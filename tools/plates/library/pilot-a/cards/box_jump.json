@@ -1,0 +1,637 @@
+{
+  "id": "box_jump",
+  "libId": "lib_box_jump",
+  "name": "Box Jump",
+  "family": "SQUAT (airborne)",
+  "tier": "A",
+  "tierNote": "Safety tier A from content.md appendix B (explosive); census.json difficulty tier 2.",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Stand facing a sturdy box, feet about hip width apart.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-boxjump",
+        "nasm-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-boxjump",
+          "text": "Stand facing a sturdy box with feet hip-width apart and arms in a ready position.",
+          "where": "How to Perform, Step 1: Setup"
+        },
+        {
+          "source": "cat-boxjump",
+          "text": "Stand with feet around hip width, brace the trunk",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "To load the jump, brace the trunk, bend the knees and hips and swing the arms back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "cat-boxjump",
+          "text": "Stand with feet around hip width, brace the trunk, bend at the knees and hips to load the legs and swing the arms back, then swing the arms up as you push as aggressively as possible against the ground with the legs.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Take off by explosively extending hips, knees and ankles while the arms swing up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-boxjump",
+          "text": "Explosively extend your hips, knees, and ankles while swinging your arms upward to generate momentum.",
+          "where": "Step 3: Execute/Drive"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Once airborne, bend at the hips to lift the feet onto the box, and land on it with both feet.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-boxjump",
+        "nasm-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "cat-boxjump",
+          "text": "Once off the floor, bend at the hips to lift the feet high enough to land on the box.",
+          "where": "technique"
+        },
+        {
+          "source": "nasm-boxjump",
+          "text": "Jump as high as needed to clear the box and land on it with both feet.",
+          "where": "Step 3: Execute/Drive"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Landing with straight knees is a common mistake: it raises joint stress and absorbs force poorly, so land with the knees bent.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-boxjump",
+          "text": "Landing with straight knees, which increases joint stress and reduces proper force absorption",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Step down from the box; do not jump down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-boxjump",
+          "text": "Step down from the box carefully (do not jump down to reduce impact stress).",
+          "where": "Step 4: Return/Descent"
+        },
+        {
+          "source": "nasm-boxjump",
+          "text": "Jumping down from the box, which creates excessive impact stress on joints",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Choose a box well below your maximum; a box that is too high compromises the landing and raises injury risk.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-boxjump",
+        "nasm-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "cat-boxjump",
+          "text": "Generally it's a good idea to use a box well under what you can actually jump onto so you can focus on jumping as high as possible and coming down onto the box",
+          "where": "technique"
+        },
+        {
+          "source": "nasm-boxjump",
+          "text": "Selecting a box height too high, which compromises landing mechanics and increases injury risk",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Load progression: beginners start on a low box (12-18 inches, about 30-45 cm) and raise it as power and landing improve.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-boxjump",
+          "text": "Beginners should start with a lower box height (12-18 inches) allowing comfortable landings and proper control. Progressively increase box height as explosive power and landing mechanics improve.",
+          "where": "FAQ"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "In recreationally active adults, box height (0-80 % of their maximum) did not change take-off performance, though women's peak force was higher at 80 %.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "dossantos-2024"
+      ],
+      "quotes": [
+        {
+          "source": "dossantos-2024",
+          "text": "Overall, variations in box height did not influence box jump performance in recreationally trained individuals when the intent to perform a maximal-effort jump was emphasized.",
+          "where": "abstract"
+        },
+        {
+          "source": "dossantos-2024",
+          "text": "Peak force at 80% maximal box jump was significantly higher than 0% in the female cohort",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Landing on a box cut peak impact force by about half compared with a countermovement jump landing on the floor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "janikov-2023"
+      ],
+      "quotes": [
+        {
+          "source": "janikov-2023",
+          "text": "Finally, BJ significantly decreased peak impact force by ~51% compared to CMJ and HJ.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Do low reps with full rest, and never jump to failure: fatigue spoils landings and raises injury risk.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-boxjump",
+        "nasm-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-boxjump",
+          "text": "Due to high neuromuscular demand, perform 3-5 sets of 3-5 repetitions with complete rest between sets. Never perform to failure with plyometrics, as fatigue significantly compromises landing mechanics and increases injury risk.",
+          "where": "FAQ"
+        },
+        {
+          "source": "cat-boxjump",
+          "text": "Box jumps should generally be done for 3-5 reps per set, with 3-10 sets.",
+          "where": "Programming"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The quads drive knee extension, the glutes hip extension and the calves ankle extension.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-boxjump",
+          "text": "Quadriceps – primary driver of knee extension and explosive force production",
+          "where": "Muscles Worked"
+        },
+        {
+          "source": "nasm-boxjump",
+          "text": "Glutes – generate hip extension power for vertical propulsion",
+          "where": "Muscles Worked"
+        },
+        {
+          "source": "nasm-boxjump",
+          "text": "Gastrocnemius and Soleus – contribute plantarflexion power for ankle extension",
+          "where": "Muscles Worked"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Asymmetric or uncontrolled landings are a common mistake that raises injury risk.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-boxjump",
+          "text": "Landing asymmetrically or with poor control, which increases imbalance and injury risk",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "NHS: after an injury, get help from 111 if it is very painful or getting worse, or you cannot put weight on it; call 999 if you heard a crack or it changed shape.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-sprains"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-sprains",
+          "text": "it's very painful, or the pain is getting worse",
+          "where": "Urgent advice box"
+        },
+        {
+          "source": "nhs-sprains",
+          "text": "you cannot put any weight on it or walk more than a few steps",
+          "where": "Urgent advice box"
+        },
+        {
+          "source": "nhs-sprains",
+          "text": "you heard a crack when you had your injury",
+          "where": "Immediate action box"
+        },
+        {
+          "source": "nhs-sprains",
+          "text": "the injured body part has changed shape or is pointing at an odd angle",
+          "where": "Immediate action box"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "NHS knee-pain advice: get urgent advice (111) if the knee is very painful, or locks or gives way.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-knee"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-knee",
+          "text": "Urgent advice: Get advice from 111 now if:",
+          "where": "Urgent advice box, heading"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee is very painful",
+          "where": "Urgent advice box, item 1"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+          "where": "Urgent advice box, item 4"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Removing the arm swing (hands loosely at the chest) makes the legs and hips do more of the work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-boxjump"
+      ],
+      "quotes": [
+        {
+          "source": "cat-boxjump",
+          "text": "Demand on actual leg and hip power can be increased by removing the swinging of the arms—hold the hands loosely at the chest instead.",
+          "where": "technique"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "nasm-boxjump",
+      "url": "https://www.nasm.org/resource-center/exercise-library/box-jumps",
+      "title": "Box Jumps (NASM Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "cat-boxjump",
+      "url": "https://www.catalystathletics.com/exercise/548/Box-Jump/",
+      "title": "Box Jump (Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "dossantos-2024",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11166134/",
+      "title": "Does Box Height Matter? A Comparative Analysis of Box Height on Box Jump Performance in Men and Women",
+      "kind": "peer-reviewed",
+      "year": 2024,
+      "pmid": "38863787",
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "janikov-2023",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/37218857/",
+      "title": "Countermovement, Hurdle, and Box Jumps: Data-Driven Exercise Selection",
+      "kind": "peer-reviewed",
+      "year": 2023,
+      "pmid": "37218857",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-sprains",
+      "url": "https://www.nhs.uk/conditions/sprains-and-strains/",
+      "title": "Sprains and strains (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "title": "Knee pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Take-off (hip, knee, ankle extension, c3) and the landing knee bend (c5) are sagittal; the box's height and the step-down (c6) read from the side.",
+    "equipment": "Generic box (plyo box) in front of the lifter, low to moderate height (c7, c8); floor line.",
+    "frames": "Airborne convention (architecture section 1): take-off and landing frames only, no mid-air pose.",
+    "start": "Take-off frame: facing the box, feet about hip width (c1), knees and hips bent, arms swung back (c2).",
+    "end": "Landing frame: both feet on the box (c4), knees and hips bent to absorb the landing (c5). Drawing geometry, not copy: both whole feet land flat on the box top, well back from the edge, never with the heels hanging off.",
+    "checkpoints": [
+      {
+        "label": "Load and swing",
+        "what": "Knees and hips bend while the arms swing back.",
+        "claim": "c2"
+      },
+      {
+        "label": "Full extension",
+        "what": "Hips, knees and ankles extend as the arms swing up.",
+        "claim": "c3"
+      },
+      {
+        "label": "Soft knees",
+        "what": "Land on the box with both feet and the knees bent (landing checkpoint).",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Landing on the box with straight, stiff knees.",
+      "why": "Listed as a common mistake that increases joint stress and reduces force absorption (c5).",
+      "claim": "c5",
+      "drawable": true,
+      "rankNote": "NASM lists five common mistakes without ranking them. A too-high box (c7) and jumping down (c6) are also common but read less clearly in a single landing frame; knee collapse inward is front-view and unsourced here."
+    },
+    "tells": [
+      {
+        "text": "Both feet land together, knees bent",
+        "claim": "c5"
+      },
+      {
+        "text": "You step down, never jump down",
+        "claim": "c6"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Explosive take-off; step down; full rest between sets; never to failure. Airborne plate: take-off and landing frames only.",
+      "claim": "c11"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [],
+    "note": "Hand archetype none. Arms swing back then up (c2, c3)."
+  },
+  "setup": [
+    {
+      "step": "Pick a sturdy box well below your maximum; beginners start at 12-18 inches.",
+      "claim": "c8"
+    },
+    {
+      "step": "Stand facing it, feet about hip width.",
+      "claim": "c1"
+    },
+    {
+      "step": "Brace, bend knees and hips, swing the arms back.",
+      "claim": "c2"
+    },
+    {
+      "step": "Drive up, lift the feet with a hip bend, land with both feet, knees bent.",
+      "claim": "c4"
+    },
+    {
+      "step": "Step down, reset, rest between reps.",
+      "claim": "c6"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Trunk braced before the jump.",
+      "claim": "c2"
+    },
+    {
+      "point": "Both feet land together on the box.",
+      "claim": "c4"
+    },
+    {
+      "point": "Knees bent on landing.",
+      "claim": "c5"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Box too high.",
+      "fix": "Use a box well below your maximum.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Jumping down off the box.",
+      "fix": "Step down.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Jumping on tired legs.",
+      "fix": "Stop the set; keep reps low with full rest.",
+      "claim": "c11"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "glutes",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "calves",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the thighs, hips and calves",
+        "means": "The jumping muscles are working.",
+        "fix": "",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Sharp knee pain, or the knee gives way",
+        "means": "Not a training feeling.",
+        "fix": "Stop jumping.",
+        "claim": "c15",
+        "redFlag": "knee"
+      },
+      {
+        "where": "Ankle pain after a bad landing, can't take weight",
+        "means": "Not a training feeling.",
+        "fix": "Stop jumping.",
+        "claim": "c14",
+        "redFlag": "ankle"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Box too high: the landing suffers and injury risk rises.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Landing with straight knees or unevenly (shared landing risk line).",
+      "claim": "c13"
+    },
+    {
+      "risk": "Jumping down, or jumping while fatigued.",
+      "claim": "c11"
+    }
+  ],
+  "redFlags": [
+    "knee",
+    "ankle"
+  ],
+  "redFlagNote": "ankle is a new shared box (content.md 5.3: added only if a jump row needs it, from the NHS page read in full); nhs-sprains supplies its triggers.",
+  "zooms": [
+    {
+      "key": "landing-knees",
+      "kind": "posture",
+      "right": "Knees and hips bent on landing.",
+      "wrong": "Straight, locked knees on landing.",
+      "claim": "c5"
+    },
+    {
+      "key": "box-height",
+      "kind": "posture",
+      "right": "Low box, landing well above it with room to spare.",
+      "wrong": "Box so high the feet barely clear it.",
+      "claim": "c7"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: quads primary, glutes and calves secondary. NASM names quads, glutes and calves as drivers (c12), so all three are present; NASM calls glutes and calves primary, but no EMG source was found to justify moving them, so no change."
+  },
+  "loadProgression": {
+    "text": "Progress by box height, from 12-18 inches, only as landings stay controlled; box height did not change take-off performance.",
+    "claims": [
+      "c8",
+      "c9"
+    ]
+  },
+  "wayOut": {
+    "text": "Step down, never jump down; stop the set when tired.",
+    "claims": [
+      "c6",
+      "c11"
+    ]
+  },
+  "anchorSource": "nasm-boxjump",
+  "anchorNote": "NASM box jumps page read in full; Catalyst Athletics box jump page also read in full.",
+  "unsourced": [
+    "Knee tracking over the toes on landing (front view).",
+    "Where on the foot to land (whole foot vs forefoot).",
+    "Box surface or stability checks beyond 'sturdy'.",
+    "Breathing."
+  ]
+}

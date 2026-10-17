@@ -1,0 +1,652 @@
+{
+  "id": "rope_triceps_pushdown",
+  "libId": "lib_rope_triceps_pushdown",
+  "name": "Rope Triceps Pushdown",
+  "family": "PUSHDOWN (rope)",
+  "tier": "C",
+  "archetype": {
+    "hand": "push",
+    "handle": "rope",
+    "loadAxis": "across",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Fix a rope to the cable pulley at its top position (above head height).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rope",
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rope",
+          "text": "Fasten a rope handle in the upper position of a cable pulley. Grip the rope with an overhand grip, and take one step back from the pulley.",
+          "where": "How to, step 1"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "Stand facing the cable machine and position the cable attachment at a height above your head.",
+          "where": "Step 1, starting position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Hold each end of the rope with the hand up against the knob (the clubbed end), with a full grip.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nfpt-rope",
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "nfpt-rope",
+          "text": "Grip the rope with your hand against the clubbed end.",
+          "where": "Instructions"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+          "where": "Step 1, starting position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The rope turns the grip neutral (palms facing each other) instead of overhand; this has little or no effect on how hard the triceps work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "It also changes your grip from overhand to neutral, but this has minimal to no effect on your triceps activation.",
+          "where": "Alternatives & variations, rope"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Unlike a bar, the rope ends can be separated at the bottom, so the hands finish past the body and the range is longer.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-pushdown",
+        "sl-rope"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "Using a rope instead of a bar in tricep pushdowns could allow for a longer range of motion since you can separate the ends of the rope and continue the motion without the bar hitting your body.",
+          "where": "Alternatives & variations, rope"
+        },
+        {
+          "source": "sl-rope",
+          "text": "Using a rope allows for a greater range of motion than a straight bar, as you can extend your arms past your body, giving your triceps a more thorough workout.",
+          "where": "Benefits"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The wrists stay straight for the whole movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nfpt-rope",
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "nfpt-rope",
+          "text": "Your wrists should be straight throughout the movement, press the handle down toward the floor to the extended position.",
+          "where": "Instructions"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "Continue pressing the weight with your elbows right next to your side while maintaining a neutral position with your wrists until your elbows become fully extended",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The elbows stay in at the sides; if they move away from the body the shoulders take over.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nfpt-rope"
+      ],
+      "quotes": [
+        {
+          "source": "nfpt-rope",
+          "text": "Keep your elbows in at your sides during the entire movement. As your elbows move away from your body your shoulders will come into play, you will no longer be isolating your triceps.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Elbows moving forward is the fault to watch: it brings in the lats and takes work off the triceps. ACE's instructions cover the rope as well as the handle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "It is important to monitor the forward movement of your elbows as this recruits from your lats (back muscles) and reduces the emphasis on the triceps.",
+          "where": "Note after step 4"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Top position: raise the rope only until the forearms are just past parallel to the floor; higher shifts the feeling to the forearms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nfpt-rope"
+      ],
+      "quotes": [
+        {
+          "source": "nfpt-rope",
+          "text": "Take two to three seconds to raise the bar up until your forearms are just past parallel to the floor.",
+          "where": "Instructions"
+        },
+        {
+          "source": "nfpt-rope",
+          "text": "Be sure that the bar does not go higher than just above parallel. If it does you will feel it more in your forearms.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Bottom position: arms straight, with wrist, elbow and shoulder in a vertical line, but the elbows not locked out.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nfpt-rope",
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "nfpt-rope",
+          "text": "When your arms are extended, your wrists, elbow and shoulder should be in a line perpendicular to the floor.",
+          "where": "Instructions"
+        },
+        {
+          "source": "nfpt-rope",
+          "text": "Do not lock out your elbows in the extended position. Failure to do so can result in injury to your elbows.",
+          "where": "Instructions"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "until your elbows become fully extended, (do not allow them to \"lock out\" in full extension).",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Stand with feet hip-width or staggered; keep the torso tall and braced, and if you lean, tilt from the hips rather than arching the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown",
+        "sl-rope"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Position your feet hip-width apart or in a staggered-stance (walking) position.",
+          "where": "Step 1, starting position"
+        },
+        {
+          "source": "sl-rope",
+          "text": "If you need to lean slightly forward, make sure to tilt from your hips rather than arching your back.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Keep the shoulders pulled down and back through the set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Leaning too far forward or arching the back strains the lower back and moves work off the triceps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rope"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rope",
+          "text": "Some people tend to lean too far forward or arch their back, which can put unnecessary strain on the lower back and shift the focus away from the triceps.",
+          "where": "Common mistakes, arching your back"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Tempo (up = working phase, the press down; down = return): press in about 1 s, pause briefly at the bottom, let the rope back up over 2-3 s, never faster.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nfpt-rope",
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "nfpt-rope",
+          "text": "Do not raise the bar any faster than two to three seconds. You must stay in control at all times during this movement.",
+          "where": "Instructions"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Breathe out as you press the rope down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Gently exhale and slowly extend your elbows, pressing the handle / rope down towards the floor.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Too much weight leads to momentum and can lead to injury; pick a weight you can move with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rope"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rope",
+          "text": "This often leads to using momentum to complete the exercise, instead of relying on the strength of the triceps. This not only reduces the effectiveness of the exercise but can also lead to injury.",
+          "where": "Common mistakes, using too much weight"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Heavy, low-rep pushdowns feel uncomfortable in the elbows for many people; lighter weights for more reps can ease this.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rope"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rope",
+          "text": "For the triceps pushdown, using heavy weights and low reps feels uncomfortable in the elbows for many people, and using lighter weights and doing more reps can alleviate this.",
+          "where": "Sets and reps"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Muscles: the back of the upper arm (triceps) works most; one coaching source also names the forearms and biceps as secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nfpt-rope"
+      ],
+      "quotes": [
+        {
+          "source": "nfpt-rope",
+          "text": "The primary muscles stressed in this movement are the muscles in the back of your upper arm",
+          "where": "Muscles"
+        },
+        {
+          "source": "nfpt-rope",
+          "text": "The secondary muscles stressed are the muscles in your forearms and bicep.",
+          "where": "Muscles"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "nfpt-rope",
+      "url": "https://nfpt.com/how-to-do-tricep-pushdowns-with-the-rope/",
+      "title": "How to do Tricep Pushdowns with the Rope (Robert Bovee, NFPT)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-pushdown",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+      "title": "Triceps Pushdowns (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-rope",
+      "url": "https://www.strengthlog.com/?p=2541",
+      "title": "How to Do Tricep Pushdown With Rope: Muscles Worked & Proper Form",
+      "kind": "coach",
+      "year": 2023,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sl-pushdown",
+      "url": "https://www.strengthlog.com/tricep-pushdown/",
+      "title": "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form",
+      "kind": "coach",
+      "year": 2023,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm-2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The elbow bends front-to-back and the key fault, elbows drifting forward (c7), shows side-on; the bottom line of wrist, elbow and shoulder (c9) is also a side-view check. The rope ends spreading apart (c4) is sideways and cannot be drawn in this view; it goes to a zoom. Census view is side.",
+    "equipment": "Cable column, pulley at the top position, rope attachment with a knob on each end (c1). The rope drawing is missing (census R4).",
+    "start": "Standing facing the stack, feet hip-width or staggered (c10); elbows at the sides, forearms just past parallel to the floor (c8); hands against the rope knobs, palms facing each other, wrists straight (c2, c3, c5); shoulders down and back (c11).",
+    "end": "Arms straight, wrist, elbow and shoulder in a vertical line, elbows not locked (c9); hands by the thighs with the rope ends apart (c4); elbows still at the sides (c6).",
+    "checkpoints": [
+      {
+        "label": "Elbows in",
+        "what": "Upper arms stay at the sides from top to bottom.",
+        "claim": "c6"
+      },
+      {
+        "label": "Straight wrists",
+        "what": "Hands in line with the forearms, fists not curled.",
+        "claim": "c5"
+      },
+      {
+        "label": "Vertical finish",
+        "what": "At the bottom, wrist, elbow and shoulder line up vertically.",
+        "claim": "c9"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows drifting forward as the rope comes up (and swinging forward to start the press).",
+      "why": "ACE names it as the fault to monitor, for rope and handle alike: it brings in the lats and takes load off the triceps.",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Elbows stay by your sides",
+        "claim": "c6"
+      },
+      {
+        "text": "Wrist, elbow, shoulder line up at the bottom",
+        "claim": "c9"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 3,
+      "pause": 1,
+      "claim": "c13"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Neutral (palms facing each other), one hand on each end of the rope, full grip.",
+    "width": "Set by the rope; the ends spread apart at the bottom (c4).",
+    "thumb": "Wrapped round the rope.",
+    "handContact": "Hand up against the knob (clubbed end) of the rope.",
+    "wrist": "Straight for the whole movement.",
+    "claims": [
+      "c2",
+      "c3",
+      "c4",
+      "c5"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Fix the rope to the pulley at its top position.",
+      "claim": "c1"
+    },
+    {
+      "step": "Hold each end with your hand against the knob, thumbs wrapped.",
+      "claim": "c2"
+    },
+    {
+      "step": "Stand facing the machine, feet hip-width or staggered, torso tall.",
+      "claim": "c10"
+    },
+    {
+      "step": "Elbows at your sides, forearms just past parallel to the floor, shoulders down and back.",
+      "claim": "c8"
+    },
+    {
+      "step": "Pick a weight you can move with control.",
+      "claim": "c15"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Elbows stay in at your sides.",
+      "claim": "c6"
+    },
+    {
+      "point": "Wrists straight throughout.",
+      "claim": "c5"
+    },
+    {
+      "point": "Torso tall; any lean comes from the hips, not an arched back.",
+      "claim": "c10"
+    },
+    {
+      "point": "Shoulders down and back.",
+      "claim": "c11"
+    },
+    {
+      "point": "Spread the rope ends apart as the arms straighten.",
+      "claim": "c4"
+    },
+    {
+      "point": "Arms straight at the bottom, elbows not locked out.",
+      "claim": "c9"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Elbows drifting forward or away from the body.",
+      "fix": "Keep the elbows at your sides.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Leaning over the rope or arching the back.",
+      "fix": "Stand taller; tilt only from the hips; go lighter.",
+      "claim": "c12"
+    },
+    {
+      "mistake": "Letting the rope rise too high.",
+      "fix": "Stop when the forearms are just past parallel.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "triceps",
+        "claim": "c17"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "forearms",
+        "claim": "c17"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Back of the upper arm",
+        "means": "The triceps are doing the work.",
+        "fix": "",
+        "claim": "c17",
+        "redFlag": null
+      },
+      {
+        "where": "Forearms, at the top",
+        "means": "Usually means the rope is rising too high.",
+        "fix": "Stop when the forearms are just past parallel.",
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Usually means you are leaning too far or arching.",
+        "fix": "Stand taller and go lighter.",
+        "claim": "c12",
+        "redFlag": "back"
+      },
+      {
+        "where": "Elbows",
+        "means": "Heavy, low-rep sets often feel this way.",
+        "fix": "Use a lighter weight for more reps; don't lock out. Sharp or lasting elbow pain: stop the set.",
+        "claim": "c16",
+        "redFlag": "elbow",
+        "fixNote": "The 'sharp or lasting elbow pain: stop the set' part follows the shared elbow warning box this row links; the claim covers only the discomfort and the lighter-weight advice; 'don't lock out' is c9."
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Locking the elbows out hard at the bottom can injure the elbows.",
+      "claim": "c9"
+    },
+    {
+      "risk": "Leaning or arching strains the lower back.",
+      "claim": "c12"
+    },
+    {
+      "risk": "Too much weight moved with momentum can lead to injury.",
+      "claim": "c15"
+    }
+  ],
+  "redFlags": [
+    "elbow",
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "rope-hand",
+      "kind": "hand",
+      "right": "Hand up against the knob, neutral grip, wrist straight.",
+      "wrong": "Fist curled toward the forearm (wrist bent).",
+      "claim": "c5"
+    },
+    {
+      "key": "rope-spread",
+      "kind": "posture",
+      "right": "At the bottom the rope ends spread apart and the hands pass the thighs.",
+      "wrong": "Hands jammed together, rope ends hitting the thighs.",
+      "claim": "c4"
+    },
+    {
+      "key": "rope-elbow",
+      "kind": "posture",
+      "right": "Elbows against the sides at the top of the return.",
+      "wrong": "Elbows drifted forward, upper arms swung up.",
+      "claim": "c7"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "triceps primary and forearms secondary match exercises.json (c17). NFPT also names the biceps as secondary; not added because it is one coaching source with no measurement behind it."
+  },
+  "anchorSource": "nfpt-rope"
+}

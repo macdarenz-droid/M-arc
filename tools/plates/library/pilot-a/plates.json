@@ -1,0 +1,199 @@
+{
+ "note": "Pilot A (library plan 6.1, card LIB-8). tier: content.md appendix B lists (A 47, B 27, C the rest); closest: census.json closestApproved; view: census view; class: the new pose class, rule or rig the plate anchors (plan 2.1, 2.2). extras: other renders shown beside the plate on the sheet (go/no-go alternates as spec ids, previews as image files in evidence/). held: plates kept off the sheet by a supervisor ruling, listed in one line each. rulings: a supervisor ruling that names a raised flag, printed with that flag on the sheet.",
+ "plates": [
+  {
+   "id": "dumbbell_bench_press",
+   "tier": "A",
+   "closest": "machine_chest_press",
+   "view": "side",
+   "class": "supine bench (BENCH parent)"
+  },
+  {
+   "id": "incline_dumbbell_press",
+   "tier": "A",
+   "closest": "machine_chest_press",
+   "view": "side",
+   "class": "incline; inclineBench (BENCH child)"
+  },
+  {
+   "id": "dumbbell_shoulder_press",
+   "tier": "A",
+   "closest": "machine_chest_press",
+   "view": "side",
+   "class": "seated press (SEATPRESS parent); inclineBench"
+  },
+  {
+   "id": "barbell_overhead_press",
+   "tier": "A",
+   "closest": "barbell_back_squat",
+   "view": "side",
+   "class": "standing overhead press"
+  },
+  {
+   "id": "barbell_row",
+   "tier": "A",
+   "closest": "seated_cable_row",
+   "view": "side",
+   "class": "hinge (HROW parent)"
+  },
+  {
+   "id": "romanian_deadlift",
+   "tier": "A",
+   "closest": "barbell_back_squat",
+   "view": "side",
+   "class": "hinge (HINGE parent)"
+  },
+  {
+   "id": "single_leg_romanian_deadlift",
+   "tier": "A",
+   "closest": "barbell_back_squat",
+   "view": "side",
+   "class": "single leg; drawable-fault rule"
+  },
+  {
+   "id": "barbell_shrug",
+   "tier": "A",
+   "closest": "lateral_raise",
+   "view": "side",
+   "class": "small-motion zoom (SHRUG parent), F1"
+  },
+  {
+   "id": "box_jump",
+   "tier": "A",
+   "closest": "barbell_back_squat",
+   "view": "side",
+   "class": "airborne"
+  },
+  {
+   "id": "dumbbell_fly",
+   "tier": "A",
+   "closest": "machine_chest_press",
+   "view": "front",
+   "class": "view conflict go/no-go (supine)",
+   "extras": [
+    {
+     "spec": "dumbbell_fly__alt",
+     "caption": "Side view (the previous plate), for comparison"
+    }
+   ],
+   "held": "needs a raised foot-end camera (engine follow-up card, plan 2.8)"
+  },
+  {
+   "id": "dumbbell_biceps_curl",
+   "tier": "C",
+   "closest": "lateral_raise",
+   "view": "side",
+   "class": "engine dumbbell primitive (CURL parent)"
+  },
+  {
+   "id": "upright_row",
+   "tier": "B",
+   "closest": "lateral_raise",
+   "view": "front",
+   "class": "engine-drawn front view"
+  },
+  {
+   "id": "triceps_pushdown",
+   "tier": "C",
+   "closest": "lat_pulldown",
+   "view": "side",
+   "class": "cable pushdown (PUSHDOWN parent)"
+  },
+  {
+   "id": "rope_triceps_pushdown",
+   "tier": "C",
+   "closest": "lat_pulldown",
+   "view": "side",
+   "class": "rope (PUSHDOWN child)",
+   "extras": [
+    {
+     "image": "evidence/rope-pushdown-poly-silent-black.png",
+     "caption": "Preview: rope drawn with the LIB-25 poly primitive (PR #120, 8480052)"
+    }
+   ],
+   "notes": [
+    "Rope does not read as a rope at 390 px (drawn with the dumbbell primitive); the fix is the LIB-25 poly primitive, previewed beside it"
+   ]
+  },
+  {
+   "id": "pec_fly",
+   "tier": "B",
+   "closest": "machine_chest_press",
+   "view": "front",
+   "class": "pecDeck, front-view pivot arms go/no-go (FSEAT parent)"
+  },
+  {
+   "id": "bent_over_dumbbell_rear_delt_fly",
+   "tier": "C",
+   "closest": "lateral_raise",
+   "view": "front",
+   "class": "view conflict go/no-go (hinge)",
+   "extras": [
+    {
+     "spec": "bent_over_dumbbell_rear_delt_fly__alt",
+     "caption": "Front view (census view): no-go"
+    }
+   ],
+   "held": "needs a front-view bent-over torso (follow-up card)"
+  },
+  {
+   "id": "reverse_lunge",
+   "tier": "B",
+   "closest": "barbell_back_squat",
+   "view": "side",
+   "class": "split stance (SPLIT parent)"
+  },
+  {
+   "id": "plank",
+   "tier": "C",
+   "closest": "hanging_leg_raise",
+   "view": "side",
+   "class": "hold plate",
+   "rulings": {
+    "F1": "D-LIB8-floor (floor-horizontal class): floor at the approved y, scale up to x1.35 of 146.29 px/m to fill the width between the approved side margins"
+   }
+  },
+  {
+   "id": "mountain_climbers",
+   "tier": "C",
+   "closest": "hanging_leg_raise",
+   "view": "side",
+   "class": "cycle plate",
+   "rulings": {
+    "F1": "D-LIB8-floor (floor-horizontal class): floor at the approved y, scale up to x1.35 of 146.29 px/m to fill the width between the approved side margins"
+   }
+  }
+ ],
+ "cards": "cards/ = verified research cards copied from claude/libht-research e2a70bc",
+ "handsNote": "hands: LIB-12 hand renders shown on the sheet only (not plates), renderPair(id) from tools/plates/library/hands/pairs.mjs on claude/lib-12-hand-views 06519f9 (LIB-7 loader aacebf5 merged), Silent Black and Paper at 390 px; flags as the LIB-12 note on PR #109 (2026-10-02 14:10).",
+ "hands": [
+  {
+   "key": "cupped",
+   "id": "goblet_squat",
+   "name": "Cupped hold (goblet)",
+   "images": [
+    "evidence/lib12-cupped-silent-black.png",
+    "evidence/lib12-cupped-paper.png"
+   ],
+   "flags": [
+    "New hand kind (plan 2.3)",
+    "Drawing values (D-LIB12-2), not sourced: dumbbell head 180 mm across, 70 mm thick, handle 32 mm",
+    "Thumb and fingers not drawn: no goblet source places them, so the palms are one outline"
+   ]
+  },
+  {
+   "key": "front-rack",
+   "id": "front_squat",
+   "name": "Front rack",
+   "images": [
+    "evidence/lib12-front-rack-silent-black.png",
+    "evidence/lib12-front-rack-paper.png"
+   ],
+   "flags": [
+    "New hand kind (plan 2.3)",
+    "Drawing value (D-LIB12-2), not sourced: bar 28 mm (golden B's value)",
+    "Wrist: no number drawn; the front-rack exemption replaces the on-body range"
+   ]
+  }
+ ]
+}

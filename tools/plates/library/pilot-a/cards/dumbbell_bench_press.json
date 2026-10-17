@@ -1,0 +1,677 @@
+{
+  "id": "dumbbell_bench_press",
+  "libId": "lib_dumbbell_bench_press",
+  "name": "Dumbbell Bench Press",
+  "family": "BENCH",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "bench-lying"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Lie on a flat bench with feet firmly on the floor (or a raised platform) so the spine stays flat or neutral.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-db-chest-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-db-chest-press",
+          "text": "lie supine (on your back) on a flat bench with your feet firmly placed on the floor or upon a raised platform to allow you to maintain a flat or neutral (flat) spine",
+          "where": "Step 1, starting position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Pull the shoulder blades down and back into the bench; head, shoulders, buttocks and feet stay in contact with the bench and floor for the whole set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-db-chest-press",
+        "nsca-ch15-summary"
+      ],
+      "quotes": [
+        {
+          "source": "ace-db-chest-press",
+          "text": "Depress and retract your scapulae (pull shoulders down and back) to make firm contact with the bench. Your head, shoulders, butt and feet should make contact with the bench and floor/riser throughout the exercise.",
+          "where": "Step 2"
+        },
+        {
+          "source": "nsca-ch15-summary",
+          "text": "Five point body contact position.",
+          "where": "Stable Body and Limb Positioning"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Grip: closed, palms facing forward, thumbs wrapped round the handle, wrist neutral (not bent forward or back).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-db-chest-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-db-chest-press",
+          "text": "Grasp each dumbbell with a closed, pronated grip (palms facing forward, thumbs wrapped around the handle)",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-db-chest-press",
+          "text": "Maintain a neutral wrist position (avoid flexion/extension at the wrist joint).",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "At lockout the elbows are fully extended and the dumbbells go no further toward the head than eye level (ACE: level with or just below the eyes); the card draws them over the shoulders (c10).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-db-chest-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-db-chest-press",
+          "text": "press the dumbbells to a position level with or just below your eyes with the elbows fully extended",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lower slowly toward mid-chest, drifting slightly wider toward the armpits, and touch the chest gently without bouncing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-db-chest-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-db-chest-press",
+          "text": "Inhale and slowly lower the dumbbells in unison and in a controlled movement towards your mid-chest, but moving slightly wider towards the armpits. Gently touch the dumbbells to your chest without bouncing",
+          "where": "Step 3, downward phase"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep all contact points and avoid arching the low back, both lowering and pressing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-db-chest-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-db-chest-press",
+          "text": "Maintain all points of contact with the bench and floor/riser and avoid any arching in the low back.",
+          "where": "Step 3"
+        },
+        {
+          "source": "ace-db-chest-press",
+          "text": "avoid arching your back during the lift and maintain neutral wrist position throughout the movement",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Each dumbbell has to stay roughly over its elbow; weights closer together than the elbows are much harder on the triceps and weights wider than the elbows much harder on the chest, which is why they travel in a slight arc.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "sbs-bench"
+      ],
+      "quotes": [
+        {
+          "source": "sbs-bench",
+          "text": "Gravity pulls the DB straight to the floor, and you press against that force. Because of that, the weight needs to stay more-or-less right over your elbow the whole time.",
+          "where": "dumbbell explanation"
+        },
+        {
+          "source": "sbs-bench",
+          "text": "That’s why the weights move in an arcing path – away from each other on the way down, and toward each other on the way up.",
+          "where": "dumbbell explanation"
+        },
+        {
+          "source": "sbs-bench",
+          "text": "the lift gets way harder on your triceps if the weights are closer together than your elbows are (it basically becomes a Tate Press), and it gets way harder on your pecs (and maybe biceps) if the weights are further from each other than your elbows are",
+          "where": "dumbbell explanation"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Breathe in on the way down and out on the way up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-db-chest-press",
+        "hk-db-bench"
+      ],
+      "quotes": [
+        {
+          "source": "ace-db-chest-press",
+          "text": "Exhale and gently press upwards to full elbow extension",
+          "where": "Step 4, upward phase"
+        },
+        {
+          "source": "hk-db-bench",
+          "text": "While exhaling, press the dumbbells straight up by extending your arms.",
+          "where": "Movement Phases"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Elbows close to the sides shifts work toward the triceps; flared elbows shift it toward the chest (ACE coaching guidance, not measured in this source).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-db-chest-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-db-chest-press",
+          "text": "Keep the elbows close to your sides (emphasizes more triceps) or flared out from the body (emphasizes more pectorals).",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Getting in: sit on the bench with a dumbbell in each hand and lean back into position with the dumbbells over the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-db-bench"
+      ],
+      "quotes": [
+        {
+          "source": "hk-db-bench",
+          "text": "Sit on a bench with both feet on the floor and one dumbbell in each hand.",
+          "where": "Beginning Position"
+        },
+        {
+          "source": "hk-db-bench",
+          "text": "Lean back into a supine position on the bench while positioning your hands and dumbbells over your shoulders.",
+          "where": "Beginning Position"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "A way out with heavy dumbbells: a spotter behind the bench holds the lifter's wrists (not elbows) and takes the dumbbells one at a time at the end.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-db-bench"
+      ],
+      "quotes": [
+        {
+          "source": "hk-db-bench",
+          "text": "the spotter should stand behind the bench, ready to act when the lifter struggles. The spotter should place a firm grip with each hand around the wrists of the lifter. Spotting at the elbows is incorrect",
+          "where": "Spotting Guidelines"
+        },
+        {
+          "source": "hk-db-bench",
+          "text": "the spotter should retrieve one dumbbell at a time from the lifter while they are still in the active position",
+          "where": "Spotting Guidelines"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "With dumbbells, pectoralis major and anterior deltoid activity match the barbell and Smith bench; triceps activity is lower and biceps activity higher, with a lower 1-RM.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "saeterbakken2011"
+      ],
+      "quotes": [
+        {
+          "source": "saeterbakken2011",
+          "text": "Electrical activity in the pectoralis major and anterior deltoid did not differ during the lifts.",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2011",
+          "text": "triceps brachii activity was reduced using dumbbells versus barbell",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2011",
+          "text": "The dumbbell load was 14% less than that for the Smith machine",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Pectoralis major and anterior deltoid activation did not differ between the barbell bench, dumbbell bench and dumbbell fly.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "welsch2005"
+      ],
+      "quotes": [
+        {
+          "source": "welsch2005",
+          "text": "Motor unit activation of both muscles was not significantly different during all 3 lifts.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "ACSM recommends a moderate speed for strength work: 1-2 seconds up and 1-2 seconds down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Pec major tendon ruptures happen most often during the lowering (eccentric) part of the bench press in general (a narrative review, not a dumbbell measurement).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "kowalczuk2022"
+      ],
+      "quotes": [
+        {
+          "source": "kowalczuk2022",
+          "text": "The injury results from an eccentric contracture of the muscle most commonly while performing the bench press maneuver during weight training.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "The shoulder is one of the most often injured areas in resistance training (up to 36% of documented injuries), and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-db-chest-press",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/19/chest-press/",
+      "title": "Chest Press (dumbbell), ACE Exercise Library",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nsca-ch15-summary",
+      "url": "https://www.ptpioneer.com/personal-training/certifications/nsca-cscs/cscs-chapter-15/",
+      "title": "NSCA CSCS Chapter 15 (Exercise Technique) study summary, PTPioneer",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "sbs-bench",
+      "url": "https://www.strongerbyscience.com/how-to-bench/",
+      "title": "How to Bench Press: The Definitive Guide (Stronger by Science)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "hk-db-bench",
+      "url": "https://us.humankinetics.com/blogs/excerpt/how-to-perform-a-dumbbell-bench-press",
+      "title": "How to perform a dumbbell bench press (Human Kinetics excerpt)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "saeterbakken2011",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21225489/",
+      "title": "A comparison of muscle activity and 1-RM strength of three chest-press exercises with different stability requirements",
+      "kind": "peer-reviewed",
+      "year": 2011,
+      "pmid": "21225489",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "welsch2005",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15903389/",
+      "title": "Electromyographic activity of the pectoralis major and anterior deltoid muscles during three upper-body lifts",
+      "kind": "peer-reviewed",
+      "year": 2005,
+      "pmid": "15903389",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kowalczuk2022",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35025841/",
+      "title": "Pectoralis Major Rupture: Evaluation and Management",
+      "kind": "peer-reviewed",
+      "year": 2022,
+      "pmid": "35025841",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; the faults that matter here (low back arching off the bench, dumbbell depth at mid-chest, forearm over the elbow) all read in the sagittal plane (c6, c5, c7).",
+    "equipment": "Flat bench, one dumbbell per hand, feet flat on the floor (c1).",
+    "start": "Supine, head/shoulders/buttocks on the bench, feet on the floor (c1, c2); arms straight and vertical, dumbbells directly over the shoulder joints (c10), never past eye level (c4).",
+    "end": "Dumbbells lowered to touch mid-chest, slightly wide toward the armpits (c5), each forearm near vertical under its dumbbell (c7); contact points unchanged (c6).",
+    "checkpoints": [
+      {
+        "label": "Five points",
+        "what": "Head, shoulders, buttocks and both feet stay in contact throughout.",
+        "claim": "c2"
+      },
+      {
+        "label": "Down to mid-chest",
+        "what": "Dumbbells come down to mid-chest, a little wide toward the armpits, touching gently.",
+        "claim": "c5"
+      },
+      {
+        "label": "Weight over elbow",
+        "what": "Each dumbbell stays roughly over its elbow; forearm near vertical.",
+        "claim": "c7"
+      }
+    ],
+    "mistake": {
+      "what": "Low back arching off the bench (hips lifting) to press the weight.",
+      "why": "ACE names low-back arching as the thing to avoid on both the lowering and the press; how often it happens is not measured in any source read.",
+      "claim": "c6",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Hips and head stay on the bench",
+        "claim": "c2"
+      },
+      {
+        "text": "Dumbbells touch chest, no bounce",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c15"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed grip, palms facing forward (c3).",
+    "width": "Dumbbells over the elbows; they move slightly apart on the way down and together on the way up (c7).",
+    "thumb": "Wrapped round the handle (c3).",
+    "handContact": "Handle held firmly in the palm (c3); heel-of-palm detail is the push archetype default, not from this card's sources.",
+    "wrist": "Neutral: no bending forward or back (c3).",
+    "claims": [
+      "c3",
+      "c7"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Sit on the bench end with a dumbbell in each hand, feet on the floor.",
+      "claim": "c10"
+    },
+    {
+      "step": "Lean back into position with the dumbbells over your shoulders.",
+      "claim": "c10"
+    },
+    {
+      "step": "Feet flat on the floor, spine flat or neutral.",
+      "claim": "c1"
+    },
+    {
+      "step": "Shoulder blades down and back into the bench.",
+      "claim": "c2"
+    },
+    {
+      "step": "Press to straight arms, dumbbells over your shoulders.",
+      "claim": "c10"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Head, shoulders, buttocks and feet stay in contact.",
+      "claim": "c2"
+    },
+    {
+      "point": "No low-back arch.",
+      "claim": "c6"
+    },
+    {
+      "point": "Wrists neutral.",
+      "claim": "c3"
+    },
+    {
+      "point": "Dumbbells over the elbows.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Bouncing the dumbbells off the chest.",
+      "fix": "Lower slowly and touch gently; if you can't, the weight is too heavy.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Arching the low back to finish a rep.",
+      "fix": "Stop the set or go lighter; keep hips on the bench.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Spotter holding the elbows.",
+      "fix": "Spotter holds the wrists.",
+      "claim": "c11"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "chest",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "triceps",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Chest and front of shoulders",
+        "means": "The target muscles are working.",
+        "fix": null,
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Sharp pain in the chest or front of the shoulder while lowering",
+        "means": "Usually a warning sign: pec tendon tears happen mostly in the lowering phase of bench pressing, and the shoulder is one of the most often injured areas in lifting.",
+        "fix": "Stop the set. Go lighter next time.",
+        "claim": "c17",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; use a spotter for heavy sets.",
+      "claim": "c16"
+    },
+    {
+      "risk": "Pec tendon rupture during the lowering phase of heavy bench pressing.",
+      "claim": "c17"
+    },
+    {
+      "risk": "Shoulder injuries are common in lifting and linked to poor technique.",
+      "claim": "c18"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "wrist-neutral-press",
+      "kind": "hand",
+      "right": "Thumb wrapped, wrist straight over the forearm.",
+      "wrong": "Wrist bent back under the dumbbell.",
+      "claim": "c3"
+    },
+    {
+      "key": "five-point-bench",
+      "kind": "posture",
+      "right": "Head, shoulders, buttocks on the bench, feet flat.",
+      "wrong": "Hips lifted, low back arched.",
+      "claim": "c6"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json lists chest primary, front_delts and triceps secondary; c12 and c13 support all three. No change."
+  },
+  "anchorSource": "ace-db-chest-press"
+}

@@ -1,0 +1,556 @@
+{
+  "id": "reverse_lunge",
+  "libId": "lib_reverse_lunge",
+  "name": "Reverse Lunge",
+  "family": "SPLIT",
+  "tier": "B",
+  "tierNote": "Safety tier B from content.md appendix B (loaded lunge); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The reverse lunge starts standing with the feet about hip to shoulder width apart, then one foot steps back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-revlunge",
+        "cat-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-revlunge",
+          "text": "Starting with feet hip to shoulder width, step one foot back far enough to move down into a deep lunge with the front shin approximately vertical.",
+          "where": "technique, step 1"
+        },
+        {
+          "source": "ace-revlunge",
+          "text": "With the feet about hip-width apart, slowly step backwards with the left leg.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "At the bottom the front shin is roughly vertical.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-revlunge",
+          "text": "step one foot back far enough to move down into a deep lunge with the front shin approximately vertical.",
+          "where": "technique, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The trunk stays upright and the weight is shared about evenly between both feet at the bottom.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-revlunge",
+          "text": "Keep the trunk upright and balance approximately evenly on the two feet at the bottom of the motion.",
+          "where": "technique, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Once the back foot lands, the back knee is lowered slowly toward the floor with the chest kept up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "ace-revlunge",
+          "text": "After the left foot hits the ground push back into the right hip to slowly lower the left knee towards the floor while keeping the chest raised towards the ceiling.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "To stand up, the front foot presses into the floor while the back leg swings forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "ace-revlunge",
+          "text": "Press the right foot into the ground and think about pulling the right knee backwards while swinging the left leg forward to return to standing.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Losing the upright trunk, the controlled descent or the balance between the feet means the load is too heavy and should be reduced.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-revlunge",
+          "text": "Many athletes try to load lunges too heavily and lose the position in which the exercise will be most effective.",
+          "where": "Notes"
+        },
+        {
+          "source": "cat-revlunge",
+          "text": "If you can't maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight.",
+          "where": "Notes"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The descent is controlled, with a full-length step and no crashing into the bottom position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-revlunge",
+          "text": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position.",
+          "where": "Programming"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Leaning the trunk forward in lunges roughly doubled lower-back (erector spinae) activity in one EMG study of 12 trained women carrying 30% of body weight; that study used static, step-forward and walking lunges, not the reverse lunge.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "bezerra-2021"
+      ],
+      "quotes": [
+        {
+          "source": "bezerra-2021",
+          "text": "Results indicate that positioning the trunk in a forward-inclined position induces greater lower lumbar erector spinae activation",
+          "where": "abstract, results"
+        },
+        {
+          "source": "bezerra-2021",
+          "text": "(straight = 20 ± 15, inclined = 40 ± 29)",
+          "where": "abstract, results"
+        },
+        {
+          "source": "bezerra-2021",
+          "text": "Twelve women (24 ± 3 years) were selected and performed the lunge exercise with an overload of 30% of body weight",
+          "where": "abstract, methods"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The reverse lunge strengthens the legs and hips and improves hip stability.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-revlunge",
+          "text": "The reverse lunge strengthens the legs and hips and improves hip stability with the unilateral effort",
+          "where": "Purpose"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The backward lunge produced lower kneecap-joint (patellofemoral) loading than the forward lunge in 20 women without knee pain, with more forward trunk tilt.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "goulette-2021"
+      ],
+      "quotes": [
+        {
+          "source": "goulette-2021",
+          "text": "Quadriceps force, PFJ reaction force, and knee flexion angle were larger in the FL movement and Up phases. PFJ loading rate was greater in the FL movement along with a lower forward trunk tilt.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "goulette-2021",
+          "text": "The FL produced greater PFJ loading variables compared to the BL.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The reverse lunge can be loaded with dumbbells or kettlebells held at the sides, or with a barbell.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-revlunge",
+        "cat-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-revlunge",
+          "text": "The reverse lunge can be loaded in many ways, such as with a barbell in the clean rack position or overhead, dumbbells or kettlebells at the sides",
+          "where": "Variations"
+        },
+        {
+          "source": "ace-revlunge",
+          "text": "Dip under the bar so that it rests behind the neck across the top of the back and the shoulder blades",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Legs can alternate each rep, or all reps can be done on one leg before switching.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-revlunge",
+          "text": "You can alternate legs rep to rep, or complete all reps on one leg before switching to the other.",
+          "where": "technique"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "NHS knee-pain advice: get urgent advice (111) if the knee is very painful, or locks or gives way.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-knee"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-knee",
+          "text": "Urgent advice: Get advice from 111 now if:",
+          "where": "Urgent advice box, heading"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee is very painful",
+          "where": "Urgent advice box, item 1"
+        },
+        {
+          "source": "nhs-knee",
+          "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
+          "where": "Urgent advice box, item 4"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Load progression: light or unloaded lunges can be done for 15-20 reps; loaded sets are usually 3-10 reps per leg at a weight that keeps a full step and smooth movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "cat-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "cat-revlunge",
+          "text": "Light or unloaded lunges can be done with 15-20 reps as well if using them for work capacity or rehab.",
+          "where": "Programming"
+        },
+        {
+          "source": "cat-revlunge",
+          "text": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position.",
+          "where": "Programming"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "cat-revlunge",
+      "url": "https://www.catalystathletics.com/exercise/735/Reverse-Lunge/",
+      "title": "Reverse Lunge (Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "ace-revlunge",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/319/reverse-lunge/",
+      "title": "Reverse Lunge (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "goulette-2021",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33310585/",
+      "title": "Patellofemoral joint loading during the forward and backward lunge",
+      "kind": "peer-reviewed",
+      "year": 2021,
+      "pmid": "33310585",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "bezerra-2021",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34055138/",
+      "title": "Influence of Trunk Position during Three Lunge Exercises on Muscular Activation in Trained Women",
+      "kind": "peer-reviewed",
+      "year": 2021,
+      "pmid": "34055138",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-knee",
+      "url": "https://www.nhs.uk/conditions/knee-pain/",
+      "title": "Knee pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The movement is a front-to-back step in the sagittal plane; every checkpoint (shin angle c2, upright trunk c3, knee lowered to the floor c4) and the mistake (trunk pitch, c6/c8) read from the side.",
+    "equipment": "Two dumbbells hanging at the sides (c11), floor line.",
+    "start": "Standing tall, feet about hip to shoulder width apart (c1), dumbbells at the sides (c11).",
+    "end": "One foot stepped back, back knee lowered toward the floor (c4), front shin roughly vertical (c2), trunk upright, weight about even on both feet (c3).",
+    "checkpoints": [
+      {
+        "label": "Front shin vertical",
+        "what": "At the bottom the front shin is roughly vertical.",
+        "claim": "c2"
+      },
+      {
+        "label": "Chest up",
+        "what": "Trunk stays upright as the back knee lowers.",
+        "claim": "c3"
+      },
+      {
+        "label": "Weight even",
+        "what": "Weight shared about evenly between both feet at the bottom.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Trunk pitches forward over the front thigh at the bottom (upright trunk lost).",
+      "why": "Named by the anchor source as the position athletes lose when the lunge is loaded too heavily (c6); a forward-inclined trunk roughly doubled lower-back muscle activity in a lunge EMG study (c8, other lunge types).",
+      "claim": "c6",
+      "drawable": true,
+      "rankNote": "No source ranks lunge faults by frequency; the anchor names this fault first among the three it says heavy loading causes. Knee drifting inward is a front-view fault and is not claimed here (unsourced)."
+    },
+    "tells": [
+      {
+        "text": "Back knee lowers toward the floor",
+        "claim": "c4"
+      },
+      {
+        "text": "Front shin stays about vertical",
+        "claim": "c2"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Controlled, slow descent; no crash into the bottom. No source gives seconds.",
+      "claim": "c7"
+    },
+    "variantLine": "exercises.json lists Dumbbells / Barbell. The plate draws dumbbells at the sides (c11). Stance, step, shin, trunk and weight-sharing claims (c1-c5) come from a barbell source (ACE) and a load-agnostic source (Catalyst), so they hold for both."
+  },
+  "grip": {
+    "type": "Dumbbells held at the sides (c11).",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c11"
+    ],
+    "note": "No reverse-lunge source covers thumb or wrist; the hold archetype's rules apply from the shared module, not from this card."
+  },
+  "setup": [
+    {
+      "step": "Hold the dumbbells at your sides and stand with feet about hip to shoulder width apart.",
+      "claim": "c1"
+    },
+    {
+      "step": "Step one foot back, a full-length step.",
+      "claim": "c7"
+    },
+    {
+      "step": "Lower the back knee slowly toward the floor, chest up.",
+      "claim": "c4"
+    },
+    {
+      "step": "Press the front foot into the floor and bring the back leg forward to stand.",
+      "claim": "c5"
+    },
+    {
+      "step": "Alternate legs, or finish all reps on one side before switching.",
+      "claim": "c12"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Front shin roughly vertical at the bottom.",
+      "claim": "c2"
+    },
+    {
+      "point": "Trunk upright.",
+      "claim": "c3"
+    },
+    {
+      "point": "Weight about even on both feet at the bottom.",
+      "claim": "c3"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Leaning the chest forward at the bottom.",
+      "fix": "Go lighter until you can stay upright and controlled.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Dropping fast into the bottom.",
+      "fix": "Lower slowly; use a weight that lets you move smoothly.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c8"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of the thigh and the hips",
+        "means": "The target muscles are working.",
+        "fix": "",
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Usually means the chest is leaning forward.",
+        "fix": "Stay upright; go lighter if you can't.",
+        "claim": "c8",
+        "redFlag": null
+      },
+      {
+        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "means": "Not a training feeling.",
+        "fix": "Stop the set.",
+        "claim": "c13",
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Too heavy a load costs the upright trunk, the controlled descent and balance.",
+      "claim": "c6"
+    },
+    {
+      "risk": "Crashing into the bottom position instead of lowering under control.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "trunk",
+      "kind": "posture",
+      "right": "Trunk upright over the hips at the bottom.",
+      "wrong": "Chest pitched forward over the front thigh.",
+      "claim": "c3"
+    },
+    {
+      "key": "front-shin",
+      "kind": "posture",
+      "right": "Front shin about vertical.",
+      "wrong": "Front shin tipped far forward, not vertical.",
+      "claim": "c2",
+      "wrongNote": "The wrong drawing is the inverse of c1/c2 ; no source describes the wrong shape directly."
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: quads and glutes primary, hamstrings secondary, core stabilizer. Catalyst names legs and hips with a slight quad emphasis (c9), which matches; no source found that justifies a change."
+  },
+  "loadProgression": {
+    "text": "Start light or unloaded; add weight only while the step stays full and the descent smooth.",
+    "claims": [
+      "c14",
+      "c6"
+    ]
+  },
+  "anchorSource": "cat-revlunge",
+  "anchorNote": "Catalyst Athletics reverse lunge page read in full; ACE reverse lunge page also read in full.",
+  "unsourced": [
+    "Knee tracking over the toes (front view) — no reverse-lunge source found.",
+    "Tempo in seconds.",
+    "Thumb and wrist for the dumbbell hold.",
+    "Breathing."
+  ]
+}
