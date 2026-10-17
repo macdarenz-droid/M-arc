@@ -12,6 +12,11 @@ export const EXERCISES_JSON = 'src/data/exercises.json';
 /** Library plan section 1: the stage of every id (coverage.ts). `blocked:` and `left-out:` carry a reason/decision. */
 export const STAGES = ['queued', 'researching', 'drawing', 'review', 'approved-plate', 'shipped'];
 export const MODES = ['H', 'P', 'T', 'D'];
+/** LIB-2b (D-LIB2b-PAGES, D-LIB2b-QA): a batch's `pages` (its plates page config, its committed layers page and that
+ *  page's builder config), its census source (`censusRef`, a commit) and a library row's census `view`. Checked here when present; the generator requires both for
+ *  a shipped library row (registry readers that only list ids, such as the synthetic scale build, do not need them). */
+export const PAGE_KEYS = ['plates', 'layers', 'layersConfig'];
+export const VIEWS = ['front', 'side'];
 export const isStage = s => STAGES.includes(s) || /^blocked:\S/.test(s) || /^left-out:\S/.test(s);
 
 const read = (root, p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
@@ -37,12 +42,14 @@ export function rows(root = ROOT, { plates = read(root, PLATES_JSON), batches = 
   for (const id of ids8) add({ id, ...plates[id], mode: 'golden', stage: 'shipped', batch: 'golden' }, PLATES_JSON);
   for (const [file, b] of batches) {
     if (!b || typeof b.rows !== 'object') throw new Error(`registry: ${file}: no rows object`);
+    if (b.pages !== undefined) for (const k of PAGE_KEYS) if (typeof b.pages?.[k] !== 'string' || !b.pages[k]) throw new Error(`registry: ${file}: pages.${k} must be a repo-relative path`);
     for (const [id, r] of Object.entries(b.rows)) {
       if (!MODES.includes(r.mode)) throw new Error(`registry: ${file}: ${id}: unknown mode ${r.mode}`);
       if (!isStage(r.stage)) throw new Error(`registry: ${file}: ${id}: unknown stage ${r.stage}`);
       if ((r.mode === 'D' || r.mode === 'T') && !r.parent) throw new Error(`registry: ${file}: ${id}: mode ${r.mode} needs a parent`);
       for (const k of ['src', 'slug', 'prefix', 'chromeId']) if (typeof r[k] !== 'string' || !r[k]) throw new Error(`registry: ${file}: ${id}: no ${k}`);
-      add({ id, ...r, batch: b.batch ?? file }, file);
+      if (r.view !== undefined && !VIEWS.includes(r.view)) throw new Error(`registry: ${file}: ${id}: view ${r.view} is not ${VIEWS.join(' or ')}`);
+      add({ id, ...r, batch: b.batch ?? file, batchFile: file, ...(b.pages ? { pages: b.pages } : {}), ...(b.censusRef ? { censusRef: b.censusRef } : {}) }, file);
     }
   }
   return out;
@@ -60,8 +67,14 @@ export function sourceOf(id, root = ROOT) {
   throw new Error(`registry: no row for ${id}`);
 }
 
+/** LIB-2b (design 6.2): a batch file's golden file, tests/howto/golden/library/<batch file name>. */
+export const LIBRARY_GOLDEN_DIR = 'tests/howto/golden/library';
+export const batchGoldenOf = batchFile => `${LIBRARY_GOLDEN_DIR}/${batchFile.split('/').pop()}`;
+
 /** chromeId -> lib id, for every row. */
 export const libOf = (all = rows()) => Object.fromEntries(all.map(r => [r.chromeId, r.id]));
+/** The rows that ship a How-to (stage 'shipped'), in row order: the 8 first, then library rows in batch-file order. */
+export const shippedRows = (all = rows()) => all.filter(r => r.stage === 'shipped');
 /** The ids that ship a How-to (stage 'shipped'), in row order. */
 export const shippedIds = (all = rows()) => all.filter(r => r.stage === 'shipped').map(r => r.id);
 /** The registry inputs (repo-relative): what a file derived from the rows was made from. */

@@ -12,6 +12,7 @@ import { createFeelController } from '@/slices/howto/feel/useFeelMap';
 
 const FEEL_EVENTS = { row: 'ht:feel-row', chip: 'ht:feel-chip' } as const;   // events.ts (HT-6), the supervisor's contract
 import { lint } from './css.test';
+import { SHIPPED } from './shipped-rows';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const LAYERS = 'tools/plates/layers';
@@ -435,7 +436,8 @@ export const FEEL_MODULE_GZ = 8_930;
 describe('HT8-A6: chunk size', () => {
   it(`each feel-<chromeId> module is <= ${FEEL_MODULE_GZ} B gz (the plan's 24 KB start, lowered to measured + 10 %)`, () => {
     const files = readdirSync('src/howto/generated').filter(f => /^feel-.*\.ts$/.test(f));
-    expect(files).toHaveLength(8);
+    expect(files).toHaveLength(SHIPPED.length);   // LIB-2b: every shipped row, library chunks under the same ceiling
+    expect(files.sort()).toEqual(SHIPPED.map(r => `feel-${r.chromeId}.ts`).sort());
     for (const f of files) expect(gzipSync(readFileSync(`src/howto/generated/${f}`)).length, f).toBeLessThanOrEqual(FEEL_MODULE_GZ);
     expect(FEEL_MODULE_GZ).toBeLessThanOrEqual(24 * 1024);
   });
