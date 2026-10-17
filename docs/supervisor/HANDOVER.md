@@ -813,7 +813,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 - **New supervisor:** session_01SNCyDETVkqVxtLoQxn2Ue9, on the owner's other account (auto mode). Owner, 10-17 ~13:41: "Check get a grasp of 2 repos. Then continue as nxt supervisor. Then continue with tasks of last progress. Read agents.md claude.md". The old supervisor (session_01FTBsxoLN135B3HvJ7sT676) and all its workers are on an account this one cannot see or message: no M/ARC comment or card-branch push after 08:51 UTC. Treated per 10.2a: every replacement builder runs `git pull --no-rebase` before each push and never forces, and stops if its branch moves without its push.
 - **Routine:** `trig_01KNrnsDb34dztKs493YQ5vW` "M/ARC supervisor loop", cron `58 * * * *`, into this session (replaces `trig_016ECwLTU7XRLzsYVRrwLTGe`, which is on the old account). The other routines on this account (Zeroed, OF chain) belong to another project: never touch them.
 - **Watchers:** `subscribe_pr_activity` still fails on every PR. The PR watch is `monitor.sh` plus a branch-head poll (`heads.sh`, local copy in the scratchpad) under Monitor, re-armed every 30 min.
-- **Relay:** the "2nd Supervisor M/ARC" tools are not connected on this account. Relay backlog (apply when they appear): LOG line for this takeover; PROJECT_STATE supervisor = session_01SNCyDETVkqVxtLoQxn2Ue9; LIB-2b review (PASS, fixing), D-LIB2b-ORDER, LIB-4a/LIB-4b replacements; GATE-SPLIT delta review restarted.
+- **Relay:** not connected on this account. Owner, 10-17 ~15:10: "No need to update relay for now." So no Relay upkeep and no Relay backlog until he says otherwise; this file and the PRs are the record.
 - **Sessions on this account:**
 
 | Session | Role | PR @ start head |
@@ -832,7 +832,9 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 - **Corrections to 8.0j:** LIB-2b has a review PASS (6231942072, 1 Medium + 2 Low) and fix-before-merge ruling D-LIB2b-REVIEW-1 (6231953220), not "READY". LIB-4b's B2 never posted results (old container gone). The watch head is `cd0e0b1`, not `128a56d`.
 - **Watch lane:** still active on the other account (pushed `cd0e0b1`, signed watch 1.2.0, 13:39), no reply in about 20 h. Supervisor follow-up on #221 (6235137013) and Watch-test #4 (6235137537): corrected the javap-floor claim (it reads only `registerPlugin()` in MainActivity, so it skips WearEnginePlugin from capacitor.plugins.json), restated the daily-APK launch-safety question, asked for the verdict and the owner's approvals verbatim. Supervisor to-do, add-only `.github`, after #219 and before #221: javap every classpath in `capacitor.plugins.json`; an agent-guard Rule 3 case for `ccr-061c7350-tjvpo6`. #221's preconditions (a)-(d) are all still open; the PR body says "Not for merge yet".
 - **Gotcha (new):** a takeover can find the old account's watch lane still running while its supervisor is gone. Check both by branch pushes, not by session lists.
-- **Owner-only:** disable every M/ARC routine and archive every M/ARC session on the old account (10.2a); the OLD-ANDROID-1 device checks D1-D4 (8.0j).
+- **Old account stopped.** Owner, 10-17 ~15:10: "Also, ive stopped them dont worry" (the old account's M/ARC sessions and routines). The 10.2a two-writer risk is closed; builders still run `git pull --no-rebase` before each push as normal practice. Every card-branch push since 14:30 carries a `Claude-Session:` trailer of this account's sessions.
+- **Owner-only:** the OLD-ANDROID-1 device checks D1-D4 (8.0j).
+- **#219 push run on `82d896d`: all 15 checks green**, gate-verdict included (the first real 14-job + verdict run on current code).
 
 ### 8.0j 10-17 ~08:05 UTC (read first; supersedes 8.0i where they differ)
 
