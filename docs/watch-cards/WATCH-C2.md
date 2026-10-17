@@ -9,9 +9,10 @@
 - **Later, not in this card:** the heart-rate page (needs the watch's Body sensors permission, a privacy section and a device check) and the Session page with Pause, Resume and Finish (Gate D). Calories are not shown: no source.
 - **Fixed dark palette** from C2 (the watch face is AMOLED, and C2 is dark): background `#08090a`, text `#f7f8f8`, label `#a9aef0`, muted `#8a8f98`, pill `#232428`, accent `#5e6ad2`, warning `#f2b56b`. The snap's `th` is still read (view fields `bg`, `fg`, `ac` as today) but the screens do not use it.
 - **No bold, one font** (HYQiHei-65S; lite has no font-weight): hierarchy comes from size, colour and letter-spacing. Pills are a `div` with `border-radius` = height/2 and a centred `text` (the GT 6-proven way). Every `text` has a fixed width and height. No `line-height`, `position`, `font-weight`, `align-self`, `flex-grow`, class binding, swiper `indicator` or non-ASCII text: "x" not ×, no ✓.
-- **Paging by `onswipe`** on the root (proven on the GT 6), not a swiper: two pages. Page 0 is Rest while the phone's rest runs, else Set; page 1 is Up next. A swipe up or down switches page. Dots on the right edge, in a root `stack`, show the page.
+- **Paging by `onswipe`** on the root (proven on the GT 6), not a swiper: two pages. Page 0 is Rest while the phone's rest counts down (or is paused with time left), else Set; page 1 is Up next. A swipe up or down switches page. The page dots and the rest ring were dropped under the budget fallback (build of 2026-10-17).
 - **Pick on the watch:** tapping a row in Up next makes that exercise the watch's current one and returns to page 0. The pick holds while the phone's shown exercise (`eid`) stays the same and the picked exercise still has an open set; it clears when `eid` or `sid` changes, or the row leaves the plan. Complete sends `complete_set` for the picked exercise's set, with its own `id` and `rev`. Nothing about the pick is sent or stored.
-- **Rest appears only from the phone's rest** in a snap (so "Set N saved" is true); the sent set stays on Set with "Pending hh:mm:ss" until the result.
+- **Rest appears only from the phone's rest** in a snap (so "Set N saved" is true), and only while it counts down: the phone keeps an ended rest, and Complete must stay reachable (red team, 1c6b2d81). The sent set stays on Set with "Pending hh:mm:ss" until the result.
+- **Numbering:** "SET a OF b" counts the sets that are not skipped: a is the sets committed plus 1, b the sets not skipped, from the plan row of the exercise shown, picked or not (the snap's position only when the plan has no row for it).
 - **Offline:** with nothing pending, Set and Rest stay usable and the header shows "Phone not connected" in the warning colour; with something pending, the Phone not connected screen shows (the set is locked anyway).
 - **Back in sync** shows for 3 ticks when the outbox empties after being offline with something pending, then returns by itself (no Continue tap).
 - **A hello after each applied result** (2 ticks later), so a watch clock step is corrected during a workout (red team of `d303bbce`, RT5).
@@ -23,7 +24,7 @@
   - `sd`: sets committed in the session; `st`: sets in the session that are not skipped.
   - `rows`: up to 4 entries that are not done or skipped and still have a set to log, starting with the shown one and then in display order, wrapping round. Each is `{id, ex, d, n, set, lt}`: entry id, ASCII name (at most 24), sets committed, sets not skipped, its open set as in snap (`null` for anything but plain weight), and last time for that set.
   - Rows are dropped from the end until the JSON fits 1000 B.
-  - Sent after the snap that answers a hello, and whenever its projection changes (with the snap's 300 ms limit). Never while hidden, held or stopped.
+  - Sent after the snap that answers a hello, and whenever its projection changes (with the snap's 300 ms limit). Never while hidden, held or stopped, and never without a session. A plan whose send failed goes again with the next sync (review, 1c6b2d81).
 - The watch refuses a plan over 2,048 characters or with a field of the wrong type, as it does a snap.
 
 ## Screens (466 x 466; sizes are targets, the builder may move a few px)
@@ -40,7 +41,7 @@
 - **reserved_paths:** everything else, notably `wearengine.js` (byte-identical), `WearEnginePlugin.java`, `src/core/**`, `src/slices/workout/**`, `.github/**`.
 
 ## Acceptance
-Each new test fails before and passes after. Existing tests stay as they are, except these deliberate spec changes in `native/wear/test/link.test.mjs` W4, each at least as strict: the version pin (1.2.0), the page sources cap (40,000 B, from 34,000; the compiled page stays at most 46,000 B and `check-lite-js` enforces 48,000), and the markup pin of button labels (replaced by a pin of the new labels and handlers). In `tests/watch-contract.test.ts`, the clock block's hello counts cover only the start hellos (before the first command), because 1.2.0 also says hello after each applied set (integration, 2026-10-17).
+Each new test fails before and passes after. Existing tests stay as they are, except these deliberate spec changes in `native/wear/test/link.test.mjs` W4, each at least as strict: the version pin (1.2.0), the page sources cap (42,000 B, from 34,000; the compiled page stays at most 46,000 B and `check-lite-js` enforces 48,000), and the markup pin of button labels (replaced by a pin of the new labels and handlers). In `tests/watch-contract.test.ts`, the clock block's hello counts cover only the start hellos (before the first command), because 1.2.0 also says hello after each applied set (integration, 2026-10-17).
 - **P1** (phone, `tests/watch-link.test.ts`): snap `eid` and `lt`; plan rows (order from the shown one, wrap, cap 4, done and skipped left out, plain weight only for `set`, `lt` values, counts), at most 1000 B and ASCII with long names, sent after a hello answer and on change only, never while hidden or held.
 - **V1** (watch): each screen's view fields from the snap, plan and outbox state, including the header clock, offline header, Pending label, status line and dots.
 - **V2** (watch): swipe paging, pick, the pick holding across a snap with the same `eid` and clearing on a new `eid`, `sid` or a row leaving; Complete on a picked row sends that set's `id`, `rev`, values and effort.
@@ -62,6 +63,7 @@ Each new test fails before and passes after. Existing tests stay as they are, ex
   - The page budget: measured at about 41.6 KB for four screens without comments; Up next adds about 2 KB. Fallback: drop the ring, then the dots.
   - A local pick against the phone's open card (handled by `eid`).
   - Huawei may ask about the plan message (11.3 note); the next Modify names it.
+  - **JS heap (red team, 1c6b2d81):** the GT 6's heap size is unknown. In the red team's model of the lite framework, 1.1.2 (which ran on the GT 6) peaks at about 77 KB in a workout and 1c6b2d81 at about 98 KB. Running out is a fatal exit, and one later than 30 s into a run is not counted by the restart guard. Mitigation: the fix round cuts the heap (target at most 86 KB peak), and E1 is a test workout with Up next, picks, rests and an offline spell before any real workout. Recovery: reinstall 1.1.2.
   - Recovery: reinstall watch 1.1.2.
 - **return:** head commit; criterion, test and red-making change; the compiled size; hashes.
 
