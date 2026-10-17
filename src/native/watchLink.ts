@@ -46,7 +46,7 @@ export const MAX_NEXT_SETS = 3;
  */
 export interface SnapSet { id: string; rev: number; w: number | null; u: LoadUnit; r: number | null; e: Effort | null; src: 'd' | 't' | 'l' | null; st?: number }
 /** WATCH-C3: an open set after the shown one: id, rev, load w in the shown set's unit and reps r (null: none). */
-export type NextSet = [id: string, rev: number, w: number | null, r: number | null];
+export type NextSet = [id: string, rev: number, w: number | null, r: number | null, n: number];
 /** Last time's set at the same position, in the unit the set shows: load w and reps r (null: none). */
 export interface SnapLast { w: number | null; u: LoadUnit; r: number | null }
 /** left: ms to go, held while paused; tot: the rest's length in ms; p: paused. */
@@ -58,7 +58,7 @@ export interface Snap {
   eid?: string | null; lt?: SnapLast | null;
   /**
    * WATCH-C3, also only with a session: nx, up to MAX_NEXT_SETS open sets after set in the shown entry (none without a
-   * set), dropped from the end to keep the snap within 700 B; rs, the rest in seconds the phone starts after a live set (0: none).
+   * set), each with its set number n (red team: sets done in between keep the watch's numbering), dropped from the end to keep the snap within 700 B; rs, the rest in seconds the phone starts after a live set (0: none).
    */
   nx?: NextSet[]; rs?: number;
 }
@@ -123,7 +123,7 @@ function nextSets(s: AppState, a: ActiveSession, entry: Entry, j: number, u: Loa
     if (isCommitted(x) || x.status === 'skipped') continue;
     const v = snapSet(s, a, entry, k, u, targets)?.set;
     if (!v) break;
-    out.push([v.id, v.rev, v.w, v.r]);
+    out.push([v.id, v.rev, v.w, v.r, k + 1]);
   }
   return out;
 }

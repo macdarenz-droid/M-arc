@@ -17,7 +17,7 @@
 
 ## Protocol additions (`mw` v1; older watches ignore them)
 - **`st`** on a set (in `snap.set`, `nx` and plan rows): the load step in `u`, from the phone's loadable values; left out when unknown or when `u` is not the profile's unit.
-- **snap `nx`:** up to 3 open sets after `set` in the shown entry, each `[id, rev, w, r]` in `set.u` (values by the snapSet rules); dropped from the end to keep the snap at most 700 B.
+- **snap `nx`:** up to 3 open sets after `set` in the shown entry, each `[id, rev, w, r, n]` in `set.u` (values by the snapSet rules; `n` the set's number, added after the red team); dropped from the end to keep the snap at most 700 B.
 - **snap `rs`:** seconds of the rest the phone starts after a live set (`restDefaultSec` when auto rest is on, else 0).
 - Phone defence: a watch load is rounded to 0.01 before it is saved.
 
@@ -60,3 +60,14 @@ A fresh review of `3d1515d2`: pass with findings. The builder's changes to exist
 - **R4 (nit):** the lock list's cap of 16 is now tested.
 - Accepted as a known limit: the next sets reuse the shown set's load step (`nx` has no room for one). Recorded: the README C3 section; the watch-lane docs commits outside `write_scope` (research, red-team tools, the handover) carry no app or test code.
 - Page sources stay at most 46,000 B by shortening comments (they are not in the compiled page).
+
+## Red team rulings (2026-10-17, second watch-lane session)
+The red team of `3d1515d2` (1 high, 1 medium, 6 low; no crash, loop, stack regression or bad storage write). F1 (double tap, high) and F2 (a rest the phone never starts, medium) are R1 and R3 above. Fixed, each with a test that fails before (`c3.test.mjs` R5 to R9, `tests/watch-link.test.ts` P3 rows):
+- **R5 (F3):** a queued +30 s on the phone's rest shows on the countdown at once, so it is not tapped again; a rest command refused later (its rest ended) is silent, so a saved batch ends Saved, not Changed on phone. Two C2 pins move with it (`c2.test.mjs` V1 and the surviving-mutations test: the countdown with the +30 s).
+- **R6 (F5):** the Adjust draft is tied to the unit too, so a set the phone now shows in lb never sends a kg value as lb.
+- **R7 (F6):** a phone rest that replaces a local rest that already rang does not ring again, nor show Rest done again after its OK.
+- **R8 (F7):** `nx` gains each set's number, so sets done on the phone in between keep the watch's numbering; a bad number refuses the snap.
+- **R9 (F8):** each keep-on unsubscribes the heart rate before it subscribes, so there is one subscription however often the app shows (L4's exact call list gains the first unsubscribe).
+- **No change (F4):** an Adjust value comes back when the same set (same id and rev) is shown again: the draft is tied to the set's id and rev by design.
+- **Heap (B3):** the framework model needs 103 KB for workout W1 and 106 KB for W1C3 (1.2.0: 96 and 98 KB), so 7 to 8 KB more, not the card's 4 to 6 KB. The deepest stack is 13,728 B (1.2.0: 14,240 B). The GT 6's heap is unknown; 1.2.0 survived a real workout. A practice workout comes first, and 1.2.0 is the recovery.
+- Page sources stay at most 46,000 B by removing comments that restate the code.

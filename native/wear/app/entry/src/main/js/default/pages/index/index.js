@@ -50,7 +50,8 @@ function keep(on) {
 
 function buzz() { try { vibrator.vibrate({ mode: 'long', success: no, fail: no }); } catch (e) {} }
 function hr(on) {
-	try { on ? sensor.subscribeHeartRate({ success: function (d) { tap('beat', d && d.heartRate); }, fail: function (d, c) { tap('beat', -c); } }) : sensor.unsubscribeHeartRate(); } catch (e) {}
+	try { sensor.unsubscribeHeartRate(); } catch (e) {}
+	if (on) try { sensor.subscribeHeartRate({ success: function (d) { tap('beat', d && d.heartRate); }, fail: function (d, c) { tap('beat', -c); } }); } catch (e) {}
 }
 
 function connect() {
@@ -67,7 +68,6 @@ function connect() {
 }
 
 export default {
-	// what index.hml binds
 	data: {
 		sc: 0, off: 0, ck: '', set: 0, nm: '', cl: '', nx: '', ns: '', r0: '', r1: '', r2: '', r3: '',
 		t1: '', t2: '', t3: '', t4: '', t5: '', c1: '#08090a', c2: '#08090a', c3: '#08090a', c4: '#08090a'
@@ -82,7 +82,6 @@ export default {
 		} catch (e) {}
 	},
   onShow() { try { link.show(); } catch (e) {} },
-  // a double tap logs one set
   onComplete() { try { var t = Date.now(); if (Math.abs(t - ct) >= 1000) ct = t, link.complete(); } catch (e) {} },
   onEffort() { try { link.effort(); } catch (e) {} },
   onAdd() { try { link.rest('rest_add_30'); } catch (e) {} },

@@ -861,7 +861,7 @@ describe('WATCH-C3 P3: the snap carries the load step, the next open sets and th
     // Today's target for the sets without a draft.
     fx.target = { sets: [{ kg: 50, reps: 12, durationSec: null, note: '' }] };
     const x = (j: number) => e(0).sets[j]!;
-    const row = (j: number, w: number | null, r: number | null) => [x(j).id, x(j).rev ?? 0, w, r];
+    const row = (j: number, w: number | null, r: number | null) => [x(j).id, x(j).rev ?? 0, w, r, j + 1];
     for (const j of [1, 2, 3, 5]) load(0, j, 60 + 2.5 * j, 'kg', 10 - j);
     expect(snap().set).toMatchObject({ id: x(0).id, w: 50, u: 'kg', r: 12, src: 't' });
     expect(snap().nx).toEqual([row(1, 62.5, 9), row(2, 65, 8), row(3, 67.5, 7)]);
@@ -902,7 +902,7 @@ describe('WATCH-C3 P3: the snap carries the load step, the next open sets and th
     expect(s).toMatchObject({ set: { id: big(0), w: 999.75, u: 'kg', st: 2.5 }, rs: 600 });
     expect(text).toMatch(/^[\x20-\x7e]+$/);
     expect(bytes(text)).toBeLessThanOrEqual(MAX_SNAP_BYTES);
-    const all = [1, 2, 3].map(j => [big(j), Number.MAX_SAFE_INTEGER, 999.75, 100]);
+    const all = [1, 2, 3].map(j => [big(j), Number.MAX_SAFE_INTEGER, 999.75, 100, j + 1]);
     expect(s.nx!.length).toBeGreaterThan(0);
     expect(s.nx!.length).toBeLessThan(3);
     expect(s.nx).toEqual(all.slice(0, s.nx!.length));

@@ -50,7 +50,7 @@ function okLt(l) { return !l || Object(l) === l && nn(l.w) && nn(l.r) && (l.u ==
 function okSnap(m) {
 	var r = m.rest || {}, n = m.nx || [], i, ok = num(m.pt) && nn(m.wt) && (m.sid === null || str(m.sid)) && (m.ex == null || str(m.ex) && num(m.si) && num(m.sn)) &&
 		(!m.set || okSet(m.set)) && (!m.rest || str(r.id) && num(r.left)) && (m.eid == null || str(m.eid)) && okLt(m.lt) && nn(m.rs) && Array.isArray(n);
-	for (i = 0; ok && i < n.length; i++) ok = Array.isArray(r = n[i]) && str(r[0]) && num(r[1]) && nn(r[2]) && nn(r[3]);
+	for (i = 0; ok && i < n.length; i++) ok = Array.isArray(r = n[i]) && str(r[0]) && num(r[1]) && nn(r[2]) && nn(r[3]) && (r[4] == null || num(r[4]) && r[4] > m.si && r[4] % 1 === 0);
 	return ok;
 }
 // C2 plan: rows of {id, ex, d, n, set, lt}
@@ -67,16 +67,13 @@ function Link(io, boot) {
 	var tk = 0, seq = 0, snapTk = 0, off = 0, rtt = -1, lastRx = -1, fail = 0, hb = 0, due = Infinity;
 	var q = [], jobs = [], hellos = [], wq = [], busy = 0, snap = 0, eff = null, effSet = '', dl = [];
 	var wait = 0, msg = '', stop = 0, kept = false, ready = 0, lost = 0, on = 0, pause = 0, calm = 0, dead = 0, sick = 0;
-	// C2: plan, pick, page, Set N saved, sync, a refusal in its batch, hello, a failed send
 	var plan = 0, pk, ps, pe, pg = 0, sv, svR, lq, bn = 0, bj = 0, sy, hi, bad = 0;
-	// C3: Adjust, local rest, Rest done, heart rate
 	var ad = 0, af = 0, lr = 0, rn = '', rk, bz, ko, hv = '', ht = 0;
 
 	function no() {}
 	function later(fn) {
 		if (!dead) (io.defer || setTimeout)(function () { if (!dead) try { fn(); } catch (e) {} }, 0);
 	}
-	// one job at a time, each on a fresh stack
 	function queue(job) { jobs.push(job); if (!busy) next(); }
 	function next() {
 		var job = jobs.shift();
@@ -124,7 +121,7 @@ function Link(io, boot) {
 				if (set) wq.splice(wq.indexOf(set), 1);
 				fresh();
 				fin();
-				later(io.paint); // C3: on a fresh stack
+				later(io.paint);
 			}
 			if (lost || sick || val.length > 119 || !(sum(val) >= 0) || text(val) !== t) return end('Not saved');
 			if (slot < 0) return end('Queue full');
@@ -243,8 +240,11 @@ function Link(io, boot) {
 			off = o;
 		}
 		if (m.sid !== snap.sid) pg = lr = 0;
-		if (m.rest && m.rest.id !== lr.i || lr.d) lr = 0;
-		for (m.xs = [s = m.set], i = 0; s && m.nx && i < m.nx.length; i++) n = m.nx[i], m.xs.push({ id: n[0], rev: n[1], w: n[2], u: s.u, r: n[3], st: s.st, k: i + 1 });
+		if (m.rest && m.rest.id !== lr.i || lr.d) {
+			if (m.rest && lr.on && bz === lr.id) bz = m.rest.id, rk = rk === lr.id ? bz : rk;
+			lr = 0;
+		}
+		for (m.xs = [s = m.set], i = 0; s && m.nx && i < m.nx.length; i++) n = m.nx[i], m.xs.push({ id: n[0], rev: n[1], w: n[2], u: s.u, r: n[3], st: s.st, k: n[4] - m.si || i + 1 });
 		snap = m;
 		ko = '';
 		snapTk = tk;
@@ -276,18 +276,18 @@ function Link(io, boot) {
 	function xs() { var r = row(); return r ? [r.set] : snap.xs || [0]; }
 	function free(s) { return s && !held(s.id) && dl.indexOf(s.id + ':' + s.rev) < 0; }
 	function cs() { for (var o = xs(), i = 0; i < o.length - 1 && !free(o[i]); i++); return o[i]; }
-	function dv(s) { return s && ad && ad.id === s.id && ad.rev === s.rev ? ad : s; }
+	function dv(s) { return s && ad && ad.id === s.id && ad.rev === s.rev && ad.u === s.u ? ad : s; }
 	function ao() { var s = cs(); return af && free(s) && dv(s) === ad; }
 	// reps 1 to 100; load by st (or 2.5 kg, 5 lb), in (0, 1000], to 0.01
 	function bump(d) {
 		var f = af, x = Math.round(((ad[f] || 0) + d * (f === 'r' ? 1 : ad.st > 0 ? ad.st : ad.u === 'lb' ? 5 : 2.5)) * 100) / 100;
 		ad[f] = f === 'r' ? x < 1 ? 1 : x > 100 ? 100 : x : x > 1000 ? 1000 : x > 0 ? x : ad.w;
 	}
-	// the local rest, else the phone's
 	function rst() {
-		var r = lr.on ? lr : snap.sid && snap.rest, x = r && { id: r.id, left: Math.max(0, r.p ? r.left : r.left - (tk - (r === lr ? r.id : snapTk)) * 1000) };
+		var r = lr.on ? lr : snap.sid && snap.rest, x = r && { id: r.id, left: Math.max(0, (r.p ? r.left : r.left - (tk - (r === lr ? r.id : snapTk)) * 1000) + pa(r)) };
 		return x && x.id !== ko && x;
 	}
+	function pa(r) { for (var n = 0, i = 0; r !== lr && i < q.length; i++) n += q[i].set === 'rest_add_30' + r.id && 30000; return n; }
 	function ring() {
 		var r = rst() || {};
 		if (r.left > 0) rn = r.id;
@@ -298,13 +298,12 @@ function Link(io, boot) {
 	function onRes(m) {
 		for (var i = 0, c, o, j; i < q.length; i++) {
 			if (q[i].id !== m.commandId) continue;
-			if (m.status === 'applied') {
-				// a refusal in this offline batch keeps its reason
+			if (m.status === 'applied' || m.status === 'rejected' && q[i].rev == null) {
 				if (msg !== bj) msg = q.length > 1 ? q.length - 1 + ' pending' : 'Saved';
-				if (dl.push(q[i].set + ':' + q[i].rev) > 16) dl.shift(); // C3: locked at its rev
+				if (dl.push(q[i].set + ':' + q[i].rev) > 16) dl.shift();
 				for (o = xs(), j = 0; j < o.length && (o[j] || 0).id !== q[i].set; j++);
 				if (j < o.length) sv = ((c = nr()) ? c.d + 1 : snap.si) + j, svR = '';
-				hi = tk + 2, bn++;
+				if (m.status === 'applied') hi = tk + 2, bn++;
 			} else if (m.status === 'rejected') {
 				msg = str(m.reason) && str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
 				// kept through the queued results, online too, until a new tap (611b09c8)
@@ -312,7 +311,7 @@ function Link(io, boot) {
 			} else {
 				return;
 			}
-			if (lr.c === m.commandId) lr.d = 1; // C3: its next snap decides the rest
+			if (lr.c === m.commandId) lr.d = 1; // C3: its snap decides
 			drop(i);
 			if (!q.length) sy = lq ? (m.status === 'applied' && !bj ? tk + 3 : 0) : sy, lq = bj = 0;
 			fresh();
@@ -346,7 +345,7 @@ function Link(io, boot) {
 		if (busy && tk - busy.at > 5 && busy.job) go();
 		if (busy && tk - busy.at > 10) next(sick = 1);
 		if (pause && tk >= pause) live();
-		if (on && !calm && tk - on >= 30) queue(function (fin) { kv('set', RUN, '0,r', fin); }, calm = 1); // not a quick restart
+		if (on && !calm && tk - on >= 30) queue(function (fin) { kv('set', RUN, '0,r', fin); }, calm = 1);
 		if (!stop && e && e.n && tk - e.at >= Math.min(4 << Math.min(e.n, 4) - 1, 30)) fire(e);
 		if (hi && tk >= hi) hello(hi = 0);
 		if (!stop && tk >= due) hello();
@@ -447,7 +446,7 @@ function Link(io, boot) {
 		complete: function () { if (can()) add('c', cs().id, shown()); },
 		rest: function (kind) {
 			var k = kind === 'rest_skip' && snap && snap.rest ? kind + snap.rest.id : '';
-			if (lr.on) kind === 'rest_skip' ? lr = 0 : lr.left += 30000, io.paint(); // C3: a local rest is local
+			if (lr.on) kind === 'rest_skip' ? lr = 0 : lr.left += 30000, io.paint();
 			else if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) add(k ? 's' : 'a', k, '');
 		},
 		// C2: effort 1 to 3, again clears; next(d) pages on a swipe, else opens Up next
@@ -456,7 +455,7 @@ function Link(io, boot) {
 			io.paint();
 		},
 		next: function (d) {
-			if (ao()) d === 'up' ? bump(1) : d === 'down' ? bump(-1) : (d === 'left' || d === 'right') && (af = af === 'r' ? 'w' : 'r'); // C3: in Adjust
+			if (ao()) d === 'up' ? bump(1) : d === 'down' ? bump(-1) : (d === 'left' || d === 'right') && (af = af === 'r' ? 'w' : 'r');
 			else if (up()) pg = !d ? 1 : d === 'up' || d === 'down' ? 1 - pg : pg;
 			io.paint();
 		},

@@ -481,14 +481,14 @@ test('L4 page hooks: the heart rate is subscribed with keep-on, its samples and 
   const page = { ...def.data };
   def.onInit.call(page);
   io.keep(true);
-  assert.deepEqual(calls, ['sub']);
+  assert.deepEqual(calls, ['unsub 0', 'sub'], 'red team R9: unsubscribe first');
   sub.success({ heartRate: 128 });
   sub.fail('Permission not declared', 602);
   sub.success(undefined);
   assert.deepEqual(beats, [128, -602, undefined]);
   io.buzz();
   def.onDestroy.call(page);
-  assert.deepEqual(calls, ['sub', 'vibrate long', 'unsub 0']);
+  assert.deepEqual(calls, ['unsub 0', 'sub', 'vibrate long', 'unsub 0']);
   // A sensor or vibrator that throws is caught.
   const bad = { subscribeHeartRate() { throw new Error('x'); }, unsubscribeHeartRate() { throw new Error('x'); }, vibrate() { throw new Error('x'); } };
   const def2 = new Function('P2pClient', 'Message', 'Builder', 'storage', 'brightness', 'vibrator', 'sensor', 'PHONE_PKG', 'PHONE_FP', 'Link', 'makeBoot', 'setInterval', 'clearInterval', src)(
@@ -578,4 +578,90 @@ test('R4 the lock list keeps the 16 newest saved sets: two saved, a stale snap l
   r.link.rx(res('abcd1234-2'));
   r.link.rx(snap());
   assert.deepEqual(only(r.v(), ['sp', 'l2']), { sp: 'SET 4 OF 5', l2: '62.5 kg x 6' });
+});
+
+// C3 red team (2026-10-17): +30 s on the phone's rest shows at once and a refused rest command is silent; a draft keeps
+// its unit; a phone rest after a rung local rest rings no more; nx numbers; one heart-rate subscription.
+test('R5 a queued +30 s shows on the phone rest at once; a rest command refused later (its rest ended) is silent and the batch ends Saved', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ rest: { ...rest1, left: 60000 } }));
+  offline(r);
+  assert.equal(r.v().rc, '0:34');
+  r.link.rest('rest_add_30');
+  assert.equal(r.v().rc, '1:04');
+  r.link.rest('rest_add_30');
+  assert.equal(r.v().rc, '1:34');
+  r.link.rest('rest_skip');
+  r.link.ok();
+  r.link.complete();
+  r.link.rx(snap());
+  r.link.rx(res('abcd1234-1', { status: 'rejected', reason: 'stale_rest' }));
+  r.link.rx(res('abcd1234-2', { status: 'rejected', reason: 'stale_rest' }));
+  r.link.rx(res('abcd1234-3', { status: 'rejected', reason: 'stale_rest' }));
+  r.link.rx(res('abcd1234-4'));
+  assert.equal(r.v().st, 'Saved');
+});
+
+test('R6 an Adjust draft is tied to the unit too: the phone showing the same set in lb drops it, and Complete sends the lb values', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.adj(); r.link.adj(1); r.link.adj(1); r.link.adj(0);
+  assert.equal(r.v().l2, '65 kg x 8');
+  r.link.rx(snap({ set: { ...S2, w: 135, u: 'lb', st: 5 }, nx: [] }));
+  assert.equal(r.v().l2, '135 lb x 8');
+  r.link.complete();
+  assert.deepEqual(r.cmds().at(-1).load, { value: 135, unit: 'lb' });
+});
+
+test('R7 a local rest that rang and was OKed: the phone rest that replaces it rings no more and shows no second Rest done', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  offline(r);
+  r.link.complete();
+  for (let i = 0; i < 92; i++) r.tick();
+  assert.deepEqual([r.v().sc, r.buzz], [6, 1]);
+  r.link.ok();
+  r.link.rx(snap({ si: 3, set: { ...S2, id: 'set_b3', rev: 0, w: 62.5 }, nx: NX.slice(1), rest: { id: 'rest_7', left: 3000, tot: 90000, p: false } }));
+  for (let i = 0; i < 5; i++) r.tick();
+  assert.deepEqual([r.v().sc, r.buzz], [1, 1]);
+  // not rung yet (no OK either): the phone rest takes over and rings once
+  const n = await rig({ code: null });
+  n.link.rx(snap());
+  offline(n);
+  n.link.complete();
+  n.tick(); n.tick();
+  n.link.rx(snap({ rest: { id: 'rest_8', left: 3000, tot: 90000, p: false } }));
+  for (let i = 0; i < 4; i++) n.tick();
+  assert.deepEqual([n.v().sc, n.buzz], [6, 1]);
+});
+
+test('R8 a next set carries its set number (5th of nx), so a set done on the phone in between keeps the numbering; a bad one refuses the snap', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ nx: [['set_b3', 0, 62.5, 8, 3], ['set_b5', 0, 65, 5, 5]] }));
+  r.link.complete();
+  assert.equal(r.v().sp, 'SET 3 OF 5');
+  r.link.complete();
+  assert.deepEqual(only(r.v(), ['sp', 'l2']), { sp: 'SET 5 OF 5', l2: '65 kg x 5' });
+  const b = await rig({ code: null });
+  b.link.rx(snap());
+  const before = b.v();
+  for (const x of ['4', { toString: 1, valueOf: 1 }, 2.5, 0]) {
+    assert.doesNotThrow(() => b.link.rx(snap({ ex: 'Row', nx: [['set_b4', 0, 60, 8, x]] })));
+    assert.deepEqual(b.v(), before, JSON.stringify(x));
+  }
+});
+
+test('R9 the heart rate has one subscription: each keep-on unsubscribes before it subscribes', () => {
+  let src = readFileSync(path.join(PAGE, 'index.js'), 'utf8');
+  src = src.split('\n').filter((l) => !l.startsWith('import ')).join('\n').replace(/^export default \{/m, 'return {');
+  let io, live = 0, most = 0;
+  const sensor = { subscribeHeartRate: () => { most = Math.max(most, ++live); }, unsubscribeHeartRate: () => { live = 0; } };
+  const link = { start() {}, tick() {}, show() {}, die() {}, view: () => ({ sc: 0 }) };
+  const def = new Function('P2pClient', 'Message', 'Builder', 'storage', 'brightness', 'vibrator', 'sensor', 'PHONE_PKG', 'PHONE_FP', 'Link', 'makeBoot', 'setInterval', 'clearInterval', src)(
+    function () {}, function () {}, function () {}, {}, { setKeepScreenOn() {} }, {}, sensor, '', '', (x) => { io = x; return link; }, () => 'b', () => 0, () => {});
+  def.onInit.call({ ...def.data });
+  for (let i = 0; i < 4; i++) io.keep(true);
+  assert.deepEqual([live, most], [1, 1]);
+  def.onDestroy.call({});
+  assert.equal(live, 0);
 });

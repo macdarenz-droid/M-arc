@@ -124,7 +124,8 @@ test('V1 offline: the header warns while Set and Rest stay usable; with somethin
   r.link.rx(snap({ rest: { ...rest1, left: 61000 } }));
   r.link.rest('rest_add_30');
   r.adv(26000);
-  assert.deepEqual(only(r.v(), ['sc', 'na', 'rest']), { sc: 4, na: '2 actions', rest: 'Rest 0:35' });
+  // WATCH-C3 red team: the queued +30 s shows at once
+  assert.deepEqual(only(r.v(), ['sc', 'na', 'rest']), { sc: 4, na: '2 actions', rest: 'Rest 1:05' });
   // A failed send shows it at once.
   const f = await rig({ code: 206 });
   f.link.rx(snap());
@@ -643,6 +644,8 @@ test('fix: surviving mutations: one left or right swipe each keeps the page; a p
   s.link.rx(snap({ rest: { ...rest1, left: 5000 } }));
   s.link.rest('rest_add_30');
   s.adv(6000);
+  assert.deepEqual(only(s.v(), ['sc', 'rc']), { sc: 2, rc: '0:29' }, 'WATCH-C3 red team: the queued +30 s shows');
+  s.adv(30000);
   assert.equal(s.v().sc, 6, 'WATCH-C3: Rest done, then its OK');
   s.link.ok();
   assert.deepEqual(only(s.v(), ['sc', 'cl', 'can', 'cb']), { sc: 1, cl: 'Complete set', can: true, cb: AC });
