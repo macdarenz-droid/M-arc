@@ -283,18 +283,25 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     const r = await run(tree, ['--input-type=module', '-e', "import { inputsMap } from './tools/plates/library/ci/affected.mjs'; const m = await inputsMap(); console.log('@@' + JSON.stringify({ proven: m.proven, why: m.why, n: m.inputs.size }));"]);
     expect(JSON.parse(r.out.split('\n').find(l => l.startsWith('@@'))!.slice(2))).toEqual({ proven: true, why: [], n: 66 });
   });
-  it('a new composer imported only by the fixture id\'s spec selects that id (class 3); one also imported by the 8\'s sources selects all', async () => {
-    const SPEC = F.SPEC as string;
+  it('D-LIB4c-3: a new composer imported only by the fixture id\'s spec selects all (ids.ts, ids-node.mjs and sources.json list it); a path only per-id files list (the batch\'s layersConfig) selects that id; one the 8\'s outputs list selects all', async () => {
+    const SPEC = F.SPEC as string, gen = (root: string) => execFileSync(process.execPath, ['tools/plates/generate.mjs'], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
     let r = await inTree(root => {
       put(root, 'tools/plates/library/composers/c4.mjs', 'export const C4 = 1;\n');
       const f = join(root, SPEC); writeFileSync(f, `import { C4 } from '../composers/c4.mjs';\n${readFileSync(f, 'utf8')}`);
-      const g = execFileSync(process.execPath, ['tools/plates/generate.mjs'], { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }); void g;
+      gen(root);
     });
     const c3 = r.reasons.find((x: any) => x.path === 'tools/plates/library/composers/c4.mjs');
-    expect(c3).toMatchObject({ cls: 3, ids: [F.ID] });
-    r = await inTree(root => put(root, 'tools/plates/layers.mjs', `${readFileSync(join(root, 'tools/plates/layers.mjs'), 'utf8')}// c4\n`));
-    expect(r.reasons[0]).toMatchObject({ path: 'tools/plates/layers.mjs', cls: 3, ids: 'all' });
+    expect(c3).toMatchObject({ cls: 3, ids: 'all' });
+    expect(c3.why).toMatch(/src\/howto\/ids\.ts|tools\/plates\/library\/ids-node\.mjs|docs\/research\/howto\/sources\.json/);
+    r = await inTree(root => {
+      const f = join(root, F.PAGES.layersConfig), c = JSON.parse(readFileSync(f, 'utf8'));
+      writeFileSync(f, `${JSON.stringify({ ...c, $comment: 'C4 class 3' }, null, 2)}\n`);
+      gen(root);
+    });
+    expect(r.reasons.find((x: any) => x.path === F.PAGES.layersConfig)).toMatchObject({ cls: 3, ids: [F.ID] });
     expect(r.class3.active).toBe(true);
+    r = await inTree(root => { put(root, 'tools/plates/layers.mjs', `${readFileSync(join(root, 'tools/plates/layers.mjs'), 'utf8')}// c4\n`); gen(root); });
+    expect(r.reasons.find((x: any) => x.path === 'tools/plates/layers.mjs')).toMatchObject({ cls: 3, ids: 'all' });
   });
   it('class 3 is off when the map is not proven: its paths fall to class 4', async () => {
     const r = await inTree(root => {

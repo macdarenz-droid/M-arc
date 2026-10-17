@@ -221,7 +221,7 @@ export async function affectedIds({ changed, base = 'FETCH_HEAD', root = ROOT, b
           const keys = pk.some(Boolean) ? await pairKeys() : {};
           ids = [...new Set(listers.flatMap((o, i) => (owners[i] ? [owners[i]] : lib.filter(r => keys?.[r.id] === pk[i]).map(r => r.id))))];
         }
-        reasons.push({ path: p, cls: 3, ids: ids?.length ? ids : 'all', why: ids?.length ? `listed only by ${listers.join(', ')}` : `listed by ${listers.filter((o, i) => !owners[i]).slice(0, 3).join(', ')}` });
+        reasons.push({ path: p, cls: 3, ids: ids?.length ? ids : 'all', why: ids?.length ? `listed only by ${listers.join(', ')}` : `listed by shared outputs ${listers.filter((o, i) => !owners[i] && !pk[i]).slice(0, 6).join(', ')}` });
         continue;
       }
     }
