@@ -8971,6 +8971,7 @@ if (gate.runs('COPY-2'))
 // crash card, no reset, no boot and nothing saved (P2-P6). An entry that never runs on a capable engine shows
 // the crash card with the user agent within 2 s of DOMContentLoaded (P7). No false positives: a normal boot (P1)
 // and an entry held back 8 s (P8). Then the build is scanned against scripts/old-android-floor.mjs (S1-S3).
+if (gate.runs('OLD-ANDROID-1'))
 {
   const tag = 'OLD-ANDROID-1';
   const floor = await import('./old-android-floor.mjs');
