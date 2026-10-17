@@ -68,7 +68,7 @@ Each test fails before and passes after; existing tests are not edited; the PR n
 - **X1:** the watch's `link.js` builds a command from `buildSnapshot`; `handleWorkoutCommand` applies it and then returns the replay.
 
 ## Device runs (owner: PR-head debug APK, watch 1.1.0, auto rest on, lab Connect)
-- **D1:** 10 Completes, each Saved within 3 s with matching values, with no `future_time` and a lab `lead` from −5 s to +1 s (added after the 1.1.2 run). +30 s and Skip move the phone's rest.
+- **D1:** 10 Completes, each Saved within 3 s with matching values, with no `future_time` and a lab `lead` from −3.5 s to +1 s (added after the 1.1.2 run; −3.5 s follows from the 3 s Saved limit). +30 s and Skip move the phone's rest.
 - **D2, cut before the save:** phone Bluetooth off; tap Complete and note the Pending time; reopen the watch app (it shows "1 pending"); wait 60 s; Bluetooth on; Connect.
 - **D3, cut after the save:**
   1. Hold on; tap Complete. The lab shows `applied`; the watch shows Pending.
@@ -78,6 +78,7 @@ Each test fails before and passes after; existing tests are not edited; the PR n
 - **D5:** Bluetooth off; Complete set 2; edit its weight on the phone; Bluetooth on. The watch shows "Changed on phone", and the phone keeps its value.
 - **D6:** with M/ARC in the background, the watch stays Pending for 60 s, then shows Saved within 5 s of reopening M/ARC.
 - **D7:** left untouched for 3 min, the watch app stays open.
+- **D8, a start the phone's JS sees late (added after the 1.1.2 run):** leave M/ARC in the background until the lab shows a native gap of 1 min or more; open the watch app first; wait about 15 s; open M/ARC; 5 Completes. Each hello row shows `js +N ms` of 10 s or more (otherwise the run does not count), each set has no `future_time`, and each lead is from −3.5 s to +1 s.
 
 **What proves one set (D2 to D6):**
 - the phone shows one completed set, and the next set is still a draft;

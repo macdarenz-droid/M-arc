@@ -568,4 +568,11 @@ describe('WATCH-C 1.1.2 device run: the clock sample leaves out the phone JS del
     expect(rows[0]).toMatch(/ set_\S+ lead \+7\.1s applied rev \d+ at \d\d:\d\d:\d\d future_time$/);
     expect(rows[1]).toMatch(/ set_\S+ replayed at \d\d:\d\d:\d\d future_time$/);
   });
+  it('a lead behind the receipt shows its minus sign', async () => {
+    const r = rig();
+    startSession(split);
+    const c = cmd();
+    await r.link.receive(JSON.stringify(c), (c.actionAt as number) + 400);
+    expect(r.rows.find(x => x.startsWith('mw cmd'))).toMatch(/ set_\S+ lead -0\.4s applied rev \d+ at \d\d:\d\d:\d\d$/);
+  });
 });

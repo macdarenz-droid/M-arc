@@ -17,6 +17,7 @@ import { setTheme } from '@/theme/engine';
 import { setSet, startRest, startSession } from '@/slices/workout/session';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
 import { buildSnapshot, createLink } from '@/native/watchLink';
+import { createLab, type WearEnginePlugin } from '@/native/wearEngine';
 
 const LINK = fileURLToPath(new URL('../native/wear/app/entry/src/main/js/default/common/link.js', import.meta.url));
 interface WatchView { l1: string; l2: string; st: string; eff: string; can: boolean; rest: string }
@@ -179,5 +180,109 @@ describe('WATCH-C 1.1.2 device run: a hello the phone JS sees late still gives t
     expect(set.status).toBe('committed');
     expect(set.flags ?? []).not.toContain('future_time');
     expect(Math.abs(Date.parse(set.at!) - tap)).toBeLessThanOrEqual(1_000);
+  });
+});
+
+describe('WATCH-C 1.1.2 review and red team: clock samples over a lab-like route, the watch ticking each second', () => {
+  const split12: Split = { ...split, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 12 }] };
+  interface Run {
+    /** phone clock minus watch clock, ms */
+    theta: number;
+    /** Java stamps rxAt on arrival; JS sees nothing before this phone time (probe 2 run F) */
+    jsFrozenUntil?: number;
+    /** JS hands queued events over newest first */
+    reverse?: boolean;
+    /** M/ARC hidden until this phone time; then the visibilitychange snap goes */
+    hiddenUntil?: number;
+    /** the first n hello answers fail to send (206); then a set is edited on the phone, so a change snap goes */
+    failHelloAnswers?: number;
+  }
+  /** Radio 150 ms each way. Returns, per saved set, its time minus the tap and whether it was flagged. */
+  async function run(o: Run, openAt: number, taps: number[]) {
+    const Link = await loadWatch();
+    let watch: WatchLink | null = null;
+    let failed = 0;
+    const rows: string[] = [];
+    const queue: Record<string, unknown>[] = [];
+    let pumping = false;
+    const pump = () => {
+      if (pumping) return;
+      pumping = true;
+      setTimeout(() => {
+        pumping = false;
+        const evs = queue.splice(0);
+        if (o.reverse) evs.reverse();
+        for (const ev of evs) void lab.receive(ev);
+      }, Math.max(5, (o.jsFrozenUntil ?? 0) - Date.now()));
+    };
+    const plugin = {
+      send: async ({ text }: { text: string }) => {
+        const answer = (JSON.parse(text) as { wt: unknown }).wt != null;
+        if (answer && o.failHelloAnswers && failed < o.failHelloAnswers) {
+          failed++;
+          if (failed === o.failHelloAnswers) setTimeout(() => setSet(0, 0, { reps: 9 }), 500);
+          return { code: 206 };
+        }
+        setTimeout(() => watch?.rx(text), 150);
+        return { code: 207 };
+      },
+    } as unknown as WearEnginePlugin;
+    const lab = createLab(plugin);
+    let vis = 'visible';
+    const listeners: Array<() => void> = [];
+    const doc = { get visibilityState() { return vis; }, addEventListener: (_t: string, fn: () => void) => { listeners.push(fn); } };
+    const phone = createLink({ send: lab.post, log: t => { rows.push(t); }, doc, hidden: () => vis === 'hidden' });
+    lab.route(phone.receive);
+    await phone.start();
+    if (o.hiddenUntil) { vis = 'hidden'; setTimeout(() => { vis = 'visible'; for (const f of listeners) f(); }, o.hiddenUntil - Date.now()); }
+    const send = (t: string, done: (c: number) => void) => {
+      setTimeout(() => { queue.push({ type: 1, data: t, desc: '', dataLen: t.length, descLen: 0, rxAt: Date.now() }); pump(); }, 150);
+      done(207);
+    };
+    await vi.advanceTimersByTimeAsync(openAt - Date.now());
+    watch = onWatch(Link, { store: watchStore(), send, keep: () => undefined, now: () => Date.now() - o.theta }, 'k3x9qa04');
+    watch.start();
+    watch.show(); // registerReceiver's onSuccess: the second start hello
+    setInterval(() => watch!.tick(), 1000);
+    const tapAt: number[] = [];
+    for (const t of taps) {
+      await vi.advanceTimersByTimeAsync(t - Date.now());
+      if (watch.view().can) { tapAt.push(Date.now()); watch.complete(); }
+    }
+    await vi.advanceTimersByTimeAsync(10_000);
+    const sets = state.value.active!.entries[0]!.sets.filter(x => x.at);
+    return { rows, sets: sets.map((x, i) => ({ err: Date.parse(x.at!) - tapAt[i]!, future: (x.flags ?? []).includes('future_time') })) };
+  }
+  const every5 = (from: number, n: number) => Array.from({ length: n }, (_, i) => from + i * 5_000);
+  const atTap = (sets: Array<{ err: number; future: boolean }>, n: number) => {
+    expect(sets).toHaveLength(n);
+    for (const x of sets) expect(x.future || Math.abs(x.err) > 300 ? x : 'ok').toBe('ok');
+  };
+
+  it('the device run: watch app opened first, JS sees the start hellos 15.6 s late, then 11 Completes', async () => {
+    startSession(split12);
+    const r = await run({ theta: 0, jsFrozenUntil: T0 + 75_600 }, T0 + 60_000, every5(T0 + 80_000, 11));
+    atTap(r.sets, 11);
+    expect(r.rows.filter(x => x.startsWith('mw hello')).every(x => /js \+15\d{3}ms$/.test(x))).toBe(true);
+  });
+  for (const reverse of [false, true]) {
+    it(`JS frozen 35 s holds three hellos, handed over ${reverse ? 'newest first' : 'in order'}; watch clock 37 s behind`, async () => {
+      startSession(split12);
+      const r = await run({ theta: 37_000, jsFrozenUntil: T0 + 95_000, reverse }, T0 + 60_000, every5(T0 + 100_000, 6));
+      expect(r.rows.filter(x => x.startsWith('mw hello'))).toHaveLength(3);
+      atTap(r.sets, 6);
+    });
+  }
+  it('hellos seen while M/ARC is hidden are answered by the snap that goes when it shows; watch 8 s behind', async () => {
+    startSession(split12);
+    const r = await run({ theta: 8_000, hiddenUntil: T0 + 70_000 }, T0 + 60_000, every5(T0 + 75_000, 3));
+    expect(r.rows.filter(x => x === 'mw hidden hello')).toHaveLength(2);
+    atTap(r.sets, 3);
+  });
+  it('both start hello answers fail to send; the next change snap answers them; watch 8 s behind', async () => {
+    startSession(split12);
+    const r = await run({ theta: 8_000, failHelloAnswers: 2 }, T0 + 60_000, every5(T0 + 63_000, 3));
+    expect(r.rows.filter(x => x === 'mw snap 206')).toHaveLength(2);
+    atTap(r.sets, 3);
   });
 });

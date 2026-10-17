@@ -159,25 +159,30 @@ export function createLink(deps: LinkDeps): Link {
   let following = false;
   const quiet = () => hidden() || hold.value || stopped;
 
+  /** The latest hello still unanswered (seen while hidden or held, or its answer failed to send): the next snap answers it. */
+  let owed: { wt: number; rxAt: number } | null = null;
+
   /**
    * Never rejects: the timer and the screen event do not wait for it, and an unhandled rejection shows the crash screen (RG-01).
    * A snap that answers a hello carries as `pt` the midpoint of the hello's native receipt (rxAt) and this send, so the
-   * watch's offset, pt - (wt + arrival) / 2, leaves out the time the phone's JS took to see the hello. After a long
-   * native gap that took seconds, and 8 of 11 sets in the 1.1.2 device run came out future_time.
+   * watch's offset, pt - (wt + arrival) / 2, leaves out the time the phone's JS took to see the hello, however late the
+   * answer goes. The likely cause of 8 of 11 sets coming out future_time in the 1.1.2 device run (README).
    */
   async function sendSnap(wt: number | null, onlyIfChanged = false, rxAt?: number): Promise<void> {
     try {
-      if (quiet()) return;
+      const ans = wt !== null ? { wt, rxAt: rxAt ?? NaN } : owed;
+      if (quiet()) { if (wt !== null) owed = ans; return; }
       const t = now();
-      const built = snapshot(t, wt);
-      const snap = wt !== null && typeof rxAt === 'number' && Number.isFinite(rxAt) && rxAt < t ? { ...built, pt: Math.round((rxAt + t) / 2) } : built;
+      const built = snapshot(t, ans ? ans.wt : null);
+      const snap = ans && Number.isFinite(ans.rxAt) && ans.rxAt < t ? { ...built, pt: Math.round((ans.rxAt + t) / 2) } : built;
       const key = projection(snap);
       if (onlyIfChanged && key === lastKey) return;
       lastKey = key;
       lastAt = now();
       bump('snap');
       const r = await deps.send(JSON.stringify(snap));
-      if (r !== SEND_OK) deps.log(`mw snap ${r}`);
+      if (r !== SEND_OK) { deps.log(`mw snap ${r}`); if (ans) owed = ans; }
+      else if (ans && owed && !(owed.rxAt > ans.rxAt)) owed = null;
     } catch (e) {
       deps.log(`mw snap ${e instanceof Error ? e.message : String(e)}`);
     }
@@ -199,7 +204,12 @@ export function createLink(deps: LinkDeps): Link {
       if (v && typeof v === 'object' && !Array.isArray(v)) m = v as Record<string, unknown>;
     } catch { /* counted as bad below */ }
     if (!m || m.t !== MW) { bump('bad'); deps.log('mw bad'); return; }
-    if (hidden()) { bump('hidden'); deps.log(`mw hidden ${String(m.k)}`); return; }
+    if (hidden()) {
+      bump('hidden');
+      deps.log(`mw hidden ${String(m.k)}`);
+      if (m.k === 'hello' && m.v === MW_VERSION && typeof m.wt === 'number') owed = { wt: m.wt, rxAt };
+      return;
+    }
     if (m.v !== MW_VERSION) { stopped = true; bump('bad'); deps.log(`mw v${String(m.v)}: update needed`); return; }
     if (stopped) return;
     if (m.k === 'hello') {
