@@ -2,7 +2,12 @@
 // src/slices/howto/css/plate.css (ids.ts moved to gen/ids.mjs, LIB-2). It rebuilds the gallery from the vendored engine (HT-1's golden.mjs), refuses
 // unless the page is the approved one and every fragment matches its latest GOLDEN.json entry, then emits the
 // fragments as JSON string literals: the parsed strings are the golden bytes, never re-serialized.
-import { goldenInputs, goldenRows } from '../library/registry.mjs';
+import { batchGoldenOf, goldenInputs, goldenRows, rows as registryRows, shippedRows } from '../library/registry.mjs';
+import { pagesOf, pinOf, platesPage } from '../library/batch-golden.mjs';
+import { closureOf } from '../library/inputs-closure.mjs';
+// The QA modules (LIB-3) and candidate.mjs are imported when a library row is gated, never at load: qa/node.mjs imports
+// this file's moduleText, and a static import back would make a cycle (vitest's parallel module loads hang on it).
+const qa = async () => ({ ...(await import('../library/candidate.mjs')), ...(await import('../library/qa/index.mjs')), ...(await import('../library/qa/engine.mjs')) });
 import { readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT, sha256 } from '../lib/inputs.mjs';
@@ -100,17 +105,78 @@ async function outputsOf({ hashFor }) {
   const byId = new Map(plates.map(p => [LIB_OF[p.chromeId], p]));
   const out = goldenIds.map(id => {
     const path = `src/howto/generated/${chunkName(rows[id].slug)}.ts`;
-    return { path, text: moduleText(id, byId.get(id), latest.get(id), hashFor(path)) };
+    return { path, text: moduleText(id, byId.get(id), latest.get(id), hashFor(path, inputsFor(path))) };
   });
   out.push({ path: 'src/howto/generated/index.ts', text: indexText() });
-  out.push({ path: 'src/slices/howto/css/plate.css', text: rewriteCss(galleryCss(html)) });
+  const plateCss = rewriteCss(galleryCss(html));
+  out.push({ path: 'src/slices/howto/css/plate.css', text: plateCss });
+  out.push(...await libraryOutputs(hashFor, plateCss));
   return out;
 }
 
-/** LIB-2 (design 6.1): each output's own inputs. Every plates.mjs output is cut from one shared source (the golden
- *  A gallery built from the whole vendored folder), so a file's inputs are that whole set; the rows come from the
- *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4). */
-export const inputsFor = () => inputs();
+/** LIB-2b: the shipped library rows (the 8 stay above, from golden A). */
+export const libraryRows = (all = registryRows()) => shippedRows(all).filter(r => r.mode !== 'golden');
+
+/** Checks one library plate against its batch golden `plate` entry and its batch row; returns the problems. */
+export function libraryProblems(p, entry, row) {
+  const bad = [];
+  for (const [k, v] of Object.entries(fragmentsOf(p))) if (entry.fragments?.[k] !== v) bad.push(`${row.id}.${k}: sha256 ${v} != batch golden ${entry.fragments?.[k]}`);
+  for (const k of ['src', 'slug', 'prefix', 'chromeId']) if (row[k] !== entry[k]) bad.push(`${row.id}: batch row ${k} ${row[k]} != batch golden ${entry[k]}`);
+  if (p.prefix !== entry.prefix) bad.push(`${row.id}: svg prefix ${p.prefix} != batch golden ${entry.prefix}`);
+  return bad;
+}
+
+/** The QA node half of one library row (D-LIB2b-QA): throws QaRefused naming the id for any problem but the browser keys.
+ *  Cached in-process by sha256 of its candidate inputs (the row, its plate card markup, its spec closure and research
+ *  card bytes); `ms` is the measured node-half time of the run that filled the cache. */
+const qaCache = new Map();
+export async function gateNodeHalf(row, platesHtml, engine, all) {
+  const { QaRefused, candidateOf, nodeHalf, runQa } = await qa();
+  const c = await candidateOf(row.id, { platesHtml, engine, all });
+  const spec = closureOf([`tools/plates/${row.src}`]).map(f => [f, sha256(readFileSync(join(ROOT, f)))]);
+  const key = sha256(JSON.stringify([row, c.article, c.plate, spec, c.research, c.exemptions]));
+  if (!qaCache.has(key)) {
+    const t0 = Date.now(), report = nodeHalf(await runQa(c, { engine }));
+    qaCache.set(key, { ...report, ms: Date.now() - t0 });
+  }
+  const report = qaCache.get(key);
+  if (!report.ok) throw new QaRefused(report);
+  return report;
+}
+
+/** Each shipped library row's ht-<slug>.ts plate part, cut from its batch plates page after its pins and the QA node half. */
+async function libraryOutputs(hashFor, plateCss) {
+  const all = registryRows(), lib = libraryRows(all);
+  if (!lib.length) return [];
+  const { dropMirror, loadEngine } = await qa(), mirror = makeMirror();
+  try {
+    const engine = await loadEngine(mirror), out = [];
+    for (const row of lib) {
+      const html = await platesPage(row, all), file = pagesOf(row).plates;
+      // plate.css is built from golden A's gallery only: a batch page must rebuild it byte for byte (D-LIB2b-CSS)
+      if (rewriteCss(galleryCss(html)) !== plateCss) throw new Error(`plates: ${row.id}: the page built from ${file} does not rebuild plate.css byte for byte`);
+      const p = extractPlates(html).find(x => x.chromeId === row.chromeId);
+      if (!p) throw new Error(`plates: ${row.id}: no card-${row.chromeId} in the page built from ${file}`);
+      const entry = pinOf(row, 'plate'), bad = libraryProblems(p, entry, row);
+      if (bad.length) throw new Error(`plates: refusing to generate ${row.id}:\n${bad.join('\n')}`);
+      await gateNodeHalf(row, html, engine, all);
+      const path = `src/howto/generated/${chunkName(row.slug)}.ts`;
+      out.push({ path, text: moduleText(row.id, p, entry, hashFor(path, inputsFor(path))) });
+    }
+    return out;
+  } finally { dropMirror(mirror); }
+}
+
+/** LIB-2 (design 6.1), LIB-2b: each output's own inputs. The 8's outputs are cut from one shared source (the golden A
+ *  gallery built from the whole vendored folder), so a file's inputs are that whole set; the rows come from the
+ *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4). A library row's
+ *  ht-<slug>.ts adds its plates page config, the closure of its spec (closureOf), its batch file and batch golden file. */
+export function inputsFor(path) {
+  const row = libraryRows().find(r => path === `src/howto/generated/${chunkName(r.slug)}.ts`);
+  if (!row) return inputs();
+  return [...inputs(), 'tools/plates/library/plates-page.mjs', 'tools/plates/library/build-page.mjs', 'tools/plates/library/batch-golden.mjs',
+    pagesOf(row).plates, ...closureOf([`tools/plates/${row.src}`]), row.batchFile, batchGoldenOf(row.batchFile)];
+}
 export async function outputs(ctx) {
   return (await outputsOf(ctx)).map(o => ({ ...o, inputs: inputsFor(o.path) }));
 }
