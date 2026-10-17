@@ -13,12 +13,13 @@
 // The content checks (C1-C8, C16) still need the *full* `zooms`/`feel` to run (several read them directly), so
 // `loadContent()` returns the full normalized HowToContent (everything golden B authors, minus `plate`) for the
 // checks to run against, while `baseFieldsText()` narrows `zooms` to descriptors and leaves `feel` out entirely.
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT } from '../lib/inputs.mjs';
 import { chunkName } from './plates.mjs';
-import { EXERCISES_JSON, goldenInputs, goldenRows, shippedIds, sourceOf } from '../library/registry.mjs';
+import { EXERCISES_JSON, goldenInputs, shippedIds, shippedRows, sourceOf } from '../library/registry.mjs';
+import { closureOf } from '../library/inputs-closure.mjs';
 import { hintsOutputs } from '../library/ids-encoding.mjs';
 
 export const after = ['tools/plates/gen/plates.mjs', 'tools/plates/gen/ids.mjs'];
@@ -42,16 +43,19 @@ export function zoomDescriptors(zooms) {
   return zooms.map(z => Object.fromEntries(DESCRIPTOR_KEYS.filter(k => z[k] !== undefined).map(k => [k, z[k]])));
 }
 
-// LIB-2 (design 3, 6.1): the rows and each id's source path come from the registry; each output is hashed over only
-// what it was made from (an exercise's own source for its module and research card; every source for the shared files).
-const rowsOf = () => goldenRows();
+// LIB-2 (design 3, 6.1), LIB-2b: the rows are the registry's shipped rows (the 8, then library rows in batch order) and
+// each id's source path comes from the registry; each output is hashed over only what it was made from: an exercise's
+// module and research card over that source's import closure (closureOf: its composers, D-LIB2b-CLOSURE) plus its own
+// batch file for a library row; the shared files over every shipped source's closure.
+const rowsOf = () => Object.fromEntries(shippedRows().map(r => [r.id, r]));
+const ownInputs = (id, row) => [SHARED_REL, ...goldenInputs(), ...closureOf([sourceOf(id)]), ...(row.batchFile ? [row.batchFile] : [])];
 
-export const inputs = () => [SHARED_REL, ...goldenInputs(), ...Object.keys(rowsOf()).map(id => sourceOf(id))];
+export const inputs = () => [SHARED_REL, ...goldenInputs(), ...Object.entries(rowsOf()).flatMap(([id, row]) => ownInputs(id, row))];
 /** Each output's own inputs, static (no render), so a header can be re-checked and a new batch row stales nothing. */
 export function inputsFor(path) {
   const rows = rowsOf();
   for (const [id, row] of Object.entries(rows)) {
-    if (path === `src/howto/generated/${chunkName(row.slug)}.ts` || path === `docs/research/howto/${id}.json`) return [SHARED_REL, ...goldenInputs(), sourceOf(id)];
+    if (path === `src/howto/generated/${chunkName(row.slug)}.ts` || path === `docs/research/howto/${id}.json`) return ownInputs(id, row);
   }
   if (path === 'src/howto/archetypes.ts') return [SHARED_REL];
   if (path === 'src/howto/ids.ts' || path === 'docs/research/howto/sources.json') return inputs();
@@ -84,6 +88,7 @@ export function normalizeRefs(node) {
  *  golden B, so they are dropped when building the app-wide Source registry). */
 export async function loadContent(id) {
   const file = join(ROOT, sourceOf(id));
+  if (!existsSync(file)) throw new Error(`content: ${id}: no How-to source ${sourceOf(id)}`);
   const mod = await import(pathToFileURL(file).href);
   const raw = mod.default;
   if (!raw || raw.id !== id) throw new Error(`content: ${file} default export id "${raw?.id}" != "${id}"`);
@@ -132,10 +137,11 @@ export function patchModule(prevText, content, hash) {
   return `${body}\n${baseFieldsText(content)}} satisfies BuiltHowTo;\n`;
 }
 
-/** HT-5's push hints, golden B's handling.cue of each push-archetype exercise: lib id -> text (ids.mjs encodes them). */
-export async function pushHints() {
+/** HT-5's push hints, golden B's handling.cue of each push-archetype exercise: lib id -> text (ids.mjs encodes them).
+ *  `ids`: the shipped ids to read (default all; every one must have its source, loadContent throws otherwise). */
+export async function pushHints(ids = Object.keys(rowsOf())) {
   const hints = {};
-  for (const id of Object.keys(rowsOf())) {
+  for (const id of ids) {
     const { content } = await loadContent(id);
     if (content.handling && content.handling.archetype === 'push' && content.handling.cue) hints[id] = content.handling.cue;
   }
