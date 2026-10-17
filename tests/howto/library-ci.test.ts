@@ -104,6 +104,11 @@ describe('C2: integer-aware K (t = 271, c0 = 30)', () => {
     expect([big.K, big.shards.map((s: string[]) => s.length)]).toEqual([2, [1, 1]]);
     expect(big.note).toMatch(/over alone: a/);
     expect(planK([], times)).toEqual({ K: 1, note: null });
+    // D-LIB4c-4: once-states over the target alone (1,268 s measured locally): shard 1 holds no id, every other shard fits
+    const heavy = libraryPlan({ ids: items(6).map(x => x.id), times: { default: 280.8, c0: 30, once: { run: 1200, shard: 60 }, ids: {} } });
+    expect([heavy.K, heavy.shards[0]]).toEqual([4, []]);
+    for (const [j, l] of heavy.loads.entries()) if (j) expect(l).toBeLessThanOrEqual(900);
+    expect(heavy.note).toMatch(/holds no id/);
     expect([LIB_TARGET, JOB_BUDGET_S]).toEqual([GATE_TARGET, GATE_BUDGET]);
   });
   it('an unmeasured id uses the largest measured time, else default; the hash covers ids, times and K', () => {

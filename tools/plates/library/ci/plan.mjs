@@ -35,14 +35,15 @@ export function shardLoads(items, K, times) {
 }
 
 /**
- * The smallest K >= 1 whose packed shards all fit SHARD_TARGET_S. When none does (an id alone is over the target, or
+ * The smallest K >= 1 whose packed shards all fit SHARD_TARGET_S (a shard whose fixed part alone is over it must hold no id). When none does (an id alone is over the target, or
  * shard 1's head start leaves it no room), each id gets its own shard and `note` says why. K = 1 with 0 ids.
  */
 export function planK(items, times) {
   const n = items.length;
   for (let K = 1; K <= Math.max(1, n) + 1; K++) {
-    const { loads } = shardLoads(items, K, times);
-    if (loads.every(s => s <= SHARD_TARGET_S)) return { K, note: null };
+    const { loads, shards } = shardLoads(items, K, times);
+    // D-LIB4c-4: a shard whose fixed part (c0 + its once-states) is already over the target fits only with no id
+    if (loads.every((s, j) => s <= SHARD_TARGET_S || shards[j].length === 0)) return { K, note: loads.some(s => s > SHARD_TARGET_S) ? `shard 1's once-states alone are ${loads[0]} s, over ${SHARD_TARGET_S} s; it holds no id` : null };
   }
   const over = items.filter(it => (times.c0 ?? 0) + it.seconds > SHARD_TARGET_S).map(it => it.id);
   return { K: Math.max(1, n), note: `no K fits ${SHARD_TARGET_S} s (${over.length ? `over alone: ${over.join(', ')}` : 'shard 1\'s once-states leave no room'}); one id per shard` };
