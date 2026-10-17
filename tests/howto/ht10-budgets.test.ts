@@ -16,12 +16,19 @@ describe('D-HT10-A4: the How-to total ceiling', () => {
     expect(t.setBy).toMatch(/^[A-Z][A-Z0-9]*-[A-Za-z0-9]+$/);
     expect(t.reason.trim().length).toBeGreaterThanOrEqual(10);
   });
-  it('keeps the ceiling within measured .. measured + 10 % (rounded up)', () => {
+  it('keeps the ceiling within measured .. measured + 10 % (rounded up), per shipped id past the 8 (LIB-2 rule)', async () => {
     const t = file.totals![0]!;
+    // LIB-4a (D-LIB4-PINS-2): measured is the 8's; at N shipped ids the + 10 % bound is LIB-2's per-id rule
+    // (budgets/total.mjs totalCeiling = ceil(measured x 11 x N / 80), which is ceil10 at N = 8)
+    const reg = await import(/* @vite-ignore */ new URL('../../tools/plates/library/registry.mjs', import.meta.url).href) as { shippedIds: () => string[] };
+    const { totalCeiling } = await import(/* @vite-ignore */ new URL('../../tools/plates/library/budgets/total.mjs', import.meta.url).href) as { totalCeiling: (m: number, n: number) => number };
+    const n = reg.shippedIds().length;
+    expect(n).toBeGreaterThanOrEqual(8);
+    const upper = (v: number) => (n === 8 ? ceil10(v) : totalCeiling(v, n));
     expect(t.rawMax).toBeGreaterThanOrEqual(t.measuredRaw);
-    expect(t.rawMax).toBeLessThanOrEqual(ceil10(t.measuredRaw));
+    expect(t.rawMax).toBeLessThanOrEqual(upper(t.measuredRaw));
     expect(t.gzMax).toBeGreaterThanOrEqual(t.measuredGz);
-    expect(t.gzMax).toBeLessThanOrEqual(ceil10(t.measuredGz));
+    expect(t.gzMax).toBeLessThanOrEqual(upper(t.measuredGz));
   });
 });
 
