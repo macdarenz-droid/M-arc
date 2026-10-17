@@ -2,7 +2,10 @@
 // ONE library id in ONE theme: each posture close-up's L3 (with the D-HT7-L3-text re-open rule and, in silent-black on
 // the first key, the 0.5 px control), its L4 opening animation (equal to golden B's, one, C18 props), A4 (S1/S3
 // exclusive, focus, A2 one #zdots and no duplicate ids), the plate restore after Close, A5 (the posture chunk fetched
-// once, none before the first tap), the chip (44x44, A6 Right/Wrong halves); in paper also the reduced-motion pass.
+// once), the chip (44x44, A6 Right/Wrong halves); in paper also the reduced-motion pass (HT7/<k>:reduced). The
+// sheet-level row HT7/A2 (D-LIB4b-COUNTS; paper's reduced pass: HT7/A2:reduced): the app's posture chips and golden B's
+// posture close-ups equal the source's keys, no posture chunk before the first tap, data-motion, #zdots gone after
+// Close, page errors.
 // Same browser setup as the block: golden B (the id's layers page) through goldenB.mjs openPage, the app in that same
 // browser. Not here (LIB-4-DESIGN X5, X2): the D-HT7-L3-text-9 30-opens label check, the planted probes, chunk sizes.
 // Posture keys: the source's (job.facts.posture) and golden B's DOM (its .zx panels less the source's hand key), so a
@@ -121,29 +124,32 @@ export async function run(ctx, job) {
 async function pass(ctx, { lib, chrome: id, index, theme, facts }, reduce, stats) {
   const { R } = ctx;
   const G = await goldenB(ctx.root);
-  const S = (k, sub) => stateOf('HT7', `${k}:${reduce ? 'reduced' : sub}`, WIDTH);
+  // k null: the sheet-level row (D-LIB4b-COUNTS), HT7/A2 (paper's reduced pass: HT7/A2:reduced)
+  const S = (k, sub) => stateOf('HT7', k == null ? (reduce ? 'A2:reduced' : 'A2') : `${k}:${reduce ? 'reduced' : sub}`, WIDTH);
   const bad = new Map();   // state -> [messages]; every state of a key is checked once at its end
   const P = (k, sub, m) => { const s = S(k, sub); if (!bad.has(s)) bad.set(s, []); bad.get(s).push(m); };
   const flush = (k, subs) => { for (const sub of subs) { const s = S(k, sub); R.check(lib, theme, s, bad.get(s) ?? []); bad.delete(s); } };
   const source = facts.posture ?? [];
-  let cur = [source[0], 'L3'], lastSubs = [];   // cur: where a page error or a crash lands
+  let cur = [null, 'A2'], lastSubs = [];   // cur: where a page error or a crash lands
   const g = await G.openPage(ctx.layersFile(lib), theme, { reduce, chromePath: process.env.MARC_CHROMIUM || G.CHROME_PATH });
   try {
-    const app = await H.openAppTrain(g.browser, ctx.port, theme, { order: ctx.order, custom: ctx.custom, reducedMotion: reduce ? 'reduce' : 'no-preference', onError: m => cur[0] && P(cur[0], cur[1], `app page error: ${m}`) });
+    const app = await H.openAppTrain(g.browser, ctx.port, theme, { order: ctx.order, custom: ctx.custom, reducedMotion: reduce ? 'reduce' : 'no-preference', onError: m => P(cur[0], cur[1], `app page error: ${m}`) });
     // golden B's close-ups of this id, less the source's other kinds (the hand): golden B's markup does not tell a
     // posture panel from a hand panel, so a key is a posture key on the DOM side unless the source names it another kind
     const other = new Set(((await import(pathToFileURL(join(ctx.root, sourceOf(lib, ctx.root))).href)).default.zooms ?? []).filter(z => z.kind !== 'posture').map(z => z.key));
     const dom = (await g.page.evaluate(id => [...document.querySelectorAll(`#card-${id} .zx[data-zoom]`)].map(p => p.dataset.zoom), id)).filter(k => !other.has(k));
     const keys = [...source, ...dom.filter(k => !source.includes(k))];
-    const first = keys[0];
-    if (first) for (const e of g.errs) P(first, 'L3', `golden page error: ${e}`);
+    for (const e of g.errs) P(null, 'A2', `golden page error: ${e}`);
+    if (JSON.stringify(dom) !== JSON.stringify(source)) P(null, 'A2', `${id}: golden B's posture close-ups ${JSON.stringify(dom)} != the source's ${JSON.stringify(source)}`);
     if (reduce) await g.page.evaluate(() => { document.documentElement.dataset.motion = 'reduce'; });
     const fetched = [];
     app.page.on('request', r => { const m = r.url().match(/\/assets\/(posture-[a-z0-9-]+)-[\w-]{8}\.js$/); if (m) fetched.push(m[1]); });
     await H.openHowTo(app.page, index);
-    if (first && fetched.length) P(first, 'A5', `${id}: a posture chunk was fetched before any posture tap (${fetched.join(', ')})`);
+    if (fetched.length) P(null, 'A2', `${id}: a posture chunk was fetched before any posture tap (${fetched.join(', ')})`);
     const motion = await app.page.evaluate(() => document.documentElement.getAttribute('data-motion'));
-    if (first && (motion === 'reduce') !== reduce) P(first, 'L4', `${id}: the app's data-motion is ${motion}`);
+    if ((motion === 'reduce') !== reduce) P(null, 'A2', `${id}: the app's data-motion is ${motion}`);
+    const chips = (await app.page.evaluate(() => [...document.querySelectorAll('dialog.sheet.ht .zx-chip[data-zoom]')].map(c => c.dataset.zoom))).filter(k => !other.has(k));
+    if (JSON.stringify(chips) !== JSON.stringify(source)) P(null, 'A2', `${id}: the app's posture chips ${JSON.stringify(chips)} != the source's keys ${JSON.stringify(source)}`);
     for (const [ki, k] of keys.entries()) {
       const subs = reduce ? ['L3'] : ['L3', 'L4', 'A4', 'restore', 'A5', 'chip', ...(theme === 'silent-black' && ki === 0 ? ['control'] : [])];
       cur = [k, 'L3'];
@@ -195,7 +201,6 @@ async function pass(ctx, { lib, chrome: id, index, theme, facts }, reduce, stats
         if (!ra.fits || !rg.fits) P(k, 'L3', `A3 L3 ${id}/${k}: the panel does not fit in the viewport (app ${JSON.stringify(ra)}, golden ${JSON.stringify(rg)})`);
         delete ra.fits; delete rg.fits;
         if (ra.y !== rg.y || ra.x !== rg.x || ra.width !== rg.width) P(k, 'L3', `A3 L3 ${id}/${k}: panel at ${JSON.stringify(ra)} in the app, ${JSON.stringify(rg)} in golden B`);
-        if (process.env.HT7_BITE === k) await app.page.evaluate(sel => { const e = [...document.querySelectorAll(`${sel} svg path`)].find(p => !p.closest('defs, clipPath, pattern, mask, text') && p.getBoundingClientRect().width > 4); e.setAttribute('transform', `translate(1 0) ${e.getAttribute('transform') ?? ''}`); }, sel); // BITE-TEMP
         const [ia, ig] = await Promise.all([shot(app.page, ra), shot(g.page, rg)]);
         const d = await H.diffPng(app.page, ia, ig);
         stats.pairs++; stats.maxOff = Math.max(stats.maxOff, d.off);
@@ -237,15 +242,16 @@ async function pass(ctx, { lib, chrome: id, index, theme, facts }, reduce, stats
       if (ki < keys.length - 1) flush(k, subs); else lastSubs = subs;
     }
     const last = keys[keys.length - 1];
-    cur = [last, 'A4'];
+    cur = [null, 'A2'];
     await H.closeHowTo(app.page);
-    if (last && await app.page.$('#zdots')) P(last, 'A4', `A2 ${id}: #zdots stays in the document after the sheet closed`);
+    if (await app.page.$('#zdots')) P(null, 'A2', `A2 ${id}: #zdots stays in the document after the sheet closed`);
     if (last) flush(last, lastSubs);
+    flush(null, ['A2']);
     await app.ctx.close();
   } catch (e) {
     // a crash fails the state it hit; the states of that key and later keys not yet checked stay "not proven"
     const m = `${reduce ? 'reduced ' : ''}crashed: ${e.message.split('\n')[0]}`;
-    if (cur[0]) P(cur[0], cur[1], m); else R.fail(lib, theme, stateOf('HT7', 'crashed', WIDTH), m);
+    P(cur[0], cur[1], m);
   } finally {
     for (const [s, list] of bad) R.check(lib, theme, s, list);
     await g.browser.close();
