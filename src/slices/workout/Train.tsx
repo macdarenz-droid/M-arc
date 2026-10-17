@@ -497,7 +497,7 @@ function LiveSession() {
         <div class="row">
           {s.escobar.enabled && <button type="button" class="esc-live-btn" data-palace="train.escobar" aria-label="Ask Escobar mid-session" onClick={() => openEscobar({ mode: 'live' })}><IconEscobar size={20} /></button>}
           <WatchPill />
-          <Button variant="quiet" class="btn-icon" aria-label={a.pausedAt ? 'Resume' : 'Pause'} onClick={() => (a.pausedAt ? resumeSession() : pauseSession())}>{a.pausedAt ? <IconPlay /> : <IconPause />}</Button>
+          <Button variant="quiet" class="btn-icon" style={{ width: '20px', height: '20px', minWidth: 0, minHeight: 0, padding: 0 }} aria-label={a.pausedAt ? 'Resume' : 'Pause'} onClick={() => (a.pausedAt ? resumeSession() : pauseSession())}>{a.pausedAt ? <IconPlay /> : <IconPause />}</Button>
           <Button size="sm" class="tap" onClick={() => setFinishing(true)}>Finish</Button>
         </div>
         <div class="live-progress" aria-hidden="true"><i class={progress >= 1 ? 'full' : ''} style={{ transform: `scaleX(${progress})` }} /></div>
