@@ -1,0 +1,940 @@
+{
+  "id": "lat_pulldown",
+  "libId": "lib_lat_pulldown",
+  "name": "Lat Pulldown",
+  "family": "Vertical pull",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "seat-back",
+      "brace-pad"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit facing the machine with the thigh pad set firmly on the tops of the thighs and the feet flat on the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown",
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Sit in the machine, anchoring your lower extremity by adjusting the thigh pad to fit firmly against the top of your thighs.",
+          "where": "Step 1"
+        },
+        {
+          "source": "nsca-low-row",
+          "text": "Sit facing the machine stack with the legs under the thigh pads and the feet flat on the floor.",
+          "where": "Lat Pulldown, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Start position, trunk: lean back slightly from vertical, no more than a 30 degree angle, with the legs under the pad supporting the body; the lean makes a path for the bar to pass the face.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown",
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Lean back slightly (no more than a 30 degree angle), using your legs to support your body (low back).",
+          "where": "Step 1"
+        },
+        {
+          "source": "nsca-low-row",
+          "text": "Slightly lean the torso backward to create a path for the bar to pass by the face.",
+          "where": "Lat Pulldown, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "End position, trunk: the lean stays as set at the start; add no extra backward lean during the pull and keep the feet, legs and torso in the same position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown",
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Avoid any additional backwards lean during the pull movement.",
+          "where": "Step 2"
+        },
+        {
+          "source": "nsca-low-row",
+          "text": "Keep the feet, legs, and torso in the same position.",
+          "where": "Lat Pulldown, Downward Movement Phase"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Take the bar with a closed overhand (pronated) grip, wider than shoulder width, thumbs around the bar. The thumbs-around line comes from a general grip drill, not a pulldown text.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nsca-low-row",
+        "baechle-earle"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Grasp the bar with a closed, pronated grip wider than shoulder-width.",
+          "where": "Lat Pulldown, Starting Position"
+        },
+        {
+          "source": "baechle-earle",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "With the arms straight overhead, pull the shoulders back and down, and start each pull by lowering the shoulder blades first.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "While your arms are extended overhead, depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+          "where": "Step 1"
+        },
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Slowly exhale and initiate the downward pull by first depressing (lower) your scapulae",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Pull the bar down to the top of the chest (collarbones or upper chest), driving the elbows down toward the floor and the sides of the body, chest up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown",
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "pulling the bar downward towards the top or mid-section of your chest. Attempt to pull in a motion that drives your elbows directly down towards the floor, bringing your elbows towards the sides of your torso.",
+          "where": "Step 2"
+        },
+        {
+          "source": "nsca-low-row",
+          "text": "Touch the bar to the clavicles or upper chest.",
+          "where": "Lat Pulldown, Downward Movement Phase"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Stop when the bar nears or touches the chest, or when the elbows stop moving down and start moving back; pulling further adds stress to the shoulder joint.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Continue pulling until the bar nears or touches your chest, or more importantly, you observe your elbows no longer moving downward, but now beginning to move backwards.  Avoid any further pulling as this places additiomnal stresses into the shoulder joint.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Pause briefly, then return slowly until the elbows are fully straight; not fully straightening the elbows on the way up is a listed common error.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown",
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Pause momentarily, then slowly return to your starting position by allowing the bar to move upwards until your elbows are fully extended",
+          "where": "Step 4"
+        },
+        {
+          "source": "nsca-low-row",
+          "text": "Not fully extending the elbows during the upward movement phase",
+          "where": "Lat Pulldown Common Errors"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Pulling the bar down behind the head to the back of the neck is a listed common error, and an EMG study of trained men concluded the behind-the-neck pulldown should be avoided.",
+      "tags": [
+        "CONSENSUS",
+        "DATA"
+      ],
+      "sources": [
+        "nsca-low-row",
+        "sperandei2009"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Pulling the bar down behind the head to the back of the neck.",
+          "where": "Lat Pulldown Common Errors"
+        },
+        {
+          "source": "sperandei2009",
+          "text": "we concluded that FNL is the better choice, whereas BNL is not a good lat pull-down technique and should be avoided.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "In weight trainers, doing behind-the-neck pulldowns and presses (the arm-up, turned-out \"high-five\" position) was linked to signs of a loose, unstable front of the shoulder. It is an association, not a proven cause.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "kolber2013"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2013",
+          "text": "A significant association existed between performance of exercises that require the \"high-five\" position (behind-the-neck latissimus pull-downs and military press) and clinical characteristics of AI.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2013",
+          "text": "Future intervention-based trials are needed to investigate a causative effect of exercises.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Pulling in front of the face gave more lat activity than behind the neck in two EMG studies.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "signorile2002",
+        "padovan2024"
+      ],
+      "quotes": [
+        {
+          "source": "signorile2002",
+          "text": "performance of the lat pull-down exercise using the WGA hand position produces greater muscle activity in the LD than any other hand position during both the concentric or eccentric phases of the movement.",
+          "where": "abstract"
+        },
+        {
+          "source": "padovan2024",
+          "text": "The front-LPD appears to provide overall greater excitation in the prime movers.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Crunching the abs and bending the trunk forward to help the bar down is a listed common error.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Contracting the abdominal muscles and flexing the torso to assist in the downward movement phase",
+          "where": "Lat Pulldown Common Errors"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Using an open grip (thumb not around the bar) is a listed common error.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Using an open grip on the bar",
+          "where": "Lat Pulldown Common Errors"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Brace the abs, avoid arching the lower back, and keep the head in line with the spine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid any arching of your low back throughout the exercise.",
+          "where": "Step 1"
+        },
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Maintain your head aligned with your spine.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The pulldown should be done without putting the shoulder or the lower back at risk; following the steps reduces stress on both.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lat-pulldown",
+          "text": "This exercise targets the major back muscles effectively, but should be performed without compromise to the shoulder or low back. Follow the instructions provided to reduce the stress placed upon these two areas.",
+          "where": "closing note"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Tempo: a pulldown study used a 2-second pull and a 2-second return (a study protocol, not a tested recommendation); a guideline gives 1-2 s up and 1-2 s down, but states it for intermediate to advanced training, not novices. The step text asks for a brief pause and a slow return; the 1-second pause on the plate is a drawing convention.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "lusk2010",
+        "acsm2009",
+        "ace-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "lusk2010",
+          "text": "Participants maintained a cadence of 2-second concentric and 2-second eccentric phases.",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "ace-lat-pulldown",
+          "text": "Pause momentarily, then slowly return to your starting position",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Main muscles trained: latissimus dorsi, teres major, rhomboids and rear deltoid.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Primary Muscles Trained Latissimus dorsi, teres major, rhomboid, posterior deltoid",
+          "where": "Lat Pulldown Common Errors"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Novices often pull with the elbow flexors (biceps) instead of the back; instruction raised lat activity, but the biceps did not switch off.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "snyder2009"
+      ],
+      "quotes": [
+        {
+          "source": "snyder2009",
+          "text": "novice strength trainers often rely on the elbow flexors to complete the movement rather than fully utilizing the relevant back muscles such as the latissimus dorsi (LD) and teres major (TM).",
+          "where": "abstract (described as observed anecdotally)"
+        },
+        {
+          "source": "snyder2009",
+          "text": "A significant increase was seen in Nrms EMG in the LD (p = 0.005) from the average of preinstruction NrmsEMG to the average of postinstruction NrmsEMG. No significant differences were observed between pre- and postinstruction muscle activity in the BB or TM.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Overhand pulldowns measured lat, middle trapezius and biceps activity; overhand gave more lat activity than underhand and grip type did not change middle trapezius or biceps.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "lusk2010"
+      ],
+      "quotes": [
+        {
+          "source": "lusk2010",
+          "text": "a pronated grip elicited greater LD activity than a supinated grip (p < 0.05), but had no influence of grip type on the MT and BB muscles.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Grip width from 1 to 2 times shoulder (biacromial) width gives similar muscle activity; the widest grip lowered strength a little.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "andersen2014"
+      ],
+      "quotes": [
+        {
+          "source": "andersen2014",
+          "text": "athletes and others engaged in resistance training can generally expect similar muscle activation which in turn should result in similar hypertrophy gains with a grip width that is 1-2 times the biacromial distance.",
+          "where": "abstract"
+        },
+        {
+          "source": "andersen2014",
+          "text": "The 6RM strengths with narrow (80.3 ± 7.2 kg) and medium grip (80 ± 7.1 kg) were higher than wide grip (77.3 ± 6.3 kg; p = 0.02).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Grip is strongest with the wrist in its own chosen, slightly bent-back position and weaker when the wrist moves away from it, for example curled forward. Measured on a hand grip tester, applied to the pulldown by reasoning.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "After the set, stand up and return the weight to its resting position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "After the set is completed, stand up and return the weight to its resting position.",
+          "where": "Lat Pulldown, Upward Movement Phase"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "text": "A 30 degree trunk lean with a wide overhand grip was one of the tested pulldown variants: lat activity did not differ between variants, and rear-deltoid activity was higher with the 30 degree lean.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "buonsenso2025"
+      ],
+      "quotes": [
+        {
+          "source": "buonsenso2025",
+          "text": "showed no significant difference in the NrmsEMG muscle activation across the different lat pulldown exercise variations (all p > 0.05). A significant difference was found in the posterior deltoid where the wide-pronated grip with a 30° trunk inclination showed greater EMG activation compared to the wide pronated grip",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-lat-pulldown",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/158/seated-lat-pulldown/",
+      "title": "Seated Lat Pulldown (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "nsca-low-row",
+      "url": "https://brainscape.com/flashcards/exercise-techniques-3136125/packs/4953113",
+      "title": "NSCA exercise technique text (lat pulldown and low-pulley seated row, starting position, phases and common errors), via a study flashcard set; original NSCA text not free online",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "baechle-earle",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "sperandei2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19855327/",
+      "title": "Electromyographic analysis of three different types of lat pull-down (Sperandei et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": "19855327",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "kolber2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/22836608/",
+      "title": "Characteristics of anterior shoulder instability and hyperlaxity in the weight-training population (Kolber, Corrao, Hanney, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": "22836608",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "signorile2002",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12423182/",
+      "title": "A comparative electromyographical investigation of muscle utilization patterns using various hand positions during the lat pull-down (Signorile, Zink, Szwed, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2002,
+      "pmid": "12423182",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "padovan2024",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/38689585/",
+      "title": "High-density electromyography excitation in front vs. back lat pull-down prime movers (Padovan et al., J Hum Kinet)",
+      "kind": "peer-reviewed",
+      "year": 2024,
+      "pmid": "38689585",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "lusk2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+      "title": "Grip width and forearm orientation effects on muscle activity during the lat pull-down (Lusk, Hale, Russell, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20543740",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand: progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "snyder2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19826307/",
+      "title": "Voluntary increase in latissimus dorsi muscle activity during the lat pull-down following expert instruction (Snyder, Leech, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": "19826307",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "andersen2014",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24662157/",
+      "title": "Effects of grip width on muscle strength and activation in the lat pull-down (Andersen et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2014,
+      "pmid": "24662157",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "odriscoll1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "buonsenso2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40981044/",
+      "title": "Electromyographic analysis of back muscle activation during lat pulldown exercise: effects of grip variations and forearm orientation (Buonsenso et al., J Funct Morphol Kinesiol)",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": "40981044",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "census",
+    "equipment": "Lat pulldown machine: high cable with a long overhead bar, seat, thigh (knee) pad over the tops of the thighs, feet flat on the floor (c1).",
+    "start": "Seated, thighs firm under the pad, feet flat (c1); arms fully straight overhead, closed overhand grip wider than shoulder width (c4, c8); trunk leaned back slightly from vertical, no more than a 30 degree angle (c2); shoulders back and down (c5).",
+    "end": "Bar at the collarbones or upper chest (c6); elbows down at the sides of the trunk, stopped where they would start moving back (c6, c7); trunk lean unchanged from the start, no extra lean back (c3).",
+    "checkpoints": [
+      {
+        "label": "Slight lean",
+        "what": "Lean back slightly, no more than about 30 degrees, and keep that lean for the whole rep.",
+        "claim": [
+          "c2",
+          "c3"
+        ]
+      },
+      {
+        "label": "Bar to chest",
+        "what": "Pull the bar in front of your face to your collarbones or upper chest.",
+        "claim": "c6"
+      },
+      {
+        "label": "Elbows down",
+        "what": "Drive the elbows down to your sides; stop when they start moving back.",
+        "claim": [
+          "c6",
+          "c7"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Pulling the bar down behind the head to the back of the neck.",
+      "why": "NSCA technique text lists it among the common errors (frequency not measured); Sperandei 2009 concludes it should be avoided, Signorile 2002 and Padovan 2024 found less lat activity than pulling in front, and Kolber 2013 links behind-the-neck pulldowns to signs of anterior shoulder instability (association only).",
+      "claim": [
+        "c9",
+        "c10",
+        "c11"
+      ],
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Lean stays the same all rep",
+        "claim": "c3"
+      },
+      {
+        "text": "Bar touches your upper chest",
+        "claim": "c6"
+      },
+      {
+        "text": "Arms fully straight at the top",
+        "claim": "c8"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c16",
+      "text": "2 s pull, 1 s pause (drawing convention for a brief pause), 2 s return: the 2-2 count is a study protocol (Lusk 2010); ACSM 1-2 s is stated for intermediate to advanced training."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (pronated), closed grip (c4); an open grip is a listed common error (c13).",
+    "width": "Wider than shoulder width (c4); 1 to 2 times shoulder width gives similar muscle activity, the widest a little weaker (c20).",
+    "thumb": "Around the bar (c4, c13).",
+    "handContact": "From the shared pull hand archetype; not re-sourced on this card.",
+    "wrist": "Not curled forward; grip is weaker away from the slightly bent-back position (c21, MECH).",
+    "claims": [
+      "c4",
+      "c13",
+      "c20",
+      "c21"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Sit facing the machine. Set the thigh pad firm on the tops of your thighs, feet flat on the floor.",
+      "claim": "c1"
+    },
+    {
+      "step": "Take the bar overhand, wider than shoulder width, thumbs around the bar.",
+      "claim": "c4"
+    },
+    {
+      "step": "Arms straight overhead, pull your shoulders back and down.",
+      "claim": "c5"
+    },
+    {
+      "step": "Brace your abs and lean back slightly, no more than about 30 degrees.",
+      "claim": [
+        "c14",
+        "c2"
+      ]
+    },
+    {
+      "step": "After the set, stand up and return the weight to rest.",
+      "claim": "c22"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Thighs firm under the pad, feet flat.",
+      "claim": "c1"
+    },
+    {
+      "point": "Slight lean back, no more than about 30 degrees, held the same all rep.",
+      "claim": [
+        "c2",
+        "c3"
+      ]
+    },
+    {
+      "point": "Head in line with your spine; no arching of the lower back.",
+      "claim": "c14"
+    },
+    {
+      "point": "Lower your shoulder blades first, then pull.",
+      "claim": "c5"
+    },
+    {
+      "point": "Elbows drive down toward the floor and your sides.",
+      "claim": "c6"
+    },
+    {
+      "point": "Arms fully straight at the top of every rep.",
+      "claim": "c8"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Pulling the bar behind your head to the back of your neck.",
+      "fix": "Pull in front of your face to your collarbones or upper chest.",
+      "claim": [
+        "c9",
+        "c6"
+      ]
+    },
+    {
+      "mistake": "Crunching your abs and bending forward to help the bar down.",
+      "fix": "Keep your feet, legs and trunk in the same position; only your arms move.",
+      "claim": [
+        "c12",
+        "c3"
+      ]
+    },
+    {
+      "mistake": "Leaning further back as you pull.",
+      "fix": "Set a slight lean at the start and add no extra lean during the pull.",
+      "claim": [
+        "c3",
+        "c2"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": [
+          "c17",
+          "c19"
+        ]
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "mid_back",
+        "claim": [
+          "c17",
+          "c19"
+        ]
+      },
+      {
+        "muscleId": "biceps",
+        "claim": [
+          "c18",
+          "c19"
+        ]
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "rear_delts",
+        "claim": [
+          "c17",
+          "c23"
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of the shoulder",
+        "means": "Pulling behind the neck, or pulling on after the elbows start moving back.",
+        "fix": "Pull in front to the upper chest. Stop when your elbows stop moving down.",
+        "claim": [
+          "c7",
+          "c9",
+          "c10"
+        ],
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Lower back",
+        "means": "Leaning further back or arching the lower back during the pull.",
+        "fix": "Brace your abs, keep the slight lean set at the start, and let your legs under the pad hold you.",
+        "claim": [
+          "c3",
+          "c14",
+          "c2",
+          "c15"
+        ],
+        "redFlag": "back"
+      },
+      {
+        "where": "Arms more than your back",
+        "means": "Beginners often pull with the arms instead of the back.",
+        "fix": "Start each rep by lowering your shoulder blades, then drive your elbows down.",
+        "claim": [
+          "c18",
+          "c5",
+          "c6"
+        ],
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder: pulling the bar behind the neck is linked to a loose, unstable front of the shoulder in lifters (a link, not a proven cause).",
+      "claim": "c10"
+    },
+    {
+      "risk": "Shoulder: pulling on after the elbows start moving back adds stress to the shoulder joint.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Lower back: extra lean or arching during the pull.",
+      "claim": [
+        "c15",
+        "c3",
+        "c14"
+      ]
+    }
+  ],
+  "redFlags": [
+    "shoulder",
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Closed overhand grip, thumb around the bar, wrist not curled.",
+      "wrong": "Open grip: thumb not around the bar.",
+      "claim": [
+        "c4",
+        "c13",
+        "c21"
+      ]
+    },
+    {
+      "key": "trunk lean",
+      "kind": "posture",
+      "right": "Slight lean back, no more than about 30 degrees, same at the start and the end.",
+      "wrong": "Bending forward with the abs to drag the bar down.",
+      "claim": [
+        "c2",
+        "c3",
+        "c12"
+      ]
+    },
+    {
+      "key": "bar path",
+      "kind": "posture",
+      "right": "Bar in front of the face to the upper chest.",
+      "wrong": "Bar behind the head to the back of the neck.",
+      "claim": [
+        "c6",
+        "c9"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "lats primary stands (c17, c19). mid_back secondary stands: middle trapezius is measured active (c19) and rhomboids are listed as trained (c17). biceps secondary stands: measured (c19) and the elbow flexors take part (c18). rear_delts is listed as trained (c17) and rises with the 30 degree lean (c23), but is kept as watch only, not added to the library list, because lat-focused texts treat it as a helper."
+  },
+  "anchorSource": "ace-lat-pulldown",
+  "gaps": [],
+  "notes": [
+    "Tier C; no tier-A safety gaps apply.",
+    "plate.mistake choice: the NSCA common-errors list names four faults with no ranking (open grip, trunk flexion to assist, not fully extending, behind the neck). Behind the neck is drawn because it is visible from the side and is the only one with study backing for risk (c9, c10, c11). How often any of them happens is not measured.",
+    "Tempo: no novice-level source gives seconds for the pulldown. 2-2 is Lusk 2010's protocol (WEAK); ACSM 2009 1-2 s is for intermediate to advanced (LR-15); the 1 s pause is a drawing convention for ACE's \"pause momentarily\".",
+    "NSCA text is read through a study flashcard set (secondary, summary). The registry id is nsca-low-row; the same page carries the lat pulldown section.",
+    "Wrist: no pulldown source gives a wrist position; c21 is grip-tester data applied by reasoning (MECH).",
+    "Exit: c22 is the only sourced way off; no line on letting the stack down under control is sourced.",
+    "Read but not cited (abstracts): Lehman 2004, Di Fonza 2026, Doma 2013, Kolber 2010; no fact needed beyond the cited sources."
+  ]
+}

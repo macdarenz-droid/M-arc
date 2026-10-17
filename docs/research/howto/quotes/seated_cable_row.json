@@ -1,0 +1,284 @@
+{
+  "id": "seated_cable_row",
+  "checked": "2026-10-17",
+  "sources": [
+    {
+      "id": "unmc-cable-row",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "nsca-low-row",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "ace-seated-row",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "baechle-earle",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "acsm2009",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "lehman2004",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "deabreu2023",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "dosanjos2024",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "callaghan2001",
+      "access": "abstract",
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "nsca-low-row",
+      "quote": "Facing the machine, sit on the floor (or on the long seat pad, if available). Place the feet on the machine frame or foot supports. Flex the knees and hips to reach forward and grasp the handle with a closed, neutral grip.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c1",
+      "source": "unmc-cable-row",
+      "quote": "Set up for the cable row is with your feet about hip width apart, knees slightly bent,chest is tall and pull the shoulders down and back",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "nsca-low-row",
+      "quote": "Pull the handle back and assume an erect seated position with the torso perpendicular to the floor, knees slightly flexed, and the feet and legs parallel to each other.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "nsca-low-row",
+      "quote": "Allow the elbows to fully extend with the arms about parallel to the floor.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "unmc-cable-row",
+      "quote": "The handle should finish at your stomach, keeping a nice straight line.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "nsca-low-row",
+      "quote": "Touch the handle to the sternum or abdomen.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-seated-row",
+      "quote": "Flex (bend) your elbows and pull them towards your chest keeping your elbows close to the sides of your body.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-seated-row",
+      "quote": "Continue pulling until your elbows pass the sides of your body.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "nsca-low-row",
+      "quote": "Maintain an erect torso position with the knees in the same slightly flexed position.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "unmc-cable-row",
+      "quote": "Keeping your body still, pull the elbows straight back",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "nsca-low-row",
+      "quote": "Allow the elbows to slowly extend back to the starting position.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "unmc-cable-row",
+      "quote": "Return to the start position, fully extending the arms and without leaning forward.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "nsca-low-row",
+      "quote": "Jerking the upper body or leaning back during the backward movement phase",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "nsca-low-row",
+      "quote": "Curling the handle toward the torso during the backward movement phase",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "nsca-low-row",
+      "quote": "Flexing the torso forward during the forward movement phase",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "ace-seated-row",
+      "quote": "Avoid leaning back and arching your low back",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "ace-seated-row",
+      "quote": "Additionally, reduce unnecessary stresses into your low back by avoiding any backwards lean during the pull movements.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "ace-seated-row",
+      "quote": "maintain a neutral wrist position (i.e., wrist in line with your forearms) and attempt to hold these positions throughout the exercise.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "unmc-cable-row",
+      "quote": "pull the shoulders down and back so they're stacked in your backpockets.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "ace-seated-row",
+      "quote": "Maintain your upright trunk position and avoid forward rounding of your scapulae (shoulder blades).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "ace-seated-row",
+      "quote": "Pause momentarily then slowly return to your starting position, allowing your arms to move forward and elbows to extend (straighten) in a slow, controlled manner",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "nsca-low-row",
+      "quote": "Allow the elbows to slowly extend back to the starting position.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "nsca-low-row",
+      "quote": "Primary Muscles Trained Latissimus dorsi, teres major, rhomboid, posterior deltoid",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "lehman2004",
+      "quote": "Highest levels of myoelectric activity in the middle trapezius/rhomboid muscle group occurred during the seated row. Actively retracting the scapula did not influence middle trapezius/rhomboid activity.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "deabreu2023",
+      "quote": "In conclusion, the closer to 90° shoulder abduction the greater UT, MT, and PD activity, on the other hand, the closer to 0° shoulder abduction the greater peak force, UL, and LL activity during the variations of the rowing exercise.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "deabreu2023",
+      "quote": "among the rowing techniques, BB activation was greater during SUP, NEU, and 90° techniques.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "dosanjos2024",
+      "quote": "The upper trapezius muscle is often excessively excited during resistance training exercises, increasing the shoulder's liability to musculoskeletal disorders of individuals participating in overhead sports or throwing activities.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "dosanjos2024",
+      "quote": "Eight male volunteers were instructed to perform the wide-grip seated row exercise without and with the EMG biofeedback of the upper trapezius.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "callaghan2001",
+      "quote": "The results support the notion that intervertebral disc herniation may be more linked to repeated flexion extension motions than applied joint compression, at least with younger, non-degenerated specimens.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c17",
+      "source": "baechle-earle",
+      "quote": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c18",
+      "source": "nsca-low-row",
+      "quote": "After the set is completed, flex the knees and hips to reach forward and return the weight to its resting position.",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}

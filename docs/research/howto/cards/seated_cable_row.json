@@ -1,0 +1,808 @@
+{
+  "id": "seated_cable_row",
+  "libId": "lib_seated_cable_row",
+  "name": "Seated Cable Row",
+  "family": "Row",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "foot-platform"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit facing the machine with the feet on the foot supports, about hip width apart, knees slightly bent; bend the knees and hips to reach forward and take the handle with a closed, neutral grip.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row",
+        "unmc-cable-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Facing the machine, sit on the floor (or on the long seat pad, if available). Place the feet on the machine frame or foot supports. Flex the knees and hips to reach forward and grasp the handle with a closed, neutral grip.",
+          "where": "Low Pulley Seated Row, Starting Position"
+        },
+        {
+          "source": "unmc-cable-row",
+          "text": "Set up for the cable row is with your feet about hip width apart, knees slightly bent,chest is tall and pull the shoulders down and back",
+          "where": "transcript"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Start position, shoulder: torso upright, perpendicular to the floor, with the elbows fully straight and the arms about parallel to the floor. The source gives no shoulder angle; with an upright trunk and level arms the upper arm sits at about a right angle to the trunk (geometry from the two stated positions).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Pull the handle back and assume an erect seated position with the torso perpendicular to the floor, knees slightly flexed, and the feet and legs parallel to each other.",
+          "where": "Low Pulley Seated Row, Starting Position"
+        },
+        {
+          "source": "nsca-low-row",
+          "text": "Allow the elbows to fully extend with the arms about parallel to the floor.",
+          "where": "Low Pulley Seated Row, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "End position, shoulder: the handle reaches the stomach (touching the sternum or abdomen), elbows kept close to the sides and pulled until they pass the sides of the body, so the upper arm ends just behind the trunk line. No angle is given. The elbow end point comes from a chest-pad machine row, applied to the cable row because the arm path is the same.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "unmc-cable-row",
+        "nsca-low-row",
+        "ace-seated-row"
+      ],
+      "quotes": [
+        {
+          "source": "unmc-cable-row",
+          "text": "The handle should finish at your stomach, keeping a nice straight line.",
+          "where": "transcript"
+        },
+        {
+          "source": "nsca-low-row",
+          "text": "Touch the handle to the sternum or abdomen.",
+          "where": "Low Pulley Seated Row, Backward Movement Phase"
+        },
+        {
+          "source": "ace-seated-row",
+          "text": "Flex (bend) your elbows and pull them towards your chest keeping your elbows close to the sides of your body.",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-seated-row",
+          "text": "Continue pulling until your elbows pass the sides of your body.",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Keep the torso erect and the body still, with the knees at the same slight bend, through the pull.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row",
+        "unmc-cable-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Maintain an erect torso position with the knees in the same slightly flexed position.",
+          "where": "Low Pulley Seated Row, Backward Movement Phase"
+        },
+        {
+          "source": "unmc-cable-row",
+          "text": "Keeping your body still, pull the elbows straight back",
+          "where": "transcript"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Return slowly to the start, fully straightening the arms without leaning forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row",
+        "unmc-cable-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Allow the elbows to slowly extend back to the starting position.",
+          "where": "Low Pulley Seated Row, Forward Movement Phase"
+        },
+        {
+          "source": "unmc-cable-row",
+          "text": "Return to the start position, fully extending the arms and without leaning forward.",
+          "where": "transcript"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Jerking the upper body or leaning back while pulling is the first listed common error.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Jerking the upper body or leaning back during the backward movement phase",
+          "where": "Low Pulley Seated Row Common Errors"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Curling the handle toward the torso while pulling is a listed common error.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Curling the handle toward the torso during the backward movement phase",
+          "where": "Low Pulley Seated Row Common Errors"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Bending the torso forward on the way back to the start is a listed common error.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Flexing the torso forward during the forward movement phase",
+          "where": "Low Pulley Seated Row Common Errors"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Avoiding any backward lean during the pull reduces unneeded stress on the lower back. Written for the chest-pad machine row; applied to the cable row by reasoning.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-seated-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-row",
+          "text": "Avoid leaning back and arching your low back",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-seated-row",
+          "text": "Additionally, reduce unnecessary stresses into your low back by avoiding any backwards lean during the pull movements.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Keep the wrist in line with the forearm all through the row. Written for the machine row; applied here by reasoning.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-seated-row"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-row",
+          "text": "maintain a neutral wrist position (i.e., wrist in line with your forearms) and attempt to hold these positions throughout the exercise.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Pull the shoulders back and down at the start, and on the return keep the trunk upright without letting the shoulder blades round forward. The return cue is from the machine row (MECH).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "unmc-cable-row",
+        "ace-seated-row"
+      ],
+      "quotes": [
+        {
+          "source": "unmc-cable-row",
+          "text": "pull the shoulders down and back so they're stacked in your backpockets.",
+          "where": "transcript"
+        },
+        {
+          "source": "ace-seated-row",
+          "text": "Maintain your upright trunk position and avoid forward rounding of your scapulae (shoulder blades).",
+          "where": "Step 3"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Tempo: no source gives seconds for this row. The texts ask for a brief pause at the end of the pull and a slow, controlled return; a guideline gives 1-2 s up and 1-2 s down but states it for intermediate to advanced training. The 2-1-2 count on the plate is a drawing convention, not a sourced number.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-seated-row",
+        "nsca-low-row",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "ace-seated-row",
+          "text": "Pause momentarily then slowly return to your starting position, allowing your arms to move forward and elbows to extend (straighten) in a slow, controlled manner",
+          "where": "Step 3"
+        },
+        {
+          "source": "nsca-low-row",
+          "text": "Allow the elbows to slowly extend back to the starting position.",
+          "where": "Low Pulley Seated Row, Forward Movement Phase"
+        },
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Main muscles trained: latissimus dorsi, teres major, rhomboids and rear deltoid. In a held (isometric) test the seated row gave the highest middle trapezius and rhomboid activity of the pulls tested, and actively squeezing the shoulder blades did not change it.",
+      "tags": [
+        "CONSENSUS",
+        "DATA"
+      ],
+      "sources": [
+        "nsca-low-row",
+        "lehman2004"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "Primary Muscles Trained Latissimus dorsi, teres major, rhomboid, posterior deltoid",
+          "where": "Low Pulley Seated Row Common Errors"
+        },
+        {
+          "source": "lehman2004",
+          "text": "Highest levels of myoelectric activity in the middle trapezius/rhomboid muscle group occurred during the seated row. Actively retracting the scapula did not influence middle trapezius/rhomboid activity.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "On the seated cable row, elbows closer to the sides (near 0 degrees of shoulder abduction) gave more peak force and lat activity; elbows flared toward 90 degrees gave more upper and middle trapezius and rear-deltoid activity. Biceps activity was measured in every row variant.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "deabreu2023"
+      ],
+      "quotes": [
+        {
+          "source": "deabreu2023",
+          "text": "In conclusion, the closer to 90° shoulder abduction the greater UT, MT, and PD activity, on the other hand, the closer to 0° shoulder abduction the greater peak force, UL, and LL activity during the variations of the rowing exercise.",
+          "where": "abstract"
+        },
+        {
+          "source": "deabreu2023",
+          "text": "among the rowing techniques, BB activation was greater during SUP, NEU, and 90° techniques.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The upper trapezius (tops of the shoulders) is often over-active in resistance exercises, which researchers link to more shoulder trouble in overhead and throwing athletes; this was tested on a wide-grip seated row.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "dosanjos2024"
+      ],
+      "quotes": [
+        {
+          "source": "dosanjos2024",
+          "text": "The upper trapezius muscle is often excessively excited during resistance training exercises, increasing the shoulder's liability to musculoskeletal disorders of individuals participating in overhead sports or throwing activities.",
+          "where": "abstract"
+        },
+        {
+          "source": "dosanjos2024",
+          "text": "Eight male volunteers were instructed to perform the wide-grip seated row exercise without and with the EMG biofeedback of the upper trapezius.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "In lab tests on pig spine segments, disc herniation was linked more to repeated bending and straightening than to compression. Applied to rounding the back forward under load by reasoning; it does not prove a gym risk.",
+      "tags": [
+        "DATA",
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "callaghan2001"
+      ],
+      "quotes": [
+        {
+          "source": "callaghan2001",
+          "text": "The results support the notion that intervertebral disc herniation may be more linked to repeated flexion extension motions than applied joint compression, at least with younger, non-degenerated specimens.",
+          "where": "CONCLUSIONS"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Wrap the thumbs around the handle. From a general grip drill, applied to the row handle (MECH).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "baechle-earle"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-earle",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Lifting Fundamentals Drill 1"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "After the set, bend the knees and hips to reach forward and return the weight to rest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "After the set is completed, flex the knees and hips to reach forward and return the weight to its resting position.",
+          "where": "Low Pulley Seated Row, Forward Movement Phase"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "unmc-cable-row",
+      "url": "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt",
+      "title": "Seated Cable Row video transcript (University of Nebraska Medical Center, Center for Healthy Living)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "nsca-low-row",
+      "url": "https://brainscape.com/flashcards/exercise-techniques-3136125/packs/4953113",
+      "title": "NSCA exercise technique text (low-pulley seated row and lat pulldown, starting position, phases and common errors), via a study flashcard set; original NSCA text not free online",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "ace-seated-row",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/",
+      "title": "Seated Row (ACE Exercise Library; machine version with a chest pad)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "baechle-earle",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand: progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "lehman2004",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/15228624/",
+      "title": "Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: an experimental study (Lehman et al., Dyn Med)",
+      "kind": "peer-reviewed",
+      "year": 2004,
+      "pmid": "15228624",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "deabreu2023",
+      "url": "https://doi.org/10.47206/ijsc.v3i1.190",
+      "title": "Effect of different grip position and shoulder-abduction angle on muscle strength and activation during the seated cable row (de Abreu Vasconcelos et al., Int J Strength Cond)",
+      "kind": "peer-reviewed",
+      "year": 2023,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "dosanjos2024",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/39177899/",
+      "title": "Assessing the feasibility of EMG biofeedback to reduce the upper trapezius muscle excitation during a seated row exercise (Dos Anjos et al., Appl Psychophysiol Biofeedback)",
+      "kind": "peer-reviewed",
+      "year": 2024,
+      "pmid": "39177899",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "callaghan2001",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/11114441/",
+      "title": "Intervertebral disc herniation: studies on a porcine model exposed to highly repetitive flexion/extension motion with compressive force (Callaghan, McGill, Clin Biomech)",
+      "kind": "peer-reviewed",
+      "year": 2001,
+      "pmid": "11114441",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "census",
+    "equipment": "Low cable with a close-grip V-handle, a long low seat or bench, and a foot plate the feet press against (c1). The weight stack hangs clear of the rest once seated upright (source text: the weight is suspended above the rest of the stack).",
+    "start": "Seated, feet on the plate about hip width, knees slightly bent (c1); torso upright, perpendicular to the floor (c2); elbows fully straight, arms about parallel to the floor, so the upper arm is at about a right angle to the trunk (c2, geometry); shoulders down and back (c11).",
+    "end": "Torso still upright, knees unchanged (c4); handle at the stomach (c3); elbows close to the sides, just past them, so the upper arm ends just behind the trunk line (c3); no angle sourced.",
+    "checkpoints": [
+      {
+        "label": "Torso upright",
+        "what": "Sit tall, torso straight up, and keep it still for the whole rep.",
+        "claim": [
+          "c2",
+          "c4"
+        ]
+      },
+      {
+        "label": "Handle to stomach",
+        "what": "Pull the handle in to your stomach.",
+        "claim": "c3"
+      },
+      {
+        "label": "Elbows close",
+        "what": "Elbows stay close to your sides and go just past them.",
+        "claim": [
+          "c3",
+          "c14"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Jerking the upper body or leaning back to pull the handle in.",
+      "why": "First item in the NSCA technique text's common-errors list (frequency not measured); ACE says avoiding backward lean reduces unnecessary low-back stress (machine row, MECH).",
+      "claim": [
+        "c6",
+        "c9"
+      ],
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Torso stays still and upright",
+        "claim": "c4"
+      },
+      {
+        "text": "Handle touches your stomach",
+        "claim": "c3"
+      },
+      {
+        "text": "Arms fully straight at the start",
+        "claim": [
+          "c2",
+          "c5"
+        ]
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c12",
+      "text": "Drawing convention: 2 s pull, brief pause, 2 s slow return. No source gives seconds for this row; ACSM 1-2 s is stated for intermediate to advanced training (LR-15)."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed, neutral (palms facing) on the handle (c1).",
+    "width": "Set by the V-handle; no source gives a width.",
+    "thumb": "Around the handle (c1 closed grip, c17).",
+    "handContact": "From the shared pull hand archetype; not re-sourced on this card.",
+    "wrist": "In line with the forearm (c10, machine row, MECH); curling the handle toward the torso is a listed error (c7).",
+    "claims": [
+      "c1",
+      "c7",
+      "c10",
+      "c17"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Sit facing the machine and put your feet on the foot plate, about hip width apart.",
+      "claim": "c1"
+    },
+    {
+      "step": "Bend your knees and hips to reach forward and take the handle, palms facing, thumbs around it.",
+      "claim": [
+        "c1",
+        "c17"
+      ]
+    },
+    {
+      "step": "Sit up tall, torso straight up, knees slightly bent, arms straight out about level with the floor.",
+      "claim": "c2"
+    },
+    {
+      "step": "Pull your shoulders down and back, then pull.",
+      "claim": "c11"
+    },
+    {
+      "step": "After the set, bend your knees and hips to reach forward and put the weight back to rest.",
+      "claim": "c18"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Torso upright and still; knees keep the same slight bend.",
+      "claim": "c4"
+    },
+    {
+      "point": "Elbows close to your sides.",
+      "claim": [
+        "c3",
+        "c14"
+      ]
+    },
+    {
+      "point": "Handle finishes at your stomach.",
+      "claim": "c3"
+    },
+    {
+      "point": "Wrists in line with your forearms.",
+      "claim": "c10"
+    },
+    {
+      "point": "Arms fully straight at the front, without leaning forward.",
+      "claim": "c5"
+    },
+    {
+      "point": "Shoulder blades do not round forward on the way back.",
+      "claim": "c11"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Jerking your upper body or leaning back to pull.",
+      "fix": "Keep your torso upright and still; only your arms move.",
+      "claim": [
+        "c6",
+        "c4"
+      ]
+    },
+    {
+      "mistake": "Bending forward as the handle goes back out.",
+      "fix": "Straighten your arms without leaning forward.",
+      "claim": [
+        "c8",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Curling the handle toward your body.",
+      "fix": "Keep your wrists in line with your forearms.",
+      "claim": [
+        "c7",
+        "c10"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c13"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "lats",
+        "claim": [
+          "c13",
+          "c14"
+        ]
+      },
+      {
+        "muscleId": "biceps",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "rear_delts",
+        "claim": [
+          "c13",
+          "c14"
+        ]
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "upper_traps",
+        "claim": [
+          "c14",
+          "c15"
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "where": "Lower back",
+        "means": "Jerking or leaning back to pull, or bending forward on the way back out.",
+        "fix": "Keep your torso upright and still. Use a weight you can pull without rocking.",
+        "claim": [
+          "c6",
+          "c8",
+          "c4",
+          "c9"
+        ],
+        "redFlag": "back"
+      },
+      {
+        "where": "Tops of the shoulders and neck",
+        "means": "The tops of the shoulders often work too hard; elbows flared out make them work more.",
+        "fix": "Shoulders down and back, elbows close to your sides.",
+        "claim": [
+          "c15",
+          "c14",
+          "c11"
+        ],
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Wrist and forearm",
+        "means": "Curling the handle toward your body.",
+        "fix": "Keep your wrists in line with your forearms.",
+        "claim": [
+          "c7",
+          "c10"
+        ],
+        "redFlag": "wrist"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Lower back: leaning back to pull adds stress the row does not need.",
+      "claim": "c9"
+    },
+    {
+      "risk": "Lower back: lab tests on animal spines link repeated bending under load to disc damage; it does not prove a gym risk.",
+      "claim": "c16"
+    },
+    {
+      "risk": "Shoulder: when the tops of the shoulders take over, strain on the shoulder may rise; shown mainly in overhead and throwing athletes.",
+      "claim": "c15"
+    }
+  ],
+  "redFlags": [
+    "back",
+    "shoulder",
+    "wrist"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Palms facing, thumbs around the handle, wrist in line with the forearm.",
+      "wrong": "Handle curled toward the body.",
+      "claim": [
+        "c1",
+        "c17",
+        "c10",
+        "c7"
+      ]
+    },
+    {
+      "key": "torso",
+      "kind": "posture",
+      "right": "Torso straight up and still at the start and the end.",
+      "wrong": "Leaning back to pull the handle in.",
+      "claim": [
+        "c2",
+        "c4",
+        "c6"
+      ]
+    },
+    {
+      "key": "elbows",
+      "kind": "posture",
+      "right": "Elbows close to your sides, just past them at the end.",
+      "wrong": "Elbows flared out wide.",
+      "claim": [
+        "c3",
+        "c14"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "mid_back primary stands: the seated row gave the highest middle trapezius and rhomboid activity of the pulls tested (c13, isometric). lats secondary stands; lats are listed as trained and rise with elbows close (c13, c14), so a later data pass may weigh lats as co-primary. biceps secondary stands (measured in every variant, c14). rear_delts secondary stands (listed as trained, c13; rises with flared elbows, c14). upper_traps is watch only (c15)."
+  },
+  "anchorSource": "unmc-cable-row",
+  "gaps": [],
+  "notes": [
+    "Tier C; no tier-A safety gaps apply.",
+    "Measured joint (shoulder angle): no source gives degrees. Start = trunk perpendicular to the floor plus arms about parallel to the floor (c2), so about a right angle is geometry, stated as such. End = elbows close to and just past the sides (c3, partly machine-row text, MECH).",
+    "Tempo: no source gives seconds for the seated cable row or for novices; 2-1-2 is a drawing convention (c12, WEAK), following chin_up c8.",
+    "Anchor: the UNMC transcript is short but cable-row specific and read in full. ACE is the chest-pad machine row; its claims carry MECH. The NSCA text is read through a study flashcard set (secondary, summary).",
+    "de Abreu 2023: read from the journal page abstract (https://journal.iusca.org/index.php/Journal/article/view/190); the DOI URL is the registry url. It has no PMID.",
+    "Ronai 2019, Fenwick 2009, Saeterbakken 2015, Cronin 2007, Fujita 2020, Padovan 2025 (scapular positions) and Di Fonza 2026 were read (abstracts) but not cited: none states a fact this card needs that the cited sources do not. Padovan 2025 (narrow vs wide grip, doi only) was not fetched."
+  ]
+}

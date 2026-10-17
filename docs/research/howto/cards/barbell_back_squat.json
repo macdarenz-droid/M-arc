@@ -1,0 +1,1090 @@
+{
+  "id": "barbell_back_squat",
+  "libId": "lib_barbell_back_squat",
+  "name": "Barbell Back Squat",
+  "family": "Squat (free, Smith, bodyweight)",
+  "tier": "A",
+  "archetype": {
+    "hand": "on-body",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "ACE racks the bar just below shoulder height, puts it behind the neck across the top of the back, and grips with the hands wider than shoulder-width apart.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-back-squat"
+      ],
+      "quotes": [
+        {
+          "source": "ace-back-squat",
+          "text": "Place a barbell in a rack just below shoulder-height. Dip under the bar to put it behind the neck across the top of the back, and grip the bar with the hands wider than shoulder-width apart.",
+          "where": "exercise steps"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Human Kinetics places the bar on top of the trapezius across the rear deltoids, held there with an extended wrist (like opening a motorcycle throttle) and the elbows pointing down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-squat"
+      ],
+      "quotes": [
+        {
+          "source": "hk-squat",
+          "text": "Dip under the bar and position it on top of the trapezius across the posterior deltoids. To keep the bar on the back of the shoulders, use an extended wrist grip (as when accelerating on a motorcycle) with the elbows pointed down.",
+          "where": "Position of the bar on the back"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Human Kinetics sets the rack slightly below shoulder height, loads the plates evenly with collars, puts the hands slightly wider than shoulder-width, then straightens the hips and knees to lift the bar off and steps back while staying close to the supports.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-squat"
+      ],
+      "quotes": [
+        {
+          "source": "hk-squat",
+          "text": "Set the supports of the rack to position the bar slightly below shoulder-height. Keep the bar racked and evenly load the weight plates on each end of the bar using a collar to keep the plates in position.",
+          "where": "Using the rack and loading the bar"
+        },
+        {
+          "source": "hk-squat",
+          "text": "Position the hands on the bar slightly wider than shoulder-width apart.",
+          "where": "Hand placement on the bar"
+        },
+        {
+          "source": "hk-squat",
+          "text": "Extend the hips and knees to lift the bar off the supports then step back but stay close to the supports.",
+          "where": "Get in the beginning position"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Stance: ACE puts the feet a little wider than shoulder-width; Human Kinetics says most people stand between hip- and shoulder-width with the toes turned slightly out.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-back-squat",
+        "hk-squat"
+      ],
+      "quotes": [
+        {
+          "source": "ace-back-squat",
+          "text": "place the feet so that they are a little wider than shoulder-width apart.",
+          "where": "exercise steps"
+        },
+        {
+          "source": "hk-squat",
+          "text": "The stance should be symmetrical and comfortable. Most people place the feet between hip- and shoulder-width apart with the toes slightly angled out.",
+          "where": "Foot spacing"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Lift the chest and squeeze the shoulder blades together to keep the back straight for the whole movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-back-squat"
+      ],
+      "quotes": [
+        {
+          "source": "ace-back-squat",
+          "text": "Lift the chest up and squeeze the shoulder blades together to keep the straight back throughout the entire movement.",
+          "where": "exercise steps"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Depth: ACE squats down until the hips are below the knees, keeping the back straight and the chest up; Human Kinetics says the hip joint passes a point even with or lower than the knee joint.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-back-squat",
+        "hk-squat"
+      ],
+      "quotes": [
+        {
+          "source": "ace-back-squat",
+          "text": "Sit back into hips and keep the back straight and the chest up, squatting down so the hips are below the knees.",
+          "where": "exercise steps"
+        },
+        {
+          "source": "hk-squat",
+          "text": "During the exercise, your hip joint passes a point even with or lower than your knee joint.",
+          "where": "What is a squat?"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Knee bend in numbers: in a 12-week training study (17 male students), the deep squat ran from 0 to 120 degrees of knee flexion (0 = knee straight, standing) and the shallow squat from 0 to 60; the deep squat grew the front thigh more.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "bloomquist2013"
+      ],
+      "quotes": [
+        {
+          "source": "bloomquist2013",
+          "text": "deep squat (0-120° of knee flexion); n = 8 (DS) or (b) shallow squat (0-60 of knee flexion); n = 9 (SS).",
+          "where": "abstract"
+        },
+        {
+          "source": "bloomquist2013",
+          "text": "the main finding was that DS training resulted in superior increases in front thigh muscle CSA (4-7 %) compared to SS training",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Bend the hips and knees together, keep the knees in line with the thighs and feet, and keep the heels flat on the ground.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-squat"
+      ],
+      "quotes": [
+        {
+          "source": "hk-squat",
+          "text": "Simultaneously flex the hips and knees to lower the center of gravity.",
+          "where": "Downward movement"
+        },
+        {
+          "source": "hk-squat",
+          "text": "Keep the knees aligned with the thighs and feet. Keep the heels flat on the ground.",
+          "where": "Downward movement"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The head and neck stay in line with the spine, neither tilted back nor tipped forward; a fixed point straight ahead helps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-squat"
+      ],
+      "quotes": [
+        {
+          "source": "hk-squat",
+          "text": "The neck and head should be natural extensions of the spine; do not tilt the head back or tip it forward. To help with this, look for a visual anchor right in front.",
+          "where": "Position of the head"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Keep the natural curve of the spine and the abdomen flat without overarching the low back; Human Kinetics warns that rounding the back can cause injury. How often it happens is not measured.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-squat"
+      ],
+      "quotes": [
+        {
+          "source": "hk-squat",
+          "text": "Keep the abdomen flat without exaggerating the lumbar arch.",
+          "where": "Downward movement"
+        },
+        {
+          "source": "hk-squat",
+          "text": "Be sure to maintain the natural spinal curve; rounding the back can cause injury.",
+          "where": "Upward movement"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "On the way up the hips and knees straighten together: press the feet into the ground and push the hips forward back to standing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-squat",
+        "ace-back-squat"
+      ],
+      "quotes": [
+        {
+          "source": "hk-squat",
+          "text": "Extend the hips and knees in synchrony.",
+          "where": "Upward movement"
+        },
+        {
+          "source": "ace-back-squat",
+          "text": "From the bottom of the squat, press feet into the ground and push hips forward to return to the top of the standing position.",
+          "where": "exercise steps"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "In seven weight-trained men, blocking the knees from moving past the toes raised hip torque and trunk lean; the authors conclude the knees may need to move slightly past the toes.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "fry2003"
+      ],
+      "quotes": [
+        {
+          "source": "fry2003",
+          "text": "Restricted squats also produced more anterior lean of the trunk and shank and a greater internal angle at the knees and ankles.",
+          "where": "abstract"
+        },
+        {
+          "source": "fry2003",
+          "text": "appropriate joint loading during this exercise may require the knees to move slightly past the toes.",
+          "where": "abstract, practical applications"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Lifts with the bar on the back belong inside a power rack with the crossbars at the right height; set the safeties or pins just below your lowest squat depth so you can lower the bar onto them if you cannot finish.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-summary",
+        "rep-fail"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-summary",
+          "text": "Overhead exercises and ones with the bar on the back or shoulders must be done within a power rack with crossbars at the right height.",
+          "where": "Spotting Overhead Exercises and Exercises with Bar on the Back or Front Shoulders"
+        },
+        {
+          "source": "rep-fail",
+          "text": "Ensure your safeties or pins are set just below your lowest squat depth. This allows you to lower the bar onto the safeties if you can't complete the lift.",
+          "where": "How to Safely Bail from a Squat, 1. How to Bail a Back Squat"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Have a spotter for heavy squats whenever possible.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-fail"
+      ],
+      "quotes": [
+        {
+          "source": "rep-fail",
+          "text": "Whenever possible, have a spotter when performing heavy squats.",
+          "where": "The Importance of Spotters and Safeties"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Way out: if you must bail a back squat, push the bar backward off the shoulders while moving the body forward so it falls onto the safety bars, and practise this with light weights first.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-fail"
+      ],
+      "quotes": [
+        {
+          "source": "rep-fail",
+          "text": "If you must bail, push the bar backward off your shoulders while moving your body forward. This will let the bar fall onto the safety bars without hitting you. Practice this movement with lighter weights to get comfortable with the process.",
+          "where": "How to Safely Bail from a Squat, 1. How to Bail a Back Squat"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Load progression: safeties are for emergencies, not a way of training; progressive loading within your limits avoids needing to bail. The general resistance-training position stand (not squat-specific) adds 2-10% load once you can do one or two reps more than the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "rep-fail",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "rep-fail",
+          "text": "Safeties are for emergencies; they're not supposed to be a method of training.",
+          "where": "Safety Bars"
+        },
+        {
+          "source": "rep-fail",
+          "text": "Proper training techniques, progressive loading, and knowing your limits are key to avoiding situations where you need to bail.",
+          "where": "The Risks of Bailing a Squat"
+        },
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Breathing: breathe out through the sticking point and in during the easier part. Holding the breath against a closed throat (Valsalva) is used by experienced lifters on structural lifts to keep the spine aligned.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-summary"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-summary",
+          "text": "Tell athletes to exhale at the sticking point and inhale when the move is less stressful.",
+          "where": "Breathing Considerations"
+        },
+        {
+          "source": "nsca-summary",
+          "text": "This is used by experienced and well trained resistance athletes during structural exercises.",
+          "where": "The Valsalva Maneuver"
+        },
+        {
+          "source": "nsca-summary",
+          "text": "This assists in keeping good vertebral alignment.",
+          "where": "The Valsalva Maneuver"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "A review of resistance exercise in general (not squat data): a brief breath-hold is unavoidable with heavy loads above 80% of maximum; it raises trunk pressure, which may help spine stability, and raises blood pressure; the health risks are unconfirmed.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "hackett2013"
+      ],
+      "quotes": [
+        {
+          "source": "hackett2013",
+          "text": "During resistance exercise, a brief Valsalva maneuver (VM) is unavoidable when lifting heavy loads (>80% of maximal voluntary contraction) or when lifting lighter loads to failure.",
+          "where": "abstract"
+        },
+        {
+          "source": "hackett2013",
+          "text": "The VM was associated with an increase in blood pressure during resistance exercise",
+          "where": "abstract"
+        },
+        {
+          "source": "hackett2013",
+          "text": "the VM effectively increases IAP, which may assist with spine stability and trunk rigidity during resistance exercise. The health risks associated with the VM during resistance exercise remain unconfirmed.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Human Kinetics names the quadriceps, glutes and hamstrings as the main muscles, with the core (including the erector spinae) and calves stabilising.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hk-squat"
+      ],
+      "quotes": [
+        {
+          "source": "hk-squat",
+          "text": "Primarily you use the quadriceps (vastus lateralis, vastus intermedius, vastus medialis, and rectus femoris), glutes (gluteus maximus, medius, and minimus), and hamstrings (semimembranosus, semitendinosus, and biceps femoris).",
+          "where": "What muscles are involved in the squat?"
+        },
+        {
+          "source": "hk-squat",
+          "text": "The superficial and deep core muscles (including the erector spinae) and calves (gastrocnemius and soleus) help with stabilization.",
+          "where": "What muscles are involved in the squat?"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "In ten experienced lifters, the glute's share of hip and thigh muscle activity on the way up rose as the squat got deeper; the hamstring and quad shares did not change.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "caterisano2002"
+      ],
+      "quotes": [
+        {
+          "source": "caterisano2002",
+          "text": "The results suggest that the GM, rather than the BF, the VMO, or the VL, becomes more active in concentric contraction as squat depth increases.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "In a 10-week MRI study, full squats grew the inner thigh (adductor) and glute muscles more than half squats; the hamstrings and rectus femoris did not grow in either group.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kubo2019"
+      ],
+      "quotes": [
+        {
+          "source": "kubo2019",
+          "text": "whereas that of rectus femoris and hamstring muscles did not change in either group.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "kubo2019",
+          "text": "relative increases in adductor (p = 0.026) and gluteus maximus (p = 0.008) muscle volumes were significantly greater in FST than in HST.",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "Review: the high-bar back squat has more knee bend, less hip bend, a more upright torso and a deeper squat than the low-bar squat; lifters shift to keep the centre of mass over the base of support.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "glassbrook2017"
+      ],
+      "quotes": [
+        {
+          "source": "glassbrook2017",
+          "text": "the HBBS is characterized by greater knee flexion, lesser hip flexion, a more upright torso, and a deeper squat.",
+          "where": "abstract"
+        },
+        {
+          "source": "glassbrook2017",
+          "text": "Different movement strategies are used to ensure that the center of mass remains in the base of support for balance during the execution of these lifts.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "text": "In the squat the hands only stop the bar rolling down the back; the back should carry the load. A coach source (written for the low-bar squat) links supporting the bar with the hands, wrists or elbows to inner-elbow tendinitis.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "barbell-logic-squat-grip"
+      ],
+      "quotes": [
+        {
+          "source": "barbell-logic-squat-grip",
+          "text": "in the squat, the hands are simply there to prevent the bar from rolling down the back. Your back should bear the load of the squat, not your hands, wrists or elbows.",
+          "where": "article text"
+        },
+        {
+          "source": "barbell-logic-squat-grip",
+          "text": "if a lifter is supporting the bar with their hands, wrists, or elbows, they develop tendinitis, specifically tendinitis in the medial epicondyle of the elbow.",
+          "where": "article text"
+        }
+      ]
+    },
+    {
+      "id": "c24",
+      "text": "Thumb: a general barbell textbook drill keeps the thumbs around the bar for all grips (not squat-specific: inference). The low-bar coach source instead uses no thumb wrap, with the bar pressed into the heel of the palm, and links wrapped thumbs that overextend the wrist to wrist pain.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "baechle-earle",
+        "barbell-logic-squat-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-earle",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Grip drill"
+        },
+        {
+          "source": "barbell-logic-squat-grip",
+          "text": "Instead of wrapping the thumbs around the bar like we do in the other barbell lifts, we want to use compression between the bones of the wrist and bones of the forearm to hold the bar in place. This means the bar must push into the heel of the palm.",
+          "where": "article text"
+        },
+        {
+          "source": "barbell-logic-squat-grip",
+          "text": "if you choose to wrap your thumbs around the bar creating overextension of the wrist, you might develop wrist pain or tendinitis.",
+          "where": "article text"
+        }
+      ]
+    },
+    {
+      "id": "c25",
+      "text": "Across US emergency-department records for all weight training (1990-2007), the most common way people were hurt was weights dropping on them.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c26",
+      "text": "Tempo: no source read gives seconds for a novice back squat. The position stand gives 1-2 s up and 1-2 s down for intermediate to advanced heavy strength training (LR-15), and in a lab study one 8-RM parallel back-squat rep took about 3.3 to 3.6 s in all. The plate's 2 s down and 2 s up is a drawing convention taken from the top of the 1-2 s range, not a novice recommendation.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "acsm2009",
+        "lander1992"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        },
+        {
+          "source": "lander1992",
+          "text": "WB repetitions were generally performed faster than WOB repetitions, especially by the later repetitions (3.34 vs 3.56 s).",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-back-squat",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/11/back-squat/",
+      "title": "Back Squat (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "hk-squat",
+      "url": "https://us.humankinetics.com/blogs/strength-conditioning-fitness/squat-technique",
+      "title": "Squat technique (Broussal-Derval A., Human Kinetics blog)",
+      "kind": "guideline",
+      "year": 2019,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "nsca-summary",
+      "url": "https://www.ptpioneer.com/personal-training/certifications/nsca-cscs/cscs-chapter-15/",
+      "title": "NSCA CSCS chapter 15, exercise technique (study summary of NSCA Essentials of Strength Training and Conditioning, PT Pioneer)",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "rep-fail",
+      "url": "https://repfitness.com/blogs/training/how-to-safely-fail-a-heavy-squat-in-the-gym",
+      "title": "How to Safely Fail a Heavy Squat in the Gym (REP Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "barbell-logic-squat-grip",
+      "url": "https://barbell-logic.com/?p=4521",
+      "title": "Elbow Pain While Squatting? Fix Your Squat Grip (Reynolds M., Barbell Logic)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "baechle-earle",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location, excerpt from Weight Training: Steps to Success (Baechle and Earle, Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "bloomquist2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23604798/",
+      "title": "Effect of range of motion in heavy load squatting on muscle and tendon adaptations (Bloomquist K et al., Eur J Appl Physiol)",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": "23604798",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "fry2003",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/14636100/",
+      "title": "Effect of knee position on hip and knee torques during the barbell squat (Fry AC, Smith JC, Schilling BK, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2003,
+      "pmid": "14636100",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "hackett2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23222073/",
+      "title": "The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise (Hackett DA, Chow CM, J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": "23222073",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "caterisano2002",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/12173958/",
+      "title": "The effect of back squat depth on the EMG activity of 4 superficial hip and thigh muscles (Caterisano A et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2002,
+      "pmid": "12173958",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "kubo2019",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31230110/",
+      "title": "Effects of squat training with different depths on lower limb muscle volumes (Kubo K, Ikebukuro T, Yata H, Eur J Appl Physiol)",
+      "kind": "peer-reviewed",
+      "year": 2019,
+      "pmid": "31230110",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "glassbrook2017",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/28570490/",
+      "title": "A Review of the Biomechanical Differences Between the High-Bar and Low-Bar Back-Squat (Glassbrook DJ et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2017,
+      "pmid": "28570490",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (Kerr ZY, Collins CL, Comstock RD, Am J Sports Med)",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "lander1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1533266/",
+      "title": "The effectiveness of weight-belts during multiple repetitions of the squat exercise (Lander JE, Hundley JR, Simonton RL, Med Sci Sports Exerc)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1533266",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (Med Sci Sports Exerc)",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "census",
+    "equipment": "Barbell on the upper back (high-bar: on top of the trapezius across the rear deltoids, c2; ACE: behind the neck across the top of the back, c1), squat rack with the hooks just below shoulder height (c1, c3) and safety bars or pins just below the lowest squat depth (c13); floor line.",
+    "start": "Standing tall with the knees straight, 0 degrees of knee flexion (c7); bar on the upper back, hands a little wider than shoulder-width, elbows down (c1, c2, c3); feet a little wider than shoulder-width or between hip- and shoulder-width, toes slightly out (c4); chest up, back straight (c5); head in line with the spine (c9).",
+    "end": "Bottom: hips below the knees (c6), knee flexion up to about 120 degrees, the deep-squat range in the training study (c7); knees in line with the feet and allowed slightly past the toes (c8, c12); heels flat (c8); back straight with its natural curve, chest up (c5, c10).",
+    "checkpoints": [
+      {
+        "label": "Chest up",
+        "what": "Chest lifted and shoulder blades squeezed, back straight the whole way.",
+        "claim": "c5"
+      },
+      {
+        "label": "Hips below knees",
+        "what": "Squat down until the hips are below the knees.",
+        "claim": "c6"
+      },
+      {
+        "label": "Heels flat",
+        "what": "Heels stay flat; knees in line with the thighs and feet.",
+        "claim": "c8"
+      }
+    ],
+    "mistake": {
+      "what": "The back rounds at the bottom of the squat instead of keeping its natural curve.",
+      "why": "Human Kinetics warns that rounding the back can cause injury (c10); ACE asks for a straight back throughout (c5). How often it happens is not measured.",
+      "claim": [
+        "c10",
+        "c5"
+      ],
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Heels stay flat on the floor",
+        "claim": "c8"
+      },
+      {
+        "text": "Hips end below the knees",
+        "claim": "c6"
+      },
+      {
+        "text": "Chest up, back straight",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 0,
+      "claim": "c26",
+      "text": "Drawing convention: 2 s down, 2 s up, from the top of the 1-2 s range given for intermediate to advanced heavy training (c26); no novice squat tempo in seconds is sourced."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Hands on the bar behind the neck; the extended-wrist, motorcycle-throttle grip (c2) implies an overhand grip, but no source read names the palm direction.",
+    "width": "Wider than shoulder-width (ACE, c1); slightly wider than shoulder-width (Human Kinetics, c3).",
+    "thumb": "Not settled by the sources: a general textbook drill wraps the thumbs (c24, inference); the low-bar coach source uses no wrap with the bar in the heel of the palm (c24).",
+    "handContact": "The hands only stop the bar rolling down the back; the back carries the load (c23).",
+    "wrist": "Human Kinetics: extended wrist, elbows pointed down (c2). The low-bar coach source warns that overextending the wrist by wrapping the thumbs may cause wrist pain (c24).",
+    "claims": [
+      "c1",
+      "c2",
+      "c3",
+      "c23",
+      "c24"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the bar in the rack just below shoulder height, and the safety bars or pins just below your lowest squat depth.",
+      "claim": [
+        "c1",
+        "c3",
+        "c13"
+      ]
+    },
+    {
+      "step": "Load the plates evenly on both ends, with collars.",
+      "claim": "c3"
+    },
+    {
+      "step": "Grip the bar a little wider than your shoulders, dip under it and set it across the top of your upper back, elbows pointing down.",
+      "claim": [
+        "c1",
+        "c2",
+        "c3"
+      ]
+    },
+    {
+      "step": "Lift your chest and squeeze your shoulder blades together.",
+      "claim": "c5"
+    },
+    {
+      "step": "Straighten your hips and knees to lift the bar off, step back but stay close to the rack, and set your feet a little wider than your shoulders, toes slightly out.",
+      "claim": [
+        "c3",
+        "c4"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Bar across the top of the upper back, elbows pointing down; your back carries it, the hands only stop it rolling.",
+      "claim": [
+        "c2",
+        "c23"
+      ]
+    },
+    {
+      "point": "Chest up, back straight with its natural curve, for the whole rep.",
+      "claim": [
+        "c5",
+        "c10"
+      ]
+    },
+    {
+      "point": "Head and neck in line with the spine; look at a point straight ahead.",
+      "claim": "c9"
+    },
+    {
+      "point": "Hips and knees bend together; knees in line with your thighs and feet, heels flat.",
+      "claim": "c8"
+    },
+    {
+      "point": "Squat until your hips are below your knees; the knees may move slightly past the toes.",
+      "claim": [
+        "c6",
+        "c12"
+      ]
+    },
+    {
+      "point": "Drive up by pressing your feet into the floor, hips and knees straightening together.",
+      "claim": "c11"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "The back rounds at the bottom.",
+      "fix": "Keep your chest up and your back straight with its natural curve all the way down and up.",
+      "claim": [
+        "c10",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Holding the bar up with your hands, wrists or elbows.",
+      "fix": "Let your back carry the bar; your hands only stop it rolling down.",
+      "claim": "c23"
+    },
+    {
+      "mistake": "Heels lifting, or knees drifting out of line with the feet.",
+      "fix": "Keep your heels flat and your knees in line with your thighs and feet.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c19"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": [
+          "c19",
+          "c20"
+        ]
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "adductors",
+        "claim": "c21"
+      },
+      {
+        "muscleId": "hamstrings",
+        "claim": [
+          "c19",
+          "c21"
+        ]
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": [
+          "c10",
+          "c19"
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of the thighs and the glutes",
+        "means": "Expected: these are the main working muscles, and the glutes work more the deeper you squat.",
+        "fix": "Nothing to fix.",
+        "claim": [
+          "c19",
+          "c20"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "The fault to check: the back rounding at the bottom, which can cause injury.",
+        "fix": "Keep your chest up and your back straight with its natural curve.",
+        "claim": [
+          "c10",
+          "c5"
+        ],
+        "redFlag": "back"
+      },
+      {
+        "where": "Knees",
+        "means": "The fault to check: heels lifting, or knees out of line with the feet.",
+        "fix": "Keep your heels flat and your knees in line with your thighs and feet.",
+        "claim": "c8",
+        "redFlag": "knee"
+      },
+      {
+        "where": "Wrists or the inside of the elbows",
+        "means": "The fault to check: the hands holding the bar up instead of the back.",
+        "fix": "Let your back carry the bar; your hands only stop it rolling.",
+        "claim": [
+          "c23",
+          "c24"
+        ],
+        "redFlag": "wrist"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Back: rounding the back under the bar can cause injury.",
+      "claim": "c10"
+    },
+    {
+      "risk": "Dropped weights: across all weight training, the most common way people got hurt was weights dropping on them. Set the safeties.",
+      "claim": [
+        "c25",
+        "c13"
+      ]
+    },
+    {
+      "risk": "Holding your breath under heavy load raises blood pressure; whether that harms healthy lifters is not confirmed.",
+      "claim": "c18"
+    }
+  ],
+  "redFlags": [
+    "back",
+    "knee",
+    "wrist"
+  ],
+  "zooms": [
+    {
+      "key": "bar on back",
+      "kind": "posture",
+      "right": "Bar across the top of the upper back, elbows pointing down.",
+      "wrong": null,
+      "claim": [
+        "c2",
+        "c1"
+      ]
+    },
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Hands a little wider than the shoulders, only stopping the bar from rolling; the back carries the load.",
+      "wrong": "Hands, wrists or elbows propping the bar up.",
+      "claim": [
+        "c3",
+        "c23"
+      ]
+    },
+    {
+      "key": "back",
+      "kind": "posture",
+      "right": "Chest up, back straight with its natural curve at the bottom.",
+      "wrong": "Back rounded at the bottom.",
+      "claim": [
+        "c5",
+        "c10"
+      ]
+    },
+    {
+      "key": "knees",
+      "kind": "posture",
+      "right": "Knees move slightly past the toes, heels flat.",
+      "wrong": "Knees held back behind the toes, trunk leaning further forward.",
+      "claim": [
+        "c12",
+        "c8"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "glutes",
+        "role": "primary",
+        "why": "Human Kinetics lists the glutes with the quadriceps as main movers (c19), and their share rises with depth (c20). The library has glutes as secondary."
+      },
+      {
+        "muscleId": "adductors",
+        "role": "secondary",
+        "why": "Full squats grew the adductors more than half squats (c21)."
+      }
+    ],
+    "remove": [],
+    "why": "Library: primary quads; secondary glutes, hamstrings. quads stay primary (c19). glutes move up to primary (c19, c20). hamstrings stay secondary: Human Kinetics names them (c19), but they did not grow with squat training (c21). calves are not added: Human Kinetics names them only as stabilisers (c19)."
+  },
+  "loadProgression": {
+    "text": "Add weight step by step, within your limits: a small jump of 2-10% once you can do one or two reps more than your target. Safeties are for emergencies, not a way to train.",
+    "claims": [
+      "c16"
+    ]
+  },
+  "breathing": {
+    "text": "Breathe out through the hardest part of the way up, breathe in on the easier part.",
+    "claims": [
+      "c17",
+      "c18"
+    ]
+  },
+  "tierA": {
+    "wayOut": {
+      "text": "Safeties just below your lowest depth, and a spotter for heavy sets when you can. To bail, push the bar backward off your shoulders while you move your body forward, so it falls onto the safeties. Practise with light weight first.",
+      "claims": [
+        "c13",
+        "c14",
+        "c15"
+      ]
+    }
+  },
+  "anchorSource": "hk-squat",
+  "gaps": [
+    "Tier A: no source read describes walking the bar back into the hooks (the rerack); left out, not invented.",
+    "Tier A: bar path clear of the neck is sourced only as bar placement (behind the neck across the top of the back, on the trapezius across the rear deltoids: c1, c2) and the backward bail (c15); no source read names the wrong position of the bar on the neck itself, so the bar-on-back zoom shows the right position only (wrong: null, LR-25)."
+  ],
+  "notes": [
+    "Fact 1 (knee bend): start 0 degrees and deep end 120 degrees are from the training study's deep-squat range (c7); the coaching depth line is hips below the knees (c6). No source gives the knee angle at the exact point where the hips pass the knees.",
+    "Tempo (fact 2): c26 is a drawing convention under LR-15 (WEAK). The measured 8-RM rep took about 3.3 to 3.6 s in all (c26), shorter than the 4 s the plate draws; open question for the supervisor.",
+    "Mistake (fact 3): back rounding is the fault the technique source names as injurious and that the side view can draw; no source ranks back-squat faults by frequency.",
+    "The card describes the high-bar back squat (c2, c22). The barbell-logic page is written for the low-bar squat; its lines (c23, c24) are tagged MECH where applied to the high-bar squat.",
+    "ACE answers 403 to curl with the plain 'Mozilla/5.0' agent; a full browser user-agent string gets the page (200). The fetcher may need the same.",
+    "Breathing has two sourced lines: breathe out through the sticking point (c17), and a brief breath-hold under heavy load, which experienced lifters use and which raises blood pressure (c17, c18). The shown breathing line uses only the first."
+  ]
+}

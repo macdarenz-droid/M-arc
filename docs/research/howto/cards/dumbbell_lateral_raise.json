@@ -1,0 +1,582 @@
+{
+  "id": "dumbbell_lateral_raise",
+  "libId": "lib_dumbbell_lateral_raise",
+  "name": "Dumbbell Lateral Raise",
+  "family": "Lateral and front raise",
+  "tier": "C",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "ACE starts the raise standing, dumbbells alongside the thighs in a closed, neutral grip (thumbs around the handles, palms facing the body), elbows extended or holding a slight bend.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lateral-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lateral-raise",
+          "text": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles and palms facing your body). Position the dumbbells alongside your thighs with your elbows extended or holding a slight bend.",
+          "where": "Step 1, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Stance is a split stance or feet slightly wider than hip-width apart.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lateral-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lateral-raise",
+          "text": "Assume either a split-stance position to stabilize your body or position your feet slightly wider than hip-width apart.",
+          "where": "Step 1, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The torso is braced, the shoulders pulled down and back and held there for the whole set, and the head kept in line with the spine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lateral-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lateral-raise",
+          "text": "Stiffen your torso by contracting your abdominal and core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining this position throughout the exercise. Your head position should be aligned with your spine.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "On the way up you breathe out and raise the dumbbells slowly up and out to the sides, the elbows and upper arms rising together slightly ahead of the forearms and dumbbells.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lateral-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lateral-raise",
+          "text": "Exhale and slowly raise the dumbbells up and out to your sides. Your elbows and upper arms should rise together and be slightly ahead of your forearms and dumbbells.",
+          "where": "Step 3, Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Past 60-70 degrees the arms turn slightly so the front edge of the dumbbell points slightly up; ACE says this slight outward rotation may reduce potential impingement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lateral-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lateral-raise",
+          "text": "As your arms move past 60 - 70 degrees (nearing shoulder level), rotate them slightly upwards so that the front edge of the dumbbells point slightly upwards.",
+          "where": "Step 3, Upward Phase"
+        },
+        {
+          "source": "ace-lateral-raise",
+          "text": "the slight external rotation initiated at the 60-70 degree mark may reduce potential impingement in the shoulder joint.",
+          "where": "Note after Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The raise stops when the arms are level with the shoulders and about parallel with the floor, with the torso erect (no low-back arch) and the wrists neutral.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lateral-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lateral-raise",
+          "text": "Continue raising the dumbbells until your arms are level with your shoulders and approximately parallel with the floor. Maintain your torso erect (no arching your low back) and neutral wrist position (avoid flexion and extension of your wrists).",
+          "where": "Step 3, Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "On the way down you breathe in and lower gently to the start, keeping the elbows slightly extended and the grip neutral.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lateral-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lateral-raise",
+          "text": "Inhale and gently lower the dumbbells back towards your starting position keeping your elbows slightly extended and holding the neutral grip position.",
+          "where": "Step 4, Downward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "In the EMG study, the lateral raise abducted the upper arm up to 90°, thumbs forward for the neutral version, with the elbow almost fully extended and the wrist in line with the forearm.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "coratella2020",
+          "text": "For LR-neutral, the participants were required to abduct laterally the humerus up to 90°, with the humerus neutrally rotated (i.e., thumbs forward).",
+          "where": "2.4 Exercise Protocols"
+        },
+        {
+          "source": "coratella2020",
+          "text": "For all these exercises, the elbow was almost fully extended, and the wrist in line with the forearm",
+          "where": "2.4 Exercise Protocols"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The EMG study paced each raise at 2 s up, 2 s down and 0.5 s held at the bottom and the top, by metronome, in 10 competitive bodybuilders, seated. A study protocol, not a beginner recommendation.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "coratella2020",
+          "text": "Each exercise was performed with the pacing of 2 s for the concentric and 2 s for the eccentric phase and 0.5 s for the isometric phase at the beginning and at the end of each movement.",
+          "where": "2.4 Exercise Protocols"
+        },
+        {
+          "source": "coratella2020",
+          "text": "Ten competitive bodybuilders performed the exercises.",
+          "where": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "The side (medial) deltoid was more active with a straight elbow than with the elbow bent.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "coratella2020",
+          "text": "Medial deltoid was more active during LR with straight vs. flexed elbow.",
+          "where": "5. Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The upper trapezius worked harder when the upper arm was turned in (thumbs down).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "coratella2020",
+          "text": "Lastly, upper trapezius showed greater activity when humerus tended to be rotated internally.",
+          "where": "5. Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "In women with chronic neck muscle pain, the lateral raise drove the trapezius to about 97% of maximum, close to the shrug, with light loads (3-10 kg).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "andersen2008"
+      ],
+      "quotes": [
+        {
+          "source": "andersen2008",
+          "text": "For the trapezius muscle, the highest level of muscle activation was found during the shrug (102+/-11% of MVC), lateral raise (97+/-6% of MVC), and upright row (85+/-5% of MVC) exercises, but the latter 2 exercises required smaller training loads (3-10 kg)",
+          "where": "Abstract, Results"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "In recreational weight-trainers, lateral raises above 90° were linked with signs of shoulder impingement (case-control association, not cause); the authors suggest not raising beyond 90°.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2014"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2014",
+          "text": "A significant association existed between clinical characteristics of SIS (p ≤ 0.004) and both lateral deltoid raises and upright rows above 90°.",
+          "where": "Abstract"
+        },
+        {
+          "source": "kolber2014",
+          "text": "Avoiding performance of lateral deltoid raises and upright rows beyond an angle of 90° and efforts to strengthen the external rotators may serve as a useful means to mitigate characteristics associated with SIS.",
+          "where": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "In static MRI of 12 healthy volunteers (not lifting), the space under the shoulder roof narrowed as the arm went from 30 to 120 degrees, and the rotator cuff tendon came closest to the roof at 90 degrees with the arm turned in.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "graichen1999"
+      ],
+      "quotes": [
+        {
+          "source": "graichen1999",
+          "text": "The minimal acromio-humeral distance decreased significantly from 30 degrees of abduction (mean 7.0 mm +/- 1.6 mm) to 120 degrees (mean 3.9 mm; +/- 1.8 mm; p < 0.0001).",
+          "where": "Abstract"
+        },
+        {
+          "source": "graichen1999",
+          "text": "the supraspinatus is in closest contact to the anterior inferior border of the acromion in 90 degrees of abduction with 45 degrees internal rotation.",
+          "where": "Abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-lateral-raise",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+      "title": "Lateral Raise (ACE exercise library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "coratella2020",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+      "title": "An Electromyographic Analysis of Lateral Raise Variations and Frontal Raise in Competitive Bodybuilders (Coratella et al., Int J Environ Res Public Health 17(17):6015)",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "andersen2008",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18339796/",
+      "title": "Muscle activation during selected strength exercises in women with chronic neck muscle pain (Andersen et al., Phys Ther 88(6):703-11)",
+      "kind": "peer-reviewed",
+      "year": 2008,
+      "pmid": 18339796,
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "kolber2014",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24077379/",
+      "title": "Characteristics of shoulder impingement in the recreational weight-training population (Kolber et al., J Strength Cond Res 28(4):1081-9)",
+      "kind": "peer-reviewed",
+      "year": 2014,
+      "pmid": 24077379,
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "graichen1999",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/10370995/",
+      "title": "Subacromial space width changes during abduction and rotation, a 3-D MR imaging study (Graichen et al., Surg Radiol Anat 21(1):59-64)",
+      "kind": "peer-reviewed",
+      "year": 1999,
+      "pmid": 10370995,
+      "access": "abstract",
+      "checked": "2026-10-17"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "census",
+    "equipment": "A pair of dumbbells and the floor line; feet slightly wider than hip-width apart (c2).",
+    "start": "Standing, dumbbells alongside the thighs, palms facing the body, closed grip (c1); elbows extended or holding a slight bend (c1); torso braced, shoulders down and back, head in line with the spine (c3).",
+    "end": "Arms level with the shoulders and approximately parallel with the floor (c6); in the EMG protocol the upper arm is abducted up to 90° (c8); elbow almost fully extended (c8), elbows kept slightly extended on the way down (c7); elbows and upper arms slightly ahead of the forearms and dumbbells (c4); front edge of the dumbbell pointing slightly up (c5); wrists neutral, torso erect (c6).",
+    "checkpoints": [
+      {
+        "label": "Shoulders down",
+        "what": "Shoulders pulled down and back, held there for the whole set.",
+        "claim": "c3"
+      },
+      {
+        "label": "Elbows lead",
+        "what": "Elbows and upper arms rise together, slightly ahead of the hands.",
+        "claim": "c4"
+      },
+      {
+        "label": "Shoulder height",
+        "what": "Stop when your arms are level with your shoulders, about parallel with the floor.",
+        "claim": "c6"
+      }
+    ],
+    "mistake": {
+      "what": "Raising the arms above shoulder height (beyond 90°).",
+      "why": "Kolber 2014 linked lateral raises above 90° with signs of shoulder impingement in recreational weight-trainers (association, not cause) and advises not going beyond 90°. No source measures how common it is.",
+      "claim": "c13",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Arms level with shoulders at the top",
+        "claim": "c6"
+      },
+      {
+        "text": "Elbows rise slightly ahead of the hands",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 0.5,
+      "claim": [
+        "c9",
+        "c4",
+        "c7"
+      ],
+      "text": "Lab pacing for this exercise: 2 s up, 2 s down, 0.5 s held at the bottom and top (study protocol in trained bodybuilders, WEAK). ACE words: raise slowly, lower gently."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed, neutral grip, palms facing the body at the start (c1).",
+    "width": "Dumbbells alongside the thighs (c1).",
+    "thumb": "Around the handles (c1).",
+    "handContact": "Not sourced: no read source says where the handle sits in the palm.",
+    "wrist": "Neutral, no flexion or extension (c6); in line with the forearm (c8).",
+    "claims": [
+      "c1",
+      "c6",
+      "c8"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Stand with your feet slightly wider than hip-width apart, or in a split stance.",
+      "claim": "c2"
+    },
+    {
+      "step": "Hold the dumbbells with a closed grip, thumbs around the handles, palms facing your body.",
+      "claim": "c1"
+    },
+    {
+      "step": "Let the dumbbells sit alongside your thighs, elbows straight or slightly bent.",
+      "claim": "c1"
+    },
+    {
+      "step": "Brace your torso and pull your shoulders down and back.",
+      "claim": "c3"
+    },
+    {
+      "step": "Keep your head in line with your spine.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Breathe out and raise the dumbbells slowly up and out to your sides.",
+      "claim": "c4"
+    },
+    {
+      "point": "Elbows and upper arms rise together, slightly ahead of your forearms and the dumbbells.",
+      "claim": "c4"
+    },
+    {
+      "point": "Past about 60 to 70 degrees, turn the front edge of the dumbbells slightly up.",
+      "claim": "c5"
+    },
+    {
+      "point": "Stop when your arms are level with your shoulders, about parallel with the floor.",
+      "claim": "c6"
+    },
+    {
+      "point": "Torso upright, no arch in the low back; wrists straight.",
+      "claim": "c6"
+    },
+    {
+      "point": "Breathe in and lower gently, keeping your elbows slightly extended.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Raising the arms above shoulder height.",
+      "fix": "Stop when your arms are level with your shoulders.",
+      "claim": [
+        "c13",
+        "c6"
+      ]
+    },
+    {
+      "mistake": "Arms turned in at the top, thumbs pointing down.",
+      "fix": "Keep your thumbs forward, or the front edge of the dumbbells slightly up, at the top.",
+      "claim": [
+        "c11",
+        "c8",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Arching the low back as the dumbbells rise.",
+      "fix": "Brace your torso and keep it upright.",
+      "claim": [
+        "c6",
+        "c3"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "side_delts",
+        "claim": "c10"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Outside of the shoulders",
+        "means": "Expected: the side shoulder works most with the elbows nearly straight.",
+        "fix": "Nothing to fix.",
+        "claim": [
+          "c10",
+          "c8"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Neck and tops of the shoulders",
+        "means": "Expected: this raise works the upper traps hard. Turning the arms in at the top makes them work harder.",
+        "fix": "Keep your shoulders down, and keep your thumbs forward at the top.",
+        "claim": [
+          "c12",
+          "c11",
+          "c3",
+          "c8"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Shoulder, at the top of the raise",
+        "means": "Fault: raising above shoulder height, where the space at the top of the shoulder gets smaller.",
+        "fix": "Stop when your arms are level with your shoulders.",
+        "claim": [
+          "c13",
+          "c14",
+          "c6"
+        ],
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder: raises taken above shoulder height have been linked with signs of shoulder pinching in people who lift weights.",
+      "claim": "c13"
+    },
+    {
+      "risk": "Shoulder: the space under the top of the shoulder gets smaller as the arm rises, and the tendon there sits closest at shoulder height with the arm turned in.",
+      "claim": "c14"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "top height",
+      "kind": "posture",
+      "right": "Arms level with the shoulders, about parallel with the floor, elbows nearly straight.",
+      "wrong": "Arms raised above shoulder height.",
+      "claim": [
+        "c6",
+        "c8",
+        "c13"
+      ]
+    },
+    {
+      "key": "hand at the top",
+      "kind": "hand",
+      "right": "Thumbs forward, front edge of the dumbbell slightly up, wrist straight.",
+      "wrong": "Arm turned in, thumbs pointing down.",
+      "claim": [
+        "c5",
+        "c8",
+        "c6",
+        "c11"
+      ]
+    },
+    {
+      "key": "shoulders",
+      "kind": "posture",
+      "right": "Shoulders pulled down and back, held for the whole set.",
+      "wrong": null,
+      "claim": "c3"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "side_delts primary stands: the lateral raise targets the side (medial) deltoid, most with a straight elbow (c10). upper_traps secondary stands: the trapezius worked at about 97% of maximum in the lateral raise (c12) and more with the arm turned in (c11)."
+  },
+  "anchorSource": "ace-lateral-raise",
+  "notes": [
+    "Tempo: the only seconds are Coratella 2020's lab pacing (c9, WEAK; trained bodybuilders, seated). No novice-level source giving seconds was found; ACE gives words only (c4, c7).",
+    "Arm height: ACE (arms level with the shoulders, c6) and Coratella (humerus up to 90°, c8) agree; Kolber (c13) gives the 90° limit. Elbow: ACE says \"extended or holding a slight bend\" (c1) and \"slightly extended\" on the way down (c7); Coratella \"almost fully extended\" (c8). No source gives an elbow angle in degrees.",
+    "ACE turns the front edge of the dumbbell slightly up past 60-70° (outward rotation, c5); Coratella's neutral version is thumbs forward (c8). The plate draws thumbs forward with the front edge slightly up, which both allow; recorded as a drawing choice.",
+    "Coratella tested seated raises; ACE is standing. The plate draws standing (census).",
+    "Not sourced, so left out: where the handle sits in the palm, a rep range, an arm angle forward of the body, and a swinging/leaning-back fault.",
+    "Golden-B sources sporrong1995, sporrong1996, weiss1995, kolber2010, jakobsen2012, nhs-wrist-pain and nhs-shoulder-pain are not cited: none states a fact this card needs beyond the cited ones (Sporrong are static grip-gauge studies; Weiss a splint study; Kolber 2010 a general review; Jakobsen a fatigue study), and the NHS pages belong to the shared red-flag boxes."
+  ]
+}
