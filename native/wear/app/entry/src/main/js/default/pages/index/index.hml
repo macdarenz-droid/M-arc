@@ -1,11 +1,11 @@
 <div class="c" style="background-color: {{bg}};">
   <text class="l1" style="color: {{fg}};">{{l1}}</text>
   <text class="l2" style="color: {{fg}};">{{l2}}</text>
-  <input if="{{set}}" type="button" class="eb" value="{{eff}}" onclick="onEffort"></input>
+  <input if="{{set}}" type="button" class="b" value="{{eff}}" onclick="onEffort"></input>
   <div if="{{rs}}" class="row">
     <text class="rt" style="color: {{fg}};">{{rest}}</text>
-    <input if="{{add}}" type="button" class="sb" value="+30 s" onclick="onAdd"></input>
-    <input type="button" class="sb" value="Skip" onclick="onSkip"></input>
+    <input if="{{add}}" type="button" class="b" value="+30 s" onclick="onAdd"></input>
+    <input type="button" class="b" value="Skip" onclick="onSkip"></input>
   </div>
   <text class="st" style="color: {{fg}};">{{st}}</text>
   <text class="st" style="color: {{fg}};">{{p1}}</text>

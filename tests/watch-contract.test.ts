@@ -31,12 +31,12 @@ function memoryStorage(): Storage {
     clear: () => map.clear(), key: (i: number) => [...map.keys()][i] ?? null, get length() { return map.size; },
   } as Storage;
 }
-/** @system.storage on the watch. */
+/** @system.storage on the watch: values must be under 128 bytes (WATCH-C D1; the fake before D1 took any length). */
 function watchStore() {
   const map = new Map<string, string>();
   return {
     map,
-    set: (o: { key: string; value: string; success(): void }) => { map.set(o.key, o.value); o.success(); },
+    set: (o: { key: string; value: string; success(): void; fail(): void }) => { if (new TextEncoder().encode(o.value).length >= 128) return o.fail(); map.set(o.key, o.value); o.success(); },
     get: (o: { key: string; default: string; success(v: string): void }) => { o.success(map.get(o.key) ?? o.default); },
   };
 }

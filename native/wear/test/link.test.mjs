@@ -23,26 +23,47 @@ const snap = (o = {}) => JSON.stringify({
 });
 const res = (commandId, o = {}) => JSON.stringify({ t: 'mw', v: 1, k: 'res', commandId, status: 'applied', sessionRev: 4, replayed: false, ...o });
 
-/** @system.storage as the watch has it: get and set with success and fail callbacks. */
+/**
+ * @system.storage as the watch has it: get and set with success and fail callbacks. WATCH-C D1: it
+ * refuses a value of 128 bytes or more ("The length must be less than 128 bytes") and keys over 32
+ * characters or outside letters, digits and underscore; the fake before D1 took any length.
+ */
+const KEY_OK = /^[A-Za-z0-9_]{1,32}$/;
 function fakeStore() {
   const s = {
     map: new Map(), calls: [], queue: [], defer: false, failSet: () => false, failGet: () => false, cut: 0,
     set(o) {
       s.calls.push(`set ${o.key}`);
       s.run(() => {
-        if (s.failSet(o.key)) return o.fail('write failed', 300);
+        if (s.failSet(o.key) || !KEY_OK.test(o.key) || Buffer.byteLength(String(o.value)) >= 128) return o.fail('write failed', 300);
         s.map.set(o.key, s.cut ? o.value.slice(0, s.cut) : o.value);
         o.success();
       });
     },
     get(o) {
       s.calls.push(`get ${o.key}`);
-      s.run(() => (s.failGet(o.key) ? o.fail('read failed', 300) : o.success(s.map.has(o.key) ? s.map.get(o.key) : o.default)));
+      s.run(() => (s.failGet(o.key) || !KEY_OK.test(o.key) ? o.fail('read failed', 300) : o.success(s.map.has(o.key) ? s.map.get(o.key) : o.default)));
     },
     run(fn) { if (s.defer) s.queue.push(fn); else fn(); },
     step() { s.queue.shift()(); },
   };
   return s;
+}
+
+/** The wire text slot i holds, put back together from its header (count,length,sum) and chunks. */
+function slotText(store, i) {
+  const h = store.map.get(`mc_q${i}`);
+  if (h === undefined) return undefined;
+  let t = '';
+  for (let j = 0; j < Number(h.split(',')[0]); j++) t += store.map.get(`mc_q${i}_${j}`);
+  return t;
+}
+/** Writes text into slot i the way the watch does. */
+async function putSlot(store, i, text) {
+  const { sum } = await load();
+  const n = Math.ceil(text.length / 120);
+  for (let j = 0; j < n; j++) store.map.set(`mc_q${i}_${j}`, text.slice(j * 120, j * 120 + 120));
+  store.map.set(`mc_q${i}`, `${n},${text.length},${sum(text)}`);
 }
 
 /** A link with a fake clock, storage, radio and screen. code: the send result, or null for none yet. */
@@ -121,7 +142,7 @@ test('W1 ids are valid for the phone and unique across boots; actionAt is fixed 
     const r = await rig({ boot });
     r.link.rx(snap({ rest: { id: 'rest_1', left: 60000, tot: 90000, p: false } }));
     for (let i = 0; i < 3; i++) r.link.rest('rest_add_30');
-    for (const c of r.store.map.keys()) if (c !== 'mc_q') ids.add(JSON.parse(r.store.map.get(c)).commandId);
+    for (const i of r.store.map.get('mc_q')) ids.add(JSON.parse(slotText(r.store, i)).commandId);
   }
   assert.deepEqual([...ids].sort(), ['abcd1234-1', 'abcd1234-2', 'abcd1234-3', 'abcd1235-1', 'abcd1235-2', 'abcd1235-3']);
   for (const id of ids) assert.match(id, COMMAND_ID);
@@ -151,11 +172,12 @@ test('W2 Pending shows only after the slot and the index are written', async () 
     steps.push([store.calls[store.calls.length - 1], r.link.view().st, r.cmds().length]);
     store.step();
   }
-  assert.deepEqual(steps, [['set mc_q0', '', 0], ['get mc_q0', '', 0], ['set mc_q', '', 0]]);
+  // chunks, header, header read, chunk reads, index: nothing shows or goes before the last
+  assert.deepEqual(steps, ['set mc_q0_0', 'set mc_q0_1', 'set mc_q0', 'get mc_q0', 'get mc_q0_0', 'get mc_q0_1', 'set mc_q'].map((c) => [c, '', 0]));
   assert.equal(r.link.view().st, `Pending ${new Date(T0).toTimeString().slice(0, 8)}`);
   assert.equal(r.cmds().length, 1);
   assert.equal(store.map.get('mc_q'), '0');
-  assert.equal(store.map.get('mc_q0'), r.cmds()[0]);
+  assert.equal(slotText(store, 0), r.cmds()[0]);
 });
 
 test('W2 a failed write shows Not saved and sends nothing', async () => {
@@ -163,7 +185,9 @@ test('W2 a failed write shows Not saved and sends nothing', async () => {
     ['slot write', (s) => { s.failSet = (k) => k === 'mc_q0'; }],
     ['index write', (s) => { s.failSet = (k) => k === 'mc_q'; }],
     ['read-back', (s) => { s.failGet = (k) => k === 'mc_q0'; }],
-    ['value cut short', (s) => { s.cut = 128; }],
+    ['value cut short', (s) => { s.cut = 100; }],
+    ['a chunk write', (s) => { s.failSet = (k) => k === 'mc_q0_1'; }],
+    ['a chunk read-back', (s) => { s.failGet = (k) => k === 'mc_q0_0'; }],
   ]) {
     const store = fakeStore();
     const r = await rig({ store });
@@ -198,7 +222,7 @@ test('W2 a full outbox shows Queue full and drops nothing; a restart restores id
   r.link.rest('rest_skip');
   assert.equal(r.link.view().st, 'Queue full');
   assert.deepEqual(new Map(store.map), before, 'nothing written, nothing dropped');
-  const texts = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => store.map.get(`mc_q${i}`));
+  const texts = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => slotText(store, i));
   // Restart: the slots the index lists come back with the same bytes, oldest first.
   const again = await rig({ store, boot: 'qqqqqqqq', code: null });
   assert.equal(again.link.view().st, '8 pending');
@@ -219,13 +243,13 @@ test('W2 a full outbox shows Queue full and drops nothing; a restart restores id
   assert.equal(s2.map.get('mc_q'), '120');
   const y = await rig({ store: s2, code: null });
   assert.equal(y.link.view().st, '3 pending');
-  assert.equal(y.cmds()[0], s2.map.get('mc_q1'));
+  assert.equal(y.cmds()[0], slotText(s2, 1));
   // Slots the index does not list, or that no longer hold a command, are not loaded.
   const s3 = fakeStore();
   s3.map.set('mc_q', '3x3a5');
-  s3.map.set('mc_q3', texts[2]);
-  s3.map.set('mc_q5', '{"t":"mw"');
-  s3.map.set('mc_q6', texts[3]);
+  await putSlot(s3, 3, texts[2]);
+  await putSlot(s3, 5, '{"t":"mw"');
+  await putSlot(s3, 6, texts[3]);
   const z = await rig({ store: s3, code: null });
   assert.equal(z.link.view().st, '1 pending');
   assert.equal(s3.map.get('mc_q'), '3');
@@ -321,7 +345,7 @@ test('W3 hello: at start, on show, after 20 s of silence and after failed sends 
   assert.equal(r.hellos().length, 1);
   const h = JSON.parse(r.hellos()[0]);
   assert.deepEqual(Object.keys(h), ['t', 'v', 'k', 'app', 'boot', 'wt', 'q']);
-  assert.deepEqual(h, { t: 'mw', v: 1, k: 'hello', app: '1.1.0', boot: 'abcd1234', wt: T0, q: 0 });
+  assert.deepEqual(h, { t: 'mw', v: 1, k: 'hello', app: '1.1.1', boot: 'abcd1234', wt: T0, q: 0 });
   r.link.show();
   assert.equal(r.hellos().length, 2);
   r.adv(19999); r.link.tick();
@@ -522,7 +546,7 @@ test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sou
   assert.equal(PHONE_PKG, JSON.parse(readFileSync(path.join(ROOT, 'capacitor.config.json'), 'utf8')).appId);
   const cfg = JSON.parse(readFileSync(path.join(MAIN, 'config.json'), 'utf8'));
   const hello = JSON.parse(readFileSync(path.join(ROOT, 'native/wear/hello/entry/src/main/config.json'), 'utf8'));
-  assert.deepEqual(cfg.app.version, { code: 1001000, name: '1.1.0' });
+  assert.deepEqual(cfg.app.version, { code: 1001001, name: '1.1.1' });
   assert.equal(cfg.app.bundleName, hello.app.bundleName);
   assert.equal(cfg.module.reqPermissions, undefined, 'no permissions');
   assert.deepEqual(cfg.module.abilities, hello.module.abilities);
@@ -551,7 +575,7 @@ test('W2 a listed slot that cannot be read at start stays listed; nothing rewrit
   const r = await rig({ store, code: null });
   r.link.rx(snap({ rest: rest1 }));
   for (let i = 0; i < 3; i++) r.link.rest('rest_add_30');
-  const texts = [0, 1, 2].map((i) => store.map.get(`mc_q${i}`));
+  const texts = [0, 1, 2].map((i) => slotText(store, i));
   let once = true;
   store.failGet = (k) => { if (k === 'mc_q1' && once) { once = false; return true; } return false; };
   const b = await rig({ store, boot: 'bbbbbbbb', code: null });
@@ -567,7 +591,7 @@ test('W2 a listed slot that cannot be read at start stays listed; nothing rewrit
   const c = await rig({ store, boot: 'cccccccc', code: null });
   assert.equal(c.link.view().st, '3 pending');
   assert.equal(c.cmds()[0], texts[0]);
-  assert.equal(store.map.get('mc_q1'), texts[1]);
+  assert.equal(slotText(store, 1), texts[1]);
 });
 
 test('W3 Saved shows only once the outbox is empty; until then it counts what is still pending', async () => {
@@ -594,7 +618,7 @@ test('W3 only a Complete holds the lock while it is written; a Skip tap meanwhil
   assert.equal(r.link.view().can, false);
   r.link.complete();
   while (store.queue.length) store.step();
-  const kinds = [...store.map.entries()].filter(([k]) => k !== 'mc_q').map(([, v]) => JSON.parse(v).kind).sort();
+  const kinds = [...store.map.get('mc_q')].map((i) => JSON.parse(slotText(store, i)).kind).sort();
   assert.deepEqual(kinds, ['complete_set', 'rest_skip']);
   assert.equal(r.link.view().can, false, 'still pending');
   // A Skip written first: its end does not free the Complete queued behind it.
@@ -608,7 +632,7 @@ test('W3 only a Complete holds the lock while it is written; a Skip tap meanwhil
   w.link.complete();
   while (s2.queue.length) s2.step();
   assert.equal(s2.map.get('mc_q'), '01');
-  assert.equal([...s2.map.keys()].filter((k) => k !== 'mc_q').length, 2);
+  assert.deepEqual([...s2.map.get('mc_q')].map((i) => JSON.parse(slotText(s2, i)).kind), ['rest_skip', 'complete_set']);
 });
 
 test('W4 every watch source written for Gate C transforms to ES5 with esbuild, and the page keeps only the onInit() { style', async () => {
@@ -634,13 +658,13 @@ test('W2 a result during start-up writes no index once a later slot read fails',
   r.link.rx(snap({ si: 2, set: set1({ id: 'set_a2' }) }));
   r.link.complete();
   assert.equal(store.map.get('mc_q'), '01');
-  const texts = ['mc_q0', 'mc_q1'].map((k) => store.map.get(k));
+  const texts = [0, 1].map((i) => slotText(store, i));
   let once = true;
   store.failGet = (k) => { if (k === 'mc_q1' && once) { once = false; return true; } return false; };
   store.defer = true;
   const b = await rig({ store, boot: 'bbbbbbbb', code: null });
   store.step(); // the index
-  store.step(); // slot 0
+  store.step(); store.step(); store.step(); // slot 0: its header and two chunks
   b.link.rx(snap({ si: 3, set: set1({ id: 'set_a3' }) }));
   assert.equal(b.cmds()[0], texts[0]);
   b.link.rx(res(JSON.parse(texts[0]).commandId));
@@ -663,7 +687,7 @@ test('W3 a second Skip for a rest is not queued while one is being written or pe
   store.defer = false;
   r.link.rest('rest_skip');
   r.link.rest('rest_add_30');
-  const kinds = () => store.map.get('mc_q').split('').map((i) => JSON.parse(store.map.get(`mc_q${i}`)).kind);
+  const kinds = () => store.map.get('mc_q').split('').map((i) => JSON.parse(slotText(store, i)).kind);
   assert.deepEqual(kinds(), ['rest_skip', 'rest_add_30']);
   // Once it is answered, the next rest can be skipped.
   r.link.rx(res('abcd1234-1'));
@@ -707,4 +731,44 @@ test('W3 a later pair replaces the offset when it differs by more than its own r
   r.link.rx(snap({ wt: h, pt: h + 2000 - 60000 + 3000 })); // 3 s off, but within its 4 s round trip: ignored
   r.link.complete();
   assert.equal(JSON.parse(r.cmds()[0]).actionAt, r.now() - 60000);
+});
+
+// WATCH-C device run D1 (2026-10-17): @system.storage refuses values of 128 bytes or more.
+test('W2 every value stored is under 128 bytes: a 400 B command goes in chunks and comes back byte for byte', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, boot: 'zzzzzzzz', code: null });
+  const id64 = 'x'.repeat(64);
+  r.link.rx(snap({ sid: id64, set: set1({ id: id64, rev: Number.MAX_SAFE_INTEGER, w: 999.75, r: 100, e: 'ideal' }) }));
+  r.link.complete();
+  assert.match(r.link.view().st, /^Pending /);
+  const text = r.cmds()[0];
+  assert.ok(Buffer.byteLength(text) > 300 && Buffer.byteLength(text) <= 400);
+  for (const [k, v] of store.map) {
+    assert.ok(Buffer.byteLength(v) < 128, `${k}: ${Buffer.byteLength(v)} B`);
+    assert.match(k, KEY_OK);
+  }
+  const n = Math.ceil(text.length / 120);
+  assert.deepEqual([...store.map.keys()].sort(), ['mc_q', 'mc_q0', ...Array.from({ length: n }, (_, j) => `mc_q0_${j}`)]);
+  assert.equal(store.map.get('mc_q0').split(',').slice(0, 2).join(','), `${n},${text.length}`);
+  const again = await rig({ store, boot: 'yyyyyyyy', code: null });
+  assert.equal(again.link.view().st, '1 pending');
+  assert.equal(again.cmds()[0], text);
+});
+
+test('W2 a slot whose chunks no longer match its header is not loaded, and leaves the index', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  r.link.rest('rest_add_30');
+  r.link.rest('rest_skip');
+  const keep = slotText(store, 1);
+  for (const bad of [(s) => s.map.set('mc_q0_0', s.map.get('mc_q0_0').replace('abcd1234-1', 'abcd1234-9')), (s) => s.map.set('mc_q0', '1,5,0'), (s) => s.map.delete('mc_q0_1')]) {
+    const s2 = fakeStore();
+    for (const [k, v] of store.map) s2.map.set(k, v);
+    bad(s2);
+    const b = await rig({ store: s2, boot: 'bbbbbbbb', code: null });
+    assert.equal(b.link.view().st, '1 pending');
+    assert.equal(b.cmds()[0], keep);
+    assert.equal(s2.map.get('mc_q'), '1');
+  }
 });
