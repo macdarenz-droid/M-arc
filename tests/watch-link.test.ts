@@ -78,14 +78,14 @@ describe('WATCH-C C1 buildSnapshot', () => {
     expect(commitSet(0, 0)).toBe(true);
     expect(ids(snap())).toEqual(['Barbell Bench Press', 2, 2, bench!.sets[1]!.id]);
     expect(snap().srev).toBe(a().rev);
-    // Reorder: display order wins.
-    moveEntry(1, 0);
-    // WATCH-C D1: the entry of the last set logged now comes before display order (the reorder case without a commit is in the D1 block).
+    // WATCH-C D1: the exercise of the set logged last comes before display order, also after a reorder
+    // (display order without a commit is in the D1 block).
+    moveEntry(1, 0); // Cable Fly, Barbell Bench Press, Plank
     expect(ids(snap())).toEqual(['Barbell Bench Press', 2, 2, bench!.sets[1]!.id]);
-    expect(fly!.sets[0]!.id).toBeTruthy();
-    skipEntry(0);
-    expect(ids(snap())).toEqual(['Barbell Bench Press', 2, 2, bench!.sets[1]!.id]);
-    skipEntry(0, false);
+    // Skipped, it gives way to the first in display order.
+    skipEntry(1);
+    expect(ids(snap())).toEqual(['Cable Fly', 1, 1, fly!.sets[0]!.id]);
+    skipEntry(1, false);
     markDone(0);
     expect(snap().ex).toBe('Barbell Bench Press');
     // A skipped set is passed over; an entry with nothing left is too.

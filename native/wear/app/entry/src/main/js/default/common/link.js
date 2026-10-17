@@ -98,7 +98,7 @@ function Link(io, boot) {
 		var i = 0;
 		(function one(ok) {
 			if (!ok) return cb(false);
-			if (i * 120 < text.length) return kv('set', KEY + slot + '_' + i, text.substr(120 * i++, 120), one);
+			if (i * 120 < text.length) return kv('set', KEY + slot + '_' + i, text.substring(120 * i, 120 * ++i), one);
 			kv('set', KEY + slot, i + ',' + text.length + ',' + sum(text), cb);
 		})(true);
 	}

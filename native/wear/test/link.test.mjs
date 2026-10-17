@@ -643,6 +643,8 @@ test('W4 every watch source written for Gate C transforms to ES5 with esbuild, a
     // The page-method style hello/ ran on the GT 6, and nothing else: two spaces in, on<Name>() {.
     if (rel !== 'common/link.js') src = src.replace(/^ {2}(on[A-Z]\w*)\(\) \{/gm, '  $1: function () {');
     assert.doesNotMatch(src, /\.\.\./, `${rel}: spread or rest`);
+    // Annex B string methods are not core ES5; substring and charAt ran on the GT 6 (hello/ a2.js).
+    assert.doesNotMatch(src, /\.(substr|anchor|big|blink|bold|fixed|fontcolor|fontsize|italics|link|small|strike|sub|sup)\(|\b(un)?escape\(/, `${rel}: an Annex B method`);
     // esbuild refuses method shorthand, destructuring, default parameters, let, const and class at ES5.
     const out = transformSync(src, { target: 'es5', loader: 'js' }).code;
     assert.doesNotMatch(out, /\b__\w+/, `${rel}: needs an esbuild helper`);
@@ -738,11 +740,15 @@ test('W2 every value stored is under 128 bytes: a 400 B command goes in chunks a
   const store = fakeStore();
   const r = await rig({ store, boot: 'zzzzzzzz', code: null });
   const id64 = 'x'.repeat(64);
-  r.link.rx(snap({ sid: id64, set: set1({ id: id64, rev: Number.MAX_SAFE_INTEGER, w: 999.75, r: 100, e: 'ideal' }) }));
+  // seq 100 and a long load make the command over 360 characters: four chunks, as many as a 400 B command needs
+  r.link.rx(snap({ rest: rest1 }));
+  for (let i = 1; i < 100; i++) { r.link.rest('rest_add_30'); r.link.rx(res(`zzzzzzzz-${i}`)); }
+  r.link.rx(snap({ sid: id64, set: set1({ id: id64, rev: Number.MAX_SAFE_INTEGER, w: 123.45678901234567, r: 100, e: 'ideal' }) }));
+  r.sent.length = 0;
   r.link.complete();
   assert.match(r.link.view().st, /^Pending /);
   const text = r.cmds()[0];
-  assert.ok(Buffer.byteLength(text) > 300 && Buffer.byteLength(text) <= 400);
+  assert.ok(text.length > 360 && Buffer.byteLength(text) <= 400, `${text.length}`);
   for (const [k, v] of store.map) {
     assert.ok(Buffer.byteLength(v) < 128, `${k}: ${Buffer.byteLength(v)} B`);
     assert.match(k, KEY_OK);
@@ -771,4 +777,26 @@ test('W2 a slot whose chunks no longer match its header is not loaded, and leave
     assert.equal(b.cmds()[0], keep);
     assert.equal(s2.map.get('mc_q'), '1');
   }
+});
+
+test('W2 a chunk that cannot be read at start keeps its slot listed; new commands show Not saved; the next start loads it', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  r.link.rest('rest_add_30');
+  r.link.rest('rest_skip');
+  const texts = [0, 1].map((i) => slotText(store, i));
+  let once = true;
+  store.failGet = (k) => { if (k === 'mc_q1_0' && once) { once = false; return true; } return false; };
+  const b = await rig({ store, boot: 'bbbbbbbb', code: null });
+  assert.equal(store.map.get('mc_q'), '01', 'still listed');
+  assert.equal(b.link.view().st, '1 pending');
+  b.link.rx(snap({ rest: { ...rest1, id: 'rest_2' } }));
+  b.link.rest('rest_add_30');
+  assert.equal(b.link.view().st, 'Not saved');
+  assert.equal(store.map.get('mc_q'), '01');
+  assert.equal(slotText(store, 1), texts[1]);
+  const c = await rig({ store, boot: 'cccccccc', code: null });
+  assert.equal(c.link.view().st, '2 pending');
+  assert.equal(c.cmds()[0], texts[0]);
 });
