@@ -483,7 +483,9 @@
       "title": "Pull-up (Catalyst Athletics exercise library)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "nasm-chinup",
@@ -491,7 +493,9 @@
       "title": "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog, H. Cherry)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "baechle-earle",
@@ -499,7 +503,9 @@
       "title": "Grip selection and location, excerpt from Weight Training: Steps to Success (Baechle and Earle, Human Kinetics)",
       "kind": "textbook",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "youdas2010",
@@ -507,7 +513,9 @@
       "title": "Surface electromyographic activation patterns and elbow joint motion during a pull-up, chin-up, or perfect-pullup rotational exercise (Youdas et al., J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2010,
-      "pmid": "21068680"
+      "pmid": "21068680",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "acsm2009",
@@ -515,7 +523,9 @@
       "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (Med Sci Sports Exerc)",
       "kind": "guideline",
       "year": 2009,
-      "pmid": "19204579"
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "prinold2016",
@@ -523,7 +533,9 @@
       "title": "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport)",
       "kind": "peer-reviewed",
       "year": 2016,
-      "pmid": "26383875"
+      "pmid": "26383875",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "kolber2010",
@@ -531,7 +543,9 @@
       "title": "Shoulder injuries attributed to resistance training: a brief review (Kolber et al., J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2010,
-      "pmid": "20508476"
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "odriscoll1992",
@@ -539,7 +553,9 @@
       "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
       "kind": "peer-reviewed",
       "year": 1992,
-      "pmid": "1538102"
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-10-17"
     }
   ],
   "plate": {
