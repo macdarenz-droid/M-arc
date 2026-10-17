@@ -13,6 +13,12 @@ import { recorder, rowProblems, stateOf } from '../../tools/plates/library/fidel
 import { TWINS, mapProblems, pinnedTexts, readPins, twinProblems } from '../../tools/plates/library/fidelity/twins.mjs';
 // @ts-expect-error plain .mjs build tool, no types
 import { HT_PLATES, HT_THEMES, ht10AllTuples } from '../../tools/plates/fidelity/harness.mjs';
+// @ts-expect-error plain .mjs build tool, no types
+import { SPEC_IDS_8, libraryA5, mergeDeep } from '../../tools/plates/library/fidelity/twins/ht4.mjs';
+// @ts-expect-error plain .mjs build tool, no types
+import * as goldenB from '../../tools/plates/fidelity/goldenB.mjs';
+// @ts-expect-error plain .mjs build tool, no types
+import { COPY_EDITS, POOL, SCRATCH, paths, transformSources } from '../../tools/plates/library/fidelity/fixture.mjs';
 
 type Tuple = { id: string; theme: string; state: string };
 const ROOT = join(__dirname, '..', '..');
@@ -213,5 +219,72 @@ describe('LIB-4b B6: a missing page is red, never a skip', () => {
   it('statesOf has no state twice for one id', async () => {
     const s: Tuple[] = statesOf(await sourceFacts('lib_dumbbell_lateral_raise'));
     expect(new Set(s.map(x => `${x.theme}|${x.state}`)).size).toBe(s.length);
+  });
+});
+
+describe('LIB-4b D-LIB4b-POSES: the derived HT4-A5 rule a library id gets (libraryA5)', () => {
+  // A library plate as LIB-6's crop shell draws it: base, the plate's -n/-m, and one posture zoom whose Wrong side
+  // carries the source-declared fault as its mistake pose (crop.mjs cropSpec). Fragments are LIB-4b B5's scratch run.
+  const S = { root: { at: [0, 1, 0], tilt: 0 }, neck: 0 }, E = { root: { at: [0, 0.9, 0], tilt: 4 }, neck: 2 }, M = { neck: 20 }, W = { neck: -15 };
+  const ref = { id: 'x_lib', poses: { start: S, end: E }, mistake: { pose: M, parts: [] }, tempo: [{ phase: 'Pull', s: 1 }], alt: 'a', checks: [], callouts: [] };
+  const howto = { zooms: [{ key: 'k', kind: 'posture', right: 'end', wrong: { base: 'end', pose: W } }, { key: 'hand', kind: 'hand' }] };
+  const crop = (role: string, extra = {}) => ({ opts: { id: `k-${role}`, mistake: role === 'wrong' }, spec: { ...ref, poses: { start: E, end: E }, callouts: [], checks: [], mistake: undefined, ...extra } });
+  const calls = () => [
+    { opts: { id: 'base' }, spec: ref }, { opts: { id: 'x-lib-n' }, spec: ref }, { opts: { id: 'x-lib-m', mistake: true }, spec: ref },
+    crop('right'), crop('wrong', { mistake: { pose: mergeDeep(E, W), parts: ['trunk'] } }),
+  ].map(c => JSON.parse(JSON.stringify(c)));
+  const gb = { ...goldenB, fragmentProblems: () => [] };
+  const run = (cs: unknown[], o = {}) => libraryA5({ calls: cs, html: '' }, { specId: 'x_lib', ref, howto, prefix: 'x-lib', family: 'zoom', entry: {}, ...o }, gb);
+  it('a build drawn as the source declares passes all three rows', () => {
+    expect(run(calls())).toEqual({ protected: [], fragments: [], poses: [] });
+  });
+  it('a Right crop given a {base, pose} override fails poses (the B5 mutation, synthetic)', () => {
+    const cs = calls(); cs[3].spec.poses = { start: mergeDeep(E, { neck: 4 }), end: mergeDeep(E, { neck: 4 }) };
+    expect(run(cs).poses.join('\n')).toMatch(/x_lib\|k-right: poses\.start matches neither a reference pose/);
+  });
+  it('a Wrong side may draw only its own declared fault: another fault, or a moved mistake joint, fails', () => {
+    const cs = calls(); cs[4].spec.mistake.pose = mergeDeep(E, { neck: -16 });
+    expect(run(cs).poses.join('\n')).toMatch(/x_lib\|k-wrong: mistake\.pose matches neither/);
+    const solid = calls(); solid[4].spec.poses = { start: mergeDeep(E, W), end: mergeDeep(E, W) };
+    expect(run(solid).poses).toEqual([]);                                   // a solid Wrong drawing its fault
+    solid[3].spec.poses = { start: mergeDeep(E, W), end: mergeDeep(E, W) };
+    expect(run(solid).poses.join('\n')).toMatch(/x_lib\|k-right: poses\.start/);   // never on the Right side
+  });
+  it('an unattributed call, a missing zoom side and a spec id of the 8 each fail', () => {
+    expect(run([...calls(), { opts: { id: 'zz-right' }, spec: ref }]).poses.join('\n')).toMatch(/x_lib\|zz-right: a call that cannot be attributed/);
+    expect(run(calls().filter(c => c.opts.id !== 'k-wrong')).poses.join('\n')).toMatch(/x_lib\|k\|wrong: no renderPlate call captured/);
+    expect(run(calls(), { family: 'zbox' }).poses.join('\n')).toMatch(/cannot be attributed/);   // the zbox shell names its sides -r/-w
+    for (const id of SPEC_IDS_8) expect(libraryA5({ calls: [], html: '' }, { specId: id, ref: { ...ref, id }, howto, prefix: 'p', family: 'zoom', entry: {} }, gb).poses[0]).toBe(`library spec.id ${id} is one of the 8's (D-LIB4b-POSES (5))`);
+  });
+  it('protected fields, options and the untouched base call hold as in HT-4', () => {
+    const cs = calls(); cs[3].spec.tempo = [{ phase: 'Pull', s: 2 }];
+    expect(run(cs).protected.join('\n')).toMatch(/tempo differs from golden-A/);
+    expect(run(calls().map(c => ({ ...c, opts: { ...c.opts, scale: 2 } }))).protected.join('\n')).toMatch(/outside \{id, mistake, selected\}/);
+    expect(run(calls().slice(3)).protected).toContain('no untouched base-plate call found for x_lib');
+    expect(run([]).protected).toContain('captured 0 renderPlate calls for x_lib');
+  });
+});
+
+describe('LIB-4b B5: the scratch fixture sources (D-LIB4-FIXTURE, lib4-cards 11.1 items 3-5 and 14)', () => {
+  it('3 ids from the pool, 3 separate pair keys; each clone swaps ids and research card, and its spec id is none of the 8\'s', () => {
+    expect(SCRATCH).toHaveLength(3);
+    expect(new Set(SCRATCH.map((s: { key: string }) => s.key)).size).toBe(3);
+    for (const s of SCRATCH) {
+      expect(POOL).toContain(s.from);
+      const t = transformSources(s, ROOT), P = paths(s);
+      expect(t).toEqual(transformSources(s, ROOT));                              // deterministic
+      expect(t.spec).toContain(`id: '${P.card}', name: '`);
+      expect(SPEC_IDS_8).not.toContain(P.card);
+      expect(t.howto).toContain(`id: '${s.id}'`);
+      expect(t.howto).toContain(`research: { card: '${P.research}', rev: 1 }`);
+      expect(t.howto).not.toMatch(/from '\.\/[a-z_]+\.mjs'/);                     // every relative import re-pointed
+      for (const [a, b] of COPY_EDITS[s.from]) { expect(t.spec).toContain(b.slice(5)); expect(t.spec).not.toContain(a.slice(5)); }
+    }
+  });
+  it('a source outside the pool, or a copy edit whose text is gone, throws', () => {
+    expect(() => transformSources({ id: 'lib_x', from: 'pull_up', key: 'k' }, ROOT)).toThrow(/not in the B5 pool/);
+    const saved = COPY_EDITS.lat_pulldown;
+    COPY_EDITS.lat_pulldown = [['cue: \'no such text\'', 'x']];
+    try { expect(() => transformSources(SCRATCH[0], ROOT)).toThrow(/expected one copy edit/); } finally { COPY_EDITS.lat_pulldown = saved; }
   });
 });
