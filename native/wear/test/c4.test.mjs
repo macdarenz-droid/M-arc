@@ -757,11 +757,18 @@ test('R17 every if in index.hml is the boolean true or false in every state: onl
   assert.ok([...seen].some((c) => /hv|hd/.test(c)), 'the heart was drawn');
 });
 
-test('R18 a paused phone rest at 10 s or less wakes the screen once, then dims after 15 s like any rest', async () => {
+test('R18 a paused phone rest never wakes the screen (last red team: the paused flag reaches ring); it dims after 15 s like any rest', async () => {
   const r = await rig({ code: null });
   r.link.rx(snap({ rest: { ...rest1, left: 8000, p: true } }));
   r.ticks(16);
   assert.deepEqual(only(r.v(), ['sc', 'dm']), { sc: 2, dm: 1 }, 'paused at 8 s: dims');
+  const q = await rig({ code: null });
+  q.link.rx(snap({ rest: { ...rest1, left: 27000 } }));
+  q.ticks(15);
+  assert.equal(q.v().dm, 1, 'idle at 12 s left');
+  q.link.rx(snap({ rest: { ...rest1, left: 8000, p: true } }));
+  q.ticks(2);
+  assert.equal(q.v().dm, 1, 'the phone pauses it at 8 s: still idle');
   const s = await rig({ code: null });
   s.link.rx(snap({ rest: { ...rest1, left: 30000 } }));
   s.ticks(15);
@@ -806,7 +813,7 @@ test('R21 a heart rate outside 25 to 250 bpm is ignored: the header, the pulse a
   r.link.rx(snap());
   r.link.beat(128);
   const before = only(r.v(), ['hm', 'hd', 'hv']);
-  for (const x of [1, 24, 251, 300, 24001, 1e9, Infinity]) {
+  for (const x of [1, 24, 24.4, 250.6, 251, 300, 24001, 1e9, Infinity]) {
     r.link.beat(x);
     assert.deepEqual(only(r.v(), ['hm', 'hd', 'hv']), before, String(x));
   }
@@ -828,4 +835,17 @@ test('R22 onShow (a wrist raise) redraws at once, so the idle screen does not st
   r.link.show();
   assert.equal(r.v().dm, 0);
   assert.ok(r.paints > p, 'painted');
+});
+
+// C4 last red team (2026-10-18): a rest that goes back above 10 s wakes again at its next 10 s.
+test('R23 the 10 s wake fires once per crossing: the phone adds 15 s after it, and the next 10 s wakes again', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ rest: { ...rest1, left: 30000 } }));
+  r.ticks(20);
+  assert.deepEqual(only(r.v(), ['rc', 'dm']), { rc: '0:10', dm: 0 }, 'the first 10 s woke it');
+  r.link.rx(snap({ rest: { ...rest1, left: 25000 } }));
+  r.ticks(15);
+  assert.equal(r.v().rc, '0:10');
+  r.ticks(4);
+  assert.deepEqual(only(r.v(), ['rc', 'dm']), { rc: '0:06', dm: 0 }, 'woken again at 10 s, not idle');
 });

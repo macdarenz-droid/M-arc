@@ -290,7 +290,7 @@ function Link(io, boot) {
 		else x = af === 'w' ? Math.round((v + d) * 100) / 100 : W + ((d > 0 ? Math.floor(x) + 1 : Math.ceil(x) + 3) % 4) / 4, ad.w = x > M ? M : x > 0 ? x : ad.w;
 	}
 	function rst() {
-		var r = lr.on ? lr : snap.sid && snap.rest, L = r && (r.p ? r.left : r.left - (tk - (r === lr ? r.id : snapTk)) * 1000), x = r && { id: r.id, left: Math.max(0, L + pa(r, L)) };
+		var r = lr.on ? lr : snap.sid && snap.rest, L = r && (r.p ? r.left : r.left - (tk - (r === lr ? r.id : snapTk)) * 1000), x = r && { id: r.id, left: Math.max(0, L + pa(r, L)), p: r.p };
 		return x && x.id !== ko && x;
 	}
 	// offline, its queued steps, each at its tap
@@ -298,10 +298,10 @@ function Link(io, boot) {
 		for (var n = 0, i = 0, e; r !== lr && (bad || gone()) && i < q.length; i++) if ((e = q[i]).set === e.k + r.id) n += step(e.k, L + n + (r.p ? 0 : io.now() + off - e.t));
 		return n;
 	}
-	// wake: a rest at 10 s (once), Rest done
+	// wake: a running rest crossing 10 s, Rest done
 	function ring() {
 		var r = rst() || {};
-		if (r.left > 0) rn = r.id, r.left > 1e4 || r.p || wk === r.id || (wk = r.id, it = tk);
+		if (r.left > 0) rn = r.id, r.left > 1e4 ? wk = 0 : r.p || wk === r.id || (wk = r.id, it = tk);
 		else if (r.id === rn && bz !== rn) bz = rn, it = tk, (io.buzz || no)();
 	}
 	function up() { return snap.sid && plan.sid === snap.sid; }
@@ -493,7 +493,7 @@ function Link(io, boot) {
 			io.paint();
 		},
 		beat: function (x) {
-			if (x > 24 && x < 251) bp = Math.round(x), ht = tk, snap.sid && (hp = Math.max(hp, bp), hs += bp, hn++);
+			if ((x = Math.round(x)) > 24 && x < 251) bp = x, ht = tk, snap.sid && (hp = Math.max(hp, bp), hs += bp, hn++);
 			else if (!(x > 0)) ht = -99;
 			hz = x === -602;
 		}

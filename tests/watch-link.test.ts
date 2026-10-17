@@ -30,7 +30,7 @@ import { addSet, commitSet, discardSession, finishSession, logWarmups, markDone,
 import { mergeAskAnswer, profileFor, saveProfile, setExerciseUnit } from '@/slices/workout/units';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
 import { createLab, watchLab, type WearEnginePlugin } from '@/native/wearEngine';
-import { MAX_PLAN_BYTES, MAX_SNAP_BYTES, SNAP_GAP_MS, buildPlan, buildSnapshot, createLink, watchLink, type LinkDeps, type Plan, type Snap } from '@/native/watchLink';
+import { MAX_PLAN_BYTES, MAX_SNAP_BYTES, SNAP_GAP_MS, buildPlan, buildSnapshot, createLink, shortName, watchLink, type LinkDeps, type Plan, type Snap } from '@/native/watchLink';
 import { sessionAt } from './helpers';
 
 function memoryStorage(): Storage {
@@ -1104,5 +1104,16 @@ describe('WATCH-C4 P5: fin, the highlights of the workout just finished', () => 
     [[40, 8], [10, 8]].forEach(([kg, reps], i) => { vi.advanceTimersByTime(120_000); setSet(i, 0, { kg, reps, effort: 'ideal' }); expect(commitSet(i, 0)).toBe(true); });
     finishSession(false);
     expect(snap().fin).toEqual([id, ['4 min, 2 sets', '80 kg lifted', '2 exercises']]);
+  });
+});
+
+describe('WATCH-C4 last red team: shortName', () => {
+  it('whole words, never a trailing word without a letter or digit; with no whole word, 4 or more letters; else nothing', () => {
+    expect(shortName('Bench - Incline Dumbbell', 11)).toBe('Bench');
+    expect(shortName('Barbell Bench Press', 9)).toBe('Barbell');
+    expect(shortName('Barbell Bench Press', 13)).toBe('Barbell Bench');
+    expect(shortName('Developpe', 6)).toBe('Develo');
+    expect(shortName('Developpe', 3)).toBe('');
+    expect(shortName('A - B', 3)).toBe('A');
   });
 });

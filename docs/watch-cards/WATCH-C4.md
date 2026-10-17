@@ -95,3 +95,11 @@ The red team of `38e4240` (1 medium, 6 low; Done, the restart guard and the high
 - **Known limit, the restart guard with slow storage (F3):** with storage writes over about 4 s, the closing page's clean mark can land after the reopened page's running mark, so one crash in the next 30 s is not counted; the next one is.
 - **Accepted (F7):** each heart-rate gap over 15 s remounts the heart (about 150 to 200 B of native memory each; 5 in the model's workout with a 602 every 5 minutes).
 - Index-side sources stay at most 49,000 B by dropping comments the README covers.
+
+## Last red team rulings (2026-10-18)
+The last red team of the fixes (`0ae1b2f`): no high or medium; the boolean `if`s, the Done retry, Adjust's limits, the outbox slots and the phone's load check held. Fixed, each with a test that fails before (`c4.test.mjs` R18, R21, R23; the `shortName` test):
+- **Low, a paused rest still woke the screen:** the rest's paused flag now reaches the wake check (R18 now pauses a rest at 8 s from idle).
+- **Low, one 10 s wake per rest:** the wake re-arms while more than 10 s is left, so a rest the phone extends past 10 s wakes again at its next 10 s (R23).
+- **Nit, heart-rate range:** checked after rounding (24.4 and 250.6 are ignored).
+- **Nit, PR names:** never end on a word without a letter or digit ("Bench - Incline" gives "Bench").
+- B4 at `0ae1b2f` (the red team's runs): the 37 JerryScript scenarios pass at 8 and 14 KB stacks; the C4 scenarios pass at 14 KB (at 8 KB the framework model itself overflows on its first render, as before); the model's workouts need 111 KB (W1) and 115 KB (W1C3); the deepest stack is 13,728 B. Every counted scenario file exists.

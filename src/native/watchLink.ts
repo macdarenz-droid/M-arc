@@ -196,15 +196,18 @@ function highlights(s: AppState, session: Session): string[] {
   ].slice(0, MAX_HL);
 }
 
-/** WATCH-C4 review: the whole words that fit `room`; with none, the first word cut to `room` when 4 or more letters fit; else ''. */
-function shortName(name: string, room: number): string {
-  let out = '';
+/**
+ * WATCH-C4 review: the whole words that fit `room`, never ending on a word without a letter or digit (last red team:
+ * "Bench -"); with none, the first word cut to `room` when 4 or more letters fit; else ''.
+ */
+export function shortName(name: string, room: number): string {
+  const words: string[] = [];
   for (const w of name.split(' ').filter(Boolean)) {
-    const next = out ? `${out} ${w}` : w;
-    if (next.length > room) break;
-    out = next;
+    if ([...words, w].join(' ').length > room) break;
+    words.push(w);
   }
-  return out || (room >= 4 ? name.slice(0, room).trim() : '');
+  while (words.length && !/[A-Za-z0-9]/.test(words[words.length - 1]!)) words.pop();
+  return words.join(' ') || (room >= 4 ? name.slice(0, room).trim() : '');
 }
 
 /** WATCH-C4: fin for the newest closed session, when it was finished at most FIN_MS before `now` and is in history. */
