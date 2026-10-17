@@ -52,7 +52,7 @@ describe('E1: generated block list', () => {
     const guards = SRC.split('\n').filter(l => /^if \(gate\.runs\('[^']+'\)\)$/.test(l)).length;
     expect(groups.reduce((a, g) => a + g.statements.length, 0)).toBe(guards);   // the syntax tree and the text agree
     expect(new Set(groups.map(g => g.key)).size).toBe(groups.length);
-    expect(groups.length).toBe(100);   // the generated count today (99 + LIB-2, main 21d8797); adding a block raises it with its own guard
+    expect(groups.length).toBe(101);   // the generated count today (99 + LIB-2 + OLD-ANDROID-1, main 49a2853); adding a block raises it with its own guard
     for (const a of B.ALWAYS) expect(groups.some(g => g.key === a)).toBe(true);
   });
   it('mutation: a block without its guard line is red', () => {
