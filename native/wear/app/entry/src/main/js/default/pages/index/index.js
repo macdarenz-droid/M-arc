@@ -61,10 +61,10 @@ export default {
   onAdd() { try { link.rest('rest_add_30'); } catch (e) {} },
   onSkip() { try { link.rest('rest_skip'); } catch (e) {} },
   onDestroy() {
-		try { link.die(); } catch (e) {}
 		clearInterval(timer);
 		keep(false);
 		page = null;
 		try { client.unregisterReceiver({ onSuccess: no }); } catch (e) {}
+		try { link.die(); } catch (e) {}
 	}
 };

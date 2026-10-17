@@ -45,7 +45,7 @@ function wire(f) {
 function nn(x) { return x == null || num(x); }
 function okSnap(m) {
 	var s = m.set || {}, r = m.rest || {};
-	return num(m.pt) && (m.sid === null || str(m.sid)) && (m.ex == null || str(m.ex) && num(m.si) && num(m.sn)) &&
+	return num(m.pt) && nn(m.wt) && (m.sid === null || str(m.sid)) && (m.ex == null || str(m.ex) && num(m.si) && num(m.sn)) &&
 		(!m.set || str(s.id) && num(s.rev) && (s.u === 'kg' || s.u === 'lb') && nn(s.w) && nn(s.r) && (s.e == null || str(s.e))) && (!m.rest || str(r.id) && num(r.left));
 }
 
@@ -331,10 +331,10 @@ function Link(io, boot) {
 	return {
 		rx: rx, tick: tick, view: view,
 		start: run,
-		// onDestroy: a live run is marked clean by one direct write
+		// onDestroy: a live run with no call in flight is marked clean by one direct write
 		die: function () {
 			dead = 1;
-			if (on && !pause && !sick) try { io.store.set({ key: RUN, value: '0,c', success: no, fail: no }); } catch (e) {}
+			if (on && !pause && !sick && !wait) try { io.store.set({ key: RUN, value: '0,c', success: no, fail: no }); } catch (e) {}
 		},
 		show: function () { if (!dead) { hello(); keepOn(true); } },
 		complete: function () { if (can()) add('c', snap.set.id, shown()); },

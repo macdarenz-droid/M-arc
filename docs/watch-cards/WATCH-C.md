@@ -64,7 +64,7 @@ Each test fails before and passes after; existing tests are not edited; the PR n
 - **W1:** command bytes are fixed and at most 400 B; ids are valid for the phone and unique across boots; the shown load and effort are sent; `actionAt` is unchanged across resends.
 - **W2:** Pending only after both writes; a failed write sends nothing; a full outbox drops nothing; a restart restores identical bytes.
 - **W3:** send, resend, result and offset rules; a snap never shows Saved; a version mismatch; the offline countdown; the Complete lock; keep-on; the no-workout and no-phone wording.
-- **W4:** ES5, ASCII, `wearengine.js` unchanged, PHONE_FP, no permissions, page sources at most 34,000 B (32,000 until 2026-10-17, raised by the coordinator for the required safety fixes after the 1.1.1 device crash; the compiled page stays at most 46,000 B, and `check-lite-js` enforces 48,000).
+- **W4:** ES5, ASCII, `wearengine.js` unchanged, PHONE_FP, no permissions, page sources at most 34,000 B (32,000 until 2026-10-17, raised by the coordinator for the required safety fixes after the 1.1.1 device crash; the compiled page stays at most 46,000 B, and `check-lite-js` enforces 48,000). Known limit of the 1.1.2 restart guard: a crash loop slower than 30 s never pauses, because a run live for 30 s resets the count.
 - **X1:** the watch's `link.js` builds a command from `buildSnapshot`; `handleWorkoutCommand` applies it and then returns the replay.
 
 ## Device runs (owner: PR-head debug APK, watch 1.1.0, auto rest on, lab Connect)

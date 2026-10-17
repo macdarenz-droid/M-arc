@@ -1211,6 +1211,34 @@ test('1.1.2 S16 a job whose start is lost starts on the 6th tick; one that never
   assert.equal(s.store.calls.length, c, 'no storage call once the job was given up');
 });
 
+test('1.1.2 S17 an exit while a storage call is in flight writes no clean marker, so it counts as unclean', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, keepRun: true, code: null });
+  r.link.rx(snap());
+  store.defer = true;
+  r.link.complete(); // its slot write is in flight
+  assert.equal(store.calls.at(-1), 'set m2q0');
+  const calls = store.calls.length;
+  r.link.die();
+  assert.equal(store.calls.length, calls, 'no second call while one is in flight');
+  store.defer = false;
+  while (store.queue.length) store.step();
+  assert.equal(store.map.get('m2r'), '0,r');
+  const s = await rig({ store, t: T0 + 60000, keepRun: true, boot: 'bbbbbbbb', code: null });
+  assert.equal(store.map.get('m2r'), '1,r', 'that exit counted');
+  s.link.die(); // nothing in flight
+  assert.equal(store.map.get('m2r'), '0,c');
+});
+
+test('1.1.2 S18 a snap whose wt is not a number is ignored, and nothing throws', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  assert.doesNotThrow(() => r.link.rx(snap({ ex: 'Row', wt: { valueOf: 1, toString: 1 } })));
+  assert.equal(r.link.view().l1, 'Bench press 1/3');
+  r.link.rx(snap({ ex: 'Row', wt: null }));
+  assert.equal(r.link.view().l1, 'Row 1/3');
+});
+
 test('1.1.2 S12 phone values that are not what they claim are ignored, and nothing throws', async () => {
   const obj = { toString: 1 };
   const r = await rig({ code: null });
@@ -1225,7 +1253,8 @@ test('1.1.2 S12 phone values that are not what they claim are ignored, and nothi
   const page = readFileSync(path.join(JS, 'pages/index/index.js'), 'utf8');
   for (const h of ['onShow', 'onComplete', 'onEffort', 'onAdd', 'onSkip']) assert.match(page, new RegExp(`^  ${h}\\(\\) \\{ try \\{ .*\\} catch \\(e\\) \\{\\} \\},$`, 'm'), h);
   assert.match(page, /onInit\(\) \{\n\t\ttry \{/);
-  assert.match(page, /onDestroy\(\) \{\n\t\ttry \{ link\.die\(\); \} catch \(e\) \{\}/);
+  // onDestroy writes the clean marker last, so a hung write cannot block the rest (final check of 345137b8)
+  assert.match(page, /onDestroy\(\) \{\n\t\tclearInterval\(timer\);\n\t\tkeep\(false\);\n\t\tpage = null;\n\t\ttry \{ client\.unregisterReceiver\(\{ onSuccess: no \}\); \} catch \(e\) \{\}\n\t\ttry \{ link\.die\(\); \} catch \(e\) \{\}\n\t\}/);
   assert.match(page, /setInterval\(function \(\) \{ try \{ link\.tick\(\); \} catch \(e\) \{\} \}, 1000\)/);
   assert.match(page, /onReceiveMessage: function \(msg\) \{ try \{ link\.rx\(msg\); \} catch \(e\) \{\} \}/);
   assert.match(page, /onSuccess: function \(\) \{ try \{ link\.show\(\); \} catch \(e\) \{\} \}/);
