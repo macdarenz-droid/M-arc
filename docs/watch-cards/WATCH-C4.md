@@ -67,3 +67,11 @@ Each new test fails before and passes after.
 - **P4:** `rest_add_15` and `rest_sub_15`: parsed and refused like `rest_add_30` (bad rest id, ended rest, wrong session, replay); +15 moves the end by 15 s; -15 with 60, 12, 5 and 3 s left gives 45, 5, 5 and 3 s; paused rests the same on their remaining time; the rest-done notification is rescheduled to the new end; receipts store the kind.
 - **P5:** `fin` only after a finish (not a discard, not with an active session, not after 15 minutes); the lines and their order for a session with 0, 1 and 3 new bests (at most 2 shown); names shortened to 24 characters; lb profile; ASCII only; the snap at most 700 B with the longest names.
 - **X4 (contract):** the phone's real snap after `finishSession` carries `fin` with the session id the watch had.
+
+## Build rulings (2026-10-18)
+- **Compiled index target 47,000 B (was 46,000 B):** the index builder's build compiles to 46,631 B with every requested feature; cutting a requested feature to save 631 B is not worth it, and 47,000 keeps 1.4 KB under `check-lite-js`'s hard 48,000 B. The highlights page is 5,868 B (target 6,000 B).
+- **Heap:** the model's workouts need 113 KB (W1) and 115 KB (W1C3), about 8 KB more than 1.3.0 measured the same way. The GT 6's heap is unknown and 1.3.0 ran on the device, so the practice workout (G6) comes first and 1.3.0 is the recovery.
+- **Highlights lines (L11, builder's change):** an opacity animation never changes an element's own opacity on lite, so lines at base opacity 0 would never show, and a delayed fade alone flashes each line during its delay. The lines are uncovered instead by a box that opens from height 0 (each line starts to show at 600, 800, 1000, 1200 and 1400 ms and stays). The page ignores taps in its first second, like the index page.
+- **Heart placement (index builder):** the heart sits in an always-shown header row (inside the online header branch the stack model overflowed 14 KB on a reconnect), so it also shows next to "Phone not connected"; offline, the bpm stays on the Set and Rest line as in 1.3.0.
+- **Idle screen:** one grey 52 px line (the countdown, or the set's target such as "60 kg x 8") and a grey header; a swipe on it wakes it and also acts as a normal swipe.
+- **Adjust bounds:** at the top, +1 clamps to 1000; a step that would reach 0 or below is ignored.
