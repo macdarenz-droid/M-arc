@@ -813,3 +813,34 @@ test('final check: Phone not connected shows the rest only while it has time lef
   t.adv(30000);
   assert.ok(screen(t.v()).lines.includes('Rest 1:00'), screen(t.v()).lines.join('|'));
 });
+
+test('final check: after a refusal, a set tapped and saved later shows Saved; a refusal kept when the link drops before the queued result', async () => {
+  const r = await rig();
+  r.link.rx(snap({ rest: rest1 }));
+  r.link.rx(plan());
+  r.link.complete();
+  r.link.pick(1);
+  r.link.complete();
+  r.link.rx(res('abcd1234-1', { status: 'rejected', reason: 'stale_revision' }));
+  r.link.pick(0);
+  r.link.rx(snap({ si: 3, set: { ...S1, id: 'set_b3' }, rest: rest1 }));
+  r.link.complete();
+  r.link.rx(res('abcd1234-2'));
+  r.link.rx(res(r.cmds().at(-1).commandId));
+  assert.equal(r.v().st, 'Saved');
+  for (const how of ['silence', 'failed send']) {
+    const b = await rig();
+    b.link.rx(snap());
+    b.link.rx(plan());
+    b.link.complete();
+    b.link.pick(1);
+    b.link.complete();
+    if (how !== 'silence') b.code = 206;
+    b.link.rx(res('abcd1234-1', { status: 'rejected', reason: 'stale_revision' }));
+    b.adv(how === 'silence' ? 30000 : 2000);
+    b.tick();
+    b.code = 207;
+    b.link.rx(res('abcd1234-2'));
+    assert.deepEqual(only(b.v(), ['sc', 'st']), { sc: 1, st: 'Changed on phone' }, how);
+  }
+});

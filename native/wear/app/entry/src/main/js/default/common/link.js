@@ -269,14 +269,14 @@ function Link(io, boot) {
 			if (q[i].id !== m.commandId) continue;
 			if (m.status === 'applied') {
 				// a refusal in this offline batch keeps its reason
-				if (!bj) msg = q.length > 1 ? q.length - 1 + ' pending' : 'Saved';
+				if (msg !== bj) msg = q.length > 1 ? q.length - 1 + ' pending' : 'Saved';
 				if (q[i].set) done = q[i].set;
 				if ((c = cs()) && c.id === q[i].set) sv = (c = nr()) ? c.d + 1 : snap.si, svR = '';
 				hi = tk + 2, bn++;
 			} else if (m.status === 'rejected') {
 				msg = str(m.reason) && str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
-				// kept through the results still queued, online too (red team, 611b09c8)
-				bj = lq || q.length > 1;
+				// its text is kept through the results still queued, online too, until a new tap (red team, 611b09c8)
+				bj = (lq || q.length > 1) && msg;
 			} else {
 				return;
 			}
@@ -316,7 +316,7 @@ function Link(io, boot) {
 		if (!stop && e && e.n && tk - e.at >= Math.min(4 << Math.min(e.n, 4) - 1, 30)) fire(e);
 		if (hi && tk >= hi) hello(hi = 0);
 		if (!stop && tk >= due) hello();
-		if ((gone() || bad) && q.length && !lq) lq = 1, bn = bj = 0;
+		if ((gone() || bad) && q.length && !lq) lq = 1, bn = 0;
 		keepOn();
 		io.paint();
 	}
