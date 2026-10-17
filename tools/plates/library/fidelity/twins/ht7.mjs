@@ -5,13 +5,14 @@
 // once, none before the first tap), the chip (44x44, A6 Right/Wrong halves); in paper also the reduced-motion pass.
 // Same browser setup as the block: golden B (the id's layers page) through goldenB.mjs openPage, the app in that same
 // browser. Not here (LIB-4-DESIGN X5, X2): the D-HT7-L3-text-9 30-opens label check, the planted probes, chunk sizes.
-// Posture keys: the source's (job.facts.posture) and golden B's DOM (a .zx panel holding a .zx-half), so a key missing
-// on either side is a missing or an extra row.
+// Posture keys: the source's (job.facts.posture) and golden B's DOM (its .zx panels less the source's hand key), so a
+// posture key missing on either side is a missing or an extra row.
 import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 import * as H from '../../../fidelity/harness.mjs';
 import { WIDTH } from '../tuples.mjs';
 import { stateOf } from '../rows.mjs';
+import { sourceOf } from '../../registry.mjs';
 
 const panelSel = (id, k) => `#${id}-zoom-${k}`;
 
@@ -129,8 +130,10 @@ async function pass(ctx, { lib, chrome: id, index, theme, facts }, reduce, stats
   const g = await G.openPage(ctx.layersFile(lib), theme, { reduce, chromePath: process.env.MARC_CHROMIUM || G.CHROME_PATH });
   try {
     const app = await H.openAppTrain(g.browser, ctx.port, theme, { order: ctx.order, custom: ctx.custom, reducedMotion: reduce ? 'reduce' : 'no-preference', onError: m => cur[0] && P(cur[0], cur[1], `app page error: ${m}`) });
-    // golden B's posture close-ups of this id: a .zx panel that holds a right/wrong half (the hand close-up holds none)
-    const dom = await g.page.evaluate(id => [...document.querySelectorAll(`#card-${id} .zx[data-zoom]`)].filter(p => p.querySelector('.zx-half')).map(p => p.dataset.zoom), id);
+    // golden B's close-ups of this id, less the source's other kinds (the hand): golden B's markup does not tell a
+    // posture panel from a hand panel, so a key is a posture key on the DOM side unless the source names it another kind
+    const other = new Set(((await import(pathToFileURL(join(ctx.root, sourceOf(lib, ctx.root))).href)).default.zooms ?? []).filter(z => z.kind !== 'posture').map(z => z.key));
+    const dom = (await g.page.evaluate(id => [...document.querySelectorAll(`#card-${id} .zx[data-zoom]`)].map(p => p.dataset.zoom), id)).filter(k => !other.has(k));
     const keys = [...source, ...dom.filter(k => !source.includes(k))];
     const first = keys[0];
     if (first) for (const e of g.errs) P(first, 'L3', `golden page error: ${e}`);
