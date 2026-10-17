@@ -142,7 +142,9 @@ test('V1 Rest: REST, the countdown, its line, Next and its set, +30 s until the 
   r.link.rx(res('abcd1234-1'));
   assert.equal(r.v().sl, '', 'Saved: no set of the watch saved on this rest');
   r.adv(91000);
-  // WATCH-C2 fix round (red team R1): an ended rest leaves page 0 to Set (was: Rest at 0:00)
+  // WATCH-C2 fix round (red team R1): an ended rest leaves page 0 to Set (was: Rest at 0:00); WATCH-C3: after Rest done and its OK
+  assert.deepEqual(only(r.v(), ['sc', 'rc', 'add']), { sc: 6, rc: '0:00', add: false });
+  r.link.ok();
   assert.deepEqual(only(r.v(), ['sc', 'rc', 'add']), { sc: 1, rc: '0:00', add: false });
   r.link.rx(snap({ ex: 'Plank', set: null, lt: null, rest: rest1 }));
   assert.deepEqual(only(r.v(), ['nx', 'ns']), { nx: 'Next: Plank', ns: 'Set 2 of 3' });
@@ -383,7 +385,7 @@ test('V3 a hello goes 2 ticks after each applied result, and not after other res
   r.link.rx(res('abcd1234-3'));
   r.tick(); r.tick();
   assert.equal(r.hellos(), h + 2);
-  assert.equal(JSON.parse(r.sent.filter((x) => JSON.parse(x).k === 'hello').pop()).app, '1.2.0');
+  assert.equal(JSON.parse(r.sent.filter((x) => JSON.parse(x).k === 'hello').pop()).app, '1.3.0');
 });
 
 test('V4 a bad plan changes nothing: wrong types, toString tricks, over 2,048 characters, not JSON', async () => {
@@ -487,6 +489,8 @@ test('fix R1: page 0 is Set once the rest has run out, online and offline; a pau
   assert.equal(r.v().sc, 2, 'Rest while it runs');
   r.adv(91000);
   r.link.rx(snap({ pt: T0 + 91000, rest: { ...rest1, left: 0 } }));
+  assert.equal(r.v().sc, 6, 'WATCH-C3: Rest done, then its OK');
+  r.link.ok();
   assert.equal(r.v().sc, 1, 'the phone keeps an ended rest (left 0): Set and its Complete');
   assert.deepEqual(screen(r.v()).lines, ['M/ARC', hm(T0 + 91000), 'Bench press', '>', 'SET 2 OF 3', 'Target', '60 kg x 8', 'Last time 57.5 kg x 8',
     'Easy', 'Ideal', 'Max', 'Complete set', '']);
@@ -513,6 +517,8 @@ test('fix R1: page 0 is Set once the rest has run out, online and offline; a pau
   s.link.rx(res('abcd1234-2'));
   assert.deepEqual(only(s.v(), ['sc', 'sl']), { sc: 2, sl: 'Set 2 saved' });
   s.adv(21000);
+  assert.equal(s.v().sc, 6, 'WATCH-C3: Rest done, then its OK');
+  s.link.ok();
   assert.deepEqual(only(s.v(), ['sc', 'sl']), { sc: 1, sl: '' }, 'the rest ran out: Set, and no "Set 2 saved" under its Complete');
   s.link.complete();
   assert.deepEqual(only(s.v(), ['sc', 'cl', 'sl']), { sc: 1, cl: `Pending ${hms(T0 + 21000)}`, sl: '' }, 'its Pending is on the Complete pill only');
@@ -637,6 +643,8 @@ test('fix: surviving mutations: one left or right swipe each keeps the page; a p
   s.link.rx(snap({ rest: { ...rest1, left: 5000 } }));
   s.link.rest('rest_add_30');
   s.adv(6000);
+  assert.equal(s.v().sc, 6, 'WATCH-C3: Rest done, then its OK');
+  s.link.ok();
   assert.deepEqual(only(s.v(), ['sc', 'cl', 'can', 'cb']), { sc: 1, cl: 'Complete set', can: true, cb: AC });
 });
 
@@ -699,7 +707,7 @@ test('fix: each screen shows its card lines from the shared slots, and a bound c
   r.link.pick(2);
   at(['Seated row', '>', 'SET 3 OF 4', 'Target', '135 lb x 6', '', 'Easy', 'Ideal', 'Max', 'Complete set', ''], [AC, PL, PL, AC]);
   r.link.rx(snap({ rest: rest1 }));
-  at(['REST', '1:30', '', 'Next: Seated row', 'Set 3 of 4, 135 lb x 6', 'Change', '+30 s', 'Skip']);
+  at(['REST', '1:30', '', 'Next: Seated row', 'Set 3 of 4, 135 lb x 6', 'Change', '+30 s', 'Skip', '']); // WATCH-C3: the heart-rate line
   r.link.rx(snap());
   r.link.complete();
   r.adv(30000);

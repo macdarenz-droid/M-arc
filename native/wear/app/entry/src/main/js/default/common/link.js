@@ -1,5 +1,5 @@
 // WATCH-C link: native/wear/README.md
-var T = 'mw', V = 1, APP = '1.2.0';
+var T = 'mw', V = 1, APP = '1.3.0';
 var PHONE_PKG = 'com.mrcdrnzz.dailytracker';
 var PHONE_FP = '05669AD2721C6ABAF9FDD4B9B84E2FB7944844B1DEF359845F015F2B67CAF1F5';
 var KEY = 'm2q', RUN = 'm2r';
@@ -44,12 +44,14 @@ function wire(f) {
 }
 
 function nn(x) { return x == null || num(x); }
-function okSet(s) { return str(s.id) && num(s.rev) && (s.u === 'kg' || s.u === 'lb') && nn(s.w) && nn(s.r) && (s.e == null || str(s.e)); }
+function okSet(s) { return str(s.id) && num(s.rev) && (s.u === 'kg' || s.u === 'lb') && nn(s.w) && nn(s.r) && (s.e == null || str(s.e)) && nn(s.st); }
 function okLt(l) { return !l || Object(l) === l && nn(l.w) && nn(l.r) && (l.u === 'kg' || l.u === 'lb'); }
+// C3: nx [id, rev, w, r], rs in s
 function okSnap(m) {
-	var r = m.rest || {};
-	return num(m.pt) && nn(m.wt) && (m.sid === null || str(m.sid)) && (m.ex == null || str(m.ex) && num(m.si) && num(m.sn)) &&
-		(!m.set || okSet(m.set)) && (!m.rest || str(r.id) && num(r.left)) && (m.eid == null || str(m.eid)) && okLt(m.lt);
+	var r = m.rest || {}, n = m.nx || [], i, ok = num(m.pt) && nn(m.wt) && (m.sid === null || str(m.sid)) && (m.ex == null || str(m.ex) && num(m.si) && num(m.sn)) &&
+		(!m.set || okSet(m.set)) && (!m.rest || str(r.id) && num(r.left)) && (m.eid == null || str(m.eid)) && okLt(m.lt) && nn(m.rs) && Array.isArray(n);
+	for (i = 0; ok && i < n.length; i++) ok = Array.isArray(r = n[i]) && str(r[0]) && num(r[1]) && nn(r[2]) && nn(r[3]);
+	return ok;
 }
 // C2 plan: rows of {id, ex, d, n, set, lt}
 function okPlan(m) {
@@ -59,14 +61,16 @@ function okPlan(m) {
 }
 function fmt(s) { var r = s.r == null ? '-' : s.r; return s.w == null ? r + ' reps' : s.w + ' ' + s.u + ' x ' + r; }
 
-// io: store, send(text, done(code)), keep(on), connect(), paint(), now(), defer(fn, 0)
+// io: store, send(text, done(code)), keep(on), connect(), paint(), now(), defer(fn, 0), buzz()
 function Link(io, boot) {
 	// tk counts 1 s ticks, the clock of every timer; io.now() is for actionAt, the offset and the clock
 	var tk = 0, seq = 0, snapTk = 0, off = 0, rtt = -1, lastRx = -1, fail = 0, hb = 0, due = Infinity;
-	var q = [], jobs = [], hellos = [], wq = [], busy = 0, snap = 0, eff = null, effSet = '', done = '';
+	var q = [], jobs = [], hellos = [], wq = [], busy = 0, snap = 0, eff = null, effSet = '', dl = [];
 	var wait = 0, msg = '', stop = 0, kept = false, ready = 0, lost = 0, on = 0, pause = 0, calm = 0, dead = 0, sick = 0;
 	// C2: plan, pick, page, Set N saved, Back in sync and a refusal in its batch, hello, the last send failed
 	var plan = 0, pk, ps, pe, pg = 0, sv, svR, lq, bn = 0, bj = 0, sy, hi, bad = 0;
+	// C3: Adjust, the local rest, Rest done, the heart rate
+	var ad = 0, af = 0, lr = 0, rn = '', rk, bz, ko, hv = '', ht = 0;
 
 	function no() {}
 	function later(fn) {
@@ -109,7 +113,8 @@ function Link(io, boot) {
 	}
 
 	function add(code, set, effort) {
-		var at = Math.round(io.now() + off), s = cs(), f = [code, boot + '-' + ++seq, snap.sid, at].concat(code === 'c' ? [s.id, s.rev, s.w == null ? '' : s.w, s.u, s.r, effort] : [snap.rest.id]);
+		var at = Math.round(io.now() + off), s = cs(), d = dv(s), f = [code, boot + '-' + ++seq, snap.sid, at].concat(code === 'c' ? [s.id, s.rev, d.w == null ? '' : d.w, s.u, d.r, effort] : [snap.rest.id]);
+		var L = code === 'c' && snap.rs > 0 && { i: (snap.rest || 0).id, left: snap.rs * 1000, id: tk };
 		var b = f.join(','), val = b + ',' + sum(b) % 99991, t = wire(f);
 		if (set) wq.push(set);
 		queue(function (fin) {
@@ -117,8 +122,9 @@ function Link(io, boot) {
 			function end(m) {
 				msg = m;
 				if (set) wq.splice(wq.indexOf(set), 1);
+				fresh();
 				fin();
-				io.paint();
+				later(io.paint); // C3: on a fresh stack
 			}
 			if (lost || sick || val.length > 119 || !(sum(val) >= 0) || text(val) !== t) return end('Not saved');
 			if (slot < 0) return end('Queue full');
@@ -130,6 +136,8 @@ function Link(io, boot) {
 						if (!ok3) return end('Not saved');
 						q.push(entry(slot, t, read(t)));
 						msg = 'Pending ' + hms(at);
+						if (L) lr = L;
+						if (code === 's') ko = rk = bz = f[4];
 						pump();
 						end(msg);
 					});
@@ -229,28 +237,31 @@ function Link(io, boot) {
 	}
 
 	function onSnap(m, now) {
-		var o = Math.round(m.pt - (m.wt + now) / 2);
+		var o = Math.round(m.pt - (m.wt + now) / 2), i, n, s;
 		if (hellos.indexOf(m.wt) >= 0 && (rtt < 0 || now - m.wt < rtt || Math.abs(o - off) > now - m.wt)) {
 			rtt = now - m.wt;
 			off = o;
 		}
-		if (m.sid !== snap.sid) pg = 0;
+		if (m.sid !== snap.sid) pg = lr = 0;
+		if (m.rest && m.rest.id !== lr.i) lr = 0;
+		for (m.xs = [s = m.set], i = 0; s && m.nx && i < m.nx.length; i++) n = m.nx[i], m.xs.push({ id: n[0], rev: n[1], w: n[2], u: s.u, r: n[3], st: s.st, k: i + 1 });
 		snap = m;
+		ko = '';
 		snapTk = tk;
 		if (svR === '') svR = m.rest ? m.rest.id : 0;
-		fresh(1);
+		fresh();
 		if (q[0] && (!q[0].n || tk > q[0].at)) {
 			q[0].n = 0;
 			fire(q[0]);
 		}
 	}
 
-	// a new set clears the effort draft; only the phone (k: a snap or a plan) frees a saved set
-	function fresh(k) {
+	// a new set clears the effort draft and closes Adjust
+	function fresh() {
 		var s = cs(), id = s ? s.id : '';
 		if (id !== effSet) eff = null;
-		if (k && id !== done) done = '';
 		effSet = id;
+		if (!ao()) af = 0;
 	}
 	function pr(id) { for (var r = up() ? plan.rows : [], i = 0; i < r.length; i++) if (r[i].id === id) return r[i]; }
 	// the pick holds while sid, eid and its row stay
@@ -261,27 +272,49 @@ function Link(io, boot) {
 	}
 	// numbers from the plan row: the pick's, or the shown exercise's while it has the snap's set
 	function nr() { var r = row(), e = pr(snap.eid); return r || e && (e.set || 0).id === (snap.set || 0).id && e; }
-	function cs() { var r = row(); return r ? r.set : snap.set; }
+	// C3: the first free of set, nx (a pick: its row's set), else the last
+	function xs() { var r = row(); return r ? [r.set] : snap.xs || [0]; }
+	function free(s) { return s && !held(s.id) && dl.indexOf(s.id) < 0; }
+	function cs() { for (var o = xs(), i = 0; i < o.length - 1 && !free(o[i]); i++); return o[i]; }
+	function dv(s) { return s && ad && ad.id === s.id && ad.rev === s.rev ? ad : s; }
+	function ao() { var s = cs(); return af && free(s) && dv(s) === ad; }
+	// reps 1 to 100; load by st (or 2.5 kg, 5 lb), in (0, 1000], to 0.01
+	function bump(d) {
+		var f = af, x = Math.round(((ad[f] || 0) + d * (f === 'r' ? 1 : ad.st > 0 ? ad.st : ad.u === 'lb' ? 5 : 2.5)) * 100) / 100;
+		ad[f] = f === 'r' ? x < 1 ? 1 : x > 100 ? 100 : x : x > 1000 ? 1000 : x > 0 ? x : ad.w;
+	}
+	// the local rest, else the phone's
+	function rst() {
+		var r = lr.on ? lr : snap.sid && snap.rest, x = r && { id: r.id, left: Math.max(0, r.p ? r.left : r.left - (tk - (r === lr ? r.id : snapTk)) * 1000) };
+		return x && x.id !== ko && x;
+	}
+	function ring() {
+		var r = rst() || {};
+		if (r.left > 0) rn = r.id;
+		else if (r.id === rn && bz !== rn) bz = rn, (io.buzz || no)();
+	}
 	function up() { return snap.sid && plan.sid === snap.sid; }
 
 	function onRes(m) {
-		for (var i = 0, c; i < q.length; i++) {
+		for (var i = 0, c, o, j; i < q.length; i++) {
 			if (q[i].id !== m.commandId) continue;
 			if (m.status === 'applied') {
 				// a refusal in this offline batch keeps its reason
 				if (msg !== bj) msg = q.length > 1 ? q.length - 1 + ' pending' : 'Saved';
-				if (q[i].set) done = q[i].set;
-				if ((c = cs()) && c.id === q[i].set) sv = (c = nr()) ? c.d + 1 : snap.si, svR = '';
+				if (dl.push(q[i].set) > 16) dl.shift(); // C3: stays locked
+				for (o = xs(), j = 0; j < o.length && (o[j] || 0).id !== q[i].set; j++);
+				if (j < o.length) sv = ((c = nr()) ? c.d + 1 : snap.si) + j, svR = '';
 				hi = tk + 2, bn++;
 			} else if (m.status === 'rejected') {
 				msg = str(m.reason) && str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
-				// its text is kept through the results still queued, online too, until a new tap (red team, 611b09c8)
+				// its text is kept through the results still queued, online too, until a new tap (611b09c8)
 				bj = (lq || q.length > 1) && msg;
 			} else {
 				return;
 			}
 			drop(i);
 			if (!q.length) sy = lq ? (m.status === 'applied' && !bj ? tk + 3 : 0) : sy, lq = bj = 0;
+			fresh();
 			return pump();
 		}
 	}
@@ -317,6 +350,8 @@ function Link(io, boot) {
 		if (hi && tk >= hi) hello(hi = 0);
 		if (!stop && tk >= due) hello();
 		if ((gone() || bad) && q.length && !lq) lq = 1, bn = 0;
+		if (tk - lr.id > 1) lr.on = 1;
+		ring();
 		keepOn();
 		io.paint();
 	}
@@ -329,11 +364,11 @@ function Link(io, boot) {
 	}
 	function can() {
 		var s = snap.sid && cs();
-		return !!(ready && !stop && s && s.r >= 1 && s.id !== done && !held(s.id));
+		return !!(ready && !stop && free(s) && s.r >= 1);
 	}
 
 	function view() {
-		var c = snap.sid && row(), x = c || snap, s = snap.sid && x.set, r = snap.sid && snap.rest, th = snap.th;
+		var c = snap.sid && row(), x = c || snap, s = snap.sid && cs(), r = rst(), th = snap.th, j = s && s.k || 0;
 		var a = c ? c.d + 1 : snap.si, b = c ? c.n : snap.sn, rows = up() && plan.rows, left = 0, i, o, k;
 		if (!(th && th.length === 3 && str(th[0]) && str(th[1]) && str(th[2]))) th = ['#08090a', '#f7f8f8', '#5e6ad2'];
 		var v = { l1: '', l2: '', eff: '', rest: '', st: msg, p1: '', p2: '', set: false, can: false, rs: false, add: false, bg: th[0], fg: th[1], ac: th[2], cb: PL,
@@ -358,28 +393,31 @@ function Link(io, boot) {
 			v.l2 = x.ex ? 'Log on phone' : '';
 		}
 		if (s) {
-			v.l2 = fmt(s);
+			v.l2 = fmt(dv(s));
 			v.eff = ['Effort', 'Easy', 'Ideal', 'Max'][EFF.indexOf(shown())] || 'Effort';
 			v.set = true;
 			v.can = can();
 			if (v.can) v.cb = AC;
 		}
 		if (r) {
-			left = r.p ? r.left : Math.max(0, r.left - (tk - snapTk) * 1000);
+			left = r.left;
 			v.rest = 'Rest ' + mss(left);
 			v.rs = true;
 			v.add = left > 0;
 			v.rc = mss(left);
 		}
-		// C2 screen: 1 Set, 2 Rest while it has time left, 3 Up next, 4 Phone not connected, 5 Back in sync, 0 l1, l2
-		v.sc = v.off && (q.length || !snap) ? 4 : tk < sy ? 5 : rows && pg ? 3 : left > 0 ? 2 : snap.sid && x.ex ? 1 : 0;
+		v.hr = tk - ht < 16 ? hv : '';
+		if (k = ao()) v.ak = af === 'r' ? 'REPS' : ad.u.toUpperCase(), v.av = ad[af] == null ? '-' : '' + ad[af];
+		// screen: 1 Set, 2 Rest, 3 Up next, 4 Phone not connected, 5 Back in sync, 6 Rest done, 7 Adjust, 0 l1, l2
+		v.sc = v.off && (q.length || !snap) && !free(s) ? 4 : k ? 7 : tk < sy ? 5 : rows && pg ? 3 : left > 0 ? 2 : r && r.id === rn && r.id !== rk ? 6 :
+			snap.sid && x.ex ? 1 : 0;
 		k = v.sc > 4 ? bn : q.length;
 		v.na = k ? k + ' action' + (k > 1 ? 's' : '') : '';
 		v.nm = x.ex || '';
-		a = (o = nr()) ? o.d + 1 : snap.si;
+		a = ((o = nr()) ? o.d + 1 : snap.si) + j;
 		b = o ? o.n : snap.sn;
 		v.sp = 'SET ' + a + ' OF ' + b;
-		v.la = x.lt ? 'Last time ' + fmt(x.lt) : '';
+		v.la = x.lt && !j ? 'Last time ' + fmt(x.lt) : '';
 		v.nx = v.nm && 'Next: ' + v.nm;
 		v.ns = v.nm && 'Set ' + a + ' of ' + b + (s ? ', ' + v.l2 : '');
 		v.sl = msg === 'Saved' ? (left > 0 && svR === r.id ? 'Set ' + sv + ' saved' : '') : left > 0 || msg.indexOf('Pending') ? msg : '';
@@ -408,7 +446,8 @@ function Link(io, boot) {
 		complete: function () { if (can()) add('c', cs().id, shown()); },
 		rest: function (kind) {
 			var k = kind === 'rest_skip' && snap && snap.rest ? kind + snap.rest.id : '';
-			if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) add(k ? 's' : 'a', k, '');
+			if (lr.on) kind === 'rest_skip' ? lr = 0 : lr.left += 30000, io.paint(); // C3: a local rest is local
+			else if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) add(k ? 's' : 'a', k, '');
 		},
 		// C2: effort 1 to 3, again to clear; next(d) pages on a swipe up or down, else opens Up next
 		effort: function (k) {
@@ -416,14 +455,28 @@ function Link(io, boot) {
 			io.paint();
 		},
 		next: function (d) {
-			if (up()) pg = !d ? 1 : d === 'up' || d === 'down' ? 1 - pg : pg;
+			if (ao()) d === 'up' ? bump(1) : d === 'down' ? bump(-1) : (d === 'left' || d === 'right') && (af = af === 'r' ? 'w' : 'r'); // C3: in Adjust
+			else if (up()) pg = !d ? 1 : d === 'up' || d === 'down' ? 1 - pg : pg;
 			io.paint();
 		},
 		pick: function (i) {
 			var r = up() && plan.rows[i];
 			if (r) pk = r.id === snap.eid ? '' : r.id, ps = snap.sid, pe = snap.eid, pg = 0, fresh();
 			io.paint();
-		}
+		},
+		// C3: adj(): open, d 1 or -1 step, d 0 close; beat(bpm or -code), drawn on the next tick
+		ok: function () { rk = (rst() || 0).id; io.paint(); },
+		adj: function (d) {
+			var s = cs(), k;
+			if (d === 0) af = 0;
+			else if (d) ao() && bump(d);
+			else if (can()) {
+				if (dv(s) !== ad) for (k in (ad = {}, s)) ad[k] = s[k];
+				af = ad.w == null ? 'r' : 'w';
+			}
+			io.paint();
+		},
+		beat: function (x) { hv = x > 0 ? Math.round(x) + ' bpm' : x === -602 ? 'Allow Body sensors' : ''; ht = x > 0 ? tk : 1e9; }
 	};
 }
 

@@ -1,6 +1,8 @@
 import { P2pClient, Message, Builder } from '../wearengine.js';
 import storage from '@system.storage';
 import brightness from '@system.brightness';
+import vibrator from '@system.vibrator';
+import sensor from '@system.sensor';
 import { PHONE_PKG, PHONE_FP, Link, makeBoot } from '../../common/link.js';
 
 // WATCH-C page; common/link.js does the rest. Every entry point catches what it throws.
@@ -9,16 +11,16 @@ var client, link, page, timer;
 function no() {}
 function tap(f, a) { try { link[f](a); } catch (e) {} }
 
-// the lines t1 to t5 and colours c1 to c4 that the screens share (index.hml), from link.js view(), by screen
+// the lines t1 to t5 and colours c1 to c4 the screens share (index.hml), from view(), by screen
 var SLOTS = 't1 t2 t3 t4 t5 c1 c2 c3 c4'.split(' ');
 function slots(v) {
 	var k = v.sc;
-	return k == 1 ? [v.sp, v.l2, v.la, v.sl, '', v.e1, v.e2, v.e3, v.cb] : k == 2 ? [v.rc, v.sl] :
-		k == 3 ? [v.dn, v.n0, v.n1, v.n2, v.n3, v.b0, v.b1, v.b2, v.b3] : k ? [v.na, v.add ? v.rest : ''] : [v.l1, v.l2];
+	return k == 1 ? [v.sp, v.l2, v.la, v.sl || v.hr, '', v.e1, v.e2, v.e3, v.cb] : k == 2 ? [v.rc, v.sl, v.hr] :
+		k == 3 ? [v.dn, v.n0, v.n1, v.n2, v.n3, v.b0, v.b1, v.b2, v.b3] : k == 7 ? [v.ak, v.av] : k ? [v.na, v.add ? v.rest : '', v.na && 'Pending'] : [v.l1, v.l2];
 }
 
-// only page data; a colour is always a colour. A new screen is built with its inner if-parts (set, t1) off and gets
-// them after, so no build runs inside another, as in 1.1.2 (red team, 611b09c8: about 1.9 KB less stack)
+// only page data; a colour is always a colour. A new screen is built with its inner if-part (set) off and gets it
+// after, with t1, so no build runs inside another (red team, 611b09c8)
 function paint() {
 	var v = page && link ? link.view() : 0, s = v && slots(v), k;
 	if (!v) return;
@@ -41,8 +43,15 @@ function send(text, done) {
 	}
 }
 
+// C3: the heart rate goes with keep-on; never stored or sent
 function keep(on) {
 	try { brightness.setKeepScreenOn({ keepScreenOn: on, success: no, fail: no }); } catch (e) {}
+	hr(on);
+}
+
+function buzz() { try { vibrator.vibrate({ mode: 'long', success: no, fail: no }); } catch (e) {} }
+function hr(on) {
+	try { on ? sensor.subscribeHeartRate({ success: function (d) { tap('beat', d && d.heartRate); }, fail: function (d, c) { tap('beat', -c); } }) : sensor.unsubscribeHeartRate(); } catch (e) {}
 }
 
 function connect() {
@@ -59,7 +68,7 @@ function connect() {
 }
 
 export default {
-	// what index.hml binds; t1 to t5 and c1 to c4 are the lines and colours the screens share (slots)
+	// what index.hml binds; t1 to t5 and c1 to c4 come from slots()
 	data: {
 		sc: 0, off: 0, ck: '', set: 0, nm: '', cl: '', nx: '', ns: '', r0: '', r1: '', r2: '', r3: '',
 		t1: '', t2: '', t3: '', t4: '', t5: '', c1: '#08090a', c2: '#08090a', c3: '#08090a', c4: '#08090a'
@@ -67,7 +76,7 @@ export default {
   onInit() {
 		try {
 			page = this;
-			link = Link({ store: storage, send: send, keep: keep, connect: connect, now: function () { return Date.now(); }, paint: paint }, makeBoot());
+			link = Link({ store: storage, send: send, keep: keep, connect: connect, now: function () { return Date.now(); }, paint: paint, buzz: buzz }, makeBoot());
 			link.start();
 			timer = setInterval(function () { try { link.tick(); } catch (e) {} }, 1000);
 			paint();
@@ -87,6 +96,11 @@ export default {
   onR2() { tap('pick', 2); },
   onR3() { tap('pick', 3); },
   onSwipe: function (e) { tap('next', e && e.direction); },
+  onAdj() { tap('adj'); },
+  onOk() { tap('ok'); },
+  onLess() { tap('adj', -1); },
+  onMore() { tap('adj', 1); },
+  onDone() { tap('adj', 0); },
   onDestroy() {
 		clearInterval(timer);
 		keep(false);
