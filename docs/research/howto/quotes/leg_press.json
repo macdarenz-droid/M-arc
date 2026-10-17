@@ -1,70 +1,70 @@
 {
   "id": "leg_press",
-  "checked": null,
+  "checked": "2026-10-17",
   "sources": [
     {
       "id": "yessis",
-      "access": null,
+      "access": "full",
       "fixes": null
     },
     {
       "id": "ace-leg-press",
-      "access": null,
+      "access": "full",
       "fixes": null
     },
     {
       "id": "nasm-leg-press",
-      "access": null,
+      "access": "full",
       "fixes": null
     },
     {
       "id": "bells-of-steel",
-      "access": null,
+      "access": "full",
       "fixes": null
     },
     {
       "id": "larsen2025",
-      "access": null,
+      "access": "abstract",
       "fixes": null
     },
     {
       "id": "barnds2019",
-      "access": null,
+      "access": "abstract",
       "fixes": null
     },
     {
       "id": "macdougall1985",
-      "access": null,
+      "access": "abstract",
       "fixes": null
     },
     {
       "id": "martinfuentes2020",
-      "access": null,
+      "access": "abstract",
       "fixes": null
     },
     {
       "id": "martinfuentes2022",
-      "access": null,
+      "access": "abstract",
       "fixes": null
     },
     {
       "id": "kinoshita2026",
-      "access": null,
+      "access": "abstract",
       "fixes": null
     },
     {
       "id": "stien2021",
-      "access": null,
+      "access": "abstract",
       "fixes": null
     },
     {
       "id": "dasilva2008",
-      "access": null,
+      "access": "abstract",
       "fixes": null
     },
     {
       "id": "escamilla2001lp",
-      "access": null,
+      "access": "abstract",
       "fixes": null
     }
   ],
@@ -73,399 +73,399 @@
       "claim": "c1",
       "source": "yessis",
       "quote": "Assume a seated position on a leg press machine angled at approximately a 45º angle.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c1",
       "source": "yessis",
       "quote": "Place your feet against the resistance platform with your hips and spine against the back support.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c2",
       "source": "yessis",
       "quote": "Your feet should be shoulder width apart and placed in the middle of the resistance platform. Pressure should be felt on the entire soles of both feet.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c2",
       "source": "nasm-leg-press",
       "quote": "Position your feet on the platform hip-width apart with your knees bent at approximately 90 degrees.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c3",
       "source": "yessis",
       "quote": "Release the locking lever located on the sides of the seat and then straighten the legs.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c3",
       "source": "bells-of-steel",
       "quote": "Push the platform away with your feet and disengage the safety side handles by turning them (usually) outwards. The handles are levers that release and lock the footplate in place.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c3",
       "source": "nasm-leg-press",
       "quote": "Place your hands on the handles for stability and release the safety bars.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c4",
       "source": "yessis",
       "quote": "The legs should be fully extended but not locked and the trunk should be held firmly against the back support. This is the starting position.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c4",
       "source": "ace-leg-press",
       "quote": "Continue extending your hips and knees until the knees reach a relaxed, extended position, with the heels still pressed firmly into the plate.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c4",
       "source": "ace-leg-press",
       "quote": "Do not hyperextend (lock-out) your knees and avoid lifting your butt off the seat pad or rounding out your low back.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c4",
       "source": "bells-of-steel",
       "quote": "Then, push the footplate back up until your legs are almost straight again. Don't lock out your knees completely.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c5",
       "source": "yessis",
       "quote": "Bend your legs until there is an 80-90? angle in the knees (measured from the back of the shin to the back of the thigh).",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c5",
       "source": "nasm-leg-press",
       "quote": "Lower the platform back toward your body with control, returning to approximately 90 degrees of knee flexion.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c5",
       "source": "ace-leg-press",
       "quote": "adjust your seat and foot position so that the bend in your knees is at approximately 90 degrees with your heels flat.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c6",
       "source": "larsen2025",
       "quote": "In one leg, the knee flexion range of motion (ROM) was fixed at approximately 5-100°, while for the other leg, participants used their maximum individualized ROM (5-154 ± 7.8°).",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c6",
       "source": "larsen2025",
       "quote": "These findings suggest that both knee flexion ROMs are similarly effective for promoting quadriceps femoris muscle hypertrophy over a relatively short training-period in resistance-trained individuals.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c7",
       "source": "yessis",
       "quote": "Leg press machines commonly cause low back injury because of the rounding of the back when the knees are close to the chest.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c7",
       "source": "yessis",
       "quote": "The closer the knees get to the chest, the greater is the rounding in the lower back which puts pressure on the lumbar intravertebral discs and can cause injury.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c7",
       "source": "ace-leg-press",
       "quote": "Do not allow your upper thighs to compress your ribcage.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c7",
       "source": "nasm-leg-press",
       "quote": "Descending too far beyond 90 degrees of knee flexion, which reduces control",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c8",
       "source": "ace-leg-press",
       "quote": "Improper technique can lead to injury. Control the extension phase by keeping your heels in contact with the plate and avoid locking out your knees.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c8",
       "source": "yessis",
       "quote": "Be sure that you do not lock out the knees at the end of the movement, especially if you naturally have several degrees of hyperextension in the locked position. This can lead to excessive hyperextension, which can severely injure the knees.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c8",
       "source": "nasm-leg-press",
       "quote": "Locking out knees at full extension, which removes tension and stresses the joint",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c9",
       "source": "barnds2019",
       "quote": "The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees during any type of leg press or squatting exercise.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c10",
       "source": "nasm-leg-press",
       "quote": "Allowing knees to cave inward (valgus), which indicates poor motor control",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c10",
       "source": "nasm-leg-press",
       "quote": "Using excessive weight that compromises form or allows knees to collapse inward",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c11",
       "source": "ace-leg-press",
       "quote": "Sit in the machine, positioning your back and sacrum (tailbone) flat against the machine's backrest.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c11",
       "source": "ace-leg-press",
       "quote": "Contract (“brace”) your abdominal muscles to stabilize your spine, be careful to avoid movement in your low back throughout the exercise.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c11",
       "source": "nasm-leg-press",
       "quote": "Sit on the leg press machine with your back and head firmly against the backrest.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c12",
       "source": "ace-leg-press",
       "quote": "Lightly grasp any available handles to stabilize your upper extremity.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c13",
       "source": "yessis",
       "quote": "Inhale slightly more than usual and hold your breath as you bend (flex) the legs to lower the platform.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c13",
       "source": "yessis",
       "quote": "Exhale as you pass the most difficult part of the upward pressing action.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c13",
       "source": "ace-leg-press",
       "quote": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c14",
       "source": "macdougall1985",
       "quote": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c14",
       "source": "macdougall1985",
       "quote": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c15",
       "source": "martinfuentes2020",
       "quote": "controlled velocity (2″ eccentric-2″ concentric)",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c15",
       "source": "martinfuentes2022",
       "quote": "2:2 seconds steady-paced velocities",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c15",
       "source": "yessis",
       "quote": "Lower at a slow to moderate speed.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c15",
       "source": "bells-of-steel",
       "quote": "If desired, you can pause for a second at the bottom.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c16",
       "source": "yessis",
       "quote": "The primary muscles of the hip joint are the gluteus maximus and hamstrings.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c16",
       "source": "yessis",
       "quote": "The primary muscle of the knee joint is the quadriceps femoris",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c16",
       "source": "nasm-leg-press",
       "quote": "Quadriceps -- primary mover for knee extension and leg pressing power",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c16",
       "source": "nasm-leg-press",
       "quote": "Glutes -- assist in hip extension and provide pressing power",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c17",
       "source": "kinoshita2026",
       "quote": "LP, but not KE, increased volumes of the gluteus maximus (+15.4%) and the adductor magnus (+6.2%)",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c17",
       "source": "kinoshita2026",
       "quote": "Muscle volumes of the individual and whole QF significantly increased in both conditions ( P ≤ 0.026), except for the rectus femoris in the LP condition ( P = 0.379).",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c18",
       "source": "stien2021",
       "quote": "The biceps femoris EMG amplitude was higher during the single-joint exercise kickback compared to the leg press",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c19",
       "source": "dasilva2008",
       "quote": "if the goal is to induce greater rectus femoris and vastus lateralis (quadriceps) activation, the LPL should be performed. On the other hand, if the goal is to induce gluteus maximus activity, the LPH should be performed.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c19",
       "source": "dasilva2008",
       "quote": "the rectus femoris and gastrocnemius were more active during the LP45 and LPL than the LPH.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c20",
       "source": "martinfuentes2022",
       "quote": "Muscle activation presented no differences between conditions regarding feet width stance or feet rotation.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c20",
       "source": "martinfuentes2022",
       "quote": "The inclined leg press exercise produces the highest muscle activation in the vastus medialis, regardless of the velocity, feet stance, or gender.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c21",
       "source": "escamilla2001lp",
       "quote": "Because all forces increased with knee flexion, training within the functional 0-50 degrees range may be efficacious for those whose goal is to minimize knee forces.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c22",
       "source": "bells-of-steel",
       "quote": "Some leg press machines also have a safety depth selector, which is a knob or a pin that lets you adjust how far the footplate can travel.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c22",
       "source": "bells-of-steel",
       "quote": "When you’ve completed your set, pause at the top and pull the safety handles inwards.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c22",
       "source": "bells-of-steel",
       "quote": "You can now bend your knees gently until the platform rests across the safety stoppers.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c23",
       "source": "yessis",
       "quote": "In comparison to the free weight squat, the leg press allows you to use much more weight; in some cases, well over twice the amount used in the regular squat. The extra weight is needed for greater intensity but you should always use caution to prevent injury.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c24",
       "source": "ace-leg-press",
       "quote": "Pause momentarily, then slowly return to your starting position by flexing (bending) the hips and knees, and allowing the resistance plate to move towards you in a slow, controlled manner.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c24",
       "source": "nasm-leg-press",
       "quote": "Maintain tension throughout the movement and avoid jerky or uncontrolled descent.",
-      "status": null,
+      "status": "verbatim",
       "closest": null
     }
   ]

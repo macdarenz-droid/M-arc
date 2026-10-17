@@ -614,7 +614,9 @@
       "title": "The Leg Press (Yessis M., Dr. Yessis SportLab)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "ace-leg-press",
@@ -622,7 +624,9 @@
       "title": "Seated Leg Press (ACE Exercise Library)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "nasm-leg-press",
@@ -630,7 +634,9 @@
       "title": "Leg Press (NASM Exercise Library)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "bells-of-steel",
@@ -638,7 +644,9 @@
       "title": "How to use the leg press machine (Bells of Steel, manufacturer blog)",
       "kind": "manufacturer",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "larsen2025",
@@ -646,7 +654,9 @@
       "title": "Knee flexion range of motion does not influence muscle hypertrophy of the quadriceps femoris during leg press training in resistance-trained individuals (Larsen S et al., J Sports Sci)",
       "kind": "peer-reviewed",
       "year": 2025,
-      "pmid": "40113586"
+      "pmid": "40113586",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "barnds2019",
@@ -654,7 +664,9 @@
       "title": "Simultaneous Bilateral Knee Dislocation During Weight Training: A Case Report and Review of the Literature (Barnds B et al., JBJS Case Connect)",
       "kind": "peer-reviewed",
       "year": 2019,
-      "pmid": "30676343"
+      "pmid": "30676343",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "macdougall1985",
@@ -662,7 +674,9 @@
       "title": "Arterial blood pressure response to heavy resistance exercise (MacDougall JD et al., J Appl Physiol)",
       "kind": "peer-reviewed",
       "year": 1985,
-      "pmid": "3980383"
+      "pmid": "3980383",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "martinfuentes2020",
@@ -670,7 +684,9 @@
       "title": "Muscle Activation and Kinematic Analysis during the Inclined Leg Press Exercise in Young Females (Martin-Fuentes I, Oliva-Lozano JM, Muyor JM, Int J Environ Res Public Health)",
       "kind": "peer-reviewed",
       "year": 2020,
-      "pmid": "33238589"
+      "pmid": "33238589",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "martinfuentes2022",
@@ -678,7 +694,9 @@
       "title": "Influence of Feet Position and Execution Velocity on Muscle Activation and Kinematic Parameters During the Inclined Leg Press Exercise (Martin-Fuentes I, Oliva-Lozano JM, Muyor JM, Sports Health)",
       "kind": "peer-reviewed",
       "year": 2022,
-      "pmid": "34085847"
+      "pmid": "34085847",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "kinoshita2026",
@@ -686,7 +704,9 @@
       "title": "Hypertrophic Effects of Single- versus Multi-Joint Exercise: A Direct Comparison between Knee Extension and Leg Press (Kinoshita M et al., Med Sci Sports Exerc)",
       "kind": "peer-reviewed",
       "year": 2026,
-      "pmid": "41630124"
+      "pmid": "41630124",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "stien2021",
@@ -694,7 +714,9 @@
       "title": "Electromyographic Comparison of Five Lower-Limb Muscles between Single- and Multi-Joint Exercises among Trained Men (Stien N, Saeterbakken AH, Andersen V, J Sports Sci Med)",
       "kind": "peer-reviewed",
       "year": 2021,
-      "pmid": "33707987"
+      "pmid": "33707987",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "dasilva2008",
@@ -702,7 +724,9 @@
       "title": "Analysis of muscle activation during different leg press exercises at submaximum effort levels (Da Silva EM et al., J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2008,
-      "pmid": "18545207"
+      "pmid": "18545207",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "escamilla2001lp",
@@ -710,7 +734,9 @@
       "title": "Effects of technique variations on knee biomechanics during the squat and leg press (Escamilla RF et al., Med Sci Sports Exerc)",
       "kind": "peer-reviewed",
       "year": 2001,
-      "pmid": "11528346"
+      "pmid": "11528346",
+      "access": "abstract",
+      "checked": "2026-10-17"
     }
   ],
   "plate": {
