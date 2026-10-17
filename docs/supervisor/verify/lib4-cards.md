@@ -650,6 +650,13 @@ The supervisor workflow wf_f45aa9b0-355 drafted these. It ran one Opus judge per
     - New acceptance row **E7**: QA node-half gate. A row failing any node-half problem other than the browser keys is refused with QaRefused naming the id. Mutations as in D-LIB2b-QA.
     - write_scope adds `tools/plates/library/candidate.mjs`, `tools/plates/library/layers-spec.mjs`, `tools/plates/library/inputs-closure.mjs`, `tests/howto/budgets.test.ts` (item 6), `tests/howto/fixtures/lib2b/**`, and new batch-format fields (`pages`, `view`) in the registry's validation.
 12. **Inputs of a library row's layer outputs.** `feel-`, `posture-` and `zoom-<chromeId>.css` list, as inputs, the row's pinned page, its `layersConfig`, its batch golden file and batch file, the plugin code files, `tools/plates/layers/MANIFEST.json` and `tools/plates/layers.mjs`, because ZDOTS, HX_TAIL, HAND_CSS and FEEL_CSS enter their text or checks. E2 asserts this. Mutation: drop MANIFEST.json, and E2 is red.
+13. **LIB-4b map gaps (2026-10-17, on #232).** Four groups of gaps are named; none of them drops a per-id check.
+    - **X3b:** `ht3Behaviour` A1 negatives (bench press and the custom exercise show no entry). They have no library-id subject. HT-3 and LIB-4a's control block (D-LIB4-CTRL) cover them on every run.
+    - **X9a:** `runHt10` `golden`, the C10/C18 exemptions on the 8's golden page. Library ids inherit no exemptions. If a batch entry ever names a C10 or C18 exemption, that id's row checks it on its own page, and the row is red until it does.
+    - **X9b:** `runHt10` `fixtures` (19 checks). They guard `ht10Sweep` and `ht10DomProbe`, which the runner imports and never copies, and which HT-10 covers on every run. B3's pin proves the imports.
+    - **X9c:** `runHt10` A5's per-shard time budget. For the library, LIB-4c's 1,800 s verdict covers it.
+    - HT-3b A2's `HowToSheet-*.js` and `.css` budgets are build-wide and map to X4.
+    - The count is **2,947** on the 8, not 2,979. `HT6/A6` and `HT9/A5` are one row per id and theme, covering N, M, T@2400 and R:end, so 64 rows each, equal to each block's printed "64 plate pairs". B1 pins 2,947.
 
 ### 11.2 LIB-2b rulings (#234)
 
