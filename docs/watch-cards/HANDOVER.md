@@ -1,24 +1,18 @@
 # Watch lane handover
 
-Last update: 2026-10-17, by the watch lane session (owner asked for a handover before its usage ran out). Read with `AGENTS.md`, `docs/WATCH-ARCHITECTURE.md`, the cards in this folder and `native/wear/README.md` (every device record).
+Last update: 2026-10-17, by the second watch lane session. Read with `AGENTS.md`, `docs/WATCH-ARCHITECTURE.md`, the cards in this folder and `native/wear/README.md` (every device record).
 
-## Current task (emergency pickup)
-Exactly where the watch lane stopped, in order. Work moved to branch `ccr-8cef8a15-l12swp` (the second session's designated branch; it starts from `ccr-061c7350-tjvpo6` @ `567a27e5`). Draft PR #221 still points at the old branch; its HANDOFF names the new one.
-1. **WATCH-C3 built:** phone `f583f397` and watch 1.3.0 `aa632927` (see the card). **Done 2026-10-17:** X3 contract test `3d1515d2` (`tests/watch-contract.test.ts`; red under 5 mutations: the watch ignores `nx`, the phone sends no `nx`, the phone saves at receipt, the outbox runs newest first, the action time moves 60 s). `npm run check` 3053/3053, `npm run test:tz` 3053/3053, watch tests 105/105. Watch build from the public 7.0 SDK (hashes match README): compiled page 43,125 B, `check-lite-js` OK, unsigned `.bin` 174,759 B.
-2. **In progress:** a fresh-context review and a red team (JerryScript runs at 8 and 14 KB, the framework model, offline and Adjust edge cases) ran in parallel on `3d1515d2`. Next: fix every finding with a test that fails before, then one last red team of the fixes.
-3. **Signing is blocked:** the owner sent `marc-watch-signing.zip` (the files listed below), but the session's auto-mode classifier refused to open it ("Credential Exploration"). AGENTS.md: never work around a denial. The owner must allow it (a permission rule) or sign with `sign-lite-bin.sh` himself. Then verify, record the hashes in README, send privately with the card's F1–F6, a practice workout first.
-4. **CI:** done. The Play bundle job passed on `567a27e5` (run 122), so the `fff328ff` failure was the Maven outage.
-5. **PR #221 body:** HANDOFF updated to the new branch and head.
+## Current task
+Branch `ccr-8cef8a15-l12swp` (the second session's designated branch; it starts from `ccr-061c7350-tjvpo6` @ `567a27e5`). Draft PR #221 still points at the old branch; its HANDOFF names this one.
+1. **WATCH-C3 (watch 1.3.0) is done up to the device run.** Phone `f583f397`, watch `aa632927`, X3 `3d1515d2`; a fresh review and a red team ran on `3d1515d2`; fixes `cdbdd783` (R1 to R4) and `ce998f04` (R5 to R9); a last red team of the fixes; its fixes `0dd78bc5` (R10 to R16). Every finding is fixed with a test that fails before and a mutation that turns it red, or ruled (rulings at the end of `WATCH-C3.md`). On `0dd78bc5`: `npm run check` 3053/3053, `npm run test:tz` 3053/3053, watch tests 121/121; page sources 45,909 B (cap 46,000), compiled page 43,724 B, `check-lite-js` OK; 37 JerryScript scenarios clean at 8 and 14 KB stacks; the model's workouts need 104 KB (W1) and 107 KB (W1C3) of heap (1.2.0: 96 and 98 KB).
+2. **Signed and sent:** 1.3.0 signed with the owner's debug files, `verify-signed-bin.py` and `verify-app` pass, hashes in README "watch 1.3.0". Sent privately with `native/wear/tools/owner-steps.md` (F1 to F6, a practice workout first) and the debug APK from the M/ARC gate run on `0dd78bc5`.
+3. **Next:** read the owner's F1 to F6 results; fix anything found; then record Gate C (D1 to D8 on the latest build).
 
 ## Where things stand
-- **Branch:** `ccr-061c7350-tjvpo6`, draft PR #221 (not for merge). Head `fff328ff` or later. M/ARC gate green on `cd0e0b16` (run 2116). The Play bundle job failed on `fff328ff` with Maven artifacts not found (`kotlin-stdlib:2.2.0` and about 80 more): a repository outage, not code; one re-run was requested. If it fails again, it is real: look at it.
-- **Gates:** A done (Q1–Q6). B done (`WATCH-B.md`). C in progress: `WATCH-C.md` (protocol, outbox), `WATCH-C2.md` (C2 screens, Up next, watch 1.2.0), `WATCH-C3.md` (next build, not built yet).
-- **On the owner's devices:** watch **1.2.0** (signed; hashes in README "C2 screens") and the debug APK from **run 2113** (`5fc2da44`; phone code unchanged since). The owner ran a practice test ("seems fine") and is doing a real workout; no crash reported so far.
-- **Waiting on the owner:** the real-workout result (any crash: which screen, how far in); whether Settings > Down button offers M/ARC Watch.
-
-## In flight when this was written
-- **WATCH-C3** builders (phone and watch) were running in local worktrees of this session. Their commits are **not pushed**. If you do not see C3 commits on the branch, rebuild from the card: it lists every decision, the protocol (`st`, `nx`, `rs`), the screens, the tests (P3, L1–L5, X3, B3) and the W4 spec changes.
-- After the build: integrate, then review, then red team (owner rule: "red team every output before handing it to me"), fix, a last red team of the fixes, sign, send privately, record hashes in README.
+- **Gates:** A done (Q1–Q6). B done (`WATCH-B.md`). C in progress: `WATCH-C.md` (protocol, outbox), `WATCH-C2.md` (C2 screens, Up next, watch 1.2.0), `WATCH-C3.md` (watch 1.3.0, sent).
+- **On the owner's devices:** watch 1.2.0 and the debug APK from run 2113 until he installs 1.3.0 and the new APK. 1.2.0 is the recovery.
+- **Waiting on the owner:** the 1.3.0 practice workout (F1 to F6); whether Settings > Down button offers M/ARC Watch.
+- **Signing files:** in this session's scratch folder only. A new session needs them again, unless the owner adds `MARC_WATCH_SIGNING_ZIP_B64` to the environment (see Building and signing).
 
 ## Owner decisions (all recorded in `docs/WATCH-WEAR-ENGINE-APPLICATION.md` 11.3)
 - 2026-10-16: phone sends exercise, target, set count, rest timer, theme; watch commands saved like phone sets.
@@ -31,14 +25,14 @@ Exactly where the watch lane stopped, in order. Work moved to branch `ccr-8cef8a
 - The GT 6 closes the app about 25 s after its screen goes dark; lowering the arm turns the screen off even with keep-on. No setting or API brings the app back on wrist raise.
 - A `<text>` with `if` that turns true later is not drawn (1.2.0 gym run); use bound text.
 - Huawei's own workout blocks other apps. Heart rate needs Body sensors allowed in watch Settings (error 602 until then).
-- The GT 6 JS heap size is unknown; 1.2.0 uses more than 1.1.2 (model: about 98 KB against 77 KB at a workout's peak).
+- The GT 6 JS heap size is unknown; each build uses more (model, a workout: 1.1.2 77 KB, 1.2.0 96 to 98 KB, 1.3.0 104 to 107 KB).
 - The phone's JS can see messages seconds late after a native freeze; the hello answer's `pt` is the receipt midpoint because of this.
 
 ## Building and signing (nothing secret goes in the repo)
 - Build: README "Build without DevEco Studio" (public OpenHarmony 7.0 SDK), then `native/wear/build/build-lite-bin.sh <sdk> native/wear/app/entry/src/main <out> debug` with `NODE_OPTIONS=--openssl-legacy-provider`, then `check-lite-js.cjs`.
-- Sign: `native/wear/build/sign-lite-bin.sh` with the owner's debug keystore, certificate and GT 6 profile (`marc_watch_debug.p12`, its password file, `.cer`, `_gt6.p7b`). They are secrets and stay out of this public repo (AGENTS.md: never commit keys). The owner holds them (sent privately on 2026-10-17: `marc_watch_debug.p12`, `marc_watch_debug-password.txt`, `marc_watch_debug.cer`, `marc_watch_debug_gt6.p7b`, plus `cert1.pem`, the root for `verify-signed-bin.py`, and the `.csr`) and gives them to the next session once; they are the only thing to ask for. Put them in that session's scratch folder, never in the repo. Read the password from its file into a variable; never print it. The password file is labelled: the key alias is on the `Key alias:` line and the password on the `Keystore password =` line. **Before asking the owner:** if the environment variable `MARC_WATCH_SIGNING_ZIP_B64` is set (the owner may add it in the cloud environment's settings), decode it into the scratch folder (`printf %s "$MARC_WATCH_SIGNING_ZIP_B64" | base64 -d > <scratch>/signing/s.zip`, then unzip there) and use that; never echo the variable. Verify with `verify-signed-bin.py`.
+- Sign: `native/wear/build/sign-lite-bin.sh` with the owner's debug keystore, certificate and GT 6 profile (`marc_watch_debug.p12`, its password file, `.cer`, `_gt6.p7b`). They are secrets and stay out of this public repo (AGENTS.md: never commit keys). The owner holds them (sent privately on 2026-10-17: `marc_watch_debug.p12`, `marc_watch_debug-password.txt`, `marc_watch_debug.cer`, `marc_watch_debug_gt6.p7b`, plus `cert1.pem`, the root for `verify-signed-bin.py`, and the `.csr`) and gives them to the next session once; they are the only thing to ask for. Put them in that session's scratch folder, never in the repo. Read the password from its file into a variable; never print it. The password file is labelled: the key alias is on the `Key alias:` line; the password is the token after the last `: ` on the `Keystore password =` line (that line carries a label of its own first; the whole line fails with "Init keystore failed"). **Before asking the owner:** if the environment variable `MARC_WATCH_SIGNING_ZIP_B64` is set (the owner may add it in the cloud environment's settings), decode it into the scratch folder (`printf %s "$MARC_WATCH_SIGNING_ZIP_B64" | base64 -d > <scratch>/signing/s.zip`, then unzip there) and use that; never echo the variable. Verify with `verify-signed-bin.py`.
 - Signed builds carry the owner's name and the watch UDID: never commit, attach to a PR or publish; send privately.
-- The JerryScript red-team harness and the lite-framework heap model are in `native/wear/tools/redteam/` (see its README); the research and review outputs are in `native/wear/research/`; the C2 design is `docs/watch-cards/c2-watch-ux.png`; the owner's last test steps are `native/wear/tools/owner-steps-1.2.0.md`.
+- The JerryScript red-team harness and the lite-framework heap model are in `native/wear/tools/redteam/` (see its README); the research and review outputs are in `native/wear/research/`; the C2 design is `docs/watch-cards/c2-watch-ux.png`; the owner's current test steps are `native/wear/tools/owner-steps.md` (one file, updated per build).
 
 ## Next after C3
 Record Gate C (D1–D8 on the latest build), then plan Gate D (needs the Modify), the crown probe, dimming during rest (device check; may leave the system brightness changed), the Session and Heart pages.
