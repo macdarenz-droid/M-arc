@@ -1,0 +1,308 @@
+{
+  "id": "chin_up",
+  "checked": "2026-09-30",
+  "sources": [
+    {
+      "id": "ace-best-back",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "ace-chin-ups",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "barbend-chin-up",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "bullbar-assist-beginner",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "hk-baechle-grip",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "mcgill-2014",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "nasm-chin-pull",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "odriscoll-1992",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "prinold-2016",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "strengthlog-chin-up",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "youdas-2010",
+      "access": "abstract",
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-chin-ups",
+      "quote": "reach your arms overhead with your palms facing you. Reach, jump or lift your body off the floor to grasp the handles firmly with a full grip position (thumbs wrapped around the handles).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "strengthlog-chin-up",
+      "quote": "Grip the bar with a supinated grip (palms facing you), about shoulder-width apart.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "nasm-chin-pull",
+      "quote": "A chin-up uses a supinated grip (palms facing the client), typically shoulder-width or slightly closer, and involves shoulder extension.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-chin-ups",
+      "quote": "assume a neutral wrist position (i.e., wrist aligned in a straight line with your forearms).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "ace-chin-ups",
+      "quote": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "nasm-chin-pull",
+      "quote": "Set the scapulae first, cueing 'pull the shoulder blades down and back' before the arms take over, so the client leads with the back rather than yanking with the arms.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-chin-ups",
+      "quote": "Attempt to pull in a motion that drives your elbows directly down towards the floor, keeping your elbows in front of your body.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "ace-chin-ups",
+      "quote": "Attempt to keep your body aligned vertically to the floor and avoid swinging your body during your upward pull",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "nasm-chin-pull",
+      "quote": "Discourage the common faults: kipping and momentum on strict-strength work, partial range of motion (coach a full hang at the bottom to a chin-clearing top), and craning the neck.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "ace-chin-ups",
+      "quote": "Continue pulling upward until your chin is level with the bar or your hands. Pause momentarily then slowly return to your starting position by allowing your arms to extend back overhead until your arms are fully extended.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "ace-chin-ups",
+      "quote": "Slowly exhale and slowly pull your body upwards by flexing (bending) your elbows",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "ace-chin-ups",
+      "quote": "Pause momentarily then slowly return to your starting position",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "ace-chin-ups",
+      "quote": "Gently cross one leg over the other to stabilize your lower extremity and then stiffen (\"brace\") your abdominal muscles to stabilize your spine.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "youdas-2010",
+      "quote": "The pectoralis major and biceps brachii had significantly higher EMG activation during the chin-up than during the pull-up, whereas the lower trapezius was significantly more active during the pull-up.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "youdas-2010",
+      "quote": "latissimus dorsi (117-130%), biceps brachii (78-96%), infraspinatus (71-79%), lower trapezius (45-56%), pectoralis major (44-57%)",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "ace-best-back",
+      "quote": "Latissimus dorsi (Figure 3): The pull-up and chin-up had significantly greater muscle activation than the other six exercises.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "prinold-2016",
+      "quote": "palms facing anterior, palms facing posterior and wide-grip",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "prinold-2016",
+      "quote": "The reverse technique has extreme glenohumeral internal-external rotation and large deviation from the scapula plane.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "prinold-2016",
+      "quote": "Wide and reverse pull-ups demonstrate kinematics patterns linked with increased impingement risk.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "prinold-2016",
+      "quote": "High arm elevation during pull-ups reduces sub-acromial space and increases pressure, increasing the risk of impingement injury.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "mcgill-2014",
+      "quote": "The chin-up and pull-up exercises created the highest spine load as they required the highest muscle activation, despite the body \"hanging\" under tractioning gravitational load.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "nasm-chin-pull",
+      "quote": "progress gradually to avoid overuse issues like elbow tendon irritation",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "nasm-chin-pull",
+      "quote": "if a client reports shoulder or elbow pain, numbness, or tingling that persists, refer them to a physician or physical therapist rather than training through it.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c17",
+      "source": "nasm-chin-pull",
+      "quote": "Band-assisted reps or an assisted pull-up machine to practice the full pattern with reduced load.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c17",
+      "source": "nasm-chin-pull",
+      "quote": "Eccentric (negative) reps: jump or step to the top, then lower slowly",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c18",
+      "source": "barbend-chin-up",
+      "quote": "Be sure to freely hang at the bottom of the chin-up. You should be able to have your head in between your biceps with the elbows fully extended.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c19",
+      "source": "barbend-chin-up",
+      "quote": "A strong grip and forearms are needed to both keep you holding on to the bar itself as well as provide a stable connection to pull from.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "odriscoll-1992",
+      "quote": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "odriscoll-1992",
+      "quote": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "odriscoll-1992",
+      "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c21",
+      "source": "hk-baechle-grip",
+      "quote": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c22",
+      "source": "ace-chin-ups",
+      "quote": "Align your head vertically with your trunk under your hands",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c23",
+      "source": "nasm-chin-pull",
+      "quote": "Apply progressive overload deliberately, more reps, less assistance, then added load",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c23",
+      "source": "nasm-chin-pull",
+      "quote": "once reps come easily, added load via a belt or dumbbell for continued overload",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c24",
+      "source": "bullbar-assist-beginner",
+      "quote": "The Shrug: Initiating the pull with your shoulders up by your ears.",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}

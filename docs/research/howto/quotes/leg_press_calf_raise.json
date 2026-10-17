@@ -1,0 +1,231 @@
+{
+  "id": "leg_press_calf_raise",
+  "checked": "2026-09-30",
+  "sourceFixes": [],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "yessis-lpcr",
+      "quote": "Assume a seated position on an incline leg press machine and place the balls of the feet on the bottom edge of the resistance platform so that the heels of the feet are free to move.",
+      "status": "verbatim",
+      "closest": "Assume a seated position on an incline leg press machine and place the balls of the feet on the bottom edge of the resistance platform so that the heels of the feet are free to move."
+    },
+    {
+      "claim": "c1",
+      "source": "yessis-lpcr",
+      "quote": "Keep the toes pointed directly in front or slightly to the outsides.",
+      "status": "verbatim",
+      "closest": "Keep the toes pointed directly in front or slightly to the outsides."
+    },
+    {
+      "claim": "c2",
+      "source": "yessis-lpcr",
+      "quote": "The legs should be straight or very slightly bent and never locked.",
+      "status": "verbatim",
+      "closest": "The legs should be straight or very slightly bent and never locked."
+    },
+    {
+      "claim": "c2",
+      "source": "yessis-lpcr",
+      "quote": "To ensure maximum safety, keep the knees slightly bent at all times.",
+      "status": "verbatim",
+      "closest": "To ensure maximum safety, keep the knees slightly bent at all times."
+    },
+    {
+      "claim": "c3",
+      "source": "yessis-lpcr",
+      "quote": "Grip the side handles to stabilize the upper body and to release the holding mechanism.",
+      "status": "verbatim",
+      "closest": "Grip the side handles to stabilize the upper body and to release the holding mechanism."
+    },
+    {
+      "claim": "c4",
+      "source": "yessis-lpcr",
+      "quote": "Extend the feet at a slow to moderate rate of speed through approximately a 30 — 45° range of motion. Then hold the fully extended position for one to two seconds to maximize the contraction.",
+      "status": "verbatim",
+      "closest": "Extend the feet at a slow to moderate rate of speed through approximately a 30 — 45° range of motion. Then hold the fully extended position for one to two seconds to maximize the contraction."
+    },
+    {
+      "claim": "c4",
+      "source": "yessis-lpcr",
+      "quote": "Exhale as you return (under control) until the feet are in a position of slight dorsi flexion (ball of the foot about 10 — 20° toward the shin from the neutral position).",
+      "status": "verbatim",
+      "closest": "Exhale as you return (under control) until the feet are in a position of slight dorsi flexion (ball of the foot about 10 — 20° toward the shin from the neutral position)."
+    },
+    {
+      "claim": "c5",
+      "source": "yessis-lpcr",
+      "quote": "For safety and to ensure an adequate range of motion, do this exercise slowly or at a moderate rate of speed. If you do the exercise quickly there is a tendency to fully straighten the legs and to push the resistance platform off the feet.",
+      "status": "verbatim",
+      "closest": "For safety and to ensure an adequate range of motion, do this exercise slowly or at a moderate rate of speed. If you do the exercise quickly there is a tendency to fully straighten the legs and to push the resistance platform off the feet."
+    },
+    {
+      "claim": "c6",
+      "source": "yessis-lpcr",
+      "quote": "Do not lock or hyperextend the knees as this can be potentially very dangerous.",
+      "status": "verbatim",
+      "closest": "Do not lock or hyperextend the knees as this can be potentially very dangerous."
+    },
+    {
+      "claim": "c6",
+      "source": "barnds2019",
+      "quote": "The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees during any type of leg press or squatting exercise.",
+      "status": "verbatim",
+      "closest": "The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees during any type of leg press or squatting exercise."
+    },
+    {
+      "claim": "c7",
+      "source": "yessis-lpcr",
+      "quote": "To prevent the feet from slipping be sure that you have on shoes with good traction and that the surface of the resistance platform is not slippery. Your feet should maintain in firm contact at all times.",
+      "status": "verbatim",
+      "closest": "To prevent the feet from slipping be sure that you have on shoes with good traction and that the surface of the resistance platform is not slippery. Your feet should maintain in firm contact at all times."
+    },
+    {
+      "claim": "c7",
+      "source": "yessis-lpcr",
+      "quote": "I have seen several injuries in which the skin was “shaved” off the bone when the resistance platform came down across the shins.",
+      "status": "verbatim",
+      "closest": "I have seen several injuries in which the skin was “shaved” off the bone when the resistance platform came down across the shins."
+    },
+    {
+      "claim": "c8",
+      "source": "yessis-lpcr",
+      "quote": "Do not lower the resistance platform too quickly or bounce in the bottom position. Doing so increases the chance of muscle injury and enhances the possibility of the feet slipping off the platform.",
+      "status": "verbatim",
+      "closest": "Do not lower the resistance platform too quickly or bounce in the bottom position. Doing so increases the chance of muscle injury and enhances the possibility of the feet slipping off the platform."
+    },
+    {
+      "claim": "c8",
+      "source": "yessis-lpcr",
+      "quote": "Exhale as you return (under control) until the feet are in a position of slight dorsi flexion (ball of the foot about 10 — 20° toward the shin from the neutral position). Pause momentarily and then repeat.",
+      "status": "verbatim",
+      "closest": "Exhale as you return (under control) until the feet are in a position of slight dorsi flexion (ball of the foot about 10 — 20° toward the shin from the neutral position). Pause momentarily and then repeat."
+    },
+    {
+      "claim": "c8",
+      "source": "yessis-lpcr",
+      "quote": "If you fully extend the ankle in the up and down movements the possibility of slipping off the resistance platform is increased greatly.",
+      "status": "verbatim",
+      "closest": "If you fully extend the ankle in the up and down movements the possibility of slipping off the resistance platform is increased greatly."
+    },
+    {
+      "claim": "c9",
+      "source": "yessis-lpcr",
+      "quote": "The gastrocnemius is most powerful when the leg is straight while the soleus is equally powerful regardless of knee position.",
+      "status": "verbatim",
+      "closest": "The gastrocnemius is most powerful when the leg is straight while the soleus is equally powerful regardless of knee position."
+    },
+    {
+      "claim": "c11",
+      "source": "kassiano2023",
+      "quote": "Forty-two young women performed a calf training program for 8 weeks, 3 days·week -1 , with differences in the calf raise ROM configuration. The calf raise exercise was performed in a pin-loaded, horizontal, leg-press machine, in 3 sets of 15-20 repetition maximum.",
+      "status": "verbatim",
+      "closest": "Forty-two young women performed a calf training program for 8 weeks, 3 days·week -1 , with differences in the calf raise ROM configuration. The calf raise exercise was performed in a pin-loaded, horizontal, leg-press machine, in 3 sets of 15-20 repetition maximum."
+    },
+    {
+      "claim": "c11",
+      "source": "kassiano2023",
+      "quote": "INITIAL ROM elicited greater medial gastrocnemius increases than FULL ROM and FINAL ROM",
+      "status": "verbatim",
+      "closest": "INITIAL ROM elicited greater medial gastrocnemius increases than FULL ROM and FINAL ROM"
+    },
+    {
+      "claim": "c11",
+      "source": "kassiano2023",
+      "quote": "INITIAL ROM elicited greater lateral gastrocnemius increases than FINAL ROM (INITIAL ROM = +14.9% vs. FINAL ROM = +6.2%; p < 0.024) but did not significantly differ from FULL ROM (FULL ROM = +7.3%; p = 0.060).",
+      "status": "verbatim",
+      "closest": "INITIAL ROM elicited greater lateral gastrocnemius increases than FINAL ROM (INITIAL ROM = +14.9% vs. FINAL ROM = +6.2%; p < 0.024) but did not significantly differ from FULL ROM (FULL ROM = +7.3%; p = 0.060)."
+    },
+    {
+      "claim": "c11",
+      "source": "kassiano2023",
+      "quote": "The current results suggest that calf training performed at longer muscle lengths may optimize gastrocnemius muscle hypertrophy in young women.",
+      "status": "verbatim",
+      "closest": "The current results suggest that calf training performed at longer muscle lengths may optimize gastrocnemius muscle hypertrophy in young women."
+    },
+    {
+      "claim": "c12",
+      "source": "macdougall1985",
+      "quote": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
+      "status": "verbatim",
+      "closest": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders."
+    },
+    {
+      "claim": "c12",
+      "source": "macdougall1985",
+      "quote": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+      "status": "verbatim",
+      "closest": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum."
+    },
+    {
+      "claim": "c12",
+      "source": "macdougall1985",
+      "quote": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+      "status": "verbatim",
+      "closest": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift"
+    },
+    {
+      "claim": "c12",
+      "source": "macdougall1985",
+      "quote": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
+      "status": "verbatim",
+      "closest": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg."
+    },
+    {
+      "claim": "c12",
+      "source": "macdougall1985",
+      "quote": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
+      "status": "verbatim",
+      "closest": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver."
+    },
+    {
+      "claim": "c13",
+      "source": "acsm2009",
+      "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+      "status": "verbatim",
+      "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c13",
+      "source": "yessis-lpcr",
+      "quote": "Although the calf muscles are very strong and can produce a tremendous amount of force, do not use too much weight in every set.",
+      "status": "verbatim",
+      "closest": "Although the calf muscles are very strong and can produce a tremendous amount of force, do not use too much weight in every set."
+    },
+    {
+      "claim": "c13",
+      "source": "yessis-lpcr",
+      "quote": "Using very heavy weight is needed for maximum intensity but you should also do one or two sets with lighter weight for a fuller range of motion",
+      "status": "verbatim",
+      "closest": "Using very heavy weight is needed for maximum intensity but you should also do one or two sets with lighter weight for a fuller range of motion"
+    },
+    {
+      "claim": "c14",
+      "source": "yessis-lpcr",
+      "quote": "When you are ready, inhale and hold your breath as you extend the feet",
+      "status": "verbatim",
+      "closest": "When you are ready, inhale and hold your breath as you extend the feet"
+    },
+    {
+      "claim": "c14",
+      "source": "yessis-lpcr",
+      "quote": "Be sure to hold your breath to stabilize the body and to maximize your attention on the ankle joint action.",
+      "status": "verbatim",
+      "closest": "Be sure to hold your breath to stabilize the body and to maximize your attention on the ankle joint action."
+    },
+    {
+      "claim": "c15",
+      "source": "acsm2009",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
+    },
+    {
+      "claim": "c15",
+      "source": "yessis-lpcr",
+      "quote": "Extend the feet at a slow to moderate rate of speed through approximately a 30 — 45° range of motion. Then hold the fully extended position for one to two seconds to maximize the contraction.",
+      "status": "verbatim",
+      "closest": "Extend the feet at a slow to moderate rate of speed through approximately a 30 — 45° range of motion. Then hold the fully extended position for one to two seconds to maximize the contraction."
+    }
+  ]
+}
