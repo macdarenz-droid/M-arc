@@ -43,7 +43,8 @@ Any other `v` shows "Update needed", and sending stops. Unknown `k` values and u
 - **Screen:** keep-on is held while a session or a pending entry exists.
 
 ## Phone side (`src/native/watchLink.ts`, new)
-- **`buildSnapshot`** picks the first entry, in display order, that is not done or skipped, and its first set that is neither committed nor skipped. An unset status counts as draft (carried from WATCH-B).
+- **`buildSnapshot`** picks, among entries that are not done or skipped and still have a set to log: the card open on the phone (an in-memory `openEntryId` set by Train.tsx, never saved); else the entry of the last logged set; else the first in display order (amended after device run D1, 2026-10-17). Within it, the first set that is neither committed nor skipped. An unset status counts as draft (carried from WATCH-B).
+- **Storage:** `@system.storage` values must be under 128 bytes (OpenHarmony `@system.storage` reference), so each outbox slot is stored as chunks of at most 120 characters plus a header with the chunk count, length and checksum (watch 1.1.1, after device run D1).
   - Values, with `src` d, t or l: the draft's own load (in the entered unit), reps and effort; else `entryTarget(...).sets[j]` (Train.tsx:165); else `previousSet`.
 - **Routing:** `mw` messages go to the link, and everything else to the lab.
   - A `cmd` goes to `handleWorkoutCommand(cmd, rxAt)`.
