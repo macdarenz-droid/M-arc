@@ -91,6 +91,15 @@ All in `src/brain/`.
 - **PWA** (`public/sw.js`): navigations are network-first with the cached index as the fallback. Other files are cache-first. Every built file, lazy chunks included, is installed with the app. Old chunks carry over to a new version, so an open tab keeps working after an update.
 - **Themes** (`theme/`): one token contract, five themes (Silent Black default, Paper, Ember, Emerald, Midnight). The first paint uses the saved theme's colours from `index.html`; the Android status and navigation bars follow the theme.
 
+## Minimum WebView
+
+Decision D-OA1-FLOOR (supervisor, 2026-10-16). The app needs Android System WebView with module scripts (Chrome 61), `Array.prototype.at` (92), `Animation.prototype.finished` (84) and CSS `color-mix()` (111), so the floor is Chrome 111. Any Android version runs the app once its WebView meets that.
+- `index.html` checks the four features before the bundle loads, by feature detection rather than version number (Huawei numbers its WebView its own way). A WebView missing any of them gets one update screen with a Play Store link; the app never boots there and saves nothing.
+- Capacitor's `minWebViewVersion` only logs, and its `server.errorPath` also fires on any load error and can loop, so neither is used.
+- On a capable WebView, an entry that never runs (failed fetch, empty file) shows the crash card at DOMContentLoaded, with the user agent. No fixed timer, so a slow load never shows it.
+- `scripts/old-android-floor.mjs` is the single list of features, newer JS APIs and CSS tokens. `tests/old-android-floor.test.ts` and the gate's OLD-ANDROID-1 block keep `index.html` and the build within it.
+- Lowering the floor to Chrome 80 is card OLD-ANDROID-2, opened only if device data shows users on WebView 80-110 who cannot update.
+
 ## Builds
 
 See the README. `scripts/prepare-android.sh` generates the Android project for both workflows. `docs/AGENT-RULES.md` lists the rules the agent guard enforces.
