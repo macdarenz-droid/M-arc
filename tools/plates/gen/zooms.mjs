@@ -9,13 +9,14 @@
 //     with (`url(#zdots)`), proven to be in the page verbatim; Posture.tsx mounts it once per document;
 //   - an import of `css/zoom-<chromeId>.css` (HT-6 generates it: the exercise's scoped close-up rules). Never duplicated.
 import { goldenInputs, goldenRows } from '../library/registry.mjs';
+import { layersPage, pagesOf } from '../library/batch-golden.mjs';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { ROOT, sha256 } from '../lib/inputs.mjs';
 import { LAYERS, PAGE_SHA256, buildLayerPage, cleanupMirror, makeMirror, readManifest } from '../layers.mjs';
 import { galleryCss, parse } from '../css.mjs';
-import { chromeRules, divAt, howtoCss, rewrite } from './hands.mjs';
+import { chromeRules, divAt, howtoCss, libraryInputs, libraryRows, rewrite } from './hands.mjs';
 
 export const PLATES_JSON = 'tools/plates/plates.json';
 export const inputs = () => [
@@ -68,6 +69,21 @@ export function posturePanels(html, id) {
 }
 
 const lit = s => JSON.stringify(s);
+export const postureText = (id, panels, zdots) => `// The ${id} posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.\n`
+  + `import '../../slices/howto/css/zoom-${id}.css';\n`
+  + `export const panels: Readonly<Record<string, string>> = {\n${panels.map(p => `  ${lit(p.key)}: ${lit(p.panel)},\n`).join('')}};\n`
+  + `export const zdots = ${lit(zdots)};\n`;
+/** posture.css from a layers page's style and its HOWTO_CSS (the 8's from golden B; a library page must rebuild it). */
+export function postureCssOf(style, chrome) {
+  const plate = cropPlateCss(style), zdot = rewrite(chromeRules(chrome, POSTURE_SELECTORS));
+  return `${plate}${zdot.slice(zdot.indexOf('/* ht-tokens:end */\n') + 20)}`;
+}
+/** A layers page's style with comments, blank lines and the given rows' own `.hx-<chromeId> ` rules removed (D-LIB2b-CSS): what every
+ *  page must share with golden B's. */
+export function styleWithout(style, rowsOf) {
+  const ids = Object.values(rowsOf).map(r => r.chromeId);
+  return style.replace(/\/\*[\s\S]*?\*\//g, '').split('\n').filter(l => l.trim() && !ids.some(id => l.trimStart().startsWith(`.hx-${id} `))).join('\n');
+}
 
 async function outputsOf() {
   const rows = goldenRows();
@@ -82,14 +98,19 @@ async function outputsOf() {
     const out = [];
     for (const row of Object.values(rows)) {
       const id = row.chromeId, panels = posturePanels(html, id);
-      out.push({ path: `src/howto/generated/posture-${id}.ts`, text:
-        `// The ${id} posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.\n`
-        + `import '../../slices/howto/css/zoom-${id}.css';\n`
-        + `export const panels: Readonly<Record<string, string>> = {\n${panels.map(p => `  ${lit(p.key)}: ${lit(p.panel)},\n`).join('')}};\n`
-        + `export const zdots = ${lit(L.ZDOTS)};\n` });
+      out.push({ path: `src/howto/generated/posture-${id}.ts`, text: postureText(id, panels, L.ZDOTS) });
     }
-    const plate = cropPlateCss(style), zdot = rewrite(chromeRules(chrome, POSTURE_SELECTORS));
-    out.push({ path: 'src/slices/howto/css/posture.css', text: `${plate}${zdot.slice(zdot.indexOf('/* ht-tokens:end */\n') + 20)}` });
+    const postureCss = postureCssOf(style, chrome);
+    out.push({ path: 'src/slices/howto/css/posture.css', text: postureCss });
+    const base = styleWithout(style, goldenRows());
+    for (const row of libraryRows()) {
+      const page = layersPage(row), file = pagesOf(row).layers, id = row.chromeId, lib = galleryCss(page);
+      if (page.split(L.ZDOTS).length !== 2) throw new Error(`zooms: ${row.id}: ZDOTS is not in ${file} exactly once`);
+      if (styleWithout(lib, libraryRows().filter(r => pagesOf(r).layers === file)) !== base) throw new Error(`zooms: ${row.id}: ${file}'s style, without its own .hx- rules, is not golden B's`);
+      if (postureCssOf(lib, howtoCss(readFileSync(join(LAYERS, 'artifact', 'build-page.mjs'), 'utf8'), lib)) !== postureCss) throw new Error(`zooms: ${row.id}: ${file} does not rebuild posture.css byte for byte`);
+      const panels = posturePanels(page, id);
+      out.push({ path: `src/howto/generated/posture-${id}.ts`, text: postureText(id, panels, L.ZDOTS) });
+    }
     return out;
   } finally {
     cleanupMirror(mirror);
@@ -99,7 +120,12 @@ async function outputsOf() {
 /** LIB-2 (design 6.1): each output's own inputs. Every zooms.mjs output is cut from one shared source (the golden
  *  B page built from the whole vendored folder), so a file's inputs are that whole set; the rows come from the
  *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4). */
-export const inputsFor = () => inputs();
+/** LIB-2b (lib4-cards 11.1 item 12): a library row's posture-<chromeId>.ts lists its pinned page and the files around it
+ *  (hands.mjs libraryInputs: ZDOTS is checked against the MANIFEST-locked golden B). The 8 keep the whole layers set. */
+export function inputsFor(path) {
+  const row = libraryRows().find(r => path === `src/howto/generated/posture-${r.chromeId}.ts`);
+  return row ? [...libraryInputs(row), 'tools/plates/gen/hands.mjs'] : inputs();
+}
 export async function outputs(ctx) {
   return (await outputsOf(ctx)).map(o => ({ ...o, inputs: inputsFor(o.path) }));
 }
