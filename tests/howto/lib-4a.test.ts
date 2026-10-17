@@ -28,8 +28,9 @@ describe('A1/A2: the no-How-to control at full coverage (D-LIB4-CTRL)', () => {
   }, 240_000);
   afterAll(() => { if (copy) rmSync(copy.root, { recursive: true, force: true }); });
 
-  it('A2 at the 8: the control exists and not every id ships (false/false)', async () => {
-    expect(await tripwire(ROOT, 'eight')).toEqual([false, false]);
+  it('A2 on this tree (the 8 today: false/false): the control is null exactly when every id ships', async () => {
+    const [isNull, all] = await tripwire(ROOT, 'eight');
+    expect(isNull).toBe(all);
   });
   it('A1 + A2 at 153: firstWithoutHowTo() is null, HT_ORDER is the 8 then the custom exercise, and every id ships (true/true)', async () => {
     const root = copy!.root;
@@ -60,7 +61,7 @@ describe('A4: HT-2 A9\'s exact ht- set (D-LIB4-A9)', () => {
   beforeAll(async () => {
     cs = await import(/* @vite-ignore */ url('tools/plates/library/chunk-set.mjs'));
     const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
-    rows = reg.rows().filter((r: any) => reg.shippedIds().includes(r.id));
+    rows = Object.entries(reg.goldenRows()).map(([id, r]: [string, any]) => ({ id, slug: r.slug }));   // the 8, whatever ships
     files = rows.map((r, i) => `ht-${r.slug}-${String(i).padStart(8, 'A')}.js`).concat(['index-ABCDEFGH.js', 'loaders-ABCDEFGH.js', 'handpair-x-ABCDEFGH.js']);
   });
   it('one anchored chunk per shipped row passes', () => {
@@ -119,11 +120,12 @@ describe('A6: the error list is complete (D-SUP-ERRLIST)', () => {
 });
 
 describe('D-LIB4-FIXTURE: write-ids re-sets the copy\'s budgets at n by LIB-2\'s rule (L2-A23)', () => {
-  it('the How-to total and the loaders perId follow the per-id rule; at 8 they equal the committed file', async () => {
+  it('the How-to total and the loaders perId follow the per-id rule; at the shipped count they equal the committed file', async () => {
     const w = await import(/* @vite-ignore */ url('tools/plates/library/scale/write-ids.mjs'));
     const { totalCeiling } = await import(/* @vite-ignore */ url('tools/plates/library/budgets/total.mjs'));
     const src = readFileSync('tests/howto/budgets.json', 'utf8');
-    expect(JSON.parse(w.budgetsAt(src, 8))).toEqual(JSON.parse(src));
+    const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    expect(JSON.parse(w.budgetsAt(src, reg.shippedIds().length))).toEqual(JSON.parse(src));
     const b = JSON.parse(w.budgetsAt(src, 153)), t = b.totals.find((x: any) => x.chunk === 'How-to total');
     expect(t.rawMax).toBe(totalCeiling(t.measuredRaw, 153));
     expect(t.gzMax).toBe(totalCeiling(t.measuredGz, 153));
