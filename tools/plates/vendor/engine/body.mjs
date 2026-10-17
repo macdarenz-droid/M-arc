@@ -89,7 +89,9 @@ export function normPose(p, body) {
   const at = Array.isArray(root) ? root : (root.at ?? [0, REF.hjcY * H, 0]);
   const map = (v, fn, def) => { const q = perSide(v, def); return { l: fn(q.l), r: fn(q.r) }; };
   return {
-    root: at, tilt: root.tilt ?? p.tilt ?? 0, trunk: p.trunk ?? 0, neck: p.neck ?? 0,
+    root: at, tilt: root.tilt ?? p.tilt ?? 0, trunk: (typeof p.trunk === 'object' ? p.trunk.flex : p.trunk) ?? 0, neck: p.neck ?? 0,
+    roll: root.roll ?? 0, yaw: (typeof p.trunk === 'object' ? p.trunk.yaw : 0) ?? 0,   // ENGINE SPIKE E-R5
+    lat: (typeof p.trunk === 'object' ? p.trunk.lat : 0) ?? 0,                            // ENGINE SPIKE: side bend
     scap: map(p.scap, scapN, 0), sh: map(p.shoulder, shoulderN, null),
     elbow: perSide(p.elbow, 0), wrist: perSide(p.wrist, 0),
     hip: map(p.hip, hipN, 0), knee: perSide(p.knee, 0), ankle: perSide(p.ankle, 0),
@@ -109,7 +111,11 @@ const thighFrame = (s, h) => mm(mm(rotX(-h.flex), rotZ(s * h.abd)), rotY(s * h.r
 /** Skeleton in world metres. q: normalised pose (angles). */
 export function fk(q, body) {
   const H = body.height, k = v => mul(v, H);
-  const Rp = rotX(q.tilt), Rt = mm(Rp, rotX(q.trunk)), Rh = mm(Rt, rotX(q.neck));
+  // ENGINE SPIKE E-R5: root.roll turns the whole body about the forward (z) axis; trunk.yaw turns the thorax (and the
+  // head with it) about its own long axis. Both default 0, where the original rotations are used unchanged.
+  const Rp = q.roll ? mm(rotZ(q.roll), rotX(q.tilt)) : rotX(q.tilt);
+  const Rt0 = q.lat ? mm(mm(Rp, rotX(q.trunk)), rotZ(q.lat)) : mm(Rp, rotX(q.trunk));
+  const Rt = q.yaw ? mm(Rt0, rotY(q.yaw)) : Rt0, Rh = mm(Rt, rotX(q.neck));
   const hjc = [0, REF.hjcY, 0];
   const pelvis = r => add(q.root, mv(Rp, k(sub(r, hjc))));
   const Lw = pelvis(REF.lumbar);
@@ -292,6 +298,8 @@ export function bodyShapes(sk, cam, opts = {}) {
   };
   const push = (key, group, shp) => out.push({ key, group, ...shp });
   // head + torso
+  if (opts.torso === 'volume') volumeTrunk(sk, P, side, push);   // ENGINE SPIKE: opt-in 3D trunk and head silhouette
+  else {
   const headPts = side ? HEAD_SIDE.map(([z, y]) => [0, y, z]) : HEAD_FRONT.map(([x, y]) => [x, y, 0]);
   push('head', side ? 'trunk' : 'body', { d: spline(headPts.map(r => P(sk.head(r)))), poly: headPts.map(r => P(sk.head(r))) });
   let torso;
@@ -304,6 +312,7 @@ export function bodyShapes(sk, cam, opts = {}) {
   }
   const tp = torso.map(r => P(sk.skin(r)));
   push('torso', side ? 'trunk' : 'body', { d: spline(tp), poly: tp });
+  }
   for (const sd of SIDES) {
     const s = SGN[sd];
     const Hp = P(sk.hip[sd]), K = P(sk.K[sd]), A = P(sk.A[sd]);
@@ -353,4 +362,40 @@ export function rootOnSeat(point, tilt = 0, height = 1.75) {
 export function landmarksOf(pose, height = 1.75) {
   const body = { height }, r = resolve(normPose(pose, body), body);
   return landmarks(fk(r.q, body));
+}
+
+// ENGINE SPIKE (opt-in, spec.torso 'volume'): the trunk and head as stacked elliptic sections (half width from the
+// front outline, depth from the side outline, per level), each skinned onto the skeleton and projected. The body
+// union draws their silhouette, so a trunk seen end-on (lying, hinged) or from a pitched camera keeps its volume.
+const crossAt = (pts, y, pick) => { let best = null; for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length];
+  if ((a[1] - y) * (b[1] - y) > 0 || a[1] === b[1]) continue; const u = a[0] + (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]); best = best == null ? u : pick(best, u); } return best; };
+function volumeTrunk(sk, P, side, push) {
+  // front view: a trunk nearer the camera than the knees (hinged toward it) is drawn over the legs ('chest' group)
+  const zS = (sk.S.l[2] + sk.S.r[2]) / 2, zK = (sk.K.l[2] + sk.K.r[2]) / 2;
+  const grp = side ? 'trunk' : (zS > zK ? 'chest' : 'body');
+  const sh = (sk.q.scap.l.elev + sk.q.scap.r.elev) / 2 / 100 / sk.H;
+  const half = torsoHalf(sh), front = [...half, ...[...half].reverse().map(([x, y]) => [-x, y])], sideO = torsoSide(sh);
+  const ring = (w, y, zb, zf, map) => Array.from({ length: 20 }, (_, k) => { const a = k / 20 * 2 * Math.PI; return P(map([w * Math.cos(a), y, (zb + zf) / 2 + (zf - zb) / 2 * Math.sin(a)])); });
+  // each pair of neighbouring sections becomes one convex hull, so a section seen edge-on never leaves a bare stroke
+  let i = 0;
+  const strip = (from, to, step, fo, so, map, g, key) => {
+    let prev = null;
+    for (let y = from; y <= to; y += step) {
+      const w = crossAt(fo, y, Math.max), zb = crossAt(so, y, Math.min), zf = crossAt(so, y, Math.max);
+      if (w == null || zb == null || zf == null) continue;
+      const r = ring(w, y, zb, zf, map);
+      if (prev) { const poly = hull([...prev, ...r]); push(`${key}.${i++}`, g, { d: polyD(poly), poly }); }
+      prev = r;
+    }
+  };
+  strip(0.465, 0.9, 0.012, front, sideO, sk.skin, grp, 'torso');
+  strip(0.874, 0.995, 0.01, HEAD_FRONT, HEAD_SIDE, sk.head, grp === 'chest' ? 'headF' : grp, 'head');
+}
+const polyD = pts => `M${pts.map(([x, y]) => `${x.toFixed(2)} ${y.toFixed(2)}`).join('L')}Z`;
+function hull(pts) {   // monotone chain
+  const p = [...pts].sort((a, b) => a[0] - b[0] || a[1] - b[1]), cr = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lo = [], up = [];
+  for (const q of p) { while (lo.length >= 2 && cr(lo[lo.length - 2], lo[lo.length - 1], q) <= 0) lo.pop(); lo.push(q); }
+  for (const q of [...p].reverse()) { while (up.length >= 2 && cr(up[up.length - 2], up[up.length - 1], q) <= 0) up.pop(); up.push(q); }
+  return [...lo.slice(0, -1), ...up.slice(0, -1)];
 }
