@@ -76,24 +76,26 @@ describe('HT2-A1 (L2): each ht-<slug>.ts holds exactly the golden fragments', ()
 
 describe('HT2-A2 (freshness): every generated file starts with a fresh header over its own inputs only', () => {
   const onDisk = () => gen.generatedOnDisk() as string[];
-  const inputsOf = async (writers: string[]) => (await Promise.all(writers.map(async w => (await import(/* @vite-ignore */ url(w))).inputs()))).flat();
+  // LIB-2 (per-output inputs, design 6.1): a plugin that gives a file its own inputs exports inputsFor(path); the
+  // recomputation below uses it, so it stays exact with no render.
+  const inputsOf = async (writers: string[], path?: string) => (await Promise.all(writers.map(async w => { const m = await import(/* @vite-ignore */ url(w)); return (path && m.inputsFor?.(path)) ?? m.inputs(); }))).flat();
 
   // Plugins are found by glob (plan 2.2), so later cards add generated files. What stays pinned: plates.mjs's own
-  // outputs are exactly these 11 files, and every file names only real plugins. `generate --check` (the gate) proves
+  // outputs are exactly these 10 files (ids.ts moved to gen/ids.mjs in LIB-2), and every file names only real plugins. `generate --check` (the gate) proves
   // the files on disk are exactly what the plugins write, with those writers.
   const PLATES = 'tools/plates/gen/plates.mjs';
   const writersOf = (p: string) => core.parseHeader(readFileSync(p, 'utf8')).writers as string[];
-  it('plates.mjs writes exactly the 8 modules, the loader index, ids.ts and plate.css; no file in generated/ is hand-written', () => {
+  it('plates.mjs writes exactly the 8 modules, the loader index and plate.css; no file in generated/ is hand-written', () => {
     expect(onDisk().filter(p => writersOf(p).includes(PLATES))).toEqual([
       'src/howto/generated/ht-barbell-back-squat.ts', 'src/howto/generated/ht-dumbbell-lateral-raise.ts', 'src/howto/generated/ht-hanging-leg-raise.ts',
       'src/howto/generated/ht-lat-pulldown.ts', 'src/howto/generated/ht-leg-press.ts', 'src/howto/generated/ht-machine-chest-press.ts',
-      'src/howto/generated/ht-pull-up.ts', 'src/howto/generated/ht-seated-cable-row.ts', 'src/howto/generated/index.ts', 'src/howto/ids.ts',
+      'src/howto/generated/ht-pull-up.ts', 'src/howto/generated/ht-seated-cable-row.ts', 'src/howto/generated/index.ts',
       'src/slices/howto/css/plate.css',
     ]);
     for (const f of readdirSync('src/howto/generated')) expect(onDisk(), `hand-written file in generated/: ${f}`).toContain(`src/howto/generated/${f}`);
   });
 
-  it('every header names real plugins: one writer per file, except ht-<slug>.ts and ids.ts, which plates.mjs writes and content.mjs (run after it) may extend', async () => {
+  it('every header names real plugins: one writer per file, except ht-<slug>.ts (plates.mjs) and ids.ts (ids.mjs, LIB-2), which content.mjs (run after it) may extend', async () => {
     const plugins: string[] = core.pluginFiles();
     for (const p of onDisk()) {
       const w = writersOf(p);
@@ -102,15 +104,16 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
       for (const x of w) expect(plugins, `${p}: writer ${x} is not a plugin in tools/plates/gen/`).toContain(x);
       if (w.length === 1) continue;
       expect(p, `${p}: only ht-<slug>.ts and ids.ts may have more than one writer`).toMatch(/^src\/howto\/(generated\/ht-[a-z0-9-]+\.ts|ids\.ts)$/);
-      expect(w, `${p}: plan 2.2 allows exactly plates.mjs then content.mjs`).toEqual(['tools/plates/gen/content.mjs', PLATES]);
-      for (const x of w.filter(x => x !== PLATES)) expect((await import(/* @vite-ignore */ url(x))).after ?? [], `${p}: ${x} must run after plates.mjs`).toContain(PLATES);
+      const first = p === 'src/howto/ids.ts' ? 'tools/plates/gen/ids.mjs' : PLATES;
+      expect(w, `${p}: plan 2.2 allows exactly ${first} then content.mjs`).toEqual(['tools/plates/gen/content.mjs', first].sort());
+      for (const x of w.filter(x => x !== first)) expect((await import(/* @vite-ignore */ url(x))).after ?? [], `${p}: ${x} must run after ${first}`).toContain(first);
     }
   });
 
   it('each header\'s inputsSha256 is recomputed from its writers and their inputs, with no render', async () => {
     for (const p of onDisk()) {
       const h = core.parseHeader(readFileSync(p, 'utf8'));
-      expect(h.hash, p).toBe(core.inputsSha256(h.writers, await inputsOf(h.writers)));
+      expect(h.hash, p).toBe(core.inputsSha256(h.writers, await inputsOf(h.writers, p)));
     }
   });
 
