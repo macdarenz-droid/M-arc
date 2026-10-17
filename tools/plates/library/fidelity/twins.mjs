@@ -8,6 +8,7 @@ import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT } from '../../lib/inputs.mjs';
+import { CHECKS } from './tuples.mjs';
 
 const sha = s => createHash('sha256').update(s).digest('hex');
 export const PINS_FILE = 'tools/plates/library/fidelity/twins/pins.json';
@@ -86,3 +87,58 @@ export async function twinProblems(over = {}, pins = readPins()) {
 
 /** The sha256 of every pinned text now (for re-pinning). */
 export const currentShas = async () => Object.fromEntries(Object.entries(await pinnedTexts()).map(([k, v]) => [k, v == null ? null : sha(v)]));
+
+// D-LIB4b-MAP: the assertion map. Every match of MAP_RE in a pinned text (a push, a `throw new Error`, or a call of a
+// failure helper) is mapped, in order, in pins[key].map as { m, t, why?, gap? }: `m` is the match text, `t` its target,
+// one of
+//   - a state formula `<check>/<sub>@<390|360|340|*|w>` whose check is in tuples.mjs CHECKS; placeholders such as <k>,
+//     <i>, <n>, <row>, <label>, <part>, <cur> stand inside the sub-state, and <w> (or w) for the width;
+//   - an exemption id (LIB-4-DESIGN section 2: X1-X8, X8b, X8c);
+//   - 'def': a helper definition or plumbing that is not itself an assertion;
+//   - 'collect:<var>': a push that gathers data that never reaches errors/problems.
+// `gap: true` marks an entry whose check no supervisor ruling names with an X id (it still names the closest one).
+export const MAP_RE = /\b[A-Za-z_$][\w$]*\.push\(|\bthrow new Error\b|\b(?:P|F|S|fail|crashed)\(/g;
+export const EXEMPTIONS = ['X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'X8', 'X8b', 'X8c'];
+const SINK = String.raw`(?:\b(?:errors|problems)\.push\(|\b(?:P|F|S|fail|crashed)\()`;
+const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Why a map target does not resolve (null when it does). */
+export function targetProblem(t) {
+  if (typeof t !== 'string') return `target ${JSON.stringify(t)} is not a string`;
+  if (t === 'def' || EXEMPTIONS.includes(t)) return null;
+  if (t.startsWith('collect:')) return /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(t.slice(8)) ? null : `collect target ${t} does not name a variable`;
+  const s = /^([A-Za-z0-9]+)\/(.+)@(390|360|340|\*|w|<w>)$/.exec(t);
+  if (!s) return `target ${t} is not a state formula, an exemption id, 'def' or 'collect:<var>'`;
+  return CHECKS.includes(s[1]) ? null : `target ${t}: check ${s[1]} is not in CHECKS`;
+}
+
+/**
+ * D-LIB4b-MAP: one problem per pinned text whose MAP_RE matches differ from its map (count or order), per target that
+ * does not resolve, and per 'collect:<var>' whose variable reaches errors/problems. The flow check is same-statement
+ * only: it fails when the variable and an errors/problems push or a P/F/S/fail/crashed call sit in one statement (no ';'
+ * between them, either order). A variable copied into another first (`const x = v; errors.push(x)`) or passed through a
+ * helper is not caught; review checks those by reading.
+ */
+export function mapProblems(texts, pins) {
+  const out = [];
+  for (const { key } of TWINS) {
+    const text = texts[key], map = pins[key]?.map;
+    if (text == null) { out.push(`${key}: no pinned text`); continue; }
+    if (!Array.isArray(map)) { out.push(`${key}: no assertion map`); continue; }
+    const got = [...text.matchAll(MAP_RE)].map(m => m[0]);
+    if (got.length !== map.length) out.push(`${key}: ${got.length} assertion matches, ${map.length} map entries`);
+    const i = got.findIndex((m, j) => m !== map[j]?.m);
+    if (i >= 0) out.push(`${key} #${i}: the match ${JSON.stringify(got[i])} != the map entry ${JSON.stringify(map[i]?.m)} (every later entry is off by one: re-map)`);
+    for (const [j, e] of map.entries()) {
+      const bad = targetProblem(e?.t);
+      if (bad) { out.push(`${key} #${j}: ${bad}`); continue; }
+      if (!e.t.startsWith('collect:')) continue;
+      const v = e.t.slice(8), recv = /^([\w$]+)\.push\($/.exec(e.m)?.[1];
+      if (recv !== v.split('.').pop()) { out.push(`${key} #${j}: collect target ${e.t} is not the receiver of ${JSON.stringify(e.m)}`); continue; }
+      const V = `(?<![\\w$])${esc(v)}(?![\\w$])`;
+      const st = text.match(new RegExp(`${SINK}[^;]*${V}|${V}[^;]*${SINK}`));
+      if (st) out.push(`${key} #${j}: ${e.t} reaches errors/problems in one statement: ${st[0].slice(0, 120)}`);
+    }
+  }
+  return out;
+}

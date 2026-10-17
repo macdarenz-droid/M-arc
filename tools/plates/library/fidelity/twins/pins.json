@@ -1,66 +1,1703 @@
 {
  "gate:HT-2": {
   "sha256": "af2fcf8dc51ff4340f15b8d9397e955f9cd1ee3cd5cd89e56698ea9c47d18a6f",
-  "map": []
+  "map": [
+   {
+    "m": "errors.push(",
+    "t": "X2",
+    "why": "L1: GOLDEN.json page entry is the approved gallery (build-wide, every gate)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X2",
+    "why": "L1: generate.mjs --check (build-wide, every gate)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "L2/chunk-size@*",
+    "why": "A9: exactly one ht-<slug> chunk (sizeJob)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "L2/chunk-size@*",
+    "why": "A9 FG-OFF name ban: cannot fire on a file that already matched ^ht-<slug>-; sizeJob's exactly-one ^ht-<slug> match implies it"
+   },
+   {
+    "m": "errors.push(",
+    "t": "L2/chunk-size@*",
+    "why": "A9: raw <= 153600, gz <= 36864"
+   },
+   {
+    "m": "errors.push(",
+    "t": "L2/chunk@*",
+    "why": "A9: bundled chunk fragments = the pinned entry (l2Job)"
+   },
+   {
+    "m": "sizes.push(",
+    "t": "collect:sizes",
+    "why": "printed only"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X2",
+    "why": "LIB-4a htChunkProblems: build-wide exact ht- set, already over every shipped library row"
+   }
+  ]
  },
  "gate:HT-3": {
   "sha256": "5267014f25a11bc0fa4c54c304728976dde2d97374ffb20ae559e8104b5eb957",
-  "map": []
+  "map": [
+   {
+    "m": "errors.push(",
+    "t": "X3",
+    "why": "forwards ht3Fidelity and ht3Behaviour (mapped under their own pins) plus presentControls and ht3SectionGuards (X3; the section guards are guard/L-sections@390)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "L3/<label>@<w>",
+    "why": "pairs >= 300 on the 8: per id each pixel tuple is its own row and R.finish fails any not proven"
+   }
+  ]
  },
  "gate:HT-6": {
   "sha256": "b3308c94ba5a24182981caf2de4bc45de0945e9be6be45401097cebbc5a21852",
-  "map": []
+  "map": [
+   {
+    "m": "errors.push(",
+    "t": "def",
+    "why": "P helper"
+   },
+   {
+    "m": "throw new Error",
+    "t": "def",
+    "why": "click helper: a missing control throws; the twin's catch fails the current state"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/page-<i>@390",
+    "why": "l3 of a close-up page (HT6/grip@390 for the grip capture)"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/page-<i>@390",
+    "why": "l3 of a close-up page (HT6/grip@390 for the grip capture)"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/page-<i>@390",
+    "why": "l3 of a close-up page (HT6/grip@390 for the grip capture)"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/page-<i>@390",
+    "why": "l3 of a close-up page (HT6/grip@390 for the grip capture)"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/<cur>@390",
+    "why": "app page error lands on the current state"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/<cur>@390",
+    "why": "golden page error lands on the current state"
+   },
+   {
+    "m": "reqs.push(",
+    "t": "HT6/A7-lazy@390",
+    "why": "request log the A7 checks read (not collect: it reaches P)"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/A8-hint@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/A8-hint@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/A7-lazy@390",
+    "why": "no hand chunk before the first tap"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/open-anim@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/A4@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/chip@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/page-<i>@390",
+    "why": "C16 region, Right/Wrong words, icons, halves"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/page-<i>@390",
+    "why": "C16 region, Right/Wrong words, icons, halves"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/page-<i>@390",
+    "why": "C16 region, Right/Wrong words, icons, halves"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/page-<i>@390",
+    "why": "C16 region, Right/Wrong words, icons, halves"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/close-anim@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/A4@390",
+    "why": "A4 close"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/A4-mistake@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/origin@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/back@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/A7-lazy@390",
+    "why": "the hand chunk loads on the tap"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/reduced@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/reduced@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/<cur>@390",
+    "why": "a crash fails the current state"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/page-<i>@390",
+    "why": "pairs >= 105: per id every page/grip tuple is its own row, R.finish fails any not proven"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/A6@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT6/A6@390",
+    "why": "pairs >= 2 per id"
+   },
+   {
+    "m": "P(",
+    "t": "X2",
+    "why": "A7: 8 hand-*.js chunks"
+   },
+   {
+    "m": "P(",
+    "t": "X2",
+    "why": "A7: the 8's hand ceilings"
+   }
+  ]
  },
  "gate:HT-3b": {
   "sha256": "f5c6f80cfca165ec9d9c2b979287c3c1a442fa178b3b29b57313e97c6e51da08",
-  "map": []
+  "map": [
+   {
+    "m": "throw new Error",
+    "t": "L2/chunk-size@*",
+    "why": "oneOf: not exactly one chunk (sizeJob \"expected one\"); also used for HowToSheet-* and the A4b squat chunk"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A1"
+   },
+   {
+    "m": "appSrc.push(",
+    "t": "X4",
+    "why": "A1 data: non-How-to source that excuses a string"
+   },
+   {
+    "m": "leaked.push(",
+    "t": "X4",
+    "why": "A1, reported next"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A1"
+   },
+   {
+    "m": "errors.push(",
+    "t": "L2/chunk-size@*",
+    "why": "A2 budgets.json entry and ceiling (D-LIB4b-SIZE); for HowToSheet-*.js/.css it is build-wide, not per id"
+   },
+   {
+    "m": "errors.push(",
+    "t": "L2/chunk-size@*",
+    "why": "A2 budgets.json entry and ceiling (D-LIB4b-SIZE); for HowToSheet-*.js/.css it is build-wide, not per id"
+   },
+   {
+    "m": "errors.push(",
+    "t": "L2/chunk-size@*",
+    "why": "A2 budgets.json entry and ceiling (D-LIB4b-SIZE); for HowToSheet-*.js/.css it is build-wide, not per id"
+   },
+   {
+    "m": "sizes.push(",
+    "t": "collect:sizes",
+    "why": "printed only"
+   },
+   {
+    "m": "early.push(",
+    "t": "X4",
+    "why": "A3a data"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A3a"
+   },
+   {
+    "m": "tasks.push(",
+    "t": "X4",
+    "why": "A3c data"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A3b"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A3c"
+   },
+   {
+    "m": "errors.push(",
+    "t": "offline/open@390",
+    "why": "A4a (twins/offline.mjs)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "offline/open@390",
+    "why": "A4a (twins/offline.mjs)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "offline/open@390",
+    "why": "A4a (twins/offline.mjs)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "offline/open@390",
+    "why": "A4a (twins/offline.mjs)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "offline/open@390",
+    "why": "A4a (twins/offline.mjs)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A4b"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A4b"
+   },
+   {
+    "m": "errs.push(",
+    "t": "X4",
+    "why": "A4c data"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A4c"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A4c"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A4c"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A4d"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A4d"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A5 (C17)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A5 (C17)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A5 (C17)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "A5 (C17)"
+   }
+  ]
  },
  "gate:HT-7": {
   "sha256": "134205430bfbb55f971ac0e561cbce107debc22e85cfa6f8440d2e4bfa94ecfb",
-  "map": []
+  "map": [
+   {
+    "m": "errors.push(",
+    "t": "HT7/A5-size@*",
+    "why": "D-LIB4b-SIZE (sizeJob)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT7/A5-size@*",
+    "why": "D-LIB4b-SIZE (sizeJob)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT7/A5-size@*",
+    "why": "D-LIB4b-SIZE (sizeJob)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT7/A5-size@*",
+    "why": "D-LIB4b-SIZE (sizeJob)"
+   },
+   {
+    "m": "sizes.push(",
+    "t": "collect:sizes",
+    "why": "printed only"
+   },
+   {
+    "m": "throw new Error",
+    "t": "def",
+    "why": "shot helper: a capture that never settles throws; the twin's catch fails the current state"
+   },
+   {
+    "m": "__ht7anims.push(",
+    "t": "HT7/<k>:L4@390",
+    "why": "records the opening animations compared next (not collect)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "def",
+    "why": "P helper"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<cur>@390",
+    "why": "app page error lands on the current state"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/A2@390",
+    "why": "golden page error"
+   },
+   {
+    "m": "fetched.push(",
+    "t": "HT7/A2@390",
+    "why": "fetch log: no early fetch (A2) and <k>:A5; not collect, it reaches P"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/A2@390",
+    "why": "posture keys = the source's"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/A2@390",
+    "why": "no early fetch"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/A2@390",
+    "why": "data-motion (A2:reduced under reduced motion)"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:chip@390",
+    "why": "no chip: the twin fails every sub-state of k"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:chip@390",
+    "why": "44 x 44"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:L4@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:reduced@390",
+    "why": "under reduced motion every sub-state of k is <k>:reduced"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:L4@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:L4@390",
+    "why": "C18"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:A4@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:A4@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:A4@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:A4@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:chip@390",
+    "why": "A6 halves"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:L3@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:L3@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:L3@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:L3@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:L3@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:control@390"
+   },
+   {
+    "m": "P(",
+    "t": "X5",
+    "why": "planted L3-text probes (guard/HT7-l3text@390 runs them through T3)"
+   },
+   {
+    "m": "P(",
+    "t": "X5",
+    "why": "planted L3-text probes (guard/HT7-l3text@390 runs them through T3)"
+   },
+   {
+    "m": "P(",
+    "t": "X5",
+    "why": "planted L3-text probes (guard/HT7-l3text@390 runs them through T3)"
+   },
+   {
+    "m": "P(",
+    "t": "X5",
+    "why": "planted L3-text probes (guard/HT7-l3text@390 runs them through T3)"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:restore@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/<k>:A5@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT7/A2@390",
+    "why": "#zdots gone after close"
+   },
+   {
+    "m": "P(",
+    "t": "X5",
+    "why": "D-HT7-L3-text-9 label width"
+   },
+   {
+    "m": "P(",
+    "t": "X5",
+    "why": "D-HT7-L3-text-9 30 opens"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT7/<cur>@390",
+    "why": "a crash fails the current state"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT7/<cur>@390",
+    "why": "reduced run crash"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X5",
+    "why": "150 label opens"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X5",
+    "why": "one probe run"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT7/<k>:L3@390",
+    "why": "pairs >= 80: per id every L3 tuple is its own row, R.finish fails any not proven"
+   }
+  ]
  },
  "gate:HT-4": {
   "sha256": "d98dfb34a05ba8d27f77a962b2e1eda740e51c44dc565e4e524c31e838b918fe",
-  "map": []
+  "map": [
+   {
+    "m": "errors.push(",
+    "t": "X8",
+    "why": "L0-B"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT4/A5-protected@*",
+    "why": "at least one renderPlate call (D-LIB4b-X8)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT4/A5-protected@*",
+    "why": "opts keys in {id, mistake, selected}"
+   },
+   {
+    "m": "protectedBad.push(",
+    "t": "HT4/A5-protected@*",
+    "why": "unknown spec.id; reaches errors next"
+   },
+   {
+    "m": "protectedBad.push(",
+    "t": "HT4/A5-protected@*",
+    "why": "protectedFieldProblems"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT4/A5-protected@*"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT4/A5-protected@*",
+    "why": "an untouched base call"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT4/A5-poses@*"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT4/A5-fragments@*"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X8b",
+    "why": "validateLateralRaiseCrops; the twin still records it in HT4/A5-protected@* for the 8's ref-src plate"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT4/A6@390"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT4/A6@390",
+    "why": "page error"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X8c"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X8c"
+   }
+  ]
  },
  "gate:HT-9": {
   "sha256": "6bb3f58d03adf83925107a3738f4bc87a0465b6d665dbbf78ef014555a6a6923",
-  "map": []
+  "map": [
+   {
+    "m": "throw new Error",
+    "t": "HT9/C19@390",
+    "why": "no DISCLAIMER: the twin's C19 job throws and the row is not proven"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/C19@390",
+    "why": "page error"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT9/C19@390",
+    "why": "in-page C19 probe, reported by the push of `found`"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT9/C19@390",
+    "why": "in-page C19 probe, reported by the push of `found`"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT9/C19@390",
+    "why": "in-page C19 probe, reported by the push of `found`"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT9/C19@390",
+    "why": "in-page C19 probe, reported by the push of `found`"
+   },
+   {
+    "m": "strings.push(",
+    "t": "HT9/C19@390",
+    "why": "C19 data, matched next"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT9/C19@390"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT9/C19@390"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT9/C19@390"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT9/C19@390"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/C19@390"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/show-<n>@390",
+    "why": "the Show ids = the layers page's (the twin reads them from the id's own page)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/show-<n>@390",
+    "why": "page error"
+   },
+   {
+    "m": "seen.push(",
+    "t": "HT9/show-<n>@390",
+    "why": "ids compared to golden B's next (not collect)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/show-<n>@390"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/show-<n>@390"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/show-<n>@390"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/show-<n>@390",
+    "why": "pre-HT-7 count; the twin requires every hand (and, with HT-7, every) Show to open"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/show-<n>@390",
+    "why": "no pending posture with HT-7"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/order@390",
+    "why": "page error"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT9/order@390"
+   },
+   {
+    "m": "errors.push(",
+    "t": "def",
+    "why": "P helper"
+   },
+   {
+    "m": "throw new Error",
+    "t": "HT9/setup-L3@390",
+    "why": "no generated How-to: the twin fails every HT-9 state of the id"
+   },
+   {
+    "m": "out.push(",
+    "t": "HT9/<part>-copy@390",
+    "why": "leaves: the copy compared in A4"
+   },
+   {
+    "m": "texts.push(",
+    "t": "HT9/A3@390",
+    "why": "A3 data"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT9/A3@390",
+    "why": "a3 probe, reported by P"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT9/A3@390",
+    "why": "a3 probe, reported by P"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT9/A3@390",
+    "why": "a3 probe, reported by P"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT9/A3@390",
+    "why": "a3 probe, reported by P"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<part>-L3@390",
+    "why": "l3 of Setup, Risks, the disclaimer"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<part>-L3@390",
+    "why": "l3 of Setup, Risks, the disclaimer"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<part>-L3@390",
+    "why": "l3 of Setup, Risks, the disclaimer"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<part>-L3@390",
+    "why": "l3 of Setup, Risks, the disclaimer"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<cur>@390",
+    "why": "app page error"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<cur>@390",
+    "why": "golden page error"
+   },
+   {
+    "m": "P(",
+    "t": "X7",
+    "why": "HT-3b A3 split"
+   },
+   {
+    "m": "P(",
+    "t": "X7",
+    "why": "HT-3b A3 split"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<part>-L3@390",
+    "why": "no setup/risks state: the twin fails every state"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/setup-L3@390",
+    "why": "every setup step shows"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/risks-L3@390",
+    "why": "and HT9/disclaimer-L3@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<part>-copy@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<part>-copy@390",
+    "why": "golden B's copy"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/A3@390"
+   },
+   {
+    "m": "P(",
+    "t": "X7",
+    "why": "A3 duplicate-line fixture (guard/HT9-A3-dup@390)"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<cur>@390",
+    "why": "a crash fails the current state"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<part>-L3@390",
+    "why": "pairs >= 120: per id each tuple is its own row, R.finish fails any not proven"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/<part>-copy@390",
+    "why": "copy/A3 run counts: per id each tuple is its own row"
+   },
+   {
+    "m": "throw new Error",
+    "t": "HT9/A5@390",
+    "why": "openAll (copied verbatim into the twin) throws; a5 fails HT9/A5"
+   },
+   {
+    "m": "throw new Error",
+    "t": "HT9/A5@390",
+    "why": "openAll (copied verbatim into the twin) throws; a5 fails HT9/A5"
+   },
+   {
+    "m": "throw new Error",
+    "t": "HT9/A5@390",
+    "why": "openAll (copied verbatim into the twin) throws; a5 fails HT9/A5"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/A5@390"
+   },
+   {
+    "m": "P(",
+    "t": "HT9/A5@390",
+    "why": "pairs >= 2 per id"
+   }
+  ]
  },
  "gate:HT-8": {
   "sha256": "fcdd4f7de1eaaf4e797113f4896ec7fcf5b89e432cb819f73a6a2e7d1a136da6",
-  "map": []
+  "map": [
+   {
+    "m": "errors.push(",
+    "t": "HT8/L4@390",
+    "why": "SWEEP/GAP/DELAY found"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT8/<cur>@390",
+    "why": "onError: a page error lands on the current state"
+   },
+   {
+    "m": "throw new Error",
+    "t": "def",
+    "why": "click helper: a missing control throws; the twin's catch fails the current state"
+   },
+   {
+    "m": "feelReqs.push(",
+    "t": "HT8/lazy@390",
+    "why": "request log the lazy check reads (not collect)"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/lazy@390"
+   },
+   {
+    "m": "S(",
+    "t": "HT8/lazy@390",
+    "why": "S labels the problem"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/L4@390"
+   },
+   {
+    "m": "S(",
+    "t": "HT8/L4@390",
+    "why": "label"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/L4@390"
+   },
+   {
+    "m": "S(",
+    "t": "HT8/L4@390",
+    "why": "label"
+   },
+   {
+    "m": "S(",
+    "t": "HT8/S5-<mid|end>@390",
+    "why": "label: S5-mid at SWEEP/2 (HT_FULL), S5-end at TOTAL-1"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/S5-<mid|end>@390"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/S4@390"
+   },
+   {
+    "m": "S(",
+    "t": "HT8/S4@390",
+    "why": "label"
+   },
+   {
+    "m": "S(",
+    "t": "HT8/S4@390",
+    "why": "label"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/S4@390"
+   },
+   {
+    "m": "S(",
+    "t": "HT8/S6-<row>@390",
+    "why": "label"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/S6-<row>@390"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/S6-<row>@390",
+    "why": "44 x 44"
+   },
+   {
+    "m": "S(",
+    "t": "HT8/S6-<row>@390",
+    "why": "label"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/S6-<row>@390",
+    "why": "aria-expanded"
+   },
+   {
+    "m": "S(",
+    "t": "HT8/S6-<row>@390",
+    "why": "label"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/C12@390"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/<cur>@390",
+    "why": "a crash fails the current state"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/reduced@390"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/reduced@390"
+   },
+   {
+    "m": "problems.push(",
+    "t": "HT8/reduced@390",
+    "why": "reduced run crash"
+   },
+   {
+    "m": "idle.push(",
+    "t": "X6",
+    "why": "shimmer tripwire data"
+   },
+   {
+    "m": "runs.push(",
+    "t": "X6",
+    "why": "shimmer tripwire data"
+   },
+   {
+    "m": "problems.push(",
+    "t": "X6",
+    "why": "early \"Feel it\" chip"
+   },
+   {
+    "m": "problems.push(",
+    "t": "X6",
+    "why": "early \"Feel it\" chip"
+   },
+   {
+    "m": "problems.push(",
+    "t": "X6",
+    "why": "early \"Feel it\" chip"
+   },
+   {
+    "m": "problems.push(",
+    "t": "X6",
+    "why": "early \"Feel it\" chip"
+   },
+   {
+    "m": "problems.push(",
+    "t": "X6",
+    "why": "early \"Feel it\" chip"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT8/size@*",
+    "why": "D-LIB4b-SIZE (sizeJob)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT8/size@*",
+    "why": "D-LIB4b-SIZE (sizeJob)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT8/size@*",
+    "why": "D-LIB4b-SIZE (sizeJob)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "build-wide main-bundle probe (the same strings HT-10 A4 `assets` checks)"
+   },
+   {
+    "m": "errors.push(",
+    "t": "def",
+    "why": "forwards themeRun/reducedRun problems, mapped at their pushes"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X6",
+    "why": "forwards the early-chip problems"
+   },
+   {
+    "m": "errors.push(",
+    "t": "HT8/S4@390",
+    "why": "pairs >= 200: per id each pixel tuple is its own row, R.finish fails any not proven"
+   },
+   {
+    "m": "errors.push(",
+    "t": "X6",
+    "why": "shimmer tripwire"
+   }
+  ]
  },
  "tools/plates/fidelity/harness.mjs:ht3Fidelity": {
   "sha256": "338d01fe5dcc9688a93e515b5e5d830bd9c3559309dec22b9c4d8bc8aff0bb68",
-  "map": []
+  "map": [
+   {
+    "m": "throw new Error",
+    "t": "def",
+    "why": "click helper: a missing control throws; plate.mjs throws the same and the job crash fails"
+   },
+   {
+    "m": "problems.push(",
+    "t": "def",
+    "why": "P helper"
+   },
+   {
+    "m": "P(",
+    "t": "L3/<label>@<w>",
+    "why": "app page error (plate.mjs: the current L3 state)"
+   },
+   {
+    "m": "P(",
+    "t": "L3/<label>@<w>",
+    "why": "golden page error"
+   },
+   {
+    "m": "P(",
+    "t": "F3/<label>@<w>"
+   },
+   {
+    "m": "P(",
+    "t": "L2b/<label>@<w>"
+   },
+   {
+    "m": "tall.push(",
+    "t": "collect:stats.tall",
+    "why": "printed only"
+   },
+   {
+    "m": "P(",
+    "t": "L3/<label>@<w>",
+    "why": "still scrolls at TALL_H"
+   },
+   {
+    "m": "own.push(",
+    "t": "L3/<label>@<w>",
+    "why": "presentGolden problems, reported next (not collect)"
+   },
+   {
+    "m": "P(",
+    "t": "L3/<label>@<w>"
+   },
+   {
+    "m": "P(",
+    "t": "L3/<label>@<w>",
+    "why": "widths differ"
+   },
+   {
+    "m": "P(",
+    "t": "L3/<label>@<w>",
+    "why": "blank capture"
+   },
+   {
+    "m": "out.push(",
+    "t": "collect:out",
+    "why": "diagnostic layer dump written to a file"
+   },
+   {
+    "m": "P(",
+    "t": "L3/<label>@<w>",
+    "why": "px rule"
+   },
+   {
+    "m": "P(",
+    "t": "L3/<label>@<w>",
+    "why": "sections restored"
+   },
+   {
+    "m": "P(",
+    "t": "L3/<label>@<w>",
+    "why": "golden page error at a narrow width"
+   },
+   {
+    "m": "P(",
+    "t": "L2b/sections@<w>"
+   },
+   {
+    "m": "P(",
+    "t": "L2b/title@390"
+   },
+   {
+    "m": "P(",
+    "t": "L3/slot-api@390"
+   },
+   {
+    "m": "P(",
+    "t": "L4/anims@390"
+   },
+   {
+    "m": "P(",
+    "t": "L4/ends@390"
+   },
+   {
+    "m": "P(",
+    "t": "L4/ends@390"
+   },
+   {
+    "m": "shots.push(",
+    "t": "L4/motion@390",
+    "why": "the two frames compared next (not collect)"
+   },
+   {
+    "m": "P(",
+    "t": "L4/motion@390"
+   },
+   {
+    "m": "problems.push(",
+    "t": "L3/crashed@*",
+    "why": "a crashed theme run; the runner records it as <fam>/crashed@* (an unexpected row: fail) and leaves the job's tuples not proven"
+   }
+  ]
  },
  "tools/plates/fidelity/harness.mjs:ht3Behaviour": {
   "sha256": "2ac69d5ecef772e706606d1250a76f03235b33139edaf239234e8918663e07bd",
-  "map": []
+  "map": [
+   {
+    "m": "problems.push(",
+    "t": "def",
+    "why": "P helper"
+   },
+   {
+    "m": "P(",
+    "t": "entry/open@390",
+    "why": "page error (entryJob)"
+   },
+   {
+    "m": "P(",
+    "t": "X3",
+    "why": "GAP: A1 negative controls (bench press, the custom exercise: no entry) are once-per-run checks of cards without approved content; no X id names them",
+    "gap": true
+   },
+   {
+    "m": "P(",
+    "t": "entry/open@390",
+    "why": "A1"
+   },
+   {
+    "m": "P(",
+    "t": "entry/open@390",
+    "why": "A3 S0 facts (D-LIB4b-X3 amended)"
+   },
+   {
+    "m": "P(",
+    "t": "X3",
+    "why": "A8 pills on plate 0 (D-LIB4b-X3 (i); per id C10 is in HT10/sweep)"
+   },
+   {
+    "m": "P(",
+    "t": "X3",
+    "why": "A3 first Mistake tap inserts the figure (D-LIB4b-X3 (i))"
+   },
+   {
+    "m": "P(",
+    "t": "entry/open@390",
+    "why": "G7: entry/open checks it per id after the first Mistake tap and a tell"
+   },
+   {
+    "m": "P(",
+    "t": "X3",
+    "why": "A3 focus back on the entry (D-LIB4b-X3 (i))"
+   },
+   {
+    "m": "P(",
+    "t": "X3",
+    "why": "A3 second open is S0 (D-LIB4b-X3 (i); per id HT10/sweep A2)"
+   },
+   {
+    "m": "P(",
+    "t": "X3",
+    "why": "A3 Back (D-LIB4b-X3 (i))"
+   },
+   {
+    "m": "P(",
+    "t": "X3",
+    "why": "A3 drag-to-close (D-LIB4b-X3 (i))"
+   },
+   {
+    "m": "P(",
+    "t": "X3",
+    "why": "no new saved data (D-LIB4b-X3 (i); per id offline/open@390 asserts the localStorage keys)"
+   }
+  ]
  },
  "tools/plates/fidelity/ht10.mjs:runHt10": {
   "sha256": "2becf5f102021a946d53a08e96b3b9003f8e9137cbec92fb6fec616d26899948",
-  "map": []
+  "map": [
+   {
+    "m": "throw new Error",
+    "t": "X4",
+    "why": "no \"How-to total\" budget: A4 `assets`, build-wide"
+   },
+   {
+    "m": "errors.push(",
+    "t": "def",
+    "why": "fail helper"
+   },
+   {
+    "m": "crashed(",
+    "t": "X4",
+    "why": "speed crash (A3 once per run, D-LIB4b-X4)"
+   },
+   {
+    "m": "fail(",
+    "t": "def",
+    "why": "F helper (speed)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "speed: launch/tap/long tasks once per run (D-LIB4b-X4)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "speed: launch/tap/long tasks once per run (D-LIB4b-X4)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "speed: launch/tap/long tasks once per run (D-LIB4b-X4)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "speed: launch/tap/long tasks once per run (D-LIB4b-X4)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "speed: launch/tap/long tasks once per run (D-LIB4b-X4)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "speed: launch/tap/long tasks once per run (D-LIB4b-X4)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "speed: launch/tap/long tasks once per run (D-LIB4b-X4)"
+   },
+   {
+    "m": "F(",
+    "t": "X6",
+    "why": "shimmer (D-LIB4b-X6)"
+   },
+   {
+    "m": "F(",
+    "t": "X6",
+    "why": "shimmer (D-LIB4b-X6)"
+   },
+   {
+    "m": "F(",
+    "t": "X6",
+    "why": "shimmer (D-LIB4b-X6)"
+   },
+   {
+    "m": "out.push(",
+    "t": "HT10/sweep@390",
+    "why": "sweep result, reported at the A1 fail below (not collect)"
+   },
+   {
+    "m": "crashed(",
+    "t": "HT10/sweep@390"
+   },
+   {
+    "m": "out.push(",
+    "t": "HT10/reduced@390",
+    "why": "reduced sweep result (not collect)"
+   },
+   {
+    "m": "crashed(",
+    "t": "HT10/reduced@390"
+   },
+   {
+    "m": "fail(",
+    "t": "HT10/<sweep|reduced>@390"
+   },
+   {
+    "m": "crashed(",
+    "t": "HT10/a2@390"
+   },
+   {
+    "m": "fail(",
+    "t": "HT10/a2@390"
+   },
+   {
+    "m": "fail(",
+    "t": "HT10/a2@390",
+    "why": "pairs >= 2 per id"
+   },
+   {
+    "m": "fail(",
+    "t": "HT10/sweep@390",
+    "why": "steps >= 15 per id"
+   },
+   {
+    "m": "fail(",
+    "t": "def",
+    "why": "F helper (golden)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: HT-10 `golden` (C10 exemptions measured on the 8's golden page) is once per run; no X id names it",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: HT-10 `golden` (C18 exemptions on the 8's golden page) is once per run; no X id names it",
+    "gap": true
+   },
+   {
+    "m": "fail(",
+    "t": "def",
+    "why": "F helper (assets)"
+   },
+   {
+    "m": "F(",
+    "t": "X2",
+    "why": "LIB-4a exact ht- and hand chunk sets, build-wide over every shipped row"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "A4 total How-to assets, build-wide"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "A4 `assets` C17 over every How-to chunk (X4 names it as the library chunks' C17)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "A4 `assets` C17 over every How-to chunk (X4 names it as the library chunks' C17)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "A4 `assets` C17 over every How-to chunk (X4 names it as the library chunks' C17)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "A4 `assets` C17 over every How-to chunk (X4 names it as the library chunks' C17)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "C18/C12 CSS over every How-to chunk, build-wide"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "main chunk holds no section hook, build-wide"
+   },
+   {
+    "m": "crashed(",
+    "t": "X4",
+    "why": "build B (A4b once per run)"
+   },
+   {
+    "m": "fail(",
+    "t": "X4",
+    "why": "build B (A4b once per run)"
+   },
+   {
+    "m": "fail(",
+    "t": "def",
+    "why": "F helper (fixtures)"
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "F(",
+    "t": "X4",
+    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
+    "gap": true
+   },
+   {
+    "m": "errors.push(",
+    "t": "X4",
+    "why": "GAP: A5 shard time budget (25 min per ht10 shard) is a run property; no X id names it (LIB-4c times the library run itself)",
+    "gap": true
+   }
+  ]
  },
  "tools/plates/fidelity/goldenB.mjs:classifyPose": {
   "sha256": "25156d575592ee03f3c56fb1b2610e6a7774260ee424838b97d7082c84def489",
-  "map": []
+  "map": [
+   {
+    "m": "refs.push(",
+    "t": "collect:refs",
+    "why": "reference poses compared against, never pushed to a problem"
+   }
+  ]
  },
  "tools/plates/fidelity/goldenB.mjs:classifyMistakePose": {
   "sha256": "d17f2fe22218b35a9d8184e4c44dbea0e7e2f69dc6badd2ef04bf8ce6c6da12e",
-  "map": []
+  "map": [
+   {
+    "m": "refs.push(",
+    "t": "collect:refs",
+    "why": "reference poses compared against, never pushed to a problem"
+   }
+  ]
  },
  "tools/plates/fidelity/goldenB.mjs:validateCalls": {
   "sha256": "20fc98c632f951a1b58a5bcc175a2aa39609665497dde27fa02cf4d4024f7f1e",
-  "map": []
+  "map": [
+   {
+    "m": "bad.push(",
+    "t": "HT4/A5-poses@*"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT4/A5-poses@*"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT4/A5-poses@*"
+   }
+  ]
  },
  "tools/plates/fidelity/goldenB.mjs:protectedFieldProblems": {
   "sha256": "988d4cad9d68e03e43c114b065066d98b8a8133e6745a63a44b8f99a68546202",
-  "map": []
+  "map": [
+   {
+    "m": "bad.push(",
+    "t": "HT4/A5-protected@*"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT4/A5-protected@*"
+   }
+  ]
  },
  "tools/plates/fidelity/goldenB.mjs:fragmentProblems": {
   "sha256": "7a2159d33370c076f531109cac0382b24a2d057ffa64f3736f0f38740170bce2",
-  "map": []
+  "map": [
+   {
+    "m": "throw new Error",
+    "t": "HT4/A5-fragments@*",
+    "why": "no svg boundary: the HT4 job crashes and A5-fragments is not proven"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT4/A5-fragments@*"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT4/A5-fragments@*"
+   },
+   {
+    "m": "bad.push(",
+    "t": "HT4/A5-fragments@*"
+   }
+  ]
  }
 }

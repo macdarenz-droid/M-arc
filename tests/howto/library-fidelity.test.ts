@@ -10,7 +10,7 @@ import { CHECKS, LIB_ONCE, PQH_STATES, libraryTuples, parseState, plateKeys, sou
 // @ts-expect-error plain .mjs build tool, no types
 import { recorder, rowProblems, stateOf } from '../../tools/plates/library/fidelity/rows.mjs';
 // @ts-expect-error plain .mjs build tool, no types
-import { TWINS, readPins, twinProblems } from '../../tools/plates/library/fidelity/twins.mjs';
+import { TWINS, mapProblems, pinnedTexts, readPins, twinProblems } from '../../tools/plates/library/fidelity/twins.mjs';
 // @ts-expect-error plain .mjs build tool, no types
 import { HT_PLATES, HT_THEMES, ht10AllTuples } from '../../tools/plates/fidelity/harness.mjs';
 
@@ -139,6 +139,39 @@ describe('LIB-4b B3: the twin drift tripwire', () => {
     const g = 'tools/plates/fidelity/goldenB.mjs', gb = readFileSync(join(ROOT, g), 'utf8');
     bad = await twinProblems({ [g]: gb.replace("if (refs.some(r => r !== undefined && deepEqual(pose, r))) return 'golden';", "if (refs.some(r => deepEqual(pose, r))) return 'golden';") });
     expect(bad).toEqual([expect.stringMatching(/^tools\/plates\/fidelity\/goldenB\.mjs:classifyPose changed/)]);
+  });
+});
+
+describe('LIB-4b D-LIB4b-MAP: every assertion of a pinned text is mapped', () => {
+  type Entry = { m: string; t: string; why?: string; gap?: boolean };
+  type Pins = Record<string, { sha256: string; map: Entry[] }>;
+  const mapOf = (pins: Pins, key: string): Entry[] => pins[key]?.map ?? [];
+  it('each pinned text\'s assertions equal its map, in count and order, and every target resolves', async () => {
+    const pins: Pins = readPins();
+    expect(mapProblems(await pinnedTexts(), pins)).toEqual([]);
+    for (const t of TWINS as { key: string }[]) expect(mapOf(pins, t.key).length).toBeGreaterThan(0);
+  });
+  it('deleting one map entry turns it red', async () => {
+    const pins: Pins = readPins();
+    mapOf(pins, 'gate:HT-4').splice(3, 1);
+    const bad: string[] = mapProblems(await pinnedTexts(), pins);
+    expect(bad).toContain('gate:HT-4: 14 assertion matches, 13 map entries');
+  });
+  it('a collect variable that reaches errors is red', async () => {
+    const pins: Pins = readPins();
+    const e = mapOf(pins, 'gate:HT-6').find(x => x.m === 'reqs.push(');
+    expect(e).toBeDefined();
+    if (e) e.t = 'collect:reqs';
+    expect(mapProblems(await pinnedTexts(), pins)).toEqual([expect.stringMatching(/^gate:HT-6 #\d+: collect:reqs reaches errors\/problems/)]);
+  });
+  it('a new push or throw in a twinned gate block is red, together with B3', async () => {
+    const gate = readFileSync(join(ROOT, 'scripts/screenshot-gate.mjs'), 'utf8'), marker = "const tag = 'HT-4';";
+    expect(gate.split(marker)).toHaveLength(2);
+    for (const add of [" bad.push('x');", " if (!tag) throw new Error('x');"]) {
+      const over = { 'scripts/screenshot-gate.mjs': gate.replace(marker, marker + add) };
+      expect(mapProblems(await pinnedTexts(over), readPins())).toEqual(expect.arrayContaining([expect.stringMatching(/^gate:HT-4: 15 assertion matches, 14 map entries/)]));
+      expect(await twinProblems(over)).toEqual([expect.stringMatching(/^gate:HT-4 changed .*re-check the library twin/)]);
+    }
   });
 });
 

@@ -161,6 +161,11 @@ async function entryJob({ browser, port, R, order, custom, fixtures, root }, { l
       }, chrome);
       if (!st || st.els > 700 || st.mistakeFig || !st.normalShown || JSON.stringify(st.pressed) !== JSON.stringify([facts.firstKey]) || st.mistakeOn !== 'false' || st.eyebrow !== 'How to do it' || st.title !== name || !st.open)
         bad.push(`A3: the first open is not S0 within 700 elements (title ${JSON.stringify(name)}, first key ${facts.firstKey}): ${JSON.stringify(st)}`);
+      // G7 (ht3Behaviour): after the first Mistake tap and a tell, no .form-guide element inside the open sheet
+      await page.locator(`#${chrome}-mistake`).click();
+      if (!(await page.locator('dialog.sheet.ht .ht-plate[data-mode="mistake"]').count())) bad.push('A3: the first Mistake tap did not insert the mistake figure');
+      else await page.locator('dialog.sheet.ht .ht-plate[data-mode="mistake"] .plate-callout').nth(1).click();
+      if (await page.locator('.form-guide').count()) bad.push('G7: a .form-guide element is inside the open How-to sheet');
       await closeHowTo(page);
     }
   } catch (e) { bad.push(e.message.split('\n')[0]); } finally { await ctx.close(); }
