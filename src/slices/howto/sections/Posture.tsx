@@ -11,8 +11,10 @@ import '../css/posture.css';
 interface PostureModule { readonly panels: Readonly<Record<string, string>>; readonly zdots: string }
 /** The per-exercise posture chunks, keyed by chrome id like the hand chunks, one lazy import each (Vite splits every
  *  file into its own `posture-<chromeId>-*.js`, with the exercise's close-up CSS, css/zoom-<chromeId>.css, which its
- *  hand chunk imports too). */
-const CHUNKS = import.meta.glob<PostureModule>('../../../howto/generated/posture-*.ts');
+ *  hand chunk imports too). LIB-2 (D-LIB2-sheet-maps): the map is the loaders module's POSTURE, already loaded by
+ *  the sheet, so the sheet chunk holds no per-id map. */
+const chunkOf = (chromeId: string): Promise<(() => Promise<PostureModule>) | undefined> =>
+  import('../../../howto/generated/loaders').then(m => m.POSTURE[chromeId]);
 
 let holders = 0, zdots: string | null = null, node: HTMLElement | null = null;
 const mount = () => {
@@ -41,7 +43,7 @@ export function holdZdots(): () => void {
 
 /** The registry's `posture` loader: the close-up `key` of `chromeId`, loaded with its chunk on the first open. */
 export async function postureZoom(chromeId: string, key: string): Promise<ZoomChunk> {
-  const load = CHUNKS[`../../../howto/generated/posture-${chromeId}.ts`];
+  const load = await chunkOf(chromeId);
   if (!load) throw new Error(`posture: no close-ups for ${chromeId}`);
   const m = await load();
   const panel = m.panels[key];

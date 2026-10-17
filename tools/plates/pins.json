@@ -1,0 +1,19 @@
+{
+  "$comment": "Golden A pins (HT1-A1, HT1-A2), moved out of tools/plates/golden.mjs by LIB-2 (library plan 5.3: everything that names the 8 becomes data). golden.mjs reads this file and exports the same PINS object; vendor.test.ts and golden.test.ts keep asserting the values. vendorSources: the commits a vendored file may come from, each with why.",
+  "refSrcMd5": {
+    "ref-src/plate.mjs": "31e7bfe3555c0c456ed4417f503dc93f",
+    "ref-src/themes.mjs": "37495b3d37d1a6a284a380c9e517fb18"
+  },
+  "fontSha256": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62",
+  "pageSha256": "e2bea90c8312132b93a2ab0bc004cee6ef43edd22e8227720be3958f6b2dcf48",
+  "pageBytes": 860766,
+  "vendorSources": [
+    { "commit": "bc0f378", "why": "golden A blobs" },
+    { "commit": "1a1e33b", "why": "the ref-src commit" },
+    { "commit": "7859292", "why": "golden update, LIB-25 poly" },
+    { "commit": "de00174", "why": "golden update, LIB-25 poly" },
+    { "commit": "48153c4", "why": "golden update, LIB-25 poly" },
+    { "commit": "f214700", "why": "golden update, LIB-26 flat palm" }
+  ],
+  "vendorSourceMessage": "is not a bc0f378 blob, the ref-src commit or a golden update (7859292, de00174, 48153c4: LIB-25 poly; f214700: LIB-26 flat palm)"
+}
