@@ -73,7 +73,7 @@ describe('LIB-4b B1: tuples from source match what the HT blocks observe on the 
     // HT-6: close-up pages + grip sections in 5 themes (>= 105); A6 one row per (id, theme) in HT_FULL, >= 2 pairs each (>= 32)
     const ht6 = count(ts, t => t.check === 'HT6' && (t.sub === 'grip' || t.sub.startsWith('page-')));
     expect(ht6).toBe(105);
-    expect(count(ts, t => t.check === 'HT6' && t.sub === 'A6') * 2).toBeGreaterThanOrEqual(32);
+    expect(count(ts, t => t.check === 'HT6' && t.sub === 'A6') * 4).toBe(64);   // N, M, T@2400, R:end per row; HT-6 prints "A6 64 plate pairs"
     expect(count(ts, t => t.check === 'HT6' && t.sub === 'open-anim')).toBe(40);
     // HT-7: posture L3 pairs, 5 themes + the reduced-motion run (>= 80)
     const ht7 = count(ts, t => t.check === 'HT7' && (t.sub.endsWith(':L3') || t.sub.endsWith(':reduced')));
@@ -90,7 +90,7 @@ describe('LIB-4b B1: tuples from source match what the HT blocks observe on the 
     expect(count(ts, t => t.check === 'HT9' && t.sub.startsWith('show-'))).toBe(34);
     expect(count(ts, t => t.check === 'HT9' && t.sub === 'C19')).toBe(40);
     expect(count(ts, t => t.check === 'HT9' && t.sub === 'order')).toBe(8);
-    expect(count(ts, t => t.check === 'HT9' && t.sub === 'A5') * 2).toBeGreaterThanOrEqual(32);
+    expect(count(ts, t => t.check === 'HT9' && t.sub === 'A5') * 4).toBe(64);   // HT-9 prints "A5 64 plate pairs"
     // HT-4 A6: 8 x 5 passes; HT-10: exactly HT-10's own per-id tuples
     expect(count(ts, t => t.check === 'HT4' && t.sub === 'A6')).toBe(40);
     const ht10 = (await ht10AllTuples()).filter((t: Tuple) => t.id !== '*');
