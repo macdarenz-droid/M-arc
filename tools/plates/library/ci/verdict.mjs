@@ -105,7 +105,7 @@ export async function libraryVerdict({ lib, rebuild, gate = [], sha, ref, event,
     const s = m.meta?.shardSeconds;
     if (!(s >= 0)) problems.push(`${at}: no shardSeconds`);
     else if (s > JOB_BUDGET_S) problems.push(`${at}: ${s} s, over the ${JOB_BUDGET_S} s budget`);
-    else if (s > SHARD_TARGET_S) notes.push(`${at}: ${s} s, over the ${SHARD_TARGET_S} s target: refresh times.json`);
+    else if (s > SHARD_TARGET_S) notes.push(`${at}: ${s} s, over the ${SHARD_TARGET_S} s target: re-pick K/N (refresh times.json; D-GATESPLIT-BUDGET)`);
     for (const r of m.rows) {
       if (r.result !== 'pass') problems.push(`${at}: ${r.id} ${r.theme} ${r.state}: ${r.result}`);
       for (const p of rowProblems(r)) problems.push(`${at}: ${p}`);
@@ -117,7 +117,10 @@ export async function libraryVerdict({ lib, rebuild, gate = [], sha, ref, event,
     if (lib.length && !lib[0].meta?.[f]) problems.push(`library: no ${f} in the shard proofs`);
     if (gateV.size && [...libV].some(v => !gateV.has(v))) problems.push(`library: meta.${f} ${[...libV].join(' / ')} differs from the gate family's ${[...gateV].join(' / ')}`);
   }
-  const line = `library: ${mode} (${ids.length} of ${U.length})`;
+  // D-LIB4c-4: a shard planned with no id because its fixed part is over the target is named, with the seconds it used
+  const fixedOnly = plan.shards.map((s, j) => (s.length === 0 && plan.loads[j] > SHARD_TARGET_S ? `shard ${j + 1} once-states only (fixed ${Math.round(plan.loads[j] * 10) / 10} s planned, ${lib.find(m => m.meta?.job?.k === j + 1)?.meta?.shardSeconds ?? '?'} s used; D-LIB4c-4)` : null)).filter(Boolean);
+  notes.push(...fixedOnly.map(f => `library: ${f}`));
+  const line = `library: ${mode} (${ids.length} of ${U.length})${fixedOnly.length ? `; ${fixedOnly.join('; ')}` : ''}`;
   if (mode === 'affected') notes.push(...reasons.map(r => `library affected: ${r.path} (class ${r.cls}): ${r.ids === 'all' ? 'all ids' : r.ids.length ? r.ids.join(', ') : 'no id'}; ${r.why}`));
   return { problems, notes, line, mode, ids, seconds };
 }

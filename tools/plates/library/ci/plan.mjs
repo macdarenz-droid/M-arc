@@ -43,7 +43,10 @@ export function planK(items, times) {
   for (let K = 1; K <= Math.max(1, n) + 1; K++) {
     const { loads, shards } = shardLoads(items, K, times);
     // D-LIB4c-4: a shard whose fixed part (c0 + its once-states) is already over the target fits only with no id
-    if (loads.every((s, j) => s <= SHARD_TARGET_S || shards[j].length === 0)) return { K, note: loads.some(s => s > SHARD_TARGET_S) ? `shard 1's once-states alone are ${loads[0]} s, over ${SHARD_TARGET_S} s; it holds no id` : null };
+    if (loads.every((s, j) => s <= SHARD_TARGET_S || shards[j].length === 0)) {
+      const fixed = loads.map((s, j) => (s > SHARD_TARGET_S ? `shard ${j + 1} fixed part ${Math.round(s * 10) / 10} s (c0 + once-states) is over ${SHARD_TARGET_S} s: it holds no id (D-LIB4c-4)` : null)).filter(Boolean);
+      return { K, note: fixed.length ? fixed.join('; ') : null };
+    }
   }
   const over = items.filter(it => (times.c0 ?? 0) + it.seconds > SHARD_TARGET_S).map(it => it.id);
   return { K: Math.max(1, n), note: `no K fits ${SHARD_TARGET_S} s (${over.length ? `over alone: ${over.join(', ')}` : 'shard 1\'s once-states leave no room'}); one id per shard` };

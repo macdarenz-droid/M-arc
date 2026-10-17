@@ -104,12 +104,23 @@ describe('C2: integer-aware K (t = 271, c0 = 30)', () => {
     expect([big.K, big.shards.map((s: string[]) => s.length)]).toEqual([2, [1, 1]]);
     expect(big.note).toMatch(/over alone: a/);
     expect(planK([], times)).toEqual({ K: 1, note: null });
-    // D-LIB4c-4: once-states over the target alone (1,268 s measured locally): shard 1 holds no id, every other shard fits
-    const heavy = libraryPlan({ ids: items(6).map(x => x.id), times: { default: 280.8, c0: 30, once: { run: 1200, shard: 60 }, ids: {} } });
+    // D-LIB4c-4 (a): once-states over the target alone (1,268 s measured locally): shard 1 holds no id, every other shard
+    // fits, and K is the smallest K that does so
+    const heavyT = { default: 280.8, c0: 30, once: { run: 1200, shard: 60 }, ids: {} }, six = items(6, 280.8);
+    const heavy = libraryPlan({ ids: six.map(x => x.id), times: heavyT });
     expect([heavy.K, heavy.shards[0]]).toEqual([4, []]);
     for (const [j, l] of heavy.loads.entries()) if (j) expect(l).toBeLessThanOrEqual(900);
-    expect(heavy.note).toMatch(/holds no id/);
+    for (let K = 1; K < heavy.K; K++) { const x = shardLoads(six, K, heavyT); expect(x.loads.every((l: number, j: number) => l <= 900 || x.shards[j].length === 0)).toBe(false); }
+    expect(heavy.note).toBe('shard 1 fixed part 1290 s (c0 + once-states) is over 900 s: it holds no id (D-LIB4c-4)');
     expect([LIB_TARGET, JOB_BUDGET_S]).toEqual([GATE_TARGET, GATE_BUDGET]);
+  });
+  it('D-LIB4c-4 (b): with every fixed part <= 900 s the plan is the literal rule\'s (the smallest K whose every shard fits)', () => {
+    const literal = (it0: any[], t: any) => { for (let K = 1; ; K++) if (shardLoads(it0, K, t).loads.every((l: number) => l <= 900)) return K; };
+    for (const n of [0, 1, 4, 6, 14, 30]) for (const s0 of [120, 271, 280.8, 449]) for (const run of [0, 40, 300, 800]) {
+      const t = { default: s0, c0: 30, once: { run, shard: 8 }, ids: {} }, it0 = items(n, s0), p = libraryPlan({ ids: it0.map(x => x.id), times: t });
+      expect([n, s0, run, p.K]).toEqual([n, s0, run, literal(it0, t)]);
+      expect(p.note).toBeNull();
+    }
   });
   it('an unmeasured id uses the largest measured time, else default; the hash covers ids, times and K', () => {
     const t = { default: 100, c0: 0, once: { run: 0, shard: 0 }, ids: { a: 400 } };
@@ -431,6 +442,19 @@ describe('C5: the verdict family is red on every D-LIB4-VERDICT item (LIB-2b fix
     const v = await verdict(x);
     expect(v.problems).toEqual([]);
     expect(v.notes.join('\n')).toMatch(/1800 s, over the 900 s target/);
+  });
+  it('D-LIB4c-4: a once-states-only shard is named in the line and the notes, and 1,800 s stays red on it', async () => {
+    const heavyT = { default: 600, c0: 0, once: { run: 1000, shard: 0 }, ids: {} };
+    const h = await greenSet(tree, { ids: [F.ID], times: heavyT, all });
+    expect([h.plan.K, h.plan.shards[0]]).toEqual([2, []]);
+    h.lib[0].meta.shardSeconds = 1100;
+    const v = await libraryVerdict({ lib: h.lib, rebuild: h.rebuild, gate: h.gate, sha: SHA, ref: 'refs/heads/main', event: 'push', needs: NEEDS, root: tree, all, times: heavyT });
+    expect(v.problems).toEqual([]);
+    expect(v.line).toBe('library: full (1 of 1); shard 1 once-states only (fixed 1000 s planned, 1100 s used; D-LIB4c-4)');
+    expect(v.notes.join('\n')).toMatch(/shard 1: 1100 s, over the 900 s target: re-pick K\/N/);
+    h.lib[0].meta.shardSeconds = 1801;
+    const w = await libraryVerdict({ lib: h.lib, rebuild: h.rebuild, gate: h.gate, sha: SHA, ref: 'refs/heads/main', event: 'push', needs: NEEDS, root: tree, all, times: heavyT });
+    expect(w.problems.join('\n')).toMatch(/library shard 1: 1801 s, over the 1800 s budget/);
   });
   it('affected mode on a full ref; a howto-shard need missing or skipped; library ids + the 8 != shippedIds()', async () => {
     await red(x => { x.rebuild[0].meta.mode = 'affected'; }, /affected mode on a full ref/);
