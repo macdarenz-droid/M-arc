@@ -510,3 +510,72 @@ test('L5 no if, elif or else on a text; the Phone not connected title and Pendin
   r.link.rx(snap({ nx: [] }));
   assert.deepEqual(lines(r.v()).slice(0, 2), ['M/ARC', r.v().ck], 'online: the header row');
 });
+
+// C3 review (2026-10-17): a double tap on Complete, a set the phone reopens, the phone's answer and the local rest,
+// the cap of the saved-set lock list.
+test('R1 a second Complete tap within 1 s is a double tap and is ignored; from 1 s on it logs the next set', () => {
+  let src = readFileSync(path.join(PAGE, 'index.js'), 'utf8');
+  src = src.split('\n').filter((l) => !l.startsWith('import ')).join('\n').replace(/^export default \{/m, 'return {');
+  let n = 0, t = Date.UTC(2026, 9, 17, 10, 0, 0);
+  const link = { start() {}, tick() {}, show() {}, view: () => ({ sc: 0 }), complete: () => { n++; } };
+  const def = new Function('P2pClient', 'Message', 'Builder', 'storage', 'brightness', 'vibrator', 'sensor', 'PHONE_PKG', 'PHONE_FP', 'Link', 'makeBoot', 'setInterval', 'Date', src)(
+    function () {}, function () {}, function () {}, {}, { setKeepScreenOn() {} }, {}, {}, '', '', () => link, () => 'b', () => 0, { now: () => t });
+  const page = { ...def.data };
+  def.onInit.call(page);
+  const t0 = t;
+  const got = [0, 150, 999, 1000, 1400, 2400, 500].map((d) => { t = t0 + d; def.onComplete.call(page); return n; });
+  assert.deepEqual(got, [1, 1, 1, 2, 2, 3, 4], 'taps 150 ms and 999 ms after a logged one are ignored; a clock set back logs');
+});
+
+test('R2 a saved set stays locked at the rev it was sent with; the phone reopening it (a higher rev) frees it', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.complete();
+  r.link.rx(res('abcd1234-1'));
+  r.link.rx(snap());
+  assert.equal(r.v().sp, 'SET 3 OF 5', 'a stale snap: still locked');
+  r.link.rx(snap({ set: { ...S2, rev: 3 } }));
+  assert.deepEqual(only(r.v(), ['sp', 'l2', 'can']), { sp: 'SET 2 OF 5', l2: '60 kg x 8', can: true });
+  r.tick(); r.tick();
+  r.link.complete();
+  assert.deepEqual(only(r.cmds().at(-1), ['setId', 'expectedRev']), { setId: 'set_b2', expectedRev: 3 });
+});
+
+test("R3 online, the phone's answer decides the rest: its result, then a snap with no new rest, end the local rest; the phone's old rest stays", async () => {
+  const b3 = { si: 3, set: { ...S2, id: 'set_b3', rev: 0, w: 62.5 }, nx: NX.slice(1) };
+  // a warm-up or a late set: the phone starts no rest
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.complete();
+  r.link.rx(res('abcd1234-1'));
+  r.link.rx(snap(b3));
+  for (let i = 0; i < 95; i++) r.tick();
+  assert.deepEqual([r.v().sc, r.buzz], [1, 0], 'no rest, no Rest done');
+  // the phone's earlier rest, still running, is what the watch shows
+  const o = await rig({ code: null });
+  o.link.rx(snap({ rest: { ...rest1, left: 60000 } }));
+  o.link.complete();
+  o.link.rx(res('abcd1234-1'));
+  o.link.rx(snap({ ...b3, rest: { ...rest1, left: 59000 } }));
+  o.tick(); o.tick(); o.tick();
+  assert.deepEqual(only(o.v(), ['sc', 'rc']), { sc: 2, rc: '0:56' });
+  // the result without its snap (lost): the local rest still runs
+  const l = await rig({ code: null });
+  l.link.rx(snap());
+  l.link.complete();
+  l.link.rx(res('abcd1234-1'));
+  l.tick(); l.tick();
+  assert.deepEqual(only(l.v(), ['sc', 'rc']), { sc: 2, rc: '1:28' });
+});
+
+test('R4 the lock list keeps the 16 newest saved sets: two saved, a stale snap listing both leaves both locked', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.complete();
+  r.tick(); r.tick();
+  r.link.complete();
+  r.link.rx(res('abcd1234-1'));
+  r.link.rx(res('abcd1234-2'));
+  r.link.rx(snap());
+  assert.deepEqual(only(r.v(), ['sp', 'l2']), { sp: 'SET 4 OF 5', l2: '62.5 kg x 6' });
+});

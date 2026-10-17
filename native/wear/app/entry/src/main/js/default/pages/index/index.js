@@ -6,12 +6,12 @@ import sensor from '@system.sensor';
 import { PHONE_PKG, PHONE_FP, Link, makeBoot } from '../../common/link.js';
 
 // WATCH-C page; common/link.js does the rest. Every entry point catches what it throws.
-var client, link, page, timer;
+var client, link, page, timer, ct = 0;
 
 function no() {}
 function tap(f, a) { try { link[f](a); } catch (e) {} }
 
-// the lines t1 to t5 and colours c1 to c4 the screens share (index.hml), from view(), by screen
+// t1 to t5 and c1 to c4, shared by the screens (index.hml), from view()
 var SLOTS = 't1 t2 t3 t4 t5 c1 c2 c3 c4'.split(' ');
 function slots(v) {
 	var k = v.sc;
@@ -19,8 +19,7 @@ function slots(v) {
 		k == 3 ? [v.dn, v.n0, v.n1, v.n2, v.n3, v.b0, v.b1, v.b2, v.b3] : k == 7 ? [v.ak, v.av] : k ? [v.na, v.add ? v.rest : '', v.na && 'Pending'] : [v.l1, v.l2];
 }
 
-// only page data; a colour is always a colour. A new screen is built with its inner if-part (set) off and gets it
-// after, with t1, so no build runs inside another (red team, 611b09c8)
+// page data only; a new screen gets its if-part (set) after t1, so no build runs inside another (611b09c8)
 function paint() {
 	var v = page && link ? link.view() : 0, s = v && slots(v), k;
 	if (!v) return;
@@ -68,7 +67,7 @@ function connect() {
 }
 
 export default {
-	// what index.hml binds; t1 to t5 and c1 to c4 come from slots()
+	// what index.hml binds
 	data: {
 		sc: 0, off: 0, ck: '', set: 0, nm: '', cl: '', nx: '', ns: '', r0: '', r1: '', r2: '', r3: '',
 		t1: '', t2: '', t3: '', t4: '', t5: '', c1: '#08090a', c2: '#08090a', c3: '#08090a', c4: '#08090a'
@@ -83,7 +82,8 @@ export default {
 		} catch (e) {}
 	},
   onShow() { try { link.show(); } catch (e) {} },
-  onComplete() { try { link.complete(); } catch (e) {} },
+  // a double tap logs one set
+  onComplete() { try { var t = Date.now(); if (Math.abs(t - ct) >= 1000) ct = t, link.complete(); } catch (e) {} },
   onEffort() { try { link.effort(); } catch (e) {} },
   onAdd() { try { link.rest('rest_add_30'); } catch (e) {} },
   onSkip() { try { link.rest('rest_skip'); } catch (e) {} },

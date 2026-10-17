@@ -51,3 +51,12 @@ Each new test fails before and passes after. Existing tests stay, except these s
 
 ## Forecast (builder hours; device and review time not included)
 Phone 3, watch 10, integration 1, review and red team 4: **18 h (range 12 to 28).**
+
+## Review rulings (2026-10-17, second watch-lane session)
+A fresh review of `3d1515d2`: pass with findings. The builder's changes to existing watch tests (Rest done before Set in four C2 tests, the 1.3.0 pins, the W4 handler pin, the Rest line list) are accepted: each is at least as strict. Fixed, each with a test that fails before (`c3.test.mjs`):
+- **R1 (medium):** a double tap on Complete logged two sets. The page ignores a second Complete tap within 1 s; the link is unchanged, so its tests that tap twice on purpose stand.
+- **R2 (low):** a set the phone reopened stayed locked. The lock is on the set id at the rev sent.
+- **R3 (low):** the watch ran a rest the phone never starts (a warm-up, a late set). Online, the Complete's result, then a snap with no new rest, ends the local rest. This refines "Local rest" above: offline, or with the snap lost, the local rest runs as before.
+- **R4 (nit):** the lock list's cap of 16 is now tested.
+- Accepted as a known limit: the next sets reuse the shown set's load step (`nx` has no room for one). Recorded: the README C3 section; the watch-lane docs commits outside `write_scope` (research, red-team tools, the handover) carry no app or test code.
+- Page sources stay at most 46,000 B by shortening comments (they are not in the compiled page).

@@ -63,13 +63,13 @@ function fmt(s) { var r = s.r == null ? '-' : s.r; return s.w == null ? r + ' re
 
 // io: store, send(text, done(code)), keep(on), connect(), paint(), now(), defer(fn, 0), buzz()
 function Link(io, boot) {
-	// tk counts 1 s ticks, the clock of every timer; io.now() is for actionAt, the offset and the clock
+	// tk: 1 s ticks, the clock of every timer; io.now(): actionAt, the offset, the clock
 	var tk = 0, seq = 0, snapTk = 0, off = 0, rtt = -1, lastRx = -1, fail = 0, hb = 0, due = Infinity;
 	var q = [], jobs = [], hellos = [], wq = [], busy = 0, snap = 0, eff = null, effSet = '', dl = [];
 	var wait = 0, msg = '', stop = 0, kept = false, ready = 0, lost = 0, on = 0, pause = 0, calm = 0, dead = 0, sick = 0;
-	// C2: plan, pick, page, Set N saved, Back in sync and a refusal in its batch, hello, the last send failed
+	// C2: plan, pick, page, Set N saved, sync, a refusal in its batch, hello, a failed send
 	var plan = 0, pk, ps, pe, pg = 0, sv, svR, lq, bn = 0, bj = 0, sy, hi, bad = 0;
-	// C3: Adjust, the local rest, Rest done, the heart rate
+	// C3: Adjust, local rest, Rest done, heart rate
 	var ad = 0, af = 0, lr = 0, rn = '', rk, bz, ko, hv = '', ht = 0;
 
 	function no() {}
@@ -109,12 +109,12 @@ function Link(io, boot) {
 		return s;
 	}
 	function entry(slot, text, m) {
-		return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, t: m.actionAt, at: 0, n: 0 };
+		return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, rev: m.expectedRev, t: m.actionAt, at: 0, n: 0 };
 	}
 
 	function add(code, set, effort) {
 		var at = Math.round(io.now() + off), s = cs(), d = dv(s), f = [code, boot + '-' + ++seq, snap.sid, at].concat(code === 'c' ? [s.id, s.rev, d.w == null ? '' : d.w, s.u, d.r, effort] : [snap.rest.id]);
-		var L = code === 'c' && snap.rs > 0 && { i: (snap.rest || 0).id, left: snap.rs * 1000, id: tk };
+		var L = code === 'c' && snap.rs > 0 && { i: (snap.rest || 0).id, left: snap.rs * 1000, id: tk, c: f[1] };
 		var b = f.join(','), val = b + ',' + sum(b) % 99991, t = wire(f);
 		if (set) wq.push(set);
 		queue(function (fin) {
@@ -243,7 +243,7 @@ function Link(io, boot) {
 			off = o;
 		}
 		if (m.sid !== snap.sid) pg = lr = 0;
-		if (m.rest && m.rest.id !== lr.i) lr = 0;
+		if (m.rest && m.rest.id !== lr.i || lr.d) lr = 0;
 		for (m.xs = [s = m.set], i = 0; s && m.nx && i < m.nx.length; i++) n = m.nx[i], m.xs.push({ id: n[0], rev: n[1], w: n[2], u: s.u, r: n[3], st: s.st, k: i + 1 });
 		snap = m;
 		ko = '';
@@ -270,11 +270,11 @@ function Link(io, boot) {
 		if (!r) pk = '';
 		return r;
 	}
-	// numbers from the plan row: the pick's, or the shown exercise's while it has the snap's set
+	// the plan row: the pick's, or the shown exercise's while it has the snap's set
 	function nr() { var r = row(), e = pr(snap.eid); return r || e && (e.set || 0).id === (snap.set || 0).id && e; }
 	// C3: the first free of set, nx (a pick: its row's set), else the last
 	function xs() { var r = row(); return r ? [r.set] : snap.xs || [0]; }
-	function free(s) { return s && !held(s.id) && dl.indexOf(s.id) < 0; }
+	function free(s) { return s && !held(s.id) && dl.indexOf(s.id + ':' + s.rev) < 0; }
 	function cs() { for (var o = xs(), i = 0; i < o.length - 1 && !free(o[i]); i++); return o[i]; }
 	function dv(s) { return s && ad && ad.id === s.id && ad.rev === s.rev ? ad : s; }
 	function ao() { var s = cs(); return af && free(s) && dv(s) === ad; }
@@ -301,17 +301,18 @@ function Link(io, boot) {
 			if (m.status === 'applied') {
 				// a refusal in this offline batch keeps its reason
 				if (msg !== bj) msg = q.length > 1 ? q.length - 1 + ' pending' : 'Saved';
-				if (dl.push(q[i].set) > 16) dl.shift(); // C3: stays locked
+				if (dl.push(q[i].set + ':' + q[i].rev) > 16) dl.shift(); // C3: locked at its rev
 				for (o = xs(), j = 0; j < o.length && (o[j] || 0).id !== q[i].set; j++);
 				if (j < o.length) sv = ((c = nr()) ? c.d + 1 : snap.si) + j, svR = '';
 				hi = tk + 2, bn++;
 			} else if (m.status === 'rejected') {
 				msg = str(m.reason) && str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
-				// its text is kept through the results still queued, online too, until a new tap (611b09c8)
+				// kept through the queued results, online too, until a new tap (611b09c8)
 				bj = (lq || q.length > 1) && msg;
 			} else {
 				return;
 			}
+			if (lr.c === m.commandId) lr.d = 1; // C3: its next snap decides the rest
 			drop(i);
 			if (!q.length) sy = lq ? (m.status === 'applied' && !bj ? tk + 3 : 0) : sy, lq = bj = 0;
 			fresh();
@@ -383,7 +384,7 @@ function Link(io, boot) {
 			v.p1 = 'Phone not connected';
 			v.p2 = 'Open M/ARC on your phone';
 		}
-		// offline also while a pending send fails, though phone messages still arrive
+		// offline also while a pending send fails, though messages arrive
 		if (gone() || bad && q.length) v.off = 1;
 		if (snap && !snap.sid) {
 			v.l1 = 'Start your workout';
@@ -408,7 +409,7 @@ function Link(io, boot) {
 		}
 		v.hr = tk - ht < 16 ? hv : '';
 		if (k = ao()) v.ak = af === 'r' ? 'REPS' : ad.u.toUpperCase(), v.av = ad[af] == null ? '-' : '' + ad[af];
-		// screen: 1 Set, 2 Rest, 3 Up next, 4 Phone not connected, 5 Back in sync, 6 Rest done, 7 Adjust, 0 l1, l2
+		// screen: 1 Set, 2 Rest, 3 Up next, 4 Offline, 5 Back in sync, 6 Rest done, 7 Adjust, 0 l1, l2
 		v.sc = v.off && (q.length || !snap) && !free(s) ? 4 : k ? 7 : tk < sy ? 5 : rows && pg ? 3 : left > 0 ? 2 : r && r.id === rn && r.id !== rk ? 6 :
 			snap.sid && x.ex ? 1 : 0;
 		k = v.sc > 4 ? bn : q.length;
@@ -437,7 +438,7 @@ function Link(io, boot) {
 	return {
 		rx: rx, tick: tick, view: view,
 		start: run,
-		// onDestroy: a live run with no call in flight is marked clean by one direct write
+		// onDestroy: a run with no call in flight is marked clean by one write
 		die: function () {
 			dead = 1;
 			if (on && !pause && !sick && !wait) try { io.store.set({ key: RUN, value: '0,c', success: no, fail: no }); } catch (e) {}
@@ -449,7 +450,7 @@ function Link(io, boot) {
 			if (lr.on) kind === 'rest_skip' ? lr = 0 : lr.left += 30000, io.paint(); // C3: a local rest is local
 			else if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) add(k ? 's' : 'a', k, '');
 		},
-		// C2: effort 1 to 3, again to clear; next(d) pages on a swipe up or down, else opens Up next
+		// C2: effort 1 to 3, again clears; next(d) pages on a swipe, else opens Up next
 		effort: function (k) {
 			if (cs()) eff = !k ? EFF[(EFF.indexOf(shown()) + 1) % EFF.length] : EFF[k] === shown() ? '' : EFF[k];
 			io.paint();
