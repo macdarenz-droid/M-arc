@@ -332,3 +332,62 @@ describe('WATCH-C2 X2 Up next: a pick on the watch logs that exercise on the pho
     }
   });
 });
+
+describe('WATCH-C3 X3 logging while M/ARC is closed: the watch logs from the snap\'s nx, the phone saves them in order', () => {
+  it("the watch's link.js logs 3 sets with M/ARC closed; when it opens, the phone applies them in order, each at its tap time", async () => {
+    const Link = await loadWatch();
+    startSession({ ...split, exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 4 }] });
+    // Distinct targets, so the saved values show they came from the snap's set and nx.
+    setSet(0, 0, { kg: 60, reps: 8 });
+    setSet(0, 1, { kg: 62.5, reps: 6 });
+    setSet(0, 2, { kg: 65, reps: 5 });
+    const sets = () => state.value.active!.entries[0]!.sets;
+    const ids = sets().map(s => s.id);
+    type X3Watch = WatchLink & { ok(): void };
+    let away = false;
+    let watch: X3Watch | null = null;
+    const applied: string[] = [];
+    const phone = createLink({
+      // M/ARC closed: nothing reaches the watch, and the watch's sends fail (206, as after the phone's Stop in A2-9).
+      send: async t => { if (away) return 206; watch!.rx(t); return 207; },
+      log: l => { const m = /^mw cmd \S+ complete_set (\S+) /.exec(l); if (m) applied.push(m[1]!); },
+      plan: () => buildPlan(state.value),
+    });
+    watch = onWatch(Link, { store: watchStore(), send: (t: string, done: (c: number) => void) => { if (away) return done(206); void phone.receive(t, Date.now()); done(207); }, keep: () => undefined, now: () => Date.now() }, 'k3x9qa06') as unknown as X3Watch;
+    const v = () => watch!.view() as unknown as Record<string, unknown>;
+    const wait = async (sec: number) => { for (let i = 0; i < sec; i++) { await vi.advanceTimersByTimeAsync(1000); watch!.tick(); } };
+    await phone.start();
+    watch.start();
+    await vi.advanceTimersByTimeAsync(0);
+    const snap = buildSnapshot(state.value, Date.now(), null);
+    expect(snap.set!.id).toBe(ids[0]);
+    expect(snap.nx!.map(n => n[0])).toEqual(ids.slice(1));
+    expect(v()).toMatchObject({ sc: 1, sp: 'SET 1 OF 4', l2: '60 kg x 8' });
+
+    away = true;
+    await wait(30);
+    expect(v().off).toBe(1);
+    const taps: number[] = [];
+    for (const [sp, l2] of [['SET 2 OF 4', '62.5 kg x 6'], ['SET 3 OF 4', '65 kg x 5'], ['SET 4 OF 4', '']]) {
+      taps.push(Date.now());
+      watch.complete();
+      expect(v().sp).toBe(sp);
+      if (l2) expect(v().l2).toBe(l2);
+      await wait(100);
+      if (v().sc === 6) watch.ok();
+    }
+    expect(sets().filter(s => s.status === 'committed')).toHaveLength(0);
+
+    // M/ARC opens: the watch's next hello reaches it, and each result frees the next command.
+    away = false;
+    await wait(120);
+    expect(applied).toEqual(ids.slice(0, 3));
+    expect(sets().map(s => [s.status === 'committed', s.kg, s.reps, s.at])).toEqual([
+      [true, 60, 8, new Date(taps[0]!).toISOString()],
+      [true, 62.5, 6, new Date(taps[1]!).toISOString()],
+      [true, 65, 5, new Date(taps[2]!).toISOString()],
+      [false, sets()[3]!.kg, sets()[3]!.reps, undefined],
+    ]);
+    expect(v()).toMatchObject({ sc: 1, sp: 'SET 4 OF 4' });
+  });
+});
