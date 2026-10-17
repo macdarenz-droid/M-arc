@@ -604,5 +604,25 @@
   ],
   "unsourced": [
     "Most common band-hand fault and its direction for this row (F07): no source ranks band-hand faults, and c14's face-ward snap belongs to the manual's starred exercises, not to this row anchored at the feet. LIB-7 must not draw a face-ward snap as this row's hand Wrong."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "seat",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Pull",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "slump"
 }

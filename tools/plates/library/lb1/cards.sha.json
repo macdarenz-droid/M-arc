@@ -1,0 +1,20 @@
+{
+ "note": "sha256 of each LB1 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + '\\n' (the research files' own form). Quotes are byte copies with the same research head.",
+ "researchHead": "9dbc7e0af0f3da0490d1800012569973ed511c32",
+ "cards": {
+  "chin_up": "627381ec89b3edec1efee03e5f243a8235f2f7d55d5fb042c545cff2299050c5",
+  "hanging_knee_raise": "7120dcedda41447c68e25cc985a95fe0ea9e69b5fe320a7a6ad8f4201e415119",
+  "assisted_pull_up": "07e85015cb2c8a411848ce1050ed2b94d29175fbcb1d615677ba20ad9af67f4a",
+  "inverted_row": "632a3ab222a3d253e28f84cd9169c4542308a7b75c5d6f36406e5d43195871cb",
+  "close_grip_pulldown": "6a519efb73950bd45358655eff5f28ab0740559129b76b86f8039be4ba40eb7e",
+  "underhand_lat_pulldown": "c9a19a5d2a13b8d3d280fda5f76bed8a4fe3c285fb6aea5b1aec6694fc323946",
+  "single_arm_lat_pulldown": "53ff74940130c931395e57b99b4071eab348a34d8aba1abfca11a2834eae2bdb",
+  "straight_arm_pulldown": "776c76ef92e9339849559f75f1fccdd3b580e7ffd3b9038090b7a22cd4e311ed",
+  "chest_supported_row": "251ee19e30098866f29ce4726ac20001a17bfb0049729539ef47df9e053bb80c",
+  "resistance_band_row": "0fba9d4f2104a59858b728723e5d4f4ba8623db68ca251c6e532d99f2b2e34c7",
+  "incline_machine_press": "6420c1f897d0a32a321fb1f40e31a1355f3f43fe7b40529370c58094582efcd8",
+  "shoulder_press": "2375df95202c5951803da854e03d48170e7f87dcbe52e2ef1a338bd058e97b28",
+  "horizontal_leg_press": "c312fa5b17feb3276517bc192283364f9390f66424472c18cc4cb1d8749f4209",
+  "leg_press_calf_raise": "d1ae99e0f53791a2d44909279c06565a2693adc364cab0a917d3d971dac9bf97"
+ }
+}

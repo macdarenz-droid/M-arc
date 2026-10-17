@@ -625,5 +625,23 @@
   "anchorSource": "athlean-sap",
   "notes": [
     "ACE page 334 is short and mixes a straight bar and 'one end of the rope'; only its stance, arm and tempo lines are used. The Muyor 2022 pullover vs straight-arm pulldown paper (Appl Sci 12:11138) could not be opened (MDPI 403), so it is cited only through the Di Fonza 2026 review. No source was found for a tier-specific way out or for thumb position; the hand lines are the GA hold archetype defaults. Teixeira 2022 (isometric shoulder angles) was dropped: its abstract does not support a range-of-motion cue and no line used it."
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [
+    {
+      "phase": "Pull",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "bend"
 }

@@ -641,5 +641,25 @@
   "anchorSource": "puregym-close-grip-lat-pulldown",
   "notes": [
     "PureGym's claims that the close grip gives 'greater range of motion' and more trap and rhomboid work are not used: no measured source was found, and Signorile 2002 found less lat activity than the wide front grip. It is not stated in Signorile's abstract whether its close grip used a V-handle. The StrengthLog neutral close-grip page was re-fetched on 2026-09-30 (access full, quote verbatim). ACE lines are written for the bar pulldown and tagged MECH here. The lower-back feel row was dropped: no source links a lower-back feeling to rocking."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "thighTop.r",
+      "claim": "c2"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Pull",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "low"
 }

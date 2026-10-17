@@ -534,5 +534,36 @@
   "anchorSource": "ace-row-machine",
   "notes": [
     "ACE page 168 is titled 'Seated Row' but describes a row machine with an adjustable chest pad, which is this exercise. The page has a typo ('tors0 vertical'), so that sentence is not quoted. No study measured the chest-supported machine row itself; EMG claims come from an isometric seated row (Lehman 2004) and the prone bench row (Fischer 2025), tagged MECH. The hand lines are the GA pull archetype defaults."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "chest",
+      "pose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "chest",
+      "pose": "end",
+      "claim": "c4"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Pull",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "lean"
 }

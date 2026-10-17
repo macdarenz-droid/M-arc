@@ -649,5 +649,43 @@
   "anchorSource": "ace-seated-leg-press",
   "notes": [
     "The parent card leans on ACE 154 too; ACE titles it 'Seated Leg Press' and its wording (seat adjusted to set the knee angle, resistance plate) fits the horizontal machine at least as well as the 45 degree sled. The parent's catch-lever and plate-loading steps are not inherited: horizontal machines are often stack-loaded with a sliding seat, and no source read here describes their catches or pin. WebMD (medically reviewed) is a second full read for the horizontal machine."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "angle",
+      "joint": "knee.r",
+      "pose": "start",
+      "deg": 90,
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sacrum",
+      "pose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "claim": "c7"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Press",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "lock"
 }

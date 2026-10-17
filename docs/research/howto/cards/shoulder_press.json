@@ -633,5 +633,29 @@
     "Tier A: safeties or J-hooks and a bar path clear of the neck do not apply as written to a pivot-arm machine; no source read describes the handle arc's clearance from the head or face.",
     "Palm direction on the handles is not given by any source read (see plate.variantLine).",
     "No source on this card says what to do if a sharp shoulder pinch keeps coming back; the row fix does not add one. The shared shoulder red-flag box and the owner disclaimer carry the stop-and-check line."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Press",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "arch"
 }

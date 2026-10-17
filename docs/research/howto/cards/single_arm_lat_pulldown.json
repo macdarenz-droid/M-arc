@@ -623,5 +623,29 @@
   "anchorSource": "puregym-single-arm-lat-pulldown",
   "notes": [
     "No peer-reviewed study of the single-arm pulldown was found (PubMed searches for unilateral/one-arm pulldown returned nothing relevant). BarBend's guide was read in full as a second technique source. No source names the palm direction on the single handle, so the grip type is left open rather than invented. The back feel row was dropped: no source links a back or one-sided ache to leaning or twisting. c7 and c8 rest on one coach source (WEAK)."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "thighTop.r",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Pull",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "past"
 }

@@ -688,5 +688,30 @@
   "anchorSource": "catalyst-inverted-row",
   "notes": [
     "Safety tier C (not in content.md tier A or B lists). No source found on securing the bar in the rack (J-hooks) or on grip slipping; left out. Youdas 2016 found a grip difference in lat activity but the direction is not in the abstract (c10); c10 is kept only to stop the sheet claiming a direction. Anchor is the Catalyst Athletics inverted row page (read in full). The StrengthLog page was re-fetched for the source check on 2026-09-30 (access full, quotes verbatim); it only co-supports claims and its underhand-grip claim was dropped. The hip-sag fault is not named by any source (see plate.mistake.why)."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "start",
+      "claim": "c3"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Pull",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "sag"
 }
