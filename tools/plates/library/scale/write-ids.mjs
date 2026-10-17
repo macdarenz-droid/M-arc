@@ -53,11 +53,23 @@ const PANEL = ${JSON.stringify(panelOf)};
 export const inputsFor = key => ['tools/plates/library/hands/pairs.mjs'];
 export const pairPanel = async key => PANEL[key];
 `);
-    const hp = await import(pathToFileURL(join(root, 'tools/plates/gen/handpairs.mjs')).href);
-    for (const o of await hp.outputs()) put(o.path, o.text);
   }
+  // the repo generator's own render in the copy, so each file carries its GENERATED header and every writer's part
+  // (content.mjs is ids.ts's second writer); only the hand pairs and the gen/ids.mjs outputs are written from it
+  // the generator reads the golden fixtures (tests/howto/golden), which syntheticRoot does not copy
+  if (!existsSync(join(root, 'tests/howto/golden'))) cpSync(join(src, 'tests/howto/golden'), join(root, 'tests/howto/golden'), { recursive: true });
+  const render = await (await import(pathToFileURL(join(root, 'tools/plates/generate.mjs')).href)).render();
+  const hp = await import(pathToFileURL(join(root, 'tools/plates/gen/handpairs.mjs')).href);
   const gen = await import(pathToFileURL(join(root, 'tools/plates/gen/ids.mjs')).href);
-  for (const o of await gen.outputs()) put(o.path, o.text);
+  // loaders.ts maps a chunk when its file exists: in render() that is only a plugin's output, so the clones' posture- and
+  // feel- files (syntheticRoot's, no plugin writes them) would drop out of POSTURE and FEEL; its body comes from
+  // gen/ids.mjs reading the disk (as syntheticRoot did), under render()'s header (the header hashes inputs, not text)
+  const disk = new Map((await gen.outputs()).map(o => [o.path, o.text]));
+  for (const p of [...(await hp.outputs()).map(o => o.path), ...disk.keys()]) {
+    if (!render.has(p)) throw new Error(`write-ids: the generator rendered no ${p}`);
+    const t = render.get(p).text;
+    put(p, p === 'src/howto/generated/loaders.ts' ? t.slice(0, t.indexOf('\n') + 1) + disk.get(p) : t);
+  }
   const budgets = 'tests/howto/budgets.json';
   const bsrc = existsSync(join(root, budgets)) ? join(root, budgets) : join(src, budgets);
   put(budgets, budgetsAt(readFileSync(bsrc, 'utf8'), n));

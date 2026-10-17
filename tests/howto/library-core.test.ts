@@ -147,10 +147,14 @@ describe('L2-A12: the registry', () => {
   const plates = () => JSON.parse(readFileSync('tools/plates/plates.json', 'utf8'));
   const row = (o = {}) => ({ src: 'library/specs/x.mjs', slug: 'x', prefix: 'x', chromeId: 'x', mode: 'H', stage: 'drawing', ...o });
   it('reads the 8 from plates.json, all shipped, in file order', () => {
-    const all = reg.rows();
-    expect(all).toHaveLength(8);
-    expect(all.map((r: any) => r.id)).toEqual(Object.keys(plates()));
-    expect(reg.shippedIds(all)).toHaveLength(8);
+    const all = reg.rows(), eight = Object.keys(plates());
+    // LIB-4a (D-LIB4-PINS-2): the 8 first, in file order, then every batch row (none today)
+    const batchRows = reg.batchFiles().reduce((a: number, f: string) => a + Object.keys(JSON.parse(readFileSync(f, 'utf8')).rows).length, 0);
+    expect(eight).toHaveLength(8);
+    expect(all).toHaveLength(8 + batchRows);
+    expect(all.slice(0, 8).map((r: any) => r.id)).toEqual(eight);
+    for (const id of eight) expect(reg.shippedIds(all), id).toContain(id);
+    expect(reg.shippedIds(all).length).toBeGreaterThanOrEqual(8);
   });
   it('adds a batch row and refuses a duplicate id, a chromeId or prefix clash, an unknown id, mode or stage, a D row with no parent, and zero rows', () => {
     const base = { plates: plates(), exercises: ex() };
@@ -349,9 +353,10 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
     expect(() => idsGen.coverageEntries({ ...arch, lib_barbell_row: null }, reg.rows(), exerciseIds())).toThrow(/no archetype/);
   });
   it('L2-A16: the gate\'s no-How-to control is the first exercises.json id that does not ship, and moves on when it ships', () => {
-    expect(h.firstWithoutHowTo()).toBe(exerciseIds().find(id => !reg.shippedIds().includes(id)));
-    expect(h.firstWithoutHowTo()).toBe('lib_dumbbell_bench_press');
-    const first = exerciseIds().find(id => !node.hasHowTo(id));
+    expect(h.firstWithoutHowTo()).toBe(exerciseIds().find(id => !reg.shippedIds().includes(id)) ?? null);
+    // LIB-4a (D-LIB4-PINS-2): the literal is the 8's answer; past the 8 the registry line above decides
+    if (reg.shippedIds().length === 8) expect(h.firstWithoutHowTo()).toBe('lib_dumbbell_bench_press');
+    const first = exerciseIds().find(id => !node.hasHowTo(id)) ?? null;
     expect(first).toBe(h.HT_NO_HOWTO);
   });
   it('L2-A18: HT_PLATES, now read from plates.json, equals the literal pairs it replaced, in order (8 pairs)', () => {
@@ -367,10 +372,10 @@ describe('L2-A15: the How-to total ceiling is a per-id rule (plan 5.1)', () => {
     const rule = (await import(/* @vite-ignore */ url('tools/plates/library/budgets/total.mjs'))).totalCeiling as (m: number, n: number) => number;
     const t = JSON.parse(readFileSync('tests/howto/budgets.json', 'utf8')).totals.find((x: any) => x.chunk === 'How-to total');
     const n = reg.shippedIds().length;
-    expect(n).toBe(8);
+    expect(n).toBeGreaterThanOrEqual(8);   // LIB-4a (D-LIB4-PINS-2): the registry's shipped N, the 8 today
     expect(t.gzMax).toBe(rule(t.measuredGz, n));
     expect(t.rawMax).toBe(rule(t.measuredRaw, n));
-    expect(rule(t.measuredGz, 9)).toBeGreaterThan(t.gzMax);
+    expect(rule(t.measuredGz, n + 1)).toBeGreaterThan(t.gzMax);
     expect(Math.ceil(t.measuredGz / 8 * 1.1) * n).not.toBe(t.gzMax);   // rounding per id would drift
   });
 });
@@ -443,7 +448,8 @@ describe('L2-A2: the plates page builder (2.7, taken byte for byte from LIB-8 #1
     const cfg = await bp.goldenAConfig();
     const ids = cfg.groups.flatMap((x: any) => x.ids) as string[];
     expect(ids).toHaveLength(8);
-    expect([...ids].sort()).toEqual(reg.rows().map((r: any) => r.src === 'ref-src' ? 'lateral_raise' : r.src.replace(/^exercises\//, '').replace(/\.mjs$/, '')).sort());
+    // LIB-4a (D-LIB4-PINS-2): golden A is the registry's 8 (goldenRows), whatever the batches add
+    expect([...ids].sort()).toEqual(Object.values(reg.goldenRows()).map((r: any) => r.src === 'ref-src' ? 'lateral_raise' : r.src.replace(/^exercises\//, '').replace(/\.mjs$/, '')).sort());
     const { html } = await bp.buildPlatesPage(cfg);
     expect(html.length).toBe(g.PINS.pageBytes);
     expect(g.sha256(html)).toBe(g.PINS.pageSha256);

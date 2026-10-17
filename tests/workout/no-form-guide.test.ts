@@ -154,12 +154,17 @@ describe('D-HT1 A5: hasHowTo is true exactly for the approved plates', () => {
     const lib = (JSON.parse(readFileSync('src/data/exercises.json', 'utf8')) as { id: string }[]).map(e => e.id);
     expect(lib.length).toBeGreaterThan(140);
     for (const id of approved) expect(lib, id).toContain(id);
-    expect(lib.filter(id => hasHowTo(id)).sort()).toEqual(approved);
+    // LIB-4a (D-LIB4-PINS-2): exactly the registry's shipped ids, which always hold the approved plates (the 8 today)
+    const reg = await import(/* @vite-ignore */ new URL('../../tools/plates/library/registry.mjs', import.meta.url).href) as { rows: () => { id: string; slug: string }[]; shippedIds: (all?: { id: string }[]) => string[] };
+    const shipped = [...reg.shippedIds()].sort(), idOfSlug = new Map(reg.rows().map(r => [r.slug, r.id]));
+    expect(shipped.length).toBeGreaterThanOrEqual(8);
+    for (const id of approved) expect(shipped, id).toContain(id);
+    expect(lib.filter(id => hasHowTo(id)).sort()).toEqual(shipped);
     for (const id of ['custom_1', 'custom_lib_pull_up', 'lib_pull_up ', '', 'LIB_PULL_UP']) expect(hasHowTo(id), id).toBe(false);
-    expect([...HOWTO_IDS].sort()).toEqual(approved);
-    expect(Object.keys(LOADERS).sort()).toEqual(approved);
-    const files = readdirSync('src/howto/generated').filter(f => /^ht-.*\.ts$/.test(f)).map(f => `lib_${f.slice(3, -3).replace(/-/g, '_')}`).sort();
-    expect(files).toEqual(approved);
+    expect([...HOWTO_IDS].sort()).toEqual(shipped);
+    expect(Object.keys(LOADERS).sort()).toEqual(shipped);
+    const files = readdirSync('src/howto/generated').filter(f => /^ht-.*\.ts$/.test(f)).map(f => idOfSlug.get(f.slice(3, -3)) ?? f).sort();
+    expect(files).toEqual(shipped);
   });
   it('the gate\'s no-How-to control is the first library id without approved content, and has none', async () => {
     const { hasHowTo } = await import('@/howto/ids');
