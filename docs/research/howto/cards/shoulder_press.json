@@ -297,6 +297,11 @@
       "quotes": [
         {
           "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
           "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
@@ -377,7 +382,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-17"
     }
   ],
   "plate": {
@@ -626,7 +631,8 @@
     "loadProgression": "Setup step: add 2-10% only when you beat your target reps by one or two (c12)."
   },
   "notes": [
-    "Mode D per the plan: derived from the machine chest press plate. content.md appendix A lists shoulder_press as a parent on its own; the supervisor's brief makes it a difference card of machine_chest_press, and the shared parts (same push hand and lever primitive) justify the inherit lines above. ACE's text has typos ('avoidng', 'oppsed'), kept verbatim in quotes. The EMG claims come from military presses whose equipment the abstracts do not state (Paoli 2010, Bull 2010), tagged MECH or WEAK, and one machine study (Kim 2026). No source was found for a safe way to fail a rep (tier-A way out); see gaps."
+    "Mode D per the plan: derived from the machine chest press plate. content.md appendix A lists shoulder_press as a parent on its own; the supervisor's brief makes it a difference card of machine_chest_press, and the shared parts (same push hand and lever primitive) justify the inherit lines above. ACE's text has typos ('avoidng', 'oppsed'), kept verbatim in quotes. The EMG claims come from military presses whose equipment the abstracts do not state (Paoli 2010, Bull 2010), tagged MECH or WEAK, and one machine study (Kim 2026). No source was found for a safe way to fail a rep (tier-A way out); see gaps.",
+    "W2A 2026-10-17: searched PubMed esearch 'shoulder press machine AND safety' (1 hit, unrelated), 'weight machine AND injury AND (finger OR entrapment)' (12, none on failing a rep); manuals for failing or ending a set on a selectorized shoulder press. Fetched Hoist RS-1501 Shoulder Press owner's manual -> 200 (assembly and maintenance only); Hoist ROC-IT-Workout-Manual.pdf -> 200 (describes the ROC-IT 501 Shoulder Press; nothing on failing a rep); Body-Solid LVSP.pdf and S2SP.pdf -> 200 (assembly); lifefitness.com and matrixfitness.com manual pages -> 404; precor.com product-guides -> 200 (cardio only); technogym.com/us/support -> 403. No source says how to fail a rep safely on a shoulder press machine; tierA.wayOut stays null."
   ],
   "gaps": [
     "Tier A way out: no source read says how to fail a rep safely on a shoulder press machine; left out of the sheet, not invented.",
