@@ -18,7 +18,7 @@ import { SPEC_IDS_8, libraryA5, mergeDeep } from '../../tools/plates/library/fid
 // @ts-expect-error plain .mjs build tool, no types
 import * as goldenB from '../../tools/plates/fidelity/goldenB.mjs';
 // @ts-expect-error plain .mjs build tool, no types
-import { COPY_EDITS, POOL, SCRATCH, paths, transformSources } from '../../tools/plates/library/fidelity/fixture.mjs';
+import { COPY_EDITS, POOL, SCRATCH, f5Reason, paths, transformSources } from '../../tools/plates/library/fidelity/fixture.mjs';
 
 type Tuple = { id: string; theme: string; state: string };
 const ROOT = join(__dirname, '..', '..');
@@ -280,6 +280,44 @@ describe('LIB-4b B5: the scratch fixture sources (D-LIB4-FIXTURE, lib4-cards 11.
       expect(t.howto).not.toMatch(/from '\.\/[a-z_]+\.mjs'/);                     // every relative import re-pointed
       for (const [a, b] of COPY_EDITS[s.from]) { expect(t.spec).toContain(b.slice(5)); expect(t.spec).not.toContain(a.slice(5)); }
     }
+  });
+  it('byte diff against the 8: only the id, name, research card, the listed copy edits and re-pointed import paths differ', () => {
+    const imp = /^(.*?\b(?:from\s*|import\s*\(\s*|import\s+))(['"])\.\.?\/[^'"]+\2(.*)$/;
+    for (const s of SCRATCH) {
+      const t = transformSources(s, ROOT), P = paths(s), edits = COPY_EDITS[s.from];
+      for (const [kind, copy, orig] of [['spec', t.spec, `tools/plates/layers/exercises/${s.from}.mjs`], ['howto', t.howto, `tools/plates/layers/exercises/${s.from}.howto.mjs`]] as const) {
+        const a = readFileSync(join(ROOT, orig), 'utf8').split('\n'), b = copy.split('\n'), why: string[] = [];
+        expect(b.length, `${s.id} ${kind}: line count`).toBe(a.length);
+        for (let i = 0; i < a.length; i++) {
+          if (a[i] === b[i]) continue;
+          const ma = a[i]!.match(imp), mb = b[i]!.match(imp);
+          if (ma && mb && ma[1] === mb[1] && ma[3] === mb[3]) { why.push('import'); continue; }
+          if (kind === 'spec' && a[i]!.replace(/\bid: '[a-z_]+', name: '[^']*'/, '') === b[i]!.replace(/\bid: '[a-z_]+', name: '[^']*'/, '') && b[i]!.includes(`id: '${P.card}', name: '`)) { why.push('id'); continue; }
+          const e = edits.find((e: string[]) => a[i]!.replace(e[0]!, e[1]!) === b[i]);
+          if (kind === 'spec' && e) { why.push('edit'); continue; }
+          if (kind === 'howto' && a[i]!.replace(`id: 'lib_${s.from}'`, `id: '${s.id}'`) === b[i]) { why.push('id'); continue; }
+          if (kind === 'howto' && a[i]!.replace(`card: 'grip/research/${s.from}.json'`, `card: '${P.research}'`) === b[i]) { why.push('research'); continue; }
+          why.push(`unexplained line ${i + 1}: ${b[i]}`);
+        }
+        expect(why.filter(w => w.startsWith('unexplained')), `${s.id} ${kind}`).toEqual([]);
+        expect(why.filter(w => w === 'id').length, `${s.id} ${kind}: one id line`).toBe(1);
+        if (kind === 'spec') expect(why.filter(w => w === 'edit').length).toBe(edits.length);
+        else expect(why.filter(w => w === 'research').length).toBe(1);
+      }
+    }
+  });
+  it('each copy edit lists the refusal it answers; the F5 reason is the 8\'s one text, verbatim (D-LIB4b-F5)', () => {
+    const all = Object.entries(COPY_EDITS).flatMap(([from, es]) => (es as string[][]).map(e => [from, ...e]));
+    expect(all).toHaveLength(2);
+    // minimal: the 16-word cue only loses "top of the"; the semicolon cue only becomes two sentences
+    const [lat, row] = [COPY_EDITS.lat_pulldown[0], COPY_EDITS.seated_cable_row[0]];
+    expect(lat[0].replace('the top of the chest', 'the chest')).toBe(lat[1]);
+    expect(row[0].replace('Sit tall; no', 'Sit tall. No')).toBe(row[1]);
+    for (const [from, , , refusal] of all) expect(refusal).toMatch(new RegExp(`^QaRefused: plate QA refused ${SCRATCH.find((s: { from: string }) => s.from === from).id}: PQ-H8 `));
+    const ex = JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/qa/exemptions.json'), 'utf8')).plates;
+    expect(Object.keys(ex)).toHaveLength(8);
+    for (const id of Object.keys(ex)) expect(f5Reason(ROOT)).toBe(ex[id].F5);
+    expect(f5Reason(ROOT)).toMatch(/3\.57:1 in Midnight/);
   });
   it('a source outside the pool, or a copy edit whose text is gone, throws', () => {
     expect(() => transformSources({ id: 'lib_x', from: 'pull_up', key: 'k' }, ROOT)).toThrow(/not in the B5 pool/);

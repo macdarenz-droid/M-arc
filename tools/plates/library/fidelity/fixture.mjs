@@ -30,16 +30,25 @@ export const SCRATCH = [
 ];
 export const POOL = ['lat_pulldown', 'seated_cable_row', 'leg_press', 'machine_chest_press'];
 /**
- * Copy edits on a clone's spec, each [from, to] applied exactly once. The 8's copy predates LIB-3's PQ-H8 copy rules
- * (approved mode); a library row is held to them, so a verbatim clone of lat_pulldown or seated_cable_row is refused by
- * the generator's node-half gate (PQ-H8: a 16-word cue; a semicolon). The smallest edits that meet the rule, recorded
- * here; no check is changed. (leg_press needs three semicolon edits and is not used.)
+ * Copy edits on a clone's spec (D-LIB4b-COPYEDITS, ruled 11.1 item 19): [from, to, the refusal it answers], each applied
+ * exactly once. The 8's copy predates LIB-3's PQ-H8 copy rules (approved mode); a library row is held to them, so a
+ * verbatim clone of lat_pulldown or seated_cable_row is refused by the generator's node-half gate with exactly the
+ * refusal listed. Only those two cues change, minimally; no check is changed. (leg_press would need three semicolon
+ * edits and is not used.) Golden B's own two cues are golden-B follow-up 12 and stay as they are.
  */
 export const COPY_EDITS = {
-  lat_pulldown: [["cue: 'Lean back slightly and pull the bar past the face to the top of the chest.'", "cue: 'Lean back slightly and pull the bar past the face to the chest.'"]],
-  seated_cable_row: [["cue: 'Sit tall; no rocking, the torso finishes upright.'", "cue: 'Sit tall. No rocking, the torso finishes upright.'"]],
+  lat_pulldown: [["cue: 'Lean back slightly and pull the bar past the face to the top of the chest.'", "cue: 'Lean back slightly and pull the bar past the face to the chest.'",
+    'QaRefused: plate QA refused lib_underhand_lat_pulldown: PQ-H8 normal.chest.cue has 16 words (max 15)']],
+  seated_cable_row: [["cue: 'Sit tall; no rocking, the torso finishes upright.'", "cue: 'Sit tall. No rocking, the torso finishes upright.'",
+    'QaRefused: plate QA refused lib_chest_supported_row: PQ-H8 normal.tall.cue "Sit tall; no rocking, the torso finishes upright.": semicolon']],
   machine_chest_press: [],
 };
+/** D-LIB4b-F5 (11.1 item 17): the 8's named F5 exemption, quoted verbatim from qa/exemptions.json (one text on all 8). */
+export function f5Reason(root) {
+  const texts = new Set(Object.values(JSON.parse(readFileSync(join(root, 'tools/plates/library/qa/exemptions.json'), 'utf8')).plates).map(p => p.F5));
+  if (texts.size !== 1 || texts.has(undefined)) throw new Error(`fixture: the 8 do not share one F5 exemption text (${[...texts].join(' | ')})`);
+  return [...texts][0];
+}
 export const BATCH = 'tools/plates/library/batches/zz-lib4b.json', BATCH_GOLDEN = 'tests/howto/golden/library/zz-lib4b.json';
 export const PAGES = { plates: 'tools/plates/library/pages/zz-lib4b.json', layers: 'tests/howto/golden/library/zz-lib4b.layers.html', layersConfig: 'tools/plates/library/pages/zz-lib4b.layers.json' };
 export const OPTIONS = 'tools/plates/library/render/closeups-8.mjs';
@@ -108,8 +117,12 @@ export function page(root) {
   `).trim().split('\n').pop();
 }
 
-/** Pins the batch golden file, writes the scratch QA cards (unless card=false) and the pair loader. */
-export function pin(root, { scratch = SCRATCH, card: withCard = true } = {}) {
+/**
+ * Pins the batch golden file, writes the scratch QA cards (unless card=false) and the pair loader. Each scratch plate
+ * entry carries the 8's F5 exemption (D-LIB4b-F5, scratch only), except the ids in `noF5` (the mutation).
+ */
+export function pin(root, { scratch = SCRATCH, card: withCard = true, noF5 = [] } = {}) {
+  const F5 = f5Reason(root);
   const out = node(root, `
     import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
     import { dirname } from 'node:path';
@@ -117,7 +130,8 @@ export function pin(root, { scratch = SCRATCH, card: withCard = true } = {}) {
     import { pageConfig } from './tools/plates/library/plates-page.mjs';
     import { appendEntry, extractPlates, fragmentsOf, prefixHash, makeMirror, sha256 } from './tools/plates/golden.mjs';
     import { loadEngine, dropMirror } from './tools/plates/library/qa/engine.mjs';
-    const S = ${JSON.stringify(scratch.map(s => ({ id: s.id, chromeId: paths(s).chromeId, spec: paths(s).spec, src: batchRow(s).src })))};
+    const S = ${JSON.stringify(scratch.map(s => ({ id: s.id, chromeId: paths(s).chromeId, spec: paths(s).spec, src: batchRow(s).src, f5: !noF5.includes(s.id) })))};
+    const F5 = ${JSON.stringify(F5)};
     const { html } = await buildPlatesPage(await pageConfig(${JSON.stringify(PAGES.plates)}));
     mkdirSync(${JSON.stringify(OUT)}, { recursive: true });
     writeFileSync(${JSON.stringify(`${OUT}/zz-lib4b.plates.html`)}, html);
@@ -131,7 +145,8 @@ export function pin(root, { scratch = SCRATCH, card: withCard = true } = {}) {
     for (const s of S) {
       const p = plates.find(x => x.chromeId === s.chromeId);
       if (!p) throw new Error('fixture: no plate ' + s.chromeId + ' on the plates page');
-      e = appendEntry(e, { kind: 'plate', id: s.id, src: s.src, slug: s.chromeId, prefix: p.prefix, chromeId: s.chromeId, fragments: fragmentsOf(p), ...meta });
+      e = appendEntry(e, { kind: 'plate', id: s.id, src: s.src, slug: s.chromeId, prefix: p.prefix, chromeId: s.chromeId, fragments: fragmentsOf(p), ...meta,
+        ...(s.f5 ? { exemptions: ['F5'], why: 'LIB-4b B5 scratch fixture (D-LIB4b-F5; never pinned or shipped). F5: ' + F5 } : {}) });
       const spec = (await import('./' + s.spec)).default, rep = E.renderPlate(spec, { id: 'x-n' }).report;
       facts[s.id] = { angles: rep.angles, tempo: spec.tempo, topFault: p.mistake.firstKey };
     }
