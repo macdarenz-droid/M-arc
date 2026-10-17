@@ -1,4 +1,4 @@
-// WATCH-C link, outbox and screen text; see native/wear/README.md. ES5, ASCII, tabs (32,000 B page budget).
+// WATCH-C link, outbox, screen text (native/wear/README.md). ES5, ASCII, tabs: 32,000 B budget.
 var T = 'mw', V = 1, APP = '1.1.1';
 var PHONE_PKG = 'com.mrcdrnzz.dailytracker';
 // build-apk.yml EXPECTED_SHA256
@@ -9,7 +9,6 @@ var CH = 'Changed on phone', END = 'Workout ended';
 var WHY = { target_missing: CH, already_committed: CH, stale_revision: CH, stale_rest: CH, invalid_state: CH,
 	session_closed: END, no_session: END, wrong_session: END, unsupported: 'Update needed' };
 
-function own(o, k) { return Object.prototype.hasOwnProperty.call(o, k); }
 function num(x) { return typeof x === 'number'; }
 function str(x) { return typeof x === 'string'; }
 function two(n) { return (n < 10 ? '0' : '') + n; }
@@ -72,7 +71,7 @@ function theme(th) {
 function Link(io, boot) {
 	var seq = 0, snapAt = 0, off = 0, rtt = -1, t0 = 0, lastRx = 0, failAt = 0, hb = 0, due = Infinity;
 	var q = [], jobs = [], hellos = [], wq = [], busy = false, snap = null, eff = null, effSet = '', done = '';
-	var msg = '', stop = false, kept = false, ready = false, lost = false;
+	var wait = null, msg = '', stop = false, kept = false, ready = false, lost = false;
 
 	function paint() { if (io.paint) io.paint(); }
 	function queue(job) {
@@ -86,14 +85,15 @@ function Link(io, boot) {
 	}
 	function kv(op, key, value, cb) {
 		var once = false;
-		function back(ok, v) { if (!once) cb(ok, v); once = true; }
+		function back(ok, v) { if (!once) { once = true; wait = null; cb(ok, v); } }
+		wait = { at: io.now(), back: back };
 		try {
 			io.store[op]({ key: key, value: value, default: '', success: function (v) { back(true, v); }, fail: function () { back(false); } });
 		} catch (e) {
 			back(false);
 		}
 	}
-	// values stay under 128 bytes: a slot is chunks mc_q<slot>_<i> of 120 characters, then mc_q<slot> = count,length,sum
+	// values < 128 B: chunks mc_q<slot>_<i> of 120 characters, then mc_q<slot> = count,length,sum; tick fails a call after 5 s
 	function put(slot, text, cb) {
 		var i = 0;
 		(function one(ok) {
@@ -245,7 +245,7 @@ function Link(io, boot) {
 				msg = q.length > 1 ? q.length - 1 + ' pending' : 'Saved';
 				if (q[i].set) done = q[i].set;
 			} else if (m.status === 'rejected') {
-				msg = own(WHY, m.reason) ? WHY[m.reason] : 'Not saved';
+				msg = str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
 			} else {
 				return;
 			}
@@ -273,6 +273,7 @@ function Link(io, boot) {
 	function tick() {
 		var now = io.now();
 		var e = q[0];
+		if (wait && now - wait.at > 5000) wait.back(false);
 		if (!stop && e && e.sent && now - e.sent >= GAPS[Math.min(e.n, 4) - 1]) fire(e);
 		if (!stop && now >= due) hello();
 		keepOn();

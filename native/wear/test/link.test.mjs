@@ -800,3 +800,43 @@ test('W2 a chunk that cannot be read at start keeps its slot listed; new command
   assert.equal(c.link.view().st, '2 pending');
   assert.equal(c.cmds()[0], texts[0]);
 });
+
+// WATCH-C red team of 1.1.1: a storage call that never calls back must not block the outbox.
+test('W2 a storage call that never calls back ends in Not saved after 5 s, a late callback does nothing, and the next tap works', async () => {
+  for (let k = 0; k < 7; k++) { // the Complete's calls: two chunks, header, header read, two chunk reads, index
+    const store = fakeStore();
+    const r = await rig({ store, code: null });
+    r.link.rx(snap());
+    const held = [];
+    let n = 0;
+    store.run = (fn) => { if (n++ === k) held.push(fn); else fn(); };
+    r.link.complete();
+    assert.equal(held.length, 1, `call ${k}`);
+    assert.equal(r.link.view().can, false);
+    r.adv(5000); r.link.tick();
+    assert.equal(r.link.view().st, '', `call ${k}: still waiting at 5 s`);
+    r.adv(1); r.link.tick();
+    assert.equal(r.link.view().st, 'Not saved', `call ${k}`);
+    assert.equal(r.cmds().length, 0, `call ${k}: nothing sent`);
+    store.run = (fn) => fn();
+    held[0]();
+    assert.equal(r.link.view().st, 'Not saved', `call ${k}: the late callback changes nothing`);
+    assert.equal(r.cmds().length, 0);
+    r.link.complete();
+    assert.match(r.link.view().st, /^Pending /, `call ${k}: the next tap works`);
+    assert.equal(r.cmds().length, 1);
+  }
+  // At start-up a stuck index read takes the unreadable-index path: ready, hello, and Not saved.
+  const store = fakeStore();
+  let late = null;
+  store.run = (fn) => { if (!late) late = fn; else fn(); };
+  const b = await rig({ store, code: null });
+  b.link.rx(snap());
+  assert.equal(b.hellos().length, 0);
+  b.adv(5001); b.link.tick();
+  assert.equal(b.hellos().length, 1);
+  b.link.complete();
+  assert.equal(b.link.view().st, 'Not saved');
+  late();
+  assert.equal(b.hellos().length, 1);
+});
