@@ -428,7 +428,11 @@ export const replaceGeneration = (): number => generation;
 /** A3-7b: memory-only holds tied to the old state (the opened onboarding form) drop on every replace. */
 const replaceListeners = new Set<() => void>();
 export function onReplace(fn: () => void): () => void { replaceListeners.add(fn); return () => { replaceListeners.delete(fn); }; }
-function bumpGeneration(): void { generation++; for (const fn of replaceListeners) fn(); }
+function bumpGeneration(): void {
+  generation++;
+  // D-A3-7b-3: a throwing listener never aborts the replace or the other listeners.
+  for (const fn of replaceListeners) { try { fn(); } catch (err) { console.warn('replace listener failed', err); } }
+}
 
 export function replaceState(next: AppState): void {
   bumpGeneration();
