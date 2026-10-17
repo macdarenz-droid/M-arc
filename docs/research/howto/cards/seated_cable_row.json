@@ -422,7 +422,9 @@
       "title": "Seated Cable Row video transcript (University of Nebraska Medical Center, Center for Healthy Living)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "nsca-low-row",
@@ -430,7 +432,9 @@
       "title": "NSCA exercise technique text (low-pulley seated row and lat pulldown, starting position, phases and common errors), via a study flashcard set; original NSCA text not free online",
       "kind": "secondary",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "ace-seated-row",
@@ -438,7 +442,9 @@
       "title": "Seated Row (ACE Exercise Library; machine version with a chest pad)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "baechle-earle",
@@ -446,7 +452,9 @@
       "title": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
       "kind": "textbook",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "acsm2009",
@@ -454,7 +462,9 @@
       "title": "American College of Sports Medicine position stand: progression models in resistance training for healthy adults",
       "kind": "guideline",
       "year": 2009,
-      "pmid": "19204579"
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "lehman2004",
@@ -462,7 +472,9 @@
       "title": "Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: an experimental study (Lehman et al., Dyn Med)",
       "kind": "peer-reviewed",
       "year": 2004,
-      "pmid": "15228624"
+      "pmid": "15228624",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "deabreu2023",
@@ -470,7 +482,9 @@
       "title": "Effect of different grip position and shoulder-abduction angle on muscle strength and activation during the seated cable row (de Abreu Vasconcelos et al., Int J Strength Cond)",
       "kind": "peer-reviewed",
       "year": 2023,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "dosanjos2024",
@@ -478,7 +492,9 @@
       "title": "Assessing the feasibility of EMG biofeedback to reduce the upper trapezius muscle excitation during a seated row exercise (Dos Anjos et al., Appl Psychophysiol Biofeedback)",
       "kind": "peer-reviewed",
       "year": 2024,
-      "pmid": "39177899"
+      "pmid": "39177899",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "callaghan2001",
@@ -486,7 +502,9 @@
       "title": "Intervertebral disc herniation: studies on a porcine model exposed to highly repetitive flexion/extension motion with compressive force (Callaghan, McGill, Clin Biomech)",
       "kind": "peer-reviewed",
       "year": 2001,
-      "pmid": "11114441"
+      "pmid": "11114441",
+      "access": "abstract",
+      "checked": "2026-10-17"
     }
   ],
   "plate": {
