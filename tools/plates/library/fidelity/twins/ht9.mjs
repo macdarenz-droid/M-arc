@@ -289,7 +289,6 @@ async function main({ browser, port, R, pages, order, custom, root }, { lib, chr
     }
     // A3 (its duplicate-line fixture runs once per run, not per id: LIB-4-DESIGN X7)
     cur = S('A3');
-    if (process.env.HT9_BITE === lib) await app.page.evaluate(([A, t]) => { const p = document.createElement('p'); p.textContent = t; document.querySelector(`${A} .setup`).append(p); }, [APP, flagLines[(h.riskFlags ?? ['wrist'])[0]][1]]); // TEMP bite hook
     R.check(lib, theme, S('A3'), (await a3Probe(app.page, h.riskFlags ?? ['wrist'], flagLines, C.DISCLAIMER)).map(b => `A3: ${b}`));
     cur = null;
     await H.closeHowTo(app.page);
