@@ -90,6 +90,7 @@ export function repairState(raw: AppState): { state: AppState; dropped: number }
   sessions.sort((a, b) => (a.startedAt ?? '') < (b.startedAt ?? '') ? -1 : (a.startedAt ?? '') > (b.startedAt ?? '') ? 1 : 0);
   const schedule = { ...(isObj(raw.schedule) ? raw.schedule : {}) } as Record<Weekday, string | null>;
   for (const d of Object.keys(schedule) as Weekday[]) { const v = schedule[d]; schedule[d] = typeof v === 'string' && splitIds.has(v) ? v : null; }
+  const strList = <T extends string>(v: unknown): T[] => (Array.isArray(v) ? v.filter(str) as T[] : []);
   // DATA-01 (AUD-4): every list is a list, and each element has the fields its readers key on.
   const lists = {
     body: valid<AppState['body'][number]>(raw.body, c, b => str(b.day)),
@@ -97,7 +98,9 @@ export function repairState(raw: AppState): { state: AppState; dropped: number }
     weightLog: valid<AppState['weightLog'][number]>(raw.weightLog, c, w => str(w.day) && finite(w.kg)),
     checkIns: valid<AppState['checkIns'][number]>(raw.checkIns, c, ci => str(ci.day)),
     freshMarks: valid<AppState['freshMarks'][number]>(raw.freshMarks, c, f => str(f.muscle) && str(f.at)),
-    customExercises: valid<AppState['customExercises'][number]>(raw.customExercises, c, e => str(e.id) && str(e.name)),
+    // A3-2 DATA 01 (R3): a hand-made custom exercise keeps its record; missing or invalid lists become [].
+    customExercises: valid<AppState['customExercises'][number]>(raw.customExercises, c, e => str(e.id) && str(e.name))
+      .map(e => ({ ...e, primary: strList(e.primary), secondary: strList(e.secondary), stabilizers: strList(e.stabilizers), aliases: strList(e.aliases) }) as AppState['customExercises'][number]),
     profileHistory: valid<AppState['profileHistory'][number]>(raw.profileHistory, c, h => str(h.at) && str(h.field)),
     insightFeedback: valid<AppState['insightFeedback'][number]>(raw.insightFeedback, c, f => str(f.id) && str(f.day) && VERDICTS.includes(f.verdict as string)),
   };
@@ -319,7 +322,7 @@ function listenToOtherTabs(): void {
     if (e.key === null || (e.key === STATE_KEY && e.newValue === null)) {
       if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
       lastGoodRaw = null;
-      if (storageRef) state.value = loadState(storageRef).state;
+      if (storageRef) { bumpGeneration(); state.value = loadState(storageRef).state; }
       return;
     }
     if (e.key !== STATE_KEY || !e.newValue) return;
@@ -329,6 +332,7 @@ function listenToOtherTabs(): void {
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
     const localActive = state.value.active;
     const incoming = normalize(parsed);
+    bumpGeneration();
     state.value = incoming;
     lastGoodRaw = e.newValue;
     if (localActive && localActive.startedAt !== incoming.active?.startedAt) showToast('Updated from another tab');
@@ -398,9 +402,25 @@ export function deleteRescueCopy(storage: Storagelike = storageRef ?? localStora
   bootRecovered.value = false;
 }
 
+/**
+ * A3-2 DATA 02 (R4): another tab wrote or cleared the state since this tab's last read or write,
+ * and its storage event has not arrived (a frozen or back-forward cached tab). This tab takes what
+ * storage now holds instead of writing its old copy over it. Only deferred and flushed saves ask;
+ * an explicit replace, reset or boot write still wins.
+ */
+function storageMovedOn(): boolean {
+  if (!storageRef || lastGoodRaw == null) return false;
+  let stored: string | null;
+  try { stored = storageRef.getItem(STATE_KEY); } catch { return false; }
+  if (stored === lastGoodRaw) return false;
+  lastGoodRaw = stored;
+  state.value = loadState(storageRef).state;
+  return true;
+}
+
 function persistSoon(): void {
   if (saveTimer) clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => { saveTimer = null; persistNow(); }, 250);
+  saveTimer = setTimeout(() => { saveTimer = null; if (!storageMovedOn()) persistNow(); }, 250);
 }
 
 /** Apply a change to the state. The updater must return a new object (spread). */
@@ -409,7 +429,23 @@ export function update(fn: (s: AppState) => AppState): void {
   persistSoon();
 }
 
+/**
+ * IMP-N02: bumped whenever the whole state is replaced (Restore, Reset, Undo, another tab), so an
+ * async read started before it can tell its result belongs to the old state. Memory only.
+ */
+let generation = 0;
+export const replaceGeneration = (): number => generation;
+/** A3-7b: memory-only holds tied to the old state (the opened onboarding form) drop on every replace. */
+const replaceListeners = new Set<() => void>();
+export function onReplace(fn: () => void): () => void { replaceListeners.add(fn); return () => { replaceListeners.delete(fn); }; }
+function bumpGeneration(): void {
+  generation++;
+  // D-A3-7b-3: a throwing listener never aborts the replace or the other listeners.
+  for (const fn of replaceListeners) { try { fn(); } catch (err) { console.warn('replace listener failed', err); } }
+}
+
 export function replaceState(next: AppState): void {
+  bumpGeneration();
   state.value = normalize(next);
   persistNow();
 }
@@ -428,6 +464,8 @@ export function resetState(next: AppState): void {
 /** Saves now. Returns whether the save worked; the phone's callers may ignore it. */
 export function flushSave(): boolean {
   if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+  // A3-2 DATA 02: when another tab moved storage on, this tab takes it and its own change is not saved.
+  if (storageMovedOn()) return false;
   return persistNow();
 }
 
@@ -435,8 +473,11 @@ export function flushSave(): boolean {
  * WATCH-B: applies a change only once it is saved, for a watch command that must not be answered
  * before. The save includes any change still waiting for the debounced save, which it replaces. If
  * the save fails, the state stays as it was, the pending save stays queued, and it returns false.
+ * A3-2 DATA 02: if another tab moved storage on, nothing is written over it; this tab takes what
+ * storage holds, drops its pending save and returns false, so the watch resends against that state.
  */
 export function commitNow(fn: (s: AppState) => AppState): boolean {
+  if (storageMovedOn()) { if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; } return false; }
   const next = fn(state.value);
   if (!write(next)) return false;
   if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }

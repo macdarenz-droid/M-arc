@@ -90,13 +90,16 @@ describe('WATCH-B B1: new sets are drafts with their own id and rev 0', () => {
     expect(warm).toEqual({ id: expect.any(String), status: 'draft', rev: 0, kg: 10, reps: 10, kind: 'warmup' });
     const before = new Set(allSets().map(s => s.id));
     substituteEntry(0, findExercise('lib_dumbbell_bench_press')!);
-    const subs = a().entries[0]!.sets;
-    expect(subs.every(draft) && subs.every(s => !before.has(s.id))).toBe(true);
+    // A3-4 (main): the committed sets stay on the original entry, and the substitute follows it.
+    const subs = a().entries.find(e => e.exerciseId === 'lib_dumbbell_bench_press')!.sets;
+    expect(subs.length > 0 && subs.every(draft) && subs.every(s => !before.has(s.id))).toBe(true);
     addExerciseToSession(findExercise('lib_dumbbell_lateral_raise')!);
-    expect(a().entries[2]!.sets.every(draft)).toBe(true);
+    const raise = () => a().entries.findIndex(e => e.exerciseId === 'lib_dumbbell_lateral_raise');
+    expect(raise()).toBeGreaterThan(-1);
+    expect(a().entries[raise()]!.sets.every(draft)).toBe(true);
     expect(new Set(allSets().map(s => s.id)).size).toBe(allSets().length);
-    addSet(2);
-    expect(a().entries[2]!.sets.at(-1)!.id).not.toBe(a().entries[2]!.sets.at(-2)!.id);
+    addSet(raise());
+    expect(a().entries[raise()]!.sets.at(-1)!.id).not.toBe(a().entries[raise()]!.sets.at(-2)!.id);
   });
 });
 

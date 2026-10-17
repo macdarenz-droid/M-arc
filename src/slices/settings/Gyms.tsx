@@ -42,7 +42,7 @@ export function GymsSheet({ onClose }: { onClose: () => void }) {
                 {eq.map(([group, p]) => <Row key={group} trailing={<Button size="sm" variant="quiet" onClick={() => resetProfile('equipment', group, g.id)}>Reset</Button>}><span class="small">All {group}</span><div class="hint">{describe(p)} · {SOURCE[p.source]}</div></Row>)}
                 {ex.map(([id, p]) => <Row key={id} trailing={<Button size="sm" variant="quiet" onClick={() => resetProfile('exercise', id, g.id)}>Reset</Button>}><span class="small">{findExercise(id, s.customExercises)?.name ?? id}</span><div class="hint">{describe(p)} · {SOURCE[p.source]}</div></Row>)}
               </div>
-              {s.units.gyms.length > 1 && (confirm === g.id
+              {s.units.gyms.length > 1 && s.active?.gymId !== g.id && (confirm === g.id
                 ? <div class="row"><Button size="sm" variant="quiet" onClick={() => setConfirm(null)}>Keep</Button><Button size="sm" variant="danger" onClick={() => { deleteGym(g.id); setConfirm(null); }}>Delete {g.name}</Button></div>
                 : <Button size="sm" variant="quiet" onClick={() => setConfirm(g.id)}>Delete gym</Button>)}
             </Card>

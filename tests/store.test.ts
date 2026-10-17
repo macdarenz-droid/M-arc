@@ -353,4 +353,27 @@ describe('WATCH-B: commitNow and flushSave report the save', () => {
     fail = true;
     expect(S.flushSave()).toBe(false);
   });
+  it('commitNow never writes over a newer save from another tab; it takes that save and the resend lands on it', async () => {
+    const st = memoryStorage();
+    const S = await fresh();
+    S.initStore(st);
+    S.update(s => ({ ...s, profile: { ...s.profile, name: 'stale tab' } }));
+    const other = { ...freshState(), exerciseNotes: { squat: 'other tab' } };
+    st.map.set('marc.state.v1', JSON.stringify(other)); // another tab saved; its storage event has not arrived
+    expect(S.commitNow(s => ({ ...s, exerciseNotes: { ...s.exerciseNotes, bench: 'watch' } }))).toBe(false);
+    expect(JSON.parse(st.map.get('marc.state.v1')!).exerciseNotes).toEqual({ squat: 'other tab' });
+    expect(S.state.value.exerciseNotes).toEqual({ squat: 'other tab' });
+    vi.advanceTimersByTime(1_000);
+    expect(JSON.parse(st.map.get('marc.state.v1')!).profile.name).not.toBe('stale tab');
+    expect(S.commitNow(s => ({ ...s, exerciseNotes: { ...s.exerciseNotes, bench: 'watch' } }))).toBe(true);
+    expect(JSON.parse(st.map.get('marc.state.v1')!).exerciseNotes).toEqual({ squat: 'other tab', bench: 'watch' });
+  });
+  it('flushSave returns false when another tab moved storage on', async () => {
+    const st = memoryStorage();
+    const S = await fresh();
+    S.initStore(st);
+    st.map.set('marc.state.v1', JSON.stringify({ ...freshState(), exerciseNotes: { squat: 'other tab' } }));
+    expect(S.flushSave()).toBe(false);
+    expect(JSON.parse(st.map.get('marc.state.v1')!).exerciseNotes).toEqual({ squat: 'other tab' });
+  });
 });

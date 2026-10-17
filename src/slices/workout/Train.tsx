@@ -10,7 +10,7 @@ import { checkInDraft, saveCheckIn } from '@/slices/readiness/checkIn';
 import { Button, Card, Chip, Empty, Field, HoldButton, Row, Section, Sheet, WeightInput, type WeightChange } from '@/ui/primitives';
 import { IconCheck, IconChevronDown, IconDumbbell, IconEscobar, IconEdit, IconMinus, IconMore, IconPause, IconPlay, IconPlus, IconShare, IconTrash, IconTrophy } from '@/ui/icons';
 import { ShareSheet } from '@/slices/share/lazy';
-import { HowToSheet } from '@/slices/howto/lazy'; import { hasHowTo, HOWTO_HINTS, HOWTO_LABEL } from '@/howto/ids';
+import { HowToSheet } from '@/slices/howto/lazy'; import { hasHowTo, howToHint, HOWTO_LABEL } from '@/howto/ids';
 import { hasWorkingSets } from '@/brain/exposure';
 import { dayKey, formatClock, formatTimeOfDay } from '@/core/dates';
 import { parseDurationSec, parseMinutes, parseReps } from '@/core/parse';
@@ -54,6 +54,7 @@ import type { EquipmentProfile, LoadUnit, LoggedSet } from '@/core/models';
 import { restTarget, hrMax, restingHr } from '@/brain/heart';
 import { recoveryPctFor } from '@/brain/recovery';
 import { firstWorkingSet, hasEntry, isWorkingSet, workingIndex } from '@/brain/exposure';
+import { doneSets } from './doneSets';
 import { haptic } from '@/native/haptics';
 import { durFor, EASE, reduced } from '@/ui/motion';
 import { celebrateOnce } from './celebrate';
@@ -727,7 +728,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
     if (next) next.focus(); else target.blur();
   };
   const [subOpen, setSubOpen] = useState(false);
-  const logged = entry.sets.filter(isWorkingSet).length;
+  const logged = doneSets(entry.sets).length;
   const isTimed = mode === 'duration';
   // QA-R6-3: autoregulation reads the first working set; logged warm-ups sit in front of it.
   const firstSet = firstWorkingSet(entry.sets);
@@ -831,7 +832,7 @@ function EntryCard({ index, entry, open, onToggle, onDone }: { index: number; en
             <button type="button" class="why-toggle" aria-expanded={why} onClick={() => setWhy(w => !w)}>Why this target <IconChevronDown size={16} class={`chev ${why ? 'up' : ''}`} /></button>
             {ex && !ex.custom && hasHowTo(ex.id) && <button type="button" class="ht-entry" onClick={() => setHowToOpen(true)}><IconPlay size={18} /> {HOWTO_LABEL}</button>}
           </div>
-          {ex && !ex.custom && hasHowTo(ex.id) && HOWTO_HINTS[ex.id] && <p class="hint muted">{HOWTO_HINTS[ex.id]}</p>}
+          {ex && !ex.custom && hasHowTo(ex.id) && howToHint(ex.id) && <p class="hint muted">{howToHint(ex.id)}</p>}
           <div class={`ex-body ${why ? 'open' : ''} ${whySettled ? 'settled' : ''}`} ref={whyBodyRef} onTransitionEnd={e => { if (e.target === whyBodyRef.current && why) setWhySettled(true); }}>
             <div class="ex-body-inner">
             {(why || whyClosing) && (
