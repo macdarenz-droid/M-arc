@@ -1,0 +1,510 @@
+{
+ "exercise": "lib_dumbbell_lateral_raise",
+ "verdicts": [
+  {
+   "claim": "Handle diameter 34 mm (33-35 for ~7 kg and up; 25-28 for 2.5-5 kg)",
+   "verdict": "confirmed",
+   "correction": "Iron Company: 28 mm for 5-10 lb, 34 mm at center for 15-125 lb. Bench Fitness: 28 mm (2.5, 5 kg), 34 mm (7.5, 10 kg). Rogue KG: 25 mm (2.5-5 kg), 35 mm (7.5-60 kg).",
+   "sources": [
+    "https://www.ironcompany.com/rubber-hex-dumbbell-sets",
+    "https://benchfitness.com/products/hex-dumbbell-1-10kg-pairs",
+    "https://www.roguefitness.com/gb/rubber-hex-dumbbells-eu"
+   ]
+  },
+  {
+   "claim": "Handle grip length 133 mm (130-134, inside distance between heads)",
+   "verdict": "confirmed",
+   "correction": "Iron Company 5-1/4 in (133 mm) inside the heads. Titan 5.125 in (130 mm), but that figure is for its 10 lb (4.5 kg) model with a 28 mm handle, not a 10 kg one.",
+   "sources": [
+    "https://www.ironcompany.com/rubber-hex-dumbbell-sets",
+    "https://titan.fitness/strength/dumbbells/rubber-coated-hex/10-lb-rubber-hex-dumbbells/421010.html"
+   ]
+  },
+  {
+   "claim": "Overall length 311 mm; head width 126 mm (Torque 9.1 kg)",
+   "verdict": "confirmed",
+   "correction": "Torque table: 20 lb/9.1 kg = 311 mm long, W 126.09 mm; 25 lb = 322.4 mm, 137.99 mm. Torque does not say whether W is across flats or corners, and gives no handle data. The figures are for 9.1 kg, not the 10 kg model named.",
+   "sources": [
+    "https://commercial.torquefitness.com/products/rubber-hexagon-dumbbell"
+   ]
+  },
+  {
+   "claim": "Chosen model: straight, chrome, knurled steel handle",
+   "verdict": "corrected",
+   "correction": "Chrome and knurled are confirmed (Iron Company: 'bands of medium diamond knurling'; Rogue: 'knurled, chrome-plated'). 'Straight' contradicts the cited Iron Company handle, which is 'ergonomically shaped to fit the natural contour of the hands' and quotes 34 mm 'at center' (a contoured handle). The file's own visualReferences also say 'contoured'. Pick one shape and model it consistently.",
+   "sources": [
+    "https://www.ironcompany.com/rubber-hex-dumbbell-sets",
+    "https://www.roguefitness.com/gb/rubber-hex-dumbbells-eu"
+   ]
+  },
+  {
+   "claim": "Head: regular hexagon, rubber over cast iron, weight number embossed on the end face",
+   "verdict": "confirmed",
+   "correction": "Iron Company: cast iron heads with rubber coating, weight 'molded into one head'. Rogue: rubber-encased hex heads with embossed weight.",
+   "sources": [
+    "https://www.ironcompany.com/rubber-hex-dumbbell-sets",
+    "https://www.roguefitness.com/gb/rubber-hex-dumbbells-eu"
+   ]
+  },
+  {
+   "claim": "10 kg sits in the 3-10 kg range Andersen 2008 reports for lateral raises",
+   "verdict": "corrected",
+   "correction": "Andersen's 3-10 kg covers the lateral raise and the upright row together, in 12 women with trapezius myalgia. It is not a lateral-raise-only range. Fine as an art choice.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/18339796/"
+   ]
+  },
+  {
+   "claim": "Alternative: seated (Coratella 2020 and Campos 2020 both ran it seated)",
+   "verdict": "confirmed",
+   "correction": "Coratella: seated, 'avoiding lumbar involvement'. Campos: seated, back against a 90-degree bench, feet flat.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677/"
+   ]
+  },
+  {
+   "claim": "Setup 2: feet slightly wider than hip width, or split stance",
+   "verdict": "confirmed",
+   "correction": "ACE verbatim: 'split-stance position ... or position your feet slightly wider than hip-width apart'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Setup 3: closed, neutral grip, thumb wrapped, palms facing body, dumbbells beside the outer thighs",
+   "verdict": "confirmed",
+   "correction": "ACE: 'closed, neutral grip (thumbs around the handles and palms facing your body) ... dumbbells alongside your thighs'. 'Outer thigh, mid-thigh height' is derived, not stated.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Setup 4: elbows straight or slightly bent, fixed",
+   "verdict": "confirmed",
+   "correction": "ACE: 'elbows extended or holding a slight bend'. Coratella used 'almost fully extended' and Larsen 'fully extended' elbows. The 10-20 degree number has no source, as the file says.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/"
+   ]
+  },
+  {
+   "claim": "Setup 5: brace, shoulders down and slightly back, head in line with spine",
+   "verdict": "confirmed",
+   "correction": "ACE: brace; 'depress and retract your scapulae ... maintaining this position throughout'; 'head ... aligned with your spine'. ACE does not say 'slightly'. 'Maintain throughout' must not freeze the scapula (see Ludewig upward rotation).",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC2657311/"
+   ]
+  },
+  {
+   "claim": "Setup 6: arms 20-30 degrees forward of the frontal plane; scapular plane defined as 30-45 degrees (McCall); Ludewig used 40",
+   "verdict": "corrected",
+   "correction": "Ludewig: scapular plane 40 degrees in front of the coronal plane (confirmed). McCall/ACE 2025 says the glenoid points 'approximately 35 degrees anterior to the frontal plane' and suggests raising 'in a 30-degree angle to the front of the body'. The 30-45 range was not found on that page. Every EMG/RCT protocol cited (Coratella, Campos, Larsen) used the frontal plane; Larsen let some people go 'mid-way between the frontal and scapular plane' because of pain. 20-30 degrees forward stays coach consensus.",
+   "sources": [
+    "https://www.acefitness.org/continuing-education/certified/september-2025/8951/a-pro-s-guide-to-muscle-mechanics-the-shoulders/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC2657311/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/"
+   ]
+  },
+  {
+   "claim": "Start: head neutral; torso upright, 0 lean, braced; scapulae down and slightly back",
+   "verdict": "confirmed",
+   "correction": "ACE (see setup 5).",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Start: 0-10 degrees abduction, dumbbells just clear of the thighs, humerus neutral",
+   "verdict": "confirmed",
+   "correction": "Coach consensus, as labelled. Larsen starts 'from the humerus being parallel to the body'. Some abduction is needed so the 126 mm hex heads do not pass through the thigh.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/",
+    "https://commercial.torquefitness.com/products/rubber-hexagon-dumbbell"
+   ]
+  },
+  {
+   "claim": "Start: forearm mid-position, palm faces outer thigh, handle runs front to back; wrist neutral",
+   "verdict": "confirmed",
+   "correction": "ACE (palms facing body); Coratella (wrist 'in line with the forearm').",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "Start: knees soft, 5-10 degrees",
+   "verdict": "unverified",
+   "correction": "No source, as the file says. ACE gives no knee instruction.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Mid: about 45 degrees abduction in a plane 20-30 degrees forward",
+   "verdict": "unverified",
+   "correction": "The 45 degrees is just the midpoint of 0-90 (fine). The plane is coach consensus (see setup 6).",
+   "sources": [
+    "https://www.acefitness.org/continuing-education/certified/september-2025/8951/a-pro-s-guide-to-muscle-mechanics-the-shoulders/"
+   ]
+  },
+  {
+   "claim": "Mid: elbow at or slightly above hand height",
+   "verdict": "corrected",
+   "correction": "Geometrically wrong. At 45 degrees abduction with a 10-20 degree elbow bend, the forearm still points down and out, so the hand sits well below the elbow (about forearm length x sin 45 = roughly 15-18 cm on an adult). ACE only says the elbows and upper arms rise 'slightly ahead of your forearms and dumbbells', meaning the hand never leads. Correct to: 'hand below the elbow, close to the line of the upper arm; hand never rises above the elbow'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Mid: palm turns from facing the thigh to facing the floor; humerus stays near neutral rotation",
+   "verdict": "confirmed",
+   "correction": "Consistent with Coratella LR-neutral ('thumbs forward' at 90 degrees). The palm turns only because the arm is abducted. There is no forearm pronation and no humeral rotation, so the key name 'forearm_rotation' is misleading for an animator.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "Mid: scapulae starting to rotate upward, no elevation",
+   "verdict": "confirmed",
+   "correction": "Ludewig: scapular upward rotation throughout elevation. Note that the clavicle does rise a little during elevation (+6 degrees, 11 to 17, over the measured range), so 'no elevation' means no visible shrug, not zero clavicle motion.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC2657311/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "End: 90 degrees humerothoracic abduction, upper arm parallel to floor, no higher",
+   "verdict": "confirmed",
+   "correction": "ACE: 'arms are level with your shoulders and approximately parallel with the floor'. Coratella and Larsen: up to 90 degrees. Kolber: association of raises above 90 degrees with impingement signs.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/",
+    "https://pubmed.ncbi.nlm.nih.gov/24077379/"
+   ]
+  },
+  {
+   "claim": "End split: about 61 degrees GH + 29 degrees scapular upward rotation (Ludewig 2.1:1 for coronal abduction)",
+   "verdict": "confirmed",
+   "correction": "Ludewig: 'scapulohumeral rhythm was 2.1:1 for abduction', defined as 'glenohumeral elevation to scapular upward rotation', averaged across the range (analysed to 120 degrees). 90/3.1 = 29 is a valid linear derivation. Real rhythm varies by angle. Resting upward rotation is about 5 degrees (Table I), so the absolute value at the top is about 34 degrees.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC2657311/"
+   ]
+  },
+  {
+   "claim": "End: humeral rotation neutral; thumb end level or tipped slightly up; never little finger above thumb",
+   "verdict": "confirmed",
+   "correction": "ACE: past 60-70 degrees 'rotate them slightly upwards so that the front edge of the dumbbells point slightly upwards'. Coratella: LR-neutral (thumbs forward) gave the most medial deltoid. Yanai: large forces only with maximum internal rotation.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+    "https://pubmed.ncbi.nlm.nih.gov/16632128/"
+   ]
+  },
+  {
+   "claim": "End: elbow same 10-20 bend; elbow level with or slightly above the wrist",
+   "verdict": "corrected",
+   "correction": "At 90 degrees abduction with neutral rotation, a slightly bent elbow flexes in a horizontal plane. The hand sits at elbow height, a little in front of it, not below it. The elbow can only sit clearly above the wrist if the humerus rotates inward, which conflicts with ACE's 'front edge slightly up' cue (a small outward roll lifts the hand by about 1-2 cm, not lowers it). Correct to: 'hand about level with the elbow'. The bend itself remains consensus; Coratella and Larsen used near-straight or straight elbows.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/"
+   ]
+  },
+  {
+   "claim": "End: palm facing floor; wrist neutral",
+   "verdict": "confirmed",
+   "correction": "Follows from thumbs-forward at 90 degrees (Coratella). Wrist 'in line with the forearm' (Coratella).",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "End: head neutral, space between shoulders and ears; torso, hips, knees unchanged",
+   "verdict": "confirmed",
+   "correction": "ACE (scapulae held down; bracing; head aligned).",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Animator note: GH external rotation about 41-51 degrees near 90 degrees elevation (Ludewig)",
+   "verdict": "refuted",
+   "correction": "Ludewig's text: 'increased external rotation (an average increase of 10 degrees to 51 degrees, depending on the plane of elevation)', over the elevation range analysed. It is not 41-51 degrees at 90 degrees, and the per-plane split was not found. Do not animate a visible outward roll beyond ACE's 'slightly up'.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC2657311/"
+   ]
+  },
+  {
+   "claim": "Grip orientation: neutral at bottom, palms down at top",
+   "verdict": "confirmed",
+   "correction": "ACE (neutral grip) + Coratella (thumbs forward at 90 degrees). The change comes from the abduction, not from twisting the forearm.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "Grip width: hands about hip width at the bottom",
+   "verdict": "corrected",
+   "correction": "ACE puts the dumbbells 'alongside your thighs'. Hands beside the outer thighs are wider than hip-joint width. Use 'just outside the thighs'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Handle diagonally across mid-palm, index base to little-finger heel; dumbbell hangs level",
+   "verdict": "unverified",
+   "correction": "No source. ACE says only 'closed, neutral grip'. Whether a diagonal palm line with a straight wrist leaves the dumbbell level is not shown by any source read. Needs a photo check before modelling.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Thumb wrapped (closed grip)",
+   "verdict": "confirmed",
+   "correction": "ACE: 'closed, neutral grip (thumbs around the handles ...)'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Fingers: firm, not maximal squeeze; Sporrong shows hard squeezing raises shoulder muscle activity",
+   "verdict": "corrected",
+   "correction": "Sporrong 1995/1996 (9 subjects, isometric grip at 30-50% MVC on a dynamometer) found higher supraspinatus activity in flexed/elevated positions, LOWER infraspinatus activity in abduction (1995), lower middle-deltoid activity above 90 degrees flexion, and no change in the trapezius. That is mixed evidence and does not apply to a dynamic dumbbell raise. 'Firm, not maximal' is coach consensus only.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/8983914/",
+    "https://pubmed.ncbi.nlm.nih.gov/8948256/"
+   ]
+  },
+  {
+   "claim": "Wrist stacked, 0 degrees",
+   "verdict": "confirmed",
+   "correction": "Coratella: wrist 'in line with the forearm'. Weiss: lowest carpal-tunnel pressure at about 2 degrees extension, 2 degrees ulnar deviation.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+    "https://pubmed.ncbi.nlm.nih.gov/7593079/"
+   ]
+  },
+  {
+   "claim": "Finger detail for Meshy: fingertips reach base of thumb, thumb over index and middle on 34 mm",
+   "verdict": "unverified",
+   "correction": "No source, as the file says.",
+   "sources": []
+  },
+  {
+   "claim": "ROM: 0-10 degrees to 90 degrees abduction",
+   "verdict": "confirmed",
+   "correction": "Campos: '90 degrees of shoulder abduction from the anatomical position'. Larsen: 'from the humerus being parallel to the body to an abduction angle of 90 degrees'. Coratella: up to 90.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "Tempo: 2 s up, 0.5 s top, 2 s down, 0.5 s bottom (Coratella); Campos 1 s up / 2 s down; Larsen about 1 s each",
+   "verdict": "confirmed",
+   "correction": "Coratella: 2 s concentric, 2 s eccentric, 0.5 s pauses at start and end. Campos: 2/0/1/0 (2 s eccentric, 1 s concentric). Larsen: about 1 s each phase.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/"
+   ]
+  },
+  {
+   "claim": "Rep durations 0.5-8 s give similar growth",
+   "verdict": "confirmed",
+   "correction": "Schoenfeld 2015 meta-analysis (8 studies, all exercises).",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/25601394/"
+   ]
+  },
+  {
+   "claim": "Breathing: exhale up, inhale down",
+   "verdict": "confirmed",
+   "correction": "ACE: 'Exhale and slowly raise ... Inhale and gently lower'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Dumbbell torque lowest at bottom, highest at 90 degrees",
+   "verdict": "confirmed",
+   "correction": "Larsen: dumbbell has 'an ascending concentric resistance profile with reduced torque when the lateral deltoid is in a lengthened position'. Matches physics (torque is proportional to sin of the abduction angle).",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/"
+   ]
+  },
+  {
+   "claim": "side_delts primary: medial deltoid 30.3% MVIC (Campos, seated, 60% 1RM); highest in thumbs-forward (Coratella)",
+   "verdict": "confirmed",
+   "correction": "Campos table: LR anterior 21.2, medial 30.3, posterior 24 %MVIC. Coratella: medial deltoid greater in LR-neutral than LR-external (ES 1.47), LR-internal and LR-flexed (ES 6.41).",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "upper_traps: 97 +/- 6% MVC in lateral raises with 3-10 kg; internal rotation raises it further",
+   "verdict": "corrected",
+   "correction": "Numbers confirmed (Andersen: shrug 102 +/- 11%, lateral raise 97 +/- 6%). The population was 12 women aged 30-60 with trapezius myalgia, and 3-10 kg covers lateral raise plus upright row together. Do not present 97% as a general-lifter value. Coratella: upper trapezius greater in LR-internal than LR-neutral (ES 3.86), confirmed.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/18339796/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "front_delts: anterior deltoid 21.2% MVIC, similar to bench press (21.4%)",
+   "verdict": "confirmed",
+   "correction": "Campos table.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677/"
+   ]
+  },
+  {
+   "claim": "rear_delts: posterior deltoid 24% MVIC vs shoulder press 11.4%; rises sharply with internal rotation",
+   "verdict": "confirmed",
+   "correction": "Campos table; Coratella LR-internal > LR-neutral posterior deltoid (ES 10.34).",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "rotator_cuff stabilizer: supraspinatus similar across full can, empty can, prone full can (related movement)",
+   "verdict": "confirmed",
+   "correction": "Reinold 2007: supraspinatus 62/67/64% MVIC, 'No statistical difference' (P = .807). Related movement, as the file says.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC2140071/"
+   ]
+  },
+  {
+   "claim": "Serratus anterior and lower trapezius rotate the scapula upward (Ekstrom 2003)",
+   "verdict": "confirmed",
+   "correction": "Ekstrom: trapezius and serratus anterior 'are considered to be the only upward rotators of the scapula'.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/12774999/"
+   ]
+  },
+  {
+   "claim": "Mistake pinky-up: internal rotation at 90 degrees gave 21.3 N vs <=3 N (13 healthy shoulders)",
+   "verdict": "corrected",
+   "correction": "Yanai: 13 SUBJECTS (not shoulders) without symptoms, static holds, 90 degrees abduction + MAXIMUM internal rotation 21.3 N vs neutral/external <=3 N. A slight pinky-up tilt is not maximum internal rotation, so the user text must not imply that any tilt gives 7x force. Coratella part confirmed: LR-internal raised posterior delt, upper trap and triceps (ES 10.34, 3.86, 1.17), and medial delt was LOWER than LR-neutral.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/16632128/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "Mistake too-high: 77 men, raises above 90 associated with impingement signs; AHD falls 7.0 mm at 30 to 3.9 mm at 120",
+   "verdict": "corrected",
+   "correction": "Kolber confirmed: 77 men (46 lifters, 31 controls); 'significant association ... (p <= 0.004)' with lateral raises and upright rows above 90 degrees (association only). Graichen numbers confirmed, but Graichen also says at 120 degrees the closest point 'was always located lateral to the supraspinatus tendon'. So the 3.9 mm figure does not show tendon pinching above 90 degrees. Use Kolber alone for this mistake, or quote Graichen with that caveat.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/24077379/",
+    "https://pubmed.ncbi.nlm.nih.gov/10370995/"
+   ]
+  },
+  {
+   "claim": "Mistake shrug: upper traps already near maximum",
+   "verdict": "corrected",
+   "correction": "Andersen value is from women with trapezius myalgia (see upper_traps). The cue (shoulders down) is confirmed by ACE. The effect is coach consensus.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/18339796/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/26/lateral-raise/"
+   ]
+  },
+  {
+   "claim": "Mistake swing: momentum replaces deltoid work; research protocols sit lifters down",
+   "verdict": "confirmed",
+   "correction": "Coratella and Campos ran it seated (Coratella: to avoid lumbar involvement). The effect is coach consensus, as labelled.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7706677/"
+   ]
+  },
+  {
+   "claim": "Mistake elbow-change: Coratella bent-elbow (90) version gave less medial deltoid",
+   "verdict": "corrected",
+   "correction": "Number confirmed (LR-neutral > LR-flexed, ES 6.41). However, Coratella compared a FIXED 90-degree bend against a near-straight arm, not an elbow angle that changes mid-rep. It supports 'a heavily bent elbow means less side-delt work', not the 'bending and straightening' fault as worded.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "Mistake fingertip-grip, wrist bent: raises carpal-tunnel pressure",
+   "verdict": "unverified",
+   "correction": "No source names this as a lateral-raise mistake. Weiss supports 'near-straight wrist = lowest carpal-tunnel pressure' (2 degrees extension, 2 degrees ulnar deviation, 20 controls), and Coratella kept the wrist in line. The Sporrong studies say nothing about fingertip grips. Keep it as coach consensus or drop it.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/7593079/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+    "https://pubmed.ncbi.nlm.nih.gov/8983914/"
+   ]
+  },
+  {
+   "claim": "Key fact: thumbs-forward highest side delt; thumbs-up more front delt; thumbs-down more rear delt, trap, triceps",
+   "verdict": "confirmed",
+   "correction": "Coratella: medial LR-neutral > LR-external (ES 1.47); anterior LR-external > LR-neutral (ES 4.68); LR-internal > LR-neutral for posterior (10.34), upper trap (3.86) and triceps (1.17). These were seated competitive bodybuilders using near-straight arms in the frontal plane.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/"
+   ]
+  },
+  {
+   "claim": "Key fact: dumbbell almost no resistance at bottom, most at shoulder height; cable and dumbbell grew side delts equally over 8 weeks",
+   "verdict": "corrected",
+   "correction": "Profile confirmed. Larsen: 24 trained people (16 men, 8 women), one arm per method, 8 weeks, 2 sessions/week, 5 sets (4 in week 1), 12-16 reps to failure. Thickness +3.3-4.6%, with 'moderate' Bayesian evidence for no difference. Say 'similarly', not 'equally'.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/"
+   ]
+  },
+  {
+   "claim": "Key fact: rolling the arm inward at shoulder height multiplied pinch force about sevenfold",
+   "verdict": "corrected",
+   "correction": "Yanai compared MAXIMUM internal rotation (21.3 N) with neutral/external (means <= 3 N), in 13 asymptomatic subjects holding the position still. Reword: 'Turning the arm fully inward at shoulder height raised the pinch force on the shoulder tendons to about 21 N, against 3 N or less with the thumb forward or up.'",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/16632128/"
+   ]
+  },
+  {
+   "claim": "Key fact: upper traps 97% vs shrug 102%, 3-10 kg vs 20-30 kg",
+   "verdict": "corrected",
+   "correction": "Numbers verbatim, but the group was 12 women with chronic neck pain, and 3-10 kg covers lateral raise plus upright row. Add the population or drop the fact.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/18339796/"
+   ]
+  },
+  {
+   "claim": "Key fact: above 90 degrees linked with impingement signs in recreational lifters",
+   "verdict": "confirmed",
+   "correction": "Kolber (association, case-control, 77 men).",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/24077379/"
+   ]
+  },
+  {
+   "claim": "Existing review: Longo 2017 (4 kg) found more subacromial space with external rotation; Graichen (unloaded) found less",
+   "verdict": "confirmed",
+   "correction": "Longo: with 4 kg, space larger at 90 degrees ER than 90 degrees neutral (p<0.001); unloaded, neutral smaller than ER. Graichen (unloaded MRI): ER 4.4 mm < neutral 5.4 mm < IR 7.6 mm, but IR hit the tendon's vulnerable part. Longo's unloaded result also conflicts with Graichen, so the evidence is mixed. Keep 'level or a touch higher'.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/27776926/",
+    "https://pubmed.ncbi.nlm.nih.gov/10370995/"
+   ]
+  }
+ ],
+ "would_look_wrong": [
+  "Mid-rep hand height: if the rig follows 'elbow at or slightly above the hand' at 45 degrees, the hand will be lifted toward elbow height, which bends the elbow sharply and looks like an upright row. At 45 degrees the hand must hang well below the elbow, near the line of the upper arm.",
+  "Forearm twist: the palm turning from 'facing thigh' to 'facing floor' comes from the abduction itself. If the animator also pronates the forearm or rotates the humerus to get there, the top will end palms-back or little finger up (the very fault the guide warns about).",
+  "Frozen shoulder girdle: 'shoulders down and back, maintained throughout' with no scapular upward rotation (about 29 degrees from rest by the top) makes the arm look like it pivots on a hinge and the deltoid looks crushed into the neck. With no clavicle rise at all it looks robotic; with a lot of clavicle rise it reads as a shrug. Use a small rise, consistent with Ludewig's about 6 degrees clavicle elevation over the full range.",
+  "Top hand vs elbow: with neutral rotation and a slight bend, the hand sits level with the elbow and a little in front of it. Forcing 'elbow above wrist' needs inward rotation, which gives the jug-pour look the guide calls a mistake.",
+  "Elbow bend: research protocols used near-straight arms. A bend at the top of the 10-20 degree range is fine, but anything visibly near 30 degrees or more starts to look like the LR-flexed variant, not the taught lift.",
+  "Bottom position: at 0 degrees abduction, 126 mm wide hex heads at the outer thigh clip into the leg mesh. Keep about 5-10 degrees so the heads clear.",
+  "Hand width at the bottom: 'hip width' places the dumbbells in front of the thighs. They belong beside the outer thighs.",
+  "Grip: if the handle is modelled straight while the reference photo (Iron Company) shows a contoured handle, the hand closure will not match the reference. Also, the 'diagonal across the palm' line is unsourced and may tip the dumbbell; check it against a photo before finger rigging.",
+  "GH external rotation: do not dial in the misquoted 41-51 degrees. At most a slight 'front edge up' roll near the top (ACE)."
+ ],
+ "summary": "Most mechanics and EMG numbers check out against the opened sources (ACE, Coratella, Campos, Larsen, Ludewig, Kolber, Graichen, Yanai, Andersen, Reinold, dumbbell specs). Key fixes: (1) the mid-rep 'elbow at or above hand' is geometrically wrong (the hand hangs well below the elbow at 45 degrees), and the top 'elbow above wrist' conflicts with ACE's slight outward roll, so use 'hand about level with elbow'; (2) Ludewig GH external rotation is a 10-51 degree increase depending on plane, not 41-51 degrees at 90 (refuted); (3) Yanai's 21.3 N is for MAXIMUM internal rotation in 13 subjects, so do not imply any slight tilt gives 7x force; (4) Andersen's 97% trap figure is from women with trapezius myalgia, and 3-10 kg covers two exercises; (5) Graichen's 3.9 mm at 120 degrees lies lateral to the tendon, so it does not support the above-90 mistake; Kolber alone does; (6) McCall gives about 35 degrees, not 30-45; all EMG/RCT protocols used the frontal plane with near-straight arms; (7) Sporrong grip data are mixed and irrelevant to a dumbbell; (8) 'straight' handle conflicts with the cited contoured Iron Company handle; (9) Coratella's bent-elbow finding is a fixed 90-degree bend, not a changing elbow."
+}
