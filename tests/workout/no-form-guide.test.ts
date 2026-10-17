@@ -163,14 +163,21 @@ describe('D-HT1 A5: hasHowTo is true exactly for the approved plates', () => {
   });
   it('the gate\'s no-How-to control is the first library id without approved content, and has none', async () => {
     const { hasHowTo } = await import('@/howto/ids');
-    const h = await import(/* @vite-ignore */ new URL('../../tools/plates/fidelity/harness.mjs', import.meta.url).href) as { firstWithoutHowTo: () => string; HT_NO_HOWTO: string; HT_ORDER: string[] };
+    const h = await import(/* @vite-ignore */ new URL('../../tools/plates/fidelity/harness.mjs', import.meta.url).href) as { firstWithoutHowTo: () => string | null; HT_NO_HOWTO: string | null; HT_ORDER: (string | null)[] };
     const { firstWithoutHowTo, HT_NO_HOWTO, HT_ORDER } = h;
     const lib = (JSON.parse(readFileSync('src/data/exercises.json', 'utf8')) as { id: string }[]).map(e => e.id);
     const id = firstWithoutHowTo();
-    expect(id).toBe(lib.find(i => !hasHowTo(i)));
-    expect(hasHowTo(id)).toBe(false);
+    expect(id).toBe(lib.find(i => !hasHowTo(i)) ?? null);
     expect(HT_NO_HOWTO).toBe(id);
-    expect(HT_ORDER).toContain(id);
+    if (id === null) {
+      // LIB-4a (D-LIB4-CTRL): full coverage has no library control; HT_ORDER is the 8 and the custom exercise
+      expect(lib.every(i => hasHowTo(i))).toBe(true);
+      expect(HT_ORDER).not.toContain(null);
+      expect(HT_ORDER).toHaveLength(9);
+    } else {
+      expect(hasHowTo(id)).toBe(false);
+      expect(HT_ORDER).toContain(id);
+    }
   });
   it('no fallback: the sheet closes with the load-failed toast for an id without content, and renders nothing until the content is in', () => {
     const sheet = readFileSync('src/slices/howto/HowToSheet.tsx', 'utf8');
