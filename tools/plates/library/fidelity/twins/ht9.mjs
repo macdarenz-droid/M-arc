@@ -337,7 +337,7 @@ async function a5({ browser, port, R, pages, order, custom }, { lib, chrome, ind
  * plate index 0 in Silent Black, a second copy of a red-flag line planted in Setup must be reported ("shows 2 times"),
  * and the clean sheet must not be. Returns the problems (none when the guard fires).
  */
-export async function guardA3Dup({ browser, port, root }) {
+export async function guardA3Dup({ browser, port, root }, { blind = false } = {}) {
   const { C, flagLines } = await content(root);
   const [chrome, lib] = H.HT_PLATES[0], h = C.HOWTOS.find(x => x.id === lib), flags = h.riskFlags ?? ['wrist'];
   const bad = [];
@@ -348,7 +348,7 @@ export async function guardA3Dup({ browser, port, root }) {
     await H.settleApp(app.page);
     const clean = await a3Probe(app.page, flags, flagLines, C.DISCLAIMER);
     if (clean.length) bad.push(`the clean ${chrome} sheet already fails A3: ${clean.join('; ')}`);
-    await app.page.evaluate(([A, t]) => { const p = document.createElement('p'); p.id = 'ht9-a3-fixture'; p.textContent = t; document.querySelector(`${A} .setup`).append(p); }, [APP, flagLines[flags[0]][1]]);
+    if (!blind) await app.page.evaluate(([A, t]) => { const p = document.createElement('p'); p.id = 'ht9-a3-fixture'; p.textContent = t; document.querySelector(`${A} .setup`).append(p); }, [APP, flagLines[flags[0]][1]]);   // blind: B2's mutation
     const caught = await a3Probe(app.page, flags, flagLines, C.DISCLAIMER);
     if (!caught.some(b => b.includes('shows 2 times'))) bad.push(`a second copy of the ${flags[0]} red-flag line in Setup was not caught (${JSON.stringify(caught)})`);
   } catch (e) { bad.push(msg(e)); } finally { await app.ctx.close(); }

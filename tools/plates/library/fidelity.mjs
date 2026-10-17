@@ -253,7 +253,7 @@ export async function onceStates(browser, port, k, { root = ROOT, blind = null, 
     const t7 = await import('./fidelity/twins/ht7.mjs');
     R.check(l3text.id, l3text.theme, l3text.state, t7.guardL3Text ? await t7.guardL3Text({ browser, port, root }, { blind: blind === 'HT7-l3text' }) : ['the HT-7 twin has no L3 text guard']);
     const t9 = await import('./fidelity/twins/ht9.mjs');
-    R.check(a3dup.id, a3dup.theme, a3dup.state, blind === 'HT9-A3-dup' ? ['blinded'] : await t9.guardA3Dup({ browser, port, root }));
+    R.check(a3dup.id, a3dup.theme, a3dup.state, await t9.guardA3Dup({ browser, port, root }, { blind: blind === 'HT9-A3-dup' }));
   }
   return R.finish(tuples);
 }
