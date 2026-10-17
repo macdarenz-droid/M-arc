@@ -1260,9 +1260,8 @@
    },
    {
     "m": "P(",
-    "t": "X3",
-    "why": "GAP: A1 negative controls (bench press, the custom exercise: no entry) are once-per-run checks of cards without approved content; no X id names them",
-    "gap": true
+    "t": "X3b",
+    "why": "A1 negative controls (bench press, the custom exercise: no entry) are once-per-run checks of cards without approved content; no X id names them (D-LIB4b-MAP-2)"
    },
    {
     "m": "P(",
@@ -1436,15 +1435,13 @@
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: HT-10 `golden` (C10 exemptions measured on the 8's golden page) is once per run; no X id names it",
-    "gap": true
+    "t": "X9a",
+    "why": "HT-10 `golden` (C10 exemptions measured on the 8's golden page) is once per run; no X id names it (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: HT-10 `golden` (C18 exemptions on the 8's golden page) is once per run; no X id names it",
-    "gap": true
+    "t": "X9a",
+    "why": "HT-10 `golden` (C18 exemptions on the 8's golden page) is once per run; no X id names it (D-LIB4b-MAP-2)"
    },
    {
     "m": "fail(",
@@ -1508,123 +1505,103 @@
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "F(",
-    "t": "X4",
-    "why": "GAP: a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures`",
-    "gap": true
+    "t": "X9b",
+    "why": "a guard of imported HT-10 probes (ht10DomProbe, ht10AxNames, ht10Sweep inject, perf.mjs, ht10AnimProblems); D-LIB4b-GUARDS rules imported-code guards stay covered by their own block every run, but no X id names HT-10 `fixtures` (D-LIB4b-MAP-2)"
    },
    {
     "m": "errors.push(",
-    "t": "X4",
-    "why": "GAP: A5 shard time budget (25 min per ht10 shard) is a run property; no X id names it (LIB-4c times the library run itself)",
-    "gap": true
+    "t": "X9c",
+    "why": "A5 shard time budget (25 min per ht10 shard) is a run property; no X id names it (LIB-4c times the library run itself) (D-LIB4b-MAP-2)"
    }
   ]
  },

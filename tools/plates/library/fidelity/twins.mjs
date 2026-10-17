@@ -98,7 +98,7 @@ export const currentShas = async () => Object.fromEntries(Object.entries(await p
 //   - 'collect:<var>': a push that gathers data that never reaches errors/problems.
 // `gap: true` marks an entry whose check no supervisor ruling names with an X id (it still names the closest one).
 export const MAP_RE = /\b[A-Za-z_$][\w$]*\.push\(|\bthrow new Error\b|\b(?:P|F|S|fail|crashed)\(/g;
-export const EXEMPTIONS = ['X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'X8', 'X8b', 'X8c'];
+export const EXEMPTIONS = ['X1', 'X2', 'X3', 'X3b', 'X4', 'X5', 'X6', 'X7', 'X8', 'X8b', 'X8c', 'X9a', 'X9b', 'X9c'];
 const SINK = String.raw`(?:\b(?:errors|problems)\.push\(|\b(?:P|F|S|fail|crashed)\()`;
 const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
