@@ -1,4 +1,4 @@
-New phone test app: https://github.com/macdarenz-droid/M-arc/actions/runs/39050691341 (download MARC-DEBUG-APK, run 2142). Watch app 1.3.0 attached (private: it carries your name and your watch's ID).
+New phone test app: https://github.com/macdarenz-droid/M-arc/actions/runs/39051286436/artifacts/12109371477 (download MARC-DEBUG-APK, run 2144). Watch app 1.3.0 attached (private: it carries your name and your watch's ID).
 
 What changed on the watch:
 - With M/ARC closed on the phone, you keep logging the next sets of the exercise (up to 8 actions). They save at your tap times when you open M/ARC.
