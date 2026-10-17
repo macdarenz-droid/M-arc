@@ -11,7 +11,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { FIXTURE, GOLDEN_JSON, extractPlates, fragmentsOf, latestEntries } from '../golden.mjs';
 import { ROOT } from '../lib/inputs.mjs';
 import { rows as registryRows } from './registry.mjs';
-import { HT_CUSTOM, HT_FULL, HT_PLATES, HT_THEMES, closeHowTo, openAppTrain, openCard, openHowTo, ht10GoldenCounts, ht10Script, ht10Sweep } from '../fidelity/harness.mjs';
+import { HT_CUSTOM, HT_FULL, HT_PLATES, HT_THEMES, fixtureLeakSection, fixtureSection, closeHowTo, openAppTrain, openCard, openHowTo, ht10GoldenCounts, ht10Script, ht10Sweep } from '../fidelity/harness.mjs';
 import { CHECKS, LIB_ONCE, NO_THEME, PQH_STATES, WIDTH, libraryTuples, sourceFacts } from './fidelity/tuples.mjs';
 import { recorder, stateOf } from './fidelity/rows.mjs';
 import { plateJob, plateStats } from './fidelity/plate.mjs';
@@ -50,7 +50,7 @@ async function pool(jobs, P) {
  * pixel tuple 'id|theme|state' to its max px off; seconds maps id and family to the job seconds spent.
  * `families`/`themes` narrow a development run (the rows then cover only those); CI always runs everything.
  */
-export async function libraryFidelity(browser, port, { ids, pages, P = 1, families = FAMILIES, themes = HT_THEMES, root = ROOT, log = () => {} }) {
+export async function libraryFidelity(browser, port, { ids, pages, P = 1, families = FAMILIES, themes = HT_THEMES, root = ROOT, log = () => {}, fixtures = {} }) {
   const R = recorder(), all = registryRows(root), why = {}, seconds = { id: {}, family: {} }, stats = { plate: plateStats(), byFamily: {} };
   const facts = {};
   for (const id of ids) facts[id] = await sourceFacts(id, { root, all });
@@ -73,7 +73,7 @@ export async function libraryFidelity(browser, port, { ids, pages, P = 1, famili
     }
     return files.get(html);
   };
-  const ctx = { browser, port, R, pages, order, custom, root, layersFile, stats, themes, golden: new Map() };
+  const ctx = { browser, port, R, pages, order, custom, root, layersFile, stats, themes, golden: new Map(), fixtures };
   const timed = (id, fam, fn) => async () => {
     const t0 = Date.now();
     try { await fn(); } catch (e) { R.fail(id, NO_THEME, `${fam === 'plate' ? 'L3' : fam}/crashed@*`, `${fam} crashed: ${e.message.split('\n')[0]}`); log(`${id} ${fam}: crashed ${e.stack}`); }
@@ -93,7 +93,7 @@ export async function libraryFidelity(browser, port, { ids, pages, P = 1, famili
     if (twins.HT4?.runNode) jobs.push(timed(id, 'HT4', () => twins.HT4.runNode(ctx, j)));
     for (const theme of themes) {
       const tj = { ...j, theme };
-      if (families.includes('plate')) jobs.push(timed(id, 'plate', () => plateJob(browser, port, R, { ...tj, html: pages[id].plates, order, custom, stats: stats.plate })));
+      if (families.includes('plate')) jobs.push(timed(id, 'plate', () => plateJob(browser, port, R, { ...tj, html: pages[id].plates, order, custom, stats: stats.plate, mutate: fixtures.mutate?.[id] ?? null, shift: fixtures.shift?.includes(id) ? 1 : 0 })));
       for (const fam of ['HT4', 'HT6', 'HT7', 'HT8', 'HT9']) if (twins[fam]) jobs.push(timed(id, fam, () => twins[fam].run(ctx, tj)));
       if (families.includes('HT10')) jobs.push(timed(id, 'HT10', () => ht10Job(ctx, tj)));
     }
@@ -121,11 +121,12 @@ async function l2Job({ R, pages, root }, { lib, chrome }) {
 }
 
 /** entry (HT3-A1, D-LIB4-CTRL 6): exactly one 44 px "How to do it" button on the id's card, and tapping it opens the sheet. */
-async function entryJob({ browser, port, R, order, custom }, { lib, index }) {
+async function entryJob({ browser, port, R, order, custom, fixtures }, { lib, index }) {
   const theme = 'paper', st = stateOf('entry', 'open', WIDTH), bad = [];
   const { ctx, page } = await openAppTrain(browser, port, theme, { order, custom, onError: m => bad.push(`page error: ${m}`) });
   try {
     const card = await openCard(page, index);
+    if (fixtures.entry?.[lib]) await card.evaluate(fixtures.entry[lib]);   // B4's fixture only
     const entry = card.locator('button.ht-entry');
     const n = await entry.count(), name = n === 1 ? (await entry.getAttribute('aria-label')) ?? (await entry.innerText()).trim() : null, b = n === 1 ? await entry.boundingBox() : null;
     if (n !== 1 || name !== 'How to do it' || !b || b.width < 44 || b.height < 44) bad.push(`A1: ${n} entries, name ${JSON.stringify(name)}, box ${JSON.stringify(b && [b.width, b.height])}`);
@@ -142,7 +143,7 @@ async function ht10Job(ctx, { lib, chrome, index, theme }) {
   const counts = await golden.get(html);
   const expectRisks = existsSync(join(ctx.root, 'src/slices/howto/sections/Risks.tsx'));
   for (const [state, reduced] of [['sweep', false], ['reduced', true]]) {
-    const r = await ht10Sweep(browser, port, theme, { ids: [chrome], reduced, expectRisks, golden: counts, order, custom, indexOf: () => index });
+    const r = await ht10Sweep(browser, port, theme, { ids: [chrome], reduced, expectRisks, golden: counts, order, custom, indexOf: () => index, inject: reduced ? null : ctx.fixtures.inject?.[lib] ?? null });
     const bad = [...r.problems];
     if (!reduced && r.stats.steps < 15) bad.push(`A1: only ${r.stats.steps} script steps probed, expected at least 15`);
     R.check(lib, theme, stateOf('HT10', state, WIDTH), bad);
@@ -209,11 +210,30 @@ export async function onceStates(browser, port, k) {
   return R.finish(tuples);
 }
 
+/**
+ * B2/B4 failure fixtures by name ("<name>:<lib id>"), each the HT block's own: HT-3's section fixtures and 1 px shift,
+ * HT-10's hidden chip and "Show me", and B4's hidden entry. Never used outside the evidence runs.
+ */
+export function fixturesOf(specs) {
+  const f = { mutate: {}, shift: [], inject: {}, entry: {} };
+  for (const s of specs) {
+    const [name, lib] = s.split(':');
+    if (name === 'section') f.mutate[lib] = fixtureSection;
+    else if (name === 'leak-section') f.mutate[lib] = fixtureLeakSection;
+    else if (name === 'shift') f.shift.push(lib);
+    else if (name === 'ht10-inject') f.inject[lib] = () => { document.querySelector('dialog.sheet.ht .st-show').style.display = 'none'; document.querySelector('dialog.sheet.ht .zx-chip[data-zoom]').style.display = 'none'; };
+    else if (name === 'hide-entry') f.entry[lib] = card => card.querySelectorAll('.ht-entry').forEach(e => e.remove());
+    else throw new Error(`unknown fixture ${name} (section, leak-section, shift, ht10-inject, hide-entry)`);
+  }
+  return f;
+}
+
 // ---- CLI -----------------------------------------------------------------------------------------------------------
 const arg = (name, d = null) => { const i = process.argv.indexOf(`--${name}`); return i > 0 ? process.argv[i + 1] : d; };
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const { spawn } = await import('node:child_process');
   const idsArg = arg('ids', 'golden8'), ids = idsArg === 'golden8' ? HT_PLATES.map(p => p[1]) : idsArg.split(',');
+  const fixtures = fixturesOf(process.argv.flatMap((a, i) => (a === '--fixture' ? [process.argv[i + 1]] : [])));
   const P = +arg('P', '1'), families = arg('families') ? arg('families').split(',') : FAMILIES, themes = arg('themes') ? arg('themes').split(',') : HT_THEMES;
   for (const f of families) if (!FAMILIES.includes(f)) throw new Error(`unknown family ${f} (${FAMILIES.join(', ')})`);
   const PORT = process.env.MARC_LIB_PORT || '4180';
@@ -229,7 +249,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const browser = await launchBrowser();
   const t0 = Date.now();
   let out;
-  try { out = await libraryFidelity(browser, PORT, { ids, pages, P, families, themes, log: m => console.error(m) }); } finally { await browser.close(); }
+  try { out = await libraryFidelity(browser, PORT, { ids, pages, P, families, themes, fixtures, log: m => console.error(m) }); } finally { await browser.close(); }
   const fails = out.rows.filter(r => r.result === 'fail');
   for (const r of fails) console.log(`FAIL ${r.id} ${r.theme} ${r.state}: ${r.why.join(' | ').slice(0, 400)}`);
   const pxId = {};

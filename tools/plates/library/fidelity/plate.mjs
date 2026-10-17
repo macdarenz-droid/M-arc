@@ -42,7 +42,7 @@ export const subOf = label => label.replace('M:after-hide-restore', 'M:restore')
  * card index in `order`; `html`: its plates page. `markup: false` and `widths: []` and `full: false` give HT10-A2's and
  * HT-6 A6's / HT-9 A5's narrower compare; `as`: the one state every check of the job goes to (e.g. HT6/A6@390).
  */
-export async function plateJob(browser, port, R, { lib, chrome, index, theme, html, order, custom, full = HT_FULL.includes(theme), widths = full ? NARROW : [], mutate = null, markup: markupAll = true, as = null, stats }) {
+export async function plateJob(browser, port, R, { lib, chrome, index, theme, html, order, custom, full = HT_FULL.includes(theme), widths = full ? NARROW : [], mutate = null, markup: markupAll = true, as = null, stats, shift = 0 }) {
   const at = (check, label, w) => as ?? stateOf(check, subOf(label), w);
   let cur = null;
   const fail = (state, m) => R.fail(lib, theme, state, m);
@@ -84,7 +84,7 @@ export async function plateJob(browser, port, R, { lib, chrome, index, theme, ht
     if (ra.blockWidth !== rg.blockWidth || ra.fitWidth !== rg.fitWidth || ra.width !== rg.width || ra.height !== rg.height || ra.zoom !== rg.zoom || (exp && (ra.fitWidth !== exp || ra.zoom !== '1')))
       fail(L3, `widths differ: app .ht-golden ${ra.blockWidth} / .ht-plate-fit ${ra.fitWidth} (zoom ${ra.zoom}), region ${ra.width}x${ra.height}; golden card content ${rg.blockWidth} / .plate-fit ${rg.fitWidth} (zoom ${rg.zoom}), region ${rg.width}x${rg.height}`);
     else {
-      const [a, g] = await Promise.all([capture(app.page, ra), capture(gold.page, rg)]);
+      const [a, g] = await Promise.all([capture(app.page, ra, shift), capture(gold.page, rg)]);   // shift: B2's 1 px fixture only
       const d = await diffPng(gold.page, a, g);
       stats.pairs++; stats.offMax = Math.max(stats.offMax, d.off); stats.off1Max = Math.max(stats.off1Max, d.off1);
       R.px(lib, theme, L3, d.off);
