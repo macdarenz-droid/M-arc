@@ -318,7 +318,7 @@ function listenToOtherTabs(): void {
     if (e.key === null || (e.key === STATE_KEY && e.newValue === null)) {
       if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
       lastGoodRaw = null;
-      if (storageRef) { generation++; state.value = loadState(storageRef).state; }
+      if (storageRef) { bumpGeneration(); state.value = loadState(storageRef).state; }
       return;
     }
     if (e.key !== STATE_KEY || !e.newValue) return;
@@ -328,7 +328,7 @@ function listenToOtherTabs(): void {
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
     const localActive = state.value.active;
     const incoming = normalize(parsed);
-    generation++;
+    bumpGeneration();
     state.value = incoming;
     lastGoodRaw = e.newValue;
     if (localActive && localActive.startedAt !== incoming.active?.startedAt) showToast('Updated from another tab');
@@ -425,9 +425,17 @@ export function update(fn: (s: AppState) => AppState): void {
  */
 let generation = 0;
 export const replaceGeneration = (): number => generation;
+/** A3-7b: memory-only holds tied to the old state (the opened onboarding form) drop on every replace. */
+const replaceListeners = new Set<() => void>();
+export function onReplace(fn: () => void): () => void { replaceListeners.add(fn); return () => { replaceListeners.delete(fn); }; }
+function bumpGeneration(): void {
+  generation++;
+  // D-A3-7b-3: a throwing listener never aborts the replace or the other listeners.
+  for (const fn of replaceListeners) { try { fn(); } catch (err) { console.warn('replace listener failed', err); } }
+}
 
 export function replaceState(next: AppState): void {
-  generation++;
+  bumpGeneration();
   state.value = normalize(next);
   persistNow();
 }

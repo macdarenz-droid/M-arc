@@ -1,6 +1,6 @@
 /** Derived, memoised views over the store that several screens share. */
 import { computed, signal } from '@preact/signals';
-import { state } from '@/core/store';
+import { onReplace, state } from '@/core/store';
 import { getSeries } from '@/core/heartStore';
 import { daysBetween, trainedTodaySessions } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
@@ -70,6 +70,8 @@ export const deloadSuggestion = computed(() => deloadOffer(coachContext.value));
 export const sessionsToday = computed(() => trainedTodaySessions(state.value.sessions, today.value, minuteNow.value));
 // UI-R05: an opened form stays until Save or close.
 export const heldOnboardingTrigger = signal<OnboardingTrigger | null>(null);
+// A3-7b: Reset, Restore or another tab's replace drops the hold, so a held review never shows over the new profile.
+onReplace(() => { heldOnboardingTrigger.value = null; });
 export const onboardingTrigger = computed(() => {
   const justConnectedWatch = watchStatus.value.state === 'connected' && !state.value.onboarding.watchPromptedAt;
   return heldOnboardingTrigger.value ?? shouldShowOnboarding(state.value.profile, state.value.onboarding, today.value, justConnectedWatch);
