@@ -8966,6 +8966,153 @@ if (gate.runs('COPY-2'))
   if (!errors.some(e => e.startsWith('COPY-2 swap '))) console.log('COPY-2 swap: a brief shorter than the check-in eases the same sheet down (one direction, >= 20 px, no step over max(16 px, travel / 4), still after rest), in Silent Black and Paper at 1x and 4x CPU');
 }
 
+// OLD-ANDROID-1: the WebView floor (card OLD-ANDROID-1b, D-OA1-FLOOR). Each probe takes away one feature the
+// bundle needs, in a fresh context, the way an old WebView lacks it: the update screen shows, alone, with no
+// crash card, no reset, no boot and nothing saved (P2-P6). An entry that never runs on a capable engine shows
+// the crash card with the user agent within 2 s of DOMContentLoaded (P7). No false positives: a normal boot (P1)
+// and an entry held back 8 s (P8). Then the build is scanned against scripts/old-android-floor.mjs (S1-S3).
+{
+  const tag = 'OLD-ANDROID-1';
+  const floor = await import('./old-android-floor.mjs');
+  const { transformSync } = await import('esbuild');
+  const entry = /<script type="module" crossorigin src="\.\/(assets\/[^"]+\.js)">/.exec(readFileSync(join(ROOT, 'www/index.html'), 'utf8'))?.[1];
+  if (!entry) errors.push(`${tag}: no module entry script in www/index.html`);
+  const base = `http://localhost:${PORT}/`;
+  const watchInit = () => {
+    window.__oaDcl = null; window.__oaCrashT = null;
+    document.addEventListener('DOMContentLoaded', () => { window.__oaDcl = performance.now(); });
+    new MutationObserver(() => {
+      if (window.__oaCrashT === null && document.querySelector('#app[data-crash-shown]')) window.__oaCrashT = performance.now();
+    }).observe(document, { subtree: true, childList: true, attributes: true });
+  };
+  const open = async (name, { init, route } = {}) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'no-preference' });
+    const page = await ctx.newPage();
+    const pageErrors = [];
+    page.on('pageerror', e => pageErrors.push(e.message));
+    await page.addInitScript(watchInit);
+    if (init) await page.addInitScript(init);
+    if (route) await route(page);
+    const t0 = Date.now();
+    await page.goto(base, { waitUntil: 'commit' });
+    return { ctx, page, pageErrors, t0, tag: `${tag} ${name}` };
+  };
+  const read = (page) => page.evaluate(() => ({
+    unsupported: !!document.querySelector('#app[data-unsupported]'),
+    crash: !!document.querySelector('#app[data-crash-shown]') && !document.querySelector('#app[data-unsupported]'),
+    reset: !!document.querySelector('[data-reset]'),
+    launch: !!document.getElementById('launch'),
+    booted: window.__marcBooted === true,
+    saved: localStorage.getItem('marc.state.v1') !== null,
+    text: document.getElementById('app')?.innerText ?? '',
+    pre: document.querySelector('#app pre')?.textContent ?? '',
+    ua: navigator.userAgent,
+  }));
+  // P2-P6: below the floor, one screen and nothing else.
+  const updateScreen = async (name, opts) => {
+    const { ctx, page, tag: t } = await open(name, opts);
+    const shown = await page.waitForSelector('#app[data-unsupported]', { state: 'attached', timeout: 3000 }).then(() => true).catch(() => false);
+    await page.waitForFunction(() => window.__oaDcl !== null, null, { timeout: 10000 }).catch(() => {});
+    await page.waitForTimeout(500);
+    const s = await read(page);
+    if (!shown) errors.push(`${t}: no update screen within 3 s (${JSON.stringify({ ...s, ua: undefined })})`);
+    else {
+      if (s.launch) errors.push(`${t}: #launch still on screen`);
+      if (s.reset) errors.push(`${t}: the update screen has a reset button`);
+      if (s.crash || /could not start/.test(s.text)) errors.push(`${t}: the crash card showed`);
+      if (s.booted) errors.push(`${t}: the app booted below the floor`);
+      if (s.saved) errors.push(`${t}: marc.state.v1 was written below the floor`);
+      const lines = s.text.split('\n').map(x => x.trim()).filter(Boolean);
+      const want = ['WebView update', 'M/ARC needs a newer Android System WebView.', null, 'Open Play Store'];
+      if (lines.length !== 4 || want.some((w, i) => w !== null && lines[i] !== w) || !/^WebView (\d+|\?) · [a-z-]+(, [a-z-]+)*$/.test(lines[2])) errors.push(`${t}: update screen text is ${JSON.stringify(lines)}`);
+      const href = await page.locator('#app[data-unsupported] a').getAttribute('href').catch(() => null);
+      if (href !== 'market://details?id=com.google.android.webview') errors.push(`${t}: the Play Store link is ${href}`);
+      if (name === 'P2') await page.screenshot({ path: `${OUT}/old-android-update.png` });
+    }
+    await ctx.close();
+  };
+  const routeEntry = (fn) => async (page) => page.route(`${base}${entry}`, fn);
+  await updateScreen('P2', {
+    init: () => { delete HTMLScriptElement.prototype.noModule; },
+    route: async (page) => page.route(base, async r => {
+      const res = await r.fetch();
+      await r.fulfill({ response: res, body: (await res.text()).replaceAll('type="module"', 'type="module-off"') });
+    }),
+  });
+  await updateScreen('P3', {
+    init: () => { delete Array.prototype.at; },
+    route: routeEntry(async r => { const res = await r.fetch(); await r.fulfill({ response: res, body: 'const a = ;\n' + await res.text() }); }),
+  });
+  await updateScreen('P4', { init: () => { delete Array.prototype.at; } });
+  await updateScreen('P5', { init: () => { delete Animation.prototype.finished; } });
+  await updateScreen('P6', {
+    init: () => {
+      const orig = CSS.supports;
+      CSS.supports = function (a, b) { return /color-mix/.test(String(a) + ' ' + String(b)) ? false : orig.apply(CSS, arguments); };
+    },
+  });
+  // P7: every feature present, the entry never runs: the crash card, with the user agent, within 2 s of DOMContentLoaded.
+  {
+    const { ctx, page, tag: t } = await open('P7', { route: routeEntry(r => r.fulfill({ status: 404, body: 'not found' })) });
+    await page.waitForFunction(() => window.__oaDcl !== null && window.__oaCrashT !== null, null, { timeout: 10000 }).catch(() => {});
+    const times = await page.evaluate(() => ({ dcl: window.__oaDcl, crash: window.__oaCrashT }));
+    const s = await read(page);
+    if (times.dcl === null || times.crash === null) errors.push(`${t}: no crash card (${JSON.stringify(times)})`);
+    else if (times.crash - times.dcl > 2000) errors.push(`${t}: the crash card came ${Math.round(times.crash - times.dcl)} ms after DOMContentLoaded, over 2000`);
+    if (!/M\/ARC could not start/.test(s.text)) errors.push(`${t}: no "M/ARC could not start" text`);
+    if (!s.pre.includes(s.ua)) errors.push(`${t}: the crash card's <pre> lacks the user agent: ${JSON.stringify(s.pre)}`);
+    if (s.unsupported) errors.push(`${t}: the update screen showed on a capable engine`);
+    await ctx.close();
+  }
+  // P1 and P8: a normal boot and an entry held back 8 s show neither screen.
+  for (const [name, delay] of [['P1', 0], ['P8', 8000]]) {
+    const { ctx, page, pageErrors, t0, tag: t } = await open(name, delay ? { route: routeEntry(async r => { await new Promise(res => setTimeout(res, delay)); await r.continue(); }) } : {});
+    for (const at of delay ? [2000, 5000, 7000] : []) {
+      await page.waitForTimeout(Math.max(0, t0 + at - Date.now()));
+      const s = await read(page);
+      if (s.unsupported || s.crash) errors.push(`${t}: at ${at / 1000} s, ${s.unsupported ? 'the update screen' : 'the crash card'} showed while the entry was loading`);
+    }
+    const booted = await page.waitForFunction(() => window.__marcBooted === true, null, { timeout: 15000 }).then(() => true).catch(() => false);
+    await page.waitForTimeout(500);
+    const s = await read(page);
+    if (!booted) errors.push(`${t}: the app did not boot`);
+    if (s.unsupported || s.crash || /could not start/.test(s.text)) errors.push(`${t}: ${s.unsupported ? 'the update screen' : 'the crash card'} showed after boot`);
+    for (const m of pageErrors) errors.push(`${t}: page error ${m}`);
+    await ctx.close();
+  }
+  // S1-S3: the build stays within the floor.
+  const assets = join(ROOT, 'www/assets');
+  const allowed = (file, token) => floor.ALLOW.some(a => file.startsWith(a.file) && a.token === token);
+  let jsCount = 0, cssCount = 0;
+  for (const file of readdirSync(assets)) {
+    if (file.endsWith('.js')) {
+      jsCount++;
+      const code = readFileSync(join(assets, file), 'utf8');
+      try {
+        const atFloor = transformSync(code, { target: `chrome${floor.FLOOR}`, minify: false, format: 'esm' }).code;
+        const latest = transformSync(code, { target: 'esnext', minify: false, format: 'esm' }).code;
+        if (atFloor !== latest) errors.push(`${tag} S1: ${file} needs lowering for chrome${floor.FLOOR}`);
+      } catch (e) { errors.push(`${tag} S1: ${file} cannot be built for chrome${floor.FLOOR}: ${String(e.message).split('\n')[0]}`); }
+      for (const api of floor.JS_APIS) if (api.chrome > floor.FLOOR && code.includes(api.token) && !allowed(file, api.token)) errors.push(`${tag} S2: ${file} uses ${api.token} (Chrome ${api.chrome}, floor ${floor.FLOOR})`);
+    } else if (file.endsWith('.css')) {
+      cssCount++;
+      let css = readFileSync(join(assets, file), 'utf8');
+      for (let i = css.indexOf('@supports'); i >= 0; i = css.indexOf('@supports')) {
+        let j = css.indexOf('{', i), depth = 0;
+        for (; j < css.length; j++) { if (css[j] === '{') depth++; else if (css[j] === '}' && --depth === 0) break; }
+        css = css.slice(0, i) + css.slice(j + 1);
+      }
+      for (const c of floor.CSS_TOKENS) {
+        if (c.chrome <= floor.FLOOR || allowed(file, c.token)) continue;
+        const re = c.token.endsWith(':') ? new RegExp(`(^|[{;\\s])${c.token.slice(0, -1)}\\s*:`) : null;
+        if (re ? re.test(css) : css.includes(c.token)) errors.push(`${tag} S3: ${file} uses ${c.token} (Chrome ${c.chrome}, floor ${floor.FLOOR}) outside @supports`);
+      }
+    }
+  }
+  if (!jsCount || !cssCount) errors.push(`${tag}: scanned ${jsCount} JS and ${cssCount} CSS assets, expected some of each`);
+  if (!errors.some(e => e.startsWith(tag))) console.log(`${tag}: update screen for a missing module/at/animation/color-mix (P2-P6), crash card with the user agent for an entry that never runs (P7), no false screen on a normal or 8 s boot (P1, P8); ${jsCount} JS and ${cssCount} CSS assets within Chrome ${floor.FLOOR} (S1-S3)`);
+}
+
 // HT-10: the whole finished How-to sheet (card HT-10; plan 2.9, 2.10; GA 6.1 C10-C12, C17, C18; LR-23 C19). Adds
 // nothing to the per-section blocks; it runs the sheet as a whole. Its work is a list of (id, theme, state) tuples
 // (tools/plates/fidelity/shard.mjs): MARC_HT_SHARD="k/N" runs shard k of N, unset runs everything, and every tuple's
