@@ -593,7 +593,9 @@
       "title": "Back Squat (ACE Exercise Library)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "hk-squat",
@@ -601,7 +603,9 @@
       "title": "Squat technique (Broussal-Derval A., Human Kinetics blog)",
       "kind": "guideline",
       "year": 2019,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "nsca-summary",
@@ -609,7 +613,9 @@
       "title": "NSCA CSCS chapter 15, exercise technique (study summary of NSCA Essentials of Strength Training and Conditioning, PT Pioneer)",
       "kind": "secondary",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "rep-fail",
@@ -617,7 +623,9 @@
       "title": "How to Safely Fail a Heavy Squat in the Gym (REP Fitness)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "barbell-logic-squat-grip",
@@ -625,7 +633,9 @@
       "title": "Elbow Pain While Squatting? Fix Your Squat Grip (Reynolds M., Barbell Logic)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "baechle-earle",
@@ -633,7 +643,9 @@
       "title": "Grip selection and location, excerpt from Weight Training: Steps to Success (Baechle and Earle, Human Kinetics)",
       "kind": "textbook",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "bloomquist2013",
@@ -641,7 +653,9 @@
       "title": "Effect of range of motion in heavy load squatting on muscle and tendon adaptations (Bloomquist K et al., Eur J Appl Physiol)",
       "kind": "peer-reviewed",
       "year": 2013,
-      "pmid": "23604798"
+      "pmid": "23604798",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "fry2003",
@@ -649,7 +663,9 @@
       "title": "Effect of knee position on hip and knee torques during the barbell squat (Fry AC, Smith JC, Schilling BK, J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2003,
-      "pmid": "14636100"
+      "pmid": "14636100",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "hackett2013",
@@ -657,7 +673,9 @@
       "title": "The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise (Hackett DA, Chow CM, J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2013,
-      "pmid": "23222073"
+      "pmid": "23222073",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "caterisano2002",
@@ -665,7 +683,9 @@
       "title": "The effect of back squat depth on the EMG activity of 4 superficial hip and thigh muscles (Caterisano A et al., J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2002,
-      "pmid": "12173958"
+      "pmid": "12173958",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "kubo2019",
@@ -673,7 +693,9 @@
       "title": "Effects of squat training with different depths on lower limb muscle volumes (Kubo K, Ikebukuro T, Yata H, Eur J Appl Physiol)",
       "kind": "peer-reviewed",
       "year": 2019,
-      "pmid": "31230110"
+      "pmid": "31230110",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "glassbrook2017",
@@ -681,7 +703,9 @@
       "title": "A Review of the Biomechanical Differences Between the High-Bar and Low-Bar Back-Squat (Glassbrook DJ et al., J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2017,
-      "pmid": "28570490"
+      "pmid": "28570490",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "kerr2010",
@@ -689,7 +713,9 @@
       "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (Kerr ZY, Collins CL, Comstock RD, Am J Sports Med)",
       "kind": "peer-reviewed",
       "year": 2010,
-      "pmid": "20139328"
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "lander1992",
@@ -697,7 +723,9 @@
       "title": "The effectiveness of weight-belts during multiple repetitions of the squat exercise (Lander JE, Hundley JR, Simonton RL, Med Sci Sports Exerc)",
       "kind": "peer-reviewed",
       "year": 1992,
-      "pmid": "1533266"
+      "pmid": "1533266",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "acsm2009",
@@ -705,7 +733,9 @@
       "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (Med Sci Sports Exerc)",
       "kind": "guideline",
       "year": 2009,
-      "pmid": "19204579"
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-10-17"
     }
   ],
   "plate": {
