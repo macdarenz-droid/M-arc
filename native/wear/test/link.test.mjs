@@ -553,7 +553,7 @@ const JS_RULES = [
 ];
 const walk = (dir) => readdirSync(dir).flatMap((n) => (statSync(path.join(dir, n)).isDirectory() ? walk(path.join(dir, n)).map((f) => `${n}/${f}`) : [n]));
 
-test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sources at most 40,000 B', async () => {
+test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sources at most 42,000 B', async () => {
   const files = walk(JS).sort();
   assert.deepEqual(files, ['app.js', 'common/link.js', 'pages/index/index.css', 'pages/index/index.hml', 'pages/index/index.js', 'pages/wearengine.js']);
   let total = 0;
@@ -567,8 +567,9 @@ test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sou
     const src = buf.toString('utf8');
     for (const [name, rule] of JS_RULES) assert.doesNotMatch(src, rule, `${rel} uses ${name}`);
   }
-  // 34,000 since the 1.1.2 red team (docs/watch-cards/WATCH-C.md W4); 40,000 since WATCH-C2's screens (its W4)
-  assert.ok(total <= 40000, `page sources ${total} B`);
+  // 34,000 since the 1.1.2 red team (docs/watch-cards/WATCH-C.md W4); 40,000 since WATCH-C2's screens (its W4);
+  // 42,000 since the WATCH-C2 fix round (the compiled page stays at most 46,000 B, check-lite-js enforces 48,000)
+  assert.ok(total <= 42000, `page sources ${total} B`);
   assert.equal(createHash('sha256').update(readFileSync(path.join(JS, 'pages/wearengine.js'))).digest('hex'),
     '8c7f1100c840abdb237991b0d436ef9ab49a215269c5fecdb3dd59fe63a71471');
   assert.doesNotMatch(readFileSync(LINK, 'utf8'), /\bimport\b|\brequire\b/, 'link.js makes no Huawei or module calls');

@@ -9,9 +9,20 @@ var client, link, page, timer;
 function no() {}
 function tap(f, a) { try { link[f](a); } catch (e) {} }
 
+// the lines t1 to t5 and colours c1 to c4 that the screens share (index.hml), from link.js view(), by screen
+var SLOTS = 't1 t2 t3 t4 t5 c1 c2 c3 c4'.split(' ');
+function slots(v) {
+	var k = v.sc;
+	return k == 1 ? [v.sp, v.l2, v.la, v.sl, '', v.e1, v.e2, v.e3, v.cb] : k == 2 ? [v.rc, v.sl] :
+		k == 3 ? [v.dn, v.n0, v.n1, v.n2, v.n3, v.b0, v.b1, v.b2, v.b3] : k ? [v.na, v.rest] : [v.l1, v.l2];
+}
+
+// only page data, and the screen last, so that it opens on its own lines; a colour is always a colour
 function paint() {
-	var v = page && link ? link.view() : {};
-	for (var k in v) page[k] = v[k];
+	var v = page && link ? link.view() : 0, s = v && slots(v), k;
+	for (k in v) if (k !== 'sc' && k in page) page[k] = v[k];
+	for (k = 0; s && k < 9; k++) page[SLOTS[k]] = s[k] || (k < 5 ? '' : '#08090a');
+	if (v) page.sc = v.sc;
 }
 
 function send(text, done) {
@@ -43,10 +54,10 @@ function connect() {
 }
 
 export default {
+	// what index.hml binds; t1 to t5 and c1 to c4 are the lines and colours the screens share (slots)
 	data: {
-		l2: '', rest: '', set: 0, add: 0, cb: '', off: 0, ck: '', sc: 0, nm: '', sp: '', la: '', sl: '',
-		cl: '', e1: '', e2: '', e3: '', rc: '', nx: '', ns: '', dn: '', r0: '', r1: '', r2: '', r3: '', n0: '', n1: '', n2: '', n3: '',
-		b0: '', b1: '', b2: '', b3: '', na: '', l1: ''
+		sc: 0, off: 0, ck: '', set: 0, nm: '', cl: '', nx: '', ns: '', r0: '', r1: '', r2: '', r3: '',
+		t1: '', t2: '', t3: '', t4: '', t5: '', c1: '#08090a', c2: '#08090a', c3: '#08090a', c4: '#08090a'
 	},
   onInit() {
 		try {

@@ -46,10 +46,10 @@ function store() {
 async function rig(o = {}) {
   const { Link } = await import(LINK);
   let t = T0;
-  const r = { sent: [], code: o.code === undefined ? 207 : o.code, store: o.store ?? store() };
+  const r = { sent: [], dones: [], code: o.code === undefined ? 207 : o.code, store: o.store ?? store() };
   const io = {
-    store: r.store, now: () => t, keep: () => {}, paint: () => {}, connect: () => {}, defer: (fn) => { tasks.push(fn); },
-    send: (text, done) => { r.sent.push(text); if (r.code !== null) done(r.code); },
+    store: r.store, now: () => (o.now ? o.now(t) : t), keep: () => {}, paint: () => {}, connect: () => {}, defer: (fn) => { tasks.push(fn); },
+    send: (text, done) => { r.sent.push(text); r.dones.push(done); if (r.code !== null) done(r.code); },
   };
   const link = Link(io, 'abcd1234');
   let ticked = 0;
@@ -142,7 +142,8 @@ test('V1 Rest: REST, the countdown, its line, Next and its set, +30 s until the 
   r.link.rx(res('abcd1234-1'));
   assert.equal(r.v().sl, '', 'Saved: no set of the watch saved on this rest');
   r.adv(91000);
-  assert.deepEqual(only(r.v(), ['sc', 'rc', 'add']), { sc: 2, rc: '0:00', add: false });
+  // WATCH-C2 fix round (red team R1): an ended rest leaves page 0 to Set (was: Rest at 0:00)
+  assert.deepEqual(only(r.v(), ['sc', 'rc', 'add']), { sc: 1, rc: '0:00', add: false });
   r.link.rx(snap({ ex: 'Plank', set: null, lt: null, rest: rest1 }));
   assert.deepEqual(only(r.v(), ['nx', 'ns']), { nx: 'Next: Plank', ns: 'Set 2 of 3' });
   r.link.rx(snap({ eid: null, ex: null, si: 0, sn: 0, set: null, lt: null, rest: rest1 }));
@@ -419,4 +420,342 @@ test('V4 a bad plan changes nothing: wrong types, toString tricks, over 2,048 ch
   }
   r.link.next('down');
   assert.equal(r.v().nm, 'Bench press');
+});
+
+// WATCH-C2 fix round: the review and red team of 1c6b2d81 (R1, R8, the pick lock, numbering, surviving mutations,
+// page data, the header clock, remount churn).
+
+/** index.js run with a fake link: its page data object, each key paint() writes in order, and paint(view). */
+function pageRig() {
+  let src = readFileSync(path.join(PAGE, 'index.js'), 'utf8');
+  src = src.split('\n').filter((l) => !l.startsWith('import ')).join('\n').replace(/^export default \{/m, 'return {');
+  let cur, io;
+  const link = { start() {}, tick() {}, show() {}, view: () => cur };
+  const def = new Function('P2pClient', 'Message', 'Builder', 'storage', 'brightness', 'PHONE_PKG', 'PHONE_FP', 'Link', 'makeBoot', 'setInterval', src)(
+    function () {}, function () {}, function () {}, {}, { setKeepScreenOn() {} }, '', '', (x) => { io = x; return link; }, () => 'b', () => 0);
+  const order = [], page = {};
+  for (const k of Object.keys(def.data)) {
+    let x = def.data[k];
+    Object.defineProperty(page, k, { enumerable: true, configurable: true, get: () => x, set: (y) => { order.push(k); x = y; } });
+  }
+  def.onInit.call(page);
+  return { def, page, order, paint(v) { cur = v; order.length = 0; io.paint(); } };
+}
+/** index.hml as the watch draws it: the header and the shown screen, from the page data paint() leaves. */
+const HML = readFileSync(path.join(PAGE, 'index.hml'), 'utf8');
+const PG = pageRig();
+/** The screen for a view: draw() of the page after paint(v), and the keys that paint wrote. */
+function screen(v) {
+  PG.paint(v);
+  return { ...draw(PG.page), written: [...PG.order] };
+}
+function tree(src) {
+  const root = { kids: [] }, stack = [root];
+  for (const m of src.matchAll(/<(\/?)(\w+)([^>]*)>|([^<]+)/g)) {
+    if (m[4] !== undefined) { if (m[4].trim()) stack.at(-1).kids.push({ text: m[4] }); continue; }
+    if (m[1]) { stack.pop(); continue; }
+    const node = { tag: m[2], attrs: Object.fromEntries([...m[3].matchAll(/([\w-]+)(?:="([^"]*)")?/g)].map((a) => [a[1], a[2] ?? ''])), kids: [] };
+    stack.at(-1).kids.push(node);
+    stack.push(node);
+  }
+  return root;
+}
+/** Lines (texts in order) and colours (bound backgrounds in order) on the screen for page data d, and the keys it reads. */
+function draw(d) {
+  const keys = new Set(), get = (k) => (k in d ? (keys.add(k), d[k]) : assert.fail(`not page data: ${k}`));
+  const holds = (c) => { const m = /^\{\{(!?)(\w+)(?:==(\d+))?\}\}$/.exec(c) ?? assert.fail(`condition ${c}`); const x = m[3] === undefined ? !!get(m[2]) : get(m[2]) == +m[3]; return m[1] ? !x : x; };
+  const lines = [], colours = [];
+  const walk = (node) => {
+    let last = true;
+    for (const n of node.kids) {
+      if (n.text !== undefined) { lines.push(n.text.replace(/\{\{(\w+)\}\}/g, (_, k) => get(k))); continue; }
+      const on = 'if' in n.attrs ? holds(n.attrs.if) : 'else' in n.attrs ? !last : true;
+      if ('if' in n.attrs) last = on;
+      if (!on) continue;
+      const bg = /background-color:\{\{(\w+)\}\}/.exec(n.attrs.style ?? '');
+      if (bg) colours.push(get(bg[1]));
+      walk(n);
+    }
+  };
+  walk(tree(HML));
+  return { lines, colours, keys: [...keys] };
+}
+
+test('fix R1: page 0 is Set once the rest has run out, online and offline; a paused rest with time left stays on Rest', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  assert.equal(r.v().sc, 2, 'Rest while it runs');
+  r.adv(91000);
+  r.link.rx(snap({ pt: T0 + 91000, rest: { ...rest1, left: 0 } }));
+  assert.equal(r.v().sc, 1, 'the phone keeps an ended rest (left 0): Set and its Complete');
+  assert.deepEqual(screen(r.v()).lines, ['M/ARC', hm(T0 + 91000), 'Bench press', '>', 'SET 2 OF 3', 'Target', '60 kg x 8', 'Last time 57.5 kg x 8',
+    'Easy', 'Ideal', 'Max', 'Complete set', '']);
+  r.adv(30000);
+  assert.deepEqual(only(r.v(), ['sc', 'off']), { sc: 1, off: 1 }, 'offline: Set stays usable');
+  r.link.complete();
+  assert.equal(r.cmds().at(-1).kind, 'complete_set', 'the set is queued offline');
+  const p = await rig({ code: null });
+  p.link.rx(snap({ rest: { ...rest1, left: 0, p: true } }));
+  assert.equal(p.v().sc, 1, 'a paused rest at 0 is over too');
+  const q = await rig({ code: null });
+  q.link.rx(snap({ rest: { ...rest1, left: 40000, p: true } }));
+  q.adv(60000);
+  q.link.rx(snap({ pt: T0 + 60000, rest: { ...rest1, left: 40000, p: true } }));
+  assert.equal(q.v().sc, 2, 'a paused rest with time left stays on Rest');
+  // The status line has the same rule: "Set N saved" and the rest's Pending show only while the rest runs.
+  const s = await rig({ code: null });
+  s.link.rx(snap());
+  s.link.complete();
+  s.link.rx(res('abcd1234-1'));
+  s.link.rx(snap({ si: 3, set: { ...S1, id: 'set_b3' }, rest: { ...rest1, left: 20000 } }));
+  s.link.rest('rest_add_30');
+  assert.deepEqual(only(s.v(), ['sc', 'sl']), { sc: 2, sl: `Pending ${hms(T0)}` });
+  s.link.rx(res('abcd1234-2'));
+  assert.deepEqual(only(s.v(), ['sc', 'sl']), { sc: 2, sl: 'Set 2 saved' });
+  s.adv(21000);
+  assert.deepEqual(only(s.v(), ['sc', 'sl']), { sc: 1, sl: '' }, 'the rest ran out: Set, and no "Set 2 saved" under its Complete');
+  s.link.complete();
+  assert.deepEqual(only(s.v(), ['sc', 'cl', 'sl']), { sc: 1, cl: `Pending ${hms(T0 + 21000)}`, sl: '' }, 'its Pending is on the Complete pill only');
+});
+
+test('fix R8: after offline, a refusal is not covered by a later Saved, and its batch shows no Back in sync', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.rx(plan());
+  r.adv(30000);
+  r.link.complete();
+  r.link.pick(1);
+  r.link.complete();
+  r.adv(2000);
+  const answer = (o) => r.link.rx(res(r.cmds().at(-1).commandId, o));
+  answer({ status: 'rejected', reason: 'stale_revision' });
+  answer();
+  const seen = [];
+  for (let i = 0; i < 5; i++) { const v = r.v(); seen.push(`${v.sc} ${v.st}`); r.adv(1000); }
+  assert.deepEqual(seen, Array(5).fill('1 Changed on phone'));
+  assert.equal(r.v().sl, 'Changed on phone');
+  // The batch is over: the next set online shows Saved again.
+  r.link.pick(0);
+  r.link.rx(snap({ si: 3, set: { ...S1, id: 'set_b3' } }));
+  r.link.complete();
+  r.link.rx(res('abcd1234-3'));
+  assert.equal(r.v().st, 'Saved');
+  // A batch with a refusal last shows its reason too.
+  const b = await rig({ code: null });
+  b.link.rx(snap());
+  b.link.rx(plan());
+  b.adv(30000);
+  b.link.complete();
+  b.link.pick(1);
+  b.link.complete();
+  b.adv(2000);
+  b.link.rx(res('abcd1234-1'));
+  b.link.rx(res('abcd1234-2', { status: 'rejected', reason: 'session_closed' }));
+  assert.deepEqual(only(b.v(), ['sc', 'st']), { sc: 1, st: 'Workout ended' });
+});
+
+test('fix: picking another row and back keeps a just-saved set locked until the phone moves on', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.rx(plan());
+  r.link.pick(1);
+  r.link.complete();
+  r.link.rx(res('abcd1234-1'));
+  assert.equal(r.v().can, false, 'saved: locked');
+  r.link.pick(2);
+  assert.deepEqual(only(r.v(), ['nm', 'can']), { nm: 'Seated row', can: true }, 'another exercise is free');
+  r.link.pick(1);
+  assert.deepEqual(only(r.v(), ['nm', 'can', 'cb']), { nm: 'Chest press', can: false, cb: PL }, 'back on the saved set: still locked');
+  r.link.complete();
+  assert.equal(r.cmds().length, 1, 'no second command for it');
+  r.link.rx(plan({ srev: 4, rows: [ROWS[0], { ...ROWS[1], d: 1, set: { ...ROWS[1].set, id: 'set_c2' } }, ROWS[2], ROWS[3]] }));
+  assert.deepEqual(only(r.v(), ['nm', 'sp', 'can']), { nm: 'Chest press', sp: 'SET 2 OF 3', can: true }, 'the plan moved on');
+  // The same for the phone's own exercise: saved, a pick away and back, locked until the snap moves on.
+  const s = await rig({ code: null });
+  s.link.rx(snap());
+  s.link.rx(plan());
+  s.link.complete();
+  s.link.rx(res('abcd1234-1'));
+  s.link.pick(1);
+  s.link.pick(0);
+  assert.deepEqual(only(s.v(), ['nm', 'can']), { nm: 'Bench press', can: false });
+  s.link.rx(snap({ si: 3, set: { ...S1, id: 'set_b3' } }));
+  assert.equal(s.v().can, true);
+});
+
+// Seated row: 4 sets, set 1 committed, set 2 skipped, set 3 open. The snap counts every set (SET 3 OF 4); the plan
+// counts the sets not skipped (d 1 of n 3: SET 2 OF 3).
+const SK = { ...ROWS[2], d: 1, n: 3 };
+const snapSK = (o = {}) => snap({ eid: 'e_row', ex: 'Seated row', si: 3, sn: 4, set: SK.set, lt: null, ...o });
+
+test('fix: one numbering rule, from the plan row, for the shown exercise as for a picked one (a skipped set makes them differ)', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snapSK());
+  assert.deepEqual(only(r.v(), ['sp', 'l1']), { sp: 'SET 3 OF 4', l1: 'Seated row 3/4' }, 'no plan yet: the snap');
+  r.link.rx(plan({ rows: [SK, ROWS[0], ROWS[1]] }));
+  assert.deepEqual(only(r.v(), ['sc', 'sp', 'l1']), { sc: 1, sp: 'SET 2 OF 3', l1: 'Seated row 3/4' }, 'row 0 with a skipped set; l1 stays as in 1.1.2');
+  assert.equal(screen(r.v()).lines[4], 'SET 2 OF 3');
+  r.link.complete();
+  r.link.rx(res('abcd1234-1'));
+  r.link.rx(snapSK({ rest: rest1, si: 4, set: { ...SK.set, id: 'set_r4' } }));
+  assert.deepEqual(only(r.v(), ['sc', 'sl']), { sc: 2, sl: 'Set 2 saved' });
+  r.link.rx(plan({ rows: [{ ...SK, d: 2, set: { ...SK.set, id: 'set_r4' } }, ROWS[0], ROWS[1]] }));
+  assert.deepEqual(screen(r.v()).lines.slice(4, 7), ['Set 2 saved', 'Next: Seated row', 'Set 3 of 3, 135 lb x 6']);
+  // A plan that has not caught up with the snap's set yet: the snap's numbers until it does.
+  r.link.rx(snapSK({ si: 4, set: { ...SK.set, id: 'set_r5' } }));
+  assert.equal(r.v().sp, 'SET 4 OF 4');
+  // A picked row is numbered by its row; the shown exercise again by its own row.
+  r.link.rx(snapSK({ si: 4, set: { ...SK.set, id: 'set_r4' } }));
+  r.link.pick(1);
+  assert.deepEqual(only(r.v(), ['nm', 'sp']), { nm: 'Bench press', sp: 'SET 2 OF 3' });
+  r.link.pick(0);
+  assert.deepEqual(only(r.v(), ['nm', 'sp']), { nm: 'Seated row', sp: 'SET 3 OF 3' });
+});
+
+test('fix: surviving mutations: one left or right swipe each keeps the page; a picked effort resets with its next set; a pending +30 s keeps Complete set', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.rx(plan());
+  for (const d of ['left', 'right']) {
+    r.link.next(d);
+    assert.equal(r.v().sc, 1, `${d} on page 0`);
+    r.link.next('up');
+    r.link.next(d);
+    assert.equal(r.v().sc, 3, `${d} on page 1`);
+    r.link.next('down');
+  }
+  // An effort chosen on a picked set is a draft for that set only.
+  r.link.pick(1);
+  r.link.effort(3);
+  assert.deepEqual(only(r.v(), ['e1', 'e2', 'e3']), { e1: PL, e2: PL, e3: AC });
+  r.link.rx(plan({ srev: 4 }));
+  assert.equal(r.v().e3, AC, 'the same set: it stays');
+  r.link.rx(plan({ srev: 5, rows: [ROWS[0], { ...ROWS[1], d: 1, set: { ...ROWS[1].set, id: 'set_c2' } }, ROWS[2], ROWS[3]] }));
+  assert.deepEqual(only(r.v(), ['nm', 'e1', 'e2', 'e3']), { nm: 'Chest press', e1: PL, e2: PL, e3: PL }, 'the plan moved to its next set');
+  // A rest command waiting for its result is not the set's: Complete stays free.
+  const s = await rig({ code: null });
+  s.link.rx(snap({ rest: { ...rest1, left: 5000 } }));
+  s.link.rest('rest_add_30');
+  s.adv(6000);
+  assert.deepEqual(only(s.v(), ['sc', 'cl', 'can', 'cb']), { sc: 1, cl: 'Complete set', can: true, cb: AC });
+});
+
+test('fix: paint() writes only the page data, the screen last; every key the shown screen reads is written by each paint', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  const v = r.v(), P = pageRig();
+  P.paint(v);
+  assert.deepEqual(Object.keys(P.page), Object.keys(P.def.data), 'no other keys on the page (view has eff, st, p1 and more)');
+  assert.ok(Object.keys(v).some((k) => !(k in P.def.data)));
+  for (const k of ['nm', 'cl', 'set', 'off', 'ck', 'sc']) assert.equal(P.page[k], v[k], k);
+  assert.equal(P.order.at(-1), 'sc', 'the screen is written last, so it opens on its own lines');
+  assert.equal(P.order.filter((k) => k === 'sc').length, 1);
+  // Every screen: each key its lines, colours and conditions read is written by the paint, so none keeps an old value.
+  const seen = new Set();
+  const look = (a) => { const v1 = a.v(), d = screen(v1); seen.add(v1.sc); for (const k of d.keys) assert.ok(d.written.includes(k), `${k} on screen ${v1.sc}`); };
+  for (const s of [snap(), snap({ rest: rest1 }), snap({ sid: null, eid: null, ex: null, si: 0, sn: 0, set: null, lt: null })]) {
+    const a = await rig({ code: null });
+    a.link.rx(s);
+    look(a);
+    a.link.rx(plan());
+    a.link.next();
+    look(a);
+    a.link.complete();
+    a.adv(30000);
+    look(a);
+  }
+  const b = await rig({ code: null });
+  b.link.rx(snap());
+  b.link.complete();
+  for (let i = 0; i < 26; i++) b.tick();
+  b.link.rx(res('abcd1234-1'));
+  look(b);
+  assert.deepEqual([...seen].sort(), [0, 1, 2, 3, 4, 5]);
+});
+
+test('fix: each screen shows its card lines from the shared slots, and a bound colour is always a colour', async () => {
+  const r = await rig({ code: null });
+  const colours = Object.keys(PG.def.data).filter((k) => /^c\d$/.test(k));
+  assert.equal(colours.length, 4);
+  const at = (want, bg = []) => {
+    const v = r.v(), d = screen(v);
+    assert.deepEqual(d.lines, v.off ? ['Phone not connected', ...want] : ['M/ARC', v.ck, ...want], `screen ${v.sc}`);
+    assert.deepEqual(d.colours, bg, `screen ${v.sc} colours`);
+    // also while the screen they are for is closed (paint() writes the screen last, so the closing one gets them first)
+    for (const k of colours) assert.match(PG.page[k], /^#[0-9a-f]{6}$/, `${k} on screen ${v.sc}`);
+  };
+  at(['', ''], []); // the first 5 s, before the phone answers
+  r.link.rx(snap({ sid: null, eid: null, ex: null, si: 0, sn: 0, set: null, lt: null }));
+  at(['Start your workout', 'in M/ARC on your phone']);
+  r.link.rx(snap());
+  r.link.rx(plan());
+  at(['Bench press', '>', 'SET 2 OF 3', 'Target', '60 kg x 8', 'Last time 57.5 kg x 8', 'Easy', 'Ideal', 'Max', 'Complete set', ''], [PL, PL, PL, AC]);
+  r.link.next();
+  at(['UP NEXT', '8 of 21 sets done', 'Bench press', '1/3', 'Chest press', '0/3', 'Seated row', '2/4', 'Plank', '0/2'], [AC, PL, PL, PL]);
+  r.link.pick(2);
+  at(['Seated row', '>', 'SET 3 OF 4', 'Target', '135 lb x 6', '', 'Easy', 'Ideal', 'Max', 'Complete set', ''], [AC, PL, PL, AC]);
+  r.link.rx(snap({ rest: rest1 }));
+  at(['REST', '1:30', '', 'Next: Seated row', 'Set 3 of 4, 135 lb x 6', 'Change', '+30 s', 'Skip']);
+  r.link.rx(snap());
+  r.link.complete();
+  r.adv(30000);
+  at(['1 action', 'Pending', '', 'Open M/ARC', 'on your phone']);
+  r.link.rx(snap({ rest: rest1 }));
+  r.link.rx(res('abcd1234-1'));
+  at(['Phone connected', 'Saved', '1 action', 'Rest 1:30']);
+  r.link.rx(JSON.stringify({ t: 'mw', v: 2, k: 'snap' }));
+  at(['Update needed', '']);
+});
+
+test('fix: the header clock is the phone-corrected time, as the Pending time is', async () => {
+  const r = await rig({ code: null, now: (t) => t - 90000 }); // the watch clock 90 s behind the phone
+  const h = r.sent.map((x) => JSON.parse(x)).find((m) => m.k === 'hello');
+  assert.notEqual(hm(h.wt), hm(T0), 'the minutes differ');
+  r.link.rx(snap({ wt: h.wt, pt: T0 }));
+  assert.equal(r.v().ck, hm(T0));
+  r.link.complete();
+  assert.deepEqual(only(r.v(), ['ck', 'cl']), { ck: hm(T0), cl: `Pending ${hms(T0)}` });
+});
+
+test('fix: a phone whose messages arrive while every send fails keeps Phone not connected, with no flip on each snap (red team s8)', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.complete();
+  r.dones.at(-1)(206);
+  assert.deepEqual(only(r.v(), ['sc', 'off']), { sc: 4, off: 1 });
+  const seen = [];
+  for (let i = 0; i < 5; i++) {
+    r.adv(3000);
+    r.link.rx(snap()); // the phone's message arrives; the watch sends the set again
+    seen.push(`${r.v().sc}${r.v().off}`);
+    r.dones.at(-1)(206); // and that send fails
+    seen.push(`${r.v().sc}${r.v().off}`);
+  }
+  assert.deepEqual(seen, Array(10).fill('41'));
+  r.adv(3000);
+  r.link.rx(snap());
+  r.dones.at(-1)(207);
+  assert.deepEqual(only(r.v(), ['sc', 'off', 'cl']), { sc: 1, off: 0, cl: `Pending ${hms(T0)}` }, 'a send that goes through ends it');
+  // Offline only by its failing sends, the outbox still ends in Back in sync.
+  const b = await rig({ code: null });
+  b.link.rx(snap());
+  b.link.complete();
+  b.dones.at(-1)(206);
+  b.link.rx(snap()); // the failure is cleared by the message, the send again is under way
+  b.tick();
+  assert.deepEqual(only(b.v(), ['sc', 'off']), { sc: 4, off: 1 });
+  b.dones.at(-1)(207);
+  b.link.rx(res('abcd1234-1'));
+  assert.deepEqual(only(b.v(), ['sc', 'na']), { sc: 5, na: '1 action' });
+  // With nothing pending, a phone message clears the warning at once (1.1.2), and an old failure does not come back
+  // with the next Complete while its send is under way.
+  const e = await rig({ code: null });
+  e.link.rx(snap());
+  e.link.show();
+  e.dones.at(-1)(206);
+  assert.equal(e.v().off, 1);
+  e.link.rx(snap());
+  assert.deepEqual(only(e.v(), ['sc', 'off']), { sc: 1, off: 0 });
+  e.link.complete();
+  assert.deepEqual(only(e.v(), ['sc', 'off', 'cl']), { sc: 1, off: 0, cl: `Pending ${hms(T0)}` });
 });
