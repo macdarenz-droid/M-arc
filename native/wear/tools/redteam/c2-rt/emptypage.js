@@ -1,0 +1,1 @@
+new ViewModel({ data: {}, onInit: function () {}, onShow: function () {}, onDestroy: function () {}, render: function (vm) { return _c('div', {}, []); } })
