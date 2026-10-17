@@ -1,18 +1,15 @@
 /**
- * The Exercise progress card's trend (QA2-FC-1). Assisted, bodyweight and hold lifts are judged by
- * their mode, as Escobar judges them (less assistance is up). Weighted lifts keep the strength
- * score, with volume for sessions of sets over 10 reps.
+ * The Exercise progress card's trend (QA2-FC-1). BUG-41: the line, its label and the trend come
+ * from one series, the one Escobar judges (progressSeries in brain/trend).
  */
 import type { ResistanceMode } from '@/core/models';
 import type { ExerciseSessionSummary } from '@/brain/history';
-import { liftTrend, trend, type Trend } from '@/brain/trend';
+import { progressSeries, type ProgressMetric, type Trend } from '@/brain/trend';
+
+export { progressSeries };
 
 export function progressTrend(hist: ExerciseSessionSummary[], mode: ResistanceMode): Trend {
-  if (mode === 'assisted' || mode === 'bodyweight' || mode === 'duration') return liftTrend(hist, mode);
-  // UI-11: a carry or sled logs distance, not kg × reps, so an unloaded one has no e1RM or volume
-  // to plot (a flat line at 0) — fall back to the farthest distance that session, when there is one.
-  if (mode === 'conditioning') return trend(hist.map(h => ({ day: h.day, value: h.bestDistanceM || h.bestE1rm || h.volume })));
-  return trend(hist.map(h => ({ day: h.day, value: h.bestE1rm || h.volume })));
+  return progressSeries(hist, mode).trend;
 }
 
 /**
@@ -28,11 +25,14 @@ export function progressValue(h: ExerciseSessionSummary, mode: ResistanceMode): 
   return h.bestE1rm || h.topKg || h.bestReps;
 }
 
-/** The caption under the card: what the trend line plots for this mode (COPY-1: a caption, no explanation). */
-export function progressHint(mode: ResistanceMode): string {
-  if (mode === 'assisted') return 'Less assistance, then more reps';
-  if (mode === 'bodyweight') return 'Best reps';
-  if (mode === 'duration') return 'Longest hold';
-  if (mode === 'conditioning') return 'Farthest distance';
-  return 'Estimated one-rep max';
+const MODE_METRIC: Record<ResistanceMode, ProgressMetric> = { weighted: 'e1rm', conditioning: 'distance', bodyweight: 'reps', duration: 'hold', assisted: 'assist' };
+
+const HINT: Record<ProgressMetric, string> = {
+  e1rm: 'Estimated one-rep max', top: 'Top load', volume: 'Volume', distance: 'Farthest distance',
+  assist: 'Less assistance', reps: 'Best reps', hold: 'Longest hold',
+};
+
+/** The label under the card's line: the metric it plots (COPY-1: a label, no explanation). */
+export function progressHint(mode: ResistanceMode, metric: ProgressMetric = MODE_METRIC[mode]): string {
+  return HINT[metric];
 }
