@@ -1,20 +1,17 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d5e987a440c22961f3d982cf45309a41f98e7f34809d725f1f8ac95a3404991c
-// The only How-to module in the main bundle (plan 2.9: <= 2,048 B, no runtime imports).
-export const HOWTO_IDS = [
-  "lib_dumbbell_lateral_raise",
-  "lib_barbell_back_squat",
-  "lib_pull_up",
-  "lib_hanging_leg_raise",
-  "lib_lat_pulldown",
-  "lib_seated_cable_row",
-  "lib_leg_press",
-  "lib_machine_chest_press",
-] as const;
-export type HowToId = (typeof HOWTO_IDS)[number];
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/ids.mjs). inputsSha256=2d0e28898451a49d0b6d8c4bce7902beb113a6b6f93d5519dbaf116e10d1b12a
+// Main-bundle How-to module (plan 2.9, 5.2): 4-char hashes of the shipped ids, hinted ids first.
+export type HowToId = string & { readonly __howTo: true };
 export const HOWTO_LABEL = "How to do it";
-export function hasHowTo(id: string): id is HowToId {
-  return (HOWTO_IDS as readonly string[]).includes(id);
+const S = "2eTgR?oeeYPaW@NI22\\X@@[:2`_N8@HY";
+const H = ["Heel of palm, wrist straight."];
+const O = "A";
+function at(s: string): number {
+  if (!s.startsWith('lib_')) return -1;
+  let x = 0x811c9dc5, t = '';
+  for (let i = 0; i < s.length; i++) x = Math.imul(x ^ s.charCodeAt(i), 0x01000193) >>> 0;
+  for (x = (x ^ (x >>> 24)) & 0xffffff; t.length < 4; x >>= 6) t = String.fromCharCode(48 + (x & 63)) + t;
+  for (let i = 0; i < S.length; i += 4) if (S.startsWith(t, i)) return i / 4;
+  return -1;
 }
-export const HOWTO_HINTS: Partial<Record<HowToId, string>> = {
-  "lib_machine_chest_press": "Heel of palm, wrist straight.",
-};
+export function hasHowTo(id: string): id is HowToId { return at(id) >= 0; }
+export function howToHint(id: string): string | undefined { return H[O.charCodeAt(at(id)) - 65]; }

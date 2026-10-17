@@ -4,17 +4,18 @@
 // later; the chunk loads then, so the map is in before it is seen and golden B's timing starts from its own observer.
 // A "Feel it" chip or "This is usually why" before that loads it at once and is replayed after the mount (HT-10's
 // finding on #166: the controller's own listeners exist only once the section is in).
-import { useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useContext, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { SectionProps } from './index';
 import { howToLoadFailed } from '../lazy';
 import { useFeelMap, type FeelPending } from '../feel/useFeelMap';
 import { listen } from '../events';
 import { chromeIdOf } from '../PlateView';
+import { LoadersContext } from '../loadersContext';
 import '../css/feel.css';
 
 export interface FeelChunk { readonly default: { readonly id: string; readonly pre: string; readonly section: string } }
-const CHUNKS = import.meta.glob<FeelChunk>('../../../howto/generated/feel-*.ts');
-/** The chunk for a How-to: feel-<chromeId> (golden B's card id prefix, e.g. lateral-raise; supervisor ruling, #119). */
+/** The chunk for a How-to: feel-<chromeId> (golden B's card id prefix, e.g. lateral-raise; supervisor ruling, #119),
+ *  found in the loaders module's FEEL map (LIB-2, D-LIB2-sheet-maps; the sheet chunk holds no per-id map). */
 export const feelPath = (chromeId: string) => `../../../howto/generated/feel-${chromeId}.ts`;
 
 /** Resolves once two frames have passed and `el` is within one `root` height of `root`'s visible area. `root` is the
@@ -34,9 +35,10 @@ export function Feel({ howTo }: SectionProps) {
   const host = useRef<HTMLDivElement>(null);
   const pending = useRef<FeelPending | null>(null);
   const [section, setSection] = useState<string | null>(null);
+  const loaders = useContext(LoadersContext);
   // a layout effect, so the early listeners are on before the first paint shows the chip
   useLayoutEffect(() => {
-    const load = CHUNKS[feelPath(chromeIdOf(howTo))];
+    const load = loaders?.FEEL[chromeIdOf(howTo)];
     const el = host.current;
     if (!load || !el) return;
     let live = true, started = false;

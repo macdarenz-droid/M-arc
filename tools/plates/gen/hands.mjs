@@ -10,6 +10,7 @@
 //     HOWTO_ZOOM_CSS part for it) through HT-2's rewriteCss. Vite splits it off with the chunk and loads it on first
 //     open, after hand.css. The posture close-ups (HT-7) use the same rules and import the same file.
 // Nothing is re-rendered or re-serialized: every string is a slice of the approved page.
+import { goldenInputs, goldenRows } from '../library/registry.mjs';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -21,7 +22,7 @@ export const PLATES_JSON = 'tools/plates/plates.json';
 export const FIXTURE = 'tests/howto/golden/howto-layers.html';
 export const inputs = () => [
   ...Object.keys(readManifest().files).map(p => `tools/plates/layers/${p}`),
-  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', PLATES_JSON, FIXTURE,
+  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', ...goldenInputs(), FIXTURE,
 ];
 
 /** The ht token a banned literal moves to, named from the literal (`font-size: 10.5px` -> --ht-fs-10-5px), so the
@@ -124,11 +125,7 @@ export function chromeRules(css, selectors = CHROME_SELECTORS) {
 /** D-HT6-budget (supervisor, 2026-09-30): each built `hand-<id>-*.js` chunk (www/assets, gzip default level) may be at
  *  most its size measured at the ruling + 10 %, rounded up. No detail is cut to fit (golden B is the reference). The
  *  measured sizes are pinned in hands.test; gate block HT-6 holds the built chunks to `handCeiling`. */
-export const HAND_MEASURED = Object.freeze({
-  'lateral-raise': { raw: 26570, gz: 8134 }, 'barbell-back-squat': { raw: 34361, gz: 10629 }, 'pull-up': { raw: 84470, gz: 23896 },
-  'hanging-leg-raise': { raw: 44454, gz: 11445 }, 'lat-pulldown': { raw: 68272, gz: 19574 }, 'seated-cable-row': { raw: 23824, gz: 7673 },
-  'leg-press': { raw: 22227, gz: 7430 }, 'machine-chest-press': { raw: 24375, gz: 7426 },
-});
+export const HAND_MEASURED = Object.freeze(JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/budgets/hands.json'), 'utf8')).measured);   // LIB-2: data, same values
 export const handCeiling = id => { const m = HAND_MEASURED[id]; if (!m) throw new Error(`hands: no budget for ${id}`); return { raw: Math.ceil((m.raw * 11) / 10), gz: Math.ceil((m.gz * 11) / 10) }; };   // integer maths (84470 * 1.1 is 92917.00000000001)
 
 /** A single-quoted JS string literal of `s`: its value is `s` exactly, and the markup's double quotes stay unescaped,
@@ -143,8 +140,8 @@ export function flatStyle(style) {
   return style.replace(at, '');
 }
 
-export async function outputs() {
-  const rows = JSON.parse(readFileSync(join(ROOT, PLATES_JSON), 'utf8'));
+async function outputsOf() {
+  const rows = goldenRows();
   // The committed golden-B page (HT-4's fixture), refused unless it is the approved page. HT-4's gate block rebuilds
   // it from the vendored layers (L1-B), so reading it here keeps `generate` fast (no page build per run).
   const page = readFileSync(join(ROOT, FIXTURE));
@@ -165,4 +162,12 @@ export async function outputs() {
   }
   out.push({ path: 'src/slices/howto/css/hand.css', text: rewrite(`${H.HAND_CSS}\n${chromeRules(chrome)}`) });
   return out;
+}
+
+/** LIB-2 (design 6.1): each output's own inputs. Every hands.mjs output is cut from one shared source (the golden
+ *  B page built from the whole vendored folder), so a file's inputs are that whole set; the rows come from the
+ *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4). */
+export const inputsFor = () => inputs();
+export async function outputs(ctx) {
+  return (await outputsOf(ctx)).map(o => ({ ...o, inputs: inputsFor(o.path) }));
 }
