@@ -15,7 +15,7 @@
 - **Offline:** with nothing pending, Set and Rest stay usable and the header shows "Phone not connected" in the warning colour; with something pending, the Phone not connected screen shows (the set is locked anyway).
 - **Back in sync** shows for 3 ticks when the outbox empties after being offline with something pending, then returns by itself (no Continue tap).
 - **A hello after each applied result** (2 ticks later), so a watch clock step is corrected during a workout (red team of `d303bbce`, RT5).
-- **Build:** babel `comments: false` through a wrapper around Huawei's webpack config in `build-lite-bin.sh`; it fails the build unless it finds exactly one babel rule. The executed code is token-identical (`c2-feas` budget research, 2026-10-17). Huawei's `wearengine.js` stays byte-identical.
+- **Build:** babel `comments: false` and `compact: true` (without `compact` the page was 47,103 B; Huawei's release mode minifies too) through a wrapper around Huawei's webpack config in `build-lite-bin.sh`; it fails the build unless it finds exactly one babel rule. The executed code is token-identical (`c2-feas` budget research, 2026-10-17). Huawei's `wearengine.js` stays byte-identical.
 
 ## Protocol additions (`mw` v1; older watches ignore them)
 - **snap** gains `eid` (the shown exercise's entry id, or null) and `lt` (last time for `set`: `{w, u, r}`, or null). Still at most 700 B.
@@ -40,7 +40,7 @@
 - **reserved_paths:** everything else, notably `wearengine.js` (byte-identical), `WearEnginePlugin.java`, `src/core/**`, `src/slices/workout/**`, `.github/**`.
 
 ## Acceptance
-Each new test fails before and passes after. Existing tests stay as they are, except these deliberate spec changes in `native/wear/test/link.test.mjs` W4, each at least as strict: the version pin (1.2.0), the page sources cap (40,000 B, from 34,000; the compiled page stays at most 46,000 B and `check-lite-js` enforces 48,000), and the markup pin of button labels (replaced by a pin of the new labels and handlers).
+Each new test fails before and passes after. Existing tests stay as they are, except these deliberate spec changes in `native/wear/test/link.test.mjs` W4, each at least as strict: the version pin (1.2.0), the page sources cap (40,000 B, from 34,000; the compiled page stays at most 46,000 B and `check-lite-js` enforces 48,000), and the markup pin of button labels (replaced by a pin of the new labels and handlers). In `tests/watch-contract.test.ts`, the clock block's hello counts cover only the start hellos (before the first command), because 1.2.0 also says hello after each applied set (integration, 2026-10-17).
 - **P1** (phone, `tests/watch-link.test.ts`): snap `eid` and `lt`; plan rows (order from the shown one, wrap, cap 4, done and skipped left out, plain weight only for `set`, `lt` values, counts), at most 1000 B and ASCII with long names, sent after a hello answer and on change only, never while hidden or held.
 - **V1** (watch): each screen's view fields from the snap, plan and outbox state, including the header clock, offline header, Pending label, status line and dots.
 - **V2** (watch): swipe paging, pick, the pick holding across a snap with the same `eid` and clearing on a new `eid`, `sid` or a row leaving; Complete on a picked row sends that set's `id`, `rev`, values and effort.

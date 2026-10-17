@@ -16,7 +16,8 @@ import { initStore, replaceState, state } from '@/core/store';
 import { setTheme } from '@/theme/engine';
 import { setSet, startRest, startSession } from '@/slices/workout/session';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
-import { buildSnapshot, createLink } from '@/native/watchLink';
+import { buildPlan, buildSnapshot, createLink } from '@/native/watchLink';
+import { openEntryId } from '@/slices/workout/Train';
 import { createLab, type WearEnginePlugin } from '@/native/wearEngine';
 
 const LINK = fileURLToPath(new URL('../native/wear/app/entry/src/main/js/default/common/link.js', import.meta.url));
@@ -254,6 +255,7 @@ describe('WATCH-C 1.1.2 review and red team: clock samples over a lab-like route
     return { rows, sets: sets.map((x, i) => ({ err: Date.parse(x.at!) - tapAt[i]!, future: (x.flags ?? []).includes('future_time') })) };
   }
   const every5 = (from: number, n: number) => Array.from({ length: n }, (_, i) => from + i * 5_000);
+  const startHellos = (rows: string[]) => { const i = rows.findIndex(x => x.startsWith('mw cmd')); return (i < 0 ? rows : rows.slice(0, i)).filter(x => x.startsWith('mw hello')); };
   const atTap = (sets: Array<{ err: number; future: boolean }>, n: number) => {
     expect(sets).toHaveLength(n);
     for (const x of sets) expect(x.future || Math.abs(x.err) > 300 ? x : 'ok').toBe('ok');
@@ -263,13 +265,15 @@ describe('WATCH-C 1.1.2 review and red team: clock samples over a lab-like route
     startSession(split12);
     const r = await run({ theta: 0, jsFrozenUntil: T0 + 75_600 }, T0 + 60_000, every5(T0 + 80_000, 11));
     atTap(r.sets, 11);
-    expect(r.rows.filter(x => x.startsWith('mw hello')).every(x => /js \+15\d{3}ms$/.test(x))).toBe(true);
+    // WATCH-C2: the start hellos, before the first command; 1.2.0 also says hello after each applied set
+    expect(startHellos(r.rows)).toHaveLength(2);
+    expect(startHellos(r.rows).every(x => /js \+15\d{3}ms$/.test(x))).toBe(true);
   });
   for (const reverse of [false, true]) {
     it(`JS frozen 35 s holds three hellos, handed over ${reverse ? 'newest first' : 'in order'}; watch clock 37 s behind`, async () => {
       startSession(split12);
       const r = await run({ theta: 37_000, jsFrozenUntil: T0 + 95_000, reverse }, T0 + 60_000, every5(T0 + 100_000, 6));
-      expect(r.rows.filter(x => x.startsWith('mw hello'))).toHaveLength(3);
+      expect(startHellos(r.rows)).toHaveLength(3);
       atTap(r.sets, 6);
     });
   }
@@ -284,5 +288,47 @@ describe('WATCH-C 1.1.2 review and red team: clock samples over a lab-like route
     const r = await run({ theta: 8_000, failHelloAnswers: 2 }, T0 + 60_000, every5(T0 + 63_000, 3));
     expect(r.rows.filter(x => x === 'mw snap 206')).toHaveLength(2);
     atTap(r.sets, 3);
+  });
+});
+
+describe('WATCH-C2 X2 Up next: a pick on the watch logs that exercise on the phone', () => {
+  it("the watch's link.js picks a row from the phone's real plan; Complete commits that set; the pick holds until the phone shows another exercise", async () => {
+    const Link = await loadWatch();
+    const split3: Split = { ...split, exercises: [
+      { exerciseId: 'lib_barbell_bench_press', sets: 3 }, { exerciseId: 'lib_dumbbell_bench_press', sets: 3 }, { exerciseId: 'lib_dumbbell_lateral_raise', sets: 3 },
+    ] };
+    startSession(split3);
+    const e = () => state.value.active!.entries;
+    openEntryId.value = e()[0]!.id ?? null;
+    type X2Watch = WatchLink & { next(d?: string): void; pick(i: number): void };
+    let watch: X2Watch | null = null;
+    const phone = createLink({ send: async t => { watch!.rx(t); return 207; }, log: () => undefined, plan: () => buildPlan(state.value) });
+    watch = onWatch(Link, { store: watchStore(), send: (t: string, done: (c: number) => void) => { void phone.receive(t, Date.now()); done(207); }, keep: () => undefined, now: () => Date.now() }, 'k3x9qa05') as unknown as X2Watch;
+    const v = () => watch!.view() as unknown as Record<string, unknown>;
+    try {
+      await phone.start(); // the lab's Connect: the link follows the phone's changes
+      watch.start();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(v()).toMatchObject({ sc: 1, nm: e()[0]!.name });
+      watch.next();
+      expect(v().sc).toBe(3);
+      watch.pick(1);
+      expect(v()).toMatchObject({ sc: 1, nm: e()[1]!.name, sp: 'SET 1 OF 3' });
+      watch.complete();
+      await vi.advanceTimersByTimeAsync(400);
+      const done = (i: number) => e()[i]!.sets.filter(x => x.status === 'committed').length;
+      expect([done(0), done(1), done(2)]).toEqual([0, 1, 0]);
+      // The phone still shows the first exercise, so the watch keeps its pick and moves to its next set.
+      expect(v()).toMatchObject({ nm: e()[1]!.name, sp: 'SET 2 OF 3' });
+      watch.complete();
+      await vi.advanceTimersByTimeAsync(400);
+      expect([done(0), done(1), done(2)]).toEqual([0, 2, 0]);
+      // The phone opens the third card: the watch follows it (the rest after the set is running).
+      openEntryId.value = e()[2]!.id ?? null;
+      await vi.advanceTimersByTimeAsync(400);
+      expect(v()).toMatchObject({ sc: 2, nm: e()[2]!.name, sp: 'SET 1 OF 3', nx: `Next: ${e()[2]!.name}` });
+    } finally {
+      openEntryId.value = null;
+    }
   });
 });
