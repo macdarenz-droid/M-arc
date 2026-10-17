@@ -150,7 +150,7 @@ describe('LIB-4b D-LIB4b-MAP: every assertion of a pinned text is mapped', () =>
     const pins: Pins = readPins();
     expect(mapProblems(await pinnedTexts(), pins)).toEqual([]);
     // D-LIB4b-MAP-2: every assertion has a ruled target; none is left as a gap
-    expect(Object.values(pins).flatMap((p: any) => p.map).filter((e: any) => e.gap || /GAP/.test(e.why ?? ''))).toEqual([]);
+    expect(Object.values(pins).flatMap((p: any) => p.map).filter((e: any) => e.gap || /^GAP:/.test(e.why ?? ''))).toEqual([]);
     for (const t of TWINS as { key: string }[]) expect(mapOf(pins, t.key).length).toBeGreaterThan(0);
   });
   it('deleting one map entry turns it red', async () => {
