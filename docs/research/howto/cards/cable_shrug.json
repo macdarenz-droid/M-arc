@@ -147,10 +147,11 @@
     },
     {
       "id": "c7",
-      "text": "Tempo: about 1-2 s up and 1-2 s down, with a one-second hold at the top and a slow lowering (the slow lowering is from the ACE barbell shrug page; same shoulder movement on a cable).",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, with a one-second hold at the top and a slow lowering (the slow lowering is from the ACE barbell shrug page; same shoulder movement on a cable). ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
       "tags": [
         "CONSENSUS",
-        "MECH"
+        "MECH",
+        "WEAK"
       ],
       "sources": [
         "acsm2009",
@@ -160,7 +161,12 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -362,7 +368,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-17"
     },
     {
       "id": "ace-shrug",

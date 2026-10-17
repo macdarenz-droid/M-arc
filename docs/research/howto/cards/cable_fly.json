@@ -242,7 +242,8 @@
       "id": "c12",
       "text": "ACSM recommends a moderate speed: 1-2 seconds up and 1-2 seconds down (ACSM, for heavy sets in trained lifters).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm2009"
@@ -349,7 +350,7 @@
       "year": 2009,
       "pmid": "19204579",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-17"
     },
     {
       "id": "kolber2010",
