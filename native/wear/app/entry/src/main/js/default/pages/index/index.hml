@@ -1,6 +1,7 @@
-<div class="rt co" onswipe="onSwipe">
-<div if="{{off}}" class="wb mt"><text class="a w x">Phone not connected</text></div>
-<div else class="hd mt"><text class="hb l">M/ARC</text><text class="hb f r">{{ck}}</text></div>
+<div class="rt co" onclick="onTouch" onswipe="onSwipe">
+<div class="hd mt"><div if="{{hd}}" class="hh"><image class="hi" src="{{im}}" style="animation-duration:{{hd}}"></image></div>
+<div if="{{off}}" class="wb"><text class="a w x" style="color:{{hc}}">Phone not connected</text></div>
+<div else class="hk"><text class="hb l" style="color:{{hc}}">{{hm}}</text><text class="hb f r" style="color:{{kc}}">{{ck}}</text></div></div>
 <div if="{{sc==1}}" class="bx co cc">
 <div class="nr cc" onclick="onNext"><text class="g f x">{{nm}}</text><text class="gt l">></text></div>
 <text class="b m x">{{t1}}</text>
@@ -22,8 +23,9 @@
 <text class="e f x" onclick="onNext">{{nx}}</text>
 <div class="nr cc" onclick="onNext"><text class="ns m r">{{ns}}</text><text class="ch l">Change</text></div>
 <div class="rw cc">
-<div class="p3 cc ac" onclick="onAdd"><text class="pt f x">+30 s</text></div>
-<div class="p3 cc dk" onclick="onSkip"><text class="pt f x">Skip</text></div>
+<div class="p1 cc dk" onclick="onSub"><text class="pt f x">-15 s</text></div>
+<div class="p1 cc ac" onclick="onAdd"><text class="pt f x">+15 s</text></div>
+<div class="p1 cc dk" onclick="onSkip"><text class="pt f x">Skip</text></div>
 </div>
 <text class="a m x">{{t3}}</text>
 </div>
@@ -62,6 +64,9 @@
 <div class="p3 cc dk" onclick="onMore"><text class="gt f">+</text></div>
 </div>
 <div class="p2 cc ac" onclick="onDone"><text class="pc f x">Done</text></div>
+</div>
+<div if="{{sc==8}}" class="bx co cc">
+<text class="k q x">{{t1}}</text>
 </div>
 <div if="{{!sc}}" class="bx co cc">
 <text class="g f x">{{t1}}</text>

@@ -3,9 +3,10 @@ import storage from '@system.storage';
 import brightness from '@system.brightness';
 import vibrator from '@system.vibrator';
 import sensor from '@system.sensor';
+import router from '@system.router';
 import { PHONE_PKG, PHONE_FP, Link, makeBoot } from '../../common/link.js';
 
-// WATCH-C page; common/link.js does the rest. Every entry point catches what it throws.
+// WATCH-C page; common/link.js does the rest. Entry points catch what they throw.
 var client, link, page, timer, ct = 0;
 
 // a tap within 1 s of a screen change is the same finger
@@ -18,18 +19,18 @@ function tap(f, a) { try { link[f](a); } catch (e) {} }
 var SLOTS = 't1 t2 t3 t4 t5 c1 c2 c3 c4'.split(' ');
 function slots(v) {
 	var k = v.sc;
-	return k == 1 ? [v.sp, v.l2, v.la, v.sl || v.hr, '', v.e1, v.e2, v.e3, v.cb] : k == 2 ? [v.rc, v.sl, v.hr] :
+	return v.dm ? [k == 2 ? v.rc : v.l2] : k == 1 ? [v.sp, v.l2, v.la, v.sl || v.hr, '', v.e1, v.e2, v.e3, v.cb] : k == 2 ? [v.rc, v.sl, v.hr] :
 		k == 3 ? [v.dn, v.n0, v.n1, v.n2, v.n3, v.b0, v.b1, v.b2, v.b3] : k == 7 ? [v.ak, v.av] : k ? [v.na, v.add ? v.rest : '', v.na && 'Pending'] : [v.l1, v.l2];
 }
 
-// a new screen gets set after t1: no build inside another (611b09c8)
+// a new screen: set and t1 go last (611b09c8)
 function paint() {
-	var v = page && link ? link.view() : 0, s = v && slots(v), k;
+	var v = page && link ? link.view() : 0, s = v && slots(v), k, e = v.dm ? 8 : v.sc;
 	if (!v) return;
-	if (v.sc !== page.sc) page.set = false, page.t1 = '';
+	if (e !== page.sc) page.set = false, page.t1 = '';
 	for (k in v) if (k !== 'sc' && k !== 'set' && k in page) page[k] = v[k];
 	for (k = 1; k < 9; k++) page[SLOTS[k]] = s[k] || (k < 5 ? '' : '#08090a');
-	page.sc = v.sc;
+	page.sc = e;
 	page.set = v.set;
 	page.t1 = s[0] || '';
 }
@@ -45,7 +46,7 @@ function send(text, done) {
 	}
 }
 
-// C3: the heart rate goes with keep-on; never stored or sent
+// C3: heart rate with keep-on; never stored or sent
 function keep(on) {
 	try { brightness.setKeepScreenOn({ keepScreenOn: on, success: no, fail: no }); } catch (e) {}
 	hr(on);
@@ -56,6 +57,9 @@ function hr(on) {
 	try { sensor.unsubscribeHeartRate(); } catch (e) {}
 	if (on) try { sensor.subscribeHeartRate({ success: function (d) { tap('beat', d && d.heartRate); }, fail: function (d, c) { tap('beat', -c); } }); } catch (e) {}
 }
+
+// C4: Done
+function hl(p) { try { router.replace({ uri: 'pages/hl/hl', params: p }); } catch (e) {} }
 
 function connect() {
 	try {
@@ -73,12 +77,13 @@ function connect() {
 export default {
 	data: {
 		sc: 0, off: 0, ck: '', set: 0, nm: '', cl: '', nx: '', ns: '', r0: '', r1: '', r2: '', r3: '',
-		t1: '', t2: '', t3: '', t4: '', t5: '', c1: '#08090a', c2: '#08090a', c3: '#08090a', c4: '#08090a'
+		t1: '', t2: '', t3: '', t4: '', t5: '', c1: '#08090a', c2: '#08090a', c3: '#08090a', c4: '#08090a',
+		hm: '', hd: '', im: '', hc: '', kc: ''
 	},
   onInit() {
 		try {
 			page = this;
-			link = Link({ store: storage, send: send, keep: keep, connect: connect, now: function () { return Date.now(); }, paint: paint, buzz: buzz }, makeBoot());
+			link = Link({ store: storage, send: send, keep: keep, connect: connect, now: function () { return Date.now(); }, paint: paint, buzz: buzz, hl: hl }, makeBoot());
 			link.start();
 			timer = setInterval(function () { try { link.tick(); } catch (e) {} }, 1000);
 			paint();
@@ -87,7 +92,8 @@ export default {
   onShow() { try { link.show(); } catch (e) {} },
   onComplete() { try { g(1) && link.complete(); } catch (e) {} },
   onEffort() { try { link.effort(); } catch (e) {} },
-  onAdd() { try { g() && link.rest('rest_add_30'); } catch (e) {} },
+  onSub() { g() && tap('rest', 'rest_sub_15'); },
+  onAdd() { try { g() && link.rest('rest_add_15'); } catch (e) {} },
   onSkip() { try { g(1) && link.rest('rest_skip'); } catch (e) {} },
   onEasy() { tap('effort', 1); },
   onIdeal() { tap('effort', 2); },
@@ -103,6 +109,7 @@ export default {
   onLess() { tap('adj', -1); },
   onMore() { tap('adj', 1); },
   onDone() { g(1) && tap('adj', 0); },
+  onTouch() { tap('touch'); },
   onDestroy() {
 		clearInterval(timer);
 		keep(false);

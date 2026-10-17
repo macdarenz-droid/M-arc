@@ -346,7 +346,9 @@ test('L2 Rest done at 0: one long vibration per rest, OK goes back to Set and se
   assert.deepEqual([s.v().sc, s.buzz], [1, 0]);
 });
 
-test('L3 Adjust: a tap on the value; steps by st, else 2.5 kg or 5 lb, and reps by 1; clamps; 2 decimals; swipes step and switch the field, never page', async () => {
+// WATCH-C4 spec change: Adjust steps the load by 1 (not st, 2.5 kg or 5 lb) and left is the previous of three fields, so the
+// values below are the C4 ones; c4.test.mjs L6 covers the decimals field.
+test('L3 Adjust: a tap on the value; steps by 1 (C4), and reps by 1; clamps; 2 decimals; swipes step and switch the field, never page', async () => {
   const r = await rig({ code: null });
   r.link.rx(snap({ set: { ...S2, st: 1.25 } }));
   r.link.rx(plan());
@@ -355,11 +357,11 @@ test('L3 Adjust: a tap on the value; steps by st, else 2.5 kg or 5 lb, and reps 
   assert.deepEqual(lines(r.v()).slice(2), ['KG', '60', '-', '+', 'Done']);
   r.link.adj(1);
   r.link.next('up');
-  assert.equal(r.v().av, '62.5', 'st 1.25');
+  assert.equal(r.v().av, '62', 'by 1, st 1.25 unused (C4)');
   r.link.next('down');
   r.link.adj(-1);
   r.link.adj(-1);
-  assert.deepEqual(only(r.v(), ['sc', 'av']), { sc: 7, av: '58.75' }, 'no page turn');
+  assert.deepEqual(only(r.v(), ['sc', 'av']), { sc: 7, av: '59' }, 'no page turn');
   r.link.next('left');
   assert.deepEqual(only(r.v(), ['sc', 'ak', 'av']), { sc: 7, ak: 'REPS', av: '8' });
   for (const d of [undefined, '', 'x', null, 0, { toString: 1 }]) {
@@ -374,7 +376,7 @@ test('L3 Adjust: a tap on the value; steps by st, else 2.5 kg or 5 lb, and reps 
   r.link.next('right');
   assert.equal(r.v().ak, 'KG');
   r.link.adj(0);
-  assert.deepEqual(only(r.v(), ['sc', 'l2', 'sp']), { sc: 1, l2: '58.75 kg x 2', sp: 'SET 2 OF 5' });
+  assert.deepEqual(only(r.v(), ['sc', 'l2', 'sp']), { sc: 1, l2: '59 kg x 2', sp: 'SET 2 OF 5' });
   r.link.next('up');
   assert.equal(r.v().sc, 3, 'Done: swipes page again');
   // Not on a set that is pending: a refusal that frees it later does not open Adjust.
@@ -385,14 +387,14 @@ test('L3 Adjust: a tap on the value; steps by st, else 2.5 kg or 5 lb, and reps 
   assert.equal(p.v().sc, 1);
   p.link.rx(res('abcd1234-1', { status: 'rejected', reason: 'stale_revision' }));
   assert.deepEqual(only(p.v(), ['sc', 'can']), { sc: 1, can: true });
-  // Defaults: 2.5 kg, 5 lb; the load stays above 0 and at most 1000; 2 decimals (0.1 steps would leave 102.49999999999999).
-  for (const [set, steps, want] of [[{ st: undefined }, 1, '62.5'], [{ u: 'lb', w: 135, st: undefined }, -1, '130'], [{ w: 2.5, st: undefined }, -1, '2.5'],
-    [{ w: 1, st: 2.5 }, -3, '1'], [{ w: 997.5, st: undefined }, 3, '1000'], [{ w: 102.2, st: 0.1 }, 3, '102.5'], [{ w: 999.45, st: 0.1 }, 3, '999.75'],
-    [{ w: null, st: undefined }, 1, '2.5'], [{ w: null, st: undefined }, -1, '-']]) {
+  // C4: by 1 kg or 1 lb; the load stays above 0 and at most 1000; 2 decimals (0.14 + 1 would leave 1.1400000000000001).
+  for (const [set, steps, want] of [[{ st: undefined }, 1, '61'], [{ u: 'lb', w: 135, st: undefined }, -1, '134'], [{ w: 2.5, st: undefined }, -1, '1.5'],
+    [{ w: 1, st: 2.5 }, -3, '1'], [{ w: 997.5, st: undefined }, 3, '1000'], [{ w: 0.14, st: 0.1 }, 1, '1.14'], [{ w: 996.75, st: 0.1 }, 3, '999.75'],
+    [{ w: null, st: undefined }, 1, '1'], [{ w: null, st: undefined }, -1, '-']]) {
     const a = await rig({ code: null });
     a.link.rx(snap({ set: { ...S2, ...set } }));
     a.link.adj();
-    a.link.next(set.w === null ? 'left' : 'up');
+    a.link.next(set.w === null ? 'right' : 'up'); // C4: right is REPS to KG (left is now DECIMALS)
     a.link.next('down');
     for (let i = 0; i < Math.abs(steps); i++) a.link.adj(Math.sign(steps));
     assert.deepEqual(only(a.v(), ['ak', 'av']), { ak: set.u === 'lb' ? 'LB' : 'KG', av: want }, JSON.stringify(set));
@@ -407,9 +409,9 @@ test('L3 the draft lives in memory, tied to its set id and rev; Complete sends i
   r.link.next('left');
   r.link.adj(1);
   r.link.adj(0);
-  assert.equal(r.v().l2, '62.5 kg x 9');
+  assert.equal(r.v().l2, '61 kg x 9'); // C4: by 1 (was 62.5 by st)
   r.link.rx(snap({ srev: 4 }));
-  assert.equal(r.v().l2, '62.5 kg x 9', 'the same set id and rev: kept');
+  assert.equal(r.v().l2, '61 kg x 9', 'the same set id and rev: kept');
   r.link.rx(snap({ srev: 4, si: 3, set: { ...S2, id: 'set_b3' }, nx: NX.slice(1) }));
   assert.equal(r.v().l2, '60 kg x 8', 'another set with the same rev: not its draft');
   r.link.rx(snap({ srev: 4 }));
@@ -421,13 +423,13 @@ test('L3 the draft lives in memory, tied to its set id and rev; Complete sends i
   r.link.rx(snap({ srev: 6, si: 3, set: { ...S2, id: 'set_b3', rev: 0 }, nx: NX.slice(1) }));
   assert.equal(r.v().sc, 1, 'the phone moved on: Adjust closes');
   r.link.rx(snap({ srev: 5, set: { ...S2, rev: 2 } }));
-  assert.deepEqual(only(r.v(), ['sc', 'l2']), { sc: 1, l2: '62.5 kg x 8' }, 'a stale snap brings back the draft value, not Adjust');
+  assert.deepEqual(only(r.v(), ['sc', 'l2']), { sc: 1, l2: '61 kg x 8' }, 'a stale snap brings back the draft value, not Adjust');
   r.link.complete();
-  assert.deepEqual(only(r.cmds()[0], ['setId', 'expectedRev', 'load', 'reps']), { setId: 'set_b2', expectedRev: 2, load: { value: 62.5, unit: 'kg' }, reps: 8 });
+  assert.deepEqual(only(r.cmds()[0], ['setId', 'expectedRev', 'load', 'reps']), { setId: 'set_b2', expectedRev: 2, load: { value: 61, unit: 'kg' }, reps: 8 });
   assert.deepEqual([...r.store.map.keys()].filter((k) => !/^m2[qr]\d?$/.test(k)), [], 'nothing else stored');
-  // The longest values at the phone's id lengths (tests/watch-contract.test.ts): rev 99999, 102.5 or 999.75 reached by 0.1 steps, 100 reps.
+  // The longest values at the phone's id lengths (tests/watch-contract.test.ts): rev 99999, 102.5 or 999.75 reached by 1 steps (C4), 100 reps.
   const sid = `s_${'z'.repeat(8)}_${'z'.repeat(6)}`, id = `set_${'z'.repeat(8)}_${'z'.repeat(6)}`;
-  for (const w of [102.2, 999.45]) {
+  for (const w of [99.5, 996.75]) {
     const a = await rig({ code: null, boot: 'zzzzzzzz' });
     a.link.rx(snap({ sid, set: { ...S2, id, rev: 99999, w, r: 99, e: 'ideal', st: 0.1 } }));
     a.link.adj();
@@ -439,22 +441,23 @@ test('L3 the draft lives in memory, tied to its set id and rev; Complete sends i
     assert.match(a.v().st, /^Pending /, String(w));
     const value = a.store.map.get('m2q0');
     assert.ok(value.length + 4 < 120, `${value.length} characters, and 4 more for a sequence of 99999`);
-    assert.deepEqual(only(a.cmds()[0], ['load', 'reps']), { load: { value: Math.round((w + 0.3) * 100) / 100, unit: 'kg' }, reps: 100 });
+    assert.deepEqual(only(a.cmds()[0], ['load', 'reps']), { load: { value: Math.round((w + 3) * 100) / 100, unit: 'kg' }, reps: 100 });
   }
 });
 
-test('L4 heart rate: "128 bpm" on Set and Rest, "Allow Body sensors" on 602, blank after 15 s without a sample; never in a message or in storage', async () => {
+// WATCH-C4 spec change: the bpm moves from the Set and Rest lines to the header (hm), and Rest has -15 s and +15 s.
+test('L4 heart rate: "128 bpm" in the header (C4), "Allow Body sensors" on 602, blank after 15 s without a sample; never in a message or in storage', async () => {
   const r = await rig({ code: null });
   r.link.rx(snap());
   r.link.beat(127.6);
-  assert.equal(r.v().hr, '128 bpm');
-  assert.equal(lines(r.v()).at(-1), '128 bpm', 'Set: the status line while it is free');
+  assert.deepEqual(only(r.v(), ['hm', 'hr']), { hm: '128 bpm', hr: '' });
+  assert.deepEqual([lines(r.v())[0], lines(r.v()).at(-1)], ['128 bpm', ''], 'Set: the header; the status line is free');
   r.link.rx(snap({ rest: { ...rest1, left: 60000 } }));
-  assert.deepEqual(lines(r.v()).slice(-4), ['Change', '+30 s', 'Skip', '128 bpm']);
+  assert.deepEqual([lines(r.v())[0], ...lines(r.v()).slice(-5)], ['128 bpm', 'Change', '-15 s', '+15 s', 'Skip', '']);
   for (let i = 0; i < 15; i++) r.tick();
-  assert.equal(r.v().hr, '128 bpm');
+  assert.equal(r.v().hm, '128 bpm');
   r.tick();
-  assert.equal(r.v().hr, '', 'no sample for 16 s');
+  assert.deepEqual(only(r.v(), ['hm', 'hr']), { hm: 'M/ARC', hr: '' }, 'no sample for 16 s');
   r.link.beat(-602);
   for (let i = 0; i < 30; i++) r.tick();
   assert.equal(r.v().hr, 'Allow Body sensors');
@@ -606,7 +609,7 @@ test('R6 an Adjust draft is tied to the unit too: the phone showing the same set
   const r = await rig({ code: null });
   r.link.rx(snap());
   r.link.adj(); r.link.adj(1); r.link.adj(1); r.link.adj(0);
-  assert.equal(r.v().l2, '65 kg x 8');
+  assert.equal(r.v().l2, '62 kg x 8'); // C4: by 1 (was 65 by st)
   r.link.rx(snap({ set: { ...S2, w: 135, u: 'lb', st: 5 }, nx: [] }));
   assert.equal(r.v().l2, '135 lb x 8');
   r.link.complete();
@@ -693,7 +696,7 @@ test('R10 a tap within 1 s of a tap that changed the screen (Complete, Done, OK,
   tap('onComplete', 1000); tap('onAdd', 200); tap('onSkip', 100);
   assert.deepEqual(calls, ['adj 0', 'ok', 'rest_skip', 'c']);
   tap('onAdd', 1000); tap('onAdd', 200); tap('onComplete', 300);
-  assert.deepEqual(calls.slice(4), ['rest_add_30', 'rest_add_30', 'c'], 'two +30 s in a row both count; +30 s does not change the screen');
+  assert.deepEqual(calls.slice(4), ['rest_add_15', 'rest_add_15', 'c'], 'two +15 s in a row both count; +15 s does not change the screen'); // WATCH-C4: +15 s (was +30 s)
 });
 
 test('R11 Set N saved names the set number of a next set after a gap, when its result comes before the next snap', async () => {

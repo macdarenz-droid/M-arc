@@ -1,9 +1,10 @@
 // WATCH-C link: native/wear/README.md
-var T = 'mw', V = 1, APP = '1.3.0';
+var T = 'mw', V = 1, APP = '1.4.0';
 var PHONE_PKG = 'com.mrcdrnzz.dailytracker';
 var PHONE_FP = '05669AD2721C6ABAF9FDD4B9B84E2FB7944844B1DEF359845F015F2B67CAF1F5';
 var KEY = 'm2q', RUN = 'm2r';
-var EFF = ['', 'easy', 'ideal', 'max'], KINDS = { c: 'complete_set', a: 'rest_add_30', s: 'rest_skip' };
+var EFF = ['', 'easy', 'ideal', 'max'], KINDS = { c: 'complete_set', a: 'rest_add_30', s: 'rest_skip', m: 'rest_sub_15', p: 'rest_add_15' };
+var RK = { rest_add_30: 'a', rest_skip: 's', rest_sub_15: 'm', rest_add_15: 'p' };
 var CH = 'Changed on phone', END = 'Workout ended';
 var WHY = { target_missing: CH, already_committed: CH, stale_revision: CH, stale_rest: CH, invalid_state: CH,
 	session_closed: END, no_session: END, wrong_session: END, unsupported: 'Update needed' };
@@ -46,11 +47,12 @@ function wire(f) {
 function nn(x) { return x == null || num(x); }
 function okSet(s) { return str(s.id) && num(s.rev) && (s.u === 'kg' || s.u === 'lb') && nn(s.w) && nn(s.r) && (s.e == null || str(s.e)) && nn(s.st); }
 function okLt(l) { return !l || Object(l) === l && nn(l.w) && nn(l.r) && (l.u === 'kg' || l.u === 'lb'); }
-// C3: nx [id, rev, w, r], rs in s
+// nx [id, rev, w, r, n], fin [sid, lines]
 function okSnap(m) {
-	var r = m.rest || {}, n = m.nx || [], i, ok = num(m.pt) && nn(m.wt) && (m.sid === null || str(m.sid)) && (m.ex == null || str(m.ex) && num(m.si) && num(m.sn)) &&
-		(!m.set || okSet(m.set)) && (!m.rest || str(r.id) && num(r.left)) && (m.eid == null || str(m.eid)) && okLt(m.lt) && nn(m.rs) && Array.isArray(n);
+	var r = m.rest || {}, n = m.nx || [], f = m.fin, l = f == null ? [] : Array.isArray(f) && str(f[0]) && f[1], i, ok = num(m.pt) && nn(m.wt) && (m.sid === null || str(m.sid)) && (m.ex == null || str(m.ex) && num(m.si) && num(m.sn)) &&
+		(!m.set || okSet(m.set)) && (!m.rest || str(r.id) && num(r.left)) && (m.eid == null || str(m.eid)) && okLt(m.lt) && nn(m.rs) && Array.isArray(n) && Array.isArray(l) && l.length < 5;
 	for (i = 0; ok && i < n.length; i++) ok = Array.isArray(r = n[i]) && str(r[0]) && num(r[1]) && nn(r[2]) && nn(r[3]) && (r[4] === void 0 || num(r[4]) && r[4] > m.si && r[4] <= m.sn && r[4] % 1 === 0);
+	for (i = 0; ok && i < l.length; i++) ok = str(l[i]) && l[i].length < 25;
 	return ok;
 }
 // C2 plan: rows of {id, ex, d, n, set, lt}
@@ -59,16 +61,18 @@ function okPlan(m) {
 	for (var i = 0, o; ok && i < r.length; i++) ok = Object(o = r[i]) === o && str(o.id) && str(o.ex) && num(o.d) && num(o.n) && (!o.set || okSet(o.set)) && okLt(o.lt);
 	return ok;
 }
+// C4: rest step (ms) at L ms left; -15 s keeps 5 s
+function step(k, L) { var s = k.slice(9) * 1e3; return k.charAt(5) > 'a' ? -Math.min(s, Math.max(0, L - 5e3)) : s; }
 function fmt(s) { var r = s.r == null ? '-' : s.r; return s.w == null ? r + ' reps' : s.w + ' ' + s.u + ' x ' + r; }
 
-// io: store, send(text, done(code)), keep(on), connect(), paint(), now(), defer(fn, 0), buzz()
+// io: store, send(text, done(code)), keep(on), connect(), paint(), now(), defer(fn), buzz(), hl(p)
 function Link(io, boot) {
-	// tk: 1 s ticks, the clock of every timer; io.now(): actionAt, the offset, the clock
+	// tk: 1 s ticks, every timer's clock; io.now(): actionAt, offset, clock
 	var tk = 0, seq = 0, snapTk = 0, off = 0, rtt = -1, lastRx = -1, fail = 0, hb = 0, due = Infinity;
 	var q = [], jobs = [], hellos = [], wq = [], busy = 0, snap = 0, eff = null, effSet = '', dl = [];
 	var wait = 0, msg = '', stop = 0, kept = false, ready = 0, lost = 0, on = 0, pause = 0, calm = 0, dead = 0, sick = 0;
 	var plan = 0, pk, ps, pe, pg = 0, sv, svR, lq, bn = 0, bj = 0, sy, hi, bad = 0;
-	var ad = 0, af = 0, lr = 0, rn = '', rk, bz, ko, hv = '', ht = 0;
+	var ad = 0, af = 0, lr = 0, rn = '', rk, bz, ko, ht = 0, bp, hz, it = 0, hp, hs, hn, ls, fq;
 
 	function no() {}
 	function later(fn) {
@@ -87,7 +91,7 @@ function Link(io, boot) {
 			j(next);
 		}
 	}
-	// answered on a fresh stack; silent for 5 ticks, it fails and storage stays off
+	// answered on a fresh stack; silent 5 ticks: fails, storage off
 	function kv(op, key, value, cb) {
 		var once = 0, o = { key: key, success: function (v) { back(true, v); }, fail: function () { back(false); } };
 		function give(ok, v) { if (!once) { once = 1; wait = 0; cb(ok, v); } }
@@ -99,14 +103,14 @@ function Link(io, boot) {
 	}
 	function text(v) {
 		var j = String(v).lastIndexOf(','), b = String(v).slice(0, j), f = b.split(','), h = sum(b);
-		return h >= 0 && String(h % 99991) === String(v).slice(j + 1) && f.length === { c: 10, a: 5, s: 5 }[f[0]] ? wire(f) : '';
+		return h >= 0 && String(h % 99991) === String(v).slice(j + 1) && f.length === { c: 10, a: 5, s: 5, m: 5, p: 5 }[f[0]] ? wire(f) : '';
 	}
 	function slots() {
 		for (var s = '', i = 0; i < q.length; i++) s += q[i].slot;
 		return s;
 	}
 	function entry(slot, text, m) {
-		return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, rev: m.expectedRev, t: m.actionAt, at: 0, n: 0 };
+		return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, k: m.kind, rev: m.expectedRev, t: m.actionAt, at: 0, n: 0 };
 	}
 
 	function add(code, set, effort) {
@@ -240,11 +244,14 @@ function Link(io, boot) {
 			off = o;
 		}
 		if (m.sid !== snap.sid) pg = lr = 0;
+		// C4: heart stats per session; Done once
+		if (m.sid) fq = 0, m.sid !== ls && (ls = m.sid, hp = hs = hn = 0);
+		else if (m.fin && m.fin[0] === ls) for (ls = 0, fq = {}, n = m.fin[1].concat(hn ? ['Peak ' + hp + ' bpm, avg ' + Math.round(hs / hn)] : []), i = 0; i < 5;) fq['h' + ++i] = n[i - 1] || '';
 		if (m.rest && m.rest.id !== lr.i || lr.d) {
 			if (m.rest && lr.d && bz === lr.id) bz = m.rest.id, rk = rk === lr.id ? bz : rk;
 			lr = 0;
 		}
-		for (m.xs = [s = m.set], i = 0; s && m.nx && i < m.nx.length; i++) n = m.nx[i], m.xs.push({ id: n[0], rev: n[1], w: n[2], u: s.u, r: n[3], st: s.st, k: n[4] - m.si || i + 1 });
+		for (m.xs = [s = m.set], i = 0; s && m.nx && i < m.nx.length; i++) n = m.nx[i], m.xs.push({ id: n[0], rev: n[1], w: n[2], u: s.u, r: n[3], k: n[4] - m.si || i + 1 });
 		snap = m;
 		ko = '';
 		snapTk = tk;
@@ -259,39 +266,45 @@ function Link(io, boot) {
 	// a new set clears the effort draft and closes Adjust
 	function fresh() {
 		var s = cs(), id = s ? s.id : '';
-		if (id !== effSet) eff = null;
+		if (id !== effSet) eff = null, it = tk;
 		effSet = id;
 		if (!ao()) af = 0;
 	}
 	function pr(id) { for (var r = up() ? plan.rows : [], i = 0; i < r.length; i++) if (r[i].id === id) return r[i]; }
-	// the pick holds while sid, eid and its row stay
+	// a pick holds while sid, eid and its row stay
 	function row() {
 		var r = pk && snap.sid === ps && snap.eid === pe && pr(pk);
 		if (!r) pk = '';
 		return r;
 	}
-	// the plan row: the pick's, or the shown exercise's while it has the snap's set
+	// the plan row: the pick's, or the shown one's while it has the snap's set
 	function nr() { var r = row(), e = pr(snap.eid); return r || e && (e.set || 0).id === (snap.set || 0).id && e; }
-	// C3: the first free of set, nx (a pick: its row's set), else the last
+	// C3: the first free of set, nx (a pick: its row), else the last
 	function xs() { var r = row(); return r ? [r.set] : snap.xs || [0]; }
 	function free(s) { return s && !held(s.id) && dl.indexOf(s.id + ':' + s.rev) < 0; }
 	function cs() { for (var o = xs(), i = 0; i < o.length - 1 && !free(o[i]); i++); return o[i]; }
 	function dv(s) { return s && ad && ad.id === s.id && ad.rev === s.rev && ad.u === s.u ? ad : s; }
 	function ao() { var s = cs(); return af && free(s) && dv(s) === ad; }
-	// reps 1 to 100; load by st (or 2.5 kg, 5 lb), in (0, 1000], to 0.01
+	// C4: reps 1-100; w +-1 keeps decimals; d wheel .00-.75; load in (0, 1000]
 	function bump(d) {
-		var f = af, x = Math.round(((ad[f] || 0) + d * (f === 'r' ? 1 : ad.st > 0 ? ad.st : ad.u === 'lb' ? 5 : 2.5)) * 100) / 100;
-		ad[f] = f === 'r' ? x < 1 ? 1 : x > 100 ? 100 : x : x > 1000 ? 1000 : x > 0 ? x : ad.w;
+		var v = ad.w || 0, W = Math.floor(v), x = Math.round((v - W) * 100) / 25;
+		if (af === 'r') x = (ad.r || 0) + d, ad.r = x < 1 ? 1 : x > 100 ? 100 : x;
+		else x = af === 'w' ? Math.round((v + d) * 100) / 100 : W + ((d > 0 ? Math.floor(x) + 1 : Math.ceil(x) + 3) % 4) / 4, ad.w = x > 1000 ? 1000 : x > 0 ? x : ad.w;
 	}
 	function rst() {
-		var r = lr.on ? lr : snap.sid && snap.rest, x = r && { id: r.id, left: Math.max(0, (r.p ? r.left : r.left - (tk - (r === lr ? r.id : snapTk)) * 1000) + pa(r)) };
+		var r = lr.on ? lr : snap.sid && snap.rest, L = r && (r.p ? r.left : r.left - (tk - (r === lr ? r.id : snapTk)) * 1000), x = r && { id: r.id, left: Math.max(0, L + pa(r, L)) };
 		return x && x.id !== ko && x;
 	}
-	function pa(r) { for (var n = 0, i = 0; r !== lr && (bad || gone()) && i < q.length; i++) n += q[i].set === 'rest_add_30' + r.id && 30000; return n; }
+	// offline, its queued steps, each at its tap
+	function pa(r, L) {
+		for (var n = 0, i = 0, e; r !== lr && (bad || gone()) && i < q.length; i++) if ((e = q[i]).set === e.k + r.id) n += step(e.k, L + n + (r.p ? 0 : io.now() + off - e.t));
+		return n;
+	}
+	// 10 s left and Rest done wake
 	function ring() {
 		var r = rst() || {};
-		if (r.left > 0) rn = r.id;
-		else if (r.id === rn && bz !== rn) bz = rn, (io.buzz || no)();
+		if (r.left > 0) rn = r.id, r.left > 1e4 || (it = tk);
+		else if (r.id === rn && bz !== rn) bz = rn, it = tk, (io.buzz || no)();
 	}
 	function up() { return snap.sid && plan.sid === snap.sid; }
 
@@ -306,7 +319,7 @@ function Link(io, boot) {
 				if (bn++, m.status === 'applied') hi = tk + 2;
 			} else if (m.status === 'rejected') {
 				msg = str(m.reason) && str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
-				// kept through the queued results, online too, until a new tap (611b09c8)
+				// kept until a new tap (611b09c8)
 				bj = (lq || q.length > 1) && msg;
 			} else {
 				return;
@@ -341,7 +354,7 @@ function Link(io, boot) {
 		if (dead) return;
 		tk++;
 		if (wait && tk - wait.at > 5) wait.give(false, sick = 1);
-		// a lost start is retried; a job silent for 10 ticks is given up, storage off
+		// a lost start is retried; silent 10 ticks: given up, storage off
 		if (busy && tk - busy.at > 5 && busy.job) go();
 		if (busy && tk - busy.at > 10) next(sick = 1);
 		if (pause && tk >= pause) live();
@@ -351,6 +364,7 @@ function Link(io, boot) {
 		if (!stop && tk >= due) hello();
 		if ((gone() || bad) && q.length && !lq) lq = 1, bn = 0;
 		if (tk - lr.id > 1) lr.on = 1;
+		if (fq && ready && !q.length && !busy && !wait) later((io.hl || no).bind(0, fq)), fq = 0;
 		ring();
 		keepOn();
 		io.paint();
@@ -368,11 +382,12 @@ function Link(io, boot) {
 	}
 
 	function view() {
-		var c = snap.sid && row(), x = c || snap, s = snap.sid && cs(), r = rst(), th = snap.th, j = s && s.k || 0;
+		var c = snap.sid && row(), x = c || snap, s = snap.sid && cs(), r = rst(), th = snap.th, j = s && s.k || 0, f = tk - ht < 16 && bp;
 		var a = c ? c.d + 1 : snap.si, b = c ? c.n : snap.sn, rows = up() && plan.rows, left = 0, i, o, k;
 		if (!(th && th.length === 3 && str(th[0]) && str(th[1]) && str(th[2]))) th = ['#08090a', '#f7f8f8', '#5e6ad2'];
 		var v = { l1: '', l2: '', eff: '', rest: '', st: msg, p1: '', p2: '', set: false, can: false, rs: false, add: false, bg: th[0], fg: th[1], ac: th[2], cb: PL,
-			off: 0, ck: hms(io.now() + off).slice(0, 5), sc: 0 };
+			off: 0, ck: hms(io.now() + off).slice(0, 5), sc: 0, hm: f ? f + ' bpm' : 'M/ARC', hd: f ? Math.round(12000 / (Math.round(f / 5) || 1)) + 'ms' : '',
+			im: '/common/h.png', hc: '#a9aef0', kc: '#f7f8f8', hr: hz ? 'Allow Body sensors' : '' };
 		if (stop || pause) {
 			v.st = '';
 			v.l1 = pause ? 'Paused after restarts' : 'Update needed';
@@ -383,8 +398,8 @@ function Link(io, boot) {
 			v.p1 = 'Phone not connected';
 			v.p2 = 'Open M/ARC on your phone';
 		}
-		// offline also while a pending send fails, though messages arrive
-		if (gone() || bad && q.length) v.off = 1;
+		// offline also while a pending send fails
+		if (gone() || bad && q.length) v.off = 1, v.hc = '#f2b56b', f && !hz && (v.hr = v.hm);
 		if (snap && !snap.sid) {
 			v.l1 = 'Start your workout';
 			v.l2 = 'in M/ARC on your phone';
@@ -406,11 +421,12 @@ function Link(io, boot) {
 			v.add = left > 0;
 			v.rc = mss(left);
 		}
-		v.hr = tk - ht < 16 ? hv : '';
-		if (k = ao()) v.ak = af === 'r' ? 'REPS' : ad.u.toUpperCase(), v.av = ad[af] == null ? '-' : '' + ad[af];
-		// screen: 1 Set, 2 Rest, 3 Up next, 4 Offline, 5 Back in sync, 6 Rest done, 7 Adjust, 0 l1, l2
+		if (k = ao()) o = ad[af === 'r' ? 'r' : 'w'], v.ak = { r: 'REPS', d: 'DECIMALS' }[af] || ad.u.toUpperCase(), v.av = o == null ? '-' : af === 'd' ? o.toFixed(2) : '' + o;
+		// 1 Set, 2 Rest, 3 Up next, 4 Offline, 5 Back in sync, 6 Rest done, 7 Adjust, 0 l1 l2
 		v.sc = v.off && (q.length || !snap) && !free(s) ? 4 : k ? 7 : tk < sy ? 5 : rows && pg ? 3 : left > 0 ? 2 : r && r.id === rn && r.id !== rk ? 6 :
 			snap.sid && x.ex ? 1 : 0;
+		// C4: idle 15 s after a wake, on Set and Rest
+		if (v.dm = tk - it > 14 && v.sc > 0 && v.sc < 3 ? 1 : 0) v.hc = v.kc = '#3a3a40', v.im = '/common/hd.png';
 		k = v.sc > 4 ? bn : q.length;
 		v.na = k ? k + ' action' + (k > 1 ? 's' : '') : '';
 		v.nm = x.ex || '';
@@ -437,25 +453,27 @@ function Link(io, boot) {
 	return {
 		rx: rx, tick: tick, view: view,
 		start: run,
-		// onDestroy: a run with no call in flight is marked clean by one write
+		// onDestroy: no call in flight: marked clean by one write
 		die: function () {
 			dead = 1;
 			if (on && !pause && !sick && !wait) try { io.store.set({ key: RUN, value: '0,c', success: no, fail: no }); } catch (e) {}
 		},
-		show: function () { if (!dead) { hello(); keepOn(true); } },
+		show: function () { if (!dead) { it = tk; hello(); keepOn(true); } },
+		touch: function () { it = tk; io.paint(); },
 		complete: function () { if (can()) add('c', cs().id, shown()); },
 		rest: function (kind) {
-			var k = kind === 'rest_skip' && snap && snap.rest ? kind + snap.rest.id : '';
-			if (lr.on) kind === 'rest_skip' ? lr = 0 : lr.left += 30000, io.paint();
-			else if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) add(k ? 's' : 'a', k, '');
+			var k = kind === 'rest_skip' && snap && snap.rest ? kind + snap.rest.id : '', c = RK[kind];
+			if (lr.on) c && (kind === 'rest_skip' ? lr = 0 : lr.left += step(kind, rst().left)), io.paint();
+			else if (c && ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) add(c, k, '');
 		},
 		effort: function (k) {
 			if (cs()) eff = !k ? EFF[(EFF.indexOf(shown()) + 1) % EFF.length] : EFF[k] === shown() ? '' : EFF[k];
 			io.paint();
 		},
 		next: function (d) {
-			if (ao()) d === 'up' ? bump(1) : d === 'down' ? bump(-1) : (d === 'left' || d === 'right') && (af = af === 'r' ? 'w' : 'r');
+			if (ao()) d === 'up' ? bump(1) : d === 'down' ? bump(-1) : (d === 'left' || d === 'right') && (af = { w: 'dr', d: 'rw', r: 'wd' }[af].charAt(d === 'left'));
 			else if (up()) pg = !d ? 1 : d === 'up' || d === 'down' ? 1 - pg : pg;
+			it = tk;
 			io.paint();
 		},
 		pick: function (i) {
@@ -463,10 +481,11 @@ function Link(io, boot) {
 			if (r) pk = r.id === snap.eid ? '' : r.id, ps = snap.sid, pe = snap.eid, pg = 0, fresh();
 			io.paint();
 		},
-		// C3: adj() opens, adj(1 or -1) steps, adj(0) closes; beat(bpm or -code)
+		// adj() opens, adj(1 or -1) steps, adj(0) closes; beat(bpm or -code)
 		ok: function () { rk = (rst() || 0).id; io.paint(); },
 		adj: function (d) {
 			var s = cs(), k;
+			it = tk;
 			if (d === 0) af = 0;
 			else if (d) ao() && bump(d);
 			else if (can()) {
@@ -475,7 +494,12 @@ function Link(io, boot) {
 			}
 			io.paint();
 		},
-		beat: function (x) { hv = x > 0 ? Math.round(x) + ' bpm' : x === -602 ? 'Allow Body sensors' : ''; ht = x > 0 ? tk : 1e9; }
+		// C4: peak and average in memory only
+		beat: function (x) {
+			if (x > 0) bp = Math.round(x), ht = tk, snap.sid && (hp = Math.max(hp, bp), hs += bp, hn++);
+			else ht = -99;
+			hz = x === -602;
+		}
 	};
 }
 

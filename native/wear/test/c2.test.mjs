@@ -386,7 +386,7 @@ test('V3 a hello goes 2 ticks after each applied result, and not after other res
   r.link.rx(res('abcd1234-3'));
   r.tick(); r.tick();
   assert.equal(r.hellos(), h + 2);
-  assert.equal(JSON.parse(r.sent.filter((x) => JSON.parse(x).k === 'hello').pop()).app, '1.3.0');
+  assert.equal(JSON.parse(r.sent.filter((x) => JSON.parse(x).k === 'hello').pop()).app, '1.4.0'); // WATCH-C4: the version pin
 });
 
 test('V4 a bad plan changes nothing: wrong types, toString tricks, over 2,048 characters, not JSON', async () => {
@@ -708,7 +708,7 @@ test('fix: each screen shows its card lines from the shared slots, and a bound c
   r.link.pick(2);
   at(['Seated row', '>', 'SET 3 OF 4', 'Target', '135 lb x 6', '', 'Easy', 'Ideal', 'Max', 'Complete set', ''], [AC, PL, PL, AC]);
   r.link.rx(snap({ rest: rest1 }));
-  at(['REST', '1:30', '', 'Next: Seated row', 'Set 3 of 4, 135 lb x 6', 'Change', '+30 s', 'Skip', '']); // WATCH-C3: the heart-rate line
+  at(['REST', '1:30', '', 'Next: Seated row', 'Set 3 of 4, 135 lb x 6', 'Change', '-15 s', '+15 s', 'Skip', '']); // WATCH-C3: the heart-rate line; WATCH-C4: -15 s and +15 s (was +30 s)
   r.link.rx(snap());
   r.link.complete();
   r.adv(30000);

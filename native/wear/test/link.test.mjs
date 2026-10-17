@@ -381,7 +381,7 @@ test('W3 hello: at start, on show, after 20 s of silence and after failed sends 
   assert.equal(r.hellos().length, 1);
   const h = JSON.parse(r.hellos()[0]);
   assert.deepEqual(Object.keys(h), ['t', 'v', 'k', 'app', 'boot', 'wt', 'q']);
-  assert.deepEqual(h, { t: 'mw', v: 1, k: 'hello', app: '1.3.0', boot: 'abcd1234', wt: T0, q: 0 }); // WATCH-C2: the version pin
+  assert.deepEqual(h, { t: 'mw', v: 1, k: 'hello', app: '1.4.0', boot: 'abcd1234', wt: T0, q: 0 }); // WATCH-C2: the version pin (WATCH-C4: 1.4.0)
   r.link.show();
   assert.equal(r.hellos().length, 2);
   r.adv(19000); r.link.tick(); // the clock is the 1 s tick (1.1.2)
@@ -543,7 +543,7 @@ test('W3 screen wording: no workout, no phone, and the set', async () => {
 const JS_RULES = [
   ['RegExp', /\bRegExp\b/],
   ['regular expression literal', /(^|[=(,:[!&|?{};])\s*\/(?![/*])/m],
-  ['.replace(', /\.replace\(/],
+  ['.replace(', /(?<!\brouter)\.replace\(/], // WATCH-C4: router.replace (the page switch) is not String.prototype.replace
   ['let', /\blet\b/],
   ['const', /\bconst\b/],
   ['=>', /=>/],
@@ -553,14 +553,16 @@ const JS_RULES = [
 ];
 const walk = (dir) => readdirSync(dir).flatMap((n) => (statSync(path.join(dir, n)).isDirectory() ? walk(path.join(dir, n)).map((f) => `${n}/${f}`) : [n]));
 
-test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, only the vibration and heart-rate permissions, page sources at most 46,000 B', async () => {
+test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, only the vibration and heart-rate permissions, index-side page sources at most 49,000 B', async () => {
   const files = walk(JS).sort();
-  assert.deepEqual(files, ['app.js', 'common/link.js', 'pages/index/index.css', 'pages/index/index.hml', 'pages/index/index.js', 'pages/wearengine.js']);
+  // WATCH-C4: + the two heart PNGs and the highlights page (its own page file; not in the index-side total)
+  assert.deepEqual(files, ['app.js', 'common/h.png', 'common/hd.png', 'common/link.js', 'pages/hl/hl.css', 'pages/hl/hl.hml', 'pages/hl/hl.js',
+    'pages/index/index.css', 'pages/index/index.hml', 'pages/index/index.js', 'pages/wearengine.js']);
   let total = 0;
   for (const rel of files) {
     const buf = readFileSync(path.join(JS, rel));
-    total += buf.length;
-    if (rel === 'pages/wearengine.js') continue;
+    if (!rel.startsWith('pages/hl/')) total += buf.length;
+    if (rel === 'pages/wearengine.js' || rel.endsWith('.png')) continue;
     const at = buf.findIndex((b) => b > 0x7f);
     assert.equal(at, -1, `${rel}: non-ASCII byte at offset ${at}`);
     if (!rel.endsWith('.js')) continue;
@@ -568,14 +570,15 @@ test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, only the vibration and h
     for (const [name, rule] of JS_RULES) assert.doesNotMatch(src, rule, `${rel} uses ${name}`);
   }
   // 34,000 since the 1.1.2 red team (docs/watch-cards/WATCH-C.md W4); 40,000 since WATCH-C2's screens (its W4);
-  // 42,000 since the WATCH-C2 fix round; 46,000 since WATCH-C3 (its W4; the compiled page stays at most 46,000 B, check-lite-js enforces 48,000)
-  assert.ok(total <= 46000, `page sources ${total} B`);
+  // 42,000 since the WATCH-C2 fix round; 46,000 since WATCH-C3 (its W4; the compiled page stays at most 46,000 B, check-lite-js enforces 48,000);
+  // 49,000 since WATCH-C4 (its acceptance: app.js, common with the PNGs, pages/index and wearengine.js; the compiled index page stays at most 46,000 B)
+  assert.ok(total <= 49000, `index-side page sources ${total} B`);
   assert.equal(createHash('sha256').update(readFileSync(path.join(JS, 'pages/wearengine.js'))).digest('hex'),
     '8c7f1100c840abdb237991b0d436ef9ab49a215269c5fecdb3dd59fe63a71471');
   assert.doesNotMatch(readFileSync(LINK, 'utf8'), /\bimport\b|\brequire\b/, 'link.js makes no Huawei or module calls');
   const page = readFileSync(path.join(JS, 'pages/index/index.js'), 'utf8');
   assert.match(page, /^import \{ P2pClient, Message, Builder \} from '\.\.\/wearengine\.js';$/m);
-  assert.deepEqual([...page.matchAll(/^import (\w+) from '@system\.(\w+)';$/gm)].map((m) => m[2]), ['storage', 'brightness', 'vibrator', 'sensor']); // WATCH-C3: + vibrator, sensor
+  assert.deepEqual([...page.matchAll(/^import (\w+) from '@system\.(\w+)';$/gm)].map((m) => m[2]), ['storage', 'brightness', 'vibrator', 'sensor', 'router']); // WATCH-C3: + vibrator, sensor; WATCH-C4: + router
   const { PHONE_FP, PHONE_PKG } = await load();
   const yml = readFileSync(path.join(ROOT, '.github/workflows/build-apk.yml'), 'utf8');
   const pins = [...yml.matchAll(/EXPECTED_SHA256: '([0-9A-F:]+)'/g)].map((m) => m[1]);
@@ -584,14 +587,16 @@ test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, only the vibration and h
   assert.equal(PHONE_PKG, JSON.parse(readFileSync(path.join(ROOT, 'capacitor.config.json'), 'utf8')).appId);
   const cfg = JSON.parse(readFileSync(path.join(MAIN, 'config.json'), 'utf8'));
   const hello = JSON.parse(readFileSync(path.join(ROOT, 'native/wear/hello/entry/src/main/config.json'), 'utf8'));
-  assert.deepEqual(cfg.app.version, { code: 1003000, name: '1.3.0' });
+  assert.deepEqual(cfg.app.version, { code: 1004000, name: '1.4.0' });
   assert.equal(cfg.app.bundleName, hello.app.bundleName);
   // WATCH-C3: exactly VIBRATE and READ_HEALTH_DATA, each used as the KIT app that ran on the GT 6 (hello/) used it (was: none)
   const kit = Object.fromEntries(hello.module.reqPermissions.map((p) => [p.name, p.usedScene]));
   assert.deepEqual(cfg.module.reqPermissions.map((p) => p.name), ['ohos.permission.VIBRATE', 'ohos.permission.READ_HEALTH_DATA']);
   for (const p of cfg.module.reqPermissions) assert.deepEqual(p.usedScene, kit[p.name], p.name);
   assert.deepEqual(cfg.module.abilities, hello.module.abilities);
-  assert.deepEqual(cfg.module.js, hello.module.js);
+  // WATCH-C4: the highlights page after the start page (was: hello's js exactly)
+  assert.deepEqual(cfg.module.js, [{ ...hello.module.js[0], pages: [...hello.module.js[0].pages, 'pages/hl/hl'] }]);
+  assert.deepEqual(hello.module.js[0].pages, ['pages/index/index']);
   assert.equal(cfg.app.apiVersion.compatible, 6);
 });
 
@@ -603,9 +608,11 @@ test('W4 page markup matches the page data and handlers', () => {
   for (const key of bound) assert.match(data, new RegExp(`\\b${key}: `), `data.${key}`);
   for (const h of [...hml.matchAll(/onclick="(\w+)"/g)].map((m) => m[1])) assert.match(page, new RegExp(`^  ${h}\\(\\) \\{`, 'm'), `${h} is defined`);
   // WATCH-C2: each tap target's handler and the label it shows (was: the button labels); WATCH-C3 adds the value's tap,
-  // Rest done's OK and Adjust's pills
+  // Rest done's OK and Adjust's pills; WATCH-C4: Rest's -15 s and +15 s (was +30 s), and the root's tap that wakes the idle screen
+  assert.match(hml, /^<div class="rt co" onclick="onTouch" onswipe="onSwipe">\n/);
+  assert.equal([...hml.matchAll(/onclick=/g)].length, 20);
   assert.deepEqual([...hml.matchAll(/onclick="(\w+)">(?:<text[^>]*>)?([^<]*)/g)].map((m) => `${m[1]} ${m[2]}`), [
-    'onNext {{nm}}', 'onAdj {{t2}}', 'onEasy Easy', 'onIdeal Ideal', 'onMax Max', 'onComplete {{cl}}', 'onNext {{nx}}', 'onNext {{ns}}', 'onAdd +30 s', 'onSkip Skip',
+    'onNext {{nm}}', 'onAdj {{t2}}', 'onEasy Easy', 'onIdeal Ideal', 'onMax Max', 'onComplete {{cl}}', 'onNext {{nx}}', 'onNext {{ns}}', 'onSub -15 s', 'onAdd +15 s', 'onSkip Skip',
     'onR0 {{r0}}', 'onR1 {{r1}}', 'onR2 {{r2}}', 'onR3 {{r3}}', 'onOk OK', 'onLess -', 'onMore +', 'onDone Done']);
   assert.equal([...hml.matchAll(/onswipe="(\w+)"/g)].map((m) => m[1]).join(), 'onSwipe');
   assert.match(page, /^  onSwipe: function \(e\) \{ tap\('next', e && e\.direction\); \},$/m);
