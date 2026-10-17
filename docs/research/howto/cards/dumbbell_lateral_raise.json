@@ -286,7 +286,9 @@
       "title": "Lateral Raise (ACE exercise library)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "coratella2020",
@@ -294,7 +296,9 @@
       "title": "An Electromyographic Analysis of Lateral Raise Variations and Frontal Raise in Competitive Bodybuilders (Coratella et al., Int J Environ Res Public Health 17(17):6015)",
       "kind": "peer-reviewed",
       "year": 2020,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "andersen2008",
@@ -302,7 +306,9 @@
       "title": "Muscle activation during selected strength exercises in women with chronic neck muscle pain (Andersen et al., Phys Ther 88(6):703-11)",
       "kind": "peer-reviewed",
       "year": 2008,
-      "pmid": 18339796
+      "pmid": 18339796,
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "kolber2014",
@@ -310,7 +316,9 @@
       "title": "Characteristics of shoulder impingement in the recreational weight-training population (Kolber et al., J Strength Cond Res 28(4):1081-9)",
       "kind": "peer-reviewed",
       "year": 2014,
-      "pmid": 24077379
+      "pmid": 24077379,
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "graichen1999",
@@ -318,7 +326,9 @@
       "title": "Subacromial space width changes during abduction and rotation, a 3-D MR imaging study (Graichen et al., Surg Radiol Anat 21(1):59-64)",
       "kind": "peer-reviewed",
       "year": 1999,
-      "pmid": 10370995
+      "pmid": 10370995,
+      "access": "abstract",
+      "checked": "2026-10-17"
     }
   ],
   "plate": {

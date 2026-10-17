@@ -320,7 +320,9 @@
       "title": "Seated Chest Press (ACE exercise library)",
       "kind": "guideline",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "muyor2023",
@@ -328,7 +330,9 @@
       "title": "Comparison of Muscle Activity between the Horizontal Bench Press and the Seated Chest Press Exercises Using Several Grips (Muyor, Rodriguez-Ridao, Oliva-Lozano; J Hum Kinet 87:23-34)",
       "kind": "peer-reviewed",
       "year": 2023,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "barbell-logic-grip",
@@ -336,7 +340,9 @@
       "title": "Bench Press Grip Tips (Barbell Logic)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "nance2017",
@@ -344,7 +350,9 @@
       "title": "Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study (Nance et al., J Wrist Surg 6(4):276-279)",
       "kind": "peer-reviewed",
       "year": 2017,
-      "pmid": 29085728
+      "pmid": 29085728,
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "snyder2012",
@@ -352,7 +360,9 @@
       "title": "Effect of verbal instruction on muscle activity during the bench press exercise (Snyder, Fry; J Strength Cond Res 26(9):2394-400)",
       "kind": "peer-reviewed",
       "year": 2012,
-      "pmid": 22076100
+      "pmid": 22076100,
+      "access": "abstract",
+      "checked": "2026-10-17"
     }
   ],
   "plate": {
