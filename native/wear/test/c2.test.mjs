@@ -433,13 +433,13 @@ function pageRig() {
   const link = { start() {}, tick() {}, show() {}, view: () => cur };
   const def = new Function('P2pClient', 'Message', 'Builder', 'storage', 'brightness', 'PHONE_PKG', 'PHONE_FP', 'Link', 'makeBoot', 'setInterval', src)(
     function () {}, function () {}, function () {}, {}, { setKeepScreenOn() {} }, '', '', (x) => { io = x; return link; }, () => 'b', () => 0);
-  const order = [], page = {};
+  const order = [], log = [], page = {};
   for (const k of Object.keys(def.data)) {
     let x = def.data[k];
-    Object.defineProperty(page, k, { enumerable: true, configurable: true, get: () => x, set: (y) => { order.push(k); x = y; } });
+    Object.defineProperty(page, k, { enumerable: true, configurable: true, get: () => x, set: (y) => { order.push(k); log.push([k, y]); x = y; } });
   }
   def.onInit.call(page);
-  return { def, page, order, paint(v) { cur = v; order.length = 0; io.paint(); } };
+  return { def, page, order, log, paint(v) { cur = v; order.length = 0; log.length = 0; io.paint(); } };
 }
 /** index.hml as the watch draws it: the header and the shown screen, from the page data paint() leaves. */
 const HML = readFileSync(path.join(PAGE, 'index.hml'), 'utf8');
@@ -640,7 +640,7 @@ test('fix: surviving mutations: one left or right swipe each keeps the page; a p
   assert.deepEqual(only(s.v(), ['sc', 'cl', 'can', 'cb']), { sc: 1, cl: 'Complete set', can: true, cb: AC });
 });
 
-test('fix: paint() writes only the page data, the screen last; every key the shown screen reads is written by each paint', async () => {
+test('fix: paint() writes only the page data, the screen, then its inner if-parts last; every key the shown screen reads is written by each paint', async () => {
   const r = await rig({ code: null });
   r.link.rx(snap());
   const v = r.v(), P = pageRig();
@@ -648,8 +648,12 @@ test('fix: paint() writes only the page data, the screen last; every key the sho
   assert.deepEqual(Object.keys(P.page), Object.keys(P.def.data), 'no other keys on the page (view has eff, st, p1 and more)');
   assert.ok(Object.keys(v).some((k) => !(k in P.def.data)));
   for (const k of ['nm', 'cl', 'set', 'off', 'ck', 'sc']) assert.equal(P.page[k], v[k], k);
-  assert.equal(P.order.at(-1), 'sc', 'the screen is written last, so it opens on its own lines');
+  // final check of 611b09c8: a new screen is built with set and t1 off, and gets them after, so no build runs inside another
+  assert.deepEqual(P.order.slice(-3), ['sc', 'set', 't1']);
   assert.equal(P.order.filter((k) => k === 'sc').length, 1);
+  assert.deepEqual(P.log.slice(0, 2), [['set', false], ['t1', '']], 'the inner parts go off before the screen changes');
+  P.paint(v);
+  assert.ok(!P.log.some(([k, y]) => k === 'set' && y === false), 'no screen change, no off and on');
   // Every screen: each key its lines, colours and conditions read is written by the paint, so none keeps an old value.
   const seen = new Set();
   const look = (a) => { const v1 = a.v(), d = screen(v1); seen.add(v1.sc); for (const k of d.keys) assert.ok(d.written.includes(k), `${k} on screen ${v1.sc}`); };
@@ -758,4 +762,54 @@ test('fix: a phone whose messages arrive while every send fails keeps Phone not 
   assert.deepEqual(only(e.v(), ['sc', 'off']), { sc: 1, off: 0 });
   e.link.complete();
   assert.deepEqual(only(e.v(), ['sc', 'off', 'cl']), { sc: 1, off: 0, cl: `Pending ${hms(T0)}` });
+});
+
+// Final check of 611b09c8 (review and red team).
+test('final check: a refusal with another command queued keeps its reason online and after a restart; the next saved set shows Saved', async () => {
+  const r = await rig();
+  r.link.rx(snap());
+  r.link.rx(plan());
+  r.link.complete();
+  r.link.pick(1);
+  r.link.complete();
+  r.link.rx(res('abcd1234-1', { status: 'rejected', reason: 'stale_revision' }));
+  r.link.rx(res('abcd1234-2'));
+  assert.deepEqual(only(r.v(), ['sc', 'st']), { sc: 1, st: 'Changed on phone' });
+  r.link.pick(0);
+  r.link.rx(snap({ si: 3, set: { ...S1, id: 'set_b3' } }));
+  r.link.complete();
+  r.link.rx(res('abcd1234-3'));
+  assert.equal(r.v().st, 'Saved');
+  // Two queued offline, then the app restarts next to the phone: the restored pair keeps the refusal too.
+  const a = await rig({ code: null });
+  a.link.rx(snap());
+  a.link.rx(plan());
+  a.link.complete();
+  a.link.pick(1);
+  a.link.complete();
+  const b = await rig({ store: a.store });
+  b.link.rx(snap());
+  b.link.rx(plan());
+  b.link.rx(res('abcd1234-1', { status: 'rejected', reason: 'stale_revision' }));
+  b.link.rx(res('abcd1234-2'));
+  assert.equal(b.v().st, 'Changed on phone');
+  b.link.rx(snap({ si: 3, set: { ...S1, id: 'set_b3' } }));
+  b.link.complete();
+  b.link.rx(res(b.cmds().at(-1).commandId));
+  assert.equal(b.v().st, 'Saved');
+});
+
+test('final check: Phone not connected shows the rest only while it has time left', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ rest: { ...rest1, left: 0 } }));
+  r.link.complete();
+  r.adv(30000);
+  const v = r.v();
+  assert.equal(v.sc, 4);
+  assert.ok(!screen(v).lines.some((x) => /^Rest /.test(x)), screen(v).lines.join('|'));
+  const t = await rig({ code: null });
+  t.link.rx(snap({ rest: rest1 }));
+  t.link.complete();
+  t.adv(30000);
+  assert.ok(screen(t.v()).lines.includes('Rest 1:00'), screen(t.v()).lines.join('|'));
 });

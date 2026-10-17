@@ -14,15 +14,20 @@ var SLOTS = 't1 t2 t3 t4 t5 c1 c2 c3 c4'.split(' ');
 function slots(v) {
 	var k = v.sc;
 	return k == 1 ? [v.sp, v.l2, v.la, v.sl, '', v.e1, v.e2, v.e3, v.cb] : k == 2 ? [v.rc, v.sl] :
-		k == 3 ? [v.dn, v.n0, v.n1, v.n2, v.n3, v.b0, v.b1, v.b2, v.b3] : k ? [v.na, v.rest] : [v.l1, v.l2];
+		k == 3 ? [v.dn, v.n0, v.n1, v.n2, v.n3, v.b0, v.b1, v.b2, v.b3] : k ? [v.na, v.add ? v.rest : ''] : [v.l1, v.l2];
 }
 
-// only page data, and the screen last, so that it opens on its own lines; a colour is always a colour
+// only page data; a colour is always a colour. A new screen is built with its inner if-parts (set, t1) off and gets
+// them after, so no build runs inside another, as in 1.1.2 (red team, 611b09c8: about 1.9 KB less stack)
 function paint() {
 	var v = page && link ? link.view() : 0, s = v && slots(v), k;
-	for (k in v) if (k !== 'sc' && k in page) page[k] = v[k];
-	for (k = 0; s && k < 9; k++) page[SLOTS[k]] = s[k] || (k < 5 ? '' : '#08090a');
-	if (v) page.sc = v.sc;
+	if (!v) return;
+	if (v.sc !== page.sc) page.set = false, page.t1 = '';
+	for (k in v) if (k !== 'sc' && k !== 'set' && k in page) page[k] = v[k];
+	for (k = 1; k < 9; k++) page[SLOTS[k]] = s[k] || (k < 5 ? '' : '#08090a');
+	page.sc = v.sc;
+	page.set = v.set;
+	page.t1 = s[0] || '';
 }
 
 function send(text, done) {

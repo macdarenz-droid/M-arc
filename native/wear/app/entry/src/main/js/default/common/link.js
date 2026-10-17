@@ -275,12 +275,13 @@ function Link(io, boot) {
 				hi = tk + 2, bn++;
 			} else if (m.status === 'rejected') {
 				msg = str(m.reason) && str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
-				bj = lq;
+				// kept through the results still queued, online too (red team, 611b09c8)
+				bj = lq || q.length > 1;
 			} else {
 				return;
 			}
 			drop(i);
-			if (lq && !q.length) sy = m.status === 'applied' && !bj ? tk + 3 : 0, lq = bj = 0;
+			if (!q.length) sy = lq ? (m.status === 'applied' && !bj ? tk + 3 : 0) : sy, lq = bj = 0;
 			return pump();
 		}
 	}
