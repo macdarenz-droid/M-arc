@@ -1,0 +1,1041 @@
+{
+  "id": "leg_press",
+  "libId": "lib_leg_press",
+  "name": "Leg Press",
+  "family": "Leg press and squat machines",
+  "tier": "B",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "foot-platform"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Yessis describes the leg press on a machine angled at about 45 degrees, with the feet on the platform and the hips and spine against the back support.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis"
+      ],
+      "quotes": [
+        {
+          "source": "yessis",
+          "text": "Assume a seated position on a leg press machine angled at approximately a 45º angle.",
+          "where": "Execution"
+        },
+        {
+          "source": "yessis",
+          "text": "Place your feet against the resistance platform with your hips and spine against the back support.",
+          "where": "Execution"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Feet: in the middle of the platform with pressure over the whole sole; Yessis says shoulder-width apart, NASM hip-width apart.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis",
+        "nasm-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "yessis",
+          "text": "Your feet should be shoulder width apart and placed in the middle of the resistance platform. Pressure should be felt on the entire soles of both feet.",
+          "where": "Execution"
+        },
+        {
+          "source": "nasm-leg-press",
+          "text": "Position your feet on the platform hip-width apart with your knees bent at approximately 90 degrees.",
+          "where": "Step 1: Setup"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "To start, push the platform away and release the locking levers or safety handles at the sides of the seat; on many machines they turn outwards.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis",
+        "bells-of-steel",
+        "nasm-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "yessis",
+          "text": "Release the locking lever located on the sides of the seat and then straighten the legs.",
+          "where": "Execution"
+        },
+        {
+          "source": "bells-of-steel",
+          "text": "Push the platform away with your feet and disengage the safety side handles by turning them (usually) outwards. The handles are levers that release and lock the footplate in place.",
+          "where": "4. Push Platform & Disengage Safeties"
+        },
+        {
+          "source": "nasm-leg-press",
+          "text": "Place your hands on the handles for stability and release the safety bars.",
+          "where": "Step 2: Brace/Position"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Top position, knee bend: the legs are fully extended but not locked (Yessis), the knees in a relaxed, extended position without hyperextending (ACE), or almost straight (Bells of Steel); the trunk stays firmly against the back support.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis",
+        "ace-leg-press",
+        "bells-of-steel"
+      ],
+      "quotes": [
+        {
+          "source": "yessis",
+          "text": "The legs should be fully extended but not locked and the trunk should be held firmly against the back support. This is the starting position.",
+          "where": "Execution"
+        },
+        {
+          "source": "ace-leg-press",
+          "text": "Continue extending your hips and knees until the knees reach a relaxed, extended position, with the heels still pressed firmly into the plate.",
+          "where": "Step 3"
+        },
+        {
+          "source": "ace-leg-press",
+          "text": "Do not hyperextend (lock-out) your knees and avoid lifting your butt off the seat pad or rounding out your low back.",
+          "where": "Step 3"
+        },
+        {
+          "source": "bells-of-steel",
+          "text": "Then, push the footplate back up until your legs are almost straight again. Don't lock out your knees completely.",
+          "where": "5. Leg Press"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Bottom position, knee bend: Yessis bends until an 80-90 degree angle at the knee, measured from the back of the shin to the back of the thigh (the page prints the degree sign as '?'); NASM returns to about 90 degrees of knee flexion; ACE sets the seat so the knees start at about 90 degrees with the heels flat. Measured either way, 90 degrees is the same right angle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis",
+        "nasm-leg-press",
+        "ace-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "yessis",
+          "text": "Bend your legs until there is an 80-90? angle in the knees (measured from the back of the shin to the back of the thigh).",
+          "where": "Execution"
+        },
+        {
+          "source": "nasm-leg-press",
+          "text": "Lower the platform back toward your body with control, returning to approximately 90 degrees of knee flexion.",
+          "where": "Step 4: Return/Descent"
+        },
+        {
+          "source": "ace-leg-press",
+          "text": "adjust your seat and foot position so that the bend in your knees is at approximately 90 degrees with your heels flat.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Measured range: in 23 resistance-trained people, leg presses through about 5 to 100 degrees of knee flexion grew the quadriceps about as much as their full range (5 to about 154 degrees) over 8 weeks.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "larsen2025"
+      ],
+      "quotes": [
+        {
+          "source": "larsen2025",
+          "text": "In one leg, the knee flexion range of motion (ROM) was fixed at approximately 5-100°, while for the other leg, participants used their maximum individualized ROM (5-154 ± 7.8°).",
+          "where": "abstract"
+        },
+        {
+          "source": "larsen2025",
+          "text": "These findings suggest that both knee flexion ROMs are similarly effective for promoting quadriceps femoris muscle hypertrophy over a relatively short training-period in resistance-trained individuals.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Yessis: leg press machines commonly cause low back injury because the lower back rounds when the knees come close to the chest; the closer they come, the more it rounds and the more pressure on the lumbar discs. ACE says not to let the thighs press into the ribs; NASM lists going far beyond 90 degrees as a mistake.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis",
+        "ace-leg-press",
+        "nasm-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "yessis",
+          "text": "Leg press machines commonly cause low back injury because of the rounding of the back when the knees are close to the chest.",
+          "where": "Performance"
+        },
+        {
+          "source": "yessis",
+          "text": "The closer the knees get to the chest, the greater is the rounding in the lower back which puts pressure on the lumbar intravertebral discs and can cause injury.",
+          "where": "Performance"
+        },
+        {
+          "source": "ace-leg-press",
+          "text": "Do not allow your upper thighs to compress your ribcage.",
+          "where": "Step 4"
+        },
+        {
+          "source": "nasm-leg-press",
+          "text": "Descending too far beyond 90 degrees of knee flexion, which reduces control",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Do not lock the knees at the top: ACE says improper technique can lead to injury and to keep the heels on the plate and avoid locking out; Yessis says locking can lead to excessive hyperextension that can severely injure the knees; NASM says it stresses the joint.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-leg-press",
+        "yessis",
+        "nasm-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-leg-press",
+          "text": "Improper technique can lead to injury. Control the extension phase by keeping your heels in contact with the plate and avoid locking out your knees.",
+          "where": "Step 5"
+        },
+        {
+          "source": "yessis",
+          "text": "Be sure that you do not lock out the knees at the end of the movement, especially if you naturally have several degrees of hyperextension in the locked position. This can lead to excessive hyperextension, which can severely injure the knees.",
+          "where": "Performance"
+        },
+        {
+          "source": "nasm-leg-press",
+          "text": "Locking out knees at full extension, which removes tension and stresses the joint",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "A case report of both knees dislocating during weight training says the risk can be reduced by not locking or hyperextending the knees in any leg press or squat. One case; very rare.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "barnds2019"
+      ],
+      "quotes": [
+        {
+          "source": "barnds2019",
+          "text": "The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees during any type of leg press or squatting exercise.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "NASM lists the knees caving inward as a mistake, and too much weight that lets the knees collapse inward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-leg-press",
+          "text": "Allowing knees to cave inward (valgus), which indicates poor motor control",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "nasm-leg-press",
+          "text": "Using excessive weight that compromises form or allows knees to collapse inward",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Back, tailbone and head stay on the pad; brace the abs and keep the low back still.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-leg-press",
+        "nasm-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-leg-press",
+          "text": "Sit in the machine, positioning your back and sacrum (tailbone) flat against the machine's backrest.",
+          "where": "Step 1"
+        },
+        {
+          "source": "ace-leg-press",
+          "text": "Contract (“brace”) your abdominal muscles to stabilize your spine, be careful to avoid movement in your low back throughout the exercise.",
+          "where": "Step 1"
+        },
+        {
+          "source": "nasm-leg-press",
+          "text": "Sit on the leg press machine with your back and head firmly against the backrest.",
+          "where": "Step 1: Setup"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Hold the side handles lightly, only to steady the upper body.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-leg-press",
+          "text": "Lightly grasp any available handles to stabilize your upper extremity.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Breathing differs between sources: Yessis breathes in a little more than usual and holds it on the way down, then breathes out after the hardest part of the push; ACE breathes out slowly while pushing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis",
+        "ace-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "yessis",
+          "text": "Inhale slightly more than usual and hold your breath as you bend (flex) the legs to lower the platform.",
+          "where": "Execution"
+        },
+        {
+          "source": "yessis",
+          "text": "Exhale as you pass the most difficult part of the upward pressing action.",
+          "where": "Execution"
+        },
+        {
+          "source": "ace-leg-press",
+          "text": "Slowly exhale while pushing the resistance plate away from your body by contracting your glutes, quadiceps and hamstrings.",
+          "where": "Step 2"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "In five experienced bodybuilders lifting to failure at 80-100% of maximum, the double-leg press gave the highest blood pressures of the lifts tested, partly from breath-holding.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Tempo: two inclined leg press studies in trained adults used a controlled pace of 2 s down and 2 s up as their steady-paced condition; Yessis lowers at a slow to moderate speed, and Bells of Steel allows an optional one-second pause at the bottom. These are study conditions and coaching words, not a novice prescription; the plate uses 2 s down, 2 s up.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "martinfuentes2020",
+        "martinfuentes2022",
+        "yessis",
+        "bells-of-steel"
+      ],
+      "quotes": [
+        {
+          "source": "martinfuentes2020",
+          "text": "controlled velocity (2″ eccentric-2″ concentric)",
+          "where": "abstract"
+        },
+        {
+          "source": "martinfuentes2022",
+          "text": "2:2 seconds steady-paced velocities",
+          "where": "abstract, background"
+        },
+        {
+          "source": "yessis",
+          "text": "Lower at a slow to moderate speed.",
+          "where": "Execution"
+        },
+        {
+          "source": "bells-of-steel",
+          "text": "If desired, you can pause for a second at the bottom.",
+          "where": "5. Leg Press"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Muscles: Yessis names the glutes and hamstrings at the hip and the quadriceps at the knee as the primary muscles; NASM names the quadriceps as the primary mover and the glutes as assisting, with hamstrings and hip adductors secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis",
+        "nasm-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "yessis",
+          "text": "The primary muscles of the hip joint are the gluteus maximus and hamstrings.",
+          "where": "Primary Muscles Involved"
+        },
+        {
+          "source": "yessis",
+          "text": "The primary muscle of the knee joint is the quadriceps femoris",
+          "where": "Primary Muscles Involved"
+        },
+        {
+          "source": "nasm-leg-press",
+          "text": "Quadriceps -- primary mover for knee extension and leg pressing power",
+          "where": "Muscles Worked"
+        },
+        {
+          "source": "nasm-leg-press",
+          "text": "Glutes -- assist in hip extension and provide pressing power",
+          "where": "Muscles Worked"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "In 17 untrained adults over 12 weeks, the leg press grew the vasti, the gluteus maximus and the adductor magnus, but not the rectus femoris.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kinoshita2026"
+      ],
+      "quotes": [
+        {
+          "source": "kinoshita2026",
+          "text": "LP, but not KE, increased volumes of the gluteus maximus (+15.4%) and the adductor magnus (+6.2%)",
+          "where": "abstract, results"
+        },
+        {
+          "source": "kinoshita2026",
+          "text": "Muscle volumes of the individual and whole QF significantly increased in both conditions ( P ≤ 0.026), except for the rectus femoris in the LP condition ( P = 0.379).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "In trained men the leg press gave much lower hamstring (biceps femoris) activity than a single-joint kickback.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "stien2021"
+      ],
+      "quotes": [
+        {
+          "source": "stien2021",
+          "text": "The biceps femoris EMG amplitude was higher during the single-joint exercise kickback compared to the leg press",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Foot height: in 14 women, feet low on the platform gave more quadriceps activity and feet high more glute activity; on the 45-degree press the calf (gastrocnemius) was more active than with high feet.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "dasilva2008"
+      ],
+      "quotes": [
+        {
+          "source": "dasilva2008",
+          "text": "if the goal is to induce greater rectus femoris and vastus lateralis (quadriceps) activation, the LPL should be performed. On the other hand, if the goal is to induce gluteus maximus activity, the LPH should be performed.",
+          "where": "abstract"
+        },
+        {
+          "source": "dasilva2008",
+          "text": "the rectus femoris and gastrocnemius were more active during the LP45 and LPL than the LPH.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Feet width and toe angle made no difference to muscle activity on the inclined leg press; the vastus medialis was the most active muscle.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "martinfuentes2022"
+      ],
+      "quotes": [
+        {
+          "source": "martinfuentes2022",
+          "text": "Muscle activation presented no differences between conditions regarding feet width stance or feet rotation.",
+          "where": "abstract, results"
+        },
+        {
+          "source": "martinfuentes2022",
+          "text": "The inclined leg press exercise produces the highest muscle activation in the vastus medialis, regardless of the velocity, feet stance, or gender.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Knee forces in the leg press and squat rose as the knee bent further; the authors suggest the 0-50 degree range for people who want to keep knee forces low.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "escamilla2001lp"
+      ],
+      "quotes": [
+        {
+          "source": "escamilla2001lp",
+          "text": "Because all forces increased with knee flexion, training within the functional 0-50 degrees range may be efficacious for those whose goal is to minimize knee forces.",
+          "where": "abstract, conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "Getting out: some machines have a depth selector that limits how far the platform travels; after the set, pause at the top, pull the safety handles in and bend the knees gently until the platform rests on the safety stoppers.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bells-of-steel"
+      ],
+      "quotes": [
+        {
+          "source": "bells-of-steel",
+          "text": "Some leg press machines also have a safety depth selector, which is a knob or a pin that lets you adjust how far the footplate can travel.",
+          "where": "3. Setting the Safety Catch"
+        },
+        {
+          "source": "bells-of-steel",
+          "text": "When you’ve completed your set, pause at the top and pull the safety handles inwards.",
+          "where": "6. Re-Engage Safeties"
+        },
+        {
+          "source": "bells-of-steel",
+          "text": "You can now bend your knees gently until the platform rests across the safety stoppers.",
+          "where": "6. Re-Engage Safeties"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "text": "The leg press allows much more weight than the squat, sometimes over twice as much, so use caution to prevent injury.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis"
+      ],
+      "quotes": [
+        {
+          "source": "yessis",
+          "text": "In comparison to the free weight squat, the leg press allows you to use much more weight; in some cases, well over twice the amount used in the regular squat. The extra weight is needed for greater intensity but you should always use caution to prevent injury.",
+          "where": "Performance"
+        }
+      ]
+    },
+    {
+      "id": "c24",
+      "text": "Return slowly and under control, after a brief pause at the top; NASM warns against a jerky or uncontrolled descent.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-leg-press",
+        "nasm-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-leg-press",
+          "text": "Pause momentarily, then slowly return to your starting position by flexing (bending) the hips and knees, and allowing the resistance plate to move towards you in a slow, controlled manner.",
+          "where": "Step 4"
+        },
+        {
+          "source": "nasm-leg-press",
+          "text": "Maintain tension throughout the movement and avoid jerky or uncontrolled descent.",
+          "where": "Step 4: Return/Descent"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "yessis",
+      "url": "https://doctoryessis.com/?p=2700",
+      "title": "The Leg Press (Yessis M., Dr. Yessis SportLab)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "ace-leg-press",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/154/seated-leg-press/",
+      "title": "Seated Leg Press (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "nasm-leg-press",
+      "url": "https://www.nasm.org/resource-center/exercise-library/leg-press",
+      "title": "Leg Press (NASM Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "bells-of-steel",
+      "url": "https://bellsofsteel.us/blogs/content/how-to-use-the-leg-press-machine",
+      "title": "How to use the leg press machine (Bells of Steel, manufacturer blog)",
+      "kind": "manufacturer",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "larsen2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/40113586/",
+      "title": "Knee flexion range of motion does not influence muscle hypertrophy of the quadriceps femoris during leg press training in resistance-trained individuals (Larsen S et al., J Sports Sci)",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": "40113586",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "barnds2019",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/30676343/",
+      "title": "Simultaneous Bilateral Knee Dislocation During Weight Training: A Case Report and Review of the Literature (Barnds B et al., JBJS Case Connect)",
+      "kind": "peer-reviewed",
+      "year": 2019,
+      "pmid": "30676343",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise (MacDougall JD et al., J Appl Physiol)",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": "3980383",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "martinfuentes2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33238589/",
+      "title": "Muscle Activation and Kinematic Analysis during the Inclined Leg Press Exercise in Young Females (Martin-Fuentes I, Oliva-Lozano JM, Muyor JM, Int J Environ Res Public Health)",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": "33238589",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "martinfuentes2022",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/34085847/",
+      "title": "Influence of Feet Position and Execution Velocity on Muscle Activation and Kinematic Parameters During the Inclined Leg Press Exercise (Martin-Fuentes I, Oliva-Lozano JM, Muyor JM, Sports Health)",
+      "kind": "peer-reviewed",
+      "year": 2022,
+      "pmid": "34085847",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "kinoshita2026",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41630124/",
+      "title": "Hypertrophic Effects of Single- versus Multi-Joint Exercise: A Direct Comparison between Knee Extension and Leg Press (Kinoshita M et al., Med Sci Sports Exerc)",
+      "kind": "peer-reviewed",
+      "year": 2026,
+      "pmid": "41630124",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "stien2021",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33707987/",
+      "title": "Electromyographic Comparison of Five Lower-Limb Muscles between Single- and Multi-Joint Exercises among Trained Men (Stien N, Saeterbakken AH, Andersen V, J Sports Sci Med)",
+      "kind": "peer-reviewed",
+      "year": 2021,
+      "pmid": "33707987",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "dasilva2008",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18545207/",
+      "title": "Analysis of muscle activation during different leg press exercises at submaximum effort levels (Da Silva EM et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2008,
+      "pmid": "18545207",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "escamilla2001lp",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/11528346/",
+      "title": "Effects of technique variations on knee biomechanics during the squat and leg press (Escamilla RF et al., Med Sci Sports Exerc)",
+      "kind": "peer-reviewed",
+      "year": 2001,
+      "pmid": "11528346",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The knee angle at the bottom (c5) and top (c4), the lower back rounding as the knees near the chest (c7, the plate fault) and the back on the pad (c11) all read from the side. Knees caving in (c10) needs a front view and stays in text.",
+    "equipment": "45-degree plate-loaded sled (c1): back pad and seat, foot platform on the sled, side locking levers or safety handles (c3, c22), safety stoppers; floor line.",
+    "start": "Bottom of the rep: knees at about 90 degrees of knee flexion (NASM, ACE) or an 80-90 degree angle measured from the back of the shin to the back of the thigh (Yessis) (c5); feet in the middle of the platform, whole sole pressing (c2); hips, back and head on the pad (c1, c11); thighs clear of the ribs (c7); hands light on the side handles (c12).",
+    "end": "Top of the rep: legs fully extended but not locked, knees relaxed with no hyperextension (c4); heels still pressed into the plate (c4); trunk still against the back support (c4).",
+    "checkpoints": [
+      {
+        "label": "Back on pad",
+        "what": "Back and tailbone flat on the pad; hips never lift.",
+        "claim": [
+          "c11",
+          "c4"
+        ]
+      },
+      {
+        "label": "Knees about 90°",
+        "what": "Lower until the knees are at about 90 degrees, no deeper.",
+        "claim": [
+          "c5",
+          "c7"
+        ]
+      },
+      {
+        "label": "Soft knees",
+        "what": "Legs extended at the top, knees never locked.",
+        "claim": [
+          "c4",
+          "c8"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Lowering until the knees come close to the chest, so the lower back rounds off the pad.",
+      "why": "Yessis says leg press machines commonly cause low back injury this way (c7); ACE and NASM give the same limit (thighs off the ribs, not far beyond 90 degrees). The 'commonly' is the coach's word; no frequency is measured.",
+      "claim": "c7",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Back stays flat on the pad",
+        "claim": "c11"
+      },
+      {
+        "text": "Knees stop at about 90°",
+        "claim": "c5"
+      },
+      {
+        "text": "Small knee bend at the top",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 0,
+      "claim": "c15",
+      "text": "2 s down, 2 s up: the controlled pace two inclined leg press studies used in trained adults (c15), not a novice prescription; an optional one-second pause at the bottom is allowed (c15)."
+    },
+    "variantLine": "Drawn: the 45-degree plate-loaded sled (c1). The knee-angle, back-on-pad, no-lockout and handle lines (c4, c5, c7, c8, c11, c12) come from ACE's seated machine and NASM's generic machine as well and hold for both; the locking levers and stoppers (c3, c22) differ by machine."
+  },
+  "grip": {
+    "type": "Side handles held lightly (c12).",
+    "width": "The machine's side handles, beside the seat (c3, c12).",
+    "thumb": "Not sourced; drawing convention (LR-4).",
+    "handContact": "Light hold only, to steady the upper body (c12).",
+    "wrist": "Not sourced.",
+    "claims": [
+      "c3",
+      "c12"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Sit with your hips, back and head against the back pad.",
+      "claim": [
+        "c1",
+        "c11"
+      ]
+    },
+    {
+      "step": "Put your feet in the middle of the platform, about hip- to shoulder-width apart, pressing through the whole sole.",
+      "claim": "c2"
+    },
+    {
+      "step": "If the machine has a depth selector, set how far the platform can travel.",
+      "claim": "c22"
+    },
+    {
+      "step": "Hold the side handles lightly and brace your abs.",
+      "claim": [
+        "c12",
+        "c11"
+      ]
+    },
+    {
+      "step": "Push the platform away and release the safety handles; on many machines they turn outwards.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back and tailbone flat on the pad, head back, low back still.",
+      "claim": "c11"
+    },
+    {
+      "point": "Whole foot pressing on the platform, heels down.",
+      "claim": [
+        "c2",
+        "c4"
+      ]
+    },
+    {
+      "point": "Lower slowly and under control until your knees are at about 90 degrees.",
+      "claim": [
+        "c5",
+        "c24"
+      ]
+    },
+    {
+      "point": "Keep your thighs off your ribs.",
+      "claim": "c7"
+    },
+    {
+      "point": "Push until your legs are extended but not locked.",
+      "claim": "c4"
+    },
+    {
+      "point": "Hands stay light on the handles.",
+      "claim": "c12"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Going so deep that your knees come close to your chest and your lower back rounds.",
+      "fix": "Stop at about 90 degrees at the knee, with your thighs off your ribs.",
+      "claim": [
+        "c7",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Locking your knees straight at the top.",
+      "fix": "Stop with a small bend in your knees, heels on the plate.",
+      "claim": [
+        "c8",
+        "c4"
+      ]
+    },
+    {
+      "mistake": "Knees caving in, or using so much weight that they do.",
+      "fix": "Use a weight light enough that your knees do not cave in.",
+      "claim": "c10"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": [
+          "c16",
+          "c20"
+        ]
+      },
+      {
+        "muscleId": "glutes",
+        "claim": [
+          "c16",
+          "c17"
+        ]
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "adductors",
+        "claim": [
+          "c17",
+          "c16"
+        ]
+      },
+      {
+        "muscleId": "hamstrings",
+        "claim": [
+          "c16",
+          "c18"
+        ]
+      },
+      {
+        "muscleId": "calves",
+        "claim": "c19"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c7"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Front of the thighs and the glutes",
+        "means": "Expected: these are the main working muscles.",
+        "fix": "Nothing to fix.",
+        "claim": "c16",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "The fault to check: knees coming too close to the chest, so the lower back rounds.",
+        "fix": "Stop at about 90 degrees at the knee, thighs off your ribs.",
+        "claim": [
+          "c7",
+          "c5"
+        ],
+        "redFlag": "back"
+      },
+      {
+        "where": "Knees",
+        "means": "The fault to check: locking the knees at the top, or knees caving in.",
+        "fix": "Keep a small bend at the top, and use a weight light enough that your knees do not cave in.",
+        "claim": [
+          "c8",
+          "c10"
+        ],
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Lower back: letting the knees come close to the chest rounds the lower back and puts pressure on the discs.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Knees: locking them can push them past straight and badly injure them; both knees dislocating has been reported once.",
+      "claim": [
+        "c8",
+        "c9"
+      ]
+    },
+    {
+      "risk": "Very high blood pressure near failure on heavy two-leg presses, partly from holding your breath.",
+      "claim": "c14"
+    }
+  ],
+  "redFlags": [
+    "back",
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "knee at top",
+      "kind": "posture",
+      "right": "Legs extended with the knees relaxed, not locked.",
+      "wrong": "Knees snapped straight and locked.",
+      "claim": [
+        "c4",
+        "c8"
+      ]
+    },
+    {
+      "key": "depth",
+      "kind": "posture",
+      "right": "Knees at about 90 degrees, back flat on the pad.",
+      "wrong": "Knees close to the chest, lower back rounding off the pad.",
+      "claim": [
+        "c5",
+        "c7",
+        "c11"
+      ]
+    },
+    {
+      "key": "feet",
+      "kind": "posture",
+      "right": "Feet in the middle of the platform, whole sole pressing.",
+      "wrong": null,
+      "claim": "c2"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "adductors",
+        "role": "secondary",
+        "why": "The leg press grew the adductor magnus (c17), and NASM lists the hip adductors as secondary (c16)."
+      }
+    ],
+    "remove": [],
+    "why": "Library: primary quads, glutes; secondary hamstrings, calves. quads and glutes stay primary (c16, c17). hamstrings stay secondary: Yessis names them, but measured activity was low (c18). calves stay secondary: the gastrocnemius was active on the 45-degree press (c19)."
+  },
+  "anchorSource": "yessis",
+  "notes": [
+    "Fact 1 (knee bend): bottom about 90 degrees (c5), top extended but not locked (c4). Yessis measures the angle between the back of the shin and the back of the thigh; NASM gives knee flexion. Both are 90 at a right angle, so they agree there; Yessis's 80 degrees end would be about 100 degrees of flexion, which the card does not convert. Plate start is the bottom, as in ACE's step order; Yessis starts at the top after releasing the levers.",
+    "Yessis's page prints the degree sign as '?' (an encoding fault in the page itself); the quote keeps it as printed.",
+    "Tempo (fact 2): c15 gives seconds only as study conditions in trained adults (DATA, WEAK). No novice-level seconds for the leg press were found; pause 0 at the top, with the one-second bottom pause optional.",
+    "Mistake (fact 3): c7 is the only fault a source calls common ('commonly cause low back injury'); the lockout (c8) is the second, also drawable.",
+    "Breathing conflict (c13): Yessis holds the breath on the way down and breathes out past the sticking point; ACE breathes out while pushing. Not resolved; no shown breathing line. MacDougall (c14) supports caution with breath-holding.",
+    "Tier B: no tier-A safety block is required. The way out (c22: pause at the top, handles in, lower onto the stoppers) is sourced by the manufacturer blog only; machines differ."
+  ]
+}
