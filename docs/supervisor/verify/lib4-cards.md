@@ -223,6 +223,8 @@ shared-file owners: scripts/screenshot-gate.mjs is shared and add-only. Under D-
 
 ## 4. Card LIB-4b: per-id library runner
 
+> Amended by section 11.1 (2026-10-17): `LIB_ONCE.run` has four rows (item 8), B5's scratch ids, pairs and QA inputs follow items 3-5, and PQH rows import `candidateOf` (item 2). Where this card and 11.1 differ, 11.1 wins.
+
 ```
 id: LIB-4b
 model: claude-opus-5-5
@@ -342,6 +344,8 @@ hard card: post the design note (D-LIB4-SCOPE table, the tuple contract, the twi
 **return:** PR number, head, design-note link, the rows and seconds tables for both browsers, the P result, and the fixture result.
 
 ## 5. Card LIB-4c: library CI
+
+> Amended by section 11.1 item 9 (2026-10-17): C4 class 1 includes committed layers pages, C9 asserts committed == rebuilt == pin, and C6/C8 expect the four `LIB_ONCE.run` rows.
 
 ```
 id: LIB-4c
@@ -549,6 +553,8 @@ Build order: LIB-4a and LIB-4b build in parallel now. LIB-4c starts after LIB-4b
 
 ## 10. Card LIB-2b: library rows in the layer generators (D-LIB4-FIXTURE-2)
 
+> Amended by section 11.1 (2026-10-17): hands ship as `handpair-<key>` only, the QA candidate builder and E7 are added, budgets.test.ts and the new library modules join write_scope, and layers pages are committed. Where this card and 11.1 differ, 11.1 wins.
+
 ```
 id: LIB-2b
 model: claude-opus-5-5
@@ -594,3 +600,342 @@ hard card: post the design note on the PR before bulk building; the supervisor r
 **risk_and_recovery**
 - **The closure moves the 8's `hashes:` lines past a gz ceiling.** Stop and report; the supervisor rules (no silent re-set).
 - **The feel renderer cannot run on library sources without LIB-6 code.** Say so in the design note with the exact import; the supervisor rules before any LIB-6 file is touched.
+
+## 11. Design-note rulings for LIB-2b (#234) and LIB-4b (#232), 2026-10-17
+
+The supervisor workflow wf_f45aa9b0-355 drafted these. It ran one Opus judge per note, each reading the code at the named refs, then one adversarial critic per judge. The rulings in 11.2 and 11.3 are the judge's text, plus the critic's amendments where it amended. Section 11.1 is the supervisor's: it settles every place where the two sets disagree, and it records the card changes. Where 11.1 and a ruling below disagree, 11.1 wins.
+
+### 11.1 Supervisor decisions (these win over 11.2 and 11.3)
+
+1. **Library hands ship only as `handpair-<key>`.** This follows D-LIB7-1, LIB-2 design 12, plan 2.3 and D-LIB4-A4 (b).
+   - Card 10 Do 1 was wrong to say "`hand-` from the pinned layers page". It now reads: a library row's hand is its LIB-7/LIB-12 pair (`handpair-<key>`), or nothing when its archetype is `none`; its `zoom-<chromeId>.css` comes from the pinned layers page.
+   - `hands.mjs` never writes `hand-<chromeId>.ts` for a library row. `tests/howto/hands.test.ts` is not edited, so the amendment rejects D-LIB2b-PINS (6).
+   - On LIB-4a's synthetic scratch, a hands.test failure caused by syntheticRoot's `hand-<nc>` clones is a clone artifact (D-LIB4-PINS-2), listed with that reason.
+2. **One QA candidate builder.** It lives at `tools/plates/library/candidate.mjs`, exports `candidateOf(id, { root, platesHtml, engine })` and is owned by LIB-2b. LIB-4b's PQH rows import it, which settles D-LIB2b-QA and D-LIB4b-QACAND under one name.
+   - Census view comes from a required batch-row field `view`.
+   - Research comes from the card file named in the How-to's `research.card`.
+   - A T-mode parent's fragments come from the parent's latest `plate` entry, found as in D-LIB4b-KEYS.
+   - Mode `P` throws until it is ruled.
+   - The generator gates the node half, the batch sheet build and LIB-4b's PQH rows gate the full report, and D-LIB3-5 is amended to say so. Plan 3.2's sentence is amended to name these three places (D-LIB4-DOCS).
+3. **Scratch QA inputs for fixtures (D-LIB4-FIXTURE-3; amends D-LIB4-FIXTURE's "nothing is mocked").**
+   - **Where:** LIB-2b's E1 row and LIB-4b's B5 scratch ids only.
+   - **What:** each may carry a scratch research card in LIB-3's shape. Its plateFacts are measured from the copied spec's own engine report, and its topFault equals the spec's mistakeFault.
+   - **Limits:** it is marked scratch and is never pinned or shipped.
+   - **Mutation:** every fixture test includes "card removed → the generator throws QaRefused naming the id and PQ-H6".
+   - **Why:** without these inputs the generator's node-half gate refuses the row, and no output exists to test. Real research arrives with LIB-5 and the batch cards.
+4. **Fixture pair panels are real.** E1's and B5's scratch `pairs.mjs` return the hand close-up block cut from that scratch id's own fixture layers page, which LIB-6 builds on a scratch worktree. They never return a placeholder `<div hidden>`. B5 includes two scratch ids that share one pair key. Its `HT6/A7-lazy` row runs in a fresh app context per id. If this needs LIB-7 code that the scratch branch lacks, the builder stops and reports.
+5. **B5's scratch ids** are taken from {lat pulldown, seated cable row, leg press, machine chest press}, so no inherited Right override or exemption is involved. Scratch `budgets.json` entries are at measured + 10 %, on the scratch tree only. Criterion: every row passes, with the scratch QA inputs from item 3.
+6. **Budgets follow the registry.**
+   - `tests/howto/budgets.test.ts` joins LIB-2b's write_scope. It reads the registry's shipped rows: at the 8 nothing changes, and every shipped row's `ht-`, `posture-` and `feel-` chunk must have an entry.
+   - The 8's ceilings (8,930 B gz per feel chunk, 24 KB gz per posture chunk) also apply to library chunks.
+   - Batch PRs add their entries at measured + 10 %. No ceiling is raised.
+   - A per-key budget for `handpair-<key>` goes to LIB-7's card, as a pre-merge line.
+7. **Layers pages are committed (D-LIB2b-PAGES).**
+   - Plan 3.5's "derived, not committed" is amended for layers pages only. Plates pages stay derived.
+   - Plan 3.5's per-id `layers` entries become one batch `layers-page` pin plus the generator's per-id cuts, so a one-id layer change is a batch-page golden update.
+   - `approvedBy` stays `'owner'` until the "stamps (O5)" wording is ruled.
+   - Plan 3.5's `[golden update]` guard does not exist. The guards are the generator's pin check, LIB-2b's bijection test and LIB-4c's L1. Plan 3.5 is corrected (D-LIB4-DOCS).
+   - Repo size is a named risk: about 43 MB working tree and 9-10 MB packed at 145 ids [est]. If packed growth under `tests/howto/golden/library/` passes 20 MB, the supervisor re-rules before the next pin.
+8. **LIB_ONCE contract amendment (card 4).** `LIB_ONCE.run` = `qa-selftest/browser@*`, `guard/L-sections@390`, `guard/HT7-l3text@390` and `guard/HT9-A3-dup@390`, all ('*', 'silent-black'). LIB-4c's C6 and C8 expect all four, and B8 puts their seconds into `times.json` `once`. The per-shard rows are unchanged.
+9. **Added to other cards:**
+   - LIB-4c C4 class 1 includes `tests/howto/golden/library/<batch>.layers.html`, which selects that batch's ids. C9 asserts committed == rebuilt == pin.
+   - LIB-6's pre-merge lines: an unconditional `spec.files` test that builds the LIB-2b fixture through `layersSpecOf` and compares bytes; and making D-LIB2b-FIXTURE (4)'s rebuild compare unconditional.
+   - LIB-7's pre-merge line: the per-key handpair budget (item 6).
+10. **Open before LIB-8 or LIB-9 builds a library layers page.** These are blockers for LIB-9, not for LIB-2b or LIB-4b.
+    - **(a) D-LIB9-ENGINE.** Which engine draws a library plate on its layers page? Golden A's vendor engine carries `poly` and the flat-palm updates; golden B's layers engine does not. Owners: LIB-6 and LIB-8.
+    - **(b) D-LIB9-HANDPAGE.** A library card's hand close-up on its layers page must be rendered from its pair key, so the page reference equals the app's `handpair` chunk. Owners: LIB-6 and LIB-7.
+    - LIB-4b's T1 twin (`fragments ===`) covers every library id.
+11. **Card 10 changes, in addition to the above.**
+    - E1 now reads: the generator writes `ht-`, `feel-`, `posture-` and `zoom-<chromeId>.css`, the research JSON, and `handpair-<key>` for the row's key, never `hand-<chromeId>`; the file count is asserted against that list.
+    - New acceptance row **E7**: QA node-half gate. A row failing any node-half problem other than the browser keys is refused with QaRefused naming the id. Mutations as in D-LIB2b-QA.
+    - write_scope adds `tools/plates/library/candidate.mjs`, `tools/plates/library/layers-spec.mjs`, `tools/plates/library/inputs-closure.mjs`, `tests/howto/budgets.test.ts` (item 6), `tests/howto/fixtures/lib2b/**`, and new batch-format fields (`pages`, `view`) in the registry's validation.
+12. **Inputs of a library row's layer outputs.** `feel-`, `posture-` and `zoom-<chromeId>.css` list, as inputs, the row's pinned page, its `layersConfig`, its batch golden file and batch file, the plugin code files, `tools/plates/layers/MANIFEST.json` and `tools/plates/layers.mjs`, because ZDOTS, HX_TAIL, HAND_CSS and FEEL_CSS enter their text or checks. E2 asserts this. Mutation: drop MANIFEST.json, and E2 is red.
+
+### 11.2 LIB-2b rulings (#234)
+
+#### D-LIB2b-PAGES
+
+*Q1: should each batch's layers page be committed (tests/howto/golden/library/<batch>.layers.html), or built inside generate?* Owner: LIB-2b builds (1), (2) and (6). The supervisor amends plan 3.5 and adds the C9 compare in (4) to LIB-4c's card..
+
+Commit it. Conditions the builder applies:
+(1) The batch file's `pages` has three keys: `plates` (tools/plates/library/pages/<batch>.json, as the note says), `layers` (tests/howto/golden/library/<batch>.layers.html) and `layersConfig` (tools/plates/library/pages/<batch>.layers.json). `layersConfig` holds LIB-6's buildLayersPage spec as data, with repo-relative paths: { groups:[{id,title,ids:[libId]}], optionsModule, closeups:{libId:{optionsKey}}, jump }. Without it, LIB-4c's L1 has nothing to rebuild a layers page from (see D-LIB2b-LAYOUT).
+(2) The batch golden file holds one `layers-page` entry {pageSha256, bytes}. The generator reads the committed file and throws, naming the batch and the file, if it is missing or its sha256 or byte count differs from the pin. It does this before any cut.
+(3) The page enters the repo only in the same commit as its `layers-page` pin, which is the supervisor's [golden update] commit. A row needs no layers output before it is `shipped`.
+(4) Provenance belongs to LIB-4c's L1 (C9). It rebuilds every committed layers page from its sources through layersSpecOf and LIB-6's builder, on every run, in both modes. It is red unless rebuilt bytes == committed bytes == pin.
+(5) Plates pages stay rebuilt at generate time (card Do 1, as golden A is today).
+(6) LIB-2b corrects LIB-2-DESIGN 6.2 in section 13 ('no library page is committed' becomes 'layers pages are committed and pinned; plates pages are derived; L1 rebuilds both'). The supervisor amends plan 3.5's 'Fixtures are derived, not committed' line the same way.
+
+**Amended after critique:** Keep (1)-(6), and add:
+(7) A LIB-2b vitest guard. The files in tests/howto/golden/library/ are exactly the batch golden files, plus one <batch>.layers.html for each batch file whose latest `layers-page` entry exists. Each page's sha256 and bytes equal that entry. Each batch file's pages.layers names that path. Mutations: an unpinned page added is red; a pin without its page is red.
+(8) layersSpecOf translates layersConfig.closeups, keyed by lib id, to LIB-6's keys (howtoIdOf(card), build-layers-page.mjs:61). layersConfig never sets regionFix:false.
+(9) LIB-2-DESIGN 13 gets a risk row: about 43 MB working tree and 9-10 MB packed at 145 ids [est, 21% gzip], plus one page per batch golden update. Trigger: if packed growth under tests/howto/golden/library/ passes 20 MB (2x the estimate), the supervisor re-rules (for example, a content-addressed build cache) before the next pin.
+(10) Until the 'stamps (O5)' wording is ruled, `layers-page` entries carry approvedBy 'owner' (verifyChain).
+
+#### D-LIB2b-FEEL
+
+*Q2: may feel- for a library row be cut from the pinned layers page instead of coming from a renderer run (a deviation from card Do 1)?* Owner: LIB-2b.
+
+Yes. Conditions:
+(1) Cut it with the existing feelSectionOf(page, chromeId) (feel.mjs:34-42: exactly one section, nothing nested), only after the page's pin check (D-LIB2b-PAGES (2)).
+(2) renderAll() and the 8's path stay on goldenRows, so the 8's bytes do not change (E4). feel.test.ts:44 is not edited.
+(3) Per shipped library row, a test asserts that the feel-<chromeId>.ts section === feelSectionOf(that row's page, chromeId), and that the source's feel rows (keys) appear as fr-btn ids in the section, as the 8 are checked.
+(4) The renderer equivalence is proven by D-LIB2b-FIXTURE (4): wherever LIB-6's builder exists, the fixture page is rebuilt and must be byte-equal. In production it is proven by L1.
+Record this as D-LIB2b-FEEL in COACHING-DECISIONS and in LIB-2-DESIGN section 13.
+
+**Amended after critique:** Keep (1), (2), (4) and the record. Replace (3): for every shipped library row, a test runs the same HT8-A1 checks the 8 get (rest map, each row's watch and pain marks, legend, no is-playing or is-focus). It uses `rendered.fm` from renderAll() and that row's own How-to `feel` spec, loaded in place through loadContent. It also asserts feel-<chromeId>.ts section === feelSectionOf(the row's pinned page, chromeId). Mutations: a 1-byte change in the library section is red; one row's mark moved to another muscle in the source, without a page rebuild, is red.
+
+#### D-LIB2b-FIXTURE
+
+*Q3: may the E1 fixture's layers page be built from #181 on a scratch worktree and committed as test-fixture bytes?* Owner: LIB-2b; the LIB-6 merge PR rebuilds the fixture if its bytes move.
+
+Yes, with exact provenance:
+(1) The fixture row is lib_cable_lateral_raise. Its spec and How-to come from tools/plates/layers/exercises/pull_up.mjs and pull_up.howto.mjs by one deterministic transform committed in the LIB-2b test helper: swap the id and chromeId, and re-point every relative import to its original target under tools/plates/layers/**.
+(2) The page is built on a scratch worktree (main + #189 + LIB-2b + #181 9b8f76e6, never pushed). It is built from those transformed bytes, through layersSpecOf (D-LIB2b-LAYOUT), with one group holding only this card. Commit tests/howto/fixtures/lib2b/cable-lateral-raise.layers.html and tests/howto/fixtures/lib2b/provenance.json. The provenance file holds: pageSha256, bytes, sha256 of the transformed spec and How-to, the #181 sha, the LIB-2b sha, the node version and the exact command.
+(3) The E1 test asserts:
+- the transform's output shas equal provenance;
+- the committed page sha equals provenance;
+- then generate, generate --check and npm run build pass on the temp tree.
+(4) When tools/plates/library/build-layers-page.mjs exists in the tree, the same test rebuilds the page through layersSpecOf and asserts byte equality with the committed fixture. This happens on LIB-4b B5 and the LIB-4c scratch branches, and on main after LIB-6 merges. The PR shows that path once, run on the scratch worktree.
+(5) The fixture never goes into tests/howto/golden/library/ and is never pinned or shipped.
+(6) If LIB-6's output changes later, the fixture is rebuilt with the recorded command in that PR.
+
+**Amended after critique:** Keep (1)-(6), and add:
+(7) The E1 temp tree writes tools/plates/library/hands/pairs.mjs, the path handpairs.mjs's loadPairs reads. It maps lib_cable_lateral_raise to one scratch key, and its pairPanel returns a zx panel. E1 asserts: HAND maps the clone's chromeId to handpair-<key>; no hand-cable-lateral-raise.ts exists.
+(8) The temp batch row carries the clone's census view. A scratch research card in LIB-3's documented shape (qa/index.mjs:4-10) supplies plateFacts measured from the clone's own engine report and a topFault equal to its mistakeFault. It is test data only, never pinned or shipped. Mutation: remove the card, and generate throws QaRefused naming lib_cable_lateral_raise PQ-H6.
+(9) On the scratch worktree, the fixture page is built from two checkouts at different absolute paths, with byte-equal results, and provenance.json records both.
+(10) While build-layers-page.mjs is absent, the test asserts that tools/plates/library/render/ is also absent, so a half-merged or renamed LIB-6 is red. The LIB-6 merge PR makes the rebuild compare unconditional; the supervisor adds that line to LIB-6's card.
+
+#### D-LIB2b-LAYOUT
+
+*Gap found by the Q3 check: library sources cannot both be imported in place (content.mjs, closureOf, the QA candidate, LIB-4b tuples) and be copied verbatim into LIB-6's mirror.* Owner: LIB-2b.
+
+Library specs and How-to sources keep in-repo relative imports, which is LIB-8's convention. Every Node consumer imports them in place: content.mjs's loadContent, closureOf, candidateOf, and LIB-4b via content.mjs's exported loadContent (it never calls import(sourceOf(id)) directly).
+LIB-2b adds tools/plates/library/layers-spec.mjs with layersSpecOf(batchFile, { stageDir }). It imports no LIB-6 code and returns LIB-6's buildLayersPage spec:
+- groups: from pages.layersConfig, with card id = chromeId with '-' replaced by '_';
+- closeups and optionsUrl: from layersConfig;
+- files: for each row, `exercises/<card>.mjs` and `exercises/<card>.howto.mjs` map to staged copies of the row's spec (`src`) and sourceOf(id). In each staged copy, every relative specifier is rewritten from its in-repo target. A target under tools/plates/layers/** becomes its path relative to the mirror's exercises/ folder, so the mirror's one engine instance is used. Any other target becomes its absolute file URL (golden B's own pattern, howto-layers.mjs:49).
+LIB-4c's L1, LIB-4b's fixture.mjs, the E1 fixture and LIB-9 build layers pages only through it.
+Test: staging the fixture's re-pointed sources gives text byte-equal to golden-B-layout copies. When the builder exists, the built page equals the committed fixture page.
+
+**Amended after critique:** layersSpecOf stages the whole data closure (closureOf) of each row's spec and How-to source into the mirror, and imports nothing from outside it:
+- a target under tools/plates/layers/** maps to its mirror path;
+- the row's own spec (row.src) maps to exercises/<card>.mjs;
+- every other closure file is copied to library/<its repo-relative path> inside the mirror, with its specifiers rewritten by the same rule (vendor-engine files included);
+- node: builtins stay as they are.
+Any specifier that would leave the mirror throws, naming the file. Tests: the fixture's staged text is byte-equal to the golden-B-layout copies; a planted composer that imports ../../layers/engine/body.mjs is staged with its import mapped into the mirror; no staged file contains 'file://'. Where the builder exists, the built page equals the committed fixture page from two checkout paths.
+
+#### D-LIB2b-PINS
+
+*D-LIB4-PINS-2 table in the addendum: is every edit at least as strict, are the floors right, is HT2-A2's split right?* Owner: LIB-2b.
+
+The rule is accepted: literal becomes registry shippedRows(), with the same matcher and per-item checks. The floor is accepted too: shippedRows().length >= 8, and shippedRows().slice(0,8) ids === Object.keys(plates.json) in order.
+Corrections:
+(1) Add shippedRows(all = rows()) = all.filter(r => r.stage === 'shipped') to registry.mjs. It does not exist; only shippedIds does (:66).
+(2) Do not edit tests whose subject is a golden-8 artifact and which cannot fail with library rows: generate.test.ts:28-31 (HT2-A1: the golden A fixture and GOLDEN.json latest), feel.test.ts:44 (HT8-A1: renderAll stays the 8 under D-LIB2b-FEEL), class-map.test.ts:38's golden A extract, library-core L2-A4 :72-73 (identity list) and L2-A19. Library per-item checks go in new `it` blocks against the batch golden and batch pages.
+(3) HT2-A2 is generate.test.ts:88-95 (plates.mjs's exact output list), not :29-30. Expected = the 10 literal paths unchanged ∪ one ht-<slug>.ts per shipped library row, with exact toEqual. The :127 loop (hashes.inputsSha256 == header) covers every shipped row.
+(4) HT8-A6 (feel.test.ts:435-441): count = shipped rows. The 8,930 B gz ceiling still applies to every feel-*.ts, library files included. HT7-A5 (zooms.test.ts:172-186): the 24 KB gz per posture chunk applies to every shipped row, and the loaders count = shipped rows. A library chunk over a ceiling means stop and report (card E4). There is no 'no ceiling here' class.
+(5) HT7-A1 (zooms.test.ts:39-43, :53-61): the file set must equal shipped chromeIds exactly. The crop count is exact: n === Σ posturePanels(pageOf(row), chromeId).length over shipped rows, and the 8's subtotal stays === 16. A '≥ 16' bound may never replace an exact count. The per-id panel, zoom-key and ZDOTS checks run against each row's own page and source.
+(6) Add hands.test.ts:31-35 (exact hand- set = shipped chromeIds without a LIB-7 pair) and :42-44 (distinct panels = that set's size). HT6-A7 (:90-100) stays unedited.
+(7) css.test.ts:127-131 takes the slug from registry rows (plates.json, :18, has no library slug).
+(8) Discover the list instead of guessing it. Run full `npm test` on the E1 tree and list every red test with its line and fix in the PR. A red test outside D-LIB4-PINS-2's LIB-2b set goes to the supervisor before it is edited.
+(9) Each edit keeps its mutations: a 9th shipped row with the count re-pinned to 8 is red, and dropping one output kind for that row is red.
+
+**Amended after critique:** Keep (1)-(5) and (7)-(9). Replace (6): hands.test.ts is not edited; :31-35 and :42-44 keep the 8, and LIB-2b writes no hand-<chromeId>.ts for a library row (see D-LIB2b-LOADERS). Add:
+(10) library-core '60 files' = 60 + Σ over shipped library rows of {ht-<slug>.ts, feel-<c>.ts, posture-<c>.ts, zoom-<c>.css, docs/research/howto/<id>.json}, plus one handpair-<key>.ts per distinct key used by shipped rows. E1 asserts the exact number.
+(11) New `it` blocks, one per shipped library row:
+- HT2-A1's check: the ht- plate fragments (fragmentsOf) === the batch golden plate entry, and src/slug/prefix/chromeId agree;
+- class-map.test.ts:38's 'no plate or plate-fit class' over the batch plates page's shipped plates;
+- HT8-A1's checks per D-LIB2b-FEEL.
+Each gets its mutation.
+
+#### D-LIB2b-CSS
+
+*(a) Is it sound that the shared CSS files stay built from the 8's pages only, plus the throw-on-mismatch rule?* Owner: LIB-2b.
+
+Yes: plate.css, hand.css, feel.css and posture.css stay built from the 8's pages, so their bytes do not change. Replace the note's named-constant checks with one exact rule per file. For each shipped library row, rebuild the file from that row's pages with the same function, and throw unless the bytes are identical, naming the id and the file:
+- plate.css: rewriteCss(galleryCss(batch plates page));
+- hand.css: rewrite(HAND_CSS + chromeRules(howtoCss(build-page.mjs, layersStyle))). howtoCss already throws if HOWTO_CSS is not in the page;
+- posture.css: cropPlateCss(galleryCss(layers page)) + the .zdot rule. The note has no posture.css check;
+- feel.css: feelCss({ FEEL_CSS, pageCss: HOWTO_CSS, used: used8 ∪ the library sections' classes ∪ RUNTIME_CLASSES }), after checking that FEEL_CSS is in the page. A new unstyled class passes; a class HOWTO_CSS styles throws.
+Also require:
+- ZDOTS appears exactly once in the layers page;
+- with comments and its own rows' `.hx-<chromeId>` rules removed, the layers page's style equals golden B's style with the same removal for the 8.
+Give each shared file one mutation that makes the generator throw.
+
+#### D-LIB2b-LOADERS
+
+*(b) Is ids.mjs 'after: plates.mjs' with a ctx.prev check sound, or does the check belong elsewhere?* Owner: LIB-2b.
+
+It is sound and belongs in ids.mjs, because ids.mjs writes the import lines. Precisions:
+(1) Set `after = [...LAYERS, 'tools/plates/gen/plates.mjs']`, as an array of paths that keeps LAYERS. There is no cycle: plates.mjs has no `after`, and content.mjs keeps [plates, ids].
+(2) Check through the existing `has` (ctx.prev when given, else the file on disk), so syntheticRoot's ctx-less outputs() call keeps working. Throw `ids: <id>: no src/howto/generated/ht-<slug>.ts` before any text is built.
+(3) Extend the check to every map. For each shipped row, throw unless all of these exist: has(ht-<slug>), has(feel-<c>), has(posture-<c>), and has(hand-<c>) or pairOf[c]. Today chunkMaps silently drops a missing kind. For the 8 all four exist, so no bytes change.
+(4) E3 test: parse every import('./X') in the rendered loaders.ts, on main and on the E1 tree, and assert X.ts is an output. E1 also asserts that HAND, POSTURE and FEEL each map the fixture's chromeId. Mutation: emit the loader line before the check, and it turns red.
+
+**Amended after critique:** (3) becomes: for each shipped row, ids.mjs throws unless has(ht-<slug>), has(feel-<c>) and has(posture-<c>), and, unless coverage-archetypes.json gives the id 'none', has(hand-<c>) or pairOf[c]. Every map line it writes still points at an existing output.
+The hand rules for library rows live in hands.mjs's library path:
+- it emits zoom-<chromeId>.css only, never hand-<chromeId>.ts;
+- it throws, naming the id, when a non-'none' row has no pair;
+- it throws when a 'none' row's layers page holds a hand close-up for it.
+Tests: on main and on the E1 tree, every import('./X') in loaders.ts is an output; syntheticRoot at n = 8, 22 and 153 still builds. Mutations: emit a loader line before the check (red); give the clone no pair (hands.mjs throws).
+
+#### D-LIB2b-CLOSURE
+
+*(c) Do the closure helper's import forms cover the real sources?* Owner: LIB-2b.
+
+They cover today's data sources.
+(1) closureOf applies only to data sources: How-to sources, plate specs and their composers. Plugin and page-builder code keeps its static lists.
+(2) Build the graph from esbuild's metafile (bundle, platform 'node', packages 'external', write false), taking the repo-relative, sorted inputs. esbuild 0.28.2 is already a devDependency, so nothing new is added. It handles multi-line imports, export-from, comments and JSON import attributes.
+(3) esbuild silently skips a computed import(), so closureOf also scans each closure file. It throws, naming file:line, on an import( with a non-literal argument, on require(, and on createRequire.
+(4) File reads are not imports. A closure file outside the MANIFEST-locked trees (tools/plates/layers/**, tools/plates/vendor/**) that calls readFileSync or new URL(…, import.meta.url) throws. When a closure enters a locked tree, that tree's MANIFEST.json joins the inputs. This is because engine/sheet.mjs reads tokens.css and the Inter woff2.
+(5) An unresolved import throws, naming the importer.
+Tests: the pull_up.howto.mjs closure has exactly 13 files; a planted computed import throws; a planted readFileSync in a library composer throws.
+
+**Amended after critique:** Keep (1)-(5), and add:
+(6) In a data closure, a specifier that is neither relative nor `node:` throws, naming the file and specifier.
+(7) The scan in (3) throws on any import( whose argument is not one plain string literal, template literals included.
+Tests: a planted bare import throws; a planted template-literal import throws; the pull_up.howto.mjs closure is exactly 13 files, plus layers MANIFEST.json as an input.
+
+#### D-LIB2b-QA
+
+*(e) LIB-3 expects LIB-2 to supply a QA candidate builder. Does one exist, and which card owns it?* Owner: LIB-2b; the supervisor amends D-LIB3-5.
+
+None exists. LIB-2b owns it.
+(1) LIB-2b merges #180 at 4540d827 now; #180 merges before LIB-2b in checklist order.
+(2) New tools/plates/library/candidate.mjs: candidateOf(row, { platesHtml, engine, batchEntry }), returning qa/index.mjs:4-10's shape:
+- spec from row.src;
+- plate and article from the batch plates page;
+- research, tempo, topFault and mistakeFault from the row's sources;
+- census.view from docs/howto/library/inputs/census.json;
+- derivation via derive.mjs for D and T rows;
+- exemptions from the batch golden plate entry (flags only, D-LIB3-flags).
+(3) gen/plates.mjs runs runQa(candidate) with no browser half on each shipped library row before emitting. It throws QaRefused naming the id for any problem other than the browser-half keys: `browser:not-run` in PQ-H1/H4/H5, and F2/F5 'browser checks not run'.
+(4) LIB-4b's PQH rows import candidateOf and gate the full report (report.ok).
+(5) The supervisor amends D-LIB3-5: the generator gates the node half; the shards gate the full report.
+(6) On day 1, measure whether the pull-up clone passes the node half (unverified). A hard-check failure is reported, never exempted.
+
+**Amended after critique:** Keep (1), (4) and (5), and change the rest:
+(2) candidateOf reads census.view from a required batch-row field `view` ('front' or 'side'). The batch file records the census source sha. The registry validates `view` for library rows.
+- research (plateFacts, tempo, topFault) is read from the card file the row's How-to names in research.card, in the shape qa/index.mjs:4-10 documents;
+- a missing card or field is not defaulted: runQa reports it, and the generator refuses the row (no exemption);
+- the rest stays as the judge wrote it.
+(3) The only problems ignored are exactly key 'browser:not-run' in PQ-H1, H4 and H5, and F2/F5 with why 'browser checks not run' (qa/index.mjs:47-48). Mutation: any other F2 or F5 reason is not ignored.
+(6) E1 supplies scratch QA inputs per D-LIB2b-FIXTURE (8). Its mutation (card removed) gives QaRefused for PQ-H6 naming the id.
+(7) Cache each row's QA result in-process, keyed by sha256 of its candidate inputs. Measure the node-half seconds per id on E1 and project them over 145 ids × about 9 renders per job. If a job would pass 30 min, the supervisor rules before LIB-9.
+(8) The supervisor adds this as an acceptance row E7 to card 10, with the mutations above, and amends D-LIB3-5.
+
+### 11.3 LIB-4b rulings (#232)
+
+#### D-LIB4b-KEYS
+
+*(1) Callout and tell keys come from the id's generated plate module ht-<slug>.ts (normal.cues / mistake.cues) instead of 'the batch golden entry', and theme-less rows carry theme '*'. Is this at least as strict, and still 'from source only'?* Owner: LIB-4b.
+
+Adopt, with one addition that makes it strictly bound to the pin. libraryTuples reads src/howto/generated/ht-<slug>.ts and takes plate.normal.{firstKey,cues} and plate.mistake.{firstKey,cues}. Before it uses any key, it recomputes the `cues` fragment exactly as fragmentsOf does: sha256(JSON.stringify({normal:{firstKey,cues},mistake:{firstKey,cues}})). That value must equal the pinned entry's fragments.cues. For the 8, the pinned entry is the latest GOLDEN.json `plate` entry. For a library id, it is the latest `plate` entry for that id in tests/howto/golden/library/<row.batch>.json, and only after verifyBatchChain(file, GOLDEN.entries) returns []. It also asserts cues[0].key === firstKey for each figure. The N:<k> and M:<k> rows are cues.slice(1), in module order. libraryTuples throws, naming the id and the file, when any of these holds: the module is missing, the batch file is missing or invalid, the entry is missing, or the hash differs. It never returns fewer tuples. Theme '*' is allowed only on per-id rows whose state ends '@*': L2/*, PQH/*, HT4/A5-* and the size rows of D-LIB4b-SIZE. For every per-id row, theme === '*' must hold exactly when width === '*'; libraryTuples and the runner both assert this. LIB_ONCE rows stay fixed literals. In the doc, call these rows 'theme-less', not 'node-only': PQH has a browser half. Add to B1: a module copy with one tell dropped makes libraryTuples throw 'cues sha256 … != entry'.
+
+**Amended after critique:** Adopt the judge's hash-bound rule, with two changes. (a) The pinned entry for a library id is found by scanning every tests/howto/golden/library/*.json, not by building a path from row.batch. Every file must pass verifyBatchChain(file, GOLDEN.entries). The id's `plate` entries must sit in exactly one file; otherwise libraryTuples throws 'plate entry for <id> in N files'. Use that file's latest `plate` entry for the id. (b) The module is read either by extracting the `plate:` object literal that moduleText writes as JSON literals, or through esbuild's transform, which is already a gate-time import. No new dependency. Any parse error shows up as the 'cues sha256 … != entry' throw. Everything else stands as the judge wrote it: cues[0].key === firstKey, rows from cues.slice(1), throw and never return fewer tuples, theme '*' ⇔ width '*' on per-id rows, the 'theme-less' wording, and the B1 mutation.
+
+#### D-LIB4b-X1
+
+*X1: is HT-1's golden self-check correctly not a per-id row?* Owner: LIB-4b.
+
+Accepted. goldenSelfCheck (golden A, defaults exactly as the HT-1 group calls it) runs once per shard as LIB_ONCE.shard(k): self/0px@390 and self/1px-control@390. No per-id row.
+
+#### D-LIB4b-SIZE
+
+*X2 (chunk sizes) and X4's HT-3b A2: are the per-chunk size checks truly build-wide?* Owner: LIB-4b (rows); each batch card (entries); LIB-2b (budgets.test follows the registry, see other findings).
+
+X2 is rejected for its size parts, and X4 is rejected for A2. Add these theme-less per-id rows, read from www/assets of the shard's build. (a) L2/chunk-size@*: exactly one ^ht-<slug>-[\w-]{8}\.js$; raw ≤ 153,600 and gzip at the default level ≤ 36,864 (HT-2 A9); within its tests/howto/budgets.json entry `ht-<slug>-*.js` (HT-3b A2, same gzip). A missing entry fails. (b) HT7/A5-size@*, for ids whose sourceOf(id) has at least one posture zoom: exactly one ^posture-<chromeId>-[\w-]{8}\.js$; gzip level 9 ≤ 24,576; within its entry `posture-<chromeId>-*.js`. A missing entry fails. (c) HT8/size@*, for ids with feel rows: exactly one ^feel-<chromeId>-[\w-]{8}\.js$, within its entry `feel-<chromeId>-*.js`. A missing entry fails. The rest of X2 is accepted. HT-2 L1 (generate --check) is build-wide and runs every gate. HT-6 A7's 'hand-*.js count = 8' is covered by LIB-4a's handChunkProblems (D-LIB4-A4 b), because library hands ship only as handpair-<key>. HT-6 A7's per-chunk hand- ceiling applies to the 8 only, for the same reason. Each batch PR that ships an id adds budgets.json entries for its ht-, posture- and feel- chunks at measured + 10 %, under the budgets.json rule (LIB-2 design: 'like any new chunk'). The B5 fixture writes such entries on its scratch branch only. LIB-4b recomputes the scope table: +24 rows on the 8.
+
+**Amended after critique:** Keep rows (a)-(c), their limits and the missing-entry rule. Add three points. (1) B2 must show that, on the 8, L2/chunk-size raw/gz from www/assets equals both HT-2 A9's printed sizes and HT-3b A2's printed sizes. If the www bytes differ from A9's probe build, the twin runs A9's own probe build, the same vite call. (2) Rows (b) and (c) apply when the generator's output list for the id (LIB-2b) contains a posture-<chromeId> or feel-<chromeId> chunk. Each also asserts zero such chunks for an id whose output list has none. (3) The supervisor adds `tests/howto/budgets.test.ts` explicitly to LIB-2b's write_scope; budgets.json stays reserved apart from scratch fixtures. LIB-2b makes it read the registry's shipped rows: at the 8 the test is unchanged, and it requires an entry for every shipped row's ht-, posture- and feel- chunk. Batch PRs add their entries at measured + 10 %. Scope table: +24 on the 8.
+
+#### D-LIB4b-X3
+
+*X3: ht3Behaviour A3/A8, presentControls and ht3SectionGuards — no per-id rows?* Owner: LIB-4b.
+
+Accepted, on these conditions. (i) ht3Behaviour A3/A8 run on plate 0 only for the 8, so no per-id row is needed. Per id, S0 ≤ 700 elements is in PQ-H7, the 44 px controls are in HT10/sweep (C10), and the return to S0 is in HT10/sweep (A2). (ii) presentControls tests the imported primitive presentGolden. The HT-3 group covers it on every gate run, on the same Chrome (D-LIB4-VERDICT is red when `chrome` differs). (iii) ht3SectionGuards guard ht3Fidelity's code. The runner re-implements that code, so its copy needs its own once-per-run guard: LIB_ONCE.run row guard/L-sections@390 (D-LIB4b-GUARDS).
+
+**Amended after critique:** (i) No separate A3/A8 row. Instead, `entry/open@390` (paper) also asserts, per id, A3's S0 facts at the moment the entry opens the sheet: the h2 text equals the id's exercises.json name; the eyebrow is 'How to do it'; exactly one pressed normal callout, which equals the module's normal.firstKey; no Mistake figure before the first tap; Mistake aria-pressed false; dialog element count ≤ 700. On the 8, B2 must show this row passes. In the doc, state that PQ-H7's s0 is the article count, not the app sheet. (ii) presentControls stays as the judge accepted. (iii) guard/L-sections@390 as in D-LIB4b-GUARDS.
+
+#### D-LIB4b-X4
+
+*X4: HT-3b A1-A3, A4b-d and A5 — build-wide or once per run?* Owner: LIB-4b.
+
+A1 (main-chunk content probe over every file in src/howto/generated), A3 (launch idle and tap-to-plate on the squat), A4b (build-B carry-over), A4c (chunk-load toast, squat) and A4d (PlateSheet chip) are accepted as once per run. HT-3b covers them on every gate run, and HT-10 `speed` once per run. A2 is rejected (D-LIB4b-SIZE). A5 is accepted, but the doc must name its real coverage. HT-3b A5 scans only HowToSheet and the 8's ht- chunks. C17 on library chunks is covered by HT-10 A4 `assets`, which runs checkChucks over every HowToSheet-, ht-, hand-, feel-, posture- and zoom- JS chunk, and by LIB-2 A26 (loaders-, handpair-). A4a stays per id as `offline/open@390`, including A4's localStorage-keys equality.
+
+#### D-LIB4b-X5
+
+*X5: HT-7 D-HT7-L3-text-9 (30 opens of the squat's 'Bony bump') and the planted L3-text probes (leg press foot).* Owner: LIB-4b.
+
+Accepted as non-per-id. The 30-open label check is a once-per-run stability proof of the app host. HT-7 covers it on every run (150 opens asserted). The planted probes guard HT-7's L3 text re-open classifier. T3 re-implements that classifier, so add the LIB_ONCE.run row guard/HT7-l3text@390. It runs the same four planted cases (path moved 1 px → immediate fail; text-only change → one re-open; a kept text change ≠ 0 px; an exact re-open = 0 px) through T3 on leg press foot, golden B, silent-black.
+
+#### D-LIB4b-X6
+
+*X6: HT-8 early 'Feel it' chip and the shimmer tripwire.* Owner: LIB-4b.
+
+Accepted. earlyChip runs on the squat (card 1) in HT_FULL, and shimmerCosts on HT_PLATES[2]. Both are sheet behaviour and performance, once per run, covered by the HT-8 group on every run and by HT-10 `speed`. Lazy loading of the feel chunk per id stays in HT8/lazy@390.
+
+#### D-LIB4b-X7
+
+*X7: HT-9's HT-3b A3 split and the A3 duplicate-line fixture.* Owner: LIB-4b.
+
+The split is accepted. It is a property of the sheet component (Setup and Risks are inserted after the plate), checked on index 0 in silent-black and covered by the HT-9 group every run. The duplicate-line fixture guards HT-9's A3 check, which T5 re-implements, so add the LIB_ONCE.run row guard/HT9-A3-dup@390. It plants a second copy of a red-flag line in Setup and must be caught ('shows 2 times') by T5's A3, on index 0 in silent-black.
+
+#### D-LIB4b-X8
+
+*X8 (first half) and unlisted exemptions in HT-4: L0-B and the HT-4 assertions the note does not list.* Owner: LIB-4b.
+
+L0-B is accepted. It is golden B's own lock; for library layers pages, LIB-4c's L1 rebuilds every pinned page to its sha. Two more named exemptions are added. X8b: validateLateralRaiseCrops (ref-src lateral raise only; no library id uses ref-src). X8c: HT4-A6's capture('#nope') throw probe (gb.capture is imported, not re-implemented, so the HT-4 group covers it every run). The remaining HT-4 A5 assertions are per id and fold into HT4/A5-protected@*: at least 1 renderPlate call captured for this id, every opts key in {id, mistake, selected}, and one untouched base call whose spec deep-equals the reference spec, which is the spec the id's pinned plates page is built from.
+
+#### D-LIB4b-POSES
+
+*(3) X8 question: does PQ-H cover poses, so that HT4/A5-poses can be exempt for library ids, or does a library pose list get added by LIB-2b or LIB-9?* Owner: LIB-4b (T1); no work for LIB-2b or LIB-9.
+
+There is no exemption, and no hand-written pose list from LIB-2b or LIB-9. HT4/A5-poses@* stays for every library id, and T1 applies HT-4's rule with its exception tables replaced by a derivation from source. (1) Capture every renderPlate call made while building that id's layers page with LIB-6's build-layers-page.mjs. Use HT-4's shim method on a mirror of tools/plates (captureRenderPlateCalls pattern). (2) Attribute each call to the base or camera call, or to (zoom key, side ∈ {right, wrong}) from its opts.id as LIB-6 builds it: crop.mjs `${z.key}-${role}`, and the zbox uid. A call that cannot be attributed fails. Every right and wrong side of each zoom declared in sourceOf(id) must have at least one captured call (anti-blindness). (3) Right side, and every unattributed-to-wrong call: poses.start and poses.end must deep-equal one of classifyPose's references, taken from the reference spec: start, end, or mergeDeep(end, mistake.pose). (4) Wrong side: poses.start, poses.end and mistake.pose may also deep-equal the fault pose that the id's pinned How-to source declares for that zoom's wrong side, resolved exactly as LIB-6 resolves it: poseOf(z.wrong) or mergeDeep(poseOf(z.right), poseOf(z.wrong)) in the crop family; for the zbox family, the declared still for that side and the `over` still. (5) The 8's ENUMERATED_POSES and ENUMERATED_MISTAKE_POSES never apply to a library id. T1 asserts that a library spec.id is none of the 8's spec ids. A Right-side override is a new design kind: it needs an owner pilot-sheet approval and a named supervisor ruling that pins a literal in the batch golden entry, and none is allowed now. (6) On the 8, T1 keeps HT-4's exact path (golden-B build plus the enumerated tables), so B2 stays equivalent. (7) Test, on the scratch branch with #181: applied to LIB-6's build of the 8, the derived rule accepts every call HT-4 accepts except the two Right-side pins pull_up|shoulders-right and hanging_leg_raise|shoulders-right, which it reports. Mutation: the fixture's Right crop given a {base, pose} override → HT4/A5-poses fails.
+
+**Amended after critique:** Keep (1), (2) and (4)-(6). Change the rest as follows. (3) On every call not attributed to a Wrong side (base, cam, plate -n/-m, Right): poses.start and poses.end must deep-equal start, end or mergeDeep(end, mistake.pose) of the reference spec. A present spec.mistake.pose must deep-equal the reference spec's mistake.pose or mergeDeep(end, mistake.pose), as classifyMistakePose does. (4) On a Wrong side the source-declared fault pose is allowed, exactly as the judge stated, for both poses and mistake.pose. (7) The test on the scratch branch with #181 runs every HT-4 A5 assertion on LIB-6's build of the 8: protected fields, opts keys, untouched base call, fragments and poses. It must accept everything HT-4 accepts except the two named Right pins. The mutation stays. Pin the source text of goldenB.mjs's classifyPose, classifyMistakePose, validateCalls, protectedFieldProblems and fragmentProblems in twins/pins.json (D-LIB4b-TWINS). Named risk: a D or T child whose How-to copies its parent's Right override is red under this rule. It goes to a supervisor ruling on the pilot or batch sheet that introduces it, and is never relaxed in T1.
+
+#### D-LIB4b-OPEN2
+
+*(4) The extra harness option ht10GoldenCounts(browser, {html, ids}): additive, with defaults unchanged?* Owner: LIB-4b.
+
+Approved under D-LIB4-OPEN, and LIB-4b's harness write_scope gains these lines. Exact signature: `export async function ht10GoldenCounts(browser, { html = readFileSync(HT10_GOLDEN_B), ids = HT_PLATES.map(p => p[0]) } = {})`. The trailing `= {}` is required, because the 3 existing one-argument calls must keep working. The body changes only by passing `html` to openGolden and `ids` as the evaluate argument. The runner calls it with { html: pages[id].layers, ids: [chromeId] } and passes the result through ht10Sweep's existing `golden` option. ht10Sweep needs no further change beyond D-LIB4-OPEN's order, custom and indexOf. B9 gains a mutation: change the `ids` default → ht10-gate red.
+
+#### D-LIB4b-QACAND
+
+*(5) PQH rows for library ids need a QA candidate builder. Do the rows stay red until it exists, and who owns it?* Owner: LIB-2b (builder); LIB-4b (rows).
+
+Confirmed: they stay red and are never skipped. Until a builder exists, the runner emits all 11 PQH/* rows for a library id as fail, with reason 'no QA candidate builder'. B6 covers the absence. libraryTuples always lists them. The owner is LIB-2b. LIB-2 is frozen except for review fixes, and LIB-2b is the card that carries LIB-2's unfinished outcomes (D-LIB4-FIXTURE-2 a). Add to LIB-2b's card a new file tools/plates/library/candidate.mjs (outside qa/, which stays LIB-3's), exporting libraryCandidate(id, { root, platesHtml, engine }). It returns qa/index.mjs's candidate shape, with these fields: mode from the registry row (H, T, D; 'P' throws until ruled); spec from the library spec loader; plate and article from extractPlates and articlesOf of the id's pinned plates page; research from the id's research facts as sourceOf(id) and the generated research card hold them (the exact field path goes in LIB-2b's design note); census view from census.json; derivation for D and T from derive.mjs, with rebuildParent and parentFragments from GOLDEN.json; exemptions from the batch golden entry's exemptions list (empty if none). A missing input throws, naming the id and the file. New acceptance row E7: for the 8, libraryCandidate in mode 'approved' deep-equals candidatesOf's output (ignoring functions); a scratch library row gets every field; a missing research or spec file throws. LIB-4b's B5 (and so its READY) waits for this, as it already waits for LIB-2b's READY.
+
+**Amended after critique:** LIB-2b owns tools/plates/library/candidate.mjs `libraryCandidate(id, { root, platesHtml, engine })` as the judge wrote, with these changes. Its base also merges #180 (4540d827) now, and it re-merges main after #180 merges. Derivation for D: parentFragments from GOLDEN.json. For T: from the parent's latest `plate` entry, found as in D-LIB4b-KEYS (GOLDEN.json for one of the 8, otherwise the one batch or pilot file that verifyBatchChain accepts). research: read from the research card v2 file and fields that content 3.2 and LIB-5 define. When the card or a field is absent, it throws, naming the id and the file. Keep mode 'P' throwing until ruled, E7, and B5 waiting on it. The PQH rows stay red with 'no QA candidate builder' until it exists.
+
+#### D-LIB4b-COUNTS
+
+*(6) Do the scope-table counts on the 8 equal what each HT block observes (B1)? Spot-check two families.* Owner: LIB-4b.
+
+The internal arithmetic is correct: 2,907 on this head. Spot-checks below. HT-3 families, with Σ(callouts+tells) over the 8 = 44 from the generated modules: F3 216 = HT-3 `f3`; L2b 328 = `l2b` 216 + title 40 + sections 72; L3 pixel 344 = `pairs` (≥ 300) + 16 slot-api; L4 72 = `anims` 40 + ends 16 + motion 16. HT-7, with 16 posture keys: 504 = 31 × 16 + 8 controls, against HT-7 counters pairs 96 (80 L3 + 16 reduced), anims 80, reduced 16, controls 8, restores 96. HT-6 401 matches 13 hand pages: `pairs` 105 = 65 pages + 40 grip, A6 32. The family totals do not equal single printed counters, so B1 must use an exact mapping table: each sub-state set → the block counter it equals (name and value on the 8), or 'formula × source count' for rows the block does not print (L2b title and sections, slot-api, L4 ends and motion, HT7 chip/A5/A4). Equality must be exact, and each block bound (≥ 300, ≥ 80, ≥ 200, ≥ 32, Show 17, 40 passes) is checked on the mapped count. The values are taken from the printed lines of B2's gate run on the merged head and quoted in the doc. Also add the missing HT-7 sheet-level row: HT7/A2@390 per theme plus HT7/A2:reduced@390 (paper). It carries 'no posture chunk fetched before the first posture tap', the data-motion match, and '#zdots removed after the sheet closed' (+48 on the 8). With D-LIB4b-SIZE (+24), the table becomes 2,979 on the 8. LIB-4b recomputes it and B1 pins it.
+
+**Amended after critique:** Adopt the exact mapping table, the bounds checked on mapped counts, and HT7/A2@390 per theme plus HT7/A2:reduced@390 (paper), +48 on the 8, for a total of 2,979. HT7/A2 also carries: the DOM's posture chip keys equal sourceOf(id)'s posture zoom keys, in order. For the 8 the twin keeps the literal 2 so that B2 holds. For library ids the count is the source's. Printed values are quoted from B2's merged-head gate run. Where an arithmetic check was not run, the doc says 'unverified'.
+
+#### D-LIB4b-TWINS
+
+*(6) Is the twin list complete against card B3 and D-LIB4-OPEN, and how is the pin defined?* Owner: LIB-4b.
+
+Keep T1-T7 and the extra source pins of ht3Fidelity and ht3Behaviour, and add two. T8 is the HT-2 group: L2/chunk re-implements A9's per-row 'bundled chunk = GOLDEN fragments' check, and L2/chunk-size re-implements A9's size check. A source pin is added for runHt10 (tools/plates/fidelity/ht10.mjs), because the HT10 family re-implements its a2 composition and thresholds (pairs ≥ 2 per plate, 15 steps per sheet). Pinned text for a group: `group.statements.map(s => src.slice(s.start, s.end)).join('\n')` from parseGate(readFileSync(GATE_FILE)). For a function: the export's Function.prototype.toString(). All pins live in one file, tools/plates/library/fidelity/twins/pins.json ({key: sha256}), so the line D-LIB4-OPEN asks the supervisor to add to a later card's write_scope is a single path. The B3 message stays 're-check the library twin', naming the key.
+
+**Amended after critique:** Keep T1-T8 and the group-text definition. A function pin's text is the function's source plus, in file order, the source of every non-exported module-level binding it references, found by parsing the module with gate-blocks' parser. This covers ht3Fidelity, ht3Behaviour, runHt10, and every goldenB.mjs function that a twin re-implements instead of importing (at least classifyPose, classifyMistakePose, validateCalls, protectedFieldProblems and fragmentProblems). A twin imports every exported helper its block imports, and copies none. The runner launches Chromium with HT-3's exact args, which T7's pin covers. Pins and the assertion map live in the one file twins/pins.json ({key: {sha256, map}}), so a later card's write_scope line stays a single path. The B3 message is unchanged.
+
+#### D-LIB4b-GUARDS
+
+*How are guards and planted-defect fixtures that prove re-implemented check code covered for library ids?* Owner: LIB-4b (rows); LIB-4c consumes LIB_ONCE unchanged in form.
+
+Add three LIB_ONCE.run rows, which run on shard 1 and are exported from tuples.mjs so LIB-4c's verdict expects them. ('*','silent-black','guard/L-sections@390'): the runner's L-family, on HT_PLATES[0] against golden A, with fixtureSection still compares and restores sections, and with fixtureLeakSection fails L2b. ('*','silent-black','guard/HT7-l3text@390'), per D-LIB4b-X5. ('*','silent-black','guard/HT9-A3-dup@390'), per D-LIB4b-X7. Each guard row fails when its guard does not fire. B2 gains a mutation per guard: blind the guarded check in the runner → that guard row is red. Guards of imported code (presentGolden, gb.capture, ht10Sweep's inject fixtures, LIB-3's selftest) stay covered by their own blocks or by qa-selftest/browser@*.
+
+**Amended after critique:** Adopt the three LIB_ONCE.run rows and the B2 mutations. The supervisor amends card section 4's contract text and LIB-4-DESIGN section 1 so that LIB_ONCE.run = qa-selftest/browser@*, guard/L-sections@390, guard/HT7-l3text@390 and guard/HT9-A3-dup@390, all ('*', 'silent-black'). LIB-4c's C6 and C8 expect all four. B8 measures their seconds, and they go into times.json `once`.
+
+#### D-LIB4b-MAP
+
+*How do we prove that 'anything left out is a named supervisor exemption' (D-LIB4-SCOPE) for every twinned block?* Owner: LIB-4b.
+
+LIB-4-DESIGN.md section 2 gets an assertion map, kept as data in tools/plates/library/fidelity/twins/map.mjs. For each pinned text (every T1-T8 group, ht3Fidelity, ht3Behaviour, runHt10), it lists, in order, every match of /\b(?:errors|problems)\.push\(|\bP\(|\bF\(|\bfail\(/g with its target. A target is a state formula in tuples.mjs, an exemption id (X1-X8c), or 'def' for a helper definition. Test in library-fidelity.test.ts: the number and order of matches in each pinned text equal its map entries, and every target resolves. Mutations: delete one map entry → red; add a P( call to a twinned block → red (together with B3).
+
+**Amended after critique:** The map lists every match of /\b[A-Za-z_$][\w$]*\.push\(|\bthrow new Error\b|\b(?:P|F|S|fail|crashed)\(/g in each pinned text, in order. Each match maps to a state formula, an exemption id, 'def', or 'collect' (a push that gathers data and never reaches errors, e.g. sizes.push, fetched.push). Every 'collect' entry names the variable, and the test asserts that the variable never flows into errors/problems within that text. The map data lives in twins/pins.json with the pins. Mutations: delete one entry → red; add a bad.push( or a throw to a twinned block → red, together with B3.
