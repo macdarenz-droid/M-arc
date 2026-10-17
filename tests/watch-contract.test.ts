@@ -11,7 +11,7 @@ vi.mock('@/native/haptics', async orig => {
   return { ...real, haptic: { ...real.haptic, confirm: vi.fn(async () => undefined), success: vi.fn(async () => undefined) } };
 });
 
-import { freshState, type Split } from '@/core/models';
+import { freshState, newId, type Split } from '@/core/models';
 import { initStore, replaceState, state } from '@/core/store';
 import { setTheme } from '@/theme/engine';
 import { setSet, startRest, startSession } from '@/slices/workout/session';
@@ -23,6 +23,18 @@ interface WatchView { l1: string; l2: string; st: string; eff: string; can: bool
 interface WatchLink { start(): void; rx(text: string): void; tick(): void; view(): WatchView; complete(): void; rest(kind: string): void; effort(): void; show(): void }
 type LinkFactory = (io: Record<string, unknown>, boot: string) => WatchLink;
 const loadWatch = async () => (await import(/* @vite-ignore */ pathToFileURL(LINK).href) as { Link: LinkFactory }).Link;
+/**
+ * 1.1.2: the watch link starts each storage call and callback through io.defer (setTimeout 0 on the
+ * watch). Here they queue, and the queue runs after each call into the link.
+ */
+const tasks: Array<() => void> = [];
+const drain = () => { while (tasks.length) tasks.shift()!(); };
+function onWatch(Link: LinkFactory, io: Record<string, unknown>, boot: string): WatchLink {
+  const l = Link({ connect: () => undefined, paint: () => undefined, defer: (fn: () => void) => { tasks.push(fn); }, ...io }, boot);
+  const out = {} as Record<string, (...a: unknown[]) => unknown>;
+  for (const [k, fn] of Object.entries(l)) out[k] = (...a: unknown[]) => { const r = (fn as (...b: unknown[]) => unknown)(...a); drain(); return r; };
+  return out as unknown as WatchLink;
+}
 
 function memoryStorage(): Storage {
   const map = new Map<string, string>();
@@ -60,7 +72,7 @@ describe('WATCH-C X1 the watch and the phone agree', () => {
     startSession(split);
     setSet(0, 0, { kg: 61.235, entered: { value: 135, unit: 'lb' }, reps: 6, effort: 'ideal' });
     const sent: string[] = [];
-    const watch = Link({ store: watchStore(), send: (t: string, done: (c: number) => void) => { sent.push(t); done(207); }, keep: () => undefined, now: () => Date.now() }, 'k3x9qa00');
+    const watch = onWatch(Link, { store: watchStore(), send: (t: string, done: (c: number) => void) => { sent.push(t); done(207); }, keep: () => undefined, now: () => Date.now() }, 'k3x9qa00');
     watch.start();
     const hello = JSON.parse(sent[0]!) as { wt: number };
     watch.rx(JSON.stringify(buildSnapshot(state.value, Date.now(), hello.wt)));
@@ -87,7 +99,7 @@ describe('WATCH-C X1 the watch and the phone agree', () => {
       send: async t => { if (!drop) watch!.rx(t); return 207; },
       log: () => undefined,
     });
-    watch = Link({ store: watchStore(), send: (t: string, done: (c: number) => void) => { toPhone.push(t); void phone.receive(t, Date.now()); done(207); }, keep: () => undefined, now: () => Date.now() }, 'k3x9qa01');
+    watch = onWatch(Link, { store: watchStore(), send: (t: string, done: (c: number) => void) => { toPhone.push(t); void phone.receive(t, Date.now()); done(207); }, keep: () => undefined, now: () => Date.now() }, 'k3x9qa01');
     watch.start();
     await vi.advanceTimersByTimeAsync(0);
     expect(watch.view()).toMatchObject({ l1: 'Barbell Bench Press 1/2', can: true, st: '' });
@@ -116,5 +128,27 @@ describe('WATCH-C X1 the watch and the phone agree', () => {
     await vi.advanceTimersByTimeAsync(0);
     expect(state.value.active!.rest!.endsAt).toBe(endsAt + 30_000);
     expect(watch.view()).toMatchObject({ st: 'Saved', rest: 'Rest 1:30' });
+  });
+});
+
+describe('WATCH-C 1.1.2 the ids the phone sends keep the watch slot under 120 B', () => {
+  it('newId lengths for session, set and rest ids, and the longest stored Complete with them', async () => {
+    const longest = (p: string) => Math.max(...Array.from({ length: 2000 }, () => newId(p).length));
+    // newId: prefix, "_", Date.now() in base 36 (8 characters from 1997 to 2059), "_", up to 6 random characters.
+    expect([longest('s'), longest('set'), longest('rest')]).toEqual([17, 19, 20]);
+    const Link = await loadWatch();
+    const store = watchStore();
+    const watch = onWatch(Link, { store, send: (_t: string, done: (c: number) => void) => { done(207); }, keep: () => undefined, now: () => Date.now() }, 'k3x9qa02');
+    watch.start();
+    const sid = `s_${'z'.repeat(8)}_${'z'.repeat(6)}`, setId = `set_${'z'.repeat(8)}_${'z'.repeat(6)}`;
+    // the longest values a set carries: rev 99999, a load of 999.75, 100 reps, Ideal
+    watch.rx(JSON.stringify({ t: 'mw', v: 1, k: 'snap', pt: Date.now(), wt: null, srev: 1, sid, ex: 'Bench', si: 1, sn: 3, set: { id: setId, rev: 99999, w: 999.75, u: 'kg', r: 100, e: 'ideal' }, rest: null, th: null }));
+    watch.complete();
+    expect(watch.view().st).toMatch(/^Pending /);
+    const value = store.map.get('mc_q0')!;
+    // commandId "<boot>-1" here; a run's sequence can reach 99999 (4 more characters) and keep the margin.
+    const worst = value.length + 4;
+    console.log(`[WATCH-C 1.1.2] longest stored Complete ${worst} characters of 119: margin ${119 - worst}`);
+    expect(worst).toBeLessThanOrEqual(119 - 10);
   });
 });

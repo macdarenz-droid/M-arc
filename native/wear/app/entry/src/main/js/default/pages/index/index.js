@@ -3,7 +3,7 @@ import storage from '@system.storage';
 import brightness from '@system.brightness';
 import { PHONE_PKG, PHONE_FP, Link, makeBoot } from '../../common/link.js';
 
-// WATCH-C page: Wear Engine, storage and screen calls; the rest is in common/link.js.
+// WATCH-C page: radio, storage and screen calls; the rest is common/link.js.
 var client = null, link = null, page = null, timer = null;
 
 function paint() {
@@ -11,29 +11,23 @@ function paint() {
   for (var k in v) page[k] = v[k];
 }
 
-// the SDK calls all four callbacks
+function no() {}
+
 function send(text, done) {
   try {
-    var b = new Builder();
+    var b = new Builder(), m = new Message();
     b.setDescription(text);
-    var m = new Message();
     m.builder = b;
-    client.send(m, {
-      onSuccess: function () {}, onFailure: function () {}, onSendProgress: function () {},
-      onSendResult: function (r) { done(r && r.code); }
-    });
+    client.send(m, { onSuccess: no, onFailure: no, onSendProgress: no, onSendResult: function (r) { done(r && r.code); } });
   } catch (e) {
     done(-1);
   }
 }
 
 function keep(on) {
-  try {
-    brightness.setKeepScreenOn({ keepScreenOn: on, success: function () {}, fail: function () {} });
-  } catch (e) {}
+  try { brightness.setKeepScreenOn({ keepScreenOn: on, success: no, fail: no }); } catch (e) {}
 }
 
-// package name first (Huawei's order)
 function connect() {
   try {
     client = new P2pClient();
@@ -41,7 +35,7 @@ function connect() {
     client.setPeerFingerPrint(PHONE_FP);
     client.registerReceiver({
       onSuccess: function () { link.show(); },
-      onFailure: function () {},
+      onFailure: no,
       onReceiveMessage: function (msg) {
         if (typeof msg === 'string') link.rx(msg);
       }
@@ -56,8 +50,7 @@ export default {
   },
   onInit() {
     page = this;
-    link = Link({ store: storage, send: send, keep: keep, now: function () { return Date.now(); }, paint: paint }, makeBoot());
-    connect();
+    link = Link({ store: storage, send: send, keep: keep, connect: connect, now: function () { return Date.now(); }, paint: paint }, makeBoot());
     link.start();
     timer = setInterval(function () { link.tick(); }, 1000);
     paint();
@@ -72,7 +65,7 @@ export default {
     keep(false);
     page = null;
     try {
-      client.unregisterReceiver({ onSuccess: function () {} });
+      client.unregisterReceiver({ onSuccess: no });
     } catch (e) {}
   }
 };

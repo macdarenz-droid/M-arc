@@ -1,10 +1,10 @@
-// WATCH-C link, outbox, screen text (native/wear/README.md). ES5, ASCII, tabs: 32,000 B budget.
-var T = 'mw', V = 1, APP = '1.1.1';
+// WATCH-C link; see native/wear/README.md. ES5, ASCII, tabs.
+var T = 'mw', V = 1, APP = '1.1.2';
 var PHONE_PKG = 'com.mrcdrnzz.dailytracker';
 // build-apk.yml EXPECTED_SHA256
 var PHONE_FP = '05669AD2721C6ABAF9FDD4B9B84E2FB7944844B1DEF359845F015F2B67CAF1F5';
 var KEY = 'mc_q', SLOTS = 8, GAPS = [4000, 8000, 16000, 30000], QUIET = 20000, LOST = 25000;
-var EFF = ['', 'easy', 'ideal', 'max'];
+var EFF = ['', 'easy', 'ideal', 'max'], KINDS = { c: 'complete_set', a: 'rest_add_30', s: 'rest_skip' };
 var CH = 'Changed on phone', END = 'Workout ended';
 var WHY = { target_missing: CH, already_committed: CH, stale_revision: CH, stale_rest: CH, invalid_state: CH,
 	session_closed: END, no_session: END, wrong_session: END, unsupported: 'Update needed' };
@@ -12,107 +12,67 @@ var WHY = { target_missing: CH, already_committed: CH, stale_revision: CH, stale
 function num(x) { return typeof x === 'number'; }
 function str(x) { return typeof x === 'string'; }
 function two(n) { return (n < 10 ? '0' : '') + n; }
-function hms(ms) {
-	var d = new Date(ms);
-	return two(d.getHours()) + ':' + two(d.getMinutes()) + ':' + two(d.getSeconds());
-}
-function mss(ms) {
-	var s = Math.ceil(ms / 1000);
-	return Math.floor(s / 60) + ':' + two(s % 60);
-}
+function hms(ms) { var d = new Date(ms); return two(d.getHours()) + ':' + two(d.getMinutes()) + ':' + two(d.getSeconds()); }
+function mss(ms) { var s = Math.ceil(ms / 1000); return Math.floor(s / 60) + ':' + two(s % 60); }
 function sum(t) {
-	for (var h = 0, i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) % 2147483647;
+	for (var h = 0, i = 0, c; i < t.length; i++) h = (c = t.charCodeAt(i)) < 33 || c > 126 ? NaN : (h * 31 + c) % 2147483647;
 	return h;
 }
 
 function makeBoot(rand) {
-	for (var s = '', i = 0; i < 8; i++) {
-		var k = Math.floor((rand || Math.random)() * 36);
-		s += '0123456789abcdefghijklmnopqrstuvwxyz'.charAt(k >= 0 && k < 36 ? k : 0);
-	}
+	for (var s = '', i = 0, k; i < 8; i++) s += '0123456789abcdefghijklmnopqrstuvwxyz'.charAt((k = Math.floor((rand || Math.random)() * 36)) >= 0 && k < 36 ? k : 0);
 	return s;
 }
 
 function read(text) {
-	try {
-		var m = JSON.parse(text);
-		return Object(m) === m && m.t === T ? m : null;
-	} catch (e) {
-		return null;
-	}
+	try { var m = JSON.parse(text); } catch (e) { return null; }
+	return Object(m) === m && m.t === T ? m : null;
 }
 
-function makeCmd(id, snap, kind, at, effort) {
-	var c = { t: T, v: V, k: 'cmd', commandId: id, sessionId: snap.sid, actionAt: at, kind: kind };
-	var s = snap.set;
-	if (kind !== 'complete_set') {
-		c.restId = snap.rest.id;
-	} else {
-		c.setId = s.id;
-		c.expectedRev = s.rev;
-		if (s.w != null) c.load = { value: s.w, unit: s.u };
-		c.reps = s.r;
-		if (effort) c.effort = effort;
+function wire(f) {
+	var c = { t: T, v: V, k: 'cmd', commandId: f[1], sessionId: f[2], actionAt: +f[3], kind: KINDS[f[0]] };
+	if (f[0] !== 'c') c.restId = f[4];
+	else {
+		c.setId = f[4];
+		c.expectedRev = +f[5];
+		if (f[6] !== '') c.load = { value: +f[6], unit: f[7] };
+		c.reps = +f[8];
+		if (f[9]) c.effort = f[9];
 	}
 	return JSON.stringify(c);
 }
 
 function okSnap(m) {
-	var s = m.set;
-	if (s && (!str(s.id) || !num(s.rev) || (s.u !== 'kg' && s.u !== 'lb'))) return false;
-	return num(m.pt) && (m.sid === null || str(m.sid)) && (!m.rest || (str(m.rest.id) && num(m.rest.left)));
+	var s = m.set || {}, r = m.rest || {};
+	return num(m.pt) && (m.sid === null || str(m.sid)) && (!m.set || str(s.id) && num(s.rev) && (s.u === 'kg' || s.u === 'lb')) && (!m.rest || str(r.id) && num(r.left));
 }
 
 function theme(th) {
 	return th && th.length === 3 && str(th[0]) && str(th[1]) && str(th[2]) ? th : ['#08090a', '#f7f8f8', '#5e6ad2'];
 }
 
-// io: store, send(text, done(code)), keep(on), now(), paint()
 function Link(io, boot) {
 	var seq = 0, snapAt = 0, off = 0, rtt = -1, t0 = 0, lastRx = 0, failAt = 0, hb = 0, due = Infinity;
 	var q = [], jobs = [], hellos = [], wq = [], busy = false, snap = null, eff = null, effSet = '', done = '';
-	var wait = null, msg = '', stop = false, kept = false, ready = false, lost = false;
+	var wait = null, msg = '', stop = false, kept = false, ready = false, lost = false, on = false, pause = 0;
 
-	function paint() { if (io.paint) io.paint(); }
-	function queue(job) {
-		jobs.push(job);
-		if (!busy) next();
-	}
-	function next() {
-		var job = jobs.shift();
-		busy = !!job;
-		if (job) job(next);
+	function paint() { io.paint(); }
+	function queue(job) { jobs.push(job); if (!busy) next(); }
+	function next() { var job = jobs.shift(); busy = !!job; if (job) job(next); }
+	function later(fn) {
+		(io.defer || setTimeout)(function () { try { fn(); } catch (e) {} }, 0);
 	}
 	function kv(op, key, value, cb) {
 		var once = false;
-		function back(ok, v) { if (!once) { once = true; wait = null; cb(ok, v); } }
+		function back(ok, v) { if (!once) { once = true; wait = null; later(function () { cb(ok, v); }); } }
 		wait = { at: io.now(), back: back };
-		try {
-			io.store[op]({ key: key, value: value, default: '', success: function (v) { back(true, v); }, fail: function () { back(false); } });
-		} catch (e) {
-			back(false);
-		}
-	}
-	// values < 128 B: chunks mc_q<slot>_<i> of 120 characters, then mc_q<slot> = count,length,sum; tick fails a call after 5 s
-	function put(slot, text, cb) {
-		var i = 0;
-		(function one(ok) {
-			if (!ok) return cb(false);
-			if (i * 120 < text.length) return kv('set', KEY + slot + '_' + i, text.substring(120 * i, 120 * ++i), one);
-			kv('set', KEY + slot, i + ',' + text.length + ',' + sum(text), cb);
-		})(true);
-	}
-	// cb(false): a read failed; cb(true, null): the slot is not whole
-	function take(slot, cb) {
-		kv('get', KEY + slot, '', function (ok, h) {
-			var p = String(h).split(','), t = '', i = 0;
-			(function one(ok2, c) {
-				if (!ok2) return cb(false);
-				t += c;
-				if (i < p[0] && i < 5) return kv('get', KEY + slot + '_' + i++, '', one);
-				cb(true, t.length === +p[1] && sum(t) === +p[2] ? t : null);
-			})(ok, '');
+		later(function () {
+			try { io.store[op]({ key: key, value: value, default: '', success: function (v) { back(true, v); }, fail: function () { back(false); } }); } catch (e) { back(false); }
 		});
+	}
+	function text(v) {
+		var j = String(v).lastIndexOf(','), b = String(v).slice(0, j);
+		return j > 0 && String(sum(b) % 99991) === String(v).slice(j + 1) ? wire(b.split(',')) : '';
 	}
 	function slots() {
 		for (var s = '', i = 0; i < q.length; i++) s += q[i].slot;
@@ -122,26 +82,29 @@ function Link(io, boot) {
 		return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, sent: 0, n: 0 };
 	}
 
-	function add(text, set, at) {
+	function add(f, set, at) {
+		var b = f.join(','), val = b + ',' + sum(b) % 99991, t = wire(f);
 		if (set) wq.push(set);
 		queue(function (fin) {
 			for (var slot = -1, i = SLOTS - 1; i >= 0; i--) if (slots().indexOf(String(i)) < 0) slot = i;
 			function end(m) {
 				msg = m;
 				if (set) wq.splice(wq.indexOf(set), 1);
-				paint();
 				fin();
+				paint();
 			}
-			if (lost || slot < 0) return end(lost ? 'Not saved' : 'Queue full');
-			put(slot, text, function (ok) {
+			if (slot < 0 && !lost) return end('Queue full');
+			if (lost || val.length > 119 || !(sum(val) >= 0) || text(val) !== t) return end('Not saved');
+			kv('set', KEY + slot, val, function (ok) {
 				if (!ok) return end('Not saved');
-				take(slot, function (ok2, back) {
-					if (!ok2 || back !== text) return end('Not saved');
+				kv('get', KEY + slot, '', function (ok2, back) {
+					if (!ok2 || back !== val) return end('Not saved');
 					kv('set', KEY, slots() + slot, function (ok3) {
 						if (!ok3) return end('Not saved');
-						q.push(entry(slot, text, read(text)));
-						end('Pending ' + hms(at));
+						q.push(entry(slot, t, read(t)));
+						msg = 'Pending ' + hms(at);
 						pump();
+						end(msg);
 					});
 				});
 			});
@@ -150,17 +113,14 @@ function Link(io, boot) {
 
 	function drop(i) {
 		q.splice(i, 1);
-		queue(function (fin) {
-			if (lost) return fin();
-			kv('set', KEY, slots(), fin);
-		});
+		queue(function (fin) { if (lost) fin(); else kv('set', KEY, slots() || '-', fin); });
 	}
 
 	function load() {
 		queue(function (fin) {
 			kv('get', KEY, '', function (ok, list) {
 				var i = 0, keep = '';
-				list = String(list);
+				list = String(list) === '-' ? '' : String(list);
 				lost = !ok;
 				function finish() {
 					if (q.length) msg = q.length + ' pending';
@@ -173,17 +133,17 @@ function Link(io, boot) {
 					while (ok && i < list.length) {
 						var slot = list.charAt(i++);
 						if ('01234567'.indexOf(slot) < 0 || keep.indexOf(slot) >= 0) continue;
-						return take(slot, function (ok2, t) {
-							var m = ok2 && read(t);
+						return kv('get', KEY + slot, '', function (ok2, v) {
+							var t = ok2 && text(v);
 							lost = lost || !ok2;
-							if (m && m.k === 'cmd' && str(m.commandId)) {
+							if (t) {
 								keep += slot;
-								q.push(entry(Number(slot), t, m));
+								q.push(entry(Number(slot), t, read(t)));
 							}
 							one();
 						});
 					}
-					if (!lost && keep !== list) kv('set', KEY, keep, finish);
+					if (!lost && keep !== list) kv('set', KEY, keep || '-', finish);
 					else finish();
 				}
 				one();
@@ -191,9 +151,7 @@ function Link(io, boot) {
 		});
 	}
 
-	function pump() {
-		if (q[0] && !q[0].sent && !stop) fire(q[0]);
-	}
+	function pump() { if (q[0] && !q[0].sent && !stop) fire(q[0]); }
 	function fire(e) {
 		e.sent = io.now();
 		e.n++;
@@ -206,8 +164,23 @@ function Link(io, boot) {
 		due = failAt + hb;
 		paint();
 	}
+	function run() {
+		queue(function (fin) {
+			kv('get', 'mc_run', '', function (ok, v) {
+				var p = String(v).split(','), c = +p[0] || 0, f = +p[1] || t0;
+				if (t0 < f || t0 - f > (c > 2 ? 599999 : 120000)) c = 0;
+				if (!c) f = t0;
+				pause = ++c > 2 ? f : 0;
+				kv('set', 'mc_run', c + ',' + f, function () {
+					fin();
+					if (!pause) live();
+				});
+			});
+		});
+	}
+	function live() { pause = 0; on = true; io.connect(); load(); }
 	function hello() {
-		if (stop) return;
+		if (stop || !on) return;
 		var now = io.now();
 		due = now + QUIET;
 		hellos.push(now);
@@ -220,7 +193,6 @@ function Link(io, boot) {
 	}
 
 	function onSnap(m, now) {
-		// the lowest round trip, or a clock change
 		var o = Math.round(m.pt - (m.wt + now) / 2);
 		if (hellos.indexOf(m.wt) >= 0 && (rtt < 0 || now - m.wt < rtt || Math.abs(o - off) > now - m.wt)) {
 			rtt = now - m.wt;
@@ -255,8 +227,7 @@ function Link(io, boot) {
 	}
 
 	function rx(text) {
-		var m = read(text);
-		var now = io.now();
+		var m = read(text), now = io.now();
 		if (!m || stop) return;
 		stop = m.v !== V;
 		if (!stop) {
@@ -271,18 +242,16 @@ function Link(io, boot) {
 	}
 
 	function tick() {
-		var now = io.now();
-		var e = q[0];
+		var now = io.now(), e = q[0];
 		if (wait && now - wait.at > 5000) wait.back(false);
+		if (pause && now - pause > 599999) live();
 		if (!stop && e && e.sent && now - e.sent >= GAPS[Math.min(e.n, 4) - 1]) fire(e);
 		if (!stop && now >= due) hello();
 		keepOn();
 		paint();
 	}
 
-	function shown() {
-		return eff !== null ? eff : (snap && snap.set && snap.set.e) || '';
-	}
+	function shown() { return eff !== null ? eff : (snap && snap.set && snap.set.e) || ''; }
 	function held(id) {
 		for (var h = wq.indexOf(id) >= 0, i = 0; i < q.length; i++) h = h || q[i].set === id;
 		return h;
@@ -291,17 +260,18 @@ function Link(io, boot) {
 		var s = snap && snap.sid ? snap.set : null;
 		return !!(ready && !stop && s && s.r >= 1 && s.id !== done && !held(s.id));
 	}
-	function cmd(kind, set, effort) {
-		var at = Math.round(io.now() + off);
-		add(makeCmd(boot + '-' + ++seq, snap, kind, at, effort), set, at);
+	function cmd(code, set, effort) {
+		var at = Math.round(io.now() + off), s = snap.set;
+		add([code, boot + '-' + ++seq, snap.sid, at].concat(code === 'c' ? [s.id, s.rev, s.w == null ? '' : s.w, s.u, s.r, effort] : [snap.rest.id]), set, at);
 	}
 
 	function view() {
 		var now = io.now(), s = snap && snap.sid && snap.set, r = snap && snap.sid && snap.rest, th = theme(snap && snap.th);
 		var v = { l1: '', l2: '', eff: '', rest: '', st: msg, p1: '', p2: '', set: false, can: false, rs: false, add: false, bg: th[0], fg: th[1], ac: th[2], cb: '#3a3a3a' };
-		if (stop) {
-			v.l1 = 'Update needed';
+		if (stop || pause) {
 			v.st = '';
+			v.l1 = pause ? 'Paused after restarts' : 'Update needed';
+			if (pause) v.l2 = 'Try again in 10 min';
 			return v;
 		}
 		if (failAt > 0 || (lastRx ? now - lastRx > LOST : now - t0 > 5000)) {
@@ -334,12 +304,12 @@ function Link(io, boot) {
 
 	return {
 		rx: rx, tick: tick, view: view,
-		start: function () { t0 = io.now(); load(); },
+		start: function () { t0 = io.now(); run(); },
 		show: function () { hello(); keepOn(true); },
-		complete: function () { if (can()) cmd('complete_set', snap.set.id, shown()); },
+		complete: function () { if (can()) cmd('c', snap.set.id, shown()); },
 		rest: function (kind) {
 			var k = kind === 'rest_skip' && snap && snap.rest ? kind + snap.rest.id : '';
-			if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) cmd(kind, k, '');
+			if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) cmd(k ? 's' : 'a', k, '');
 		},
 		effort: function () {
 			if (snap && snap.set) eff = EFF[(EFF.indexOf(shown()) + 1) % EFF.length];
@@ -348,4 +318,4 @@ function Link(io, boot) {
 	};
 }
 
-export { PHONE_PKG, PHONE_FP, makeBoot, sum, Link };
+export { PHONE_PKG, PHONE_FP, makeBoot, sum, wire, Link };

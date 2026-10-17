@@ -13,6 +13,7 @@ const MAIN = path.join(ROOT, 'native/wear/app/entry/src/main');
 const JS = path.join(MAIN, 'js/default');
 const LINK = path.join(JS, 'common/link.js');
 const load = () => import(pathToFileURL(LINK).href);
+const { wire, sum } = await load();
 
 const T0 = Date.UTC(2026, 9, 16, 10, 0, 0);
 const TH = ['#08090a', '#f7f8f8', '#5e6ad2'];
@@ -29,41 +30,54 @@ const res = (commandId, o = {}) => JSON.stringify({ t: 'mw', v: 1, k: 'res', com
  * characters or outside letters, digits and underscore; the fake before D1 took any length.
  */
 const KEY_OK = /^[A-Za-z0-9_]{1,32}$/;
+/**
+ * 1.1.2: the link starts every storage call and delivers every callback through io.defer (setTimeout 0 on
+ * the watch). The rig's defer queues the task and runs the queue after each call into the link, and
+ * after each step of a deferred store, so a store that answers at once is never entered from inside
+ * one of its own callbacks: depth and maxDepth count that. An empty value is refused and recorded.
+ */
+const tasks = [];
+const drain = () => { while (tasks.length) tasks.shift()(); };
+let calling = false; // a call into the link is running (the store must not be entered from it)
 function fakeStore() {
   const s = {
     map: new Map(), calls: [], queue: [], defer: false, failSet: () => false, failGet: () => false, cut: 0,
+    depth: 0, maxDepth: 0, empty: [], direct: 0, inside: 0,
+    enter(fn) { if (calling) s.direct++; s.depth++; s.maxDepth = Math.max(s.maxDepth, s.depth); try { fn(); } finally { s.depth--; } },
     set(o) {
       s.calls.push(`set ${o.key}`);
-      s.run(() => {
-        if (s.failSet(o.key) || !KEY_OK.test(o.key) || Buffer.byteLength(String(o.value)) >= 128) return o.fail('write failed', 300);
+      if (o.value === '') s.empty.push(o.key);
+      s.enter(() => s.run(() => {
+        if (s.failSet(o.key) || !KEY_OK.test(o.key) || o.value === '' || Buffer.byteLength(String(o.value)) >= 128) return o.fail('write failed', 300);
         s.map.set(o.key, s.cut ? o.value.slice(0, s.cut) : o.value);
         o.success();
-      });
+      }));
     },
     get(o) {
       s.calls.push(`get ${o.key}`);
-      s.run(() => (s.failGet(o.key) || !KEY_OK.test(o.key) ? o.fail('read failed', 300) : o.success(s.map.has(o.key) ? s.map.get(o.key) : o.default)));
+      s.enter(() => s.run(() => (s.failGet(o.key) || !KEY_OK.test(o.key) ? o.fail('read failed', 300) : o.success(s.map.has(o.key) ? s.map.get(o.key) : o.default))));
     },
     run(fn) { if (s.defer) s.queue.push(fn); else fn(); },
-    step() { s.queue.shift()(); },
+    step() { s.enter(s.queue.shift()); drain(); },
   };
   return s;
 }
 
-/** The wire text slot i holds, put back together from its header (count,length,sum) and chunks. */
+/** The wire text slot i holds: its fields and sum (1.1.2), rebuilt as the watch does. */
 function slotText(store, i) {
-  const h = store.map.get(`mc_q${i}`);
-  if (h === undefined) return undefined;
-  let t = '';
-  for (let j = 0; j < Number(h.split(',')[0]); j++) t += store.map.get(`mc_q${i}_${j}`);
-  return t;
+  const v = store.map.get(`mc_q${i}`);
+  if (v === undefined) return undefined;
+  const j = v.lastIndexOf(',');
+  return String(sum(v.slice(0, j)) % 99991) === v.slice(j + 1) ? wire(v.slice(0, j).split(',')) : null;
 }
-/** Writes text into slot i the way the watch does. */
+const CODE = { complete_set: 'c', rest_add_30: 'a', rest_skip: 's' };
+/** Writes a wire command (or, when it is not one, the raw text) into slot i the way the watch does. */
 async function putSlot(store, i, text) {
-  const { sum } = await load();
-  const n = Math.ceil(text.length / 120);
-  for (let j = 0; j < n; j++) store.map.set(`mc_q${i}_${j}`, text.slice(j * 120, j * 120 + 120));
-  store.map.set(`mc_q${i}`, `${n},${text.length},${sum(text)}`);
+  let m = null;
+  try { m = JSON.parse(text); } catch { /* raw */ }
+  const f = m && m.k === 'cmd' ? [CODE[m.kind], m.commandId, m.sessionId, m.actionAt, m.setId ?? m.restId,
+    ...(m.kind === 'complete_set' ? [m.expectedRev, m.load ? m.load.value : '', m.load ? m.load.unit : '', m.reps, m.effort ?? ''] : [])] : null;
+  store.map.set(`mc_q${i}`, f ? `${f.join(',')},${sum(f.join(',')) % 99991}` : text);
 }
 
 /** A link with a fake clock, storage, radio and screen. code: the send result, or null for none yet. */
@@ -76,12 +90,18 @@ async function rig(o = {}) {
   const r = { sent, keeps, store, code: o.code === undefined ? 207 : o.code, paints: 0 };
   const io = {
     store,
-    now: () => t,
+    now: () => { if (store.depth > 0) store.inside++; return t; },
     send: (text, done) => { sent.push(text); if (r.code !== null) done(r.code); },
     keep: (on) => keeps.push(on),
     paint: () => { r.paints++; },
+    connect: () => { r.connects = (r.connects ?? 0) + 1; },
+    defer: (fn) => { tasks.push(fn); },
   };
-  r.link = Link(io, o.boot ?? 'abcd1234');
+  // A start long after the last one, unless the test is about the restart guard.
+  if (!o.keepRun) store.map.delete('mc_run');
+  const link = Link(io, o.boot ?? 'abcd1234');
+  r.link = {};
+  for (const k of Object.keys(link)) r.link[k] = (...a) => { calling = true; let out; try { out = link[k](...a); } finally { calling = false; } drain(); return out; };
   r.adv = (ms) => { t += ms; };
   r.now = () => t;
   r.cmds = () => sent.filter((x) => JSON.parse(x).k === 'cmd');
@@ -116,13 +136,17 @@ test('W1 a complete_set command: fixed keys and bytes, at most 400 B, with the l
   assert.equal(n.link.view().eff, 'Effort');
   n.link.complete();
   assert.deepEqual(Object.keys(JSON.parse(n.cmds()[0])).slice(7), ['setId', 'expectedRev', 'reps'], 'no load and no effort shown, none sent');
-  // The longest ids the phone allows still fit.
-  const big = await rig({ boot: 'zzzzzzzz' });
+  // The longest ids the phone allows still make a wire command of at most 400 B (1.1.2: too long to store,
+  // so the watch shows Not saved and sends nothing; the phone's own ids fit, tests/watch-contract.test.ts).
   const id64 = 'x'.repeat(64);
+  const text = wire(['c', 'zzzzzzzz-99999', id64, 8.64e15, id64, Number.MAX_SAFE_INTEGER, 999.75, 'kg', 100, 'ideal']);
+  assert.ok(Buffer.byteLength(text) <= 400, `${Buffer.byteLength(text)} B`);
+  assert.match(text, /^[\x20-\x7e]+$/);
+  const big = await rig({ boot: 'zzzzzzzz' });
   big.link.rx(snap({ sid: id64, set: set1({ id: id64, rev: Number.MAX_SAFE_INTEGER, w: 999.75, u: 'kg', r: 100, e: 'ideal' }) }));
   big.link.complete();
-  assert.ok(Buffer.byteLength(big.cmds()[0]) <= 400, `${Buffer.byteLength(big.cmds()[0])} B`);
-  assert.match(big.cmds()[0], /^[\x20-\x7e]+$/);
+  assert.equal(big.link.view().st, 'Not saved');
+  assert.equal(big.cmds().length, 0);
 });
 
 test('W1 ids are valid for the phone and unique across boots; actionAt is fixed at the tap', async () => {
@@ -172,8 +196,8 @@ test('W2 Pending shows only after the slot and the index are written', async () 
     steps.push([store.calls[store.calls.length - 1], r.link.view().st, r.cmds().length]);
     store.step();
   }
-  // chunks, header, header read, chunk reads, index: nothing shows or goes before the last
-  assert.deepEqual(steps, ['set mc_q0_0', 'set mc_q0_1', 'set mc_q0', 'get mc_q0', 'get mc_q0_0', 'get mc_q0_1', 'set mc_q'].map((c) => [c, '', 0]));
+  // 1.1.2: the slot, its read-back, the index; nothing shows or goes before the last
+  assert.deepEqual(steps, ['set mc_q0', 'get mc_q0', 'set mc_q'].map((c) => [c, '', 0]));
   assert.equal(r.link.view().st, `Pending ${new Date(T0).toTimeString().slice(0, 8)}`);
   assert.equal(r.cmds().length, 1);
   assert.equal(store.map.get('mc_q'), '0');
@@ -185,9 +209,7 @@ test('W2 a failed write shows Not saved and sends nothing', async () => {
     ['slot write', (s) => { s.failSet = (k) => k === 'mc_q0'; }],
     ['index write', (s) => { s.failSet = (k) => k === 'mc_q'; }],
     ['read-back', (s) => { s.failGet = (k) => k === 'mc_q0'; }],
-    ['value cut short', (s) => { s.cut = 100; }],
-    ['a chunk write', (s) => { s.failSet = (k) => k === 'mc_q0_1'; }],
-    ['a chunk read-back', (s) => { s.failGet = (k) => k === 'mc_q0_0'; }],
+    ['value cut short', (s) => { s.cut = 40; }],
   ]) {
     const store = fakeStore();
     const r = await rig({ store });
@@ -209,7 +231,7 @@ test('W2 a failed write shows Not saved and sends nothing', async () => {
   r.link.complete();
   assert.equal(r.link.view().st, 'Not saved');
   assert.equal(r.cmds().length, 0);
-  assert.equal(store.calls.filter((c) => c.startsWith('set')).length, 0);
+  assert.equal(store.calls.filter((c) => c.startsWith('set') && c !== 'set mc_run').length, 0);
 });
 
 test('W2 a full outbox shows Queue full and drops nothing; a restart restores identical bytes', async () => {
@@ -232,7 +254,7 @@ test('W2 a full outbox shows Queue full and drops nothing; a restart restores id
     again.link.rx(res(JSON.parse(texts[i]).commandId));
     assert.equal(again.cmds()[again.cmds().length - 1], i < 7 ? texts[i + 1] : texts[7]);
   }
-  assert.equal(store.map.get('mc_q'), '');
+  assert.equal(store.map.get('mc_q'), '-', 'the empty index (1.1.2)');
   // A removed slot is reused; the index keeps the oldest first.
   const s2 = fakeStore();
   const x = await rig({ store: s2, code: null });
@@ -306,7 +328,7 @@ test('W3 results: applied and replayed show Saved, rejected shows its reason, no
     r.link.rx(res('abcd1234-999'));
     r.link.rx(res('abcd1234-1', extra));
     assert.equal(r.link.view().st, word ?? pending, JSON.stringify(extra));
-    assert.equal(r.store.map.get('mc_q'), left ? '0' : '', JSON.stringify(extra));
+    assert.equal(r.store.map.get('mc_q'), left ? '0' : '-', JSON.stringify(extra));
     if (left) {
       r.adv(4000); r.link.tick();
       assert.equal(r.cmds().length, 2, 'retried');
@@ -345,7 +367,7 @@ test('W3 hello: at start, on show, after 20 s of silence and after failed sends 
   assert.equal(r.hellos().length, 1);
   const h = JSON.parse(r.hellos()[0]);
   assert.deepEqual(Object.keys(h), ['t', 'v', 'k', 'app', 'boot', 'wt', 'q']);
-  assert.deepEqual(h, { t: 'mw', v: 1, k: 'hello', app: '1.1.1', boot: 'abcd1234', wt: T0, q: 0 });
+  assert.deepEqual(h, { t: 'mw', v: 1, k: 'hello', app: '1.1.2', boot: 'abcd1234', wt: T0, q: 0 });
   r.link.show();
   assert.equal(r.hellos().length, 2);
   r.adv(19999); r.link.tick();
@@ -546,7 +568,7 @@ test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sou
   assert.equal(PHONE_PKG, JSON.parse(readFileSync(path.join(ROOT, 'capacitor.config.json'), 'utf8')).appId);
   const cfg = JSON.parse(readFileSync(path.join(MAIN, 'config.json'), 'utf8'));
   const hello = JSON.parse(readFileSync(path.join(ROOT, 'native/wear/hello/entry/src/main/config.json'), 'utf8'));
-  assert.deepEqual(cfg.app.version, { code: 1001001, name: '1.1.1' });
+  assert.deepEqual(cfg.app.version, { code: 1001002, name: '1.1.2' });
   assert.equal(cfg.app.bundleName, hello.app.bundleName);
   assert.equal(cfg.module.reqPermissions, undefined, 'no permissions');
   assert.deepEqual(cfg.module.abilities, hello.module.abilities);
@@ -736,39 +758,48 @@ test('W3 a later pair replaces the offset when it differs by more than its own r
 });
 
 // WATCH-C device run D1 (2026-10-17): @system.storage refuses values of 128 bytes or more.
-test('W2 every value stored is under 128 bytes: a 400 B command goes in chunks and comes back byte for byte', async () => {
+test('W2 every value stored is under 128 bytes: a slot is one value of under 120 plain characters that rebuilds the same bytes', async () => {
   const store = fakeStore();
   const r = await rig({ store, boot: 'zzzzzzzz', code: null });
-  const id64 = 'x'.repeat(64);
-  // seq 100 and a long load make the command over 360 characters: four chunks, as many as a 400 B command needs
-  r.link.rx(snap({ rest: rest1 }));
-  for (let i = 1; i < 100; i++) { r.link.rest('rest_add_30'); r.link.rx(res(`zzzzzzzz-${i}`)); }
-  r.link.rx(snap({ sid: id64, set: set1({ id: id64, rev: Number.MAX_SAFE_INTEGER, w: 123.45678901234567, r: 100, e: 'ideal' }) }));
-  r.sent.length = 0;
+  // ids at the lengths the phone's newId gives (tests/watch-contract.test.ts), and a long load
+  r.link.rx(snap({ sid: 's_mgv4k2xq_a1b2c3', set: set1({ id: 'set_mgv4k2xq_d4e5f6', rev: 9999, w: 123.456, r: 100, e: 'ideal' }) }));
   r.link.complete();
   assert.match(r.link.view().st, /^Pending /);
   const text = r.cmds()[0];
-  assert.ok(text.length > 360 && Buffer.byteLength(text) <= 400, `${text.length}`);
   for (const [k, v] of store.map) {
-    assert.ok(Buffer.byteLength(v) < 128, `${k}: ${Buffer.byteLength(v)} B`);
+    assert.ok(Buffer.byteLength(v) < 120, `${k}: ${Buffer.byteLength(v)} B`);
     assert.match(k, KEY_OK);
   }
-  const n = Math.ceil(text.length / 120);
-  assert.deepEqual([...store.map.keys()].sort(), ['mc_q', 'mc_q0', ...Array.from({ length: n }, (_, j) => `mc_q0_${j}`)]);
-  assert.equal(store.map.get('mc_q0').split(',').slice(0, 2).join(','), `${n},${text.length}`);
+  assert.deepEqual([...store.map.keys()].sort(), ['mc_q', 'mc_q0', 'mc_run']);
+  assert.equal(slotText(store, 0), text);
   const again = await rig({ store, boot: 'yyyyyyyy', code: null });
   assert.equal(again.link.view().st, '1 pending');
   assert.equal(again.cmds()[0], text);
+  // A command whose stored form would reach 120 characters, or holds a character that is not plain, is not stored.
+  // the stored form for sid 's_1' sets the length a sid needs to make it exactly 120 characters
+  const base = await rig({ store: fakeStore(), code: null });
+  base.link.rx(snap({ sid: 's_1', set: set1({ id: 'set_mgv4k2xq_d4e5f6' }) }));
+  base.link.complete();
+  const at120 = 's_' + 'x'.repeat(120 - base.store.map.get('mc_q0').length + 1);
+  for (const sid of [at120, 's_' + 'x'.repeat(60), 's_a b', 's_\u00e9t\u00e9', 's_a,b']) {
+    const s2 = fakeStore();
+    const b = await rig({ store: s2, code: null });
+    b.link.rx(snap({ sid, set: set1({ id: 'set_mgv4k2xq_d4e5f6' }) }));
+    b.link.complete();
+    assert.equal(b.link.view().st, 'Not saved', sid);
+    assert.equal(b.cmds().length, 0);
+    assert.deepEqual(s2.calls.filter((c) => c.startsWith('set') && c !== 'set mc_run'), []);
+  }
 });
 
-test('W2 a slot whose chunks no longer match its header is not loaded, and leaves the index', async () => {
+test('W2 a slot that no longer matches its sum is not loaded, and leaves the index', async () => {
   const store = fakeStore();
   const r = await rig({ store, code: null });
   r.link.rx(snap({ rest: rest1 }));
   r.link.rest('rest_add_30');
   r.link.rest('rest_skip');
   const keep = slotText(store, 1);
-  for (const bad of [(s) => s.map.set('mc_q0_0', s.map.get('mc_q0_0').replace('abcd1234-1', 'abcd1234-9')), (s) => s.map.set('mc_q0', '1,5,0'), (s) => s.map.delete('mc_q0_1')]) {
+  for (const bad of [(s) => s.map.set('mc_q0', s.map.get('mc_q0').replace('abcd1234-1', 'abcd1234-9')), (s) => s.map.set('mc_q0', 'x'), (s) => s.map.set('mc_q0', s.map.get('mc_q0') + '0')]) {
     const s2 = fakeStore();
     for (const [k, v] of store.map) s2.map.set(k, v);
     bad(s2);
@@ -779,7 +810,7 @@ test('W2 a slot whose chunks no longer match its header is not loaded, and leave
   }
 });
 
-test('W2 a chunk that cannot be read at start keeps its slot listed; new commands show Not saved; the next start loads it', async () => {
+test('W2 a slot value that cannot be read at start keeps its slot listed; new commands show Not saved; the next start loads it', async () => {
   const store = fakeStore();
   const r = await rig({ store, code: null });
   r.link.rx(snap({ rest: rest1 }));
@@ -787,7 +818,7 @@ test('W2 a chunk that cannot be read at start keeps its slot listed; new command
   r.link.rest('rest_skip');
   const texts = [0, 1].map((i) => slotText(store, i));
   let once = true;
-  store.failGet = (k) => { if (k === 'mc_q1_0' && once) { once = false; return true; } return false; };
+  store.failGet = (k) => { if (k === 'mc_q1' && once) { once = false; return true; } return false; };
   const b = await rig({ store, boot: 'bbbbbbbb', code: null });
   assert.equal(store.map.get('mc_q'), '01', 'still listed');
   assert.equal(b.link.view().st, '1 pending');
@@ -803,7 +834,7 @@ test('W2 a chunk that cannot be read at start keeps its slot listed; new command
 
 // WATCH-C red team of 1.1.1: a storage call that never calls back must not block the outbox.
 test('W2 a storage call that never calls back ends in Not saved after 5 s, a late callback does nothing, and the next tap works', async () => {
-  for (let k = 0; k < 7; k++) { // the Complete's calls: two chunks, header, header read, two chunk reads, index
+  for (let k = 0; k < 3; k++) { // the Complete's calls (1.1.2): the slot, its read-back, the index
     const store = fakeStore();
     const r = await rig({ store, code: null });
     r.link.rx(snap());
@@ -820,6 +851,7 @@ test('W2 a storage call that never calls back ends in Not saved after 5 s, a lat
     assert.equal(r.cmds().length, 0, `call ${k}: nothing sent`);
     store.run = (fn) => fn();
     held[0]();
+    drain();
     assert.equal(r.link.view().st, 'Not saved', `call ${k}: the late callback changes nothing`);
     assert.equal(r.cmds().length, 0);
     r.link.complete();
@@ -829,7 +861,7 @@ test('W2 a storage call that never calls back ends in Not saved after 5 s, a lat
   // At start-up a stuck index read takes the unreadable-index path: ready, hello, and Not saved.
   const store = fakeStore();
   let late = null;
-  store.run = (fn) => { if (!late) late = fn; else fn(); };
+  store.run = (fn) => { if (!late && store.calls[store.calls.length - 1] === 'get mc_q') late = fn; else fn(); };
   const b = await rig({ store, code: null });
   b.link.rx(snap());
   assert.equal(b.hellos().length, 0);
@@ -838,5 +870,135 @@ test('W2 a storage call that never calls back ends in Not saved after 5 s, a lat
   b.link.complete();
   assert.equal(b.link.view().st, 'Not saved');
   late();
+  drain();
   assert.equal(b.hellos().length, 1);
+});
+
+// WATCH-C 1.1.2 (2026-10-17): the GT 6 crashed after each applied command and then reset. Safeguards, each
+// failing on 1.1.1.
+const eight = async (store) => { // 8 pending rest commands from an earlier run
+  const r = await rig({ store, boot: 'eeeeeeee', code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  for (let i = 0; i < 8; i++) r.link.rest('rest_add_30');
+  assert.equal(store.map.get('mc_q'), '01234567');
+  return r;
+};
+
+test('1.1.2 S1 nothing writes an empty value: the empty index is "-", read like a missing one', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  r.link.complete();
+  r.link.rest('rest_skip');
+  r.link.rx(res('abcd1234-1'));
+  r.link.rx(res('abcd1234-2'));
+  assert.equal(r.link.view().st, 'Saved');
+  assert.equal(store.map.get('mc_q'), '-');
+  // An index whose slots are all gone is rewritten as "-", never ""; "-" and a missing index read as empty, with no write.
+  const s2 = fakeStore();
+  s2.map.set('mc_q', '35');
+  await rig({ store: s2, code: null });
+  assert.equal(s2.map.get('mc_q'), '-');
+  for (const idx of ['-', undefined]) {
+    const s3 = fakeStore();
+    if (idx) s3.map.set('mc_q', idx);
+    const c = await rig({ store: s3, code: null });
+    assert.equal(c.link.view().st, '');
+    assert.deepEqual(s3.calls.filter((x) => x.startsWith('set')), ['set mc_run']);
+  }
+  assert.deepEqual([...store.empty, ...s2.empty], []);
+});
+
+test('1.1.2 S2 storage calls: a Complete is 3 (slot, read-back, index), a result is 1 (index)', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap());
+  store.calls.length = 0;
+  r.link.complete();
+  assert.deepEqual(store.calls, ['set mc_q0', 'get mc_q0', 'set mc_q']);
+  store.calls.length = 0;
+  r.link.rx(res('abcd1234-1'));
+  assert.deepEqual(store.calls, ['set mc_q']);
+  // Start-up: the restart count, then the index and each listed slot once.
+  const s2 = fakeStore();
+  await eight(s2);
+  s2.calls.length = 0;
+  await rig({ store: s2, boot: 'ffffffff', code: null });
+  assert.deepEqual(s2.calls, ['get mc_run', 'set mc_run', 'get mc_q', ...[0, 1, 2, 3, 4, 5, 6, 7].map((i) => `get mc_q${i}`)]);
+});
+
+test('1.1.2 S3 every storage call starts on a fresh stack: a store that answers at once is never re-entered', async () => {
+  const store = fakeStore();
+  await eight(store); // eight Completes' worth of writes
+  const r = await rig({ store, boot: 'gggggggg', code: null }); // start-up load of 8 slots
+  r.link.rx(snap({ rest: rest1 }));
+  for (let i = 1; i <= 8; i++) r.link.rx(res(`eeeeeeee-${i}`)); // results
+  r.link.rx(snap());
+  r.link.complete(); // a Complete
+  assert.match(r.link.view().st, /^Pending /);
+  assert.equal(store.maxDepth, 1);
+  assert.equal(store.direct, 0, 'no storage call on the stack of a call into the link');
+  assert.equal(store.inside, 0, 'no link code on the stack of a storage call');
+});
+
+test('1.1.2 S4 a third start within 120 s pauses messaging and the outbox until 10 min after the first', async () => {
+  const store = fakeStore();
+  const t1 = T0;
+  const a = await rig({ store, t: t1, code: null });
+  a.link.rx(snap());
+  a.link.complete();
+  assert.equal(a.connects, 1);
+  const b = await rig({ store, t: t1 + 30000, keepRun: true, boot: 'bbbbbbbb', code: null });
+  assert.equal(b.connects, 1, 'the second start runs, and resends once');
+  assert.equal(b.cmds().length, 1);
+  assert.equal(store.map.get('mc_run'), `2,${t1}`);
+  store.calls.length = 0;
+  const c = await rig({ store, t: t1 + 60000, keepRun: true, boot: 'cccccccc', code: null });
+  assert.equal(c.connects, undefined, 'no receiver');
+  assert.deepEqual(c.sent, [], 'no hello, no resend');
+  assert.deepEqual(store.calls, ['get mc_run', 'set mc_run'], 'no outbox, no other writes');
+  c.link.show();
+  c.link.rx(snap());
+  c.link.complete();
+  c.adv(31000); c.link.tick();
+  assert.deepEqual(c.sent, []);
+  assert.deepEqual([c.link.view().l1, c.link.view().l2, c.link.view().set], ['Paused after restarts', 'Try again in 10 min', false]);
+  // Still paused at the next start within 10 min, even after the 120 s
+  const d = await rig({ store, t: t1 + 300000, keepRun: true, boot: 'dddddddd', code: null });
+  assert.equal(d.link.view().l1, 'Paused after restarts');
+  // ... and it ends by itself 10 min after the first start, also in an app left open.
+  d.adv(600000 - 300000 - 1); d.link.tick();
+  assert.equal(d.connects, undefined);
+  d.adv(1); d.link.tick();
+  assert.equal(d.connects, 1);
+  assert.equal(d.cmds().length, 1);
+  const e = await rig({ store, t: t1 + 600000, keepRun: true, boot: 'eeeeeeee', code: null });
+  assert.equal(e.connects, 1);
+  assert.equal(store.map.get('mc_run'), `1,${t1 + 600000}`);
+  // Three starts spread over more than 120 s are normal.
+  const s2 = fakeStore();
+  for (const [i, at] of [[1, 0], [2, 100000], [3, 230000]].map(([n, ms]) => [n, T0 + ms])) {
+    const x = await rig({ store: s2, t: at, keepRun: true, code: null });
+    assert.equal(x.connects, 1, `start ${i}`);
+  }
+});
+
+test('1.1.2 S5 a callback that throws is caught on its own stack, and the outbox carries on', async () => {
+  const store = fakeStore();
+  const { Link } = await load();
+  const sent = [];
+  let throwing = true;
+  // the page's repaint throws inside every storage callback
+  const io = { store, now: () => T0, send: (x) => { sent.push(x); }, keep: () => {}, connect: () => {}, defer: (fn) => { tasks.push(fn); }, paint: () => { if (throwing) throw new Error('paint'); } };
+  const l = Link(io, 'tttttttt');
+  l.start();
+  assert.doesNotThrow(drain);
+  throwing = false;
+  l.rx(snap());
+  throwing = true;
+  l.complete();
+  assert.doesNotThrow(drain);
+  throwing = false;
+  assert.match(l.view().st, /^Pending /);
+  assert.equal(sent.filter((x) => JSON.parse(x).k === 'cmd').length, 1);
 });
