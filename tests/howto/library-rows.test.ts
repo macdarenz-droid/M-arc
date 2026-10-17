@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { LIBRARY } from './shipped-rows';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -101,6 +102,11 @@ describe('E1/E3/E7 failure paths: the generator throws, naming the id and the fi
       const p = join(r, 'tools/plates/gen/feel.mjs'), s = readFileSync(p, 'utf8');
       writeFileSync(p, s.replace('...libraryRows().map(row =>', '...[].map(row =>'));
     }, /ids: lib_cable_lateral_raise: no src\/howto\/generated\/feel-cable-lateral-raise\.ts/],
+    ['hands.mjs\'s library loop emptied (no zoom css)', r => {
+      const p = join(r, 'tools/plates/gen/hands.mjs'), s = readFileSync(p, 'utf8'), from = 'const all = registryRows(), lib = libraryRows(all);';
+      if (s.split(from).length !== 2) throw new Error('hands.mjs: the library loop moved');
+      writeFileSync(p, s.replace(from, 'const all = registryRows(), lib = [];'));
+    }, /ids: lib_cable_lateral_raise: no src\/slices\/howto\/css\/zoom-cable-lateral-raise\.css/],
     ['QA card removed (E7)', r => rmSync(join(r, F.CARD_FILE)), /plate QA refused lib_cable_lateral_raise:[\s\S]*PQ-H6/],
     ['no How-to source (E3)', r => rmSync(join(r, F.HOWTO)), /lib_cable_lateral_raise[^\n]*no (How-to )?source( file)? tools\/plates\/library\/howto\/lib_cable_lateral_raise\.howto\.mjs/],
     ['no pinned layers page (E3)', r => rmSync(join(r, F.PAGES.layers)), /lib_cable_lateral_raise \(batch LB-LIB2B, [^)]*\): no layers page tests\/howto\/golden\/library\/zz-lib2b\.layers\.html/],
@@ -133,13 +139,15 @@ describe('E3: no dangling chunk', () => {
   });
   it('ids.mjs refuses a shipped row without a chunk before it writes a line (missingChunks)', async () => {
     const ids = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));
-    const row = { id: 'lib_x', slug: 'x', chromeId: 'x' }, all = new Set(['ht-x', 'feel-x', 'posture-x', 'hand-x']);
-    const has = (drop: string) => (n: string) => n !== drop && all.has(n);
-    expect(() => ids.missingChunks([row], has(''))).not.toThrow();
-    for (const n of ['ht-x', 'feel-x', 'posture-x']) expect(() => ids.missingChunks([row], has(n))).toThrow(`ids: lib_x: no src/howto/generated/${n}.ts`);
-    expect(() => ids.missingChunks([row], has('hand-x'))).toThrow('ids: lib_x: no src/howto/generated/hand-x.ts and no hand pair');
-    expect(() => ids.missingChunks([row], has('hand-x'), { x: 'k' })).not.toThrow();
-    expect(() => ids.missingChunks([row], has('hand-x'), {}, { lib_x: 'none' })).not.toThrow();
+    const row = { id: 'lib_x', slug: 'x', chromeId: 'x' }, all = new Set(['ht-x', 'feel-x', 'posture-x', 'hand-x']), zoom = 'src/slices/howto/css/zoom-x.css';
+    const has = (drop: string) => (n: string) => n !== drop && all.has(n), file = (p: string) => p === zoom, none = () => false;
+    expect(() => ids.missingChunks([row], has(''), {}, {}, file)).not.toThrow();
+    for (const n of ['ht-x', 'feel-x', 'posture-x']) expect(() => ids.missingChunks([row], has(n), {}, {}, file)).toThrow(`ids: lib_x: no src/howto/generated/${n}.ts`);
+    expect(() => ids.missingChunks([row], has(''), {}, {}, none)).toThrow(`ids: lib_x: no ${zoom}`);
+    expect(() => ids.missingChunks([row], has(''), { x: 'k' }, { lib_x: 'none' }, none)).toThrow(`ids: lib_x: no ${zoom}`);
+    expect(() => ids.missingChunks([row], has('hand-x'), {}, {}, file)).toThrow('ids: lib_x: no src/howto/generated/hand-x.ts and no hand pair');
+    expect(() => ids.missingChunks([row], has('hand-x'), { x: 'k' }, {}, file)).not.toThrow();
+    expect(() => ids.missingChunks([row], has('hand-x'), {}, { lib_x: 'none' }, file)).not.toThrow();
   });
 });
 
@@ -275,32 +283,60 @@ describe('D-LIB2b-LAYOUT: layersSpecOf stages each row\'s whole closure into the
   });
 });
 
+/** D-LIB2b-REVIEW-1: every shipped library row to check, with the tree it lives in: the repo's own LIBRARY rows
+ *  (none until a batch ships), then the E1 tree's row, which is asserted present so the checks never run on nothing. */
+async function libraryCases() {
+  const reg = await import(/* @vite-ignore */ turl('tools/plates/library/registry.mjs'));
+  const tree = reg.shippedRows(reg.rows()).filter((r: any) => r.mode !== 'golden');
+  expect(tree.map((r: any) => r.id)).toEqual([F.ID]);
+  const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
+  return [...LIBRARY.map(row => ({ base: repo, row: row as any })), ...tree.map((row: any) => ({ base: root, row }))];
+}
+
+/** HT8-A1's checks on one shipped library row in `base`: its committed feel-<chromeId>.ts section === feelSectionOf(its
+ *  pinned page); the rest map, each row's watch and pain marks and the legend are golden B's renderer output from that
+ *  row's own How-to feel spec; no is-playing or is-focus. Throws on the first failed check. */
+async function feelChecks(base: string, row: any) {
+  const feel = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/feel.mjs'));
+  const content = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/content.mjs'));
+  const fm = (await feel.renderAll()).fm, pre = row.chromeId, page = readFileSync(join(base, row.pages.layers), 'utf8');
+  const text = readFileSync(join(base, `src/howto/generated/feel-${pre}.ts`), 'utf8');
+  const section = JSON.parse(text.match(/\n {2}section: (".*"),\n/)![1]!) as string;
+  expect(section === feel.feelSectionOf(page, pre), `${row.id}: section`).toBe(true);
+  const Fs = (await content.loadContent(row.id)).content.feel;
+  const rest = fm.renderFeelMap({ primary: Fs.primary, secondary: Fs.secondary, views: ['front', 'back'], id: `${pre}-feel`, shimmer: true });
+  expect(section).toContain(`data-feel-map id="${pre}-feel-map" data-rest-label="${rest.label}">`);
+  let marks = 0;
+  for (const r of Fs.rows) {
+    const watch = (r.at?.muscles ?? []).filter((m: string) => Fs.watch.some((w: any) => w.muscleId === m) && !Fs.primary.some((p: any) => p.muscleId === m)), pain = r.at?.parts ?? [];
+    if (!watch.length && !pain.length) { expect(section.includes(`<g class="feel-mark" data-row="${r.key}">`), `${row.id}/${r.key}`).toBe(false); continue; }
+    const m = fm.renderFeelMap({ primary: Fs.primary, secondary: Fs.secondary, avoid: watch, pain, views: ['front', 'back'], id: `${pre}-feel-${r.key}`, shimmer: false });
+    m.svg.split('</figure>').slice(0, 2).forEach((v: string) => {
+      const w = v.match(/<g class="feel-watch">[\s\S]*?<\/g>/)?.[0] ?? '', p = v.match(/<g class="feel-pain">[\s\S]*?<\/g>/)?.[0] ?? '';
+      if (w || p) { marks++; expect(section, `${row.id}/${r.key}`).toContain(`<g class="feel-mark" data-row="${r.key}">${w.replace('class="feel-watch"', 'class="feel-quiet"')}${p}${w}</g>`); }
+    });
+  }
+  expect(marks, row.id).toBeGreaterThan(0);
+  const lg = fm.renderFeelLegend({ avoid: true }).replace(/<span>(<svg class="feel-sw sw-watch)/, '<span class="lg-watch" hidden>$1');
+  expect(section).toContain(lg.replace(/<\/div>$/, ''));
+  expect(section).not.toMatch(/is-playing|is-focus|feel-mark on/);
+  expect(section.replace('stop-opacity="0.62"', 'stop-opacity="0.63"') === feel.feelSectionOf(page, pre)).toBe(false);
+}
+
 describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get', { timeout: 180_000 }, () => {
-  it('section === feelSectionOf(its pinned page); rest map, every row\'s marks and the legend are golden B\'s renderer output; no is-playing', async () => {
-    const feel = await import(/* @vite-ignore */ turl('tools/plates/gen/feel.mjs'));
-    const content = await import(/* @vite-ignore */ turl('tools/plates/gen/content.mjs'));
-    const r = await feel.renderAll(), fm = r.fm, pre = 'cable-lateral-raise';
-    const text = treeOut.get(`src/howto/generated/feel-${pre}.ts`).text as string;
-    const section = JSON.parse(text.match(/\n {2}section: (".*"),\n/)![1]!) as string;
-    expect(section === feel.feelSectionOf(readFileSync(join(root, F.PAGES.layers), 'utf8'), pre)).toBe(true);
-    const Fs = (await content.loadContent(F.ID)).content.feel;
-    const rest = fm.renderFeelMap({ primary: Fs.primary, secondary: Fs.secondary, views: ['front', 'back'], id: `${pre}-feel`, shimmer: true });
-    expect(section).toContain(`data-feel-map id="${pre}-feel-map" data-rest-label="${rest.label}">`);
-    let marks = 0;
-    for (const row of Fs.rows) {
-      const watch = (row.at?.muscles ?? []).filter((m: string) => Fs.watch.some((w: any) => w.muscleId === m) && !Fs.primary.some((p: any) => p.muscleId === m)), pain = row.at?.parts ?? [];
-      if (!watch.length && !pain.length) { expect(section.includes(`<g class="feel-mark" data-row="${row.key}">`)).toBe(false); continue; }
-      const m = fm.renderFeelMap({ primary: Fs.primary, secondary: Fs.secondary, avoid: watch, pain, views: ['front', 'back'], id: `${pre}-feel-${row.key}`, shimmer: false });
-      m.svg.split('</figure>').slice(0, 2).forEach((v: string) => {
-        const w = v.match(/<g class="feel-watch">[\s\S]*?<\/g>/)?.[0] ?? '', p = v.match(/<g class="feel-pain">[\s\S]*?<\/g>/)?.[0] ?? '';
-        if (w || p) { marks++; expect(section, row.key).toContain(`<g class="feel-mark" data-row="${row.key}">${w.replace('class="feel-watch"', 'class="feel-quiet"')}${p}${w}</g>`); }
-      });
-    }
-    expect(marks).toBeGreaterThan(0);
-    const lg = fm.renderFeelLegend({ avoid: true }).replace(/<span>(<svg class="feel-sw sw-watch)/, '<span class="lg-watch" hidden>$1');
-    expect(section).toContain(lg.replace(/<\/div>$/, ''));
-    expect(section).not.toMatch(/is-playing|is-focus|feel-mark on/);
-    expect(section.replace('stop-opacity="0.62"', 'stop-opacity="0.63"') === feel.feelSectionOf(readFileSync(join(root, F.PAGES.layers), 'utf8'), pre)).toBe(false);
+  it('for the repo\'s shipped library rows and the E1 tree\'s: section === feelSectionOf(its pinned page); rest map, every row\'s marks and the legend are golden B\'s renderer output; no is-playing', async () => {
+    const cases = await libraryCases();
+    expect(cases.at(-1)!.row.id).toBe(F.ID);
+    for (const { base, row } of cases) await feelChecks(base, row);
+  });
+  it('failure path: one row\'s mark moved to another muscle in the How-to source, without a page rebuild, is red', async () => {
+    const m = mkdtempSync(join(tmpdir(), 'lib2b-feel-')); tmps.push(m);
+    cpSync(root, m, { recursive: true, verbatimSymlinks: true });
+    const p = join(m, F.HOWTO), s = readFileSync(p, 'utf8'), from = "at: { muscles: ['upper_traps'] }";
+    expect(s.split(from)).toHaveLength(2);
+    writeFileSync(p, s.replace(from, "at: { muscles: ['lower_back'] }"));
+    const row = (await libraryCases()).at(-1)!.row;
+    await expect(feelChecks(m, row)).rejects.toThrow(`${F.ID}/traps`);
   });
 });
 
@@ -395,17 +431,18 @@ describe('D-LIB2b-PAGES (7): the library golden folder holds only batch golden f
 });
 
 describe('D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped library row', { timeout: 180_000 }, () => {
-  it('its ht- plate strings are the plate cut from its batch plates page, whose fragments === the batch golden plate entry; no plate or plate-fit class', async () => {
-    const reg = await import(/* @vite-ignore */ turl('tools/plates/library/registry.mjs'));
-    const bg = await import(/* @vite-ignore */ turl('tools/plates/library/batch-golden.mjs'));
-    const golden = await import(/* @vite-ignore */ turl('tools/plates/golden.mjs'));
-    const all = reg.rows(), lib = reg.shippedRows(all).filter((r: any) => r.mode !== 'golden');
-    expect(lib.map((r: any) => r.id)).toEqual([F.ID]);
-    for (const row of lib) {
+  it('for the repo\'s shipped library rows and the E1 tree\'s: its ht- plate strings are the plate cut from its batch plates page, whose fragments === the batch golden plate entry; no plate or plate-fit class', async () => {
+    const cases = await libraryCases();
+    expect(cases.at(-1)!.row.id).toBe(F.ID);
+    for (const { base, row } of cases) {
+      const reg = await import(/* @vite-ignore */ F.url(base, 'tools/plates/library/registry.mjs'));
+      const bg = await import(/* @vite-ignore */ F.url(base, 'tools/plates/library/batch-golden.mjs'));
+      const golden = await import(/* @vite-ignore */ F.url(base, 'tools/plates/golden.mjs'));
+      const all = reg.rows();
       const p = golden.extractPlates(await bg.platesPage(row, all)).find((x: any) => x.chromeId === row.chromeId), e = bg.pinOf(row, 'plate');
-      expect(golden.fragmentsOf(p)).toEqual(e.fragments);
-      for (const k of ['src', 'slug', 'prefix', 'chromeId']) expect(e[k], k).toBe(row[k]);
-      const text = treeOut.get(`src/howto/generated/ht-${row.slug}.ts`).text as string;
+      expect(golden.fragmentsOf(p), row.id).toEqual(e.fragments);
+      for (const k of ['src', 'slug', 'prefix', 'chromeId']) expect(e[k], `${row.id}.${k}`).toBe(row[k]);
+      const text = readFileSync(join(base, `src/howto/generated/ht-${row.slug}.ts`), 'utf8');
       const strings = { normalSvg: p.normal.svg, normalOverlay: p.normal.overlay, mistakeSvg: p.mistake.svg, mistakeOverlay: p.mistake.overlay, tells: p.tells, tempo: p.tempo };
       for (const [k, s] of Object.entries(strings) as [string, string][]) {
         expect(text.includes(JSON.stringify(s)), `${row.id}.${k} ships verbatim`).toBe(true);

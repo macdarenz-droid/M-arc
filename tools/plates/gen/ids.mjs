@@ -46,12 +46,15 @@ export function chunkMaps(shippedRows, has, pairOf = {}) {
 }
 
 /** D-LIB2b-LOADERS: throws, naming the id and the file, unless every shipped row has its ht-<slug>, feel-<c> and
- *  posture-<c> chunk and, unless its archetype is 'none', its hand-<c> chunk or a hand pair. Runs before any text is built,
- *  so no loaders.ts line can point at a chunk that is not written. */
-export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}) {
+ *  posture-<c> chunk, its zoom-<c>.css (posture-<c>.ts imports it; `hasFile` takes a repo path, D-LIB2b-REVIEW-1) and,
+ *  unless its archetype is 'none', its hand-<c> chunk or a hand pair. Runs before any text is built, so no loaders.ts
+ *  line can point at a chunk that is not written. */
+export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}, hasFile) {
   for (const r of shippedRows) {
     const c = r.chromeId;
     for (const name of [`ht-${r.slug}`, `feel-${c}`, `posture-${c}`]) if (!has(name)) throw new Error(`ids: ${r.id}: no src/howto/generated/${name}.ts`);
+    const zoom = `src/slices/howto/css/zoom-${c}.css`;
+    if (!hasFile(zoom)) throw new Error(`ids: ${r.id}: no ${zoom}`);
     if (archetypes[r.id] !== 'none' && !has(`hand-${c}`) && !pairOf[c]) throw new Error(`ids: ${r.id}: no src/howto/generated/hand-${c}.ts and no hand pair`);
   }
 }
@@ -138,9 +141,9 @@ export async function outputs(ctx = {}) {
   const archetypes = JSON.parse(readFileSync(join(ROOT, COVERAGE_DATA), 'utf8')).archetypes;
   const { pairOf } = pairsOf(await loadPairs(), shipped, all);
   const gen = name => `src/howto/generated/${name}.ts`;
-  const has = ctx.prev ? name => ctx.prev.has(gen(name)) : name => existsSync(join(ROOT, gen(name)));
+  const hasFile = ctx.prev ? path => ctx.prev.has(path) : path => existsSync(join(ROOT, path)), has = name => hasFile(gen(name));
   const byId = new Map(all.map(r => [r.id, r]));
-  missingChunks(shipped.map(id => byId.get(id)), has, pairOf, archetypes);
+  missingChunks(shipped.map(id => byId.get(id)), has, pairOf, archetypes, hasFile);
   const maps = chunkMaps(shipped.map(id => byId.get(id)), has, pairOf);
   const out = [
     { path: 'src/howto/ids.ts', text: twins.ids },
