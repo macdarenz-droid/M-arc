@@ -1,0 +1,21 @@
+{
+  "$comment": "LIB-2b fixture provenance (D-LIB2b-FIXTURE (2), (9)): the layers page was built by LIB-6’s builder through layersSpecOf on a scratch worktree (main + LIB-2b + #181, never pushed), from two checkouts at different absolute paths, byte-equal. Rebuild with the command when LIB-6’s output changes (D-LIB2b-FIXTURE (6)).",
+  "pageSha256": "6b78c2c2136d0e6cf05bf068139a0fbf33e35cdf97c32dc841d7287371f3ba53",
+  "bytes": 418552,
+  "specSha256": "7302f19b4a2e836ccf8e6ea2829ee5f159608c0e9d3234590d610acbd19cd4bc",
+  "howtoSha256": "8f361dafdafcdec481b66dbb8f73fa2ac562f9bef0244a1d864a17608974876c",
+  "lib6": "9b8f76e6d942f63f54f07dcdceeebe81d2823130",
+  "lib2b": "735c8e7fdf3e572e4f7bc36b638f246fb0b2cd67",
+  "node": "v22.22.0",
+  "command": "git worktree add <wt> <lib2b sha> && cd <wt> && git merge origin/claude/lib-6-closeup-renderer && ln -s <repo>/node_modules node_modules && node tests/howto/fixtures/lib2b/build-page.mjs <wt> <out.html>",
+  "builds": [
+    {
+      "checkout": "/tmp/claude-0/-home-user-M-arc/1ff445ae-88bd-51df-8612-12d7e0918da1/scratchpad/wt181",
+      "pageSha256": "6b78c2c2136d0e6cf05bf068139a0fbf33e35cdf97c32dc841d7287371f3ba53"
+    },
+    {
+      "checkout": "/tmp/claude-0/-home-user-M-arc/1ff445ae-88bd-51df-8612-12d7e0918da1/scratchpad/wt181-second-checkout",
+      "pageSha256": "6b78c2c2136d0e6cf05bf068139a0fbf33e35cdf97c32dc841d7287371f3ba53"
+    }
+  ]
+}
