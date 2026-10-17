@@ -1406,3 +1406,7 @@ Conditions:
 ### Amendments recorded here
 - Item 9's mutation line for LB1 (D-LIB9-CARDFIELDS, 'Rest changed → red') is replaced by Q3's six mutations (i)-(vi).
 - LIB-9a's A2 'box pad' mutation is replaced by Q4's exact-key rackUpright mutation, with the premise assertions of Q4 (a); A4 still runs LIB-3's M6.
+
+19. **D-LIB4c-1 (b) amended: the MANIFEST guard's one exemption (22:2x UTC; #249).** The guard rule (agent-guard.sh Rule 4) is: every non-merge commit that changes `tools/plates/library/MANIFEST.json` carries `[golden update]`. There is one exemption: the commit that creates the file as exactly `{"rows": {}}` (no parent file, one key, an empty map) needs no tag.
+    - Why: LIB-4c's `2ee3a037` creates it that way untagged, on a branch that is never rewritten, and an empty manifest pins nothing. Without the exemption every head holding LIB-4c is red on that commit.
+    - Why nothing is loosened: any later edit, deletion, non-empty creation or rename into the path stays red untagged (tested on #249). C0 still recomputes every row, file and sha256. The scratch ref's build commit (scratch.mjs) carries `[golden update]` so Agent guard is green there too.

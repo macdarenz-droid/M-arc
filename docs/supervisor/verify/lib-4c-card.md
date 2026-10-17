@@ -295,7 +295,7 @@ Do:
    - Entries change only in the commit that adds or replaces that pin.
    - The count is exact: 0 on main.
    - MANIFEST.json is not a LOCKED tree in inputs-closure.mjs.
-   - Once the supervisor's guard line is in, a non-merge commit that touches MANIFEST.json carries '[golden update]'.
+   - Once the supervisor's guard line is in, a non-merge commit that touches MANIFEST.json carries '[golden update]' (one exemption: creating it as exactly {"rows": {}}; lib4-cards.md 12 item 19).
 9. Post 'ready for wiring' with the interface. The supervisor may already have drafted the wiring.
 10. Scratch evidence (H3).
     - scratch.mjs builds the tree from:
