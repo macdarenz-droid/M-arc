@@ -20,7 +20,7 @@ import { workingIndex } from '@/brain/exposure';
 import { DEFAULT_THEME, THEMES, type ThemeId } from '@/theme/themes';
 import { themeId } from '@/theme/engine';
 import { Row, Toggle } from '@/ui/primitives';
-import { entryTarget } from '@/slices/workout/Train';
+import { entryTarget, openEntryId } from '@/slices/workout/Train';
 import { isCommitted } from '@/slices/workout/session';
 import { activeGymId, profileFor } from '@/slices/workout/units';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
@@ -72,12 +72,15 @@ function snapSet(s: AppState, a: ActiveSession, entry: Entry, j: number): SnapSe
   return { id: set.id, rev: set.rev ?? 0, w, u: set.entered?.unit ?? eu, r: set.reps ?? target?.reps ?? prev?.reps ?? null, e: set.effort ?? null, src };
 }
 
+/** The entry's first set that is neither committed nor skipped (an unset status counts as a draft), or -1; -1 for an entry done or skipped. */
+const openSet = (e: Entry): number => (e.done || e.skipped ? -1 : e.sets.findIndex(x => !isCommitted(x) && x.status !== 'skipped'));
+
 /**
- * What the watch shows: the first entry in display order that is neither done nor skipped and still
- * has a set that is neither committed nor skipped (an unset status counts as a draft), that set, the
- * rest, and the theme's background, text and accent. `wt` echoes the hello this answers.
+ * What the watch shows: the exercise in use on the phone with a set to log (WATCH-C D1: the card open
+ * on the phone, else the exercise of the set logged last, else the first in display order), that set,
+ * the rest, and the theme's background, text and accent. `wt` echoes the hello this answers.
  */
-export function buildSnapshot(s: AppState, now: number, wt: number | null, theme: ThemeId = themeId.value): Snap {
+export function buildSnapshot(s: AppState, now: number, wt: number | null, theme: ThemeId = themeId.value, openId: string | null = openEntryId.value): Snap {
   const tk = (THEMES[theme] ?? THEMES[DEFAULT_THEME]).tokens;
   const base = { t: MW, v: MW_VERSION, k: 'snap', pt: now, wt } as const;
   const th: Snap['th'] = [tk.bg, tk.text, tk.accent];
@@ -85,12 +88,11 @@ export function buildSnapshot(s: AppState, now: number, wt: number | null, theme
   if (!a?.id) return { ...base, srev: 0, sid: null, ex: null, si: 0, sn: 0, set: null, rest: null, th };
   const rest = a.rest?.id ? { id: a.rest.id, left: Math.max(0, restLeftMs(a, now)), tot: a.rest.totalSec * 1000, p: !!a.pausedAt } : null;
   const head = { ...base, srev: a.rev ?? 0, sid: a.id };
-  for (const entry of a.entries) {
-    if (entry.done || entry.skipped) continue;
-    const j = entry.sets.findIndex(x => !isCommitted(x) && x.status !== 'skipped');
-    if (j >= 0) return { ...head, ex: asciiName(entry.name), si: j + 1, sn: entry.sets.length, set: snapSet(s, a, entry, j), rest, th };
-  }
-  return { ...head, ex: null, si: 0, sn: 0, set: null, rest, th };
+  const last = a.entries.flatMap(e => e.sets.filter(x => x.at).map(x => ({ e, t: Date.parse(x.at!) }))).sort((p, q) => q.t - p.t)[0]?.e;
+  const entry = [a.entries.find(e => e.id === openId), last, ...a.entries].find(e => e && openSet(e) >= 0);
+  if (!entry) return { ...head, ex: null, si: 0, sn: 0, set: null, rest, th };
+  const j = openSet(entry);
+  return { ...head, ex: asciiName(entry.name), si: j + 1, sn: entry.sets.length, set: snapSet(s, a, entry, j), rest, th };
 }
 
 /** A snap without what moves by itself (pt, wt and the rest's countdown): a new one goes only when this differs. */
@@ -222,6 +224,7 @@ export function createLink(deps: LinkDeps): Link {
         following = true;
         state.subscribe(changed);
         themeId.subscribe(changed);
+        openEntryId.subscribe(changed);
         const doc = deps.doc;
         doc?.addEventListener('visibilitychange', () => { if (doc.visibilityState === 'visible') void sendSnap(null); });
       }

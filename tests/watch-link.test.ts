@@ -25,7 +25,7 @@ import { initStore, replaceState, state } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { kgToDisplay } from '@/core/units';
 import { setTheme } from '@/theme/engine';
-import { entryTarget } from '@/slices/workout/Train';
+import { entryTarget, openEntryId } from '@/slices/workout/Train';
 import { addSet, commitSet, markDone, moveEntry, setSet, skipEntry, startRest, startSession, substituteEntry, pauseSession } from '@/slices/workout/session';
 import { profileFor } from '@/slices/workout/units';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
@@ -80,7 +80,9 @@ describe('WATCH-C C1 buildSnapshot', () => {
     expect(snap().srev).toBe(a().rev);
     // Reorder: display order wins.
     moveEntry(1, 0);
-    expect(ids(snap())).toEqual(['Cable Fly', 1, 1, fly!.sets[0]!.id]);
+    // WATCH-C D1: the entry of the last set logged now comes before display order (the reorder case without a commit is in the D1 block).
+    expect(ids(snap())).toEqual(['Barbell Bench Press', 2, 2, bench!.sets[1]!.id]);
+    expect(fly!.sets[0]!.id).toBeTruthy();
     skipEntry(0);
     expect(ids(snap())).toEqual(['Barbell Bench Press', 2, 2, bench!.sets[1]!.id]);
     skipEntry(0, false);
@@ -475,4 +477,60 @@ describe('WATCH-B follow-up: skipping or finishing an exercise on the phone stop
       expect(committed()).toHaveLength(1);
     });
   }
+});
+
+describe('WATCH-C D1: the snapshot follows the exercise in use on the phone', () => {
+  const four: Split = { ...split, id: 'sp4', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 2 }, { exerciseId: 'lib_cable_fly', sets: 2 }, { exerciseId: 'lib_dumbbell_bench_press', sets: 1 }] };
+  const log = (i: number, j: number) => { setSet(i, j, { kg: 20, entered: { value: 20, unit: 'kg' }, reps: 10 }); expect(commitSet(i, j)).toBe(true); };
+  beforeEach(() => { openEntryId.value = null; replaceState({ ...state.value, splits: [four] }); startSession(four); });
+  afterEach(() => { openEntryId.value = null; });
+  it('the card open on the phone, when it has a set to log', () => {
+    openEntryId.value = a().entries[1]!.id!;
+    expect(ids(snap())).toEqual(['Cable Fly', 1, 2, a().entries[1]!.sets[0]!.id]);
+    log(0, 0);
+    expect(snap().ex).toBe('Cable Fly');
+  });
+  it('else the exercise of the last set logged, when it has a set to log', () => {
+    log(1, 0);
+    expect(ids(snap())).toEqual(['Cable Fly', 2, 2, a().entries[1]!.sets[1]!.id]);
+    vi.advanceTimersByTime(60_000);
+    log(0, 0);
+    expect(ids(snap())).toEqual(['Barbell Bench Press', 2, 2, a().entries[0]!.sets[1]!.id]);
+    // An open card with nothing left gives way to it.
+    vi.advanceTimersByTime(1000);
+    log(2, 0);
+    openEntryId.value = a().entries[2]!.id!;
+    expect(snap().ex).toBe('Barbell Bench Press');
+  });
+  it('else the first exercise in display order with a set to log; done or skipped ones are passed over', () => {
+    moveEntry(2, 0); // Dumbbell Bench Press, Barbell Bench Press, Cable Fly
+    expect(snap().ex).toBe('Dumbbell Bench Press');
+    log(2, 0);
+    log(2, 1);
+    expect(snap().ex).toBe('Dumbbell Bench Press'); // the last set's exercise has nothing left
+    openEntryId.value = a().entries[0]!.id!;
+    skipEntry(0);
+    expect(snap().ex).toBe('Barbell Bench Press');
+    skipEntry(0, false);
+    expect(snap().ex).toBe('Dumbbell Bench Press');
+    markDone(0);
+    expect(snap().ex).toBe('Barbell Bench Press');
+    openEntryId.value = 'e_gone';
+    expect(snap().ex).toBe('Barbell Bench Press');
+  });
+  it('Train keeps openEntryId in step with its open card, in memory only, and the link follows it', async () => {
+    const train = readFileSync('src/slices/workout/Train.tsx', 'utf8');
+    expect(train).toContain('export const openEntryId = signal<string | null>(null);');
+    expect(train).toContain('useEffect(() => { openEntryId.value = a.entries[open]?.id ?? null; return () => { openEntryId.value = null; }; }, [open, a.entries[open]?.id]);');
+    expect(train.match(/openEntryId/g)).toHaveLength(3);
+    const sent: string[] = [];
+    const link = createLink({ send: async t => { sent.push(t); return 207; }, log: () => undefined, connect: async () => undefined, doc: { visibilityState: 'visible', addEventListener: () => undefined } });
+    await link.start();
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(sent).toHaveLength(1);
+    openEntryId.value = a().entries[1]!.id!;
+    await vi.advanceTimersByTimeAsync(SNAP_GAP_MS);
+    expect(sent).toHaveLength(2);
+    expect((JSON.parse(sent[1]!) as Snap).ex).toBe('Cable Fly');
+  });
 });
