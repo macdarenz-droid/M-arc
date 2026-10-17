@@ -71,6 +71,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const t1 = Date.now();
     once = await onceStates(browser, PORT, k);
     onceSeconds = (Date.now() - t1) / 1000;
+    console.log(`howto-shard ${k}/${K}: once-states ${once.length} rows in ${onceSeconds.toFixed(1)} s; now ${ids.length} ids`);
     out = ids.length ? await libraryFidelity(browser, PORT, { ids, pages, P: LIB_P, log: m => console.error(m) }) : { rows: [], px: {}, seconds: { id: {}, family: {} }, problems: [] };
   } finally { await browser.close(); server.kill('SIGKILL'); }
   const rows = [...once, ...out.rows];
