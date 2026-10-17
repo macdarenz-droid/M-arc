@@ -8,6 +8,7 @@ import { WATCH_COMMAND_KINDS, type ActiveSession, type AppState, type CommandRec
 import { commitNow, state } from '@/core/store';
 import { fromNewerBuild, repairCommands } from '@/core/dataVersion';
 import { enteredLoad } from '@/core/units';
+import { MAX_LOAD } from '@/core/parse';
 import { addRestStep, commitStep, finishStep, isCommitted, pauseStep, resumeStep, skipRestStep, withActive, type Step } from './session';
 
 export type { CommandResult } from '@/core/models';
@@ -36,7 +37,7 @@ function ownFields(v: unknown): Record<string, unknown> | null {
 }
 const text = (v: unknown): v is string => typeof v === 'string' && v.length >= 1 && v.length <= 64;
 const whole = (v: unknown, min: number, max: number): v is number => typeof v === 'number' && Number.isInteger(v) && v >= min && v <= max;
-const isLoad = (v: Record<string, unknown> | null): v is Record<string, unknown> & Load => !!v && typeof v.value === 'number' && v.value >= 0 && v.value <= 1000 && UNITS.includes(v.unit as LoadUnit);
+const isLoad = (v: Record<string, unknown> | null): v is Record<string, unknown> & Load => !!v && typeof v.value === 'number' && UNITS.includes(v.unit as LoadUnit) && v.value >= 0 && v.value <= MAX_LOAD[v.unit as LoadUnit];
 const bytes = (v: unknown): number => { try { return new TextEncoder().encode(JSON.stringify(v)).length; } catch { return Infinity; } };
 
 const rejected = (commandId: string, reason: CommandRejectReason): StoredCommandResult => ({ commandId, status: 'rejected', reason, replayed: false });

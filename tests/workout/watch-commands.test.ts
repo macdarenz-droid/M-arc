@@ -834,3 +834,15 @@ describe('WATCH-C4 P4: rest_add_15 and rest_sub_15', () => {
     expect(a().rest!.endsAt).toBe(endsAt);
   });
 });
+
+describe('WATCH-C4 red team: a watch load is checked against its own unit limit, as the phone parses loads', () => {
+  it('up to 1000 kg and 2200 lb; 1000.01 kg and 2200.01 lb are invalid', () => {
+    begin();
+    for (const [value, unit, status] of [[1000, 'kg', 'applied'], [1000.01, 'kg', 'rejected'], [1100, 'lb', 'applied'], [2200.01, 'lb', 'rejected'], [2200, 'lb', 'applied']] as const) {
+      // the first set still open: a refused load commits nothing
+      const set = a().entries.flatMap(e => e.sets).find(x => x.status !== 'committed')!;
+      const r = handleWorkoutCommand(complete(set.id!, { load: { value, unit } }));
+      expect(r, `${value} ${unit}`).toMatchObject(status === 'applied' ? { status } : { status, reason: 'invalid' });
+    }
+  });
+});

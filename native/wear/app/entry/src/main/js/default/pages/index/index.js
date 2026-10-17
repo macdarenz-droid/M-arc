@@ -58,7 +58,6 @@ function hr(on) {
 	if (on) try { sensor.subscribeHeartRate({ success: function (d) { tap('beat', d && d.heartRate); }, fail: function (d, c) { tap('beat', -c); } }); } catch (e) {}
 }
 
-// C4: Done
 function hl(p) { try { router.replace({ uri: 'pages/hl/hl', params: p }); } catch (e) {} }
 
 function connect() {

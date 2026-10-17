@@ -4,7 +4,7 @@
  */
 import type { LoadUnit } from './models';
 
-const MAX_LOAD: Record<LoadUnit, number> = { kg: 1000, lb: 2200 };
+export const MAX_LOAD: Record<LoadUnit, number> = { kg: 1000, lb: 2200 };
 const DECIMAL = /^\d+(\.\d+)?$|^\d+\.$|^\.\d+$/;
 const INTEGER = /^\d+$/;
 

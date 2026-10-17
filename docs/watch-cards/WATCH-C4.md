@@ -84,3 +84,14 @@ A fresh review of `38e4240`: fail, 1 high, 1 medium, 2 low, 2 nits. All fixed, e
 - **Low, B4 evidence:** the scenario runs and heap are recorded at the final head (Last red team below); the builder's phantom `f*` glob is noted in the red-team tools README.
 - **Nit, names cut mid-word:** a best now reads `PR <name> ...` (the phone's own PR badge word), its name cut to whole words; with no whole word, the first word cut when 4 or more letters fit; else the best is left out.
 - **Nit:** the stale 46,000 B comment in W4 now says 47,000 B.
+
+## Red team rulings (2026-10-18)
+The red team of `38e4240` (1 medium, 6 low; Done, the restart guard and the highlights page held). Fixed, each with a test that fails before (`c4.test.mjs` R19 to R22, `tests/workout/watch-commands.test.ts` "a watch load is checked against its own unit limit"):
+- **Medium, loads over 1,000 lb (R19):** Adjust and the phone capped every unit at 1,000. Both now use the phone's own limit (`MAX_LOAD` in `src/core/parse.ts`: 1,000 kg, 2,200 lb).
+- **Done never retried (R20):** if the engine drops the page switch, Done is tried again every 3 ticks while the index page lives; a new session's Done is not delayed by an earlier one. L10's "once" assertions now say what happens: a second fin starts nothing; the same Done repeats 3 ticks later while the page lives.
+- **Heart rates outside 25 to 250 bpm (R21):** ignored (the header, the pulse and the peak keep the last good sample); a missing or failed sample still marks it stale. L8's pin `[1, '12000ms']` becomes `[25, '2400ms'], [250, '240ms']`.
+- **onShow did not redraw (R22):** it paints at once, so a wrist raise does not leave the idle screen up to the next tick.
+- **Known limit, offline -15 s and +15 s (F2):** the watch applies a queued step at its tap, the phone at its receipt (WATCH-ARCHITECTURE 6: a late step never restarts an ended rest), so an offline countdown can end earlier or later than the phone's. The phone's snap replaces the watch's countdown when it is back.
+- **Known limit, the restart guard with slow storage (F3):** with storage writes over about 4 s, the closing page's clean mark can land after the reopened page's running mark, so one crash in the next 30 s is not counted; the next one is.
+- **Accepted (F7):** each heart-rate gap over 15 s remounts the heart (about 150 to 200 B of native memory each; 5 in the model's workout with a 602 every 5 minutes).
+- Index-side sources stay at most 49,000 B by dropping comments the README covers.

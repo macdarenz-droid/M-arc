@@ -47,9 +47,9 @@ function store() {
 async function rig(o = {}) {
   const { Link } = await import(LINK);
   let t = T0;
-  const r = { sent: [], code: o.code === undefined ? 207 : o.code, store: o.store ?? store(), hls: [], buzz: 0 };
+  const r = { sent: [], code: o.code === undefined ? 207 : o.code, store: o.store ?? store(), hls: [], buzz: 0, paints: 0 };
   const io = {
-    store: r.store, now: () => t, keep: () => {}, connect: () => {}, defer: (fn) => { tasks.push(fn); }, paint: () => {},
+    store: r.store, now: () => t, keep: () => {}, connect: () => {}, defer: (fn) => { tasks.push(fn); }, paint: () => { r.paints++; },
     send: (text, done) => { r.sent.push(text); if (r.code !== null) done(r.code); }, buzz: () => { r.buzz++; }, hl: (p) => { r.hls.push(p); },
   };
   const link = Link(io, o.boot ?? 'abcd1234');
@@ -360,7 +360,7 @@ test('L8 the header: a heart and the bpm with a fresh sample, M/ARC without; the
   assert.deepEqual(d.images, [{ src: '/common/h.png', style: 'animation-duration:462ms' }]);
   assert.equal(d.lines.filter((x) => /bpm/.test(x)).length, 1, 'the bpm is in the header only');
   assert.equal(d.lines.at(-1), '', 'the Set status line is free');
-  for (const [x, want] of [[60, '1000ms'], [128, '462ms'], [182, '333ms'], [62.4, '1000ms'], [63, '923ms'], [1, '12000ms']]) {
+  for (const [x, want] of [[60, '1000ms'], [128, '462ms'], [182, '333ms'], [62.4, '1000ms'], [63, '923ms'], [25, '2400ms'], [250, '240ms']]) {
     r.link.beat(x);
     assert.equal(r.v().hd, want, String(x));
   }
@@ -643,8 +643,10 @@ test('L10 Done: a snap with no session whose fin is the last session id replaces
   r.tick();
   assert.deepEqual(r.hls, [{ h1: LINES[0], h2: LINES[1], h3: LINES[2], h4: LINES[3], h5: 'Peak 140 bpm, avg 130' }]);
   r.link.rx(done());
-  r.ticks(3);
-  assert.equal(r.hls.length, 1, 'once per session id');
+  r.tick();
+  assert.equal(r.hls.length, 1, 'once per session id: a second fin starts nothing');
+  r.ticks(2);
+  assert.deepEqual(r.hls, [r.hls[0], r.hls[0]], 'the same Done is tried again 3 ticks later while the page lives (C4 red team)');
   // with nothing pending: on the next tick; the phone's 2 lines then the heart, the rest blank; no samples, no heart line
   const a = await rig({ code: null });
   a.link.rx(snap());
@@ -676,7 +678,7 @@ test('L10 no Done for a discard, an unknown id, a fin before any session (the in
   c.link.rx(snap());
   c.link.rx(done());
   c.ticks(5);
-  assert.equal(c.hls.length, 1, 'the control: the same rig sees a Done');
+  assert.equal(c.hls.length, 2, 'the control: the same rig sees a Done (ticks 1 and 4, while the page lives)');
   // the index page back from the highlights page is a fresh link with the same storage: the phone's snap still carries fin
   const back = await rig({ code: null, store: c.store, boot: 'bbbbbbbb' });
   back.link.rx(done());
@@ -768,4 +770,62 @@ test('R18 a paused phone rest at 10 s or less wakes the screen once, then dims a
   assert.equal(s.v().dm, 0, 'a running rest at 10 s wakes');
   s.ticks(10);
   assert.equal(s.v().sc, 6, 'Rest done at 0');
+});
+
+// C4 red team (2026-10-18): lb loads up to the phone's 2,200 lb; Done retried while the page lives; heart rates outside
+// 25 to 250 bpm ignored; onShow redraws at once.
+test('R19 Adjust keeps a load within the phone limit of its unit: 1000 kg, 2200 lb; a 1100 lb set steps to 1101', async () => {
+  const at = async (set) => { const a = await rig({ code: null }); a.link.rx(snap({ set: { ...S2, ...set } })); a.link.adj(); return a; };
+  for (const [set, steps, want] of [[{ u: 'lb', w: 1100 }, 1, '1101'], [{ u: 'lb', w: 1100 }, -1, '1099'], [{ u: 'lb', w: 2199.5 }, 1, '2200'],
+    [{ u: 'lb', w: 2200 }, 2, '2200'], [{ u: 'kg', w: 999.5 }, 1, '1000']]) {
+    const a = await at(set);
+    for (let i = 0; i < Math.abs(steps); i++) a.link.adj(Math.sign(steps));
+    assert.equal(a.v().av, want, JSON.stringify(set));
+  }
+  const d = await at({ u: 'lb', w: 1500.5 });
+  d.link.next('right');
+  d.link.adj(1);
+  assert.equal(d.v().av, '1500.75', 'the decimals of a load over 1000 lb');
+});
+
+test('R20 Done is tried again every 3 ticks while the index page still lives (a page switch the engine dropped)', async () => {
+  const r = await rig();
+  r.link.rx(snap());
+  r.link.rx(done());
+  r.tick();
+  assert.equal(r.hls.length, 1);
+  r.ticks(3);
+  assert.equal(r.hls.length, 2, 'still here 3 ticks later: again');
+  r.link.die();
+  r.ticks(6);
+  assert.equal(r.hls.length, 2, 'not after the page is gone');
+});
+
+test('R21 a heart rate outside 25 to 250 bpm is ignored: the header, the pulse and the peak keep the last good sample', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.beat(128);
+  const before = only(r.v(), ['hm', 'hd', 'hv']);
+  for (const x of [1, 24, 251, 300, 24001, 1e9, Infinity]) {
+    r.link.beat(x);
+    assert.deepEqual(only(r.v(), ['hm', 'hd', 'hv']), before, String(x));
+  }
+  r.link.beat(25);
+  assert.equal(r.v().hm, '25 bpm');
+  r.link.beat(250);
+  assert.equal(r.v().hm, '250 bpm');
+  r.link.rx(done({ fin: ['s_1', LINES] }));
+  r.tick();
+  assert.equal(r.hls[0].h5, 'Peak 250 bpm, avg 134');
+});
+
+test('R22 onShow (a wrist raise) redraws at once, so the idle screen does not stay up to the next tick', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.ticks(15);
+  assert.equal(r.v().dm, 1);
+  const p = r.paints;
+  r.link.show();
+  assert.equal(r.v().dm, 0);
+  assert.ok(r.paints > p, 'painted');
 });
