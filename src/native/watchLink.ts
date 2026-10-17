@@ -2,7 +2,8 @@
  * WATCH-C (Gate C, docs/watch-cards/WATCH-C.md): the phone end of the workout link with the GT 6
  * companion (native/wear/app). Protocol "mw" v1, JSON of at most 1000 B each way:
  * - watch to phone: hello {t,v,k,app,boot,wt,q}, and cmd (WATCH-B's command with t and k);
- * - phone to watch: snap (buildSnapshot: at most 700 B, ASCII), and res {t,v,k} plus the CommandResult.
+ * - phone to watch: snap (buildSnapshot: at most 700 B, ASCII), plan (buildPlan, WATCH-C2: at most 1000 B, ASCII),
+ *   and res {t,v,k} plus the CommandResult.
  * Debug APK only: the lab's Connect starts it. While M/ARC is hidden it neither handles nor sends, and
  * the watch sends again. Every cmd goes to handleWorkoutCommand and its result goes back whatever the
  * plugin's "by" says: Wire.requestId in WearEnginePlugin.java accepts only marc-a2, so Java never
@@ -29,18 +30,27 @@ import { SEND_OK, watchLab } from './wearEngine';
 const MW = 'mw';
 const MW_VERSION = 1;
 export const MAX_SNAP_BYTES = 700;
+export const MAX_PLAN_BYTES = 1000;
+export const MAX_PLAN_ROWS = 4;
 export const MAX_EX_CHARS = 24;
-/** Snaps for changes go at most this often; a hello's answer and the snap after a result go at once. */
+/** Snaps and plans for changes go at most this often; a hello's answer and the snap after a result go at once. */
 export const SNAP_GAP_MS = 300;
 
 /** The set the watch shows: load w in unit u (null: none), reps r, effort e, and where they came from (src). */
 export interface SnapSet { id: string; rev: number; w: number | null; u: LoadUnit; r: number | null; e: Effort | null; src: 'd' | 't' | 'l' | null }
+/** Last time's set at the same position, in the unit the set shows: load w and reps r (null: none). */
+export interface SnapLast { w: number | null; u: LoadUnit; r: number | null }
 /** left: ms to go, held while paused; tot: the rest's length in ms; p: paused. */
 export interface SnapRest { id: string; left: number; tot: number; p: boolean }
 export interface Snap {
   t: typeof MW; v: typeof MW_VERSION; k: 'snap'; pt: number; wt: number | null; srev: number; sid: string | null;
   ex: string | null; si: number; sn: number; set: SnapSet | null; rest: SnapRest | null; th: [string, string, string];
+  /** WATCH-C2: the shown exercise's entry id, and last time for set. The snap without a session has neither (C1 pins it). */
+  eid?: string | null; lt?: SnapLast | null;
 }
+/** An Up next row: entry id, name, sets committed (d) and not skipped (n), its open set as in snap, and last time for it. */
+export interface PlanRow { id: string; ex: string; d: number; n: number; set: SnapSet | null; lt: SnapLast | null }
+export interface Plan { t: typeof MW; v: typeof MW_VERSION; k: 'plan'; sid: string | null; srev: number; sd: number; st: number; rows: PlanRow[] }
 type Entry = ActiveSession['entries'][number];
 
 /** An exercise name the watch can show: ASCII, at most MAX_EX_CHARS characters. */
@@ -56,8 +66,9 @@ const restLeftMs = (a: ActiveSession, now: number): number => (a.pausedAt
  * unit it was entered in), else today's target (Train's entryTarget, the live card's), else last time's
  * set at the same position. Effort is the draft's only. Null for anything but a plain load: the
  * protocol has no load meaning yet (bodyweight added load, assistance) and a timed set has no reps.
+ * lt (WATCH-C2): last time's set, in the unit the set shows.
  */
-function snapSet(s: AppState, a: ActiveSession, entry: Entry, j: number): SnapSet | null {
+function snapSet(s: AppState, a: ActiveSession, entry: Entry, j: number): { set: SnapSet; lt: SnapLast | null } | null {
   const set = entry.sets[j]!;
   if ((findExercise(entry.exerciseId, s.customExercises)?.mode ?? 'weighted') !== 'weighted' || !set.id) return null;
   const eu = profileFor(entry.exerciseId, a.gymId ?? activeGymId()).unit;
@@ -69,15 +80,25 @@ function snapSet(s: AppState, a: ActiveSession, entry: Entry, j: number): SnapSe
   const kg = set.kg ?? target?.kg ?? prev?.kg ?? null;
   const w = set.entered ? set.entered.value : kg == null ? null : kgToDisplay(kg, eu);
   const src = own ? 'd' : target && (target.kg != null || target.reps != null) ? 't' : prev ? 'l' : null;
-  return { id: set.id, rev: set.rev ?? 0, w, u: set.entered?.unit ?? eu, r: set.reps ?? target?.reps ?? prev?.reps ?? null, e: set.effort ?? null, src };
+  const u = set.entered?.unit ?? eu;
+  const lt = prev && (prev.kg != null || prev.reps != null) ? { w: prev.kg == null ? null : kgToDisplay(prev.kg, u), u, r: prev.reps ?? null } : null;
+  return { set: { id: set.id, rev: set.rev ?? 0, w, u, r: set.reps ?? target?.reps ?? prev?.reps ?? null, e: set.effort ?? null, src }, lt };
 }
 
 /** The entry's first set that is neither committed nor skipped (an unset status counts as a draft), or -1; -1 for an entry done or skipped. */
 const openSet = (e: Entry): number => (e.done || e.skipped ? -1 : e.sets.findIndex(x => !isCommitted(x) && x.status !== 'skipped'));
 
+/** The entry's open set and last time for it, as the watch shows them. */
+const shown = (s: AppState, a: ActiveSession, e: Entry): { set: SnapSet | null; lt: SnapLast | null } => snapSet(s, a, e, openSet(e)) ?? { set: null, lt: null };
+
+/** The exercise in use on the phone with a set to log (WATCH-C D1): the card open on the phone, else the exercise of the set logged last, else the first in display order. */
+function shownEntry(a: ActiveSession, openId: string | null): Entry | undefined {
+  const last = a.entries.flatMap(e => e.sets.filter(x => x.at).map(x => ({ e, t: Date.parse(x.at!) }))).sort((p, q) => q.t - p.t)[0]?.e;
+  return [a.entries.find(e => e.id === openId), last, ...a.entries].find(e => e && openSet(e) >= 0);
+}
+
 /**
- * What the watch shows: the exercise in use on the phone with a set to log (WATCH-C D1: the card open
- * on the phone, else the exercise of the set logged last, else the first in display order), that set,
+ * What the watch shows: the shown exercise (shownEntry) and its entry id, that set and last time for it,
  * the rest, and the theme's background, text and accent. `wt` echoes the hello this answers.
  */
 export function buildSnapshot(s: AppState, now: number, wt: number | null, theme: ThemeId = themeId.value, openId: string | null = openEntryId.value): Snap {
@@ -88,11 +109,31 @@ export function buildSnapshot(s: AppState, now: number, wt: number | null, theme
   if (!a?.id) return { ...base, srev: 0, sid: null, ex: null, si: 0, sn: 0, set: null, rest: null, th };
   const rest = a.rest?.id ? { id: a.rest.id, left: Math.max(0, restLeftMs(a, now)), tot: a.rest.totalSec * 1000, p: !!a.pausedAt } : null;
   const head = { ...base, srev: a.rev ?? 0, sid: a.id };
-  const last = a.entries.flatMap(e => e.sets.filter(x => x.at).map(x => ({ e, t: Date.parse(x.at!) }))).sort((p, q) => q.t - p.t)[0]?.e;
-  const entry = [a.entries.find(e => e.id === openId), last, ...a.entries].find(e => e && openSet(e) >= 0);
-  if (!entry) return { ...head, ex: null, si: 0, sn: 0, set: null, rest, th };
-  const j = openSet(entry);
-  return { ...head, ex: asciiName(entry.name), si: j + 1, sn: entry.sets.length, set: snapSet(s, a, entry, j), rest, th };
+  const entry = shownEntry(a, openId);
+  if (!entry) return { ...head, eid: null, ex: null, si: 0, sn: 0, set: null, lt: null, rest, th };
+  return { ...head, eid: entry.id ?? null, ex: asciiName(entry.name), si: openSet(entry) + 1, sn: entry.sets.length, ...shown(s, a, entry), rest, th };
+}
+
+/**
+ * WATCH-C2 Up next: up to 4 exercises with a set to log, the shown one first, then in display order,
+ * wrapping round; rows go from the end until the JSON fits 1000 B. sd: sets committed in the session;
+ * st: those and every set still to log, so a done or skipped exercise's unlogged sets do not count.
+ */
+export function buildPlan(s: AppState, openId: string | null = openEntryId.value): Plan {
+  const base = { t: MW, v: MW_VERSION, k: 'plan' } as const;
+  const a = s.active;
+  if (!a?.id) return { ...base, sid: null, srev: 0, sd: 0, st: 0, rows: [] };
+  const d = (e: Entry) => e.sets.filter(isCommitted).length;
+  const n = (e: Entry) => d(e) + (e.done || e.skipped ? 0 : e.sets.filter(x => !isCommitted(x) && x.status !== 'skipped').length);
+  const first = shownEntry(a, openId);
+  const i = first ? a.entries.indexOf(first) : -1;
+  const rows = (i < 0 ? [] : [...a.entries.slice(i), ...a.entries.slice(0, i)])
+    // a row without an id cannot be picked
+    .filter(e => e.id && openSet(e) >= 0).slice(0, MAX_PLAN_ROWS)
+    .map(e => ({ id: e.id!, ex: asciiName(e.name), d: d(e), n: n(e), ...shown(s, a, e) }));
+  const plan: Plan = { ...base, sid: a.id, srev: a.rev ?? 0, sd: a.entries.reduce((t, e) => t + d(e), 0), st: a.entries.reduce((t, e) => t + n(e), 0), rows };
+  while (plan.rows.length && new TextEncoder().encode(JSON.stringify(plan)).length > MAX_PLAN_BYTES) plan.rows.pop();
+  return plan;
 }
 
 /** A snap without what moves by itself (pt, wt and the rest's countdown): a new one goes only when this differs. */
@@ -125,6 +166,8 @@ export interface LinkDeps {
   now?: () => number;
   handle?: (cmd: unknown, rxAt: number) => CommandResult;
   snapshot?: (now: number, wt: number | null) => Snap;
+  /** WATCH-C2: the plan for Up next (buildPlan). Without it the link sends snaps only, as in WATCH-C. */
+  plan?: () => Plan;
   /** The lab's Connect (listeners first, then the plugin's connect). */
   connect?: () => Promise<void>;
   doc?: Doc | null;
@@ -152,6 +195,7 @@ export function createLink(deps: LinkDeps): Link {
   const hold = signal(false);
   const bump = (k: keyof LinkCounts) => { counts.value = { ...counts.value, [k]: counts.value[k] + 1 }; };
   let lastKey = '';
+  let lastPlan = '';
   let lastAt = -Infinity;
   let timer: ReturnType<typeof setTimeout> | null = null;
   let busy = 0;
@@ -167,33 +211,57 @@ export function createLink(deps: LinkDeps): Link {
    * A snap that answers a hello carries as `pt` the midpoint of the hello's native receipt (rxAt) and this send, so the
    * watch's offset, pt - (wt + arrival) / 2, leaves out the time the phone's JS took to see the hello, however late the
    * answer goes. The likely cause of 8 of 11 sets coming out future_time in the 1.1.2 device run (README).
+   * Resolves whether it sent a snap that answers a hello.
    */
-  async function sendSnap(wt: number | null, onlyIfChanged = false, rxAt?: number): Promise<void> {
+  async function sendSnap(wt: number | null, onlyIfChanged = false, rxAt?: number): Promise<boolean> {
     try {
       const ans = wt !== null ? { wt, rxAt: rxAt ?? NaN } : owed;
-      if (quiet()) { if (wt !== null) owed = ans; return; }
+      if (quiet()) { if (wt !== null) owed = ans; return false; }
       const t = now();
       const built = snapshot(t, ans ? ans.wt : null);
       const snap = ans && Number.isFinite(ans.rxAt) && ans.rxAt < t ? { ...built, pt: Math.round((ans.rxAt + t) / 2) } : built;
       const key = projection(snap);
-      if (onlyIfChanged && key === lastKey) return;
+      if (onlyIfChanged && key === lastKey) return false;
       lastKey = key;
       lastAt = now();
       bump('snap');
       const r = await deps.send(JSON.stringify(snap));
       if (r !== SEND_OK) { deps.log(`mw snap ${r}`); if (ans) owed = ans; }
       else if (ans && owed && !(owed.rxAt > ans.rxAt)) owed = null;
+      return ans !== null;
     } catch (e) {
       deps.log(`mw snap ${e instanceof Error ? e.message : String(e)}`);
+      return false;
     }
   }
+
+  /**
+   * WATCH-C2: the plan, quiet as the snap and under its 300 ms limit; only when it changed, unless forced. Nothing in
+   * it moves by itself, so its text is its projection. Never rejects.
+   */
+  async function sendPlan(onlyIfChanged: boolean): Promise<void> {
+    try {
+      if (!deps.plan || quiet()) return;
+      const text = JSON.stringify(deps.plan());
+      if (onlyIfChanged && text === lastPlan) return;
+      lastPlan = text;
+      lastAt = now();
+      const r = await deps.send(text);
+      if (r !== SEND_OK) deps.log(`mw plan ${r}`);
+    } catch (e) {
+      deps.log(`mw plan ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }
+
+  /** A snap, then the plan: always after a snap that answers a hello, else only when it changed. */
+  const sync = async (wt: number | null, onlyIfChanged = false, rxAt?: number): Promise<void> => sendPlan(!(await sendSnap(wt, onlyIfChanged, rxAt)));
 
   function changed(): void {
     if (timer) return;
     timer = setTimeout(() => {
       timer = null;
       // While a command is being answered, the snap after its result carries the change.
-      if (!busy) void sendSnap(null, true);
+      if (!busy) void sync(null, true);
     }, Math.max(0, lastAt + SNAP_GAP_MS - now()));
   }
 
@@ -216,7 +284,7 @@ export function createLink(deps: LinkDeps): Link {
       bump('hello');
       // js: from the native receipt to this code, as the lab's own rows show it (Gate A question 4)
       deps.log(`mw hello ${String(m.boot)} q${String(m.q)}${Number.isFinite(rxAt) ? ` js +${now() - rxAt}ms` : ''}`);
-      await sendSnap(typeof m.wt === 'number' ? m.wt : null, false, rxAt);
+      await sync(typeof m.wt === 'number' ? m.wt : null, false, rxAt);
       return;
     }
     // A kind a later watch adds is ignored.
@@ -230,7 +298,7 @@ export function createLink(deps: LinkDeps): Link {
       const r = await deps.send(JSON.stringify({ t: MW, v: MW_VERSION, k: 'res', ...result }));
       if (r === SEND_OK) bump('res');
       else deps.log(`mw res ${result.commandId} ${r}`);
-      await sendSnap(null);
+      await sync(null);
     } finally {
       // A change made while this answer was sending was skipped above; the changed-only check stops a duplicate.
       if (--busy === 0) changed();
@@ -242,7 +310,7 @@ export function createLink(deps: LinkDeps): Link {
     hold,
     receive,
     changed,
-    refresh: () => sendSnap(null),
+    refresh: () => sync(null),
     async start() {
       if (deps.connect) await deps.connect();
       if (!following) {
@@ -251,10 +319,10 @@ export function createLink(deps: LinkDeps): Link {
         themeId.subscribe(changed);
         openEntryId.subscribe(changed);
         const doc = deps.doc;
-        doc?.addEventListener('visibilitychange', () => { if (doc.visibilityState === 'visible') void sendSnap(null); });
+        doc?.addEventListener('visibilitychange', () => { if (doc.visibilityState === 'visible') void sync(null); });
       }
       stopped = false;
-      await sendSnap(null);
+      await sync(null);
     },
   };
 }
@@ -265,7 +333,7 @@ export function watchLink(): Link {
   if (link) return link;
   const lab = watchLab();
   const doc = typeof document === 'undefined' ? null : document;
-  link = createLink({ send: lab.post, log: lab.note, connect: lab.connect, doc, hidden: () => doc?.visibilityState === 'hidden' });
+  link = createLink({ send: lab.post, log: lab.note, connect: lab.connect, doc, hidden: () => doc?.visibilityState === 'hidden', plan: () => buildPlan(state.value) });
   lab.route(link.receive);
   return link;
 }

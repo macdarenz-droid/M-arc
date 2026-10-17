@@ -20,17 +20,17 @@ vi.mock('@/slices/workout/Train', async orig => {
   return { ...real, entryTarget: (...args: Parameters<typeof real.entryTarget>) => (fx.target as ReturnType<typeof real.entryTarget> | null) ?? real.entryTarget(...args) };
 });
 
-import { freshState, type CommandResult, type LoggedSet, type Split } from '@/core/models';
+import { freshState, newId, type CommandResult, type LoggedSet, type Split } from '@/core/models';
 import { initStore, replaceState, state } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { kgToDisplay } from '@/core/units';
 import { setTheme } from '@/theme/engine';
 import { entryTarget, openEntryId } from '@/slices/workout/Train';
-import { addSet, commitSet, markDone, moveEntry, setSet, skipEntry, startRest, startSession, substituteEntry, pauseSession } from '@/slices/workout/session';
+import { addSet, commitSet, logWarmups, markDone, moveEntry, setSet, skipEntry, startRest, startSession, substituteEntry, pauseSession } from '@/slices/workout/session';
 import { profileFor } from '@/slices/workout/units';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
-import { createLab, type WearEnginePlugin } from '@/native/wearEngine';
-import { MAX_SNAP_BYTES, SNAP_GAP_MS, buildSnapshot, createLink, type LinkDeps, type Snap } from '@/native/watchLink';
+import { createLab, watchLab, type WearEnginePlugin } from '@/native/wearEngine';
+import { MAX_PLAN_BYTES, MAX_SNAP_BYTES, SNAP_GAP_MS, buildPlan, buildSnapshot, createLink, watchLink, type LinkDeps, type Plan, type Snap } from '@/native/watchLink';
 import { sessionAt } from './helpers';
 
 function memoryStorage(): Storage {
@@ -574,5 +574,218 @@ describe('WATCH-C 1.1.2 device run: the clock sample leaves out the phone JS del
     const c = cmd();
     await r.link.receive(JSON.stringify(c), (c.actionAt as number) + 400);
     expect(r.rows.find(x => x.startsWith('mw cmd'))).toMatch(/ set_\S+ lead -0\.4s applied rev \d+ at \d\d:\d\d:\d\d$/);
+  });
+});
+
+describe('WATCH-C2 P1: the snap names its entry and last time, and the plan feeds Up next', () => {
+  const six: Split = {
+    ...split, id: 'sp6', exercises: [
+      { exerciseId: 'lib_barbell_bench_press', sets: 2 }, { exerciseId: 'lib_cable_fly', sets: 2 }, { exerciseId: 'lib_plank', sets: 1 },
+      { exerciseId: 'lib_dumbbell_bench_press', sets: 1 }, { exerciseId: 'lib_push_up', sets: 1 }, { exerciseId: 'lib_farmer_s_carry', sets: 1 },
+    ],
+  };
+  // Last time: the bench on 14 October, the fly on the 15th (its load is the argument).
+  const before = (fly: number) => [
+    sessionAt('2026-10-14T10:00:00.000Z', '2026-10-14T11:00:00.000Z', [{ id: 'lib_barbell_bench_press', sets: [{ kg: 57.5, reps: 9 }, { kg: 55, reps: 7 }] }]),
+    sessionAt('2026-10-15T10:00:00.000Z', '2026-10-15T11:00:00.000Z', [{ id: 'lib_cable_fly', sets: [{ kg: fly, reps: 12 }] }]),
+  ];
+  const plan = () => buildPlan(state.value);
+  const order = (p: Plan) => p.rows.map(x => x.id);
+  const e = (i: number) => a().entries[i]!;
+  const log = (i: number, j: number) => { setSet(i, j, { kg: 20, entered: { value: 20, unit: 'kg' }, reps: 10 }); expect(commitSet(i, j)).toBe(true); };
+  const bytes = (t: string) => new TextEncoder().encode(t).length;
+  const sentPlan = () => JSON.parse(JSON.stringify(plan())) as Plan;
+  beforeEach(() => { openEntryId.value = null; replaceState({ ...state.value, splits: [six], sessions: before(20) }); startSession(six); });
+  afterEach(() => { openEntryId.value = null; });
+
+  it('snap: eid is the shown entry; lt is last time at the same working position, in the unit the set shows', () => {
+    const eu = profileFor('lib_barbell_bench_press', a().gymId).unit;
+    expect(eu).toBe('kg');
+    expect(snap()).toMatchObject({ eid: e(0).id, si: 1, lt: { w: 57.5, u: 'kg', r: 9 } });
+    // A warm-up has no last time; the working set after it gets last time's first set.
+    logWarmups(0, [{ kg: 20, entered: { value: 20, unit: 'kg' }, reps: 10 }]);
+    expect(snap()).toMatchObject({ si: 1, lt: null });
+    expect(snap().set).not.toBeNull();
+    expect(commitSet(0, 0)).toBe(true);
+    expect(snap()).toMatchObject({ si: 2, lt: { w: 57.5, u: 'kg', r: 9 } });
+    // Entered in lb: last time in lb too, as the set's own values.
+    setSet(0, 1, { kg: 61.235, entered: { value: 135, unit: 'lb' }, reps: 5 });
+    expect(snap().set).toMatchObject({ w: 135, u: 'lb' });
+    expect(snap().lt).toEqual({ w: kgToDisplay(57.5, 'lb'), u: 'lb', r: 9 });
+    expect(snap().lt!.w).toBe(126.8);
+    expect(commitSet(0, 1)).toBe(true);
+    expect(snap()).toMatchObject({ eid: e(0).id, si: 3, lt: { w: 55, u: 'kg', r: 7 } });
+    // No history: no last time. Timed: no set and no last time.
+    openEntryId.value = e(3).id!;
+    expect(snap()).toMatchObject({ eid: e(3).id, ex: 'Dumbbell Bench Press', lt: null });
+    expect(snap().set).not.toBeNull();
+    openEntryId.value = e(2).id!;
+    expect(snap()).toMatchObject({ eid: e(2).id, ex: 'Plank', set: null, lt: null });
+    // Nothing left: no entry. Without a session the snap stays as C1 pins it, with neither field.
+    for (let i = 0; i < 6; i++) markDone(i);
+    expect(snap()).toMatchObject({ sid: a().id, eid: null, ex: null, set: null, lt: null });
+    const none = buildSnapshot(freshState(), Date.now(), null);
+    expect('eid' in none || 'lt' in none).toBe(false);
+  });
+
+  it('plan rows: the shown one first, then display order, wrapping round, at most 4; done and skipped left out; counts', () => {
+    expect(plan()).toMatchObject({ t: 'mw', v: 1, k: 'plan', sid: a().id, srev: a().rev, sd: 0, st: 8 });
+    expect(order(plan())).toEqual([0, 1, 2, 3].map(i => e(i).id));
+    // The card open on the phone first, then round the end.
+    openEntryId.value = e(3).id!;
+    expect(order(plan())).toEqual([3, 4, 5, 0].map(i => e(i).id));
+    // Done and skipped exercises are left out, and their unlogged sets leave st.
+    markDone(4);
+    skipEntry(5);
+    expect(order(plan())).toEqual([3, 0, 1, 2].map(i => e(i).id));
+    expect(plan()).toMatchObject({ sd: 0, st: 6 });
+    // A committed set counts in d and sd; a skipped one leaves n and st.
+    log(0, 0);
+    setSet(1, 1, { status: 'skipped' });
+    expect(snap().eid).toBe(e(3).id);
+    expect(plan()).toMatchObject({ srev: a().rev, sd: 1, st: 5 });
+    expect(plan().rows.map(x => [x.id, x.ex, x.d, x.n])).toEqual([[e(3).id, 'Dumbbell Bench Press', 0, 1], [e(0).id, 'Barbell Bench Press', 1, 2], [e(1).id, 'Cable Fly', 0, 1], [e(2).id, 'Plank', 0, 1]]);
+    // Each row's set and last time as the snap shows them for that exercise; a set only for a plain load.
+    const rows = plan().rows;
+    expect(rows[0]).toMatchObject({ set: { id: e(3).sets[0]!.id }, lt: null });
+    expect(rows[1]).toMatchObject({ set: { id: e(0).sets[1]!.id, src: 't' }, lt: { w: 55, u: 'kg', r: 7 } });
+    expect(rows[2]).toMatchObject({ set: { id: e(1).sets[0]!.id }, lt: { w: kgToDisplay(20, profileFor('lib_cable_fly', a().gymId).unit), r: 12 } });
+    expect(rows[3]).toMatchObject({ set: null, lt: null });
+    for (const [k, i] of [[0, 3], [1, 0], [2, 1], [3, 2]] as const) {
+      openEntryId.value = e(i).id!;
+      expect({ set: rows[k]!.set, lt: rows[k]!.lt }).toEqual({ set: snap().set, lt: snap().lt });
+    }
+    // Bodyweight has no set either.
+    openEntryId.value = e(3).id!;
+    markDone(4, false);
+    expect(plan().rows[1]).toMatchObject({ id: e(4).id, set: null, lt: null });
+    // Nothing left: no rows. No session: no session id and no rows.
+    for (let i = 0; i < 6; i++) markDone(i);
+    expect(plan()).toMatchObject({ sid: a().id, sd: 1, st: 1, rows: [] });
+    expect(buildPlan(freshState())).toEqual({ t: 'mw', v: 1, k: 'plan', sid: null, srev: 0, sd: 0, st: 0, rows: [] });
+  });
+
+  it('at most 1000 B and ASCII with long names and ids: rows go from the end until it fits', () => {
+    const long = 'Développé couché incliné × haltères très long';
+    const big = (p: string, i: number) => `${p}_${i}${'q'.repeat(60)}`;
+    startRest(600);
+    replaceState({ ...state.value, active: { ...a(), id: `s_${'x'.repeat(60)}`, rev: Number.MAX_SAFE_INTEGER, entries: a().entries.map((x, i) => ({ ...x, id: big('e', i), exerciseId: 'lib_barbell_bench_press', name: long, sets: x.sets.map((y, j) => ({ ...y, id: big(`set${j}`, i), rev: Number.MAX_SAFE_INTEGER, kg: 453.59237, entered: { value: 999.75, unit: 'lb' as const }, reps: 100, effort: 'ideal' as const })) })) } });
+    // The snap with both new fields still fits.
+    const s = snap(8.64e15);
+    expect(s).toMatchObject({ eid: big('e', 0), lt: { w: 126.8, u: 'lb', r: 9 } });
+    expect(bytes(JSON.stringify(s))).toBeLessThanOrEqual(MAX_SNAP_BYTES);
+    const p = plan();
+    const text = JSON.stringify(p);
+    expect(text).toMatch(/^[\x20-\x7e]+$/);
+    expect(bytes(text)).toBeLessThanOrEqual(MAX_PLAN_BYTES);
+    expect(MAX_PLAN_BYTES).toBe(1000);
+    expect(p.rows.map(x => x.ex)).toEqual(p.rows.map(() => 'Developpe couche incline'));
+    // The rows are all one size: the first ones stay, in order, and one more would not fit.
+    expect(p.rows.length).toBeGreaterThan(0);
+    expect(p.rows.length).toBeLessThan(4);
+    expect(order(p)).toEqual(p.rows.map((_, i) => big('e', i)));
+    expect(bytes(text) + 1 + bytes(JSON.stringify(p.rows[0]))).toBeGreaterThan(MAX_PLAN_BYTES);
+    // With the app's own ids, 4 rows of 24-character names fit.
+    replaceState({ ...state.value, active: { ...a(), entries: a().entries.map(x => ({ ...x, id: newId('e'), sets: x.sets.map(y => ({ ...y, id: newId('set') })) })) } });
+    expect(plan().rows).toHaveLength(4);
+    expect(bytes(JSON.stringify(plan()))).toBeLessThanOrEqual(MAX_PLAN_BYTES);
+  });
+
+  it('the link sends the plan after each hello answer, and on change only, under the snap limit', async () => {
+    const r = rig({ connect: async () => undefined, doc: { visibilityState: 'visible', addEventListener: () => undefined }, plan });
+    await r.link.start();
+    expect(r.kinds()).toEqual(['snap', 'plan']);
+    expect(r.last()).toEqual(sentPlan());
+    // A hello answer: the snap, then the plan, also when nothing changed.
+    await vi.advanceTimersByTimeAsync(1000);
+    await r.link.receive(hello(T0));
+    await r.link.receive(hello(T0 + 1));
+    expect(r.kinds()).toEqual(['snap', 'plan', 'snap', 'plan', 'snap', 'plan']);
+    // The theme changes the snap only; the countdown changes neither.
+    startRest(90);
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(r.kinds().slice(6)).toEqual(['snap', 'plan']);
+    setTheme('ember');
+    await vi.advanceTimersByTimeAsync(5000);
+    r.link.changed();
+    await vi.advanceTimersByTimeAsync(SNAP_GAP_MS);
+    expect(r.kinds().slice(8)).toEqual(['snap']);
+    // Last time for the fly changes the plan only; a second change within 300 ms waits.
+    replaceState({ ...state.value, sessions: before(25) });
+    await vi.advanceTimersByTimeAsync(0);
+    expect(r.kinds().slice(9)).toEqual(['plan']);
+    expect((r.last() as unknown as Plan).rows[1]).toMatchObject({ id: e(1).id, lt: { w: kgToDisplay(25, profileFor('lib_cable_fly', a().gymId).unit), r: 12 } });
+    replaceState({ ...state.value, sessions: before(30) });
+    await vi.advanceTimersByTimeAsync(SNAP_GAP_MS - 1);
+    expect(r.sent).toHaveLength(10);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(r.kinds().slice(10)).toEqual(['plan']);
+    expect(r.last()).toEqual(sentPlan());
+    // After a result: res, the snap, then at once the plan with the set counted, and nothing twice.
+    await r.link.receive(JSON.stringify(cmd()));
+    expect(r.kinds().slice(11)).toEqual(['res', 'snap', 'plan']);
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(r.sent).toHaveLength(14);
+    expect(r.last()).toMatchObject({ k: 'plan', sd: 1 });
+    expect(r.last()).toEqual(sentPlan());
+  });
+
+  it('never while hidden, held or stopped; a hello owed from then gets its plan', async () => {
+    const listeners: Array<() => void> = [];
+    const doc = { visibilityState: 'visible', addEventListener: (_: string, fn: () => void) => { listeners.push(fn); } };
+    const r = rig({ connect: async () => undefined, doc, hidden: () => doc.visibilityState === 'hidden', plan });
+    await r.link.start();
+    expect(r.kinds()).toEqual(['snap', 'plan']);
+    const show = async (hide: () => Promise<void>) => {
+      doc.visibilityState = 'hidden';
+      await hide();
+      await vi.advanceTimersByTimeAsync(1000);
+      await r.link.refresh();
+      expect(r.sent).toHaveLength(n);
+      doc.visibilityState = 'visible';
+      for (const fn of listeners) fn();
+      await vi.advanceTimersByTimeAsync(0);
+      return r.kinds().slice(n);
+    };
+    let n = 2;
+    // Hidden: nothing. Shown again: the snap, and the plan when a hello is owed or it changed.
+    expect(await show(async () => { await r.link.receive(hello(T0)); })).toEqual(['snap', 'plan']);
+    n = 4;
+    expect(await show(async () => { markDone(2); })).toEqual(['snap', 'plan']);
+    expect(r.last()).toEqual(sentPlan());
+    n = 6;
+    expect(await show(async () => undefined)).toEqual(['snap']);
+    // Held: nothing; off again, the replay's res, the snap and the plan.
+    r.link.hold.value = true;
+    const c = JSON.stringify(cmd());
+    await r.link.receive(c);
+    await r.link.receive(hello(T0 + 1));
+    markDone(3);
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(r.sent).toHaveLength(7);
+    r.link.hold.value = false;
+    await r.link.receive(c);
+    expect(r.kinds().slice(7)).toEqual(['res', 'snap', 'plan']);
+    expect(r.last()).toMatchObject({ sd: 1 });
+    expect(r.last()).toEqual(sentPlan());
+    // Stopped by another version: nothing until the next start.
+    await vi.advanceTimersByTimeAsync(1000);
+    await r.link.receive(JSON.stringify({ t: 'mw', v: 2, k: 'hello', wt: 1 }));
+    await r.link.receive(hello(T0 + 2));
+    markDone(4);
+    await vi.advanceTimersByTimeAsync(1000);
+    await r.link.refresh();
+    expect(r.sent).toHaveLength(10);
+    await r.link.start();
+    expect(r.kinds().slice(10)).toEqual(['snap', 'plan']);
+  });
+
+  it("the app's link sends the plan after the hello answer, and logs a failed send", async () => {
+    const lab = watchLab();
+    watchLink();
+    const text = hello(T0);
+    await lab.receive({ type: 1, data: text, desc: '', dataLen: text.length, descLen: 0, rxAt: T0 });
+    // Off the phone the plugin is missing, so each send fails and is logged, newest first.
+    expect(lab.rows.value.slice(0, 3)).toEqual(['mw plan unavailable', 'mw snap unavailable', 'mw hello abcd1234 q0 js +0ms']);
   });
 });
