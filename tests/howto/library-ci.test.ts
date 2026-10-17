@@ -318,6 +318,10 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     expect(r.class3.active).toBe(true);
     r = await inTree(root => { put(root, 'tools/plates/layers.mjs', `${readFileSync(join(root, 'tools/plates/layers.mjs'), 'utf8')}// c4\n`); gen(root); });
     expect(r.reasons.find((x: any) => x.path === 'tools/plates/layers.mjs')).toMatchObject({ cls: 3, ids: 'all' });
+    // every output lists src/data/exercises.json (registryInputs), yet it is outside tools/plates/**: class 4, never 3
+    r = await inTree(root => { const f = join(root, 'src/data/exercises.json'); writeFileSync(f, `${readFileSync(f, 'utf8')}\n`); put(root, 'tools/plates/layers.mjs', `${readFileSync(join(root, 'tools/plates/layers.mjs'), 'utf8')}// c4\n`); gen(root); });
+    expect(r.class3.active).toBe(true);
+    expect(r.reasons.find((x: any) => x.path === 'src/data/exercises.json')).toMatchObject({ cls: 4, ids: 'all' });
   });
   it('class 3 is off when the map is not proven: its paths fall to class 4', async () => {
     const r = await inTree(root => {
