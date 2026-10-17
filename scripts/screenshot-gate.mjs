@@ -6487,6 +6487,7 @@ const ht10Clock = { t0: Date.now(), lines: [] };
   const H = await import('../tools/plates/fidelity/harness.mjs');
   const { gzipSync } = await import('node:zlib');
   const GB = readFileSync(join(ROOT, 'tests/howto/golden/howto-layers.html'));
+  const C11 = await import('./c11-anims.mjs');   // GATE-FLAKE-3: the animations recorded where they are created
   const ht6 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'] });
   const stats = { pairs: 0, offMax: 0, tall: 0, words: 0, anims: 0, a6: 0 };
   const P = m => errors.push(`${tag}: ${m}`);
@@ -6510,8 +6511,6 @@ const ht10Clock = { t0: Date.now(), lines: [] };
       pages: p.querySelectorAll('.zx-page').length,
     };
   }, sel);
-  /** The open or close animation of a panel, as comparable data. */
-  const animsOf = (page, sel) => page.evaluate(s => document.querySelector(s).getAnimations().map(a => ({ k: a.effect.getKeyframes().map(f => ({ o: f.opacity, t: f.transform, off: f.offset })), d: a.effect.getTiming().duration, e: a.effect.getTiming().easing })), sel);
   /** L3 of the open page of one close-up: the golden panel placed at the app panel's position, both on their own layer. */
   const l3 = async (app, gold, id, label, sel = panelSel(id)) => {
     // no smooth scroll left running in the golden page (its openZoom scrolls smoothly), both pages settled
@@ -6585,11 +6584,13 @@ const ht10Clock = { t0: Date.now(), lines: [] };
         await gold.page.evaluate(() => { document.body.style.marginTop = '0px'; window.scrollTo({ top: 0, behavior: 'instant' }); });
         const before = await plateState(app.page);
         // a real tap in both pages (pointer modality: the heading takes focus without a focus ring, as on a phone)
-        await app.page.click(`#${id}-chip-hand`);
-        await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible', timeout: 8000 });
-        const [aA, aG] = await Promise.all([animsOf(app.page, panelSel(id)), (async () => { await gold.page.click(`#${id}-chip-hand`); return animsOf(gold.page, panelSel(id)); })()]);
+        const aA = await C11.captureAnims(app.page, panelSel(id), async () => {
+          await app.page.click(`#${id}-chip-hand`);
+          await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible', timeout: 8000 });
+        }, 'shown');
+        const aG = await C11.captureAnims(gold.page, panelSel(id), () => gold.page.click(`#${id}-chip-hand`), 'shown');
         stats.anims++;
-        if (JSON.stringify(aA) !== JSON.stringify(aG) || aA.length !== 1) P(`${T} C11 open animation: app ${JSON.stringify(aA)} vs golden ${JSON.stringify(aG)}`);
+        if (C11.c11Bad(aA, aG)) P(`${T} C11 open animation: app ${JSON.stringify(aA)} vs golden ${JSON.stringify(aG)}`);
         await H.settleApp(app.page); await H.settle(gold.page);
         // A4: the plate box hidden and inert, the figure mounted, the cue line hidden, focus on the heading
         const open = await plateState(app.page);
@@ -6620,9 +6621,9 @@ const ht10Clock = { t0: Date.now(), lines: [] };
           }
         }
         // closing: golden B's exit animation, the plate state back as before, focus back on the chip
-        const shut = async pg => { await pg.click(`${panelSel(id)}-close`); return animsOf(pg, panelSel(id)); };
+        const shut = pg => C11.captureAnims(pg, panelSel(id), () => pg.click(`${panelSel(id)}-close`), 'hidden');
         const [cA, cG] = await Promise.all([shut(app.page), shut(gold.page)]);
-        if (JSON.stringify(cA) !== JSON.stringify(cG) || cA.length !== 1) P(`${T} C11 close animation: app ${JSON.stringify(cA)} vs golden ${JSON.stringify(cG)}`);
+        if (C11.c11Bad(cA, cG)) P(`${T} C11 close animation: app ${JSON.stringify(cA)} vs golden ${JSON.stringify(cG)}`);
         await H.settleApp(app.page); await H.settle(gold.page);
         const after = await plateState(app.page), back = await app.page.evaluate(i => document.activeElement?.id === `${i}-chip-hand`, id);
         if (JSON.stringify(after) !== JSON.stringify(before) || !back) P(`${T} A4 close: ${JSON.stringify({ before, after, back })}`);
@@ -6686,11 +6687,13 @@ const ht10Clock = { t0: Date.now(), lines: [] };
     try {
       const id = 'machine-chest-press', index = H.HT_PLATES.findIndex(p => p[0] === id);
       await H.openHowTo(app.page, index);
-      await click(app.page, `#${id}-chip-hand`);
-      await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
-      const o = await animsOf(app.page, panelSel(id));
-      await click(app.page, `${panelSel(id)}-close`);
-      const c = await animsOf(app.page, panelSel(id)), shut = await app.page.evaluate(s => document.querySelector(s).hidden, panelSel(id));
+      const o = await C11.captureAnims(app.page, panelSel(id), async () => {
+        await click(app.page, `#${id}-chip-hand`);
+        await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
+      }, 'shown');
+      // "closed at once": hidden in the same task as the tap
+      let shut = false;
+      const c = await C11.captureAnims(app.page, panelSel(id), async () => { shut = await app.page.evaluate(s => { document.querySelector(`${s}-close`).click(); return document.querySelector(s).hidden; }, panelSel(id)); }, 'hidden');
       if (o.length || c.length || !shut) P(`${theme} C11 reduced motion: open ${JSON.stringify(o)}, close ${JSON.stringify(c)}, closed at once ${shut}`);
     } finally { await app.ctx.close(); }
   };

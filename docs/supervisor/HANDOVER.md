@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-16 ~19:00 UTC · main `41807999` (train 15 #220; main's own run red on the HT-6 C11 race, re-run once, GATE-FLAKE-3) · 8.0e · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Paused 10-09 08:35 to 10-16 17:20 (owner). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-16 ~23:25 UTC · main `277bd6d5` (train 17 #230) · 8.0f · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -807,6 +807,29 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0f 10-16 ~22:15 UTC (read first; supersedes 8.0e where they differ)
+
+- **Train 16 merged** (#228 → main `8f64ab00`). It carried:
+  - A3-6 #218 @ 8b4633c;
+  - A3-7 #216 @ ec0ba2a (the supervisor's main merge plus a date-bomb test fix; delta PASS);
+  - A3-5b #223 @ 65c7698;
+  - A3-2b #222 @ 08fb932;
+  - handover #225.
+
+  All 8 checks were green on train head 67baa0b. The APK went to the owner: run 38965662947, fingerprint passed. Builders and reviewers for those cards are archived. The audit-3 lane is done except **A3-7b** (#229, session_01MQ1jw4YksgT3pxVJwWjFyv, building).
+- **Train 17 merged** (#230 → main `277bd6d5`, 10-16 ~23:20). It carried OLD-ANDROID-1a #226 @ d5f6f11, the native launch-crash fix for Android 8-13, plus HANDOVER 8.0f. All 8 checks were green on 3aff0d6. The APK goes to the owner with device checks D1/D3 (docs/supervisor/verify/old-android-1.md). Builder and reviewer archived.
+- **Train 18:** GATE-FLAKE-3 #224 (PASS @ 0d397b5), so main's C11 race is fixed.
+- **OLD-ANDROID-1a #226: PASS @ d5f6f11** (0/0/0/1). It rides train 17 alone, for speed (P0). Its reviewer is session_01PNvAhFyDVPgqA8UDe3APyr. **OLD-ANDROID-1b #227** is building; it was told to merge main for A3-2b's `index.html` block.
+- **GATE-FLAKE-3 #224:** READY @ 0d397b5. Reviewer session_01DN4ub4bS6GhaGK8x32xNuY.
+- **LIB-2 #189:**
+  - delta PASS @ b0ca732 covers items 1, 2, 3, 5 and 6;
+  - item 4 (ids.ts hints) is being built under rulings **D-LIB2-hints** (howToHint everywhere; HT-6 A8, hint.test and content-gen move onto the decoder) and **D-LIB2-hints-2** (the generator enforces the 2,048 B raw budget; 12 distinct 29-character texts fit; a 13th is refused; 3 B margin).
+- **GATE-SPLIT #194: FAIL @ 0df9648** (0/0/2/2).
+  - Medium 1: gate-split credits only new screenshot names.
+  - Medium 2: the proof sha comes from GITHUB_SHA instead of `git rev-parse HEAD`.
+  - The builder session_01Nf1EpvrcLEJ3uR8fW6zFW7 has been resumed. CI-only proofs still owed after #219: a 14-job verdict PASS, E6, the E8 pairs, E9 and E7.
+- **Watch lane:** no reply on #221 after 4 h. Also asked in **Watch-test issue #4** (the owner suggested his repo), which the monitor now polls too.
 
 ### 8.0e RESTART 10-16 ~17:20 UTC (owner: "Start full work again"; read first, supersedes 8.0d where they differ)
 
