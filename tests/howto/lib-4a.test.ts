@@ -75,10 +75,10 @@ describe('A4: HT-2 A9\'s exact ht- set (D-LIB4-A9)', () => {
     const p = cs.htChunkProblems(prefix, rows).join();
     expect(p).toMatch(/lib_leg_press: expected one ht-leg-press-\*\.js chunk, found none/);
     expect(p).toMatch(/unexpected How-to chunk ht-leg-press-calf-raise-ABCDEFGH\.js/);
-    expect(cs.htChunkProblems(files, [...rows, { id: 'lib_x', slug: rows[0].slug }]).join()).toMatch(/slug dumbbell-lateral-raise is also lib_dumbbell_lateral_raise's/);
+    expect(cs.htChunkProblems(files, [...rows, { id: 'lib_x', slug: rows[0]!.slug }]).join()).toMatch(/slug dumbbell-lateral-raise is also lib_dumbbell_lateral_raise's/);
     expect(cs.htChunkProblems(files, [...rows, { id: 'lib_y', slug: 'Bad_Slug' }]).join()).toMatch(/lib_y: slug "Bad_Slug" is not/);
     expect(cs.htChunkProblems([...files, 'ht-pull-up-ABCDEFGH.css'], rows).join()).toMatch(/unexpected How-to file ht-pull-up-ABCDEFGH\.css/);
-    expect(cs.htChunkProblems([...files, `ht-${rows[0].slug}-ZZZZZZZZ.js`], rows).join()).toMatch(/expected one ht-dumbbell-lateral-raise-\*\.js chunk, found ht-/);
+    expect(cs.htChunkProblems([...files, `ht-${rows[0]!.slug}-ZZZZZZZZ.js`], rows).join()).toMatch(/expected one ht-dumbbell-lateral-raise-\*\.js chunk, found ht-/);
   });
   it('the old prefix filter is the hole this closes: it credits ht-leg-press-calf-raise-* to leg press', () => {
     const old = (fs: string[]) => fs.filter(f => /^ht-/.test(f) && !rows.some(r => f.startsWith(`ht-${r.slug}-`)));
