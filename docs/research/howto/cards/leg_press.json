@@ -741,7 +741,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "The knee angle at the bottom (c5) and top (c4), the lower back rounding as the knees near the chest (c7, the plate fault) and the back on the pad (c11) all read from the side. Knees caving in (c10) needs a front view and stays in text.",
+    "viewWhy": "census",
     "equipment": "45-degree plate-loaded sled (c1): back pad and seat, foot platform on the sled, side locking levers or safety handles (c3, c22), safety stoppers; floor line.",
     "start": "Bottom of the rep: knees at about 90 degrees of knee flexion (NASM, ACE) or an 80-90 degree angle measured from the back of the shin to the back of the thigh (Yessis) (c5); feet in the middle of the platform, whole sole pressing (c2); hips, back and head on the pad (c1, c11); thighs clear of the ribs (c7); hands light on the side handles (c12).",
     "end": "Top of the rep: legs fully extended but not locked, knees relaxed with no hyperextension (c4); heels still pressed into the plate (c4); trunk still against the back support (c4).",
@@ -773,9 +773,10 @@
     ],
     "mistake": {
       "what": "Lowering until the knees come close to the chest, so the lower back rounds off the pad.",
-      "why": "Yessis says leg press machines commonly cause low back injury this way (c7); ACE and NASM give the same limit (thighs off the ribs, not far beyond 90 degrees). The 'commonly' is the coach's word; no frequency is measured.",
+      "why": "NASM's common-mistakes list starts with the knees caving inward, alone or from too much weight (c10); that is a sideways fault the side view cannot show. The drawn fault is the knees coming to the chest so the lower back rounds, which Yessis says commonly causes low back injury (c7); ACE and NASM give the same depth limit.",
       "claim": "c7",
-      "drawable": true
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. NASM lists its mistakes without a frequency; the knee cave is listed first and stays in handlingMistakes (c10)."
     },
     "tells": [
       {

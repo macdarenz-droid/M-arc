@@ -220,3 +220,19 @@ Fact 1 is the plate's measured joint, fact 2 is the tempo and fact 3 is plate.mi
 6. **Leg press:**
    - Breathing: Yessis holds the breath on the way down, while ACE says to breathe out while pushing. No breathing line is shown.
    - The way out (c22) rests on the manufacturer's blog alone.
+
+## Fix round 0 (supervisor, 2026-10-17: plate view)
+The views come from census.json @ 48153c4, field `view`, which matches CENSUS_8 in tools/plates/library/qa/approved.mjs on main. dumbbell_lateral_raise is front; the other 7 are side. All 8 cards already had these views, and `plate.viewWhy` is now "census" on each. Each `plate.mistake` was checked against the faults its sources name, and asked whether that fault can be seen from the census view:
+- dumbbell_lateral_raise (front): c13 is unchanged. Raising above 90° can be seen from the front, and no source calls another fault common.
+- barbell_back_squat (side): c10 + c5 are unchanged. Knees out of line with the feet (c8) needs a front view, but no source names it as common.
+- pull_up (side): c10 + c9 are unchanged. Kipping comes first in NASM's "common faults" and can be seen from the side.
+- hanging_leg_raise (side): c7 + c6 are unchanged.
+- lat_pulldown (side): c9, c10 and c11 are unchanged. Every fault on the NSCA common-errors list on the card can be seen from the side.
+- seated_cable_row (side): c6 + c9 are unchanged. The first NSCA common error can be seen from the side.
+- leg_press (side): **changed.**
+  - NASM's "Common Mistakes" list starts with the knees caving inward (c10), which needs a front view.
+  - So `drawable` is now false, and a `rankNote` is added.
+  - The drawn fault stays c7, the knees to the chest with the lower back rounding.
+  - No claim or quote changed.
+- machine_chest_press (side): c8 is unchanged.
+No quote was added or changed, so the fetcher had nothing new to check. The pre-push check was rerun and all 8 cards print OK.
