@@ -75,3 +75,12 @@ Each new test fails before and passes after.
 - **Heart placement (index builder):** the heart sits in an always-shown header row (inside the online header branch the stack model overflowed 14 KB on a reconnect), so it also shows next to "Phone not connected"; offline, the bpm stays on the Set and Rest line as in 1.3.0.
 - **Idle screen:** one grey 52 px line (the countdown, or the set's target such as "60 kg x 8") and a grey header; a swipe on it wakes it and also acts as a normal swipe.
 - **Adjust bounds:** at the top, +1 clamps to 1000; a step that would reach 0 or below is ignored.
+
+## Review rulings (2026-10-18)
+A fresh review of `38e4240`: fail, 1 high, 1 medium, 2 low, 2 nits. All fixed, each with a test that fails before (`c4.test.mjs` R17 and R18, the strict `if` model in `c3` and `c4`, the P5 pins):
+- **High, the heart never drew:** the engine shows an `if` only for the boolean `true` (`jerry_get_boolean_value`), and `hd` was a string. The heart's `if` is now `hv` (a boolean). This also explains the 1.2.0 device run: the two lines that did not draw had `if` values that were a number (`off`) and a string (`t1`), not "a text with if". The test model now refuses a plain `if` binding that is not a boolean (R17 checks every `if` in every state).
+- **Medium, Phone not connected never drew (since 1.3.0):** `off` is a number; the `if` is now `off==1`.
+- **Low, a paused rest kept the screen bright:** the 10 s wake now fires once per rest and never for a paused rest (R18).
+- **Low, B4 evidence:** the scenario runs and heap are recorded at the final head (Last red team below); the builder's phantom `f*` glob is noted in the red-team tools README.
+- **Nit, names cut mid-word:** a best now reads `PR <name> ...` (the phone's own PR badge word), its name cut to whole words; with no whole word, the first word cut when 4 or more letters fit; else the best is left out.
+- **Nit:** the stale 46,000 B comment in W4 now says 47,000 B.

@@ -571,7 +571,7 @@ test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, only the vibration and h
   }
   // 34,000 since the 1.1.2 red team (docs/watch-cards/WATCH-C.md W4); 40,000 since WATCH-C2's screens (its W4);
   // 42,000 since the WATCH-C2 fix round; 46,000 since WATCH-C3 (its W4; the compiled page stays at most 46,000 B, check-lite-js enforces 48,000);
-  // 49,000 since WATCH-C4 (its acceptance: app.js, common with the PNGs, pages/index and wearengine.js; the compiled index page stays at most 46,000 B)
+  // 49,000 since WATCH-C4 (its acceptance: app.js, common with the PNGs, pages/index and wearengine.js; the compiled index page at most 47,000 B by the C4 build ruling)
   assert.ok(total <= 49000, `index-side page sources ${total} B`);
   assert.equal(createHash('sha256').update(readFileSync(path.join(JS, 'pages/wearengine.js'))).digest('hex'),
     '8c7f1100c840abdb237991b0d436ef9ab49a215269c5fecdb3dd59fe63a71471');

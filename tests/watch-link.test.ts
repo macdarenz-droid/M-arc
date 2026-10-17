@@ -991,7 +991,7 @@ describe('WATCH-C4 P5: fin, the highlights of the workout just finished', () => 
     const session = finishSession(false)!.session;
     expect([session.durationSec, session.exercises.reduce((n, e) => n + e.sets.length, 0), session.exercises.length]).toEqual([480, 5, 4]);
     // 62.5 x 8 + 22.5 x 10 + 26 x 8 = 933 kg; the 20 kg warm-up and the plank lift nothing.
-    expect(snap().fin).toEqual([id, ['Best: Barbel 62.5 kg x 8', 'Best: Cable 22.5 kg x 10', '8 min, 5 sets', '933 kg lifted']]);
+    expect(snap().fin).toEqual([id, ['PR Barbell 62.5 kg x 8', 'PR Cable 22.5 kg x 10', '8 min, 5 sets', '933 kg lifted']]);
     // Nothing else changes in the snap without a session.
     const { fin: _fin, ...rest } = snap(77);
     expect(rest).toEqual({ t: 'mw', v: 1, k: 'snap', pt: Date.now(), wt: 77, srev: 0, sid: null, ex: null, si: 0, sn: 0, set: null, rest: null, th: ['#08090a', '#f7f8f8', '#5e6ad2'] });
@@ -1000,7 +1000,7 @@ describe('WATCH-C4 P5: fin, the highlights of the workout just finished', () => 
   it('1 new best; an exercise with no earlier session, or one only matched, is none', () => {
     replaceState({ ...state.value, sessions: [before([60, 8], [20, 10])] });
     const id = train([[60, 9], [20, 10], [26, 8]]);
-    expect(snap().fin).toEqual([id, ['Best: Barbell 60 kg x 9', '8 min, 4 sets', '948 kg lifted', '4 exercises']]);
+    expect(snap().fin).toEqual([id, ['PR Barbell 60 kg x 9', '8 min, 4 sets', '948 kg lifted', '4 exercises']]);
   });
 
   it('0 new bests: lighter, first time, and an earlier session with no estimate (over 10 reps) is nothing to beat', () => {
@@ -1024,10 +1024,10 @@ describe('WATCH-C4 P5: fin, the highlights of the workout just finished', () => 
     const id = train([[140, 8], [40, 10]], 'lb');
     expect(profileFor('lib_barbell_bench_press').unit).toBe('lb');
     // 140 x 8 + 40 x 10 = 1520 lb
-    expect(snap().fin).toEqual([id, ['Best: Barbell 140 lb x 8', '6 min, 3 sets', '1520 lb lifted', '3 exercises']]);
+    expect(snap().fin).toEqual([id, ['PR Barbell 140 lb x 8', '6 min, 3 sets', '1520 lb lifted', '3 exercises']]);
     // A set saved without its typed unit shows in the profile unit.
     replaceState({ ...state.value, sessions: state.value.sessions.map(x => (x.id !== id ? x : { ...x, exercises: x.exercises.map(e => ({ ...e, sets: e.sets.map(({ entered: _e, ...set }) => set) })) })) });
-    expect(snap().fin![1][0]).toBe('Best: Barbell 140 lb x 8');
+    expect(snap().fin![1][0]).toBe('PR Barbell 140 lb x 8');
     // Profiles in kg and lb: the load lifted in the unit the app shows (kg).
     setExerciseUnit('lib_cable_fly', 'kg');
     expect(snap().fin![1][2]).toBe(`${Math.round(kgToDisplay(enteredLoad(140, 'lb').kg * 8 + enteredLoad(40, 'lb').kg * 10, 'kg'))} kg lifted`);
@@ -1082,9 +1082,10 @@ describe('WATCH-C4 P5: fin, the highlights of the workout just finished', () => 
     finishSession(false);
     const s = snap(8.64e15);
     const text = JSON.stringify(s);
-    // The longer the numbers, the less of the name: 3 characters beside 487.75 kg x 10, 8 beside 10 kg x 5.
-    expect(s.fin).toEqual([`s_${'x'.repeat(62)}`, ['Best: Dev 487.75 kg x 10', 'Best: Developp 10 kg x 5', '8 min, 4 sets', '9805 kg lifted']]);
-    expect(s.fin![1].map(l => l.length)).toEqual([24, 24, 13, 14]);
+    // The longer the numbers, the less of the name (C4 review: whole words when one fits): 6 letters beside 487.75 kg x 10,
+    // where no whole word fits, and the whole first word beside 10 kg x 5.
+    expect(s.fin).toEqual([`s_${'x'.repeat(62)}`, ['PR Develo 487.75 kg x 10', 'PR Developpe 10 kg x 5', '8 min, 4 sets', '9805 kg lifted']]);
+    expect(s.fin![1].map(l => l.length)).toEqual([24, 22, 13, 14]);
     expect(text).toMatch(/^[\x20-\x7e]+$/);
     expect(bytes(text)).toBeLessThanOrEqual(MAX_SNAP_BYTES);
   });
@@ -1092,7 +1093,7 @@ describe('WATCH-C4 P5: fin, the highlights of the workout just finished', () => 
   it('a set held as a typo (over 500 kg, never repeated) is not a best, as no record counts it', () => {
     replaceState({ ...state.value, sessions: [before([400, 10], [20, 10])] });
     const id = train([[600, 10], [22.5, 10]]);
-    expect(snap().fin).toEqual([id, ['Best: Cable 22.5 kg x 10', '6 min, 3 sets', '6225 kg lifted', '3 exercises']]);
+    expect(snap().fin).toEqual([id, ['PR Cable 22.5 kg x 10', '6 min, 3 sets', '6225 kg lifted', '3 exercises']]);
   });
 
   it('more assistance, or added load on a body-weight exercise, is not a plain load, so never a best', () => {

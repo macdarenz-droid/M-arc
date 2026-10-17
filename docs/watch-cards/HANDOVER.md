@@ -24,7 +24,7 @@ Branch `ccr-8cef8a15-l12swp` (the second session's designated branch; it starts 
 ## Device facts that bite (details in README)
 - Storage values must be under 128 bytes; never write an empty value (1.1.1's crash loop reset the watch). Keep the 1.1.2 storage hardening and restart guard.
 - The GT 6 closes the app about 25 s after its screen goes dark; lowering the arm turns the screen off even with keep-on. No setting or API brings the app back on wrist raise.
-- A `<text>` with `if` that turns true later is not drawn (1.2.0 gym run); use bound text.
+- An `if` draws only for the boolean `true` (JerryScript's `jerry_get_boolean_value`): a number or a string counts as false. That, not "a text with if", is why two 1.2.0 lines did not draw. Keep `if` values boolean (`sc==1`, `!x`, boolean fields); the tests' page model refuses anything else.
 - Huawei's own workout blocks other apps. Heart rate needs Body sensors allowed in watch Settings (error 602 until then).
 - The GT 6 JS heap size is unknown; each build uses more (model, a workout: 1.1.2 77 KB, 1.2.0 96 to 98 KB, 1.3.0 104 to 107 KB).
 - The phone's JS can see messages seconds late after a native freeze; the hello answer's `pt` is the receipt midpoint because of this.

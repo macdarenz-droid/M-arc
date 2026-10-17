@@ -1,6 +1,6 @@
 <div class="rt co" onclick="onTouch" onswipe="onSwipe">
-<div class="hd mt"><div if="{{hd}}" class="hh"><image class="hi" src="{{im}}" style="animation-duration:{{hd}}"></image></div>
-<div if="{{off}}" class="wb"><text class="a w x" style="color:{{hc}}">Phone not connected</text></div>
+<div class="hd mt"><div if="{{hv}}" class="hh"><image class="hi" src="{{im}}" style="animation-duration:{{hd}}"></image></div>
+<div if="{{off==1}}" class="wb"><text class="a w x" style="color:{{hc}}">Phone not connected</text></div>
 <div else class="hk"><text class="hb l" style="color:{{hc}}">{{hm}}</text><text class="hb f r" style="color:{{kc}}">{{ck}}</text></div></div>
 <div if="{{sc==1}}" class="bx co cc">
 <div class="nr cc" onclick="onNext"><text class="g f x">{{nm}}</text><text class="gt l">></text></div>

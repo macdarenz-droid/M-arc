@@ -117,7 +117,8 @@ function pageData(v) {
 function drawn(v) {
   const d = pageData(v), lines = [], images = [];
   const sub = (s) => s.replace(/\{\{(\w+)\}\}/g, (_, k) => (k in d ? d[k] : assert.fail(`not page data: ${k}`)));
-  const cond = (c) => { const m = /^\{\{(!?)(\w+)(?:==(\d+))?\}\}$/.exec(c) ?? assert.fail(c); const x = m[3] === undefined ? !!d[m[2]] : d[m[2]] == +m[3]; return m[1] ? !x : x; };
+  // C4 review: the engine shows an if only for the boolean true (jerry_get_boolean_value), so a plain binding must be a boolean
+  const b = (k) => (typeof d[k] === 'boolean' ? d[k] : assert.fail(`if {{${k}}} is ${JSON.stringify(d[k])}, not a boolean: the GT 6 draws only true`)); const cond = (c) => { const m = /^\{\{(!?)(\w+)(?:==(\d+))?\}\}$/.exec(c) ?? assert.fail(c); const x = m[3] !== undefined ? d[m[2]] == +m[3] : m[1] ? !!d[m[2]] : b(m[2]); return m[1] ? !x : x; };
   const walk = (node) => {
     let last = true;
     for (const n of node.kids) {
@@ -396,7 +397,7 @@ test('L8 the heart is mounted once: outside every screen branch and the offline 
   const img = find(TREE, (n) => n.tag === 'image');
   const conds = [];
   for (let n = img; n.up; n = n.up) for (const a of ['if', 'elif', 'else']) if (a in n.attrs) conds.push(`${a}=${n.attrs[a]}`);
-  assert.deepEqual(conds, ['if={{hd}}'], 'only its own div if (a nested if mount overflowed the 14 KB stack model on rx)');
+  assert.deepEqual(conds, ['if={{hv}}'], 'only its own div if (a nested if mount overflowed the 14 KB stack model on rx)');
   assert.equal([...HML.matchAll(/<image\b/g)].length, 1);
   assert.deepEqual(img.attrs, { class: 'hi', src: '{{im}}', style: 'animation-duration:{{hd}}' });
   assert.match(rules.hi, /animation-name:hb;/);
@@ -721,3 +722,50 @@ test('L10 page: the hook replaces the page with pages/hl/hl and the params; a ro
 
 /** The drawn lines of a view (texts only). */
 function lines(v) { return drawn(v).lines; }
+
+// C4 review (2026-10-18): every if value is a boolean in every state; a paused rest at 10 s or less still dims.
+test('R17 every if in index.hml is the boolean true or false in every state: online, offline with a pending action, heart on and off, each screen', async () => {
+  const conds = [...HML.matchAll(/\b(?:if|elif)="(\{\{[^"]*\}\})"/g)].map((m) => m[1]);
+  assert.ok(conds.length >= 10, `${conds.length} ifs`);
+  const seen = new Set();
+  const check = (r, why) => {
+    const d = pageData(r.v());
+    for (const c of conds) {
+      const m = /^\{\{(!?)(\w+)(?:(==)(\d+))?\}\}$/.exec(c) ?? assert.fail(`unexpected if form ${c}`);
+      const x = m[3] ? d[m[2]] == +m[4] : m[1] ? !d[m[2]] : d[m[2]];
+      assert.equal(typeof x, 'boolean', `${why}: ${c} is ${JSON.stringify(d[m[2]])}`);
+      if (x) seen.add(c);
+    }
+  };
+  const r = await rig({ code: null });
+  check(r, 'start');
+  r.link.rx(snap());
+  check(r, 'set');
+  r.link.beat(128);
+  check(r, 'set with a heart rate');
+  r.link.adj();
+  check(r, 'adjust');
+  r.link.adj(0);
+  r.link.rx(snap({ rest: rest1 }));
+  check(r, 'rest');
+  offline(r);
+  r.link.complete();
+  check(r, 'offline, pending');
+  assert.ok(seen.has('{{off==1}}') || seen.has('{{off}}'), 'the offline header was drawn');
+  assert.ok([...seen].some((c) => /hv|hd/.test(c)), 'the heart was drawn');
+});
+
+test('R18 a paused phone rest at 10 s or less wakes the screen once, then dims after 15 s like any rest', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ rest: { ...rest1, left: 8000, p: true } }));
+  r.ticks(16);
+  assert.deepEqual(only(r.v(), ['sc', 'dm']), { sc: 2, dm: 1 }, 'paused at 8 s: dims');
+  const s = await rig({ code: null });
+  s.link.rx(snap({ rest: { ...rest1, left: 30000 } }));
+  s.ticks(15);
+  assert.equal(s.v().dm, 1, 'idle at 15 s');
+  s.ticks(5);
+  assert.equal(s.v().dm, 0, 'a running rest at 10 s wakes');
+  s.ticks(10);
+  assert.equal(s.v().sc, 6, 'Rest done at 0');
+});

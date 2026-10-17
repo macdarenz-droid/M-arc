@@ -158,8 +158,8 @@ function shownEntry(a: ActiveSession, openId: string | null): Entry | undefined 
  * WATCH-C4: a finished session's highlight lines, the first MAX_HL of, in order:
  * - up to 2 new bests, in workout order: a plain load (as snapSet) whose best e1RM here beats the best of every earlier
  *   session, held sets left out as in its history; it needs an earlier estimate to beat (a first session, or earlier
- *   sets over 10 reps only, is none). "Best: <name> <w> <u> x <r>" with that set, in the snap's unit, the name shortened
- *   to fit; a best whose numbers alone do not fit is left out;
+ *   sets over 10 reps only, is none). "PR <name> <w> <u> x <r>" with that set, in the snap's unit, the name shortened
+ *   to whole words (shortName); a best with no room for 4 letters of its name is left out;
  * - its minutes and sets, as the finish screen counts them;
  * - kg x reps of its working sets (workingTotals) in its loaded exercises' profile unit (the app's unit when they
  *   differ), as a whole number; none when nothing was lifted, as the share card;
@@ -180,8 +180,8 @@ function highlights(s: AppState, session: Session): string[] {
     if (!set) continue;
     const u = set.entered?.unit ?? unitOf(e.exerciseId);
     const tail = ` ${setLoadIn(set, u)} ${u} x ${set.reps}`;
-    const room = MAX_EX_CHARS - 'Best: '.length - tail.length;
-    if (room > 0) bests.push(`Best: ${asciiName(e.name).slice(0, room).trim()}${tail}`);
+    const name = shortName(asciiName(e.name), MAX_EX_CHARS - 'PR '.length - tail.length);
+    if (name) bests.push(`PR ${name}${tail}`);
   }
   const sets = session.exercises.reduce((n, e) => n + e.sets.length, 0);
   const n = session.exercises.length;
@@ -194,6 +194,17 @@ function highlights(s: AppState, session: Session): string[] {
     ...(lifted > 0 ? [`${lifted} ${u} lifted`] : []),
     `${n} exercise${n === 1 ? '' : 's'}`,
   ].slice(0, MAX_HL);
+}
+
+/** WATCH-C4 review: the whole words that fit `room`; with none, the first word cut to `room` when 4 or more letters fit; else ''. */
+function shortName(name: string, room: number): string {
+  let out = '';
+  for (const w of name.split(' ').filter(Boolean)) {
+    const next = out ? `${out} ${w}` : w;
+    if (next.length > room) break;
+    out = next;
+  }
+  return out || (room >= 4 ? name.slice(0, room).trim() : '');
 }
 
 /** WATCH-C4: fin for the newest closed session, when it was finished at most FIN_MS before `now` and is in history. */

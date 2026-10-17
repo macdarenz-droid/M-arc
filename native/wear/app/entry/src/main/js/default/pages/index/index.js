@@ -78,7 +78,7 @@ export default {
 	data: {
 		sc: 0, off: 0, ck: '', set: 0, nm: '', cl: '', nx: '', ns: '', r0: '', r1: '', r2: '', r3: '',
 		t1: '', t2: '', t3: '', t4: '', t5: '', c1: '#08090a', c2: '#08090a', c3: '#08090a', c4: '#08090a',
-		hm: '', hd: '', im: '', hc: '', kc: ''
+		hm: '', hd: '', hv: false, im: '', hc: '', kc: ''
 	},
   onInit() {
 		try {

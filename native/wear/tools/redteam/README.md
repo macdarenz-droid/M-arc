@@ -18,3 +18,5 @@ scratch folder and set `S` (and the paths under it) to where you put them.
 
 The compiled page to test is `<out>/intermediates/loader_out_lite/js/default/pages/index/index.js` from
 `native/wear/build/build-lite-bin.sh`. Findings these tools produced are in `native/wear/research/`.
+
+- **Caution (C4 review, 2026-10-18):** a runner that globs a missing folder (`rt-f/f*.js`) reports a phantom `f* exit 0` line, counted as a pass. Check that each scenario file exists before counting a run.

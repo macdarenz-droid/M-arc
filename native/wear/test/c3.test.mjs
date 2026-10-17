@@ -102,7 +102,7 @@ function pageData(v) {
 }
 function lines(v) {
   const d = pageData(v), out = [];
-  const cond = (c) => { const m = /^\{\{(!?)(\w+)(?:==(\d+))?\}\}$/.exec(c); const x = m[3] === undefined ? !!d[m[2]] : d[m[2]] == +m[3]; return m[1] ? !x : x; };
+  const b = (k) => (typeof d[k] === 'boolean' ? d[k] : assert.fail(`if {{${k}}} is ${JSON.stringify(d[k])}, not a boolean: C4 review`)); const cond = (c) => { const m = /^\{\{(!?)(\w+)(?:==(\d+))?\}\}$/.exec(c); const x = m[3] !== undefined ? d[m[2]] == +m[3] : m[1] ? !!d[m[2]] : b(m[2]); return m[1] ? !x : x; };
   const walk = (node) => {
     let last = true;
     for (const n of node.kids) {
