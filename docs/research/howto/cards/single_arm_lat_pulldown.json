@@ -628,6 +628,7 @@
     {
       "kind": "contact",
       "landmark": "thighTop.r",
+      "pose": "start",
       "claim": "c1"
     }
   ],

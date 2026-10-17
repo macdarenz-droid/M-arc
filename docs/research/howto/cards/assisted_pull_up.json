@@ -765,12 +765,6 @@
       "landmark": "knee.r",
       "pose": "end",
       "claim": "c1"
-    },
-    {
-      "kind": "contact",
-      "landmark": "knee.r",
-      "pose": "start",
-      "claim": "c1"
     }
   ],
   "tempo": [

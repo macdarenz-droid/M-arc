@@ -638,6 +638,7 @@
     {
       "kind": "contact",
       "landmark": "backUpper",
+      "pose": "start",
       "claim": "c1"
     }
   ],
