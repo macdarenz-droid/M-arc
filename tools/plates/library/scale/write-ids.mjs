@@ -61,9 +61,14 @@ export const pairPanel = async key => PANEL[key];
   const render = await (await import(pathToFileURL(join(root, 'tools/plates/generate.mjs')).href)).render();
   const hp = await import(pathToFileURL(join(root, 'tools/plates/gen/handpairs.mjs')).href);
   const gen = await import(pathToFileURL(join(root, 'tools/plates/gen/ids.mjs')).href);
-  for (const p of [...(await hp.outputs()).map(o => o.path), ...(await gen.outputs()).map(o => o.path)]) {
+  // loaders.ts maps a chunk when its file exists: in render() that is only a plugin's output, so the clones' posture- and
+  // feel- files (syntheticRoot's, no plugin writes them) would drop out of POSTURE and FEEL; its body comes from
+  // gen/ids.mjs reading the disk (as syntheticRoot did), under render()'s header (the header hashes inputs, not text)
+  const disk = new Map((await gen.outputs()).map(o => [o.path, o.text]));
+  for (const p of [...(await hp.outputs()).map(o => o.path), ...disk.keys()]) {
     if (!render.has(p)) throw new Error(`write-ids: the generator rendered no ${p}`);
-    put(p, render.get(p).text);
+    const t = render.get(p).text;
+    put(p, p === 'src/howto/generated/loaders.ts' ? t.slice(0, t.indexOf('\n') + 1) + disk.get(p) : t);
   }
   const budgets = 'tests/howto/budgets.json';
   const bsrc = existsSync(join(root, budgets)) ? join(root, budgets) : join(src, budgets);
