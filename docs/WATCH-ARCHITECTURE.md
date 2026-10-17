@@ -229,7 +229,7 @@ Implement stable identities, the workout command interface, explicit draft/compl
 
 ### Gate C — one end-to-end vertical slice
 
-Implement one exercise, one suggested set, complete/undo and rest, through actual Wear Engine. Deliberately interrupt the link before and after the database commit. Reconnect must produce exactly one saved set with the correct identity/time. No additional watch screens are needed to prove this foundation.
+Implement one exercise, one suggested set, complete and rest (+30 s, skip), through actual Wear Engine. Undo moves to Gate D: application 3 does not list it, and a new command that changes saved data needs a Modify (`docs/watch-cards/WATCH-C.md`). Deliberately interrupt the link before and after the database commit. Reconnect must produce exactly one saved set with the correct identity/time. No additional watch screens are needed to prove this foundation. Built in WATCH-C (2026-10-16): watch app `native/wear/app` 1.1.0 and `src/native/watchLink.ts`, debug APK only; device runs D1 to D7 pending.
 
 ### Gate D — C2 and phone-in-pocket reliability
 

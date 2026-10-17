@@ -14,6 +14,7 @@ import { healthAvailable, healthSyncTitle, lastHealthError } from '@/native/heal
 import { syncAndStoreHealth } from './health';
 import { watchSupported, watchStatus } from '@/native/watch';
 import { WatchSheet } from './Watch';
+import { WatchLabEntry } from './WatchLab';
 import { HealthDiagnosticSheet } from './HealthDiagnostic';
 import { GymsSheet } from './Gyms';
 import { usePalaceFocus } from '@/escobar/palace/focus';
@@ -248,7 +249,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
             )}
           </Card>
         </Section>
-        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><p class="hint" style={{ textAlign: 'center' }} data-palace="settings.rights">{RIGHTS_LINE}</p><span class="hint" data-palace="settings.version">Version {APP_VERSION}</span></div>
+        <div class="stack-sm" style={{ justifyItems: 'center', paddingTop: 8 }}><Logo height={30} /><p class="hint" style={{ textAlign: 'center' }} data-palace="settings.rights">{RIGHTS_LINE}</p><span class="hint" data-palace="settings.version">Version {APP_VERSION}</span><WatchLabEntry /></div>
       </div>
     </Sheet>
   );

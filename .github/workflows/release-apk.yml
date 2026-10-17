@@ -188,6 +188,35 @@ jobs:
           print('native classes present in', sys.argv[1])
           PYDEX
 
+      # Watch lane, Gate A question 2: the Wear Engine lab is for build-apk.yml's debug APK only (MARC_WEAR_LAB).
+      - name: Verify the Wear Engine lab is left out
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="$(ls android/app/build/outputs/apk/release/app-release*.apk | head -n 1)"
+          python3 - "$APK" <<'PYWEAR'
+          from pathlib import Path
+          import sys, zipfile
+          A = Path('android')
+          def no(found, what):
+              if found: raise SystemExit('::error::' + what + ' is in the release build; the Wear Engine lab is for the debug APK only')
+          no('WearEnginePlugin' in (A / 'app/src/main/assets/capacitor.plugins.json').read_text(encoding='utf-8'), 'WearEnginePlugin (capacitor.plugins.json)')
+          no('com.huawei.hms.client.appid' in (A / 'app/src/main/AndroidManifest.xml').read_text(encoding='utf-8'), 'com.huawei.hms.client.appid (AndroidManifest.xml)')
+          no('com.huawei.hms:wearengine' in (A / 'app/build.gradle').read_text(encoding='utf-8'), 'the Wear Engine dependency (app/build.gradle)')
+          no('developer.huawei.com/repo' in (A / 'build.gradle').read_text(encoding='utf-8'), 'the Huawei Maven repo (build.gradle)')
+          no((A / 'app/src/main/java/com/mrcdrnzz/dailytracker/wear').exists(), 'the Watch lab plugin source')
+          z = zipfile.ZipFile(sys.argv[1])
+          dex = b''.join(z.read(n) for n in z.namelist() if n.startswith('classes') and n.endswith('.dex'))
+          if b'Lcom/mrcdrnzz/dailytracker/MainActivity;' not in dex: raise SystemExit('::error::the APK dex was not read')
+          no(b'Lcom/mrcdrnzz/dailytracker/wear/' in dex, 'the Watch lab plugin (APK dex)')
+          no(b'Lcom/huawei/wearengine/' in dex, 'the Wear Engine SDK (APK dex)')
+          # Binary XML keeps its strings as UTF-8 or UTF-16LE.
+          man = z.read('AndroidManifest.xml')
+          if not any('android.permission.BLUETOOTH_CONNECT'.encode(e) in man for e in ('utf-8', 'utf-16-le')): raise SystemExit('::error::the APK manifest was not read')
+          no(any('com.huawei.hms.client.appid'.encode(e) in man for e in ('utf-8', 'utf-16-le')), 'com.huawei.hms.client.appid (APK manifest)')
+          print('Wear Engine lab absent from', sys.argv[1])
+          PYWEAR
+
       - name: Decode the permanent signing key
         shell: bash
         env:

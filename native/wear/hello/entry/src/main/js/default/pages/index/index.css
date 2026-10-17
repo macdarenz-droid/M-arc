@@ -1,0 +1,50 @@
+.container {
+  width: 466px;
+  height: 466px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000;
+}
+.head {
+  width: 300px;
+  height: 26px;
+  font-size: 20px;
+  color: #ffffff;
+  text-align: center;
+}
+.row {
+  width: 360px;
+  height: 24px;
+  font-size: 20px;
+  color: #ffffff;
+  text-align: center;
+}
+.tally {
+  width: 380px;
+  height: 26px;
+  font-size: 20px;
+  color: #ffffff;
+  text-align: center;
+}
+.sub {
+  width: 360px;
+  height: 26px;
+  font-size: 20px;
+  color: #ffffff;
+  text-align: center;
+}
+.bar {
+  width: 300px;
+  height: 50px;
+  margin-top: 4px;
+  justify-content: space-between;
+  align-items: center;
+}
+.btn {
+  width: 94px;
+  height: 46px;
+  font-size: 22px;
+  background-color: #2f7bf5;
+  color: #ffffff;
+}

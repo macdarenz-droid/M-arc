@@ -2,9 +2,10 @@
  * The live workout. One active session at a time, stored in state so it
  * survives app restarts. All mutations go through `update` so they persist.
  */
-import type { ActiveSession, AppState, Exercise, LoggedSet, PlannedTarget, RecoveryModel, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
+import type { ActiveSession, AppState, ClosedSession, CommandLog, Exercise, LoggedSet, PlannedTarget, Preferences, RecoveryModel, RestState, Session, SessionLogging, Split, TodayOverride } from '@/core/models';
 import { newId } from '@/core/models';
 import { MAX_EXERCISE_NOTE, state, update, flushSave } from '@/core/store';
+import { MAX_CLOSED, fromNewerBuild, repairCommands } from '@/core/dataVersion';
 import { findExercise } from '@/core/exercises';
 import { hasEntry, isWorkingSet } from '@/brain/exposure';
 import { BURST_WINDOW_MS, LIVE_GAP_SEC, classifySetFidelity, liveSessionLogging, retroSessionLogging } from '@/brain/fidelity';
@@ -40,11 +41,41 @@ export function rebuildRecoveryModel(s: Pick<AppState, 'sessions' | 'customExerc
 
 export function active(): ActiveSession | null { return state.value.active; }
 
-function patchActive(fn: (a: ActiveSession) => ActiveSession): void {
-  update(s => (s.active ? { ...s, active: fn(s.active) } : s));
+/** WATCH-B: the state with the live session changed; any change raises the session's revision. */
+export function withActive(s: AppState, next: ActiveSession): AppState {
+  return { ...s, active: next === s.active ? next : { ...next, rev: (s.active?.rev ?? 0) + 1 } };
 }
 
-const draftSet = (from: Partial<LoggedSet> = {}): LoggedSet => ({ ...from, id: newId('set') });
+function patchActive(fn: (a: ActiveSession) => ActiveSession): void {
+  update(s => (s.active ? withActive(s, fn(s.active)) : s));
+}
+
+/**
+ * WATCH-B: a change worked out without applying it. `effects` (the rest alarm, haptics and the
+ * in-memory links below) run only once the change is saved.
+ */
+export interface Step { active: ActiveSession; effects: () => void }
+
+/**
+ * WATCH-B: a new session keeps only the receipts of the last session that closed, so that
+ * session's finish can still be replayed. A newer build's log is left as it is.
+ */
+function receiptsForNewSession(s: AppState): CommandLog {
+  if (fromNewerBuild(s)) return s.commands;
+  const log = repairCommands(s.commands);
+  const last = log.closed[log.closed.length - 1];
+  return { ...log, receipts: log.receipts.filter(r => r.sessionId === last?.sessionId) };
+}
+
+/** WATCH-B: a finished or discarded session is closed for good; a late command for it is refused. A newer build's log is left as it is. */
+function withClosed(s: AppState, sessionId: string | undefined, status: ClosedSession['status'], at: number): CommandLog {
+  if (fromNewerBuild(s)) return s.commands;
+  const log = repairCommands(s.commands);
+  return sessionId ? { ...log, closed: [...log.closed.filter(c => c.sessionId !== sessionId), { sessionId, status, at }].slice(-MAX_CLOSED) } : log;
+}
+
+/** WATCH-B: every new set is a draft at revision 0 with its own id. */
+const draftSet = (from: Partial<LoggedSet> = {}): LoggedSet => ({ ...from, id: newId('set'), status: 'draft', rev: 0 });
 const blankSets = (n: number): LoggedSet[] => Array.from({ length: n }, () => draftSet());
 export const isCommitted = (set: LoggedSet): boolean => set.status === 'committed' || !!set.at;
 
@@ -80,7 +111,7 @@ export function startSession(split: Split): void {
     return { id: newId('e'), exerciseId: se.exerciseId, name: ex?.name ?? se.exerciseId, sets: blankSets(se.sets), done: false, skipped: false, ...(se.loadFactor != null ? { loadFactor: se.loadFactor } : {}) };
   });
   const startedAt = new Date().toISOString();
-  update(s => ({ ...s, active: { id: newId('s'), splitId: split.id, startedAt, pausedMs: 0, entries, gymId: s.units.activeGymId } }));
+  update(s => ({ ...s, active: { id: newId('s'), splitId: split.id, startedAt, pausedMs: 0, entries, gymId: s.units.activeGymId, rev: 0 }, commands: receiptsForNewSession(s) }));
   flushSave();
   resetHeartCapture();
   void haptic.confirm();
@@ -151,18 +182,36 @@ export function finishTiming(a: ActiveSession, now = Date.now()): FinishTiming {
   return { endedAtMs, durationSec: Math.min(full, activeAtLast + FINISH_MARGIN_SEC), trimmed: true };
 }
 
+/** The session paused at `now`, its rest held (UI-19). The same session when already paused. */
+function pausedSession(a: ActiveSession, now: number): ActiveSession {
+  return a.pausedAt ? a : { ...a, pausedAt: now, rest: a.rest ? { ...a.rest, pausedRemainingSec: Math.max(0, Math.round((a.rest.endsAt - now) / 1000)), rev: (a.rest.rev ?? 0) + 1 } : undefined };
+}
+
+/** The session resumed at `now`: the pause is added up and a held rest runs again. The same session when not paused. */
+function resumedSession(a: ActiveSession, now: number): ActiveSession {
+  if (!a.pausedAt) return a;
+  const rest = a.rest?.pausedRemainingSec != null ? { ...a.rest, endsAt: now + a.rest.pausedRemainingSec * 1000, pausedRemainingSec: undefined, rev: (a.rest.rev ?? 0) + 1 } : a.rest;
+  // A clock stepped back while paused adds no pause rather than a negative one.
+  return { ...a, pausedMs: a.pausedMs + Math.max(0, now - a.pausedAt), pausedAt: undefined, rest };
+}
+
 export function pauseSession(): void {
-  patchActive(a => (a.pausedAt ? a : { ...a, pausedAt: Date.now(), rest: a.rest ? { ...a.rest, pausedRemainingSec: Math.max(0, Math.round((a.rest.endsAt - Date.now()) / 1000)) } : undefined }));
+  patchActive(a => pausedSession(a, Date.now()));
   void cancelRestDone();
 }
 
 export function resumeSession(): void {
-  patchActive(a => {
-    if (!a.pausedAt) return a;
-    const rest = a.rest?.pausedRemainingSec != null ? { ...a.rest, endsAt: Date.now() + a.rest.pausedRemainingSec * 1000, pausedRemainingSec: undefined } : a.rest;
-    if (rest) void scheduleRestDone(rest.endsAt);
-    return { ...a, pausedMs: a.pausedMs + (Date.now() - a.pausedAt), pausedAt: undefined, rest };
-  });
+  const a = active();
+  const next = a && resumedSession(a, Date.now());
+  patchActive(x => next ?? x);
+  if (next && next !== a && next.rest) void scheduleRestDone(next.rest.endsAt);
+}
+
+export const pauseStep = (a: ActiveSession, now: number): Step => ({ active: pausedSession(a, now), effects: () => void cancelRestDone() });
+
+export function resumeStep(a: ActiveSession, now: number): Step {
+  const next = resumedSession(a, now);
+  return { active: next, effects: () => { if (next.rest) void scheduleRestDone(next.rest.endsAt); } };
 }
 
 /**
@@ -171,14 +220,18 @@ export function resumeSession(): void {
  * rest (QA-R2b-1). Refilled, it is committed again with its original timing.
  */
 function patched(set: LoggedSet, patch: Partial<LoggedSet>): LoggedSet {
-  const next = { ...set, ...patch };
+  // WATCH-B: every patch raises the set's revision.
+  const next = { ...set, ...patch, rev: (set.rev ?? 0) + 1 };
   if (isCommitted(set) && !hasEntry(next) && !('at' in patch)) return { ...next, status: 'draft' };
   if (set.status === 'draft' && next.at && hasEntry(next) && !('status' in patch)) return { ...next, status: 'committed' };
   return next;
 }
 
+const patchedSetIn = (a: ActiveSession, setId: string, patch: Partial<LoggedSet>): ActiveSession =>
+  ({ ...a, entries: a.entries.map(e => (e.sets.some(s => s.id === setId) ? { ...e, sets: e.sets.map(s => (s.id === setId ? patched(s, patch) : s)) } : e)) });
+
 export function setSetById(setId: string, patch: Partial<LoggedSet>): void {
-  patchActive(a => ({ ...a, entries: a.entries.map(e => (e.sets.some(s => s.id === setId) ? { ...e, sets: e.sets.map(s => (s.id === setId ? patched(s, patch) : s)) } : e)) }));
+  patchActive(a => patchedSetIn(a, setId, patch));
 }
 
 export function setSet(entry: number, index: number, patch: Partial<LoggedSet>): void {
@@ -216,6 +269,27 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   if (isCommitted(set)) return true;
   const action = opts.actionAt ? Date.parse(opts.actionAt) : NaN;
   const now = Number.isFinite(action) ? Math.min(action, Date.now()) : Date.now();
+  const step = commitStep(a, setId, now, state.value.preferences);
+  patchActive(() => step.active);
+  step.effects();
+  return true;
+}
+
+/** WATCH-B: `at` is after `ms`, by instant; text order (`text`) only when `at` cannot be read. */
+function isLater(at: string, ms: number, text: string): boolean {
+  const t = Date.parse(at);
+  return Number.isFinite(t) ? t > ms : at > text;
+}
+
+/**
+ * WATCH-B: the commit of a filled, uncommitted set at `now`, worked out without changing anything:
+ * its time, rest, fidelity and heart, and the auto-rest it starts. `values` are saved with it (a
+ * watch set's load and reps). `latestOnly`: a late set starts no rest when a later set is
+ * committed, so it never replaces that set's timer (WATCH-ARCHITECTURE 6).
+ */
+export function commitStep(a: ActiveSession, setId: string, now: number, prefs: Pick<Preferences, 'autoRest' | 'restDefaultSec'>, values: Partial<LoggedSet> = {}, latestOnly = false): Step {
+  const entry = a.entries.find(e => e.sets.some(x => x.id === setId))!;
+  const set: LoggedSet = { ...entry.sets.find(x => x.id === setId)!, ...values };
   const prior = committedTimestamps(a).filter(p => p.t <= now);
   const lastCommit = prior[prior.length - 1];
   const last = lastCommit?.t;
@@ -229,15 +303,23 @@ export function commitSetById(setId: string, opts: { actionAt?: string } = {}): 
   const heart = fidelity === 'live' ? heartForSet(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)) : undefined;
   // BUG-19 (DATES-F5): rest ends when this set starts, so its own working time comes off the gap.
   const restSec = gapSec != null ? Math.min(REST_MAX, Math.max(0, gapSec - setWorkSec(set))) : undefined;
-  pausedAtCommit.set(setId, pausedTotalMs(a, now));
-  setSetById(setId, { at: new Date(now).toISOString(), restSec, fidelity, heart, status: 'committed' });
-  if (state.value.preferences.autoRest && fidelity === 'live' && set.kind !== 'warmup') {
-    startRest(state.value.preferences.restDefaultSec, set.effort, preSetBpmFor(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)), now);
-    const entry = a.entries.find(e => e.sets.some(x => x.id === setId));
-    if (entry) restStartedBy = { setId, exerciseId: entry.exerciseId };
-  }
-  void haptic.confirm();
-  return true;
+  const at = new Date(now).toISOString();
+  const next = patchedSetIn(a, setId, { ...values, at, restSec, fidelity, heart, status: 'committed' });
+  const later = latestOnly && a.entries.some(e => e.sets.some(x => x.id !== setId && !!x.at && isLater(x.at, now, at)));
+  const rest = prefs.autoRest && fidelity === 'live' && set.kind !== 'warmup' && !later
+    ? newRest(prefs.restDefaultSec, set.effort, preSetBpmFor(Math.max(0, Math.round(((last ?? startedAtMs) - startedAtMs) / 1000)), Math.round((now - startedAtMs) / 1000)), now, !!a.pausedAt)
+    : null;
+  return {
+    active: rest ? { ...next, rest } : next,
+    effects: () => {
+      pausedAtCommit.set(setId, pausedTotalMs(a, now));
+      if (rest) {
+        restStartedBy = { setId, exerciseId: entry.exerciseId };
+        if (!a.pausedAt && rest.endsAt > Date.now()) void scheduleRestDone(rest.endsAt);
+      }
+      void haptic.confirm();
+    },
+  };
 }
 
 const withoutTarget = <T extends { target?: unknown }>({ target: _t, ...rest }: T): Omit<T, 'target'> => rest;
@@ -264,7 +346,7 @@ export function latestCommittedSetId(a: ActiveSession): string | undefined {
 
 /** UI-31: rating the effort of the set just done updates the running rest's heart target. */
 export function setRestEffort(effort: LoggedSet['effort']): void {
-  patchActive(a => (a.rest ? { ...a, rest: { ...a.rest, effort } } : a));
+  patchActive(a => (a.rest ? { ...a, rest: { ...a.rest, effort, rev: (a.rest.rev ?? 0) + 1 } } : a));
 }
 
 /** The next set carries the load and reps forward, never the previous set's timing or effort (UI-01). */
@@ -274,7 +356,8 @@ export function addSet(entry: number): void {
     const last = e.sets[e.sets.length - 1];
     const carry: Partial<LoggedSet> = last ? { kg: last.kg, entered: last.entered, reps: last.reps, durationSec: last.durationSec, distanceM: last.distanceM } : {};
     for (const k of Object.keys(carry) as Array<keyof LoggedSet>) if (carry[k] === undefined) delete carry[k];
-    return { ...e, sets: [...e.sets, draftSet(carry)] };
+    // WATCH-B: rev 0 and its own id. Its status stays unset as UI-01 keeps it, which reads as a draft (isCommitted).
+    return { ...e, sets: [...e.sets, { ...carry, id: newId('set'), rev: 0 }] };
   }) }));
 }
 
@@ -316,13 +399,16 @@ export function insertSet(sessionId: string, entryId: string, at: number, set: L
   });
 }
 
+/** WATCH-B follow-up (WATCH-C red team): skipping or finishing an entry raises its open sets' revisions, so a queued watch Complete for one gets stale_revision. */
+const bumpOpen = (sets: LoggedSet[]): LoggedSet[] => sets.map(s => (isCommitted(s) ? s : { ...s, rev: (s.rev ?? 0) + 1 }));
+
 export function markDone(entry: number, done = true): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, done, skipped: false })) }));
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, done, skipped: false, sets: bumpOpen(e.sets) })) }));
   if (done) void haptic.confirm(); else void haptic.tick();
 }
 
 export function skipEntry(entry: number, skipped = true): void {
-  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, skipped, done: false })) }));
+  patchActive(a => ({ ...a, entries: a.entries.map((e, i) => (i !== entry ? e : { ...e, skipped, done: false, sets: bumpOpen(e.sets) })) }));
 }
 
 export function addExerciseToSession(ex: Exercise, sets = ex.defaultSets): void {
@@ -383,17 +469,19 @@ export function substituteEntry(entry: number, ex: Exercise): void {
   patchActive(a => ({ ...a, entries: a.entries.flatMap((x, i) => (i !== entry ? [x] : [{ ...x, sets: kept, done: !x.skipped }, sub])) }));
 }
 
-export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number, from = Date.now()): void {
+/** A rest of `sec` (clamped) from `from`. Paused: held in full until resume (UI-19). WATCH-B: each rest has its own id. */
+function newRest(sec: number, effort: LoggedSet['effort'], preSetBpm: number | undefined, from: number, paused: boolean): RestState {
   const total = Math.max(REST_MIN, Math.min(REST_MAX, sec));
-  const endsAt = from + total * 1000;
+  return { endsAt: from + total * 1000, totalSec: total, effort, preSetBpm, ...(paused ? { pausedRemainingSec: total } : {}), id: newId('rest'), rev: 0 };
+}
+
+export function startRest(sec: number, effort?: LoggedSet['effort'], preSetBpm?: number, from = Date.now()): void {
   restStartedBy = null;
-  // Paused: hold the full rest until resume (UI-19); resume schedules it.
-  if (active()?.pausedAt) {
-    patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, effort, preSetBpm, pausedRemainingSec: total } }));
-    return;
-  }
-  patchActive(a => ({ ...a, rest: { endsAt, totalSec: total, effort, preSetBpm } }));
-  if (endsAt > Date.now()) void scheduleRestDone(endsAt);
+  const paused = !!active()?.pausedAt;
+  const rest = newRest(sec, effort, preSetBpm, from, paused);
+  patchActive(a => ({ ...a, rest }));
+  // Paused: resume schedules it.
+  if (!paused && rest.endsAt > Date.now()) void scheduleRestDone(rest.endsAt);
 }
 
 /**
@@ -426,19 +514,37 @@ export function restDone(timeDone: boolean, heartReady: boolean, timerIsFloor: b
   return timeDone || (heartReady && !timerIsFloor);
 }
 
+/** WATCH-B: an ended rest that the phone starts again is a new rest, so a late watch +30 s for the old one is stale. */
+const restIdentity = (r: RestState, restarted: boolean): Pick<RestState, 'id' | 'rev'> => (restarted ? { id: newId('rest'), rev: 0 } : { id: r.id, rev: (r.rev ?? 0) + 1 });
+
 export function adjustRest(deltaSec: number): void {
   const a = active();
   if (!a?.rest) return;
   if (a.pausedAt) {
     const cur = a.rest.pausedRemainingSec ?? Math.max(0, Math.round((a.rest.endsAt - a.pausedAt) / 1000));
     const next = Math.max(5, Math.min(REST_MAX, cur + deltaSec));
-    patchActive(x => ({ ...x, rest: x.rest ? { ...x.rest, pausedRemainingSec: next, totalSec: Math.max(x.rest.totalSec, next) } : x.rest }));
+    patchActive(x => ({ ...x, rest: x.rest ? { ...x.rest, pausedRemainingSec: next, totalSec: Math.max(x.rest.totalSec, next), ...restIdentity(x.rest, cur <= 0) } : x.rest }));
     return;
   }
+  const ended = a.rest.endsAt <= Date.now();
   const remaining = Math.max(0, (a.rest.endsAt - Date.now()) / 1000) + deltaSec;
   const endsAt = Date.now() + Math.max(5, Math.min(REST_MAX, remaining)) * 1000;
-  patchActive(x => ({ ...x, rest: x.rest ? { ...x.rest, endsAt, totalSec: Math.max(x.rest.totalSec, Math.round(remaining)) } : x.rest }));
+  patchActive(x => ({ ...x, rest: x.rest ? { ...x.rest, endsAt, totalSec: Math.max(x.rest.totalSec, Math.round(remaining)), ...restIdentity(x.rest, ended) } : x.rest }));
   void scheduleRestDone(endsAt);
+}
+
+/**
+ * WATCH-B: +`sec` on a rest that has time left. Unlike adjustRest it never restarts an ended rest
+ * (the caller refuses that), and the deadline moves by exactly `sec`, up to REST_MAX left.
+ */
+export function addRestStep(a: ActiveSession, sec: number, now: number): Step {
+  const rest = a.rest!;
+  if (a.pausedAt) {
+    const left = Math.min(REST_MAX, (rest.pausedRemainingSec ?? Math.max(0, Math.round((rest.endsAt - a.pausedAt) / 1000))) + sec);
+    return { active: { ...a, rest: { ...rest, pausedRemainingSec: left, totalSec: Math.max(rest.totalSec, left), rev: (rest.rev ?? 0) + 1 } }, effects: () => undefined };
+  }
+  const endsAt = Math.min(now + REST_MAX * 1000, rest.endsAt + sec * 1000);
+  return { active: { ...a, rest: { ...rest, endsAt, totalSec: Math.max(rest.totalSec, Math.round((endsAt - now) / 1000)), rev: (rest.rev ?? 0) + 1 } }, effects: () => void scheduleRestDone(endsAt) };
 }
 
 export function stopRest(): void {
@@ -446,6 +552,8 @@ export function stopRest(): void {
   restStartedBy = null;
   void cancelRestDone();
 }
+
+export const skipRestStep = (a: ActiveSession): Step => ({ active: { ...a, rest: undefined }, effects: () => { restStartedBy = null; void cancelRestDone(); } });
 
 export function restRemainingSec(a: ActiveSession, now = Date.now()): number | null {
   if (!a.rest) return null;
@@ -537,7 +645,7 @@ export function templateFromSession(a: ActiveSession, split: Split, override: To
  */
 export function savedExercises(a: ActiveSession): Session['exercises'] {
   return a.entries
-    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(set => hasEntry(set) && (!e.skipped || isCommitted(set))).map(({ status: _status, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}), ...(e.target ? { target: e.target } : {}) }))
+    .map(e => ({ exerciseId: e.exerciseId, name: e.name, sets: e.sets.filter(set => hasEntry(set) && (!e.skipped || isCommitted(set))).map(({ status: _status, rev: _rev, ...set }) => set), ...(e.note?.trim() ? { note: e.note.trim().slice(0, 500) } : {}), ...(e.target ? { target: e.target } : {}) }))
     .filter(e => e.sets.length);
 }
 
@@ -556,13 +664,28 @@ export function startsInFuture(trainedAtLocal: string, nowMs = Date.now()): bool
 export function finishSession(saveTemplate: boolean, opts: { note?: string } = {}): FinishSummary | null {
   const a = active();
   if (!a) return null;
-  const split = state.value.splits.find(s => s.id === a.splitId);
   const nowMs = Date.now();
-  const timing = finishTiming(a, nowMs);
-  const exercises = savedExercises(a);
+  const session = finishedSession(state.value, a, nowMs, opts.note);
   // BUG-28: nothing logged, so there is nothing to save. End the session exactly like a discard
   // (history untouched, today's Escobar override kept) instead of saving an empty session.
-  if (!exercises.length) { discardSession(); return null; }
+  if (!session) { discardSession(); return null; }
+  restStartedBy = null;
+  const changedTemplate = changedFromPlan(a, state.value.splits.find(s => s.id === a.splitId));
+  update(s => withFinished(s, a, session, saveTemplate, nowMs));
+  flushSave();
+  afterFinish();
+  return { session, changedTemplate };
+}
+
+/**
+ * The session as Finish saves it, or null when nothing was logged. finishHeartCapture also
+ * stores the session's heart series.
+ */
+function finishedSession(s: AppState, a: ActiveSession, nowMs: number, note?: string): Session | null {
+  const split = s.splits.find(sp => sp.id === a.splitId);
+  const timing = finishTiming(a, nowMs);
+  const exercises = savedExercises(a);
+  if (!exercises.length) return null;
   // BUG-19 (DATES-F3): only working sets that were committed carry timing evidence. A pre-filled
   // warm-up or a set that was typed but never committed has no time of its own.
   const workingSets = exercises.flatMap(e => e.sets).filter(s => s.kind !== 'warmup' && !!s.at);
@@ -575,8 +698,7 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     loggedDurationSec: timing.durationSec,
     workingSetCount: workingSets.length,
   });
-  restStartedBy = null;
-  const session: Session = finishHeartCapture({
+  return finishHeartCapture({
     id: a.id ?? newId('s'),
     splitId: a.splitId,
     splitName: split?.name ?? 'Workout',
@@ -587,29 +709,45 @@ export function finishSession(saveTemplate: boolean, opts: { note?: string } = {
     durationSec: timing.durationSec,
     exercises,
     logging,
-    gymId: a.gymId ?? state.value.units.activeGymId,
-    ...(opts.note?.trim() ? { note: opts.note.trim().slice(0, 1000) } : {}),
+    gymId: a.gymId ?? s.units.activeGymId,
+    ...(note?.trim() ? { note: note.trim().slice(0, 1000) } : {}),
   });
-  const changedTemplate = changedFromPlan(a, split);
-  update(s => ({
+}
+
+/** The state once `session` (never empty) is in history. WATCH-B: its id is closed for the watch. */
+function withFinished(s: AppState, a: ActiveSession, session: Session, saveTemplate: boolean, nowMs: number): AppState {
+  const split = s.splits.find(sp => sp.id === a.splitId);
+  return {
     ...s,
     active: null,
     // ES-02: today's adjustment is used up by finishing this split (a discarded session keeps it).
     escobar: s.escobar.todayOverride?.splitId === a.splitId ? { ...s.escobar, todayOverride: null } : s.escobar,
-    sessions: exercises.length ? sortByStart([...s.sessions, session]) : s.sessions,
+    sessions: sortByStart([...s.sessions, session]),
     splits: saveTemplate && split
       ? s.splits.map(sp => (sp.id !== split.id ? sp : { ...sp, exercises: templateFromSession(a, split, s.escobar.todayOverride) }))
       : s.splits,
     // QA-R2b-5: the prediction at finish sees the whole history, like the number the app showed.
-    recoveryModel: exercises.length ? calibrateAfterSession(sortByStart(s.sessions), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => lastSummaryAlone(s.sessions, id, s.customExercises)) : s.recoveryModel,
-  }));
-  flushSave();
+    recoveryModel: calibrateAfterSession(sortByStart(s.sessions), session, s.customExercises, s.profile, s.healthDays, s.recoveryModel, id => lastSummaryAlone(s.sessions, id, s.customExercises)),
+    commands: withClosed(s, a.id, 'finished', nowMs),
+  };
+}
+
+function afterFinish(): void {
   pausedAtCommit.clear();
   // QA8-3: a reminder scheduled before this session started may still be queued for today.
   void resyncReminders();
   void cancelRestDone();
   void haptic.success();
-  return { session, changedTemplate };
+}
+
+/**
+ * WATCH-B: the watch's Finish. It never saves the template. Nothing logged ends the session like a
+ * discard (BUG-28).
+ */
+export function finishStep(s: AppState, a: ActiveSession, nowMs: number): { state: AppState; finish: 'saved' | 'discarded'; effects: () => void } {
+  const session = finishedSession(s, a, nowMs);
+  if (!session) return { state: withDiscarded(s, nowMs), finish: 'discarded', effects: afterDiscard };
+  return { state: withFinished(s, a, session, false, nowMs), finish: 'saved', effects: () => { restStartedBy = null; afterFinish(); } };
 }
 
 /** The finish sheet calls this after "when did you train?" resolves a compressed session's real timing. */
@@ -669,11 +807,19 @@ export function logPastSession(input: { splitId: string; trainedAtLocal: string;
   return { session, changedTemplate: false };
 }
 
-export function discardSession(): void {
-  update(s => ({ ...s, active: null }));
+/** WATCH-B: a discarded session is closed too. */
+const withDiscarded = (s: AppState, nowMs: number): AppState => ({ ...s, active: null, commands: withClosed(s, s.active?.id, 'discarded', nowMs) });
+
+function afterDiscard(): void {
   pausedAtCommit.clear();
-  flushSave();
   void cancelRestDone();
   discardHeartCapture();
   restStartedBy = null;
+}
+
+export function discardSession(): void {
+  const nowMs = Date.now();
+  update(s => withDiscarded(s, nowMs));
+  flushSave();
+  afterDiscard();
 }

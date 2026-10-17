@@ -105,6 +105,8 @@ export function askCandidates(menu: Pick<LoadMenu, 'rungsKg' | 'unit'>, topKg: n
 }
 /** A9: the open card's next set to do, "62.5 kg × 8" (the exact A1 label), for the rest banner. */
 export const nextUpHint = signal<string | null>(null);
+/** WATCH-C: the open card's entry id, in memory only, so the watch shows the exercise in use. */
+export const openEntryId = signal<string | null>(null);
 
 /** A1/A8/A9: the kg placeholder a set's input shows — today's target, else last time's, else 'bw'. */
 export function targetKgPh(target: { kg: number | null } | undefined, prev: { kg?: number | null } | null | undefined, eu: LoadUnit, mode: string): string {
@@ -450,6 +452,7 @@ function LiveSession() {
     moveEntry(from, to);
     if (openId) setOpen(state.value.active?.entries.findIndex(e => e.exerciseId === openId) ?? -1);
   });
+  useEffect(() => { openEntryId.value = a.entries[open]?.id ?? null; return () => { openEntryId.value = null; }; }, [open, a.entries[open]?.id]);
   useEffect(() => acquireTicker(), []);
   const remaining = a.entries.filter(e => !e.done && !e.skipped);
   const done = a.entries.filter(e => e.done).length;

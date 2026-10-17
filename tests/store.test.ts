@@ -312,3 +312,68 @@ describe('body-fat readings from before the cm formula (QA-R3a-10)', () => {
     expect(cur!.bodyFatPct).toBe(16.1);
   });
 });
+
+// WATCH-B block (add-only): the save a watch command waits on.
+describe('WATCH-B: commitNow and flushSave report the save', () => {
+  beforeEach(() => { vi.spyOn(console, 'warn').mockImplementation(() => undefined); });
+  afterEach(() => { vi.restoreAllMocks(); });
+  it('commitNow saves at once, takes the pending debounced save with it and returns true', async () => {
+    const st = memoryStorage();
+    const S = await fresh();
+    S.initStore(st);
+    S.update(s => ({ ...s, profile: { ...s.profile, name: 'typed' } }));
+    expect(S.commitNow(s => ({ ...s, exerciseNotes: { bench: 'seat 4' } }))).toBe(true);
+    const saved = JSON.parse(st.map.get('marc.state.v1')!) as AppState;
+    expect([saved.profile.name, saved.exerciseNotes.bench]).toEqual(['typed', 'seat 4']);
+    expect(S.state.value.exerciseNotes.bench).toBe('seat 4');
+    const writes = st.writes.length;
+    vi.advanceTimersByTime(1_000);
+    expect(st.writes.length).toBe(writes);
+  });
+  it('a failed commitNow leaves the state as it was, keeps the pending save and returns false', async () => {
+    let fail = false;
+    const st = memoryStorage({ onSet: k => { if (fail && k === 'marc.state.v1') throw new Error('disk error'); } });
+    const S = await fresh();
+    S.initStore(st);
+    S.update(s => ({ ...s, profile: { ...s.profile, name: 'typed' } }));
+    const before = S.state.value;
+    fail = true;
+    expect(S.commitNow(s => ({ ...s, profile: { ...s.profile, name: 'watch' } }))).toBe(false);
+    expect(S.state.value).toBe(before);
+    fail = false;
+    vi.advanceTimersByTime(300);
+    expect(JSON.parse(st.map.get('marc.state.v1')!).profile.name).toBe('typed');
+  });
+  it('flushSave returns whether the save worked', async () => {
+    let fail = false;
+    const st = memoryStorage({ onSet: k => { if (fail && k === 'marc.state.v1') throw new Error('disk error'); } });
+    const S = await fresh();
+    S.initStore(st);
+    expect(S.flushSave()).toBe(true);
+    fail = true;
+    expect(S.flushSave()).toBe(false);
+  });
+  it('commitNow never writes over a newer save from another tab; it takes that save and the resend lands on it', async () => {
+    const st = memoryStorage();
+    const S = await fresh();
+    S.initStore(st);
+    S.update(s => ({ ...s, profile: { ...s.profile, name: 'stale tab' } }));
+    const other = { ...freshState(), exerciseNotes: { squat: 'other tab' } };
+    st.map.set('marc.state.v1', JSON.stringify(other)); // another tab saved; its storage event has not arrived
+    expect(S.commitNow(s => ({ ...s, exerciseNotes: { ...s.exerciseNotes, bench: 'watch' } }))).toBe(false);
+    expect(JSON.parse(st.map.get('marc.state.v1')!).exerciseNotes).toEqual({ squat: 'other tab' });
+    expect(S.state.value.exerciseNotes).toEqual({ squat: 'other tab' });
+    vi.advanceTimersByTime(1_000);
+    expect(JSON.parse(st.map.get('marc.state.v1')!).profile.name).not.toBe('stale tab');
+    expect(S.commitNow(s => ({ ...s, exerciseNotes: { ...s.exerciseNotes, bench: 'watch' } }))).toBe(true);
+    expect(JSON.parse(st.map.get('marc.state.v1')!).exerciseNotes).toEqual({ squat: 'other tab', bench: 'watch' });
+  });
+  it('flushSave returns false when another tab moved storage on', async () => {
+    const st = memoryStorage();
+    const S = await fresh();
+    S.initStore(st);
+    st.map.set('marc.state.v1', JSON.stringify({ ...freshState(), exerciseNotes: { squat: 'other tab' } }));
+    expect(S.flushSave()).toBe(false);
+    expect(JSON.parse(st.map.get('marc.state.v1')!).exerciseNotes).toEqual({ squat: 'other tab' });
+  });
+});

@@ -101,6 +101,10 @@ export interface LoggedSet {
   entered?: { value: number; unit: LoadUnit };
   /** F2: a warm-up is logged but never counted; a drop set counts but sets no record; to failure implies max effort. */
   kind?: SetKind;
+  /** WATCH-B: live session only. Every change to the set raises it, so a watch command that saw an older one is refused. Dropped at finish. */
+  rev?: number;
+  /** WATCH-B: sets completed on the watch only. When the phone received it; `at` is then the watch's action time. */
+  receivedAt?: string;
 }
 
 export type SetKind = 'warmup' | 'drop' | 'failure';
@@ -206,6 +210,9 @@ export interface RestState {
   /** F1.2: bpm when rest started and the effort just committed, so heart-guided rest has a target. Absent when the stream wasn't LIVE at that moment. */
   preSetBpm?: number;
   effort?: Effort;
+  /** WATCH-B: a new id for each rest, so a watch command for an earlier one is refused; `rev` rises with every change. */
+  id?: string;
+  rev?: number;
 }
 
 export interface ActiveSession {
@@ -220,7 +227,41 @@ export interface ActiveSession {
   rest?: RestState;
   /** The gym this session is at (§25), stamped at start. */
   gymId?: string;
+  /** WATCH-B: rises with every change to the session; the watch is told the revision it saw applied. */
+  rev?: number;
 }
+
+/** WATCH-B: the commands the watch can send (Wear Engine application 3, approved data in 11.3). */
+export type WatchCommandKind = 'complete_set' | 'rest_add_30' | 'rest_skip' | 'pause' | 'resume' | 'finish';
+export const WATCH_COMMAND_KINDS: WatchCommandKind[] = ['complete_set', 'rest_add_30', 'rest_skip', 'pause', 'resume', 'finish'];
+
+export type CommandRejectReason =
+  | 'unsupported' | 'invalid' | 'id_conflict' | 'session_closed' | 'no_session' | 'wrong_session'
+  | 'target_missing' | 'already_committed' | 'stale_revision' | 'stale_rest' | 'invalid_state' | 'limit_reached';
+
+/** WATCH-B: an answer the phone keeps, so a resent command gets the same one (`replayed` true). */
+export type StoredCommandResult =
+  | { commandId: string; status: 'applied'; sessionRev: number; replayed: boolean; finish?: 'saved' | 'discarded' }
+  | { commandId: string; status: 'rejected'; reason: CommandRejectReason; replayed: boolean };
+/** `not_saved`: the save failed, nothing changed and nothing was kept, so the watch may send it again. */
+export type CommandResult = StoredCommandResult | { commandId: string; status: 'not_saved'; reason: 'storage_failed' };
+
+/** WATCH-B: one handled command. `fp` is the 64-bit FNV-1a hash of everything it said, its session included. Times in ms. */
+export interface CommandReceipt {
+  commandId: string;
+  sessionId: string;
+  kind: WatchCommandKind;
+  fp: string;
+  result: StoredCommandResult;
+  actionAt: number;
+  receivedAt: number;
+}
+
+/** WATCH-B: a session that ended, so a late command for it is refused, never applied. `at` in ms. */
+export interface ClosedSession { sessionId: string; status: 'finished' | 'discarded'; at: number }
+
+/** WATCH-B: receipts (at most 500 per session; a new session keeps the last closed one's) and the last 50 closed sessions, newest last. */
+export interface CommandLog { receipts: CommandReceipt[]; closed: ClosedSession[] }
 
 export interface Reminders {
   enabled: boolean;
@@ -488,6 +529,8 @@ export function freshEscobar(): EscobarState {
 
 export interface AppState {
   version: 1;
+  /** WATCH-B: the saved data's own version (src/core/dataVersion.ts). Absent means 0. */
+  dataVersion?: number;
   createdAt: string;
   profile: Profile;
   goal: GoalId;
@@ -529,6 +572,8 @@ export interface AppState {
   exerciseNotes: Record<string, string>;
   /** F5: when the last backup was exported. */
   lastBackupAt?: string;
+  /** WATCH-B: the watch commands handled, so each applies at most once. */
+  commands: CommandLog;
 }
 
 export function emptySchedule(): Record<Weekday, string | null> {
@@ -538,6 +583,7 @@ export function emptySchedule(): Record<Weekday, string | null> {
 export function freshState(now = new Date()): AppState {
   return {
     version: 1,
+    dataVersion: 1,
     createdAt: now.toISOString(),
     profile: { name: '' },
     goal: 'lean',
@@ -571,6 +617,7 @@ export function freshState(now = new Date()): AppState {
     units: freshUnits('kg', now),
     daysOff: [],
     exerciseNotes: {},
+    commands: { receipts: [], closed: [] },
   };
 }
 

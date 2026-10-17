@@ -150,6 +150,33 @@ jobs:
           sha256sum "$OUT" > "$OUT.sha256"
           cat "$OUT.sha256"
 
+      # Watch lane, Gate A question 2: the Wear Engine lab is for build-apk.yml's debug APK only (MARC_WEAR_LAB).
+      - name: Verify the Wear Engine lab is left out
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - android/app/build/outputs/bundle/release/app-release.aab "$RUNNER_TEMP/manifest.xml" <<'PYWEAR'
+          from pathlib import Path
+          import sys, zipfile
+          A = Path('android')
+          def no(found, what):
+              if found: raise SystemExit('::error::' + what + ' is in the Play bundle; the Wear Engine lab is for the debug APK only')
+          no('WearEnginePlugin' in (A / 'app/src/main/assets/capacitor.plugins.json').read_text(encoding='utf-8'), 'WearEnginePlugin (capacitor.plugins.json)')
+          no('com.huawei.hms.client.appid' in (A / 'app/src/main/AndroidManifest.xml').read_text(encoding='utf-8'), 'com.huawei.hms.client.appid (AndroidManifest.xml)')
+          no('com.huawei.hms:wearengine' in (A / 'app/build.gradle').read_text(encoding='utf-8'), 'the Wear Engine dependency (app/build.gradle)')
+          no('developer.huawei.com/repo' in (A / 'build.gradle').read_text(encoding='utf-8'), 'the Huawei Maven repo (build.gradle)')
+          no((A / 'app/src/main/java/com/mrcdrnzz/dailytracker/wear').exists(), 'the Watch lab plugin source')
+          z = zipfile.ZipFile(sys.argv[1])
+          dex = b''.join(z.read(n) for n in z.namelist() if n.startswith('base/dex/') and n.endswith('.dex'))
+          if b'Lcom/mrcdrnzz/dailytracker/MainActivity;' not in dex: raise SystemExit('::error::the bundle dex was not read')
+          no(b'Lcom/mrcdrnzz/dailytracker/wear/' in dex, 'the Watch lab plugin (bundle dex)')
+          no(b'Lcom/huawei/wearengine/' in dex, 'the Wear Engine SDK (bundle dex)')
+          man = Path(sys.argv[2]).read_text(encoding='utf-8')
+          if '<application' not in man: raise SystemExit('::error::the bundletool manifest dump was not read')
+          no('com.huawei.hms.client.appid' in man, 'com.huawei.hms.client.appid (bundle manifest)')
+          print('Wear Engine lab absent from', sys.argv[1])
+          PYWEAR
+
       - name: Self-test, the checks fail on broken bundles
         shell: bash
         env:

@@ -21,6 +21,8 @@ mkdir -p "$PKG"
 cp native/MainActivity.java native/HealthConnectNativePlugin.java native/PermissionsRationaleActivity.java native/NativeUiPlugin.java "$PKG/"
 mkdir -p "$PKG/watch/core" && cp native/watch/*.java "$PKG/watch/" && cp native/watch/core/*.java "$PKG/watch/core/"
 python3 native/patch_manifest.py android/app/src/main/AndroidManifest.xml
+# Watch lane (owner, 2026-10-15): the Wear Engine lab, only in build-apk.yml's debug APK (MARC_WEAR_LAB=1).
+if [ "${MARC_WEAR_LAB:-}" = 1 ]; then python3 native/wear/android/prepare_android.py; fi
 
 # Replace Capacitor launcher assets with the M/ARC icon copied into www/ by the build.
 ICON='www/icon-512.png'
