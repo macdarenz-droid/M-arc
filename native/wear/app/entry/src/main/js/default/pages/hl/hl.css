@@ -1,0 +1,16 @@
+/* WATCH-C4 highlights. Lite keyframes use frames 0 and 1 only. Their width and height are the content box
+   (UIView::SetWidth adds the border), while CSS sizes include it: the ring's 228 + 2 x 6 border = 240 px.
+   The ring grows from its centre: its translateX and the wrapper's translateY move it as it grows, with the
+   same duration and easing. The lines show one by one as the box that holds them opens from height 0 (one
+   line every 200 ms from 600 ms), not by opacity 0 and a fade: CSS opacity sets the view's opacity scale,
+   which the opacity animation never changes, so they would never show. */
+.rt{width:466px;height:466px;flex-direction:column;align-items:center;background-color:#08090a}
+.bb{width:240px;height:240px;margin-top:20px;align-items:flex-start}
+.wr{width:240px;height:353px;flex-direction:column;align-items:flex-start;animation-name:up;animation-duration:600ms;animation-timing-function:ease-out;animation-fill-mode:forwards}
+.rg{width:14px;height:14px;margin-left:113px;margin-top:113px;border-width:6px;border-color:#5e6ad2;border-radius:120px;animation-name:rg;animation-duration:600ms;animation-timing-function:ease-out;animation-fill-mode:forwards}
+.tt{width:220px;height:40px;margin-left:10px;margin-top:86px;font-size:30px;color:#f7f8f8;text-align:center}
+.ls{width:300px;height:0px;margin-top:8px;flex-direction:column;animation-name:wp;animation-duration:1000ms;animation-delay:600ms;animation-fill-mode:forwards}
+.ln{width:300px;height:30px;font-size:20px;color:#f7f8f8;text-align:center}
+@keyframes up{from{transform:translateY(0px)}to{transform:translateY(-113px)}}
+@keyframes rg{from{width:0px;height:0px;transform:translateX(0px)}to{width:228px;height:228px;transform:translateX(-113px)}}
+@keyframes wp{from{height:0px}to{height:150px}}
