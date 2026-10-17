@@ -431,7 +431,9 @@
       "title": "Hanging Leg Raise (Dr. Yessis SportLab)",
       "kind": "coach",
       "year": 2013,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "catalyst-hlr",
@@ -439,7 +441,9 @@
       "title": "Hanging Leg Raise (Catalyst Athletics exercise library)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "strengthlog-hlr",
@@ -447,7 +451,9 @@
       "title": "How to Do Hanging Leg Raise: Muscles Worked & Proper Form (StrengthLog)",
       "kind": "coach",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "wiki-leg-raise",
@@ -455,7 +461,9 @@
       "title": "Leg raise (Wikipedia)",
       "kind": "secondary",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "acsm2009",
@@ -463,7 +471,9 @@
       "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (Med Sci Sports Exerc)",
       "kind": "guideline",
       "year": 2009,
-      "pmid": "19204579"
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "mcgill2015",
@@ -471,7 +481,9 @@
       "title": "Muscle activity and spine load during anterior chain whole body linkage exercises: the body saw, hanging leg raise and walkout from a push-up (McGill, Andersen, Cannon, J Sports Sci)",
       "kind": "peer-reviewed",
       "year": 2015,
-      "pmid": "25111163"
+      "pmid": "25111163",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "andersson1997",
@@ -479,7 +491,9 @@
       "title": "Abdominal and hip flexor muscle activation during various training exercises (Andersson et al., Eur J Appl Physiol)",
       "kind": "peer-reviewed",
       "year": 1997,
-      "pmid": "9118976"
+      "pmid": "9118976",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "workman2008",
@@ -487,7 +501,9 @@
       "title": "Influence of pelvis position on the activation of abdominal and hip flexor muscles (Workman et al., J Strength Cond Res)",
       "kind": "peer-reviewed",
       "year": 2008,
-      "pmid": "18714231"
+      "pmid": "18714231",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "prinold2016",
@@ -495,7 +511,9 @@
       "title": "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport)",
       "kind": "peer-reviewed",
       "year": 2016,
-      "pmid": "26383875"
+      "pmid": "26383875",
+      "access": "abstract",
+      "checked": "2026-10-17"
     },
     {
       "id": "baechle-earle",
@@ -503,7 +521,9 @@
       "title": "Grip selection and location, excerpt from Weight Training: Steps to Success (Baechle and Earle, Human Kinetics)",
       "kind": "textbook",
       "year": null,
-      "pmid": null
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
     },
     {
       "id": "odriscoll1992",
@@ -511,7 +531,9 @@
       "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
       "kind": "peer-reviewed",
       "year": 1992,
-      "pmid": "1538102"
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-10-17"
     }
   ],
   "plate": {
