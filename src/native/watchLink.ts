@@ -242,13 +242,18 @@ export function createLink(deps: LinkDeps): Link {
   async function sendPlan(onlyIfChanged: boolean): Promise<void> {
     try {
       if (!deps.plan || quiet()) return;
-      const text = JSON.stringify(deps.plan());
+      const plan = deps.plan();
+      // the watch reads only a session's plan
+      if (plan.sid === null) return;
+      const text = JSON.stringify(plan);
       if (onlyIfChanged && text === lastPlan) return;
       lastPlan = text;
       lastAt = now();
       const r = await deps.send(text);
-      if (r !== SEND_OK) deps.log(`mw plan ${r}`);
+      // a plan that did not reach the watch goes again with the next sync
+      if (r !== SEND_OK) { lastPlan = ''; deps.log(`mw plan ${r}`); }
     } catch (e) {
+      lastPlan = '';
       deps.log(`mw plan ${e instanceof Error ? e.message : String(e)}`);
     }
   }

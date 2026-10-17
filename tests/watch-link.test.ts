@@ -26,7 +26,7 @@ import { findExercise } from '@/core/exercises';
 import { kgToDisplay } from '@/core/units';
 import { setTheme } from '@/theme/engine';
 import { entryTarget, openEntryId } from '@/slices/workout/Train';
-import { addSet, commitSet, logWarmups, markDone, moveEntry, setSet, skipEntry, startRest, startSession, substituteEntry, pauseSession } from '@/slices/workout/session';
+import { addSet, commitSet, discardSession, logWarmups, markDone, moveEntry, setSet, skipEntry, startRest, startSession, substituteEntry, pauseSession } from '@/slices/workout/session';
 import { profileFor } from '@/slices/workout/units';
 import { handleWorkoutCommand } from '@/slices/workout/commands';
 import { createLab, watchLab, type WearEnginePlugin } from '@/native/wearEngine';
@@ -787,5 +787,26 @@ describe('WATCH-C2 P1: the snap names its entry and last time, and the plan feed
     await lab.receive({ type: 1, data: text, desc: '', dataLen: text.length, descLen: 0, rxAt: T0 });
     // Off the phone the plugin is missing, so each send fails and is logged, newest first.
     expect(lab.rows.value.slice(0, 3)).toEqual(['mw plan unavailable', 'mw snap unavailable', 'mw hello abcd1234 q0 js +0ms']);
+  });
+
+  // WATCH-C2 review: a plan that did not reach the watch goes again; a plan without a session does not go.
+  it('a plan whose send failed goes again with the next sync, though it did not change', async () => {
+    let fail = true;
+    const r = rig({ connect: async () => undefined, plan, send: vi.fn(async (t: string) => { const k = (JSON.parse(t) as { k: string }).k; if (k === 'plan' && fail) { fail = false; return 206; } r.sent.push(t); return 207; }) });
+    await r.link.start();
+    expect(r.kinds()).toEqual(['snap']);
+    // A rejected command changes nothing, so only the failed send makes the plan go again.
+    await r.link.receive(JSON.stringify(cmd({ expectedRev: 99 })));
+    expect((JSON.parse(r.sent[1]!) as { status: string }).status).toBe('rejected');
+    expect(r.kinds()).toEqual(['snap', 'res', 'snap', 'plan']);
+    expect(r.last()).toEqual(sentPlan());
+    expect(r.rows).toContain('mw plan 206');
+  });
+  it('no session: the hello answer is the snap alone', async () => {
+    discardSession();
+    const r = rig({ plan });
+    await r.link.receive(hello(T0));
+    expect(r.kinds()).toEqual(['snap']);
+    expect(buildPlan(state.value).sid).toBeNull();
   });
 });
