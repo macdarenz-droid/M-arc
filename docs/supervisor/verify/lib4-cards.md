@@ -678,6 +678,32 @@ The supervisor workflow wf_f45aa9b0-355 drafted these. It ran one Opus judge per
     - **(e) One floor shape for pinned-to-8 tests.** Each test LIB-4a edits under D-LIB4-PINS-2 asserts the exact count from the registry (never `>=`) and contains each of the 8. Where its subject is `shippedRows()`, it also asserts `shippedRows().slice(0, 8)` equals the `plates.json` keys in order (D-LIB2b-PINS), so both cards pin one shape. Each edited test keeps its "drop one id at the 8 → red" mutation.
     - **(f) Scratch pushes.** A builder session pushes only to its own branch. LIB-4a runs its scratch trees locally. When a CI run on a scratch tree is needed, it posts the exact `writeIds`/`exportTo` commands and its head sha on #233, and the supervisor pushes `claude/lib-4a-scratch`.
 
+17. **B5's F5 (D-LIB4b-F5, 2026-10-17, on #232; ruling (a)).** All 3 scratch ids raise F5 at 3.57:1: the selected-Mistake-tell chrome contrast that each of the 8 carries as a named exemption in `tools/plates/library/qa/exemptions.json` ("approved chrome … the same on all 8 by construction (locked chrome CSS); an owner item like O7").
+    - B5's scratch plate entries may carry `exemptions: ['F5']` with that reason quoted verbatim. Scratch only: never pinned or shipped (11.1 item 3's limits).
+    - Evidence: each scratch id's measured F5 ratio equals the 8's 3.57:1. Mutation: the exemption removed from one id → only that id's PQH F5 row goes red.
+    - Why nothing is loosened: F5 still runs on every row, and the exemption names exactly the known chrome property the 8 carry.
+    - **Open for LIB-9 (D-LIB9-F5):** every real library plate will raise the same F5, and "new plates inherit none". Before LB1's sheet, the supervisor rules either a named per-plate exemption under the 10-01 delegation or a chrome fix through a golden update. This is not decided here.
+18. **Library hand panels unstyled (D-LIB2b-HANDCSS, 2026-10-17, on #232 and #234; ruling (b)).** A library row's hand comes from the shared `handpair-<key>.ts`, which imports no CSS. Its `zoom-<chromeId>.css` arrives only through its `posture-` chunk. Opened first in a fresh context (as HT-6 and HT-10 do), the panel is unstyled: the pager tabs are 20 px (C10) and the boxes differ from the layers page. LIB-4b's B5 shows 31 HT6 and 15 HT10/sweep rows red. Adding the css import fixed lat pulldown 18/18.
+    - **Owner: LIB-2b,** because a shipped library row must get every output and behaviour a row of the 8 gets (card 10 outcome; E1). The fix goes in its generator files (`tools/plates/gen/ids.mjs` loader emission, or `hands.mjs`/`handpairs.mjs`), never in app components.
+    - **Constraints:**
+      - no `hand-<chromeId>.ts` for a library row (11.1 item 1);
+      - `handpair-<key>.ts` stays exercise-neutral, with no per-id import inside it (D-LIB9-HANDPAGE's direction);
+      - D-LIB4-A4 and D-LIB4-A9's exact chunk sets still pass;
+      - the 8's bytes and loaders are unchanged (E4).
+    - **Evidence:**
+      - a test that every shipped library row's HAND loader brings in that row's `zoom-<chromeId>.css` before the panel, both in the generated `loaders.ts` and in the E1 tree's built chunk graph (the vite manifest);
+      - mutation: drop the css from the loader → red;
+      - the 8's loaders.ts lines are byte-unchanged.
+    - **Then:** "LIB-2b FIXED" and a delta review by the same reviewer. LIB-4a merges LIB-2b's final passed head. B5's final run waits for this fix through LIB-4a's final head. No B5 row is waived.
+    - **Gotcha:** E1's node-level checks could not see this. Only a browser opening the hand close-up first does.
+19. **COPY_EDITS (D-LIB4b-COPYEDITS, 2026-10-17, on #232; ruling (c)): accepted, with limits.**
+    - Verbatim clones of lat pulldown and seated cable row are refused by PQ-H8 (`normal.chest.cue has 16 words (max 15)`; `normal.tall.cue … semicolon`). The fixture may edit only those two cues, minimally, in the scratch copies.
+    - Evidence:
+      - the edits are listed in the fixture code with the refusal they answer;
+      - mutation: revert one edit → `QaRefused … PQ-H8` naming that id;
+      - nothing else in the copied How-to sources differs from the 8 (a byte diff in the test).
+    - Golden B itself carries those two cues. They are approved and byte-locked, so they are recorded as golden-B follow-up 12 (HANDOVER 8.2) and not changed. PQ-H8 is a library rule; it is not loosened.
+
 ### 11.2 LIB-2b rulings (#234)
 
 #### D-LIB2b-PAGES
