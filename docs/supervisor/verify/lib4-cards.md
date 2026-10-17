@@ -992,3 +992,229 @@ Add three LIB_ONCE.run rows, which run on shard 1 and are exported from tuples.m
 LIB-4-DESIGN.md section 2 gets an assertion map, kept as data in tools/plates/library/fidelity/twins/map.mjs. For each pinned text (every T1-T8 group, ht3Fidelity, ht3Behaviour, runHt10), it lists, in order, every match of /\b(?:errors|problems)\.push\(|\bP\(|\bF\(|\bfail\(/g with its target. A target is a state formula in tuples.mjs, an exemption id (X1-X8c), or 'def' for a helper definition. Test in library-fidelity.test.ts: the number and order of matches in each pinned text equal its map entries, and every target resolves. Mutations: delete one map entry → red; add a P( call to a twinned block → red (together with B3).
 
 **Amended after critique:** The map lists every match of /\b[A-Za-z_$][\w$]*\.push\(|\bthrow new Error\b|\b(?:P|F|S|fail|crashed)\(/g in each pinned text, in order. Each match maps to a state formula, an exemption id, 'def', or 'collect' (a push that gathers data and never reaches errors, e.g. sizes.push, fetched.push). Every 'collect' entry names the variable, and the test asserts that the variable never flows into errors/problems within that text. The map data lives in twins/pins.json with the pins. Mutations: delete one entry → red; add a bad.push( or a throw to a twinned block → red, together with B3.
+
+## 12. Speed-up rulings (2026-10-17 evening)
+
+Supervisor session_01SNCyDETVkqVxtLoQxn2Ue9, about 18:45 UTC. A planning workflow drafted these rulings and one adversarial critic checked them. An adversarial re-check then found 10 problems; the text below applies the supervisor's decisions on them and every other re-check fix. Checked at 18:42 UTC, all unchanged since 18:00: main `49a2853` (frozen until the GATE-SPLIT train, about 22:00 UTC [est]); #194 `06ce286`; #219 `82d896d`; LIB-2b #234 `ccf0250`; LIB-4a #233 `66f5cef`; LIB-4b #232 `379cdf4`; `claude/libht-research` `9dbc7e0`; the plan on `claude/howto-options` `4a9fd86`. Where this section and sections 1-11 disagree, this section wins.
+
+Posting order:
+- Now, with tonight's starts (LIB-4c and LIB-9a): items 1-6, 12 and 13. LIB-5's start is held until the owner answers item 12's question and its card's open points (merge routes, the clone test, commit order, the 8's research) are settled.
+- The owner's back-box question (item 12) was sent at about 18:50 UTC, with option 2 marked as still needing one more wording check; if he picks option 2, a fresh critic reads its wording before it is used.
+- When E8 ends: "E8 done" to the LIB-4c, LIB-5 and LIB-9a sessions by message, and as a comment on any PR they have opened, with item 1's check command and its reading line.
+- Items 7-9 before the steps that need them (LIB-6-PM; LIB-9a Do 4-6). Item 10 before the LIB-7 fixer starts. Item 11 before LIB-4c READY. Item 14 before W2B starts.
+
+1. **CI manners while E8 runs (D-LIB-CIMANNERS).**
+   - **Decision:**
+     - One text. The LIB-4c, LIB-5 and LIB-9a cards, and every start before the GATE-SPLIT train merges, carry it unchanged as their CI-manners block:
+       > CI manners while GATE-SPLIT's E8 proof runs: push nothing until the supervisor sends you 'E8 done' (by a message to your session, and as a comment on your PR if it exists). After 'E8 done' and until the GATE-SPLIT train has merged, before each push check that no M/ARC gate run is in progress on claude/sup-gate-split-ci, claude/gate-split, claude/sup-gate-split-e6, claude/sup-gate-split-e9 or claude/sup-merge-train-* (curl the Actions API); if one is, wait. Then at most one push per 2 hours until READY unless the supervisor asks for one. Never use [skip ci].
+     - Reading line: the 2-hour limit runs from 'E8 done' to READY, and the check comes on top of it until the train merges. A start after 'E8 done' gets 'E8 done' in its start message.
+     - The check, sent with 'E8 done'. It must print nothing. A branch name means wait, and so does API-ERROR (rate limit or no answer). A queued run counts as in progress. Re-check at most every 10 minutes: unauthenticated calls are limited to about 60 an hour per IP.
+       `for s in queued in_progress; do curl -sS "https://api.github.com/repos/macdarenz-droid/M-arc/actions/workflows/build-apk.yml/runs?status=$s&per_page=100" | jq -rs 'if (.[0].workflow_runs|type)=="array" then .[0].workflow_runs[].head_branch else "API-ERROR" end'; done | grep -E '^(API-ERROR|claude/(gate-split|sup-gate-split-(ci|e6|e9)|sup-merge-train-.+))$'`
+       build-apk.yml is the workflow named "M/ARC gate". Tested at 18:42 UTC: it printed `claude/sup-gate-split-ci` (E8's workflow_dispatch run 39057924732), and it prints API-ERROR on an empty or error reply.
+     - Cards already pushing (LIB-2b, LIB-4a, LIB-4b, the critical path): until the train merges, push only at a milestone the card needs (a review fix or evidence), and only after the same check prints nothing. They have no 2-hour limit.
+     - Unchanged, outside the text: never cancel, re-run or dispatch another card's run; the supervisor pushes scratch refs (11.1 item 16 (f)); LIB-4c's dispatches follow its Do 10; never write to the owner. If a D-LIB4-QUEUE trigger fires, the supervisor slows LIB-9a's pushes first, then LIB-5's.
+   - **Why:**
+     - The draft ruling and the draft cards had two texts. They disagreed on where 'E8 done' arrives, on the check after E8, and on who has the 2-hour limit, so a builder could not obey both.
+     - The first draft checked `claude/gate-split` only. E8 runs on `claude/sup-gate-split-ci`, and `claude/gate-split` has had no run since 07:59 (run 39015691673), so that check always read "free". E8's evidence counts only on its own sha (D-LIB2b-ORDER: a main move voids it).
+     - LIB-4c carries the 2-hour limit too: its work before 'E8 done' is local, its CI evidence (C11-C14) runs on scratch refs the supervisor pushes, and the supervisor can ask for an extra push when the critical path needs one.
+   - **Why nothing is loosened:** scheduling only. No check, job or run is skipped, cancelled or capped. Every push runs the full workflow, and the check fails closed.
+
+2. **Active builders (D-LIB-LANE-ACTIVE; amends plan 7 "Lanes" and HANDOVER 5.12).**
+   - **Decision:**
+     - The LIB lane cap of 4 builders counts **active** builders: those with permitted work in hand (building, fixing, running evidence, or local work before 'E8 done').
+     - A builder is WAITING only when it has no permitted work in hand: it waits on another card's head, a ruling, a review or a resume message. A WAITING builder keeps its session, holds no slot, does no new work and pushes nothing.
+     - LIB-2b, LIB-4a and LIB-4b count as separate slots.
+     - The count at 18:00: LIB-2b (HANDCSS fix), LIB-4b (B5/B7 on `379cdf4`), LIB-4c and LIB-9a are active, which makes 4. LIB-4a waits for LIB-2b's PASS.
+     - LIB-5 starts now with Do 1 only, cut to pure reading and writing: the design note states each method, and Do 1 builds and runs nothing. The HowToSheet chunk measurement (Do 1 a) and the lint dry run over the 8's copy (Do 1 h) move to Do 2, which posts their numbers first. So Do 1 holds no slot. LIB-5 takes a slot from Do 2, on the supervisor's "LIB-5 resume" once the note is ruled and a slot frees.
+     - A freed slot goes, in this order, to: a D-LIB2b-ORDER chain card or LIB-4c; LIB-5 (Do 2 on); the LIB-7 fixer; LIB-6-PM; LIB-9a's second drawer.
+     - If a chain card's resume would make 5, the newest other start parks at its next commit, in this order: LIB-9a's second drawer, LIB-6-PM, the LIB-7 fixer, LIB-9a, LIB-5. The chain cards and LIB-4c never park.
+     - The "3 drawing, 1 enabler or fix" split gives way while drawing slots would sit empty: they may carry enablers, as LIB-2b, LIB-4a, LIB-4b and LIB-4c do. LIB-9a takes a drawing slot.
+     - Only the supervisor sends resume messages, on the PR and by send_message. A merge, a CI result, a PR event or the builder's own timer never resumes it. The supervisor counts active builders before every start or resume message and writes the count in it.
+     - The HT/gate lane keeps its own cap. Research agents and critics are still not builders.
+   - **Why:**
+     - At 17:00 the chain held 3 sessions but only 1 or 2 active builders. Counting sessions would leave slots idle while LIB-4c (the critical path), LIB-5 (the merge gate for LIB-6/7/8 and LIB-9) and LB1's plates wait 1-3 days for a merge.
+     - The re-check found two ways past the cap: builders working locally before 'E8 done' counted as waiting, and LIB-5's Do 1 needed a build and new lint code. Both are closed above.
+     - HANDOVER 5.12: "The real limits are the CI queue and the merge order, not the number of builders."
+     - Authority: the owner's 10-01 ~16:50 delegation (HANDOVER 4.1: "i authorise u to do #3 And other decision that will make the app better without me"); his 10-01 ~16:40 ask to go faster on the library with the same quality; his 10-17 "if u can make it faster thats good" (owner chat, not yet in HANDOVER); and AGENTS.md's ULTIMATE RULE, "add workers only for independent work that review and CI capacity can absorb". cards.md says to preserve explicit lane restrictions, so this is recorded as an amendment, not a clarification.
+     - Capacity: about 9 sessions at the peak, which is plan 7's stated peak ("about 9 agents"). CI after the train: about 14-17 runs on 10-18 [est] at 12-27 concurrent jobs. Review: one fresh Opus reviewer each for LIB-4c and LIB-5.
+   - **Why nothing is loosened:** no check, test, review, gate or merge order changes. At most 4 LIB builders work at once, which is what the cap bounds (Opus throughput, pushes and review hand-offs). Do 2 still posts LIB-5's chunk sizes and dry-run hits before any shared module is built, and an over-budget chunk or a ban that hits approved copy still stops the card.
+
+3. **LIB-5's slot (D-LIB5-ORDER).**
+   - **Decision:**
+     - LIB-5 keeps plan slot 4: it merges after LIB-4c (3c) and before LIB-6 #181, LIB-7 #193, LIB-8 #109 and LIB-9.
+     - Section 2 item 6 now reads: "LIB-5, then #181 (LIB-6) and later, #109 (LIB-8), then LIB-9."
+     - LIB-5 starts now under item 2, with Do 1 first.
+     - The back-pain box text and its word cap wait for the owner's answer to his decision 6 (item 12). LIB-5's Do 4 builds a fail-closed placeholder, and the answer is recorded before LIB-5's Do 9, which builds the box. Until then no rule allows a box over 30 words, and every placement of the box stays inside the reach of golden B's `lintShared` and C7.
+   - **Why:**
+     - Plan 7 row 4 (:761) sets the order. Section 2 item 6 left LIB-5 out, which was an omission, not a ruling. LIB-9 depends on LIB-2..LIB-8 (:765), and AGENTS.md forbids out-of-order merges.
+     - The box: four existing limits say 30 or fewer (copy-lint.mjs:50 `RED_FLAG_BOX_MAX_WORDS`, "owner 2026-09-30"; c7.ts:38 `redFlagBoxWords`; plan 8 owner decision 6; plan 4.2 "about 29 words each"). R-W0-1 (verify/w0.md) sets 50 for this box. The box is still `status: draft`, and the owner has not seen it. The conflict is with his own decision, so only he can settle it.
+     - The placeholder lets LIB-5 build everything else while he decides, so his answer is not on the critical path.
+   - **Why nothing is loosened:** it restores the approved order. No 30-word limit is raised, or avoided by where the box is placed, before he answers. The placeholder throws for any row flagged 'back', so no such row can generate before the box exists.
+
+4. **LB1 build-ahead before the entry condition (D-LIB4-ENTRY-2; amends D-LIB4-ENTRY).**
+   - **Decision:**
+     - D-LIB4-ENTRY's "Before LIB-9 pushes" now reads "Before LIB-9 pushes a head on which any of these is true":
+       - an LB1 row is at stage approved-plate or shipped;
+       - an LB1 row is in `tools/plates/library/batches/`;
+       - an LB1 entry is in `tests/howto/golden/library/`.
+     - The build-ahead slice LIB-9a may push to `claude/lib-9-lb1` (after "E8 done", item 1) with LB1 rows at stage drawing or review, kept in `tools/plates/library/lb1/rows.json`. It ships no id.
+     - Its test A9 turns red if any of the three conditions appears. A9's mutations (one row set to shipped; rows.json copied into batches/) are checked by the supervisor at the LIB-9a slice review, not at LIB-9 READY.
+     - Every other D-LIB4-ENTRY condition is unchanged.
+     - Posted on `claude/sup-lib4-cards` before LIB-9a's first push.
+   - **Why:**
+     - D-LIB4-ENTRY's own reason is plan 5.4's entry condition (:596, "before K goes above 1"), moved before LB1 because LB1 needs K = 5. It protects CI stability at K > 1. LIB-9a cannot raise K: with 0 shipped library ids, K stays 1.
+     - The plan schedules LB1 drawing now: plan 9, "LB1 drawing from LIB-2's first push" (LIB-2 merged in train 19); plan 6.1:636, "LB1's D plates need only the 8, so they can start first".
+     - The sister rulings word the same gate as shipping: D-LIB4-A9, "before LIB-9 pushes its first shipped row"; 11.1 item 14, "before LIB-9 ships an id".
+     - cards.md: a dependency is clarified against the plan and never silently waived. This narrows a ruling's literal scope, so it is recorded as an amendment.
+   - **Why nothing is loosened:** every D-LIB4-ENTRY condition (GATE-SPLIT; LIB-2b, LIB-4a, LIB-4b and LIB-4c merged; C14; C13's 5 identical K ≥ 2 runs; HT-3's 5 reruns) still holds before any LB1 id is approved-plate, pinned, in batches/ or shipped. A committed test, with its mutations checked early, enforces the stage ceiling, so no LB1 id can raise K sooner.
+
+5. **LIB-4c's inputs (D-LIB4c-1; the draft's (c) is dropped).**
+   - **Decision:**
+     - **(a) Scratch inputs.**
+       - D-LIB4-FIXTURE-3 (11.1 item 3) and D-LIB4b-F5 (item 17) extend to LIB-4c's scratch ids on `claude/lib-4c-scratch`, with the same limits: marked scratch, never pinned on main, never shipped, and the "card removed → QaRefused naming the id and PQ-H6" mutation.
+       - The set is 6 targets outside LB1 and LB2 (item 6) with no How-to on main: two per usable pool source (`lat_pulldown`, `seated_cable_row`, `machine_chest_press`; `leg_press` is unusable per fixture.mjs's COPY_EDITS note), each with its own pair key. If fixture.mjs cannot build two per source, at least 4. `planK` must give K ≥ 2.
+       - COPY_EDITS (11.1 item 19) applies with its limits. Its refusal strings name an id, so LIB-4c's evidence names its own target ids.
+       - The supervisor pushes the scratch refs (11.1 item 16 (f)), and the builder dispatches.
+     - **(b) L0-lib (`tools/plates/library/MANIFEST.json`).**
+       - Scope: library rows that have a plate entry in a batch golden file. The count is exact: 0 on main.
+       - For each such row it lists, with each file's sha256 and the approving entry's hash: `closureOf(spec)`, `closureOf(How-to source)`, and every input of that row's pinned pages. The page inputs are:
+         - the esbuild metafile import closure of the page builders and renderer: `build-page.mjs`, `plates-page.mjs`, LIB-6's `build-layers-page.mjs` and `render/**` (`closeups.mjs` included), and the hand loader `hands/pairs.mjs` with the files its `inputsFor(key)` lists;
+         - the `MANIFEST.json` of every locked tree a builder imports from or reads from (`tools/plates/vendor/`, `tools/plates/layers/`);
+         - each non-locked file a builder reads at runtime, by explicit path: the batch page JSON, the batch's `layersConfig`, its options module, and the files a layers spec's `files` map copies. They come from the builders' static input lists or from an fs-read trace of one real page build, and the check-in says which.
+       - Checked: a metafile lists imports only, and `closureOf` is for data sources only (inputs-closure.mjs:4 on `ccf0250`: "page-builder code keeps its static input lists"). The builders read files at runtime: build-page.mjs:63 reads `VENDORED_PAGE` (`vendor/artifact/build-page.mjs`); plates-page.mjs:20 on `ccf0250` reads the batch page JSON; build-layers-page.mjs:110-115 on #181 @ `9b8f76e` copies, patches and reads layers-tree files in a mirror.
+       - Entries change only in the commit that adds or replaces that pin. It is not a LOCKED tree in `inputs-closure.mjs`.
+       - Mutations, each red in C0: one byte in a pinned row's spec; one byte in a pinned row's page builder; one byte in the batch page JSON; a runtime-read file left out of the set; a missing or extra entry.
+       - The supervisor extends the agent guard, add-only, before LIB-4c merges: a non-merge commit touching MANIFEST.json needs "[golden update]" (plan 3.5). This replaces 11.1 item 7's "the [golden update] guard does not exist", which was written about layers pages.
+     - **(c) Dropped.** `tools/plates/generate.mjs` leaves LIB-4c's write_scope. For C4 class 3, `ci/affected.mjs` builds the per-output inputs itself from the exported `loadPlugins()` and each plugin's `outputs()` (`o.inputs`, falling back to `mod.inputs()`). If C4 cannot prove that, class 3 stays off and those paths select all ids, as the card allows. C10b reads: "`generate.mjs` byte-unchanged; `generate --check` green".
+     - **(d) Affected classes.** Class 1 adds the research card named by an id's How-to `research.card`, and its quotes file. Every other `docs/research/howto/**` path goes to class 4 (all ids), ahead of class 5's `docs/**`.
+   - **Why:**
+     - (a) Without scratch research cards the generator's node-half gate refuses the scratch rows, so C11-C14 have no subject. 11.1 item 3 named only LIB-2b's E1 and LIB-4b's B5.
+     - (b) MANIFEST.json is missing on main and on every open head. Plan 3.5 pins "every source (specs, templates, composers, hands, renderer, howto specs)", and plan 3.6's L0-lib adds the page builders. A spec-and-How-to set would leave out the files that build a row's pinned pages, and an import-only set would leave out the files the builders read at runtime; C0's builder mutation edits build-page.mjs itself, so it could not catch that gap. Scoping to pinned rows keeps #181, #193, #191, #109 and LIB-9a green as they land.
+     - (c) `coreFiles()` (`tools/plates/lib/inputs.mjs:15`) puts `generate.mjs` into every generated file's `inputsSha256` (:31). Any edit rewrites every generated header (the last core edit, `384f576d`, touched 59 files), collides with LIB-2b, LIB-5 and the passed heads #181, #193, #191 and #109, and voids their evidence. The file's own header says: "The core is frozen after HT-2 (plan 2.2): a change to it is its own PR."
+     - (d) `candidateOf` reads the card file named by `research.card` (candidate.mjs:44-48), and C15 reads `reviews.json`. Under the old rule `docs/**` selects 0 ids, so those inputs would be missed.
+   - **Why nothing is loosened:** (a) keeps every limit of the rulings it extends. (b) pins every file that builds an approved row's pages, imported or read, to its approving entry, which is plan 3.5/3.6's L0-lib, and its mutations bite. (c) changes no file the generator hashes; class 3 is either proven or falls back to all ids. (d) only moves paths to stricter classes.
+
+6. **Scratch targets (D-LIB-SCRATCHIDS).**
+   - **Decision:**
+     - From now on, scratch fixtures never target an LB1 or LB2 id. LIB-4c chooses its targets outside LB1 and LB2.
+     - LIB-4b's B5 keeps `lib_underhand_lat_pulldown` and `lib_chest_supported_row` (fixture.mjs:27-28), so its critical-path evidence is not churned.
+     - The push that first moves LB1 rows into batches/ (LIB-9, after D-LIB4-ENTRY) swaps those two targets for non-LB1 ids with the same sources, keys and COPY_EDITS, re-runs the fixture test and lists the changed lines in its PR.
+   - **Why:** two B5 targets are LB1 ids (plan 6.2). Once LB1's real rows are in batches/, the fixture's `put()` overwrites the real spec, How-to and card in its scratch copy, and the registry throws on the duplicate id. Until then the clash cannot happen, because LIB-9a keeps its rows out of batches/ (item 4).
+   - **Why nothing is loosened:** the same sources and checks run; only target names change, at the point the clash would start. The duplicate-id throw makes any earlier clash loud.
+
+7. **Engine per plate (D-LIB9-ENGINE; settles 11.1 item 10 (a)).**
+   - **Decision:**
+     - A plate's QA, crops and layers page use the engine that drew it. The engine is chosen per row from the engine its spec imports (or as recorded in its plate entry), never by "library or the 8".
+     - A spec that imports `tools/plates/library/engine.mjs` (which re-exports `tools/plates/vendor/engine/*`, golden A's engine) is drawn, checked and cropped by the vendor engine everywhere: plates page, QA, the app `ht-` chunk and its layers-page crops. New LB1 specs import it and may use `poly` and flat palm.
+     - A spec that imports golden B's layers engine (`tools/plates/layers/engine/**`, MANIFEST-locked) stays on it: the 8, LIB-2b's fixture, LIB-4b's B5 clones and LIB-4c's scratch clones.
+     - LIB-6's `crop.mjs` and `zbox*.mjs` take the engine as a parameter whose default is the layers engine.
+     - LIB-6-PM implements this before LIB-6's delta review. Evidence:
+       - the existing 8-closeup tests are unedited and green;
+       - LIB-2b's committed fixture page `cable-lateral-raise.layers.html` and the B5 scratch pages stay byte-identical;
+       - a library fixture crop with a `poly` part and a flat palm renders through the vendor engine;
+       - mutations: that crop through the layers engine → red; a layers-engine spec cropped through the vendor engine → red.
+     - Posted on #181, #232 and #234 before LIB-6-PM starts.
+   - **Why:**
+     - Checked on main: the vendor `PRIMITIVES` (equipment.mjs:316) include `poly` and the layers `PRIMITIVES` (:304) do not; the layers `renderPlate` throws "unknown equipment type" (layers plate.mjs:45); only the vendor body.mjs has flat palm. LIB-6's crop.mjs:13-14 imports the layers engine. Pilot A uses `poly` (eq/rope.mjs:60-64, safetyArms.mjs:24, barbell_overhead_press.mjs:189).
+     - HT4-A5 cuts crops from the approved plate, so they must come from the engine that drew it. Every fixture so far clones a layers spec (lib2b/fixture.mjs:2-4, :29; LIB-4b's fixture.mjs:78), so choosing by row kind would break HT4-A5 for those rows and could change pages already pinned. Whether the two engines render those clones byte-identically is not verified, so no fixture changes engine.
+   - **Why nothing is loosened:** golden B's locked engine and the 8's bytes are unchanged, because the default parameter keeps them on the layers engine. Every crop gains a check that it comes from its own plate's engine. No exemption is added, and no pinned page changes.
+
+8. **Authoring-time QA (D-LIB9-AUTHORQA).**
+   - **Decision:**
+     - `candidateOf(id, { all, authoring: true })` in `tools/plates/library/candidate.mjs`:
+       - returns the same candidate with `exemptions: []` and reads no pin;
+       - resolves the How-to source from the injected `all`, through an optional `all` parameter on registry `sourceOf` whose default is `rows(root)`;
+       - throws when the row's stage is approved-plate or shipped.
+     - Every default call behaves exactly as before, and the default-path tests are unedited.
+     - Owner: LIB-9a, after LIB-2b is on main. The generator, LIB-4b's PQH rows and LIB-4c never pass the option.
+     - Posted before LIB-9a's Do 4.
+   - **Why:** candidate.mjs:85 calls `pinOf(row, 'plate')`, which throws "no batch golden file" for an unpinned row (batch-golden.mjs:28), and `sourceOf` (registry.mjs:64-67) sees only batches/. So plan 3.2's authoring-time QA cannot run through the one candidate builder (11.1 item 2) for rows still in review.
+   - **Why nothing is loosened:** zero exemptions is stricter than any pinned path, because every raised flag blocks `ok` (qa/index.mjs:56-61). The option is refused at approved-plate and shipped, so it can never stand in for the generator's gate. The default path and its tests are unedited.
+
+9. **Research machine fields (D-LIB9-CARDFIELDS).**
+   - **Decision:**
+     - The three fields LIB-3 reads go at the top level of `docs/research/howto/cards/<id>.json`, in exactly the shape that candidate.mjs `researchOf` (:44-48), qa/node.mjs H6 (:153-176) and F7 (:293) read:
+       - `plateFacts: [{kind: 'angle'|'contact'|'height', joint|landmark, pose?, deg|m, measure?, claim}]`;
+       - `tempo`: the spec's phase array `[{phase, s, move?}]`, compared by `JSON.stringify`;
+       - `topFault`: the card's mistake key.
+     - Every value names the claim whose verbatim quote states it. Nothing else in a card changes.
+     - Tempo: every numeric `s` maps to a verified research value (the card's verified `plate.tempo` up, down and pause seconds) or to a named constant ruled in LIB-9a's design note (for example Rest). The phase-name mapping is proposed in that note and ruled there. LIB-9a's A11 checks this; mutation: Rest changed → red.
+     - Verification: a fresh Opus content verifier, with one planted wrong number, checks the 14 LB1 cards' fields right after LIB-9a's Do 6, before Do 7's QA and the critic. Every later batch does the same, after the fields are written and before QA. The 8's cards (item 13) get the same check before their exemptions are removed.
+     - LIB-5 documents the fields in CARD-V2.md and writes them for the 8 (item 13). The supervisor merges the field commits back into `claude/libht-research`.
+     - Posted before LIB-9a's Do 6, and in LIB-5's card.
+   - **Why:** on `9dbc7e0` none of the 109 research cards has `plateFacts`, and `plate.tempo` is `{up, down, pause, claim}` (for example `chin_up`), so it cannot deep-equal a spec's phase array. Without these fields every LB1 row fails PQ-H6 (H6:no-card) and F7 ("no card top fault"). LIB-5 and LIB-9a must write one shape. The builder who writes the fields also draws the plates H6 checks against them, so the independent check has to come before QA, the critic and approvals; a later correction would redraw approved plates.
+   - **Why nothing is loosened:** H6's ±2° and ±1 cm and its exact tempo equality are unchanged. The values come from verified research claims and are re-verified with a planted-error check before any QA uses them. None is taken from the spec under test.
+
+10. **Library hand blocks (D-LIB9-HANDPAGE; settles 11.1 item 10 (b); post before the LIB-7 fixer starts).**
+    - **Decision:**
+      - LIB-7 implements main's loader contract exactly (`tools/plates/gen/handpairs.mjs:3-4`):
+        - `HAND_OF_ID`: {lib id: key};
+        - `inputsFor(key)`;
+        - `pairPanel(key)`, returning an exercise-neutral `<div class="zx"` panel whose ids are keyed by pair key, with no chromeId and no exercise name.
+      - A key is one drawn pair (variant × orientation × fault set), as LIB-7's design defines it. `renderPair(id)` may stay for the critic tooling.
+      - The LIB-7 fixer, on LIB-6's branch, makes the layers page draw a library card's hand block from `pairPanel(HAND_OF_ID[id])`. It also carries 11.1 item 14's shared-key proof (page hand block === handpair panel; two ids on one key, each in a fresh context) and the per-key handpair budget (items 6 and 9).
+      - It proposes keys for the 6 LB1 hand zooms that have none, for a supervisor ruling.
+    - **Why:** on main, `handpairs.mjs` reads `pairs.HAND_OF_ID[id]` for every shipped id, the 8 included (:29-30), plus `inputsFor(key)` and `pairPanel(key)` (:45-51). LIB-7 @ `55e91e9` exports `INDEX`, `renderPair(id)` and `inputsFor(id)` (pairs.mjs:64, :229, :278), and no `HAND_OF_ID` or `pairPanel`. `generate --check` on main + `55e91e9` throws a TypeError at handpairs.mjs:30. So LIB-7, and LIB-12 that contains it, would turn a train red, and LB1 needs LIB-7.
+    - **Why nothing is loosened:** the merged consumer's contract and the 8's `hand-` chunks are unchanged. Panel equality, the shared-key proof and the per-key budget are added checks. The 12 LIB-7 approvals carry over only if their pins stay byte-identical.
+
+11. **Plan wording before LIB-4c READY (D-LIB4-DOCS-2; extends D-LIB4-DOCS).**
+    - **Decision:**
+      - Before LIB-4c is READY, the supervisor amends, on `claude/howto-options` (docs only, about 20 min), plan 5.4 :571-577 and :584-601, plan 3.6, and section 7 row 3: `howto-verdict` → the `gate-verdict` family; "ready-for-review heads" → the ref-and-event mode (D-LIB4-MODE); `android-gate`'s needs (D-LIB4-VERDICT); and the K wording (D-LIB4-SHARD). It posts the amended plan sha on LIB-4c's PR for its reviewer.
+      - The LIB-4c card keeps its plan refs at `4a9fd86`. Its own clause already says lib4-cards section 1 and its rulings win where the plan differs.
+      - SPEED.md :25 and :62 and GATE-SPLIT design 3.5 go in the first supervisor docs PR after the GATE-SPLIT train (main is frozen and is never pushed to directly).
+      - Until then each card states that lib4-cards section 1 wins wherever a doc differs.
+    - **Why:** D-LIB4-DOCS says "Supervisor, before the cards are `ready`". Plan 5.4 still says "ready-for-review heads", "`android-gate` keeps its current `needs`" and "`howto-verdict`" (:591-595 on `4a9fd86`, checked). Doing it before the start would delay the critical-path start and add load tonight, while the card's clause already covers the gap.
+    - **Why nothing is loosened:** docs only. It makes the plan match rulings already in force, before the review that relies on it.
+
+12. **Back box: the owner's question and LIB-5's merge routes (D-LIB5-BOX).**
+    - **Decision:**
+      - The supervisor asks the owner tonight: it is a choice only he can make. First, one fresh Opus critic reads option 2 against the NHS page (`nhs-back`) and main's checks. Any fix it makes is re-checked with main's copy-lint and C7 rules before the message goes.
+      - The message gives both options in full. Both keep the name "Back pain" and the doctor line "No better in a few weeks? See a doctor."
+        - Option 1, 50 words (R-W0-1), all six NHS emergency triggers: "Pain, numbness, tingling or weakness in both legs? Numb genitals or anus? Bladder, bowel or sexual changes? Chest pain? Serious accident? Get emergency help now. Sudden severe or fast-worsening pain? Hot, cold, shivery or unwell? See a doctor today." It is over his 30-word limit, so it needs its own card, written under his recorded answer, that adds a named limit for this box only (red at 51). LIB-5 never makes that change.
+        - Option 2, 30 words, his limit kept: "Both legs painful, weak or numb? Numb genitals? Bladder or bowel changes? Get emergency help now. Fever? Doctor today." It passes main's checks unchanged.
+        - The message says plainly what option 2 drops: three of the six emergency triggers (sexual changes, chest pain, after a serious accident), "anus", and the same-day trigger "severe pain that starts suddenly, or it's getting worse quickly". It also merges tingling into "numb" and narrows "hot, cold, shivery or generally unwell" to "Fever?".
+      - The answer is recorded in three places before LIB-5's Do 9: a supervisor comment on LIB-5's PR; a `claude/libht-research` head whose `shared/back-pain-box.json` holds the answered text with a status other than 'draft'; and R-W0-1, updated in place in verify/w0.md.
+      - Until Do 9, LIB-5's Do 4 placeholder holds, checked by S4-P. S4-P's "no string from the box fields under src/**" means each whole field value (`box.name.text`, `box.now.text` and `box.doctor.text` of the copied `shared/back-pain-box.json`), matched exactly. The test also asserts that each value is absent from src/** at main, so it is known to bite.
+      - LIB-5 merges by one of two routes:
+        - (a) The answer is recorded in time and passes every existing check unedited: Do 9 is built in LIB-5's PR, and S4 and S5 are green.
+        - (b) By LIB-5's merge slot no answer is recorded, or the answer needs the cap card and that card has not merged: LIB-5 merges with the placeholder (S4-P green), so LIB-6, LIB-7 and LIB-8 are not held up. Do 9 then lands in its own PR from `claude/lib-5-back-box`, based on main, with its own fresh Opus review.
+      - LIB-9a's merge_prerequisites gain: "LIB-5's back box (Do 9) on main before LIB-9 merges (LR-28)."
+      - W2B's back-box `appliesTo` edit waits for the answer (item 14).
+    - **Why:**
+      - Checked: main's copy-lint `words()` gives 50 for option 1 and 30 for option 2, against `RED_FLAG_BOX_MAX_WORDS` 30. Option 2 has 'today' and 'doctor', its longest sentence is 6 words, and it has no BANNED, contact, source or safety-line hit. S4-P at `49a2853`: all three field values are absent from src/**. The only near matches are lowercase "back pain" (ht-hanging-leg-raise.ts:429) and "No better after a few weeks? See a doctor." (archetypes.ts:35, :48), which an exact whole-value match does not hit.
+      - Asking now keeps the answer off the critical path. LIB-5 builds the rest meanwhile, and route (b) keeps LIB-6..8 moving if he answers late or picks 50.
+      - LR-28: sheets that link `redFlag: back` cannot ship before the back-pain box. On `9dbc7e0`, 7 of the 14 LB1 cards link it (hanging_knee_raise, inverted_row, straight_arm_pulldown, chest_supported_row, resistance_band_row, shoulder_press, horizontal_leg_press). Under route (b), "LIB-2..LIB-8 merged" alone would let LIB-9 merge while the box is still missing.
+      - No critic had read option 2, and it drops emergency triggers, so he must see that before he chooses.
+    - **Why nothing is loosened:** no limit changes before he answers, and a 50-word cap would be its own card under his recorded answer. The placeholder throws, so no back-flagged row can generate, and S4-P is proven to bite on main. LIB-9 gains a prerequisite, and none is dropped.
+
+13. **The 8's machine cards (D-LIB5-CARDS8).**
+    - **Decision:**
+      - LIB-5 adds the 8's machine research cards: `plateFacts`, `tempo` and `topFault` in the D-LIB9-CARDFIELDS shape, for the 8 ids in `qa/exemptions.json`. They join LIB-5's write_scope and acceptance.
+      - Inputs: verified research for the 8, which does not exist yet. The supervisor first runs a research task for the 8 on `claude/libht-research` (claude-opus-5-5; the CARD-V2 shape with verbatim quotes; verified like every card). LIB-5 copies those cards byte for byte from the head the supervisor names and adds only the three keys. Every value names the claim whose verbatim quote states it, and none is taken from the 8's specs or plates.
+      - Card path: `docs/research/howto/cards/<card id>.json` and `quotes/<card id>.json`, the D-LIB9-CARDFIELDS path, unless the design note (Do 1 d) gives a reason against it. The supervisor merges the field commits back into research.
+      - Extra write scope, nothing else:
+        - the 8's card and quote files at that path: byte copies plus the three keys (a carve-out from LIB-5's reserved `docs/research/howto/cards/**`, for these 8 only).
+        - `tools/plates/library/qa/approved.mjs`: each of the 8's candidates gets its card's three keys as `research` and its plate's mistake key as `mistakeFault`, as candidate.mjs:84 does for library rows. Today :20 sets `research: null` and `mistakeFault: null`.
+        - `tools/plates/library/qa/exemptions.json`: delete the 8's `H6:no-card` (7 ids) and `F7` (8 ids) entries, each in the commit that adds that id's card. `lib_dumbbell_lateral_raise` keeps `H6:not-engine` (it has no spec), and every other entry stays.
+        - `tests/howto/library-qa.test.ts`: the clone test (:64-72) spreads the pull-up's candidate into `lib_chin_up`, so it would inherit the card. Its clone sets `research: null` (a new plate has no card), and every assertion stays. This is expected from the code, not run.
+        - COACHING-DECISIONS.md: append D-LIB5-CARDS8 (exemptions.json changes only with a decision).
+      - Proof, with these existing tests unedited: "every node problem of the 8 is one of its named exemptions" (:50) shows H6 passes with no exemption; "none unused" (:53) is red for any exemption left after its card lands; "each of the 8 is ok" (:60) shows F7 no longer blocks. Mutations, each red: one card's `plateFacts` deleted (H6:no-card); its `topFault` deleted (F7 blocks); one fact +3° (H6); one tempo second changed (H6.tempo).
+      - Before any exemption goes, a fresh blind Opus content verifier with one planted wrong number checks the 8 cards' fields (item 9's rule).
+      - If one of the 8's approved plates fails H6 or F7 against its verified card: stop and report. Never change the plate (locked), a fact, a tolerance or a test. That id keeps its exemption, and its reason changes only by a supervisor ruling with a COACHING-DECISIONS entry.
+      - If the 8's verified research is not on a named head by LIB-5's merge slot, this part lands after LIB-5 in its own PR from `claude/lib-5-cards-8`, with its own fresh Opus review. The exemptions keep the 8's QA green until then, so no other card waits for it.
+    - **Why:**
+      - LIB-5 is the shared-research card: plan 7 row 4 (:761) gives it "the 19 shared cards, C15 stamps for the 8", and `qa/exemptions.json` on main gives the 8's H6:no-card and F7 exemptions the reason "LIB-5 adds their cards". The card now does what the exemption text says.
+      - Checked: `9dbc7e0` has no card for any of the 8 (its 109 cards exclude them), and the verified cards the 8's How-to sources cite (for example `grip/research/pull_up.json`, layers/exercises/pull_up.howto.mjs:2) are not on main or on `9dbc7e0`. So the quotes need research first.
+      - `qa/approved.mjs` builds the 8's candidates with no research, so cards alone would change nothing. The wiring line is what lets H6 and F7 run on the 8.
+    - **Why nothing is loosened:** only exemptions are removed. H6's ±2°, ±1 cm and exact tempo and F7's equality are unchanged. The values come from verified quotes and are re-verified with a planted error before any exemption goes. The 8's bytes are unchanged (S10).
+
+14. **Research wave 2's W2B (D-LIB-W2B).**
+    - **Decision:**
+      - W2B runs on claude-opus-5-5. It may run on claude-sonnet-5 only if the supervisor's prompt gives the exact replacement text, the exact claim list and the exact card list, and tells it to stop on any mismatch.
+      - The 10 % re-fetch comparison (claims chosen by the head hash) stays with the supervisor. W2B never runs it on its own work.
+      - W2B's back-box `appliesTo` edit waits until the owner answers decision 6 (item 12). It then lands in the same research head as the answered box text.
+    - **Why:**
+      - The draft kept W2B on claude-sonnet-5 while it derived claim lists from rules and rewrote user-facing copy: the underhand_lat_pulldown `feel.rows[0]` line, and the back box's `appliesTo`, which lists 3 cards while 35 cards on `9dbc7e0` link `redFlag: back`. That is judgement work, and AGENTS.md gives Sonnet only steps that are spelled out.
+      - Plan 4.3 (:448): "the supervisor re-fetches 10 % of claims (chosen by the head hash)". A check run by the agent whose work it checks is not independent.
+      - LIB-5's S1 pins `shared/back-pain-box.json`, and Do 9 re-copies it. One edit together with the answer means one re-copy and one re-pin.
+    - **Why nothing is loosened:** W2B gets a stronger model, or exact inputs with a stop. The re-fetch keeps its 10 % and its independence, and S1 still pins every byte.
