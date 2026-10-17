@@ -1,0 +1,353 @@
+{
+  "id": "lat_pulldown",
+  "checked": null,
+  "sources": [
+    {
+      "id": "ace-lat-pulldown",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "nsca-low-row",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "baechle-earle",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "sperandei2009",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "kolber2013",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "signorile2002",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "padovan2024",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "lusk2010",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "acsm2009",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "snyder2009",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "andersen2014",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "odriscoll1992",
+      "access": null,
+      "fixes": null
+    },
+    {
+      "id": "buonsenso2025",
+      "access": null,
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-lat-pulldown",
+      "quote": "Sit in the machine, anchoring your lower extremity by adjusting the thigh pad to fit firmly against the top of your thighs.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c1",
+      "source": "nsca-low-row",
+      "quote": "Sit facing the machine stack with the legs under the thigh pads and the feet flat on the floor.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "ace-lat-pulldown",
+      "quote": "Lean back slightly (no more than a 30 degree angle), using your legs to support your body (low back).",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "nsca-low-row",
+      "quote": "Slightly lean the torso backward to create a path for the bar to pass by the face.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-lat-pulldown",
+      "quote": "Avoid any additional backwards lean during the pull movement.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "nsca-low-row",
+      "quote": "Keep the feet, legs, and torso in the same position.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "nsca-low-row",
+      "quote": "Grasp the bar with a closed, pronated grip wider than shoulder-width.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "baechle-earle",
+      "quote": "Perform all grips with your thumbs around the bar.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-lat-pulldown",
+      "quote": "While your arms are extended overhead, depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-lat-pulldown",
+      "quote": "Slowly exhale and initiate the downward pull by first depressing (lower) your scapulae",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "ace-lat-pulldown",
+      "quote": "pulling the bar downward towards the top or mid-section of your chest. Attempt to pull in a motion that drives your elbows directly down towards the floor, bringing your elbows towards the sides of your torso.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "nsca-low-row",
+      "quote": "Touch the bar to the clavicles or upper chest.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "ace-lat-pulldown",
+      "quote": "Continue pulling until the bar nears or touches your chest, or more importantly, you observe your elbows no longer moving downward, but now beginning to move backwards.  Avoid any further pulling as this places additiomnal stresses into the shoulder joint.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "ace-lat-pulldown",
+      "quote": "Pause momentarily, then slowly return to your starting position by allowing the bar to move upwards until your elbows are fully extended",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "nsca-low-row",
+      "quote": "Not fully extending the elbows during the upward movement phase",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "nsca-low-row",
+      "quote": "Pulling the bar down behind the head to the back of the neck.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "sperandei2009",
+      "quote": "we concluded that FNL is the better choice, whereas BNL is not a good lat pull-down technique and should be avoided.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "kolber2013",
+      "quote": "A significant association existed between performance of exercises that require the \"high-five\" position (behind-the-neck latissimus pull-downs and military press) and clinical characteristics of AI.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "kolber2013",
+      "quote": "Future intervention-based trials are needed to investigate a causative effect of exercises.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "signorile2002",
+      "quote": "performance of the lat pull-down exercise using the WGA hand position produces greater muscle activity in the LD than any other hand position during both the concentric or eccentric phases of the movement.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "padovan2024",
+      "quote": "The front-LPD appears to provide overall greater excitation in the prime movers.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "nsca-low-row",
+      "quote": "Contracting the abdominal muscles and flexing the torso to assist in the downward movement phase",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "nsca-low-row",
+      "quote": "Using an open grip on the bar",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "ace-lat-pulldown",
+      "quote": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid any arching of your low back throughout the exercise.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "ace-lat-pulldown",
+      "quote": "Maintain your head aligned with your spine.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "ace-lat-pulldown",
+      "quote": "This exercise targets the major back muscles effectively, but should be performed without compromise to the shoulder or low back. Follow the instructions provided to reduce the stress placed upon these two areas.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "lusk2010",
+      "quote": "Participants maintained a cadence of 2-second concentric and 2-second eccentric phases.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "acsm2009",
+      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "acsm2009",
+      "quote": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "ace-lat-pulldown",
+      "quote": "Pause momentarily, then slowly return to your starting position",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c17",
+      "source": "nsca-low-row",
+      "quote": "Primary Muscles Trained Latissimus dorsi, teres major, rhomboid, posterior deltoid",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c18",
+      "source": "snyder2009",
+      "quote": "novice strength trainers often rely on the elbow flexors to complete the movement rather than fully utilizing the relevant back muscles such as the latissimus dorsi (LD) and teres major (TM).",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c18",
+      "source": "snyder2009",
+      "quote": "A significant increase was seen in Nrms EMG in the LD (p = 0.005) from the average of preinstruction NrmsEMG to the average of postinstruction NrmsEMG. No significant differences were observed between pre- and postinstruction muscle activity in the BB or TM.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c19",
+      "source": "lusk2010",
+      "quote": "a pronated grip elicited greater LD activity than a supinated grip (p < 0.05), but had no influence of grip type on the MT and BB muscles.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "andersen2014",
+      "quote": "athletes and others engaged in resistance training can generally expect similar muscle activation which in turn should result in similar hypertrophy gains with a grip width that is 1-2 times the biacromial distance.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "andersen2014",
+      "quote": "The 6RM strengths with narrow (80.3 ± 7.2 kg) and medium grip (80 ± 7.1 kg) were higher than wide grip (77.3 ± 6.3 kg; p = 0.02).",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "quote": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "quote": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c22",
+      "source": "nsca-low-row",
+      "quote": "After the set is completed, stand up and return the weight to its resting position.",
+      "status": null,
+      "closest": null
+    },
+    {
+      "claim": "c23",
+      "source": "buonsenso2025",
+      "quote": "showed no significant difference in the NrmsEMG muscle activation across the different lat pulldown exercise variations (all p > 0.05). A significant difference was found in the posterior deltoid where the wide-pronated grip with a 30° trunk inclination showed greater EMG activation compared to the wide pronated grip",
+      "status": null,
+      "closest": null
+    }
+  ]
+}
