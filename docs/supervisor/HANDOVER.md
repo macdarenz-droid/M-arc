@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-17 ~05:35 UTC · main `5fb4068` (train 20) · 8.0i · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-17 ~08:05 UTC · main `49a2853` (train 21) · 8.0j · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -807,6 +807,22 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0j 10-17 ~08:05 UTC (read first; supersedes 8.0i where they differ)
+
+- **Main `49a2853`** (train 21 #238, A3-7b; 8/8 green). The audit-3 lane is done, with its builders and reviewers archived. The APKs for trains 20 and 21 went to the owner. The OLD-ANDROID-1 device checks (D1, D2, D4 on the old phone; D3 on the new one) wait on him, and the Relay item OLD-ANDROID-1 stays in review until then.
+- **LIB-2b #234: READY @ 5af33b4.** Its reviewer is session_01Tjc3wnBra5qZdiZjLGozVK. Checklist slot 3a.1.
+- **LIB-4b #232** (session_01MQ2BT4MiRoP2F1FhxjMC4B) is building B5 on 3 scratch ids with 3 separate pair keys, under D-LIB4-FIXTURE-4 (lib4-cards.md 11.1 item 14 @ 6f2db31). The shared-key proof moved to LIB-7's card (D-LIB9-HANDPAGE), and D-LIB4-ENTRY gains it. B2 is running on both browsers.
+- **LIB-4a #233** (session_01PKX7vT1vRteUZ15QynVS3Z) is building. Scratch PR #237 is "[do not merge]".
+- **GATE-SPLIT #194:**
+  - FIXED @ b43710b, which merged main 21d8797 and gave the LIB-2 group its times.
+  - Main 49a2853 then added the OLD-ANDROID-1 block, which fails the guard check (E1, line 8974). The builder is merging 49a2853, guarding it and timing it.
+  - Then one delta review from 5c8a8fa covering both main merges.
+  - Then the supervisor merges the head and main into #219, pushes, and pushes the E6 and E9 scratch branches (specs in #194 comment 07:43), and the builder dispatches the 14-job, E8 and E9 runs.
+- **Gotchas (new):**
+  - **Every new top-level gate block on main breaks GATE-SPLIT's guard check** until it is guarded. GATE-SPLIT should merge before the next card that adds a block. After it merges, every new block needs its own `if (gate.runs('<task>'))` guard and a gate-times entry.
+  - **4x-CPU timing probes miss under local parallel load:** BUG-34 first frame, BUG-37 Settings settle, HT-3b A3. CI has not shown this. If it shows in CI or in an E8 pair, it becomes a GATE-FLAKE card, root-caused and never re-run to green.
+- **Watch lane:** #221 is still active (head 128a56d). There has been no reply on #221 or Watch-test issue #4.
 
 ### 8.0i 10-17 ~05:35 UTC (read first; supersedes 8.0h where they differ)
 
