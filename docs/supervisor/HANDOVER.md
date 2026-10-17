@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-17 ~08:05 UTC · main `49a2853` (train 21) · 8.0j · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-17 ~14:45 UTC · main `49a2853` (train 21) · 8.0k · by supervisor session `session_01SNCyDETVkqVxtLoQxn2Ue9` (took over from `session_01FTBsxoLN135B3HvJ7sT676` on another account). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -807,6 +807,31 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0k TAKEOVER 10-17 ~14:45 UTC (read first; supersedes 8.0j where they differ)
+
+- **New supervisor:** session_01SNCyDETVkqVxtLoQxn2Ue9, on the owner's other account (auto mode). Owner, 10-17 ~13:41: "Check get a grasp of 2 repos. Then continue as nxt supervisor. Then continue with tasks of last progress. Read agents.md claude.md". The old supervisor (session_01FTBsxoLN135B3HvJ7sT676) and all its workers are on an account this one cannot see or message: no M/ARC comment or card-branch push after 08:51 UTC. Treated per 10.2a: every replacement builder runs `git pull --no-rebase` before each push and never forces, and stops if its branch moves without its push.
+- **Routine:** `trig_01KNrnsDb34dztKs493YQ5vW` "M/ARC supervisor loop", cron `58 * * * *`, into this session (replaces `trig_016ECwLTU7XRLzsYVRrwLTGe`, which is on the old account). The other routines on this account (Zeroed, OF chain) belong to another project: never touch them.
+- **Watchers:** `subscribe_pr_activity` still fails on every PR. The PR watch is `monitor.sh` plus a branch-head poll (`heads.sh`, local copy in the scratchpad) under Monitor, re-armed every 30 min.
+- **Relay:** the "2nd Supervisor M/ARC" tools are not connected on this account. Relay backlog (apply when they appear): LOG line for this takeover; PROJECT_STATE supervisor = session_01SNCyDETVkqVxtLoQxn2Ue9; LIB-2b review (PASS, fixing), D-LIB2b-ORDER, LIB-4a/LIB-4b replacements; GATE-SPLIT delta review restarted.
+- **Sessions on this account:**
+
+| Session | Role | PR @ start head |
+|---|---|---|
+| session_01MYuGhfpFpmeReWs9q5F67t | GATE-SPLIT reviewer, delta `5c8a8fa..06ce286` and every later delta (incl. the solo E10 runs for LIB-2 and OLD-ANDROID-1 in both TZ) | #194 @ `06ce286` |
+| session_01MdJ6EY8riPvnkLfAbD7ftE | LIB-2b replacement builder: the 3 D-LIB2b-REVIEW-1 fixes | #234 @ `5af33b4` |
+| session_014viUzTy4Uyv6KSnQ6ASfEX | LIB-4a replacement builder (prototype the write-ids fix now, heavy evidence after LIB-2b's delta PASS) | #233 @ `4a2c12e` |
+| session_01QcCqLjrEVouQUdaFpQyTbq | LIB-4b replacement builder (B5 dry run, POSES (7), B7 now; final-head evidence after LIB-4a's final head) | #232 @ `96ef793` |
+
+- **#219 re-wired** by the supervisor: `82d896d` = `4cbac5a` + merge of #194 @ `06ce286` (clean). Diff vs `06ce286`: build-apk.yml +85/-1 and ci-watch.sh +4; the one removed line is android-gate's old `needs:`. Its 14-job push run is the early signal (`GATE_LEGS=6 HT10_LEGS=4 ci-watch.sh`). E6/E9 scratch branches (specs: #194 comment 6231336906) are pushed only after the delta PASS; then a GATE-SPLIT replacement builder (Opus) runs the 14-job, E6, E8 x5, E9 and E7 proofs. Main stays frozen from E8's start until the GATE-SPLIT train merges.
+- **Ruling D-LIB2b-ORDER** (lib4-cards.md 11.1 items 15-16, `claude/sup-lib4-cards` @ `0d65b98`; posted on #233, #234, #232):
+  - On any head with both LIB-2b and LIB-4a, `lib-4a.test` A1/A2 fails: "shipped, but its batch file has no pages" (write-ids.mjs:61 → the copy's render() → plates.mjs libraryOutputs → pagesOf; #232 source-gate job 117346820949).
+  - New order: #194 → #219 → **LIB-2b (slot 3a.0)** → LIB-4a → LIB-4b → LIB-4c. LIB-2b rides the GATE-SPLIT train behind #219 if its delta PASS is in, else the next train; never while E8 runs.
+  - LIB-4a owns the fix in write-ids.mjs; LIB-2b's E3 refusal stays. Item 16 settles LIB-4a's open points: E1 pin +1, its own gate-times entry, A3 attribution past the import crash, the duplicate D-A3-7b-3, one floor shape for pinned-to-8 tests, and scratch pushes by the supervisor.
+- **Corrections to 8.0j:** LIB-2b has a review PASS (6231942072, 1 Medium + 2 Low) and fix-before-merge ruling D-LIB2b-REVIEW-1 (6231953220), not "READY". LIB-4b's B2 never posted results (old container gone). The watch head is `cd0e0b1`, not `128a56d`.
+- **Watch lane:** still active on the other account (pushed `cd0e0b1`, signed watch 1.2.0, 13:39), no reply in about 20 h. Supervisor follow-up on #221 (6235137013) and Watch-test #4 (6235137537): corrected the javap-floor claim (it reads only `registerPlugin()` in MainActivity, so it skips WearEnginePlugin from capacitor.plugins.json), restated the daily-APK launch-safety question, asked for the verdict and the owner's approvals verbatim. Supervisor to-do, add-only `.github`, after #219 and before #221: javap every classpath in `capacitor.plugins.json`; an agent-guard Rule 3 case for `ccr-061c7350-tjvpo6`. #221's preconditions (a)-(d) are all still open; the PR body says "Not for merge yet".
+- **Gotcha (new):** a takeover can find the old account's watch lane still running while its supervisor is gone. Check both by branch pushes, not by session lists.
+- **Owner-only:** disable every M/ARC routine and archive every M/ARC session on the old account (10.2a); the OLD-ANDROID-1 device checks D1-D4 (8.0j).
 
 ### 8.0j 10-17 ~08:05 UTC (read first; supersedes 8.0i where they differ)
 
