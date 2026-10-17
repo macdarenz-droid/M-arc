@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-16 ~23:25 UTC · main `277bd6d5` (train 17 #230) · 8.0f · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-17 ~02:30 UTC · main `c14212af` (train 18) · 8.0g · by supervisor session `session_01FTBsxoLN135B3HvJ7sT676`. Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -807,6 +807,29 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0g 10-17 ~02:30 UTC (read first; supersedes 8.0f where they differ)
+
+- **Train 18 merged** (main `c14212af`): GATE-FLAKE-3 #224.
+- **Train 19 (this one):**
+  - LIB-2 #189 @ 54d37f2: delta PASS 02:17, 0/0/0/0;
+  - LIB-3 #180 @ 4540d82: PASS, frozen. Merged onto main + LIB-2 with no conflicts; typecheck, `generate --check` (60 files) and vitest (2,882 tests) all green locally;
+  - `claude/sup-lib4-cards` @ f6debb0;
+  - this handover.
+  After it merges, send the APK. The How-to wiring changed (loaders and hints), so the phone check is: the 8 How-to sheets open and look the same.
+- **LIB-4 split** (`docs/supervisor/verify/lib4-cards.md`, rulings in section 1):
+  - LIB-4a #233 (session_01PKX7vT1vRteUZ15QynVS3Z): existing checks at scale.
+  - LIB-4b #232 (session_01MQ2BT4MiRoP2F1FhxjMC4B): the per-id runner. Its design note is posted.
+  - LIB-4c: after LIB-4b's design note.
+  - Ruling **D-LIB4-FIXTURE-2**: LIB-2's layer generators read only the 8, and their inputs miss imported composers. The new card **LIB-2b** (#234, session_01Xj1c9kPKCXgUcAGadGStg8, section 10, checklist slot 3a.1) fixes both. Its design note is posted. LIB-4b's B5 and LIB-4c's C4/C11-C14 wait for it, and D-LIB4-ENTRY gains LIB-2b.
+  - Ruling **D-LIB4-PINS-2** decides which card fixes each test pinned to the 8.
+  - AGENTS.md now has a pointer line for LIB-4a's edits in other tasks' blocks (plan risk 22).
+- **Gotcha:** a builder session can push only to its designated branch. A new card needs a new session (`outcome_branch` = the card's branch); a trigger cannot add a branch.
+- **Audit lane:** A3-7b #229 READY @ 3fe9b88, reviewer session_014LEkzSXYkmz1BrNfyPAjiN. The A3-1..A3-5 builders and reviewers are archived.
+- **Still open:**
+  - GATE-SPLIT #194 delta review of 5c8a8fa (reviewer session_01RXRCfEdijRcaieyozTaJsA, running);
+  - OLD-ANDROID-1b #227 building (session_01AKXZbhXZViXpgvhfT3UeEv);
+  - the watch lane (#221, Watch-test issue #4) has not replied.
 
 ### 8.0f 10-16 ~22:15 UTC (read first; supersedes 8.0e where they differ)
 
