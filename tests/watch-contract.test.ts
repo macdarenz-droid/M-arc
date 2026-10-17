@@ -110,8 +110,8 @@ describe('WATCH-C X1 the watch and the phone agree', () => {
     expect(watch.view().st).toMatch(/^Pending \d\d:\d\d:\d\d$/);
     expect(state.value.active!.entries[0]!.sets.filter(s => s.status === 'committed')).toHaveLength(1);
     drop = false;
-    await vi.advanceTimersByTimeAsync(4000);
-    watch.tick();
+    // 1.1.2: the watch's resend clock is its 1 s tick
+    for (let i = 0; i < 4; i++) { await vi.advanceTimersByTimeAsync(1000); watch.tick(); }
     await vi.advanceTimersByTimeAsync(0);
     expect(watch.view()).toMatchObject({ st: 'Saved', l1: 'Barbell Bench Press 2/2', can: true });
     expect(state.value.active!.entries[0]!.sets.filter(s => s.status === 'committed')).toHaveLength(1);

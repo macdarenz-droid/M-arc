@@ -3,22 +3,22 @@ import storage from '@system.storage';
 import brightness from '@system.brightness';
 import { PHONE_PKG, PHONE_FP, Link, makeBoot } from '../../common/link.js';
 
-// WATCH-C page; common/link.js does the rest
+// WATCH-C page; common/link.js does the rest. Every entry point catches what it throws.
 var client, link, page, timer;
+
+function no() {}
 
 function paint() {
 	var v = page && link ? link.view() : {};
 	for (var k in v) page[k] = v[k];
 }
 
-function no() {}
-
 function send(text, done) {
 	try {
 		var b = new Builder(), m = new Message();
 		b.setDescription(text);
 		m.builder = b;
-		client.send(m, { onSuccess: no, onFailure: no, onSendProgress: no, onSendResult: function (r) { done(r && r.code); } });
+		client.send(m, { onSuccess: no, onFailure: no, onSendProgress: no, onSendResult: function (r) { try { done(r && r.code); } catch (e) {} } });
 	} catch (e) {
 		done(-1);
 	}
@@ -34,9 +34,9 @@ function connect() {
 		client.setPeerPkgName(PHONE_PKG);
 		client.setPeerFingerPrint(PHONE_FP);
 		client.registerReceiver({
-			onSuccess: function () { link.show(); },
+			onSuccess: function () { try { link.show(); } catch (e) {} },
 			onFailure: no,
-			onReceiveMessage: function (msg) { link.rx(msg); }
+			onReceiveMessage: function (msg) { try { link.rx(msg); } catch (e) {} }
 		});
 	} catch (e) {}
 }
@@ -47,24 +47,24 @@ export default {
 		bg: '#08090a', fg: '#f7f8f8', ac: '#5e6ad2', cb: '#3a3a3a'
 	},
   onInit() {
-		page = this;
-		link = Link({ store: storage, send: send, keep: keep, connect: connect, now: function () { return Date.now(); }, paint: paint }, makeBoot());
-		link.start();
-		timer = setInterval(function () { link.tick(); }, 1000);
-		paint();
+		try {
+			page = this;
+			link = Link({ store: storage, send: send, keep: keep, connect: connect, now: function () { return Date.now(); }, paint: paint }, makeBoot());
+			link.start();
+			timer = setInterval(function () { try { link.tick(); } catch (e) {} }, 1000);
+			paint();
+		} catch (e) {}
 	},
-  onShow() { link.show(); },
-  onComplete() { link.complete(); },
-  onEffort() { link.effort(); },
-  onAdd() { link.rest('rest_add_30'); },
-  onSkip() { link.rest('rest_skip'); },
+  onShow() { try { link.show(); } catch (e) {} },
+  onComplete() { try { link.complete(); } catch (e) {} },
+  onEffort() { try { link.effort(); } catch (e) {} },
+  onAdd() { try { link.rest('rest_add_30'); } catch (e) {} },
+  onSkip() { try { link.rest('rest_skip'); } catch (e) {} },
   onDestroy() {
-		link.die();
+		try { link.die(); } catch (e) {}
 		clearInterval(timer);
 		keep(false);
 		page = null;
-		try {
-			client.unregisterReceiver({ onSuccess: no });
-		} catch (e) {}
+		try { client.unregisterReceiver({ onSuccess: no }); } catch (e) {}
 	}
 };

@@ -24,6 +24,7 @@ function makeBoot(rand) {
 }
 
 function read(text) {
+	if (!str(text) || text.length > 2048) return null;
 	try { var m = JSON.parse(text); } catch (e) { return null; }
 	return Object(m) === m && m.t === T ? m : null;
 }
@@ -41,29 +42,47 @@ function wire(f) {
 	return JSON.stringify(c);
 }
 
+function nn(x) { return x == null || num(x); }
 function okSnap(m) {
 	var s = m.set || {}, r = m.rest || {};
-	return num(m.pt) && (m.sid === null || str(m.sid)) && (!m.set || str(s.id) && num(s.rev) && (s.u === 'kg' || s.u === 'lb')) && (!m.rest || str(r.id) && num(r.left));
+	return num(m.pt) && (m.sid === null || str(m.sid)) && (m.ex == null || str(m.ex) && num(m.si) && num(m.sn)) &&
+		(!m.set || str(s.id) && num(s.rev) && (s.u === 'kg' || s.u === 'lb') && nn(s.w) && nn(s.r) && (s.e == null || str(s.e))) && (!m.rest || str(r.id) && num(r.left));
 }
 
+// io: store, send(text, done(code)), keep(on), connect(), paint(), now(), defer(fn, 0)
 function Link(io, boot) {
-	var seq = 0, snapAt = 0, off = 0, rtt = -1, t0 = 0, lastRx = 0, failAt = 0, hb = 0, due = Infinity;
-	var q = [], jobs = [], hellos = [], wq = [], busy = 0, snap = null, eff = null, effSet = '', done = '';
-	var wait = null, msg = '', stop = 0, kept = false, ready = 0, lost = 0, on = 0, pause = 0, calm = 0, dead = 0;
+	// tk counts 1 s ticks, the clock of every timer; io.now() is for actionAt and the offset only
+	var tk = 0, seq = 0, snapTk = 0, off = 0, rtt = -1, lastRx = -1, fail = 0, hb = 0, due = Infinity;
+	var q = [], jobs = [], hellos = [], wq = [], busy = 0, snap = 0, eff = null, effSet = '', done = '';
+	var wait = 0, msg = '', stop = 0, kept = false, ready = 0, lost = 0, on = 0, pause = 0, calm = 0, dead = 0, sick = 0;
 
-	function queue(job) { jobs.push(job); if (!busy) next(); }
-	function next() { var job = jobs.shift(); busy = !!job; if (job) job(next); }
+	function no() {}
 	function later(fn) {
 		if (!dead) (io.defer || setTimeout)(function () { if (!dead) try { fn(); } catch (e) {} }, 0);
 	}
+	// one job at a time, each on a fresh stack
+	function queue(job) { jobs.push(job); if (!busy) next(); }
+	function next() {
+		var job = jobs.shift();
+		busy = job && { at: tk, job: job };
+		if (job) later(go);
+	}
+	function go() {
+		var j = busy && busy.job;
+		if (j) {
+			busy.job = 0;
+			j(next);
+		}
+	}
+	// answered on a fresh stack; silent for 5 ticks, it fails and storage stays off
 	function kv(op, key, value, cb) {
 		var once = 0, o = { key: key, success: function (v) { back(true, v); }, fail: function () { back(false); } };
-		function back(ok, v) { if (!once) { once = true; wait = null; later(function () { cb(ok, v); }); } }
+		function give(ok, v) { if (!once) { once = 1; wait = 0; cb(ok, v); } }
+		function back(ok, v) { later(function () { give(ok, v); }); }
 		o[op === 'set' ? 'value' : 'default'] = value;
-		wait = { at: io.now(), back: back };
-		later(function () {
-			try { io.store[op](o); } catch (e) { back(false); }
-		});
+		wait = { at: tk, give: give };
+		if (busy) busy.at = tk;
+		later(sick ? function () { give(false); } : function () { try { io.store[op](o); } catch (e) { back(false); } });
 	}
 	function text(v) {
 		var j = String(v).lastIndexOf(','), b = String(v).slice(0, j), f = b.split(','), h = sum(b);
@@ -74,7 +93,7 @@ function Link(io, boot) {
 		return s;
 	}
 	function entry(slot, text, m) {
-		return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, sent: 0, n: 0 };
+		return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, at: 0, n: 0 };
 	}
 
 	function add(code, set, effort) {
@@ -89,8 +108,8 @@ function Link(io, boot) {
 				fin();
 				io.paint();
 			}
-			if (slot < 0 && !lost) return end('Queue full');
-			if (lost || val.length > 119 || !(sum(val) >= 0) || text(val) !== t) return end('Not saved');
+			if (lost || sick || val.length > 119 || !(sum(val) >= 0) || text(val) !== t) return end('Not saved');
+			if (slot < 0) return end('Queue full');
 			kv('set', KEY + slot, val, function (ok) {
 				if (!ok) return end('Not saved');
 				kv('get', KEY + slot, '', function (ok2, back) {
@@ -147,41 +166,46 @@ function Link(io, boot) {
 		});
 	}
 
-	function pump() { if (q[0] && !q[0].sent && !stop) fire(q[0]); }
+	function pump() { if (q[0] && !q[0].n && !stop) fire(q[0]); }
 	function fire(e) {
-		e.sent = io.now();
+		e.at = tk;
 		e.n++;
 		io.send(e.text, sent);
 	}
 	function sent(code) {
-		if (code === 207) return;
-		failAt = io.now();
-		hb = hb ? Math.min(hb * 2, 30000) : 5000;
-		due = failAt + hb;
+		if (code === 207 || dead) return;
+		fail = 1;
+		hb = hb ? Math.min(hb * 2, 30) : 5;
+		due = tk + hb;
 		io.paint();
 	}
+	// m2r = "n,x", the restart guard in README
 	function run() {
 		queue(function (fin) {
 			kv('get', RUN, '', function (ok, v) {
-				var p = String(v).split(','), c = +p[0], f = +p[1];
-				if (!ok) return fin(pause = t0);
-				if (!(c >= 0 && c < 100 && c % 1 === 0)) c = 0;
-				if (!(f > 0)) f = t0;
-				if (t0 < f || t0 - f > (c > 2 ? 599999 : 120000)) c = 0;
-				if (!c) f = t0;
-				pause = ++c > 2 ? f : 0;
-				kv('set', RUN, c + ',' + f, function () {
+				var p = String(v).split(','), n = +p[0], x = p[1], left = 600000 - (io.now() - x);
+				if (!ok) return fin(pause = tk + 600);
+				if (+x > 0 && left > 0 && left <= 600000) return fin(pause = tk + Math.ceil(left / 1000));
+				n = x === 'r' ? (n >= 0 && n < 99 && n % 1 === 0 ? n : 0) + 1 : +x > 0 ? 1 : 0;
+				pause = n > 1 ? tk + 600 : 0;
+				kv('set', RUN, n + ',' + (pause ? io.now() : 'r'), function () {
 					fin();
 					if (!pause) live();
 				});
 			});
 		});
 	}
-	function live() { if (!dead) { pause = 0; on = io.now(); io.connect(); load(); } }
+	function live() {
+		if (dead) return;
+		pause = 0;
+		on = tk + 1;
+		io.connect();
+		load();
+	}
 	function hello() {
-		if (stop || !on) return;
+		if (stop || !on || dead) return;
 		var now = io.now();
-		due = now + 20000;
+		due = tk + 20;
 		hellos.push(now);
 		if (hellos.length > 8) hellos.shift();
 		io.send(JSON.stringify({ t: T, v: V, k: 'hello', app: APP, boot: boot, wt: now, q: q.length }), sent);
@@ -202,8 +226,8 @@ function Link(io, boot) {
 		if (id !== done) done = '';
 		effSet = id;
 		snap = m;
-		snapAt = now;
-		if (q[0] && (!q[0].sent || now - q[0].sent >= 1000)) {
+		snapTk = tk;
+		if (q[0] && (!q[0].n || tk > q[0].at)) {
 			q[0].n = 0;
 			fire(q[0]);
 		}
@@ -216,7 +240,7 @@ function Link(io, boot) {
 				msg = q.length > 1 ? q.length - 1 + ' pending' : 'Saved';
 				if (q[i].set) done = q[i].set;
 			} else if (m.status === 'rejected') {
-				msg = str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
+				msg = str(m.reason) && str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
 			} else {
 				return;
 			}
@@ -227,12 +251,12 @@ function Link(io, boot) {
 
 	function rx(text) {
 		var m = read(text), now = io.now();
-		if (!m || stop) return;
+		if (!m || stop || dead) return;
 		stop = m.v !== V;
 		if (!stop) {
-			lastRx = now;
-			failAt = hb = 0;
-			due = now + 20000;
+			lastRx = tk;
+			fail = hb = 0;
+			due = tk + 20;
 			if (m.k === 'snap' && okSnap(m)) onSnap(m, now);
 			if (m.k === 'res') onRes(m);
 			keepOn();
@@ -241,12 +265,17 @@ function Link(io, boot) {
 	}
 
 	function tick() {
-		var now = io.now(), e = q[0];
-		if (wait && now - wait.at > 5000) wait.back(false);
-		if (pause && now - pause > 599999) live();
-		if (on && !calm && now - on > 30000) queue(function (fin) { kv('set', RUN, '0,' + t0, fin); }, calm = 1);
-		if (!stop && e && e.sent && now - e.sent >= Math.min(4000 << Math.min(e.n, 4) - 1, 30000)) fire(e);
-		if (!stop && now >= due) hello();
+		var e = q[0];
+		if (dead) return;
+		tk++;
+		if (wait && tk - wait.at > 5) wait.give(false, sick = 1);
+		// a lost start is retried; a job silent for 10 ticks is given up, storage off
+		if (busy && tk - busy.at > 5 && busy.job) go();
+		if (busy && tk - busy.at > 10) next(sick = 1);
+		if (pause && tk >= pause) live();
+		if (on && !calm && tk - on >= 30) queue(function (fin) { kv('set', RUN, '0,r', fin); }, calm = 1); // not a quick restart
+		if (!stop && e && e.n && tk - e.at >= Math.min(4 << Math.min(e.n, 4) - 1, 30)) fire(e);
+		if (!stop && tk >= due) hello();
 		keepOn();
 		io.paint();
 	}
@@ -262,7 +291,7 @@ function Link(io, boot) {
 	}
 
 	function view() {
-		var now = io.now(), s = snap && snap.sid && snap.set, r = snap && snap.sid && snap.rest, th = snap && snap.th;
+		var s = snap && snap.sid && snap.set, r = snap && snap.sid && snap.rest, th = snap && snap.th;
 		if (!(th && th.length === 3 && str(th[0]) && str(th[1]) && str(th[2]))) th = ['#08090a', '#f7f8f8', '#5e6ad2'];
 		var v = { l1: '', l2: '', eff: '', rest: '', st: msg, p1: '', p2: '', set: false, can: false, rs: false, add: false, bg: th[0], fg: th[1], ac: th[2], cb: '#3a3a3a' };
 		if (stop || pause) {
@@ -271,7 +300,7 @@ function Link(io, boot) {
 			if (pause) v.l2 = 'Try again in 10 min';
 			return v;
 		}
-		if (failAt > 0 || (lastRx ? now - lastRx > 25000 : now - t0 > 5000)) {
+		if (fail || (lastRx < 0 ? tk > 5 : tk - lastRx > 25)) {
 			v.p1 = 'Phone not connected';
 			v.p2 = 'Open M/ARC on your phone';
 		}
@@ -291,7 +320,7 @@ function Link(io, boot) {
 			if (v.can) v.cb = v.ac;
 		}
 		if (r) {
-			var left = r.p ? r.left : Math.max(0, r.left - (now - snapAt));
+			var left = r.p ? r.left : Math.max(0, r.left - (tk - snapTk) * 1000);
 			v.rest = 'Rest ' + mss(left);
 			v.rs = true;
 			v.add = left > 0;
@@ -301,9 +330,13 @@ function Link(io, boot) {
 
 	return {
 		rx: rx, tick: tick, view: view,
-		start: function () { t0 = io.now(); run(); },
-		die: function () { dead = 1; },
-		show: function () { hello(); keepOn(true); },
+		start: run,
+		// onDestroy: a live run is marked clean by one direct write
+		die: function () {
+			dead = 1;
+			if (on && !pause && !sick) try { io.store.set({ key: RUN, value: '0,c', success: no, fail: no }); } catch (e) {}
+		},
+		show: function () { if (!dead) { hello(); keepOn(true); } },
 		complete: function () { if (can()) add('c', snap.set.id, shown()); },
 		rest: function (kind) {
 			var k = kind === 'rest_skip' && snap && snap.rest ? kind + snap.rest.id : '';

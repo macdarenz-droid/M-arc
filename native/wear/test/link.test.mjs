@@ -44,18 +44,20 @@ function fakeStore() {
     map: new Map(), calls: [], queue: [], defer: false, failSet: () => false, failGet: () => false, cut: 0,
     depth: 0, maxDepth: 0, empty: [], direct: 0, inside: 0,
     enter(fn) { if (calling) s.direct++; s.depth++; s.maxDepth = Math.max(s.maxDepth, s.depth); try { fn(); } finally { s.depth--; } },
+    answering: false,
+    answer(fn) { s.answering = true; try { fn(); } finally { s.answering = false; } },
     set(o) {
       s.calls.push(`set ${o.key}`);
       if (o.value === '') s.empty.push(o.key);
-      s.enter(() => s.run(() => {
+      s.enter(() => s.run(() => s.answer(() => {
         if (s.failSet(o.key) || !KEY_OK.test(o.key) || o.value === '' || Buffer.byteLength(String(o.value)) >= 128) return o.fail('write failed', 300);
         s.map.set(o.key, s.cut ? o.value.slice(0, s.cut) : o.value);
         o.success();
-      }));
+      })));
     },
     get(o) {
       s.calls.push(`get ${o.key}`);
-      s.enter(() => s.run(() => (s.failGet(o.key) || !KEY_OK.test(o.key) ? o.fail('read failed', 300) : o.success(s.map.has(o.key) ? s.map.get(o.key) : o.default))));
+      s.enter(() => s.run(() => s.answer(() => (s.failGet(o.key) || !KEY_OK.test(o.key) ? o.fail('read failed', 300) : o.success(s.map.has(o.key) ? s.map.get(o.key) : o.default)))));
     },
     run(fn) { if (s.defer) s.queue.push(fn); else fn(); },
     step() { s.enter(s.queue.shift()); drain(); },
@@ -90,18 +92,30 @@ async function rig(o = {}) {
   const r = { sent, keeps, store, code: o.code === undefined ? 207 : o.code, paints: 0 };
   const io = {
     store,
-    now: () => { if (store.depth > 0) store.inside++; return t; },
-    send: (text, done) => { sent.push(text); if (r.code !== null) done(r.code); },
+    now: () => { if (store.depth > 0) store.inside++; return t + (r.wall ?? 0); },
+    send: (text, done) => { if (r.throwSend) { r.throwSend = false; throw new Error('send'); } sent.push(text); if (r.code !== null) done(r.code); },
     keep: (on) => keeps.push(on),
-    paint: () => { r.paints++; },
+    paint: () => { r.paints++; if (r.onPaint) r.onPaint(); },
     connect: () => { r.connects = (r.connects ?? 0) + 1; },
-    defer: (fn) => { tasks.push(fn); },
+    // dropAnswer: lose the deferred delivery of the next storage answer (ACE lite drops a timer it cannot dispatch)
+    // dropNext: lose the next deferred task, whatever it is
+    defer: (fn) => { if (r.dropNext || (r.dropAnswer && store.answering)) { r.dropNext = r.dropAnswer = false; return; } tasks.push(fn); },
   };
   // A start long after the last one, unless the test is about the restart guard.
   if (!o.keepRun) store.map.delete('m2r');
   const link = Link(io, o.boot ?? 'abcd1234');
+  // 1.1.2: the link's clock is the page's 1 s interval. The rig runs one tick per second the test moves
+  // the clock on, before each call into the link; a call to tick() only runs those.
+  const t00 = t;
+  let ticked = 0;
+  const into = (fn) => { calling = true; let out; try { out = fn(); } finally { calling = false; } drain(); return out; };
   r.link = {};
-  for (const k of Object.keys(link)) r.link[k] = (...a) => { calling = true; let out; try { out = link[k](...a); } finally { calling = false; } drain(); return out; };
+  for (const k of Object.keys(link)) {
+    r.link[k] = (...a) => {
+      while (ticked < Math.floor((t - t00) / 1000)) { ticked++; into(() => link.tick()); }
+      return k === 'tick' ? undefined : into(() => link[k](...a));
+    };
+  }
   r.adv = (ms) => { t += ms; };
   r.now = () => t;
   r.cmds = () => sent.filter((x) => JSON.parse(x).k === 'cmd');
@@ -297,9 +311,9 @@ test('W3 one command in flight, oldest first; resends at 4, 8 and 16 s, then eve
   assert.equal(r.cmds().length, 8, 'a snap sends it again at once');
   r.link.rx(snap({ rest: { id: 'rest_1', left: 60000, tot: 90000, p: false } }));
   assert.equal(r.cmds().length, 8, 'not twice within a second');
-  r.adv(3999); r.link.tick();
+  r.adv(3000); r.link.tick(); // the clock is the 1 s tick (1.1.2)
   assert.equal(r.cmds().length, 8);
-  r.adv(1); r.link.tick();
+  r.adv(1000); r.link.tick();
   assert.equal(r.cmds().length, 9, 'after a snap the gaps start again at 4 s');
   // The result sends the next one at once.
   r.link.rx(res('abcd1234-1'));
@@ -370,12 +384,12 @@ test('W3 hello: at start, on show, after 20 s of silence and after failed sends 
   assert.deepEqual(h, { t: 'mw', v: 1, k: 'hello', app: '1.1.2', boot: 'abcd1234', wt: T0, q: 0 });
   r.link.show();
   assert.equal(r.hellos().length, 2);
-  r.adv(19999); r.link.tick();
+  r.adv(19000); r.link.tick(); // the clock is the 1 s tick (1.1.2)
   assert.equal(r.hellos().length, 2);
   r.link.rx(snap());
-  r.adv(19999); r.link.tick();
+  r.adv(19000); r.link.tick();
   assert.equal(r.hellos().length, 2, 'a phone message restarts the 20 s');
-  r.adv(1); r.link.tick();
+  r.adv(1000); r.link.tick();
   assert.equal(r.hellos().length, 3);
   r.code = 206;
   const gaps = [];
@@ -493,12 +507,12 @@ test('W3 keep-on is held while a session or a pending entry exists, and asked ag
 test('W3 screen wording: no workout, no phone, and the set', async () => {
   const r = await rig({ code: null });
   assert.deepEqual([r.link.view().p1, r.link.view().p2], ['', ''], 'no warning in the first 5 s');
-  r.adv(5001);
+  r.adv(6000); // the 6th tick (1.1.2)
   assert.deepEqual([r.link.view().p1, r.link.view().p2], ['Phone not connected', 'Open M/ARC on your phone']);
   r.link.rx(snap({ sid: null, ex: null, si: 0, sn: 0, set: null }));
   let v = r.link.view();
   assert.deepEqual([v.l1, v.l2, v.p1, v.set], ['Start your workout', 'in M/ARC on your phone', '', false]);
-  r.adv(25001);
+  r.adv(26000);
   assert.equal(r.link.view().p1, 'Phone not connected');
   r.link.rx(snap());
   v = r.link.view();
@@ -539,7 +553,7 @@ const JS_RULES = [
 ];
 const walk = (dir) => readdirSync(dir).flatMap((n) => (statSync(path.join(dir, n)).isDirectory() ? walk(path.join(dir, n)).map((f) => `${n}/${f}`) : [n]));
 
-test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sources at most 32,000 B', async () => {
+test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sources at most 34,000 B', async () => {
   const files = walk(JS).sort();
   assert.deepEqual(files, ['app.js', 'common/link.js', 'pages/index/index.css', 'pages/index/index.hml', 'pages/index/index.js', 'pages/wearengine.js']);
   let total = 0;
@@ -553,7 +567,8 @@ test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sou
     const src = buf.toString('utf8');
     for (const [name, rule] of JS_RULES) assert.doesNotMatch(src, rule, `${rel} uses ${name}`);
   }
-  assert.ok(total <= 32000, `page sources ${total} B`);
+  // 34,000 since the 1.1.2 red team: the safety fixes after the device crash (docs/watch-cards/WATCH-C.md W4)
+  assert.ok(total <= 34000, `page sources ${total} B`);
   assert.equal(createHash('sha256').update(readFileSync(path.join(JS, 'pages/wearengine.js'))).digest('hex'),
     '8c7f1100c840abdb237991b0d436ef9ab49a215269c5fecdb3dd59fe63a71471');
   assert.doesNotMatch(readFileSync(LINK, 'utf8'), /\bimport\b|\brequire\b/, 'link.js makes no Huawei or module calls');
@@ -846,7 +861,7 @@ test('W2 a storage call that never calls back ends in Not saved after 5 s, a lat
     assert.equal(r.link.view().can, false);
     r.adv(5000); r.link.tick();
     assert.equal(r.link.view().st, '', `call ${k}: still waiting at 5 s`);
-    r.adv(1); r.link.tick();
+    r.adv(1000); r.link.tick(); // the 6th tick (1.1.2)
     assert.equal(r.link.view().st, 'Not saved', `call ${k}`);
     assert.equal(r.cmds().length, 0, `call ${k}: nothing sent`);
     store.run = (fn) => fn();
@@ -854,9 +869,12 @@ test('W2 a storage call that never calls back ends in Not saved after 5 s, a lat
     drain();
     assert.equal(r.link.view().st, 'Not saved', `call ${k}: the late callback changes nothing`);
     assert.equal(r.cmds().length, 0);
+    // 1.1.2: after a timeout storage stays off for the run, so the next tap is Not saved too, with no storage call
+    const calls = store.calls.length;
     r.link.complete();
-    assert.match(r.link.view().st, /^Pending /, `call ${k}: the next tap works`);
-    assert.equal(r.cmds().length, 1);
+    assert.equal(r.link.view().st, 'Not saved', `call ${k}: storage stays off`);
+    assert.equal(r.cmds().length, 0);
+    assert.equal(store.calls.length, calls);
   }
   // At start-up a stuck index read takes the unreadable-index path: ready, hello, and Not saved.
   const store = fakeStore();
@@ -865,7 +883,7 @@ test('W2 a storage call that never calls back ends in Not saved after 5 s, a lat
   const b = await rig({ store, code: null });
   b.link.rx(snap());
   assert.equal(b.hellos().length, 0);
-  b.adv(5001); b.link.tick();
+  b.adv(6000); b.link.tick(); // the 6th tick (1.1.2)
   assert.equal(b.hellos().length, 1);
   b.link.complete();
   assert.equal(b.link.view().st, 'Not saved');
@@ -941,46 +959,66 @@ test('1.1.2 S3 every storage call starts on a fresh stack: a store that answers 
   assert.equal(store.inside, 0, 'no link code on the stack of a storage call');
 });
 
-test('1.1.2 S4 a third start within 120 s pauses messaging and the outbox until 10 min after the first', async () => {
+test('1.1.2 S4 two unclean starts in a row pause the third; a clean exit never counts; the pause runs 600 ticks', async () => {
   const store = fakeStore();
-  const t1 = T0;
-  const a = await rig({ store, t: t1, code: null });
+  const a = await rig({ store, keepRun: true, code: null }); // no die(): it crashed
   a.link.rx(snap());
   a.link.complete();
   assert.equal(a.connects, 1);
-  const b = await rig({ store, t: t1 + 30000, keepRun: true, boot: 'bbbbbbbb', code: null });
+  const b = await rig({ store, t: T0 + 60000, keepRun: true, boot: 'bbbbbbbb', code: null });
   assert.equal(b.connects, 1, 'the second start runs, and resends once');
   assert.equal(b.cmds().length, 1);
-  assert.equal(store.map.get('m2r'), `2,${t1}`);
+  assert.equal(store.map.get('m2r'), '1,r');
   store.calls.length = 0;
-  const c = await rig({ store, t: t1 + 60000, keepRun: true, boot: 'cccccccc', code: null });
+  const c = await rig({ store, t: T0 + 120000, keepRun: true, boot: 'cccccccc', code: null });
   assert.equal(c.connects, undefined, 'no receiver');
   assert.deepEqual(c.sent, [], 'no hello, no resend');
   assert.deepEqual(store.calls, ['get m2r', 'set m2r'], 'no outbox, no other writes');
+  assert.equal(store.map.get('m2r'), `2,${T0 + 120000}`);
   c.link.show();
   c.link.rx(snap());
   c.link.complete();
   c.adv(31000); c.link.tick();
   assert.deepEqual(c.sent, []);
   assert.deepEqual([c.link.view().l1, c.link.view().l2, c.link.view().set], ['Paused after restarts', 'Try again in 10 min', false]);
-  // Still paused at the next start within 10 min, even after the 120 s
-  const d = await rig({ store, t: t1 + 300000, keepRun: true, boot: 'dddddddd', code: null });
+  c.link.die();
+  assert.equal(store.map.get('m2r'), `2,${T0 + 120000}`, 'a paused run leaves the pause in place');
+  // Reopened within the 10 min it stays paused for the rest of them, then resumes by itself.
+  store.calls.length = 0;
+  const d = await rig({ store, t: T0 + 420000, keepRun: true, boot: 'dddddddd', code: null });
   assert.equal(d.link.view().l1, 'Paused after restarts');
-  // ... and it ends by itself 10 min after the first start, also in an app left open.
-  d.adv(600000 - 300000 - 1); d.link.tick();
+  assert.deepEqual(store.calls, ['get m2r'], 'no write');
+  d.adv(299000); d.link.tick();
   assert.equal(d.connects, undefined);
-  d.adv(1); d.link.tick();
+  d.adv(1000); d.link.tick();
   assert.equal(d.connects, 1);
   assert.equal(d.cmds().length, 1);
-  const e = await rig({ store, t: t1 + 600000, keepRun: true, boot: 'eeeeeeee', code: null });
+  // A start after the pause runs; a crash right after counts once more.
+  const e = await rig({ store, t: T0 + 800000, keepRun: true, boot: 'eeeeeeee', code: null });
   assert.equal(e.connects, 1);
-  assert.equal(store.map.get('m2r'), `1,${t1 + 600000}`);
-  // Three starts spread over more than 120 s are normal.
+  assert.equal(store.map.get('m2r'), '1,r');
+  // Clean exits never count, however quick.
   const s2 = fakeStore();
-  for (const [i, at] of [[1, 0], [2, 100000], [3, 230000]].map(([n, ms]) => [n, T0 + ms])) {
-    const x = await rig({ store: s2, t: at, keepRun: true, code: null });
-    assert.equal(x.connects, 1, `start ${i}`);
+  for (let i = 0; i < 5; i++) {
+    const x = await rig({ store: s2, t: T0 + i * 20000, keepRun: true, code: null });
+    assert.equal(x.connects, 1, `open ${i + 1}`);
+    x.link.die();
+    assert.equal(s2.map.get('m2r'), '0,c');
   }
+  // A clock set back during a pause ends it rather than stretching it.
+  const s3 = fakeStore();
+  s3.map.set('m2r', `2,${T0 + 3600000}`);
+  const y = await rig({ store: s3, keepRun: true, code: null });
+  assert.equal(y.connects, 1);
+  // The pause is 600 ticks of the page interval, whatever the wall clock does.
+  const s4 = fakeStore();
+  s4.map.set('m2r', '1,r');
+  const z = await rig({ store: s4, keepRun: true, code: null });
+  z.wall = -3600000;
+  z.adv(599000); z.link.tick();
+  assert.equal(z.connects, undefined, 'still paused after 599 ticks');
+  z.adv(1000); z.link.tick();
+  assert.equal(z.connects, 1);
 });
 
 test('1.1.2 S5 a callback that throws is caught on its own stack, and the outbox carries on', async () => {
@@ -1004,43 +1042,41 @@ test('1.1.2 S5 a callback that throws is caught on its own stack, and the outbox
 });
 
 // Review of 1.1.2 (49025d7f).
-test('1.1.2 S6 the restart count fails closed: an unreadable or silent count pauses without a write; a corrupt one counts from 0', async () => {
+test('1.1.2 S6 the restart marker fails closed: an unreadable or silent marker pauses without a write; a corrupt count counts as 0', async () => {
   for (const [name, setup] of [['fails', (s) => { s.failGet = (k) => k === 'm2r'; }], ['never answers', (s) => { const run = s.run; s.run = (fn) => { if (s.calls[s.calls.length - 1] !== 'get m2r') run(fn); }; }]]) {
     const store = fakeStore();
     setup(store);
     const r = await rig({ store, keepRun: true, code: null });
-    r.adv(5001); r.link.tick();
+    r.adv(6000); r.link.tick();
     assert.equal(r.link.view().l1, 'Paused after restarts', name);
     assert.equal(r.connects, undefined, name);
     assert.deepEqual(store.calls.filter((c) => c.startsWith('set')), [], `${name}: no write`);
     r.adv(600000); r.link.tick();
-    assert.equal(r.connects, 1, `${name}: the 10 min rule resumes it`);
+    assert.equal(r.connects, 1, `${name}: 600 ticks later it resumes`);
   }
-  for (const bad of ['-1000,' + T0, '1e9,' + T0, '0.5,' + T0, '100,' + T0, 'abc', ',', '-']) {
+  for (const [bad, after] of [['-1000,r', '1,r'], ['1e9,r', '1,r'], ['0.5,r', '1,r'], ['99,r', '1,r'], ['abc', '0,r'], [',', '0,r'], ['-', '0,r'], ['5,c', '0,r'], ['5', '0,r']]) {
     const store = fakeStore();
     store.map.set('m2r', bad);
     const r = await rig({ store, keepRun: true, code: null });
     assert.equal(r.connects, 1, bad);
-    assert.equal(store.map.get('m2r'), `1,${T0}`, bad);
+    assert.equal(store.map.get('m2r'), after, bad);
   }
-  // A corrupt first-start time counts as now: with two starts behind it, this is the third.
   const store = fakeStore();
-  store.map.set('m2r', '2,x');
+  store.map.set('m2r', '1,r');
   const r = await rig({ store, keepRun: true, code: null });
-  assert.equal(r.link.view().l1, 'Paused after restarts');
-  assert.equal(store.map.get('m2r'), `3,${T0}`);
+  assert.equal(r.link.view().l1, 'Paused after restarts', 'the second unclean start in a row');
 });
 
 test('1.1.2 S7 a run that stays live for 30 s resets the count, so only quick restarts pause', async () => {
   const store = fakeStore();
-  for (let i = 0; i < 4; i++) {
-    const r = await rig({ store, t: T0 + i * 40000, keepRun: true, code: null });
+  for (let i = 0; i < 4; i++) { // each run crashes after a minute (no die)
+    const r = await rig({ store, t: T0 + i * 100000, keepRun: true, code: null });
     assert.equal(r.connects, 1, `open ${i + 1}`);
-    r.adv(30001); r.link.tick();
-    assert.equal(store.map.get('m2r'), `0,${T0 + i * 40000}`);
-    r.adv(5000); r.link.tick();
-    assert.deepEqual(store.calls.filter((c) => c === 'set m2r').length, 2 * (i + 1), 'one reset per run');
+    r.adv(31000); r.link.tick();
+    assert.equal(store.map.get('m2r'), '0,r');
+    r.adv(29000); r.link.tick();
   }
+  assert.deepEqual(store.calls.filter((c) => c === 'set m2r').length, 8, 'one reset per run');
   assert.deepEqual(store.empty, []);
 });
 
@@ -1090,4 +1126,142 @@ test('1.1.2 S9 1.1.1 keys are never read; a stored slot needs a whole sum, a kno
   y.link.rx(snap());
   y.link.complete();
   assert.deepEqual([...new Set(seen.map((x) => x.join(' ')))].sort(), ['get default fail key success', 'set fail key success value']);
+});
+
+// Red team of 128a56db on JerryScript (scratchpad rt-e).
+test('1.1.2 S10 queued jobs start on a fresh stack: 100 "Queue full" taps behind a slow write do not nest', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  for (let i = 0; i < 7; i++) r.link.rest('rest_add_30');
+  store.defer = true;
+  r.link.rest('rest_add_30'); // the 8th, its write held
+  for (let i = 0; i < 100; i++) r.link.rest('rest_add_30');
+  const limit = Error.stackTraceLimit;
+  Error.stackTraceLimit = Infinity;
+  let deepest = 0;
+  const paint = r.paints;
+  try {
+    const depth = () => { deepest = Math.max(deepest, new Error().stack.split('\n').length); };
+    const { run } = store;
+    store.run = (fn) => { depth(); run(fn); };
+    r.onPaint = depth; // each "Queue full" job ends with a repaint and makes no storage call
+    while (store.queue.length) store.step();
+    drain();
+  } finally { Error.stackTraceLimit = limit; }
+  assert.equal(r.link.view().st, 'Queue full');
+  assert.ok(deepest < 40, `stack ${deepest}`);
+  assert.equal(store.map.get('m2q'), '01234567');
+  assert.ok(r.paints > paint);
+});
+
+test('1.1.2 S11 a lost storage answer fails after 5 ticks, and storage then stays off for the run', async () => {
+  const store = fakeStore();
+  const r = await rig({ store, code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  r.dropAnswer = true;
+  r.link.complete();
+  r.adv(5000); r.link.tick();
+  assert.equal(r.link.view().st, '');
+  r.adv(1000); r.link.tick();
+  assert.equal(r.link.view().st, 'Not saved');
+  const calls = store.calls.length;
+  for (let i = 0; i < 30; i++) { r.adv(2000); r.link.rest('rest_add_30'); }
+  assert.equal(r.link.view().st, 'Not saved');
+  assert.equal(store.calls.length, calls, 'no storage call after the timeout');
+  assert.equal(r.cmds().length, 0);
+  // With the outbox full, a tap once storage is off says Not saved, not Queue full.
+  const s2 = fakeStore();
+  const f = await rig({ store: s2, code: null });
+  f.link.rx(snap({ rest: rest1 }));
+  for (let i = 0; i < 9; i++) f.link.rest('rest_add_30');
+  assert.equal(f.link.view().st, 'Queue full');
+  f.dropAnswer = true; // the 30 s restart-marker write is never answered
+  f.adv(40000); f.link.tick();
+  assert.equal(s2.calls.at(-1), 'set m2r');
+  const c2 = s2.calls.length;
+  f.link.rest('rest_add_30');
+  assert.equal(f.link.view().st, 'Not saved');
+  assert.equal(s2.calls.length, c2);
+});
+
+test('1.1.2 S16 a job whose start is lost starts on the 6th tick; one that never finishes is given up on the 11th, and storage stays off', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ rest: rest1 }));
+  const calls = r.store.calls.length;
+  r.dropNext = true; // the deferred start of the Complete's job is lost
+  r.link.complete();
+  r.adv(5000); r.link.tick();
+  assert.equal(r.store.calls.length, calls, 'not started after 5 ticks');
+  r.adv(1000); r.link.tick();
+  assert.match(r.link.view().st, /^Pending /);
+  assert.equal(r.cmds().length, 1);
+  // A job that throws before it finishes holds the queue for 10 ticks, then is given up.
+  const s = await rig({ code: null });
+  s.link.rx(snap({ rest: rest1 }));
+  s.throwSend = true; // the Complete's first send throws inside its job
+  s.link.complete();
+  s.link.rest('rest_add_30'); // queued behind it
+  const c = s.store.calls.length;
+  s.adv(10000); s.link.tick();
+  assert.match(s.link.view().st, /^Pending /);
+  assert.equal(s.cmds().length, 1, 'the Complete is resent at 4 s');
+  s.adv(1000); s.link.tick();
+  assert.equal(s.link.view().st, 'Not saved');
+  assert.equal(s.store.calls.length, c, 'no storage call once the job was given up');
+});
+
+test('1.1.2 S12 phone values that are not what they claim are ignored, and nothing throws', async () => {
+  const obj = { toString: 1 };
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.complete();
+  for (const m of [snap({ ex: obj }), snap({ si: obj }), snap({ set: set1({ id: 'set_b', r: obj }) }), snap({ set: set1({ id: 'set_b', w: obj }) }), snap({ set: set1({ id: 'set_b', e: obj }) }),
+    res('abcd1234-1', { status: 'rejected', reason: obj })]) {
+    assert.doesNotThrow(() => { r.link.rx(m); r.adv(1000); r.link.tick(); r.link.complete(); r.link.view(); }, m);
+  }
+  assert.equal(r.link.view().l1, 'Bench press 1/3', 'the last good snap stays');
+  // Every page entry point catches what it throws.
+  const page = readFileSync(path.join(JS, 'pages/index/index.js'), 'utf8');
+  for (const h of ['onShow', 'onComplete', 'onEffort', 'onAdd', 'onSkip']) assert.match(page, new RegExp(`^  ${h}\\(\\) \\{ try \\{ .*\\} catch \\(e\\) \\{\\} \\},$`, 'm'), h);
+  assert.match(page, /onInit\(\) \{\n\t\ttry \{/);
+  assert.match(page, /onDestroy\(\) \{\n\t\ttry \{ link\.die\(\); \} catch \(e\) \{\}/);
+  assert.match(page, /setInterval\(function \(\) \{ try \{ link\.tick\(\); \} catch \(e\) \{\} \}, 1000\)/);
+  assert.match(page, /onReceiveMessage: function \(msg\) \{ try \{ link\.rx\(msg\); \} catch \(e\) \{\} \}/);
+  assert.match(page, /onSuccess: function \(\) \{ try \{ link\.show\(\); \} catch \(e\) \{\} \}/);
+});
+
+test('1.1.2 S13 a message over 2 KB is refused before it is parsed', async () => {
+  const r = await rig({ code: null });
+  const big = snap({ ex: 'Row', pad: 'x'.repeat(2100) });
+  const parse = JSON.parse;
+  let parsed = 0;
+  JSON.parse = (...a) => { parsed++; return parse(...a); };
+  try { r.link.rx(big); r.link.rx('['.repeat(40000) + ']'.repeat(40000)); } finally { JSON.parse = parse; }
+  assert.equal(parsed, 0);
+  assert.equal(r.link.view().l1, '');
+  r.link.rx(snap({ ex: 'Row', pad: 'x'.repeat(1700) }));
+  assert.equal(r.link.view().l1, 'Row 1/3');
+});
+
+test('1.1.2 S14 resends, hello and the phone lines run on the 1 s tick, not the wall clock', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  r.link.complete();
+  r.wall = -3600000; // the watch clock set back an hour
+  for (let i = 0; i < 60; i++) { r.adv(1000); r.link.tick(); }
+  assert.equal(r.cmds().length, 5, 'resent at 4, 12, 28 and 58 s');
+  assert.ok(r.hellos().length >= 3);
+  assert.equal(r.link.view().p1, 'Phone not connected');
+});
+
+test('1.1.2 S15 after onDestroy rx and show do nothing', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  const keeps = r.keeps.length, sent = r.sent.length, paints = r.paints;
+  r.link.die();
+  r.link.rx(snap({ sid: 's_2' }));
+  r.link.show();
+  r.adv(60000); r.link.tick();
+  assert.deepEqual([r.keeps.length, r.sent.length, r.paints], [keeps, sent, paints]);
 });
