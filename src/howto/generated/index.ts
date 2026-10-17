@@ -1,3 +1,3 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=9107a61f095a073121e77ac3615316eed437b2e1906dfb5614aac7989cd0fccc
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/plates.mjs). inputsSha256=394e355f782109b4e937352bdbc416729370078399fe1938124e2e16fe758f65
 // LOADERS live in ./loaders (LIB-2): one dynamic import per shipped id, in its own lazy chunk.
 export { LOADERS } from './loaders';
