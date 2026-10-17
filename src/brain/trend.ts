@@ -46,23 +46,53 @@ export function leastHelpKg(h: ExerciseSessionSummary): number {
   return done.length ? Math.min(...done.map(s => s.kg ?? 0)) : h.topKg;
 }
 
+/** The sessions a lift's trend reads: liftTrend's last 12, the same last 12 the progress card draws (O4). */
+export const LIFT_TREND_SESSIONS = 12;
+
+export type ProgressMetric = 'e1rm' | 'top' | 'volume' | 'distance' | 'assist' | 'reps' | 'hold';
+
+/** One metric over the sessions that have it: what the progress card draws and what its trend judges (BUG-41). */
+export interface ProgressSeries { metric: ProgressMetric; rows: ExerciseSessionSummary[]; values: number[]; trend: Trend }
+
 /**
- * QA-R3a-2: the trend of what counts as progress for the lift's mode. Weighted: the strength
- * estimate (or top load). Bodyweight: best reps. Duration: longest hold. Assisted: the assistance
- * load, with the direction inverted (less help is up); with it flat, the best reps, as in plateauStatus.
+ * BUG-41 (D-BUG41-1): the series a lift's progress is judged on, one metric over the last 12
+ * sessions, never mixed per session. Bodyweight: best reps. Duration: longest hold. Assisted: the
+ * least assistance, negated so less help is up (AUD-8, QA2-FC-4); with it flat, the best reps.
+ * Conditioning: the farthest distance when any session has one (D-AUD11-4). Weighted: e1RM when
+ * every session has one; else top load, with volume deciding only upward when top load is neither
+ * up nor down (BR-04's tie rule); else best reps.
  */
-export function liftTrend(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted'): Trend {
-  const recent = history.slice(-12);
-  if (mode === 'bodyweight') return trend(recent.map(h => ({ day: h.day, value: h.bestReps })));
-  if (mode === 'duration') return trend(recent.map(h => ({ day: h.day, value: h.bestDurationSec })));
+export function progressSeries(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted'): ProgressSeries {
+  const recent = history.slice(-LIFT_TREND_SESSIONS);
+  const of = (metric: ProgressMetric, f: (h: ExerciseSessionSummary) => number): ProgressSeries => {
+    const rows = recent.filter(h => f(h) > 0);
+    const values = rows.map(f);
+    return { metric, rows, values, trend: trend(rows.map((h, i) => ({ day: h.day, value: values[i]! }))) };
+  };
+  if (mode === 'bodyweight') return of('reps', h => h.bestReps);
+  if (mode === 'duration') return of('hold', h => h.bestDurationSec);
   if (mode === 'assisted') {
     // QA2-FC-4: not the e1RM of the assistance, which rises with more reps and would read as down.
     const help = trend(recent.map(h => ({ day: h.day, value: leastHelpKg(h) })), true);
-    if (help.direction === 'up' || help.direction === 'down') return { ...help, direction: help.direction === 'up' ? 'down' : 'up', slopePerWeek: -help.slopePerWeek };
-    const reps = trend(recent.map(h => ({ day: h.day, value: h.bestReps })));
-    return reps.direction === 'unknown' && help.direction === 'flat' ? help : reps;
+    const assist = (t: Trend): ProgressSeries => ({ metric: 'assist', rows: recent, values: recent.map(h => -leastHelpKg(h)), trend: t });
+    if (help.direction === 'up' || help.direction === 'down') return assist({ ...help, direction: help.direction === 'up' ? 'down' : 'up', slopePerWeek: -help.slopePerWeek });
+    const reps = of('reps', h => h.bestReps);
+    return reps.trend.direction === 'unknown' && help.direction === 'flat' ? assist(help) : reps;
   }
-  return trend(recent.map(h => ({ day: h.day, value: h.bestE1rm || h.topKg })));
+  if (mode === 'conditioning' && recent.some(h => h.bestDistanceM > 0)) return of('distance', h => h.bestDistanceM);
+  if (recent.every(h => h.bestE1rm > 0)) return of('e1rm', h => h.bestE1rm);
+  if (recent.some(h => h.topKg > 0)) {
+    const top = of('top', h => h.topKg);
+    if (top.trend.direction === 'up' || top.trend.direction === 'down') return top;
+    const volume = of('volume', h => h.volume);
+    return volume.trend.direction === 'up' ? volume : top;
+  }
+  return of('reps', h => h.bestReps);
+}
+
+/** QA-R3a-2: the trend of what counts as progress for the lift's mode, the progress card's series (BUG-41). */
+export function liftTrend(history: ExerciseSessionSummary[], mode: ResistanceMode = 'weighted'): Trend {
+  return progressSeries(history, mode).trend;
 }
 
 export type PlateauStatus = 'progressing' | 'plateaued' | 'declining' | 'unknown';
