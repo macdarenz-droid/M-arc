@@ -274,6 +274,7 @@ After the OLD-ANDROID-1 APK (record each result with the APK commit sha):
    - Then the web causes become the explanation, and the WebView version from the device answers it.
 
 2. The owner's device data is unknown: model, Android version and WebView version. Every link from cause to report other than cause 1 depends on it.
+   - **Owner, 2026-10-17 ~16:05 UTC:** "Android version 12 / Android version13 / Etc. Different phones cause they are the one involved in beta test on pkaystore". So the reports come from the Play closed-test testers' phones on Android 12 and 13, which is cause 1's range (8-13). The closed test was released with bundle 37.1.0.55 (main `bf0a916`, 10-03), which predates the native fix (OLD-ANDROID-1a, train 17 `277bd6d`, first Play bundle 37.1.0.103). The newest bundle with both halves of the fix is 37.1.0.107 (versionCode 37000107, main `49a2853`, Play bundle run 39010087902, artifact MARC-PLAY-AAB-UPLOAD-SIGNED 12092871150). Uploading it to the closed-test track is the owner's step; the testers then run D1 (and D2/D4); WebView versions are still unknown.
 
 3. Huawei WebView's Chromium base is unknown, and Huawei users are in scope (App ID at build-apk.yml:252).
    - If no-GMS Huawei phones report a WebView below 111, open OLD-ANDROID-2 to lower the floor to 80.

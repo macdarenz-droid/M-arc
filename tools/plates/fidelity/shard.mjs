@@ -82,9 +82,9 @@ const RESULTS = new Set(['pass', 'fail']);
  * Writes the proof manifest (library plan 5.4): one row `{sha, id, check, state, theme, width, result}` per proven
  * state, sorted, as JSON at `file`. `width` is the CSS px width or null when the check has none. Throws (writing
  * nothing) on a row with a missing field, a result other than pass/fail, or a duplicate (id, check, state, theme,
- * width). Returns the manifest object.
+ * width). Returns the manifest object. `meta` (GATE-SPLIT, optional) is written as is after the rows.
  */
-export function writeProof(file, { sha, shard = {}, rows }) {
+export function writeProof(file, { sha, shard = {}, rows, meta }) {
   if (typeof sha !== 'string' || !/^[0-9a-f]{7,40}$/.test(sha)) throw new Error(`writeProof: sha must be a git sha, got ${sha}`);
   const out = rows.map((r, i) => {
     for (const f of ['id', 'check', 'state', 'theme']) if (typeof r[f] !== 'string' || !r[f]) throw new Error(`writeProof: row ${i} has no ${f}: ${JSON.stringify(r)}`);
@@ -96,7 +96,48 @@ export function writeProof(file, { sha, shard = {}, rows }) {
   out.sort((a, b) => cmp(key(a), key(b)));
   for (let i = 1; i < out.length; i++) if (key(out[i - 1]) === key(out[i])) throw new Error(`writeProof: duplicate row ${JSON.stringify(out[i])}`);
   const manifest = { sha, shard: shard.N ? { k: shard.k, N: shard.N } : null, rows: out };
+  if (meta !== undefined) manifest.meta = meta;   // GATE-SPLIT: optional; callers without it write the same bytes as before
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, `${JSON.stringify(manifest, null, 1)}\n`);
   return manifest;
+}
+
+// ---- GATE-SPLIT (docs/qa/GATE-SPLIT-DESIGN.md 3.5): additions to the one sharding system. Nothing above changes. ----
+
+/**
+ * `k/N` from `env[name]` (1-based, as CI matrix jobs name them) into 0-based { k, N }. Unset or empty gives {} (run
+ * everything); anything else malformed throws. `shardFromEnv(env)` equals `jobFromEnv('MARC_HT_SHARD', env)`.
+ */
+export function jobFromEnv(name, env = process.env) {
+  const v = env[name];
+  if (v == null || v === '') return {};
+  const m = /^(\d+)\/(\d+)$/.exec(v);
+  const k = m ? Number(m[1]) - 1 : -1, N = m ? Number(m[2]) : 0;
+  if (!m || N < 1 || k < 0 || k >= N) throw new Error(`${name} must be "k/N" with 1 <= k <= N, got "${v}"`);
+  return { k, N };
+}
+
+/**
+ * Packs weighted items into K jobs, for items of unequal cost (gate blocks: 0.3 s to 300 s), where htShard's modulo
+ * is right only for equal-cost tuples. Longest first (ties by id, plain code-unit order), each to the job with the
+ * least total so far (ties to the lowest index); `offsets[j]` is job j's head start in seconds. Returns K arrays of
+ * ids, each in the items' original order. Every id lands in exactly one job; throws on a duplicate id or a bad K.
+ */
+export function packShards(items, K, offsets = []) {
+  if (!Number.isInteger(K) || K < 1) throw new Error(`packShards: K must be an integer >= 1, got ${K}`);
+  const ids = new Set();
+  for (const it of items) {
+    if (typeof it.id !== 'string' || !it.id) throw new Error(`packShards: item has no id: ${JSON.stringify(it)}`);
+    if (!(Number.isFinite(it.seconds) && it.seconds >= 0)) throw new Error(`packShards: item ${it.id} has no seconds`);
+    if (ids.has(it.id)) throw new Error(`packShards: duplicate id ${it.id}`);
+    ids.add(it.id);
+  }
+  const load = Array.from({ length: K }, (_, j) => offsets[j] ?? 0), of = new Map();
+  for (const it of [...items].sort((a, b) => b.seconds - a.seconds || cmp(a.id, b.id))) {
+    let j = 0;
+    for (let x = 1; x < K; x++) if (load[x] < load[j]) j = x;
+    load[j] += it.seconds;
+    of.set(it.id, j);
+  }
+  return Array.from({ length: K }, (_, j) => items.filter(it => of.get(it.id) === j).map(it => it.id));
 }
