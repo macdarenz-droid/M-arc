@@ -6,21 +6,28 @@
 // shoulder width or a little wider; knees on the pad, the pad sinks until the arms are straight), c2 (chest up at the
 // top), c3 (chin over the bar, then lower to fully straight arms), c7 (shoulder blades down and back, elbows down
 // toward the ribs), c8 (the named faults: the partial rep first), c9 (tempo: brief pause at the top, 3-4 s down).
-// Clone source: pull_up (golden A): bar end-on, grip IK, the hang drawn as hidden lines under the end figure.
-// Kneel class (plan 2.2, probe C): no contact IK for the knees; the pose is set by angles, the root is placed so the
-// knee sits on the pad, and a `checks` plane proves the contact (knee joint one kneecap radius over the pad top).
+// Drawn order (ruling D-LIB9a-NOTE Q2): the spec's start is the card's end (chin over the bar) and the spec's end is the
+// card's start (the straight-arm hang). The engine builds the Mistake as the end pose plus an override and outlines what
+// differs from the end pose, drawn over the end figure, so a bottom-of-rep fault reads only against a hang end, as on
+// leg_press. This differs on purpose from pull_up, which draws the top solid: this card's fault is at the bottom.
+// Pose map for the card's facts: card plate.end = spec 'start', card plate.start = spec 'end', Mistake = 'mistake'.
+// Clone source: pull_up (golden A, bc0f378): bar end-on, grip IK.
+// Kneel class (plan 2.2, probe C): no contact IK for the knees. The machine is driven by named pad states (PAD_TOP, one
+// per pose); the roots below were solved once so each knee sits one kneecap radius over its pad and 2.5 cm behind the
+// pad's front edge, and are written as constants, so a pose change that lifts a knee off its pad turns the `checks`
+// planes red.
 // Geometry decisions:
 //  - Bar 2.07 m (32 mm, end-on), grips +-27 cm: 54 cm apart, a little wider than the 45 cm shoulder-joint width (c1).
-//  - Start: dead hang, elbows 8.5 deg (straight, as pull_up's start), root 0.944 m. Thighs near vertical (hip 4),
-//    knees 92 deg, the shins lie back along the pad, the feet hang off its rear edge.
-//  - End: chin 5 cm over the bar top (c3), chest up with a small lean back (tilt -4, trunk -6, c2), elbows driven down
-//    to the ribs (c7), shoulder blades down and back (scap elev -3, pro -3), root 1.50 m.
-//  - The pad rises with the lifter on its lever; the pivot sits half-way between the start and end lever heights, so
-//    the knees keep the same distance from the tower at the bottom and at the top.
-//  - Mistake (card plate.mistake, c8): the half hang. The lifter stops the lowering with the elbows about 75 deg bent,
-//    the pad still part-way up: the arms never straighten.
-import { landmarksOf } from '../engine.mjs';
-import { assistMachine, assistGeometry, KNEE_R, ASSIST_ITEMS } from '../eq/assistMachine.mjs';
+//  - Start (the top): chin 5 cm over the bar top (c3), chest up with a small lean back (tilt -4, trunk -6, c2), elbows
+//    driven down to the ribs (c7), shoulder blades down and back (scap elev -3, pro -3), root 1.50 m.
+//  - End (the hang): elbows 8.5 deg (straight, as pull_up's hang), root 0.944 m. Thighs near vertical (hip 4), knees
+//    92 deg, the shins lie back along the pad, the feet hang off its rear edge.
+//  - The pad rises with the lifter on its lever; the pivot sits half-way between the top and hang lever heights, so the
+//    knees keep the same distance from the tower at the bottom and at the top.
+//  - Mistake (card plate.mistake, c8): the half hang. The lowering stops with the elbows about 105 deg bent, the pad
+//    part-way up. The trunk is the hang's (tilt 0, trunk 0), so it cannot read as a swing (c8); the knees sit 6.6 cm
+//    further from the tower only because the pad, mid-way on its lever arc, is further from the pivot line.
+import { assistMachine, KNEE_R, ASSIST_ITEMS } from '../eq/assistMachine.mjs';
 import { perItem } from '../eq/parts.mjs';
 
 const H = 1.75;
@@ -31,48 +38,35 @@ const LEGS = { hip: 4, knee: 92, ankle: -35 };
 const grip = pole => ({ l: { at: [GX, BAR[1], BAR[2]], pole: [pole[0], pole[1], pole[2]] },
   r: { at: [-GX, BAR[1], BAR[2]], pole: [-pole[0], pole[1], pole[2]] } });
 
-const HANG_Y = 0.944, TOP_Y = 1.50, MIS_Y = 1.22;
-const hangP = { root: { tilt: 0 }, trunk: 0, scap: { elev: -1, pro: -2 }, ...LEGS, reach: grip([0.5, 0, 0.3]) };
-const topP = { root: { tilt: -4 }, trunk: -6, neck: -14, scap: { elev: -3, pro: -3 }, ...LEGS, reach: grip([0.3, -1, 0]) };
-const misP = { root: { tilt: -2 }, trunk: -2, neck: -6, scap: { elev: 0, pro: -1 }, reach: grip([0.4, -1, 0.15]) };
+// Pad-top heights per pose (m) and the roots solved onto them (knee joint KNEE_R * H over the pad top, 2.5 cm behind
+// the pad's front edge).
+export const PAD_TOP = { start: 1.0264, end: 0.4673, mistake: 0.7433 };
+const ROOT = { start: [0, 1.50, -0.0497], end: [0, 0.944, -0.0199], mistake: [0, 1.22, -0.0865] };
+const start = { root: { at: ROOT.start, tilt: -4 }, trunk: -6, neck: -14, scap: { elev: -3, pro: -3 }, ...LEGS, reach: grip([0.3, -1, 0]) };
+const end = { root: { at: ROOT.end, tilt: 0 }, trunk: 0, scap: { elev: -1, pro: -2 }, ...LEGS, reach: grip([0.5, 0, 0.3]) };
+const misBody = { root: { at: ROOT.mistake, tilt: 0 }, trunk: 0, scap: { elev: 0, pro: -1 }, reach: grip([0.4, -1, 0.15]) };
 
-// Machine: pad 32 cm long, 8 cm thick, on a 6 cm bracket; lever 62 cm; the cable leaves the lever 5 cm from the pivot.
-const PAD = [0.32, 0.08], BRACKET = 0.06, LEVER = 0.62, KNEE_FROM_FRONT = 0.025;
-const kneeAt = (p, y) => landmarksOf({ ...p, root: { ...p.root, at: [0, y, 0] } }, H)['knee.r'];
-const footY = y => kneeAt(hangP, y)[1] - KNEE_R * H - PAD[1] - BRACKET;
-const PIVOT_Y = (footY(HANG_Y) + footY(TOP_Y)) / 2;
-const PAD_Z = -0.125;                                  // lever end (bracket) at the bottom and the top of the rep
-const PIVOT = [0, PIVOT_Y, PAD_Z + Math.sqrt(LEVER ** 2 - (footY(HANG_Y) - PIVOT_Y) ** 2)];
-const M = { pivot: PIVOT, lever: LEVER, bracket: BRACKET, pad: PAD, padBack: PAD[0] / 2, attach: 0.05,
-  tower: [PIVOT[2] + 0.03, PIVOT[2] + 0.43], h: 2.28, bar: BAR, step: 0.42, H,
-  stack: { plates: 14, load: 6, lift0: 0.03 }, floor: [-0.62, PIVOT[2] + 0.55] };
-M.attachZ = PIVOT[2] - 0.05;
-// Root that puts the knee one pad-front offset behind the pad's front edge, for a body height y.
-function kneelRoot(p, y) {
-  const k = kneeAt(p, y), g = assistGeometry(M, k, H);
-  return [0, y, g.padTop[1][2] - KNEE_FROM_FRONT - k[2]];
-}
-const start = { ...topP, root: { ...topP.root, at: kneelRoot(topP, TOP_Y) } };
-const end = { ...hangP, root: { ...hangP.root, at: kneelRoot(hangP, HANG_Y) } };
-const misBody = { ...hangP, ...misP, root: { ...misP.root, at: kneelRoot({ ...hangP, ...misP }, MIS_Y) } };
-const padTopOf = p => assistGeometry(M, landmarksOf(p, H)['knee.r'], H).padTop[0][1];
-const PAD_START = padTopOf(start), PAD_END = padTopOf(end), PAD_MIS = padTopOf({ ...end, ...misBody });
-
+// Machine: pad 32 cm long, 8 cm thick, on a 6 cm bracket; lever 62 cm, pivot half-way between the top and hang lever
+// heights; the cable leaves the lever 5 cm from the pivot.
+const PIVOT = [0, 0.6069, 0.4284];
+const GHOSTS = 2;
+export const MACHINE = { pivot: PIVOT, lever: 0.62, bracket: 0.06, pad: [0.32, 0.08], padBack: 0.16, attach: 0.05, padTop: PAD_TOP,
+  ghosts: GHOSTS, tower: [PIVOT[2] + 0.03, PIVOT[2] + 0.43], h: 2.28, bar: BAR, step: 0.42,
+  stack: { plates: 14, load: 6, lift0: 0.03 }, floor: [-0.62, PIVOT[2] + 0.55], attachZ: PIVOT[2] - 0.05 };
+const kneePlane = pose => ({ landmark: 'knee.r', plane: { point: [0, PAD_TOP[pose] + KNEE_R * H, 0], normal: [0, 1, 0] }, pose, tol: 1 });
 
 export default {
   id: 'assisted_pull_up', name: 'Assisted Pull-up', view: 'side', facing: 'right',
   camera: { fit: true },
   poses: { start, end },
   equipment: [
-    ...perItem(assistMachine(M), ASSIST_ITEMS),
+    ...perItem(assistMachine(MACHINE), ASSIST_ITEMS),
   ],
   checks: [
-    { landmark: 'knee.r', plane: { point: [0, PAD_START + KNEE_R * H, 0], normal: [0, 1, 0] }, pose: 'start', tol: 1 },   // knees on the pad
-    { landmark: 'knee.r', plane: { point: [0, PAD_END + KNEE_R * H, 0], normal: [0, 1, 0] }, pose: 'end', tol: 1 },
-    { landmark: 'knee.r', plane: { point: [0, PAD_MIS + KNEE_R * H, 0], normal: [0, 1, 0] }, pose: 'mistake', tol: 1 },
+    kneePlane('start'), kneePlane('end'), kneePlane('mistake'),   // knees on the pad, in every drawn pose
     { landmark: 'chin', above: { point: [0, BAR_TOP + 0.045, 0], normal: [0, 1, 0] }, pose: 'start' },                  // chin clearly over
   ],
-  ghosts: { count: 2, parts: ['trunk', 'leg.r', 'pad'] },
+  ghosts: { count: GHOSTS, parts: ['trunk', 'leg.r', 'pad'] },
   trace: { point: 'chin', trim: [18, 8] },
   datum: [{ y: BAR_TOP, from: 20, to: 'start:chin' }],
   callouts: [
@@ -93,5 +87,5 @@ export default {
       { key: 'high', text: 'Pad<br>stays up', anchor: { at: 'knee.r', pose: 'mistake', off: [-30, 14] }, box: { left: 26, top: 294 }, cue: 'The pad never sinks to the dead hang.' },
     ],
   },
-  alt: 'Assisted pull-up, side view. Kneeling on the machine pad, overhand grip a little wider than the shoulders. From a straight-arm hang the body rises until the chin clears the bar.',
+  alt: 'Assisted pull-up, side view. Kneeling on the machine pad, overhand grip a little wider than the shoulders. From the chin over the bar, the body lowers slowly to a straight-arm hang with the knees on the pad.',
 };

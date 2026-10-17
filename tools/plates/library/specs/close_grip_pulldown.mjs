@@ -14,7 +14,7 @@
 //  - The lean is the same at the start and the end (c4: no extra lean during the pull): pelvis tilt -8, trunk -3, a
 //    13 deg lean at the hip, under the 30 deg limit.
 //  - End: grip centres 6 cm under the chin and 9 cm in front of it (just below the chin, c5); the elbow pole points
-//    down and a little back, so the elbows finish beside the trunk, in line with the hips seen from the side.
+//    down and a little back, so the elbows finish at the front edge of the trunk, below the shoulders.
 //  - Mistake (card plate.mistake, c6, c7): the handle comes down to the lower chest and the elbows travel back behind
 //    the trunk. The torso keeps the correct lean, so the one fault reads alone.
 import { rootOnSeat, landmarksOf } from '../engine.mjs';
@@ -89,7 +89,7 @@ export default {
     { type: 'pulley', at: [0, COLP.y, COLP.z], r: COLP.r },
     { type: 'cable', from: [0, HEAD.y + HEAD.r, HEAD.z], to: [0, COLP.y + COLP.r, COLP.z], z: 'back' },
     (lm, ctx) => {
-      const lift = LIFT0 + cableLen(gripOf(ctx.start)) - cableLen(gripOf(lm));
+      const lift = LIFT0 + cableLen(gripOf(lm)) - cableLen(gripOf(ctx.start));   // the cable pays out as the handle comes down: the stack rises
       return [
         { type: 'stack', base: [0, 0, STACK_Z], plates: 16, load: 8, w: 0.16, lift, rods: false, part: 'stack' },
         { type: 'cable', from: [0, COLP.y, STACK_Z], to: [0, 0.06 + 16 * 0.025 + lift, STACK_Z], z: 'back', part: 'stack' },
@@ -120,7 +120,7 @@ export default {
   callouts: [
     { key: 'thighs', text: 'Thighs<br>pinned', anchor: 'thighTop.r', box: { left: 162, top: 206 }, cue: 'Set the thigh pad tight on top of the thighs.' },
     { key: 'elbows', text: 'Elbows<br>to hips', anchor: 'elbow.r', box: { left: 162, top: 150 }, cue: 'Drive the elbows down toward the hips, upper arms tucked at the sides.' },
-    { key: 'chin', text: 'Handle<br>below chin', anchor: 'grip.r', cue: 'Stop when the handle is just below the chin.' },
+    { key: 'chin', text: 'Handle<br>below chin', anchor: 'grip.r', box: { left: 150, top: 108 }, cue: 'Stop when the handle is just below the chin.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Return', s: 2, move: true }],
   mistake: {
@@ -128,6 +128,9 @@ export default {
     parts: ['arm.r', 'handle'],
     guides: [
       { kind: 'dashed', pts: [ringOf(MIS_G), headTangent(ringOf(MIS_G))] },
+      // the faulty handle sits inside the solid arm: its V-handle redrawn as hidden lines (as pull_up redraws its hang)
+      { kind: 'dashed', pts: [MIS_G, ringOf(MIS_G)] },
+      { kind: 'dashed', pts: [[0, MIS_G[1] - 0.06, MIS_G[2]], [0, MIS_G[1] + 0.06, MIS_G[2]]] },
       { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [14, 0] }, to: { at: 'grip.r', off: [14, 0] } },
     ],
     tells: [
