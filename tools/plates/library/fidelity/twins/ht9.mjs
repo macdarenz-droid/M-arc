@@ -331,3 +331,26 @@ async function a5({ browser, port, R, pages, order, custom }, { lib, chrome, ind
   } catch (e) { R.fail(lib, theme, st, `A5 (after scrolling to the end and opening everything) crashed: ${msg(e)}`); }
   if (stats.pairs < 2) R.fail(lib, theme, st, `A5: only ${stats.pairs} plate pairs compared, expected {N, M} (>= 2)`);
 }
+
+/**
+ * D-LIB4b-GUARDS: LIB_ONCE.run guard/HT9-A3-dup@390. The "HT-9" block's A3 failure path through this twin's a3Probe: on
+ * plate index 0 in Silent Black, a second copy of a red-flag line planted in Setup must be reported ("shows 2 times"),
+ * and the clean sheet must not be. Returns the problems (none when the guard fires).
+ */
+export async function guardA3Dup({ browser, port, root }) {
+  const { C, flagLines } = await content(root);
+  const [chrome, lib] = H.HT_PLATES[0], h = C.HOWTOS.find(x => x.id === lib), flags = h.riskFlags ?? ['wrist'];
+  const bad = [];
+  const app = await H.openAppTrain(browser, port, 'silent-black', { onError: m => bad.push(`page error: ${m}`) });
+  try {
+    await H.openHowTo(app.page, 0);
+    for (const s of ['.setup', '.risks', '.ht-disclaimer']) await app.page.locator(`${APP} ${s}`).waitFor({ state: 'attached', timeout: 5000 });
+    await H.settleApp(app.page);
+    const clean = await a3Probe(app.page, flags, flagLines, C.DISCLAIMER);
+    if (clean.length) bad.push(`the clean ${chrome} sheet already fails A3: ${clean.join('; ')}`);
+    await app.page.evaluate(([A, t]) => { const p = document.createElement('p'); p.id = 'ht9-a3-fixture'; p.textContent = t; document.querySelector(`${A} .setup`).append(p); }, [APP, flagLines[flags[0]][1]]);
+    const caught = await a3Probe(app.page, flags, flagLines, C.DISCLAIMER);
+    if (!caught.some(b => b.includes('shows 2 times'))) bad.push(`a second copy of the ${flags[0]} red-flag line in Setup was not caught (${JSON.stringify(caught)})`);
+  } catch (e) { bad.push(msg(e)); } finally { await app.ctx.close(); }
+  return bad;
+}

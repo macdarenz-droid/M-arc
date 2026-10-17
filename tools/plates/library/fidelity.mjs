@@ -3,6 +3,7 @@
 // (id, theme, state) (fidelity/tuples.mjs), plus LIB-3's full plate QA report and the offline open. Run on the 8 it
 // gives the HT blocks' pass set and px (B2). Build and CI time only; never bundled.
 // CLI: node tools/plates/library/fidelity.mjs --ids <golden8|id,id,…> [--P n] [--families F,…] [--themes t,…] [--json out]
+//      node tools/plates/library/fidelity.mjs --once <k> [--blind L-sections|HT7-l3text|HT9-A3-dup]   (the LIB_ONCE rows)
 //      (serves www/ with vite preview on MARC_LIB_PORT, default 4180; MARC_CHROMIUM for the browser)
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -221,24 +222,48 @@ async function qaBase(ctx) {
 }
 
 /**
- * The per-shard once-states (LIB_ONCE): HT-1's golden self-check (0 px twice, a 1 px shift fails), and on shard 1
- * LIB-3's browser self-test (qa/selftest.mjs). Returns rows.
+ * The once-states (LIB_ONCE): per shard, HT-1's golden self-check (0 px twice, a 1 px shift fails); on shard 1, LIB-3's
+ * browser self-test (qa/selftest.mjs) and the three guards of the runner's re-implemented checks (D-LIB4b-GUARDS).
+ * `blind` (B2's guard mutations only) names a guard whose planted defect is not planted, so that guard must turn red.
+ * Returns rows.
  */
-export async function onceStates(browser, port, k) {
-  const R = recorder(), [a, b] = LIB_ONCE.shard(k);
+export async function onceStates(browser, port, k, { root = ROOT, blind = null } = {}) {
+  const R = recorder(), [a, b] = LIB_ONCE.shard(k), tuples = [a, b];
   const { goldenSelfCheck } = await import('../fidelity/harness.mjs');
   const r = await goldenSelfCheck(browser);
   R.check(a.id, a.theme, a.state, r.problems.filter(p => !p.startsWith('negative control:')));
   R.check(b.id, b.theme, b.state, r.control?.fails ? [] : [`the 1 px shift control does not fail the rule (${r.control?.off} px)`]);
-  const tuples = [a, b];
   if (k === 1) {
+    const [qa, sec, l3text, a3dup] = LIB_ONCE.run;
+    tuples.push(qa, sec, l3text, a3dup);
     const { selftest } = await import('./qa/selftest.mjs');
-    const [c] = LIB_ONCE.run, lines = [];
-    const ok = await selftest({ log: l => lines.push(l) }).then(x => x, e => ({ ok: false, error: e.message }));
-    R.check(c.id, c.theme, c.state, ok?.ok === false || ok?.bad?.length ? [JSON.stringify(ok).slice(0, 500)] : []);
-    tuples.push(c);
+    const lines = [], st = await selftest({ log: l => lines.push(l) }).then(x => x, e => ({ ok: false, error: e.message }));
+    R.check(qa.id, qa.theme, qa.state, st?.ok === false || st?.bad?.length ? [JSON.stringify(st).slice(0, 500)] : []);
+    R.check(sec.id, sec.theme, sec.state, await guardSections(browser, port, root, blind === 'L-sections'));
+    const t7 = await import('./fidelity/twins/ht7.mjs');
+    R.check(l3text.id, l3text.theme, l3text.state, t7.guardL3Text ? await t7.guardL3Text({ browser, port, root }, { blind: blind === 'HT7-l3text' }) : ['the HT-7 twin has no L3 text guard']);
+    const t9 = await import('./fidelity/twins/ht9.mjs');
+    R.check(a3dup.id, a3dup.theme, a3dup.state, blind === 'HT9-A3-dup' ? ['blinded'] : await t9.guardA3Dup({ browser, port, root }));
   }
   return R.finish(tuples);
+}
+
+/**
+ * guard/L-sections@390 (HT-3's ht3SectionGuards 1 and 2, on the runner's L-family): plate 0 against golden A in Silent
+ * Black, with a tall section registered, still compares N and M and restores the sections; with a section whose CSS
+ * leaks into the block, L2b must fail on word-spacing. `blind` plants nothing in the leak case (B2's mutation).
+ */
+async function guardSections(browser, port, root, blind) {
+  const [chrome, lib] = HT_PLATES[0], html = readFileSync(join(root, 'tests/howto/golden/technical-plates.html')), bad = [];
+  const job = { lib, chrome, index: 0, theme: 'silent-black', html, order: undefined, custom: undefined, full: false, widths: [] };
+  const R1 = recorder(), s1 = plateStats();
+  await plateJob(browser, port, R1, { ...job, mutate: fixtureSection, stats: s1 });
+  if (R1.problems.length) bad.push(`guard 1 (tall section registered): ${R1.problems.slice(0, 3).join('; ')}`);
+  if (s1.pairs < 4) bad.push(`guard 1: only ${s1.pairs} pairs compared with a section registered`);
+  const R2 = recorder();
+  await plateJob(browser, port, R2, { ...job, mutate: blind ? null : fixtureLeakSection, stats: plateStats() });
+  if (!R2.problems.some(p => /L2b\/.*word-spacing/.test(p))) bad.push('guard 2: a section CSS leak into the golden block (.ht p word-spacing) was not caught by L2b while the sections were hidden');
+  return bad;
 }
 
 /**
@@ -280,7 +305,10 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const browser = await launchBrowser();
   const t0 = Date.now();
   let out;
-  try { out = await libraryFidelity(browser, PORT, { ids, pages, P, families, themes, fixtures, log: m => console.error(m) }); } finally { await browser.close(); }
+  try {
+    out = arg('once') ? { rows: await onceStates(browser, PORT, +arg('once'), { blind: arg('blind') }), px: {}, sizes: {}, seconds: { id: {}, family: {} } }
+      : await libraryFidelity(browser, PORT, { ids, pages, P, families, themes, fixtures, log: m => console.error(m) });
+  } finally { await browser.close(); }
   const fails = out.rows.filter(r => r.result === 'fail');
   for (const r of fails) console.log(`FAIL ${r.id} ${r.theme} ${r.state}: ${r.why.join(' | ').slice(0, 400)}`);
   const pxId = {};
