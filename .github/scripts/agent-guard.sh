@@ -51,5 +51,17 @@ else
   warn 'No main to compare' "$BASE_REF not fetched; ownership rules skipped." 'fetch origin/main.'
 fi
 
+# Rule 4 (LIB-4c, D-LIB4c-1 (b); library plan 3.5): the library pin manifest changes only in a commit that says so.
+if git rev-parse --verify -q "$BASE_REF" >/dev/null; then
+  MB=$(git merge-base HEAD "$BASE_REF")
+  MF=tools/plates/library/MANIFEST.json
+  for c in $(git rev-list --no-merges "$MB..HEAD" -- "$MF"); do
+    # Creating the manifest with an empty rows map pins nothing, so it needs no tag. Every other change does.
+    if ! git cat-file -e "$c^:$MF" 2>/dev/null && git show "$c:$MF" 2>/dev/null | jq -e 'keys == ["rows"] and (.rows | length) == 0' >/dev/null 2>&1; then continue; fi
+    git log -1 --format=%B "$c" | grep -qF '[golden update]' \
+      || err 'Library manifest without [golden update]' "commit ${c:0:8} changes tools/plates/library/MANIFEST.json, but its message does not carry '[golden update]'." "only the commit that adds or replaces an approved pin changes MANIFEST.json, and its message carries '[golden update]'; never edit the manifest in any other commit."
+  done
+fi
+
 [ $fail -eq 0 ] && echo "Agent guard passed for $BRANCH$( [ $warnn -eq 1 ] && echo ' (with warnings)')."
 exit $fail
