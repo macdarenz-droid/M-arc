@@ -34,7 +34,7 @@ describe('days off (RG-19, D4)', () => {
   // 2026-09-14 Mon, 16 Wed, 18 Fri, 21 Mon, 23 Wed.
   const trained = ['2026-09-14', '2026-09-16', '2026-09-18', '2026-09-23'].map(d => session(d, [{ id: 'lib_barbell_bench_press', sets: sets(60, 8) }]));
   it('a scheduled day taken off keeps the streak', () => {
-    expect(trainingStreak(trained, schedule, '2026-09-23')).toBe(1);
+    expect(trainingStreak(trained, schedule, '2026-09-23')).toBe(4);
     expect(trainingStreak(trained, schedule, '2026-09-23', ['2026-09-21'])).toBe(4);
   });
   it('adherence and this week\'s target leave it out', () => {

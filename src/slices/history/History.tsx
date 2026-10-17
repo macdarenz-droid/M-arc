@@ -485,7 +485,9 @@ function Stats() {
   const s = state.value;
   const u = unit.value;
   const w = weekSummary(s.sessions, today.value, s.customExercises, plannedThisWeek(s.schedule, s.daysOff, today.value), bodyWeightAt.value);
-  const records = useMemo(() => allRecords(s.sessions, s.customExercises, u).slice(0, 12), [s.sessions, u]);
+  const allRecs = useMemo(() => allRecords(s.sessions, s.customExercises, u), [s.sessions, s.customExercises, u]);
+  const [allShown, setAllShown] = useState(false);
+  const records = allShown ? allRecs : allRecs.slice(0, 12);
   const exerciseIds = useMemo(() => { const m = new Map<string, string>(); for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!m.has(e.exerciseId)) m.set(e.exerciseId, e.name); return [...m]; }, [s.sessions]);
   const panel = openPanel.value;
   const fromPanel = panel?.id === 'exercise-stats' ? panel.params?.exerciseId : undefined;
@@ -566,11 +568,12 @@ function Stats() {
         )}
       </Section>
 
-      <Section title="Records" palace="history.records" aside={<Chip tone="positive"><IconTrophy size={16} /> {records.length}</Chip>}>
+      <Section title="Records" palace="history.records" aside={<Chip tone="positive"><IconTrophy size={16} /> {allRecs.length}</Chip>}>
         <Card>
           {!records.length ? <p class="small muted">No records yet.</p> : (
             <div class="list">{records.map((r, i) => <Row key={i} trailing={<span class="hint">{formatDay(r.day)}</span>}><div class="small">{r.exerciseName}</div><div class="hint">{PR_LABEL[r.kind]} · {r.detail}</div></Row>)}</div>
           )}
+          {records.length < allRecs.length && <Button variant="quiet" size="sm" onClick={() => setAllShown(true)}>Show all</Button>}
         </Card>
       </Section>
     </div>
