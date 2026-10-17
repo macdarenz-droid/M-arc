@@ -13,12 +13,13 @@ import { join } from 'node:path';
 import { ROOT } from '../lib/inputs.mjs';
 import { hintsOutputs } from '../library/ids-encoding.mjs';
 import { inputs as contentInputs, pushHints } from './content.mjs';
-import { EXERCISES_JSON, registryInputs, rows, shippedIds } from '../library/registry.mjs';
+import { EXERCISES_JSON, registryInputs, rows, shippedIds, sourceOf } from '../library/registry.mjs';
 import { PAIRS, loadPairs, pairsOf } from './handpairs.mjs';
 
 /** The layer plugins whose chunks loaders.ts maps (run first, so ctx.prev holds their outputs). */
 export const LAYERS = ['tools/plates/gen/hands.mjs', 'tools/plates/gen/zooms.mjs', 'tools/plates/gen/feel.mjs', 'tools/plates/gen/handpairs.mjs'];
-export const after = LAYERS;
+// LIB-2b (D-LIB2b-LOADERS): plates.mjs too, so a LOADERS line is written only for an ht-<slug>.ts that is an output
+export const after = [...LAYERS, 'tools/plates/gen/plates.mjs'];
 
 export const ENCODING = 'tools/plates/library/ids-encoding.mjs';
 export const COVERAGE_DATA = 'tools/plates/library/coverage-archetypes.json';
@@ -44,7 +45,24 @@ export function chunkMaps(shippedRows, has, pairOf = {}) {
   return { hand, posture, feel };
 }
 
-const mapText = entries => `{${entries.map(([c, f]) => `\n  ${JSON.stringify(c)}: () => import('./${f}'),`).join('')}${entries.length ? '\n' : ''}}`;
+/** D-LIB2b-LOADERS: throws, naming the id and the file, unless every shipped row has its ht-<slug>, feel-<c> and
+ *  posture-<c> chunk, its zoom-<c>.css (posture-<c>.ts imports it; `hasFile` takes a repo path, D-LIB2b-REVIEW-1) and,
+ *  unless its archetype is 'none', its hand-<c> chunk or a hand pair. Runs before any text is built, so no loaders.ts
+ *  line can point at a chunk that is not written. */
+export function missingChunks(shippedRows, has, pairOf = {}, archetypes = {}, hasFile) {
+  for (const r of shippedRows) {
+    const c = r.chromeId;
+    for (const name of [`ht-${r.slug}`, `feel-${c}`, `posture-${c}`]) if (!has(name)) throw new Error(`ids: ${r.id}: no src/howto/generated/${name}.ts`);
+    const zoom = `src/slices/howto/css/zoom-${c}.css`;
+    if (!hasFile(zoom)) throw new Error(`ids: ${r.id}: no ${zoom}`);
+    if (archetypes[r.id] !== 'none' && !has(`hand-${c}`) && !pairOf[c]) throw new Error(`ids: ${r.id}: no src/howto/generated/hand-${c}.ts and no hand pair`);
+  }
+}
+
+// D-LIB2b-HANDCSS: a shared handpair-<key> chunk imports no CSS (it stays exercise-neutral), so a pair's HAND line loads
+// that exercise's zoom-<chromeId>.css first; the 8's own hand-<chromeId>.ts imports it itself, and their lines are unchanged.
+const load = (c, f) => f.startsWith('handpair-') ? `import('../../slices/howto/css/zoom-${c}.css').then(() => import('./${f}'))` : `import('./${f}')`;
+const mapText = entries => `{${entries.map(([c, f]) => `\n  ${JSON.stringify(c)}: () => ${load(c, f)},`).join('')}${entries.length ? '\n' : ''}}`;
 
 export const htIndexText = (loaders, { hand = [], posture = [], feel = [] } = {}) => `import type { BuiltHowTo, LibId } from '../types';
 
@@ -116,19 +134,26 @@ export function inputsFor(path) {
 export async function outputs(ctx = {}) {
   const all = rows(), shipped = shippedIds(all);
   const exerciseIds = JSON.parse(readFileSync(join(ROOT, EXERCISES_JSON), 'utf8')).map(e => e.id);
-  const twins = hintsOutputs(await pushHints(), shipped, exerciseIds);
+  // Called without the core's ctx (tools/plates/library/scale/synthetic.mjs, measurement only): its synthetic shipped
+  // rows are generated-module clones with no How-to source, so only ids with a source give hints, and no inputs are
+  // listed. The generator always passes ctx, and there content.mjs loads every shipped row's source or throws.
+  const measuring = !ctx.prev;
+  const hintIds = measuring ? shipped.filter(id => existsSync(join(ROOT, sourceOf(id)))) : shipped;
+  const twins = hintsOutputs(await pushHints(hintIds), shipped, exerciseIds);
   const slugOf = new Map(all.map(r => [r.id, r.slug]));
   const archetypes = JSON.parse(readFileSync(join(ROOT, COVERAGE_DATA), 'utf8')).archetypes;
   const { pairOf } = pairsOf(await loadPairs(), shipped, all);
   const gen = name => `src/howto/generated/${name}.ts`;
-  const has = ctx.prev ? name => ctx.prev.has(gen(name)) : name => existsSync(join(ROOT, gen(name)));
+  const hasFile = ctx.prev ? path => ctx.prev.has(path) : path => existsSync(join(ROOT, path)), has = name => hasFile(gen(name));
   const byId = new Map(all.map(r => [r.id, r]));
+  missingChunks(shipped.map(id => byId.get(id)), has, pairOf, archetypes, hasFile);
   const maps = chunkMaps(shipped.map(id => byId.get(id)), has, pairOf);
-  return [
-    { path: 'src/howto/ids.ts', text: twins.ids, inputs: inputsFor('src/howto/ids.ts') },
-    { path: 'tools/plates/library/ids-node.mjs', text: twins.node, inputs: inputsFor('tools/plates/library/ids-node.mjs') },
-    { path: 'src/howto/lib-id.ts', text: libIdText(exerciseIds), inputs: inputsFor('src/howto/lib-id.ts') },
-    { path: 'src/howto/generated/loaders.ts', text: htIndexText(shipped.map(id => [id, slugOf.get(id)]), maps), inputs: inputsFor('src/howto/generated/loaders.ts') },
-    { path: 'src/howto/coverage.ts', text: coverageText(coverageEntries(archetypes, all, exerciseIds)), inputs: inputsFor('src/howto/coverage.ts') },
+  const out = [
+    { path: 'src/howto/ids.ts', text: twins.ids },
+    { path: 'tools/plates/library/ids-node.mjs', text: twins.node },
+    { path: 'src/howto/lib-id.ts', text: libIdText(exerciseIds) },
+    { path: 'src/howto/generated/loaders.ts', text: htIndexText(shipped.map(id => [id, slugOf.get(id)]), maps) },
+    { path: 'src/howto/coverage.ts', text: coverageText(coverageEntries(archetypes, all, exerciseIds)) },
   ];
+  return measuring ? out : out.map(o => ({ ...o, inputs: inputsFor(o.path) }));
 }

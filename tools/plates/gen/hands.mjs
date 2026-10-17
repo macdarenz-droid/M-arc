@@ -10,7 +10,9 @@
 //     HOWTO_ZOOM_CSS part for it) through HT-2's rewriteCss. Vite splits it off with the chunk and loads it on first
 //     open, after hand.css. The posture close-ups (HT-7) use the same rules and import the same file.
 // Nothing is re-rendered or re-serialized: every string is a slice of the approved page.
-import { goldenInputs, goldenRows } from '../library/registry.mjs';
+import { batchGoldenOf, goldenInputs, goldenRows, rows as registryRows, shippedIds, shippedRows } from '../library/registry.mjs';
+import { layersPage, pagesOf } from '../library/batch-golden.mjs';
+import { loadPairs, pairsOf } from './handpairs.mjs';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -160,14 +162,50 @@ async function outputsOf() {
       + `import '../../slices/howto/css/zoom-${id}.css';\n`
       + `export const panel = ${lit(panel)};\n` });
   }
-  out.push({ path: 'src/slices/howto/css/hand.css', text: rewrite(`${H.HAND_CSS}\n${chromeRules(chrome)}`) });
+  const handCss = rewrite(`${H.HAND_CSS}\n${chromeRules(chrome)}`);
+  out.push({ path: 'src/slices/howto/css/hand.css', text: handCss });
+  out.push(...await libraryOutputs(H, handCss));
   return out;
 }
 
-/** LIB-2 (design 6.1): each output's own inputs. Every hands.mjs output is cut from one shared source (the golden
- *  B page built from the whole vendored folder), so a file's inputs are that whole set; the rows come from the
- *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4). */
-export const inputsFor = () => inputs();
+/** LIB-2b: the shipped library rows (the 8 stay above, from golden B's committed page). */
+export const libraryRows = (all = registryRows()) => shippedRows(all).filter(r => r.mode !== 'golden');
+export const COVERAGE_DATA = 'tools/plates/library/coverage-archetypes.json';
+
+/** Each shipped library row's zoom-<chromeId>.css, cut from its pinned layers page. A library hand ships only as its
+ *  LIB-7 pair (handpair-<key>, lib4-cards 11.1 item 1), so no hand-<chromeId>.ts is written: a row whose archetype is not
+ *  'none' must have a pair, and a 'none' row's page must hold no hand close-up for it. hand.css, rebuilt from the row's
+ *  page, must be byte-identical (D-LIB2b-CSS). */
+async function libraryOutputs(H, handCss) {
+  const all = registryRows(), lib = libraryRows(all);
+  if (!lib.length) return [];
+  const { pairOf } = pairsOf(await loadPairs(), shippedIds(all), all);
+  const archetypes = JSON.parse(readFileSync(join(ROOT, COVERAGE_DATA), 'utf8')).archetypes, out = [];
+  const buildPage = readFileSync(join(LAYERS, 'artifact', 'build-page.mjs'), 'utf8');
+  for (const row of lib) {
+    const html = layersPage(row), file = pagesOf(row).layers, id = row.chromeId;
+    const style = galleryCss(html);
+    if (!style.includes(H.HAND_CSS)) throw new Error(`hands: ${row.id}: HAND_CSS is not in ${file} verbatim`);
+    if (rewrite(`${H.HAND_CSS}\n${chromeRules(howtoCss(buildPage, style))}`) !== handCss) throw new Error(`hands: ${row.id}: ${file} does not rebuild hand.css byte for byte`);
+    const hasHand = html.includes(`<div class="zx" id="${id}-zoom-hand" data-zoom="hand"`);
+    if (archetypes[row.id] === 'none') { if (hasHand) throw new Error(`hands: ${row.id}: archetype 'none', but ${file} holds a hand close-up for ${id}`); }
+    else if (!pairOf[id]) throw new Error(`hands: ${row.id}: no hand pair (tools/plates/library/hands/pairs.mjs HAND_OF_ID); a library hand ships only as handpair-<key>`);
+    out.push({ path: `src/slices/howto/css/zoom-${id}.css`, text: rewrite(`${scopedRules(flatStyle(style), id)}\n${chromeRules(howtoCss(buildPage, style), HX_TAIL)}`, { inPanel: true }) });
+  }
+  return out;
+}
+
+/** LIB-2 (design 6.1): each output's own inputs. Every hands.mjs output of the 8 is cut from one shared source (the
+ *  golden B page built from the whole vendored folder), so a file's inputs are that whole set; the rows come from the
+ *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4).
+ *  LIB-2b (lib4-cards 11.1 item 12): a library row's zoom-<chromeId>.css lists its pinned page, layersConfig, batch golden
+ *  file and batch file, the code that reads them, tools/plates/layers/MANIFEST.json (HX_TAIL, HAND_CSS) and layers.mjs. */
+export const libraryInputs = row => [pagesOf(row).layers, pagesOf(row).layersConfig, batchGoldenOf(row.batchFile), row.batchFile,
+  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', ...goldenInputs(), 'tools/plates/library/batch-golden.mjs'];
+export function inputsFor(path) {
+  const row = libraryRows().find(r => path === `src/slices/howto/css/zoom-${r.chromeId}.css`);
+  return row ? libraryInputs(row) : inputs();
+}
 export async function outputs(ctx) {
   return (await outputsOf(ctx)).map(o => ({ ...o, inputs: inputsFor(o.path) }));
 }
