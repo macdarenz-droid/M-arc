@@ -1,9 +1,10 @@
 # LB1 plates: design note (LIB-9a)
 
 Card: `docs/supervisor/verify/lib-9a-card.md` @ `19a6017` (Do 1). Rulings: lib4-cards sections 1, 11.1 and 12 @ `19a6017`
-(D-LIB4-ENTRY-2, D-LIB9-ENGINE, D-LIB9-AUTHORQA, D-LIB9-CARDFIELDS, D-LIB-CIMANNERS, D-LIB-LANE-ACTIVE, D-LIB5-BOX).
-Plan: `claude/howto-options` @ `4a9fd86`. Research read on `claude/libht-research` @ `9dbc7e0` (the copy for Do 6 waits for
-the head the supervisor names). Census: `docs/howto/library/inputs/census.json` @ `4a9fd86`.
+(D-LIB4-ENTRY-2, D-LIB9-ENGINE, D-LIB9-AUTHORQA, D-LIB9-CARDFIELDS, D-LIB-CIMANNERS, D-LIB-LANE-ACTIVE, D-LIB5-BOX), and
+this note's rulings, D-LIB9a-NOTE (lib4-cards section 13 @ `8669e21`; Q1-Q5 below). Plan: `claude/howto-options` @
+`4a9fd86`. Research: the 14 cards and quotes are byte copies from `claude/libht-research` @ `9dbc7e0` (Do 6; re-copied
+once when the supervisor names the wave-2 head). Census: `docs/howto/library/inputs/census.json` @ `4a9fd86`.
 
 Nothing here ships: every LB1 row stays at stage `drawing` or `review` in `lb1/rows.json`, outside `batches/`.
 
@@ -23,10 +24,19 @@ Nothing here ships: every LB1 row stays at stage `drawing` or `review` in `lb1/r
   The parent fields that are false for each child are listed in the table (section 2). 9 D become H: chin_up,
   hanging_knee_raise, close_grip_pulldown, underhand_lat_pulldown, single_arm_lat_pulldown, incline_machine_press,
   shoulder_press, horizontal_leg_press, leg_press_calf_raise. Cost per plan risk: about +2.5 Opus-hours each [est].
-- **Consequence for the acceptance list.** With no D row, A7 (D parent rebuild) and the "raw-spec override on a D row"
-  mutation (A4) have no LB1 subject. Both are still proven, on a test candidate copied from one LB1 row with
-  `mode: 'D'` and a derivation, so the checks are shown to bite (lb1-plates.test.ts). If the supervisor prefers, a row
-  can stay D only where every parent string is true; none qualifies today.
+- **Envelope fact.** `qa/envelope.json` names no PARAMS key, so `derive()` given that envelope (derive.mjs:2-3) refuses
+  every param today: no row can be a valid D.
+- **Consequence for the acceptance list (Q5).** With no D row, A7 (D parent rebuild) and A4's "raw-spec override on a D
+  row" have no LB1 subject. Both are proven in Do 4 (lb1-plates.test.ts) on the real path: candidateOf(...,
+  { authoring: true }) on an in-memory D copy of lib_close_grip_pulldown with its plan parent lib_lat_pulldown and
+  params { 'camera.maxScale': n }, then h10. Clean first, then a key outside PARAMS (H10.unknown), a raw-spec key
+  (H10.raw) and one byte of a parent fragment (H10.byte), each red. The clean result means "H10's checks bite", never
+  "a valid D". The test asserts 14 H and 0 D in rows.json.
+- **Known H10 gap (recorded, not fixed here: qa/ is reserved).** On the real path `validateParams` (qa/node.mjs) checks
+  only key names: it ignores PARAMS `values`, number ranges and the envelope, and allows empty params
+  ('bar.kind':'banana', 'camera.maxScale':99 and 'handedness':7 all pass H10 on main). candidate.mjs passes PARAMS as the
+  schema, whose `{type:'enum', values}` shape validateParams does not read. The supervisor routes the fix before any D
+  row exists on any branch.
 
 ## 2. Per id
 
@@ -38,11 +48,11 @@ Clone sources: the 8 = golden A, `tests/howto/golden/GOLDEN.json` entry `ref bc0
 | chin_up* | H. pull_up: alt "Overhand grip" (card c1: palms toward the face); callouts Chin over bar / Elbows down / Shoulders down vs card Shoulders set / Elbows in front / Chin to bar; tempo 1/0.5/2/0.5 vs 2/1/2 | pull_up (bc0f378) | pullupBar | hang | hand: no key yet |
 | hanging_knee_raise* | H. hanging_leg_raise: pose (straight legs vs knees bent above the hips, c5); callout "Legs straight"; tell "Knees only" names the child's correct pose as a fault; tempo 1.5/0.5/2/1 vs 1/1/2 | hanging_leg_raise (bc0f378) | pullupBar | hang | hand: no key yet |
 | assisted_pull_up* | H (own parent). No parent spec | pull_up (bc0f378) for the hang and grip IK | **assistMachine** (new) | hang + kneel (kneel anchor, plan 2.2) | hand: no key yet |
-| inverted_row | H (own parent) | dumbbell_bench_press (e6f39ff, supine `checks {plane}`) | pullupBar lowered + rackUpright | supine | hand: no key yet |
-| close_grip_pulldown | H. lat_pulldown: alt "the wide bar"; latBar vs V-handle (c1); callouts Bar to chest / Elbows down / Shoulders down vs Thighs pinned / Elbows to hips / Handle below chin; lean grows start to end vs no extra lean (c4); tempo 1/0.5/2/0.5 vs 2/2 | lat_pulldown (bc0f378) | vHandle, lat_pulldown's station | seat | hand: no key yet |
-| underhand_lat_pulldown | H. lat_pulldown: alt "wide bar", grip overhand wide vs underhand about shoulder width (c1); callouts; Mistake swing + shrug vs momentum rock (c7); tempo | lat_pulldown (bc0f378) | latBar, station | seat | hand: no key yet |
-| single_arm_lat_pulldown | H. lat_pulldown: one arm, single handle (c1); callouts; Mistake; tempo 2/1/2 | lat_pulldown (bc0f378) | **dHandle** (new, `poly`), station | seat | hand: `d-handle/pull` (LIB-7 @ 55e91e9) |
-| straight_arm_pulldown | H (own parent) | romanian_deadlift / barbell_row hinge (e6f39ff), after the pilot A code review (Do 5 d) | cableColumn (high pulley), latBar straight | stand + hinge | none on the card |
+| inverted_row | H (own parent) | census closest seated_cable_row (bc0f378); supine anchor dumbbell_bench_press (e6f39ff, or the head D-PILOTA-R5 names; supine `checks {plane}`) | pullupBar lowered + rackUpright | supine | hand: no key yet |
+| close_grip_pulldown | H. lat_pulldown: alt "the wide bar"; latBar vs V-handle (c1); callouts Bar to chest / Elbows down / Shoulders down vs Thighs pinned / Elbows to hips / Handle below chin; lean grows start to end vs no extra lean (c4); tempo 1/0.5/2/0.5 vs 2/2 | lat_pulldown (bc0f378) | vHandle, lat_pulldown's station | seat + overhead | hand: no key yet |
+| underhand_lat_pulldown | H. lat_pulldown: alt "wide bar", grip overhand wide vs underhand about shoulder width (c1); callouts; Mistake swing + shrug vs momentum rock (c7); tempo | lat_pulldown (bc0f378) | latBar, station | seat + overhead | hand: no key yet |
+| single_arm_lat_pulldown | H. lat_pulldown: one arm, single handle (c1); callouts; Mistake; tempo 2/1/2 | lat_pulldown (bc0f378) | **dHandle** (new, `poly`), station | seat + overhead | hand: `d-handle/pull` (LIB-7 @ 55e91e9) |
+| straight_arm_pulldown | H (own parent) | census closest lat_pulldown (bc0f378); hinge anchors romanian_deadlift / barbell_row (e6f39ff, or the head D-PILOTA-R5 names), after the pilot A code review (Do 5 d) | cableColumn (high pulley), latBar straight | stand + hinge | none on the card |
 | chest_supported_row | H (own parent) | seated_cable_row (bc0f378) | **chestRowMachine** (new) | seat + lean | none on the card |
 | resistance_band_row | H (own parent) | seated_cable_row (bc0f378) | **band** (new) | floor-sit (first user, own sheet) | none on the card (band hand waits on research, LIB-7 hand-band.mjs GAPS) |
 | incline_machine_press | H. machine_chest_press: arm path horizontal vs up and forward to forehead height (c2); handle height mid-chest vs upper chest (c1); callout "Elbows 45°"; tempo 1/0.3/1.5/0.5 vs 2/1/2 | machine_chest_press (bc0f378) | chestPress (pivot placed for the inclined path), backPad reclined, seat | recline | none on the card |
@@ -61,31 +71,31 @@ keys (D-LIB9-HANDPAGE).
 - **F1 on leg_press_calf_raise, if zoomed.** The ankle moves the platform about 8-10 cm [est], about 12 px at the 8's
   scale, under PQ-H3's shortest approved Trace (22.1 px). If the drawn Trace is short, `camera.maxScale` zooms it and F1
   is raised (plan 1, small-motion zoom), with an alt text saying the view is enlarged.
-- **F7 on single_arm_lat_pulldown: not expected, ruling asked.** The card asks for F7 (the plan's drawable-fault list,
-  census note "the defining fault is a sideways lean"). But the verified card @ `9dbc7e0` sets
-  `plate.mistake.drawable: true` (elbow driven back past the end, shoulder rolling forward; c10, c13), and
-  D-LIB9-CARDFIELDS makes `topFault` "the card's mistake key". So the drawn Mistake equals `topFault` and F7 stays
-  down. Proposal: expect no F7 here; if the supervisor wants the lean named as the top fault, the card needs a research
-  change first (`drawable: false` with the lean sourced), not a field written here.
+- **F7 follows research (Q1).** topFault comes from the card (section 4), so the expected F7 is a research fact: on a
+  drawable:true card the drawn Mistake carries topFault and F7 stays down; on a drawable:false card F7 is raised and
+  needs the owner's yes. single_arm_lat_pulldown's drawable question is with the research owner (the card's viewWhy
+  and handlingMistakes order, plan 3.1:85); until it is answered its expected F7 is undecided and no Do 7 evidence
+  for it counts. LIB-9a never edits the card beyond its three keys.
 - No other flag is planned. Any other raised flag is a defect to fix, never an addition to the list.
 
 ## 4. Card fields (D-LIB9-CARDFIELDS)
 
-- `topFault` = the first tell key of the plate (what `candidateOf` reads as `mistakeFault`). Proposed keys: chin_up
-  `kip`, hanging_knee_raise `swing`, assisted_pull_up `partial`, inverted_row `sag`, close_grip_pulldown `low`,
-  underhand_lat_pulldown `rock`, single_arm_lat_pulldown `past`, straight_arm_pulldown `bend`, chest_supported_row
-  `lean`, resistance_band_row `slump`, incline_machine_press `blades`, shoulder_press `arch`, horizontal_leg_press
-  `lock`, leg_press_calf_raise `lock`.
+- **topFault (Q1).** Written by Do 6 from the card, never from a spec, through this ruled map of each card's
+  plate.mistake to a key: chin_up `kip`, hanging_knee_raise `swing`, assisted_pull_up `partial`, inverted_row `sag`,
+  close_grip_pulldown `low`, underhand_lat_pulldown `rock`, single_arm_lat_pulldown `past`, straight_arm_pulldown
+  `bend`, chest_supported_row `lean`, resistance_band_row `slump`, incline_machine_press `blades`, shoulder_press
+  `arch`, horizontal_leg_press `lock`, leg_press_calf_raise `lock`. Two cases: drawable:true, topFault is the key of
+  plate.mistake; drawable:false, it is the key of the top fault the card itself names (mistake.why or
+  handlingMistakes), which differs from the drawn Mistake's key, so F7 is raised. All 14 cards are drawable:true @
+  `9dbc7e0`. The spec's first Mistake tell carries plate.mistake's key and draws that fault.
 - `plateFacts` only for numbers that a claim's verbatim quote states, each naming that claim. A bound ("no more than
   about 30 degrees") or a range is not a point fact: the drawing stays inside it, and it is not written as a fact.
   The fields are written in Do 6 from the head the supervisor names, never from a spec.
-- **Tempo map** (for the supervisor to rule). Rule: the spec's phase array follows the movement from the drawn start
-  pose. The concentric phase takes `plate.tempo.up`, the eccentric phase takes `plate.tempo.down`, and a `Hold` phase of
-  `plate.tempo.pause` seconds sits at the end of the concentric phase, where every one of the 14 cards puts its pause
-  (checked against each tempo claim's quote). `pause: 0` gives no Hold phase. No Rest phase: pilot A's approved specs
-  have none, and no LB1 card sources a rest, so **no named constant is needed**. (Alternative, not recommended: the 8's
-  Rest 0.5 s, cited to lat_pulldown and pull_up; it would be the only unsourced number in the strip.) A11's "Rest
-  changed in one card" mutation then becomes "a Rest phase added to one card" (an unmapped `s`, red).
+- **Tempo map (ruled, Q3; lb1/tempo.json).** The spec's phase array follows the movement from the drawn start pose. The
+  concentric phase takes `plate.tempo.up`, the eccentric phase `plate.tempo.down`, and a `Hold` of `plate.tempo.pause`
+  comes right after the concentric phase, if and only if pause > 0 (every LB1 card puts its pause there, checked
+  against each tempo claim's quote). Shape `{phase, s, move: true}` for a moving phase and `{phase, s}` for Hold. No
+  Rest phase: no LB1 card sources a rest, so the set of named constants is empty. A11's mutations are Q3's (i)-(vi).
 
 | id | card up/down/pause (claim) | phase array |
 |---|---|---|
@@ -111,29 +121,33 @@ keys (D-LIB9-HANDPAGE).
 
 Each is `(lm, ctx) => item[]`, built only from PRIMITIVES types, reads no file, and is wrapped with `perItem()` so each
 part has its own engine key. Any part that moves between the end pose and the Mistake is `poly` (or a stack or cable,
-the pinned H9 line types). Shared poly shapes: `eq/polybar.mjs` (`polyBar`, `polyPad`).
-- `assistMachine`: tower, handle arm and bar, knee pad on a lever (pad top one kneecap radius under the knee, lever
-  length constant in every pose), cable to the stack, mount step, stack pin. Sizes are assumed typical commercial ones;
-  no card claim gives sizes.
+the pinned H9 line types). `eq/polybar.mjs` (`polyBar`, `polyPad`) is accepted by name as a composer-support file under
+the same rules: a new file, pure, PRIMITIVES-only output, no file reads, covered by the import scan.
+- `assistMachine`: tower, handle arm and bar, knee pad on a lever, cable to the stack, mount step, stack pin. It is
+  driven by named per-pose pad-top heights (never by the lifter's landmarks), the pad on a circle of radius `lever`
+  round the pivot; the start pad, bracket and lever are added to the end pose as a dashed outline. Sizes are assumed
+  typical commercial ones; no card claim gives sizes.
 - `chestRowMachine`: seat, upright chest pad, lever handles at shoulder height on a pivot arm (moving, `poly`).
 - `band`: a band looped round the soles, two strands to the hands (moving, `poly`), drawn for the floor-sit row.
 - `dHandle` (named here as an LB1 composer): a single D-handle on the cable for single_arm_lat_pulldown (moving, `poly`).
+The tests read the drawn items in every pose (lever ends at the pivot and lever end, rails at the ring, handle on the
+lever circle), never the helper maths alone.
 
-## 6. Drawing decisions that need a look
+## 6. Drawing decisions
 
-- **assisted_pull_up draws the top as the start pose.** The card's start is the hang and its end is the chin over the
-  bar. The engine draws the Mistake as an outline of what differs from the end pose, masked by the solid end figure. The
-  card's Mistake (a half hang with bent arms, c8) lies inside the top figure's silhouette, so drawn against the top it
-  was mostly hidden (tried and rendered). With the top as the start and the straight-arm hang as the end, the bent arms
-  and the high pad of the Mistake stand clear of the solid hang, and the solid figure shows the card's "Knees on pad"
-  and "arms straight" checkpoint. Both positions are still drawn, and the tempo strip starts with the 3 s lowering the
-  card stresses (c9, c16). If the supervisor rules against it, the fallback is the card's order with the Mistake drawn
-  as guides only.
-- **Kneel class (plan 2.2, probe C).** Knees by angles, root placed so the knee sits on the pad, contact proven by a
-  `checks` plane at one kneecap radius above the pad top (start, end and Mistake).
-- **Tall machines and F1.** The pulldown station and the assist tower are 2.2-2.3 m tall, so `fit` lands at 126-130
-  px/m, inside F1 (123.9-146.3) with little room. A taller part would push the scale below F1; machines are kept at the
-  8's heights.
+- **assisted_pull_up draws the top as the start pose (Q2).** The card's start is the hang and its end is the chin over
+  the bar. The engine builds the Mistake as the end pose plus an override (plate.mjs:78) and outlines what differs from
+  the end pose (:208), drawn over the end figure (:265). So a bottom-of-rep fault reads correctly only against a hang
+  end, as on leg_press. With the top as the start, the half hang's bent arms and raised pad show against the solid
+  straight-arm hang, which carries the card's "Knees on pad" and straight-arms checkpoint. This plate differs on purpose
+  from pull_up, which draws the top solid: this card's fault is at the bottom. Pose map for the card's facts: card
+  plate.start (the hang) = spec 'end', card plate.end (chin over the bar) = spec 'start', Mistake = 'mistake'
+  (recorded in lb1/tempo.json). The start layer draws no moving equipment (plate.mjs:110-114), so the top pose's pad,
+  bracket and lever are a dashed phantom in the end pose. The critic judges it blind; the bound fallback is Q2 (g).
+- **Kneel class (plan 2.2, probe C).** Knees by angles, roots solved once onto named pad heights and written as
+  constants, contact proven by `checks` planes at one kneecap radius above each pose's pad top (start, end, Mistake).
+- **Tall machines and F1.** The pulldown station and the assist tower are 2.2-2.3 m tall, so `fit` lands at 126-133
+  px/m, inside F1 (123.9-146.3) with little room. Machines are kept at the 8's heights.
 
 ## 7. Work split (if a second drawer joins, `claude/lib-9-lb1-b`)
 
@@ -159,14 +173,13 @@ the pinned H9 line types). Shared poly shapes: `eq/polybar.mjs` (`polyBar`, `pol
 - **F2 coverage on tall rigs:** checked in the preview runs (assist tower 0.43, pulldown station 0.38, inside
   0.19-0.55).
 
-## 9. Open points for the supervisor's look
+## 9. Rulings (D-LIB9a-NOTE, lib4-cards section 13 @ `8669e21`)
 
-1. **F7 on single_arm_lat_pulldown** (section 3): expect none, since the verified card's Mistake is drawable.
-2. **assisted_pull_up start = the top** (section 6).
-3. **Tempo map** (section 4): no Rest phase, so no named constant.
-4. **A2's second mutation as worded does not bite.** "A knee pad that moves in the Mistake as a box with no poly": a
-   `box` carries a closed outline (vendor `geom.mjs` `bar()` returns `{ d, poly }`), so `plate.mjs:209-213` draws it in
-   the Mistake and H9 accepts it (`qa/node.mjs` `movingLines` passes any item with `poly`). lb1-plates.test.ts pins that
-   fact (a moving box pad: H9 green) and proves the intent with the pad drawn by a part with no closed outline that the 8
-   never move (a moving `rackUpright`, as LIB-3's M6): H9.moving-line red. Ruling asked: accept that as A2's mutation.
-5. **No D row** (section 1): A7 and the "raw-spec override on a D row" mutation are proven on a test candidate.
+1. Q1: topFault from the card (section 4); single_arm's expected F7 waits for research.
+2. Q2: start = the top, with the pose map, the phantom pad and the bound fallback (section 6).
+3. Q3: the tempo map with no Rest and no constants; the ruled table lives in the test (section 4).
+4. Q4: A2's second mutation is the real knee pad drawn as a moving `rackUpright`, exact key
+   `H9.moving-line:eq<i>.rackUpright.1`: a moving item with no poly whose type is not in H9lineTypes (rackUpright's hole
+   marks, j=1, the key family of LIB-3's M6). The "moving box pad: H9 green" test stays as a record of the engine, with
+   its premise asserted. A4 still runs LIB-3's M6 through runQa.
+5. Q5: the D path is proven on an in-memory D copy of lib_close_grip_pulldown (section 1).

@@ -118,9 +118,9 @@ export default {
   trace: { point: 'grip.r', trim: [10, 12] },
   measure: { vertex: 'hip.r', from: 'up', to: 'shoulder.r', radius: 40, title: 'Lean back', value: 'under 30°' },
   callouts: [
-    { key: 'thighs', text: 'Thighs<br>pinned', anchor: 'thighTop.r', box: { left: 162, top: 206 }, cue: 'Set the thigh pad tight on top of the thighs.' },
-    { key: 'elbows', text: 'Elbows<br>to hips', anchor: 'elbow.r', box: { left: 162, top: 150 }, cue: 'Drive the elbows down toward the hips, upper arms tucked at the sides.' },
-    { key: 'chin', text: 'Handle<br>below chin', anchor: 'grip.r', box: { left: 150, top: 108 }, cue: 'Stop when the handle is just below the chin.' },
+    { key: 'thighs', text: 'Thighs<br>pinned', anchor: 'thighTop.r', box: { left: 180, top: 226 }, cue: 'Set the thigh pad tight on top of the thighs.' },
+    { key: 'elbows', text: 'Elbows<br>to hips', anchor: 'elbow.r', box: { left: 172, top: 180 }, cue: 'Drive the elbows down toward the hips, upper arms tucked at the sides.' },
+    { key: 'chin', text: 'Handle<br>below chin', anchor: 'grip.r', box: { left: 150, top: 132 }, cue: 'Stop when the handle is just below the chin.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Return', s: 2, move: true }],
   mistake: {
