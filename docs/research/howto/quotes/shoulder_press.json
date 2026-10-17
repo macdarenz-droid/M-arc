@@ -1,6 +1,6 @@
 {
   "id": "shoulder_press",
-  "checked": "2026-09-30",
+  "checked": "2026-10-17",
   "sourceFixes": [],
   "quotes": [
     {
@@ -177,6 +177,13 @@
       "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
       "status": "verbatim",
       "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
     }
   ]
 }

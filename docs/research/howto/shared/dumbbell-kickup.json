@@ -147,19 +147,25 @@
   },
   {
    "id": "c4",
-   "text": "Way out at the end of a set: with the arms bent, sit back up to the starting position (dumbbells on the thighs); the source also allows lowering them to the floor or handing them to spotters. One coach source; written for the flat bench and applied to the incline by inference.",
+   "text": "Way out at the end of a set: with the arms bent, sit back up to the starting position (dumbbells on the thighs); one source also allows lowering them to the floor or handing them to spotters. Two coach sources (the second says to reverse the setup and come off the bench with the weights); written for the flat bench and applied to the incline by inference.",
    "tags": [
     "CONSENSUS",
     "WEAK"
    ],
    "sources": [
-    "fv-db-bench"
+    "fv-db-bench",
+    "ggr-db-bench"
    ],
    "quotes": [
     {
      "source": "fv-db-bench",
      "text": "At the of your set, either lower the weights to the floor or, with your arms bent, just sit back up and return to your starting position. Alternatively, if you have spotters nearby, allow them to take the weights from you.",
      "where": "How to do the dumbbell bench press, step 5"
+    },
+    {
+     "source": "ggr-db-bench",
+     "text": "When you finish your last rep, reverse the process and come off the bench with the weights",
+     "where": "How To Dumbbell Bench Press, step 6"
     }
    ]
   },
@@ -179,18 +185,49 @@
      "where": "Benefits: Safety when training alone"
     }
    ]
+  },
+  {
+   "id": "c6",
+   "text": "Way out after a seated dumbbell press: when lowering the weights at the end of the set, bring the knees up one at a time to catch the dumbbells, or have a spotter take one; don't throw them from shoulder height onto the floor. One coach source, written for the seated dumbbell shoulder press and applied to the Arnold press by inference.",
+   "tags": [
+    "MECH",
+    "WEAK"
+   ],
+   "sources": [
+    "bb-db-shoulder-press"
+   ],
+   "quotes": [
+    {
+     "source": "bb-db-shoulder-press",
+     "text": "Alternatively, you can bring your knees up one at a time to “catch” the dumbbells when lowering the weight back down. There’s no reason to chuck them from shoulder height onto the floor.",
+     "where": "Dropping the Dumbbells"
+    },
+    {
+     "source": "bb-db-shoulder-press",
+     "text": "Consider getting your spotter to take one of your dumbbells once you’re finished.",
+     "where": "Dropping the Dumbbells"
+    },
+    {
+     "source": "bb-db-shoulder-press",
+     "text": "Grab two dumbbells and sit on the bench, pressing your back firmly against the pad and resting both dumbbells on your knees.",
+     "where": "How to Do the Dumbbell Shoulder Press, step 2"
+    }
+   ]
   }
  ],
  "gaps": [
   "No source names a wrong kick-up or set-down pose, so postureArchetype.wrong is null. The candidate \"never dropped out to the sides\" is unsupported, and one source allows it when stuck (c5).",
-  "No source for setting the dumbbells down after a seated press (dumbbell_shoulder_press, arnold_press); it stays out (tier-A way out).",
-  "Set-down rests on one coach source (c4, WEAK); a second source (textbook or coach) is still wanted.",
+  "Seated set-down is now sourced (c6: knees up one at a time to catch the dumbbells, or a spotter takes one; one coach source, WEAK, applied to arnold_press by inference). The seated variant still has no finish step; adding one is outside W2A's scope (variants reserved). Until it is added, no seated way-out line is shown.",
   "No injury data found for the kick-up or set-down."
  ],
  "notes": [
   "Re-read and confirmed: incline_dumbbell_press c9 (liftosaur), arnold_press c5 (fitfather-arnold), dumbbell_bench_press c10 (hk-db-bench).",
   "The c4 quote keeps the source typo \"At the of your set\".",
-  "A coach log on the dumbbell floor press (elitefts.com) brings the legs up to catch the dumbbells at the end; not cited (floor press, not bench)."
+  "A coach log on the dumbbell floor press (elitefts.com) brings the legs up to catch the dumbbells at the end; not cited (floor press, not bench).",
+  "W2A 2026-10-17 T5: second bench set-down source found (ggr-db-bench, coach, read in full; added to c4). No textbook or guideline source found. c4 keeps its tags (CONSENSUS, WEAK): both sources are coach pages and the incline is still by inference. The same GGR line allows dropping the weights on the ground before getting up if the dumbbells are bouncy and the gym allows it; not used in any field.",
+  "W2A 2026-10-17 T5 fly/pullover: no read source says how to get the dumbbells into position or set them down for dumbbell_fly or dumbbell_pullover, so appliesTo is unchanged. Fetched: barbend.com/dumbbell-pullover/ -> 200 (only warns the dumbbell passes over the face; no set-down); barbend.com/dumbbell-chest-fly/ -> 404; fitnessvolt.com/dumbbell-fly/ -> 200 and /dumbbell-pullover/ -> 200 (setup only); strengthlog.com/dumbbell-pullover/ -> 200; strengthlog.com/dumbbell-fly/ -> 429; inspireusafoundation.org/dumbbell-fly/ and /dumbbell-pullover/ -> 200 (nothing); verywellfit fly and pullover pages -> 402.",
+  "W2A 2026-10-17 conflict for a ruling: bb-db-shoulder-press (seated press, end of set) says \"There’s no reason to chuck them from shoulder height onto the floor.\" c5 (fv-db-bench, bench press, stuck rep) says \"This is less of an issue with dumbbells because, if you get stuck, you can simply drop the weights out to the side.\" content.md 5.2 also lists dumping dumbbells to the sides on the floor as a way out. Different exercises and situations; no shown line changed.",
+  "W2A 2026-10-17 T4: arnold_press end-of-set searched: barbend.com/arnold-press/ -> 200 (setup only: dumbbells on the knees), fitnessvolt.com/arnold-press/ -> 200, strengthlog.com/arnold-press/ -> 200, garagegymreviews.com/arnold-press -> 200, inspireusafoundation.org/arnold-press/ -> 200, verywellfit arnold press -> 402; no page says how to set the dumbbells down after an Arnold press, so c6 covers it by inference (MECH). Other seated pages read: strengthlog.com/dumbbell-shoulder-press/ -> 200 (no end-of-set text), fitnessvolt.com/dumbbell-shoulder-press/ -> 404."
  ],
  "sources": [
   {
@@ -242,6 +279,26 @@
    "pmid": null,
    "access": "full",
    "checked": "2026-10-02"
+  },
+  {
+   "id": "bb-db-shoulder-press",
+   "url": "https://barbend.com/dumbbell-shoulder-press/",
+   "title": "How to Do the Dumbbell Shoulder Press, With Video Guide (BarBend)",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-17"
+  },
+  {
+   "id": "ggr-db-bench",
+   "url": "https://www.garagegymreviews.com/dumbbell-bench-press",
+   "title": "Expert Tips on How to Do a Dumbbell Bench Press (Garage Gym Reviews)",
+   "kind": "coach",
+   "year": 2023,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-17"
   }
  ]
 }
