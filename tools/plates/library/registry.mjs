@@ -61,9 +61,9 @@ export const goldenRows = (root = ROOT) => read(root, PLATES_JSON);
 export const goldenInputs = () => [PLATES_JSON, 'tools/plates/library/registry.mjs'];
 /** The How-to content source of an id (design 3): golden B's vendored file for the 8, the library's own file for a
  *  library row. Throws for an id the registry does not hold. */
-export function sourceOf(id, root = ROOT, all = rows(root)) {   // D-LIB9-AUTHORQA: `all` injects rows not in batches/
+export function sourceOf(id, root = ROOT) {
   if (id in goldenRows(root)) return `tools/plates/layers/exercises/${id.slice(4)}.howto.mjs`;
-  if (all.some(r => r.id === id)) return `tools/plates/library/howto/${id}.howto.mjs`;
+  if (rows(root).some(r => r.id === id)) return `tools/plates/library/howto/${id}.howto.mjs`;
   throw new Error(`registry: no row for ${id}`);
 }
 

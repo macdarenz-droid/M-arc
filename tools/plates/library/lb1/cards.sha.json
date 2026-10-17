@@ -1,5 +1,5 @@
 {
- "note": "sha256 of each LB1 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + '\\n' (the research files' own form). Quotes are byte copies with the same research head.",
+ "note": "sha256 per LB1 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\" (the research files own form); and sha256 of each quotes file, a byte copy from the same head.",
  "researchHead": "9dbc7e0af0f3da0490d1800012569973ed511c32",
  "cards": {
   "chin_up": "627381ec89b3edec1efee03e5f243a8235f2f7d55d5fb042c545cff2299050c5",
@@ -16,5 +16,21 @@
   "shoulder_press": "2375df95202c5951803da854e03d48170e7f87dcbe52e2ef1a338bd058e97b28",
   "horizontal_leg_press": "c312fa5b17feb3276517bc192283364f9390f66424472c18cc4cb1d8749f4209",
   "leg_press_calf_raise": "d1ae99e0f53791a2d44909279c06565a2693adc364cab0a917d3d971dac9bf97"
+ },
+ "quotes": {
+  "chin_up": "cae8a92f57663440af671236ae9dc56a49e1b34433a56e3fbf335c6fda7d652b",
+  "hanging_knee_raise": "3c0824f3b0d8cc04990b2ea5466b2e1e72fffbc7e4c38a6307a8ea8ba10794a0",
+  "assisted_pull_up": "a33f25b39e03ee1bc6cf714e61f46f66a685af9029726ebecc7b02f4cc7e7ca7",
+  "inverted_row": "5b27425d57f12d4b1c8ea0dabdb5d81c175b6e462125784e53e74c69d79a480a",
+  "close_grip_pulldown": "360d8395e5bb309acba13cf8c13922699393570576894e6fba20c15201f99c56",
+  "underhand_lat_pulldown": "268ab1c0a9bd19e62c68ff03b64590096f66d9f6d8a58c0fe271520b528b0f3b",
+  "single_arm_lat_pulldown": "6499ad4dc6cd90fed225dcaaf28f04a13de534c9e83177e878c2acea04b418e9",
+  "straight_arm_pulldown": "cce3a1e0ef031ac6e90ec14d6b9372dc92bef5166a5adc96f103e5df6a78fa46",
+  "chest_supported_row": "8788cea0f0581c740c894367a0b39bfce26a7bae3f1960a878eb84f8c55f2323",
+  "resistance_band_row": "48a894cfe5c61a89573c251b9f06b96bfd36814725bae4a36f4f5ff7a9b3319c",
+  "incline_machine_press": "657ac7452be23dc42b2e21d27da5d64d294b459557a28e9f616cd80757c87dd4",
+  "shoulder_press": "025e47dd55449c78b73211ecd5da0068948d16dcbf1a7afa1a46195e1f575d6c",
+  "horizontal_leg_press": "f17533be48da75907deb0b057da536322416d35cdac889765d1af84db1ae60a7",
+  "leg_press_calf_raise": "fb4270c445445c60f618528035880ff7411e4d9dde24552c48e3a2547dce49c0"
  }
 }

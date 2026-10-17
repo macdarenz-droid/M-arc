@@ -52,6 +52,10 @@ export function researchOf(howto, root = ROOT) {
  *  with exemptions [] and reads no pin; it is refused at stage approved-plate or shipped. The generator, LIB-4b's PQH rows
  *  and LIB-4c never pass it. */
 export const AUTHORING_REFUSED = ['approved-plate', 'shipped'];
+/** The How-to source of a row in the injected `all`: registry sourceOf's rule for a library row, applied to `all`.
+ *  (registry.mjs is an input of every generated file, so it is not edited: D-LIB9-AUTHORQA asks for an `all` parameter
+ *  on sourceOf; this keeps generate --check unchanged. Ruling asked on #245.) */
+const howtoOf = (id, root, all) => (all.some(r => r.id === id && r.mode !== 'golden') ? `tools/plates/library/howto/${id}.howto.mjs` : sourceOf(id, root));
 export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = rows(root), authoring = false } = {}) {
   const row = all.find(r => r.id === id);
   if (!row) throw new Error(`candidate: no registry row for ${id}`);
@@ -67,9 +71,9 @@ export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = r
   if (!plate) fail(row, `card-${row.chromeId} is not in its plates page`);
   if (!row.view) fail(row, 'no census view (batch row field `view`)');
   if (typeof row.censusRef !== 'string' || !/^[0-9a-f]{7,40}$/.test(row.censusRef)) fail(row, 'its batch file records no census source (`censusRef`)');
-  for (const f of [`tools/plates/${row.src}`, sourceOf(id, root, all)]) if (!existsSync(join(root, f))) fail(row, `no source file ${f}`);
+  for (const f of [`tools/plates/${row.src}`, howtoOf(id, root, all)]) if (!existsSync(join(root, f))) fail(row, `no source file ${f}`);
   const spec = (await import(pathToFileURL(join(root, 'tools/plates', row.src)).href)).default;
-  const howto = (await import(pathToFileURL(join(root, sourceOf(id, root, all))).href)).default;
+  const howto = (await import(pathToFileURL(join(root, howtoOf(id, root, all))).href)).default;
   let derivation = null;
   if (row.mode === 'D' || row.mode === 'T') {
     const parent = all.find(r => r.id === row.parent);
