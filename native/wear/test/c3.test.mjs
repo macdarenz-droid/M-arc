@@ -621,6 +621,9 @@ test('R7 a local rest that rang and was OKed: the phone rest that replaces it ri
   for (let i = 0; i < 92; i++) r.tick();
   assert.deepEqual([r.v().sc, r.buzz], [6, 1]);
   r.link.ok();
+  // the phone applies the queued Complete: its result, then the snap with that set's rest (last red team: the result first)
+  r.link.rx(snap());
+  r.link.rx(res('abcd1234-1'));
   r.link.rx(snap({ si: 3, set: { ...S2, id: 'set_b3', rev: 0, w: 62.5 }, nx: NX.slice(1), rest: { id: 'rest_7', left: 3000, tot: 90000, p: false } }));
   for (let i = 0; i < 5; i++) r.tick();
   assert.deepEqual([r.v().sc, r.buzz], [1, 1]);
@@ -664,4 +667,99 @@ test('R9 the heart rate has one subscription: each keep-on unsubscribes before i
   assert.deepEqual([live, most], [1, 1]);
   def.onDestroy.call({});
   assert.equal(live, 0);
+});
+
+// C3 last red team (2026-10-17): the tap guard covers every tap that changes the screen; Set N saved by set number; a
+// later phone rest still rings; a +30 s counted once online; Back in sync after a silent refusal; only stale_rest is
+// silent; nx numbers within the exercise.
+function pageWith(link, clock) {
+  let src = readFileSync(path.join(PAGE, 'index.js'), 'utf8');
+  src = src.split('\n').filter((l) => !l.startsWith('import ')).join('\n').replace(/^export default \{/m, 'return {');
+  const def = new Function('P2pClient', 'Message', 'Builder', 'storage', 'brightness', 'vibrator', 'sensor', 'PHONE_PKG', 'PHONE_FP', 'Link', 'makeBoot', 'setInterval', 'Date', src)(
+    function () {}, function () {}, function () {}, {}, { setKeepScreenOn() {} }, {}, {}, '', '', () => link, () => 'b', () => 0, { now: () => clock.t });
+  const page = { ...def.data };
+  def.onInit.call(page);
+  return { def, page };
+}
+test('R10 a tap within 1 s of a tap that changed the screen (Complete, Done, OK, Skip) is the same finger: no Complete, +30 s or Skip from it', () => {
+  const calls = [];
+  const link = { start() {}, tick() {}, show() {}, view: () => ({ sc: 0 }), complete: () => calls.push('c'), rest: (k) => calls.push(k), adj: (d) => calls.push(`adj ${d}`), ok: () => calls.push('ok') };
+  const clock = { t: Date.UTC(2026, 9, 17, 10, 0, 0) };
+  const { def, page } = pageWith(link, clock);
+  const tap = (h, d = 0) => { clock.t += d; def[h].call(page); };
+  tap('onDone'); tap('onComplete', 200);
+  tap('onOk', 1000); tap('onComplete', 200);
+  tap('onSkip', 1000); tap('onComplete', 200);
+  tap('onComplete', 1000); tap('onAdd', 200); tap('onSkip', 100);
+  assert.deepEqual(calls, ['adj 0', 'ok', 'rest_skip', 'c']);
+  tap('onAdd', 1000); tap('onAdd', 200); tap('onComplete', 300);
+  assert.deepEqual(calls.slice(4), ['rest_add_30', 'rest_add_30', 'c'], 'two +30 s in a row both count; +30 s does not change the screen');
+});
+
+test('R11 Set N saved names the set number of a next set after a gap, when its result comes before the next snap', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ si: 3, set: { ...S2, id: 'set_b3', rev: 0 }, nx: [['set_b5', 0, 65, 5, 5]] }));
+  r.link.complete();
+  r.link.complete();
+  r.link.rx(res('abcd1234-1'));
+  r.link.rx(res('abcd1234-2'));
+  r.link.rx(snap({ si: 1, eid: 'e_row', ex: 'Row', set: { ...S2, id: 'set_r1', rev: 0 }, nx: [], rest: { id: 'rest_9', left: 90000, tot: 90000, p: false } }));
+  assert.equal(r.v().sl, 'Set 5 saved');
+});
+
+test("R12 a rung, OKed local rest: a phone rest for a later set (logged on the phone) still rings once and shows Rest done", async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap());
+  offline(r);
+  r.link.complete();
+  for (let i = 0; i < 92; i++) r.tick();
+  r.link.ok();
+  r.link.rx(snap({ si: 4, set: { ...S2, id: 'set_b4', rev: 2 }, nx: NX.slice(2), rest: { id: 'rest_x', left: 5000, tot: 90000, p: false } }));
+  r.link.rx(res('abcd1234-1', { status: 'rejected', reason: 'already_committed' }));
+  for (let i = 0; i < 8; i++) r.tick();
+  assert.deepEqual([r.v().sc, r.buzz], [6, 2]);
+});
+
+test('R13 online, a +30 s waits for the phone: the snap with it applied shows it once, though its result is lost', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ rest: { ...rest1, left: 60000 } }));
+  r.link.rest('rest_add_30');
+  r.link.rx(snap({ rest: { ...rest1, left: 90000 } }));
+  assert.equal(r.v().rc, '1:30');
+});
+
+test('R14 a batch whose last result is a refused (stale) rest command ends on Back in sync, as an all-applied batch does', async () => {
+  const mk = async (last) => {
+    const r = await rig({ code: null });
+    r.link.rx(snap({ rs: 0, rest: { ...rest1, left: 200000 } }));
+    offline(r);
+    r.link.complete();
+    r.link.rest('rest_add_30');
+    r.tick(); r.tick();
+    r.link.rx(snap({ rs: 0, rest: null }));
+    r.link.rx(res('abcd1234-1'));
+    r.link.rx(res('abcd1234-2', last));
+    return only(r.v(), ['sc', 'st', 'na']);
+  };
+  assert.deepEqual(await mk({ status: 'rejected', reason: 'stale_rest' }), await mk({}));
+});
+
+test('R15 only a stale rest command is silent: a rest command refused as unsupported still says Update needed', async () => {
+  const r = await rig({ code: null });
+  r.link.rx(snap({ rest: { ...rest1, left: 60000 } }));
+  r.link.rest('rest_add_30');
+  r.link.rx(res('abcd1234-1', { status: 'rejected', reason: 'unsupported' }));
+  assert.equal(r.v().st, 'Update needed');
+});
+
+test('R16 a next set number must be a whole number after si and at most sn: null or above sn refuses the snap', async () => {
+  const b = await rig({ code: null });
+  b.link.rx(snap());
+  const before = b.v();
+  for (const x of [null, 6, 1e300]) {
+    b.link.rx(snap({ ex: 'Row', nx: [['set_b4', 0, 60, 8, x]] }));
+    assert.deepEqual(b.v(), before, JSON.stringify(x));
+  }
+  b.link.rx(snap({ ex: 'Row', nx: [['set_b5', 0, 60, 8, 5]] }));
+  assert.equal(b.v().nm, 'Row', 'n = sn is fine');
 });

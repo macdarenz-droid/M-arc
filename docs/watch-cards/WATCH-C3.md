@@ -63,11 +63,22 @@ A fresh review of `3d1515d2`: pass with findings. The builder's changes to exist
 
 ## Red team rulings (2026-10-17, second watch-lane session)
 The red team of `3d1515d2` (1 high, 1 medium, 6 low; no crash, loop, stack regression or bad storage write). F1 (double tap, high) and F2 (a rest the phone never starts, medium) are R1 and R3 above. Fixed, each with a test that fails before (`c3.test.mjs` R5 to R9, `tests/watch-link.test.ts` P3 rows):
-- **R5 (F3):** a queued +30 s on the phone's rest shows on the countdown at once, so it is not tapped again; a rest command refused later (its rest ended) is silent, so a saved batch ends Saved, not Changed on phone. Two C2 pins move with it (`c2.test.mjs` V1 and the surviving-mutations test: the countdown with the +30 s).
+- **R5 (F3):** offline, a queued +30 s on the phone's rest shows on the countdown at once, so it is not tapped again; a rest command refused as `stale_rest` (its rest ended) is silent, so a saved batch ends Saved, not Changed on phone. `c2.test.mjs` V1's pin moves with it (the offline countdown with the +30 s).
 - **R6 (F5):** the Adjust draft is tied to the unit too, so a set the phone now shows in lb never sends a kg value as lb.
 - **R7 (F6):** a phone rest that replaces a local rest that already rang does not ring again, nor show Rest done again after its OK.
 - **R8 (F7):** `nx` gains each set's number, so sets done on the phone in between keep the watch's numbering; a bad number refuses the snap.
 - **R9 (F8):** each keep-on unsubscribes the heart rate before it subscribes, so there is one subscription however often the app shows (L4's exact call list gains the first unsubscribe).
 - **No change (F4):** an Adjust value comes back when the same set (same id and rev) is shown again: the draft is tied to the set's id and rev by design.
-- **Heap (B3):** the framework model needs 103 KB for workout W1 and 106 KB for W1C3 (1.2.0: 96 and 98 KB), so 7 to 8 KB more, not the card's 4 to 6 KB. The deepest stack is 13,728 B (1.2.0: 14,240 B). The GT 6's heap is unknown; 1.2.0 survived a real workout. A practice workout comes first, and 1.2.0 is the recovery.
+- **Heap (B3), at the final head:** the framework model needs 104 KB for workout W1 and 107 KB for W1C3 with the phone's 5-element `nx` (before the fixes 103 and 106 KB; 1.2.0: 96 and 98 KB), so 8 to 9 KB more than 1.2.0, not the card's 4 to 6 KB. The deepest stack is 13,728 B (1.2.0: 14,240 B). The 37 JerryScript scenarios run clean at 8 and 14 KB stacks. The GT 6's heap is unknown; 1.2.0 survived a real workout. A practice workout comes first, and 1.2.0 is the recovery.
 - Page sources stay at most 46,000 B by removing comments that restate the code.
+
+## Last red team rulings (2026-10-17)
+The last red team of the fixes (`ce998f0`; 1 medium, 4 low, 1 nit; no crash, loop, stack regression or bad storage write). Fixed, each with a test that fails before (`c3.test.mjs` R10 to R16):
+- **R10 (medium):** the tap guard covers every tap that changes the screen: a Complete, +30 s or Skip within 1 s of a Complete, Done, OK or Skip is ignored (Done sits 53 of its 62 px over Complete); two +30 s in a row both count.
+- **R11:** Set N saved uses the next set's number, not its place in `nx`.
+- **R12:** R7's carry-over applies only after the Complete's result, so a phone rest for a later set (logged on the phone) still rings and shows Rest done. R7's test now delivers the result before that set's rest, as the phone does.
+- **R13:** online, a +30 s waits for the phone (as in 1.2.0), so a snap with it applied never counts it twice; the surviving-mutations C2 test is back to its original pin.
+- **R14:** a batch ending in a silent `stale_rest` refusal ends on Back in sync and counts it, as an all-applied batch does.
+- **R15:** only a `stale_rest` refusal is silent; any other refusal of a rest command keeps its text (Update needed).
+- **R16:** a next set's number must be a whole number after `si` and at most `sn`; `null` refuses the snap.
+- Unproven, no change: if the device's `unsubscribeHeartRate` always throws, subscriptions still pile up as before the fix.

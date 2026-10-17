@@ -50,7 +50,7 @@ function okLt(l) { return !l || Object(l) === l && nn(l.w) && nn(l.r) && (l.u ==
 function okSnap(m) {
 	var r = m.rest || {}, n = m.nx || [], i, ok = num(m.pt) && nn(m.wt) && (m.sid === null || str(m.sid)) && (m.ex == null || str(m.ex) && num(m.si) && num(m.sn)) &&
 		(!m.set || okSet(m.set)) && (!m.rest || str(r.id) && num(r.left)) && (m.eid == null || str(m.eid)) && okLt(m.lt) && nn(m.rs) && Array.isArray(n);
-	for (i = 0; ok && i < n.length; i++) ok = Array.isArray(r = n[i]) && str(r[0]) && num(r[1]) && nn(r[2]) && nn(r[3]) && (r[4] == null || num(r[4]) && r[4] > m.si && r[4] % 1 === 0);
+	for (i = 0; ok && i < n.length; i++) ok = Array.isArray(r = n[i]) && str(r[0]) && num(r[1]) && nn(r[2]) && nn(r[3]) && (r[4] === void 0 || num(r[4]) && r[4] > m.si && r[4] <= m.sn && r[4] % 1 === 0);
 	return ok;
 }
 // C2 plan: rows of {id, ex, d, n, set, lt}
@@ -241,7 +241,7 @@ function Link(io, boot) {
 		}
 		if (m.sid !== snap.sid) pg = lr = 0;
 		if (m.rest && m.rest.id !== lr.i || lr.d) {
-			if (m.rest && lr.on && bz === lr.id) bz = m.rest.id, rk = rk === lr.id ? bz : rk;
+			if (m.rest && lr.d && bz === lr.id) bz = m.rest.id, rk = rk === lr.id ? bz : rk;
 			lr = 0;
 		}
 		for (m.xs = [s = m.set], i = 0; s && m.nx && i < m.nx.length; i++) n = m.nx[i], m.xs.push({ id: n[0], rev: n[1], w: n[2], u: s.u, r: n[3], st: s.st, k: n[4] - m.si || i + 1 });
@@ -287,7 +287,7 @@ function Link(io, boot) {
 		var r = lr.on ? lr : snap.sid && snap.rest, x = r && { id: r.id, left: Math.max(0, (r.p ? r.left : r.left - (tk - (r === lr ? r.id : snapTk)) * 1000) + pa(r)) };
 		return x && x.id !== ko && x;
 	}
-	function pa(r) { for (var n = 0, i = 0; r !== lr && i < q.length; i++) n += q[i].set === 'rest_add_30' + r.id && 30000; return n; }
+	function pa(r) { for (var n = 0, i = 0; r !== lr && (bad || gone()) && i < q.length; i++) n += q[i].set === 'rest_add_30' + r.id && 30000; return n; }
 	function ring() {
 		var r = rst() || {};
 		if (r.left > 0) rn = r.id;
@@ -296,14 +296,14 @@ function Link(io, boot) {
 	function up() { return snap.sid && plan.sid === snap.sid; }
 
 	function onRes(m) {
-		for (var i = 0, c, o, j; i < q.length; i++) {
+		for (var i = 0, c, o, j, k; i < q.length; i++) {
 			if (q[i].id !== m.commandId) continue;
-			if (m.status === 'applied' || m.status === 'rejected' && q[i].rev == null) {
+			if (k = m.status === 'applied' || m.reason === 'stale_rest') {
 				if (msg !== bj) msg = q.length > 1 ? q.length - 1 + ' pending' : 'Saved';
 				if (dl.push(q[i].set + ':' + q[i].rev) > 16) dl.shift();
 				for (o = xs(), j = 0; j < o.length && (o[j] || 0).id !== q[i].set; j++);
-				if (j < o.length) sv = ((c = nr()) ? c.d + 1 : snap.si) + j, svR = '';
-				if (m.status === 'applied') hi = tk + 2, bn++;
+				if (j < o.length) sv = ((c = nr()) ? c.d + 1 : snap.si) + (o[j].k || 0), svR = '';
+				if (bn++, m.status === 'applied') hi = tk + 2;
 			} else if (m.status === 'rejected') {
 				msg = str(m.reason) && str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
 				// kept through the queued results, online too, until a new tap (611b09c8)
@@ -311,9 +311,9 @@ function Link(io, boot) {
 			} else {
 				return;
 			}
-			if (lr.c === m.commandId) lr.d = 1; // C3: its snap decides
+			if (lr.c === m.commandId) lr.d = 1;
 			drop(i);
-			if (!q.length) sy = lq ? (m.status === 'applied' && !bj ? tk + 3 : 0) : sy, lq = bj = 0;
+			if (!q.length) sy = lq ? (k && !bj ? tk + 3 : 0) : sy, lq = bj = 0;
 			fresh();
 			return pump();
 		}
@@ -449,7 +449,6 @@ function Link(io, boot) {
 			if (lr.on) kind === 'rest_skip' ? lr = 0 : lr.left += 30000, io.paint();
 			else if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) add(k ? 's' : 'a', k, '');
 		},
-		// C2: effort 1 to 3, again clears; next(d) pages on a swipe, else opens Up next
 		effort: function (k) {
 			if (cs()) eff = !k ? EFF[(EFF.indexOf(shown()) + 1) % EFF.length] : EFF[k] === shown() ? '' : EFF[k];
 			io.paint();
@@ -464,7 +463,7 @@ function Link(io, boot) {
 			if (r) pk = r.id === snap.eid ? '' : r.id, ps = snap.sid, pe = snap.eid, pg = 0, fresh();
 			io.paint();
 		},
-		// C3: adj(): open, d 1 or -1 step, d 0 close; beat(bpm or -code), drawn on the next tick
+		// C3: adj() opens, adj(1 or -1) steps, adj(0) closes; beat(bpm or -code)
 		ok: function () { rk = (rst() || 0).id; io.paint(); },
 		adj: function (d) {
 			var s = cs(), k;

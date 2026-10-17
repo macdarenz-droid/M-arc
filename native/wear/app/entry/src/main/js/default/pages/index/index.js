@@ -8,10 +8,13 @@ import { PHONE_PKG, PHONE_FP, Link, makeBoot } from '../../common/link.js';
 // WATCH-C page; common/link.js does the rest. Every entry point catches what it throws.
 var client, link, page, timer, ct = 0;
 
+// a tap within 1 s of a screen change is the same finger
+function g(s) { var t = Date.now(); if (Math.abs(t - ct) < 1000) return 0; if (s) ct = t; return 1; }
+
 function no() {}
 function tap(f, a) { try { link[f](a); } catch (e) {} }
 
-// t1 to t5 and c1 to c4, shared by the screens (index.hml), from view()
+// t1 to t5, c1 to c4 of index.hml, from view()
 var SLOTS = 't1 t2 t3 t4 t5 c1 c2 c3 c4'.split(' ');
 function slots(v) {
 	var k = v.sc;
@@ -19,7 +22,7 @@ function slots(v) {
 		k == 3 ? [v.dn, v.n0, v.n1, v.n2, v.n3, v.b0, v.b1, v.b2, v.b3] : k == 7 ? [v.ak, v.av] : k ? [v.na, v.add ? v.rest : '', v.na && 'Pending'] : [v.l1, v.l2];
 }
 
-// page data only; a new screen gets its if-part (set) after t1, so no build runs inside another (611b09c8)
+// a new screen gets set after t1: no build inside another (611b09c8)
 function paint() {
 	var v = page && link ? link.view() : 0, s = v && slots(v), k;
 	if (!v) return;
@@ -82,10 +85,10 @@ export default {
 		} catch (e) {}
 	},
   onShow() { try { link.show(); } catch (e) {} },
-  onComplete() { try { var t = Date.now(); if (Math.abs(t - ct) >= 1000) ct = t, link.complete(); } catch (e) {} },
+  onComplete() { try { g(1) && link.complete(); } catch (e) {} },
   onEffort() { try { link.effort(); } catch (e) {} },
-  onAdd() { try { link.rest('rest_add_30'); } catch (e) {} },
-  onSkip() { try { link.rest('rest_skip'); } catch (e) {} },
+  onAdd() { try { g() && link.rest('rest_add_30'); } catch (e) {} },
+  onSkip() { try { g(1) && link.rest('rest_skip'); } catch (e) {} },
   onEasy() { tap('effort', 1); },
   onIdeal() { tap('effort', 2); },
   onMax() { tap('effort', 3); },
@@ -96,10 +99,10 @@ export default {
   onR3() { tap('pick', 3); },
   onSwipe: function (e) { tap('next', e && e.direction); },
   onAdj() { tap('adj'); },
-  onOk() { tap('ok'); },
+  onOk() { g(1) && tap('ok'); },
   onLess() { tap('adj', -1); },
   onMore() { tap('adj', 1); },
-  onDone() { tap('adj', 0); },
+  onDone() { g(1) && tap('adj', 0); },
   onDestroy() {
 		clearInterval(timer);
 		keep(false);

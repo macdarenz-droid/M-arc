@@ -644,8 +644,6 @@ test('fix: surviving mutations: one left or right swipe each keeps the page; a p
   s.link.rx(snap({ rest: { ...rest1, left: 5000 } }));
   s.link.rest('rest_add_30');
   s.adv(6000);
-  assert.deepEqual(only(s.v(), ['sc', 'rc']), { sc: 2, rc: '0:29' }, 'WATCH-C3 red team: the queued +30 s shows');
-  s.adv(30000);
   assert.equal(s.v().sc, 6, 'WATCH-C3: Rest done, then its OK');
   s.link.ok();
   assert.deepEqual(only(s.v(), ['sc', 'cl', 'can', 'cb']), { sc: 1, cl: 'Complete set', can: true, cb: AC });
