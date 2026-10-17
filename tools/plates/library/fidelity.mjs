@@ -195,9 +195,13 @@ async function pqhJob(ctx, { lib, chrome }) {
   const Q = await qaBase(ctx);
   const html = String(pages[lib].plates);
   const fail = m => { for (const s of PQH_STATES) R.fail(lib, NO_THEME, s, m); };
-  const cands = await Q.candidates(html);
-  const c = cands.find(x => x.chromeId === chrome);
-  if (!c) return fail(`no QA candidate for ${lib} (${Q.approved.includes(lib) ? 'not on its plates page' : 'library candidates come from LIB-2, not built yet'})`);
+  // D-LIB4b-QACAND: LIB-2b's one candidate builder, tools/plates/library/candidate.mjs candidateOf(id, { root, platesHtml,
+  // engine }); until it exists the 8 use LIB-3's candidatesOf and a library id's rows fail
+  let c = null;
+  if (Q.candidateOf) c = await Q.candidateOf(lib, { root: ctx.root, platesHtml: html, engine: Q.E }).catch(e => fail(`QA candidate for ${lib}: ${e.message.split('\n')[0]}`));
+  else if (Q.approved.includes(lib)) c = (await Q.candidates(html)).find(x => x.chromeId === chrome) ?? null;
+  else return fail('no QA candidate builder (tools/plates/library/candidate.mjs, LIB-2b)');
+  if (!c) return Q.candidateOf ? undefined : fail(`no QA candidate for ${lib} on its plates page`);
   const bmap = await Q.browserResults(Q.browser, html, [c], Q.E, Q.pins.envelope);
   const report = await Q.runQa(c, { engine: Q.E, pins: Q.pins, approvedStrings: Q.strings, browser: bmap });
   const blocking = [...Q.HARD.flatMap(h => report.hard[h].problems.map(p => `${h} ${p.key}`)), ...Q.FLAGS.filter(f => report.flags[f].blocks)];
@@ -216,7 +220,8 @@ async function qaBase(ctx) {
     const [I, A, E, B, G] = await Promise.all(['index', 'approved', 'engine', 'browser'].map(n => import(`./qa/${n}.mjs`)).concat(import('../golden.mjs')));
     const mirror = G.makeMirror(), engine = await E.loadEngine(mirror), browser = await B.launch();
     ctx.cleanup = [...(ctx.cleanup ?? []), async () => { await browser.close(); E.dropMirror(mirror); }];
-    return { runQa: I.runQa, HARD: I.HARD, FLAGS: I.FLAGS, pins: I.loadPins(), E: engine, browser, browserResults: B.browserResults, strings: A.approvedStrings(), approved: A.APPROVED_IDS, candidates: html => A.candidatesOf(html, engine) };
+    const cand = existsSync(join(ctx.root, 'tools/plates/library/candidate.mjs')) ? await import(pathToFileURL(join(ctx.root, 'tools/plates/library/candidate.mjs')).href) : null;
+    return { candidateOf: cand?.candidateOf ?? null, runQa: I.runQa, HARD: I.HARD, FLAGS: I.FLAGS, pins: I.loadPins(), E: engine, browser, browserResults: B.browserResults, strings: A.approvedStrings(), approved: A.APPROVED_IDS, candidates: html => A.candidatesOf(html, engine) };
   })();
   return ctx.qa;
 }
