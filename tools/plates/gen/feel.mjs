@@ -8,6 +8,7 @@
 // whole and emitted as one JSON string literal, so the parsed string is golden B's bytes, never re-serialized.
 // CSS: FEEL_CSS plus the golden-B page rules the section's own elements use, through HT-2's rewriteCss with the
 // feel pre-rules below (each unit-tested in tests/howto/feel.test.ts).
+import { goldenInputs, goldenRows } from '../library/registry.mjs';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -22,7 +23,7 @@ export const CSS_OUT = 'src/slices/howto/css/feel.css';
 
 export const inputs = () => [
   ...Object.keys(readManifest().files).map(p => `tools/plates/layers/${p}`),
-  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', PLATES_JSON,
+  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', ...goldenInputs(),
 ];
 
 export const chunkName = chromeId => `feel-${chromeId}`;
@@ -150,7 +151,7 @@ export default {
 
 /** Renders every section and the CSS from a mirror of the vendored layers. */
 export async function renderAll() {
-  const rows = JSON.parse(readFileSync(join(ROOT, PLATES_JSON), 'utf8'));
+  const rows = goldenRows();
   const mirror = makeMirror();
   try {
     const url = p => pathToFileURL(join(mirror, p)).href;
@@ -178,10 +179,18 @@ export async function renderAll() {
   } finally { cleanupMirror(mirror); }
 }
 
-export async function outputs() {
+async function outputsOf() {
   const { sections, css } = await renderAll();
   return [
     ...sections.map(s => ({ path: `src/howto/generated/${chunkName(s.pre)}.ts`, text: moduleText(s.id, s.pre, s.section) })),
     { path: CSS_OUT, text: css },
   ];
+}
+
+/** LIB-2 (design 6.1): each output's own inputs. Every feel.mjs output is cut from one shared source (the golden
+ *  B page built from the whole vendored folder), so a file's inputs are that whole set; the rows come from the
+ *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4). */
+export const inputsFor = () => inputs();
+export async function outputs(ctx) {
+  return (await outputsOf(ctx)).map(o => ({ ...o, inputs: inputsFor(o.path) }));
 }
