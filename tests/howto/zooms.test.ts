@@ -67,7 +67,7 @@ describe('HT7-A1: every posture panel === golden B', () => {
       const page = readFileSync(r.pages!.layers, 'utf8'), golden = gen.posturePanels(page, r.chromeId) as { key: string; panel: string }[];
       const chunk = await import(/* @vite-ignore */ url(`src/howto/generated/posture-${r.chromeId}.ts`));
       const zooms = (await cg.loadContent(r.id)).content.zooms.filter((z: any) => z.kind === 'posture');
-      want += golden.length;
+      want += zooms.length;
       expect(Object.keys(chunk.panels)).toEqual(golden.map(g => g.key));
       expect(golden.map(g => g.key)).toEqual(zooms.map((z: any) => z.key));
       for (const g of golden) {
