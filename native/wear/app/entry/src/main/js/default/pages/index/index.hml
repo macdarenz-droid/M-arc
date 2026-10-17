@@ -1,14 +1,54 @@
-<div class="c" style="background-color: {{bg}};">
-  <text class="l1" style="color: {{fg}};">{{l1}}</text>
-  <text class="l2" style="color: {{fg}};">{{l2}}</text>
-  <input if="{{set}}" type="button" class="b" value="{{eff}}" onclick="onEffort"></input>
-  <div if="{{rs}}" class="row">
-    <text class="rt" style="color: {{fg}};">{{rest}}</text>
-    <input if="{{add}}" type="button" class="b" value="+30 s" onclick="onAdd"></input>
-    <input type="button" class="b" value="Skip" onclick="onSkip"></input>
-  </div>
-  <text class="st" style="color: {{fg}};">{{st}}</text>
-  <text class="st" style="color: {{fg}};">{{p1}}</text>
-  <text class="st" style="color: {{fg}};">{{p2}}</text>
-  <input if="{{set}}" type="button" class="cb" style="background-color: {{cb}};" value="Complete" onclick="onComplete"></input>
+<div class="rt co" onswipe="onSwipe">
+<text if="{{off}}" class="mt a w x">Phone not connected</text>
+<div else class="hd mt"><text class="hb l">M/ARC</text><text class="hb f r">{{ck}}</text></div>
+<div if="{{sc==1}}" class="bx co cc">
+<div class="nr cc" onclick="onNext"><text class="g f x">{{nm}}</text><text class="gt l">></text></div>
+<text class="b m x">{{sp}}</text>
+<text class="a l x">Target</text>
+<text class="k f x">{{l2}}</text>
+<text class="a m x">{{la}}</text>
+<div if="{{set}}" class="rw cc">
+<div class="p1 cc" style="background-color:{{e1}}" onclick="onEasy"><text class="pt f x">Easy</text></div>
+<div class="p1 cc" style="background-color:{{e2}}" onclick="onIdeal"><text class="pt f x">Ideal</text></div>
+<div class="p1 cc" style="background-color:{{e3}}" onclick="onMax"><text class="pt f x">Max</text></div>
+</div>
+<div if="{{set}}" class="p2 cc" style="background-color:{{cb}}" onclick="onComplete"><text class="pc f x">{{cl}}</text></div>
+<text class="a m x">{{sl}}</text>
+</div>
+<div if="{{sc==2}}" class="bx co cc">
+<text class="b l x">REST</text>
+<text class="t f x">{{rc}}</text>
+<text class="a m x">{{sl}}</text>
+<text class="e f x" onclick="onNext">{{nx}}</text>
+<div class="nr cc" onclick="onNext"><text class="ns m r">{{ns}}</text><text class="ch l">Change</text></div>
+<div class="rw cc">
+<div if="{{add}}" class="p3 cc ac" onclick="onAdd"><text class="pt f x">+30 s</text></div>
+<div class="p3 cc dk" onclick="onSkip"><text class="pt f x">Skip</text></div>
+</div>
+</div>
+<div if="{{sc==3}}" class="bx co cc">
+<text class="b l x">UP NEXT</text>
+<text class="a m x">{{dn}}</text>
+<div class="ur" style="background-color:{{b0}}" onclick="onR0"><text class="un f">{{r0}}</text><text class="ud f r">{{n0}}</text></div>
+<div class="ur" style="background-color:{{b1}}" onclick="onR1"><text class="un f">{{r1}}</text><text class="ud f r">{{n1}}</text></div>
+<div class="ur" style="background-color:{{b2}}" onclick="onR2"><text class="un f">{{r2}}</text><text class="ud f r">{{n2}}</text></div>
+<div class="ur" style="background-color:{{b3}}" onclick="onR3"><text class="un f">{{r3}}</text><text class="ud f r">{{n3}}</text></div>
+</div>
+<div if="{{sc==4}}" class="bx co cc">
+<text class="h f x">{{na}}</text>
+<text if="{{na}}" class="h l x">Pending</text>
+<text class="a m x">{{rest}}</text>
+<text class="e f x">Open M/ARC</text>
+<text class="e f x">on your phone</text>
+</div>
+<div if="{{sc==5}}" class="bx co cc">
+<text class="e l x">Phone connected</text>
+<text class="k f x">Saved</text>
+<text class="c l x">{{na}}</text>
+<text class="a m x">{{rest}}</text>
+</div>
+<div if="{{!sc}}" class="bx co cc">
+<text class="g f x">{{l1}}</text>
+<text class="c m x">{{l2}}</text>
+</div>
 </div>

@@ -1,5 +1,5 @@
 // WATCH-C link: native/wear/README.md
-var T = 'mw', V = 1, APP = '1.1.2';
+var T = 'mw', V = 1, APP = '1.2.0';
 var PHONE_PKG = 'com.mrcdrnzz.dailytracker';
 var PHONE_FP = '05669AD2721C6ABAF9FDD4B9B84E2FB7944844B1DEF359845F015F2B67CAF1F5';
 var KEY = 'm2q', RUN = 'm2r';
@@ -7,6 +7,7 @@ var EFF = ['', 'easy', 'ideal', 'max'], KINDS = { c: 'complete_set', a: 'rest_ad
 var CH = 'Changed on phone', END = 'Workout ended';
 var WHY = { target_missing: CH, already_committed: CH, stale_revision: CH, stale_rest: CH, invalid_state: CH,
 	session_closed: END, no_session: END, wrong_session: END, unsupported: 'Update needed' };
+var PL = '#232428', AC = '#5e6ad2', BG = '#08090a';
 
 function num(x) { return typeof x === 'number'; }
 function str(x) { return typeof x === 'string'; }
@@ -43,18 +44,29 @@ function wire(f) {
 }
 
 function nn(x) { return x == null || num(x); }
+function okSet(s) { return str(s.id) && num(s.rev) && (s.u === 'kg' || s.u === 'lb') && nn(s.w) && nn(s.r) && (s.e == null || str(s.e)); }
+function okLt(l) { return !l || Object(l) === l && nn(l.w) && nn(l.r) && (l.u === 'kg' || l.u === 'lb'); }
 function okSnap(m) {
-	var s = m.set || {}, r = m.rest || {};
+	var r = m.rest || {};
 	return num(m.pt) && nn(m.wt) && (m.sid === null || str(m.sid)) && (m.ex == null || str(m.ex) && num(m.si) && num(m.sn)) &&
-		(!m.set || str(s.id) && num(s.rev) && (s.u === 'kg' || s.u === 'lb') && nn(s.w) && nn(s.r) && (s.e == null || str(s.e))) && (!m.rest || str(r.id) && num(r.left));
+		(!m.set || okSet(m.set)) && (!m.rest || str(r.id) && num(r.left)) && (m.eid == null || str(m.eid)) && okLt(m.lt);
 }
+// C2 plan: rows of {id, ex, d, n, set, lt}
+function okPlan(m) {
+	var r = m.rows, ok = str(m.sid) && num(m.srev) && num(m.sd) && num(m.st) && Array.isArray(r);
+	for (var i = 0, o; ok && i < r.length; i++) ok = Object(o = r[i]) === o && str(o.id) && str(o.ex) && num(o.d) && num(o.n) && (!o.set || okSet(o.set)) && okLt(o.lt);
+	return ok;
+}
+function fmt(s) { var r = s.r == null ? '-' : s.r; return s.w == null ? r + ' reps' : s.w + ' ' + s.u + ' x ' + r; }
 
 // io: store, send(text, done(code)), keep(on), connect(), paint(), now(), defer(fn, 0)
 function Link(io, boot) {
-	// tk counts 1 s ticks, the clock of every timer; io.now() is for actionAt and the offset only
+	// tk counts 1 s ticks, the clock of every timer; io.now() is for actionAt, the offset and the clock
 	var tk = 0, seq = 0, snapTk = 0, off = 0, rtt = -1, lastRx = -1, fail = 0, hb = 0, due = Infinity;
 	var q = [], jobs = [], hellos = [], wq = [], busy = 0, snap = 0, eff = null, effSet = '', done = '';
 	var wait = 0, msg = '', stop = 0, kept = false, ready = 0, lost = 0, on = 0, pause = 0, calm = 0, dead = 0, sick = 0;
+	// C2: plan, pick, page, Set N saved, Back in sync, hello
+	var plan = 0, pk, ps, pe, pg = 0, sv, svR, lq, bn = 0, sy, hi;
 
 	function no() {}
 	function later(fn) {
@@ -93,11 +105,11 @@ function Link(io, boot) {
 		return s;
 	}
 	function entry(slot, text, m) {
-		return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, at: 0, n: 0 };
+		return { slot: slot, text: text, id: m.commandId, set: m.setId || m.kind + m.restId, t: m.actionAt, at: 0, n: 0 };
 	}
 
 	function add(code, set, effort) {
-		var at = Math.round(io.now() + off), s = snap.set, f = [code, boot + '-' + ++seq, snap.sid, at].concat(code === 'c' ? [s.id, s.rev, s.w == null ? '' : s.w, s.u, s.r, effort] : [snap.rest.id]);
+		var at = Math.round(io.now() + off), s = cs(), f = [code, boot + '-' + ++seq, snap.sid, at].concat(code === 'c' ? [s.id, s.rev, s.w == null ? '' : s.w, s.u, s.r, effort] : [snap.rest.id]);
 		var b = f.join(','), val = b + ',' + sum(b) % 99991, t = wire(f);
 		if (set) wq.push(set);
 		queue(function (fin) {
@@ -221,30 +233,46 @@ function Link(io, boot) {
 			rtt = now - m.wt;
 			off = o;
 		}
-		var id = m.set ? m.set.id : '';
-		if (id !== effSet) eff = null;
-		if (id !== done) done = '';
-		effSet = id;
+		if (m.sid !== snap.sid) pg = 0;
 		snap = m;
 		snapTk = tk;
+		if (svR === '') svR = m.rest ? m.rest.id : 0;
+		fresh();
 		if (q[0] && (!q[0].n || tk > q[0].at)) {
 			q[0].n = 0;
 			fire(q[0]);
 		}
 	}
 
+	function fresh() {
+		var s = cs(), id = s ? s.id : '';
+		if (id !== effSet) eff = null;
+		if (id !== done) done = '';
+		effSet = id;
+	}
+	// the pick holds while sid, eid and its row stay
+	function row() {
+		for (var r = pk && snap.sid === ps && snap.eid === pe && plan.sid === ps ? plan.rows : [], i = 0; i < r.length; i++) if (r[i].id === pk) return r[i];
+		pk = '';
+	}
+	function cs() { var r = row(); return r ? r.set : snap.set; }
+	function up() { return snap.sid && plan.sid === snap.sid; }
+
 	function onRes(m) {
-		for (var i = 0; i < q.length; i++) {
+		for (var i = 0, c; i < q.length; i++) {
 			if (q[i].id !== m.commandId) continue;
 			if (m.status === 'applied') {
 				msg = q.length > 1 ? q.length - 1 + ' pending' : 'Saved';
 				if (q[i].set) done = q[i].set;
+				if ((c = cs()) && c.id === q[i].set) sv = row() ? row().d + 1 : snap.si, svR = '';
+				hi = tk + 2, bn++;
 			} else if (m.status === 'rejected') {
 				msg = str(m.reason) && str(WHY[m.reason]) ? WHY[m.reason] : 'Not saved';
 			} else {
 				return;
 			}
 			drop(i);
+			if (lq && !q.length) lq = 0, sy = m.status === 'applied' ? tk + 3 : 0;
 			return pump();
 		}
 	}
@@ -259,6 +287,7 @@ function Link(io, boot) {
 			due = tk + 20;
 			if (m.k === 'snap' && okSnap(m)) onSnap(m, now);
 			if (m.k === 'res') onRes(m);
+			if (m.k === 'plan' && okPlan(m)) fresh(plan = m);
 			keepOn();
 		}
 		io.paint();
@@ -275,55 +304,81 @@ function Link(io, boot) {
 		if (pause && tk >= pause) live();
 		if (on && !calm && tk - on >= 30) queue(function (fin) { kv('set', RUN, '0,r', fin); }, calm = 1); // not a quick restart
 		if (!stop && e && e.n && tk - e.at >= Math.min(4 << Math.min(e.n, 4) - 1, 30)) fire(e);
+		if (hi && tk >= hi) hello(hi = 0);
 		if (!stop && tk >= due) hello();
+		if (gone() && q.length && !lq) lq = 1, bn = 0;
 		keepOn();
 		io.paint();
 	}
+	function gone() { return fail || (lastRx < 0 ? tk > 5 : tk - lastRx > 25); }
 
-	function shown() { return eff !== null ? eff : (snap && snap.set && snap.set.e) || ''; }
+	function shown() { var s = cs(); return eff !== null ? eff : (s && s.e) || ''; }
 	function held(id) {
 		for (var h = wq.indexOf(id) >= 0, i = 0; i < q.length; i++) h = h || q[i].set === id;
 		return h;
 	}
 	function can() {
-		var s = snap && snap.sid ? snap.set : null;
+		var s = snap.sid && cs();
 		return !!(ready && !stop && s && s.r >= 1 && s.id !== done && !held(s.id));
 	}
 
 	function view() {
-		var s = snap && snap.sid && snap.set, r = snap && snap.sid && snap.rest, th = snap && snap.th;
+		var c = snap.sid && row(), x = c || snap, s = snap.sid && x.set, r = snap.sid && snap.rest, th = snap.th;
+		var a = c ? c.d + 1 : snap.si, b = c ? c.n : snap.sn, rows = up() && plan.rows, i, o, k;
 		if (!(th && th.length === 3 && str(th[0]) && str(th[1]) && str(th[2]))) th = ['#08090a', '#f7f8f8', '#5e6ad2'];
-		var v = { l1: '', l2: '', eff: '', rest: '', st: msg, p1: '', p2: '', set: false, can: false, rs: false, add: false, bg: th[0], fg: th[1], ac: th[2], cb: '#3a3a3a' };
+		var v = { l1: '', l2: '', eff: '', rest: '', st: msg, p1: '', p2: '', set: false, can: false, rs: false, add: false, bg: th[0], fg: th[1], ac: th[2], cb: PL,
+			off: 0, ck: hms(io.now()).slice(0, 5), sc: 0 };
 		if (stop || pause) {
 			v.st = '';
 			v.l1 = pause ? 'Paused after restarts' : 'Update needed';
 			if (pause) v.l2 = 'Try again in 10 min';
 			return v;
 		}
-		if (fail || (lastRx < 0 ? tk > 5 : tk - lastRx > 25)) {
+		if (gone()) {
 			v.p1 = 'Phone not connected';
 			v.p2 = 'Open M/ARC on your phone';
+			v.off = 1;
 		}
 		if (snap && !snap.sid) {
 			v.l1 = 'Start your workout';
 			v.l2 = 'in M/ARC on your phone';
 		} else if (snap) {
-			v.l1 = snap.ex ? snap.ex + ' ' + snap.si + '/' + snap.sn : 'All sets done';
-			v.l2 = snap.ex ? 'Log on phone' : '';
+			v.l1 = x.ex ? x.ex + ' ' + a + '/' + b : 'All sets done';
+			v.l2 = x.ex ? 'Log on phone' : '';
 		}
 		if (s) {
-			var reps = s.r == null ? '-' : s.r;
-			v.l2 = s.w == null ? reps + ' reps' : s.w + ' ' + s.u + ' x ' + reps;
+			v.l2 = fmt(s);
 			v.eff = ['Effort', 'Easy', 'Ideal', 'Max'][EFF.indexOf(shown())] || 'Effort';
 			v.set = true;
 			v.can = can();
-			if (v.can) v.cb = v.ac;
+			if (v.can) v.cb = AC;
 		}
 		if (r) {
 			var left = r.p ? r.left : Math.max(0, r.left - (tk - snapTk) * 1000);
 			v.rest = 'Rest ' + mss(left);
 			v.rs = true;
 			v.add = left > 0;
+			v.rc = mss(left);
+		}
+		// C2 screen: 1 Set, 2 Rest, 3 Up next, 4 Phone not connected, 5 Back in sync, 0 l1, l2
+		v.sc = v.off && (q.length || !snap) ? 4 : tk < sy ? 5 : rows && pg ? 3 : r ? 2 : snap.sid && x.ex ? 1 : 0;
+		k = v.sc > 4 ? bn : q.length;
+		v.na = k ? k + ' action' + (k > 1 ? 's' : '') : '';
+		v.nm = x.ex || '';
+		v.sp = 'SET ' + a + ' OF ' + b;
+		v.la = x.lt ? 'Last time ' + fmt(x.lt) : '';
+		v.nx = v.nm && 'Next: ' + v.nm;
+		v.ns = v.nm && 'Set ' + a + ' of ' + b + (s ? ', ' + v.l2 : '');
+		v.sl = msg === 'Saved' ? (r && svR === r.id ? 'Set ' + sv + ' saved' : '') : r || msg.indexOf('Pending') ? msg : '';
+		v.cl = 'Complete set';
+		for (i = 0; s && i < q.length; i++) if (q[i].set === s.id) v.cl = 'Pending ' + hms(q[i].t);
+		for (i = 1; i < 4; i++) v['e' + i] = EFF[i] === shown() ? AC : PL;
+		v.dn = rows ? plan.sd + ' of ' + plan.st + ' sets done' : '';
+		for (i = 0; rows && i < 4; i++) {
+			o = rows[i];
+			v['r' + i] = o ? o.ex : '';
+			v['n' + i] = o ? o.d + '/' + o.n : '';
+			v['b' + i] = !o ? BG : o.id === (c ? c.id : snap.eid) ? AC : PL;
 		}
 		return v;
 	}
@@ -337,13 +392,23 @@ function Link(io, boot) {
 			if (on && !pause && !sick && !wait) try { io.store.set({ key: RUN, value: '0,c', success: no, fail: no }); } catch (e) {}
 		},
 		show: function () { if (!dead) { hello(); keepOn(true); } },
-		complete: function () { if (can()) add('c', snap.set.id, shown()); },
+		complete: function () { if (can()) add('c', cs().id, shown()); },
 		rest: function (kind) {
 			var k = kind === 'rest_skip' && snap && snap.rest ? kind + snap.rest.id : '';
 			if (ready && !stop && snap && snap.sid && snap.rest && !(k && held(k))) add(k ? 's' : 'a', k, '');
 		},
-		effort: function () {
-			if (snap && snap.set) eff = EFF[(EFF.indexOf(shown()) + 1) % EFF.length];
+		// C2: effort 1 to 3, again to clear; next(d) pages on a swipe up or down, else opens Up next
+		effort: function (k) {
+			if (cs()) eff = !k ? EFF[(EFF.indexOf(shown()) + 1) % EFF.length] : EFF[k] === shown() ? '' : EFF[k];
+			io.paint();
+		},
+		next: function (d) {
+			if (up()) pg = !d ? 1 : d === 'up' || d === 'down' ? 1 - pg : pg;
+			io.paint();
+		},
+		pick: function (i) {
+			var r = up() && plan.rows[i];
+			if (r) fresh(pk = r.id === snap.eid ? '' : r.id, ps = snap.sid, pe = snap.eid, pg = 0);
 			io.paint();
 		}
 	};

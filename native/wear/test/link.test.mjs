@@ -381,7 +381,7 @@ test('W3 hello: at start, on show, after 20 s of silence and after failed sends 
   assert.equal(r.hellos().length, 1);
   const h = JSON.parse(r.hellos()[0]);
   assert.deepEqual(Object.keys(h), ['t', 'v', 'k', 'app', 'boot', 'wt', 'q']);
-  assert.deepEqual(h, { t: 'mw', v: 1, k: 'hello', app: '1.1.2', boot: 'abcd1234', wt: T0, q: 0 });
+  assert.deepEqual(h, { t: 'mw', v: 1, k: 'hello', app: '1.2.0', boot: 'abcd1234', wt: T0, q: 0 }); // WATCH-C2: the version pin
   r.link.show();
   assert.equal(r.hellos().length, 2);
   r.adv(19000); r.link.tick(); // the clock is the 1 s tick (1.1.2)
@@ -553,7 +553,7 @@ const JS_RULES = [
 ];
 const walk = (dir) => readdirSync(dir).flatMap((n) => (statSync(path.join(dir, n)).isDirectory() ? walk(path.join(dir, n)).map((f) => `${n}/${f}`) : [n]));
 
-test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sources at most 34,000 B', async () => {
+test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sources at most 40,000 B', async () => {
   const files = walk(JS).sort();
   assert.deepEqual(files, ['app.js', 'common/link.js', 'pages/index/index.css', 'pages/index/index.hml', 'pages/index/index.js', 'pages/wearengine.js']);
   let total = 0;
@@ -567,8 +567,8 @@ test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sou
     const src = buf.toString('utf8');
     for (const [name, rule] of JS_RULES) assert.doesNotMatch(src, rule, `${rel} uses ${name}`);
   }
-  // 34,000 since the 1.1.2 red team: the safety fixes after the device crash (docs/watch-cards/WATCH-C.md W4)
-  assert.ok(total <= 34000, `page sources ${total} B`);
+  // 34,000 since the 1.1.2 red team (docs/watch-cards/WATCH-C.md W4); 40,000 since WATCH-C2's screens (its W4)
+  assert.ok(total <= 40000, `page sources ${total} B`);
   assert.equal(createHash('sha256').update(readFileSync(path.join(JS, 'pages/wearengine.js'))).digest('hex'),
     '8c7f1100c840abdb237991b0d436ef9ab49a215269c5fecdb3dd59fe63a71471');
   assert.doesNotMatch(readFileSync(LINK, 'utf8'), /\bimport\b|\brequire\b/, 'link.js makes no Huawei or module calls');
@@ -583,7 +583,7 @@ test('W4 ES5, ASCII, wearengine.js unchanged, PHONE_FP, no permissions, page sou
   assert.equal(PHONE_PKG, JSON.parse(readFileSync(path.join(ROOT, 'capacitor.config.json'), 'utf8')).appId);
   const cfg = JSON.parse(readFileSync(path.join(MAIN, 'config.json'), 'utf8'));
   const hello = JSON.parse(readFileSync(path.join(ROOT, 'native/wear/hello/entry/src/main/config.json'), 'utf8'));
-  assert.deepEqual(cfg.app.version, { code: 1001002, name: '1.1.2' });
+  assert.deepEqual(cfg.app.version, { code: 1002000, name: '1.2.0' });
   assert.equal(cfg.app.bundleName, hello.app.bundleName);
   assert.equal(cfg.module.reqPermissions, undefined, 'no permissions');
   assert.deepEqual(cfg.module.abilities, hello.module.abilities);
@@ -598,7 +598,13 @@ test('W4 page markup matches the page data and handlers', () => {
   const data = page.slice(page.indexOf('data: {'), page.indexOf('},', page.indexOf('data: {')));
   for (const key of bound) assert.match(data, new RegExp(`\\b${key}: `), `data.${key}`);
   for (const h of [...hml.matchAll(/onclick="(\w+)"/g)].map((m) => m[1])) assert.match(page, new RegExp(`^  ${h}\\(\\) \\{`, 'm'), `${h} is defined`);
-  assert.deepEqual([...hml.matchAll(/value="([^"{]+)"/g)].map((m) => m[1]), ['+30 s', 'Skip', 'Complete']);
+  // WATCH-C2: each tap target's handler and the label it shows (was: the button labels)
+  assert.deepEqual([...hml.matchAll(/onclick="(\w+)">(?:<text[^>]*>)?([^<]*)/g)].map((m) => `${m[1]} ${m[2]}`), [
+    'onNext {{nm}}', 'onEasy Easy', 'onIdeal Ideal', 'onMax Max', 'onComplete {{cl}}', 'onNext {{nx}}', 'onNext {{ns}}', 'onAdd +30 s', 'onSkip Skip',
+    'onR0 {{r0}}', 'onR1 {{r1}}', 'onR2 {{r2}}', 'onR3 {{r3}}']);
+  assert.equal([...hml.matchAll(/onswipe="(\w+)"/g)].map((m) => m[1]).join(), 'onSwipe');
+  assert.match(page, /^  onSwipe: function \(e\) \{ tap\('next', e && e\.direction\); \},$/m);
+  assert.match(page, /^function tap\(f, a\) \{ try \{ link\[f\]\(a\); \} catch \(e\) \{\} \}$/m, 'the new handlers catch what they throw');
   assert.match(page, /setInterval\(/);
   assert.match(page, /clearInterval\(/);
   assert.match(page, /onDestroy\(\) \{[\s\S]*keep\(false\)/, 'onDestroy lets the screen go dark again');

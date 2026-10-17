@@ -7,6 +7,7 @@ import { PHONE_PKG, PHONE_FP, Link, makeBoot } from '../../common/link.js';
 var client, link, page, timer;
 
 function no() {}
+function tap(f, a) { try { link[f](a); } catch (e) {} }
 
 function paint() {
 	var v = page && link ? link.view() : {};
@@ -43,8 +44,9 @@ function connect() {
 
 export default {
 	data: {
-		l1: '', l2: '', eff: '', rest: '', st: '', p1: '', p2: '', set: false, can: false, rs: false, add: false,
-		bg: '#08090a', fg: '#f7f8f8', ac: '#5e6ad2', cb: '#3a3a3a'
+		l2: '', rest: '', set: 0, add: 0, cb: '', off: 0, ck: '', sc: 0, nm: '', sp: '', la: '', sl: '',
+		cl: '', e1: '', e2: '', e3: '', rc: '', nx: '', ns: '', dn: '', r0: '', r1: '', r2: '', r3: '', n0: '', n1: '', n2: '', n3: '',
+		b0: '', b1: '', b2: '', b3: '', na: '', l1: ''
 	},
   onInit() {
 		try {
@@ -60,6 +62,15 @@ export default {
   onEffort() { try { link.effort(); } catch (e) {} },
   onAdd() { try { link.rest('rest_add_30'); } catch (e) {} },
   onSkip() { try { link.rest('rest_skip'); } catch (e) {} },
+  onEasy() { tap('effort', 1); },
+  onIdeal() { tap('effort', 2); },
+  onMax() { tap('effort', 3); },
+  onNext() { tap('next'); },
+  onR0() { tap('pick', 0); },
+  onR1() { tap('pick', 1); },
+  onR2() { tap('pick', 2); },
+  onR3() { tap('pick', 3); },
+  onSwipe: function (e) { tap('next', e && e.direction); },
   onDestroy() {
 		clearInterval(timer);
 		keep(false);

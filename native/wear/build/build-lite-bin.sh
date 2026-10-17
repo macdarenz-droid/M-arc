@@ -51,10 +51,26 @@ const walk = (dir) => { for (const name of fs.readdirSync(dir).sort()) { const p
   if (n) fs.writeFileSync(p, lines.join("\n")); } };
 walk(process.argv[1]);' "$JSRC/$JSNAME"
 HAPMODE=false; [ "$MODE" = release ] && HAPMODE=true
+# WATCH-C2: a wrapper around Huawei's webpack config whose only change is babel's output format, comments: false and
+# compact: true, so comments and indentation do not count against the 48 KB; the code is token-identical (Huawei's
+# release mode, hapMode, minifies with Terser). It stops the build unless it finds exactly one babel rule.
+WRAP="$I/lite-babel-format.config.cjs"
+cat > "$WRAP" <<'EOF'
+const base = require(process.env.LITE_ACE + '/webpack.lite.config.js');
+module.exports = (env) => {
+  const cfg = base(env);
+  const babel = [];
+  for (const r of cfg.module.rules) for (const u of [].concat(r.use || [])) if (u && /babel-loader/.test(u.loader)) babel.push(u);
+  if (babel.length !== 1 || !babel[0].options || !babel[0].options.presets) throw new Error('expected exactly one babel rule, found ' + babel.length);
+  babel[0].options.comments = false;
+  babel[0].options.compact = true;
+  return cfg;
+};
+EOF
 # webpack names each module by its path from the working folder, and debug output repeats those names, so run it
 # from the build folder: the page JS is smaller (Huawei's limit is 48 KB) and the same wherever the build starts.
-(cd "$I" && aceManifestPath="$I/manifest/$JSNAME/manifest.json" iconPath="$I/lite_res" img2bin=true hapMode=$HAPMODE watchMode=false \
-  node "$ACE/node_modules/webpack/bin/webpack.js" --config "$ACE/webpack.lite.config.js" \
+(cd "$I" && LITE_ACE="$ACE" aceManifestPath="$I/manifest/$JSNAME/manifest.json" iconPath="$I/lite_res" img2bin=true hapMode=$HAPMODE watchMode=false \
+  node "$ACE/node_modules/webpack/bin/webpack.js" --config "$WRAP" \
   --env aceModuleRoot="$JSRC/$JSNAME" --env aceModuleBuild="$I/loader_out_lite/js/$JSNAME" \
   --env cachePath="$I/cache" --env buildMode="$MODE" --env deviceType=liteWearable)
 sleep 1  # img2bin and jerry-snapshot run async in webpack done-hooks
