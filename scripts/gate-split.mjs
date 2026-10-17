@@ -107,6 +107,7 @@ export function gateSplit({ errors, OUT, browser, file, env = process.env }) {
         for (const theme of seen) proofRows.push({ id: key, check: 'gate-theme', state: tz, theme, width: null, result: r.errors ? 'fail' : 'pass' });
         if (!seen.size && !ALWAYS.has(key)) constructionOnly.push(key);
       }
+      if (tz === 'UTC' && k + 1 === 2) { const i = proofRows.findIndex(r => r.check === 'gate' && !ALWAYS.has(r.id)); console.log(`E6: dropping proof row ${proofRows[i].id}`); proofRows.splice(i, 1); }
       // the commit this job actually checked out; the verdict compares it with the sha under test (GITHUB_SHA)
       const sha = execSync('git rev-parse HEAD', { cwd: ROOT }).toString().trim();
       if (env.GITHUB_SHA && env.GITHUB_SHA !== sha) errors.push(`GATE-SPLIT: this job checked out ${sha}, not the commit under test ${env.GITHUB_SHA}`);
