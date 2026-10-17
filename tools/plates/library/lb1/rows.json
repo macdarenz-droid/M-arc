@@ -1,0 +1,133 @@
+{
+ "note": "LB1 build-ahead rows (LIB-9a, D-LIB4-ENTRY-2): stage drawing or review only, never in batches/. Mode H for all 14 (lb1/DESIGN.md 1). censusRef: the census commit (claude/howto-options).",
+ "batch": "LB1",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_chin_up": {
+   "src": "library/specs/chin_up.mjs",
+   "slug": "chin-up",
+   "prefix": "chin-up",
+   "chromeId": "chin-up",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_hanging_knee_raise": {
+   "src": "library/specs/hanging_knee_raise.mjs",
+   "slug": "hanging-knee-raise",
+   "prefix": "hanging-knee-raise",
+   "chromeId": "hanging-knee-raise",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_assisted_pull_up": {
+   "src": "library/specs/assisted_pull_up.mjs",
+   "slug": "assisted-pull-up",
+   "prefix": "assisted-pull-up",
+   "chromeId": "assisted-pull-up",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_inverted_row": {
+   "src": "library/specs/inverted_row.mjs",
+   "slug": "inverted-row",
+   "prefix": "inverted-row",
+   "chromeId": "inverted-row",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_close_grip_pulldown": {
+   "src": "library/specs/close_grip_pulldown.mjs",
+   "slug": "close-grip-pulldown",
+   "prefix": "close-grip-pulldown",
+   "chromeId": "close-grip-pulldown",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_underhand_lat_pulldown": {
+   "src": "library/specs/underhand_lat_pulldown.mjs",
+   "slug": "underhand-lat-pulldown",
+   "prefix": "underhand-lat-pulldown",
+   "chromeId": "underhand-lat-pulldown",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_single_arm_lat_pulldown": {
+   "src": "library/specs/single_arm_lat_pulldown.mjs",
+   "slug": "single-arm-lat-pulldown",
+   "prefix": "single-arm-lat-pulldown",
+   "chromeId": "single-arm-lat-pulldown",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_straight_arm_pulldown": {
+   "src": "library/specs/straight_arm_pulldown.mjs",
+   "slug": "straight-arm-pulldown",
+   "prefix": "straight-arm-pulldown",
+   "chromeId": "straight-arm-pulldown",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_chest_supported_row": {
+   "src": "library/specs/chest_supported_row.mjs",
+   "slug": "chest-supported-row",
+   "prefix": "chest-supported-row",
+   "chromeId": "chest-supported-row",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_resistance_band_row": {
+   "src": "library/specs/resistance_band_row.mjs",
+   "slug": "resistance-band-row",
+   "prefix": "resistance-band-row",
+   "chromeId": "resistance-band-row",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_incline_machine_press": {
+   "src": "library/specs/incline_machine_press.mjs",
+   "slug": "incline-machine-press",
+   "prefix": "incline-machine-press",
+   "chromeId": "incline-machine-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_shoulder_press": {
+   "src": "library/specs/shoulder_press.mjs",
+   "slug": "shoulder-press",
+   "prefix": "shoulder-press",
+   "chromeId": "shoulder-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_horizontal_leg_press": {
+   "src": "library/specs/horizontal_leg_press.mjs",
+   "slug": "horizontal-leg-press",
+   "prefix": "horizontal-leg-press",
+   "chromeId": "horizontal-leg-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_leg_press_calf_raise": {
+   "src": "library/specs/leg_press_calf_raise.mjs",
+   "slug": "leg-press-calf-raise",
+   "prefix": "leg-press-calf-raise",
+   "chromeId": "leg-press-calf-raise",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}
