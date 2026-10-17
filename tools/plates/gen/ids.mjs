@@ -13,7 +13,7 @@ import { join } from 'node:path';
 import { ROOT } from '../lib/inputs.mjs';
 import { hintsOutputs } from '../library/ids-encoding.mjs';
 import { inputs as contentInputs, pushHints } from './content.mjs';
-import { EXERCISES_JSON, registryInputs, rows, shippedIds } from '../library/registry.mjs';
+import { EXERCISES_JSON, registryInputs, rows, shippedIds, sourceOf } from '../library/registry.mjs';
 import { PAIRS, loadPairs, pairsOf } from './handpairs.mjs';
 
 /** The layer plugins whose chunks loaders.ts maps (run first, so ctx.prev holds their outputs). */
@@ -128,7 +128,12 @@ export function inputsFor(path) {
 export async function outputs(ctx = {}) {
   const all = rows(), shipped = shippedIds(all);
   const exerciseIds = JSON.parse(readFileSync(join(ROOT, EXERCISES_JSON), 'utf8')).map(e => e.id);
-  const twins = hintsOutputs(await pushHints(), shipped, exerciseIds);
+  // Called without the core's ctx (tools/plates/library/scale/synthetic.mjs, measurement only): its synthetic shipped
+  // rows are generated-module clones with no How-to source, so only ids with a source give hints, and no inputs are
+  // listed. The generator always passes ctx, and there content.mjs loads every shipped row's source or throws.
+  const measuring = !ctx.prev;
+  const hintIds = measuring ? shipped.filter(id => existsSync(join(ROOT, sourceOf(id)))) : shipped;
+  const twins = hintsOutputs(await pushHints(hintIds), shipped, exerciseIds);
   const slugOf = new Map(all.map(r => [r.id, r.slug]));
   const archetypes = JSON.parse(readFileSync(join(ROOT, COVERAGE_DATA), 'utf8')).archetypes;
   const { pairOf } = pairsOf(await loadPairs(), shipped, all);
@@ -137,11 +142,12 @@ export async function outputs(ctx = {}) {
   const byId = new Map(all.map(r => [r.id, r]));
   missingChunks(shipped.map(id => byId.get(id)), has, pairOf, archetypes);
   const maps = chunkMaps(shipped.map(id => byId.get(id)), has, pairOf);
-  return [
-    { path: 'src/howto/ids.ts', text: twins.ids, inputs: inputsFor('src/howto/ids.ts') },
-    { path: 'tools/plates/library/ids-node.mjs', text: twins.node, inputs: inputsFor('tools/plates/library/ids-node.mjs') },
-    { path: 'src/howto/lib-id.ts', text: libIdText(exerciseIds), inputs: inputsFor('src/howto/lib-id.ts') },
-    { path: 'src/howto/generated/loaders.ts', text: htIndexText(shipped.map(id => [id, slugOf.get(id)]), maps), inputs: inputsFor('src/howto/generated/loaders.ts') },
-    { path: 'src/howto/coverage.ts', text: coverageText(coverageEntries(archetypes, all, exerciseIds)), inputs: inputsFor('src/howto/coverage.ts') },
+  const out = [
+    { path: 'src/howto/ids.ts', text: twins.ids },
+    { path: 'tools/plates/library/ids-node.mjs', text: twins.node },
+    { path: 'src/howto/lib-id.ts', text: libIdText(exerciseIds) },
+    { path: 'src/howto/generated/loaders.ts', text: htIndexText(shipped.map(id => [id, slugOf.get(id)]), maps) },
+    { path: 'src/howto/coverage.ts', text: coverageText(coverageEntries(archetypes, all, exerciseIds)) },
   ];
+  return measuring ? out : out.map(o => ({ ...o, inputs: inputsFor(o.path) }));
 }

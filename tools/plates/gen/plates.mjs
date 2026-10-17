@@ -4,10 +4,10 @@
 // fragments as JSON string literals: the parsed strings are the golden bytes, never re-serialized.
 import { batchGoldenOf, goldenInputs, goldenRows, rows as registryRows, shippedRows } from '../library/registry.mjs';
 import { pagesOf, pinOf, platesPage } from '../library/batch-golden.mjs';
-import { candidateOf, nodeHalf } from '../library/candidate.mjs';
 import { closureOf } from '../library/inputs-closure.mjs';
-import { QaRefused, runQa } from '../library/qa/index.mjs';
-import { dropMirror, loadEngine } from '../library/qa/engine.mjs';
+// The QA modules (LIB-3) and candidate.mjs are imported when a library row is gated, never at load: qa/node.mjs imports
+// this file's moduleText, and a static import back would make a cycle (vitest's parallel module loads hang on it).
+const qa = async () => ({ ...(await import('../library/candidate.mjs')), ...(await import('../library/qa/index.mjs')), ...(await import('../library/qa/engine.mjs')) });
 import { readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT, sha256 } from '../lib/inputs.mjs';
@@ -126,9 +126,20 @@ export function libraryProblems(p, entry, row) {
   return bad;
 }
 
-/** The QA node half of one library row (D-LIB2b-QA): throws QaRefused naming the id for any problem but the browser keys. */
+/** The QA node half of one library row (D-LIB2b-QA): throws QaRefused naming the id for any problem but the browser keys.
+ *  Cached in-process by sha256 of its candidate inputs (the row, its plate card markup, its spec closure and research
+ *  card bytes); `ms` is the measured node-half time of the run that filled the cache. */
+const qaCache = new Map();
 export async function gateNodeHalf(row, platesHtml, engine, all) {
-  const report = nodeHalf(await runQa(await candidateOf(row.id, { platesHtml, engine, all }), { engine }));
+  const { QaRefused, candidateOf, nodeHalf, runQa } = await qa();
+  const c = await candidateOf(row.id, { platesHtml, engine, all });
+  const spec = closureOf([`tools/plates/${row.src}`]).map(f => [f, sha256(readFileSync(join(ROOT, f)))]);
+  const key = sha256(JSON.stringify([row, c.article, c.plate, spec, c.research, c.exemptions]));
+  if (!qaCache.has(key)) {
+    const t0 = Date.now(), report = nodeHalf(await runQa(c, { engine }));
+    qaCache.set(key, { ...report, ms: Date.now() - t0 });
+  }
+  const report = qaCache.get(key);
   if (!report.ok) throw new QaRefused(report);
   return report;
 }
@@ -137,7 +148,7 @@ export async function gateNodeHalf(row, platesHtml, engine, all) {
 async function libraryOutputs(hashFor, plateCss) {
   const all = registryRows(), lib = libraryRows(all);
   if (!lib.length) return [];
-  const mirror = makeMirror();
+  const { dropMirror, loadEngine } = await qa(), mirror = makeMirror();
   try {
     const engine = await loadEngine(mirror), out = [];
     for (const row of lib) {

@@ -137,10 +137,11 @@ export function patchModule(prevText, content, hash) {
   return `${body}\n${baseFieldsText(content)}} satisfies BuiltHowTo;\n`;
 }
 
-/** HT-5's push hints, golden B's handling.cue of each push-archetype exercise: lib id -> text (ids.mjs encodes them). */
-export async function pushHints() {
+/** HT-5's push hints, golden B's handling.cue of each push-archetype exercise: lib id -> text (ids.mjs encodes them).
+ *  `ids`: the shipped ids to read (default all; every one must have its source, loadContent throws otherwise). */
+export async function pushHints(ids = Object.keys(rowsOf())) {
   const hints = {};
-  for (const id of Object.keys(rowsOf())) {
+  for (const id of ids) {
     const { content } = await loadContent(id);
     if (content.handling && content.handling.archetype === 'push' && content.handling.cue) hints[id] = content.handling.cue;
   }

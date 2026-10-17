@@ -62,6 +62,7 @@ export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = r
   if (!plate) fail(row, `card-${row.chromeId} is not in its plates page`);
   if (!row.view) fail(row, 'no census view (batch row field `view`)');
   if (typeof row.censusRef !== 'string' || !/^[0-9a-f]{7,40}$/.test(row.censusRef)) fail(row, 'its batch file records no census source (`censusRef`)');
+  for (const f of [`tools/plates/${row.src}`, sourceOf(id, root)]) if (!existsSync(join(root, f))) fail(row, `no source file ${f}`);
   const spec = (await import(pathToFileURL(join(root, 'tools/plates', row.src)).href)).default;
   const howto = (await import(pathToFileURL(join(root, sourceOf(id, root))).href)).default;
   let derivation = null;

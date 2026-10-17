@@ -23,6 +23,8 @@ const STRING_ARG = /^\s*(['"])(?:(?!\1)[^\\\n]|\\.)*\1\s*\)/;
 export function scanProblems(rel, text, externals = []) {
   const code = transformSync(text, { loader: 'js', format: 'esm', legalComments: 'none' }).code;
   const bad = [], at = i => `${rel} (code line ${code.slice(0, i).split('\n').length})`;
+  // esbuild prints a constant template literal as a plain string, so template-literal imports are found in the source
+  for (const m of text.matchAll(/\bimport\s*\(\s*`/g)) bad.push(`${rel}:${text.slice(0, m.index).split('\n').length}: import() with an argument that is not one plain string literal`);
   for (const m of code.matchAll(IMPORT_CALL)) {
     if (!STRING_ARG.test(code.slice(m.index + m[0].length))) bad.push(`${at(m.index)}: import() with an argument that is not one plain string literal`);
   }

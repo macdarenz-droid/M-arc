@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=cb2e0168f3271fde0fea48f003adf825bf255a8aee87c633fb778cd05e08714a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=a215d9a35e25c0a776f522b42da51cf062e7d8f9c529abf8a7590f2b5b0c3e69
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_lat_pulldown",
   name: "Lat Pulldown",
-  hashes: { inputsSha256: "cb2e0168f3271fde0fea48f003adf825bf255a8aee87c633fb778cd05e08714a", golden: "0666827521cc8d42721a01e804596a3a3670ca11ce83b074da95d728e89c5ea3" },
+  hashes: { inputsSha256: "a215d9a35e25c0a776f522b42da51cf062e7d8f9c529abf8a7590f2b5b0c3e69", golden: "0666827521cc8d42721a01e804596a3a3670ca11ce83b074da95d728e89c5ea3" },
   plate: {
     view: "side",
     normal: {

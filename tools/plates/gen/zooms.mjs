@@ -78,11 +78,11 @@ export function postureCssOf(style, chrome) {
   const plate = cropPlateCss(style), zdot = rewrite(chromeRules(chrome, POSTURE_SELECTORS));
   return `${plate}${zdot.slice(zdot.indexOf('/* ht-tokens:end */\n') + 20)}`;
 }
-/** A layers page's style with comments and the given rows' own `.hx-<chromeId> ` rules removed (D-LIB2b-CSS): what every
+/** A layers page's style with comments, blank lines and the given rows' own `.hx-<chromeId> ` rules removed (D-LIB2b-CSS): what every
  *  page must share with golden B's. */
 export function styleWithout(style, rowsOf) {
   const ids = Object.values(rowsOf).map(r => r.chromeId);
-  return style.replace(/\/\*[\s\S]*?\*\//g, '').split('\n').filter(l => !ids.some(id => l.trimStart().startsWith(`.hx-${id} `))).join('\n');
+  return style.replace(/\/\*[\s\S]*?\*\//g, '').split('\n').filter(l => l.trim() && !ids.some(id => l.trimStart().startsWith(`.hx-${id} `))).join('\n');
 }
 
 async function outputsOf() {

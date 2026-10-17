@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=9336b299466deb0fa2b4a3616bb0f24c4c2a7b547ae6883c3b62e1999945e1fd
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=50164cd89b9fb201e0f93c5772236a03d0acc7a4f7ae1f08f290e64748b65d34
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
