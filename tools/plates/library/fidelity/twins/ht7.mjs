@@ -7,9 +7,13 @@
 // posture close-ups equal the source's keys, no posture chunk before the first tap, data-motion, #zdots gone after
 // Close, page errors.
 // Same browser setup as the block: golden B (the id's layers page) through goldenB.mjs openPage, the app in that same
-// browser. Not here (LIB-4-DESIGN X5, X2): the D-HT7-L3-text-9 30-opens label check, the planted probes, chunk sizes.
+// browser. Not here (LIB-4-DESIGN X5, X2): the D-HT7-L3-text-9 30-opens label check and chunk sizes. The planted
+// D-HT7-L3-text probes run once per run as guardL3Text (D-LIB4b-X5 / D-LIB4b-GUARDS), through this file's own
+// place/shot/l3/reopen.
 // Posture keys: the source's (job.facts.posture) and golden B's DOM (its .zx panels less the source's hand key), so a
 // posture key missing on either side is a missing or an extra row.
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 import * as H from '../../../fidelity/harness.mjs';
@@ -84,8 +88,9 @@ const l3 = async (page, sel, clip, a, b) => {
   const px = await diffPixels(page, a, b, await textBoxes(page, sel, clip));
   return { verdict: px.n && !px.outside ? 'text' : 'fail', d, px };
 };
-/** D-HT7-L3-text's one re-open: Close, then the same chip once the page is idle, placed at viewport y `at`. */
-const reopen = async (page, id, k, sel, at) => {
+/** D-HT7-L3-text's one re-open: Close, then the same chip once the page is idle, placed at viewport y `at`.
+ *  `before` (guardL3Text's planted probes only) runs on the open panel before it is placed. */
+const reopen = async (page, id, k, sel, at, before) => {
   await unplace(page, sel);
   await page.click(`${sel}-close`);
   await page.waitForSelector(`${sel}[hidden]`, { state: 'attached' });
@@ -94,6 +99,7 @@ const reopen = async (page, id, k, sel, at) => {
   await page.waitForSelector(`${sel}:not([hidden])`);
   await H.settleApp(page);
   await page.mouse.move(0, 0);
+  if (before) await before();
   const r = await place(page, sel, 'app', at); delete r.fits;
   return { r, img: await shot(page, r) };
 };
@@ -256,4 +262,60 @@ async function pass(ctx, { lib, chrome: id, index, theme, facts }, reduce, stats
     for (const [s, list] of bad) R.check(lib, theme, s, list);
     await g.browser.close();
   }
+}
+
+/**
+ * D-LIB4b-GUARDS (guard/HT7-l3text): the HT-7 block's four planted D-HT7-L3-text probes, through this twin's own
+ * place/shot/l3/reopen, on leg press `foot` in silent-black against golden B (tests/howto/golden/howto-layers.html,
+ * wrapped as GB.buildScratchPage wraps it), the app seeded with the default order. Returns the problems ([] when the
+ * rule bites as it should). `blind`: B2's mutation, the path is not moved, so probe 1 must report a problem.
+ */
+export async function guardL3Text(ctx, { blind = false } = {}) {
+  const G = await goldenB(ctx.root), out = [], P = m => out.push(`HT-7 silent-black: ${m}`);
+  const id = 'leg-press', k = 'foot', sel = panelSel(id, k), index = H.HT_PLATES.findIndex(([x]) => x === id);
+  const dir = mkdtempSync(join(tmpdir(), 'ht7-guard-')), file = join(dir, 'page.html');
+  writeFileSync(file, `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>${readFileSync(join(ctx.root, 'tests/howto/golden/howto-layers.html'), 'utf8')}</body></html>`);
+  const g = await G.openPage(file, 'silent-black', { chromePath: process.env.MARC_CHROMIUM || G.CHROME_PATH });
+  try {
+    const app = await H.openAppTrain(g.browser, ctx.port, 'silent-black', { onError: m => P(`app page error: ${m}`) });
+    for (const e of g.errs) P(`golden page error: ${e}`);
+    await H.openHowTo(app.page, index);
+    await app.page.click(`#${id}-chip-${k}`);
+    await app.page.waitForSelector(`${sel}:not([hidden])`);
+    await G.openZoom(g.page, id, k);
+    await H.settleApp(app.page);
+    await app.page.mouse.move(0, 0);
+    const ra = await place(app.page, sel, 'app'), rg = await place(g.page, sel, 'golden', ra.y);
+    delete ra.fits; delete rg.fits;
+    const ig = await shot(g.page, rg);
+    // the block's probes, as written there
+    const plant = (what, on) => app.page.evaluate(([sel, what, on]) => {
+      const e = what === 'path'
+        ? [...document.querySelectorAll(`${sel} svg path`)].find(p => !p.closest('defs, clipPath, pattern, mask, text') && p.getBoundingClientRect().width > 4)
+        : document.querySelector(`${sel} svg text`);
+      if (what === 'path') { if (on) { e.dataset.ht7 = e.getAttribute('transform') ?? ''; e.setAttribute('transform', `translate(1 0) ${e.dataset.ht7}`); } else if ('ht7' in e.dataset) { if (e.dataset.ht7) e.setAttribute('transform', e.dataset.ht7); else e.removeAttribute('transform'); delete e.dataset.ht7; } }
+      else e.style.letterSpacing = on ? '0.05px' : '';
+    }, [sel, what, on]);
+    const placeAt = async () => { const r = await place(app.page, sel, 'app', ra.y); delete r.fits; return r; };
+    if (!blind) await plant('path', true);
+    const p1 = await l3(app.page, sel, await placeAt(), await shot(app.page, ra), ig);
+    await plant('path', false);
+    if (p1.verdict !== 'fail' || !p1.px?.outside) P(`A3 L3 probe ${id}/${k}: a path moved 1 px reads ${p1.verdict} (${JSON.stringify(p1.px)}), not an immediate non-text failure`);
+    await plant('text', true);
+    const p2 = await l3(app.page, sel, await placeAt(), await shot(app.page, ra), ig);
+    if (p2.verdict !== 'text') P(`A3 L3 probe ${id}/${k}: a text-only change reads ${p2.verdict} (${JSON.stringify(p2.px)}), not a text re-open`);
+    const kept = await reopen(app.page, id, k, sel, ra.y, () => plant('text', true));
+    if (H.identical(await H.diffPng(app.page, kept.img, ig))) P(`A3 L3 probe ${id}/${k}: a re-open that keeps the text change still reads 0 px`);
+    await plant('text', false);
+    const clean = await reopen(app.page, id, k, sel, ra.y);
+    const dc2 = await H.diffPng(app.page, clean.img, ig);
+    if (!H.identical(dc2)) P(`A3 L3 probe ${id}/${k}: an exact re-open reads ${offText(dc2)}`);
+    await app.ctx.close();
+  } catch (e) {
+    P(`guard/HT7-l3text crashed: ${e.message.split('\n')[0]}`);
+  } finally {
+    await g.browser.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+  return out;
 }
