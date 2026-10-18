@@ -463,7 +463,7 @@
       "claim": "c1"
     },
     {
-      "step": "Take a handle in each hand and step into a staggered stance, trunk upright.",
+      "step": "Take a handle in each hand; staggered stance, trunk upright.",
       "claim": "c3"
     },
     {
@@ -498,7 +498,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Leaning forward, usually because the weight is too heavy.",
+      "mistake": "Leaning forward, often when the weight is too heavy.",
       "fix": "Lower the weight and keep your trunk upright.",
       "claim": "c7"
     },
@@ -554,10 +554,9 @@
       {
         "where": "Shoulder pain",
         "means": "Fault: leaning forward.",
-        "fix": "Stop the set. Don't train through the pain. Lower the resistance and keep your trunk vertical.",
+        "fix": "Stop the set. Don't train through the pain. Keep your trunk vertical.",
         "claim": [
-          "c7",
-          "c13"
+          "c7"
         ],
         "redFlag": "shoulder"
       }
@@ -603,5 +602,8 @@
     "remove": [],
     "why": "exercises.json: upper_chest primary; front_delts and chest secondary. PureGym and StrengthLog (c8) say the low-to-high pull emphasises the upper chest; StrengthLog says pulley height only slightly changes the muscles and lists chest first and front delts second for the cable fly (c9, applied by inference). Kept as is."
   },
-  "anchorSource": "ace-incline-cable-fly"
+  "anchorSource": "ace-incline-cable-fly",
+  "notes": [
+    "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick is unchanged here. Verify #3's critic found it consistent with LR-31: the lean is the top fault, drawable false (speed and load), and the next fault is the bent elbows."
+  ]
 }

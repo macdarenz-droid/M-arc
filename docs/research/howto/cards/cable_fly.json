@@ -431,7 +431,7 @@
       "claim": "c1"
     },
     {
-      "step": "Stand centred between them and step forward so the pulleys are slightly behind you.",
+      "step": "Stand centred between them, pulleys slightly behind you.",
       "claim": "c2"
     },
     {
@@ -441,6 +441,10 @@
     {
       "step": "Choose a weight that lets you keep a soft elbow bend.",
       "claim": "c7"
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c14"
     }
   ],
   "posture": [
@@ -507,7 +511,7 @@
     "rows": [
       {
         "where": "Across the chest and front of the shoulders, through the whole rep",
-        "means": "The target muscles are working; cables keep the load on through the range.",
+        "means": "The target muscles are working; cables keep the load on.",
         "fix": null,
         "claim": [
           "c9",
@@ -517,11 +521,10 @@
       },
       {
         "where": "Pain at the front of the shoulder",
-        "means": "Fault: the joints are not kept stable, so the shoulder is overloaded.",
+        "means": "Fault: opening the arms past the chest line strains the shoulder.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
-          "c11",
-          "c13"
+          "c7"
         ],
         "redFlag": "shoulder"
       }
@@ -533,11 +536,8 @@
       "claim": "c11"
     },
     {
-      "risk": "The shoulder is a common injury site in lifting; add weight in small steps.",
-      "claim": [
-        "c13",
-        "c14"
-      ]
+      "risk": "The shoulder is a common injury site in lifting.",
+      "claim": "c13"
     }
   ],
   "redFlags": [
@@ -567,5 +567,8 @@
     "remove": [],
     "why": "exercises.json: chest primary; front_delts secondary. StrengthLog (c9) says exactly this. PureGym also names triceps and core as engaged for stability; not added, as they hold rather than move the load."
   },
-  "anchorSource": "sl-cable-fly"
+  "anchorSource": "sl-cable-fly",
+  "notes": [
+    "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick (elbows bending into a press) is unchanged here. Verify #3's critic notes PureGym ties range and the soft elbow to 'minimising strain to the shoulder joint' (c7), so LR-31 step 2 may pick opening past the chest line (handlingMistakes[2]); that reading needs a supervisor ruling."
+  ]
 }

@@ -610,12 +610,9 @@
   },
   "setup": [
     {
-      "step": "Set the bench to about 70 degrees.",
-      "claim": "c1"
-    },
-    {
-      "step": "Slide the bench under the bar and do practice reps with the empty bar until it just clears your nose.",
+      "step": "Bench at 70 degrees; the bar should just clear your nose.",
       "claim": [
+        "c1",
         "c2",
         "c3"
       ]
@@ -635,6 +632,10 @@
         "c13",
         "c8"
       ]
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c15"
     }
   ],
   "posture": [
@@ -721,22 +722,22 @@
         "redFlag": null
       },
       {
-        "where": "Lower back",
+        "where": "Lower back pain",
         "means": "Fault: an excessive back arch.",
-        "fix": "Press your upper back into the pad and brace your core.",
+        "fix": "Stop the set. Don't train through the pain. Press your upper back into the pad.",
         "claim": [
           "c9",
           "c4"
         ],
-        "redFlag": null
+        "redFlag": "back"
       },
       {
         "where": "Any shoulder pain",
-        "means": "Up to 36% of resistance-training injuries are at the shoulder.",
+        "means": "Fault: flaring the elbows wide.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
           "c9",
-          "c16"
+          "c10"
         ],
         "redFlag": "shoulder"
       }
@@ -756,15 +757,13 @@
       "claim": "c17"
     },
     {
-      "risk": "Shoulder injuries are common in lifting; add weight in small steps.",
-      "claim": [
-        "c16",
-        "c15"
-      ]
+      "risk": "Shoulder injuries are common in lifting.",
+      "claim": "c16"
     }
   ],
   "redFlags": [
-    "shoulder"
+    "shoulder",
+    "back"
   ],
   "zooms": [
     {
@@ -793,5 +792,8 @@
     "remove": [],
     "why": "exercises.json: front_delts and side_delts primary; triceps secondary. Motra (c11) rates anterior and medial delts as the main movers and triceps next; StrengthLog lists the lateral deltoid as secondary. Kept as is (c12, free-bar data only, shows the seated barbell press still works the front shoulder, less than dumbbells). Motra also lists upper traps and upper chest at low ratings; not added, as no second source supports them."
   },
-  "anchorSource": "fv-smith-ohp"
+  "anchorSource": "fv-smith-ohp",
+  "notes": [
+    "LIB-TOPRANK (R-LB2-20; verify #3 finding 5, declined here): no rankNote yet and the pick is unchanged. The current pick (bench placed too far back) is a bench setting, which R-LB2-12 and LR-31 exclude. The critic expects LR-31 step 2 to pick the back arch: Fitness Volt ties core engagement to protecting the lower back (c4) and Motra says 'Avoid excessive back arch' (c9); the side view shows it. Supervisor to confirm in that batch."
+  ]
 }

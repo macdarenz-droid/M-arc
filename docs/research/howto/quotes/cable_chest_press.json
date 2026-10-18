@@ -211,6 +211,20 @@
       "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
       "status": "verbatim",
       "closest": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number"
+    },
+    {
+      "claim": "c15",
+      "source": "nfpt-cable-press",
+      "text": "Lower the cables towards the chest to about one inch before touching the chest. Do this in a controlled 2-3 second tempo.",
+      "status": "verbatim",
+      "closest": "Lower the cables towards the chest to about one inch before touching the chest. Do this in a controlled 2-3 second tempo."
+    },
+    {
+      "claim": "c15",
+      "source": "nfpt-cable-press",
+      "text": "Push the cables back to the starting position in a semi explosive tempo. Do not completely lock the elbow just extend it so it is almost locked.",
+      "status": "verbatim",
+      "closest": "Push the cables back to the starting position in a semi explosive tempo. Do not completely lock the elbow just extend it so it is almost locked."
     }
   ]
 }
