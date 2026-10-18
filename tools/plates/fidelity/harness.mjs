@@ -188,18 +188,17 @@ export const HT_PLATES = Object.entries(JSON.parse(readFileSync(join(ROOT, 'tool
 /**
  * The gate's "no How-to" control (D-HT1): the first library id, in src/data/exercises.json order, for which hasHowTo()
  * is false (LIB-2: hasHowTo from the generated Node twin of src/howto/ids.ts). Data-driven, so it moves on by itself when more
- * exercises get approved content, and the gate block never needs an edit for it.
+ * exercises get approved content, and the gate block never needs an edit for it. LIB-4a (D-LIB4-CTRL): null when every
+ * library id has a How-to (full coverage); HT_ORDER then drops it and its checks skip only that pair.
  */
 export function firstWithoutHowTo() {
   const lib = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => e.id);
   if (lib.length === 0) throw new Error('firstWithoutHowTo: src/data/exercises.json has no ids');
-  const id = lib.find(i => !hasHowTo(i));
-  if (!id) throw new Error('firstWithoutHowTo: every library exercise has a How-to');
-  return id;
+  return lib.find(i => !hasHowTo(i)) ?? null;
 }
 export const HT_NO_HOWTO = firstWithoutHowTo();
 export const HT_CUSTOM = { id: 'custom_ht3_lateral', name: 'Cable Lateral Raise HT3', equipment: 'Cable', primary: ['side_delts'], secondary: [], stabilizers: [], aliases: [], pattern: 'isolation', defaultSets: 2, mode: 'weighted', role: 'accessory', custom: true };
-export const HT_ORDER = [...HT_PLATES.map(p => p[1]), HT_NO_HOWTO, HT_CUSTOM.id];
+export const HT_ORDER = [...HT_PLATES.map(p => p[1]), ...(HT_NO_HOWTO ? [HT_NO_HOWTO] : []), HT_CUSTOM.id];
 
 /** Init script (runs in the page): theme plus a split holding the 8 plates, bench press and a custom exercise. */
 export function htSeed([theme, ids, custom]) {
@@ -807,7 +806,7 @@ export async function ht3Behaviour(browser, port, theme = 'silent-black') {
     const keysBefore = await page.evaluate(() => Object.keys(localStorage).sort().join(','));
     const box = async loc => { const b = await loc.boundingBox(); return b ? [b.width, b.height] : null; };
     // HT3-A1: the controls. Bench press (no approved content) and the custom exercise show no entry.
-    for (const [index, name] of [[HT_ORDER.indexOf(HT_NO_HOWTO), `${HT_NO_HOWTO} (no approved content)`], [HT_ORDER.indexOf(HT_CUSTOM.id), 'custom exercise']]) {
+    for (const [index, name] of [...(HT_NO_HOWTO ? [[HT_ORDER.indexOf(HT_NO_HOWTO), `${HT_NO_HOWTO} (no approved content)`]] : []), [HT_ORDER.indexOf(HT_CUSTOM.id), 'custom exercise']]) {
       const card = await openCard(page, index);
       if (await card.locator('.ht-entry').count()) P(`A1: the ${name} card has a How-to entry`);
     }
