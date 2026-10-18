@@ -1725,6 +1725,241 @@ Why nothing is loosened: R3 and R7 keep the bar, the card is not bent, and no re
   - Nothing goes under batches/, tests/howto/golden/, src/ or tools/plates/gen/.
   - qa/ and vendor/ stay reserved.
 
+### 13.4 Round 2 (D-LIB9a-R2, 2026-10-18 ~04:3x UTC; #245 @ `4257648`)
+
+Reviewed from three sides, then judged:
+- an evidence audit that re-ran the tests, the shas, QA, 8 of the listed mutations and 5 new ones;
+- a blind plate critic that scored the 9 changed plates on plan 3.4, each beside its golden-A anchor at 390 px, in Paper and Silent Black, normal and Mistake;
+- a rules lens.
+
+Inputs: LIB-9a's round-2 post 6245258953 and its cue-table comment. The judge re-measured these points in a worktree at `4257648`, using the engine's `bodyShapes`, `poseAt` and `renderPlate`:
+- the single_arm Mistake elbow and fist clearances, at 4257648 and on the critic's v5;
+- the straight_arm Mistake bar against the solid bar path;
+- `load: 0` on a direct stack;
+- the resistance_band_row floor and label boxes at 186.29 px/m;
+- incline_machine_press, inverted_row and underhand_lat_pulldown rendered in the Mistake at 390 px.
+
+**Verdict: NOT GO for READY. One more fix round.**
+- The evidence holds at `4257648`. lb1-plates passes 92/92 and typecheck is clean. The plates page gave sha256 `a93b2427…e411` on four builds plus the test's two. The QA table matches row for row, and every listed mutation is red. Row 67 is red with 2 problems, not 1 (must-fix 7).
+- These 13.3 must-fix items landed: 1, 3, 4, 5, 6, 7 (plate held), 10, 11 and 12. Item 13 landed except for the PR row (must-fix 7). Item 14 landed except for one number (must-fix 8). Item 8 is closed by the rulings and must-fix 5. Item 9 is reopened as must-fix 3.
+- Still open:
+  - one plate below the bar (single_arm Mistake, R5 = 3);
+  - one loosened test;
+  - a hole in the stack loop, hidden by must-fix 9's false claim;
+  - one tell whose words do not match its drawing;
+  - the one-tell records.
+- This critic pass was blind but uncalibrated (no hidden anchors, no planted defects). So it is not the plan 3.4 Do 8 run, and it uses none of that run's fix round. Q2(g) stays armed. R8 and R9 stay unscored (13.1).
+
+**Per plate.** "At the bar" means every scored item is 4 or more on this uncalibrated pass. The Do 8 critic decides.
+
+| plate | verdict | still owed |
+|---|---|---|
+| straight_arm_pulldown | at the bar. 13.3 must-fix 1 verified: every ghost elbow at 15.0°, and the trace is an arc | fix the `close` tell words (must-fix 4); stack loop (must-fix 3) |
+| single_arm_lat_pulldown | **fix**: Mistake R5 = 3. The normal plate is at the bar (13.3 must-fix 3 verified: the elbow falls at every step, 20.1 cm in the last quarter) | must-fix 1 (Q-R2-1) |
+| close_grip_pulldown | at the bar | stack loop (must-fix 3) |
+| chest_supported_row | at the bar. 13.3 must-fix 4 verified: end elbow 8.31 cm behind backUpper; end grip 0.98 cm behind the pad face; start handle spans the shoulder (1.0335 m); lever 0.5766 m; clears the head by 11.7 cm | stale comments (must-fix 6) |
+| inverted_row | at the bar. The hook shows (13.3 must-fix 5 verified, R2 = 4) | one tell accepted; DESIGN.md record (must-fix 5) |
+| chin_up | at the bar (R10 = 4) | none (not blocking: the 'Elbows in front' leader) |
+| hanging_knee_raise | at the bar (R10 = 4) | none |
+| resistance_band_row | at the bar at 159 px/m (R4 = R7 = 4) | Q-R2-3 conditions |
+| shoulder_press | at the bar. `gap` tell added (R10 = 4) | none |
+| incline_machine_press | drawing at the bar (13.3); not re-scored | second tell, or evidence that none fits (must-fix 5) |
+| underhand_lat_pulldown | at the bar (13.3); not re-scored | one tell accepted; DESIGN.md record (must-fix 5) |
+| assisted_pull_up | at the bar (accepted at `f94905c`, unchanged since) | cue table (must-fix 7). Q2(g) stays armed for Do 8 |
+| horizontal_leg_press | **HELD**. The Q-D5-3 route was followed: redrawn at 15°, H3 8.2 px against 11.39 | loosened test (must-fix 2); owner design option |
+| leg_press_calf_raise | **HELD** (13.3) | unchanged |
+
+**Must fix** (before the next milestone post). Each fix needs one of two proofs, listed in the PR: a test that is red at `4257648` and green after, or, where a test missed a defect, a mutation that is green at `4257648` and red after.
+1. **high** `specs/single_arm_lat_pulldown.mjs` Mistake (MIS_G, misBody reach, guides, tells `past` and `low`). This is 13.3 must-fix 2 as restated by Q-R2-1.
+   - The drawing:
+     - The Mistake elbow ends at least 10 cm behind the end `backMid`.
+     - The red elbow cap clears the solid end figure by at least 6 px.
+     - The end pose and the normal plate do not change.
+     - The moving cable shows in the Mistake (DRAWING-GUIDE section 4), in close_grip's pattern (a dashed line from the Mistake handle to the head-pulley tangent).
+     - An elbow guide from the solid elbow to the red elbow is optional, kept only if it reads (an arc, or a short straight arrow behind the back).
+     - The `past` and `low` boxes sit where the engine reports no issue.
+     - The `low` anchor sits on a drawn red mark on the open side, never inside the figure (DRAWING-GUIDE:59-60).
+     - The `low` cue drops "to the chest". Default: "The handle keeps going down well past the chin." (9 words).
+     - The header lists every new number under "Unsourced numbers".
+   - Tests:
+     - (a) The Mistake `elbow.r` z ≤ the end `backMid` z − 0.10 m. At 4257648 it is −0.064 m, so red.
+     - (b) The drawn outline of the Mistake elbow cap lies at least 6 px outside every trunk and near-side shape of the solid end figure. Build the shapes with the engine's `bodyShapes` at the plate's px/m, as the shoulder_press test does. At 4257648 it is 4.4 px, so red.
+     - (c) The Mistake view draws the moving cable from the Mistake handle to the head pulley. It is absent at 4257648, so red.
+     - Evidence, not a test: the normal plate's SVG is byte-identical to 4257648's.
+   - Keep every hard check and H3 green. Post 390 px renders in both themes beside lat_pulldown and close_grip.
+   - It can be done. The critic's v5 prototype (`r2look/variants/v5.mjs`) puts the elbow 12.2 cm behind backMid with the cap 9.8 px clear (judge-measured). It passes all 10 hard checks, its H3 deviation is 43.9 px, and its normal plate is pixel-identical (critic's runs).
+2. **medium** `tests/howto/lb1-plates.test.ts:302` (horizontal_leg_press sled travel; see the sled-travel ruling).
+   - Replace `toBeGreaterThan(0)` with two assertions:
+     - the change in the drawn plate face (`legPressFace` at each travel) from end to Mistake equals the change in `sole.r` z within 1 mm;
+     - that change is at least 0.007 m (0.00795 m now).
+   - Delete the duplicate knee-lock line at :303 (it repeats :298).
+   - Proof: a Mistake-only travel offset of +3 mm is green at 4257648 and red after. Setting the Mistake travel equal to the end travel is red after.
+3. **medium** `tests/howto/lb1-plates.test.ts` stack loop (:580-655; see the stack-adapter ruling).
+   - (a) The "drawn stack top" for the cable check is the top edge of a drawn block at least one plate high (0.025 m at the plate's px/m). In the end and the Mistake the lifted block holds at least one plate.
+   - (b) For a cableColumn, read the lift from its drawn plates. Delete stackItem's copy of the vendor formula; the file's own header forbids "a helper's own maths".
+   - (c) Correct the test comment and PR row 9. A spec edit can part the cable from the stack.
+   - Proof, green at 4257648 and red after:
+     - `STACK.load` 6 → 0 (`straight_arm_pulldown.mjs:55`);
+     - `load: 8` → 0 (`close_grip_pulldown.mjs:110`). The judge re-ran this one: both stack tests pass at 4257648. The rules lens ran both mutations: 92/92 green.
+   - List the audit's spec mutation `stack: { ...STACK, rods: false, base: [0, 0.03, SZ] }` as must-fix 9's proof. It is red at 4257648 (`3.9208 < 1`). Row 53 stays as an extra.
+4. **medium** `specs/straight_arm_pulldown.mjs:163` (tell `close`).
+   - The problem: "Bar to chest" and the cue "pulled in to the chest" do not match the drawing (judge-measured). The red bar is at y 1.319, 0.363 m from the chest. It is 18.5 cm nearer the shoulder than the solid bar path at the same height (0.472 against 0.657 m).
+   - The fix: words that say what is drawn, as the card says it ("a bent-arm pulldown", c6). Default label "Bar pulled in". Default cue "The bar comes in close to the body, as in a bent-arm pulldown." (13 words). Update the cue-table row.
+   - Tests:
+     - (a) The drawn Mistake bar sits at least 0.15 m nearer the shoulder than the solid bar path at its own height. This pins the new claim.
+     - (b) The `close` text and cue do not name the chest. Red at 4257648.
+5. **medium** `lb1/DESIGN.md` and `specs/incline_machine_press.mjs` (Q-R2-2).
+   - DESIGN.md records, per id, the one-tell reason as ruled below, with the measurement behind it. Q-D5-4 requires this; at 4257648 the reasons are only in the PR.
+   - incline_machine_press: add the second tell. Test: its tell keys, in row 66's pattern, red at 4257648. Use the evidence route only if Q-R2-2's condition is met.
+6. **low** `specs/chest_supported_row.mjs` comments.
+   - The END_G line says "6 cm behind its face"; the measured gap is 0.98 cm.
+   - The PIVOT_Y line says "24 cm in front of the face". The header says 17 cm; the audit measured about 18 cm.
+   - Also correct the post's claim that the 1.85 m pivot "put the end lever across the face": on the same bisector it clears the head by 3.7 cm.
+   - Comments and post only, so there is no test.
+7. **low** PR #245 bookkeeping (post only, no test):
+   - Row 13: name the lever test "start handle at the hands" and its mutation, the start reach target moved 3 cm down (`0.0210 < 0.005`) or 2 cm back (`0.0135 < 0.005`). Row 17 does not cover START_G.
+   - Row 67: give the exact edit and the red line it gives now. At the audit's edit it is 2 problems (`…Thighs<br>pinned:126cells`, `…Handle<br>below chin:56cells`), and the A4 M1 test throws.
+   - Row 1's red line reads "> 0.03".
+   - Must-fix 3's numbers: the last-quarter drop is 20.1 cm; close_grip's steps drop 6.2-18.4 cm.
+   - Cue table: 7 word counts are one low (chin_up elbows and arc; hanging_knee_raise curl; horizontal_leg_press ninety and soft; straight_arm straight and thighs). Add assisted_pull_up's table: Q-D5-6 asks for one per id.
+8. **low** Spec headers (no test):
+   - horizontal_leg_press lists 15° under "Unsourced numbers", citing its anchor source (vendor `leg_press.mjs:13`, `:23`). The card does not give it (13.3 must-fix 14).
+   - single_arm lists must-fix 1's new numbers.
+
+Not blocking (low):
+- chin_up: the 'Elbows in front' label sits about 70 px below its elbow on a vertical leader. That is under F3's 82.26, but use a nearer open box if one exists.
+- inverted_row: the cup under the bar is not distinct (R2 = 4).
+
+**Rulings**
+
+#### Q-R2-1 (single_arm_lat_pulldown Mistake)
+Ruling: none of (a), (b) or (c). 13.3 must-fix 2 is restated as must-fix 1 above:
+- the elbow stays at least 10 cm behind backMid;
+- the 6 px clearance moves from the fist to the red elbow cap, measured against the solid end figure;
+- the moving cable is drawn in the Mistake;
+- the handle sits where the arm puts it, even if the solid torso hides it;
+- the end pose does not move, H3 stays green, and the 390 px recheck must score R5 ≥ 4 in both themes.
+
+Why:
+- The card puts the fault in the elbow and the shoulder: "the elbow drives backward behind the body and the shoulder rolls forward" (c10, c13). The fist target came from 13.1's close_grip ruling, where the card's fault is "too low". On this card's end pose the two 13.3 targets conflict:
+  - With the elbow 10 cm behind backMid, the 0.332 m elbow-to-grip reach ends at z ≈ 0.145 (rules lens).
+  - A 6 px fist clearance at lower-chest height needs z 0.24. The builder's own numbers agree.
+- (a) Relaxing the elbow target is the 4257648 drawing: elbow 6.4 cm behind, cap 4.4 px, fist −1.0 px (judge-measured), and R5 = 3. Even at 6 cm the fist reaches only z ≈ 0.185.
+- (b) Relaxing the clearance accepts the 0 px pattern that 13.1 banned from cloning.
+- (c) Changing the end pose moves a right pose off its card. A grip at z 0.24 puts the end elbow 16 cm in front of the shoulder (critic's probe), against c3, "upper arm flush with your side". Q-D5-3 forbids this.
+- The restated target can be met (v5, must-fix 1).
+- Strict option: the critic's route (the elbow plus a guide) and the rules lens's route (6 px on the elbow) both keep every rule. This ruling takes both together, plus the cable.
+- c13's quote counts "nears or touches your chest" as the normal stop of the pull. So "to the chest" leaves the `low` cue (DRAWING-GUIDE:37).
+
+Why nothing is loosened:
+- Both 13.3 numbers (10 cm, 6 px) stay, measured on drawn items. The 6 px now applies to the mark the card names.
+- Both are judge drawing targets, not QA checks. No check and no envelope bound moves. H3's minimum, every hard check and the R5 ≥ 4 bar stay.
+- The critic designed v5, so its R5 = 4 is not a blind score. The next critic pass and Do 8 score the builder's drawing.
+- The right pose is not moved (Q-D5-3).
+
+#### Q-R2-2 (one tell kept), per id
+Ruling: for every id, the reason goes into DESIGN.md with its measurement (must-fix 5).
+- **horizontal_leg_press: ACCEPT one tell.**
+  - The card's mistake names one sign: "Snapping the knees straight and locking them" (c7, c4, c8).
+  - The heels (c7) and the low back (c4) are right-form tells or other faults. Drawing them as Mistake tells would add a second fault (DRAWING-GUIDE:24 "all about the one fault", :37).
+- **incline_machine_press: REQUIRE a second tell for the forward roll.**
+  - The card says "Shoulder blades roll forward off the pad at the top of the press" (c5). `blades` marks "off the pad" at backUpper, so "roll forward" is the second sign.
+  - The builder's grounds were the solid arm "or the levers". The levers are not a Q-D5-4 ground, and leaders on this plate already cross the rear post and the pad.
+  - The judge's 390 px render at 4257648 shows red marks of the roll outside the solid figure: the red head ahead of the solid head, and the red arm, handle and lever past the solid ones, in the open top right.
+  - So: a second tell that names the roll, anchored on one of those marks on the open side, with H1, H4, H8 and F3 green and 13.1's 6 px leader rule kept.
+  - Only if every open-side box fails one of those checks, or crosses the solid figure or a cable, does DESIGN.md list each box tried with its red check. The supervisor then rules again.
+- **underhand_lat_pulldown: ACCEPT one tell.**
+  - The card names one visible sign, "the torso rocks back".
+  - "To drive the bar down" is the purpose. "Using momentum" cannot be seen in a still. c5's lean limit is the same sign.
+  - The tried 'Bar driven down' leader also crossed the face and the arm, a Q-D5-4 ground.
+  - Correction: 13.3 Q-D5-4's example for this id ("the torso rocks back") is tell 1 itself, `rock`. The example is withdrawn.
+- **inverted_row: ACCEPT one tell, on the placement ground only.** The card names the fold (c3), and Q-D5-4 named it too, so "only one sign" is not the ground.
+  - The fold's only open-side edge is the buttock, which `sag` already marks, and `sag`'s cue already says "the body folds". A second tell there would be one sign twice (DRAWING-GUIDE:40).
+  - The other side of the fold lies inside the solid end figure.
+  - The tried 'Folds at hips' leader runs 91 px through the solid thigh (the builder's figure; the judge did not re-measure it). That is over F3's 82.26, so it would raise a new flag (DESIGN.md:79).
+  - DESIGN.md records the box tried and its leader length.
+
+Why: Q-D5-4 asks for 2-3 tells wherever the card names more than one visible sign that can be placed (DRAWING-GUIDE:24, :40), and a per-id record otherwise.
+
+Why nothing is loosened: no tell is invented. Where a second sign exists and can be placed (incline), it is required. H2, H4, H8 and F7 apply to every tell.
+
+#### Q-R2-3 (resistance_band_row at 159 px/m)
+Ruling: ACCEPT 159.02 px/m (×1.087 of 146.29) on four conditions:
+- List the proof in Q-D5-2's form. With the floor back at 1.30 m and the 4257648 labels, the engine reports `figure:Band round<br>soles:169cells` (PQ-H1). The judge verified this: 1.40 m is also red, and 1.60 m is clean.
+- The named F1 exemption on the LB1 sheet states 159.02 px/m (×1.087) and cites D-LIB8-floor, Q-D5-1 and this ruling. Q-D5-1's 186.29 was a measurement, not a target.
+- The scale test pins 159.02 ± 0.5 px/m, so a floor or camera change turns red against the exemption. Today's test passes anything from 153.6 to 197.5.
+- The floor's 1.60 m stays under "Unsourced numbers" (it is listed at spec :33-34).
+
+Why:
+- D-LIB8-floor sets a ceiling ("may go up … at most ×1.35"), and the camera is exactly Q-D5-1's. Cover is back inside F2 (0.211 against 0.19113), which was Q-D5-1's purpose.
+- Of the two allowed scales, 159 is the stricter. F1 overshoots its 146.29 cap by ×1.087 instead of ×1.273, and the figure stays nearer its anchor's scale (R7). The critic scored R4 = R7 = 4 beside seated_cable_row.
+- The long floor departs from plank, whose floor ends 1-3 cm past the feet. But it matches this plate's anchor, seated_cable_row, whose floor spans the plate.
+- 186 is not proven impossible. The judge probed boxes at 186.29 px/m:
+  - every box right of the foot hits the plate edge (`edge:`);
+  - boxes above the foot pass the engine's box checks, but their leader runs down the upright toes. That is the builder's reason, and no check scores it.
+  - So the ruling rests on the stricter flag, not on impossibility.
+
+Why nothing is loosened:
+- F1's cap, the ×1.35 limit and F2's range stay. F1 is still raised and needs its named exemption.
+- Cover sits only 0.02 above F2's floor. Any later change re-runs QA, and an F2 flag is a defect to fix.
+- The Do 8 critic rechecks the plate beside seated_cable_row and plank.
+
+#### Stack adapter (13.3 must-fix 9)
+Ruling: the adapter-level red (row 53) counts only as a check that the comparison can fail. It is not must-fix 9's proof. Must-fix 3 closes the gap.
+
+Why:
+- "No spec edit can part them" is false.
+  - `cableColumn` spreads `...st` after `base` into `stack()` (`equipment.mjs:93`), while the cable end uses the column's own base (`:99`).
+  - The audit's base-offset spec mutations are red in the loop and in the Do 5(d) test (`3.9208 < 1`; "cables over the stack: expected 0").
+- The loop has a real hole.
+  - `load: 0` draws a resting stack whose cable ends in mid-air: 1.083 m above the visible plates on straight_arm (rules lens).
+  - Both stack tests stay green, because a zero-height lifted block counts as "the drawn stack top" (lb1-plates.test.ts:615, :627-628). The judge confirmed it on close_grip.
+- stackItem's lift copies the vendor formula, which the test file's header forbids.
+
+Why nothing is loosened: every loop assertion stays and two are added. Row 53 stays as an extra.
+
+#### Sled-travel test (horizontal_leg_press)
+Ruling: changing `> 0.01` to `> 0` loosened a test. Must-fix 2's replacement reverses it. The plate stays HELD.
+
+Why:
+- The 0.01 bound was set for the 25° pose that Q-D5-3 rejected. At the card-true 15° the lock moves the sled 0.795 cm, so no card-true drawing can meet it.
+- But `> 0` passes a 0.1 mm move. The per-pose "sole on the plate face" check allows 1 cm, which is more than the whole travel. So nothing else catches a frozen or wrong sled.
+- The added "knee lock" line repeats :298.
+
+Why nothing is loosened: the replacement pins the travel to the leg's own movement within 1 mm and keeps a floor of 0.007 m. It is red on every mutation the old bound caught at this pose, and on one it missed: a Mistake travel off by 3 mm. Strict option: an exact match plus a floor, not a lower threshold alone.
+
+**Owner-only, and it waits**
+- The design option for horizontal_leg_press and leg_press_calf_raise (D-LIB8-shrug). It comes after the research owner checks the sources. The card at 9dbc7e0 gives no end-knee number, only "relaxed and nearly straight" and a 0-50° range, so the check is of c4's sources.
+- Any named-list decision.
+- Nothing else here is owner-only:
+  - The F1 exemption at 159.02 px/m is the supervisor's (D-LIB3-flags: the owner sees it and can overturn it).
+  - Q-R2-1's restatement is a supervisor drawing target.
+
+**Supervisor actions**
+- Record the F1 exemption on resistance_band_row at 159.02 px/m (×1.087) on the LB1 sheet.
+- Ask the research owner to check horizontal_leg_press c4's sources for an end-knee number, together with the calf-raise check.
+- Done by this section: 13.3 Q-D5-4's underhand example is withdrawn, and 13.3 must-fix 2 is restated.
+
+**Conditions for the next round**
+- Order: merge origin/main with a merge commit if it has moved. Then must-fix 1, then 2-5, then the lows.
+- The next milestone post includes:
+  - lb1-plates with every mutation, old and new, listed and shown red, then restored;
+  - qa.mjs on every drawn id;
+  - the two-build plates-page sha256;
+  - 390 px before and after renders in Paper and Silent Black for every changed plate beside its anchor (single_arm also beside close_grip);
+  - the updated cue table;
+  - the three-dot diff.
+  It is not a new WAITING gate.
+- Carried, unchanged:
+  - single_arm's expected F7 waits for Q1(b). Must-fix 1 does not wait for it.
+  - Do 8 and every approval wait for D-LIB9-F5. Q2(g) stays armed. R8 and R9 stay unscored.
+  - The card re-copy follows research wave 2.
+  - The 2-hour push limit until READY stays.
+  - Nothing goes under batches/, tests/howto/golden/, src/ or tools/plates/gen/.
+  - qa/ and vendor/ stay reserved.
+
+Also for LIB-9a's replacement, from research w2 (`claude/libht-verify-w2` @ `531b77c`, `verify/w2/w2-rulings-final.md`): LR-31 turns assisted_pull_up to drawable:false (a speed fault), and its Mistake then needs a fast-lowering fault key; underhand's spec draws `past`; LR-32's lib-9a-card.md edits are held until the w2 recheck. These take effect only when w2 merges into claude/libht-research and LIB-9a re-copies the cards.
+
 ## 14. LIB-5 design-note rulings (D-LIB5-NOTE, 2026-10-17 ~23:xx UTC; #244 @ ee7f40f)
 
 A 3-lens review read the note. A judge ruled each open point, and one adversarial verifier checked each ruling. Where the verifier corrected a ruling, the corrected text is the ruling. It is changed here only where it clashed with sections 12 and 13 or with another item, and each ruling says in one line what changed. An earlier re-check of the LIB-5 card found 23 defects. Their fixes are merged into the card amendments below.
