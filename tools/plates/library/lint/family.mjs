@@ -66,3 +66,14 @@ export function familyCheck({ eight, shared, hands, handMods }) {
   problems.push(...familyLabels([...eight, ...shared, ...hands]));
   return { counts, problems };
 }
+
+/** LIB-5's shared modules that may export faults, under tools/plates/library/shared/. */
+export const SHARED_MODULES = ['hands', 'implements', 'exemptions', 'moves', 'checkpoints'].map(m => `tools/plates/library/shared/${m}.mjs`);
+
+/** Rule (a) over a tree: `rows` = [{ src, M }] (every shipped row's How-to module), LIB-5's shared modules and the
+ *  hand modules under `root`. */
+export async function treeFamily(rows, root = ROOT) {
+  const shared = await Promise.all(SHARED_MODULES.map(async p => ({ src: p.split('/').pop(), M: await import(pathToFileURL(join(root, p)).href) })));
+  const handMods = await handModules(join(root, HANDS_DIR));
+  return familyCheck({ eight: eightSources(rows), shared: sharedSources(shared), hands: handSources(handMods), handMods });
+}

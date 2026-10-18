@@ -3,7 +3,7 @@
 // constants are imported unchanged; the pure rules take injected rows or fixture modules (D-LIB5-FIXTURE 6), and the
 // generator cases run in per-case copies of E1's tree.
 import { spawn } from 'node:child_process';
-import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -205,6 +205,16 @@ describe('LIB-5 S7 generator cases: E1\'s row in per-case copies of E1\'s tree (
     writeFileSync(p, s.replace(from, to));
     return r;
   };
+  /** A copy of E1's tree with the fixture hand module (LIB-7's shape) added under tools/plates/library/hands/. */
+  const withHand = (from = '', to = '') => {
+    const r = mkdtempSync(join(tmpdir(), 'lib5-lint-e1-')); temps.push(r);
+    cpSync(tree, r, { recursive: true, verbatimSymlinks: true });
+    const t = readFileSync(join(ROOT, 'tests/howto/fixtures/lib5/hands/hand-fixture.mjs'), 'utf8');
+    if (from && t.split(from).length !== 2) throw new Error(`lib5 fixture: ${from} is not in hand-fixture.mjs exactly once`);
+    mkdirSync(join(r, 'tools/plates/library/hands'), { recursive: true });
+    writeFileSync(join(r, 'tools/plates/library/hands/hand-fixture.mjs'), from ? t.replace(from, to) : t);
+    return r;
+  };
   const SETUP = "setupLine: 'Hang still on straight arms, legs together. Pull your shoulders down, then start.',";
   it('cases, each refused with its exact message; the control (inherit []) and the unedited tree generate', async () => {
     const cases: [string, () => string, string | null][] = [
@@ -216,6 +226,9 @@ describe('LIB-5 S7 generator cases: E1\'s row in per-case copies of E1\'s tree (
         `lib_cable_lateral_raise: family: ${F.CARD_FILE}#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`],
       ['M3: inherit true on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": true,\n  "topFault":'),
         `lib_cable_lateral_raise: family: ${F.CARD_FILE}#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`],
+      ['D-LIB5-FAULTKEYS 4: a hand module labels hand-ahead \'Hands forward\'', () => withHand("'hand-ahead': { label: 'Hand ahead'", "'hand-ahead': { label: 'Hands forward'"),
+        'library family (rows 13, shared 13, hands 3):\n  fault hand-ahead: one label per fault key (content.md 4, family consistency) ("Hands forward" (hand-fixture.mjs) vs "Hand ahead" (hands.mjs#PALM_FLAT))'],
+      ['control: the fixture hand module as it is', () => withHand(), null],
       ['control: inherit [] on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": [],\n  "topFault":'), null],
       ['control: the unedited tree', () => tree, null],
     ];
@@ -269,6 +282,14 @@ describe('LIB-5 D-LIB5-FAULTKEYS 4: the family reader over the 8, the shared mod
     expect(rules({ hands: [{ ...hands[0], faults: hands[0].faults.slice(1) }] })).toEqual(['hand faults read differ from the faults the hand modules export (2 read, 3 exported)']);
     expect(rules({ eight: [] })).toEqual(['the 8\'s fault count is 0']);
     expect(rules({ shared: [] })).toEqual(['the shared modules\' fault count is 0']);
+  });
+  it('the sweep: rule (a) over every shipped row, the shared modules and hand-*.mjs on this head: counts above 0, no conflict', async () => {
+    const R = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const rows = await Promise.all(SHIPPED.map(async r => ({ src: r.id, M: await import(/* @vite-ignore */ url(R.sourceOf(r.id))) })));
+    const r = await FM.treeFamily(rows);
+    console.log(`family reader (this head): rows ${r.counts.eight}, shared ${r.counts.shared}, hands ${r.counts.hands}`);
+    expect([r.counts.eight > 0, r.counts.shared > 0, r.counts.hands]).toEqual([true, true, 0]);
+    expect(r.problems).toEqual([]);
   });
   it('on this head: no hand-*.mjs (LIB-7/12 merge after LIB-5, D-LIB5-ORDER), so the hands count is 0 and equals what is exported', async () => {
     const mods = await FM.handModules();

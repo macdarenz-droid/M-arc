@@ -1,5 +1,5 @@
 // LIB-5 S1: the 38 shared research files (19 cards, 19 quote files) are byte copies of the named research head
-// (claude/libht-research @ 9dbc7e0, lib4-cards.md 14.2). A re-copy re-pins this table (card amendment 46).
+// (claude/libht-research @ 9eaa248, lib4-cards.md 14.5: the one re-copy, after 9dbc7e0 of 14.2).
 import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
@@ -8,33 +8,33 @@ import { afterAll, describe, expect, it } from 'vitest';
 
 const ROOT = join(new URL('.', import.meta.url).pathname, '..', '..');
 const HOWTO = 'docs/research/howto';
-const RESEARCH_HEAD = '9dbc7e0af0f3da0490d1800012569973ed511c32';
+const RESEARCH_HEAD = '9eaa2480fea8f8f82a52ac2596c14d9a0da08ca5';
 
 /** path under docs/research/howto -> sha256 of the file bytes at RESEARCH_HEAD. */
 const PINS: Record<string, string> = {
   'shared/back-pain-box.json': '4039694652f6ebf0ce3efdaf63b0531c43c5aa4a7d48e843f966face85a4cd00',
-  'shared/cupped-thumb.json': '523e83fbf366f8baf2b8cbb571ea8cdeac6e9c49568b5a2c1d3bf30a7a337771',
-  'shared/curl.json': '9d65a04d6076ee18e9c01f23c94a422be92ee210c5a07db0879f95693043b1d7',
-  'shared/dumbbell-kickup.json': '59a8704133b1c7ce3e48c8bfdb64f968414f62bbfb3db29d5014e681b3f64d75',
-  'shared/floor-body.json': '0ca0d5eabf8c696880435c0afed075db7275876a2d1aba9d6921c0ed9229253d',
+  'shared/cupped-thumb.json': 'd671abc3cef92e90bba70e1d204775b5f44cd57ab5e2611af3927f6de1ee7a89',
+  'shared/curl.json': '8fda3d8dbc51a6480ca923178f627a8c585b60bdf6eea4e357faed4867a23d99',
+  'shared/dumbbell-kickup.json': '45028bdde15be1a8a07197a1bed8c4ada1c2cc4a442275581c3042915b7b5719',
+  'shared/floor-body.json': '1b75495ca05e318a4ea1c21b8ff6e8445925d7c5cf38835ce39eee11b74fb121',
   'shared/foot-bar.json': '87f9395ba84bc6b2fce7d8e09123cb8e833010db624138214d276f4b7828c7c3',
-  'shared/front-rack-exemption.json': 'c5f6f6a4bea51bac78cccd0dbb1cdc09a8dfe0abcf8bc72853959434194fcad9',
-  'shared/get-in-out.json': '7da63bb524b4924838e363e56c501979e7ca6cd093f944bae8c0a7317ac0efbe',
-  'shared/implement-battle-ropes.json': '3fa15864b98fa6ecbf69535cdf30ac4fbf093a825bc0724983e31460c04da330',
-  'shared/implement-jump-rope.json': '0ba8c7a7a4a6728d7b10d09503b243905b4b74f7a8b7c77573f7187eed615943',
-  'shared/implement-kettlebell-swing.json': '6607b0b41be437847869bd67c4f930b6881db25ae76839d41975caa5d973e17a',
-  'shared/implement-medicine-ball-slam.json': '873f2e5f5c64cce7893bc98ef9306a3fe43a7dddeaa1c0978094a3b70d43a172',
-  'shared/implement-wall-ball.json': '58e4fbd11d9b55618a65cec60f44589eeb607dd43c5dd6af1788655a848a2263',
-  'shared/palm-flat.json': '49d8ecac79d878c5fff6e8b4d858e7413dc9ad8795df358d3d6fe51824beff46',
-  'shared/prone-checkpoints.json': 'cef85f05ab3f37328b6fe09b5d4b88bf55ab910196e2d44e453e1b6c764eb8cc',
-  'shared/rope-rule.json': 'e650669b1c6af254fbfb159150b0110b296bef173838404cf21902abdd259c21',
+  'shared/front-rack-exemption.json': 'a5dec3c700a0865297a7338c70ea6eb7420b09f3c4db57142d33e5afa960c21e',
+  'shared/get-in-out.json': '29ecf0ec5af07cf09c77a0335fdb09da1649e6829e5a5f1c4d90091b8c82e87f',
+  'shared/implement-battle-ropes.json': 'd8bd68b613df28b78ef0e1de5cc2cb04448a2b43e219fc4c1744c9a28da4ab1d',
+  'shared/implement-jump-rope.json': '4f8827ee3fd4e304db88f68c083c1ab68c17f28eaaaaf178bfff463b9bb07619',
+  'shared/implement-kettlebell-swing.json': 'ab4a26f1db5105cff51ece93ebe74f5b295b38907923d114646f0cfe5028f097',
+  'shared/implement-medicine-ball-slam.json': '121e8c402795b705c549532bde5400bcea3f35cf9b19a1e5e11720c7134392bd',
+  'shared/implement-wall-ball.json': '42ce2cbfce4f84d9ee67ea3c76561e94ace51e2ecbb3bd14d0f0bba6c5c737e3',
+  'shared/palm-flat.json': 'fb4e54fd3f6cf3f91b15cb0d17cf0297743962141b4c695d9e46a1eee1414d11',
+  'shared/prone-checkpoints.json': 'e5a5e3dbecd12a8de0f51dba8cd6ac53b520e928376c2143cf8f8afcca6a85a6',
+  'shared/rope-rule.json': 'eb0727e069d46e9e780fa76bab7a299d4ab241ade8d8ca484dfa333ef0759010',
   'shared/selector-pin.json': 'af4316219601c66beda13c2dbbacea6d3f592e30a6fbda3d3c9309d417c6abb9',
-  'shared/unrack-rerack.json': 'f10ad305c81e48460fbc2dd6a56865b4d33e24454b6339a8e35c374a0d298510',
-  'shared/wrist-curl-exemption.json': '3e310b439bd06bd1380474420b917d6207041110ecef7be59d5306b14d0b8683',
+  'shared/unrack-rerack.json': '6f54cb7135f79212eb013812161774f4bf6662ca904a2ba3b62332788ef0025b',
+  'shared/wrist-curl-exemption.json': '236c2b2cd91684ab119fbc29d0bf8e526762ee11265c61e25433b64ea10bcd9b',
   'quotes/shared-back-pain-box.json': '56186cf7f4ffb3c91d65c5410ba82791489efb5c751ca1739ed16af559712973',
   'quotes/shared-cupped-thumb.json': '4b070809fa75b1c79d80bdd13f5aef2855a12e9e15f4e48064b0f590cf9e60e8',
   'quotes/shared-curl.json': '86e7dd0b8940b7636d6dc17ea05d74bdab0b7f493b607f59aea3ceac29da19a2',
-  'quotes/shared-dumbbell-kickup.json': 'd4a61aee8b9b24bd30b93361aee08487e4d05e9818a00b22cfdacd760f785a61',
+  'quotes/shared-dumbbell-kickup.json': 'c9dd68d1b0a1cefd9776b18e057f9d990aae3009dbb2fd3a96a43ee6484a5bd0',
   'quotes/shared-floor-body.json': '1ffad2a30eb7994c4fc136f3c87a76ba36f31077254ad3e23adb6ef09faea816',
   'quotes/shared-foot-bar.json': '4083d763e5ef82058735e28b2387d520d0d664c23d038bceb0b5ef207d903d82',
   'quotes/shared-front-rack-exemption.json': 'd3f4a5be9748352b0c1e219c332a5e2b0d532929664a72c0a67adebac6c2c15b',

@@ -14,14 +14,14 @@
     ]
   },
   "reason": {
-    "text": "In the wrist curl the wrist itself is the joint that moves: it starts straight, bends back toward the floor on the way down, and rolls back up.",
+    "text": "In the wrist curl, the wrist is the moving joint. It starts straight, bends back toward the floor, then rolls back up.",
     "claim": [
       "c1",
       "c2"
     ]
   },
   "replacementRule": {
-    "text": "The wrist moves slowly from straight into a backward bend and back; the forearm stays on its support and the grip stays closed.",
+    "text": "The wrist moves slowly from straight into a backward bend and back. The forearm stays supported, the grip closed.",
     "claim": [
       "c1",
       "c2",

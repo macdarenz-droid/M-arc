@@ -182,94 +182,155 @@ describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes nothing before Do 9 and sta
   });
 });
 
-describe('LIB-5 S6: the built shared modules equal their cards (D-LIB5-SPLIT; foot-bar and selector-pin)', () => {
-  const BUILT: Record<string, string> = { 'selector-pin': 'SELECTOR_PIN', 'foot-bar': 'FOOT_BAR' };
-  let C: any, MV: any, SL: any, shared: any;
+describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research 9eaa248, lib4-cards 14.5)', () => {
+  /** module.EXPORT -> its pinned top-level keys. ROPE and FLOOR_BODY stop on their split throws (asked on #244). */
+  const PINNED: Record<string, string> = {
+    'moves.DUMBBELL_KICKUP': 'card appliesTo postureArchetype variants',
+    'moves.FOOT_BAR': 'card appliesTo variants',
+    'moves.GET_IN_OUT': 'card appliesTo setup variants',
+    'moves.SELECTOR_PIN': 'card appliesTo setup',
+    'moves.UNRACK_RERACK': 'card appliesTo postureArchetype variants',
+    'hands.CUPPED_THUMB': 'card appliesTo handContact thumbRule wrist alternative gripLine cue',
+    'hands.CURL': 'card appliesTo thumbRule wrist rightPose faults widthNote gripLine cue',
+    'hands.PALM_FLAT': 'card appliesTo contactPoint fingers wrist rightPose faults soreWrist gripLine cue',
+    'implements.BATTLE_ROPES': 'card appliesTo contactPoint thumbRule rightPose faults gripLine cue handRisks',
+    'implements.JUMP_ROPE': 'card appliesTo contactPoint thumbRule wrist rightPose faults gripLine cue handRisks',
+    'implements.KETTLEBELL_SWING': 'card appliesTo contactPoint thumbRule rightPose faults gripLine cue handRisks',
+    'implements.MEDICINE_BALL_SLAM': 'card appliesTo rightPose gripLine cue handRisks',
+    'implements.WALL_BALL': 'card appliesTo contactPoint rightPose faults gripLine cue handRisks',
+    'exemptions.FRONT_RACK': 'card appliesTo reason replacementRule faults',
+    'exemptions.WRIST_CURL': 'card appliesTo reason replacementRule faults',
+    'checkpoints.PRONE': 'card appliesTo checkpoints',
+  };
+  let C: any, SL: any, shared: any;
+  const MODS: Record<string, any> = {};
   beforeAll(async () => {
-    [C, MV, SL, shared] = await Promise.all(['tools/plates/library/shared/card.mjs', 'tools/plates/library/shared/moves.mjs',
-      'tools/plates/library/lint/shared-cards.mjs', 'tools/plates/layers/howto/shared.mjs'].map(p => import(/* @vite-ignore */ url(p))));
+    [C, SL, shared] = await Promise.all(['tools/plates/library/shared/card.mjs', 'tools/plates/library/lint/shared-cards.mjs',
+      'tools/plates/layers/howto/shared.mjs'].map(p => import(/* @vite-ignore */ url(p))));
+    for (const m of ['moves', 'hands', 'implements', 'exemptions', 'checkpoints']) MODS[m] = await import(/* @vite-ignore */ url(`tools/plates/library/shared/${m}.mjs`));
   });
   const card = (k: string) => JSON.parse(readFileSync(join(ROOT, `docs/research/howto/shared/${k}.json`), 'utf8'));
-  /** The export as read straight from the card JSON, independent of moves.mjs. */
+  const exp = (at: string) => { const [m, n] = at.split('.'); return MODS[m!][n!]; };
+  const keyOf = (e: any) => e.card.slice('shared/'.length, -'.json'.length);
+  const pick = (o: any, ks: string[]) => Object.fromEntries(ks.filter(k => k in o).map(k => [k, o[k]]));
+  /** The export as read straight from the card JSON, independent of card.mjs. */
   const expected = (c: any) => {
-    const steps = (l: any[]) => l.map(s => ({ kind: s.kind, text: s.text, claim: s.claim }));
-    return { card: `shared/${c.key}.json`, appliesTo: c.appliesTo, ...(c.steps ? { setup: steps(c.steps) } : {}),
-      ...(c.variants ? { variants: Object.fromEntries(Object.entries(c.variants).map(([v, va]: [string, any]) => [v, { appliesTo: va.appliesTo, setup: steps(va.steps) }])) } : {}) };
+    const out: any = { card: `shared/${c.key}.json`, appliesTo: c.appliesTo };
+    const steps = (l: any[]) => l.map(s => pick(s, ['kind', 'text', 'claim']));
+    for (const [f, v] of Object.entries(c) as [string, any][]) {
+      if (['gripLine', 'cue', 'wrist', 'soreWrist', 'thumbRule', 'alternative', 'widthNote', 'fingers', 'handContact', 'grip', 'rightPose', 'contactPoint', 'reason', 'replacementRule', 'defaultCrop'].includes(f)) out[f] = pick(v, ['text', 'claim', 'appliesTo']);
+      if (f === 'faults') out.faults = v.map((x: any) => pick(x, ['key', 'label', 'what', 'claim']));
+      if (f === 'handRisks') out.handRisks = v.map((x: any) => pick(x, ['text', 'claim']));
+      if (f === 'steps') out.setup = steps(v);
+      if (f === 'variants') out.variants = Object.fromEntries(Object.entries(v).map(([n, va]: [string, any]) => [n, { appliesTo: va.appliesTo, setup: steps(va.steps) }]));
+      if (f === 'postureArchetype') out.postureArchetype = { right: pick(v.right, ['text', 'claim']), wrong: v.wrong && pick(v.wrong, ['text', 'claim']) };
+      if (f === 'checkpoints' || f === 'defaultCheckpoints') out[f] = v.map((x: any) => pick(x, ['key', 'label', 'detail', 'claim', 'appliesTo']));
+    }
+    return out;
   };
-  /** Every export key path of a move export (steps by position collapsed), for the pinned list. */
-  const keyPaths = (e: any): string[] => [...new Set(Object.entries(e).flatMap(([k, x]: [string, any]) =>
-    k === 'setup' ? [k, ...x.flatMap((s: any) => Object.keys(s).map(f => `${k}[].${f}`))]
-      : k === 'variants' ? Object.entries(x).flatMap(([v, va]) => keyPaths(va).map(p => `${k}.${v}.${p}`)) : [k]))].sort();
-  /** Data fields (card.mjs DATA) among an export's own key paths (a step's keys are pinned above). */
-  const dataKeys = (e: any) => keyPaths(e).filter(p => !p.includes('[]') && C.DATA.includes(p.split('.').pop()!.replace('[]', '')));
-  /** Step refs that do not resolve to a claim whose sources are all in the card's registry. */
-  const refProblems = (c: any, e: any) => [e.setup ?? [], ...Object.values(e.variants ?? {}).map((va: any) => va.setup)].flat()
-    .filter((s: any) => { const cl = SL.claimOf(c, s.claim); return !cl || !cl.sources.length || cl.sources.some((x: string) => !c.sources.some((y: any) => y.id === x)); })
-    .map((s: any) => s.text);
+  /** Every key path of an export (list items collapsed to []). */
+  const keyPaths = (o: any, at = ''): string[] => [...new Set(Object.entries(o ?? {}).flatMap(([k, x]: [string, any]) => {
+    const p = at ? `${at}.${k}` : k;
+    if (Array.isArray(x)) return [p, ...x.flatMap(y => (y && typeof y === 'object' ? keyPaths(y, `${p}[]`) : []))];
+    return x && typeof x === 'object' ? [p, ...keyPaths(x, p)] : [p];
+  }))].sort();
+  /** Data fields (card.mjs DATA) among an export's own keys and its variants' (a list item's keys are pinned by shape). */
+  const dataKeys = (e: any) => keyPaths(e).filter(p => !p.includes('[]') && C.DATA.includes(p.split('.').pop()!));
+  /** Claim refs that do not resolve to a claim whose sources are all in the card's registry, as their paths. */
+  const refProblems = (c: any, e: any) => keyPaths(e).filter(p => p.endsWith('claim')).length === 0 ? ['no claim refs'] : (function walk(o: any, at: string): string[] {
+    if (Array.isArray(o)) return o.flatMap((y, i) => walk(y, `${at}[${i}]`));
+    if (!o || typeof o !== 'object') return [];
+    const own = 'claim' in o && (() => { const cl = SL.claimOf(c, o.claim); return !cl || !cl.sources.length || cl.sources.some((x: string) => !c.sources.some((y: any) => y.id === x)); })() ? [`${at}.claim`] : [];
+    return [...own, ...Object.entries(o).filter(([k]) => k !== 'claim').flatMap(([k, y]) => walk(y, at ? `${at}.${k}` : k))];
+  })(e, '');
 
-  it('module === card: each export equals its card\'s fields; a drifted string is red', () => {
-    for (const [k, name] of Object.entries(BUILT)) expect([k, MV[name]]).toEqual([k, expected(card(k))]);
-    const drift = structuredClone(MV.FOOT_BAR);
-    drift.variants.pullover.setup[0].text += ' ';
-    expect(drift).not.toEqual(expected(card('foot-bar')));
+  it('the module files export exactly the pinned exports, and each top-level key list is pinned', () => {
+    expect(Object.entries(MODS).flatMap(([m, M]) => Object.keys(M).map(n => `${m}.${n}`)).sort()).toEqual(Object.keys(PINNED).sort());
+    for (const [at, keys] of Object.entries(PINNED)) expect([at, Object.keys(exp(at)).join(' ')]).toEqual([at, keys]);
   });
-  it('pinned export keys hold no data field; a data key added to an export is red', () => {
-    expect(keyPaths(MV.SELECTOR_PIN)).toEqual(['appliesTo', 'card', 'setup', 'setup[].claim', 'setup[].kind', 'setup[].text']);
-    expect(keyPaths(MV.FOOT_BAR)).toEqual(['appliesTo', 'card', ...['chest-press', 'pullover'].flatMap(v =>
-      ['appliesTo', 'setup', 'setup[].claim', 'setup[].kind', 'setup[].text'].map(p => `variants.${v}.${p}`))].sort());
-    for (const name of Object.values(BUILT)) expect([name, dataKeys(MV[name])]).toEqual([name, []]);
-    expect(dataKeys({ ...MV.SELECTOR_PIN, notes: card('selector-pin').notes })).toEqual(['notes']);
-    expect(dataKeys({ ...MV.FOOT_BAR, variants: { ...MV.FOOT_BAR.variants, pullover: { ...MV.FOOT_BAR.variants.pullover, gaps: [] } } })).toEqual(['variants.pullover.gaps']);
+  it('module === card: each export equals its card\'s fields; a drifted string is red', () => {
+    for (const at of Object.keys(PINNED)) expect([at, exp(at)]).toEqual([at, expected(card(keyOf(exp(at))))]);
+    const drift = structuredClone(exp('hands.PALM_FLAT'));
+    drift.faults[0].label += 's';
+    expect(drift).not.toEqual(expected(card('palm-flat')));
+  });
+  it('no data field is exported; a data key added to an export is red', () => {
+    for (const at of Object.keys(PINNED)) expect([at, dataKeys(exp(at))]).toEqual([at, []]);
+    expect(dataKeys({ ...exp('moves.SELECTOR_PIN'), notes: card('selector-pin').notes })).toEqual(['notes']);
+    expect(dataKeys({ ...exp('exemptions.WRIST_CURL'), exempts: card('wrist-curl-exemption').exempts })).toEqual(['exempts', 'exempts.archetype']);
+    const fb = exp('moves.FOOT_BAR');
+    expect(dataKeys({ ...fb, variants: { ...fb.variants, pullover: { ...fb.variants.pullover, gaps: [] } } })).toEqual(['variants.pullover.gaps']);
   });
   it('every claim ref resolves, with its sources in the card\'s registry; a broken ref is red', () => {
-    for (const [k, name] of Object.entries(BUILT)) expect([k, refProblems(card(k), MV[name])]).toEqual([k, []]);
-    const broken = structuredClone(MV.SELECTOR_PIN);
-    broken.setup[2].claim = 'c9';
-    expect(refProblems(card('selector-pin'), broken)).toEqual([broken.setup[2].text]);
+    for (const at of Object.keys(PINNED)) expect([at, refProblems(card(keyOf(exp(at))), exp(at))]).toEqual([at, []]);
+    const broken = structuredClone(exp('implements.JUMP_ROPE'));
+    broken.handRisks[0].claim = 'c99';
+    expect(refProblems(card('implement-jump-rope'), broken)).toEqual(['handRisks[0].claim']);
   });
-  it('every shown field passes golden B\'s lint at setup[] (kind setup, SETUP_MAX_STEPS per sheet); each rule bites', () => {
-    for (const [k, name] of Object.entries(BUILT)) expect([k, SL.sharedShownLint(card(k), MV[name], shared)]).toEqual([k, []]);
-    const c = card('selector-pin'), bad = structuredClone(MV.SELECTOR_PIN), rules = (e: any) => SL.sharedShownLint(c, e, shared).map((x: any) => `${x.path}: ${x.rule}`);
-    bad.setup[0].text = 'Push the pin in; it treats the stack.';
-    expect(rules(bad)).toEqual(['selector-pin: setup[0]: banned: semicolon', 'selector-pin: setup[0]: medical claim (content.md 4)']);
-    const six = { ...MV.SELECTOR_PIN, setup: [...MV.SELECTOR_PIN.setup, { kind: 'safety', text: 'Check the pin again.', claim: 'c1' }] };
-    expect(rules(six)).toEqual(['selector-pin: setup: more than 5 setup steps']);
-    const long = structuredClone(MV.FOOT_BAR);
-    long.variants.pullover.setup[1].text = 'This stops you over-reaching for the start of every single long hard rep.';
-    expect(SL.sharedShownLint(card('foot-bar'), long, shared).map((x: any) => `${x.path}: ${x.rule}`)).toEqual(['foot-bar.variants.pullover: setup[1]: setup > 12 words']);
+  it('every shown field passes golden B\'s lint at its ruled path and kind (one sheet per scope); each kind bites', () => {
+    for (const at of Object.keys(PINNED)) expect([at, SL.sharedShownLint(card(keyOf(exp(at))), exp(at), shared)]).toEqual([at, []]);
+    const rules = (at: string, edit: (e: any) => void) => {
+      const e = structuredClone(exp(at)); edit(e);
+      return SL.sharedShownLint(card(keyOf(e)), e, shared).map((x: any) => `${x.path}: ${x.rule}`);
+    };
+    expect(rules('moves.SELECTOR_PIN', e => { e.setup[0].text = 'Push the pin in; it treats the stack.'; }))
+      .toEqual(['selector-pin: setup[0]: banned: semicolon', 'selector-pin: setup[0]: medical claim (content.md 4)']);
+    expect(rules('moves.SELECTOR_PIN', e => { e.setup.push({ kind: 'safety', text: 'Check the pin again.', claim: 'c1' }); })).toEqual(['selector-pin: setup: more than 5 setup steps']);
+    expect(rules('moves.FOOT_BAR', e => { e.variants.pullover.setup[1].text = 'This stops you over-reaching for the start of every single long hard rep.'; }))
+      .toEqual(['foot-bar.variants.pullover: setup[1]: setup > 12 words']);
+    expect(rules('moves.GET_IN_OUT', e => { e.variants['thigh-pad'].setup.push(e.variants['thigh-pad'].setup[0]); })).toEqual(['get-in-out.variants.thigh-pad: setup: more than 5 setup steps']);
+    expect(rules('hands.PALM_FLAT', e => { e.faults[0].label = 'Hands too far forward'; })).toEqual(['palm-flat: handling.faults[0](hand-ahead).label: label > 3 words']);
+    expect(rules('hands.PALM_FLAT', e => { e.contactPoint.text = 'Heel of the hand'; })).toEqual(['palm-flat: zooms[0](hand).rightNote: label > 3 words']);
+    expect(rules('hands.CURL', e => { e.rightPose.text = 'Handle across the middle of the palm with the thumb wrapped.'; })).toEqual(['curl: zooms[0](hand).hand.note: caption > 10 words']);
+    expect(rules('hands.CURL', e => { e.cue.text = 'Keep the wrist straight all the way.'; })).toEqual(['curl: handling.cue: cue > 6 words']);
+    expect(rules('hands.CUPPED_THUMB', e => { e.gripLine.text = 'Thumbs wrap the handle and the fingers sit on the head of the dumbbell, so it stays put.'; }))
+      .toEqual(['cupped-thumb: handling.gripLine: sentence > 15 words']);
+    expect(rules('implements.JUMP_ROPE', e => { e.handRisks[0].text = 'Hold the handles loosely so the forearms do not get tired too fast in a set.'; }))
+      .toEqual(['jump-rope: risks[0](handRisks0): sentence > 15 words', 'jump-rope: risks[0](handRisks0): risk > 14 words'].map(x => x.replace('jump-rope', 'implement-jump-rope')));
+    expect(rules('exemptions.WRIST_CURL', e => { e.reason.text = 'The wrist moves here; that is the exercise.'; })).toEqual(['wrist-curl-exemption: handling.wrist.limitText: banned: semicolon']);
+    expect(rules('moves.UNRACK_RERACK', e => { e.postureArchetype.wrong.text = 'Bar lowered or pressed straight from the hooks with bent arms.'; }))
+      .toEqual(['unrack-rerack: zooms[0](posture).caption.wrong: caption > 10 words']);
+    expect(rules('checkpoints.PRONE', e => { e.checkpoints[0].label = 'Hips on the pad'; })).toEqual([`prone-checkpoints: posture[0](${exp('checkpoints.PRONE').checkpoints[0].key}).label: label > 3 words`]);
+    expect(rules('implements.WALL_BALL', e => { e.gripLine.text = 'Hold it as at www.example.com.'; })).toEqual(['implement-wall-ball: handling.gripLine: no contact or emergency wording (LR-23)']);
   });
   it('the split throw: one card with two fields on one path throws, naming them (fixture card, D-LIB5-SPLIT 4)', () => {
     const fx = JSON.parse(readFileSync(join(ROOT, 'tests/howto/fixtures/lib5/split-card.json'), 'utf8'));
     expect(() => C.splitOf(fx)).toThrow(/^fixture-split: split: handling\.gripLine has gripLine, replacementRule$/);
+    expect(() => C.cardExport(fx)).toThrow(/^fixture-split: split: handling\.gripLine has gripLine, replacementRule$/);
     const { replacementRule: _r, ...one } = fx;
-    expect(C.splitOf(one).map((x: any) => x.path)).toEqual(['handling.gripLine']);
+    expect(C.cardExport(one)).toEqual({ card: 'shared/fixture-split.json', appliesTo: ['fixture_exercise'], gripLine: fx.gripLine });
     expect(() => C.splitOf({ ...one, wrist: fx.gripLine, reason: fx.gripLine })).toThrow(/^fixture-split: split: handling\.wrist\.limitText has wrist, reason$/);
     expect(() => C.splitOf({ ...one, newField: 'x' })).toThrow(/^fixture-split: split: newField is not a ruled field$/);
+    expect(() => C.cardExport({ ...one, cue: { text: 'x', claim: 'c1', extra: 1 } })).toThrow(/^fixture-split: cue: unruled shape \(\+extra\)$/);
     // variants with disjoint ids are separate sheets; a list path holds one entry per field
     expect(C.splitOf(card('foot-bar')).map((x: any) => `${x.field} ${x.path}`)).toEqual(['variants.chest-press.steps setup[]', 'variants.pullover.steps setup[]']);
   });
+  it('the two real cards that stop: rope-rule (grip and handContact on width.text) and floor-body (prone unruled)', () => {
+    expect(() => C.cardExport(card('rope-rule'))).toThrow(/^rope-rule: split: handling\.width\.text has handContact, grip$/);
+    expect(() => C.cardExport(card('floor-body'))).toThrow(/^floor-body: split: prone is not a ruled field$/);
+  });
 
-  /** Each whole free-text data value of a card: appliesToWhy, every notes and gaps entry, every data field's .text/.basis. */
+  /** Each whole free-text data value of a card: appliesToWhy, every notes and gaps entry, every data field's .text/.basis,
+   *  and every string in exempts (lib4-cards 14.5) but its typed archetype enum (14.3 point 2). */
   const dataValues = (c: any, skip: string[] = []) => [
     ...(c.appliesToWhy ? [['appliesToWhy', c.appliesToWhy]] : []),
     ...['notes', 'gaps'].flatMap(k => (c[k] ?? []).map((t: string, i: number) => [`${k}[${i}]`, t])),
     ...C.DATA.flatMap((k: string) => ['text', 'basis'].filter(t => typeof c[k]?.[t] === 'string' && !skip.includes(`${k}.${t}`)).map(t => [`${k}.${t}`, c[k][t]])),
+    ...Object.entries(c.exempts ?? {}).filter(([k, v]) => k !== 'archetype' && typeof v === 'string').map(([k, v]) => [`exempts.${k}`, v]),
   ] as [string, string][];
   const leaks = (vals: [string, string][], files: [string, string][]) => files.flatMap(([p, t]) => vals.filter(([, x]) => t.includes(x)).map(([n]) => `${p}: ${n}`));
-  it('no data value reaches src/** or a generator output (0 hits on 5592280, recorded on #244); a notes string in a generated file is red', async () => {
+  it('no data value reaches src/** or a generator output (0 hits before these modules, recorded on #244); a notes string in a generated file is red', async () => {
     const src = walkFiles(join(ROOT, 'src')).map(f => [f.slice(ROOT.length), readFileSync(f, 'utf8')] as [string, string]);
     const out = [...(await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render())].map(([p, o]: [string, any]) => [p, o.text] as [string, string]);
     expect(src.length).toBeGreaterThan(100);
     expect(out.length).toBeGreaterThan(50);
-    for (const k of Object.keys(BUILT)) {
-      const vals = dataValues(card(k));
-      expect(vals.length).toBeGreaterThan(4);
-      expect([k, leaks(vals, [...src, ...out])]).toEqual([k, []]);
-    }
-    // The cards whose modules wait (D-LIB5-SPLIT 5): checked early; implement.text is an exercise id (question on #244)
-    const waiting = readdirSync(join(ROOT, 'docs/research/howto/shared')).map(f => f.slice(0, -5)).filter(k => k !== 'back-pain-box' && !BUILT[k]);
-    expect(waiting).toHaveLength(16);
-    for (const k of waiting) expect([k, leaks(dataValues(card(k), ['implement.text']), [...src, ...out])]).toEqual([k, []]);
+    const keys = readdirSync(join(ROOT, 'docs/research/howto/shared')).map(f => f.slice(0, -5)).filter(k => k !== 'back-pain-box');
+    expect(keys).toHaveLength(18);
+    let n = 0;
+    // implement.text is an exercise id (battle_ropes), which src names as an id: asked on #244, the only skip
+    for (const k of keys) { const vals = dataValues(card(k), ['implement.text']); n += vals.length; expect([k, leaks(vals, [...src, ...out])]).toEqual([k, []]); }
+    expect(n).toBeGreaterThan(100);
+    expect(dataValues(card('wrist-curl-exemption')).map(([p]) => p)).toContain('exempts.rule');
     const note = card('selector-pin').notes[0], planted = out.map(([p, t], i) => [p, i === 0 ? `${t}\n// ${note}\n` : t] as [string, string]);
     expect(leaks(dataValues(card('selector-pin')), planted)).toEqual([`${out[0]![0]}: notes[0]`]);
   }, 300_000);

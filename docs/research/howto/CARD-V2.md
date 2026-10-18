@@ -32,7 +32,7 @@ This follows docs/howto/library/inputs/content.md section 3.2. There is one JSON
     "checkpoints": [                       // exactly 3, the top form checkpoints; they become callouts
       { "label": "1-3 words", "what": "what it means", "claim": "c2" } ],
     "mistake": { "what": "the single most common fault the engine can draw from this view",
-                 "why": "why it is common or risky", "claim": "c5",
+                 "why": "why it is common or risky", "claim": "c5", "rankNote": "the LR-31 step that picked the top fault, with claim ids",
                  "drawable": true },       // false when the top fault needs a view the plate lacks: then name the most common drawable fault
     "tells": [ { "text": "how you know you are doing it right (<= 8 words)", "claim": "c6" } ],   // 1-3
     "tempo": { "up": 1, "down": 2, "pause": 0, "claim": "c7" },
@@ -59,17 +59,18 @@ This follows docs/howto/library/inputs/content.md section 3.2. There is one JSON
 The rules:
 - Every factual line points to a claim, and every claim has at least one source with a verbatim quote of at most 50 words. There are no free-text citations.
 - Every listed source is cited by at least one claim, so there are no orphan sources.
-- Muscle ids come from `src/data/muscles.ts` on main. `core`, `brachialis` and `rotator_cuff` are text-only.
+- Muscle ids come from `src/data/muscles.ts` on main. In `feel` (C2; LR-35): `brachialis` and `rotator_cuff` have no drawn region (text-only), so use them only in `feel.secondary` and `feel.watch`, never in `feel.primary` or a row's `at.muscles`; `core` has a misleading region, so use it in none of `feel.primary`, `feel.secondary` and `feel.watch`. `libraryDiff` may use any muscles.ts id.
 - Never infer from another exercise without saying so in the claim, with the tag `MECH` or `WEAK`.
 - Tier-A exercises (spinal loading, overhead, high skill) carry the safety points the safety checker will look for:
   - safeties or J-hooks where they apply;
   - a bar path clear of the neck;
   - load progression.
 - `"claim"` on any line is one claim id (`"c2"`), a list when the line uses words from several claims (`["c2","c5"]`), or `"inherit:<n>"` when the line restates the child's `inherit[n]` field. Every word of a line comes from the claims it cites.
-- A difference card's parent must be a verified card on `claude/libht-research`, or an approved golden exercise. Parent picks follow the library architecture (6.1/6.2), which supersedes content.md appendix A (ruling LR-7).
+- A difference card's parent must be a verified card on `claude/libht-research`, or an approved golden exercise. Once a golden parent has a verified card on the branch, that card, and any verified shared card whose appliesTo lists the child, governs the child's inherited lines; an inherit entry stays only where the parent's shipped How-to string for it holds whole there, and golden-B research is a source map only (LR-34). Parent picks follow the library architecture (6.1/6.2), which supersedes content.md appendix A (ruling LR-7).
 - Rulings on verifier open items: `RULINGS.md` in this folder.
 - A source may carry an optional `archiveUrl` (a web.archive.org copy) when the live page no longer answers; `checked` then refers to the archived copy (ruling LR-25).
 - A zoom's `wrong` may be `null` when no wrong position is sourced; the sheet then shows only the right position (LR-25).
+- The top fault follows LR-31 on every card, on LR-31's rollout. `plate.mistake.rankNote` records the step, the claim ids and each frequency or harm quote set aside; `handlingMistakes[0]` is the top fault; a fault seen only as speed is never drawable. `rankNote` is research data, never shown (LR-28).
 
 ## Machine fields
 

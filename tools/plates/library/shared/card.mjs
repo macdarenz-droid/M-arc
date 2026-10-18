@@ -45,9 +45,9 @@ const EXPANDS = { faults: ['faults[].label', 'faults[].what'], postureArchetype:
   checkpoints: ['checkpoints[].label', 'checkpoints[].detail'], defaultCheckpoints: ['defaultCheckpoints[].label', 'defaultCheckpoints[].detail'] };
 
 /** D-LIB5-SPLIT 2: never written to a text path (the note's "Not projected" list, keys, implement, the registry fields
- *  and the typed enums). appliesTo is ids: it scopes a field and is exported as scope, never as text. */
+ *  the typed enums, and exempts (lib4-cards 14.5)). appliesTo is ids: it scopes a field and is exported as scope, never as text. */
 export const DATA = ['key', 'kind', 'appliesToWhy', 'move', 'claims', 'sources', 'gaps', 'notes', 'implement',
-  'loadAxis', 'thumbMode', 'byRule', 'byInference', 'notFor', 'archetype', 'handle'];
+  'loadAxis', 'thumbMode', 'byRule', 'byInference', 'notFor', 'archetype', 'handle', 'exempts'];
 
 /** The card's shown fields as [{ field, path, kind, ids }], each scoped to the ids whose sheet shows it (a variant's
  *  appliesTo for its steps, else the card's). Throws for an unruled field, and when two fields share a one-value path
@@ -67,7 +67,7 @@ export function splitOf(card) {
     const subs = EXPANDS[f] ?? [f];
     for (const s of subs) {
       if (!SPLIT[s]) throw new Error(`${card.key}: split: ${s} is not a ruled field`);
-      out.push({ field: s, path: SPLIT[s][0], kind: SPLIT[s][1], ids: card.appliesTo ?? [] });
+      out.push({ field: s, path: SPLIT[s][0], kind: SPLIT[s][1], ids: v?.appliesTo ?? card.appliesTo ?? [] });
     }
   }
   const byPath = new Map();
@@ -80,9 +80,35 @@ export function splitOf(card) {
   return out;
 }
 
-/** A step as the module exports it: the card's kind, text and claim ref, nothing else. */
-export function stepOf(card, s, at) {
-  const extra = Object.keys(s).filter(k => !['kind', 'text', 'claim'].includes(k));
-  if (extra.length) throw new Error(`${card.key}: ${at}: unruled step field ${extra.join(', ')}`);
-  return { kind: s.kind, text: s.text, claim: s.claim };
+const TEXT = ['gripLine', 'cue', 'wrist', 'soreWrist', 'thumbRule', 'alternative', 'widthNote', 'fingers', 'handContact', 'grip',
+  'rightPose', 'contactPoint', 'reason', 'replacementRule', 'defaultCrop'];
+
+/** `o` with exactly the keys `want` (those in `opt` may be absent), else a throw naming the card and place. */
+function only(card, at, o, want, opt = []) {
+  const keys = Object.keys(o ?? {}), extra = keys.filter(k => !want.includes(k) && !opt.includes(k)), miss = want.filter(k => !keys.includes(k));
+  if (o === null || typeof o !== 'object' || extra.length || miss.length) throw new Error(`${card.key}: ${at}: unruled shape (${[...extra.map(k => `+${k}`), ...miss.map(k => `-${k}`)].join(', ') || typeof o})`);
+  return Object.fromEntries([...want, ...opt].filter(k => k in o).map(k => [k, o[k]]));
+}
+
+/** One card as its module exports it: { card, appliesTo } plus every shown field under its card name, each with the
+ *  card's own text and claim refs (steps as setup). Data fields are left out; an unruled field or shape throws. */
+export function cardExport(card) {
+  splitOf(card);
+  const out = { card: `shared/${card.key}.json`, appliesTo: [...card.appliesTo] };
+  const steps = (l, at) => l.map((s, i) => only(card, `${at}[${i}]`, s, ['kind', 'text', 'claim']));
+  for (const [f, v] of Object.entries(card)) {
+    if (TEXT.includes(f)) out[f] = only(card, f, v, ['text', 'claim'], ['appliesTo']);
+    else if (f === 'faults') out.faults = v.map((x, i) => only(card, `faults[${i}]`, x, ['key', 'label', 'what', 'claim']));
+    else if (f === 'handRisks') out.handRisks = v.map((x, i) => only(card, `handRisks[${i}]`, x, ['text', 'claim']));
+    else if (f === 'steps') out.setup = steps(v, 'steps');
+    else if (f === 'variants') out.variants = Object.fromEntries(Object.entries(v).map(([n, va]) => [n, { appliesTo: [...va.appliesTo], setup: steps(va.steps, `variants.${n}.steps`) }]));
+    else if (f === 'postureArchetype') {
+      only(card, f, v, ['key', 'right', 'wrong']);
+      out.postureArchetype = { right: only(card, `${f}.right`, v.right, ['text', 'claim']), wrong: v.wrong === null ? null : only(card, `${f}.wrong`, v.wrong, ['text', 'claim']) };
+    } else if (f === 'checkpoints' || f === 'defaultCheckpoints') out[f] = v.map((x, i) => {
+      only(card, `${f}[${i}]`, x, ['key', 'label', 'detail', 'claim', 'appliesTo'], ['byInference', 'notFor']);
+      return { key: x.key, label: x.label, detail: x.detail, claim: x.claim, appliesTo: [...x.appliesTo] };
+    });
+  }
+  return out;
 }
