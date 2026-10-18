@@ -2356,3 +2356,11 @@ A 3-lens review (rulings, quotes, scope) read the revised note against this sect
   - Fix: Replace with: 'It imports nothing from `tests/**`. package.json engines '>=22' admits Node 22.0-22.17, which do not strip types by default, and c19.ts's extensionless import would not resolve natively either.'
 
 **Supervisor actions done with this ruling:** the :162 cite in NEW-4 point 2 now reads node.mjs:163 (measure) and :161-162 (joint), checked on main `72c94fc` (h6 runs :153-176). The blind TOPFAULT pass never reads #244 comment 6241270855 or any #244 material that prints a selected Mistake key; its inputs are only those D-LIB5-TOPFAULT lists.
+
+### 14.2 Note fixes checked; LIB-5 resume (D-LIB5-NOTE-3, 2026-10-18 ~02:2x UTC; #244 @ `9628a35`)
+
+- A fresh delta reviewer checked `738cdd3..9628a35`. Only LIB-5-DESIGN.md changed, in one non-merge commit. F2-F12 are applied as written. Blindness holds. The cites are right on main `b99a9e2` (node.mjs :153-176, :161-162, :163, :174).
+- One low remains, F1b: the restored SPLIT table's From-card cells were condensed, not pasted verbatim. Examples: "(unrack, kick-up)" dropped, array markers dropped, slash lists turned into comma lists. No rule changes. LIB-5 pastes the From-card cells of the hands, moves and checkpoints rows from ee7f40f :113, :115 and :117 verbatim at the note's :273, :275 and :277, in its first resumed commit.
+- **The note is ruled.** D-LIB5-NOTE-2 is closed, with F1b carried.
+- **Do 2's research head is `9dbc7e0`.** This is lib-5-card.md build_prerequisites' fallback: wave 2 and the 8's cards have not merged into claude/libht-research yet. LIB-5 re-copies and re-pins once when they merge (S1, S2, S6, S7). Then it re-copies one more time, for the one D-LIB5-FAULTKEYS/D-LIB5-SPLIT head (card amendment 46). Do 3 b still waits for the merged head, the TOPFAULT comment, the tempo-map ruling and 'CARD FIELDS VERIFIED'.
+- **LIB-5 resume**, with active LIB builders = 4: LIB-4b, LIB-4c, LIB-9a, LIB-5. The freed-slot queue after this: LIB-3b, LIB-4d, LIB-8-FIX.
