@@ -19,16 +19,21 @@ export const SCRATCH_MARKER = 'LIB5-SCRATCH-ROOT';
 const sha256 = s => createHash('sha256').update(s).digest('hex');
 const imp = (root, p) => import(pathToFileURL(join(root, p)).href);
 
-/** { scope, hash } for one shipped id, computed with `root`'s own modules (loadContent has no root parameter). */
-export async function stampOf(id, { root = ROOT } = {}) {
-  const [{ loadContent }, G, R, B] = await Promise.all(['tools/plates/gen/content.mjs', 'tools/plates/golden.mjs', 'tools/plates/library/registry.mjs',
-    'tools/plates/library/batch-golden.mjs'].map(p => imp(root, p)));
+/** The whole `fragments` object (9 keys) of one shipped id's latest plate entry, read with `root`'s own modules. */
+export async function plateFragmentsOf(id, { root = ROOT } = {}) {
+  const [G, R, B] = await Promise.all(['tools/plates/golden.mjs', 'tools/plates/library/registry.mjs', 'tools/plates/library/batch-golden.mjs'].map(p => imp(root, p)));
   const row = R.rows(root).find(r => r.id === id);
   if (!row) throw new Error(`stamps: ${id}: no registry row`);
   const entry = row.mode === 'golden' ? G.latestEntries(JSON.parse(readFileSync(G.GOLDEN_JSON, 'utf8')).entries).get(id) : B.pinOf(row, 'plate', root);
   if (!entry?.fragments) throw new Error(`stamps: ${id}: no plate entry with fragments`);
+  return entry.fragments;
+}
+
+/** { scope, hash } for one shipped id, computed with `root`'s own modules (loadContent has no root parameter). */
+export async function stampOf(id, { root = ROOT } = {}) {
+  const [{ loadContent }, plate] = await Promise.all([imp(root, 'tools/plates/gen/content.mjs'), plateFragmentsOf(id, { root })]);
   const { content } = await loadContent(id);
-  return { scope: content.extends ?? content.id, hash: sha256(JSON.stringify({ content, plate: entry.fragments })) };
+  return { scope: content.extends ?? content.id, hash: sha256(JSON.stringify({ content, plate })) };
 }
 
 /** c15's contentHash for one shipped id. */

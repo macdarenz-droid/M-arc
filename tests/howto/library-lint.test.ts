@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import exercises from '../../src/data/exercises.json';
 import { LIMITS, checkC7 } from './checks/c7';
+import { checkC15 } from './checks/c15';
 import { RULE_CONTACT, RULE_NAME, RULE_SAFETY, RULE_SOURCE, checkC19Shared } from './checks/c19';
 import { SHIPPED } from './shipped-rows';
 
@@ -224,4 +225,30 @@ describe('LIB-5 S7 generator cases: E1\'s row in per-case copies of E1\'s tree (
       else { expect([x.name, x.code]).not.toEqual([x.name, 0]); expect(x.out, x.name).toContain(`Error: ${x.want}`); }
     }
   }, T);
+});
+
+describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and C19, with every red-flag box it shows', () => {
+  it(`${SHIPPED.length} shipped rows, no finding`, async () => {
+    const [{ checkC1 }, { checkC2 }, { checkC3 }, { checkC4 }, { checkC8 }, { checkC16 }, C19] = await Promise.all([
+      import('./checks/c1'), import('./checks/c2'), import('./checks/c3'), import('./checks/c4'), import('./checks/c8'), import('./checks/c16'), import('./checks/c19')]);
+    const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
+    const R = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const SOURCES = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/sources.json'), 'utf8').replace(/^\/\/[^\n]*\n/, ''));
+    const reviews = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/reviews.json'), 'utf8'));
+    const known = new Set((exercises as any[]).map(e => e.id));
+    expect(SHIPPED.length).toBeGreaterThanOrEqual(8);
+    for (const r of SHIPPED) {
+      const { content: c } = await content.loadContent(r.id), M = await import(/* @vite-ignore */ url(R.sourceOf(r.id)));
+      const names = CL.sourceNamePatterns([M]), plate = await S.plateFragmentsOf(r.id);
+      expect(Object.keys(plate)).toHaveLength(9);
+      const boxes = Object.fromEntries((c.riskFlags ?? ['wrist']).map((f: string) => [`RED_FLAG_${f.toUpperCase()}`, shared[CL.RED_FLAG_BLOCKS[f].exp]]));
+      const bad = [
+        ...checkC1(c, known), ...checkC2(c), ...checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? ''), ...checkC4(c), ...checkC7(c),
+        ...checkC8(c, SOURCES), ...checkC15(c, plate, reviews), ...checkC16(c),
+        ...C19.checkC19Copy(CL.copyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),
+        ...L.lintLibraryRow(M, shared).map((x: any) => `lint: ${x.path}: ${x.rule}`),
+      ];
+      expect([r.id, bad]).toEqual([r.id, []]);
+    }
+  });
 });
