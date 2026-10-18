@@ -2894,3 +2894,10 @@ A 3-lens review (rulings, quotes, scope) read the revised note against this sect
 3. LB1's expected flag set keeps F5 with this reason. Do 8 and per-exercise approvals are unblocked on this point.
 **Why.** F5 measures label text against WCAG AA 4.5:1 (qa/browser.mjs:14). The tell's chrome is locked, shared CSS that every shipped plate already carries, approved by the owner with golden A. A chrome fix is a golden update of the owner-approved plates (plan 2.8 step 3: the owner sees the contact sheet), and one such update later fixes every plate at once, so waiting costs nothing per plate. The fix stays an owner item in the O7 family: offered with the next sheet or APK message, never forced.
 **Why nothing is loosened.** F5 runs on every row; the exemption names one element and one value, and the mutation proves any drift is caught.
+
+### 14.5 Named research head for LIB-5 and LIB-9a; 14.3 data list amended (2026-10-18 ~05:50 UTC)
+
+- **Named head: `claude/libht-research` @ `9eaa2480fea8f8f82a52ac2596c14d9a0da08ca5`.** It merges the w2 verify head `efc8feda` into `9dbc7e0`. It holds every w2 packet item, LR-30..LR-36, W2-R1..R12, the 45 SPLIT rewords plus W2-R10, and the FAULTKEYS edits. Record: docs/research/howto/verify/w2.md. The recheck was calibrated: two supervisor plants were caught as blockers. The copy lint at the 14.3 mapping shows 0 hits on the 18 shared cards.
+- This is LIB-5's one re-copy (S1 re-pin, then S2, S6, S7; 14.3), and LIB-9a's Do 6 re-copy.
+- **14.3 point 1, data list amended:** the `exempts` object of shared/*-exemption.json (for example `exempts.rule`) is data. No module writes it to a text path, and library-shared.test's data-absence test covers its strings (the recheck's Low; wrist-curl's holds a ';').
+- Next, in this order: the blind TOPFAULT pass on this head (D-LIB5-TOPFAULT; Supervisor actions 5); then CARD FIELDS VERIFIED after LIB-5's Do 3 b commit 1, and after LIB-9a's Do 6 for its changed picks (assisted_pull_up, underhand_lat_pulldown, resistance_band_row, shoulder_press).
