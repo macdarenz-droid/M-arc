@@ -160,7 +160,20 @@ Tree: 575fa75 + #181 9b8f76e, scratch only. 575fa75 and this branch's later head
 
 - Rows and px are identical across all 1,009 pixel tuples, so `par.mjs` gives P = 4. That is a 3.69× speed-up.
 - A forced 1-row difference keeps P = 1.
-- The default stays P = 1 until B7 runs on the final head.
+
+### B7: P decision on the final head (316679e)
+
+Chromium 141.0.7390.37, nproc 4, `--ids golden8`, both runs on the same head and build.
+
+| P | Rows | Max px | Wall time | Job seconds summed |
+|---|---|---|---|---|
+| 1 | 2,947 of 2,947 | 0 on all 8 | 8,422.3 s | 8,421 |
+| 4 | 2,947 of 2,947 | 0 on all 8 | 2,379.7 s | 9,356 |
+
+- `par.mjs p1.json p4.json 4 4`: "P = 4: identical rows and px" over 2,947 rows and 1,009 pixel tuples. Speed-up 3.54×; each job runs about 11 % longer under load.
+- The default is now `DEFAULT_P = 4` in `fidelity.mjs` (function and CLI). Unit test: the default is 4; setting it to 1 turns that test red.
+- Seconds per family at P=4 (summed job seconds): L2 0.2, entry 71.4, plate 1,511, HT4 466.1, HT6 1,077.1, HT7 705.7, HT8 799.2, HT9 1,243, HT10 2,896.6, PQH 555.7, offline 29.6.
+- Chunk sizes from the P=4 run (raw/gz bytes) are identical to the P=1 run's.
 
 ### B2 and B8: the 8 on the final head, Chromium 141
 
@@ -200,7 +213,6 @@ Not yet run on the final head, so unverified:
 - the failure fixtures;
 - the size equalities with A9 and A2;
 - the guard `--blind` runs and the once-row seconds;
-- B7 at P=4;
 - Chrome 153;
 - B9;
 - B10.

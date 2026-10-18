@@ -21,6 +21,9 @@ import { plateJob, plateStats } from './fidelity/plate.mjs';
 export const LAUNCH_ARGS = ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'];
 export const launchBrowser = async () => (await import('playwright')).chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: LAUNCH_ARGS });
 /** The families the runner runs, in order; each covers the CHECKS named. */
+// B7 (D-LIB4-PAR) on 316679e, Chromium 141, nproc 4: P = 4 gave rows and px identical to P = 1 (2,947 rows, 1,009 px
+// tuples; 2,379.7 s against 8,422.3 s), so 4 pages run at once by default.
+export const DEFAULT_P = 4;
 export const FAMILIES = ['entry', 'L2', 'plate', 'HT4', 'HT6', 'HT7', 'HT8', 'HT9', 'HT10', 'PQH', 'offline'];
 const COVERS = { plate: ['L2b', 'F3', 'L3', 'L4'] };
 const GOLDEN_B = 'tests/howto/golden/howto-layers.html';
@@ -43,7 +46,7 @@ async function pool(jobs, P) {
  * pixel tuple 'id|theme|state' to its max px off; seconds maps id and family to the job seconds spent.
  * `families`/`themes` narrow a development run (the rows then cover only those); CI always runs everything.
  */
-export async function libraryFidelity(browser, port, { ids, pages, P = 1, families = FAMILIES, themes = HT_THEMES, root = ROOT, log = () => {}, fixtures = {} }) {
+export async function libraryFidelity(browser, port, { ids, pages, P = DEFAULT_P, families = FAMILIES, themes = HT_THEMES, root = ROOT, log = () => {}, fixtures = {} }) {
   const R = recorder(), all = registryRows(root), why = {}, seconds = { id: {}, family: {} }, stats = { plate: plateStats(), byFamily: {} };
   const facts = {};
   for (const id of ids) facts[id] = await sourceFacts(id, { root, all });
@@ -300,7 +303,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const { spawn } = await import('node:child_process');
   const idsArg = arg('ids', 'golden8'), ids = idsArg === 'golden8' ? HT_PLATES.map(p => p[1]) : idsArg.split(',');
   const fixtures = fixturesOf(process.argv.flatMap((a, i) => (a === '--fixture' ? [process.argv[i + 1]] : [])));
-  const P = +arg('P', '1'), families = arg('families') ? arg('families').split(',') : FAMILIES, themes = arg('themes') ? arg('themes').split(',') : HT_THEMES;
+  const P = +arg('P', String(DEFAULT_P)), families = arg('families') ? arg('families').split(',') : FAMILIES, themes = arg('themes') ? arg('themes').split(',') : HT_THEMES;
   for (const f of families) if (!FAMILIES.includes(f)) throw new Error(`unknown family ${f} (${FAMILIES.join(', ')})`);
   const PORT = process.env.MARC_LIB_PORT || '4180';
   const server = spawn(process.execPath, [join(ROOT, 'node_modules/vite/bin/vite.js'), 'preview', '--port', PORT, '--strictPort'], { cwd: ROOT, stdio: 'ignore' });
