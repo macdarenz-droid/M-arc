@@ -219,3 +219,69 @@ Not yet run on the final head, so unverified:
 - Chrome 153;
 - B9;
 - B10.
+
+## 7. CI
+
+LIB-4c's section (card LIB-4c Do 11). The supervisor wires the jobs in `.github/workflows` (#249); the scripts below hold all of their logic.
+
+### Flow
+
+| Step | Job | Script | Proof |
+|---|---|---|---|
+| Mode, ids, plan, L1 rebuild | `howto-rebuild` (1 job) | `scripts/howto-rebuild.mjs` | `screenshots/howto-rebuild-proof.json`, `howto-pages/` |
+| Runner rows | `howto-shard` (k of K) | `scripts/howto-shard.mjs` (P = `LIB_P`, equal to LIB-4b's `DEFAULT_P` = 1) | `screenshots/howto-proof-<k>of<K>.json`, `screenshots/howto-evidence/` |
+| Verdict | `gate-verdict` (the one verdict, D-GATESPLIT-ONE) | `scripts/ci-verdict.mjs` CLI seam → `tools/plates/library/ci/verdict.mjs` | the `library:` line in the PASS line and the step summary |
+
+### Mode (D-LIB4-MODE; `ci/mode.mjs`, `ci/affected.mjs`)
+
+- Full on `main`, on `claude/sup-merge-train-*` heads and on every `workflow_dispatch`; affected on every other push (CI cannot see draft or ready).
+- Affected ids: each path of `git diff --name-only FETCH_HEAD HEAD` goes to the first class that matches:
+  1. one id's own files → that id;
+  2. registry-derived files → the ids whose rows differ; all ids when no row differs (D-LIB4c-2);
+  3. a `tools/plates/**` input that generated outputs list at HEAD → the ids whose per-id files alone list it; all ids when any other output lists it (literal, D-LIB4c-3). The map is proven against every output's header at run time; unproven, class 3 is off and those paths fall to class 4;
+  4. shared inputs → all ids; 5. neutral paths → none; 6. anything else → all ids.
+- A failed fetch selects every id. The base-side values read are kept in the rebuild proof, so the verdict recomputes the same set at the sha without fetching.
+
+### Shards (D-LIB4-SHARD; `ci/plan.mjs`, `ci/times.json`, `ci/times.mjs`)
+
+- GATE-SPLIT's `packShards`, target 900 s, red line 1,800 s (`SHARD_TARGET_S`, `JOB_BUDGET_S`, unchanged).
+- K is the smallest K ≥ 1 for which every shard fits: `c0 + once offset + planned id seconds ≤ 900`. Shard 1 carries `LIB_ONCE.run` and its `LIB_ONCE.shard` rows; every other shard its `LIB_ONCE.shard` rows. An id's planned seconds: its measured time, else the largest measured time, else `default`.
+- D-LIB4c-4: a shard whose fixed part alone is over 900 s holds no id. On CI this is the branch in force (shard 1: selftest + once rows, 707-1,184 s measured). When every id is over 900 s alone, the fallback is one id per shard and none on shard 1 (D-LIB4c-P1). 1,800 s stays red on every shard.
+- `times.json` is refreshed only from full-run proofs (`node tools/plates/library/ci/times.mjs <proof dir> --write`). An id's seconds are its share of its shard's wall time after the once-states and c0 (D-LIB4c-5, D-LIB4c-C0); at P > 1 the runner's per-id seconds overlap. Batch PRs never edit it.
+
+### L1 rebuild and L0-lib
+
+- `howto-rebuild` rebuilds every pinned library page in parallel processes (plates through `buildPlatesPage`; layers through `layersSpecOf` and LIB-6's `build-layers-page.mjs`). Each must equal its pin; a layers page must also equal the committed bytes.
+- L0-lib (`ci/manifest.mjs`, `tools/plates/library/MANIFEST.json`, `tests/howto/library-manifest.test.ts`): per pinned row, every file its plate and pages are made from, with its sha256 and the approving golden entry's hash; the set is in the manifest module's header. On main it holds `{"rows": {}}`. A non-merge commit that changes it carries `[golden update]` (guard Rule 4; creating it as `{"rows": {}}` is exempt).
+
+### Verdict (D-LIB4-VERDICT; `ci/verdict.mjs`)
+
+- Recomputes at the sha the mode, the ids, K, the plan hash and the expected tuples; it never copies the proof's ids and never fetches.
+- Red on: a needed job missing or not `success`; library ids plus the 8 that differ from `shippedIds()`; a proof for another sha; a plan-hash, mode, id-list or page-sha mismatch; a missing or extra shard proof; a shard not in UTC or over 1,800 s; any fail row or missing, duplicated or extra row; a library `meta.www` or `meta.chrome` that differs between shards or from the gate family's.
+
+### Evidence (scratch `claude/lib-4c-scratch`, D-LIB4c-1 a; reds of other families there are D-LIB4c-SCRATCHREDS)
+
+| Criterion | Runs | Result |
+|---|---|---|
+| C11 affected | 39123273382 (a0250935) | `howto-rebuild: mode affected, 6 of 6 ids, K 2`; shard 1 then hit the 30-minute job limit on the 0/0 once seed (D-LIB4c-ONCESEED) |
+| C14 calibration, P = 1 | 39133500575, 39134810143 (243574c6) | library 0 fail; `compare.mjs` 2,218 rows and 752 px tuples identical; times.json b671532; c0 6ccaa86 (D-LIB4c-C0) |
+| C12 1 px | 39141950670 (seed 1) | only lib_landmine_row's 42 `L3/*` rows fail, shard 6 |
+| C12 plan hash | 39143665858 (seed 2) | every shard: `plan hash … at this sha's times.json != howto-rebuild's …` |
+| C12 dropped row | 39145073743 (seed 3) | `library: lib_one_arm_dumbbell_row\|paper\|F3/M:restore@390 proven 0 times`, the dropped tuple, and nothing else in the family |
+| C13 5 full runs, P = 1 | 39146621138, 39148264749, 39149952702, 39151600793, 39153265130 (42716893) | `compare.mjs`: PASS, 2,218 rows and 752 px tuples identical; 35 shard proofs, 0 fail |
+
+C14 at P = 1, per id (s): HT10 311.5-328.1, plate 130.0-137.4, HT9 125.9-128.6, HT6 94.6-101.6, HT8 70.3-72.9, HT7 64.1-70.5, PQH 25.0-44.1, HT4 30.9-38.2, entry 7.9-8.0, offline 1.9-2.2, L2 0.0; t per id 870.5-916.9; once 707.2-1,183.1 on shard 1, 12.5-18.5 elsewhere; in-shard overhead (c0) 1.0-2.9; job setup 40-52; R (CI / local LIB-4b B2) ≈ 0.97. K with the committed times.json: N = 0, 4, 14, 145, 153 → K = 1, 5, 15, 146, 154 (one id per shard, 929-937 s planned; shard 1 1,186 s).
+
+P = 4 (runs 39127805072, 39129402701 on 0f7c96f9) was identical between runs too (2,210 rows), but LIB-4b withdrew it (D-LIB4c-P1); its re-qualification is a separate card.
+
+### C16 scratch inputs
+
+- Set: lib_barbell_row, lib_one_arm_dumbbell_row (from lat_pulldown), lib_t_bar_row, lib_landmine_row (seated_cable_row), lib_smith_machine_bench_press, lib_smith_machine_incline_press (machine_chest_press): outside LB1 and LB2, none taken, own keys. F5 3.57:1 on all 6. The copy diff shows only id, name, research-card and import lines and the ruled COPY_EDITS.
+- Mutations, each red: card removed → `QaRefused … lib_barbell_row: PQ-H6`; F5 exemption removed (lib_landmine_row) → only that id's PQH rows (`PQH/flags` names F5); one copy edit reverted → `QaRefused … lib_t_bar_row: PQ-H8 … semicolon`; an LB1 id → `scratch: refused: lib_chin_up is an LB1 id`.
+
+### Risks
+
+- Affected mode misses an id → class 6 and the fetch fail-safe select all; full mode on main and on every train head proves everything.
+- A stale `times.json` shows as shards over 900 s in notes and over 1,800 s as red; the supervisor refreshes it from full runs.
+- At P = 1 the library needs one CI job per id (K = 154 at 153 ids). The selftest on CI varies 707-1,184 s.
+- Browser drift between families → the verdict compares `meta.chrome`.
