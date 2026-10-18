@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-18 ~04:55 UTC · main `b99a9e25` (train 25) · **8.0m HANDOFF to a new supervisor account** · by supervisor session `session_01SNCyDETVkqVxtLoQxn2Ue9` (its account ends; all its M/ARC sessions are archived after their HANDOFF comments; its routine is disabled). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-18 ~05:35 UTC · main `b99a9e25` (train 25) · **8.0n new supervisor running** · by supervisor session `session_01HtNEBU3oDR8NyHKK3uCwUi` (new account). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -808,6 +808,40 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0n 10-18 ~05:35 UTC: new supervisor running (read first; supersedes 8.0m where they differ)
+
+**Supervisor.** session_01HtNEBU3oDR8NyHKK3uCwUi (new account, environment env_013Ap2eNfQ92RBapFBzsfRs7). Hourly routine `trig_019LBJDA2jX95HgcWEgQPMJ6` "M/ARC supervisor tick" (cron 57 * * * *, fires into this session; its prompt carries the owner rules: owner chat ".", Relay skipped, the library focus, the parked items, the models). Watchers: monitor.sh + heads.sh under one Monitor (SKIP adds 188 190 192 197 209 221 237; BR adds claude/libht-research-split). `subscribe_pr_activity` failed on this account too.
+
+**Sessions started 05:03-05:05 (all Opus, auto mode).** Active LIB builders: 4 of 4.
+| Session | Role | Branch @ start |
+|---|---|---|
+| session_01AvmDs7fwubnhXjMyETwDQJ | LIB-4b builder (#232) | claude/lib-4b-runner @ 316679e |
+| session_018fYJAmcV28GBcbntVUssyX | LIB-4c builder (#246) | claude/lib-4c-library-ci @ 52c853e |
+| session_01EtPBie8dERvuaHFMj9AWUU | LIB-5 builder (#244) | claude/lib-5-shared-layers @ 5592280 |
+| session_016jeozfhwK4zuXV84msyxJk | LIB-9a builder (#245) | claude/lib-9-lb1 @ 4257648 |
+| session_01DbTm9yH4hNqr34mwtiUXFL | GATE-FLAKE-4 builder (#253, HT/gate lane) | claude/gate-flake-4 @ aaf5bfd |
+| session_0158SzC44QRznvasjBmEGALx | research: w2 packet W2A (#242) | claude/libht-research-w2a @ a33d8f3 |
+| session_01Vb1BkSoeGjYRXffLc8eyHk | research: w2 packet THE8 (#243) | claude/libht-research-the8 @ e6381fa |
+| session_01SUe7e6YmpGQtyB9LxHsw4D | research: w2 packet HELPER (W2B's files; opens its own draft PR) | claude/libht-research-w2b @ d4f30c7 |
+| session_01RqJoXSCLzSyHQdQRWp79eG | research: SPLIT rewords (opens its own draft PR) | claude/libht-research-split @ a557d93 |
+Each research session runs Opus, gives plain exact edits to a Sonnet helper and does the [LR-31]/[LR-34] steps itself, with a Sonnet curl fetcher.
+
+**Done since 8.0m** (cards branch `claude/sup-lib4-cards` now `94eb611`):
+- Section 14 Supervisor action 12 applied to lib-9a-card.md (`65afbe2`): merge_prerequisites gain LIB-6-PM's back patches + S5-L and the variant-line field card; Do 9 = the D-LIB5-FAMILY comparator with its write-scope carve-out.
+- lib4-cards **14.3** (`9c709bd`): D-LIB5-SPLIT ruled (contactPoint → rightNote, kind label; variants steps → setup[]; one card, two fields on one path → throw); the w2 packets and the SPLIT rewords share **one** verify and one named head (one re-copy for LIB-5); B5(b) (PQ-H7 determinism) goes to LIB-3b as its first item; LIB-4c's open points.
+- lib4-cards **14.4** (`94eb611`): D-LIB9-F5 = (a) a named per-plate exemption, only for the tell chrome at exactly 3.57:1 in Midnight, with a 3.40 mutation; the chrome fix stays an owner item (O7 family).
+- D-LIB5-FAULTKEYS exact edits committed by the supervisor on `claude/libht-research-split` @ `a557d93` (from the verify head `531b77c`).
+- Rulings posted on #244 (6245934655) and #245 (6245935506). #237 closed (LIB-4a merged).
+
+**Next for the supervisor.**
+- When W2A, THE8, HELPER and SPLIT post FIXED/READY: re-merge all four into `claude/libht-verify-w2`; one fresh Opus recheck of every changed line plus quotes/{chin_up,hanging_knee_raise,assisted_pull_up} (LR-35) and the FAULTKEYS labels and gaps[2]; the 10 % re-fetch; `verify/w2.md`; RULINGS.md rows LR-30..35; merge into `claude/libht-research`; name that head on #244 and #245 (then LR-31/LR-32 effects for LIB-9a; the held edits list in 8.0m).
+- Then TOPFAULT (blind, per id) and CARD FIELDS VERIFIED; the D-LIB5-TEMPO8 and "stamps (O5)" rulings when LIB-5 reaches them.
+- Scratch-branch pushes asked for by LIB-4b ("LIB-4b SCRATCH") and LIB-4c ("LIB-4c SCRATCH").
+- Owed, not started: the variant-line field card (action 14, LB1 critical path); the LIB-6-PM patches and the L0-lib back-box follow-up line (action 11; it needs back-box.mjs on main, so it lands after LIB-5); LIB-10 items.
+- Queue as LIB slots free (a builder posting WAITING frees one): LIB-3b (its first item is now B5(b)), LIB-4d, LIB-8-FIX.
+
+**Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
 
