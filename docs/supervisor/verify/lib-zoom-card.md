@@ -29,7 +29,9 @@ For each option, state:
 - Labels in a zoom are words only, 1-3 words, as for plate labels.
 - No card fact changes. The zoom shows the card's own poses, and the plate stays byte-identical outside the zoom.
 - Nothing is loosened: H3's 11.39 px bar, every hard check, the envelope and the exemptions stay. A zoom that does not reach the bar at its own scale is red.
-- The calf raise (leg_press_calf_raise) is not in this card unless the owner's answer to the 1a/1b question adds it.
+- **Owner answers, 2026-10-18 ~16:20 UTC ("1. A, 2. A"):**
+  - 1a: leg_press_calf_raise is left out for now. It goes on the named list (plan: decided at the release candidate), with the toe-through-footplate reason and LIB-9a's renders. It is not in this card or in LB1.
+  - 2a: "no angle numbers" applies to zoom views only. Plate labels keep their sourced angles, as in the 8 and LB1.
 
 **Acceptance (after the ruling):**
 - horizontal_leg_press passes all 10 hard checks with its zoom.
