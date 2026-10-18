@@ -35,7 +35,7 @@ export async function runQa(c, ctx) {
   const M = nodeMetrics(c, env, R);
   const raw = {
     'PQ-H1': h1Engine(c, R, renderError), 'PQ-H2': h2(c, env), 'PQ-H3': h3(c, env, R, M), 'PQ-H4': [], 'PQ-H5': [],
-    'PQ-H6': h6(c, env, R), 'PQ-H7': h7(c, env, R), 'PQ-H8': h8(c, env), 'PQ-H9': h9(c, env, R), 'PQ-H10': await h10(c),
+    'PQ-H6': h6(c, env, R), 'PQ-H7': h7(c, env, R), 'PQ-H8': h8(c, env), 'PQ-H9': h9(c, env, R), 'PQ-H10': await h10(c, env),
   };
   if (c.mode === 'approved' && !APPROVED_IDS.includes(c.id)) raw['PQ-H2'].push({ key: 'mode', text: `${c.id} is not one of the 8 and cannot be 'approved'` });
   const flags = nodeFlags(c, env, M);

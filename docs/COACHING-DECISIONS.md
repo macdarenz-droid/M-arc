@@ -2453,3 +2453,17 @@ Card: `docs/supervisor/verify/lib-8-fix-card.md` (claude/sup-lib4-cards @ 4e2365
 - **D-LIB8FIX-3, tests in CI.** The two `node --test` files move to vitest (`tests/howto/lib8-pilot-a.test.ts`) and are deleted in the same commit. build-page tests 1-2 are not copied: main's library-core.test.ts L2-A2 already pins the same rebuild (length, sha, reversed list), so nothing runs twice. The OHP test reads `H` and `ARM_Y` from the spec (`export { H, ARM_Y }`). The composer tests are `tests/howto/lib8-composers.test.ts`.
 - **D-LIB8FIX-4, ENVELOPE.** Applied D-LIB8FIX-ENV: only the build.mjs :26 sentence changes, word for word. Read as LIB-3 reads them (qa/envelope.json, both ends), pilot A's own measures would change the flags on 16 of 17 plates; with F1 and the upper ends only, F2 changes on 4 (barbell_row, barbell_shrug, upright_row, dumbbell_biceps_curl). Flags set the page order, so the pinned bytes would move. The merge card's gap 4 run (LIB-3's qa) gates the merge.
 - **D-LIB8FIX-5, docs exception.** The card reserves `docs/**`; this section is written because the start message asks for D-LIB8FIX-* here. It is the only path outside the card's write_scope.
+## LIB-3b: PQ-H10 checks values and the envelope on the real path (LIB-3b builder, 2026-10-18)
+
+Card: `docs/supervisor/verify/lib-3b-card.md` (claude/sup-lib4-cards @ 5551cadd, amendments 1 and 2). PR #258.
+- **D-LIB3b-H10 Decided**: PQ-H10 applies derive.mjs's own `PARAMS` and `paramProblems` against the envelope that runQa holds (`h10(c, env)` at qa/index.mjs:38), for each key that validateParams did not already flag. It never reads the candidate's schema. Empty params give `H10.empty`; a PARAMS key the envelope does not name, or a malformed envelope row, gives `H10.envelope:<key>`; an inherited name (constructor, toString, __proto__) gives `H10.unknown:<key>`. envelope.json names no PARAMS key, so every D/T param stays red until a supervisor ruling gives PARAMS ranges a home.
+- **D-LIB3b-H7 Decided** (supervisor ruling on #258 comment 6249576171, option 1): the B5(b) gap from #232 is real, and the fix moved to LIB-3c. Reproduced on a scratch mirror (golden `makeMirror()`, `vendor/exercises/seated_cable_row.mjs` pulley `r: 0.045` edited, `candidateOf('lib_seated_cable_row')` then `runQa`; nothing committed):
+
+  | Edit | Two in-process renders | Fresh import vs first render | PQ-H7 |
+  |---|---|---|---|
+  | none | same | n/a | `[]` |
+  | per call: `r: 0.045 + Math.random() * 0.02` inside `equipment()` | differ | n/a | `H7.determinism:normal.svg`, `H7.determinism:mistake.svg` |
+  | import time: `const RR = 0.045 + Math.random() * 0.02` at module top, `r: RR` | same | differ | `[]` (missed) |
+  | the per-call edit in `tools/plates/layers/exercises/seated_cable_row.mjs` (not vendor) | same | n/a | `[]`: QA renders the vendor copy (golden.mjs makeMirror copies `VENDOR`) |
+
+  A render that throws leaves R null, so the determinism loop is skipped, but PQ-H1 is red (`H1.engine:render-threw`), so it fails closed. A fresh-import H7 needs an async h7 at index.mjs:38 and a spec loader for H/D/T rows in candidate.mjs, which is reserved in this card and collides with #245. Moved to LIB-3c ("PQ-H7 builds twice from fresh spec imports"). node.mjs's H7 lines are unchanged here.
