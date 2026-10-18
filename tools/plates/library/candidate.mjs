@@ -48,9 +48,18 @@ export function researchOf(howto, root = ROOT) {
   return Object.fromEntries(['plateFacts', 'tempo', 'topFault'].filter(k => k in c).map(k => [k, c[k]]));
 }
 
-export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = rows(root) } = {}) {
+/** D-LIB9-AUTHORQA: authoring-time QA of a row still in drawing or review. `authoring: true` returns the same candidate
+ *  with exemptions [] and reads no pin; it is refused at stage approved-plate or shipped. The generator, LIB-4b's PQH rows
+ *  and LIB-4c never pass it. */
+export const AUTHORING_REFUSED = ['approved-plate', 'shipped'];
+/** The How-to source of a row in the injected `all`: registry sourceOf's rule for a library row, applied to `all`.
+ *  (registry.mjs is an input of every generated file, so it is not edited: D-LIB9-AUTHORQA asks for an `all` parameter
+ *  on sourceOf; this keeps generate --check unchanged: ruling Q-A, #245 comment 6242372604.) */
+export const howtoOf = (id, root, all) => (all.some(r => r.id === id && r.mode !== 'golden') ? `tools/plates/library/howto/${id}.howto.mjs` : sourceOf(id, root));
+export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = rows(root), authoring = false } = {}) {
   const row = all.find(r => r.id === id);
   if (!row) throw new Error(`candidate: no registry row for ${id}`);
+  if (authoring && AUTHORING_REFUSED.includes(row.stage)) fail(row, `authoring QA is refused at stage ${row.stage} (D-LIB9-AUTHORQA)`);
   if (typeof platesHtml !== 'string') fail(row, 'no plates page');
   if (row.mode === 'golden') {
     const c = (await candidatesOf(platesHtml, engine)).find(x => x.id === id);
@@ -62,9 +71,9 @@ export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = r
   if (!plate) fail(row, `card-${row.chromeId} is not in its plates page`);
   if (!row.view) fail(row, 'no census view (batch row field `view`)');
   if (typeof row.censusRef !== 'string' || !/^[0-9a-f]{7,40}$/.test(row.censusRef)) fail(row, 'its batch file records no census source (`censusRef`)');
-  for (const f of [`tools/plates/${row.src}`, sourceOf(id, root)]) if (!existsSync(join(root, f))) fail(row, `no source file ${f}`);
+  for (const f of [`tools/plates/${row.src}`, howtoOf(id, root, all)]) if (!existsSync(join(root, f))) fail(row, `no source file ${f}`);
   const spec = (await import(pathToFileURL(join(root, 'tools/plates', row.src)).href)).default;
-  const howto = (await import(pathToFileURL(join(root, sourceOf(id, root))).href)).default;
+  const howto = (await import(pathToFileURL(join(root, howtoOf(id, root, all))).href)).default;
   let derivation = null;
   if (row.mode === 'D' || row.mode === 'T') {
     const parent = all.find(r => r.id === row.parent);
@@ -82,7 +91,7 @@ export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = r
   return {
     id, chromeId: row.chromeId, mode: row.mode, spec, plate, article: articlesOf(platesHtml).get(row.chromeId),
     research: researchOf(howto, root), census: { view: row.view }, mistakeFault: plate.mistake.firstKey, derivation,
-    exemptions: pinOf(row, 'plate', root).exemptions ?? [],
+    exemptions: authoring ? [] : pinOf(row, 'plate', root).exemptions ?? [],
   };
 }
 
