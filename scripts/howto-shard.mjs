@@ -49,6 +49,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const plan = JSON.parse(readFileSync(join(dir, 'plan.json'), 'utf8')), rebuild = JSON.parse(readFileSync(join(dir, 'rebuild-proof.json'), 'utf8'));
   const pageShas = {};
   for (const [id, f] of Object.entries(plan.files ?? {})) { try { pageShas[id] = sha256(readFileSync(join(dir, f))); } catch { pageShas[id] = null; } }
+  { const tf = join(ROOT, 'tools/plates/library/ci/times.json'), tt = JSON.parse(readFileSync(tf, 'utf8')); tt.default += 1; writeFileSync(tf, `${JSON.stringify(tt, null, 1)}\n`); console.log('C12 seed 2: times.json default', tt.default); }
   const { problems, hash } = inputProblems({ plan, rebuild, job, times: readTimes(ROOT), pages: pageShas });
   const ids = idsOfShard(plan, k);
   const sha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim();
