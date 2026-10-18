@@ -156,6 +156,11 @@
           "source": "bloomquist2013",
           "text": "the main finding was that DS training resulted in superior increases in front thigh muscle CSA (4-7 %) compared to SS training",
           "where": "abstract"
+        },
+        {
+          "source": "bloomquist2013",
+          "text": "Male students (n = 17) were randomly assigned to 12 weeks of progressive squat training (repetition matched, repetition maximum sets)",
+          "where": "abstract"
         }
       ]
     },
@@ -262,6 +267,16 @@
           "source": "fry2003",
           "text": "appropriate joint loading during this exercise may require the knees to move slightly past the toes.",
           "where": "abstract, practical applications"
+        },
+        {
+          "source": "fry2003",
+          "text": "Seven weight-trained men (mean +/- SD; age = 27.9 +/- 5.2 years) were videotaped while performing 2 variations of parallel barbell squats (barbell load = body weight).",
+          "where": "abstract"
+        },
+        {
+          "source": "fry2003",
+          "text": "For the unrestricted squat, knee torque (N.m; mean +/- SD) = 150.1 +/- 50.8 and hip torque = 28.2 +/- 65.0. For the restricted squat, knee torque = 117.3 +/- 34.2 and hip torque = 302.7 +/- 71.2.",
+          "where": "abstract"
         }
       ]
     },
@@ -290,7 +305,7 @@
     },
     {
       "id": "c14",
-      "text": "Have a spotter for heavy squats whenever possible.",
+      "text": "Have a spotter for heavy squats whenever possible; a spotter can help if you struggle with the lift, reducing the need to bail.",
       "tags": [
         "CONSENSUS"
       ],
@@ -302,12 +317,17 @@
           "source": "rep-fail",
           "text": "Whenever possible, have a spotter when performing heavy squats.",
           "where": "The Importance of Spotters and Safeties"
+        },
+        {
+          "source": "rep-fail",
+          "text": "A spotter can assist in case you struggle with the lift, reducing the need to bail entirely.",
+          "where": "The Importance of Spotters and Safeties"
         }
       ]
     },
     {
       "id": "c15",
-      "text": "Way out: if you must bail a back squat, push the bar backward off the shoulders while moving the body forward so it falls onto the safety bars, and practise this with light weights first.",
+      "text": "Way out: if you must bail a back squat on your own, without a spotter, push the bar backward off the shoulders while moving the body forward so it falls onto the safety bars, and practise this with light weights first.",
       "tags": [
         "CONSENSUS"
       ],
@@ -319,6 +339,11 @@
           "source": "rep-fail",
           "text": "If you must bail, push the bar backward off your shoulders while moving your body forward. This will let the bar fall onto the safety bars without hitting you. Practice this movement with lighter weights to get comfortable with the process.",
           "where": "How to Safely Bail from a Squat, 1. How to Bail a Back Squat"
+        },
+        {
+          "source": "rep-fail",
+          "text": "While the best course of action is always to have a spotter and use safety equipment, there are times when you might find yourself in a situation where you need to bail on your own.",
+          "where": "Introduction, before The Importance of Spotters and Safeties"
         }
       ]
     },
@@ -489,7 +514,7 @@
     },
     {
       "id": "c23",
-      "text": "In the squat the hands only stop the bar rolling down the back; the back should carry the load. A coach source (written for the low-bar squat) links supporting the bar with the hands, wrists or elbows to inner-elbow tendinitis.",
+      "text": "In the squat the hands only stop the bar rolling down the back; the back should carry the load. A coach source (written for the low-bar squat) links supporting the bar with the hands, wrists or elbows to inner-elbow tendinitis, and says that when the back bears the load there is less chance of wrist, shoulder or elbow pain.",
       "tags": [
         "CONSENSUS",
         "MECH"
@@ -506,6 +531,11 @@
         {
           "source": "barbell-logic-squat-grip",
           "text": "if a lifter is supporting the bar with their hands, wrists, or elbows, they develop tendinitis, specifically tendinitis in the medial epicondyle of the elbow.",
+          "where": "article text"
+        },
+        {
+          "source": "barbell-logic-squat-grip",
+          "text": "If the back bears the load of the bar, there’s less chance of developing wrist, shoulder or elbow pain from squatting.",
           "where": "article text"
         }
       ]
@@ -558,7 +588,7 @@
     },
     {
       "id": "c26",
-      "text": "Tempo: no source read gives seconds for a novice back squat. The position stand gives 1-2 s up and 1-2 s down for intermediate to advanced heavy strength training (LR-15), and in a lab study one 8-RM parallel back-squat rep took about 3.3 to 3.6 s in all. The plate's 2 s down and 2 s up is a drawing convention taken from the top of the 1-2 s range, not a novice recommendation.",
+      "text": "Tempo: no source read gives seconds for a novice back squat. The position stand gives 1-2 s up and 1-2 s down for intermediate to advanced heavy strength training (LR-15). A lab study of 8-RM parallel back squats compared reps with and without a weight-belt: reps with the belt were generally faster, especially the later reps (3.34 vs 3.56 s); it is a belt comparison, not a tempo source. The plate's 2 s down and 2 s up is a drawing convention taken from the top of the 1-2 s range, not a novice recommendation.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -575,12 +605,17 @@
         },
         {
           "source": "acsm2009",
-          "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
           "where": "abstract"
         },
         {
           "source": "lander1992",
           "text": "WB repetitions were generally performed faster than WOB repetitions, especially by the later repetitions (3.34 vs 3.56 s).",
+          "where": "abstract"
+        },
+        {
+          "source": "lander1992",
+          "text": "multiple repetitions of the parallel back squat exercise. Five subjects were filmed (50 fps) as they performed eight consecutive trials at each of two weight-belt conditions [with belt = WB, without belt = WOB] in random order at their eight-repetition maximum effort.",
           "where": "abstract"
         }
       ]
@@ -625,7 +660,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-17"
+      "checked": "2026-10-18"
     },
     {
       "id": "barbell-logic-squat-grip",
@@ -768,7 +803,8 @@
         "c10",
         "c5"
       ],
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a squat fault (c25's \"most common\" is weights dropping on lifters across all training, not a technique fault). Back rounding (c10) and holding the bar up with the hands (c23) each have one harm source; back rounding is sourced for this lift directly, c23 is applied from the low-bar squat (MECH). Scan (2026-10-18): Barbell Logic's \"addresses common issues such as overextended wrists, elbow flare and more\" is a list sentence, not a frequency word, and names neither ranked fault; the overextended wrist it points to comes from wrapped thumbs (c24), a grip choice, which is not a candidate. Hackett's \"resistance trainers are often advised to avoid the VM\" (c18) is about advice on breath-holding in all resistance training. Kerr's \"most commonly injured body parts\" (c25) and rep-fail's safeties that \"help you avoid injuries\" (c13) are about all weight training and equipment. None counts."
     },
     "tells": [
       {
@@ -963,10 +999,7 @@
         "where": "Wrists or the inside of the elbows",
         "means": "The fault to check: the hands holding the bar up instead of the back.",
         "fix": "Let your back carry the bar; your hands only stop it rolling.",
-        "claim": [
-          "c23",
-          "c24"
-        ],
+        "claim": "c23",
         "redFlag": "wrist"
       }
     ]
@@ -984,7 +1017,7 @@
       ]
     },
     {
-      "risk": "Holding your breath under heavy load raises blood pressure; whether that harms healthy lifters is not confirmed.",
+      "risk": "Holding your breath under heavy load raises blood pressure.",
       "claim": "c18"
     }
   ],
@@ -1066,7 +1099,7 @@
   },
   "tierA": {
     "wayOut": {
-      "text": "Safeties just below your lowest depth, and a spotter for heavy sets when you can. To bail, push the bar backward off your shoulders while you move your body forward, so it falls onto the safeties. Practise with light weight first.",
+      "text": "Safeties just below your lowest depth: if you can't finish the rep, lower the bar onto them. A spotter for heavy sets when you can, who can help if you struggle. On your own and must bail? Push the bar backward off your shoulders while you move your body forward, so it falls onto the safeties. Practise with light weight first.",
       "claims": [
         "c13",
         "c14",
@@ -1077,14 +1110,17 @@
   "anchorSource": "hk-squat",
   "gaps": [
     "Tier A: no source read describes walking the bar back into the hooks (the rerack); left out, not invented.",
-    "Tier A: bar path clear of the neck is sourced only as bar placement (behind the neck across the top of the back, on the trapezius across the rear deltoids: c1, c2) and the backward bail (c15); no source read names the wrong position of the bar on the neck itself, so the bar-on-back zoom shows the right position only (wrong: null, LR-25)."
+    "Tier A: bar path clear of the neck is sourced only as bar placement (behind the neck across the top of the back, on the trapezius across the rear deltoids: c1, c2) and the backward bail (c15); no source read names the wrong position of the bar on the neck itself, so the bar-on-back zoom shows the right position only (wrong: null, LR-25).",
+    "Tier A breathing (content.md 5.2, 2026-10-18): no source read supports the squat's approved \"High blood pressure? Don't hold your breath long.\" pattern. Hackett 2013 (abstract) says only that lifters are often advised to avoid the breath-hold because of possible vascular events, and that its health risks remain unconfirmed; it names no condition and no time limit, and the NSCA summary gives no limit. Left out, not invented; risks[2] states only the sourced rise in blood pressure (c18), and the unsourced 'healthy lifters' scope was dropped."
   ],
   "notes": [
     "Fact 1 (knee bend): start 0 degrees and deep end 120 degrees are from the training study's deep-squat range (c7); the coaching depth line is hips below the knees (c6). No source gives the knee angle at the exact point where the hips pass the knees.",
-    "Tempo (fact 2): c26 is a drawing convention under LR-15 (WEAK). The measured 8-RM rep took about 3.3 to 3.6 s in all (c26), shorter than the 4 s the plate draws; open question for the supervisor.",
+    "Tempo (fact 2): c26 is a named drawing convention under LR-15 and D-W2-TEMPO (WEAK). Lander's 3.34 and 3.56 s (c26) are the with-belt and no-belt rep times of 5 lifters at their 8-RM, the gap widest in the later reps; they compare belts and do not set or test the plate's 2 s down, 2 s up.",
     "Mistake (fact 3): back rounding is the fault the technique source names as injurious and that the side view can draw; no source ranks back-squat faults by frequency.",
     "The card describes the high-bar back squat (c2, c22). The barbell-logic page is written for the low-bar squat; its lines (c23, c24) are tagged MECH where applied to the high-bar squat.",
     "ACE answers 403 to curl with the plain 'Mozilla/5.0' agent; a full browser user-agent string gets the page (200). The fetcher may need the same.",
-    "Breathing has two sourced lines: breathe out through the sticking point (c17), and a brief breath-hold under heavy load, which experienced lifters use and which raises blood pressure (c17, c18). The shown breathing line uses only the first."
+    "Breathing has two sourced lines: breathe out through the sticking point (c17), and a brief breath-hold under heavy load, which experienced lifters use and which raises blood pressure (c17, c18). The shown breathing line uses only the first.",
+    "2026-10-18 (W2-16): the tier-A way out now follows rep-fail's order. Lower the bar onto the safeties when you can't finish (c13). A spotter can help if you struggle (c14). The backward bail is for when you must bail on your own (c15; the source's intro sets bailing apart from having a spotter). No source read says where a back-squat spotter stands.",
+    "2026-10-18 (W2-30): feel row 4 (wrists or the inside of the elbows) is backed by c23 alone. c23 now carries the barbell-logic page's closing line, 'If the back bears the load of the bar, there’s less chance of developing wrist, shoulder or elbow pain from squatting.', re-read word for word by curl on 2026-10-18. c24 (wrapped thumbs overextending the wrist) is a different wrist fault and the sources disagree on it (grip.thumb), so it stays in grip only and is not cited on the row."
   ]
 }

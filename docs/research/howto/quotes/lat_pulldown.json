@@ -212,7 +212,14 @@
     {
       "claim": "c11",
       "source": "padovan2024",
-      "quote": "The front-LPD appears to provide overall greater excitation in the prime movers.",
+      "quote": "During the descending phase, the front-LPD showed superior excitation of the latissimus dorsi (ES = 0.97) and the pectoralis major (ES = 1.17), while in the ascending phase, the back-LPD exhibited superior excitation of the latissimus dorsi (ES = 0.63)",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "sperandei2009",
+      "quote": "For LD, there was no difference between techniques.",
       "status": "verbatim",
       "closest": null
     },

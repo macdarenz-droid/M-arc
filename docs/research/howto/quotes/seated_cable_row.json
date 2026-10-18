@@ -34,7 +34,7 @@
     },
     {
       "id": "deabreu2023",
-      "access": "full",
+      "access": "abstract",
       "fixes": null
     },
     {
@@ -277,6 +277,13 @@
       "claim": "c18",
       "source": "nsca-low-row",
       "quote": "After the set is completed, flex the knees and hips to reach forward and return the weight to its resting position.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c19",
+      "source": "nsca-low-row",
+      "quote": "In this position, the weight to be lifted will be suspended above the rest of the stack.",
       "status": "verbatim",
       "closest": null
     }

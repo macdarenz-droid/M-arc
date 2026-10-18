@@ -182,6 +182,13 @@
       "closest": null
     },
     {
+      "claim": "c6",
+      "source": "larsen2025",
+      "quote": "Twenty-three participants (training age: 7.2 ± 3.5 years) completed a within-participant design, performing four sets of unilateral leg presses to momentary failure twice weekly for 8 weeks.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
       "claim": "c7",
       "source": "yessis",
       "quote": "Leg press machines commonly cause low back injury because of the rounding of the back when the knees are close to the chest.",
@@ -315,6 +322,20 @@
       "closest": null
     },
     {
+      "claim": "c14",
+      "source": "macdougall1985",
+      "quote": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "macdougall1985",
+      "quote": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
       "claim": "c15",
       "source": "martinfuentes2020",
       "quote": "controlled velocity (2″ eccentric-2″ concentric)",
@@ -359,14 +380,14 @@
     {
       "claim": "c16",
       "source": "nasm-leg-press",
-      "quote": "Quadriceps -- primary mover for knee extension and leg pressing power",
+      "quote": "Primary Muscles: Quadriceps -- primary mover for knee extension and leg pressing power Glutes -- assist in hip extension and provide pressing power",
       "status": "verbatim",
       "closest": null
     },
     {
       "claim": "c16",
       "source": "nasm-leg-press",
-      "quote": "Glutes -- assist in hip extension and provide pressing power",
+      "quote": "Secondary Muscles: Hamstrings Hip Adductors Core Stabilizers",
       "status": "verbatim",
       "closest": null
     },
@@ -381,6 +402,13 @@
       "claim": "c17",
       "source": "kinoshita2026",
       "quote": "Muscle volumes of the individual and whole QF significantly increased in both conditions ( P ≤ 0.026), except for the rectus femoris in the LP condition ( P = 0.379).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c17",
+      "source": "kinoshita2026",
+      "quote": "Seventeen untrained adults performed KE with one leg and LP with the contralateral leg at 70% of one-repetition maximum, 10 reps/set, 5 sets/session, 2 sessions/week for 12 wk.",
       "status": "verbatim",
       "closest": null
     },
@@ -402,6 +430,13 @@
       "claim": "c19",
       "source": "dasilva2008",
       "quote": "the rectus femoris and gastrocnemius were more active during the LP45 and LPL than the LPH.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c19",
+      "source": "dasilva2008",
+      "quote": "Fourteen women performed 3 LP exercises: 45 degrees LP (LP45), LP high (LPH), and LP low (LPL) at 40% and 80% of the 1 repetition maximum.",
       "status": "verbatim",
       "closest": null
     },
@@ -465,6 +500,13 @@
       "claim": "c24",
       "source": "nasm-leg-press",
       "quote": "Maintain tension throughout the movement and avoid jerky or uncontrolled descent.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c25",
+      "source": "ace-leg-press",
+      "quote": "Pause momentarily, then slowly return to your starting position by flexing (bending) the hips and knees, and allowing the resistance plate to move towards you in a slow, controlled manner.",
       "status": "verbatim",
       "closest": null
     }

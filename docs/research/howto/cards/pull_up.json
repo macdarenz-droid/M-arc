@@ -119,6 +119,11 @@
           "source": "youdas2010",
           "text": "The mean absolute elbow joint range of motion was 93.4 ± 14.6°, 100.6 ± 14.5°, and 99.8 ± 11.7° for the pull-up, chin-up, and rotational exercise using the Perfect·Pullup™ twisting handles, respectively.",
           "where": "abstract"
+        },
+        {
+          "source": "youdas2010",
+          "text": "Twenty-one men (24.9 ± 2.4 years) and 4 women (23.5 ± 1 years) volunteered to participate.",
+          "where": "abstract"
         }
       ]
     },
@@ -331,7 +336,7 @@
     },
     {
       "id": "c17",
-      "text": "The wide-grip pull-up showed less shoulder-blade movement with the arm at 90 degrees out to the side and 45 degrees turned out; the authors link wide (and reverse) pull-ups to higher impingement risk.",
+      "text": "The wide-grip pull-up showed a smaller range of shoulder-blade protraction and retraction (sliding forward and back), and the arm also reached 90 degrees out to the side with 45 degrees turned out; the authors link wide (and reverse) pull-ups to higher impingement risk.",
       "tags": [
         "MECH"
       ],
@@ -562,8 +567,8 @@
     "view": "side",
     "viewWhy": "census",
     "equipment": "Fixed overhead pull-up bar and floor line. Feet clear the floor in the full hang (bar height itself is not sourced; drawing convention).",
-    "start": "Full hang: elbows completely extended, shoulders fully open (c4, c1); palms facing forward, hands just outside shoulder width (c1); body braced and slightly hollow, not swinging (c9); shoulder blades set down and back before the arms bend (c8).",
-    "end": "Chin above the bar (c5); elbows bent through the measured range, a mean of 93.4 ± 14.6 degrees from the full hang in a lab sample (c6); upper back extended, shoulder blades squeezed back and down (c5, c23); head level, no reaching with the chin (c7).",
+    "start": "Full hang: elbows completely extended, shoulders fully open (c4, c1); palms facing forward, hands just outside shoulder width (c1); body braced and slightly hollow, not swinging (c9).",
+    "end": "Chin above the bar (c5); upper back extended, shoulder blades squeezed back and down (c5, c23); head level, no reaching with the chin (c7).",
     "checkpoints": [
       {
         "label": "Shoulders set",
@@ -582,13 +587,14 @@
       }
     ],
     "mistake": {
-      "what": "Kipping: the body swings and the legs kick to throw the chin over the bar.",
+      "what": "Kipping: the body swings, using momentum to get the chin over the bar.",
       "why": "NASM lists kipping and momentum first among the common faults on strict-strength work (c10) and asks for a braced, slightly hollow body to prevent swing (c9). How often it happens is not measured.",
       "claim": [
         "c10",
         "c9"
       ],
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for a pull-up fault (Catalyst's \"natural tendency\" to round the back near the bar, c23, is not one under LR-31), and no quote ties one of NASM's listed faults to harm. Kipping and momentum come first in NASM's common-faults list (c10); NASM's \"Discourage the common faults\" is a list sentence, not a ranking. Scan (2026-10-18): Prinold's \"Avoiding impingement risk with training changes\" ties grip choices (c17) and the overhead arm position itself (c16) to impingement risk, not a technique fault; NASM's \"progress gradually to avoid overuse (like elbow tendon irritation)\" (c20) is about progression and load; Kolber's \"one of the most prevalent regions of injury\" (c19) covers all resistance training. None counts."
     },
     "tells": [
       {
@@ -682,7 +688,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Kipping: swinging and kicking to get the chin over the bar.",
+      "mistake": "Kipping: swinging and using momentum to get the chin over the bar.",
       "fix": "Brace slightly hollow and keep the body still. If you cannot finish strict reps, use a band, the assisted machine or your feet on a box, or do slow lowering-only reps.",
       "claim": [
         "c10",
@@ -742,7 +748,7 @@
       {
         "where": "Shoulder",
         "means": "Arms high overhead narrow the space under the shoulder roof; a wide grip adds a pattern linked to pinching there.",
-        "fix": "Bring your hands in to just outside shoulder width. If the pain persists, do not train through it.",
+        "fix": "Bring your hands in to just outside shoulder width. Don't train through the pain.",
         "claim": [
           "c16",
           "c17",
@@ -754,7 +760,7 @@
       {
         "where": "Elbow",
         "means": "Too much pulling, too soon, can irritate the elbow tendons.",
-        "fix": "Build up gradually. If the pain persists, do not train through it.",
+        "fix": "Build up gradually. Don't train through the pain.",
         "claim": "c20",
         "redFlag": "elbow"
       }
@@ -815,7 +821,7 @@
       "key": "body line",
       "kind": "posture",
       "right": "Body braced, slightly hollow and still under the bar.",
-      "wrong": "Body swinging, legs kicking (kipping).",
+      "wrong": "Body swinging (kipping).",
       "claim": [
         "c9",
         "c10"
@@ -850,10 +856,13 @@
     "wayOut": null
   },
   "notes": [
-    "Elbow positions: the start (elbows completely extended) and the top (chin above the bar) are coach words (c4, c5). The only number is Youdas 2010: the mean elbow range of motion, 93.4 ± 14.6 degrees (c6). No source gives the elbow angle at the top; the plate draws the range, not a sourced top angle.",
+    "Elbow positions: the start (elbows completely extended) and the top (chin above the bar) are coach words (c4, c5). The only number is Youdas 2010: the mean elbow range of motion, 93.4 ± 14.6 degrees (c6). It is a range, not a pose: the abstract gives no start or end angle and does not say the range starts from a full hang, so the plate does not use it. No source gives the elbow angle at the top. The plate draws the top from c5, c23 and c7 (chin above the bar, upper back extended, head level), and the elbow bend that puts the chin there is a drawing convention, not a sourced angle.",
     "Tempo: no source gives seconds for the pull-up. ACSM 2009 1-2 s is for intermediate to advanced heavy training (LR-15), so c11 is WEAK and the plate numbers are a drawing convention.",
     "Grip hand contact (where the bar sits in the palm) and bar height are not sourced on this card; drawn as conventions (LR-4).",
     "Breath: no pull-up source here gives a breathing line; none shown (not a heavy two-leg lift).",
-    "Leads not used: Dickie 2017 and Snarr 2017 (grip and handle types give similar EMG), Urbanczyk 2020 (modelled forces by grip), Di Fonza 2026 (review). None is needed for a shown line."
+    "Leads not used: Dickie 2017 and Snarr 2017 (grip and handle types give similar EMG), Urbanczyk 2020 (modelled forces by grip), Di Fonza 2026 (review). None is needed for a shown line.",
+    "2026-10-18 (W2-22): The shoulder and elbow feel fixes drop 'If the pain persists'. NASM (c20) gives no time for 'persists', so the row gives none (LR-28, D-LR23-9). The research-based time comes from the linked shoulder and elbow boxes. 'Don't train through the pain' is from c20 ('rather than training through it'). 'Stop the set' is not added because no pull_up source says to stop (LR-6).",
+    "Start pose (D-LIB9-FACTPOSE, W2-32, 2026-10-18): the plate draws the open full hang as the start, elbows completely extended and shoulders fully open (c1, c4; c4's quote returns to 'fully open again' at the bottom, and catalyst-pullup's Notes, re-read 2026-10-18, ask that each rep start from a genuinely open shoulder position). Setting the shoulder blades down and back (c8) is the first move of the pull, 'before the arms take over', so it is drawn as the first phase, shown by the 'Shoulders set' checkpoint and the shoulders zoom, not as part of the start pose.",
+    "2026-10-18 (W2-33): c17's abstract sentence is ambiguous. The full text (PMC4916995, Discussion and Conclusion) treats the two wide-grip findings separately: \"a reduced range of ScT pro/retraction with a similar range of HT plane of elevation, and the achievement of 90° of arm abduction with 45° external rotation\". prinold2016 access stays \"abstract\" unless the full text is cited as a quote."
   ]
 }

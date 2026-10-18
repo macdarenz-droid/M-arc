@@ -179,6 +179,11 @@
           "source": "muyor2023",
           "text": "Twenty physically active adults performed a set of 8 repetitions at 60% of the one repetition maximum.",
           "where": "Abstract"
+        },
+        {
+          "source": "muyor2023",
+          "text": "This velocity was controlled by a KORG MA−1 metronome",
+          "where": "Procedures"
         }
       ]
     },
@@ -311,6 +316,24 @@
           "where": "Abstract, conclusion"
         }
       ]
+    },
+    {
+      "id": "c16",
+      "text": "Tempo: ACE asks for a momentary pause at full press and gives no seconds, so the 1 s pause on the plate is a drawing convention.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-chest-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-chest-press",
+          "text": "Pause momentarily then gently allow your elbows to flex (bend) in a slow, controlled manner while returning the bar back towards the starting position.",
+          "where": "Step 3"
+        }
+      ]
     }
   ],
   "sources": [
@@ -395,7 +418,8 @@
       "what": "Shoulder blades round forward and come off the backrest at the end of the press.",
       "why": "ACE says individuals very frequently press to this point and that it makes the muscles holding the shoulder blades to the ribcage less stable. How often it happens is not measured.",
       "claim": "c8",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: ACE says individuals \"very frequently\" press until the shoulder blades round forward off the backrest (c8). Nance's \"many exercise disciplines\" (c14) is about wrist loading in other exercises. Scan (2026-10-18): Nance's \"Occult dorsal ganglion cysts were the most common sources of pathology\" (c14) is about wrist findings in patients, not how often a pressing fault happens."
     },
     "tells": [
       {
@@ -410,12 +434,12 @@
     "tempo": {
       "up": 2,
       "down": 2,
-      "pause": null,
+      "pause": 1,
       "claim": [
         "c9",
-        "c7"
+        "c16"
       ],
-      "text": "Lab pacing on this machine: 2 s pressing, 2 s lowering (study protocol, WEAK). ACE asks for a momentary pause at full press and gives no seconds, so pause is null."
+      "text": "Lab pacing on this machine: 2 s pressing, 2 s lowering (study protocol, WEAK). ACE asks for a momentary pause at full press and gives no seconds; the 1 s pause is a drawing convention (c16; LR-33)."
     },
     "variantLine": null
   },
@@ -609,7 +633,7 @@
   },
   "anchorSource": "ace-chest-press",
   "notes": [
-    "Tempo: the only seconds for this exercise are the lab pacing in Muyor 2023 (c9, WEAK); no novice-level source giving seconds was found. Pause is null: ACE says \"pause momentarily\" with no seconds (c7).",
+    "Tempo: the only seconds for this exercise are the lab pacing in Muyor 2023 (c9, WEAK); no novice-level source giving seconds was found. The 1 s pause is a drawing convention: ACE says \"pause momentarily\" with no seconds (c16; LR-33).",
     "Muyor 2023 describes thumbs \"in a hook grip\" on the machine; the card follows ACE's full grip with thumbs around the handles (c2).",
     "Not sourced, so left out: a start elbow angle, a handle width to choose, an elbow-lockout injury mechanism, and a seat-too-low fault.",
     "Golden-B sources weiss1995, fees1998, calatayud2016, nhs-wrist-pain and nhs-elbow-pain are not cited: Weiss is a splint/nerve-pressure study, the Fees abstract does not state a press-depth limit, Calatayud repeats Snyder's bench-press point, and the NHS pages belong to the shared red-flag boxes."

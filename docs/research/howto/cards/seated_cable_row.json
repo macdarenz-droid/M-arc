@@ -413,6 +413,23 @@
           "where": "Low Pulley Seated Row, Forward Movement Phase"
         }
       ]
+    },
+    {
+      "id": "c19",
+      "text": "In the start position (sitting upright, elbows straight), the weight being lifted hangs clear of the rest of the stack.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nsca-low-row"
+      ],
+      "quotes": [
+        {
+          "source": "nsca-low-row",
+          "text": "In this position, the weight to be lifted will be suspended above the rest of the stack.",
+          "where": "Low Pulley Seated Row, Starting Position"
+        }
+      ]
     }
   ],
   "sources": [
@@ -483,7 +500,7 @@
       "kind": "peer-reviewed",
       "year": 2023,
       "pmid": null,
-      "access": "full",
+      "access": "abstract",
       "checked": "2026-10-17"
     },
     {
@@ -510,7 +527,7 @@
   "plate": {
     "view": "side",
     "viewWhy": "census",
-    "equipment": "Low cable with a close-grip V-handle, a long low seat or bench, and a foot plate the feet press against (c1). The weight stack hangs clear of the rest once seated upright (source text: the weight is suspended above the rest of the stack).",
+    "equipment": "Low cable with a close-grip V-handle, a long low seat or bench, and a foot plate the feet press against (c1). In the upright start position the weight being lifted hangs clear of the rest of the stack (c19).",
     "start": "Seated, feet on the plate about hip width, knees slightly bent (c1); torso upright, perpendicular to the floor (c2); elbows fully straight, arms about parallel to the floor, so the upper arm is at about a right angle to the trunk (c2, geometry); shoulders down and back (c11).",
     "end": "Torso still upright, knees unchanged (c4); handle at the stomach (c3); elbows close to the sides, just past them, so the upper arm ends just behind the trunk line (c3); no angle sourced.",
     "checkpoints": [
@@ -543,7 +560,8 @@
         "c6",
         "c9"
       ],
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a row fault (c15's \"often\" is upper-trapezius activity across resistance exercises). Two NSCA-listed errors have stated harm, one source each, both applied by reasoning: leaning back (c9, avoiding it reduces low-back stress) and bending forward on the return (c16). So the NSCA list order decides: jerking or leaning back is first (c6). Scan (2026-10-18): Callaghan's \"more frequent and more severe disc injuries\" (c16) is about the size of the compressive load, not how often lifters make a fault, so it is not a frequency word."
     },
     "tells": [
       {
@@ -567,7 +585,7 @@
       "down": 2,
       "pause": 1,
       "claim": "c12",
-      "text": "Drawing convention: 2 s pull, brief pause, 2 s slow return. No source gives seconds for this row; ACSM 1-2 s is stated for intermediate to advanced training (LR-15)."
+      "text": "Drawing convention: 2 s pull, 1 s pause for ACE's \"pause momentarily\", 2 s slow return. No source gives seconds for this row; ACSM 1-2 s is stated for intermediate to advanced training (LR-15)."
     },
     "variantLine": null
   },
@@ -704,7 +722,7 @@
       {
         "where": "Lower back",
         "means": "Jerking or leaning back to pull, or bending forward on the way back out.",
-        "fix": "Keep your torso upright and still. Use a weight you can pull without rocking.",
+        "fix": "Keep your torso upright and still.",
         "claim": [
           "c6",
           "c8",
@@ -746,7 +764,7 @@
       "claim": "c16"
     },
     {
-      "risk": "Shoulder: when the tops of the shoulders take over, strain on the shoulder may rise; shown mainly in overhead and throwing athletes.",
+      "risk": "Shoulder: when the tops of the shoulders take over, strain on the shoulder may rise; this is linked to overhead and throwing sports.",
       "claim": "c15"
     }
   ],
@@ -802,7 +820,9 @@
     "Measured joint (shoulder angle): no source gives degrees. Start = trunk perpendicular to the floor plus arms about parallel to the floor (c2), so about a right angle is geometry, stated as such. End = elbows close to and just past the sides (c3, partly machine-row text, MECH).",
     "Tempo: no source gives seconds for the seated cable row or for novices; 2-1-2 is a drawing convention (c12, WEAK), following chin_up c8.",
     "Anchor: the UNMC transcript is short but cable-row specific and read in full. ACE is the chest-pad machine row; its claims carry MECH. The NSCA text is read through a study flashcard set (secondary, summary).",
-    "de Abreu 2023: read from the journal page abstract (https://journal.iusca.org/index.php/Journal/article/view/190); the DOI URL is the registry url. It has no PMID.",
-    "Ronai 2019, Fenwick 2009, Saeterbakken 2015, Cronin 2007, Fujita 2020, Padovan 2025 (scapular positions) and Di Fonza 2026 were read (abstracts) but not cited: none states a fact this card needs that the cited sources do not. Padovan 2025 (narrow vs wide grip, doi only) was not fetched."
+    "de Abreu 2023: read from the journal page abstract (https://journal.iusca.org/index.php/Journal/article/view/190); the DOI URL is the registry url. It has no PMID. Access is abstract: a free full-text PDF exists (CC BY 4.0) but it was not read for this card, and c14 rests on the abstract only (2026-10-18).",
+    "Ronai 2019, Fenwick 2009, Saeterbakken 2015, Cronin 2007, Fujita 2020, Padovan 2025 (scapular positions) and Di Fonza 2026 were read (abstracts) but not cited: none states a fact this card needs that the cited sources do not. Padovan 2025 (narrow vs wide grip, doi only) was not fetched.",
+    "c19 quote re-read 2026-10-18 by curl from the flashcard page (https://brainscape.com/flashcards/exercise-techniques-3136125/packs/4953113), under Low Pulley Seated Row, Starting Position; word for word.",
+    "2026-10-18 (W2-35): removed the load line \"Use a weight you can pull without rocking.\" from feel.rows[0].fix. No cited source (unmc-cable-row, nsca-low-row, ace-seated-row) gives load advice for this row. Tier C, so the content.md 5.2 load wording (g1 R2, tier A only) does not apply. No sourced load line found."
   ]
 }

@@ -179,6 +179,16 @@
           "source": "coratella2020",
           "text": "Ten competitive bodybuilders performed the exercises.",
           "where": "Abstract"
+        },
+        {
+          "source": "coratella2020",
+          "text": "each exercise was performed seated with a load that allowed eight repetitions (i.e., 8-RM).",
+          "where": "2.4 Exercise Protocols"
+        },
+        {
+          "source": "coratella2020",
+          "text": "A metronome was used to pace the intended duty cycle",
+          "where": "2.4 Exercise Protocols"
         }
       ]
     },
@@ -358,7 +368,8 @@
       "what": "Raising the arms above shoulder height (beyond 90°).",
       "why": "Kolber 2014 linked lateral raises above 90° with signs of shoulder impingement in recreational weight-trainers (association, not cause) and advises not going beyond 90°. No source measures how common it is.",
       "claim": "c13",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: no frequency word for a lateral-raise fault (ACE's \"this exercise traditionally positions the arms into internal rotation\" says how the exercise is taught, not how often lifters err). LR-31 step 2: two named faults are tied to harm, raising above 90° (Kolber 2014, signs of shoulder impingement, association only, c13) and arms turned in (ACE: the slight external rotation \"may reduce potential impingement\", c5). Neither is on a common-mistakes list; one harm source each; both sourced directly; no list names both. Step 3's count decides: Kolber tells lifters to avoid going beyond 90° (c13). Scan (2026-10-18): Graichen's MRI in healthy volunteers (c14), where at 90 degrees turned in the space \"penetrated the supraspinatus tendon at its most vulnerable part\", measures position, not injury, pain or an injury sign, so it adds no harm source for arms turned in. Andersen's \"may be suitable alternatives to shrugs during rehabilitation of chronic neck muscle pain\" (c12) is about rehab use, not a fault. Step 3 is not tied: no read source tells lifters to avoid turning the arms in."
     },
     "tells": [
       {
