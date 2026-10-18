@@ -181,3 +181,96 @@ describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes nothing before Do 9 and sta
     expect(checkC17(c17Dirs('shared'))).toEqual([expect.stringMatching(/back-box\.mjs: matches/)]);
   });
 });
+
+describe('LIB-5 S6: the built shared modules equal their cards (D-LIB5-SPLIT; foot-bar and selector-pin)', () => {
+  const BUILT: Record<string, string> = { 'selector-pin': 'SELECTOR_PIN', 'foot-bar': 'FOOT_BAR' };
+  let C: any, MV: any, SL: any, shared: any;
+  beforeAll(async () => {
+    [C, MV, SL, shared] = await Promise.all(['tools/plates/library/shared/card.mjs', 'tools/plates/library/shared/moves.mjs',
+      'tools/plates/library/lint/shared-cards.mjs', 'tools/plates/layers/howto/shared.mjs'].map(p => import(/* @vite-ignore */ url(p))));
+  });
+  const card = (k: string) => JSON.parse(readFileSync(join(ROOT, `docs/research/howto/shared/${k}.json`), 'utf8'));
+  /** The export as read straight from the card JSON, independent of moves.mjs. */
+  const expected = (c: any) => {
+    const steps = (l: any[]) => l.map(s => ({ kind: s.kind, text: s.text, claim: s.claim }));
+    return { card: `shared/${c.key}.json`, appliesTo: c.appliesTo, ...(c.steps ? { setup: steps(c.steps) } : {}),
+      ...(c.variants ? { variants: Object.fromEntries(Object.entries(c.variants).map(([v, va]: [string, any]) => [v, { appliesTo: va.appliesTo, setup: steps(va.steps) }])) } : {}) };
+  };
+  /** Every export key path of a move export (steps by position collapsed), for the pinned list. */
+  const keyPaths = (e: any): string[] => [...new Set(Object.entries(e).flatMap(([k, x]: [string, any]) =>
+    k === 'setup' ? [k, ...x.flatMap((s: any) => Object.keys(s).map(f => `${k}[].${f}`))]
+      : k === 'variants' ? Object.entries(x).flatMap(([v, va]) => keyPaths(va).map(p => `${k}.${v}.${p}`)) : [k]))].sort();
+  /** Data fields (card.mjs DATA) among an export's own key paths (a step's keys are pinned above). */
+  const dataKeys = (e: any) => keyPaths(e).filter(p => !p.includes('[]') && C.DATA.includes(p.split('.').pop()!.replace('[]', '')));
+  /** Step refs that do not resolve to a claim whose sources are all in the card's registry. */
+  const refProblems = (c: any, e: any) => [e.setup ?? [], ...Object.values(e.variants ?? {}).map((va: any) => va.setup)].flat()
+    .filter((s: any) => { const cl = SL.claimOf(c, s.claim); return !cl || !cl.sources.length || cl.sources.some((x: string) => !c.sources.some((y: any) => y.id === x)); })
+    .map((s: any) => s.text);
+
+  it('module === card: each export equals its card\'s fields; a drifted string is red', () => {
+    for (const [k, name] of Object.entries(BUILT)) expect([k, MV[name]]).toEqual([k, expected(card(k))]);
+    const drift = structuredClone(MV.FOOT_BAR);
+    drift.variants.pullover.setup[0].text += ' ';
+    expect(drift).not.toEqual(expected(card('foot-bar')));
+  });
+  it('pinned export keys hold no data field; a data key added to an export is red', () => {
+    expect(keyPaths(MV.SELECTOR_PIN)).toEqual(['appliesTo', 'card', 'setup', 'setup[].claim', 'setup[].kind', 'setup[].text']);
+    expect(keyPaths(MV.FOOT_BAR)).toEqual(['appliesTo', 'card', ...['chest-press', 'pullover'].flatMap(v =>
+      ['appliesTo', 'setup', 'setup[].claim', 'setup[].kind', 'setup[].text'].map(p => `variants.${v}.${p}`))].sort());
+    for (const name of Object.values(BUILT)) expect([name, dataKeys(MV[name])]).toEqual([name, []]);
+    expect(dataKeys({ ...MV.SELECTOR_PIN, notes: card('selector-pin').notes })).toEqual(['notes']);
+    expect(dataKeys({ ...MV.FOOT_BAR, variants: { ...MV.FOOT_BAR.variants, pullover: { ...MV.FOOT_BAR.variants.pullover, gaps: [] } } })).toEqual(['variants.pullover.gaps']);
+  });
+  it('every claim ref resolves, with its sources in the card\'s registry; a broken ref is red', () => {
+    for (const [k, name] of Object.entries(BUILT)) expect([k, refProblems(card(k), MV[name])]).toEqual([k, []]);
+    const broken = structuredClone(MV.SELECTOR_PIN);
+    broken.setup[2].claim = 'c9';
+    expect(refProblems(card('selector-pin'), broken)).toEqual([broken.setup[2].text]);
+  });
+  it('every shown field passes golden B\'s lint at setup[] (kind setup, SETUP_MAX_STEPS per sheet); each rule bites', () => {
+    for (const [k, name] of Object.entries(BUILT)) expect([k, SL.sharedShownLint(card(k), MV[name], shared)]).toEqual([k, []]);
+    const c = card('selector-pin'), bad = structuredClone(MV.SELECTOR_PIN), rules = (e: any) => SL.sharedShownLint(c, e, shared).map((x: any) => `${x.path}: ${x.rule}`);
+    bad.setup[0].text = 'Push the pin in; it treats the stack.';
+    expect(rules(bad)).toEqual(['selector-pin: setup[0]: banned: semicolon', 'selector-pin: setup[0]: medical claim (content.md 4)']);
+    const six = { ...MV.SELECTOR_PIN, setup: [...MV.SELECTOR_PIN.setup, { kind: 'safety', text: 'Check the pin again.', claim: 'c1' }] };
+    expect(rules(six)).toEqual(['selector-pin: setup: more than 5 setup steps']);
+    const long = structuredClone(MV.FOOT_BAR);
+    long.variants.pullover.setup[1].text = 'This stops you over-reaching for the start of every single long hard rep.';
+    expect(SL.sharedShownLint(card('foot-bar'), long, shared).map((x: any) => `${x.path}: ${x.rule}`)).toEqual(['foot-bar.variants.pullover: setup[1]: setup > 12 words']);
+  });
+  it('the split throw: one card with two fields on one path throws, naming them (fixture card, D-LIB5-SPLIT 4)', () => {
+    const fx = JSON.parse(readFileSync(join(ROOT, 'tests/howto/fixtures/lib5/split-card.json'), 'utf8'));
+    expect(() => C.splitOf(fx)).toThrow(/^fixture-split: split: handling\.gripLine has gripLine, replacementRule$/);
+    const { replacementRule: _r, ...one } = fx;
+    expect(C.splitOf(one).map((x: any) => x.path)).toEqual(['handling.gripLine']);
+    expect(() => C.splitOf({ ...one, wrist: fx.gripLine, reason: fx.gripLine })).toThrow(/^fixture-split: split: handling\.wrist\.limitText has wrist, reason$/);
+    expect(() => C.splitOf({ ...one, newField: 'x' })).toThrow(/^fixture-split: split: newField is not a ruled field$/);
+    // variants with disjoint ids are separate sheets; a list path holds one entry per field
+    expect(C.splitOf(card('foot-bar')).map((x: any) => `${x.field} ${x.path}`)).toEqual(['variants.chest-press.steps setup[]', 'variants.pullover.steps setup[]']);
+  });
+
+  /** Each whole free-text data value of a card: appliesToWhy, every notes and gaps entry, every data field's .text/.basis. */
+  const dataValues = (c: any, skip: string[] = []) => [
+    ...(c.appliesToWhy ? [['appliesToWhy', c.appliesToWhy]] : []),
+    ...['notes', 'gaps'].flatMap(k => (c[k] ?? []).map((t: string, i: number) => [`${k}[${i}]`, t])),
+    ...C.DATA.flatMap((k: string) => ['text', 'basis'].filter(t => typeof c[k]?.[t] === 'string' && !skip.includes(`${k}.${t}`)).map(t => [`${k}.${t}`, c[k][t]])),
+  ] as [string, string][];
+  const leaks = (vals: [string, string][], files: [string, string][]) => files.flatMap(([p, t]) => vals.filter(([, x]) => t.includes(x)).map(([n]) => `${p}: ${n}`));
+  it('no data value reaches src/** or a generator output (0 hits on 5592280, recorded on #244); a notes string in a generated file is red', async () => {
+    const src = walkFiles(join(ROOT, 'src')).map(f => [f.slice(ROOT.length), readFileSync(f, 'utf8')] as [string, string]);
+    const out = [...(await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render())].map(([p, o]: [string, any]) => [p, o.text] as [string, string]);
+    expect(src.length).toBeGreaterThan(100);
+    expect(out.length).toBeGreaterThan(50);
+    for (const k of Object.keys(BUILT)) {
+      const vals = dataValues(card(k));
+      expect(vals.length).toBeGreaterThan(4);
+      expect([k, leaks(vals, [...src, ...out])]).toEqual([k, []]);
+    }
+    // The cards whose modules wait (D-LIB5-SPLIT 5): checked early; implement.text is an exercise id (question on #244)
+    const waiting = readdirSync(join(ROOT, 'docs/research/howto/shared')).map(f => f.slice(0, -5)).filter(k => k !== 'back-pain-box' && !BUILT[k]);
+    expect(waiting).toHaveLength(16);
+    for (const k of waiting) expect([k, leaks(dataValues(card(k), ['implement.text']), [...src, ...out])]).toEqual([k, []]);
+    const note = card('selector-pin').notes[0], planted = out.map(([p, t], i) => [p, i === 0 ? `${t}\n// ${note}\n` : t] as [string, string]);
+    expect(leaks(dataValues(card('selector-pin')), planted)).toEqual([`${out[0]![0]}: notes[0]`]);
+  }, 300_000);
+});

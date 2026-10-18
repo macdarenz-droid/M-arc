@@ -227,6 +227,56 @@ describe('LIB-5 S7 generator cases: E1\'s row in per-case copies of E1\'s tree (
   }, T);
 });
 
+describe('LIB-5 D-LIB5-FAULTKEYS 4: the family reader over the 8, the shared modules and hand-*.mjs (fixture hand module)', () => {
+  const FX = join(ROOT, 'tests/howto/fixtures/lib5/hands');
+  let FM: any;
+  beforeAll(async () => { FM = await import(/* @vite-ignore */ url('tools/plates/library/lint/family.mjs')); });
+  const eightSrc = async () => FM.eightSources(await Promise.all(EIGHT.map(async id => ({ src: id, M: await howto(id) }))));
+  /** A shared module namespace in the shape LIB-5's hand modules export (PALM_FLAT after D-LIB5-FAULTKEYS). */
+  const SHARED_FX = [{ src: 'fixture-shared.mjs', M: { PALM_FLAT: { faults: [{ key: 'hand-ahead', label: 'Hand ahead', what: 'x' }] }, NOTE: 'no faults' } }];
+  /** A temp copy of the fixture folder with one exact-once replacement in hand-fixture.mjs. */
+  const fixtureWith = (from: string, to: string) => {
+    const d = mkdtempSync(join(tmpdir(), 'lib5-hands-')); temps.push(d);
+    cpSync(FX, d, { recursive: true });
+    const p = join(d, 'hand-fixture.mjs'), t = readFileSync(p, 'utf8');
+    if (t.split(from).length !== 2) throw new Error(`lib5 fixture: ${from} is not in hand-fixture.mjs exactly once`);
+    writeFileSync(p, t.replace(from, to));
+    return d;
+  };
+  it('reads the fixture: 3 hand faults, equal to what VARIANTS exports; counts printed; no label conflict', async () => {
+    const mods = await FM.handModules(FX), eight = await eightSrc();
+    expect(mods.map((m: any) => m.src)).toEqual(['hand-fixture.mjs']);
+    const hands = FM.handSources(mods);
+    expect(hands).toEqual([{ src: 'hand-fixture.mjs', faults: [{ key: 'hand-ahead', label: 'Hand ahead' }, { key: 'cupped-palm', label: 'Palm cupped' }, { key: 'curled', label: 'Wrist curled' }] }]);
+    expect(FM.exportedHandFaults(mods)).toBe(3);
+    const shared = FM.sharedSources(SHARED_FX);
+    expect(shared).toEqual([{ src: 'fixture-shared.mjs#PALM_FLAT', faults: [{ key: 'hand-ahead', label: 'Hand ahead' }] }]);
+    const r = FM.familyCheck({ eight, shared, hands, handMods: mods });
+    console.log(`family reader (fixture): 8 ${r.counts.eight}, shared ${r.counts.shared}, hands ${r.counts.hands}`);
+    expect(r.counts.eight).toBeGreaterThan(0);
+    expect([r.counts.shared, r.counts.hands]).toEqual([1, 3]);
+    expect(r.problems).toEqual([]);
+  });
+  it('mutation: the fixture\'s hand-ahead labelled \'Hands forward\' is red', async () => {
+    const mods = await FM.handModules(fixtureWith("'hand-ahead': { label: 'Hand ahead'", "'hand-ahead': { label: 'Hands forward'"));
+    const r = FM.familyCheck({ eight: await eightSrc(), shared: FM.sharedSources(SHARED_FX), hands: FM.handSources(mods), handMods: mods });
+    expect(r.problems).toEqual([{ path: 'fault hand-ahead', rule: 'one label per fault key (content.md 4, family consistency)', detail: '"Hands forward" (hand-fixture.mjs) vs "Hand ahead" (fixture-shared.mjs#PALM_FLAT)' }]);
+  });
+  it('mutations: the reader returning 0 faults, or dropping one, on the fixture is red; 0 from the 8 or the shared modules is red', async () => {
+    const mods = await FM.handModules(FX), eight = await eightSrc(), shared = FM.sharedSources(SHARED_FX), hands = FM.handSources(mods);
+    const rules = (x: any) => FM.familyCheck({ eight, shared, hands, handMods: mods, ...x }).problems.map((p: any) => `${p.rule}${p.detail ? ` (${p.detail})` : ''}`);
+    expect(rules({ hands: [] })).toEqual(['hand faults read differ from the faults the hand modules export (0 read, 3 exported)', 'the hand modules export faults but none were read']);
+    expect(rules({ hands: [{ ...hands[0], faults: hands[0].faults.slice(1) }] })).toEqual(['hand faults read differ from the faults the hand modules export (2 read, 3 exported)']);
+    expect(rules({ eight: [] })).toEqual(['the 8\'s fault count is 0']);
+    expect(rules({ shared: [] })).toEqual(['the shared modules\' fault count is 0']);
+  });
+  it('on this head: no hand-*.mjs (LIB-7/12 merge after LIB-5, D-LIB5-ORDER), so the hands count is 0 and equals what is exported', async () => {
+    const mods = await FM.handModules();
+    expect(mods).toEqual([]);
+    expect([FM.handSources(mods), FM.exportedHandFaults(mods)]).toEqual([[], 0]);
+  });
+});
+
 describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and C19, with every red-flag box it shows', () => {
   it(`${SHIPPED.length} shipped rows, no finding`, async () => {
     const [{ checkC1 }, { checkC2 }, { checkC3 }, { checkC4 }, { checkC8 }, { checkC16 }, C19] = await Promise.all([

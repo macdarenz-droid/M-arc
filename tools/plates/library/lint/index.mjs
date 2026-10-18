@@ -100,27 +100,10 @@ export const variantLineOf = () => undefined;
 /** The ids among `eightIds` whose exercises.json equipment contains '/' (D-LIB5-VARIANT8). */
 export const eightWithSlash = (eightIds, exercises) => eightIds.filter(id => String(exercises.find(e => e.id === id)?.equipment ?? '').includes('/')).sort();
 
-/** D-LIB5-FAMILY (2): a row that declares inheritance is refused until a ruled comparator exists. `readCard(path)` reads
- *  the card the How-to's research.card names (as candidate.mjs researchOf reads it), or returns null. */
-export function familyRefusal(id, content, readCard) {
-  if (content.extends !== undefined) return `${id}: family: extends: inherited-string map not ruled (D-LIB5-FAMILY)`;
-  const card = typeof content.research?.card === 'string' ? readCard(content.research.card) : null;
-  if (card && card.inherit !== undefined && !(Array.isArray(card.inherit) && card.inherit.length === 0)) return `${id}: family: ${content.research.card}#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`;
-  return null;
-}
 /** The card at a repo-relative path under `root`, or null when it is missing. */
 export const cardReader = (root = ROOT) => p => { try { return JSON.parse(readFileSync(join(root, p), 'utf8')); } catch { return null; } };
 
-/** Rule (a): one label per fault.key across `sources` = [{ src, faults: [{ key, label }] }]. */
-export function familyLabels(sources) {
-  const seen = new Map(), out = [];
-  for (const { src, faults } of sources) for (const f of faults) {
-    const at = seen.get(f.key);
-    if (!at) seen.set(f.key, { label: f.label, src });
-    else if (at.label !== f.label) v(out, `fault ${f.key}`, 'one label per fault key (content.md 4, family consistency)', `"${f.label}" (${src}) vs "${at.label}" (${at.src})`);
-  }
-  return out;
-}
+export { familyLabels, familyRefusal } from './family.mjs';
 
 /** Every library rule for one shipped library row (golden B's own lint included), as [{ path, rule, detail }]. */
 export function lintLibraryRow(M, shared, { extraBoxes = {} } = {}) {
