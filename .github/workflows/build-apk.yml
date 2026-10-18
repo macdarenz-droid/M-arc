@@ -362,36 +362,41 @@ jobs:
               scan(fq, hits[0])
           # Each JSON class is found where Gradle compiles it: the app module, or the plugin module whose
           # projectDir capacitor.settings.gradle sets for ':<pkg>' (cap sync drops the @ and turns the / into -).
+          # Class dirs: javac, Kotlin Gradle plugin (tmp/kotlin-classes) and AGP 9 built-in Kotlin (built_in_kotlinc).
+          # JSON failures are collected, not fatal here, so the older floor and HealthConnect output still prints.
           pj = 'android/app/src/main/assets/capacitor.plugins.json'
+          jerr, entries, modules = [], [], {}
           try: entries = json.load(open(pj, encoding='utf-8'))
-          except (OSError, ValueError) as e: die('%s does not parse: %s' % (pj, e))
-          if not isinstance(entries, list) or not entries: die(pj + ' must be a non-empty list of plugin entries')
+          except (OSError, ValueError) as e: jerr.append('%s does not parse: %s' % (pj, e))
+          if not jerr and (not isinstance(entries, list) or not entries): jerr.append(pj + ' must be a non-empty list of plugin entries'); entries = []
           sg = 'android/capacitor.settings.gradle'
-          if not os.path.isfile(sg): die(sg + ' not found: plugin modules cannot be located')
-          modules = dict(re.findall(r"project\(\s*'(:[^']+)'\s*\)\.projectDir\s*=\s*new File\(\s*'([^']+)'\s*\)", open(sg).read()))
-          found = []
+          if os.path.isfile(sg): modules = dict(re.findall(r"project\(\s*'(:[^']+)'\s*\)\.projectDir\s*=\s*new File\(\s*'([^']+)'\s*\)", open(sg).read()))
+          else: jerr.append(sg + ' not found: plugin modules cannot be located')
+          found, seen = [], set(names)
           for e in entries:
               cp, ep = (e.get('classpath'), e.get('pkg')) if isinstance(e, dict) else (None, None)
-              if not isinstance(cp, str) or not isinstance(ep, str) or not re.fullmatch(r'[A-Za-z_$][\w$]*(\.[A-Za-z_$][\w$]*)+', cp): die('bad entry in %s: %r' % (pj, e))
-              if cp in names: continue
-              names.append(cp)
+              if not isinstance(cp, str) or not isinstance(ep, str) or not re.fullmatch(r'[A-Za-z_$][\w$]*(\.[A-Za-z_$][\w$]*)+', cp): jerr.append('bad entry in %s: %r' % (pj, e)); continue
+              if cp in seen: continue
+              seen.add(cp)
               roots = ['android/app/build']
               mod = modules.get(':' + ep.replace('@', '', 1).replace('/', '-', 1))
               if mod: roots.append(os.path.normpath(os.path.join('android', mod, 'build')))
               rel = cp.replace('.', '/') + '.class'
-              hits = sorted({h for r in roots for sub in ('intermediates/javac/**/', 'tmp/kotlin-classes/**/') for h in glob.glob(glob.escape(r) + '/' + sub + rel, recursive=True)})
-              if not hits: die('compiled class not found for %s (pkg %s) under %s' % (cp, ep, ', '.join(roots)))
+              hits = sorted({h for r in roots for sub in ('intermediates/javac/**/', 'tmp/kotlin-classes/**/', 'intermediates/built_in_kotlinc/**/') for h in glob.glob(glob.escape(r) + '/' + sub + rel, recursive=True)})
+              if not hits: jerr.append('compiled class not found for %s (pkg %s) under %s' % (cp, ep, ', '.join(roots))); continue
+              names.append(cp)
               for h in hits: scan(cp, h)
               found.append(cp + ' = ' + ', '.join(hits))
           print(pj + ':', '; '.join(found))
           for b in bad: print('::error::' + b)
+          for x in jerr: print('::error::' + x)
           print('checked', len(names), 'classes against', xml_path, ':', ', '.join(names))
           hc = [f for q, f in files.items() if q.endswith('.HealthConnectNativePlugin')]
           if len(hc) != 1: die('HealthConnectNativePlugin is not registered')
           refs = subprocess.run(['javap', '-v', hc[0]], check=True, capture_output=True, text=True).stdout.count('android/health')
           print('android/health references in the outer HealthConnectNativePlugin:', refs)
           if refs: die('outer HealthConnectNativePlugin references android/health %d times; keep them in Api34' % refs)
-          if bad: sys.exit(1)
+          if bad or jerr: sys.exit(1)
           PYFLOOR
 
       - name: Verify native classes in the APK
