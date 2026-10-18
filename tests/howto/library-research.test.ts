@@ -154,3 +154,19 @@ describe('LIB-5 S2: every shared card is valid (tools/plates/library/research/va
     expect(V.validateShared(s, q, { file: 'back-pain-box.json' })).toEqual([]);
   });
 });
+
+describe('LIB-5 S9: the source registry is consistent', () => {
+  it('one id, one URL across sources.json and the 19 shared cards; no URL in src/howto or src/slices/howto (C17)', async () => {
+    const sets = V.registrySets();
+    expect(sets.length).toBe(20);
+    expect(sets.reduce((a: number, s: any) => a + s.sources.length, 0)).toBeGreaterThan(100);
+    expect(V.registryProblems(sets)).toEqual([]);
+    const { checkC17 } = await import('./checks/c17');
+    expect(checkC17([join(ROOT, 'src/howto'), join(ROOT, 'src/slices/howto')])).toEqual([]);
+  });
+  it('mutation: a duplicate id with a different URL is red', () => {
+    const sets = V.registrySets(), s0 = sets[1].sources[0];
+    sets.push({ where: 'shared/extra.json', sources: [{ id: s0.id, url: `${s0.url}x` }] });
+    expect(V.registryProblems(sets)).toEqual([`source ${s0.id}: shared/extra.json has ${s0.url}x, ${sets[1].where} has ${s0.url}`]);
+  });
+});

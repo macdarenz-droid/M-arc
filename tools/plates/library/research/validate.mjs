@@ -2,7 +2,7 @@
 // are checked for their kind's keys, claim refs, orphan sources, quotes (verbatim, at most 50 words, present in
 // quotes/shared-<key>.json) and the LR-23 patterns on every shown field. A card's `wordCap` and `words` are data,
 // never a limit (Stops 3): nothing here reads them.
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CONTACT_RE, RED_FLAG_BOX_MAX_WORDS, SAFETY_LINE_RE, SOURCE_CS_RE, SOURCE_RE, words } from '../../layers/artifact/copy-lint.mjs';
@@ -114,4 +114,23 @@ export function validateSharedFile(file, root = ROOT) {
   const card = JSON.parse(readFileSync(join(root, HOWTO, 'shared', file), 'utf8'));
   const quotes = JSON.parse(readFileSync(join(root, HOWTO, 'quotes', `shared-${card.key}.json`), 'utf8'));
   return validateShared(card, quotes, { file });
+}
+
+/** S9 (C17, C19 keep URLs out of src): one source id means one URL across the registry and every card.
+ *  `sets` = [{ where, sources: [{ id, url }] }]; a registry map { id: { url } } can be passed as one set. */
+export function registryProblems(sets) {
+  const seen = new Map(), bad = [];
+  for (const { where, sources } of sets) for (const s of sources) {
+    const at = seen.get(s.id);
+    if (!at) seen.set(s.id, { url: s.url, where });
+    else if (at.url !== s.url) bad.push(`source ${s.id}: ${where} has ${s.url}, ${at.where} has ${at.url}`);
+  }
+  return bad;
+}
+
+/** The sets registryProblems reads under `root`: sources.json (its GENERATED header stripped) and every shared card. */
+export function registrySets(root = ROOT) {
+  const reg = JSON.parse(readFileSync(join(root, HOWTO, 'sources.json'), 'utf8').replace(/^\/\/[^\n]*\n/, ''));
+  const shared = readdirSync(join(root, HOWTO, 'shared')).sort().map(f => ({ where: `shared/${f}`, sources: JSON.parse(readFileSync(join(root, HOWTO, 'shared', f), 'utf8')).sources }));
+  return [{ where: 'sources.json', sources: Object.entries(reg).map(([id, s]) => ({ id, url: s.url })) }, ...shared];
 }
