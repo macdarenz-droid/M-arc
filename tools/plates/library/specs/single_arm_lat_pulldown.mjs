@@ -21,12 +21,24 @@
 //    in this view).
 //  - Mistake (card plate.mistake, c10, c13): the handle pulled on down to the chest (grip 12 cm under the chest mark),
 //    the elbow driven back 6 cm behind the back line and the near shoulder protracted 4 cm (rolled forward). The torso
-//    keeps the upright posture. One tell, on the elbow: the shoulder roll stays inside the solid trunk in this view, so a
-//    tell there would point at nothing red.
+//    keeps the upright posture. The red handle and fist sit on the front edge of the solid end forearm: with the
+//    elbow behind the back, the arm (upper 0.326 m, forearm 0.255 m) cannot reach the open space in front of that
+//    forearm (an open lib4-cards 13.3 must-fix 2 question).
 //  - End handle height: the grip centre is 12 cm under the chin (the fist top at about mouth level), not at the chin
 //    itself; with the grip at the chin the elbow finishes 15 cm in front of the shoulder, not near the side (c3).
+//  - In-between keys (lib4-cards 13.3 must-fix 3): grip in even steps down the cable line at t = 1/4, 1/2, 3/4, the
+//    shoulder drawn down as it goes, elbow poles turned from out to down; the elbow falls at every step (1.335, 1.250,
+//    1.111, 0.880, 0.667 m) and stays in front of the shoulder.
+//  - Mistake tells: 'past' (the elbow behind the body) and 'low' (the handle pulled past the end), the card's two
+//    visible signs that the side view shows; the shoulder roll stays inside the trunk and stays unlabelled (Q-D5-5).
 //  - Labels: 'shoulder' and the Mistake tell sit left of the back with level leaders; 'pocket' below them; 'thighs' right
 //    of the knee as on close_grip. The 'shoulder' and 'pocket' leaders cross the back to anchors inside the outline.
+// CARD: thighs under the pads (c1), handle just past chin height (c2), upper arm at the side (c3), shoulder up at the
+//  top (c4), torso upright (c7, c11), tempo (c14). Unsourced numbers: GX 0.18 (handle under the near shoulder), REACH
+//  0.13 m (D-handle), TILT -3 / TRUNK -2 (card: "upright", no angle), START_Y 1.668 and the 3 cm start shrug (card: "the
+//  cable lifts the shoulder", no size), END_G 12 cm under and 5 cm in front of the chin, end scap -2/-1, MIS_G 12 cm
+//  under the chest mark and 4 cm forward, Mistake protraction 4 cm, the in-between poles (VIA_POLES), the free hand
+//  on the far thigh; the station sizes as close_grip_pulldown.
 import { rootOnSeat, landmarksOf } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
 import { dHandle, dHandleRing, D_HANDLE_ITEMS } from '../eq/dHandle.mjs';
@@ -61,6 +73,14 @@ const START_G = [0, START_Y, END_G[2] + cd[2] / cd[1] * (START_Y - END_G[1])];
 
 const start = { ...body, scap: { l: { elev: 0, pro: 0 }, r: { elev: 3, pro: 1 } }, reach: reach(START_G, [-1, 0.1, 0.2]) };
 const end = { ...body, scap: { l: { elev: 0, pro: 0 }, r: { elev: -2, pro: -1 } }, reach: reach(END_G, [-0.5, -1, -1.5]) };
+// In-between keys at t = 1/4, 1/2, 3/4 (the ghosts): the grip in even steps down the cable line, the shoulder drawn down
+// as it goes, and the elbow pole turned from out-and-forward to down, so the elbow falls at every step and stays in
+// front of the shoulder (lib4-cards 13.3 must-fix 3).
+const VIA_POLES = [[-1, -0.4, 0.1], [-0.6, -0.9, 0.1], [-0.2, -1, -0.6]];
+const via = VIA_POLES.map((pole, i) => {
+  const f = (i + 1) / 4, g = START_G.map((v, k) => v + (END_G[k] - v) * f);
+  return { ...body, scap: { l: { elev: 0, pro: 0 }, r: { elev: 3 - 5 * f, pro: 1 - 2 * f } }, reach: reach(g, pole) };
+});
 // Mistake: pulled past the end, the elbow back behind the trunk, the shoulder rolled forward.
 const MIS_G = [0, lm0.chest[1] - 0.12, lm0.chest[2] + 0.04];
 const misBody = { scap: { l: { elev: 0, pro: 0 }, r: { elev: 0, pro: 4 } }, reach: reach(MIS_G, [-0.3,0.6,-1]) };
@@ -81,7 +101,7 @@ export const HANDLE = { grip: gripOf, toward, reach: REACH, ringOf, headTangent 
 export default {
   id: 'single_arm_lat_pulldown', name: 'Single-Arm Lat Pulldown', view: 'side', facing: 'right',
   camera: { fit: true },
-  poses: { start, end },
+  poses: { start, via, end },
   equipment: [
     { type: 'floor', from: -0.5, to: 1.48 },
     ...[[-0.22, 0.30], [0.84, COL.z1]].map(([a, b]) => ({ type: 'box', at: [0, 0.022, (a + b) / 2], w: b - a, h: 0.044, rc: 1, z: 'center' })),
@@ -128,6 +148,7 @@ export default {
     ],
     tells: [
       { key: 'past', text: 'Elbow<br>goes back', anchor: 'elbow.r', box: { left: 4, top: 226 }, cue: 'The elbow drives back behind the body past the end.' },
+      { key: 'low', text: 'Pulled<br>too low', anchor: { at: 'grip.r', off: [0, 6] }, box: { left: 176, top: 222 }, cue: 'The handle keeps going down past the chin to the chest.' },
     ],
   },
   alt: 'Single-arm lat pulldown, side view. Seated with the thighs under the knee pad, one hand pulls a single handle from a long arm overhead down until it just passes the chin, the elbow driving down toward the back pocket.',

@@ -12,17 +12,24 @@
 //  - Seat top 47 cm, trunk vertical (tilt 0, trunk 0), feet flat on the floor 46 cm in front of the hip, knees ~90 deg.
 //  - Chest pad upright (angle 0), its face on the chest landmark of the correct pose (c2, c4): 45 cm tall, 12 cm thick,
 //    mounted on an arm to the front column. The pad does not move.
-//  - Lever: a top pivot 1.85 m up and 55 cm in front of the hip line, carried on a short top beam from the front
-//    column (80 cm, clear of the toes), so the lever stays clear of the face. End handle 98 cm, 3 cm in front of the
-//    pad face, the elbows just behind the trunk (c4, c5); start handle on the same circle 72 cm forward (93 cm, 11 cm
-//    below the shoulder joint): arms straight forward (elbow 11 deg) at about shoulder level (c1, c2). Two in-between
-//    keys keep the hands on the lever circle, so the ghosts hold the handle (tested).
+//  - Lever: a pivot 1.40 m up (forehead height) and 33 cm in front of the hip line, 17 cm in front of the face,
+//    carried on a top beam from the front column (80 cm, clear of the toes). The pivot lies on the perpendicular
+//    bisector of the start and end handles, so both sit on its circle (lever 0.577 m). End handle 85 cm up, either side
+//    of the pad, 1 cm behind its face: the elbows end 8 cm behind the upper back, close to the ribs (c4, c5; tested
+//    >= 3 cm). Start handle 98 cm up and 73 cm forward: arms straight forward (elbow 8 deg), the 13 cm handle spanning
+//    the shoulder joint's height (c1, c2; tested). A pivot on the old 1.85 m beam put the end lever across the face once
+//    the elbows end behind the back; at 1.40 m it clears the face by 10 cm. Keys at t = 1/4, 1/2 and 3/4 keep the
+//    ghosts' hands on the lever circle (tested).
 //  - Pad centred 8 cm below the chest landmark (its face plane passes through it), so its arm to the column runs under
 //    the straight start arm, not along it. The 'chest' label points to the pad top just in front of the chest: the
 //    hands cover the contact below, and the only open approach is from above, between the face and the lever.
 //  - Mistake (card plate.mistake, c6): the pelvis rolls back 8 deg and the low back arches 8 deg, so the chest leaves
-//    the pad (checked: the chest is behind the pad face; a gap dimension shows it) and the trunk leans 16 deg back; the
-//    hands follow the lever 12 cm further round its arc. Legs and feet unchanged.
+//    the pad (checked: the chest is behind the pad face; a gap dimension at chest height, above the handles, shows it)
+//    and the trunk leans 16 deg back; the hands follow the lever 12 cm further round its arc. Legs and feet unchanged.
+// Unsourced numbers (the card gives none of these; typical commercial machine and pose values):
+//  seat top 47 cm; feet 46 cm ahead; handles 44 cm apart; chest pad 45 x 12 cm, centred 8 cm below the chest landmark;
+//  pivot 1.40 m up, 33 cm forward; front column at 80 cm; start handle 98 cm up, 73 cm forward; end handle 85 cm up,
+//  16 cm forward; Mistake: pelvis -8 deg, trunk -8 deg (16 deg lean back), hands 12 cm further back.
 import { rootOnSeat, landmarksOf } from '../engine.mjs';
 import { chestRowMachine, CHEST_ROW_ITEMS } from '../eq/chestRowMachine.mjs';
 import { perItem } from '../eq/parts.mjs';
@@ -39,24 +46,31 @@ const lm0 = landmarksOf({ ...body, shoulder: { flex: 0 } }, H);
 // its arm to the column runs under the straight start arm, not along it.
 const PAD_FACE = [0, lm0.chest[1] - 0.08, lm0.chest[2]];
 
-const PIVOT = [0, 1.85, 0.55];
-const END_Y = 0.98;                                     // end handle height
+// The handle path: start and end handles both on the lever circle; the pivot sits on their perpendicular bisector at
+// PIVOT_Y, so the lever hangs from the top beam and its circle runs through both.
+const START_G = [0, 0.98, 0.728];                        // arms straight forward; the 13 cm handle spans the shoulder joint's height (c1, c2)
+const END_G = [0, 0.85, 0.16];                          // handles either side of the pad, 6 cm behind its face: elbows just behind the back (c4, c5)
+const PIVOT_Y = 1.40;                                   // forehead height, 24 cm in front of the face: the end lever clears the face
+const PIVOT = (() => {
+  const m = [(START_G[1] + END_G[1]) / 2, (START_G[2] + END_G[2]) / 2], d = [END_G[1] - START_G[1], END_G[2] - START_G[2]];
+  const z = m[1] - (PIVOT_Y - m[0]) * d[0] / d[1];      // on the bisector: (p - m) . d = 0
+  return [0, PIVOT_Y, z];
+})();
 
 const COLUMN = 0.80;
-const END_G = [0, END_Y, PAD_FACE[2] + 0.03];           // end handle just in front of the pad face: elbows just behind the trunk (c4, c5)
 const LEVER = Math.hypot(END_G[1] - PIVOT[1], END_G[2] - PIVOT[2]);
 const onLever = z => { const dz = PIVOT[2] - z; return [0, PIVOT[1] - Math.sqrt(LEVER * LEVER - dz * dz), z]; };
-const START_G = onLever(0.72);                          // arms straight forward, a little below shoulder level (c1, c2)
 const MIS_G = onLever(END_G[2] - 0.12);                 // the lean lets the hands travel 12 cm further back
 export const MACHINE = { seat: [0, SEAT_TOP, -0.02], pad: { face: PAD_FACE, angle: 0, t: 0.12 }, pivot: PIVOT, lever: LEVER, column: COLUMN,
   footBar: null, floor: [-0.5, COLUMN + 0.3], grip: 'neutral' };
 
 const grips = (g, pole) => ({ l: { at: [GX, g[1], g[2]], pole: [pole[0], pole[1], pole[2]] }, r: { at: [-GX, g[1], g[2]], pole: [-pole[0], pole[1], pole[2]] } });
 const start = { ...body, scap: { elev: 0, pro: 2 }, reach: grips(START_G, [0.3, -1, 0]) };
-const end = { ...body, scap: { elev: -1, pro: -3 }, reach: grips(END_G, [0.2, -0.6, -1]) };
+const end = { ...body, scap: { elev: -1, pro: -3 }, reach: grips(END_G, [0.2, -1, -1]) };
 // In-between keys with the hands on the lever circle, so the ghosts hold the handle (as machine_chest_press's via).
-const via = [1 / 3, 2 / 3].map(t => ({ ...body, scap: { elev: -t, pro: 2 - 5 * t },
-  reach: grips(onLever(START_G[2] + (END_G[2] - START_G[2]) * t), [0.3 - 0.1 * t, -1 + 0.4 * t, -t]) }));
+// Keys at t = 1/4, 1/2, 3/4, where the three ghosts are drawn, so each ghost is a key with its hands on the circle.
+const via = [1 / 4, 1 / 2, 3 / 4].map(t => ({ ...body, scap: { elev: -t, pro: 2 - 5 * t },
+  reach: grips(onLever(START_G[2] + (END_G[2] - START_G[2]) * t), [0.3 - 0.1 * t, -1, -t]) }));
 const M_TILT = -8, M_TRUNK = -8;
 const misBody = { root: { at: rootOnSeat(SEAT, M_TILT), tilt: M_TILT }, trunk: M_TRUNK, scap: { elev: 0, pro: -3 }, reach: grips(MIS_G, [0.2, -0.6, -1]) };
 // Gap dimension for the Mistake (as machine_chest_press): from the faulty chest forward to the pad face, with 2 px ticks.
@@ -84,7 +98,7 @@ export default {
   trace: { point: 'grip.r', trim: [10, 12] },
   callouts: [
     { key: 'chest', text: 'Chest<br>on pad', anchor: { at: 'chest', off: [4, -20] }, box: { left: 118, top: 86 }, cue: 'Keep the chest lightly on the pad from the first rep to the last.' },
-    { key: 'elbows', text: 'Elbows<br>past sides', anchor: 'elbow.r', box: { left: 34, top: 214 }, cue: 'Each rep ends with the elbows close to the ribs and just behind the body.' },
+    { key: 'elbows', text: 'Elbows<br>past sides', anchor: 'elbow.r', box: { left: 8, top: 212 }, cue: 'Each rep ends with the elbows close to the ribs and just behind the body.' },
     { key: 'shoulders', text: 'Shoulders<br>down', anchor: 'shoulderTop.r', box: { left: 34, top: 158 }, cue: 'Shoulders drawn back and down before the pull and kept there.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],

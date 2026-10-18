@@ -25,6 +25,7 @@ let eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, parts:
 let assist: any, chestRow: any, band: any, dh: any, apu: any, cgp: any, apuMod: any, build: any, cand: any, closure: any, reg: any;
 let pins: any, E: any, mirror = '', html = '', all: any;
 let hlp: any, csr: any, csrMod: any, rbrMod: any, ulp: any, sap: any, sapMod: any, sapdMod: any, sapd: any, irMod: any, ir: any;
+let cuMod: any, cu: any, hkrMod: any, hkr: any;
 beforeAll(async () => {
   [eng, body, qaNode, qaEng, qaIdx, plate, parts, assist, chestRow, band, dh, build, cand, closure, reg, muts] = await Promise.all([
     'engine.mjs', '../vendor/engine/body.mjs', 'qa/node.mjs', 'qa/engine.mjs', 'qa/index.mjs', '../vendor/engine/plate.mjs', 'eq/parts.mjs',
@@ -47,6 +48,10 @@ beforeAll(async () => {
   sapd = sapdMod.default;
   irMod = await import(/* @vite-ignore */ lib('specs/inverted_row.mjs'));
   ir = irMod.default;
+  cuMod = await import(/* @vite-ignore */ lib('specs/chin_up.mjs'));
+  cu = cuMod.default;
+  hkrMod = await import(/* @vite-ignore */ lib('specs/hanging_knee_raise.mjs'));
+  hkr = hkrMod.default;
   mirror = golden.makeMirror();
   E = await qaEng.loadEngine(mirror);
   all = build.lb1All();
@@ -286,14 +291,16 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
   it('horizontal_leg_press: knees about 90 at the start, a soft bend at the end, locked in the Mistake; the sled runs on in the Mistake', () => {
     const R = plate.renderPlate(hlp, { id: 'x' }).report;
     expect(Math.abs(R.angles.start['knee.r'] - 90)).toBeLessThan(1);
-    expect(R.angles.end['knee.r']).toBeGreaterThan(15);
+    expect(Math.abs(R.angles.end['knee.r'] - 15), 'end knee at the approved leg_press top (Q-D5-3)').toBeLessThanOrEqual(2);
     const m = itemsIn(hlp, 'mistake', { mistake: true }).lm, ang = (a: any, b: any, c: any) => {
       const u: any = [a[1] - b[1], a[2] - b[2]], v: any = [c[1] - b[1], c[2] - b[2]];
       return 180 - Math.acos((u[0] * v[0] + u[1] * v[1]) / Math.hypot(...u) / Math.hypot(...v)) * 180 / Math.PI; };
     expect(ang(m['hip.r'], m['knee.r'], m['ankle.r']), 'Mistake knee locked').toBeLessThan(2);
     const tEnd = itemsIn(hlp, 'end').items.find(it => it.type === 'legPress45').travel;
     const tMis = itemsIn(hlp, 'mistake', { mistake: true }).items.find(it => it.type === 'legPress45').travel;
-    expect(tMis - tEnd, 'the sled runs further when the knees lock').toBeGreaterThan(0.01);
+    // 13.3 Q-D5-3: end redrawn at 15° (card-true); the lock moves the sled 0.8 cm, so the travel check is now 'further than the end', with the knee lock asserted directly
+    expect(tMis - tEnd, 'the sled runs further when the knees lock').toBeGreaterThan(0);
+    expect(ang(m['hip.r'], m['knee.r'], m['ankle.r']), 'Mistake knee locked (below 2 deg)').toBeLessThan(2);
   });
   it('horizontal_leg_press: the bottom footplate is a thin outline in the end pose only', () => {
     const outl = (pose: string) => itemsIn(hlp, pose, { mistake: pose === 'mistake' }).items.filter(it => it.type === 'line' && it.cls === 'eq-thin');
@@ -434,18 +441,189 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
     expect(irMod.bisect((x: number) => 0.25 - x, 0, 1)).toBeCloseTo(0.25, 9);   // falling f too
   });
 
+  it('pulldowns: from start to end the elbow falls at every step (t = 0, 1/4, 1/2, 3/4, 1), level with or in front of the shoulder at every ghost', () => {
+    const B = Eng().body, hb = { height: 1.75 };
+    for (const [id, spec] of [['single_arm_lat_pulldown', sap], ['close_grip_pulldown', cgp], ['underhand_lat_pulldown', ulp]] as [string, any][]) {
+      const keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => B.normPose(p, hb));
+      const n = spec.ghosts.count, ts = [0, ...Array.from({ length: n }, (_, i) => (i + 1) / (n + 1)), 1];
+      const at = ts.map(t => { const lm = B.landmarks(B.fk(B.poseAt(keys, t, hb).q, hb)); return { t, up: lm['elbow.r'][1] - lm['shoulder.r'][1], fwd: lm['elbow.r'][2] - lm['shoulder.r'][2] }; });
+      for (let i = 1; i < at.length; i++) expect(at[i]!.up, `${id} elbow height above the shoulder falls from t ${at[i - 1]!.t} to ${at[i]!.t}`).toBeLessThan(at[i - 1]!.up);
+      for (const g of at.slice(1, -1)) expect(g.fwd, `${id} ghost t ${g.t}: elbow level with or in front of the shoulder`).toBeGreaterThanOrEqual(0);
+    }
+  });
+// Mutation (the e035bdf state): tools/plates/library/specs/single_arm_lat_pulldown.mjs
+//   old "  poses: { start, via, end }," new "  poses: { start, end },"
+//   red: "single_arm_lat_pulldown elbow height above the shoulder falls from t 0.5 to 0.75" (0.241 -> 0.246) and,
+//   with that line removed, "ghost t 0.5: elbow level with or in front of the shoulder" (-0.072).
+  it('chest_supported_row: the end elbow is at least 3 cm behind the upper back (c4, c5: just behind the body)', () => {
+    const { lm } = itemsIn(csr, 'end');
+    expect(lm['elbow.r'][2], 'end elbow.r z vs backUpper z').toBeLessThanOrEqual(lm.backUpper[2] - 0.03);
+  });
+  it('chest_supported_row: the drawn start handle spans the shoulder joint height (c1, c2: handles at about shoulder height)', () => {
+    // start-pose equipment is computed from the start landmarks, as the engine draws it
+    const { items, lm } = itemsIn(csr, 'start');
+    const handle = items.find((x: any) => x.type === 'poly' && x.part === 'lever' && x.cls === 'eq-solid');
+    expect(handle, 'drawn start handle').toBeTruthy();
+    const ys = handle.pts.map((p: any) => p[1]);
+    expect(Math.min(...ys), 'handle bottom below the shoulder joint').toBeLessThanOrEqual(lm['shoulder.r'][1]);
+    expect(Math.max(...ys), 'handle top above the shoulder joint').toBeGreaterThanOrEqual(lm['shoulder.r'][1]);
+  });
+  it('chest_supported_row: the Mistake gap mark runs from the chest to the pad face, clear of the drawn end handle', () => {
+    const gap = csr.mistake.guides.find((g: any) => g.kind === 'line' && g.pts.length === 2 && g.pts[0][1] === g.pts[1][1]);
+    expect(gap, 'gap line').toBeTruthy();
+    const y = gap.pts[0][1], { items } = itemsIn(csr, 'end');
+    const handle = items.find((x: any) => x.type === 'poly' && x.part === 'lever' && x.cls === 'eq-solid');
+    const ys = handle.pts.map((p: any) => p[1]);
+    expect(y < Math.min(...ys) - 0.01 || y > Math.max(...ys) + 0.01, `gap y ${y.toFixed(3)} vs handle ${Math.min(...ys).toFixed(3)}-${Math.max(...ys).toFixed(3)}`).toBe(true);
+    expect(gap.pts[1][2], 'gap ends on the pad face').toBeCloseTo(csrMod.MACHINE.pad.face[2], 6);
+  });
+// Red at e035bdf (mutation = the whole e035bdf spec, $S/do5/chest_supported_row/e035bdf.mjs, copied over the new one):
+//   all three new tests red (elbow, start handle, gap mark); the two older chest_supported_row tests stay green.
+// Each check alone (old -> new in specs/chest_supported_row.mjs):
+//   m2 'const END_G = [0, 0.85, 0.16];' -> 'const END_G = [0, 0.85, 0.24];' (handles in front of the pad face): elbow test red.
+//   m3 'const START_G = [0, 0.98, 0.728];' -> 'const START_G = [0, 0.88, 0.70];': start-handle test red.
+//   m4 'const GAP_Y = lmM.chest[1]' -> 'const GAP_Y = END_G[1]': gap-mark test red.
+  it('inverted_row: part of the J-hook outline lies outside the solid end figure (13.3 fix 5: the bar must not float)', () => {
+    const b = { height: 1.75 };
+    const sk = eng.fk(eng.resolve(eng.normPose(ir.poses.end, b), b).q, b);
+    const shapes = eng.bodyShapes(sk, { view: 'side', facing: 'right', near: 'r', pxm: 1, P: (w: any) => [w[2], -w[1]] }).map((s: any) => s.poly).filter(Boolean);
+    const inside = (p: number[], poly: number[][]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i] as any, [xj, yj] = poly[j] as any; if ((yi > p[1]!) !== (yj > p[1]!) && p[0]! < (xj - xi) * (p[1]! - yi) / (yj - yi) + xi) c = !c; } return c; };
+    const drawn = itemsIn(ir, 'end').items.filter((it: any) => it.type === 'poly' && JSON.stringify(it.pts) === JSON.stringify(irMod.HOOK));
+    expect(drawn.length, 'the J-hook is drawn').toBe(1);
+    const hook: number[][] = drawn[0].pts, pts: number[][] = [];
+    hook.forEach((a: any, i: number) => { const c: any = hook[(i + 1) % hook.length]; for (let k = 0; k < 10; k++) pts.push([a[2] + (c[2] - a[2]) * k / 10, -(a[1] + (c[1] - a[1]) * k / 10)]); });
+    const out = pts.filter(p => !shapes.some((s: number[][]) => inside(p, s)));
+    // at least 1 cm of the hook's outline (here: a 10-sample stretch, about 1-1.3 cm) shows outside the body
+    expect(out.length, 'hook outline points outside the end figure').toBeGreaterThanOrEqual(10);
+  });
+  it('inverted_row: rule a (D-LIB9-CLONE): closureOf lists no specs/ file but its own', () => {
+    const c = closure.closureOf(['tools/plates/library/specs/inverted_row.mjs']);
+    expect(c.filter((p: string) => p.includes('/specs/'))).toEqual(['tools/plates/library/specs/inverted_row.mjs']);
+  });
+// Mutations (tools/plates/library/specs/inverted_row.mjs):
+//  M5 (the e035bdf state, hook only under the fist): replace
+//    "export const HOOK = [[0.95, FACE], [1.10, FACE], [1.10, FACE + 0.025], [0.975, FACE + 0.025], [0.975, BAR[2]],\n  [0.95, BAR[2]]]"
+//    with the e035bdf rackUpright hook outline (y BAR-0.03 .. BAR+0.02, z FACE .. FACE+0.07):
+//    "export const HOOK = [[0.97, FACE], [0.97, FACE + 0.07], [1.02, FACE + 0.07], [1.02, FACE + 0.055], [0.985, FACE + 0.055], [0.985, FACE]]"
+//    -> the hook test is red (outline points outside < 10).
+//  (M5 is also the 'hook back under the forearm' case: the e035bdf hook sat wholly under the end fist and forearm.)
+  it('resistance_band_row: rescaled under D-LIB8-floor (fit above 146.29 px/m, at most x1.35, floor line at y 339)', () => {
+    const rbr = rbrMod.default;
+    expect(rbr.camera).toEqual({ fit: true, maxScale: 1.35, y0: 339 });
+    const r = plate.renderPlate(rbr, { id: 'x' }), pxm = r.report.camera.pxPerM;
+    expect(pxm, 'scale above the F1 cap (the floor sit fills the plate)').toBeGreaterThan(146.29 * 1.05);
+    expect(pxm, 'within D-LIB8-floor x1.35').toBeLessThanOrEqual(146.29 * 1.35 + 0.01);
+    expect(r.report.camera.y0, 'floor line at y 339').toBe(339);
+  });
+// Mutation (state at e035bdf, red): tools/plates/library/specs/resistance_band_row.mjs
+//   old: "  camera: { fit: true, maxScale: 1.35, y0: 339 },"  new: "  camera: { fit: true },"
+//   red: "expected { fit: true } to deeply equal { fit: true, maxScale: 1.35, y0: 339 }" (and, with the camera assertion
+//   removed, "scale above the F1 cap: expected 146.29 to be greater than 153.6").
+  it('chin_up: free hang with straight arms at the start; at the end the chin is level with the bar (0-4 cm over its top) and the elbows are below the shoulders and in front of them', () => {
+    const bend = (lm: any) => { const u = [0, 1, 2].map(i => lm['elbow.r'][i] - lm['shoulder.r'][i]), f = [0, 1, 2].map(i => lm['wrist.r'][i] - lm['elbow.r'][i]);
+      const d = u.reduce((a, v, i) => a + v * f[i]!, 0) / (Math.hypot(...u) * Math.hypot(...f)); return Math.acos(Math.max(-1, Math.min(1, d))) * 180 / Math.PI; };
+    const s = itemsIn(cu, 'start').lm, e = itemsIn(cu, 'end').lm, barTop = 2.25 + 0.016;
+    expect(bend(s), 'start elbow bend (deg)').toBeLessThanOrEqual(8);
+    expect(e.chin[1] - barTop, 'end chin over the bar top (m)').toBeGreaterThanOrEqual(0);
+    expect(e.chin[1] - barTop, 'end chin over the bar top (m)').toBeLessThanOrEqual(0.04);
+    expect(e['elbow.r'][1], 'end elbow below the shoulder').toBeLessThan(e['shoulder.r'][1]);
+    expect(e['elbow.r'][2] - e['shoulder.r'][2], 'end elbow in front of the shoulder (m)').toBeGreaterThan(0.05);
+  });
+  it('chin_up: the legs stay still (same hip, knee and ankle at start and end), the hang is redrawn as hidden lines in the end pose only, and the Mistake kicks the knees forward of the end knees', () => {
+    for (const k of ['hip', 'knee', 'ankle']) expect(cuMod.start[k], k).toEqual(cuMod.end[k]);
+    const hang = (pose: string) => itemsIn(cu, pose).items.filter((it: any) => it.part === 'hang').length;
+    expect(hang('start')).toBe(0); expect(hang('end')).toBeGreaterThan(0); expect(hang('mistake')).toBe(0);
+    const m = itemsIn(cu, 'mistake').lm, e = itemsIn(cu, 'end').lm;
+    expect(m['knee.r'][2] - e['knee.r'][2], 'Mistake knee forward of the end knee (m)').toBeGreaterThan(0.15);
+  });
+// Source mutations (file tools/plates/library/specs/chin_up.mjs), each red on the named test:
+//  M1 elbows behind:  "END_POLE = [0.2, -1, 0.05]" -> "END_POLE = [0, -1, -1]"          -> test 1 (elbow in front)
+//  M2 chin short:     "root: { at: [0, 1.65, -0.06], tilt: -2 }" -> "root: { at: [0, 1.60, -0.06], tilt: -2 }" -> test 1 (chin)
+//  M3 bent hang:      "const START_Y = 1.128" -> "const START_Y = 1.16"                       -> test 1 (start bend)
+//  M4 hang dropped:   "ctx.pose === 'end' ? HANG" -> "ctx.pose === 'never' ? HANG"            -> test 2
+//  M5 legs move:      "...LEGS, reach: grip(END_POLE)" -> "...LEGS, knee: 20, reach: grip(END_POLE)" -> test 2
+  it('hanging_knee_raise: still hang at start and end (centre of mass on the bar line, grips on the bar), knees above the hips only at the end, the Mistake swung back at least 15 cm', () => {
+    const lm = (p: any) => eng.landmarksOf(p, 1.75);
+    const S = lm(hkr.poses.start), E = lm(hkr.poses.end), M = lm({ ...hkr.poses.end, ...hkr.mistake.pose });
+    for (const [n, L] of [['start', S], ['end', E]] as [string, any][]) {
+      expect(Math.abs(hkrMod.comZ(L) - hkrMod.BAR[2]), `${n} centre of mass on the bar line`).toBeLessThan(0.005);
+      expect(Math.hypot(L['grip.r'][1] - hkrMod.BAR[1], L['grip.r'][2] - hkrMod.BAR[2]), `${n} grip on the bar`).toBeLessThan(0.005);
+    }
+    expect(S['knee.r'][1], 'start: knees below the hips (straight hang)').toBeLessThan(S['hip.r'][1] - 0.3);
+    expect(E['knee.r'][1] - E['hip.r'][1], 'end: knees at least 10 cm above the hip joint (c5)').toBeGreaterThan(0.10);
+    expect(hkrMod.comZ(M) - hkrMod.BAR[2], 'Mistake: centre of mass swung at least 15 cm behind the bar (c4)').toBeLessThan(-0.15);
+    expect(S['toe.r'][1], 'feet clear the floor (c1)').toBeGreaterThan(0.05);
+  });
+  it('hanging_knee_raise: two Mistake tells about the swing, the first = topFault; no parent "Knees only" tell or "Legs straight" callout', () => {
+    const keys = hkr.mistake.tells.map((t: any) => t.key);
+    expect(keys).toEqual(['swing', 'kick']);
+    expect(hkr.callouts.map((c: any) => c.key)).toEqual(['still', 'knees', 'curl']);
+    expect(JSON.stringify(hkr)).not.toMatch(/Knees only|Legs straight/);
+  });
+// Source mutations (tools/plates/library/specs/hanging_knee_raise.mjs), each red on the named test:
+//  m1 end knees not above the hips: "hip: 100, knee: 100, ankle: -25 };" -> "hip: 60, knee: 100, ankle: -25 };"  (test 1, end knees)
+//  m2 no swing: "export const SWING_OFF = -0.20;" -> "export const SWING_OFF = 0;"                              (test 1, Mistake swung back)
+//  m3 parent's tell back: "{ key: 'kick', text: 'Legs<br>kicked up'" -> "{ key: 'knees', text: 'Knees only'"  (test 2)
+  it('shoulder_press: two Mistake tells, `arch` (topFault) first, `gap` anchored on the drawn pad gap mark', async () => {
+    const sp = (await import(/* @vite-ignore */ lib('specs/shoulder_press.mjs'))).default;
+    const card = JSON.parse(readFileSync(new URL('../../docs/research/howto/cards/shoulder_press.json', import.meta.url), 'utf8'));
+    const keys = sp.mistake.tells.map((t: any) => t.key);
+    expect(keys).toEqual(['arch', 'gap']);
+    expect(keys[0]).toBe(card.topFault);
+    const gapLine = sp.mistake.guides.find((g: any) => g.kind === 'line' && g.pts.length === 2 && Array.isArray(g.pts[0]));
+    const mid: number[] = [0, (gapLine.pts[0][1] + gapLine.pts[1][1]) / 2, (gapLine.pts[0][2] + gapLine.pts[1][2]) / 2];
+    const a = sp.mistake.tells[1].anchor;
+    expect(Math.hypot(a[1] - mid[1]!, a[2] - mid[2]!)).toBeLessThan(1e-9);
+  });
+// Mutation (reproduces e035bdf, one tell): tools/plates/library/specs/shoulder_press.mjs
+//   old: "\n      { key: 'gap', text: 'Off<br>the pad'," ... (delete the whole `gap` tell line)
+//   red: "expected [ 'arch' ] to deeply equal [ 'arch', 'gap' ]"
+
   // Every drawn LB1 spec that has a weight stack (D-LIB9a-SLICE: one loop over all stack specs).
+// Mutations (verified in a throwaway worktree with a copy of the test file; all restored):
+//  M-via   spec `poses: { start, end, via },` -> `poses: { start, end },` (the e035bdf state):
+//          × straight_arm_pulldown: every ghost elbow keeps the 15 deg bend … → ghost 0 elbow 97.6: expected 82.57 to be less than or equal to 2
+//  M-rods  spec `...[-0.05, 0.05].map(dz => ({ type: 'line', cls: 'eq-thin'` -> `...[].map(dz => …`:
+//          × every stack spec: two static guide rods … → straight_arm_pulldown start rods: expected +0 to be 2
+//  M-cable the cable end 3 cm (3.9 px) off the stack top. A cableColumn draws the cable end and the stack top in one
+//          locked vendor primitive (equipment.mjs:78, :99), so no spec edit can part them, and a vendor edit is refused
+//          by the golden lock ("vendored engine is not the golden lock"). Shown on the adapter input instead:
+//          `const end = xy[xy.length - 1]!` -> `[end0[0], end0[1] + 3.9]`:
+//          × every stack spec: the stack rises … → straight_arm_pulldown start cable end on the drawn stack top: expected 3.896 to be less than 1
   const STACK_SPECS = () => [['close_grip_pulldown', cgp, 0.03], ['assisted_pull_up', apu, apuMod.MACHINE.stack.lift0],
-    ['underhand_lat_pulldown', ulp, 0.03], ['single_arm_lat_pulldown', sap, sapMod.LIFT0]] as [string, any, number][];
+    ['underhand_lat_pulldown', ulp, 0.03], ['single_arm_lat_pulldown', sap, sapMod.LIFT0], ['straight_arm_pulldown', sapd, 0]] as [string, any, number][];
+  // Adapter (lib4-cards 13.3 must-fix 9): a cableColumn draws its own stack and the cable down to it, so for
+  // straight_arm_pulldown the stack item and the drawn stack/cable come from the column. Every assertion of the loop
+  // applies unchanged. The column's lift is the engine's own rule (cable paid out from `rest` to `to`, over `ratio`).
+  const stackItem = (spec: any, pose: string) => {
+    const its = itemsIn(spec, pose).items, st = its.find(it => it.type === 'stack');
+    if (st) return st;
+    const c = its.find(it => it.type === 'cableColumn'), d = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!);
+    return { type: 'stack', base: c.base, plates: c.stack.plates, w: Math.min(0.22, (c.width ?? 0.34) - 0.12),
+      lift: c.rest ? (d(c.to, c.pulley.at) - d(c.rest, c.pulley.at)) / (c.ratio ?? 1) : 0 };
+  };
+  // drawn [key, item] pairs of a pose, the column's stack plates renamed `.stack.` and its run down to the stack given
+  // as a `.cable.` line (its last segment, top pulley -> stack top)
+  const stackDrawn = (pairs: [string, any][]) => {
+    const col = pairs.filter(([k]) => /\.cableColumn\./.test(k)), rest = pairs.filter(([k]) => !/\.cableColumn\./.test(k));
+    if (!col.length) return pairs;
+    const run = col.map(([, v]) => v).filter((v: any) => v.cls === 'eq-cable' && !v.line);
+    expect(run.length, 'one column run').toBeGreaterThan(0);
+    const xy = [...run[0].d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
+    const end = xy[xy.length - 1]!, from = xy[xy.length - 2]!;
+    const plates = col.filter(([, v]) => v.poly && v.poly.length === 4 && v.poly.every((p: number[]) => Math.abs(p[0]! - end[0]!) < 15 && p[1]! > from[1]! + 1));
+    return [...rest, ...plates.map(([k, v], i) => [`${k.split('.')[0]}.stack.${i}`, v] as [string, any]), ['col.cable.0', { line: [from, end] }] as [string, any]];
+  };
   it('every stack spec: the stack rises off its rest pose (end and Mistake), and its cable ends on the drawn stack top', () => {
     for (const [id, spec, lift0] of STACK_SPECS()) {
       const R = plate.renderPlate(spec, { id: 'x' }), drawn = qaEng.equipmentItems(Eng(), spec, R.report, ['start', 'end', 'mistake']);
-      // both stacks sit at lift0 in the spec's start pose and rise from it (the pulldown pulls; the assist hang pushes the pad down)
+      // every stack sits at lift0 in the spec's start pose and rises from it (the pulldowns pull; the assist hang pushes the pad down)
       const up = ['end', 'mistake'];
-      expect(itemsIn(spec, 'start').items.find(it => it.type === 'stack').lift, `${id} start lift`).toBeCloseTo(lift0, 9);
-      for (const pose of up) expect(itemsIn(spec, pose).items.find(it => it.type === 'stack').lift, `${id} ${pose} lift`).toBeGreaterThan(lift0);
+      expect(stackItem(spec, 'start').lift, `${id} start lift`).toBeCloseTo(lift0, 9);
+      for (const pose of up) expect(stackItem(spec, pose).lift, `${id} ${pose} lift`).toBeGreaterThan(lift0);
       for (const pose of ['start', ...up]) {
-        const its = [...drawn[pose].entries()];
+        const its = stackDrawn([...drawn[pose].entries()]);
         const blocks = its.filter(([k, v]) => /\.stack\./.test(k) && v.poly).flatMap(([, v]) => v.poly.map((p: number[]) => p[1]));
         const top = Math.min(...blocks);                                               // the drawn stack's top edge (plate px)
         const xs = its.filter(([k, v]) => /\.stack\./.test(k) && v.poly).flatMap(([, v]) => v.poly.map((p: number[]) => p[0]));
@@ -461,7 +639,7 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
   });
   it('every stack spec: two static guide rods run through the resting and the lifted plates, drawn as close_grip draws them', () => {
     for (const [id, spec] of STACK_SPECS()) for (const pose of ['start', 'end', 'mistake']) {
-      const its = itemsIn(spec, pose).items, st = its.find(it => it.type === 'stack');
+      const its = itemsIn(spec, pose).items, st = stackItem(spec, pose);
       const rods = its.filter(it => it.type === 'line' && it.cls === 'eq-thin');
       expect(rods.length, `${id} ${pose} rods`).toBe(2);
       const top = 0.06 + st.plates * 0.025 + st.lift;
@@ -473,6 +651,18 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
       expect(rods.every(r => JSON.stringify(r.pts) === JSON.stringify(itemsIn(spec, 'start').items.filter(x => x.type === 'line' && x.cls === 'eq-thin')[rods.indexOf(r)].pts)), `${id} rods static`).toBe(true);
     }
   });
+  // straight_arm_pulldown (lib4-cards 13.3 must-fix 1): every ghost keeps the 15 deg elbow of the start and the end
+  // (the in-between keys put the bar on the shoulder arc; without them the ghost elbows bend 98-120 deg)
+  it('straight_arm_pulldown: every ghost elbow keeps the 15 deg bend (within 2 deg, H6 tolerance)', () => {
+    const B = { height: 1.75 }, keys = [sapd.poses.start, ...(sapd.poses.via ?? []), sapd.poses.end].map((p: any) => body.normPose(p, B));
+    const n = sapd.ghosts.count, el = (lm: any) => { const a = [0, 1, 2].map(i => lm['shoulder.r'][i] - lm['elbow.r'][i]), b = [0, 1, 2].map(i => lm['wrist.r'][i] - lm['elbow.r'][i]);
+      return 180 - Math.acos((a[0]! * b[0]! + a[1]! * b[1]! + a[2]! * b[2]!) / Math.hypot(...a) / Math.hypot(...b)) * 180 / Math.PI; };
+    expect(n).toBe(3);
+    for (let i = 1; i <= n; i++) {
+      const lm = body.landmarks(body.fk(body.poseAt(keys, i / (n + 1), B).q, B));
+      expect(Math.abs(el(lm) - 15), `ghost ${i - 1} elbow ${el(lm).toFixed(1)}`).toBeLessThanOrEqual(2);
+    }
+  });
   // D-LIB9a-SLICE: no leader runs within 6 px of the trace or a cable (8 px round its anchor excepted: the anchor may sit
   // on the trace). Every drawn LB1 spec, normal and Mistake views.
   it('every drawn LB1 spec: no leader comes within 6 px of the trace or a cable, away from its anchor', async () => {
@@ -480,6 +670,8 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
     const segs = (p: number[][]) => p.slice(1).map((q, i) => [p[i]!, q]);
     const dseg = (p: number[], [a, b]: number[][]) => { const dx = b![0]! - a![0]!, dy = b![1]! - a![1]!, L2 = dx * dx + dy * dy || 1;
       const t = Math.max(0, Math.min(1, ((p[0]! - a![0]!) * dx + (p[1]! - a![1]!) * dy) / L2)); return Math.hypot(p[0]! - a![0]! - t * dx, p[1]! - a![1]! - t * dy); };
+    const leaderOk = (d: string) => /^ML*H?$/.test(d.replace(/[\d.\s,-]/g, ''));
+    expect([leaderOk('M1 2L3 4H5'), leaderOk('M1 2L3 4'), leaderOk('M0 0Q1 1 2 2'), leaderOk('M0 0C1 1 2 2 3 3'), leaderOk('M0 0V5')]).toEqual([true, true, false, false, false]);
     const ids = build.drawnIds();
     expect(ids.length).toBeGreaterThan(1);
     for (const id of ids) for (const mistake of [false, true]) {
@@ -487,6 +679,8 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
       const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg;
       const avoid = [...svg.matchAll(/<path class="(?:trace|eq-cable)[^"]*"[^>]*? d="([^"]+)"/g)].flatMap(m => segs(xy(m[1]!)));
       for (const [, d] of svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)) {
+        // leaders are M, L and a closing H only; any other command would be misread, so it fails here (13.3 must-fix 13)
+        if (!leaderOk(d!)) throw new Error(`${id}: leader path has a command other than M, L or H: ${d}`);
         const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]);
         let min = Infinity;
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {

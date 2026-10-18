@@ -20,6 +20,11 @@
 //    down and a little back, so the elbows finish at the front edge of the trunk, below the shoulders.
 //  - Mistake (card plate.mistake, c6, c7): the handle comes down to the lower chest and the elbows travel back behind
 //    the trunk. The torso keeps the correct lean, so the one fault reads alone.
+// CARD: V-handle close neutral grip (c1), thighs pinned (c2, c3), lean under about 30 deg and unchanged (c4), handle
+//  just below the chin, elbows to the hips (c5), the fault (c6, c7), tempo (c10). Unsourced numbers: SEAT_TOP 0.42,
+//  the station (column 1.04/1.30 m, head pulley 2.08 m, 16 x 5 kg stack), GX 0.075 and RING 0.22 (V-handle), TILT -8 /
+//  TRUNK -3 (card: "slight lean", no angle), END_G 6 cm under and 9 cm in front of the chin, START_Y 1.607, MIS_G
+//  17 cm under the chest mark and 7.5 cm forward (illustrative fault size), the in-between poles (VIA_POLES), LIFT0.
 import { rootOnSeat, landmarksOf } from '../engine.mjs';
 
 const H = 1.75;
@@ -53,6 +58,14 @@ const START_G = [0, START_Y, END_G[2] + cd[2] / cd[1] * (START_Y - END_G[1])];
 
 const start = { ...body, scap: { elev: 0, pro: 0 }, reach: grips(START_G, [1, 0.1, 0.2]) };
 const end = { ...body, scap: { elev: -2, pro: -2 }, reach: grips(END_G, [0.25, -1, -0.7]) };
+// In-between keys at t = 1/4, 1/2, 3/4 (the ghosts): the handle in even steps down the cable line, the shoulder blades
+// drawn down as it goes, and the elbow pole turned from out to down, so the elbows fall in even steps in front of the
+// shoulders (lib4-cards 13.3, the close_grip low).
+const VIA_POLES = [[0.5, -0.6, 0], [0.2, -1, -0.4], [0.2, -0.8, -0.4]];
+const via = VIA_POLES.map((pole, i) => {
+  const f = (i + 1) / 4, g = START_G.map((v, k) => v + (END_G[k] - v) * f);
+  return { ...body, scap: { elev: -2 * f, pro: -2 * f }, reach: grips(g, pole) };
+});
 // Mistake: the handle pulled down to the lower chest, the elbows driven back behind the trunk.
 const MIS_G = [0, lm0.chest[1] - 0.17, lm0.chest[2] + 0.075];
 const misBody = { reach: grips(MIS_G, [0.3, 0.3, -1]) };
@@ -77,7 +90,7 @@ const LEAN_UP = [0, HIP_E[1] + RAY, HIP_E[2]], LEAN_AX = HIP_E.map((v, i) => v +
 export default {
   id: 'close_grip_pulldown', name: 'Close-Grip Pulldown', view: 'side', facing: 'right',
   camera: { fit: true },
-  poses: { start, end },
+  poses: { start, via, end },
   equipment: [
     { type: 'floor', from: -0.5, to: 1.48 },
     ...[[-0.22, 0.30], [0.84, COL.z1]].map(([a, b]) => ({ type: 'box', at: [0, 0.022, (a + b) / 2], w: b - a, h: 0.044, rc: 1, z: 'center' })),

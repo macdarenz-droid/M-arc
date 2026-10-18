@@ -25,6 +25,12 @@
 //  - Labels: 'Soft elbows' sits above the arm with a vertical leader (the elbow is closed in by the trace below and
 //    right); the 'Blades on pad' and 'Blades off pad' leaders come from the open left side and cross the rear post and
 //    the pad, because the back-on-pad contact has the pad behind it and the torso in front.
+// CARD: hands level with the upper chest at the start (c1), forehead height at the end (c2), tempo (card `tempo`).
+//  Unsourced numbers: TILT -25 (pad 25 deg from vertical; the card gives no angle), SEAT_TOP 0.46 m, GX0/GX1 26/22 cm,
+//  S0 (6 cm in front of the chest, 5 cm below the shoulder joint), E1 (59.5 cm in front of the shoulder, 4 cm below the
+//  head landmark), L 1.0 m, the Mistake size (trunk +20 deg thoracic flexion, scap pro 5 cm / elev 1.5 cm, GAP_M about
+//  8 cm, the handle 11.2 deg further along the arc), the post 12 cm behind the pivot. All illustrative: the card gives
+//  no machine sizes and no fault size.
 import { rootOnSeat, landmarksOf, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 
 const H = 1.75;

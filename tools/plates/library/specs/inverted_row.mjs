@@ -23,11 +23,18 @@
 //  - Mistake (card plate.mistake, c3): hips sag at the top. The hips flex 30 deg (the body folds, hips toward the
 //    floor); the heels stay put and the plank angle is re-solved (SAG_TILT -28.3) so the shoulder joint keeps the end
 //    pose's height; the grips stay on the bar.
-//  - Rack upright 1.18 m, 10 cm behind the bar, with its J-hook under the bar; drawn behind the body.
+//  - Rack upright 1.18 m, 10 cm behind the bar, drawn behind the body, with a J-hook (back plate 10 cm above the bar,
+//    cup and lip) whose back plate shows above the end fist (13.3 fix 5).
 //  - Labels: 'Blades back' and 'Hips sagging' point at the back and the buttock, which face the floor. Their open
 //    side is closed in by the start pose and the ghosts below the body, so those leaders cross the lighter ghost lines
 //    (never the trace).
 //  - Grips +-26 cm: 52 cm apart, a little wider than the 45 cm shoulder-joint width (c2).
+// CARD: GX (c2, a little wider than the shoulders), BAR height (c1, "about waist height"), chest to the bar at the end
+//  (c4), heels on the floor (c1, c3), tempo (c5/c6). Unsourced numbers: BAR 1.00 m (card: "about waist height"),
+//  GX 0.26 m (card: "a little wider"), SAG 30 deg (illustrative fault size; card gives none), start arms straight but
+//  not exactly vertical (the heels are placed for the chest-at-bar end), elbow 5 deg for "straight" (STRAIGHT), NECK
+//  -6, scap pro -3/-4 and elev -1 (card: "back and down", no size), RACK_Z 10 cm behind the bar, upright 1.18 m, the
+//  J-hook sizes (HOOK), ghost count 2, tell text 'Hips sagging' (the 44 px hit box; card: "hips sagging").
 import { landmarksOf, WINTER, REF } from '../engine.mjs';
 
 const H = 1.75;
@@ -87,13 +94,21 @@ const misBody = { ...plank(SAG_TILT, HEEL_S, SAG), scap: { elev: -1, pro: -4 }, 
 export const GEOM = { HEEL_S, BAR, BAR_R, STRAIGHT };
 
 const RACK_Z = BAR[2] - 0.10;
+// J-hook on the upright's near face (13.3 fix 5): a back plate that slides on the upright and stands 10 cm above the
+// bar, and a cup under the bar (its front lip is left off: hidden by the fist, it only crowded the 'Chest to bar'
+// leader). The end fist covers the cup, so the back plate's top shows above
+// the bar and the bar reads as held by the hook, not floating. World [y, z] outline, exported for the test.
+const FACE = RACK_Z + 0.038;
+export const HOOK = [[0.95, FACE], [1.10, FACE], [1.10, FACE + 0.025], [0.975, FACE + 0.025], [0.975, BAR[2]],
+  [0.95, BAR[2]]].map(([y, z]) => [0, y, z]);
 export default {
   id: 'inverted_row', name: 'Inverted Row', view: 'side', facing: 'right',
   camera: { fit: true },
   poses: { start, end },
   equipment: [
     { type: 'floor', from: -0.45, to: HEEL_S[2] + 0.25 },
-    { type: 'rackUpright', at: [0, 0, RACK_Z], h: 1.18, hook: BAR[1] - 0.03 },
+    { type: 'rackUpright', at: [0, 0, RACK_Z], h: 1.18 },
+    { type: 'poly', cls: 'eq', z: 'back', pts: HOOK },
     { type: 'pullupBar', at: BAR, mount: 'ceiling', stub: 0.0001 },
   ],
   checks: [

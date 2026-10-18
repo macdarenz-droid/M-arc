@@ -18,6 +18,11 @@
 //    the bar, elbows pulled down toward the hips.
 //  - Mistake (card plate.mistake, c7, c5): momentum. The torso rocks back about 25 deg past the set lean and the bar
 //    comes down with it to the chest; the arms are the end pose's. The swing reads as the red trunk behind the solid one.
+// CARD: GX (c1, about shoulder width), the lean limit (c5, about 30 deg), tempo (card `tempo`). Unsourced numbers:
+//  END_BAR 10 cm under and 9 cm in front of the chin (card: "just below chin height"), START_Y 1.63 m, TILT -8 and
+//  TRUNK -3 (card: "slight lean"), the Mistake rock (pelvis -24, trunk -12: about 25 deg past the set lean; card gives
+//  no size) and MIS_BAR 16 cm under the rocked chin; station sizes (SEAT_TOP 0.42 m, HEAD 2.08 m, COL 1.04/1.30 m,
+//  bar 1.22 m / 60 cm / 12 cm drop, 16 plates, LIFT0 3 cm) copied from close_grip_pulldown and lat_pulldown.
 import { rootOnSeat, landmarksOf } from '../engine.mjs';
 
 const H = 1.75;

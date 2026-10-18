@@ -21,10 +21,17 @@
 //  - Mistake (card plate.mistake, c3): the slump. The pelvis rolls back 14 deg and the spine rounds 34 deg, so the
 //    trunk tips forward and the low back rounds while the hands still hold the band at the end of the pull. The hips
 //    flex 14 deg less at the joint (the pelvis rolled back), so the legs stay flat on the mat.
-//  - Labels: 'band' right of the foot at ball height (a box above leaves a leader along the upright toes); the
-//    'elbows' and 'slump' leaders cross the near arm because the elbow and low back sit behind it in this view.
-//  - Scale: `fit` lands on the reference 146.29 px/m (F1's top); the floor sit is only 0.92 m tall, so the figure
-//    covers less of the plate than the 8 do (F2 raised, see lb1/DESIGN.md).
+//  - Labels: 'band' right of the foot at ball height (a box above leaves a leader along the upright toes); 'elbows'
+//    above the elbow and 'slump' above the low back, their vertical leaders running down the back of the near arm,
+//    because the elbow and the low back sit behind the arm in this view and the plate's left edge leaves no other side.
+//  - Scale (ruling Q-D5-1, D-LIB8-floor, as plank): `camera { fit: true, maxScale: 1.35, y0: 339 }`. The floor runs on
+//    to 1.60 m past the feet so 'Band round soles' fits right of the foot; the width-filling fit lands at 159 px/m
+//    (x1.087, inside the ruling's x1.35), F1 raised as the named exemption, F2 cover 0.211.
+// CARD: c1 (mat, legs out, feet flexed, band round the soles), c3 (sit tall, arms straight, palms in; the slump), c4
+//  (elbows back close to the sides), tempo (c10). Unsourced numbers: MAT 1 cm; LEGS hip 88, knee 4, ankle +8; GX 0.15
+//  (hands 30 cm apart); START_G (shoulder -0.17, +0.662) and END_G (shoulder -0.30, +0.17); scap elev -1, pro +2/-4;
+//  the slump size M_TILT -14, M_TRUNK 34, neck 8, Mistake hands -0.04/+0.14 (illustrative fault size); floor -0.45 to
+//  1.60 m; mat 1.40 m.
 import { rootOnSeat, landmarksOf } from '../engine.mjs';
 import { band, bandAnchor, BAND_ITEMS } from '../eq/band.mjs';
 import { perItem } from '../eq/parts.mjs';
@@ -53,10 +60,10 @@ const misBody = { root: { at: rootOnSeat(SEAT, M_TILT, H), tilt: M_TILT }, trunk
 
 export default {
   id: 'resistance_band_row', name: 'Resistance Band Row', view: 'side', facing: 'right',
-  camera: { fit: true },
+  camera: { fit: true, maxScale: 1.35, y0: 339 },   // D-LIB8-floor (ruling Q-D5-1, as plank): floor at y 339, width-filling scale <= x1.35
   poses: { start, end },
   equipment: [
-    { type: 'floor', from: -0.45, to: 1.30 },
+    { type: 'floor', from: -0.45, to: 1.60 },
     { type: 'box', at: [0, MAT / 2, 0.38], w: 1.40, h: MAT, rc: 0.5, z: 'back' },                              // mat
     ...perItem(band(), BAND_ITEMS),
     // the start strand as a dashed outline (both strands project onto one line in this view) in the end pose (the start layer never draws moving equipment)
@@ -71,9 +78,9 @@ export default {
   trace: { point: 'grip.r', trim: [10, 12] },
   datum: [{ x: 'hip.r', from: 'hip.r', to: 190 }],        // vertical through the hip: the trunk stays tall
   callouts: [
-    { key: 'tall', text: 'Sit tall', anchor: 'sternum', box: { left: 166, top: 196 }, cue: 'Back straight and neutral, chest up, the same from start to finish.' },
-    { key: 'elbows', text: 'Elbows<br>to sides', anchor: 'elbow.r', box: { left: 10, top: 216 }, cue: 'Elbows travel back close to the body.' },
-    { key: 'band', text: 'Band round<br>soles', anchor: 'ball.r', box: { left: 262, top: 284 }, cue: 'The band sits securely around the soles of the feet, feet flexed.' },
+    { key: 'tall', text: 'Sit tall', anchor: 'sternum', box: { left: 160, top: 206 }, cue: 'Back straight and neutral, chest up, the same from start to finish.' },
+    { key: 'elbows', text: 'Elbows<br>to sides', anchor: 'elbow.r', box: { left: 2, top: 226 }, cue: 'Elbows travel back close to the body.' },
+    { key: 'band', text: 'Band round<br>soles', anchor: 'ball.r', box: { left: 244, top: 282 }, cue: 'The band sits securely around the soles of the feet, feet flexed.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Return', s: 2, move: true }],
   mistake: {
@@ -83,8 +90,8 @@ export default {
       { kind: 'arc-arrow', center: 'hip.r', r: 62, a0: -96, a1: -70 },
     ],
     tells: [
-      { key: 'slump', text: 'Low back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake', off: [-2, 0] }, box: { left: 10, top: 288 }, cue: 'The lower back rounds and the trunk tips forward.' },
-      { key: 'tip', text: 'Trunk tips<br>forward', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, box: { left: 160, top: 196 }, cue: 'The trunk tips forward over the legs instead of staying tall.' },
+      { key: 'slump', text: 'Low back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake', off: [-2, 0] }, box: { left: 2, top: 206 }, cue: 'The lower back rounds and the trunk tips forward.' },
+      { key: 'tip', text: 'Trunk tips<br>forward', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, box: { left: 160, top: 206 }, cue: 'The trunk tips forward over the legs instead of staying tall.' },
     ],
   },
   alt: 'Resistance band row, side view. Sitting tall on a mat, legs straight out and feet flexed with a band round the soles, the lifter pulls the band ends from straight arms back to the lower ribs, elbows close to the sides.',

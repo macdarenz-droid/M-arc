@@ -76,7 +76,14 @@ keys (D-LIB9-HANDPAGE).
   needs the owner's yes. single_arm_lat_pulldown's drawable question is with the research owner (the card's viewWhy
   and handlingMistakes order, plan 3.1:85); until it is answered its expected F7 is undecided and no Do 7 evidence
   for it counts. LIB-9a never edits the card beyond its three keys.
+- **F1 on resistance_band_row (D-LIB8-floor, ruling Q-D5-1, lib4-cards 13.3).** The floor sit uses plank's camera
+  (`fit`, `maxScale 1.35`, `y0 339`); the floor runs to 1.60 m so the 'band' label fits right of the foot, and the fit
+  lands at 159 px/m (x1.087). A named exemption by id and key on the LB1 sheet, the supervisor's to sign.
 - No other flag is planned. Any other raised flag is a defect to fix, never an addition to the list.
+
+**Held plates (13.3).** leg_press_calf_raise (H3 trace and toe-plate contact, D-LIB8-shrug; spec not committed until it
+is re-planned) and horizontal_leg_press (end knee redrawn at the card-true 15°; H3 deviation 8.2 px < 11.39, so held under
+Q-D5-3 / D-LIB8-shrug; spec committed at 15°). Neither is bent to pass a check; the owner's design option decides them.
 
 ## 4. Card fields (D-LIB9-CARDFIELDS)
 

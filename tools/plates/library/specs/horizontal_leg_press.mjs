@@ -13,8 +13,15 @@
 //  - Bottom: knee 90, the shin 12 deg below horizontal, so a vertical plate needs 12 deg of ankle dorsiflexion and the
 //    heels stay flat (c1, c7).
 //  - Foot plate vertical (card equipment), its face 24 cm above the level rail; feet hip width, toes forward (c1).
-//  - End: the sled is placed so the knee is 25 deg short of straight (soft: a small bend left, c4). Mistake: the sled runs on until the
-//    knee is straight (0 deg); hips and back stay on the pad (one fault only).
+//  - End: the sled is placed so the knee is 15 deg short of straight (soft: a small bend left, c4), the approved
+//    leg_press top ("knees 15 deg short of lockout", vendor leg_press.mjs:13, :23; ruling Q-D5-3, lib4-cards 13.3).
+//    Mistake: the sled runs on until the knee is straight (0.5 deg); hips and back stay on the pad (one fault only).
+//  - HELD (Q-D5-3, D-LIB8-shrug): at 15 deg PQ-H3's Mistake deviation is 8.2 px against the 11.39 px minimum. The end
+//    pose stays card-true; the plate waits for a sourced end-knee number or the owner's design option.
+// Unsourced numbers: back pad 40 deg from vertical (pelvis tilt -40); hip-joint centre 0.55 m up; bottom shin 12 deg
+//  below horizontal; plate face 24 cm above the rail, plate 62 cm tall, rail 1.25 m; mid-sole 10 cm above the face
+//  reference; feet 11 cm either side of the midline (hip width); handle 25 cm out, 2 cm above and 12 cm ahead of the
+//  hip; seat pan rising 12 deg; Mistake knee 0.5 deg (the engine cannot reach exactly 0).
 import { legPressFace, landmarksOf } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
@@ -66,7 +73,7 @@ const travelFor = deg => {   // bisect the sled travel for a knee angle (the kne
   for (let i = 0; i < 50; i++) { const m = (lo + hi) / 2; if (kneeAt(m) > deg) lo = m; else hi = m; }
   return (lo + hi) / 2;
 };
-const T_START = BACK_T, T_END = travelFor(25), T_LOCK = travelFor(0.5);
+const T_START = BACK_T, T_END = travelFor(15), T_LOCK = travelFor(0.5);   // end: 15 deg (Q-D5-3)
 
 const start = { ...base, plant: feetAt(T_START) };
 const end = { ...base, plant: feetAt(T_END) };

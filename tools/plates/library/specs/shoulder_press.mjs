@@ -24,6 +24,15 @@
 //    forward and the thorax leans back until the torso touches the pad again (solved on the drawn torso outline: no
 //    part of the back sinks into the pad), a 28 deg spine extension. The low back leaves the pad (mid back 9 cm, sacrum
 //    12 cm) while the top of the back stays on it; the handles stay at the top, so the arch is the one change.
+//  - Labels: 'Soft elbows overhead' crosses the lever once (the elbow is closed in by the lever above, the trace on the
+//    right and the head below). 'No back arch' and the Mistake tells 'Back arched' and 'Off the pad' come from the
+//    open left side and cross the upright and the back pad, because the back-on-pad contact has the pad behind it.
+//    Second tell 'gap' (lib4-cards 13.3 Q-D5-4): the card's "off the pad", anchored on the gap mark.
+// CARD: handles level with or just above the shoulders at the start (c1), elbows straight but not locked (c6), tempo
+//  (card `tempo`). Unsourced numbers: SEAT_TOP 0.46 m, TILT -6, GX 33 cm (the card names no width), START_G 10 cm above
+//  and 24 cm in front of the shoulder joint, END_G 65.2 cm above and 12 cm in front, L 0.60 m, the Mistake size
+//  (SLIDE 5.5 cm, ARCH_P 10 deg, a 28 deg total spine extension solved on the torso outline; card gives no size),
+//  HANDLE 14 cm. All illustrative: the card gives no machine sizes and no fault size.
 import { rootOnSeat, landmarksOf, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 import { polyBar } from '../eq/polybar.mjs';
 import { perItem } from '../eq/parts.mjs';
@@ -89,6 +98,7 @@ const misBody = { root: { at: misRoot, tilt: TILT + ARCH_P }, trunk: -(ARCH_P + 
 const lmM = landmarksOf({ ...end, ...misBody }, H);
 const gapTo = lmM.backMid, gapCm = (gapTo[1] - padU[1]) * padN[1] + (gapTo[2] - padU[2]) * padN[2];
 const gapFrom = [0, gapTo[1] - padN[1] * gapCm, gapTo[2] - padN[2] * gapCm];
+const gapMid = [0, (gapFrom[1] + gapTo[1]) / 2, (gapFrom[2] + gapTo[2]) / 2];
 const TICK = 2 / 146.29;
 const tick = p => ({ kind: 'line', pts: [[0, p[1] - padDir[1] * TICK, p[2] - padDir[2] * TICK], [0, p[1] + padDir[1] * TICK, p[2] + padDir[2] * TICK]] });
 
@@ -144,6 +154,7 @@ export default {
     ],
     tells: [
       { key: 'arch', text: 'Back<br>arched', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 38, top: 220 }, cue: 'The low back arches off the pad to push the handles up.' },
+      { key: 'gap', text: 'Off<br>the pad', anchor: gapMid, box: { left: 34, top: 166 }, cue: 'A gap opens between the low back and the pad.' },
     ],
   },
   alt: 'Machine shoulder press, side view. Seated with the back on an upright pad and the feet planted, the lifter presses vertical handles from just above the shoulders straight up overhead until the elbows are straight but not locked, the low back keeping its natural curve against the pad.',

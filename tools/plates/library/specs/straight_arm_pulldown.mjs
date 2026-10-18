@@ -30,8 +30,17 @@
 //    stack drawn with two static guide rods as close_grip_pulldown draws them (R7).
 //  - Mistake (card plate.mistake, c6): the elbows bend as the bar comes down (a bent-arm pulldown), drawn part-way
 //    down: elbows 90 deg, the bar in front of the chest. Trunk and legs unchanged, so the arm is the only fault.
+//  - In-between keys at every eighth of the rep keep the bar on the shoulder arc (lib4-cards 13.3 must-fix 1), so the
+//    ghosts hold the 15 deg elbow and the trace sweeps the arc.
+//  - Mistake tells (DRAWING-GUIDE:24, rule Q-D5-4): 'bend' (the elbows bend, topFault) and 'close' (the bar pulled in
+//    to the chest, the card's "bent-arm pulldown", c6). 'close' points at the near side of the red fist, below the
+//    cables, from the open space between the cable and the column.
 //  - Labels sit on the left: on the right every leader to the arm would meet the cable. 'Arms stay straight' and
 //    'Elbows bend' cross the trunk to reach the elbow, which hangs in front of it (no open side away from the cable).
+// Unsourced numbers (the card gives none of these): feet 24 cm apart, toes 5 deg out; knees 10 deg; trunk 10 deg
+// forward; elbow bend 15 deg; hands +-25 cm; bar 66 cm wide, 28 mm; end bar 1 cm in front of the thighs; column 2.25 m
+// tall, 34 cm deep, its pulley 1.13 m in front of mid-foot at 2.12 m; 14 x 5 kg stack, 6 loaded; Mistake drawn
+// mid-pull with the upper arm 35 deg forward and the elbow at 90 deg; in-between keys every eighth of the rep.
 import { landmarksOf } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
@@ -93,8 +102,15 @@ const thighGap = bar => {
 };
 export const END_DEG = solve(deg => thighGap(onArc(deg)) - BAR_GAP, ...END_ARM_BRACKET);
 const END_BAR = onArc(END_DEG);
-const start = { ...base, reach: hands(START_BAR, [-0.3, -0.2, -1]) };
+const POLE_START = [-0.3, -0.2, -1];
+const start = { ...base, reach: hands(START_BAR, POLE_START) };
 const end = { ...base, reach: hands(END_BAR, POLE_HANG) };
+// In-between keys (lib4-cards 13.3 must-fix 1): at every eighth of the rep the bar sits on the same arc, the arm stepping
+// evenly from START_DEG to END_DEG, so every ghost keeps the 15 deg elbow and the trace follows the arc. Without them
+// the engine interpolates the grip on a straight chord and the ghost elbows bend 98-120 deg (more than the Mistake).
+export const VIA_T = [1, 2, 3, 4, 5, 6, 7].map(k => k / 8);   // the ghosts (t = 1/4, 1/2, 3/4) land on keys 2, 4, 6
+export const VIA_DEG = VIA_T.map(t => START_DEG + (END_DEG - START_DEG) * t);
+const via = VIA_DEG.map((deg, i) => ({ ...base, reach: hands(onArc(deg), POLE_START.map((v, k) => v + (POLE_HANG[k] - v) * VIA_T[i])) }));
 
 // Mistake (c6): part-way down the elbows have bent to about 90 deg, a bent-arm pulldown: the upper arm MIS_ARM deg
 // forward of hanging, the forearm square to it, the bar in front of the chest. Drawn mid-pull, where the bent arm
@@ -110,7 +126,7 @@ const SZ = COL.z, ROD_TOP = COL.h - 0.21;
 export default {
   id: 'straight_arm_pulldown', name: 'Straight-Arm Pulldown', view: 'side', facing: 'right',
   camera: { fit: { left: 70, right: 10 } },             // room on the left for the labels (their leaders cannot cross the cable on the right)
-  poses: { start, end },
+  poses: { start, end, via },
   equipment: [
     { type: 'floor', from: -0.3, to: COL.z + 0.3 },
     (lm, ctx) => {
@@ -144,6 +160,7 @@ export default {
     parts: ['arm.r', 'bar'],
     tells: [
       { key: 'bend', text: 'Elbows<br>bend', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 10, top: 170 }, cue: 'The elbows bend and the lift turns into a pushdown.' },
+      { key: 'close', text: 'Bar to<br>chest', anchor: { at: 'grip.r', pose: 'mistake', off: [5, 5] }, box: { left: 200, top: 200 }, cue: 'The bar is pulled in to the chest, as in a bent-arm pulldown.' },
     ],
   },
   alt: 'Straight-arm cable pulldown, side view. Standing a step back from a high pulley with a slight forward lean and soft knees, the lifter sweeps a straight bar from overhead down to the front of the thighs, elbows keeping one slight bend.',
