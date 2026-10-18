@@ -13,8 +13,8 @@ import { idsOfShard, libraryPlan, readTimes } from '../tools/plates/library/ci/p
 import { PAGES_DIR } from './howto-rebuild.mjs';
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-/** Pages per job (D-LIB4-PAR): LIB-4b's adopted P. 1 until B7 adopts more. */
-export const LIB_P = 1;
+/** Pages per job (D-LIB4-PAR): LIB-4b's adopted P (B7 on e607bb5: fidelity.mjs DEFAULT_P = 4; a test keeps them equal). */
+export const LIB_P = 4;
 const sha256 = b => createHash('sha256').update(b).digest('hex');
 
 /** GATE-SPLIT's wwwHash (scripts/gate-split.mjs), the same bytes in the same order, so the verdict can compare the two

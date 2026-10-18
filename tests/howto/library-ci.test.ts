@@ -25,7 +25,7 @@ import { JOB_BUDGET_S as GATE_BUDGET, SHARD_TARGET_S as GATE_TARGET } from '../.
 // @ts-expect-error plain .mjs build tool, no types
 import { wwwHash as gateWwwHash } from '../../scripts/gate-split.mjs';
 // @ts-expect-error plain .mjs build tool, no types
-import { wwwHash as libWwwHash, inputProblems } from '../../scripts/howto-shard.mjs';
+import { LIB_P, wwwHash as libWwwHash, inputProblems } from '../../scripts/howto-shard.mjs';
 // @ts-expect-error plain .mjs build tool, no types
 import { LIB_ONCE, libraryTuples, parseState } from '../../tools/plates/library/fidelity/tuples.mjs';
 // @ts-expect-error plain .mjs build tool, no types
@@ -543,6 +543,11 @@ describe('C9: L1 rebuilds every pinned page: committed == rebuilt == pin (LIB-2b
 });
 
 describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
+  it('howto-shard runs at LIB-4b\'s adopted P (D-LIB4-PAR: fidelity.mjs DEFAULT_P)', async () => {
+    // @ts-expect-error plain .mjs build tool, no types
+    const { DEFAULT_P } = await import('../../tools/plates/library/fidelity.mjs');
+    expect(LIB_P).toBe(DEFAULT_P);
+  });
   it('howto-shard re-checks the plan hash at this sha\'s times.json, K and the page shas', () => {
     const times = readTimes(ROOT), plan = { ids: ['a'], ...libraryPlan({ ids: ['a'], times }) }, rebuild = { meta: { pageShas: { p: 'x' } } };
     expect(inputProblems({ plan, rebuild, job: { k: 0, N: plan.K }, times, pages: { p: 'x' } }).problems).toEqual([]);
