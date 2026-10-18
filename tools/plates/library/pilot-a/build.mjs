@@ -23,7 +23,7 @@ const HELD = ALL.filter(p => p.held);
 const CARDS = join(here, 'cards');   // verified research cards (card v2), copied from claude/libht-research
 
 // Flag envelope (plan 3.3), measured on the 7 engine-drawn approved plates by report.mjs `measures` (the lateral
-// raise is hand-drawn, at the reference 146.29 px/m). Re-measured by LIB-3 once it merges (plan 3.5, last bullet).
+// raise is hand-drawn, at the reference 146.29 px/m). Kept for this sheet and page order only (D-LIB8FIX-ENV): F2 and F3 here are other measures than LIB-3's; LIB-3's qa flags (qa/envelope.json) gate the merge.
 export const ENVELOPE = { pxPerM: [123.91, 146.29], coverage: [0.1, 0.246], longestLeader: [0, 81.9], boxed: [0, 6] };
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const TIER_TITLE = { A: 'Tier A: over the face, spinal load, overhead, explosive', B: 'Tier B', C: 'Tier C' };
