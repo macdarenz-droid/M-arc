@@ -1,0 +1,623 @@
+{
+ "critic run 1": {
+  "findings": [
+   {
+    "file": "docs/research/howto/cards/barbell_back_squat.json",
+    "path": "tierA.wayOut.text (claims c13, c14, c15)",
+    "severity": "blocker",
+    "problem": "The tier-A way-out line puts two different situations into one instruction. It says to have a spotter, then says to bail by pushing the bar backward. The source gives the backward bail as the option for lifting alone. The line also skips the source's gentler first option: lowering the bar onto the safeties. A beginner who follows it literally with a spotter behind them dumps the bar onto the spotter.",
+    "evidence": "Shown: \"Safeties just below your lowest depth, and a spotter for heavy sets when you can. To bail, push the bar backward off your shoulders while you move your body forward, so it falls onto the safeties.\" rep-fail (re-fetched 2026-10-17) frames the bail as solo: \"Bailing from a heavy squat can be a daunting experience, especially if you're lifting without a spotter ... there are times when you might find yourself in a situation where you need to bail on your own\". Its first bullet is \"This allows you to lower the bar onto the safeties if you can't complete the lift\". It also says \"A spotter can assist in case you struggle with the lift, reducing the need to bail entirely.\"",
+    "fix": "Separate the two cases using only rep-fail's words. With a spotter: they help you finish the rep. Alone: set the safeties just below your lowest depth and lower the bar onto them; if you must bail, push it backward off your shoulders while you move forward; practise with light weight first. Add the spotter-assist sentence to c14 and the 'bail on your own' sentence to c15 (each quote 50 words or fewer)."
+   },
+   {
+    "file": "docs/research/howto/cards/pull_up.json",
+    "path": "plate.end",
+    "severity": "high",
+    "problem": "plate.end turns Youdas's measured elbow range into a top elbow angle. It adds \"from the full hang\", which the source never states and which c6's own text rules out. The plate engine would draw about 93\u00b0 of elbow bend at the top, which may not match 'chin above the bar' (c5).",
+    "evidence": "plate.end: \"elbows bent through the measured range, a mean of 93.4 \u00b1 14.6 degrees from the full hang in a lab sample (c6)\". c6: \"The source gives the range moved, not the elbow angle at the top.\" The Youdas abstract (efetch PMID 21068680) gives only \"mean absolute elbow joint range of motion\" and no start position.",
+    "fix": "Remove the number and the words 'from the full hang' from plate.end. Draw the top from c5 (chin above the bar) and c7 only, and keep the 93.4\u00b0 range in notes."
+   },
+   {
+    "file": "docs/research/howto/cards/hanging_leg_raise.json",
+    "path": "plate.end; claim c4; notes[0]",
+    "severity": "high",
+    "problem": "plate.end feeds an unclear expert number (hip flexion stops at 30-45\u00b0 from the vertical) into the end pose. The card and verify/the8.md misdescribe what is unclear. The quoted source names the thigh angle. What it does not say is which vertical it measures from. Read from the hanging vertical, 30-45\u00b0 as 'maximum hip flexion' cannot fit toes-to-bar (c3), so the drawn pose could be wrong.",
+    "evidence": "c4 quote (Yessis, re-fetched): \"The abdominals do not begin to shorten until the thighs reach approximately the 30-45 degree angle from the vertical.\" Same page: \"As hip flexion reaches it maximum range of motion (approximately 30-45 degrees from the vertical position)\". notes[0] and the8.md say \"the page does not say whether it means the thigh or the hip angle\". c4 is also tagged MECH, although it is expert opinion on this same exercise, not an inference from another one.",
+    "fix": "Remove the 30-45\u00b0 sentence from plate.end and draw only the sourced words: toes to the bar, pelvis curled up (c3, c8). Correct notes[0] and the8.md: the angle is the thigh's, the unclear part is the reference vertical. Keep c4 as a note, or tag it WEAK (or CONSENSUS+WEAK) instead of MECH+WEAK."
+   },
+   {
+    "file": "docs/research/howto/cards/hanging_knee_raise.json",
+    "path": "inherit[0], inherit[1] (handContact), inherit[3], inherit[4], inherit[5]; gaps[0]; feel.rows[3].fix; zooms[0].right",
+    "severity": "high",
+    "problem": "This tier-A child inherits lines that its parent's new verified card (hanging_leg_raise, the 8) marks as unsourced. A kept gap record and a shown safety-row fix depend on those lines. This fails LR-8 against the parent card now on the branch. A zoom also uses inherited words without citing inherit:n.",
+    "evidence": "verify/the8.md (hanging_leg_raise): \"These golden-B points are unsourced: the shoulder-width grip, straps and slings, the box-clearance setup...\". The parent card has grip.width \"Not sourced on this card\", grip.handContact \"Not sourced on this card (LR-4 drawing convention)\", and no active-hang or box-clear line. HKR gaps[0]: \"the parent's box-clear setup line is inherited\". feel.rows[3].fix cites \"inherit:5\" (active hang). zooms[0].right \"bar across the base of the fingers\" cites only c16, c2 and c3.",
+    "fix": "Re-check each inherit line against the parent's new card. Move the unsourced ones (width, hand contact, box clearance, chalk/straps, active hang) to gaps, or find sources. Rewrite gaps[0] to say that box/stool clearance is unsourced. Replace feel.rows[3].fix with a sourced fix or none. Cite inherit:n wherever a line uses an inherited fact."
+   },
+   {
+    "file": "docs/research/howto/cards/chin_up.json",
+    "path": "inherit[0], inherit[2], inherit[3]; zooms[0].right",
+    "severity": "medium",
+    "problem": "The inherited hand contact, bar-height and chalk lines come from golden-B research. The parent's new card (pull_up) does not support them. The hand zoom uses inherited words its cited claims do not contain.",
+    "evidence": "pull_up grip.handContact: \"Not sourced on this card: drawn as the bar primitive natural hang grip (LR-4 drawing convention)\". pull_up has no bar-height, jump/step, dry-bar or chalk line. chin_up zooms[0].right: \"Palm facing the face, bar across the top of the palm, thumb wrapped under...\" cites c3, c1 and c20, none of which says 'top of the palm'. The notes check inherits against origin/claude/howto-options research, not against the new parent card.",
+    "fix": "Re-run the LR-8 check against the new pull_up card. Drop the unsupported inherit lines or record them as gaps. Remove 'bar across the top of the palm' from zooms[0].right, or cite inherit:0 only once a source supports it."
+   },
+   {
+    "file": "docs/research/howto/cards/leg_press.json",
+    "path": "plate.mistake.drawable / rankNote; notes[3]",
+    "severity": "medium",
+    "problem": "drawable:false rests on NASM's list order. The card's own rankNote says that list carries no frequency, and notes[3] says c7 is the only fault any source calls common. So the card contradicts itself. The ranking rule also differs across the 8: pull_up, seated_cable_row and leg_press treat first-listed as top, while lat_pulldown says its list 'does not rank its errors' and picks the fourth item.",
+    "evidence": "rankNote: \"NASM lists its mistakes without a frequency\". notes[3]: \"c7 is the only fault a source calls common ('commonly cause low back injury')\". NASM page (re-fetched) lists \"Using excessive weight that compromises form or allows knees to collapse inward\" first. lat_pulldown notes: \"names four faults with no ranking\" (behind the neck is drawn, though open grip is listed first).",
+    "fix": "Use one ranking rule for all 8 cards. Under the card's own evidence, set drawable:true with c7 as the top fault (the only one called common), keep knee cave in handlingMistakes, and reword the rankNote. If list order is the rule, apply it to lat_pulldown as well."
+   },
+   {
+    "file": "docs/research/howto/cards/leg_press.json",
+    "path": "setup[4] vs claim c22 (no shown line)",
+    "severity": "medium",
+    "problem": "The card shows how to release the safety handles but no shown line says how to lock them again at the end, although c22 sources it. A beginner is told how to unlock the sled and never how to secure it.",
+    "evidence": "setup[4]: \"Push the platform away and release the safety handles...\" (c3). c22 quotes: \"When you\u2019ve completed your set, pause at the top and pull the safety handles inwards.\" and \"You can now bend your knees gently until the platform rests across the safety stoppers.\" No setup, posture or mistake line cites the re-engage part.",
+    "fix": "Add a finish line from c22: \"After the last rep, pause at the top, pull the safety handles in and lower the platform onto the stoppers.\" Merge two setup steps to stay within 5."
+   },
+   {
+    "file": "docs/research/howto/cards/barbell_back_squat.json",
+    "path": "risks[2] (claim c18)",
+    "severity": "medium",
+    "problem": "The tier-A breath line names a risk but gives no action, so it breaks the LR-28 order and the content.md 5.2 pattern. It also adds 'healthy lifters', which the review does not say.",
+    "evidence": "Shown: \"Holding your breath under heavy load raises blood pressure; whether that harms healthy lifters is not confirmed.\" Hackett abstract (efetch): \"The health risks associated with the VM during resistance exercise remain unconfirmed.\" No 'healthy' qualifier. content.md 5.2: \"heavy two-leg lifts carry the breath-holding line (the squat's approved 'High blood pressure? Don't hold your breath long.' pattern)\". c17 sources \"exhale at the sticking point\".",
+    "fix": "Rewrite as condition, then what to do, using the cited claims: e.g. \"High blood pressure? Don't hold your breath long; breathe out through the hardest part.\" Remove 'healthy lifters'. If 'don't hold your breath long' needs its own source, cite the one behind the approved line (MacDougall 1985 is already on the leg press card)."
+   },
+   {
+    "file": "docs/research/howto/shared/dumbbell-kickup.json",
+    "path": "variants.seated.steps; gaps[0]; gaps[1]",
+    "severity": "medium",
+    "problem": "The seated variant (tier-A dumbbell_shoulder_press, arnold_press) shows how to get the dumbbells up but not how to get them down. c6 now sources a seated set-down, so LR-3 no longer blocks it; only scope does. gaps[0] is also out of date: c6's source does name a wrong set-down.",
+    "evidence": "Seated steps: only 'position' and 'get-in' (c3). gaps[1]: \"Seated set-down is now sourced (c6...). The seated variant still has no finish step... no seated way-out line is shown.\" gaps[0]: \"No source names a wrong kick-up or set-down pose\". The c6 quote (BarBend, re-fetched): \"There\u2019s no reason to chuck them from shoulder height onto the floor.\"",
+    "fix": "Add seated finish steps from c6: bring your knees up one at a time to catch the dumbbells, or have a spotter take one. Set postureArchetype.wrong for the seated set-down to 'dumbbells thrown down from shoulder height' (c6), and update gaps[0] and gaps[1]."
+   },
+   {
+    "file": "docs/research/howto/shared/dumbbell-kickup.json",
+    "path": "notes ('W2A 2026-10-17 conflict for a ruling'); claims c5, c6",
+    "severity": "low",
+    "problem": "Open question 1. The two quotes do not conflict: they cover different exercises and situations. BarBend is about the normal end-of-set set-down after a seated overhead press. FitnessVolt c5 is about a failed rep lying on a bench. FitnessVolt's own end-of-set step says to lower the weights, not throw them.",
+    "evidence": "BarBend section 'Dropping the Dumbbells': \"considering how you\u2019ll get them down at the end of the set... Consider getting your spotter to take one... bring your knees up one at a time to 'catch' the dumbbells... There\u2019s no reason to chuck them from shoulder height onto the floor.\" FitnessVolt section 'Safety when training alone': \"if you are unable to complete a rep of barbell bench presses, you could find yourself pinned... if you get stuck, you can simply drop the weights out to the side.\" FitnessVolt step 5: \"either lower the weights to the floor or, with your arms bent, just sit back up\".",
+    "fix": "Proposed shown lines. Bench finish (c4): \"After the last rep, keep your arms bent and sit up; the dumbbells come back to your thighs.\" Seated finish (c6): \"Lower the dumbbells and bring your knees up one at a time to catch them, or have a spotter take one. Don't throw them down from shoulder height.\" Bench failed rep, only if the supervisor accepts one WEAK coach source for a tier-A way out (it is sourced, so LR-3 allows it): \"Stuck on a rep? Drop the dumbbells out to your sides.\" (c5). 'Never over the face' needs its own source before it can be added."
+   },
+   {
+    "file": "docs/research/howto/cards/hanging_knee_raise.json",
+    "path": "feel.rows[2].means, feel.rows[3].means, feel.rows[3].fix, risks[0]",
+    "severity": "medium",
+    "problem": "Shown fields contain research notes and evidence hedges written for the researcher, not the user. This breaks the UI copy rule and LR-27's card-line rule.",
+    "evidence": "rows[2].means: \"...measured about 3000 N...; bent knees likely load the spine less (inference).\" rows[3].means: \"(measured in pull-ups)\". rows[3].fix: \"Set the shoulders a little down from the ears before each rep (the inherited active hang).\" risks[0]: \"the straight-leg version measured about 3000 N.\"",
+    "fix": "Remove '(inference)', '(measured in pull-ups)' and '(the inherited active hang)'. Leave the confidence wording in the claim tags (MECH/WEAK). rows[3].fix also needs a sourced replacement (see the inherit finding)."
+   },
+   {
+    "file": "docs/research/howto/cards/hanging_leg_raise.json",
+    "path": "setup[0]; gaps",
+    "severity": "medium",
+    "problem": "The tier-A setup tells the lifter to step up on a low stool, but nothing covers moving it clear of the swinging legs. The8.md calls the golden-B box-clearance line unsourced, yet it is not recorded in gaps, so the owner sheet's list of open tier-A gaps (LR-3, LR-20) will miss it.",
+    "evidence": "setup[0]: \"Jump, or step up on a low stool, to reach it.\" (c1). the8.md: \"These golden-B points are unsourced: ... the box-clearance setup\". The gaps list only the dismount, safeties/neck and the back-ache line.",
+    "fix": "Add a tier-A gap: \"No source says to move the stool or box clear of the legs; not shown, not invented.\" Ask LIB-WAYOUT to look for a source."
+   },
+   {
+    "file": "docs/research/howto/cards/single_arm_lat_pulldown.json",
+    "path": "plate.mistake (c10, c13, drawable:true); handlingMistakes order; plate.viewWhy; inherit[3]",
+    "severity": "low",
+    "problem": "Open question 2. The card's own sources support drawable:true with the past-the-end pull as the top drawable fault. BarBend's common-mistakes section lists shoulder dumping (c10) first and torso twisting (where c11 sits) third. PureGym's twist line (c6) is a tip, not a frequency statement. What is wrong is the handlingMistakes order (twist first) and the missing rankNote. inherit[3] says 'lean sideways', which c11 does not say.",
+    "evidence": "BarBend headings (re-fetched): 'Common Single-Arm Lat Pulldown Mistakes' > 'Dumping Your Shoulders Forward', 'Going Too Heavy', 'Torso Twisting'. c6 (PureGym 'Tips'): \"If you find your torso swings or twists, lower the load\". c10 also names a risk: \"This compensation may cause undue stress or discomfort.\" c11 quote: \"leaning into each repetition\", with no 'sideways'.",
+    "fix": "Keep drawable:true. Move the c10 mistake to the top of handlingMistakes (most common and most risky). Add a rankNote: BarBend lists shoulder dumping first; no source measures frequency; the twist (c6) cannot be drawn. Name the section and item in c10's 'where'. Remove 'sideways' from inherit[3]."
+   },
+   {
+    "file": "docs/research/howto/cards/pull_up.json",
+    "path": "plate.start",
+    "severity": "low",
+    "problem": "The single start pose describes two different shoulder-blade states, so the engine has to guess which one to draw.",
+    "evidence": "plate.start: \"Full hang: elbows completely extended, shoulders fully open (c4, c1); ... shoulder blades set down and back before the arms bend (c8).\" Catalyst c1: \"allowing your shoulder to open completely\". NASM c8: \"Set the scapulae first\".",
+    "fix": "Name the drawn start pose: the open dead hang (c1, c4). Treat the scapular set (c8) as the first phase, shown by the 'Shoulders set' checkpoint, and record the choice in notes."
+   },
+   {
+    "file": "docs/research/howto/cards/cable_fly.json and low_to_high_cable_fly.json",
+    "path": "plate.tempo.claim",
+    "severity": "low",
+    "problem": "The tempo claim reference is the single string \"c12, c5\". CARD-V2/LR-12 allow only one id, a list, or inherit:n, so a parser that resolves claim ids fails on this machine field. Outside this review's scope: the same comma-string form and cross-card ids such as \"barbell_bench_press:c5\" appear in line claims of barbell_bench_press, close_grip, decline, incline_barbell, dumbbell_pullover, skull_crusher and the five Smith cards.",
+    "evidence": "cable_fly plate.tempo: {\"up\":1,\"down\":2,\"pause\":1,\"claim\":\"c12, c5\"}. low_to_high_cable_fly: the same.",
+    "fix": "Change to [\"c12\",\"c5\"]. Batch-convert the other comma strings and decide how cross-card references are written."
+   },
+   {
+    "file": "docs/research/howto/cards/cable_shrug.json",
+    "path": "claims[c7].tags",
+    "severity": "low",
+    "problem": "The tag set CONSENSUS, MECH, WEAK is not used by any of the 8 cards. They use DATA+MECH+WEAK, CONSENSUS+MECH and CONSENSUS+WEAK. Each tag is earned by one part of the claim, so it follows the 8's pattern (one base tag plus both modifiers), but the claim is not atomic.",
+    "evidence": "c7 joins the exercise.com hold (\"Hold the contraction at the top for a second.\", CONSENSUS), the ACE barbell-shrug lowering (\"lowering slowly...\", MECH) and the ACSM seconds (WEAK, LR-15). Both new quotes were re-fetched and are verbatim.",
+    "fix": "Accept it under the pattern reading, or split c7 into a tempo claim (exercise.com + ACSM: CONSENSUS, WEAK) and a slow-lowering claim (ACE: CONSENSUS, MECH)."
+   },
+   {
+    "file": "docs/research/howto/cards/{chest_supported_row c12, horizontal_leg_press c12, incline_machine_press c8, shoulder_press c12, straight_arm_pulldown c15}.json",
+    "path": "claims (ACSM tempo + load progression in one claim)",
+    "severity": "low",
+    "problem": "Each of these claims joins the advanced-only ACSM tempo (now WEAK) with the general ACSM 2-10% load rule. The WEAK tag meant for the tempo now also rates the load-progression lines that cite these claims. Claims should be atoms (content.md 3.2).",
+    "evidence": "For example, shoulder_press c12 [CONSENSUS, WEAK] quotes both \"(1-2 s CON; 1-2 s ECC)\" and \"When training at a specific RM load, it is recommended that 2-10% increase in load be applied...\", and is cited by setup[4] \"Add 2-10% load only when...\".",
+    "fix": "Split each into a tempo claim (WEAK, LR-15 wording) and a load claim (CONSENSUS). Point the load lines at the new load claim."
+   },
+   {
+    "file": "docs/research/howto/quotes/{conventional_deadlift,dumbbell_romanian_deadlift,sumo_deadlift}.json",
+    "path": "sources[acsm2009].checked / .changes",
+    "severity": "low",
+    "problem": "The quote files record acsm2009 as checked 2026-09-30 with 'changes: none'. The cards say checked 2026-10-17, and the files' quote entries already hold the changed LR-15 Q1/Q2 quotes. The same fact is kept in two places that disagree, and 33 other W2B quote files carry no sources[] at all.",
+    "evidence": "conventional_deadlift qfile: {\"id\":\"acsm2009\",\"checked\":\"2026-09-30\",\"changes\":\"none\"}; the card: acsm2009 checked 2026-10-17. The qfile c12 quotes ('For intermediate...', 'with eventual emphasis...') match the card and are verbatim against the abstract (re-fetched 2026-10-17).",
+    "fix": "Update these three entries to checked 2026-10-17 with changes 'LR-15 Q1/Q2 quotes', or remove the per-file sources[] so the card holds access and checked once."
+   },
+   {
+    "file": "docs/research/howto/cards/assisted_pull_up.json",
+    "path": "gaps[0]; notes[1] (W2A search record)",
+    "severity": "low",
+    "problem": "The gap says getting onto the pad is unsourced, but c1 sources it and setup[2] shows it; only the way off and a knee slipping off are unsourced. The search record also claims an ACE assisted pull-up page was read, but that URL redirects to the ACE chin-ups page.",
+    "evidence": "c1 (Bullbar): \"Step onto the platform or kneel on the pad... Ensure your knees or legs are securely positioned on the pad.\" Notes: \"acefitness.org exercise-library/190/assisted-pull-up/ -> 200 (mount and return only)\". Re-fetch: final URL .../190/chin-ups/, title \"Chin-ups\". Bullbar's only 'step off the platform' is inside the eccentric-only drill, so it is not a way out.",
+    "fix": "Reword gaps[0] to cover only the way off and the knee slip. Correct the search record: the ACE assisted page was not found, and /190/ is chin-ups."
+   },
+   {
+    "file": "docs/research/howto/cards/ (the 8)",
+    "path": "claims c9 (lateral raise), c7/c12/c26 (squat), c9 (chest press), c17 (leg press), c12 (hanging_leg_raise)",
+    "severity": "low",
+    "problem": "Some claims carry details that are true in the source but missing from their own quotes, so the quote alone does not support the whole claim (CARD-V2).",
+    "evidence": "Lateral raise c9 'seated', 'by metronome' (Coratella full text: \"each exercise was performed seated\", \"A metronome was used\"). Squat c12 'raised hip torque', 'seven weight-trained men' (Fry abstract: hip torque 302.7 vs 28.2). Squat c7 '12-week'. Squat c26 'heavy': its Q2 variant lacks 'heavy loading'. Chest press c9 'metronome'. Leg press c17 '17 untrained adults over 12 weeks'. HLR c12 'Modelled in 14 men'. All were checked against the fetched sources and are true.",
+    "fix": "Add the supporting fragment to each claim's quotes (50 words or fewer), or trim the detail from the claim text."
+   },
+   {
+    "file": "docs/research/howto/cards/seated_cable_row.json",
+    "path": "feel.rows[0].fix",
+    "severity": "low",
+    "problem": "A shown fix gives load advice that none of its cited claims supports.",
+    "evidence": "\"Keep your torso upright and still. Use a weight you can pull without rocking.\" cites c6, c8, c4 and c9, none of which mentions load. This is a tier-C card, so content.md 5.2's 'go lighter' load wording does not apply.",
+    "fix": "Cite a sourced load line, or remove the second sentence."
+   },
+   {
+    "file": "docs/research/howto/cards/barbell_back_squat.json",
+    "path": "libraryDiff.add[glutes]",
+    "severity": "low",
+    "problem": "A role change (glutes from secondary to primary) is recorded as an 'add'. When the library data is updated, this could add glutes a second time.",
+    "evidence": "add: [{\"muscleId\":\"glutes\",\"role\":\"primary\"...}]. why: \"The library has glutes as secondary.\"",
+    "fix": "Record role changes in a separate field (for example 'change'), or say in the why that the add replaces the existing role."
+   },
+   {
+    "file": "docs/research/howto/cards/*.json",
+    "path": "feel.*.muscleId",
+    "severity": "low",
+    "problem": "Not verified: muscle ids could not be checked against src/data/muscles.ts, which is outside the folders this review may read. Outside scope, noted: bent_over_dumbbell_rear_delt_fly uses muscleId 'rotator_cuff', which CARD-V2 lists as text-only.",
+    "evidence": "Ids used: abs, adductors, biceps, calves, chest, forearms, front_delts, glutes, hamstrings, hip_flexors, lats, lower_back, mid_back, obliques, quads, rear_delts, rotator_cuff, side_delts, triceps, upper_chest, upper_traps. the8.md says the pre-push check covered muscles.ts.",
+    "fix": "The supervisor runs the muscles.ts check and confirms or replaces 'rotator_cuff' on the rear-delt fly card."
+   }
+  ],
+  "refetched": {
+   "sources": 96,
+   "checked": 771,
+   "verbatim": 771,
+   "problems": [
+    "Coverage: 96 unique source URLs, covering 259 of the 442 source entries in the copied cards plus shared/dumbbell-kickup (59%, far above 10%). Fetched with curl -sL and a desktop Chrome user agent; PubMed abstracts through NCBI efetch.",
+    "Every source on every fully reviewed tier-A card was re-fetched: barbell_back_squat, pull_up, hanging_leg_raise, chin_up, hanging_knee_raise, assisted_pull_up, shoulder_press and dumbbell-kickup. Also every source on the 5 tier-C/B cards of the 8, underhand and single-arm pulldown, acsm2009 for all W2B cards, and cable_shrug c7's two new sources (exercise.com, ACE shrug). Not re-fetched: the remaining sources on the other W2B tier-A cards (deadlifts, presses, rows, Smith cards).",
+    "Quote check: 771 quote instances from fetched sources, with whitespace, quotes and dashes normalised (756 on cards, 13 on the kick-up card, 2 cable_shrug c7). All 771 are verbatim. That includes every ACSM Q1/Q2 variant and Q3. The abstract confirms Q1 and Q2 are parts of the same intermediate-to-advanced strength sentence, so LR-15 holds.",
+    "Fetch issues: ACE returned 403 (Azure WAF) on the first try for lateral-raise (26), seated-lat-pulldown (158), seated-chest-press (188) and shrug (72). A retry with browser headers got 200 and full pages for all four.",
+    "ACE /exercise-library/190/assisted-pull-up/ (named in the assisted_pull_up notes) redirects to /190/chin-ups/. No ACE assisted pull-up page exists at that address.",
+    "No way out for the bar, the assist machine or the selectorized press was found in any re-fetched source (keyword search of each page). The kept LR-3 gaps hold, apart from the dumbbell-kickup seated set-down, which c6 now sources."
+   ]
+  }
+ },
+ "critic run 2": {
+  "findings": [
+   {
+    "file": "docs/research/howto/cards/barbell_back_squat.json",
+    "path": "tierA.wayOut.text (claims c13, c14, c15)",
+    "severity": "blocker",
+    "problem": "The shown way out gives only the emergency backward dump. It leaves out the safer option its own source gives first: lower the bar onto the safeties. It also puts 'a spotter' next to a backward dump, but the source describes the dump for lifting without a spotter. A beginner with a spotter behind them who follows the line literally pushes the bar back toward the spotter.",
+    "evidence": "c13's own quote (rep-fail): \"This allows you to lower the bar onto the safeties if you can't complete the lift.\" The wayOut text says: \"Safeties just below your lowest depth, and a spotter for heavy sets when you can. To bail, push the bar backward off your shoulders while you move your body forward, so it falls onto the safeties.\" REP page re-fetched 2026-10-17: \"Bailing from a heavy squat can be a daunting experience, especially if you're lifting without a spotter.\" Also: \"If you don't have a spotter, using safety bars or pins is essential.\" And: \"Bailing should only be done in emergencies\".",
+    "fix": "Rewrite in this order, every part from c13-c15: (1) set the safeties just below your lowest depth; (2) if you can't finish a rep, lower the bar onto them; (3) use a spotter for heavy sets when you can; (4) only if you must bail with no spotter, push the bar backward while moving forward so it falls onto the safeties; (5) practise with light weight first. Add REP's \"without a spotter\" sentence as a quote on c15 (it is verbatim on the page). No new source is needed."
+   },
+   {
+    "file": "docs/research/howto/cards/shoulder_press.json",
+    "path": "feel.rows[0] (where/means/fix), gaps[3], tierA.loadWording, tierA.warningLink",
+    "severity": "high",
+    "problem": "The tier-A safety row covers 'sharp or pinching' shoulder pain. Its fix, 'Stop the set. Next session, you can try the close handles', goes beyond the quotes. c7 supports the close handles only for 'some discomfort'. No claim says 'stop the set': tierA.loadWording credits that to c6, but c6 only covers lockout and lowering with the lats. The kept gap says 'the row fix does not add one', but the fix does add an unsourced next-session plan for sharp pain. The means line also invents a cause for the pain (LR-6).",
+    "evidence": "c7 quote: \"more appropriate for individuals who experience some discomfort when performing traditional shoulder presses\". c6 quotes: \"Continue pressing until your elbows are fully extended, but not locked.\" / \"...engage your lats (back muscles) to initiate the downward movement as oppsed to simply yielding to gravity.\" gaps[3]: \"No source on this card says what to do if a sharp shoulder pinch keeps coming back; the row fix does not add one.\" means: \"The shoulder is relatively unstable in the overhead position.\" ACE pages re-fetched: neither says what to do about pain.",
+    "fix": "Use c7's wording: where 'Front of the shoulder, discomfort' (drop 'sharp or pinching'); fix 'Try the close handles with the elbows pointing forward.' (c7). Drop 'Stop the set' unless a source is added. Change means to place + fault + fix with no invented cause (LR-6). Correct tierA.loadWording and warningLink so they no longer say c6 supports stopping the set. Leave the 'sharp pinch keeps coming back' case to the shared shoulder box, as gaps[3] says."
+   },
+   {
+    "file": "docs/research/howto/shared/dumbbell-kickup.json",
+    "path": "claims[c5].text, variants.bench.steps, variants.seated.steps, gaps[0], gaps[1], notes ('conflict for a ruling')",
+    "severity": "high",
+    "problem": "Open question 1: the two sources do not conflict. BarBend (c6) covers the normal set-down at the end of a seated press. Fitness Volt (c5) covers a failed rep while lying on a bench and training alone. c5 is therefore a sourced tier-A way out for failing a rep (WEAK, one coach page) for dumbbell_bench_press and incline_dumbbell_press, both over-the-face lifts. The card still calls it 'a conflict with the candidate rule; not used in any field', so the bench variant shows no failed-rep line. The seated variant also has no finish step, although c6 now sources one.",
+    "evidence": "BarBend, re-fetched, 'Dropping the Dumbbells': \"considering how you'll get them down at the end of the set ... Consider getting your spotter to take one of your dumbbells once you're finished. Alternatively, you can bring your knees up one at a time to \"catch\" the dumbbells when lowering the weight back down. There's no reason to chuck them from shoulder height onto the floor.\" Fitness Volt, re-fetched, 'Safety when training alone': \"if you are unable to complete a rep of barbell bench presses, you could find yourself pinned ... This is less of an issue with dumbbells because, if you get stuck, you can simply drop the weights out to the side.\" GGR even allows \"just drop the weights on the ground before getting up\" after a normal set, with bouncy dumbbells and the gym's permission. content.md 5.2 lists \"dumping dumbbells to the sides on the floor (never over the face)\" as a way out.",
+    "fix": "Reword c5 as the failed-rep case and drop the word 'conflict'. Shown lines: (a) bench finish: keep the two c4 steps; (b) new bench failed-rep step: 'Stuck on a rep? Drop the dumbbells out to your sides.' (c5); (c) seated finish: 'Hand one dumbbell to a spotter, or lift one knee at a time to catch them as you lower. Don't drop them from shoulder height.' (c6). Show 'never over the face' only once it has its own quote. Update gaps[0] and gaps[1] and the conflict note to match."
+   },
+   {
+    "file": "docs/research/howto/cards/pull_up.json",
+    "path": "plate.end (c6); notes[0]",
+    "severity": "medium",
+    "problem": "plate.end turns Youdas's mean elbow range of motion into an end-pose angle by assuming every rep started from 0\u00b0 (full extension). The abstract never gives the start angle, so this machine field draws an unflagged inferred top elbow angle of about 93\u00b0. The card's own claim and notes say the source gives no top angle.",
+    "evidence": "plate.end: \"elbows bent through the measured range, a mean of 93.4 \u00b1 14.6 degrees from the full hang in a lab sample (c6)\". c6 text: \"The source gives the range moved, not the elbow angle at the top.\" Youdas abstract (efetch): \"The mean absolute elbow joint range of motion was 93.4 \u00b1 14.6\u00b0...\" (no start or end angle). notes[0]: \"the plate draws the range, not a sourced top angle\". Drawing the range from 0\u00b0 is the same as drawing a top angle.",
+    "fix": "Remove the degree figure from plate.end, or mark it as a drawing convention (MECH/WEAK). The sourced end pose is chin above the bar with the upper back extended (c5, c23), so the drawing gate should check chin over bar, not 93\u00b0."
+   },
+   {
+    "file": "docs/research/howto/cards/hanging_leg_raise.json",
+    "path": "plate.end (c4)",
+    "severity": "medium",
+    "problem": "plate.end includes Yessis's expert opinion that hip flexion 'stops at approximately 30-45 degrees from the vertical', after which the leg-hip angle stays the same. Read literally alongside c3 (straight legs until the toes reach the bar), most of the rise would have to come from the pelvis rotating alone, which is not possible. The card itself says it cannot tell which angle Yessis means, so the number does not belong in a machine field that gates the plate.",
+    "evidence": "plate.end: \"Expert opinion (WEAK): hip flexion itself stops at approximately 30-45 degrees from the vertical, and the rest of the rise is the pelvis rotating backward with the leg-hip angle unchanged (c4).\" c3 quote: \"lift your straight legs up until the toes reach the bar\". notes[0]: \"the page does not say whether he means the thigh or the hip angle\".",
+    "fix": "Move the c4 clause from plate.end to notes, or label it 'not for drawing'. Keep plate.end to the c3 and c8 poses: toes to the bar, pelvis curled into posterior tilt."
+   },
+   {
+    "file": "docs/research/howto/cards/leg_press.json; cards/lat_pulldown.json; cards/seated_cable_row.json",
+    "path": "plate.mistake (drawable, rankNote, why) and notes",
+    "severity": "medium",
+    "problem": "The 8 use three different rules to pick the 'single most common' plate fault, and leg_press contradicts itself. leg_press sets drawable false because NASM lists knee cave first, yet its notes say c7 is the only fault any source calls common. seated_cable_row uses the first-listed error. lat_pulldown says list order is no ranking and draws the 4th NSCA error because it has study backing for risk. Under one rule, leg_press and lat_pulldown would come out differently. These fields gate approved plates.",
+    "evidence": "leg_press plate.mistake: drawable false, \"NASM's common-mistakes list starts with the knees caving inward\". leg_press notes: \"Mistake (fact 3): c7 is the only fault a source calls common ('commonly cause low back injury')\". seated_cable_row why: \"First item in the NSCA technique text's common-errors list\". NSCA lat pulldown list order on the re-fetched brainscape page: 'Using an open grip', 'Contracting the abdominal muscles and flexing', 'Not fully extending the elbows', 'Pulling the bar down behind the head'. lat_pulldown notes: \"Behind the neck is drawn because it ... is the only one with study backing for risk\". CARD-V2 asks for \"the single most common fault the engine can draw from this view\".",
+    "fix": "The supervisor sets one ranking rule, for example: a source's frequency word ('commonly', 'very frequently', 'often') beats list order, and list order beats risk. Apply it to all 8 and add a rankNote to each card. Under that rule leg_press c7 becomes drawable: true. lat_pulldown would draw c12 (trunk flexion, the first error that can be drawn from the side) unless a recorded ruling says risk may override."
+   },
+   {
+    "file": "docs/research/howto/cards/machine_chest_press.json; cards/lat_pulldown.json; cards/seated_cable_row.json; cards/leg_press.json",
+    "path": "plate.tempo.pause",
+    "severity": "medium",
+    "problem": "The same ACE words, 'Pause momentarily', give four different values in a machine field. One of them is null where CARD-V2's tempo shape expects a number.",
+    "evidence": "ACE, re-fetched, uses \"Pause momentarily\" on the lat pulldown, seated row, chest press and leg press pages. plate.tempo.pause: lat_pulldown 1 (\"drawing convention for a brief pause\"), seated_cable_row 1, machine_chest_press null, leg_press 0, although leg_press c24 says \"Return slowly and under control, after a brief pause at the top\". CARD-V2 example: \"tempo\": { \"up\": 1, \"down\": 2, \"pause\": 0 }.",
+    "fix": "Use one convention for ACE's 'pause momentarily' (for example 1 s, named a drawing convention, WEAK) on all four cards, and put a number in machine_chest_press, not null."
+   },
+   {
+    "file": "docs/research/howto/cards/lat_pulldown.json",
+    "path": "plate.variantLine",
+    "severity": "medium",
+    "problem": "variantLine is null although the library lists two kinds of equipment. content.md section 4 requires a variant line whenever the equipment field contains '/'.",
+    "evidence": "src/data/exercises.json on main (read-only, 49a2853): lib_lat_pulldown equipment \"Cable / Machine\". content.md 4: the variant line \"is required when `equipment` contains `/`\". CARD-V2: variantLine is for \"when exercises.json lists two kinds of equipment\". leg_press (\"Plate-Loaded / Machine\") does carry one.",
+    "fix": "Add a variantLine that names the drawn machine (high cable, thigh pad) and says which claims also hold on a cable-station pulldown. Or get a supervisor note that 'Cable / Machine' counts as one kind."
+   },
+   {
+    "file": "docs/research/howto/cards/barbell_back_squat.json; verify/the8.md",
+    "path": "claims[c26].text; notes[1]; the8.md 'Open questions' item 1",
+    "severity": "medium",
+    "problem": "Lander's numbers are misread. 3.34 and 3.56 s are the times with and without a belt for the later reps of 8-RM sets in 5 subjects. They are not 'one 8-RM rep took about 3.3 to 3.6 s in all'. The supervisor's open tempo question rests on this reading.",
+    "evidence": "Lander 1992 abstract (efetch): \"Five subjects were filmed ... eight consecutive trials ... at their eight-repetition maximum effort... WB repetitions were generally performed faster than WOB repetitions, especially by the later repetitions (3.34 vs 3.56 s).\" c26: \"in a lab study one 8-RM parallel back-squat rep took about 3.3 to 3.6 s in all\". the8.md: \"the measured 8-RM rep took about 3.5 s\".",
+    "fix": "Reword c26 to say that in 5 lifters at 8-RM the later reps took about 3.3 s with a belt and 3.6 s without. Do not use it as evidence against the plate's 2/2 drawing convention; answer Q1 under LR-15."
+   },
+   {
+    "file": "docs/research/howto/cards/hanging_knee_raise.json",
+    "path": "inherit[3]; gaps[0]; notes[0]",
+    "severity": "medium",
+    "problem": "The kept gap record leans on an inherited golden-B line, 'box moved clear of the legs'. The new parent card's research lists that line as unsourced, and the parent card no longer carries it. The note's wording, 'a safe way down from the bar (inherited from the parent's box line)', can be read as if the box line gives a way down. That would be an unsourced way out arriving through inheritance (LR-3).",
+    "evidence": "inherit[3]: \"setup: step or box to reach the bar, box moved clear of the legs\". gaps[0]: \"the parent's box-clear setup line is inherited, nothing new invented\". notes[0]: \"Not sourced: a safe way down from the bar (inherited from the parent's box line).\" verify/the8.md, hanging_leg_raise: \"These golden-B points are unsourced: ... the box-clearance setup\". cards/hanging_leg_raise.json setup[0] has only the stool or jump to reach the bar (c1). Re-fetched Yessis knee-raise page: \"Step up on a low stool or jump to grasp a high bar\", with nothing on getting down.",
+    "fix": "Drop inherit[3], or source it. Reword gaps[0] and the note: 'No sourced way down from the bar. The box or stool line is for getting on only, not a way out.' Also re-check inherit[5] (the active hang): the new parent card does not carry it."
+   },
+   {
+    "file": "docs/research/howto/cards/underhand_lat_pulldown.json",
+    "path": "feel.rows[0].means",
+    "severity": "medium",
+    "problem": "The changed row explains and debunks ('Often said to... lab tests found...') instead of saying what the feeling means. That breaks the owner's UI copy rule, and the 'often said' hearsay is source-style wording in a shown field (LR-27). Each half matches its quote; the problem is the copy.",
+    "evidence": "means: \"Often said to work the biceps more; lab tests found no biceps difference between grips.\" fix: \"Nothing to fix.\" c13 (Lusk): \"had no influence of grip type on the MT and BB muscles\" (abstract re-fetched, verbatim). c17 (PureGym): \"...as well as the rear delts and biceps.\"",
+    "fix": "means: 'Expected: your biceps work here too.' with claim [c17, c13]. Keep c16 (the coaches' biceps claim) in the data only."
+   },
+   {
+    "file": "docs/research/howto/cards/barbell_back_squat.json",
+    "path": "risks[2] (c18)",
+    "severity": "medium",
+    "problem": "The tier-A breathing risk line adds 'healthy lifters', which is not in the quote. With no action, a beginner with high blood pressure can read it as reassurance. content.md 5.2 expects the action pattern for heavy two-leg lifts.",
+    "evidence": "risks[2]: \"Holding your breath under heavy load raises blood pressure; whether that harms healthy lifters is not confirmed.\" c18 quotes: \"The VM was associated with an increase in blood pressure during resistance exercise\" / \"The health risks associated with the VM during resistance exercise remain unconfirmed.\" Hackett also says \"a brief Valsalva maneuver (VM) is unavoidable when lifting heavy loads\". content.md 5.2: \"High blood pressure? Don't hold your breath long.\"",
+    "fix": "Drop the 'healthy lifters' clause. Use a sourced action, for example 'Holding your breath under heavy load raises blood pressure. Keep any hold brief.' ('brief' from c18), alongside the c17 breathing line."
+   },
+   {
+    "file": "docs/research/howto/cards/cable_shrug.json",
+    "path": "claims[c7].tags",
+    "severity": "low",
+    "problem": "CONSENSUS + MECH + WEAK is not a combination any of the 8 use. Their only three-tag set is DATA + MECH + WEAK. WEAK alone already satisfies both LR-15 and CARD-V2's inference rule ('with the tag MECH or WEAK'), and the claim text already names the inference.",
+    "evidence": "Tag combinations across the 8 (counted): CONSENSUS, DATA, MECH, WEAK, CONSENSUS/MECH, CONSENSUS/WEAK, CONSENSUS/DATA, DATA/WEAK, DATA/MECH, MECH/WEAK, DATA/MECH/WEAK (machine_chest_press c14, seated_cable_row c16). cable_shrug c7 is the only CONSENSUS/MECH/WEAK claim in any card.",
+    "fix": "Set the tags to [\"CONSENSUS\",\"WEAK\"], a combination the 8 use on 8 claims. Keep the claim text's 'same shoulder movement on a cable' clause."
+   },
+   {
+    "file": "docs/research/howto/quotes/conventional_deadlift.json; quotes/dumbbell_romanian_deadlift.json; quotes/sumo_deadlift.json",
+    "path": "sources[id=acsm2009].checked (and top-level checked)",
+    "severity": "low",
+    "problem": "The fetcher record and the card disagree on when acsm2009 was checked. The quotes files say 2026-09-30; the cards say 2026-10-17, the LIB-TEMPO re-check that added the Q1 'For intermediate...' quotes.",
+    "evidence": "In all three files, quotes sources[] has {\"id\": \"acsm2009\", \"checked\": \"2026-09-30\"}, while cards/<id>.json sources[acsm2009].checked is \"2026-10-17\". romanian_deadlift's quotes file has no sources[], so it has no conflict. Today's efetch of PMID 19204579 matches all 132 ACSM quotes in all 55 cards, the Q1 and Q2 fragments included.",
+    "fix": "Set the three quotes files' acsm2009 checked to 2026-10-17 to match the re-check, and note which quotes were added that day. Change nothing else."
+   },
+   {
+    "file": "docs/research/howto/cards/cable_fly.json; low_to_high_cable_fly.json; smith_machine_bench_press.json; smith_machine_incline_press.json; smith_machine_shoulder_press.json; smith_machine_shrug.json; smith_machine_squat.json",
+    "path": "claims[c12|c10|c14|c7].text; plate.tempo.claim (cable flys)",
+    "severity": "low",
+    "problem": "These 7 tempo claims carry WEAK, but their LR-15 wording differs from the other 40 cards. They frame ACSM as a recommendation ('ACSM recommends...') with only '(for heavy sets in trained lifters)', and they do not say the plate numbers are a drawing convention. 1-6 RM heavy sets also do not fit cable flys. Separately, cable_fly and low_to_high_cable_fly give plate.tempo.claim as the string \"c12, c5\", which is not one of CARD-V2's claim forms.",
+    "evidence": "cable_fly c12: \"ACSM recommends a moderate speed: 1-2 seconds up and 1-2 seconds down (ACSM, for heavy sets in trained lifters).\" Compare arnold_press c12: \"For intermediate to advanced lifters ... the plate uses it only as a drawing convention for tempo.\" CARD-V2: claim is \"one claim id ... a list ... or inherit:<n>\".",
+    "fix": "Use the batch wording (intermediate to advanced, drawing convention) on all 7, and turn the comma strings into lists, e.g. [\"c12\",\"c5\"]."
+   },
+   {
+    "file": "docs/research/howto/cards/single_arm_lat_pulldown.json",
+    "path": "plate.mistake (c10, c13, drawable), plate.viewWhy, handlingMistakes order, claims c10/c11 quote 'where'",
+    "severity": "low",
+    "problem": "Open question 2: the card's own quotes do not make the twist the top fault. No quote has a frequency word or a rank. c6 (twist) comes from PureGym's FAQ, while c10 and c11 come from BarBend's 'Common mistakes'. Twist-first in handlingMistakes is the writer's ordering. The re-fetched page lists shoulder dumping (c10) first, and c11's lean sits under BarBend's 'Torso Twisting' heading: a rotation the side view cannot draw. So drawable: true with c10 stands under the list-order rule, but the card does not record the order, so a reader cannot check it from the card.",
+    "evidence": "c6 where \"FAQ\": \"The core must work hard in a single arm lat pulldown to prevent the torso from twisting. If you find your torso swings or twists, lower the load\". c10 and c11 where \"Common mistakes\". BarBend, re-fetched, 'Common Single-Arm Lat Pulldown Mistakes': 1 'Dumping Your Shoulders Forward' (c10 text), 2 'Going Too Heavy', 3 'Torso Twisting' (\"If you find yourself leaning into each repetition...\", c11).",
+    "fix": "Keep drawable: true and c10. Add a rankNote: no frequency data; BarBend lists shoulder dumping first; the twist (c6, c11) is a rotation the side view cannot draw. Put the BarBend headings in the c10 and c11 quote 'where'. Either move c10 to handlingMistakes[0] or record why the twist leads. If the supervisor instead ranks by risk, set drawable: false and name the twist."
+   },
+   {
+    "file": "docs/research/howto/cards/assisted_pull_up.json",
+    "path": "gaps[0]; notes[1] (W2A search log)",
+    "severity": "low",
+    "problem": "The kept gap overstates what is missing, and its search log names a page that was not read. The way on is sourced (c1, setup[2]); only getting off, a knee slipping and leaving the machine are unsourced. The logged ACE 'assisted-pull-up' URL actually serves the Chin-ups page, so no ACE assisted-pull-up page was checked. Not verified whether ACE has one.",
+    "evidence": "gaps[0]: \"no sourced way to get on and off the pad safely\". c1 quotes: \"Step onto the platform or kneel on the pad...\" / \"Put your feet/knees on the pad and let your body weight push it down\". notes[1]: \"acefitness.org exercise-library/190/assisted-pull-up/ -> 200 (mount and return only)\". Re-fetched 2026-10-17: that URL returns <title>Arm Exercises | Chin-ups</title> with canonical /exercise-library/190/chin-ups/. Bullbar's only 'step off' line is for eccentric-only reps (\"step off the platform and perform a maximally slow ... negative\"), not a way out.",
+    "fix": "Reword gaps[0] to 'no sourced way to get off the pad, to handle a knee slipping off, or to leave the machine at the end of a set'. Correct the log entry to name the chin-ups page."
+   },
+   {
+    "file": "docs/research/howto/cards/lat_pulldown.json",
+    "path": "feel.watch[rear_delts]; libraryDiff.why",
+    "severity": "low",
+    "problem": "rear_delts is put in 'watch', the list used elsewhere for at-risk areas such as lower_back, for an unsourced reason. The reason also contradicts c17, where the card's own NSCA quote lists the posterior deltoid as a primary muscle.",
+    "evidence": "libraryDiff.why: \"kept as watch only, not added to the library list, because lat-focused texts treat it as a helper\" (no claim). c17 quote: \"Primary Muscles Trained Latissimus dorsi, teres major, rhomboid, posterior deltoid\". c23: rear delt activity higher with a 30\u00b0 lean.",
+    "fix": "Either list rear_delts as secondary, citing c17 and c23, and add it to libraryDiff.add with that reason, or leave it out of feel. Drop the unsourced 'helper' reason."
+   },
+   {
+    "file": "docs/research/howto/cards/shoulder_press.json",
+    "path": "feel.secondary; libraryDiff.remove",
+    "severity": "low",
+    "problem": "The feel spec drops upper_chest, but libraryDiff.remove is empty, so the diff does not record a change the card makes.",
+    "evidence": "exercises.json (main): shoulder_press secondary [\"triceps\",\"upper_chest\"]. The card's feel.secondary is [\"triceps\"]. libraryDiff: \"The card's feel spec therefore leaves upper_chest out, and the library entry is left as is\".",
+    "fix": "Add upper_chest to libraryDiff.remove with the c8/c10 conflict as the reason, or keep it in feel.secondary. Do not leave the two disagreeing silently."
+   },
+   {
+    "file": "docs/research/howto/cards/hanging_knee_raise.json",
+    "path": "feel.rows[2].means; feel.rows[3].means; feel.rows[3].fix",
+    "severity": "low",
+    "problem": "Shown fields carry research wording: '(inference)', '(measured in pull-ups)', '(the inherited active hang)'. That breaks LR-27's plain-fact rule for shown fields and the UI copy rule. This is outside the W2A way-out scope but is a real shown-text defect on a tier-A card.",
+    "evidence": "rows[2].means: \"...bent knees likely load the spine less (inference).\" rows[3].means: \"...narrow the space under the shoulder roof (measured in pull-ups).\" rows[3].fix: \"Set the shoulders a little down from the ears before each rep (the inherited active hang).\"",
+    "fix": "Remove the parentheticals. Keep how sure the finding is in the claim tags (MECH/WEAK) and in notes."
+   },
+   {
+    "file": "docs/research/howto/cards/seated_cable_row.json; cards/lat_pulldown.json",
+    "path": "plate.equipment (seated_cable_row); sources[nsca-low-row].access vs notes",
+    "severity": "low",
+    "problem": "seated_cable_row's plate.equipment states a fact with no claim id. Both cards mark nsca-low-row access as 'full' while their notes call the read a summary.",
+    "evidence": "plate.equipment: \"(source text: the weight is suspended above the rest of the stack)\". The phrase is on the brainscape page (\"the weight to be lifted will be suspended\") but in no claim. nsca-low-row access \"full\"; notes: \"The NSCA text is read through a study flashcard set (secondary, summary).\"",
+    "fix": "Add a claim with that quote, or drop the clause. Set access to one value and make the notes agree."
+   },
+   {
+    "file": "docs/research/howto/cards/barbell_back_squat.json; cards/hanging_leg_raise.json; cards/pull_up.json",
+    "path": "squat claims[c12].text; HLR plate.mistake.why; pull_up plate.mistake.what",
+    "severity": "low",
+    "problem": "A few words go beyond the quotes cited. Squat c12's 'raised hip torque' is in the abstract but not quoted. HLR mistake.why cites c9 ('All three technique sources forbid swinging'), but c9 is not in its claim list and Catalyst says 'minimize'. pull_up mistake.what adds 'the legs kick', which neither c10 nor c9 says.",
+    "evidence": "Fry abstract: \"For the restricted squat, knee torque = 117.3 +/- 34.2 and hip torque = 302.7 +/- 71.2\" (unquoted). HLR mistake.claim [\"c7\",\"c6\"]; c9 quote: \"control the speed to minimize swinging\". pull_up c10 quote: \"kipping and momentum on strict-strength work\".",
+    "fix": "Add the Fry torque sentence as a c12 quote. Add c9 to the HLR mistake claim and say 'minimise', not 'forbid'. Drop 'the legs kick' or source it."
+   },
+   {
+    "file": "docs/research/howto/quotes/ (chin_up, hanging_knee_raise, assisted_pull_up)",
+    "path": "quotes files",
+    "severity": "low",
+    "problem": "The copy holds no quotes file for three W2A tier-A cards, so their way-out and gap quotes have no fetcher record. Not verified whether the files exist on the branch. I re-fetched every source on these cards and all their quotes are verbatim.",
+    "evidence": "The validator found no quotes/chin_up.json, quotes/hanging_knee_raise.json or quotes/assisted_pull_up.json in the copy. shoulder_press and shared-dumbbell-kickup do have one.",
+    "fix": "Add the fetcher's quotes files for these three cards, or confirm they are on the branch."
+   }
+  ],
+  "refetched": {
+   "sources": 92,
+   "checked": 576,
+   "verbatim": 576,
+   "problems": [
+    "Scope: every source on the 8, on W2A's 4 tier-A cards and on shared/dumbbell-kickup was re-fetched (46 PubMed ids via efetch, 44 web pages), plus the BarBend and PureGym single-arm pulldown pages: 92 of 221 unique sources in all cards (42 %), including every tier-A source. Quotes: the in-scope cards' 432 (120 source entries), plus the 118 ACSM quotes on the other cards (all 55 cards' 132 ACSM quotes verbatim), plus 26 single_arm/underhand quotes: 576 checked, 576 verbatim.",
+    "Matching normalised whitespace, quotes, dashes, case and the space before punctuation. Meaning and context were checked by hand only for the tier-A safety quotes, the NSCA list order, the BarBend and Fitness Volt set-down passages, Wikipedia, and the abstracts behind numeric claims.",
+    "ACE back-squat page gave 403 on the first request and 200 on retry (intermittent, as content.md 3.4 notes).",
+    "PMC article pages (coratella2020 PMC7503819, muyor2023 PMC10203828) served a 20 KB stub; full text was read through efetch db=pmc.",
+    "deabreu2023 was read from the journal.iusca.org article page, not the DOI URL.",
+    "acefitness.org/.../190/assisted-pull-up/ serves the Chin-ups page (canonical /190/chin-ups/); W2A's assisted_pull_up search log names it as an assisted pull-up page.",
+    "Muscle ids and libraryDiff were checked against src/data/muscles.ts and src/data/exercises.json on main (49a2853), read-only, because the copy holds neither."
+   ]
+  }
+ },
+ "critic run 3": {
+  "findings": [
+   {
+    "file": "docs/research/howto/cards/hanging_knee_raise.json",
+    "path": "gaps[0]; inherit[0],[3],[4],[5]; feel.rows[3].claim (inherit:5); also cards/chin_up.json inherit[0],[2],[3]",
+    "severity": "high",
+    "problem": "These tier-A child cards inherit lines from parents (hanging_leg_raise, pull_up) whose new verified cards from the 8 now say the same lines are unsourced. The kept gap record 'the parent's box-clear setup line is inherited, nothing new invented' no longer holds. Under LR-8 the inheritance was checked against the golden-B research and sheet, but the parent now has its own verified card. That card drops the box clearance, the shoulder-width grip and the active hang, and pull_up drops handContact, bar height and chalk.",
+    "evidence": "verify/the8.md, hanging_leg_raise: 'These golden-B points are unsourced: the shoulder-width grip, straps and slings, the box-clearance setup, the 2-3 s lowering...'. In cards/hanging_leg_raise.json, grip.width is 'Not sourced on this card' and posture has no active-hang line. hanging_knee_raise feel.rows[3].fix rests on 'inherit:5' (active hang). cards/pull_up.json has grip.handContact 'Not sourced on this card' and plate.equipment 'bar height itself is not sourced; drawing convention', and its notes say 'Golden-B's active hang conflicts with Catalyst's open completely'. The chin_up notes check inherit[0],[2],[3] against origin/claude/howto-options research, which the8.md says was 'used only as a source map, never as a citation'. Re-fetch: the Yessis HLR page does source straps ('use a small footstool to stand on when adjusting straps to support your grip'), so inherit[4] is partly sourced.",
+    "fix": "Re-run LR-8 for both children against the parents' verified cards (the 8). Drop or re-source each inherit line that no longer holds. Re-source the straps from Yessis. Rewrite hanging_knee_raise gaps[0] as 'no sourced way down from the bar; no sourced stool/box clearance line'. Remove inherit:5 from feel.rows[3] unless an active-hang source is found. The supervisor should rule which clause of LR-8 applies now that the golden parents have verified cards."
+   },
+   {
+    "file": "docs/research/howto/cards/barbell_back_squat.json",
+    "path": "tierA.wayOut.text (claims c13, c14, c15)",
+    "severity": "medium",
+    "problem": "The tier-A way-out leaves out the source's first, controlled option: lowering the bar onto the safeties. It sends a beginner straight to dumping the bar backward. A beginner who reads it literally will throw the bar off at any failed rep, even when the safeties would let them sit it down.",
+    "evidence": "c13 quote (rep-fail): 'Ensure your safeties or pins are set just below your lowest squat depth. This allows you to lower the bar onto the safeties if you can't complete the lift.' The re-fetched REP page lists '- Set the Safety Bars: ... lower the bar onto the safeties if you can't complete the lift. - Drop the Bar: If you must bail, push the bar backward...'. The wayOut text has only 'To bail, push the bar backward off your shoulders while you move your body forward'.",
+    "fix": "Order the line as the source does. Example: 'Can't stand up? Lower the bar onto the safeties. If you must bail, push it backward off your shoulders as you move forward. Practise with light weight first.' (c13, c15)."
+   },
+   {
+    "file": "docs/research/howto/cards/barbell_back_squat.json",
+    "path": "risks[2]; breathing.text",
+    "severity": "medium",
+    "problem": "The tier-A breath line is incomplete. It states the blood-pressure rise but gives no action, so it breaks LR-28's symptom \u2192 how bad \u2192 what to do order and content.md 5.2's breath line for heavy two-leg lifts. 'whether that harms healthy lifters is not confirmed' adds 'healthy lifters', which is not in the source. Read literally, it says breath-holding is fine.",
+    "evidence": "Hackett 2013 abstract (re-fetched): 'a brief Valsalva maneuver (VM) is unavoidable when lifting heavy loads'; 'resistance trainers are often advised to avoid the VM ... because of potential adverse vascular events'; 'The health risks associated with the VM during resistance exercise remain unconfirmed.' The source has no 'healthy lifters'. content.md 5.2 asks for the squat's approved 'High blood pressure? Don't hold your breath long.' pattern.",
+    "fix": "Replace the line with the approved pattern, sourced to c18 ('brief' breath-hold, raises blood pressure), for example 'High blood pressure? Don't hold your breath long.' Drop 'healthy lifters'."
+   },
+   {
+    "file": "docs/research/howto/cards/pull_up.json",
+    "path": "plate.end (c6); notes[0]",
+    "severity": "medium",
+    "problem": "plate.end turns a measured range of motion into an end pose ('elbows bent ... a mean of 93.4 \u00b1 14.6 degrees from the full hang'). That fixes the top elbow angle at about 93\u00b0, which the card's own note says no source gives. The abstract does not say the range was measured from a full hang. A roughly right-angle elbow is unlikely to put the chin above the bar, so the drawing could contradict c5.",
+    "evidence": "Youdas 2010 abstract (re-fetched): 'The mean absolute elbow joint range of motion was 93.4 \u00b1 14.6\u00b0...'. It gives no start or end angle. The card's notes say 'No source gives the elbow angle at the top; the plate draws the range, not a sourced top angle.'",
+    "fix": "Remove the 93.4\u00b0 from plate.end and define the top only by c5 (chin above the bar, upper back extended). Keep c6 as data in notes, marked 'range, not a pose'."
+   },
+   {
+    "file": "docs/research/howto/cards/hanging_leg_raise.json",
+    "path": "plate.end (c4); notes[0]; verify/the8.md fact 1",
+    "severity": "medium",
+    "problem": "plate.end holds Yessis's '30-45 degrees from the vertical' as part of the end pose. The card says the source does not say whether this is the thigh or the hip angle, but c4's own third quote says 'the thighs'. Read that way, the hip angle stops changing with the thighs only 30-45\u00b0 up, so reaching the bar would need more than 100\u00b0 of backward pelvic rotation. That cannot be drawn together with c3 (toes to bar).",
+    "evidence": "c4 quote (Training Tips): 'The abdominals do not begin to shorten until the thighs reach approximately the 30-45 degree angle from the vertical.' notes[0]: 'the page does not say whether it means the thigh or the hip angle'. c4: 'The leg-hip joint angle remains the same as the pelvis is rotated backward.'",
+    "fix": "Take c4 out of plate.end (machine field) and keep it in notes as expert opinion that the drawing cannot use. Correct notes[0] and the8.md: the source says the thighs."
+   },
+   {
+    "file": "docs/research/howto/cards/hanging_leg_raise.json",
+    "path": "setup[0] (c1); gaps",
+    "severity": "medium",
+    "problem": "Tier-A safety, read literally: setup[0] tells a beginner to 'step up on a low stool' and the stool stays under the bar. The legs, or the bent knees in setup[3], then swing into it. No line or gap covers moving the stool clear, and golden-B's box-clearance line was dropped as unsourced.",
+    "evidence": "setup[0]: 'Use a bar high enough that you hang with straight legs, feet off the floor. Jump, or step up on a low stool, to reach it.' gaps lists only the dismount, safeties and back box. verify/the8.md: 'the box-clearance setup' is unsourced.",
+    "fix": "Add a gap: 'Tier A: no source says to move the stool or box clear of the legs; left out, not invented (LR-3)'. Put it on the owner's open tier-A list. Or source the clearance line before the sheet shows a stool."
+   },
+   {
+    "file": "docs/research/howto/cards/lat_pulldown.json",
+    "path": "plate.mistake (drawable, no rankNote); notes[1]",
+    "severity": "medium",
+    "problem": "The plate fault is not picked by the rule used on leg_press in fix round 0, where the first-listed common error is the top fault. The NSCA list puts behind-the-neck last and open grip first. The card picks behind-the-neck for its risk backing, with no rankNote. Either open grip is the top fault (a hand detail) or drawable must be false with a rankNote, as on leg_press.",
+    "evidence": "Re-fetched NSCA flashcard text, in order: 'Lat Pulldown Common Errors A Using an open grip on the bar / Contracting the abdominal muscles and flexing the torso ... / Not fully extending the elbows ... / Pulling the bar down behind the head to the back of the neck.' leg_press plate.mistake has drawable false plus a rankNote for the same situation. the8.md fix round 0 says only 'Every fault on the NSCA common-errors list on the card can be seen from the side.'",
+    "fix": "Apply one rule across the 8. Either draw the first-listed fault, or set drawable false, keep behind-the-neck as the most common drawable fault, and add a rankNote that names the list order."
+   },
+   {
+    "file": "docs/research/howto/cards/lat_pulldown.json",
+    "path": "plate.variantLine",
+    "severity": "medium",
+    "problem": "variantLine is null, but exercises.json lists two kinds of equipment for lib_lat_pulldown. content.md 4 requires a variant line whenever equipment contains '/', and CARD-V2 requires the card to say which claims hold for both. underhand_lat_pulldown has the same gap.",
+    "evidence": "src/data/exercises.json: lib_lat_pulldown equipment 'Cable / Machine' (also lib_underhand_lat_pulldown). In the card, plate.variantLine is null. leg_press ('Plate-Loaded / Machine') has a variantLine.",
+    "fix": "Add a variantLine naming what is drawn (the pulldown station) and which claims hold for both kinds of equipment, or ask the supervisor whether 'Cable / Machine' counts as one kind."
+   },
+   {
+    "file": "docs/research/howto/cards/lat_pulldown.json",
+    "path": "claims.c11; plate.mistake.why",
+    "severity": "medium",
+    "problem": "c11 says front pulls gave more lat activity than behind-the-neck pulls 'in two EMG studies'. Padovan 2024 found that only in the lowering phase. In the lifting phase, back-LPD gave more lat excitation. The quote used is the overall 'prime movers' line. Sperandei 2009, cited on the same card (c9), found no lat difference. plate.mistake.why repeats the overstatement.",
+    "evidence": "Padovan 2024 abstract (re-fetched): 'During the descending phase, the front-LPD showed superior excitation of the latissimus dorsi (ES = 0.97) ... while in the ascending phase, the back-LPD exhibited superior excitation of the latissimus dorsi (ES = 0.63)'. Sperandei 2009: 'For LD, there was no difference between techniques.'",
+    "fix": "Restate c11: 'One EMG study found more lat activity pulling in front (Signorile 2002); another found it only while the bar comes down (Padovan 2024); a third found no lat difference (Sperandei 2009).' Tag it DATA, WEAK and correct plate.mistake.why. The mistake still stands on c9 and c10."
+   },
+   {
+    "file": "docs/research/howto/cards/single_arm_lat_pulldown.json",
+    "path": "plate.mistake.drawable; handlingMistakes order; claims.c10, c11 'where'",
+    "severity": "medium",
+    "problem": "Open question 2. From the card's own quotes, nothing shows the past-end pull is the top fault. c6 (twist) and c10 carry no frequency words, and the card ranks the twist first in handlingMistakes ('most common and most risky first'). As written, CARD-V2 would therefore need drawable false, because viewWhy says the twist is a rotation the engine cannot draw. The re-fetched source, though, lists 'Dumping Your Shoulders Forward' (c10) first and 'Torso Twisting' (which contains the c11 lean line) last. So drawable true with c10 can stand under the leg_press list-order rule, once the card records that order.",
+    "evidence": "BarBend (re-fetched), 'Common Single-Arm Lat Pulldown Mistakes': 'Dumping Your Shoulders Forward Once you've reached the end of the range of motion, your elbow has nowhere to go but backwards...' comes first; '...Torso Twisting ... If you find yourself leaning into each repetition...' comes last. PureGym's twist line (c6) is under 'Single Arm Lat Pulldown Tips', with no frequency. c10 and c11 'where' say only 'Common mistakes'. handlingMistakes[0] is c6.",
+    "fix": "Keep drawable true with c10, but add a rankNote ('BarBend lists shoulder dumping first; the twist is listed last; no frequency is measured'). Set c10 'where' to 'Common mistakes, item 1'. Reorder handlingMistakes so c10 comes first, or give a sourced reason for putting the twist first. Note that c11 belongs to the twist heading, not to a separate sideways lean."
+   },
+   {
+    "file": "docs/research/howto/shared/dumbbell-kickup.json",
+    "path": "claims.c5, c6; variants.bench.steps; notes[4]",
+    "severity": "medium",
+    "problem": "Open question 1. The two lines do not conflict, because they cover different situations. BarBend (c6) covers the normal end-of-set set-down from a seated press: catch the dumbbells on the knees or hand one to a spotter, and don't throw them from shoulder height. Fitness Volt (c5) covers a failed rep on the bench press: drop the weights out to the side. The bench variant therefore has a sourced fail-a-rep way out that the card leaves unused ('not used in any field'), and the tier-A bench sheets show none.",
+    "evidence": "Re-fetched Fitness Volt: 'if you are unable to complete a rep of barbell bench presses, you could find yourself pinned ... This is less of an issue with dumbbells because, if you get stuck, you can simply drop the weights out to the side.' BarBend: 'considering how you'll get them down at the end of the set ... bring your knees up one at a time to catch the dumbbells ... There's no reason to chuck them from shoulder height onto the floor.' GGR: 'reverse the process and come off the bench with the weights'.",
+    "fix": "Shown lines. Bench finish: keep c4 ('After the last rep, keep your arms bent and sit up; the dumbbells come back to your thighs'). Bench fail: add a step from c5, e.g. 'Stuck on a rep? Drop the dumbbells out to your sides.' (WEAK, one coach source; add 'away from your face' only if a source says it). Seated finish: 'Bring your knees up one at a time to catch the dumbbells, or hand one to a spotter. Don't throw them down from shoulder height.' (c6). Rewrite c5's text, which should no longer say 'conflict'."
+   },
+   {
+    "file": "docs/research/howto/cards/assisted_pull_up.json",
+    "path": "gaps[0]; notes[1] (W2A search log)",
+    "severity": "medium",
+    "problem": "The kept tier-A gap record is wrong in two places. (1) The search log says an ACE assisted pull-up page was read ('mount and return only'). ACE id 190 redirects to the Chin-ups page, so no ACE assisted-machine page was read. (2) gaps[0] says there is 'no sourced way to get on ... the pad', but c1 and setup[2] already source getting on.",
+    "evidence": "curl https://www.acefitness.org/resources/everyone/exercise-library/190/assisted-pull-up/ \u2192 200, effective URL /190/chin-ups/, <title>Arm Exercises | Chin-ups</title>. The c1 quote (bullbar) reads 'Step onto the platform or kneel on the pad ... Ensure your knees or legs are securely positioned on the pad.'",
+    "fix": "Correct the log (the ACE page read was the chin-up page) and redo the ACE search under LIB-WAYOUT. Narrow gaps[0] to the missing way off: leaving the pad at the end of a set, and a knee slipping off."
+   },
+   {
+    "file": "docs/research/howto/cards/leg_press.json",
+    "path": "claims.c6, c14, c16, c17, c19; also barbell_back_squat c7, c12; pull_up c6; hanging_leg_raise c12; dumbbell_lateral_raise c9",
+    "severity": "low",
+    "problem": "Claim text carries facts that none of its quotes contain. They are populations, durations, a second outcome, and NASM's secondary muscles. The fact is true (re-fetched) but not quote-backed. c16 also calls the glutes 'assisting' when NASM lists them under Primary Muscles.",
+    "evidence": "Abstracts and pages (re-fetched): Larsen 'Twenty-three participants ... 8 weeks'; MacDougall 'five experienced body builders ... 80, 90, 95, and 100%'; Kinoshita 'Seventeen untrained adults ... 12 wk'; Da Silva 'Fourteen women'; NASM 'Primary Muscles: Quadriceps ... Glutes ... Secondary Muscles: Hamstrings Hip Adductors'; Bloomquist '12 weeks'; Fry 'Seven weight-trained men', hip torque 302.7 vs 28.2; Youdas 'Twenty-one men ... and 4 women'; McGill 'Fourteen males'; Coratella 'each exercise was performed seated'.",
+    "fix": "Add a short verbatim quote for each extra fact (\u226450 words), or trim the claim text to what the quotes say. Quote NASM's Secondary Muscles line for the libraryDiff adductor reason."
+   },
+   {
+    "file": "docs/research/howto/cards/dumbbell_lateral_raise.json",
+    "path": "plate.mistake (also barbell_back_squat plate.mistake)",
+    "severity": "low",
+    "problem": "The plate fault was picked for risk, not frequency. No source names any lateral-raise or squat fault as common, and the cards carry no rankNote, unlike leg_press. CARD-V2 asks for 'the single most common fault'.",
+    "evidence": "lateral raise plate.mistake.why: 'No source measures how common it is.' squat notes: 'no source ranks back-squat faults by frequency.'",
+    "fix": "Add a rankNote to each card ('no source ranks faults; drawn fault chosen as the only sourced risky fault visible from this view') so the pick is consistent across the 8."
+   },
+   {
+    "file": "docs/research/howto/cards/machine_chest_press.json",
+    "path": "plate.tempo.pause",
+    "severity": "low",
+    "problem": "The same ACE wording 'Pause momentarily' becomes pause null here but a 1 s drawing convention on lat_pulldown (and 1 on seated_cable_row). That is an inconsistent machine value, and null may not be accepted by the plate engine.",
+    "evidence": "machine_chest_press tempo {up 2, down 2, pause null}. lat_pulldown plate.tempo.text: '1 s pause (drawing convention for a brief pause)'.",
+    "fix": "Use one convention for ACE's 'pause momentarily' across the 8 (e.g. 1 s, labelled a drawing convention), or confirm the engine accepts null."
+   },
+   {
+    "file": "docs/research/howto/cards/barbell_back_squat.json",
+    "path": "feel.rows[3] (Wrists or the inside of the elbows)",
+    "severity": "low",
+    "problem": "The row gives one fault (hands holding the bar up) for both places. The source links wrist pain to a different fault, wrapping the thumbs and overextending the wrist (c24). Only the inner elbow is linked to supporting the bar (c23).",
+    "evidence": "c23: 'if a lifter is supporting the bar with their hands, wrists, or elbows, they develop tendinitis, specifically tendinitis in the medial epicondyle of the elbow.' c24: 'if you choose to wrap your thumbs around the bar creating overextension of the wrist, you might develop wrist pain or tendinitis.'",
+    "fix": "Split the row, or limit it to the inner elbow (c23). If kept, any wrist row should cite c24's fault, marked low-bar coach source, MECH."
+   },
+   {
+    "file": "docs/research/howto/cards/pull_up.json",
+    "path": "claims.c17",
+    "severity": "low",
+    "problem": "c17 joins two separate observations into one. It says the wide grip showed less shoulder-blade movement 'with the arm at 90 degrees out to the side and 45 degrees turned out'. The abstract reports a reduced pro/retraction range, and separately that the arm reached 90\u00b0 abduction with 45\u00b0 external rotation.",
+    "evidence": "Prinold 2016 (re-fetched): 'The wide technique has a reduced range of pro/retraction in the same HT plane of elevation and 90\u00b0 of arm abduction with 45\u00b0 external rotation was observed.'",
+    "fix": "Restate: 'The wide grip showed less shoulder-blade protraction/retraction, and the arm reached 90\u00b0 out to the side with 45\u00b0 outward rotation; the authors link this to impingement risk.'"
+   },
+   {
+    "file": "docs/research/howto/cards/seated_cable_row.json",
+    "path": "risks[2]; feel.rows[1].means",
+    "severity": "low",
+    "problem": "'shown mainly in overhead and throwing athletes' presents the abstract's background sentence as a finding. The study tested 8 men on biofeedback and did not show shoulder strain.",
+    "evidence": "Dos Anjos 2024 (re-fetched), opening sentence: 'The upper trapezius muscle is often excessively excited ... increasing the shoulder's liability to musculoskeletal disorders of individuals participating in overhead sports or throwing activities.' Methods: 'Eight male volunteers'.",
+    "fix": "Use 'linked mainly to overhead and throwing sports' instead of 'shown', and keep the WEAK tag."
+   },
+   {
+    "file": "docs/research/howto/cards/underhand_lat_pulldown.json",
+    "path": "feel.rows[0].means",
+    "severity": "low",
+    "problem": "The changed row is supported (c13, c16) but reads as a debate rather than what the feeling means ('Often said to... lab tests found...'). It reports what others claim, which the UI copy rule discourages.",
+    "evidence": "'Often said to work the biceps more; lab tests found no biceps difference between grips.' Lusk 2010 (re-fetched): 'had no influence of grip type on the MT and BB muscles' (12 healthy men).",
+    "fix": "State the fact, e.g. 'Expected: the biceps work about the same with either grip.' (c13)."
+   },
+   {
+    "file": "docs/research/howto/cards/hanging_leg_raise.json",
+    "path": "feel.rows[0].means; also cards/hanging_knee_raise.json feel.rows[2].means, feel.rows[3].means/fix",
+    "severity": "low",
+    "problem": "Shown fields carry study or meta wording. 'most of the exercises tested' (HLR) is meaningless without the study. The hanging_knee_raise rows show '(inference)', '(measured in pull-ups)' and '(the inherited active hang)', which are research labels in user-facing text. The hanging_knee_raise rows are outside this wave's assigned scope but were seen.",
+    "evidence": "HLR: 'Expected: the straight-leg hanging raise challenged the abs most of the exercises tested.' HKR: 'bent knees likely load the spine less (inference)'; 'Set the shoulders a little down from the ears before each rep (the inherited active hang).'",
+    "fix": "HLR: 'Expected: this raise works the abs very hard.' (c12). Strip the parenthetical labels from the HKR rows, as in LR-27's scrub."
+   },
+   {
+    "file": "docs/research/howto/cards/cable_shrug.json",
+    "path": "claims.c7.tags",
+    "severity": "low",
+    "problem": "Judgement asked for. ['CONSENSUS','MECH','WEAK'] is not a triple that appears in the 8, but it follows their pattern. The 8 combine a base tag with MECH and WEAK (seated_cable_row c16 and machine_chest_press c14 are DATA, MECH, WEAK), and they use CONSENSUS+MECH and CONSENSUS+WEAK. Each tag here is earned: coach words (CONSENSUS), the barbell shrug page applied to the cable (MECH), and ACSM's advanced-only seconds (WEAK). No defect.",
+    "evidence": "Tag combinations counted across the 8 cards: (DATA,MECH,WEAK) \u00d72, (CONSENSUS,MECH) \u00d78, (CONSENSUS,WEAK) \u00d78, (MECH,WEAK) \u00d74. The c7 quotes are ACSM Q1/Q2, exercise-com 'Hold the contraction at the top for a second.' and ace-shrug 'lowering slowly...'; all were re-fetched verbatim.",
+    "fix": "None needed. Record a one-line ruling that a base tag plus MECH plus WEAK is allowed, so the 'combine only as the 8 do' rule is not read as a literal list."
+   },
+   {
+    "file": "docs/research/howto/quotes/conventional_deadlift.json",
+    "path": "sources[acsm2009].checked (also quotes/dumbbell_romanian_deadlift.json, quotes/sumo_deadlift.json)",
+    "severity": "low",
+    "problem": "The fetcher record says acsm2009 was checked on 2026-09-30 with 'changes: none', and the file-level date is also 2026-09-30. Yet the file holds the LR-15 Q1/Q2 quotes marked verbatim, and the cards say checked 2026-10-17. Either the quote file is stale or the card claims a check the record does not show.",
+    "evidence": "In each quotes file, sources holds {'id':'acsm2009','access':'abstract','checked':'2026-09-30','changes':'none'} and checked is '2026-09-30'. The cards' acsm2009 source has checked '2026-10-17'. The other W2B quote files with acsm2009 say 2026-10-17. Re-fetched ACSM abstract (efetch PMID 19204579): Q1 and Q2 are verbatim and in one sentence.",
+    "fix": "Set the three quote files' acsm2009 'checked' (and the file-level date) to the date the Q1/Q2 quotes were actually re-checked (2026-10-17 or today's re-fetch), and drop 'changes: none'."
+   },
+   {
+    "file": "docs/research/howto/quotes/shared-dumbbell-kickup.json",
+    "path": "quotes[c4 fv-db-bench].note, quotes[c5 fv-db-bench].note",
+    "severity": "low",
+    "problem": "The fetcher marked c4 (the tier-A bench way out) and c5 verbatim on the strength of WebFetch. WebFetch summarises with a small model, so it cannot confirm a quote is verbatim. My curl re-fetch does confirm both verbatim.",
+    "evidence": "Note: 'Source retrieved via WebFetch (direct curl blocked by Sucuri JS challenge); WebFetch confirmed this passage verbatim'. Today, curl with a desktop user agent returned 200 (28.6 KB), and the c1, c2, c4 and c5 quotes matched exactly, including the typo 'At the of your set'.",
+    "fix": "Replace the notes with the curl result (HTTP 200, verbatim, date)."
+   },
+   {
+    "file": "docs/research/howto/cards/cable_fly.json",
+    "path": "plate.tempo.claim (also cards/low_to_high_cable_fly.json plate.tempo.claim)",
+    "severity": "low",
+    "problem": "The tempo claim link is the comma-joined string 'c12, c5', not one id or a list, so a resolver for this machine field will not find it. The same old format is widespread in the older g-wave cards (barbell_bench_press, smith_* and others; outside this wave's scope).",
+    "evidence": "\"tempo\": {\"up\": 1, \"down\": 2, \"pause\": 1, \"claim\": \"c12, c5\"}. CARD-V2: '\"claim\" on any line is one claim id (\"c2\"), a list ... or \"inherit:<n>\"'.",
+    "fix": "Change to [\"c12\",\"c5\"]. The supervisor may want a mechanical pass over the other cards' comma-string claims."
+   },
+   {
+    "file": "docs/research/howto/cards/chin_up.json",
+    "path": "(quotes file missing; also hanging_knee_raise, assisted_pull_up, underhand_lat_pulldown)",
+    "severity": "low",
+    "problem": "These cards have no quotes/<id>.json in the review copy, so there is no fetcher status per quote. I could not verify whether the files exist elsewhere. All of their quotes were re-fetched today and match verbatim.",
+    "evidence": "ls docs/research/howto/quotes/ has no chin_up.json, hanging_knee_raise.json, assisted_pull_up.json or underhand_lat_pulldown.json. the8.md's pre-push check includes 'the quotes file matches the card'.",
+    "fix": "Add the quote files, or point to where they live."
+   }
+  ],
+  "refetched": {
+   "sources": 102,
+   "checked": 502,
+   "verbatim": 502,
+   "problems": [
+    "Scope: I re-fetched 102 of 229 unique source URLs (442 source entries across all cards, 44.5%). They come from 16 files: all 8 new cards, the 4 W2A tier-A cards, shared/dumbbell-kickup, single_arm_lat_pulldown, underhand_lat_pulldown and cable_shrug. Every source on a tier-A card in scope is included. PubMed was read through E-utilities efetch, PMC through efetch db=pmc, and web pages with curl and a desktop user agent. WebFetch was not used.",
+    "All 502 quote checks matched verbatim after normalising whitespace, quotes and dashes. wiki-leg-raise c8 matched only after closing the space the HTML stripper adds before '.' after a link, which is still verbatim.",
+    "ACE returned 403 to a Chrome user agent for seated-row (168), seated-chest-press (188) and close-grip shoulder press (187). Safari and Firefox user agents got 200, and all 20 affected quotes then matched. Access is intermittent, as content.md 3.4 notes.",
+    "fitnessvolt.com (fv-db-bench) answered curl with 200 and full text. The fetcher's WebFetch-only verification of c4 and c5 is now confirmed by curl.",
+    "The ACSM 2009 abstract (PMID 19204579) was read in full. Q1 ('For intermediate ... to advanced ... training') and Q2 ('with eventual emphasis on heavy loading ... (1-2 s CON; 1-2 s ECC)') are verbatim and in the same sentence, so LR-15 holds. The abstract gives no novice tempo in seconds.",
+    "The quotes are verbatim, but some claims overstate or misread their source: Padovan 2024 (lat_pulldown c11, phase-dependent lat result), Prinold 2016 (pull_up c17), Yessis HLR ('thighs' is stated, against notes[0]) and Dos Anjos 2024 (background sentence presented as a finding). The ACE '190/assisted-pull-up' URL in the assisted_pull_up search log redirects to the Chin-ups page.",
+    "Claims checked against full abstracts with no discrepancy: Bloomquist, Caterisano, Kubo, Kerr, Lander, Youdas, O'Driscoll, McGill 2015, Hackett, MacDougall, Kinoshita, Da Silva, Larsen, Barnds, Graichen, Andersen 2008, Kolber 2014/2013, Sperandei, Lehman, Callaghan, Snyder 2009, Lusk, Signorile, Buonsenso, Stien, Martin-Fuentes 2020/2022, Escamilla 2001, and Muyor 2023 (c11's truncated quote drops only a bench-press exception)."
+   ]
+  }
+ }
+}
