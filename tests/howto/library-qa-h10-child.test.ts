@@ -3,6 +3,7 @@
 // Test-only templates, sources and family rows are written into the temp tree only. Nothing is written to rows.json,
 // batches/, tests/howto/golden/ or the repo's param-ranges.json.
 import { existsSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -157,13 +158,16 @@ describe('LIB-3c 3c-A4 PARAMS ranges (D-LIB10-RANGES, D-LIB3c-SHARED)', { timeou
 });
 
 describe('LIB-3c 3c-A5 the child proof (D-LIB10-CHILDPROOF)', { timeout: T }, () => {
-  it('control: a clean D child and a clean T child, with test family rows present, give no H10 problem', async () => {
+  it('control: a clean D child and a clean T child, with test family rows present, give no H10 problem; no rebuild module is left behind', async () => {
+    const left = () => readdirSync(tmpdir()).filter(n => n.startsWith('lib3c-rebuild-'));
+    const before = left();
     writeRanges({ 'D:lib_pull_up': fam({ 'camera.maxScale': [0.9, 1.1] }), BENCH: fam({ 'bar.kind': ['straight', 'ez'] }) });
     expect((await qa(dAll({ 'camera.maxScale': 1 }))).h10).toEqual([]);
     const params = { 'bar.kind': 'straight' }, all = tAll(params, tSource('t_clean', 'BENCH', params));
     expect((await qa(all, {}, () => {}, await pageFor(all))).h10).toEqual([]);
     const ez = { 'bar.kind': 'ez' }, allEz = tAll(ez, tSource('t_clean_ez', 'BENCH', ez));
     expect((await qa(allEz, {}, () => {}, await pageFor(allEz))).h10).toEqual([]);
+    expect(left()).toEqual(before);
   });
   it('a D source that derives and then sets tempo gives H10.child:tempo', async () => {
     writeRanges({ 'D:lib_pull_up': fam({ 'camera.maxScale': [0.9, 1.1] }) });
