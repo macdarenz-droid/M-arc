@@ -403,12 +403,12 @@ describe('L2-A21: hand-pair chunks (gen/handpairs.mjs, design 12, D-LIB7-1)', ()
     idsGen = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));
     reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
   });
-  it('on main (no LIB-7 pair loader yet) nothing is written and HAND imports no hand pair', async () => {
+  it('with the repo\'s own pair loader (or none): the written pairs and HAND\'s pair imports follow the shipped rows\' keys', async () => {
     const pairs = await hp.loadPairs(), written = [...out.keys()].filter(p => p.includes('/handpair-'));
     const loaders = readFileSync('src/howto/generated/loaders.ts', 'utf8');
     if (pairs) {   // LIB-2b: a tree with a pair loader (LIB-7, or a fixture): the written pairs follow the shipped rows' keys
       const { keys } = hp.pairsOf(pairs, reg.shippedIds());
-      expect(keys.length).toBeGreaterThan(0);
+      expect(Object.keys(pairs.HAND_OF_ID).length).toBeGreaterThan(0);   // D-LIB7FIX-A21: LIB-7's loader lands before any row ships a key, so keys may be []; a shipped row that needs a pair and has none is refused by gen/ids.mjs missingChunks in this file's beforeAll render
       expect(hp.pairProblems(pairs, reg.shippedIds(), written, keys)).toEqual([]);
       expect([...loaders.matchAll(/import\('\.\/handpair-([a-z0-9-]+)'\)/g)].map(m => m[1]).sort()).toEqual([...new Set(keys)].sort());
       return;

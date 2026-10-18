@@ -129,7 +129,7 @@ Claim refs are `<file>#<cid>`, relative to `docs/research/howto/`.
 - 4 drawn keys plus band as a gap key;
 - 7 variants;
 - 12 drawn ids (14 before D-LIB7-19a; LIB-7's keys only: sweeps filter by `OWNER`, so LIB-12's keys never move them);
-- 16 gap ids;
+- 18 gap ids (16, plus the 2 parked push ids, D-LIB7-19a);
 - joint check: no id is claimed by a LIB-7 and a LIB-12 module;
 - scope 30 = census, with each `lib_` id once and its census archetype matching;
 - every `<file>#<cid>` resolving in that file at research 95342b1, through a pinned extract (`hands/claims.json`).

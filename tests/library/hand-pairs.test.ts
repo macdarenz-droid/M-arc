@@ -433,6 +433,7 @@ describe('LIB-7 A3: counted sweeps, census scope and claims', () => {
     expect(CLAIMS.research).toBe('95342b1');
     for (const r of Object.keys(CLAIMS.claims)) expect(CLAIMS.files).toHaveProperty(r.split('#')[0]!);
     expect(claimProblems(P.MODULES, CLAIMS.claims)).toEqual([]);
+    expect(claimProblems(redrawPush(clone()), CLAIMS.claims)).toEqual([]);   // LIB-7-FIX: the parked push ids' claims stay checked (delta review 5974981698, Low 2)
   });
   it('failure paths: an unknown claim, a claim number that names another fact, reverse_curl drawn underhand', () => {
     const c99 = withMods(m => { key(m, 'curl').VARIANTS.dumbbell.claims.thumb = ['shared/curl.json#c99']; });
