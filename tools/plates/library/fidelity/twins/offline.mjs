@@ -25,6 +25,8 @@ export async function run({ browser, port, R, order, custom = HT_CUSTOM }, { lib
   const ctx = await browser.newContext({ viewport: DEVICE.viewport, deviceScaleFactor: DEVICE.deviceScaleFactor, reducedMotion: 'reduce' });
   const page = await ctx.newPage();
   page.on('pageerror', e => bad.push(`A4: ${e.message}`));
+  const failed = [];
+  page.on('requestfailed', r => failed.push(`${new URL(r.url()).pathname} ${r.failure()?.errorText ?? ''}`.trim()));
   try {
     await page.addInitScript(htSeed, [theme, order, custom]);
     await page.goto(`http://localhost:${port}/`);
@@ -34,7 +36,16 @@ export async function run({ browser, port, R, order, custom = HT_CUSTOM }, { lib
     if (!controlled) bad.push('A4: the service worker never took control');
     await ctx.setOffline(true);
     await page.reload();
-    await page.waitForSelector('.nav', { timeout: 10000 }).catch(() => bad.push('A4: offline reload did not render the app'));
+    await page.waitForSelector('.nav', { timeout: 10000 }).catch(async () => {
+      // what the page holds when it fails (B2 delta, 10-18: not reproduced on LIB-4c's scratch here), so a recurrence names its cause
+      const d = await page.evaluate(async () => ({
+        url: location.href, title: document.title, body: (document.body?.innerText ?? '').slice(0, 120), controller: !!navigator.serviceWorker?.controller,
+        regs: (await navigator.serviceWorker.getRegistrations()).map(r => ({ active: r.active?.state ?? null, waiting: r.waiting?.state ?? null, installing: r.installing?.state ?? null })),
+        caches: await Promise.all((await caches.keys()).map(async k => `${k}:${(await (await caches.open(k)).keys()).length}`)),
+      })).catch(e => `state not readable: ${e.message.split('\n')[0]}`);
+      bad.push(`A4: offline reload did not render the app; page ${JSON.stringify(d).slice(0, 600)}; failed requests ${JSON.stringify(failed.slice(0, 8))}`);
+    });
+    if (bad.some(b => b.startsWith('A4: offline reload did not render'))) throw new Error('A4: no app to continue with offline');
     await htFlow(page);
     const keysBefore = await page.evaluate(() => Object.keys(localStorage).sort());
     await openCard(page, index);

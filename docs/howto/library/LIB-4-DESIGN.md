@@ -263,3 +263,14 @@ Heads: 7679566 (main 0628270), then 2b59a24 (main 2078913, LIB-3b: `qa/node.mjs`
   - `openAppTrain`'s `order` default reversed: gate job 4/4 is red. HT-3 compares 0 pixel pairs (it expects at least 300), and a later block's `openHowTo` times out.
   - `ht10GoldenCounts`'s `ids` default without its first id: `ht10-gate` 1/2 is red ("golden B has no card for lateral-raise to count its Look closer chips", 15 problems).
 - **B10** (on 2b59a24): `npm run check` (3,062 tests), `npm run test:tz` (3,062 in each time zone) and `generate --check` (60 files) pass. The gate passed on 7679566. Between the two heads only `tools/plates/library/qa/**`, one new test and docs changed.
+
+### offline/open timeout (LIB-4c review, 10-18)
+
+- **Report:** `lib_landmine_row silent-black offline/open@390: A4: offline reload did not render the app`, 2 of 2 runs, in LIB-4c's local `howto-shard 6/7` (Chromium 141). It was the third local occurrence; CI on Chrome 153 never showed it.
+- **Not reproduced here** on the same tree (scratch 42716893 + LIB-4c 68f1556, `howto-rebuild`, `npm run build`):
+  - `howto-shard 6/7`: 364 of 364 rows, 978.6 s;
+  - the offline twin alone on `lib_landmine_row`: 2 of 2 pass.
+- **What the message itself proves:** with no service worker, the offline `page.reload()` throws at once (`net::ERR_INTERNET_DISCONNECTED`; mutation: unregister the worker first). So in the report the reload got a document from the worker, but the app never started. The likely path is a cached `index.html` whose `/assets/` scripts were not in the cache. Which script was missing, and why, is unverified.
+- **Built in:** when the reload renders no app, the row now records the page's URL, title and text, the worker's controller and registration states, each cache with its entry count, and the failed requests. It then stops, so the 30 s `htFlow` wait no longer hides the first failure. The twin's checks are unchanged.
+  - Mutation: delete `/assets/index-*` from the cache before going offline. The row fails and names `/assets/index-….js net::ERR_FAILED`, `controller: true` and the app's "could not start" screen.
+  - The 8: 8 of 8 offline rows pass.
