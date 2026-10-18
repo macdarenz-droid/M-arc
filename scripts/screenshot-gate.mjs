@@ -5234,9 +5234,9 @@ if (gate.runs('O1.2'))
 // BUG-34: the launch overlay animates from its first paint, even while the app bundle is still
 // loading. Chromium starts SMIL only at the load event (which waits for the bundle), so the SMIL
 // build showed a frozen frame first: the dot at the mark's (0,0) and a round cap at the line's end.
-// Every context below holds the bundle back 1500 ms, then samples the overlay at its first paint
-// and 100 ms later, in all 5 themes, at 1x and at 4x CPU throttling. A probe that saw no bundle
-// delay, no visible ink or no movement fails, so it can never pass on flat data.
+// Every context below holds the bundle until the context closes, then samples the overlay at its first paint
+// and 100 ms later, in all 5 themes, at 1x and at 4x CPU throttling; A2 reads frames recorded in the page. A probe
+// that saw no bundle delay, no visible ink or no movement fails, so it can never pass on flat data.
 if (gate.runs('BUG-34'))
 {
   const tag = 'launch first frame (BUG-34)';
@@ -5258,7 +5258,9 @@ if (gate.runs('BUG-34'))
   // into the mark's units: how many there are, and how many lie farther than the dot's radius plus
   // 1.5 units (edges, the settle scale) from the part of the path travelled so far, 0 to `reach`
   // (+1.5). Distance to that part, not to the nearest leg: near a corner the next leg can be closer.
-  const strayInk = (b64, bg, ctm, cssWidth, reach) => pix.evaluate(async ([b64, bg, ctm, cssWidth, reach, P]) => {
+  // `word`: the word's box in CSS px once its reveal is due by the state read after the capture (else null), so a
+  // capture that lands after the reveal does not count the word as stray (GATE-FLAKE-4).
+  const strayInk = (b64, bg, ctm, cssWidth, reach, word) => pix.evaluate(async ([b64, bg, ctm, cssWidth, reach, P, word]) => {
     const img = await new Promise(res => { const i = new Image(); i.onload = () => res(i); i.src = 'data:image/png;base64,' + b64; });
     const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
     const g = cv.getContext('2d'); g.drawImage(img, 0, 0);
@@ -5269,6 +5271,7 @@ if (gate.runs('BUG-34'))
     for (let y = 0; y < cv.height; y++) for (let x = 0; x < cv.width; x++) {
       const k = (y * cv.width + x) * 4;
       if (Math.max(Math.abs(d[k] - bg[0]), Math.abs(d[k + 1] - bg[1]), Math.abs(d[k + 2] - bg[2])) <= 24) continue;
+      if (word && (x + 0.5) / ratio >= word[0] && (x + 0.5) / ratio <= word[2] && (y + 0.5) / ratio >= word[1] && (y + 0.5) / ratio <= word[3]) continue;
       ink++;
       const m = new DOMPoint((x + 0.5) / ratio, (y + 0.5) / ratio).matrixTransform(inv);
       let near = Infinity, acc = 0;
@@ -5282,7 +5285,7 @@ if (gate.runs('BUG-34'))
       if (near > 3.1 + 1.5) { stray++; if (!first) first = `(${m.x.toFixed(1)}, ${m.y.toFixed(1)})`; }
     }
     return { ink, stray, first };
-  }, [b64, bg, ctm, cssWidth, reach, P]);
+  }, [b64, bg, ctm, cssWidth, reach, P, word]);
   // Read two animation frames later, so the state is never behind the capture taken just before it.
   const sample = page => page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => done((() => {
     const launch = document.getElementById('launch');
@@ -5293,11 +5296,16 @@ if (gate.runs('BUG-34'))
     const r = dot.getBoundingClientRect();
     const c = new DOMPoint(r.x + r.width / 2, r.y + r.height / 2).matrixTransform(m.inverse());
     const bg = getComputedStyle(launch).backgroundColor.match(/\d+/g).map(Number);
-    return { t: performance.now() - window.__marcLaunchT0, off: parseFloat(getComputedStyle(path).strokeDashoffset), dx: c.x, dy: c.y, ctm: [m.a, m.b, m.c, m.d, m.e, m.f], bg, booted: !!window.__bug34Ready, anims: document.getAnimations().filter(a => launch.contains(a.effect && a.effect.target)).length };
+    // The word's box once its own animation has passed the O1 reveal delay (1050 ms), else null.
+    const wEl = launch.querySelector('.launch-word'), wr = wEl.getBoundingClientRect(), wa = wEl.getAnimations().find(a => a.animationName === 'launch-reveal');
+    const word = wa && wa.currentTime >= 1050 ? [wr.left - 12, wr.top - 12, wr.right + 12, wr.bottom + 12] : null;
+    return { t: performance.now() - window.__marcLaunchT0, off: parseFloat(getComputedStyle(path).strokeDashoffset), dx: c.x, dy: c.y, ctm: [m.a, m.b, m.c, m.d, m.e, m.f], bg, word, booted: !!window.__bug34Ready, anims: document.getAnimations().filter(a => launch.contains(a.effect && a.effect.target)).length };
   })())))));
   const open = async (theme, rate, extra) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: extra.os || 'no-preference' });
-    await ctx.route(/\/assets\/index-[^/]*\.js$/, async r => { await new Promise(res => setTimeout(res, 1500)); await r.continue(); });
+    // GATE-FLAKE-4: the bundle is held until the context closes. A hold timed from the request let a slow parse before
+    // __marcLaunchT0 use it up, so the app could boot while the samples were being taken.
+    await ctx.route(/\/assets\/index-[^/]*\.js$/, () => {});
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
     const cdp = await ctx.newCDPSession(page);
@@ -5307,12 +5315,21 @@ if (gate.runs('BUG-34'))
       if (motion) localStorage.setItem('marc.motion', motion);
       let inner;
       Object.defineProperty(window, '__marcLaunchReady', { configurable: true, get() { return inner && (() => { window.__bug34Ready = true; inner(); }); }, set(fn) { inner = fn; } });
-      window.__bug34 = {};
-      new PerformanceObserver(l => { for (const e of l.getEntries()) if (e.name === 'first-paint') window.__bug34.fp = e.startTime; }).observe({ type: 'paint', buffered: true });
-      const tick = () => {
-        const p = document.getElementById('launch-path');
-        if (p && window.__bug34.anim === undefined && parseFloat(getComputedStyle(p).strokeDashoffset) < 100) window.__bug34.anim = performance.now();
-        if (window.__bug34.anim === undefined) requestAnimationFrame(tick);
+      window.__bug34 = { frames: [] };
+      new PerformanceObserver(l => { for (const e of l.getEntries()) { if (e.name === 'first-paint') window.__bug34.fp = e.startTime; if (e.name === 'first-contentful-paint') window.__bug34.fcp = e.startTime; } }).observe({ type: 'paint', buffered: true });
+      // GATE-FLAKE-4: A2 reads the line and dot of every frame from the first one that has them, recorded here in the
+      // page at the frame's own time (the rAF time its animations were computed at), so no capture or round trip can
+      // move the times A2 measures at.
+      const tick = ts => {
+        const p = document.getElementById('launch-path'), dot = document.getElementById('launch-dot');
+        if (p && dot) {
+          const off = parseFloat(getComputedStyle(p).strokeDashoffset);
+          if (window.__bug34.anim === undefined && off < 100) window.__bug34.anim = performance.now();
+          const r = dot.getBoundingClientRect();
+          const c = new DOMPoint(r.x + r.width / 2, r.y + r.height / 2).matrixTransform(p.parentNode.getScreenCTM().inverse());
+          window.__bug34.frames.push({ t: ts, off, dx: c.x, dy: c.y, booted: !!window.__bug34Ready });
+        }
+        if (!window.__bug34.stop) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
     }, [theme, extra.motion || null]);
@@ -5331,11 +5348,17 @@ if (gate.runs('BUG-34'))
     if (!s1) { errors.push(`${tag} ${at}: #launch was gone at first paint`); await ctx.close(); continue; }
     await page.waitForFunction(t => performance.now() - window.__marcLaunchT0 >= t, s1.t + 100, { timeout: 8000 });
     const png2 = await shot(); const s2 = await sample(page);
-    await page.waitForFunction(() => performance.now() - window.__marcLaunchT0 >= 700, null, { timeout: 8000 });
-    const s3 = await sample(page);
-    if (!s2 || !s3) { errors.push(`${tag} ${at}: #launch was gone before the samples were taken`); await ctx.close(); continue; }
+    // Until the recorder has a frame 700 ms after the overlay's first paint (or the line is gone).
+    await page.waitForFunction(() => { const b = window.__bug34, f = b.frames; return !document.getElementById('launch-path') || (b.fcp !== undefined && f.length && f[f.length - 1].t >= b.fcp + 700); }, null, { timeout: 8000 });
+    const rec = await page.evaluate(() => { window.__bug34.stop = true; const t0 = window.__marcLaunchT0; return { fcp: window.__bug34.fcp - t0, frames: window.__bug34.frames.map(f => ({ ...f, t: f.t - t0 })) }; });
+    // A2 times from the overlay's first paint (first-contentful-paint; first-paint can be an earlier, empty frame): f0
+    // is the frame shown then, fA the first frame 100 ms or more after it, fB the first frame 700 ms or more after it.
+    const fp = rec.fcp, fr = rec.frames;
+    if (!Number.isFinite(fp) || !fr.length) { errors.push(`${tag} ${at}: no first-contentful-paint entry or no recorded frame`); await ctx.close(); continue; }
+    const f0 = fr.filter(x => x.t <= fp).pop() ?? fr[0], fA = fr.find(x => x.t >= fp + 100), fB = fr.find(x => x.t >= fp + 700);
+    if (!s2 || !fA || !fB) { errors.push(`${tag} ${at}: #launch was gone before the samples were taken`); await ctx.close(); continue; }
     // The probe only means something while the bundle is still held back.
-    if (s1.booted || s2.booted || s3.booted) errors.push(`${tag} ${at}: the app booted before the samples (${Math.round(s3.t)} ms), so the bundle delay did not hold`);
+    if (s1.booted || s2.booted || fB.booted) errors.push(`${tag} ${at}: the app booted before the samples (${Math.round(fB.t)} ms), so the bundle delay did not hold`);
     // A1: at first paint and +100 ms the dot is on the path, and nothing is painted off the path or
     // ahead of how far the dot and line have got (the SMIL build froze on the dot at 0,0 and a cap at 56,40).
     const cssWidth = await page.evaluate(() => innerWidth);
@@ -5343,14 +5366,21 @@ if (gate.runs('BUG-34'))
       const dot = nearest(s.dx, s.dy);
       if (dot.d > 0.6) errors.push(`${tag} ${at} ${n} (${Math.round(s.t)} ms): the dot is ${dot.d.toFixed(1)} units off the path, at (${s.dx.toFixed(1)}, ${s.dy.toFixed(1)})`);
       const reach = Math.max(dot.s, (100 - s.off) / 100 * L);
-      const px = await strayInk(png, s.bg, s.ctm, cssWidth, reach);
+      const px = await strayInk(png, s.bg, s.ctm, cssWidth, reach, s.word);
+      if (s.word) { const [a, b, c, d, e, f] = s.ctm, top = Math.min(...[s.word[0], s.word[2]].map(x => (a * (s.word[1] - f) - b * (x - e)) / (a * d - b * c))); timings.top = Math.min(timings.top ?? Infinity, top); if (!(top >= 54.6)) errors.push(`${tag} ${at} ${n} (${Math.round(s.t)} ms): the word's box starts ${top.toFixed(2)} units down the mark, want 54.6 or more, so the word skip could hide ink near the path`); }
       if (px.stray > 0) errors.push(`${tag} ${at} ${n} (${Math.round(s.t)} ms): ${px.stray} painted pixels off the path or past the dot, first at ${px.first} (a stray dot or cap)`);
       if (n === '+100 ms' && px.ink < 50) errors.push(`${tag} ${at} +100 ms: only ${px.ink} painted pixels, so there is nothing to measure`);
     }
     // A2: the line and dot visibly move within 100 ms of first paint, and keep moving.
-    if (!(s2.off < s1.off && s2.off < 100)) errors.push(`${tag} ${at}: strokeDashoffset did not drop within 100 ms of first paint (${s1.off} at ${Math.round(s1.t)} ms, ${s2.off} at ${Math.round(s2.t)} ms)`);
-    if (!(Math.hypot(s2.dx - s1.dx, s2.dy - s1.dy) > 0.1)) errors.push(`${tag} ${at}: the dot did not move within 100 ms of first paint`);
-    if (!(s3.off < s2.off - 10)) errors.push(`${tag} ${at}: at ${Math.round(s3.t)} ms strokeDashoffset is ${s3.off}, want at least 10 below ${s2.off}`);
+    // On the recorded frames (GATE-FLAKE-4); load can only make fA and fB later and the early frames fewer.
+    if (!(fA.off < f0.off && fA.off < 100)) errors.push(`${tag} ${at}: strokeDashoffset did not drop within 100 ms of first paint (${f0.off} at ${Math.round(f0.t)} ms, ${fA.off} at ${Math.round(fA.t)} ms)`);
+    if (!(Math.hypot(fA.dx - f0.dx, fA.dy - f0.dy) > 0.1)) errors.push(`${tag} ${at}: the dot did not move within 100 ms of first paint`);
+    // Keeps moving: fB is at least 10 below every frame up to 300 ms after first paint.
+    const behind = fr.find(x => x.t <= fp + 300 && !(fB.off < x.off - 10));
+    if (behind) errors.push(`${tag} ${at}: at ${Math.round(fB.t)} ms strokeDashoffset is ${fB.off}, want at least 10 below ${behind.off} (at ${Math.round(behind.t)} ms)`);
+    const still = fr.find(x => x.t <= fp + 300 && !(Math.hypot(fB.dx - x.dx, fB.dy - x.dy) > 0.1));
+    if (still) errors.push(`${tag} ${at}: at ${Math.round(fB.t)} ms the dot is within 0.1 units of where it was at ${Math.round(still.t)} ms`);
+    timings.margin = Math.min(timings.margin ?? Infinity, ...fr.filter(x => x.t <= fp + 300).map(x => x.off - fB.off - 10));
     if (rate === 4) timings.push(`${theme} ${JSON.stringify(await page.evaluate(() => ({ firstPaint: Math.round(window.__bug34.fp), firstAnimated: Math.round(window.__bug34.anim) })))}`);
     await ctx.close();
   }
@@ -5367,7 +5397,7 @@ if (gate.runs('BUG-34'))
     await ctx.close();
   }
   await pix.context().close();
-  console.log(`${tag}: 5 themes x 1x/4x checked with the bundle held 1500 ms; 4x timings from navigation start: ${timings.join('; ')}`);
+  console.log(`${tag}: 5 themes x 1x/4x checked with the bundle held until the context closes; smallest A2 margin ${timings.margin?.toFixed(2) ?? 'none'}, smallest word top ${timings.top?.toFixed(2) ?? 'none'}; 4x timings from navigation start: ${timings.join('; ')}`);
 }
 
 // A4: keepAwake is called on while a workout is live, and off once it ends. The NativeUi plugin
@@ -6320,7 +6350,7 @@ if (gate.runs('FG-OFF'))
     const now = new Date().toISOString();
     localStorage.setItem('marc.state.v1', JSON.stringify({
       version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
-      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 2 }, { exerciseId: other, sets: 2 }] }],
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 2 }, ...(other ? [{ exerciseId: other, sets: 2 }] : [])] }],
       schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
       sessions: [], active: null, customExercises: [],
       preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
@@ -6355,9 +6385,9 @@ if (gate.runs('FG-OFF'))
       await page.keyboard.press('Escape'); await page.waitForTimeout(400);
     }
     const other = page.locator('.card.exercise').nth(1);
-    await other.locator('.ex-head').click(); await page.waitForTimeout(300);
+    if (noHowTo) { await other.locator('.ex-head').click(); await page.waitForTimeout(300);
     if (!(await visible(other.locator('.why-toggle')))) errors.push(`${tag} ${theme} G6: the ${noHowTo} card did not open`);
-    if (await other.locator('.ht-entry').count()) errors.push(`${tag} ${theme} G6: the ${noHowTo} card (no approved content) has a How-to entry`);
+    if (await other.locator('.ht-entry').count()) errors.push(`${tag} ${theme} G6: the ${noHowTo} card (no approved content) has a How-to entry`); } else console.log(`${tag} ${theme} G6 library control: none (every library id ships)`);
     await ctx.close();
   }
 }
@@ -6527,8 +6557,8 @@ if (gate.runs('HT-2'))
       if (JSON.stringify(got) !== JSON.stringify(latest.get(id)?.fragments)) errors.push(`${tag} A9: the bundled ${f} does not hold the GOLDEN.json fragments of ${id}`);
       sizes.push(`${f.replace(/-[\w-]{8}\.js$/, '')} ${b.length}/${gz}`);
     }
-    const extra = files.filter(f => /^ht-/.test(f) && !Object.values(rows).some(r => f.startsWith(`ht-${r.slug}-`)));
-    if (extra.length) errors.push(`${tag} A9: unexpected How-to chunks: ${extra.join(', ')}`);
+    const REG = await import('../tools/plates/library/registry.mjs'), { htChunkProblems } = await import('../tools/plates/library/chunk-set.mjs'), regAll = REG.rows(), regShipped = new Set(REG.shippedIds(regAll));
+    for (const m of htChunkProblems(files, regAll.filter(r => regShipped.has(r.id)))) errors.push(`${tag} A9: ${m}`);   // LIB-4a (D-LIB4-A9): the exact ht- set over every shipped row
     console.log(`${tag} A9 chunk sizes (raw/gz B): ${sizes.join(', ')}`);
   } finally {
     rmSync(out, { recursive: true, force: true });
@@ -6669,7 +6699,7 @@ if (gate.runs('HT-6'))
         const hints = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => [e.id, twin.howToHint(e.id)]).filter(([, t]) => t !== undefined);
         const text = Object.fromEntries(hints);
         if (!text.lib_machine_chest_press) P(`${theme} A8: no hint for the chest press`);
-        for (const [lib, want] of [['lib_machine_chest_press', text.lib_machine_chest_press], ['lib_lat_pulldown', null], [H.HT_NO_HOWTO, null], [H.HT_CUSTOM.id, null]]) {
+        for (const [lib, want] of [['lib_machine_chest_press', text.lib_machine_chest_press], ['lib_lat_pulldown', null], ...(H.HT_NO_HOWTO ? [[H.HT_NO_HOWTO, null]] : []), [H.HT_CUSTOM.id, null]]) {
           const card = await H.openCard(app.page, H.HT_ORDER.indexOf(lib));
           const got = await card.evaluate(c => [...c.querySelectorAll('p.hint.muted')].filter(p => !p.closest('.why-row ~ .ex-body')).map(p => p.textContent));
           const shown = got.filter(t => Object.values(text).includes(t));
@@ -9243,9 +9273,135 @@ if (gate.runs('LIB-2'))
   if (!errors.some(e => / A2[56]: /.test(e) && e.startsWith(`${tag} `))) console.log(`${tag} A25/A26: superset How-to total within the per-id ceiling; C17 clean on ${scanned.join(', ')}`);
 }
 
+// LIB-4a (D-LIB4-CTRL (4)): the custom-exercise negative in both of FG-OFF G6's themes, whatever the library coverage.
+// At full coverage the library no-How-to control has no subject (firstWithoutHowTo() is null, G6, HT-3 A1 and HT-6 A8
+// skip only that pair); the seeded custom exercise always has one: its card opens and holds no .ht-entry, in Silent
+// Black and Paper (HT-3 A1 runs this negative only in one theme, and HT-6 A8 checks hints, not the entry).
+if (gate.runs('LIB-4a'))
+{
+  const tag = 'LIB-4a';
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const index = H.HT_ORDER.indexOf(H.HT_CUSTOM.id);
+  if (index < 0) errors.push(`${tag}: the custom exercise ${H.HT_CUSTOM.id} is not in HT_ORDER`);
+  for (const theme of index < 0 ? [] : ['silent-black', 'paper']) {
+    const { ctx, page } = await H.openAppTrain(browser, PORT, theme, { onError: m => errors.push(`${tag} ${theme}: page error: ${m}`) });
+    try {
+      const card = await H.openCard(page, index).catch(e => { errors.push(`${tag} ${theme}: the custom exercise card did not open (${e.message.split('\n')[0]})`); return null; });
+      const n = card ? await card.locator('.ht-entry').count() : 0;
+      if (card && n) errors.push(`${tag} ${theme}: the custom exercise card has ${n} .ht-entry, expected none`);
+      if (card && !n) console.log(`${tag} ${theme}: custom exercise card open, no How-to entry (library control: ${H.HT_NO_HOWTO ?? 'none, every library id ships'})`);
+    } finally { await ctx.close(); }
+  }
+}
+
+// BUG-41 (owner report 2026-10-17): the Exercise progress line, its metric label and the trend tile come
+// from one series. The owner's Rear Delt Fly (line rose, tile said Slipping) and Dumbbell Lateral Raise (line
+// fell at the end, tile said Improving) both read Improving with the line ending on its highest point; the label
+// sits directly under the line and names the plotted metric; the line is in the user's unit (lb run); a carry
+// with a distance in one of three sessions draws no line, raises no error and keeps its tiles, bars and rows.
+if (gate.runs('BUG-41'))
+{
+  const tag = 'BUG-41';
+  const { build: esbBug41 } = await import('esbuild');
+  const unitsJs = (await esbBug41({ entryPoints: [join(ROOT, 'src/core/units.ts')], bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' })).outputFiles[0].text;
+  const { kgToDisplay } = await import(`data:text/javascript;base64,${Buffer.from(unitsJs).toString('base64')}`);
+  const sparkFmt = (v) => String(Math.round(v * 10) / 10);
+  const LABELS = ['Estimated one-rep max', 'Top load', 'Volume', 'Farthest distance', 'Less assistance', 'Best reps', 'Longest hold'];
+  const S = (kg, reps, effort = 'ideal') => ({ kg, reps, effort });
+  const X3 = (kg, reps) => [S(kg, reps), S(kg, reps), S(kg, reps)];
+  // Offsets in days before today, from the owner's last session (18 Oct = 0), same order and gaps.
+  const back = (iso) => Math.round((Date.UTC(2026, 9, 18) - Date.parse(`${iso}T00:00:00Z`)) / 86_400_000);
+  const seed = [
+    ...[['2026-08-23', X3(26, 15)], ['2026-08-30', X3(26, 15)], ['2026-09-06', X3(26, 15)], ['2026-09-23', X3(26, 11)], ['2026-09-28', X3(26, 15)], ['2026-10-04', X3(26, 16)],
+      ['2026-10-06', [S(33, 12), S(33, 14)]], ['2026-10-11', [S(35.5, 9), S(35.5, 9), S(35.5, 9, 'max')]], ['2026-10-18', [S(35.5, 10, 'easy'), S(35.5, 10), S(35.5, 10, 'max')]]]
+      .map(([d, sets]) => ({ off: back(d), id: 'lib_rear_delt_fly', name: 'Rear Delt Fly', sets })),
+    ...[...['2026-09-23', '2026-09-25', '2026-09-27', '2026-09-29', '2026-10-01'].map(d => [d, X3(6, 10)]),
+      ['2026-10-04', [S(6, 14), S(6, 13)]], ['2026-10-06', [S(7, 13), S(7, 13), S(7, 12)]], ['2026-10-09', [S(7, 12), S(7, 11), S(7, 10, 'easy')]], ['2026-10-11', [S(7, 14), S(7, 14), S(7, 13)]],
+      ['2026-10-13', X3(7, 15)], ['2026-10-17', [S(7, 15), S(7, 10, 'max')]], ['2026-10-18', [S(7, 15, 'easy'), S(7, 15), S(7, 16, 'max')]]]
+      .map(([d, sets]) => ({ off: back(d), id: 'lib_dumbbell_lateral_raise', name: 'Dumbbell Lateral Raise', sets })),
+    ...[['2026-10-04', [S(30, 8)]], ['2026-10-11', [{ kg: 30, distanceM: 40, effort: 'ideal' }]], ['2026-10-18', [S(30, 8)]]]
+      .map(([d, sets]) => ({ off: back(d), id: 'lib_farmer_s_carry', name: "Farmer's Carry", sets })),
+  ].sort((a, b) => b.off - a.off);
+  const open = async (weightUnit) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} (${weightUnit}): ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} (${weightUnit}) console: ${m.text()}`); });
+    await page.addInitScript(({ seed, weightUnit }) => {
+      const now = new Date().toISOString();
+      const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+      const sessions = seed.map((x, i) => ({ id: `bug41-${i}`, splitId: 'sp1', splitName: 'Pull', day: day(x.off), startedAt: `${day(x.off)}T17:00:00.000Z`, endedAt: `${day(x.off)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+        exercises: [{ exerciseId: x.id, name: x.name, sets: x.sets }],
+        logging: { mode: 'live', trainedAt: `${day(x.off)}T17:00:00.000Z`, trainedEndAt: `${day(x.off)}T18:00:00.000Z`, loggedAt: `${day(x.off)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } }));
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions, active: null, customExercises: [],
+        preferences: { weightUnit, restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    }, { seed, weightUnit });
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+    await page.waitForTimeout(250);
+    await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+    await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(300);
+    return { ctx, page };
+  };
+  const card = '[data-palace="history.exercise-stats"]';
+  const read = (page, id) => page.selectOption(`${card} select`, id).then(() => page.waitForTimeout(300)).then(() => page.evaluate(({ card, LABELS }) => {
+    const root = document.querySelector(card);
+    const wrap = root?.querySelector('.sparkline-wrap');
+    const d = root?.querySelector('svg.sparkline path')?.getAttribute('d') ?? '';
+    const ys = [...d.matchAll(/[ML]\s*[-\d.]+\s+([-\d.]+)/g)].map(m => Number(m[1]));
+    return {
+      tile: [...(root?.querySelectorAll('.stat') ?? [])].find(el => /^trend/.test(el.querySelector('span')?.textContent ?? ''))?.querySelector('b')?.textContent ?? null,
+      stats: root?.querySelectorAll('.stat').length ?? 0,
+      after: wrap?.nextElementSibling?.textContent ?? null,
+      labels: [...(root?.querySelectorAll('.hint') ?? [])].filter(el => LABELS.includes(el.textContent.trim())).length,
+      max: root?.querySelector('.sparkline-minmax span')?.textContent ?? null,
+      readout: root?.querySelector('.chart-readout .readout-cur')?.textContent ?? '',
+      ys, paths: root?.querySelectorAll('svg.sparkline path').length ?? 0,
+      bars: root?.querySelectorAll('.effort-bar-col').length ?? 0,
+      rows: root?.querySelectorAll('.list .list-row').length ?? 0,
+    };
+  }, { card, LABELS }));
+  const endsHighest = (r) => r.ys.length >= 2 && r.ys[r.ys.length - 1] <= Math.min(...r.ys) + 0.05;
+  {
+    const { ctx, page } = await open('kg');
+    const rd = await read(page, 'lib_rear_delt_fly');
+    if (rd.tile !== 'Improving') errors.push(`${tag} Rear Delt: trend tile reads ${JSON.stringify(rd.tile)}, expected "Improving"`);
+    if (rd.after !== 'Top load') errors.push(`${tag} Rear Delt: the element after the line reads ${JSON.stringify(rd.after)}, expected "Top load"`);
+    if (rd.labels !== 1) errors.push(`${tag} Rear Delt: ${rd.labels} metric labels on the card, expected exactly 1`);
+    if (rd.max !== '35.5') errors.push(`${tag} Rear Delt: max y label ${JSON.stringify(rd.max)}, expected "35.5"`);
+    if (!rd.readout.includes('35.5 kg × 10')) errors.push(`${tag} Rear Delt: readout ${JSON.stringify(rd.readout)} lacks "35.5 kg × 10"`);
+    if (!endsHighest(rd)) errors.push(`${tag} Rear Delt: the line's last point is not its highest (y ${JSON.stringify(rd.ys)})`);
+    const lat = await read(page, 'lib_dumbbell_lateral_raise');
+    if (lat.tile !== 'Improving') errors.push(`${tag} Lateral: trend tile reads ${JSON.stringify(lat.tile)}, expected "Improving"`);
+    if (!endsHighest(lat)) errors.push(`${tag} Lateral: the line's last point is not its highest (y ${JSON.stringify(lat.ys)})`);
+    if (lat.ys.length !== lat.bars || !lat.bars) errors.push(`${tag} Lateral: ${lat.ys.length} line points vs ${lat.bars} effort bars`);
+    const car = await read(page, 'lib_farmer_s_carry');
+    if (car.paths !== 0) errors.push(`${tag} A10 carry: ${car.paths} sparkline path(s) drawn for a one-row series`);
+    if (!car.tile || car.stats < 2) errors.push(`${tag} A10 carry: tiles missing (${car.stats} stat tiles, trend ${JSON.stringify(car.tile)})`);
+    if (car.bars < 1) errors.push(`${tag} A10 carry: no effort bars`);
+    if (car.rows !== 3) errors.push(`${tag} A10 carry: ${car.rows} session rows, expected 3`);
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('lb');
+    const rd = await read(page, 'lib_rear_delt_fly');
+    const want = sparkFmt(kgToDisplay(35.5, 'lb'));
+    if (rd.max !== want) errors.push(`${tag} lb: max y label ${JSON.stringify(rd.max)}, expected ${JSON.stringify(want)} (35.5 kg in lb)`);
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith(`${tag} `))) console.log(`${tag}: Rear Delt and Lateral read Improving with the line ending highest, "Top load" under the line once, max label in kg and lb, readout 35.5 kg × 10, line points = bars; a one-row carry draws no line and keeps its tiles, bars and rows`);
+}
+
 await gate.done();
 await browser.close();
 stopping = true;
 server.kill();
-if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
+if (errors.length) { for (const l of (await import('./error-list.mjs')).formatErrors(errors)) console.error(l); process.exit(1); }
 console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and AUD-20 (finish-screen calories are a plain estimate with no band in 5 themes) verified, and HT-7 (posture close-ups equal golden B in 5 themes: L3 pixels, opening animation, reduced motion, transform and opacity only; S1/S3 exclusive and the plate restored on Close; chunks on first open only, <= 24 KB gz; Right/Wrong images, 44 px chips, one #zdots, no duplicate ids) verified, and HT-8 (feel map equals golden B in 5 themes: S5 paused frames, S4, every S6 row, reduced-motion rest; band animation list; nothing running at end + 1 s; shimmer TaskDuration within 1.2x golden B at 4x; an early "Feel it" tap loads, scrolls to and plays the map) verified, and HT-9 C19 (no source list, citation link or evidence label anywhere on the real How-to sheet, 8 exercises x 5 themes, disclaimer exactly once after the last red-flag block) verified, and HT-9 Show (golden B\'s 17 setup "Show me" buttons, tapped by id, open their close-up through the zoom host, Silent Black and Paper) verified, and HT-9 Order (the sheet\'s sections render in golden B\'s order on all 8 exercises) verified, and HT-9 (Setup, Risks and the disclaimer equal golden B at L3 in 5 themes, on-screen copy equals the content strings, one copy of each red-flag line with its duplicate fixture caught, Setup and Risks mounted after the plate\'s first paint, and the plate compare after scrolling and opening everything) verified, and COPY-1 (Settings footer rights line under the logo and above the version line, hint style, no removed Settings copy, no medical reminder) verified, and HT-10 (the whole How-to sheet in 5 themes: every interaction probed for 44 px targets, overlaps, TalkBack names and C19; reduced motion; nothing endless or running after its end; transform and opacity only; S0 and L3 after it all; final speed numbers; C17 and size of every How-to chunk; build B per chunk kind; failure fixtures) verified.');

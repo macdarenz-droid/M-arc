@@ -48,7 +48,7 @@ export const todayReadiness = computed(() => readiness({
   sessions: sessions.value,
 }));
 export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedSessions({ schedule: state.value.schedule, daysOff: state.value.daysOff, plannedDays: state.value.profile.plannedDays }, today.value)));
-export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value, state.value.daysOff));
+export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value, state.value.daysOff, state.value.profile.plannedDays));
 const coachContext = computed((): CoachContext => ({
   sessions: state.value.sessions, splits: state.value.splits, schedule: state.value.schedule, custom: state.value.customExercises,
   today: today.value, now: minuteNow.value, profileHistory: state.value.profileHistory, profile: state.value.profile,

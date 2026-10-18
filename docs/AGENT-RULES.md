@@ -9,6 +9,7 @@ The step-by-step procedures for each role are in `.claude/skills/builder/SKILL.m
 | Supervisor (Claude, acting for the owner) | its own docs branch | the task board, the merge queue, CI files and these rules |
 | Builders (Claude sessions, one per task) | `claude/*` | what their task card lists |
 | Watch companion (GPT/Codex) | `codex/gt6-gate-a-watch-lab` (Gates A–E of `docs/WATCH-ARCHITECTURE.md`) | `native/wear/**`, `src/native/wearEngine.ts`, `src/slices/settings/WatchLab.tsx`, its Watch-lab row in `Settings.tsx`, and its lines in the CI workflows |
+| Watch lane (Claude cloud sessions) | `ccr-061c7350-tjvpo6` and `ccr-8cef8a15-l12swp` only (other `ccr-*` branches are not the watch lane); the guard checks them like `codex/*` | the same files as the watch companion |
 
 ## Why you are being watched
 
