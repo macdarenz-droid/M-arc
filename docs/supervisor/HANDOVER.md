@@ -903,6 +903,32 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - reviewers on READY, then trains.
   - Queue as slots free: LIB-3b (first item B5(b)), LIB-4d, LIB-8-FIX, and LIB-5v after LIB-5 merges.
 
+**Update ~13:00 UTC.**
+- **Sessions started:**
+  - LIB-5 reviewer session_013484ehdaXkSp6xn5vdzMJy (Opus), on READY @ `1d1fe9e`. LIB-5 is WAITING and holds no slot.
+  - LIB-3b builder session_01CckQsL6t3JEMEXR2jsfu3a (#258), card @ `5bf0d64a`, amendment 1: base `0628270a`, with Do 0 = B5(b).
+  - Active LIB builders: LIB-4b, LIB-4c, LIB-9a and LIB-3b = 4.
+- **Rulings** (cards branch now `680b30d6`):
+  - D-LIB4b-B2FIX (lib4-cards section 4, B2 row): fixtureSection is HT-3's pass guard 1, so it passes with ≥ 4 pairs. The other three fixtures are red. Still open:
+    - LIB-4b's Chromium 141 settleApp timeout (machine_chest_press, paper, HT9/show-1..3), being root-caused;
+    - the pair count.
+    LIB-4b was checked in at 13:01.
+  - D-LIB3b-H7 (lib-3b-card amendment 2): PQ-H7 misses import-time nondeterminism. LIB-3b goes on with H10 alone, and the new card **LIB-3c** ("PQ-H7 builds twice from fresh spec imports") is queued. It starts after #245 merges and must merge before the first post-LB1 batch QA.
+  - D-LIB4c-ONCESEED: times.json once = 971.1/13.9, from C11's CI log. D-LIB4c-SCRATCHREDS: the scratch-only reds in other tasks' main-tree checks are attributed and not counted for C12-C14.
+  - D-LIB9a-FIX1 (13.6): the end-elbow R1 rows are withdrawn on chin_up, close_grip, underhand and single_arm, because the critics' targets need a forearm 1.15-1.35× too long. inverted_row R3 gets a dashed hidden start arm. The recheck brief gains the segment-length rule.
+  - D-LIB9a-R3 (13.7): the recheck round 3 is VALID, and **11 of the 12 drawn LB1 plates pass**. underhand R5 gets one targeted fix, then a single-plate recheck. horizontal_leg_press and leg_press_calf_raise stay held.
+- **LIB-4c:**
+  - C11 is met: run 39123273382 on scratch `a0250935` (draft #257, never merged; the supervisor pushes it).
+  - The scratch was refreshed @ `0f7c96f9` with the once seed. C14 is next.
+- **Supervisor gotcha (13.7):** before every critic round, diff each hidden anchor's facts.json against its vendor spec's mistake and tells. `scratchpad/critic-lb1/cards-approved/lat_pulldown.json` is the research card, not golden B. That broke one round and needed a P04 re-score.
+- **Next:**
+  - LIB-5 review verdict, then train;
+  - `LB1 UNDERHAND READY`, then the single-plate recheck;
+  - LIB-4c C14, then C12 and C13;
+  - LIB-4b root cause and B8-B10;
+  - LIB-3b READY, then its reviewer.
+  - Queued: LIB-4d, LIB-8-FIX, LIB-3c (after #245), LIB-5v (after LIB-5).
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
