@@ -154,7 +154,9 @@ describe('L2-A12: the registry', () => {
     expect(all).toHaveLength(8 + batchRows);
     expect(all.slice(0, 8).map((r: any) => r.id)).toEqual(eight);
     for (const id of eight) expect(reg.shippedIds(all), id).toContain(id);
-    expect(reg.shippedIds(all).length).toBeGreaterThanOrEqual(8);
+    const batchShipped = reg.batchFiles().reduce((a: number, f: string) => a + Object.values(JSON.parse(readFileSync(f, 'utf8')).rows).filter((r: any) => r.stage === 'shipped').length, 0);
+    expect(reg.shippedIds(all)).toHaveLength(8 + batchShipped);
+    expect(reg.shippedIds(all).slice(0, 8)).toEqual(eight);
   });
   it('adds a batch row and refuses a duplicate id, a chromeId or prefix clash, an unknown id, mode or stage, a D row with no parent, and zero rows', () => {
     const base = { plates: plates(), exercises: ex() };
@@ -372,7 +374,7 @@ describe('L2-A15: the How-to total ceiling is a per-id rule (plan 5.1)', () => {
     const rule = (await import(/* @vite-ignore */ url('tools/plates/library/budgets/total.mjs'))).totalCeiling as (m: number, n: number) => number;
     const t = JSON.parse(readFileSync('tests/howto/budgets.json', 'utf8')).totals.find((x: any) => x.chunk === 'How-to total');
     const n = reg.shippedIds().length;
-    expect(n).toBeGreaterThanOrEqual(8);   // LIB-4a (D-LIB4-PINS-2): the registry's shipped N, the 8 today
+    expect(reg.shippedIds().slice(0, 8)).toEqual(Object.keys(JSON.parse(readFileSync('tools/plates/plates.json', 'utf8'))));   // LIB-4a (D-LIB4-PINS-2): N is the registry's, the 8 first
     expect(t.gzMax).toBe(rule(t.measuredGz, n));
     expect(t.rawMax).toBe(rule(t.measuredRaw, n));
     expect(rule(t.measuredGz, n + 1)).toBeGreaterThan(t.gzMax);
@@ -427,7 +429,8 @@ describe('L2-A21: hand-pair chunks (gen/handpairs.mjs, design 12, D-LIB7-1)', ()
     expect(keys).toEqual(['bar-grip', 'd-handle']);
     // with no per-id hand chunk (has = false), every pair exercise's HAND entry is its key's shared chunk
     const text = idsGen.htIndexText([], idsGen.chunkMaps(reg.rows().filter((r: any) => reg.shippedIds().includes(r.id)), () => false, pairOf));
-    expect([...text.matchAll(/^ {2}"([a-z-]+)": \(\) => import\('\.\/handpair-([a-z-]+)'\)/gm)].map(m => [m[1], m[2]])).toEqual([['pull-up', 'bar-grip'], ['lat-pulldown', 'bar-grip'], ['leg-press', 'd-handle']]);
+    // D-LIB2b-HANDCSS: each pair line loads that exercise's zoom-<chromeId>.css first (the shared chunk imports no CSS)
+    expect([...text.matchAll(/^ {2}"([a-z-]+)": \(\) => import\('\.\.\/\.\.\/slices\/howto\/css\/zoom-\1\.css'\)\.then\(\(\) => import\('\.\/handpair-([a-z-]+)'\)\),$/gm)].map(m => [m[1], m[2]])).toEqual([['pull-up', 'bar-grip'], ['lat-pulldown', 'bar-grip'], ['leg-press', 'd-handle']]);
     const loaderKeys = [...new Set([...text.matchAll(/import\('\.\/handpair-([a-z-]+)'\)/g)].map(m => m[1]))];
     expect(hp.pairProblems(pairs, reg.shippedIds(), o.map((x: any) => x.path), loaderKeys)).toEqual([]);
   });

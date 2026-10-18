@@ -157,7 +157,7 @@ describe('D-HT1 A5: hasHowTo is true exactly for the approved plates', () => {
     // LIB-4a (D-LIB4-PINS-2): exactly the registry's shipped ids, which always hold the approved plates (the 8 today)
     const reg = await import(/* @vite-ignore */ new URL('../../tools/plates/library/registry.mjs', import.meta.url).href) as { rows: () => { id: string; slug: string }[]; shippedIds: (all?: { id: string }[]) => string[] };
     const shipped = [...reg.shippedIds()].sort(), idOfSlug = new Map(reg.rows().map(r => [r.slug, r.id]));
-    expect(shipped.length).toBeGreaterThanOrEqual(8);
+    expect(reg.shippedIds().slice(0, 8)).toEqual(Object.keys(JSON.parse(readFileSync('tools/plates/plates.json', 'utf8'))));   // the 8 ship first, in plates.json order
     for (const id of approved) expect(shipped, id).toContain(id);
     expect(lib.filter(id => hasHowTo(id)).sort()).toEqual(shipped);
     for (const id of ['custom_1', 'custom_lib_pull_up', 'lib_pull_up ', '', 'LIB_PULL_UP']) expect(hasHowTo(id), id).toBe(false);

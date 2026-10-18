@@ -33,7 +33,7 @@ describe('HT2-A5: ids.ts', () => {
 
   it('HOWTO_IDS are the approved plates slugs in GOLDEN.json; LOADERS keys equal them; they equal the generated files', () => {
     expect(HOWTO_IDS).toHaveLength(shipped().size);
-    expect(shipped().size).toBeGreaterThanOrEqual(8);
+    expect(REG.shippedIds().slice(0, 8)).toEqual(Object.keys(rows));   // the 8 ship first, in plates.json order
     for (const [id, slug] of approved()) expect(shipped().get(id), id).toBe(slug);   // the approved plates always ship
     expect(idProblems(HOWTO_IDS, Object.keys(LOADERS), files(), shipped())).toEqual([]);
   });
