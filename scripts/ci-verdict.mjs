@@ -130,8 +130,13 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     sha: process.env.GITHUB_SHA, event: process.env.GITHUB_EVENT_NAME, arrangement: process.env.MARC_GATE_ARRANGEMENT || 'split',
     needs: JSON.parse(process.env.MARC_NEEDS || '{}'), ht10Tuples: await ht10AllTuples(),
   });
+  // LIB-4c (D-LIB4-VERDICT): the library family, from the same proof folder
+  const L = await import('../tools/plates/library/ci/verdict.mjs'), { rebuild, shards } = L.collectLibrary(dir);
+  const lib = await L.libraryVerdict({ lib: shards, rebuild, gate, sha: process.env.GITHUB_SHA, ref: process.env.GITHUB_REF, event: process.env.GITHUB_EVENT_NAME, needs: JSON.parse(process.env.MARC_NEEDS || '{}') });
+  problems.push(...lib.problems); notes.push(...lib.notes);
+  if (process.env.GITHUB_STEP_SUMMARY) (await import('node:fs')).appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${lib.line}\n`);
   for (const m of gate) console.log(`gate ${m.meta?.tz} job ${m.meta?.job?.k}/${m.meta?.job?.K}: ${m.rows.filter(r => r.check === 'gate').length} groups, ${m.meta?.gateSeconds} s`);
   for (const n of notes) console.log(`note: ${n}`);
   if (problems.length) { console.error(`gate-verdict FAIL (${problems.length}):\n${problems.join('\n')}`); process.exit(1); }
-  console.log(`gate-verdict PASS: ${gate.length} gate proofs and ${ht10.length} ht10 proofs on ${process.env.GITHUB_SHA}; every group x time zone once, every HT-10 tuple x time zone once`);
+  console.log(`gate-verdict PASS: ${gate.length} gate proofs and ${ht10.length} ht10 proofs on ${process.env.GITHUB_SHA}; every group x time zone once, every HT-10 tuple x time zone once; ${lib.line}`);
 }
