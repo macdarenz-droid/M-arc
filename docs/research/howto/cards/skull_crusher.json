@@ -405,7 +405,8 @@
       "what": "Upper arms drifting back toward the head as the bar comes down.",
       "why": "Strength Shop calls it the most common fault (c7, retailer blog, WEAK), and ACE uses it as the stop signal for the descent (c5).",
       "claim": "c7",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Strength Shop's \"Upper arms drifting back: the most common fault\" (c7, WEAK) puts the frequency word on that fault itself, not a list heading read onto one item, so it counts; no other quote gives a frequency word for a skull-crusher fault. Set aside: \"one of the most frequently butchered\" is about the exercise, not one fault; Gaviria's \"often occur as a result of falling on an outstretched hand, forceful eccentric contraction\" and \"most commonly seen in middle-aged men\" (c15) name causes and people for triceps ruptures, not a fault of this exercise; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c14) is about all weight training; \"working skull crusher weight is typically 30–45kg\" is a load. Step 2 is not needed: Strength Shop's \"any lateral drift in the bar exacerbates elbow and wrist strain\" ties a sideways bar drift to strain, but no frequency word backs it; too much weight (c9) and a straight bar (c8) are load and equipment choices, not candidates. drawable stays true: the side view shows the upper-arm angle."
     },
     "tells": [
       {

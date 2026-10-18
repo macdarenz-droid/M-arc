@@ -187,7 +187,7 @@
     },
     {
       "id": "c8",
-      "text": "This guide uses 2 seconds down, a 1-second pause and 1 second up. ACSM gives 1-2 seconds each way for intermediate to advanced lifters working toward heavy loads.",
+      "text": "This guide uses 2 seconds down, a 1-second pause at the bottom (between lowering and pressing, not after the press) and 1 second up. ACSM gives 1-2 seconds each way for intermediate to advanced lifters working toward heavy loads.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -481,7 +481,8 @@
       "what": "Bar landing high on the chest, toward the neck.",
       "why": "WorkoutLabs says the bar should touch the lower chest only and not drift; a high touch brings the bar toward the neck (c12, MECH). How often it happens is not measured in any source read.",
       "claim": "c5",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a decline-press fault. Set aside: Kowalczuk's \"most commonly while performing the bench press maneuver\" (c14) names the exercise and the lowering phase in which pec ruptures happen, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c13) and \"most commonly injured body parts\" are about all weight training. The bar landing high on the chest, toward the neck (c5), is the only named fault a quote ties to harm: barbells compressing the neck killed weightlifters (c12; the link to a high touch is MECH). Benching without safeties or a spotter (c6) is a setup choice, not a candidate; bouncing the bar (c5) states no harm; Kolber's \"improper attention to exercise technique\" (c15) names no fault. drawable stays true: the side view shows where the bar touches the chest."
     },
     "tells": [
       {
@@ -496,8 +497,9 @@
     "tempo": {
       "up": 1,
       "down": 2,
-      "pause": 1,
-      "claim": "c8"
+      "pause": 0,
+      "claim": "c8",
+      "text": "WorkoutLabs's 2:1:1 count (c8): 2 s down, a 1 s pause at the bottom, between lowering and pressing, then 1 s up. That bottom pause is not the pause right after the press, so pause is 0 (LR-33); the bottom 1 s keeps its sourced seconds here. No quote on the card asks for a pause right after the press; WorkoutLabs's \"At the top of the movement, lock your arms and squeeze your chest muscles\" gives no pause and no seconds."
     },
     "variantLine": null
   },
