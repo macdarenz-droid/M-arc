@@ -49,3 +49,37 @@ reserved_paths: tools/plates/layers/** and vendor/** (golden B); src/**; every d
 **Verify:** npm ci; npm run check; npm run test:tz; MARC_CHROMIUM=/opt/pw-browsers/chromium npm run gate. `git diff --stat origin/claude/lib-5-shared-layers...HEAD` (or origin/main once LIB-5 has merged) shows only write_scope files.
 
 finish: merged in the train right after LIB-5, then LIB-5's Do 9 PR. You will notice: nothing visible. The box text ships with Do 9.
+
+**Amendment 1 (supervisor, 2026-10-18 ~13:25 UTC; D-BOXCAP-WIRE; on #260 comment 6250379136):**
+- **box-caps.mjs imports nothing.**
+  - It exports `NAMED_BOX_CAPS = { 'back-pain-box': 50 }` and `boxCapOf(key, fallback)`.
+  - The fallback is required: boxCapOf throws without a finite number.
+  - Each site passes its own default. validate.mjs and the library lint pass golden B's imported RED_FLAG_BOX_MAX_WORDS, and c7 passes `LIMITS.redFlagBoxWords`.
+  - So c7 never reaches copy-lint.mjs, its header stays true, and library-lint.test's [30, 30] cross-check keeps two independent sources.
+- **Q1 (c7) is accepted:**
+  - the signature becomes `checkC7(content, { boxKey }: { boxKey?: string } = {})`, with `boxCapOf(boxKey, LIMITS.redFlagBoxWords)`;
+  - the 11 existing callers do not change, and with no key they get 30;
+  - add `tools/plates/library/lint/box-caps.d.mts` (types for the two exports).
+- **Q2 (library lint) is accepted:**
+  - `boxReach(path, box, names = [], key)` and `lintLibraryRow(M, shared, { extraBoxes = {}, boxKeys = {} })`, with `boxKeys[f]`;
+  - Do 9's gate call passes `{ back: 'back-pain-box' }`;
+  - with no key the cap is 30;
+  - keep the RED_FLAG_BOX_MAX_WORDS import that S7 requires.
+- **Q3 (library-research.test.ts:147-155): BOX-CAP edits it, at least as strict as before.**
+  - Keep wordCap 999 on the back-pain box, and make it red at 51 words (`box has 51 words, at most 50`) and green at 50.
+  - Add the same test under a different key: a settled box with wordCap 999 and 31 words is red under 30.
+  - Show both red when boxCapOf returns the wordCap.
+- **S7 (library-lint.test.ts:32) is tightened, add-only.**
+  - Its regex also catches quoted keys (`'x': 50`).
+  - box-caps.mjs is the one named exception, pinned: `NAMED_BOX_CAPS` must deep-equal `{ 'back-pain-box': 50 }`, and the exception names D-BOXCAP-1.
+  - Show that the tightened S7 is red on a planted `'x': 50` in lint/index.mjs.
+- **write_scope adds:**
+  - box-caps.d.mts;
+  - c7.ts's signature and cap lines;
+  - lint/index.mjs's boxReach and lintLibraryRow lines;
+  - library-research.test.ts:147-155 and the new key test;
+  - library-lint.test.ts's S7 regex and its named exception, add-only.
+- **Mutations added:**
+  - boxCapOf without a fallback: it throws.
+  - c7 called with `boxKey: 'back-pain-box'` and a 51-word box: red.
+  - c7 called with no key and a 31-word box: red.
