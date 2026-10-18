@@ -6320,7 +6320,7 @@ if (gate.runs('FG-OFF'))
     const now = new Date().toISOString();
     localStorage.setItem('marc.state.v1', JSON.stringify({
       version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
-      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 2 }, { exerciseId: other, sets: 2 }] }],
+      goal: 'lean', splits: [{ id: 'sp1', name: 'Upper', color: '#6aa9ff', focus: [], createdAt: now, exercises: [{ exerciseId: 'lib_dumbbell_lateral_raise', sets: 2 }, ...(other ? [{ exerciseId: other, sets: 2 }] : [])] }],
       schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
       sessions: [], active: null, customExercises: [],
       preferences: { weightUnit: 'kg', restDefaultSec: 90, autoRest: false, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
@@ -6355,9 +6355,9 @@ if (gate.runs('FG-OFF'))
       await page.keyboard.press('Escape'); await page.waitForTimeout(400);
     }
     const other = page.locator('.card.exercise').nth(1);
-    await other.locator('.ex-head').click(); await page.waitForTimeout(300);
+    if (noHowTo) { await other.locator('.ex-head').click(); await page.waitForTimeout(300);
     if (!(await visible(other.locator('.why-toggle')))) errors.push(`${tag} ${theme} G6: the ${noHowTo} card did not open`);
-    if (await other.locator('.ht-entry').count()) errors.push(`${tag} ${theme} G6: the ${noHowTo} card (no approved content) has a How-to entry`);
+    if (await other.locator('.ht-entry').count()) errors.push(`${tag} ${theme} G6: the ${noHowTo} card (no approved content) has a How-to entry`); } else console.log(`${tag} ${theme} G6 library control: none (every library id ships)`);
     await ctx.close();
   }
 }
@@ -6527,8 +6527,8 @@ if (gate.runs('HT-2'))
       if (JSON.stringify(got) !== JSON.stringify(latest.get(id)?.fragments)) errors.push(`${tag} A9: the bundled ${f} does not hold the GOLDEN.json fragments of ${id}`);
       sizes.push(`${f.replace(/-[\w-]{8}\.js$/, '')} ${b.length}/${gz}`);
     }
-    const extra = files.filter(f => /^ht-/.test(f) && !Object.values(rows).some(r => f.startsWith(`ht-${r.slug}-`)));
-    if (extra.length) errors.push(`${tag} A9: unexpected How-to chunks: ${extra.join(', ')}`);
+    const REG = await import('../tools/plates/library/registry.mjs'), { htChunkProblems } = await import('../tools/plates/library/chunk-set.mjs'), regAll = REG.rows(), regShipped = new Set(REG.shippedIds(regAll));
+    for (const m of htChunkProblems(files, regAll.filter(r => regShipped.has(r.id)))) errors.push(`${tag} A9: ${m}`);   // LIB-4a (D-LIB4-A9): the exact ht- set over every shipped row
     console.log(`${tag} A9 chunk sizes (raw/gz B): ${sizes.join(', ')}`);
   } finally {
     rmSync(out, { recursive: true, force: true });
@@ -6669,7 +6669,7 @@ if (gate.runs('HT-6'))
         const hints = JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => [e.id, twin.howToHint(e.id)]).filter(([, t]) => t !== undefined);
         const text = Object.fromEntries(hints);
         if (!text.lib_machine_chest_press) P(`${theme} A8: no hint for the chest press`);
-        for (const [lib, want] of [['lib_machine_chest_press', text.lib_machine_chest_press], ['lib_lat_pulldown', null], [H.HT_NO_HOWTO, null], [H.HT_CUSTOM.id, null]]) {
+        for (const [lib, want] of [['lib_machine_chest_press', text.lib_machine_chest_press], ['lib_lat_pulldown', null], ...(H.HT_NO_HOWTO ? [[H.HT_NO_HOWTO, null]] : []), [H.HT_CUSTOM.id, null]]) {
           const card = await H.openCard(app.page, H.HT_ORDER.indexOf(lib));
           const got = await card.evaluate(c => [...c.querySelectorAll('p.hint.muted')].filter(p => !p.closest('.why-row ~ .ex-body')).map(p => p.textContent));
           const shown = got.filter(t => Object.values(text).includes(t));
@@ -9243,9 +9243,135 @@ if (gate.runs('LIB-2'))
   if (!errors.some(e => / A2[56]: /.test(e) && e.startsWith(`${tag} `))) console.log(`${tag} A25/A26: superset How-to total within the per-id ceiling; C17 clean on ${scanned.join(', ')}`);
 }
 
+// LIB-4a (D-LIB4-CTRL (4)): the custom-exercise negative in both of FG-OFF G6's themes, whatever the library coverage.
+// At full coverage the library no-How-to control has no subject (firstWithoutHowTo() is null, G6, HT-3 A1 and HT-6 A8
+// skip only that pair); the seeded custom exercise always has one: its card opens and holds no .ht-entry, in Silent
+// Black and Paper (HT-3 A1 runs this negative only in one theme, and HT-6 A8 checks hints, not the entry).
+if (gate.runs('LIB-4a'))
+{
+  const tag = 'LIB-4a';
+  const H = await import('../tools/plates/fidelity/harness.mjs');
+  const index = H.HT_ORDER.indexOf(H.HT_CUSTOM.id);
+  if (index < 0) errors.push(`${tag}: the custom exercise ${H.HT_CUSTOM.id} is not in HT_ORDER`);
+  for (const theme of index < 0 ? [] : ['silent-black', 'paper']) {
+    const { ctx, page } = await H.openAppTrain(browser, PORT, theme, { onError: m => errors.push(`${tag} ${theme}: page error: ${m}`) });
+    try {
+      const card = await H.openCard(page, index).catch(e => { errors.push(`${tag} ${theme}: the custom exercise card did not open (${e.message.split('\n')[0]})`); return null; });
+      const n = card ? await card.locator('.ht-entry').count() : 0;
+      if (card && n) errors.push(`${tag} ${theme}: the custom exercise card has ${n} .ht-entry, expected none`);
+      if (card && !n) console.log(`${tag} ${theme}: custom exercise card open, no How-to entry (library control: ${H.HT_NO_HOWTO ?? 'none, every library id ships'})`);
+    } finally { await ctx.close(); }
+  }
+}
+
+// BUG-41 (owner report 2026-10-17): the Exercise progress line, its metric label and the trend tile come
+// from one series. The owner's Rear Delt Fly (line rose, tile said Slipping) and Dumbbell Lateral Raise (line
+// fell at the end, tile said Improving) both read Improving with the line ending on its highest point; the label
+// sits directly under the line and names the plotted metric; the line is in the user's unit (lb run); a carry
+// with a distance in one of three sessions draws no line, raises no error and keeps its tiles, bars and rows.
+if (gate.runs('BUG-41'))
+{
+  const tag = 'BUG-41';
+  const { build: esbBug41 } = await import('esbuild');
+  const unitsJs = (await esbBug41({ entryPoints: [join(ROOT, 'src/core/units.ts')], bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' })).outputFiles[0].text;
+  const { kgToDisplay } = await import(`data:text/javascript;base64,${Buffer.from(unitsJs).toString('base64')}`);
+  const sparkFmt = (v) => String(Math.round(v * 10) / 10);
+  const LABELS = ['Estimated one-rep max', 'Top load', 'Volume', 'Farthest distance', 'Less assistance', 'Best reps', 'Longest hold'];
+  const S = (kg, reps, effort = 'ideal') => ({ kg, reps, effort });
+  const X3 = (kg, reps) => [S(kg, reps), S(kg, reps), S(kg, reps)];
+  // Offsets in days before today, from the owner's last session (18 Oct = 0), same order and gaps.
+  const back = (iso) => Math.round((Date.UTC(2026, 9, 18) - Date.parse(`${iso}T00:00:00Z`)) / 86_400_000);
+  const seed = [
+    ...[['2026-08-23', X3(26, 15)], ['2026-08-30', X3(26, 15)], ['2026-09-06', X3(26, 15)], ['2026-09-23', X3(26, 11)], ['2026-09-28', X3(26, 15)], ['2026-10-04', X3(26, 16)],
+      ['2026-10-06', [S(33, 12), S(33, 14)]], ['2026-10-11', [S(35.5, 9), S(35.5, 9), S(35.5, 9, 'max')]], ['2026-10-18', [S(35.5, 10, 'easy'), S(35.5, 10), S(35.5, 10, 'max')]]]
+      .map(([d, sets]) => ({ off: back(d), id: 'lib_rear_delt_fly', name: 'Rear Delt Fly', sets })),
+    ...[...['2026-09-23', '2026-09-25', '2026-09-27', '2026-09-29', '2026-10-01'].map(d => [d, X3(6, 10)]),
+      ['2026-10-04', [S(6, 14), S(6, 13)]], ['2026-10-06', [S(7, 13), S(7, 13), S(7, 12)]], ['2026-10-09', [S(7, 12), S(7, 11), S(7, 10, 'easy')]], ['2026-10-11', [S(7, 14), S(7, 14), S(7, 13)]],
+      ['2026-10-13', X3(7, 15)], ['2026-10-17', [S(7, 15), S(7, 10, 'max')]], ['2026-10-18', [S(7, 15, 'easy'), S(7, 15), S(7, 16, 'max')]]]
+      .map(([d, sets]) => ({ off: back(d), id: 'lib_dumbbell_lateral_raise', name: 'Dumbbell Lateral Raise', sets })),
+    ...[['2026-10-04', [S(30, 8)]], ['2026-10-11', [{ kg: 30, distanceM: 40, effort: 'ideal' }]], ['2026-10-18', [S(30, 8)]]]
+      .map(([d, sets]) => ({ off: back(d), id: 'lib_farmer_s_carry', name: "Farmer's Carry", sets })),
+  ].sort((a, b) => b.off - a.off);
+  const open = async (weightUnit) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+    const page = await ctx.newPage();
+    page.on('pageerror', e => errors.push(`${tag} (${weightUnit}): ${e.message}`));
+    page.on('console', m => { if (m.type() === 'error') errors.push(`${tag} (${weightUnit}) console: ${m.text()}`); });
+    await page.addInitScript(({ seed, weightUnit }) => {
+      const now = new Date().toISOString();
+      const day = (offset) => { const d = new Date(); d.setDate(d.getDate() - offset); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+      const sessions = seed.map((x, i) => ({ id: `bug41-${i}`, splitId: 'sp1', splitName: 'Pull', day: day(x.off), startedAt: `${day(x.off)}T17:00:00.000Z`, endedAt: `${day(x.off)}T18:00:00.000Z`, durationSec: 3600, gymId: 'gym_default',
+        exercises: [{ exerciseId: x.id, name: x.name, sets: x.sets }],
+        logging: { mode: 'live', trainedAt: `${day(x.off)}T17:00:00.000Z`, trainedEndAt: `${day(x.off)}T18:00:00.000Z`, loggedAt: `${day(x.off)}T18:00:00.000Z`, timeSource: 'timer', liveShare: 1, timingTrusted: true, contentConfidence: 'high', flags: [] } }));
+      localStorage.setItem('marc.state.v1', JSON.stringify({
+        version: 1, createdAt: now, profile: { name: 'Marc', bodyWeightKg: 78, heightCm: 180, sex: 'male', birthYear: 1990 },
+        goal: 'lean', splits: [], schedule: { sun: null, mon: null, tue: null, wed: null, thu: null, fri: null, sat: null },
+        sessions, active: null, customExercises: [],
+        preferences: { weightUnit, restDefaultSec: 90, autoRest: true, haptics: true, reminders: { enabled: false, time: '17:30', style: 'silent' }, showSpark: true, watch: { autoConnectOnSession: false }, rest: { mode: 'time', heartTargetPct: 0.6, minSec: 30 } },
+        body: [], health: { connected: false }, healthDays: [], weightLog: [], profileHistory: [],
+        onboarding: { dismissedAt: [], completedAt: now }, checkIns: [], recoveryModel: { tauScale: {}, observations: {} }, freshMarks: [],
+      }));
+    }, { seed, weightUnit });
+    await page.goto(`http://localhost:${PORT}/`);
+    await page.waitForSelector('.nav'); await launchGone(page);
+    await page.getByRole('button', { name: 'Later' }).click().catch(() => {});
+    await page.waitForTimeout(250);
+    await page.locator('nav.nav button', { hasText: 'History' }).click(); await page.waitForTimeout(300);
+    await page.getByRole('tab', { name: 'Stats' }).click(); await page.waitForTimeout(300);
+    return { ctx, page };
+  };
+  const card = '[data-palace="history.exercise-stats"]';
+  const read = (page, id) => page.selectOption(`${card} select`, id).then(() => page.waitForTimeout(300)).then(() => page.evaluate(({ card, LABELS }) => {
+    const root = document.querySelector(card);
+    const wrap = root?.querySelector('.sparkline-wrap');
+    const d = root?.querySelector('svg.sparkline path')?.getAttribute('d') ?? '';
+    const ys = [...d.matchAll(/[ML]\s*[-\d.]+\s+([-\d.]+)/g)].map(m => Number(m[1]));
+    return {
+      tile: [...(root?.querySelectorAll('.stat') ?? [])].find(el => /^trend/.test(el.querySelector('span')?.textContent ?? ''))?.querySelector('b')?.textContent ?? null,
+      stats: root?.querySelectorAll('.stat').length ?? 0,
+      after: wrap?.nextElementSibling?.textContent ?? null,
+      labels: [...(root?.querySelectorAll('.hint') ?? [])].filter(el => LABELS.includes(el.textContent.trim())).length,
+      max: root?.querySelector('.sparkline-minmax span')?.textContent ?? null,
+      readout: root?.querySelector('.chart-readout .readout-cur')?.textContent ?? '',
+      ys, paths: root?.querySelectorAll('svg.sparkline path').length ?? 0,
+      bars: root?.querySelectorAll('.effort-bar-col').length ?? 0,
+      rows: root?.querySelectorAll('.list .list-row').length ?? 0,
+    };
+  }, { card, LABELS }));
+  const endsHighest = (r) => r.ys.length >= 2 && r.ys[r.ys.length - 1] <= Math.min(...r.ys) + 0.05;
+  {
+    const { ctx, page } = await open('kg');
+    const rd = await read(page, 'lib_rear_delt_fly');
+    if (rd.tile !== 'Improving') errors.push(`${tag} Rear Delt: trend tile reads ${JSON.stringify(rd.tile)}, expected "Improving"`);
+    if (rd.after !== 'Top load') errors.push(`${tag} Rear Delt: the element after the line reads ${JSON.stringify(rd.after)}, expected "Top load"`);
+    if (rd.labels !== 1) errors.push(`${tag} Rear Delt: ${rd.labels} metric labels on the card, expected exactly 1`);
+    if (rd.max !== '35.5') errors.push(`${tag} Rear Delt: max y label ${JSON.stringify(rd.max)}, expected "35.5"`);
+    if (!rd.readout.includes('35.5 kg × 10')) errors.push(`${tag} Rear Delt: readout ${JSON.stringify(rd.readout)} lacks "35.5 kg × 10"`);
+    if (!endsHighest(rd)) errors.push(`${tag} Rear Delt: the line's last point is not its highest (y ${JSON.stringify(rd.ys)})`);
+    const lat = await read(page, 'lib_dumbbell_lateral_raise');
+    if (lat.tile !== 'Improving') errors.push(`${tag} Lateral: trend tile reads ${JSON.stringify(lat.tile)}, expected "Improving"`);
+    if (!endsHighest(lat)) errors.push(`${tag} Lateral: the line's last point is not its highest (y ${JSON.stringify(lat.ys)})`);
+    if (lat.ys.length !== lat.bars || !lat.bars) errors.push(`${tag} Lateral: ${lat.ys.length} line points vs ${lat.bars} effort bars`);
+    const car = await read(page, 'lib_farmer_s_carry');
+    if (car.paths !== 0) errors.push(`${tag} A10 carry: ${car.paths} sparkline path(s) drawn for a one-row series`);
+    if (!car.tile || car.stats < 2) errors.push(`${tag} A10 carry: tiles missing (${car.stats} stat tiles, trend ${JSON.stringify(car.tile)})`);
+    if (car.bars < 1) errors.push(`${tag} A10 carry: no effort bars`);
+    if (car.rows !== 3) errors.push(`${tag} A10 carry: ${car.rows} session rows, expected 3`);
+    await ctx.close();
+  }
+  {
+    const { ctx, page } = await open('lb');
+    const rd = await read(page, 'lib_rear_delt_fly');
+    const want = sparkFmt(kgToDisplay(35.5, 'lb'));
+    if (rd.max !== want) errors.push(`${tag} lb: max y label ${JSON.stringify(rd.max)}, expected ${JSON.stringify(want)} (35.5 kg in lb)`);
+    await ctx.close();
+  }
+  if (!errors.some(e => e.startsWith(`${tag} `))) console.log(`${tag}: Rear Delt and Lateral read Improving with the line ending highest, "Top load" under the line once, max label in kg and lb, readout 35.5 kg × 10, line points = bars; a one-row carry draws no line and keeps its tiles, bars and rows`);
+}
+
 await gate.done();
 await browser.close();
 stopping = true;
 server.kill();
-if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
+if (errors.length) { for (const l of (await import('./error-list.mjs')).formatErrors(errors)) console.error(l); process.exit(1); }
 console.log('Screenshot gate PASS: 5 themes, no page errors, legacy import verified, crash containment and backup round trip verified, rest clock off-screen and 360 px set grid verified, watch stub verified, plate sense verified, palace verified, escobar verified (Apply, Undo in window, Undo gone after 8 s), heart line verified, reorder verified, service worker offline reload and build-B chunk carry-over verified, R6 day off, setup note, warm-ups and CSV row verified, F12 share sheet on all three entry points, PNG export at 9:16 and 1:1, and its buttons on screen at 360 and 390 px with 0/24/48 px safe areas verified, motion smoke and determinism verified (F5), O3 ready-times ring tiles (grouping, tap open/close/switch, muscle panel, one-column fallback, edge cases), and O2 muscle panel (recovery timeline, facts, live Add, never-trained) verified, and FG-OFF (no old form-guide chunk, player, markup or removed tokens; How-to entry only where approved content exists) verified, and HT-1 (golden plates harness self-check: 8 plates x 5 themes x normal/mistake, golden vs golden 0 px, 1 px shift fails) verified, and HT-2 (generate --check fresh with the L1 rebuild e2bea90c… reproduced, 8 ht-<slug> chunks within 150 KB raw / 36 KB gz holding their GOLDEN fragments) verified, and HT-3 (How-to sheet equals the approved plates in 5 themes: L2b boxes and styles, F3 markup, L3 pixels within 1/255, L4 Trace; entry only where approved content exists; S0, Back, drag and focus) verified, and HT-3b (main chunk content probe, chunk budgets at measured + 10%, no How-to request before Train is idle, tap-to-plate under 400 ms and no long task over 100 ms at 4x throttle, offline reload, build-B chunk carry-over, a failed chunk load\'s toast, localStorage unchanged, PlateSheet\'s .plate chip unaffected by the How-to CSS, and C17) verified., and HT-4 (golden-B L0-B rebuild pin, HT4-A5 live renderPlate capture holding only golden-A plates with strict pose classification of poses.start/end and mistake.pose, plate fragments ===, and HT4-A6 state driver self-check across 8 exercises x 5 themes plus the no-match throw) verified, and AUD-20 (finish-screen calories are a plain estimate with no band in 5 themes) verified, and HT-7 (posture close-ups equal golden B in 5 themes: L3 pixels, opening animation, reduced motion, transform and opacity only; S1/S3 exclusive and the plate restored on Close; chunks on first open only, <= 24 KB gz; Right/Wrong images, 44 px chips, one #zdots, no duplicate ids) verified, and HT-8 (feel map equals golden B in 5 themes: S5 paused frames, S4, every S6 row, reduced-motion rest; band animation list; nothing running at end + 1 s; shimmer TaskDuration within 1.2x golden B at 4x; an early "Feel it" tap loads, scrolls to and plays the map) verified, and HT-9 C19 (no source list, citation link or evidence label anywhere on the real How-to sheet, 8 exercises x 5 themes, disclaimer exactly once after the last red-flag block) verified, and HT-9 Show (golden B\'s 17 setup "Show me" buttons, tapped by id, open their close-up through the zoom host, Silent Black and Paper) verified, and HT-9 Order (the sheet\'s sections render in golden B\'s order on all 8 exercises) verified, and HT-9 (Setup, Risks and the disclaimer equal golden B at L3 in 5 themes, on-screen copy equals the content strings, one copy of each red-flag line with its duplicate fixture caught, Setup and Risks mounted after the plate\'s first paint, and the plate compare after scrolling and opening everything) verified, and COPY-1 (Settings footer rights line under the logo and above the version line, hint style, no removed Settings copy, no medical reminder) verified, and HT-10 (the whole How-to sheet in 5 themes: every interaction probed for 44 px targets, overlaps, TalkBack names and C19; reduced motion; nothing endless or running after its end; transform and opacity only; S0 and L3 after it all; final speed numbers; C17 and size of every How-to chunk; build B per chunk kind; failure fixtures) verified.');

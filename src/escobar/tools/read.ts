@@ -140,7 +140,7 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
     readiness: r ? { band: r.band, score: r.score, loadAdvice: r.loadAdvice, calibrating: r.calibrating } : null,
     leastRecovered: least(ctx),
     week: { workouts: w.workouts, sets: w.sets, records: w.records.length, planned: planned ?? 0 }, // QA-R6-12: days off are not planned
-    streak: trainingStreak(s.sessions, s.schedule, ctx.today, s.daysOff),
+    streak: trainingStreak(s.sessions, s.schedule, ctx.today, s.daysOff, s.profile.plannedDays),
     lighterWeek: deload ? { day: lighterWeekDay(deload, ctx.today), endDay: deload.endDay } : null,
     todayAdjusted: override ? { reason: override.reason, changes: override.changes.length } : null,
     daysSinceLastSession: daysSinceLastSession(s.sessions, ctx.today, ctx.now),
