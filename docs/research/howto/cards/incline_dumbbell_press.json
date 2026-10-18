@@ -486,7 +486,8 @@
       "what": "Elbows drifting out of line with the wrists (forearms tilted) at the bottom.",
       "why": "ACE's only incline-specific cue is elbows under wrists; frequency is not measured in any source read.",
       "claim": "c7",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for an incline-press fault (Kerr's \"The most common mechanism of injury was weights dropping on the person\", c15, is about all weight training). Step 2: no quote ties a named fault to harm; Liftosaur's \"minimizing the risk of injury\" is about following all its steps, not one fault, and a bench steeper than 45 degrees (c2) is a bench setting, not a candidate. Step 3: no common-mistakes list; the fault the most read sources tell the lifter to avoid is low-back arching (c8): ACE's \"avoid any arching in the low back\" and Liftosaur's \"avoid arching your lower back\", two sources (Liftosaur is not yet cited in c8). Bouncing has one (ACE, c6); Liftosaur's \"avoiding sudden jerks or drops\" is a speed fault; elbows under the wrists (c7) is an ACE cue, not a fault named to avoid. PICK CHANGED: by LR-31 the top fault is low-back arching, not the plate's elbows out of line with the wrists. The approved plate (D-PILOTA-R5) is not changed here, and handlingMistakes keeps its order until the supervisor rules. drawable for the LR-31 fault: true, the side view shows the back arch."
     },
     "tells": [
       {

@@ -338,7 +338,8 @@
       "what": "Lowering the dumbbells below shoulder and chest level at the bottom of the arc.",
       "why": "ACE sets the bottom of the arc at shoulder or chest level, and this goes past it. How often it happens is not measured in any source read.",
       "claim": "c4",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for a fly fault (Solstad's \"often occurs\" is about tasks in some populations; Kerr's \"The most common mechanism of injury was weights dropping on the person\", c12, is about all weight training). Step 2: no quote ties a fly fault to harm. Step 3: no common-mistakes list and no source names a fault, so the top fault is the break of an instruction; every technique instruction comes from ACE alone, one source each: the bottom of the arc at shoulder or chest level (c4), the same slight elbow bend (c5), lowering slowly (c4). Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it; LR-31 gives no further order. drawable stays true: the front view shows the arc depth against the shoulders."
     },
     "tells": [
       {
@@ -407,6 +408,11 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Going below chest level.",
+      "fix": "Stop level with the shoulders or chest.",
+      "claim": "c4"
+    },
+    {
       "mistake": "Bending the elbows more as the weight comes down (turning it into a press).",
       "fix": "Keep the same slight bend; go lighter if you can't.",
       "claim": "c5"
@@ -414,11 +420,6 @@
     {
       "mistake": "Dropping fast into the bottom.",
       "fix": "Lower slowly.",
-      "claim": "c4"
-    },
-    {
-      "mistake": "Going below chest level.",
-      "fix": "Stop level with the shoulders or chest.",
       "claim": "c4"
     }
   ],

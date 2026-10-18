@@ -384,7 +384,8 @@
       "what": "Low back arching away from the pad as the dumbbells go up.",
       "why": "ACE names low-back arching as the fault to avoid on the press; frequency is not measured in any source read.",
       "claim": "c4",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a shoulder-press fault (Kerr's \"The most common mechanism of injury was weights dropping on the person\", c14, is about all weight training). Lowering behind the head (c10) is the only named fault a quote ties to harm: Kolber links the high-five position (behind-the-neck military press) to \"clinical characteristics of AI\", and Esenkaya says \"When improperly performed, military presses can cause injury\" and advises presses \"that do not allow movement posterior to the plane of the body\" (c10, WEAK: barbell pressing, applied to dumbbells). Low-back arching (c4) and letting the dumbbells drop (c6, a speed fault) state no harm in any read source. PICK CHANGED: by LR-31 the top fault is lowering behind the head, not the plate's low-back arch. The approved plate (D-PILOTA-R5) is not changed here, and handlingMistakes keeps its order until the supervisor rules. drawable for the LR-31 fault: true, the side view shows the dumbbells behind the head."
     },
     "tells": [
       {

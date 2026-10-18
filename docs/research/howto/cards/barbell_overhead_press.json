@@ -537,7 +537,8 @@
       "what": "Elbows back at the start, forearms tilted, so the bar curves forward away from the face.",
       "why": "StrongLifts says most people press this way (coach observation, not measured); it moves the bar off the vertical line.",
       "claim": "c5",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: StrongLifts's \"Most people press with their elbows back at the bottom\" (c5, WEAK) and \"Most people Overhead Press with their elbows behind the bar\" put the frequency word on the elbows-back fault; no other fault has one. Set aside: \"Most people lack the shoulder flexibility to handle this position\" is about flexibility for the behind-the-neck press, not how many lifters make it; \"You'll usually fail at the bottom\" says where reps fail; \"Fear of dropping the bar on your head is common\" is a fear, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c19) is about all weight training. Step 2 is not needed: StrongLifts ties excess arching to pain (\"Extreme arching of your lower spine (hyper-extension) squeezes your spinal discs from the back which can result in back pain\"; c8) and c14 ties the behind-the-neck press to shoulder instability signs, but no frequency word backs them. The top fault is not in handlingMistakes, so handlingMistakes[0] cannot be set to it by reordering; left for the supervisor. drawable stays true: the side view shows the tilted forearms."
     },
     "tells": [
       {
