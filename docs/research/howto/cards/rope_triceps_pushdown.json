@@ -433,7 +433,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "The elbow bends front-to-back and the key fault, elbows drifting forward (c7), shows side-on; the bottom line of wrist, elbow and shoulder (c9) is also a side-view check. The rope ends spreading apart (c4) is sideways and cannot be drawn in this view; it goes to a zoom. Census view is side.",
+    "viewWhy": "The elbow bends front-to-back and the key fault, elbows drifting forward (c7), shows side-on; the bottom line of wrist, elbow and shoulder (c9) is also a side-view check. The rope ends spreading apart (c4) is sideways and cannot be drawn in this view; it goes to a zoom. Census view is side. The LR-31 top fault, leaning too far forward or arching the back (c12), is a trunk lean that also reads side-on (ruling R-LB2-4).",
     "equipment": "Cable column, pulley at the top position, rope attachment with a knob on each end (c1). The rope drawing is missing (census R4).",
     "start": "Standing facing the stack, feet hip-width or staggered (c10); elbows at the sides, forearms just past parallel to the floor (c8); hands against the rope knobs, palms facing each other, wrists straight (c2, c3, c5); shoulders down and back (c11).",
     "end": "Arms straight, wrist, elbow and shoulder in a vertical line, elbows not locked (c9); hands by the thighs with the rope ends apart (c4); elbows still at the sides (c6).",
@@ -455,10 +455,11 @@
       }
     ],
     "mistake": {
-      "what": "Elbows drifting forward as the rope comes up (and swinging forward to start the press).",
-      "why": "ACE names it as the fault to monitor, for rope and handle alike: it brings in the lats and takes load off the triceps.",
-      "claim": "c7",
-      "drawable": true
+      "what": "Leaning too far forward over the rope or arching the back to press it down.",
+      "why": "StrengthLog lists arching the back first among the rope pushdown's common mistakes: leaning too far forward or arching the back can put unnecessary strain on the lower back and shift the focus away from the triceps (c12). How often it happens is not measured in any source read.",
+      "claim": "c12",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word counts for a rope-pushdown fault. Set aside: StrengthLog's \"Some people tend to lean too far forward or arch their back\" (c12) uses 'tend', not a frequency word; \"This often leads to using momentum to complete the exercise\" (c15) is about using too much weight, a load; \"feels uncomfortable in the elbows for many people\" (c16) is about heavy weights and low reps, a load; \"often performed with a bar or a rope\" is about the attachment. Step 2: leaning or arching (c12) is the named fault a quote ties to harm (\"unnecessary strain on the lower back\"), first on StrengthLog's common-mistakes list. Too much weight (c15) is a load choice, not a candidate; read onto the momentum it brings, that fault is second on the same list with one harm source, so the lean still wins. NFPT's \"Do not lock out your elbows in the extended position. Failure to do so can result in injury to your elbows.\" (c9) and \"The faster you perform this movement, the less control you will have, which in turn will increase your risk of injury\" (the return, a speed fault) tie harm to faults that are on no mistakes list and not in handlingMistakes, so they are not named faults under step 2. Elbows drifting forward (c7), the head's pick, states no harm (the lats and shoulders take over, c6, c7). Pick changed from the elbows drifting forward and applied to this research card (ruling R-LB2-7); the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: lean or arch, elbows forward, rope too high. drawable is true: the side view shows the trunk lean and the back arch."
     },
     "tells": [
       {
@@ -541,14 +542,14 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Elbows drifting forward or away from the body.",
-      "fix": "Keep the elbows at your sides.",
-      "claim": "c7"
-    },
-    {
       "mistake": "Leaning over the rope or arching the back.",
       "fix": "Stand taller; tilt only from the hips; go lighter.",
       "claim": "c12"
+    },
+    {
+      "mistake": "Elbows drifting forward or away from the body.",
+      "fix": "Keep the elbows at your sides.",
+      "claim": "c7"
     },
     {
       "mistake": "Letting the rope rise too high.",
