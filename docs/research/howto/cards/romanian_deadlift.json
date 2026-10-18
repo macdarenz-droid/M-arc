@@ -653,7 +653,7 @@
   },
   "setup": [
     {
-      "step": "Set the bar in a rack at thigh height, or deadlift it from the floor.",
+      "step": "Unrack the bar, or deadlift it off the floor.",
       "claim": "c11"
     },
     {
@@ -760,9 +760,9 @@
         "redFlag": null
       },
       {
-        "where": "Lower back pain after sessions that is severe, or not gone after a few days to a week of rest",
-        "means": "Fault: doing too much too soon, or not keeping the spine neutral.",
-        "fix": "Stop the set. Don't train through the pain. Ease up on the training volume.",
+        "where": "Lower-back pain during or after sessions",
+        "means": "Severe, or still there after a few days to a week?",
+        "fix": "Stop the set. Don't train through the pain. See a doctor if so.",
         "claim": [
           "c17"
         ],
@@ -794,9 +794,12 @@
     {
       "key": "rdl-grip",
       "kind": "hand",
-      "right": "Thumbs wrapped, wrists straight, hands just outside the thighs.",
+      "right": "Thumbs wrapped, hands just outside the thighs.",
       "wrong": null,
-      "claim": "c9"
+      "claim": [
+        "c22",
+        "c9"
+      ]
     },
     {
       "key": "rdl-bottom",
@@ -818,7 +821,7 @@
       "adductors"
     ],
     "remove": [],
-    "why": "Library primary hamstrings and secondary glutes, lower_back match (c13, c15, c16). Add adductors as secondary: StrengthLog names them (c16)."
+    "why": "Library primary hamstrings and secondary glutes, lower_back. Glutes move to primary: StrengthLog lists them as a primary muscle (c16) and the RDL works them strongly (c15). Add adductors as secondary: StrengthLog names them (c16)."
   },
   "anchorSource": "nasm-rdl",
   "gaps": [

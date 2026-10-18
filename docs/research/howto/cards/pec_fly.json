@@ -457,7 +457,7 @@
       "claim": "c2"
     },
     {
-      "step": "Sit back against the pad, feet flat on the floor, shoulder-width or wider.",
+      "step": "Sit back against the pad, feet flat, shoulder-width or wider.",
       "claim": "c1"
     },
     {
@@ -532,7 +532,7 @@
       },
       {
         "where": "Shoulder pain",
-        "means": "This exercise puts the shoulder in a vulnerable position.",
+        "means": "",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
           "c8"

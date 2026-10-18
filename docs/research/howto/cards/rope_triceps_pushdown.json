@@ -274,7 +274,8 @@
       ],
       "sources": [
         "nfpt-rope",
-        "ace-pushdown"
+        "ace-pushdown",
+        "acsm-2009"
       ],
       "quotes": [
         {
@@ -517,8 +518,12 @@
       "claim": "c10"
     },
     {
-      "step": "Elbows at your sides, forearms just past parallel to the floor, shoulders down and back.",
-      "claim": "c8"
+      "step": "Elbows at your sides, forearms just past parallel, shoulders down and back.",
+      "claim": [
+        "c6",
+        "c8",
+        "c11"
+      ]
     },
     {
       "step": "Pick a weight you can move with control.",
@@ -613,9 +618,9 @@
         "redFlag": "back"
       },
       {
-        "where": "Elbow discomfort or pain on heavy, low-rep sets",
-        "means": "Heavy weights with low reps feel uncomfortable in the elbows for many people.",
-        "fix": "Stop the set. Don't train through the pain. Use lighter weights for more reps, and don't lock out your elbows.",
+        "where": "Elbow discomfort or pain",
+        "means": "Heavy, low-rep sets feel uncomfortable in the elbows for many.",
+        "fix": "Stop the set. Don't train through the pain. Go lighter; don't lock out your elbows.",
         "claim": [
           "c16",
           "c9"

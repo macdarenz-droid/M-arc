@@ -510,8 +510,12 @@
       "claim": "c3"
     },
     {
-      "step": "Brace, shoulders down and back, elbows at your sides with the bar at upper-chest level.",
-      "claim": "c7"
+      "step": "Brace, shoulders down and back, elbows at sides, bar at upper chest.",
+      "claim": [
+        "c4",
+        "c10",
+        "c7"
+      ]
     },
     {
       "step": "Pick a weight you can move with control.",
@@ -601,8 +605,8 @@
         "redFlag": "back"
       },
       {
-        "where": "Elbow discomfort or pain on heavy, low-rep sets",
-        "means": "Heavy weights with low reps feel uncomfortable in the elbows for many people.",
+        "where": "Elbow discomfort or pain",
+        "means": "Heavy, low-rep sets feel uncomfortable in the elbows for many.",
         "fix": "Stop the set. Don't train through the pain. Use lighter weights for more reps.",
         "claim": [
           "c17"

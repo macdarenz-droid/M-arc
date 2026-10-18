@@ -304,7 +304,7 @@
     },
     {
       "id": "c16",
-      "text": "Tempo: about 1-2 s up and 1-2 s down, then a balanced pause at the top. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, then a balanced pause at the top. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention. The 1 s pause at the top is a drawing convention (LR-33).",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -515,7 +515,7 @@
       "why": "Gentilcore says many trainees make the mistake of trying to touch the dumbbell all the way to the floor, resulting in a significant amount of flexion, and lists rounding the back and shoulders and lowering the dumbbell too low among the faults (c7). How often it happens is not measured in any source read.",
       "claim": "c7",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Gentilcore's \"many trainees make the mistake of trying to touch the DB all the way to the floor, resulting in a significant amount of flexion\" (c7) puts the frequency word on one fault of this exercise: reaching the dumbbell to the floor and rounding the back. It is the top fault. Set aside: Gentilcore's \"Every so often\" is about his gym visits, not a fault; the NHS page's \"Back pain, particularly lower back pain, is very common.\" and \"it often gets better on its own\" are about back pain in general, not a fault of this exercise. Step 2 is not needed: no read source ties a single-leg RDL fault to harm. StrengthLog's hip rotation (c5) has no frequency word or harm quote, so it stays second in handlingMistakes. drawable is true (ruling R-LB2-16): a rounded back with the dumbbell low has a still sign, and the side view shows the back line and the dumbbell height. The earlier drawable false came from the hip rotation, which no view can draw; that fault is not the top fault."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Gentilcore's \"many trainees make the mistake of trying to touch the DB all the way to the floor, resulting in a significant amount of flexion\" (c7) puts the frequency word on one fault of this exercise: reaching the dumbbell to the floor and rounding the back. It is the top fault. Set aside: Gentilcore's \"Every so often\" is about his gym visits, not a fault; his \"I wouldn’t be surprised if many of you reading recognize this from your gyms as well.\" is about the badly done lift pictured as a whole and names no single fault, so it does not count; the NHS page's \"Back pain, particularly lower back pain, is very common.\" and \"it often gets better on its own\" are about back pain in general, not a fault of this exercise. Step 2 is not needed: no read source ties a single-leg RDL fault to harm. StrengthLog's hip rotation (c5) has no frequency word or harm quote, so it stays second in handlingMistakes. drawable is true (ruling R-LB2-16): a rounded back with the dumbbell low has a still sign, and the side view shows the back line and the dumbbell height. The earlier drawable false came from the hip rotation, which no view can draw; that fault is not the top fault."
     },
     "tells": [
       {
@@ -595,7 +595,10 @@
     {
       "mistake": "Reaching the dumbbell to the floor and rounding.",
       "fix": "Stop around mid-shin with a flat back.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c9"
+      ]
     },
     {
       "mistake": "Opening the hip of the lifted leg.",
@@ -658,7 +661,7 @@
   },
   "risks": [
     {
-      "risk": "One of the hardest single-leg movements; balance and form break easily.",
+      "risk": "One of the most advanced single-leg movements, even for experienced lifters.",
       "claim": "c13"
     },
     {
@@ -690,7 +693,7 @@
       "lower_back"
     ],
     "remove": [],
-    "why": "Library primary hamstrings and secondary glutes match (c14). Add lower_back as secondary: Mo 2023 measured erector spinae activity that rose with opposite-side loading (c15)."
+    "why": "Library primary hamstrings and secondary glutes. Glutes move to primary: Mo 2023 measured very high glute activity in this lift (c14). Add lower_back as secondary: Mo 2023 measured erector spinae activity that rose with opposite-side loading (c15)."
   },
   "anchorSource": "gentilcore-slrdl",
   "gaps": [

@@ -402,7 +402,7 @@
     "checkpoints": [
       {
         "label": "Elbows lead",
-        "what": "Elbows go out to the sides and stay above the hands.",
+        "what": "Elbows go out to the sides.",
         "claim": "c3"
       },
       {
@@ -429,7 +429,7 @@
         "claim": "c6"
       },
       {
-        "text": "Elbows stay higher than hands",
+        "text": "Bar stays close to your body",
         "claim": "c3"
       }
     ],
@@ -555,11 +555,12 @@
       },
       {
         "where": "Any discomfort or pain in the shoulder joints near the top of the lift",
-        "means": "Fault: the elbows above the shoulders, or the bar pulled up under the chin.",
-        "fix": "Stop the set. Don't train through the pain. Turn the bar back before your upper arms pass shoulder height.",
+        "means": "Fault: elbows above the shoulders, or the bar pulled under the chin.",
+        "fix": "Stop the set. Don't train through the pain. Stop below shoulder height.",
         "claim": [
           "c15",
-          "c5"
+          "c5",
+          "c2"
         ],
         "redFlag": "shoulder"
       }
@@ -582,9 +583,14 @@
     {
       "key": "urow-grip",
       "kind": "hand",
-      "right": "Overhand about shoulder width or wider, thumbs wrapped, wrists straight.",
-      "wrong": "Hands touching in the middle, wrists curled up.",
-      "claim": "c5"
+      "right": "Overhand about shoulder width or wider, thumbs wrapped.",
+      "wrong": "Hands too narrowly placed.",
+      "claim": [
+        "c1",
+        "c7",
+        "c14",
+        "c5"
+      ]
     },
     {
       "key": "urow-top",

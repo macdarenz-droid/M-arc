@@ -500,7 +500,10 @@
       {
         "label": "Bar to belly",
         "what": "Bar pulled to the belly button or low chest.",
-        "claim": "c5"
+        "claim": [
+          "c5",
+          "c6"
+        ]
       }
     ],
     "mistake": {
@@ -543,27 +546,31 @@
   },
   "setup": [
     {
-      "step": "Set the bar in a rack at about thigh height and lift it out.",
+      "step": "Lift the bar from the rack.",
       "claim": "c3"
     },
     {
-      "step": "Feet about shoulder width, toes forward or slightly out.",
-      "claim": "c8"
-    },
-    {
-      "step": "Overhand grip, slightly wider than shoulders, thumbs around the bar.",
+      "step": "Feet shoulder width; overhand grip slightly wider, thumbs around the bar.",
       "claim": [
+        "c8",
         "c2",
         "c16"
       ]
     },
     {
-      "step": "Bend forward at the hips with a flat back and soft knees; arms hang straight.",
-      "claim": "c3"
+      "step": "Bend at the hips, back straight, knees slightly bent; arms straight.",
+      "claim": [
+        "c3",
+        "c5"
+      ]
     },
     {
       "step": "Breathe in, then pull.",
       "claim": "c19"
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c14"
     }
   ],
   "posture": [
@@ -676,11 +683,8 @@
       "claim": "c15"
     },
     {
-      "risk": "Too much weight makes you swing; add 2-10% once you beat your target reps.",
-      "claim": [
-        "c7",
-        "c14"
-      ]
+      "risk": "Swinging the bar up with your hips shifts work to the lower back.",
+      "claim": "c7"
     }
   ],
   "redFlags": [
