@@ -2464,3 +2464,13 @@ Card: `docs/supervisor/verify/gate-flake-4-card.md` (claude/sup-lib4-cards), Rul
   - `:8498` BUG-36, `:8624` and `:8641` BUG-37, `:8944` COPY-2: each starts an in-page rAF recorder (900 ms from its own start), then clicks through Playwright round trips; nothing bounds how late the click lands inside the 900 ms window, so a late click leaves fewer frames after it.
   - A1's stray check still reads its state after the capture, as on main. A late read can only widen `reach`; it cannot hide the dot at (0, 0) (dot-origin stays red at every lag).
   - E9's word skip: a capture taken just before 1050 ms whose state is read just after it skips the word's box where main still counted it. This is the only case where A1 counts less than main.
+
+## D-BOXCAP-1: a named 50-word limit for the back-pain box (card BOX-CAP, 2026-10-18)
+Card: `docs/supervisor/verify/box-cap-card.md` (claude/sup-lib4-cards @ 3d9b8e10, amendment 1 = ruling D-BOXCAP-WIRE).
+- **The owner's answer:** decision 6, option 1, 2026-10-18 ~13:15 UTC. The back-pain box keeps all six NHS emergency triggers in 50 words (R-W0-1; `claude/libht-research` @ 0393aac9 `shared/back-pain-box.json`, status `owner-approved`).
+- **The identity rule:** `tools/plates/library/lint/box-caps.mjs` holds the one table, `NAMED_BOX_CAPS = { 'back-pain-box': 50 }`, and `boxCapOf(key, fallback)`. A cap is chosen by the box's shared-card key only, never by its text, its word count or the card's own `wordCap`. The module imports nothing, and the fallback is required, so each site keeps its own default:
+  - `validate.mjs`: settled red-flag cards use `boxCapOf(card.key, RED_FLAG_BOX_MAX_WORDS)`;
+  - the library lint: `boxReach(path, box, names, key)`, with `lintLibraryRow(..., { boxKeys })` passing `boxKeys[flag]` (Do 9's gate call passes `{ back: 'back-pain-box' }`);
+  - c7: `checkC7(content, { boxKey })`, with `LIMITS.redFlagBoxWords` as the fallback, so c7 still never imports copy-lint.mjs.
+- **Every other box stays at 30.** Golden B's `copy-lint.mjs` (RED_FLAG_BOX_MAX_WORDS 30) is byte-identical (sha256 pin), c7's `LIMITS.redFlagBoxWords` stays 30, and library-lint.test's [30, 30] pin is unchanged. With no key, every site gives 30. S7 now also catches a quoted key holding a number; box-caps.mjs is its one named exception, pinned to `{ 'back-pain-box': 50 }`.
+- **Evidence:** `tests/howto/box-cap.test.ts` BC-1..BC-4 (BC-1, BC-3's back-key rows and BC-4 red on base 1d1fe9ea), library-research.test.ts's wordCap rows (back-pain key red at 51 under 50; another key red at 31 under 30), and the mutations listed on PR #260.

@@ -5,6 +5,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { boxCapOf } from '../lint/box-caps.mjs';
 import { CONTACT_RE, RED_FLAG_BOX_MAX_WORDS, SAFETY_LINE_RE, SOURCE_CS_RE, SOURCE_RE, words } from '../../layers/artifact/copy-lint.mjs';
 
 export const ROOT = resolve(fileURLToPath(new URL('../../../..', import.meta.url)));
@@ -101,11 +102,13 @@ export function validateShared(card, quotes, { file } = {}) {
   if (quotes?.id !== `shared-${card.key}`) bad.push(`${tag}: quotes file id ${JSON.stringify(quotes?.id)}, want shared-${card.key}`);
   bad.push(...claimProblems(card, quotes, tag));
   for (const [p, t] of shownStrings(card)) for (const [name, re] of PATTERNS) if (re.test(t)) bad.push(`${tag}: ${p}: ${name} hit "${t.match(re)[0]}"`);
-  // A settled box (status other than 'draft') is held to golden B's box cap, imported; the card's own wordCap is data.
+  // A settled box (status other than 'draft') is held to its key's cap (BOX-CAP: boxCapOf, golden B's imported cap for
+  // every key but a named one); the card's own wordCap is data.
   // The draft waits for the owner (decision 6) and is kept out of the app by S4-P, so its count is not judged here.
   if (card.kind === 'red-flag-box' && card.status !== 'draft') {
     const n = words(['name', 'now', 'doctor'].map(f => card.box?.[f]?.text ?? '').join(' '));
-    if (n > RED_FLAG_BOX_MAX_WORDS) bad.push(`${tag}: box has ${n} words, at most ${RED_FLAG_BOX_MAX_WORDS}`);
+    const cap = boxCapOf(card.key, RED_FLAG_BOX_MAX_WORDS);
+    if (n > cap) bad.push(`${tag}: box has ${n} words, at most ${cap}`);
   }
   return bad;
 }

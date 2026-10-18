@@ -144,14 +144,25 @@ describe('LIB-5 S2: every shared card is valid (tools/plates/library/research/va
     const d = rd('shared/curl.json'); d.cue.text = 'Call your GP.';
     expect(V.validateShared(d, q, { file: 'curl.json' }).map((x: string) => x.replace(/ hit .*/, ''))).toEqual(['shared/curl.json: cue.text: SAFETY_LINE_RE']);
   });
-  it('wordCap and words are data: a settled box with wordCap 999 and 31 words is red under golden B\'s 30', () => {
+  // BOX-CAP (D-BOXCAP-WIRE Q3): the back-pain box is held to its named 50 (D-BOXCAP-1), every other key to golden B's 30;
+  // in both, a card's own wordCap 999 never lifts the cap.
+  it('wordCap and words are data: a settled back-pain box with wordCap 999 is red at 51 words under its named 50', () => {
     const c = rd('shared/back-pain-box.json'), q = rd('quotes/shared-back-pain-box.json'), s = clone(c);
     expect(V.validateShared(c, q, { file: 'back-pain-box.json' })).toEqual([]);   // the draft is not judged (S4-P keeps it out of the app)
-    s.status = 'settled'; s.box.wordCap = { limit: 999, basis: 'test' }; s.box.words = 31;
-    s.box.name.text = 'Back pain'; s.box.now.text = Array.from({ length: 24 }, () => 'numb').join(' ') + ' today?'; s.box.doctor.text = 'See a doctor soon.';
-    expect(V.validateShared(s, q, { file: 'back-pain-box.json' })).toEqual(['shared/back-pain-box.json: box has 31 words, at most 30']);
+    s.status = 'settled'; s.box.wordCap = { limit: 999, basis: 'test' }; s.box.words = 51;
+    s.box.name.text = 'Back pain'; s.box.now.text = Array.from({ length: 44 }, () => 'numb').join(' ') + ' today?'; s.box.doctor.text = 'See a doctor soon.';
+    expect(V.validateShared(s, q, { file: 'back-pain-box.json' })).toEqual(['shared/back-pain-box.json: box has 51 words, at most 50']);
     s.box.doctor.text = 'See a doctor.';
     expect(V.validateShared(s, q, { file: 'back-pain-box.json' })).toEqual([]);
+  });
+  it('wordCap and words are data: a settled box under any other key with wordCap 999 and 31 words is red under golden B\'s 30', () => {
+    const s = clone(rd('shared/back-pain-box.json')), q = clone(rd('quotes/shared-back-pain-box.json'));
+    s.key = 'spine-pain-box'; q.id = 'shared-spine-pain-box';
+    s.status = 'settled'; s.box.wordCap = { limit: 999, basis: 'test' }; s.box.words = 31;
+    s.box.name.text = 'Back pain'; s.box.now.text = Array.from({ length: 24 }, () => 'numb').join(' ') + ' today?'; s.box.doctor.text = 'See a doctor soon.';
+    expect(V.validateShared(s, q, { file: 'spine-pain-box.json' })).toEqual(['shared/spine-pain-box.json: box has 31 words, at most 30']);
+    s.box.doctor.text = 'See a doctor.';
+    expect(V.validateShared(s, q, { file: 'spine-pain-box.json' })).toEqual([]);
   });
 });
 

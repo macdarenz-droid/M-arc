@@ -10,6 +10,7 @@ import {
   BANNED, CAPTION_MAX_WORDS, CONTACT_RE, FIX_VERBS, MAX_SENTENCE_WORDS, OWN_RED_FLAG, RED_FLAG_BLOCKS, RED_FLAG_BOX_MAX_WORDS,
   SAFETY_LINE_RE, SOURCE_CS_RE, SOURCE_RE, VISIBLE_WORDS_MAX, copyFields, lintHowto, sentences, sourceNamePatterns, words,
 } from '../../layers/artifact/copy-lint.mjs';
+import { boxCapOf } from './box-caps.mjs';
 
 export const ROOT = resolve(fileURLToPath(new URL('../../../..', import.meta.url)));
 const plain = s => String(s).replace(/<br\s*\/?>/gi, ' ').replace(/[‘’]/g, "'").replace(/\s+/g, ' ').trim();
@@ -39,13 +40,15 @@ export function fixVerbs(M) {
   return out;
 }
 
-/** D-LIB5-REACH: every rule c7 and C19 apply to a red-flag box, with golden B's exports. `path` names the box. */
-export function boxReach(path, box, names = []) {
+/** D-LIB5-REACH: every rule c7 and C19 apply to a red-flag box, with golden B's exports. `path` names the box; `key`,
+ *  its shared-card key, picks its word cap (BOX-CAP: golden B's 30 unless box-caps.mjs names the key). */
+export function boxReach(path, box, names = [], key) {
   const out = [];
   for (const f of ['name', 'now', 'doctor']) if (typeof box?.[f] !== 'string' || !box[f].trim()) v(out, `${path}.${f}`, 'box line missing');
   if (out.length) return out;
   const n = words([box.name, box.now, box.doctor].join(' '));
-  if (n > RED_FLAG_BOX_MAX_WORDS) v(out, path, `red-flag box > ${RED_FLAG_BOX_MAX_WORDS} words`, `${n} words`);
+  const cap = boxCapOf(key, RED_FLAG_BOX_MAX_WORDS);
+  if (n > cap) v(out, path, `red-flag box > ${cap} words`, `${n} words`);
   if (!/today/i.test(box.now)) v(out, `${path}.now`, 'the urgent line must say "today"');
   if (!/doctor/i.test(box.doctor)) v(out, `${path}.doctor`, 'the doctor line must say "doctor"');
   for (const f of ['name', 'now', 'doctor']) {
@@ -106,11 +109,11 @@ export const cardReader = (root = ROOT) => p => { try { return JSON.parse(readFi
 export { familyLabels, familyRefusal } from './family.mjs';
 
 /** Every library rule for one shipped library row (golden B's own lint included), as [{ path, rule, detail }]. */
-export function lintLibraryRow(M, shared, { extraBoxes = {} } = {}) {
+export function lintLibraryRow(M, shared, { extraBoxes = {}, boxKeys = {} } = {}) {
   const H = M.default ?? M, names = sourceNamePatterns([M]), out = [];
   out.push(...lintHowto(M, shared, names).violations.map(x => ({ path: x.path, rule: x.rule, detail: x.detail })));
   out.push(...medicalBans(M), ...fixVerbs(M));
-  for (const f of H.riskFlags ?? ['wrist']) { const B = boxOf(f, shared, extraBoxes); if (B) out.push(...boxReach(`redFlag(${f})`, B, names)); }
+  for (const f of H.riskFlags ?? ['wrist']) { const B = boxOf(f, shared, extraBoxes); if (B) out.push(...boxReach(`redFlag(${f})`, B, names, boxKeys[f])); }
   out.push(...sheetWords(M, shared, extraBoxes).violations.filter(x => x.path !== '(sheet)' || !out.some(y => y.path === '(sheet)')));
   return out;
 }
