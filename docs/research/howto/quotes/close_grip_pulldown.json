@@ -41,6 +41,11 @@
       "id": "strengthlog-neutral-close-grip-lat-pulldown",
       "access": "full",
       "fixes": null
+    },
+    {
+      "id": "hk-baechle-grip",
+      "access": "full",
+      "fixes": null
     }
   ],
   "quotes": [
@@ -195,6 +200,13 @@
       "claim": "c15",
       "source": "odriscoll-1992",
       "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "hk-baechle-grip",
+      "quote": "Perform all grips with your thumbs around the bar.",
       "status": "verbatim",
       "closest": null
     }

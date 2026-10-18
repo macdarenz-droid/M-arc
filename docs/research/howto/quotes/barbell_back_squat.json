@@ -164,6 +164,13 @@
       "closest": null
     },
     {
+      "claim": "c7",
+      "source": "bloomquist2013",
+      "quote": "Male students (n = 17) were randomly assigned to 12 weeks of progressive squat training (repetition matched, repetition maximum sets)",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
       "claim": "c8",
       "source": "hk-squat",
       "quote": "Simultaneously flex the hips and knees to lower the center of gravity.",
@@ -227,6 +234,20 @@
       "closest": null
     },
     {
+      "claim": "c12",
+      "source": "fry2003",
+      "quote": "Seven weight-trained men (mean +/- SD; age = 27.9 +/- 5.2 years) were videotaped while performing 2 variations of parallel barbell squats (barbell load = body weight).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "fry2003",
+      "quote": "For the unrestricted squat, knee torque (N.m; mean +/- SD) = 150.1 +/- 50.8 and hip torque = 28.2 +/- 65.0. For the restricted squat, knee torque = 117.3 +/- 34.2 and hip torque = 302.7 +/- 71.2.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
       "claim": "c13",
       "source": "nsca-summary",
       "quote": "Overhead exercises and ones with the bar on the back or shoulders must be done within a power rack with crossbars at the right height.",
@@ -248,9 +269,23 @@
       "closest": null
     },
     {
+      "claim": "c14",
+      "source": "rep-fail",
+      "quote": "A spotter can assist in case you struggle with the lift, reducing the need to bail entirely.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
       "claim": "c15",
       "source": "rep-fail",
       "quote": "If you must bail, push the bar backward off your shoulders while moving your body forward. This will let the bar fall onto the safety bars without hitting you. Practice this movement with lighter weights to get comfortable with the process.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "rep-fail",
+      "quote": "While the best course of action is always to have a spotter and use safety equipment, there are times when you might find yourself in a situation where you need to bail on your own.",
       "status": "verbatim",
       "closest": null
     },
@@ -381,6 +416,13 @@
       "closest": null
     },
     {
+      "claim": "c23",
+      "source": "barbell-logic-squat-grip",
+      "quote": "If the back bears the load of the bar, there’s less chance of developing wrist, shoulder or elbow pain from squatting.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
       "claim": "c24",
       "source": "baechle-earle",
       "quote": "Perform all grips with your thumbs around the bar.",
@@ -418,7 +460,7 @@
     {
       "claim": "c26",
       "source": "acsm2009",
-      "quote": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
       "status": "verbatim",
       "closest": null
     },
@@ -426,6 +468,13 @@
       "claim": "c26",
       "source": "lander1992",
       "quote": "WB repetitions were generally performed faster than WOB repetitions, especially by the later repetitions (3.34 vs 3.56 s).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c26",
+      "source": "lander1992",
+      "quote": "multiple repetitions of the parallel back squat exercise. Five subjects were filmed (50 fps) as they performed eight consecutive trials at each of two weight-belt conditions [with belt = WB, without belt = WOB] in random order at their eight-repetition maximum effort.",
       "status": "verbatim",
       "closest": null
     }

@@ -290,9 +290,10 @@
     },
     {
       "id": "c12",
-      "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar.",
+      "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar. Written for barbell lifts (a drill lifting a bar from the floor); applied to the assisted pull-up machine's bar by inference.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "hk-baechle-grip"
@@ -526,9 +527,10 @@
     ],
     "mistake": {
       "what": "Partial reps: the arms never straighten at the bottom, so each rep starts from a bent-arm half hang.",
-      "why": "Listed first among the machine's common mistakes and named by NASM; the anchor says full range builds full strength. Frequency is not measured.",
+      "why": "Most people let the machine pull them back up too quickly, and dropping too fast at the bottom is named a shoulder impingement risk (c16). A fault seen only as speed cannot be drawn in a still plate, so the plate draws partial reps, first on the manufacturer's common-mistakes list (c8). Frequency is not measured.",
       "claim": "c8",
-      "drawable": true
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: \"Most people let the machine pull them back up too quickly\" (c16), a speed fault, so drawable is false. The drawn fault, by the same steps: partial reps, first on the beginner guide's common-mistakes list (c8). Set aside: \"I see lifters every week ... bouncing through partial reps\" says how often the author sees it, not how many lifters do it; \"Most beginners set it too high\" is the assistance chosen, not a fault."
     },
     "tells": [
       {
@@ -620,6 +622,11 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Dropping fast on the way down and letting the machine do the braking.",
+      "fix": "Take three to four seconds to lower back to straight arms.",
+      "claim": "c16"
+    },
+    {
       "mistake": "Stopping short: not straightening the arms at the bottom, or not getting the chin over the bar.",
       "fix": "Full hang to chin over the bar, every rep. If you can't, add a little assistance.",
       "claim": [
@@ -631,11 +638,6 @@
       "mistake": "Swinging or using leg drive because the assistance is set too low.",
       "fix": "Add assistance until every rep is controlled.",
       "claim": "c5"
-    },
-    {
-      "mistake": "Dropping fast on the way down and letting the machine do the braking.",
-      "fix": "Take three to four seconds to lower back to straight arms.",
-      "claim": "c16"
     }
   ],
   "feel": {
@@ -664,7 +666,7 @@
     "rows": [
       {
         "where": "Tops of the shoulders and neck",
-        "means": "Usually means you are shrugging to start the pull.",
+        "means": "Fault: starting the pull with your shoulders up by your ears.",
         "fix": "Draw your shoulders down and back first, then bend your arms.",
         "claim": [
           "c8",
@@ -674,8 +676,8 @@
       },
       {
         "where": "Shoulder",
-        "means": "Usually means the shoulder does not like the arms-overhead position.",
-        "fix": "Stop the set. If it keeps happening or lasts, don't train through it.",
+        "means": "Arms high overhead narrow the space under the shoulder roof.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": [
           "c10",
           "c13"
@@ -685,7 +687,7 @@
       {
         "where": "Inside or outside of the elbow",
         "means": "Usually means too much pulling volume, too soon.",
-        "fix": "Build up the sets slowly. If it lasts, don't train through it.",
+        "fix": "Build up the sets slowly. Don't train through the pain.",
         "claim": [
           "c13",
           "c15"
@@ -752,12 +754,13 @@
   },
   "anchorSource": "bullbar-assist-beginner",
   "gaps": [
-    "Tier A: no sourced way to get on and off the pad safely (including a knee slipping off the moving pad) or to leave the machine at the end of a set; left out, not invented.",
+    "Tier A: getting on the pad is sourced (c1, setup[2]); no sourced way to get off the pad, to handle a knee slipping off the moving pad, or to leave the machine at the end of a set; left out, not invented.",
     "Tier A: safeties/J-hooks and bar path clear of the neck do not apply. Load progression: more reps, then less assistance, then load (c6).",
     "No study of the assisted machine itself; muscle roles and shoulder risk come from unassisted pull-ups (tagged MECH, c10, c11)."
   ],
   "notes": [
-    "Thin evidence: the anchor is a manufacturer blog (WEAK), read in full; the StrengthLog assisted pull-up page was read in full and re-fetched for the source check on 2026-09-30 (quotes verbatim); it only co-supports claims and its rear-delt listing was dropped. No EMG or kinematic study of the assisted machine itself was found (PubMed search 'assisted pull-up' returned nothing relevant), so muscle roles are inferred from unassisted pull-ups (c11) and machine handling rests on StrengthLog plus a manufacturer blog (WEAK). Not sourced, so left out: how to get on and off the pad safely and how to leave the machine at the end of a set (the tier-A 'way out'). The census contact is brace-pad; the pad here is a kneeling pad that pushes up, not a chest pad. Source conflict: the anchor's 'The Swing' says 'Reduce the assistance weight if this happens', while the sister safety page says to increase the assistance if you can't do a rep without swinging (c5). The card follows c5: on this machine more assistance weight means less load (c4), so swinging from a rep that is too hard is fixed by more assistance; the anchor line reads as an error or a different machine convention.",
-    "W2A 2026-10-17: searched PubMed esearch 'assisted pull-up machine' (1 hit, unrelated); manufacturer manual libraries and coach pages for getting on and off the knee pad, a knee slipping off, and leaving the machine. Fetched strengthlog.com/assisted-pull-up/ -> 200 (mount only: 'Put your feet/knees on the pad'); acefitness.org exercise-library/190/assisted-pull-up/ -> 200 (mount and return only); Hoist HD-3700 Chin-Dip Assist, HD-3000 and HD-3800 owner's manuals (cdn.shopify.com/s/files/1/0057/5599/4225/files/...) -> 200 (assembly, maintenance, parts; the HD-3700 placard text is not reproduced); Hoist ROC-IT-Workout-Manual.pdf -> 200 (no chin-dip machine); lifefitness.com support and owner's-manual pages -> 404; matrixfitness.com owner's-manuals -> 404; precor.com product-guides -> 200 (cardio only); cybexintl.com and hammerstrength.com -> no answer; technogym.com/us/support -> 403; nautilus.com/support -> 404; bodybuilding.com assisted-pull-up -> 404; nasm.org assisted-pull-up -> 404. No source says how to get on and off the pad safely, what to do if a knee slips off, or how to leave the machine at the end of a set."
+    "Thin evidence: the anchor is a manufacturer blog (WEAK), read in full; the StrengthLog assisted pull-up page was read in full and re-fetched for the source check on 2026-09-30 (quotes verbatim); it only co-supports claims and its rear-delt listing was dropped. No EMG or kinematic study of the assisted machine itself was found (PubMed search 'assisted pull-up' returned nothing relevant), so muscle roles are inferred from unassisted pull-ups (c11) and machine handling rests on StrengthLog plus a manufacturer blog (WEAK). Not sourced, so left out: how to get off the pad safely, what to do if a knee slips off the moving pad, and how to leave the machine at the end of a set (the tier-A 'way out'); getting on the pad is sourced (c1). The census contact is brace-pad; the pad here is a kneeling pad that pushes up, not a chest pad. Source conflict: the anchor's 'The Swing' says 'Reduce the assistance weight if this happens', while the sister safety page says to increase the assistance if you can't do a rep without swinging (c5). The card follows c5: on this machine more assistance weight means less load (c4), so swinging from a rep that is too hard is fixed by more assistance; the anchor line reads as an error or a different machine convention.",
+    "W2A 2026-10-17: searched PubMed esearch 'assisted pull-up machine' (1 hit, unrelated); manufacturer manual libraries and coach pages for getting on and off the knee pad, a knee slipping off, and leaving the machine. Fetched strengthlog.com/assisted-pull-up/ -> 200 (mount only: 'Put your feet/knees on the pad'); acefitness.org exercise-library/190/assisted-pull-up/ -> 301 to the ACE chin-ups page (exercise-library/190/chin-ups/; rechecked 2026-10-18), so no ACE assisted-machine page was read; Hoist HD-3700 Chin-Dip Assist, HD-3000 and HD-3800 owner's manuals (cdn.shopify.com/s/files/1/0057/5599/4225/files/...) -> 200 (assembly, maintenance, parts; the HD-3700 placard text is not reproduced); Hoist ROC-IT-Workout-Manual.pdf -> 200 (no chin-dip machine); lifefitness.com support and owner's-manual pages -> 404; matrixfitness.com owner's-manuals -> 404; precor.com product-guides -> 200 (cardio only); cybexintl.com and hammerstrength.com -> no answer; technogym.com/us/support -> 403; nautilus.com/support -> 404; bodybuilding.com assisted-pull-up -> 404; nasm.org assisted-pull-up -> 404. No source says how to get off the pad safely, what to do if a knee slips off, or how to leave the machine at the end of a set; getting on the pad is sourced (c1). The ACE assisted-machine search goes back to LIB-WAYOUT (assist machine).",
+    "W2-8 2026-10-18: No card source gives a time for shoulder or elbow pain. NASM (re-fetched, 200) says only 'persists'. So the red-flag row fixes say 'Stop the set. Don't train through the pain.' with no time, and the time comes from the linked NHS boxes (shoulder: no better after two weeks; elbow: no better after a few weeks) (LR-28). The shrug and shoulder rows have no sourced link from the feeling to a cause: Bullbar names the shrug only as a fault, and Prinold 2016 (efetch) links arm position to impingement risk, not pain to a cause. So they read place + the source's fault + fix, with no 'usually means' (LR-6). The elbow rows keep 'usually means', because NASM links elbow tendon irritation to overuse."
   ]
 }

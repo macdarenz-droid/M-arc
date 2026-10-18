@@ -56,6 +56,11 @@
       "id": "youdas-2010",
       "access": "abstract",
       "fixes": null
+    },
+    {
+      "id": "bullbar-calluses",
+      "access": "full",
+      "fixes": null
     }
   ],
   "quotes": [
@@ -301,6 +306,13 @@
       "claim": "c24",
       "source": "bullbar-assist-beginner",
       "quote": "The Shrug: Initiating the pull with your shoulders up by your ears.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c25",
+      "source": "bullbar-calluses",
+      "quote": "When you hang, the bar should sit just below the base of your fingers—where your fingers meet your palm.",
       "status": "verbatim",
       "closest": null
     }

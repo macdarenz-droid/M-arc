@@ -169,6 +169,11 @@
           "source": "larsen2025",
           "text": "These findings suggest that both knee flexion ROMs are similarly effective for promoting quadriceps femoris muscle hypertrophy over a relatively short training-period in resistance-trained individuals.",
           "where": "abstract"
+        },
+        {
+          "source": "larsen2025",
+          "text": "Twenty-three participants (training age: 7.2 ± 3.5 years) completed a within-participant design, performing four sets of unilateral leg presses to momentary failure twice weekly for 8 weeks.",
+          "where": "abstract"
         }
       ]
     },
@@ -367,6 +372,16 @@
           "source": "macdougall1985",
           "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
           "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
+          "where": "abstract"
+        },
+        {
+          "source": "macdougall1985",
+          "text": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+          "where": "abstract"
         }
       ]
     },
@@ -408,7 +423,7 @@
     },
     {
       "id": "c16",
-      "text": "Muscles: Yessis names the glutes and hamstrings at the hip and the quadriceps at the knee as the primary muscles; NASM names the quadriceps as the primary mover and the glutes as assisting, with hamstrings and hip adductors secondary.",
+      "text": "Muscles: Yessis names the glutes and hamstrings at the hip and the quadriceps at the knee as the primary muscles; NASM lists the quadriceps (the primary mover) and the glutes (assisting hip extension) as primary muscles, with hamstrings and hip adductors secondary.",
       "tags": [
         "CONSENSUS"
       ],
@@ -429,12 +444,12 @@
         },
         {
           "source": "nasm-leg-press",
-          "text": "Quadriceps -- primary mover for knee extension and leg pressing power",
+          "text": "Primary Muscles: Quadriceps -- primary mover for knee extension and leg pressing power Glutes -- assist in hip extension and provide pressing power",
           "where": "Muscles Worked"
         },
         {
           "source": "nasm-leg-press",
-          "text": "Glutes -- assist in hip extension and provide pressing power",
+          "text": "Secondary Muscles: Hamstrings Hip Adductors Core Stabilizers",
           "where": "Muscles Worked"
         }
       ]
@@ -458,6 +473,11 @@
           "source": "kinoshita2026",
           "text": "Muscle volumes of the individual and whole QF significantly increased in both conditions ( P ≤ 0.026), except for the rectus femoris in the LP condition ( P = 0.379).",
           "where": "abstract, results"
+        },
+        {
+          "source": "kinoshita2026",
+          "text": "Seventeen untrained adults performed KE with one leg and LP with the contralateral leg at 70% of one-repetition maximum, 10 reps/set, 5 sets/session, 2 sessions/week for 12 wk.",
+          "where": "abstract, methods"
         }
       ]
     },
@@ -496,6 +516,11 @@
         {
           "source": "dasilva2008",
           "text": "the rectus femoris and gastrocnemius were more active during the LP45 and LPL than the LPH.",
+          "where": "abstract"
+        },
+        {
+          "source": "dasilva2008",
+          "text": "Fourteen women performed 3 LP exercises: 45 degrees LP (LP45), LP high (LPH), and LP low (LPL) at 40% and 80% of the 1 repetition maximum.",
           "where": "abstract"
         }
       ]
@@ -603,6 +628,24 @@
           "source": "nasm-leg-press",
           "text": "Maintain tension throughout the movement and avoid jerky or uncontrolled descent.",
           "where": "Step 4: Return/Descent"
+        }
+      ]
+    },
+    {
+      "id": "c25",
+      "text": "Tempo: ACE asks for a momentary pause at the top and gives no seconds, so the 1 s top pause on the plate is a drawing convention.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-leg-press"
+      ],
+      "quotes": [
+        {
+          "source": "ace-leg-press",
+          "text": "Pause momentarily, then slowly return to your starting position by flexing (bending) the hips and knees, and allowing the resistance plate to move towards you in a slow, controlled manner.",
+          "where": "Step 4"
         }
       ]
     }
@@ -773,10 +816,10 @@
     ],
     "mistake": {
       "what": "Lowering until the knees come close to the chest, so the lower back rounds off the pad.",
-      "why": "NASM's common-mistakes list starts with the knees caving inward, alone or from too much weight (c10); that is a sideways fault the side view cannot show. The drawn fault is the knees coming to the chest so the lower back rounds, which Yessis says commonly causes low back injury (c7); ACE and NASM give the same depth limit.",
+      "why": "Yessis says leg press machines commonly cause low back injury because the back rounds when the knees come close to the chest (c7); no source uses a frequency word for any other leg-press fault. ACE and NASM give the same depth limit. NASM's common-mistakes list (excessive weight and the knee cave first, c10) gives no ranking.",
       "claim": "c7",
-      "drawable": false,
-      "rankNote": "No source measures how often each fault happens. NASM lists its mistakes without a frequency; the knee cave is listed first and stays in handlingMistakes (c10)."
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Yessis's \"commonly cause low back injury because of the rounding\" (c7) is the only frequency word for a leg-press fault. NASM's list order is not a ranking; the knee cave stays in handlingMistakes (c10). Scan (2026-10-18): the harm quotes for the lockout (c8, c9: \"The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees\") and NASM's neutral knee position \"minimizing knee stress and valgus collapse risk\" (the knee cave) are step 2 evidence, not needed because step 1 decides; Yessis's \"On most machines\" is about machines, not a fault."
     },
     "tells": [
       {
@@ -795,9 +838,12 @@
     "tempo": {
       "up": 2,
       "down": 2,
-      "pause": 0,
-      "claim": "c15",
-      "text": "2 s down, 2 s up: the controlled pace two inclined leg press studies used in trained adults (c15), not a novice prescription; an optional one-second pause at the bottom is allowed (c15)."
+      "pause": 1,
+      "claim": [
+        "c15",
+        "c25"
+      ],
+      "text": "2 s down, 2 s up: the controlled pace two inclined leg press studies used in trained adults (c15), not a novice prescription. ACE asks for a momentary pause at the top and gives no seconds; the 1 s top pause is a drawing convention (c25; LR-33). An optional one-second pause at the bottom is allowed (c15)."
     },
     "variantLine": "Drawn: the 45-degree plate-loaded sled (c1). The knee-angle, back-on-pad, no-lockout and handle lines (c4, c5, c7, c8, c11, c12) come from ACE's seated machine and NASM's generic machine as well and hold for both; the locking levers and stoppers (c3, c22) differ by machine."
   },
@@ -829,15 +875,16 @@
       "claim": "c22"
     },
     {
-      "step": "Hold the side handles lightly and brace your abs.",
+      "step": "Hold the side handles lightly, brace your abs, then push the platform away and release the safety handles; on many machines they turn outwards.",
       "claim": [
         "c12",
-        "c11"
+        "c11",
+        "c3"
       ]
     },
     {
-      "step": "Push the platform away and release the safety handles; on many machines they turn outwards.",
-      "claim": "c3"
+      "step": "After the set, pause at the top, pull the safety handles in and bend your knees gently until the platform rests on the safety stoppers.",
+      "claim": "c22"
     }
   ],
   "posture": [
@@ -1034,9 +1081,10 @@
   "notes": [
     "Fact 1 (knee bend): bottom about 90 degrees (c5), top extended but not locked (c4). Yessis measures the angle between the back of the shin and the back of the thigh; NASM gives knee flexion. Both are 90 at a right angle, so they agree there; Yessis's 80 degrees end would be about 100 degrees of flexion, which the card does not convert. Plate start is the bottom, as in ACE's step order; Yessis starts at the top after releasing the levers.",
     "Yessis's page prints the degree sign as '?' (an encoding fault in the page itself); the quote keeps it as printed.",
-    "Tempo (fact 2): c15 gives seconds only as study conditions in trained adults (DATA, WEAK). No novice-level seconds for the leg press were found; pause 0 at the top, with the one-second bottom pause optional.",
-    "Mistake (fact 3): c7 is the only fault a source calls common ('commonly cause low back injury'); the lockout (c8) is the second, also drawable.",
+    "Tempo (fact 2): c15 gives seconds only as study conditions in trained adults (DATA, WEAK). No novice-level seconds for the leg press were found; the 1 s top pause is a drawing convention for ACE's \"pause momentarily\" (c25; LR-33), and the one-second bottom pause is optional (c15).",
+    "Mistake (fact 3): under LR-31 step 1, c7 is the only fault a source calls common (Yessis: 'Leg press machines commonly cause low back injury because of the rounding of the back when the knees are close to the chest'), so it is the top fault and drawable is true (2026-10-18). NASM's 'Common Mistakes' list names the knees caving or collapsing inward (c10), locking out (c8) and going too far past 90 degrees (c7) without saying how often any of them happens; its order is not a ranking. The knee cave (c10) needs a front view and stays in handlingMistakes. The lockout (c8) is also drawable.",
     "Breathing conflict (c13): Yessis holds the breath on the way down and breathes out past the sticking point; ACE breathes out while pushing. Not resolved; no shown breathing line. MacDougall (c14) supports caution with breath-holding.",
-    "Tier B: no tier-A safety block is required. The way out (c22: pause at the top, handles in, lower onto the stoppers) is sourced by the manufacturer blog only; machines differ."
+    "Tier B: no tier-A safety block is required. The way out (c22: pause at the top, handles in, lower onto the stoppers) is sourced by the manufacturer blog only; machines differ.",
+    "W2-24 2026-10-18: the re-lock half of c22 is now the last setup step. The old setup steps 4 and 5 (handles and brace, then release) are merged into one to stay within 5 steps. Wording follows c22 (Bells of Steel section 6, re-read by curl 2026-10-18). Machines differ: some use locking levers (c3)."
   ]
 }

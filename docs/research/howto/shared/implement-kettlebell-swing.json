@@ -12,7 +12,7 @@
     ]
   },
   "contactPoint": {
-    "text": "Handle sits in the base of the fingers, not deep in the palm, fingers wrapped around it.",
+    "text": "Base of fingers",
     "claim": "c2"
   },
   "thumbRule": {
@@ -20,7 +20,7 @@
     "claim": "c5"
   },
   "rightPose": {
-    "text": "Both hands side by side on the handle, palms facing down, handle in the base of the fingers, handle tilted toward you.",
+    "text": "Hands side by side, palms down, handle tilted toward you.",
     "claim": [
       "c1",
       "c2",
@@ -31,7 +31,7 @@
     {
       "key": "palm-grip",
       "label": "Palm grip",
-      "what": "Handle pushed deep into the palm instead of the base of the fingers, pinching the palm.",
+      "what": "Handle deep in the palm instead of the base of the fingers, pinching the palm.",
       "claim": "c2"
     },
     {
@@ -42,7 +42,7 @@
     }
   ],
   "gripLine": {
-    "text": "Both hands on the handle, palms facing down, handle in the base of the fingers, a strong grip but not a death grip.",
+    "text": "Both hands on the handle, palms down, handle in the base of the fingers. Grip strong, not a death grip.",
     "claim": [
       "c1",
       "c2",

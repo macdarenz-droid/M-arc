@@ -10,11 +10,11 @@
     "claim": "c1"
   },
   "contactPoint": {
-    "text": "Hands on the underside of the ball, not its sides.",
+    "text": "Hands under ball",
     "claim": "c1"
   },
   "rightPose": {
-    "text": "Hands underneath the ball, wrists about six inches apart, elbows high in front, ball close to the body, hands near the middle of the face at the catch.",
+    "text": "Catch with hands at mid-face, wrists about six inches apart.",
     "claim": [
       "c1",
       "c2",
@@ -34,7 +34,7 @@
     }
   ],
   "gripLine": {
-    "text": "Catch the ball with your hands underneath it and your elbows high in front of you, close to your body.",
+    "text": "Catch the ball with your hands underneath it, close to your body. Keep your elbows high in front of you.",
     "claim": [
       "c1",
       "c2",

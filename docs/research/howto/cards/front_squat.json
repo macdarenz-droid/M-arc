@@ -10,7 +10,6 @@
   "parentNote": "Supervisor's LB4A brief names barbell_back_squat as the template parent. Same hand archetype (on-body) and primary contact (standing-feet), so the content.md 2.3 family rule holds. content.md appendix A had front_squat as a stand-alone parent; the brief overrides it.",
   "inherit": [
     { "field": "setup[2] (load the plates evenly, collars on)", "why": "true for this child because it is the same straight barbell loaded the same way; nothing about plate loading depends on where the bar rests." },
-    { "field": "setup[6]-setup[7] (stand straight up to unrack, two or three short steps back)", "why": "true for this child because the bar also leaves the rack hooks resting on the trunk, so the same stand-up-then-step-back unrack applies; only the bar's position on the body differs (c2). Parent evidence: setup[6]-setup[7] of the approved grip-and-feel research (docs/howto/grip-and-feel/research/barbell_back_squat.json), and the approved setupLine 'stand straight up with it'; the parent source ACE Back Squat says 'Stand up to bring the bar off the rack and step backwards'. The step count (two or three) is the parent's coaching consensus. No front-squat source read (Catalyst, Human Kinetics, REP) describes the unrack, so this line rests on the parent." },
     { "field": "posture[3] (feet flat, knees follow the toes)", "why": "true for this child because Catalyst's front squat technique gives the same rule: whole-foot balance and knees in line with the feet (c10)." }
   ],
   "claims": [
@@ -114,7 +113,11 @@
       "tags": ["CONSENSUS", "MECH"], "sources": ["rep-fail"],
       "quotes": [
         { "source": "rep-fail", "text": "Whenever possible, have a spotter when performing heavy squats.", "where": "The Importance of Spotters and Safeties" },
-        { "source": "rep-fail", "text": "Practice this movement with lighter weights to get comfortable with the process.", "where": "How to Bail a Back Squat" } ] }
+        { "source": "rep-fail", "text": "Practice this movement with lighter weights to get comfortable with the process.", "where": "How to Bail a Back Squat" } ] },
+    { "id": "c26", "text": "Walk out with one step back on each leg. Written for the back squat; applied to the front squat by inference (W2-R7).",
+      "tags": ["CONSENSUS", "MECH"], "sources": ["stronglifts-squat"],
+      "quotes": [
+        { "source": "stronglifts-squat", "text": "Then walk back by taking one step back with each leg.", "where": "Unracking: Walk Back" } ] }
   ],
   "sources": [
     { "id": "cat-frontsquat", "url": "https://www.catalystathletics.com/exercise/78/Front-Squat/", "title": "Front Squat (Exercise Library)", "kind": "coach", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
@@ -125,7 +128,8 @@
     { "id": "yavuz-2015", "url": "https://pubmed.ncbi.nlm.nih.gov/25630691/", "title": "Kinematic and EMG activities during front and back squat variations in maximum loads", "kind": "peer-reviewed", "year": 2015, "pmid": "25630691", "access": "abstract", "checked": "2026-09-30" },
     { "id": "hackett-2013", "url": "https://pubmed.ncbi.nlm.nih.gov/23222073/", "title": "The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise", "kind": "peer-reviewed", "year": 2013, "pmid": "23222073", "access": "abstract", "checked": "2026-09-30" },
     { "id": "nhs-back", "url": "https://www.nhs.uk/conditions/back-pain/", "title": "Back pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
-    { "id": "nhs-knee", "url": "https://www.nhs.uk/conditions/knee-pain/", "title": "Knee pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" }
+    { "id": "nhs-knee", "url": "https://www.nhs.uk/conditions/knee-pain/", "title": "Knee pain (NHS)", "kind": "guideline", "year": null, "pmid": null, "access": "full", "checked": "2026-09-30" },
+    { "id": "stronglifts-squat", "url": "https://stronglifts.com/squat/", "title": "How to Squat with Proper Form: The Definitive Guide (StrongLifts)", "kind": "coach", "year": null, "pmid": null, "access": "full", "checked": "2026-10-18" }
   ],
   "plate": {
     "view": "side",
@@ -165,7 +169,7 @@
     { "step": "Bar in the channel between throat and shoulders, touching the throat lightly; shoulders pushed forward and slightly up.", "claim": ["c2", "c3"] },
     { "step": "Loose full grip, elbows high.", "claim": "c4" },
     { "step": "Heels hip width or a little wider, toes out 15-30 degrees.", "claim": "c8" },
-    { "step": "Brace hard before each rep.", "claim": "c9" }
+    { "step": "Walk out one step back on each leg. Brace hard each rep.", "claim": ["c26", "c9"] }
   ],
   "posture": [
     { "point": "Bar in the channel, no pressure on the throat.", "claim": "c2" },
@@ -215,5 +219,9 @@
     "A wrist angle for the front rack.",
     "Tempo in seconds.",
     "Knees caving (front view): not named in the sources read."
+  ],
+  "notes": [
+    "LR-34 check (W2-53, 2026-10-18) against cards/barbell_back_squat.json and shared/unrack-rerack.json on head 5036283d; shipped sheet tools/plates/layers/exercises/barbell_back_squat.howto.mjs on main b99a9e25. Plate loading holds: barbell_back_squat c3 (plates loaded evenly, collars) and c13 (pins), restating 'Collars on, pins just below your lowest squat to catch a miss.' Unrack and walk-out: standing straight up to unrack holds on barbell_back_squat c3 and shared/unrack-rerack.json c15, which agree; the walk-out fails: 'two or three short steps' is sourced by neither card (barbell_back_squat c3 says step back while staying close; unrack-rerack c16 says one step back on each leg, kept short) and no front-squat source read describes the unrack. It is a tier-A point, so the line and inherit[1] stay as on the head and front_squat is stopped for a supervisor ruling (open point b). Feet flat, knees follow the toes holds: barbell_back_squat c8, restating the checkpoint label 'Knees follow toes'. Three inherit entries are left.",
+    "W2-R7 (supervisor, 2026-10-18): the walk-out takes way (1). New c26 quotes StrongLifts \"Then walk back by taking one step back with each leg.\" (the sentence behind shared/unrack-rerack.json c16), re-fetched by curl on 2026-10-18 [CONSENSUS, MECH: written for the back squat]. inherit[1] is dropped. The setup is at its 5-step cap (CARD-V2), so the walk-out is merged into the brace step: \"Walk out one step back on each leg. Brace hard each rep.\" (12 words; c26, c9). Standing straight up to unrack stays sourced for this card by shared/unrack-rerack.json c15. front_squat is no longer stopped."
   ]
 }

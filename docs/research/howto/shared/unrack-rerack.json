@@ -53,32 +53,21 @@
     },
     {
      "kind": "adjust",
-     "text": "Hooks low enough that the bar clears them without reaching.",
-     "claim": "c2"
-    },
-    {
-     "kind": "position",
-     "text": "Shoulders at least 8 cm from the uprights.",
-     "claim": "c3"
+     "text": "Clear the hooks without reaching. Shoulders at least 15 cm from uprights.",
+     "claim": [
+      "c2",
+      "c3"
+     ]
     },
     {
      "kind": "brace",
-     "text": "Squeeze your shoulder blades before you unrack.",
-     "claim": "c4"
-    },
-    {
-     "kind": "position",
-     "text": "Straighten your arms, then move the bar over your shoulders.",
+     "text": "Squeeze your shoulder blades, then unrack on straight arms over your shoulders.",
      "claim": [
+      "c4",
       "c5",
       "c8",
       "c9"
      ]
-    },
-    {
-     "kind": "finish",
-     "text": "To rack: lock out, move back to the posts, bend arms.",
-     "claim": "c6"
     },
     {
      "kind": "safety",
@@ -127,7 +116,7 @@
    "steps": [
     {
      "kind": "adjust",
-     "text": "Hooks at about mid-chest; pins just below your bottom position.",
+     "text": "Hooks at about mid-chest, pins just below your bottom position.",
      "claim": [
       "c13",
       "c14"
@@ -135,13 +124,11 @@
     },
     {
      "kind": "position",
-     "text": "Feet under the bar; stand straight up to unrack.",
-     "claim": "c15"
-    },
-    {
-     "kind": "position",
-     "text": "Walk back one step with each leg. Keep it short.",
-     "claim": "c16"
+     "text": "Feet under the bar, stand straight up, one step back per leg.",
+     "claim": [
+      "c15",
+      "c16"
+     ]
     },
     {
      "kind": "finish",
@@ -171,12 +158,7 @@
    "steps": [
     {
      "kind": "safety",
-     "text": "Set the safety stops just below your lowest point.",
-     "claim": "c20"
-    },
-    {
-     "kind": "safety",
-     "text": "Test the stops with a light rep first.",
+     "text": "Set stops just below your lowest point. Test with a light rep.",
      "claim": "c20"
     },
     {
@@ -697,7 +679,8 @@
   "No source for the walk-out on the front squat specifically; the back-squat lines are applied by inference (MECH).",
   "Incline and close-grip rack presses have no own source for the pin height and the rerack path; the flat-bench lines are applied by inference (MECH).",
   "No source for walking the overhead-press bar back into the rack (step count, path).",
-  "No source for a failed rep on a Smith shrug or shoulder press beyond the general \"rack at any time\" and stops."
+  "No source for a failed rep on a Smith shrug or shoulder press beyond the general \"rack at any time\" and stops.",
+  "Re-rack: sourced (c6), no setup slot (SETUP_MAX_STEPS 5; W2-R10)."
  ],
  "notes": [
   "Re-read and confirmed: barbell_bench_press c6, c7, c12, c13 sources (stronglifts-bench, hk-bench-youth, sbs-bench); incline_barbell_bench_press c5 (strengthlog-incline); smith_machine_squat c8, c9 (golds, motra); smith_machine_bench_press c2, c4, c5 (eos); front_squat c14, c25 (rep-fail). Boostcamp (incline c6) and motra-smith-bench were not needed and not cited.",

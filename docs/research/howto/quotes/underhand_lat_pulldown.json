@@ -206,6 +206,20 @@
       "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
       "status": "verbatim",
       "closest": null
+    },
+    {
+      "claim": "c19",
+      "source": "barbend-reverse-grip-lat-pulldown",
+      "quote": "To perform the reverse-grip lat pulldown, you’ll need a pulldown machine or a regular cable machine with a bar attachment.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c19",
+      "source": "barbend-reverse-grip-lat-pulldown",
+      "quote": "This guide will focus on the version with a fully-equipped lat pulldown station.",
+      "status": "verbatim",
+      "closest": null
     }
   ]
 }

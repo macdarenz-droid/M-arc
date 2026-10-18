@@ -10,7 +10,7 @@
     "claim": "c1"
   },
   "contactPoint": {
-    "text": "Handle held by the thumb and index finger.",
+    "text": "Thumb and forefinger",
     "claim": "c2"
   },
   "thumbRule": {
@@ -18,11 +18,11 @@
     "claim": "c2"
   },
   "wrist": {
-    "text": "The wrist turns the rope with a small flick; the arms barely move.",
+    "text": "The wrist turns the rope with a small flick. The arms barely move.",
     "claim": "c3"
   },
   "rightPose": {
-    "text": "Loose hold on each handle, hands a little in front of the hips near waist level, elbows close to the ribs.",
+    "text": "Loose hold, hands just ahead of hips, elbows by ribs.",
     "claim": [
       "c1",
       "c4"
@@ -37,7 +37,7 @@
     }
   ],
   "gripLine": {
-    "text": "Hold the handles loosely, mainly with thumb and index finger, firm enough that they will not fly out.",
+    "text": "Hold the handles loosely, mainly with thumb and index finger. Grip just firm enough that they won't fly out.",
     "claim": [
       "c1",
       "c2"
@@ -52,7 +52,7 @@
   },
   "handRisks": [
     {
-      "text": "Turning the rope with the arms instead of the wrists is one cause of wrist pain.",
+      "text": "Turning the rope with your arms, not your wrists, can cause wrist pain.",
       "claim": "c6"
     },
     {

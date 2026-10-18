@@ -294,6 +294,11 @@
           "source": "mcgill2015",
           "text": "The hanging straight leg raise created the highest challenge to the abdominal wall (>130% MVC in rectus abdominis, 88% MVC in external oblique).",
           "where": "abstract"
+        },
+        {
+          "source": "mcgill2015",
+          "text": "Fourteen males performed the exercises while muscle activity, external force and 3D body segment motion were recorded. A sophisticated and anatomically detailed 3D model used muscle activity and body segment kinematics to estimate muscle force",
+          "where": "abstract"
         }
       ]
     },
@@ -541,7 +546,7 @@
     "viewWhy": "census",
     "equipment": "Fixed overhead bar high enough that the body hangs freely with straight legs, feet off the floor (c1); floor line.",
     "start": "Full hang, legs hanging straight under the bar, body perfectly still (c2, c1, c6). No source gives a start hip angle; Yessis starts with a slight lower-back arch (c2).",
-    "end": "Straight legs raised until the toes reach the bar, pelvis curled up by the abs as in a crunch (c3); pelvis in posterior tilt, not hyperextended (c8). Expert opinion (WEAK): hip flexion itself stops at approximately 30-45 degrees from the vertical, and the rest of the rise is the pelvis rotating backward with the leg-hip angle unchanged (c4).",
+    "end": "Straight legs raised until the toes reach the bar, pelvis curled up by the abs as in a crunch (c3); pelvis in posterior tilt, not hyperextended (c8). No end hip angle is drawn: Yessis's approximately 30-45 degrees (c4) is where hip flexion stops while the legs keep rising, and the page does not say which vertical it is measured from (notes[0]).",
     "checkpoints": [
       {
         "label": "Still start",
@@ -564,12 +569,15 @@
     ],
     "mistake": {
       "what": "Swinging: the body swings to build momentum and kick the legs up.",
-      "why": "All three technique sources forbid swinging (c6, c9), and the hanging raise is described as potentially the easiest leg raise to cheat with a swing (c7). How often it happens is not measured.",
+      "why": "Yessis and StrengthLog say not to swing (c6), and Catalyst says to lift without swinging and, on a pull-up bar, to control the speed to minimise swinging (c3, c9). The hanging raise is described as potentially the easiest leg raise to cheat with a swing (c7). How often it happens is not measured.",
       "claim": [
         "c7",
-        "c6"
+        "c6",
+        "c3",
+        "c9"
       ],
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word (Wikipedia's \"easiest to use bad form on\" and \"may use a swinging motion\", c7, say what can happen, not how often), no common-mistakes list, and no quote ties a named fault to harm. Swinging is the fault the most read sources warn against (Yessis and StrengthLog c6, Catalyst c9, Wikipedia c7). Scan (2026-10-18): Yessis's hip-flexor involvement that \"has been negatively criticized by many\" is about muscle activity; Prinold's \"Avoiding impingement risk with training changes\" (c16) is pull-up data on the overhead arm position, not a named fault. Neither counts."
     },
     "tells": [
       {
@@ -698,7 +706,7 @@
     "rows": [
       {
         "where": "Front of your stomach",
-        "means": "Expected: the straight-leg hanging raise challenged the abs most of the exercises tested.",
+        "means": "Expected: this raise works the abs very hard.",
         "fix": "Nothing to fix.",
         "claim": "c12",
         "redFlag": null
@@ -797,13 +805,14 @@
   "gaps": [
     "Tier A: no sourced way to get down from the bar safely (dismount) or to stop mid-set; left out, not invented (LR-3, LIB-WAYOUT).",
     "Tier A: safeties/J-hooks and a bar path clear of the neck do not apply (bodyweight hang). Load progression is sourced (c5, c11).",
-    "Tier A: no source on this card says what to do if a lower-back ache stays; the back row links the shared back box (pending, LR-23, LR-26)."
+    "Tier A: no source on this card says what to do if a lower-back ache stays; the back row links the shared back box (pending, LR-23, LR-26).",
+    "Tier A: no source says to move the stool clear of the legs once hanging (golden-B's box-clearance setup line, dropped as unsourced); not shown, not invented (LR-3, LIB-WAYOUT). Added 2026-10-18."
   ],
   "tierA": {
     "wayOut": null
   },
   "notes": [
-    "Hip angle: no source gives a start angle (c2: full hang). The end is coach words, toes to the bar (c3). The only numbers are Yessis expert opinion, approximately 30-45 degrees from the vertical where hip flexion stops and the pelvis takes over (c4); the page does not say whether it means the thigh or the hip angle, so the words are kept and not converted.",
+    "Hip angle: no source gives a start angle (c2: full hang). The end is coach words, toes to the bar (c3). The only numbers are Yessis expert opinion, approximately 30-45 degrees from the vertical where hip flexion stops and the pelvis takes over (c4). The Training Tips sentence names the thighs (\"until the thighs reach approximately the 30-45 degree angle from the vertical\"), but the page has no figure and does not say whether that vertical is the hanging line or straight up, so the words are kept, not converted and not drawn; plate.end draws only toes to the bar and the posterior tilt (c3, c8). Corrected 2026-10-18: the earlier note said the page does not name the thigh.",
     "Yessis starts with a slight lower-back arch (c2), while Wikipedia names a hyperextended spine with anterior pelvic tilt as the fault (c8). The plate draws the still full hang at the start and the posterior tilt at the top; the start arch is not drawn.",
     "Yessis also says to inhale and hold the breath during the lift; not used or shown (not a heavy two-leg lift; no other source supports it).",
     "Grip type, width and hand contact are not stated by any hanging-leg-raise source here: drawing convention (LR-4).",

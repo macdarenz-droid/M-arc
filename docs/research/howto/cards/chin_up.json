@@ -13,24 +13,12 @@
   "parent": "pull_up",
   "inherit": [
     {
-      "field": "grip.handContact",
-      "why": "true for this child because the same fixed bar hangs in the fingers and top of the palm under full body weight; only the palm turns toward the face (c1)."
-    },
-    {
       "field": "grip.thumb (wrapped, never thumbless by default)",
-      "why": "true for this child because the lifter is still what falls if the hand opens, and ACE's chin-up setup itself asks for thumbs wrapped (c1, c21)."
+      "why": "true for this child because the lifter is still what falls if the hand opens, and ACE's chin-up setup itself asks for thumbs wrapped (c1, c21); parent c3."
     },
     {
-      "field": "setup: bar high enough that the feet clear the floor, reached by a small jump or a step",
-      "why": "true for this child because the bar and the free hang are identical to the pull-up."
-    },
-    {
-      "field": "setup: bar fixed and dry, chalk if the hands sweat",
-      "why": "true for this child because grip security on the same bar does not depend on palm direction."
-    },
-    {
-      "field": "zooms.thumb (full grip is the only option shown; thumbless, hook and gymnastics false grip appear only as labelled wrong or trap)",
-      "why": "true for this child because the thumb choices and their naming trap are the same on a supinated hang; the drawing turns the palm toward the face."
+      "field": "zooms.hand (full grip, thumb around the bar, is the only grip shown)",
+      "why": "true for this child because the thumb rule on a hang does not depend on palm direction (parent zoom 'hand' and c3; content.md 5.2 C4)."
     }
   ],
   "claims": [
@@ -430,9 +418,10 @@
     },
     {
       "id": "c21",
-      "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar.",
+      "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar. Written for barbell lifts (a drill lifting a bar from the floor); applied to the chin-up bar by inference.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "hk-baechle-grip"
@@ -499,6 +488,24 @@
           "source": "bullbar-assist-beginner",
           "text": "The Shrug: Initiating the pull with your shoulders up by your ears.",
           "where": "Common mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c25",
+      "text": "Hand contact: a manufacturer blog says that when you hang, the bar sits just below the base of the fingers, where the fingers meet the palm. Written for a palms-away hang (a callus blog) and applied to the chin-up by inference; weak evidence.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "bullbar-calluses"
+      ],
+      "quotes": [
+        {
+          "source": "bullbar-calluses",
+          "text": "When you hang, the bar should sit just below the base of your fingers—where your fingers meet your palm.",
+          "where": "1. The Grip: Hook, Don't Crush"
         }
       ]
     }
@@ -613,6 +620,16 @@
       "pmid": null,
       "access": "full",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "bullbar-calluses",
+      "url": "https://bullbarfit.com/blogs/q-as/what-is-the-correct-way-to-grip-the-bar-to-avoid-calluses",
+      "title": "How to Grip the Bar Without Getting Calluses (Bullbar Fit, manufacturer blog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-18"
     }
   ],
   "plate": {
@@ -642,7 +659,8 @@
       "what": "Swinging or kipping: the legs kick forward and the body arcs to throw the chin over the bar.",
       "why": "ACE and NASM both name swinging and kipping as the fault to avoid. How often it happens is not measured.",
       "claim": "c6",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: no frequency word for a chin-up fault (curl and efetch 2026-10-18 of every read source). Set aside: \"Many people are slightly stronger in this variation\" (strengthlog-chin-up) and \"chin-ups tend to feel easier for most clients\" (nasm-chin-pull) are about strength, not a fault; \"many lifters will find they can use significantly more load with the underhand row\" (barbend-chin-up) is another exercise; bullbar-calluses' \"Most people grab the bar like they're trying to strangle it.\" is a grip on a general bar-hang page and \"Here's where most people go wrong: they hang from their shoulders like a sack of potatoes.\" is written for hanging in general, to prevent calluses, not for the chin-up. LR-31 step 2: two named faults are tied to harm, both on NASM's common-faults list (c6), one source each, both written for chin-ups: kipping (barbend-chin-up: \"Kipping, when performed improperly, can end up placing high amounts of strain and stress on the connective tissues of the elbow and shoulder.\") and partial range (nasm-chin-pull: \"Quality reps through a full range build strength and protect the shoulder.\"). Two lists name both: NASM's, written for chin-ups and pull-ups, puts kipping and momentum first; Bullbar's, written for the assisted machine (c24, applied by inference), puts the partial rep first. Following LR-31's list order (the one written for this exercise first), NASM's list decides: swinging or kipping (c6) stays the pick. Set aside: NASM's \"pulls carry injury risk when rushed\" is about progression (its injury-prevention section), not a named rep fault; ACE's \"Follow the instructions provided to reduce the stress placed upon your shoulder\" names no fault; Prinold's reverse-grip impingement link (c13) is about the grip."
     },
     "tells": [
       {
@@ -669,15 +687,16 @@
   "grip": {
     "type": "Underhand (supinated), palms facing you, full closed grip.",
     "width": "About shoulder-width apart, or slightly closer.",
-    "thumb": "Wrapped around the bar to meet the index finger (inherited from pull_up; ACE also asks for it).",
-    "handContact": "Inherited from pull_up: bar across the top of the palm where the fingers start.",
+    "thumb": "Wrapped around the bar (c1, c21; inherited from pull_up, parent c3).",
+    "handContact": "Bar just below the base of the fingers, where the fingers meet the palm (c25).",
     "wrist": "Straight, in line with the forearm (c3); not curled forward (c20).",
     "claims": [
       "c1",
       "c2",
       "c3",
       "c20",
-      "c21"
+      "c21",
+      "c25"
     ]
   },
   "setup": [
@@ -790,7 +809,7 @@
       },
       {
         "where": "Tops of the shoulders and neck",
-        "means": "Usually means you are starting the pull with your shoulders up by your ears.",
+        "means": "Fault: starting the pull with your shoulders up by your ears.",
         "fix": "Set your shoulders down and back before each rep.",
         "claim": [
           "c24",
@@ -800,8 +819,8 @@
       },
       {
         "where": "Shoulder",
-        "means": "Usually means the shoulder does not like this arms-overhead, palms-toward-you position.",
-        "fix": "Stop the set. If it keeps happening or lasts, stop chin-ups.",
+        "means": "Arms high overhead narrow the space under the shoulder roof.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": [
           "c14",
           "c13",
@@ -812,7 +831,7 @@
       {
         "where": "Elbow",
         "means": "Usually means too much pulling volume, too soon.",
-        "fix": "Build up the sets slowly. If it lasts, don't train through it.",
+        "fix": "Build up the sets slowly. Don't train through the pain.",
         "claim": "c16",
         "redFlag": "elbow"
       }
@@ -843,12 +862,13 @@
     {
       "key": "hand",
       "kind": "hand",
-      "right": "Palm facing the face, bar across the top of the palm, thumb wrapped under, wrist straight in line with the forearm.",
+      "right": "Palm facing the face, bar just below the base of the fingers, thumb wrapped around the bar, wrist straight in line with the forearm.",
       "wrong": "Wrist curled forward.",
       "claim": [
         "c3",
         "c1",
-        "c20"
+        "c20",
+        "c25"
       ]
     },
     {
@@ -883,15 +903,14 @@
   "anchorSource": "ace-chin-ups",
   "gaps": [
     "Tier A: no sourced way to get down from the bar or fail a rep safely (dismount); left out, not invented.",
-    "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression is on handlingMistakes[0] (c17, c23); how much load to add, and when, is not sourced."
+    "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression is on handlingMistakes[0] (c17, c23); how much load to add, and when, is not sourced.",
+    "Chalk: sourced (bullbar-calluses), no setup slot.",
+    "Tier A: no sourced line that the bar is fixed and dry or high enough for the feet to clear the floor; the pull_up card does not source them, and catalyst-pullup and bullbar-calluses do not say them (LR-34). Left out, not invented."
   ],
   "notes": [
-    "Not sourced, so left out: a safe way down from the bar (the tier-A 'way out'); the pull_up card's setup lines are inherited for bar height and chalk. No source compares shoulder-width and closer chin-up grips. Prinold 2016 is read from the abstract only; the reverse = chin-up mapping is interpretation (c13). The StrengthLog chin-up page was re-fetched on 2026-09-30 (access full, quotes verbatim). The shrug fault is borrowed from the assisted-machine source (c24, WEAK). Wrist: the straight, in-line wrist comes from ACE (c3). O'Driscoll (c20) found the strongest dynamometer grip near 35 degrees of extension, so it does not support 'straight'; it is cited only for 'not curled forward' (zoom wrong, grip.wrist).",
-    "W2A LR-8: inherit[0] holds - docs/howto/grip-and-feel/research/pull_up.json (origin/claude/howto-options): grip.handContact (bar across the top of the palm where the fingers start; fingers over the top, thumb under).",
-    "W2A LR-8: inherit[1] holds - docs/howto/grip-and-feel/research/pull_up.json (origin/claude/howto-options): grip.thumb (wrapped under the bar by default, because you are what falls if the grip opens; thumbless is never the default).",
-    "W2A LR-8: inherit[2] holds - docs/howto/grip-and-feel/research/pull_up.json (origin/claude/howto-options): setup[0] (a bar you reach with a small jump or from a step, high enough that the feet clear the floor with straight arms).",
-    "W2A LR-8: inherit[3] holds - docs/howto/grip-and-feel/research/pull_up.json (origin/claude/howto-options): setup[1] (bar fixed and dry, chalk if the hands sweat).",
-    "W2A LR-8: inherit[4] holds - docs/howto/golden-b/exercises/pull_up.howto.mjs (origin/claude/howto-options): THUMB_PAGE and the header note on thumb (full grip is the default and the only option offered; thumbless is drawn as a risk, 'Can open late in a set'; hook 'Heavy barbell pulls only'; gymnastics false grip 'Rings only'), with content.md 5.2 'no thumbless option offered'. The research file's zooms[1].correct still labels thumbless 'optional, dry bar, fresh hands'; the approved sheet overrides it for hang exercises (C4), so the line follows the approved sheet. Line unchanged.",
-    "W2A 2026-10-17: searched PubMed esearch 'pull-up AND (dismount OR fall OR falling)' (14 hits), 'chin-up AND injury' (5), 'horizontal bar AND fall AND injury AND exercise' (1), none on how to get down; esearch-only leads are not citations; coach and manual pages for getting down from the bar. Fetched acefitness.org exercise-library/190/chin-ups -> 200; strengthlog.com/chin-up/ -> 200; strengthlog.com/pull-up/ -> 200; barbend.com/chin-up/ -> 200; en.wikipedia.org/wiki/Pull-up_(exercise) -> 200; darebee.com/exercises/pull-ups.html -> 200; inspireusafoundation.org/chin-ups/ -> 200; acefitness.org/resources/everyone/blog/6636/how-to-do-a-pull-up/ -> 200; verywellfit chin-up and pull-up pages -> 402; nerdfitness, garagegymreviews, healthline, menshealth, bodybuilding.com and puregym pull-up/chin-up pages -> 404; muscleandstrength.com chin-up and pull-up -> 403; nsca.com pull-ups -> 403; startingstrength.com chin-up -> 403; Body-Solid owner's manuals GDCC250, GDIP59, DPCC, GKR60 (bodysolid.com/content/...) -> 200 (assembly and general warnings only). No source says how to get down from the bar or fail a rep safely."
+    "Not sourced, so left out: a safe way down from the bar (the tier-A 'way out'); bar height, a fixed and dry bar, and chalk are not on the pull_up card, so none is inherited (LR-34): chalk is sourced by bullbar-calluses but the setup has no free slot (5 of 5 steps), and catalyst-pullup and bullbar-calluses do not say the bar is fixed or dry or how high it is; all three are in gaps. No source compares shoulder-width and closer chin-up grips. Prinold 2016 is read from the abstract only; the reverse = chin-up mapping is interpretation (c13). The StrengthLog chin-up page was re-fetched on 2026-09-30 (access full, quotes verbatim). The shrug fault is borrowed from the assisted-machine source (c24, WEAK). Wrist: the straight, in-line wrist comes from ACE (c3). O'Driscoll (c20) found the strongest dynamometer grip near 35 degrees of extension, so it does not support 'straight'; it is cited only for 'not curled forward' (zoom wrong, grip.wrist).",
+    "W2A LR-8 check redone under LR-34 against cards/pull_up.json on 5036283d (golden-B research is a source map only): the thumb holds (parent c3; c1 and c21 here) and the hand zoom's full-grip-only rule holds (parent zoom 'hand', c3; content.md 5.2 C4), each restating a whole string of tools/plates/layers/exercises/pull_up.howto.mjs on main. The thumbless, hook and gymnastics false-grip labels fail: the parent's baechle-earle quote gives only \"Perform all grips with your thumbs around the bar.\" (c3). Hand contact, bar height, a fixed and dry bar, and chalk fail because the parent card does not source them; those inherit entries are removed. Way (1): hand contact is this card's own c25 (bullbar-calluses, MECH, WEAK); chalk is sourced by bullbar-calluses but the setup has no free slot; catalyst-pullup and bullbar-calluses do not say the bar is fixed or dry or how high it is. Chalk, bar height and a fixed bar are in gaps.",
+    "W2A 2026-10-17: searched PubMed esearch 'pull-up AND (dismount OR fall OR falling)' (14 hits), 'chin-up AND injury' (5), 'horizontal bar AND fall AND injury AND exercise' (1), none on how to get down; esearch-only leads are not citations; coach and manual pages for getting down from the bar. Fetched acefitness.org exercise-library/190/chin-ups -> 200; strengthlog.com/chin-up/ -> 200; strengthlog.com/pull-up/ -> 200; barbend.com/chin-up/ -> 200; en.wikipedia.org/wiki/Pull-up_(exercise) -> 200; darebee.com/exercises/pull-ups.html -> 200; inspireusafoundation.org/chin-ups/ -> 200; acefitness.org/resources/everyone/blog/6636/how-to-do-a-pull-up/ -> 200; verywellfit chin-up and pull-up pages -> 402; nerdfitness, garagegymreviews, healthline, menshealth, bodybuilding.com and puregym pull-up/chin-up pages -> 404; muscleandstrength.com chin-up and pull-up -> 403; nsca.com pull-ups -> 403; startingstrength.com chin-up -> 403; Body-Solid owner's manuals GDCC250, GDIP59, DPCC, GKR60 (bodysolid.com/content/...) -> 200 (assembly and general warnings only). No source says how to get down from the bar or fail a rep safely.",
+    "W2-8 2026-10-18: No card source gives a time for shoulder or elbow pain. NASM (re-fetched, 200) says only 'persists'. So the red-flag row fixes say 'Stop the set. Don't train through the pain.' with no time, and the time comes from the linked NHS boxes (shoulder: no better after two weeks; elbow: no better after a few weeks) (LR-28). The shrug and shoulder rows have no sourced link from the feeling to a cause: Bullbar names the shrug only as a fault, and Prinold 2016 (efetch) links arm position to impingement risk, not pain to a cause. So they read place + the source's fault + fix, with no 'usually means' (LR-6). The elbow rows keep 'usually means', because NASM links elbow tendon irritation to overuse."
   ]
 }

@@ -242,6 +242,13 @@
       "closest": null
     },
     {
+      "claim": "c12",
+      "source": "mcgill2015",
+      "quote": "Fourteen males performed the exercises while muscle activity, external force and 3D body segment motion were recorded. A sophisticated and anatomically detailed 3D model used muscle activity and body segment kinematics to estimate muscle force",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
       "claim": "c13",
       "source": "catalyst-hlr",
       "quote": "The hanging leg raise strengthens the abs in trunk flexion, and the hip flexors through a long range of motion.",

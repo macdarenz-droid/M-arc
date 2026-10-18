@@ -13,11 +13,11 @@
     "basis": "drawing decision from GA 3.1.1 (a rope can only be pulled, so the lever check is off); not a sourced claim, see gaps"
   },
   "handContact": {
-    "text": "Hand up against the knob at the end of the rope, one hand on each end.",
+    "text": "One hand on each end of the rope, up against the knob.",
     "claim": "c1"
   },
   "grip": {
-    "text": "Neutral grip (palms facing each other), a full grip with the thumbs wrapped round the rope.",
+    "text": "Neutral grip, palms facing each other. A full grip, thumbs wrapped round the rope.",
     "claim": [
       "c2",
       "c3"
@@ -36,14 +36,14 @@
   },
   "faults": [
     {
-      "key": "rope-wrist-curl",
-      "label": "Wrists curl",
+      "key": "curled",
+      "label": "Wrist curled",
       "what": "The wrists bend toward the palms as the rope is pushed down.",
       "claim": "c6"
     }
   ],
   "gripLine": {
-    "text": "Hold each end of the rope, hands up against the knobs, palms facing each other, wrists straight.",
+    "text": "Hold each end of the rope, hands up against the knobs. Palms face down, wrists straight.",
     "claim": [
       "c1",
       "c2",
