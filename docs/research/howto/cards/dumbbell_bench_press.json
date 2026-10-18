@@ -557,7 +557,7 @@
   },
   "setup": [
     {
-      "step": "Sit on the bench end with a dumbbell in each hand, feet on the floor.",
+      "step": "Sit on the bench end, feet on the floor, dumbbells in hand.",
       "claim": "c10"
     },
     {
@@ -641,9 +641,10 @@
       },
       {
         "where": "Pain in the chest or front of the shoulder while lowering",
-        "means": "Pec tendon tears happen while lowering.",
+        "means": "Fault: lowering the dumbbells too fast.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
+          "c5",
           "c17"
         ],
         "redFlag": "shoulder"
@@ -652,7 +653,7 @@
   },
   "risks": [
     {
-      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; have a spotter hold your wrists.",
+      "risk": "Dropped weights badly hurt lifters most often; have a spotter hold your wrists.",
       "claim": [
         "c16",
         "c11"

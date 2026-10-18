@@ -477,11 +477,11 @@
     "primary": [
       {
         "muscleId": "front_delts",
-        "claim": "c9"
+        "claim": "c8"
       },
       {
         "muscleId": "side_delts",
-        "claim": "c9"
+        "claim": "c8"
       }
     ],
     "secondary": [
@@ -548,5 +548,8 @@
     "remove": [],
     "why": "exercises.json: front_delts, side_delts primary; triceps secondary. c9 measured all of them. No change."
   },
-  "anchorSource": "ace-seated-ohp"
+  "anchorSource": "ace-seated-ohp",
+  "gaps": [
+    "tier-A way out: the only shown way out is a spotter; no read source gives a seated failed-rep way out without one (LR-30; LIB-WAYOUT)"
+  ]
 }

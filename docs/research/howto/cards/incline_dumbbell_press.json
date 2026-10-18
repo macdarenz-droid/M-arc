@@ -19,6 +19,10 @@
     {
       "field": "grip.wrist",
       "why": "true for this child because ACE gives the same neutral wrist for the incline press (c3)."
+    },
+    {
+      "field": "zooms.wrist-neutral-press",
+      "why": "true for this child because the same closed, thumbs-wrapped grip and neutral wrist hold on the incline (c3; parent c3), so the parent's wrist zoom strings apply unchanged."
     }
   ],
   "claims": [
@@ -530,11 +534,7 @@
       "claim": "c1"
     },
     {
-      "step": "Sit with the dumbbells on your thighs.",
-      "claim": "c9"
-    },
-    {
-      "step": "Lie back, using your thighs to help lift the dumbbells to shoulder height.",
+      "step": "Dumbbells on your thighs, lie back and lift them to shoulder height.",
       "claim": "c9"
     },
     {
@@ -544,6 +544,10 @@
     {
       "step": "Press to straight arms, dumbbells over the shoulders.",
       "claim": "c17"
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c13"
     }
   ],
   "posture": [
@@ -611,7 +615,7 @@
       },
       {
         "where": "Pain at the front of the shoulder",
-        "means": "The shoulder is one of the most often injured areas in lifting.",
+        "means": "",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c16",
         "redFlag": "shoulder"
@@ -620,7 +624,7 @@
   },
   "risks": [
     {
-      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; have a spotter grip your wrists.",
+      "risk": "Dropped weights badly hurt lifters most often; have a spotter grip your wrists.",
       "claim": [
         "c15",
         "c10"
@@ -629,10 +633,6 @@
     {
       "risk": "Shoulder injuries are common in lifting and linked to poor technique.",
       "claim": "c16"
-    },
-    {
-      "risk": "Add 2-10% once you beat your target reps by one or two.",
-      "claim": "c13"
     }
   ],
   "redFlags": [
@@ -642,9 +642,9 @@
     {
       "key": "wrist-neutral-press",
       "kind": "hand",
-      "right": "Thumb wrapped, wrist straight.",
-      "wrong": "Wrist bent back.",
-      "claim": "c3"
+      "right": "Thumb wrapped, wrist straight over the forearm.",
+      "wrong": "Wrist bent back under the dumbbell.",
+      "claim": "inherit:2"
     },
     {
       "key": "incline-angle",

@@ -155,7 +155,7 @@
     },
     {
       "id": "c8",
-      "text": "Do not lean back by arching the low back when a rep gets hard; if you can't keep it neutral the weight is too heavy, so count the rep as failed.",
+      "text": "Do not lean back by arching the low back when a rep gets hard; if you can't keep it neutral the weight is too heavy, so count the rep as failed. StrongLifts says extreme arching of the lower spine can result in back pain.",
       "tags": [
         "CONSENSUS"
       ],
@@ -167,6 +167,11 @@
           "source": "stronglifts-ohp",
           "text": "If you can’t keep your lower back neutral, the weight is too heavy. Consider it a fail instead of leaning back to get your rep at all costs.",
           "where": "Lower Back Pain"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "Extreme arching of your lower spine (hyper-extension) squeezes your spinal discs from the back which can result in back pain.",
+          "where": "Lower Back"
         }
       ]
     },
@@ -267,7 +272,7 @@
     },
     {
       "id": "c13",
-      "text": "Barbell pressing allowed more load than dumbbells standing (about 7%), with greater triceps activity; deltoids work in all shoulder press variants.",
+      "text": "Barbell pressing allowed more load than dumbbells standing (about 7%), with greater triceps activity; the front and side deltoids work in barbell and dumbbell shoulder presses, most with standing dumbbells.",
       "tags": [
         "DATA"
       ],
@@ -283,6 +288,16 @@
         {
           "source": "saeterbakken2013",
           "text": "For triceps, ~39% greater for standing barbell versus dumbbells (p < 0.001)",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2013",
+          "text": "In conclusion, the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2013",
+          "text": "For medial deltoid, ~7% lower for standing barbell versus dumbbells (p = 0.050)",
           "where": "abstract"
         }
       ]
@@ -547,7 +562,7 @@
       },
       {
         "label": "Head clear",
-        "what": "Lean back slightly from the hips so the bar clears the chin, then move under the bar.",
+        "what": "Lean back slightly from the hips so the bar clears your chin.",
         "claim": "c6"
       },
       {
@@ -599,16 +614,19 @@
   },
   "setup": [
     {
-      "step": "Set the rack hooks at about shoulder height and the safety crossbars at the right height.",
-      "claim": "c11"
+      "step": "Rack the bar at shoulder height; unrack it inside the power rack.",
+      "claim": [
+        "c1",
+        "c11"
+      ]
     },
     {
-      "step": "Grip just outside the shoulders, thumbs wrapped, bar in the heel of the palm.",
-      "claim": "c2"
-    },
-    {
-      "step": "Unrack onto the front of the shoulders and stay inside the rack.",
-      "claim": "c11"
+      "step": "Grip just outside the shoulders, thumbs wrapped, bar on the palm's heel.",
+      "claim": [
+        "c2",
+        "c3",
+        "c4"
+      ]
     },
     {
       "step": "Feet hip-width and flat; elbows forward so the forearms are vertical.",
@@ -616,6 +634,10 @@
         "c10",
         "c5"
       ]
+    },
+    {
+      "step": "Failed rep? Lower the bar to your shoulders, then rack it.",
+      "claim": "c11"
     },
     {
       "step": "Add 2-10% once you beat your target reps by one or two.",
@@ -681,7 +703,7 @@
     "rows": [
       {
         "where": "Low-back pain while pressing",
-        "means": "Fault: leaning back by arching the low back instead of from the hips.",
+        "means": "Fault: leaning back from the low back, not the hips.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
           "c8",
@@ -707,7 +729,7 @@
       "claim": "c3"
     },
     {
-      "risk": "Low-back hyperextension from leaning back under a heavy bar.",
+      "risk": "Arching the low back under a heavy bar can cause back pain.",
       "claim": "c8"
     },
     {
@@ -740,5 +762,8 @@
     "remove": [],
     "why": "exercises.json: front_delts, side_delts primary; triceps, upper_chest secondary; core stabilizer. c13 supports deltoids and triceps. upper_chest: no source read measured it in the overhead press, so it is unsupported here but not removed (no evidence against it either); flagged for the critic."
   },
-  "anchorSource": "stronglifts-ohp"
+  "anchorSource": "stronglifts-ohp",
+  "gaps": [
+    "safety crossbar height: no read source gives the crossbar height for the overhead press; plate.equipment keeps it as a drawing note only (LR-3)"
+  ]
 }

@@ -504,16 +504,15 @@
   },
   "setup": [
     {
-      "step": "Set the bench upright.",
-      "claim": "c2"
+      "step": "Set the bench upright; keep your back on the pad.",
+      "claim": [
+        "c2",
+        "c3"
+      ]
     },
     {
       "step": "Sit with the dumbbells on your knees, then kick them up.",
       "claim": "c5"
-    },
-    {
-      "step": "Back on the pad.",
-      "claim": "c3"
     },
     {
       "step": "Dumbbells in front of your chest, palms facing you.",
@@ -522,6 +521,10 @@
     {
       "step": "If using a spotter, they stand behind you, hands near your wrists.",
       "claim": "c10"
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c11"
     }
   ],
   "posture": [
@@ -551,7 +554,7 @@
     },
     {
       "mistake": "Pressing through shoulder pain.",
-      "fix": "Stop the workout, or switch to another exercise.",
+      "fix": "Stop the set. Don't train through the pain.",
       "claim": "c7"
     }
   ],
@@ -582,10 +585,12 @@
         "redFlag": null
       },
       {
-        "where": "Any pain in the shoulder during the turn or the press",
-        "means": "Any pain at all is the sign to stop.",
-        "fix": "Stop the workout, or switch to another exercise.",
-        "claim": "c7",
+        "where": "Any pain",
+        "means": "",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c7"
+        ],
         "redFlag": "shoulder"
       }
     ]
@@ -598,10 +603,6 @@
     {
       "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
       "claim": "c14"
-    },
-    {
-      "risk": "Add 2-10% once you beat your target reps by one or two.",
-      "claim": "c11"
     }
   ],
   "redFlags": [
@@ -618,9 +619,9 @@
     {
       "key": "seat-back-contact",
       "kind": "posture",
-      "right": "Back on the pad.",
-      "wrong": "Back arched away from the pad.",
-      "claim": "c3"
+      "right": "Head, shoulders and buttocks on the pad.",
+      "wrong": "Low back arched off the pad.",
+      "claim": "inherit:3"
     }
   ],
   "libraryDiff": {
@@ -628,5 +629,8 @@
     "remove": [],
     "why": "exercises.json: front_delts and side_delts primary; triceps secondary. c8 supports both deltoids (StrengthLog lists the lateral deltoid as secondary, Fit Father says the whole shoulder); no EMG study of the Arnold press was found, so no change on coach opinion alone. Triceps rests on c9 (MECH, WEAK)."
   },
-  "anchorSource": "fitfather-arnold"
+  "anchorSource": "fitfather-arnold",
+  "gaps": [
+    "tier-A way out: the only shown way out is a spotter; no read source gives a seated failed-rep way out without one (LR-30; LIB-WAYOUT)"
+  ]
 }

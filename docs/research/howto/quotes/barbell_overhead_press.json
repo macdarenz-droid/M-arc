@@ -253,6 +253,27 @@
       "quote": "Rest at the bottom for a second before doing your next rep.",
       "status": "verbatim",
       "closest": "Rest at the bottom for a second before doing your next rep."
+    },
+    {
+      "claim": "c13",
+      "source": "saeterbakken2013",
+      "quote": "In conclusion, the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles",
+      "status": "verbatim",
+      "closest": "In conclusion, the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles"
+    },
+    {
+      "claim": "c13",
+      "source": "saeterbakken2013",
+      "quote": "For medial deltoid, ~7% lower for standing barbell versus dumbbells (p = 0.050)",
+      "status": "verbatim",
+      "closest": "For medial deltoid, ~7% lower for standing barbell versus dumbbells (p = 0.050)"
+    },
+    {
+      "claim": "c8",
+      "source": "stronglifts-ohp",
+      "quote": "Extreme arching of your lower spine (hyper-extension) squeezes your spinal discs from the back which can result in back pain.",
+      "status": "verbatim",
+      "closest": "Extreme arching of your lower spine (hyper-extension) squeezes your spinal discs from the back which can result in back pain."
     }
   ]
 }

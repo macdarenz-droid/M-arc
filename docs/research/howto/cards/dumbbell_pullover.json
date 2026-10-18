@@ -605,23 +605,29 @@
   },
   "setup": [
     {
-      "step": "Lie with your head as far up the bench as possible, feet flat.",
-      "claim": "c2"
+      "step": "Head as far up the bench as possible, feet flat.",
+      "claim": [
+        "c2",
+        "c1"
+      ]
     },
     {
       "step": "Keep five points of contact.",
       "claim": "c1"
     },
     {
-      "step": "Take the dumbbell from a spotter, or bring it up from your thigh.",
+      "step": "Take the dumbbell from a spotter, or lift it from your thigh.",
       "claim": "c21"
     },
     {
-      "step": "Cradle the top plate, thumbs overlapping behind the handle; grip it securely before it goes over your face.",
-      "claim": "c11"
+      "step": "Cradle the top plate, thumbs overlapping behind the handle; grip it securely.",
+      "claim": [
+        "c3",
+        "c11"
+      ]
     },
     {
-      "step": "Start with the dumbbell above your upper chest, arms vertical, elbows slightly bent.",
+      "step": "Dumbbell above your upper chest, arms vertical, elbows slightly bent.",
       "claim": "c4"
     }
   ],
@@ -729,7 +735,7 @@
       "claim": "c19"
     },
     {
-      "risk": "Big weight jumps load the shoulders hard at the bottom; add weight in small steps.",
+      "risk": "Even small weight jumps load the shoulders much more at the bottom.",
       "claim": "c12"
     }
   ],
