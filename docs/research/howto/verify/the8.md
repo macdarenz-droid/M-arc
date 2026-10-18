@@ -75,7 +75,7 @@ Fact 1 is the plate's measured joint, fact 2 is the tempo and fact 3 is plate.mi
   - No source gives the knee angle at the moment the hips pass the knees.
 - **Fact 2, tempo:** gap for novice seconds.
   - c26 is tagged WEAK, and the plate's 2/2 is a drawing convention under LR-15.
-  - Lander measured one 8-RM rep at 3.34-3.56 s in total.
+  - Lander (5 lifters, 8-RM sets): reps with a belt were generally faster than without, especially the later reps (3.34 vs 3.56 s). A belt comparison, not a tempo source.
 - **Fact 3, mistake:** c10 with c5, the back rounding at the bottom. The source says "rounding the back can cause injury".
 - **Tier A, sourced:**
   - safeties just below the lowest depth (c13);
@@ -123,7 +123,7 @@ Fact 1 is the plate's measured joint, fact 2 is the tempo and fact 3 is plate.mi
 - **Fact 1, hip angle:** found in words; the only number is expert opinion.
   - c2: a full hang, with no start angle given.
   - c3: straight legs raised until the toes reach the bar, with the pelvis curled up.
-  - c4, tagged MECH and WEAK: Yessis says hip flexion reaches its maximum at "approximately 30-45 degrees from the vertical". He doesn't say whether he means the thigh or the hip angle, so the words are kept and not converted.
+  - c4, tagged MECH and WEAK: Yessis says hip flexion reaches its maximum at "approximately 30-45 degrees from the vertical", and that the abs begin to shorten when "the thighs reach" that angle. He doesn't say whether the vertical is the hanging line or straight up, so the words are kept, not converted and not drawn; plate.end draws only toes to the bar and the posterior tilt (c3, c8) (2026-10-18).
 - **Fact 2, tempo:** only the top hold is sourced.
   - c10: "approximately one-two seconds", and the plate draws 1 s.
   - Up and down are a drawing convention under LR-15 (WEAK).
@@ -133,6 +133,7 @@ Fact 1 is the plate's measured joint, fact 2 is the tempo and fact 3 is plate.mi
 - **Tier A gaps:**
   - No sourced way to get down from the bar (LR-3).
   - The back row links the pending back box (LR-23, LR-26).
+  - No source says to move the stool clear of the legs; golden-B's box-clearance line is not shown and is listed in the card's gaps (LR-3, LIB-WAYOUT; 2026-10-18).
 - **Golden-B differences:**
   - Golden-B ends at "thighs at or above horizontal"; the card follows the sources, toes to the bar.
   - These golden-B points are unsourced: the shoulder-width grip, straps and slings, the box-clearance setup, the 2-3 s lowering, and lats and forearms as secondary muscles.
@@ -151,7 +152,7 @@ Fact 1 is the plate's measured joint, fact 2 is the tempo and fact 3 is plate.mi
 - **Fact 3, mistake:** pulling the bar behind the neck.
   - c9: the NSCA common-errors list names it, and Sperandei says it "should be avoided".
   - c10: Kolber 2013 links it to an unstable front shoulder, as an association only.
-  - c11: less lat activity.
+  - c11: lat activity is mixed (DATA, WEAK): Signorile less behind the neck; Padovan less only while the bar comes down, more on the way up; Sperandei no lat difference (W2-23, 2026-10-18).
   - The list does not rank its errors.
 - **Golden-B differences:**
   - Golden-B's grip of 1.5 times shoulder width is not in any source. The card says "wider than shoulder-width", plus Andersen's 1-2 times biacromial width.
@@ -159,8 +160,8 @@ Fact 1 is the plate's measured joint, fact 2 is the tempo and fact 3 is plate.mi
 
 ### seated_cable_row
 - **Read:**
-  - full: unmc-cable-row (the anchor), nsca-low-row, ace-seated-row (a chest-pad machine row, so its claims are tagged MECH), baechle-earle, deabreu2023;
-  - abstracts: acsm2009, lehman2004, dosanjos2024, callaghan2001;
+  - full: unmc-cable-row (the anchor), nsca-low-row, ace-seated-row (a chest-pad machine row, so its claims are tagged MECH), baechle-earle;
+  - abstracts: acsm2009, lehman2004, dosanjos2024, callaghan2001, deabreu2023 (journal page abstract);
   - not fetched: padovan2025grip.
 - **Fact 1, shoulder angle:** found in words; no degrees.
   - c2: the torso is perpendicular to the floor with the arms about parallel to it. "About a right angle" is geometry, tagged MECH.
@@ -212,7 +213,7 @@ Fact 1 is the plate's measured joint, fact 2 is the tempo and fact 3 is plate.mi
 
 ## Open questions for the supervisor
 1. **Tempo:** no source at novice level gives seconds for any of the 8. Four cards (lateral raise, lat pulldown, leg press, chest press) use exercise-specific lab pacing, tagged WEAK. The other four mark their counts as a drawing convention.
-   - Squat: the plate draws 4 s per rep, but the measured 8-RM rep took about 3.5 s. Keep 2/2, or use 2 down and 1-2 up?
+   - Squat: answered by LR-15 and D-W2-TEMPO. The plate's 2 s down and 2 s up stays a named drawing convention tagged WEAK (c26). Lander's 3.34 vs 3.56 s are with-belt vs no-belt rep times (especially the later reps of 8-RM sets), not a tempo source, so they do not bear on 2/2.
 2. **nsca-low-row:** the lat pulldown and seated row cards depend on a study-flashcard copy of the NSCA text, because the original is not free online. The same id covers both sections of that page. Should it get a clearer id?
 3. **fenwick2009:** the registry has PMID 19197209, but the chest_supported_row card uses 19620925, and the two records look like duplicates. None of the 8 cites it.
 4. **Hanging leg raise hip angle:** Yessis's "30-45 degrees from the vertical" is expert opinion and doesn't say which angle it means. Is that enough to remove the exemption, or is it a gap?
@@ -236,3 +237,10 @@ The views come from census.json @ 48153c4, field `view`, which matches CENSUS_8 
   - No claim or quote changed.
 - machine_chest_press (side): c8 is unchanged.
 No quote was added or changed, so the fetcher had nothing new to check. The pre-push check was rerun and all 8 cards print OK.
+
+## Fix round 1 (supervisor rulings LR-31, LR-33, 2026-10-18)
+- Top fault (LR-31): every plate.mistake carries a rankNote naming the step used. Picks are unchanged under LR-31 as ruled, each re-run with a scan of every read source. leg_press: Yessis's "commonly" (c7) decides under step 1, so `drawable` is true again, and its why and rankNote are rewritten; the knee cave stays in handlingMistakes (c10).
+- Pause (LR-33): ACE's "pause momentarily" is a 1 s drawing convention on the four cards that quote it. machine_chest_press pause null -> 1; leg_press pause 0 -> 1 (top pause); new tempo claims leg_press c25 and machine_chest_press c16 [CONSENSUS, WEAK] name the 1 s, each a copy of the verified ACE quote in c24 and c7; seated_cable_row's text names the 1 s; lat_pulldown unchanged.
+- LR-31 added or changed no quote; LR-33's c16 and c25 copy verified ACE quotes (c7, c24).
+- 2026-10-18 (W2-28): quotes added for details the claim texts already stated: populations (leg_press c6, c14, c17, c19; barbell_back_squat c7, c12; pull_up c6; hanging_leg_raise c12), durations and loads (leg_press c6, c14, c17; barbell_back_squat c7), Fry's hip torques (barbell_back_squat c12), Lander's 8-RM parallel back squat and ACSM's heavy loading (barbell_back_squat c26), Coratella's seated and metronome protocol (dumbbell_lateral_raise c9), and Muyor's metronome (machine_chest_press c9). leg_press c16 now says NASM lists the quadriceps and glutes as primary muscles, quoting its Primary and Secondary Muscles lists; that quote now supports the libraryDiff adductor reason. All new quotes were re-read on 2026-10-18 by efetch (PubMed and PMC) and curl (NASM). They are verbatim and at most 50 words.
+- Fetcher, fix round 1 (checked 2026-10-18): every new or changed quote re-fetched, 25 of 25 verbatim. Quotes-file totals after this round: barbell_back_squat 57 (W2-16 +2, W2-28 +4 and 1 changed, W2-30 +1); pull_up 37; hanging_leg_raise 37; lat_pulldown 41 (W2-23: 1 changed, 1 added); seated_cable_row 34 (W2-37 c19; 19 claims); leg_press 63 (W2-28: 5 added, 2 changed; LR-33: c25 added); machine_chest_press 25; dumbbell_lateral_raise 21. The 2026-10-17 table above stays the record of that run.

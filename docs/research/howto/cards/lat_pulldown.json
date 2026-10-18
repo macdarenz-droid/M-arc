@@ -241,13 +241,15 @@
     },
     {
       "id": "c11",
-      "text": "Pulling in front of the face gave more lat activity than behind the neck in two EMG studies.",
+      "text": "EMG studies of lat activity, pulling in front versus behind the neck, are mixed: one found more lat activity pulling in front, one found more in front only while the bar comes down and more behind the neck on the way back up, and one found no lat difference.",
       "tags": [
-        "DATA"
+        "DATA",
+        "WEAK"
       ],
       "sources": [
         "signorile2002",
-        "padovan2024"
+        "padovan2024",
+        "sperandei2009"
       ],
       "quotes": [
         {
@@ -257,7 +259,12 @@
         },
         {
           "source": "padovan2024",
-          "text": "The front-LPD appears to provide overall greater excitation in the prime movers.",
+          "text": "During the descending phase, the front-LPD showed superior excitation of the latissimus dorsi (ES = 0.97) and the pectoralis major (ES = 1.17), while in the ascending phase, the back-LPD exhibited superior excitation of the latissimus dorsi (ES = 0.63)",
+          "where": "abstract"
+        },
+        {
+          "source": "sperandei2009",
+          "text": "For LD, there was no difference between techniques.",
           "where": "abstract"
         }
       ]
@@ -669,13 +676,14 @@
     ],
     "mistake": {
       "what": "Pulling the bar down behind the head to the back of the neck.",
-      "why": "NSCA technique text lists it among the common errors (frequency not measured); Sperandei 2009 concludes it should be avoided, Signorile 2002 and Padovan 2024 found less lat activity than pulling in front, and Kolber 2013 links behind-the-neck pulldowns to signs of anterior shoulder instability (association only).",
+      "why": "NSCA technique text lists it among the common errors (frequency not measured); Sperandei 2009 concludes it should be avoided, though it found no lat difference; Signorile 2002 found less lat activity than pulling in front; Padovan 2024 found less lat activity only while the bar comes down and more on the way back up; and Kolber 2013 links behind-the-neck pulldowns to signs of anterior shoulder instability (association only).",
       "claim": [
         "c9",
         "c10",
         "c11"
       ],
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1 has no candidate: Snyder's \"often rely on the elbow flexors\" (c18) is muscle use, which stays a feel row. LR-31 step 2: behind the neck is on the NSCA common-errors list and a study ties it to signs of front-shoulder instability (c9, c10). The past-end pull also has stated harm (c7) but is on no common-errors list."
     },
     "tells": [
       {
@@ -817,9 +825,7 @@
           "c18",
           "c19"
         ]
-      }
-    ],
-    "watch": [
+      },
       {
         "muscleId": "rear_delts",
         "claim": [
@@ -828,6 +834,7 @@
         ]
       }
     ],
+    "watch": [],
     "rows": [
       {
         "where": "Front of the shoulder",
@@ -922,19 +929,26 @@
     }
   ],
   "libraryDiff": {
-    "add": [],
+    "add": [
+      {
+        "muscleId": "rear_delts",
+        "role": "secondary",
+        "why": "Listed as trained with the lats, teres major and rhomboids (c17), and rear-deltoid activity was higher with the 30 degree lean (c23)."
+      }
+    ],
     "remove": [],
-    "why": "lats primary stands (c17, c19). mid_back secondary stands: middle trapezius is measured active (c19) and rhomboids are listed as trained (c17). biceps secondary stands: measured (c19) and the elbow flexors take part (c18). rear_delts is listed as trained (c17) and rises with the 30 degree lean (c23), but is kept as watch only, not added to the library list, because lat-focused texts treat it as a helper."
+    "why": "lats primary stands (c17, c19). mid_back secondary stands: middle trapezius is measured active (c19) and rhomboids are listed as trained (c17). biceps secondary stands: measured (c19) and the elbow flexors take part (c18). rear_delts secondary added: the rear deltoid is listed as trained (c17) and its activity was higher with the 30 degree lean (c23); the library list has no rear_delts."
   },
   "anchorSource": "ace-lat-pulldown",
   "gaps": [],
   "notes": [
     "Tier C; no tier-A safety gaps apply.",
-    "plate.mistake choice: the NSCA common-errors list names four faults with no ranking (open grip, trunk flexion to assist, not fully extending, behind the neck). Behind the neck is drawn because it is visible from the side and is the only one with study backing for risk (c9, c10, c11). How often any of them happens is not measured.",
+    "plate.mistake choice: the NSCA common-errors list names four faults with no ranking (open grip, trunk flexion to assist, not fully extending, behind the neck). Behind the neck is drawn because it is visible from the side and is the only one with study backing (c9, c10; the lat data in c11 is mixed, 2026-10-18). How often any of them happens is not measured.",
     "Tempo: no novice-level source gives seconds for the pulldown. 2-2 is Lusk 2010's protocol (WEAK); ACSM 2009 1-2 s is for intermediate to advanced (LR-15); the 1 s pause is a drawing convention for ACE's \"pause momentarily\".",
     "NSCA text is read through a study flashcard set (secondary, summary). The registry id is nsca-low-row; the same page carries the lat pulldown section.",
     "Wrist: no pulldown source gives a wrist position; c21 is grip-tester data applied by reasoning (MECH).",
     "Exit: c22 is the only sourced way off; no line on letting the stack down under control is sourced.",
-    "Read but not cited (abstracts): Lehman 2004, Di Fonza 2026, Doma 2013, Kolber 2010; no fact needed beyond the cited sources."
+    "Read but not cited (abstracts): Lehman 2004, Di Fonza 2026, Doma 2013, Kolber 2010; no fact needed beyond the cited sources.",
+    "2026-10-18: rear_delts moved from watch to secondary. The earlier 'helper' reason had no source. NSCA lists the posterior deltoid among the primary muscles trained (c17). No source on the card ranks it against the lats, so secondary follows the card's mapping of the rhomboids from the same list (mid_back secondary) and the seated_cable_row card."
   ]
 }
