@@ -2,13 +2,13 @@
 // (candidateOf -> runQa), on the LIB-2b fixture row turned into a D child of lib_pull_up in memory. Nothing is written
 // to rows.json, batches/ or tests/howto/golden/; TEST_ENV lives only in this file.
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import * as F from './fixtures/lib2b/fixture.mjs';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const T = 180_000;
-let root: string, cand: any, I: any, node: any, der: any, eng: any, mirror: string, E: any, pins: any, base: any[], row: any, html: string, TEST_ENV: any;
+let F: any, root: string, cand: any, I: any, node: any, der: any, eng: any, mirror: string, E: any, pins: any, base: any[], row: any, html: string, TEST_ENV: any;
 
 beforeAll(async () => {
+  F = await import(/* @vite-ignore */ new URL('./fixtures/lib2b/fixture.mjs', import.meta.url).href);
   root = F.fixtureTree();
   const im = (p: string) => import(/* @vite-ignore */ F.url(root, p));
   let bg: any, reg: any, golden: any;
