@@ -523,6 +523,24 @@
           "where": "Missing in the midrange"
         }
       ]
+    },
+    {
+      "id": "c26",
+      "text": "Hold the bar for a second at the top of each rep, arms straight.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "stronglifts-bench"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-bench",
+          "text": "Hold the weight for a second at the top, with straight arms.",
+          "where": "Here's how to Bench Press with proper form"
+        }
+      ]
     }
   ],
   "sources": [
@@ -694,8 +712,13 @@
     "tempo": {
       "up": 1,
       "down": 2,
-      "pause": 0,
-      "claim": "c17"
+      "pause": 1,
+      "claim": [
+        "c26",
+        "c18",
+        "c17"
+      ],
+      "text": "Pause 1 s at the top: StrongLifts gives the seconds for the hold right after the press (c26; ruling R-LB2-8, LR-33). Down 2 s sits inside Stronger by Science's \"it should take around 2-3 seconds\" for this exercise (c18). Up 1 s keeps ACSM's 1-2 s, stated for intermediate to advanced training (c17, WEAK; LR-15). At the bottom the sources disagree, so no bottom pause is drawn: Human Kinetics says \"Pause briefly, then press the barbell to the starting position.\", StrongLifts says \"Don’t pause at the bottom.\", and Stronger by Science says \"lightly touching the bar to your chest without a pause before pressing it back up is fine.\""
     },
     "variantLine": null
   },
