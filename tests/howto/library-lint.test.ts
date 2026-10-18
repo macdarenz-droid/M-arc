@@ -194,7 +194,7 @@ describe('LIB-5 S7 generator cases: E1\'s row in per-case copies of E1\'s tree (
   let F: any, tree: string;
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
-    tree = F.fixtureTree(); temps.push(tree);
+    tree = await (await import(/* @vite-ignore */ url('tests/howto/fixtures/lib5/tree.mjs'))).fixtureTreeAsync(); temps.push(tree);
   }, T);
   /** A copy of E1's tree with one exact-once replacement in `file` (the How-to, or the scratch card for the family cases). */
   const copyWith = (file: string, from: string, to: string) => {

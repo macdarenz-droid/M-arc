@@ -106,7 +106,7 @@ describe('LIB-5 Do 6: the stamp gate in E1\'s tree (D-LIB5-SCRATCH 3, 7; S8)', (
   let F: any, tree: string;
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
-    tree = F.fixtureTree(); temps.push(tree);
+    tree = await (await import(/* @vite-ignore */ url('tests/howto/fixtures/lib5/tree.mjs'))).fixtureTreeAsync(); temps.push(tree);
   }, T);
   /** `node tools/plates/generate.mjs` in `cwd`; resolves { code, out }. */
   const gen = (cwd: string) => new Promise<{ code: number; out: string }>(resolve => {
@@ -125,12 +125,10 @@ describe('LIB-5 Do 6: the stamp gate in E1\'s tree (D-LIB5-SCRATCH 3, 7; S8)', (
     expect([g.code, g.out.slice(-300)]).toEqual([0, expect.stringContaining('generate: wrote')]);
   }, T);
   it('mutations, each red: entries emptied (every shipped id named, while checkC15 passes the empty file); marker removed; E1\'s stamp dropped', async () => {
-    const results = await Promise.all([
-      gen(copy(r => writeFileSync(join(r, REV), '{ "schema": 1, "entries": [] }\n'))),
-      gen(copy(r => rmSync(join(r, S.SCRATCH_MARKER)))),
-      gen(copy(r => { const v = rev(r); v.entries = v.entries.filter((e: any) => !e.scratch); writeFileSync(join(r, REV), JSON.stringify(v)); })),
-    ]);
-    const [emptied, unmarked, dropped] = results;
+    // one generator at a time: three full generator runs at once, beside the other suites, overload the runner
+    const emptied = await gen(copy(r => writeFileSync(join(r, REV), '{ "schema": 1, "entries": [] }\n')));
+    const unmarked = await gen(copy(r => rmSync(join(r, S.SCRATCH_MARKER))));
+    const dropped = await gen(copy(r => { const v = rev(r); v.entries = v.entries.filter((e: any) => !e.scratch); writeFileSync(join(r, REV), JSON.stringify(v)); }));
     expect(emptied.code).not.toBe(0);
     for (const id of [...EIGHT, F.ID]) expect([id, emptied.out]).toEqual([id, expect.stringContaining(`LIB-5 stamp: ${id}: reviews.json is missing, unparsable or empty`)]);
     const { content: c } = await content.loadContent('lib_pull_up');
@@ -142,9 +140,21 @@ describe('LIB-5 Do 6: the stamp gate in E1\'s tree (D-LIB5-SCRATCH 3, 7; S8)', (
     }
   }, T);
   it('LIB-4a: writeIds(ROOT, 22) passes, and its synthetic copy holds no reviews.json (the gate is never reached from ids.mjs)', async () => {
-    const w = await import(/* @vite-ignore */ url('tools/plates/library/scale/write-ids.mjs'));
-    const out = await w.writeIds(ROOT, 22);
-    temps.push(out.root);
-    expect(existsSync(join(out.root, REV))).toBe(false);
+    // In a child process: writeIds copies src/ and tools/plates synchronously, which would block this worker's RPC.
+    const code = `import { existsSync } from 'node:fs'; import { join } from 'node:path';
+const { writeIds } = await import(${JSON.stringify(url('tools/plates/library/scale/write-ids.mjs'))});
+const o = await writeIds(${JSON.stringify(ROOT)}, 22);
+console.log('@@' + JSON.stringify({ root: o.root, reviews: existsSync(join(o.root, ${JSON.stringify(REV)})) }));`;
+    const r = await new Promise<{ code: number; out: string }>(resolve => {
+      const c = spawn(process.execPath, ['--input-type=module', '-e', code], { cwd: ROOT });
+      let out = '';
+      c.stdout.on('data', d => { out += d; }); c.stderr.on('data', d => { out += d; });
+      c.on('close', k => resolve({ code: k ?? 1, out }));
+    });
+    const line = r.out.split('\n').find(l => l.startsWith('@@'));
+    expect([r.code, Boolean(line)]).toEqual([0, true]);
+    const got = JSON.parse(line!.slice(2));
+    temps.push(got.root);
+    expect(got.reviews).toBe(false);
   }, T);
 });

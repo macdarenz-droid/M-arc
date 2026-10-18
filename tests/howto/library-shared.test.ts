@@ -112,7 +112,7 @@ describe('LIB-5 S4-P 3: E1\'s row with back in its riskFlags makes the generator
   let F: any, tree: string;
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
-    tree = F.fixtureTree(); temps.push(tree);
+    tree = await (await import(/* @vite-ignore */ url('tests/howto/fixtures/lib5/tree.mjs'))).fixtureTreeAsync(); temps.push(tree);
   }, T);
   /** A per-case copy of E1's tree with one exact-once replacement in its How-to. */
   const copyWith = (from: string, to: string) => {

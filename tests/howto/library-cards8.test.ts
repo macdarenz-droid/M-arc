@@ -205,7 +205,7 @@ describe('LIB-5 S3 and S12 on the S3 fixture card: candidateOf and runQa in a co
   let F: any, tree: string, base: any;
   beforeAll(async () => {
     F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
-    const t0 = F.fixtureTree(); temps.push(t0);
+    const t0 = await (await import(/* @vite-ignore */ url('tests/howto/fixtures/lib5/tree.mjs'))).fixtureTreeAsync(); temps.push(t0);
     tree = mkdtempSync(join(tmpdir(), 'lib5-s3-')); temps.push(tree);
     cpSync(t0, tree, { recursive: true, verbatimSymlinks: true });
     const e1 = JSON.parse(readFileSync(join(tree, F.CARD_FILE), 'utf8'));
