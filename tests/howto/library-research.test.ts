@@ -101,3 +101,56 @@ describe(`LIB-5 S1: the 38 shared research files equal the named research head $
     expect(s1Problems(t)).toEqual(['shared/extra.json: not pinned']);
   });
 });
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+let V: any;
+const rd = (p: string) => JSON.parse(readFileSync(join(ROOT, HOWTO, p), 'utf8'));
+const clone = <T>(x: T): T => JSON.parse(JSON.stringify(x));
+
+describe('LIB-5 S2: every shared card is valid (tools/plates/library/research/validate.mjs)', () => {
+  it('the 19 copied cards pass with no problem', async () => {
+    V = await import(/* @vite-ignore */ new URL('../../tools/plates/library/research/validate.mjs', import.meta.url).href);
+    const files = readdirSync(join(ROOT, HOWTO, 'shared'));
+    expect(files.length).toBe(19);
+    for (const f of files) expect([f, V.validateSharedFile(f)]).toEqual([f, []]);
+  });
+  it('mutation: an orphan source is red', () => {
+    const c = rd('shared/curl.json'), q = rd('quotes/shared-curl.json');
+    c.sources.push({ ...c.sources[0], id: 'orphan-x' });
+    expect(V.validateShared(c, q, { file: 'curl.json' })).toEqual(['shared/curl.json: orphan source orphan-x (no claim cites it)']);
+  });
+  it('mutation: a 51-word quote is red', () => {
+    const c = rd('shared/curl.json'), q = rd('quotes/shared-curl.json'), long = Array.from({ length: 51 }, (_, i) => `w${i}`).join(' ');
+    const e = q.quotes.find((x: any) => x.claim === c.claims[0].id && x.source === c.claims[0].quotes[0].source && x.text === c.claims[0].quotes[0].text);
+    e.text = long; c.claims[0].quotes[0].text = long;
+    expect(V.validateShared(c, q, { file: 'curl.json' })).toEqual([`shared/curl.json: claim ${c.claims[0].id} quote from ${c.claims[0].quotes[0].source} has 51 words, at most 50`]);
+  });
+  it('mutation: a missing quote entry is red', () => {
+    const c = rd('shared/curl.json'), q = rd('quotes/shared-curl.json'), cq = c.claims[0].quotes[0];
+    q.quotes = q.quotes.filter((x: any) => !(x.claim === c.claims[0].id && x.source === cq.source && x.text === cq.text));
+    expect(V.validateShared(c, q, { file: 'curl.json' })).toEqual([`shared/curl.json: claim ${c.claims[0].id} quote from ${cq.source} is not in its quotes file`]);
+  });
+  it('mutation: an unknown kind is red', () => {
+    const c = rd('shared/curl.json');
+    c.kind = 'grip';
+    expect(V.validateShared(c, rd('quotes/shared-curl.json'), { file: 'curl.json' })).toEqual(['shared/curl.json: unknown kind "grip"']);
+  });
+  it('mutations: an unresolved claim ref, a missing kind key and a contact line are red', () => {
+    const q = rd('quotes/shared-curl.json');
+    const a = rd('shared/curl.json'); a.gripLine.claim = 'c99';
+    expect(V.validateShared(a, q, { file: 'curl.json' })).toEqual(['shared/curl.json: gripLine.claim names unknown claim c99']);
+    const b = rd('shared/curl.json'); delete b.cue;
+    expect(V.validateShared(b, q, { file: 'curl.json' })).toEqual(['shared/curl.json: hand card lacks cue']);
+    const d = rd('shared/curl.json'); d.cue.text = 'Call your GP.';
+    expect(V.validateShared(d, q, { file: 'curl.json' }).map((x: string) => x.replace(/ hit .*/, ''))).toEqual(['shared/curl.json: cue.text: SAFETY_LINE_RE']);
+  });
+  it('wordCap and words are data: a settled box with wordCap 999 and 31 words is red under golden B\'s 30', () => {
+    const c = rd('shared/back-pain-box.json'), q = rd('quotes/shared-back-pain-box.json'), s = clone(c);
+    expect(V.validateShared(c, q, { file: 'back-pain-box.json' })).toEqual([]);   // the draft is not judged (S4-P keeps it out of the app)
+    s.status = 'settled'; s.box.wordCap = { limit: 999, basis: 'test' }; s.box.words = 31;
+    s.box.name.text = 'Back pain'; s.box.now.text = Array.from({ length: 24 }, () => 'numb').join(' ') + ' today?'; s.box.doctor.text = 'See a doctor soon.';
+    expect(V.validateShared(s, q, { file: 'back-pain-box.json' })).toEqual(['shared/back-pain-box.json: box has 31 words, at most 30']);
+    s.box.doctor.text = 'See a doctor.';
+    expect(V.validateShared(s, q, { file: 'back-pain-box.json' })).toEqual([]);
+  });
+});
