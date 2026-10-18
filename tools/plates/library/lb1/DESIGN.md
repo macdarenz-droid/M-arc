@@ -184,6 +184,14 @@ lever circle), never the helper maths alone.
   the bar 25.7 cm below the end bar, the elbows 7.4 cm behind the end backMid (red cap 8.9 px clear), the set lean
   kept. shoulder_press draws the close handles with the elbows pointing forward (card variantLine, W2-10, LR-2, c7):
   grip centres +-15 cm, the start elbow 23 cm in front of the shoulder. Every other plate is unchanged.
+- **End elbows (D-LIB9a-FIX1: critic R1 withdrawn).** The critics asked for the end elbow under or behind the
+  shoulder on chin_up and the three pulldowns. The vendored arm (upper arm 0.326 m, forearm to grip 0.342 m) and the
+  cards' stop points (chin over the bar; the handle or bar just below or past the chin) put the elbow in front. A sweep of
+  every end elbow pole (x and z from −1 to 1 in 0.25 steps, the elbow at least 20 cm below the shoulder) gives:
+  chin_up, no upper arm less than 64.3° forward of vertical (66.4° drawn); underhand_lat_pulldown, the most-back
+  sagittal elbow 17.4 cm in front of the shoulder (17.9 cm drawn); single_arm_lat_pulldown, the drawn elbow is already
+  the most-back one, 10.4 cm in front; close_grip_pulldown, a sagittal elbow (full upper-arm length) 23.6 cm in front,
+  so the drawn elbow turns in toward the midline (5.6 cm in front).
 - **Tall machines and F1.** The pulldown station and the assist tower are 2.2-2.3 m tall, so `fit` lands at 126-133
   px/m, inside F1 (123.9-146.3) with little room. Machines are kept at the 8's heights.
 

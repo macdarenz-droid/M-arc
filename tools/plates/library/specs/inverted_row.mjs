@@ -26,6 +26,9 @@
 //  - Rack upright 2.0 m (Do 8 fix, lb1-critic-findings R7: a full-height rack that fills the plate at the same
 //    scale), 10 cm behind the bar, drawn behind the body, with a J-hook (back plate 10 cm above the bar,
 //    cup and lip) whose back plate shows above the end fist (13.3 fix 5).
+//  - The straight start arm's middle runs behind the filled end torso, so it is redrawn there as hidden lines in the end
+//    pose (D-LIB9a-FIX1, R3); the 'blades' anchor sits 6 px back and 4 px up from backUpper, so its leader stays 6 px
+//    clear of those lines.
 //  - Labels: 'Blades back' and 'Hips sagging' point at the back and the buttock, which face the floor. Their open
 //    side is closed in by the start pose and the ghosts below the body, so those leaders cross the lighter ghost lines
 //    (never the trace).
@@ -36,7 +39,7 @@
 //  not exactly vertical (the heels are placed for the chest-at-bar end), elbow 5 deg for "straight" (STRAIGHT), NECK
 //  -6, scap pro -3/-4 and elev -1 (card: "back and down", no size), RACK_Z 10 cm behind the bar, upright 2.0 m, the
 //  J-hook sizes (HOOK), ghost count 1 (Do 8 fix R7: one start outline and one ghost), tell text 'Hips sagging' (the 44 px hit box; card: "hips sagging").
-import { landmarksOf, WINTER, REF } from '../engine.mjs';
+import { landmarksOf, WINTER, REF, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 
 const H = 1.75;
 const BAR = [0, 1.00, 0];
@@ -102,6 +105,46 @@ const RACK_Z = BAR[2] - 0.10;
 const FACE = RACK_Z + 0.038;
 export const HOOK = [[0.95, FACE], [1.10, FACE], [1.10, FACE + 0.025], [0.975, FACE + 0.025], [0.975, BAR[2]],
   [0.95, BAR[2]]].map(([y, z]) => [0, y, z]);
+// Do 8 fix (D-LIB9a-FIX1, inverted_row R3): the straight start arm runs to the bar behind the filled end torso, so its
+// hidden middle is redrawn as hidden lines over the end figure, as pull_up and chin_up redraw the hang (copied, not
+// imported): the engine's own arm shapes on a 1000 px/m probe camera, sampled along the spline it draws, kept only where
+// the end figure covers them.
+const STYLE_HIDDEN = 'eq-cable m-line';
+const cr = (ps, k = 8) => {
+  const n = ps.length, g = i => ps[(i + n) % n], out = [];
+  for (let i = 0; i < n; i++) {
+    const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    for (let j = 0; j < k; j++) { const t = j / k, u = 1 - t;
+      out.push([0, 1].map(d => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d])); }
+  }
+  return out;
+};
+const inside = (p, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+  const [xi, yi] = poly[i], [xj, yj] = poly[j];
+  if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
+function startArmHidden() {
+  const body = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
+  const shapesOf = pose => bodyShapes(fk(resolve(normPose(pose, body), body).q, body), probe)
+    .map(s => ({ key: s.key, pts: s.key.includes('cap') || s.key.startsWith('fist') ? s.poly : cr(s.poly) }));
+  const keep = ['upper.r', 'fore.r', 'fist.r'];
+  const arm = shapesOf(start).filter(s => keep.includes(s.key)).map(s => ({ ...s, pts: s.key.startsWith('fist') ? cr(s.pts, 4) : s.pts }));
+  const cover = shapesOf(end).map(s => s.pts);
+  const items = [];
+  for (const s of arm) {
+    const others = arm.filter(o => o !== s).map(o => o.pts);
+    const vis = s.pts.map(p => !others.some(o => inside(p, o)) && cover.some(c => inside(p, c)));
+    const n = s.pts.length, i0 = vis.indexOf(false);
+    if (i0 < 0) { items.push([...s.pts, s.pts[0]]); continue; }
+    let run = [];
+    for (let k = 1; k <= n; k++) { const i = (i0 + k) % n;
+      if (vis[i]) run.push(s.pts[i]); else { if (run.length > 2) items.push(run); run = []; } }
+    if (run.length > 2) items.push(run);
+  }
+  return items.map(r => ({ type: 'line', pts: r.map(([x, y]) => [0, -y / 1000, x / 1000]), cls: STYLE_HIDDEN, z: 'front', part: 'hidden' }));
+}
+export const START_ARM_HIDDEN = startArmHidden();
+
 export default {
   id: 'inverted_row', name: 'Inverted Row', view: 'side', facing: 'right',
   camera: { fit: true },
@@ -111,6 +154,7 @@ export default {
     { type: 'rackUpright', at: [0, 0, RACK_Z], h: 2.0 },
     { type: 'poly', cls: 'eq', z: 'back', pts: HOOK },
     { type: 'pullupBar', at: BAR, mount: 'ceiling', stub: 0.0001 },
+    (lm, ctx) => (ctx.pose === 'end' ? START_ARM_HIDDEN : null),                  // the start arm's hidden middle
   ],
   checks: [
     { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },          // heels ON the floor (c3)
@@ -121,7 +165,7 @@ export default {
   callouts: [
     { key: 'line', text: 'Body<br>straight', anchor: 'thighTop.r', box: { left: 250, top: 196 }, cue: 'Keep a rigid straight line from head to heels, top and bottom.' },
     { key: 'chest', text: 'Chest<br>to bar', anchor: 'chest', box: { left: 175, top: 172 }, cue: 'Pull until the chest touches the bar.' },
-    { key: 'blades', text: 'Blades<br>back', anchor: 'backUpper', box: { left: 6, top: 172 }, cue: 'Squeeze the shoulder blades back together and down at the top.' },
+    { key: 'blades', text: 'Blades<br>back', anchor: { at: 'backUpper', off: [-6, -4] }, box: { left: 6, top: 172 }, cue: 'Squeeze the shoulder blades back together and down at the top.' },
   ],
   tempo: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   mistake: {

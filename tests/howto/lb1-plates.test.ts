@@ -798,6 +798,14 @@ describe('LIB-9a Do 8 fix round', { timeout: T }, () => {
     const el = cam.P(Q.lm.end['elbow.r']);
     expect(Math.hypot(a[0] - el[0], a[1] - el[1]), 'anchor clear of the solid elbow (px)').toBeGreaterThanOrEqual(12);
   });
+  it('inverted_row: the start arm\'s hidden middle is redrawn as hidden lines in the end pose only, reaching the bar (D-LIB9a-FIX1, R3)', () => {
+    const hid = (pose: string) => itemsIn(ir, pose, { mistake: pose === 'mistake' }).items.filter((it: any) => it.part === 'hidden' && it.type === 'line');
+    expect(hid('end').length, 'end pose hidden lines').toBeGreaterThan(0);
+    expect(hid('start').length + hid('mistake').length, 'never in the start or Mistake pose').toBe(0);
+    const pts = hid('end').flatMap((it: any) => it.pts), bar = [0, 1.0, 0], sh = itemsIn(ir, 'start').lm['shoulder.r'];
+    expect(Math.min(...pts.map((q: number[]) => hyp(q, bar))), 'hidden arm reaches the bar (m)').toBeLessThan(0.04);
+    expect(Math.max(...pts.map((q: number[]) => hyp(q, sh))), 'hidden arm spans most of the straight arm (m)').toBeGreaterThan(0.45);
+  });
   it('close_grip and underhand: the lean arc lies behind the back, outside the solid end figure', () => {
     for (const spec of [cgp, ulp]) {
       const { r, shapes } = solidOf(spec, false);
