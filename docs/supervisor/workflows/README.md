@@ -46,3 +46,21 @@ Done. Top cause (≈0.75): in Chromium 141 an SVG text's font size includes oute
 ## Other scripts from this session
 
 Many other Workflows ran in the first supervisor session (for example the How-to plans and plate critics, the architecture review ARCH-1, the library How-to architecture, the Escobar report plan). Their scripts live only in the session's folder on the current account and are lost on an account switch; they are not kept here. Their results are in the research folders, the cards and `docs/COACHING-DECISIONS.md`. To redo one, rebuild it from the shape above and the matching research README.
+
+## Scripts added 2026-10-17/18 (supervisor session_01SNCyDETVkqVxtLoQxn2Ue9)
+
+Each takes its inputs through `args` (paths, shas). Read the script's `args` uses before you run it, and point the paths at your own scratchpad.
+
+| Script | Shape | Used for |
+|---|---|---|
+| `research-verify.js` | LR-29: a planter puts 2 errors in a history-free copy, a blind Opus critic reviews, the run counts only if both plants are caught and the tier-A plant is rated blocker/high (up to 3 runs) | research wave verifies. New `plantScope` arg: plant only where the critic reviews in full (w2's first 3 runs were invalid without it) |
+| `w2-triage.js` | dedupe many critic findings, one adversarial verifier per item on the real head, a judge for open questions, per-owner fix packets | a research fix round |
+| `w2-rulings-review.js` | 2 lenses per draft ruling (consistency, effect on approved material), final judge, packets revised | before any research ruling is sent |
+| `lib5-note-r2.js` | 3 lenses (rulings, quotes, scope), one refuter per finding, judge | a builder's design note against its rulings |
+| `lib9a-r2-look.js` | evidence audit + blind plate critic (renders beside anchors) + rules lens, judge writes the next lib4-cards section | a drawing builder's milestone post |
+| `lb1-card-fields-verify.js` | blind content verifier with one planted wrong value (D-LIB9-CARDFIELDS) | machine card fields |
+| `h10-card.js`, `cards-r2.js` | draft a card, 2 checker lenses, fixer; then extra check-and-fix rounds | new cards (LIB-3b took 3 rounds) |
+| `gate-flake-4.js` | root cause with a repro probe, card, adversarial check | a CI flake (GATE-FLAKE-N) |
+| `ci-watch-floor.js` | build in a worktree with local proofs, fresh adversarial review, fixer | supervisor-owned `.github/**` changes |
+| `review-lib4c-wiring.js` | 2-lens review of CI wiring | `.github/**` wiring for a card |
+| `lib5-card-apply-amendments.js` | apply numbered amendments to a card file exactly, then a checker | card amendments |

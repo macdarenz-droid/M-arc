@@ -26,3 +26,14 @@ Small shell watchers the supervisor runs in the background, plus one conflict he
 **Not scripted:** cancelling standalone CI runs on a PR head that a merge train supersedes. The supervisor does that directly.
 
 How these fit the whole routine: `docs/supervisor/HANDOVER.md` (merge trains, ticks, APK delivery) and `.claude/skills/supervisor/` (`tick.md`, `ship-apk.md`).
+
+## heads.sh (added 2026-10-18)
+
+`heads.sh` prints `push <branch> <sha7>` when a watched branch head moves. It polls `git ls-remote` every 90 s and never exits on its own. `branch-watch.sh` was the older version of the same idea.
+- Edit `BR` to the live branches.
+- Set `REPO` to your clone.
+- Run it in the same Monitor as `monitor.sh`, re-armed every 30 min with SINCE backdated 3 min:
+
+  `(SINCE=$(date -u -d '-3 minutes' +%Y-%m-%dT%H:%M:%SZ) bash monitor.sh & REPO=<clone> bash heads.sh & wait)`
+
+The outgoing supervisor ran exactly this. One stdout line is one wake-up, so keep `SKIP` in monitor.sh up to date.

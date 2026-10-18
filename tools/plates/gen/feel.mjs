@@ -8,6 +8,8 @@
 // whole and emitted as one JSON string literal, so the parsed string is golden B's bytes, never re-serialized.
 // CSS: FEEL_CSS plus the golden-B page rules the section's own elements use, through HT-2's rewriteCss with the
 // feel pre-rules below (each unit-tested in tests/howto/feel.test.ts).
+import { batchGoldenOf, goldenInputs, goldenRows, rows as registryRows, shippedRows } from '../library/registry.mjs';
+import { layersPage, pagesOf } from '../library/batch-golden.mjs';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -22,7 +24,7 @@ export const CSS_OUT = 'src/slices/howto/css/feel.css';
 
 export const inputs = () => [
   ...Object.keys(readManifest().files).map(p => `tools/plates/layers/${p}`),
-  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', PLATES_JSON,
+  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', ...goldenInputs(),
 ];
 
 export const chunkName = chromeId => `feel-${chromeId}`;
@@ -150,7 +152,7 @@ export default {
 
 /** Renders every section and the CSS from a mirror of the vendored layers. */
 export async function renderAll() {
-  const rows = JSON.parse(readFileSync(join(ROOT, PLATES_JSON), 'utf8'));
+  const rows = goldenRows();
   const mirror = makeMirror();
   try {
     const url = p => pathToFileURL(join(mirror, p)).href;
@@ -174,14 +176,45 @@ export async function renderAll() {
     const css = feelCss({ feelCss: fm.FEEL_CSS, pageCss, used, themeIds: THEME_IDS, total });
     // fm: the engine instance golden B rendered with, after the renderers loaded (howto/render-hanging_leg_raise.mjs
     // REGION_FIX edits the shared body parts for every map on the page, so callers re-render states with this one)
-    return { sections, css, fm };
+    return { sections, css, fm, pageCss, used, themeIds: THEME_IDS, total };
   } finally { cleanupMirror(mirror); }
 }
 
-export async function outputs() {
-  const { sections, css } = await renderAll();
+/** LIB-2b: the shipped library rows (the 8 stay on renderAll, golden B's own run). */
+export const libraryRows = (all = registryRows()) => shippedRows(all).filter(r => r.mode !== 'golden');
+
+/** A library row's feel section, cut from its pinned layers page (D-LIB2b-FEEL), after the page's pin check and the
+ *  rule that feel.css, rebuilt with the section's classes added, is byte-identical (D-LIB2b-CSS). */
+export function librarySection(row, r) {
+  const page = layersPage(row), file = pagesOf(row).layers;
+  if (!page.includes(r.fm.FEEL_CSS) || !page.includes(r.pageCss)) throw new Error(`feel: ${row.id}: FEEL_CSS / HOWTO_CSS not in ${file}`);
+  const section = feelSectionOf(page, row.chromeId);
+  const used = new Set([...r.used, ...classesOf(section)]);
+  if (feelCss({ feelCss: r.fm.FEEL_CSS, pageCss: r.pageCss, used, themeIds: r.themeIds, total: r.total }) !== r.css) throw new Error(`feel: ${row.id}: its feel section in ${file} uses a class HOWTO_CSS styles that feel.css does not keep (feel.css would change)`);
+  return section;
+}
+
+async function outputsOf() {
+  const r = await renderAll(), { sections, css } = r;
   return [
     ...sections.map(s => ({ path: `src/howto/generated/${chunkName(s.pre)}.ts`, text: moduleText(s.id, s.pre, s.section) })),
+    ...libraryRows().map(row => ({ path: `src/howto/generated/${chunkName(row.chromeId)}.ts`, text: moduleText(row.id, row.chromeId, librarySection(row, r)) })),
     { path: CSS_OUT, text: css },
   ];
+}
+
+/** LIB-2 (design 6.1): each output's own inputs. Every feel.mjs output of the 8 is cut from one shared source (the
+ *  golden B page built from the whole vendored folder), so a file's inputs are that whole set; the rows come from the
+ *  registry's goldenRows() (plates.json only), so a library batch row is never among them (L2-A4).
+ *  LIB-2b (lib4-cards 11.1 item 12): a library row's feel-<chromeId>.ts is cut from its pinned layers page, checked
+ *  against FEEL_CSS and HOWTO_CSS (MANIFEST-locked), so its inputs are that page, its layersConfig, batch golden file
+ *  and batch file, the code that reads them, tools/plates/layers/MANIFEST.json and tools/plates/layers.mjs. */
+export const libraryInputs = row => [pagesOf(row).layers, pagesOf(row).layersConfig, batchGoldenOf(row.batchFile), row.batchFile,
+  'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', ...goldenInputs(), 'tools/plates/library/batch-golden.mjs'];
+export function inputsFor(path) {
+  const row = libraryRows().find(r => path === `src/howto/generated/${chunkName(r.chromeId)}.ts`);
+  return row ? libraryInputs(row) : inputs();
+}
+export async function outputs(ctx) {
+  return (await outputsOf(ctx)).map(o => ({ ...o, inputs: inputsFor(o.path) }));
 }

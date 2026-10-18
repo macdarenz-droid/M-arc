@@ -2,7 +2,7 @@
 import type { Exercise, Session } from '@/core/models';
 import { MUSCLE_IDS, type MuscleId } from '@/data/muscles';
 import { VOLUME_BANDS, VOLUME_OFFSET } from '@/data/volume';
-import { weeklyMuscleSets, trainingLevels } from './exposure';
+import { hasWorkingSets, weeklyMuscleSets, trainingLevels } from './exposure';
 import { addDays } from '@/core/dates';
 import { DEFAULT_WEEK_SESSIONS, fullWeekSessions, type WeekPlan } from './weekly';
 
@@ -46,7 +46,7 @@ export function muscleVolumeStatus(sessions: Session[], today: string, custom: E
   const levels = trainingLevels(sessions, custom, { trainingSince, today });
   // QA-R3a-1/5: a past week only counts toward 'under' when it was a full training week
   // (the planned sessions, ADAPT-4). A first week, or the first week back, has empty weeks behind it.
-  const sessionsIn = (week: string) => sessions.filter(x => x.day >= week && x.day < addDays(week, 7)).length;
+  const sessionsIn = (week: string) => sessions.filter(x => x.day >= week && x.day < addDays(week, 7) && hasWorkingSets(x)).length;
   const full = [1, 2].map(i => (weekly[i] ? sessionsIn(weekly[i]!.week) >= fullWeekSessions(plan, weekly[i]!.week) : false));
   return MUSCLE_IDS.map(muscle => {
     const w = [0, 1, 2, 3].map(i => weekly[i]?.sets[muscle] ?? 0);

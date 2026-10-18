@@ -1,0 +1,8 @@
+{
+  "$comment": "LIB-2 (design 2.7, 8.2): golden A's page as registry data: its groups, titles and order by library id. plates-page.mjs maps each id to its spec through the registry row; with this file the builder rebuilds golden A e2bea90c... byte for byte (L2-A2).",
+  "groups": [
+    { "id": "free", "title": "Free weights", "ids": ["lib_dumbbell_lateral_raise", "lib_barbell_back_squat"] },
+    { "id": "hanging", "title": "Hanging", "ids": ["lib_pull_up", "lib_hanging_leg_raise"] },
+    { "id": "machines", "title": "Machines", "ids": ["lib_lat_pulldown", "lib_seated_cable_row", "lib_leg_press", "lib_machine_chest_press"] }
+  ]
+}

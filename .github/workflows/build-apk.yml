@@ -4,6 +4,12 @@ on:
   push:
     branches: ['**']
   workflow_dispatch:
+    inputs:
+      arrangement:
+        description: 'split (default) or serial (E8 arrangement A: one gate job per time zone)'
+        type: choice
+        options: [split, serial]
+        default: split
 
 permissions:
   contents: read
@@ -15,6 +21,10 @@ concurrency:
 jobs:
   source-gate:
     runs-on: ubuntu-latest
+    # HT-10 (D-HT10-A5b/A5c): this job skips gate block HT-10; job ht10-gate runs it, sharded.
+    env:
+      MARC_HT10_OWN_JOB: '1'
+      MARC_GATE_JOB: ${{ inputs.arrangement == 'serial' && '1/1' || '1/4' }}  # GATE-SPLIT: shard 1 of 4 (UTC)
     # D-SUP-CI-1 (10-01): 40 -> 60. The full gate took 30.7 min on main 1fcd9c8 and 38.2 min on HT-9's
     # head; the HT lane, COPY-2 and BUG-37 add more. Every block still runs; this is a runaway limit, not a check.
     timeout-minutes: 60
@@ -73,6 +83,9 @@ jobs:
   # build; android-gate still waits for both, so nothing ships unless both pass.
   visual-gate-tz:
     runs-on: ubuntu-latest
+    env:
+      MARC_HT10_OWN_JOB: '1'  # as source-gate: HT-10 runs in job ht10-gate, in this job's time zone too
+      MARC_GATE_JOB: ${{ inputs.arrangement == 'serial' && '1/1' || '1/4' }}  # GATE-SPLIT: shard 1 of 4 (Auckland)
     timeout-minutes: 60  # D-SUP-CI-1, as source-gate
     steps:
       - uses: actions/checkout@v6
@@ -98,9 +111,122 @@ jobs:
           path: screenshots/
           if-no-files-found: ignore
           retention-days: 30
+      - name: Upload the gate proof (GATE-SPLIT)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-gate-proof-auckland-1
+          path: screenshots/gate-proof-*.json
+          if-no-files-found: error
+          retention-days: 30
+
+  # GATE-SPLIT (docs/qa/GATE-SPLIT-DESIGN.md; owner yes 10-02, AGENTS.md exception; supervisor wiring 10-04):
+  # gate shards 2..K per time zone; source-gate (UTC) and visual-gate-tz (Pacific/Auckland) are shard 1.
+  # scripts/gate-split.mjs picks each shard's blocks; gate-verdict checks every block x time zone ran exactly once.
+  gate-shard:
+    name: gate-shard (${{ matrix.k }}/4, ${{ matrix.tz }})
+    if: ${{ inputs.arrangement != 'serial' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        tz: ['UTC', 'Pacific/Auckland']
+        k: [2, 3, 4]
+    env:
+      MARC_HT10_OWN_JOB: '1'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build the web app
+        run: npm run build
+      - name: Install Chromium for the visual gate
+        run: npx playwright install --with-deps chromium
+      - name: Visual gate, one shard (GATE-SPLIT)
+        env:
+          TZ: ${{ matrix.tz }}
+          MARC_GATE_JOB: ${{ matrix.k }}/4
+        run: npm run gate
+      - name: Upload the gate proof and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-gate-${{ matrix.tz == 'UTC' && 'utc' || 'auckland' }}-${{ matrix.k }}
+          path: screenshots/
+          if-no-files-found: error
+          retention-days: 30
+
+  # HT-10's own gate job (D-HT10-A5b/A5c; supervisor wiring 2026-10-03, HANDOVER 8.7 step 6). Gate block HT-10
+  # runs only here: 2 shards (every tuple lands in exactly one, tools/plates/fidelity/shard.mjs) in each of the
+  # two time zones the gate covers (source-gate: the runner's UTC; visual-gate-tz: Pacific/Auckland), so every
+  # HT-10 tuple still runs once per time zone, as before the split. android-gate waits for all four legs.
+  ht10-gate:
+    name: ht10-gate (${{ matrix.shard }}, ${{ matrix.tz }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 35  # A5: each shard must finish within 25 min (checked inside the block)
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ['1/2', '2/2']
+        tz: ['UTC', 'Pacific/Auckland']
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build the web app
+        run: npm run build
+      - name: Install Chromium for the visual gate
+        run: npx playwright install --with-deps chromium
+      - name: Gate block HT-10, one shard
+        env:
+          TZ: ${{ matrix.tz }}
+          MARC_HT_SHARD: ${{ matrix.shard }}
+        run: node scripts/ht10-gate.mjs
+      - name: Record this shard's time zone for gate-verdict (GATE-SPLIT)
+        if: always()
+        run: mkdir -p screenshots && printf '{"tz":"%s","shard":"%s"}\n' "${{ matrix.tz }}" "${{ matrix.shard }}" > screenshots/ht10-job.json
+      - name: Upload the HT-10 proof and evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-ht10-gate-${{ strategy.job-index }}
+          path: screenshots/
+          if-no-files-found: warn
+          retention-days: 30
+
+  # GATE-SPLIT: one verdict over every shard's proof (every block x time zone and every HT-10 tuple x time
+  # zone exactly once, on this sha, all passing, each gate step under 30 min).
+  gate-verdict:
+    needs: [source-gate, visual-gate-tz, gate-shard, ht10-gate]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          path: proofs/
+          pattern: MARC-*
+      - name: One verdict over every shard's proof (GATE-SPLIT)
+        env:
+          MARC_GATE_ARRANGEMENT: ${{ inputs.arrangement || 'split' }}
+          MARC_NEEDS: ${{ toJSON(needs) }}
+        run: node scripts/ci-verdict.mjs proofs/
 
   android-gate:
-    needs: [source-gate, visual-gate-tz]
+    needs: [source-gate, visual-gate-tz, ht10-gate, gate-shard, gate-verdict]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -186,6 +312,92 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew --no-daemon assembleDebug
+
+      - name: OLD-ANDROID-1 native API floor
+        shell: bash
+        run: |
+          set -euo pipefail
+          # OLD-ANDROID-1a: Capacitor reflects on every registered plugin's declared methods at launch.
+          # A member signature naming a type newer than minSdk 26 throws NoClassDefFoundError on older
+          # Android and the app never opens. Check the compiled classes, not the sources.
+          # OLD-ANDROID-1b: Capacitor also loads every class in capacitor.plugins.json (cap sync writes the
+          # npm plugins there; the watch lane adds its plugin only there), so check those classes too.
+          python3 - <<'PYFLOOR'
+          import glob, json, os, re, subprocess, sys
+          MIN = 26
+          def die(msg): raise SystemExit('::error::' + msg)
+          var = open('android/variables.gradle').read()
+          m = re.search(r'compileSdkVersion\s*=\s*(\d+)', var) or die('compileSdkVersion not found in android/variables.gradle')
+          sdk = os.environ.get('ANDROID_HOME') or os.environ.get('ANDROID_SDK_ROOT') or die('ANDROID_HOME is not set')
+          xml_path = os.path.join(sdk, 'platforms', 'android-' + m.group(1), 'data', 'api-versions.xml')
+          if not os.path.isfile(xml_path): die('missing ' + xml_path + ': the API floor cannot be checked')
+          since = {n: int(v) for n, v in re.findall(r'<class name="([^"]+)" since="(\d+)"', open(xml_path).read())}
+          if len(since) < 1000: die('api-versions.xml has only %d classes' % len(since))
+          mains = glob.glob('android/app/src/main/java/**/MainActivity.java', recursive=True)
+          if len(mains) != 1: die('expected one generated MainActivity.java, found %r' % mains)
+          src = open(mains[0]).read()
+          pkg = re.search(r'^package\s+([\w.]+);', src, re.M).group(1)
+          imports = {i.rsplit('.', 1)[1]: i for i in re.findall(r'^import\s+([\w.]+);', src, re.M)}
+          names = [pkg + '.MainActivity']
+          for n in re.findall(r'registerPlugin\(\s*([\w.]+)\.class\s*\)', src):
+              names.append(n if '.' in n else imports.get(n, pkg + '.' + n))
+          if len(names) < 2: die('no registerPlugin(...) calls found in ' + mains[0])
+          bad, files = [], {}
+          def scan(fq, path):
+              out = subprocess.run(['javap', '-p', '-s', path], check=True, capture_output=True, text=True).stdout
+              member = None
+              for line in out.splitlines():
+                  t = line.strip()
+                  if t.startswith('descriptor:'):
+                      for ty in re.findall(r'L([^;<]+);', t):
+                          v = since.get(ty)
+                          if v is not None and v > MIN: bad.append('%s :: %s :: %s (API %d)' % (fq, member, ty.replace('/', '.'), v))
+                  elif t and not t.startswith(('Compiled from', '}')):
+                      member = t
+          for fq in names:
+              rel = fq.replace('.', '/') + '.class'
+              hits = sorted(glob.glob('android/app/build/intermediates/javac/**/' + rel, recursive=True))
+              if not hits: die('compiled class not found for ' + fq)
+              files[fq] = hits[0]
+              scan(fq, hits[0])
+          # Each JSON class is found where Gradle compiles it: the app module, or the plugin module whose
+          # projectDir capacitor.settings.gradle sets for ':<pkg>' (cap sync drops the @ and turns the / into -).
+          # Class dirs: javac, Kotlin Gradle plugin (tmp/kotlin-classes) and AGP 9 built-in Kotlin (built_in_kotlinc).
+          # JSON failures are collected, not fatal here, so the older floor and HealthConnect output still prints.
+          pj = 'android/app/src/main/assets/capacitor.plugins.json'
+          jerr, entries, modules = [], [], {}
+          try: entries = json.load(open(pj, encoding='utf-8'))
+          except (OSError, ValueError) as e: jerr.append('%s does not parse: %s' % (pj, e))
+          if not jerr and (not isinstance(entries, list) or not entries): jerr.append(pj + ' must be a non-empty list of plugin entries'); entries = []
+          sg = 'android/capacitor.settings.gradle'
+          if os.path.isfile(sg): modules = dict(re.findall(r"project\(\s*'(:[^']+)'\s*\)\.projectDir\s*=\s*new File\(\s*'([^']+)'\s*\)", open(sg).read()))
+          else: jerr.append(sg + ' not found: plugin modules cannot be located')
+          found, seen = [], set(names)
+          for e in entries:
+              cp, ep = (e.get('classpath'), e.get('pkg')) if isinstance(e, dict) else (None, None)
+              if not isinstance(cp, str) or not isinstance(ep, str) or not re.fullmatch(r'[A-Za-z_$][\w$]*(\.[A-Za-z_$][\w$]*)+', cp): jerr.append('bad entry in %s: %r' % (pj, e)); continue
+              if cp in seen: continue
+              seen.add(cp)
+              roots = ['android/app/build']
+              mod = modules.get(':' + ep.replace('@', '', 1).replace('/', '-', 1))
+              if mod: roots.append(os.path.normpath(os.path.join('android', mod, 'build')))
+              rel = cp.replace('.', '/') + '.class'
+              hits = sorted({h for r in roots for sub in ('intermediates/javac/**/', 'tmp/kotlin-classes/**/', 'intermediates/built_in_kotlinc/**/') for h in glob.glob(glob.escape(r) + '/' + sub + rel, recursive=True)})
+              if not hits: jerr.append('compiled class not found for %s (pkg %s) under %s' % (cp, ep, ', '.join(roots))); continue
+              names.append(cp)
+              for h in hits: scan(cp, h)
+              found.append(cp + ' = ' + ', '.join(hits))
+          print(pj + ':', '; '.join(found))
+          for b in bad: print('::error::' + b)
+          for x in jerr: print('::error::' + x)
+          print('checked', len(names), 'classes against', xml_path, ':', ', '.join(names))
+          hc = [f for q, f in files.items() if q.endswith('.HealthConnectNativePlugin')]
+          if len(hc) != 1: die('HealthConnectNativePlugin is not registered')
+          refs = subprocess.run(['javap', '-v', hc[0]], check=True, capture_output=True, text=True).stdout.count('android/health')
+          print('android/health references in the outer HealthConnectNativePlugin:', refs)
+          if refs: die('outer HealthConnectNativePlugin references android/health %d times; keep them in Api34' % refs)
+          if bad or jerr: sys.exit(1)
+          PYFLOOR
 
       - name: Verify native classes in the APK
         shell: bash

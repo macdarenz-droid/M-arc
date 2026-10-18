@@ -1,13 +1,13 @@
 /** Derived, memoised views over the store that several screens share. */
-import { computed } from '@preact/signals';
-import { state } from '@/core/store';
+import { computed, signal } from '@preact/signals';
+import { onReplace, state } from '@/core/store';
 import { getSeries } from '@/core/heartStore';
 import { daysBetween, trainedTodaySessions } from '@/core/dates';
 import { recoveryStatus } from '@/brain/recovery';
 import { readiness } from '@/brain/readiness';
 import { deloadOffer, hiddenBackOnBoard, hiddenInsightIds, rankInsights, runInsightRules, type CoachContext } from '@/brain/coach/rules';
 import { plannedSessions, trainingStreak, weekSummary } from '@/brain/weekly';
-import { shouldShowOnboarding } from '@/brain/onboarding';
+import { shouldShowOnboarding, type OnboardingTrigger } from '@/brain/onboarding';
 import { watchStatus } from '@/native/watch';
 import { bodyWeightResolver } from '@/brain/bodyweight';
 import { splitPlan } from '@/brain/splitPlan';
@@ -48,7 +48,7 @@ export const todayReadiness = computed(() => readiness({
   sessions: sessions.value,
 }));
 export const week = computed(() => weekSummary(state.value.sessions, today.value, state.value.customExercises, plannedSessions({ schedule: state.value.schedule, daysOff: state.value.daysOff, plannedDays: state.value.profile.plannedDays }, today.value)));
-export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value, state.value.daysOff));
+export const streak = computed(() => trainingStreak(state.value.sessions, state.value.schedule, today.value, state.value.daysOff, state.value.profile.plannedDays));
 const coachContext = computed((): CoachContext => ({
   sessions: state.value.sessions, splits: state.value.splits, schedule: state.value.schedule, custom: state.value.customExercises,
   today: today.value, now: minuteNow.value, profileHistory: state.value.profileHistory, profile: state.value.profile,
@@ -68,7 +68,11 @@ export const activeDeload = computed(() => { const d = state.value.deload; retur
 export const deloadSuggestion = computed(() => deloadOffer(coachContext.value));
 /** QA8-4: also counts a session that started before midnight and ended today, within the last 6 hours. */
 export const sessionsToday = computed(() => trainedTodaySessions(state.value.sessions, today.value, minuteNow.value));
+// UI-R05: an opened form stays until Save or close.
+export const heldOnboardingTrigger = signal<OnboardingTrigger | null>(null);
+// A3-7b: Reset, Restore or another tab's replace drops the hold, so a held review never shows over the new profile.
+onReplace(() => { heldOnboardingTrigger.value = null; });
 export const onboardingTrigger = computed(() => {
   const justConnectedWatch = watchStatus.value.state === 'connected' && !state.value.onboarding.watchPromptedAt;
-  return shouldShowOnboarding(state.value.profile, state.value.onboarding, today.value, justConnectedWatch);
+  return heldOnboardingTrigger.value ?? shouldShowOnboarding(state.value.profile, state.value.onboarding, today.value, justConnectedWatch);
 });

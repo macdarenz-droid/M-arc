@@ -243,7 +243,7 @@ public final class WatchService extends Service {
     private Notification notification() {
         PendingIntent open = PendingIntent.getActivity(this,0,new Intent(this,com.mrcdrnzz.dailytracker.MainActivity.class),PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent stop = PendingIntent.getService(this,1,new Intent(this,WatchService.class).setAction(STOP),PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        return new Notification.Builder(this,"watch_sync").setSmallIcon(R.mipmap.ic_launcher)
+        return new Notification.Builder(this,"watch_sync").setSmallIcon(R.drawable.ic_stat_marc)
             .setContentTitle("M/ARC · " + deviceName).setContentText(status)
             .setContentIntent(open).setOngoing(true).setOnlyAlertOnce(true).setVisibility(Notification.VISIBILITY_PRIVATE)
             .addAction(new Notification.Action.Builder(null,"Disconnect",stop).build()).build();
