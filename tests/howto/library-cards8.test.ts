@@ -157,6 +157,10 @@ describe('LIB-5 D-LIB5-TEMPO8: the ruled map and form table; every one of the 8 
       const keys = Object.keys(ex[`lib_${id}`] ?? {});
       expect([id, keys.includes('F7'), keys.includes(id === 'dumbbell_lateral_raise' ? 'H6:not-engine' : 'H6:no-card')]).toEqual([id, true, true]);
     }
+    // D-LIB5-TEMPO8 (commit 2): the 7 ids' H6:no-card and F7 reasons name the ruling; the lateral raise's F7 is as on main
+    const WHY = 'no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); the verified card\'s tempo differs from the approved plate\'s timing; approved timing kept (D-LIB5-TEMPO8)';
+    for (const id of WITH_SPEC) expect([id, ex[`lib_${id}`]['H6:no-card'], ex[`lib_${id}`].F7]).toEqual([id, WHY, WHY]);
+    expect(ex.lib_dumbbell_lateral_raise.F7).toBe('no machine-readable verified card on main for the 8 (plate facts, tempo, top fault); LIB-5 adds their cards');
     const appr = readFileSync(join(ROOT, 'tools/plates/library/qa/approved.mjs'), 'utf8');
     expect(appr).not.toMatch(/CARDS_8|cardResearch/);
     expect(appr).toContain('research: null, census: CENSUS_8[LIB_OF[p.chromeId]] ?? null, mistakeFault: null,');
