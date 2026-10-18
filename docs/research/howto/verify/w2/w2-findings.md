@@ -24,7 +24,7 @@ Plus six open questions answered by the supervisor (W2-49 to W2-54, recorded as 
 | W2-1 | W2A | high | real | shoulder_press sharp-pinch row sent the lifter back to the close handles next session, which c7 backs only for "some discomfort"; fix cut to "Stop the set.", means names c6's fault (LR-6), loadWording no longer credits "stop" to c6. |
 | W2-2 | W2A | low | real (part) | hanging_knee_raise rows[2].means shows the label "(inference)" (LR-27, LR-23); only the label goes. The proposed stop line is refuted: no source on the card gives one (LR-6 R1). |
 | W2-3 | W2A | low | real (part); overturned by LR-34 | The judge kept the inherited golden-B lines under LR-8 and fixed only notes[0]'s implied way down and the "(the inherited active hang)" label. LR-34 (W2-53) now removes the failed inherit lines, so the hanging_knee_raise edits come from W2-53; notes[0] is merged. |
-| W2-4 | not supplied | — | rejected | Not in the verified-real list given to this step; reason not supplied here. Number falls in the W2A range. W2-53 says W2-3, W2-4 and W2-5 "are applied in this form" (LR-34). |
+| W2-4 | W2A | low | rejected | Rejected under LR-8 as in force (triage result.rejected); overturned by LR-34. W2-53 says W2-3, W2-4 and W2-5 "are applied in this form" (LR-34). |
 | W2-5 | W2A | medium | real; fix superseded | chin_up and hanging_knee_raise hand zooms state where the bar sits with no cited claim (CARD-V2). The judge's fix (cite inherit:n) is superseded: LR-34 removes those inherit entries, so the bar-position words leave both zooms. |
 | W2-6 | W2A | low | real (part) | hanging_knee_raise rows[3].means carries a study note "(measured in pull-ups)" (kept as a conditional edit). The rows[1] fix citing inherit:4 is void under LR-34; rows[1] goes through the LR-34 route with a no-change fallback (open point a). |
 | W2-7 | W2A | medium | real | The NSCA thumb quote comes from a floor-to-thigh barbell drill but is tagged CONSENSUS only on three hang cards; now CONSENSUS+WEAK with the inference stated, and hanging_knee_raise setup[1] cites it for "thumbs wrapped". |
@@ -76,11 +76,11 @@ Final rulings: `w2-rulings-final.md` (supervisor final judge, 2026-10-18). All s
 
 | id | LR | ruling | edits routed to |
 |---|---|---|---|
-| W2-49 | LR-30 | Dumbbell kick-up: no conflict. c5 (stuck rep, bench) is shown as the bench failed-rep step, MECH+WEAK; c6 gives three seated finish steps; no seated failed-rep way out is sourced, so none is shown; "never over the face" has no quote. | W2A (7 edits, `variants` opened by name); supervisor (RULINGS row) |
+| W2-49 | LR-30 | Dumbbell kick-up: no conflict. c5 (stuck rep, bench) is shown as the bench failed-rep step, MECH+WEAK; c6 gives three seated finish steps; no seated failed-rep way out without a spotter is sourced, so none is shown (the spotter way out is on dumbbell_shoulder_press c7 and arnold_press c10); "never over the face" has no quote. | W2A (7 edits, `variants` opened by name); supervisor (RULINGS row) |
 | W2-50 | LR-32 | single_arm_lat_pulldown: no source measures frequency; the past-end pull is the top fault (LR-31 step 2); drawable stays true; handlingMistakes reordered; rankNote added. Then 13 Q1(c). | HELPER (4 edits); supervisor (RULINGS row; lib-9a-card.md:188; LIBRARY-HOWTO-ARCHITECTURE.md:85, :303) |
-| W2-51 | LR-31 | Top-fault rule in three steps; every plate.mistake carries a rankNote; all picks unchanged; leg_press drawable false -> true. | THE8 (8 rankNotes, leg_press why/drawable, the8.md section); supervisor (RULINGS row; CARD-V2 x2) |
-| W2-52 | LR-33 | A pause with no seconds is 1 s, named a drawing convention; 0 means no pause is asked; null is never used for a sourced pause. | THE8 (machine_chest_press, leg_press, seated_cable_row); supervisor (RULINGS row) |
-| W2-53 | LR-34 | Once a parent has a card, the child's inherited lines are checked against that card only; golden-B is a source map, never a citation. | W2A (chin_up, hanging_knee_raise, shoulder_press check); HELPER (8 children re-checked); supervisor (RULINGS row; CARD-V2) |
+| W2-51 | LR-31 | Top-fault rule in three steps; every plate.mistake carries a rankNote; picks unchanged on the 8; LB1: assisted_pull_up drawable false (step 1, speed), underhand_lat_pulldown plate.mistake is the past-end pull (step 2); leg_press drawable false -> true. | THE8 (8 rankNotes, leg_press why/drawable, the8.md section); supervisor (RULINGS row; CARD-V2 x2) |
+| W2-52 | LR-33 | A pause with no seconds after the concentric phase is 1 s, named a drawing convention in a WEAK tempo claim; 0 means no quote on the card asks for a pause there; null is never used for such a pause on a card with numeric up/down. | THE8 (machine_chest_press, leg_press, seated_cable_row); supervisor (RULINGS row) |
+| W2-53 | LR-34 | Once a parent has a card, the child's inherited lines are checked against that card or a verified shared card (LR-29); ways out in order, fetched quote first; stop rule for feel rows, red flags, risks and tier-A points; golden-B is a source map, never a citation. | W2A (chin_up, hanging_knee_raise, shoulder_press check); HELPER (8 children re-checked); supervisor (RULINGS row; CARD-V2) |
 | W2-54 | LR-35 | brachialis and rotator_cuff only in feel.secondary/watch; core in no feel role (C2). Three critic findings void. Recheck gains four quotes files, the C2 role check and this round's newly shown quotes. LIB-MUSCLE later. | supervisor (RULINGS row; CARD-V2; verify/w2.md; TASKS.md); HELPER (no change) |
 
 ## Conflicts merged
@@ -91,16 +91,16 @@ Final rulings: `w2-rulings-final.md` (supervisor final judge, 2026-10-18). All s
 4. **chin_up and hanging_knee_raise zooms[0]** (W2-5 x W2-53): W2-53's new `right` text wins. W2-5's added inherit citations are not applied.
 5. **single_arm_lat_pulldown zooms[0]** (W2-40 x W2-53): W2-40's inherit:0 citation is not applied. The words are settled in HELPER's LR-34 step, along with close_grip_pulldown and underhand_lat_pulldown, which have the same pattern.
 6. **dumbbell-kickup variants.seated.steps, gaps[0], gaps[1], notes** (W2-11 x W2-49): the ruling wins.
-   - Seated gets LR-30's three steps (5 in all, within the limit).
+   - Seated gets LR-30's three steps (5 in all, within the 5-step limit; each step ≤12 words).
    - gaps[0] merges W2-11's corrected reason (without "waits on the ruling") with LR-30's sentence.
    - gaps[1] and notes[5] use the ruling's text. W2-11's note is not added.
 7. **leg_press notes[3]** (W2-25 x W2-51): rewritten under LR-31 step 1 (drawable true). W2-25's real point stays: NASM's list is unranked, and no source ranks the lockout second.
-8. **leg_press plate.tempo.pause, .claim, .text and notes[2]** (W2-26 x W2-52): the ruling wins. Pause is 1, not null; the claim list is the same in both.
+8. **leg_press plate.tempo.pause, .claim, .text and notes[2]** (W2-26 x W2-52): the ruling wins. Pause is 1, not null; tempo.claim is [c15, c25], not W2-26's [c15, c24].
 9. **single_arm_lat_pulldown c6 where, handlingMistakes, rankNote** (W2-39 x W2-50): these are the same edits. The rankNote uses the ruling's text. W2-39's c10 and c11 where labels and its inherit[3].why edit are added.
 10. **verify/the8.md fetcher table** (W2-30 x W2-16/W2-28): W2-30's change to the row (50 -> 51) is not applied.
     - The table is the dated 2026-10-17 run, and this round adds 7 squat quotes, not 1.
     - The post-round totals go in the new Fix round 1 fetcher line instead: squat 57, pull_up 37, hanging_leg_raise 37, lat_pulldown 41, seated_cable_row 34, leg_press 62, machine_chest_press 24, dumbbell_lateral_raise 21.
-11. **verify/the8.md Fix round 1** (W2-51 x W2-16/23/28/30/37): the ruling's line "No quote was added or changed." would be false for this round. It is narrowed to "LR-31 and LR-33 added or changed no quote." W2-28's the8.md note and the fetcher line are added to the same section.
+11. **verify/the8.md Fix round 1** (W2-51 x W2-16/23/28/30/37): the ruling's line "No quote was added or changed." would be false for this round. It is narrowed to "LR-31 added or changed no quote; LR-33's c16 and c25 copy verified ACE quotes (c7, c24)." W2-28's the8.md note and the fetcher line are added to the same section.
 12. **quotes/barbell_back_squat.json** (W2-16, W2-28, W2-30): 6 inserts and 1 replace. They are applied by claim id, because head indices shift after each insert.
 13. **quotes/shoulder_press.json** (W2-10 x W2-14): W2-14's head quotes[24] becomes quotes[26] after W2-10's two c7 inserts. It is applied by content.
 14. **shoulder_press notes, pull_up notes, chin_up notes, assisted_pull_up notes, seated_cable_row notes, hanging_knee_raise notes**: several appends per card, listed in order. None of them overlaps another edit.
@@ -180,7 +180,7 @@ LIB-MUSCLE (research, later pass): replace `core` in feel roles on ab_wheel_roll
 **Recheck scope after this round (LR-35).** The recheck covers:
 - the four quotes files;
 - the C2 role check;
-- every quote marked [fetcher] in the packets: W2A 2 items (shoulder_press c7 card and file), THE8 38 items, HELPER 2 items (underhand c19 card and file);
+- every quote marked [fetcher] in the packets: W2A 2 items (shoulder_press c7 card and file), THE8 40 items, HELPER 2 items (underhand c19 card and file);
 - any quote that W2A or HELPER adds in an LR-34 step.
 
 ## Open points for the supervisor
@@ -190,11 +190,12 @@ These are flagged here and not edited in any packet.
 a. **hanging_knee_raise feel.rows[1]** (W2-6 x LR-34): if W2A finds no source that links straps to grip, the row stays as on the head. Its means ("The knee-up with arm straps showed some of the highest ab muscle activity.") is then still not a "usually means" line. Rule whether it stays as it is, is rewritten from c10 only, or is removed.
 b. **Back-squat way out vs the shared card** (W2-16): barbell_back_squat's tier-A way out now teaches the backward bail when on your own (rep-fail, c15). shared/unrack-rerack.json says "Failed back squat: squat straight down onto the pins." (its c18, stronglifts-squat: "Don't drop it forward or back or you'll lose balance."), and that card covers barbell_back_squat. The two sources disagree. A ruling is needed on which way out the back-squat sheet shows, or whether it shows both in order.
 c. **Copy limits on cards:** W2-6 cites the 12- and 15-word row limits (golden-B copy-lint) as a defect. W2-24 says those limits do not apply to cards, because cards hold facts. Neither changes an edit here, but the two judges disagree.
-d. **Rejected items without reasons:** six items have none here (W2-4, W2-13, W2-27, W2-31, W2-41, W2-43). Fill them in from the judge outputs before this table goes into verify/w2.md.
+d. **Rejected items without reasons:** five items have none here (W2-13, W2-27, W2-31, W2-41, W2-43). Fill them in from the judge outputs before this table goes into verify/w2.md.
 e. **Owner tier-A gap list:**
    - drop "get on" for assisted_pull_up (W2-9);
-   - drop the bench failed-rep and seated set-down gaps for the kick-up, and keep the seated failed-rep gap (LR-30);
+   - drop the bench failed-rep and seated set-down gaps for the kick-up, and keep the seated failed-rep gap for training without a spotter (LR-30);
    - add the squat breathing gap (W2-19) and the hanging_leg_raise stool-clearance gap (W2-21).
+   - add the hanging_knee_raise box and stool-clearance gap (LR-34) and, if way (1) fails, chin_up's "bar fixed" (LR-34).
 f. **Leftovers outside each item's fields** (not edited; for a later pass or a ruling):
    - chin_up shoulder row still cites c13, which its text no longer uses (W2-8).
    - The shared-dumbbell-kickup source fv-db-bench URL now redirects 301 to /dumbbell-bench-press-guide/ (W2-15).
@@ -207,5 +208,5 @@ f. **Leftovers outside each item's fields** (not edited; for a later pass or a r
    - 34 other W2B quotes files keep a top-level checked date of 2026-09-30 (W2-47).
    - seated_cable_row c15's text "this was tested on a wide-grip seated row" can read as if the injury link was tested (W2-36).
    - verify/g1.md:130 and :152 quote assisted_pull_up's old gaps[0] as a historical record (W2-9).
-g. **Expected effect of LR-31 on F7** (from W2-51): the lat_pulldown pick (behind the neck) and the squat pick (back rounding) may match none of their approved plates' Mistake tells. The blind pass may then stop them, and F7 stays raised.
-h. **Hand zooms on the lat_pulldown children:** under LR-34, single_arm, close_grip and underhand say "across the base of the fingers" while the parent card does not source hand contact. HELPER's LR-34 step is expected to remove those words. A shown grip line leaves three sheets; this is not a safety line.
+g. **Expected effect of LR-31 on F7** (from W2-51): the lat_pulldown pick (behind the neck), the squat pick (back rounding) and the dumbbell_lateral_raise pick may match none of their approved plates' Mistake tells. The blind pass may then stop them, and F7 stays raised.
+h. **Hand zooms on the lat_pulldown children:** under LR-34, single_arm, close_grip and underhand say "across the base of the fingers" while the parent card does not source hand contact. HELPER's LR-34 step removes those words unless way (1) finds a verbatim quote for the handle contact. A shown grip line leaves three sheets; this is not a safety line.
