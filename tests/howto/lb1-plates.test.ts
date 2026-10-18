@@ -806,6 +806,23 @@ describe('LIB-9a Do 8 fix round', { timeout: T }, () => {
     expect(Math.min(...pts.map((q: number[]) => hyp(q, bar))), 'hidden arm reaches the bar (m)').toBeLessThan(0.04);
     expect(Math.max(...pts.map((q: number[]) => hyp(q, sh))), 'hidden arm spans most of the straight arm (m)').toBeGreaterThan(0.45);
   });
+  // lb1-critic-findings round 3 (lib4-cards 13.7) R5: the low bar and its arm are drawn above the solid figure
+  it('underhand_lat_pulldown: the Mistake draws its arm and the low bar as dashed lines, the arrow and the `past` tell end on the low bar', () => {
+    const r = plate.renderPlate(ulp, { id: 'x', mistake: true }), cam = qaEng.cameraOf(ulp, r.report), Q = qaEng.poseLandmarks(Eng(), ulp);
+    const P = (k: string) => cam.P(Q.lm.mistake[k]), S = P('shoulder.r'), E = P('elbow.r'), G = P('grip.r');
+    const xy = (d: string) => [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
+    const lines = [...r.svg.matchAll(/<path class="m-line" d="([^"]+)"/g)].map(m => xy(m[1]!));
+    const near = (a: number[], b: number[], tol = 1) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!) <= tol;
+    expect(lines.some(l => l.length === 3 && near(l[0]!, S) && near(l[1]!, E) && near(l[2]!, G)), 'dashed arm shoulder-elbow-grip').toBe(true);
+    const fist = 0.02 * 1.75 * cam.pxm;
+    expect(lines.some(l => l.length >= 16 && l.every(q => Math.abs(Math.hypot(q[0]! - G[0], q[1]! - G[1]) - fist) < 0.6)), 'dashed fist-sized ring round the low bar').toBe(true);
+    const arrow = [...r.svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].map(m => xy(m[1]!));
+    expect(arrow.some(a => Math.hypot(a[1]![0]! - G[0], a[1]![1]! - G[1]) <= fist + 2), 'arrow tip (its first segment end) on the low bar').toBe(true);
+    const t = qaEng.resolvePoint(ulp.mistake.tells.find((x: any) => x.key === 'past').anchor, 'mistake', Q.lm, cam);
+    expect(Math.hypot(t[0] - G[0], t[1] - G[1]), '`past` anchor on the low bar ring (px)').toBeLessThanOrEqual(fist + 1);
+    const endGrip = cam.P(Q.lm.end['grip.r']);
+    expect(G[1] - endGrip[1], 'low bar well below the end bar (px)').toBeGreaterThan(25);
+  });
   it('close_grip and underhand: the lean arc lies behind the back, outside the solid end figure', () => {
     for (const spec of [cgp, ulp]) {
       const { r, shapes } = solidOf(spec, false);

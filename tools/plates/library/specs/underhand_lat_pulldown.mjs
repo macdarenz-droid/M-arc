@@ -22,8 +22,9 @@
 //    the end backMid, the red elbow cap 8.9 px clear of the solid end figure). The lean stays the set lean (c5), so
 //    the arm and the bar are the only red parts. The bar sits behind the solid torso, so its moving cable is drawn
 //    dashed to the head pulley, as close_grip draws it.
-//  - Mistake tells: 'past' (the bar pulled too low, on the red arrow's tip right of the chest) and 'back' (the elbows
-//    behind the body, from the open left side), close_grip's pair.
+//  - Mistake tells: 'past' (the bar pulled too low, on the red ring round the low bar) and 'back' (the elbows behind
+//    the body, from the open left side), close_grip's pair. The low bar's arm and a fist-sized ring round it are
+//    redrawn dashed over the solid figure and the arrow runs down the cable line onto it (lb1-critic-findings R5).
 // CARD: GX (c1, about shoulder width), the lean limit (c5, about 30 deg), tempo (card `tempo`). Unsourced numbers:
 //  END_BAR 10 cm under and 9 cm in front of the chin (card: "just below chin height"), START_Y 1.63 m, TILT -8 and
 //  TRUNK -3 (card: "slight lean"), MIS_BAR 14 cm under and 4 cm in front of the chest mark and the Mistake elbow pole
@@ -64,6 +65,16 @@ const end = { ...body, scap: { elev: -2, pro: -2 }, reach: grips(END_BAR, [0.2, 
 // the trunk; the lean stays the set lean (c5).
 const MIS_BAR = [0, lm0.chest[1] - 0.14, lm0.chest[2] + 0.04];
 const misBody = { reach: grips(MIS_BAR, [0, 0.5, -1]) };
+// The low bar and its arm lie under the solid forearm, so the Mistake's arm (the engine's own joints for this pose) and
+// a fist-sized circle round the low bar are redrawn as red dashed lines over the solid figure, and the arrow runs down
+// the cable line onto the low bar (Do 8 recheck, lb1-critic-findings round 3 R5; segment lengths are the arm's own).
+const lmM = landmarksOf({ ...end, ...misBody }, H), lmE = landmarksOf(end, H);
+const yz = p => [0, p[1], p[2]];
+const MIS_ARM = [yz(lmM['shoulder.r']), yz(lmM['elbow.r']), yz(lmM['grip.r'])];
+const FIST_R = 0.02 * H;
+const MIS_RING = Array.from({ length: 17 }, (_, i) => { const a = i / 16 * 2 * Math.PI; return [0, MIS_BAR[1] + FIST_R * Math.sin(a), MIS_BAR[2] + FIST_R * Math.cos(a)]; });
+const ARROW = (() => { const e = yz(lmE['grip.r']), d = MIS_BAR.map((v, i) => v - e[i]), L = Math.hypot(...d), u = d.map(v => v / L);
+  return { from: e.map((v, i) => v + u[i] * (FIST_R + 0.02)), to: MIS_BAR.map((v, i) => v - u[i] * (FIST_R + 0.005)) }; })();
 
 const PAD_AT = lm0['thighTop.r'];
 const PAD = { at: [0, PAD_AT[1], PAD_AT[2]], r: 0.055 };
@@ -144,10 +155,12 @@ export default {
     parts: ['arm.r', 'bar'],
     guides: [
       { kind: 'dashed', pts: [MIS_BAR, headTangent(MIS_BAR)] },
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [14, 0] }, to: { at: 'grip.r', off: [14, 0] } },
+      { kind: 'dashed', pts: MIS_ARM },
+      { kind: 'dashed', pts: MIS_RING },
+      { kind: 'arrow', from: ARROW.from, to: ARROW.to },
     ],
     tells: [
-      { key: 'past', text: 'Pulled<br>too low', anchor: { at: 'grip.r', off: [14, 0] }, box: { left: 176, top: 222 }, cue: 'The bar keeps going down well past the chin.' },
+      { key: 'past', text: 'Pulled<br>too low', anchor: { at: 'grip.r', off: [5, 0] }, box: { left: 176, top: 222 }, cue: 'The bar keeps going down well past the chin.' },
       { key: 'back', text: 'Elbows<br>go back', anchor: 'elbow.r', box: { left: 4, top: 236 }, cue: 'The elbows start to travel back behind the body.' },
     ],
   },
