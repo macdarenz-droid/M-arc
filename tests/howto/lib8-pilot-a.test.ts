@@ -41,11 +41,20 @@ describe('LIB-8-FIX checked solvers (finding 3)', () => {
     expect(incline.reclined({ back: 45, seatTilt: 12, seatTop: 0.45, trunk: 0 }).pose).toEqual(
       { root: { at: [0, 0.5440524517166693, -0.03673144192764042], tilt: -47.00955381302114 }, trunk: 0, neck: -5.212605903003716 });
   });
-  it('every spec pilot-a/plates.json names still imports', async () => {
-    const pj = JSON.parse(readFileSync(new URL('pilot-a/plates.json', LIB), 'utf8')) as { plates: { id: string; extras?: { spec?: string }[] }[] };
-    const ids = pj.plates.flatMap(p => [p.id, ...(p.extras ?? []).flatMap(x => (x.spec ? [x.spec] : []))]);
-    expect(ids).toHaveLength(21);
-    for (const id of ids) expect((await imp(`specs/${id}.mjs`)).default).toBeTruthy();
+});
+
+// D-LIB8FIX-IMPORTS: one test per spec, each at vitest's default timeout, so a failure names the spec that broke.
+const PJ = JSON.parse(readFileSync(new URL('pilot-a/plates.json', LIB), 'utf8')) as { plates: { id: string; extras?: { spec?: string }[] }[] };
+const SPEC_IDS = PJ.plates.flatMap(p => [p.id, ...(p.extras ?? []).flatMap(x => (x.spec ? [x.spec] : []))]);
+describe('LIB-8-FIX every spec pilot-a/plates.json names still imports (finding 3)', () => {
+  it('plates.json names the 21 specs, in order', () => {
+    expect(SPEC_IDS).toEqual(['dumbbell_bench_press', 'incline_dumbbell_press', 'dumbbell_shoulder_press', 'barbell_overhead_press',
+      'barbell_row', 'romanian_deadlift', 'single_leg_romanian_deadlift', 'barbell_shrug', 'box_jump', 'dumbbell_fly', 'dumbbell_fly__alt',
+      'dumbbell_biceps_curl', 'upright_row', 'triceps_pushdown', 'rope_triceps_pushdown', 'pec_fly', 'bent_over_dumbbell_rear_delt_fly',
+      'bent_over_dumbbell_rear_delt_fly__alt', 'reverse_lunge', 'plank', 'mountain_climbers']);
+  });
+  it.each(SPEC_IDS)('%s imports', async id => {
+    expect((await imp(`specs/${id}.mjs`)).default).toBeTruthy();
   });
 });
 
