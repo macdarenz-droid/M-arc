@@ -1,0 +1,32 @@
+{
+  "$comment": "LIB-4b B5 scratch QA card (D-LIB4-FIXTURE-3): measured from the clone's own engine report; never pinned or shipped.",
+  "plateFacts": [
+    {
+      "kind": "angle",
+      "joint": "elbow.r",
+      "pose": "end",
+      "deg": 16
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Press",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 0.3
+    },
+    {
+      "phase": "Return",
+      "s": 1.5,
+      "move": true
+    },
+    {
+      "phase": "Rest",
+      "s": 0.5
+    }
+  ],
+  "topFault": "round"
+}

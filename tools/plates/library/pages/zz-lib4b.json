@@ -1,0 +1,16 @@
+{
+  "groups": [
+    {
+      "id": "scratch",
+      "title": "Scratch",
+      "ids": [
+        "lib_barbell_row",
+        "lib_one_arm_dumbbell_row",
+        "lib_t_bar_row",
+        "lib_landmine_row",
+        "lib_smith_machine_bench_press",
+        "lib_smith_machine_incline_press"
+      ]
+    }
+  ]
+}

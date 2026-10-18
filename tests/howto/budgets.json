@@ -234,6 +234,168 @@
       "measuredGz": 14972,
       "setBy": "HT-7",
       "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    },
+    {
+      "chunk": "ht-barbell-row-*.js",
+      "rawMax": 130538,
+      "gzMax": 29725,
+      "measuredRaw": 118670,
+      "measuredGz": 27022,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "posture-barbell-row-*.js",
+      "rawMax": 119829,
+      "gzMax": 16816,
+      "measuredRaw": 108935,
+      "measuredGz": 15287,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "feel-barbell-row-*.js",
+      "rawMax": 35259,
+      "gzMax": 8855,
+      "measuredRaw": 32053,
+      "measuredGz": 8050,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "ht-one-arm-dumbbell-row-*.js",
+      "rawMax": 135171,
+      "gzMax": 29838,
+      "measuredRaw": 122882,
+      "measuredGz": 27125,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "posture-one-arm-dumbbell-row-*.js",
+      "rawMax": 123799,
+      "gzMax": 16870,
+      "measuredRaw": 112544,
+      "measuredGz": 15336,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "feel-one-arm-dumbbell-row-*.js",
+      "rawMax": 35556,
+      "gzMax": 8875,
+      "measuredRaw": 32323,
+      "measuredGz": 8068,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "ht-t-bar-row-*.js",
+      "rawMax": 133562,
+      "gzMax": 31179,
+      "measuredRaw": 121420,
+      "measuredGz": 28344,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "posture-t-bar-row-*.js",
+      "rawMax": 123865,
+      "gzMax": 17805,
+      "measuredRaw": 112604,
+      "measuredGz": 16186,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "feel-t-bar-row-*.js",
+      "rawMax": 33115,
+      "gzMax": 8811,
+      "measuredRaw": 30104,
+      "measuredGz": 8010,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "ht-landmine-row-*.js",
+      "rawMax": 135163,
+      "gzMax": 31191,
+      "measuredRaw": 122875,
+      "measuredGz": 28355,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "posture-landmine-row-*.js",
+      "rawMax": 125168,
+      "gzMax": 17822,
+      "measuredRaw": 113789,
+      "measuredGz": 16201,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "feel-landmine-row-*.js",
+      "rawMax": 33214,
+      "gzMax": 8813,
+      "measuredRaw": 30194,
+      "measuredGz": 8011,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "ht-smith-machine-bench-press-*.js",
+      "rawMax": 119595,
+      "gzMax": 24941,
+      "measuredRaw": 108722,
+      "measuredGz": 22673,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "posture-smith-machine-bench-press-*.js",
+      "rawMax": 118289,
+      "gzMax": 16496,
+      "measuredRaw": 107535,
+      "measuredGz": 14996,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "feel-smith-machine-bench-press-*.js",
+      "rawMax": 33664,
+      "gzMax": 8818,
+      "measuredRaw": 30603,
+      "measuredGz": 8016,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "ht-smith-machine-incline-press-*.js",
+      "rawMax": 120253,
+      "gzMax": 24946,
+      "measuredRaw": 109320,
+      "measuredGz": 22678,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "posture-smith-machine-incline-press-*.js",
+      "rawMax": 119132,
+      "gzMax": 16499,
+      "measuredRaw": 108301,
+      "measuredGz": 14999,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "feel-smith-machine-incline-press-*.js",
+      "rawMax": 33734,
+      "gzMax": 8815,
+      "measuredRaw": 30667,
+      "measuredGz": 8013,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
     }
   ],
   "perId": [

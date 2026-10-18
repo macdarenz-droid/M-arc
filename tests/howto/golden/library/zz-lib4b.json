@@ -1,0 +1,180 @@
+{
+  "base": {
+    "index": 8,
+    "hash": "e48d731d176c5e3994cab5e2de5ea2db938cbdf6c249600679588daa58b22361"
+  },
+  "entries": [
+    {
+      "kind": "page",
+      "pageSha256": "2f60cf9246dd763d283186a2c0b5b1cb75e6c49c65e92c85d76f2afaa23182cb",
+      "bytes": 693772,
+      "approvedBy": "owner",
+      "date": "2026-10-17",
+      "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "layers-page",
+      "pageSha256": "0a1a402123fe9d21956538a93f2992636aa7d11536d7ba2b0e54a09f54af2272",
+      "bytes": 1894365,
+      "approvedBy": "owner",
+      "date": "2026-10-17",
+      "prev": "baf8f96ac9a00c0b28463dfa2cc155d949ce5c9c7f32589fb4e46979164b0912"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_barbell_row",
+      "src": "library/specs/barbell_row.mjs",
+      "slug": "barbell-row",
+      "prefix": "barbell-row",
+      "chromeId": "barbell-row",
+      "fragments": {
+        "normalSvg": "10fa4266ea5599f200e83d9960068bd9f9afe1f9fa75b986476488e4d2fef917",
+        "normalOverlay": "149683e3937d8be5d8e1142646fd42bd024d9c8e5c6f7d285c85e58f5c8ad1c9",
+        "mistakeSvg": "60593573a3162d3df73073e56396a07c9b4dd80734f0ae302b7c7cb29364b3ac",
+        "mistakeOverlay": "daba8e30b4ee69bdd97e165ad676ad8cded9cffe9043f31e8e8b2cdcf2a8dd0e",
+        "tells": "c8e49fa88e80540ff19ce56a91849be3510ea67817bed653c36220902348b52d",
+        "tempo": "728820058cffd87bf337f5a88ded98b528f42c158d24d2edccbd37490e8664ae",
+        "cues": "c0b18760cc549b8fff80ed238068ef46a77bf6e0a5a015802320afe9261ed2c9",
+        "alt": "aae4cf32a1c202d83bf73e331896a73f0b0b7d4dd620efc2b52fce7b321b7fdb",
+        "mistakeAlt": "3e43ff2a241cb5d2c3e9c6409efcaaf0fff97640011bbedf5eeed94612d30ee1"
+      },
+      "approvedBy": "owner",
+      "date": "2026-10-17",
+      "exemptions": [
+        "F5"
+      ],
+      "why": "LIB-4b B5 scratch fixture (D-LIB4b-F5; never pinned or shipped). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "prev": "c2c84598868f99e3152bd9228fbef209612a0ddd7116f9e9b1bb18d7ba387067"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_one_arm_dumbbell_row",
+      "src": "library/specs/one_arm_dumbbell_row.mjs",
+      "slug": "one-arm-dumbbell-row",
+      "prefix": "one-arm-dumbbell-row",
+      "chromeId": "one-arm-dumbbell-row",
+      "fragments": {
+        "normalSvg": "8fdf6ee96bab7f87f7575b46f690af475c59f6ebe9bba7c3cf0208c109de957e",
+        "normalOverlay": "2872ded75d5b2a5c1d270dfd9a701a654e2479cc3adfcd2f38999180c2e4c6f6",
+        "mistakeSvg": "e50d0c561aa2d97b5ffbeb7f8c3e67444f5e04be437b30596d8209e4674d202a",
+        "mistakeOverlay": "bb340cf71e41abeedbca5728215e1946d619189e08e65b722c64334b52f25ddc",
+        "tells": "c8e49fa88e80540ff19ce56a91849be3510ea67817bed653c36220902348b52d",
+        "tempo": "728820058cffd87bf337f5a88ded98b528f42c158d24d2edccbd37490e8664ae",
+        "cues": "c0b18760cc549b8fff80ed238068ef46a77bf6e0a5a015802320afe9261ed2c9",
+        "alt": "aae4cf32a1c202d83bf73e331896a73f0b0b7d4dd620efc2b52fce7b321b7fdb",
+        "mistakeAlt": "d771c0785ceebae45ea330788f553fb08a7b6cc5525d06ce4b52be9d9378f0be"
+      },
+      "approvedBy": "owner",
+      "date": "2026-10-17",
+      "exemptions": [
+        "F5"
+      ],
+      "why": "LIB-4b B5 scratch fixture (D-LIB4b-F5; never pinned or shipped). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "prev": "54fd93d06f6be16297025631e64539902de1b05ddea54ef402741a8337f61116"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_t_bar_row",
+      "src": "library/specs/t_bar_row.mjs",
+      "slug": "t-bar-row",
+      "prefix": "t-bar-row",
+      "chromeId": "t-bar-row",
+      "fragments": {
+        "normalSvg": "8d2cf0177dfaa5e7fdc3a546d24db01cd29c125a2cf909809a1f072450e55973",
+        "normalOverlay": "c571f269ff51ad196e3f9447976e5ea3970e11a9160ed9ad0e1fbf8880902648",
+        "mistakeSvg": "2b2fbb353425ebc1264d843eaa059328ead03bb765d3108f7a20fc04fea0eb37",
+        "mistakeOverlay": "5b6018c2905ac77d955b633886ff848f3b80afe6c83122767f108906a886916f",
+        "tells": "94cf286a37be5c0e5d57a193d520971b5cebccaa245540d1db0b5e026ffeec23",
+        "tempo": "d17fd4692e5e5782af8eed1f724987c14b7e7a2952c29922367b4baab03fbdb4",
+        "cues": "c90395e1f6410ad7774b6c09d30b8a9c3510ac8395f874b6b2636eb1e121d022",
+        "alt": "132fe69eba2c374f0f66be7a2a226ba088ca4af93c12a160c56e4c4c1da64e98",
+        "mistakeAlt": "6eea18cf9ec0b7692427b8066dd69f0df01dc88a94d51cda657797510b69e884"
+      },
+      "approvedBy": "owner",
+      "date": "2026-10-17",
+      "exemptions": [
+        "F5"
+      ],
+      "why": "LIB-4b B5 scratch fixture (D-LIB4b-F5; never pinned or shipped). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "prev": "8e95f9a96d8b113bacb6b77846963dd0b7cecc95a5ce9cb6e7b48b870a544302"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_landmine_row",
+      "src": "library/specs/landmine_row.mjs",
+      "slug": "landmine-row",
+      "prefix": "landmine-row",
+      "chromeId": "landmine-row",
+      "fragments": {
+        "normalSvg": "fa6da5b92118f5c310c00fedb3019c3f9b05a79138a471940e06bd209b0ac847",
+        "normalOverlay": "5178bbb4be96eb60f107464afd0a04b8a51cb55f2ffccfdf4189e72d63739e21",
+        "mistakeSvg": "abcfa6063cee9710100029d89c6cb4ecdfea037c9cf2c8ee58b20d3676feffc2",
+        "mistakeOverlay": "885f36eaa6d0210e2ce70b1c093327470a9f6a5db6240956238150aeaf7a6429",
+        "tells": "94cf286a37be5c0e5d57a193d520971b5cebccaa245540d1db0b5e026ffeec23",
+        "tempo": "d17fd4692e5e5782af8eed1f724987c14b7e7a2952c29922367b4baab03fbdb4",
+        "cues": "c90395e1f6410ad7774b6c09d30b8a9c3510ac8395f874b6b2636eb1e121d022",
+        "alt": "132fe69eba2c374f0f66be7a2a226ba088ca4af93c12a160c56e4c4c1da64e98",
+        "mistakeAlt": "8d7f941c7ea660773b1572dc4884e058b13437dc191c91f6144ebac444c3e158"
+      },
+      "approvedBy": "owner",
+      "date": "2026-10-17",
+      "exemptions": [
+        "F5"
+      ],
+      "why": "LIB-4b B5 scratch fixture (D-LIB4b-F5; never pinned or shipped). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "prev": "5702fa58a0160bdda9c71af5a71ae65bc27523bd897e27ec0778dc078038c144"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_smith_machine_bench_press",
+      "src": "library/specs/smith_machine_bench_press.mjs",
+      "slug": "smith-machine-bench-press",
+      "prefix": "smith-machine-bench-press",
+      "chromeId": "smith-machine-bench-press",
+      "fragments": {
+        "normalSvg": "dd6894b709468e962f4fc77562e8494d0797d8ee7c6c119a471e4b5bbcf2415b",
+        "normalOverlay": "769389f65c867e867a4082b5f6fc0ae8dee1d4fc4f0a502a451ee3d6885d81bd",
+        "mistakeSvg": "a61c52c9b89e58714ebe1695bddf446ea101802139efd511ac4b9827f081ca49",
+        "mistakeOverlay": "e48d49b8a0fc1daabd255b6478434a96c38e3d11a21dd1246935c3ff54e47abb",
+        "tells": "dad24e8d7c3fbc5e70e87bdb9b6bc74c813f578a80543000cd5155fe412f00bf",
+        "tempo": "db07508fde6cde4b3f9f8c0129a2b60252a7c1abc6dfcb8bf0b2d725c6106938",
+        "cues": "51211391e3855113a9e57aec5c79b4f5dcd6a51a99b76e674079dbe3f4e106d4",
+        "alt": "72bf1cc163d6b1b3030fdb4f77443ed86b45a007be25f2bd4b84f562e0fa956b",
+        "mistakeAlt": "c99242ab8172809c00427bd65f767075a61bf35fef73da59e906155fa57fb1c4"
+      },
+      "approvedBy": "owner",
+      "date": "2026-10-17",
+      "exemptions": [
+        "F5"
+      ],
+      "why": "LIB-4b B5 scratch fixture (D-LIB4b-F5; never pinned or shipped). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "prev": "7088479cbcfe604df46f595d5908fc7df59d24c473e9c9715694988bd65b3233"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_smith_machine_incline_press",
+      "src": "library/specs/smith_machine_incline_press.mjs",
+      "slug": "smith-machine-incline-press",
+      "prefix": "smith-machine-incline-press",
+      "chromeId": "smith-machine-incline-press",
+      "fragments": {
+        "normalSvg": "4ce56e675fb0f22c675b247ec5e82aec7be3fad84dd21078e231561e27fcf6dc",
+        "normalOverlay": "fcddac62eb8f1538294f33a36974367d77041a7bf8f57be1465a8dffaf1188f5",
+        "mistakeSvg": "4a1b1593571865272ff3fa0c438b4ed1687ad77d2482d811fb3df452f7788168",
+        "mistakeOverlay": "400184cdaaf7962355ba7bc5cfe0608cf337ae509517bbe26cc692e379dede43",
+        "tells": "dad24e8d7c3fbc5e70e87bdb9b6bc74c813f578a80543000cd5155fe412f00bf",
+        "tempo": "db07508fde6cde4b3f9f8c0129a2b60252a7c1abc6dfcb8bf0b2d725c6106938",
+        "cues": "51211391e3855113a9e57aec5c79b4f5dcd6a51a99b76e674079dbe3f4e106d4",
+        "alt": "72bf1cc163d6b1b3030fdb4f77443ed86b45a007be25f2bd4b84f562e0fa956b",
+        "mistakeAlt": "5f5d05c8ad7e05e4cf367b0308ee0d3c4aa41895e645fe26299bf16a38280401"
+      },
+      "approvedBy": "owner",
+      "date": "2026-10-17",
+      "exemptions": [
+        "F5"
+      ],
+      "why": "LIB-4b B5 scratch fixture (D-LIB4b-F5; never pinned or shipped). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "prev": "275c1dadb61bb146f5fde8733d9759ae9552377db79ed76b178fe2ecfeca06b7"
+    }
+  ]
+}

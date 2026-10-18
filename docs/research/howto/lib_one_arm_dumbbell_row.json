@@ -1,0 +1,32 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ed4ec89573aaa7bd5e7ecd28c4fb290789d3140218fc5f5769412e914298b96b
+{
+  "id": "lib_one_arm_dumbbell_row",
+  "rev": 1,
+  "research": {
+    "card": "tests/howto/fixtures/lib4b/research/lib_one_arm_dumbbell_row.json",
+    "rev": 1
+  },
+  "sources": [
+    "signorile2002",
+    "lusk2010",
+    "andersen2014",
+    "sperandei2009",
+    "padovan2024",
+    "snyder2009",
+    "lehman2004",
+    "buonsenso2025",
+    "difonza2026",
+    "doma2013",
+    "kolber2013",
+    "kolber2010",
+    "odriscoll1992",
+    "ace-lat-pulldown",
+    "baechle-earle",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "wrist",
+    "shoulder"
+  ]
+}

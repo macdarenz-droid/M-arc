@@ -1,0 +1,38 @@
+{
+  "groups": [
+    {
+      "id": "scratch",
+      "title": "Scratch",
+      "ids": [
+        "lib_barbell_row",
+        "lib_one_arm_dumbbell_row",
+        "lib_t_bar_row",
+        "lib_landmine_row",
+        "lib_smith_machine_bench_press",
+        "lib_smith_machine_incline_press"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/render/closeups-8.mjs",
+  "closeups": {
+    "lib_barbell_row": {
+      "optionsKey": "lat_pulldown"
+    },
+    "lib_one_arm_dumbbell_row": {
+      "optionsKey": "lat_pulldown"
+    },
+    "lib_t_bar_row": {
+      "optionsKey": "seated_cable_row"
+    },
+    "lib_landmine_row": {
+      "optionsKey": "seated_cable_row"
+    },
+    "lib_smith_machine_bench_press": {
+      "optionsKey": "machine_chest_press"
+    },
+    "lib_smith_machine_incline_press": {
+      "optionsKey": "machine_chest_press"
+    }
+  },
+  "jump": null
+}
