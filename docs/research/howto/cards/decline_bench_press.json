@@ -515,30 +515,34 @@
   },
   "setup": [
     {
-      "step": "Set the bench in decline and set the safety racks at both sides.",
+      "step": "Set the bench in decline and the safety racks at both sides.",
       "claim": [
         "c2",
         "c6"
       ]
     },
     {
-      "step": "Set the bar at a height you can reach without straightening your arms.",
+      "step": "Set the bar where you can reach it without straightening your arms.",
       "claim": "c7"
     },
     {
-      "step": "Hook your feet under the pads and lie back with the rack behind your head.",
-      "claim": "c1"
-    },
-    {
-      "step": "Shoulder blades together and down; grip slightly wider than your shoulders.",
-      "claim": "c4"
-    },
-    {
-      "step": "Lift the bar out, ideally with a spotter, and hold it over your chest on locked arms.",
+      "step": "Feet hooked, blades together and down, grip slightly wider than shoulders.",
       "claim": [
-        "c7",
-        "c6"
+        "c1",
+        "c4",
+        "c3"
       ]
+    },
+    {
+      "step": "New to it? Use a spotter. Lift out on locked arms.",
+      "claim": [
+        "c6",
+        "c7"
+      ]
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c11"
     }
   ],
   "posture": [
@@ -613,9 +617,9 @@
       },
       {
         "where": "Pain in the chest or front of the shoulder while lowering",
-        "means": "Pec tendon tears happen while lowering.",
+        "means": "Fault: lowering the bar without control.",
         "fix": "Stop the set. Don't train through the pain.",
-        "claim": "c14",
+        "claim": "c5",
         "redFlag": "shoulder"
       },
       {
@@ -629,17 +633,12 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face and neck: a bar landing high on the chest moves toward the neck, and a failed rep cannot be rolled off; wrap the thumbs and set safety racks.",
+      "risk": "Bar over face and neck: touch low; wrap thumbs; set the safety racks.",
       "claim": [
         "c12",
-        "c13",
         "c6",
         "inherit:0"
       ]
-    },
-    {
-      "risk": "Add 2-10% once you beat your target reps by one or two.",
-      "claim": "c11"
     },
     {
       "risk": "Pec tendon rupture while lowering the bar.",

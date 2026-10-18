@@ -763,15 +763,12 @@
       "claim": "c6"
     },
     {
-      "step": "Lie down with your shoulders at least 8 cm from the uprights; feet flat.",
+      "step": "Shoulders at least 8 cm from uprights; feet flat; blades together.",
       "claim": [
         "c13",
-        "c14"
+        "c14",
+        "c12"
       ]
-    },
-    {
-      "step": "Pull your shoulder blades together.",
-      "claim": "c12"
     },
     {
       "step": "Grip slightly wider than shoulders, thumbs wrapped, bar low in the palm.",
@@ -787,6 +784,10 @@
         "c7",
         "c27"
       ]
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c16"
     }
   ],
   "posture": [
@@ -867,15 +868,15 @@
       },
       {
         "where": "Pain in the chest or front of the shoulder while lowering",
-        "means": "Pec tendon tears happen while lowering.",
+        "means": "Fault: lowering the bar too fast.",
         "fix": "Stop the set. Don't train through the pain.",
-        "claim": "c22",
+        "claim": "c18",
         "redFlag": "shoulder"
       },
       {
         "where": "Pain deep in the front of the shoulder",
         "means": "Poor technique is a risk for shoulder injuries.",
-        "fix": "Stop the set. Don't train through the pain. Keep the upper arms about 45-60 degrees from the torso.",
+        "fix": "Stop the set. Don't train through the pain. Keep upper arms 45-60 degrees out.",
         "claim": [
           "c24",
           "c3"
@@ -884,7 +885,7 @@
       },
       {
         "where": "Wrist pain or strain",
-        "means": "Fault: the bar sits close to the fingers, so the wrist bends back.",
+        "means": "Fault: the bar sits near the fingers, bending the wrist back.",
         "fix": "Grip the bar lower in the palm. Don't train through the pain.",
         "claim": "c5",
         "redFlag": "wrist"
@@ -893,18 +894,13 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face and neck: a dropped or stuck bar can crush the neck; wrap the thumbs and use safety pins or a spotter.",
+      "risk": "Bar over face and neck: wrap the thumbs; use safety pins or a spotter.",
       "claim": [
         "c9",
-        "c23",
         "c4",
         "c6",
         "c7"
       ]
-    },
-    {
-      "risk": "Add 2-10% once you beat your target reps by one or two.",
-      "claim": "c16"
     },
     {
       "risk": "Pec tendon rupture while lowering the bar.",

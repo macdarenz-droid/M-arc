@@ -23,6 +23,10 @@
     {
       "field": "zooms.bar-low-palm",
       "why": "true for this child because the hand, bar and wrist rule are the same as the parent's (parent c5; c4 here)."
+    },
+    {
+      "field": "setup.safety-pins",
+      "why": "true for this child because the bar is still lowered from a rack over the face, neck and chest, so the parent's pin height (parent c6: set the pins slightly lower than the bottom position) applies to the incline's safety catches (c6)."
     }
   ],
   "claims": [
@@ -560,11 +564,12 @@
   },
   "setup": [
     {
-      "step": "Set the back pad to about 30 degrees and set the safety catches.",
-      "claim": [
-        "c1",
-        "c6"
-      ]
+      "step": "Set the back pad to about 30 degrees.",
+      "claim": "c1"
+    },
+    {
+      "step": "Set the safety pins slightly below where the bar touches your chest.",
+      "claim": "inherit:3"
     },
     {
       "step": "Sit back with head, shoulders and hips on the pad, feet flat.",
@@ -575,8 +580,11 @@
       "claim": "c4"
     },
     {
-      "step": "With a spotter, lift the bar out to straight arms above your shoulders.",
-      "claim": "c6"
+      "step": "With a spotter, unrack to straight arms above your shoulders.",
+      "claim": [
+        "c6",
+        "c5"
+      ]
     }
   ],
   "posture": [
@@ -679,7 +687,7 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face and neck: the upper-chest touch point is closest to the neck; wrap the thumbs and use a spotter or safety catches.",
+      "risk": "Bar over face and neck: wrap thumbs; use a spotter or safety catches.",
       "claim": [
         "c15",
         "c6",
@@ -691,7 +699,7 @@
       "claim": "c16"
     },
     {
-      "risk": "Shoulder injuries are common in lifting and linked to poor technique; flared elbows strain the shoulder.",
+      "risk": "Shoulder injuries are linked to poor technique; flared elbows strain the shoulder.",
       "claim": [
         "c17",
         "c8"

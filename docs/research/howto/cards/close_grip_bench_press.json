@@ -527,9 +527,12 @@
       },
       {
         "where": "Mostly the front of the shoulders",
-        "means": "The grip may have crept wider.",
+        "means": "A medium grip works the front shoulder more than a narrow one.",
         "fix": "Bring the hands in line with the shoulders.",
-        "claim": "c7",
+        "claim": [
+          "c7",
+          "c1"
+        ],
         "redFlag": null
       },
       {
@@ -546,7 +549,7 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face and neck: touch low on the chest, wrap the thumbs and use safety pins or a spotter.",
+      "risk": "Bar over face and neck: touch low; wrap thumbs; use pins or a spotter.",
       "claim": [
         "c10",
         "c4",

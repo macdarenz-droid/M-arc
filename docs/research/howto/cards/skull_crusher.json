@@ -469,24 +469,30 @@
   },
   "setup": [
     {
-      "step": "Lie on a flat bench with your head near the end, feet flat.",
-      "claim": "c10"
+      "step": "Lie on a flat bench, head near the end, feet flat.",
+      "claim": [
+        "c10",
+        "c1"
+      ]
     },
     {
       "step": "Grip the bar closed, thumbs wrapped, palms toward your feet.",
       "claim": "c1"
     },
     {
-      "step": "Press the bar to straight arms above your face.",
-      "claim": "c2"
-    },
-    {
-      "step": "Upper arms vertical, elbows shoulder-width apart.",
-      "claim": "c6"
+      "step": "Press to straight arms above your face; upper arms vertical.",
+      "claim": [
+        "c2",
+        "c5"
+      ]
     },
     {
       "step": "When new to the lift, have a spotter and start light.",
       "claim": "c16"
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c12"
     }
   ],
   "posture": [
@@ -519,9 +525,9 @@
       "claim": "c9"
     },
     {
-      "mistake": "Using a straight bar, wrists fully turned palms down.",
-      "fix": "Use an EZ bar: its angled grip eases the wrist and elbow.",
-      "claim": "c8"
+      "mistake": "Wrists bent back or curled.",
+      "fix": "Keep the wrists neutral.",
+      "claim": "c3"
     }
   ],
   "feel": {
@@ -543,14 +549,14 @@
       },
       {
         "where": "Mostly the shoulders",
-        "means": "Fault: the upper arms drift back, which shifts the load onto the shoulder.",
+        "means": "Fault: upper arms drift back, shifting the load onto the shoulder.",
         "fix": "Keep the upper arms vertical.",
         "claim": "c7",
         "redFlag": null
       },
       {
         "where": "Pain at the back of the elbow while lowering",
-        "means": "Triceps tendon tears are rare; they often come from forceful lowering.",
+        "means": "Fault: lowering the bar forcefully.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c15",
         "redFlag": "elbow"
@@ -559,9 +565,8 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face: a dropped bar lands on the face; wrap the thumbs, lower slowly, and have a spotter while you are new to the lift.",
+      "risk": "Bar over the face: wrap the thumbs, lower slowly, have a spotter when new.",
       "claim": [
-        "c14",
         "c2",
         "c1",
         "c4",
@@ -571,10 +576,6 @@
     {
       "risk": "Triceps tendon rupture (rare), often from forceful lowering or lifting against resistance.",
       "claim": "c15"
-    },
-    {
-      "risk": "Add 2-10% once you beat your target reps by one or two.",
-      "claim": "c12"
     }
   ],
   "redFlags": [
@@ -601,5 +602,8 @@
     "remove": [],
     "why": "exercises.json: triceps primary, no secondary. c11 supports it. No change."
   },
-  "anchorSource": "ace-lying-tri-ext"
+  "anchorSource": "ace-lying-tri-ext",
+  "gaps": [
+    "tier-A way out: the read sources give only a spotter for a first-time lifter; no source says how to end a failed rep without one (LIB-WAYOUT)"
+  ]
 }
