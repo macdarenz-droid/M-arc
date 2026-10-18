@@ -50,7 +50,14 @@ const source = (name: string, text: string) => { writeFileSync(join(root, LIB, '
 const tSource = (name: string, tpl: string, params: unknown, tail = 'export default make(PARAMS, facts);', facts = '{}') =>
   source(name, `import { make } from '../templates/${tpl}.mjs';\nconst PARAMS = ${JSON.stringify(params)};\nexport const facts = ${facts};\n${tail}\n`);
 const dAll = (params: unknown, extra: any = {}) => base.map(r => (r.id === F.ID ? { ...row, mode: 'D', parent: 'lib_pull_up', params, ...extra } : r));
-const tAll = (params: unknown, src: string, template: unknown = 'BENCH') => base.map(r => (r.id === F.ID ? { ...row, mode: 'T', parent: 'lib_pull_up', template, params, src } : r));
+/** A T row; `tpl` is its template, or NO_TEMPLATE for a row without the field. */
+const NO_TEMPLATE = Symbol('no template');
+const tAll = (params: unknown, src: string, tpl: unknown = 'BENCH') => base.map(r => {
+  if (r.id !== F.ID) return r;
+  const t: any = { ...row, mode: 'T', parent: 'lib_pull_up', template: tpl, params, src };
+  if (tpl === NO_TEMPLATE) delete t.template;
+  return t;
+});
 /** The page built from `all` (the row's own source), as its batch page would be. */
 const pageFor = async (all: any[]) => (await bp.buildPlatesPage(await pp.groupsConfig({ groups: [{ id: 'c', title: 'C', ids: [F.ID] }] }, all, 'test page'))).html.toString('utf8');
 const keys = (r: any) => I.HARD.flatMap((h: string) => r.hard[h].problems.filter((p: any) => p.key !== 'browser:not-run').map((p: any) => `${h} ${p.key}`));
@@ -137,7 +144,7 @@ describe('LIB-3c 3c-A4 PARAMS ranges (D-LIB10-RANGES, D-LIB3c-SHARED)', { timeou
   });
   it('a T row with no template, or one naming no file under templates/, makes candidateOf throw', async () => {
     const params = { 'bar.kind': 'straight' }, src = tSource('tcheck', 'BENCH', params);
-    for (const t of [undefined, 'NOPE', '../derive', 'BEN/CH', 7]) {
+    for (const t of [NO_TEMPLATE, null, '', 'NOPE', '../derive', 'BEN/CH', 7]) {
       await expect(cand.candidateOf(F.ID, { platesHtml: html, engine: E, all: tAll(params, src, t) }), String(t)).rejects.toThrow(/template/);
     }
   });
@@ -167,7 +174,7 @@ describe('LIB-3c 3c-A5 the child proof (D-LIB10-CHILDPROOF)', { timeout: T }, ()
   it('a T source that calls make and then moves one callout gives H10.child', async () => {
     writeRanges({ BENCH: fam({ 'bar.kind': ['straight'] }) });
     const params = { 'bar.kind': 'straight' };
-    const all = tAll(params, tSource('t_moved', 'BENCH', params, "const s = make(PARAMS, facts);\nexport default { ...s, callouts: s.callouts.map((c, i) => (i === 0 ? { ...c, box: { ...c.box, left: c.box.left + 4 } } : c)) };"));
+    const all = tAll(params, tSource('t_moved', 'BENCH', params, "const s = make(PARAMS, facts), k = s.callouts.find(c => c.box).key;\nexport default { ...s, callouts: s.callouts.map(c => (c.key === k ? { ...c, box: { ...c.box, left: c.box.left + 4 } } : c)) };"));
     const h = (await qa(all, {}, () => {}, await pageFor(all))).h10;
     expect(h.length).toBeGreaterThan(0);
     expect(h.every((k: string) => k.startsWith('H10.child:'))).toBe(true);
