@@ -408,6 +408,23 @@
           "where": "3. The Hanging Mechanics: Active Shoulders, Not Passive Arms"
         }
       ]
+    },
+    {
+      "id": "c20",
+      "text": "Stop line for shoulder pain: NASM says that if a client reports shoulder or elbow pain, numbness or tingling that persists, they are referred on rather than training through it. Written for chin-ups and pull-ups and applied to the knee-raise hang, which shares the arm position, by inference.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chin-pull",
+          "text": "if a client reports shoulder or elbow pain, numbness, or tingling that persists, refer them to a physician or physical therapist rather than training through it.",
+          "where": "Injury Prevention and Scope"
+        }
+      ]
     }
   ],
   "sources": [
@@ -496,6 +513,16 @@
       "url": "https://bullbarfit.com/blogs/q-as/what-is-the-correct-way-to-grip-the-bar-to-avoid-calluses",
       "title": "How to Grip the Bar Without Getting Calluses (Bullbar Fit, manufacturer blog)",
       "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-18"
+    },
+    {
+      "id": "nasm-chin-pull",
+      "url": "https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked",
+      "title": "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog)",
+      "kind": "guideline",
       "year": null,
       "pmid": null,
       "access": "full",
@@ -685,10 +712,11 @@
       {
         "where": "Shoulder",
         "means": "Arms high overhead narrow the space under the shoulder roof.",
-        "fix": "Pull your shoulder blades down and back before each rep.",
+        "fix": "Pull your shoulder blades down and back. If it hurts, stop the set.",
         "claim": [
           "c15",
-          "c19"
+          "c19",
+          "c20"
         ],
         "redFlag": "shoulder"
       }
@@ -762,6 +790,7 @@
     "W2A 2026-10-17: searched PubMed esearch 'pull-up AND (dismount OR fall OR falling)' (14 hits), 'chin-up AND injury' (5), 'horizontal bar AND fall AND injury AND exercise' (1), none on how to get down; esearch-only leads are not citations; coach and manual pages for getting down from the bar, plus strengthlog.com/hanging-knee-raise/ -> 200, strengthlog.com/hanging-leg-raise/ -> 200, muscleandstrength.com hanging-knee-raise -> 403. Fetched acefitness.org exercise-library/190/chin-ups -> 200; strengthlog.com/chin-up/ -> 200; strengthlog.com/pull-up/ -> 200; barbend.com/chin-up/ -> 200; en.wikipedia.org/wiki/Pull-up_(exercise) -> 200; darebee.com/exercises/pull-ups.html -> 200; inspireusafoundation.org/chin-ups/ -> 200; acefitness.org/resources/everyone/blog/6636/how-to-do-a-pull-up/ -> 200; verywellfit chin-up and pull-up pages -> 402; nerdfitness, garagegymreviews, healthline, menshealth, bodybuilding.com and puregym pull-up/chin-up pages -> 404; muscleandstrength.com chin-up and pull-up -> 403; nsca.com pull-ups -> 403; startingstrength.com chin-up -> 403; Body-Solid owner's manuals GDCC250, GDIP59, DPCC, GKR60 (bodysolid.com/content/...) -> 200 (assembly and general warnings only). No source says how to get down from the bar safely after hanging knee raises.",
     "Verify w2 2026-10-18 (W2-2): feel.rows[2].means lost '(inference)' (LR-27 plain words; 'likely' keeps how sure). The fix 'Keep the knees bent.' is kept: it is the sourced progression (c13, c14: straight legs are the version measured at about 3000 N), not a stop line. No source on this card supports 'Stop the set. Don't train through the pain.', so none is added (LR-6 R1). Re-read by efetch: McGill 2015 (PMID 25111163) has no bent-knee load and no advice line; Escamilla 2006 (PMID 16649890) names the Power Wheel knee-up, reverse crunch and bent-knee sit-up, not the hanging knee-up, as possibly problematic for low back problems. gaps[2] and the pending redFlag 'back' stand.",
     "Verify W2-6 2026-10-18: feel.rows[3].means drops '(measured in pull-ups)' (only when the LR-34 step sources the row's fix; otherwise the row stays as on the head); how sure stays in c15 (MECH, applied to a hang by reasoning). W2-6's straps fix for feel.rows[1] (cite inherit:4) is void under LR-34: the parent card has no strap line, and the Yessis page (curl 200, 2026-10-18) mentions no straps or slings. risks[0] and feel.rows[1].where kept: no source or study wording.",
-    "W2A LR-8 check under LR-34 against cards/hanging_leg_raise.json on 5036283d (golden-B research is a source map only): the thumb (parent c17) holds, restating the whole string 'Full grip' (THUMB_PAGE, tools/plates/layers/exercises/hanging_leg_raise.howto.mjs on main). The wrist (parent c18) fails: no wrist string on that sheet is whole on the parent card ('A curling wrist means your grip is failing. End the set or use straps.', 'Base of the fingers, thumb wrapped, wrist level.' and 'Bar at the fingertips, wrist curled.' each add straps or a hand contact the parent does not source), so the wrist inherit entry is removed and grip.wrist cites this card's own c16. The jump or step-up holds (parent c1) and is cited to this card's own c1, not inherited: the parent's shipped get-in string is the box step, so there is no whole string. Grip width, hand contact, the box-clear step, chalk, straps and the active hang fail (the8.md:138 lists the width, straps and box clearance as unsourced golden-B points; the parent's grip.handContact says Not sourced; chalk and the active hang are not on the parent card). Those entries are removed. Way (1): hand contact and width are this card's own c17 and c18 (bullbar-calluses, MECH, WEAK); the shoulder row's fix is this card's own c19 (bullbar-calluses, MECH, WEAK; its next sentence, \"Keep a slight bend in your elbows—never lock out fully.\", conflicts with c2 and is not used); no quote gives the box clearance, so it stays in gaps; no fetched source links straps to grip giving out, so feel.rows[1] stays and gaps records it."
+    "W2A LR-8 check under LR-34 against cards/hanging_leg_raise.json on 5036283d (golden-B research is a source map only): the thumb (parent c17) holds, restating the whole string 'Full grip' (THUMB_PAGE, tools/plates/layers/exercises/hanging_leg_raise.howto.mjs on main). The wrist (parent c18) fails: no wrist string on that sheet is whole on the parent card ('A curling wrist means your grip is failing. End the set or use straps.', 'Base of the fingers, thumb wrapped, wrist level.' and 'Bar at the fingertips, wrist curled.' each add straps or a hand contact the parent does not source), so the wrist inherit entry is removed and grip.wrist cites this card's own c16. The jump or step-up holds (parent c1) and is cited to this card's own c1, not inherited: the parent's shipped get-in string is the box step, so there is no whole string. Grip width, hand contact, the box-clear step, chalk, straps and the active hang fail (the8.md:138 lists the width, straps and box clearance as unsourced golden-B points; the parent's grip.handContact says Not sourced; chalk and the active hang are not on the parent card). Those entries are removed. Way (1): hand contact and width are this card's own c17 and c18 (bullbar-calluses, MECH, WEAK); the shoulder row's fix is this card's own c19 (bullbar-calluses, MECH, WEAK; its next sentence, \"Keep a slight bend in your elbows—never lock out fully.\", conflicts with c2 and is not used); no quote gives the box clearance, so it stays in gaps; no fetched source links straps to grip giving out, so feel.rows[1] stays and gaps records it.",
+    "W2-R12 2026-10-18: feel.rows[3].fix gains its stop line by LR-34 way (1): new c20 quotes nasm-chin-pull's pain sentence (curl 2026-10-18, HTTP 200, verbatim; the source chin_up c16 quotes), tagged MECH (written for chin-ups and pull-ups; the hang shares the arm position). redFlag stays 'shoulder'."
   ]
 }
