@@ -524,7 +524,8 @@
       "why": "Boostcamp lists allowing the elbows to flare out excessively, increasing shoulder strain, among its common mistakes (c8), and its exercise page names shoulder strain from flared elbows as an injury risk (c9). How often it happens is not measured in any source read.",
       "claim": [
         "c8",
-        "c9"
+        "c9",
+        "c7"
       ],
       "drawable": true,
       "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for an incline-press fault (Boostcamp's \"Common Mistakes to Avoid\" is a heading; \"usually 30–45 degrees\" is the bench setting; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c16) is about all weight training). Two named faults are tied to harm: flared elbows (\"Allowing the elbows to flare out excessively, increasing shoulder strain\", c8, and \"Shoulder strain from flared elbows\", c9; two sources) and the low-back arch (\"lower back arching excessively\" in the same injury-risk line, c9; one source). Step 2's first tie-break picks the flared elbows: they are on Boostcamp's common-mistakes list, and the arch is only in its form tips (\"avoid arching your back excessively\"); the second tie-break (more harm sources) gives the same. Boostcamp's \"Keep your wrists straight to prevent strain.\" ties bent wrists (a joint position, ruling R-LB2-15) to strain, one source, in its tips and not on its common-mistakes list, so the first tie-break still picks the flared elbows. An incline set too steep and lifting too heavy are setup and load choices, and \"wrist strain from poor grip angle\" is a grip choice; none is a candidate. drawable is true: in the side view a flared elbow sits level with the shoulder instead of down toward the ribs (as close_grip_bench_press draws its elbow drift); the arch, the head's earlier pick, stays in handlingMistakes."
@@ -665,7 +666,7 @@
         "redFlag": null
       },
       {
-        "where": "Shoulder or chest, sudden or severe",
+        "where": "Any pain or discomfort in the shoulder or chest",
         "means": "Fault: the elbows flare out too far, which strains the shoulder.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [

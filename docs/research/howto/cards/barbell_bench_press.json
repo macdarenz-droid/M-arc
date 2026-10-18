@@ -55,7 +55,7 @@
     },
     {
       "id": "c3",
-      "text": "During the rep the upper arms sit about 45-60 degrees from the torso and the hips stay on the bench.",
+      "text": "During the rep the upper arms sit about 45-60 degrees from the torso and the hips stay on the bench. StrongLifts (c2) instead says to tuck the elbows about 75 degrees; the card shows Human Kinetics' 45-60 degree range because it is given for the whole rep, while StrongLifts gives one value as the bar is lowered.",
       "tags": [
         "CONSENSUS"
       ],
@@ -546,6 +546,23 @@
           "where": "Here's how to Bench Press with proper form"
         }
       ]
+    },
+    {
+      "id": "c27",
+      "text": "Unrack the bar by straightening the arms, then move it over the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-bench"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-bench",
+          "text": "Unracking. Unrack the weight by straightening your arms. Move the bar above your shoulder joint.",
+          "where": "Bench Press Form"
+        }
+      ]
     }
   ],
   "sources": [
@@ -747,7 +764,10 @@
     },
     {
       "step": "Lie down with your shoulders at least 8 cm from the uprights; feet flat.",
-      "claim": "c13"
+      "claim": [
+        "c13",
+        "c14"
+      ]
     },
     {
       "step": "Pull your shoulder blades together.",
@@ -755,11 +775,18 @@
     },
     {
       "step": "Grip slightly wider than shoulders, thumbs wrapped, bar low in the palm.",
-      "claim": "c4"
+      "claim": [
+        "c4",
+        "c1",
+        "c5"
+      ]
     },
     {
-      "step": "With a spotter behind your head, lift the bar out to straight arms over your shoulders.",
-      "claim": "c7"
+      "step": "With a spotter behind your head, unrack the bar to straight arms.",
+      "claim": [
+        "c7",
+        "c27"
+      ]
     }
   ],
   "posture": [
@@ -839,15 +866,15 @@
         "redFlag": null
       },
       {
-        "where": "Chest or front of the shoulder, sudden or severe, while lowering",
+        "where": "Pain in the chest or front of the shoulder while lowering",
         "means": "Pec tendon tears happen while lowering.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c22",
         "redFlag": "shoulder"
       },
       {
-        "where": "Deep in the front of the shoulder, sudden or severe",
-        "means": "Poor attention to technique is a named risk for shoulder injuries.",
+        "where": "Pain deep in the front of the shoulder",
+        "means": "Poor technique is a risk for shoulder injuries.",
         "fix": "Stop the set. Don't train through the pain. Keep the upper arms about 45-60 degrees from the torso.",
         "claim": [
           "c24",
@@ -856,7 +883,7 @@
         "redFlag": "shoulder"
       },
       {
-        "where": "Strain in the wrist",
+        "where": "Wrist pain or strain",
         "means": "Fault: the bar sits close to the fingers, so the wrist bends back.",
         "fix": "Grip the bar lower in the palm. Don't train through the pain.",
         "claim": "c5",
@@ -876,7 +903,7 @@
       ]
     },
     {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "risk": "Add 2-10% once you beat your target reps by one or two.",
       "claim": "c16"
     },
     {

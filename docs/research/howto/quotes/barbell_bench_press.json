@@ -302,6 +302,13 @@
       "quote": "It makes the weight easier to bench by decreasing the range of motion.",
       "status": "verbatim",
       "closest": "It makes the weight easier to bench by decreasing the range of motion."
+    },
+    {
+      "claim": "c27",
+      "source": "stronglifts-bench",
+      "quote": "Unracking. Unrack the weight by straightening your arms. Move the bar above your shoulder joint.",
+      "status": "verbatim",
+      "closest": "Unracking. Unrack the weight by straightening your arms. Move the bar above your shoulder joint."
     }
   ]
 }

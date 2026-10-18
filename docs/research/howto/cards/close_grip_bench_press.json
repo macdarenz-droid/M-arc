@@ -30,7 +30,7 @@
     },
     {
       "field": "setup.spotter",
-      "why": "true for this child because the bar is lifted out of the same J-hooks over the face; the parent's spotter behind the head (parent c7) applies."
+      "why": "true for this child because the bar is lifted out of the same J-hooks over the face; the parent's spotter behind the head and straight-arm unrack (parent c7, c27) apply, and the step is the parent's string."
     },
     {
       "field": "zooms.bar-low-palm",
@@ -452,11 +452,11 @@
       "claim": "c1"
     },
     {
-      "step": "Lift the bar out, ideally with a spotter behind your head.",
+      "step": "With a spotter behind your head, unrack the bar to straight arms.",
       "claim": "inherit:4"
     },
     {
-      "step": "Add weight in small steps: 2-10%, once you can do one or two reps over your target.",
+      "step": "Add 2-10% once you beat your target reps by one or two.",
       "claim": "c8"
     }
   ],
@@ -533,8 +533,8 @@
         "redFlag": null
       },
       {
-        "where": "Deep in the front of the shoulder, sudden or severe",
-        "means": "Poor attention to technique is a named risk for shoulder injuries.",
+        "where": "Pain deep in the front of the shoulder",
+        "means": "Poor technique is a risk for shoulder injuries.",
         "fix": "Stop the set. Don't train through the pain. Keep the elbows close to your ribs.",
         "claim": [
           "c12",

@@ -519,8 +519,8 @@
       "claim": "c9"
     },
     {
-      "mistake": "Wrists aching on a straight bar.",
-      "fix": "Use an EZ bar.",
+      "mistake": "Using a straight bar, wrists fully turned palms down.",
+      "fix": "Use an EZ bar: its angled grip eases the wrist and elbow.",
       "claim": "c8"
     }
   ],
@@ -549,7 +549,7 @@
         "redFlag": null
       },
       {
-        "where": "Back of the elbow, severe, while lowering",
+        "where": "Pain at the back of the elbow while lowering",
         "means": "Triceps tendon tears are rare; they often come from forceful lowering.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c15",
@@ -573,7 +573,7 @@
       "claim": "c15"
     },
     {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "risk": "Add 2-10% once you beat your target reps by one or two.",
       "claim": "c12"
     }
   ],

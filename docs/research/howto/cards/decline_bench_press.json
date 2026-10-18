@@ -612,15 +612,15 @@
         "redFlag": null
       },
       {
-        "where": "Chest or front of the shoulder, sudden or severe, while lowering",
+        "where": "Pain in the chest or front of the shoulder while lowering",
         "means": "Pec tendon tears happen while lowering.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c14",
         "redFlag": "shoulder"
       },
       {
-        "where": "Deep in the front of the shoulder, sudden or severe",
-        "means": "Poor attention to technique is a named risk for shoulder injuries.",
+        "where": "Pain deep in the front of the shoulder",
+        "means": "Poor technique is a risk for shoulder injuries.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c15",
         "redFlag": "shoulder"
@@ -638,7 +638,7 @@
       ]
     },
     {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "risk": "Add 2-10% once you beat your target reps by one or two.",
       "claim": "c11"
     },
     {
