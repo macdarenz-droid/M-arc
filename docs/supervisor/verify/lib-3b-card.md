@@ -123,6 +123,20 @@ reserved_paths (read only; everything outside write_scope is reserved, in partic
 - tests/howto/lb1-plates.test.ts (LIB-9a's; not on main);
 - .github/**, package.json, package-lock.json, the AGENTS add-only files (scripts/screenshot-gate.mjs, tests/theme.test.ts, src/ui/styles.css), native/wear/**, src/**. No gate block. No new dependency.
 
+Amendment 1 (supervisor, 2026-10-18 ~11:40 UTC; lib4-cards 14.3 "B5(b)"):
+- Base: origin/main @ 0628270a, or later. `git diff --stat b99a9e25 0628270a -- tools/plates/library tests/howto` is empty, so every line cited above still holds.
+- Do 0 comes before Do 1. It is B5(b) from LIB-4b's HANDOFF (#232 comment 6245832215, mutation (b)): "A deliberately nondeterministic pulley radius did **not** trip `H7.determinism`; why is unverified."
+  - Reproduce it first, on a scratch copy of one cable id's spec (for example seated_cable_row's pulley radius, made to vary per call). Run runQa through candidateOf on it. Never commit the scratch spec.
+  - Then do one of two things:
+    - (a) If the field never reaches the rendered bytes, H7 is right. Show it by byte-comparing two renders with the field varied. Record why as D-LIB3b-H7 in COACHING-DECISIONS.
+    - (b) Otherwise, add a failing case and fix PQ-H7 so that a nondeterministic value that reaches the bytes turns `H7.determinism` red.
+      - The case goes in tests/howto/library-qa-h7.test.ts (new). It must be red on the base and green after.
+      - The fix may touch only qa/node.mjs's H7 lines.
+      - Every existing H7 key and message stays.
+  - Nothing is loosened either way. Show a mutation that reverts the fix and turns the new case red.
+- write_scope adds: tests/howto/library-qa-h7.test.ts (new); qa/node.mjs's H7 lines (Do 0 (b) only); docs/COACHING-DECISIONS.md (append).
+- The collision check adds LIB-5 #244 @ 1d1fe9e (qa/approved.mjs, qa/exemptions.json, library-qa.test.ts's two clone inputs; none in this scope) and LIB-4c #246 @ 9ba2ed7. Re-run it on your review head.
+
 Do:
 1. Branch from origin/main @ b99a9e25. Write tests/howto/library-qa-h10.test.ts first (rows 3b-A1..3b-A7, 3b-A1b, 3b-A5b and 3b-A10). Run it on the unchanged base and keep the output. 3b-A1, A1b, A2, A3, A4, A5b, A6, A7 and A10 must be red there. In 3b-A5 the rope row and the three inherited-name rows are red on the base (each resolves ok true with []); the camera.maxScale '1', gripWidth, tempo, view and view.yaw rows are guards (already green).
 2. The fix, in node.mjs and index.mjs only:
