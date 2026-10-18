@@ -112,6 +112,12 @@ describe('C2: integer-aware K (t = 271, c0 = 30)', () => {
     for (const [j, l] of heavy.loads.entries()) if (j) expect(l).toBeLessThanOrEqual(900);
     for (let K = 1; K < heavy.K; K++) { const x = shardLoads(six, K, heavyT); expect(x.loads.every((l: number, j: number) => l <= 900 || x.shards[j].length === 0)).toBe(false); }
     expect(heavy.note).toBe('shard 1 fixed part 1290 s (c0 + once-states) is over 900 s: it holds no id (D-LIB4c-4)');
+    // D-LIB4c-P1: at P = 1 every id is over 900 s alone (C14 at P = 4: ~1,050 job-seconds per id); with shard 1's fixed
+    // part also over 900 s, each id gets its own shard and shard 1 none, so no shard carries two ids or an id + once-states
+    const alone = libraryPlan({ ids: ['a', 'b', 'c', 'd', 'e', 'f'], times: { default: 280.8, c0: 30, once: { run: 971.1, shard: 13.9 }, ids: { a: 1054.3, b: 975.6, c: 1064.7, d: 956.7, e: 1039.3, f: 961.9 } } });
+    expect([alone.K, alone.shards.map((s: string[]) => s.length)]).toEqual([7, [0, 1, 1, 1, 1, 1, 1]]);
+    for (const l of alone.loads) expect(l).toBeLessThanOrEqual(1800);
+    expect(alone.note).toMatch(/one id per shard, none on shard 1 \(D-LIB4c-4\)/);
     expect([LIB_TARGET, JOB_BUDGET_S]).toEqual([GATE_TARGET, GATE_BUDGET]);
   });
   it('D-LIB4c-4 (b): with every fixed part <= 900 s the plan is the literal rule\'s (the smallest K whose every shard fits)', () => {
@@ -571,6 +577,13 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
     expect(next.ids).toEqual({ a: 210, b: 250 });
     expect(next.once).toEqual({ run: 63, shard: 12 });
     expect([next.default, next.c0]).toEqual([t.default, t.c0]);
+  });
+  it('D-LIB4c-5: an id\'s seconds are its share of the shard\'s wall time after the once-states (P > 1 jobs overlap)', () => {
+    const m = (k: number, seconds: any, once: number, wall: number) => ({ meta: { job: { k }, seconds, onceSeconds: once, shardSeconds: wall } });
+    // C14 run 1, shard 2 at P = 4: 3,158.3 job-seconds in 847.6 s, 18.3 s of them once-states
+    const next = refreshLibraryTimes(readTimes(ROOT), [m(2, { x: 1054.3, y: 1064.7, z: 1039.3 }, 18.3, 847.6)]);
+    expect(next.ids).toEqual({ x: 276.8, y: 279.6, z: 272.9 });
+    expect(Object.values(next.ids).reduce((a: number, b: any) => a + b, 0)).toBeCloseTo(847.6 - 18.3, 0);
   });
   it('compare.mjs: identical runs pass; a dropped row, a flipped result or a changed px is the first difference', () => {
     const run1: any = [{ sha: SHA, rows: [{ id: 'a', theme: 't', state: 'L3/N@390', result: 'pass' }, { id: 'a', theme: 't', state: 'L3/M@390', result: 'pass' }], meta: { px: { 'a|t|L3/N@390': 0 } } }];

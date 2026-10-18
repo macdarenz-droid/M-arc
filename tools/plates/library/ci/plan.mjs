@@ -49,7 +49,9 @@ export function planK(items, times) {
     }
   }
   const over = items.filter(it => (times.c0 ?? 0) + it.seconds > SHARD_TARGET_S).map(it => it.id);
-  return { K: Math.max(1, n), note: `no K fits ${SHARD_TARGET_S} s (${over.length ? `over alone: ${over.join(', ')}` : 'shard 1\'s once-states leave no room'}); one id per shard` };
+  // one id per shard; a shard 1 whose fixed part is already over the target keeps none (D-LIB4c-4, D-LIB4c-P1)
+  const heavy = shardLoads([], 1, times).loads[0] > SHARD_TARGET_S && n > 0;
+  return { K: Math.max(1, n) + (heavy ? 1 : 0), note: `no K fits ${SHARD_TARGET_S} s (${over.length ? `over alone: ${over.join(', ')}` : 'shard 1\'s once-states leave no room'}); one id per shard${heavy ? ', none on shard 1 (D-LIB4c-4)' : ''}` };
 }
 
 /** { K, shards, hash, note, loads }: hash = sha256 over the sorted ids, the times, K, c0, the offsets and the target. */
