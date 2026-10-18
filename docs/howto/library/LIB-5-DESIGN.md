@@ -48,20 +48,20 @@ Line numbers below are on main `72c94fc` unless another sha is named. Every line
 
 **Do 9 count lines (D-LIB5-COUNTS) [N6].** Each is found by its text, and each assertion stays an exact equality.
 
-| File @ sha | Old (exact) | New |
+| File @ sha | Old (exact) | New (exact) |
 |---|---|---|
-| library-core.test.ts:242 @ 72c94fc | `it('the generator writes 60 files: the 54 fingerprinted, the 2 it rewrites, and ids-node.mjs, lib-id.ts, loaders.ts, coverage.ts', async () => {` | `it('the generator writes 61 files: the 54 fingerprinted, the 2 it rewrites, and ids-node.mjs, lib-id.ts, loaders.ts, coverage.ts, red-flag-back.ts', async () => {` |
-| :243 | `// LIB-2b (D-LIB2b-PINS (10)): 60 for the 8, plus …` | `// LIB-2b (D-LIB2b-PINS (10)): 61 for the 8's set (60 plus red-flag-back.ts), plus …` |
-| :247 | `expect(out.size).toBe(60 + 5 * LIBRARY.length + new Set(keys).size);` | `expect(out.size).toBe(61 + 5 * LIBRARY.length + new Set(keys).size);` |
-| :248 | `for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts']) expect(out.has(p), p).toBe(true);` | the same list plus `'src/howto/red-flag-back.ts'` (add-only) |
-| library-rows.test.ts:90 @ 72c94fc | `it('generate writes the 60 files plus exactly the clone\'s 6 (…), never hand-<chromeId>', () => {` | `… the 61 files plus …` |
-| :92 | `expect(mainOut.size).toBe(60);` | `expect(mainOut.size).toBe(61);` |
-| :94 | `expect(treeOut.size).toBe(60 + CLONE_OUTPUTS.length);` | `expect(treeOut.size).toBe(61 + CLONE_OUTPUTS.length);` |
-| :108 | ``expect(c.out).toContain(`PASS, ${60 + CLONE_OUTPUTS.length} files fresh`);`` | ``… `PASS, ${61 + CLONE_OUTPUTS.length} files fresh` …`` |
-| library-ci.test.ts:298 @ 108eb5c (only after LIB-4c is on main and merged in) | `expect(real.inputs.size).toBe(60);` | `expect(real.inputs.size).toBe(61);` |
-| :300 @ 108eb5c | `… .toEqual({ proven: true, why: [], n: 66 });` | `… n: 67 });` |
+| library-core.test.ts:242 @ 72c94fc | `  it('the generator writes 60 files: the 54 fingerprinted, the 2 it rewrites, and ids-node.mjs, lib-id.ts, loaders.ts, coverage.ts', async () => {` | `  it('the generator writes 61 files: the 54 fingerprinted, the 2 it rewrites, and ids-node.mjs, lib-id.ts, loaders.ts, coverage.ts, red-flag-back.ts', async () => {` |
+| library-core.test.ts:243-244 @ 72c94fc | `    // LIB-2b (D-LIB2b-PINS (10)): 60 for the 8, plus for each shipped library row its ht-, feel-, posture-, zoom- css and` / `    // research card, plus one handpair-<key>.ts per distinct key the shipped rows use` | `    // LIB-2b (D-LIB2b-PINS (10)): 61 for the 8's set (60 plus red-flag-back.ts), plus for each shipped library row its ht-, feel-, posture-, zoom- css and` / :244 unchanged |
+| library-core.test.ts:247 @ 72c94fc | `    expect(out.size).toBe(60 + 5 * LIBRARY.length + new Set(keys).size);` | `    expect(out.size).toBe(61 + 5 * LIBRARY.length + new Set(keys).size);` |
+| library-core.test.ts:248 @ 72c94fc | `    for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts']) expect(out.has(p), p).toBe(true);` | `    for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts', 'src/howto/red-flag-back.ts']) expect(out.has(p), p).toBe(true);` |
+| library-rows.test.ts:90 @ 72c94fc | `  it('generate writes the 60 files plus exactly the clone\'s 6 (ht, feel, posture, zoom css, research card, its hand pair), never hand-<chromeId>', () => {` | `  it('generate writes the 61 files plus exactly the clone\'s 6 (ht, feel, posture, zoom css, research card, its hand pair), never hand-<chromeId>', () => {` |
+| library-rows.test.ts:92 @ 72c94fc | `    expect(mainOut.size).toBe(60);` | `    expect(mainOut.size).toBe(61);` |
+| library-rows.test.ts:94 @ 72c94fc | `    expect(treeOut.size).toBe(60 + CLONE_OUTPUTS.length);` | `    expect(treeOut.size).toBe(61 + CLONE_OUTPUTS.length);` |
+| library-rows.test.ts:108 @ 72c94fc | ``    expect(c.out).toContain(`PASS, ${60 + CLONE_OUTPUTS.length} files fresh`);`` | ``    expect(c.out).toContain(`PASS, ${61 + CLONE_OUTPUTS.length} files fresh`);`` |
+| library-ci.test.ts:298 @ 108eb5c (only after LIB-4c is on main and merged in) | `    expect(real.inputs.size).toBe(60);` | `    expect(real.inputs.size).toBe(61);` |
+| library-ci.test.ts:300 @ 108eb5c | `    expect(JSON.parse(r.out.split('\n').find(l => l.startsWith('@@'))!.slice(2))).toEqual({ proven: true, why: [], n: 66 });` | `    expect(JSON.parse(r.out.split('\n').find(l => l.startsWith('@@'))!.slice(2))).toEqual({ proven: true, why: [], n: 67 });` |
 
-L2-A3 (54 bodies, keyed on generated-bodies.json) is unchanged. The PR records the red-before run (every assertion line above red with the old values, and no other test red) and the green-after run, plus the mutation "red-flag-back.ts output removed", which turns each re-pinned line red.
+L2-A3 (54 bodies, keyed on generated-bodies.json) is unchanged. The PR records the red-before run: with the old values, library-core :247, library-rows :92, :94 and :108, and library-ci :298 and :300 (once LIB-4c is merged in) are red, each listed, and no other test is red. The :242 and :90 titles, the :243 comment and the :248 presence list cannot be red; they change only to match. Then the green-after run, plus the mutation "red-flag-back.ts output removed", which turns each re-pinned assertion line red and the :248 presence check red for src/howto/red-flag-back.ts.
 
 **D-LIB5-RISKSTEST (Do 9 only).** `tests/howto/sections-risks.test.ts` @ 72c94fc gains exactly two lines:
 - after :10 `import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER } from '@/howto/archetypes';`, add `import { RED_FLAG_BACK } from '@/howto/red-flag-back';`;
@@ -69,11 +69,13 @@ L2-A3 (54 bodies, keyed on generated-bodies.json) is unchanged. The PR records t
 
 No other line changes. Mutation: removing either line turns `npm run typecheck` red.
 
-**D-LIB5-TWIN (after LIB-4b merges).** `fidelity/twins/ht9.mjs` @ f1df4a7:
-- :26, the esbuild entry, which ends ``…export * from ${JSON.stringify(join(root, 'src/howto/archetypes.ts'))};\n` ``, gains a second re-export of `src/howto/red-flag-back.ts` after the archetypes one;
-- :29 `const FLAG = { wrist: C.RED_FLAG, shoulder: C.RED_FLAG_SHOULDER, knee: C.RED_FLAG_KNEE, elbow: C.RED_FLAG_ELBOW };` gains `back: C.RED_FLAG_BACK`.
+**D-LIB5-TWIN (Do 9 only, after LIB-4b merges).** `tools/plates/library/fidelity/twins/ht9.mjs` @ f1df4a7, both lines found by content:
+- :26 old (full line): ``    const entry = `${htFiles.map((f, i) => `import h${i} from ${JSON.stringify(join(genDir, f))};`).join('\n')}\nexport const HOWTOS = [${htFiles.map((_, i) => `h${i}`).join(', ')}];\nexport * from ${JSON.stringify(join(root, 'src/howto/archetypes.ts'))};\n`;``
+- :26 new (full line): ``    const entry = `${htFiles.map((f, i) => `import h${i} from ${JSON.stringify(join(genDir, f))};`).join('\n')}\nexport const HOWTOS = [${htFiles.map((_, i) => `h${i}`).join(', ')}];\nexport * from ${JSON.stringify(join(root, 'src/howto/archetypes.ts'))};\nexport * from ${JSON.stringify(join(root, 'src/howto/red-flag-back.ts'))};\n`;``
+- :29 old: `    const FLAG = { wrist: C.RED_FLAG, shoulder: C.RED_FLAG_SHOULDER, knee: C.RED_FLAG_KNEE, elbow: C.RED_FLAG_ELBOW };`
+- :29 new: `    const FLAG = { wrist: C.RED_FLAG, shoulder: C.RED_FLAG_SHOULDER, knee: C.RED_FLAG_KNEE, elbow: C.RED_FLAG_ELBOW, back: C.RED_FLAG_BACK };`
 
-pins.json stays unedited, and B3 stays green. B2 (`--ids golden8`) must be identical before and after. A library-shared.test.ts block reads ht9.mjs as text and asserts that FLAG's keys equal RiskJoint's members and Risks.tsx's FLAG keys, and that the entry re-exports red-flag-back.ts.
+Nothing else in ht9.mjs changes, a3Probe stays unexported, and the gate's HT-9 block is untouched. pins.json stays unedited and B3 stays green; the PR says why no re-pin was made. If a pinned text changes after all, re-run B2 and re-pin that key under D-LIB4-OPEN in the same PR. B2 (`--ids golden8`) must be identical before and after; if it differs, stop and report, and never change a3Probe or FLAG. A library-shared.test.ts block, added in Do 9 with the twin lines, reads ht9.mjs as text and asserts that FLAG's keys equal RiskJoint's members and Risks.tsx's FLAG keys, and that the entry re-exports red-flag-back.ts. Mutations: `back` dropped from FLAG → that block red; the re-export dropped → that block red and B2 red on every id with HT9/crashed@*.
 
 **Chunk measurement (Do 2) [N7, N15].**
 - Budget: `tests/howto/budgets.json` `HowToSheet-*.js`, rawMax 30,884 / gzMax 10,728 (HT-9). It is never raised.
@@ -84,13 +86,14 @@ pins.json stays unedited, and B3 stays green. B2 (`--ids golden8`) must be ident
   - Then, in the worktree only, add `src/howto/red-flag-back.ts` with the stand-in, the Risks entry, `RiskJoint 'back'` and the two sections-risks lines. Rebuild, measure again, and grep the chunk for the stand-in.
 - Stand-in (30 words by c7's count; scratch only, never committed or pushed): `{ name: 'Spine pain', now: 'Alpha bravo charlie delta echo foxtrot golf hotel india juliet kilo lima? Get it checked today.', doctor: 'Mike november oscar papa quebec romeo sierra tango uniform? See a doctor.', claim: { tags: ['CONSENSUS'], sources: ['nhs-back'] } }`.
 - Report before and after, raw and gz, with headroom. Over budget means stop.
+- On the PR head, run `npm run build`, then `node tools/plates/library/shared/check-bundle.mjs`, and post its output in the Do 2 comment. In the scratch worktree only, plant `box.doctor.text` in a shipped src string, rebuild, and check-bundle exits 1 naming the doctor field. Nothing seeded is committed (D-LIB5-BUNDLE; card amendment 23).
 
 ## b. The 30-word reach (D-LIB5-REACH) [N3, N8]
 
 **Mechanism.**
 - The generator's library lint imports copy-lint.mjs's exports unchanged: `words`, `sentences`, `RED_FLAG_BOX_MAX_WORDS`, `MAX_SENTENCE_WORDS`, `BANNED`, `CONTACT_RE`, `SOURCE_RE`, `SOURCE_CS_RE`, `SAFETY_LINE_RE`, `sourceNamePatterns`.
 - It applies lintShared's per-box 'today' and 'doctor' rules (`copy-lint.mjs:337-338`).
-- It imports nothing from `tests/**`. Node 22.0-22.17 does not strip types, and c19.ts's import is extensionless.
+- It imports nothing from `tests/**`. package.json engines '>=22' admits Node 22.0-22.17, which do not strip types by default, and c19.ts's extensionless import would not resolve natively either.
 - Pattern parity is already pinned by HT4b-A6 (`tests/howto/no-contacts-parity.test.ts`), so no second parity test is added.
 
 In vitest, both run unedited on every placement:
@@ -113,7 +116,7 @@ The same comparison runs on every shipped row's redFlag. An equality test assert
 | 3. `src/howto/red-flag-back.ts` (Do 9) | Byte-equal to placement 1; checkC7 clone and `checkC19Shared` run on its block. |
 | 4. `Risks.tsx` `FLAG.back` (Do 9) | S5: a direct `renderRisks` test on a spread of a real sheet with `riskFlags: ['back']` emits `<pre>-redflag-back` with exactly placement 3's three lines (D-LIB5-FIXTURE 5). |
 | 5. A sheet's own `content.redFlag` | It stays `RED_FLAG` (wrist) for every library row, because loadContent re-exports it (`content.mjs:99`; HT5-A5). The back box never goes there. The sweep's checkC7 covers it as for the 8. |
-| 6. The library layers page (D-LIB5-PAGE) | Owner LIB-6-PM (#181): the RF and FLAG patches read `backBox()` lazily. S5-L (`tests/howto/library-back-page.test.ts`, carried by whichever of #181 and Do 9 merges second) runs the reach checks on the page text. LIB-9a's merge_prerequisites gain "LIB-6-PM's back patches and S5-L on main and green". |
+| 6. The library layers page (D-LIB5-PAGE) | Owner LIB-6-PM (#181): the RF patch adds `back: 'back'` to feelSection's RF map, and the FLAG patch reads `backBox()` lazily, only when a sheet's riskFlags include 'back'. S5-L (`tests/howto/library-back-page.test.ts`, carried by whichever of #181 and Do 9 merges second) runs the reach checks on the page text. LIB-9a's merge_prerequisites gain "LIB-6-PM's back patches and S5-L on main and green". |
 
 `lintShared` covers only RED_FLAG_BLOCKS' 4 joints and stays locked. No box limit under `tools/plates/library/lint/**` differs from the imported 30 (S7's assert).
 
@@ -137,13 +140,13 @@ The same comparison runs on every shipped row's redFlag. An equality test assert
 4. `RiskJoint` has no `'back'`.
 5. Guard: box text in the module requires D-LIB5-BACKBOX, and text equal to a non-draft card's box.
 
-**Mutations:** draft text pasted → 1 and 5 red; throw removed → 3 red; each value planted in a temp folder → check-bundle exit 1 naming the field; no HowToSheet chunk → exit 1.
+**Mutations:** draft text pasted → 1 and 5 red; throw removed → 3 red; the doctor value added as a string under `src/` → 2 red; each value planted in a temp folder → check-bundle exit 1 naming the field; no HowToSheet chunk → exit 1.
 
 **Do 9 (D-LIB5-BUNDLE):** the scanner's rule flips. Each answered value must be present. The `9dbc7e0` draft `box.now.text`, kept as a `tests/howto/fixtures/lib5` file, must be absent unless it is the answer. The vitest cases flip with it.
 
 ## d. Machine fields (D-LIB9-CARDFIELDS, D-LIB5-TEMPO8, D-LIB5-TOPFAULT) [N13]
 
-These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by `researchOf` (`candidate.mjs:44-48`), H6 (`qa/node.mjs:151-176`) and F7 (`:293`).
+These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by `researchOf` (`candidate.mjs:44-48`), H6 (`qa/node.mjs:153-176`) and F7 (`:293`).
 
 - **plateFacts** `[{ kind, joint|landmark, pose?, deg|m, measure?, claim }]`.
   - Every fact names a claim whose verbatim quote states it; H6 ignores `claim`.
@@ -152,14 +155,14 @@ These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by 
   - Built only from LIB-5's own ruled 8-row map (section k) and the card's verified `plate.tempo`.
   - A moving phase takes `up` or `down`, never a constant. Any other `s` is a ruled constant with its verified claim and quote.
   - Key order is `{phase, s, move: true}` or `{phase, s}`. No entry carries `claim` (H6 compares with `JSON.stringify`, `node.mjs:174`).
-  - There is no tempo-map.mjs and no LIB-9a dependency. The old premise ("a constant LIB-9a names", "Do 3 waits for that ruling") is withdrawn.
+  - There is no separate tempo-map.mjs and no LIB-9a dependency. The builder's copy of the ruled 8-row table sits in the validator, `tools/plates/library/research/validate.mjs`, as `export const TEMPO8`. It is keyed by lib id, and each entry is an ordered list of `{ phase, move?: true, from: 'up' | 'down' | 'pause' }` or `{ phase, constant: <s>, claim }` (D-LIB5-TEMPO8 4). tests/howto/library-cards8.test.ts keeps its own literal copies of the tempo map and the plateFacts form table, asserts that `TEMPO8` equals its copy, and never takes expected values from a spec, a plate or TEMPO8 (card S12). The old premise ("a constant LIB-9a names", "Do 3 waits for that ruling") is withdrawn.
 - **topFault**: the key from the supervisor's blind pass, posted as 'TOPFAULT @ <sha>'. It cites `plate.mistake.claim`, or, on a drawable:false card, the claim of the top fault the card names. LIB-5 never reads `mistake.firstKey` to choose it.
   - An id stops (no topFault, not in CARDS_8, both exemptions kept, reported) on:
     - 'none' or 'several';
     - a drawable:true key that differs from firstKey;
     - a drawable:false key equal to firstKey.
-  - A drawable:false id whose key differs gets that key, is never wired here, and keeps its exemptions.
-  - library-cards8.test.ts asserts each wired card has `drawable: true` and topFault equal to its TOPFAULT key.
+  - A drawable:false id whose key differs gets that key, is never wired here, keeps its exemptions, and is reported on the PR.
+  - library-cards8.test.ts asserts that each wired card has `drawable: true` and a topFault equal to its TOPFAULT key. It also asserts that each drawable:false card's topFault, where written, equals its TOPFAULT key and differs from its plate's `mistake.firstKey`. Mutations, each red: a wired card's drawable set to false; a test copy of one card set to drawable:false with topFault equal to the drawn key (section 13 Q1 (2)).
 - Only labels come from the spec or plate, each through a ruling: the tempo map's phase names, order and move flags; the form table's labels; and the tell keys the pass chose from.
 - Paths: `docs/research/howto/cards/<card id>.json` and `quotes/<card id>.json`, where card id = lib id without `lib_`.
 
@@ -196,8 +199,11 @@ These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by 
   4. after the loop: `stampProblems(ids)`, which throws on any line.
 - `inputsFor` lists `back-box.mjs`, its static imports and `docs/research/howto/shared/back-pain-box.json`; a test asserts that set.
 - checkC17 runs on `tools/plates/library/shared` and on a temp directory holding a copy of library-gate.mjs.
-- PR evidence (never a committed pin): `git diff --exit-code <main sha> HEAD` is empty over content.mjs, ids.mjs, generate.mjs, `tools/plates/lib/**` and every path render() returns, and `generate --check` is green.
-- After LIB-4c merges, an affectedIds test gives `all: true` for each of library-gate.mjs, a lint module, research/stamps.mjs and reviews.json.
+- inputs() returns every file the plugin reads. Before Do 9 outputs() returns []; from Do 9 it returns only src/howto/red-flag-back.ts.
+- library-shared.test.ts: the paths render() attributes to library-gate.mjs are exactly [] while back-box.mjs holds no box text, and ["src/howto/red-flag-back.ts"] after Do 9. No other generated file's header names the plugin. Each has its mutation (the plugin returns any other path → red; it returns red-flag-back.ts while the placeholder holds → red).
+- checkC17 asserts [] and that each directory holds its file. Mutations: `fetch(` in a temp copy of library-gate.mjs, and in a temp copy of back-box.mjs, each red.
+- PR evidence (never a committed pin): `git diff --exit-code <main sha> HEAD` is empty over content.mjs, ids.mjs, generate.mjs, `tools/plates/lib/**` and every path render() returns, and `generate --check` is green, on every head sent for review and on the READY head, headers included; after Do 9 the same, except red-flag-back.ts. Plus a one-time scratch-worktree demo: one comment byte in content.mjs, regenerate, and the diff lists the 8's ht-*.ts, ids.ts, archetypes.ts, sources.json and lib_*.json.
+- After LIB-4c merges, on a registry with at least one shipped library row (E1's), an affectedIds test makes one call per changed path for library-gate.mjs, a lint module, research/stamps.mjs and reviews.json, and expects ids 'all' with `all: true`. If any case does not select every id, stop and report (LIB-4c owns affected.mjs).
 
 **Helpers** (`tools/plates/library/research/stamps.mjs`; signatures fixed):
 - `export const SCRATCH_MARKER = 'LIB5-SCRATCH-ROOT';`: a file at the top level of a scratch root, not git-ignored (`.gitignore` has no matching pattern; `git check-ignore` gives no hit).
@@ -258,6 +264,21 @@ These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by 
 
 "Not drawn" means no IDS entry draws it; GAPS lists card ids (hand-battle-rope.mjs's GAPS is `{}`).
 
+**D-LIB5-SPLIT anchors (from ee7f40f section g; they hold until the supervisor rules the split on Do 2's post).**
+
+(1) Shown-copy floor (SPLIT 1). Each field is held to this lint at its ruled path and kind. This is not a claim that it passes.
+
+| Module | Exports | From card | Lint held to |
+|---|---|---|---|
+| `hands.mjs` | PALM_FLAT, CURL, ROPE, CUPPED_THUMB | palm-flat, curl, rope-rule, cupped-thumb: gripLine, cue, thumbRule, wrist, rightPose, faults{key,label,what}; palm-flat soreWrist, fingers, contactPoint; curl widthNote; rope grip, handContact; cupped alternative, handContact | gripLine lead (≤22 words, ≤2 sentences); cue ≤6; fault label 1-3; other prose sentence ≤15; all BANNED, LR-23 patterns and medical bans |
+| `implements.mjs` | BATTLE_ROPES, JUMP_ROPE, KETTLEBELL_SWING, MEDICINE_BALL_SLAM, WALL_BALL | the 5 implement cards: gripLine, cue, contactPoint, thumbRule, wrist, rightPose, faults, handRisks[] | as hands, plus handRisks[] risk ≤14 |
+| `moves.mjs` | GET_IN_OUT, SELECTOR_PIN, FOOT_BAR, UNRACK_RERACK, DUMBBELL_KICKUP | steps / variants.<v>.steps {kind,text}, postureArchetype, variant appliesTo | setup step ≤12 words, ≤5 steps per variant; posture right/wrong caption ≤10 |
+| `exemptions.mjs` | FRONT_RACK, WRIST_CURL | exempts, reason, replacementRule, faults | prose sentence ≤15; label 1-3 |
+| `checkpoints.mjs` | FLOOR_BODY, PRONE | defaultCheckpoints / checkpoints {key,label,detail,appliesTo}, defaultCrop, prone | label 1-3; detail caption ≤10 |
+| `back-box.mjs` | placeholder (c) | none until Do 9 | (b) |
+
+(2) Data list (SPLIT 2). Not projected (research data under LR-28): `appliesToWhy`, `loadAxis`, `thumbMode`, `byRule`, `byInference`, `notFor`, `gaps`, `notes`.
+
 **D-LIB5-FAULTKEYS:** research makes exactly these edits at the source, and LIB-5 never retypes:
 - curl `wrist-curl-cheat`→`curled` and `bent-back-bottom`→`bent-back`, plus gaps[2] replaced whole;
 - rope-rule `rope-wrist-curl`→`curled` and 'Wrists curl'→'Wrist curled';
@@ -265,7 +286,7 @@ These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by 
 
 CURL, ROPE and PALM_FLAT are built only from a copied head that holds these edits; otherwise LIB-5 stops and reports.
 
-The family reader reads the 8's handling.faults, the shared modules' faults, and every `tools/plates/library/hands/hand-*.mjs` `VARIANTS[*].faults`. It prints the count per source and asserts that each count is above 0 where it must be. A fixture hand module under `tests/howto/fixtures/lib5/` proves the reader. Mutations: fixture hand-ahead labelled 'Hands forward'; the reader returning 0. Do 2 lists every claim set filed under two keys (palm-flat c3 under hand-ahead and hands-rotated).
+The family reader reads the 8's handling.faults, the shared modules' faults, and every `tools/plates/library/hands/hand-*.mjs` `VARIANTS[*].faults`. It prints the compared count per source and asserts three things: the 8's count is above 0; the shared modules' count is above 0; the hands count equals the fault entries the imported modules export, and is above 0 whenever any module it finds exports a fault. A fixture hand module in LIB-7's shape under `tests/howto/fixtures/lib5/`, with a known fault count, proves the reader (D-LIB5-FAULTKEYS 4). Mutations: fixture hand-ahead labelled 'Hands forward'; the reader returning 0; the reader drops one fixture fault → red. Do 2 lists every claim set filed under two keys (palm-flat c3 under hand-ahead and hands-rotated).
 
 **Order (Do 4):** the placeholder and every module whose card has no shown-copy hit are built at once. A module with a hit waits for the one named research head on which its fields pass. On that head LIB-5 re-copies, re-pins S1 and re-runs S2, S6 and S7.
 
@@ -308,7 +329,7 @@ Bar over the face, breath-holding and jump landing are sourced by no shared card
 
 **The research head is not named yet**, so the per-id table cannot be built on it. Research stays `9dbc7e0`, which has no card for any of the 8. `claude/libht-research-the8` @ `e6381fa` holds unverified cards for all 8 without the three keys, and is never a source on its own. Once the supervisor names the head, the tempo map, the measured-joint facts and the TOPFAULT inputs follow as one addendum comment on #244 (reading and writing only, no slot, no push), as D-LIB5-TEMPO8 2 allows.
 
-Below is only what can be fixed from main now. The pre-revision table showed each plate's selected Mistake key; this revision leaves that column out, so #244 can be a blind input. The keys are listed in sorted order.
+Below is only what can be fixed from main now. The TOPFAULT pass gets only the inputs D-LIB5-TOPFAULT lists. The plate half below is one of them. It never reads #244's other comments, its history or an earlier note.
 
 **Spec phases to map** (labels only, from `tools/plates/vendor/exercises/<id>.mjs` on main; the field each `s` takes is filled from the named head's verified `plate.tempo`):
 
@@ -337,7 +358,7 @@ Rest, Brace and leg_press's bottom Pause can only be named constants with a veri
 | lib_leg_press | knee.r, 'Knee', 'about 90° bend', 90 | `measure: true`, pose end |
 | lib_machine_chest_press | elbow.r, 'Elbow', 'soft, not locked', no expect | `joint: 'elbow.r'` (only a joint fact can match), pose from the verified card |
 
-`measure: true` compares the fact with `spec.measure.expect` and the drawn measure (`node.mjs:162`); a `joint` fact compares it with the engine's angle at its pose (`:161`). Values come only from verified quotes. Where none exists, the id gets no plateFacts key.
+`measure: true` compares the fact with `spec.measure.expect` and the drawn measure (`node.mjs:163`); a `joint` fact compares it with the engine's angle at its pose (`:161-162`). Values come only from verified quotes. Where none exists, the id gets no plateFacts key.
 
 **TOPFAULT pass, plate half of the inputs** (each plate's Mistake tells from the golden fixture, sorted by key, with no selected marker). The card half (plate.mistake.what or, for drawable:false, the named top fault, with claims and quotes) comes from the named head.
 - lateral-raise: dip "The knees dip to swing it up."; shrug "The shoulders shrug toward the ears."; thumbs "Thumbs turn down at the top."
@@ -353,14 +374,17 @@ Rest, Brace and leg_press's bottom Pause can only be named constants with a veri
 - CARDS_8 lists exactly the ids that hold every value H6 and F7 read, all verified and clean (topFault alone for lib_dumbbell_lateral_raise, which keeps 'H6:not-engine'). It is all-or-nothing per id.
 - The fallback is per id.
 - A test asserts that `cardResearch(id)` deep-equals researchOf's projection for each CARDS_8 id.
-- The clone inputs at `library-qa.test.ts:66` and `:70` gain `research: null, mistakeFault: null` only if lib_pull_up is wired.
+- The clone inputs at `library-qa.test.ts` @ 72c94fc gain `research: null, mistakeFault: null` only if lib_pull_up is wired. If lib_pull_up is not wired, both stay as on main and the PR says why. Old lines in full:
+  - :66 `    const r = await I.runQa({ ...c, id: 'lib_chin_up', mode: 'H' }, { ...base.ctx, browser: cleanBrowser(['lib_chin_up']) });`
+  - :70 `    const named = await I.runQa({ ...c, id: 'lib_chin_up', mode: 'H', exemptions: ['F5', 'F7'] }, { ...base.ctx, browser: cleanBrowser(['lib_chin_up']) });`
+  - New: `{ ...c, id: 'lib_chin_up', mode: 'H', research: null, mistakeFault: null }` and `{ ...c, id: 'lib_chin_up', mode: 'H', exemptions: ['F5', 'F7'], research: null, mistakeFault: null }` in those two places; nothing else on either line changes.
 - When no id lost 'H6:no-card', S12 runs on the S3 lib5 fixture card.
 
 **qa/approved.mjs lines (commit 2), only these:**
 - Imports: add `join` from `node:path` and `ROOT` from `../../golden.mjs` (exported at `golden.mjs:15`).
 - New: `export const CARDS_8 = [<verified, wired ids>];`.
 - New: `` const cardResearch = id => { const c = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/cards', `${id.slice(4)}.json`), 'utf8')); return Object.fromEntries(['plateFacts', 'tempo', 'topFault'].filter(k => k in c).map(k => [k, c[k]])); }; ``. It is inlined, because candidate.mjs imports approved.mjs.
-- `:20`: `research: null` → `research: CARDS_8.includes(LIB_OF[p.chromeId]) ? cardResearch(LIB_OF[p.chromeId]) : null`, and `mistakeFault: null` → `mistakeFault: CARDS_8.includes(LIB_OF[p.chromeId]) ? p.mistake.firstKey : null` (candidate.mjs:84's rule; F7 compares the plate against the card's TOPFAULT key).
+- `:20` @ 72c94fc, old line in full: `      research: null, census: CENSUS_8[LIB_OF[p.chromeId]] ?? null, mistakeFault: null, derivation: null, exemptions: [], ...(extra[LIB_OF[p.chromeId]] ?? {}) });`. Change: `research: null` → `research: CARDS_8.includes(LIB_OF[p.chromeId]) ? cardResearch(LIB_OF[p.chromeId]) : null`, and `mistakeFault: null` → `mistakeFault: CARDS_8.includes(LIB_OF[p.chromeId]) ? p.mistake.firstKey : null` (candidate.mjs:84's rule; F7 compares the plate against the card's TOPFAULT key).
 
 ## Still waiting (after "LIB-5 resume")
 
