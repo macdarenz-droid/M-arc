@@ -3489,3 +3489,146 @@ D-LIB6PM-BRANCH (amends D-LIB9-HANDPAGE, lib4-cards :1156, section 12 item 10)
 D-LIB6PM-LANE (amends D-LIB-LANE-ACTIVE's freed-slot order, lib4-cards :1030)
 - LIB-6-PM takes a freed slot before the LIB-7 fixer.
 - Reason: slot 5 merges before slot 6, and no LIB-7 fixer card exists yet (HANDOVER :1033).
+
+## 18. LIB-7-FIX and LIB-7b rulings (D-LIB7FIX-*, D-LIB7b-*, 2026-10-18)
+
+Rulings for cards LIB-7-FIX and LIB-7b (supervisor, 2026-10-18; from lib-7-fix-rulings-proposed.md and lib-7-fix-critic.md, all findings accepted). Cites: cards claude/sup-lib4-cards @ 0b85c963; main 2078913c; #193 55e91e9f; #181 9b8f76e6; #246 68f15560.
+
+D-LIB7FIX-CARRY
+- #193's head is unfrozen for LIB-7-FIX only.
+- The 12 approvals at 55e91e9 (D-PILOTA-R5; #193 5975538224) count on a later #193 head only when all of these hold on that exact head:
+  - the pins at tests/library/hand-pairs.test.ts:132 (2f9d3b7f…), :403 (fcd57af5…) and :404 (5feecaf0…) pass, with those lines unedited;
+  - these files are byte-identical to 55e91e9: hands/hand-*.mjs, radial-rules.mjs, checks.mjs, claims.json, claims-extract.mjs, census-scope.json, sheet.mjs, page.mjs and gate.mjs;
+  - tools/plates/library/render/closeup/zoom-css.mjs is byte-identical to 9b8f76e;
+  - for each approved id and fault, the SVG in `pairPanel(HAND_OF_ID['lib_'+id])` equals `renderPair(id, { fault }).svg` with every `hp-<id dashed>-<fault>` replaced by the panel's uid.
+- This applies to each head the card pushes, including every merge. A head without that run carries no approval.
+- Reason: approvals carry only on byte proof against the pinned render (critic R5: 22 of 22 pages hold), and the sheet's unpinned CSS is held fixed.
+
+D-LIB7FIX-BRANCH (one text with D-LIB6PM-BRANCH, lib4-cards :3483; amends its "and may edit build-layers-page.mjs there" and 12 item 10's "on LIB-6's branch", :1156)
+- LIB-6-PM is the only writer of claude/lib-6-closeup-renderer until #181 merges.
+- LIB-7-FIX works on #193 only. It edits none of these: build-layers-page.mjs, layers-spec.mjs, gen/hands.mjs, gen/handpairs.mjs, tools/plates/library/fidelity/**.
+- After #181 merges, the supervisor sets #193's base to main and #193 merges main.
+- Split:
+  - #193 merges with the contract, D-LIB7FIX-A21, D-LIB7FIX-SCALE, D-LIB7FIX-GATE, the two Lows, D-LIB7FIX-BUDGET and D-LIB7FIX-WORDS;
+  - the page hook, the generator's pair-row lines, the runner's HT-6 twin and their proofs go to card LIB-7b, on main after #193 merges.
+- D-LIB4-ENTRY and 11.1 item 10 (b) are unchanged.
+- Reason: none of the moved items is a merge rule for #193. Shared keys gate LIB-9's shipping; page work gates a library layers page, and LIB-8M builds none (lib-8-merge-card.md:291). So #193 merges right after #181.
+
+D-LIB7FIX-KEY
+- **Key string:** `<KEY>-<variant>-<orientation>`.
+- **Identity:** module KEY × variant × orientation × the ordered fault list.
+- **The loader throws when:**
+  - ids on one key differ in fault list;
+  - two triples give one string;
+  - a key is outside `/^[a-z0-9-]+$/`;
+  - `k1 + '-'` is a prefix of another key;
+  - a key equals a drawn id.
+- **HAND_OF_ID** maps `lib_<card id>` → key for every drawn id of any owner. It never maps one of the 8 or a gap.
+- **Panel ids** start with `hp-<key>-`.
+- **pairs.mjs exports `keyIndexOf(index = INDEX)`,** so mutations run in memory.
+- Ids that draw the same picture under different keys keep separate keys.
+- Reason: this follows 12 item 10's "variant × orientation × fault set" (:1155) with a checked identity. The probe and R4 found 8 keys over 12 ids and 7 pictures.
+
+D-LIB7FIX-API
+- `inputsFor(x)` takes a pair key (main's contract, gen/handpairs.mjs:3-4) or a drawn id.
+- Both give the same list for every id on a key.
+- The loader throws if a key string equals a drawn id.
+- LIB-7's tests (hand-pairs.test.ts:514-524) and LIB-12's (hand-views.test.ts:211, :217) stay unedited.
+- Reason: ids and keys are disjoint (no exercises.json id has '-'; every key has two), so one name serves the contract with no edit to frozen tests.
+
+D-LIB7FIX-A21
+- Applies to tests/howto/library-core.test.ts, L2-A21's first test only.
+- Its title becomes "with the repo's own pair loader (or none): the written pairs and HAND's pair imports follow the shipped rows' keys".
+- In its `if (pairs)` branch, :411 `expect(keys.length).toBeGreaterThan(0);` is replaced by `expect(Object.keys(pairs.HAND_OF_ID).length).toBeGreaterThan(0);`, with the comment `// D-LIB7FIX-A21: LIB-7's loader lands before any row ships a key, so keys may be []; a shipped row that needs a pair and has none is refused by gen/ids.mjs missingChunks in this file's beforeAll render`.
+- Every other line of the file is unedited.
+- Covering proof, in tests/library/lib7-fix.test.ts:
+  - `missingChunks([{ id: 'lib_x', chromeId: 'x', slug: 'x' }], n => n !== 'hand-x', {}, { lib_x: 'curl' }, () => true)` throws /lib_x: no .*hand pair/;
+  - with pairOf `{ x: 'k' }` it does not throw;
+  - mutation: a temp copy of gen/ids.mjs in os.tmpdir() (never under tools/plates/, so no plugin glob or core hash sees it), its relative imports rewritten to the repo files' file URLs and its hand clause (:58, `if (archetypes[r.id] !== 'none' && …) throw`) removed → the first call no longer throws → red. The copy is deleted in `finally`.
+- The "before" is recorded on a local contract-only commit (:411 red) and never pushed alone.
+- Reason: `> 0` is false for the correct tree (R3). The wrong tree it stood for stays refused by missingChunks, and the mutation proves it.
+
+D-LIB7FIX-GATE
+- At the main merge, LIB-7's gate block keeps its body unchanged and goes inside `if (gate.runs('LIB-7')) { … }` before `await gate.done();`.
+- tests/gate-split.test.ts:55 goes 103 → 104 (exact toBe; "+ LIB-7" in its comment).
+- scripts/gate-times.json gains "LIB-7", measured as 11.1 item 16 (b) says.
+- Reason: this is the only merge conflict, and 11.1 item 16 (a)/(b) sets this pattern for every card that adds a block (R3: gate-split 29/29 at 104; LIB-7 gate PASS, 22 pages).
+
+D-LIB7FIX-SCALE
+- LIB-7-FIX adds one line to tools/plates/library/scale/synthetic.mjs, directly after :22 (`symlinkSync(...)`), in a block marked LIB-7-FIX: `rmSync(join(root, 'tools/plates/library/hands/pairs.mjs'), { force: true });   // LIB-7-FIX: the clones never use LIB-7's pairs; write-ids writes its own loader, and a real one imported here would stay cached (ESM) after write-ids replaces it`.
+- Evidence: tests/howto/lib-4a.test.ts A1/A2 are red before with a real loader ('no hand pair', on the local contract-only commit), then green after (R8: 10/10).
+- Mutation: the line removed → A1/A2 red.
+- Reason: write-ids.mjs:35-56 already replaces the loader with one pair per clone. The line only stops a stale cached module being used, and no assertion changes, so nothing is loosened.
+
+D-LIB7FIX-BUDGET
+- The cap is `handCeiling('pull-up')` (gen/hands.mjs:131; 92,917 B raw, 26,286 B gz), the largest of the 8's hand ceilings.
+- (a) For every key, `pairText(key, await pairPanel(key))` is within the cap.
+- (b) tests/howto/budgets.test.ts gains one test named LIB-7-FIX:
+  - every key a shipped row uses has a `handpair-<key>-*.js` entry, and none is stale;
+  - each entry is within the cap;
+  - it is proven red on a fixture shipped list.
+- (c) LIB-7's gate block checks that:
+  - the built `handpair-*.js` chunks equal the shipped keys;
+  - each is within its entry and the cap;
+  - a missing entry fails;
+  - a self-check with an oversize fixture asset is red.
+- The batch PR that first ships a key adds its entry at measured + 10 %, never above the cap.
+- Reason: no per-chunk ceiling holds a built handpair chunk. Only LIB-2 A25's superset How-to total counts it (screenshot-gate.mjs:9228-9251), and 11.1 item 6 (:633) sends the per-key budget here.
+
+D-LIB7FIX-WORDS
+- Every shown word of `pairPanel(key)` is approved wording, recorded with its source in tools/plates/library/hands/panel-words.json. hand-*.mjs stays frozen.
+- The heading is golden B's approved hand-zoom heading, 'Hand: right and wrong'.
+- Each caption is at most 10 words (CAPTION_MAX_WORDS, golden B copy-lint.mjs:47, imported). It comes from the cards' approved wording, else it is the key's label only: the approved Right note and the D-LIB7-10 fault labels already in the approved SVG.
+- Pager labels are the D-LIB7-10 fault labels.
+- No explaining text (the owner's UI copy rule).
+- The supervisor looks at the panels on a sheet before any key ships.
+- Reason: the critic approved drawings only (#193 5975538224), and LIB-7's per-pair alt texts run up to 18 words.
+
+D-LIB7b-SCOPE (card LIB-7b; after its design note)
+Each item below is one block marked LIB-7b, with its own test and mutation. Anything else in another card's file means stop.
+- (a) **tools/plates/library/build-layers-page.mjs:** one post-build replacement in `buildLayersPage`.
+  - For each spec row whose closeups entry names `pair`, the hand zx block becomes `await pairPanel(key)` verbatim.
+  - Every page reference to it names the panel's id.
+  - The page's style gains the pair scope's rules once per key.
+  - No exact-once anchor is added to the vendored text.
+- (b) **tools/plates/library/layers-spec.mjs:** a row is a pair row only when its batch's layers config names it (`closeups: { <id>: { …, pair: '<key>' } }`). The entry is already copied whole (:57-60); this card adds its validation only. No page build reads a pairs loader to choose rows, so configs that name no pair (the 8, E1, B5, LIB-4c scratch) build exactly as today.
+- (c) **tools/plates/gen/handpairs.mjs, add-only:**
+  - `export const after = ['tools/plates/gen/hands.mjs']`;
+  - a shipped row whose config names pair K must have `HAND_OF_ID[id] === K` and an archetype other than 'none';
+  - a 'none' row whose page holds a pair panel throws;
+  - a pair row's zoom-<chromeId>.css (ctx.prev) gains the rules that style its pair panel.
+  - The converse, every keyed row naming its pair, is LIB-9's D-LIB4-ENTRY check, not a generator throw.
+  - gen/hands.mjs is not edited.
+- (d) **tools/plates/library/fidelity/twins/ht6.mjs** (:21, :48-51 and the readers that use them): it finds a pair row's panel by its pair markup. The 8's HT-6 gate block is never touched.
+- Reason: this places the page and generator work with 0 header moves (R6: hands.mjs 27, the others 0) and no loop through the scratch loaders (critic finding 5).
+
+D-LIB7b-PAGEDUP (open until LIB-7b's Do 3 (e) measurement)
+- Two pair rows on one key may repeat the panel's ids on a batch page, or one after the other in an app context, only when all three hold:
+  - (1) in Chromium 141 and Chrome 153, each card's panel renders pixel-equal to the same panel alone on a page, with the other copy hidden;
+  - (2) the note names every id-uniqueness check: HT7-A2 (zooms.test.ts:147-176), gate HT-7 A2 (:7382) and its twin (ht7.mjs:201), and shoot2.mjs:200;
+  - (3) a new check asserts that every repeated id belongs to byte-identical pair panels of one key.
+- HT7-A2's "none between two" does not apply between two rows on one pair key, because they hold one shared chunk.
+- An added probe runs in one app context: open card A's hand close-up, close it, open card B's on the same key; no duplicate id is in the document (the HT-7 A2 probe).
+- If (1) fails, the options, each needing a ruling, are:
+  - (B) a page-only id namespace per card, with equality checked after that one named rewrite;
+  - (C) ids that share a key go on separate layers pages.
+- Reason: per-card byte equality stays exact, and only exact copies may repeat.
+
+D-LIB7b-SLOT (amends D-LIB-ORDER-2, lib4-cards :3416-3417, which amends D-LIB8M-ORDER :3396)
+- LIB-7b takes checklist slot 6b. The order reads: LIB-4b → LIB-4c + #249 → LIB-4d (3d) → LIB-5 + sup-lib5-bundle → BOX-CAP → LIB-5 Do 9 → LIB-6 #181 + LIB-6-PM → LIB-7 #193 + LIB-7-FIX (6) → LIB-7b (6b) → LIB-8M #109 (7) → LIB-5v (7a) → LB1 #245 (8). LIB-3c may still merge any time after its review.
+- No library pin commit is made on a head that lacks LIB-7b:
+  - 'PILOT A PIN GO' (D-LIB8M-PIN; LIB-8M Do 13, lib-8-merge-card.md:53) is sent only after LIB-7b is on main and merged into #109;
+  - #109's merge prerequisites (lib-8-merge-card.md:56) gain "6b LIB-7b".
+- Post on #109, #193 and LIB-7b's PR.
+- Reason:
+  - A pinned row's MANIFEST.json entry lists the static closure of every page builder, build-layers-page.mjs and hands/pairs.mjs (with panel.mjs) included (ci/manifest.mjs:4-7, :27, :60-62).
+  - A keyed row's entry also lists `inputsFor(key)` (:69-71). Pilot A's plates include dumbbell_biceps_curl and rope_triceps_pushdown (lib-8-merge-card.md:117, :119), which are LIB-7 keyed ids.
+  - Entries are written in the pin commit (lib-8-merge-card.md:208, :262) and change only in a commit that adds or replaces a pin (ci/manifest.mjs:14; lib4-cards :1086).
+  - So merging LIB-7b before #109 is not enough on its own. A pilot A pin made before LIB-7b reaches #109 goes stale (C0 red) when #109 merges main, and would need a `[golden update]` pin replacement.
+
+Recheck (critic, 2026-10-18, against lib4-cards @ 0b85c963 sections 16-17):
+- recheck N1: applied. In D-LIB7FIX-A21 the mutation is now "hand clause (:58) removed in a temp copy outside tools/plates/". The critic's original "`!pairOf[c]` deleted" makes the check throw more, so it could not go red.
+- recheck N2: applied. D-LIB7b-SLOT states 6b only and writes out the amended order. It adds the pin-timing rule (no library pin on a head without LIB-7b; 'PILOT A PIN GO' after LIB-7b is merged into #109), because MANIFEST rows are written at pin time, not merge time. It also adds the #109 prerequisite and the posts.
+- recheck N3: applied. D-LIB7FIX-BRANCH wording: "edits none of these".
+
+- Supervisor (LIB-6-PM critic finding 12, from the LIB-7-FIX critic): no early hand-pairs check is added to LIB-6-PM; LIB-7-FIX catches a moved pin. Section 16 (LIB-8M) is amended by D-LIB7b-SLOT: #109 merge prerequisites gain LIB-7b (6b), and PILOT A PIN GO waits until LIB-7b is merged into #109.
