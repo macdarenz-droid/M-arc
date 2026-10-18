@@ -46,6 +46,11 @@
       "id": "bullbar-calluses",
       "access": "full",
       "fixes": null
+    },
+    {
+      "id": "nasm-chin-pull",
+      "access": "full",
+      "fixes": null
     }
   ],
   "quotes": [
@@ -256,6 +261,13 @@
       "claim": "c19",
       "source": "bullbar-calluses",
       "quote": "Pull your shoulder blades down and back",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "nasm-chin-pull",
+      "quote": "if a client reports shoulder or elbow pain, numbness, or tingling that persists, refer them to a physician or physical therapist rather than training through it.",
       "status": "verbatim",
       "closest": null
     }
