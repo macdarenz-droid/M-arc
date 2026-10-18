@@ -2885,3 +2885,12 @@ A 3-lens review (rulings, quotes, scope) read the revised note against this sect
 **B5(b) (#232 HANDOFF (d)).** PQ-H7 determinism did not trip on a deliberately nondeterministic pulley radius. Not LIB-4b's. It goes to LIB-3b (qa/** is its write scope) as an added first item: reproduce it, then either show the field never reaches the rendered bytes (H7 is right; record why) or add a failing fixture and fix H7. Nothing is loosened either way.
 
 **LIB-4c (#246 HANDOFF (d)).** The meta.chrome comparison stays as built. If C11 shows the gate family and the library family differ, report with the run link; the supervisor rules. The smith incline offline/open timeout is root-caused if it repeats, never re-run to green.
+
+### 14.4 D-LIB9-F5 ruled (new supervisor, 2026-10-18 ~05:30 UTC; 11.1 item 17)
+
+**Ruling: (a), a named per-plate exemption, under the owner's 10-01 delegation.** No chrome change now.
+1. A library plate may carry `exemptions: ['F5']` with the 8's reason quoted verbatim from tools/plates/library/qa/exemptions.json on main (`b99a9e2`), only when F5's measured element is the selected Mistake tell (button.plate-callout.m, pressed) in Midnight and its value equals the 8's 3.57 exactly. Any other F5 element or value is a defect, never exempt.
+2. Each LB1 plate's QA table shows the measured F5 element and value. Mutation (LIB-9 acceptance): one plate's tell chrome colour changed so F5 reads 3.40 → that plate's PQH F5 row is red with the exemption still in place.
+3. LB1's expected flag set keeps F5 with this reason. Do 8 and per-exercise approvals are unblocked on this point.
+**Why.** F5 measures label text against WCAG AA 4.5:1 (qa/browser.mjs:14). The tell's chrome is locked, shared CSS that every shipped plate already carries, approved by the owner with golden A. A chrome fix is a golden update of the owner-approved plates (plan 2.8 step 3: the owner sees the contact sheet), and one such update later fixes every plate at once, so waiting costs nothing per plate. The fix stays an owner item in the O7 family: offered with the next sheet or APK message, never forced.
+**Why nothing is loosened.** F5 runs on every row; the exemption names one element and one value, and the mutation proves any drift is caught.
