@@ -259,6 +259,9 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
     expect(L['elbow.r'][2] - L['shoulder.r'][2], 'elbow in front of the shoulder (m)').toBeGreaterThanOrEqual(0.15);
     expect(Math.abs(L['elbow.r'][0] - L['shoulder.r'][0]), 'elbow out to the side (m)').toBeLessThanOrEqual(0.06);
     expect(Math.abs(L['grip.r'][0] - L['grip.l'][0]), 'handles closer than shoulder width (m)').toBeLessThan(Math.abs(L['shoulder.r'][0] - L['shoulder.l'][0]));
+    // D-LIB9a-DO6: the start elbow bend the header gives (about 130 deg, 132 drawn), pinned within 5 deg
+    const bend = plate.renderPlate(sp, { id: 'x' }).report.angles.start['elbow.r'];
+    expect(Math.abs(bend - 132), `start elbow bend ${bend}`).toBeLessThanOrEqual(5);
   });
   it('shoulder_press: the start lever and handle are a dashed phantom in the end pose, never in the Mistake pose', async () => {
     const sp = await spOf();
