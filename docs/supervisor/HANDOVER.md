@@ -999,6 +999,54 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
 - **Active LIB builders:** LIB-4b, LIB-4c, LIB-4d and LIB-8-FIX = 4.
 - **Merge order to LB1:** LIB-4b → LIB-4c (+#249) → LIB-5 → BOX-CAP → Do 9 (+LIB-5v) → LIB-4d → LIB-9a's Do 9 comparator → LB1 (12 plates). LIB-8-FIX/#109 merges in plan slot 7.
 
+**Update ~22:00 UTC.**
+- **Reviews:**
+  - LIB-4d PASS @ `e7502cd` (0/0/0/1). It is frozen. Its Low (the COACHING-DECISIONS order) is fixed in its pre-train main merge, which gets a delta review by the same reviewer (session_01FgX75qDGNc7Tdon9ki4RfC).
+  - LIB-8-FIX PASS @ `200f8c3` (0/0/0/1). Its Low goes into LIB-8M's first push.
+  - LIB-4c READY @ `68f1556` (C12 and C13 met). Its reviewer is session_01NLY7iwsASk7emzYfNvaC1d.
+  - #249 re-merged LIB-4c as `4a4d29dc`; CI is all green (howto-rebuild, howto-shard 1/1, gate-verdict, android-gate).
+  - The scratch PR #257 and the seed refs stay until LIB-4c merges.
+- **Plan:** `claude/howto-options` @ `6550ce28` (D-LIB4-DOCS-2 and D-LIB4-DOCS plan parts; posted on #246).
+  - Still owed from D-LIB4-DOCS: SPEED.md :25/:62, GATE-SPLIT design 3.5 and the AGENTS.md screenshot-gate row pointer (in the first supervisor docs PR), plus plan 3.5's D-LIB2b-PAGES line.
+- **New cards on `claude/sup-lib4-cards`**, each written, then critiqued, fixed and re-checked:
+  - `be4b18f1`: LIB-10 (LB2 build-ahead), section 15 D-LIB10-*, and the LB2 research card.
+  - `95928e1f`: LIB-3c (AUTHORQA hunk, fresh-import H7, PARAMS ranges, child proof) and 15.1 D-LIB3c-SHARED.
+  - `1e85584a`: LIB-8M (the pilot A merge) and section 16 D-LIB8M-*.
+- **Started:**
+  - LIB-10 builder session_01ETPEGTYndpyzuNBELX3zNy (#265). Its design note is ruled D-LIB10-NOTE (6255216039).
+  - LIB-3c builder session_01L9b8Vf8JXiJ6CcaWgbk7BX (#264). Its design note is accepted (6254903885).
+  - LIB-8M on the LIB-8-FIX session session_01QdGHXtEjcSa8a26UskJnC4 (#109, "LIB-8M start").
+  - LB2 research session_01AnygddDGdN8kjnwH1HXbuy (#263; no slot).
+- **Active LIB builders:** 4 of 4 (LIB-4b, LIB-10, LIB-3c, LIB-8M). LIB-4c and LIB-4d are WAITING.
+- **Research (#263):**
+  - R-LB2-1..18 are posted there. LR-31 is applied to the 12 LB2 cards and to 7 pilot A cards. Pick changes:
+    - LB2: barbell_bench_press, incline_barbell_bench_press;
+    - pilot A: dumbbell_shoulder_press, incline_dumbbell_press, dumbbell_biceps_curl, triceps_pushdown, rope_triceps_pushdown;
+    - dumbbell_fly, which is held to LIB-20.
+  - Verify #1 (`2b6747f`, 12 cards) and #2 (`2fad80c`, 25 cards) were both VALID; the plants were caught. Fix round 2 is in progress, then verify #3 on the changed cards plus single_leg_romanian_deadlift (R-LB2-16, `863280a`).
+  - LIB-10 draws against `2b6747f8`.
+  - The verify is run by hand (a plant agent plus a blind critic agent) under `scratchpad/vlb2*`. Keep the answer key out of shared files until the critic ends.
+- **Pilot A (LIB-8M):**
+  - 19 ids; 14 are pinned. Held: box_jump and reverse_lunge (no tempo strip; named follow-up: a design for a tempo strip without seconds) and 3 others per D-LIB8M-PAGESET.
+  - It redraws 5 Mistakes, or 6 if SLRDL's tells change, and changes OHP's tempo (Hold 1 s).
+  - The owner sees the pilot A sheet and answers only the non-F5 flags. After the train, the APK goes to him (nothing visible changes).
+- **Cards being drafted:**
+  - LIB-7-FIX: drafting.
+  - LIB-6-PM: a fixer on #181's branch. Drafted; a critic is running. Do 0-4 can be done locally now, the back patches after LIB-5, S5-L after Do 9.
+- **Merge order to LB1 (checklist order; corrects 19:00):**
+  1. LIB-4b
+  2. LIB-4c with #249
+  3. LIB-5 with sup-lib5-bundle
+  4. BOX-CAP
+  5. LIB-5 Do 9 (back box)
+  6. LIB-6 #181 with LIB-6-PM
+  7. LIB-7 #193 with LIB-7-FIX
+  8. LIB-4d
+  9. LIB-8M #109
+  10. slot 7a: LIB-5v
+  11. slot 8: LB1 #245
+  - LIB-3c may merge before #245. LB1 cannot merge before #109.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
