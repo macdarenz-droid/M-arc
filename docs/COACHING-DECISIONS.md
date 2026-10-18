@@ -2452,3 +2452,17 @@ Card `docs/supervisor/verify/lib-4d-card.md` (lib4-cards 12 items 20-22, D-LIB4a
   - L2-A4's base comes from the tree's disk, not a second render: its generated files are its own generator's output for the 8 (rewritten by ownRowsTree, or main's committed files, which `generate --check` keeps fresh). One render instead of two: 67 s at 153 against 145 s.
   - L2-A4 and E1 render a whole tree, so they keep their own 180_000 / 600_000 / 900_000 limits, not vitest's 5 s default (one render per tree: L2-A4 took 33.5 s at the 8 and 66.7 s at 153 in the card's runs). "Under 5 s" (D-LIB4a-SCALE (c), lib4-cards 12 item 22) applies to the tests on the default timeout.
 - **D-LIB4d-READ.** Tests that read every shipped ht-<slug>.ts read it from its text (`readHowTo`, tests/howto/generated-module.ts), not through vite's transform, which took 8.9-17.4 s for 153 modules against 129 ms. readHowTo accepts only the generator's exact shape (header, the one type import, `export default {` … `} satisfies BuiltHowTo;`, no import or export line inside) and throws naming the path otherwise; lib-4d R1 ties it to import() for the 8 and to loaders.ts for every shipped id. Used by css HT2-A6, generate 'own hashes', hint HT6-A8 and sections-risks HT9-A3. A test reads `generatedOnDisk()` once, never once per file: generate HT2-A2 'plates.mjs writes exactly…' counts its reads and is red at the 8 on a re-read per file.
+## LIB-3b: PQ-H10 checks values and the envelope on the real path (LIB-3b builder, 2026-10-18)
+
+Card: `docs/supervisor/verify/lib-3b-card.md` (claude/sup-lib4-cards @ 5551cadd, amendments 1 and 2). PR #258.
+- **D-LIB3b-H10 Decided**: PQ-H10 applies derive.mjs's own `PARAMS` and `paramProblems` against the envelope that runQa holds (`h10(c, env)` at qa/index.mjs:38), for each key that validateParams did not already flag. It never reads the candidate's schema. Empty params give `H10.empty`; a PARAMS key the envelope does not name, or a malformed envelope row, gives `H10.envelope:<key>`; an inherited name (constructor, toString, __proto__) gives `H10.unknown:<key>`. envelope.json names no PARAMS key, so every D/T param stays red until a supervisor ruling gives PARAMS ranges a home.
+- **D-LIB3b-H7 Decided** (supervisor ruling on #258 comment 6249576171, option 1): the B5(b) gap from #232 is real, and the fix moved to LIB-3c. Reproduced on a scratch mirror (golden `makeMirror()`, `vendor/exercises/seated_cable_row.mjs` pulley `r: 0.045` edited, `candidateOf('lib_seated_cable_row')` then `runQa`; nothing committed):
+
+  | Edit | Two in-process renders | Fresh import vs first render | PQ-H7 |
+  |---|---|---|---|
+  | none | same | n/a | `[]` |
+  | per call: `r: 0.045 + Math.random() * 0.02` inside `equipment()` | differ | n/a | `H7.determinism:normal.svg`, `H7.determinism:mistake.svg` |
+  | import time: `const RR = 0.045 + Math.random() * 0.02` at module top, `r: RR` | same | differ | `[]` (missed) |
+  | the per-call edit in `tools/plates/layers/exercises/seated_cable_row.mjs` (not vendor) | same | n/a | `[]`: QA renders the vendor copy (golden.mjs makeMirror copies `VENDOR`) |
+
+  A render that throws leaves R null, so the determinism loop is skipped, but PQ-H1 is red (`H1.engine:render-threw`), so it fails closed. A fresh-import H7 needs an async h7 at index.mjs:38 and a spec loader for H/D/T rows in candidate.mjs, which is reserved in this card and collides with #245. Moved to LIB-3c ("PQ-H7 builds twice from fresh spec imports"). node.mjs's H7 lines are unchanged here.
