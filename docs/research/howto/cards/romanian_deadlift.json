@@ -615,7 +615,8 @@
       "what": "Lower back rounds at the bottom as the bar is reached down.",
       "why": "Listed first among common RDL mistakes; it removes spinal stability and raises injury risk (c7).",
       "claim": "c7",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for an RDL fault. Set aside: StrengthLog's \"There are several reasons why your back might hurt after doing Romanian deadlifts, the two most likely being\" (c17) says which causes of back pain are likeliest, volume and technique, with no frequency word and no named fault; \"It is usually performed with a barbell\" and \"you want to use light weights in this exercise\" are about the implement and the load; NASM's \"typically when the barbell reaches mid-shin height\" (c6) is about depth, not a fault; the NHS lines (\"Back pain, particularly lower back pain, is very common.\") are about back pain in general. Rounding the lower back is the only named fault a quote ties to harm: NASM's \"Rounding the lower back excessively, which removes spinal stability and increases injury risk\" (c7), first on its common-mistakes list. The knee bend that turns it into a squat (c7), jerky movement and too much weight (c8) state no harm; too much weight is a load choice, not a candidate. drawable stays true: the side view shows the back rounding."
     },
     "tells": [
       {
