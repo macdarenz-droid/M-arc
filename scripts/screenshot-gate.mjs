@@ -5234,9 +5234,9 @@ if (gate.runs('O1.2'))
 // BUG-34: the launch overlay animates from its first paint, even while the app bundle is still
 // loading. Chromium starts SMIL only at the load event (which waits for the bundle), so the SMIL
 // build showed a frozen frame first: the dot at the mark's (0,0) and a round cap at the line's end.
-// Every context below holds the bundle back 1500 ms, then samples the overlay at its first paint
-// and 100 ms later, in all 5 themes, at 1x and at 4x CPU throttling. A probe that saw no bundle
-// delay, no visible ink or no movement fails, so it can never pass on flat data.
+// Every context below holds the bundle until the context closes, then samples the overlay at its first paint
+// and 100 ms later, in all 5 themes, at 1x and at 4x CPU throttling; A2 reads frames recorded in the page. A probe
+// that saw no bundle delay, no visible ink or no movement fails, so it can never pass on flat data.
 if (gate.runs('BUG-34'))
 {
   const tag = 'launch first frame (BUG-34)';
@@ -5258,7 +5258,9 @@ if (gate.runs('BUG-34'))
   // into the mark's units: how many there are, and how many lie farther than the dot's radius plus
   // 1.5 units (edges, the settle scale) from the part of the path travelled so far, 0 to `reach`
   // (+1.5). Distance to that part, not to the nearest leg: near a corner the next leg can be closer.
-  const strayInk = (b64, bg, ctm, cssWidth, reach) => pix.evaluate(async ([b64, bg, ctm, cssWidth, reach, P]) => {
+  // `word`: the word's box in CSS px once its reveal is due by the state read after the capture (else null), so a
+  // capture that lands after the reveal does not count the word as stray (GATE-FLAKE-4).
+  const strayInk = (b64, bg, ctm, cssWidth, reach, word) => pix.evaluate(async ([b64, bg, ctm, cssWidth, reach, P, word]) => {
     const img = await new Promise(res => { const i = new Image(); i.onload = () => res(i); i.src = 'data:image/png;base64,' + b64; });
     const cv = document.createElement('canvas'); cv.width = img.width; cv.height = img.height;
     const g = cv.getContext('2d'); g.drawImage(img, 0, 0);
@@ -5269,6 +5271,7 @@ if (gate.runs('BUG-34'))
     for (let y = 0; y < cv.height; y++) for (let x = 0; x < cv.width; x++) {
       const k = (y * cv.width + x) * 4;
       if (Math.max(Math.abs(d[k] - bg[0]), Math.abs(d[k + 1] - bg[1]), Math.abs(d[k + 2] - bg[2])) <= 24) continue;
+      if (word && (x + 0.5) / ratio >= word[0] && (x + 0.5) / ratio <= word[2] && (y + 0.5) / ratio >= word[1] && (y + 0.5) / ratio <= word[3]) continue;
       ink++;
       const m = new DOMPoint((x + 0.5) / ratio, (y + 0.5) / ratio).matrixTransform(inv);
       let near = Infinity, acc = 0;
@@ -5282,7 +5285,7 @@ if (gate.runs('BUG-34'))
       if (near > 3.1 + 1.5) { stray++; if (!first) first = `(${m.x.toFixed(1)}, ${m.y.toFixed(1)})`; }
     }
     return { ink, stray, first };
-  }, [b64, bg, ctm, cssWidth, reach, P]);
+  }, [b64, bg, ctm, cssWidth, reach, P, word]);
   // Read two animation frames later, so the state is never behind the capture taken just before it.
   const sample = page => page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(() => done((() => {
     const launch = document.getElementById('launch');
@@ -5293,11 +5296,16 @@ if (gate.runs('BUG-34'))
     const r = dot.getBoundingClientRect();
     const c = new DOMPoint(r.x + r.width / 2, r.y + r.height / 2).matrixTransform(m.inverse());
     const bg = getComputedStyle(launch).backgroundColor.match(/\d+/g).map(Number);
-    return { t: performance.now() - window.__marcLaunchT0, off: parseFloat(getComputedStyle(path).strokeDashoffset), dx: c.x, dy: c.y, ctm: [m.a, m.b, m.c, m.d, m.e, m.f], bg, booted: !!window.__bug34Ready, anims: document.getAnimations().filter(a => launch.contains(a.effect && a.effect.target)).length };
+    // The word's box once its own animation has passed the O1 reveal delay (1050 ms), else null.
+    const wEl = launch.querySelector('.launch-word'), wr = wEl.getBoundingClientRect(), wa = wEl.getAnimations().find(a => a.animationName === 'launch-reveal');
+    const word = wa && wa.currentTime >= 1050 ? [wr.left - 12, wr.top - 12, wr.right + 12, wr.bottom + 12] : null;
+    return { t: performance.now() - window.__marcLaunchT0, off: parseFloat(getComputedStyle(path).strokeDashoffset), dx: c.x, dy: c.y, ctm: [m.a, m.b, m.c, m.d, m.e, m.f], bg, word, booted: !!window.__bug34Ready, anims: document.getAnimations().filter(a => launch.contains(a.effect && a.effect.target)).length };
   })())))));
   const open = async (theme, rate, extra) => {
     const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, reducedMotion: extra.os || 'no-preference' });
-    await ctx.route(/\/assets\/index-[^/]*\.js$/, async r => { await new Promise(res => setTimeout(res, 1500)); await r.continue(); });
+    // GATE-FLAKE-4: the bundle is held until the context closes. A hold timed from the request let a slow parse before
+    // __marcLaunchT0 use it up, so the app could boot while the samples were being taken.
+    await ctx.route(/\/assets\/index-[^/]*\.js$/, () => {});
     const page = await ctx.newPage();
     page.on('pageerror', e => errors.push(`${tag} ${theme}: ${e.message}`));
     const cdp = await ctx.newCDPSession(page);
@@ -5307,12 +5315,21 @@ if (gate.runs('BUG-34'))
       if (motion) localStorage.setItem('marc.motion', motion);
       let inner;
       Object.defineProperty(window, '__marcLaunchReady', { configurable: true, get() { return inner && (() => { window.__bug34Ready = true; inner(); }); }, set(fn) { inner = fn; } });
-      window.__bug34 = {};
-      new PerformanceObserver(l => { for (const e of l.getEntries()) if (e.name === 'first-paint') window.__bug34.fp = e.startTime; }).observe({ type: 'paint', buffered: true });
-      const tick = () => {
-        const p = document.getElementById('launch-path');
-        if (p && window.__bug34.anim === undefined && parseFloat(getComputedStyle(p).strokeDashoffset) < 100) window.__bug34.anim = performance.now();
-        if (window.__bug34.anim === undefined) requestAnimationFrame(tick);
+      window.__bug34 = { frames: [] };
+      new PerformanceObserver(l => { for (const e of l.getEntries()) { if (e.name === 'first-paint') window.__bug34.fp = e.startTime; if (e.name === 'first-contentful-paint') window.__bug34.fcp = e.startTime; } }).observe({ type: 'paint', buffered: true });
+      // GATE-FLAKE-4: A2 reads the line and dot of every frame from the first one that has them, recorded here in the
+      // page at the frame's own time (the rAF time its animations were computed at), so no capture or round trip can
+      // move the times A2 measures at.
+      const tick = ts => {
+        const p = document.getElementById('launch-path'), dot = document.getElementById('launch-dot');
+        if (p && dot) {
+          const off = parseFloat(getComputedStyle(p).strokeDashoffset);
+          if (window.__bug34.anim === undefined && off < 100) window.__bug34.anim = performance.now();
+          const r = dot.getBoundingClientRect();
+          const c = new DOMPoint(r.x + r.width / 2, r.y + r.height / 2).matrixTransform(p.parentNode.getScreenCTM().inverse());
+          window.__bug34.frames.push({ t: ts, off, dx: c.x, dy: c.y, booted: !!window.__bug34Ready });
+        }
+        if (!window.__bug34.stop) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
     }, [theme, extra.motion || null]);
@@ -5331,11 +5348,17 @@ if (gate.runs('BUG-34'))
     if (!s1) { errors.push(`${tag} ${at}: #launch was gone at first paint`); await ctx.close(); continue; }
     await page.waitForFunction(t => performance.now() - window.__marcLaunchT0 >= t, s1.t + 100, { timeout: 8000 });
     const png2 = await shot(); const s2 = await sample(page);
-    await page.waitForFunction(() => performance.now() - window.__marcLaunchT0 >= 700, null, { timeout: 8000 });
-    const s3 = await sample(page);
-    if (!s2 || !s3) { errors.push(`${tag} ${at}: #launch was gone before the samples were taken`); await ctx.close(); continue; }
+    // Until the recorder has a frame 700 ms after the overlay's first paint (or the line is gone).
+    await page.waitForFunction(() => { const b = window.__bug34, f = b.frames; return !document.getElementById('launch-path') || (b.fcp !== undefined && f.length && f[f.length - 1].t >= b.fcp + 700); }, null, { timeout: 8000 });
+    const rec = await page.evaluate(() => { window.__bug34.stop = true; const t0 = window.__marcLaunchT0; return { fcp: window.__bug34.fcp - t0, frames: window.__bug34.frames.map(f => ({ ...f, t: f.t - t0 })) }; });
+    // A2 times from the overlay's first paint (first-contentful-paint; first-paint can be an earlier, empty frame): f0
+    // is the frame shown then, fA the first frame 100 ms or more after it, fB the first frame 700 ms or more after it.
+    const fp = rec.fcp, fr = rec.frames;
+    if (!Number.isFinite(fp) || !fr.length) { errors.push(`${tag} ${at}: no first-contentful-paint entry or no recorded frame`); await ctx.close(); continue; }
+    const f0 = fr.filter(x => x.t <= fp).pop() ?? fr[0], fA = fr.find(x => x.t >= fp + 100), fB = fr.find(x => x.t >= fp + 700);
+    if (!s2 || !fA || !fB) { errors.push(`${tag} ${at}: #launch was gone before the samples were taken`); await ctx.close(); continue; }
     // The probe only means something while the bundle is still held back.
-    if (s1.booted || s2.booted || s3.booted) errors.push(`${tag} ${at}: the app booted before the samples (${Math.round(s3.t)} ms), so the bundle delay did not hold`);
+    if (s1.booted || s2.booted || fB.booted) errors.push(`${tag} ${at}: the app booted before the samples (${Math.round(fB.t)} ms), so the bundle delay did not hold`);
     // A1: at first paint and +100 ms the dot is on the path, and nothing is painted off the path or
     // ahead of how far the dot and line have got (the SMIL build froze on the dot at 0,0 and a cap at 56,40).
     const cssWidth = await page.evaluate(() => innerWidth);
@@ -5343,14 +5366,21 @@ if (gate.runs('BUG-34'))
       const dot = nearest(s.dx, s.dy);
       if (dot.d > 0.6) errors.push(`${tag} ${at} ${n} (${Math.round(s.t)} ms): the dot is ${dot.d.toFixed(1)} units off the path, at (${s.dx.toFixed(1)}, ${s.dy.toFixed(1)})`);
       const reach = Math.max(dot.s, (100 - s.off) / 100 * L);
-      const px = await strayInk(png, s.bg, s.ctm, cssWidth, reach);
+      const px = await strayInk(png, s.bg, s.ctm, cssWidth, reach, s.word);
+      if (s.word) { const [a, b, c, d, e, f] = s.ctm, top = Math.min(...[s.word[0], s.word[2]].map(x => (a * (s.word[1] - f) - b * (x - e)) / (a * d - b * c))); timings.top = Math.min(timings.top ?? Infinity, top); if (!(top >= 54.6)) errors.push(`${tag} ${at} ${n} (${Math.round(s.t)} ms): the word's box starts ${top.toFixed(2)} units down the mark, want 54.6 or more, so the word skip could hide ink near the path`); }
       if (px.stray > 0) errors.push(`${tag} ${at} ${n} (${Math.round(s.t)} ms): ${px.stray} painted pixels off the path or past the dot, first at ${px.first} (a stray dot or cap)`);
       if (n === '+100 ms' && px.ink < 50) errors.push(`${tag} ${at} +100 ms: only ${px.ink} painted pixels, so there is nothing to measure`);
     }
     // A2: the line and dot visibly move within 100 ms of first paint, and keep moving.
-    if (!(s2.off < s1.off && s2.off < 100)) errors.push(`${tag} ${at}: strokeDashoffset did not drop within 100 ms of first paint (${s1.off} at ${Math.round(s1.t)} ms, ${s2.off} at ${Math.round(s2.t)} ms)`);
-    if (!(Math.hypot(s2.dx - s1.dx, s2.dy - s1.dy) > 0.1)) errors.push(`${tag} ${at}: the dot did not move within 100 ms of first paint`);
-    if (!(s3.off < s2.off - 10)) errors.push(`${tag} ${at}: at ${Math.round(s3.t)} ms strokeDashoffset is ${s3.off}, want at least 10 below ${s2.off}`);
+    // On the recorded frames (GATE-FLAKE-4); load can only make fA and fB later and the early frames fewer.
+    if (!(fA.off < f0.off && fA.off < 100)) errors.push(`${tag} ${at}: strokeDashoffset did not drop within 100 ms of first paint (${f0.off} at ${Math.round(f0.t)} ms, ${fA.off} at ${Math.round(fA.t)} ms)`);
+    if (!(Math.hypot(fA.dx - f0.dx, fA.dy - f0.dy) > 0.1)) errors.push(`${tag} ${at}: the dot did not move within 100 ms of first paint`);
+    // Keeps moving: fB is at least 10 below every frame up to 300 ms after first paint.
+    const behind = fr.find(x => x.t <= fp + 300 && !(fB.off < x.off - 10));
+    if (behind) errors.push(`${tag} ${at}: at ${Math.round(fB.t)} ms strokeDashoffset is ${fB.off}, want at least 10 below ${behind.off} (at ${Math.round(behind.t)} ms)`);
+    const still = fr.find(x => x.t <= fp + 300 && !(Math.hypot(fB.dx - x.dx, fB.dy - x.dy) > 0.1));
+    if (still) errors.push(`${tag} ${at}: at ${Math.round(fB.t)} ms the dot is within 0.1 units of where it was at ${Math.round(still.t)} ms`);
+    timings.margin = Math.min(timings.margin ?? Infinity, ...fr.filter(x => x.t <= fp + 300).map(x => x.off - fB.off - 10));
     if (rate === 4) timings.push(`${theme} ${JSON.stringify(await page.evaluate(() => ({ firstPaint: Math.round(window.__bug34.fp), firstAnimated: Math.round(window.__bug34.anim) })))}`);
     await ctx.close();
   }
@@ -5367,7 +5397,7 @@ if (gate.runs('BUG-34'))
     await ctx.close();
   }
   await pix.context().close();
-  console.log(`${tag}: 5 themes x 1x/4x checked with the bundle held 1500 ms; 4x timings from navigation start: ${timings.join('; ')}`);
+  console.log(`${tag}: 5 themes x 1x/4x checked with the bundle held until the context closes; smallest A2 margin ${timings.margin?.toFixed(2) ?? 'none'}, smallest word top ${timings.top?.toFixed(2) ?? 'none'}; 4x timings from navigation start: ${timings.join('; ')}`);
 }
 
 // A4: keepAwake is called on while a workout is live, and off once it ends. The NativeUi plugin
