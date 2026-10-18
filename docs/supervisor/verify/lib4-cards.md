@@ -2067,6 +2067,26 @@ Why:
   - Then a single-plate calibrated recheck, with 2 anchors and 2 plants. A third failure goes to the supervisor, who rules again and does not loosen anything.
 - The LB1 plates now passing the calibrated critic (R1-R7 and R10; R8 and R9 stay unscored, 13.1): chin_up, hanging_knee_raise, assisted_pull_up, inverted_row, close_grip_pulldown, single_arm_lat_pulldown, straight_arm_pulldown, chest_supported_row, resistance_band_row, incline_machine_press and shoulder_press. That is 11. underhand is open. horizontal_leg_press and leg_press_calf_raise stay held (13.3/13.4).
 
+### 13.8 Underhand single-plate recheck (round 4) (D-LIB9a-R4, 2026-10-18 ~13:35 UTC; #245 @ `38b436d`)
+
+**What ran.** 3 fresh Opus critics on 5 plates.
+- The target: underhand_lat_pulldown @ `38b436d`. The supervisor rebuilt its page and got LIB-9a's sha256 `9b683745…`.
+- The hidden anchors: lat_pulldown and pull_up. Their facts.json now carries golden B's own Mistake text (vendor lat_pulldown.mjs:70, :164-165; pull_up.mjs:112-120), per 13.7's rule.
+- The plants:
+  - inverted_row's Mistake drawn as hips up (R5);
+  - underhand's 'Elbows down, back' leader on the shoulder (R4), rebuilt on `38b436d` and passing all 10 hard checks.
+
+**Calibration: VALID.**
+- Both anchors scored 4 or more on every item.
+- Both plants were caught on their target items: inverted_row R5 [2, 2, 1], and the underhand plant R4 [2, 3, 2].
+
+**Result: underhand_lat_pulldown passes every scored item.** All 12 drawn LB1 plates now pass the calibrated critic (R1-R7 and R10; R8 and R9 stay unscored, 13.1). Card Do 8's critic gate is met for LB1.
+- horizontal_leg_press and leg_press_calf_raise stay held.
+- LP check (#259, `claude/libht-research-lp` @ `dd54051e`, verify/lp-check.md):
+  - horizontal_leg_press has no sourced number for the top knee angle;
+  - the calf raise has a study-group range of -25° to +25° (kassiano2023, abstract), not a cue, and Yessis keeps 30-45° and "limit ROM".
+- So both go to the owner as a design option (D-LIB8-shrug). The supervisor prepares the option images.
+
 ## 14. LIB-5 design-note rulings (D-LIB5-NOTE, 2026-10-17 ~23:xx UTC; #244 @ ee7f40f)
 
 A 3-lens review read the note. A judge ruled each open point, and one adversarial verifier checked each ruling. Where the verifier corrected a ruling, the corrected text is the ruling. It is changed here only where it clashed with sections 12 and 13 or with another item, and each ruling says in one line what changed. An earlier re-check of the LIB-5 card found 23 defects. Their fixes are merged into the card amendments below.
