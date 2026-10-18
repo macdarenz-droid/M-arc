@@ -300,8 +300,6 @@ export function keyIndexOf(index = INDEX) {
   for (const [id, { mod, cfg }] of index.drawn) {
     const key = keyOfCfg(mod, cfg), triple = `${mod.KEY}/${cfg.variant}/${cfg.orientation}`, faults = cfg.faults.join(',');
     if (!KEY_RE.test(key)) throw new Error(`hand pairs: key ${key} (${id}) is not ${KEY_RE}`);
-    if (!EXERCISE_IDS.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is not in src/data/exercises.json`);
-    if (GOLDEN_IDS.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is one of the 8 (tools/plates/plates.json); it keeps its own hand`);
     const k = keys.get(key);
     if (!k) keys.set(key, { key, triple, faults: cfg.faults, ids: [id] });
     else if (k.triple !== triple) throw new Error(`hand pairs: ${k.triple} and ${triple} both give key ${key}`);
@@ -309,9 +307,13 @@ export function keyIndexOf(index = INDEX) {
     else k.ids.push(id);
     keyOf.set(id, key);
   }
-  for (const a of keys.keys()) {
-    if (index.drawn.has(a)) throw new Error(`hand pairs: key ${a} equals a drawn id`);
+  for (const [a, k] of keys) {
+    if (index.drawn.has(a)) throw new Error(`hand pairs: key ${a} (${k.ids}) equals a drawn id`);
     for (const b of keys.keys()) if (a !== b && b.startsWith(`${a}-`)) throw new Error(`hand pairs: key ${a} + '-' starts key ${b}`);
+  }
+  for (const id of keyOf.keys()) {
+    if (!EXERCISE_IDS.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is not in src/data/exercises.json`);
+    if (GOLDEN_IDS.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is one of the 8 (tools/plates/plates.json); it keeps its own hand`);
   }
   return { keys, keyOf };
 }

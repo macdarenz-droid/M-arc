@@ -19,7 +19,8 @@ Each key is one file, `hands/hand-<key>.mjs`. It exports:
 - `GAPS`: `{ <card id>: reason }`. These ids belong to this key's census scope but are not drawn.
 
 ### Loader (`hands/pairs.mjs`)
-- It discovers modules by filename, so there is no shared registry to edit. It builds `HAND_OF_ID` and throws if an id is drawn twice, or is drawn by one key and listed as a gap by another.
+- It discovers modules by filename, so there is no shared registry to edit. It throws if an id is drawn twice, or is drawn by one key and listed as a gap by another.
+- It implements main's loader contract (`tools/plates/gen/handpairs.mjs:3-4`): `HAND_OF_ID` (`lib_<card id>` → pair key), `inputsFor(key)` and `pairPanel(key)`, plus `keyIndexOf(index)` and `keysOf()`. §8 (LIB-7-FIX) has the keys, the panel and its words.
 - `pairSpec(id)` returns the record a pair needs: camera, loadAxis, right, the wrong pages, notes, alt and extras.
 - `renderPair(id, opts)` calls `module.render ?? renderHandPair` (golden-B, unchanged), then applies the extras: the force-line strip (D-LIB7-7), bend-label placement (D-LIB7-6) and the thumb-side camera label (D-LIB7-4).
 - `inputsFor(id)` lists everything that drawing depends on, for LIB-2's per-output `inputsSha256`: the static import closure of `pairs.mjs`, `zoom.mjs` and the id's key file (with `VIEW_FILES`), plus the key's declared `INPUTS` (the rope's sizes are matched to `eq/rope.mjs`). Other key files are never in it, so a change to another key never marks this id stale.
@@ -210,3 +211,41 @@ Every test is shown red with its mutation and at 0 without it (gotcha V1-08).
 - **D-LIB7-19 (panel critic @ f3e285c, all 3 critics in both rounds, C3 = 3).** The two push Rights labelled HEEL OF PALM drew the handle mid-fist, about 83 px (2×) above the pivot and in front of the forearm, because they copied golden B's squat Right, which has the same defect (golden-B follow-up 9). The ruling asked for the handle low in the heel and over the forearm. Measured through golden B's engine (d-handle push Right, f3e285c: handle centre 42.1 px above the pivot and 28.2 px off the axis, radius 16.0 px): no pose at wrist 8-35° and contactAt -0.8 to -0.2 has both the height at most 23.1 px (0.55×) and the axis through the circle. A low handle always sits at least 25 px in front of the axis, and only about 35° (the Wrong's fault) brings the axis through it, high up (grid on #193).
 - **D-LIB7-19a (ruling, option 1).** single_arm_triceps_pushdown and skull_crusher become gaps citing golden-B follow-up 9: 12 drawn, 18 gaps, 22 pages. The push design is parked, not deleted: `radial-rules.mjs pushVariant`, the d-handle and ez `push` variants (each module's comment keeps the id's orientation, fault and claims), `rightNoLoad`, the D-LIB7-14/18a/18b decisions and G4/G6's push checks all stay. The push-only checks are idle while no push is drawn and keep their failure paths through a test fixture that draws the two ids again as they were (`redrawPush`). No tolerance changed. When plan 2.8 fixes follow-up 9, the ids move back to `IDS` and must meet D-LIB7-19's two rules, added to G4 then.
 - **Approved drawings unchanged.** The critic-approved pages are pinned by one sha256, computed on 23ac5bb: curl 1, curl 2, curl 3 without ez_bar_curl, reverse_curl and single_arm_lat_pulldown. The sheet's own pins were re-pinned once for these fixes.
+
+## 8. Loader contract and pair panels (LIB-7-FIX)
+Card LIB-7-FIX; rulings D-LIB7FIX-* (lib4-cards section 18). Nothing here changes a drawing: the 12 approved ids render byte for byte as at 55e91e9 (D-LIB7FIX-CARRY).
+
+**(a) Keys as built (D-LIB7FIX-KEY).**
+- A key is `<KEY>-<variant>-<orientation>`; its identity is module KEY × variant × orientation × the ordered fault list.
+- `keyIndexOf(index)` builds them from the drawn ids and throws when: ids on one key differ in fault list; two triples give one string; a key is not `[a-z0-9-]`; one key + `-` starts another; a key equals a drawn id; `lib_<id>` is not in `src/data/exercises.json`; `lib_<id>` is one of the 8.
+- `HAND_OF_ID` maps `lib_<card id>` → key for every drawn id of any owner (LIB-12's too, once merged). It never maps one of the 8 or a gap.
+- LIB-7's 8 keys over 12 ids, 7 pictures (curl-bar-under and ez-curl-under draw the same picture and stay separate keys):
+
+| key | ids | faults |
+|---|---|---|
+| curl-dumbbell-under | dumbbell_biceps_curl, alternating_dumbbell_curl, incline_dumbbell_curl | curled, bent-back |
+| curl-dumbbell-neutral | hammer_curl, cross_body_hammer_curl | curled, bent-back |
+| curl-bar-under | barbell_curl, cable_curl | bent-back, curled |
+| d-handle-pull-unstated | single_arm_lat_pulldown | curled |
+| ez-curl-angled | ez_bar_curl | bent-back, curled |
+| ez-curl-under | preacher_curl | bent-back, curled |
+| ez-curl-over | reverse_curl | bent-back, curled |
+| rope-push-neutral | rope_triceps_pushdown | curled |
+
+- `inputsFor(x)` takes a key or a drawn id and gives one list for both (D-LIB7FIX-API): the id path is unchanged, and the list now also holds `panel.mjs` (in `pairs.mjs`'s import closure, with golden B's `copy-lint.mjs`) and `panel-words.json`.
+
+**(b) Panel markup (`hands/panel.mjs`).**
+- golden B's close-up panel as `artifact/howto-layers.mjs:162-171` builds it and `cleanZoom` (:140-157) tidies it:
+  `<div class="zx" id="hp-<key>-zoom-hand" data-zoom="hand" role="region" aria-labelledby="hp-<key>-zoom-hand-h" hidden>`, a `zx-top` with the `h4.zx-h` heading and the `zx-close` button (golden B's icon and label), then `<div class="hx hx-hp-<key>">` holding one `zx-page` per fault (`data-page`, all but the first `hidden`).
+- Each page: `section.zoom` › `div.hand-plate` with the SVG, LIB-6's `captions()` (`zoom-caps`, sr-only "Right: "/"Wrong: "), and, for two or more faults, LIB-6's `pagerOf()` as `cleanZoom` leaves it (`role="group"`, `type="button"`, `data-page`, `aria-pressed`). `data-zoom="hand"` is what `ZoomHost.tsx` finds the panel by.
+- The SVG is `renderPair(<the key's first id>, { fault, uid: 'hp-<key>-<fault>' })`, unchanged: the same as the approved render with only the uid swapped (F4). Every id in the panel starts `hp-<key>-`; there is no chromeId, lib id, card id or exercise name, and no feel link, grip line or limit hint (they are per exercise).
+- Not applied: golden B's `splitHalves` (TalkBack halves), because it rewrites SVG bytes and F4 holds them to the approved render. Whether a shipped pair needs it is LIB-7b's / the shipping card's call, with a re-check of F4's rule.
+- The pair's CSS is not in the chunk (main's `pairText` writes the panel only); LIB-7b adds the pair scope's rules (D-LIB7b-SCOPE (a), (c)).
+- LIB-7b may change only the wrapper bytes, under its own review, while F3 and F4 still hold.
+
+**(c) Words (`hands/panel-words.json`, D-LIB7FIX-WORDS).**
+- Heading, every key: "Hand: right and wrong", golden B's approved hand-zoom heading (`exercises/lat_pulldown.howto.mjs:254`, `dumbbell_lateral_raise.howto.mjs:202`, `machine_chest_press.howto.mjs:101`).
+- Captions: the key's label only. Right = the approved Right note already in the SVG ("Middle of palm": curl and ez keys `radial-rules.mjs:16`, rope `hand-rope.mjs:18`; "Base of fingers": d-handle `radial-rules.mjs:48`). Wrong = the D-LIB7-10 fault label ("Wrist curled" `radial-rules.mjs:20`/`:52`, `hand-rope.mjs:22`; "Wrist bent back" `radial-rules.mjs:22`). Each is 2-3 words, within CAPTION_MAX_WORDS (10).
+- Pager labels: the D-LIB7-10 fault labels.
+- Chrome (golden B's, every close-up): the close label "Close the close-up and show the plate" (`howto-layers.mjs:170`), the sr-only "Right: " / "Wrong: " and the pager's "Hand pages" and "<label>, page <i> of <n>" (LIB-6 `common.mjs:15-18`).
+- `panel.mjs` throws on a key or fault with no words, an entry without text and source, or a caption over 10 words. No key ships before the supervisor has seen the 8 panels (the sheet posted on #193).

@@ -9415,6 +9415,38 @@ if (gate.runs('LIB-7'))
     for (const p of r.problems) errors.push(`${tag}: ${p}`);
     if (r.pages !== 22) errors.push(`${tag}: ${r.pages} pages, expected 22 (12 drawn ids; 2 push ids parked as gaps, D-LIB7-19a)`);
     console.log(`${tag} hand pairs (${lib7.version()}): ${r.pages} pages x ${r.themes} themes x ${r.widths} widths, ${r.shots} pixel shots, ${r.problems.length} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+    // LIB-7-FIX F6 (c) (D-LIB7FIX-BUDGET): the built handpair-<key>-*.js chunks equal the shipped rows' pair keys, each
+    // within its tests/howto/budgets.json entry and handCeiling('pull-up'), the largest of the 8's hand ceilings; a
+    // chunk with no entry fails. A self-check with an oversize fixture asset must be red.
+    {
+      const { gzipSync } = await import('node:zlib');
+      const { loadPairs, pairsOf } = await import('../tools/plates/gen/handpairs.mjs');
+      const { handCeiling } = await import('../tools/plates/gen/hands.mjs');
+      const { shippedIds } = await import('../tools/plates/library/registry.mjs');
+      const cap = handCeiling('pull-up'), shipped = pairsOf(await loadPairs(), shippedIds()).keys;
+      const budgets = new Map(JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).budgets.map(b => [b.chunk, b]));
+      const handpairProblems = assets => {
+        const out = [], built = assets.map(a => ({ ...a, key: a.name.match(/^handpair-([a-z0-9-]+)-[\w-]{8}\.js$/)?.[1] }));
+        for (const a of built) if (!a.key) out.push(`${a.name}: not a handpair-<key>-<hash>.js chunk`);
+        const keys = built.filter(a => a.key).map(a => a.key).sort();
+        if (JSON.stringify(keys) !== JSON.stringify([...shipped].sort())) out.push(`handpair chunks [${keys}] != the shipped rows' pair keys [${[...shipped].sort()}]`);
+        for (const a of built.filter(x => x.key)) {
+          const b = budgets.get(`handpair-${a.key}-*.js`);
+          if (!b) out.push(`${a.name} is ${a.raw} B raw / ${a.gz} B gz and has no entry in tests/howto/budgets.json; the batch PR that ships ${a.key} adds it at measured + 10 %`);
+          else if (a.raw > b.rawMax || a.gz > b.gzMax) out.push(`${a.name} is ${a.raw}/${a.gz} B, over its entry ${b.rawMax}/${b.gzMax} (set by ${b.setBy})`);
+          if (a.raw > cap.raw || a.gz > cap.gz) out.push(`${a.name} is ${a.raw}/${a.gz} B, over the cap ${cap.raw}/${cap.gz}`);
+        }
+        return out;
+      };
+      const self = handpairProblems([{ name: 'handpair-zz-fixture-AAAAAAAA.js', raw: cap.raw + 1, gz: cap.gz + 1 }]);
+      if (!self.some(p => /over the cap/.test(p)) || !self.some(p => /no entry/.test(p))) errors.push(`${tag} F6: the handpair budget passes an oversize chunk with no entry (self-check): ${self.join('; ')}`);
+      const assets = readdirSync(join(ROOT, 'www/assets')).filter(n => n.startsWith('handpair-')).map(name => {
+        const buf = readFileSync(join(ROOT, 'www/assets', name));
+        return { name, raw: buf.length, gz: gzipSync(buf).length };
+      });
+      for (const p of handpairProblems(assets)) errors.push(`${tag} F6: ${p}`);
+      console.log(`${tag} F6 handpair chunks: ${assets.length} built, ${shipped.length} shipped pair keys, ${[...budgets.keys()].filter(c => c.startsWith('handpair-')).length} entries, cap ${cap.raw}/${cap.gz} B`);
+    }
   } finally { await lib7.close(); }
 }
 
