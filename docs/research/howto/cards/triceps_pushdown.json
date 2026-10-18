@@ -550,7 +550,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Leaning over the bar or arching the back.",
+      "mistake": "Leaning over or arching back.",
       "fix": "Stand taller; tilt only from the hips.",
       "claim": [
         "c11",
@@ -563,7 +563,7 @@
       "claim": "c6"
     },
     {
-      "mistake": "Weight too heavy, moved with momentum.",
+      "mistake": "Too heavy, moved with momentum.",
       "fix": "Go lighter and move with control.",
       "claim": "c16"
     }
@@ -597,7 +597,7 @@
       {
         "where": "Lower back pain",
         "means": "Fault: leaning too far forward or arching the back.",
-        "fix": "Stop the set. Don't train through the pain. Stand taller; tilt only from the hips.",
+        "fix": "Stop and don't train through the pain. Stand taller; tilt only from the hips.",
         "claim": [
           "c11",
           "c4"
@@ -607,7 +607,7 @@
       {
         "where": "Elbow discomfort or pain",
         "means": "Heavy, low-rep sets feel uncomfortable in the elbows for many.",
-        "fix": "Stop the set. Don't train through the pain. Use lighter weights for more reps.",
+        "fix": "Stop and don't train through the pain. Use lighter weights for more reps.",
         "claim": [
           "c17"
         ],

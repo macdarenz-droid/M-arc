@@ -594,7 +594,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Arching the back excessively to press the bar.",
+      "mistake": "Arching the back too much.",
       "fix": "Use lighter weights until you can press with good form.",
       "claim": [
         "c7",
@@ -610,7 +610,7 @@
       ]
     },
     {
-      "mistake": "Bouncing the bar off the chest.",
+      "mistake": "Bar bouncing off the chest.",
       "fix": "Lower with control until the bar just touches.",
       "claim": [
         "c7",
@@ -638,7 +638,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Chest, front of the shoulders, backs of the arms",
+        "where": "Chest, front shoulders, backs of arms",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c11",
@@ -666,7 +666,7 @@
       ]
     },
     {
-      "risk": "You may lift less on the Smith than with free weights.",
+      "risk": "You lift less on the Smith, so a free-bar load doesn't carry over.",
       "claim": "c10"
     },
     {

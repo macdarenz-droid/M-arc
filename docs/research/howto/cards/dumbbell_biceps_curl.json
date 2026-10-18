@@ -530,16 +530,16 @@
   "handlingMistakes": [
     {
       "mistake": "Wrists bending up or down.",
-      "fix": "Keep the hand in line with the forearm; pick the dumbbell position that allows it.",
+      "fix": "Keep the hand in line with the forearm.",
       "claim": "c6"
     },
     {
-      "mistake": "Swinging the body to get the weight up.",
+      "mistake": "Swinging the body.",
       "fix": "Use a lighter dumbbell and lift with control.",
       "claim": "c5"
     },
     {
-      "mistake": "Elbows drifting back, or forward before the top.",
+      "mistake": "Elbows drifting back or forward.",
       "fix": "Keep the elbows at your sides; never let them travel back.",
       "claim": "c4"
     }
@@ -560,7 +560,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Front of the upper arm, through the whole lift",
+        "where": "Front of the upper arm",
         "means": "The biceps are doing the work.",
         "fix": "",
         "claim": "c12",
@@ -578,7 +578,7 @@
       {
         "where": "Wrist discomfort or pain",
         "means": "Fault: the wrists bent up or down under load.",
-        "fix": "Stop the set. Don't train through the pain. Keep the wrist straight.",
+        "fix": "Stop and don't train through the pain. Keep the wrist straight.",
         "claim": [
           "c6"
         ],

@@ -671,7 +671,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Bench set so the bar runs far in front of the face.",
+      "mistake": "Bench set too far back.",
       "fix": "Move the bench until the bar just clears your nose.",
       "claim": [
         "c3",
@@ -679,15 +679,15 @@
       ]
     },
     {
-      "mistake": "Arching the back off the pad.",
-      "fix": "Press your upper back into the pad and brace; start with a light weight.",
+      "mistake": "Back arching off the pad.",
+      "fix": "Press your upper back into the pad, brace, start light.",
       "claim": [
         "c9",
         "c4"
       ]
     },
     {
-      "mistake": "Locking the elbows at the top.",
+      "mistake": "Elbows locking at the top.",
       "fix": "Stop just short of full arm extension.",
       "claim": [
         "c10",
@@ -715,7 +715,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Front and sides of the shoulders, backs of the arms",
+        "where": "Front, side shoulders, backs of arms",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c11",
@@ -724,7 +724,7 @@
       {
         "where": "Lower back pain",
         "means": "Fault: an excessive back arch.",
-        "fix": "Stop the set. Don't train through the pain. Press your upper back into the pad.",
+        "fix": "Stop and don't train through the pain. Press your upper back into the pad.",
         "claim": [
           "c9",
           "c4"

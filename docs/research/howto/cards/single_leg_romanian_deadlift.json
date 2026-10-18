@@ -593,7 +593,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Reaching the dumbbell to the floor and rounding.",
+      "mistake": "Reaching to the floor, rounding.",
       "fix": "Stop around mid-shin with a flat back.",
       "claim": [
         "c7",
@@ -601,7 +601,7 @@
       ]
     },
     {
-      "mistake": "Opening the hip of the lifted leg.",
+      "mistake": "Opening the lifted-leg hip.",
       "fix": "Keep both hips pointing at the floor; shorten the range if needed.",
       "claim": "c5"
     },
@@ -631,7 +631,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Back of the standing thigh near the bottom",
+        "where": "Back of the standing thigh",
         "means": "The hamstrings should feel strong tension when the dumbbell reaches about mid-shin.",
         "fix": null,
         "claim": [
@@ -661,8 +661,11 @@
   },
   "risks": [
     {
-      "risk": "One of the most advanced single-leg movements, even for experienced lifters.",
-      "claim": "c13"
+      "risk": "Losing balance on one leg: keep the lifted leg's toes touching if needed.",
+      "claim": [
+        "c13",
+        "c6"
+      ]
     },
     {
       "risk": "Rounding the back while reaching low.",

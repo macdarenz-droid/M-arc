@@ -517,7 +517,7 @@
       "claim": "c1"
     },
     {
-      "step": "Hold a handle in each hand, a foot or two in front.",
+      "step": "Stand a foot or two from the cables, a handle per hand.",
       "claim": "c1"
     },
     {
@@ -525,7 +525,7 @@
       "claim": "c2"
     },
     {
-      "step": "Handles just outside shoulder width; elbows just below 90, wrists over elbows.",
+      "step": "Handles outside shoulder width, elbows just below 90 degrees, wrists over elbows.",
       "claim": "c3"
     },
     {
@@ -566,7 +566,7 @@
       "claim": "c6"
     },
     {
-      "mistake": "Shifting and jerking the body with a weight that is too heavy.",
+      "mistake": "Jerking the body, too heavy.",
       "fix": "Choose a weight you can press with the body still.",
       "claim": [
         "c7",
@@ -574,7 +574,7 @@
       ]
     },
     {
-      "mistake": "Gripping much wider than shoulder width or flaring the elbows.",
+      "mistake": "Gripping wide or flaring elbows.",
       "fix": "Handles just outside shoulder width, elbows about 45 degrees from the body.",
       "claim": [
         "c7",
@@ -610,7 +610,7 @@
     ],
     "rows": [
       {
-        "where": "Chest, front of the shoulders, backs of the arms",
+        "where": "Chest, front shoulders, backs of arms",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c9",
@@ -629,7 +629,7 @@
       {
         "where": "Lower back pain",
         "means": "Fault: arching the back.",
-        "fix": "Stop the set. Don't train through the pain. Keep your spine neutral.",
+        "fix": "Stop and don't train through the pain. Keep your spine neutral.",
         "claim": [
           "c6"
         ],
@@ -638,7 +638,7 @@
       {
         "where": "Shoulder pain",
         "means": "Fault: gripping much wider than shoulder width, or flaring the elbows.",
-        "fix": "Stop the set. Don't train through the pain. Keep your elbows at a 45-degree angle.",
+        "fix": "Stop and don't train through the pain. Keep elbows at a 45-degree angle.",
         "claim": [
           "c7",
           "c13"

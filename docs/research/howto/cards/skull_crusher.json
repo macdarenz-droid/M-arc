@@ -520,7 +520,7 @@
       "claim": "c5"
     },
     {
-      "mistake": "Too heavy: elbows wander and the bar bounces.",
+      "mistake": "Too heavy: elbows wander.",
       "fix": "Reduce the load until every rep is clean.",
       "claim": "c9"
     },
@@ -555,7 +555,7 @@
         "redFlag": null
       },
       {
-        "where": "Pain at the back of the elbow while lowering",
+        "where": "Back-of-elbow pain",
         "means": "Fault: lowering the bar forcefully.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c15",

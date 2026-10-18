@@ -564,16 +564,15 @@
   },
   "setup": [
     {
-      "step": "Set the back pad to about 30 degrees.",
-      "claim": "c1"
+      "step": "Pad at about 30 degrees; sit with head, shoulders, hips on it.",
+      "claim": [
+        "c1",
+        "c3"
+      ]
     },
     {
       "step": "Set the safety pins slightly below where the bar touches your chest.",
       "claim": "inherit:3"
-    },
-    {
-      "step": "Sit back with head, shoulders and hips on the pad, feet flat.",
-      "claim": "c3"
     },
     {
       "step": "Grip slightly wider than shoulders, wrists straight.",
@@ -585,6 +584,10 @@
         "c6",
         "c5"
       ]
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c13"
     }
   ],
   "posture": [
@@ -619,7 +622,7 @@
       ]
     },
     {
-      "mistake": "Arching the low back off the pad to finish a rep.",
+      "mistake": "Low back arching off pad.",
       "fix": "Keep your back on the pad; build up to heavier weights gradually.",
       "claim": [
         "c9",
@@ -628,7 +631,7 @@
       ]
     },
     {
-      "mistake": "Bouncing the bar off the chest.",
+      "mistake": "Bar bouncing off the chest.",
       "fix": "Lower slowly and with control.",
       "claim": [
         "c8",
@@ -660,21 +663,21 @@
     "watch": [],
     "rows": [
       {
-        "where": "Upper chest and front of the shoulders",
+        "where": "Upper chest and front shoulders",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c2",
         "redFlag": null
       },
       {
-        "where": "Mostly the front of the shoulders, little in the chest",
+        "where": "Mostly front shoulders, little chest",
         "means": "A bench steeper than 45 degrees shifts the work to the shoulders.",
         "fix": "Set the back pad between 30 and 45 degrees.",
         "claim": "c1",
         "redFlag": null
       },
       {
-        "where": "Any pain or discomfort in the shoulder or chest",
+        "where": "Shoulder or chest pain or discomfort",
         "means": "Fault: the elbows flare out too far, which strains the shoulder.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -687,7 +690,7 @@
   },
   "risks": [
     {
-      "risk": "Bar over face and neck: wrap thumbs; use a spotter or safety catches.",
+      "risk": "Bar over face and neck: wrap thumbs; use a spotter or safety pins.",
       "claim": [
         "c15",
         "c6",

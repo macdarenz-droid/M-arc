@@ -530,7 +530,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Arching the back excessively to press the bar.",
+      "mistake": "Arching the back too much.",
       "fix": "Use lighter weights until you can press without it.",
       "claim": [
         "c6",
@@ -546,7 +546,7 @@
       ]
     },
     {
-      "mistake": "Bouncing the bar off the chest.",
+      "mistake": "Bar bouncing off the chest.",
       "fix": "Touch the bar lightly to the chest.",
       "claim": [
         "c6",
@@ -574,7 +574,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Upper chest and front of the shoulders",
+        "where": "Upper chest and front shoulders",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c8",

@@ -484,12 +484,12 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Elbows flaring out and the bar landing high on the chest.",
+      "mistake": "Elbows flaring, bar landing high.",
       "fix": "Keep the elbows close to your ribs and touch low.",
       "claim": "c2"
     },
     {
-      "mistake": "Loading it like your regular bench.",
+      "mistake": "Loading it like regular bench.",
       "fix": "Use less weight than your regular bench.",
       "claim": "c6"
     },
@@ -519,7 +519,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Backs of the upper arms, with some chest",
+        "where": "Backs of upper arms, some chest",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c6",
@@ -536,9 +536,9 @@
         "redFlag": null
       },
       {
-        "where": "Pain deep in the front of the shoulder",
+        "where": "Pain deep in the front shoulder",
         "means": "Poor technique is a risk for shoulder injuries.",
-        "fix": "Stop the set. Don't train through the pain. Keep the elbows close to your ribs.",
+        "fix": "Stop and don't train through the pain. Keep elbows close to your ribs.",
         "claim": [
           "c12",
           "c2"

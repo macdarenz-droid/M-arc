@@ -568,7 +568,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Letting the bar land high on the chest, toward the neck.",
+      "mistake": "Bar landing high, toward neck.",
       "fix": "Lower it to the lower chest only.",
       "claim": [
         "c5",
@@ -576,12 +576,12 @@
       ]
     },
     {
-      "mistake": "Benching heavy without safeties or a spotter.",
+      "mistake": "Heavy without safeties or spotter.",
       "fix": "Set the safety racks; use a spotter or go lighter.",
       "claim": "c6"
     },
     {
-      "mistake": "Bouncing the bar off the chest.",
+      "mistake": "Bar bouncing off the chest.",
       "fix": "Lower with control, 2 seconds down.",
       "claim": [
         "c5",
@@ -609,21 +609,24 @@
     "watch": [],
     "rows": [
       {
-        "where": "Lower chest and backs of the arms",
+        "where": "Lower chest and backs of arms",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c9",
         "redFlag": null
       },
       {
-        "where": "Pain in the chest or front of the shoulder while lowering",
+        "where": "Chest or front-shoulder pain",
         "means": "Fault: lowering the bar without control.",
         "fix": "Stop the set. Don't train through the pain.",
-        "claim": "c5",
+        "claim": [
+          "c5",
+          "c14"
+        ],
         "redFlag": "shoulder"
       },
       {
-        "where": "Pain deep in the front of the shoulder",
+        "where": "Pain deep in the front shoulder",
         "means": "Poor technique is a risk for shoulder injuries.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c15",

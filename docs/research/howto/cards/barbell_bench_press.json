@@ -55,7 +55,7 @@
     },
     {
       "id": "c3",
-      "text": "During the rep the upper arms sit about 45-60 degrees from the torso and the hips stay on the bench. StrongLifts (c2) instead says to tuck the elbows about 75 degrees; the card shows Human Kinetics' 45-60 degree range because it is given for the whole rep, while StrongLifts gives one value as the bar is lowered.",
+      "text": "During the movement the hips stay on the bench. Human Kinetics gives the upper arms about 45-60 degrees from the torso; the card and the plate follow StrongLifts' elbow tuck of about 75 degrees (c2), which fits the drawn mid-chest touch with vertical forearms (ruling R-LB2-24), so no shown line uses the 45-60 range.",
       "tags": [
         "CONSENSUS"
       ],
@@ -800,8 +800,8 @@
       "claim": "c12"
     },
     {
-      "point": "Upper arms about 45-60 degrees from the torso.",
-      "claim": "c3"
+      "point": "Elbows tucked in about 75 degrees as you lower.",
+      "claim": "c2"
     },
     {
       "point": "Forearms vertical at the bottom.",
@@ -818,7 +818,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Pressing the bar straight up off the chest.",
+      "mistake": "Pressing straight up off chest.",
       "fix": "Drive it up and slightly back toward your shoulders.",
       "claim": [
         "c25",
@@ -832,7 +832,7 @@
     },
     {
       "mistake": "Hips lifting off the bench.",
-      "fix": "Keep your hips on the bench. If they lift, count it as a failed rep.",
+      "fix": "Keep hips on the bench. If they lift, it's a failed rep.",
       "claim": "c10"
     }
   ],
@@ -856,7 +856,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Middle of the chest, front of the shoulders, backs of the arms",
+        "where": "Mid-chest, front shoulders, backs of arms",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": [
@@ -867,19 +867,19 @@
         "redFlag": null
       },
       {
-        "where": "Pain in the chest or front of the shoulder while lowering",
+        "where": "Chest or front-shoulder pain",
         "means": "Fault: lowering the bar too fast.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c18",
         "redFlag": "shoulder"
       },
       {
-        "where": "Pain deep in the front of the shoulder",
+        "where": "Pain deep in the front shoulder",
         "means": "Poor technique is a risk for shoulder injuries.",
-        "fix": "Stop the set. Don't train through the pain. Keep upper arms 45-60 degrees out.",
+        "fix": "Stop and don't train through the pain. Tuck elbows in about 75 degrees.",
         "claim": [
           "c24",
-          "c3"
+          "c2"
         ],
         "redFlag": "shoulder"
       },

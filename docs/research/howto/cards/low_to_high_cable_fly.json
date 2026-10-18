@@ -498,12 +498,12 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Leaning forward, often when the weight is too heavy.",
+      "mistake": "Leaning forward, often too heavy.",
       "fix": "Lower the weight and keep your trunk upright.",
       "claim": "c7"
     },
     {
-      "mistake": "Bending the elbows so the fly becomes a press.",
+      "mistake": "Bending elbows into a press.",
       "fix": "Keep the slight elbow bend the whole rep.",
       "claim": [
         "c11",
@@ -511,7 +511,7 @@
       ]
     },
     {
-      "mistake": "Letting the hands go back past the armpits.",
+      "mistake": "Hands going past the armpits.",
       "fix": "Stop opening at armpit level.",
       "claim": "c4"
     }
@@ -543,7 +543,7 @@
         "redFlag": null
       },
       {
-        "where": "Front of the shoulders, body leaning forward",
+        "where": "Front shoulders, body leaning forward",
         "means": "Fault: leaning forward, which happens frequently when the weight is too heavy.",
         "fix": "Lower the resistance and keep your trunk vertical.",
         "claim": [
@@ -554,7 +554,7 @@
       {
         "where": "Shoulder pain",
         "means": "Fault: leaning forward.",
-        "fix": "Stop the set. Don't train through the pain. Keep your trunk vertical.",
+        "fix": "Stop and don't train through the pain. Keep your trunk vertical.",
         "claim": [
           "c7"
         ],

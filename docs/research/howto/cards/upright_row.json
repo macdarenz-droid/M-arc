@@ -497,7 +497,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Pulling the bar up under the chin.",
+      "mistake": "Bar pulled under the chin.",
       "fix": "Stop at the lower ribs, elbows level with the shoulders.",
       "claim": "c5"
     },
@@ -507,7 +507,7 @@
       "claim": "c5"
     },
     {
-      "mistake": "Lifting with the wrists and letting the elbows drop.",
+      "mistake": "Lifting with wrists, elbows dropping.",
       "fix": "Lead with the elbows out to the sides.",
       "claim": "c3"
     }
@@ -554,9 +554,9 @@
         "redFlag": null
       },
       {
-        "where": "Any discomfort or pain in the shoulder joints near the top of the lift",
+        "where": "Shoulder discomfort or pain",
         "means": "Fault: elbows above the shoulders, or the bar pulled under the chin.",
-        "fix": "Stop the set. Don't train through the pain. Stop below shoulder height.",
+        "fix": "Stop and don't train through the pain. Keep upper arms below shoulder height.",
         "claim": [
           "c15",
           "c5",

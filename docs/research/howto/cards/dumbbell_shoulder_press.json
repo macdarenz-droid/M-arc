@@ -463,12 +463,12 @@
       "claim": "c10"
     },
     {
-      "mistake": "Arching the back to finish a rep.",
+      "mistake": "Arching the back.",
       "fix": "Press without arching your low back.",
       "claim": "c4"
     },
     {
-      "mistake": "Letting the dumbbells drop on the way down.",
+      "mistake": "Dumbbells dropping fast going down.",
       "fix": "Lower slowly, pulling them down.",
       "claim": "c6"
     }
@@ -500,7 +500,7 @@
         "redFlag": null
       },
       {
-        "where": "Pain deep in the front of the shoulder at the bottom",
+        "where": "Pain deep in the front shoulder",
         "means": "Fault: lowering the dumbbells behind the head.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [

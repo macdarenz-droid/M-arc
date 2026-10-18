@@ -697,20 +697,20 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Rounding the lower back to get the bar lower.",
-      "fix": "Stop higher, where the back stays flat; if it still rounds, lower the weight.",
+      "mistake": "Rounding the lower back.",
+      "fix": "Stop where the back stays flat; if it rounds, lower the weight.",
       "claim": [
         "c7",
         "c8"
       ]
     },
     {
-      "mistake": "Bending the knees until it becomes a squat.",
+      "mistake": "Knees bending into a squat.",
       "fix": "Lock the knees at a slight bend and push the hips back.",
       "claim": "c7"
     },
     {
-      "mistake": "Using so much weight the form breaks.",
+      "mistake": "So much weight form breaks.",
       "fix": "Go lighter and move smoothly.",
       "claim": "c8"
     }
@@ -739,7 +739,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Back of the thighs, stretching on the way down",
+        "where": "Back of thighs, stretching going down",
         "means": "The hamstrings are stretched as the hips push back.",
         "fix": null,
         "claim": [
@@ -762,7 +762,7 @@
       {
         "where": "Lower-back pain during or after sessions",
         "means": "Severe, or still there after a few days to a week?",
-        "fix": "Stop the set. Don't train through the pain. See a doctor if so.",
+        "fix": "Stop. Don't train through the pain.",
         "claim": [
           "c17"
         ],
@@ -821,7 +821,7 @@
       "adductors"
     ],
     "remove": [],
-    "why": "Library primary hamstrings and secondary glutes, lower_back. Glutes move to primary: StrengthLog lists them as a primary muscle (c16) and the RDL works them strongly (c15). Add adductors as secondary: StrengthLog names them (c16)."
+    "why": "Library primary hamstrings and secondary glutes, lower_back. Glutes move to primary: StrengthLog lists them as a primary muscle (c16) and the RDL works them strongly (c15). Add adductors as secondary: StrengthLog names them (c16). Lower back stays secondary: StrengthLog lists it as primary (c16), but the RDL works the erector spinae less than the hamstrings (c14)."
   },
   "anchorSource": "nasm-rdl",
   "gaps": [

@@ -593,7 +593,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Swinging the bar up with the hips.",
+      "mistake": "Swinging the bar up.",
       "fix": "Go lighter and row strictly.",
       "claim": "c7"
     },
@@ -606,7 +606,7 @@
       ]
     },
     {
-      "mistake": "Switching to an underhand grip for heavy sets.",
+      "mistake": "Underhand grip for heavy sets.",
       "fix": "Keep the overhand grip for this row.",
       "claim": "c20"
     }

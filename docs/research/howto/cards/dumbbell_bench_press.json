@@ -600,7 +600,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Arching the low back to finish a rep.",
+      "mistake": "Arching the low back.",
       "fix": "Keep your hips and back on the bench.",
       "claim": [
         "c6",
@@ -608,7 +608,7 @@
       ]
     },
     {
-      "mistake": "Bouncing the dumbbells off the chest.",
+      "mistake": "Dumbbells bouncing off the chest.",
       "fix": "Lower slowly and touch gently.",
       "claim": "c5"
     }
@@ -640,7 +640,7 @@
         "redFlag": null
       },
       {
-        "where": "Pain in the chest or front of the shoulder while lowering",
+        "where": "Chest or front-shoulder pain",
         "means": "Fault: lowering the dumbbells too fast.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -653,7 +653,7 @@
   },
   "risks": [
     {
-      "risk": "Dropped weights badly hurt lifters most often; have a spotter hold your wrists.",
+      "risk": "Dropped weights cause the most bad lifting injuries. A spotter holds your wrists.",
       "claim": [
         "c16",
         "c11"

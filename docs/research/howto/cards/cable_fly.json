@@ -473,7 +473,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Bending the elbows so the fly becomes a press.",
+      "mistake": "Bending elbows into a press.",
       "fix": "Keep the elbow bend fixed; move at the shoulders.",
       "claim": [
         "c6",
@@ -481,7 +481,7 @@
       ]
     },
     {
-      "mistake": "Too much weight, so you swing.",
+      "mistake": "Swinging with too much weight.",
       "fix": "Use a weight you can move slowly with a soft elbow bend.",
       "claim": [
         "c6",
@@ -489,7 +489,7 @@
       ]
     },
     {
-      "mistake": "Opening the arms too far back.",
+      "mistake": "Arms opening too far back.",
       "fix": "Stop when the hands are in line with the chest.",
       "claim": "c7"
     }
@@ -510,7 +510,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Across the chest and front of the shoulders, through the whole rep",
+        "where": "Chest and front shoulders, whole rep",
         "means": "The target muscles are working; cables keep the load on.",
         "fix": null,
         "claim": [
@@ -520,7 +520,7 @@
         "redFlag": null
       },
       {
-        "where": "Pain at the front of the shoulder",
+        "where": "Pain at the front shoulder",
         "means": "Fault: opening the arms past the chest line strains the shoulder.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [

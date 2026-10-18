@@ -558,7 +558,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Leaning over the rope or arching the back.",
+      "mistake": "Leaning over or arching back.",
       "fix": "Stand taller; tilt only from the hips.",
       "claim": [
         "c12",
@@ -566,12 +566,12 @@
       ]
     },
     {
-      "mistake": "Elbows drifting forward or away from the body.",
+      "mistake": "Elbows drifting forward or out.",
       "fix": "Keep the elbows at your sides.",
       "claim": "c7"
     },
     {
-      "mistake": "Letting the rope rise too high.",
+      "mistake": "Rope rising too high.",
       "fix": "Stop when the forearms are just past parallel.",
       "claim": "c8"
     }
@@ -610,7 +610,7 @@
       {
         "where": "Lower back pain",
         "means": "Fault: leaning too far forward or arching the back.",
-        "fix": "Stop the set. Don't train through the pain. Stand taller; tilt only from the hips.",
+        "fix": "Stop and don't train through the pain. Stand taller; tilt only from the hips.",
         "claim": [
           "c12",
           "c10"
@@ -620,7 +620,7 @@
       {
         "where": "Elbow discomfort or pain",
         "means": "Heavy, low-rep sets feel uncomfortable in the elbows for many.",
-        "fix": "Stop the set. Don't train through the pain. Go lighter; don't lock out your elbows.",
+        "fix": "Stop and don't train through the pain. Go lighter; don't lock out your elbows.",
         "claim": [
           "c16",
           "c9"

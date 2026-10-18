@@ -493,17 +493,17 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Stopping short of the full range.",
+      "mistake": "Stopping short of full range.",
       "fix": "Go lighter until the handles nearly meet every rep.",
       "claim": "c6"
     },
     {
-      "mistake": "Lifting the upper back off the pad to finish.",
+      "mistake": "Upper back lifting off pad.",
       "fix": "Go lighter; keep the back on the pad.",
       "claim": "c6"
     },
     {
-      "mistake": "Changing the technique to move more weight.",
+      "mistake": "Changing technique for more weight.",
       "fix": "Lower the weight.",
       "claim": "c7"
     }

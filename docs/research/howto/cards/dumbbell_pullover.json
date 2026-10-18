@@ -655,18 +655,18 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Bending the elbows a lot so it becomes a triceps extension.",
+      "mistake": "Elbows bending into triceps extension.",
       "fix": "Keep the same slight bend all the way.",
       "claim": "c7"
     },
     {
-      "mistake": "Hips rising to get the weight further back.",
-      "fix": "Dig your heels in and brace; stop where your shoulders run out of range.",
+      "mistake": "Hips rising off the bench.",
+      "fix": "Dig your heels in, brace, stop where shoulder range ends.",
       "claim": "c8"
     },
     {
-      "mistake": "Letting go before the spotter has the dumbbell.",
-      "fix": "Hold on until the spotter has full control, or until it rests on your thigh.",
+      "mistake": "Letting go before the spotter.",
+      "fix": "Grip until the spotter has it or it rests on your thigh.",
       "claim": "c10"
     }
   ],
@@ -690,7 +690,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Lats and lower chest, with a stretch along the sides at the bottom",
+        "where": "Lats and lower chest, side stretch",
         "means": "The target muscles are working through a stretch.",
         "fix": null,
         "claim": "c5",
@@ -704,14 +704,14 @@
         "redFlag": null
       },
       {
-        "where": "Pain on the inside of the elbow",
+        "where": "Pain inside the elbow",
         "means": "Fault: too much elbow bend, with the elbows flaring out.",
-        "fix": "Stop the set. Don't train through the pain. Keep the elbows pointing forward or up.",
+        "fix": "Stop and don't train through the pain. Keep elbows pointing forward or up.",
         "claim": "c14",
         "redFlag": "elbow"
       },
       {
-        "where": "Pain in the shoulder at the bottom",
+        "where": "Shoulder pain at the bottom",
         "means": "Fault: lowering further than you can control.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -735,7 +735,7 @@
       "claim": "c19"
     },
     {
-      "risk": "Even small weight jumps load the shoulders much more at the bottom.",
+      "risk": "Small weight jumps load the shoulders hard. Start light, add weight in small steps.",
       "claim": "c12"
     }
   ],
