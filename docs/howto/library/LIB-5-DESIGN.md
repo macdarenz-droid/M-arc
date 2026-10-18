@@ -270,11 +270,11 @@ These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by 
 
 | Module | Exports | From card | Lint held to |
 |---|---|---|---|
-| `hands.mjs` | PALM_FLAT, CURL, ROPE, CUPPED_THUMB | palm-flat, curl, rope-rule, cupped-thumb: gripLine, cue, thumbRule, wrist, rightPose, faults{key,label,what}; palm-flat soreWrist, fingers, contactPoint; curl widthNote; rope grip, handContact; cupped alternative, handContact | gripLine lead (≤22 words, ≤2 sentences); cue ≤6; fault label 1-3; other prose sentence ≤15; all BANNED, LR-23 patterns and medical bans |
+| `hands.mjs` | PALM_FLAT, CURL, ROPE, CUPPED_THUMB | palm-flat, curl, rope-rule, cupped-thumb: `gripLine`, `cue`, `thumbRule`, `wrist`, `rightPose`, `faults[{key,label,what}]`, palm-flat `soreWrist`, `fingers`, `contactPoint`, curl `widthNote`, rope `grip`/`handContact`, cupped `alternative`/`handContact` | gripLine lead (≤22 words, ≤2 sentences); cue ≤6; fault label 1-3; other prose sentence ≤15; all BANNED, LR-23 patterns and medical bans |
 | `implements.mjs` | BATTLE_ROPES, JUMP_ROPE, KETTLEBELL_SWING, MEDICINE_BALL_SLAM, WALL_BALL | the 5 implement cards: gripLine, cue, contactPoint, thumbRule, wrist, rightPose, faults, handRisks[] | as hands, plus handRisks[] risk ≤14 |
-| `moves.mjs` | GET_IN_OUT, SELECTOR_PIN, FOOT_BAR, UNRACK_RERACK, DUMBBELL_KICKUP | steps / variants.<v>.steps {kind,text}, postureArchetype, variant appliesTo | setup step ≤12 words, ≤5 steps per variant; posture right/wrong caption ≤10 |
+| `moves.mjs` | GET_IN_OUT, SELECTOR_PIN, FOOT_BAR, UNRACK_RERACK, DUMBBELL_KICKUP | `steps[]` / `variants.<v>.steps[]` `{kind,text}`, `postureArchetype` (unrack, kick-up), variant `appliesTo` | setup step ≤12 words, ≤5 steps per variant; posture right/wrong caption ≤10 |
 | `exemptions.mjs` | FRONT_RACK, WRIST_CURL | exempts, reason, replacementRule, faults | prose sentence ≤15; label 1-3 |
-| `checkpoints.mjs` | FLOOR_BODY, PRONE | defaultCheckpoints / checkpoints {key,label,detail,appliesTo}, defaultCrop, prone | label 1-3; detail caption ≤10 |
+| `checkpoints.mjs` | FLOOR_BODY, PRONE | `defaultCheckpoints[]` / `checkpoints[]` `{key,label,detail,appliesTo}`, `defaultCrop`, `prone` | label 1-3; detail caption ≤10 |
 | `back-box.mjs` | placeholder (c) | none until Do 9 | (b) |
 
 (2) Data list (SPLIT 2). Not projected (research data under LR-28): `appliesToWhy`, `loadAxis`, `thumbMode`, `byRule`, `byInference`, `notFor`, `gaps`, `notes`.
