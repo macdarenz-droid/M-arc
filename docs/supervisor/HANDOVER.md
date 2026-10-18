@@ -969,6 +969,17 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - LIB-6-PM;
   - the LIB-8 merge card (with verifyChain and O5 Low 2).
 
+**Update ~16:00 UTC.**
+- **Train 27 merged:** #262, main `2078913c`, carrying LIB-3b #258 @ `5a764fc`.
+  - The review passed (6251512215; 0/0/0/2, PR-body Lows only; reviewer archived). LIB-3b is numbered checklist slot 2b.
+  - All 15 checks were green on train head `99c3f138`. No app code changed, so no APK is owed.
+  - #245 was told to update its lb1-plates h10 expectations at its next main merge (12 item 21).
+- **LIB-4c:** C14 is met at P = 1 (runs 39133500575 and 39134810143; compare PASS).
+  - c0 must come from C14's data in LIB-4c's next push. The supervisor's first "c0 unchanged" line was corrected on #246.
+  - The scratch was refreshed @ `42716893`. C12's three seed refs are being pushed one at a time by `scratchpad/c12-seeds.sh` (a background task). Then C13, 5 full dispatches.
+- **LIB-4d:** D-LIB4d-A1A2 (#261). The lib-4a A1/A2 beforeAll error on the synthetic 22 tree is a clone artifact (PINS-2), reproduced on main. It goes in S8 as "synthetic 22 tree only" and must pass at real 22.
+- **Waiting on the owner:** the leg-press letters (1A/1B/1C, 2C), and watch G1-G6 (unchanged).
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
