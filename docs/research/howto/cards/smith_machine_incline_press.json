@@ -433,7 +433,10 @@
       {
         "label": "Stops set",
         "what": "Safety stops set just below the lowest point of the bar (where it touches your upper chest).",
-        "claim": "c5, c3"
+        "claim": [
+          "c5",
+          "c3"
+        ]
       }
     ],
     "mistake": {
@@ -477,11 +480,17 @@
     },
     {
       "step": "Set the safety stops just below the lowest point of the bar (where it touches your upper chest).",
-      "claim": "c5, c3"
+      "claim": [
+        "c5",
+        "c3"
+      ]
     },
     {
       "step": "Sit back, feet flat, shoulder blades together and down, chest up.",
-      "claim": "c2, c4"
+      "claim": [
+        "c2",
+        "c4"
+      ]
     },
     {
       "step": "Grip slightly wider than shoulder-width.",
@@ -489,7 +498,10 @@
     },
     {
       "step": "Start with the empty bar or light plates; rotate the bar off the hooks to begin.",
-      "claim": "c9, c4"
+      "claim": [
+        "c9",
+        "c4"
+      ]
     }
   ],
   "posture": [
@@ -507,7 +519,10 @@
     },
     {
       "point": "Elbows at about 45-75 degrees, not flared wide.",
-      "claim": "c3, c6"
+      "claim": [
+        "c3",
+        "c6"
+      ]
     },
     {
       "point": "Back not arched excessively.",
@@ -518,17 +533,26 @@
     {
       "mistake": "Arching the back excessively to press the bar.",
       "fix": "Use lighter weights until you can press without it.",
-      "claim": "c6, c9"
+      "claim": [
+        "c6",
+        "c9"
+      ]
     },
     {
       "mistake": "Flaring the elbows wide.",
       "fix": "Keep the elbows at about 45-75 degrees.",
-      "claim": "c6, c3"
+      "claim": [
+        "c6",
+        "c3"
+      ]
     },
     {
       "mistake": "Bouncing the bar off the chest.",
       "fix": "Touch the bar lightly to the chest.",
-      "claim": "c6, c3"
+      "claim": [
+        "c6",
+        "c3"
+      ]
     }
   ],
   "feel": {
@@ -559,7 +583,7 @@
       },
       {
         "where": "Mostly the front of the shoulders",
-        "means": "Fault: the bench is set over 45 degrees.",
+        "means": "A bench set over 45 degrees makes the shoulders dominate.",
         "fix": "Lower the back pad to 30-45 degrees.",
         "claim": [
           "c1"
@@ -567,7 +591,7 @@
         "redFlag": null
       },
       {
-        "where": "Shoulder, sudden or severe",
+        "where": "Any shoulder pain",
         "means": "Up to 36% of resistance-training injuries are at the shoulder.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -580,11 +604,15 @@
   },
   "risks": [
     {
-      "risk": "Bar lowered to the upper chest, the touch point nearest the neck: set the safety stops and wrap the thumbs.",
-      "claim": "c12, c5, barbell_bench_press:c4"
+      "risk": "Upper-chest touch is nearest the neck: set the safety stops, wrap your thumbs.",
+      "claim": [
+        "c12",
+        "c5",
+        "inherit:1"
+      ]
     },
     {
-      "risk": "Adding weight in big jumps.",
+      "risk": "Add 2-10% once you beat your target reps by one or two.",
       "claim": "c11"
     },
     {
@@ -601,14 +629,17 @@
       "kind": "hand",
       "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
-      "claim": "barbell_bench_press:c5"
+      "claim": "inherit:4"
     },
     {
       "key": "smith-incline-position",
       "kind": "posture",
       "right": "Bench at 30-45 degrees, bar lined up over the upper chest.",
       "wrong": "Back arched excessively.",
-      "claim": "c1, c6"
+      "claim": [
+        "c1",
+        "c6"
+      ]
     }
   ],
   "libraryDiff": {

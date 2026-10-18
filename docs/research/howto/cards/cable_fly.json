@@ -201,7 +201,7 @@
       "quotes": [
         {
           "source": "sl-cable-fly",
-          "text": "Compared to dumbbell chest flyes , the resistance curve in cable flyes is more evenly distributed, and the load on your chest muscles is more constant throughout the range of motion.",
+          "text": "Compared to dumbbell chest flyes, the resistance curve in cable flyes is more evenly distributed, and the load on your chest muscles is more constant throughout the range of motion.",
           "where": "Introduction"
         }
       ]
@@ -450,7 +450,10 @@
     },
     {
       "point": "Core braced, body still, no swinging.",
-      "claim": "c3, c6"
+      "claim": [
+        "c3",
+        "c6"
+      ]
     },
     {
       "point": "Elbows slightly bent, same angle all rep.",
@@ -458,19 +461,28 @@
     },
     {
       "point": "Hands meet in front, then open only to chest line.",
-      "claim": "c5, c7"
+      "claim": [
+        "c5",
+        "c7"
+      ]
     }
   ],
   "handlingMistakes": [
     {
       "mistake": "Bending the elbows so the fly becomes a press.",
       "fix": "Keep the elbow bend fixed; move at the shoulders.",
-      "claim": "c6, c4"
+      "claim": [
+        "c6",
+        "c4"
+      ]
     },
     {
       "mistake": "Too much weight, so you swing.",
       "fix": "Use a weight you can move slowly with a soft elbow bend.",
-      "claim": "c6, c7"
+      "claim": [
+        "c6",
+        "c7"
+      ]
     },
     {
       "mistake": "Opening the arms too far back.",
@@ -497,11 +509,14 @@
         "where": "Across the chest and front of the shoulders, through the whole rep",
         "means": "The target muscles are working; cables keep the load on through the range.",
         "fix": null,
-        "claim": "c9, c10",
+        "claim": [
+          "c9",
+          "c10"
+        ],
         "redFlag": null
       },
       {
-        "where": "Front of the shoulder, sudden or severe",
+        "where": "Pain at the front of the shoulder",
         "means": "Fault: the joints are not kept stable, so the shoulder is overloaded.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -514,12 +529,15 @@
   },
   "risks": [
     {
-      "risk": "In lab tests, cable pulley exercises (cross-over, pull-over) loaded the shoulder more than the bench press; keep the joints stable and do not open past chest line.",
-      "claim": "c11, c7"
+      "risk": "Cable flyes load the shoulder more than bench pressing; keep your joints stable.",
+      "claim": "c11"
     },
     {
       "risk": "The shoulder is a common injury site in lifting; add weight in small steps.",
-      "claim": "c13, c14"
+      "claim": [
+        "c13",
+        "c14"
+      ]
     }
   ],
   "redFlags": [
@@ -538,7 +556,10 @@
       "kind": "posture",
       "right": "Soft, fixed elbow bend, hands meeting in front.",
       "wrong": "Elbows bending deeply, pressing the handles.",
-      "claim": "c4, c6"
+      "claim": [
+        "c4",
+        "c6"
+      ]
     }
   ],
   "libraryDiff": {

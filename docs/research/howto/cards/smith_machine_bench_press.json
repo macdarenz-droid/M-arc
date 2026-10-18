@@ -491,7 +491,10 @@
       {
         "label": "Stops set",
         "what": "Safety stops set just below the lowest point of the bar (where it touches your chest) before you start.",
-        "claim": "c4, c3"
+        "claim": [
+          "c4",
+          "c3"
+        ]
       },
       {
         "label": "Blades together",
@@ -540,11 +543,17 @@
     },
     {
       "step": "Set the safety stops just below the lowest point of the bar (where it touches your chest).",
-      "claim": "c4, c3"
+      "claim": [
+        "c4",
+        "c3"
+      ]
     },
     {
       "step": "Lie back, feet flat, shoulder blades together and down, chest up.",
-      "claim": "c1, c2"
+      "claim": [
+        "c1",
+        "c2"
+      ]
     },
     {
       "step": "Grip slightly wider than shoulder-width.",
@@ -552,7 +561,10 @@
     },
     {
       "step": "Start with the empty bar or light plates; rotate the bar off the hooks to begin.",
-      "claim": "c6, c5"
+      "claim": [
+        "c6",
+        "c5"
+      ]
     }
   ],
   "posture": [
@@ -570,7 +582,10 @@
     },
     {
       "point": "Elbows at about 45 degrees, not flared wide.",
-      "claim": "c3, c7"
+      "claim": [
+        "c3",
+        "c7"
+      ]
     },
     {
       "point": "Back not arched excessively.",
@@ -581,17 +596,26 @@
     {
       "mistake": "Arching the back excessively to press the bar.",
       "fix": "Use lighter weights until you can press with good form.",
-      "claim": "c7, c6"
+      "claim": [
+        "c7",
+        "c6"
+      ]
     },
     {
       "mistake": "Flaring the elbows wide.",
       "fix": "Keep the elbows at about 45 degrees.",
-      "claim": "c7, c3"
+      "claim": [
+        "c7",
+        "c3"
+      ]
     },
     {
       "mistake": "Bouncing the bar off the chest.",
       "fix": "Lower with control until the bar just touches.",
-      "claim": "c7, c3"
+      "claim": [
+        "c7",
+        "c3"
+      ]
     }
   ],
   "feel": {
@@ -621,7 +645,7 @@
         "redFlag": null
       },
       {
-        "where": "Shoulder, sudden or severe",
+        "where": "Any shoulder pain",
         "means": "Up to 36% of resistance-training injuries are at the shoulder.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -634,12 +658,19 @@
   },
   "risks": [
     {
-      "risk": "A loaded bar over the chest can slip onto the face, throat or chest: set the safety stops and wrap the thumbs.",
-      "claim": "c14, c4, barbell_bench_press:c4"
+      "risk": "Bar can slip onto your face, throat or chest: set stops, wrap thumbs.",
+      "claim": [
+        "c14",
+        "c4",
+        "inherit:0"
+      ]
     },
     {
-      "risk": "Adding weight in big jumps; Smith loads also differ from free-bar loads.",
-      "claim": "c13, c10"
+      "risk": "Smith loads differ from free-bar loads; add 2-10% once you beat your target reps.",
+      "claim": [
+        "c10",
+        "c13"
+      ]
     },
     {
       "risk": "The shoulder is a common injury site in lifting, linked to poor technique.",
@@ -655,14 +686,19 @@
       "kind": "hand",
       "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
-      "claim": "barbell_bench_press:c5"
+      "claim": "inherit:4"
     },
     {
       "key": "smith-bench-position",
       "kind": "posture",
       "right": "Bench placed so the bar lands on the mid-chest; stops just below where the bar touches the chest.",
       "wrong": "Back arched excessively.",
-      "claim": "c2, c4, c3, c7"
+      "claim": [
+        "c2",
+        "c4",
+        "c3",
+        "c7"
+      ]
     }
   ],
   "libraryDiff": {

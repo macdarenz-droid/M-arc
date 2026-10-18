@@ -544,12 +544,18 @@
     {
       "mistake": "Shifting and jerking the body with a weight that is too heavy.",
       "fix": "Choose a weight you can press with the body still.",
-      "claim": "c7, c8"
+      "claim": [
+        "c7",
+        "c8"
+      ]
     },
     {
       "mistake": "Gripping much wider than shoulder width or flaring the elbows.",
       "fix": "Handles just outside shoulder width, elbows about 45 degrees from the body.",
-      "claim": "c7, c3"
+      "claim": [
+        "c7",
+        "c3"
+      ]
     }
   ],
   "feel": {
@@ -572,7 +578,10 @@
     "watch": [
       {
         "muscleId": "core",
-        "claim": "c10, c11"
+        "claim": [
+          "c10",
+          "c11"
+        ]
       }
     ],
     "rows": [
@@ -587,7 +596,10 @@
         "where": "Stomach and sides working hard",
         "means": "Normal: standing presses load the trunk to keep you stable.",
         "fix": null,
-        "claim": "c10, c11",
+        "claim": [
+          "c10",
+          "c11"
+        ],
         "redFlag": null
       },
       {
@@ -600,7 +612,7 @@
         "redFlag": null
       },
       {
-        "where": "Shoulder, sudden or severe",
+        "where": "Shoulder pain",
         "means": "Fault: gripping much wider than shoulder width, or flaring the elbows.",
         "fix": "Stop the set. Don't train through the pain. Keep your elbows at a 45-degree angle.",
         "claim": [
@@ -614,11 +626,17 @@
   "risks": [
     {
       "risk": "Wide grips and flared elbows stress the shoulder, a common injury site in lifting.",
-      "claim": "c7, c13"
+      "claim": [
+        "c7",
+        "c13"
+      ]
     },
     {
       "risk": "Too much weight costs form and raises injury risk; add weight in small steps.",
-      "claim": "c7, c14"
+      "claim": [
+        "c7",
+        "c14"
+      ]
     }
   ],
   "redFlags": [
@@ -637,7 +655,11 @@
       "kind": "posture",
       "right": "Staggered stance, spine neutral, handles at nipple height.",
       "wrong": "Lower back arched, handles up at the collarbone.",
-      "claim": "c2, c4, c6"
+      "claim": [
+        "c2",
+        "c4",
+        "c6"
+      ]
     }
   ],
   "libraryDiff": {

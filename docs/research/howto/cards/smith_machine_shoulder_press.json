@@ -615,7 +615,10 @@
     },
     {
       "step": "Slide the bench under the bar and do practice reps with the empty bar until it just clears your nose.",
-      "claim": "c2, c3"
+      "claim": [
+        "c2",
+        "c3"
+      ]
     },
     {
       "step": "Set the safety stops just below the lowest point of the press.",
@@ -627,7 +630,11 @@
     },
     {
       "step": "Grip wider than shoulders, thumbs wrapped; rotate the bar off the hooks.",
-      "claim": "c5, c13, c8"
+      "claim": [
+        "c5",
+        "c13",
+        "c8"
+      ]
     }
   ],
   "posture": [
@@ -637,11 +644,17 @@
     },
     {
       "point": "Core braced, no excessive back arch.",
-      "claim": "c4, c9"
+      "claim": [
+        "c4",
+        "c9"
+      ]
     },
     {
       "point": "Elbows in front of the shoulders, not flared wide.",
-      "claim": "c5, c10"
+      "claim": [
+        "c5",
+        "c10"
+      ]
     },
     {
       "point": "Lower until the upper arms are about parallel to the floor.",
@@ -649,24 +662,36 @@
     },
     {
       "point": "Stop just short of locking the elbows.",
-      "claim": "c6, c10"
+      "claim": [
+        "c6",
+        "c10"
+      ]
     }
   ],
   "handlingMistakes": [
     {
       "mistake": "Bench set so the bar runs far in front of the face.",
       "fix": "Move the bench until the bar just clears your nose.",
-      "claim": "c3, c2"
+      "claim": [
+        "c3",
+        "c2"
+      ]
     },
     {
       "mistake": "Arching the back off the pad.",
       "fix": "Press your upper back into the pad and brace; start with a light weight.",
-      "claim": "c9, c4"
+      "claim": [
+        "c9",
+        "c4"
+      ]
     },
     {
       "mistake": "Locking the elbows at the top.",
       "fix": "Stop just short of full arm extension.",
-      "claim": "c10, c6"
+      "claim": [
+        "c10",
+        "c6"
+      ]
     }
   ],
   "feel": {
@@ -697,13 +722,16 @@
       },
       {
         "where": "Lower back",
-        "means": "Possibly the back arching off the pad.",
-        "fix": "Press your upper back into the pad and brace.",
-        "claim": "c4, c9",
+        "means": "Fault: an excessive back arch.",
+        "fix": "Press your upper back into the pad and brace your core.",
+        "claim": [
+          "c9",
+          "c4"
+        ],
         "redFlag": null
       },
       {
-        "where": "Shoulder, sudden or severe",
+        "where": "Any shoulder pain",
         "means": "Up to 36% of resistance-training injuries are at the shoulder.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -716,16 +744,23 @@
   },
   "risks": [
     {
-      "risk": "Bar passes the face: place the bench so it just clears the nose, set the stops and wrap the thumbs.",
-      "claim": "c1, c3, c7, c13"
+      "risk": "Bar passes your face: it should just clear your nose; set stops, wrap thumbs.",
+      "claim": [
+        "c3",
+        "c7",
+        "c13"
+      ]
     },
     {
-      "risk": "Heavy presses send blood pressure very high; part of it comes from holding your breath.",
+      "risk": "Heavy presses send blood pressure very high, partly from holding your breath.",
       "claim": "c17"
     },
     {
-      "risk": "The shoulder is a common injury site in lifting, linked to poor technique; add weight in small steps.",
-      "claim": "c16, c15"
+      "risk": "Shoulder injuries are common in lifting; add weight in small steps.",
+      "claim": [
+        "c16",
+        "c15"
+      ]
     }
   ],
   "redFlags": [
@@ -737,14 +772,20 @@
       "kind": "hand",
       "right": "Overhand, wider than the shoulders, thumbs wrapped round the bar.",
       "wrong": "Thumb not wrapped around the bar.",
-      "claim": "c5, c13"
+      "claim": [
+        "c5",
+        "c13"
+      ]
     },
     {
       "key": "smith-ohp-bench",
       "kind": "posture",
       "right": "Bench at about 70 degrees, bar just clears the nose.",
       "wrong": "Bench too far back, bar running far in front of the face.",
-      "claim": "c1, c3"
+      "claim": [
+        "c1",
+        "c3"
+      ]
     }
   ],
   "libraryDiff": {

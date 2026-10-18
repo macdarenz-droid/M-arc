@@ -156,7 +156,7 @@
         {
           "source": "ace-incline-cable-fly",
           "text": "Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy. To protect your shoulders from potential injury, lower the resistance, align your trunk vertically and follow the instructions provided.",
-          "where": "Step 5"
+          "where": "Step 4"
         }
       ]
     },
@@ -313,6 +313,24 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c15",
+      "text": "Tempo: ACE asks for a momentary pause when the hands meet and gives no seconds, so the 1 s pause is a drawing convention (LR-33).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-incline-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Pause momentarily then slowly return to your starting position, allowing your arms to move back outwards in a slow, controlled manner.",
+          "where": "Step 4"
+        }
+      ]
     }
   ],
   "sources": [
@@ -422,7 +440,7 @@
       "pause": 1,
       "claim": [
         "c12",
-        "c5"
+        "c15"
       ]
     },
     "variantLine": null
@@ -460,7 +478,10 @@
   "posture": [
     {
       "point": "Trunk vertical, no forward lean.",
-      "claim": "c6, c7"
+      "claim": [
+        "c6",
+        "c7"
+      ]
     },
     {
       "point": "Abs braced, low back not arched.",
@@ -484,7 +505,10 @@
     {
       "mistake": "Bending the elbows so the fly becomes a press.",
       "fix": "Keep the slight elbow bend the whole rep.",
-      "claim": "c11, c6"
+      "claim": [
+        "c11",
+        "c6"
+      ]
     },
     {
       "mistake": "Letting the hands go back past the armpits.",
@@ -521,16 +545,16 @@
       {
         "where": "Front of the shoulders, body leaning forward",
         "means": "Fault: leaning forward, which happens frequently when the weight is too heavy.",
-        "fix": "Lower the weight and keep your trunk vertical.",
+        "fix": "Lower the resistance and keep your trunk vertical.",
         "claim": [
           "c7"
         ],
         "redFlag": null
       },
       {
-        "where": "Shoulder, sudden or severe",
+        "where": "Shoulder pain",
         "means": "Fault: leaning forward.",
-        "fix": "Stop the set. Don't train through the pain. Lower the weight and keep your trunk vertical.",
+        "fix": "Stop the set. Don't train through the pain. Lower the resistance and keep your trunk vertical.",
         "claim": [
           "c7",
           "c13"
@@ -545,8 +569,8 @@
       "claim": "c7"
     },
     {
-      "risk": "Cable chest work loaded the shoulder more than the bench press in lab tests; keep the joints stable.",
-      "claim": "c14, c13"
+      "risk": "Cable chest work loads the shoulder more than bench pressing; keep joints stable.",
+      "claim": "c14"
     }
   ],
   "redFlags": [
@@ -558,14 +582,20 @@
       "kind": "hand",
       "right": "Wrist straight in line with the forearm.",
       "wrong": "Wrist bent as the hands rise.",
-      "claim": "c4, c6"
+      "claim": [
+        "c4",
+        "c6"
+      ]
     },
     {
       "key": "low-high-trunk",
       "kind": "posture",
       "right": "Trunk upright, staggered stance, abs braced.",
       "wrong": "Leaning forward over the front foot.",
-      "claim": "c3, c7"
+      "claim": [
+        "c3",
+        "c7"
+      ]
     }
   ],
   "libraryDiff": {
