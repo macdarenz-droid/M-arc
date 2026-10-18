@@ -406,7 +406,10 @@
       "up": 1,
       "down": 2,
       "pause": 1,
-      "claim": "c12, c5"
+      "claim": [
+        "c12",
+        "c5"
+      ]
     },
     "variantLine": null
   },

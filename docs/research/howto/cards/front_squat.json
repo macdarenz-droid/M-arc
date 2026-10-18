@@ -215,5 +215,8 @@
     "A wrist angle for the front rack.",
     "Tempo in seconds.",
     "Knees caving (front view): not named in the sources read."
+  ],
+  "notes": [
+    "LR-34 check (W2-53, 2026-10-18) against cards/barbell_back_squat.json and shared/unrack-rerack.json on head 5036283d; shipped sheet tools/plates/layers/exercises/barbell_back_squat.howto.mjs on main b99a9e25. Plate loading holds: barbell_back_squat c3 (plates loaded evenly, collars) and c13 (pins), restating 'Collars on, pins just below your lowest squat to catch a miss.' Unrack and walk-out: standing straight up to unrack holds on barbell_back_squat c3 and shared/unrack-rerack.json c15, which agree; the walk-out fails: 'two or three short steps' is sourced by neither card (barbell_back_squat c3 says step back while staying close; unrack-rerack c16 says one step back on each leg, kept short) and no front-squat source read describes the unrack. It is a tier-A point, so the line and inherit[1] stay as on the head and front_squat is stopped for a supervisor ruling (open point b). Feet flat, knees follow the toes holds: barbell_back_squat c8, restating the checkpoint label 'Knees follow toes'. Three inherit entries are left."
   ]
 }
