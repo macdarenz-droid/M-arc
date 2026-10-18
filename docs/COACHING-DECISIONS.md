@@ -2426,3 +2426,19 @@ Card LIB-4a (docs/supervisor/verify/lib4-cards.md on claude/sup-lib4-cards, sect
 
 - **D-LIB5-TEMPO8 (supervisor ruling, lib4-cards 14.7).** The 8's tempo map and plateFacts form table are LIB-5's (`TEMPO8` in `tools/plates/library/research/validate.mjs`; literal copies in `tests/howto/library-cards8.test.ts`). On research `9eaa2480` every one of the 7 ids with a spec stops at H6.tempo: the verified cards give 2 s up and 2 s down, and each spec's concentric phase is 1 s (hanging leg raise 1.5 s). Five ids also have a Rest with no verified source. The plates and specs keep their approved timing, and the cards keep their verified values; neither is changed to match the other. So the 7 ids keep 'H6:no-card' and 'F7', and each reason now reads "the verified card's tempo differs from the approved plate's timing; approved timing kept (D-LIB5-TEMPO8)" in place of "LIB-5 adds their cards". No exemption is added or removed. The per-id differences are in #244's stop report (comment 6247430295).
 - **D-LIB5-CARDS8.** CARDS_8 is empty. The 8's cards and quotes are on main as byte copies of `9eaa2480`, with no plateFacts, tempo or topFault key. lib_dumbbell_lateral_raise, lib_barbell_back_squat and lib_lat_pulldown also stop on the blind TOPFAULT pass's `none`. `qa/approved.mjs` and `tests/howto/library-qa.test.ts` are unchanged (lib_pull_up is not wired). S3 and S12 run on the fixture card `tests/howto/fixtures/lib5/research/` (card amendment 39). CARD FIELDS VERIFIED @ `33302cc` (#244 comment 6247457715).
+- **D-LIB5-BOX, D-LIB5-BUNDLE (S4-P).** The back-pain box fails closed until the owner answers decision 6: `shared/back-box.mjs` holds no box text and throws `LIB-5: back box waits for owner decision 6 (plan 8 item 6)`. `library-gate.mjs` refuses any shipped row whose riskFlags name `back`. `check-bundle.mjs` fails a build whose files hold any whole box value, or which has no HowToSheet chunk.
+- **D-LIB5-GATE.** `tools/plates/gen/library-gate.mjs` is the one refusal point. It runs after content.mjs and writes no file before Do 9. Its order: family rule (a) once; then per row the back-box refusal, the inheritance refusal and, for library rows, the library lint; then the C15 stamp check.
+- **D-LIB5-SPLIT, D-LIB5-SPLIT-2 (lib4-cards 14.3, 14.6).**
+  - Shared-card fields reach the sheet only through `shared/card.mjs`'s ruled path and kind table, with golden B's lint unchanged.
+  - Two fields on one one-value path throw. The one exception is rope-rule's ruled width.text join.
+  - A list path takes one entry per field.
+  - `exempts` and `prone` are data. `implement.text` is a typed id that must name an exercises.json row.
+  - The 73 Do 2 hits were reworded by research (9eaa2480). LIB-5 reworded, trimmed or exempted nothing.
+- **D-LIB5-SPLIT (builder reading).** A field's scope is the ids its sheet names: a variant's `appliesTo` for its steps, else the field's own `appliesTo`, else the card's. So two variants with disjoint ids never clash.
+- **D-LIB5-FAULTKEYS, D-LIB5-FAMILY.**
+  - One label per fault key holds over the shipped rows, the shared modules and every `hands/hand-*.mjs`. The reader is proven on a fixture hand module.
+  - A row that declares inheritance (`extends`, or a card `inherit` other than `[]`) is refused until LIB-9's ruled comparator replaces the refusal.
+- **D-LIB5-STAMPS, D-LIB5-SCRATCH, D-LIB-O5 (lib4-cards 14.8).**
+  - C15 is strict: every shipped row needs a reviews.json entry matching its content hash, and an empty file fails every row.
+  - The 8's entries are the supervisor's (`approvedBy: 'supervisor'`, `decision: 'D-LIB5-STAMPS'`, approved at `33302cc`).
+  - Scratch stamps count only in a tree that holds `LIB5-SCRATCH-ROOT`. Main holds no marker and no scratch entry.

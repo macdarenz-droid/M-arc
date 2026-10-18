@@ -1,17 +1,24 @@
-# LIB-5 design note (Do 1, revised under lib4-cards.md section 14)
+# LIB-5 design note (as built, Do 8)
 
-Card LIB-5 (shared layer modules). Revised on `claude/lib-5-shared-layers` at the merge of main `72c94fc` (merge commit `5e24b45`). This is reading and writing only: nothing was built, run or tested. Where a number needs a measurement, the method is given and Do 2 runs it. Do 8 rewrites this file as built.
+Card LIB-5 (shared layer modules), on `claude/lib-5-shared-layers` (#244). The note was ruled as a design under lib4-cards.md section 14 (D-LIB5-NOTE, -2, -3). Do 8 rewrote it as built. The rulings applied while building: 14.3 (D-LIB5-SPLIT), 14.5 (the named research head and `exempts` as data), 14.6 (D-LIB5-SPLIT-2), 14.7 (D-LIB5-TEMPO8) and 14.8 (D-LIB-O5), all on `claude/sup-lib4-cards`. Where a section below still describes a ruled design step, the built code follows it, unless the section says otherwise.
 
-**Rulings applied:** lib4-cards.md section 14 (D-LIB5-NOTE) on `claude/sup-lib4-cards` @ `a0e5d69`, and the amended card `docs/supervisor/verify/lib-5-card.md` on the same head. Section 14 wins over the card and section 12, and item 13 as read at `19a6017` is superseded. Note fixes N1-N16 are applied and marked [Nn].
+**Heads:**
+- main `b99a9e2` (merge commit `749a337`);
+- research `claude/libht-research` @ `9eaa2480`: the one re-copy (19 shared cards, 19 quote files, the 8's cards and quotes);
+- LIB-7 #193 `55e91e9` and LIB-12 #191 `0d268a7`, read for the family check only.
 
-**Heads re-read [N16]:**
-- main `72c94fc`. Since `2d1bbf3` only BUG-41's files, the handover, gate-times.json, gate-split.test.ts and screenshot-gate.mjs changed.
-- LIB-4a #233 `0b2d3c1`. Since `aaff25e` only COACHING-DECISIONS.md and main merges changed; `git diff aaff25e 0b2d3c1 -- tools tests/howto` is empty.
-- LIB-4b #232 `f1df4a7`; LIB-4c `claude/lib-4c-library-ci` `108eb5c`; LIB-9a #245 `6285b4f`; LIB-6 #181 `9b8f76e`; LIB-7 #193 `55e91e9`; LIB-12 #191 `0d268a7`.
-- Research `9dbc7e0`, until the supervisor names the merged head.
-- `claude/libht-research-the8` `e6381fa`: unverified, never a source on its own.
+**What is built:**
+| Part | Files | Evidence |
+|---|---|---|
+| S1 copies | `docs/research/howto/shared/*.json`, `quotes/shared-*.json`, the 8's `cards/` and `quotes/` | `library-research.test.ts`, `library-cards8.test.ts` (sha256 pins) |
+| S2 validator | `tools/plates/library/research/validate.mjs` (`validateShared`, `validateCard`, `TEMPO8`, `buildTempo`, `registryProblems`) | `library-research.test.ts`, `library-cards8.test.ts` |
+| S4-P back box | `shared/back-box.mjs` (placeholder), `shared/check-bundle.mjs`, `gen/library-gate.mjs` | `library-shared.test.ts` |
+| S6 modules | `shared/card.mjs` (`cardExport`, `SPLIT`, `DATA`, `RULED_JOINS`), `hands`, `implements`, `exemptions`, `moves` and `checkpoints.mjs`: all 18 non-box cards | `library-shared.test.ts` |
+| S7 lint | `lint/index.mjs`, `lint/family.mjs` (rule (a), the reader, the inheritance refusal), `lint/shared-cards.mjs` | `library-lint.test.ts` |
+| S8 stamps | `research/stamps.mjs`, the gate's stamp check, `reviews.json` (the 8, approved at `33302cc`) | `c15-stamps.test.ts` |
+| S3/S12 | the S3 fixture card `tests/howto/fixtures/lib5/research/` | `library-cards8.test.ts` |
 
-Line numbers below are on main `72c94fc` unless another sha is named. Every line a ruling names is also found by its quoted text.
+Not built here: Do 9 (the owner's back-box answer, decision 6; route (b) holds, so the placeholder stays fail-closed), the variant-line field (D-LIB5-VARIANT: no shown field yet), and LIB-9's inheritance comparator (D-LIB5-FAMILY 6).
 
 ## Ruling ids for the old open points [N13]
 
@@ -192,11 +199,12 @@ These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by 
 **library-gate.mjs** is the one refusal point.
 - Exports: `after = ['tools/plates/gen/content.mjs']`, `inputs()`, `inputsFor(path)` and `async outputs()`.
 - It never reads `ctx.prev`.
-- Order inside `outputs()`:
-  1. per shipped row: `refuseBack`;
-  2. the family refusal (D-LIB5-FAMILY);
-  3. for library rows only (registry rows after the 8): the lint, including `sheetWords`;
-  4. after the loop: `stampProblems(ids)`, which throws on any line.
+- Order inside `outputs()` (as built):
+  1. once: rule (a), one label per fault key, over every shipped row's How-to, the shared modules and every `hands/hand-*.mjs` (`lint/family.mjs` `treeFamily`). It throws `library family (rows N, shared N, hands N): ...`;
+  2. per shipped row: `refuseBack`;
+  3. the family refusal (D-LIB5-FAMILY);
+  4. for library rows only (registry rows after the 8): the lint, including `sheetWords`;
+  5. after the loop: `stampProblems(ids)`, which throws one error listing every line.
 - `inputsFor` lists `back-box.mjs`, its static imports and `docs/research/howto/shared/back-pain-box.json`; a test asserts that set.
 - checkC17 runs on `tools/plates/library/shared` and on a temp directory holding a copy of library-gate.mjs.
 - inputs() returns every file the plugin reads. Before Do 9 outputs() returns []; from Do 9 it returns only src/howto/red-flag-back.ts.
@@ -241,54 +249,38 @@ These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by 
 
 **LIB-4c's scratch ref:** LIB-4c merges first. If a C11-C14 rebuild is needed after LIB-5, stop and report.
 
-## g. Shared modules (`tools/plates/library/shared/`) [N1, N11]
+## g. Shared modules (`tools/plates/library/shared/`) [N1, N11], as built
 
-`card.mjs` provides `sharedCard(key)`. Each module projects card fields as `{ text, claim }` with the card's own refs, never retyped. **No claim is made here that every exported string passes the lint** (D-LIB5-SPLIT). The per-field path and kind table goes with Do 2's results, for the supervisor to rule. S6 checks module `===` card, that refs resolve, that each shown field passes golden B's lint at its ruled path and kind, and that no data value reaches `src/**` or a generator output (pinned export-key lists; typed enums stay under typecheck).
+`card.mjs`:
+- `sharedCard(key)` reads the copied card.
+- `SPLIT` is D-LIB5-SPLIT's ruled field → [sheet path, copy-lint kind] table (14.3 point 1-3; contactPoint → `zooms[hand].rightNote`, label).
+- `DATA` holds the fields never written to a text path: the "Not projected" list, keys, implement, the registry fields, the typed enums, `exempts` (14.5) and `prone` (14.6). `appliesTo` scopes a field and is exported as ids.
+- `splitOf(card)` throws for an unruled field, and when two fields share a one-value path on one id: `${card}: split: ${path} has ${fields}` (14.3 point 4). A list path (`[]`) takes one entry per field (14.6 point 4).
+- `RULED_JOINS = { 'rope-rule': { 'handling.width.text': ['handContact', 'grip'] } }` is the only ruled join (14.6 point 1): `width.text = handContact + ' ' + grip`, with claims c1-c3.
+- `cardExport(card)` returns `{ card, appliesTo }` plus every shown field under its card name, with the card's own text and claim refs: steps as `setup`; variants as `{ <v>: { appliesTo, setup } }`; postureArchetype as `{ right, wrong }`; checkpoints with their own `appliesTo`. An unruled field or shape throws. No module ever retypes a string.
 
-**Modules and their pairing to LIB-7 / LIB-12** (pair = module KEY/variant; LIB-7 #193 @ 55e91e9, LIB-12 #191 @ 0d268a7):
+| Module | Exports |
+|---|---|
+| `hands.mjs` | PALM_FLAT, CURL, CUPPED_THUMB, ROPE |
+| `implements.mjs` | BATTLE_ROPES, JUMP_ROPE, KETTLEBELL_SWING, MEDICINE_BALL_SLAM, WALL_BALL |
+| `exemptions.mjs` | FRONT_RACK, WRIST_CURL |
+| `moves.mjs` | GET_IN_OUT, SELECTOR_PIN, FOOT_BAR, UNRACK_RERACK, DUMBBELL_KICKUP |
+| `checkpoints.mjs` | PRONE, FLOOR_BODY |
+| `back-box.mjs` | the placeholder (section c) |
 
-| Module export | Card (claims cited by its fields; research-only claims in brackets) | Hand module KEY/variant | Fault keys after D-LIB5-FAULTKEYS |
-|---|---|---|---|
-| `hands.mjs` CURL | curl c1-c5 | LIB-7 hand-curl.mjs `curl`/dumbbell, `curl`/bar | `curled` (curl#c3,#c4), `bent-back` (curl#c3-#c5), as radial-rules.mjs:20, :22 |
-| `hands.mjs` ROPE | rope-rule c1-c6 | LIB-7 hand-rope.mjs `rope`/push | `curled` 'Wrist curled' (rope-rule#c6), as hand-rope.mjs:22 |
-| `hands.mjs` PALM_FLAT | palm-flat c1-c6, c8, c9 [c7] | LIB-12 hand-palm-flat.mjs `palm-flat`/floor | `cupped-palm` (#c2), `hand-ahead` 'Hand ahead' (#c3), `hands-rotated` (not drawn) |
-| `hands.mjs` CUPPED_THUMB | cupped-thumb c1-c3, c5 [c4] | not drawn (LIB-12 hand-cupped.mjs lists dumbbell_overhead_triceps_extension in GAPS) | none |
-| `implements.mjs` BATTLE_ROPES | battle-ropes c1-c4 [c5] | LIB-12 hand-battle-rope.mjs `battle-rope`/rope | `death-grip` (#c4); `end-grip` not drawn |
-| `implements.mjs` WALL_BALL | wall-ball c1-c5 | LIB-12 hand-ball-contact.mjs `ball-contact`/catch | `side-sandwich` (#c1,#c2,#c4) |
-| `implements.mjs` JUMP_ROPE, KETTLEBELL_SWING [c6], MEDICINE_BALL_SLAM | their cards | not drawn (hand-implement.mjs and hand-ball-contact.mjs list the card ids in GAPS) | `white-knuckle`, `palm-grip`, `crush-grip` |
-| `exemptions.mjs` FRONT_RACK | front-rack c1-c5 | LIB-12 hand-front-rack.mjs `front-rack`/rack | `bar-off-shoulders` (#c4 + front_squat#c7) |
-| `exemptions.mjs` WRIST_CURL | wrist-curl c1-c3 | not drawn (hand-curl.mjs GAPS: wrist_curl, exempt) | `grip-opening` |
-| `moves.mjs` GET_IN_OUT, SELECTOR_PIN, FOOT_BAR, UNRACK_RERACK, DUMBBELL_KICKUP [c5] | their cards | none | none |
-| `checkpoints.mjs` FLOOR_BODY [c5], PRONE | their cards | none | none |
-| `back-box.mjs` | none before Do 9 | none | none |
+**S6** (`library-shared.test.ts`):
+- each export equals its card, read independently in the test;
+- the top-level keys are pinned, and no data field is exported;
+- every ref resolves, with its sources in the card's registry;
+- `lint/shared-cards.mjs` `sharedShownLint` places each shown field at its ruled path in one How-to-shaped sheet per scope (the card's ids, or a variant's setup list: the card's steps, then the variant's). It runs golden B's `lintHowto` unchanged plus the medical bans: 0 hits on 9eaa248;
+- no free-text data value (appliesToWhy, notes, gaps, `.text` and `.basis` of data fields, the strings in `exempts` and `prone`) appears under `src/**` or in any generator output. `implement.text` is a typed exercise id and must name an exercises.json row (14.6 point 3);
+- each check has its mutations.
 
-"Not drawn" means no IDS entry draws it; GAPS lists card ids (hand-battle-rope.mjs's GAPS is `{}`).
-
-**D-LIB5-SPLIT anchors (from ee7f40f section g; they hold until the supervisor rules the split on Do 2's post).**
-
-(1) Shown-copy floor (SPLIT 1). Each field is held to this lint at its ruled path and kind. This is not a claim that it passes.
-
-| Module | Exports | From card | Lint held to |
-|---|---|---|---|
-| `hands.mjs` | PALM_FLAT, CURL, ROPE, CUPPED_THUMB | palm-flat, curl, rope-rule, cupped-thumb: `gripLine`, `cue`, `thumbRule`, `wrist`, `rightPose`, `faults[{key,label,what}]`, palm-flat `soreWrist`, `fingers`, `contactPoint`, curl `widthNote`, rope `grip`/`handContact`, cupped `alternative`/`handContact` | gripLine lead (≤22 words, ≤2 sentences); cue ≤6; fault label 1-3; other prose sentence ≤15; all BANNED, LR-23 patterns and medical bans |
-| `implements.mjs` | BATTLE_ROPES, JUMP_ROPE, KETTLEBELL_SWING, MEDICINE_BALL_SLAM, WALL_BALL | the 5 implement cards: gripLine, cue, contactPoint, thumbRule, wrist, rightPose, faults, handRisks[] | as hands, plus handRisks[] risk ≤14 |
-| `moves.mjs` | GET_IN_OUT, SELECTOR_PIN, FOOT_BAR, UNRACK_RERACK, DUMBBELL_KICKUP | `steps[]` / `variants.<v>.steps[]` `{kind,text}`, `postureArchetype` (unrack, kick-up), variant `appliesTo` | setup step ≤12 words, ≤5 steps per variant; posture right/wrong caption ≤10 |
-| `exemptions.mjs` | FRONT_RACK, WRIST_CURL | exempts, reason, replacementRule, faults | prose sentence ≤15; label 1-3 |
-| `checkpoints.mjs` | FLOOR_BODY, PRONE | `defaultCheckpoints[]` / `checkpoints[]` `{key,label,detail,appliesTo}`, `defaultCrop`, `prone` | label 1-3; detail caption ≤10 |
-| `back-box.mjs` | placeholder (c) | none until Do 9 | (b) |
-
-(2) Data list (SPLIT 2). Not projected (research data under LR-28): `appliesToWhy`, `loadAxis`, `thumbMode`, `byRule`, `byInference`, `notFor`, `gaps`, `notes`.
-
-**D-LIB5-FAULTKEYS:** research makes exactly these edits at the source, and LIB-5 never retypes:
-- curl `wrist-curl-cheat`→`curled` and `bent-back-bottom`→`bent-back`, plus gaps[2] replaced whole;
-- rope-rule `rope-wrist-curl`→`curled` and 'Wrists curl'→'Wrist curled';
-- palm-flat 'Hands too far forward'→'Hand ahead'.
-
-CURL, ROPE and PALM_FLAT are built only from a copied head that holds these edits; otherwise LIB-5 stops and reports.
-
-The family reader reads the 8's handling.faults, the shared modules' faults, and every `tools/plates/library/hands/hand-*.mjs` `VARIANTS[*].faults`. It prints the compared count per source and asserts three things: the 8's count is above 0; the shared modules' count is above 0; the hands count equals the fault entries the imported modules export, and is above 0 whenever any module it finds exports a fault. A fixture hand module in LIB-7's shape under `tests/howto/fixtures/lib5/`, with a known fault count, proves the reader (D-LIB5-FAULTKEYS 4). Mutations: fixture hand-ahead labelled 'Hands forward'; the reader returning 0; the reader drops one fixture fault → red. Do 2 lists every claim set filed under two keys (palm-flat c3 under hand-ahead and hands-rotated).
-
-**Order (Do 4):** the placeholder and every module whose card has no shown-copy hit are built at once. A module with a hit waits for the one named research head on which its fields pass. On that head LIB-5 re-copies, re-pins S1 and re-runs S2, S6 and S7.
+**Family (D-LIB5-FAULTKEYS 4, D-LIB5-FAMILY):**
+- The reader collects the 8's `handling.faults`, every shared export's `faults` and every `hands/hand-*.mjs` `VARIANTS[*].faults`.
+- It asserts three things: the rows' count is above 0; the shared count is above 0; the hands count equals the faults the hand modules export.
+- The fixture hand module `tests/howto/fixtures/lib5/hands/hand-fixture.mjs` (LIB-7's shape, 3 faults) proves it.
+- On this head: rows 11, shared 14, hands 0, and no conflict. It also has no conflict against #193 (10 hand faults) and #191 (16).
 
 ## h. Library lint rules and the Do 2 dry run [N4]
 
@@ -382,12 +374,10 @@ All 8 stop, so CARDS_8 is empty: no card gains a machine key, and each id keeps 
 - New: `` const cardResearch = id => { const c = JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/cards', `${id.slice(4)}.json`), 'utf8')); return Object.fromEntries(['plateFacts', 'tempo', 'topFault'].filter(k => k in c).map(k => [k, c[k]])); }; ``. It is inlined, because candidate.mjs imports approved.mjs.
 - `:20` @ 72c94fc, old line in full: `      research: null, census: CENSUS_8[LIB_OF[p.chromeId]] ?? null, mistakeFault: null, derivation: null, exemptions: [], ...(extra[LIB_OF[p.chromeId]] ?? {}) });`. Change: `research: null` → `research: CARDS_8.includes(LIB_OF[p.chromeId]) ? cardResearch(LIB_OF[p.chromeId]) : null`, and `mistakeFault: null` → `mistakeFault: CARDS_8.includes(LIB_OF[p.chromeId]) ? p.mistake.firstKey : null` (candidate.mjs:84's rule; F7 compares the plate against the card's TOPFAULT key).
 
-## Still waiting (after "LIB-5 resume")
+## Open after the build
 
-- Do 2: the named research head.
-- Do 3 b: the tempo-map and form-table ruling, 'TOPFAULT @ <sha>', then 'CARD FIELDS VERIFIED'.
-- Do 4: D-LIB5-FAULTKEYS's edits for CURL, ROPE and PALM_FLAT, and SPLIT rewords for any module with a hit.
-- Do 6: the "stamps (O5)" ruling and the entry approval.
-- Do 9: the owner's answer (route (b) likely).
-- Variant-line generator enforcement: the field card.
+- Do 9: the owner's back-box answer (decision 6). Route (b) holds: the placeholder stays fail-closed, and S4-P holds.
+- The variant-line field: no shown field exists yet (D-LIB5-VARIANT 4). It comes with the field card.
+- LIB-9's inheritance comparator (D-LIB5-FAMILY 6) replaces `familyRefusal` in `lint/family.mjs`.
+- The 8's machine cards carry no machine key (CARDS_8 empty, D-LIB5-TEMPO8). A later card may wire the five TOPFAULT matches (14.7).
 - The back box on the layers page: LIB-6-PM.
