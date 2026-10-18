@@ -212,10 +212,54 @@ Head 21c66d5, which holds LIB-4a 0b2d3c1 and main b99a9e2; later commits change 
   | HT9 | 1,071.0 |
   | HT10 | 2,558.1 |
 
-Not yet run on the final head, so unverified:
-- the failure fixtures;
-- the size equalities with A9 and A2;
-- the guard `--blind` runs and the once-row seconds;
-- Chrome 153;
-- B9;
-- B10.
+### B2, B5 and B8 to B10 on the final head
+
+Heads: 7679566 (main 0628270), then 2b59a24 (main 2078913, LIB-3b: `qa/node.mjs` and `qa/index.mjs`). Chromium 141, nproc 4, default P = 1.
+
+- **B2, Chromium 141, on 7679566.** `--ids golden8` ran in 4 family chunks because container restarts came about 1.5 h apart. Every chunk seeds the same 8 ids.
+
+  | Chunk | Rows | Seconds |
+  |---|---|---|
+  | HT10 | 120 of 120 | 2,568.6 |
+  | plate + HT4 | 1,040 of 1,040 | 1,436.4 |
+  | HT9 + HT8 | 714 of 714 | 1,698.2 |
+  | HT6 + HT7 + PQH + entry + L2 + offline | 1,073 of 1,073 | 1,810.6 |
+
+  - The union against `libraryTuples(golden8)`: 2,947 rows, 2,947 unique, 0 missing, 0 extra, 0 fail.
+  - 1,009 pixel tuples, max px off 0 on all 8 (HT-3 prints 0). Total 7,513.8 s.
+  - On 2b59a24 the PQH family ran again because LIB-3b changed QA: 88 of 88 pass, 396.5 s.
+- **B2, Chrome 153.0.8010.12** (CI run 39118115597, scratch 693bcff = e607bb5 plus the scratch workflow, P = 4): 2,947 of 2,947 pass, max px off 0 on all 8, 2,064.5 s.
+- **B2 failure fixtures** (Chrome 153, silent-black, P = 4). The section pass guard was also run on Chromium 141.
+
+  | Fixture | Result |
+  |---|---|
+  | `section:lib_dumbbell_lateral_raise` | Pass, as in HT-3's sections guard 1 (a pass guard): 356 of 356 rows. Lateral raise compared 16 pixel pairs (at least 4), max px off 0. |
+  | `leak-section:lib_dumbbell_lateral_raise` | Exit 1. 27 red rows, all lateral raise L2b and L3. L2b catches the word-spacing leak, as in guard 2. |
+  | `shift:lib_dumbbell_lateral_raise` | Exit 1. 16 red rows, all lateral raise L3. |
+  | `ht10-inject:lib_barbell_back_squat` | Exit 1. 1 red row, back squat `HT10/sweep`. |
+
+- **Size equalities** (gate on 7679566):
+  - `L2/chunk-size` equals HT-2 A9's printed raw/gz for all 8 `ht-` chunks.
+  - It also equals HT-3b A2's printed sizes for the same 8 chunks.
+  - A2's `HowToSheet-*` budgets are build-wide (X4).
+- **entry/open:** passes on the 8, in the HT6 + HT7 + PQH + entry + L2 + offline chunk.
+- **B5 on the final tree** (2b59a24 + #181 9b8f76e, scratch only, never pushed):
+  - Setup: `fixture.mjs <tree> all`, `generate` and `--check` (PASS, 78 files), `npm run build`, fixture budgets.
+  - Result: 1,100 of 1,100 pass, equal to `libraryTuples` of the 3 ids. Max px off 0 on all 3. 2,907.0 s.
+- **`--once 1`** (on 7679566): 6 of 6 pass:
+  - `self/0px@390` and `self/1px-control@390` (shard 1);
+  - `qa-selftest/browser@*`;
+  - `guard/L-sections@390`, `guard/HT7-l3text@390` and `guard/HT9-A3-dup@390`.
+
+  It took 1,194.7 s, of which the QA self-test took 1,125.4 s.
+- **The 3 `--blind` runs** (`--skip-selftest`, so `qa-selftest/browser@*` reads "not proven"). Each turns only its own guard red:
+  - `L-sections`: "guard 2: a section CSS leak into the golden block (.ht p word-spacing) was not caught by L2b while the sections were hidden";
+  - `HT7-l3text`: "a path moved 1 px reads pass (undefined), not an immediate non-text failure";
+  - `HT9-A3-dup`: "a second copy of the wrist red-flag line in Setup was not caught ([])".
+
+  Each took about 67 s.
+- **B8:** the per-id and per-family seconds are the tables above and in "B2 and B8". The once rows took 1,194.7 s at k = 1 (69.3 s without the self-test).
+- **B9** (on 7679566, split as CI runs it): gate jobs 1/4 to 4/4 (UTC) PASS, 579 s, 817 s, 762 s and 927 s. `ht10-gate` 1/2 and 2/2 PASS (63 and 62 tuples). Mutations:
+  - `openAppTrain`'s `order` default reversed: gate job 4/4 is red. HT-3 compares 0 pixel pairs (it expects at least 300), and a later block's `openHowTo` times out.
+  - `ht10GoldenCounts`'s `ids` default without its first id: `ht10-gate` 1/2 is red ("golden B has no card for lateral-raise to count its Look closer chips", 15 problems).
+- **B10** (on 2b59a24): `npm run check` (3,062 tests), `npm run test:tz` (3,062 in each time zone) and `generate --check` (60 files) pass. The gate passed on 7679566. Between the two heads only `tools/plates/library/qa/**`, one new test and docs changed.
