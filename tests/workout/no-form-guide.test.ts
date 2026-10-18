@@ -145,7 +145,8 @@ describe('D-HT1 A4: the How-to is reached from main only through ids.ts', () => 
 // D-HT1 A5 (HT-3): the entry exists exactly where approved content exists, with no fallback.
 describe('D-HT1 A5: hasHowTo is true exactly for the approved plates', () => {
   it('true for the GOLDEN plate ids, false for every other library id and for custom ids; ids = LOADERS keys = generated files', async () => {
-    const { hasHowTo, HOWTO_IDS } = await import('@/howto/ids');
+    const { hasHowTo } = await import('@/howto/ids');
+    const { HOWTO_IDS } = await import('@/howto/generated/loaders');   // LIB-2: the shipped list moved here
     const { LOADERS } = await import('@/howto/generated');
     const golden = JSON.parse(readFileSync('tests/howto/golden/GOLDEN.json', 'utf8')) as { entries: { kind: string; id?: string }[] };
     const approved = [...new Set(golden.entries.filter(e => e.kind === 'plate').map(e => e.id!))].sort();
@@ -153,23 +154,35 @@ describe('D-HT1 A5: hasHowTo is true exactly for the approved plates', () => {
     const lib = (JSON.parse(readFileSync('src/data/exercises.json', 'utf8')) as { id: string }[]).map(e => e.id);
     expect(lib.length).toBeGreaterThan(140);
     for (const id of approved) expect(lib, id).toContain(id);
-    expect(lib.filter(id => hasHowTo(id)).sort()).toEqual(approved);
+    // LIB-4a (D-LIB4-PINS-2): exactly the registry's shipped ids, which always hold the approved plates (the 8 today)
+    const reg = await import(/* @vite-ignore */ new URL('../../tools/plates/library/registry.mjs', import.meta.url).href) as { rows: () => { id: string; slug: string }[]; shippedIds: (all?: { id: string }[]) => string[] };
+    const shipped = [...reg.shippedIds()].sort(), idOfSlug = new Map(reg.rows().map(r => [r.slug, r.id]));
+    expect(reg.shippedIds().slice(0, 8)).toEqual(Object.keys(JSON.parse(readFileSync('tools/plates/plates.json', 'utf8'))));   // the 8 ship first, in plates.json order
+    for (const id of approved) expect(shipped, id).toContain(id);
+    expect(lib.filter(id => hasHowTo(id)).sort()).toEqual(shipped);
     for (const id of ['custom_1', 'custom_lib_pull_up', 'lib_pull_up ', '', 'LIB_PULL_UP']) expect(hasHowTo(id), id).toBe(false);
-    expect([...HOWTO_IDS].sort()).toEqual(approved);
-    expect(Object.keys(LOADERS).sort()).toEqual(approved);
-    const files = readdirSync('src/howto/generated').filter(f => /^ht-.*\.ts$/.test(f)).map(f => `lib_${f.slice(3, -3).replace(/-/g, '_')}`).sort();
-    expect(files).toEqual(approved);
+    expect([...HOWTO_IDS].sort()).toEqual(shipped);
+    expect(Object.keys(LOADERS).sort()).toEqual(shipped);
+    const files = readdirSync('src/howto/generated').filter(f => /^ht-.*\.ts$/.test(f)).map(f => idOfSlug.get(f.slice(3, -3)) ?? f).sort();
+    expect(files).toEqual(shipped);
   });
   it('the gate\'s no-How-to control is the first library id without approved content, and has none', async () => {
     const { hasHowTo } = await import('@/howto/ids');
-    const h = await import(/* @vite-ignore */ new URL('../../tools/plates/fidelity/harness.mjs', import.meta.url).href) as { firstWithoutHowTo: () => string; HT_NO_HOWTO: string; HT_ORDER: string[] };
+    const h = await import(/* @vite-ignore */ new URL('../../tools/plates/fidelity/harness.mjs', import.meta.url).href) as { firstWithoutHowTo: () => string | null; HT_NO_HOWTO: string | null; HT_ORDER: (string | null)[] };
     const { firstWithoutHowTo, HT_NO_HOWTO, HT_ORDER } = h;
     const lib = (JSON.parse(readFileSync('src/data/exercises.json', 'utf8')) as { id: string }[]).map(e => e.id);
     const id = firstWithoutHowTo();
-    expect(id).toBe(lib.find(i => !hasHowTo(i)));
-    expect(hasHowTo(id)).toBe(false);
+    expect(id).toBe(lib.find(i => !hasHowTo(i)) ?? null);
     expect(HT_NO_HOWTO).toBe(id);
-    expect(HT_ORDER).toContain(id);
+    if (id === null) {
+      // LIB-4a (D-LIB4-CTRL): full coverage has no library control; HT_ORDER is the 8 and the custom exercise
+      expect(lib.every(i => hasHowTo(i))).toBe(true);
+      expect(HT_ORDER).not.toContain(null);
+      expect(HT_ORDER).toHaveLength(9);
+    } else {
+      expect(hasHowTo(id)).toBe(false);
+      expect(HT_ORDER).toContain(id);
+    }
   });
   it('no fallback: the sheet closes with the load-failed toast for an id without content, and renders nothing until the content is in', () => {
     const sheet = readFileSync('src/slices/howto/HowToSheet.tsx', 'utf8');

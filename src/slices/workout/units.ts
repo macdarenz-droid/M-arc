@@ -7,7 +7,7 @@ import { newId, MAX_GYMS, type EquipmentProfile, type LoadUnit, type UnitsState 
 import { state, update } from '@/core/store';
 import { findExercise } from '@/core/exercises';
 import { equipmentGroup } from '@/brain/coach/cues';
-import { defaultProfile, resolveProfile } from '@/brain/units';
+import { defaultProfile, menuProfile } from '@/brain/units';
 
 function patchUnits(fn: (u: UnitsState) => UnitsState): void {
   update(s => ({ ...s, units: fn(s.units) }));
@@ -18,7 +18,7 @@ export function activeGymId(): string { return state.value.units.activeGymId; }
 /** The profile Train should use for this exercise right now. */
 export function profileFor(exerciseId: string, gymId = activeGymId()): EquipmentProfile {
   const s = state.value;
-  return resolveProfile(exerciseId, gymId, s.units, findExercise(exerciseId, s.customExercises));
+  return menuProfile(exerciseId, gymId, s.units, findExercise(exerciseId, s.customExercises));
 }
 
 /**
@@ -111,8 +111,9 @@ export function setGymDefaultUnit(gymId: string, unit: LoadUnit): void {
   patchUnits(u => ({ ...u, gyms: u.gyms.map(g => (g.id === gymId ? { ...g, defaultUnit: unit } : g)) }));
 }
 
-/** Removes a gym and its profiles. The last gym stays. */
+/** Removes a gym and its profiles. The last gym stays, and so does the live session's gym (UI-R06). */
 export function deleteGym(gymId: string): void {
+  if (state.value.active?.gymId === gymId) return;
   patchUnits(u => {
     if (u.gyms.length <= 1) return u;
     const gyms = u.gyms.filter(g => g.id !== gymId);

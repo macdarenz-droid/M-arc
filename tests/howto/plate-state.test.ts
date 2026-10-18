@@ -12,7 +12,9 @@ const FIXTURE = readFileSync('tests/howto/golden/technical-plates.html', 'utf8')
 const GOLDEN = JSON.parse(readFileSync('tests/howto/golden/GOLDEN.json', 'utf8')) as GoldenFile;
 const PLATES = new Map<string, GoldenPlateEntry>();
 for (const e of GOLDEN.entries) if (e.kind === 'plate') PLATES.set(e.id, e);
-const modules = async () => Promise.all(readdirSync('src/howto/generated').filter(f => /^ht-.*\.ts$/.test(f))
+// LIB-4a (D-LIB4-PINS-2): the golden-A fixture holds the 8, so the subject is the 8's modules (GOLDEN's plate slugs);
+// library ids' modules compare with their own pages (LIB-4b). Every one of the 8 must still be generated.
+const modules = async () => Promise.all(readdirSync('src/howto/generated').filter(f => /^ht-.*\.ts$/.test(f) && [...PLATES.values()].some(e => f === `ht-${e.slug}.ts`))
   .map(async f => (await import(`../../src/howto/generated/${f.replace(/\.ts$/, '')}`)).default as BuiltHowTo));
 
 /** The gallery card's block from plate-fit to the end of the tempo strip, with the 2 wrapper classes mapped. */
@@ -29,7 +31,8 @@ const withMistake = (h: BuiltHowTo) => goldenBlockHtml(h).replace('<div class="h
 describe('HT3-A4: the inserted golden block is the gallery card, byte for byte', () => {
   it('for all 8: the S0 block with the mistake figure inserted and the zoom slot left out equals the fixture block', async () => {
     const all = await modules();
-    expect(all).toHaveLength(8);
+    expect(PLATES.size).toBe(8);
+    expect(all).toHaveLength(PLATES.size);
     for (const h of all) {
       const id = chromeIdOf(h);
       expect(id, h.id).toBe(PLATES.get(h.id)!.chromeId);
