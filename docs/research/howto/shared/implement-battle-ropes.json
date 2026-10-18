@@ -1,0 +1,245 @@
+{
+  "key": "implement-battle-ropes",
+  "kind": "implement",
+  "appliesTo": [
+    "battle_ropes"
+  ],
+  "appliesToWhy": "GA appendix B hand archetype `implement` lists battle_ropes; one card per implement.",
+  "implement": {
+    "text": "battle_ropes",
+    "claim": "c1"
+  },
+  "contactPoint": {
+    "text": "Rope lies in the palm, about 10 cm from its end.",
+    "claim": [
+      "c2",
+      "c3"
+    ]
+  },
+  "thumbRule": {
+    "text": "Thumb closes over the fingers, on top.",
+    "claim": "c3"
+  },
+  "rightPose": {
+    "text": "One rope end in each hand, palms facing each other, fingers wrapped around the rope, thumb over the fingers.",
+    "claim": [
+      "c1",
+      "c3"
+    ]
+  },
+  "faults": [
+    {
+      "key": "end-grip",
+      "label": "Hand at end",
+      "what": "Hand holds the very end of the rope instead of about 10 cm from it, so the rope can slide through.",
+      "claim": "c2"
+    },
+    {
+      "key": "death-grip",
+      "label": "Too tight",
+      "what": "Fist squeezed hard around the rope instead of a firm but relaxed grip.",
+      "claim": "c4"
+    }
+  ],
+  "gripLine": {
+    "text": "Hold each rope end about 10 cm from the end, palms facing each other, with a firm but relaxed grip.",
+    "claim": [
+      "c1",
+      "c2",
+      "c4"
+    ]
+  },
+  "cue": {
+    "text": "Palms facing, firm but relaxed.",
+    "claim": [
+      "c1",
+      "c4"
+    ]
+  },
+  "handRisks": [
+    {
+      "text": "Holding too close to the end can let the rope slide through the grip.",
+      "claim": "c2"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hold one rope end in each hand with a neutral grip, palms facing each other.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bos-ropes",
+        "bodbot-rope-waves"
+      ],
+      "quotes": [
+        {
+          "source": "bos-ropes",
+          "text": "Grip: Hold the ends of the rope with a neutral grip (palms facing each other).",
+          "where": "Ideal Battle Rope Technique, Basic Waves"
+        },
+        {
+          "source": "bodbot-rope-waves",
+          "text": "Hold the end of the ropes in each hand, firm grip with palms facing each other.",
+          "where": "Set-up"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Take hold about 10 cm from the end of the rope; holding too close to the end can let it slide through the grip.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "df-rope-grips"
+      ],
+      "quotes": [
+        {
+          "source": "df-rope-grips",
+          "text": "Grip one end of the battle rope in each hand about 10cm from the end, holding the end of the rope too closely from the end can cause it to slide through your grip.",
+          "where": "Battle Rope Gripping Positions, intro"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The rope lies in the palm, the fingers wrap around it and the thumb closes over the fingers, on top.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "df-rope-grips",
+        "nike-ropes"
+      ],
+      "quotes": [
+        {
+          "source": "df-rope-grips",
+          "text": "Place the rope is in the palm of your hands, wrap your fingers around the rope and secure your grip by positioning your thumb over the fingers.",
+          "where": "Handshake Grip"
+        },
+        {
+          "source": "nike-ropes",
+          "text": "holding each end of the battle rope in your hands with an overhand grip (your thumbs should be on top).",
+          "where": "Double-arm waves, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Grip firmly but relaxed; gripping too tightly tires the forearms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bos-ropes",
+        "df-rope-circles",
+        "df-rope-grips"
+      ],
+      "quotes": [
+        {
+          "source": "bos-ropes",
+          "text": "Overgripping: Gripping the rope too tightly tires out your forearms. A firm but relaxed grip is best.",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "df-rope-circles",
+          "text": "don’t grip the battling rope too tightly otherwise you’ll fatigue the forearm muscles.",
+          "where": "Outside circles, step 1"
+        },
+        {
+          "source": "df-rope-grips",
+          "text": "a looser grip creates smoother waves with more fluidity and a greater range of motion in the shoulder, elbows and wrists.",
+          "where": "Handshake Grip"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "For basic waves one source says to move the hands without bending the wrists, with the movement coming from the shoulders; another source says to flick the wrist, so this rule is contested.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "nike-ropes",
+        "bodbot-rope-waves"
+      ],
+      "quotes": [
+        {
+          "source": "nike-ropes",
+          "text": "With control and without bending your wrists, begin to move your hands up and down simultaneously with force. The movement should come from the shoulders as opposed to the lower arm.",
+          "where": "Double-arm waves, step 2"
+        },
+        {
+          "source": "bodbot-rope-waves",
+          "text": "lift rope up towards the ceiling by moving your arm up and flicking your wrist.",
+          "where": "Movement"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bodbot-rope-waves",
+      "url": "https://www.bodbot.com/Exercises/1193/Battle-Ropes-_-Unilateral-Waves",
+      "title": "Battle Ropes - Unilateral Waves",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "bos-ropes",
+      "url": "https://bellsofsteel.us/blogs/content/how-to-correctly-use-battle-ropes",
+      "title": "How To Correctly Use Battle Ropes?",
+      "kind": "manufacturer",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "df-rope-circles",
+      "url": "https://www.dangerouslyfit.com.au/?p=40650",
+      "title": "Battle Rope Outside Circles",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "df-rope-grips",
+      "url": "https://www.dangerouslyfit.com.au/?p=40049",
+      "title": "Battle Rope Gripping Positions",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "nike-ropes",
+      "url": "https://www.nike.com/a/battle-ropes-benefits-workout",
+      "title": "Battle Ropes: What They Are, Their Benefits, and Exercises You Can Do",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "gaps": [
+    "Wrist rule: the sources conflict (c5: one says move the hands without bending the wrists, another says flick the wrist), and both are secondary pages; no wrist field is set until a coach, textbook or study source settles it. c5 stays as research data.",
+    "'Neutral at impact or release' does not apply as such (no impact or release); nothing sourced on the wrist at the top or bottom of a wave."
+  ],
+  "notes": [
+    "A third secondary page (Virtuagym) says 'Keep your wrists loose'; not cited, adds to the wrist conflict.",
+    "Palms facing each other with thumbs on top are consistent (handshake/neutral grip); 'overhand' in one source is used for the same thumbs-on-top hold.",
+    "One source offers a golf-style grip with the thumb off the fingers as an option; card keeps the main grip.",
+    "handRisks holds hand-related safety points the sources state (grip loss, over-gripping); one shared field name across the 5 implement cards."
+  ]
+}

@@ -1,0 +1,63 @@
+{
+ "id": "shared-implement-wall-ball",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "boxrox-wallball",
+   "text": "Having your hands sandwiching the ball and your elbows out will reduce the efficiency of your throw. Instead, catch the ball with your hands underneath the ball and high elbows in front of you.",
+   "status": "verbatim",
+   "closest": "Having your hands sandwiching the ball and your elbows out will reduce the efficiency of your throw. Instead, catch the ball with your hands underneath the ball and high elbows in front of you.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "boxlife-wallball",
+   "text": "Ideally, you want to catch the med ball so that your hands are on the underside of the ball (as opposed to the sides)",
+   "status": "verbatim",
+   "closest": "Ideally, you want to catch the med ball so that your hands are on the underside of the ball (as opposed to the sides)",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "boxrox-wallball",
+   "text": "Having your hands sandwiching the ball and your elbows out will reduce the efficiency of your throw. Instead, catch the ball with your hands underneath the ball and high elbows in front of you.",
+   "status": "verbatim",
+   "closest": "Having your hands sandwiching the ball and your elbows out will reduce the efficiency of your throw. Instead, catch the ball with your hands underneath the ball and high elbows in front of you.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "boxlife-wallball",
+   "text": "as close to your body as possible, with your wrists about six inches apart.",
+   "status": "verbatim",
+   "closest": "as close to your body as possible, with your wrists about six inches apart.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "boxlife-wallball",
+   "text": "Catching the med ball on its side can cause your chest to fall forward, making the ball feel heavier and even possibly falling out of your hands.",
+   "status": "verbatim",
+   "closest": "Catching the med ball on its side can cause your chest to fall forward, making the ball feel heavier and even possibly falling out of your hands.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "boxlife-wallball",
+   "text": "As the ball makes initial contact with your hands, you should still be standing with your hands near the middle of your face. Begin to squat once the ball has made contact.",
+   "status": "verbatim",
+   "closest": "As the ball makes initial contact with your hands, you should still be standing with your hands near the middle of your face. Begin to squat once the ball has made contact.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "boxrox-wallball",
+   "text": "It\u2019s better to catch the ball with hips and arms extended, bring it to your chest and then start with your squat.",
+   "status": "verbatim",
+   "closest": "It\u2019s better to catch the ball with hips and arms extended, bring it to your chest and then start with your squat.",
+   "note": ""
+  }
+ ]
+}

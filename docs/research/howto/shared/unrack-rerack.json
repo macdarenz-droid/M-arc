@@ -1,0 +1,852 @@
+{
+ "key": "unrack-rerack",
+ "kind": "equipment-move",
+ "appliesTo": [
+  "barbell_bench_press",
+  "incline_barbell_bench_press",
+  "decline_bench_press",
+  "close_grip_bench_press",
+  "barbell_overhead_press",
+  "barbell_back_squat",
+  "front_squat",
+  "smith_machine_bench_press",
+  "smith_machine_incline_press",
+  "smith_machine_shoulder_press",
+  "smith_machine_shrug",
+  "smith_machine_squat"
+ ],
+ "appliesToWhy": "GA 3.4 \"Barbell and Smith presses and squats\": census ids with equipment Barbell and a rack (rack or safetyArms in equipmentNeeds) for presses and squats, plus every Smith Machine id. Barbell rows, shrugs, curls and deadlifts start from the floor or a free stand and are out.",
+ "move": "unrack-rerack",
+ "postureArchetype": {
+  "key": "unrack-rerack",
+  "right": {
+   "text": "Lock out over shoulders, then move bar back to posts.",
+   "claim": [
+    "c5",
+    "c6"
+   ]
+  },
+  "wrong": {
+   "text": "Bar lowered or pressed straight from the hooks.",
+   "claim": [
+    "c5",
+    "c6"
+   ]
+  }
+ },
+ "variants": {
+  "press-rack": {
+   "appliesTo": [
+    "barbell_bench_press",
+    "incline_barbell_bench_press",
+    "decline_bench_press",
+    "close_grip_bench_press"
+   ],
+   "steps": [
+    {
+     "kind": "safety",
+     "text": "Set the safety pins just below your lowest bar position.",
+     "claim": [
+      "c1",
+      "c10"
+     ]
+    },
+    {
+     "kind": "adjust",
+     "text": "Hooks low enough that the bar clears them without reaching.",
+     "claim": "c2"
+    },
+    {
+     "kind": "position",
+     "text": "Shoulders at least 8 cm from the uprights.",
+     "claim": "c3"
+    },
+    {
+     "kind": "brace",
+     "text": "Squeeze your shoulder blades before you unrack.",
+     "claim": "c4"
+    },
+    {
+     "kind": "position",
+     "text": "Straighten your arms, then move the bar over your shoulders.",
+     "claim": [
+      "c5",
+      "c8",
+      "c9"
+     ]
+    },
+    {
+     "kind": "finish",
+     "text": "To rack: lock out, move back to the posts, bend arms.",
+     "claim": "c6"
+    },
+    {
+     "kind": "safety",
+     "text": "Failed rep: bar to chest, flatten your torso onto the pins.",
+     "claim": "c1"
+    },
+    {
+     "kind": "safety",
+     "text": "A spotter behind your head helps the bar out and back.",
+     "claim": "c7"
+    }
+   ]
+  },
+  "overhead-press": {
+   "appliesTo": [
+    "barbell_overhead_press"
+   ],
+   "steps": [
+    {
+     "kind": "adjust",
+     "text": "Set the bar in the rack at about shoulder height.",
+     "claim": "c11"
+    },
+    {
+     "kind": "position",
+     "text": "Dip under it, take it on your shoulders, step back.",
+     "claim": "c11"
+    },
+    {
+     "kind": "safety",
+     "text": "Press inside the rack with the crossbars at the right height.",
+     "claim": "c12"
+    },
+    {
+     "kind": "safety",
+     "text": "Failed rep: lower the bar to your shoulders, then rack it.",
+     "claim": "c12"
+    }
+   ]
+  },
+  "squat": {
+   "appliesTo": [
+    "barbell_back_squat",
+    "front_squat"
+   ],
+   "steps": [
+    {
+     "kind": "adjust",
+     "text": "Hooks at about mid-chest; pins just below your bottom position.",
+     "claim": [
+      "c13",
+      "c14"
+     ]
+    },
+    {
+     "kind": "position",
+     "text": "Feet under the bar; stand straight up to unrack.",
+     "claim": "c15"
+    },
+    {
+     "kind": "position",
+     "text": "Walk back one step with each leg. Keep it short.",
+     "claim": "c16"
+    },
+    {
+     "kind": "finish",
+     "text": "To rack: stand tall, walk forward to the posts, bend legs.",
+     "claim": "c17"
+    },
+    {
+     "kind": "safety",
+     "text": "Failed back squat: squat straight down onto the pins.",
+     "claim": "c18"
+    },
+    {
+     "kind": "safety",
+     "text": "Failed front squat: let the bar drop forward, step back.",
+     "claim": "c19"
+    }
+   ]
+  },
+  "smith": {
+   "appliesTo": [
+    "smith_machine_bench_press",
+    "smith_machine_incline_press",
+    "smith_machine_shoulder_press",
+    "smith_machine_shrug",
+    "smith_machine_squat"
+   ],
+   "steps": [
+    {
+     "kind": "safety",
+     "text": "Set the safety stops just below your lowest point.",
+     "claim": "c20"
+    },
+    {
+     "kind": "safety",
+     "text": "Test the stops with a light rep first.",
+     "claim": "c20"
+    },
+    {
+     "kind": "position",
+     "text": "Rotate the bar forward off the hooks.",
+     "claim": "c21"
+    },
+    {
+     "kind": "finish",
+     "text": "To rack: rotate it back onto the hooks.",
+     "claim": "c22"
+    },
+    {
+     "kind": "finish",
+     "text": "Check both sides are locked before you let go.",
+     "claim": "c22"
+    },
+    {
+     "kind": "safety",
+     "text": "You can rack the bar on the hooks at any point.",
+     "claim": "c23"
+    }
+   ]
+  }
+ },
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Way out: bench inside a power rack with the safety pins set slightly below the bottom position; a failed rep is lowered to the mid-chest and the torso flattened to set the bar on the pins. Written for the flat bench; applied to incline, decline and close-grip presses in a rack by inference.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "stronglifts-bench"
+   ],
+   "quotes": [
+    {
+     "source": "stronglifts-bench",
+     "text": "Set these pins slightly lower than the bottom position when you Bench Press. The bar can’t touch the pins on good reps.",
+     "where": "Safety Pins"
+    },
+    {
+     "source": "stronglifts-bench",
+     "text": "If you fail to bench the weight, lower the bar to your mid-chest. Then flatten your torso to lower the bar on the safety pins.",
+     "where": "Safety Pins"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Set the bench hooks so the bar clears them by about 2-5 cm without reaching up or losing the shoulder-blade position.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sbs-bench"
+   ],
+   "quotes": [
+    {
+     "source": "sbs-bench",
+     "text": "you should be able to comfortably get the bar over the hooks without needing to “reach” up, protract your shoulder blades, and lose scapular position.",
+     "where": "Equipment"
+    },
+    {
+     "source": "sbs-bench",
+     "text": "In general, you should be able to comfortably clear the hooks by about an inch or two (2-5cm).",
+     "where": "Equipment"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Lie with the shoulders at least about 8 cm from the upright supports so the bar does not hit them.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hk-bench-youth"
+   ],
+   "quotes": [
+    {
+     "source": "hk-bench-youth",
+     "text": "To avoid hitting the upright supports, position your shoulders at least 3 inches (~8 cm) from the supports before you start.",
+     "where": "technique notes"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Squeeze the shoulder blades together before unracking.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "stronglifts-bench"
+   ],
+   "quotes": [
+    {
+     "source": "stronglifts-bench",
+     "text": "Squeeze your shoulder-blades before you unrack the weight.",
+     "where": "Squeeze Your Shoulder-blades"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Unrack by straightening the arms to lift the bar out of the hooks, then move it level until it is balanced over the shoulders; do not lower it from the hooks to the chest on a slant. Written for the flat bench; applied to the other rack presses by inference.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "stronglifts-bench"
+   ],
+   "quotes": [
+    {
+     "source": "stronglifts-bench",
+     "text": "Unrack. Straighten your arms to lift the bar out of the uprights. Move it horizontally until it’s balanced over your shoulders.",
+     "where": "How to setup"
+    },
+    {
+     "source": "stronglifts-bench",
+     "text": "Don’t lower the bar from the uprights to your chest in an incline line.",
+     "where": "Unracking: Bar to Shoulders First"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Rerack by locking the elbows over the shoulders, moving the bar back until it touches the rack posts, then bending the arms to lower it into the hooks; pressing straight into the hooks can miss them. Written for the flat bench; applied to the other rack presses by inference.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "stronglifts-bench"
+   ],
+   "quotes": [
+    {
+     "source": "stronglifts-bench",
+     "text": "Rack the bar by moving it back against the vertical parts of your Power Rack. Then lower it into the uprights by bending your arms. Don’t aim for the uprights, you could miss them.",
+     "where": "Racking: Aim for The Power Rack"
+    },
+    {
+     "source": "stronglifts-bench",
+     "text": "Don’t Bench Press the bar straight into the uprights. You can miss them by pressing the bar under them.",
+     "where": "Racking: Bar Over Shoulders First"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "A spotter stands behind the lifter's head and helps the bar out to the start position and back into the rack.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hk-bench-youth"
+   ],
+   "quotes": [
+    {
+     "source": "hk-bench-youth",
+     "text": "A spotter should be behind the lifter's head and should assist the lifter with getting the barbell into the starting position and returning the barbell to the rack when finished.",
+     "where": "spotting"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Incline bench: unrack the bar and hold it on straight arms above the shoulders.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "strengthlog-incline"
+   ],
+   "quotes": [
+    {
+     "source": "strengthlog-incline",
+     "text": "Sitting on an inclined bench, unrack a barbell and hold it on straight arms above your shoulders.",
+     "where": "How to Incline Bench Press"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Decline bench: set the bar at a height you can reach without fully straightening the arms, push up to lift it out and hold it over you on locked arms.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "workoutlabs-decline"
+   ],
+   "quotes": [
+    {
+     "source": "workoutlabs-decline",
+     "text": "Set a barbell in a weight rack at the low end of a decline bench, making sure it is at a height you can reach without fully extending your arms.",
+     "where": "Instructions"
+    },
+    {
+     "source": "workoutlabs-decline",
+     "text": "Push up to lift the bar from the rack and hold it directly over you with your arms locked.",
+     "where": "Instructions"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Decline bench way out: set safety racks on both sides, because a failed rep cannot be rolled down the belly.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "strengthlog-decline"
+   ],
+   "quotes": [
+    {
+     "source": "strengthlog-decline",
+     "text": "Remember to set up safety racks on your sides while decline benching, as you cannot roll the bar down your belly if you fail.",
+     "where": "How to Decline Bench Press"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Overhead press: set the bar in a rack at about shoulder height, dip under it to take it off onto the shoulders, then step back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-standing-sp"
+   ],
+   "quotes": [
+    {
+     "source": "ace-standing-sp",
+     "text": "Place a barbell in a rack at about shoulder-height.",
+     "where": "Starting Position"
+    },
+    {
+     "source": "ace-standing-sp",
+     "text": "Dip under the bar to bring it off the rack letting it rest across the top of the shoulders",
+     "where": "Starting Position"
+    },
+    {
+     "source": "ace-standing-sp",
+     "text": "Step back, keeping the back straight and tall",
+     "where": "Starting Position"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Overhead press way out: the textbook summary says overhead lifts are done in a power rack with crossbars at the right height; a failed press is lowered back to the shoulders and then racked. One coach source says the rack is optional for this lift.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nsca-ch15-summary",
+    "stronglifts-ohp"
+   ],
+   "quotes": [
+    {
+     "source": "nsca-ch15-summary",
+     "text": "Overhead exercises and ones with the bar on the back or shoulders must be done within a power rack with crossbars at the right height.",
+     "where": "Spotting"
+    },
+    {
+     "source": "stronglifts-ohp",
+     "text": "If you fail to press the weight, you can simply lower it back on your shoulders. You then rack it in your Power Rack or return it to the floor.",
+     "where": "Failing Reps"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Squat: set the hooks at about mid-chest, so you only straighten bent legs to unrack; too high puts you on your toes. Written for the back squat; applied to the front squat by inference.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "stronglifts-squat"
+   ],
+   "quotes": [
+    {
+     "source": "stronglifts-squat",
+     "text": "This is unsafe because you have to get on your toes to rack/unrack the bar.",
+     "where": "Power Rack"
+    },
+    {
+     "source": "stronglifts-squat",
+     "text": "Set the uprights mid-chest level so you just have to straighten your bent legs to unrack the bar.",
+     "where": "Power Rack"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Squat way out: set the safety pins just below the lowest squat depth (just below where you break parallel).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "stronglifts-squat",
+    "rep-fail"
+   ],
+   "quotes": [
+    {
+     "source": "stronglifts-squat",
+     "text": "Set the pins just below where you break parallel.",
+     "where": "Power Rack"
+    },
+    {
+     "source": "rep-fail",
+     "text": "Ensure your safeties or pins are set just below your lowest squat depth.",
+     "where": "How to Bail a Back Squat"
+    },
+    {
+     "source": "rep-fail",
+     "text": "Similar to the back squat, set the safety bars at an appropriate height.",
+     "where": "How to Bail a Front Squat"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Unrack a squat with the feet under the bar by standing straight up, not lunge-style with one foot back. Written for the back squat; applied to the front squat by inference.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "stronglifts-squat"
+   ],
+   "quotes": [
+    {
+     "source": "stronglifts-squat",
+     "text": "Put your feet under the bar, Squat straight up and keep your heels on the floor.",
+     "where": "Unracking: Squat Up"
+    },
+    {
+     "source": "stronglifts-squat",
+     "text": "Don’t unrack lunge-style with one foot back or you’ll put uneven stress on your spine.",
+     "where": "Unracking: Squat Up"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Walk out with one step back on each leg and keep it short, so the rack stays close for the end of the set. Written for the back squat; applied to the front squat by inference.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "stronglifts-squat"
+   ],
+   "quotes": [
+    {
+     "source": "stronglifts-squat",
+     "text": "Then walk back by taking one step back with each leg. Don’t take a ton of steps back. Keep the walk back short to save strength. This also keeps the uprights close when your set is done.",
+     "where": "Unracking: Walk Back"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "Rerack a squat by finishing the rep standing, walking forward until the bar touches the rack posts, then bending the legs to set it in the hooks; do not squat it straight into the hooks. Written for the back squat; applied to the front squat by inference.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "stronglifts-squat"
+   ],
+   "quotes": [
+    {
+     "source": "stronglifts-squat",
+     "text": "Don’t try to Squat it straight into the uprights.",
+     "where": "Racking: Finish Your Squat First"
+    },
+    {
+     "source": "stronglifts-squat",
+     "text": "Rack the bar by walking forward until it hits the vertical parts of your Power Rack. Then bend your legs and the bar will land in the uprights.",
+     "where": "Racking: Aim For The Rack"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "Back squat way out: if a rep fails, squat straight down until the bar lands on the pins, without dropping it forward or back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "stronglifts-squat"
+   ],
+   "quotes": [
+    {
+     "source": "stronglifts-squat",
+     "text": "When you fail to Squat the weight up, lower the bar to the pins by Squatting straight down. Don’t drop it forward or back or you’ll lose balance.",
+     "where": "Power Rack"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "Front squat way out: release the bar from the shoulders so it drops forward onto the safety bars while stepping back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "rep-fail"
+   ],
+   "quotes": [
+    {
+     "source": "rep-fail",
+     "text": "If you need to bail, quickly release the bar from your shoulders and let it drop forward onto the safety bars. Step back simultaneously to avoid any contact with the falling bar.",
+     "where": "How to Bail a Front Squat"
+    }
+   ]
+  },
+  {
+   "id": "c20",
+   "text": "Smith machine way out: set the safety stops just below the lowest point of the movement before unracking, and test them with a light rep before going heavy.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "eos-smith",
+    "golds-smith-squat",
+    "motra-smith-squat"
+   ],
+   "quotes": [
+    {
+     "source": "eos-smith",
+     "text": "Set the safety stops just below your lowest movement point to catch the bar if needed.",
+     "where": "How to use a Smith machine safely"
+    },
+    {
+     "source": "golds-smith-squat",
+     "text": "Slide or pin them just below your lowest squat depth, and always test them with a light rep before loading heavy.",
+     "where": "Form Tips: Set the Safety Stops"
+    },
+    {
+     "source": "motra-smith-squat",
+     "text": "Always set safety stops before unracking",
+     "where": "Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c21",
+   "text": "Unrack a Smith bar by rotating it (the wrists) forward off the hooks.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "eos-smith",
+    "golds-smith-squat"
+   ],
+   "quotes": [
+    {
+     "source": "eos-smith",
+     "text": "Rotate your wrists forward to unlock the bar from the hooks.",
+     "where": "How to use a Smith machine safely"
+    },
+    {
+     "source": "golds-smith-squat",
+     "text": "Grip the bar just outside your shoulders and rotate it forward to unlock.",
+     "where": "Step 3. Unrack the Bar Safely"
+    }
+   ]
+  },
+  {
+   "id": "c22",
+   "text": "Rerack a Smith bar by rotating it back onto the hooks and checking it is locked on both sides before letting go.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "eos-smith",
+    "golds-smith-squat"
+   ],
+   "quotes": [
+    {
+     "source": "eos-smith",
+     "text": "Rotate your wrists back to lock the bar into place when you’re done.",
+     "where": "How to use a Smith machine safely"
+    },
+    {
+     "source": "golds-smith-squat",
+     "text": "Rotate the bar backward to engage the safety hooks. Listen for the click and double-check that it’s secure on both sides.",
+     "where": "Step 6. Re-Rack the Bar Safely"
+    }
+   ]
+  },
+  {
+   "id": "c23",
+   "text": "The Smith machine has built-in hooks and safety stops, so the bar can be racked at any time.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "eos-smith"
+   ],
+   "quotes": [
+    {
+     "source": "eos-smith",
+     "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+     "where": "What is a Smith machine?"
+    }
+   ]
+  }
+ ],
+ "gaps": [
+  "No source for the walk-out on the front squat specifically; the back-squat lines are applied by inference (MECH).",
+  "Incline and close-grip rack presses have no own source for the pin height and the rerack path; the flat-bench lines are applied by inference (MECH).",
+  "No source for walking the overhead-press bar back into the rack (step count, path).",
+  "No source for a failed rep on a Smith shrug or shoulder press beyond the general \"rack at any time\" and stops."
+ ],
+ "notes": [
+  "Re-read and confirmed: barbell_bench_press c6, c7, c12, c13 sources (stronglifts-bench, hk-bench-youth, sbs-bench); incline_barbell_bench_press c5 (strengthlog-incline); smith_machine_squat c8, c9 (golds, motra); smith_machine_bench_press c2, c4, c5 (eos); front_squat c14, c25 (rep-fail). Boostcamp (incline c6) and motra-smith-bench were not needed and not cited.",
+  "Conflict: for the Smith bench and incline press, Motra puts the stops \"just above chest level\"; EoS and Gold's say just below the lowest point. The card follows below-lowest-point (c20).",
+  "Conflict: for a failed back squat, REP pushes the bar backward off the shoulders onto the safeties; StrongLifts says squat straight down onto the pins and not to drop it back. The card uses StrongLifts (c18).",
+  "Conflict: StrongLifts says the overhead press needs no rack for safety; the NSCA summary (secondary source) says overhead lifts must be done in a power rack. c12 keeps both: rack with crossbars, failed press back to the shoulders.",
+  "StrongLifts calls the J-hooks \"uprights\" and the rack posts \"vertical parts\"; card text says \"hooks\" and \"posts\".",
+  "The 8 cm (c3) and 2-5 cm (c2) figures come from the quotes."
+ ],
+ "sources": [
+  {
+   "id": "stronglifts-bench",
+   "url": "https://stronglifts.com/bench-press/",
+   "title": "How to Bench Press with Proper Form: Definitive Guide (StrongLifts)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "sbs-bench",
+   "url": "https://www.strongerbyscience.com/how-to-bench/",
+   "title": "How to Bench Press: The Definitive Guide (Stronger by Science)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "hk-bench-youth",
+   "url": "https://us.humankinetics.com/blogs/excerpt/a-step-by-step-guide-for-a-proper-bench-press",
+   "title": "A step by step guide for a proper bench press (Human Kinetics excerpt)",
+   "kind": "textbook",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "strengthlog-incline",
+   "url": "https://www.strengthlog.com/incline-bench-press/",
+   "title": "How to Do Incline Bench Press: Muscles Worked & Proper Form (StrengthLog)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "workoutlabs-decline",
+   "url": "https://workoutlabs.com/exercise-guide/decline-barbell-bench-press/",
+   "title": "Decline Barbell Bench Press Exercise Guide (WorkoutLabs)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "strengthlog-decline",
+   "url": "https://www.strengthlog.com/decline-bench-press/",
+   "title": "How to Do Decline Bench Press: Muscles Worked & Proper Form (StrengthLog)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "ace-standing-sp",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/71/standing-shoulder-press/",
+   "title": "Standing Shoulder Press, ACE Exercise Library",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "nsca-ch15-summary",
+   "url": "https://www.ptpioneer.com/personal-training/certifications/nsca-cscs/cscs-chapter-15/",
+   "title": "CSCS Chapter 15: Exercise Technique for Free Weight and Machine Training (PTPioneer study summary of the NSCA textbook)",
+   "kind": "secondary",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "stronglifts-ohp",
+   "url": "https://stronglifts.com/overhead-press/",
+   "title": "How to Overhead Press with Proper Form: Full Guide (StrongLifts)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "stronglifts-squat",
+   "url": "https://stronglifts.com/squat/",
+   "title": "How to Squat with Proper Form: The Definitive Guide (StrongLifts)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "rep-fail",
+   "url": "https://repfitness.com/blogs/training/how-to-safely-fail-a-heavy-squat-in-the-gym",
+   "title": "How to Safely Fail a Heavy Squat in the Gym (REP Fitness)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "eos-smith",
+   "url": "https://www.eosfitness.com/blog/how-to-use-smith-machine",
+   "title": "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness)",
+   "kind": "coach",
+   "year": 2025,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "golds-smith-squat",
+   "url": "https://www.goldsgym.com/blog/how-to-do-smith-machine-squats/",
+   "title": "How to Do Smith Machine Squats Safely and Effectively (Gold's Gym)",
+   "kind": "coach",
+   "year": 2025,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  },
+  {
+   "id": "motra-smith-squat",
+   "url": "https://www.motra.com/exercises/smithMachineSquat",
+   "title": "Smith Machine Squat - Exercise Guide (Motra)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-02"
+  }
+ ]
+}

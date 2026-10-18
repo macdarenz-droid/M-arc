@@ -1,0 +1,241 @@
+{
+  "key": "rope-rule",
+  "kind": "hand",
+  "appliesTo": [
+    "rope_triceps_pushdown",
+    "overhead_cable_triceps_extension"
+  ],
+  "appliesToWhy": "GA 3.1.1: the two rope exercises filed under push with handle rope and loadAxis across. face_pull and cable_crunch also use a rope (census need ropeLikely) but are in the pull and on-body archetypes and are not covered by this card.",
+  "archetype": "push",
+  "handle": "rope",
+  "loadAxis": {
+    "value": "across",
+    "basis": "drawing decision from GA 3.1.1 (a rope can only be pulled, so the lever check is off); not a sourced claim, see gaps"
+  },
+  "handContact": {
+    "text": "Hand up against the knob at the end of the rope, one hand on each end.",
+    "claim": "c1"
+  },
+  "grip": {
+    "text": "Neutral grip (palms facing each other), a full grip with the thumbs wrapped round the rope.",
+    "claim": [
+      "c2",
+      "c3"
+    ]
+  },
+  "thumbRule": {
+    "text": "Wrapped round the rope.",
+    "claim": "c2"
+  },
+  "wrist": {
+    "text": "Straight, in line with the forearm, for the whole movement.",
+    "claim": [
+      "c4",
+      "c5"
+    ]
+  },
+  "faults": [
+    {
+      "key": "rope-wrist-curl",
+      "label": "Wrists curl",
+      "what": "The wrists bend toward the palms as the rope is pushed down.",
+      "claim": "c6"
+    }
+  ],
+  "gripLine": {
+    "text": "Hold each end of the rope, hands up against the knobs, palms facing each other, wrists straight.",
+    "claim": [
+      "c1",
+      "c2",
+      "c4"
+    ]
+  },
+  "cue": {
+    "text": "Keep your wrists straight.",
+    "claim": "c4"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "For the rope pushdown, hold the rope with each hand up against its clubbed end (the knob).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nfpt-rope"
+      ],
+      "quotes": [
+        {
+          "source": "nfpt-rope",
+          "text": "Grip the rope with your hand against the clubbed end.",
+          "where": "How to steps"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Grasp the handle or rope firmly with a full grip, thumbs clasped around it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "ace-pushdown",
+          "text": "Attach the handle or rope and grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+          "where": "Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "For the overhead extension the rope is held with a neutral grip (palms facing each other) behind the head. Using the same neutral grip for the rope pushdown is an inference: no source read states the palm direction for the pushdown.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "motra-ohrope"
+      ],
+      "quotes": [
+        {
+          "source": "motra-ohrope",
+          "text": "Attach a rope to the low pulley. Stand facing away from the machine, holding the rope with a neutral grip, and step forward to create tension, positioning hands behind your head with elbows bent.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "In the rope pushdown the wrists stay straight for the whole movement, in line with the forearms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nfpt-rope",
+        "ace-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "nfpt-rope",
+          "text": "Your wrists should be straight throughout the movement, press the handle down toward the floor to the extended position.",
+          "where": "How to steps"
+        },
+        {
+          "source": "ace-pushdown",
+          "text": "wrists in neutral positon (i.e., aligned with your forearms). This arm and wrist position should be maintained",
+          "where": "Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The overhead rope extension lists neutral wrist mobility as a requirement.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-ohrope"
+      ],
+      "quotes": [
+        {
+          "source": "motra-ohrope",
+          "text": "Wrist neutral mobility",
+          "where": "Flexibility Needed"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Bending the wrists (flexing them) as you push the weight down moves work from the triceps to the forearms, puts the wrists at a mechanical disadvantage and stresses the elbow; keep the wrists neutral. The source says this happens especially with the bar attachment; applying it to the rope is an inference.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "bws-tri"
+      ],
+      "quotes": [
+        {
+          "source": "bws-tri",
+          "text": "Letting the forearms takeover is a little harder to catch but is just as common - especially when the bar attachment is used.",
+          "where": "Forearms"
+        },
+        {
+          "source": "bws-tri",
+          "text": "And this happens when you flex your wrists as you push the weight down.",
+          "where": "Forearms"
+        },
+        {
+          "source": "bws-tri",
+          "text": "This not only shifts tension away from the triceps and onto the forearms, but also:",
+          "where": "Forearms"
+        },
+        {
+          "source": "bws-tri",
+          "text": "puts your wrists at a mechanical disadvantage",
+          "where": "Forearms"
+        },
+        {
+          "source": "bws-tri",
+          "text": "stresses the elbow joint",
+          "where": "Forearms"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "nfpt-rope",
+      "url": "https://nfpt.com/how-to-do-tricep-pushdowns-with-the-rope/",
+      "title": "How to do Tricep Pushdowns with the Rope (NFPT)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "ace-pushdown",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+      "title": "Triceps Pushdowns (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "motra-ohrope",
+      "url": "https://www.motra.com/exercises/cableRopeOverheadTriExtensionLow",
+      "title": "Cable Rope Overhead Tricep Extension Low - Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "bws-tri",
+      "url": "https://builtwithscience.com/workouts/tricep-training/",
+      "title": "How To Get Bigger Triceps: 3 Training Mistakes You’re Probably Making (Built With Science)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "gaps": [
+    "GA 3.1.1 says the rope load sits in the fingers and on the little-finger edge of the fist, never on the heel of the palm. No source read says where the load sits in the hand; loadAxis \"across\" is kept as GA's drawing decision, not a claim.",
+    "Fault rope-slip (rope sliding out of the fist): no source read names it or says the knob stops it. Not drawn until sourced.",
+    "No source read gives a hand-contact or wrist rule specific to the overhead rope extension beyond the neutral grip (c3) and neutral wrist mobility (c5); the pushdown rules (c1, c2, c4) are applied to it by inference and need a source before an overhead sheet uses them."
+  ],
+  "notes": [
+    "Same rules sourced in cards/rope_triceps_pushdown.json c2, c3, c5 (NFPT, ACE) and cards/overhead_cable_triceps_extension.json c3 (Motra). Re-read NFPT, ACE pushdown and Motra in full on 2026-10-01; quotes copied from that read. Built With Science (bws-tri) is new here.",
+    "ACE's pushdown steps cover both the handle and the rope (\"handle / rope\"), so c2 and c4 apply to the rope directly."
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "key": "implement-medicine-ball-slam",
+  "kind": "implement",
+  "appliesTo": [
+    "medicine_ball_slam"
+  ],
+  "appliesToWhy": "GA appendix B hand archetype `implement` lists medicine_ball_slam; one card per implement.",
+  "implement": {
+    "text": "medicine_ball_slam",
+    "claim": "c1"
+  },
+  "rightPose": {
+    "text": "Both hands hold the ball firmly, arms extended overhead.",
+    "claim": [
+      "c1",
+      "c2"
+    ]
+  },
+  "gripLine": {
+    "text": "Hold the ball firmly with both hands, then catch it on the bounce or pick it up with both hands.",
+    "claim": [
+      "c1",
+      "c3"
+    ]
+  },
+  "cue": {
+    "text": "Both hands, firm grip.",
+    "claim": "c1"
+  },
+  "handRisks": [
+    {
+      "text": "A soft slam ball that does not bounce back is the safer choice.",
+      "claim": "c4"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hold the ball firmly with both hands.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-slam-ball",
+        "bodbot-mb-slam",
+        "im-mb-slam"
+      ],
+      "quotes": [
+        {
+          "source": "hl-slam-ball",
+          "text": "Gripping the ball firming, extend your arms and bring the ball overhead.",
+          "where": "Ball slams, step 2"
+        },
+        {
+          "source": "bodbot-mb-slam",
+          "text": "Hold the medicine ball with both hands in front of your chest.",
+          "where": "Set-up"
+        },
+        {
+          "source": "im-mb-slam",
+          "text": "Hold a soft medicine ball with both hands directly in front of your torso.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Raise the ball overhead with the arms extended before slamming it down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bodbot-mb-slam",
+        "hl-slam-ball"
+      ],
+      "quotes": [
+        {
+          "source": "bodbot-mb-slam",
+          "text": "Raise the ball overhead with extended arms.",
+          "where": "Movement"
+        },
+        {
+          "source": "hl-slam-ball",
+          "text": "Gripping the ball firming, extend your arms and bring the ball overhead.",
+          "where": "Ball slams, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "After the slam, catch the ball on the bounce if it rebounds, or pick it up with both hands.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bodbot-mb-slam",
+        "im-mb-slam",
+        "wl-mb-slam"
+      ],
+      "quotes": [
+        {
+          "source": "bodbot-mb-slam",
+          "text": "Catch the ball on the bounce (if it rebounds) or pick it up quickly.",
+          "where": "Movement"
+        },
+        {
+          "source": "im-mb-slam",
+          "text": "Retrieve the medicine ball with both hands and return to the starting position.",
+          "where": "How to"
+        },
+        {
+          "source": "wl-mb-slam",
+          "text": "Catch the ball as it bounces back up, and bring it back up above your head.",
+          "where": "How to Do Medicine Ball Slams"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "A soft slam ball that does not bounce back is the safer choice, as a bouncing ball can rebound strongly off the floor.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "vit-mb-slam"
+      ],
+      "quotes": [
+        {
+          "source": "vit-mb-slam",
+          "text": "a slam ball is softer and doesn’t bounce back when you slam it on the floor. Hence, the risk of injury with this ball is minimal.",
+          "where": "How to do it, equipment"
+        },
+        {
+          "source": "vit-mb-slam",
+          "text": "Using a slam ball instead will allow you to perform the workout without fearing a strong bounce off the floor.",
+          "where": "Safety"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bodbot-mb-slam",
+      "url": "https://www.bodbot.com/Exercises/966/Medicine-Ball-Slam",
+      "title": "Medicine Ball Slam",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "hl-slam-ball",
+      "url": "https://www.healthline.com/health/fitness-exercise/slam-ball-exercises",
+      "title": "Slam Ball Exercises and Benefits",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "im-mb-slam",
+      "url": "https://www.ironmanmagazine.com/how-to-do-overhead-medicine-ball-slam/",
+      "title": "How To Do Overhead Medicine Ball Slam",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "vit-mb-slam",
+      "url": "https://vitruve.fit/blog/how-to-master-the-medicine-ball-slam-throw-technique/",
+      "title": "How to Master the Medicine Ball Slam Throw Technique",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "wl-mb-slam",
+      "url": "https://workoutlabs.com/exercise-guide/medicine-ball-slams/",
+      "title": "Medicine Ball Slams · Exercise Guide",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "gaps": [
+    "Where the hands sit on the ball (sides, top, fingers spread) not stated in any source read; only a search-engine snippet mentioned 'fingertips on the sides', not found on a page.",
+    "Thumb rule not sourced.",
+    "Wrist at release/impact not sourced.",
+    "No drawable hand fault sourced.",
+    "No coach, textbook or study source found; all sources are secondary exercise pages. PubMed search on medicine ball hand/finger injury found nothing relevant."
+  ],
+  "notes": [
+    "The ACE rotational slam page (catch on rebound) is a different exercise and was not cited.",
+    "handRisks holds hand-related safety points the sources state (grip loss, over-gripping); one shared field name across the 5 implement cards."
+  ]
+}

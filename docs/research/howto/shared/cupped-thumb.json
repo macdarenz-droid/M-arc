@@ -1,0 +1,193 @@
+{
+  "key": "cupped-thumb",
+  "kind": "hand",
+  "appliesTo": [
+    "dumbbell_overhead_triceps_extension"
+  ],
+  "appliesToWhy": "GA 3.1.1 and appendix B: the one push id held with two hands cupping one dumbbell.",
+  "archetype": "push",
+  "thumbMode": "cupped",
+  "handContact": {
+    "text": "Both palms against the inside of the top dumbbell head, the handle running between thumb and fingers.",
+    "claim": [
+      "c1",
+      "c2"
+    ]
+  },
+  "thumbRule": {
+    "text": "Thumbs wrapped around the handle, fingers on the dumbbell head.",
+    "claim": [
+      "c1",
+      "c2"
+    ]
+  },
+  "loadAxis": {
+    "value": "along-forearm",
+    "text": "along-forearm: at the top the palms face up with the dumbbell hanging over the head, so the weight rests in the upturned palms.",
+    "basis": "drawing decision for the lever check, read across from c4 (ACE's wrap-the-handle grip, palms up, dumbbell hanging over the head); not a sourced claim for the cupped grip"
+  },
+  "wrist": {
+    "text": "Keep the wrist position unchanged through the set.",
+    "claim": "c5"
+  },
+  "alternative": {
+    "text": "Another way is both hands wrapped around the handle.",
+    "claim": "c3"
+  },
+  "gripLine": {
+    "text": "Cup the top of one dumbbell with both palms, thumbs wrapped round the handle.",
+    "claim": [
+      "c1",
+      "c2"
+    ]
+  },
+  "cue": {
+    "text": "Thumbs round the handle.",
+    "claim": "c1"
+  },
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Hold one dumbbell with both hands, thumbs wrapped round the handle and fingers gripping the body of the dumbbell.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lifto-ote"
+      ],
+      "quotes": [
+        {
+          "source": "lifto-ote",
+          "text": "Grip the Dumbbell: Hold a single dumbbell with both hands. Your thumbs should wrap around the handle and fingers grip the body of the dumbbell.",
+          "where": "Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Place the palms against the inside of the dumbbell head, with the handle running between thumb and finger; another source describes grasping the inside plate surface with both hands.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lbeb-ote",
+        "hl-ote"
+      ],
+      "quotes": [
+        {
+          "source": "lbeb-ote",
+          "text": "Place your palms against the inside of the dumbbell head. The handle should run between your thumb and finger.",
+          "where": "Dumbbell overhead triceps extension"
+        },
+        {
+          "source": "hl-ote",
+          "text": "Hold the weight overhead by grasping the inside dumbbell plate surface with both hands, or by grasping both handles of the kettlebell.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "An alternative grip wraps both hands around the dumbbell handle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-ohext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-ohext",
+          "text": "Stand in a split-stance position holding a dumbbell with both hands and wrap both hands around the dumbbell handle.",
+          "where": "Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "At the top the dumbbell sits directly over the head with the palms facing up and the dumbbell hanging vertically or slightly angled.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-ohext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-ohext",
+          "text": "The dumbbell should be positioned directly over your head with your palms facing upwards and the dumbbell hanging vertically or angled slightly.",
+          "where": "Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the head, torso, upper arms, wrists and feet in the same position through the exercise.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-ohext"
+      ],
+      "quotes": [
+        {
+          "source": "ace-ohext",
+          "text": "Maintain your balance and avoid changing the position of your head, torso, upper arms, wrists and feet.",
+          "where": "Upward Phase"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "lifto-ote",
+      "url": "https://www.liftosaur.com/exercises/dumbbell-triceps-extension",
+      "title": "Dumbbell Triceps Extension - How To, Muscles Worked & Form Guide (Liftosaur)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "lbeb-ote",
+      "url": "https://liftbigeatbig.com/?p=6923",
+      "title": "Overhead Triceps Extension (How To, Muscles Worked, & Variations) (Lift Big Eat Big, James de Lacey)",
+      "kind": "coach",
+      "year": 2023,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "hl-ote",
+      "url": "https://www.healthline.com/health/fitness/overhead-triceps-extension",
+      "title": "Overhead Tricep Extension: How-To and Variations (Healthline; Travis Edwards, PT)",
+      "kind": "coach",
+      "year": 2021,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    },
+    {
+      "id": "ace-ohext",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/74/triceps-extension/",
+      "title": "Triceps Extension (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-02"
+    }
+  ],
+  "gaps": [
+    "No source read gives a wrist angle or names a hand fault for the cupped grip (for example the dumbbell tipping or the hands sliding off the head). No fault is drawn until one is sourced; GA's push faults (fingers-bent-back, ulnar-tip) are not carried over.",
+    "No source read says how to get the dumbbell overhead or down again for this grip (tier-A way out, LR-3, LR-13: stays with LIB-WAYOUT).",
+    "overBody: the dumbbell is over the head, so GA requires a wrapped thumb; c1 and c2 support thumbs round the handle, but no source states that a cupped grip keeps the dumbbell from falling."
+  ],
+  "notes": [
+    "ACE (c3) and the cupped sources (c1, c2) describe two different grips. cards/dumbbell_overhead_triceps_extension.json cites ACE c1 (handle) and Healthline c2 (inside plate). This card makes the cupped grip the default per GA 3.1.1 and keeps the handle grip as the alternative; the sheet author picks one per plate.",
+    "loadAxis along-forearm is supported only as a reading of c4 (palms up, dumbbell hanging over the head); it is a drawing decision for the lever check, not a measured fact.",
+    "Re-read ACE triceps extension and Healthline in full on 2026-10-01; Liftosaur and Lift Big Eat Big are new here."
+  ]
+}
