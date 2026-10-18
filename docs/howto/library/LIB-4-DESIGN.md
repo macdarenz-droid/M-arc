@@ -161,3 +161,46 @@ Tree: 575fa75 + #181 9b8f76e, scratch only. 575fa75 and this branch's later head
 - Rows and px are identical across all 1,009 pixel tuples, so `par.mjs` gives P = 4. That is a 3.69× speed-up.
 - A forced 1-row difference keeps P = 1.
 - The default stays P = 1 until B7 runs on the final head.
+
+### B2 and B8: the 8 on the final head, Chromium 141
+
+Head 21c66d5, which holds LIB-4a 0b2d3c1 and main b99a9e2; later commits change only `docs/`. The run was `--ids golden8 --P 1`.
+
+- **Rows:** 2,947 of 2,947 pass. Max px off is 0 on all 8 ids. The run took 7,522.1 s.
+- **Seconds per id:**
+
+  | Id | Seconds |
+  |---|---|
+  | lateral raise | 928.8 |
+  | back squat | 934.3 |
+  | pull-up | 934.9 |
+  | hanging leg raise | 940.6 |
+  | lat pulldown | 956.0 |
+  | seated row | 949.1 |
+  | leg press | 932.4 |
+  | machine chest press | 945.4 |
+
+- **Seconds per family:**
+
+  | Family | Seconds |
+  |---|---|
+  | L2 | 0.1 |
+  | HT7 | 553.0 |
+  | HT8 | 625.9 |
+  | PQH | 354.2 |
+  | entry | 65.1 |
+  | offline | 17.3 |
+  | HT4 | 272.4 |
+  | plate | 1,163.4 |
+  | HT6 | 841.0 |
+  | HT9 | 1,071.0 |
+  | HT10 | 2,558.1 |
+
+Not yet run on the final head, so unverified:
+- the failure fixtures;
+- the size equalities with A9 and A2;
+- the guard `--blind` runs and the once-row seconds;
+- B7 at P=4;
+- Chrome 153;
+- B9;
+- B10.
