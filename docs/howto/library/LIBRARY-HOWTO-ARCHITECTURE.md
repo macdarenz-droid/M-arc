@@ -268,8 +268,8 @@ that is itself a child of a parent on the same pilot sheet (`incline_dumbbell_pr
 approved together. If the parent is rejected, the child is redrawn and shown again.
 
 ### 3.2 Hard checks (LIB-3, `tools/plates/library/qa.mjs`)
-The generator refuses to emit a plate that fails any of these. They run in authoring and in CI for every shipped
-library id.
+The generator refuses to emit a plate whose report fails the node half of these checks. The batch sheet build and
+LIB-4b's PQH rows (in CI, for every shipped library id) gate the full report, node and browser halves (D-LIB4-DOCS).
 
 | ID | Check | Basis |
 |---|---|---|
@@ -364,26 +364,26 @@ the end pose, a moving `line` part, a raw-spec override, and a colour literal.
   6. a fresh reviewer, with "golden update" in the title.
 - An engine or composer change that moves no approved byte needs no owner session: its proof is L1 on every pinned
   page.
-- **Guard:** `tests/howto/golden/library/**` is already inside the HT guard's `tests/howto/golden/**` (plan 2.8). The
-  supervisor extends the agent guard, add-only, so that `[golden update]` is also required on non-merge commits that
-  touch `tools/plates/library/MANIFEST.json`.
+- **Guards:** the generator's pin check, LIB-2b's bijection test and LIB-4c's L1. No check reads the commit message for
+  `tests/howto/golden/**` (plan 2.8's was never built). Once #249 merges, agent-guard rule 4 requires `[golden update]`
+  on non-merge commits changing `tools/plates/library/MANIFEST.json`, except its `{"rows": {}}` creation (D-LIB4-DOCS).
 - **Pilot sheets built before LIB-3 merges** are re-checked on the merged LIB-3. If any pinned byte would have to
   change, the owner gets a changed-ids sheet before the pin.
 
 ### 3.6 CI forever after
-Every shipped library id is proven in the library shards (5.4) on every full run:
+Every shipped library id is proven in the shards (5.4) on every full run, and `gate-verdict` proves no id or state is missing (D-LIB4-DOCS-2):
 - L0-lib: every source pinned in `library/MANIFEST.json` (specs, templates, composers, hands, renderer, page
   builders, howto specs) has its pinned sha256 (vitest);
 - L1: pages rebuild to the pinned sha;
 - L2: fragments `===` their entries;
 - L2b: CSS walk;
 - F3: markup;
-- L3: pixels in 5 themes, every callout and tell, 390, 360 and 340 px;
+- L3: N and M at 390 px in 5 themes, and every callout and tell, A6's restore, 360 and 340 px in silent-black and paper (D-LIB4-DOCS);
 - L4: Trace;
 - the layer states (no sources states, LR-23);
 - PQ-H1..H10.
 
-`gate-verdict` proves no id or state is missing (D-LIB4-DOCS-2). The 8 keep their HT-1..HT-10 blocks, unchanged, in both gate jobs.
+The HT-1..HT-10 blocks stay in both gate jobs, unchanged for the 8; A1, A8 and A9 are extended under D-LIB4-CTRL and D-LIB4-A9 (D-LIB4-DOCS).
 
 ---
 
@@ -548,8 +548,8 @@ Every shipped library id is proven in the library shards (5.4) on every full run
   - the D/T derivation helpers with the `PARAMS` validator.
 
 ### 5.4 Gate time: sharded, nothing dropped
-- **The load.** 27.2 s per plate per job (measured, HT-3) plus about 26 s of layers (est.) is 53 s per exercise. For
-  145 exercises that is about 128 min, against a 40-min job timeout.
+- **The load** (C14, CI, P = 1): 870.5-916.9 s of checks per library id, plus 707-1,183 s of once-states per run. For
+  145 ids that is about 35-37 h of checks, against a 1,800 s budget per job (D-LIB4-DOCS).
 - **The 8 stay exactly where they are:** HT-1..HT-10 in `source-gate` and `visual-gate-tz`, about 23 min per job at
   M1 (est.), and the time-zone canary.
 - **HT-10 card amendment** (supervisor, now, before HT-10 is built):
@@ -559,10 +559,10 @@ Every shipped library id is proven in the library shards (5.4) on every full run
     over budget, HT-10 stops and reports.
 - **New add-only jobs** (the supervisor wires `.github`; LIB-4 writes the scripts):
   1. `howto-rebuild`:
-     - L1 for every pinned library page, on parallel processes;
-     - uploads `www` and the pages;
-     - emits the shard plan (greedy packing on a committed timing file, K from `fromJSON`: 1 at LB1, about 8 at 153).
-  2. `howto-shard-k`:
+     - picks the mode and the ids (D-LIB4-MODE), then runs L1 for every pinned library page, on parallel processes;
+     - uploads the pages, `plan.json` and its rebuild proof (each `howto-shard` job builds `www` itself);
+     - emits the shard plan (`packShards` on `ci/times.json`): K = N + 1 at P = 1, 154 at 153 ids (C14) (D-LIB4-DOCS).
+  2. `howto-shard`, one matrix job whose leg k runs shard k of K (D-LIB4-DOCS-2):
      - re-checks the page shas;
      - runs the golden-vs-golden 0 px self-check and the 1 px-shift control;
      - for its ids: PQ-H1..H10, L2b, F3, the full L3 matrix, L4, the layer states in 5 themes, and the per-id offline
@@ -609,8 +609,8 @@ Every shipped library id is proven in the library shards (5.4) on every full run
   from data: the first library id in `exercises.json` order with no How-to. The custom control `HT_CUSTOM` stays
   permanent. The supervisor also adds one line to the HT-5..HT-10 cards (not built yet): any "no How-to" control reads
   that shared helper, never a literal id.
-- **Fallback, if HT-3 merges first:** the switch HT plan R17 already sanctioned ("HT-12 must switch it deliberately,
-  in the same PR"). It is made once, in LIB-2, as a data move with the owner told. It is never made silently.
+- **Done in HT-3** (`firstWithoutHowTo()`, no fallback). At full coverage it returns `null` (D-LIB4-CTRL): FG-OFF G6,
+  HT-3 A1 and HT-6 A8 then skip only the library control; a LIB-4a block keeps the custom negative (D-LIB4-DOCS).
 
 ### 5.6 Offline, data, cost
 - **Offline:** everything is static and bundled. C17 runs on every library chunk. A unit check proves every `ht-*`
@@ -834,7 +834,7 @@ verbatim, and "next batch" (plan O4, answered by this plan).
 **What the Play Store upload needs from this plan:**
 - LB1-LB10 merged, or the remaining ids on a named list he approved.
 - LIB-23 green on the exact release APK: full regression, full QA, the release-mode C6 check (C6R: every id shipped
-  or left-out by decision), C15 stamps on every sheet, and `howto-verdict`.
+  or left-out by decision), C15 stamps on every sheet, and `gate-verdict` green with `library: full` (D-LIB4-DOCS-2).
 - His device checks on that APK: font scale (O9), open time, Trace and shimmer smoothness, TalkBack, and the
   five-second test for new tier-A hand keys.
 - No change to data collection. How-to reads and sends nothing (C17), and storage keys are unchanged, so the Play
@@ -856,7 +856,7 @@ verbatim, and "next batch" (plan O4, answered by this plan).
    - QA, critic and fixes 0.75 h per id;
    - research 1.5 h per full card, 0.5 h per difference card and 1 h per shared card.
 2. Builders do about 16 productive hours a day in auto mode, with at most 4 at once.
-3. A full CI run takes about 30-35 min, and each batch needs about 3.
+3. A full run at 145 ids plans about 2,300 runner-min of library checks (C14, P = 1; wall time unmeasured); each merge needs 2 (D-LIB4-DOCS).
 4. The owner answers a sheet within about 1 day. This is the largest unknown.
 5. About 2 real content errors per first draft, so one fix round.
 6. Opus usage limits hold for about 1,370 agent-hours over about 5 weeks. **Not verified.**
@@ -914,7 +914,7 @@ verbatim, and "next batch" (plan O4, answered by this plan).
 | 6 | E-R5 fails the bar | Spike in phase 0; go/no-go on pilot B; named list for 3 ids with renders |
 | 7 | Renderer can't reproduce all 8 | Legacy scripts frozen for any it can't; the 5 `render-*` must reproduce; critic and owner flag for the affected family |
 | 8 | CI pixel instability (HT-3 red today) | Entry condition of 5 identical reruns; golden-vs-golden 0 px per shard; root-cause, never retry; the threshold never changes (plan R6) |
-| 9 | Gate time or queueing | Shards sized by measurement; verdict proves full coverage; changed-id shards on drafts; full runs on ready heads and main |
+| 9 | Gate time or queueing | Shards sized by measurement (C14: K = N + 1 at P = 1); `gate-verdict`'s library family proves full coverage; affected-id shards on other pushes; full runs on `main`, merge-train heads and `workflow_dispatch`, and only `library: full` is merge evidence (D-LIB4-MODE); queue triggers (D-LIB4-QUEUE) (D-LIB4-DOCS) |
 | 10 | Opus usage limits or cost (≈ 1,370 h) | D and T modes, difference cards, one critic per batch, no duplicate checks; degraded calendar named (up to 8 weeks); re-projection after LB2 |
 | 11 | Owner review fatigue (12 sheets) | Anchors front-loaded, so batch sheets hold plates only; flagged and tier-A items first; per-exercise answers; stalled-batch rule |
 | 12 | Content accuracy at volume | Quote-backed claims, an independent critic, planted mistakes, 10 % re-fetch, tier-A safety checker, strict C15 stamps |
