@@ -23,7 +23,8 @@
 //  - Mistake (card plate.mistake, c3): hips sag at the top. The hips flex 30 deg (the body folds, hips toward the
 //    floor); the heels stay put and the plank angle is re-solved (SAG_TILT -28.3) so the shoulder joint keeps the end
 //    pose's height; the grips stay on the bar.
-//  - Rack upright 1.18 m, 10 cm behind the bar, drawn behind the body, with a J-hook (back plate 10 cm above the bar,
+//  - Rack upright 2.0 m (Do 8 fix, lb1-critic-findings R7: a full-height rack that fills the plate at the same
+//    scale), 10 cm behind the bar, drawn behind the body, with a J-hook (back plate 10 cm above the bar,
 //    cup and lip) whose back plate shows above the end fist (13.3 fix 5).
 //  - Labels: 'Blades back' and 'Hips sagging' point at the back and the buttock, which face the floor. Their open
 //    side is closed in by the start pose and the ghosts below the body, so those leaders cross the lighter ghost lines
@@ -33,8 +34,8 @@
 //  (c4), heels on the floor (c1, c3), tempo (c5/c6). Unsourced numbers: BAR 1.00 m (card: "about waist height"),
 //  GX 0.26 m (card: "a little wider"), SAG 30 deg (illustrative fault size; card gives none), start arms straight but
 //  not exactly vertical (the heels are placed for the chest-at-bar end), elbow 5 deg for "straight" (STRAIGHT), NECK
-//  -6, scap pro -3/-4 and elev -1 (card: "back and down", no size), RACK_Z 10 cm behind the bar, upright 1.18 m, the
-//  J-hook sizes (HOOK), ghost count 2, tell text 'Hips sagging' (the 44 px hit box; card: "hips sagging").
+//  -6, scap pro -3/-4 and elev -1 (card: "back and down", no size), RACK_Z 10 cm behind the bar, upright 2.0 m, the
+//  J-hook sizes (HOOK), ghost count 1 (Do 8 fix R7: one start outline and one ghost), tell text 'Hips sagging' (the 44 px hit box; card: "hips sagging").
 import { landmarksOf, WINTER, REF } from '../engine.mjs';
 
 const H = 1.75;
@@ -107,7 +108,7 @@ export default {
   poses: { start, end },
   equipment: [
     { type: 'floor', from: -0.45, to: HEEL_S[2] + 0.25 },
-    { type: 'rackUpright', at: [0, 0, RACK_Z], h: 1.18 },
+    { type: 'rackUpright', at: [0, 0, RACK_Z], h: 2.0 },
     { type: 'poly', cls: 'eq', z: 'back', pts: HOOK },
     { type: 'pullupBar', at: BAR, mount: 'ceiling', stub: 0.0001 },
   ],
@@ -115,7 +116,7 @@ export default {
     { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },          // heels ON the floor (c3)
     { landmark: 'chest', above: { point: [0, BAR[1] - BAR_R + 0.005, 0], normal: [0, -1, 0] }, pose: 'end' },   // chest at, not through, the bar
   ],
-  ghosts: { count: 2, parts: ['trunk', 'arm.r'] },
+  ghosts: { count: 1, parts: ['trunk', 'arm.r'] },
   trace: { point: 'chest', trim: [10, 10] },
   callouts: [
     { key: 'line', text: 'Body<br>straight', anchor: 'thighTop.r', box: { left: 250, top: 196 }, cue: 'Keep a rigid straight line from head to heels, top and bottom.' },

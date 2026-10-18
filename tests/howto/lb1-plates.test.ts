@@ -778,6 +778,37 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
   });
 });
 
+// Do 8 fix round (lb1-critic-findings @ 0ec6e424, D-CRITIC-CAL3): the marks the critics named sit off the solid figure.
+describe('LIB-9a Do 8 fix round', { timeout: T }, () => {
+  const inside = (p: number[], poly: number[][]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i] as any, [xj, yj] = poly[j] as any; if ((yi > p[1]!) !== (yj > p[1]!) && p[0]! < (xj - xi) * (p[1]! - yi) / (yj - yi) + xi) c = !c; } return c; };
+  const solidOf = (spec: any, mistake: boolean) => {
+    const r = plate.renderPlate(spec, { id: 'x', mistake }), cam = qaEng.cameraOf(spec, r.report), Q = qaEng.poseLandmarks(Eng(), spec);
+    return { r, cam, Q, shapes: eng.bodyShapes(eng.fk(Q.q.end, Q.body), cam).filter((x: any) => x.poly) };
+  };
+  it('chest_supported_row: the `arch` tell ends on the red low back, outside the solid end figure and clear of its elbow', () => {
+    const { cam, Q, shapes } = solidOf(csr, true);
+    const a = qaEng.resolvePoint(csr.mistake.tells.find((t: any) => t.key === 'arch').anchor, 'mistake', Q.lm, cam);
+    expect(shapes.filter((x: any) => inside(a, x.poly)).map((x: any) => x.key), 'anchor inside the solid end figure').toEqual([]);
+    const tor = eng.bodyShapes(eng.fk(Q.q.mistake, Q.body), cam).find((x: any) => x.key === 'torso').poly;
+    const dseg = (p: number[], u: number[], v: number[]) => { const dx = v[0]! - u[0]!, dy = v[1]! - u[1]!, L2 = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((p[0]! - u[0]!) * dx + (p[1]! - u[1]!) * dy) / L2)); return Math.hypot(p[0]! - u[0]! - t * dx, p[1]! - u[1]! - t * dy); };
+    const d = Math.min(...tor.map((u: number[], i: number) => dseg(a, u, tor[(i + 1) % tor.length]!)));
+    expect(d, 'anchor on the red torso outline (px)').toBeLessThanOrEqual(2);
+    const el = cam.P(Q.lm.end['elbow.r']);
+    expect(Math.hypot(a[0] - el[0], a[1] - el[1]), 'anchor clear of the solid elbow (px)').toBeGreaterThanOrEqual(12);
+  });
+  it('close_grip and underhand: the lean arc lies behind the back, outside the solid end figure', () => {
+    for (const spec of [cgp, ulp]) {
+      const { r, shapes } = solidOf(spec, false);
+      const m = /<path class="arc-line" d="M(-?[\d.]+)[ ,](-?[\d.]+)A[\d.]+ [\d.]+ 0 0 [01] (-?[\d.]+)[ ,](-?[\d.]+)"/.exec(r.svg);
+      expect(m, `${spec.id} arc drawn`).toBeTruthy();
+      const a = [+m![1]!, +m![2]!], b = [+m![3]!, +m![4]!], mid = [(a[0]! + b[0]!) / 2, (a[1]! + b[1]!) / 2];
+      for (const p of [a, b, mid]) expect(shapes.filter((x: any) => inside(p, x.poly)).map((x: any) => x.key), `${spec.id} arc point ${p}`).toEqual([]);
+    }
+  });
+});
+
 describe('LIB-9a Do 5(d): straight_arm_pulldown (D-LIB9-CLONE)', { timeout: T }, () => {
   it('rule a: the clone copies its anchor code; closureOf lists no specs/ file but its own', () => {
     const c = closure.closureOf(['tools/plates/library/specs/straight_arm_pulldown.mjs']);

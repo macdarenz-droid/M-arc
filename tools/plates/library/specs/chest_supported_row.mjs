@@ -23,13 +23,14 @@
 //  - Pad centred 8 cm below the chest landmark (its face plane passes through it), so its arm to the column runs under
 //    the straight start arm, not along it. The 'chest' label points to the pad top just in front of the chest: the
 //    hands cover the contact below, and the only open approach is from above, between the face and the lever.
-//  - Mistake (card plate.mistake, c6): the pelvis rolls back 8 deg and the low back arches 8 deg, so the chest leaves
+//  - Mistake (card plate.mistake, c6): the pelvis rolls back 8 deg and the low back arches 16 deg, so the chest leaves
 //    the pad (checked: the chest is behind the pad face; a gap dimension at chest height, above the handles, shows it)
-//    and the trunk leans 16 deg back; the hands follow the lever 12 cm further round its arc. Legs and feet unchanged.
+//    and the trunk leans 24 deg back; the hands follow the lever 12 cm further round its arc. Legs and feet unchanged.
 // Unsourced numbers (the card gives none of these; typical commercial machine and pose values):
 //  seat top 47 cm; feet 46 cm ahead; handles 44 cm apart; chest pad 45 x 12 cm, centred 8 cm below the chest landmark;
 //  pivot 1.40 m up, 33 cm forward; front column at 80 cm; start handle 98 cm up, 73 cm forward; end handle 85 cm up,
-//  16 cm forward; Mistake: pelvis -8 deg, trunk -8 deg (16 deg lean back), hands 12 cm further back.
+//  16 cm forward; Mistake: pelvis -8 deg, trunk -16 deg (24 deg lean back; Do 8 fix, so the red back stands 13 px
+//  off the solid back at mid-back height), hands 12 cm further back.
 import { rootOnSeat, landmarksOf } from '../engine.mjs';
 import { chestRowMachine, CHEST_ROW_ITEMS } from '../eq/chestRowMachine.mjs';
 import { perItem } from '../eq/parts.mjs';
@@ -71,7 +72,7 @@ const end = { ...body, scap: { elev: -1, pro: -3 }, reach: grips(END_G, [0.2, -1
 // Keys at t = 1/4, 1/2, 3/4, where the three ghosts are drawn, so each ghost is a key with its hands on the circle.
 const via = [1 / 4, 1 / 2, 3 / 4].map(t => ({ ...body, scap: { elev: -t, pro: 2 - 5 * t },
   reach: grips(onLever(START_G[2] + (END_G[2] - START_G[2]) * t), [0.3 - 0.1 * t, -1, -t]) }));
-const M_TILT = -8, M_TRUNK = -8;
+const M_TILT = -8, M_TRUNK = -16;
 const misBody = { root: { at: rootOnSeat(SEAT, M_TILT), tilt: M_TILT }, trunk: M_TRUNK, scap: { elev: 0, pro: -3 }, reach: grips(MIS_G, [0.2, -0.6, -1]) };
 // Gap dimension for the Mistake (as machine_chest_press): from the faulty chest forward to the pad face, with 2 px ticks.
 const lmM = landmarksOf({ ...end, ...misBody }, H);
@@ -108,10 +109,13 @@ export default {
     guides: [
       { kind: 'arrow', from: { at: 'head', pose: 'end', off: [-16, 16] }, to: { at: 'head', off: [-8, 16] } },   // the trunk swings back
       { kind: 'line', pts: GAP }, tick(GAP[0]), tick(GAP[1]),   // chest-to-pad gap
+      // the low back arches in (as hanging_leg_raise); the 'arch' tell ends on the red low back at the sacrum, below the
+      // solid elbow (Do 8 fix, lb1-critic-findings R4)
+      { kind: 'arrow', from: { at: 'sacrum', off: [-24, -6] }, to: { at: 'sacrum', off: [-7, -6] } },
     ],
     tells: [
       { key: 'lean', text: 'Leaning<br>back', anchor: 'head', box: { left: 10, top: 118 }, cue: 'The trunk leans back and the chest leaves the pad to finish the pull.' },
-      { key: 'arch', text: 'Low back<br>arched', anchor: 'backMid', box: { left: 10, top: 216 }, cue: 'The low back arches to heave the handles in.' },
+      { key: 'arch', text: 'Low back<br>arched', anchor: { at: 'sacrum', pose: 'mistake', off: [-1, 0] }, box: { left: 10, top: 216 }, cue: 'The low back arches to heave the handles in.' },
     ],
   },
   alt: 'Chest-supported row, side view. Seated upright with the chest on an upright pad and the feet flat, the lifter pulls lever handles from straight arms at about shoulder height back until the elbows pass the sides, chest kept on the pad.',

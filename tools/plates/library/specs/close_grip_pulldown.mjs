@@ -81,11 +81,15 @@ function headTangent(b) {
 const gripOf = lm => [0, lm.grips[1], lm.grips[2]];
 const cableLen = g => Math.hypot(ringOf(g)[1] - HEAD.y, ringOf(g)[2] - HEAD.z);
 const LIFT0 = 0.03;
-// Lean construction (end pose): plumb line up from the hip joint and the trunk axis, over the figure, as lat_pulldown.
+// Lean construction (end pose; Do 8 fix, lb1-critic-findings R4): the angle sits behind the back, where nothing
+// overlaps. Its vertex is 5 cm behind the upper back; one leg is a dashed plumb line down from it, the other runs
+// parallel to the trunk axis (hip joint to shoulder joint), so the arc between them shows the trunk lean.
 const HIP_E = [0, lm0['hip.r'][1], lm0['hip.r'][2]];
 const TU = (() => { const d = [0, lm0['shoulder.r'][1] - HIP_E[1], lm0['shoulder.r'][2] - HIP_E[2]], L = Math.hypot(...d); return d.map(v => v / L); })();
-const RAY = 0.33;
-const LEAN_UP = [0, HIP_E[1] + RAY, HIP_E[2]], LEAN_AX = HIP_E.map((v, i) => v + TU[i] * RAY);
+const BACK_OFF = 0.05, LEG = 0.40;
+const LEAN_V = [0, lm0.backUpper[1], lm0.backUpper[2] - BACK_OFF];
+const LEAN_B = LEAN_V.map((v, i) => v - TU[i] * LEG);
+const LEAN_DN = [0, LEAN_V[1] - LEG, LEAN_V[2]];
 
 export default {
   id: 'close_grip_pulldown', name: 'Close-Grip Pulldown', view: 'side', facing: 'right',
@@ -120,8 +124,8 @@ export default {
       ];
     },
     (lm, ctx) => (ctx.pose === 'end' && !ctx.mistake ? [
-      { type: 'line', cls: 'eq-line datum', pts: [HIP_E, LEAN_UP], z: 'front' },
-      { type: 'line', cls: 'eq-line', pts: [HIP_E, LEAN_AX], z: 'front' },
+      { type: 'line', cls: 'eq-line datum', pts: [LEAN_V, LEAN_DN], z: 'front' },
+      { type: 'line', cls: 'eq-line', pts: [LEAN_V, LEAN_B], z: 'front' },
     ] : null),
     ...[-0.05, 0.05].map(o => ({ type: 'line', cls: 'eq-thin', pts: [[0, 0.06, STACK_Z + o], [0, 1.95, STACK_Z + o]] })),
   ],
@@ -132,7 +136,7 @@ export default {
   ],
   ghosts: { count: 3, parts: ['arm.r', 'handle'] },
   trace: { point: 'grip.r', trim: [10, 12] },
-  measure: { vertex: 'hip.r', from: 'up', to: 'shoulder.r', radius: 40, title: 'Lean back', value: 'under 30°' },
+  measure: { vertex: LEAN_V, from: 'down', to: LEAN_B, radius: 45, title: 'Lean back', value: 'under 30°' },
   // Labels in open space, no leader within 6 px of the trace or a cable: 'chin' right of the handle with a level
   // leader; 'thighs' right of the knee, its leader reaching the thigh just in front of the roller (box clear of the
   // roller, the knee and the column); 'elbows' below the lean-back label so the two leaders never cross.
