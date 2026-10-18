@@ -194,6 +194,14 @@
    "status": "verbatim",
    "closest": "Therefore, fitness professionals should avoid using the pec deck exercise with clients who have a history of shoulder dysfunction.",
    "note": "fixer: added 2026-09-30 after verification finding"
+  },
+  {
+   "claim": "c12",
+   "source": "acsm-2009",
+   "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+   "status": "verbatim",
+   "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+   "note": ""
   }
  ],
  "sources": [

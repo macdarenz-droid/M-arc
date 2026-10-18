@@ -178,7 +178,7 @@
     },
     {
       "id": "c10",
-      "text": "Pressing behind the neck (the 'high-five' position) is associated with anterior shoulder instability signs; press in front instead.",
+      "text": "Pressing behind the neck (the 'high-five' position) is associated with anterior shoulder instability signs (barbell and pulldown data, applied to dumbbells); press in front instead.",
       "tags": [
         "DATA",
         "WEAK"
@@ -359,7 +359,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; back contact with the pad, low-back arch and elbows pointing forward read in the sagittal plane (c1, c4, c5).",
+    "viewWhy": "Census view is side; back contact with the pad, low-back arch and elbows pointing forward read in the sagittal plane (c1, c4, c5). The LR-31 top fault, lowering behind the head (c10), also reads in the sagittal plane (ruling R-LB2-4).",
     "equipment": "Upright bench with a backrest (angle not given by the sources read; census inclineBench), dumbbell per hand, feet on the floor (c1).",
     "start": "Seated, head/shoulders/buttocks on the pad, feet flat (c1); dumbbells at shoulder level, wrists neutral (c2); elbows pointed in front of the body (c5).",
     "end": "Arms straight overhead, elbows fully extended, back still on the pad, no low-back arch (c4).",
@@ -381,10 +381,11 @@
       }
     ],
     "mistake": {
-      "what": "Low back arching away from the pad as the dumbbells go up.",
-      "why": "ACE names low-back arching as the fault to avoid on the press; frequency is not measured in any source read.",
-      "claim": "c4",
-      "drawable": true
+      "what": "Lowering the dumbbells behind the head, into the behind-the-neck position.",
+      "why": "Kolber found a significant association between exercises that need the high-five position (behind-the-neck military press) and signs of anterior shoulder instability, and Esenkaya advises frontal presses that do not allow movement behind the plane of the body (c10, WEAK: barbell pressing, applied to dumbbells). How often it happens is not measured in any source read.",
+      "claim": "c10",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a shoulder-press fault (Kerr's \"The most common mechanism of injury was weights dropping on the person\", c14, is about all weight training). Lowering behind the head (c10) is the only named fault a quote ties to harm: Kolber links the high-five position (behind-the-neck military press) to \"clinical characteristics of AI\", and Esenkaya says \"When improperly performed, military presses can cause injury\" and advises presses \"that do not allow movement posterior to the plane of the body\" (c10, WEAK: barbell pressing, applied to dumbbells). Low-back arching (c4) and letting the dumbbells drop (c6, a speed fault) state no harm in any read source. Pick changed from the low-back arch (c4) and applied to this research card (ruling R-LB2-7); the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: behind the head, arching, dropping. drawable is true: the side view shows the dumbbells behind the head."
     },
     "tells": [
       {
@@ -417,11 +418,7 @@
   },
   "setup": [
     {
-      "step": "Sit with head, shoulders and buttocks on the backrest; feet flat.",
-      "claim": "c1"
-    },
-    {
-      "step": "Brace your trunk.",
+      "step": "Head, shoulders and buttocks on the backrest. Feet flat. Trunk braced.",
       "claim": "c1"
     },
     {
@@ -431,6 +428,14 @@
     {
       "step": "Shoulder blades down and back.",
       "claim": "c3"
+    },
+    {
+      "step": "If using a spotter, they stand behind you, hands near your wrists.",
+      "claim": "c7"
+    },
+    {
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c11"
     }
   ],
   "posture": [
@@ -453,30 +458,30 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Arching the back to finish a rep.",
-      "fix": "Stop the set or go lighter.",
-      "claim": "c4"
-    },
-    {
-      "mistake": "Letting the dumbbells drop on the way down.",
-      "fix": "Lower slowly, pulling them down.",
-      "claim": "c6"
-    },
-    {
       "mistake": "Lowering behind the head.",
       "fix": "Keep the dumbbells in front of the head.",
       "claim": "c10"
+    },
+    {
+      "mistake": "Arching the back.",
+      "fix": "Press without arching your low back.",
+      "claim": "c4"
+    },
+    {
+      "mistake": "Dumbbells dropping fast going down.",
+      "fix": "Lower slowly, pulling them down.",
+      "claim": "c6"
     }
   ],
   "feel": {
     "primary": [
       {
         "muscleId": "front_delts",
-        "claim": "c9"
+        "claim": "c8"
       },
       {
         "muscleId": "side_delts",
-        "claim": "c9"
+        "claim": "c8"
       }
     ],
     "secondary": [
@@ -495,10 +500,12 @@
         "redFlag": null
       },
       {
-        "where": "Pain deep in the front of the shoulder at the bottom",
-        "means": "Usually a warning sign; shoulder injuries are among the most common lifting injuries.",
-        "fix": "Stop the set. Go lighter and keep elbows pointed forward.",
-        "claim": "c13",
+        "where": "Pain deep in the front shoulder",
+        "means": "Fault: lowering the dumbbells behind the head.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c10"
+        ],
         "redFlag": "shoulder"
       }
     ]
@@ -541,5 +548,8 @@
     "remove": [],
     "why": "exercises.json: front_delts, side_delts primary; triceps secondary. c9 measured all of them. No change."
   },
-  "anchorSource": "ace-seated-ohp"
+  "anchorSource": "ace-seated-ohp",
+  "gaps": [
+    "tier-A way out: the only shown way out is a spotter; no read source gives a seated failed-rep way out without one (LR-30; LIB-WAYOUT)"
+  ]
 }

@@ -247,6 +247,23 @@
           "where": "abstract, results"
         }
       ]
+    },
+    {
+      "id": "c13",
+      "text": "Keep the wrists neutral: avoid bending them forward or back (wrist flexion or extension).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-lying-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-lying-fly",
+          "text": "maintaining a neutral wrist position (avoid flexion/extension at the wrist joint)",
+          "where": "Step 1, preparation"
+        }
+      ]
     }
   ],
   "sources": [
@@ -313,7 +330,7 @@
   ],
   "plate": {
     "view": "front",
-    "viewWhy": "Census view is front: the arc opens sideways, so arc depth relative to the shoulders and the fixed elbow bend only read from the head or foot end (c4, c5).",
+    "viewWhy": "Census view is front: the arc opens sideways, so arc depth relative to the shoulders and the fixed elbow bend only read from the head or foot end (c4, c5). The LR-31 top fault, wrists bent out of neutral (c13), reads from the head or foot end as the hand angled off the forearm; it is small at plate scale (ruling R-LB2-4).",
     "equipment": "Flat bench, dumbbell per hand, feet flat (c1).",
     "start": "Supine, five points in contact (c2); arms up, dumbbells shoulder-width apart, palms facing each other, elbows slightly bent (c3).",
     "end": "Dumbbells lowered in a wide arc to level with the shoulders or chest, same slight elbow bend (c4, c5).",
@@ -324,7 +341,7 @@
         "claim": "c5"
       },
       {
-        "label": "Stop at chest level",
+        "label": "Chest-level stop",
         "what": "Lower until the dumbbells are level with the shoulders or chest, no deeper.",
         "claim": "c4"
       },
@@ -335,10 +352,11 @@
       }
     ],
     "mistake": {
-      "what": "Lowering the dumbbells below shoulder and chest level at the bottom of the arc.",
-      "why": "ACE sets the bottom of the arc at shoulder or chest level, and this goes past it. How often it happens is not measured in any source read.",
-      "claim": "c4",
-      "drawable": true
+      "what": "Wrists bent forward or back out of a neutral position while the dumbbells arc.",
+      "why": "ACE says to maintain a neutral wrist position and avoid flexion or extension at the wrist joint (c13); it is the only fault a read source of this card names to avoid. How often it happens is not measured in any source read.",
+      "claim": "c13",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for a fly fault (Solstad's \"often occurs\" is about tasks in some populations; Kerr's \"The most common mechanism of injury was weights dropping on the person\", c12, is about all weight training). Step 2: no quote ties a fly fault to harm. Step 3: there is no common-mistakes list, so the top fault is the fault the most read sources tell the lifter to avoid. Only ACE names one: \"avoid flexion/extension at the wrist joint\" (c13), a joint position during the set, not a grip statement (rulings R-LB2-11, R-LB2-15). This replaces the earlier break-of-instruction pick (going below chest level, c4), which was tied with the elbow bend (c5) and lowering slowly (c4) and kept by LR-36; viewWhy names both depth and elbow bend, so that tie needed the supervisor's confirmation in any case. Pick changed from going below chest level. handlingMistakes: the wrist fault is added at [0] and the last item, dropping fast into the bottom (c4, a speed fault), is dropped to keep 3 (ruling R-LB2-2). drawable is true: from the head or foot end the hand reads angled off the forearm; the bend is small at plate scale, so drawable is settled when the plate is drawn under LIB-20 (camera pitch; ruling R-LB2-22)."
     },
     "tells": [
       {
@@ -379,12 +397,16 @@
       "claim": "c2"
     },
     {
-      "step": "Press the dumbbells up to shoulder-width, thumbs wrapped.",
+      "step": "Press up to shoulder-width, thumbs wrapped. Palms in, elbows slightly bent.",
       "claim": "c3"
     },
     {
-      "step": "Turn the palms to face each other and bend the elbows slightly.",
-      "claim": "c3"
+      "step": "A spotter's hands stay near your wrists, not touching.",
+      "claim": "c6"
+    },
+    {
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c9"
     }
   ],
   "posture": [
@@ -407,19 +429,19 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Bending the elbows more as the weight comes down (turning it into a press).",
-      "fix": "Keep the same slight bend; go lighter if you can't.",
-      "claim": "c5"
-    },
-    {
-      "mistake": "Dropping fast into the bottom.",
-      "fix": "Lower slowly.",
-      "claim": "c4"
+      "mistake": "Wrists bending forward or back.",
+      "fix": "Keep your wrists neutral.",
+      "claim": "c13"
     },
     {
       "mistake": "Going below chest level.",
       "fix": "Stop level with the shoulders or chest.",
       "claim": "c4"
+    },
+    {
+      "mistake": "Elbows bending more going down.",
+      "fix": "Keep the same slight bend.",
+      "claim": "c5"
     }
   ],
   "feel": {
@@ -445,10 +467,13 @@
         "redFlag": null
       },
       {
-        "where": "Pain at the front of the shoulder at the bottom",
-        "means": "Usually a warning sign; the shoulder is one of the most often injured areas in lifting.",
-        "fix": "Stop the set. Go lighter and stop at chest level.",
-        "claim": "c11",
+        "where": "Front-shoulder pain at the bottom",
+        "means": "Fault: lowering the dumbbells past shoulder or chest level.",
+        "fix": "Stop and don't train through the pain. Stop level with your shoulders or chest.",
+        "claim": [
+          "c11",
+          "c4"
+        ],
         "redFlag": "shoulder"
       }
     ]
@@ -459,7 +484,7 @@
       "claim": "c11"
     },
     {
-      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; the dumbbells travel over the chest.",
+      "risk": "Dropped weights are the most common way lifters get badly hurt.",
       "claim": "c12"
     }
   ],
@@ -494,5 +519,8 @@
     "remove": [],
     "why": "exercises.json: chest primary, front_delts secondary; c7 measured both. Biceps work more in the fly than the bench (c8), but as an antagonist, so not added. No change."
   },
-  "anchorSource": "ace-lying-fly"
+  "anchorSource": "ace-lying-fly",
+  "gaps": [
+    "over-the-face line: no read source of this card says the dumbbells travel over the face or chest; the shared over-face line is linked at stamp (content.md 5.1, LR-16)"
+  ]
 }

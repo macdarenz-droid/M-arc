@@ -19,6 +19,10 @@
     {
       "field": "grip.wrist",
       "why": "true for this child because ACE gives the same neutral wrist for the incline press (c3)."
+    },
+    {
+      "field": "zooms.wrist-neutral-press",
+      "why": "true for this child because the same closed, thumbs-wrapped grip and neutral wrist hold on the incline (c3; parent c3), so the parent's wrist zoom strings apply unchanged."
     }
   ],
   "claims": [
@@ -47,7 +51,7 @@
     },
     {
       "id": "c2",
-      "text": "In EMG studies of the barbell bench press, the upper chest peaked at a 30-degree incline, inclines above 45 degrees shifted work to the front deltoid and reduced chest performance, and triceps activity was similar at all inclines (barbell data applied to dumbbells).",
+      "text": "In EMG studies of the barbell bench press, the upper chest peaked at a 30-degree incline, inclines above 45 degrees shifted work to the front deltoid and reduced chest performance, and triceps activity was similar at all inclines (barbell data applied to dumbbells). This barbell data favours 45 degrees or less, while ACE sets the dumbbell incline at 45-60 degrees (c1): the sources conflict above 45.",
       "tags": [
         "DATA",
         "MECH"
@@ -176,13 +180,19 @@
         "CONSENSUS"
       ],
       "sources": [
-        "ace-incline-press"
+        "ace-incline-press",
+        "liftosaur-incline-db"
       ],
       "quotes": [
         {
           "source": "ace-incline-press",
           "text": "Maintain all points of contact with the bench and floor/riser and avoid any arching in the low back.",
           "where": "Step 3"
+        },
+        {
+          "source": "liftosaur-incline-db",
+          "text": "Maintain a neutral spine; avoid arching your lower back.",
+          "where": "Points to Remember"
         }
       ]
     },
@@ -461,14 +471,14 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; bench angle, elbow-under-wrist and back arch all read in the sagittal plane (c1, c7, c8).",
+    "viewWhy": "Census view is side; bench angle, elbow-under-wrist and back arch all read in the sagittal plane (c1, c7, c8). The LR-31 top fault, the low-back arch (c8), is one of these (ruling R-LB2-4).",
     "equipment": "Adjustable bench at 45 degrees (the value inside both ACE's 45-60 range and HK's 'about 45', c1; c2 notes 30 degrees peaks upper chest in barbell data, so 45 is the upper sensible limit). Dumbbell per hand, feet flat.",
     "start": "On the incline, head/shoulders/buttocks on the pad, feet on the floor (c4); arms straight and vertical, dumbbells directly above the shoulder joints (c17, c7), so they sit above eye height (c5) and in front of the face, never over it.",
     "end": "Dumbbells at the upper chest, slightly wide (c6), elbows under the wrists (c7).",
     "checkpoints": [
       {
         "label": "Bench at 45°",
-        "what": "Back pad at about 45 degrees; steeper shifts work to the front shoulder (barbell data).",
+        "what": "Back pad at about 45 degrees. Steeper shifts work to the front shoulder.",
         "claim": "c2"
       },
       {
@@ -483,10 +493,11 @@
       }
     ],
     "mistake": {
-      "what": "Elbows drifting out of line with the wrists (forearms tilted) at the bottom.",
-      "why": "ACE's only incline-specific cue is elbows under wrists; frequency is not measured in any source read.",
-      "claim": "c7",
-      "drawable": true
+      "what": "Low back arching off the bench as the dumbbells go up.",
+      "why": "ACE says to avoid any arching in the low back, and Liftosaur says to avoid arching your lower back (c8): the fault the most read sources tell the lifter to avoid. How often it happens is not measured in any source read.",
+      "claim": "c8",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for an incline-press fault (Kerr's \"The most common mechanism of injury was weights dropping on the person\", c15, is about all weight training). Step 2: no quote ties a named fault to harm; Liftosaur's \"minimizing the risk of injury\" is about following all its steps, not one fault, and a bench steeper than 45 degrees (c2) is a bench setting, not a candidate. Step 3: no common-mistakes list; the fault the most read sources tell the lifter to avoid is low-back arching (c8): ACE's \"avoid any arching in the low back\" and Liftosaur's \"avoid arching your lower back\", two sources. Bouncing has one (ACE, c6); Liftosaur's \"avoiding sudden jerks or drops\" is a speed fault; bent wrists (ACE's \"Maintain a neutral wrist position (avoid flexion / extension at the wrist joint)\", c3; a joint position during the set, ruling R-LB2-15) have one source; elbows under the wrists (c7) is an ACE cue, not a fault named to avoid. Pick changed from the elbows out of line with the wrists (c7) and applied to this research card (ruling R-LB2-7, which names dumbbell_shoulder_press and incline_dumbbell_press); the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: arching, bouncing; the bench-angle item is removed as a setting, not a fault (ruling R-LB2-12). drawable is true: the side view shows the back arch."
     },
     "tells": [
       {
@@ -523,20 +534,20 @@
       "claim": "c1"
     },
     {
-      "step": "Sit with the dumbbells on your thighs.",
+      "step": "Dumbbells on your thighs, lie back and lift them to shoulder height.",
       "claim": "c9"
     },
     {
-      "step": "Lie back, using your thighs to help lift the dumbbells to shoulder height.",
-      "claim": "c9"
-    },
-    {
-      "step": "Shoulder blades down and back; feet flat.",
+      "step": "Shoulder blades down and back. Feet flat.",
       "claim": "c4"
     },
     {
       "step": "Press to straight arms, dumbbells over the shoulders.",
       "claim": "c17"
+    },
+    {
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c13"
     }
   ],
   "posture": [
@@ -559,19 +570,14 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Bench set steeper than 45 degrees.",
-      "fix": "Lower the back pad; steeper shifts work to the front shoulder (barbell data).",
-      "claim": "c2"
+      "mistake": "Arching the low back.",
+      "fix": "Keep your back on the bench.",
+      "claim": "c8"
     },
     {
       "mistake": "Bouncing off the chest.",
-      "fix": "Touch gently; go lighter if you can't.",
+      "fix": "Touch gently.",
       "claim": "c6"
-    },
-    {
-      "mistake": "Arching the low back.",
-      "fix": "Stop the set or go lighter.",
-      "claim": "c8"
     }
   ],
   "feel": {
@@ -598,16 +604,19 @@
     "watch": [],
     "rows": [
       {
-        "where": "Mostly front of the shoulders, little chest",
-        "means": "Usually the bench is too steep.",
-        "fix": "Lower the bench to about 45 degrees or less.",
-        "claim": "c2",
+        "where": "Mostly front shoulders, little chest",
+        "means": "A steeper bench shifts work to the front shoulders.",
+        "fix": "Lower the bench to about 45 degrees.",
+        "claim": [
+          "c2",
+          "c1"
+        ],
         "redFlag": null
       },
       {
-        "where": "Sharp pain at the front of the shoulder",
-        "means": "Usually a warning sign; the shoulder is one of the most often injured areas in lifting.",
-        "fix": "Stop the set. Go lighter next time.",
+        "where": "Pain at the front shoulder",
+        "means": "",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c16",
         "redFlag": "shoulder"
       }
@@ -615,8 +624,11 @@
   },
   "risks": [
     {
-      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; use a spotter for heavy sets.",
-      "claim": "c15"
+      "risk": "Dropped weights cause most bad lifting injuries. Have a spotter hold your wrists.",
+      "claim": [
+        "c15",
+        "c10"
+      ]
     },
     {
       "risk": "Shoulder injuries are common in lifting and linked to poor technique.",
@@ -630,9 +642,9 @@
     {
       "key": "wrist-neutral-press",
       "kind": "hand",
-      "right": "Thumb wrapped, wrist straight.",
-      "wrong": "Wrist bent back.",
-      "claim": "c3"
+      "right": "Thumb wrapped, wrist straight over the forearm.",
+      "wrong": "Wrist bent back under the dumbbell.",
+      "claim": "inherit:2"
     },
     {
       "key": "incline-angle",

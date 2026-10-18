@@ -32,7 +32,7 @@
     },
     {
       "id": "c2",
-      "text": "Lower the bar slowly to the middle of the chest; at the bottom the forearms are vertical.",
+      "text": "Lower the bar slowly to the middle of the chest, tucking the elbows in about 75 degrees; at the bottom the forearms are vertical.",
       "tags": [
         "CONSENSUS"
       ],
@@ -55,7 +55,7 @@
     },
     {
       "id": "c3",
-      "text": "During the rep the upper arms sit about 45-60 degrees from the torso and the hips stay on the bench.",
+      "text": "During the movement the hips stay on the bench. Human Kinetics gives the upper arms about 45-60 degrees from the torso; the card and the plate follow StrongLifts' elbow tuck of about 75 degrees (c2), which fits the drawn mid-chest touch with vertical forearms (ruling R-LB2-24), so no shown line uses the 45-60 range.",
       "tags": [
         "CONSENSUS"
       ],
@@ -229,6 +229,11 @@
           "source": "hk-bench-youth",
           "text": "Do not bounce the barbell off the chest, and do not lift your buttocks off the bench during this exercise.",
           "where": "technique notes"
+        },
+        {
+          "source": "stronglifts-bench",
+          "text": "It makes the weight easier to bench by decreasing the range of motion.",
+          "where": "No Butt Off Bench!"
         }
       ]
     },
@@ -501,6 +506,63 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c25",
+      "text": "Most novice lifters drive the bar straight up off the chest at first; elite lifters drive it up and back, then straight up. A bar that shoots straight up off the chest instead of up and slightly back makes the lift harder, especially for the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sbs-bench"
+      ],
+      "quotes": [
+        {
+          "source": "sbs-bench",
+          "text": "Most elite lifters utilize this bar path (up and back, then straight up), whereas most novice lifters drive the bar straight up initially, then up and back to lock out.",
+          "where": "Section 2, bar path"
+        },
+        {
+          "source": "sbs-bench",
+          "text": "If the bar shoots straight up off your chest instead of up and slightly back, you’re just making the lift unnecessarily difficult – especially for your shoulders.",
+          "where": "Missing in the midrange"
+        }
+      ]
+    },
+    {
+      "id": "c26",
+      "text": "Hold the bar for a second at the top of each rep, arms straight.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "stronglifts-bench"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-bench",
+          "text": "Hold the weight for a second at the top, with straight arms.",
+          "where": "Here's how to Bench Press with proper form"
+        }
+      ]
+    },
+    {
+      "id": "c27",
+      "text": "Unrack the bar by straightening the arms, then move it over the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "stronglifts-bench"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-bench",
+          "text": "Unracking. Unrack the weight by straightening your arms. Move the bar above your shoulder joint.",
+          "where": "Bench Press Form"
+        }
+      ]
     }
   ],
   "sources": [
@@ -627,10 +689,10 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; the checkpoints (touch point on the mid-chest, vertical forearms, hips on the bench) and the mistake (hips off the bench) all read in the sagittal plane (c2, c10).",
+    "viewWhy": "Census view is side; the checkpoints (touch point on the mid-chest, vertical forearms, hips on the bench) and the census-time mistake (hips off the bench) all read in the sagittal plane (c2, c10). The LR-31 top fault, the bar pressed straight up off the chest instead of up and back toward the shoulders (c25, c8), also reads only from the side (ruling R-LB2-4).",
     "equipment": "Flat bench under a rack with J-hooks, safety pins set slightly below the bottom position (c6); barbell; feet flat on the floor (c14).",
     "start": "Supine, feet flat (c14), shoulder blades pulled together (c12), hips on the bench (c1); arms straight with the bar over the shoulders (c8).",
-    "end": "Bar touching the middle of the chest (c2), forearms vertical (c2), upper arms about 45-60 degrees from the torso (c3), hips still on the bench (c3).",
+    "end": "Bar touching the middle of the chest (c2), forearms vertical (c2), elbows tucked about 75 degrees (c2), hips still on the bench (c3).",
     "checkpoints": [
       {
         "label": "Hips down",
@@ -649,10 +711,11 @@
       }
     ],
     "mistake": {
-      "what": "Hips lifting off the bench to press the bar up.",
-      "why": "StrongLifts and the Human Kinetics text both name it; it shortens the range and can over-extend the low back. How often it happens is not measured in any source read.",
-      "claim": "c10",
-      "drawable": true
+      "what": "Pressing the bar straight up off the chest instead of up and slightly back toward the shoulders.",
+      "why": "Stronger by Science says most novice lifters drive the bar straight up initially, and that a bar that shoots straight up off the chest makes the lift unnecessarily difficult, especially for the shoulders (c25); StrongLifts gives the bar path as a diagonal line from the mid-chest to the shoulders, not vertical (c8). How often it happens is not measured beyond that.",
+      "claim": "c25",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Stronger by Science's \"most novice lifters drive the bar straight up initially, then up and back to lock out\" (c25) says most beginners make this fault, which it names an improper bar path; StrongLifts's \"Diagonal line from your mid-chest to shoulders\" (c8) gives the same path. Set aside: StrongLifts's \"Most people hold it in the middle of their palms when they Bench Press\" is about the grip, a grip choice and not a candidate (as the thumbless grip, c4, is not); \"If your wrists hurt with the full grip, it’s usually because they’re bent when you Bench Press\" says what usually causes wrist pain, not how often the fault happens; \"Many people who get shoulder pain on the Bench Press can do Close Grip pain-free\" is about a grip; Stronger by Science's \"this is especially common for people who use the “bend the bar” cue\" (shoulders not turned in at lockout) is common only in one subgroup; if counted, neither it nor the bar path has a harm quote, and the bar path comes first in the same sticking-point list, so step 2's order still picks the bar path; \"When most people miss, it’s after that initial acceleration\" is where a failed rep stalls, not a fault; Kowalczuk's \"most commonly while performing the bench press maneuver\" (c22) names the exercise and the lowering phase, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c23) is about all weight training. Also set aside: StrongLifts's \"They usually hurt because you grip the bar wrong.\" (the wrists) and \"Wider grips are tough on most people’s shoulders.\" are about the grip (ruling R-LB2-3); \"if you lose the bar, it will usually hit you before the spotter can react.\" and \"Most people don’t know how to spot.\" are about the spotting setup, not a lifter's fault (ruling R-LB2-5); Stronger by Science's \"The final common issue people have when benching is discomfort at the biceps insertion\" names a discomfort with no fault tied to it. Hips off the bench (c10) keeps its harm quote (\"It can hurt your lower back if you hyper-extend your spine\"), but step 1 decides. drawable is true: the side view shows the bar's path between the chest and the shoulders. handlingMistakes is capped at 3 (CARD-V2), so the added top fault takes [0] and the last item, bouncing the bar off the chest (c11), is dropped (ruling R-LB2-2)."
     },
     "tells": [
       {
@@ -671,8 +734,13 @@
     "tempo": {
       "up": 1,
       "down": 2,
-      "pause": 0,
-      "claim": "c17"
+      "pause": 1,
+      "claim": [
+        "c26",
+        "c18",
+        "c17"
+      ],
+      "text": "Pause 1 s at the top: StrongLifts gives the seconds for the hold right after the press (c26; ruling R-LB2-8, LR-33). Down 2 s sits inside Stronger by Science's \"it should take around 2-3 seconds\" for this exercise (c18). Up 1 s keeps ACSM's 1-2 s, stated for intermediate to advanced training (c17, WEAK; LR-15). At the bottom the sources disagree, so no bottom pause is drawn: Human Kinetics says \"Pause briefly, then press the barbell to the starting position.\", StrongLifts says \"Don’t pause at the bottom.\", and Stronger by Science says \"lightly touching the bar to your chest without a pause before pressing it back up is fine.\""
     },
     "variantLine": null
   },
@@ -695,20 +763,31 @@
       "claim": "c6"
     },
     {
-      "step": "Lie down with your shoulders at least 8 cm from the uprights; feet flat.",
-      "claim": "c13"
-    },
-    {
-      "step": "Pull your shoulder blades together.",
-      "claim": "c12"
+      "step": "Shoulders at least 8 cm from uprights. Feet flat. Blades together.",
+      "claim": [
+        "c13",
+        "c14",
+        "c12"
+      ]
     },
     {
       "step": "Grip slightly wider than shoulders, thumbs wrapped, bar low in the palm.",
-      "claim": "c4"
+      "claim": [
+        "c4",
+        "c1",
+        "c5"
+      ]
     },
     {
-      "step": "With a spotter behind your head, lift the bar out to straight arms over your shoulders.",
-      "claim": "c7"
+      "step": "With a spotter behind your head, unrack the bar to straight arms.",
+      "claim": [
+        "c7",
+        "c27"
+      ]
+    },
+    {
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c16"
     }
   ],
   "posture": [
@@ -721,8 +800,8 @@
       "claim": "c12"
     },
     {
-      "point": "Upper arms about 45-60 degrees from the torso.",
-      "claim": "c3"
+      "point": "Elbows tucked in about 75 degrees as you lower.",
+      "claim": "c2"
     },
     {
       "point": "Forearms vertical at the bottom.",
@@ -739,19 +818,22 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Pressing straight up off chest.",
+      "fix": "Drive it up and slightly back toward your shoulders.",
+      "claim": [
+        "c25",
+        "c8"
+      ]
+    },
+    {
       "mistake": "Thumbless grip.",
       "fix": "Wrap your thumbs round the bar.",
       "claim": "c4"
     },
     {
       "mistake": "Hips lifting off the bench.",
-      "fix": "Count it as a failed rep; repeat the weight next time.",
+      "fix": "Keep hips on the bench. If they lift, it's a failed rep.",
       "claim": "c10"
-    },
-    {
-      "mistake": "Bouncing the bar off the chest.",
-      "fix": "Lower under control, about 2-3 seconds (c18).",
-      "claim": "c11"
     }
   ],
   "feel": {
@@ -774,30 +856,37 @@
     "watch": [],
     "rows": [
       {
-        "where": "Middle of the chest, front of the shoulders, backs of the arms",
+        "where": "Mid-chest, front shoulders, backs of arms",
         "means": "The target muscles are working.",
         "fix": null,
-        "claim": "c19, c20, c21",
+        "claim": [
+          "c19",
+          "c20",
+          "c21"
+        ],
         "redFlag": null
       },
       {
-        "where": "Sharp pain in the chest or front of the shoulder while lowering",
-        "means": "Usually a warning sign.",
-        "fix": "Stop the set.",
-        "claim": "c22",
+        "where": "Chest or shoulder pain while lowering",
+        "means": "Fault: lowering the bar too fast.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c18",
         "redFlag": "shoulder"
       },
       {
-        "where": "Pain deep in the front of the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set. Keep the upper arms about 45-60 degrees from the torso (c3).",
-        "claim": "c24",
+        "where": "Pain deep in the front shoulder",
+        "means": "Poor technique is a risk for shoulder injuries.",
+        "fix": "Stop and don't train through the pain. Tuck elbows in about 75 degrees.",
+        "claim": [
+          "c24",
+          "c2"
+        ],
         "redFlag": "shoulder"
       },
       {
-        "where": "Ache in the wrists",
-        "means": "Usually the bar is sitting high in the hand and bending the wrist back.",
-        "fix": "Grip the bar lower in the palm.",
+        "where": "Wrist pain or strain",
+        "means": "Fault: the bar sits near the fingers, bending the wrist back.",
+        "fix": "Grip the bar lower in the palm. Don't train through the pain.",
         "claim": "c5",
         "redFlag": "wrist"
       }
@@ -805,12 +894,13 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face and neck: a dropped or stuck bar can crush the neck; wrap the thumbs and use safety pins or a spotter.",
-      "claim": "c9, c23, c4, c6, c7"
-    },
-    {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
-      "claim": "c16"
+      "risk": "Bar over face and neck: wrap the thumbs. Use safety pins or a spotter.",
+      "claim": [
+        "c9",
+        "c4",
+        "c6",
+        "c7"
+      ]
     },
     {
       "risk": "Pec tendon rupture while lowering the bar.",
@@ -825,7 +915,7 @@
     {
       "key": "bar-low-palm",
       "kind": "hand",
-      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "right": "Bar in the palm's base, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
       "claim": "c5"
     },

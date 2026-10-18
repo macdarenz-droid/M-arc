@@ -610,12 +610,12 @@
   },
   "setup": [
     {
-      "step": "Set the bench to about 70 degrees.",
-      "claim": "c1"
-    },
-    {
-      "step": "Slide the bench under the bar and do practice reps with the empty bar until it just clears your nose.",
-      "claim": "c2, c3"
+      "step": "Bench at 70 degrees. The bar should just clear your nose.",
+      "claim": [
+        "c1",
+        "c2",
+        "c3"
+      ]
     },
     {
       "step": "Set the safety stops just below the lowest point of the press.",
@@ -626,8 +626,16 @@
       "claim": "c4"
     },
     {
-      "step": "Grip wider than shoulders, thumbs wrapped; rotate the bar off the hooks.",
-      "claim": "c5, c13, c8"
+      "step": "Grip wider than shoulders, thumbs wrapped. Rotate the bar off the hooks.",
+      "claim": [
+        "c5",
+        "c13",
+        "c8"
+      ]
+    },
+    {
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c15"
     }
   ],
   "posture": [
@@ -637,11 +645,17 @@
     },
     {
       "point": "Core braced, no excessive back arch.",
-      "claim": "c4, c9"
+      "claim": [
+        "c4",
+        "c9"
+      ]
     },
     {
       "point": "Elbows in front of the shoulders, not flared wide.",
-      "claim": "c5, c10"
+      "claim": [
+        "c5",
+        "c10"
+      ]
     },
     {
       "point": "Lower until the upper arms are about parallel to the floor.",
@@ -649,24 +663,36 @@
     },
     {
       "point": "Stop just short of locking the elbows.",
-      "claim": "c6, c10"
+      "claim": [
+        "c6",
+        "c10"
+      ]
     }
   ],
   "handlingMistakes": [
     {
-      "mistake": "Bench set so the bar runs far in front of the face.",
+      "mistake": "Bench set too far back.",
       "fix": "Move the bench until the bar just clears your nose.",
-      "claim": "c3, c2"
+      "claim": [
+        "c3",
+        "c2"
+      ]
     },
     {
-      "mistake": "Arching the back off the pad.",
-      "fix": "Press your upper back into the pad and brace; start with a light weight.",
-      "claim": "c9, c4"
+      "mistake": "Back arching off the pad.",
+      "fix": "Press your upper back into the pad, brace, start light.",
+      "claim": [
+        "c9",
+        "c4"
+      ]
     },
     {
-      "mistake": "Locking the elbows at the top.",
+      "mistake": "Elbows locking at the top.",
       "fix": "Stop just short of full arm extension.",
-      "claim": "c10, c6"
+      "claim": [
+        "c10",
+        "c6"
+      ]
     }
   ],
   "feel": {
@@ -689,44 +715,55 @@
     "watch": [],
     "rows": [
       {
-        "where": "Front and sides of the shoulders, backs of the arms",
+        "where": "Front, side shoulders, backs of arms",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c11",
         "redFlag": null
       },
       {
-        "where": "Lower back",
-        "means": "Possibly the back arching off the pad.",
-        "fix": "Press your upper back into the pad and brace.",
-        "claim": "c4, c9",
-        "redFlag": null
+        "where": "Lower back pain",
+        "means": "Fault: an excessive back arch.",
+        "fix": "Stop and don't train through the pain. Press your upper back into the pad.",
+        "claim": [
+          "c9",
+          "c4"
+        ],
+        "redFlag": "back"
       },
       {
-        "where": "Pain in the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set.",
-        "claim": "c9, c16",
+        "where": "Any shoulder pain",
+        "means": "Fault: flaring the elbows wide.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c9",
+          "c10"
+        ],
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Bar passes the face: place the bench so it just clears the nose, set the stops and wrap the thumbs.",
-      "claim": "c1, c3, c7, c13"
+      "risk": "Bar passes your face: it should just clear your nose. Set stops, wrap thumbs.",
+      "claim": [
+        "c3",
+        "c7",
+        "c13"
+      ]
     },
     {
-      "risk": "Heavy presses send blood pressure very high; part of it comes from holding your breath.",
+      "risk": "Heavy presses send blood pressure very high, partly from holding your breath.",
       "claim": "c17"
     },
     {
-      "risk": "The shoulder is a common injury site in lifting, linked to poor technique; add weight in small steps.",
-      "claim": "c16, c15"
+      "risk": "Shoulder injuries are common in lifting.",
+      "claim": "c16"
     }
   ],
   "redFlags": [
-    "shoulder"
+    "shoulder",
+    "back"
   ],
   "zooms": [
     {
@@ -734,14 +771,20 @@
       "kind": "hand",
       "right": "Overhand, wider than the shoulders, thumbs wrapped round the bar.",
       "wrong": "Thumb not wrapped around the bar.",
-      "claim": "c5, c13"
+      "claim": [
+        "c5",
+        "c13"
+      ]
     },
     {
       "key": "smith-ohp-bench",
       "kind": "posture",
       "right": "Bench at about 70 degrees, bar just clears the nose.",
-      "wrong": "Bench too far back, bar running far in front of the face.",
-      "claim": "c1, c3"
+      "wrong": "Bench too far back, bar far in front of face.",
+      "claim": [
+        "c1",
+        "c3"
+      ]
     }
   ],
   "libraryDiff": {
@@ -749,5 +792,8 @@
     "remove": [],
     "why": "exercises.json: front_delts and side_delts primary; triceps secondary. Motra (c11) rates anterior and medial delts as the main movers and triceps next; StrengthLog lists the lateral deltoid as secondary. Kept as is (c12, free-bar data only, shows the seated barbell press still works the front shoulder, less than dumbbells). Motra also lists upper traps and upper chest at low ratings; not added, as no second source supports them."
   },
-  "anchorSource": "fv-smith-ohp"
+  "anchorSource": "fv-smith-ohp",
+  "notes": [
+    "LIB-TOPRANK (R-LB2-20; verify #3 finding 5, declined here): no rankNote yet and the pick is unchanged. The current pick (bench placed too far back) is a bench setting, which R-LB2-12 and LR-31 exclude. The critic expects LR-31 step 2 to pick the back arch: Fitness Volt ties core engagement to protecting the lower back (c4) and Motra says 'Avoid excessive back arch' (c9); the side view shows it. Supervisor to confirm in that batch."
+  ]
 }

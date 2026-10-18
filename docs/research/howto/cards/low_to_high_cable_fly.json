@@ -156,7 +156,7 @@
         {
           "source": "ace-incline-cable-fly",
           "text": "Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy. To protect your shoulders from potential injury, lower the resistance, align your trunk vertically and follow the instructions provided.",
-          "where": "Step 5"
+          "where": "Step 4"
         }
       ]
     },
@@ -313,6 +313,24 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c15",
+      "text": "Tempo: ACE asks for a momentary pause when the hands meet and gives no seconds, so the 1 s pause is a drawing convention (LR-33).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-incline-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "ace-incline-cable-fly",
+          "text": "Pause momentarily then slowly return to your starting position, allowing your arms to move back outwards in a slow, controlled manner.",
+          "where": "Step 4"
+        }
+      ]
     }
   ],
   "sources": [
@@ -422,7 +440,7 @@
       "pause": 1,
       "claim": [
         "c12",
-        "c5"
+        "c15"
       ]
     },
     "variantLine": null
@@ -445,11 +463,11 @@
       "claim": "c1"
     },
     {
-      "step": "Take a handle in each hand and step into a staggered stance, trunk upright.",
+      "step": "Take a handle in each hand. Staggered stance, trunk upright.",
       "claim": "c3"
     },
     {
-      "step": "Brace your abs; don't arch your low back.",
+      "step": "Brace your abs. Don't arch your low back.",
       "claim": "c2"
     },
     {
@@ -460,7 +478,10 @@
   "posture": [
     {
       "point": "Trunk vertical, no forward lean.",
-      "claim": "c6, c7"
+      "claim": [
+        "c6",
+        "c7"
+      ]
     },
     {
       "point": "Abs braced, low back not arched.",
@@ -477,17 +498,20 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Leaning forward, usually because the weight is too heavy.",
+      "mistake": "Leaning forward, often too heavy.",
       "fix": "Lower the weight and keep your trunk upright.",
       "claim": "c7"
     },
     {
-      "mistake": "Bending the elbows so the fly becomes a press.",
+      "mistake": "Bending elbows into a press.",
       "fix": "Keep the slight elbow bend the whole rep.",
-      "claim": "c11, c6"
+      "claim": [
+        "c11",
+        "c6"
+      ]
     },
     {
-      "mistake": "Letting the hands go back past the armpits.",
+      "mistake": "Hands going past the armpits.",
       "fix": "Stop opening at armpit level.",
       "claim": "c4"
     }
@@ -519,17 +543,21 @@
         "redFlag": null
       },
       {
-        "where": "Front of the shoulders, body leaning forward",
-        "means": "Usually the weight is too heavy.",
-        "fix": "Lower the weight and stand upright.",
-        "claim": "c7",
+        "where": "Front shoulders, body leaning forward",
+        "means": "Fault: leaning forward, which happens frequently when the weight is too heavy.",
+        "fix": "Lower the resistance and keep your trunk vertical.",
+        "claim": [
+          "c7"
+        ],
         "redFlag": null
       },
       {
-        "where": "Pain in the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set.",
-        "claim": "c13, c7",
+        "where": "Shoulder pain",
+        "means": "Fault: leaning forward.",
+        "fix": "Stop and don't train through the pain. Keep your trunk vertical.",
+        "claim": [
+          "c7"
+        ],
         "redFlag": "shoulder"
       }
     ]
@@ -540,8 +568,8 @@
       "claim": "c7"
     },
     {
-      "risk": "Cable chest work loaded the shoulder more than the bench press in lab tests; keep the joints stable.",
-      "claim": "c14, c13"
+      "risk": "Cable chest work loads the shoulder more than bench pressing. Keep joints stable.",
+      "claim": "c14"
     }
   ],
   "redFlags": [
@@ -553,14 +581,20 @@
       "kind": "hand",
       "right": "Wrist straight in line with the forearm.",
       "wrong": "Wrist bent as the hands rise.",
-      "claim": "c4, c6"
+      "claim": [
+        "c4",
+        "c6"
+      ]
     },
     {
       "key": "low-high-trunk",
       "kind": "posture",
       "right": "Trunk upright, staggered stance, abs braced.",
       "wrong": "Leaning forward over the front foot.",
-      "claim": "c3, c7"
+      "claim": [
+        "c3",
+        "c7"
+      ]
     }
   ],
   "libraryDiff": {
@@ -568,5 +602,8 @@
     "remove": [],
     "why": "exercises.json: upper_chest primary; front_delts and chest secondary. PureGym and StrengthLog (c8) say the low-to-high pull emphasises the upper chest; StrengthLog says pulley height only slightly changes the muscles and lists chest first and front delts second for the cable fly (c9, applied by inference). Kept as is."
   },
-  "anchorSource": "ace-incline-cable-fly"
+  "anchorSource": "ace-incline-cable-fly",
+  "notes": [
+    "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick is unchanged here. Verify #3's critic found it consistent with LR-31: the lean is the top fault, drawable false (speed and load), and the next fault is the bent elbows."
+  ]
 }

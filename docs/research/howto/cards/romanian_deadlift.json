@@ -597,7 +597,7 @@
     "checkpoints": [
       {
         "label": "Hips back",
-        "what": "The hips move back to lower the bar; knees stay at a fixed slight bend.",
+        "what": "The hips move back to lower the bar. Knees stay at a fixed slight bend.",
         "claim": "c2"
       },
       {
@@ -607,7 +607,7 @@
       },
       {
         "label": "Flat back",
-        "what": "The back stays neutral; depth stops where it would round.",
+        "what": "The back stays neutral. Depth stops where it would round.",
         "claim": "c5"
       }
     ],
@@ -615,7 +615,8 @@
       "what": "Lower back rounds at the bottom as the bar is reached down.",
       "why": "Listed first among common RDL mistakes; it removes spinal stability and raises injury risk (c7).",
       "claim": "c7",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for an RDL fault. Set aside: StrengthLog's \"There are several reasons why your back might hurt after doing Romanian deadlifts, the two most likely being\" (c17) says which causes of back pain are likeliest, volume and technique, with no frequency word and no named fault; \"It is usually performed with a barbell\" and \"you want to use light weights in this exercise\" are about the implement and the load; NASM's \"typically when the barbell reaches mid-shin height\" (c6) is about depth, not a fault; the NHS lines (\"Back pain, particularly lower back pain, is very common.\") are about back pain in general. Rounding the lower back is the only named fault a quote ties to harm: NASM's \"Rounding the lower back excessively, which removes spinal stability and increases injury risk\" (c7), first on its common-mistakes list. The knee bend that turns it into a squat (c7), jerky movement and too much weight (c8) state no harm; too much weight is a load choice, not a candidate. drawable stays true: the side view shows the back rounding."
     },
     "tells": [
       {
@@ -652,7 +653,7 @@
   },
   "setup": [
     {
-      "step": "Set the bar in a rack at thigh height, or deadlift it from the floor.",
+      "step": "Unrack the bar, or deadlift it off the floor.",
       "claim": "c11"
     },
     {
@@ -660,7 +661,7 @@
       "claim": "c10"
     },
     {
-      "step": "Grip slightly wider than shoulders; shoulders back and down.",
+      "step": "Grip slightly wider than shoulders. Shoulders back and down.",
       "claim": "c9"
     },
     {
@@ -674,11 +675,11 @@
   ],
   "posture": [
     {
-      "point": "Knees fixed at a slight bend; the movement is at the hips.",
+      "point": "Knees fixed at a slight bend. The movement is at the hips.",
       "claim": "c4"
     },
     {
-      "point": "Spine neutral; stop before it rounds.",
+      "point": "Spine neutral. Stop before it rounds.",
       "claim": "c5"
     },
     {
@@ -686,7 +687,7 @@
       "claim": "c3"
     },
     {
-      "point": "Usually down to about mid-shin; spine position beats depth.",
+      "point": "Typically down to about mid-shin. Spine position beats depth.",
       "claim": "c6"
     },
     {
@@ -696,17 +697,20 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Rounding the lower back to get the bar lower.",
-      "fix": "Stop higher, where the back stays flat; if it still rounds, lower the weight.",
-      "claim": "c7"
+      "mistake": "Rounding the lower back.",
+      "fix": "Stop where the back stays flat. If it rounds, lower the weight.",
+      "claim": [
+        "c7",
+        "c8"
+      ]
     },
     {
-      "mistake": "Bending the knees until it becomes a squat.",
+      "mistake": "Knees bending into a squat.",
       "fix": "Lock the knees at a slight bend and push the hips back.",
       "claim": "c7"
     },
     {
-      "mistake": "Using so much weight the form breaks.",
+      "mistake": "Too heavy, form breaks.",
       "fix": "Go lighter and move smoothly.",
       "claim": "c8"
     }
@@ -735,31 +739,33 @@
     "watch": [],
     "rows": [
       {
-        "where": "Back of the thighs, stretching on the way down",
-        "means": "Usually means the hips are hinging correctly.",
+        "where": "Back of thighs, stretching going down",
+        "means": "The hamstrings are stretched as the hips push back.",
         "fix": null,
-        "claim": "c2",
+        "claim": [
+          "c2",
+          "c16"
+        ],
         "redFlag": null
       },
       {
         "where": "Lower back more than the hamstrings",
-        "means": "Usually means the back is rounding or the load is too heavy; the hamstrings normally work harder than the lower back here.",
-        "fix": "Shorten the range and lower the weight.",
-        "claim": "c14",
+        "means": "Fault: rounding the lower back, or weight that compromises spinal position.",
+        "fix": "Stop higher, before the back rounds.",
+        "claim": [
+          "c7",
+          "c8",
+          "c5"
+        ],
         "redFlag": null
       },
       {
-        "where": "Lower back sore after sessions",
-        "means": "Usually means too much too soon, or technique.",
-        "fix": "Cut the volume and keep the spine neutral.",
-        "claim": "c17",
-        "redFlag": null
-      },
-      {
-        "where": "Back pain with pain or numbness in both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop.",
-        "claim": "c23",
+        "where": "Lower-back pain during or after sessions",
+        "means": "Severe, or still there after a few days to a week?",
+        "fix": "Stop. Don't train through the pain.",
+        "claim": [
+          "c17"
+        ],
         "redFlag": "back"
       }
     ]
@@ -774,8 +780,11 @@
       "claim": "c21"
     },
     {
-      "risk": "Doing too much too soon can leave the back sore.",
-      "claim": "c17"
+      "risk": "Too much too soon can leave the back sore. Ease into heavy sets gradually.",
+      "claim": [
+        "c17",
+        "c19"
+      ]
     }
   ],
   "redFlags": [
@@ -785,14 +794,17 @@
     {
       "key": "rdl-grip",
       "kind": "hand",
-      "right": "Thumbs wrapped, wrists straight, hands just outside the thighs.",
-      "wrong": "Hands hanging off the fingertips, wrists bent.",
-      "claim": "c9"
+      "right": "Thumbs wrapped, hands just outside the thighs.",
+      "wrong": null,
+      "claim": [
+        "c22",
+        "c9"
+      ]
     },
     {
       "key": "rdl-bottom",
       "kind": "posture",
-      "right": "Hips back, flat back, knees slightly bent, bar at mid-shin close to the legs.",
+      "right": "Hips back, flat back, knees slightly bent, bar at mid-shin.",
       "wrong": "Rounded lower back, or knees bent deep like a squat.",
       "claim": "c7"
     },
@@ -809,7 +821,10 @@
       "adductors"
     ],
     "remove": [],
-    "why": "Library primary hamstrings and secondary glutes, lower_back match (c13, c15, c16). Add adductors as secondary: StrengthLog names them (c16)."
+    "why": "Library primary hamstrings and secondary glutes, lower_back. Glutes move to primary: StrengthLog lists them as a primary muscle (c16) and the RDL works them strongly (c15). Add adductors as secondary: StrengthLog names them (c16). Lower back stays secondary: StrengthLog lists it as primary (c16), but the RDL works the erector spinae less than the hamstrings (c14)."
   },
-  "anchorSource": "nasm-rdl"
+  "anchorSource": "nasm-rdl",
+  "gaps": [
+    "tier-A way out: no read source says how to set the bar down or fail a stuck rep on this exercise (LIB-WAYOUT); setup's lifting blocks are an option to avoid reversing a heavy bar, not a failed-rep way out"
+  ]
 }

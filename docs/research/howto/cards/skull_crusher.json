@@ -304,6 +304,29 @@
           "where": "closing notes"
         }
       ]
+    },
+    {
+      "id": "c17",
+      "text": "Lower the bar over about 3 seconds: this retailer coaching blog asks for a controlled eccentric of two to three seconds, and gives three seconds down as the fix for rushing the lowering.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "strengthshop-skull"
+      ],
+      "quotes": [
+        {
+          "source": "strengthshop-skull",
+          "text": "Skull crushers respond well to a controlled eccentric — two to three seconds down — which increases time under tension and maximises the stimulus on the long head.",
+          "where": "How to do skull crushers: what not to do"
+        },
+        {
+          "source": "strengthshop-skull",
+          "text": "Fix: three seconds down, controlled at the bottom, press back up.",
+          "where": "Common skull crusher mistakes and how to fix them"
+        }
+      ]
     }
   ],
   "sources": [
@@ -387,7 +410,7 @@
     "checkpoints": [
       {
         "label": "Upper arms vertical",
-        "what": "Only the forearms move; the upper arms stay upright.",
+        "what": "Only the forearms move. The upper arms stay upright.",
         "claim": "c5"
       },
       {
@@ -405,7 +428,8 @@
       "what": "Upper arms drifting back toward the head as the bar comes down.",
       "why": "Strength Shop calls it the most common fault (c7, retailer blog, WEAK), and ACE uses it as the stop signal for the descent (c5).",
       "claim": "c7",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Strength Shop's \"Upper arms drifting back: the most common fault\" (c7, WEAK) puts the frequency word on that fault itself, not a list heading read onto one item, so it counts; no other quote gives a frequency word for a skull-crusher fault. Set aside: \"one of the most frequently butchered\" is about the exercise, not one fault; Gaviria's \"often occur as a result of falling on an outstretched hand, forceful eccentric contraction\" and \"most commonly seen in middle-aged men\" (c15) name causes and people for triceps ruptures, not a fault of this exercise; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c14) is about all weight training; \"working skull crusher weight is typically 30–45kg\" is a load. Step 2 is not needed: Strength Shop's \"any lateral drift in the bar exacerbates elbow and wrist strain\" ties a sideways bar drift to strain, but no frequency word backs it; too much weight (c9) and a straight bar (c8) are load and equipment choices, not candidates. drawable stays true: the side view shows the upper-arm angle."
     },
     "tells": [
       {
@@ -419,9 +443,13 @@
     ],
     "tempo": {
       "up": 1,
-      "down": 2,
+      "down": 3,
       "pause": 0,
-      "claim": "c13"
+      "claim": [
+        "c17",
+        "c13"
+      ],
+      "text": "3 s down: the only value in both of Strength Shop's lines for this exercise (c17, WEAK, retailer blog; ruling R-LB2-1). 1 s up keeps ACSM's 1-2 s, stated for intermediate to advanced training (c13, WEAK; LR-15). Pause 0: no quote asks for a pause right after the press; Strength Shop's \"Squeeze the triceps at the top\" gives no pause or seconds. Fit Father's \"Once the bar touches your forehead, pause for 2-3 seconds.\" is a pause at another point of the rep (the bottom), with the bar on the forehead; it contradicts ACE's stop just above the forehead (c5), so no bottom pause is drawn and pause stays 0."
     },
     "variantLine": "exercises.json lists \"EZ Bar / Barbell\". The EZ bar is drawn (census ezBar; StrengthLog uses it, c10). The setup, arm path and wrist rules (c1-c6) come from ACE's barbell version and hold for both; the EZ bar's easier wrist angle (c8) is the only difference."
   },
@@ -441,24 +469,30 @@
   },
   "setup": [
     {
-      "step": "Lie on a flat bench with your head near the end, feet flat.",
-      "claim": "c10"
+      "step": "Lie on a flat bench, head near the end, feet flat.",
+      "claim": [
+        "c10",
+        "c1"
+      ]
     },
     {
       "step": "Grip the bar closed, thumbs wrapped, palms toward your feet.",
       "claim": "c1"
     },
     {
-      "step": "Press the bar to straight arms above your face.",
-      "claim": "c2"
-    },
-    {
-      "step": "Upper arms vertical, elbows shoulder-width apart.",
-      "claim": "c6"
+      "step": "Press to straight arms above your face. Upper arms vertical.",
+      "claim": [
+        "c2",
+        "c5"
+      ]
     },
     {
       "step": "When new to the lift, have a spotter and start light.",
       "claim": "c16"
+    },
+    {
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c12"
     }
   ],
   "posture": [
@@ -482,18 +516,18 @@
   "handlingMistakes": [
     {
       "mistake": "Upper arms drifting back.",
-      "fix": "Keep them vertical; stop the descent when they start to move.",
+      "fix": "Keep them vertical. Stop the descent when they start to move.",
       "claim": "c5"
     },
     {
-      "mistake": "Too heavy: elbows wander and the bar bounces.",
+      "mistake": "Too heavy: elbows wander.",
       "fix": "Reduce the load until every rep is clean.",
       "claim": "c9"
     },
     {
-      "mistake": "Wrists aching on a straight bar.",
-      "fix": "Use an EZ bar.",
-      "claim": "c8"
+      "mistake": "Wrists bent back or curled.",
+      "fix": "Keep the wrists neutral.",
+      "claim": "c3"
     }
   ],
   "feel": {
@@ -515,15 +549,15 @@
       },
       {
         "where": "Mostly the shoulders",
-        "means": "Usually the upper arms are drifting back.",
+        "means": "Fault: upper arms drift back, shifting the load onto the shoulder.",
         "fix": "Keep the upper arms vertical.",
         "claim": "c7",
         "redFlag": null
       },
       {
-        "where": "Sharp pain at the back of the elbow while lowering",
-        "means": "Usually a warning sign.",
-        "fix": "Stop the set.",
+        "where": "Back-of-elbow pain",
+        "means": "Fault: lowering the bar forcefully.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c15",
         "redFlag": "elbow"
       }
@@ -531,16 +565,17 @@
   },
   "risks": [
     {
-      "risk": "Bar over the face: a dropped bar lands on the face; wrap the thumbs, lower slowly, and have a spotter while you are new to the lift.",
-      "claim": "c14, c2, c1, c4, c16"
+      "risk": "Bar over the face: wrap the thumbs, lower slowly, have a spotter when new.",
+      "claim": [
+        "c2",
+        "c1",
+        "c4",
+        "c16"
+      ]
     },
     {
       "risk": "Triceps tendon rupture (rare), often from forceful lowering or lifting against resistance.",
       "claim": "c15"
-    },
-    {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
-      "claim": "c12"
     }
   ],
   "redFlags": [
@@ -567,5 +602,8 @@
     "remove": [],
     "why": "exercises.json: triceps primary, no secondary. c11 supports it. No change."
   },
-  "anchorSource": "ace-lying-tri-ext"
+  "anchorSource": "ace-lying-tri-ext",
+  "gaps": [
+    "tier-A way out: the read sources give only a spotter for a first-time lifter; no source says how to end a failed rep without one (LIB-WAYOUT)"
+  ]
 }

@@ -23,6 +23,10 @@
     {
       "field": "zooms.bar-low-palm",
       "why": "true for this child because the hand, bar and wrist rule are the same as the parent's (parent c5; c4 here)."
+    },
+    {
+      "field": "setup.safety-pins",
+      "why": "true for this child because the bar is still lowered from a rack over the face, neck and chest, so the parent's pin height (parent c6: set the pins slightly lower than the bottom position) applies to the incline's safety catches (c6)."
     }
   ],
   "claims": [
@@ -498,7 +502,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; bench angle, the upper-chest touch point and the low-back arch all read in the sagittal plane (c1, c7, c9).",
+    "viewWhy": "Census view is side; bench angle, the upper-chest touch point and the low-back arch all read in the sagittal plane (c1, c7, c9). The LR-31 top fault, elbows flared out (c8, c9), reads from the side as the elbow level with the shoulder instead of below it toward the ribs (ruling R-LB2-4).",
     "equipment": "Incline bench with its own rack, back pad at 30 degrees (inside the 30-45 range of c1, and the angle where upper-chest EMG peaked, c1); barbell; feet flat (c3). Safety catches are drawn on the rack (c6).",
     "start": "On the incline, head, shoulders and hips on the pad, feet flat (c3); bar on straight arms above the shoulders (c5).",
     "end": "Bar touching the upper chest (c7), elbows about 45-75 degrees from the torso (c7), back and hips still on the pad (c3, c9).",
@@ -515,15 +519,20 @@
       },
       {
         "label": "Back on pad",
-        "what": "Head, shoulders and hips stay on the bench; no big low-back arch.",
+        "what": "Head, shoulders and hips stay on the bench. No big low-back arch.",
         "claim": "c3"
       }
     ],
     "mistake": {
-      "what": "Low back arching away from the pad (hips pushing up) to press the bar.",
-      "why": "Boostcamp names excessive low-back arching both as a form fault and as an injury risk; how often it happens is not measured in any source read.",
-      "claim": "c9",
-      "drawable": true
+      "what": "Elbows flaring out excessively as the bar comes down, instead of staying about 45-75 degrees from the torso.",
+      "why": "Boostcamp lists allowing the elbows to flare out excessively, increasing shoulder strain, among its common mistakes (c8), and its exercise page names shoulder strain from flared elbows as an injury risk (c9). How often it happens is not measured in any source read.",
+      "claim": [
+        "c8",
+        "c9",
+        "c7"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for an incline-press fault (Boostcamp's \"Common Mistakes to Avoid\" is a heading; \"usually 30–45 degrees\" is the bench setting; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c16) is about all weight training). Two named faults are tied to harm: flared elbows (\"Allowing the elbows to flare out excessively, increasing shoulder strain\", c8, and \"Shoulder strain from flared elbows\", c9; two sources) and the low-back arch (\"lower back arching excessively\" in the same injury-risk line, c9; one source). Step 2's first tie-break picks the flared elbows: they are on Boostcamp's common-mistakes list, and the arch is only in its form tips (\"avoid arching your back excessively\"); the second tie-break (more harm sources) gives the same. Boostcamp's \"Keep your wrists straight to prevent strain.\" ties bent wrists (a joint position, ruling R-LB2-15) to strain, one source, in its tips and not on its common-mistakes list, so the first tie-break still picks the flared elbows. An incline set too steep and lifting too heavy are setup and load choices, and \"wrist strain from poor grip angle\" is a grip choice; none is a candidate. drawable is true: in the side view a flared elbow sits level with the shoulder instead of down toward the ribs (as close_grip_bench_press draws its elbow drift); the arch, the head's earlier pick, stays in handlingMistakes."
     },
     "tells": [
       {
@@ -555,20 +564,30 @@
   },
   "setup": [
     {
-      "step": "Set the back pad to about 30 degrees and set the safety catches.",
-      "claim": "c1, c6"
+      "step": "Pad at about 30 degrees. Head, shoulders, hips on it, feet flat.",
+      "claim": [
+        "c1",
+        "c3"
+      ]
     },
     {
-      "step": "Sit back with head, shoulders and hips on the pad, feet flat.",
-      "claim": "c3"
+      "step": "Set the safety pins slightly below where the bar touches your chest.",
+      "claim": "inherit:3"
     },
     {
       "step": "Grip slightly wider than shoulders, wrists straight.",
       "claim": "c4"
     },
     {
-      "step": "With a spotter, lift the bar out to straight arms above your shoulders.",
-      "claim": "c6"
+      "step": "With a spotter, unrack to straight arms above your shoulders.",
+      "claim": [
+        "c6",
+        "c5"
+      ]
+    },
+    {
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c13"
     }
   ],
   "posture": [
@@ -595,19 +614,29 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Arching the low back off the pad to finish a rep.",
-      "fix": "Keep your back on the pad; build up to heavier weights gradually.",
-      "claim": "c9, c12, c13"
-    },
-    {
       "mistake": "Elbows flared straight out.",
       "fix": "Keep them about 45-75 degrees from your body.",
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c7"
+      ]
     },
     {
-      "mistake": "Bouncing the bar off the chest.",
-      "fix": "Lower slowly and with control (c7).",
-      "claim": "c8"
+      "mistake": "Low back arching off pad.",
+      "fix": "Keep your back on the pad. Build up to heavier weights gradually.",
+      "claim": [
+        "c9",
+        "c12",
+        "c13"
+      ]
+    },
+    {
+      "mistake": "Bar bouncing off the chest.",
+      "fix": "Lower slowly and with control.",
+      "claim": [
+        "c8",
+        "c7"
+      ]
     }
   ],
   "feel": {
@@ -634,40 +663,51 @@
     "watch": [],
     "rows": [
       {
-        "where": "Upper chest and front of the shoulders",
+        "where": "Upper chest and front shoulders",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c2",
         "redFlag": null
       },
       {
-        "where": "Mostly the front of the shoulders, little in the chest",
-        "means": "Usually the bench is set too steep.",
-        "fix": "Lower the back pad toward 30 degrees.",
+        "where": "Mostly front shoulders, little chest",
+        "means": "A bench steeper than 45 degrees shifts the work to the shoulders.",
+        "fix": "Set the back pad between 30 and 45 degrees.",
         "claim": "c1",
         "redFlag": null
       },
       {
-        "where": "Pain in the shoulder or chest",
-        "means": "Usually a warning sign; shoulder injuries are common in lifting.",
-        "fix": "Stop the set.",
-        "claim": "c12",
+        "where": "Shoulder or chest pain or discomfort",
+        "means": "Fault: the elbows flare out too far, which strains the shoulder.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c12",
+          "c8"
+        ],
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Bar over the face and neck: the upper-chest touch point is closest to the neck; wrap the thumbs and use a spotter or safety catches.",
-      "claim": "c15"
+      "risk": "Bar over face and neck: wrap thumbs. Use a spotter or safety pins.",
+      "claim": [
+        "c15",
+        "c6",
+        "inherit:0",
+        "inherit:3"
+      ]
     },
     {
       "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
       "claim": "c16"
     },
     {
-      "risk": "Shoulder injuries are common in lifting and linked to poor technique; flared elbows strain the shoulder.",
-      "claim": "c17"
+      "risk": "Shoulder injuries are linked to poor technique. Flared elbows strain the shoulder.",
+      "claim": [
+        "c17",
+        "c8"
+      ]
     }
   ],
   "redFlags": [
@@ -677,9 +717,9 @@
     {
       "key": "bar-low-palm",
       "kind": "hand",
-      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "right": "Bar in the palm's base, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
-      "claim": "barbell_bench_press:c5"
+      "claim": "inherit:2"
     },
     {
       "key": "back-on-incline-pad",

@@ -37,7 +37,7 @@
     },
     {
       "id": "c2",
-      "text": "Grip just outside the shoulders so the forearms are vertical at the bottom; a wide bench-press grip flares the elbows.",
+      "text": "Grip just outside the shoulders so the forearms are vertical at the bottom.",
       "tags": [
         "CONSENSUS"
       ],
@@ -155,7 +155,7 @@
     },
     {
       "id": "c8",
-      "text": "Do not lean back by arching the low back when a rep gets hard; if you can't keep it neutral the weight is too heavy, so count the rep as failed.",
+      "text": "Do not lean back by arching the low back when a rep gets hard; if you can't keep it neutral the weight is too heavy, so count the rep as failed. StrongLifts says extreme arching of the lower spine can result in back pain.",
       "tags": [
         "CONSENSUS"
       ],
@@ -167,6 +167,11 @@
           "source": "stronglifts-ohp",
           "text": "If you can’t keep your lower back neutral, the weight is too heavy. Consider it a fail instead of leaning back to get your rep at all costs.",
           "where": "Lower Back Pain"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "Extreme arching of your lower spine (hyper-extension) squeezes your spinal discs from the back which can result in back pain.",
+          "where": "Common Mistakes > Excess Arching"
         }
       ]
     },
@@ -267,7 +272,7 @@
     },
     {
       "id": "c13",
-      "text": "Barbell pressing allowed more load than dumbbells standing (about 7%), with greater triceps activity; deltoids work in all shoulder press variants.",
+      "text": "Barbell pressing allowed more load than dumbbells standing (about 7%), with greater triceps activity; the front and side deltoids work in barbell and dumbbell shoulder presses, most with standing dumbbells.",
       "tags": [
         "DATA"
       ],
@@ -283,6 +288,16 @@
         {
           "source": "saeterbakken2013",
           "text": "For triceps, ~39% greater for standing barbell versus dumbbells (p < 0.001)",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2013",
+          "text": "In conclusion, the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles",
+          "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2013",
+          "text": "For medial deltoid, ~7% lower for standing barbell versus dumbbells (p = 0.050)",
           "where": "abstract"
         }
       ]
@@ -416,6 +431,29 @@
           "where": "abstract, results"
         }
       ]
+    },
+    {
+      "id": "c20",
+      "text": "Hold the bar for a second at the top of each rep; between reps, rest a second at the bottom to get tight.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Hold the bar for a second at the top.",
+          "where": "How to Overhead Press with proper form"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "Rest at the bottom for a second before doing your next rep.",
+          "where": "Get Tight"
+        }
+      ]
     }
   ],
   "sources": [
@@ -523,8 +561,8 @@
         "claim": "c5"
       },
       {
-        "label": "Head out, then through",
-        "what": "Lean back slightly from the hips so the bar clears the chin, then move under the bar.",
+        "label": "Head clear",
+        "what": "Lean back slightly from the hips so the bar clears your chin.",
         "claim": "c6"
       },
       {
@@ -537,7 +575,8 @@
       "what": "Elbows back at the start, forearms tilted, so the bar curves forward away from the face.",
       "why": "StrongLifts says most people press this way (coach observation, not measured); it moves the bar off the vertical line.",
       "claim": "c5",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: StrongLifts's \"Most people press with their elbows back at the bottom\" (c5, WEAK) \"Most people Overhead Press with their elbows behind the bar\" and \"They’ll usually be inclined because your elbows are too far back.\" (the forearms) put the frequency word on the elbows-back fault; no other fault has one. Set aside: \"Most people lack the shoulder flexibility to handle this position\" is about flexibility for the behind-the-neck press, not how many lifters make it; \"You'll usually fail at the bottom\" says where reps fail; \"Fear of dropping the bar on your head is common\" is a fear, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c19) is about all weight training. Step 2 is not needed: StrongLifts ties excess arching to pain (\"Extreme arching of your lower spine (hyper-extension) squeezes your spinal discs from the back which can result in back pain\"; c8) and c14 ties the behind-the-neck press to shoulder instability signs, but no frequency word backs them. The top fault was not in handlingMistakes: it is added at [0] from c5's words, and the last item, bending the knees (c9), is dropped to keep the list at 3 (CARD-V2; ruling R-LB2-2). drawable stays true: the side view shows the tilted forearms."
     },
     "tells": [
       {
@@ -552,8 +591,12 @@
     "tempo": {
       "up": 1,
       "down": 2,
-      "pause": 0,
-      "claim": "c17"
+      "pause": 1,
+      "claim": [
+        "c20",
+        "c17"
+      ],
+      "text": "Pause 1 s at the top: StrongLifts gives the seconds for the hold right after the press (c20; ruling R-LB2-6, LR-33). StrongLifts also asks for a 1 s rest at the bottom between reps (c20); that pause is at another point of the rep, so it is named here and not in pause. Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c17, WEAK; LR-15)."
     },
     "variantLine": null
   },
@@ -571,30 +614,43 @@
   },
   "setup": [
     {
-      "step": "Set the rack hooks at about shoulder height and the safety crossbars at the right height.",
+      "step": "In the power rack, set the crossbars. Bar at shoulder height.",
+      "claim": [
+        "c11",
+        "c1"
+      ]
+    },
+    {
+      "step": "Grip just outside the shoulders, thumbs wrapped, bar on the palm's heel.",
+      "claim": [
+        "c2",
+        "c3",
+        "c4"
+      ]
+    },
+    {
+      "step": "Feet hip-width and flat. Elbows forward so the forearms are vertical.",
+      "claim": [
+        "c10",
+        "c5"
+      ]
+    },
+    {
+      "step": "Failed rep? Lower the bar to your shoulders, then rack it.",
       "claim": "c11"
     },
     {
-      "step": "Grip just outside the shoulders, thumbs wrapped, bar in the heel of the palm.",
-      "claim": "c2"
-    },
-    {
-      "step": "Unrack onto the front of the shoulders and stay inside the rack.",
-      "claim": "c11"
-    },
-    {
-      "step": "Feet hip-width, flat on the floor.",
-      "claim": "c10"
-    },
-    {
-      "step": "Elbows forward so the forearms are vertical.",
-      "claim": "c5"
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c16"
     }
   ],
   "posture": [
     {
-      "point": "Low back neutral; lean comes from the hips, not the spine.",
-      "claim": "c8"
+      "point": "Low back neutral. Lean comes from the hips, not the spine.",
+      "claim": [
+        "c8",
+        "c6"
+      ]
     },
     {
       "point": "Hips and knees locked.",
@@ -611,7 +667,12 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Leaning back by arching the low back to grind out a rep.",
+      "mistake": "Pressing with the elbows back.",
+      "fix": "Move your elbows forward under the bar before you press.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Leaning back, low back arching.",
       "fix": "The weight is too heavy: end the set.",
       "claim": "c8"
     },
@@ -619,11 +680,6 @@
       "mistake": "Thumbless grip.",
       "fix": "Wrap the thumbs.",
       "claim": "c3"
-    },
-    {
-      "mistake": "Bending the knees to drive the bar.",
-      "fix": "Keep the legs locked; go lighter.",
-      "claim": "c9"
     }
   ],
   "feel": {
@@ -646,28 +702,34 @@
     "watch": [],
     "rows": [
       {
-        "where": "Low back",
-        "means": "Usually leaning back by arching the spine instead of from the hips.",
-        "fix": "Go lighter. Keep the low back neutral.",
-        "claim": "c8",
+        "where": "Low-back pain while pressing",
+        "means": "Fault: leaning back from the low back, not the hips.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c8",
+          "c6"
+        ],
         "redFlag": "back"
       },
       {
-        "where": "Pain at the front of the shoulder",
-        "means": "Usually a warning sign; the shoulder is one of the most often injured areas in lifting.",
-        "fix": "Stop the set. Go lighter next time.",
-        "claim": "c18",
+        "where": "Pain at the front shoulder",
+        "means": "Fault: pressing behind the neck.",
+        "fix": "Stop and don't train through the pain. Press in front of your head.",
+        "claim": [
+          "c14",
+          "c18"
+        ],
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Bar falling on the head with a thumbless grip or soft lockout.",
+      "risk": "Bar falling on the head with a thumbless grip.",
       "claim": "c3"
     },
     {
-      "risk": "Low-back hyperextension from leaning back under a heavy bar.",
+      "risk": "Over-arching the low back under a heavy bar can cause back pain.",
       "claim": "c8"
     },
     {
@@ -683,7 +745,7 @@
     {
       "key": "bar-heel-of-palm",
       "kind": "hand",
-      "right": "Bar on the heel of the palm, wrist almost straight, thumb wrapped.",
+      "right": "Bar on the palm's heel, wrist almost straight, thumb wrapped.",
       "wrong": "Bar in mid-palm, wrist bent back.",
       "claim": "c4"
     },
@@ -700,5 +762,8 @@
     "remove": [],
     "why": "exercises.json: front_delts, side_delts primary; triceps, upper_chest secondary; core stabilizer. c13 supports deltoids and triceps. upper_chest: no source read measured it in the overhead press, so it is unsupported here but not removed (no evidence against it either); flagged for the critic."
   },
-  "anchorSource": "stronglifts-ohp"
+  "anchorSource": "stronglifts-ohp",
+  "gaps": [
+    "safety crossbar height: no read source gives the crossbar height for the overhead press; plate.equipment keeps it as a drawing note only (LR-3)"
+  ]
 }

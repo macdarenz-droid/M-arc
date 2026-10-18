@@ -201,7 +201,7 @@
       "quotes": [
         {
           "source": "sl-cable-fly",
-          "text": "Compared to dumbbell chest flyes , the resistance curve in cable flyes is more evenly distributed, and the load on your chest muscles is more constant throughout the range of motion.",
+          "text": "Compared to dumbbell chest flyes, the resistance curve in cable flyes is more evenly distributed, and the load on your chest muscles is more constant throughout the range of motion.",
           "where": "Introduction"
         }
       ]
@@ -431,16 +431,20 @@
       "claim": "c1"
     },
     {
-      "step": "Stand centred between them and step forward so the pulleys are slightly behind you.",
+      "step": "Stand centred between them, pulleys slightly behind you.",
       "claim": "c2"
     },
     {
-      "step": "Staggered or parallel stance; brace your core, legs and glutes.",
+      "step": "Staggered or parallel stance. Brace your trunk, legs and glutes.",
       "claim": "c3"
     },
     {
       "step": "Choose a weight that lets you keep a soft elbow bend.",
       "claim": "c7"
+    },
+    {
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c14"
     }
   ],
   "posture": [
@@ -450,7 +454,10 @@
     },
     {
       "point": "Core braced, body still, no swinging.",
-      "claim": "c3, c6"
+      "claim": [
+        "c3",
+        "c6"
+      ]
     },
     {
       "point": "Elbows slightly bent, same angle all rep.",
@@ -458,22 +465,31 @@
     },
     {
       "point": "Hands meet in front, then open only to chest line.",
-      "claim": "c5, c7"
+      "claim": [
+        "c5",
+        "c7"
+      ]
     }
   ],
   "handlingMistakes": [
     {
-      "mistake": "Bending the elbows so the fly becomes a press.",
-      "fix": "Keep the elbow bend fixed; move at the shoulders.",
-      "claim": "c6, c4"
+      "mistake": "Bending elbows into a press.",
+      "fix": "Keep the elbow bend fixed. Move at the shoulders.",
+      "claim": [
+        "c6",
+        "c4"
+      ]
     },
     {
-      "mistake": "Too much weight, so you swing.",
+      "mistake": "Swinging with too much weight.",
       "fix": "Use a weight you can move slowly with a soft elbow bend.",
-      "claim": "c6, c7"
+      "claim": [
+        "c6",
+        "c7"
+      ]
     },
     {
-      "mistake": "Opening the arms too far back.",
+      "mistake": "Arms opening too far back.",
       "fix": "Stop when the hands are in line with the chest.",
       "claim": "c7"
     }
@@ -494,29 +510,34 @@
     "watch": [],
     "rows": [
       {
-        "where": "Across the chest and front of the shoulders, through the whole rep",
-        "means": "The target muscles are working; cables keep the load on through the range.",
+        "where": "Chest and front shoulders, whole rep",
+        "means": "The target muscles are working, cables keep the load on.",
         "fix": null,
-        "claim": "c9, c10",
+        "claim": [
+          "c9",
+          "c10"
+        ],
         "redFlag": null
       },
       {
-        "where": "Pain in the front of the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set.",
-        "claim": "c13, c11",
+        "where": "Pain at the front shoulder",
+        "means": "Fault: opening the arms past the chest line strains the shoulder.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c7"
+        ],
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
     {
-      "risk": "In lab tests, cable pulley exercises (cross-over, pull-over) loaded the shoulder more than the bench press; keep the joints stable and do not open past chest line.",
-      "claim": "c11, c7"
+      "risk": "Cable flyes load the shoulder more than bench pressing. Keep your joints stable.",
+      "claim": "c11"
     },
     {
-      "risk": "The shoulder is a common injury site in lifting; add weight in small steps.",
-      "claim": "c13, c14"
+      "risk": "The shoulder is a common injury site in lifting.",
+      "claim": "c13"
     }
   ],
   "redFlags": [
@@ -526,7 +547,7 @@
     {
       "key": "fly-handle",
       "kind": "hand",
-      "right": "Handle held with the wrist at the same angle all rep.",
+      "right": "Wrist held at the same angle all rep.",
       "wrong": "Wrist bending as the hands come together.",
       "claim": "c4"
     },
@@ -535,7 +556,10 @@
       "kind": "posture",
       "right": "Soft, fixed elbow bend, hands meeting in front.",
       "wrong": "Elbows bending deeply, pressing the handles.",
-      "claim": "c4, c6"
+      "claim": [
+        "c4",
+        "c6"
+      ]
     }
   ],
   "libraryDiff": {
@@ -543,5 +567,8 @@
     "remove": [],
     "why": "exercises.json: chest primary; front_delts secondary. StrengthLog (c9) says exactly this. PureGym also names triceps and core as engaged for stability; not added, as they hold rather than move the load."
   },
-  "anchorSource": "sl-cable-fly"
+  "anchorSource": "sl-cable-fly",
+  "notes": [
+    "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick (elbows bending into a press) is unchanged here. Verify #3's critic notes PureGym ties range and the soft elbow to 'minimising strain to the shoulder joint' (c7), so LR-31 step 2 may pick opening past the chest line (handlingMistakes[2]); that reading needs a supervisor ruling."
+  ]
 }

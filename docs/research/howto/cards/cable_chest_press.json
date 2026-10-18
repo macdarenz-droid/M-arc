@@ -335,6 +335,29 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c15",
+      "text": "Tempo: lower in a controlled 2-3 seconds; the press back is only 'semi explosive', so the 1 s up is a drawing convention (no source gives its seconds).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "nfpt-cable-press"
+      ],
+      "quotes": [
+        {
+          "source": "nfpt-cable-press",
+          "text": "Lower the cables towards the chest to about one inch before touching the chest. Do this in a controlled 2-3 second tempo.",
+          "where": "Movement, Phase 1"
+        },
+        {
+          "source": "nfpt-cable-press",
+          "text": "Push the cables back to the starting position in a semi explosive tempo. Do not completely lock the elbow just extend it so it is almost locked.",
+          "where": "Movement, Phase 2"
+        }
+      ]
     }
   ],
   "sources": [
@@ -472,7 +495,8 @@
       "up": 1,
       "down": 2,
       "pause": 0,
-      "claim": "c5"
+      "claim": "c15",
+      "text": "Down 2 s sits inside NFPT's 2-3 s lowering (c15). NFPT gives no seconds for the press, only 'semi explosive', so the 1 s up is a drawing convention (c15, WEAK; LR-33 pattern)."
     },
     "variantLine": null
   },
@@ -493,7 +517,7 @@
       "claim": "c1"
     },
     {
-      "step": "Take a handle in each hand and stand a foot or two in front of the cables.",
+      "step": "Stand a foot or two from the cables, a handle per hand.",
       "claim": "c1"
     },
     {
@@ -501,7 +525,7 @@
       "claim": "c2"
     },
     {
-      "step": "Handles just outside shoulder width, elbows just below 90 degrees, wrists over the elbows.",
+      "step": "Handles just outside shoulders, elbows just below 90 degrees, wrists over elbows.",
       "claim": "c3"
     },
     {
@@ -542,14 +566,20 @@
       "claim": "c6"
     },
     {
-      "mistake": "Shifting and jerking the body with a weight that is too heavy.",
+      "mistake": "Jerking the body, too heavy.",
       "fix": "Choose a weight you can press with the body still.",
-      "claim": "c7, c8"
+      "claim": [
+        "c7",
+        "c8"
+      ]
     },
     {
-      "mistake": "Gripping much wider than shoulder width or flaring the elbows.",
+      "mistake": "Gripping wide or flaring elbows.",
       "fix": "Handles just outside shoulder width, elbows about 45 degrees from the body.",
-      "claim": "c7, c3"
+      "claim": [
+        "c7",
+        "c3"
+      ]
     }
   ],
   "feel": {
@@ -572,12 +602,15 @@
     "watch": [
       {
         "muscleId": "core",
-        "claim": "c10, c11"
+        "claim": [
+          "c10",
+          "c11"
+        ]
       }
     ],
     "rows": [
       {
-        "where": "Chest, front of the shoulders, backs of the arms",
+        "where": "Chest, front shoulders, backs of arms",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c9",
@@ -587,21 +620,29 @@
         "where": "Stomach and sides working hard",
         "means": "Normal: standing presses load the trunk to keep you stable.",
         "fix": null,
-        "claim": "c10, c11",
+        "claim": [
+          "c10",
+          "c11"
+        ],
         "redFlag": null
       },
       {
-        "where": "Lower back aching",
-        "means": "Usually the back is arching.",
-        "fix": "Keep your spine neutral and brace your abs.",
-        "claim": "c6",
-        "redFlag": null
+        "where": "Lower back pain",
+        "means": "Fault: arching the back.",
+        "fix": "Stop and don't train through the pain. Keep your spine neutral.",
+        "claim": [
+          "c6"
+        ],
+        "redFlag": "back"
       },
       {
-        "where": "Pain in the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set; check your grip is not too wide.",
-        "claim": "c13, c7",
+        "where": "Shoulder pain",
+        "means": "Fault: gripping much wider than shoulder width, or flaring the elbows.",
+        "fix": "Stop and don't train through the pain. Keep elbows at a 45-degree angle.",
+        "claim": [
+          "c7",
+          "c13"
+        ],
         "redFlag": "shoulder"
       }
     ]
@@ -609,15 +650,22 @@
   "risks": [
     {
       "risk": "Wide grips and flared elbows stress the shoulder, a common injury site in lifting.",
-      "claim": "c7, c13"
+      "claim": [
+        "c7",
+        "c13"
+      ]
     },
     {
-      "risk": "Too much weight costs form and raises injury risk; add weight in small steps.",
-      "claim": "c7, c14"
+      "risk": "Too much weight costs form and raises injury risk. Add weight in small steps.",
+      "claim": [
+        "c7",
+        "c14"
+      ]
     }
   ],
   "redFlags": [
-    "shoulder"
+    "shoulder",
+    "back"
   ],
   "zooms": [
     {
@@ -632,7 +680,11 @@
       "kind": "posture",
       "right": "Staggered stance, spine neutral, handles at nipple height.",
       "wrong": "Lower back arched, handles up at the collarbone.",
-      "claim": "c2, c4, c6"
+      "claim": [
+        "c2",
+        "c4",
+        "c6"
+      ]
     }
   ],
   "libraryDiff": {
@@ -640,5 +692,8 @@
     "remove": [],
     "why": "exercises.json: chest primary; front_delts and triceps secondary, matching StrengthLog (c9). Core is shown as watch only (c10, c11), not added as a trained muscle."
   },
-  "anchorSource": "nfpt-cable-press"
+  "anchorSource": "nfpt-cable-press",
+  "notes": [
+    "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick (arching) is unchanged here. Verify #3's critic expects LR-31 step 2 to pick flared elbows: Bells of Steel lists 'Flaring your elbows: This can put excessive stress on your shoulder joints' before 'Arching your back: This can cause lower back pain' (c7, c6); NFPT's lack-of-retraction line is not on the card."
+  ]
 }

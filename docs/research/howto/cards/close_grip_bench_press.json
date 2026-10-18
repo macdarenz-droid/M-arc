@@ -30,7 +30,7 @@
     },
     {
       "field": "setup.spotter",
-      "why": "true for this child because the bar is lifted out of the same J-hooks over the face; the parent's spotter behind the head (parent c7) applies."
+      "why": "true for this child because the bar is lifted out of the same J-hooks over the face; the parent's spotter behind the head and straight-arm unrack (parent c7, c27) apply, and the step is the parent's string."
     },
     {
       "field": "zooms.bar-low-palm",
@@ -407,7 +407,8 @@
       "what": "Elbows drifting away from the ribs and the bar landing high on the chest (drawn high on the chest, never touching the neck).",
       "why": "It is the opposite of the two defining cues (ACE elbows-to-ribs, StrengthLog low touch) and brings the bar toward the neck (c10, MECH). No source read ranks close-grip faults by frequency.",
       "claim": "c2",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a close-grip fault. Set aside: StrengthLog's \"most people will have to use less weight in the close-grip bench press\" (c6) is about the load, and \"Most people find it comfortable to grip the bar somewhere around shoulder-width apart\" (c1) is about the grip; Stronger by Science's \"Most people touch the bar a bit lower on their chest when they bench with a close grip\" (c4) describes the touch point, not a fault; its \"most novice lifters drive the bar straight up initially\" and \"this is especially common for people who use the “bend the bar” cue\" are written for the regular bench press, another exercise; Its \"The final common issue people have when benching is discomfort at the biceps insertion\" names a discomfort with no fault tied to it. Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c11) is about all weight training. The elbows drifting away from the ribs with the bar landing high on the chest is the only named fault a quote on the card ties to harm: barbells compressing the neck killed weightlifters (c10; the link to a high touch is MECH). Stronger by Science's \"It’s risky for your shoulders (not to mention weaker) to flare through the whole lift and touch the bar high on your chest\" says the same for the regular bench. Loading it like the regular bench (c6) is a load choice, not a candidate; hips off the bench (c3) has no harm quote. drawable stays true: the side view shows the elbows' distance from the ribs and the touch point."
     },
     "tells": [
       {
@@ -439,8 +440,8 @@
   },
   "setup": [
     {
-      "step": "Set the safety pins slightly below where the bar touches your chest (inherited, parent c6).",
-      "claim": "barbell_bench_press:c6"
+      "step": "Set the safety pins slightly below where the bar touches your chest.",
+      "claim": "inherit:3"
     },
     {
       "step": "Lie down, shoulder blades together and down, feet on the floor.",
@@ -451,11 +452,11 @@
       "claim": "c1"
     },
     {
-      "step": "Lift the bar out, ideally with a spotter behind your head (inherited, parent c7).",
-      "claim": "barbell_bench_press:c7"
+      "step": "With a spotter behind your head, unrack the bar to straight arms.",
+      "claim": "inherit:4"
     },
     {
-      "step": "Add weight in small steps: 2-10%, once you can do one or two reps over your target.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c8"
     }
   ],
@@ -483,12 +484,12 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Elbows flaring out and the bar landing high on the chest.",
+      "mistake": "Elbows flaring, bar landing high.",
       "fix": "Keep the elbows close to your ribs and touch low.",
       "claim": "c2"
     },
     {
-      "mistake": "Loading it like your regular bench.",
+      "mistake": "Loading it like regular bench.",
       "fix": "Use less weight than your regular bench.",
       "claim": "c6"
     },
@@ -518,7 +519,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Backs of the upper arms, with some chest",
+        "where": "Backs of upper arms, some chest",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c6",
@@ -526,24 +527,36 @@
       },
       {
         "where": "Mostly the front of the shoulders",
-        "means": "The grip may have crept wider.",
+        "means": "A medium grip works the front shoulder more than a narrow one.",
         "fix": "Bring the hands in line with the shoulders.",
-        "claim": "c7",
+        "claim": [
+          "c7",
+          "c1"
+        ],
         "redFlag": null
       },
       {
-        "where": "Pain deep in the front of the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set.",
-        "claim": "c12",
+        "where": "Pain deep in the front shoulder",
+        "means": "Poor technique is a risk for shoulder injuries.",
+        "fix": "Stop and don't train through the pain. Keep elbows close to your ribs.",
+        "claim": [
+          "c12",
+          "c2"
+        ],
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Bar over the face and neck: touch low on the chest, wrap the thumbs and use safety pins or a spotter.",
-      "claim": "c10, c4, barbell_bench_press:c4, barbell_bench_press:c6, barbell_bench_press:c7"
+      "risk": "Bar over face and neck: touch low. Wrap thumbs. Use pins or a spotter.",
+      "claim": [
+        "c10",
+        "c4",
+        "inherit:0",
+        "inherit:3",
+        "inherit:4"
+      ]
     },
     {
       "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
@@ -561,9 +574,9 @@
     {
       "key": "bar-low-palm",
       "kind": "hand",
-      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "right": "Bar in the palm's base, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
-      "claim": "barbell_bench_press:c5"
+      "claim": "inherit:5"
     },
     {
       "key": "elbows-to-ribs",
