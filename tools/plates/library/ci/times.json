@@ -2,8 +2,15 @@
  "default": 280.8,
  "c0": 30,
  "once": {
-  "run": 971.1,
-  "shard": 13.9
+  "run": 1157,
+  "shard": 18.3
  },
- "ids": {}
+ "ids": {
+  "lib_barbell_row": 276.8,
+  "lib_landmine_row": 277.4,
+  "lib_one_arm_dumbbell_row": 279.6,
+  "lib_smith_machine_bench_press": 274,
+  "lib_smith_machine_incline_press": 272.9,
+  "lib_t_bar_row": 276.9
+ }
 }
