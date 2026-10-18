@@ -1,0 +1,32 @@
+/* HT-9: "Set up" and "Risks and when to stop" (plan 2.4 items 6-7; the "Where this comes from" section is
+   removed, owner decision LR-23: no sources or evidence labels in the app UI), the golden B rules for the
+   setup, risks, red-flag and disclaimer classes, scoped under .ht like every How-to rule (css.test). The eyebrow
+   class itself is already global (src/ui/styles.css); only the section's own margin reset is repeated here. No
+   new timing or theme token, so this block stays empty (css.test HT2-A6).
+   CSS ownership (supervisor ruling on HT-6's design note, PR #112, 2026-09-30): HT-6 owns the shared section
+   frame (`.hw-sec`) and `.st-show`, in its own file, so those two rules are NOT repeated here; every class below
+   is the setup/risks rows themselves. */
+/* ht-tokens:start */
+/* ht-tokens:end */
+
+/* Set it up */
+.ht .setup { display: grid; gap: var(--sp-3); }
+.ht .st-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+.ht .st-list li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text); }
+.ht .st-list li[hidden] { display: none; }
+.ht .st-n { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-pill); background: var(--surface-3, var(--surface-2)); border: 1px solid var(--border); font-size: var(--fs-meta); font-weight: var(--fw-semibold); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ht .fr-more { justify-self: start; min-height: 44px; padding: 0 16px; border-radius: var(--radius-pill); border: 1px solid var(--border); color: var(--text-2); font-size: var(--fs-small); font-weight: var(--fw-medium); }
+.ht .fr-more:hover { color: var(--text); }
+
+/* Risks and when to stop */
+.ht .risks { display: grid; gap: var(--sp-3); }
+.ht .rk-list { margin: 0; padding-left: 18px; display: grid; gap: var(--sp-2); font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text); }
+.ht .rk-list li::marker { color: var(--text-3); }
+.ht .redflag { display: flex; gap: 8px; padding: 10px 12px; border-radius: var(--radius-md); border: 1px solid color-mix(in srgb, var(--mistake) 35%, var(--border)); color: var(--text); font-size: var(--fs-small); line-height: var(--lh-small); }
+.ht .redflag:focus { outline: none; }
+.ht .redflag:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.ht .redflag svg { flex: none; margin-top: 1px; color: var(--mistake); }
+.ht .redflag div { display: grid; gap: 4px; }
+.ht .redflag .rf-name { font-weight: var(--fw-medium); }
+
+.ht .ht-disclaimer { margin-top: var(--sp-2); font-size: var(--fs-meta); line-height: var(--lh-meta); color: var(--text-2); }

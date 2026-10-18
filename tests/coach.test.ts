@@ -272,17 +272,20 @@ describe('recovery.scheduled-conflict / recovery.done-today (QA8-1)', () => {
     expect(doneToday!.means).toContain('Next: Upper on Mon');
   });
 
-  it('a different, unscheduled split done today keeps the old warning when the scheduled split is still pending', () => {
-    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_lower');
+  it('BUG-38: after any session today the coach names what was done and never warns about today\'s plan', () => {
+    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_push');
     const todaysChestSession = session('2026-09-26', [{ id: bench, sets: sets(60, 8, 'ideal', 3) }], 'split_chest');
     const ctx = { ...baseCoachExtras, today: '2026-09-26', now: new Date('2026-09-26T20:00:00Z').getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [priorHamSession, todaysChestSession] };
     const out = coachInsights(ctx, 20);
-    expect(out.some(i => i.id.startsWith('scheduled-conflict'))).toBe(true);
-    expect(out.some(i => i.id.startsWith('recovery.done-today'))).toBe(false);
+    expect(out.some(i => i.id.startsWith('scheduled-conflict'))).toBe(false);
+    const done = out.find(i => i.id === 'recovery.done-today:split_chest');
+    expect(done).toBeDefined();
+    expect(done!.title).toBe('Done today: Push');
+    expect(done!.means).toContain('Next: Upper on Mon');
   });
 
   it('nothing done today: the old warning is byte-identical to main, field for field', () => {
-    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_lower');
+    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_push');
     const ctx = { ...baseCoachExtras, today: '2026-09-26', now: new Date('2026-09-26T20:00:00Z').getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [priorHamSession] };
     const out = coachInsights(ctx, 20);
     const warning = out.find(i => i.id.startsWith('scheduled-conflict'));
@@ -299,5 +302,60 @@ describe('recovery.scheduled-conflict / recovery.done-today (QA8-1)', () => {
       muscle: 'hamstrings',
     });
     expect(out.some(i => i.id.startsWith('recovery.done-today'))).toBe(false);
+  });
+
+  it('BUG-38: SPLIT 2 trained Fri counts as Sat\'s, done early: no warning Sat', () => {
+    const priorHamSession = session('2026-09-25', [{ id: HAM, sets: sets(40, 10, 'max', 4) }], 'split_lower');
+    const ctx = { ...baseCoachExtras, today: '2026-09-26', now: new Date('2026-09-26T20:00:00Z').getTime(), splits: [splitLower, splitUpper], schedule, custom: [], sessions: [priorHamSession] };
+    const out = coachInsights(ctx, 20);
+    expect(out.some(i => i.id.startsWith('scheduled-conflict'))).toBe(false);
+    expect(out.some(i => i.id.startsWith('recovery.done-today'))).toBe(false);
+  });
+});
+
+describe('BUG-38 owner case and UI-R03 day off in the coach', () => {
+  const S1: Split = { id: 'split_1', name: 'SPLIT 1 - UPPER BODY', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] };
+  const S2: Split = { id: 'split_2', name: 'SPLIT 2 - LOWER AND CORE', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: 'lib_seated_leg_curl', sets: 3 }] };
+  const S3: Split = { id: 'split_3', name: 'SPLIT 3', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: 'lib_lat_pulldown', sets: 3 }] };
+  const S4: Split = { id: 'split_4', name: 'SPLIT 4 - CONDITIONING', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: 'lib_standing_calf_raise', sets: 3 }] };
+  const at = (sp: Split, day: string, h: number) => {
+    const [y, m, d] = day.split('-').map(Number);
+    return { ...sessionAt(local(y!, m!, d!, h, 0).toISOString(), local(y!, m!, d!, h + 1, 0).toISOString(), [{ id: sp.exercises[0]!.exerciseId, sets: sets(60, 8, 'max', 4) }], sp.id), day, splitName: sp.name };
+  };
+
+  it('BUG-38 owner: \'Done today: SPLIT 3\', \'Next: SPLIT 2 - LOWER AND CORE on Sun.\', no scheduled-conflict, no text containing \'SPLIT 3 is next\'', () => {
+    const ctx = {
+      ...baseCoachExtras, today: '2026-10-03', now: local(2026, 10, 3, 19, 0).getTime(), custom: [],
+      splits: [S1, S2, S3, S4], schedule: { ...emptySchedule(), tue: S1.id, thu: S4.id, sat: S2.id, sun: S3.id },
+      sessions: [at(S1, '2026-09-29', 17), at(S4, '2026-10-01', 17), at(S3, '2026-10-03', 17)],
+    };
+    const out = coachInsights(ctx, 20);
+    expect(out.some(i => i.id.startsWith('scheduled-conflict'))).toBe(false);
+    const done = out.find(i => i.id === 'recovery.done-today:split_3');
+    expect(done).toBeDefined();
+    expect(done!.title).toBe('Done today: SPLIT 3');
+    expect(done!.means).toContain('Next: SPLIT 2 - LOWER AND CORE on Sun.');
+    expect(out.map(i => JSON.stringify(i)).join(' ')).not.toContain('SPLIT 3 is next');
+  });
+
+  it('BUG-38: two splits done today are named together', () => {
+    const ctx = {
+      ...baseCoachExtras, today: '2026-10-03', now: local(2026, 10, 3, 19, 0).getTime(), custom: [],
+      splits: [S1, S2, S3, S4], schedule: { ...emptySchedule(), tue: S1.id, thu: S4.id, sat: S2.id, sun: S3.id },
+      sessions: [at(S2, '2026-10-03', 10), at(S3, '2026-10-03', 17)],
+    };
+    const done = coachInsights(ctx, 20).find(i => i.id === 'recovery.done-today:split_2');
+    expect(done?.title).toBe('Done today: SPLIT 2 - LOWER AND CORE + SPLIT 3');
+    expect(done?.noticed).toBe('SPLIT 2 - LOWER AND CORE + SPLIT 3 are done for today.');
+    expect(done?.means).toContain('Next: SPLIT 1 - UPPER BODY on Tue.');
+  });
+
+  it('BUG-38/UI-R03: no scheduled-conflict on a day off', () => {
+    const push: Split = { id: 'split_push', name: 'Push', color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId: 'lib_barbell_bench_press', sets: 3 }] };
+    const wed = { ...sessionAt(local(2026, 9, 30, 18, 0).toISOString(), local(2026, 9, 30, 19, 0).toISOString(), [{ id: 'lib_barbell_bench_press', sets: sets(100, 6, 'max', 6) }], 'split_other'), day: '2026-09-30' };
+    const ctx = { ...baseCoachExtras, profile: { name: 'N' }, today: '2026-10-01', now: local(2026, 10, 1, 9, 0).getTime(), custom: [], splits: [push], schedule: { ...emptySchedule(), thu: 'split_push' }, sessions: [wed] };
+    // Wed: chest trained in another split (a Push session on Wed would cover Thu early). Without the day off, the warning shows.
+    expect(coachInsights(ctx, 20).find(i => i.id.startsWith('scheduled-conflict'))?.title).toMatch(/^Push today, but chest is only \d+% recovered$/);
+    expect(coachInsights({ ...ctx, daysOff: ['2026-10-01'] }, 20).some(i => i.id.startsWith('scheduled-conflict'))).toBe(false);
   });
 });

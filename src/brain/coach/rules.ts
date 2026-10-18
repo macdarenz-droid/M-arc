@@ -10,7 +10,8 @@ import { kgToDisplay } from '@/core/units';
 import type { CheckIn, DailyHealth, Deload, Exercise, FreshMark, InsightFeedback, Profile, ProfileChange, RecoveryModel, Session, Split, Weekday } from '@/core/models';
 import { muscleLabel, type MuscleId } from '@/data/muscles';
 import { DEFAULT_GOAL, GOAL_BY_ID, GOALS, type GoalId } from '@/data/goals';
-import { formatHours, weekdayOf, daysBetween, addDays, weekStart, trainedTodaySessions, nextScheduled, WEEKDAY_LABEL } from '@/core/dates';
+import { formatHours, weekdayOf, daysBetween, addDays, weekStart, trainedTodaySessions, WEEKDAY_LABEL } from '@/core/dates';
+import { splitPlan, type SplitPlan } from '../splitPlan';
 import { muscleDoses, recoveryAt, recoveryStatus, trainingAgeMonths, type MuscleRecovery } from '../recovery';
 import { exerciseHistory, isActive, modeOf } from '../history';
 import { PLATEAU_MIN_SPAN_DAYS, plateauStatus, plateauWindow } from '../trend';
@@ -165,24 +166,33 @@ function listJoin(xs: string[]): string {
   return xs.length <= 1 ? (xs[0] ?? '') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`;
 }
 
-/** QA8-2: the next scheduled split (and its weekday) after `day`, resolved to the actual Split. */
-function nextScheduledSplitOf(splits: Split[], schedule: Record<Weekday, string | null>, day: string): { split: Split; weekday: Weekday } | null {
-  const n = nextScheduled(schedule, day);
-  if (!n) return null;
-  const split = splits.find(s => s.id === n.splitId);
-  return split ? { split, weekday: n.weekday } : null;
+/** BUG-38: the plan as of `day` (now = `now`), and the split readiness targets that day: none on a day off (UI-R03). */
+function planAt(ctx: CoachContext, day: string, now: number): { plan: SplitPlan; scheduledSplit: Split | undefined } {
+  const plan = splitPlan({ schedule: ctx.schedule, splits: ctx.splits, sessions: ctx.sessions, daysOff: ctx.daysOff, today: day, now });
+  return { plan, scheduledSplit: plan.today && !plan.today.off ? plan.today.split : undefined };
+}
+
+/**
+ * Today's plan, built once per context and shared by derive() and the rules. Memoised on the
+ * context rather than kept in Derived, so a rule run with a hand-built Derived still sees it.
+ */
+const todayPlans = new WeakMap<CoachContext, ReturnType<typeof planAt>>();
+function todayPlanOf(ctx: CoachContext): ReturnType<typeof planAt> {
+  let p = todayPlans.get(ctx);
+  if (!p) { p = planAt(ctx, ctx.today, ctx.now); todayPlans.set(ctx, p); }
+  return p;
 }
 
 function derive(ctx: CoachContext): Derived {
   const names = new Map<string, string>();
   for (const s of [...ctx.sessions].reverse()) for (const e of s.exercises) if (!names.has(e.exerciseId)) names.set(e.exerciseId, e.name);
   const recovery = recoveryStatus({ sessions: ctx.sessions, custom: ctx.custom, now: ctx.now, profile: ctx.profile, healthDays: ctx.healthDays, checkIns: ctx.checkIns, freshMarks: ctx.freshMarks, recoveryModel: ctx.recoveryModel });
-  const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(ctx.today)]);
+  const { plan, scheduledSplit } = todayPlanOf(ctx);
   const exerciseIds = [...names].map(([id, name]) => ({ id, name }));
   const today = readinessWithInputs({
     today: ctx.today, now: ctx.now, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === ctx.today),
     checkInHistory: ctx.checkIns.filter(c => c.day !== ctx.today), recovery, scheduledSplit,
-    next: nextScheduledSplitOf(ctx.splits, ctx.schedule, ctx.today), custom: ctx.custom, sessions: ctx.sessions,
+    next: plan.next, custom: ctx.custom, sessions: ctx.sessions,
   });
   return {
     recovery,
@@ -229,43 +239,52 @@ export const RULES: Rule[] = [
   {
     id: 'recovery.scheduled-conflict',
     run: (ctx, d) => {
-      const split = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(ctx.today)]);
+      // BUG-38/UI-R03 (D-BUG38): never on a day off; after any session today, name what was done
+      // and the plan's next split, and never warn about today's own plan (revises QA8-1 point 3).
+      const { plan } = todayPlanOf(ctx);
+      const planned = plan.today;
+      if (planned?.off) return [];
+      const doneToday = trainedTodaySessions(ctx.sessions, ctx.today, ctx.now);
+      if (doneToday.length) {
+        if (!planned && !plan.doneEarly) return [];
+        const done = doneToday.filter((s, i) => doneToday.findIndex(x => x.splitId === s.splitId) === i);
+        const doneMuscles = new Set<MuscleId>();
+        for (const s of done) {
+          const sp = ctx.splits.find(x => x.id === s.splitId);
+          // A split that no longer exists: the exercises that session logged.
+          for (const id of sp ? sp.exercises.map(e => e.exerciseId) : s.exercises.map(e => e.exerciseId)) findExercise(id, ctx.custom)?.primary.forEach(m => doneMuscles.add(m));
+        }
+        if (!d.recovery.some(r => doneMuscles.has(r.muscle) && !r.ready)) return [];
+        const next = plan.next;
+        let body = 'Rest and recover.';
+        if (next) {
+          const nextPrimary = new Set<MuscleId>();
+          for (const se of next.split.exercises) findExercise(se.exerciseId, ctx.custom)?.primary.forEach(m => nextPrimary.add(m));
+          const hoursAhead = daysBetween(ctx.today, next.day) * 24;
+          const notReady = d.recovery.filter(r => nextPrimary.has(r.muscle) && r.hoursLeft > hoursAhead).sort((a, b) => b.hoursLeft - a.hoursLeft)[0];
+          let warn = '';
+          if (notReady) {
+            const window = notReady.readyInHours ? `in ${formatHours(notReady.readyInHours[0])}–${formatHours(notReady.readyInHours[1])}` : notReady.beyondCap ? 'in more than 5 days' : `in about ${formatHours(notReady.hoursLeft)}`;
+            warn = ` ${muscleLabel(notReady.muscle)} should be ready ${window}.`;
+          }
+          body = `Next: ${next.split.name} on ${WEEKDAY_LABEL[next.weekday]}.${warn}`;
+        }
+        const names = done.map(s => ctx.splits.find(x => x.id === s.splitId)?.name ?? s.splitName);
+        return [{
+          id: `recovery.done-today:${done[0]!.splitId}`,
+          category: 'recovery', priority: 335,
+          title: `Done today: ${names.join(' + ')}`,
+          noticed: names.length > 1 ? `${names.join(' + ')} are done for today.` : `${names[0]} is done for today.`,
+          means: body,
+          action: 'Recover well before the next one.',
+        }];
+      }
+      const split = planned?.split;
       if (!split) return [];
       const primaryMuscles = new Set<MuscleId>();
       for (const se of split.exercises) findExercise(se.exerciseId, ctx.custom)?.primary.forEach(m => primaryMuscles.add(m));
       const worst = d.recovery.filter(r => primaryMuscles.has(r.muscle) && !r.ready).sort((a, b) => a.pct - b.pct)[0];
       if (!worst) return [];
-      // QA8-1: the split that caused this fatigue is already done today (or ended today within the
-      // last 6h, per QA8-4) — re-warning about it just re-reports the fatigue it just caused.
-      const doneToday = trainedTodaySessions(ctx.sessions, ctx.today, ctx.now);
-      if (doneToday.some(s => s.splitId === split.id) || worst.lastDay === ctx.today) {
-        const next = nextScheduled(ctx.schedule, ctx.today);
-        let body = 'Rest and recover.';
-        if (next) {
-          const nextSplit = ctx.splits.find(s => s.id === next.splitId);
-          const label = nextSplit?.name ?? 'your next session';
-          let warn = '';
-          if (nextSplit) {
-            const nextPrimary = new Set<MuscleId>();
-            for (const se of nextSplit.exercises) findExercise(se.exerciseId, ctx.custom)?.primary.forEach(m => nextPrimary.add(m));
-            const hoursAhead = daysBetween(ctx.today, next.day) * 24;
-            const notReady = d.recovery.filter(r => nextPrimary.has(r.muscle) && r.hoursLeft > hoursAhead).sort((a, b) => b.hoursLeft - a.hoursLeft)[0];
-            if (notReady) {
-              const window = notReady.readyInHours ? `in ${formatHours(notReady.readyInHours[0])}–${formatHours(notReady.readyInHours[1])}` : notReady.beyondCap ? 'in more than 5 days' : `in about ${formatHours(notReady.hoursLeft)}`;
-              warn = ` ${muscleLabel(notReady.muscle)} should be ready ${window}.`;
-            }
-          }
-          body = `Next: ${label} on ${WEEKDAY_LABEL[next.weekday]}.${warn}`;
-        }
-        return [{
-          id: `recovery.done-today:${split.id}`,
-          category: 'recovery', priority: 335,
-          title: `Done today: ${split.name}`,
-          noticed: `${split.name} is done for today.`,
-          means: body,
-          action: 'Recover well before the next one.',
-        }];
-      }
       const firm = worst.pct < 60;
       return [{
         id: `scheduled-conflict:${split.id}:${worst.muscle}`,
@@ -746,11 +765,11 @@ export function readinessSeries(ctx: CoachContext, days = 5): Array<ReadinessRes
     const day = addDays(ctx.today, -i);
     const now = new Date(`${day}T23:59:59`).getTime();
     const recovery = recoveryAt(doses, { ...base, now });
-    const scheduledSplit = ctx.splits.find(s => s.id === ctx.schedule[weekdayOf(day)]);
+    const { plan, scheduledSplit } = planAt(ctx, day, now);
     out.push(readiness({
       today: day, now, healthDays: ctx.healthDays, checkIn: ctx.checkIns.find(c => c.day === day),
       checkInHistory: ctx.checkIns.filter(c => c.day !== day), recovery, scheduledSplit,
-      next: nextScheduledSplitOf(ctx.splits, ctx.schedule, day), custom: ctx.custom, sessions: ctx.sessions,
+      next: plan.next, custom: ctx.custom, sessions: ctx.sessions,
     }));
   }
   return out;

@@ -37,6 +37,7 @@ Scripts cannot use `Date.now()`, `Math.random()` or a bare `new Date()`. Pass an
 | `marc-rating.js` | App rating: two read-only researchers in parallel (the code on main, the market). No args. Output: `docs/research/app-rating/`. | Done 10-01. |
 | `gym-finder-review.js` | Gym Finder (#158): three read-only agents in parallel (proposal, codebase fit, external constraints). No args. Output: `docs/research/gym-finder/gf-0.md` to `gf-2.md`. | Done 10-01. Gym Finder is **parked**: no rerun without the owner's approval. |
 | `gym-finder-redteam.js` | Gym Finder: one red-team agent attacks the draft plan. It reads its inputs from `origin/main:docs/research/gym-finder/`. Output: `docs/research/gym-finder/gf-redteam.md`. | Same as above. |
+| `pilot-a-critic.js` | Library pilot A (#109), plan 3.4: one Opus agent builds a blind set in the scratchpad (18 pilot plates, 2 hidden approved plates, 2 planted defects, shuffled, facts per plate, the answer key only in its output), then a fresh Opus critic scores R1-R10; plain code checks the calibration (hidden approved plates all at 4 or more, both plants scored below 4 on their item) and reruns a fresh critic up to 3 times. Args: `{"scratch": "<scratchpad dir>"}`. For another batch, change the branch, head, plate count and expected plates page sha in the prepare prompt. | Run 08:00 (`wf_1d2fcf84-613`) on `c6e5b66`: run 2 valid, result on #109. Rerun 09:27 (`wf_d3676188-4dd`) on `c19805a`: 17 plates, after the fix round and D-LIB8-fly (dumbbell fly held); run 2 valid, 13 pass, 4 below the bar. Rerun 11:05 (`wf_3a60c2a3-e4c`) on `1da9014` after that fix round and D-LIB8-floor. The critic must label plates exactly by folder name (run 1 of 09:27 was invalid for that). |
 
 ### HT-7 result
 
@@ -44,4 +45,22 @@ Done. Top cause (≈0.75): in Chromium 141 an SVG text's font size includes oute
 
 ## Other scripts from this session
 
-Many other Workflows ran in this supervisor session (for example the How-to plans and plate critics, the architecture review ARCH-1, the library How-to architecture, the Escobar report plan). Their scripts live only in the session's folder on the current account and are lost on an account switch; they are not kept here. Their results are in the research folders, the cards and `docs/COACHING-DECISIONS.md`. To redo one, rebuild it from the shape above and the matching research README.
+Many other Workflows ran in the first supervisor session (for example the How-to plans and plate critics, the architecture review ARCH-1, the library How-to architecture, the Escobar report plan). Their scripts live only in the session's folder on the current account and are lost on an account switch; they are not kept here. Their results are in the research folders, the cards and `docs/COACHING-DECISIONS.md`. To redo one, rebuild it from the shape above and the matching research README.
+
+## Scripts added 2026-10-17/18 (supervisor session_01SNCyDETVkqVxtLoQxn2Ue9)
+
+Each takes its inputs through `args` (paths, shas). Read the script's `args` uses before you run it, and point the paths at your own scratchpad.
+
+| Script | Shape | Used for |
+|---|---|---|
+| `research-verify.js` | LR-29: a planter puts 2 errors in a history-free copy, a blind Opus critic reviews, the run counts only if both plants are caught and the tier-A plant is rated blocker/high (up to 3 runs) | research wave verifies. New `plantScope` arg: plant only where the critic reviews in full (w2's first 3 runs were invalid without it) |
+| `w2-triage.js` | dedupe many critic findings, one adversarial verifier per item on the real head, a judge for open questions, per-owner fix packets | a research fix round |
+| `w2-rulings-review.js` | 2 lenses per draft ruling (consistency, effect on approved material), final judge, packets revised | before any research ruling is sent |
+| `lib5-note-r2.js` | 3 lenses (rulings, quotes, scope), one refuter per finding, judge | a builder's design note against its rulings |
+| `lib9a-r2-look.js` | evidence audit + blind plate critic (renders beside anchors) + rules lens, judge writes the next lib4-cards section | a drawing builder's milestone post |
+| `lb1-card-fields-verify.js` | blind content verifier with one planted wrong value (D-LIB9-CARDFIELDS) | machine card fields |
+| `h10-card.js`, `cards-r2.js` | draft a card, 2 checker lenses, fixer; then extra check-and-fix rounds | new cards (LIB-3b took 3 rounds) |
+| `gate-flake-4.js` | root cause with a repro probe, card, adversarial check | a CI flake (GATE-FLAKE-N) |
+| `ci-watch-floor.js` | build in a worktree with local proofs, fresh adversarial review, fixer | supervisor-owned `.github/**` changes |
+| `review-lib4c-wiring.js` | 2-lens review of CI wiring | `.github/**` wiring for a card |
+| `lib5-card-apply-amendments.js` | apply numbered amendments to a card file exactly, then a checker | card amendments |

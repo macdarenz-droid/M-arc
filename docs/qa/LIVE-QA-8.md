@@ -17,10 +17,10 @@ Fix them in this order. Each fix gets a test that fails before and passes after,
      - Title: "Done today: {split name}".
      - Body: "Next: {next scheduled split} on {weekday}." Find the next scheduled split by walking `ctx.schedule` forward from tomorrow, at most 7 days. If nothing is scheduled, use "Rest and recover."
      - If the next split's primary muscles include a muscle that won't be ready (90%) by that day, add "{muscle} should be ready {window}", using readyInHours.
-  3. A different, unscheduled workout done today that didn't train the scheduled split's muscles keeps the old warning.
+  3. A different, unscheduled workout done today that didn't train the scheduled split's muscles keeps the old warning. Revised by D-BUG38.
 - **Tests** (tests/coach…):
   - The owner's case, split done today with hamstrings at 18%: no `scheduled-conflict` insight, and the `done-today` insight names the next split and day.
-  - A different split done today, with the scheduled one still pending: the warning still shows.
+  - A different split done today, with the scheduled one still pending: the warning still shows. Revised by D-BUG38.
   - Nothing done today: the old behaviour is unchanged.
 
 ## Medium

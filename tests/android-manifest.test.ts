@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const BASE = `<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -34,5 +35,20 @@ describe('patch_manifest.py', () => {
     expect(once).toContain('android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29"');
     const twice = patched(once);
     expect(twice.match(/READ_EXTERNAL_STORAGE/g)?.length).toBe(1);
+  });
+
+  it('PLAY-HR: the `permissions` list is exactly the 4 read types the app uses plus the 2 non-health ones, never READ_HEART_RATE', () => {
+    const src = readFileSync(fileURLToPath(new URL('../native/patch_manifest.py', import.meta.url)), 'utf8');
+    const body = src.match(/^permissions = \[([\s\S]*?)\]/m)?.[1];
+    expect(body, 'permissions list not found in patch_manifest.py').toBeDefined();
+    const names = [...body!.matchAll(/"([^"]+)"/g)].map(m => m[1]);
+    expect(names).toEqual([
+      'android.permission.POST_NOTIFICATIONS',
+      'android.permission.SCHEDULE_EXACT_ALARM',
+      'android.permission.health.READ_STEPS',
+      'android.permission.health.READ_SLEEP',
+      'android.permission.health.READ_ACTIVE_CALORIES_BURNED',
+      'android.permission.health.READ_RESTING_HEART_RATE',
+    ]);
   });
 });

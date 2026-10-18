@@ -2,7 +2,7 @@
 import { Button, Row, Sheet } from '@/ui/primitives';
 import { lastHealthError, openHealthPermissions } from '@/native/health';
 
-const TYPE_LABEL: Record<string, string> = { READ_STEPS: 'Steps', READ_SLEEP: 'Sleep', READ_HEART_RATE: 'Heart rate', READ_ACTIVE_CALORIES_BURNED: 'Active calories', READ_RESTING_HEART_RATE: 'Resting heart rate' };
+const TYPE_LABEL: Record<string, string> = { READ_STEPS: 'Steps', READ_SLEEP: 'Sleep', READ_ACTIVE_CALORIES_BURNED: 'Active calories', READ_RESTING_HEART_RATE: 'Resting heart rate' };
 
 export function HealthDiagnosticSheet({ onClose }: { onClose: () => void }) {
   const e = lastHealthError;
@@ -11,7 +11,6 @@ export function HealthDiagnosticSheet({ onClose }: { onClose: () => void }) {
     ['Steps', r.steps ? String(r.steps) : '—'],
     ['Sleep', r.sleepMinutes ? `${r.sleepMinutes} min` : '—'],
     ['Resting heart rate', r.restingHR ? `${r.restingHR} bpm` : '—'],
-    ['Latest heart rate', r.workoutHR ? `${r.workoutHR} bpm` : '—'],
     ['Active calories', r.activeCalories ? `${r.activeCalories} kcal` : '—'],
   ] : [];
   return (

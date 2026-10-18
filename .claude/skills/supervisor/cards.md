@@ -4,6 +4,14 @@
 
 - Plan hard cards before building (owner, 2026-09-29). For complex work (animation production, simulation, anything with several possible designs), the supervisor first runs a phased plan: understand the problem, draft competing designs, have independent judges score them, then write the build cards. Builders on those cards write a short design note and post it on the PR as a progress check-in before bulk building; the supervisor reads it the next tick and re-guides or stops early. Small fixes stay simple, with no extra agents.
 
+- For repeated families, validate a representative end-to-end slice and the highest-risk case before bulk production. Reuse approved patterns; isolate exceptions for their own checks rather than spreading an unproven pattern.
+
+## Dependencies
+
+- Keep `depends_on` for compatibility with the approved plan, and make its meaning explicit with `build_prerequisites` and `merge_prerequisites`. Name the shared-file owner alongside `write_scope` and `reserved_paths`; use the existing ownership rules.
+- A merge-order-only dependency need not block build-ahead **only where the approved plan permits it** and the actual build prerequisites are met. Preserve explicit "no", "design note only", approval, shared-file and lane restrictions. An unclear dependency is clarified against the plan, not silently waived.
+- State the deliverable, acceptance evidence and finish condition for the phase the card serves. Building a slice is distinct from accepting the integrated release candidate or publishing to a store.
+
 ## Collision check before a card is `ready`
 
 Before a card is `ready`:

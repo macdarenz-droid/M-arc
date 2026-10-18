@@ -4,6 +4,9 @@ import { buildManifest } from '@/escobar/context/manifest';
 import { MODE_ADDENDUM } from '@/escobar/context/modes';
 import { ctxOf, sixMonthsState, emptyState, twoWeeksState } from './fixtures';
 import type { MemoryItem } from '@/core/models';
+import { makeCtx } from '@/escobar/tools/context';
+import { freshState, emptySchedule } from '@/core/models';
+import { sessionAt, sets } from '../helpers';
 
 describe('situation brief (§11.2)', () => {
   it('is at most 6,000 (and within its 3,000 cap) on six months of data', () => {
@@ -135,5 +138,26 @@ describe('BUG-33 the "now" line names the unit of the days since the last sessio
   it('three days ago', async () => {
     const b = await briefAt(23);
     expect(b.text.split('\n')[0]).toBe('now: sat 2026-09-26, night 04:51; last session 3 [f1] days ago');
+  });
+});
+
+describe('BUG-38 / UI-R03: the brief follows the plan (D-BUG38)', () => {
+  const local = (day: string, h: number) => { const [y, m, d] = day.split('-').map(Number); return new Date(y!, m! - 1, d!, h, 0); };
+  const sp = (id: string, name: string, exerciseId: string) => ({ id, name, color: '#fff', focus: [], createdAt: '', exercises: [{ exerciseId, sets: 3 }] });
+  const S2 = sp('split_2', 'SPLIT 2 - LOWER AND CORE', 'lib_seated_leg_curl'), S3 = sp('split_3', 'SPLIT 3', 'lib_lat_pulldown');
+  const sat = { ...sessionAt(local('2026-10-03', 17).toISOString(), local('2026-10-03', 18).toISOString(), [{ id: 'lib_lat_pulldown', sets: sets(60, 8, 'max', 4) }], S3.id), day: '2026-10-03', splitName: S3.name };
+  const own = (extra = {}) => ({ ...freshState(), splits: [S2, S3], schedule: { ...emptySchedule(), sat: S2.id, sun: S3.id }, ...extra });
+  const today = (s: ReturnType<typeof own>, day: string, h: number) => buildBrief({ ctx: makeCtx(s, local(day, h).getTime()), mode: 'chat', turnIndex: 0, ledger: [] }).lines.today!;
+
+  it('brief contains \'moved from sat\'', () => {
+    expect(today(own({ sessions: [sat] }), '2026-10-04', 8)).toMatch(/^scheduled SPLIT 2 - LOWER AND CORE \(splitId split_2\), moved from sat;/);
+  });
+  it('day off line', () => {
+    expect(today(own({ daysOff: ['2026-10-03'] }), '2026-10-03', 9)).toMatch(/^day off, SPLIT 2 - LOWER AND CORE planned \(splitId split_2\);/);
+  });
+  it('done early line', () => {
+    // SPLIT 2 on Fri covers Sat early.
+    const fri = { ...sat, day: '2026-10-02', splitId: S2.id, splitName: S2.name, startedAt: local('2026-10-02', 17).toISOString(), endedAt: local('2026-10-02', 18).toISOString() };
+    expect(today(own({ sessions: [fri] }), '2026-10-03', 9)).toMatch(/^SPLIT 2 - LOWER AND CORE done early on fri;/);
   });
 });

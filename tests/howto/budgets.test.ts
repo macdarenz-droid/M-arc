@@ -4,6 +4,7 @@
 // without re-measuring the chunk and recording who did it and why.
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { SHIPPED } from './shipped-rows';
 
 interface Budget { chunk: string; rawMax: number; gzMax: number; measuredRaw: number; measuredGz: number; setBy: string; reason: string }
 
@@ -39,9 +40,20 @@ describe('HT-3c B3: tests/howto/budgets.json', () => {
   });
 
   it('has an entry for every chunk the gate budgets, and no stale ht-<slug> entry', () => {
-    const slugs = Object.values(rows).map(r => `ht-${r.slug}-*.js`);
+    // LIB-2b (lib4-cards 11.1 item 6): the registry's shipped rows, not the 8 alone; at the 8 nothing changes
+    expect(Object.keys(rows)).toEqual(SHIPPED.slice(0, 8).map(r => r.id));
+    const slugs = SHIPPED.map(r => `ht-${r.slug}-*.js`);
     const names = file.budgets.map(b => b.chunk);
     for (const c of ['HowToSheet-*.js', 'HowToSheet-*.css', ...slugs]) expect(names, c).toContain(c);
     for (const n of names) if (/^ht-.*\.js$/.test(n)) expect(slugs, n).toContain(n);
+  });
+
+  it('LIB-2b: every shipped row\'s posture- and feel- chunk has an entry, and none is stale', () => {
+    const names = file.budgets.map(b => b.chunk);
+    for (const kind of ['posture', 'feel']) {
+      const want = SHIPPED.map(r => `${kind}-${r.chromeId}-*.js`);
+      for (const c of want) expect(names, c).toContain(c);
+      for (const n of names) if (n.startsWith(`${kind}-`)) expect(want, n).toContain(n);
+    }
   });
 });

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 import { AskAbout } from '@/escobar/ui/AskAbout';
 import { state } from '@/core/store';
 import { go } from '@/app/router';
-import { insights, recovery, scheduledSplit, sessionsToday, streak, today, todayReadiness, week } from '@/app/selectors';
+import { insights, recovery, sessionsToday, streak, today, todayPlan, todayReadiness, week } from '@/app/selectors';
 import { Button, Card, Chip, Section, Stat } from '@/ui/primitives';
 import { IconChevron, IconFlame, IconGear, IconPlay } from '@/ui/icons';
 import { settingsOpen } from '@/app/router';
@@ -14,6 +14,7 @@ import { mindsetForDay, sparkIndexForDay } from '@/brain/coach/cues';
 import { CATEGORY_LABEL } from '@/brain/coach/rules';
 import { requestStart } from '../workout/Train';
 import { setDayOff } from './dayOff';
+import { sessionCardState } from './cardState';
 import { INSIGHT_COLOR } from '../coach/Coach';
 import { MuscleMap } from '@/ui/MuscleMap';
 import { LogoMark } from '@/ui/Logo';
@@ -25,7 +26,6 @@ function greeting(): string {
 
 export function Today() {
   const s = state.value;
-  const split = scheduledSplit.value;
   const done = sessionsToday.value;
   const live = s.active;
   const rec = recovery.value;
@@ -39,9 +39,9 @@ export function Today() {
   const spark = SPARKS[sparkIndexForDay(dayOfYear, Number(today.value.slice(0, 4)), SPARKS.length)]!;
   const values = Object.fromEntries(rec.filter(r => r.lastTrainedAt).map(r => [r.muscle, r.pct]));
 
-  // RG-19 (D4): a scheduled day taken off reads as its own state and counts as unscheduled.
-  const off = s.daysOff.includes(today.value);
-  const status = live ? 'live' : done.length ? 'done' : split ? (off ? 'off' : 'ready') : 'rest';
+  // RG-19 (D4): a scheduled day taken off reads as its own state. BUG-38: the split comes from the plan.
+  const card = sessionCardState({ live: !!live, doneCount: done.length, plan: todayPlan.value });
+  const { status, split } = card;
   usePalaceFocus('today.header', { status });
 
   return (
@@ -76,7 +76,7 @@ export function Today() {
         )}
         {status === 'ready' && split && (
           <div class="stack-sm">
-            <div class="eyebrow">Scheduled today</div>
+            <div class="eyebrow">{card.eyebrow}</div>
             <h2>{split.name}</h2>
             <p class="muted small">{split.exercises.length} exercises planned.</p>
             <div class="row">
@@ -90,6 +90,13 @@ export function Today() {
             <div class="eyebrow">Day off</div>
             <h2>{split.name}</h2>
             <div class="row"><Button onClick={() => { setDayOff(today.value, false); requestStart(split); go('train'); }}><IconPlay /> Train anyway</Button><Button variant="quiet" onClick={() => setDayOff(today.value, false)}>Undo day off</Button></div>
+          </div>
+        )}
+        {status === 'early' && split && (
+          <div class="stack-sm">
+            <div class="eyebrow">{card.eyebrow}</div>
+            <h2>{split.name}</h2>
+            <Button onClick={() => go('train')}>Choose a workout</Button>
           </div>
         )}
         {status === 'rest' && (

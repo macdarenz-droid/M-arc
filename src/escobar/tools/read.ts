@@ -30,12 +30,14 @@ import { substitutesFor } from '@/brain/substitute';
 import { pickCue, equipmentGroup } from '@/brain/coach/cues';
 import { flagsForSet } from '@/brain/fidelity';
 import { autoregulationSuggestion } from '@/brain/coach/live';
-import { loadableNear, loadableValues, loadMenu, loggedLoads, resolveProfile } from '@/brain/units';
+import { loadableNear, loadableValues, loadMenu, loggedLoads, menuProfile } from '@/brain/units';
 import { findInApp } from '../palace/registry';
 import { firstWorkingSet, isWorkingSet } from '@/brain/exposure';
+import { elapsedSec, restRemainingSec } from '@/slices/workout/session';
+import { doneSets } from '@/slices/workout/doneSets';
 import { one } from '../context/brief';
 import {
-  progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, hoursLeftOut, readinessToday, recoveryAt, redactDrivers, scheduledSplitFor, todayOverrideOf, type ToolCtx,
+  progressionCtxFor, activeDeloadOf, coachCtx, exerciseName, exerciseOf, hoursLeftOut, readinessToday, recoveryAt, redactDrivers, splitPlanOf, todayOverrideOf, type ToolCtx,
 } from './context';
 
 export class ToolError extends Error {}
@@ -71,7 +73,7 @@ export function capJson<T>(data: T, maxBytes: number, { dropFrom = 'end' }: { dr
 
 /** A load in canonical kg plus the equipment's own reading. */
 export function loadOf(ctx: ToolCtx, exerciseId: string, kg: number): { kg: number; unit: 'kg' | 'lb'; value: number } {
-  const profile = resolveProfile(exerciseId, ctx.state.units.activeGymId, ctx.state.units, exerciseOf(ctx, exerciseId));
+  const profile = menuProfile(exerciseId, ctx.state.units.activeGymId, ctx.state.units, exerciseOf(ctx, exerciseId));
   // QA2-FE-5: the app's own conversion, so quarter-pound loads (26.25 lb) read as on screen.
   const value = kgToDisplay(kg, profile.unit);
   return { kg: r2(kg), unit: profile.unit, value };
@@ -121,7 +123,9 @@ function least(ctx: ToolCtx, n = 3, atMs = ctx.now) {
 
 export function getOverview(_: unknown, ctx: ToolCtx) {
   const s = ctx.state;
-  const split = scheduledSplitFor(ctx);
+  // BUG-38/UI-R03: today's split from the plan, null on a day off; movedFrom when it moved here.
+  const t = splitPlanOf(ctx).today;
+  const split = t && !t.off ? t : null;
   const r = readinessToday(ctx);
   const planned = plannedThisWeek(s.schedule, s.daysOff, ctx.today);
   const w = weekSummary(s.sessions, ctx.today, s.customExercises, planned);
@@ -130,13 +134,13 @@ export function getOverview(_: unknown, ctx: ToolCtx) {
   return capJson({
     today: ctx.today,
     weekday: weekdayOf(ctx.today),
-    scheduled: split ? { splitId: split.id, split: split.name, exercises: split.exercises.length } : null,
+    scheduled: split ? { splitId: split.split.id, split: split.split.name, exercises: split.split.exercises.length, ...(split.movedFrom ? { movedFrom: weekdayOf(split.movedFrom) } : {}) } : null,
     trainedToday: trainedTodaySessions(s.sessions, ctx.today, ctx.now).map(x => x.splitName),
     live: s.active ? { split: s.splits.find(x => x.id === s.active!.splitId)?.name ?? 'Workout' } : null,
     readiness: r ? { band: r.band, score: r.score, loadAdvice: r.loadAdvice, calibrating: r.calibrating } : null,
     leastRecovered: least(ctx),
     week: { workouts: w.workouts, sets: w.sets, records: w.records.length, planned: planned ?? 0 }, // QA-R6-12: days off are not planned
-    streak: trainingStreak(s.sessions, s.schedule, ctx.today, s.daysOff),
+    streak: trainingStreak(s.sessions, s.schedule, ctx.today, s.daysOff, s.profile.plannedDays),
     lighterWeek: deload ? { day: lighterWeekDay(deload, ctx.today), endDay: deload.endDay } : null,
     todayAdjusted: override ? { reason: override.reason, changes: override.changes.length } : null,
     daysSinceLastSession: daysSinceLastSession(s.sessions, ctx.today, ctx.now),
@@ -413,25 +417,29 @@ export function getLiveSession(_: unknown, ctx: ToolCtx) {
   if (!a) return { active: false };
   const openIdx = a.entries.findIndex(e => !e.done && !e.skipped);
   const cur = a.entries[openIdx];
-  const elapsedMin = Math.max(0, Math.round((ctx.now - Date.parse(a.startedAt) - a.pausedMs) / 60_000));
+  // IMP-E05: Train's own clock, so a pause stops both the training time and the rest.
+  const elapsedMin = Math.round(elapsedSec(a, ctx.now) / 60);
   let autoreg: string | null = null;
   if (cur) {
     const ex = exerciseOf(ctx, cur.exerciseId);
     const pctx = progressionCtxFor(ctx, cur.exerciseId, a.gymId);
     // QA-R6-3/11: warm-ups are neither planned working sets nor the first set autoregulation reads.
     const working = cur.sets.filter(x => x.kind !== 'warmup');
-    const sug = suggestNext(s.sessions, cur.exerciseId, s.goal, ctx.today, Math.max(1, working.length), s.customExercises, pctx);
+    // ENG-01: the session gym's load menu, as Train's target uses it.
+    const sug = suggestNext(s.sessions, cur.exerciseId, s.goal, ctx.today, Math.max(1, working.length), s.customExercises, { ...pctx, menu: menuFor(ctx, cur.exerciseId, a.gymId ?? s.units.activeGymId) });
     const first = firstWorkingSet(cur.sets);
     const tgt = sug.sets[0];
     // QA-R4b-5: like Train, weighted main lifts only; on an assisted lift more kg means more help.
     if (ex?.role === 'main' && ex.mode === 'weighted' && first && tgt?.kg != null && tgt.reps != null) autoreg = autoregulationSuggestion({ exerciseId: cur.exerciseId, exerciseName: cur.name, firstSet: first, targetKg: tgt.kg, targetReps: tgt.reps, historyCount: exerciseHistory(s.sessions, cur.exerciseId, s.customExercises).length, equipment: pctx.equipment, holdLoad: !!sug.holdLoad })?.action ?? null;
   }
+  // R11 (D-A3-5b): one list for the count and the sets, by Train's card rule (typed sets count).
+  const done = cur ? doneSets(cur.sets) : [];
   return capJson({
     active: true,
     split: s.splits.find(x => x.id === a.splitId)?.name ?? 'Workout', splitId: a.splitId, elapsedMin, paused: !!a.pausedAt,
-    current: cur ? { exerciseId: cur.exerciseId, exercise: cur.name, setsDone: cur.sets.filter(isWorkingSet).length, setsPlanned: cur.sets.filter(x => x.kind !== 'warmup').length, sets: cur.sets.filter(x => x.at).map(x => setOut(ctx, cur.exerciseId, x)) } : null,
+    current: cur ? { exerciseId: cur.exerciseId, exercise: cur.name, setsDone: done.length, setsPlanned: cur.sets.filter(x => x.kind !== 'warmup').length, sets: done.map(x => setOut(ctx, cur.exerciseId, x)) } : null,
     entries: a.entries.map(e => ({ exerciseId: e.exerciseId, exercise: e.name, done: e.done, skipped: e.skipped, sets: e.sets.length })),
-    restSecLeft: a.rest ? Math.max(0, Math.round((a.rest.endsAt - ctx.now) / 1000)) : null,
+    restSecLeft: restRemainingSec(a, ctx.now),
     adjustment: autoreg,
     ...(s.escobar.sharing.health && ctx.watch ? { watch: ctx.watch } : {}),
   }, 3000);

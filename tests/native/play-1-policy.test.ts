@@ -32,7 +32,9 @@ describe('PLAY-1', () => {
     // The WebView only replaces the summary once a page finished without an error.
     expect(java).toMatch(/onPageFinished\([^)]*\)\s*\{\s*if \(failed\) return;\s*web\.setVisibility\(View\.VISIBLE\);\s*fallback\.setVisibility\(View\.GONE\);/);
     expect(java).toMatch(/web\.setVisibility\(View\.INVISIBLE\);\s*web\.getSettings/);
-    expect(java).toContain('M/ARC reads steps, sleep, heart rate, resting heart rate and active calories from Health Connect');
+    // PLAY-HR: no feature reads session heart rate from Health Connect (the watch provides it), so the
+    // rationale text no longer claims it.
+    expect(java).toContain('M/ARC reads steps, sleep, resting heart rate and active calories from Health Connect');
   });
 
   it('LR-23: the link label, the healthcare line and the Health Connect screen text carry no contact or source', () => {

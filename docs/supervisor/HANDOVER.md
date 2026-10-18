@@ -8,12 +8,12 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-01 ~10:20 UTC · main `1fcd9c8` (merge train 6 #170, BUG-36 + the 09:00 handover) · by supervisor session `session_01Tc7uLSdp7LGknt8xc1i9dc` on the owner's current account. Rows in section 8 that this update did not re-check say so. Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-18 ~08:40 UTC · main `b99a9e25` (train 25; train 26 in CI) · **8.0n new supervisor running (update 08:40)** · by supervisor session `session_01HtNEBU3oDR8NyHKK3uCwUi` (new account). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
   git fetch origin
-  for r in origin/main $(git branch -r --list 'origin/claude/sup-handover-*' 'origin/claude/sup-merge-train-*'); do
+  for r in origin/main $(git branch -r --list 'origin/claude/sup-handover-*' 'origin/claude/sup-merge-train-*' 'origin/ccr-*'); do
     echo "$(git log -1 --format=%cI $r -- docs/supervisor/HANDOVER.md) $r | $(git show $r:docs/supervisor/HANDOVER.md | grep -m1 '^## 8\.')"
   done | sort
   ```
@@ -190,10 +190,14 @@ Owner typos are kept as he wrote them.
 
 | Topic | Decision (verbatim where it matters) | When (UTC) | Recorded in |
 |---|---|---|---|
+| **Continue after the pause (takeover)** | 10-01 18:17: the owner paused all work because of the old account's usage limit (W0B commit `c2f3dfbc`; owner, 10-02: "I told him to pause because of usage limit"). 10-02 ~07:47, on his other account: "Read my repo. And continue based on lastsupervisor  handoff progress" / "Follow agents.md". The new supervisor resumes every lane from this file (8.0). | 10-02 ~07:47 | 8.0; Relay LOG |
+| **Owner chat** | Recorded by the old supervisor (verbatim words lost with the old chat): write to the owner only for a new APK (link, what changed, what to check), a problem no agent can solve, a choice only he can make, or the finish-line reminder; everything else goes in the repo, on the PRs and in Relay. The AGENTS.md text is on `claude/sup-agents-chat-rule`, unmerged (K14). | 10-01 ~17:05 | K14; the hourly Routine |
+| **GATE-SPLIT allowed** | "1. Yes" (to the supervisor's 10-02 assessment question 1: after HT-10, let the supervisor move existing check blocks into parallel CI jobs, unchanged, only with proof every check still runs exactly once; about 45 → 25 min per run). Also, on a second GitHub account for CI and a paid plan: the supervisor advised against both (no speed gain now; evidence and signing must stay in this repo); no decision taken. | 10-02 ~10:30 | AGENTS.md ownership table (exception); SPEED.md 2 |
 | **Supervisor approves per exercise; owner monitors** | "3. I let u handle the decision for each exercise. Dont disaappoint me. Its because, i saw almost all of the existing drawings and output jnside the app. All of those, I Said yes from what u recommended and checked. None of those that i said \" edit this, edit this... \" so i authorise u to do #3 And other decision that will make the app better without me. Everytime u produce an output, my role is to check, monitor how good the output on a human level is. Then i flag if anything is bad or needs modifying." Meaning: the supervisor approves library sheets per exercise (library plan 3.5 and 8) and makes the other app-improvement decisions. The owner monitors every output and flags problems; his flags are fixed in the next batch. Safeguards: a calibrated blind visual critic (2 approved plates + 2 planted defects; a miss discards the run), the PQ hard checks (LIB-3), and the supervisor's own look at every plate. Every batch's sheet and APK still go to him. Still owner-only (AGENTS.md): Worker deploys, keys and signing, publishing, new kinds of saved or sent data, new paid services or providers (a drawing server counts), any spending. | 10-01 ~16:50 | this row; scratchpad FINISH-LINE.md |
 | **After the How-to finish line** | The owner asked to go faster on the library with the same quality. The supervisor's plan, given in chat: (1) build the library early in free slots (LIB-3 and LIB-6 started 16:55; merges stay in the plan's order after HT-10); (2) run pilot A's calibrated critic now; (3) supervisor sheet approval (the row above); (4) GATE-FLAKE-1. Then the library and the parked improvement audit run in parallel. Library size: about 10 MB compressed for all 153 (plan 8.10: 8-11 MB). Shared parts first; a download server only with his OK. Gym Finder stays parked. | 10-01 ~16:40 | this row |
 | **Handover in the repo** | "Just keep updating the supervisor handoff too in repo whatever task is done. And whats left or parked, and important matters. Put source code or artifacts in repo too for ur research and architectures. So if i change acct. Another claude agent can continue. I have other pro max acct. Can use. Put how u manage workers, how u do parallels etc. Almost everything done by a supervisor" (full quote also in 3.9). Applied: this file rides in every merge train (section 11); research in `docs/research/`; tooling in `docs/supervisor/{scripts,workflows}/`; message texts in `docs/supervisor/PROMPTS.md`. | 10-01 08:28 | this file; Relay LOG |
 | **Usage limit** | "Dont worry about my ussage limit. Just continue and follow agents.md. If i maxxed out, so it is. Ill just wait a day snd few hours then i can continue." No throttling beyond AGENTS.md (use what is necessary; parallel where it helps; no duplicate agents). The weekly limit resets 2026-10-03 11:00 UTC; if it runs out, work resumes after the reset. | 10-01 08:10 | 3.4; the hourly Routine |
+| **iPhone release parked** | "One more, i want to publish this on iphone too. After i get to publish on playstore. Park this for now, but i want u to start the task when all library are finished with the drawings". Parked: no card, builder or research now. Trigger: when all 153 library exercises are drawn and merged (and after the Play public release), the supervisor starts the iOS plan (a phased plan first: Capacitor iOS target, native plugins such as Health Connect and the watch bridge, which have no iOS equivalent as-is, and App Store rules). Owner-only parts: the Apple developer account and its fee (spending), signing certificates, and the App Store listing and publishing. | 10-17 ~17:30 | this row; the hourly Routine |
 | **Gym Finder parked** | "When u finished all the task, just park the gym finder without my approval. We need to do brain storm in that topic and talk. Keep it parked for now." Gym Finder (#158, GYM-0..6) stays parked **after the finish line too**: no card, builder or research without his approval. The next step is a brainstorm and talk with him. The supervisor's review, architecture and research are in `docs/research/gym-finder/`. | 10-01 07:30 | the hourly Routine; `docs/research/gym-finder/` |
 | **Focus and finish line** | "Park this audit improvement for now. Lets finish all the how to do first. And all the first audit fixes." Then: "Remind me when we finished all of the how to. And all first audit 32 items. Then after that we proceed." The first audit is complete since train 5 (958a3de, 07:56): 31 fixed, DEV-01 closed by his decision. The line now waits only on HT-7..HT-10. At the line: push notification + chat message, then start the parked improvement audit (#149, AUD-13..19); Gym Finder stays parked. | 10-01 ~01:15, ~01:30 | 8.0; Relay LOG; the hourly Routine |
 | **Audit defaults** | SCI-10 plain calorie estimate; SCI-11 plain facts; OBS-ENDPOINT restore never changes coach, sharing, server or device id; UI-09 screen-reader-only reorder; DEV-01 skip. Offered as "I'll do my recommendation unless you say otherwise"; not objected to. | 10-01 ~00:40 | 8.0; AUD-4, AUD-10, AUD-20 |
@@ -284,6 +288,7 @@ Owner typos are kept as he wrote them.
 - **D-HT7-L3-text-9 outcome (10-01 12:00).** F1 accepted. `ZoomHost.tsx` `textAtRest` applies `geometricPrecision` only while the zoom-in runs: 0 bad in 300 under gate load, L3 0 px, L4 80/80. Without it, 21 and 30 bad in 150. Gate block HT-7 adds a 30-open label check (emerald). HT-7 PASS @ `14fb8b7` 12:53. A follow-up (D-HT7-F1b) extends that check to all 5 themes; in emerald alone it catches F1's removal only 1 run in 3.
 - **D-SUP-CI-1 (10-01 11:30, #174).** `source-gate` and `visual-gate-tz` `timeout-minutes` 40 → 60. Measured: main 30.7 min, HT-9's head 38.2. No block or check changed. Follow-up GATE-SPLIT (after the finish line): shard the gate across jobs.
 - **D-HT10-A5c (10-01 11:30, #166).** The 30 min existing-job budget becomes "HT-10 adds at most 60 s to each existing job", measured head minus base.
+- **D-HT10-A5c-2 (10-02 08:21, #166).** HT-10's skip branch held D-HT10-A5's whole-run check (`process.uptime()` ≤ 1,800 s), which is red on every run because main's existing jobs already take 30.7-38.2 min. The builder's swap to a log line was refused by the classifier. Ruling: neither removing it nor raising it; the check measures HT-10's own time in the job (block start to skip end) ≤ 60 s, a named constant, hard error, proven by a 61 s wait mutation. The head-minus-base CI delta still comes with READY. Whole-job wall time stays guarded by `timeout-minutes: 60` (D-SUP-CI-1); the 30 min goal returns in GATE-SPLIT. If auto mode refuses this edit, the owner approves it in the HT-10 builder session.
 - **D-HT10-A3m and D-HT9-A3b (10-01 12:20, #166 and #113).**
   - HT-3b's A3 check (no task over 100 ms at 4x while the sheet opens) is flaky on main itself: 1 run in 3 locally.
   - HT-10 root-causes it on the full sheet: 0 of N ≥ 5 runs over 100 ms, without loosening A3.
@@ -363,11 +368,11 @@ The supervisor never builds or reviews cards itself. It starts workers, steers t
 ### 5.2 Task states
 ready → running → review → integrating → done (merged and accepted).
 
-A blocked task names its reason and what unblocks it. Merged items are set to done, with evidence, in the same tick.
+A blocked task names its owner, reason, evidence and what unblocks it. Merged items are set to done, with exact-commit/build acceptance evidence, in the same tick.
 
 ### 5.3 Cards
 - **Fields** (`.claude/skills/builder/SKILL.md`): `id`, `outcome`, `base`, `depends_on`, `read_first`, `write_scope`, `reserved_paths`, `acceptance` (criterion IDs, including failure paths), `design_reference`, `connectivity`, `verification`, `risk_and_recovery`, `return`. Also `model` (`.claude/skills/supervisor/cards.md`).
-- Before a card is `ready`, run the collision check against other cards' write scopes (`cards.md`).
+- Before a card is `ready`, follow `cards.md` for explicit build/merge prerequisites, shared-file ownership and the collision check. Keep the approved plan's build-ahead restrictions.
 - **Hard cards** (animation, simulation, anything with several possible designs), owner 09-29: plan in phases first.
   1. Understand the problem.
   2. Draft competing designs.
@@ -785,72 +790,639 @@ The table is in `AGENTS.md`. Do not copy it here.
 
 ---
 
-## 8. Current state (2026-10-01 ~17:05 UTC for 4.1, 4.3 and 8.7 step 2; 8.2 ~12:55; other parts ~09:00; stale fast, re-check live)
+## 8. Current state (GitHub snapshot 2026-10-02 10:00 UTC; stale fast, re-check live)
 
-Facts below were checked live at 08:27-08:35 UTC (GitHub API, `git ls-remote`, `get_session`, `list_triggers`, Relay items) unless marked "(not re-checked)". Re-checked at 08:50-08:55: the 8.1 APK table, the HT-8, HT-9 and BUG-36 rows in 8.2, 8.3, and the HT-7 check-in in 8.4.
+**Current deliverable:** finish HT-9 → HT-10 and M1's existing acceptance requirements, then integrate the full 153-exercise library in its plan's order. Library build-ahead stays limited to the permissions already in the plan. Implementation, release-candidate acceptance and store publication are separate milestones; this snapshot supplies no new completion date.
+
+**Verified GitHub changes since the takeover capture:**
+- HT-8 merged in [train 10 #184](https://github.com/macdarenz-droid/M-arc/pull/184) at 09:40 UTC, main `94fd32cf4a743ea62f60dce8bba21a2796205219`. Its reviewed head was `0346aca`; that review is not evidence for later heads or APKs.
+- [HT-9 #113](https://github.com/macdarenz-droid/M-arc/pull/113) is open at `193d707e38a6be63a25043e47ba16e5b240865fd`. The recorded PASS is for older `e57c6d8`, not this head. Owner of the next action: the HT-9 builder/reviewer under the supervisor. Unblock: the [catch-up ruling](https://github.com/macdarenz-droid/M-arc/pull/113#issuecomment-5931535634), current-head delta review, green checks and the merge gate.
+- [HT-10 #166](https://github.com/macdarenz-droid/M-arc/pull/166) is open at `038cd4f5c6552433f822a42c5380644349dc9cd4`. Its [08:19 status](https://github.com/macdarenz-droid/M-arc/pull/166#issuecomment-5948066142) reports a passing local scratch combination, not final integrated acceptance. Owners: HT-10 builder/reviewer; supervisor for CI wiring. Unblock: HT-9 merged, final-head checks, the [A5c-2 ruling](https://github.com/macdarenz-droid/M-arc/pull/166#issuecomment-5948078940) and section 8.7's existing wiring/review gate. Any further permission denial still requires the owner's in-session action.
+- [Owner chat rule #185](https://github.com/macdarenz-droid/M-arc/pull/185) is open, with the owner's 10-02 yes recorded in its body. K14's older wait for that yes is historical; integration and checks remain outstanding.
+- No new release APK or device acceptance was verified in this docs pass. The current scope stays all 153 packages, including research, plates and layers; a held exercise is not delivered. Supervisor per-exercise approval follows section 4.1's 10-01 delegation, with sheets/APKs still sent for owner monitoring.
+
+**Procedure links:** card prerequisites and shared-file ownership: [cards.md](../../.claude/skills/supervisor/cards.md); bottlenecks and compact timing evidence: [tick.md](../../.claude/skills/supervisor/tick.md); merge trains: section 6.8; library acceptance and reforecast: [the existing library plan](https://github.com/macdarenz-droid/M-arc/blob/claude/howto-options/docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md). Keep those details in their canonical procedures. Record each block's owner, evidence and unblock condition, and each accepted result's exact commit/build evidence.
+
+The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unless marked otherwise. Session, Routine, Relay and unmentioned PR rows were not re-captured in this docs pass; read them as that historical snapshot and reconcile live before acting. The GitHub changes above supersede conflicting status rows below.
+
+**RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
+
+**20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0n 10-18 ~05:35 UTC: new supervisor running (read first; supersedes 8.0m where they differ)
+
+**Supervisor.** session_01HtNEBU3oDR8NyHKK3uCwUi (new account, environment env_013Ap2eNfQ92RBapFBzsfRs7). Hourly routine `trig_019LBJDA2jX95HgcWEgQPMJ6` "M/ARC supervisor tick" (cron 57 * * * *, fires into this session; its prompt carries the owner rules: owner chat ".", Relay skipped, the library focus, the parked items, the models). Watchers: monitor.sh + heads.sh under one Monitor (SKIP adds 188 190 192 197 209 221 237; BR adds claude/libht-research-split). `subscribe_pr_activity` failed on this account too.
+
+**Sessions started 05:03-05:05 (all Opus, auto mode).** Active LIB builders: 4 of 4.
+| Session | Role | Branch @ start |
+|---|---|---|
+| session_01AvmDs7fwubnhXjMyETwDQJ | LIB-4b builder (#232) | claude/lib-4b-runner @ 316679e |
+| session_018fYJAmcV28GBcbntVUssyX | LIB-4c builder (#246) | claude/lib-4c-library-ci @ 52c853e |
+| session_01EtPBie8dERvuaHFMj9AWUU | LIB-5 builder (#244) | claude/lib-5-shared-layers @ 5592280 |
+| session_016jeozfhwK4zuXV84msyxJk | LIB-9a builder (#245) | claude/lib-9-lb1 @ 4257648 |
+| session_01DbTm9yH4hNqr34mwtiUXFL | GATE-FLAKE-4 builder (#253, HT/gate lane) | claude/gate-flake-4 @ aaf5bfd |
+| session_0158SzC44QRznvasjBmEGALx | research: w2 packet W2A (#242) | claude/libht-research-w2a @ a33d8f3 |
+| session_01Vb1BkSoeGjYRXffLc8eyHk | research: w2 packet THE8 (#243) | claude/libht-research-the8 @ e6381fa |
+| session_01SUe7e6YmpGQtyB9LxHsw4D | research: w2 packet HELPER (W2B's files; opens its own draft PR) | claude/libht-research-w2b @ d4f30c7 |
+| session_01RqJoXSCLzSyHQdQRWp79eG | research: SPLIT rewords (opens its own draft PR) | claude/libht-research-split @ a557d93 |
+Each research session runs Opus, gives plain exact edits to a Sonnet helper and does the [LR-31]/[LR-34] steps itself, with a Sonnet curl fetcher.
+
+**Done since 8.0m** (cards branch `claude/sup-lib4-cards` now `94eb611`):
+- Section 14 Supervisor action 12 applied to lib-9a-card.md (`65afbe2`): merge_prerequisites gain LIB-6-PM's back patches + S5-L and the variant-line field card; Do 9 = the D-LIB5-FAMILY comparator with its write-scope carve-out.
+- lib4-cards **14.3** (`9c709bd`): D-LIB5-SPLIT ruled (contactPoint → rightNote, kind label; variants steps → setup[]; one card, two fields on one path → throw); the w2 packets and the SPLIT rewords share **one** verify and one named head (one re-copy for LIB-5); B5(b) (PQ-H7 determinism) goes to LIB-3b as its first item; LIB-4c's open points.
+- lib4-cards **14.4** (`94eb611`): D-LIB9-F5 = (a) a named per-plate exemption, only for the tell chrome at exactly 3.57:1 in Midnight, with a 3.40 mutation; the chrome fix stays an owner item (O7 family).
+- D-LIB5-FAULTKEYS exact edits committed by the supervisor on `claude/libht-research-split` @ `a557d93` (from the verify head `531b77c`).
+- Rulings posted on #244 (6245934655) and #245 (6245935506). #237 closed (LIB-4a merged).
+
+**Next for the supervisor.**
+- When W2A, THE8, HELPER and SPLIT post FIXED/READY: re-merge all four into `claude/libht-verify-w2`; one fresh Opus recheck of every changed line plus quotes/{chin_up,hanging_knee_raise,assisted_pull_up} (LR-35) and the FAULTKEYS labels and gaps[2]; the 10 % re-fetch; `verify/w2.md`; RULINGS.md rows LR-30..35; merge into `claude/libht-research`; name that head on #244 and #245 (then LR-31/LR-32 effects for LIB-9a; the held edits list in 8.0m).
+- Then TOPFAULT (blind, per id) and CARD FIELDS VERIFIED; the D-LIB5-TEMPO8 and "stamps (O5)" rulings when LIB-5 reaches them.
+- Scratch-branch pushes asked for by LIB-4b ("LIB-4b SCRATCH") and LIB-4c ("LIB-4c SCRATCH").
+- Owed, not started: the variant-line field card (action 14, LB1 critical path); the LIB-6-PM patches and the L0-lib back-box follow-up line (action 11; it needs back-box.mjs on main, so it lands after LIB-5); LIB-10 items.
+- Queue as LIB slots free (a builder posting WAITING frees one): LIB-3b (its first item is now B5(b)), LIB-4d, LIB-8-FIX.
+
+**Update ~07:00 UTC (supersedes "Next for the supervisor" above where they differ).**
+- **Research w2 is merged.** `claude/libht-research` is now `9eaa2480` (the w2 verify head `efc8feda` merged into `9dbc7e0`). Record: docs/research/howto/verify/w2.md.
+  - The fix sessions (W2A, THE8, HELPER, SPLIT) and the recheck critic are archived. Research PRs #242, #243, #254 and #255 carry the heads.
+  - Rulings W2-R1..R12 were posted on those PRs. LR-36 (ties after LR-31 step 3) is in RULINGS.md.
+  - The combined recheck ran on a squashed copy with two supervisor plants, and both were caught. The supervisor's 10 % re-fetch got 8/8 verbatim.
+- **Named head 9eaa248** was posted on #244 and #245 (lib4-cards 14.5). LIB-5 re-copied it @ `b14ff79` (S1 re-pin; 16 modules; 0 lint hits).
+- **TOPFAULT @ 9eaa248** was posted on #244 (record: docs/supervisor/verify/topfault-9eaa248.md). Five keys equal firstKey (pull_up, hanging_leg_raise, leg_press, seated_cable_row, machine_chest_press). Three ids stopped as `none` (barbell_back_squat, dumbbell_lateral_raise, lat_pulldown).
+- **New rulings:** lib4-cards 14.6 (D-LIB5-SPLIT-2: rope-rule's ruled join, floor-body prone, implement.text) and 14.7 (D-LIB5-TEMPO8). Under 14.7, all 7 engine ids stop at H6.tempo, because the cards say 2 s and the approved specs differ. The plates keep their timing, and the exemption reason is re-worded in LIB-5's commit 2.
+- **Card LIB-5v (the variant-line field)** is written and ruled (docs/supervisor/verify/variant-line-card.md). The LIB-5 session takes it after LIB-5 merges, in merge slot 7a.
+- **LIB-9a round 3** (`298fb1b`) was accepted. The supervisor reproduced lb1-plates at 98/98. LIB-9a now re-copies at 9eaa248.
+- **Owner O7-family items**, to offer with the next sheet or APK message: the tell chrome contrast (14.4), and the 7 plates' timing against their verified cards (14.7).
+- **Next:**
+  - CARD FIELDS VERIFIED, after LIB-5's Do 3 b commit 1 and after LIB-9a's re-copy for its changed picks;
+  - the "stamps (O5)" ruling, before LIB-5's Do 6;
+  - the scratch-branch pushes asked for by LIB-4b and LIB-4c;
+  - reviewers on READY.
+  - LIB-4c got a check-in at 06:31; its session had shown as disconnected.
+
+**Update ~08:40 UTC.**
+- **Rulings since 07:00:**
+  - lib4-cards 14.8, D-LIB-O5 ("stamps (O5)"): approvedBy is 'owner' or 'supervisor', and the 8's stamps take 'supervisor'. The verifyChain change moves to the LIB-8 merge card.
+- **LIB-5:**
+  - CARD FIELDS VERIFIED @ `33302cc`: a valid blind run, with the plant caught and no real finding.
+  - The 8's stamp entries were approved on #244 (6247438837): the hashes were recomputed and the records read.
+  - Next for LIB-5: commit 2 and the Do 6 commit.
+- **LIB-9a:**
+  - D-LIB9a-DO6: the drawable:false keys are fast, snap and drop, and the shoulder_press redraw stays.
+  - CARD FIELDS VERIFIED @ `8abf228`: a valid run, with one fix (close_grip pose 'start') confirmed @ `4d0beca`, which is not pushed yet.
+  - Next for LIB-9a: Do 7.
+- **GATE-FLAKE-4:**
+  - READY at `49ef5ff`, with all 15 checks green. The fresh Opus review gave PASS with 0 findings (#253).
+  - The reviewer is archived.
+  - The PR rides **train 26** with this handover and the cards branch. The cards branch carries the AGENTS.md third exception, following the precedent of LIB-4a's second exception in train 25.
+  - Train 26 changes no app code, so no APK is owed.
+
+**Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
+
+### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
+
+**Why.** Owner, 10-18 ~03:50: "Finish all ongoing task as a last task for this account. Then setup handoff in repo, inclufed ur sandbox infos." The outgoing supervisor is session_01SNCyDETVkqVxtLoQxn2Ue9. A new agent takes over, on another account. The new account cannot see or message any session here.
+
+**What the outgoing supervisor did at the handoff**
+- It asked every M/ARC builder and research session to finish only its current step, push once, post "HANDOFF <card> @ <sha>" on its PR, and stop. Each was archived after its HANDOFF comment: LIB-4b (#232 6245832215 @ `316679e`, B2 finished), LIB-4c, LIB-5, LIB-9a, GATE-FLAKE-4, W2A, the8. No M/ARC builder or research session is left on the old account. The owner's own "Watch" session (session_01R93gLhQeh1MSWXQyESZTUa) is not the supervisor's and was left alone; it waits on his G1-G6 device checks.
+- It landed every review workflow that was still running: rulings and cards are on `claude/sup-lib4-cards`, and research w2 state is on `claude/libht-verify-w2`.
+- It committed its sandbox tools and workflow scripts (`docs/supervisor/scripts/`, `docs/supervisor/workflows/`; see the README table there).
+- It disabled the hourly routine `trig_01KNrnsDb34dztKs493YQ5vW`. Create a new one on the new account (see "First hour").
+- The owner received a private file (account ids, private links, owner items) in the chat. Nothing private is in this file.
+
+**Main** is `b99a9e25` (train 25: #251 CI floor + watch guard, LIB-4a #233, handover). CI: 15/15 green on the train head. The last APK was train 24's (BUG-41). No app code changed after that, so no APK is owed.
+
+**Lanes at the handoff.** Each PR's HANDOFF comment is the builder's own record. Read it before you start a replacement.
+
+| Card | PR / branch @ HANDOFF head | State | Next step | Waits on |
+|---|---|---|---|---|
+| LIB-4b per-id runner | #232 `claude/lib-4b-runner` @ `316679e` (HANDOFF 6245832215) | final-head merges done (LIB-4a `0b2d3c1`, main `b99a9e2`); B5 on the final tree 1,100/1,100, 0 px; B2/B8 golden8 at P=1 2,947/2,947, 0 px, 7,522 s; B7 dry run only (P=4 equal to P=1). All in LIB-4-DESIGN.md section 6 | B7 on the final head (P=4 vs P=1 from the same head), the rest of B2 (4 failure fixtures, size equalities, entry/open, `--once 1`, 3 `--blind`), a scratch branch for the Chrome 153 CI dispatch (supervisor pushes), B9, B10, READY | nothing (chain card, never parks). Open question: B5(b) found PQ-H7 determinism did not catch a deliberately nondeterministic spec edit (LIB-3's qa/node.mjs, unverified); decide whether LIB-3 investigates |
+| LIB-4c library CI (never parks) | #246 `claude/lib-4c-library-ci` @ `52c853e` (+ wiring #249 `claude/sup-lib4-ci` @ `a30b0c4`, supervisor's) | Do 1-8b built, 149/149 local; nothing unpushed | Do 10 scratch commands (after LIB-4b's B5/B7/B8), then C11-C14, Do 11 seam, C15, READY. #249 merges in one train with LIB-4c | LIB-4b's final head |
+| LIB-5 shared layers | #244 `claude/lib-5-shared-layers` @ `5592280` | the note is ruled (14, 14.1, 14.2; F1b done); Do 2 done on research `9dbc7e0` (pins 38 files; HowToSheet +264/+117 B; check-bundle PASS; lint dry run: 73 shared-card hits under the proposed split) | Do 3 a (validator 19/19), Do 4 placeholder and library-gate, Do 5 lint and Do 6 prep are committed (HANDOFF 6245403672). Next: rule D-LIB5-SPLIT; Do 4's no-hit modules (foot-bar, selector-pin); Do 3 b after the named head, TOPFAULT and the tempo-map + plateFacts form-table ruling; Do 6 after the 'stamps (O5)' ruling | two re-copies (at the w2 merge, then the one D-LIB5-FAULTKEYS/SPLIT head, card amendment 46), the SPLIT ruling, the FAULTKEYS edits, the TOPFAULT pass, the tempo-map/form-table ruling, 'stamps (O5)', CARD FIELDS VERIFIED for the 8, the owner's back-box answer (route (b) meanwhile) |
+| LIB-9a LB1 plates (build-ahead, nothing ships) | #245 `claude/lib-9-lb1` @ `4257648` (+ scratch `claude/lib-9-lb1-calf-wip` @ `89d3ecd`, never merges) | 13 ids drawn, 92/92; held: leg_press_calf_raise, horizontal_leg_press | apply lib4-cards **13.4** (round-2 rulings), then the next milestone post | D-LIB9-F5 for Do 8; the w2 merge (re-copy). Q1(b) is answered by LR-32 (single_arm: no F7): state it on #245 with the re-copy head. Before restarting LIB-9a, do section 14 supervisor action 12 (LIB-9a's merge_prerequisites; not yet done) |
+| GATE-FLAKE-4 (HT/gate lane) | #253 `claude/gate-flake-4` @ `aaf5bfd` | Do 2-3 done: the fix applied (9 hunks, all inside BUG-34's block; 103 groups); S1 fail-before, S2 (20/20 green at 800 ms lag), S4 (10 seeds red), S5 margin (10.62 ≤ 16.22) and Do 7 (the read-only trace, HANDOFF 6245466471 item (c)4) done. Not done: mutants M1-M7, S3 under load, Do 6 timing, Do 8, Do 9. Open: `timings.margin`/`timings.top` kept as properties on the existing `timings` array, inside E9-E11 only. The supervisor accepts this if the reviewer confirms they are set only in E9/E10 lines and read only in E11. CI's fallback font for the word is unmeasured (S8 logs it). The timings ruling is also posted on #253 | finish the card's Acceptance, READY, fresh review, train together with the cards branch (AGENTS.md pointer) | nothing |
+| Research w2 verify | `claude/libht-verify-w2` @ `531b77c` (data head `5036283d` + the verify/w2/ docs) (= W2A #242 `a33d8f3` + W2B `d4f30c7` + the8 #243 `e6381fa`) | LR-29 verify **valid** (run 4); triage done; rulings reviewed | route the three fix packets, then a fresh Opus recheck, verify/w2.md, merge into `claude/libht-research`, name that head on #244 and #245 | nothing |
+
+**Queue (cards written, not started).** Order: D-LIB-LANE-ACTIVE plus section 12 items 21-22. Each starts only on "<card> start" with the active count.
+1. **LIB-3b** (PQ-H10 values and envelope): `docs/supervisor/verify/lib-3b-card.md`. Three check rounds. Must merge before any D or T row exists on any branch, and before #245.
+2. **LIB-4d** (scale test fixes, D-LIB4a-SCALE): `lib-4d-card.md`. Two rounds. Its deadline, read strictly (item 22): before the first merge that ships ANY library row, or takes main past 22 shipped rows.
+3. **LIB-8-FIX** (pilot A #109 review findings): `lib-8-fix-card.md`. Two rounds. Its start message quotes D-LIB8FIX-CARRY and D-LIB8FIX-ENV (item 22) word for word.
+4. Not written yet: the LIB-8 merge card (pilot A gaps 1, 2 and 4: the pin chain; `golden.mjs:151` verifyChain accepts approvedBy 'owner' only, which needs a ruling; the H6 re-check plus LIB-3's qa with qa/envelope.json under D-LIB8FIX-ENV, with an owner's named exemption for every plate that run flags). Also the research check for the held plates (13.3/13.4): look in leg_press_calf_raise's sources for a larger sourced range, and in horizontal_leg_press c4's sources for an end-knee number. Only if none exists does a design option for both go to the owner.
+   The older items in item 2's order (the LIB-7 fixer, LIB-6-PM, LIB-9a's second drawer) have no cards yet, so the three cards above go first unless one of those is written.
+5. Active-builder count at the handoff: 0 (every session archived). Restart the lanes in this order: LIB-4b (chain), LIB-4c, LIB-5, LIB-9a. That is 4, the cap. Then the HT/gate lane: GATE-FLAKE-4. Research sessions hold no LIB slot (item 2), so the three w2 packet sessions can start alongside. Queue cards follow as slots free.
+
+**Research wave 2 (LR-29) in detail**
+- Verify runs: runs 1-3 were invalid, because their plants fell outside the reviewed scope. `research-verify.js` gained `plantScope`. Run 4 was valid: both plants caught, and the tier-A plant rated blocker.
+- Critic re-fetch: 93 sources, 729/729 quotes verbatim. The supervisor's own 10 % re-fetch: 41 claims, 68/68 verbatim.
+- Triage (`w2-triage.js`): 92 findings deduped into 54 items. 41 are real and 7 rejected; rulings W2-49..54.
+- Rulings: six drafts (W2-49..54). Each was reviewed by two lenses (consistency; effect on approved material) and a final judge. All six were amended and none rejected. They are LR-30..LR-35 in `w2-rulings-final.md`.
+- Cross-lane effects of the rulings:
+  - **LR-31** sets the rule for picking a plate's top fault. It turns **assisted_pull_up to drawable:false** (a speed fault). Tell LIB-9a: assisted_pull_up needs a fast-lowering fault key, and underhand's spec draws 'past'.
+  - **LR-32** keeps single_arm's past-end pull. Its lib-9a-card.md edits are held until the recheck.
+  - **LR-34** keeps an inherit[] line only if the parent's shipped string holds whole (D-LIB5-FAMILY `===`). It tries ways out in order, and a safety row never leaves without a ruling.
+  - **LR-33**: "Pause momentarily" becomes a 1 s pause, named in a WEAK claim.
+- The packets were regenerated after the rulings review: W2A 92 items, THE8 121, HELPER 61. A dry run on head copies parses cleanly.
+- The w2 state is committed at `claude/libht-verify-w2` @ `531b77c` (README in `verify/w2/`).
+- Files on `claude/libht-verify-w2` under `docs/research/howto/verify/w2/`:
+  - `w2-findings.md`: every item, real or rejected, with its reason;
+  - `w2-rulings-final.md`: the rulings, numbered LR-30.. (add them to RULINGS.md at the merge);
+  - `packet-W2A.md`, `packet-THE8.md`, `packet-HELPER.md`: exact old/new edits per file;
+  - `w2-verify-run.json` (the valid critic run) and `w2-refetch.json` (the supervisor's re-fetch).
+- Next:
+  - one session per packet. W2A's files go to W2A's branch and the8's files to the8's branch. The rest (W2B's files) go to a helper: Sonnet for the exact edits only, Opus for the packets' [LR-31 step] and [LR-34 step] items (12 item 14; the packet header). W2B's own session refused cross-session instructions and is archived; never work around a refusal;
+  - replacement W2A and the8 sessions need their own A1-A6 checker. The old one lived only in W2A's scratchpad (W2A HANDOFF (b));
+  - w2-findings.md's header still gives the pre-review counts (70/116/52) and a scratchpad path. Use the committed packets (92/121/61);
+  - each applies only its packet, has its Sonnet fetcher check every new or changed quote, and pushes once;
+  - re-merge into `claude/libht-verify-w2`;
+  - a fresh Opus recheck of the changed lines, plus the quotes files the critic's list missed (chin_up, hanging_knee_raise, assisted_pull_up; W2-54);
+  - write `verify/w2.md` and merge into `claude/libht-research`;
+  - post that head on #244 (LIB-5 re-copy) and #245 (LIB-9a re-copy, then re-verify the changed cards' fields).
+
+**Rulings made since 8.0l** (all in `docs/supervisor/verify/lib4-cards.md` on `claude/sup-lib4-cards` @ `578b3f3`. Navigation trap: section 12 items 19-22 sit under the "## 13" heading, around lines 1410-1440.)
+- 12 item 21 (freed-slot queue; 13 Q5(c) amended; LIB-10 open items i-ii); item 22 (LIB-4d deadline; D-LIB8FIX-CARRY; D-LIB8FIX-ENV). Item 20 D-LIB4a-SCALE, 13.2 D-LIB9-CLONE and 14.1 are in 8.0l.
+- 13.3 D-LIB9a-DO5; 13.4 D-LIB9a-R2 (not GO for READY: one more fix round. The single_arm Mistake target is restated (elbow cap 6 px clear, elbow 10 cm or more behind backMid). The sled-travel test was a loosening and must be fixed. Fix the stack-loop `load: 0` hole, straight_arm's `close` tell, and incline's second tell. The band row stays at 159.02 px/m, with F1 named. Posted on #245 6245694993).
+- 14.2 D-LIB5-NOTE-3 (Do 2 head `9dbc7e0`).
+- AGENTS.md third exception (GATE-FLAKE-4 may edit only the BUG-34 lines its card lists). It is on the cards branch and must reach main in GATE-FLAKE-4's train or earlier.
+- Cards on the cards branch: lib-3b, lib-4d, lib-8-fix, gate-flake-4 (plus lib-5 amended 1-48).
+
+**Open for the supervisor (decide, don't ask)**
+- **D-LIB5-FAULTKEYS edits:** section 14 OPEN-4, the keys and labels in curl.json, rope-rule.json and palm-flat.json, plus curl's gaps[2]. They are in no w2 packet and not on the verify head (palm-flat.json:66 still "Hands too far forward"; curl.json:42 still `wrist-curl-cheat`). W2B is closed, so section 14 action 3's fallback applies: one exact-edit commit on the SPLIT research branch. LIB-5's CURL, ROPE and PALM_FLAT modules wait for it.
+- Section 14 supervisor actions still owed: 10 (the check-bundle CI step, merged in one train with LIB-5), 11 (the LIB-6-PM patches; the L0-lib line for LIB-4c), 12 (LIB-9a's merge_prerequisites, before LIB-9a's next resume), 14 (the variant-line field card, on LB1's critical path).
+- LR-31 effects: assisted_pull_up drawable:false brings a new F7 that needs the owner's yes at the LB1 sheet (w2-rulings-final Risks). THE8's packet sets leg_press drawable back to true, so the TOPFAULT inputs change; run TOPFAULT only on the named post-w2 head. LR-31's tracker item LIB-TOPRANK has no home while Relay is off; keep it in this file.
+- Held edits after the w2 recheck: RULINGS.md rows LR-30..35; CARD-V2 :35 and its rules bullet; lib-9a-card.md:188; plan :85/:86/:303 on claude/howto-options @ 4a9fd865.
+- D-LIB5-SPLIT, from LIB-5's Do 2 numbers (#244 HANDOFF): the field-to-path/kind split, and the 73 shared-card lint hits. Research rewords them on one research head; never reword, trim or exempt them in LIB-5.
+- The blind TOPFAULT pass for the 8 (D-LIB5-TOPFAULT). Its inputs must never include #244 comment 6241270855 or any material that prints a selected Mistake key.
+- The tempo-map and plateFacts form-table ruling (D-LIB5-TEMPO8). Then 'CARD FIELDS VERIFIED' for the 8, after LIB-5's Do 3 b commit 1: a blind verifier with a planted value. Adapt `lb1-card-fields-verify.js`, which is hard-coded to the 14 LB1 cards and the old scratchpad, and add section 13 Q1's two topFault checks (section 14 action 9).
+- D-LIB9-F5 (every library plate raises F5, the 3.57:1 chrome contrast). Rule it before any LB1 sheet or approval.
+- LIB-10 items (12 item 21): where approved PARAMS ranges live, and whether H10 must prove the drawn D plate equals derive(parent, params).
+- #237 (LIB-4a scratch) can be closed: LIB-4a is merged.
+- GATE-FLAKE-3/4 pattern: a CI timing miss is root-caused, never re-run to green. Train 25's first head was red on BUG-34 (the GATE-FLAKE-4 cause). The second head was a different head, and it was green.
+
+**Owner (see the private file for details)**
+- Waiting on him: the back-pain box answer (option 1, 50 words, recommended; or option 2, 30 words). Watch 1.4.0 device checks G1-G6, in his own Watch session.
+- Later: a design option for leg_press_calf_raise and horizontal_leg_press (13.4; only after the research checks above).
+- Parked: Gym Finder (#158); the iPhone release (after all 153 drawings merge); no Play closed-test upload before the public release (about 10-31).
+
+**First hour for the new supervisor**
+1. Follow section 0's reading order: sections 1-4, AGENTS.md from origin/main, `.claude/owner-rules.md`, the skills. Then read this 8.0m and each open lane PR's last HANDOFF comment. Other open PRs: #181 LIB-6, #191 LIB-12 and #193 LIB-7 follow LIB-5 in plan order; #221 is the watch lane (`ccr-061c7350-tjvpo6` @ 567a27e; the lane continues on `ccr-8cef8a15-l12swp` @ 68a919f2).
+2. Re-capture live state yourself:
+   - `git ls-remote origin` for main, `claude/sup-lib4-cards`, `claude/sup-handover-1445`, every branch in the lanes table, and `claude/libht-*`;
+   - the last comment on every open PR.
+   Trust nothing here over a live read.
+3. Watchers: these files are on `claude/sup-handover-1445` until the next train, so use `git show origin/claude/sup-handover-1445:docs/supervisor/scripts/heads.sh > <scratchpad>/heads.sh` (the same for monitor.sh and the workflows). Edit `SKIP` (PRs not tracked) and `BR` (live branches). Run both under one Monitor, timeout 30 min, re-armed on every expiry:
+   `(SINCE=<utc 3 min ago> bash monitor.sh & REPO=<clone> bash heads.sh & wait)`
+   `subscribe_pr_activity` failed on the old account, so try it once on the new one.
+4. Routine: create an hourly self-check into your own session that runs the tick (`.claude/skills/supervisor/tick.md`). Its prompt keeps the old routine's 10-17 lines: owner chat ".", the Relay skip, the focus on the library drawings, the parked items, the models. Section 10's template still has Relay upkeep; drop it.
+5. Restart the lanes with replacement sessions in auto mode, Opus (Sonnet only for fully spelled-out steps; never Haiku or Fable). Each replacement prompt:
+   - names its card and rulings by sha and its branch and HANDOFF comment;
+   - says "do not redo pushed work";
+   - lists the CI manners (one push per 2 h until READY; `git pull --no-rebase`; never force; never [skip ci]);
+   - says "never write to the owner".
+   Count active builders in every start or resume message.
+6. Research w2: route the three packets (above). After the merge, name the head on #244 and #245.
+7. Merge trains only (HANDOVER 6.8): review PASS, every check green on a train head built on the latest main, plan order respected, and `git diff --stat origin/main...head` read. Every train carries a section 8 update. Send an APK after any app-changing merge, once the fingerprint step passes.
+
+**Sandbox notes (how the outgoing supervisor worked)**
+- Claude Code on the web: a cloud container per session; the repo cloned at `/home/user/M-arc`; a per-session scratchpad that does not survive.
+- Chromium is at `/opt/pw-browsers/chromium` (`MARC_CHROMIUM=...` for the gate), and `PLAYWRIGHT_BROWSERS_PATH` is set.
+- GitHub writes went through the GitHub MCP tools (comments, PRs, merges with `expectedHeadSha`). Reads went through `curl` to api.github.com via the agent proxy (`gh api` also works there for reads). `git push` works through the proxy.
+- Unmerged supervisor branches with no PR: `claude/sup-lib4-cards` (cards, rulings and the AGENTS.md exception) and `claude/sup-handover-1445` (this file, tools, workflows). Both ride the next train.
+- #245's HANDOFF comment 6245399282 holds two private claude.ai/artifact links. They open only from the outgoing account; rebuild the renders from the shas.
+- Worktrees per job (`git worktree add`):
+  - cards branch → `wt-cards`;
+  - handover branch → `wt-ho`;
+  - research verify → `wt-verify-w2`;
+  - train building → a worktree with node_modules (`npm ci`).
+- Big judgement work ran as in-chat Workflows, with lenses, refuters and a judge (`docs/supervisor/workflows/README.md`). Small checks ran as one background Agent.
+- Every workflow result was saved into the repo (lib4-cards sections, verify/ files). Never leave one in chat only.
+- Long CI waits used a background `until` loop on the check-runs API (one notification), never a foreground sleep.
+- Gotchas:
+  - a session created by the supervisor may refuse cross-session follow-ups (W2B did). Never work around a refusal; start a new session with the full prompt instead;
+  - `send_message` "delivered" means received, not read;
+  - private artifacts (render pages) open only from the account that made them;
+  - a workflow's output file holds JSON. Parse it, or read `journal.jsonl` in its transcript folder;
+  - the 2-hour push limit binds builders, not the supervisor's own docs branches.
+
+### 8.0l 10-18 ~01:10 UTC (read first; supersedes 8.0k where they differ)
+
+- **Main** `72c94fc` (train 24: BUG-41 #240 + handover). **APK sent** for train 24 (run 39079150683, artifact 12118352489, fingerprint step success). All three owner bugs (BUG-39/40/41) are merged and sent; their builders and reviewers are archived.
+- **Cards branch** `claude/sup-lib4-cards` @ `279cf08` (lib4-cards.md):
+  - **14** (`a0e5d69`): LIB-5 design-note rulings D-LIB5-* (18), card amendments 1-48 (lib-5-card.md amended in the same commit), note fixes N1-N16, supervisor actions.
+  - **14.1** (`279cf08`): D-LIB5-NOTE-2. The revised note (#244 @ `738cdd3`) is PASS WITH FIXES, F1-F12 (5 medium, 7 low). LIB-5 makes them note-only, posts "LIB-5 NOTE FIXED", then waits for "LIB-5 resume" (the next freed slot).
+  - **13.1** (`ee22e95`): LIB-9a slice GO for Do 5 with a must-fix list; D-LIB9a-HOWTOID.
+  - **13.2** (`a5c501f`): D-LIB9-CLONE. Do 5(d) opens on the pilot A review: copy, never import; checked solvers; fresh brackets.
+  - **12 item 20** (`cda26f4`): D-LIB4a-SCALE. LIB-4a's 153 reds:
+    - library-core beforeAll render() is a clone artifact (bypass diff shown in the PR, never committed);
+    - the fixture id collisions (`lb-test.json` lib_barbell_row, `zz-lib2b.json` lib_cable_lateral_raise) and the 153 timeouts are scale defects, routed to a new card **LIB-4d**. LIB-4d must merge before any merge that ships either id or takes main past 22 shipped rows.
+  - D-LIB9-FACTPOSE (a plate fact's pose is the pose its quote states; a setup quote is the start pose only) and LB1 **CARD FIELDS VERIFIED @ `6285b4f`** (two valid blind rounds).
+- **PRs:**
+  - **LIB-4a #233 READY @ `0b2d3c1`** (15/15 green). Reviewer session_016RBQnwX1GP4YGs23TVMsE9 (Opus). After PASS, LIB-4a merges in a train and frees a lane slot: "LIB-5 resume" takes it.
+  - **LIB-4b #232** @ `f1df4a7`; **LIB-4c** `claude/lib-4c-library-ci` @ `108eb5c` (#246) with its wiring #249 (`claude/sup-lib4-ci` @ `a30b0c4`, merges in one train with LIB-4c).
+  - **LIB-9a #245** @ `6285b4f`: Do 5 in progress.
+  - **LIB-5 #244** @ `738cdd3`: Do 1, no slot.
+  - **#251** `claude/sup-ci-watch-floor` @ `a9fc0b11` (draft, supervisor CI, add-only): the OLD-ANDROID-1 floor now also covers capacitor.plugins.json classes, and agent-guard Rule 3 has an arm for the watch lane's `ccr-061c7350-tjvpo6` and `ccr-8cef8a15-l12swp`. Review PASS @ `ac20f9f` and delta PASS @ `a9fc0b1` (6243906980). Waiting on its CI run (android-gate proves the real npm plugin classes), then a train; then tell the Watch lane on #221.
+- **LIB-4a PASS @ `0b2d3c1`** (6244211629, 0/0/0/0; reviewer session_016RBQnwX1GP4YGs23TVMsE9, to archive after the merge). **Train 25** (#252) = #251 → handover → LIB-4a → handover. No src/ change, so no APK. Reviewer note for LIB-9 (not a finding): OLD-ANDROID-1's `ALLOW` names only `zoom-pull-up-`. If real library zoom CSS uses subgrid outside @supports, those rows go red; check at LIB-9's merge. LIB-4b resumes on LIB-4a's final head (it was WAITING on it).
+- **Pilot A #109 code review FAIL @ `e6f39ff`** (6243689943): 2 blockers (pilot-a/out/ 13 MB breaks HT2-A2 on merge; three composers untested), 1 medium (supine() bisect has no bracket check), 2 lows, gaps 1-6. Routed in 6243704774:
+  - findings 1-5 and gaps 3 and 6 go to a **LIB-8 fixes** card (queued for a slot; before plan slot 7);
+  - gaps 1-2 go to the LIB-8 merge card. Gap 2 is `golden.mjs` verifyChain, which accepts approvedBy 'owner' only; it needs a supervisor ruling first.
+  - The reviewer session is archived.
+- **Lane slots** (D-LIB-LANE-ACTIVE): 4 of 4 active (LIB-4a in review, LIB-4b, LIB-4c, LIB-9a). Freed-slot queue: LIB-5 (Do 2 on), then LIB-3b, LIB-4d, LIB-8 fixes. The order amendment is to be recorded in section 12 item 2 when LIB-3b's card is committed.
+- **LIB-3b card** (PQ-H10 checks values and the envelope on the real path; scratchpad draft):
+  - Today validateParams reads s.enum/s.min/s.max while PARAMS writes `values` and no ranges, and the envelope never reaches H10. So 'bar.kind':'banana', 'camera.maxScale':99, 'handedness':7 and {} all pass H10 (reproduced on main).
+  - Fix: h10 takes ctx and applies derive.mjs's paramProblems with the real envelope; new keys H10.envelope and H10.empty.
+  - Round 1 drafted, checked and fixed (24 findings); round 2 check running.
+  - Open supervisor items it raised:
+    - (i) envelope.json cannot hold hand PARAMS rows (selftest.mjs:23-25 compares the whole file; pin.mjs rewrites it), so where approved ranges live needs a ruling before LIB-10's first D/T row;
+    - (ii) LIB-3b merges before #245, and section 13 Q5(c) is amended (lb1-plates.test.ts:438-440 and :448-450 change keys);
+    - (iii) H10 never proves the drawn D plate equals derive(parent, params) (candidate.mjs:66). That is a ruling for LIB-10.
+- **Research wave 2 (LR-29):**
+  - Verify head `claude/libht-verify-w2` @ `5036283d` = W2A `a33d8f3a` + W2B `d4f30c70` + the8 `e6381fa4`.
+  - The first three critic runs were invalid: the plants fell outside the reviewed scope. The script gained a `plantScope` argument.
+  - Run 4 is **VALID**: the squat way-out direction and the lateral-raise 60-70°→30-40° plants were both caught, and the tier-A plant was rated blocker. It found 23 findings; its re-fetch covered 93 sources, 729/729 quotes verbatim.
+  - All 92 findings (valid run plus the invalid runs' real claims) are in triage (workflow wf_0a3e47e9-10a: dedupe, adversarial verify on `5036283d`, rulings for the BarBend-vs-c5 and single_arm drawable questions, per-owner fix packets in scratchpad w2fix/).
+  - Next: the fix round (W2A and the8 sessions; W2B files by a supervisor Sonnet helper), a fresh Opus recheck of the changed lines plus the quotes files the critic's list missed (chin_up, hanging_knee_raise, assisted_pull_up), then verify/w2.md and verify/w2-refetch.json, and the merge into `claude/libht-research`; then name that head on #244 and #245.
+- **Sessions now:** supervisor (this); LIB-4a builder session_014viUzTy4Uyv6KSnQ6ASfEX and reviewer session_016RBQnwX1GP4YGs23TVMsE9; LIB-4b session_01QcCqLjrEVouQUdaFpQyTbq; LIB-4c session_0192ePqaQfU5Vzq7Ft95uXcQ; LIB-9a session_012cNzvoJqdRPVEGzK55vG68; LIB-5 session_01KmrBwed4SGvYPPyWsmoPDN; W2A session_01V96jYTZ6RKFXeJ8ay9mdVt; the8 session_01CMHvXUtmBKbNtQxcFGVPm9. Archived since 8.0k: BUG-39/40/41 builders and reviewers, W2B, the pilot A reviewer.
+- **Owner:** nothing waiting on him except the back-pain box answer (option 1: 50 words, recommended; option 2: 30 words). LIB-5 takes route (b) unless he answers before Do 9.
+
+### 8.0k TAKEOVER 10-17 ~14:45 UTC (read first; supersedes 8.0j where they differ)
+
+- **New supervisor:** session_01SNCyDETVkqVxtLoQxn2Ue9, on the owner's other account (auto mode). Owner, 10-17 ~13:41: "Check get a grasp of 2 repos. Then continue as nxt supervisor. Then continue with tasks of last progress. Read agents.md claude.md". The old supervisor (session_01FTBsxoLN135B3HvJ7sT676) and all its workers are on an account this one cannot see or message: no M/ARC comment or card-branch push after 08:51 UTC. Treated per 10.2a: every replacement builder runs `git pull --no-rebase` before each push and never forces, and stops if its branch moves without its push.
+- **Routine:** `trig_01KNrnsDb34dztKs493YQ5vW` "M/ARC supervisor loop", cron `58 * * * *`, into this session (replaces `trig_016ECwLTU7XRLzsYVRrwLTGe`, which is on the old account). The other routines on this account (Zeroed, OF chain) belong to another project: never touch them.
+- **Watchers:** `subscribe_pr_activity` still fails on every PR. The PR watch is `monitor.sh` plus a branch-head poll (`heads.sh`, local copy in the scratchpad) under Monitor, re-armed every 30 min.
+- **Relay:** not connected on this account. Owner, 10-17 ~15:10: "No need to update relay for now." So no Relay upkeep and no Relay backlog until he says otherwise; this file and the PRs are the record.
+- **Sessions on this account:**
+
+| Session | Role | PR @ start head |
+|---|---|---|
+| session_01MYuGhfpFpmeReWs9q5F67t | GATE-SPLIT reviewer, delta `5c8a8fa..06ce286` and every later delta (incl. the solo E10 runs for LIB-2 and OLD-ANDROID-1 in both TZ) | #194 @ `06ce286` |
+| session_01MdJ6EY8riPvnkLfAbD7ftE | LIB-2b replacement builder: the 3 D-LIB2b-REVIEW-1 fixes | #234 @ `5af33b4` |
+| session_014viUzTy4Uyv6KSnQ6ASfEX | LIB-4a replacement builder (prototype the write-ids fix now, heavy evidence after LIB-2b's delta PASS) | #233 @ `4a2c12e` |
+| session_01QcCqLjrEVouQUdaFpQyTbq | LIB-4b replacement builder (B5 dry run, POSES (7), B7 now; final-head evidence after LIB-4a's final head) | #232 @ `96ef793` |
+| session_01AB35RrA3tfT179bFxHdtN4 | GATE-SPLIT replacement builder: CI proofs (14-job, E6, E8 x5, E9, E7) after the delta PASS (6235156427, 0/0/0/0 @ `06ce286`) | #194 @ `06ce286` |
+| session_01JeJwxHsH1MwepVntc4L9Z7 | LIB-2b reviewer (fresh): delta `5af33b4..9e09951`, then the HANDCSS delta | #234 @ `9e09951` |
+| session_01JAYxxLGX1jDmCZScPuigWj | BUG-41 builder (Exercise progress line/label/trend one series; card `docs/supervisor/verify/bug-41-card.md`) | #240 |
+| session_01Rjj9aRkBGVu5r4LkrKJtpZ | BUG-39 builder (streak: weeks on plan, D-BUG39; card `bug-39-card.md`) | (new) |
+| session_0183AVoAbnfCe6UANBHh2aYV | BUG-40 builder, Sonnet (Records chip total + Show all; card `bug-40-card.md`) | #239 |
+| session_0192ePqaQfU5Vzq7Ft95uXcQ | LIB-4c builder (library CI; card `docs/supervisor/verify/lib-4c-card.md` on claude/sup-lib4-cards @ 19a6017); local until 'E8 done' | (new) |
+| session_012cNzvoJqdRPVEGzK55vG68 | LIB-9a builder (LB1 plates build-ahead, nothing ships; card `lib-9a-card.md` @ 19a6017); local until 'E8 done' | (new) |
+
+- **#219 re-wired** by the supervisor: `82d896d` = `4cbac5a` + merge of #194 @ `06ce286` (clean). Diff vs `06ce286`: build-apk.yml +85/-1 and ci-watch.sh +4; the one removed line is android-gate's old `needs:`. Its 14-job push run is the early signal (`GATE_LEGS=6 HT10_LEGS=4 ci-watch.sh`). Delta PASS @ `06ce286` 14:35 (6235156427, 0/0/0/0). Scratch branches pushed from `82d896d`: `claude/sup-gate-split-e6` @ `e3d03a7` (proof-row drop) and `claude/sup-gate-split-e9` @ `83eb68f` (20 px Pause/Resume, F8 seed); never merged. The GATE-SPLIT replacement builder runs the 14-job, E6, E8 x5, E9 and E7 proofs. Main stays frozen from E8's start until the GATE-SPLIT train merges.
+- **Ruling D-LIB2b-ORDER** (lib4-cards.md 11.1 items 15-16, `claude/sup-lib4-cards` @ `0d65b98`; posted on #233, #234, #232):
+  - On any head with both LIB-2b and LIB-4a, `lib-4a.test` A1/A2 fails: "shipped, but its batch file has no pages" (write-ids.mjs:61 → the copy's render() → plates.mjs libraryOutputs → pagesOf; #232 source-gate job 117346820949).
+  - New order: #194 → #219 → **LIB-2b (slot 3a.0)** → LIB-4a → LIB-4b → LIB-4c. LIB-2b rides the GATE-SPLIT train behind #219 if its delta PASS is in, else the next train; never while E8 runs.
+  - LIB-4a owns the fix in write-ids.mjs; LIB-2b's E3 refusal stays. Item 16 settles LIB-4a's open points: E1 pin +1, its own gate-times entry, A3 attribution past the import crash, the duplicate D-A3-7b-3, one floor shape for pinned-to-8 tests, and scratch pushes by the supervisor.
+- **Corrections to 8.0j:** LIB-2b has a review PASS (6231942072, 1 Medium + 2 Low) and fix-before-merge ruling D-LIB2b-REVIEW-1 (6231953220), not "READY". LIB-4b's B2 never posted results (old container gone). The watch head is `cd0e0b1`, not `128a56d`.
+- **Watch lane:** still active on the other account (pushed `cd0e0b1`, signed watch 1.2.0, 13:39), no reply in about 20 h. Supervisor follow-up on #221 (6235137013) and Watch-test #4 (6235137537): corrected the javap-floor claim (it reads only `registerPlugin()` in MainActivity, so it skips WearEnginePlugin from capacitor.plugins.json), restated the daily-APK launch-safety question, asked for the verdict and the owner's approvals verbatim. Supervisor to-do, add-only `.github`, after #219 and before #221: javap every classpath in `capacitor.plugins.json`; an agent-guard Rule 3 case for `ccr-061c7350-tjvpo6`. #221's preconditions (a)-(d) are all still open; the PR body says "Not for merge yet".
+- **17:00 state:**
+  - #219's 14-job push run on `82d896d` was all green (run 39040783348). E6 was red as designed (`I16|*|UTC proven 0 times`), and E9 was red in both arrangements, F8 only (`gate-compare --seeded F8 PASS`). E8 is pair 1: A1 serial passed (55 min); B1 split is running. The builder dispatches the pairs and re-wakes itself on run completion.
+  - LIB-2b FIXED @ `9e09951` (15:50, 8/8 green). Its delta reviewer is running. Then ruling **D-LIB2b-HANDCSS** (11.1 item 18): a library row's hand panel is unstyled when it opens first, because `handpair-<key>` imports no css. LIB-2b fixes it in its generator; another FIXED and a delta follow.
+  - LIB-4a WAITING @ `66f5cef` for LIB-2b's final PASS. Its write-ids fix is prototyped locally, with 47/47 green.
+  - LIB-4b WAITING @ `624d7e8` for LIB-4a's final head. The B5 dry run gave 1,014/1,100 rows, with the causes ruled in 11.1 items 17-19 (scratch F5 exemption; HANDCSS; COPY_EDITS accepted). **D-LIB9-F5 is open:** every real library plate will raise F5 (the 3.57:1 chrome contrast). Rule it before LB1's sheet.
+  - Golden-B follow-up 12 (new): the lat pulldown and seated cable row cues break the library PQ-H8 rule (16 words; a semicolon). They are approved and locked: recorded, not changed.
+- **Watch lane:** first reply (#221, 16:37). On `567a27e`, source-gate failed in **HT-7 ember: `page.screenshot: Timeout 30000ms exceeded`** (120/150 label opens). The lane re-ran it once and calls it a runner timeout. It is a new flake signature: if it shows again (E8, a train, main), it becomes a GATE-FLAKE card, root-caused. The lane keeps its own handover in `docs/watch-cards/HANDOVER.md` on its branch. My 5 points from 6235137013 are still unanswered.
+- **Speed-up plan done** (3 workflows: plan with critic, two fix rounds with re-checks). Rulings in lib4-cards.md **section 12** (@ 19a6017): D-LIB-CIMANNERS (no push by the new cards until 'E8 done'; then a busy-check and at most one push per 2 h), D-LIB-LANE-ACTIVE (amends plan 7 'Lanes'), D-LIB5-ORDER, D-LIB4-ENTRY-2 (LB1 may be drawn at stage drawing/review before the entry condition; nothing ships), D-LIB4c-1, D-LIB-SCRATCHIDS, D-LIB9-ENGINE (engine per plate from its spec), D-LIB9-AUTHORQA, D-LIB9-CARDFIELDS, D-LIB9-HANDPAGE, D-LIB4-DOCS-2, D-LIB5-BOX, D-LIB5-CARDS8, D-LIB-W2B. Started: LIB-4c and LIB-9a. **Held: LIB-5** until the owner answers the back-box question (sent ~18:50: option 1 = 50 words with all NHS emergency signs, recommended; option 2 = his 30-word cap, drops chest pain, serious accident, sexual changes, sudden severe pain) and its open points are settled (merge routes, the library-qa clone test, commit order, research for the 8's machine cards which does not exist yet). Later starts (section 12 posting order): pilot A #109 code review, research wave 2, LIB-6-PM, the LIB-7 contract fix, a second LB1 drawer.
+- **E8 done (21:2x).** GATE-SPLIT READY @ `06ce286` (#194, 6241237372): 5 of 5 serial/split pairs on `82d896d` identical by gate-compare (A ~55 min, B ~19.5 min); E6 (39041501359) and E9 (39041503331 split, 39042889209 serial) red as designed; E7 vs `49a2853` empty, 101 groups. HT-3 lines identical across all 10 runs once the timing numbers are removed (HT-3b A3 medians 128-184 ms). 'E8 done' plus the item 1 check went to LIB-4c, LIB-9a, LIB-5, the8, W2A and W2B; LIB-4a, LIB-4b and BUG-41 were told too. The final CI-proof delta review is with session_01MYuGhfpFpmeReWs9q5F67t; then **train 22** = #194 @ `06ce286` → #219 @ `82d896d` → LIB-2b #234 @ `ccf0250` → this handover (merge-tree clean; LIB-2b's src/ changes are generated-header comments only, so no APK for train 22).
+- **Train 22 MERGED 21:5x** (#247 → main `b70ca58e`): GATE-SPLIT #194, its CI wiring #219, LIB-2b #234, handover. All 15 checks green on train head `3ee756f` (the first train on split CI). No APK: no app behaviour changed (LIB-2b's src/ edits are generated-header comments). GATE-SPLIT and LIB-2b builders and reviewers archived. Every builder was told to merge main; after GATE-SPLIT every new top-level gate block needs its own guard line, a gate-times.json entry and the pin in tests/gate-split.test.ts (BUG-41 does this in a catch-up; LIB-4a's card already has it). The busy-check of D-LIB-CIMANNERS ended with the train; the 2-hour push limit until READY stays for LIB-4c, LIB-5, LIB-9a and the research lanes. Ruling **D-LIB4-ENTRY-HT3** (section 12 item 18): E8's 10 runs count as HT-3's 5 identical reruns, timings removed.
+- **Train 23 MERGED ~22:2x** (#248 → main `2d1bbf3`): BUG-39 #241, BUG-40 #239, handover; 15/15 green on `6e7ff64`. **APK sent** (run 39074783294, artifact MARC-DEBUG-APK 12115944794, fingerprint step success): streak and records fixes, with 2 phone checks. Builders and reviewers archived. Main's own run on `b70ca58` (first split CI on main) was green too.
+- **Train 24** = BUG-41 #240 @ `6547dba` (PASS 0/0/0/1 incl. the GATE-SPLIT catch-up: guard, gate-times 60.9, pin 102; reviewer session_019K2KkjhxyCeFgTn7RizWeC) → handover, then the APK.
+- **LIB-4c wiring** #249 `claude/sup-lib4-ci` @ `a30b0c4`: howto-rebuild + howto-shard jobs, gate-verdict needs them; agent-guard Rule 4 (MANIFEST.json needs '[golden update]'; one exemption: creating it as exactly {"rows": {}}, section 12 item 19). Adversarially reviewed (2 lenses): 4 confirmed, all fixed (jq exact equality, grep without -q under pipefail, exemption written down; LIB-4c tags its scratch build commit). Its own CI is red by design until it rides with LIB-4c.
+- **LIB-9a rulings** posted (#245, lib4-cards section 13 @ `8669e21`; Q-A/Q-B later on the PR): Q1-Q5 accepted with conditions after a 3-lens review (one lens rendered the 2 plates) and per-ruling adversarial checks; highs: close_grip stack-lift sign, assisted_pull_up contact proof. Do 5 not open yet.
+- **LIB-5 note** (#244): review verdict "needs revision" (18 open points; the verifiers corrected every draft ruling). A consolidation workflow is merging those rulings and the earlier card re-check (23 card defects) into section 14 before posting.
+- **W2B redo:** the W2B session (Sonnet) declined to act on cross-session instructions and asked for a human go-ahead; not worked around. It is archived, and its fully spelled-out edits run as a supervisor helper (Sonnet) on `claude/libht-research-w2b`. The verify that follows is independent of it.
+- **Train 23** = BUG-39 #241 @ `7658c32` → BUG-40 #239 @ `7e995eb` → handover, on `b70ca58`, then the APK. BUG-41 #240 READY @ `09befbc`, reviewer session_019K2KkjhxyCeFgTn7RizWeC; its GATE-SPLIT catch-up (guard, gate-times, pin) then a delta; it rides the next train.
+- **Owner bugs:** BUG-39 #241 PASS @ `7658c32` (0/0/0/2, reviewer session_018171HkVfxjmEYxw2SV9iyt) and BUG-40 #239 PASS @ `7e995eb` (0/0/0/2, reviewer session_01UWRrnmNLNUVDGZGvCvgdua), both frozen; merge-tree of the two is clean. BUG-41 #240 still building. **Train 23** = the passed bug fixes right after train 22, then one APK with phone checks.
+- **New sessions (20:37-20:43):** the8 research writer session_01CMHvXUtmBKbNtQxcFGVPm9 (`claude/libht-research-the8`, the 8's CARD-V2 cards for D-LIB5-CARDS8; golden-B grip research on `claude/howto-options` docs/howto/grip-and-feel/research/ is a source map only; local 027faca5: 8 cards, 294/294 quotes verbatim by its Sonnet fetcher; open point: no novice-level tempo seconds for any of the 8); LIB-5 builder session_01KmrBwed4SGvYPPyWsmoPDN (Do 1 design note only, no lane slot; card `docs/supervisor/verify/lib-5-card.md` on claude/sup-lib4-cards); W2A session_01V96jYTZ6RKFXeJ8ay9mdVt (Opus; local e09dbdd: T1-T3 gaps kept, T4/T5 sourced, T6 holds, T7 Q1; one conflict BarBend vs dumbbell-kickup c5 for the supervisor's ruling); W2B session_01V4TrJj8Yx3EUECYHb2gysG (Sonnet with exact edits; step 0 re-fetch is the supervisor's; step 7 back-box appliesTo held for the owner's answer; D-W2-TEMPO extension ON).
+- **LIB-5 card settled** (cards branch, local `27ea764d`, `8525ce7b`): route (b) word for word from item 12, the D-LIB5-CARDS8 fallback PR `claude/lib-5-cards-8`, the two-commit order for the 8's exemptions, the clone-test inputs. LIB-5 started Do 1 without waiting for the owner: item 3 keeps his answer off its path until Do 9.
+- **10 % re-fetch for w2 (supervisor):** the selection re-computed here = the first 41 of 407 LB1/LB2 claims by sha256('9dbc7e0a…:<card>:<claim>'), 68 quotes; a Sonnet fetcher fetched 36 sources and the supervisor compared them itself: 68/68 verbatim (two ACE pages answered 403, then 200 on one retry). It goes into `verify/w2-refetch.json` at the w2 verify.
+- **Rulings since 19:30:** D-LIB4c-4 (item 17: planK may leave a shard with a fixed part over 900 s without ids; 1800 s stays red on every shard). Next: one LR-29 verify over W2A + W2B + the8 together; then 'CARD FIELDS VERIFIED' input for LIB-5 Do 3 b.
+- **LIB-4c** local `29f99c0`: Do 9 interface posted (howto-rebuild, howto-shard, gate-verdict library family). The supervisor wires `claude/sup-lib4-ci` after train 22. Local dry run: ~975 s per id on this container (P 1), so C14 on CI sets times.json; one offline/open timeout on lib_smith_machine_incline_press is a flake candidate if it repeats on CI.
+- **Gotcha (new):** a takeover can find the old account's watch lane still running while its supervisor is gone. Check both by branch pushes, not by session lists.
+- **Old account stopped.** Owner, 10-17 ~15:10: "Also, ive stopped them dont worry" (the old account's M/ARC sessions and routines). The 10.2a two-writer risk is closed; builders still run `git pull --no-rebase` before each push as normal practice. Every card-branch push since 14:30 carries a `Claude-Session:` trailer of this account's sessions.
+- **OLD-ANDROID-1 data (owner, 10-17 ~16:05):** the crashing phones are the Play closed-test testers' phones on Android 12 and 13 (cause 1's range). The closed test runs 37.1.0.55, built before the fix. Recommended to the owner: upload Play bundle 37.1.0.107 (run 39010087902, artifact 12092871150, main `49a2853`) to the closed-test track, then the testers do D1/D2/D4; D3 on his Android 14+ phone. Recorded in `docs/supervisor/verify/old-android-1.md` open question 2.
+- **Owner decision, 10-17 ~16:20:** "Lets upload that when my app is published to public. I just need to wait 2 weeks from now since i got 12 users already". Read as: no closed-test update now; the next Play upload is the public (production) release after the 14-day closed test with 12 testers (about 10-31). The supervisor noted once that the testers on Android 12/13 cannot open 37.1.0.55 meanwhile, and that whether a closed-test update resets the 14 days is unverified (check Play Console help). Do not raise it again unless he asks. Confirmed after the Play help check (14 days of continuous opt-in counts; the application asks about tester engagement and crash-free reliability): "No need only 1-3 users has crash, others can give feedback truthfully since they can fully use rhe app" (owner, 10-17 ~16:30). Decision final: no closed-test upload before the public release.
+- **Owner-only:** the Play uploads and the device checks D1-D4 (after the release build reaches the testers).
+- **#219 push run on `82d896d`: all 15 checks green**, gate-verdict included (the first real 14-job + verdict run on current code).
+
+### 8.0j 10-17 ~08:05 UTC (read first; supersedes 8.0i where they differ)
+
+- **Main `49a2853`** (train 21 #238, A3-7b; 8/8 green). The audit-3 lane is done, with its builders and reviewers archived. The APKs for trains 20 and 21 went to the owner. The OLD-ANDROID-1 device checks (D1, D2, D4 on the old phone; D3 on the new one) wait on him, and the Relay item OLD-ANDROID-1 stays in review until then.
+- **LIB-2b #234: READY @ 5af33b4.** Its reviewer is session_01Tjc3wnBra5qZdiZjLGozVK. Checklist slot 3a.1.
+- **LIB-4b #232** (session_01MQ2BT4MiRoP2F1FhxjMC4B) is building B5 on 3 scratch ids with 3 separate pair keys, under D-LIB4-FIXTURE-4 (lib4-cards.md 11.1 item 14 @ 6f2db31). The shared-key proof moved to LIB-7's card (D-LIB9-HANDPAGE), and D-LIB4-ENTRY gains it. B2 is running on both browsers.
+- **LIB-4a #233** (session_01PKX7vT1vRteUZ15QynVS3Z) is building. Scratch PR #237 is "[do not merge]".
+- **GATE-SPLIT #194:**
+  - FIXED @ b43710b, which merged main 21d8797 and gave the LIB-2 group its times.
+  - Main 49a2853 then added the OLD-ANDROID-1 block, which fails the guard check (E1, line 8974). The builder is merging 49a2853, guarding it and timing it.
+  - Then one delta review from 5c8a8fa covering both main merges.
+  - Then the supervisor merges the head and main into #219, pushes, and pushes the E6 and E9 scratch branches (specs in #194 comment 07:43), and the builder dispatches the 14-job, E8 and E9 runs.
+- **Gotchas (new):**
+  - **Every new top-level gate block on main breaks GATE-SPLIT's guard check** until it is guarded. GATE-SPLIT should merge before the next card that adds a block. After it merges, every new block needs its own `if (gate.runs('<task>'))` guard and a gate-times entry.
+  - **4x-CPU timing probes miss under local parallel load:** BUG-34 first frame, BUG-37 Settings settle, HT-3b A3. CI has not shown this. If it shows in CI or in an E8 pair, it becomes a GATE-FLAKE card, root-caused and never re-run to green.
+- **Watch lane:** #221 is still active (head 128a56d). There has been no reply on #221 or Watch-test issue #4.
+
+### 8.0i 10-17 ~05:35 UTC (read first; supersedes 8.0h where they differ)
+
+- **Train 20 merged** (#236 → main `5fb4068`, 8/8 green): OLD-ANDROID-1b. Its builder and reviewer are archived. The APK watch is running, and one owner message will cover trains 19 and 20.
+- **Train 21 (this one):** A3-7b #229 @ bc0c02b (PASS @ 3fe9b88; delta PASS @ bc0c02b, 0/0/0/0, D-A3-7b-3 try/catch per listener), plus this handover. This closes the audit-3 lane.
+- **LIB-4b map gaps** were named on #232 (lib4-cards.md 11.1 item 13 @ 6845d36): X3b, X9a-c; the count is 2,947 on the 8.
+
+### 8.0h 10-17 ~04:15 UTC (read first; supersedes 8.0g where they differ)
+
+- **Train 19 merged** (#235 → main `21d8797`, all 8 checks green): LIB-2, LIB-3, LIB-4 cards and HANDOVER 8.0g. LIB-2 and LIB-3 builders and reviewers are archived. The APK watch is running.
+- **Train 20 (this one):** OLD-ANDROID-1b #227 @ 8c84321 (PASS 0/0/0/0), the web half of the P0 old-phone fix, plus this handover. After the merge, send the APK. Phone checks: D2, the Open Play Store link on an old WebView (docs/supervisor/verify/old-android-1.md); a normal phone shows no change.
+- **A3-7b #229: PASS @ 3fe9b88** with one Low: a replace listener that throws could abort Reset or Restore. The supervisor ruled it fixed before merge (try/catch per listener plus a test), followed by a delta review. It goes in the next train.
+- **Design-note rulings:** `lib4-cards.md` section 11 (`claude/sup-lib4-cards` @ f20a0b4), drafted by workflow wf_f45aa9b0-355 with a judge and a critic per note. 11.1 settles the conflicts:
+  - library hands ship as `handpair-<key>` only;
+  - one `candidateOf`, owned by LIB-2b;
+  - fixtures get scratch QA inputs;
+  - layers pages are committed;
+  - `LIB_ONCE.run` has 4 rows.
+  The LIB-9 blockers stay open (D-LIB9-ENGINE, D-LIB9-HANDPAGE). LIB-2b and LIB-4b are building to the rulings.
+- **GATE-SPLIT #194:** delta PASS @ 5c8a8fa. The builder is merging main 21d8797 (new LIB-2 groups) and will post FIXED. Then the supervisor merges its head and main into #219, and the builder runs the CI proofs. The supervisor pushes the E6 and E9 scratch branches, because builder sessions push only to their own branch.
+
+### 8.0g 10-17 ~02:30 UTC (read first; supersedes 8.0f where they differ)
+
+- **Train 18 merged** (main `c14212af`): GATE-FLAKE-3 #224.
+- **Train 19 (this one):**
+  - LIB-2 #189 @ 54d37f2: delta PASS 02:17, 0/0/0/0;
+  - LIB-3 #180 @ 4540d82: PASS, frozen. Merged onto main + LIB-2 with no conflicts; typecheck, `generate --check` (60 files) and vitest (2,882 tests) all green locally;
+  - `claude/sup-lib4-cards` @ f6debb0;
+  - this handover.
+  After it merges, send the APK. The How-to wiring changed (loaders and hints), so the phone check is: the 8 How-to sheets open and look the same.
+- **LIB-4 split** (`docs/supervisor/verify/lib4-cards.md`, rulings in section 1):
+  - LIB-4a #233 (session_01PKX7vT1vRteUZ15QynVS3Z): existing checks at scale.
+  - LIB-4b #232 (session_01MQ2BT4MiRoP2F1FhxjMC4B): the per-id runner. Its design note is posted.
+  - LIB-4c: after LIB-4b's design note.
+  - Ruling **D-LIB4-FIXTURE-2**: LIB-2's layer generators read only the 8, and their inputs miss imported composers. The new card **LIB-2b** (#234, session_01Xj1c9kPKCXgUcAGadGStg8, section 10, checklist slot 3a.1) fixes both. Its design note is posted. LIB-4b's B5 and LIB-4c's C4/C11-C14 wait for it, and D-LIB4-ENTRY gains LIB-2b.
+  - Ruling **D-LIB4-PINS-2** decides which card fixes each test pinned to the 8.
+  - AGENTS.md now has a pointer line for LIB-4a's edits in other tasks' blocks (plan risk 22).
+- **Gotcha:** a builder session can push only to its designated branch. A new card needs a new session (`outcome_branch` = the card's branch); a trigger cannot add a branch.
+- **Audit lane:** A3-7b #229 READY @ 3fe9b88, reviewer session_014LEkzSXYkmz1BrNfyPAjiN. The A3-1..A3-5 builders and reviewers are archived.
+- **Still open:**
+  - GATE-SPLIT #194 delta review of 5c8a8fa (reviewer session_01RXRCfEdijRcaieyozTaJsA, running);
+  - OLD-ANDROID-1b #227 building (session_01AKXZbhXZViXpgvhfT3UeEv);
+  - the watch lane (#221, Watch-test issue #4) has not replied.
+
+### 8.0f 10-16 ~22:15 UTC (read first; supersedes 8.0e where they differ)
+
+- **Train 16 merged** (#228 → main `8f64ab00`). It carried:
+  - A3-6 #218 @ 8b4633c;
+  - A3-7 #216 @ ec0ba2a (the supervisor's main merge plus a date-bomb test fix; delta PASS);
+  - A3-5b #223 @ 65c7698;
+  - A3-2b #222 @ 08fb932;
+  - handover #225.
+
+  All 8 checks were green on train head 67baa0b. The APK went to the owner: run 38965662947, fingerprint passed. Builders and reviewers for those cards are archived. The audit-3 lane is done except **A3-7b** (#229, session_01MQ1jw4YksgT3pxVJwWjFyv, building).
+- **Train 17 merged** (#230 → main `277bd6d5`, 10-16 ~23:20). It carried OLD-ANDROID-1a #226 @ d5f6f11, the native launch-crash fix for Android 8-13, plus HANDOVER 8.0f. All 8 checks were green on 3aff0d6. The APK goes to the owner with device checks D1/D3 (docs/supervisor/verify/old-android-1.md). Builder and reviewer archived.
+- **Train 18:** GATE-FLAKE-3 #224 (PASS @ 0d397b5), so main's C11 race is fixed.
+- **OLD-ANDROID-1a #226: PASS @ d5f6f11** (0/0/0/1). It rides train 17 alone, for speed (P0). Its reviewer is session_01PNvAhFyDVPgqA8UDe3APyr. **OLD-ANDROID-1b #227** is building; it was told to merge main for A3-2b's `index.html` block.
+- **GATE-FLAKE-3 #224:** READY @ 0d397b5. Reviewer session_01DN4ub4bS6GhaGK8x32xNuY.
+- **LIB-2 #189:**
+  - delta PASS @ b0ca732 covers items 1, 2, 3, 5 and 6;
+  - item 4 (ids.ts hints) is being built under rulings **D-LIB2-hints** (howToHint everywhere; HT-6 A8, hint.test and content-gen move onto the decoder) and **D-LIB2-hints-2** (the generator enforces the 2,048 B raw budget; 12 distinct 29-character texts fit; a 13th is refused; 3 B margin).
+- **GATE-SPLIT #194: FAIL @ 0df9648** (0/0/2/2).
+  - Medium 1: gate-split credits only new screenshot names.
+  - Medium 2: the proof sha comes from GITHUB_SHA instead of `git rev-parse HEAD`.
+  - The builder session_01Nf1EpvrcLEJ3uR8fW6zFW7 has been resumed. CI-only proofs still owed after #219: a 14-job verdict PASS, E6, the E8 pairs, E9 and E7.
+- **Watch lane:** no reply on #221 after 4 h. Also asked in **Watch-test issue #4** (the owner suggested his repo), which the monitor now polls too.
+
+### 8.0e RESTART 10-16 ~17:20 UTC (owner: "Start full work again"; read first, supersedes 8.0d where they differ)
+
+- **Pause.** The owner said "Pause all sessions" on 10-09 at ~08:35 and "Start full work again" on 10-16 at ~17:20. In between, the supervisor loop routine was disabled, and 84 stale ticks were drained. The loop (trig_016ECwLTU7XRLzsYVRrwLTGe) is enabled again. The Huawei reply check (trig_01PwNaFDcaAkLKMsYM6Q6Ssm) was deleted: Wear Engine application 3 was **approved on 2026-10-15**, per the watch lane's record (#221, `docs/WATCH-WEAR-ENGINE-APPLICATION.md` on its branch).
+- **Train 15 merged** (#220 → main `41807999`, 10-16 17:2x): A3-2 #211, A3-1 #210, A3-3 #213, A3-4 #214, A3-5 #215. All checks were green on the train head `b1a3c518`.
+  - main's own gate run 38939522305 then went red in **visual-gate-tz** (Auckland pass): `HT-6: silent-black lat-pulldown C11 close animation: app [..160 ms..] vs golden []`. The same tree had passed, which points to a race: the check reads getAnimations() one round trip after the click, so the golden's 160 ms animation can end before the read.
+  - Failed jobs were re-run once (allowed: identical tree passed). Card **GATE-FLAKE-3** fixes the race the GATE-FLAKE-2 way (builder session_01JnibAabiJgVDPDwpDgxpCL, #224).
+  - The train 15 APK goes to the owner once android-gate passes.
+- **P0 OLD-ANDROID-1** (owner, 10-10: "on older phones ... it crashes or never opens"). Record: `docs/supervisor/verify/old-android-1.md`.
+  - Most likely cause: a native crash on every launch on Android 8-13. HealthConnectNativePlugin has private methods whose signatures name Android-14 types, and Capacitor's getDeclaredMethods() throws NoClassDefFoundError before the WebView loads. This has been there since 2026-09-28.
+  - Web causes: the ES2020 bundle needs WebView 80+; a boot that fails silently stays blank; `.finished` needs 84 and `.at` needs 92.
+  - Cards, built in parallel:
+    - **OLD-ANDROID-1a** (native + CI javap floor): session_01PXNT6jPqQUKp9GfwGRR1HA;
+    - **OLD-ANDROID-1b** (WebView floor 111 by feature detection, update screen, boot watchdog): session_01AKXZbhXZViXpgvhfT3UeEv.
+  - Ruling **D-OA1-FLOOR**. 1a merges in its own train as soon as it passes.
+  - The owner is asked for the phone model, Android and WebView versions in the next APK message.
+- **LIB-2 reopened.** The LIB-1 triage found must-fix items (HowToSheet glob maps, the loaders budget rule, a synthetic-N build test, the ids.ts hint encoding). Ruling **D-LIB2-A4**: a superset total lives in LIB-2's own block, and the HT-10 A4 counts go to LIB-4 before LIB-9. The old enabler session was archived; replacement builder session_01XN9ZyZPBm9GvVUfgeJqTh2 (#189 issuecomment-6221134695).
+- **Audit lane:**
+  - A3-7 #216: PASS @ 582d898. The supervisor merged main in (`b6e4552`). The delta FAILed on a date-bomb test, fixed @ `ec0ba2a`; delta running.
+  - A3-6 #218: READY @ 8b4633c; reviewer session_01MFdeeWz1CMySdevT2eUBjE.
+  - A3-5b #223: READY @ 65c7698; reviewer session_0154FQEL6TYESUJhnGaeURch.
+  - A3-2b #222: READY @ 08fb932; reviewer session_01Y66kKfjCU8Fgy1WFsEBbq3.
+  - Merge order: A3-6 → A3-7 → A3-5b and A3-2b. A3-2b and OLD-ANDROID-1b both edit `index.html`.
+  - New follow-up card **A3-7b**: the onboarding hold must clear on Reset/Restore (reserved store/App files), plus a test for the hold on "Update" (A3-7 review Lows 1-2).
+- **GATE-SPLIT #194:** reviewer resumed (it stopped at the weekly limit on 10-04). #219 (the supervisor's .github wiring) waits for the PASS and the proofs.
+- **Watch lane** (owner, 2026-10-15: "Yes u take over"). Session_01GKeGChQ1wzd3vgzK2YixRG (not visible to this account's session tools) builds the GT 6 companion on branch `ccr-061c7350-tjvpo6`, in both repos.
+  - M-arc PR **#221** (Gates A-C, draft). It changes AGENTS.md and AGENT-RULES ownership from Codex to the watch lane, `.claude/settings.json` (drops the Edit denies), store/models/dataVersion (data version 1, the command log; the owner approved on 10-16, per the record's section 11.3), session.ts, Settings.tsx, three workflows (add-only) and one `prepare-android.sh` line.
+  - Coordination channel: #221 comments (**Supervisor** / **Watch lane** prefixes), issuecomments 6221160644 and 6221733706.
+  - #221 merges through the supervisor's trains, after four things: a review verdict posted on #221, a supervisor cross-lane review of the shared files, green CI on the latest main, and the owner's approvals quoted on the PR.
+  - Watch-test review done (wf_fb1a433a-e6c): the UDID tool still labels the HiChain ID as "UDID", and WatchService loses its diagnostics. M/ARC's own follow-ups: native/watch WatchService diagnostics loss, and no Java tests on native/watch/core in CI.
+
+### 8.0d FINISH LINE 10-04 ~00:50 UTC (read first; supersedes 8.0c where they differ)
+
+- **Train 13 merged** (#207 → main `c542ae9`, 23:58): HT-10 #166 @ `edeefd2` + HT-10 CI wiring #201 @ `1b6bd4e` + handover #206. All 8 checks were green on train head `cf7b936`. HT-10 reviewer and builder archived. No app code changed since train 12 (`git diff 4aa1b2a c542ae9` touches docs, tests, scripts, tools and .github only), so there is no new APK; the owner's phone build v37.1.0.62 is the release candidate app.
+- **Finish-line message sent** (push + chat, ~00:50): How-to done, 32 first-audit items closed (DEV-01 by his decision), Gym Finder parked, O9 phone checks, optional golden update (8.6 item 8) offered.
+- **main red on its own run 37163451459:** ht10-gate (2/2, UTC) C10 `#machine-chest-press-zoom-hand-close is 41.934 x 41.934` (emerald, wrist line); the identical tree passed on cf7b936. Likely measured mid-animation (0.953 scale). Card **GATE-FLAKE-2** (builder session_01WsKUhznFUd9S1xxKdvBMrP, branch claude/gate-flake-2): deterministic slow-animation repro red→green, seeded defects still caught, bounded wait. android-gate was skipped on that run (no APK needed: no app change).
+- **LIB-7 #193:** panel critic @ f3e285c invalid twice on the squat anchor; supervisor confirmed golden-B follow-up 9 on the render. D-LIB7-19 (push heel over the forearm) proved impossible in golden B's engine (builder grid), so D-LIB7-19a: the two push ids are gaps until follow-up 9 (12 drawn, 18 gaps). **Delta PASS @ `55e91e9`** (0/0/0/2 Lows ride the next push). Panel critic running on 55e91e9 with anchors lat_pulldown p1 + pull_up p1 (run wf_10265153-50a).
+- **Pilot A #109:** panel VALID @ `e6f39ff` (wf_cad21b92-9ed): all 17 at the bar; **16 approved** (D-PILOTA-R5, this head only); shrug held (D-LIB8-shrug), dumbbell_fly and rear-delt fly held. Head frozen.
+- **LIB-12 #191:** builder resumed to merge LIB-7 f3e285c (now 55e91e9) and post FIXED; then a delta review.
+- **Library lane started:** LIB-1 scale rehearsal (session_01XCmaQYZNryUhoTH6ohTfTK, Opus because its steps cannot all be spelled out ahead; "[do not merge]" PR #209). LIB-2 enabler resumed to build (#189). GATE-SPLIT builder resumed to build (#194; supervisor wires .github add-only).
+- **Audit lane started:** cards A3-1..A3-7 in `docs/supervisor/verify/audit-3-cards.md` (26 of 26 still fail on c542ae9; rulings R1-R10 confirmed). Wave 1: A3-2 data safety (session_01BHzvrNQY3eVvGxctFKauYW) and A3-1 coach consent (session_01SpoCUhZ5jk7KeaemJVmrGc). A3-3 and A3-4 start when one of them reaches review; then A3-5 → A3-6, A3-7. Merge order A3-2 → A3-1 → A3-3 → A3-4.
+- **02:0x LIB-7 panel VALID @ `55e91e9`** under ruling **D-CRITIC-CAL3** (#193 issuecomment-5975538224). A low anchor item that the supervisor confirms on the render as a real golden defect does not invalidate the run, if the anchor is ≥ 4 elsewhere, the other anchor is fully ≥ 4 and both plants are caught. All 7 tiles were at the bar in both rounds, so **12 ids are approved**. The head is frozen. The run before it (wf_10265153-50a) was invalid: the prep's labels leaked the key (fixed in lib7-critic.js, D-LIB7-19b) and pull_up p1 is weak (follow-up 10). LIB-12 **delta PASS @ `28149bf`** (it contains LIB-7 f3e285c); it now merges 55e91e9 for a final small delta.
+- **04:00 live state (heads from ls-remote at each event):**
+
+| Card | PR @ head | State | Next |
+|---|---|---|---|
+| GATE-FLAKE-2 | #212 @ `02810de` | REVIEW PASS 0/0/2/0 (session_016xcEgxhsaUEjnk1Ppqytqp). The two Mediums are evidence precision (a vacuous "rest" sub-check; the D-GF2-1 repro text); the builder is fixing them. | FIXED → same reviewer delta → **train 14 first** (main is red until it lands). |
+| A3-2 data safety | #211 @ `4469c54` | READY; reviewer session_01AUXWduDH5q3xxt6h4od2YH running. | Train 14. |
+| A3-1 coach consent | #210 @ `08714ce` | REVIEW PASS 0/0/0/2 (session_01QE2wi5aKKSYaN3ijU6Z1by). Low: a same-value same-day weigh-in then Undo leaves profile and log disagreeing (R1 side effect; recorded, no change). | Train 14 after A3-2. |
+| A3-3 native races | #213 @ `9a37676` | REVIEW PASS 0/0/1/2 (session_019jPruvuJktDyUqMty57kpt). | Merges main after A3-2, carrying the M8 text fix and the training-guard test → delta → next train. |
+| A3-4 timing | #214 (building) | Ruling D-A3-4a: the pinned live-retarget test looks entries up by exerciseId (index lookup encoded the UI-R01 bug). | READY → fresh reviewer. |
+| A3-5 coach facts / A3-7 onboarding | building (session_01TvEw1S93oYzmjVZKb42nEv Opus; session_017qeZkExGzCXs4tkyY1k8bk Sonnet) | started 03:57 | A3-6 starts when A3-5 is in review. |
+| LIB-2 | #189 @ `ee14df8` | REVIEW FAIL 0/2/2/3 (session_01Xh8LgQJfevZDK8XyHYNFQR): generators not data-driven; L2-A4 untested; A2 ignores the registry; A5 untested. Sent to the enabler. | FIXED → same reviewer delta. |
+| LIB-1 | #209 (never merges) | measuring; its source-gate is red on purpose (153-id build). | Report comment → supervisor copies numbers into the plan. |
+| LIB-7 / LIB-12 | #193 @ `55e91e9` / #191 @ `0d268a7` | Both final PASS and frozen; LIB-12 reviewer archived. | Plan-order merges (LIB-6 → LIB-7 → … → LIB-12). |
+| Pilot A | #109 @ `e6f39ff` | 16 approved, frozen. | Plan-order merge after LIB-2..LIB-4. |
+| GATE-SPLIT | #194 (building) | design FINAL; builder resumed 00:20. | READY → reviewer; supervisor wires .github. |
+| Motion artifact | scratchpad motion-fix | Owner's phone showed "No 3D on this device" (02:3x screenshot). Workflow wf_6d484263-829 reproduces under emulated host constraints, inlines the models, adds a no-WebGL flipbook fallback, verifies adversarially. | Republish the same URL, then send the owner the link. |
+
+- **05:2x Motion artifact v2 republished** (same URL, version 2). Root cause of the owner's "No 3D on this device": the artifact host's CSP blocks fetch() of data: URIs (connect-src). The JSON/data: conversion on 10-03 introduced it, and wf_6d484263-829 reproduced it under host-like CSPs E4/E6/E10. Fix:
+  - both models are inlined as gzip+base64 and parsed with no fetch; textures use createImageBitmap from a Blob;
+  - three.js loads through a dynamic import, so a CDN failure no longer blanks the page;
+  - with no WebGL2 or a lost context, a flipbook plays: 248 WebP frames in flip/, 2 themes × 4 views × 31;
+  - the reason shows under "No 3D".
+  An env verifier and an adversarial reviewer passed it on 17 harness environments. 3D pixel parity holds and __mf.metrics() is unchanged. Known limit: no WebGL plus a blob:/data: host document leaves the flipbook unresolvable, and the reason is shown.
+- **04:34 CI note:** an android-gate job on #214 got no runner, and its builder quoted GitHub saying "account is locked due to a billing issue". A3-5's jobs also failed with 0 steps after 11 min queued. Train 14's jobs at 05:00 got runners normally. If it recurs, it goes to the owner (billing is his).
+- Classifier note: a grep of `docs/supervisor/PROMPTS.md` was refused once (00:0x, "Interfere With Workloads", right after a standalone CI-run cancel). Not retried; prompts were written from the skills instead. Standalone-run cancels (6.8 step 7) are skipped until that is clear.
+
+### 8.0c PAUSE 10-03 ~18:10 UTC (owner: "Pause all work for now."; read first, supersedes 8.0b where they differ)
+
+**Done at the pause:**
+- Routine `trig_016ECwLTU7XRLzsYVRrwLTGe` is **disabled**; the /loop is stopped; the watcher scripts are stopped.
+- Every non-archived worker on this account got a pause message: stop, push only tested green work to its own branch, post a one-line "Paused @ sha" on its PR, and wait for "resume".
+- The account hit its session limit twice today (13:10 and 18:10 UTC resets). Workers cut off by it show FAILED: the HT-10 builder, the LIB-12 builder and reviewer, and the pilot A builder.
+- main `4aa1b2a` (train 12). Owner chat rule: when nothing needs him, the reply is exactly ".".
+
+**Stop points (heads from `git ls-remote`, 18:10):**
+
+| Card | PR @ head | State | Next on resume |
+|---|---|---|---|
+| HT-10 (finish line) | #166 @ `edeefd2` | **Delta PASS 20:27** (same reviewer session_01JCTQ1so1qCTyp8CFLTE1mP, issuecomment-5973180350): hidden-chip guard in (8/125 red when hidden), fixture red without the guard, full gate Chromium 141 PASS, both Chrome 153 ht10 shards PASS (125 tuples once each). Risk note: shimmer ratio 1.12 vs limit 1.2. | Train 13 (HT-10 + #201 + this handover), APK, finish-line message (PROMPTS 10c), then the audit lane. |
+| HT-10 CI wiring | #201 @ `1b6bd4e` | HT-10 `edeefd2` merged in cleanly; typecheck 0, vitest 2668/2668 locally. | Rides train 13. |
+| LIB-7 | #193 @ `1114bc1` | Delta PASS @ `1114bc1` (0/0/0/0). Rulings D-LIB7-13…17a. The single critic @ `7dd184d` was valid: every pair at the bar except rope (fixed in `1114bc1`). The panel critic @ `1114bc1` (wf_4d223c0e-330): round 1 invalid (hidden machine_chest_press C3 median 3); round 2 died at the session limit. | Rerun the panel (`lib7-critic.js`, head `1114bc1`). machine_chest_press may be a weak anchor here too (see golden-B follow-up 7): if it fails again, record it and use lat_pulldown + another clean pair, fixed before the run. Frozen until its plan-order merge. Reviewer session_013iDRuPDJxLx2bxoTiDYYJT can be archived after the panel's final PASS. |
+| LIB-12 | #191 @ `1c672b0` | FIXED posted (base LIB-7 `23ac5bb`). Fresh delta reviewer session_01TSajZZVKcAzAiBgVGN8KHj FAILED at the session limit (no verdict on #191 at the pause). The source-gate BUG-34 launch probe was red once (app code = main); one rerun. | The reviewer resumes or a fresh one starts. Then LIB-12 merges LIB-7 `1114bc1` (small delta). If the BUG-34 probe fails again anywhere, open card GATE-FLAKE-2. |
+| Pilot A (LIB-8) | #109 @ `ae7c8c0` | Panel critic VALID (wf_afdf4915-c3f, D-CRITIC-CAL2). **15 approved:** reverse_lunge, barbell_overhead_press, single_leg_romanian_deadlift, pec_fly, box_jump, plank, romanian_deadlift, dumbbell_bench_press, triceps_pushdown, dumbbell_biceps_curl, barbell_row, upright_row, incline_dumbbell_press, rope_triceps_pushdown, mountain_climbers. **Back to fix:** dumbbell_shoulder_press (Mistake arch, R5 median 3). **Held:** barbell_shrug (H3), dumbbell_fly, rear-delt fly. | The builder (session_01XaegSQJXRSyfX5CyGxkfRk, FAILED at the limit) fixes the shoulder press Mistake only and posts PILOT-A FIXED. Then a panel round on the new head. |
+| Motion fix (owner's chest-press artifact) | branch claude/motion-upgrade-9n82lj, arch `0a45d00` | wf_1722fac2-942 reached verify-4. fix-4 and verify-5 died at the session limit. The open items are all muscle shading (fill and line edge mismatch, jagged contours, pec coverage short of the armpit) plus extra measurement rows. Page and assets: scratchpad `motion-fix/` (not in the repo). | Resume the workflow (script in this session's workflow scripts, loop up to 5 rounds). Publish the artifact only after a verify PASS, then send the owner the link only. |
+| GATE-SPLIT, LIB-2 enabler, LIB-3, research writers | #194, #189, #180, research branch | Idle until HT-10 (unchanged). | unchanged |
+
+**Arrived right after the pause (18:12, both posted on their PRs):**
+- **HT-10 FIXED @ `edeefd2`**: hidden-chip guard plus fixture (mutation 8/125 red), D-HT3 corrected to 68 ms. check, test:tz, both shards and the full gate pass locally on Chromium 141. CI: visual-gate-tz green. source-gate printed "Screenshot gate PASS" and was then cancelled by the 60 min timeout at 60:01, so android-gate was skipped. That is the job-time risk #201 removes. On resume: the same reviewer delta-reviews `b94e63a..edeefd2`, and CI evidence comes from the train with #201.
+- **DELTA REVIEW LIB-12 @ `1c672b0`: PASS** (0/0/0/2), all 4 CI checks green including the source-gate re-run (#191, issuecomment-5972033371). Its local gate failed only on the HT-3b A3 timing probe (149 ms, run alongside other jobs); that is the D-HT9-A3b follow-up. On resume: LIB-12 merges LIB-7 `1114bc1` (small delta), and the reviewer is archived after that.
+
+**New rulings today (all on their PRs):**
+- D-HT10-A3m: A3 limit = ceil(1.25 × max median, CI + container), capped at 400 ms.
+- D-LIB7-SHEET, D-LIB7-PIN, D-LIB7-16a, D-LIB7-17, D-LIB7-17a.
+- D-PILOTA-R5: a valid result on the current head outranks an earlier approval.
+- D-CRITIC-CAL: a plant counts as caught on its target item or on any item its original passes.
+- D-CRITIC-CAL2: a critic round is a panel of 3 (medians, majority findings); anchors exclude golden plates with verified weak spots (golden-B follow-ups 6 and 7).
+
+### 8.0b PAUSE 10-03 and TAKEOVER (read first; supersedes 8.0a-8.8 where they differ)
+> **TAKEOVER CANCELLED (owner, 10-03 ~10:25 UTC: "Changed my mind, just continue all task. Ill do other project in my other claude acct. Dont pause here").** This supervisor (session_01FTBsxoLN135B3HvJ7sT676) keeps running every lane; the 10:50 pause trigger was deleted. The owner's other account works on a different project and must not act on M/ARC. The note below is kept for history only.
+>
+> **To the supervisor on the owner's other account (owner, 10-03, verbatim: "if an existing supervisor reads this, continue where we left off. Since ur last progress was a week ago, stop ur current workers, archive them and create new ones appropriate to current progress. Last supervisor wrote this was tasked to stop").**
+> 1. Your own sessions and Routines date from 10-01 or earlier and are stale: stop them, archive every worker session on your account, and disable old Routines (`trig_01CtcvAE1PGAtH4dkxLVQZsR` hourly loop, `trig_01P25Eg4YpbtXMwpihA3hVCP`, `trig_01XBaJHD9jyLEXPUdpMpykLo`) if they still exist. Never merge or act on an old worker's say-so.
+> 2. This supervisor (session_01FTBsxoLN135B3HvJ7sT676) paused at ~10:50 UTC 10-03 (8:50 pm the owner's time, UTC+10), archived its own workers after each posted a Paused note, and stopped. Nothing here keeps running except GitHub Actions already queued.
+> 3. Start fresh workers per card from the table below: read each PR's last Paused / REVIEW PAUSED note and its head (`git ls-remote`), then give the card to a new builder or reviewer (AGENTS.md models; branch names checked before `create_session`). Order of priority: HT-10 review (finish line) → BUG-38 → GATE-FLAKE-1 / LIB-12 reviews → LIB-7 → pilot A → library lane in plan order.
+
+- **Owner, 10-03 ~06:30 UTC:** "Pause all workers for now. Aside from inside this chat if u have parallel. And pause when its done." Then "Lets finish this first so i can save the 5hr limit token usage". After that he asked to finish only the Play app file ("Continue the aap file since we need that here in playstore"). Every other worker got a pause message and posted a Paused / REVIEW PAUSED note on its PR. **Resumed 10-03 ~08:35 UTC** (owner: "Continue app progress" / "Continue all workers. Just make sure every task done is saved on handoff"): routine re-enabled, `monitor.sh` re-armed, /loop re-armed, resume messages sent to HT-10's reviewer, GATE-FLAKE-1's and LIB-12's reviewers, pilot A, BUG-38 and LIB-7 builders, and the research writer (W1 lows). A one-shot `trig_01Mvf69CXJYAfGyj81Ek7czm` fires at 10:50 UTC (8:50 pm owner time) to pause everything, archive this account's workers and refresh this section before the takeover.
+- **Takeover:** the owner starts a supervisor on his **other Claude account** after the 8:50 pm (his time, UTC+10 = 10:50 UTC) pause on 10-03. It continues everything paused here. **Every session listed in this section belongs to THIS account (session_01FTBsxoLN135B3HvJ7sT676's account) and is unreachable from the other one.** Start a replacement builder or reviewer per card from the PR's last Paused note, the branch head (`git ls-remote`) and this table. Never trust a head from a comment without `git ls-remote`.
+- **Main:** `bf0a916` (PLAY-HR #202 merged 08:05 10-03). Before it: `ff9b243` (PLAY-PREP #198, 07:13). Before it: `65fa1ea` (PLAY-SIGN #200, 06:2x 10-03), `c1af1e4`, `000918e` (train 11, HT-9).
+
+**Live log 10-03 (after the 08:35 resume, newest last):**
+- 08:5x LIB-7 #193: review PASS @ acc3f00 (0/0/0/2; reviewer session_01DPowN9apjbu8d32yWTMEo9 archived). FIXED @ 03ad935 = tests + 2 fixtures only (+22 lines), accepted by the supervisor. Next: fresh calibrated R8 critic (no script yet; write one modelled on pilot-a-critic.js), then frozen until its plan-order merge.
+- 08:4x W1 lows merged into claude/libht-research @ 9dbc7e0a (writer session_01PtjyPPiXjaD1z4XjCuzrvL, branch claude/libht-research-w1-lows @ 14e714df).
+- 08:5x Pilot A READY @ b5e5703 (plates page d845b15b): OHP fixed, H3 bench 11.7 / shoulder press 12.0 pass; ruling D-LIB8-shrug (#109): shrug held until a sourced elevation; critic wf_0f32e106-a0c running.
+- 08:4x Motion fix (owner request, PR #197 branch): workflow wf_1722fac2-942 (understand → architect → build → verify) building one chest-press artifact in scratchpad/motion-fix; architecture section appended to docs/FORM-GUIDE-ARCHITECTURE.md on claude/motion-upgrade-9n82lj.
+- 09:0x Play closed test 1.0 (37.1.0.55) APPROVED and live: 'Available to selected testers', released 10-03 18:48 Melbourne (08:48 UTC). Owner shares the opt-in link from the Testers tab.
+- 09:3x LIB-12 #191 review FAIL @ 1ff38b6 (1 Blocker in LIB-7's hands/sheet.mjs: problemsOf destructures wristRange=null; 4 Lows). Routed: LIB-7 builder fixes sheet.mjs + test; LIB-12 builder fixes its Lows, merges LIB-7 then main, posts LIB-12 FIXED. Reviewer session_0138fzEdbjLMnoWd2DXwSexe archived; the delta review needs a fresh Opus reviewer.
+- 09:5x LIB-12 → LIB-7 (#193 comment): source-gate on #191 @ 8945f3b red in LIB-7's tests/library/hand-pairs.test.ts:280 (hook timeout). LIB-7 builder owns the fix.
+- 09:4x LIB-7 FIXED @ 7fac80e (wristRange null: G1-G9 scoped to radial golden-B keys, other views use an optional checks() hook; red-before test). Hook-timeout (test:280 on CI) sent to the LIB-7 builder. Fresh delta reviewer session_01Mao4fQVagHkieD8edpDoaw on acc3f00..head.
+- 09:4x GATE-FLAKE-1 #179 review PASS @ 4ca1720 (0/0/2/1; reviewer archived). M1: HT-3b A3 can still exceed 100 ms under load (showModal() task residual) -> keep D-HT9-A3b open as a follow-up card (HT-9 merged) until that task is under budget; M2/L1 no code change. Merge: in HT-10's train or right after (both touch the gate harness); needs latest main merged in.
+- 09:5x LIB-7 FIXED @ 66c13ef (CI hook timeout). Delta reviewer told to verdict acc3f00..66c13ef.
+- 09:47 LIB-7 DELTA PASS @ 7fac80e (0/0/0/1 Low: A2 should assert LIB-7 modules are radial with no render). Hook-timeout commit 66c13ef came after; reviewer asked to cover it.
+- 09:52 LIB-7 DELTA PASS @ 66c13ef (0/0/0/1 carried Low: A2 radial/no-render assert; timeout root cause: golden vocab now read from the sha-pinned golden page). Reviewer archived. LIB-7 is ready for its calibrated R8 critic and its plan-order merge; CI on 66c13ef to confirm.
+- 10:0x Pilot A critic VALID (run 3) on b5e5703: 14 approved per exercise (list on #109); held: shrug (D-LIB8-shrug), triceps_pushdown + rope_triceps_pushdown (R5=3 elbows-drift cue, fix round sent), dumbbell_fly, rear-delt fly.
+- 10:1x Pilot A READY @ e82d415 (pushdown + rope pushdown R5 fix). plates page 2e121484…; only those 2 cards changed. Next: calibrated critic (pilot-a-critic.js with head e82d415 and that page sha), not started before the pause.
+- 11:09 BUG-38 READY @ `45a09cd`; fresh Opus reviewer session_01KoUZXZvBQqRGS4BawtFYje. **11:58 REVIEW PASS** (0/0/0/1 note; owner case red on main, green on head; check, test:tz, gate, CI green). Goes in train 12.
+- 11:4x Pilot A critic VALID on `e82d415` (run 2; hidden plates ≥4, both plants caught): triceps_pushdown + rope_triceps_pushdown **approved**. OHP + RDL back to fix (R5=3, Mistake view does not read), ruling **D-PILOTA-R5**: a valid run on the current head outranks an earlier approval (approval counts only for the commit it ran on). Still held: shrug (H3), dumbbell_fly, rear-delt fly.
+- 12:0x #203 handover refresh merged (main `5bc4712`).
+- 12:0x **REVIEW HT-10 @ `ca313c7`: FAIL** (2 Blockers: A3 tap limit still the 400 ms default, A3 numbers not in D-HT3; O9 list + mutation table missing. High: sweep does not count taps (Show me removed still passes). Medium: A2 not split per shard. Lows: D-HT10-A5 text, CI time). Ruling **D-HT10-A3m** on #166: A3 limit = ceil(1.25 × the highest median from ≥3 CI + ≥3 agent-container runs), capped at 400 ms, all numbers in D-HT3, probe 1 ms under the median goes red. Routed to the HT-10 builder; the same reviewer (session_01JCTQ1so1qCTyp8CFLTE1mP) does the delta.
+- 12:1x PILOT-A FIXED @ `ae7c8c0` (OHP + RDL Mistake only; other 15 byte-identical). Fresh calibrated critic wf_bbfec1c7-172 on `ae7c8c0` (script points at it; new plates page sha recorded by the run).
+- 12:2x Train 12 = BUG-38 #199 @ `45a09cd` + GATE-FLAKE-1 #179 @ `4ca1720` (PASS 09:4x; moved out of HT-10's train so the finish-line train is smaller; HT-10 merges main after train 12) + this handover row.
+- 12:2x-13:10 the account hit its session limit (reset 13:10). Workflows that died mid-run were resumed at 14:00. Workers report a seven-day "allowed_warning".
+- 13:59 **TRAIN 12 MERGED** #205 → main `4aa1b2a` (GATE-FLAKE-1 #179, BUG-38 #199, SUP #204; all 4 checks green on `9d043f4`). Relay BUG-38 and GATE-FLAKE-1 done. Archived the BUG-38 builder and reviewer and the GATE-FLAKE-1 builder. Debug APK run 37128066973 (artifact 11276767190, fingerprint step green). The Play AAB **37.1.0.62** (versionCode 37000062, sha256 `3bf887d1…d704`, upload cert `95:DC:ED:4A…`, no READ_HEART_RATE) was sent to the owner to upload as a closed-test release; he now installs through Play (keeps his data).
+- 14:0x LIB-12 had stalled since 09:49 on LIB-7's `sheet.mjs`. Ruling **D-LIB7-SHEET** (#193): refText falls back to the module's `CLAIMS_TEXT`; a key with its own `checks()` shows "Checks: ok"; flags come from an optional module `FLAGS` export; radial keys stay byte-identical. LIB-7 FIXED `656d45d`, delta PASS. Ruling **D-LIB7-PIN**: the sheet pin covers LIB-7's own modules only, with the same sha values. Test-only, accepted by the supervisor at `23ac5bb`.
+- 14:2x **LIB-7 calibrated critic** written (`docs/supervisor/workflows/lib7-critic.js`, C1-C7). It ran VALID on `656d45d`: curl 1, curl 2, curl 3, ez 6 and d-handle 5 approved. rope 8, d-handle 4 and ez 7 went back to fix, and the EZ grip tile was checked. LIB-7 FIXED `bfacafb` (D-LIB7-13/14/15). **Delta review FAIL** (ez_bar_curl `angled` renders the same as reverse_curl; the rope fist is still pointed; push values not flagged). Routed back; the same reviewer, session_013iDRuPDJxLx2bxoTiDYYJT, does the delta. Then the critic runs again.
+- 14:3x Pilot A critic on `ae7c8c0`: 3 of 3 runs invalid. The supervisor checked both reasons on the renders: the hidden seated_cable_row's start ghost leans about 12° against its own "no rocking" copy (golden-B follow-up 6), and the triceps plant was caught on R2 instead of R3. Ruling **D-CRITIC-CAL** (both critic scripts): a plant counts as caught on its target item or on any item its unplanted original passes, and seated_cable_row is no longer a hidden anchor. A fresh run, wf_caae19be-e80, is in progress.
+- 14:4x Motion fix (owner's chest-press artifact): verify-3 FAIL, all on muscle shading (fill and line edges disagree, jagged outlines, pec coverage stops short of the armpit) plus missing measurement rows. The loop was extended to 5 rounds and resumed. The artifact goes to the owner only after a verify PASS.
+- **Owner chat (10-03 ~14:55):** when nothing needs him, the reply is exactly "." (AGENTS.md "Owner chat", `.claude/owner-rules.md`).
+
+**Google Play (owner's Console, personal account, package com.mrcdrnzz.dailytracker): state at 07:30 UTC 10-03**
+- Keys: app signing key `05:66:9A:…:F1:F5` (Play App Signing, the permanent key); upload key `95:DC:ED:4A:…:07:9B` (secrets `MARC_UPLOAD_KEYSTORE_B64`, `MARC_UPLOAD_STORE_PASSWORD`; public cert in Relay `releases/upload_certificate.pem`). The workflow "M/ARC Play bundle" signs with the upload key on main pushes and manual runs (PLAY-SIGN #200), artifact `MARC-PLAY-AAB-UPLOAD-SIGNED`, pinned and self-tested (`scripts/check-play-signature.sh`).
+- **Done by the owner (answers in `docs/PLAY-SUBMISSION.md`, reviewed PASS on #198):** App content complete (privacy policy, app access, ads No, content rating = All Other App Types with Online Content Yes, rated Everyone / PEGI 3 / 3+; target audience 18+ with "restrict minors" on; Data safety with 11 types, delete-data URL `/privacy/#data-deletion`; government No; financial none; advertising ID No; Health apps = Activity and Fitness only). Store settings (Health & Fitness; tags Activity tracker, Health & fitness, Sports coaching, Workout; contact email). Store listing (text = the doc's, with the How-to line "step-by-step form guides with technical drawings"; icon = `public/icon-512.png` flattened onto #08090a; feature graphic `docs/store/feature-graphic-1024x500.png`; 8 phone cards = the 7 on `claude/play-store-cards` plus card 6 "See how your session went." built 10-03 from the owner's finish-screen screenshot with `card.py`, not yet committed to that branch). Closed testing "Alpha": 5 countries, email list "M/ARC testers" with 5 testers (he is finding 7+ more), draft release "1.0 closed test" with the old bundle 37.1.0.47 **removed**.
+- **SUBMITTED 10-03 ~08:20 UTC, in review with Google** (14 changes; quick checks passed): closed test "1.0 closed test" with bundle **37.1.0.55** (versionCode 37000055, main `bf0a916`, run 37108524303, artifact 11268548375; manifest checked: no READ_HEART_RATE, the 4 kept permissions present), 17,807 devices, Health Connect declaration (4 reasons as in PLAY-SUBMISSION) and Foreground service declaration (task "Other", video link held by the owner) filled. Google emails the owner when the review ends; then he shares the opt-in link (Testers tab) himself. He plans to install the Play build himself (told: Export backup first; never uninstall before a backup).
+- **Was waiting (done):** the first bundle built after PLAY-HR merges (below). Then the owner uploads it to the draft, fills the **Health Connect** declaration (4 permissions; reasons in PLAY-SUBMISSION "Health apps declaration") and the **Foreground service** declaration (Connected device; text in PLAY-SUBMISSION; he has recorded the video and holds the unlisted YouTube link: never write it in the repo), then sends the release for review. Production access needs 12+ testers opted in for 14 continuous days.
+- **Never** send a bundle that declares `android.permission.health.READ_HEART_RATE` (D-PLAY-HR-1). Check the manifest of the downloaded AAB first (`bundletool dump manifest`).
+
+**PLAY-HR #202: MERGED 08:05 10-03** (main `bf0a916`; review PASS @ `7aadb4f`, 0/0/1/1; builder and reviewer archived). Review follow-ups: Medium = `docs/PRIVACY-POLICY.md:14` still lists Health Connect "heart rate" (policy text is the owner's: proposal 4 in #198's body, to put to him with the next policy change); Low = `docs/PLAY-SUBMISSION.md` "until PLAY-HR removes it" is stale (fix in the next docs push). Card history: removes the unused Health Connect `READ_HEART_RATE` (D-PLAY-HR-1, from the #198 pre-verdict). Builder session_01EC3tqWMPWU1BfS5UXToVhg (Sonnet, paused at `540ddd7`, all 6 steps done, tests red-before/green-after). Supervisor commits: `c7db41c` (.github checks: require the 4 kept permissions, fail if READ_HEART_RATE returns), a merge of main `ff9b243`, and a docs line → head **`7aadb4f`**. Reviewer session_0192fzKveiUVwHJGB6yQhqXS (Opus) reviewing; CI watched by `ci-watch.sh PLAYHR:7aadb4f…`. **Next:** on PASS + all checks green on a head that contains main → merge (single-PR merge, Play lane, `expectedHeadSha`) → main's "M/ARC Play bundle" run → verify no READ_HEART_RATE in the AAB manifest → send the owner the AAB link + main's gate APK (fingerprint step success) with "what changed / what to check".
+
+**Paused cards (stop points; all on this account's sessions):**
+
+| Card | PR @ head | Stop point | Next |
+|---|---|---|---|
+| HT-10 (finish line) | #166 @ `ca313c7` | **READY 05:59** (main 000918e in; gate kept both sides). Reviewer session_01JCTQ1so1qCTyp8CFLTE1mP never started (held for "resume"). | Fresh Opus reviewer on `ca313c7` (merge latest main first if needed). On PASS: CI on #201 with `HT10_LEGS=4`, train, APK, then the finish-line message (PROMPTS.md 10c), then the audit lane. |
+| HT-10 CI wiring | #201 @ `05857ad` | main `c1af1e4` + HT-10 `ca313c7` + `ht10-gate` job (matrix 1/2, 2/2 × UTC, Pacific/Auckland; `MARC_HT10_OWN_JOB=1`; android-gate needs it). Guard passes locally; CI not run. | Re-cut on latest main after HT-10's review; this is HT-10's train. |
+| BUG-38 next split | #199 @ `5e32ba4`+ | Builder session_01EnR7H5xDTSzN1Sbgrf2M2D was still working at 07:17 (merged main); pause sent 07:3x, read its Paused note. Rulings D-BUG38-1/2/3 on #199 (04:42). Design: `docs/supervisor/verify/BUG-38.md`. | Finish card → READY → fresh Opus reviewer → train → APK. UI-R03 folds in. |
+| GATE-FLAKE-1 | #179 @ `4ca1720` | READY; reviewer session_014cQmrZM77vAkPrHgDk9po2 posted **REVIEW PAUSED** 06:30 with what it checked. | Fresh Opus reviewer continues from that note. |
+| LIB-12 | #191 @ `1ff38b6` | READY; reviewer session_0138fzEdbjLMnoWd2DXwSexe posted **REVIEW PAUSED** 06:28. | Fresh Opus reviewer continues from that note. |
+| LIB-7 | #193 @ `313bc81` | READY was posted for `aacebf5` (04:15); `313bc81` (04:18, joint check) came after. | Builder confirms READY on the real head; fresh Opus reviewer; then a fresh calibrated R8 critic. |
+| LIB-8 pilot A | #109 @ `fdb5d4e` | **Paused WIP** 06:27 (specs only; `pilot-a/out/` stale). Critic `wf_68d0322c-0a2` on `bdd511ce`: VALID, **16 of 17 pass**; barbell_overhead_press below the bar (R5 3, R7 3). | Builder finishes the round in the 10-03 #109 supervisor comment (OHP fixes; H3 bench/shoulder press; shrug: report the sourced elevation first, check unchanged), then PILOT SHEET READY → fresh calibrated critic. |
+| LIB-3 | #180 @ `4540d82` | delta PASS 10-02. | Frozen until its merge turn (after HT-10, LIB-2). |
+| Research W1 | `claude/libht-research` @ `03d0e2e4` | W1A + tempo merged after recheck PASS (22/22 fixed, 276/276 quotes verbatim). | 7 Lows + 2 older items listed in `docs/research/howto/verify/w1.md` → one small writer round (band grip wrap choice goes to LIB-7). |
+| GATE-SPLIT, LIB-2 enabler | #194, #189 | idle until HT-10. | unchanged |
+
+**Not started / parked:** improvement-audit lane (26 confirmed audit-3 bugs, `docs/supervisor/verify/audit-3-confirm.md`; starts at the finish line, privacy and data first); ERR-CONTRACT card (8.0a row); Gym Finder (parked); PREMIUM/PAY (owner).
+
+**Routines on this account (invisible to the other account):** `trig_016ECwLTU7XRLzsYVRrwLTGe` hourly loop (disabled); `trig_01PwNaFDcaAkLKMsYM6Q6Ssm` Huawei check, fires once 2026-10-13 09:00 UTC (the owner can disable it here if unwanted).
+
+### 8.0a PAUSE (owner, 10-02 13:57 UTC; historical, see 8.0b)
+- **Owner:** "After this batch. Pause all work. As i am trying to create new animation with meshy on how to". The batch = HT-9 only: its delta review (PASS 14:5x @ `dc73c32`, 0/0/0/1), train 11 (HT-9 #113 + #186 + this handover #183), CI, merge, APK to the owner. Then everything stops.
+- **Batch done 17:00:** train 11 #195 merged at 16:05 (main `000918efdf87974931ad1a630dd0bc5839b6285d`, all 4 checks green on train head `f1f5195`). APK: main's gate run 37031786763, artifact MARC-DEBUG-APK 11240393150, fingerprint step success; sent to the owner 17:0x. Relay HT-9 done. HT-9 builder and reviewer archived. Routine `trig_016ECwLTU7XRLzsYVRrwLTGe` disabled 17:00.
+- **Second pause, 10-02 ~17:30:** the owner reported BUG-38 from his phone and asked to fix it and related bugs and to confirm the audit findings (17:1x). Then: "Pause everything for now. Byt save ur progress". Both in-chat workflows were stopped, the /loop was stopped, and the progress was saved to `docs/supervisor/verify/` and `docs/supervisor/workflows/`.
+- **Resumed 10-03 04:05 (owner: "Continue alk workers"):**
+  - routine re-enabled and `monitor.sh` re-armed;
+  - resume messages to HT-10 ("HT-9 merged", main `000918e`), GATE-FLAKE-1, LIB-7 (LIB-12's asks plus the discarded R8 critic's findings) and LIB-12;
+  - in-chat workflows resumed: BUG-38 design `wf_335c9c91-d12`, audit confirmation `wf_1b1d1523-fe5` and pilot A critic `wf_3a60c2a3-e4c` (args `{scratch}`);
+  - new: LR-29 verify of W1A + tempo on `claude/libht-verify-w1` @ `2815c124` (research plus W1A `7fdc9425` plus tempo `16558393`, merge commits), workflow `research-verify.js` (`wf_14147665-13f`).
+- **Resume only on the owner's word.** Then: (1) re-enable `trig_016ECwLTU7XRLzsYVRrwLTGe` (`update_trigger enabled=true`); (2) re-arm `monitor.sh`; (3) read every row below live (`git ls-remote`), then send each paused session one resume message (one-shot trigger), in 8.7 order. HT-10 gets "HT-9 merged" first: it is the finish-line card.
+- **Why paused:** the owner is trying Meshy-made animations for the How-to (his own experiment, repo Watch-test, session_01H2ZgdD61dVdfPNnwywv13H, not ours). If he picks Meshy output for plates, that is a new provider and a plate-pipeline decision (plan 2.8, golden A/B byte-locked): a design card and his yes come first; nothing is swapped silently.
+
+| Task | Session | Stop point (pushed) | Next on resume |
+|---|---|---|---|
+| HT-10 #166 | session_01ShBYNJXt2nMtX1YLqpodA7 | idle; holds 2 local commits (`1988e4a` + long-task window fix), never told "HT-9 merged" | send "HT-9 merged" (train 11 sha): push, merge main, READY → fresh Opus reviewer → `ht10-gate` wiring (8.7 step 6) |
+| HT-9 #113 | session_01PnsUw3z3cqLz3qrELXJsm8 | done at `dc73c32` (merged in train 11) | archive after the merge; its Low (A5 "looks exactly the same" wording) rides HT-10 or the next push touching those lines |
+| GATE-FLAKE-1 #179 | session_01SHiSom5mnPpU198y2QLsUw | **Paused** `891bd46` (17:01, #179 comment): main 000918e already merged in; `npm run check` 2610 and `test:tz` pass | read its #179 comment for the load-run numbers and next step; then READY → fresh Opus reviewer |
+| LIB-3 #180 | session_01WTJ7zrNgXsvYij39bHCrLN | **delta PASS @ `4540d82`** (14:2x, 0/0/0/0); reviewer archived | frozen until its merge turn (after HT-10, LIB-2); then rerun the pilot A scorecard on `4540d82` |
+| LIB-7 #193 | session_01GaUBBUdEvc7JYd3caGTHwF | PAUSED `f971270`: mechanism, 4 drawn keys + band gap, G1-G9, sheet `--calibrate/--plant/--critic`, 28 tests, its gate block passes both browsers | LIB-12's 2 asks (diameter only for radial; sweeps filter by owner + joint no-overlap check), full check/gate, a fresh calibrated R8 critic |
+| LIB-7 R8 critic | (in-chat, discarded) | run started before the pause **discarded** under plan 3.4 (both approved pairs < 4; 1/2 plants) | its findings, checked first: concentration/bayesian curl orientation unstated (research or gaps); hammer curl "YOU ← MACHINE" label wrong for dumbbells; push Right heel vs mid-hand; rope knob does not read; Wrong label wording |
+| LIB-12 #191 | session_01PsmZzeKjrgwWHjNntDBpMD | PAUSED `3d70a94`; pilot A cupped (goblet) + front-rack renders posted on #109 | add them to the pilot A sheet; continue its card |
+| LIB-8 pilot A #109 | session_01XaegSQJXRSyfX5CyGxkfRk | idle at `1da9014`; critic `wf_3a60c2a3-e4c` **stopped** at 13:59 | resume the critic with `resumeFromRunId` (prep cached; script `pilot-a-critic.js`); then per-exercise approval or a fix round |
+| W1A research | session_01PtjyPPiXjaD1z4XjCuzrvL | PAUSED `7fdc9425` on `claude/libht-research-w1a`: 7 full cards (push_up, seated_leg_curl, crunch, side_plank, russian_twist, weighted_dip, ab_wheel_rollout) + resistance_band_row band-hand claims c11-c14; fetcher 195/195 verbatim | Opus verifier with plants (LR-29) → fixers → recheck → merge into `claude/libht-research` |
+| W0A tempo research | session_01MyriU6AJd74orFg41trqrm | PAUSED `16558393` on `claude/libht-research-tempo`: plank c12; mountain_climbers c13/c14 (by time, no steps per second); reverse_lunge c15/c16 (3 s down only from a tempo progression); box_jump gap | supervisor ruling on reverse_lunge's 3 s, then the verifier (with W1A or alone) |
+| LIB enabler, GATE-SPLIT | session_01SFDFkUMFSboiREUAPVWPa2, session_01Nf1EpvrcLEJ3uR8fW6zFW7 | idle until HT-10 | unchanged |
+| BUG-38 next split (owner 10-03 phone report) | supervisor | Investigated: `nextScheduledSplitFor` is a weekday-only lookup (`src/escobar/tools/context.ts:58` → `src/brain/readiness.ts:327`). Owner scope (17:1x): "fix this only or found any other bugs related" + confirm audit findings. Design workflow stopped before the designer finished. All saved in `docs/supervisor/verify/BUG-38.md`; Relay BUG-38. | resume the design (`next-split-design.js`), fold in UI-R03, card → Opus builder → review → train → APK |
+| Audit confirmation (#192 audit 3 + #149) | supervisor | 2 of 8 groups verified before the pause: coach-consent, and coach-facts (IMP-E01, IMP-E05, ENG-01 all CONFIRMED). data and timing stopped mid-run (scratch tests saved); 4 groups not started; skeptic not run. Saved in `docs/supervisor/verify/audit-3-confirm.md` + `a3-tests/`. | finish the 6 groups + skeptic (`audit-3-confirm.js`), then list confirmed bugs for the owner; related ones join BUG-38 |
+| Hourly routine | `trig_016ECwLTU7XRLzsYVRrwLTGe` | **disabled** 17:00 | re-enable on resume |
+| Error reports (owner Q 16:15) | in-chat workflow `wf_7fdf54b9-ae5` (3 Opus investigators + Opus judge) | **Proven end to end by the owner 16:50:27 UTC**: his restore of a non-backup JSON stored 1 row (kind `backup`, route `settings`) in D1 `marc-errors`; so the Worker secret is set and the gym hour's 0 rows meant no failures. The supervisor's zero-write probe was refused by the auto-mode classifier and not retried. | new card **ERR-CONTRACT**: a test that runs an app-built report (`src/errors/scrub.ts`, `installId.ts`, `sender.ts` body) through `escobar-worker/src/errorsValidate.ts` `validateBatch`. No test does today, and a mismatch is a 400 that the app deletes silently (`sender.ts:85-87`). App-side test only; no Worker change. |
 
 ### 8.0 Focus and finish line (owner, 10-01; read first)
-- **Owner, ~01:15:** "Park this audit improvement for now. Lets finish all the how to do first. And all the first audit fixes."
-- **Owner, ~01:30:** "Remind me when we finished all of the how to. And all first audit 32 items. Then after that we proceed."
-- **First audit: COMPLETE at 07:56** (train 5). 31 of 32 findings fixed on main; DEV-01 closed by the owner's "skip" default.
-- **Finish line now waits only on the How-to lane:** HT-7 → HT-8 → HT-9 → HT-10, all merged on main. Then: push notification + chat message to the owner (name DEV-01 as closed by his decision, Gym Finder as parked for a talk, and offer the optional golden update in 8.6), then start the parked improvement audit (#149, cards AUD-13..19; its feature proposals stay owner decisions).
-- "How-to" means the HT lane to milestone M1 (HT-3c..HT-10). The 153-exercise library rollout (LIB lane) is the next How-to stage, outside this line.
-- **Gym Finder: PARKED, also after the finish line.** Owner, 07:30: "When u finished all the task, just park the gym finder without my approval. We need to do brain storm in that topic and talk. Keep it parked for now." No card, builder or research for #158 / GYM-0..6 without his approval. Next step is a brainstorm with him. The supervisor's research is in `docs/research/gym-finder/`.
-- **Usage (owner, 08:10):** "Dont worry about my ussage limit. Just continue and follow agents.md. If i maxxed out, so it is. Ill just wait a day snd few hours then i can continue." So: no throttling beyond AGENTS.md. New worker prompts drop the "near weekly limit, work lean" line. The weekly limit is at warning level and resets 2026-10-03 11:00 UTC.
-- **Handover (owner, 08:28):** "Just keep updating the supervisor handoff too in repo whatever task is done. And whats left or parked, and important matters. Put source code or artifacts in repo too for ur research and architectures. So if i change acct. Another claude agent can continue." From now on every merge train carries a handover commit (this section plus any new decision, ruling or gotcha), and the 3-hour minimum still applies.
-- **Owner defaults accepted** (offered as "I'll do my recommendation unless you say otherwise"; not objected to): SCI-10 and SCI-11 plain estimates (AUD-20, merged); OBS-ENDPOINT restore keeps coach settings (AUD-4, merged); UI-09 Move up/down (AUD-10, merged); DEV-01 skip (closed by decision).
-- **Owner approvals in sessions (10-01):** AUD-3 "Yes cost limit" (quoted on #145). HT-6's two HowToSheet budget entries, approved inside the HT-6 builder session after the classifier refused the edit (see 9).
-- **Owner report (~04:20):** "When i start split. The animation pop up of second screen feels like glitch bouncing." → BUG-36 (#163).
-- **Owner report (~10:30, with a screen recording on the train-6 APK):** "the black area is gone but the bounce fast animation that causing the text like to glitch or blurry is still there".
-  - The supervisor's frame-by-frame measurement: the panel pops in place; its content jumps up 140-158 device px, flickers for 4 frames, then eases back over about 230 ms.
-  - Cause, reproduced in local Chromium: `dialog.sheet` keeps the UA `overflow: auto`, so the panel's `sheet-in` transform plus the showModal autofocus scroll the dialog by exactly the transform each frame. The slide is cancelled. On the phone, compositor and main thread fall out of step, which gives the jump and the blur.
-  - It affects every `Sheet` (`.esc-sheet` already has `overflow: visible`). → **BUG-37** (#173).
-  - Owner, 10:38: "When reduced motion is off. Its fine. It just open normally". The video was recorded in normal-motion mode (the panel is opaque in frame 1, and the close slides about 700 px). So he means either the in-app toggle with on/off swapped, or Android's Remove animations not reaching the WebView. Not verifiable here: the post-fix device check covers both settings.
-- **Merge trains** (since 04:05): every app PR merges through a train. Procedure: 6.8.
+- **Takeover (10-02).** The owner paused all work at 18:17 UTC on 10-01 because of the old account's usage limit (W0B commit `c2f3dfbc`: "Paused by the owner (2026-10-01 18:17 UTC)"); workers posted PAUSED notes at 18:20. On 10-02 at ~07:47 he started a new supervisor on his other account with: "Read my repo. And continue based on lastsupervisor  handoff progress / Follow agents.md". The new supervisor is session_01FTBsxoLN135B3HvJ7sT676 (env `env_01G5Xfb4KD41z5wLtxq6nCAU`). Every old session and Routine is on the old account and unreachable from here (10.2a applies).
+- **Owner, 10-01 ~01:15:** "Park this audit improvement for now. Lets finish all the how to do first. And all the first audit fixes."
+- **Owner, 10-01 ~01:30:** "Remind me when we finished all of the how to. And all first audit 32 items. Then after that we proceed."
+- **First audit: COMPLETE since 10-01 07:56** (train 5). 31 of 32 fixed on main; DEV-01 closed by the owner's "skip" default.
+- **Finish line now waits on HT-9 → HT-10** (HT-8 merged in train 10; earlier HT cards are merged). Then: push notification + chat message (DEV-01 closed by his decision, Gym Finder parked for a talk, the optional golden update in 8.6), then start the parked improvement audit (#149, AUD-13..19).
+- "How-to" means the HT lane to milestone M1. The 153-exercise library (LIB lane) is the next How-to stage; it builds early in free slots and merges after HT-10 in the plan's order.
+- **Gym Finder: PARKED, also after the finish line** (owner 10-01 07:30). No card, builder or research for #158 / GYM-0..6 without his approval.
+- **Usage (owner 10-01 08:10):** no throttling beyond AGENTS.md.
+- **Owner chat (owner 10-01, recorded on the unmerged branch `claude/sup-agents-chat-rule`, see K14):** write to him only for a new APK, a problem no agent can solve, a choice only he can make, or the finish-line reminder.
+- **Merge trains:** every app PR merges through a train (6.8).
 
 ### 8.1 Main
-- **Head:** `1c5504f` (train 7 #175, 13:36). Verified with `git ls-remote`.
+- **Head:** `000918efdf87974931ad1a630dd0bc5839b6285d` (train 11 #195, 10-02 16:05: HT-9 #113, #186, handover #183). Before it: `36b4b3f` (#185 owner chat rule), `94fd32c` (train 10 #184, HT-8, 09:40). APK for train 11: run 37031786763, artifact 11240393150 (fingerprint success; sent 17:0x). Older merge/APK records below remain historical.
 - **Merged on 10-01 (UTC), newest first:**
 
 | Time | Merge | Carried |
 |---|---|---|
+| 17:48 | train 9 #182 `9ca7f07` (`3e9cca3`) | COPY-2 #168, HT-7b #178, handover (`claude/sup-handover-1700`) |
+| 15:12 | train 8b #177 `fc38fb8` | BUG-37 #173, handover (`claude/sup-handover-1340`). Train 8 failed: COPY-2 x BUG-37 swap (section 9) |
 | 13:36 | train 7 #175 `1c5504f` (`3077ba7`) | HT-7 #119, SUP CI limit #174 (D-SUP-CI-1), handover #172 |
-| 09:40 | train 6 #170 `1fcd9c8` (`c10bb91`) | BUG-36 #163, handover #171 (playbook, PROMPTS, scripts, workflows, research) |
-| 07:56 | train 5 #169 `958a3de` (train head `7bf89dd`) | AUD-20 #162 (supervisor catch-up merge `361c7fa`, delta-reviewed) |
-| 06:42 | train 4 #167 `6a3b6b0` (`c1c2929`) | AUD-12 #156, AUD-11 #159, handover #165 |
-| 05:52 | train 3 #164 `170b828` (`371957f`) | AUD-10 #157, HT-6 #112 |
-| 05:05 | train 2 #161 `b795f16` (`147dd28`) | AUD-1 #146, AUD-4 #154 |
-| 04:30 | train 1 #160 `29ab29a` (`bc36ff9`) | HT-5 #116, AUD-5 #148, AUD-2 #147, AUD-9 #150, BUG-35 #152, BUG-34 #142, AUD-7 #151, AUD-6 #153, AUD-8 #155, ESC-REPORT app #130, handover #136 |
-| 03:46 | COPY-1 #137 `e9e170b` | |
-| 03:15 | HT-4b #140 `f1e514a` | |
-| 02:40 | HT-3c #143 `42afd04` | |
-| 01:58 | AUD-3 #145 `7477b5d` (Worker; deploy ok, /health ok, `/reports {}` 400) | |
-| 01:07 | DOC-REPORT #127 `3d3e4e1` | |
-| 00:34 | BUG-32 #131 `dbd33b9` | |
-| 00:03 | BUG-31 #132 `d5ebc77` | |
+| 09:40 | train 6 #170 `1fcd9c8` (`c10bb91`) | BUG-36 #163, handover #171 |
+| 07:56 | train 5 #169 `958a3de` | AUD-20 #162 |
+| 06:42 | train 4 #167 `6a3b6b0` | AUD-12 #156, AUD-11 #159, handover #165 |
+| 05:52 | train 3 #164 `170b828` | AUD-10 #157, HT-6 #112 |
+| 05:05 | train 2 #161 `b795f16` | AUD-1 #146, AUD-4 #154 |
+| 04:30 | train 1 #160 `29ab29a` | HT-5, AUD-5, AUD-2, AUD-9, BUG-35, BUG-34, AUD-7, AUD-6, AUD-8, ESC-REPORT app, handover #136 |
+| 03:46 / 03:15 / 02:40 / 01:58 / 01:07 / 00:34 / 00:03 | COPY-1 #137, HT-4b #140, HT-3c #143, AUD-3 #145 (Worker), DOC-REPORT #127, BUG-32 #131, BUG-31 #132 | |
 
-- **APKs (main's "M/ARC gate" run, artifact MARC-DEBUG-APK):**
-
-| Train | Run | Artifact | Sent to owner |
-|---|---|---|---|
-| 1 | 36815479106 | 11142136862 | yes |
-| 2 | 36818143394 | 11142962138 | yes |
-| 3 | 36821887923 | 11144278190 | yes |
-| 4 | 36826236208 | 11146846294 | yes |
-| 5 | 36833290484 | 11149303246 | yes, 08:33 (run success 08:32; fingerprint step success) |
+- **APKs (main's "M/ARC gate" run, artifact MARC-DEBUG-APK).** Trains 1-6 sent (runs in git history of this file at `2a925d2`). Trains 7 and 8b: sent on 10-01 (per the 17:05 handover; run ids not recorded). **Train 9:** run 36902061299, artifact 11185855693, fingerprint step success; sent by the new supervisor on 10-02 (the old one had stopped before main's run finished at 18:30).
 
 Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifacts/<id>`.
 
-### 8.2 Finish-line checklists (heads and CI checked 08:30)
-**How-to lane, merge order fixed (K1): HT-7 → HT-8 → HT-9 → HT-10.** One train may carry several of them, in this order.
+### 8.2 Finish-line checklists (heads and CI checked 10-02 07:55)
+**How-to lane, merge order: HT-8 → HT-9 → HT-10.** One train may carry several of them, in this order.
 
 | Card | PR @ head | State |
 |---|---|---|
-| HT-3c, HT-4b, HT-5, HT-6 | #143, #140, #116, #112 | merged (`42afd04`, `f1e514a`, train 1, train 3) |
-| HT-7 posture close-ups | #119 @ `14fb8b7` | **Merged in train 7 (13:36).** Follow-up D-HT7-F1b (the 5-theme label check, a COACHING note) goes to the HT-7 builder. |
-| HT-8 feel map and shimmer | #111 @ `74a4e68` | Delta **PASS** 08:02 (0 / 0 / 0 / 1 Low). Low: the `HowToSheet-*.js` entry in `tests/howto/budgets.json` was not re-measured; fix on the next push (measured 22,178 / 7,898, ceiling 24,396 / 8,688, setBy "HT-8"); no ruling posted yet. **CI: `visual-gate-tz` RED on `74a4e68`**: HT-8 shimmer tripwire, app 124 ms vs golden B 93 ms, ratio 1.33 > 1.2 (the reviewer measured 0.41 locally). CI: run 36829910426, `visual-gate-tz` job 110263907276 failure; `source-gate` and `guard` green; `android-gate` skipped; head `74a4e6861be87ac03dc2fd24a8c414c5fa6dc2e7`. Not yet ruled. Head contains main `170b828`, not trains 4-5. Brachialis Low ruled a golden-B gap (05:02) |
-| HT-9 setup and risks | #113 @ `31bbe16` | READY 07:50, all 4 checks green. **REVIEW FAIL @ `31bbe16` 08:37** (1 Blocker: HT9-A1, A4, A5 and the A3 failure path have no evidence; 1 High: the "HT-9 Show" probe taps HT-6's buttons and lets dead setup buttons pass; 2 Medium; 3 Low). Supervisor rulings 08:38 (4.3): the Sonnet builder is archived; an Opus builder continues on the same branch from `31bbe16`. The head lacks trains 4-5 |
-| HT-10 sweeps, speed, release candidate | #166 @ `63131b0` | Building, not READY. Its sweeps found the HT-8 early "Feel it" defect (fixed in `74a4e68`) and the HT-9 setup "Show me" defect (fixed in `31bbe16`). Rulings: D-HT10-A5/A5b (own `ht10-gate` job, runner `scripts/ht10-gate.mjs`, module `tools/plates/fidelity/ht10.mjs`), D-HT10-A4 (How-to asset total = measured + 10 % in `budgets.json` `totals`: 2,552,519 B raw / 564,585 B gz for now), D-HT10-C10, D-HT10-7 (C11 allows golden A's 150 ms opacity crossfade under reduced motion only). Validates on a local merge of main + #119 + #111 + #113. CI on `63131b0` running |
+| HT-3c..HT-7 | #143, #140, #116, #112, #119 | merged (HT-7 in train 7) |
+| HT-8 feel map and shimmer | #111 @ `0346aca` | **MERGED** in train 10 (#184 → main `94fd32c`, 10-02 09:39; all 4 checks green on `9af002f`). Relay done. APK: main's gate run 36991137718 on `94fd32c` (apk-watch `branch=main`, see 9). |
+| HT-9 setup and risks | #113 @ `dc73c321f4451cc733faed5e7996de4849be4fe3` | **MERGED** in train 11 #195 (main `000918e`, 16:05; APK run 37031786763). **Delta PASS 14:5x** (0/0/0/1; reviewer session_01FpbfdE7YTPoy5DCMtw5xMC). Merged in **train 11** (with #186 and this handover branch #183, which carries #187). The Low (A5's "looks exactly the same" lines in `scripts/screenshot-gate.mjs` and `docs/COACHING-DECISIONS.md`: styles same, compositing differs, no compare reads `.feel`) rides the next push that changes those lines. |
+| HT-10 sweeps, speed, release candidate | #166 @ `038cd4f` | Builder session_01ShBYNJXt2nMtX1YLqpodA7 holds 2 local commits (`1988e4a` D-HT10-A5c-2, plus the 09:33 long-task window fix: count only tasks with startTime ≥ window start in `harness.mjs`, routed from GATE-FLAKE-1). Waits for the supervisor's "HT-9 merged". Then READY → fresh Opus reviewer → supervisor `ht10-gate` wiring (8.7 step 6). Possible new flake outside GATE-FLAKE-1: BUG-34 launch first frame on `038cd4f` (job 110762812501), not verified. |
 
 **Golden-B follow-ups, before M1 is called done (through plan 2.8):**
 1. Seated cable row setup[4] "It's hardest at the start.": confirm against cronin2007 or drop it.
@@ -858,6 +1430,12 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 3. With them: the cite text differs across golden-B files for difonza2026 and weiss1995 (research data only), and the HT-5 card's A4 example cue is stale (golden B: "Heel of palm, wrist straight.").
 4. COPY-2's How-to heading list (not edited, golden B owns it): "Hand: right and wrong", "Look closer", "If you feel it in", "Option: thumb over the bar", "Thumb options, seen from the side".
 5. HT-9's "Set it up" and "Risks and when to stop" break the owner's heading rule; both are golden-B copy (HT-9 ruling 7, 08:38).
+6. Seated cable row (golden B): the dashed start ghost leans the torso about 12° forward (head about 45 px ahead of the finish head), while its own copy says "Sit tall; no rocking". 3 of 3 blind critic runs on pilot A `ae7c8c0` flagged it (R1=3), and the supervisor confirmed it on the render (10-03). Golden B is owner-approved and byte-locked, so it is recorded here and not changed. It is no longer used as a hidden calibration anchor (D-CRITIC-CAL).
+7. Machine chest press (golden B): the Mistake "OFF THE PAD" barely reads. The red dashed upper back sits only about 8-10 px in front of the solid back, so the back still looks on the pad; only the head shift and the arrow carry it. 2 of 3 blind critic runs on pilot A `ae7c8c0` scored it R5=3, and the supervisor confirmed it on the render (10-03). Recorded, not changed, and no longer a hidden anchor (D-CRITIC-CAL2).
+8. Machine chest press hand close-up (golden B): the Right says "HEEL OF PALM" but draws the handle inside the curled fingers at the front of the fist, the mid-palm fist of the lateral raise. 3 of 3 panel critics on LIB-7 `1114bc1` scored it C3 ≤3, and the supervisor confirmed it on the render (10-03 19:1x). Recorded, not changed. It is no longer a hidden anchor for the hand critic either.
+9. Barbell back squat hand close-up p1 (golden B): same defect as 8. The Right says "HEEL OF PALM" but draws the bar mid-fist, about 80 px (2×) above the wrist pivot and in front of the dashed forearm axis. 3 panel critics on LIB-7 `f3e285c` gave it a C3 median of 3 in both rounds. The supervisor confirmed it on the render (10-04 00:1x). Recorded, not changed here. It is no longer a hand-critic anchor; the anchors are now lat_pulldown p1 and pull_up p1 (D-LIB7-19). LIB-7's push Rights copied this pose; under D-LIB7-19a they are gaps until this is fixed.
+10. Pull-up hand close-up p1 (golden B): the Right says "TOP OF PALM" and draws a straight wrist with the bar mid-fist. Its own facts say "hook the bar where your fingers start" with the "wrist tipped back a little" (about 35°). Panel critics on LIB-7 `55e91e9` scored it C1/C4/C7 = 3 and C3 2-3 in both rounds. The supervisor confirmed this on the render (10-04 01:3x). Recorded, not changed. It is no longer an anchor; the anchors are lat_pulldown p1 and hanging_leg_raise p1, both of which read coherently (bar at the base of the fingers, load line through the wrist).
+11. Hanging leg raise hand close-up p1 (golden B), Wrong "SLIPPING OUT": the bar floats about 20 px (2×) below the opened fingers, and only the thumb's edge touches it. The "30°" label sits on the hand outline. 3 of 3 panel critics on LIB-7 `55e91e9` gave C3 a median of 3, and in round 2 also C7. The supervisor confirmed both on the render (10-04 02:0x). Recorded, not changed. Under D-CRITIC-CAL3 (below) the run stays valid.
 
 **First audit, 32 findings (4 P1 + 28 P2): COMPLETE 07:56.**
 
@@ -884,103 +1462,86 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 - AUD-20 (#162): (1) `readiness.ts:105` one-night wording "over the last night" → queued to COPY-2's final push; (2) `rules.ts:276` / `weeklyReview.ts` "Below 60%" / "85% or more" literals beside the 0.6 / 0.85 checks → one named constant each; (3) D-AUD20-5 note that "sharp / spreading / with swelling" is general safety advice, not from Finucane 2020.
 
 **Other open lanes (not in the finish line):**
-- **BUG-36** #163 @ `76718cc` (split start sheet bounce): FAIL @ `d593c5e` 06:12 (Medium: the pixel probe passed on main; Low: click scroll) → FIXED `76718cc` 07:21 → **delta PASS @ `76718cc` 08:28** (0 / 0 / 0 / 0). In merge train 6 #170 (`claude/sup-merge-train-6`, head `1fc2d4d`, opened 08:31). At 08:50 `guard` was green and `source-gate` and `visual-gate-tz` were running. Check CI live.
-- **BUG-37** #173 (sheets bounce on Android; card text in the builder prompt, owner report in 8.0): Opus builder session_016NL6dV6aSfXNaqH53EhBJT on `claude/bug-37-sheet-dialog-scroll`, opened 10:35.
-  - Fix candidate `.sheet { overflow: visible }` checked locally: dialog scrollTop stays 0, and the panel slides 960 → 331 px.
-  - Evidence: a new add-only BUG-37 gate block that measures `getBoundingClientRect().top` and `dialog.scrollTop` every frame. It must fail on main.
-  - The How-to plate fidelity must not move (owner rule).
-  - Addendum 10:41 (trig_011Fj8rFWc6shTk2rkggGtpK): a four-way device check and a reduced-motion assert.
-  - Merges in a train when it passes; it is not in the HT order.
-- **COPY-2** #168 @ `eef365b` (headings, explaining lines): PASS on the partial head 08:06 (0 / 0 / 0 / 2 Lows). The builder reports a local, unpushed commit `340f7a1` with the registry fix ("Current week", Low 1) (from its session status, not on GitHub). Final push after BUG-36 merges: start-sheet title, the `{i.means && …}` guard (Low 2), the `readiness.ts:105` wording (AUD-20 Low 1), the registry fix, and a main merge. Then a delta review by the same reviewer.
-- **LIB-8** pilot A #109 @ `c6e5b66`: waits on LIB-2..LIB-4 and the owner's pilot sheet. Builder idle.
-- **Parked or not for merge:** #149 improvement audit (parked until the finish line); #158 Gym Finder docs (parked, owner talk first); #144 first-audit docs (parked; its triage is in `docs/research/first-audit/`); #94 PREMIUM-PLAN and #92 PAY-1 (parked, owner decisions); #88 Watch docs (draft, waits on Huawei); #3 watch agent's PR (never merge); #1 stale.
+- **Merged since 10-01 09:00:** BUG-36 (train 6), BUG-37 (train 8b), COPY-2 and HT-7b (train 9). The BUG-37 device check is the owner's (8.6).
+- **GATE-FLAKE-1** #179 (builder session_01SHiSom5mnPpU198y2QLsUw, running): not READY; before/after statistics in progress (10:00: "main fails 28/28 L4 checks vs head 0"). 09:31 routing comment: the HT-3b A3 residual goes to HT-9 (D-HT9-A3b) and the `perf.mjs` `buffered: true` risk to HT-10 (both sent). On READY: a fresh Opus reviewer. It is the single owner of the flaky probes; LIB-4's K > 1 waits on it (plan 5.4).
+- **LIB-3** #180 @ `6558d23`: **delta PASS 09:43 (0/0/0/0)**; reviewer archived; builder session_01WTJ7zrNgXsvYij39bHCrLN idle. Frozen until its turn (after HT-10 and LIB-2); its head predates main `94fd32c`, so main is merged in at its train.
+- **LIB-6** #181 @ `9b8f76e`: PASS 09:02 with one Medium, ruled fix-before-merge; fixer added the anchor check to `npm test` (mutation red → green); **delta PASS 09:19** with one Low (D-LIB6-9 says "4 patch anchors", is 6: fix at its pre-merge main merge). Fixer and reviewer archived. Frozen until its turn.
+- **LIB-8 pilot A** #109 @ `1da9014` (17 sheet plates; plates page `209cc0bf…`; held: dumbbell_fly D-LIB8-fly, rear-delt fly). History 10-02: critic on `c19805a` valid (13 pass, 4 below the bar); ruling **D-LIB8-floor** (floor-horizontal class: floor y≈1043, scale up to ×1.35 to fill width, F1 flag; #109 comment 5950197626); LIB-3 scorecard in scratch found real plate defects (H4 340 px overlaps on 11, reverse_lunge duplicate ids, shrug semicolon) and LIB-3 defects (below); fix round `1da9014` fixed critic items + H4/H2-ids/H8 (plank ×1.19, climbers ×1.31). Fresh critic `wf_3a60c2a3-e4c` resumed 13:5x after the usage pause (critic told to ignore tempo phases). Open before approval: H2 tempo for box_jump/reverse_lunge/plank/mountain_climbers (research, W0A writer), H3 short traces (shrug, plank), flags F2-F5 (supervisor), LIB-3 rerun after its fix. Cupped and front-rack close-ups (LIB-12) and band/curl/rope/EZ/D-handle (LIB-7) join the pilot A sheet. 0 of 19 approved; held count as 0.
+- **Research wave 0 (LR-29): DONE.** Merged `claude/libht-verify-w0` into `claude/libht-research` @ `95342b11` (10:5x): 9 thin ids + 19 shared cards, critic 2/2 plants, recheck PASS, rulings R-W0-1..8 in `docs/research/howto/verify/w0.md` (R-W0-1 back box 50 words for this box only vs plan 8.6 default 30: owner sees it on pilot A). **Tempo research** (box_jump, reverse_lunge, plank, mountain_climbers) on `claude/libht-research-tempo` by the W0A writer. **Wave 1 (W1A)** writer session_01PtjyPPiXjaD1z4XjCuzrvL on `claude/libht-research-w1a`: pilot B ids (push_up, seated_leg_curl, crunch, side_plank, russian_twist), weighted_dip, ab_wheel_rollout, band-hand claims. Remaining cards to write later (after LB1): LB7 12, LB8 11, LB9 13, LB10 7 ids. Research prompts use curl, never WebFetch (it summarises with Haiku).
+- **Library build-ahead (SPEED.md 2, 10-02):** LIB-2 design note **PASS** #189 @ `2b8f52e` + addendum `56d0c2e` (handpair chunk generator; reviewed with LIB-2 code); enabler session_01SFDFkUMFSboiREUAPVWPa2 idle until HT-10. **Engine spike** #190 `82ae2d4` ([do not merge]): pitch/roll/yaw/lat/volume trunk all GO or conditional; LIB-20 amended = one golden-update card; D-SPIKE-* are PROPOSALS until the supervisor updates plan 2.4/row 20 (after #188 merges) and the owner gives go/no-go on renders. **LIB-7** #193 radial hand pairs: design PASS `efd3182`, mechanism `39e793e`, building (session_01GaUBBUdEvc7JYd3caGTHwF). **LIB-12** #191 hand views/pairs: design 0/0/1/1 applied in build (session_01PsmZzeKjrgwWHjNntDBpMD), merges LIB-7 branch. **GATE-SPLIT** #194: owner yes 10:22; design FINAL `2d747b2` (~19 min per single push, ~30-35 when two overlap; .github add-only); builder session_01Nf1EpvrcLEJ3uR8fW6zFW7 waits for HT-10. **LIB-3** #180: PASS `6558d23`, then the pilot scorecard found 2 LIB-3 defects (dotted-id crash that also hid limbs from H1; H3 explicit-pose deviation 0) fixed at `00f9686`; ruling **D-LIB3-H9** (pin the measured no-poly moving types of the 8; remove 13 exemptions); then one fresh delta reviewer from `6558d23`. Option 2 (poly twins in vendored primitives) is on the owner's optional golden-update list with O7/O10/O11. **#192** audit 3 (owner's other agent, report only): its data-preservation findings open the audit lane at the finish line, each re-verified first.
+- **Parked or not for merge:** #149 improvement audit (parked until the finish line); #158 Gym Finder (parked); #144 first-audit docs; #94 PREMIUM-PLAN and #92 PAY-1 (owner decisions); #88 Watch docs (waits on Huawei); #3 watch agent's PR (never merge); #1 stale.
 
-**Known transient on main:** 13 handling-mistake "Show me" buttons point at posture close-ups and open nothing until HT-7 merges. A registered-kind filter was tried and NOT shipped: it would break the Grip section's 0 px match with golden B. Test builds only; no store release. HT-10's sweep is expected red on main's sheet until then.
+**Known transient on main:** the 13 handling-mistake "Show me" buttons should open now that HT-7 (their posture close-ups) is merged in train 7. Not verified by the new supervisor; HT-10's replacement builder checks it on the full sheet (its step 2).
 
 **Risks and mitigations:**
-- HT-7 has no known fix and blocks HT-8..HT-10 and M1. Mitigation: root-cause workflow; never lower plate quality or loosen the check.
-- HT-8's shimmer tripwire went red under CI load on its PASS head. Mitigation: route it to the HT-8 builder now (8.7 step 3); no re-run to get green (6.6); never raise the 1.2 limit. The train's CI must be green.
-- LIB lane size: ~290 KB raw / 64 KB gz per exercise → 153 exercises ≈ 44 MB raw / 9.8 MB gz. The library plan must set its size approach.
-- Weekly usage limit: the owner said not to throttle; work resumes after the reset.
-- The old account wakes again after its limit resets (2026-10-03 11:00 UTC): its Routines fire into the old sessions. Mitigation: 10.2a.
-- Account switch: in-chat workflows, monitors and scratchpad files are lost. Mitigation: this file, `PROMPTS.md`, `docs/supervisor/scripts/` and `docs/supervisor/workflows/` hold what a new supervisor needs (section 10).
+- **The old account wakes at its weekly reset (2026-10-03 11:00 UTC).** Its hourly loop `trig_01CtcvAE1PGAtH4dkxLVQZsR` would wake the old supervisor, and two supervisors would run; old builders could push to the same branches. Mitigation: the owner disables the old account's Routines (asked 10-02, 8.6); every replacement builder runs `git pull --no-rebase` before each push and never forces; each tick compares card branch heads with the last push from a new-account session.
+- **GitHub PR events do not reach this account** (`subscribe_pr_activity` returns "Could not subscribe to this PR" for every PR). Mitigation: `monitor.sh` under the Monitor tool is the PR watch, re-armed every tick and on expiry; CI is read by polling (`ci-watch.sh`). The owner can fix it by connecting GitHub on this account (8.6).
+- HT-8's D-HT8-2 changes how its probe loads the feel chunk. Mitigation: the reviewer must prove it does not loosen the probe (a mutation that removes the early-tap fix goes red on both browsers).
+- LIB lane size: ~290 KB raw / 64 KB gz per exercise → 153 exercises ≈ 44 MB raw / 9.8 MB gz (plan 8.10: 8-11 MB). Shared parts first; a download server only with the owner's OK.
+- Account switch again: in-chat workflows, monitors and scratchpad files are lost. Mitigation: this file, `PROMPTS.md`, `docs/supervisor/scripts/` and `docs/supervisor/workflows/`.
 
-### 8.3 Running sessions (M/ARC; status at 08:55)
+### 8.3 Sessions (M/ARC, new account; status at 15:05 10-02: all paused, see 8.0a)
 | Session | Role | Status |
 |---|---|---|
-| session_01Tc7uLSdp7LGknt8xc1i9dc | **Supervisor** (env `env_01Q4EctZ7hnAkbtoGSeRp3Kh`) | running |
-| session_01TLQREDwJgfPP2gbHAmEu9T | HT-7 builder | idle, waiting for a ruling |
-| session_01H5UEjJKi59q226yyhWp9So / session_0171SwcEk6d1MB9aapE1622K | HT-8 builder / reviewer | idle / verdict posted (PASS) |
-| session_01CPSBe8axwzXUxtVW9BNS1j / session_01PJvcYHhpMAhrZ7hjWvCK5T | HT-9 builder (Opus, since 08:38; `source_revision` and `outcome_branch` = `claude/ht-9-setup-risks-sources`) / reviewer | working on the 08:37 FAIL / FAIL posted; keep it for the delta review. The Sonnet builder session_01JY7nLdZ112XUkSfYEukdvL is archived |
-| session_01SYc1pExBx2PdCN5yomW7y9 | HT-10 builder | idle; at 08:52 it reported 141 test failures from the HT-7 dependency and waits for HT-9 to merge |
-| session_016V5wVkz8EnRMpRrRShv2aE / session_0194fUfDypXY9Tj2hnyFG75z | BUG-36 builder / reviewer | idle, its head is in train 6 / final PASS posted 08:28: archive it (5.9) |
-| session_01DwAU5eceszvGpGkGg4Xdi2 / session_01EzGdKdjNhNcoq3QH8u9GYd | COPY-2 builder / reviewer | blocked, waiting for the supervisor's BUG-36 message / verdict posted (PASS on partial) |
-| session_01RFiJ26snbpASbeBRXtDcY3 | LIB-8 pilot A builder | idle, waiting on the owner's sheet |
+| session_01FTBsxoLN135B3HvJ7sT676 | **Supervisor** (branch `ccr-4fb3081a-9puaq1`) | running |
+| session_01PnsUw3z3cqLz3qrELXJsm8 | HT-9 replacement builder (catch-up) | resumed 13:50 |
+| session_01ShBYNJXt2nMtX1YLqpodA7 | HT-10 replacement builder | idle, holds 2 commits for "HT-9 merged" |
+| session_01SHiSom5mnPpU198y2QLsUw | GATE-FLAKE-1 builder | resumed 13:50 |
+| session_01WTJ7zrNgXsvYij39bHCrLN | LIB-3 builder (H9 ruling) | resumed 13:50 |
+| session_01XaegSQJXRSyfX5CyGxkfRk | LIB-8 pilot A builder (drawing lane 1) | idle, waits for the critic |
+| session_01GaUBBUdEvc7JYd3caGTHwF | LIB-7 builder (drawing lane 2) | resumed 13:50 |
+| session_01PsmZzeKjrgwWHjNntDBpMD | LIB-12 builder (drawing lane 3) | resumed 13:50 |
+| session_01SFDFkUMFSboiREUAPVWPa2 | LIB enabler (LIB-2, LIB-20 amended) | idle until HT-10 |
+| session_01Nf1EpvrcLEJ3uR8fW6zFW7 | GATE-SPLIT builder | idle until HT-10 |
+| session_01MyriU6AJd74orFg41trqrm | W0A writer (tempo research) | resumed 13:50 |
+| session_01PtjyPPiXjaD1z4XjCuzrvL | W1A research writer | resumed 13:50 |
 
-The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Archive each reviewer after its card's final PASS and each builder after its merge (5.9). Keep a reviewer whose PR still needs a delta review (HT-8 after its tripwire fix, HT-9 after FIXED, COPY-2 after its final push). The owner's own sessions are not workers: never touch them.
+Archived 10-02: HT-8 reviewer, LIB-6 reviewer and fixer, LIB-3 reviewer, W0B fetcher and fixer, LIB-2 design reviewer, LIB-7/LIB-12 joint design reviewer, GATE-SPLIT design reviewer. Not ours: session_01H2ZgdD61dVdfPNnwywv13H (the owner's Meshy experiment on repo Watch-test).
+
+**Old account (unreachable; never message or merge on their word):** supervisor session_01Tc7uLSdp7LGknt8xc1i9dc and its 10-01 builders and reviewers. Only the owner can archive them.
 
 ### 8.4 Routines and workflows
 | ID | What | When |
 |---|---|---|
-| trig_01CtcvAE1PGAtH4dkxLVQZsR | "M/ARC supervisor loop": the hourly tick into the supervisor session. Its prompt carries the focus, the finish line, the Gym Finder park, the usage note, the HT merge order, the merge-train method, the merge gate, the owner rules and the handover due time. Last updated 08:09 UTC 10-01. | cron `58 * * * *` (next 08:58) |
-| trig_01P25Eg4YpbtXMwpihA3hVCP | "HT-7 dependency check-in", into session_01TLQREDwJgfPP2gbHAmEu9T. Created by the HT-7 builder itself: a `send_later` reminder bound to its own session, made 09-30 22:04 UTC and last re-armed 08:02 (the supervisor never created it). If the supervisor has ruled after D-HT7-L3-text-6, the builder follows the ruling; if not, it re-arms itself about 3 h out. This conflicts with P1's "Do not use scheduling tools". Disable it in a takeover (10.2, 10.2a). | once, 2026-10-01 12:00 |
-| trig_01XBaJHD9jyLEXPUdpMpykLo | Watch docs session: ask the owner once whether Huawei replied. | once, 2026-10-13 09:00 |
+| trig_016ECwLTU7XRLzsYVRrwLTGe | "M/ARC supervisor loop", the hourly tick into session_01FTBsxoLN135B3HvJ7sT676. Its prompt is 10.4 step 3's text, updated 10-02: HT order HT-8 → HT-9 → HT-10, the owner-chat rule, the library delegation. | cron `58 * * * *` |
+| trig_01PwNaFDcaAkLKMsYM6Q6Ssm | Ask the owner once whether Huawei replied (PR #88). | once, 2026-10-13 09:00 |
+| (old account) trig_01CtcvAE1PGAtH4dkxLVQZsR, trig_01P25Eg4YpbtXMwpihA3hVCP, trig_01XBaJHD9jyLEXPUdpMpykLo | The old hourly loop, the HT-7 builder's self check-in, the old Huawei check. Only the owner can disable them (8.6). | — |
 
-**In-chat workflows running in the supervisor session** (lost on an account switch; re-run from the script):
-- `wo2y8z1e0`: HT-7 label-variance root cause (4 lenses + judge). Script: `docs/supervisor/workflows/ht7-label-variance-rootcause.js`. Result pending.
-- `wwjv4iltm`: this handover package (branch `claude/sup-handover-0900`).
+**In-chat workflows in the supervisor session** (lost on an account switch; scripts in `docs/supervisor/workflows/`):
+- `wf_3a60c2a3-e4c`: pilot A calibrated critic on `1da9014`, resumed after the usage pause. Script `pilot-a-critic.js`.
+- Done 10-02: `wf_1d2fcf84-613`, `wf_d3676188-4dd` (pilot A critics), `wf_fefb97cb-981` (w0 critic), `wf_8a28ca54-d4e` (speed assessment → `SPEED.md`).
+
+**Watchers:** `monitor.sh` under the Monitor tool (re-armed each tick, `SINCE` backdated). PR event subscriptions are unavailable on this account (8.2 risks).
 
 ### 8.5 Relay tracker
-- Set to done with evidence on 10-01: AUD-1..AUD-12, AUD-20, HT-3c, HT-4b, HT-5, HT-6, COPY-1, BUG-34, BUG-35, ESC-REPORT. Spot-checked live: AUD-11, AUD-12, AUD-20 and ESC-REPORT are done; the rest (not re-checked).
-- GYM-FINDER added as **blocked** (07:46) with the owner's 07:30 quote: parked until a brainstorm and his approval.
-- Upkeep due: "last APK sent" = `958a3de` (train 5, sent 08:33) if not yet set (supervisor to confirm). COPY-2 still reads "ready" (set it to running). No item was found by id for HT-8, HT-9, HT-10 or BUG-36 (HT-7 exists, "running"): find or add them. Set HT-7..HT-10, BUG-36 and COPY-2 to done as they merge.
+- 10-02 08:05: tracker items added: HT-8 (review), HT-9 (integrating), HT-10, GATE-FLAKE-1 and LIB-3 (running), LIB-6 (review). `PROJECT_STATE.md` rewritten (it dated from 09-30), with "last APK sent" = train 9. LOG line for the takeover.
+- Earlier: COPY-2, HT-7, HT-7b, BUG-36, BUG-37 set to done on 10-01.
 
 ### 8.6 Owner to-dos (his side)
-1. Phone checks on the APKs sent:
-   - Train 1: launch animation; Report button under coach answers; crisis card ("i want to disappear"); AUD-7's watch, pause and sleep checks.
-   - Train 2: make a backup and restore it; coach on/off and sharing stay as they were.
-   - Train 3: log a set, then Skip today; the set stays in History. Pull-up How-to: a hand chip or Mistake → "Also check your wrist" zooms in.
-   - Train 4: History → Stats → Plank shows a time with no "× 0"; a past carry reads like "40 m · 35s @ 32 kg".
-   - Train 5 (AUD-20), sent 08:33 (run 36833290484, artifact 11149303246): finish a workout with heart rate on; the calories line reads "About N kcal active." with no "±".
-2. Approve, inside the builder session, any `tests/howto/budgets.json` raise the auto-mode classifier refuses (expected for HT-7..HT-10, as for HT-6).
-3. Still open from 01:00 (not re-checked): the REL-3 phone steps; OWN-1 offline key backups in 2 places; the pilot sheet answers (LIB-8, also golden B approval D-LR23-2); DEV-CHECKS device list; Play Console developer name "Marc Darenz"; the parked decisions (ARCH-1, PAY-1, PREM-PLAN, K11); the closed test, then the store upload.
-4. Optional, offered at the finish line: a golden update for D-HT10-C10 (two approved-plate tells that fail C10 on the golden itself: lateral raise "dip" tell 32×44; squat "chest" / "drift" tells overlap 77×0.25 px), together with O7 and O10.
-5. Gym Finder brainstorm, when he wants it.
-6. Done, do not re-ask: "Yes cost limit"; HT-6 budgets; error reports switched on; the error-report token was never pasted; the usage note (08:10); the Gym Finder park (07:30).
+1. **Disable the old account's Routines** (open the Routines list on the old account): `trig_01CtcvAE1PGAtH4dkxLVQZsR` (hourly loop), `trig_01P25Eg4YpbtXMwpihA3hVCP` (HT-7 check-in), `trig_01XBaJHD9jyLEXPUdpMpykLo` (Huawei check). Before 2026-10-03 11:00 UTC. Asked 10-02.
+2. **Network access for research: DONE 10-02 ~08:12** (the owner set Full; pubmed, acefitness.org and nhs.uk answer 200; web.archive.org resets connections). Was: the new account's Default environment (`env_01G5Xfb4KD41z5wLtxq6nCAU`, "trusted network access") blocks the research source sites (pubmed, ncbi, acefitness.org, nhs.uk, strengthlog.com, web.archive.org: proxy 403). GitHub, npm and the Chrome 153 download work, so builders and reviewers are fine. W0A and W0B are on hold until he sets Network access to Full (or adds the source domains) in that environment's settings. Never mark a source blocked by our own network as "unreachable".
+3. **GitHub: connected** (the owner showed it on 10-02 ~08:12: account connected, Claude GitHub App installed on macdarenz-droid, M-arc reachable). `subscribe_pr_activity` still fails after that, so `monitor.sh` polling stays the PR watch. Do not ask him again.
+4. **The owner-chat rule** (K14): **yes, 10-02 ~09:2x** ("Yes"). PR #185; merges when CI is green.
+5. Phone checks: train 9 APK (COPY-2: shorter headings; the start sheet's target-load and warm-up cards show only their numbers); the BUG-37 four-way check (sheets slide up without a bounce, with reduced motion on and off); earlier trains' checks (carried from 10-01, not re-checked).
+6. Approve, inside the builder session, any `tests/howto/budgets.json` raise the auto-mode classifier refuses (expected for HT cards).
+7. Still open (carried from 10-01, not re-checked): REL-3 phone steps; OWN-1 offline key backups in 2 places; the pilot sheet answers (LIB-8; golden B approval D-LR23-2); DEV-CHECKS device list; Play Console developer name "Marc Darenz"; the parked decisions (ARCH-1, PAY-1, PREM-PLAN, K11); the closed test, then the store upload.
+8. Optional, offered at the finish line: a golden update for D-HT10-C10, O7, O10 and O11.
+9. Gym Finder brainstorm, when he wants it.
 
 ### 8.7 Next steps, in order
-1. On wake: re-arm the PR monitor (backdate `SINCE`), read the latest comment on every open PR, check which sessions are idle, read PR heads with `git ls-remote refs/pull/N/head`.
-2. **State at 17:05.** Main is `fc38fb8`: train 7 (HT-7, 13:36) and train 8b (BUG-37, 15:12) are merged, and both APKs were sent. The BUG-37 device check is the owner's.
-   - **HT lane:**
-     - HT-8 #111 (head `8ad3026`: the Chrome-153 early-"Feel it" fix plus the catch-up with HT-7) awaits FIXED, then a delta review by session_0171SwcEk6d1MB9aapE1622K, then a train.
-     - Then HT-9 (PASS `e57c6d8`; catch-up per the 12:20 rulings).
-     - Then HT-10 (with the supervisor's `ht10-gate` wiring).
-   - **Side PRs:**
-     - COPY-2 #168 (`6cdc51a`, D-COPY2-swap2): delta review by the unarchived session_01EzGdKdjNhNcoq3QH8u9GYd.
-     - HT-7b #178: PASS (D-SUP-REV-1).
-     - GATE-FLAKE-1 #179: builder session_01DFuuvEqDFHr2DegkDen7oG.
-   - **Library, early builds** (merges after HT-10 in the plan's order):
-     - LIB-3 (session_0138PaYEKqhTDP5EtSh297eQ) and LIB-6 (session_01MaUV6fAPkDeF2t3q365kuJ).
-     - Pilot A (#109) calibrated critic: workflow `wf_46565657-03e`.
-     - Then the LIB-8 builder's fix round, the supervisor's sheet approval, and the sheet to the owner for monitoring.
-   - **Phase-0 supervisor actions** (library plan section 7) still need a status check: items 1-4, 6 and 7.
-3. **HT-8 tripwire:** do not re-run `visual-gate-tz` on `74a4e68` to get green (6.6: re-runs only for a known infrastructure cause; a flake is fixed, never loosened). Send the failure to the HT-8 builder now (P4), while HT-8 waits on HT-7 anyway; never raise the 1.2 limit. Its fix moves the passed head, so the same reviewer delta-reviews it (P3) before HT-8 enters a train. The budgets Low rides that push. Before sending P4, post ruling D-HT8-tripwire on #111 (P7). It names what the builder may change (how the measurement is taken under load) and what it may not (the 1.2 limit, golden B, the plates).
-4. **HT-9:** await HT-9 FIXED from the Opus builder (rulings 08:38), then a delta review by the same reviewer, session_01PJvcYHhpMAhrZ7hjWvCK5T (P3).
-5. **HT-lane trains, in order:** HT-7 → HT-8 → HT-9 → HT-10 (one train may carry several, in order; never HT-8 before HT-7). Tell HT-10 each time an HT card merges.
-6. **HT-10:** READY after HT-9 merges, then one Opus reviewer. In HT-10's train the supervisor adds the `.github` wiring itself, add-only: job `ht10-gate` (build, then `node scripts/ht10-gate.mjs`, matrix `MARC_HT_SHARD` = `1/2`, `2/2`, once per push, 25 min per shard); `MARC_HT10_OWN_JOB=1` on `source-gate` and `visual-gate-tz` (30 min each); and `ht10-gate` added to `ci-watch.sh`'s required set. How:
-   - The wiring goes on its own branch, `claude/sup-ht10-ci`, cut from main after HT-9 merges. To get CI on a head that has the runner, merge HT-10's final head into it with a merge commit (the supervisor never pushes to HT-10's branch).
-   - Add-only edits: a new job `ht10-gate` in `.github/workflows/build-apk.yml` (matrix `MARC_HT_SHARD` `1/2`, `2/2`); job-level `env: MARC_HT10_OWN_JOB: '1'` on `source-gate` and `visual-gate-tz`; and `ht10-gate` added to `req` in `docs/supervisor/scripts/ci-watch.sh`.
-   - No change to `android-gate`, its `needs`, or any signing step. `git diff origin/main -- .github | grep '^-'` must be empty, and `bash .github/scripts/agent-guard.sh` must pass.
-   - HT-10's reviewer delta-reviews the wiring merged with HT-10's head (P3). Both shards must be green on that combined head before HT-10's final PASS.
-   - It rides HT-10's train, one row after HT-10.
-   - If auto mode refuses the edit, ask the owner to approve it in the supervisor session. Never route it through another agent.
-7. **BUG-36:** merge train 6 #170 when all four checks are green on `1fc2d4d` (read the head live first). Then send its APK, archive the BUG-36 builder and reviewer, and do step 8.
-8. **COPY-2:** after BUG-36 merges, tell the builder to make its final push (8.2), then a delta review by session_01EzGdKdjNhNcoq3QH8u9GYd, then a train.
-9. **Train 5 APK:** done (sent 08:33). Set Relay "last APK sent" if not yet done (8.5).
-10. **Relay upkeep** as in 8.5.
-11. **Golden-B follow-ups** (8.2) through plan 2.8 before M1 is called done.
-12. **Finish line:** when HT-7..HT-10 are merged, push + chat to the owner (DEV-01 closed by his decision; Gym Finder parked for a talk; the optional golden update in 8.6). Then start the improvement-audit lane (#149, AUD-13..19, plus the follow-ups above), and take #149 out of `monitor.sh`'s `SKIP`. Not Gym Finder.
-13. **Handover:** every merge train carries a handover commit; refresh at least every 3 hours (next due 12:00 UTC).
+1. On wake: re-arm `monitor.sh` (backdate `SINCE`), read the latest comment on every open PR, check sessions for idle or blocked, read PR heads with `git ls-remote refs/pull/N/head`.
+2. **#185 (owner chat rule, owner yes 10-02):** CI on `6b8e494` (main merged in); merge on all green (HANDOVER 6.8 rules, expectedHeadSha).
+3. **HT-9:** on `HT-9 FIXED`, a fresh Opus delta reviewer (reads the 12:31 PASS and the 12:32 rulings). On PASS: train 11 = HT-9 + #186 (owner-approved AGENTS and skills text; its body asks for #185 first) + this handover branch (#183, which carries #187). APK after.
+4. **After HT-9 merges:** message HT-10 to finish (push its 2 held commits, merge main, READY); fresh Opus reviewer; the supervisor's `ht10-gate` wiring (step 6 of the 10-01 list, kept below). Then the finish-line message (PROMPTS.md 10c).
+5. **Library build-ahead (SPEED.md 2, 8.2):** LIB-7 READY / LIB-12 READY → a fresh Opus reviewer each; their pilot A renders join #109. LIB-3 FIXED (H9) → one fresh delta reviewer from `6558d23`. Tempo research and W1A → the LR-29 verify (planted errors) before merging into `claude/libht-research`. After #188 merges: update plan 2.4 and row 20 for LIB-20 amended.
+6. **HT-10 CI wiring (supervisor, add-only):** branch `claude/sup-ht10-ci` cut from main after HT-9 merges; merge HT-10's final head into it with a merge commit; add job `ht10-gate` to `.github/workflows/build-apk.yml` (matrix `MARC_HT_SHARD` `1/2`, `2/2`, build then `node scripts/ht10-gate.mjs`, 25 min per shard); job-level `env: MARC_HT10_OWN_JOB: '1'` on `source-gate` and `visual-gate-tz`; add `ht10-gate` to `ci-watch.sh`'s required set.
+   - **GATE-SPLIT** (owner yes 10-02 ~10:30; AGENTS.md exception): a builder writes the design note now (no code). It reuses HT-10's shard and proof mechanism (`tools/plates/fidelity/shard.mjs`, `writeProof`) and LIB-4's verdict pattern, so there is one sharding system. It is built after HT-10 merges, and its `.github` jobs are wired by the supervisor, add-only. It is relied on only after the equivalence proof in AGENTS.md. Target: about 45 → 25 min per CI run.
+7. **Pilot A:** on the critic result and the scorecard, approve per exercise (owner delegation 10-01), or one more fix round; then the sheet to the owner.
+8. **Research:** on the recheck PASS, merge `claude/libht-verify-w0` into `claude/libht-research` (merge commit), then record it in w0.md and here.
+9. **#188** (owner-approved library-plan clarifications, base `claude/howto-options`): merge after CI is green, unless the owner says otherwise.
+10. **Golden-B follow-ups** (8.2) through plan 2.8 before M1 is called done.
+11. **Finish line:** when HT-9 and HT-10 are merged, push + chat to the owner (PROMPTS.md 10c), then start the improvement-audit lane (#149, AUD-13..19).
+12. **Handover:** every merge train carries a handover commit; refresh at least every 3 hours. Refresh SPEED.md after LB1 and LB2.
 
 ### 8.8 Open conflicts (the inputs disagreed; resolve them live)
 (K4 and K5 were resolved on 09-30 and removed.)
@@ -995,6 +1556,7 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 - **K11 · Escobar intelligence.** The owner asked on 09-29 11:25: "lets improve escobars intelligence and what else he can do." No card, lane or parked status was found for it. It is parked with PREM-PLAN here. Check whether PREM-PLAN #94 covers it (for example, the PREM-1 Opus switch) before giving it a card.
 - **K12 · Effort rule.** The owner's 09-29 11:25 "Use opus max lower, sonnet medium lowest. For high outputs" has no agreed reading, and `create_session` has no effort field. Apply it where a tool takes an effort setting, once the reading is settled; record the reading in Relay LOG. (His 10-01 08:10 usage note does not settle it.)
 - **K13 · The first-audit triage's "AUD-3" in the AUD-6 and AUD-8 notes** means the SCI-01 card, which is AUD-1 (recovery.ts). AUD-3 is the Worker quota. Builders were told; no card owns brain/history.ts. (All AUD cards merged by 07:56 10-01; nothing left to act on.)
+- **K14 · The owner-chat rule (10-01 ~17:05).** The old supervisor wrote the owner's chat rule into `AGENTS.md` and `.claude/owner-rules.md` on `claude/sup-agents-chat-rule` (`d304455`, `e9f53fc`; the same commit is also on `ccr-5d6db1e6-5itr23`) but opened no PR, and the owner's verbatim words were in the old chat. Rule files change only by PR after the owner's yes (2.2). Until he says yes: follow its substance (it matches AGENTS.md's "short updates only when something important changed"), and keep the AGENTS.md text unmerged. Asked on 10-02.
 
 ---
 
@@ -1002,6 +1564,16 @@ The AUD-11, AUD-12 and AUD-20 builders and reviewers are archived (checked). Arc
 
 | Incident | Rule |
 |---|---|
+| 10-03 06:30: the pause list was built from sessions whose status was "working"; the BUG-38 builder looked idle, then woke on a queued message and kept pushing (07:17). | A pause goes to **every** non-archived worker session, idle ones included. |
+| 10-03: a reviewer was created with a wrong branch name (HT-10's is `claude/ht-10-gate-sweeps`). | Read the branch with `git ls-remote` before `create_session`. |
+| 10-03: `jarsigner -verify -strict` fails on a self-signed upload cert; a tamper that appends a directory entry still printed "jar verified." with an "unsigned entries" warning. | `scripts/check-play-signature.sh`: exact "jar verified." line, reject "unsigned entries", pin the signer. |
+| 10-02 11:33-13:40: the account hit its 5-hour usage limit; every worker and the in-chat critic stopped mid-turn ("You've hit your session limit"). | After the reset, check every session's state, send each a resume message (check git state, re-run the cut step), and resume workflows with `resumeFromRunId`. Count the pause in the schedule (SPEED.md). |
+| 10-02: a research writer's model usage showed Haiku: WebFetch and WebSearch summarise pages with a small model. 14:58: W1A and W0A usage still showed Haiku web searches (their prompts banned only WebFetch). | Owner rule: never Haiku. Research and review prompts say: never WebFetch **or WebSearch**; search and fetch with curl and quote from the raw text. Quotes were curl-checked (W1A 195/195), so the cards stand; only the search step used Haiku. |
+| 10-02: `apk-watch.sh` on train 10's merge sha reported a *cancelled* run: a new branch cut from main (`claude/sup-skills-delivery-20261002`) had the same head sha, and its run was cancelled by the next push. | `apk-watch.sh` filters `branch=main` (10-02). Never send an APK from a run that is not main's. |
+| 10-02: the research branch had no card checker; both w0 fixers wrote their own one-off scripts. | Research quality must not rest on throwaway scripts: a committed card checker (quotes verbatim, refs, orphans, ≤ 50 words, shown-line lint) is a planned improvement (SPEED.md, class I). |
+| 10-02 speed assessment: 24 FAILs were tests that did not bite; 18 stale PR bodies; 12 FAILs only for "behind main". | PROMPTS.md P1/P4 now name mutations per criterion, require the HANDOFF refresh at READY/FIXED and include COACHING-DECISIONS.md in write_scope; the reviewer skill treats "behind main" as a note. Full analysis: `docs/supervisor/SPEED.md`. |
+| The owner paused all work at 10-01 18:17 and the next supervisor started on another account. Workers had posted PAUSED notes, but HT-8's PR body HANDOFF was 14 hours stale (@ `f947395`), HT-8's last fix had no FIXED post, and the pilot A critic result existed only in the lost in-chat workflow. | On a takeover, rebuild each card's state from its latest comments, its commits after the last verdict (`git log <verdict sha>..<head>`) and CI on the head, not from the PR body. Put workflow results on the PR they decide as soon as they finish. |
+| On the new account, `subscribe_pr_activity` failed for every PR ("Could not subscribe to this PR"). | `monitor.sh` under the Monitor tool is the PR watch; re-arm it on every tick and expiry. The owner can connect GitHub on the account to restore PR events. |
 | Train 8 (10-01 14:21): COPY-2 and BUG-37 each passed review and CI alone. Together, BUG-37's swap guard failed: COPY-2 shortened the brief, so the swap direction flipped. The local train preview had run only typecheck and vitest. | Before opening a train that carries two cards touching the same flow, run the gate blocks of both cards on the local train branch, not just typecheck and vitest. |
 | CI-only browser failures (HT-7, HT-8, 10-01). | CI's exact browser is downloadable: `https://storage.googleapis.com/chrome-for-testing-public/153.0.8010.12/linux64/chrome-headless-shell-linux64.zip` (verified reachable 14:30). Unzip it into the scratchpad and run the gate with `MARC_CHROMIUM=<dir>/chrome-headless-shell`. Reproduce on it before calling anything "CI-only". |
 | BUG-37 (10-01): BUG-36's probe added the panel's transform `m42` to its layout top and ignored the dialog's own `scrollTop`. It "saw" a 629 px slide that the scrolling dialog cancelled, while the owner's phone showed a jump. | A motion probe measures the box on screen (`getBoundingClientRect()`, which includes every ancestor's scroll and transform) and asserts that each scroll container on the way stays still. Never a computed transform. |

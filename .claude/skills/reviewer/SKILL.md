@@ -11,7 +11,8 @@ Reviewers always run on `claude-opus-5-5`, and their helpers inherit it. Review 
 2. Check every acceptance criterion's evidence against the card, including the failure paths and the listed mutations. Evidence counts only for the exact commit it ran on.
 3. Check the diff against the card's `write_scope` and `reserved_paths`, and against the file ownership table in AGENTS.md.
 4. Check the PR body: the HANDOFF block is current, and the "You will notice" line is plain and true.
-5. Never use `/ultrareview`: it spends usage credits, which only the owner approves.
+5. A head that is behind the latest `main` is a note, never a blocker: the supervisor merges `main` in at the merge train. Fail only for what the diff itself gets wrong.
+6. Never use `/ultrareview`: it spends usage credits, which only the owner approves.
 
 Post one comment:
 
