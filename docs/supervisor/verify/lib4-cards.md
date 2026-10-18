@@ -3101,3 +3101,109 @@ Rule for every row: a moving phase takes `up` (concentric) or `down` (eccentric)
 - Is a plates-page `page` re-pin that moves no pinned plate fragment a golden update? Until it is ruled, it needs `'owner'`.
 - Before #109 or #245 merges, check whether either holds a real batch entry written with the interim `'owner'`.
 - Check whether LIB-4c reads approvedBy.
+
+## 15. LB2 rulings (D-LIB10-*, 2026-10-18)
+
+
+Heads read: main `2078913c` (train 27, LIB-3b on main); claude/sup-lib4-cards `60767c0`; plan claude/howto-options `4a9fd86`; research claude/libht-research `0393aac`; pilot A claude/lib-8-pilot-a `200f8c3`; LIB-9a claude/lib-9-lb1 `38b436d`. Every file:line is on main `2078913c` unless another head is named. (i) and (ii) answer lib4-cards.md:1424 (section 13, amendment 21). Both hold before LB2's first T row (LB2 has no D row).
+
+---
+
+### (i) D-LIB10-RANGES: where approved PARAMS ranges live
+
+1. Approved PARAMS ranges live in one new file, `tools/plates/library/qa/param-ranges.json`. envelope.json stays as it is: measured on the 8, never hand-set.
+2. The file is keyed by family, then by PARAMS key, in exactly the envelope shape derive.mjs reads (`{ key: [min, max] }` or `{ key: [allowed values] }`, derive.mjs:14). A family is the template name for a T row (BENCH, SEATPRESS) and `D:<parent id>` for a D row. Each family row also carries its ruling id and, per bound or value, its basis.
+3. A basis is either a pinned approved plate that shows the value (its batch golden entry), or a verified card claim that states it. A rig value with its own anchor (incline, decline, Smith, ...) enters a family only after that anchor's plate entry is pinned (plan 3.1:243-244). A child's own value also needs its own basis: a claim on its own verified card, cited next to the param in rows.json and checked by the CARD FIELDS verifier. A range only bounds; it never stands in for that claim.
+4. Only the supervisor adds or changes rows, each by a ruling with a COACHING-DECISIONS entry. The builder proposes rows, with their basis, in its design note.
+4b. Route: the supervisor's ruling quotes each family row byte for byte. LIB-3c commits it if the ruling is posted before LIB-3c's READY. Otherwise one small supervisor PR from claude/sup-param-ranges commits it, rows only, with the loader test green and a fresh review. LIB-10 never edits the file.
+5. pin.mjs and selftest.mjs never read or write the file.
+6. PQ-H10 and the child proof's derive() call in candidate.mjs read the same family object from the file. A D spec's own derive() call is not a check, and no spec or template imports the file. A missing file, family or key fails closed with H10.envelope, as node.mjs:289 does today. (i)'s loader and any family row reach main only in the same merge as (ii)'s child proof, or after it. Mutation: with test family rows present, the child proof removed → the test that expects H10.child for "make, then move one callout" is red (ranges alone never pass it).
+7. Built by LIB-3c (item 11). registry.mjs stays byte-identical (Q-A, #245 6242372604; registry.mjs:61). The `template` field rides on the row as data (registry.mjs:52 keeps it). candidate.mjs refuses a T row whose `template` is not a string naming an existing tools/plates/library/templates/<name>.mjs (fail closed). Mutation: `template` removed from a T row → candidateOf throws.
+8. Tests, each red and then restored:
+   - a PARAMS row added to envelope.json turns selftest red (already true; kept as a guard);
+   - a value outside its family's range gives H10.value;
+   - a value ruled only for SEATPRESS, used on a BENCH row, is red;
+   - a family or key with no row gives H10.envelope;
+   - a row without a ruling id or basis makes the loader throw;
+   - derive() and H10 read one object: a mutated file changes both results.
+
+Why: envelope.json cannot hold a hand row (plan 3.3 :292; pin.mjs:1-3, :64; selftest.mjs:23-25), and one global PARAMS range would let a value approved for one family pass on another; a supervisor-owned per-family file is narrower and keeps the limit apart from the plate under test.
+
+---
+
+### (ii) D-LIB10-CHILDPROOF: PQ-H10 proves the drawn plate equals its derivation
+
+1. For every D and T row, PQ-H10 also checks that the plate on the batch page (the candidate's `plate`, candidate.mjs:61) equals, on all 9 fragments, the child rebuilt alone from its derivation:
+   - D: `derive(parentSpec, row.params, ranges[family])` (derive.mjs:39-45);
+   - T: `template.make(row.params, facts)`, with `facts` taken from the child's spec module export.
+   A difference gives a new key, `H10.child:<fragment>`.
+2. For T rows, the parent proof goes through the template: `make(parentParams, parentFacts)`, rebuilt alone, equals the parent's pinned fragments (plan 3.1:246). parentParams and parentFacts are exported by the template, which is frozen with it. Today's rebuild of the parent from its own source stays as well.
+3. LIB-3c builds it, in candidate.mjs (the derivation gains a child rebuild and, for T, a template rebuild of the parent) and in qa/node.mjs h10. buildPlatesPage loads specs by file URL (build-page.mjs:47-48, :95). How a derived spec reaches it, for example a module written to a temp directory, is for LIB-3c's design note [method unverified]. A rebuild that throws gives `H10.child:threw`. LIB-3c reports the exact new keys for LB1's two in-memory D-copy tests (lb1-plates.test.ts:1139-1151 @ `38b436d`); #245 changes those expectations when it merges main, as amendment 21 did for LIB-3b. LIB-3c's note gives the added seconds per row against LIB-4c's per-shard budget.
+4. Mutations, each red and then restored:
+   - a D source that derives and then sets one more field (tempo) → H10.child:tempo;
+   - a T source that calls make and then moves one callout → H10.child;
+   - a T source whose default export uses params other than row.params → H10.child;
+   - one byte of a template constant → H10.byte on the template parent proof;
+   - the template parent proof switched back to the parent's own source, with a template byte changed → red (proves the template path is the one checked).
+5. Deadline: on main before any T row's QA counts as evidence, and before any D row exists on any branch (LB4's front_squat, goblet_squat and bodyweight_squat; LB6's smith_machine_squat).
+
+Why: today h10 checks the params and rebuilds the parent only (node.mjs:299-302), while the drawing comes from the row's own file (candidate.mjs:66; plates-page.mjs:38), so a source that derives and then edits passes; that is the raw-spec escape hatch plan 3.1:232-233 forbids. Only comparisons are added.
+
+---
+
+### Other rulings
+
+3. **D-LIB10-AHEAD (build-ahead stage ceiling for LB2).**
+   - LIB-10 may push with its 7 LB2 rows at stage drawing or review in `tools/plates/library/lb2/rows.json`. Nothing goes under batches/, tests/howto/golden/, src/ or tools/plates/gen/, and its A9 test enforces this.
+   - Every D-LIB4-ENTRY condition still holds before any of the 7 drawn here is approved-plate, pinned, in batches/ or shipped. The 4 reused ids follow pilot A's pins (D-LIB10-PA).
+   - Why: D-LIB4-ENTRY-2 (12 item 4) names LIB-9 only, and its reason (K cannot rise while no id ships) holds for LB2; the ceiling is a committed test with mutations.
+
+4. **D-LIB10-TEMPLATES (who builds BENCH and SEATPRESS).**
+   - LIB-10 builds BENCH after pilot A is on main. It builds SEATPRESS only if the design-note ruling makes arnold_press T; otherwise SEATPRESS waits for its first T child in a later batch (plan 3.1:239 asks for at least 3 members).
+   - Each template is proven by the byte proof against its parent's pinned fragments: the card's A7, and PQ-H10 once LIB-3c is in. This amends plan 3.1:248 ("in the PR of its parent").
+   - Why: pilot A has no templates/ folder (`200f8c3`) and its head is frozen for LIB-8-FIX (lib-8-fix-card.md:11); the byte proof needs the parent's pin, which exists only after pilot A merges (candidate.mjs:28-41).
+
+5. **D-LIB10-PA (the 5 pilot A ids in LB2).**
+   - Reuse: the 4 approved plates (dumbbell_bench_press, dumbbell_shoulder_press, incline_dumbbell_press, barbell_overhead_press) ship as pilot A pins them. They are not redrawn and get no new plate entry or plate critic. The R8 and R9 scoring the ship card needs (card merge_prerequisites; 13.1) covers them too. LIB-10 adds no rows for them, because a second row throws (registry.mjs:34-36). The ship card moves their stage and adds their layers. Approval status: 16 approved at `e6f39ff` (HANDOVER:1223).
+   - Modes: the LIB-8 merge card registers the two template parents as 'H' (they were hand-drawn), not 'P'; candidate.mjs:60 throws for 'P'. The template-parent link lives on the children (`parent`, `template`) and in the template module. incline_dumbbell_press stays as pinned; its plan mark "T" names its family only. LIB-10's note may, as an option, show that make(its params, its facts) rebuilds its pinned plate byte for byte, as a second anchor for BENCH's incline branch.
+   - Card keys: the LIB-8 merge card writes the three keys for pilot A's cards. Each topFault comes from D-LIB5-TOPFAULT's blind pass (lib4-cards 14 OPEN-3: the card's fault and quotes, the plate's tells shuffled, no firstKey), on a head where LR-31 is applied, and never from mistake.firstKey. Any of its stop answers holds that id. The CARD FIELDS verifier re-checks the key on the same blind inputs. LIB-10 never writes these cards; they reach its branch when main, holding the merge card, is merged in.
+     - Checked for the 4 reused cards: plate.tempo maps through Q3 exactly onto the pilot A specs' tempo (for example dumbbell_bench_press.mjs:143: Lower 2, Press 1; the card: up 1, down 2, pause 0). dumbbell_fly [unverified]. plateFacts against the pinned plates [unverified].
+   - dumbbell_fly: held on pilot A ("needs a raised foot-end camera", pilot-a/plates.json; D-LIB8-fly). Its fix is `camera.pitch` in LIB-20 (D-SPIKE-pitch, COACHING-DECISIONS.md:2116), still a proposal (D-SPIKE-status, :2137). LB2 ships 11 ids. dumbbell_fly ships with LB2 only if LIB-20 with pitch is on main and its own drawing passes QA and the critic first; otherwise it rolls to the next sheet (plan 3.5:340). If the owner says no-go on pitch, it needs its own ruling.
+   - Why: one writer per file; the pinned bytes are the approval; pilot A's plates still pass LIB-3's QA on the merge card, with every flag named.
+
+6. **D-LIB10-DECLINE (decline_bench_press's mode).**
+   - Draw it as H. Its spec copies dumbbell_bench_press's supine code from the #109 head D-LIB8FIX-CARRY names (D-LIB9-CLONE (a)-(c)), never imports it, and adds the declineBench composer. Once BENCH exists, the note lists every difference between decline's copy and the template.
+   - 'decline' joins BENCH's range only after its plate is pinned. LB2's plan marks become P2 T5 H5 (P2 T4 H6 if arnold_press is ruled H).
+   - Why: as a BENCH child it would use 'decline' before its own anchor is approved (plan 2.2:164; 3.1:243-244); an H plate runs every check. Cost about +2.5 Opus-hours [est].
+
+7. **D-LIB10-FACTS (what a T child's `facts` may hold).**
+   - Each template exports a closed facts schema, and unknown keys throw.
+   - Allowed: callouts (text, landmark, box), tells, cue, tempo (from the verified card), alt, mistakeAlt, and the Mistake, chosen from the template's own list of fault builders, each with named magnitudes.
+   - Not allowed: poses, equipment, camera, trace, measure, checks, datum, ghosts, view, or any other key.
+   - Every number the card does not give is listed under "Unsourced numbers" in the child's spec header (13.3 must-fix 14).
+   - The supervisor rules each template's schema at the design note.
+   - Why: no facts schema exists yet (plan 3.1:238 names make(params, facts) only), and an open facts object would reopen the escape hatch that params close (node.mjs:17).
+
+8. **D-LIB10-ANCHORS (the critic's hidden anchors for LB2).**
+   - A hidden anchor may be an approved, pinned pilot A plate, scored on the card facts it was approved with at its approving head. 13.7's facts diff checks it before the round. A hidden anchor is never the plate shown as the visible reference beside an LB2 plate in the same round.
+   - The pair: barbell_overhead_press (pilot A) and pull_up (valid in 13.7 and 13.8).
+   - For a pilot A anchor, the one-item exception needs the defect confirmed on the PNG and recorded as a pilot A follow-up in HANDOVER. Every other part of 13.5 applies unchanged.
+   - Why: 13.5 was written for the 8, and LB2's census closest plate, machine_chest_press, is excluded (D-CRITIC-CAL2); pilot A's plates passed a VALID panel (D-PILOTA-R5).
+
+9. **D-LIB10-PARENTS (plate parent and card parent).**
+   - Two BENCH T children (incline_barbell_bench_press, close_grip_bench_press) and the H decline_bench_press name barbell_bench_press as card `parent` (research `0393aac`). The children's template parent is dumbbell_bench_press (plan 6.2, P:BENCH).
+   - The registry row's `parent` is the plate's derivation parent. The card's `parent` governs only copy inheritance and the D-LIB5-FAMILY comparator.
+   - The comparator, when ruled on LIB-9's PR (Do 9), accepts a parent row at stage shipped in the same head and refuses a parent below shipped. barbell_bench_press ships in the same batch as its children [unverified: the comparator is not built yet].
+   - Why: both proofs run: H10's byte proof covers the plate parent, and the comparator's `===` covers the copy parent.
+
+10. **LIB-3c carries D-LIB9-AUTHORQA.**
+    - LIB-3c starts from main now. Its first step lands #245's D-LIB9-AUTHORQA hunk byte for byte (candidate.mjs as on `38b436d`, from `git diff origin/main...38b436d -- tools/plates/library/candidate.mjs`), with #245's A8 assertions. No separate card.
+    - #245's A8 tests read LB1's files, which are not on main, so LIB-3c ports their assertions to the LIB-2b fixture; #245 keeps its own.
+    - When #245 next merges main, its candidate.mjs equals main's (it takes main's file whole if git reports a conflict there), so the AUTHORQA lines it was reviewed on do not change. LIB-3c's other changes (fresh-import PQ-H7, the ranges, the child proof) do change #245's results. #245 updates its two D-copy expectations to the keys LIB-3c reports (D-LIB10-CHILDPROOF item 3) when it merges main, as it did for LIB-3b (lib4-cards section 13 amendment 21), then re-runs its evidence on that merged head. LB2's QA (LIB-10 Do 5 and Do 8) waits only for LIB-3c, not for LB1's ship.
+    - Why: one PR, one review and one lane slot carry both; the lane cap D-LIB-LANE-ACTIVE is 4, and LIB-4b, LIB-4c, LIB-10 and LIB-3c fill it.
+
+11. **LIB-3c's scope.**
+    - LIB-3c (card lib-3c-card.md) takes, in this order: D-LIB9-AUTHORQA (item 10); D-LIB3b-H7's queued fix, "PQ-H7 builds twice from fresh spec imports" (lib-3b-card.md:151; COACHING-DECISIONS.md:2452); (i) D-LIB10-RANGES; (ii) D-LIB10-CHILDPROOF.
+    - It starts from main now and may merge before #245, in a merge train.
+    - Its deadline is (ii)'s item 5, and D-LIB3b-H7's: before the first batch after LB1 is QA'd.
+    - Why: all of these change the spec loader and the derivation in candidate.mjs and the H checks in qa/, so one PR avoids two edits of the same lines.
