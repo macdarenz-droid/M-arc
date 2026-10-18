@@ -383,7 +383,7 @@ Every shipped library id is proven in the library shards (5.4) on every full run
 - the layer states (no sources states, LR-23);
 - PQ-H1..H10.
 
-The verdict job proves no id or state is missing. The 8 keep their HT-1..HT-10 blocks, unchanged, in both gate jobs.
+`gate-verdict` proves no id or state is missing (D-LIB4-DOCS-2). The 8 keep their HT-1..HT-10 blocks, unchanged, in both gate jobs.
 
 ---
 
@@ -568,36 +568,36 @@ The verdict job proves no id or state is missing. The 8 keep their HT-1..HT-10 b
      - for its ids: PQ-H1..H10, L2b, F3, the full L3 matrix, L4, the layer states in 5 themes, and the per-id offline
        open;
      - writes a proof manifest `{sha, id, check, state, theme, width, result}`.
-  3. `howto-verdict`:
-     - fails unless every shard ran on the same sha;
-     - fails unless the proven ids **equal** the shipped library ids;
+  3. No `howto-verdict` job: the library is one family inside `gate-verdict` (D-GATESPLIT-ONE, D-LIB4-VERDICT):
+     - fails unless shards 1..K each ran once on this sha, and `howto-rebuild` and `howto-shard` succeeded;
+     - fails unless the proven ids **equal** the shipped library ids (affected mode: the affected ids, recomputed);
      - fails unless each id's state count equals the count expected from its spec (callouts × tells × themes ×
        widths, plus the layer states).
 
-     Its PR shows the mutation: delete one row from one manifest, and it goes red.
+     Its PR shows the mutation: delete one row from one manifest, and it goes red (D-LIB4-DOCS-2).
 - **The library runner is new code, `tools/plates/library/fidelity.mjs`.**
   - It composes HT-3's exported primitives (`openAppTrain`, `openGolden({html})`, `htSeed`, `region`, `l2bWalk`,
     `blockMarkup`, `capture`, `diffPng`, `meetsRule`).
   - It cannot simply call `ht3Fidelity({plates})`: that function still looks up the hard-coded `HT_PLATES`
     (harness.mjs:638, :742) and one fixed golden page. HT-3's harness is not edited.
 - **Unit tests:**
-  - **each shipped id is in exactly one shard** for every K from 1 to 16;
+  - **each shipped id is in exactly one shard** for every K from 1 to max(16, N), N up to 153 (D-LIB4-DOCS-2);
   - **C-TZ:** no `Date`, `Intl` or `toLocale*` in `src/slices/howto/**` or the generated chunks, so running the
     library in UTC only drops no state that ever ran. Timers are relative time and stay allowed (HT-8's shimmer may
     use them).
-- **K** keeps each shard ≤ 25 min, including setup: about 8 at 53 s per exercise, or 13-14 if layers measure at 2×.
-  - LIB-4 measures 1 against 4 parallel pages on the 8. It adopts workers only if both modes give 0 px against each
-    other.
-- **When the full shards run:**
-  - Pushes to `main`, ready-for-review heads and `workflow_dispatch` run the full shards.
-  - Draft pushes run the existing jobs, the L0-L2 vitest checks, and shards for **the ids the diff changed**.
-  - `android-gate` keeps its current `needs`, so the APK builds in parallel. A merge, and the APK sent to the owner,
-    still require `howto-verdict` green on that exact head, which contains the latest `main`.
-- **Entry condition:** HT-3's pixel checks give 5 consecutive identical reruns on CI before K goes above 1. A flake is
-  root-caused, never retried to green.
-- **Per-merge CI is about 30-35 min (est.).** With K = 8 a run uses about 13 jobs (the 3 existing `build-apk.yml`
-  jobs, rebuild, 8 shards, verdict) plus the agent guard. GitHub Free allows 20 concurrent jobs (the owner's plan is
-  not verified), so two full runs at once already queue. A queue adds latency, never a skip.
+- **K** (D-LIB4-SHARD, D-LIB4c-4) is the smallest K ≥ 1 for which each packed shard plans c0 + its once-states + its
+  ids' seconds ≤ 900 s. A shard whose once-states alone pass 900 s holds no id. If one id alone is over 900 s, each
+  id gets its own shard. At P = 1 (C14): c0 = 2.9 s, shard 1's once-states 1,183 s, each id 908-916 s, so K = N + 1.
+  - The timing file is `tools/plates/library/ci/times.json`. More pages per job need identical rows and px (D-LIB4-PAR).
+- **When the full shards run** (D-LIB4-MODE; CI cannot see draft or ready): pushes to `main` and to merge-train heads,
+  and every `workflow_dispatch`. Every other push runs the existing jobs and shards for **the affected ids** only.
+  - `android-gate` keeps its `needs`, `gate-verdict` among them, but `gate-verdict` now needs `howto-rebuild` and
+    `howto-shard`, so the APK starts after the library shards (D-LIB4-VERDICT). A merge, and the APK sent to the
+    owner, still require `gate-verdict` green with `library: full` on that exact head, which contains the latest `main`.
+- **Entry condition** (D-LIB4-ENTRY): before LIB-9 (LB1) pushes, HT-3's pixel checks and the library family (full
+  runs, K ≥ 2, one sha) each give 5 consecutive identical CI runs. A flake is root-caused, never retried to green.
+- **Per-merge CI:** a full run adds `howto-rebuild` and N + 1 shards planned at 929-1,186 s each. GitHub Free allows
+  20 concurrent jobs (the owner's plan is not verified); a queue adds latency, never a skip (D-LIB4-DOCS-2).
 
 ### 5.5 Library negative control
 - **The problem.** HT-3 hard-codes bench press as "no How-to" in two places (branch `claude/ht-3-howto-sheet` at
@@ -757,7 +757,7 @@ new paths, and merges its dependencies' heads in before review. It still **merge
 | — | LIB-1 | Scale rehearsal on `claude/lib-rehearsal`, with a draft PR titled "[do not merge]" (the AGENTS draft-PR rule), closed and the branch deleted after. The 145 ids get the 8's content cloned in, then it measures K, typecheck/vitest/build time, chunk sizes, APK, SW precache in the APK WebView, `ids.ts` and footprint, `ht-index`, and tap-to-plate with 153 loaders. It also runs the full existing gate on that all-153 build and lists every non-HT block that changes when library cards gain a How-to entry. Its numbers replace every est. here | HT-10 | sonnet | S | no |
 | 1 | LIB-2 | Scale core (5.2, 5.3): the 8 as data (incl. HT-5..HT-8's layer generators), per-file `inputsSha256`, library tree, plates page builder (2.7), D/T helpers with `PARAMS`, per-batch golden files with parent-hash chain, `coverage.ts` status, hash-set `ids.ts`, generated `LibId`, `ht-index` chunk, derived fixtures, the total-size re-set (5.1), library negative control; the 8 byte-identical | HT-10, LIB-1 | opus | L | design note only |
 | 2 | LIB-3 | Plate QA gate: PQ-H1..H10, flags F1-F7, vocabulary and envelope measured on the 8, label-search helper, generator refuses a non-ok report; mutation proofs | LIB-2 | opus | M | yes (new `library/qa/`) |
-| 3 | LIB-4 | Library CI: runner on HT-3's exports, rebuild, shard and verdict scripts, one-shard-per-id test, C-TZ, changed-id draft mode (the supervisor wires `.github`, add-only) | LIB-2, LIB-3, HT-10 | opus | M | no |
+| 3 | LIB-4 | Library CI: runner on HT-3's exports, rebuild and shard scripts, the library family in `gate-verdict`, one-shard-per-id test, C-TZ, the ref-and-event mode (full on `main`, merge-train heads and `workflow_dispatch`; affected ids on other pushes) (the supervisor wires `.github`, add-only) (D-LIB4-DOCS-2) | LIB-2, LIB-3, HT-10 | opus | M | no |
 | 4 | LIB-5 | Shared layer modules: new archetype data, equipment moves, back-pain box and its lint rule, the other add-only lint rules (4.4), research source registry (data only), the 19 shared cards, C15 stamps for the 8 | LIB-2 | opus | M | cards yes; code no |
 | 5 | LIB-6 | Close-up renderer: all 8 golden-B close-ups byte for byte, with the legacy fallback (2.6); layers page builder (2.7) | LIB-2, HT-4 | opus | L | yes, after HT-4 merges |
 | 6 | LIB-7 | Radial hand pairs: band, curl, rope, EZ, D-handle | LIB-6 | opus | M | yes |
