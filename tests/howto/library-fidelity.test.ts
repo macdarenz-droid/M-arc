@@ -339,9 +339,9 @@ describe('LIB-4b B7: the P decision (D-LIB4-PAR)', () => {
     expect(parVerdict(run(), px, 4).P).toBe(1);
     expect(parVerdict({ rows: [], px: {} }, { rows: [], px: {} }, 4).P).toBe(1);
   });
-  it('the default P is the final-head verdict: 4', async () => {
+  it('the default P is the final-head verdict: 1 (a P = 4 run had an unexplained red row)', async () => {
     // @ts-expect-error plain .mjs build tool, no types
     const { DEFAULT_P } = await import('../../tools/plates/library/fidelity.mjs');
-    expect(DEFAULT_P).toBe(4);
+    expect(DEFAULT_P).toBe(1);
   });
 });
