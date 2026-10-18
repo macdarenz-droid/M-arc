@@ -568,7 +568,7 @@
       "why": "Breaking Muscle lists it first among the pullover's faults; it makes the lift easier and often comes with flared elbows (c14). How often it happens is not measured in any source read.",
       "claim": "c7",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word counts for a pullover fault. Set aside: Breaking Muscle's \"A common mistake is to attempt to hold or orient the dumbbell horizontally during the repetition rather than vertically\" is about how the hands hold the dumbbell, a grip statement (ruling R-LB2-3); \"More often than not, excessive elbow bend is also associated with “flared,” or outward-pointing, elbows\" (c14) says how often two faults come together, not how often lifters make either; \"it’s common to see in commercial fitness centers\" is about the exercise; \"the pullover is typically programmed in the moderate repetition range\" is about reps; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c19) is about all weight training. Step 2: two named faults are tied to harm. Excessive elbow bend with flared elbows \"may increase stress on the inside of the elbow\" (c7, c14, WEAK), first on Breaking Muscle's mistakes list; letting go of the dumbbell over the face (c10: \"Avoid dropping the dumbbell on your face or chest\", with \"a visit to the hospital\") is a form tip, on no mistakes list. The tie goes to the one on a common-mistakes list: the elbow bend. Hips rising \"could result in a “glutes over dumbbell” tumble over the back of the bench\" (c8) names a fall but no injury, pain or stress, so it is not counted as stated harm; if it were, it would tie the elbow bend on list and source count and win on direct sourcing (c8 is not WEAK), so this reading is the one the pick rests on. drawable stays true: the side view shows the elbow bend."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word counts for a pullover fault. Set aside: Breaking Muscle's \"A common mistake is to attempt to hold or orient the dumbbell horizontally during the repetition rather than vertically\" is about how the hands hold the dumbbell, a grip statement (ruling R-LB2-3); \"More often than not, excessive elbow bend is also associated with “flared,” or outward-pointing, elbows\" (c14) says how often two faults come together, not how often lifters make either; \"it’s common to see in commercial fitness centers\" is about the exercise; \"the pullover is typically programmed in the moderate repetition range\" is about reps; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c19) is about all weight training. Step 2: two named faults are tied to harm. Excessive elbow bend with flared elbows \"may increase stress on the inside of the elbow\" (c7, c14, WEAK), first on Breaking Muscle's mistakes list; letting go of the dumbbell over the face (c10; Breaking Muscle's form tip \"Avoid dropping the dumbbell on your face or chest\", with \"a visit to the hospital\", not quoted in c10) is a form tip, on no mistakes list. The tie goes to the one on a common-mistakes list: the elbow bend. Hips rising \"could result in a “glutes over dumbbell” tumble over the back of the bench\" (c8) names a fall but no injury, pain or stress, so it is not counted as stated harm; if it were, it would tie the elbow bend on list and source count and win on direct sourcing (c8 is not WEAK), so this reading is the one the pick rests on. drawable stays true: the side view shows the elbow bend."
     },
     "tells": [
       {
@@ -692,23 +692,26 @@
       },
       {
         "where": "Mostly the backs of the arms",
-        "means": "Usually the elbows are bending and straightening.",
+        "means": "Fault: the elbows bend and straighten during the rep.",
         "fix": "Keep the elbow bend the same.",
         "claim": "c6",
         "redFlag": null
       },
       {
-        "where": "Pain on the inside of the elbow",
-        "means": "Can mean the elbows are bent too much and flaring.",
-        "fix": "Stop the set. Keep the elbows pointing forward or up.",
+        "where": "Inside of the elbow, severe",
+        "means": "Fault: too much elbow bend, with the elbows flaring out.",
+        "fix": "Stop the set. Don't train through the pain. Keep the elbows pointing forward or up.",
         "claim": "c14",
         "redFlag": "elbow"
       },
       {
-        "where": "Pain in the shoulder at the bottom",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set. Go lighter and shorten the range.",
-        "claim": "c20, c5, c12",
+        "where": "Shoulder at the bottom, sudden or severe",
+        "means": "Fault: lowering further than you can control.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c20",
+          "c5"
+        ],
         "redFlag": "shoulder"
       }
     ]
