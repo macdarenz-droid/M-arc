@@ -1,0 +1,41 @@
+name: LIB-4b B2 Chrome 153 (scratch)
+
+on:
+  push:
+    branches: ['claude/lib-4b-scratch']
+
+permissions:
+  contents: read
+
+jobs:
+  b2-golden8:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: B2 golden8 (default P)
+        shell: bash
+        run: node tools/plates/library/fidelity.mjs --ids golden8 --json b2.json 2>&1 | tee b2.log
+      - name: B2 failure fixtures (each must be red)
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          for f in "section:lib_dumbbell_lateral_raise --families plate" "leak-section:lib_dumbbell_lateral_raise --families plate" "shift:lib_dumbbell_lateral_raise --families plate" "ht10-inject:lib_barbell_back_squat --families HT10"; do
+            node tools/plates/library/fidelity.mjs --ids golden8 --themes silent-black --fixture $f 2>&1 | tee -a fixtures.log; echo "exit ${PIPESTATUS[0]} for $f" | tee -a fixtures.log
+          done
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LIB-4b-B2-chrome153
+          path: |
+            b2.json
+            b2.log
+            fixtures.log
