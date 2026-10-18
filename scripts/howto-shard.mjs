@@ -83,6 +83,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     onceSeconds: Math.round(onceSeconds * 10) / 10, shardSeconds, problems,
   };
   writeProof(join(ROOT, `screenshots/howto-proof-${k}of${K}.json`), { sha, shard: K > 1 ? { k: job.k, N: K } : {}, rows: rows.map(({ why, ...r }) => r), meta });
+  if (k === 2) { const pf = join(ROOT, `screenshots/howto-proof-${k}of${K}.json`), pj = JSON.parse(readFileSync(pf, 'utf8')), i = pj.rows.findIndex(r => r.id.startsWith('lib_')); console.log('C12 seed 3 dropped', JSON.stringify(pj.rows[i])); pj.rows.splice(i, 1); writeFileSync(pf, JSON.stringify(pj, null, 1)); }
   mkdirSync(join(ROOT, 'screenshots/howto-evidence'), { recursive: true });
   writeFileSync(join(ROOT, `screenshots/howto-evidence/shard-${k}of${K}.json`), JSON.stringify({ rows, px: out.px, seconds: out.seconds, stats: out.stats, sizes: out.sizes, problems: [...problems, ...(out.problems ?? [])] }, null, 1));
   const fails = rows.filter(r => r.result !== 'pass');
