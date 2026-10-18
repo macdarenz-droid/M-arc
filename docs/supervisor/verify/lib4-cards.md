@@ -1441,3 +1441,868 @@ Reviewed from two sides: a fixes-and-evidence audit that re-ran the tests and 4 
 
 **Ruling D-LIB9a-HOWTOID:** LB1 How-to sources may hold `id` beside `research` (071e078c), because library-scale's synthetic N = 153 reader needs it. Nothing else may be added to those files. DESIGN.md cites this.
 
+
+## 14. LIB-5 design-note rulings (D-LIB5-NOTE, 2026-10-17 ~23:xx UTC; #244 @ ee7f40f)
+
+A 3-lens review read the note. A judge ruled each open point, and one adversarial verifier checked each ruling. Where the verifier corrected a ruling, the corrected text is the ruling. It is changed here only where it clashed with sections 12 and 13 or with another item, and each ruling says in one line what changed. An earlier re-check of the LIB-5 card found 23 defects. Their fixes are merged into the card amendments below.
+
+Heads checked: main `2d1bbf3` (LIB-2b and GATE-SPLIT on main); #244 `ee7f40f`; LIB-4a #233 `aaff25e` (only COACHING-DECISIONS.md changed since `1746fd5`, so the write-ids and synthetic lines cited below hold); LIB-4b #232 `f1df4a7`; LIB-4c `claude/lib-4c-library-ci` `108eb5c`; LIB-9a #245 `6285b4f`; LIB-6 #181 `9b8f76e`; LIB-7 #193 `55e91e9`; LIB-12 #191 `0d268a7`; research `9dbc7e0`; `claude/libht-research-the8` `e6381fa` (unverified; never a source on its own); this file before section 14 `778e15b`.
+
+Precedence: where this section and the LIB-5 card or section 12 differ, this section wins. Section 13 Q1 (topFault) and Q3 (tempo) bind, and every ruling below agrees with them. LIB-5 appends each D-LIB5-* id it builds to COACHING-DECISIONS.md in Do 8, and D-LIB5-RISKSTEST together with D-LIB5-BACKBOX in Do 9.
+
+### Verdict
+
+The note needs revision. Six findings block it:
+1. The shared-module design (g) cannot pass S6 and S7 together on `9dbc7e0`: about 36 shown-field misses were verified (D-LIB5-SPLIT).
+2. The gen/content.mjs edits rewrite reserved generated files: the 8's, archetypes.ts and ids.ts (D-LIB5-GATE).
+3. The library layers page is a back-box placement outside the 30-word reach (D-LIB5-PAGE).
+4. The 450-word total does not count the back box (D-LIB5-WORDS).
+5. The '.git or ROOT' scratch-stamp refusal blocks B5 (D-LIB5-SCRATCH).
+6. The bundle check scans dist/, but vite writes www/ (vite.config.ts:18) (D-LIB5-BUNDLE).
+Two premises are also out of date: tempo (section 13 Q3 gives the 8's tempo to LIB-5) and topFault (section 13 Q1).
+
+What the builder does next (still Do 1: reading and writing only, no lane slot):
+1. Merge the newest origin/main (`72c94fc` at writing) with a merge commit. Since `2d1bbf3`, main changed only BUG-41's files, the handover, gate-times.json, gate-split.test.ts and screenshot-gate.mjs, so every line cited here on `2d1bbf3` still names the same code. Re-read the heads above.
+2. Revise docs/howto/library/LIB-5-DESIGN.md under this section. Replace each OPEN point with its ruling id. Apply Note fixes N1-N16. Quote every old and new line the rulings name, with the head sha.
+3. Section k: write the 8's tempo map (D-LIB5-TEMPO8) and the per-id TOPFAULT inputs (D-LIB5-TOPFAULT) on the research head the supervisor names. If no head is named when you re-post, say so. The map then follows as one addendum comment once the head is named (reading and writing only, no slot, no push).
+4. Push once. CI manners: GATE-SPLIT's train has merged, so only the limit of one push per 2 hours applies. Post the revised note as one PR comment. You are then WAITING.
+
+No code, build, test or lint run happens before the supervisor rules the revised note and sends "LIB-5 resume" (Stops 1, unchanged).
+
+Still waiting after the resume:
+- Do 2: the named research head (after tonight's LR-29 merge).
+- Do 3 b: the TOPFAULT comment, the tempo-map ruling, then 'CARD FIELDS VERIFIED'.
+- Do 4: CURL, ROPE and PALM_FLAT wait for the fault-key edits (D-LIB5-FAULTKEYS). Every module with a lint hit waits for reworded research (D-LIB5-SPLIT).
+- Do 6: the 'stamps (O5)' ruling and the supervisor's approval of the entries.
+- Do 9: the owner's back-box answer. He has not answered, so route (b) is likely.
+- Generator enforcement of the variant line: the field card (D-LIB5-VARIANT).
+- The back box on the layers page: LIB-6-PM, after LIB-5 is on main (D-LIB5-PAGE).
+
+### Card amendments
+
+Line numbers are the card's (msg/final-LIB-5.txt = docs/supervisor/verify/lib-5-card.md). Sources are in brackets.
+
+1. [facts; N16] base (:32-35).
+   Old: "base: origin/main @ 49a2853, plus a merge commit of origin/claude/lib-2b-library-rows @ ccf0250 (LIB-2b #234: HANDCSS fix in progress, then a delta review)." and its bullet "- When LIB-2b posts its final passed head, merge that head. Once LIB-2b is on main, merge main instead." and the bullet "  - after the GATE-SPLIT train merges (main is frozen at 49a2853 until then, about 22:00 UTC, an estimate);"
+   New: "base: origin/main @ 2d1bbf3 (LIB-2b #234 and the GATE-SPLIT train are on main), merged in with a merge commit before the revised note is pushed." The two old bullets are removed. The other merge points stay.
+2. [NEW-1] build_prerequisites (:45).
+   Old: "- Code under tools/plates/gen/** is written only on LIB-2b's final passed head, merged in."
+   New: "- Under tools/plates/gen/** LIB-5 writes one new file, tools/plates/gen/library-gate.mjs (D-LIB5-GATE), on a head that contains main 2d1bbf3. No other gen/ file is edited."
+3. [NEW-7 (5); OPEN-4 (3)] build_prerequisites (:46).
+   Old: "That is the head after research wave 2 merges, or 9dbc7e0 if wave 2 has not merged by then. In that case you re-copy and re-pin once when it merges."
+   New: "That is the head where research wave 2 and the 8's cards merge into claude/libht-research after tonight's LR-29 verify, or 9dbc7e0 if they have not merged by then. In that case you re-copy and re-pin once when they merge. One more re-copy is allowed, for the modules that wait on research (D-LIB5-FAULTKEYS, D-LIB5-SPLIT), from the one research head the supervisor names for both. Each re-copy re-pins S1 and re-runs S2, S6 and S7."
+4. [OPEN-3; NEW-4; CT-3; F2; L5-2] build_prerequisites (:47).
+   Old: "Do 3 b also waits for a supervisor PR comment that rules the note's source list for the 8 (Do 1 k) and names the head that holds their verified claims and quotes."
+   New: "Do 3 b also waits for a supervisor PR comment that rules the note's source list, the 8's tempo map and the plateFacts form table (Do 1 k; D-LIB5-TEMPO8) and names the head that holds their verified claims and quotes. Commit 1 also waits for the supervisor's 'TOPFAULT @ <named research sha>' comment (D-LIB5-TOPFAULT)."
+5. [ITEM-8] build_prerequisites (:48).
+   Old: "- Do 6 waits for the posted "stamps (O5)" wording ruling (lib4-cards.md 11.1 item 7), which sets approvedBy."
+   New: "- Do 6 waits for the posted "stamps (O5)" wording ruling (lib4-cards.md 11.1 item 7), which sets approvedBy. Its commit lands only after the supervisor's approval comment on the 8's entries (D-LIB5-STAMPS)."
+6. [CT-6; F6; L5-6; OPEN-3; NEW-4] merge_prerequisites (:60) and Do 3 b (:231).
+   Old (:60): "on the 8's machine cards, at a sha whose 8 card files equal the merge head's"
+   New: "on each of the 8's machine cards that stays in this PR, at a sha whose card files for those ids equal the merge head's"
+   Old (both :60 and :231): "If the 8's verified research is not on a named head by LIB-5's merge slot, Do 3 b leaves this PR: it lands after LIB-5 in its own PR from claude/lib-5-cards-8 (based on main), with its own fresh Opus review, and the 8's exemptions stay until then (D-LIB5-CARDS8)."
+   New: "Do 3 b leaves this PR for each of the 8 that, at LIB-5's merge slot, lacks any of these: verified research on a named head; its TOPFAULT answer; the ruled tempo map; a 'CARD FIELDS VERIFIED @ <sha>' at a sha whose card files for that id equal this head's. If that id's files are already pushed, one new commit before READY removes its card and quotes files and their library-cards8.test.ts pins. Never rebase, amend or force-push. The validator and the CARD-V2 'Machine fields' section stay. Commit 2 never covers such an id, so its approved.mjs lines and exemptions stay as on main. Those ids land after LIB-5 in one PR from claude/lib-5-cards-8 (based on main), with its own fresh Opus review and S12. Their exemptions stay until then (D-LIB5-CARDS8). An id that stops under risk_and_recovery (a miss, 'none', 'several', drawable false) is not a fallback id. It keeps both exemptions until the supervisor rules."
+7. [NEW-6; NEW-1 (4)] merge_prerequisites (:61).
+   Old: "- The scratch-stamp lines applied to every fixture builder on main (Do 7)."
+   New: "- The three D-LIB5-SCRATCH lines (one import, two calls) in every fixture builder on main that runs the generator (Do 7): LIB-2b's stageTree() and pinTree(), and, once on main, LIB-4b's stage() and pin(). LIB-4a's scale/write-ids.mjs gets none. LIB-4c's ci/scratch.mjs gets none if it builds through stage() and pin()."
+8. [NEW-2] merge_prerequisites: add after :61.
+   New: "- LIB-5's reviewed final head merges in one train with the supervisor's add-only check-bundle step in build-apk.yml's source-gate job (D-LIB5-BUNDLE). The full run on the train head is S4-P's bundle evidence."
+9. [CT-7; F5; L5-5; L5-10] merge_prerequisites route (b) (:64).
+   Old: "Do 9 then lands in its own PR from claude/lib-5-back-box (based on main), with its own fresh review."
+   New: "Do 9 then lands in its own PR from claude/lib-5-back-box (based on main), with its own fresh Opus review."
+   Old: "Under option 1 (50 words), that PR is built only after the cap card has merged, under the limit that card records; LIB-5 never makes that change."
+   New: "Under option 1 (50 words), route (b) applies whether or not the cap card has merged by LIB-5's merge slot. LIB-5 merges with the placeholder, and the claude/lib-5-back-box PR is built only after the cap card has merged, under Stops 3's one exception. LIB-5 never makes the cap change."
+   This amends section 12 item 12 (b), which covered only a cap card that had not merged.
+10. [OPEN-1; OPEN-2; NEW-9; NEW-2] Stops 2 (:20).
+    Old: "The box item (Do 9: box text, RiskJoint 'back', the Risks map entry, the ht9 twin line, S4, S5) is blocked until then."
+    New: "The box item (Do 9: box text, RiskJoint 'back', the Risks map entry, the two sections-risks.test.ts lines (D-LIB5-RISKSTEST), the ht9 twin's entry and FLAG lines (D-LIB5-TWIN), the count lines (D-LIB5-COUNTS), check-bundle's Do 9 rule (D-LIB5-BUNDLE), S4, S5 and S5-L) is blocked until then."
+11. [F5; L5-5; CT-7] Stops 3: append after "The wordCap and words fields in shared/back-pain-box.json are data, never a limit."
+    New: "One exception applies only under option 1, only in the claude/lib-5-back-box PR and only after the cap card has merged. Wherever this card holds the back box to 30 words (Do 9's first bullet, S4, S5-L and the D-LIB5-REACH differential), the back box is held to the cap card's named back-box limit, imported unchanged from where that card puts it. This card never writes, copies or edits that limit. In the D-LIB5-REACH differential and D-LIB5-REACH 3's checkC7 run on the back box: if the cap card gives c7 the named limit for 'back', both run unchanged; if it does not, for the back box only they leave out c7's 'C7: redFlag' word-count line and compare the lint's count with the imported named limit instead, and every other c7 and C19 line is still compared. S4's equality test then shows three things: c7's LIMITS.redFlagBoxWords is still 30, golden B's RED_FLAG_BOX_MAX_WORDS is still 30, and the lint reads the back-box limit only by importing it from where the cap card puts it, with no literal copy under lint/** (S7, next sentence), shown to bite by the limit + 1 mutation below. S7's 30-assert leaves out only that one imported limit, and its '50 added under lint/**' mutation stays red. Two added mutations, each red: the back box at the named limit + 1 words; another box at 31 words. Everything else stays as written: every other box, every other rule (today, doctor, contacts, sentence cap, BANNED, the 450-word total) and LIB-5's own PR."
+12. [NEW-1] shared-file owners (:68).
+    Old: "- tools/plates/gen/content.mjs and gen/ids.mjs belong to LIB-2b until it merges. Edit only the lines the design note names."
+    New: "- tools/plates/gen/content.mjs, gen/ids.mjs, tools/plates/generate.mjs and tools/plates/lib/**: read only (D-LIB5-GATE). The gate is the new tools/plates/gen/library-gate.mjs."
+13. [NEW-9] shared-file owners (:72).
+    Old: "- tests/howto/library-core.test.ts (LIB-2, LIB-2b): you may change only the exact count line of the 'generator writes N files' test (:242 on ccf0250, now 60), and only if the note adds a generated module."
+    New: "- tests/howto/library-core.test.ts (LIB-2, LIB-2b), tests/howto/library-rows.test.ts (LIB-2b) and tests/howto/library-ci.test.ts (LIB-4c; only once LIB-4c is on main and merged in): in Do 9 only, exactly the lines D-LIB5-COUNTS quotes. Find each by its text. Each stays an exact equality."
+14. [NEW-6; NEW-1 (4)] shared-file owners (:74-78).
+    Old: "- Once each of these files is on main, add one scratch-stamp call to it and list it in the PR:" and its four sub-bullets.
+    New: "- Once each of these files is on main, add exactly the three D-LIB5-SCRATCH lines (one import line after the file's last import, and two calls) and list them in the PR:
+      - LIB-2b's tests/howto/fixtures/lib2b/fixture.mjs (on main now): `import { markScratch, writeScratchStamps } from '../../../../tools/plates/library/research/stamps.mjs';`, `markScratch(root)` just before stageTree() returns its root, and `writeScratchStamps(root, [ID])` as the last statement before pinTree() returns;
+      - LIB-4b's tools/plates/library/fidelity/fixture.mjs: `import { markScratch, writeScratchStamps } from '../research/stamps.mjs';`, `markScratch(root)` as the last statement of stage(), and `writeScratchStamps(root, <the ids it pinned>)` as the last statement before pin() returns;
+      - LIB-4c's tools/plates/library/ci/scratch.mjs: no edit if it builds through stage() and pin() (it does on 108eb5c, :124-126). Otherwise the same import and two calls follow its own stage and pin steps;
+      - LIB-4a's tools/plates/library/scale/write-ids.mjs: no line."
+15. [OPEN-1; OPEN-2; NEW-9] shared-file owners, "Do 9 only" (:79-82).
+    Old: "  - LIB-4b's fidelity/twins/ht9.mjs:29: the FLAG line gains 'back' after LIB-4b merges, with B2 re-run and the twin re-pinned per D-LIB4-OPEN."
+    New: "  - LIB-4b's fidelity/twins/ht9.mjs, after LIB-4b merges, both lines found by content: the esbuild entry (:26 on f1df4a7) re-exports src/howto/red-flag-back.ts, and the FLAG line (:29) gains `back: C.RED_FLAG_BACK`. B2 is re-run and B3 stays green unedited. A re-pin under D-LIB4-OPEN happens only if a pinned text changes (D-LIB5-TWIN);
+      - HT-9's tests/howto/sections-risks.test.ts: the two add-only lines of D-LIB5-RISKSTEST;
+      - the count lines of D-LIB5-COUNTS."
+16. [CT-12; N12] read_first (:134) and Do 1 k (:212).
+    Old (:134): "research.card is 'grip/research/<slug>.json', which is not in this repo"
+    New: "research.card is 'grip/research/<slug>.json', which is not on main or on 9dbc7e0. Golden B's copies at docs/howto/grip-and-feel/research/<slug>.json on claude/howto-options @ 4a9fd86 are a lead only, never a citation or a value source for Do 3 b"
+    Old (:212): "Checked 2026-10-17: none of the 8 has a card on claude/libht-research @ 9dbc7e0 (109 cards), their How-tos name research.card 'grip/research/<slug>.json', which is not in this repo, and qa/approved.mjs:20 sets research: null and mistakeFault: null."
+    New: "Checked 2026-10-17: none of the 8 has a card on claude/libht-research @ 9dbc7e0 (109 cards). claude/libht-research-the8 @ e6381fa holds unverified cards for all 8 without the three keys, and only the head the supervisor names counts. Their How-tos name research.card 'grip/research/<slug>.json', which is not on main or 9dbc7e0 (golden B's copies on claude/howto-options are a lead only). qa/approved.mjs:20 sets research: null and mistakeFault: null."
+17. [CT-1; L5-7; N16] read_first (:143-145) and design_reference (:112, :114).
+    Old (:143): "- LIB-4b #232 at its newest head: fidelity/twins/ht9.mjs:29 and fidelity/fixture.mjs. It was 379cdf4 at 18:00; re-read it with `git ls-remote origin refs/pull/232/head`."
+    New: "- LIB-4b #232 at its newest head (f1df4a7 at 23:00; re-read it with `git ls-remote origin refs/pull/232/head`): fidelity/twins/ht9.mjs:26-31, fidelity/fixture.mjs stage() and pin(), and fidelity/twins/pins.json."
+    Old (:144): "- LIB-4a #233 @ 66f5cef: scale/write-ids.mjs and scale/synthetic.mjs."
+    New: "- LIB-4a #233 @ aaff25e: scale/write-ids.mjs, scale/synthetic.mjs and tests/howto/lib-4a.test.ts."
+    Old (:145): "- docs/supervisor/verify/lib4-cards.md on origin/claude/sup-lib4-cards @ eb77d98: section 2, 11.1 items 3, 7 and 17-19, and section 12."
+    New: "- docs/supervisor/verify/lib4-cards.md on origin/claude/sup-lib4-cards at the commit that adds section 14 (the supervisor's #244 comment names its sha): section 2, 11.1 items 3, 7 and 17-19, section 12 (items 1-19; item 13 as amended in section 14), section 13 Q1 and Q3, and section 14. Item 13 as read at 19a6017 is superseded.
+    - LIB-4c claude/lib-4c-library-ci @ 108eb5c: ci/affected.mjs, ci/scratch.mjs and tests/howto/library-ci.test.ts.
+    - LIB-6 #181 @ 9b8f76e: build-layers-page.mjs and its mirrored artifact/howto-layers.mjs (:217, :221, :271-278, :301-302).
+    - On main 2d1bbf3: tests/howto/sections-risks.test.ts (:10, :29-31); tests/howto/library-rows.test.ts (:34-36, :90-108, :130-162); tests/howto/no-contacts-parity.test.ts (HT4b-A6); tests/howto/checks/c19.ts (checkC19Shared :49); tools/plates/generate.mjs (:20, :83-90); tools/plates/lib/inputs.mjs (:2-3, :31); vite.config.ts:18; .github/workflows/build-apk.yml:42."
+    Old (:112): "- Where the plan or content.md differs from lib4-cards.md sections 1 and 12 or from this card, those win (D-LIB4-DOCS-2)."
+    New: "- Where the plan or content.md differs from lib4-cards.md sections 1, 12, 13 or 14 or from this card, those win (D-LIB4-DOCS-2). Where this card and section 14 differ, section 14 wins."
+    Old (:114): "(lib4-cards.md section 12), and D-LIB3-4"
+    New: "(lib4-cards.md section 12), section 13 Q1 and Q3, the D-LIB5-* rulings of section 14, and D-LIB3-4"
+18. [NEW-1; NEW-2; NEW-3; NEW-6; NEW-4] write_scope, new files (:149-158).
+    Old (:155): "the stamp helpers contentHashOf, stampProblems and writeScratchStamps, with signatures fixed in the design note;"
+    New: "the stamp helpers contentHashOf, stampProblems, writeScratchStamps, markScratch and SCRATCH_MARKER (D-LIB5-SCRATCH), and the builder's copy of the 8's ruled tempo table (D-LIB5-TEMPO8), with signatures fixed in the design note;"
+    Add: "  - tools/plates/gen/library-gate.mjs (D-LIB5-GATE);
+      - tools/plates/library/shared/check-bundle.mjs (D-LIB5-BUNDLE; under shared/**);
+      - under tests/howto/fixtures/lib5/**: the per-case tree helper (D-LIB5-FIXTURE), the back-flagged fixture helper (D-LIB5-PAGE), the neutral boxes and sheet (D-LIB5-WORDS, D-LIB5-REACH), the fixture hand module (D-LIB5-FAULTKEYS), the S3 fixture card and quotes (D-LIB5-FIXTURE 4) and the 9dbc7e0 draft box.now.text (D-LIB5-BUNDLE);"
+19. [CT-11; F14; L5-9; CT-5] write_scope (:163).
+    Old: "(:65 and :70 on main, `{ ...c, id: 'lib_chin_up', mode: 'H' }`), each gaining `research: null, mistakeFault: null` (a new plate has no card). Every assertion stays (Do 3 b commit 2);"
+    New: "(:66 and :70 on main: `{ ...c, id: 'lib_chin_up', mode: 'H' }` and `{ ...c, id: 'lib_chin_up', mode: 'H', exemptions: ['F5', 'F7'] }`; :65 `const c = …` stays unchanged). Each gains `research: null, mistakeFault: null` (a new plate has no card), and only if lib_pull_up is in commit 2. If it is not, both stay as on main and the PR says why. Every assertion stays (Do 3 b commit 2);"
+20. [NEW-1] write_scope (:164-165).
+    Old: "  - gen/content.mjs and gen/ids.mjs (or the one refusal point the note names): the lint call, the stamp gate and the back-box refusal. The back-box output comes only in Do 9;"
+    New: removed. The back-box refusal, the family refusal, the library lint and the stamp gate live in the new tools/plates/gen/library-gate.mjs (D-LIB5-GATE). Its one output, src/howto/red-flag-back.ts, comes only in Do 9.
+    Old (:165): "  - library-core.test.ts and the fixture-builder lines, as under shared-file owners;"
+    New: "  - the count lines and the fixture-builder lines, as under shared-file owners;"
+21. [OPEN-1; OPEN-2; NEW-5; NEW-9; NEW-2] write_scope, Do 9 (:168).
+    Old: "- Do 9 only: Risks.tsx, content-types.ts, the ht9 twin line, and the one src module the note names for RED_FLAG_BACK."
+    New: "- Do 9 only: Risks.tsx, content-types.ts, the ht9 twin's entry and FLAG lines (D-LIB5-TWIN), the two sections-risks.test.ts lines (D-LIB5-RISKSTEST), the count lines (D-LIB5-COUNTS), check-bundle.mjs's Do 9 rule (D-LIB5-BUNDLE), and tests/howto/library-back-page.test.ts (S5-L, D-LIB5-PAGE; only when the Do 9 change merges after LIB-6-PM's back patches). Under either route, also LIB-5's own files as Do 9's steps need them: tools/plates/library/shared/back-box.mjs (the placeholder replaced; backBox() keeps its name and signature), the re-copied shared/back-pain-box.json and its S1 pin, tools/plates/gen/library-gate.mjs (extraBoxes and the red-flag-back.ts output), the lint/** trigger pins, tests/howto/library-shared.test.ts (the check-bundle block's Do 9 cases and D-LIB5-TWIN's block) and library-lint.test.ts (S4's box tests). src/howto/red-flag-back.ts is written only by library-gate.mjs."
+22. [NEW-1; NEW-6; NEW-9] reserved_paths: add after :172.
+    New: "- tools/plates/gen/content.mjs, gen/ids.mjs, tools/plates/generate.mjs and tools/plates/lib/** (D-LIB5-GATE).
+    - tests/howto/fixtures/lib2b/fixture.mjs, library-rows.test.ts, library-ci.test.ts, sections-risks.test.ts and lib-4a.test.ts, except the D-LIB5-SCRATCH, D-LIB5-COUNTS and D-LIB5-RISKSTEST lines."
+23. [NEW-7; NEW-2; OPEN-4 (5); N7] Do 2 (:215).
+    Old: "   - Then run Do 1 a's chunk measurement and Do 1 h's lint dry run (the rules as the note states them; Do 5 commits them). Post both results in one PR comment with your next allowed push, naming every hit. A chunk over budget, or a hit on approved golden-B copy, follows risk_and_recovery."
+    New: "   - Then run three things: Do 1 a's chunk measurement on www/assets/HowToSheet-<hash>.js; `npm run build` followed by check-bundle.mjs, with its one seeded check in the scratch worktree (D-LIB5-BUNDLE); and Do 1 h's lint dry run over the 8's copy and all 18 non-box shared cards (the rules as the note states them; Do 5 commits them). Post in one PR comment with your next allowed push: both sizes with headroom; the scanner output; every hit with its rule, card or id, field, path, kind and text; the field split for ruling (D-LIB5-SPLIT); and every claim set filed under two fault keys (D-LIB5-FAULTKEYS 5). A chunk over budget, or a hit on approved golden-B copy, follows risk_and_recovery."
+24. [CT-2; L5-1; CT-3; F2; L5-2; CT-4; F1; OPEN-3; NEW-4; section 13 Q1 and Q3] Do 3 b (:219-220).
+    Old: "Where the copy lacks plateFacts, tempo or topFault, add only those top-level keys per D-LIB9-CARDFIELDS. Each value names the claim whose verbatim quote states it." and "      - Never fetch a source or write a quote yourself. Never take a value from the spec, plate or engine report under test."
+    New: "Where the copy lacks plateFacts, tempo or topFault, add only those top-level keys per D-LIB9-CARDFIELDS.
+      - plateFacts: each fact names the claim whose verbatim quote states it. An id with a spec gets a plateFacts key only if it is non-empty and holds an angle fact that H6 checks against the spec's measure, in the form the ruled plateFacts form table gives for that id (D-LIB5-TEMPO8 2). Otherwise it gets no plateFacts key, never [], and keeps 'H6:no-card'. plateFacts and tempo go in together or not at all.
+      - tempo: built only from the ruled 8-row tempo map (D-LIB5-TEMPO8) and the card's verified plate.tempo. Each s is that card's up, down or pause, or a ruled constant with its verified claim and quote. Phase names, order and move flags are labels from the ruled map. No tempo entry carries a claim key (H6 compares by JSON.stringify, qa/node.mjs:174).
+      - topFault: the key the supervisor's TOPFAULT comment gives for that id, citing plate.mistake.claim (on a drawable:false card, the claim of the top fault the card names, under section 13 Q1's drawable:false case). Never read mistake.firstKey to choose it (D-LIB5-TOPFAULT; section 13 Q1).
+      - Never fetch a source or write a quote yourself. Never take a number or a fault choice from the spec, plate or engine report under test. Only labels come from them, each through a ruling: the tempo map's phase names, order and move flags; the plateFacts form labels of the ruled table (kind, `joint` or `measure: true`, pose, the spec's measure.vertex); and the tell keys the blind TOPFAULT pass chose from."
+25. [OPEN-3; section 13 Q1] Do 3 b commit 1 (:223).
+    Old: "a fresh, blind Opus content verifier with one planted wrong number, as D-LIB9-CARDFIELDS sets for every batch."
+    New: "a fresh, blind Opus content verifier with one planted wrong number, as D-LIB9-CARDFIELDS sets for every batch. It re-checks each topFault on the TOPFAULT pass's blind inputs, never firstKey. It is red if a drawable:true topFault names anything other than plate.mistake's fault, or if a drawable:false topFault equals the drawn fault (section 13 Q1's two checks; D-LIB5-TOPFAULT). When commit 1 writes no plateFacts or tempo value (every id with a spec stopped, D-LIB5-TEMPO8 6), the supervisor plants the wrong number in one numeric value of the PR's stop report (a stopped id's computed fact or tempo second, each with its claim), which the verifier checks against the quotes like a written value."
+26. [CT-5] Do 3 b commit 2 (:224).
+    Old: "        - Commit 2, one commit, only after that comment and only for the ids it verifies:"
+    New: "        - Commit 2, one commit, only after that comment. It covers only the ids the comment verifies whose card holds every value H6 and F7 read, all verified and clean against H6 and F7: plateFacts, tempo and topFault (topFault alone for lib_dumbbell_lateral_raise, which keeps 'H6:not-engine'). A drawable:false id never qualifies: its section 13 Q1 topFault raises F7. CARDS_8 lists exactly those ids. Every other id stays out: approved.mjs keeps research: null and mistakeFault: null for it, and all its exemptions stay. A test asserts that cardResearch(id) deep-equals researchOf's projection (candidate.mjs:44-48) for each CARDS_8 id:"
+27. [OPEN-4; NEW-7; NEW-5; NEW-1] Do 4 (:232-236).
+    Old: "   - The generator calls it for any row whose riskFlags include 'back', so such a row throws, naming the id."
+    New: "   - library-gate.mjs calls refuseBack for every shipped row whose riskFlags include 'back', so such a row throws, naming the id.
+       - The module exports BACK_BOX_WAITS, backBox() and refuseBack(id, riskFlags). backBox() keeps its name and signature in Do 9, because LIB-6-PM's page patch calls it (D-LIB5-PAGE).
+       - Build the placeholder and every module whose card has no shown-copy hit at once. CURL, ROPE and PALM_FLAT wait for a copied head that holds D-LIB5-FAULTKEYS's research edits. A module with a hit waits for a named research head on which its shown fields pass (D-LIB5-SPLIT). LIB-5 never rewords, trims or exempts a string."
+28. [NEW-1; OPEN-5; ITEM-8; NEW-10] Do 5 (:237).
+    Old: "5. Put the library lint in the generator for shipped library rows; it throws naming the id, field and rule. Add a vitest sweep over every shipped row: C1-C4, C7 plus the library rules, C8, C15, C16 and C19."
+    New: "5. Put the library lint in tools/plates/gen/library-gate.mjs for every shipped library row (not the 8, which the sweep covers; D-LIB5-GATE 1). It throws naming the id, field and rule. The variant-line rule runs only in the sweep until the field card lands (D-LIB5-VARIANT). Add a vitest sweep over every shipped row: C1-C4, C7 plus the library rules, C8, C15, C16 and C19, plus checkC19Shared on every red-flag box the row shows (D-LIB5-REACH). checkC15 gets the row's own fragments object, never `{}` (D-LIB5-STAMPS)."
+29. [ITEM-8] Do 6 (:238).
+    Old: "6. Stamps: compute the 8's hashes, draft entries that cite the S-2 record, and post them for approval."
+    New: "6. Stamps: compute the 8's hashes (D-LIB5-STAMPS). Draft entries that cite both records per role (S-2, tools/plates/layers/README.md:27-45; the compact rewrite, :52-90) and list the recorded golden-B follow-ups that name each id (HANDOVER 8.2 items 1-11 and 8.0k follow-up 12). Post them for approval. The gate, the approved entries and every fixture builder's three D-LIB5-SCRATCH lines land in one commit."
+30. [NEW-6; NEW-1] Do 7 (:239).
+    Old: "7. After each merge listed under base, merge main and apply the listed fixture lines. Re-run everything on that head."
+    New: "7. After each merge listed under base, merge main and apply the D-LIB5-SCRATCH lines to each fixture builder now on main. Re-run everything on that head: lib-4a.test.ts unedited, and, once LIB-4c is on main, D-LIB5-GATE's affectedIds test."
+31. [OPEN-1; OPEN-2; NEW-2; NEW-8; NEW-9; NEW-5; F5; N14] Do 9 (:242-249).
+    Old: "at most 30 words, 'today' in now"
+    New: "at most 30 words (Stops 3's option-1 exception aside), 'today' in now"
+    Old: "     - replace the placeholder with RED_FLAG_BACK, equal to the card's box text;"
+    New: "     - replace the placeholder: backBox() returns the RedFlagBlock whose name, now and doctor are box.name.text, box.now.text and box.doctor.text, with claim from box.boxClaim. library-gate.mjs writes it as src/howto/red-flag-back.ts (RED_FLAG_BACK);"
+    Old: "     - apply the ht9 twin line after LIB-4b merges;"
+    New: "     - apply the ht9 twin's entry and FLAG lines after LIB-4b merges, re-run B2 and keep B3 green (D-LIB5-TWIN);
+         - add the two sections-risks.test.ts lines (D-LIB5-RISKSTEST);
+         - set extraBoxes to { back: backBox() } (D-LIB5-WORDS), and switch check-bundle.mjs to its Do 9 rule (D-LIB5-BUNDLE);
+         - re-pin the count lines, with the before and after run (D-LIB5-COUNTS);
+         - carry S5-L if this change merges after LIB-6-PM's back patches (D-LIB5-PAGE);"
+    Old: "     - append D-LIB5-BACKBOX, citing the supervisor's comment;"
+    New: "     - append D-LIB5-BACKBOX and D-LIB5-RISKSTEST, citing the supervisor's comment;"
+32. [NEW-3] S3 (:261).
+    Old: "candidateOf on a lib5 fixture card returns them, and H6 passes with matching facts, under every per-value rule the posted D-LIB9-CARDFIELDS sets."
+    New: "candidateOf on the lib5 fixture card of D-LIB5-FIXTURE (4) returns them, and H6 passes with matching facts, under every per-value rule of D-LIB9-CARDFIELDS and D-LIB5-TEMPO8. candidateOf and runQa are called directly, with no generator."
+33. [NEW-2; NEW-3] S4-P (:264-268).
+    Old: "appears in any file under src/** or in the built bundle."
+    New: "appears in any file under src/** or in any file under www/** after `npm run build` (check-bundle.mjs; D-LIB5-BUNDLE)."
+    Old: "  - a lib5 scratch row with riskFlags ['back'] makes the generator throw the module's message, naming the id;"
+    New: "  - E1's row, in a per-case copy of E1's tree with 'back' added to its riskFlags, makes the generator throw exactly `lib_cable_lateral_raise: LIB-5: back box waits for owner decision 6 (plan 8 item 6)` (D-LIB5-FIXTURE);"
+    Old: "the throw removed (the scratch row then generates)"
+    New: "the throw removed (E1's back-flagged copy then generates); each of the three values planted in a temp folder makes check-bundle exit 1, naming that field; a folder with no HowToSheet chunk makes it exit 1"
+34. [NEW-10; NEW-2] S4 (:274).
+    Old: "  - there is no CONTACT_RE, SOURCE_RE, SOURCE_CS_RE or SAFETY_LINE_RE hit;"
+    New: "  - there is no CONTACT_RE, SOURCE_RE, SOURCE_CS_RE or SAFETY_LINE_RE hit, and checkC19Shared({ RED_FLAG_BACK, DISCLAIMER }, 'back') returns [] (c19.ts:49);
+      - the D-LIB5-REACH differential holds on the box;
+      - check-bundle's Do 9 rule passes (D-LIB5-BUNDLE);"
+35. [NEW-5] S5 (:281).
+    Old: "  - budgets.test is unedited and green, and the HowToSheet chunk is within its existing budget."
+    New: "  - budgets.test is unedited and green, and www/assets/HowToSheet-<hash>.js is within its existing budget;
+      - S5-L (D-LIB5-PAGE) is green on the first head that holds both Do 9 and LIB-6-PM's back patches. Whichever change merges second carries it."
+36. [NEW-7] S6 (:283).
+    Old: "- S6 The shared modules equal their card fields, and their refs resolve. Mutations: one string drifted; one ref broken."
+    New: "- S6 The shared modules equal their card fields, and their refs resolve. Every shown field passes golden B's lint at its ruled path and kind (D-LIB5-SPLIT). No data value reaches src/** or a generator output, and a pinned list of each module's export keys holds no data field. Mutations: one string drifted; one ref broken; one notes string written into a generated file; a data key added to an export."
+37. [OPEN-4; OPEN-5; OPEN-6; ITEM-7; NEW-8; NEW-10; NEW-3] S7 (:285-289).
+    Old: "  - its rules: medical-claim bans, the variant line, FIX_VERBS closed, family consistency, and RED_FLAG_ROWS per stamped id;"
+    New: "  - its rules: medical-claim bans; the variant line (D-LIB5-VARIANT); FIX_VERBS closed; family consistency (rule (a) with the fixture-proven hand reader, D-LIB5-FAULTKEYS, and the inheritance refusal, D-LIB5-FAMILY); the sheet's visible total with every box (D-LIB5-WORDS); the red-flag box reach (D-LIB5-REACH); and RED_FLAG_ROWS per stamped id;"
+    Old: "  - the 8 pass, exempt by name only where the supervisor rules it."
+    New: "  - the 8 pass in the sweep. The only by-name exemption ruled now is VARIANT_LINE_EXEMPT = ['lib_lat_pulldown', 'lib_leg_press'], for the variant-line rule only (D-LIB5-VARIANT8). Any other is added only by a supervisor ruling under risk_and_recovery's 'A new ban hits approved golden-B copy' line that names the exact id, rule and string, matched by exact id as D-LIB5-VARIANT8 matches. E1 reuses pull-up's copy under its own id and inherits no lib_pull_up exemption, so a hit on pull-up's copy also turns E1's generator cases red: stop and report it, and the ruling says how E1 is treated."
+    Old: "a scratch row containing 'treats' makes the generator throw"
+    New: "E1's row with 'treats' in one copy string makes the generator throw (D-LIB5-FIXTURE); every mutation listed under D-LIB5-VARIANT, D-LIB5-VARIANT8, D-LIB5-FAULTKEYS, D-LIB5-FAMILY, D-LIB5-WORDS and D-LIB5-REACH"
+38. [ITEM-8; NEW-6] S8 (:293-294).
+    Old: "  - a test fails if the committed reviews.json holds a scratch entry."
+    New: "  - a test fails if the committed reviews.json holds a scratch entry, or if SCRATCH_MARKER exists at ROOT or is tracked;
+      - stampProblems treats a missing, unparsable or empty reviews.json as a failure for every shipped id, never as c15.ts:26's stub pass. contentHashOf equals c15's contentHash on the 8 and on E1's row, over all 9 fragments (D-LIB5-STAMPS)."
+    Old: "a committed scratch entry."
+    New: "a committed scratch entry; entries emptied, so the generator throws once naming each of the 8 while checkC15 returns []; every D-LIB5-SCRATCH mutation."
+39. [CT-4; F1; F4; L5-4; CT-3; F2; L5-2; OPEN-3; NEW-4; CT-5; section 13 Q1] S12 (:300, :304).
+    Old: "  - every value names a claim whose verbatim quote is in its quotes file, and S2's validator passes;"
+    New: "  - every plateFact names a claim whose verbatim quote is in its quotes file, and S2's validator passes;
+      - each id that lost 'H6:no-card' has a non-empty plateFacts that holds its measured-joint fact in the ruled form (D-LIB5-TEMPO8 2);
+      - each tempo equals the array the test builds from its own copy of the ruled 8-row map and that card's plate.tempo, and no s is unmapped (D-LIB5-TEMPO8);
+      - each topFault equals the TOPFAULT comment's key for that id; each wired card has plate.mistake.drawable true; each drawable:false card's topFault, where written, differs from its plate's mistake.firstKey (section 13 Q1); and no topFault is written for an id stopped for 'none', 'several' or a key check (D-LIB5-TOPFAULT);
+      - when no id of the 8 lost 'H6:no-card' (the expected path, D-LIB5-TEMPO8 6), every bullet and mutation here that needs such an id runs on the S3 lib5 fixture card (D-LIB5-FIXTURE 4), in a temp copy of E1's tree, through candidateOf and runQa, with a fixture map row in the test's own copy fed to the same tempo builder as the 8's. The topFault and F7 rows run on lib_dumbbell_lateral_raise when it is in CARDS_8, and otherwise on that fixture card. The test asserts that the set of cards each row checks is non-empty, and the PR lists each stopped real id with its reason;"
+    Old: "tempo deleted turns H6.tempo red; topFault set to another key raises F7;"
+    New: "plateFacts set to [] on one id that lost 'H6:no-card' turns library-cards8.test.ts red; its measured-joint fact removed turns it red; one angle fact +3° turns H6 red (H6.fact); tempo deleted turns H6.tempo red; one tempo second changed turns H6.tempo red; a mapped field swapped (up for down) turns the map test red; an s with no map entry, or a constant added without a ruling, turns it red; one card's topFault deleted makes F7 block (library-qa.test.ts:60 red); topFault set to another key raises F7; a wired card's drawable set to false turns the test red; on a test copy of one card set to drawable:false with topFault equal to the drawn key, the test turns red (section 13 Q1 mutation (2));"
+    Old: "the clone inputs' `research: null, mistakeFault: null` removed turns the clone test red."
+    New: "the clone inputs' `research: null, mistakeFault: null` removed turns the clone test red (only when lib_pull_up is wired)."
+40. [CT-2; L5-1; CT-3; F2; CT-4; CT-7; NEW-1; NEW-6; NEW-7; NEW-9; OPEN-2; OPEN-3] risk_and_recovery (:312, :314, :315, plus new lines).
+    Old (:312): "Do 9 then waits for the cap card and lands under route (b)."
+    New: "Do 9 then waits for the cap card and lands under route (b), under Stops 3's one exception."
+    Old (:314): "- A value of the 8 has no verified quote on the named head: do not write it, and report it on the PR."
+    New: "- A value of the 8 has no verified quote on the named head (and, for a tempo s, no ruled constant): do not write it, and report it on the PR. If no measured-joint fact is verified, write no plateFacts key, never []."
+    Old (:315): "(outside H6's ±2° or ±1 cm, a tempo array not equal to the spec's, or a topFault not equal to the plate's Mistake key): stop and report for that id."
+    New: "(outside H6's ±2° or ±1 cm, or a tempo array not equal to the spec's), or its TOPFAULT answer is 'none' or 'several', or on a drawable:true card that answer differs from the plate's mistake.firstKey, or on a drawable:false card it equals firstKey, or its card has drawable false: stop and report for that id. A drawable:false id gets section 13 Q1's topFault only when its key differs from firstKey, and is never wired here (D-LIB5-TOPFAULT)."
+    Add: "- A shown shared string fails golden B's lint: report it, and research rewords it (D-LIB5-SPLIT). Never reword, trim, exempt or reclassify it.
+    - A plugin cannot gate as D-LIB5-GATE rules: stop and ask for a supervisor ruling.
+    - An existing test turns red on the gate commit because a gate line now comes before the message it expects: stop and report. Never edit that test or reorder another plugin.
+    - A quoted count line's text differs on the merged head, or another test turns red from the new output: stop and report (D-LIB5-COUNTS).
+    - B2 is not identical after the twin lines: stop and report. Never change a3Probe or FLAG (D-LIB5-TWIN).
+    - A generator case throws a different message from the one it asserts: stop and report. Never loosen the assertion."
+41. [NEW-1; NEW-2; NEW-5] verification (:306).
+    Old: "verification: the PR body maps each S row to a test or run. Before READY, merge origin/main and run S11 on that exact head. Under route (b), S4 and S5 run in the Do 9 PR."
+    New: "verification: the PR body maps each S row to a test or run. On every head sent for review and on the READY head, the PR shows D-LIB5-GATE's byte-identity diff and `generate --check`, and check-bundle's output after `npm run build`. Before READY, merge origin/main and run S11 on that exact head. Under route (b), S4, S5 and (when due) S5-L run in the Do 9 PR."
+42. [OPEN-3; NEW-4; NEW-7] return (:322-330): add "- the revised note's comment id, and the TOPFAULT, tempo-map and D-LIB5-SPLIT ruling comment ids;".
+43. [NEW-4 (6); OPEN-3] outcome (:91) and finish (:99). On the expected path no id of the 8 with a spec is wired (D-LIB5-TEMPO8 6).
+    Old (:91): "- the 8's machine research cards (plate facts, tempo, top fault), verified, with their 'H6:no-card' and 'F7' exemptions removed, in this PR or, under the D-LIB5-CARDS8 fallback, in the claude/lib-5-cards-8 PR;"
+    New: "- the 8's machine research cards (plate facts, tempo, top fault), verified, in this PR or, under the D-LIB5-CARDS8 fallback, in the claude/lib-5-cards-8 PR. Their 'H6:no-card' and 'F7' exemptions are removed for each id in CARDS_8. Each stopped id is reported on the PR with its exemptions kept until the supervisor rules (D-LIB5-TOPFAULT; D-LIB5-TEMPO8 5);"
+    Old (:99): "and the 8's machine cards on main (here or by the fallback PR)."
+    New: "and the 8's machine cards on main (here or by the fallback PR), with each CARDS_8 id wired and each stopped id reported. An empty CARDS_8 still finishes, with S12 run on the fixture card (card amendment 39)."
+44. [section 14 'What the builder does next' 3-4; D-LIB5-TEMPO8 2] Stops 1 (:13).
+    Old: "apart from the one push and the comment that post the note after 'E8 done'."
+    New: "apart from the one push and the comment that post the note after 'E8 done', and, under lib4-cards.md section 14, the one push and comment that post the revised note and the one tempo-map addendum comment (D-LIB5-TEMPO8 2)."
+45. [CT-6; F6; L5-6; OPEN-3; NEW-4; N12] S12 (:301).
+    Old: "names a sha whose 8 card files equal the head's;"
+    New: "names a sha whose card files for each id in this PR equal the head's;"
+46. [NEW-7 (5); OPEN-4 (3)] risk_and_recovery (:317).
+    Old: "- The research head changes after Do 2 (wave 2): re-copy once, re-pin S1, and re-run S2 and S6."
+    New: "- The research head changes after Do 2 (wave 2, then the one D-LIB5-FAULTKEYS/D-LIB5-SPLIT head): re-copy only as build_prerequisites allows, and on each re-copy re-pin S1 and re-run S2, S6 and S7."
+47. [supervisor check: `git diff ccf0250 72c94fc` is empty over the four files] read_first (:138).
+    Old: "- On LIB-2b @ ccf0250:"
+    New: "- On main @ 72c94fc (LIB-2b merged; these four files are byte-equal to ccf0250):"
+48. [NEW-5; card amendment 41] Do 9 (:250).
+    Old: "- run S4, S5 and S11."
+    New: "- run S4, S5, S5-L when due (D-LIB5-PAGE), and S11."
+
+### Rulings
+
+#### OPEN-1 (D-LIB5-RISKSTEST)
+**Ruling.** Allowed in Do 9 only: in LIB-5's PR under route (a), or in the claude/lib-5-back-box PR under route (b). tests/howto/sections-risks.test.ts is HT-9's file. HT-9 is merged, the blob e44250bb is the same on main and on every open head that has the file (#181 @ 9b8f76e lacks it, because it predates HT-9), and no open card touches it. Find the lines by content on the merged head. The file gains exactly two new lines, and no existing line changes:
+1. `import { RED_FLAG_BACK } from '@/howto/red-flag-back';` directly after the `@/howto/archetypes` import (:10 on 2d1bbf3).
+2. `  back: RED_FLAG_BACK,` as a new line inside FLAG, after the `wrist: …, elbow: RED_FLAG_ELBOW,` line (:30) and before `};` (:31).
+
+Evidence:
+- Mutation: removing the import or the back line turns `npm run typecheck` red. List it next to S5.
+- HT9-A3 stays unedited and green on the 8. None of them has 'back'.
+- S5's renderRisks test proves the back block on the fixture. HT9-A3 reads only src/howto/generated/ht-*.ts (:26-27). It first checks a back block when a shipped back-flagged row exists (LB1/LIB-9).
+
+**Why.** tsconfig includes tests, and FLAG is `Readonly<Record<RiskJoint, …>>` (:29). With RiskJoint 'back', typecheck fails without the entry. Risks.tsx:17 and this :29 are the only typed joint maps on every head. A Partial, a cast or dropping the file from typecheck would weaken the test.
+**Why nothing is loosened.** The map gains the one entry its type needs, and every assertion stays. HT9-A3 covers back rows later with no edit.
+**Changed:** recorded in this section 14 (the corrected text said section 12). The blob sha is e44250bb (`git rev-parse <head>:tests/howto/sections-risks.test.ts`); the cited a953c81 is not an object.
+
+#### OPEN-2 (D-LIB5-TWIN)
+**Ruling.** Allowed after LIB-4b merges. In fidelity/twins/ht9.mjs, find both lines by content on the merged head:
+- The esbuild entry (:26 on f1df4a7) gains `export * from` src/howto/red-flag-back.ts, after the archetypes.ts re-export.
+- FLAG (:29) gains `back: C.RED_FLAG_BACK`.
+Nothing else in ht9.mjs changes, and a3Probe stays unexported. The gate's HT-9 block is untouched.
+
+Pins: pins.json pins only the gate:HT-* texts and the harness, ht10 and goldenB functions. ht9.mjs is not pinned, so pins.json stays unedited and B3 must be green as is. The PR says why no re-pin was made. If a pinned text changes after all, re-run B2 and re-pin that key under D-LIB4-OPEN in the same PR.
+
+Evidence:
+- (1) B2 as LIB-4b defines it (`--ids golden8`, container and CI dispatch), on the merged head. Rows and max px must be identical to the run before the edit: the back lines join every id's A3 set with 0 owners. If they differ, stop and report. Never change a3Probe or FLAG.
+- (2) A test in library-shared.test.ts, added in Do 9 with the twin lines, reads ht9.mjs as text. It asserts that FLAG's keys equal the RiskJoint members in content-types.ts and the keys of Risks.tsx's FLAG, and that the entry re-exports src/howto/red-flag-back.ts.
+- Mutations: `back` dropped from FLAG turns (2) red. The re-export dropped turns (2) red, and B2 red on every id with `HT9/crashed@*`.
+
+LIB-5 runs no back-flagged row through the twin. Golden B's page cannot render a back box yet: howto-layers.mjs:271 has 4 joints and :278 throws. D-LIB5-PAGE gives that gap to LIB-6-PM. The first PR that ships a back-linked row runs the twin on it.
+**Why.** C.RED_FLAG_BACK is undefined unless the entry re-exports the module. archetypes.ts cannot carry it: HT5-A5 (content-gen.test.ts:207) keeps that file equal to golden B.
+**Why nothing is loosened.** The twin only gets stricter. B2 on the 8, B3 and every pinned text are unchanged.
+**Changed:** the open gap ("the supervisor assigns it to a card") is now settled by D-LIB5-PAGE.
+
+#### OPEN-3 (D-LIB5-TOPFAULT)
+**Ruling.**
+- Commit 1 waits for one supervisor comment on #244, 'TOPFAULT @ <named research sha>'. It holds one answer per id from a fresh, blind Opus selection pass, run once per id.
+- The pass gets only these inputs per id:
+  - the card's plate.mistake.what, its claim id(s) and their verbatim quote(s);
+  - the approved plate's Mistake tells (key and cue text), shuffled, with no selected marker and no firstKey.
+- It answers with one key, 'none' (no tell names the card's fault) or 'several: <keys>'.
+- An id whose plate.mistake.drawable is false gets the same pass under section 13 Q1's drawable:false case (CARD-V2 :36; the plan 3.3 F7 drawable-fault rule). In place of plate.mistake.what, its input is the top fault the card itself names in mistake.why or handlingMistakes, with its claim id(s) and verbatim quote(s), plus the same shuffled tells.
+- The answers are posted before anyone compares them with firstKey. A pass is re-run for an id only when its plate.mistake or quotes change on a newly named head, never because of its answer.
+- LIB-5 writes the posted key as topFault, citing plate.mistake.claim (on a drawable:false card, the claim of the top fault the card names). It never reads mistake.firstKey to choose it.
+- The CARD FIELDS verifier re-checks each topFault on the same blind inputs, never firstKey. It gets section 13 Q1's two checks: it is red if a drawable:true topFault names anything other than plate.mistake's fault, or if a drawable:false topFault equals the drawn fault. Its planted error stays one wrong number (item 9; card amendment 25 says where it goes when no number is written).
+- An id stops if any of these holds: its answer is 'none' or 'several'; on a drawable:true card, its key differs from its plate's mistake.firstKey; on a drawable:false card, its key equals firstKey (the card names the drawn fault while saying it cannot be drawn: a research question). A stopped id gets no topFault. A drawable:false id answered 'none' has no key for its top fault among the plate's tells; a new key needs a supervisor ruling, and LIB-5 never coins one.
+- A drawable:false id whose key differs from firstKey gets that key as topFault (Q1's drawable:false case). Its F7 then stays raised, as plan 3.3 keeps it for the owner's yes.
+- Every stopped id and every drawable:false id stays out of CARDS_8, keeps 'H6:no-card' and 'F7', and is reported on the PR. Wiring a drawable:false id needs a supervisor ruling with a COACHING-DECISIONS entry that changes its F7 reason (D-LIB3-4) and the owner's yes. That is not in LIB-5's scope.
+- library-cards8.test.ts asserts that each wired card has drawable true and a topFault equal to its TOPFAULT key, and that each drawable:false card's topFault, where written, equals its TOPFAULT key and differs from its plate's mistake.firstKey. Mutations, each red: a wired card's drawable set to false; Q1's mutation (2), a test copy of one card set to drawable:false with topFault equal to the drawn key.
+- LIB-5 appends D-LIB5-TOPFAULT in Do 8, citing the TOPFAULT comment.
+
+**Why.**
+- Research cards carry no fault key: plate.mistake is {what, why, claim, drawable} (CARD-V2 :34-36).
+- Key strings exist only in the 8's spec tells and the plates built from them (pull_up.mjs:118; golden.mjs:126-130), and both are under test.
+- So the plate supplies only the spellings, and the choice must come from research, made blind. This matches section 13 Q1's "never from the spec".
+- Copying firstKey would make F7 pass by construction. golden.mjs:126 puts the selected tell first, so the list is shuffled.
+- A forced single answer, or a re-run after a miss, could match firstKey by chance. So 'several' stops the id, and no answer is re-drawn.
+- On e6381fa (unverified), leg_press has drawable false, and its mistake.what describes the drawn 'lift' tell. A pass on 'what' alone would clear the F7 that plan 3.3 keeps raised for the owner. So a drawable:false pass reads the fault the card names as its top fault, and Q1's check turns a key equal to the drawn one red.
+**Why nothing is loosened.** F7 (node.mjs:293) and its equality are unchanged, and S12's 'another key raises F7' mutation stays. A stopped id keeps every exemption, and no drawable-fault F7 is cleared. The pass, its stop answers, the no-re-run rule and the verifier's blind re-check are all added checks.
+**Changed:** the corrected text gave drawable:false ids no pass, put their case out of LIB-5's scope and had the verifier fail any topFault on a drawable:false card, which section 13 Q1 does not say. Q1's rule "goes into D-LIB9-CARDFIELDS ... for LIB-5's 8", so its two cases and its two verifier checks now apply as written, with its mutation (2) and the drawable mutation; a drawable:false id is still never wired here. This supersedes card defects CT-2 and L5-1. Their "firstKey where the verifier confirms" is weaker, because that verifier would see the selected tell.
+
+#### OPEN-4 (D-LIB5-FAULTKEYS)
+**Ruling.**
+1. Research changes exactly these fields at the source, and nothing else:
+   - shared/curl.json:
+     - fault key `wrist-curl-cheat` becomes `curled`; the label 'Wrist curled' is unchanged;
+     - `bent-back-bottom` becomes `bent-back`; the label 'Wrist bent back' is unchanged;
+     - gaps[2] (:209 on 9dbc7e0), one exact replacement of the whole string. Old: "The fault names wrist-curl-cheat and bent-back-bottom come from GA; the sources name the wrong positions (flexion, extension, a forced bend at the bottom), not a cheating motion. The labels describe positions only." New: "The fault keys curled and bent-back are LIB-7's (hands/radial-rules.mjs), which replace GA's wrist-curl-cheat and bent-back-bottom; the labels are D-LIB7-10's. The sources name the wrong positions (flexion, extension, a forced bend at the bottom), not a cheating motion. The labels describe positions only."
+   - shared/rope-rule.json: `rope-wrist-curl` becomes `curled`, and its label 'Wrists curl' becomes 'Wrist curled'.
+   - shared/palm-flat.json: `hand-ahead` keeps its key, and its label 'Hands too far forward' becomes 'Hand ahead'.
+
+   These are exact edits, each old and new string quoted above (keys, labels and the whole gaps[2] string), so the Sonnet W2B session may make them under section 12 item 14: the exact text, the exact claim and card lists, and a stop on any mismatch. A fresh Opus content critic (card and quotes only) checks each changed label and the new gaps[2] string against its claims inside tonight's LR-29 verify. The supervisor's 10 % re-fetch is unchanged.
+
+   Evidence: each fault has the same claim refs and side as LIB-7 radial-rules.mjs:20 and :22 and hand-rope.mjs:22 (curl#c3,#c4; curl#c3-#c5; rope-rule#c6), and LIB-12 hand-palm-flat.mjs:20 (PF#c3). D-LIB7-10 already names rope-rule's 'Wrists curl' as the same fault. No quote or claim text changes.
+2. LIB-7 and LIB-12 change nothing. Their pins stay byte-identical, including LIB-7's critic-approval pin over id/fault (hand-pairs.test.ts 'critic fixes (10-03)'; D-LIB9-HANDPAGE). No alias table and no exemption is added. LIB-5 never retypes a string.
+3. Timing:
+   - Do 2 copies the head the card names.
+   - At Do 4, CURL, ROPE and PALM_FLAT are built only from a copied head that holds point 1. The other modules go ahead.
+   - If the head copied at Do 4 lacks point 1, LIB-5 builds those three exports no further and reports. The supervisor routes the research fix.
+   - There is no reverse route (LIB-7/12 taking the card keys): it would change LIB-7's critic-approval pin, split D-LIB7-10's one key per fault across the curl, ez, push, rope and d-handle variants, and it cannot fix a 4-word label.
+4. Family check (one label per fault.key):
+   - It reads three sources: the 8's handling.faults; the faults in LIB-5's shared modules; and every tools/plates/library/hands/hand-*.mjs present. For the last, it imports each module and reads VARIANTS[*].faults, an object keyed by fault key, as on #193 @ 55e91e9 and #191 @ 0d268a7. The curl and rope labels come in through radial-rules.mjs.
+   - It prints the compared count per source and asserts three things: the 8's count is above 0; the shared modules' count is above 0; the hands count equals the fault entries the imported modules export, and is above 0 whenever any module it finds exports a fault.
+   - No hand-*.mjs is on LIB-5's head, because LIB-7/12 merge after LIB-5 (D-LIB5-ORDER). So a fixture hand module in LIB-7's shape under tests/howto/fixtures/lib5/** proves the reader, with a known fault count.
+   - Mutations, each red: the fixture's hand-ahead labelled 'Hands forward'; the reader returning 0 faults on the fixture.
+5. Do 2's dry run lists every claim set filed under two keys. Palm-flat c3, under both hand-ahead and hands-rotated, will show. This is a report for the supervisor, not a rule.
+6. D-LIB5-FAULTKEYS records that GA 3.1 and 3.1.1's key names (wrist-curl-cheat, bent-back-bottom, rope-wrist-curl) are superseded by LIB-7's.
+**Why.** content.md 4 (:273) and plan 4.4 make family consistency key-based. Two keys for one fault backed by the same claims would let the labels drift with every check green. LABEL_MAX_WORDS (copy-lint.mjs:54) and c7 labelMaxWords are both 3, and 'Hands too far forward' is 4 words.
+**Why nothing is loosened.** Family consistency, LABEL_MAX_WORDS, c7 and every LIB-7/12 pin stay as written, with no exemption and no alias table. Only the spelling at the research source changes, and a fresh critic checks it. A fixture proves the reader, so the check is not empty.
+**Changed:** the corrected text named "W2B (claude-opus-5-5)". W2B runs on claude-sonnet-5 with exact edits only, so these spelled-out edits go to it under item 14, with the Opus critic in tonight's verify. gaps[2]'s new string is written here by the supervisor, because item 14 lets Sonnet make only edits whose replacement text it is given.
+
+#### OPEN-5 (D-LIB5-VARIANT)
+**Ruling.**
+1. LIB-5 commits the rule as a pure function under tools/plates/library/lint/**. The note names it and fixes its signature. Each case gets a lib5 fixture, and the vitest is in library-lint.test.ts. The rule applies content.md 4's whole caption class, with copy-lint's exported pieces imported, never copied:
+   - Red: equipment has '/' and the line is missing (undefined, null, or words() = 0).
+   - Red: a line on a row whose equipment has no '/'.
+   - Red: words(line) > CAPTION_MAX_WORDS (10).
+   - Red: a hit on BANNED, OWN_RED_FLAG, CONTACT_RE, SOURCE_RE, SOURCE_CS_RE, a sourceNamePatterns name, or a library medical-claim ban. Each gets its own fixture.
+   - Green: a clean line within the limit on a '/' row; no '/' and no line.
+   - It returns the line's words(), so the visible total (D-LIB5-WORDS) can count it.
+2. The tripwire is unconditional.
+   - The Do 5 sweep calls the function for every registry shippedRows() row. It passes the row's src/data/exercises.json equipment, and takes the line from one accessor that returns undefined today.
+   - Any shipped '/' row is red, naming the id, except VARIANT_LINE_EXEMPT's two ids (D-LIB5-VARIANT8).
+   - The test pins the exact set of 23 exercises.json ids whose equipment has '/'.
+   - Mutations, each red: injected rows with one shipped '/' row (red, naming it); lib_leg_press removed from the exemption; a third exempt id; one '/' dropped from a scratch copy of exercises.json.
+3. The generator does not call this rule yet. B5's lib_underhand_lat_pulldown ('Cable / Machine', fixture.mjs:27 on #232) would throw with no field to fill. This amends plan 4.4's "runs at build" for this rule only, until the field card lands.
+4. The field card. The supervisor writes it and names its owner and slot before LIB-9 READY. In its own PR it:
+   - adds the shown field;
+   - points the accessor at the field;
+   - makes library-gate.mjs call the function for every shipped row and throw, naming the id, field and rule;
+   - counts the line toward the imported VISIBLE_WORDS_MAX, in the generator and in the sweep;
+   - has C7 count and scan the line (an add-only edit to c7.ts by its owner, ruled in that card).
+   The sweep, its mutations and the exemption stay, and no test is deleted. The field's copy follows AGENTS.md's UI-copy rule. If the line cannot pass that rule, the supervisor asks the owner; builders never write to him.
+5. Card half. LIB-5's validator (Do 3 a) is red when a card whose exercises.json equipment has '/' has a null or empty plate.variantLine, except VARIANT_LINE_EXEMPT's two ids. Mutation: variantLine set to null on a lib5 '/' fixture card turns it red. Found on 9dbc7e0: underhand_lat_pulldown's variantLine is null, and close_grip_pulldown's does not name the Machine kind. Both are LB1 ids, and the supervisor sends them to research.
+6. The merge_prerequisites of LIB-9 and of every later batch card gain: "the variant-line field card is on main before any row whose exercises.json equipment has '/' ships".
+   - Risk: LB1 holds close_grip_pulldown and underhand_lat_pulldown, so the field card is on LIB-9's critical path.
+   - Mitigation: write the card early. Otherwise those two ids stay below 'shipped'. The rule is never weakened.
+**Why.**
+- content-types.ts has no variant field (HowToContent :302-330), and src is reserved until Do 9.
+- 23 ids in exercises.json have '/': the 2 of the 8 plus 21 new.
+- copy-lint's checkText is not exported, and copyFields and c7's visible map list their fields by name. So a new shown field is checked only if a ruling puts it in reach.
+**Why nothing is loosened.**
+- No existing check, cap or budget changes.
+- From LIB-5's merge on, any shipped '/' row, except the two golden ids, is red on main.
+- The line can never ship outside the caption class, the 450-word total or C7.
+- The card half runs from LIB-5 on.
+**Changed:** the generator call goes in library-gate.mjs (D-LIB5-GATE), and it is recorded here, not in section 12. The tripwire's mutation uses injected rows, not a new scratch root (D-LIB5-FIXTURE 6). The card-half exemption reads the same constant as ITEM-7; ITEM-7 says why the two agree.
+
+#### ITEM-7 (D-LIB5-VARIANT8)
+**Ruling.** Exempt exactly lib_lat_pulldown and lib_leg_press from the variant-line rule, and from nothing else. The rule has two halves: the lint's shown-line check (content.md 4, row 'Variant line') and the validator's card half (D-LIB5-VARIANT 5).
+- Where it lives: one exported constant, VARIANT_LINE_EXEMPT = ['lib_lat_pulldown', 'lib_leg_press'], in a module under tools/plates/library/lint/**. The sweep, the validator and, after the field card, library-gate.mjs import that one constant. It never goes in qa/exemptions.json.
+- Matching: the row's own id exactly; for a card, `lib_` plus the card id. It never matches by chromeId, LIB_OF of a copied module, a fixture's `from`, `extends` or a prefix. So B5's lib_underhand_lat_pulldown and any child of the two inherit nothing.
+- Every other library rule still runs on the two ids: the medical bans, FIX_VERBS, family, the visible total and RED_FLAG_ROWS. Their cards are never edited (byte copies plus the three keys, D-LIB5-CARDS8).
+- Test, in library-lint.test.ts:
+  - A pure function eightWithSlash(eightIds, exercises) returns the ids among eightIds whose exercises.json equipment contains '/'.
+  - eightIds come from golden.mjs LIB_OF values (tools/plates/plates.json), and the test asserts there are exactly 8. It never uses HOWTO_IDS or any list that grows.
+  - It reads the committed src/data/exercises.json, read-only.
+  - It asserts that VARIANT_LINE_EXEMPT, sorted, equals both the literal pair and eightWithSlash(...).
+- Mutations, each red:
+  - a third id added;
+  - one id removed (the sweep also goes red on that id);
+  - an injected exercises.json copy in which a third of the 8 gains '/';
+  - an injected copy in which one of the two loses '/';
+  - injected rows with '/' and no line, one of them with id lib_underhand_lat_pulldown;
+  - an injected row with id lib_lat_pulldown carrying 'treats' (red under the medical ban).
+  All of these are pure-function inputs, never a new generator tree (D-LIB5-FIXTURE 6).
+- This does not settle B5 or LB1 rows with '/'; D-LIB5-VARIANT does.
+**Why.**
+- The two are approved golden-B sheets, kept byte-identical by S10. HowToContent has no field, and their golden-B copy has none.
+- S7 allows by-name exemptions of the 8 only by ruling.
+- The plan scopes the rule to the "21 new ids" (LIBRARY-HOWTO-ARCHITECTURE.md:78, :466, :931): 23 minus these two, checked on 49a2853 and b70ca58.
+- The card half follows the same scope. lat_pulldown's plate.variantLine is null on the8 @ e6381fa, and its sheet shows no line. A card-half check there would block its machine card over a field no sheet of the 8 uses.
+**Why nothing is loosened.** The rule stays whole for every library id. The exemption covers one rule and two exact ids, taken from the fixed golden-A list. The two-sided equality turns red if the list grows, shrinks or the data shifts. The card-half check is new, so no existing check narrows.
+**Changed:** the corrected ITEM-7 limited the exemption to the shown-line check, while the corrected OPEN-5 (5) exempted the same two ids from the card half. I made both halves read one constant. The plan scopes the whole rule to the 21 new ids, and the alternative would block lat_pulldown's machine card.
+
+#### ITEM-8 (D-LIB5-STAMPS)
+**Ruling.** Do 6 waits for the "stamps (O5)" wording ruling and for the supervisor's approval comment on the 8's entries.
+- Hash: c15's contentHash(content, plate).
+  - content = loadContent(id).content.
+  - plate = the whole `fragments` object of the id's latest plate entry, with 9 keys: normalSvg, normalOverlay, mistakeSvg, mistakeOverlay, tells, tempo, cues, alt, mistakeAlt. For the 8 it comes from GOLDEN.json via latestEntries. For a library row it comes from pinOf(row, 'plate', root) in the row's batch golden file.
+  - scope = content.extends ?? content.id (c15.ts:28).
+  - contentHashOf imports the given root's own gen/content.mjs, because loadContent has no root parameter (content.mjs:89-90). So it is async, and the synchronous writeScratchStamps reaches it through a child process (D-LIB5-SCRATCH 1). A test shows it equals c15's contentHash on the 8 and on E1's row.
+  - The Do 5 sweep calls checkC15 with that same fragments object, never `{}` (content.test.ts:470).
+- Gate:
+  - stampProblems treats a missing, unparsable or empty reviews.json as a failure for every shipped id, never as c15's stub pass (c15.ts:26).
+  - It runs in library-gate.mjs after the per-row loop (D-LIB5-GATE), never in gen/ids.mjs.
+  - One commit holds the gate, the 8's approved entries, the three D-LIB5-SCRATCH lines of every fixture builder already on that head, and the lib5 cases' writeScratchStamps calls (D-LIB5-FIXTURE 3). E1's fixture.mjs is on main, and library-rows.test.ts:34-36 runs the full generator in its tree. Every test is green on that commit.
+- S8 mutation added: entries emptied, so the generator throws once naming each of the 8, while checkC15 returns [] for each.
+- Entries:
+  - Each entry cites both records for each role: S-2 (tools/plates/layers/README.md:27-45, review line :45) and the compact rewrite (:52-90, checks :85-90). A role with no record says so.
+  - `open: 0` counts only those reviews' unresolved findings.
+  - `findings` also lists, by number, every recorded golden-B follow-up that names that id (HANDOVER 8.2 items 1-11 and follow-up 12 in 8.0k, numbered as on the main head merged at Do 6). Each is marked "recorded, not changed: golden B is locked (plan 2.8)".
+**Why.** reviews.json is `{schema:1, entries:[]}` on main, so C15 can never fail today, and a gate that copied the stub rule would pass vacuously. content.md 3.5 names both records. E1 is on main, so a gate commit without its scratch lines is red.
+**Why nothing is loosened.** C15 becomes strict as planned, and c15.ts is not edited. The gate cannot pass on an empty file. No commit is red, and no known golden-B issue is hidden by a stamp.
+**Changed:** "the scratch-stamp line" became the three D-LIB5-SCRATCH lines (one import, two calls). The placement and LIB-4a questions this ruling left open are settled by D-LIB5-GATE and D-LIB5-SCRATCH.
+
+#### NEW-1 (D-LIB5-GATE)
+**Ruling.**
+1. Placement.
+   - The back-box refusal, the family refusal (D-LIB5-FAMILY), the library lint (D-LIB5-REACH, D-LIB5-WORDS, family rule (a)) and the stamp gate go in one new plugin, tools/plates/gen/library-gate.mjs. The note names it as "the one refusal point".
+   - content.mjs, ids.mjs, generate.mjs and tools/plates/lib/** stay byte-unchanged. No gate helper goes under tools/plates/lib/, because core files are in every header.
+   - Order inside outputs(): for each shipped row, refuseBack, then the family refusal, then, for a library row only (registry.mjs's rows after the 8), the lint (sheetWords included). The 8 are linted only by the Do 5 sweep (S7), as the card's Do 5 scopes the generator lint to library rows. After the loop comes stampProblems. Nothing goes in loadContent or pushHints.
+2. Plugin rules.
+   - `after: ['tools/plates/gen/content.mjs']`, so every existing refusal (pagesOf, QaRefused) keeps its message.
+   - It never reads ctx.prev. Rows come from registry.mjs shippedRows(), content from content.mjs's exported loadContent(id), and M from sourceOf(id) (D-LIB5-WORDS). So it behaves the same when a test calls outputs() with an empty prev.
+   - Before Do 9, outputs() returns []. From Do 9 it returns only src/howto/red-flag-back.ts, with its own `inputs`.
+   - The plugin also exports inputsFor(path) with the same list, for HT2-A2 (generate.test.ts:85) and E2 (library-rows.test.ts:194).
+   - The list holds back-box.mjs, every repo module it imports (shared/card.mjs if it uses it) and docs/research/howto/shared/back-pain-box.json. closureOf cannot be used, because it throws on back-box.mjs's file read. A test asserts that the list equals back-box.mjs's static imports plus that JSON file.
+   - inputs() returns every file the plugin reads.
+   - library-shared.test.ts runs checkC17 (c17.ts, unchanged) on two directories, because checkC17 takes directories and skips any path it cannot readdir (c17.ts:43-47): tools/plates/library/shared, and a temp directory holding a copy of tools/plates/gen/library-gate.mjs. It asserts [] and that each directory holds the file it is meant to scan. Mutations, each red: `fetch(` planted in the temp copy of library-gate.mjs; `fetch(` planted in a temp copy of the shared directory's back-box.mjs.
+3. Evidence.
+   - Committed, in library-shared.test.ts:
+     - The paths render() attributes to library-gate.mjs are exactly [] while back-box.mjs holds no box text, and exactly ['src/howto/red-flag-back.ts'] once it does.
+     - No other generated file's header names the plugin.
+     - Mutations: the plugin returns any other path → red; it returns red-flag-back.ts while the placeholder holds → red.
+   - PR evidence, never a committed pin, on every head sent for review and on the READY head:
+     - `git diff --exit-code <the main sha last merged> HEAD` is empty over content.mjs, ids.mjs, generate.mjs, tools/plates/lib/** and every path render() returns, headers included;
+     - `generate --check` is green;
+     - after Do 9 the same holds, except for red-flag-back.ts.
+     - The mutation is shown once, in a scratch worktree: one comment byte in content.mjs, then regenerate. The diff must then list the 8's ht-*.ts, ids.ts, archetypes.ts, sources.json and lib_*.json.
+   - After LIB-4c merges, a test calls affectedIds on a registry with at least one shipped library row (E1's).
+     - It makes one call each with changed = [library-gate.mjs], [one lint/** module], [research/stamps.mjs] and [docs/research/howto/reviews.json].
+     - Each must give a reason row with ids 'all', with all: true.
+     - If any case does not select every id, stop and report. LIB-4c owns affected.mjs.
+4. Fixtures. The gate runs only through render(). So the scratch lines go only into builders that run the generator (D-LIB5-SCRATCH). LIB-4a's write-ids.mjs gets none: it calls ids.mjs's and handpairs.mjs's outputs() directly and never render(), and its clones have no How-to source. Evidence: lib-4a.test.ts is unedited and green on LIB-5's head.
+5. Fallback, only if the builder shows a plugin cannot gate: stop and ask. That ruling may allow header and hashes: line rewrites only, with a test that each reserved file differs from main in those lines and nowhere else.
+**Why.**
+- reserved_paths close src/** until Do 9, archetypes.ts always, and the 8's generated files (S10).
+- content.mjs:135 rewrites the 8's hashes: line, and lib/inputs.mjs:31 hashes each writer plugin's bytes. So a content.mjs edit rewrites reserved files, while L2-A3, which ignores headers, stays green.
+- render() writes nothing until every plugin has returned (generate.mjs:83-90), so a throwing plugin blocks every output.
+- Adding a plugin stales no other plugin's files (lib/inputs.mjs:2-3; generate.test.ts:154-162).
+- Section 12 item 5(c) dropped core edits for the same reason.
+- LIB-4a calls ids.mjs's outputs() directly, so a gate in ids.mjs would fire there.
+**Why nothing is loosened.** This is stricter than S10: full byte identity instead of body identity. The gate throws the same messages before any write. No existing test is edited. C17 keeps its reach over the code that writes app content.
+**Changed:** fixing the order inside outputs(), which D-LIB5-WORDS and D-LIB5-REACH need; keeping the generator lint to library rows, as the card's Do 5 and amendment 28 say, with the 8 in the sweep; and checkC17 run on directories, since it skips a file path.
+
+#### NEW-2 (D-LIB5-BUNDLE)
+**Ruling.** LIB-5 writes tools/plates/library/shared/check-bundle.mjs, run as `node tools/plates/library/shared/check-bundle.mjs [dir]`, with dir defaulting to www.
+- It reads box.name.text, box.now.text and box.doctor.text from the S1-pinned docs/research/howto/shared/back-pain-box.json.
+- It scans the bytes of every file under <dir>/**, index.html, sw.js and the manifest included.
+- It exits 1 if any whole value appears as one exact, case-sensitive string, naming the file and the field.
+- It also exits 1 if <dir>/assets holds no HowToSheet-*.js chunk, so it is never vacuous.
+
+A vitest in library-shared.test.ts runs the scanner on temp folders it writes at run time from the copied card:
+- each of the three values planted in turn → exit 1, naming that field;
+- no HowToSheet chunk → exit 1;
+- clean → exit 0.
+
+Do 2 on its PR head: run `npm run build`, then the scanner, and post the output. Also run one seeded check in the scratch worktree: the doctor value planted in a shipped src string gives exit 1. Nothing seeded is committed.
+
+CI. The supervisor drafts one add-only step in build-apk.yml's source-gate job, right after 'Typecheck, unit tests and production build' (:42 on 2d1bbf3).
+- It runs `node tools/plates/library/shared/check-bundle.mjs`, with no `if:` and no continue-on-error.
+- It lives on a supervisor branch that merges LIB-5's reviewed final head.
+- The step and LIB-5 merge in one train, as section 6 does for LIB-4c's wiring. The full run on the train head is S4-P's merge evidence.
+- The step never lands on main before the script.
+
+Do 9, under either route, changes the scanner's rule and its vitest cases in library-shared.test.ts, in the commit that replaces the placeholder, and nothing else of check-bundle. Each answered value must appear in the bundle. The 9dbc7e0 draft box.now.text, kept as a tests/howto/fixtures/lib5 file, must not appear unless it is the answered value. Both options keep the name and the doctor line (section 12 item 12), so only `now` can differ. The Do 9 cases, each in a temp folder: all three answered values present → exit 0; each value missing in turn → exit 1, naming that field; the draft `now` planted when it is not the answer → exit 1; no HowToSheet chunk → exit 1. The CI step is never edited or removed.
+**Why.**
+- No gate block may be added, and scripts/** and .github/** are reserved for LIB-5.
+- No current test reads the build.
+- dist/ is never written (vite.config.ts:18, outDir 'www').
+- A vitest that reads www/ is vacuous in `npm run check`, which builds after the tests.
+- One train gives exact-commit evidence without breaking main.
+- Defining the Do 9 rule now keeps route (a) mergeable without removing a check.
+**Why nothing is loosened.** It adds S4-P's check on the full built output, with no skip path, and each field is shown to bite. At Do 9 the zero-hit rule is replaced by a stricter positive rule.
+**Changed:** Do 9 also changes the scanner's vitest cases, which flip with the rule, and card amendment 21 lists every LIB-5 file Do 9 edits.
+
+#### NEW-3 (D-LIB5-FIXTURE)
+**Ruling.**
+1. Every LIB-5 test that runs the generator on a scratch row uses E1's tree, unchanged. This covers S4-P test 3, S7's 'treats' mutation and the other generator-side lint fixtures, library-lint.test.ts's 31-word box, and D-LIB5-FAMILY's M1-M3.
+   - Each test file builds one tree with fixtureTree() from tests/howto/fixtures/lib2b/fixture.mjs. The id is lib_cable_lateral_raise, with E1's own scratch QA card, which D-LIB4-FIXTURE-3 (11.1 item 3) already names.
+   - No new scratch id. No extension of D-LIB4-FIXTURE-3, D-LIB4b-F5 or D-LIB4c-1. Section 12 item 6 holds: the id is not LB1 or LB2.
+2. Each case edits only the staged How-to, in a copy of that tree.
+   - Copy with `cpSync(root, r, { recursive: true, verbatimSymlinks: true })`, as library-rows.test.ts:150-157 does.
+   - Edit only F.HOWTO, with one exact replacement that must match exactly once, or the case throws. Examples: the riskFlags line `['wrist', 'shoulder', 'elbow']` gains 'back'; one copy string that no pinned page carries gains 'treats'.
+   - One exception: D-LIB5-FAMILY's M2, M3 and control edit only the `inherit` key of E1's scratch card in the copy, under the same exact-once rule.
+   - A second exception: D-LIB5-PAGE's back-flagged fixture helper makes its three listed replacements in the How-to, each exact-once.
+   - Never edit the spec, the page, the batch file or the batch golden file. The helper lives under tests/howto/fixtures/lib5/**. lib2b/fixture.mjs changes only by D-LIB5-SCRATCH's three lines.
+3. Each case asserts its exact expected message, naming lib_cable_lateral_raise. Examples: `lib_cable_lateral_raise: LIB-5: back box waits for owner decision 6 (plan 8 item 6)`, or the lint's id, field and rule line. So a QaRefused, a stamp-gate line or any other earlier throw is red.
+   - A case that edits the How-to and expects generation to pass first calls `writeScratchStamps(r, [id])` after its edit. These calls are added in the Do 6 gate commit (D-LIB5-STAMPS): before it there is no stamp gate, and the copy has no SCRATCH_MARKER until stageTree() marks it in that commit, so the call would throw.
+   - Each such test file also includes "card removed (`rmSync(join(r, F.CARD_FILE))`) → `plate QA refused lib_cable_lateral_raise … PQ-H6`".
+4. S3 uses no D-LIB4-FIXTURE-3 card. Its card is the subject: a fixture card under tests/howto/fixtures/lib5/** that passes the committed validator unedited.
+   - Each value names a claim whose quote is in a fixture quotes file there.
+   - Its plateFacts equal E1's measured facts. Its tempo equals E1's spec tempo, with each s traced in the test to the fixture card's plate.tempo.
+   - It is marked scratch, written over F.CARD_FILE only in a temp copy, and never placed under docs/research/howto/cards/**.
+   - candidateOf and runQa are called directly, with no generator.
+5. S5 is a direct renderRisks test on a spread of a real sheet with riskFlags ['back'], as sections-risks.test.ts:89 does. No tree is needed.
+6. The pure-function lint tests (D-LIB5-VARIANT, D-LIB5-VARIANT8, D-LIB5-WORDS, D-LIB5-REACH) take injected rows or fixture modules, never a new generator tree.
+**Why.**
+- stageTree() and pinTree() build only lib_cable_lateral_raise. ID, CHROME, CARD, PAIR, PAGES and CARD_FILE are constants (fixture.mjs:20-24), transformSources swaps only lib_pull_up for that ID (:44), and the committed page is cable-lateral-raise's, built by LIB-6 (#181).
+- A new id would need an edit to LIB-2b's file, a page from LIB-6's builder, or LIB-4b's unmerged, reserved fixture.
+- gateNodeHalf (gen/plates.mjs:133-143) runs before content.mjs and so before library-gate.mjs. Without E1's card, the row throws QaRefused PQ-H6 first.
+- D-LIB4b-F5 is not needed: nodeHalf stops F5 from blocking (candidate.mjs:91, :98).
+**Why nothing is loosened.** No new exemption, scratch id or ruling extension. The QA gate runs unchanged on every case, and the card-removed mutation stays. Exact-message assertions stop a different throw from passing. All edits stay in temp copies.
+**Changed:**
+- S3's tempo no longer cites "LIB-9a's ruled tempo mapping", because section 13 Q3 keeps that map to LB1.
+- Point 6 and the inherit-key exception were added, so that ITEM-7, OPEN-5 and OPEN-6 need no new scratch id.
+- The input verdict's "extends FIXTURE-3 to the lib5 ids" is withdrawn.
+
+#### NEW-4 (D-LIB5-TEMPO8)
+**Ruling.**
+1. LIB-5 owns the 8's tempo map (section 13 Q3: "The 8's tempo stays LIB-5's"). For the 8, this replaces 12 item 9's "ruled in LIB-9a's design note". LIB-5 never imports or copies lb1/tempo.json, and LIB-9a's A11 imports nothing from LIB-5.
+2. The revised note's section k holds an 8-row map on the head the supervisor names. If that head is not yet named, one addendum comment on #244 follows once it is (reading and writing only, no slot, no push).
+   - For each phase in the spec tempo of the 7 ids that have a spec (tools/plates/vendor/exercises/<id>.mjs): the field of that card's verified plate.tempo it takes (up, down or pause), plus plate.tempo.claim.
+   - Any other s (Rest, Brace, leg_press's bottom Pause, a Hold with no pause value) appears only as a named constant, with the verified claim and verbatim quote that state its seconds, or it is marked "no verified source".
+   - lib_dumbbell_lateral_raise has no spec (H6:not-engine, node.mjs:154): "none".
+   - With the map, a plateFacts form table for the same 7 ids: the measured-joint fact's kind ('angle'); whether it is `measure: true` (H6 compares it with spec.measure.expect and the drawn measure, node.mjs:162) or a `joint` fact (H6 compares it with the engine's angle at its pose, :161); its pose; the spec's measure.vertex; and the quantity measured. Examples on main: lat_pulldown's measure is 'Lean back' at hip.r from vertical, expect 15, so a `joint: 'hip.r'` fact would be compared with the hip angle and fail; machine_chest_press's measure has no expect, so only a `joint` fact can match.
+   - The supervisor rules the map and the form table on #244, and Do 3 b's tempo and plateFacts values wait for that ruling.
+3. Shape and rules.
+   - {phase, s, move: true} for a moving phase and {phase, s} otherwise, in that key order, as in the spec arrays (pull_up.mjs:111). H6 compares with JSON.stringify (node.mjs:174).
+   - As in section 13 Q3, a moving phase takes up or down and never a constant. A constant exists only with a verified source (Q3's mountain_climbers precedent).
+4. Where the map lives.
+   - The builder's copy of the ruled table may sit in the validator under tools/plates/library/research/.
+   - tests/howto/library-cards8.test.ts holds its own copy, taken from the ruling. It asserts the validator's table equals that copy, and builds each card's expected tempo only from the ruled table and that card's plate.tempo. It never takes expected values from a spec, a plate or the builder's table (Q3's rule).
+   - It also holds a literal copy of the ruled plateFacts form table, and asserts that each wired card's measured-joint fact matches its row and that the row's vertex equals the spec's measure.vertex.
+   - Mutations, each red: one tempo second changed; an s with no map entry; a constant added without a ruling; a mapped field swapped (up for down); a pause-mapped phase whose s differs from the card's pause; a wired card's measured-joint fact in the other form (`joint` for `measure: true`, or the reverse).
+   - When CARDS_8 holds no id that lost 'H6:no-card' (point 6's expected path), these checks and mutations run on the S3 lib5 fixture card as card amendment 39 says.
+5. Stop rule. Stop and report for an id if any of its phases has no ruled entry or verified source, or if a mapped second differs from the spec's. That id is not added to CARDS_8, and it keeps both 'H6:no-card' and 'F7'. LIB-5 never changes a plate, a spec, a fact, a tolerance or the ruled map.
+6. Expected result. On the8 @ e6381fa (unverified), each of the 7 cards has plate.tempo up 2 and down 2. Each spec's concentric phase is 1 s, and hanging_leg_raise's Lift is 1.5 s. So unless the named head differs, all 7 stop at H6.tempo, and LIB-5 reports them in one PR comment. Do 3 b uses only the head the supervisor names.
+**Why.**
+- Section 13 Q3 gave the 8's tempo to LIB-5 and kept LIB-9a's map to LB1 with no constants.
+- A map in research/** that A11 imports would break LIB-9a's reserved_paths, its card's "Never write those here" and Q3's "the expected map lives in the test".
+- LIB-9a cannot import from an unmerged LIB-5 branch.
+- Two maps over different ids, each in its own card's file, are not one shared file.
+**Why nothing is loosened.** H6's exact equality, ±2° and ±1 cm, and F7's equality are unchanged. No s comes from a spec. The expected table lives in the test, and every branch has a red mutation. An id that does not match keeps both exemptions.
+**Changed:**
+- The map goes in the revised note when the head is named; before, it was a separate addendum. Either way it comes before commit 1.
+- Q3's "moving phase never a constant" rule and the pause mutation were added, so the 8's map reads like LB1's.
+- This supersedes card defects CT-3, F2 and L5-2, which waited on LIB-9a.
+- Note fix 13's "tempo-map.mjs as its one home" is withdrawn.
+- The plateFacts form table was added, because H6 checks a `measure: true` fact and a `joint` fact differently (node.mjs:161-163), and no ruling fixed each id's form.
+- The fixture route was added, because on the expected path no id of the 8 is H6-wired, and S12's and point 4's mutations would have nothing to run on.
+
+#### NEW-5 (D-LIB5-PAGE)
+**Ruling.** The library layers page becomes placement 6.
+- LIB-6-PM (#181, LIB-6's branch, build-layers-page.mjs only) adds two exact-once patches to the mirrored artifact/howto-layers.mjs. They go on a #181 head that already contains LIB-5, which merges first (D-LIB5-ORDER).
+  - (i) feelSection's `const RF = { true: 'wrist', shoulder: 'shoulder', knee: 'knee', elbow: 'elbow' };` (:217) gains `back: 'back'`.
+  - (ii) risksSection's FLAG (:271) gains `back`, read lazily through LIB-5's backBox() from tools/plates/library/shared/back-box.mjs (an absolute file URL, as RENDERER_URL is). It is evaluated only when a sheet's riskFlags include 'back', for example as a getter.
+  - Nothing under tools/plates/layers/** or copy-lint.mjs is written.
+- LIB-5: backBox() keeps its name and signature in Do 9. Until then it throws BACK_BOX_WAITS. From Do 9 it returns the RedFlagBlock that src/howto/red-flag-back.ts is generated from, byte-equal to it.
+- LIB-6-PM evidence:
+  - the two new anchors in the existing 'every patch anchor … exactly once' test;
+  - every existing #181 test unedited and green, including the 8's page at PAGE_SHA256 (e7b81413…);
+  - LIB-2b's cable-lateral-raise.layers.html byte-identical;
+  - before Do 9, E1's back-flagged fixture (below) makes buildLayersPage throw BACK_BOX_WAITS, naming the id;
+  - L0-lib inputs: the page now loads back-box.mjs by URL and reads back-pain-box.json at run time, which LIB-4c's MANIFEST lists (ci/manifest.mjs BUILDERS and the static runtime-read lists, :5-13 and :27 on 108eb5c) do not hold. A follow-up line for manifest.mjs's owner (Supervisor actions 11) adds back-box.mjs, its imports and shared/back-pain-box.json to the page-input set of every back-flagged pinned row, with a C0 mutation: one byte of back-pain-box.json on a pinned back-flagged fixture row turns C0 red. It lands before any back-flagged row is pinned;
+  - mutations: the RF patch dropped → 'red flag back missing'; the FLAG patch dropped → 'no shared red flag back'.
+- E1's back-flagged fixture, for S5-L and the LIB-6-PM evidence: one named helper under tests/howto/fixtures/lib5/** makes exactly these replacements in a copy of E1's How-to, each exact-once or it throws (an exception to D-LIB5-FIXTURE 2's one replacement):
+  - riskFlags `['wrist', 'shoulder', 'elbow']` gains 'back';
+  - the first feel row that carries no redFlag gains `redFlag: 'back'`;
+  - SOURCES gains an 'nhs-back' entry whose id, url, kind, access and checked are back-pain-box.json's sources entry, with cite 'NHS, Back pain' in the form of the nhs-* entries and `use: 'CONSENSUS'` (box.boxClaim.tags). `sources: Object.keys(SOURCES)` (pull_up.howto.mjs:385) then holds it.
+  After Do 9 this is needed: risksSection throws unless every source of a shown red-flag box is in the sheet's sources (howto-layers.mjs:274-276; boxClaim.sources is ['nhs-back']), and copy-lint needs an evidence label or `use` for each source (copy-lint.mjs:309).
+- S5-L is carried by whichever of #181 and the Do 9 change merges second: LIB-5's PR under route (a), claude/lib-5-back-box under route (b). It sits in its own test file (tests/howto/library-back-page.test.ts when LIB-5 carries it) and reads build-layers-page.mjs only. On E1's back-flagged page (the fixture above):
+  - `#<pre>-redflag-back` holds exactly three `<p>`, whose unescaped texts equal RED_FLAG_BACK's name, now and doctor, imported from src/howto/red-flag-back.ts;
+  - the row's rf-link has `data-flag="back"` and `aria-controls="<pre>-redflag-back"`;
+  - Do 1 b's reach checks run on the page text (D-LIB5-REACH);
+  - lintHowto's words.total plus words(back box) ≤ the imported VISIBLE_WORDS_MAX, because copy-lint.mjs:313 drops 'back';
+  - mutations: one box byte drifted; a 31-word box; the extra-words term removed → red on a fixture at 450;
+  - on the first head holding Do 9, the twin lines and both patches, the HT-9 twin runs that fixture at 0 px.
+- LIB-9a's merge_prerequisites gain, beside 'LIB-5's back box (Do 9) on main': "LIB-6-PM's back patches and S5-L on main and green". Until then a back-flagged row is refused: by the placeholder (generator) and BACK_BOX_WAITS (page) before Do 9, and by howto-layers.mjs:221 after Do 9 if the patches are missing.
+**Why.** LIB-4b's twin compares the app with pages[lib].layers, which #181 builds. 7 LB1 cards link redFlag 'back' (12 item 12). Both :221 and :278 throw for 'back'. An eager read would break the 8's page before Do 9.
+**Why nothing is loosened.** It adds a checked placement, tests and a prerequisite. Golden B and copy-lint stay locked, and the 8's page stays at PAGE_SHA256. The page's 450-word total counts the back box.
+**Changed:** the fixture row is E1's (D-LIB5-FIXTURE), not a new lib5 scratch row. Its helper also adds the nhs-back source, and the L0-lib inputs line was added.
+
+#### NEW-6 (D-LIB5-SCRATCH)
+**Ruling.**
+1. Helpers. research/stamps.mjs exports these, with signatures fixed in LIB-5-DESIGN.md:
+   - SCRATCH_MARKER: one file at the top level of a scratch root, not git-ignored; the note fixes its name;
+   - markScratch(root);
+   - writeScratchStamps(root, ids), with no default root. It throws on a root that lacks SCRATCH_MARKER. It writes every entry with scratch: true, and only into that root's docs/research/howto/reviews.json.
+   - markScratch and writeScratchStamps are synchronous. contentHashOf is async (it imports the root's content.mjs, D-LIB5-STAMPS), so writeScratchStamps computes the hashes in a spawnSync child Node process run in root, which imports root's own stamps.mjs, as the lib2b fixture's node(root, code) runner does (fixture.mjs:71). Every builder and every caller stays synchronous.
+2. The gate. stampProblems accepts an entry with scratch: true only when its root holds SCRATCH_MARKER; every other rule is unchanged. The stamp gate and the back-box refusal live only in library-gate.mjs's outputs() (D-LIB5-GATE), never in loadContent, pushHints or ids.mjs.
+3. Fixture edits: exactly three lines per builder, nothing else (card amendment 14): one import line and two calls.
+   - The import goes after the file's last import line: `import { markScratch, writeScratchStamps } from '../../../../tools/plates/library/research/stamps.mjs';` in lib2b/fixture.mjs, and `import { markScratch, writeScratchStamps } from '../research/stamps.mjs';` in fidelity/fixture.mjs. Both files import only node:* modules (and lib2b's `node`) today.
+   - `markScratch(root)` goes just before LIB-2b's stageTree() returns its root, and as the last statement of LIB-4b's stage().
+   - `writeScratchStamps(root, <the ids it pinned>)` goes as the last statement before pinTree() and pin() return. That puts it after the batch-golden plate entry, whose fragments contentHashOf needs, and before any generate, for every caller.
+   - Evidence: a test asserts that the tree's reviews.json holds a scratch stamp for each pinned id when fixtureTree() returns (and when pin() returns, once LIB-4b is on main), and that generate run straight after fixtureTree() passes the stamp gate. Mutation: writeScratchStamps made async (returning before it writes) turns that test red.
+4. LIB-4c. ci/scratch.mjs gets no edit if, on main, it builds through stage() and pin(). It does on 108eb5c (:124-126). Otherwise the same import and two calls follow its own staging and pin steps.
+5. LIB-4a. write-ids.mjs leaves Do 7 and the merge prerequisite.
+   - It calls only handpairs.mjs's and ids.mjs's outputs() (write-ids.mjs:68-69; synthetic.mjs:52-53 on #233 @ aaff25e), imported from its synthetic copy, not from ROOT (write-ids.mjs:63-65).
+   - It reaches content.mjs only through pushHints → loadContent (ids.mjs:141-142, content.mjs:142-145), and never library-gate.mjs.
+   - Evidence: a test runs writeIds(ROOT, 22), which passes, and asserts that syntheticRoot(ROOT, 22)'s copy holds no docs/research/howto/reviews.json (synthetic.mjs:14 copies no docs/). So a gate reached from ids.mjs would throw there (D-LIB5-STAMPS: a missing reviews.json fails every shipped id). lib-4a.test.ts A1/A2 are green on LIB-5's head.
+6. Tests on main: there is no SCRATCH_MARKER at ROOT, and none is tracked (git ls-files). S8's "committed reviews.json holds no scratch entry" is unchanged. S8 stays absolute.
+7. Mutations, each red:
+   - the marker removed from the E1 tree → generate throws "LIB-5 stamp: lib_cable_lateral_raise …";
+   - writeScratchStamps on an unmarked temp root → it throws;
+   - a marker added at ROOT → the main test;
+   - E1's stamps not written → generate throws, naming the id;
+   - the gate called from pushHints, in a scratch worktree only → the writeIds test.
+8. LIB-4c's scratch ref.
+   - LIB-4c merges first, so C11-C14 run before LIB-5 merges.
+   - A rebuild after LIB-5 commits the marker and the scratch stamps, so source-gate is red there by construction. gate-verdict needs source-gate (build-apk.yml:291 on claude/sup-lib4-ci), so C11's PASS line cannot be produced.
+   - If such a rebuild is ever needed, stop and report. S8 is never made conditional, and no test learns to skip a scratch tree.
+9. If an existing test turns red on the gate commit because a gate line now comes before the refusal it expects (for example a library-rows.test.ts:130-162 case), stop and report. Never edit that test.
+**Why.**
+- The gate throws for any unstamped shipped row. Without this, it turns E1's test on main red on LIB-5's own head (library-rows.test.ts:34-36), along with every later B5 use (LIB-7's shared-key proof, 11.1 item 14) and any LIB-4c rebuild.
+- The note's ".git or ROOT" refusal would block B5, which builds in place in a worktree (fidelity/fixture.mjs:2). A worktree has a .git file.
+- Only the generator gate reads the marker, and a main test pins it absent, so on main the gate equals S8.
+**Why nothing is loosened.** On main no marker can exist, so the gate refuses every scratch stamp. S8's bullets and their mutations are unchanged, and the marker rule has its own mutations. Scratch stamps keep D-LIB4-FIXTURE-3's limits.
+**Changed:**
+- The gate lives in library-gate.mjs, not "gen/content.mjs outputs()" (D-LIB5-GATE).
+- stageTree()'s line goes just before its return, because stageTree() returns the root.
+- Stop rule 9 was added.
+- Each builder gains one import line, because neither fixture imports stamps.mjs. The helpers are synchronous, because stageTree(), pinTree(), stage() and pin() and their callers are (library-rows.test.ts:34; ci/scratch.mjs:124-127 on 108eb5c).
+- Point 5's evidence no longer makes stampProblems throw: write-ids.mjs imports the plugins from its copy, so a mock of ROOT's module could not reach them.
+
+#### NEW-7 (D-LIB5-SPLIT)
+**Evidence.** Checked with copy-lint.mjs's exported words, sentences, BANNED and limits (49a2853) over shared/*.json on 9dbc7e0.
+- Labels over 3 words: palm-flat hand-ahead (settled by D-LIB5-FAULTKEYS); prone checkpoints[0] "Hips on the pad".
+- Sentences over 15 words: the gripLines of curl, palm-flat, rope-rule, battle-ropes, jump-rope, kettlebell (also 23 words, over lead 22), medicine-ball and wall-ball; prone checkpoints[0].detail (16).
+- Risk over 14 words: jump-rope handRisks[0] (16).
+- Semicolons: palm-flat wrist, contactPoint and soreWrist; jump-rope wrist; unrack-rerack squat steps[0] and [1]; prone checkpoints[0] and [1] detail; dumbbell-kickup postureArchetype.right.
+- Not a hit: floor-body checkpoints[0].detail (15 words, one sentence). Posture detail is 'prose' in copyFields and in c7 checkLength(detail, null, null), so it has no 10-word cap.
+- Hits that depend on the split: rightPose, fault 'what', widthNote, handContact, grip, defaultCrop, exemption reason and replacementRule, and step lists longer than SETUP_MAX_STEPS 5 (get-in-out 7; unrack-rerack press-rack 8, squat 6, smith 6).
+
+**Ruling.**
+1. The split. The builder posts it with Do 2's results, and the supervisor rules it before Do 4 builds that module.
+   - For every field of the 18 non-box cards, name the HowToContent text path (content-types.ts) or golden-B copyFields path the module writes it to, and that path's kind in copy-lint and C7.
+   - A field written to any shown or app-copy path is shown copy. It is linted at that path's kind with golden B's constants as they stand (bans, MAX_SENTENCE_WORDS, the kind's word and sentence caps, and the list caps of the sheet it lands in), plus the LR-23 patterns and content.md 4's additions.
+   - Every field that the note's g table gives a lint stays shown copy, unless the supervisor rules it data on the PR. The builder never moves a field to data to clear a hit.
+2. Data. These are only the fields the module never writes to a text path: the note's "Not projected" list, plus any the supervisor rules.
+   - library-shared.test.ts asserts that each whole free-text data value (every appliesToWhy, notes and gaps entry, and every data field's .text and .basis), matched exactly and case-sensitively, is absent from src/** and from every generator output. The 0 hits on origin/main are recorded first, as for S4-P.
+   - A pinned list of each module's export keys shows that no data field is exported.
+   - Typed enum values (thumbMode, loadAxis.value, handle, archetype) are not text, and typecheck keeps covering them.
+   - Mutations: one notes string written into a generated file turns it red; a data key added to an export turns it red.
+3. Fix route. Every shown hit goes back to research, as judgement work.
+   - Either an Opus research writer rewords only the hit lines on a claude/libht-research-* branch from the named head, or the supervisor gives the Sonnet W2B session the exact replacement text (section 12 item 14).
+   - Each changed line keeps its claim refs.
+   - A fresh Opus critic checks each changed line against its claim's verbatim quotes (the LR-27 precedent), inside an LR-29 verify, with the supervisor's 10 % re-fetch.
+   - The palm-flat hand-ahead label changes once, to 'Hand ahead' (D-LIB5-FAULTKEYS).
+   - LIB-5 never rewords, trims or exempts a string, never adds a per-string cap, and never edits a research file (S1).
+4. Do 2's dry run covers all 18 non-box cards under the split. It posts every hit with its rule, card, field, path, kind and text.
+5. Order.
+   - Do 4 builds the back-box placeholder and every module whose card has no hit, straight away.
+   - A module with a hit waits until the supervisor names the one research head that holds every SPLIT reword and, if they missed LR-29, D-LIB5-FAULTKEYS's edits (Supervisor actions 3-4), and on which its shown fields pass. LIB-5 then re-copies, re-pins S1 and re-runs S2, S6 and S7. That is the one extra re-copy the card now allows.
+6. Risk. If no such head exists by LIB-5's merge slot, the supervisor rules how the waiting modules land, for example in a follow-up PR as under D-LIB5-CARDS8. The answer is never an exemption or a cap change.
+**Why.**
+- S6 (module === card), S1 (byte copies) and reserved_paths mean only research may change these words.
+- content.md 4 and plan 4.4 apply golden B's constants unchanged.
+- Under LR-29 the shared cards carry content.md 2.1's copy fields, reused as-is. content.md 3.2's "no user copy" is for per-exercise cards.
+- W2B runs on claude-sonnet-5 with exact edits, and item 14 keeps judgement rewording off Sonnet.
+**Why nothing is loosened.** Every cap and ban stays golden B's. A field leaves the lint only by a supervisor ruling that names its path. The data test is new, and it is proven to bite on main. The fix is made in the research wording, and a fresh critic checks it again.
+**Changed:** none. The supervisor will also route the hits already found on g-table fields to research early (Supervisor actions 4), so Do 2 adds only new hits.
+
+#### NEW-8 (D-LIB5-WORDS)
+**Ruling.** Add one library lint rule, a pure function in tools/plates/library/lint/: `sheetWords(M, shared, extraBoxes) -> { total, violations }`.
+- M is the module namespace of sourceOf(id), imported as howto-layers.mjs:301 imports it. It is never loadContent's content, which drops THUMB_PAGE: on 49a2853, pull_up reads 449 as a namespace and 423 from content.
+- shared is golden B's tools/plates/layers/howto/shared.mjs namespace.
+- extraBoxes maps a flag to a RedFlagBlock, for flags not in RED_FLAG_BLOCKS. It is {} until Do 9. Do 9 sets it to { back: backBox() }, the value library-gate.mjs writes to src/howto/red-flag-back.ts.
+- total = lintHowto(M, shared).words.total, plus copy-lint's exported words() of [name, now, doctor].join(' ') for each riskFlags entry that RED_FLAG_BLOCKS lacks. That is how lintHowto's boxText counts a box. Only .words.total is used from lintHowto.
+- A violation names the id and rule when total > the imported VISIBLE_WORDS_MAX, or when a riskFlags entry has no box in RED_FLAG_BLOCKS and none in extraBoxes. It never counts 0 words.
+
+Where it runs:
+- library-gate.mjs's per-row loop, after refuseBack. So before Do 9 a back-flagged row still throws refuseBack's exact message (S4-P test 3).
+- The Do 5 sweep, over every shipped row.
+- Once the field card lands, the variant line's words() join the total (D-LIB5-VARIANT 4).
+
+Tests (in S7):
+- (a) For each of the 8, with extraBoxes {}, total equals lintHowto on its module namespace: lateral raise 444, back squat 450, pull-up 449, hanging leg raise 442, lat pulldown 449, seated cable row 449, leg press 449, chest press 444.
+- (b) A neutral fixture box, never the real text: a plain .mjs module under tests/howto/fixtures/lib5/, never a typed HowToContent, because RiskJoint has no 'back' until Do 9. The box is at most 30 words and matches none of back-pain-box.json's three field values. A fixture whose riskFlags include 'back', with the box in extraBoxes, is green at exactly 450 and red at 451.
+
+Mutations, each red:
+- the extra-box addition removed (the 451 case passes);
+- extraBoxes emptied for a back-flagged fixture (missing-box violation);
+- M replaced by { default: M.default } (pull-up (a) gives 423);
+- a literal limit above 450 in lint/** (the 451 case passes).
+**Why.** content.md 4 item 2: "The 450-word total counts the warning boxes and the owner line". copy-lint.mjs:313 drops a flag that has no RED_FLAG_BLOCKS entry, and c7.ts:298 and :307 add only content.redFlag.
+**Why nothing is loosened.** The rule only adds counting. VISIBLE_WORDS_MAX stays the imported 450. No box limit is added under lint/**, so S7's 30-assert holds. Golden B, c7 and S4-P are unchanged.
+**Changed:**
+- The rule runs in library-gate.mjs, not gen/content.mjs (D-LIB5-GATE).
+- "RED_FLAG_BACK exported from back-box.mjs" became backBox(), the one accessor D-LIB5-PAGE fixes.
+
+#### NEW-9 (D-LIB5-COUNTS)
+**Ruling.** This amends the card's shared-file line for library-core.test.ts and adds lines to Do 9's write_scope. It applies on whichever head Do 9 is built: LIB-5's branch under route (a), or claude/lib-5-back-box under route (b). Its premise: Do 9 adds exactly one generator output, src/howto/red-flag-back.ts. library-gate.mjs writes it; it is not fingerprinted and not in generated-bodies.json. No output is added before Do 9, so none of these lines changes before Do 9.
+
+Allowed edits. Each stays an exact toBe/toEqual, and only the base moves, by that one output.
+- tests/howto/library-core.test.ts (:242, :243, :247 and :248 on 2d1bbf3):
+  - title 'the generator writes 60 files: the 54 fingerprinted, the 2 it rewrites, and ids-node.mjs, lib-id.ts, loaders.ts, coverage.ts' becomes '… writes 61 files: …, coverage.ts, red-flag-back.ts';
+  - comment '60 for the 8' becomes '61 for the 8's set (60 plus red-flag-back.ts)';
+  - `60 + 5 * LIBRARY.length + new Set(keys).size` becomes `61 + …`;
+  - the :248 presence list gains 'src/howto/red-flag-back.ts' (add-only, stricter).
+- tests/howto/library-rows.test.ts (:90, :92, :94 and :108 on 2d1bbf3):
+  - title 'the 60 files' becomes 'the 61 files';
+  - `expect(mainOut.size).toBe(60)` becomes `toBe(61)`;
+  - `60 + CLONE_OUTPUTS.length` becomes `61 + CLONE_OUTPUTS.length`, both at :94 and in :108's `PASS, ${…} files fresh`.
+- tests/howto/library-ci.test.ts (LIB-4c's file; edit only after LIB-4c is on main and merged in; :298 and :300 on 108eb5c):
+  - `expect(real.inputs.size).toBe(60)` becomes `toBe(61)`;
+  - `n: 66` becomes `n: 67`.
+
+Find each line by its quoted text on the merged head, never by line number. Stop and report, without editing, if a quoted line's text differs on that head, or if any other test turns red because of the new output (D-LIB2b-PINS (8)).
+
+Evidence, recorded in the PR:
+- On the Do 9 head, with the new output and the old values, run full `npm test`. Every listed assertion line is red (library-core :247; library-rows :92, :94 and :108; library-ci :298 and :300 once LIB-4c is merged in), and no other test is red because of the new output. List each red line. The two titles, the comment and the :248 presence list cannot be red; they change only to match.
+- With the new values, everything is green.
+- Mutation: library-gate.mjs's red-flag-back.ts output removed turns each re-pinned assertion line red, and the :248 presence check for 'src/howto/red-flag-back.ts' red.
+- The note and LIB-5-DESIGN.md quote each old and new line exactly, with the head sha.
+**Why.** Each line pins the generator's exact output set, and Do 9 adds exactly one output. L2-A3's 54 is keyed on generated-bodies.json, so it stays.
+**Why nothing is loosened.** Every assertion stays an exact equality, and only its base moves by one. A failing-before and passing-after run, plus a mutation, show the new values bite. Any other red test goes to the supervisor before it is edited.
+**Changed:** the writer is library-gate.mjs, not gen/content.mjs (D-LIB5-GATE). The red-before evidence names only assertion lines.
+
+#### NEW-10 (D-LIB5-REACH)
+**Ruling.**
+1. The generator's library lint (tools/plates/library/lint/**, called once from library-gate.mjs's outputs(), Do 5) checks every red-flag box it generates or links.
+   - It uses copy-lint.mjs's exports, imported unchanged: words, sentences, RED_FLAG_BOX_MAX_WORDS, MAX_SENTENCE_WORDS, BANNED, CONTACT_RE, SOURCE_RE, SOURCE_CS_RE, SAFETY_LINE_RE and sourceNamePatterns.
+   - It also applies lintShared's per-box 'today' and 'doctor' rules (copy-lint.mjs:337-338).
+   - It imports nothing from tests/**, and no gate block is added.
+2. Pattern parity. The note cites HT4b-A6 (tests/howto/no-contacts-parity.test.ts), which already pins copy-lint's four patterns to tests/guards/no-contacts.ts by .source and .flags. No second parity test is added.
+3. In vitest, both run unedited:
+   - checkC7 on a clone of one of the 8's content, with redFlag replaced by the box under test;
+   - checkC19Shared({ RED_FLAG_BACK: box, DISCLAIMER }, 'back') (c19.ts:49), which imports no-contacts.ts and applies SAFETY_LINE_RE to boxes.
+4. Differential test, in library-lint.test.ts. For each fixture, the lint names exactly the rules named by checkC7's 'C7: redFlag' lines plus checkC19Shared's lines, so it is red exactly when either one is.
+   - Fixtures:
+     - 30 words, all clean;
+     - 31 words: count only (c7);
+     - no 'today': today only (c7);
+     - no 'doctor' and no SAFETY_LINE_RE word: doctor only (c7);
+     - 'Call 999': contact and safety line only (C19). c7 is clean here, because c7.ts:294-301 has no contact rule.
+   - Every fixture is neutral stand-in text that equals no field value of back-pain-box.json, with every sentence at most 15 words and no BANNED hit. So only the rule under test differs.
+   - The same comparison runs on every shipped row's redFlag.
+5. An equality test checks LIMITS.redFlagBoxWords === RED_FLAG_BOX_MAX_WORDS === 30.
+**Why.**
+- c7's words() is not exported (c7.ts:116), and c7.ts and c19.ts are read-only.
+- package.json engines '>=22' admits 22.0-22.17, which do not strip types by default. c19.ts's extensionless import would not resolve natively either.
+- content.md 4 item 3 says "the lint runs twice": golden B's rules at build time, then C7 again on the generated content in tests.
+- c7 has no contact rule, so C19 is the reference for contact wording.
+**Why nothing is loosened.** Both limits stay imported. The generator applies every rule c7 applies to a box, and more. c7 and C19 run unedited in vitest on every placement and every shipped row. No check, limit or pattern changes, and no test is added twice.
+**Changed:** the lint is called from library-gate.mjs, not gen/content.mjs (D-LIB5-GATE).
+
+#### OPEN-6 (D-LIB5-FAMILY)
+**Ruling.**
+1. Rule (a), one label per fault.key, ships in LIB-5. It runs in library-gate.mjs's per-row loop and in the library-lint.test.ts sweep. It covers every shipped row's handling faults, the shared modules, and any hand-pair fault labels on main, read as D-LIB5-FAULTKEYS 4 rules. D-LIB5-FAULTKEYS settles the current hand-ahead, curl and rope conflicts.
+2. The same loop and the sweep refuse a shipped row when either of these holds:
+   - (i) its How-to content has `extends`;
+   - (ii) the card file its How-to's research.card names, read as candidate.mjs researchOf reads it (main :44-48), has an `inherit` value other than absent or `[]`. Any non-array value counts.
+   A card that is unnamed or missing gives no inherit. This covers the 8, whose grip/research paths are absent and stay so (S10). QA's H6:no-card already refuses a library row with no card. The refusal never reads cards/<id>.json by id, because E1 and B5 point at scratch cards.
+3. The throw is `${id}: family: ${field}: inherited-string map not ruled (D-LIB5-FAMILY)`, where field is `extends` or `${research.card}#inherit`.
+4. Tests, each red under its mutation, all in per-case copies of E1's tree (D-LIB5-FIXTURE):
+   - (M1) `extends` added to the How-to → throws, naming `extends`;
+   - (M2) no `extends`, and E1's scratch card gains one inherit[] entry → throws, naming `#inherit`;
+   - (M3) `inherit: true` on that card → throws;
+   - control: `inherit: []` generates, as resistance_band_row's real card on 9dbc7e0 has it.
+   Green with the refusal in place: the 8, E1 and B5 now; LIB-4c's ci/scratch.mjs in Do 7, once LIB-4c is on main. LIB-4a's synthetic copies never run library-gate.mjs (write-ids.mjs:61-69 on #233), and the PR says so.
+5. S7's family-consistency row is met in LIB-5 by rule (a), the refusal and M1-M3. The child comparator is not LIB-5 acceptance.
+6. The comparator goes to LIB-9 on claude/lib-9-lb1, through a supervisor amendment of the LIB-9a/LIB-9 card.
+   - It is built only after LIB-5 is on main and merged into that branch. It must merge before any LB1 child's layer copy is written or shipped.
+   - On 9dbc7e0, 9 of the 14 LB1 cards have a non-empty inherit[]: incline_machine_press, shoulder_press, horizontal_leg_press, leg_press_calf_raise, underhand_lat_pulldown, single_arm_lat_pulldown, chin_up, hanging_knee_raise and close_grip_pulldown. The refusal blocks those until then.
+   - Write scope: a carve-out from LIB-9a's reserved lint/ and LIB-5 paths, for exactly the family module under tools/plates/library/lint/ and its block in tests/howto/library-lint.test.ts.
+   - Steps:
+     - The builder posts the inherit[]-entry → sheet-path map on the PR, and the supervisor rules it.
+     - The map lives only in the family module. Cards are never edited (D-LIB9-CARDFIELDS; A11's three-key diff).
+     - The comparator replaces the refusal and stays fail-closed. It still throws for `extends` or any inherit[] entry with no ruled mapping, for a mapped string that is not `===` to the parent's shipped How-to string, and for `extends` that disagrees with the card's `parent`.
+   - Mutations, each red: one inherited string drifted; one inherit[] entry unmapped; the parent's string changed; M1-M3 kept as unmapped cases.
+   - It gets its own fresh Opus review.
+**Why.** inherit[].field is free text (for example underhand_lat_pulldown's "setup: weight set and pin pushed all the way in; ..."), so no map can be built mechanically, and guessing one breaks the no-guessing rule. A plain deferral would let a child ship unchecked. A row can copy parent strings without declaring `extends`, hence trigger (ii). The read path matches QA's researchOf, so E1's and B5's scratch cards stay valid.
+**Why nothing is loosened.** Rule (a) runs from LIB-5. No row that declares inheritance can ship until a ruled, fail-closed comparator exists. The replacement may only add comparisons, never skip an unmapped entry. No current check, test, cap, budget or card byte changes.
+**Changed:**
+- M1-M3 run in per-case copies of E1's tree, not on new scratch rows (D-LIB5-FIXTURE).
+- The loop is library-gate.mjs's, not gen/content.mjs's (D-LIB5-GATE).
+
+### Note fixes
+
+Each fix is tied to a note section. Where a ruling covers the fix, the ruling's text applies; only what the ruling does not say is repeated.
+
+- **N1 (g; Do 2's dry run).** Apply D-LIB5-SPLIT. Remove the claim that every exported string passes the lint. The per-field path and kind table goes with Do 2's results, for the supervisor to rule. The split is the supervisor's ruling, not the builder's. The data test follows D-LIB5-SPLIT 2, and typed enums stay under typecheck.
+- **N2 (a, c, f: every gen/content.mjs and gen/ids.mjs edit).** Apply D-LIB5-GATE: every gate piece goes in library-gate.mjs, with inputsFor and the C17 scan. Byte identity is PR evidence, never a committed pin. The affectedIds test runs after LIB-4c merges, on a registry with at least one shipped row. Remove the note's "call site: gen/content.mjs outputs()" lines.
+- **N3 (b, placement table).** Add placement 6 as D-LIB5-PAGE: owner LIB-6-PM, S5-L, and a LIB-9a prerequisite. Restate placement 5 as "content.redFlag stays RED_FLAG (wrist) for every library row, because loadContent re-exports it (HT5-A5, content-gen.test.ts:207). The back box never goes there."
+- **N4 (b and h, library lint rules).** Add sheetWords as D-LIB5-WORDS rules it.
+- **N5 (f, scratch stamps and the fixture list).** Apply D-LIB5-SCRATCH: SCRATCH_MARKER and an explicit root, S8 absolute, the line positions, LIB-4a out, and the LIB-4c scratch-ref timing. Re-derive the fixture list on #233 @ aaff25e, #232 @ f1df4a7 and LIB-4c @ 108eb5c (d2d1bac and 1746fd5 are no longer #233's head).
+- **N6 (a, the pinned tests Do 9 changes).** Quote every count line's old and new text as D-LIB5-COUNTS gives it (titles, comment and presence list included). Name sections-risks.test.ts's two lines (D-LIB5-RISKSTEST) and ht9.mjs :26 and :29 (D-LIB5-TWIN).
+- **N7 (a and c, chunk path and S4-P's bundle half).** The build writes www/ (vite.config.ts:18), so measure www/assets/HowToSheet-<hash>.js. The bundle half is check-bundle.mjs over all of www/**, not only assets/: never vacuous, with a seeded check, the CI step in one train, and the Do 9 rule (D-LIB5-BUNDLE).
+- **N8 (b, placements 1-3 and the import mechanism).** Apply D-LIB5-REACH: copy-lint's exports, `sentences` included, and no .ts import. Add the differential test against checkC7 plus checkC19Shared. Cite HT4b-A6, with no second parity test. Placement 1 also applies BANNED, MAX_SENTENCE_WORDS and sourceNamePatterns. Run checkC19Shared on red-flag-back.ts's block.
+- **N9 (c, S4-P test 3, S3, S5 and S7's scratch rows).** Apply D-LIB5-FIXTURE: E1's tree, per-case copies and exact messages; the S3 fixture card; S5 as a direct renderRisks test. No new lib5 ids. The input's "name lib5 ids under a FIXTURE-3 extension" is withdrawn.
+- **N10 (e, the stamp hash and entries).** Apply D-LIB5-STAMPS: 9 fragments, not 4; scope; contentHashOf importing the root's own content.mjs; an empty reviews.json is a failure; the sweep's checkC15 gets the fragments; both records per role; the HANDOVER 8.2 follow-ups; one commit with the fixtures' lines.
+- **N11 (g, fault and pair keys).** Add the table that maps each export to its LIB-7/LIB-12 module KEY and variant (pair = KEY/variant), with the claim ids per export. Restate OPEN-4 as D-LIB5-FAULTKEYS. Replace "LIB-12 parks these as GAPS" with "not drawn": GAPS lists card ids, and hand-battle-rope's GAPS is {}.
+- **N12 (k, the 8's machine cards).** "Nothing pushed yet" is stale: claude/libht-research-the8 @ e6381fa has cards for all 8, unverified and without the three keys. Redo the table on the supervisor-named head, with columns for the measured-joint fact, the tempo map row and the TOPFAULT answer. CARDS_8 is all-or-nothing per id (card amendment 26), and the fallback is per id (card amendment 6). Add the cardResearch(id) deep-equality test. Expect most of the 7 to stop at H6.tempo (D-LIB5-TEMPO8 6).
+- **N13 (d, tempo and topFault, and the open-points list).** d's tempo premise ("a constant LIB-9a names (Rest)"; "Do 3 waits for that ruling") is replaced by D-LIB5-TEMPO8: LIB-5's own 8-row map in section k, with no tempo-map.mjs and no LIB-9a dependency. d's OPEN-3 is replaced by D-LIB5-TOPFAULT. The open-points list gives each point's ruling id. The input's "tempo-map.mjs as its one home" is withdrawn, because it contradicts section 13 Q3.
+- **N14 (a, Do 9 module shape).** State the mapping: name, now and doctor are box.name.text, box.now.text and box.doctor.text; claim comes from box.boxClaim, in RedFlagBlock's claim shape. words and wordCap are dropped: they are data (Stops 3).
+- **N15 (a, the chunk method).** Add `claim: { tags: ['CONSENSUS'], sources: ['nhs-back'] }` to the stand-in, so the scratch build's tsc passes. Cite sizeOf at screenshot-gate.mjs:6853 on 2d1bbf3, found by `const sizeOf`. The input's :6753 is wrong on this head, and so is the note's :6425. Make the location reason precise: generate.mjs:20 GENERATED_DIRS includes 'src/howto', so `generate --check` covers red-flag-back.ts.
+- **N16 (heads line).** Restate the heads as listed at the top of this section and re-check f and k against them. Research stays 9dbc7e0 until the supervisor names the merged head, and e6381fa is never a source on its own.
+
+### Supervisor actions
+
+1. **Now, with this section.**
+   - Push section 14 on claude/sup-lib4-cards, and apply card amendments 1-48 to docs/supervisor/verify/lib-5-card.md in the same commit.
+   - Post one comment on #244 with the sha and "revise the note under section 14". It is not 'LIB-5 resume'.
+   - Send the same to the LIB-5 session by message. Say that item 13 as read at 19a6017 is superseded (CT-1, L5-7).
+   - Record the step in HANDOVER and Relay. Nothing goes to the owner's chat.
+2. **Section 12 lines that this section amends** (recorded here; no other edit):
+   - item 13: ":65 and :70" reads ":66 and :70";
+   - item 13: its fallback trigger reads as card amendment 6;
+   - item 13: "none is taken from the 8's specs or plates" gains "except labels, each through a ruling: topFault spellings (D-LIB5-TOPFAULT), tempo phase names, order and move flags (D-LIB5-TEMPO8), and the plateFacts form labels of the ruled form table (kind, `joint` or `measure: true`, pose, measure.vertex; D-LIB5-TEMPO8 2)";
+   - item 12 (b): route (b) holds under option 1 whether or not the cap card has merged (card amendment 9);
+   - item 9, for the 8: the tempo map is ruled on #244 (section 13 Q3; D-LIB5-TEMPO8).
+3. **Before tonight's LR-29 verify starts.**
+   - Send D-LIB5-FAULTKEYS's exact edits to W2B, with every old and new string verbatim from D-LIB5-FAULTKEYS 1 (gaps[2] included): claude-sonnet-5, with the exact text, the exact claim and card lists, and a stop on any mismatch (item 14). Put the changed labels and the new gaps[2] string on the verify's fresh Opus critic list.
+   - If W2B has already closed, make them one exact-edit commit on the claude/libht-research-* branch that action 4's D-LIB5-SPLIT rewords use. The critic checks it, and it merges with those rewords into one research head that the supervisor names once (card amendment 3).
+   - Add D-LIB5-VARIANT 5's findings (underhand_lat_pulldown's null variantLine; close_grip_pulldown's variantLine without the Machine kind) to the verify as research judgement work for the Opus writer.
+4. **After the LR-29 merge into claude/libht-research.**
+   - Name that head on #244 (Do 2, Do 3 b).
+   - Start the D-LIB5-SPLIT reword task for the hits already found on g-table fields. An Opus research writer works on a claude/libht-research-* branch from that head, with a fresh Opus critic and the 10 % re-fetch. Do 2's dry run adds any new hits to the same task before it is verified. Any action 3 fallback commit goes on the same branch. After its verify, merge it into claude/libht-research and name that one head on #244: it is LIB-5's one extra re-copy (D-LIB5-SPLIT 5).
+5. **Once the head is named.**
+   - Run the blind TOPFAULT pass: a fresh Opus agent, once per id, with inputs exactly as D-LIB5-TOPFAULT lists (for a drawable:false id, the top fault the card names in place of plate.mistake.what; section 13 Q1).
+   - Post 'TOPFAULT @ <sha>' on #244 before anyone compares the answers with firstKey.
+6. **On the revised note.**
+   - Rule it on #244, including section k's source list, the tempo map and the plateFacts form table (D-LIB5-TEMPO8).
+   - Send "LIB-5 resume" (PR comment and session message) only when a slot frees under D-LIB-LANE-ACTIVE, with the active-builder count.
+7. **After Do 2's post.** Rule the D-LIB5-SPLIT field split, check the sizes and the scanner output, and rule any hit on approved golden-B copy: by exact id and string, in the sweep only (card amendment 37), and for a hit on pull-up's copy, how E1 is treated.
+8. **Before Do 6.**
+   - Post the "stamps (O5)" wording ruling (11.1 item 7). It sets approvedBy for LIB-5's entries and for LIB-2b's layers-page entries.
+   - Then approve the 8's entries.
+9. **After commit 1.** Run 'CARD FIELDS VERIFIED': a fresh, blind Opus agent with one planted wrong number (in the stop report when commit 1 writes no number, card amendment 25), section 13 Q1's two checks and the blind topFault inputs. Post it.
+10. **Before LIB-5 READY.**
+    - Draft the check-bundle step (D-LIB5-BUNDLE) on a supervisor branch that merges LIB-5's reviewed final head.
+    - Merge both in one train. Never land the step first.
+11. **LIB-6-PM card, before its back-patch step.** Add D-LIB5-PAGE's two patches, their evidence and mutations, the rule "only on a #181 head that contains LIB-5", and S5-L when #181 merges second. Add the L0-lib follow-up line (back-box.mjs, its imports and back-pain-box.json in the page-input set of back-flagged rows, with its C0 mutation) to the card of manifest.mjs's owner (LIB-4c), before any back-flagged row is pinned.
+12. **LIB-9a/LIB-9 card, before LIB-9a's next resume.**
+    - merge_prerequisites gain "LIB-6-PM's back patches and S5-L on main and green" (D-LIB5-PAGE).
+    - They also gain "the variant-line field card is on main before any row whose exercises.json equipment has '/' ships" (D-LIB5-VARIANT 6).
+    - Add the D-LIB5-FAMILY comparator step with its write-scope carve-out. It is built after LIB-5 is on main, and merged before any LB1 child's layer copy is written or shipped.
+13. **Every later batch card.** Add the same variant-line prerequisite line.
+14. **The variant-line field card.** Write it, naming its owner and slot, before LIB-9 READY. Write it early, because it is on LB1's critical path (D-LIB5-VARIANT 4).
+15. **Next supervisor docs pass on claude/howto-options.** Amend GRIP-AND-FEEL-ARCHITECTURE.md 3.1 and 3.1.1's key names (D-LIB5-FAULTKEYS 6).
+16. **Withdrawn from the input verdict.** There is no FIXTURE-3 extension to lib5 ids (D-LIB5-FIXTURE).
+17. **Owner.** Nothing new goes to him. The back-box question stands as sent. If he has not answered by LIB-5's merge slot, route (b) applies.
