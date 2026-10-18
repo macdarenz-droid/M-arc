@@ -432,6 +432,10 @@
     {
       "step": "Shoulder blades down and back.",
       "claim": "c3"
+    },
+    {
+      "step": "If using a spotter, they stand behind you, hands near your wrists.",
+      "claim": "c7"
     }
   ],
   "posture": [
@@ -460,7 +464,7 @@
     },
     {
       "mistake": "Arching the back to finish a rep.",
-      "fix": "Stop the set or go lighter.",
+      "fix": "Press without arching your low back.",
       "claim": "c4"
     },
     {
@@ -496,10 +500,12 @@
         "redFlag": null
       },
       {
-        "where": "Pain deep in the front of the shoulder at the bottom",
-        "means": "Usually a warning sign; shoulder injuries are among the most common lifting injuries.",
-        "fix": "Stop the set. Go lighter and keep elbows pointed forward.",
-        "claim": "c13",
+        "where": "Sudden or severe pain deep in the front of the shoulder at the bottom",
+        "means": "Fault: lowering the dumbbells behind the head.",
+        "fix": "Stop the set. Keep the dumbbells in front of your head.",
+        "claim": [
+          "c10"
+        ],
         "redFlag": "shoulder"
       }
     ]
@@ -516,6 +522,10 @@
     {
       "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
       "claim": "c14"
+    },
+    {
+      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "claim": "c11"
     }
   ],
   "redFlags": [

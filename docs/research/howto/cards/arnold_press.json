@@ -467,10 +467,10 @@
     ],
     "mistake": {
       "what": "Back arching away from the pad as the dumbbells go up.",
-      "why": "The Gym Group names it as the one thing not to do; the parent's top fault is the same. How often it happens is not measured in any source read.",
+      "why": "The Gym Group names it as the one thing not to do, and ACE asks for the same on the seated dumbbell press (step 3, c3). How often it happens is not measured in any source read.",
       "claim": "c3",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for an Arnold-press fault (Fit Father's \"so commonly desired\" is about the V shape; Kerr's \"The most common mechanism of injury was weights dropping on the person\", c14, is about all weight training). No quote ties a named fault to harm: The Gym Group's \"This exercise can be strenuous on the shoulder blades\" is about the exercise, not a fault; stopping at pain (c7) is a rule, not a position; Fit Father's \"avoiding the potential for injury\" is about doing the whole lift properly. No source has a common-mistakes list, so step 3 takes the fault the most read sources tell the lifter to avoid: raising the back away from the bench (The Gym Group, \"DON’T raise your back away from the bench during the lift\", c3; ACE asks for the same on the seated dumbbell press, \"without any arching in your low back\", another exercise). No other fault is named as one to avoid; the upper-arm height at the bottom (c4) is an instruction, and the normal shoulder-press weight (c6) is a load choice, not a candidate. drawable stays true: the side view shows the back on the upright pad."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for an Arnold-press fault (Fit Father's \"so commonly desired\" is about the V shape; Kerr's \"The most common mechanism of injury was weights dropping on the person\", c14, is about all weight training). No quote ties a named fault to harm: The Gym Group's \"This exercise can be strenuous on the shoulder blades\" is about the exercise, not a fault; stopping at pain (c7) is a rule, not a position; Fit Father's \"avoiding the potential for injury\" is about doing the whole lift properly. No source has a common-mistakes list, so step 3 takes the fault the most read sources tell the lifter to avoid: raising the back away from the bench (The Gym Group, \"DON’T raise your back away from the bench during the lift\", c3; ACE asks for the same on the seated dumbbell press, \"without any arching in your low back\", another exercise). Two other faults are named to avoid, each by ACE alone on the seated dumbbell press: bent wrists (\"neutral wrist (avoid flexion and extension)\", c15; a joint position during the set, ruling R-LB2-15), one source, and letting the dumbbells drop (\"Avoid simply yielding to gravity\"), one source and a speed fault, never drawable. The back arch has two sources, so it stays the pick. The upper-arm height at the bottom (c4) is an instruction, and the normal shoulder-press weight (c6) is a load choice, not a candidate. drawable stays true: the side view shows the back on the upright pad."
     },
     "tells": [
       {
@@ -551,7 +551,7 @@
     },
     {
       "mistake": "Pressing through shoulder pain.",
-      "fix": "Stop, or switch to another exercise.",
+      "fix": "Stop the workout, or switch to another exercise.",
       "claim": "c7"
     }
   ],
@@ -582,9 +582,9 @@
         "redFlag": null
       },
       {
-        "where": "Pain in the shoulder during the turn or the press",
-        "means": "Usually a warning sign.",
-        "fix": "Stop the set, or switch exercise.",
+        "where": "Any pain in the shoulder during the turn or the press",
+        "means": "Any pain at all is the sign to stop.",
+        "fix": "Stop the workout, or switch to another exercise.",
         "claim": "c7",
         "redFlag": "shoulder"
       }

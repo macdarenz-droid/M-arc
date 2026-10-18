@@ -267,6 +267,11 @@
           "source": "saeterbakken2011",
           "text": "The dumbbell load was 14% less than that for the Smith machine",
           "where": "abstract"
+        },
+        {
+          "source": "saeterbakken2011",
+          "text": "Electrical activity in the biceps brachii increased with stability requirements",
+          "where": "abstract"
         }
       ]
     },
@@ -346,7 +351,7 @@
     },
     {
       "id": "c17",
-      "text": "Pec major tendon ruptures happen most often during the lowering (eccentric) part of the bench press in general (a narrative review, not a dumbbell measurement).",
+      "text": "Pec major tendon ruptures happen while the loaded muscle lengthens (the lowering phase), most often on the bench press (a narrative review, not a dumbbell measurement).",
       "tags": [
         "CONSENSUS"
       ],
@@ -519,7 +524,7 @@
       "why": "ACE names low-back arching as the thing to avoid on both the lowering and the press; how often it happens is not measured in any source read.",
       "claim": "c6",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for a dumbbell-press fault. Set aside: Stronger by Science's \"most novice lifters drive the bar straight up initially\" is about the barbell bench's bar path, another exercise; Kowalczuk's \"most commonly while performing the bench press maneuver\" (c17) names the exercise and phase of pec ruptures, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c16) is about all weight training. Step 2: no quote ties a named fault of this card to harm; Stronger by Science's harm lines, such as \"make sure your wrists aren't cocked back excessively, as this can put unnecessary strain on the wrist\", are written for the barbell bench and name no fault on this card. The spotter holding the elbows (c11; the NSCA summary's \"Spotting on the arms can lead to more injury\") is how the spot is set up, not the lifter's position during the set, so it is not a candidate. Step 3: no common-mistakes list; ACE alone tells the lifter to avoid low-back arching (c6) and bouncing (c5), one source each (the NSCA summary's \"The butt is even on the bench/seat\" is an instruction, not a fault to avoid). Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it; LR-31 gives no further order. drawable stays true: the side view shows the low back arching off the bench."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for a dumbbell-press fault. Set aside: Stronger by Science's \"most novice lifters drive the bar straight up initially\" is about the barbell bench's bar path, another exercise; Kowalczuk's \"most commonly while performing the bench press maneuver\" (c17) names the exercise and phase of pec ruptures, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c16) is about all weight training. Step 2: no quote ties a named fault of this card to harm; Stronger by Science's harm lines, such as \"make sure your wrists aren't cocked back excessively, as this can put unnecessary strain on the wrist\", are written for the barbell bench and name no fault on this card. The spotter holding the elbows (c11; the NSCA summary's \"Spotting on the arms can lead to more injury\") is how the spot is set up, not the lifter's position during the set, so it is not a candidate. Step 3: no common-mistakes list; ACE alone tells the lifter to avoid low-back arching (c6), bouncing (c5) and bent wrists (\"Maintain a neutral wrist position (avoid flexion/extension at the wrist joint)\", c3; a joint position during the set, ruling R-LB2-15), one source each (the NSCA summary's \"The butt is even on the bench/seat\" is an instruction, not a fault to avoid). Three-way tie; viewWhy names the arch, not the bouncing or the wrists. Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it; LR-31 gives no further order. drawable stays true: the side view shows the low back arching off the bench."
     },
     "tells": [
       {
@@ -593,12 +598,15 @@
   "handlingMistakes": [
     {
       "mistake": "Arching the low back to finish a rep.",
-      "fix": "Stop the set or go lighter; keep hips on the bench.",
-      "claim": "c6"
+      "fix": "Keep your hips and back on the bench.",
+      "claim": [
+        "c6",
+        "c2"
+      ]
     },
     {
       "mistake": "Bouncing the dumbbells off the chest.",
-      "fix": "Lower slowly and touch gently; if you can't, the weight is too heavy.",
+      "fix": "Lower slowly and touch gently.",
       "claim": "c5"
     },
     {
@@ -634,26 +642,35 @@
         "redFlag": null
       },
       {
-        "where": "Sharp pain in the chest or front of the shoulder while lowering",
-        "means": "Usually a warning sign: pec tendon tears happen mostly in the lowering phase of bench pressing, and the shoulder is one of the most often injured areas in lifting.",
-        "fix": "Stop the set. Go lighter next time.",
-        "claim": "c17",
+        "where": "Sudden or severe pain in the chest or front of the shoulder while lowering",
+        "means": "Pec tendon tears happen while lowering.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c17"
+        ],
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; use a spotter for heavy sets.",
-      "claim": "c16"
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism; have a spotter hold your wrists.",
+      "claim": [
+        "c16",
+        "c11"
+      ]
     },
     {
-      "risk": "Pec tendon rupture during the lowering phase of heavy bench pressing.",
+      "risk": "Pec tendon rupture while lowering the weight.",
       "claim": "c17"
     },
     {
       "risk": "Shoulder injuries are common in lifting and linked to poor technique.",
       "claim": "c18"
+    },
+    {
+      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "claim": "c14"
     }
   ],
   "redFlags": [
