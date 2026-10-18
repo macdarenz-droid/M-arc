@@ -24,6 +24,7 @@ const hyp = (a: number[], b: number[]) => Math.hypot(a[1]! - b[1]!, a[2]! - b[2]
 let eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, parts: any, golden: any, muts: any;
 let assist: any, chestRow: any, band: any, dh: any, apu: any, cgp: any, apuMod: any, build: any, cand: any, closure: any, reg: any;
 let pins: any, E: any, mirror = '', html = '', all: any;
+let hlp: any, csr: any, csrMod: any, rbrMod: any, ulp: any, sap: any, sapMod: any, sapdMod: any, sapd: any, irMod: any, ir: any;
 beforeAll(async () => {
   [eng, body, qaNode, qaEng, qaIdx, plate, parts, assist, chestRow, band, dh, build, cand, closure, reg, muts] = await Promise.all([
     'engine.mjs', '../vendor/engine/body.mjs', 'qa/node.mjs', 'qa/engine.mjs', 'qa/index.mjs', '../vendor/engine/plate.mjs', 'eq/parts.mjs',
@@ -35,6 +36,17 @@ beforeAll(async () => {
   apuMod = await import(/* @vite-ignore */ lib('specs/assisted_pull_up.mjs'));
   apu = apuMod.default;
   cgp = (await import(/* @vite-ignore */ lib('specs/close_grip_pulldown.mjs'))).default;
+  hlp = (await import(/* @vite-ignore */ lib('specs/horizontal_leg_press.mjs'))).default;
+  csrMod = await import(/* @vite-ignore */ lib('specs/chest_supported_row.mjs'));
+  csr = csrMod.default;
+  rbrMod = await import(/* @vite-ignore */ lib('specs/resistance_band_row.mjs'));
+  ulp = (await import(/* @vite-ignore */ lib('specs/underhand_lat_pulldown.mjs'))).default;
+  sapMod = await import(/* @vite-ignore */ lib('specs/single_arm_lat_pulldown.mjs'));
+  sap = sapMod.default;
+  sapdMod = await import(/* @vite-ignore */ lib('specs/straight_arm_pulldown.mjs'));
+  sapd = sapdMod.default;
+  irMod = await import(/* @vite-ignore */ lib('specs/inverted_row.mjs'));
+  ir = irMod.default;
   mirror = golden.makeMirror();
   E = await qaEng.loadEngine(mirror);
   all = build.lb1All();
@@ -178,8 +190,253 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
     }
   });
 
+  it('incline_machine_press: in every drawn pose the chestPress lever runs from the pivot to the grip, on the lever circle (within 1 mm)', async () => {
+    const mod = await import(/* @vite-ignore */ lib('specs/incline_machine_press.mjs')), imp = mod.default;
+    for (const pose of ['start', 'end', 'mistake']) {
+      const { items, lm } = itemsIn(imp, pose, { mistake: pose === 'mistake' });
+      const cp = items.filter(it => it.type === 'chestPress');
+      expect(cp.length, pose).toBe(1);
+      expect(cp[0].pivot, `${pose} pivot`).toEqual(mod.PIVOT);
+      const g = lm['grip.r'];
+      expect(Math.hypot(cp[0].handle[1] - g[1], cp[0].handle[2] - g[2]), `${pose} handle at the grip`).toBeLessThan(0.001);
+      expect(Math.abs(Math.hypot(g[1] - mod.PIVOT[1], g[2] - mod.PIVOT[2]) - mod.L), `${pose} grip on the lever circle`).toBeLessThan(0.001);
+    }
+  });
+  it('incline_machine_press: the start handle is a dashed phantom in the end pose only; the start lever line is not drawn', async () => {
+    const imp = (await import(/* @vite-ignore */ lib('specs/incline_machine_press.mjs'))).default;
+    const ph = (pose: string) => itemsIn(imp, pose, { mistake: pose === 'mistake' }).items.filter(it => it.cls === 'eq-line m-line');
+    const end = ph('end'), lmS = itemsIn(imp, 'start').lm;
+    const closed = (it: any) => { const a = it.pts[0], b = it.pts[it.pts.length - 1]; return a.every((v: number, k: number) => v === b[k]); };
+    const near = end.filter(it => closed(it) && it.pts.every((p: any) => Math.hypot(p[1] - lmS['grip.r'][1], p[2] - lmS['grip.r'][2]) < 0.09));
+    expect(near.length, 'one start handle capsule round the start grip').toBe(1);
+    expect(end.some(it => it.pts.some((p: any) => p[1] > lmS['grip.r'][1] + 0.3)), 'no start lever line up to the pivot').toBe(false);
+    expect(ph('mistake')).toEqual([]);
+  });
+  it('incline_machine_press: blades on the pad at start and end (within 1 cm); off it by at least 5 cm in the Mistake, elbows as soft as at the end', async () => {
+    const imp = (await import(/* @vite-ignore */ lib('specs/incline_machine_press.mjs'))).default;
+    const R = plate.renderPlate(imp, { id: 'x' }).report;
+    for (const pose of ['start', 'end']) {
+      const c = R.checks.find((k: any) => k.landmark === 'backUpper' && k.pose === pose);
+      expect(c?.cm, pose).toBeLessThanOrEqual(1);
+    }
+    expect(R.checks.some((k: any) => k.landmark === 'backUpper' && k.pose === 'mistake'), 'no backUpper check in the Mistake (card contact fact, H6)').toBe(false);
+    const pad = imp.checks.find((k: any) => k.landmark === 'backUpper' && k.pose === 'end').plane;
+    const m = itemsIn(imp, 'mistake', { mistake: true }).lm.backUpper, n = pad.normal;
+    const gap = (m[1] - pad.point[1]) * n[1] + (m[2] - pad.point[2]) * n[2];
+    expect(gap, 'Mistake upper back off the pad').toBeGreaterThanOrEqual(0.05);
+    const end = R.angles.end['elbow.r'], mis = R.angles.mistake['elbow.r'];
+    expect(Math.abs(mis - end), 'Mistake elbow within 5 deg of the end (no lockout)').toBeLessThanOrEqual(5);
+  });
+  const spOf = async () => (await import(/* @vite-ignore */ lib('specs/shoulder_press.mjs'))).default;
+  it('shoulder_press: in every drawn pose the lever runs from the pivot to the grip at one length, with the handle centred on the grip', async () => {
+    const sp = await spOf(), pivot = sp.equipment.find((e: any) => e.type === 'pulley').at;
+    let len: number | null = null;
+    for (const pose of ['start', 'end']) {   // the via poses carry no landmarks in poseLandmarks
+      const { items, lm } = itemsIn(sp, pose), lever = items.filter(it => it.type === 'poly' && it.part === 'lever');
+      expect(lever.length, pose).toBe(2);   // lever and handle
+      const [a, b] = barEnds(lever[0]), g = [0, lm['grip.r'][1], lm['grip.r'][2]];
+      expect(hyp(a, pivot), `${pose} lever at the pivot`).toBeLessThan(0.001);
+      expect(hyp(b, g), `${pose} lever end at the grip`).toBeLessThan(0.001);
+      len ??= hyp(a, b);
+      expect(Math.abs(hyp(a, b) - len), `${pose} lever length`).toBeLessThan(0.002);
+      const [h0, h1] = barEnds(lever[1]);
+      expect(hyp(h0.map((v, k) => (v + h1[k]!) / 2), g), `${pose} handle centred on the grip`).toBeLessThan(0.001);
+    }
+    const mis = itemsIn(sp, 'mistake', { mistake: true });   // the arch moves the back only: the handles stay at the top
+    const endL = itemsIn(sp, 'end').items.filter(it => it.type === 'poly' && it.part === 'lever');
+    const misL = mis.items.filter(it => it.type === 'poly' && it.part === 'lever');
+    expect(misL.length).toBe(2);
+    misL.forEach((it, i) => it.pts.forEach((p: number[], j: number) => expect(hyp(p, endL[i].pts[j]), 'Mistake lever = end lever').toBeLessThan(1e-6)));
+  });
+  it('shoulder_press: the start lever and handle are a dashed phantom in the end pose, never in the Mistake pose', async () => {
+    const sp = await spOf();
+    const start = itemsIn(sp, 'start').items.filter(it => it.part === 'lever' && it.type === 'poly');
+    const ph = itemsIn(sp, 'end').items.filter(it => it.part === 'phantom');
+    expect(ph.length).toBe(2);
+    for (const p of ph) expect(p).toMatchObject({ type: 'line', cls: 'eq-line m-line' });
+    expect(ph.map(p => JSON.stringify(p.pts.slice(0, -1)))).toEqual(start.map(s => JSON.stringify(s.pts)));
+    expect(itemsIn(sp, 'mistake', { mistake: true }).items.filter(it => it.part === 'phantom')).toEqual([]);
+  });
+  it('shoulder_press: back on the pad in start and end; in the Mistake the drawn torso never sinks into the pad and the low back leaves it', async () => {
+    const sp = await spOf(), r = plate.renderPlate(sp, { id: 'x' });
+    expect(r.report.issues).toEqual([]);
+    const on = r.report.checks.filter((k: any) => ['backUpper', 'buttock'].includes(k.landmark));
+    expect(on.map((k: any) => `${k.landmark}:${k.pose}`).sort()).toEqual(['backUpper:end', 'backUpper:start', 'buttock:end', 'buttock:start']);
+    for (const k of on) expect(k.cm, `${k.landmark} ${k.pose}`).toBeLessThanOrEqual(1);
+    const pad = sp.checks.find((c: any) => c.landmark === 'backUpper').plane;
+    const gap = (p: number[]) => (p[1]! - pad.point[1]) * pad.normal[1] + (p[2]! - pad.point[2]) * pad.normal[2];
+    const { lm } = itemsIn(sp, 'mistake', { mistake: true }), b = { height: 1.75 };
+    const mpose = { ...sp.poses.end, ...sp.mistake.pose };
+    const sk = eng.fk(eng.resolve(eng.normPose(mpose, b), b).q, b);
+    const torso = eng.bodyShapes(sk, { view: 'side', facing: 'right', near: 'r', pxm: 1, P: (w: any) => [w[2], -w[1]] }).find((s: any) => s.key === 'torso')!.poly;
+    expect(Math.min(...torso.map(([z, ny]: any) => gap([0, -ny, z]))), 'torso into the pad').toBeGreaterThan(-0.005);   // the torso ends below the pad top
+    expect(gap(lm.backMid), 'mid back off the pad').toBeGreaterThan(0.05);
+    expect(gap(lm.sacrum), 'sacrum off the pad').toBeGreaterThan(0.08);
+  });
+  it('horizontal_leg_press: in start, end and Mistake the drawn sled plate sits under the feet on a level rail', () => {
+    for (const pose of ['start', 'end', 'mistake']) {   // ghost poses carry no landmarks in itemsIn
+      const { items, lm } = itemsIn(hlp, pose, { mistake: pose === 'mistake' }), sled = items.filter(it => it.type === 'legPress45');
+      expect(sled.length, pose).toBe(1);
+      expect(sled[0].rail.angle, `${pose} level rail`).toBe(0);
+      const fc = eng.legPressFace(sled[0], sled[0].travel);
+      // the sole lies on the drawn plate face (vertical plate: same z), within 1 cm
+      expect(Math.abs(lm['sole.r'][2] - fc.at[2]), `${pose} sole on the plate face`).toBeLessThan(0.01);
+    }
+  });
+  it('horizontal_leg_press: knees about 90 at the start, a soft bend at the end, locked in the Mistake; the sled runs on in the Mistake', () => {
+    const R = plate.renderPlate(hlp, { id: 'x' }).report;
+    expect(Math.abs(R.angles.start['knee.r'] - 90)).toBeLessThan(1);
+    expect(R.angles.end['knee.r']).toBeGreaterThan(15);
+    const m = itemsIn(hlp, 'mistake', { mistake: true }).lm, ang = (a: any, b: any, c: any) => {
+      const u: any = [a[1] - b[1], a[2] - b[2]], v: any = [c[1] - b[1], c[2] - b[2]];
+      return 180 - Math.acos((u[0] * v[0] + u[1] * v[1]) / Math.hypot(...u) / Math.hypot(...v)) * 180 / Math.PI; };
+    expect(ang(m['hip.r'], m['knee.r'], m['ankle.r']), 'Mistake knee locked').toBeLessThan(2);
+    const tEnd = itemsIn(hlp, 'end').items.find(it => it.type === 'legPress45').travel;
+    const tMis = itemsIn(hlp, 'mistake', { mistake: true }).items.find(it => it.type === 'legPress45').travel;
+    expect(tMis - tEnd, 'the sled runs further when the knees lock').toBeGreaterThan(0.01);
+  });
+  it('horizontal_leg_press: the bottom footplate is a thin outline in the end pose only', () => {
+    const outl = (pose: string) => itemsIn(hlp, pose, { mistake: pose === 'mistake' }).items.filter(it => it.type === 'line' && it.cls === 'eq-thin');
+    expect(outl('end').length).toBe(1);
+    expect(outl('start').length + outl('mistake').length).toBe(0);
+    const { lm } = itemsIn(hlp, 'start');
+    expect(Math.abs(outl('end')[0].pts[0][2] - lm['sole.r'][2]), 'outline at the start plate face').toBeLessThan(0.01);
+  });
+  it('chest_supported_row: in start, end, Mistake and every ghost the drawn lever runs from the pivot, at its length, to a handle at the hands', () => {
+    const M = csrMod.MACHINE, B = Eng().body, hb = { height: 1.75 };
+    // ghost landmarks as plate.mjs builds them: the start-to-end pose at t = (i + 1) / (n + 1) (poseLandmarks has none)
+    const keys = [csr.poses.start, ...(csr.poses.via ?? []), csr.poses.end].map((p: any) => B.normPose(p, hb)), n = csr.ghosts.count;
+    const ghosts = Array.from({ length: n }, (_, i) => [`ghost${i}`, B.landmarks(B.fk(B.poseAt(keys, (i + 1) / (n + 1), hb).q, hb))]);
+    const L = qaEng.poseLandmarks(Eng(), csr);
+    for (const [pose, lm] of [['start', L.lm.start], ['end', L.lm.end], ['mistake', L.lm.mistake], ...ghosts] as [string, any][]) {
+      const ctx = { pose, start: L.lm.start, mistake: pose === 'mistake', body: L.body };
+      const items = csr.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(lm, ctx) ?? [] : e)).filter(Boolean);
+      const lever = items.filter((x: any) => x.part === 'lever');
+      expect(lever.length, pose).toBe(2);                                              // lever and handle
+      const [a, b] = barEnds(lever[0]);
+      expect(hyp(a, M.pivot), `${pose} lever at the pivot`).toBeLessThan(0.001);
+      expect(Math.abs(hyp(a, b) - M.lever), `${pose} lever length`).toBeLessThan(0.001);
+      const [g0, g1] = barEnds(lever[1]), hc = g0.map((v: number, k: number) => (v + g1[k]!) / 2);
+      expect(hyp(hc, b), `${pose} handle on the lever end`).toBeLessThan(0.001);
+      expect(hyp(hc, lm.grips), `${pose} handle at the hands`).toBeLessThan(0.005);   // the hands hold the handle (within 5 mm)
+    }
+  });
+  it('chest_supported_row: the chest is on the drawn pad face at the start and the end (card c2, c4) and off it in the Mistake', () => {
+    for (const pose of ['start', 'end', 'mistake']) {
+      const { items, lm } = itemsIn(csr, pose), pad = items.find((x: any) => x.type === 'poly' && !x.part && x.pts.length === 4);
+      const face = Math.min(...pad.pts.map((p: number[]) => p[2]));                    // the pad face (angle 0: its lifter side)
+      const gap = face - lm.chest[2];
+      if (pose === 'mistake') expect(gap, pose).toBeGreaterThan(0.03);
+      else expect(Math.abs(gap), pose).toBeLessThan(0.01);
+    }
+  });
+  it('resistance_band_row: in start, end and Mistake the band runs from the sole loop at the ball to the drawn fists', () => {
+    const rbr = rbrMod.default;
+    for (const pose of ['start', 'end', 'mistake']) {   // ghosts have no landmark set in itemsIn
+      const { items, lm } = itemsIn(rbr, pose), strands = items.filter((it: any) => it.type === 'poly' && it.part === 'band');
+      expect(strands.length, `${pose} band parts`).toBe(band.BAND_ITEMS);
+      const [loopA] = barEnds(strands[0]);
+      expect(hyp(loopA, lm['ball.r']), `${pose} loop on the ball of the foot`).toBeLessThan(0.006);
+      for (const [i, side] of [[1, 'l'], [2, 'r']] as const) {
+        const [a, b] = barEnds(strands[i]);
+        expect(hyp(a, loopA), `${pose} ${side} strand leaves the loop`).toBeLessThan(0.002);
+        expect(hyp(b, lm[`grip.${side}`]), `${pose} ${side} strand ends on the fist`).toBeLessThan(0.002);
+      }
+    }
+  });
+  it('resistance_band_row: pelvis and heels on the mat in start, end and Mistake; the start strand is a dashed phantom in the end pose only', () => {
+    const rbr = rbrMod.default;
+    for (const pose of ['start', 'end', 'mistake']) {
+      const { items, lm } = itemsIn(rbr, pose), ph = items.filter((it: any) => it.part === 'phantom');
+      expect(Math.abs(lm.seat[1] - 0.01), `${pose} seat on the mat`).toBeLessThan(0.005);
+      expect(Math.abs(lm['heel.r'][1] - 0.01), `${pose} heel on the mat`).toBeLessThan(0.01);
+      expect(ph.length, `${pose} phantom`).toBe(pose === 'end' ? 1 : 0);
+      if (pose === 'end') {
+        const st = itemsIn(rbr, 'start').lm;
+        expect(ph[0].cls).toBe('eq-line m-line');
+        expect(hyp(ph[0].pts[0], band.bandAnchor(st).leave)).toBeLessThan(0.002);
+        expect(hyp(ph[0].pts[1], st['grip.r'])).toBeLessThan(0.002);
+      }
+    }
+  });
+  it('underhand_lat_pulldown: in start, end, Mistake and every ghost the drawn bar sits at the grips and its cable runs to the head pulley rim', () => {
+    const B = Eng().body, hb = { height: 1.75 }, n = ulp.ghosts.count;
+    const keys = [ulp.poses.start, ...(ulp.poses.via ?? []), ulp.poses.end].map((p: any) => B.normPose(p, hb));
+    const ghosts = Array.from({ length: n }, (_, i) => [`ghost${i}`, B.landmarks(B.fk(B.poseAt(keys, (i + 1) / (n + 1), hb).q, hb))]);
+    const L = qaEng.poseLandmarks(Eng(), ulp);
+    const head = itemsIn(ulp, 'start').items.find((x: any) => x.type === 'pulley')!;   // the head pulley is the first pulley
+    for (const [pose, lm] of [['start', L.lm.start], ['end', L.lm.end], ['mistake', L.lm.mistake], ...ghosts] as [string, any][]) {
+      const ctx = { pose, start: L.lm.start, mistake: pose === 'mistake', body: L.body };
+      const items = ulp.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(lm, ctx) ?? [] : e)).filter(Boolean);
+      const bar = items.filter((x: any) => x.part === 'bar');
+      const lat = bar.find((x: any) => x.type === 'latBar'), cab = bar.find((x: any) => x.type === 'cable');
+      expect(hyp(lat.at, lm.grips), `${pose} bar at the grips`).toBeLessThan(0.002);
+      expect(hyp(cab.from, lat.at), `${pose} cable leaves the bar`).toBeLessThan(0.002);
+      expect(Math.abs(hyp(cab.to, head.at) - head.r), `${pose} cable on the head pulley rim`).toBeLessThan(0.002);
+    }
+  });
+  it('underhand_lat_pulldown: the bar travels on the cable line from the head pulley; the lean is unchanged start to end (c5); the Mistake rocks the torso back (c7)', () => {
+    const L = qaEng.poseLandmarks(Eng(), ulp), head = itemsIn(ulp, 'start').items.find((x: any) => x.type === 'pulley')!;
+    const ang = (v: number[]) => Math.atan2(v[1]!, v[2]!) * 180 / Math.PI;
+    const dir = (lm: any) => ang([0, lm.grips[1] - head.at[1], lm.grips[2] - head.at[2]]);
+    expect(Math.abs(dir(L.lm.start) - dir(L.lm.end)), 'start and end bars on one line through the head pulley').toBeLessThan(0.5);
+    const lean = (lm: any) => ang([0, lm.neck[1] - lm['hip.r'][1], lm.neck[2] - lm['hip.r'][2]]);   // hip joint to the neck base: the scapulae do not move it
+    expect(Math.abs(lean(L.lm.start) - lean(L.lm.end)), 'lean start = end').toBeLessThan(1);
+    expect(lean(L.lm.mistake) - lean(L.lm.end), 'Mistake leans back at least 20 deg more').toBeGreaterThan(20);
+    expect(L.lm.end.backUpper[2] - L.lm.mistake.backUpper[2], 'Mistake upper back behind the end one').toBeGreaterThan(0.08);
+  });
+  it('single_arm_lat_pulldown: in start, end and Mistake the drawn D-handle grip is at the hand, its rails end at the drawn ring, and the cable leaves that ring for the head pulley', () => {
+    const { headTangent } = sapMod.HANDLE;
+    for (const pose of ['start', 'end', 'mistake']) {
+      const { items, lm } = itemsIn(sap, pose), h = items.filter(it => it.part === 'handle');
+      const polys = h.filter(it => it.type === 'poly'), cable = h.filter(it => it.type === 'cable');
+      expect(polys.length, `${pose} D-handle parts`).toBe(dh.D_HANDLE_ITEMS);
+      expect(cable.length, `${pose} handle cable`).toBe(1);
+      const [g0, g1] = barEnds(polys[0]), gc = g0.map((v, k) => (v + g1[k]!) / 2);
+      expect(hyp(gc, lm['grip.r']), `${pose} grip at the hand`).toBeLessThan(0.001);
+      const ringPts = polys[3].pts, ring = [0, ringPts.reduce((a: number, p: number[]) => a + p[1]!, 0) / 8, ringPts.reduce((a: number, p: number[]) => a + p[2]!, 0) / 8];
+      for (const rail of polys.slice(1, 3)) expect(hyp(barEnds(rail)[1], ring), `${pose} rail ends at the ring`).toBeLessThan(0.001);
+      expect(hyp(cable[0].from, ring), `${pose} cable leaves the drawn ring`).toBeLessThan(0.001);
+      expect(hyp(cable[0].to, headTangent(cable[0].from)), `${pose} cable meets the head pulley`).toBeLessThan(0.001);
+    }
+  });
+
+  it('inverted_row: heels on the floor in every drawn pose; arms straight at the start; chest at the drawn bar at the end', () => {
+    const G = irMod.GEOM;
+    for (const pose of ['start', 'end', 'mistake']) {
+      const { items, lm } = itemsIn(ir, pose);
+      expect(Math.abs(lm['heel.r'][1]), `${pose} heel on the floor`).toBeLessThan(0.005);
+      expect(Math.abs(lm['heel.r'][2] - G.HEEL_S[2]), `${pose} heel does not slide`).toBeLessThan(0.005);
+      const bar = items.find((it: any) => it.type === 'pullupBar');
+      expect(bar.at, `${pose} bar drawn at BAR`).toEqual(G.BAR);
+      if (pose === 'start') {
+        const s = lm['shoulder.r'], g = lm['grip.r'];
+        expect(Math.abs(Math.hypot(s[0] - g[0], s[1] - g[1], s[2] - g[2]) - G.STRAIGHT), 'start arm straight').toBeLessThan(0.01);
+      }
+      if (pose === 'end') {
+        const c = lm.chest;   // chest one bar radius under the drawn bar's centre, straight under it
+        expect(Math.hypot(c[1] - (bar.at[1] - G.BAR_R), c[2] - bar.at[2]), 'end chest at the bar').toBeLessThan(0.01);
+      }
+    }
+  });
+  it('inverted_row: the body is straight heel to shoulder in start and end; in the Mistake the hips sag off that line', () => {
+    const off = (lm: any) => {   // buttock distance from the heel-shoulder line (m), + toward the floor
+      const h = lm['heel.r'], s = lm['shoulder.r'], b = lm.buttock, d: any = [s[1] - h[1], s[2] - h[2]], L = Math.hypot(d[0], d[1]);
+      return ((b[1] - h[1]) * d[1] - (b[2] - h[2]) * d[0]) / L * Math.sign(d[1]) * -1;
+    };
+    const st = off(itemsIn(ir, 'start').lm), en = off(itemsIn(ir, 'end').lm), mi = off(itemsIn(ir, 'mistake').lm);
+    expect(Math.abs(st - en), 'same straight body line at start and end').toBeLessThan(0.01);
+    expect(mi - en, 'Mistake hips at least 8 cm nearer the floor than the straight line').toBeGreaterThan(0.08);
+  });
+  it('inverted_row: the copied bisect throws when its bracket holds no root (D-LIB9-CLONE b)', () => {
+    expect(() => irMod.bisect((x: number) => x * x + 1, -1, 1)).toThrow(/no root/);
+    expect(irMod.bisect((x: number) => x - 0.25, 0, 1)).toBeCloseTo(0.25, 9);
+    expect(irMod.bisect((x: number) => 0.25 - x, 0, 1)).toBeCloseTo(0.25, 9);   // falling f too
+  });
+
   // Every drawn LB1 spec that has a weight stack (D-LIB9a-SLICE: one loop over all stack specs).
-  const STACK_SPECS = () => [['close_grip_pulldown', cgp, 0.03], ['assisted_pull_up', apu, apuMod.MACHINE.stack.lift0]] as [string, any, number][];
+  const STACK_SPECS = () => [['close_grip_pulldown', cgp, 0.03], ['assisted_pull_up', apu, apuMod.MACHINE.stack.lift0],
+    ['underhand_lat_pulldown', ulp, 0.03], ['single_arm_lat_pulldown', sap, sapMod.LIFT0]] as [string, any, number][];
   it('every stack spec: the stack rises off its rest pose (end and Mistake), and its cable ends on the drawn stack top', () => {
     for (const [id, spec, lift0] of STACK_SPECS()) {
       const R = plate.renderPlate(spec, { id: 'x' }), drawn = qaEng.equipmentItems(Eng(), spec, R.report, ['start', 'end', 'mistake']);
@@ -250,6 +507,45 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
     expect(band.band()(ends.end, {}).length).toBe(band.BAND_ITEMS);
     expect(dh.dHandle({ grip: (l: any) => l['grip.r'], toward: () => [0, 1, 0] })(ends.end, {}).length).toBe(dh.D_HANDLE_ITEMS);
     expect(parts.perItem(() => [1, 2], 3).length).toBe(3);
+  });
+});
+
+describe('LIB-9a Do 5(d): straight_arm_pulldown (D-LIB9-CLONE)', { timeout: T }, () => {
+  it('rule a: the clone copies its anchor code; closureOf lists no specs/ file but its own', () => {
+    const c = closure.closureOf(['tools/plates/library/specs/straight_arm_pulldown.mjs']);
+    expect(c.filter((p: string) => p.includes('/specs/'))).toEqual(['tools/plates/library/specs/straight_arm_pulldown.mjs']);
+  });
+  it('rule b: the copied root finder throws when its bracket holds no root, and solves inside its bracket', () => {
+    expect(() => sapdMod.solve((x: number) => x + 1, 0, 1)).toThrow(/no solution/);
+    expect(sapdMod.solve((x: number) => x - 0.3, 0, 1)).toBeCloseTo(0.3, 6);
+  });
+  it('the elbows keep one 15 deg bend at the start and the end (c4); bent past 60 deg in the Mistake (c6)', () => {
+    const el = (lm: any) => { const a = [0, 1, 2].map(i => lm['shoulder.r'][i] - lm['elbow.r'][i]), b = [0, 1, 2].map(i => lm['wrist.r'][i] - lm['elbow.r'][i]);
+      return 180 - Math.acos((a[0]! * b[0]! + a[1]! * b[1]! + a[2]! * b[2]!) / Math.hypot(...a) / Math.hypot(...b)) * 180 / Math.PI; };
+    const L = qaEng.poseLandmarks(Eng(), sapd).lm;
+    expect(Math.abs(el(L.start) - 15)).toBeLessThan(0.5);
+    expect(Math.abs(el(L.end) - 15)).toBeLessThan(0.5);
+    expect(el(L.mistake)).toBeGreaterThan(60);
+  });
+  it('cableColumn stack: the drawn stack rises off its start (end and Mistake), its cable ends on the drawn stack top, and two static rods run through the lifted plates', () => {
+    const R = plate.renderPlate(sapd, { id: 'x' }), drawn = qaEng.equipmentItems(Eng(), sapd, R.report, ['start', 'end', 'mistake']);
+    const tops: Record<string, number> = {};
+    for (const pose of ['start', 'end', 'mistake']) {
+      const its = [...drawn[pose].entries()].filter(([k]) => /^eq\d+\.cableColumn\./.test(k));
+      const runs = its.map(([, v]) => v).filter((v: any) => v.cls === 'eq-cable' && !v.line);   // the column run: inner -> top pulley -> stack top
+      expect(runs.length, pose).toBe(1);
+      const xy = [...runs[0].d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]), end = xy[xy.length - 1]!, topPulleyY = xy[xy.length - 2]![1]!;
+      const stack = its.map(([, v]) => v).filter((v: any) => v.poly && v.poly.every((p: number[]) => Math.abs(p[0]! - end[0]!) < 15 && p[1]! > topPulleyY + 1));
+      tops[pose] = Math.min(...stack.flatMap((v: any) => v.poly.map((p: number[]) => p[1])));
+      expect(Math.abs(end[1]! - tops[pose]!), `${pose} cable end on the drawn stack top`).toBeLessThan(1);
+      const rods = [...drawn[pose].entries()].filter(([k, v]) => /\.line\./.test(k) && v.cls === 'eq-thin').map(([, v]) => v.line);
+      expect(rods.length, `${pose} rods`).toBe(2);
+      for (const r of rods) {
+        expect(Math.abs(r[0][0] - end[0]!), `${pose} rod inside the stack`).toBeLessThan(15);
+        expect(Math.min(r[0][1], r[1][1]), `${pose} rod above the lifted plates`).toBeLessThan(tops[pose]!);
+      }
+    }
+    for (const pose of ['end', 'mistake']) expect(tops[pose]!, `${pose} stack above its start`).toBeLessThan(tops.start! - 5);
   });
 });
 
