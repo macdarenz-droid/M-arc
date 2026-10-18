@@ -3408,3 +3408,84 @@ Supervisor follow-ups
 - Plan docs, only under D-LIB8M-SLRDL branch (b): amend plan 3.1:85 and :155, 3.3:303 and 6.1:646 on claude/howto-options (SLRDL is no longer a drawable-fault plate).
 - Band hand kind: the owner sees band on a pilot sheet before LB1 merges (plan 2.3); LIB-7 has no band pair yet, so this follows the research band-hand claim, not LIB-8M.
 - Follow-up list: a tempo strip for plates with no sourced seconds (box_jump, reverse_lunge); the shrug zoom (D-LIB8-shrug); dumbbell_fly (LIB-20 pitch); the rear-delt fly front view.
+
+## 17. LIB-6-PM rulings and merge order (D-LIB6PM-*, D-LIB-ORDER-2, 2026-10-18)
+
+Rulings for card LIB-6-PM (supervisor, 2026-10-18; from lib-6-pm-rulings-proposed.md and lib-6-pm-critic.md, all findings accepted). Cites: cards claude/sup-lib4-cards @ 1e85584a; main 2078913c; #181 9b8f76e6.
+
+D-LIB-ORDER-2 (merge order; amends D-LIB8M-ORDER at lib4-cards :3396 and HANDOVER :1000)
+- Order: LIB-4b → LIB-4c + #249 → LIB-4d (slot 3d) → LIB-5 + sup-lib5-bundle → BOX-CAP → LIB-5 Do 9 → LIB-6 #181 + LIB-6-PM → LIB-7 #193 + LIB-7-FIX → LIB-8M #109 (7) → LIB-5v (7a) → LB1 #245 (8).
+- LIB-3c may merge any time after its review.
+- BOX-CAP and Do 9 do not gate #181 (lib4-cards :1181).
+- Post on #181 and #261.
+- Reason:
+  - D-LIB8M-ORDER :3396 placed LIB-4d between Do 9 and #181.
+  - LIB-4d's deadline (:1428, before the first merge that ships a library row) allows any earlier slot, so merging it before LIB-5 removes that wait.
+  - LIB-5v was always 7a (variant-line-card :12).
+  - Checked: three-way merges of #261 with #181 @ 9b8f76e6 and with #244 @ 1d1fe9ea are clean.
+
+D-LIB6PM-FIXTURE (amends D-LIB5-PAGE's helper :2677-2681 and lib-5-card :165)
+- The back-flagged helper makes these exact-once replacements in a copy of E1's How-to, each exact-once or it throws:
+  - `riskFlags: ['wrist', 'shoulder', 'elbow']` → `riskFlags: ['wrist', 'back']`;
+  - the row at pull_up.howto.mjs:285, `zoom: 'top', redFlag: 'shoulder', ` → `zoom: 'top', redFlag: 'back', `;
+  - the row at :289, `redFlag: 'elbow', claim` → `claim`;
+  - SOURCES gains 'nhs-back' as ruled (`use: 'CONSENSUS'`).
+- Only S5-L's word row may add exact-once copy edits, for its two boundary variants (exactly 450 with the box, and words.total exactly 450).
+- Owner: LIB-6-PM, at tests/howto/fixtures/lib5/back-page.mjs. LIB-5's write_scope loses the helper, and Do 9 never writes one.
+- Do 9 writes S5-L only if #181 is on main first. In that case it uses this helper unchanged and D-LIB6PM-CAP (D-LIB5-PAGE :2682, "whichever merges second"; Do 9 does not gate #181, :1181).
+- Post on #244 and on the Do 9 PR before Do 9 starts.
+- Reason: the first form measures 449 + 50 = 499 words, over 450, so S5-L and the generator's lint would refuse it. This form measures 390 + 50 = 440 with 0 violations, verified twice (golden B lintHowto; BOX-CAP lintLibraryRow).
+
+D-LIB6PM-CAP (extends lib-5-card :27 to S5-L wherever it runs)
+- In S5-L, the back box is held to BOX-CAP's named limit, imported from tools/plates/library/lint/box-caps.mjs through boxReach's key 'back-pain-box' and never copied.
+- Every other box stays at 30, and the total stays at 450.
+- Mutations, each red: the back box at limit + 1 words; another box at 31 words.
+- Reason: under D-LIB-ORDER-2, #181 carries S5-L, and 50 is the owner's answer for this one box (option 1, #244 6250331645).
+
+D-LIB6PM-L0 (amends Supervisor action 11, lib4-cards :2944: the line moves from LIB-4c's card to LIB-6-PM)
+- tools/plates/library/ci/manifest.mjs adds three files, add-only, for every pinned row whose batch has a row whose How-to riskFlags include 'back':
+  - back-box.mjs;
+  - every repo module it imports statically;
+  - docs/research/howto/shared/back-pain-box.json.
+- back-box.mjs is loaded only on pages with a back box (D-LIB6PM-ANCHORS), so it is not in BUILDERS.
+- C0 mutation: one byte of back-pain-box.json on a pinned fixture row in such a batch → red.
+- LIB-4c's library-manifest.test.ts stays unedited.
+- Reason: LIB-4c merges before back-box.mjs exists, and the layers page is one file per batch (manifest.mjs:67-68), so the input lands with the patch that creates it, keyed per batch.
+
+D-LIB6PM-PLATE (extends D-LIB9-ENGINE's implementation line, :1111)
+- One exact-once patch to the mirrored build-page.mjs makes :59 and :63 render each spec with the engine its imports name. The default is the layers engine.
+- Every patch is applied for every plan and spec; the engine is chosen at run time, never by skipping a patch.
+- Evidence: the 8's page at PAGE_SHA256; E1 and B5 byte-identical; the poly and flat-palm fixture's plate block through the vendor engine.
+- Mutation: the patch dropped → red.
+- Reason: D-LIB9-ENGINE answers which engine draws a library plate on its layers page (:646), and the plate block uses the layers renderPlate, which throws on poly (layers plate.mjs:45). Vendor PLATE_CSS equals layers PLATE_CSS, so no CSS changes.
+
+D-LIB6PM-ANCHORS (amends D-LIB5-PAGE's "two exact-once patches", :2665)
+- One extra anchor is allowed: a module-scope holder (for example `const __BACK = {};`).
+  - It is exact-once and applied for every plan.
+  - It is covered by closeups.test.ts:66-73, with a red move-mutation.
+- The existing 'renderer dispatch' replacement gains the load: `if (mods.some(M => (M.default.riskFlags ?? []).includes('back'))) __BACK.backBox = (await import(BACK_BOX_URL)).backBox;`. Its anchor is unchanged and already covered.
+- FLAG's `back` getter calls `__BACK.backBox()`.
+- back-box.mjs loads only on a page with a back-flagged sheet. It is never imported at module scope or statically, by either the mirror or build-layers-page.mjs.
+- Mutation: the load made unconditional → red.
+- Reason: risksSection is synchronous, so a lazy read needs a holder filled from the async dispatch, and loading only for flagged pages keeps the L0 set exact.
+
+D-LIB6PM-WAITS (amends D-LIB5-PAGE's "before Do 9 … throw BACK_BOX_WAITS", :2674)
+- A committed test writes LIB-5's placeholder (#244 @ 1d1fe9ea back-box.mjs, all 15 lines) into a tree copy. There:
+  - the back-flagged page rejects, and its message contains the line `Error: lib_cable_lateral_raise: LIB-5: back box waits for owner decision 6 (plan 8 item 6)`;
+  - the unflagged page builds byte-identical.
+- Mutation: FLAG made eager → red.
+- Reason: Do 9 merges before #181, so only a placeholder tree can show this after Do 9. The page runs in a child process (build-layers-page.mjs:103), which is LIB-5's own form (library-shared.test.ts :130).
+
+D-LIB6PM-CI (fulfils #181 ruling D-LIB6-ci, comment 5936426770)
+- The supervisor adds, add-only, a step `node --test tools/plates/library/test/*.test.mjs` to the existing source-gate job in .github/workflows/build-apk.yml, after "Unit tests in two more time zones" (:44), in #181's train.
+- Reason: no LIB-4 card or workflow ever wired these tests, so nothing in CI would rebuild the 8's page through the renderer at e7b81413.
+
+D-LIB6PM-BRANCH (amends D-LIB9-HANDPAGE, lib4-cards :1156, section 12 item 10)
+- LIB-6-PM is the only writer of claude/lib-6-closeup-renderer until #181 merges.
+- The LIB-7 fixer (LIB-7-FIX) works on #193, which is based on #181's branch, and may edit build-layers-page.mjs there.
+- After #181 merges, the supervisor sets #193's base to main and #193 merges main.
+- Reason: two writers on one branch collide, and slot 5 must not carry slot-6 code (hands/pairs.mjs).
+
+D-LIB6PM-LANE (amends D-LIB-LANE-ACTIVE's freed-slot order, lib4-cards :1030)
+- LIB-6-PM takes a freed slot before the LIB-7 fixer.
+- Reason: slot 5 merges before slot 6, and no LIB-7 fixer card exists yet (HANDOVER :1033).
