@@ -2004,6 +2004,43 @@ Why:
 - hanging_leg_raise mount level with the SIDE VIEW title, and its bar style differs from pull_up's;
 - leg_press: "Knees cave" cannot be seen side-on (R5), and a floating back (R3). The panel flagged both; the supervisor's check is pending.
 
+### 13.6 LB1 fix round ruled (D-LIB9a-FIX1, 2026-10-18 ~11:55 UTC; #245 @ `1a4947d`)
+
+LIB-9a's "LB1 FIX ROUND READY" (#245 comment 6249481646) fixed four rows and reported five as not fixable. The supervisor checked each report against the critics' own coordinates and the cards on `claude/libht-research` @ `9eaa2480`.
+
+**Accepted, to the recheck:**
+- chest_supported_row R4: tell at the sacrum, arrow, arch 16°. The arrow and the 12.8 px gap at mid-back stand in for the "10 px at the lumbar" ask. The engine's outline bends there by 8 px at most, with a label on the figure.
+- close_grip_pulldown and underhand_lat_pulldown R4: the lean arc behind the back.
+- inverted_row R7: a 2.0 m upright and one start ghost.
+
+**R1 withdrawn on chin_up, close_grip_pulldown, underhand_lat_pulldown and single_arm_lat_pulldown (end elbow position).** No change.
+
+Why:
+- **The critics' targets need longer limbs than the body has.** At the plate scale (×2 in the PNGs), the vendored forearm-to-grip is 0.342 m: 90 px on chin_up and 91 px on the pulldowns.
+  - chin_up: the critics' target elbows, (370,270) and (400,260), sit 122 px and 114 px from the hand (377,148). That is 1.27-1.35× the forearm.
+  - underhand: an elbow under the shoulder (242,421) at the upper-arm length sits 114 px from the bar (285,402), which is 1.26×. The critics' (250,500) is 104 px, 1.15×, and it also shortens the upper arm to 79 px (the arm is 86.5 px).
+- **The cards fix the grip above the shoulder joint.** Their stop points are "Bar just below the chin" (underhand), "Handle just below the chin" (close_grip), "Handle just past the chin" (single_arm), and chin over the bar for chin_up (pinned c3). With the arm's lengths, that puts the elbow in front. LIB-9a's pole sweeps show the drawn elbows are already the furthest back the cards allow. The supervisor checked the arithmetic above; the sweeps are LIB-9a's.
+- **The asked fix would draw the Mistake as the Right.** close_grip's card Mistake is "Handle pulled past the chin, elbows moving back behind the body". The round 1 critic noted the same for underhand: its Mistake labels the elbows going back as the fault.
+- The cards' "elbows down and back toward the glutes" and "upper arms tucked" describe the path of the pull. The end pose meets them as far as the stop point allows: the elbows are down from overhead, and on close_grip they are turned in.
+- Not loosened: no card, check or pin changes. Each plate's DESIGN.md records the sweep numbers.
+
+**Recheck brief change (every plate, anchors and plants alike).** Any pose fix a critic proposes must keep the drawn segment lengths, and must state the lengths it assumes. A finding whose own fix breaks that does not count. The rule applies to every plate in the set, so calibration is unchanged.
+
+**inverted_row R3: fix it.** The start arm is right: the grip is on the bar, and the arm is straight at 0.665 m. But its middle is hidden behind the solid end torso, so it reads short. Draw the hidden part of the start arm as a dashed outline over the end torso. pull_up and hanging_leg_raise redraw hidden parts this way (13.4, close_grip's dashed handle). Pinned c1 (arms straight at the start) stays.
+
+**resistance_band_row R7: no allowed fix in scale or floor.**
+- The scale stays pinned by Q-R2-3 and the floor by D-LIB8-floor. A seated floor figure has no tall equipment, and at 186 px/m the plate's width is the limit (13.4 Q-R2-3).
+- The recheck scores it beside floor-level approved plates as well as seated_cable_row. Use pilot A's panel-approved plank and mountain_climbers (#109 @ `e6f39ff`, D-CRITIC-CAL2), rendered at the same size.
+- If R7 fails again, that is the plate's second failed round. LIB-9a stops on it and reports, and the supervisor rules.
+
+**chest_supported_row R4, second half:** accepted as drawn above. The recheck decides.
+
+**Next:**
+- LIB-9a makes the inverted_row R3 dashed-arm fix and adds the DESIGN.md records.
+- It renders plank and mountain_climbers @ `e6f39ff` into the recheck reference set.
+- It pushes, as a supervisor-asked milestone under the 2-hour rule, and posts "LB1 RECHECK READY @ <sha>".
+- The supervisor then runs the calibrated recheck under 13.5's rule, on chest_supported_row, close_grip_pulldown, underhand_lat_pulldown, inverted_row and resistance_band_row.
+
 ## 14. LIB-5 design-note rulings (D-LIB5-NOTE, 2026-10-17 ~23:xx UTC; #244 @ ee7f40f)
 
 A 3-lens review read the note. A judge ruled each open point, and one adversarial verifier checked each ruling. Where the verifier corrected a ruling, the corrected text is the ruling. It is changed here only where it clashed with sections 12 and 13 or with another item, and each ruling says in one line what changed. An earlier re-check of the LIB-5 card found 23 defects. Their fixes are merged into the card amendments below.
