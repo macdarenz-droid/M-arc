@@ -6,6 +6,7 @@
 //   node tools/plates/library/ci/scratch.mjs build                                the 6 scratch ids, generate, vite build,
 //                                                                                 budgets, MANIFEST.json, C16, one commit
 //   node tools/plates/library/ci/scratch.mjs check                                C16 on the built tree (prints the report)
+//   node tools/plates/library/ci/scratch.mjs seed <1|2|3>                         one C12 seeded failure, one commit
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -107,6 +108,22 @@ export function copyProblems(root, set = SCRATCH_4C) {
   return out;
 }
 
+/** C12's seeded failures, each a one-place edit of scripts/howto-shard.mjs on its own scratch ref: [anchor, text, how]. */
+export const SEEDS = {
+  // 1 px: LIB-4b's 1 px shift fixture on lib_landmine_row's plate rows
+  1: ['{ ids, pages, P: LIB_P, log: m => console.error(m) }', "{ ids, pages, P: LIB_P, log: m => console.error(m), fixtures: { shift: ['lib_landmine_row'] } }", 'replace'],
+  // the plan hash: the shard job edits times.json after howto-rebuild planned
+  2: ['  const { problems, hash } = inputProblems(', "  { const tf = join(ROOT, 'tools/plates/library/ci/times.json'), tt = JSON.parse(readFileSync(tf, 'utf8')); tt.default += 1; writeFileSync(tf, `${JSON.stringify(tt, null, 1)}\\n`); console.log('C12 seed 2: times.json default', tt.default); }\n", 'before'],
+  // a dropped row: shard 2 drops its first library row from its proof before upload
+  3: ["  mkdirSync(join(ROOT, 'screenshots/howto-evidence'), { recursive: true });", "  if (k === 2) { const pf = join(ROOT, `screenshots/howto-proof-${k}of${K}.json`), pj = JSON.parse(readFileSync(pf, 'utf8')), i = pj.rows.findIndex(r => r.id.startsWith('lib_')); console.log('C12 seed 3 dropped', JSON.stringify(pj.rows[i])); pj.rows.splice(i, 1); writeFileSync(pf, JSON.stringify(pj, null, 1)); }\n", 'before'],
+};
+/** scripts/howto-shard.mjs with seed n applied. Throws unless its anchor occurs exactly once. */
+export function seededShard(text, n) {
+  const [a, b, how] = SEEDS[n] ?? [];
+  if (!a || text.split(a).length !== 2) throw new Error(`scratch: seed ${n} has no single anchor in howto-shard.mjs`);
+  return text.replace(a, how === 'replace' ? b : b + a);
+}
+
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const [step, ...rest] = process.argv.slice(2), root = ROOT;
   const bad = setProblems(SCRATCH_4C, root);
@@ -137,5 +154,9 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.log(`C16 set: ${SCRATCH_4C.map(s => s.id).join(', ')}: outside LB1 and LB2, none taken, own keys`);
     console.log(c.length ? `C16 copy diff FAIL:\n${c.join('\n')}` : 'C16 copy diff: only id, name, research-card and import lines and the ruled COPY_EDITS differ');
     process.exit(c.length ? 1 : 0);
-  } else throw new Error('usage: scratch.mjs merge|seam|build|check');
+  } else if (step === 'seed') {
+    const n = +rest[0], f = join(root, 'scripts/howto-shard.mjs');
+    writeFileSync(f, seededShard(readFileSync(f, 'utf8'), n));
+    console.log(`seed ${n}: commit ${commit(root, `[do not merge] LIB-4c C12 seed ${n}`)}`);
+  } else throw new Error('usage: scratch.mjs merge|seam|build|check|seed <1|2|3>');
 }
