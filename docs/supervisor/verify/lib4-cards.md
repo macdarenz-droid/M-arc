@@ -1442,6 +1442,14 @@ Reviewed from two sides: a fixes-and-evidence audit that re-ran the tests and 4 
 **Ruling D-LIB9a-HOWTOID:** LB1 How-to sources may hold `id` beside `research` (071e078c), because library-scale's synthetic N = 153 reader needs it. Nothing else may be added to those files. DESIGN.md cites this.
 
 
+### 13.2 Do 5(d) opens: pilot A anchors (D-LIB9-CLONE, 2026-10-18 ~00:30 UTC)
+
+The pilot A code review is posted on #109 (6243689943 @ `e6f39ff`): FAIL on code (2 blockers, 1 medium, 2 lows), with the anchors sound to clone at `e6f39ff`. Its findings are pilot A's to fix before its plan-slot-7 merge; none changes a drawing. So Do 5(d) (straight_arm_pulldown, inverted_row) opens now, cloning from `e6f39ff`, under these rules:
+- (a) Copy, never import. A clone copies the anchor code it needs (pose helpers, solvers, constants) into its own spec file. It never imports from a pilot A spec, so a later pilot A edit cannot move the clone's inputs closure. Evidence: the clone's `closureOf` lists no `specs/` file other than its own.
+- (b) Checked solver. Every copied root finder throws when its bracket holds no root (`f(lo)` and `f(hi)` with the same sign), the way `barbell_row.mjs:68` (`solve`) does. `dumbbell_bench_press.mjs:56`'s `bisect` does not check this (verified at `e6f39ff`), so inverted_row's copy of `supine()` gets the check. Mutation: a bracket moved past the root throws.
+- (c) Fresh brackets. Each hard-coded bracket (for example `barbell_row.mjs:77` [-0.40, -0.04], `romanian_deadlift.mjs:91` `Z_HANG`) is re-derived for the clone's geometry and recorded in the spec header with the value it solves to.
+- Everything else in section 13 and 13.1 holds. LIB-3's H6 re-check of the anchors (gap 4) or a pilot A fix that changes a drawn anchor re-plans only these two ids (lib-9a-card.md risk_and_recovery).
+
 ## 14. LIB-5 design-note rulings (D-LIB5-NOTE, 2026-10-17 ~23:xx UTC; #244 @ ee7f40f)
 
 A 3-lens review read the note. A judge ruled each open point, and one adversarial verifier checked each ruling. Where the verifier corrected a ruling, the corrected text is the ruling. It is changed here only where it clashed with sections 12 and 13 or with another item, and each ruling says in one line what changed. An earlier re-check of the LIB-5 card found 23 defects. Their fixes are merged into the card amendments below.
