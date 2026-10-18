@@ -62,12 +62,12 @@ export function leverParts(cfg, g, z = { lever: 'back', pad: 'center' }) {
   ];
 }
 
-export const ASSIST_ITEMS = 22;   // 19 parts + the 3-part start phantom in the end pose
+export const ASSIST_ITEMS = 24;   // 21 parts + the 3-part start phantom in the end pose
 
 /**
  * cfg: { pivot, lever, bracket, pad, padBack, attach, padTop: { start, end, mistake } (pad-top heights, m), ghosts (the
  *   spec's ghost count), tower: [near z, far z], h, bar: world bar centre, step: y,
- *   stack: { plates, load, lift0 (the stack's lift at the start, m) }, floor: [from z, to z] }.
+ *   stack: { plates, load, lift0 (the stack's lift in the spec's start pose, m) }, floor: [from z, to z] }.
  * Returns (lm, ctx) => item[] (one per part, ASSIST_ITEMS at most).
  */
 export function assistMachine(cfg) {
@@ -78,7 +78,7 @@ export function assistMachine(cfg) {
   return (lm, ctx) => {
     const g = assistGeometry(cfg, padTopFor(cfg, ctx.pose)), g0 = assistGeometry(cfg, cfg.padTop.start);
     // the cable from the lever over PA and PB to the stack: the stack rises by as much as the attachment drops
-    const lift = st.lift0 - (g.attach[1] - g0.attach[1]);   // lift0: the stack's lift in the start (dead hang)
+    const lift = st.lift0 - (g.attach[1] - g0.attach[1]);   // lift0: the stack's lift in the spec's start pose (assisted_pull_up: the top)
     if (lift < 0) throw new Error(`assistMachine: the stack would sit below its stops (lift ${lift.toFixed(3)} m)`);
     const top = 0.06 + st.plates * 0.025 + lift;
     const pinY = 0.06 + (st.plates - st.load) * 0.025 + lift + 0.0125;
@@ -91,6 +91,7 @@ export function assistMachine(cfg) {
       { type: 'pullupBar', at: bar, mount: 'ceiling', stub: 0.0001 },                                                                    // the bar, end-on
       { type: 'box', at: [0, step, T0 - 0.15], w: 0.24, h: 0.04, rc: 1.5, cls: 'eq' },                                                  // mount step
       { type: 'stack', base: [0, 0, SZ], plates: st.plates, load: st.load, w: 0.2, lift, rods: false, part: 'stack' },
+      ...[-0.05, 0.05].map(dz => ({ type: 'line', cls: 'eq-thin', pts: [[0, 0.06, SZ + dz], [0, h - 0.21, SZ + dz]] })),   // guide rods (static, as lat_pulldown)
       { type: 'poly', cls: 'eq-solid', z: 'back', part: 'stack', pts: [[0, pinY - 0.006, SZ - 0.13], [0, pinY - 0.006, SZ - 0.09], [0, pinY + 0.006, SZ - 0.09], [0, pinY + 0.006, SZ - 0.13]] },   // selector pin
       { type: 'pulley', at: PA, r: 0.035 },
       { type: 'pulley', at: PB, r: 0.035 },

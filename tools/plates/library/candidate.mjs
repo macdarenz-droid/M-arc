@@ -54,7 +54,7 @@ export function researchOf(howto, root = ROOT) {
 export const AUTHORING_REFUSED = ['approved-plate', 'shipped'];
 /** The How-to source of a row in the injected `all`: registry sourceOf's rule for a library row, applied to `all`.
  *  (registry.mjs is an input of every generated file, so it is not edited: D-LIB9-AUTHORQA asks for an `all` parameter
- *  on sourceOf; this keeps generate --check unchanged. Ruling asked on #245.) */
+ *  on sourceOf; this keeps generate --check unchanged: ruling Q-A, #245 comment 6242372604.) */
 export const howtoOf = (id, root, all) => (all.some(r => r.id === id && r.mode !== 'golden') ? `tools/plates/library/howto/${id}.howto.mjs` : sourceOf(id, root));
 export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = rows(root), authoring = false } = {}) {
   const row = all.find(r => r.id === id);

@@ -8,7 +8,8 @@
 // - Lever handles: a lever from the pivot down to a handle at the lifter's grip (neutral: upright; overhand: end-on). The lever and
 //   handle move between the end pose and the Mistake, so both are `poly` (PQ-H9).
 // The handle follows the hands: `leverHandle(cfg, deg)` gives the handle point at a lever angle, so a spec puts the
-// reach target on the lever's circle and the lever keeps its length in every pose (tests/howto/lb1-plates.test.ts).
+// reach target on the lever's circle. tests/howto/lb1-plates.test.ts checks the drawn lever runs from the pivot to a
+// handle on its circle at synthetic grips; chest_supported_row's per-pose drawn-item check comes with its spec (Do 5 c).
 // Assumed sizes (typical commercial chest-supported row, not one maker's drawing; no card claim gives sizes): chest pad
 // 45 cm tall, 9 cm thick; column 6 cm; lever 5 cm thick; handle 13 cm long, 3 cm thick; seat as the vendored `seat`.
 // Returns up to CHEST_ROW_ITEMS items; wrap it with perItem() (parts.mjs) so each part gets its own key.

@@ -146,6 +146,13 @@ lever circle), never the helper maths alone.
   bracket and lever are a dashed phantom in the end pose. The critic judges it blind; the bound fallback is Q2 (g).
 - **Kneel class (plan 2.2, probe C).** Knees by angles, roots solved once onto named pad heights and written as
   constants, contact proven by `checks` planes at one kneecap radius above each pose's pad top (start, end, Mistake).
+- **Leaders (D-LIB9a-SLICE).** Labels sit in open space with short leaders that never run within 6 px of the trace or
+  a cable. close_grip_pulldown: 'chin' right of the handle, 'thighs' above the knee pointing down to the thigh just in
+  front of the roller (box clear of the roller and the upright), 'elbows' below the lean-back label so the two leaders
+  never cross. assisted_pull_up keeps three leaders that cross a drawn part, because no open side exists: the knee-pad
+  contact ('Knees on pad', 'Pad stays up') is closed in by the shin on the pad, the pad and bracket below and, in the
+  Mistake, the red half-hang legs above; the bent elbow's only open side ('Arms bent') is the 45 px gap to the tower,
+  and the 47 px button does not fit in it.
 - **Tall machines and F1.** The pulldown station and the assist tower are 2.2-2.3 m tall, so `fit` lands at 126-133
   px/m, inside F1 (123.9-146.3) with little room. Machines are kept at the 8's heights.
 
@@ -170,8 +177,18 @@ lever circle), never the helper maths alone.
 - **LIB-5's back-box placeholder** (D-LIB5-BOX route b): the plate QA path does not call the layer generator, so it
   should not reach the accessor; if any LB1 path does, stop and report (never stub it).
 - **D-LIB-SCRATCHIDS:** LIB-4b's B5 fixture targets two LB1 ids; it is never run on this branch.
+- **H10 value and envelope gap** (Q5 f): see section 1. qa/ is reserved, so the supervisor routes the fix to a separate
+  qa/ card before any D row exists on any branch; rows.json stays 14 H, 0 D (tested).
 - **F2 coverage on tall rigs:** checked in the preview runs (assist tower 0.43, pulldown station 0.38, inside
   0.19-0.55).
+
+## 8a. Critic plan (Do 8)
+
+- The calibrated critic (plan 3.4, after D-LIB9-F5) judges assisted_pull_up blind; Q2 (g)'s bound fallback stays armed
+  for that run (D-LIB9a-SLICE). Note for the critic: on its Mistake view the bent arm is the fault, and it should read
+  before the heavier red pad dashes (the pad dashes show only that the pad did not sink).
+- Plan 3.4 R8 (close-ups) and R9 (feel regions) cannot be scored in LIB-9a: there are no close-ups or feel stills yet.
+  No LB1 approval counts as a full 3.4 pass until LIB-9 (or LIB-6/7) adds them and the critic scores R8 and R9.
 
 ## 9. Rulings (D-LIB9a-NOTE, lib4-cards section 13 @ `8669e21`)
 
@@ -183,3 +200,11 @@ lever circle), never the helper maths alone.
    marks, j=1, the key family of LIB-3's M6). The "moving box pad: H9 green" test stays as a record of the engine, with
    its premise asserted. A4 still runs LIB-3's M6 through runQa.
 5. Q5: the D path is proven on an in-memory D copy of lib_close_grip_pulldown (section 1).
+6. Q-A (#245, comment 6242372604): registry.mjs stays byte-identical, because goldenInputs (registry.mjs:61) makes it an
+   input of every generated file; candidate.mjs resolves the How-to source of a row in the injected rows with sourceOf's
+   own rule, and a test proves it equals sourceOf for every main row and the 14 LB1 rows. This is D-LIB9-AUTHORQA's
+   sourceOf part.
+7. D-LIB9a-HOWTOID (lib4-cards 13.1): LB1 How-to sources hold `id` beside `research` (071e078c), because library-scale's
+   synthetic N = 153 reader checks the id of any existing source. Nothing else goes in those files.
+8. D-LIB9-FACTPOSE: a fact's pose is the pose its quote states.
+

@@ -127,13 +127,13 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
       expect(hyp(b, c), `${pose} bracket on the lever end`).toBeLessThan(0.001);
     }
   });
-  it('assisted_pull_up: in start, end and Mistake the knee is one kneecap radius over the drawn pad top (within 1 cm) and over the pad', () => {
+  it('assisted_pull_up: in start, end and Mistake the knee is one kneecap radius over the drawn pad top (within 1 cm), the kneecap inside the pad front', () => {
     for (const pose of ['start', 'end', 'mistake']) {
       const { items, lm } = itemsIn(apu, pose), pad = items.filter(isPad);
       expect(pad.length, pose).toBe(1);
       const top = Math.max(...pad[0].pts.map((p: number[]) => p[1])), zs = pad[0].pts.map((p: number[]) => p[2]);
       expect(Math.abs(lm['knee.r'][1] - top - assist.KNEE_R * 1.75), `${pose} knee over the pad top`).toBeLessThan(0.01);
-      expect(lm['knee.r'][2], `${pose} knee behind the pad front`).toBeLessThanOrEqual(Math.max(...zs));
+      expect(lm['knee.r'][2] + assist.KNEE_R * 1.75, `${pose} kneecap inside the pad front`).toBeLessThanOrEqual(Math.max(...zs));
       expect(lm['knee.r'][2], `${pose} knee in front of the pad rear`).toBeGreaterThanOrEqual(Math.min(...zs));
     }
   });
@@ -178,12 +178,42 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
     }
   });
 
-  it('close_grip_pulldown: the stack rises as the handle comes down, and its cable ends on the stack top (end and Mistake)', () => {
-    const LIFT0 = 0.03;
-    for (const pose of ['end', 'mistake']) {
-      const its = itemsIn(cgp, pose).items, st = its.find(it => it.type === 'stack'), cab = its.find(it => it.type === 'cable' && it.part === 'stack');
-      expect(st.lift, `${pose} lift`).toBeGreaterThan(LIFT0);
-      expect(cab.to[1], `${pose} cable end`).toBeGreaterThanOrEqual(0.06 + st.plates * 0.025 + st.lift - 1e-9);
+  // Every drawn LB1 spec that has a weight stack (D-LIB9a-SLICE: one loop over all stack specs).
+  const STACK_SPECS = () => [['close_grip_pulldown', cgp, 0.03], ['assisted_pull_up', apu, apuMod.MACHINE.stack.lift0]] as [string, any, number][];
+  it('every stack spec: the stack rises off its rest pose (end and Mistake), and its cable ends on the drawn stack top', () => {
+    for (const [id, spec, lift0] of STACK_SPECS()) {
+      const R = plate.renderPlate(spec, { id: 'x' }), drawn = qaEng.equipmentItems(Eng(), spec, R.report, ['start', 'end', 'mistake']);
+      // both stacks sit at lift0 in the spec's start pose and rise from it (the pulldown pulls; the assist hang pushes the pad down)
+      const up = ['end', 'mistake'];
+      expect(itemsIn(spec, 'start').items.find(it => it.type === 'stack').lift, `${id} start lift`).toBeCloseTo(lift0, 9);
+      for (const pose of up) expect(itemsIn(spec, pose).items.find(it => it.type === 'stack').lift, `${id} ${pose} lift`).toBeGreaterThan(lift0);
+      for (const pose of ['start', ...up]) {
+        const its = [...drawn[pose].entries()];
+        const blocks = its.filter(([k, v]) => /\.stack\./.test(k) && v.poly).flatMap(([, v]) => v.poly.map((p: number[]) => p[1]));
+        const top = Math.min(...blocks);                                               // the drawn stack's top edge (plate px)
+        const xs = its.filter(([k, v]) => /\.stack\./.test(k) && v.poly).flatMap(([, v]) => v.poly.map((p: number[]) => p[0]));
+        const cx = (Math.min(...xs) + Math.max(...xs)) / 2;                            // the stack's centre line
+        const low = (l: number[][]) => (l[0]![1]! > l[1]![1]! ? l[0]! : l[1]!);
+        const cable = its.filter(([k, v]) => /\.cable\./.test(k) && v.line && Math.abs(low(v.line)[0]! - cx) < 1).map(([, v]) => v.line);
+        // the stack cable is the vertical run down to the stack (the top run between the pulleys also ends over cx)
+        expect(cable.length, `${id} ${pose} cables over the stack`).toBeGreaterThan(0);
+        const lowEnd = Math.max(...cable.map(l => low(l)[1]!));
+        expect(Math.abs(lowEnd - top), `${id} ${pose} cable end on the drawn stack top`).toBeLessThan(1);
+      }
+    }
+  });
+  it('every stack spec: two static guide rods run through the resting and the lifted plates, drawn as close_grip draws them', () => {
+    for (const [id, spec] of STACK_SPECS()) for (const pose of ['start', 'end', 'mistake']) {
+      const its = itemsIn(spec, pose).items, st = its.find(it => it.type === 'stack');
+      const rods = its.filter(it => it.type === 'line' && it.cls === 'eq-thin');
+      expect(rods.length, `${id} ${pose} rods`).toBe(2);
+      const top = 0.06 + st.plates * 0.025 + st.lift;
+      for (const r of rods) {
+        expect(Math.abs(r.pts[0][2] - st.base[2]), `${id} rod inside the stack`).toBeLessThan((st.w ?? 0.22) / 2);
+        expect(Math.min(r.pts[0][1], r.pts[1][1]), `${id} ${pose} rod from the stops`).toBeLessThanOrEqual(0.06);
+        expect(Math.max(r.pts[0][1], r.pts[1][1]), `${id} ${pose} rod through the lifted plates`).toBeGreaterThan(top);
+      }
+      expect(rods.every(r => JSON.stringify(r.pts) === JSON.stringify(itemsIn(spec, 'start').items.filter(x => x.type === 'line' && x.cls === 'eq-thin')[rods.indexOf(r)].pts)), `${id} rods static`).toBe(true);
     }
   });
 
@@ -269,12 +299,15 @@ describe('LIB-9a A9: nothing ships (D-LIB4-ENTRY-2)', { timeout: T }, () => {
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(14);
     expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
   });
+  /** Problems of a batches/ listing [[name, text]]: an LB1 id as a whole token. */
+  const batchProblems = (files: [string, string][]) => files.flatMap(([f, text]) => IDS.filter(id => new RegExp(`\\b${id}\\b`).test(text)).map(id => `${f}: ${id}`));
   it('no LB1 id is in any tools/plates/library/batches/ file', () => {
     const dir = 'tools/plates/library/batches';
-    for (const f of readdirSync(dir).filter(n => n.endsWith('.json'))) {
-      const text = readFileSync(join(dir, f), 'utf8');
-      for (const id of IDS) expect(text, `${f} names ${id}`).not.toMatch(new RegExp(`\\b${id}\\b`));
-    }
+    expect(batchProblems(readdirSync(dir).filter(n => n.endsWith('.json')).map(f => [f, readFileSync(join(dir, f), 'utf8')]))).toEqual([]);
+  });
+  it('mutations: a batches/ file naming lib_chin_up is red; one naming only lib_dumbbell_shoulder_press stays green', () => {
+    expect(batchProblems([['zz.json', '{"rows":{"lib_chin_up":{}}}']])).toEqual(['zz.json: lib_chin_up']);
+    expect(batchProblems([['zz.json', '{"rows":{"lib_dumbbell_shoulder_press":{}}}']])).toEqual([]);
   });
   /** Problems of a golden/library listing [[name, text]]: an LB1 id or slug as a whole token, an LB1 batch file name,
    *  or text naming batch LB1. */
@@ -334,10 +367,8 @@ describe('LIB-9a Q-A (#245): candidate.mjs resolves the How-to source exactly as
     reg.__setExtraBatches([ROWS]);
     try { for (const id of IDS) expect(cand.howtoOf(id, undefined, all), id).toBe(reg.sourceOf(id)); } finally { reg.__setExtraBatches([]); }
   });
-  it('mutations: a changed path is red; an unknown id throws', () => {
-    const changed = (id: string) => cand.howtoOf(id, undefined, all).replace('/howto/', '/how-to/');
-    expect(changed('lib_close_grip_pulldown')).not.toBe(reg.__setExtraBatches([ROWS]) ?? reg.sourceOf('lib_close_grip_pulldown'));
-    reg.__setExtraBatches([]);
+  // The changed-path mutation is a source mutation (candidate.mjs howto/ -> how-to/), listed red on the PR.
+  it('an unknown id throws', () => {
     expect(() => cand.howtoOf('lib_no_such_id', undefined, all)).toThrow(/no row/);
   });
 });
