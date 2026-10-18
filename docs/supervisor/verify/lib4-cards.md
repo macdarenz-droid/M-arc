@@ -2041,6 +2041,32 @@ Why:
 - It pushes, as a supervisor-asked milestone under the 2-hour rule, and posts "LB1 RECHECK READY @ <sha>".
 - The supervisor then runs the calibrated recheck under 13.5's rule, on chest_supported_row, close_grip_pulldown, underhand_lat_pulldown, inverted_row and resistance_band_row.
 
+### 13.7 LB1 recheck (round 3) ruled (D-LIB9a-R3, 2026-10-18 ~13:00 UTC; #245 @ `17e3e98`)
+
+**What ran.** A calibrated recheck under 13.5's rule, with 3 fresh Opus critics on 9 plates.
+- The 5 plates: chest_supported_row, close_grip_pulldown, underhand_lat_pulldown, inverted_row and resistance_band_row.
+- Hidden anchors: lat_pulldown and pull_up.
+- Plants, rebuilt on `17e3e98`, both passing all 10 hard checks:
+  - inverted_row's Mistake drawn as hips up (R5);
+  - underhand's 'Elbows down, back' leader moved to the shoulder (R4, box at top 120).
+- The references add pilot A's plank and mountain_climbers. The brief adds 13.6's segment-length rule.
+- The supervisor rebuilt the plates page at `17e3e98` and got LIB-9a's sha256 `ed3b344c…`.
+
+**Calibration: VALID.**
+- Both plants were caught on their target items: inverted_row plant R5 [2, 1, 1]; underhand plant R4 [3, 3, 2].
+- pull_up scored 4 or more on every item.
+- lat_pulldown first scored R5 [3, 2, 2], and every other item 5. The cause was the supervisor's input error: its facts.json carried the research card's Mistake ("behind the neck") instead of golden B's "Lean and heave" (vendor lat_pulldown.mjs:19, :70, :164-165). That broke 13.5's "anchors are scored on their golden-B facts".
+  - With only that field corrected, the same 3 critics re-scored P04 alone: 5 on every item.
+  - Every other plate's entry stayed byte-identical. The pre-correction files are kept.
+- Rule from now on: the supervisor diffs every anchor's facts.json against its vendor spec's mistake and tells before a round starts.
+
+**Result:**
+- Pass on every scored item: chest_supported_row, close_grip_pulldown, inverted_row and resistance_band_row. Under the floor-level references, band row R7 passes, so Q-R2-3's scale holds.
+- underhand_lat_pulldown: R5 [3, 4, 3]. Its Mistake's low bar and arm are drawn under the solid forearm, so "Pulled too low" does not read. This is a new row; rounds 1 and 2 did not flag it. Since this is the plate's second failed round, LIB-9a stops on it and the supervisor rules:
+  - One targeted fix: draw the Mistake's low bar and arm as red dashed lines above the solid figure, keeping the segment lengths. The critics' own fix checks out at 84.5 and 88.1 px against the drawn 84 and 88. The arrow ends on the low bar.
+  - Then a single-plate calibrated recheck, with 2 anchors and 2 plants. A third failure goes to the supervisor, who rules again and does not loosen anything.
+- The LB1 plates now passing the calibrated critic (R1-R7 and R10; R8 and R9 stay unscored, 13.1): chin_up, hanging_knee_raise, assisted_pull_up, inverted_row, close_grip_pulldown, single_arm_lat_pulldown, straight_arm_pulldown, chest_supported_row, resistance_band_row, incline_machine_press and shoulder_press. That is 11. underhand is open. horizontal_leg_press and leg_press_calf_raise stay held (13.3/13.4).
+
 ## 14. LIB-5 design-note rulings (D-LIB5-NOTE, 2026-10-17 ~23:xx UTC; #244 @ ee7f40f)
 
 A 3-lens review read the note. A judge ruled each open point, and one adversarial verifier checked each ruling. Where the verifier corrected a ruling, the corrected text is the ruling. It is changed here only where it clashed with sections 12 and 13 or with another item, and each ruling says in one line what changed. An earlier re-check of the LIB-5 card found 23 defects. Their fixes are merged into the card amendments below.
