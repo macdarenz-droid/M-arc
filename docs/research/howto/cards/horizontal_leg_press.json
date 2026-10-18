@@ -25,10 +25,6 @@
       "why": "true for this child because heels stay flat and pressed into the plate throughout (c1, c3)."
     },
     {
-      "field": "posture['Knees follow the toes']",
-      "why": "true for this child because the kneecaps should track the line of the feet and the knees must not come together (c6)."
-    },
-    {
       "field": "posture['Soft knees at the top']",
       "why": "true for this child because the knees stop at a relaxed extended position, never locked (c3, c4)."
     },
@@ -279,7 +275,7 @@
     },
     {
       "id": "c12",
-      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -290,12 +286,12 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
           "where": "abstract"
         },
         {
           "source": "acsm2009",
-          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         }
       ]
@@ -320,6 +316,23 @@
           "source": "webmd-seated-leg-press",
           "text": "Take a pause, and slowly return your body to the starting position.",
           "where": "how to do it"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
         }
       ]
     }
@@ -403,7 +416,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-17"
     }
   ],
   "plate": {
@@ -437,7 +450,8 @@
         "c4",
         "c8"
       ],
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word about a fault (\"Usually, one set of 12 to 15 reps is good for most people.\" is about sets). Two named faults are tied to harm. Locked knees, by three sources: ACE puts \"Improper technique can lead to injury.\" with the cue to avoid locking out (c7), WebMD puts \"Improper technique can cause an injury.\" with \"keep your heels on the plate to help avoid knee locking\" (c4), and the case report says \"The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees during any type of leg press or squatting exercise.\" (c8). Knees coming together, by one: \"If you bring the knees too close together it can also injure the knee.\" (c6). More sources tie locked knees to harm, so they stay the top fault; a still sign, so drawable stays true. Set aside: \"If the thighs dip too low, you could hurt the knees.\" is not a named fault on this card or a mistakes list."
     },
     "tells": [
       {
@@ -587,7 +601,7 @@
       },
       {
         "where": "Knee, as the knees drift in",
-        "means": "The fault WebMD warns about here is the knees coming together.",
+        "means": "The fault to watch here is the knees coming together.",
         "fix": "Kneecaps in line with the feet.",
         "claim": "c6",
         "redFlag": "knee"
@@ -648,7 +662,8 @@
   },
   "anchorSource": "ace-seated-leg-press",
   "notes": [
-    "The parent card leans on ACE 154 too; ACE titles it 'Seated Leg Press' and its wording (seat adjusted to set the knee angle, resistance plate) fits the horizontal machine at least as well as the 45 degree sled. The parent's catch-lever and plate-loading steps are not inherited: horizontal machines are often stack-loaded with a sliding seat, and no source read here describes their catches or pin. WebMD (medically reviewed) is a second full read for the horizontal machine."
+    "The parent card leans on ACE 154 too; ACE titles it 'Seated Leg Press' and its wording (seat adjusted to set the knee angle, resistance plate) fits the horizontal machine at least as well as the 45 degree sled. The parent's catch-lever and plate-loading steps are not inherited: horizontal machines are often stack-loaded with a sliding seat, and no source read here describes their catches or pin. WebMD (medically reviewed) is a second full read for the horizontal machine.",
+    "LR-34 check (W2-53, 2026-10-18) against cards/leg_press.json and verified shared cards on head 5036283d; shipped sheet tools/plates/layers/exercises/leg_press.howto.mjs on main b99a9e25. Grip holds for type, width and hand contact: leg_press c12 and c3, restating the checkpoint label 'Hands light'; the parent's thumb is an LR-4 drawing convention and its wrist is not sourced, so 'Inherited from the parent' carries no claim for those two. Tailbone flat holds: leg_press c11, restating the zoom caption 'Tailbone and lower back flat on the pad.' Whole foot holds: leg_press c2, restating 'Whole foot flat, middle of the plate.' Knees follow the toes fails: the shipped label is 'Knees over toes', but the parent names only knees caving in (c10); way (1): this card's own c6 (kneecaps follow the line of the feet) already carries posture[1], so the entry leaves. Soft knees holds: leg_press c4, restating the checkpoint label 'Soft knees'. Hands light holds: leg_press c12, restating the checkpoint label 'Hands light'. Five inherit entries are left."
   ],
   "plateFacts": [
     {

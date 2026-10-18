@@ -385,15 +385,17 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
       expect(Math.abs(hyp(cab.to, head.at) - head.r), `${pose} cable on the head pulley rim`).toBeLessThan(0.002);
     }
   });
-  it('underhand_lat_pulldown: the bar travels on the cable line from the head pulley; the lean is unchanged start to end (c5); the Mistake rocks the torso back (c7)', () => {
+  // LR-31 (research head 9eaa248): the card's Mistake is the past-end pull (c6, c8, c11), drawn with the set lean (c5)
+  it('underhand_lat_pulldown: the bar travels on the cable line from the head pulley; the lean is unchanged start, end and Mistake (c5); the Mistake pulls the bar on past the end and the elbows back behind the trunk', () => {
     const L = qaEng.poseLandmarks(Eng(), ulp), head = itemsIn(ulp, 'start').items.find((x: any) => x.type === 'pulley')!;
     const ang = (v: number[]) => Math.atan2(v[1]!, v[2]!) * 180 / Math.PI;
     const dir = (lm: any) => ang([0, lm.grips[1] - head.at[1], lm.grips[2] - head.at[2]]);
     expect(Math.abs(dir(L.lm.start) - dir(L.lm.end)), 'start and end bars on one line through the head pulley').toBeLessThan(0.5);
     const lean = (lm: any) => ang([0, lm.neck[1] - lm['hip.r'][1], lm.neck[2] - lm['hip.r'][2]]);   // hip joint to the neck base: the scapulae do not move it
     expect(Math.abs(lean(L.lm.start) - lean(L.lm.end)), 'lean start = end').toBeLessThan(1);
-    expect(lean(L.lm.mistake) - lean(L.lm.end), 'Mistake leans back at least 20 deg more').toBeGreaterThan(20);
-    expect(L.lm.end.backUpper[2] - L.lm.mistake.backUpper[2], 'Mistake upper back behind the end one').toBeGreaterThan(0.08);
+    expect(Math.abs(lean(L.lm.mistake) - lean(L.lm.end)), 'lean Mistake = end').toBeLessThan(1);
+    expect(L.lm.end.grips[1] - L.lm.mistake.grips[1], 'Mistake bar at least 10 cm below the end bar').toBeGreaterThanOrEqual(0.10);
+    expect(L.lm.mistake['elbow.r'][2] - L.lm.end.backMid[2], 'Mistake elbow at least 5 cm behind the end backMid').toBeLessThanOrEqual(-0.05);
   });
   it('single_arm_lat_pulldown: in start, end and Mistake the drawn D-handle grip is at the hand, its rails end at the drawn ring, and the cable leaves that ring for the head pulley', () => {
     const { headTangent } = sapMod.HANDLE;
@@ -602,12 +604,15 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
 //  m1 end knees not above the hips: "hip: 100, knee: 100, ankle: -25 };" -> "hip: 60, knee: 100, ankle: -25 };"  (test 1, end knees)
 //  m2 no swing: "export const SWING_OFF = -0.20;" -> "export const SWING_OFF = 0;"                              (test 1, Mistake swung back)
 //  m3 parent's tell back: "{ key: 'kick', text: 'Legs<br>kicked up'" -> "{ key: 'knees', text: 'Knees only'"  (test 2)
-  it('shoulder_press: two Mistake tells, `arch` (topFault) first, `gap` anchored on the drawn pad gap mark', async () => {
+  // LR-31 (research head 9eaa248): the card is drawable:false (its top fault, the handles dropping, is a speed fault), so
+  // topFault is that fault's key and differs from the drawn `arch`
+  it('shoulder_press: two Mistake tells, `arch` (plate.mistake, drawn) first, `gap` anchored on the drawn pad gap mark', async () => {
     const sp = (await import(/* @vite-ignore */ lib('specs/shoulder_press.mjs'))).default;
     const card = JSON.parse(readFileSync(new URL('../../docs/research/howto/cards/shoulder_press.json', import.meta.url), 'utf8'));
     const keys = sp.mistake.tells.map((t: any) => t.key);
     expect(keys).toEqual(['arch', 'gap']);
-    expect(keys[0]).toBe(card.topFault);
+    expect(card.plate.mistake.drawable).toBe(false);
+    expect(keys[0], 'drawable:false: the drawn key differs from topFault').not.toBe(card.topFault);
     const gapLine = sp.mistake.guides.find((g: any) => g.kind === 'line' && g.pts.length === 2 && Array.isArray(g.pts[0]));
     const mid: number[] = [0, (gapLine.pts[0][1] + gapLine.pts[1][1]) / 2, (gapLine.pts[0][2] + gapLine.pts[1][2]) / 2];
     const a = sp.mistake.tells[1].anchor;
@@ -974,12 +979,14 @@ describe('LIB-9a A4, A6 and Q1: runQa node half on the LB1 slice', { timeout: T 
   const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
   const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
   const candOf = (id: string, page = html, a = all) => cand.candidateOf(id, { all: a, platesHtml: page, engine: E, authoring: true });
-  it('clean: both slice plates have no node-half problem; F7 is down and only F5 waits on the browser half', async () => {
+  // F7 is raised exactly where the card is drawable:false (lib4-cards 13 Q1(a)): assisted_pull_up at research head 9eaa248 (LR-31)
+  it('clean: both slice plates have no node-half problem; F7 is raised only on a drawable:false card, and only F5 waits on the browser half', async () => {
     for (const id of ['lib_close_grip_pulldown', 'lib_assisted_pull_up']) {
-      const r = await qa(await candOf(id));
+      const r = await qa(await candOf(id)), f7 = readJson(`docs/research/howto/cards/${id.replace(/^lib_/, '')}.json`).plate.mistake.drawable === false;
       expect(node(r), id).toEqual([]);
-      expect(r.flags.F7.raised, id).toBe(false);
-      expect(qaIdx.FLAGS.filter((f: string) => r.flags[f].raised && !['F2', 'F5'].includes(f)), id).toEqual([]);
+      expect(r.flags.F7.raised, id).toBe(f7);
+      expect(f7, id).toBe(id === 'lib_assisted_pull_up');
+      expect(qaIdx.FLAGS.filter((f: string) => r.flags[f].raised && !['F2', 'F5', ...(f7 ? ['F7'] : [])].includes(f)), id).toEqual([]);
     }
   });
   // A spec mutation, built the way the page builds it: a scratch module that imports the real spec and applies fn.
@@ -1149,17 +1156,24 @@ describe('LIB-9a A11 and Q3: the card fields and the ruled tempo map', () => {
     const c = cardOf('chin_up'); c.plate.view = 'front';
     expect(sha(canon(c))).not.toBe(cardsSha.cards.chin_up);
   });
-  it('Q1: topFault is the key of plate.mistake through the ruled map (drawable:true), and the drawn first tell carries it', () => {
-    const MAP: Record<string, string> = { chin_up: 'kip', hanging_knee_raise: 'swing', assisted_pull_up: 'partial', inverted_row: 'sag', close_grip_pulldown: 'low',
-      underhand_lat_pulldown: 'rock', single_arm_lat_pulldown: 'past', straight_arm_pulldown: 'bend', chest_supported_row: 'lean', resistance_band_row: 'slump',
-      incline_machine_press: 'blades', shoulder_press: 'arch', horizontal_leg_press: 'lock', leg_press_calf_raise: 'lock' };
+  // Q1 (lib4-cards 13 Q1(a)) on the research head named in #245 6246213504 (LR-31): DRAWN maps each card's plate.mistake
+  // to its key (the spec's first Mistake tell); a drawable:false card's topFault is the key of the top fault the card
+  // names, TOP_FALSE (keys proposed for the supervisor's ruling), so F7 is raised for exactly those ids.
+  const DRAWN: Record<string, string> = { chin_up: 'kip', hanging_knee_raise: 'swing', assisted_pull_up: 'partial', inverted_row: 'sag', close_grip_pulldown: 'low',
+    underhand_lat_pulldown: 'past', single_arm_lat_pulldown: 'past', straight_arm_pulldown: 'bend', chest_supported_row: 'lean', resistance_band_row: 'slump',
+    incline_machine_press: 'blades', shoulder_press: 'arch', horizontal_leg_press: 'lock', leg_press_calf_raise: 'lock' };
+  const TOP_FALSE: Record<string, string> = { assisted_pull_up: 'fast', resistance_band_row: 'snap', shoulder_press: 'drop' };
+  it('Q1: topFault is the drawn key on a drawable:true card and the card\'s own top-fault key on a drawable:false card; every drawn first tell carries the drawn key', async () => {
     for (const id of LB1) {
       const c = cardOf(id);
-      expect(c.plate.mistake.drawable, id).toBe(true);
-      expect(c.topFault, id).toBe(MAP[id]);
+      expect(c.plate.mistake.drawable, id).toBe(!(id in TOP_FALSE));
+      expect(c.topFault, id).toBe(TOP_FALSE[id] ?? DRAWN[id]);
+      expect(topFaultProblems(c, DRAWN[id]!), id).toEqual([]);
     }
-    expect(apu.mistake.tells[0].key).toBe(cardOf('assisted_pull_up').topFault);
-    expect(cgp.mistake.tells[0].key).toBe(cardOf('close_grip_pulldown').topFault);
+    for (const id of build.drawnIds().map((i: string) => i.replace(/^lib_/, ''))) {
+      const spec = (await import(/* @vite-ignore */ lib(`specs/${id}.mjs`))).default;
+      expect(spec.mistake.tells[0].key, `${id} first tell`).toBe(DRAWN[id]);
+    }
   });
   // Q1's two cases, as the content verifier checks them: drawable:true needs topFault = the drawn fault's key;
   // drawable:false needs a topFault that differs from it (so F7 is raised).

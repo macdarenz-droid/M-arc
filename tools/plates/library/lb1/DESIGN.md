@@ -3,8 +3,8 @@
 Card: `docs/supervisor/verify/lib-9a-card.md` @ `19a6017` (Do 1). Rulings: lib4-cards sections 1, 11.1 and 12 @ `19a6017`
 (D-LIB4-ENTRY-2, D-LIB9-ENGINE, D-LIB9-AUTHORQA, D-LIB9-CARDFIELDS, D-LIB-CIMANNERS, D-LIB-LANE-ACTIVE, D-LIB5-BOX), and
 this note's rulings, D-LIB9a-NOTE (lib4-cards section 13 @ `8669e21`; Q1-Q5 below). Plan: `claude/howto-options` @
-`4a9fd86`. Research: the 14 cards and quotes are byte copies from `claude/libht-research` @ `9dbc7e0` (Do 6; re-copied
-once when the supervisor names the wave-2 head). Census: `docs/howto/library/inputs/census.json` @ `4a9fd86`.
+`4a9fd86`. Research: the 14 cards and quotes are byte copies from `claude/libht-research` @ `9eaa248` (Do 6, re-copied from
+the post-wave-2 head the supervisor named on #245, comment 6246213504; first copied from `9dbc7e0`). Census: `docs/howto/library/inputs/census.json` @ `4a9fd86`.
 
 Nothing here ships: every LB1 row stays at stage `drawing` or `review` in `lb1/rows.json`, outside `batches/`.
 
@@ -73,9 +73,9 @@ keys (D-LIB9-HANDPAGE).
   is raised (plan 1, small-motion zoom), with an alt text saying the view is enlarged.
 - **F7 follows research (Q1).** topFault comes from the card (section 4), so the expected F7 is a research fact: on a
   drawable:true card the drawn Mistake carries topFault and F7 stays down; on a drawable:false card F7 is raised and
-  needs the owner's yes. single_arm_lat_pulldown's drawable question is with the research owner (the card's viewWhy
-  and handlingMistakes order, plan 3.1:85); until it is answered its expected F7 is undecided and no Do 7 evidence
-  for it counts. LIB-9a never edits the card beyond its three keys.
+  needs the owner's yes. At `9eaa248` (LR-31) three cards are drawable:false, so F7 is expected raised on
+  assisted_pull_up, resistance_band_row and shoulder_press. LR-32 answered single_arm_lat_pulldown (Q1(b)): it stays
+  drawable:true with the past-end pull, so no F7. LIB-9a never edits the card beyond its three keys.
 - **F1 on resistance_band_row (D-LIB8-floor, ruling Q-D5-1, lib4-cards 13.3).** The floor sit uses plank's camera
   (`fit`, `maxScale 1.35`, `y0 339`); the floor runs to 1.60 m so the 'band' label fits right of the foot, and the fit
   lands at 159 px/m (x1.087). A named exemption by id and key on the LB1 sheet, the supervisor's to sign.
@@ -89,12 +89,15 @@ Q-D5-3 / D-LIB8-shrug; spec committed at 15°). Neither is bent to pass a check;
 
 - **topFault (Q1).** Written by Do 6 from the card, never from a spec, through this ruled map of each card's
   plate.mistake to a key: chin_up `kip`, hanging_knee_raise `swing`, assisted_pull_up `partial`, inverted_row `sag`,
-  close_grip_pulldown `low`, underhand_lat_pulldown `rock`, single_arm_lat_pulldown `past`, straight_arm_pulldown
-  `bend`, chest_supported_row `lean`, resistance_band_row `slump`, incline_machine_press `blades`, shoulder_press
-  `arch`, horizontal_leg_press `lock`, leg_press_calf_raise `lock`. Two cases: drawable:true, topFault is the key of
-  plate.mistake; drawable:false, it is the key of the top fault the card itself names (mistake.why or
-  handlingMistakes), which differs from the drawn Mistake's key, so F7 is raised. All 14 cards are drawable:true @
-  `9dbc7e0`. The spec's first Mistake tell carries plate.mistake's key and draws that fault.
+  close_grip_pulldown `low`, underhand_lat_pulldown `past` (LR-31; `rock` at `9dbc7e0`), single_arm_lat_pulldown
+  `past`, straight_arm_pulldown `bend`, chest_supported_row `lean`, resistance_band_row `slump`, incline_machine_press
+  `blades`, shoulder_press `arch`, horizontal_leg_press `lock`, leg_press_calf_raise `lock`. Two cases: drawable:true,
+  topFault is the key of plate.mistake; drawable:false, it is the key of the top fault the card itself names
+  (mistake.why or handlingMistakes), which differs from the drawn Mistake's key, so F7 is raised. At `9eaa248` three
+  cards are drawable:false, each a speed fault, with keys proposed for the supervisor's ruling: assisted_pull_up
+  `fast` (lowering too fast, c16), resistance_band_row `snap` (the band snapping back, c5), shoulder_press `drop`
+  (the handles dropping on the way down, c6). The spec's first Mistake tell carries plate.mistake's key and draws
+  that fault.
 - `plateFacts` only for numbers that a claim's verbatim quote states, each naming that claim. A bound ("no more than
   about 30 degrees") or a range is not a point fact: the drawing stays inside it, and it is not written as a fact.
   The fields are written in Do 6 from the head the supervisor names, never from a spec.
@@ -162,14 +165,10 @@ lever circle), never the helper maths alone.
   Mistake, the red half-hang legs above; the bent elbow's only open side ('Arms bent') is the 45 px gap to the tower,
   and the 47 px button does not fit in it.
 - **One Mistake tell (Q-D5-4; lib4-cards 13.4 Q-R2-2).** Q-D5-4 asks for 2-3 tells wherever the card names more
-  than one visible sign that can be placed (DRAWING-GUIDE:24, :40). Three plates keep one tell, as ruled:
+  than one visible sign that can be placed (DRAWING-GUIDE:24, :40). Two plates keep one tell, as ruled:
   - horizontal_leg_press (`lock`): the card's mistake names one sign, "Snapping the knees straight and locking them"
     (c7, c4, c8). Measured: the end knee is 15.0 deg, the Mistake knee 0.5 deg. The heels (c7) and the low back (c4) are
     right-form tells or other faults; drawing them would add a second fault (DRAWING-GUIDE:24, :37).
-  - underhand_lat_pulldown (`rock`): the card names one visible sign, "the torso rocks back" (the Mistake leans back
-    more than 20 deg past the end, test "the Mistake rocks the torso back"). "To drive the bar down" is the purpose and
-    "using momentum" cannot be seen in a still; c5's lean limit is the same sign. The tried 'Bar driven down' leader
-    crossed the face and the arm (round 2, 6245258953).
   - inverted_row (`sag`), on the placement ground only: the fold's only open-side edge is the buttock, which `sag`
     marks, and `sag`'s cue says "the body folds"; a second tell there is one sign twice (DRAWING-GUIDE:40). The other
     side of the fold lies inside the solid end figure. Boxes tried for a 'Folds at hips' tell on the Mistake hip
@@ -178,6 +177,9 @@ lever circle), never the helper maths alone.
     solid thigh (builder's figure, not re-measured).
   - incline_machine_press is not one of them: its second tell `roll` marks c5's forward roll on the red handle, in the
     open top right (13.4 must-fix 5).
+  - underhand_lat_pulldown was a one-tell plate (`rock`) at `9dbc7e0`. Its LR-31 Mistake, the past-end pull, has two
+    signs the card names ("pulling the bar further down", "the elbows start moving backwards"), drawn as `past` and
+    `back`, close_grip's pair.
 - **Tall machines and F1.** The pulldown station and the assist tower are 2.2-2.3 m tall, so `fit` lands at 126-133
   px/m, inside F1 (123.9-146.3) with little room. Machines are kept at the 8's heights.
 

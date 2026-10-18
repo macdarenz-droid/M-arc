@@ -2,11 +2,12 @@
 // side view, figure faces the machine (screen right). LB1, mode H. Clone sources: close_grip_pulldown (LB1, after the
 // D-LIB9a-SLICE fixes: station, stack, rods, lean construction, label rules) and lat_pulldown (golden A: the latBar).
 // View: side (card plate.view, census view): the bar path in front of the face, the elbows driven down and back, the
-// unchanged lean and the fault (the torso rocking back to drive the bar down) are all sagittal.
+// unchanged lean and the fault (the bar pulled on past the end, the elbows travelling back) are all sagittal.
 // Source: docs/research/howto/cards/underhand_lat_pulldown.json (claude/libht-research). Claims used: c1 (underhand,
 // about shoulder width), c4 (pads tight on the thighs), c5 (slight lean, no more than about 30 deg, no extra lean during
-// the pull), c6 (elbows down and back toward the glutes, bar just below chin height), c7 (no momentum, torso stable:
-// the fault), c10 (shoulder blades down first), c12 (tempo 2 s / 2 s).
+// the pull), c6 (elbows down and back toward the glutes, bar just below chin height), c8 and c11 (the fault: pulling
+// on past the end, the elbows moving back; LR-31 at research head 9eaa248), c10 (shoulder blades down first), c12
+// (tempo 2 s / 2 s).
 // Geometry decisions:
 //  - Station as close_grip_pulldown (column at 1.04/1.30 m, 18 cm further back than lat_pulldown's, shared by the LB1
 //    pulldowns), seat top 42 cm, knee roller on the thighs, head pulley 2.08 m, 16 x 5 kg stack with two rods.
@@ -16,12 +17,17 @@
 //  - The lean is the same at the start and the end (c5): pelvis tilt -8, trunk -3, a 13 deg lean at the hip.
 //  - End: bar centre 10 cm under the chin, 9 cm in front of it (just below chin height, c6); forearms vertical under
 //    the bar, elbows pulled down toward the hips.
-//  - Mistake (card plate.mistake, c7, c5): momentum. The torso rocks back about 25 deg past the set lean and the bar
-//    comes down with it to the chest; the arms are the end pose's. The swing reads as the red trunk behind the solid one.
+//  - Mistake (card plate.mistake, c6, c8, c11; LR-31): the bar pulled on down past the end (grip 14 cm under and 4 cm
+//    in front of the chest mark, 25.7 cm below the end bar) and the elbows driven back behind the trunk (7.4 cm behind
+//    the end backMid, the red elbow cap 8.9 px clear of the solid end figure). The lean stays the set lean (c5), so
+//    the arm and the bar are the only red parts. The bar sits behind the solid torso, so its moving cable is drawn
+//    dashed to the head pulley, as close_grip draws it.
+//  - Mistake tells: 'past' (the bar pulled too low, on the red arrow's tip right of the chest) and 'back' (the elbows
+//    behind the body, from the open left side), close_grip's pair.
 // CARD: GX (c1, about shoulder width), the lean limit (c5, about 30 deg), tempo (card `tempo`). Unsourced numbers:
 //  END_BAR 10 cm under and 9 cm in front of the chin (card: "just below chin height"), START_Y 1.63 m, TILT -8 and
-//  TRUNK -3 (card: "slight lean"), the Mistake rock (pelvis -24, trunk -12: about 25 deg past the set lean; card gives
-//  no size) and MIS_BAR 16 cm under the rocked chin; station sizes (SEAT_TOP 0.42 m, HEAD 2.08 m, COL 1.04/1.30 m,
+//  TRUNK -3 (card: "slight lean"), MIS_BAR 14 cm under and 4 cm in front of the chest mark and the Mistake elbow pole
+//  [0, 0.5, -1] (card gives no size), the tell boxes (176, 222) and (4, 236); station sizes (SEAT_TOP 0.42 m, HEAD 2.08 m, COL 1.04/1.30 m,
 //  bar 1.22 m / 60 cm / 12 cm drop, 16 plates, LIFT0 3 cm) copied from close_grip_pulldown and lat_pulldown.
 import { rootOnSeat, landmarksOf } from '../engine.mjs';
 
@@ -54,11 +60,10 @@ const START_BAR = [0, START_Y, END_BAR[2] + cd[2] / cd[1] * (START_Y - END_BAR[1
 
 const start = { ...body, scap: { elev: 0, pro: 0 }, reach: grips(START_BAR, [1, 0.1, 0.2]) };
 const end = { ...body, scap: { elev: -2, pro: -2 }, reach: grips(END_BAR, [0.2, -1, -0.3]) };
-// Mistake: the torso rocks back past the set lean and the bar rides down with it to the chest.
-const misTrunk = { root: { at: rootOnSeat(SEAT, -24), tilt: -24 }, trunk: -12, neck: -2, scap: { elev: -2, pro: -2 }, plant: feet };
-const lmM = landmarksOf({ ...misTrunk, shoulder: { flex: 0 } }, H);
-const MIS_BAR = [0, lmM.chin[1] - 0.16, lmM.chin[2] + 0.09];
-const misBody = { ...misTrunk, reach: grips(MIS_BAR, [0.2, -1, -0.3]) };
+// Mistake (LR-31, card plate.mistake c6, c8, c11): the bar pulled on down past the end, so the elbows travel back behind
+// the trunk; the lean stays the set lean (c5).
+const MIS_BAR = [0, lm0.chest[1] - 0.14, lm0.chest[2] + 0.04];
+const misBody = { reach: grips(MIS_BAR, [0, 0.5, -1]) };
 
 const PAD_AT = lm0['thighTop.r'];
 const PAD = { at: [0, PAD_AT[1], PAD_AT[2]], r: 0.055 };
@@ -132,13 +137,14 @@ export default {
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Return', s: 2, move: true }],
   mistake: {
     pose: misBody,
-    parts: ['torso', 'head', 'arm.r', 'bar'],
+    parts: ['arm.r', 'bar'],
     guides: [
       { kind: 'dashed', pts: [MIS_BAR, headTangent(MIS_BAR)] },
-      { kind: 'arc-arrow', center: 'hip.r', r: 70, a0: -110, a1: -135 },
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'end', off: [14, 0] }, to: { at: 'grip.r', off: [14, 0] } },
     ],
     tells: [
-      { key: 'rock', text: 'Rocks<br>back', anchor: 'backUpper', box: { left: 8, top: 200 }, cue: 'The torso rocks back to drive the bar down.' },
+      { key: 'past', text: 'Pulled<br>too low', anchor: { at: 'grip.r', off: [14, 0] }, box: { left: 176, top: 222 }, cue: 'The bar keeps going down well past the chin.' },
+      { key: 'back', text: 'Elbows<br>go back', anchor: 'elbow.r', box: { left: 4, top: 236 }, cue: 'The elbows start to travel back behind the body.' },
     ],
   },
   alt: 'Underhand lat pulldown, side view. Seated with the thighs under the knee pad, palms facing in about shoulder width, the bar is pulled from straight arms overhead to just below the chin, elbows down and back.',

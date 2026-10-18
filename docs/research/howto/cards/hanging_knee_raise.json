@@ -13,28 +13,8 @@
   "parent": "hanging_leg_raise",
   "inherit": [
     {
-      "field": "grip.width (about shoulder width, arms hanging vertical)",
-      "why": "true for this child because the hang on the bar is identical; only the legs bend. Consensus on the parent too; no study compares widths."
-    },
-    {
-      "field": "grip.handContact (bar across the base of the fingers) and grip.wrist (not curled forward)",
-      "why": "true for this child because the same overhand hang loads the hand the same way (c2, c16)."
-    },
-    {
       "field": "grip.thumb (wrapped every set)",
-      "why": "true for this child because the lifter still falls if the hand opens (c3)."
-    },
-    {
-      "field": "setup: step or box to reach the bar, box moved clear of the legs",
-      "why": "true for this child because the bar and the hang are the same; the bent knees swing through the same space in front of the body."
-    },
-    {
-      "field": "setup: dry or chalked hands; straps or ab slings if grip quits first",
-      "why": "true for this child because grip demand is the same hang; the strapped knee-up is the version Escamilla measured (c10)."
-    },
-    {
-      "field": "posture: active hang (shoulders a little down from the ears, arms straight)",
-      "why": "true for this child because the upper body does the same job as on the parent; the leg action is what changes."
+      "why": "true for this child because the lifter still falls if the hand opens (c3; parent c17)."
     }
   ],
   "claims": [
@@ -80,9 +60,10 @@
     },
     {
       "id": "c3",
-      "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar.",
+      "text": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar. Written for barbell lifts (a drill lifting a bar from the floor); applied to the hanging bar by inference.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "hk-baechle-grip"
@@ -373,6 +354,77 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c17",
+      "text": "Hand contact: a manufacturer blog says that when you hang, the bar sits just below the base of the fingers, where the fingers meet the palm. Written for a dead hang (a callus blog) and applied to the knee-raise hang by inference; weak evidence.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "bullbar-calluses"
+      ],
+      "quotes": [
+        {
+          "source": "bullbar-calluses",
+          "text": "When you hang, the bar should sit just below the base of your fingers—where your fingers meet your palm.",
+          "where": "1. The Grip: Hook, Don't Crush"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Width: a manufacturer blog gives a shoulder-width grip with the palms facing away for dead hangs. Written for a dead hang (a callus blog) and applied to the knee-raise hang by inference; weak evidence.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "bullbar-calluses"
+      ],
+      "quotes": [
+        {
+          "source": "bullbar-calluses",
+          "text": "For dead hangs or carries: shoulder-width, palms facing away (pronated grip).",
+          "where": "2. The Grip Width: Shoulder-Width or Slightly Wider"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Active hang: a manufacturer blog says to pull the shoulder blades down and back while hanging. Written for a dead hang (a callus blog) and applied to the knee-raise hang by inference; weak evidence. Its next sentence, a slight bend in the elbows, conflicts with c2 and is not used.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "bullbar-calluses"
+      ],
+      "quotes": [
+        {
+          "source": "bullbar-calluses",
+          "text": "Pull your shoulder blades down and back",
+          "where": "3. The Hanging Mechanics: Active Shoulders, Not Passive Arms"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Stop line for shoulder pain: NASM says that if a client reports shoulder or elbow pain, numbness or tingling that persists, they are referred on rather than training through it. Written for chin-ups and pull-ups and applied to the knee-raise hang, which shares the arm position, by inference.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "nasm-chin-pull"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chin-pull",
+          "text": "if a client reports shoulder or elbow pain, numbness, or tingling that persists, refer them to a physician or physical therapist rather than training through it.",
+          "where": "Injury Prevention and Scope"
+        }
+      ]
     }
   ],
   "sources": [
@@ -455,6 +507,26 @@
       "pmid": null,
       "access": "full",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "bullbar-calluses",
+      "url": "https://bullbarfit.com/blogs/q-as/what-is-the-correct-way-to-grip-the-bar-to-avoid-calluses",
+      "title": "How to Grip the Bar Without Getting Calluses (Bullbar Fit, manufacturer blog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-18"
+    },
+    {
+      "id": "nasm-chin-pull",
+      "url": "https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked",
+      "title": "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-18"
     }
   ],
   "plate": {
@@ -484,7 +556,8 @@
       "what": "Swinging: the body swings to help kick the legs up.",
       "why": "Both technique sources forbid swinging the body to raise the legs. Frequency is not measured.",
       "claim": "c4",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: no frequency word for a knee-raise fault (curl and efetch 2026-10-18 of every read source). Set aside: Yessis's \"if you have a tendency to slouch\" is posture outside the exercise and 'tendency' is not a frequency word; bullbar-calluses' \"Most people grab the bar like they're trying to strangle it.\" is a grip on a general bar-hang page and \"Here's where most people go wrong: they hang from their shoulders like a sack of potatoes.\" is written for hanging in general, to prevent calluses, not for this exercise. LR-31 step 2: no quote ties swinging (c4), stopping at hip height (c6) or dropping the legs (c8) to harm; Yessis's \"Development of the muscles involved reduces risk of injury to the lower back\" is about muscle, and McGill's spine load (c14) is the straight-leg version, not a fault. LR-31 step 3: no common-mistakes list; swinging is the fault the most read sources tell the lifter to avoid (strengthlog-hanging-knee-raise \"Without swinging\", yessis-hanging-knee-leg-raise \"Do not swing the body to help raise the legs.\", c4); both say to lower with control (c8) but name no fault to avoid."
     },
     "tells": [
       {
@@ -513,14 +586,16 @@
   },
   "grip": {
     "type": "Overhand (palms away), full closed grip.",
-    "width": "Inherited: about shoulder width.",
+    "width": "Shoulder width (c18).",
     "thumb": "Wrapped around the bar (inherited; c3).",
-    "handContact": "Inherited: bar across the base of the fingers.",
+    "handContact": "Bar just below the base of the fingers, where the fingers meet the palm (c17).",
     "wrist": "Not curled forward (c16).",
     "claims": [
       "c2",
       "c3",
-      "c16"
+      "c16",
+      "c17",
+      "c18"
     ]
   },
   "setup": [
@@ -530,7 +605,10 @@
     },
     {
       "step": "Take the bar overhand, palms away, thumbs wrapped.",
-      "claim": "c2"
+      "claim": [
+        "c2",
+        "c3"
+      ]
     },
     {
       "step": "Hang with your arms fully straight and let your body go still.",
@@ -626,18 +704,19 @@
       },
       {
         "where": "Lower back",
-        "means": "The straight-leg version measured about 3000 N of spine compression; bent knees likely load the spine less (inference).",
+        "means": "The straight-leg version measured about 3000 N of spine compression; bent knees likely load the spine less.",
         "fix": "Keep the knees bent.",
         "claim": "c14",
         "redFlag": "back"
       },
       {
         "where": "Shoulder",
-        "means": "Arms high overhead narrow the space under the shoulder roof (measured in pull-ups).",
-        "fix": "Set the shoulders a little down from the ears before each rep (the inherited active hang).",
+        "means": "Arms high overhead narrow the space under the shoulder roof.",
+        "fix": "Pull your shoulder blades down and back. If it hurts, stop the set.",
         "claim": [
           "c15",
-          "inherit:5"
+          "c19",
+          "c20"
         ],
         "redFlag": "shoulder"
       }
@@ -661,12 +740,13 @@
     {
       "key": "hand",
       "kind": "hand",
-      "right": "Overhand, bar across the base of the fingers, thumb wrapped, wrist not curled.",
+      "right": "Overhand, bar just below the base of the fingers, thumb wrapped, wrist not curled.",
       "wrong": "Wrist curled forward.",
       "claim": [
         "c16",
         "c2",
-        "c3"
+        "c3",
+        "c17"
       ]
     },
     {
@@ -700,12 +780,18 @@
   },
   "anchorSource": "yessis-hanging-knee-leg-raise",
   "gaps": [
-    "Tier A: no sourced way to get down from the bar safely; the parent's box-clear setup line is inherited, nothing new invented.",
+    "Tier A: no sourced way to get down from the bar safely; the parent card has no box-clear setup line, so none is inherited (LR-34).",
     "Tier A: safeties/J-hooks and bar path clear of the neck do not apply (bodyweight hang). Load progression: bent knees first, straight legs later (c13).",
-    "Tier A: no source on this card says what to do if a lower-back ache stays; the row fix does not add one. The shared back red-flag box and the owner disclaimer carry the stop-and-check line."
+    "Tier A: no source on this card says what to do if a lower-back ache stays; the row fix does not add one. The shared back red-flag box and the owner disclaimer carry the stop-and-check line.",
+    "No sourced link from grip giving out to straps or ab slings: the parent card has no strap line (LR-34); feel.rows[1] keeps the c10 wording."
   ],
   "notes": [
-    "Yessis also advises holding the breath and a slight lower-back arch at the start; neither is used, because the parent card and other sources teach a still, quiet hang and no source here supports breath-holding. Not sourced: a safe way down from the bar (inherited from the parent's box line). Escamilla 2006 measured the knee-up in arm straps, not a bare-hand hang. McGill 2015 measured straight legs only. The StrengthLog hanging knee raise page was re-fetched on 2026-09-30 (access full, quotes verbatim). feel.rows[3].fix comes from the inherited active-hang line (inherit[5]), not from a claim on this card."
+    "Yessis also advises holding the breath and a slight lower-back arch at the start; neither is used, because the parent card and other sources teach a still, quiet hang and no source here supports breath-holding. Not sourced: a safe way down from the bar. Escamilla 2006 measured the knee-up in arm straps, not a bare-hand hang. McGill 2015 measured straight legs only. The StrengthLog hanging knee raise page was re-fetched on 2026-09-30 (access full, quotes verbatim).",
+    "W2A 2026-10-17: searched PubMed esearch 'pull-up AND (dismount OR fall OR falling)' (14 hits), 'chin-up AND injury' (5), 'horizontal bar AND fall AND injury AND exercise' (1), none on how to get down; esearch-only leads are not citations; coach and manual pages for getting down from the bar, plus strengthlog.com/hanging-knee-raise/ -> 200, strengthlog.com/hanging-leg-raise/ -> 200, muscleandstrength.com hanging-knee-raise -> 403. Fetched acefitness.org exercise-library/190/chin-ups -> 200; strengthlog.com/chin-up/ -> 200; strengthlog.com/pull-up/ -> 200; barbend.com/chin-up/ -> 200; en.wikipedia.org/wiki/Pull-up_(exercise) -> 200; darebee.com/exercises/pull-ups.html -> 200; inspireusafoundation.org/chin-ups/ -> 200; acefitness.org/resources/everyone/blog/6636/how-to-do-a-pull-up/ -> 200; verywellfit chin-up and pull-up pages -> 402; nerdfitness, garagegymreviews, healthline, menshealth, bodybuilding.com and puregym pull-up/chin-up pages -> 404; muscleandstrength.com chin-up and pull-up -> 403; nsca.com pull-ups -> 403; startingstrength.com chin-up -> 403; Body-Solid owner's manuals GDCC250, GDIP59, DPCC, GKR60 (bodysolid.com/content/...) -> 200 (assembly and general warnings only). No source says how to get down from the bar safely after hanging knee raises.",
+    "Verify w2 2026-10-18 (W2-2): feel.rows[2].means lost '(inference)' (LR-27 plain words; 'likely' keeps how sure). The fix 'Keep the knees bent.' is kept: it is the sourced progression (c13, c14: straight legs are the version measured at about 3000 N), not a stop line. No source on this card supports 'Stop the set. Don't train through the pain.', so none is added (LR-6 R1). Re-read by efetch: McGill 2015 (PMID 25111163) has no bent-knee load and no advice line; Escamilla 2006 (PMID 16649890) names the Power Wheel knee-up, reverse crunch and bent-knee sit-up, not the hanging knee-up, as possibly problematic for low back problems. gaps[2] and the pending redFlag 'back' stand.",
+    "Verify W2-6 2026-10-18: feel.rows[3].means drops '(measured in pull-ups)' (only when the LR-34 step sources the row's fix; otherwise the row stays as on the head); how sure stays in c15 (MECH, applied to a hang by reasoning). W2-6's straps fix for feel.rows[1] (cite inherit:4) is void under LR-34: the parent card has no strap line, and the Yessis page (curl 200, 2026-10-18) mentions no straps or slings. risks[0] and feel.rows[1].where kept: no source or study wording.",
+    "W2A LR-8 check under LR-34 against cards/hanging_leg_raise.json on 5036283d (golden-B research is a source map only): the thumb (parent c17) holds, restating the whole string 'Full grip' (THUMB_PAGE, tools/plates/layers/exercises/hanging_leg_raise.howto.mjs on main). The wrist (parent c18) fails: no wrist string on that sheet is whole on the parent card ('A curling wrist means your grip is failing. End the set or use straps.', 'Base of the fingers, thumb wrapped, wrist level.' and 'Bar at the fingertips, wrist curled.' each add straps or a hand contact the parent does not source), so the wrist inherit entry is removed and grip.wrist cites this card's own c16. The jump or step-up holds (parent c1) and is cited to this card's own c1, not inherited: the parent's shipped get-in string is the box step, so there is no whole string. Grip width, hand contact, the box-clear step, chalk, straps and the active hang fail (the8.md:138 lists the width, straps and box clearance as unsourced golden-B points; the parent's grip.handContact says Not sourced; chalk and the active hang are not on the parent card). Those entries are removed. Way (1): hand contact and width are this card's own c17 and c18 (bullbar-calluses, MECH, WEAK); the shoulder row's fix is this card's own c19 (bullbar-calluses, MECH, WEAK; its next sentence, \"Keep a slight bend in your elbows—never lock out fully.\", conflicts with c2 and is not used); no quote gives the box clearance, so it stays in gaps; no fetched source links straps to grip giving out, so feel.rows[1] stays and gaps records it.",
+    "W2-R12 2026-10-18: feel.rows[3].fix gains its stop line by LR-34 way (1): new c20 quotes nasm-chin-pull's pain sentence (curl 2026-10-18, HTTP 200, verbatim; the source chin_up c16 quotes), tagged MECH (written for chin-ups and pull-ups; the hang shares the arm position). redFlag stays 'shoulder'."
   ],
   "plateFacts": [],
   "tempo": [

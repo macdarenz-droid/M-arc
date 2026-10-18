@@ -1,6 +1,6 @@
 {
   "id": "shoulder_press",
-  "checked": "2026-09-30",
+  "checked": "2026-10-17",
   "sourceFixes": [],
   "quotes": [
     {
@@ -72,6 +72,20 @@
       "quote": "In the overhead position, the shoulder is relatively unstable. To protect your shoulder it is important to engage your lats (back muscles) to initiate the downward movement as oppsed to simply yielding to gravity.",
       "status": "verbatim",
       "closest": "In the overhead position, the shoulder is relatively unstable. To protect your shoulder it is important to engage your lats (back muscles) to initiate the downward movement as oppsed to simply yielding to gravity."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-close-shoulder-press",
+      "quote": "Grasp the handles closest to your body firmly with a full grip (thumbs clasped around the handles) and maintain a neutral position with your wrists (i.e., wrists in line with your forearms).",
+      "status": "verbatim",
+      "closest": "Grasp the handles closest to your body firmly with a full grip (thumbs clasped around the handles) and maintain a neutral position with your wrists (i.e., wrists in line with your forearms)."
+    },
+    {
+      "claim": "c7",
+      "source": "ace-close-shoulder-press",
+      "quote": "Position your elbows pointing towards the front of your body (i.e., not in the traditional 3 and 9 o'clock positions where the elbows are aligned with the midline of your trunk).",
+      "status": "verbatim",
+      "closest": "Position your elbows pointing towards the front of your body (i.e., not in the traditional 3 and 9 o'clock positions where the elbows are aligned with the midline of your trunk)."
     },
     {
       "claim": "c7",
@@ -172,11 +186,18 @@
       "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
     },
     {
-      "claim": "c12",
+      "claim": "c13",
       "source": "acsm2009",
       "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
       "status": "verbatim",
       "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c12",
+      "source": "acsm2009",
+      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
     }
   ]
 }

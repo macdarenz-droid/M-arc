@@ -205,6 +205,11 @@
       "quotes": [
         {
           "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
           "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
@@ -368,7 +373,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-17"
     },
     {
       "id": "theraband-manual",
@@ -418,7 +423,8 @@
       "what": "Slumping: the lower back rounds and the trunk tips forward while holding the band.",
       "why": "Both band sources ask for a tall, straight, neutral back; no study counts how often slumping happens.",
       "claim": "c3",
-      "drawable": true
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word about a fault (\"Elastic resistance exercise is frequently used in rehabilitation programs.\" is about the method), and no quote ties a named fault to harm: the band manual's injury warning is about exercises that stretch the band so it \"may snap toward the head\", and \"to avoid injury\" in the band check is an equipment check, not a candidate. No common-mistakes list. One fault is told to be avoided: \"Do not allow the band or tubing to snap back.\" (theraband-manual; the fault is handlingMistakes' snap-back, c5), so it is the top fault. Its only sign is speed, so drawable is false. The drawn fault, by the same steps: no other fault is named, so the break of the instruction the most read sources give, sitting tall with a straight back (sweat-bandrow, physitrack-longsitrow, sabf-bandrow, theraband-manual; c3): slumping."
     },
     "tells": [
       {
@@ -494,6 +500,11 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Letting the band snap the arms back.",
+      "fix": "Control the way back to the start.",
+      "claim": "c5"
+    },
+    {
       "mistake": "Slumping, with the lower back rounded, while holding the band.",
       "fix": "Sit tall first; if you can't keep the back straight, hold the band further along its length so it stretches less.",
       "claim": [
@@ -505,11 +516,6 @@
       "mistake": "Using a worn band or one that sits loosely on the feet.",
       "fix": "Check the band before each session and anchor it firmly around the soles, or press the feet against something sturdy.",
       "claim": "c2"
-    },
-    {
-      "mistake": "Letting the band snap the arms back.",
-      "fix": "Control the way back to the start.",
-      "claim": "c5"
     }
   ],
   "feel": {
@@ -625,5 +631,5 @@
       "move": true
     }
   ],
-  "topFault": "slump"
+  "topFault": "snap"
 }

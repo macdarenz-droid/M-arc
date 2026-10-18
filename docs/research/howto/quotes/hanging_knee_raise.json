@@ -41,6 +41,16 @@
       "id": "yessis-hanging-knee-leg-raise",
       "access": "full",
       "fixes": null
+    },
+    {
+      "id": "bullbar-calluses",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "nasm-chin-pull",
+      "access": "full",
+      "fixes": null
     }
   ],
   "quotes": [
@@ -230,6 +240,34 @@
       "claim": "c16",
       "source": "odriscoll-1992",
       "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c17",
+      "source": "bullbar-calluses",
+      "quote": "When you hang, the bar should sit just below the base of your fingers—where your fingers meet your palm.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c18",
+      "source": "bullbar-calluses",
+      "quote": "For dead hangs or carries: shoulder-width, palms facing away (pronated grip).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c19",
+      "source": "bullbar-calluses",
+      "quote": "Pull your shoulder blades down and back",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "nasm-chin-pull",
+      "quote": "if a client reports shoulder or elbow pain, numbness, or tingling that persists, refer them to a physician or physical therapist rather than training through it.",
       "status": "verbatim",
       "closest": null
     }
