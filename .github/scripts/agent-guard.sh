@@ -40,6 +40,12 @@ if git rev-parse --verify -q "$BASE_REF" >/dev/null; then
       HIT=$(echo "$CHANGED" | grep -E '^src/(slices/workout/session\.ts|core/models\.ts|core/store\.ts)$' || true)
       [ -z "$HIT" ] || warn 'Gate B files touched' "session/models/store changed: $(echo $HIT | tr '\n' ' ')" 'only for Gate B, built on the R2.8 ids already on main (ActiveSession.id, entry id, set id, set status); no second id scheme.'
       ;;
+    ccr-061c7350-tjvpo6|ccr-8cef8a15-l12swp)
+      HIT=$(echo "$CHANGED" | grep -E '^(escobar-worker/|src/escobar/|src/brain/|docs/(REMEDIATION|QA-|qa/))' || true)
+      [ -z "$HIT" ] || err 'Watch agent outside its files' "the watch branch changes files owned by the remediation work: $(echo $HIT | tr '\n' ' ')" 'revert these paths to origin/main; ask the owner if the watch needs a change there.'
+      HIT=$(echo "$CHANGED" | grep -E '^src/(slices/workout/session\.ts|core/models\.ts|core/store\.ts)$' || true)
+      [ -z "$HIT" ] || warn 'Gate B files touched' "session/models/store changed: $(echo $HIT | tr '\n' ' ')" 'only for Gate B, built on the R2.8 ids already on main (ActiveSession.id, entry id, set id, set status); no second id scheme.'
+      ;;
     claude/*)
       HIT=$(echo "$CHANGED" | grep -E '^(native/wear/|src/native/wearEngine\.ts|src/slices/settings/WatchLab\.tsx)' || true)
       [ -z "$HIT" ] || err 'Claude builder in watch files' "this claude/* branch changes watch-owned files: $(echo $HIT | tr '\n' ' ')" 'revert these paths; they belong to codex/gt6-gate-a-watch-lab.'
