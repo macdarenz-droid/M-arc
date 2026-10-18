@@ -109,6 +109,8 @@ const browser = {
     return ctx;
   },
 };
+/** The mark's y of a CSS-px edge at y from x0 to x1 (the smaller end), by the inverse of the capture's ctm. */
+const markY = ([a, b, c, d, e, f], y, x0, x1) => Math.min(...[x0, x1].map(x => (a * (y - f) - b * (x - e)) / (a * d - b * c)));
 /** One context's A2 margin (main: s2.off - s3.off - 10; the new block: the smallest x.off - fB.off - 10 up to FCP + 300). */
 function trace(info, fcpNow) {
   const [s1, s2, s3] = info.samples, rec = info.rec;
@@ -123,7 +125,7 @@ function trace(info, fcpNow) {
   } else if (s3) margin = s2.off - s3.off - 10;
   if (Number.isFinite(margin)) runMargin = Math.min(runMargin, margin);
   if (!TRACE) return;
-  const s = [s1, s2, s3].filter(Boolean).map((x, k) => `s${k + 1} ${fx(x.off, 3)}@${fx(x.t, 0)}${x.word ? ` word top ${fx(x.word[1], 1)}` : ''}`).join(' ');
+  const s = [s1, s2, s3].filter(Boolean).map((x, k) => `s${k + 1} ${fx(x.off, 3)}@${fx(x.t, 0)}${x.word ? ` word top ${fx(markY(x.ctm, x.word[1], x.word[0], x.word[2]))}` : ''}`).join(' ');
   console.log(`  ${info.theme} ${info.rate}x: ${s}${f} · FCP ${fx(rec ? rec.fcp : fcpNow, 1)} ms · ${frames} · margin ${fx(margin)}`);
 }
 
@@ -133,7 +135,9 @@ const margins = [];
 try {
   for (let run = 1; run <= RUNS; run++) {
     const errors = []; runMargin = Infinity;
-    await block(browser, { runs: id => id === 'BUG-34' }, errors, THEME ? [THEME] : ['silent-black', 'paper', 'ember', 'emerald', 'midnight'], PORT, console);
+    // The block's own log line gives its margin when it has one (E11); main's comes from the trace of its samples.
+    const log = { log: (...x) => { console.log(...x); const m = /smallest A2 margin (-?[\d.]+)/.exec(x.join(' ')); if (m) runMargin = Number(m[1]); } };
+    await block(browser, { runs: id => id === 'BUG-34' }, errors, THEME ? [THEME] : ['silent-black', 'paper', 'ember', 'emerald', 'midnight'], PORT, log);
     done++;
     if ((errors.length ? 'red' : 'green') === EXPECT) matched++;
     margins.push(runMargin);
