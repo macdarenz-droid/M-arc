@@ -46,6 +46,11 @@
      "kind": "finish",
      "text": "The dumbbells come back to your thighs, as at the start.",
      "claim": "c4"
+    },
+    {
+     "kind": "safety",
+     "text": "Failed rep: drop the dumbbells out to your sides.",
+     "claim": "c5"
     }
    ]
   },
@@ -64,6 +69,21 @@
      "kind": "get-in",
      "text": "Kick them up into the pressing position.",
      "claim": "c3"
+    },
+    {
+     "kind": "finish",
+     "text": "After the set, bring each knee up in turn to catch them.",
+     "claim": "c6"
+    },
+    {
+     "kind": "finish",
+     "text": "Or have a spotter take one of them.",
+     "claim": "c6"
+    },
+    {
+     "kind": "finish",
+     "text": "Don't throw them from shoulder height onto the floor.",
+     "claim": "c6"
     }
    ]
   }
@@ -171,8 +191,9 @@
   },
   {
    "id": "c5",
-   "text": "The same source says that if you get stuck in a dumbbell bench press you can drop the weights out to the side. Recorded as a conflict with the candidate rule; not used in any field.",
+   "text": "Failed rep on a dumbbell bench press: if you get stuck, you can drop the weights out to the side. One coach source, in its benefits section; written for the flat bench and applied to the incline by inference. A failed-rep way out, not the normal set-down (c4).",
    "tags": [
+    "MECH",
     "WEAK"
    ],
    "sources": [
@@ -216,8 +237,8 @@
   }
  ],
  "gaps": [
-  "No source names a wrong kick-up or set-down pose, so postureArchetype.wrong is null. The candidate \"never dropped out to the sides\" is unsupported, and one source allows it when stuck (c5).",
-  "Seated set-down is now sourced (c6: knees up one at a time to catch the dumbbells, or a spotter takes one; one coach source, WEAK, applied to arnold_press by inference). The seated variant still has no finish step; adding one is outside W2A's scope (variants reserved). Until it is added, no seated way-out line is shown.",
+  "No source names a wrong kick-up pose or a wrong bench set-down. c6 names a wrong seated set-down (throwing the dumbbells from shoulder height onto the floor), shown as a seated finish step (LR-30), but postureArchetype is shared by both variants and its right pose is the bench kick-up (c1, c2), so postureArchetype.wrong stays null. The candidate \"never dropped out to the sides\" is unsupported, and one source allows it when stuck (c5). \"Never over the face\" (content.md 5.2) has no quote yet, so no line says it (LR-30).",
+  "Seated set-down is sourced by one coach source (c6, WEAK; applied to arnold_press by inference) and shown as the seated finish steps (LR-30). A spotter way out for seated presses is sourced on the exercise cards (dumbbell_shoulder_press c7, arnold_press c10; ACE). No read source gives a seated failed-rep way out without a spotter, so none is shown here (LR-3).",
   "No injury data found for the kick-up or set-down."
  ],
  "notes": [
@@ -226,7 +247,7 @@
   "A coach log on the dumbbell floor press (elitefts.com) brings the legs up to catch the dumbbells at the end; not cited (floor press, not bench).",
   "W2A 2026-10-17 T5: second bench set-down source found (ggr-db-bench, coach, read in full; added to c4). No textbook or guideline source found. c4 keeps its tags (CONSENSUS, WEAK): both sources are coach pages and the incline is still by inference. The same GGR line allows dropping the weights on the ground before getting up if the dumbbells are bouncy and the gym allows it; not used in any field.",
   "W2A 2026-10-17 T5 fly/pullover: no read source says how to get the dumbbells into position or set them down for dumbbell_fly or dumbbell_pullover, so appliesTo is unchanged. Fetched: barbend.com/dumbbell-pullover/ -> 200 (only warns the dumbbell passes over the face; no set-down); barbend.com/dumbbell-chest-fly/ -> 404; fitnessvolt.com/dumbbell-fly/ -> 200 and /dumbbell-pullover/ -> 200 (setup only); strengthlog.com/dumbbell-pullover/ -> 200; strengthlog.com/dumbbell-fly/ -> 429; inspireusafoundation.org/dumbbell-fly/ and /dumbbell-pullover/ -> 200 (nothing); verywellfit fly and pullover pages -> 402.",
-  "W2A 2026-10-17 conflict for a ruling: bb-db-shoulder-press (seated press, end of set) says \"There’s no reason to chuck them from shoulder height onto the floor.\" c5 (fv-db-bench, bench press, stuck rep) says \"This is less of an issue with dumbbells because, if you get stuck, you can simply drop the weights out to the side.\" content.md 5.2 also lists dumping dumbbells to the sides on the floor as a way out. Different exercises and situations; no shown line changed.",
+  "W2A 2026-10-17, ruled LR-30 (supervisor 2026-10-18): no conflict. bb-db-shoulder-press covers the normal set-down after a seated press (c6: \"There’s no reason to chuck them from shoulder height onto the floor.\"); fv-db-bench covers a stuck rep lying on a bench (c5: \"if you get stuck, you can simply drop the weights out to the side\"). c5 is the bench failed-rep step and c6 the seated finish steps. content.md 5.2's \"never over the face\" has no quote, so no line says it.",
   "W2A 2026-10-17 T4: arnold_press end-of-set searched: barbend.com/arnold-press/ -> 200 (setup only: dumbbells on the knees), fitnessvolt.com/arnold-press/ -> 200, strengthlog.com/arnold-press/ -> 200, garagegymreviews.com/arnold-press -> 200, inspireusafoundation.org/arnold-press/ -> 200, verywellfit arnold press -> 402; no page says how to set the dumbbells down after an Arnold press, so c6 covers it by inference (MECH). Other seated pages read: strengthlog.com/dumbbell-shoulder-press/ -> 200 (no end-of-set text), fitnessvolt.com/dumbbell-shoulder-press/ -> 404."
  ],
  "sources": [
