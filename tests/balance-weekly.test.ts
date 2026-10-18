@@ -34,7 +34,7 @@ describe('weekly', () => {
     const schedule = { ...emptySchedule(), mon: 'split_push', wed: 'split_pull', fri: 'split_legs' };
     const s = [session('2026-09-14', [{ id: 'lib_barbell_bench_press', sets: sets(60, 8) }]), session('2026-09-16', [{ id: 'lib_lat_pulldown', sets: sets(60, 8) }])];
     expect(trainingStreak(s, schedule, '2026-09-18')).toBe(2); // Friday not yet done
-    expect(trainingStreak(s, schedule, '2026-09-21')).toBe(0); // Friday missed
+    expect(trainingStreak(s, schedule, '2026-09-21')).toBe(2); // one missed Friday is forgiven (D-BUG39)
     expect(trainingStreak(s, emptySchedule(), '2026-09-17')).toBe(1); // yesterday counts, today is forgiven
     expect(trainingStreak(s, emptySchedule(), '2026-09-18')).toBe(0);
     expect(trainingStreak(s, emptySchedule(), '2026-09-16')).toBe(1);
