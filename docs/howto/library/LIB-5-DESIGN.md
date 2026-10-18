@@ -327,38 +327,34 @@ Bar over the face, breath-holding and jump landing are sourced by no shared card
 
 ## k. The 8's machine cards (Do 3 b) [N12]
 
-**The research head is not named yet**, so the per-id table cannot be built on it. Research stays `9dbc7e0`, which has no card for any of the 8. `claude/libht-research-the8` @ `e6381fa` holds unverified cards for all 8 without the three keys, and is never a source on its own. Once the supervisor names the head, the tempo map, the measured-joint facts and the TOPFAULT inputs follow as one addendum comment on #244 (reading and writing only, no slot, no push), as D-LIB5-TEMPO8 2 allows.
+**Research head: `claude/libht-research` @ `9eaa2480`** (lib4-cards 14.5). The tempo map and the form table below are D-LIB5-TEMPO8 as ruled in lib4-cards 14.7 (rows 1-15). The builder's copy is `TEMPO8` in `tools/plates/library/research/validate.mjs`; `tests/howto/library-cards8.test.ts` holds its own literal copies.
 
-Below is only what can be fixed from main now. The TOPFAULT pass gets only the inputs D-LIB5-TOPFAULT lists. The plate half below is one of them. It never reads #244's other comments, its history or an earlier note.
+**Tempo map** (spec phase ← card plate.tempo field; spec in `tools/plates/vendor/exercises/<id>.mjs`). A moving phase takes `up` or `down`. The static phase right after the concentric takes `pause`, and it is left out when pause is 0 (LR-33, Q3). Any other static phase is a constant with a quote that states its seconds, or it has "no verified source" (`{ phase, from: null }`: the build throws `${id}: tempo: ${phase} has no verified source`, and the id stops).
 
-**Spec phases to map** (labels only, from `tools/plates/vendor/exercises/<id>.mjs` on main; the field each `s` takes is filled from the named head's verified `plate.tempo`):
-
-| id | Spec phases (name, s, move) | Map row (field per phase) |
+| id | Map row | Result at 9eaa2480 |
 |---|---|---|
-| lib_dumbbell_lateral_raise | none (no spec; H6:not-engine) | none |
-| lib_barbell_back_squat | Lower 2 move; Drive up 1 move; Brace 1 | head not named |
-| lib_pull_up | Pull 1 move; Hold 0.5; Lower 2 move; Rest 0.5 | head not named |
-| lib_hanging_leg_raise | Lift 1.5 move; Hold 0.5; Lower 2 move; Rest 1 | head not named |
-| lib_lat_pulldown | Pull 1 move; Hold 0.5; Return 2 move; Rest 0.5 | head not named |
-| lib_seated_cable_row | Pull 1 move; Hold 1; Return 2 move; Rest 0.5 | head not named |
-| lib_leg_press | Lower 2 move; Pause 0.5; Press 1 move; Rest 0.5 | head not named |
-| lib_machine_chest_press | Press 1 move; Hold 0.3; Return 1.5 move; Rest 0.5 | head not named |
+| lib_dumbbell_lateral_raise | none (no spec; H6:not-engine) | stops on TOPFAULT `none` |
+| lib_barbell_back_squat (:126) | Lower←down; Drive up←up; Brace←pause | built [Lower 2, Drive up 2] ≠ spec; also TOPFAULT `none` |
+| lib_pull_up (:111) | Pull←up; Hold←pause; Lower←down; Rest: no verified source | throws on Rest |
+| lib_hanging_leg_raise (:132) | Lift←up; Hold←pause; Lower←down; Rest: no verified source | throws on Rest |
+| lib_lat_pulldown (:152) | Pull←up; Hold←pause; Return←down; Rest: no verified source | throws on Rest; also TOPFAULT `none` |
+| lib_seated_cable_row (:90) | Pull←up; Hold←pause; Return←down; Rest: no verified source | throws on Rest |
+| lib_leg_press (:139) | Lower←down; Pause = constant 1 (c15); Press←up; Rest←pause | built [Lower 2, Pause 1, Press 2, Rest 1] ≠ spec |
+| lib_machine_chest_press (:164) | Press←up; Hold←pause; Return←down; Rest: no verified source | throws on Rest |
 
-Rest, Brace and leg_press's bottom Pause can only be named constants with a verified quote, or "no verified source". D-LIB5-TEMPO8 6 expects all 7 to stop at H6.tempo, because e6381fa's cards give up 2 / down 2 while each spec's concentric phase is 1 s and hanging_leg_raise's Lift is 1.5 s.
+All 8 stop, so CARDS_8 is empty: no card gains a machine key, and each id keeps 'H6:no-card' (or 'H6:not-engine') and 'F7'. Plates, specs and cards keep their values. Commit 2 changes only the 7 ids' 'H6:no-card' and 'F7' reason text, with the D-LIB5-TEMPO8 entry in COACHING-DECISIONS. S3 and S12 run on the S3 fixture card (`tests/howto/fixtures/lib5/research/`).
 
-**plateFacts form table (proposal for ruling;** labels from each spec's `measure`):
+**plateFacts form table** (`kind: 'angle'` on every row; one form per fact: a `measure: true` fact has no `joint`, a `joint` fact has no `measure`). No value is written, because all 7 stop on tempo.
 
-| id | Spec measure (vertex, title, value, expect) | Proposed form |
-|---|---|---|
-| lib_barbell_back_squat | knee.r, 'Knee', 'about 125° bend', 125 | `kind: 'angle', measure: true`, pose end |
-| lib_pull_up | elbow.r, 'Elbow', 'about 145° bend', 146.5 | `measure: true`, pose end |
-| lib_hanging_leg_raise | hip.r, 'Hip', '90° to trunk', 90 | `measure: true`, pose end |
-| lib_lat_pulldown | hip.r from vertical ('up'), 'Lean back', 'about 15°', 15 | `measure: true` (a `joint: 'hip.r'` fact would read the hip angle and fail) |
-| lib_seated_cable_row | shoulder.r, 'Shoulder', 'about 90°', 87 | `measure: true`, pose end |
-| lib_leg_press | knee.r, 'Knee', 'about 90° bend', 90 | `measure: true`, pose end |
-| lib_machine_chest_press | elbow.r, 'Elbow', 'soft, not locked', no expect | `joint: 'elbow.r'` (only a joint fact can match), pose from the verified card |
-
-`measure: true` compares the fact with `spec.measure.expect` and the drawn measure (`node.mjs:163`); a `joint` fact compares it with the engine's angle at its pose (`:161-162`). Values come only from verified quotes. Where none exists, the id gets no plateFacts key.
+| id | Vertex (spec measure) | Quantity measured | Form, pose |
+|---|---|---|---|
+| lib_barbell_back_squat | knee.r | knee bend from straight | `measure: true`, end |
+| lib_pull_up | elbow.r | elbow bend from straight | `measure: true`, end |
+| lib_hanging_leg_raise | hip.r | trunk-to-thigh angle at the hip | `measure: true`, end |
+| lib_lat_pulldown | hip.r | trunk lean back from a plumb line at the hip | `measure: true`, end |
+| lib_seated_cable_row | shoulder.r | the upper arm's sweep at the shoulder from start to end | `measure: true`, end |
+| lib_leg_press | knee.r | thigh-to-shank angle at the knee | `measure: true`, end (the spec's 'end' is the bottom) |
+| lib_machine_chest_press | elbow.r | the engine report's elbow.r angle | `joint: 'elbow.r'`, end |
 
 **TOPFAULT pass, plate half of the inputs** (each plate's Mistake tells from the golden fixture, sorted by key, with no selected marker). The card half (plate.mistake.what or, for drawable:false, the named top fault, with claims and quotes) comes from the named head.
 - lateral-raise: dip "The knees dip to swing it up."; shrug "The shoulders shrug toward the ears."; thumbs "Thumbs turn down at the top."

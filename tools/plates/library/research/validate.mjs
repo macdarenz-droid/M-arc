@@ -57,7 +57,8 @@ export function shownStrings(card) {
   return out;
 }
 
-/** Problems with one claim list against its sources and quotes file (shared by shared and per-exercise cards). */
+/** Problems with one claim list against its sources and quotes file (shared by shared and per-exercise cards; a quotes
+ *  entry holds its words in `text` (shared) or `quote` (per-exercise)). */
 function claimProblems(card, quotes, tag) {
   const bad = [], ids = new Set(), srcIds = new Set((card.sources ?? []).map(s => s.id)), cited = new Set();
   if (!Array.isArray(card.claims) || !card.claims.length) return [`${tag}: no claims`];
@@ -77,7 +78,7 @@ function claimProblems(card, quotes, tag) {
       const n = words(q.text ?? '');
       if (n > QUOTE_MAX_WORDS) bad.push(`${tag}: claim ${c.id} quote from ${q.source} has ${n} words, at most ${QUOTE_MAX_WORDS}`);
       if (!(c.sources ?? []).includes(q.source)) bad.push(`${tag}: claim ${c.id} quote from ${q.source}, which the claim does not cite`);
-      const e = entries.filter(x => x.claim === c.id && x.source === q.source && x.text === q.text);
+      const e = entries.filter(x => x.claim === c.id && x.source === q.source && (x.text ?? x.quote) === q.text);
       if (!e.length) bad.push(`${tag}: claim ${c.id} quote from ${q.source} is not in its quotes file`);
       else if (!e.some(x => x.status === 'verbatim')) bad.push(`${tag}: claim ${c.id} quote from ${q.source} is not marked verbatim`);
     }
@@ -133,4 +134,98 @@ export function registrySets(root = ROOT) {
   const reg = JSON.parse(readFileSync(join(root, HOWTO, 'sources.json'), 'utf8').replace(/^\/\/[^\n]*\n/, ''));
   const shared = readdirSync(join(root, HOWTO, 'shared')).sort().map(f => ({ where: `shared/${f}`, sources: JSON.parse(readFileSync(join(root, HOWTO, 'shared', f), 'utf8')).sources }));
   return [{ where: 'sources.json', sources: Object.entries(reg).map(([id, s]) => ({ id, url: s.url })) }, ...shared];
+}
+
+/* ------------------------------------------------- the 8's machine cards (Do 3 b; D-LIB9-CARDFIELDS, D-LIB5-TEMPO8) - */
+/** The three top-level keys researchOf reads (candidate.mjs:44-48). */
+export const MACHINE_KEYS = ['plateFacts', 'tempo', 'topFault'];
+
+/** D-LIB5-TEMPO8 (lib4-cards 14.7 rows 1-8, research 9eaa248): the builder's copy of the ruled 8-row tempo map, keyed
+ *  by lib id. Each spec phase in order: { phase, move?: true, from: 'up' | 'down' | 'pause' } takes that field of the
+ *  card's verified plate.tempo; { phase, constant, claim } is a ruled constant with its verified claim; { phase,
+ *  from: null } has no verified source, so the build throws and the id stops. null: no spec (H6:not-engine). */
+export const TEMPO8 = {
+  lib_dumbbell_lateral_raise: null,
+  lib_barbell_back_squat: [{ phase: 'Lower', move: true, from: 'down' }, { phase: 'Drive up', move: true, from: 'up' }, { phase: 'Brace', from: 'pause' }],
+  lib_pull_up: [{ phase: 'Pull', move: true, from: 'up' }, { phase: 'Hold', from: 'pause' }, { phase: 'Lower', move: true, from: 'down' }, { phase: 'Rest', from: null }],
+  lib_hanging_leg_raise: [{ phase: 'Lift', move: true, from: 'up' }, { phase: 'Hold', from: 'pause' }, { phase: 'Lower', move: true, from: 'down' }, { phase: 'Rest', from: null }],
+  lib_lat_pulldown: [{ phase: 'Pull', move: true, from: 'up' }, { phase: 'Hold', from: 'pause' }, { phase: 'Return', move: true, from: 'down' }, { phase: 'Rest', from: null }],
+  lib_seated_cable_row: [{ phase: 'Pull', move: true, from: 'up' }, { phase: 'Hold', from: 'pause' }, { phase: 'Return', move: true, from: 'down' }, { phase: 'Rest', from: null }],
+  lib_leg_press: [{ phase: 'Lower', move: true, from: 'down' }, { phase: 'Pause', constant: 1, claim: 'c15' }, { phase: 'Press', move: true, from: 'up' }, { phase: 'Rest', from: 'pause' }],
+  lib_machine_chest_press: [{ phase: 'Press', move: true, from: 'up' }, { phase: 'Hold', from: 'pause' }, { phase: 'Return', move: true, from: 'down' }, { phase: 'Rest', from: null }],
+};
+
+/** The tempo array one map row builds from a card's plate.tempo, in H6's shape ({phase, s, move: true} or {phase, s};
+ *  qa/node.mjs:174 compares by JSON.stringify). A moving phase takes up or down only; a pause-mapped phase is left
+ *  out when pause is 0 (Q3); a { from: null } phase throws. null for a null row. */
+export function buildTempo(id, row, plateTempo) {
+  if (row === null) return null;
+  if (!Array.isArray(row)) throw new Error(`${id}: tempo: no ruled map row`);
+  const out = [];
+  for (const e of row) {
+    if (e.from === null) throw new Error(`${id}: tempo: ${e.phase} has no verified source`);
+    if ('constant' in e) {
+      if (e.move) throw new Error(`${id}: tempo: ${e.phase} moves, so it takes up or down, never a constant`);
+      if (typeof e.constant !== 'number' || !e.claim) throw new Error(`${id}: tempo: ${e.phase}'s constant needs seconds and a claim`);
+      out.push({ phase: e.phase, s: e.constant });
+      continue;
+    }
+    if (!['up', 'down', 'pause'].includes(e.from)) throw new Error(`${id}: tempo: ${e.phase} maps to ${JSON.stringify(e.from)}`);
+    if (e.move && e.from === 'pause') throw new Error(`${id}: tempo: ${e.phase} moves, so it takes up or down`);
+    const s = plateTempo?.[e.from];
+    if (typeof s !== 'number') throw new Error(`${id}: tempo: plate.tempo.${e.from} is not a number`);
+    if (e.from === 'pause' && s === 0) continue;
+    out.push(e.move ? { phase: e.phase, s, move: true } : { phase: e.phase, s });
+  }
+  return out;
+}
+
+/** D-LIB5-TEMPO8 14.7 item 15: one form per fact. An angle fact is `measure: true` or names a `joint`, never both. */
+export function factFormProblems(facts) {
+  const bad = [];
+  for (const [i, f] of (facts ?? []).entries()) {
+    if (f.kind !== 'angle') continue;
+    if (f.measure === true && f.joint !== undefined) bad.push(`plateFacts[${i}]: both joint and measure (one form per fact)`);
+    if (f.measure !== true && f.joint === undefined) bad.push(`plateFacts[${i}]: neither joint nor measure`);
+    if (f.measure !== undefined && f.measure !== true) bad.push(`plateFacts[${i}]: measure is ${JSON.stringify(f.measure)}, only true`);
+  }
+  return bad;
+}
+
+/** S2 for one per-exercise card and its quotes file (CARD-V2): its claims, sources and quotes, and its machine fields
+ *  when present (plateFacts non-empty, each fact naming a known claim, one form per fact; tempo entries in H6's shape
+ *  with no claim key; topFault a key). `file` is the card's file name (<id>.json). */
+export function validateCard(card, quotes, { file } = {}) {
+  const tag = `cards/${file ?? `${card?.id}.json`}`, bad = [];
+  if (file && file !== `${card.id}.json`) bad.push(`${tag}: id ${card.id} does not match the file name`);
+  if (quotes?.id !== card.id) bad.push(`${tag}: quotes file id ${JSON.stringify(quotes?.id)}, want ${card.id}`);
+  bad.push(...claimProblems(card, quotes, tag));
+  const ids = new Set((card.claims ?? []).map(c => c.id));
+  if ('plateFacts' in card) {
+    if (!Array.isArray(card.plateFacts) || !card.plateFacts.length) bad.push(`${tag}: plateFacts is empty or not a list (leave the key out instead)`);
+    for (const [i, f] of (card.plateFacts ?? []).entries()) {
+      const refs = [].concat(f.claim ?? []);
+      if (!refs.length) bad.push(`${tag}: plateFacts[${i}] names no claim`);
+      for (const r of refs) if (!ids.has(r)) bad.push(`${tag}: plateFacts[${i}] names unknown claim ${r}`);
+    }
+    bad.push(...factFormProblems(card.plateFacts).map(x => `${tag}: ${x}`));
+  }
+  if ('plateFacts' in card !== 'tempo' in card) bad.push(`${tag}: plateFacts and tempo go in together or not at all`);
+  if ('tempo' in card) {
+    if (!Array.isArray(card.tempo) || !card.tempo.length) bad.push(`${tag}: tempo is empty or not a list`);
+    for (const [i, t] of (card.tempo ?? []).entries()) {
+      const keys = Object.keys(t).join();
+      if (keys !== 'phase,s,move' && keys !== 'phase,s') bad.push(`${tag}: tempo[${i}] keys ${keys}, want phase,s[,move]`);
+      if ('move' in t && t.move !== true) bad.push(`${tag}: tempo[${i}].move is ${JSON.stringify(t.move)}`);
+    }
+  }
+  if ('topFault' in card && (typeof card.topFault !== 'string' || !card.topFault)) bad.push(`${tag}: topFault is not a key`);
+  return bad;
+}
+
+/** Reads a per-exercise card and its quotes file from `root` and validates them. */
+export function validateCardFile(file, root = ROOT) {
+  const card = JSON.parse(readFileSync(join(root, HOWTO, 'cards', file), 'utf8'));
+  const quotes = JSON.parse(readFileSync(join(root, HOWTO, 'quotes', file), 'utf8'));
+  return validateCard(card, quotes, { file });
 }
