@@ -2442,3 +2442,18 @@ Card: `docs/supervisor/verify/gate-flake-4-card.md` (claude/sup-lib4-cards), Rul
   - `:8498` BUG-36, `:8624` and `:8641` BUG-37, `:8944` COPY-2: each starts an in-page rAF recorder (900 ms from its own start), then clicks through Playwright round trips; nothing bounds how late the click lands inside the 900 ms window, so a late click leaves fewer frames after it.
   - A1's stray check still reads its state after the capture, as on main. A late read can only widen `reach`; it cannot hide the dot at (0, 0) (dot-origin stays red at every lag).
   - E9's word skip: a capture taken just before 1050 ms whose state is read just after it skips the word's box where main still counted it. This is the only case where A1 counts less than main.
+
+## LIB-3b: PQ-H10 checks values and the envelope on the real path (LIB-3b builder, 2026-10-18)
+
+Card: `docs/supervisor/verify/lib-3b-card.md` (claude/sup-lib4-cards @ 5551cadd, amendments 1 and 2). PR #258.
+- **D-LIB3b-H10 Decided**: PQ-H10 applies derive.mjs's own `PARAMS` and `paramProblems` against the envelope that runQa holds (`h10(c, env)` at qa/index.mjs:38), for each key that validateParams did not already flag. It never reads the candidate's schema. Empty params give `H10.empty`; a PARAMS key the envelope does not name, or a malformed envelope row, gives `H10.envelope:<key>`; an inherited name (constructor, toString, __proto__) gives `H10.unknown:<key>`. envelope.json names no PARAMS key, so every D/T param stays red until a supervisor ruling gives PARAMS ranges a home.
+- **D-LIB3b-H7 Decided** (supervisor ruling on #258 comment 6249576171, option 1): the B5(b) gap from #232 is real, and the fix moved to LIB-3c. Reproduced on a scratch mirror (golden `makeMirror()`, `vendor/exercises/seated_cable_row.mjs` pulley `r: 0.045` edited, `candidateOf('lib_seated_cable_row')` then `runQa`; nothing committed):
+
+  | Edit | Two in-process renders | Fresh import vs first render | PQ-H7 |
+  |---|---|---|---|
+  | none | same | n/a | `[]` |
+  | per call: `r: 0.045 + Math.random() * 0.02` inside `equipment()` | differ | n/a | `H7.determinism:normal.svg`, `H7.determinism:mistake.svg` |
+  | import time: `const RR = 0.045 + Math.random() * 0.02` at module top, `r: RR` | same | differ | `[]` (missed) |
+  | the per-call edit in `tools/plates/layers/exercises/seated_cable_row.mjs` (not vendor) | same | n/a | `[]`: QA renders the vendor copy (golden.mjs makeMirror copies `VENDOR`) |
+
+  A render that throws leaves R null, so the determinism loop is skipped, but PQ-H1 is red (`H1.engine:render-threw`), so it fails closed. A fresh-import H7 needs an async h7 at index.mjs:38 and a spec loader for H/D/T rows in candidate.mjs, which is reserved in this card and collides with #245. Moved to LIB-3c ("PQ-H7 builds twice from fresh spec imports"). node.mjs's H7 lines are unchanged here.
