@@ -29,6 +29,9 @@ merge_prerequisites: never merges as LIB-9a. LIB-9 merges in checklist slot 8, o
 - LIB-5's back box (Do 9) on main before LIB-9 merges (LR-28).
   - Under D-LIB5-BOX route (b), LIB-5 merges with a fail-closed placeholder, so 'LIB-5 merged' is not enough: its Do 9 PR from claude/lib-5-back-box must have merged too.
   - Why: 7 of the 14 LB1 cards list redFlags 'back' on 9dbc7e0 (chest_supported_row, hanging_knee_raise, horizontal_leg_press, inverted_row, resistance_band_row, shoulder_press, straight_arm_pulldown). LR-28's ship-order rule holds back-linked sheets until the back-pain box exists; it names landmine_row, pendlay_row and t_bar_row, and the same rule covers these 7.
+- LIB-6-PM's back patches and S5-L on main and green (D-LIB5-PAGE; lib4-cards 14, Supervisor actions 12).
+- The variant-line field card is on main before any row whose exercises.json equipment has '/' ships (D-LIB5-VARIANT 6).
+- The D-LIB5-FAMILY comparator (Do 9) has its own fresh Opus PASS and is on this branch before any LB1 child's layer copy is written or shipped.
 
 Rulings this card relies on. These are summaries; where the text posted on claude/sup-lib4-cards differs, the posted text wins.
 - D-LIB4-ENTRY-2 amends D-LIB4-ENTRY (lib4-cards section 1 @ eb77d98: "Before LIB-9 pushes, all of these hold").
@@ -168,6 +171,7 @@ write_scope:
   - tests/howto/lb1-plates.test.ts (node only; it lands with Do 4).
 - tools/plates/library/candidate.mjs and registry.mjs: only the D-LIB9-AUTHORQA option and the sourceOf `all` parameter, after LIB-2b is on main.
 - docs/COACHING-DECISIONS.md: append only.
+- Do 9 only (D-LIB5-FAMILY 6), after LIB-5 is on main and merged into this branch: exactly the family module under tools/plates/library/lint/ and its block in tests/howto/library-lint.test.ts. This is a carve-out from the reserved lint/ folder and LIB-5 paths, and nothing else.
 - Plates pages and QA reports are not committed. build.mjs and qa.mjs write to a temp directory and print the sha256 and the table.
 
 reserved_paths:
@@ -226,6 +230,12 @@ Do:
    - After D-LIB9-F5 is ruled, the supervisor runs the calibrated critic (the docs/supervisor/workflows/pilot-a-critic.js pattern: 2 hidden approved anchors and 2 planted defects; plan 3.4).
    - Fix only what it names. After two failed rounds on one plate, stop and report.
    - If D-LIB9-F5 is ruled a chrome fix through a golden update: merge origin/main once that update lands, rebuild, and re-run QA. F5 then leaves the expected set.
+9. The D-LIB5-FAMILY comparator (lib4-cards 14 OPEN-6 point 6). Build it only after LIB-5 is on main and merged into this branch; it merges before any LB1 child's layer copy is written or shipped.
+   - Post the inherit[]-entry → sheet-path map on the PR first, and wait for the supervisor's ruling on it.
+   - The map lives only in the family module. Cards are never edited (D-LIB9-CARDFIELDS; A11's three-key diff).
+   - The comparator replaces LIB-5's refusal and stays fail-closed: it still throws for `extends`, for any inherit[] entry with no ruled mapping, for a mapped string that is not `===` to the parent's shipped How-to string, and for `extends` that disagrees with the card's `parent`.
+   - Mutations, each red then restored: one inherited string drifted; one inherit[] entry unmapped; the parent's string changed; LIB-5's M1-M3 kept as unmapped cases.
+   - It gets its own fresh Opus review.
 
 Acceptance (each mutation must turn red, then be restored; list each one in the PR):
 - A1 The note and the slice are posted before bulk work, with a cited D/H reason per id. Evidence: PR comment links.
