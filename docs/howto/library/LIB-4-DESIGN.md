@@ -83,8 +83,136 @@ Additive only; every default is today's value:
 - `ht10Sweep(…, { order, custom, indexOf = id => HT_PLATES.findIndex(p => p[0] === id) })`, forwarding `order` and `custom`;
 - `ht10GoldenCounts(browser, { html = readFileSync(HT10_GOLDEN_B), ids = HT_PLATES.map(p => p[0]) } = {})`.
 
-## 5. Fixture (D-LIB4-FIXTURE, -2, -3)
+## 5. Fixture (D-LIB4-FIXTURE, -2, -3, -4; D-LIB4b-F5, D-LIB4b-COPYEDITS)
 
-Day-1 result (#232): LIB-2's generator at 54d37f2d emitted no plate or layer chunk for a library row, and its per-output inputs left out the composers a How-to imports. LIB-2b fixes both. B5 runs once LIB-2b is READY: 3 scratch ids from {lat pulldown, seated cable row, leg press, machine chest press}, two of them sharing one pair key with real pair panels, scratch QA inputs (11.1 item 3), scratch budgets at measured + 10 %, pages from `buildPlatesPage` and LIB-6's `build-layers-page.mjs`, on a scratch branch only.
+Day-1 result (#232): LIB-2's generator at 54d37f2d emitted no plate or layer chunk for a library row. LIB-2b (on main) closes that gap. `tools/plates/library/fidelity/fixture.mjs` builds B5's scratch ids on a scratch tree only: LIB-4b's head plus #181 (LIB-6), never pushed.
 
-**PQH.** LIB-2b's `candidateOf(id, { root, platesHtml, engine })` in `tools/plates/library/candidate.mjs`. Until it exists, the 8 use LIB-3's `candidatesOf` and a library id's 11 PQH rows fail ("no QA candidate builder").
+- **Ids (11.1 items 5, 14).** There are 3 ids, each with its own pair key:
+  - `lib_underhand_lat_pulldown` from `lat_pulldown` (`lib4b-scratch-a`);
+  - `lib_chest_supported_row` from `seated_cable_row` (`-b`);
+  - `lib_cable_chest_press` from `machine_chest_press` (`-c`).
+  
+  Each copies the source's spec and How-to. Each relative import is re-pointed at its original target, and the ids, name and research card are swapped. A byte-diff test proves nothing else differs. A spec id is never one of the 8's (D-LIB4b-POSES (5)). The shared-key proof belongs to LIB-7 (D-LIB4-FIXTURE-4).
+- **Copy edits (D-LIB4b-COPYEDITS).** Two cues are edited minimally, and each edit names the refusal it answers:
+  - the lat pulldown cue loses "top of the" (PQ-H8, 16 words);
+  - the seated row cue becomes two sentences (PQ-H8, semicolon).
+  
+  Golden B's own two cues are golden-B follow-up 12 and are not changed.
+- **Steps.**
+  - `stage`: sources, the batch file `zz-lib4b.json` and its page configs.
+  - `page`: the batch layers page, built by LIB-6 through `layersSpecOf`.
+  - `pin`: the batch golden file over the tree's own plates and layers pages, plus a scratch QA card per id in LIB-3's shape. Its plateFacts come from the clone's own engine report, and its topFault is the selected Mistake tell. The step also writes the pair loader, each panel cut from that id's own block. Each scratch plate entry carries `exemptions: ['F5']`, with the 8's reason quoted verbatim (D-LIB4b-F5).
+  - `budgets`: after `npm run build`, each `ht-`, `posture-` and `feel-` chunk at measured + 10 %.
+  - `pages`: the runner's `--pages` file.
+- **PQH.** LIB-2b's `candidateOf(id, { root, platesHtml, engine })` from `tools/plates/library/candidate.mjs`.
+- **HT4-A5 for a library id (D-LIB4b-POSES).** `twins/ht4.mjs` `libraryA5` works on LIB-6's build of the id's batch page, captured through HT-4's recording shim on a mirror of `tools/plates`.
+  - Each call is attributed to `base`, `cam`, the plate's `-n`/`-m`, or a declared posture zoom side. An unattributed call fails, and so does a declared side with no call.
+  - Calls not on a Wrong side must draw a reference pose. A Wrong side may also draw its declared fault pose.
+  - `fidelity/poses-proof.mjs` runs (7) on LIB-6's build of the 8.
+- **Results.** See section 6.
+
+## 6. Results
+
+Values are quoted from the runs (D-LIB4b-COUNTS); "unverified" means a check was not run. All runs used Chromium 141.0.7390.37 in the container (nproc 4).
+
+### B5: library path, final tree
+
+Tree: 575fa75 + #181 9b8f76e, scratch only. 575fa75 and this branch's later heads differ only in `.github/` and `docs/`. Steps: `fixture.mjs <tree> all`, `generate` and `--check` (PASS, 78 files), `npm run build`, fixture budgets.
+
+- **Rows:** 1,100 of 1,100 pass, which equals `libraryTuples` of the 3 ids. Max px off is 0 on all 3. The run took 2,793.5 s at P=1.
+- **Seconds per id:** underhand lat pulldown 933.3, chest-supported row 929.4, cable chest press 930.4.
+- **Seconds per family:**
+
+  | Family | Seconds |
+  |---|---|
+  | L2 | 0 |
+  | HT7 | 201.9 |
+  | HT8 | 228.4 |
+  | PQH | 136.7 |
+  | entry | 24.1 |
+  | offline | 6.4 |
+  | HT4 | 97.5 |
+  | plate | 425.1 |
+  | HT6 | 306.5 |
+  | HT9 | 393.2 |
+  | HT10 | 973.4 |
+
+- **F5:** 3.57:1 on the 3 ids, the same as on lat pulldown, seated row and machine chest press (D-LIB4b-F5).
+- **HT6/A7-lazy:** runs in a fresh browser context per (id, theme), because `openAppTrain` opens a new context.
+
+**Mutations**
+
+| Mutation | Result |
+|---|---|
+| (a) 1 px `translateX` on the chest-supported row's plate, page CSS | 68 of 357 plate rows fail, all of them that id's (L3 and L2b). The other two ids stay at 0 px. |
+| (b) One source byte changed (that id's spec start tilt, 8 → 9) | Only that id's 11 PQH rows fail. PQH/PQ-H7 fails too, because the report is not ok; the root is PQ-H1 (measure 79.8 vs 87). A deliberately nondeterministic pulley radius did not trip `H7.determinism` (33 of 33 pass); why is unverified. |
+| (c) Research card removed (cable chest press) | `QaRefused: plate QA refused lib_cable_chest_press: PQ-H6 no verified card plate facts` |
+| (d) F5 exemption removed from the underhand lat pulldown | Only that id's `PQH/flags` fails ("F5 raised without a named exemption"); its other PQH rows fail as "report not ok". The re-pin is byte-identical. |
+| (e) The seated row copy edit reverted | `QaRefused: plate QA refused lib_chest_supported_row: PQ-H8 normal.tall.cue "Sit tall; no rocking, the torso finishes upright.": semicolon` |
+| POSES (7) | 48 calls; PASS. A Right override `{ base: 'end', pose: { neck: 4 } }` on the underhand pulldown's pad zoom fails only `HT4/A5-poses` (11 of 12 pass). |
+
+### B7: P decision (dry run, 624d7e8 + LIB-4a 4a2c12e)
+
+| P | Rows | Max px | Wall time |
+|---|---|---|---|
+| 1 | 2,947 of 2,947 | 0 | 7,511 s |
+| 4 | 2,947 of 2,947 | 0 | 2,036 s |
+
+- Rows and px are identical across all 1,009 pixel tuples, so `par.mjs` gives P = 4. That is a 3.69× speed-up.
+- A forced 1-row difference keeps P = 1.
+
+### B7: P decision on the final head (316679e)
+
+Chromium 141.0.7390.37, nproc 4, `--ids golden8`, both runs on the same head and build.
+
+| P | Rows | Max px | Wall time | Job seconds summed |
+|---|---|---|---|---|
+| 1 | 2,947 of 2,947 | 0 on all 8 | 8,422.3 s | 8,421 |
+| 4 | 2,947 of 2,947 | 0 on all 8 | 2,379.7 s | 9,356 |
+
+- `par.mjs p1.json p4.json 4 4`: "P = 4: identical rows and px" over 2,947 rows and 1,009 pixel tuples. Speed-up 3.54×; each job runs about 11 % longer under load.
+- The default is now `DEFAULT_P = 4` in `fidelity.mjs` (function and CLI). Unit test: the default is 4; setting it to 1 turns that test red.
+- Seconds per family at P=4 (summed job seconds): L2 0.2, entry 71.4, plate 1,511, HT4 466.1, HT6 1,077.1, HT7 705.7, HT8 799.2, HT9 1,243, HT10 2,896.6, PQH 555.7, offline 29.6.
+- Chunk sizes from the P=4 run (raw/gz bytes) are identical to the P=1 run's.
+
+### B2 and B8: the 8 on the final head, Chromium 141
+
+Head 21c66d5, which holds LIB-4a 0b2d3c1 and main b99a9e2; later commits change only `docs/`. The run was `--ids golden8 --P 1`.
+
+- **Rows:** 2,947 of 2,947 pass. Max px off is 0 on all 8 ids. The run took 7,522.1 s.
+- **Seconds per id:**
+
+  | Id | Seconds |
+  |---|---|
+  | lateral raise | 928.8 |
+  | back squat | 934.3 |
+  | pull-up | 934.9 |
+  | hanging leg raise | 940.6 |
+  | lat pulldown | 956.0 |
+  | seated row | 949.1 |
+  | leg press | 932.4 |
+  | machine chest press | 945.4 |
+
+- **Seconds per family:**
+
+  | Family | Seconds |
+  |---|---|
+  | L2 | 0.1 |
+  | HT7 | 553.0 |
+  | HT8 | 625.9 |
+  | PQH | 354.2 |
+  | entry | 65.1 |
+  | offline | 17.3 |
+  | HT4 | 272.4 |
+  | plate | 1,163.4 |
+  | HT6 | 841.0 |
+  | HT9 | 1,071.0 |
+  | HT10 | 2,558.1 |
+
+Not yet run on the final head, so unverified:
+- the failure fixtures;
+- the size equalities with A9 and A2;
+- the guard `--blind` runs and the once-row seconds;
+- Chrome 153;
+- B9;
+- B10.
