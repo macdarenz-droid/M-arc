@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-17 ~23:15 UTC · main `2d1bbf3` (train 23; train 24 next) · 8.0k · by supervisor session `session_01SNCyDETVkqVxtLoQxn2Ue9` (took over from `session_01FTBsxoLN135B3HvJ7sT676` on another account). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-18 ~04:40 UTC · main `b99a9e25` (train 25) · **8.0m HANDOFF to a new supervisor account** · by supervisor session `session_01SNCyDETVkqVxtLoQxn2Ue9` (its account ends; every M/ARC session there is archived, its routine disabled). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -808,6 +808,122 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0m HANDOFF 10-18 ~04:30 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
+
+**Why.** Owner, 10-18 ~03:50: "Finish all ongoing task as a last task for this account. Then setup handoff in repo, inclufed ur sandbox infos." The outgoing supervisor is session_01SNCyDETVkqVxtLoQxn2Ue9. A new agent takes over, on another account. The new account cannot see or message any session here.
+
+**What the outgoing supervisor did at the handoff**
+- It asked every M/ARC builder and research session to finish only its current step, push once, post "HANDOFF <card> @ <sha>" on its PR, and stop. Each session was archived after its HANDOFF comment (list below).
+- It landed every review workflow that was still running: rulings and cards are on `claude/sup-lib4-cards`, and research w2 state is on `claude/libht-verify-w2`.
+- It committed its sandbox tools and workflow scripts (`docs/supervisor/scripts/`, `docs/supervisor/workflows/`; see the README table there).
+- It disabled the hourly routine `trig_01KNrnsDb34dztKs493YQ5vW`. Create a new one on the new account (see "First hour").
+- The owner received a private file (account ids, private links, owner items) in the chat. Nothing private is in this file.
+
+**Main** is `b99a9e25` (train 25: #251 CI floor + watch guard, LIB-4a #233, handover). CI: 15/15 green on the train head. The last APK was train 24's (BUG-41). No app code changed after that, so no APK is owed.
+
+**Lanes at the handoff.** Each PR's HANDOFF comment is the builder's own record. Read it before you start a replacement.
+
+| Card | PR / branch @ HANDOFF head | State | Next step | Waits on |
+|---|---|---|---|---|
+| LIB-4b per-id runner | #232 `claude/lib-4b-runner` @ `575fa75` (HANDOFF pending at writing: read #232's newest "HANDOFF LIB-4b" comment) | B5 final-tree results and B7 dry run written into LIB-4-DESIGN.md section 6 (local commit); B2 golden8 run finishing; the builder pushes once and posts HANDOFF when it ends | final-head evidence B5/B7/B8 on main `b99a9e2`, then READY | nothing (chain card, never parks) |
+| LIB-4c library CI | #246 `claude/lib-4c-library-ci` @ `52c853e` (+ wiring #249 `claude/sup-lib4-ci` @ `a30b0c4`, supervisor's) | Do 1-8b built, 149/149 local; nothing unpushed | Do 10 scratch commands (after LIB-4b's B5/B7/B8), then C11-C14, Do 11 seam, C15, READY. #249 merges in one train with LIB-4c | LIB-4b's final head |
+| LIB-5 shared layers | #244 `claude/lib-5-shared-layers` @ `5592280` | the note is ruled (14, 14.1, 14.2; F1b done); Do 2 done on research `9dbc7e0` (pins 38 files; HowToSheet +264/+117 B; check-bundle PASS; lint dry run: 73 shared-card hits under the proposed split) | the supervisor rules D-LIB5-SPLIT from the Do 2 numbers; then Do 3 a (validator) | the w2 merge (re-copy once), the TOPFAULT pass, the tempo-map ruling, CARD FIELDS VERIFIED for the 8, the owner's back-box answer (route (b) meanwhile) |
+| LIB-9a LB1 plates (build-ahead, nothing ships) | #245 `claude/lib-9-lb1` @ `4257648` (+ scratch `claude/lib-9-lb1-calf-wip` @ `89d3ecd`, never merges) | 13 ids drawn, 92/92; held: leg_press_calf_raise, horizontal_leg_press | apply lib4-cards **13.4** (round-2 rulings), then the next milestone post | D-LIB9-F5 for Do 8; the w2 merge (re-copy); Q1(b) for single_arm's F7 |
+| GATE-FLAKE-4 (HT/gate lane) | #253 `claude/gate-flake-4` @ `aaf5bfd` | Do 2-3 done: the fix applied (9 hunks, all inside BUG-34's block; 103 groups); S1 fail-before, S2 (20/20 green at 800 ms lag), S4 (10 seeds red), S5 margin (10.62 ≤ 16.22) done. Not done: mutants M1-M7, S3 under load, Do 6 timing, Do 7-9. Open: `timings.margin`/`timings.top` kept as properties on the existing `timings` array, inside E9-E11 only. The supervisor accepts this if the reviewer confirms they are set only in E9/E10 lines and read only in E11. CI's fallback font for the word is unmeasured (S8 logs it) | finish the card's Acceptance, READY, fresh review, train together with the cards branch (AGENTS.md pointer) | nothing |
+| Research w2 verify | `claude/libht-verify-w2` @ `531b77c` (data head `5036283d` + the verify/w2/ docs) (= W2A #242 `a33d8f3` + W2B `d4f30c7` + the8 #243 `e6381fa`) | LR-29 verify **valid** (run 4); triage done; rulings reviewed | route the three fix packets, then a fresh Opus recheck, verify/w2.md, merge into `claude/libht-research`, name that head on #244 and #245 | nothing |
+
+**Queue (cards written, not started).** Order: D-LIB-LANE-ACTIVE plus section 12 items 21-22. Each starts only on "<card> start" with the active count.
+1. **LIB-3b** (PQ-H10 values and envelope): `docs/supervisor/verify/lib-3b-card.md`. Three check rounds. Must merge before any D or T row exists on any branch, and before #245.
+2. **LIB-4d** (scale test fixes, D-LIB4a-SCALE): `lib-4d-card.md`. Two rounds. Its deadline, read strictly (item 22): before the first merge that ships ANY library row, or takes main past 22 shipped rows.
+3. **LIB-8-FIX** (pilot A #109 review findings): `lib-8-fix-card.md`. Two rounds. Its start message quotes D-LIB8FIX-CARRY and D-LIB8FIX-ENV (item 22) word for word.
+4. Not written yet: the LIB-8 merge card (pilot A gaps 1-2; gap 2 = `golden.mjs:151` verifyChain accepts approvedBy 'owner' only, which needs a ruling), and the calf-raise research check (13.3: the research owner looks for a larger sourced range; only if none exists, a design option goes to the owner).
+5. Active-builder count at the handoff: 0. Every session is archived. Restart the lanes in this order: LIB-4b (chain), LIB-4c (chain), LIB-5, LIB-9a. That is 4, the cap. Then the HT/gate lane: GATE-FLAKE-4. Queue cards follow as slots free.
+
+**Research wave 2 (LR-29) in detail**
+- Verify runs: runs 1-3 were invalid, because their plants fell outside the reviewed scope. `research-verify.js` gained `plantScope`. Run 4 was valid: both plants caught, and the tier-A plant rated blocker.
+- Critic re-fetch: 93 sources, 729/729 quotes verbatim. The supervisor's own 10 % re-fetch: 41 claims, 68/68 verbatim.
+- Triage (`w2-triage.js`): 92 findings deduped into 54 items. 41 are real and 7 rejected; rulings W2-49..54.
+- - Rulings: six drafts (W2-49..54). Each was reviewed by two lenses (consistency; effect on approved material) and a final judge. All six were amended and none rejected. They are LR-30..LR-35 in `w2-rulings-final.md`.
+- Cross-lane effects of the rulings:
+  - **LR-31** sets the rule for picking a plate's top fault. It turns **assisted_pull_up to drawable:false** (a speed fault). Tell LIB-9a: assisted_pull_up needs a fast-lowering fault key, and underhand's spec draws 'past'.
+  - **LR-32** keeps single_arm's past-end pull. Its lib-9a-card.md edits are held until the recheck.
+  - **LR-34** keeps an inherit[] line only if the parent's shipped string holds whole (D-LIB5-FAMILY `===`). It tries ways out in order, and a safety row never leaves without a ruling.
+  - **LR-33**: "Pause momentarily" becomes a 1 s pause, named in a WEAK claim.
+- The packets were regenerated after the rulings review: W2A 92 items, THE8 121, HELPER 61. A dry run on head copies parses cleanly.
+- The w2 state is committed at `claude/libht-verify-w2` @ `531b77c` (README in `verify/w2/`).
+- Files on `claude/libht-verify-w2` under `docs/research/howto/verify/w2/`:
+  - `w2-findings.md`: every item, real or rejected, with its reason;
+  - `w2-rulings-final.md`: the rulings, numbered LR-30.. (add them to RULINGS.md at the merge);
+  - `packet-W2A.md`, `packet-THE8.md`, `packet-HELPER.md`: exact old/new edits per file;
+  - `w2-verify-run.json` (the valid critic run) and `w2-refetch.json` (the supervisor's re-fetch).
+- Next:
+  - one session per packet. W2A's files: W2A's branch. The8's files: the8's branch. The rest (W2B's files): a Sonnet helper with the packet as spelled-out steps. W2B's own session refused cross-session instructions and is archived; never work around a refusal;
+  - each applies only its packet, has its Sonnet fetcher check every new or changed quote, and pushes once;
+  - re-merge into `claude/libht-verify-w2`;
+  - a fresh Opus recheck of the changed lines, plus the quotes files the critic's list missed (chin_up, hanging_knee_raise, assisted_pull_up; W2-54);
+  - write `verify/w2.md` and merge into `claude/libht-research`;
+  - post that head on #244 (LIB-5 re-copy) and #245 (LIB-9a re-copy, then re-verify the changed cards' fields).
+
+**Rulings made since 8.0l** (all in `docs/supervisor/verify/lib4-cards.md` on `claude/sup-lib4-cards` @ `578b3f3`)
+- 12 item 20 D-LIB4a-SCALE; item 21 (freed-slot queue; 13 Q5(c) amended; LIB-10 open items i-ii); item 22 (LIB-4d deadline; D-LIB8FIX-CARRY; D-LIB8FIX-ENV).
+- 13.2 D-LIB9-CLONE; 13.3 D-LIB9a-DO5; 13.4 D-LIB9a-R2 (not GO for READY: one more fix round. The single_arm Mistake target is restated (elbow cap 6 px clear, elbow 10 cm or more behind backMid). The sled-travel test was a loosening and must be fixed. Fix the stack-loop `load: 0` hole, straight_arm's `close` tell, and incline's second tell. The band row stays at 159.02 px/m, with F1 named. Posted on #245 6245694993).
+- 14.1 D-LIB5-NOTE-2; 14.2 D-LIB5-NOTE-3 (Do 2 head `9dbc7e0`).
+- AGENTS.md third exception (GATE-FLAKE-4 may edit only the BUG-34 lines its card lists). It is on the cards branch and must reach main in GATE-FLAKE-4's train or earlier.
+- Cards on the cards branch: lib-3b, lib-4d, lib-8-fix, gate-flake-4 (plus lib-5 amended 1-48).
+
+**Open for the supervisor (decide, don't ask)**
+- D-LIB5-SPLIT, from LIB-5's Do 2 numbers (#244 HANDOFF): the field-to-path/kind split, and the 73 shared-card lint hits. Research rewords them on one research head; never reword, trim or exempt them in LIB-5.
+- The blind TOPFAULT pass for the 8 (D-LIB5-TOPFAULT). Its inputs must never include #244 comment 6241270855 or any material that prints a selected Mistake key.
+- The tempo-map ruling (D-LIB5-TEMPO8), then 'CARD FIELDS VERIFIED' for the 8 (D-LIB9-CARDFIELDS, blind verifier with a planted value; `lb1-card-fields-verify.js`).
+- D-LIB9-F5 (every library plate raises F5, the 3.57:1 chrome contrast). Rule it before any LB1 sheet or approval.
+- Q1(b), single_arm_lat_pulldown's expected F7.
+- LIB-10 items (12 item 21): where approved PARAMS ranges live, and whether H10 must prove the drawn D plate equals derive(parent, params).
+- #237 (LIB-4a scratch) can be closed: LIB-4a is merged.
+- GATE-FLAKE-3/4 pattern: a CI timing miss is root-caused, never re-run to green. Train 25's first head was red on BUG-34 (the GATE-FLAKE-4 cause). The second head was a different head, and it was green.
+
+**Owner (see the private file for details)**
+- Waiting on him: the back-pain box answer (option 1, 50 words, recommended; or option 2, 30 words). Watch 1.4.0 device checks G1-G6, in his own Watch session.
+- Later: the calf-raise design option (only after the research check).
+- Parked: Gym Finder (#158); the iPhone release (after all 153 drawings merge); no Play closed-test upload before the public release (about 10-31).
+
+**First hour for the new supervisor**
+1. Read AGENTS.md, CLAUDE.md, `.claude/skills/supervisor/SKILL.md` (and tick.md), this file's section 0 and this 8.0m, then each open PR's last HANDOFF comment.
+2. Re-capture live state yourself:
+   - `git ls-remote origin` for main, `claude/sup-lib4-cards`, `claude/sup-handover-1445`, every branch in the lanes table, and `claude/libht-*`;
+   - the last comment on every open PR.
+   Trust nothing here over a live read.
+3. Watchers: copy `docs/supervisor/scripts/monitor.sh` and `heads.sh` to your scratchpad. Edit `SKIP` (PRs not tracked) and `BR` (live branches). Run both under one Monitor, timeout 30 min, re-armed on every expiry:
+   `(SINCE=<utc 3 min ago> bash monitor.sh & REPO=<clone> bash heads.sh & wait)`
+   `subscribe_pr_activity` failed on the old account, so try it once on the new one.
+4. Routine: create an hourly self-check into your own session that runs the tick (`.claude/skills/supervisor/tick.md`). Keep the owner-chat rule: reply "." when nothing is for him.
+5. Restart the lanes with replacement sessions in auto mode, Opus (Sonnet only for fully spelled-out steps; never Haiku or Fable). Each replacement prompt:
+   - names its card and rulings by sha and its branch and HANDOFF comment;
+   - says "do not redo pushed work";
+   - lists the CI manners (one push per 2 h until READY; `git pull --no-rebase`; never force; never [skip ci]);
+   - says "never write to the owner".
+   Count active builders in every start or resume message.
+6. Research w2: route the three packets (above). After the merge, name the head on #244 and #245.
+7. Merge trains only (HANDOVER 6.8): review PASS, every check green on a train head built on the latest main, plan order respected, and `git diff --stat origin/main...head` read. Every train carries a section 8 update. Send an APK after any app-changing merge, once the fingerprint step passes.
+
+**Sandbox notes (how the outgoing supervisor worked)**
+- Claude Code on the web: a cloud container per session; the repo cloned at `/home/user/M-arc`; a per-session scratchpad that does not survive.
+- Chromium is at `/opt/pw-browsers/chromium` (`MARC_CHROMIUM=...` for the gate), and `PLAYWRIGHT_BROWSERS_PATH` is set.
+- No `gh` CLI. GitHub goes through the GitHub MCP tools (comments, PRs, merges with `expectedHeadSha`). Plain `curl` to api.github.com works through the agent proxy for reads, and `git push` works through the same proxy.
+- Worktrees per job (`git worktree add`):
+  - cards branch → `wt-cards`;
+  - handover branch → `wt-ho`;
+  - research verify → `wt-verify-w2`;
+  - train building → a worktree with node_modules (`npm ci`).
+- Big judgement work ran as in-chat Workflows, with lenses, refuters and a judge (`docs/supervisor/workflows/README.md`). Small checks ran as one background Agent.
+- Every workflow result was saved into the repo (lib4-cards sections, verify/ files). Never leave one in chat only.
+- Long CI waits used a background `until` loop on the check-runs API (one notification), never a foreground sleep.
+- Gotchas:
+  - a session created by the supervisor may refuse cross-session follow-ups (W2B did). Never work around a refusal; start a new session with the full prompt instead;
+  - `send_message` "delivered" means received, not read;
+  - private artifacts (render pages) open only from the account that made them;
+  - a workflow's output file holds JSON. Parse it, or read `journal.jsonl` in its transcript folder;
+  - the 2-hour push limit binds builders, not the supervisor's own docs branches.
 
 ### 8.0l 10-18 ~01:10 UTC (read first; supersedes 8.0k where they differ)
 
