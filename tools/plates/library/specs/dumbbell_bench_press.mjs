@@ -53,7 +53,7 @@ const BOTTOM_X = 0.42;                                // bottom: grip centre off
 const OCCIPUT = [0, 0.955, -0.056];                   // back of the skull on the side head outline (head frame, H)
 
 // ---- supine class: root, trunk and neck that put backUpper, buttock and occiput on a horizontal pad ----
-const bisect = (f, lo, hi) => { for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; } return (lo + hi) / 2; };
+const bisect = (f, lo, hi) => { if (!(f(lo) <= 0 && f(hi) >= 0)) throw new Error(`dumbbell_bench_press: no solution in [${lo}, ${hi}]`); for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; } return (lo + hi) / 2; };
 /** Supine on a pad top at height `top`, hip joints at world z `z`. `lift` raises the buttock off the pad (the hips-up
  * fault) while the upper back and the skull stay on it. Returns pose fields { root, trunk, neck }. */
 export function supine(top, z = 0, { tilt = -90, lift = 0, height = H } = {}) {

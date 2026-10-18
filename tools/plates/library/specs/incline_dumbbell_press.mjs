@@ -58,7 +58,7 @@ const BOTTOM_X = 0.42;                                // bottom: grip centre off
 const OCCIPUT = [0, 0.955, -0.056];                   // back of the skull, side head outline (head frame, H)
 const EYE = [0, 0.935, 0.045];                        // eye, side head outline (head frame, H)
 
-const bisect = (f, lo, hi) => { for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; } return (lo + hi) / 2; };
+const bisect = (f, lo, hi) => { if (!(f(lo) <= 0 && f(hi) >= 0)) throw new Error(`incline_dumbbell_press: no solution in [${lo}, ${hi}]`); for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; } return (lo + hi) / 2; };
 const skOf = (p, height = H) => { const b = { height }; return fk(resolve(normPose(p, b), b).q, b); };
 
 /** Reclined on a seat + back pad: returns { pose: { root, trunk, neck }, hinge, faces, padU, padL }. */

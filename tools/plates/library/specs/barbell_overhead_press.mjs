@@ -152,7 +152,7 @@ const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Mat
 // ON THE DRAWN (lockout) FIGURE, mid-press (critic on ab0c553, R5: the red upper arm began at the torso's back edge,
 // because the faulty pose used the leaning start trunk while the figure shown is the upright lockout trunk, and the
 // arm crossed itself inside the torso): the end body (same trunk, so the faulty arm's shoulder end sits on the drawn
-// shoulder joint, checked in test/ohp-mistake.test.mjs), the bar MIS_BAR in front of the face. The elbow IK pole
+// shoulder joint, checked in tests/howto/lib8-pilot-a.test.ts), the bar MIS_BAR in front of the face. The elbow IK pole
 // (MIS_POLE) points down and out, so the elbow sits just above shoulder height in front of the chest: the upper arm
 // runs from the shoulder joint forward, and the whole forearm, tilted ~30 deg, lies in front of the chest and face,
 // outside the torso fill and above the safety arms (misInfo). The engine's own faulty-arm outline is masked inside
@@ -197,6 +197,7 @@ const DRIFT_RING = Array.from({ length: 17 }, (_, k) => [0, DRIFT_END[1] + RING_
 const RACK_FRONT = 0.50, RACK_BACK = -0.50, RACK_H = 2.40;   // power rack uprights (world z) and height (m)
 const ARM_Y = BAR0[1] - 0.08;                                 // safety arms: 8 cm under the front-rack bar (c11)
 const HOOK_Y = BAR0[1] - BAR_R;                               // J-hook bearing surface: the front-rack bar's underside (c1, c11)
+export { H, ARM_Y };
 const PLATE_TOP = Math.max(BAR1[1] + 0.225, RACK_H), TOP_PX = 16;
 const CAMERA = { pxPerM: Math.min(REF_CAMERA.pxPerM, (REF_CAMERA.y0 - TOP_PX) / PLATE_TOP), x0: 179, y0: REF_CAMERA.y0 };
 
