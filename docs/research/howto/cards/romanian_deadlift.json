@@ -687,7 +687,7 @@
       "claim": "c3"
     },
     {
-      "point": "Usually down to about mid-shin; spine position beats depth.",
+      "point": "Typically down to about mid-shin; spine position beats depth.",
       "claim": "c6"
     },
     {
@@ -699,7 +699,10 @@
     {
       "mistake": "Rounding the lower back to get the bar lower.",
       "fix": "Stop higher, where the back stays flat; if it still rounds, lower the weight.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c8"
+      ]
     },
     {
       "mistake": "Bending the knees until it becomes a squat.",
@@ -737,30 +740,32 @@
     "rows": [
       {
         "where": "Back of the thighs, stretching on the way down",
-        "means": "Usually means the hips are hinging correctly.",
+        "means": "The hamstrings are stretched as the hips push back.",
         "fix": null,
-        "claim": "c2",
+        "claim": [
+          "c2",
+          "c16"
+        ],
         "redFlag": null
       },
       {
         "where": "Lower back more than the hamstrings",
-        "means": "Usually means the back is rounding or the load is too heavy; the hamstrings normally work harder than the lower back here.",
-        "fix": "Shorten the range and lower the weight.",
-        "claim": "c14",
+        "means": "Fault: rounding the lower back, or weight that compromises spinal position.",
+        "fix": "Stop higher, before the back rounds.",
+        "claim": [
+          "c7",
+          "c8",
+          "c5"
+        ],
         "redFlag": null
       },
       {
-        "where": "Lower back sore after sessions",
-        "means": "Usually means too much too soon, or technique.",
-        "fix": "Cut the volume and keep the spine neutral.",
-        "claim": "c17",
-        "redFlag": null
-      },
-      {
-        "where": "Back pain with pain or numbness in both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop.",
-        "claim": "c23",
+        "where": "Lower back pain after sessions that is severe, or not gone after a few days to a week of rest",
+        "means": "Fault: doing too much too soon, or not keeping the spine neutral.",
+        "fix": "Stop the set. Don't train through the pain. Ease up on the training volume.",
+        "claim": [
+          "c17"
+        ],
         "redFlag": "back"
       }
     ]
@@ -775,8 +780,11 @@
       "claim": "c21"
     },
     {
-      "risk": "Doing too much too soon can leave the back sore.",
-      "claim": "c17"
+      "risk": "Too much too soon can leave the back sore; ease into heavy sets gradually.",
+      "claim": [
+        "c17",
+        "c19"
+      ]
     }
   ],
   "redFlags": [
@@ -787,7 +795,7 @@
       "key": "rdl-grip",
       "kind": "hand",
       "right": "Thumbs wrapped, wrists straight, hands just outside the thighs.",
-      "wrong": "Hands hanging off the fingertips, wrists bent.",
+      "wrong": null,
       "claim": "c9"
     },
     {
@@ -812,5 +820,8 @@
     "remove": [],
     "why": "Library primary hamstrings and secondary glutes, lower_back match (c13, c15, c16). Add adductors as secondary: StrengthLog names them (c16)."
   },
-  "anchorSource": "nasm-rdl"
+  "anchorSource": "nasm-rdl",
+  "gaps": [
+    "tier-A way out: no read source says how to set the bar down or fail a stuck rep on this exercise (LIB-WAYOUT); setup's lifting blocks are an option to avoid reversing a heavy bar, not a failed-rep way out"
+  ]
 }

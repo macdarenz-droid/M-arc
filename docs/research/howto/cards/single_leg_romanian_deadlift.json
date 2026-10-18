@@ -563,6 +563,10 @@
     {
       "step": "Do all reps on one leg, then switch.",
       "claim": "c19"
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c17"
     }
   ],
   "posture": [
@@ -625,23 +629,29 @@
     "rows": [
       {
         "where": "Back of the standing thigh near the bottom",
-        "means": "Usually means the hips are hinging correctly.",
+        "means": "The hamstrings should feel strong tension when the dumbbell reaches about mid-shin.",
         "fix": null,
-        "claim": "c9",
+        "claim": [
+          "c9"
+        ],
         "redFlag": null
       },
       {
         "where": "Buttock of the standing leg",
-        "means": "Usually means the glutes are driving you back up.",
+        "means": "The glutes work hard in this lift.",
         "fix": null,
-        "claim": "c14",
+        "claim": [
+          "c14"
+        ],
         "redFlag": null
       },
       {
-        "where": "Lower back pain, or pain or numbness down both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop.",
-        "claim": "c20",
+        "where": "Lower back pain",
+        "means": "Fault: rounding the back while reaching the dumbbell low.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c7"
+        ],
         "redFlag": "back"
       }
     ]
@@ -682,5 +692,8 @@
     "remove": [],
     "why": "Library primary hamstrings and secondary glutes match (c14). Add lower_back as secondary: Mo 2023 measured erector spinae activity that rose with opposite-side loading (c15)."
   },
-  "anchorSource": "gentilcore-slrdl"
+  "anchorSource": "gentilcore-slrdl",
+  "gaps": [
+    "tier-A way out: no read source says how to end a failed or off-balance rep on this exercise (LIB-WAYOUT)"
+  ]
 }

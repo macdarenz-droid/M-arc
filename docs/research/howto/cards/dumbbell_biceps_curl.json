@@ -196,9 +196,10 @@
     },
     {
       "id": "c9",
-      "text": "Tempo (up = lifting phase, down = lowering phase): lift in about 1 s and lower slowly in about 2 s. A study protocol used 3 s per full repetition; ACSM advises moderate speed (1-2 s up, 1-2 s down).",
+      "text": "Tempo (up = lifting phase, down = lowering phase): lift in about 1 s and lower slowly in about 2 s. A study protocol used 3 s per full repetition; ACSM gives its moderate 1-2 s each way for intermediate to advanced training, so the seconds are a drawing convention, not a novice prescription (LR-15).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "marcolin-2018",
@@ -210,6 +211,11 @@
           "source": "marcolin-2018",
           "text": "The metronome was set so that each repetition duration was 3 s.",
           "where": "Methods"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
         },
         {
           "source": "acsm-2009",
@@ -445,7 +451,7 @@
       "why": "StrengthLog lists not locking the wrists among its common mistakes: bent wrists put an unnecessary load on them and can lead to discomfort and maybe even injuries; ACE says to avoid flexion and extension of the wrists (c6). How often it happens is not measured in any source read.",
       "claim": "c6",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a curl fault. Set aside: StrengthLog's \"one of the most common movements we do with our arms in our daily life\" is about the movement, and its \"Common Mistakes in the Dumbbell Curl\" heading is not read onto one item; Marcolin's \"typical exercises to train the elbow flexors\" is about the exercise; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c16) is about all weight training. Bent wrists are the only named fault a quote ties to harm: \"If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.\" (c6), on StrengthLog's common-mistakes list, with ACE's \"avoid flexion and extension of your wrists\". The elbows moving forward or back (c4) shift load off the biceps and swinging (c5) takes work away from it; neither states harm, and swinging sits under StrengthLog's too-heavy item, a load choice. Wrist position is a joint position, not how the hands hold the dumbbell, so it is not set aside as a grip statement (R-LB2-3). Pick changed from swinging (c5) and applied to this research card (ruling R-LB2-7); the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: wrists, swinging, elbows. drawable is true: the side view shows the wrist bent up or down."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a curl fault. Set aside: StrengthLog's \"one of the most common movements we do with our arms in our daily life\" is about the movement, and its \"Common Mistakes in the Dumbbell Curl\" heading is not read onto one item; Marcolin's \"typical exercises to train the elbow flexors\" is about the exercise; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c16) is about all weight training. Bent wrists are the only named fault a quote ties to harm: \"If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.\" (c6), on StrengthLog's common-mistakes list, with ACE's \"avoid flexion and extension of your wrists\". The elbows moving forward or back (c4) shift load off the biceps and swinging (c5) takes work away from it; neither states harm, and swinging sits under StrengthLog's too-heavy item, a load choice. Wrist position is a joint position, not how the hands hold the dumbbell, so it is not set aside as a grip statement (R-LB2-3). Pick changed from swinging (c5) under the supervisor's pilot A task (LR-31 with R-LB2-2 to R-LB2-5), confirmed in the R-LB2-13 to R-LB2-15 comment; the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: wrists, swinging, elbows. drawable is true: the side view shows the wrist bent up or down."
     },
     "tells": [
       {
@@ -562,16 +568,20 @@
       },
       {
         "where": "Front of the shoulder",
-        "means": "Usually means the elbows are moving forward.",
+        "means": "Fault: the elbows moving forward, which loads the front delts.",
         "fix": "Keep the elbows at your sides.",
-        "claim": "c4",
+        "claim": [
+          "c4"
+        ],
         "redFlag": null
       },
       {
-        "where": "Wrist",
-        "means": "Usually means the wrist is bending.",
-        "fix": "Straighten the wrist; go lighter if you can't.",
-        "claim": "c6",
+        "where": "Wrist discomfort or pain",
+        "means": "Fault: the wrists bent up or down under load.",
+        "fix": "Stop the set. Don't train through the pain. Keep the wrist straight.",
+        "claim": [
+          "c6"
+        ],
         "redFlag": "wrist"
       }
     ]
@@ -582,7 +592,7 @@
       "claim": "c6"
     },
     {
-      "risk": "Across all weight training, a weight dropping on you is the most common way people get badly hurt.",
+      "risk": "In all weight training, dropped weights are the most common way people get hurt.",
       "claim": "c16"
     }
   ],

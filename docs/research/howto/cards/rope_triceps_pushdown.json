@@ -267,9 +267,10 @@
     },
     {
       "id": "c13",
-      "text": "Tempo (up = working phase, the press down; down = return): press in about 1 s, pause briefly at the bottom, let the rope back up over 2-3 s, never faster.",
+      "text": "Tempo (up = working phase, the press down; down = return): press in about 1 s, pause at the bottom, let the rope back up over 2-3 s, never faster (NFPT). ACE asks to \"Pause momentarily\" and gives no seconds, so the 1 s pause is a drawing convention (LR-33). The 1 s press comes from ACSM's moderate 1-2 s, stated for intermediate to advanced training, so it is a drawing convention too (LR-15).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "nfpt-rope",
@@ -285,6 +286,16 @@
           "source": "ace-pushdown",
           "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
           "where": "Step 3"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
         }
       ]
     },
@@ -459,7 +470,7 @@
       "why": "StrengthLog lists arching the back first among the rope pushdown's common mistakes: leaning too far forward or arching the back can put unnecessary strain on the lower back and shift the focus away from the triceps (c12). How often it happens is not measured in any source read.",
       "claim": "c12",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word counts for a rope-pushdown fault. Set aside: StrengthLog's \"Some people tend to lean too far forward or arch their back\" (c12) uses 'tend', not a frequency word; \"This often leads to using momentum to complete the exercise\" (c15) is about using too much weight, a load; \"feels uncomfortable in the elbows for many people\" (c16) is about heavy weights and low reps, a load; \"often performed with a bar or a rope\" is about the attachment. Step 2: leaning or arching (c12) is the named fault a quote ties to harm (\"unnecessary strain on the lower back\"), first on StrengthLog's common-mistakes list. Too much weight (c15) is a load choice, not a candidate; read onto the momentum it brings, that fault is second on the same list with one harm source, so the lean still wins. NFPT's \"Do not lock out your elbows in the extended position. Failure to do so can result in injury to your elbows.\" (c9) and \"The faster you perform this movement, the less control you will have, which in turn will increase your risk of injury\" (the return, a speed fault) tie harm to faults that are on no mistakes list and not in handlingMistakes, so they are not named faults under step 2. Elbows drifting forward (c7), the head's pick, states no harm (the lats and shoulders take over, c6, c7). Pick changed from the elbows drifting forward and applied to this research card (ruling R-LB2-7); the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: lean or arch, elbows forward, rope too high. drawable is true: the side view shows the trunk lean and the back arch."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word counts for a rope-pushdown fault. Set aside: StrengthLog's \"Some people tend to lean too far forward or arch their back\" (c12) uses 'tend', not a frequency word; \"This often leads to using momentum to complete the exercise\" (c15) is about using too much weight, a load; \"feels uncomfortable in the elbows for many people\" (c16) is about heavy weights and low reps, a load; \"often performed with a bar or a rope\" is about the attachment. Step 2: leaning or arching (c12) is the named fault a quote ties to harm (\"unnecessary strain on the lower back\"), first on StrengthLog's common-mistakes list. Too much weight (c15) is a load choice, not a candidate; read onto the momentum it brings, that fault is second on the same list with one harm source, so the lean still wins. NFPT's \"Do not lock out your elbows in the extended position. Failure to do so can result in injury to your elbows.\" (c9) and \"The faster you perform this movement, the less control you will have, which in turn will increase your risk of injury\" (the return, a speed fault) tie harm to faults on no common-mistakes list: NFPT's \"Warning Tips\" are not one (R-LB2-14). Counted as named faults, the lockout would still lose to the lean, which alone is on a common-mistakes list. Elbows drifting forward (c7), the head's pick, states no harm (the lats and shoulders take over, c6, c7). Pick changed from the elbows drifting forward and applied to this research card under the supervisor's pilot A task (LR-31 with R-LB2-2 to R-LB2-5), confirmed in the R-LB2-13 to R-LB2-15 comment; the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: lean or arch, elbows forward, rope too high. drawable is true: the side view shows the trunk lean and the back arch."
     },
     "tells": [
       {
@@ -543,8 +554,11 @@
   "handlingMistakes": [
     {
       "mistake": "Leaning over the rope or arching the back.",
-      "fix": "Stand taller; tilt only from the hips; go lighter.",
-      "claim": "c12"
+      "fix": "Stand taller; tilt only from the hips.",
+      "claim": [
+        "c12",
+        "c10"
+      ]
     },
     {
       "mistake": "Elbows drifting forward or away from the body.",
@@ -581,25 +595,32 @@
       },
       {
         "where": "Forearms, at the top",
-        "means": "Usually means the rope is rising too high.",
+        "means": "Fault: the rope rising higher than just above parallel.",
         "fix": "Stop when the forearms are just past parallel.",
-        "claim": "c8",
+        "claim": [
+          "c8"
+        ],
         "redFlag": null
       },
       {
-        "where": "Lower back",
-        "means": "Usually means you are leaning too far or arching.",
-        "fix": "Stand taller and go lighter.",
-        "claim": "c12",
+        "where": "Lower back pain",
+        "means": "Fault: leaning too far forward or arching the back.",
+        "fix": "Stop the set. Don't train through the pain. Stand taller; tilt only from the hips.",
+        "claim": [
+          "c12",
+          "c10"
+        ],
         "redFlag": "back"
       },
       {
-        "where": "Elbows",
-        "means": "Heavy, low-rep sets often feel this way.",
-        "fix": "Use a lighter weight for more reps; don't lock out. Sharp or lasting elbow pain: stop the set.",
-        "claim": "c16",
-        "redFlag": "elbow",
-        "fixNote": "The 'sharp or lasting elbow pain: stop the set' part follows the shared elbow warning box this row links; the claim covers only the discomfort and the lighter-weight advice; 'don't lock out' is c9."
+        "where": "Elbow discomfort or pain on heavy, low-rep sets",
+        "means": "Heavy weights with low reps feel uncomfortable in the elbows for many people.",
+        "fix": "Stop the set. Don't train through the pain. Use lighter weights for more reps, and don't lock out your elbows.",
+        "claim": [
+          "c16",
+          "c9"
+        ],
+        "redFlag": "elbow"
       }
     ]
   },

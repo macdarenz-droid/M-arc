@@ -177,6 +177,13 @@
       "status": "verbatim",
       "closest": "Sixteen weight-trained men completed 2 repetitions each in the URR with 3 grip conditions: 50, 100, and 200% of the biacromial breadth (BAB).",
       "checkedBy": "supervisor, NCBI efetch PMID 22362088, 2026-09-30"
+    },
+    {
+      "claim": "c15",
+      "source": "sl-upright-row",
+      "text": "If you do feel any discomfort in your shoulder joints, you can try to revert the movement earlier, before your upper arms are above shoulder height.",
+      "status": "verbatim",
+      "closest": "If you do feel any discomfort in your shoulder joints, you can try to revert the movement earlier, before your upper arms are above shoulder height."
     }
   ]
 }

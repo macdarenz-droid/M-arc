@@ -246,9 +246,10 @@
     },
     {
       "id": "c12",
-      "text": "Tempo (up = arms closing, down = arms opening): close in about 2 s, hold the squeeze for a couple of seconds, open slowly in about 2 s.",
+      "text": "Tempo (up = arms closing, down = arms opening): close in about 2 s, hold the squeeze for a couple of seconds (Healthline, the 2 s pause), open slowly in about 2 s. Up and down rest on ACSM's moderate 1-2 s, stated for intermediate to advanced training, so those seconds are a drawing convention (LR-15).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "hl-pecdeck",
@@ -263,6 +264,11 @@
         {
           "source": "acsm-2009",
           "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
           "where": "abstract"
         }
       ]
@@ -414,7 +420,7 @@
       "why": "ACE says lifters often load too much weight and can't finish the range; the other version, lifting the back off the pad, needs a side view.",
       "claim": "c6",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: ACE's \"Quite often, the lifter will use too much weight and be unable to complete the full range of motion or will lift the upper back off the back pad to finish the motion.\" (c6) puts the frequency word on two faults that come from too much weight. Both pass, so step 2's order decides: neither has harm of its own beyond c7's \"which is a big mistake and can result in injury\", said of the technique changes the same tip spells out, so both tie on harm; the tip names the short range first, so it wins on list order. If 'Quite often' is read as a statement about the load, step 1 finds nothing and step 3 gives the same pick (first fault the tip names). Set aside: \"Many users will adopt their own technique on this machine to do more weight\" (c7) names no body or equipment position; \"many people descend too fast and let their elbows travel upward too much on the ascent, which can cause shoulder injury\" is ACE's tip for the barbell bench press, another exercise; \"one of the most common strength-training exercises\" and \"the most commonly used exercises\" are about exercises; Healthline's \"it’s often a matter of personal preference\" is about the choice of machine; Pinto's \"commonly cited reason\" and \"frequently targeted muscle group\" are about training. ACE's hyperextension harm line (c9) is written for the cable crossover. drawable stays true: the front view shows the handles finishing well apart."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: ACE's \"Quite often, the lifter will use too much weight and be unable to complete the full range of motion or will lift the upper back off the back pad to finish the motion.\" (c6) puts the frequency word on two faults that come from too much weight. Both pass, so step 2's order decides: neither has harm of its own beyond c7's \"which is a big mistake and can result in injury\", said of the technique changes the same tip spells out, so both tie on harm; the tip names the short range first, so it wins on list order. If 'Quite often' is read as a statement about the load, step 1 finds nothing and step 2's tie order gives the same pick (the earlier of the two in the tip that names both; the tip is not a common-mistakes list). Set aside: \"Many users will adopt their own technique on this machine to do more weight\" (c7) names no body or equipment position; \"many people descend too fast and let their elbows travel upward too much on the ascent, which can cause shoulder injury\" is ACE's tip for the barbell bench press, another exercise, as is its \"what many people miss in this motion is the natural arc\"; \"one of the most common strength-training exercises\" and \"the most commonly used exercises\" are about exercises; Healthline's \"it’s often a matter of personal preference\" is about the choice of machine; Pinto's \"commonly cited reason\" and \"frequently targeted muscle group\" are about training. ACE's hyperextension harm line (c9) is written for the cable crossover. drawable stays true: the front view shows the handles finishing well apart."
     },
     "tells": [
       {
@@ -525,7 +531,7 @@
         "redFlag": null
       },
       {
-        "where": "Front of the shoulder, sudden or severe",
+        "where": "Shoulder pain",
         "means": "This exercise puts the shoulder in a vulnerable position.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -554,7 +560,7 @@
       "claim": "c7"
     },
     {
-      "risk": "Arms starting behind the body may strain the shoulder (inferred from cable crossover advice).",
+      "risk": "Starting with the arms behind the body may strain the shoulder.",
       "claim": "c9"
     }
   ],

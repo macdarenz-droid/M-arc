@@ -244,9 +244,10 @@
     },
     {
       "id": "c12",
-      "text": "Tempo (up = working phase, the press down; down = return): press in about 1 s, pause briefly at the bottom, return slowly in about 2 s. ACSM advises moderate speed (1-2 s each way).",
+      "text": "Tempo (up = working phase, the press down; down = return): press in about 1 s, pause at the bottom, return slowly in about 2 s. ACE asks to \"Pause momentarily\" and gives no seconds, so the 1 s pause is a drawing convention (LR-33); ACSM's moderate 1-2 s each way is stated for intermediate to advanced training, so those seconds are a drawing convention too (LR-15).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "ace-pushdown",
@@ -257,6 +258,11 @@
           "source": "ace-pushdown",
           "text": "Pause momentarily then slowly return to your starting position, allowing your elbows to flex (bend) in a slow, controlled manner",
           "where": "Step 3"
+        },
+        {
+          "source": "acsm-2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
         },
         {
           "source": "acsm-2009",
@@ -459,7 +465,7 @@
       "why": "StrengthLog lists arching the back first among the pushdown's common mistakes: leaning too far forward or arching the back can put unnecessary strain on the lower back and shift the focus away from the triceps (c11). How often it happens is not measured in any source read.",
       "claim": "c11",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word counts for a pushdown fault. Set aside: StrengthLog's \"Some people tend to lean too far forward or arch their back\" (c11) uses 'tend', not a frequency word; \"This often leads to using momentum to complete the exercise\" is about using too much weight, a load; \"feels uncomfortable in the elbows for many people\" (c17) is about heavy weights and low reps, a load; Hussain's \"If a subject was frequently unable to maintain the correct posture\" is about replacing study subjects, not how often lifters lean. Step 2: leaning or arching (c11) is the only candidate a quote ties to harm (\"unnecessary strain on the lower back\"), first on StrengthLog's common-mistakes list. Too much weight (c16, \"can also lead to injury\") is a load choice, not a candidate; if the injury line is read onto the momentum it brings, that fault is second on the same list with one harm source, so the lean still wins on list order. Elbows drifting forward (c6), the head's pick, states no harm: it moves work to the lats. Pick changed from the elbows drifting forward and applied to this research card (ruling R-LB2-7); the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: lean or arch, elbows forward, too heavy. drawable is true: the side view shows the trunk lean and the back arch."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word counts for a pushdown fault. Set aside: StrengthLog's \"Some people tend to lean too far forward or arch their back\" (c11) uses 'tend', not a frequency word; \"This often leads to using momentum to complete the exercise\" is about using too much weight, a load; \"feels uncomfortable in the elbows for many people\" (c17) is about heavy weights and low reps, a load; Hussain's \"If a subject was frequently unable to maintain the correct posture\" is about replacing study subjects, not how often lifters lean. Step 2: leaning or arching (c11) is the only candidate a quote ties to harm (\"unnecessary strain on the lower back\"), first on StrengthLog's common-mistakes list. Too much weight (c16, \"can also lead to injury\") is a load choice, not a candidate; if the injury line is read onto the momentum it brings, that fault is second on the same list with one harm source, so the lean still wins on list order. Elbows drifting forward (c6), the head's pick, states no harm: it moves work to the lats. Pick changed from the elbows drifting forward and applied to this research card under the supervisor's pilot A task (LR-31 with R-LB2-2 to R-LB2-5), confirmed in the R-LB2-13 to R-LB2-15 comment; the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: lean or arch, elbows forward, too heavy. drawable is true: the side view shows the trunk lean and the back arch."
     },
     "tells": [
       {
@@ -541,8 +547,11 @@
   "handlingMistakes": [
     {
       "mistake": "Leaning over the bar or arching the back.",
-      "fix": "Stand taller; tilt only from the hips; go lighter.",
-      "claim": "c11"
+      "fix": "Stand taller; tilt only from the hips.",
+      "claim": [
+        "c11",
+        "c4"
+      ]
     },
     {
       "mistake": "Elbows drifting forward.",
@@ -574,25 +583,31 @@
       },
       {
         "where": "Sides of the back (lats)",
-        "means": "Usually means the elbows are drifting forward.",
+        "means": "Fault: the elbows drifting forward, which brings in the lats.",
         "fix": "Pin the elbows to your sides.",
-        "claim": "c6",
+        "claim": [
+          "c6"
+        ],
         "redFlag": null
       },
       {
-        "where": "Lower back",
-        "means": "Usually means you are leaning too far or arching.",
-        "fix": "Stand taller and go lighter.",
-        "claim": "c11",
+        "where": "Lower back pain",
+        "means": "Fault: leaning too far forward or arching the back.",
+        "fix": "Stop the set. Don't train through the pain. Stand taller; tilt only from the hips.",
+        "claim": [
+          "c11",
+          "c4"
+        ],
         "redFlag": "back"
       },
       {
-        "where": "Elbows",
-        "means": "Heavy, low-rep sets often feel this way.",
-        "fix": "Use a lighter weight for more reps. Sharp or lasting elbow pain: stop the set.",
-        "claim": "c17",
-        "redFlag": "elbow",
-        "fixNote": "The 'sharp or lasting elbow pain: stop the set' part follows the shared elbow warning box this row links; the claim covers only the discomfort and the lighter-weight advice."
+        "where": "Elbow discomfort or pain on heavy, low-rep sets",
+        "means": "Heavy weights with low reps feel uncomfortable in the elbows for many people.",
+        "fix": "Stop the set. Don't train through the pain. Use lighter weights for more reps.",
+        "claim": [
+          "c17"
+        ],
+        "redFlag": "elbow"
       }
     ]
   },
