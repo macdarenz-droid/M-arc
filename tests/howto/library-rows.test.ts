@@ -113,11 +113,7 @@ describe('E1: a shipped library row gets every output', { timeout: 120_000 }, ()
     expect(builtHandCssProblems(join(root, 'www'), 'cable-lateral-raise', 'lib2b-scratch')).toEqual([]);
   }, 600_000);
 
-  it('LIB-6 rebuild: where its builder exists the page rebuilds byte for byte through layersSpecOf; where it does not, render/ is absent too', async () => {
-    if (!existsSync(join(F.REPO, 'tools/plates/library/build-layers-page.mjs'))) {
-      expect(existsSync(join(F.REPO, 'tools/plates/library/render'))).toBe(false);
-      return;
-    }
+  it('LIB-6 rebuild: the page rebuilds byte for byte through layersSpecOf and build-layers-page.mjs', async () => {
     const stage = mkdtempSync(join(tmpdir(), 'lib2b-stage-')); tmps.push(stage);
     const { layersSpecOf } = await import(/* @vite-ignore */ turl('tools/plates/library/layers-spec.mjs'));
     const { buildLayersPage } = await import(/* @vite-ignore */ url('tools/plates/library/build-layers-page.mjs'));
