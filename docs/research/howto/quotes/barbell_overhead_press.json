@@ -239,6 +239,20 @@
       "quote": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury.",
       "status": "verbatim",
       "closest": "The shoulder complex in particular has been alluded to as one of the most prevalent regions of injury."
+    },
+    {
+      "claim": "c20",
+      "source": "stronglifts-ohp",
+      "quote": "Hold the bar for a second at the top.",
+      "status": "verbatim",
+      "closest": "Hold the bar for a second at the top."
+    },
+    {
+      "claim": "c20",
+      "source": "stronglifts-ohp",
+      "quote": "Rest at the bottom for a second before doing your next rep.",
+      "status": "verbatim",
+      "closest": "Rest at the bottom for a second before doing your next rep."
     }
   ]
 }

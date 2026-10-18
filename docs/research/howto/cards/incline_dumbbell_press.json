@@ -176,13 +176,19 @@
         "CONSENSUS"
       ],
       "sources": [
-        "ace-incline-press"
+        "ace-incline-press",
+        "liftosaur-incline-db"
       ],
       "quotes": [
         {
           "source": "ace-incline-press",
           "text": "Maintain all points of contact with the bench and floor/riser and avoid any arching in the low back.",
           "where": "Step 3"
+        },
+        {
+          "source": "liftosaur-incline-db",
+          "text": "Maintain a neutral spine; avoid arching your lower back.",
+          "where": "Points to Remember"
         }
       ]
     },
@@ -461,7 +467,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; bench angle, elbow-under-wrist and back arch all read in the sagittal plane (c1, c7, c8).",
+    "viewWhy": "Census view is side; bench angle, elbow-under-wrist and back arch all read in the sagittal plane (c1, c7, c8). The LR-31 top fault, the low-back arch (c8), is one of these (ruling R-LB2-4).",
     "equipment": "Adjustable bench at 45 degrees (the value inside both ACE's 45-60 range and HK's 'about 45', c1; c2 notes 30 degrees peaks upper chest in barbell data, so 45 is the upper sensible limit). Dumbbell per hand, feet flat.",
     "start": "On the incline, head/shoulders/buttocks on the pad, feet on the floor (c4); arms straight and vertical, dumbbells directly above the shoulder joints (c17, c7), so they sit above eye height (c5) and in front of the face, never over it.",
     "end": "Dumbbells at the upper chest, slightly wide (c6), elbows under the wrists (c7).",
@@ -483,11 +489,11 @@
       }
     ],
     "mistake": {
-      "what": "Elbows drifting out of line with the wrists (forearms tilted) at the bottom.",
-      "why": "ACE's only incline-specific cue is elbows under wrists; frequency is not measured in any source read.",
-      "claim": "c7",
+      "what": "Low back arching off the bench as the dumbbells go up.",
+      "why": "ACE says to avoid any arching in the low back, and Liftosaur says to avoid arching your lower back (c8): the fault the most read sources tell the lifter to avoid. How often it happens is not measured in any source read.",
+      "claim": "c8",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for an incline-press fault (Kerr's \"The most common mechanism of injury was weights dropping on the person\", c15, is about all weight training). Step 2: no quote ties a named fault to harm; Liftosaur's \"minimizing the risk of injury\" is about following all its steps, not one fault, and a bench steeper than 45 degrees (c2) is a bench setting, not a candidate. Step 3: no common-mistakes list; the fault the most read sources tell the lifter to avoid is low-back arching (c8): ACE's \"avoid any arching in the low back\" and Liftosaur's \"avoid arching your lower back\", two sources (Liftosaur is not yet cited in c8). Bouncing has one (ACE, c6); Liftosaur's \"avoiding sudden jerks or drops\" is a speed fault; elbows under the wrists (c7) is an ACE cue, not a fault named to avoid. PICK CHANGED: by LR-31 the top fault is low-back arching, not the plate's elbows out of line with the wrists. The approved plate (D-PILOTA-R5) is not changed here, and handlingMistakes keeps its order until the supervisor rules. drawable for the LR-31 fault: true, the side view shows the back arch."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for an incline-press fault (Kerr's \"The most common mechanism of injury was weights dropping on the person\", c15, is about all weight training). Step 2: no quote ties a named fault to harm; Liftosaur's \"minimizing the risk of injury\" is about following all its steps, not one fault, and a bench steeper than 45 degrees (c2) is a bench setting, not a candidate. Step 3: no common-mistakes list; the fault the most read sources tell the lifter to avoid is low-back arching (c8): ACE's \"avoid any arching in the low back\" and Liftosaur's \"avoid arching your lower back\", two sources. Bouncing has one (ACE, c6); Liftosaur's \"avoiding sudden jerks or drops\" is a speed fault; elbows under the wrists (c7) is an ACE cue, not a fault named to avoid. Pick changed from the elbows out of line with the wrists (c7) and applied to this research card (ruling R-LB2-7); the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: arching, bench angle, bouncing. drawable is true: the side view shows the back arch."
     },
     "tells": [
       {
@@ -560,6 +566,11 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Arching the low back.",
+      "fix": "Stop the set or go lighter.",
+      "claim": "c8"
+    },
+    {
       "mistake": "Bench set steeper than 45 degrees.",
       "fix": "Lower the back pad; steeper shifts work to the front shoulder (barbell data).",
       "claim": "c2"
@@ -568,11 +579,6 @@
       "mistake": "Bouncing off the chest.",
       "fix": "Touch gently; go lighter if you can't.",
       "claim": "c6"
-    },
-    {
-      "mistake": "Arching the low back.",
-      "fix": "Stop the set or go lighter.",
-      "claim": "c8"
     }
   ],
   "feel": {

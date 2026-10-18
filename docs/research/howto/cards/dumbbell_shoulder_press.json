@@ -359,7 +359,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; back contact with the pad, low-back arch and elbows pointing forward read in the sagittal plane (c1, c4, c5).",
+    "viewWhy": "Census view is side; back contact with the pad, low-back arch and elbows pointing forward read in the sagittal plane (c1, c4, c5). The LR-31 top fault, lowering behind the head (c10), also reads in the sagittal plane (ruling R-LB2-4).",
     "equipment": "Upright bench with a backrest (angle not given by the sources read; census inclineBench), dumbbell per hand, feet on the floor (c1).",
     "start": "Seated, head/shoulders/buttocks on the pad, feet flat (c1); dumbbells at shoulder level, wrists neutral (c2); elbows pointed in front of the body (c5).",
     "end": "Arms straight overhead, elbows fully extended, back still on the pad, no low-back arch (c4).",
@@ -381,11 +381,11 @@
       }
     ],
     "mistake": {
-      "what": "Low back arching away from the pad as the dumbbells go up.",
-      "why": "ACE names low-back arching as the fault to avoid on the press; frequency is not measured in any source read.",
-      "claim": "c4",
+      "what": "Lowering the dumbbells behind the head, into the behind-the-neck position.",
+      "why": "Kolber found a significant association between exercises that need the high-five position (behind-the-neck military press) and signs of anterior shoulder instability, and Esenkaya advises frontal presses that do not allow movement behind the plane of the body (c10, WEAK: barbell pressing, applied to dumbbells). How often it happens is not measured in any source read.",
+      "claim": "c10",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a shoulder-press fault (Kerr's \"The most common mechanism of injury was weights dropping on the person\", c14, is about all weight training). Lowering behind the head (c10) is the only named fault a quote ties to harm: Kolber links the high-five position (behind-the-neck military press) to \"clinical characteristics of AI\", and Esenkaya says \"When improperly performed, military presses can cause injury\" and advises presses \"that do not allow movement posterior to the plane of the body\" (c10, WEAK: barbell pressing, applied to dumbbells). Low-back arching (c4) and letting the dumbbells drop (c6, a speed fault) state no harm in any read source. PICK CHANGED: by LR-31 the top fault is lowering behind the head, not the plate's low-back arch. The approved plate (D-PILOTA-R5) is not changed here, and handlingMistakes keeps its order until the supervisor rules. drawable for the LR-31 fault: true, the side view shows the dumbbells behind the head."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a shoulder-press fault (Kerr's \"The most common mechanism of injury was weights dropping on the person\", c14, is about all weight training). Lowering behind the head (c10) is the only named fault a quote ties to harm: Kolber links the high-five position (behind-the-neck military press) to \"clinical characteristics of AI\", and Esenkaya says \"When improperly performed, military presses can cause injury\" and advises presses \"that do not allow movement posterior to the plane of the body\" (c10, WEAK: barbell pressing, applied to dumbbells). Low-back arching (c4) and letting the dumbbells drop (c6, a speed fault) state no harm in any read source. Pick changed from the low-back arch (c4) and applied to this research card (ruling R-LB2-7); the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: behind the head, arching, dropping. drawable is true: the side view shows the dumbbells behind the head."
     },
     "tells": [
       {
@@ -454,6 +454,11 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Lowering behind the head.",
+      "fix": "Keep the dumbbells in front of the head.",
+      "claim": "c10"
+    },
+    {
       "mistake": "Arching the back to finish a rep.",
       "fix": "Stop the set or go lighter.",
       "claim": "c4"
@@ -462,11 +467,6 @@
       "mistake": "Letting the dumbbells drop on the way down.",
       "fix": "Lower slowly, pulling them down.",
       "claim": "c6"
-    },
-    {
-      "mistake": "Lowering behind the head.",
-      "fix": "Keep the dumbbells in front of the head.",
-      "claim": "c10"
     }
   ],
   "feel": {

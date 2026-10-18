@@ -649,7 +649,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; the checkpoints (touch point on the mid-chest, vertical forearms, hips on the bench) and the mistake (hips off the bench) all read in the sagittal plane (c2, c10).",
+    "viewWhy": "Census view is side; the checkpoints (touch point on the mid-chest, vertical forearms, hips on the bench) and the census-time mistake (hips off the bench) all read in the sagittal plane (c2, c10). The LR-31 top fault, the bar pressed straight up off the chest instead of up and back toward the shoulders (c25, c8), also reads only from the side (ruling R-LB2-4).",
     "equipment": "Flat bench under a rack with J-hooks, safety pins set slightly below the bottom position (c6); barbell; feet flat on the floor (c14).",
     "start": "Supine, feet flat (c14), shoulder blades pulled together (c12), hips on the bench (c1); arms straight with the bar over the shoulders (c8).",
     "end": "Bar touching the middle of the chest (c2), forearms vertical (c2), upper arms about 45-60 degrees from the torso (c3), hips still on the bench (c3).",
@@ -675,7 +675,7 @@
       "why": "Stronger by Science says most novice lifters drive the bar straight up initially, and that a bar that shoots straight up off the chest makes the lift unnecessarily difficult, especially for the shoulders (c25); StrongLifts gives the bar path as a diagonal line from the mid-chest to the shoulders, not vertical (c8). How often it happens is not measured beyond that.",
       "claim": "c25",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Stronger by Science's \"most novice lifters drive the bar straight up initially, then up and back to lock out\" (c25) says most beginners make this fault, which it names an improper bar path; StrongLifts's \"Diagonal line from your mid-chest to shoulders\" (c8) gives the same path. Set aside: StrongLifts's \"Most people hold it in the middle of their palms when they Bench Press\" is about the grip, a grip choice and not a candidate (as the thumbless grip, c4, is not); \"If your wrists hurt with the full grip, it’s usually because they’re bent when you Bench Press\" says what usually causes wrist pain, not how often the fault happens; \"Many people who get shoulder pain on the Bench Press can do Close Grip pain-free\" is about a grip; Stronger by Science's \"this is especially common for people who use the “bend the bar” cue\" (shoulders not turned in at lockout) is common only in one subgroup; if counted, neither it nor the bar path has a harm quote, and the bar path comes first in the same sticking-point list, so step 2's order still picks the bar path; \"When most people miss, it’s after that initial acceleration\" is where a failed rep stalls, not a fault; Kowalczuk's \"most commonly while performing the bench press maneuver\" (c22) names the exercise and the lowering phase, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c23) is about all weight training. Hips off the bench (c10) keeps its harm quote (\"It can hurt your lower back if you hyper-extend your spine\"), but step 1 decides. drawable is true: the side view shows the bar's path between the chest and the shoulders."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Stronger by Science's \"most novice lifters drive the bar straight up initially, then up and back to lock out\" (c25) says most beginners make this fault, which it names an improper bar path; StrongLifts's \"Diagonal line from your mid-chest to shoulders\" (c8) gives the same path. Set aside: StrongLifts's \"Most people hold it in the middle of their palms when they Bench Press\" is about the grip, a grip choice and not a candidate (as the thumbless grip, c4, is not); \"If your wrists hurt with the full grip, it’s usually because they’re bent when you Bench Press\" says what usually causes wrist pain, not how often the fault happens; \"Many people who get shoulder pain on the Bench Press can do Close Grip pain-free\" is about a grip; Stronger by Science's \"this is especially common for people who use the “bend the bar” cue\" (shoulders not turned in at lockout) is common only in one subgroup; if counted, neither it nor the bar path has a harm quote, and the bar path comes first in the same sticking-point list, so step 2's order still picks the bar path; \"When most people miss, it’s after that initial acceleration\" is where a failed rep stalls, not a fault; Kowalczuk's \"most commonly while performing the bench press maneuver\" (c22) names the exercise and the lowering phase, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c23) is about all weight training. Hips off the bench (c10) keeps its harm quote (\"It can hurt your lower back if you hyper-extend your spine\"), but step 1 decides. drawable is true: the side view shows the bar's path between the chest and the shoulders. handlingMistakes is capped at 3 (CARD-V2), so the added top fault takes [0] and the last item, bouncing the bar off the chest (c11), is dropped (ruling R-LB2-2)."
     },
     "tells": [
       {
@@ -775,11 +775,6 @@
       "mistake": "Hips lifting off the bench.",
       "fix": "Count it as a failed rep; repeat the weight next time.",
       "claim": "c10"
-    },
-    {
-      "mistake": "Bouncing the bar off the chest.",
-      "fix": "Lower under control, about 2-3 seconds (c18).",
-      "claim": "c11"
     }
   ],
   "feel": {

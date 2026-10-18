@@ -416,6 +416,29 @@
           "where": "abstract, results"
         }
       ]
+    },
+    {
+      "id": "c20",
+      "text": "Hold the bar for a second at the top of each rep; between reps, rest a second at the bottom to get tight.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "stronglifts-ohp"
+      ],
+      "quotes": [
+        {
+          "source": "stronglifts-ohp",
+          "text": "Hold the bar for a second at the top.",
+          "where": "How to Overhead Press with proper form"
+        },
+        {
+          "source": "stronglifts-ohp",
+          "text": "Rest at the bottom for a second before doing your next rep.",
+          "where": "Get Tight"
+        }
+      ]
     }
   ],
   "sources": [
@@ -538,7 +561,7 @@
       "why": "StrongLifts says most people press this way (coach observation, not measured); it moves the bar off the vertical line.",
       "claim": "c5",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: StrongLifts's \"Most people press with their elbows back at the bottom\" (c5, WEAK) and \"Most people Overhead Press with their elbows behind the bar\" put the frequency word on the elbows-back fault; no other fault has one. Set aside: \"Most people lack the shoulder flexibility to handle this position\" is about flexibility for the behind-the-neck press, not how many lifters make it; \"You'll usually fail at the bottom\" says where reps fail; \"Fear of dropping the bar on your head is common\" is a fear, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c19) is about all weight training. Step 2 is not needed: StrongLifts ties excess arching to pain (\"Extreme arching of your lower spine (hyper-extension) squeezes your spinal discs from the back which can result in back pain\"; c8) and c14 ties the behind-the-neck press to shoulder instability signs, but no frequency word backs them. The top fault is not in handlingMistakes, so handlingMistakes[0] cannot be set to it by reordering; left for the supervisor. drawable stays true: the side view shows the tilted forearms."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: StrongLifts's \"Most people press with their elbows back at the bottom\" (c5, WEAK) and \"Most people Overhead Press with their elbows behind the bar\" put the frequency word on the elbows-back fault; no other fault has one. Set aside: \"Most people lack the shoulder flexibility to handle this position\" is about flexibility for the behind-the-neck press, not how many lifters make it; \"You'll usually fail at the bottom\" says where reps fail; \"Fear of dropping the bar on your head is common\" is a fear, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c19) is about all weight training. Step 2 is not needed: StrongLifts ties excess arching to pain (\"Extreme arching of your lower spine (hyper-extension) squeezes your spinal discs from the back which can result in back pain\"; c8) and c14 ties the behind-the-neck press to shoulder instability signs, but no frequency word backs them. The top fault was not in handlingMistakes: it is added at [0] from c5's words, and the last item, bending the knees (c9), is dropped to keep the list at 3 (CARD-V2; ruling R-LB2-2). drawable stays true: the side view shows the tilted forearms."
     },
     "tells": [
       {
@@ -553,8 +576,12 @@
     "tempo": {
       "up": 1,
       "down": 2,
-      "pause": 0,
-      "claim": "c17"
+      "pause": 1,
+      "claim": [
+        "c20",
+        "c17"
+      ],
+      "text": "Pause 1 s at the top: StrongLifts gives the seconds for the hold right after the press (c20; ruling R-LB2-6, LR-33). StrongLifts also asks for a 1 s rest at the bottom between reps (c20); that pause is at another point of the rep, so it is named here and not in pause. Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c17, WEAK; LR-15)."
     },
     "variantLine": null
   },
@@ -612,6 +639,11 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Pressing with the elbows back, forearms tilted.",
+      "fix": "Move your elbows forward under the bar before you press.",
+      "claim": "c5"
+    },
+    {
       "mistake": "Leaning back by arching the low back to grind out a rep.",
       "fix": "The weight is too heavy: end the set.",
       "claim": "c8"
@@ -620,11 +652,6 @@
       "mistake": "Thumbless grip.",
       "fix": "Wrap the thumbs.",
       "claim": "c3"
-    },
-    {
-      "mistake": "Bending the knees to drive the bar.",
-      "fix": "Keep the legs locked; go lighter.",
-      "claim": "c9"
     }
   ],
   "feel": {
