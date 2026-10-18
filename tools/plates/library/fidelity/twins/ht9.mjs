@@ -147,7 +147,11 @@ async function show({ browser, port, R, order, custom, root, pages }, { lib, chr
     }
     cur = null;
     await H.closeHowTo(page);
-  } catch (e) { R.fail(lib, theme, cur ?? S('show-1'), `Show crashed: ${msg(e)}`); } finally { await ctx.close(); }
+  } catch (e) {
+    // what was still animating when it crashed (B2, 10-18: a settleApp timeout here did not reproduce in 4 runs)
+    const left = await page.evaluate(() => document.getAnimations().map(a => `${a.animationName ?? a.transitionProperty ?? a.constructor.name} ${a.playState} ${a.effect?.target?.id || String(a.effect?.target?.className?.baseVal ?? a.effect?.target?.className ?? '')}`.trim())).catch(() => ['n/a']);
+    R.fail(lib, theme, cur ?? S('show-1'), `Show crashed: ${msg(e)}; still animating: ${JSON.stringify(left.slice(0, 12))}`);
+  } finally { await ctx.close(); }
   const got = [...seen].sort();
   if (JSON.stringify(got) !== JSON.stringify(gold)) {
     const m = `setup "Show me" ids ${JSON.stringify(got)} !== golden B's ${JSON.stringify(gold)}`;

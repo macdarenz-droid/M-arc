@@ -21,9 +21,9 @@ import { plateJob, plateStats } from './fidelity/plate.mjs';
 export const LAUNCH_ARGS = ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'];
 export const launchBrowser = async () => (await import('playwright')).chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: LAUNCH_ARGS });
 /** The families the runner runs, in order; each covers the CHECKS named. */
-// B7 (D-LIB4-PAR) on 316679e, Chromium 141, nproc 4: P = 4 gave rows and px identical to P = 1 (2,947 rows, 1,009 px
-// tuples; 2,379.7 s against 8,422.3 s), so 4 pages run at once by default.
-export const DEFAULT_P = 4;
+// B7 (D-LIB4-PAR): P = 4 gave rows and px identical to P = 1 on 316679e, but a later P = 4 run on e607bb5 had 3 red
+// HT9/show rows (a settleApp timeout) whose cause is not found, so it cannot be shown not to depend on P. P stays 1.
+export const DEFAULT_P = 1;
 export const FAMILIES = ['entry', 'L2', 'plate', 'HT4', 'HT6', 'HT7', 'HT8', 'HT9', 'HT10', 'PQH', 'offline'];
 const COVERS = { plate: ['L2b', 'F3', 'L3', 'L4'] };
 const GOLDEN_B = 'tests/howto/golden/howto-layers.html';

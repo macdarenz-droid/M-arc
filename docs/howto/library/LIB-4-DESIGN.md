@@ -171,7 +171,10 @@ Chromium 141.0.7390.37, nproc 4, `--ids golden8`, both runs on the same head and
 | 4 | 2,947 of 2,947 | 0 on all 8 | 2,379.7 s | 9,356 |
 
 - `par.mjs p1.json p4.json 4 4`: "P = 4: identical rows and px" over 2,947 rows and 1,009 pixel tuples. Speed-up 3.54×; each job runs about 11 % longer under load.
-- The default is now `DEFAULT_P = 4` in `fidelity.mjs` (function and CLI). Unit test: the default is 4; setting it to 1 turns that test red.
+- e607bb5 set `DEFAULT_P = 4`. **Withdrawn**: the B2 re-run at P = 4 on e607bb5 (Chromium 141) had 2,944 of 2,947 rows pass. The 3 red rows were machine chest press, paper, `HT9/show-1..3@390`. `settleApp` timed out after the tap on `machine-chest-press-step-4-show` (the hand close-up), so no frame was free of animations within 8 s. The other two rows failed only because the crash ended the loop. Chrome 153 at P = 4 on the same head was 2,947 of 2,947.
+- Root cause: not found. Not reproduced in 4 further runs on that head with a local-only `settleApp` patch that logs what is still animating: one full run and three HT6/HT9/HT10 runs at P = 4. Not reproduced either by 10 to 40 standalone tap loops under 3 CPU hogs, CDP CPU throttling at 4, 8, 20 and 40, or IntersectionObserver callbacks delayed by 400 and 800 ms.
+- One mechanism is proven to make `settleApp` hang: once the feel map's sweep (`feel-sweep`, 5,200 ms) has started, scrolling the map out of view pauses it (`useFeelMap.ts` hold observer, by design), and a paused animation stays in `document.getAnimations()`. That is not linked to this row: the feel sweep never started on the Show path in any repro.
+- The cause cannot be shown not to depend on P, so the default is back to `DEFAULT_P = 1` (function and CLI). Unit test: the default is 1, and setting it to 4 turns that test red. The HT-9 Show twin's crash row now lists whatever is still animating, so a recurrence names its cause.
 - Seconds per family at P=4 (summed job seconds): L2 0.2, entry 71.4, plate 1,511, HT4 466.1, HT6 1,077.1, HT7 705.7, HT8 799.2, HT9 1,243, HT10 2,896.6, PQH 555.7, offline 29.6.
 - Chunk sizes from the P=4 run (raw/gz bytes) are identical to the P=1 run's.
 
