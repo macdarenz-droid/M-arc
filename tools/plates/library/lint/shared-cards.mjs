@@ -25,7 +25,7 @@ function scopes(card, exp) {
   if (t('soreWrist') !== undefined) handling.handleChoice = { sore: t('soreWrist') };
   const opts = ['thumbRule', 'alternative'].filter(f => t(f) !== undefined).map(f => ({ when: t(f) }));
   if (opts.length) handling.thumb = { options: opts };
-  for (const f of ['widthNote', 'fingers', 'handContact', 'grip']) if (t(f) !== undefined) handling.width = { text: t(f) };
+  for (const f of ['widthNote', 'fingers', 'handContact', 'grip', 'width']) if (t(f) !== undefined) handling.width = { text: t(f) };
   if (exp.faults) handling.faults = exp.faults.map(x => ({ key: x.key, label: x.label, alt: x.what }));
   if (t('rightPose') !== undefined || t('contactPoint') !== undefined) zooms.push({ key: 'hand', ...(t('contactPoint') !== undefined ? { rightNote: t('contactPoint') } : {}), ...(t('rightPose') !== undefined ? { hand: { note: t('rightPose') } } : {}) });
   const right = exp.postureArchetype?.right?.text ?? t('defaultCrop'), wrong = exp.postureArchetype?.wrong?.text;

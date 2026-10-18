@@ -183,7 +183,7 @@ describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes nothing before Do 9 and sta
 });
 
 describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research 9eaa248, lib4-cards 14.5)', () => {
-  /** module.EXPORT -> its pinned top-level keys. ROPE and FLOOR_BODY stop on their split throws (asked on #244). */
+  /** module.EXPORT -> its pinned top-level keys. */
   const PINNED: Record<string, string> = {
     'moves.DUMBBELL_KICKUP': 'card appliesTo postureArchetype variants',
     'moves.FOOT_BAR': 'card appliesTo variants',
@@ -193,6 +193,7 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
     'hands.CUPPED_THUMB': 'card appliesTo handContact thumbRule wrist alternative gripLine cue',
     'hands.CURL': 'card appliesTo thumbRule wrist rightPose faults widthNote gripLine cue',
     'hands.PALM_FLAT': 'card appliesTo contactPoint fingers wrist rightPose faults soreWrist gripLine cue',
+    'hands.ROPE': 'card appliesTo width thumbRule wrist faults gripLine cue',
     'implements.BATTLE_ROPES': 'card appliesTo contactPoint thumbRule rightPose faults gripLine cue handRisks',
     'implements.JUMP_ROPE': 'card appliesTo contactPoint thumbRule wrist rightPose faults gripLine cue handRisks',
     'implements.KETTLEBELL_SWING': 'card appliesTo contactPoint thumbRule rightPose faults gripLine cue handRisks',
@@ -201,7 +202,10 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
     'exemptions.FRONT_RACK': 'card appliesTo reason replacementRule faults',
     'exemptions.WRIST_CURL': 'card appliesTo reason replacementRule faults',
     'checkpoints.PRONE': 'card appliesTo checkpoints',
+    'checkpoints.FLOOR_BODY': 'card appliesTo defaultCheckpoints defaultCrop',
   };
+  /** D-LIB5-SPLIT-2 1: rope-rule's width.text, pinned whole (handContact, one space, grip). */
+  const ROPE_WIDTH = 'One hand on each end of the rope, up against the knob. Neutral grip, palms facing each other. A full grip, thumbs wrapped round the rope.';
   let C: any, SL: any, shared: any;
   const MODS: Record<string, any> = {};
   beforeAll(async () => {
@@ -218,6 +222,8 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
     const out: any = { card: `shared/${c.key}.json`, appliesTo: c.appliesTo };
     const steps = (l: any[]) => l.map(s => pick(s, ['kind', 'text', 'claim']));
     for (const [f, v] of Object.entries(c) as [string, any][]) {
+      if (c.key === 'rope-rule' && f === 'handContact') out.width = { text: ROPE_WIDTH, claim: ['c1', 'c2', 'c3'] };
+      if (c.key === 'rope-rule' && (f === 'handContact' || f === 'grip')) continue;
       if (['gripLine', 'cue', 'wrist', 'soreWrist', 'thumbRule', 'alternative', 'widthNote', 'fingers', 'handContact', 'grip', 'rightPose', 'contactPoint', 'reason', 'replacementRule', 'defaultCrop'].includes(f)) out[f] = pick(v, ['text', 'claim', 'appliesTo']);
       if (f === 'faults') out.faults = v.map((x: any) => pick(x, ['key', 'label', 'what', 'claim']));
       if (f === 'handRisks') out.handRisks = v.map((x: any) => pick(x, ['text', 'claim']));
@@ -305,20 +311,39 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
     // variants with disjoint ids are separate sheets; a list path holds one entry per field
     expect(C.splitOf(card('foot-bar')).map((x: any) => `${x.field} ${x.path}`)).toEqual(['variants.chest-press.steps setup[]', 'variants.pullover.steps setup[]']);
   });
-  it('the two real cards that stop: rope-rule (grip and handContact on width.text) and floor-body (prone unruled)', () => {
-    expect(() => C.cardExport(card('rope-rule'))).toThrow(/^rope-rule: split: handling\.width\.text has handContact, grip$/);
-    expect(() => C.cardExport(card('floor-body'))).toThrow(/^floor-body: split: prone is not a ruled field$/);
+  it('the one ruled join (D-LIB5-SPLIT-2 1): rope-rule width.text = handContact + \' \' + grip; order swapped or a second card is red', () => {
+    const c = card('rope-rule');
+    expect(C.RULED_JOINS).toEqual({ 'rope-rule': { 'handling.width.text': ['handContact', 'grip'] } });
+    expect(`${c.handContact.text} ${c.grip.text}`).toBe(ROPE_WIDTH);
+    expect(exp('hands.ROPE').width).toEqual({ text: ROPE_WIDTH, claim: ['c1', 'c2', 'c3'] });
+    const keep = C.RULED_JOINS['rope-rule']['handling.width.text'];
+    try {
+      C.RULED_JOINS['rope-rule']['handling.width.text'] = ['grip', 'handContact'];
+      expect(() => C.cardExport(c)).toThrow(/^rope-rule: split: handling\.width\.text has handContact, grip$/);
+    } finally { C.RULED_JOINS['rope-rule']['handling.width.text'] = keep; }
+    expect(Object.keys({ ...C.RULED_JOINS, curl: { 'handling.width.text': ['widthNote'] } })).not.toEqual(['rope-rule']);
+    // the throw stays for every other card
+    expect(() => C.cardExport({ ...c, key: 'rope-copy' })).toThrow(/^rope-copy: split: handling\.width\.text has handContact, grip$/);
   });
 
   /** Each whole free-text data value of a card: appliesToWhy, every notes and gaps entry, every data field's .text/.basis,
-   *  and every string in exempts (lib4-cards 14.5) but its typed archetype enum (14.3 point 2). */
+   *  every string in exempts (lib4-cards 14.5) but its typed archetype enum (14.3 point 2), and prone's (14.6). */
   const dataValues = (c: any, skip: string[] = []) => [
     ...(c.appliesToWhy ? [['appliesToWhy', c.appliesToWhy]] : []),
     ...['notes', 'gaps'].flatMap(k => (c[k] ?? []).map((t: string, i: number) => [`${k}[${i}]`, t])),
     ...C.DATA.flatMap((k: string) => ['text', 'basis'].filter(t => typeof c[k]?.[t] === 'string' && !skip.includes(`${k}.${t}`)).map(t => [`${k}.${t}`, c[k][t]])),
     ...Object.entries(c.exempts ?? {}).filter(([k, v]) => k !== 'archetype' && typeof v === 'string').map(([k, v]) => [`exempts.${k}`, v]),
+    ...Object.entries(c.prone ?? {}).filter(([, v]) => typeof v === 'string').map(([k, v]) => [`prone.${k}`, v]),
   ] as [string, string][];
   const leaks = (vals: [string, string][], files: [string, string][]) => files.flatMap(([p, t]) => vals.filter(([, x]) => t.includes(x)).map(([n]) => `${p}: ${n}`));
+  it('implement.text is a typed id: each names an exercises.json row (lib_ + id); a misspelt id is red', () => {
+    const ids = new Set(JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map((e: any) => e.id));
+    const bad = (cs: any[]) => cs.filter(c => c.implement && !ids.has(`lib_${c.implement.text}`)).map(c => c.key);
+    const imps = readdirSync(join(ROOT, 'docs/research/howto/shared')).filter(f => f.startsWith('implement-')).map(f => card(f.slice(0, -5)));
+    expect(imps).toHaveLength(5);
+    expect(bad(imps)).toEqual([]);
+    expect(bad([...imps, { ...imps[0], key: 'misspelt', implement: { ...imps[0].implement, text: 'battle_rope' } }])).toEqual(['misspelt']);
+  });
   it('no data value reaches src/** or a generator output (0 hits before these modules, recorded on #244); a notes string in a generated file is red', async () => {
     const src = walkFiles(join(ROOT, 'src')).map(f => [f.slice(ROOT.length), readFileSync(f, 'utf8')] as [string, string]);
     const out = [...(await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render())].map(([p, o]: [string, any]) => [p, o.text] as [string, string]);
@@ -327,10 +352,11 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
     const keys = readdirSync(join(ROOT, 'docs/research/howto/shared')).map(f => f.slice(0, -5)).filter(k => k !== 'back-pain-box');
     expect(keys).toHaveLength(18);
     let n = 0;
-    // implement.text is an exercise id (battle_ropes), which src names as an id: asked on #244, the only skip
+    // implement.text is a typed exercise id (D-LIB5-SPLIT-2 3): the only skip, and it must name an exercises.json row
     for (const k of keys) { const vals = dataValues(card(k), ['implement.text']); n += vals.length; expect([k, leaks(vals, [...src, ...out])]).toEqual([k, []]); }
     expect(n).toBeGreaterThan(100);
     expect(dataValues(card('wrist-curl-exemption')).map(([p]) => p)).toContain('exempts.rule');
+    expect(dataValues(card('floor-body')).map(([p]) => p)).toContain('prone.see');
     const note = card('selector-pin').notes[0], planted = out.map(([p, t], i) => [p, i === 0 ? `${t}\n// ${note}\n` : t] as [string, string]);
     expect(leaks(dataValues(card('selector-pin')), planted)).toEqual([`${out[0]![0]}: notes[0]`]);
   }, 300_000);

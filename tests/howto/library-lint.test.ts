@@ -227,7 +227,7 @@ describe('LIB-5 S7 generator cases: E1\'s row in per-case copies of E1\'s tree (
       ['M3: inherit true on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": true,\n  "topFault":'),
         `lib_cable_lateral_raise: family: ${F.CARD_FILE}#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`],
       ['D-LIB5-FAULTKEYS 4: a hand module labels hand-ahead \'Hands forward\'', () => withHand("'hand-ahead': { label: 'Hand ahead'", "'hand-ahead': { label: 'Hands forward'"),
-        'library family (rows 13, shared 13, hands 3):\n  fault hand-ahead: one label per fault key (content.md 4, family consistency) ("Hands forward" (hand-fixture.mjs) vs "Hand ahead" (hands.mjs#PALM_FLAT))'],
+        'library family (rows 13, shared 14, hands 3):\n  fault hand-ahead: one label per fault key (content.md 4, family consistency) ("Hands forward" (hand-fixture.mjs) vs "Hand ahead" (hands.mjs#PALM_FLAT))'],
       ['control: the fixture hand module as it is', () => withHand(), null],
       ['control: inherit [] on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": [],\n  "topFault":'), null],
       ['control: the unedited tree', () => tree, null],
