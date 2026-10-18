@@ -12,7 +12,7 @@
 //  - Seat top 47 cm, trunk vertical (tilt 0, trunk 0), feet flat on the floor 46 cm in front of the hip, knees ~90 deg.
 //  - Chest pad upright (angle 0), its face on the chest landmark of the correct pose (c2, c4): 45 cm tall, 12 cm thick,
 //    mounted on an arm to the front column. The pad does not move.
-//  - Lever: a pivot 1.40 m up (forehead height) and 33 cm in front of the hip line, 17 cm in front of the face,
+//  - Lever: a pivot 1.40 m up (forehead height) and 33 cm in front of the hip line, 18 cm in front of the face,
 //    carried on a top beam from the front column (80 cm, clear of the toes). The pivot lies on the perpendicular
 //    bisector of the start and end handles, so both sit on its circle (lever 0.577 m). End handle 85 cm up, either side
 //    of the pad, 1 cm behind its face: the elbows end 8 cm behind the upper back, close to the ribs (c4, c5; tested
@@ -49,8 +49,8 @@ const PAD_FACE = [0, lm0.chest[1] - 0.08, lm0.chest[2]];
 // The handle path: start and end handles both on the lever circle; the pivot sits on their perpendicular bisector at
 // PIVOT_Y, so the lever hangs from the top beam and its circle runs through both.
 const START_G = [0, 0.98, 0.728];                        // arms straight forward; the 13 cm handle spans the shoulder joint's height (c1, c2)
-const END_G = [0, 0.85, 0.16];                          // handles either side of the pad, 6 cm behind its face: elbows just behind the back (c4, c5)
-const PIVOT_Y = 1.40;                                   // forehead height, 24 cm in front of the face: the end lever clears the face
+const END_G = [0, 0.85, 0.16];                          // handles either side of the pad, 1 cm (0.98 cm) behind its face: elbows just behind the back (c4, c5)
+const PIVOT_Y = 1.40;                                   // forehead height, 18 cm (18.2 cm) in front of the face: the end lever clears the face
 const PIVOT = (() => {
   const m = [(START_G[1] + END_G[1]) / 2, (START_G[2] + END_G[2]) / 2], d = [END_G[1] - START_G[1], END_G[2] - START_G[2]];
   const z = m[1] - (PIVOT_Y - m[0]) * d[0] / d[1];      // on the bisector: (p - m) . d = 0

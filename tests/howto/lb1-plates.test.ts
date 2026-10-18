@@ -296,11 +296,14 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
       const u: any = [a[1] - b[1], a[2] - b[2]], v: any = [c[1] - b[1], c[2] - b[2]];
       return 180 - Math.acos((u[0] * v[0] + u[1] * v[1]) / Math.hypot(...u) / Math.hypot(...v)) * 180 / Math.PI; };
     expect(ang(m['hip.r'], m['knee.r'], m['ankle.r']), 'Mistake knee locked').toBeLessThan(2);
-    const tEnd = itemsIn(hlp, 'end').items.find(it => it.type === 'legPress45').travel;
-    const tMis = itemsIn(hlp, 'mistake', { mistake: true }).items.find(it => it.type === 'legPress45').travel;
-    // 13.3 Q-D5-3: end redrawn at 15° (card-true); the lock moves the sled 0.8 cm, so the travel check is now 'further than the end', with the knee lock asserted directly
-    expect(tMis - tEnd, 'the sled runs further when the knees lock').toBeGreaterThan(0);
-    expect(ang(m['hip.r'], m['knee.r'], m['ankle.r']), 'Mistake knee locked (below 2 deg)').toBeLessThan(2);
+    // lib4-cards 13.4 must-fix 2: the drawn plate face moves from the end to the Mistake exactly as the sole does (within
+    // 1 mm), and that move is at least 7 mm (the card-true 15 deg end locks out over 0.795 cm)
+    const E0 = itemsIn(hlp, 'end'), M0 = itemsIn(hlp, 'mistake', { mistake: true });
+    const sledOf = (x: any) => x.items.find((it: any) => it.type === 'legPress45');
+    const face = (x: any) => eng.legPressFace(sledOf(x), sledOf(x).travel).at[2], dFace = face(M0) - face(E0);
+    const dSole = M0.lm['sole.r'][2] - E0.lm['sole.r'][2];
+    expect(Math.abs(dFace - dSole), `plate face move ${dFace.toFixed(5)} = sole move ${dSole.toFixed(5)}`).toBeLessThanOrEqual(0.001);
+    expect(Math.abs(dFace), 'the sled runs on when the knees lock').toBeGreaterThanOrEqual(0.007);
   });
   it('horizontal_leg_press: the bottom footplate is a thin outline in the end pose only', () => {
     const outl = (pose: string) => itemsIn(hlp, pose, { mistake: pose === 'mistake' }).items.filter(it => it.type === 'line' && it.cls === 'eq-thin');
@@ -406,6 +409,38 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
       expect(hyp(cable[0].from, ring), `${pose} cable leaves the drawn ring`).toBeLessThan(0.001);
       expect(hyp(cable[0].to, headTangent(cable[0].from)), `${pose} cable meets the head pulley`).toBeLessThan(0.001);
     }
+  });
+  // lib4-cards 13.4 must-fix 1 (Q-R2-1): the Mistake elbow drives back behind the body (c10, c13), its red cap clear of
+  // the solid end figure, and the moving cable drawn from the Mistake handle to the head pulley (DRAWING-GUIDE 4).
+  it('single_arm_lat_pulldown: the Mistake elbow ends at least 10 cm behind the end backMid', () => {
+    const L = qaEng.poseLandmarks(Eng(), sap).lm;
+    expect(L.mistake['elbow.r'][2] - L.end.backMid[2], 'Mistake elbow z - end backMid z').toBeLessThanOrEqual(-0.10);
+  });
+  it('single_arm_lat_pulldown: the drawn Mistake elbow cap lies at least 6 px outside every trunk and near-side shape of the solid end figure', () => {
+    const r = plate.renderPlate(sap, { id: 'x' }), cam = qaEng.cameraOf(sap, r.report), Q = qaEng.poseLandmarks(Eng(), sap);
+    expect(cam.pxm, 'the plate scale').toBeGreaterThan(100);
+    const shapesOf = (q: any) => eng.bodyShapes(eng.fk(q, Q.body), cam);
+    const solid = shapesOf(Q.q.end).filter((s: any) => s.poly && (s.group === 'trunk' || s.group === 'near'));
+    const cap = shapesOf(Q.q.mistake).find((s: any) => s.key === 'elbowcap.r');
+    expect(solid.length, 'solid trunk and near-side shapes').toBeGreaterThan(5);
+    const inside = (p: number[], poly: number[][]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i] as any, [xj, yj] = poly[j] as any; if ((yi > p[1]!) !== (yj > p[1]!) && p[0]! < (xj - xi) * (p[1]! - yi) / (yj - yi) + xi) c = !c; } return c; };
+    const dseg = (p: number[], a: number[], b: number[]) => { const dx = b[0]! - a[0]!, dy = b[1]! - a[1]!, L2 = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((p[0]! - a[0]!) * dx + (p[1]! - a[1]!) * dy) / L2)); return Math.hypot(p[0]! - a[0]! - t * dx, p[1]! - a[1]! - t * dy); };
+    // signed distance of a point to a closed outline: negative inside
+    const sd = (p: number[], poly: number[][]) => { let m = Infinity; poly.forEach((a, i) => { m = Math.min(m, dseg(p, a, poly[(i + 1) % poly.length]!)); }); return inside(p, poly) ? -m : m; };
+    let min = Infinity, who = '';
+    for (const p of cap.poly) for (const s of solid) { const d = sd(p, s.poly); if (d < min) { min = d; who = s.key; } }
+    expect(min, `Mistake elbow cap clearance (nearest: ${who})`).toBeGreaterThanOrEqual(6);
+  });
+  it('single_arm_lat_pulldown: the Mistake view draws the moving cable from the drawn Mistake handle ring to the head pulley', () => {
+    const { headTangent } = sapMod.HANDLE, r = plate.renderPlate(sap, { id: 'x', mistake: true }), cam = qaEng.cameraOf(sap, r.report);
+    const polys = itemsIn(sap, 'mistake', { mistake: true }).items.filter(it => it.part === 'handle' && it.type === 'poly');
+    const rp = polys[3].pts, ring = [0, rp.reduce((a: number, p: number[]) => a + p[1]!, 0) / 8, rp.reduce((a: number, p: number[]) => a + p[2]!, 0) / 8];
+    const [a, b] = [cam.P(ring), cam.P(headTangent(ring))];
+    const lines = [...r.svg.matchAll(/<path class="m-line" d="M(-?[\d.]+)[ ,](-?[\d.]+)L(-?[\d.]+)[ ,](-?[\d.]+)"/g)].map(m => [[+m[1]!, +m[2]!], [+m[3]!, +m[4]!]]);
+    const hit = lines.filter(([p, q]) => Math.hypot(p![0]! - a[0], p![1]! - a[1]) < 1 && Math.hypot(q![0]! - b[0], q![1]! - b[1]) < 1);
+    expect(hit.length, 'one dashed Mistake cable, ring to head pulley').toBe(1);
   });
 
   it('inverted_row: heels on the floor in every drawn pose; arms straight at the start; chest at the drawn bar at the end', () => {
@@ -514,6 +549,8 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
     const r = plate.renderPlate(rbr, { id: 'x' }), pxm = r.report.camera.pxPerM;
     expect(pxm, 'scale above the F1 cap (the floor sit fills the plate)').toBeGreaterThan(146.29 * 1.05);
     expect(pxm, 'within D-LIB8-floor x1.35').toBeLessThanOrEqual(146.29 * 1.35 + 0.01);
+    // lib4-cards 13.4 Q-R2-3: the named F1 exemption states 159.02 px/m (x1.087), so a floor or camera change is red
+    expect(Math.abs(pxm - 159.02), `scale ${pxm} px/m pinned to the F1 exemption's 159.02`).toBeLessThanOrEqual(0.5);
     expect(r.report.camera.y0, 'floor line at y 339').toBe(339);
   });
 // Mutation (state at e035bdf, red): tools/plates/library/specs/resistance_band_row.mjs
@@ -576,33 +613,43 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
     const a = sp.mistake.tells[1].anchor;
     expect(Math.hypot(a[1] - mid[1]!, a[2] - mid[2]!)).toBeLessThan(1e-9);
   });
+  // lib4-cards 13.4 must-fix 5 (Q-R2-2): the forward roll (c5) is the second sign; its tell sits on the red handle, which
+  // the roll carries past the solid one, on the open side outside the solid end figure
+  it('incline_machine_press: two Mistake tells, `blades` (topFault) first, `roll` anchored on the red handle outside the solid end figure', async () => {
+    const ip = (await import(/* @vite-ignore */ lib('specs/incline_machine_press.mjs'))).default;
+    const card = JSON.parse(readFileSync(new URL('../../docs/research/howto/cards/incline_machine_press.json', import.meta.url), 'utf8'));
+    const keys = ip.mistake.tells.map((t: any) => t.key);
+    expect(keys).toEqual(['blades', 'roll']);
+    expect(keys[0]).toBe(card.topFault);
+    const r = plate.renderPlate(ip, { id: 'x', mistake: true }), cam = qaEng.cameraOf(ip, r.report), Q = qaEng.poseLandmarks(Eng(), ip);
+    expect(r.report.issues).toEqual([]);
+    expect(Q.lm.mistake['grip.r'][2] - Q.lm.end['grip.r'][2], 'the red handle past the solid one').toBeGreaterThan(0.05);
+    const a = qaEng.resolvePoint(ip.mistake.tells[1].anchor, 'mistake', Q.lm, cam), g = cam.P(Q.lm.mistake['grip.r']);
+    expect(Math.hypot(a[0] - g[0], a[1] - g[1]), 'anchor on the red handle (px)').toBeLessThanOrEqual(10);
+    const inside = (p: number[], poly: number[][]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i] as any, [xj, yj] = poly[j] as any; if ((yi > p[1]!) !== (yj > p[1]!) && p[0]! < (xj - xi) * (p[1]! - yi) / (yj - yi) + xi) c = !c; } return c; };
+    const solid = eng.bodyShapes(eng.fk(Q.q.end, Q.body), cam).filter((s: any) => s.poly);
+    expect(solid.filter((s: any) => inside(a, s.poly)).map((s: any) => s.key), 'anchor outside the solid end figure').toEqual([]);
+  });
 // Mutation (reproduces e035bdf, one tell): tools/plates/library/specs/shoulder_press.mjs
 //   old: "\n      { key: 'gap', text: 'Off<br>the pad'," ... (delete the whole `gap` tell line)
 //   red: "expected [ 'arch' ] to deeply equal [ 'arch', 'gap' ]"
 
-  // Every drawn LB1 spec that has a weight stack (D-LIB9a-SLICE: one loop over all stack specs).
-// Mutations (verified in a throwaway worktree with a copy of the test file; all restored):
-//  M-via   spec `poses: { start, end, via },` -> `poses: { start, end },` (the e035bdf state):
-//          × straight_arm_pulldown: every ghost elbow keeps the 15 deg bend … → ghost 0 elbow 97.6: expected 82.57 to be less than or equal to 2
-//  M-rods  spec `...[-0.05, 0.05].map(dz => ({ type: 'line', cls: 'eq-thin'` -> `...[].map(dz => …`:
-//          × every stack spec: two static guide rods … → straight_arm_pulldown start rods: expected +0 to be 2
-//  M-cable the cable end 3 cm (3.9 px) off the stack top. A cableColumn draws the cable end and the stack top in one
-//          locked vendor primitive (equipment.mjs:78, :99), so no spec edit can part them, and a vendor edit is refused
-//          by the golden lock ("vendored engine is not the golden lock"). Shown on the adapter input instead:
-//          `const end = xy[xy.length - 1]!` -> `[end0[0], end0[1] + 3.9]`:
-//          × every stack spec: the stack rises … → straight_arm_pulldown start cable end on the drawn stack top: expected 3.896 to be less than 1
+  // Every drawn LB1 spec that has a weight stack (D-LIB9a-SLICE: one loop over all stack specs). Everything is read from
+  // the drawn plate (px): the stack blocks, the cable run down to the stack, the rods. lib4-cards 13.4 must-fix 3: the
+  // "drawn stack top" is the top edge of a drawn block at least one plate high, and the lifted block holds at least one
+  // plate, so a zero-height block (`load: 0`) can never stand in for the top; the lift is read off the drawn blocks (no
+  // copy of the vendor formula). A spec edit can part the cable from the stack (a cableColumn spreads its `stack`
+  // options after `base` into stack(), equipment.mjs:93, while its cable end uses the column's own base, :99).
+// Mutations (13.4 must-fix 3; each green at 4257648 and red here; all restored):
+//  M-load0 straight_arm_pulldown.mjs `const STACK = { plates: 14, load: 6 };` -> `load: 0`
+//  M-load0 close_grip_pulldown.mjs `plates: 16, load: 8,` -> `load: 0,`
+//  M-base  straight_arm_pulldown.mjs `stack: { ...STACK, rods: false }` -> `stack: { ...STACK, rods: false, base: [0, 0.03, SZ] }`
+//          (13.3 must-fix 9's proof; red at 4257648 too: `3.9208 < 1`)
+//  M-via   spec `poses: { start, end, via },` -> `poses: { start, end },` (the e035bdf state): red in the ghost-elbow test
+//  M-rods  spec `...[-0.05, 0.05].map(dz => ({ type: 'line', cls: 'eq-thin'` -> `...[].map(dz => …`: red in the rods test
   const STACK_SPECS = () => [['close_grip_pulldown', cgp, 0.03], ['assisted_pull_up', apu, apuMod.MACHINE.stack.lift0],
     ['underhand_lat_pulldown', ulp, 0.03], ['single_arm_lat_pulldown', sap, sapMod.LIFT0], ['straight_arm_pulldown', sapd, 0]] as [string, any, number][];
-  // Adapter (lib4-cards 13.3 must-fix 9): a cableColumn draws its own stack and the cable down to it, so for
-  // straight_arm_pulldown the stack item and the drawn stack/cable come from the column. Every assertion of the loop
-  // applies unchanged. The column's lift is the engine's own rule (cable paid out from `rest` to `to`, over `ratio`).
-  const stackItem = (spec: any, pose: string) => {
-    const its = itemsIn(spec, pose).items, st = its.find(it => it.type === 'stack');
-    if (st) return st;
-    const c = its.find(it => it.type === 'cableColumn'), d = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!);
-    return { type: 'stack', base: c.base, plates: c.stack.plates, w: Math.min(0.22, (c.width ?? 0.34) - 0.12),
-      lift: c.rest ? (d(c.to, c.pulley.at) - d(c.rest, c.pulley.at)) / (c.ratio ?? 1) : 0 };
-  };
   // drawn [key, item] pairs of a pose, the column's stack plates renamed `.stack.` and its run down to the stack given
   // as a `.cable.` line (its last segment, top pulley -> stack top)
   const stackDrawn = (pairs: [string, any][]) => {
@@ -615,38 +662,50 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
     const plates = col.filter(([, v]) => v.poly && v.poly.length === 4 && v.poly.every((p: number[]) => Math.abs(p[0]! - end[0]!) < 15 && p[1]! > from[1]! + 1));
     return [...rest, ...plates.map(([k, v], i) => [`${k.split('.')[0]}.stack.${i}`, v] as [string, any]), ['col.cable.0', { line: [from, end] }] as [string, any]];
   };
+  /** The drawn stack of one pose (plate px): its blocks top first, the stack top, the lift, the centre line, the half width. */
+  const stackOf = (spec: any, pose: string) => {
+    const R = plate.renderPlate(spec, { id: 'x' }), cam = qaEng.cameraOf(spec, R.report);
+    const its = stackDrawn([...qaEng.equipmentItems(Eng(), spec, R.report, [pose])[pose].entries()]);
+    const blocks: any[] = its.filter(([k, v]) => /\.stack\./.test(k) && v.poly && v.poly.length === 4).map(([, v]) => {
+      const ys = v.poly.map((p: number[]) => p[1]!), xs = v.poly.map((p: number[]) => p[0]!);
+      return { top: Math.min(...ys), bot: Math.max(...ys), x0: Math.min(...xs), x1: Math.max(...xs) };
+    }).sort((u: any, v: any) => u.top - v.top);
+    const plateH = 0.025 * cam.pxm, full = blocks.filter((b: any) => b.bot - b.top >= plateH - 0.05);
+    const x0 = Math.min(...blocks.map((b: any) => b.x0)), x1 = Math.max(...blocks.map((b: any) => b.x1));
+    return { its, cam, blocks, plateH, top: Math.min(...full.map((b: any) => b.top)), cx: (x0 + x1) / 2, half: (x1 - x0) / 2,
+      lift: blocks.length >= 2 ? (blocks[1].top - blocks[0].bot) / cam.pxm : NaN };   // gap between the lifted and the resting block (m)
+  };
   it('every stack spec: the stack rises off its rest pose (end and Mistake), and its cable ends on the drawn stack top', () => {
     for (const [id, spec, lift0] of STACK_SPECS()) {
-      const R = plate.renderPlate(spec, { id: 'x' }), drawn = qaEng.equipmentItems(Eng(), spec, R.report, ['start', 'end', 'mistake']);
       // every stack sits at lift0 in the spec's start pose and rises from it (the pulldowns pull; the assist hang pushes the pad down)
-      const up = ['end', 'mistake'];
-      expect(stackItem(spec, 'start').lift, `${id} start lift`).toBeCloseTo(lift0, 9);
-      for (const pose of up) expect(stackItem(spec, pose).lift, `${id} ${pose} lift`).toBeGreaterThan(lift0);
-      for (const pose of ['start', ...up]) {
-        const its = stackDrawn([...drawn[pose].entries()]);
-        const blocks = its.filter(([k, v]) => /\.stack\./.test(k) && v.poly).flatMap(([, v]) => v.poly.map((p: number[]) => p[1]));
-        const top = Math.min(...blocks);                                               // the drawn stack's top edge (plate px)
-        const xs = its.filter(([k, v]) => /\.stack\./.test(k) && v.poly).flatMap(([, v]) => v.poly.map((p: number[]) => p[0]));
-        const cx = (Math.min(...xs) + Math.max(...xs)) / 2;                            // the stack's centre line
+      for (const pose of ['start', 'end', 'mistake']) {
+        const S = stackOf(spec, pose);
+        expect(S.blocks.length, `${id} ${pose} stop bar, resting and lifted blocks`).toBe(3);
+        if (pose === 'start') expect(Math.abs(S.lift - lift0) * S.cam.pxm, `${id} start lift ${S.lift.toFixed(4)} (px off lift0)`).toBeLessThan(0.5);
+        else {
+          expect((S.lift - lift0) * S.cam.pxm, `${id} ${pose} lift ${S.lift.toFixed(4)} above lift0 (px)`).toBeGreaterThan(0.5);
+          expect(S.blocks[0].bot - S.blocks[0].top, `${id} ${pose} the lifted block holds at least one plate (px)`).toBeGreaterThanOrEqual(S.plateH - 0.05);
+        }
+        expect(S.blocks[0].top, `${id} ${pose} the stack top is the lifted block's top`).toBe(S.top);
         const low = (l: number[][]) => (l[0]![1]! > l[1]![1]! ? l[0]! : l[1]!);
-        const cable = its.filter(([k, v]) => /\.cable\./.test(k) && v.line && Math.abs(low(v.line)[0]! - cx) < 1).map(([, v]) => v.line);
+        const cable = S.its.filter(([k, v]) => /\.cable\./.test(k) && v.line && Math.abs(low(v.line)[0]! - S.cx) < 1).map(([, v]) => v.line);
         // the stack cable is the vertical run down to the stack (the top run between the pulleys also ends over cx)
         expect(cable.length, `${id} ${pose} cables over the stack`).toBeGreaterThan(0);
-        const lowEnd = Math.max(...cable.map(l => low(l)[1]!));
-        expect(Math.abs(lowEnd - top), `${id} ${pose} cable end on the drawn stack top`).toBeLessThan(1);
+        const lowEnd = Math.max(...cable.map((l: number[][]) => low(l)[1]!));
+        expect(Math.abs(lowEnd - S.top), `${id} ${pose} cable end on the drawn stack top`).toBeLessThan(1);
       }
     }
   });
   it('every stack spec: two static guide rods run through the resting and the lifted plates, drawn as close_grip draws them', () => {
     for (const [id, spec] of STACK_SPECS()) for (const pose of ['start', 'end', 'mistake']) {
-      const its = itemsIn(spec, pose).items, st = stackItem(spec, pose);
+      const its = itemsIn(spec, pose).items, S = stackOf(spec, pose), stops = S.cam.P([0, 0.06, 0])[1];
       const rods = its.filter(it => it.type === 'line' && it.cls === 'eq-thin');
       expect(rods.length, `${id} ${pose} rods`).toBe(2);
-      const top = 0.06 + st.plates * 0.025 + st.lift;
       for (const r of rods) {
-        expect(Math.abs(r.pts[0][2] - st.base[2]), `${id} rod inside the stack`).toBeLessThan((st.w ?? 0.22) / 2);
-        expect(Math.min(r.pts[0][1], r.pts[1][1]), `${id} ${pose} rod from the stops`).toBeLessThanOrEqual(0.06);
-        expect(Math.max(r.pts[0][1], r.pts[1][1]), `${id} ${pose} rod through the lifted plates`).toBeGreaterThan(top);
+        const [a, b] = r.pts.map((w: number[]) => S.cam.P(w));
+        expect(Math.abs(a[0] - S.cx), `${id} rod inside the stack`).toBeLessThan(S.half);
+        expect(Math.max(a[1], b[1]), `${id} ${pose} rod from the stops`).toBeGreaterThanOrEqual(stops - 0.01);
+        expect(Math.min(a[1], b[1]), `${id} ${pose} rod through the lifted plates`).toBeLessThan(S.top);
       }
       expect(rods.every(r => JSON.stringify(r.pts) === JSON.stringify(itemsIn(spec, 'start').items.filter(x => x.type === 'line' && x.cls === 'eq-thin')[rods.indexOf(r)].pts)), `${id} rods static`).toBe(true);
     }
@@ -720,6 +779,30 @@ describe('LIB-9a Do 5(d): straight_arm_pulldown (D-LIB9-CLONE)', { timeout: T },
     expect(Math.abs(el(L.start) - 15)).toBeLessThan(0.5);
     expect(Math.abs(el(L.end) - 15)).toBeLessThan(0.5);
     expect(el(L.mistake)).toBeGreaterThan(60);
+  });
+  // lib4-cards 13.4 must-fix 4: the `close` tell says what is drawn (c6, "a bent-arm pulldown"): the red bar comes in
+  // close to the body, not to the chest
+  it('the drawn Mistake bar sits at least 15 cm nearer the shoulder than the solid bar path at its own height', () => {
+    const B = { height: 1.75 }, keys = [sapd.poses.start, ...(sapd.poses.via ?? []), sapd.poses.end].map((p: any) => body.normPose(p, B));
+    const M = itemsIn(sapd, 'mistake', { mistake: true }), bar = M.items.find((it: any) => it.type === 'latBar').at;
+    const path = Array.from({ length: 401 }, (_, i) => body.landmarks(body.fk(body.poseAt(keys, i / 400, B).q, B)));
+    let solid = NaN;
+    for (let i = 1; i < path.length; i++) {
+      const a = path[i - 1], b = path[i], ya = a.grips[1], yb = b.grips[1];
+      if ((ya - bar[1]) * (yb - bar[1]) <= 0 && ya !== yb) {
+        const t = (bar[1] - ya) / (yb - ya), g = [0, bar[1], a.grips[2] + (b.grips[2] - a.grips[2]) * t];
+        const sh = [0, a['shoulder.r'][1] + (b['shoulder.r'][1] - a['shoulder.r'][1]) * t, a['shoulder.r'][2] + (b['shoulder.r'][2] - a['shoulder.r'][2]) * t];
+        solid = hyp(g, sh); break;
+      }
+    }
+    const mis = hyp(bar, M.lm['shoulder.r']);
+    expect(solid, 'the solid bar path crosses the Mistake bar height').toBeGreaterThan(0);
+    expect(solid - mis, `Mistake bar ${mis.toFixed(3)} m from the shoulder, the solid path ${solid.toFixed(3)} m`).toBeGreaterThanOrEqual(0.15);
+  });
+  it('the `close` tell text and cue do not name the chest', () => {
+    const t = sapd.mistake.tells.find((x: any) => x.key === 'close');
+    expect(t, 'the close tell').toBeTruthy();
+    expect(`${t.text} ${t.cue}`).not.toMatch(/chest/i);
   });
   it('cableColumn stack: the drawn stack rises off its start (end and Mistake), its cable ends on the drawn stack top, and two static rods run through the lifted plates', () => {
     const R = plate.renderPlate(sapd, { id: 'x' }), drawn = qaEng.equipmentItems(Eng(), sapd, R.report, ['start', 'end', 'mistake']);

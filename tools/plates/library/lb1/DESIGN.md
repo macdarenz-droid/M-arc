@@ -161,6 +161,23 @@ lever circle), never the helper maths alone.
   contact ('Knees on pad', 'Pad stays up') is closed in by the shin on the pad, the pad and bracket below and, in the
   Mistake, the red half-hang legs above; the bent elbow's only open side ('Arms bent') is the 45 px gap to the tower,
   and the 47 px button does not fit in it.
+- **One Mistake tell (Q-D5-4; lib4-cards 13.4 Q-R2-2).** Q-D5-4 asks for 2-3 tells wherever the card names more
+  than one visible sign that can be placed (DRAWING-GUIDE:24, :40). Three plates keep one tell, as ruled:
+  - horizontal_leg_press (`lock`): the card's mistake names one sign, "Snapping the knees straight and locking them"
+    (c7, c4, c8). Measured: the end knee is 15.0 deg, the Mistake knee 0.5 deg. The heels (c7) and the low back (c4) are
+    right-form tells or other faults; drawing them would add a second fault (DRAWING-GUIDE:24, :37).
+  - underhand_lat_pulldown (`rock`): the card names one visible sign, "the torso rocks back" (the Mistake leans back
+    more than 20 deg past the end, test "the Mistake rocks the torso back"). "To drive the bar down" is the purpose and
+    "using momentum" cannot be seen in a still; c5's lean limit is the same sign. The tried 'Bar driven down' leader
+    crossed the face and the arm (round 2, 6245258953).
+  - inverted_row (`sag`), on the placement ground only: the fold's only open-side edge is the buttock, which `sag`
+    marks, and `sag`'s cue says "the body folds"; a second tell there is one sign twice (DRAWING-GUIDE:40). The other
+    side of the fold lies inside the solid end figure. Boxes tried for a 'Folds at hips' tell on the Mistake hip
+    (measured at this head): (230, 230) leader 67.0 px, 40.5 px of it through the solid end figure; (200, 200) 57.5 px,
+    36.3 px through it; (270, 250) 106.7 px (over F3's 82.26), 44.5 px through it. Round 2's box gave 91 px through the
+    solid thigh (builder's figure, not re-measured).
+  - incline_machine_press is not one of them: its second tell `roll` marks c5's forward roll on the red handle, in the
+    open top right (13.4 must-fix 5).
 - **Tall machines and F1.** The pulldown station and the assist tower are 2.2-2.3 m tall, so `fit` lands at 126-133
   px/m, inside F1 (123.9-146.3) with little room. Machines are kept at the 8's heights.
 

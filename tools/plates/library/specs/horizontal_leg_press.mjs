@@ -21,7 +21,8 @@
 // Unsourced numbers: back pad 40 deg from vertical (pelvis tilt -40); hip-joint centre 0.55 m up; bottom shin 12 deg
 //  below horizontal; plate face 24 cm above the rail, plate 62 cm tall, rail 1.25 m; mid-sole 10 cm above the face
 //  reference; feet 11 cm either side of the midline (hip width); handle 25 cm out, 2 cm above and 12 cm ahead of the
-//  hip; seat pan rising 12 deg; Mistake knee 0.5 deg (the engine cannot reach exactly 0).
+//  hip; seat pan rising 12 deg; Mistake knee 0.5 deg (the engine cannot reach exactly 0); end knee 15 deg (the card
+//  gives no end-knee number; taken from the anchor, vendor exercises/leg_press.mjs:13, :23; lib4-cards 13.4 must-fix 8).
 import { legPressFace, landmarksOf } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;

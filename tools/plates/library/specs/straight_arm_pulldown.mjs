@@ -33,7 +33,8 @@
 //  - In-between keys at every eighth of the rep keep the bar on the shoulder arc (lib4-cards 13.3 must-fix 1), so the
 //    ghosts hold the 15 deg elbow and the trace sweeps the arc.
 //  - Mistake tells (DRAWING-GUIDE:24, rule Q-D5-4): 'bend' (the elbows bend, topFault) and 'close' (the bar pulled in
-//    to the chest, the card's "bent-arm pulldown", c6). 'close' points at the near side of the red fist, below the
+//    close to the body, the card's "bent-arm pulldown", c6: 18.4 cm nearer the shoulder than the solid bar path at the
+//    same height, lib4-cards 13.4 must-fix 4). 'close' points at the near side of the red fist, below the
 //    cables, from the open space between the cable and the column.
 //  - Labels sit on the left: on the right every leader to the arm would meet the cable. 'Arms stay straight' and
 //    'Elbows bend' cross the trunk to reach the elbow, which hangs in front of it (no open side away from the cable).
@@ -160,7 +161,7 @@ export default {
     parts: ['arm.r', 'bar'],
     tells: [
       { key: 'bend', text: 'Elbows<br>bend', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 10, top: 170 }, cue: 'The elbows bend and the lift turns into a pushdown.' },
-      { key: 'close', text: 'Bar to<br>chest', anchor: { at: 'grip.r', pose: 'mistake', off: [5, 5] }, box: { left: 200, top: 200 }, cue: 'The bar is pulled in to the chest, as in a bent-arm pulldown.' },
+      { key: 'close', text: 'Bar<br>pulled in', anchor: { at: 'grip.r', pose: 'mistake', off: [5, 5] }, box: { left: 200, top: 200 }, cue: 'The bar comes in close to the body, as in a bent-arm pulldown.' },
     ],
   },
   alt: 'Straight-arm cable pulldown, side view. Standing a step back from a high pulley with a slight forward lean and soft knees, the lifter sweeps a straight bar from overhead down to the front of the thighs, elbows keeping one slight bend.',

@@ -25,12 +25,15 @@
 //  - Labels: 'Soft elbows' sits above the arm with a vertical leader (the elbow is closed in by the trace below and
 //    right); the 'Blades on pad' and 'Blades off pad' leaders come from the open left side and cross the rear post and
 //    the pad, because the back-on-pad contact has the pad behind it and the torso in front.
+//  - Mistake tells (lib4-cards 13.4 must-fix 5, Q-R2-2): 'blades' (off the pad, topFault) and 'roll' (c5's "roll
+//    forward"): the roll carries the red arm, handle and lever past the solid ones into the open top right, so 'roll'
+//    points at the right edge of the red handle (8 px off the grip) from a box below it with a vertical leader.
 // CARD: hands level with the upper chest at the start (c1), forehead height at the end (c2), tempo (card `tempo`).
 //  Unsourced numbers: TILT -25 (pad 25 deg from vertical; the card gives no angle), SEAT_TOP 0.46 m, GX0/GX1 26/22 cm,
 //  S0 (6 cm in front of the chest, 5 cm below the shoulder joint), E1 (59.5 cm in front of the shoulder, 4 cm below the
 //  head landmark), L 1.0 m, the Mistake size (trunk +20 deg thoracic flexion, scap pro 5 cm / elev 1.5 cm, GAP_M about
-//  8 cm, the handle 11.2 deg further along the arc), the post 12 cm behind the pivot. All illustrative: the card gives
-//  no machine sizes and no fault size.
+//  8 cm, the handle 11.2 deg further along the arc), the post 12 cm behind the pivot, the 'roll' box (262, 160)
+//  and its 8 px anchor offset. All illustrative: the card gives no machine sizes and no fault size.
 import { rootOnSeat, landmarksOf, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 
 const H = 1.75;
@@ -172,6 +175,7 @@ export default {
     ],
     tells: [
       { key: 'blades', text: 'Blades<br>off pad', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 30, top: 186 }, cue: 'The shoulder blades round forward off the pad at the top of the press.' },
+      { key: 'roll', text: 'Rolls<br>forward', anchor: { at: 'grip.r', pose: 'mistake', off: [8, 0] }, box: { left: 262, top: 160 }, cue: 'The shoulders roll forward, so the arms reach past the end of the press.' },
     ],
   },
   alt: 'Incline machine press, side view. Seated against a reclined back pad with the feet flat, the lifter presses vertical handles from the upper chest up and forward until the hands are about forehead height, elbows soft, shoulder blades kept on the pad.',
