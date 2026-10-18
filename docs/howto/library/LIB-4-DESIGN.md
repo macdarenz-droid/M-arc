@@ -83,8 +83,34 @@ Additive only; every default is today's value:
 - `ht10Sweep(…, { order, custom, indexOf = id => HT_PLATES.findIndex(p => p[0] === id) })`, forwarding `order` and `custom`;
 - `ht10GoldenCounts(browser, { html = readFileSync(HT10_GOLDEN_B), ids = HT_PLATES.map(p => p[0]) } = {})`.
 
-## 5. Fixture (D-LIB4-FIXTURE, -2, -3)
+## 5. Fixture (D-LIB4-FIXTURE, -2, -3, -4; D-LIB4b-F5, D-LIB4b-COPYEDITS)
 
-Day-1 result (#232): LIB-2's generator at 54d37f2d emitted no plate or layer chunk for a library row, and its per-output inputs left out the composers a How-to imports. LIB-2b fixes both. B5 runs once LIB-2b is READY: 3 scratch ids from {lat pulldown, seated cable row, leg press, machine chest press}, two of them sharing one pair key with real pair panels, scratch QA inputs (11.1 item 3), scratch budgets at measured + 10 %, pages from `buildPlatesPage` and LIB-6's `build-layers-page.mjs`, on a scratch branch only.
+Day-1 result (#232): LIB-2's generator at 54d37f2d emitted no plate or layer chunk for a library row. LIB-2b (on main) closes that gap. `tools/plates/library/fidelity/fixture.mjs` builds B5's scratch ids on a scratch tree only: LIB-4b's head plus #181 (LIB-6), never pushed.
 
-**PQH.** LIB-2b's `candidateOf(id, { root, platesHtml, engine })` in `tools/plates/library/candidate.mjs`. Until it exists, the 8 use LIB-3's `candidatesOf` and a library id's 11 PQH rows fail ("no QA candidate builder").
+- **Ids (11.1 items 5, 14).** There are 3 ids, each with its own pair key:
+  - `lib_underhand_lat_pulldown` from `lat_pulldown` (`lib4b-scratch-a`);
+  - `lib_chest_supported_row` from `seated_cable_row` (`-b`);
+  - `lib_cable_chest_press` from `machine_chest_press` (`-c`).
+  
+  Each copies the source's spec and How-to. Each relative import is re-pointed at its original target, and the ids, name and research card are swapped. A byte-diff test proves nothing else differs. A spec id is never one of the 8's (D-LIB4b-POSES (5)). The shared-key proof belongs to LIB-7 (D-LIB4-FIXTURE-4).
+- **Copy edits (D-LIB4b-COPYEDITS).** Two cues are edited minimally, and each edit names the refusal it answers:
+  - the lat pulldown cue loses "top of the" (PQ-H8, 16 words);
+  - the seated row cue becomes two sentences (PQ-H8, semicolon).
+  
+  Golden B's own two cues are golden-B follow-up 12 and are not changed.
+- **Steps.**
+  - `stage`: sources, the batch file `zz-lib4b.json` and its page configs.
+  - `page`: the batch layers page, built by LIB-6 through `layersSpecOf`.
+  - `pin`: the batch golden file over the tree's own plates and layers pages, plus a scratch QA card per id in LIB-3's shape. Its plateFacts come from the clone's own engine report, and its topFault is the selected Mistake tell. The step also writes the pair loader, each panel cut from that id's own block. Each scratch plate entry carries `exemptions: ['F5']`, with the 8's reason quoted verbatim (D-LIB4b-F5).
+  - `budgets`: after `npm run build`, each `ht-`, `posture-` and `feel-` chunk at measured + 10 %.
+  - `pages`: the runner's `--pages` file.
+- **PQH.** LIB-2b's `candidateOf(id, { root, platesHtml, engine })` from `tools/plates/library/candidate.mjs`.
+- **HT4-A5 for a library id (D-LIB4b-POSES).** `twins/ht4.mjs` `libraryA5` works on LIB-6's build of the id's batch page, captured through HT-4's recording shim on a mirror of `tools/plates`.
+  - Each call is attributed to `base`, `cam`, the plate's `-n`/`-m`, or a declared posture zoom side. An unattributed call fails, and so does a declared side with no call.
+  - Calls not on a Wrong side must draw a reference pose. A Wrong side may also draw its declared fault pose.
+  - `fidelity/poses-proof.mjs` runs (7) on LIB-6's build of the 8.
+- **Results.** See section 6.
+
+## 6. Results
+
+Filled in from the final-head runs (D-LIB4b-COUNTS: values quoted from the runs; "unverified" where a check was not run).
