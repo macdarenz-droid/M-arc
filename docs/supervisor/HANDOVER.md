@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-18 ~07:00 UTC · main `b99a9e25` (train 25) · **8.0n new supervisor running (update 07:00)** · by supervisor session `session_01HtNEBU3oDR8NyHKK3uCwUi` (new account). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-18 ~08:40 UTC · main `b99a9e25` (train 25; train 26 in CI) · **8.0n new supervisor running (update 08:40)** · by supervisor session `session_01HtNEBU3oDR8NyHKK3uCwUi` (new account). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -858,6 +858,23 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - the scratch-branch pushes asked for by LIB-4b and LIB-4c;
   - reviewers on READY.
   - LIB-4c got a check-in at 06:31; its session had shown as disconnected.
+
+**Update ~08:40 UTC.**
+- **Rulings since 07:00:**
+  - lib4-cards 14.8, D-LIB-O5 ("stamps (O5)"): approvedBy is 'owner' or 'supervisor', and the 8's stamps take 'supervisor'. The verifyChain change moves to the LIB-8 merge card.
+- **LIB-5:**
+  - CARD FIELDS VERIFIED @ `33302cc`: a valid blind run, with the plant caught and no real finding.
+  - The 8's stamp entries were approved on #244 (6247438837): the hashes were recomputed and the records read.
+  - Next for LIB-5: commit 2 and the Do 6 commit.
+- **LIB-9a:**
+  - D-LIB9a-DO6: the drawable:false keys are fast, snap and drop, and the shoulder_press redraw stays.
+  - CARD FIELDS VERIFIED @ `8abf228`: a valid run, with one fix (close_grip pose 'start') confirmed @ `4d0beca`, which is not pushed yet.
+  - Next for LIB-9a: Do 7.
+- **GATE-FLAKE-4:**
+  - READY at `49ef5ff`, with all 15 checks green. The fresh Opus review gave PASS with 0 findings (#253).
+  - The reviewer is archived.
+  - The PR rides **train 26** with this handover and the cards branch. The cards branch carries the AGENTS.md third exception, following the precedent of LIB-4a's second exception in train 25.
+  - Train 26 changes no app code, so no APK is owed.
 
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
