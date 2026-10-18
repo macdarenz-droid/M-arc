@@ -6,6 +6,7 @@ import { BANNED } from '../../layers/artifact/copy-lint.mjs';
 import { moduleText, viewOf } from '../../gen/plates.mjs';
 import { pathLength, pathsOf, tags, unesc, vocabularyOf, words } from './markup.mjs';
 import { REF_CHROME, equipmentItems, poseLandmarks, cameraOf, resolvePoint } from './engine.mjs';
+import { PARAMS, paramProblems } from '../derive.mjs';
 
 /** Medical-claim bans for new plate copy (content.md 4, "Medical-claim bans"). */
 export const MEDICAL = [
@@ -271,11 +272,32 @@ export function validateParams(params, schema) {
   }
   return out;
 }
-export async function h10(c) {
+/** LIB-3b: derive.mjs's own rule (its PARAMS and paramProblems) against the pinned envelope, for each key that
+ *  validateParams did not flag (`flagged`), so a key gets one problem. A malformed envelope row fails closed, because
+ *  derive.mjs would let values through it. Never reads the candidate's schema. */
+const rowOk = (p, row) => (p.type === 'number'
+  ? Array.isArray(row) && row.length === 2 && row.every(x => typeof x === 'number' && Number.isFinite(x)) && row[0] <= row[1]
+  : Array.isArray(row) && row.length > 0 && row.every(x => p.values.includes(x)));
+export function paramEnvelopeProblems(params, flagged, envelope) {
+  if (!params || typeof params !== 'object' || Object.keys(params).length === 0) return [P('H10.empty', paramProblems(params, envelope)[0])];
+  const out = [];
+  for (const [k, v] of Object.entries(params)) {
+    if (flagged.some(p => p.key.slice(p.key.indexOf(':') + 1) === k)) continue;
+    const add = key => { const text = paramProblems({ [k]: v }, envelope)[0]; if (text) out.push(P(`${key}:${k}`, text)); };
+    if (k === 'view' || k.startsWith('view.')) add('H10.raw');
+    else if (!Object.hasOwn(PARAMS, k)) out.push(P(`H10.unknown:${k}`, `${k}: not a PARAMS key`));
+    else if (!envelope?.[k]) add('H10.envelope');
+    else if (!rowOk(PARAMS[k], envelope[k])) out.push(P(`H10.envelope:${k}`, `${k}: the envelope row ${JSON.stringify(envelope[k])} is malformed`));
+    else add('H10.value');
+  }
+  return out;
+}
+export async function h10(c, ctx = {}) {
   if (c.mode !== 'D' && c.mode !== 'T') return [];
   const d = c.derivation;
   if (!d || typeof d.rebuildParent !== 'function' || !d.parentFragments) return [P('H10:missing', `${c.mode} plate without a derivation proof`)];
   const out = validateParams(d.params, d.schema);
+  out.push(...paramEnvelopeProblems(d.params, out, ctx.envelope));
   const got = await d.rebuildParent();
   for (const k of FRAG_KEYS) if (got?.[k] !== d.parentFragments[k]) out.push(P(`H10.byte:${k}`, `parent rebuilt with its own PARAMS: ${k} differs from its GOLDEN fragment`));
   return out;
