@@ -489,7 +489,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "The hinge, the free leg in line with the back and the dumbbell in front of the standing leg are front-to-back positions (c3, c8); the hip opening fault is a rotation (c5) and cannot be drawn in any view.",
+    "viewWhy": "The hinge, the free leg in line with the back and the dumbbell in front of the standing leg are front-to-back positions (c3, c8); the hip opening fault is a rotation (c5) and cannot be drawn in any view. The LR-31 top fault, the back rounding as the dumbbell reaches toward the floor (c7), reads side-on as the bent back line and the low dumbbell (ruling R-LB2-16).",
     "equipment": "One dumbbell in the hand opposite the standing leg (c1), floor line. Bodyweight version: same body, no dumbbell.",
     "start": "Standing on one leg, standing knee soft at about 15-20 degrees (c10), dumbbell hanging from a straight arm (c3), free foot just off the floor.",
     "end": "Hips pushed back, trunk and free leg forming one straight line from head to heel (c8, c2), standing knee still soft (c10), dumbbell at about mid-shin in front of the standing leg (c9, c3).",
@@ -512,10 +512,10 @@
     ],
     "mistake": {
       "what": "Back and shoulders round as the dumbbell is reached toward the floor.",
-      "why": "The hip of the lifted leg rotating up (c5) is a rotation the engine cannot draw; rounding while reaching the dumbbell too low is drawable side-on, and Gentilcore says many trainees do it (c7).",
+      "why": "Gentilcore says many trainees make the mistake of trying to touch the dumbbell all the way to the floor, resulting in a significant amount of flexion, and lists rounding the back and shoulders and lowering the dumbbell too low among the faults (c7). How often it happens is not measured in any source read.",
       "claim": "c7",
-      "drawable": false,
-      "rankNote": "No source ranks single-leg RDL faults by frequency. Gentilcore lists faults 'to name a few' and says only that many trainees reach the dumbbell to the floor (c7); StrengthLog's hip-rotation cue (c5) is not ranked either."
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Gentilcore's \"many trainees make the mistake of trying to touch the DB all the way to the floor, resulting in a significant amount of flexion\" (c7) puts the frequency word on one fault of this exercise: reaching the dumbbell to the floor and rounding the back. It is the top fault. Set aside: Gentilcore's \"Every so often\" is about his gym visits, not a fault; the NHS page's \"Back pain, particularly lower back pain, is very common.\" and \"it often gets better on its own\" are about back pain in general, not a fault of this exercise. Step 2 is not needed: no read source ties a single-leg RDL fault to harm. StrengthLog's hip rotation (c5) has no frequency word or harm quote, so it stays second in handlingMistakes. drawable is true (ruling R-LB2-16): a rounded back with the dumbbell low has a still sign, and the side view shows the back line and the dumbbell height. The earlier drawable false came from the hip rotation, which no view can draw; that fault is not the top fault."
     },
     "tells": [
       {
