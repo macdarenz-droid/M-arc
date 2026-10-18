@@ -3117,15 +3117,15 @@ Heads read: main `2078913c` (train 27, LIB-3b on main); claude/sup-lib4-cards `6
 4. Only the supervisor adds or changes rows, each by a ruling with a COACHING-DECISIONS entry. The builder proposes rows, with their basis, in its design note.
 4b. Route: the supervisor's ruling quotes each family row byte for byte. LIB-3c commits it if the ruling is posted before LIB-3c's READY. Otherwise one small supervisor PR from claude/sup-param-ranges commits it, rows only, with the loader test green and a fresh review. LIB-10 never edits the file.
 5. pin.mjs and selftest.mjs never read or write the file.
-6. PQ-H10 and the child proof's derive() call in candidate.mjs read the same family object from the file. A D spec's own derive() call is not a check, and no spec or template imports the file. A missing file, family or key fails closed with H10.envelope, as node.mjs:289 does today. (i)'s loader and any family row reach main only in the same merge as (ii)'s child proof, or after it. Mutation: with test family rows present, the child proof removed → the test that expects H10.child for "make, then move one callout" is red (ranges alone never pass it).
-7. Built by LIB-3c (item 11). registry.mjs stays byte-identical (Q-A, #245 6242372604; registry.mjs:61). The `template` field rides on the row as data (registry.mjs:52 keeps it). candidate.mjs refuses a T row whose `template` is not a string naming an existing tools/plates/library/templates/<name>.mjs (fail closed). Mutation: `template` removed from a T row → candidateOf throws.
+6. PQ-H10 and the child proof's derive() read one object per row (D-LIB3c-SHARED, 15.1): for each PARAMS key, the family row's range when the row's family names that key, else ctx.envelope's range. h10 builds it and passes it to the derivation's child rebuild; no other code reads the file. A D spec's own derive() call is not a check, and no spec or template imports the file. On the real path ctx.envelope is envelope.json, which names no PARAMS key, so a missing file, family or key fails closed with H10.envelope, as node.mjs:289 does today. (i)'s loader and any family row reach main only in the same merge as (ii)'s child proof, or after it. Mutation: with test family rows present, the child proof removed → the test that expects H10.child for "make, then move one callout" is red (ranges alone never pass it).
+7. Built by LIB-3c (item 11). registry.mjs stays byte-identical (Q-A, #245 6242372604; registry.mjs:61). The `template` field rides on the row as data (registry.mjs:52 keeps it). candidate.mjs refuses a T row whose `template` is not a string matching /^[A-Za-z0-9_-]+$/ that names an existing tools/plates/library/templates/<name>.mjs (fail closed; `'../derive'` would otherwise pass). Mutation: `template` removed from a T row → candidateOf throws.
 8. Tests, each red and then restored:
-   - a PARAMS row added to envelope.json turns selftest red (already true; kept as a guard);
+   - a PARAMS row added to envelope.json (not committed) turns red the 3b-A6 premise (library-qa-h10.test.ts:125, which runs in npm test), LIB-3c's 3c-A4 premise and a local selftest.mjs run (selftest.mjs:25; in CI only from LIB-4b #232's qa-selftest row);
    - a value outside its family's range gives H10.value;
    - a value ruled only for SEATPRESS, used on a BENCH row, is red;
-   - a family or key with no row gives H10.envelope;
+   - with the pinned envelope, a family or key with no row gives H10.envelope; with a test envelope that names the key and no family row, the key is checked against the test envelope (the fallback);
    - a row without a ruling id or basis makes the loader throw;
-   - derive() and H10 read one object: a mutated file changes both results.
+   - derive() and H10 read one object: the object h10 passes to the child rebuild gives the same value result as H10's check; a changed family row changes it (in range: the object passed to the rebuild; out of range: H10.value, and no child rebuild runs).
 
 Why: envelope.json cannot hold a hand row (plan 3.3 :292; pin.mjs:1-3, :64; selftest.mjs:23-25), and one global PARAMS range would let a value approved for one family pass on another; a supervisor-owned per-family file is narrower and keeps the limit apart from the plate under test.
 
@@ -3133,12 +3133,12 @@ Why: envelope.json cannot hold a hand row (plan 3.3 :292; pin.mjs:1-3, :64; self
 
 ### (ii) D-LIB10-CHILDPROOF: PQ-H10 proves the drawn plate equals its derivation
 
-1. For every D and T row, PQ-H10 also checks that the plate on the batch page (the candidate's `plate`, candidate.mjs:61) equals, on all 9 fragments, the child rebuilt alone from its derivation:
-   - D: `derive(parentSpec, row.params, ranges[family])` (derive.mjs:39-45);
+1. For every D and T row whose params have no other H10 problem (D-LIB3c-SHARED, 15.1), PQ-H10 also checks that the plate on the batch page (the candidate's `plate`, candidate.mjs:61) equals, on all 9 fragments, the child rebuilt alone from its derivation:
+   - D: `derive(parentSpec, row.params, obj)`, obj being (i) 6's one object (derive.mjs:39-45);
    - T: `template.make(row.params, facts)`, with `facts` taken from the child's spec module export.
-   A difference gives a new key, `H10.child:<fragment>`.
+   A difference gives a new key, `H10.child:<fragment>`. A row with a param problem is already red and gets no child proof, so no verdict changes. A derivation with clean params and no child rebuild gives `H10.child:threw`; node.mjs:298's early return stays as it is, so M21-M23 (mutations.mjs:98-103, :116) keep their keys.
 2. For T rows, the parent proof goes through the template: `make(parentParams, parentFacts)`, rebuilt alone, equals the parent's pinned fragments (plan 3.1:246). parentParams and parentFacts are exported by the template, which is frozen with it. Today's rebuild of the parent from its own source stays as well.
-3. LIB-3c builds it, in candidate.mjs (the derivation gains a child rebuild and, for T, a template rebuild of the parent) and in qa/node.mjs h10. buildPlatesPage loads specs by file URL (build-page.mjs:47-48, :95). How a derived spec reaches it, for example a module written to a temp directory, is for LIB-3c's design note [method unverified]. A rebuild that throws gives `H10.child:threw`. LIB-3c reports the exact new keys for LB1's two in-memory D-copy tests (lb1-plates.test.ts:1139-1151 @ `38b436d`); #245 changes those expectations when it merges main, as amendment 21 did for LIB-3b. LIB-3c's note gives the added seconds per row against LIB-4c's per-shard budget.
+3. LIB-3c builds it, in candidate.mjs (the derivation gains a child rebuild and, for T, a template rebuild of the parent) and in qa/node.mjs h10. buildPlatesPage loads specs by file URL (build-page.mjs:47-48, :95). How a derived spec reaches it, for example a module written to a temp directory, is for LIB-3c's design note. A golden parent's spec is imported from a mirror (golden.mjs makeMirror), never from tools/plates/vendor in place: its engine needs the font only the mirror has (measured by the LIB-3c critic: ENOENT). A rebuild that throws gives `H10.child:threw`. LIB-3c reports every lb1-plates.test.ts row its change moves, with the exact new keys: at least the four `it`s of the in-memory D-copy describe (:1128-1153 @ `38b436d`: clean :1139, A7 :1143, A4 :1146, one byte :1149), measured on a local merge of its head into `38b436d` (LIB-3c 3c-A11); #245 changes those expectations when it merges main, as amendment 21 did for LIB-3b. LIB-3c's note gives the added seconds per row against LIB-4c's per-shard budget.
 4. Mutations, each red and then restored:
    - a D source that derives and then sets one more field (tempo) → H10.child:tempo;
    - a T source that calls make and then moves one callout → H10.child;
@@ -3199,7 +3199,7 @@ Why: today h10 checks the params and rebuilds the parent only (node.mjs:299-302)
 10. **LIB-3c carries D-LIB9-AUTHORQA.**
     - LIB-3c starts from main now. Its first step lands #245's D-LIB9-AUTHORQA hunk byte for byte (candidate.mjs as on `38b436d`, from `git diff origin/main...38b436d -- tools/plates/library/candidate.mjs`), with #245's A8 assertions. No separate card.
     - #245's A8 tests read LB1's files, which are not on main, so LIB-3c ports their assertions to the LIB-2b fixture; #245 keeps its own.
-    - When #245 next merges main, its candidate.mjs equals main's (it takes main's file whole if git reports a conflict there), so the AUTHORQA lines it was reviewed on do not change. LIB-3c's other changes (fresh-import PQ-H7, the ranges, the child proof) do change #245's results. #245 updates its two D-copy expectations to the keys LIB-3c reports (D-LIB10-CHILDPROOF item 3) when it merges main, as it did for LIB-3b (lib4-cards section 13 amendment 21), then re-runs its evidence on that merged head. LB2's QA (LIB-10 Do 5 and Do 8) waits only for LIB-3c, not for LB1's ship.
+    - When #245 next merges main, its candidate.mjs equals main's (it takes main's file whole if git reports a conflict there), so the AUTHORQA lines it was reviewed on do not change. LIB-3c's other changes (fresh-import PQ-H7, the ranges, the child proof) do change #245's results. #245 updates the expectations LIB-3c reports (D-LIB10-CHILDPROOF item 3: at least the four D-copy `it`s, with any other row 3c-A11 lists) when it merges main, as it did for LIB-3b (lib4-cards section 13 amendment 21), then re-runs its evidence on that merged head. LB2's QA (LIB-10 Do 5 and Do 8) waits only for LIB-3c, not for LB1's ship.
     - Why: one PR, one review and one lane slot carry both; the lane cap D-LIB-LANE-ACTIVE is 4, and LIB-4b, LIB-4c, LIB-10 and LIB-3c fill it.
 
 11. **LIB-3c's scope.**
@@ -3207,3 +3207,22 @@ Why: today h10 checks the params and rebuilds the parent only (node.mjs:299-302)
     - It starts from main now and may merge before #245, in a merge train.
     - Its deadline is (ii)'s item 5, and D-LIB3b-H7's: before the first batch after LB1 is QA'd.
     - Why: all of these change the spec loader and the derivation in candidate.mjs and the H checks in qa/, so one PR avoids two edits of the same lines.
+
+### 15.1 D-LIB3c-SHARED (supervisor, 2026-10-18; LIB-3c card critic B1)
+
+**Ruling.**
+- PQ-H10 and the child proof's derive() read one object: for each PARAMS key, the family row's range when the row's family names that key, else ctx.envelope's range.
+- On the real path ctx.envelope is envelope.json, which names no PARAMS key (library-qa-h10.test.ts:125 guards that in CI), so such a key fails closed with H10.envelope.
+- The child proof runs only when the row's params have no other H10 problem; such a row is already red, so no verdict changes.
+- library-qa-h10.test.ts stays unedited and green.
+- h10 builds the object and passes it to the derivation's child rebuild. No other code reads param-ranges.json; pin.mjs, selftest.mjs and loadPins never read it (15 (i) 5).
+- A derivation with clean params and no child rebuild gives `H10.child:threw`. node.mjs:298's early return stays as it is.
+
+**Amends:** 15 (i) items 6 and 8, and (ii) items 1 and 3. The same edit also fixes (i) 7 (LIB-3c critic L3) and item 10 (critic M7). Line changes below.
+
+**Why:**
+- It keeps the existing tests as the anti-loosening guard: LIB-3b's library-qa-h10.test.ts builds every case as a D child of lib_pull_up (:27-28) and injects test ranges through ctx.envelope. Under (i) 6 and (ii) 1 as first written, derive() would throw on every case (no `D:lib_pull_up` family row), so its `[[], true]` rows and exact-key rows would go red, and no design could meet both the ruling and an unedited test.
+- The real path is unchanged: every runQa caller loads the pins (gen/plates.mjs:139; proof.mjs:15; fidelity.mjs:214 on #232/#246; lb1/qa.mjs:17-24 on #245), and envelope.json names no PARAMS key.
+- The LIB-3c critic rendered the fixture's derived plates byte-identical to the vendored pull_up (svg and overlay, normal and mistake, for `camera.maxScale: 1`, `bar.kind: 'straight'` and `handedness: 'both'`), so the clean rows stay `[[], true]` with the child proof on [page-level fragments unverified].
+
+**Why nothing is loosened:** a key with no family row still fails closed on the real path; a row with any param problem is already red; the child proof and every existing H10 key keep their meaning; the test that guards envelope.json (library-qa-h10.test.ts:125) runs in npm test.
