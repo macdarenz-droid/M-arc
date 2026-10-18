@@ -14,7 +14,7 @@
     ]
   },
   "reason": {
-    "text": "In the front rack the shoulders hold the bar and the hands only add security; reaching it needs the wrist bent back, and a fingertip or open grip is acceptable.",
+    "text": "In the front rack, shoulders carry the bar and hands steady it. Bent-back wrists and a fingertip or open grip are fine.",
     "claim": [
       "c1",
       "c2",
@@ -23,7 +23,7 @@
     ]
   },
   "replacementRule": {
-    "text": "Bar in the channel between the throat and the top of the shoulders, elbows high, grip loose and as full as you can keep; fingertips on the bar are fine if the shoulders carry it.",
+    "text": "Bar between throat and shoulders, elbows high, grip loose and as full as you can. Fingertips are fine if shoulders carry it.",
     "claim": [
       "c1",
       "c2",
@@ -35,7 +35,7 @@
     {
       "key": "bar-off-shoulders",
       "label": "Bar on hands",
-      "what": "A full grip with the bar not resting on the shoulders, so the hands carry it.",
+      "what": "A full grip with the bar off the shoulders. The hands carry it.",
       "claim": "c4"
     }
   ],

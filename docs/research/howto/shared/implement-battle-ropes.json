@@ -10,7 +10,7 @@
     "claim": "c1"
   },
   "contactPoint": {
-    "text": "Rope lies in the palm, about 10 cm from its end.",
+    "text": "Rope in palm",
     "claim": [
       "c2",
       "c3"
@@ -21,7 +21,7 @@
     "claim": "c3"
   },
   "rightPose": {
-    "text": "One rope end in each hand, palms facing each other, fingers wrapped around the rope, thumb over the fingers.",
+    "text": "Palms facing each other, fingers wrapped, thumb over the fingers.",
     "claim": [
       "c1",
       "c3"
@@ -31,7 +31,7 @@
     {
       "key": "end-grip",
       "label": "Hand at end",
-      "what": "Hand holds the very end of the rope instead of about 10 cm from it, so the rope can slide through.",
+      "what": "Hand holds the very end of the rope instead of about 10 cm from it. The rope can slide through.",
       "claim": "c2"
     },
     {
@@ -42,7 +42,7 @@
     }
   ],
   "gripLine": {
-    "text": "Hold each rope end about 10 cm from the end, palms facing each other, with a firm but relaxed grip.",
+    "text": "Hold each rope about 10 cm from the end, palms facing each other. Grip firm but relaxed.",
     "claim": [
       "c1",
       "c2",
