@@ -167,7 +167,7 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
       const F = m => fail('*', 'silent-black', 'assets', `A4: ${m}`);
       const htFiles = readdirSync(assetsDir).filter(f => /^(HowToSheet-|ht-|hand-|feel-|posture-|zoom-)[\w-]+\.(js|css)$/.test(f));
       const js = htFiles.filter(f => f.endsWith('.js')), css = htFiles.filter(f => f.endsWith('.css'));
-      if (js.filter(f => f.startsWith('ht-')).length !== ids.length || js.filter(f => f.startsWith('hand-')).length !== ids.length) F(`expected ${ids.length} ht- and hand- chunks, found ${js.join(', ')}`);
+      { const REG = await import('../library/registry.mjs'), CS = await import('../library/chunk-set.mjs'), all = REG.rows(), sh = new Set(REG.shippedIds(all)), names = readdirSync(assetsDir); for (const m of [...CS.htChunkProblems(names, all.filter(r => sh.has(r.id))), ...CS.handChunkProblems(names, ids)]) F(m); }   // LIB-4a (D-LIB4-A4 a, b): exact sets
       let raw = 0, gz = 0;
       for (const f of htFiles) { const b = readFileSync(join(assetsDir, f)); raw += b.length; gz += gzipSync(b).length; }
       if (raw > TOTAL_RAW || gz > TOTAL_GZ) F(`all How-to assets are ${raw} B raw / ${gz} B gz, over ${TOTAL_RAW} / ${TOTAL_GZ}`);
@@ -192,7 +192,7 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
         if (/\btarget\s*=/.test(s)) F(`C17: ${f} has a target= attribute`);
         for (const m of s.matchAll(/\bhref=(["'])(.*?)\1/g)) if (!m[2].startsWith('#')) F(`C17: ${f} has href="${m[2].slice(0, 60)}"`);
       }
-      for (const f of [...css, ...js]) for (const m of H.ht10CssProblems(readFileSync(join(assetsDir, f), 'utf8'), f).problems) F(m);
+      for (const f of [...css, ...js, ...readdirSync(assetsDir).filter(f => /^(handpair|loaders)-[\w-]+\.js$/.test(f))]) for (const m of H.ht10CssProblems(readFileSync(join(assetsDir, f), 'utf8'), f).problems) F(m);   // LIB-4a (D-LIB4-A4 c): C18 also on handpair-/loaders-
       // the main chunk holds no section's code (HT-3b's footprint probe covers generated strings; these are the class hooks)
       const indexJs = readFileSync(join(ROOT, 'www/index.html'), 'utf8').match(/src="\.\/assets\/(index-[\w-]+\.js)"/)[1];
       const idx = readFileSync(join(assetsDir, indexJs), 'utf8');

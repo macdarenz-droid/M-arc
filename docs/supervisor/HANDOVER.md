@@ -809,6 +809,47 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
 
+### 8.0l 10-18 ~01:10 UTC (read first; supersedes 8.0k where they differ)
+
+- **Main** `72c94fc` (train 24: BUG-41 #240 + handover). **APK sent** for train 24 (run 39079150683, artifact 12118352489, fingerprint step success). All three owner bugs (BUG-39/40/41) are merged and sent; their builders and reviewers are archived.
+- **Cards branch** `claude/sup-lib4-cards` @ `279cf08` (lib4-cards.md):
+  - **14** (`a0e5d69`): LIB-5 design-note rulings D-LIB5-* (18), card amendments 1-48 (lib-5-card.md amended in the same commit), note fixes N1-N16, supervisor actions.
+  - **14.1** (`279cf08`): D-LIB5-NOTE-2. The revised note (#244 @ `738cdd3`) is PASS WITH FIXES, F1-F12 (5 medium, 7 low). LIB-5 makes them note-only, posts "LIB-5 NOTE FIXED", then waits for "LIB-5 resume" (the next freed slot).
+  - **13.1** (`ee22e95`): LIB-9a slice GO for Do 5 with a must-fix list; D-LIB9a-HOWTOID.
+  - **13.2** (`a5c501f`): D-LIB9-CLONE. Do 5(d) opens on the pilot A review: copy, never import; checked solvers; fresh brackets.
+  - **12 item 20** (`cda26f4`): D-LIB4a-SCALE. LIB-4a's 153 reds:
+    - library-core beforeAll render() is a clone artifact (bypass diff shown in the PR, never committed);
+    - the fixture id collisions (`lb-test.json` lib_barbell_row, `zz-lib2b.json` lib_cable_lateral_raise) and the 153 timeouts are scale defects, routed to a new card **LIB-4d**. LIB-4d must merge before any merge that ships either id or takes main past 22 shipped rows.
+  - D-LIB9-FACTPOSE (a plate fact's pose is the pose its quote states; a setup quote is the start pose only) and LB1 **CARD FIELDS VERIFIED @ `6285b4f`** (two valid blind rounds).
+- **PRs:**
+  - **LIB-4a #233 READY @ `0b2d3c1`** (15/15 green). Reviewer session_016RBQnwX1GP4YGs23TVMsE9 (Opus). After PASS, LIB-4a merges in a train and frees a lane slot: "LIB-5 resume" takes it.
+  - **LIB-4b #232** @ `f1df4a7`; **LIB-4c** `claude/lib-4c-library-ci` @ `108eb5c` (#246) with its wiring #249 (`claude/sup-lib4-ci` @ `a30b0c4`, merges in one train with LIB-4c).
+  - **LIB-9a #245** @ `6285b4f`: Do 5 in progress.
+  - **LIB-5 #244** @ `738cdd3`: Do 1, no slot.
+  - **#251** `claude/sup-ci-watch-floor` @ `a9fc0b11` (draft, supervisor CI, add-only): the OLD-ANDROID-1 floor now also covers capacitor.plugins.json classes, and agent-guard Rule 3 has an arm for the watch lane's `ccr-061c7350-tjvpo6` and `ccr-8cef8a15-l12swp`. Review PASS @ `ac20f9f` and delta PASS @ `a9fc0b1` (6243906980). Waiting on its CI run (android-gate proves the real npm plugin classes), then a train; then tell the Watch lane on #221.
+- **LIB-4a PASS @ `0b2d3c1`** (6244211629, 0/0/0/0; reviewer session_016RBQnwX1GP4YGs23TVMsE9, to archive after the merge). **Train 25** (#252) = #251 → handover → LIB-4a → handover. No src/ change, so no APK. Reviewer note for LIB-9 (not a finding): OLD-ANDROID-1's `ALLOW` names only `zoom-pull-up-`. If real library zoom CSS uses subgrid outside @supports, those rows go red; check at LIB-9's merge. LIB-4b resumes on LIB-4a's final head (it was WAITING on it).
+- **Pilot A #109 code review FAIL @ `e6f39ff`** (6243689943): 2 blockers (pilot-a/out/ 13 MB breaks HT2-A2 on merge; three composers untested), 1 medium (supine() bisect has no bracket check), 2 lows, gaps 1-6. Routed in 6243704774:
+  - findings 1-5 and gaps 3 and 6 go to a **LIB-8 fixes** card (queued for a slot; before plan slot 7);
+  - gaps 1-2 go to the LIB-8 merge card. Gap 2 is `golden.mjs` verifyChain, which accepts approvedBy 'owner' only; it needs a supervisor ruling first.
+  - The reviewer session is archived.
+- **Lane slots** (D-LIB-LANE-ACTIVE): 4 of 4 active (LIB-4a in review, LIB-4b, LIB-4c, LIB-9a). Freed-slot queue: LIB-5 (Do 2 on), then LIB-3b, LIB-4d, LIB-8 fixes. The order amendment is to be recorded in section 12 item 2 when LIB-3b's card is committed.
+- **LIB-3b card** (PQ-H10 checks values and the envelope on the real path; scratchpad draft):
+  - Today validateParams reads s.enum/s.min/s.max while PARAMS writes `values` and no ranges, and the envelope never reaches H10. So 'bar.kind':'banana', 'camera.maxScale':99, 'handedness':7 and {} all pass H10 (reproduced on main).
+  - Fix: h10 takes ctx and applies derive.mjs's paramProblems with the real envelope; new keys H10.envelope and H10.empty.
+  - Round 1 drafted, checked and fixed (24 findings); round 2 check running.
+  - Open supervisor items it raised:
+    - (i) envelope.json cannot hold hand PARAMS rows (selftest.mjs:23-25 compares the whole file; pin.mjs rewrites it), so where approved ranges live needs a ruling before LIB-10's first D/T row;
+    - (ii) LIB-3b merges before #245, and section 13 Q5(c) is amended (lb1-plates.test.ts:438-440 and :448-450 change keys);
+    - (iii) H10 never proves the drawn D plate equals derive(parent, params) (candidate.mjs:66). That is a ruling for LIB-10.
+- **Research wave 2 (LR-29):**
+  - Verify head `claude/libht-verify-w2` @ `5036283d` = W2A `a33d8f3a` + W2B `d4f30c70` + the8 `e6381fa4`.
+  - The first three critic runs were invalid: the plants fell outside the reviewed scope. The script gained a `plantScope` argument.
+  - Run 4 is **VALID**: the squat way-out direction and the lateral-raise 60-70°→30-40° plants were both caught, and the tier-A plant was rated blocker. It found 23 findings; its re-fetch covered 93 sources, 729/729 quotes verbatim.
+  - All 92 findings (valid run plus the invalid runs' real claims) are in triage (workflow wf_0a3e47e9-10a: dedupe, adversarial verify on `5036283d`, rulings for the BarBend-vs-c5 and single_arm drawable questions, per-owner fix packets in scratchpad w2fix/).
+  - Next: the fix round (W2A and the8 sessions; W2B files by a supervisor Sonnet helper), a fresh Opus recheck of the changed lines plus the quotes files the critic's list missed (chin_up, hanging_knee_raise, assisted_pull_up), then verify/w2.md and verify/w2-refetch.json, and the merge into `claude/libht-research`; then name that head on #244 and #245.
+- **Sessions now:** supervisor (this); LIB-4a builder session_014viUzTy4Uyv6KSnQ6ASfEX and reviewer session_016RBQnwX1GP4YGs23TVMsE9; LIB-4b session_01QcCqLjrEVouQUdaFpQyTbq; LIB-4c session_0192ePqaQfU5Vzq7Ft95uXcQ; LIB-9a session_012cNzvoJqdRPVEGzK55vG68; LIB-5 session_01KmrBwed4SGvYPPyWsmoPDN; W2A session_01V96jYTZ6RKFXeJ8ay9mdVt; the8 session_01CMHvXUtmBKbNtQxcFGVPm9. Archived since 8.0k: BUG-39/40/41 builders and reviewers, W2B, the pilot A reviewer.
+- **Owner:** nothing waiting on him except the back-pain box answer (option 1: 50 words, recommended; option 2: 30 words). LIB-5 takes route (b) unless he answers before Do 9.
+
 ### 8.0k TAKEOVER 10-17 ~14:45 UTC (read first; supersedes 8.0j where they differ)
 
 - **New supervisor:** session_01SNCyDETVkqVxtLoQxn2Ue9, on the owner's other account (auto mode). Owner, 10-17 ~13:41: "Check get a grasp of 2 repos. Then continue as nxt supervisor. Then continue with tasks of last progress. Read agents.md claude.md". The old supervisor (session_01FTBsxoLN135B3HvJ7sT676) and all its workers are on an account this one cannot see or message: no M/ARC comment or card-branch push after 08:51 UTC. Treated per 10.2a: every replacement builder runs `git pull --no-rebase` before each push and never forces, and stops if its branch moves without its push.
