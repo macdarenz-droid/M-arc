@@ -175,10 +175,10 @@ These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by 
 - **contentHashOf** imports the given root's own `gen/content.mjs` (loadContent has no root parameter), so it is async. A test shows it equals c15's `contentHash` on the 8 and on E1's row.
 - **The Do 5 sweep** calls `checkC15` with that same fragments object, never `{}`.
 - **stampProblems** treats a missing, unparsable or empty reviews.json as a failure for every shipped id, never as c15's stub pass (`c15.ts:26`).
-- **Entries:** `{ scope, hash, date, fetcher, critic, safety?, reviewer, findings, open: 0 }`.
+- **Entries:** `{ scope, hash, date, fetcher, critic, safety?, reviewer, findings, open: 0, approvedBy, decision, approval }`.
   - Each role cites both records: S-2 (`tools/plates/layers/README.md:27-45`, review line :45) and the compact rewrite (:52-90, checks :85-90). A role with no record says so.
   - `findings` lists by number every recorded golden-B follow-up naming that id (HANDOVER 8.2 items 1-11, and 8.0k follow-up 12, numbered on the main head merged at Do 6), each marked "recorded, not changed: golden B is locked (plan 2.8)". `open: 0` counts only those reviews' unresolved findings.
-  - `approvedBy` waits for the "stamps (O5)" ruling.
+  - `approvedBy: 'supervisor'`, `decision: 'D-LIB5-STAMPS'` and `approval` (the #244 approval comment link with the approved head sha), per D-LIB-O5 (lib4-cards 14.8). Approved at `33302cc` (#244 comment 6247438837). `c15-stamps.test.ts` checks every committed non-scratch entry for these and `open: 0`.
   - The 8's machine cards do not enter the hash: they are never shown, and the `research` pointer stays byte-identical (S10).
 - **One commit (Do 6)** holds:
   - the gate;

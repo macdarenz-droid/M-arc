@@ -5,7 +5,8 @@
 // src/howto/red-flag-back.ts. First, one label per fault key over every shipped row, LIB-5's shared modules and any
 // hand-*.mjs (D-LIB5-FAMILY rule (a), D-LIB5-FAULTKEYS 4). Then per shipped row: the back-box refusal (S4-P), the family
 // refusal (D-LIB5-FAMILY), then, for a library row only, the library lint (D-LIB5-REACH, D-LIB5-WORDS); the 8 are linted
-// by the vitest sweep.
+// by the vitest sweep. After the loop, the C15 stamp gate (D-LIB5-STAMPS): every shipped row needs a reviews.json entry
+// matching its content hash, and a missing, unparsable or empty file fails every row.
 import { existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -15,6 +16,7 @@ import { registryInputs, shippedRows, sourceOf } from '../library/registry.mjs';
 import { refuseBack } from '../library/shared/back-box.mjs';
 import { cardReader, familyRefusal, lintLibraryRow } from '../library/lint/index.mjs';
 import { HANDS_DIR, SHARED_MODULES, treeFamily } from '../library/lint/family.mjs';
+import { REVIEWS, stampProblems } from '../library/research/stamps.mjs';
 
 export const after = ['tools/plates/gen/content.mjs'];
 
@@ -22,7 +24,8 @@ const BACK_BOX = 'tools/plates/library/shared/back-box.mjs';
 const BACK_CARD = 'docs/research/howto/shared/back-pain-box.json';
 const CARDS = 'docs/research/howto/shared';
 const OWN = ['tools/plates/gen/library-gate.mjs', BACK_BOX, 'tools/plates/library/lint/index.mjs', 'tools/plates/library/lint/family.mjs',
-  'tools/plates/library/shared/card.mjs', ...SHARED_MODULES, 'tools/plates/layers/artifact/copy-lint.mjs', 'tools/plates/layers/howto/shared.mjs'];
+  'tools/plates/library/shared/card.mjs', ...SHARED_MODULES, 'tools/plates/layers/artifact/copy-lint.mjs', 'tools/plates/layers/howto/shared.mjs',
+  'tools/plates/library/research/stamps.mjs', REVIEWS, 'tests/howto/golden/GOLDEN.json'];
 const dirFiles = (d, re) => (existsSync(join(ROOT, d)) ? readdirSync(join(ROOT, d)).filter(n => re.test(n)).sort().map(n => `${d}/${n}`) : []);
 
 /** Every file the plugin reads: its own modules, the shared cards and every module under hands/ (hand-*.mjs and what they import there). */
@@ -46,5 +49,7 @@ export async function outputs() {
     const bad = lintLibraryRow(mods[i].M, shared);
     if (bad.length) throw new Error(`${row.id}: library lint:\n  ${bad.map(b => `${b.path}: ${b.rule}${b.detail ? ` (${b.detail})` : ''}`).join('\n  ')}`);
   }
+  const stamps = await stampProblems(rows.map(r => r.id), { root: ROOT });
+  if (stamps.length) throw new Error(stamps.join('\n'));
   return [];
 }

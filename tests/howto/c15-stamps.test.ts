@@ -1,8 +1,8 @@
 // LIB-5 S8 (Do 6; D-LIB5-STAMPS, D-LIB5-SCRATCH): strict C15. The stamp helpers (tools/plates/library/research/
 // stamps.mjs) compute exactly c15's contentHash over a row's full content and its 9 plate fragments, and an empty,
 // missing or unparsable reviews.json fails every id (never c15's stub pass). Main holds no scratch marker or stamp.
-import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { execFileSync, spawn } from 'node:child_process';
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -69,4 +69,82 @@ describe('LIB-5 S8 / D-LIB5-SCRATCH: main holds no scratch marker or scratch sta
     expect(() => S.writeScratchStamps(t, ['lib_pull_up'])).toThrow(/holds no LIB5-SCRATCH-ROOT/);
     expect(existsSync(join(t, 'docs/research/howto/reviews.json'))).toBe(false);
   });
+});
+
+describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s committed stamps', () => {
+  const reviews = () => JSON.parse(readFileSync(join(ROOT, 'docs/research/howto/reviews.json'), 'utf8'));
+  /** Problems with the committed (non-scratch) entries: approvedBy 'supervisor', a decision, an approval and open 0. */
+  const entryProblems = (entries: any[]) => entries.filter(e => !e.scratch).flatMap(e => [
+    ...(e.approvedBy !== 'supervisor' ? [`${e.scope}: approvedBy ${JSON.stringify(e.approvedBy)}`] : []),
+    ...(typeof e.decision !== 'string' || !e.decision ? [`${e.scope}: no decision`] : []),
+    ...(typeof e.approval !== 'string' || !e.approval ? [`${e.scope}: no approval`] : []),
+    ...(e.open !== 0 ? [`${e.scope}: open ${JSON.stringify(e.open)}`] : []),
+  ]);
+  it('one approved entry per id of the 8, each matching stampOf; every committed entry is the supervisor\'s', async () => {
+    const r = reviews();
+    expect(r.entries.map((e: any) => e.scope)).toEqual(EIGHT);
+    expect(entryProblems(r.entries)).toEqual([]);
+    for (const e of r.entries) {
+      expect([e.scope, e.hash]).toEqual([e.scope, (await S.stampOf(e.scope)).hash]);
+      expect([e.decision, e.approval]).toEqual(['D-LIB5-STAMPS', 'https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb']);
+      for (const role of ['fetcher', 'critic', 'safety', 'reviewer']) expect([e.scope, role, e[role]]).toEqual([e.scope, role, expect.stringContaining('README.md:52-90')]);
+      for (const f of e.findings) expect(f).toMatch(/recorded, not changed: golden B is locked \(plan 2\.8\)$/);
+    }
+    expect(await S.stampProblems(EIGHT)).toEqual([]);
+  });
+  it('mutations, each red: \'owner\'; approvedBy missing; open: 1', () => {
+    const e = reviews().entries[0], { approvedBy: _a, ...noBy } = e;
+    expect(entryProblems([{ ...e, approvedBy: 'owner' }])).toEqual([`${e.scope}: approvedBy "owner"`]);
+    expect(entryProblems([noBy])).toEqual([`${e.scope}: approvedBy undefined`]);
+    expect(entryProblems([{ ...e, open: 1 }])).toEqual([`${e.scope}: open 1`]);
+    expect(entryProblems([{ ...e, approvedBy: 'stamps (O5)' }])).toHaveLength(1);
+  });
+});
+
+describe('LIB-5 Do 6: the stamp gate in E1\'s tree (D-LIB5-SCRATCH 3, 7; S8)', () => {
+  const T = 900_000;
+  let F: any, tree: string;
+  beforeAll(async () => {
+    F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
+    tree = F.fixtureTree(); temps.push(tree);
+  }, T);
+  /** `node tools/plates/generate.mjs` in `cwd`; resolves { code, out }. */
+  const gen = (cwd: string) => new Promise<{ code: number; out: string }>(resolve => {
+    const c = spawn(process.execPath, ['tools/plates/generate.mjs'], { cwd, env: Object.fromEntries(Object.entries(process.env).filter(([k]) => k !== 'NODE_ENV' && !k.startsWith('VITEST') && k !== 'TEST')) });
+    let out = '';
+    c.stdout.on('data', d => { out += d; }); c.stderr.on('data', d => { out += d; });
+    c.on('close', code => resolve({ code: code ?? 1, out }));
+  });
+  const copy = (edit: (r: string) => void) => { const r = mkdtempSync(join(tmpdir(), 'lib5-stamp-')); temps.push(r); cpSync(tree, r, { recursive: true, verbatimSymlinks: true }); edit(r); return r; };
+  const REV = 'docs/research/howto/reviews.json';
+  const rev = (r: string) => JSON.parse(readFileSync(join(r, REV), 'utf8'));
+  it('fixtureTree() marks the tree and writes one scratch stamp for E1, and generate passes the gate', async () => {
+    expect(existsSync(join(tree, S.SCRATCH_MARKER))).toBe(true);
+    expect(rev(tree).entries.filter((e: any) => e.scratch).map((e: any) => e.scope)).toEqual([F.ID]);
+    const g = await gen(tree);
+    expect([g.code, g.out.slice(-300)]).toEqual([0, expect.stringContaining('generate: wrote')]);
+  }, T);
+  it('mutations, each red: entries emptied (every shipped id named, while checkC15 passes the empty file); marker removed; E1\'s stamp dropped', async () => {
+    const results = await Promise.all([
+      gen(copy(r => writeFileSync(join(r, REV), '{ "schema": 1, "entries": [] }\n'))),
+      gen(copy(r => rmSync(join(r, S.SCRATCH_MARKER)))),
+      gen(copy(r => { const v = rev(r); v.entries = v.entries.filter((e: any) => !e.scratch); writeFileSync(join(r, REV), JSON.stringify(v)); })),
+    ]);
+    const [emptied, unmarked, dropped] = results;
+    expect(emptied.code).not.toBe(0);
+    for (const id of [...EIGHT, F.ID]) expect([id, emptied.out]).toEqual([id, expect.stringContaining(`LIB-5 stamp: ${id}: reviews.json is missing, unparsable or empty`)]);
+    const { content: c } = await content.loadContent('lib_pull_up');
+    expect(checkC15(c, fragmentsOf8('lib_pull_up'), { schema: 1, entries: [] })).toEqual([]);
+    for (const x of [unmarked, dropped]) {
+      expect(x.code).not.toBe(0);
+      expect(x.out).toContain(`LIB-5 stamp: ${F.ID}: no reviews.json entry for scope ${F.ID}`);
+      for (const id of EIGHT) expect(x.out).not.toContain(`LIB-5 stamp: ${id}:`);
+    }
+  }, T);
+  it('LIB-4a: writeIds(ROOT, 22) passes, and its synthetic copy holds no reviews.json (the gate is never reached from ids.mjs)', async () => {
+    const w = await import(/* @vite-ignore */ url('tools/plates/library/scale/write-ids.mjs'));
+    const out = await w.writeIds(ROOT, 22);
+    temps.push(out.root);
+    expect(existsSync(join(out.root, REV))).toBe(false);
+  }, T);
 });
