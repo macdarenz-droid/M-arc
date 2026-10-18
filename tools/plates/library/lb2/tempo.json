@@ -1,0 +1,123 @@
+{
+ "note": "LB2 tempo map (LIB-10, ruled D-LIB10-NOTE section 9 and Q5 on #265, research claude/libht-research-lb2 @ 2b6747f8). Each card's tempo array is built only from this file and that card's plate.tempo: a row's s is plate.tempo[from]; 'up' is the concentric phase, 'down' the eccentric, 'pause' a Hold right after the concentric, present if and only if pause > 0. A constant row takes its seconds from `constants`, each with the quote on the card's own claim that states them. Moving rows are {phase, s, move: true}; Hold and constants are {phase, s}. No Rest phase.",
+ "ruling": "D-LIB10-NOTE (#265, sections 6 and 9)",
+ "research": "2b6747f82412a2962e7aaae397af4407426ab461",
+ "constants": {
+  "decline_bench_press.Pause": {
+   "s": 1,
+   "claim": "c8",
+   "quote": "Pause for a count of one.",
+   "source": "workoutlabs-decline",
+   "ruling": "D-LIB10-NOTE Q5"
+  }
+ },
+ "poseMap": {},
+ "ids": {
+  "barbell_bench_press": {
+   "claim": [
+    "c26",
+    "c18",
+    "c17"
+   ],
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down"
+    },
+    {
+     "phase": "Press",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    }
+   ]
+  },
+  "incline_barbell_bench_press": {
+   "claim": "c14",
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down"
+    },
+    {
+     "phase": "Press",
+     "from": "up"
+    }
+   ]
+  },
+  "close_grip_bench_press": {
+   "claim": "c9",
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down"
+    },
+    {
+     "phase": "Press",
+     "from": "up"
+    }
+   ]
+  },
+  "decline_bench_press": {
+   "claim": "c8",
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down"
+    },
+    {
+     "phase": "Pause",
+     "constant": "decline_bench_press.Pause"
+    },
+    {
+     "phase": "Press",
+     "from": "up"
+    }
+   ]
+  },
+  "arnold_press": {
+   "claim": "c12",
+   "rows": [
+    {
+     "phase": "Press",
+     "from": "up"
+    },
+    {
+     "phase": "Lower",
+     "from": "down"
+    }
+   ]
+  },
+  "skull_crusher": {
+   "claim": [
+    "c17",
+    "c13"
+   ],
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down"
+    },
+    {
+     "phase": "Extend",
+     "from": "up"
+    }
+   ]
+  },
+  "dumbbell_pullover": {
+   "claim": "c18",
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down"
+    },
+    {
+     "phase": "Pull",
+     "from": "up"
+    }
+   ]
+  }
+ }
+}

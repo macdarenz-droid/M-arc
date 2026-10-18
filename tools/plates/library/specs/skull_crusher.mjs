@@ -5,11 +5,11 @@
 // copied, never imported: `supine()` with its bisect made to throw when its bracket holds no root (rule b), the flat
 // bench at 43 cm, the feet, the scapular set. New: the elbow-only arm (upper arm vertical, elbow over the shoulder
 // joint), the EZ bar.
-// Sources: research card docs/research/howto/cards/skull_crusher.json (claude/libht-research 0393aac; Do 6 copies the
-// head the supervisor names), claims c1 (flat bench, feet firmly on the floor, closed grip), c2 (bar pressed to straight
+// Sources: research card docs/research/howto/cards/skull_crusher.json (claude/libht-research-lb2 2b6747f8, named on
+// #265), claims c1 (flat bench, feet firmly on the floor, closed grip), c2 (bar pressed to straight
 // elbows), c3 (wrists neutral), c4 (lower slowly to the forehead or slightly behind the head), c5 (upper arms stay
 // vertical; stop just above the forehead), c10 (head close to the end of the bench; close grip on the EZ bar),
-// c13 (tempo, ACSM 1-2 s each way).
+// c7 (upper arms drifting back: the Mistake), c13 (ACSM 1-2 s up), c17 (3 s down).
 // Geometry decisions:
 //  - Supine class (copied): pelvis tilt -90, the trunk that puts backUpper and buttock on the pad plane, the neck that
 //    puts the back of the skull (OCCIPUT) on it. Checks prove backUpper, buttock (plane, tol 1 cm), head clearance and
@@ -26,13 +26,13 @@
 //    EZ_PLATE_D plates (smaller than the 8's 45 cm plates, which ringed the head); the plate outline behind the body and the sleeve dot in front, as barbell_back_squat draws
 //    its bar. The start sleeve is a dashed dot in the end layer (the start layer never draws moving equipment).
 //  - Scale: reference 146.29 px/m.
-// Plate labels (card, 0393aac): callouts = plate.checkpoints c5 (Upper arms vertical), c4 (Bar to forehead),
-//   c3 (Wrists neutral); tempo = plate.tempo c13 (up 1, down 2, no pause; the plate starts at the top: Lower, then
-//   Extend), as the tempo map in lb2/DESIGN.md proposes. The Mistake (plate.mistake c7) waits for LR-31 (LIB-TOPRANK)
-//   on a research head the supervisor names (LIB-10 card).
+// Plate labels (card, 2b6747f8): callouts = plate.checkpoints c5 (Upper arms vertical), c4 (Bar to forehead),
+//   c3 (Wrists neutral, anchored on the start wrist, in open space beside the straight arm); tempo = plate.tempo c17, c13
+//   (up 1, down 3, no pause; the plate starts at the top: Lower 3, Extend 1; D-LIB10-NOTE section 9); Mistake =
+//   plate.mistake c7 (upper arms drift back; key `drift`), one tell: the card's fault has one visible sign.
 // Unsourced numbers (no card claim gives them; 13.3 must-fix 14): BENCH_TOP and FOOT_Z (the anchor's), HEAD_END,
 //   GRIP_X (a "close grip" made a number), TOP_ELBOW (the anchor's straight arm), FOREHEAD_GAP ("just above" made a
-//   number), EZ_PLATE_D.
+//   number), EZ_PLATE_D, DRIFT (the Mistake's tip; c7 gives no angle).
 import { landmarksOf, fk, resolve, normPose, WINTER, REF } from '../engine.mjs';
 
 const H = 1.75, BODY = { height: H };
@@ -45,6 +45,7 @@ const SCAP = { elev: -1, pro: -3 };                   // blades back and down (c
 const GRIP_X = 0.16;                                  // grip centre off the midline (m): the EZ bar's inner grip (c10)
 const TOP_ELBOW = 4;                                  // top: elbow flexion (deg), straight (c2)
 const FOREHEAD_GAP = 0.05;                            // end: grip centre above the forehead point (m) (c5)
+const DRIFT = 25;                                     // Mistake: upper arm tipped back toward the head (deg) (c7)
 const EZ_PLATE_D = 0.30;                              // plate diameter (m): small plates, the usual EZ-bar load
 const OCCIPUT = [0, 0.955, -0.056];                   // back of the skull on the side head outline (head frame, H)
 const FOREHEAD = [0, 0.95, 0.06];                     // brow top on the side head outline (head frame, H)
@@ -91,6 +92,18 @@ const end = { ...base, reach: { l: reachAt('l', END_FLEX), r: reachAt('r', END_F
 const VIA_FLEX = [1, 2, 3, 4, 5, 6].map(k => TOP_ELBOW + (END_FLEX - TOP_ELBOW) * k / 7);
 const via = VIA_FLEX.map(f => ({ ...base, reach: { l: reachAt('l', f), r: reachAt('r', f) } }));
 
+// Mistake (card plate.mistake, c7; key `drift`): the upper arms drift back toward the head as the bar comes down. The
+// upper arm tips DRIFT deg headward of vertical; the forearm keeps its end direction in space (elbow bend END_FLEX - DRIFT),
+// so the bar is carried back with the elbow, past the crown. A dashed plumb from the shoulder shows the vertical the
+// upper arm left.
+const misElbow = side => [S[side][0], S[side][1] + L1 * Math.cos(DRIFT * R), S[side][2] - L1 * Math.sin(DRIFT * R)];
+const misGrip = side => { const E = elbowOf(side), G = gripAt(side, END_FLEX), M = misElbow(side); return G.map((v, i) => v + M[i] - E[i]); };
+const mistakePose = { reach: { l: { at: misGrip('l'), pole: [0, Math.cos(DRIFT * R), -Math.sin(DRIFT * R)] }, r: { at: misGrip('r'), pole: [0, Math.cos(DRIFT * R), -Math.sin(DRIFT * R)] } } };
+const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
+const PLUMB = [[0, S.r[1] + 0.02, S.r[2]], [0, S.r[1] + L1 + 0.06, S.r[2]]];
+export const mistakeInfo = () => ({ upperArmBackDeg: +(Math.atan2(S.r[2] - lmMis['elbow.r'][2], lmMis['elbow.r'][1] - S.r[1]) / R).toFixed(1),
+  elbowMovedCm: +((elbowOf('r')[2] - lmMis['elbow.r'][2]) * 100).toFixed(1), barClearsCrownCm: +((lmMis['grip.r'][1] - HEAD_TOP[1]) * 100).toFixed(1) });
+
 const barOf = lm => [0, lm.grips[1], lm.grips[2]];
 const BAR0 = barOf(landmarksOf(start, H));
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
@@ -119,8 +132,20 @@ export default {
   callouts: [
     { key: 'upper', text: 'Upper arms<br>vertical', anchor: 'elbow.r', cue: 'Keep your upper arms upright and move only your forearms.' },
     { key: 'forehead', text: 'Bar to<br>forehead', anchor: 'grip.r', cue: 'Lower the bar slowly to just above your forehead.' },
-    { key: 'wrists', text: 'Wrists<br>neutral', anchor: 'wrist.r', cue: 'Keep your wrists straight, neither bent back nor curled.' },
+    { key: 'wrists', text: 'Wrists<br>neutral', anchor: { at: 'wrist.r', pose: 'start' }, cue: 'Keep your wrists straight, neither bent back nor curled.' },
   ],
-  tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Extend', s: 1, move: true }],
+  tempo: [{ phase: 'Lower', s: 3, move: true }, { phase: 'Extend', s: 1, move: true }],
+  mistake: {
+    pose: mistakePose,
+    parts: ['arm.r', 'arm.l'],
+    guides: [
+      { kind: 'dashed', pts: PLUMB },                                                                // the vertical the upper arm should keep
+      { kind: 'dashed', pts: Array.from({ length: 17 }, (_, k) => [0, lmMis.grips[1] + 0.03 * Math.sin(k * Math.PI / 8), lmMis.grips[2] + 0.03 * Math.cos(k * Math.PI / 8)]) },   // the bar carried back
+      { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [-4, -8] }, to: { at: 'elbow.r', pose: 'mistake', off: [4, -8] } },
+    ],
+    tells: [
+      { key: 'drift', text: 'Upper arms<br>drift back', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbows swing back toward your head as the bar comes down.' },
+    ],
+  },
   alt: 'Skull crusher, side view. Lying on a flat bench, head near its end, feet flat, the lifter holds an EZ bar on straight arms over the shoulders and bends only the elbows, upper arms upright, to lower the bar to just above the forehead, then straightens the arms.',
 };

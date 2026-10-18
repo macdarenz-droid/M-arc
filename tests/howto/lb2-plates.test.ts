@@ -189,6 +189,85 @@ describe('LIB-10 Do 2 a: skull_crusher draws the elbow-only arm', { timeout: T }
   });
 });
 
+describe('LIB-10 H slice Mistakes (research 2b6747f8; D-LIB10-NOTE section 10)', { timeout: T }, () => {
+  const KEYS: Record<string, string> = { decline_bench_press: 'high', skull_crusher: 'drift' };
+  /** The ruled first-tell key check (13 Q1(a)): tells[0].key is the card's ruled key. */
+  const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
+  it('each slice plate draws its Mistake, and its first tell carries the ruled key', () => {
+    for (const spec of [dbp, sc]) expect(keyProblems(spec)).toEqual([]);
+  });
+  it('mutation: the first tell key swapped is red', () => {
+    expect(keyProblems({ ...dbp, mistake: { ...dbp.mistake, tells: [...dbp.mistake.tells].reverse() } })).toEqual(['decline_bench_press: first tell neck']);
+  });
+  it('2-3 tells on decline_bench_press; skull_crusher has the one tell its single-sign fault allows (ruled per id, Q-D5-4)', () => {
+    expect(dbp.mistake.tells.length).toBeGreaterThanOrEqual(2);
+    expect(sc.mistake.tells.length).toBe(1);
+  });
+  it('decline: the Mistake bar touches the chest at least 15 cm headward of the end touch and nearer the chin (c5, c12)', () => {
+    const i = dbpMod.mistakeInfo();
+    expect(i.touchMovedHeadwardCm).toBeGreaterThanOrEqual(15);
+    expect(i.barToChinCm.mistake).toBeLessThan(i.barToChinCm.end - 10);
+    const e = itemsIn(dbp, 'end').lm, m = itemsIn(dbp, 'mistake').lm;
+    expect(m.grips[2]).toBeLessThan(e.grips[2] - 0.15);
+    expect(m.buttock).toEqual(e.buttock);   // only the bar and arms move
+  });
+  it('skull_crusher: in the Mistake the upper arm tips back at least 20 deg from vertical; the bar stays clear of the head', () => {
+    const lm = itemsIn(sc, 'mistake').lm, tilt = Math.atan2(lm['shoulder.r'][2] - lm['elbow.r'][2], lm['elbow.r'][1] - lm['shoulder.r'][1]) * 180 / Math.PI;
+    expect(tilt).toBeGreaterThanOrEqual(20);
+    expect(scMod.mistakeInfo().barClearsCrownCm).toBeGreaterThan(5);
+  });
+  it('every Mistake guide is dashed or an arrow (red parts over the solid end figure are dashed, 13.1)', () => {
+    for (const spec of [dbp, sc]) for (const g of spec.mistake.guides) expect(['dashed', 'arrow'], spec.id).toContain(g.kind);
+  });
+  it('the tempo strips are the ruled arrays (D-LIB10-NOTE sections 6 and 9)', () => {
+    expect(dbp.tempo).toEqual([{ phase: 'Lower', s: 2, move: true }, { phase: 'Pause', s: 1 }, { phase: 'Press', s: 1, move: true }]);
+    expect(sc.tempo).toEqual([{ phase: 'Lower', s: 3, move: true }, { phase: 'Extend', s: 1, move: true }]);
+  });
+  it('mutation (A2, Q4 (a)-(b)): the moving bar swapped for a rackUpright gives exactly H9.moving-line:eq<i>.rackUpright.1', () => {
+    // premise: exactly one item (the barbell) is swapped, in one entry, and it moves between the end and the Mistake
+    const hits = new Set<number>();
+    const spec = { ...dbp, equipment: dbp.equipment.map((e: any, i: number) => (typeof e !== 'function' ? e
+      : (lm: any, ctx: any) => [].concat(e(lm, ctx) ?? []).map((it: any) => (it && it.type === 'barbell' ? (hits.add(i), { type: 'rackUpright', at: [0, it.at[1] - 0.5, it.at[2]], h: 0.5, part: 'plate' }) : it)))) };
+    const keys = h9(spec);
+    expect(hits.size).toBe(1);
+    const i = [...hits][0];
+    const e = itemsIn(dbp, 'end').items.find(it => it.type === 'barbell'), m = itemsIn(dbp, 'mistake').items.find(it => it.type === 'barbell');
+    expect(e.at).not.toEqual(m.at);
+    expect(keys).toEqual([`H9.moving-line:eq${i}.rackUpright.1`]);
+  });
+  it('every drawn LB2 plate: no leader comes within 6 px of the trace, a cable or a bar sleeve, away from its anchor', () => {
+    const xy = (d: string) => [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
+    const segs = (p: number[][]) => p.slice(1).map((q, i) => [p[i]!, q]);
+    const dseg = (p: number[], [a, b]: number[][]) => { const dx = b![0]! - a![0]!, dy = b![1]! - a![1]!, L2 = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((p[0]! - a![0]!) * dx + (p[1]! - a![1]!) * dy) / L2)); return Math.hypot(p[0]! - a![0]! - t * dx, p[1]! - a![1]! - t * dy); };
+    const leaderOk = (d: string) => /^ML*H?$/.test(d.replace(/[\d.\s,-]/g, ''));
+    for (const spec of [dbp, sc]) for (const mistake of [false, true]) {
+      const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg;
+      const avoid = [...svg.matchAll(/<path class="(?:trace|eq-cable|eq-solid)[^"]*"[^>]*? d="([^"]+)"/g)].flatMap(m => segs(xy(m[1]!)));
+      expect(avoid.length, spec.id).toBeGreaterThan(0);
+      for (const [, d] of svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)) {
+        if (!leaderOk(d!)) throw new Error(`${spec.id}: leader path has a command other than M, L or H: ${d}`);
+        const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]);
+        let min = Infinity;
+        for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
+          const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) for (const g of avoid) min = Math.min(min, dseg(q, g));
+        }
+        expect(min, `${spec.id}${mistake ? ' Mistake' : ''} leader ${d}`).toBeGreaterThanOrEqual(6);
+      }
+    }
+  });
+  it('decline (Q7): the rack upright is drawn behind the figure; the hidden safety span is redrawn dashed in the end pose only (13 Q2 (c))', () => {
+    const up = itemsIn(dbp, 'end').items.filter(it => it.type === 'rackUpright');
+    expect(up.map(u => u.z)).toEqual(['back']);
+    const ph = (pose: string, mistake = false) => itemsIn(dbp, pose, { mistake }).items.filter(it => it.part === 'safety' && it.type === 'line');
+    expect(ph('end').length).toBe(2);
+    for (const l of ph('end')) { expect(l.cls).toMatch(/m-line/); expect(Math.max(...l.pts.map((q: number[]) => q[2]))).toBeGreaterThan(itemsIn(dbp, 'end').lm.grips[2]); }
+    expect(ph('start').length).toBe(0);
+    expect(ph('end', true).length).toBe(0);
+  });
+});
+
 describe('LIB-10 D-LIB9-CLONE b: each copied root finder throws on a bracket with no root', () => {
   it('decline_bench_press and skull_crusher', () => {
     for (const m of [dbpMod, scMod]) {
