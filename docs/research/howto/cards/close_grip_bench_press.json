@@ -407,7 +407,8 @@
       "what": "Elbows drifting away from the ribs and the bar landing high on the chest (drawn high on the chest, never touching the neck).",
       "why": "It is the opposite of the two defining cues (ACE elbows-to-ribs, StrengthLog low touch) and brings the bar toward the neck (c10, MECH). No source read ranks close-grip faults by frequency.",
       "claim": "c2",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a close-grip fault. Set aside: StrengthLog's \"most people will have to use less weight in the close-grip bench press\" (c6) is about the load, and \"Most people find it comfortable to grip the bar somewhere around shoulder-width apart\" (c1) is about the grip; Stronger by Science's \"Most people touch the bar a bit lower on their chest when they bench with a close grip\" (c4) describes the touch point, not a fault; its \"most novice lifters drive the bar straight up initially\" and \"this is especially common for people who use the “bend the bar” cue\" are written for the regular bench press, another exercise; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c11) is about all weight training. The elbows drifting away from the ribs with the bar landing high on the chest is the only named fault a quote on the card ties to harm: barbells compressing the neck killed weightlifters (c10; the link to a high touch is MECH). Stronger by Science's \"It’s risky for your shoulders (not to mention weaker) to flare through the whole lift and touch the bar high on your chest\" says the same for the regular bench. Loading it like the regular bench (c6) is a load choice, not a candidate; hips off the bench (c3) has no harm quote. drawable stays true: the side view shows the elbows' distance from the ribs and the touch point."
     },
     "tells": [
       {

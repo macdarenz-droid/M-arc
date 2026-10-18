@@ -501,6 +501,28 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c25",
+      "text": "Most novice lifters drive the bar straight up off the chest at first; elite lifters drive it up and back, then straight up. A bar that shoots straight up off the chest instead of up and slightly back makes the lift harder, especially for the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sbs-bench"
+      ],
+      "quotes": [
+        {
+          "source": "sbs-bench",
+          "text": "Most elite lifters utilize this bar path (up and back, then straight up), whereas most novice lifters drive the bar straight up initially, then up and back to lock out.",
+          "where": "Section 2, bar path"
+        },
+        {
+          "source": "sbs-bench",
+          "text": "If the bar shoots straight up off your chest instead of up and slightly back, you’re just making the lift unnecessarily difficult – especially for your shoulders.",
+          "where": "Missing in the midrange"
+        }
+      ]
     }
   ],
   "sources": [
@@ -649,10 +671,11 @@
       }
     ],
     "mistake": {
-      "what": "Hips lifting off the bench to press the bar up.",
-      "why": "StrongLifts and the Human Kinetics text both name it; it shortens the range and can over-extend the low back. How often it happens is not measured in any source read.",
-      "claim": "c10",
-      "drawable": true
+      "what": "Pressing the bar straight up off the chest instead of up and slightly back toward the shoulders.",
+      "why": "Stronger by Science says most novice lifters drive the bar straight up initially, and that a bar that shoots straight up off the chest makes the lift unnecessarily difficult, especially for the shoulders (c25); StrongLifts gives the bar path as a diagonal line from the mid-chest to the shoulders, not vertical (c8). How often it happens is not measured beyond that.",
+      "claim": "c25",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Stronger by Science's \"most novice lifters drive the bar straight up initially, then up and back to lock out\" (c25) says most beginners make this fault, which it names an improper bar path; StrongLifts's \"Diagonal line from your mid-chest to shoulders\" (c8) gives the same path. Set aside: StrongLifts's \"Most people hold it in the middle of their palms when they Bench Press\" is about the grip, a grip choice and not a candidate (as the thumbless grip, c4, is not); \"If your wrists hurt with the full grip, it’s usually because they’re bent when you Bench Press\" says what usually causes wrist pain, not how often the fault happens; \"Many people who get shoulder pain on the Bench Press can do Close Grip pain-free\" is about a grip; Stronger by Science's \"this is especially common for people who use the “bend the bar” cue\" (shoulders not turned in at lockout) is common only in one subgroup; if counted, neither it nor the bar path has a harm quote, and the bar path comes first in the same sticking-point list, so step 2's order still picks the bar path; \"When most people miss, it’s after that initial acceleration\" is where a failed rep stalls, not a fault; Kowalczuk's \"most commonly while performing the bench press maneuver\" (c22) names the exercise and the lowering phase, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c23) is about all weight training. Hips off the bench (c10) keeps its harm quote (\"It can hurt your lower back if you hyper-extend your spine\"), but step 1 decides. drawable is true: the side view shows the bar's path between the chest and the shoulders."
     },
     "tells": [
       {
@@ -738,6 +761,11 @@
     }
   ],
   "handlingMistakes": [
+    {
+      "mistake": "Pressing the bar straight up off the chest.",
+      "fix": "Drive it up and slightly back toward your shoulders.",
+      "claim": "c25, c8"
+    },
     {
       "mistake": "Thumbless grip.",
       "fix": "Wrap your thumbs round the bar.",

@@ -520,10 +520,14 @@
       }
     ],
     "mistake": {
-      "what": "Low back arching away from the pad (hips pushing up) to press the bar.",
-      "why": "Boostcamp names excessive low-back arching both as a form fault and as an injury risk; how often it happens is not measured in any source read.",
-      "claim": "c9",
-      "drawable": true
+      "what": "Elbows flaring out excessively as the bar comes down, instead of staying about 45-75 degrees from the torso.",
+      "why": "Boostcamp lists allowing the elbows to flare out excessively, increasing shoulder strain, among its common mistakes (c8), and its exercise page names shoulder strain from flared elbows as an injury risk (c9). How often it happens is not measured in any source read.",
+      "claim": [
+        "c8",
+        "c9"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for an incline-press fault (Boostcamp's \"Common Mistakes to Avoid\" is a heading; \"usually 30–45 degrees\" is the bench setting; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c16) is about all weight training). Two named faults are tied to harm: flared elbows (\"Allowing the elbows to flare out excessively, increasing shoulder strain\", c8, and \"Shoulder strain from flared elbows\", c9; two sources) and the low-back arch (\"lower back arching excessively\" in the same injury-risk line, c9; one source). Step 2's first tie-break picks the flared elbows: they are on Boostcamp's common-mistakes list, and the arch is only in its form tips (\"avoid arching your back excessively\"); the second tie-break (more harm sources) gives the same. An incline set too steep and lifting too heavy are setup and load choices, and \"wrist strain from poor grip angle\" is a grip choice; none is a candidate. drawable is true: in the side view a flared elbow sits level with the shoulder instead of down toward the ribs (as close_grip_bench_press draws its elbow drift); the arch, the head's earlier pick, stays in handlingMistakes."
     },
     "tells": [
       {
@@ -595,14 +599,14 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Arching the low back off the pad to finish a rep.",
-      "fix": "Keep your back on the pad; build up to heavier weights gradually.",
-      "claim": "c9, c12, c13"
-    },
-    {
       "mistake": "Elbows flared straight out.",
       "fix": "Keep them about 45-75 degrees from your body.",
       "claim": "c8"
+    },
+    {
+      "mistake": "Arching the low back off the pad to finish a rep.",
+      "fix": "Keep your back on the pad; build up to heavier weights gradually.",
+      "claim": "c9, c12, c13"
     },
     {
       "mistake": "Bouncing the bar off the chest.",

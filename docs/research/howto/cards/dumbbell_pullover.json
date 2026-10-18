@@ -466,6 +466,23 @@
           "where": "step-by-step instructions"
         }
       ]
+    },
+    {
+      "id": "c22",
+      "text": "Holding or turning the dumbbell flat (horizontal) during the rep, instead of letting it hang vertically, is named a common mistake; it needlessly works the wrist flexors and does little for the pullover.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bm-pullover"
+      ],
+      "quotes": [
+        {
+          "source": "bm-pullover",
+          "text": "A common mistake is to attempt to hold or orient the dumbbell horizontally during the repetition rather than vertically. This requires unnecessary action of the wrist flexors and does little to improve the pullover.",
+          "where": "Dumbbell Pullover Mistakes to Avoid: Not Allowing the Dumbbell to Hang"
+        }
+      ]
     }
   ],
   "sources": [
@@ -564,10 +581,11 @@
       }
     ],
     "mistake": {
-      "what": "Elbows bending a lot as the dumbbell goes back, turning it into a triceps extension.",
-      "why": "Breaking Muscle lists it first among the pullover's faults; it makes the lift easier and often comes with flared elbows (c14). How often it happens is not measured in any source read.",
-      "claim": "c7",
-      "drawable": true
+      "what": "Holding the dumbbell flat or tilting it, instead of letting it hang vertically from the hands.",
+      "why": "Breaking Muscle calls holding or orienting the dumbbell horizontally during the rep a common mistake; it needlessly works the wrist flexors and does little to improve the pullover (c22). It says the dumbbell should hang naturally (c13). How often it happens is not measured in any source read.",
+      "claim": "c22",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Breaking Muscle's \"A common mistake is to attempt to hold or orient the dumbbell horizontally during the repetition rather than vertically\" (c22) is a sentence written on that one fault, not a list heading read onto it, so it counts; the dumbbell's position during the rep is an equipment position during the set, not a grip choice made at setup. No other fault has a frequency word that counts. Set aside: \"More often than not, excessive elbow bend is also associated with “flared,” or outward-pointing, elbows\" (c14) says how often two faults come together, not how often lifters make either; \"it’s common to see in commercial fitness centers\" is about the exercise; \"the pullover is typically programmed in the moderate repetition range\" is about reps; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c19) is about all weight training. Step 2 is not needed: the flared elbows that come with too much elbow bend \"may increase stress on the inside of the elbow\" (c14, WEAK), and hips rising \"could result in a “glutes over dumbbell” tumble over the back of the bench\", but no frequency word backs them. The elbow bend, the head's earlier pick and first on the source's list, stays in handlingMistakes. drawable is true: the side view shows whether the dumbbell hangs straight down from the hands or is tilted flat."
     },
     "tells": [
       {
@@ -647,6 +665,11 @@
     }
   ],
   "handlingMistakes": [
+    {
+      "mistake": "Holding the dumbbell flat instead of letting it hang.",
+      "fix": "Let it hang naturally from your hands; don't turn or tilt it.",
+      "claim": "c22, c13"
+    },
     {
       "mistake": "Bending the elbows a lot so it becomes a triceps extension.",
       "fix": "Keep the same slight bend all the way.",

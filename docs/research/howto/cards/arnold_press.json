@@ -469,7 +469,8 @@
       "what": "Back arching away from the pad as the dumbbells go up.",
       "why": "The Gym Group names it as the one thing not to do; the parent's top fault is the same. How often it happens is not measured in any source read.",
       "claim": "c3",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for an Arnold-press fault (Fit Father's \"so commonly desired\" is about the V shape; Kerr's \"The most common mechanism of injury was weights dropping on the person\", c14, is about all weight training). No quote ties a named fault to harm: The Gym Group's \"This exercise can be strenuous on the shoulder blades\" is about the exercise, not a fault; stopping at pain (c7) is a rule, not a position; Fit Father's \"avoiding the potential for injury\" is about doing the whole lift properly. No source has a common-mistakes list, so step 3 takes the fault the most read sources tell the lifter to avoid: raising the back away from the bench (The Gym Group, \"DON’T raise your back away from the bench during the lift\", c3; ACE asks for the same on the seated dumbbell press, \"without any arching in your low back\", another exercise). No other fault is named as one to avoid; the upper-arm height at the bottom (c4) is an instruction, and the normal shoulder-press weight (c6) is a load choice, not a candidate. drawable stays true: the side view shows the back on the upright pad."
     },
     "tells": [
       {
