@@ -1,5 +1,5 @@
 {
- "note": "LB2 build-ahead rows (LIB-10, D-LIB10-AHEAD): stage drawing or review only, never in batches/. Modes as proposed in lb2/DESIGN.md 2 (T rows take their params and claims at the T slice, after pilot A is on main). censusRef: the census commit (claude/howto-options).",
+ "note": "LB2 build-ahead rows (LIB-10, D-LIB10-AHEAD): stage drawing or review only, never in batches/. Mode H for all 7 (D-LIB10-DECLINE, D-LIB10-NOTE Q6, D-LIB10-BENCH-H: BENCH is not built in LB2). censusRef: the census commit (claude/howto-options).",
  "batch": "LB2",
  "censusRef": "4a9fd86",
  "rows": {
@@ -8,9 +8,7 @@
    "slug": "barbell-bench-press",
    "prefix": "barbell-bench-press",
    "chromeId": "barbell-bench-press",
-   "mode": "T",
-   "parent": "lib_dumbbell_bench_press",
-   "template": "BENCH",
+   "mode": "H",
    "stage": "drawing",
    "view": "side"
   },
@@ -19,9 +17,7 @@
    "slug": "incline-barbell-bench-press",
    "prefix": "incline-barbell-bench-press",
    "chromeId": "incline-barbell-bench-press",
-   "mode": "T",
-   "parent": "lib_dumbbell_bench_press",
-   "template": "BENCH",
+   "mode": "H",
    "stage": "drawing",
    "view": "side"
   },
@@ -30,9 +26,7 @@
    "slug": "close-grip-bench-press",
    "prefix": "close-grip-bench-press",
    "chromeId": "close-grip-bench-press",
-   "mode": "T",
-   "parent": "lib_dumbbell_bench_press",
-   "template": "BENCH",
+   "mode": "H",
    "stage": "drawing",
    "view": "side"
   },

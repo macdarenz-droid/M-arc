@@ -17,10 +17,11 @@ Nothing here ships (D-LIB10-AHEAD): every LB2 row stays at stage `drawing` or `r
   Specs and templates copy pilot A code; they never import a pilot A spec (D-LIB9-CLONE; A3 tests it).
 - **T rule (Do 1, plan 3.1:236).** A child is T only if it differs from its template parent only through derive.mjs
   PARAMS keys (:4-12) and the D-LIB10-FACTS schema. Anything else makes it H.
-- **Result (ruled, D-LIB10-NOTE 1):** P2 T4 H6 for LB2's 12 (P2 T3 H7 if Q1(a) fails at the verifier). Drawn here: 3 T
-  (BENCH), 4 H. No T child starts before pilot A's yes. barbell_bench_press stays T only while Q2 needs no new composer;
-  otherwise it is drawn H as the rack composer's anchor and approved first. The Q1(c) feasibility table (section 3a)
-  shows that the plumb-forearm rule misses all three children's touch targets; that is for the supervisor to rule.
+- **Result (ruled, D-LIB10-BENCH-H, #265 comment 6256170884):** P2 T0 H9 for LB2's 12. All 7 drawn here are H; BENCH is
+  not built in LB2. The Q1(c) table (3a) showed no BENCH child reaching its touch target at a grip its card allows, so
+  each BENCH plate's bottom comes from its own card's facts; where those cannot all hold on the body, the builder
+  stops and posts the per-card conflict, never tuning a value off its card. The template and PARAMS rulings (15 (i),
+  (ii)) stay in force for later batches.
 
 ## 2. Per id
 
@@ -31,9 +32,9 @@ machine_chest_press is excluded as a hidden anchor (D-CRITIC-CAL2), so it is nev
 
 | id | mode and reason | template parent / clone source (approving sha) | composer / primitives | hand zoom: pair key |
 |---|---|---|---|---|
-| barbell_bench_press | T (BENCH). Differs from dumbbell_bench_press through `load.primitive` barbell; the straight bar, rack, safeties and the bottom rule follow from it in the template (3); callouts, tells, tempo, alt and the Mistake (a new bar-path builder, `path`) are facts | dumbbell_bench_press (e6f39ff) | safetyArms (+hookY) and vendor rackUpright, vendor barbell | `bar-low-palm`: no LIB-7 key yet |
-| incline_barbell_bench_press | T (BENCH). As above plus `bench.angle` 30 (c1); the incline rig comes from incline_dumbbell_press, the pinned incline anchor (plan 3.1:243-244); Mistake builder `elbowFlare` (c8, c9) | dumbbell_bench_press (e6f39ff); incline branch from incline_dumbbell_press (e6f39ff) | inclineBench (pilot A, read only), safetyArms, barbell | `bar-low-palm`: no key yet |
-| close_grip_bench_press | T (BENCH) under Q1(a) (ruled narrowly); H if the verifier rejects the reading or c2/c4 miss. As barbell_bench_press plus `grip.width` 0.453 (c1: hands in line with the shoulders). Mistake builder `elbowFlareHigh` | dumbbell_bench_press (e6f39ff) | safetyArms, barbell | `bar-low-palm`: no key yet |
+| barbell_bench_press | H (D-LIB10-BENCH-H). **Held for a ruling:** c2 (mid-chest, forearms perpendicular to the floor) and c3 (upper arms 45-60°) cannot both hold on this body; a mid-chest touch with a side-view vertical forearm puts the upper arm at 68-71° (#265 comment 6256258126). Mistake `path` (c25, c8) | dumbbell_bench_press's supine code (e6f39ff), copied | vendor rackUpright x2 + parts.mjs sideBar pin, vendor barbell | `bar-low-palm`: no LIB-7 key yet |
+| incline_barbell_bench_press | H (D-LIB10-BENCH-H). Facts feasible: upper chest with a side-view vertical forearm gives 53-60°, inside c7's 45-75°. Waits for pilot A on main (its rig is pilot A's inclineBench, imported). Mistake `flare` (c8, c9) | dumbbell_bench_press's supine code and incline_dumbbell_press's reclined solve (e6f39ff), copied | inclineBench (pilot A, imported), vendor rackUpright, barbell | `bar-low-palm`: no key yet |
+| close_grip_bench_press | H (D-LIB10-BENCH-H). Drawn: grips in line with the shoulder joints (c1, read from landmarks: 2 × 0.2266 m), the bar on the chest where the ribs end (c4, thorax 0.66 H), the elbow by the ribs (c2); the card gives no forearm rule. Mistake `flare` (c2) | dumbbell_bench_press's supine code (e6f39ff), copied | vendor rackUpright x2 (head-side J-hook) + parts.mjs sideBar pin, vendor barbell | `bar-low-palm`: no key yet |
 | decline_bench_press | H (D-LIB10-DECLINE). New pose class (declined) and rig; 'decline' is not a BENCH value until its plate is pinned | dumbbell_bench_press's supine code (e6f39ff), copied | **declineBench** (new, single use), vendor barbell | `bar-low-palm`: no key yet |
 | arnold_press | H (ruled, Q6). Imports pilot A's inclineBench, so it waits for pilot A on main. Its start (dumbbells in front of the chest, palms facing you, c1) and the palm turn are not PARAMS keys (derive.mjs:4-12) nor facts; SEATPRESS is not built (D-LIB10-TEMPLATES) | dumbbell_shoulder_press (e6f39ff), copied | inclineBench (pilot A, read only), vendor dumbbell | `arnold-palm-turn`: no key yet |
 | skull_crusher | H (own parent). New joint action (elbow only, census `N`) | dumbbell_bench_press's supine code (e6f39ff), copied | vendor bench, vendor barbell end-on as the EZ bar (Q3) | `wrist-neutral-ez`: `ez/push` (LIB-7 @ 55e91e9, parked, D-LIB7-19a) |
@@ -47,7 +48,7 @@ branch rebuilds incline_dumbbell_press byte for byte (D-LIB10-PA).
 No hand block is built. Six cards have a hand zoom with no LIB-7 key: the four barbell ones (`bar-low-palm`),
 arnold_press (`arnold-palm-turn`) and dumbbell_pullover (`cupped-dumbbell`); the LIB-7 fixer proposes them.
 
-## 3. Templates (BENCH now; SEATPRESS not built)
+## 3. Templates (not built in LB2: D-LIB10-BENCH-H; this section is kept as the record of the Q1 rulings)
 
 - **BENCH** (`templates/BENCH.mjs`, after pilot A is on main, D-LIB10-TEMPLATES). `make(params, facts)` copies
   dumbbell_bench_press's code (D-LIB9-CLONE (a)-(c)); its dumbbell path is the parent's code unchanged, so the byte proof
@@ -126,7 +127,11 @@ arnold_press (`arnold-palm-turn`) and dumbbell_pullover (`cupped-dumbbell`); the
   (c1), the rack upright with a J-hook (c1, c7), one safety arm (c6). All static; reads no file; PRIMITIVES only
   (backPad via sideBar, box, kneePad, rackUpright). Its sizes are assumptions, listed in its header and in the spec's
   "Unsourced numbers".
-- **Barbell rack (BENCH children; Q2 ruled):** pilot A's approved `safetyArms` (anchor barbell_overhead_press) with its
+- **Barbell rack (BENCH children, now H):** close_grip_bench_press draws two vendor `rackUpright`s (the head-side one with
+  the vendor J-hook, which points the way the figure faces: into the rack, toward the feet) and a safety pin drawn with
+  `eq/parts.mjs` `sideBar` (on main), slightly below the bottom, its hidden span redrawn dashed. No new composer, no
+  fork (#265 comment 6256258126). The record of Q2 as ruled for the T route follows.
+- **Barbell rack (Q2 as ruled for the T route):** pilot A's approved `safetyArms` (anchor barbell_overhead_press) with its
   existing `hookY`, and the vendor `rackUpright`. Open point, proved at the T slice with drawn-item tests: safetyArms'
   hook sits on the FRONT upright's rear face and points −z, while the lifter's head is at −z, so one rack must (a) open
   the hook into the rack with the racked bar headward of the start bar and reachable (BB c1), (b) run the safety under
@@ -217,6 +222,13 @@ an arc from the end elbow, read in the side view as the elbow at shoulder height
   carried back over the crown (13.2 cm clear); a dashed plumb from the shoulder and a dashed bar ring. One tell: the
   card's fault has one visible sign (the upper arm off the vertical); a second sign would repeat it, and "bar behind
   the head" is allowed by c4. For a per-id ruling (Q-D5-4).
+- **close_grip_bench_press (H, D-LIB10-BENCH-H):** the anchor's supine body; grips at |shoulder.r x| = 0.2266 m (c1);
+  start: straight arms over the shoulder joints; end: the bar's underside on the chest at thorax 0.66 H (c4), 22.5 cm
+  footward of the shoulder; the elbow aimed down and footward, 7.5 cm out from the shoulder line, by the ribs (c2), so
+  the forearm leans toward the head (the card gives no forearm rule). Rack as section 4. Tempo Lower 2, Press 1 (c9).
+  Mistake `flare` (c2): the bar lands at thorax 0.77 H, 19.2 cm headward (19.2 cm from the chin, never the neck), the
+  elbow swings 25 cm out; dashed ghost upper arm and forearm, a dashed bar ring, arrows from the end bar and elbow;
+  tells `flare` and `high`.
 - **Q4 (ruled):** c5 governs the start: the start bar sits over the shoulder joints, 12.3 cm footward of the chin (c2
   says "above your face"). No plateFacts fact is written from c2 at pose `start`; the verifier is told both.
 - Render defects R7 (the upright behind the head) and R8 (the floating knee, unsourced leg angles) are recorded; a test
@@ -235,8 +247,8 @@ BENCH barbell default grip width (Q1(b)) is a template constant listed in the te
 
 ## 11. Work split (if a second drawer joins, `claude/lib-10-lb2-b`)
 
-- Family BENCH (this branch): BENCH, barbell_bench_press, incline_barbell_bench_press, close_grip_bench_press, and the
-  H slice (decline_bench_press, skull_crusher).
+- This branch: decline_bench_press, skull_crusher, close_grip_bench_press, barbell_bench_press (after its conflict is
+  ruled), incline_barbell_bench_press (after pilot A is on main).
 - Family H (second drawer): dumbbell_pullover first (vendor parts only); arnold_press after pilot A is on main (it
   imports pilot A's inclineBench). Spec files only. arnold_press as H costs about +2.5 Opus-hours [est].
 - rows.json, build.mjs, qa.mjs, tempo.json, cards.sha.json and the tests stay here; the second drawer is merged in with
