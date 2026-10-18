@@ -2947,3 +2947,30 @@ Rule for every row: a moving phase takes `up` (concentric) or `down` (eccentric)
 - exemptions.json: for the 7 stopped ids, the reason "LIB-5 adds their cards" becomes "the verified card's tempo differs from the approved plate's timing; approved timing kept (D-LIB5-TEMPO8)". LIB-5 writes it in commit 2, with the D-LIB5-TEMPO8 entry in COACHING-DECISIONS. The exemption itself is unchanged.
 - No golden tempo update now. An O7-family offer to the owner (the plates' timing against the cards) goes with the next sheet or APK message, never forced.
 - topFault-only wiring for the five TOPFAULT matches is declined for now. NEW-4 5 stands as written; the five keys are on record in TOPFAULT @ 9eaa248, for a later card.
+
+### 14.8 stamps (O5) ruled (D-LIB-O5, 2026-10-18 ~07:10 UTC; main `b99a9e2`, cards `9f80173`, plan `4a9fd86`, LIB-5 `b14ff79`)
+1. O5 (HOWTO-BUILD-PLAN.md:419): the supervisor pins the finished layers after a fresh review. The owner gets the contact sheet, then the APK. Any change he wants is a golden-B update (plan 2.8).
+2. `approvedBy` names who approved, never the basis. It takes exactly two values: `'owner'` or `'supervisor'`. `'stamps (O5)'` and any other string are refused. The basis goes in `decision` and `why` (O5, or the owner's 10-01 delegation). Precedent: golden B's a7a0b74 record (layers/MANIFEST.json:18, D-LR23-2).
+3. LIB-5's 8 stamps (reviews.json) get `'supervisor'`. They are agent-verification stamps the supervisor writes after checking the reports, so `'owner'` would be a false record.
+4. LIB-2b's `layers-page` entries get `'supervisor'` under O5, on a first pin or a re-pin, only when the page holds golden-B design kinds alone and the entry it supersedes (if any) is not `'owner'`. The interim `'owner'` of D-LIB2b-PAGES ends. It stays only in scratch fixtures.
+5. Under the 10-01 delegation, `'supervisor'` goes on each id's first `plate` entry and on a batch's first plates-page `page` entry. These stay `'owner'`, with his words and the date:
+   - every GOLDEN.json entry;
+   - every superseding `plate` or `page` entry (a golden update, plan 2.8);
+   - any entry that supersedes an `'owner'` entry;
+   - any golden-B design change.
+6. verifyChain (golden.mjs:147-163; :152 accepts `'owner'` only) covers GOLDEN.json and every batch file. reviews.json is outside it.
+   - (a) LIB-5's Do 6 needs no golden.mjs change. It waits only for the supervisor's approval comment on the 8's drafted entries.
+   - (b) Before any real batch pin says `'supervisor'`, verifyChain changes. GOLDEN.json keeps `'owner'` only. verifyBatchChain accepts `'supervisor'` only in the cases in points 4-5, and only with a non-empty `decision` and `approval`. This goes in the LIB-8 merge card as its first commit, or in whichever card commits a real batch pin first, never in two. Until it is on main, no real batch golden file is committed.
+   - (c) Tests, each red with the allowed cases green: `'supervisor'` in GOLDEN.json; `'stamps (O5)'`; `'supervisor'` on a superseding entry; `'supervisor'` superseding an `'owner'` layers-page entry; a `'supervisor'` entry with no decision or no approval. No existing assertion is edited.
+7. Evidence each approval carries.
+   - **Stamp:** D-LIB5-STAMPS's fields, plus `approvedBy: 'supervisor'`, `decision: 'D-LIB5-STAMPS'`, and `approval` (the #244 comment link with the approved head sha). LIB-5 adds a c15-stamps test: every committed non-scratch entry has `'supervisor'`, a decision, an approval and `open: 0`. Mutations, each red: `'owner'`; approvedBy missing; `open: 1`. stamps.mjs and c15.ts are not changed.
+   - **`layers-page` entry:** D-LIB-<batch>; why = O5; approval = the fresh reviewer's PASS on the exact pinned head, with C9 and L1 green.
+   - **First `plate` or `page` pin:** the supervisor's per-exercise comment, naming each id and the head sha, with the valid calibrated critic run, the green PQ hard checks and the supervisor's own look.
+   - **`'owner'` entry:** his words verbatim, and the date.
+8. Docs: 11.1 item 7 bullet 3 and D-LIB2b-PAGES (10) now read "approvedBy per D-LIB-O5". lib-5-card :206 and LIB-5-DESIGN section e follow this section. The architecture :346 and :351 corrections ride the next claude/howto-options docs pass (Supervisor actions 15).
+**Why:** `approvedBy` records who decided. O5 and the 10-01 delegation give these approvals to the supervisor, so the chain keeps his decisions apart from the owner's.
+**Why nothing is loosened:** GOLDEN.json and every golden update stay owner-only, and that rule gets its first test. `'supervisor'` needs a decision and an approval link. A false `'owner'` on a supervisor approval is now refused instead of required.
+**Open:**
+- Is a plates-page `page` re-pin that moves no pinned plate fragment a golden update? Until it is ruled, it needs `'owner'`.
+- Before #109 or #245 merges, check whether either holds a real batch entry written with the interim `'owner'`.
+- Check whether LIB-4c reads approvedBy.
