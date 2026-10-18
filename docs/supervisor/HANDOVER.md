@@ -876,6 +876,33 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - The PR rides **train 26** with this handover and the cards branch. The cards branch carries the AGENTS.md third exception, following the precedent of LIB-4a's second exception in train 25.
   - Train 26 changes no app code, so no APK is owed.
 
+**Update ~11:00 UTC.**
+- **Train 26 merged** (#256, main `0628270a`): GATE-FLAKE-4 @ `49ef5ff`, the cards branch @ `ae9239f1` (AGENTS.md third exception) and the handover @ `d996c073`. No app code changed, so no APK is owed.
+- **LB1 calibrated critic: VALID under D-CRITIC-CAL3** (lib4-cards 13.5, cards branch @ `0ec6e424`).
+  - Two rounds ran on #245 @ `a4458f1a`. Each used 3 Opus critics, 2 hidden anchors and 2 plants, and both rounds caught both plants.
+  - The script discarded each round on an anchor median below 4.
+  - Round 1 counts: its only anchor lows were pull_up R6 and lat_pulldown R4, and the supervisor confirmed both defects on the PNGs.
+  - Round 2's anchors were given research-card facts instead of golden-B facts, so it is not used for validity. Its LB1 findings are kept.
+  - Fix list: docs/supervisor/verify/lb1-critic-findings.md, the union of both rounds, with hanging_knee_raise R7 withdrawn (its mount is identical to the approved hanging_leg_raise mount). Posted on #245 (6248984955), and LIB-9a was triggered for its one fix round.
+  - **New rule:**
+    - Anchors are scored on their golden-B facts.
+    - An anchor may have at most one low item, and only if that defect is supervisor-confirmed and listed below.
+    - Both plants must still be caught.
+- **LIB-4b:**
+  - B7 is final, with P = 4 at `e607bb5`.
+  - Scratch run 39118115597 (B2 on Chrome 153) finished green at 10:52. LIB-4b was told to record the artifact, then do B8-B10 and READY.
+  - LIB-4c was told to merge `e607bb5` and was checked in at 11:06.
+- **LIB-5:**
+  - Idle at `33302cc` since 10:07. It was checked in at 11:06 for: merge main, re-check the stamp hashes, commit 2 and the Do 6 commit.
+- **Gotcha:** a builder's background job stops at about 2 h. Long runs (B2, B7, mutation sweeps) must be detached processes (`setsid nohup … &` with a log file), polled by the builder. Every builder message now says so.
+- **Next:**
+  - LIB-9a's `LB1 FIX ROUND READY`, then a calibrated recheck of the changed plates under 13.5;
+  - LIB-4b B8-B10 and READY;
+  - "LIB-4c SCRATCH" (push `claude/lib-4c-scratch` for C11-C14);
+  - LIB-5's commit 2 and Do 6;
+  - reviewers on READY, then trains.
+  - Queue as slots free: LIB-3b (first item B5(b)), LIB-4d, LIB-8-FIX, and LIB-5v after LIB-5 merges.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
@@ -1436,6 +1463,10 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 9. Barbell back squat hand close-up p1 (golden B): same defect as 8. The Right says "HEEL OF PALM" but draws the bar mid-fist, about 80 px (2×) above the wrist pivot and in front of the dashed forearm axis. 3 panel critics on LIB-7 `f3e285c` gave it a C3 median of 3 in both rounds. The supervisor confirmed it on the render (10-04 00:1x). Recorded, not changed here. It is no longer a hand-critic anchor; the anchors are now lat_pulldown p1 and pull_up p1 (D-LIB7-19). LIB-7's push Rights copied this pose; under D-LIB7-19a they are gaps until this is fixed.
 10. Pull-up hand close-up p1 (golden B): the Right says "TOP OF PALM" and draws a straight wrist with the bar mid-fist. Its own facts say "hook the bar where your fingers start" with the "wrist tipped back a little" (about 35°). Panel critics on LIB-7 `55e91e9` scored it C1/C4/C7 = 3 and C3 2-3 in both rounds. The supervisor confirmed this on the render (10-04 01:3x). Recorded, not changed. It is no longer an anchor; the anchors are lat_pulldown p1 and hanging_leg_raise p1, both of which read coherently (bar at the base of the fingers, load line through the wrist).
 11. Hanging leg raise hand close-up p1 (golden B), Wrong "SLIPPING OUT": the bar floats about 20 px (2×) below the opened fingers, and only the thumb's edge touches it. The "30°" label sits on the hand outline. 3 of 3 panel critics on LIB-7 `55e91e9` gave C3 a median of 3, and in round 2 also C7. The supervisor confirmed both on the render (10-04 02:0x). Recorded, not changed. Under D-CRITIC-CAL3 (below) the run stays valid.
+12. Pull-up (golden B), R6: the motion trace lies on the forearm, from the elbow (362,245) to the chin (343,148), and does not start at the start-ghost chin, which is about 150 px lower. Supervisor-confirmed (D-CRITIC-CAL3, lib4-cards 13.5).
+13. Lat pulldown (golden B), R4: the "LEAN BACK" angle mark sits at x 268-292, y 450-468, in the V of the elbow, about 85 px above its hip vertex (291,537). It reads as an elbow mark. Supervisor-confirmed (13.5).
+14. Hanging leg raise (golden B), R7: the ceiling line sits level with the SIDE VIEW title (y about 46), and the bar style differs from pull_up's wall arm. The ceiling mount is deliberate (spec: "no wall for the swing to hit"). Flagged by the panel (13.5 round 2); this is a style choice only.
+15. Leg press (golden B): "Knees cave" cannot be seen in a side view (R5 = 2), and the back looks off the pad (R3 = 3). Flagged by the panel (13.5 round 2); the supervisor has not checked them yet.
 
 **First audit, 32 findings (4 P1 + 28 P2): COMPLETE 07:56.**
 
