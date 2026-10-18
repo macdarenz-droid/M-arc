@@ -72,7 +72,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     once = await onceStates(browser, PORT, k);
     onceSeconds = (Date.now() - t1) / 1000;
     console.log(`howto-shard ${k}/${K}: once-states ${once.length} rows in ${onceSeconds.toFixed(1)} s; now ${ids.length} ids`);
-    out = ids.length ? await libraryFidelity(browser, PORT, { ids, pages, P: LIB_P, log: m => console.error(m) }) : { rows: [], px: {}, seconds: { id: {}, family: {} }, problems: [] };
+    out = ids.length ? await libraryFidelity(browser, PORT, { ids, pages, P: LIB_P, log: m => console.error(m), fixtures: { shift: ['lib_landmine_row'] } }) : { rows: [], px: {}, seconds: { id: {}, family: {} }, problems: [] };
   } finally { await browser.close(); server.kill('SIGKILL'); }
   const rows = [...once, ...out.rows];
   const shardSeconds = Math.round((Date.now() - t0) / 100) / 10;
