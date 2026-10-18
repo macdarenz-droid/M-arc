@@ -1,0 +1,41 @@
+// LIB-9a Do 5(a) leg_press_calf_raise: per-pose drawn-item checks on the real spec (paste inside the Do 3 / A2
+// describe of tests/howto/lb1-plates.test.ts; `lpcr` = (await import(lib('specs/leg_press_calf_raise.mjs'))).default,
+// loaded in beforeAll like apu/cgp).
+it('leg_press_calf_raise: in start, end and Mistake the ball of the foot sits on the drawn footplate face (within 1 cm), at its bottom edge', () => {
+  for (const pose of ['start', 'end', 'mistake']) {
+    const { items, lm } = itemsIn(lpcr, pose, { mistake: pose === 'mistake' }), sled = items.filter(it => it.type === 'legPress45');
+    expect(sled.length, pose).toBe(1);
+    const fc = eng.legPressFace(sled[0], sled[0].travel), b = lm['ball.r'], d = [b[0] - fc.at[0], b[1] - fc.at[1], b[2] - fc.at[2]];
+    const off = d[0] * fc.normal[0] + d[1] * fc.normal[1] + d[2] * fc.normal[2], u = d[0] * fc.up[0] + d[1] * fc.up[1] + d[2] * fc.up[2];
+    expect(Math.abs(off), `${pose} ball on the plate face`).toBeLessThan(0.01);
+    const lo = -(sled[0].plate.h ?? 0.7) * 0.35;                       // the drawn plate's bottom edge (legPress45)
+    expect(u - lo, `${pose} ball just above the bottom edge`).toBeGreaterThan(0);
+    expect(u - lo, `${pose} ball just above the bottom edge`).toBeLessThan(0.05);
+  }
+});
+it('leg_press_calf_raise: only the ankles move (knee the same in start and end, c2); the Mistake knee is straight', () => {
+  const L = qaEng.poseLandmarks(Eng(), lpcr).lm, knee = (lm: any) => {
+    const a = lm['hip.r'], k = lm['knee.r'], c = lm['ankle.r'], u = a.map((v: number, i: number) => v - k[i]), w = c.map((v: number, i: number) => v - k[i]);
+    const dot = u.reduce((s: number, v: number, i: number) => s + v * w[i], 0);
+    return 180 - Math.acos(dot / Math.hypot(...u) / Math.hypot(...w)) * 180 / Math.PI;
+  };
+  expect(Math.abs(knee(L.start) - knee(L.end)), 'knee start vs end').toBeLessThan(0.5);
+  expect(knee(L.end), 'end knee soft').toBeGreaterThan(10);
+  expect(knee(L.mistake), 'Mistake knee locked').toBeLessThan(3);
+});
+it('leg_press_calf_raise: the start footplate is a dashed phantom in the end pose, never in the Mistake pose', () => {
+  const ph = (pose: string) => itemsIn(lpcr, pose, { mistake: pose === 'mistake' }).items.filter(it => it.part === 'phantom');
+  expect(ph('end').length).toBe(1);
+  expect(ph('end')[0].cls).toBe('eq-line m-line');
+  expect(ph('mistake').length).toBe(0);
+  expect(ph('start').length).toBe(0);
+});
+// Source mutations (each turns the named test red):
+// 1. specs/leg_press_calf_raise.mjs: "travel: travelOf(lm), part: 'sled'" -> "travel: travelOf(lm) + 0.02, part: 'sled'"
+//    -> "ball of the foot sits on the drawn footplate face".
+// 2. specs/leg_press_calf_raise.mjs: "start: travelFor(KNEE, FOOT.start)" -> "start: travelFor(KNEE + 6, FOOT.start)"
+//    -> "only the ankles move".
+// 3. specs/leg_press_calf_raise.mjs: "...(ctx.pose === 'end' ? [{ type: 'line'" -> "...(ctx.pose === 'never' ? [{ type: 'line'"
+//    -> "start footplate is a dashed phantom".
+// Note: the knee helper reads the engine's knee.r landmark triangle (hip, knee, ankle); if the test file already has
+// an angle helper, use it instead.
