@@ -2907,3 +2907,43 @@ A 3-lens review (rulings, quotes, scope) read the revised note against this sect
 2. **floor-body `prone`** (a pointer to prone-checkpoints.json) is data: never written to a text path, and the data-absence test covers its string.
 3. **implement.text** is a typed exercise id, like 14.3 point 2's enums. It leaves the absence check, and a new assertion requires it to resolve to an id in src/data/exercises.json (mutation: a misspelt id is red).
 4. **Reading confirmed.** A list path takes one entry per field (cupped-thumb thumbRule and alternative become two thumb.options[] entries). get-in-out's setup and variants.thigh-pad.setup stay separate exports, and the sheet's setup cap counts what one sheet shows (seated_leg_curl 4 + 1 = 5).
+
+### 14.7 D-LIB5-TEMPO8 ruled (#244 @ `b14ff79`; research `9eaa2480`; main `b99a9e2`)
+Read: LIB-5-DESIGN.md d (:151-158) and k (:328-361); the 8 cards' `plate.tempo` and claims at `9eaa2480`; the 8 specs and qa/node.mjs on main; lib4-cards 12 items 9 and 13, 13 Q3, 14 NEW-4, 14.1-14.6 (lib4-cards.md @ `db948a4d`; its :NNNN cites below); LR-33. The note raises no QUESTION on either table.
+Rule for every row: a moving phase takes `up` (concentric) or `down` (eccentric). The static phase right after the concentric takes `pause` (LR-33; Q3) and is left out when pause is 0 (Q3). Any other static phase is a constant only with a quote that states its seconds (NEW-4 3); otherwise it is "no verified source".
+
+**Tempo map** (spec phase ← card field; card s at `9eaa2480` vs spec s). Labels (names, order, move flags) at note :338-345 match every spec line below: ACCEPT.
+1. lib_dumbbell_lateral_raise: none. ACCEPT. The approved plate is drawn by ref-src ("H6:not-engine" in exemptions.json), so H6 returns at node.mjs:154. _test_front.mjs:1-2 is an engine re-draw, not that plate; its :27 Lift 1 against the card's up 2 is recorded for information only.
+2. lib_barbell_back_squat (barbell_back_squat.mjs:126): Lower←down 2=2; Drive up←up 2≠1; Brace←pause 0, so no Brace where the spec has Brace 1. Claim c26. STOP.
+3. lib_pull_up (pull_up.mjs:111): Pull←up 2≠1; Hold←pause 0, so no Hold where the spec has 0.5; Lower←down 2=2; Rest: no verified source (c11 has none). Claim c11. STOP.
+4. lib_hanging_leg_raise (hanging_leg_raise.mjs:132): Lift←up 2≠1.5; Hold←pause 1≠0.5; Lower←down 2=2; Rest: no verified source. c10's "pause momentarily" has no seconds, and LR-33's 1 s applies only after the concentric. The spec's Rest 1 is not a source. Claim c10. STOP.
+5. lib_lat_pulldown (lat_pulldown.mjs:152): Pull←up 2≠1; Hold←pause 1≠0.5; Return←down 2=2; Rest: no verified source. Claim c16. STOP.
+6. lib_seated_cable_row (seated_cable_row.mjs:90): Pull←up 2≠1; Hold←pause 1=1; Return←down 2=2; Rest: no verified source. Claim c12. STOP.
+7. lib_leg_press (leg_press.mjs:139): Lower←down 2=2; bottom Pause = constant 1, claim c15 (bells-of-steel: "If desired, you can pause for a second at the bottom."), ≠0.5; Press←up 2≠1; top Rest←pause 1≠0.5 (c25 places the pause there; LR-33). Claim [c15, c25]. STOP.
+8. lib_machine_chest_press (machine_chest_press.mjs:164): Press←up 2≠1; Hold←pause 1≠0.3; Return←down 2≠1.5; Rest: no verified source. Claim [c9, c16]. STOP.
+9. Correction, note :330, :339-345 and :347: replace "head not named" and "e6381fa" with rows 1-8 at `9eaa2480` (14.5). NEW-4 6 (:2521) holds on the named head: all 7 stop at H6.tempo.
+
+**Seconds that differ.** The plates and specs keep their approved timing (NEW-4 5 :2520; 12 item 13). The cards keep their verified values (LR-33: a card value is never changed to match a spec). A stopped id gets no `tempo` or `plateFacts` key (note :153), stays out of CARDS_8 (:374), and keeps 'H6:no-card' and 'F7' with their reasons as on main. The difference is recorded once, in LIB-5's one #244 stop comment (NEW-4 6). Per id it gives the built array, the spec file:line, and each differing phase with its card field, card s, spec s and claim.
+
+**plateFacts form table** (note :349-361). Vertex, title, value and expect match each spec's `measure`: ACCEPT.
+10. Write `kind: 'angle'` on every row; only :353 has it now.
+11. Add the "quantity measured" column that NEW-4 2 (:2509) requires; the note has none. Squat: knee bend from straight (barbell_back_squat.mjs:86, :118). Pull_up: elbow bend from straight (pull_up.mjs:82-86, :104). Hanging leg raise: trunk-to-thigh angle at the hip (:125). Lat pulldown: trunk lean back from a plumb line at the hip (lat_pulldown.mjs:51-53, :146). Seated row: the upper arm's sweep at the shoulder from its start to its end position, a two-pose angle (seated_cable_row.mjs:83). Leg press: thigh-to-shank angle at the knee (:133). Chest press: the engine report's elbow.r angle (node.mjs:147-152, :161-162).
+12. ACCEPT `measure: true` with pose 'end' for squat, pull_up, hanging_leg_raise, seated_cable_row and leg_press; each has an expect (node.mjs:163). Pose is the spec's pose name, not the card's word: leg_press's 'end' is the bottom (leg_press.mjs:36), which the card calls plate.start. H6 ignores pose on this path, so the test pins it.
+13. lat_pulldown (:356): ACCEPT `measure: true`, and add pose 'end' (lat_pulldown.mjs:51 "Lean construction (end pose").
+14. machine_chest_press (:359): ACCEPT `joint: 'elbow.r'` (no expect, machine_chest_press.mjs:158). Replace "pose from the verified card" with pose 'end' (machine_chest_press.mjs:45 "end: arms long, elbows 18 deg short of straight").
+15. One form per fact: a `measure: true` fact has no `joint`, and a `joint` fact has no `measure`. With both, H6 passes the fact on either path (node.mjs:164). No plateFacts value is ruled here; all 7 stop on tempo, so none is written.
+
+**LIB-5 writes**
+16. Section k: rows 1-15, with sha `9eaa2480`. TEMPO8 in validate.mjs keeps the :158 shapes and adds `{ phase, from: null }` for "no verified source" (the build throws `${id}: tempo: ${phase} has no verified source` and the id stops) and `lib_dumbbell_lateral_raise: null`. A `from: 'pause'` entry with pause 0 is left out of the built array.
+17. library-cards8.test.ts holds literal copies of both tables and asserts TEMPO8 deep-equals its copy. It builds the expected tempo only from that copy and plate.tempo. For each of the 7, it asserts the id is outside CARDS_8, has no tempo or plateFacts key, and keeps both exemptions. It asserts each row's vertex equals spec.measure.vertex, and one form per fact.
+18. Mutations, each red: NEW-4 4's six (:2518); pull_up's Rest given a constant 0.5; hanging_leg_raise's Rest given a constant 1 citing c10; leg_press's Pause constant changed from 1 to 0.5; the squat's Brace emitted as 0 s; a stopped id added to CARDS_8; a fact with both `joint` and `measure: true`; one row's vertex or pose changed. Checks that need a wired card run on the S3 lib5 fixture card (:2519, card amendment 39).
+
+**Why.** Q3 and NEW-4 give moving phases up and down, and allow a constant only with a quote that states its seconds. LR-33 places plate.tempo.pause right after the concentric, so the squat's Brace and leg_press's top Rest take it. H6 compares tempo with JSON.stringify (node.mjs:174) and passes an angle fact on the joint path (:161-162) or the measure path (:163).
+**Why nothing is loosened.** H6's exact tempo, ±2° and ±1 cm, and F7 are unchanged. No s comes from a spec. No plate, spec or card value moves. All 7 keep both exemptions. One form per fact closes the either-path pass. Every map branch has a red mutation.
+**UNVERIFIED.** Whether the engine report's elbow.r angle is a bend from straight (pull_up.mjs:82) or the inside angle: this is not in the inputs, so LIB-5 cites the engine line before any chest-press value is used. The card quotes are taken as verified under 14.5 and were not re-fetched.
+
+**Supervisor decisions on the open points**
+- Rows 2 and 7 confirmed: the squat's Brace and leg_press's top Rest take `pause`, because each is the static phase right after the concentric (LR-33). This amends NEW-4 2's example list.
+- exemptions.json: for the 7 stopped ids, the reason "LIB-5 adds their cards" becomes "the verified card's tempo differs from the approved plate's timing; approved timing kept (D-LIB5-TEMPO8)". LIB-5 writes it in commit 2, with the D-LIB5-TEMPO8 entry in COACHING-DECISIONS. The exemption itself is unchanged.
+- No golden tempo update now. An O7-family offer to the owner (the plates' timing against the cards) goes with the next sheet or APK message, never forced.
+- topFault-only wiring for the five TOPFAULT matches is declined for now. NEW-4 5 stands as written; the five keys are on record in TOPFAULT @ 9eaa248, for a later card.
