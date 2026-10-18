@@ -236,6 +236,19 @@
       "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
     }
   ],
+  "perId": [
+    {
+      "chunk": "loaders-*.js",
+      "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
+      "n": 8,
+      "rawMax": 5018,
+      "gzMax": 1197,
+      "measuredRaw": 4561,
+      "measuredGz": 1088,
+      "setBy": "LIB-2",
+      "reason": "LOADERS plus the per-chromeId HAND, POSTURE and FEEL maps (D-LIB2-sheet-maps), one entry per shipped id each, so the ceiling is a per-id rule set once on the 8 (library plan 5.2; D-LIB2-loaders-budget), not a fixed measured + 10 %. Measured on the 8 at main 4180799 + LIB-2."
+    }
+  ],
   "totals": [
     {
       "chunk": "How-to total",

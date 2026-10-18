@@ -34,5 +34,5 @@ try {
 }
 stopping = true;
 server.kill();
-if (errors.length) { console.error('Page errors:', errors); process.exit(1); }
+if (errors.length) { for (const l of (await import('./error-list.mjs')).formatErrors(errors)) console.error(l); process.exit(1); }
 console.log(`HT-10 gate PASS${process.env.MARC_HT_SHARD ? ` (shard ${process.env.MARC_HT_SHARD})` : ''}`);
