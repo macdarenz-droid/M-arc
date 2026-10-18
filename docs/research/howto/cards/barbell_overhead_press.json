@@ -611,18 +611,24 @@
       "claim": "c11"
     },
     {
-      "step": "Feet hip-width, flat on the floor.",
-      "claim": "c10"
+      "step": "Feet hip-width and flat; elbows forward so the forearms are vertical.",
+      "claim": [
+        "c10",
+        "c5"
+      ]
     },
     {
-      "step": "Elbows forward so the forearms are vertical.",
-      "claim": "c5"
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c16"
     }
   ],
   "posture": [
     {
       "point": "Low back neutral; lean comes from the hips, not the spine.",
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c6"
+      ]
     },
     {
       "point": "Hips and knees locked.",
@@ -674,9 +680,9 @@
     "watch": [],
     "rows": [
       {
-        "where": "Low back",
+        "where": "Low-back pain while pressing",
         "means": "Fault: leaning back by arching the low back instead of from the hips.",
-        "fix": "Keep the low back neutral; if you can't, the weight is too heavy.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": [
           "c8",
           "c6"
@@ -684,7 +690,7 @@
         "redFlag": "back"
       },
       {
-        "where": "Front of the shoulder, sudden or severe",
+        "where": "Pain at the front of the shoulder",
         "means": "Fault: pressing behind the neck.",
         "fix": "Stop the set. Don't train through the pain. Press in front of your head.",
         "claim": [
@@ -707,10 +713,6 @@
     {
       "risk": "Pressing behind the neck is linked to shoulder instability.",
       "claim": "c14"
-    },
-    {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
-      "claim": "c16"
     }
   ],
   "redFlags": [

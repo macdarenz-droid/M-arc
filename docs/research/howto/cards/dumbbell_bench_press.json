@@ -565,16 +565,19 @@
       "claim": "c10"
     },
     {
-      "step": "Feet flat on the floor, spine flat or neutral.",
-      "claim": "c1"
-    },
-    {
-      "step": "Shoulder blades down and back into the bench.",
-      "claim": "c2"
+      "step": "Feet flat, spine neutral, shoulder blades down and back.",
+      "claim": [
+        "c1",
+        "c2"
+      ]
     },
     {
       "step": "Press to straight arms, dumbbells over your shoulders.",
       "claim": "c10"
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c14"
     }
   ],
   "posture": [
@@ -608,11 +611,6 @@
       "mistake": "Bouncing the dumbbells off the chest.",
       "fix": "Lower slowly and touch gently.",
       "claim": "c5"
-    },
-    {
-      "mistake": "Spotter holding the elbows.",
-      "fix": "Spotter holds the wrists.",
-      "claim": "c11"
     }
   ],
   "feel": {
@@ -642,7 +640,7 @@
         "redFlag": null
       },
       {
-        "where": "Sudden or severe pain in the chest or front of the shoulder while lowering",
+        "where": "Pain in the chest or front of the shoulder while lowering",
         "means": "Pec tendon tears happen while lowering.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -667,10 +665,6 @@
     {
       "risk": "Shoulder injuries are common in lifting and linked to poor technique.",
       "claim": "c18"
-    },
-    {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
-      "claim": "c14"
     }
   ],
   "redFlags": [

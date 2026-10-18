@@ -698,14 +698,14 @@
         "redFlag": null
       },
       {
-        "where": "Inside of the elbow, severe",
+        "where": "Pain on the inside of the elbow",
         "means": "Fault: too much elbow bend, with the elbows flaring out.",
         "fix": "Stop the set. Don't train through the pain. Keep the elbows pointing forward or up.",
         "claim": "c14",
         "redFlag": "elbow"
       },
       {
-        "where": "Shoulder at the bottom, sudden or severe",
+        "where": "Pain in the shoulder at the bottom",
         "means": "Fault: lowering further than you can control.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -719,7 +719,10 @@
   "risks": [
     {
       "risk": "Dumbbell over the face: grip it securely and use a spotter.",
-      "claim": "c10"
+      "claim": [
+        "c10",
+        "c11"
+      ]
     },
     {
       "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",

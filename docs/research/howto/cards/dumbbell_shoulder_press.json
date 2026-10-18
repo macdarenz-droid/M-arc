@@ -178,7 +178,7 @@
     },
     {
       "id": "c10",
-      "text": "Pressing behind the neck (the 'high-five' position) is associated with anterior shoulder instability signs; press in front instead.",
+      "text": "Pressing behind the neck (the 'high-five' position) is associated with anterior shoulder instability signs (barbell and pulldown data, applied to dumbbells); press in front instead.",
       "tags": [
         "DATA",
         "WEAK"
@@ -418,11 +418,7 @@
   },
   "setup": [
     {
-      "step": "Sit with head, shoulders and buttocks on the backrest; feet flat.",
-      "claim": "c1"
-    },
-    {
-      "step": "Brace your trunk.",
+      "step": "Head, shoulders and buttocks on the backrest; feet flat; trunk braced.",
       "claim": "c1"
     },
     {
@@ -436,6 +432,10 @@
     {
       "step": "If using a spotter, they stand behind you, hands near your wrists.",
       "claim": "c7"
+    },
+    {
+      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "claim": "c11"
     }
   ],
   "posture": [
@@ -500,9 +500,9 @@
         "redFlag": null
       },
       {
-        "where": "Sudden or severe pain deep in the front of the shoulder at the bottom",
+        "where": "Pain deep in the front of the shoulder at the bottom",
         "means": "Fault: lowering the dumbbells behind the head.",
-        "fix": "Stop the set. Keep the dumbbells in front of your head.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": [
           "c10"
         ],
@@ -522,10 +522,6 @@
     {
       "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
       "claim": "c14"
-    },
-    {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
-      "claim": "c11"
     }
   ],
   "redFlags": [

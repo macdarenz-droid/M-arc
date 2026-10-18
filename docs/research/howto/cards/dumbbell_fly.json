@@ -440,7 +440,7 @@
     },
     {
       "mistake": "Bending the elbows more as the weight comes down (turning it into a press).",
-      "fix": "Keep the same slight bend; go lighter if you can't.",
+      "fix": "Keep the same slight bend.",
       "claim": "c5"
     }
   ],
@@ -467,7 +467,7 @@
         "redFlag": null
       },
       {
-        "where": "Front of the shoulder at the bottom, sudden or severe",
+        "where": "Pain at the front of the shoulder at the bottom",
         "means": "Fault: lowering the dumbbells past shoulder or chest level.",
         "fix": "Stop the set. Don't train through the pain. Stop level with your shoulders or chest.",
         "claim": [
@@ -488,7 +488,7 @@
       "claim": "c12"
     },
     {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "risk": "Add 2-10% once you beat your target reps by one or two.",
       "claim": "c9"
     }
   ],

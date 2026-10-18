@@ -493,7 +493,7 @@
       "why": "ACE says to avoid any arching in the low back, and Liftosaur says to avoid arching your lower back (c8): the fault the most read sources tell the lifter to avoid. How often it happens is not measured in any source read.",
       "claim": "c8",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for an incline-press fault (Kerr's \"The most common mechanism of injury was weights dropping on the person\", c15, is about all weight training). Step 2: no quote ties a named fault to harm; Liftosaur's \"minimizing the risk of injury\" is about following all its steps, not one fault, and a bench steeper than 45 degrees (c2) is a bench setting, not a candidate. Step 3: no common-mistakes list; the fault the most read sources tell the lifter to avoid is low-back arching (c8): ACE's \"avoid any arching in the low back\" and Liftosaur's \"avoid arching your lower back\", two sources. Bouncing has one (ACE, c6); Liftosaur's \"avoiding sudden jerks or drops\" is a speed fault; bent wrists (ACE's \"Maintain a neutral wrist position (avoid flexion / extension at the wrist joint)\", c3; a joint position during the set, ruling R-LB2-15) have one source; elbows under the wrists (c7) is an ACE cue, not a fault named to avoid. Pick changed from the elbows out of line with the wrists (c7) and applied to this research card (ruling R-LB2-7); the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: arching, bouncing; the bench-angle item is removed as a setting, not a fault (ruling R-LB2-12). drawable is true: the side view shows the back arch."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for an incline-press fault (Kerr's \"The most common mechanism of injury was weights dropping on the person\", c15, is about all weight training). Step 2: no quote ties a named fault to harm; Liftosaur's \"minimizing the risk of injury\" is about following all its steps, not one fault, and a bench steeper than 45 degrees (c2) is a bench setting, not a candidate. Step 3: no common-mistakes list; the fault the most read sources tell the lifter to avoid is low-back arching (c8): ACE's \"avoid any arching in the low back\" and Liftosaur's \"avoid arching your lower back\", two sources. Bouncing has one (ACE, c6); Liftosaur's \"avoiding sudden jerks or drops\" is a speed fault; bent wrists (ACE's \"Maintain a neutral wrist position (avoid flexion / extension at the wrist joint)\", c3; a joint position during the set, ruling R-LB2-15) have one source; elbows under the wrists (c7) is an ACE cue, not a fault named to avoid. Pick changed from the elbows out of line with the wrists (c7) and applied to this research card (ruling R-LB2-7, which names dumbbell_shoulder_press and incline_dumbbell_press); the pilot A Mistake view is redrawn by the LIB-8 merge card. handlingMistakes is reordered: arching, bouncing; the bench-angle item is removed as a setting, not a fault (ruling R-LB2-12). drawable is true: the side view shows the back arch."
     },
     "tells": [
       {
@@ -601,7 +601,7 @@
     "rows": [
       {
         "where": "Mostly front of the shoulders, little chest",
-        "means": "Fault: a bench steeper than 45 degrees shifts the work to the front shoulders.",
+        "means": "A steeper bench shifts work to the front shoulders.",
         "fix": "Lower the bench to about 45 degrees.",
         "claim": [
           "c2",
@@ -610,7 +610,7 @@
         "redFlag": null
       },
       {
-        "where": "Sudden or severe pain at the front of the shoulder",
+        "where": "Pain at the front of the shoulder",
         "means": "The shoulder is one of the most often injured areas in lifting.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c16",
@@ -631,7 +631,7 @@
       "claim": "c16"
     },
     {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "risk": "Add 2-10% once you beat your target reps by one or two.",
       "claim": "c13"
     }
   ],
