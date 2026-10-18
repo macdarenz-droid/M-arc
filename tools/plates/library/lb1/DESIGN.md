@@ -147,9 +147,10 @@ lever circle), never the helper maths alone.
 - **Kneel class (plan 2.2, probe C).** Knees by angles, roots solved once onto named pad heights and written as
   constants, contact proven by `checks` planes at one kneecap radius above each pose's pad top (start, end, Mistake).
 - **Leaders (D-LIB9a-SLICE).** Labels sit in open space with short leaders that never run within 6 px of the trace or
-  a cable. close_grip_pulldown: 'chin' right of the handle, 'thighs' above the knee pointing down to the thigh just in
-  front of the roller (box clear of the roller and the upright), 'elbows' below the lean-back label so the two leaders
-  never cross. assisted_pull_up keeps three leaders that cross a drawn part, because no open side exists: the knee-pad
+  a cable. close_grip_pulldown: 'chin' right of the handle with a level leader, 'thighs' right of the knee reaching the
+  thigh just in front of the roller, 'elbows' below the lean-back label so the two leaders never cross. Both fit only
+  with the column 18 cm further back than lat_pulldown's (1.04/1.30 m vs 0.86/1.12 m); the LB1 pulldowns share that
+  station (R7 within LB1). assisted_pull_up keeps three leaders that cross a drawn part, because no open side exists: the knee-pad
   contact ('Knees on pad', 'Pad stays up') is closed in by the shin on the pad, the pad and bracket below and, in the
   Mistake, the red half-hang legs above; the bent elbow's only open side ('Arms bent') is the 45 px gap to the tower,
   and the 47 px button does not fit in it.

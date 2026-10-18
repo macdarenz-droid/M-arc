@@ -8,8 +8,11 @@
 // during the pull), c5 (elbows down toward the hips, upper arms tucked, handle just below the chin), c6/c7 (the fault:
 // the handle pulled too low, the elbows moving back), c9 (shoulder blades down first), c10 (tempo 2 s / 2 s).
 // Geometry decisions:
-//  - Machine and seat exactly as lat_pulldown (seat top 42 cm, knee roller on the thighs, head pulley 2.08 m, column
-//    pulley, 16 x 5 kg stack), so the batch draws the same station the same way (rubric R7).
+//  - Machine and seat as lat_pulldown (seat top 42 cm, knee roller on the thighs, head pulley 2.08 m, column pulley,
+//    16 x 5 kg stack), drawn the same way (rubric R7), with one change: the column stands 18 cm further back (uprights
+//    at 1.04 and 1.30 m, lat_pulldown 0.86 and 1.12 m), so 'Thighs pinned' fits between the knee and the column and
+//    'Handle below chin' sits right of the handle at handle height (D-LIB9a-SLICE: no leader along the trace). The LB1
+//    pulldowns share this station.
 //  - V-handle (vHandle primitive: grips 15 cm apart, 22 cm to the cable ring) on the cable from the head pulley.
 //  - The lean is the same at the start and the end (c4: no extra lean during the pull): pelvis tilt -8, trunk -3, a
 //    13 deg lean at the hip, under the 30 deg limit.
@@ -26,7 +29,7 @@ const feet = { l: { at: [0.10, 0, 0.50] }, r: { at: [-0.10, 0, 0.50] } };
 const GX = 0.075;                                       // V-handle grips 15 cm apart (vHandle sep)
 const RING = 0.22;                                      // grips to the cable ring (vHandle length)
 const HEAD = { z: 0.17, y: 2.08, r: 0.045 };
-const COL = { z0: 0.86, z1: 1.12, h: 2.16 };
+const COL = { z0: 1.04, z1: 1.30, h: 2.16 };
 const COLP = { r: 0.035 };
 const STACK_Z = (COL.z0 + COL.z1) / 2;
 COLP.z = STACK_Z - COLP.r; COLP.y = HEAD.y + HEAD.r - COLP.r;
@@ -76,8 +79,8 @@ export default {
   camera: { fit: true },
   poses: { start, end },
   equipment: [
-    { type: 'floor', from: -0.5, to: 1.3 },
-    ...[[-0.22, 0.30], [0.66, COL.z1]].map(([a, b]) => ({ type: 'box', at: [0, 0.022, (a + b) / 2], w: b - a, h: 0.044, rc: 1, z: 'center' })),
+    { type: 'floor', from: -0.5, to: 1.48 },
+    ...[[-0.22, 0.30], [0.84, COL.z1]].map(([a, b]) => ({ type: 'box', at: [0, 0.022, (a + b) / 2], w: b - a, h: 0.044, rc: 1, z: 'center' })),
     { type: 'box', at: [0, COL.h + 0.03, (HEAD.z - 0.08 + COL.z1 + 0.03) / 2], w: COL.z1 + 0.03 - HEAD.z + 0.08, h: 0.06, rc: 1.5 },
     { type: 'line', cls: 'eq', pts: [[0, COL.h, HEAD.z], [0, HEAD.y, HEAD.z]] },
     { type: 'line', cls: 'eq', pts: [[0, COL.h, COLP.z], [0, COLP.y, COLP.z]] },
@@ -117,13 +120,13 @@ export default {
   ghosts: { count: 3, parts: ['arm.r', 'handle'] },
   trace: { point: 'grip.r', trim: [10, 12] },
   measure: { vertex: 'hip.r', from: 'up', to: 'shoulder.r', radius: 40, title: 'Lean back', value: 'under 30°' },
-  // Labels in open space with short leaders off the trace and cables: 'chin' right of the handle, 'thighs' above the
-  // knee pointing down to the thigh just in front of the pad (clear of the roller and the upright), 'elbows' below the
-  // lean-back label so the two leaders never cross.
+  // Labels in open space, no leader within 6 px of the trace or a cable: 'chin' right of the handle with a level
+  // leader; 'thighs' right of the knee, its leader reaching the thigh just in front of the roller (box clear of the
+  // roller, the knee and the column); 'elbows' below the lean-back label so the two leaders never cross.
   callouts: [
-    { key: 'thighs', text: 'Thighs<br>pinned', anchor: { at: 'thighTop.r', off: [14, 0] }, box: { left: 172, top: 200 }, cue: 'Set the thigh pad tight on top of the thighs.' },
+    { key: 'thighs', text: 'Thighs<br>pinned', anchor: { at: 'thighTop.r', off: [14, 0] }, box: { left: 188, top: 236 }, cue: 'Set the thigh pad tight on top of the thighs.' },
     { key: 'elbows', text: 'Elbows<br>to hips', anchor: 'elbow.r', box: { left: 24, top: 262 }, cue: 'Drive the elbows down toward the hips, upper arms tucked at the sides.' },
-    { key: 'chin', text: 'Handle<br>below chin', anchor: 'grip.r', box: { left: 148, top: 150 }, cue: 'Stop when the handle is just below the chin.' },
+    { key: 'chin', text: 'Handle<br>below chin', anchor: 'grip.r', box: { left: 146, top: 174 }, cue: 'Stop when the handle is just below the chin.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Return', s: 2, move: true }],
   mistake: {

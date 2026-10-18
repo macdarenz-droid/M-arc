@@ -216,6 +216,30 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
       expect(rods.every(r => JSON.stringify(r.pts) === JSON.stringify(itemsIn(spec, 'start').items.filter(x => x.type === 'line' && x.cls === 'eq-thin')[rods.indexOf(r)].pts)), `${id} rods static`).toBe(true);
     }
   });
+  // D-LIB9a-SLICE: no leader runs within 6 px of the trace or a cable (8 px round its anchor excepted: the anchor may sit
+  // on the trace). Every drawn LB1 spec, normal and Mistake views.
+  it('every drawn LB1 spec: no leader comes within 6 px of the trace or a cable, away from its anchor', async () => {
+    const xy = (d: string) => [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
+    const segs = (p: number[][]) => p.slice(1).map((q, i) => [p[i]!, q]);
+    const dseg = (p: number[], [a, b]: number[][]) => { const dx = b![0]! - a![0]!, dy = b![1]! - a![1]!, L2 = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((p[0]! - a![0]!) * dx + (p[1]! - a![1]!) * dy) / L2)); return Math.hypot(p[0]! - a![0]! - t * dx, p[1]! - a![1]! - t * dy); };
+    const ids = build.drawnIds();
+    expect(ids.length).toBeGreaterThan(1);
+    for (const id of ids) for (const mistake of [false, true]) {
+      const spec = (await import(/* @vite-ignore */ lib(`specs/${id.replace(/^lib_/, '')}.mjs`))).default;
+      const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg;
+      const avoid = [...svg.matchAll(/<path class="(?:trace|eq-cable)[^"]*"[^>]*? d="([^"]+)"/g)].flatMap(m => segs(xy(m[1]!)));
+      for (const [, d] of svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)) {
+        const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]);
+        let min = Infinity;
+        for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
+          const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) for (const g of avoid) min = Math.min(min, dseg(q, g));
+        }
+        expect(min, `${id}${mistake ? ' Mistake' : ''} leader ${d}`).toBeGreaterThanOrEqual(6);
+      }
+    }
+  });
 
   it('each composer returns exactly its *_ITEMS parts at most, so perItem() drops none', () => {
     const ends = { start: itemsIn(apu, 'start').lm, end: itemsIn(apu, 'end').lm };
