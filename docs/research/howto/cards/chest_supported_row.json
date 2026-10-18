@@ -231,7 +231,7 @@
     },
     {
       "id": "c12",
-      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -249,7 +249,19 @@
           "source": "acsm2009",
           "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
-        },
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
         {
           "source": "acsm2009",
           "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
@@ -357,7 +369,8 @@
       "what": "Leaning back off the chest pad and arching the lower back to finish the pull.",
       "why": "The guideline names it as the thing to avoid, and says avoiding any backwards lean reduces unnecessary stress on the low back.",
       "claim": "c6",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word in any read source. Leaning back is the only named fault a quote ties to harm, through the avoidance clause: \"Additionally, reduce unnecessary stresses into your low back by avoiding any backwards lean during the pull movements.\" (c6; the ACE high-row page repeats it). The shoulders rounding forward on the return (c7) states no harm."
     },
     "tells": [
       {
@@ -411,7 +424,7 @@
     },
     {
       "step": "Add 2-10% load only when you can do one or two reps more than your target.",
-      "claim": "c12"
+      "claim": "c13"
     }
   ],
   "posture": [

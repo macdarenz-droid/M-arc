@@ -14,18 +14,6 @@
   "parent": "lat_pulldown",
   "inherit": [
     {
-      "field": "grip.handContact (handle across the base of the fingers and top edge of the palm, like carrying a bag)",
-      "why": "true for this child because the cable pulls across the fingers exactly as on the lat_pulldown bar; only the handle or palm direction changes."
-    },
-    {
-      "field": "grip.thumb (wrapped by default; thumb over the handle allowed as a comfort option)",
-      "why": "true for this child because, as on the parent, the handle cannot fall on the lifter, so thumb position is a comfort choice with the wrapped grip as default."
-    },
-    {
-      "field": "setup: weight set and pin pushed all the way in; start lighter than you think",
-      "why": "true for this child because it is the same selector-stack machine."
-    },
-    {
       "field": "posture: bar comes down in front of the face, never behind the head",
       "why": "true for this child because an underhand bar can only be pulled to the front; the parent's front-path evidence applies unchanged."
     },
@@ -373,6 +361,28 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c19",
+      "text": "BarBend: the exercise needs a pulldown machine or a regular cable machine with a bar attachment; its guide covers the full lat pulldown station.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "barbend-reverse-grip-lat-pulldown"
+      ],
+      "quotes": [
+        {
+          "source": "barbend-reverse-grip-lat-pulldown",
+          "text": "To perform the reverse-grip lat pulldown, you’ll need a pulldown machine or a regular cable machine with a bar attachment.",
+          "where": "How to, intro"
+        },
+        {
+          "source": "barbend-reverse-grip-lat-pulldown",
+          "text": "This guide will focus on the version with a fully-equipped lat pulldown station.",
+          "where": "How to, intro"
+        }
+      ]
     }
   ],
   "sources": [
@@ -471,13 +481,15 @@
       }
     ],
     "mistake": {
-      "what": "Using momentum: the torso rocks back to drive the bar down.",
-      "why": "The coach source names momentum first and asks for a stable torso; ACE limits the lean to about 30 degrees with no extra lean during the pull. Frequency is not measured.",
+      "what": "Pulling the bar further down after it passes just below the chin, so the elbows start moving backwards.",
+      "why": "The coach source says pulling the bar further down lets the forearms and deltoids take over (c8); ACE says pulling on once the elbows start moving back adds stress to the shoulder joint (c11, MECH: written for the overhand bar). Frequency is not measured.",
       "claim": [
-        "c7",
-        "c5"
+        "c6",
+        "c8",
+        "c11"
       ],
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: no frequency word for an underhand-pulldown fault. LR-31 step 2: the past-end pull is the only named fault a quote ties to harm (c11, MECH); c8 names a muscle shift, not harm. Momentum (c7) and the fast return (c9) state no harm."
     },
     "tells": [
       {
@@ -499,13 +511,13 @@
       "pause": 0,
       "claim": "c12"
     },
-    "variantLine": null
+    "variantLine": "Drawn: the lat pulldown station with a long bar, the version BarBend's guide covers (c19). BarBend also names a regular cable machine with a bar attachment (c19); no card source describes that setup, so no line on this card is claimed to hold for it."
   },
   "grip": {
     "type": "Underhand (supinated), palms facing you.",
     "width": "About shoulder width, or a little closer; closer is likely easier on the shoulders.",
-    "thumb": "Wrapped by default (inherited); thumbless is a coach-allowed option.",
-    "handContact": "Inherited from lat_pulldown: bar across the base of the fingers.",
+    "thumb": "Wrapped around the bar or thumbless; either is allowed (c2).",
+    "handContact": "Not sourced; drawing convention (LR-4): the hands are drawn with the bar across the base of the fingers.",
     "wrist": "Not curled forward (c18).",
     "claims": [
       "c1",
@@ -560,17 +572,17 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Rocking the torso to swing the bar down.",
-      "fix": "Keep the torso still.",
-      "claim": "c7"
-    },
-    {
       "mistake": "Pulling the bar down too far.",
       "fix": "Stop when the bar passes just below your chin.",
       "claim": [
         "c8",
         "c6"
       ]
+    },
+    {
+      "mistake": "Rocking the torso to swing the bar down.",
+      "fix": "Keep the torso still.",
+      "claim": "c7"
     },
     {
       "mistake": "Letting the bar fly back up.",
@@ -655,7 +667,7 @@
     {
       "key": "hand",
       "kind": "hand",
-      "right": "Palms facing you, bar across the base of the fingers, wrists not curled.",
+      "right": "Palms facing you, wrists not curled.",
       "wrong": "Wrists curled forward.",
       "claim": [
         "c18",
@@ -682,7 +694,12 @@
     "why": "lats primary and biceps and mid_back secondary stand. The underhand grip is not better for the lats (c13, c14) and grip may not matter much (c15)."
   },
   "anchorSource": "puregym-reverse-grip-lat-pulldown",
+  "gaps": [
+    "Start lighter than you think: no source read for this card gives a starting load, and the parent's shipped 'Start light.' has no claim on cards/lat_pulldown.json (LR-34)."
+  ],
   "notes": [
-    "PureGym's claims that the underhand grip lets most people lift more and may suit people prone to shoulder pain are not used: no measured source was found for either, and the chin_up card records shoulder-risk kinematics for a palms-toward-you hang. BarBend's full reverse-grip guide was also read in full. ACE lines are written for the overhand bar pulldown and tagged MECH here. The lower-back feel row was dropped: no source links a lower-back feeling to rocking."
+    "PureGym's claims that the underhand grip lets most people lift more and may suit people prone to shoulder pain are not used: no measured source was found for either, and the chin_up card records shoulder-risk kinematics for a palms-toward-you hang. BarBend's full reverse-grip guide was also read in full. ACE lines are written for the overhand bar pulldown and tagged MECH here. The lower-back feel row was dropped: no source links a lower-back feeling to rocking.",
+    "2026-10-18: c19 is taken from BarBend's 'How to' intro, re-read by curl. BarBend names a pulldown machine or a regular cable machine with a bar attachment and covers only the station. No card source describes the cable-machine setup, such as its seat, thigh pad or bar height, so the variant line claims no line for that kind.",
+    "LR-34 check (W2-53, 2026-10-18) against cards/lat_pulldown.json and verified shared cards on head 5036283d; shipped sheet tools/plates/layers/exercises/lat_pulldown.howto.mjs on main b99a9e25. Hand contact fails: the parent's grip.handContact says it is not re-sourced and no lat_pulldown claim says where the handle sits; way (1) found no verbatim quote in the golden-B lat_pulldown source map (ACE, Baechle and Earle) or this card's sources, so the hand zoom loses the base-of-the-fingers words and grip.handContact is an LR-4 drawing convention. Thumb fails: the parent sources only thumbs around the bar (c4, c13) and lists an open grip as an error (c13); way (1): this card's own c2 (BarBend: wrap the thumb or use a thumbless grip) now carries grip.thumb, with no default. Pin and start lighter fails: the shipped 'Push the pin fully in. Start light.' has no claim for 'start light' on the parent or a shared card; the pin line stays sourced for this card by shared/selector-pin.json c1, whose appliesTo lists it. 'Start lighter' has no quote in this card's sources (PureGym's 'you're likely lifting too heavy' is a check during the set, not a starting load), so it is in gaps. Front bar path holds: lat_pulldown c6 and c9, restating the checkpoint label 'Bar in front'. Thigh-pad zoom holds: lat_pulldown c1, restating the checkpoint label 'Thighs under pad'. Two inherit entries are left."
   ]
 }

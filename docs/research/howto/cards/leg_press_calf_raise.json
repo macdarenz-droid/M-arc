@@ -17,10 +17,6 @@
       "why": "true for this child because the hands do the same job on the same machine: hold the side handles to steady the upper body and work the release (c3); they never push the load."
     },
     {
-      "field": "setup['Press the sled up a few centimetres, turn the release handles out (on most machines) to free it, and check your knees still have a small bend.']",
-      "why": "true for this child because it is done on the same incline leg press and the handles release the same holding mechanism (c3); here the sled is pressed out to almost straight legs before the calf work starts (c2)."
-    },
-    {
       "field": "setup['After the last rep, pause at the top, turn the handles back in, and let the sled settle on the catches before you take your feet off or let go.']",
       "why": "true for this child because it is the same sled and catch, and taking the feet off a loaded sled is the moment the platform could come down on the shins (c7)."
     },
@@ -449,13 +445,14 @@
       }
     ],
     "mistake": {
-      "what": "Knees snap straight and lock while pushing the platform, often from going too fast.",
+      "what": "Knees snap straight and lock while pushing the platform, which fast reps tend to cause.",
       "why": "Fast reps tend to straighten the legs fully and push the platform off the feet; locking the knees is called potentially very dangerous.",
       "claim": [
         "c5",
         "c6"
       ],
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for a fault: \"there is a tendency to fully straighten the legs\" (c5) uses 'tendency', which LR-31 does not count, and \"as is often seen with women\" is about bowed legs, not a fault. Locked knees are tied to harm by two sources (\"This opens you up to the possibility of injury.\", c5; the case report, \"The risk of knee dislocation can be reduced by avoiding locking and hyperextension of the knees during any type of leg press or squatting exercise.\", c6); feet slipping (c7) and dropping fast with a bounce (c8) by one source each. So locked knees stay the top fault; a still sign, so drawable stays true even though fast reps cause it."
     },
     "tells": [
       {
@@ -548,7 +545,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Locking the knees, often by rushing the reps.",
+      "mistake": "Locking the knees, which rushed reps tend to cause.",
       "fix": "Slow down and keep a slight knee bend the whole set.",
       "claim": "c5"
     },
@@ -625,6 +622,7 @@
   },
   "anchorSource": "yessis-lpcr",
   "notes": [
-    "The coach anchor teaches holding the breath on the push. The card openly overrides that (c14): it keeps only the coach's exhale on the return (c4) and says not to hold the breath through the set, reasoning from MacDougall 1985 (c12); it gives no separate push-phase cue. Yessis also advises a shortened range for safety, while Kassiano 2023 found that training in the initial, longer-muscle part of the range may optimize growth (medial head significant, lateral head not versus full range); the card keeps a controlled stretch to 10-20 degrees, which is Yessis's own bottom position (c4), and no deep bounce (c8). Gentil 2020 (leg press vs calf raise, PMID 33352879) was read but not used: it measured the calves during the knee-bending leg press, not the leg press calf raise. Nunes 2020 (foot angle, horizontal machine) was dropped: no line on the card used it."
+    "The coach anchor teaches holding the breath on the push. The card openly overrides that (c14): it keeps only the coach's exhale on the return (c4) and says not to hold the breath through the set, reasoning from MacDougall 1985 (c12); it gives no separate push-phase cue. Yessis also advises a shortened range for safety, while Kassiano 2023 found that training in the initial, longer-muscle part of the range may optimize growth (medial head significant, lateral head not versus full range); the card keeps a controlled stretch to 10-20 degrees, which is Yessis's own bottom position (c4), and no deep bounce (c8). Gentil 2020 (leg press vs calf raise, PMID 33352879) was read but not used: it measured the calves during the knee-bending leg press, not the leg press calf raise. Nunes 2020 (foot angle, horizontal machine) was dropped: no line on the card used it.",
+    "LR-34 check (W2-53, 2026-10-18) against cards/leg_press.json and verified shared cards on head 5036283d; shipped sheet tools/plates/layers/exercises/leg_press.howto.mjs on main b99a9e25. Grip holds for type, width and hand contact: leg_press c12 and c3, restating the checkpoint label 'Hands light'; the parent's thumb is an LR-4 drawing convention and its wrist is not sourced, so 'Inherited from the parent' carries no claim for those two. Release step fails as written: the shipped 'On most machines, push the sled up and turn the handles out.' holds on leg_press c3 (Bells of Steel: 'usually' outwards), but the entry adds 'a few centimetres' and a knee check that no parent claim states; way (1): this card's own setup[2] states the release on its c3 and c2, so the entry leaves. Re-catch holds: leg_press c22, restating 'Turn the handles in and rest the sled before feet come off.' Hands light holds: leg_press c12, restating the checkpoint label 'Hands light'. Three inherit entries are left."
   ]
 }

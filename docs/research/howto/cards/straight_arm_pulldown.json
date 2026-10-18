@@ -318,7 +318,7 @@
     },
     {
       "id": "c15",
-      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -336,7 +336,19 @@
           "source": "acsm2009",
           "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
-        },
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
         {
           "source": "acsm2009",
           "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
@@ -430,7 +442,8 @@
       "what": "Elbows bend as the bar comes down, turning it into a bent-arm pulldown or pushdown.",
       "why": "Named the most common fault; the triceps and arms take over from the lats.",
       "claim": "c6",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the coach source says of bending the elbows, \"This is the most common way lifters ruin the Straight Arm Pulldown.\" (c6), a statement about this one fault, not a heading or list sentence. Set aside: \"Another common problem is going too heavy.\" (a load choice, not a candidate); \"Most lifters struggle to “feel” their lats working since the biceps and traps always seem to take over.\" (muscle use); \"the biceps can’t take over the way they often do in Pull-Ups or Rows\" (other exercises); \"Most guys skip it\" (not a fault). Over-arching the lower back \"shifts stress onto the lumbar spine\" (c9) is a step-2 tie to harm and does not outrank a step-1 hit."
     },
     "tells": [
       {
