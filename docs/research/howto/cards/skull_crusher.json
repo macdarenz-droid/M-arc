@@ -449,7 +449,7 @@
         "c17",
         "c13"
       ],
-      "text": "3 s down: the only value in both of Strength Shop's lines for this exercise (c17, WEAK, retailer blog; ruling R-LB2-1). 1 s up keeps ACSM's 1-2 s, stated for intermediate to advanced training (c13, WEAK; LR-15). Pause 0: no quote asks for a pause right after the press; Strength Shop's \"Squeeze the triceps at the top\" gives no pause or seconds."
+      "text": "3 s down: the only value in both of Strength Shop's lines for this exercise (c17, WEAK, retailer blog; ruling R-LB2-1). 1 s up keeps ACSM's 1-2 s, stated for intermediate to advanced training (c13, WEAK; LR-15). Pause 0: no quote asks for a pause right after the press; Strength Shop's \"Squeeze the triceps at the top\" gives no pause or seconds. Fit Father's \"Once the bar touches your forehead, pause for 2-3 seconds.\" is a pause at another point of the rep (the bottom), with the bar on the forehead; it contradicts ACE's stop just above the forehead (c5), so no bottom pause is drawn and pause stays 0."
     },
     "variantLine": "exercises.json lists \"EZ Bar / Barbell\". The EZ bar is drawn (census ezBar; StrengthLog uses it, c10). The setup, arm path and wrist rules (c1-c6) come from ACE's barbell version and hold for both; the EZ bar's easier wrist angle (c8) is the only difference."
   },
@@ -543,15 +543,15 @@
       },
       {
         "where": "Mostly the shoulders",
-        "means": "Usually the upper arms are drifting back.",
+        "means": "Fault: the upper arms drift back, which shifts the load onto the shoulder.",
         "fix": "Keep the upper arms vertical.",
         "claim": "c7",
         "redFlag": null
       },
       {
-        "where": "Sharp pain at the back of the elbow while lowering",
-        "means": "Usually a warning sign.",
-        "fix": "Stop the set.",
+        "where": "Back of the elbow, severe, while lowering",
+        "means": "Triceps tendon tears are rare; they often come from forceful lowering.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c15",
         "redFlag": "elbow"
       }
@@ -560,7 +560,13 @@
   "risks": [
     {
       "risk": "Bar over the face: a dropped bar lands on the face; wrap the thumbs, lower slowly, and have a spotter while you are new to the lift.",
-      "claim": "c14, c2, c1, c4, c16"
+      "claim": [
+        "c14",
+        "c2",
+        "c1",
+        "c4",
+        "c16"
+      ]
     },
     {
       "risk": "Triceps tendon rupture (rare), often from forceful lowering or lifting against resistance.",

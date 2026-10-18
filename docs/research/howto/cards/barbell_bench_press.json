@@ -229,6 +229,11 @@
           "source": "hk-bench-youth",
           "text": "Do not bounce the barbell off the chest, and do not lift your buttocks off the bench during this exercise.",
           "where": "technique notes"
+        },
+        {
+          "source": "stronglifts-bench",
+          "text": "It makes the weight easier to bench by decreasing the range of motion.",
+          "where": "No Butt Off Bench!"
         }
       ]
     },
@@ -693,7 +698,7 @@
       "why": "Stronger by Science says most novice lifters drive the bar straight up initially, and that a bar that shoots straight up off the chest makes the lift unnecessarily difficult, especially for the shoulders (c25); StrongLifts gives the bar path as a diagonal line from the mid-chest to the shoulders, not vertical (c8). How often it happens is not measured beyond that.",
       "claim": "c25",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Stronger by Science's \"most novice lifters drive the bar straight up initially, then up and back to lock out\" (c25) says most beginners make this fault, which it names an improper bar path; StrongLifts's \"Diagonal line from your mid-chest to shoulders\" (c8) gives the same path. Set aside: StrongLifts's \"Most people hold it in the middle of their palms when they Bench Press\" is about the grip, a grip choice and not a candidate (as the thumbless grip, c4, is not); \"If your wrists hurt with the full grip, it’s usually because they’re bent when you Bench Press\" says what usually causes wrist pain, not how often the fault happens; \"Many people who get shoulder pain on the Bench Press can do Close Grip pain-free\" is about a grip; Stronger by Science's \"this is especially common for people who use the “bend the bar” cue\" (shoulders not turned in at lockout) is common only in one subgroup; if counted, neither it nor the bar path has a harm quote, and the bar path comes first in the same sticking-point list, so step 2's order still picks the bar path; \"When most people miss, it’s after that initial acceleration\" is where a failed rep stalls, not a fault; Kowalczuk's \"most commonly while performing the bench press maneuver\" (c22) names the exercise and the lowering phase, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c23) is about all weight training. Hips off the bench (c10) keeps its harm quote (\"It can hurt your lower back if you hyper-extend your spine\"), but step 1 decides. drawable is true: the side view shows the bar's path between the chest and the shoulders. handlingMistakes is capped at 3 (CARD-V2), so the added top fault takes [0] and the last item, bouncing the bar off the chest (c11), is dropped (ruling R-LB2-2)."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: Stronger by Science's \"most novice lifters drive the bar straight up initially, then up and back to lock out\" (c25) says most beginners make this fault, which it names an improper bar path; StrongLifts's \"Diagonal line from your mid-chest to shoulders\" (c8) gives the same path. Set aside: StrongLifts's \"Most people hold it in the middle of their palms when they Bench Press\" is about the grip, a grip choice and not a candidate (as the thumbless grip, c4, is not); \"If your wrists hurt with the full grip, it’s usually because they’re bent when you Bench Press\" says what usually causes wrist pain, not how often the fault happens; \"Many people who get shoulder pain on the Bench Press can do Close Grip pain-free\" is about a grip; Stronger by Science's \"this is especially common for people who use the “bend the bar” cue\" (shoulders not turned in at lockout) is common only in one subgroup; if counted, neither it nor the bar path has a harm quote, and the bar path comes first in the same sticking-point list, so step 2's order still picks the bar path; \"When most people miss, it’s after that initial acceleration\" is where a failed rep stalls, not a fault; Kowalczuk's \"most commonly while performing the bench press maneuver\" (c22) names the exercise and the lowering phase, not a fault; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c23) is about all weight training. Also set aside: StrongLifts's \"They usually hurt because you grip the bar wrong.\" (the wrists) and \"Wider grips are tough on most people’s shoulders.\" are about the grip (ruling R-LB2-3); \"if you lose the bar, it will usually hit you before the spotter can react.\" and \"Most people don’t know how to spot.\" are about the spotting setup, not a lifter's fault (ruling R-LB2-5); Stronger by Science's \"The final common issue people have when benching is discomfort at the biceps insertion\" names a discomfort with no fault tied to it. Hips off the bench (c10) keeps its harm quote (\"It can hurt your lower back if you hyper-extend your spine\"), but step 1 decides. drawable is true: the side view shows the bar's path between the chest and the shoulders. handlingMistakes is capped at 3 (CARD-V2), so the added top fault takes [0] and the last item, bouncing the bar off the chest (c11), is dropped (ruling R-LB2-2)."
     },
     "tells": [
       {
@@ -787,7 +792,10 @@
     {
       "mistake": "Pressing the bar straight up off the chest.",
       "fix": "Drive it up and slightly back toward your shoulders.",
-      "claim": "c25, c8"
+      "claim": [
+        "c25",
+        "c8"
+      ]
     },
     {
       "mistake": "Thumbless grip.",
@@ -796,7 +804,7 @@
     },
     {
       "mistake": "Hips lifting off the bench.",
-      "fix": "Count it as a failed rep; repeat the weight next time.",
+      "fix": "Keep your hips on the bench. If they lift, count it as a failed rep.",
       "claim": "c10"
     }
   ],
@@ -823,27 +831,34 @@
         "where": "Middle of the chest, front of the shoulders, backs of the arms",
         "means": "The target muscles are working.",
         "fix": null,
-        "claim": "c19, c20, c21",
+        "claim": [
+          "c19",
+          "c20",
+          "c21"
+        ],
         "redFlag": null
       },
       {
-        "where": "Sharp pain in the chest or front of the shoulder while lowering",
-        "means": "Usually a warning sign.",
-        "fix": "Stop the set.",
+        "where": "Chest or front of the shoulder, sudden or severe, while lowering",
+        "means": "Pec tendon tears happen while lowering.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c22",
         "redFlag": "shoulder"
       },
       {
-        "where": "Pain deep in the front of the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set. Keep the upper arms about 45-60 degrees from the torso (c3).",
-        "claim": "c24",
+        "where": "Deep in the front of the shoulder, sudden or severe",
+        "means": "Poor attention to technique is a named risk for shoulder injuries.",
+        "fix": "Stop the set. Don't train through the pain. Keep the upper arms about 45-60 degrees from the torso.",
+        "claim": [
+          "c24",
+          "c3"
+        ],
         "redFlag": "shoulder"
       },
       {
-        "where": "Ache in the wrists",
-        "means": "Usually the bar is sitting high in the hand and bending the wrist back.",
-        "fix": "Grip the bar lower in the palm.",
+        "where": "Strain in the wrist",
+        "means": "Fault: the bar sits close to the fingers, so the wrist bends back.",
+        "fix": "Grip the bar lower in the palm. Don't train through the pain.",
         "claim": "c5",
         "redFlag": "wrist"
       }
@@ -852,7 +867,13 @@
   "risks": [
     {
       "risk": "Bar over the face and neck: a dropped or stuck bar can crush the neck; wrap the thumbs and use safety pins or a spotter.",
-      "claim": "c9, c23, c4, c6, c7"
+      "claim": [
+        "c9",
+        "c23",
+        "c4",
+        "c6",
+        "c7"
+      ]
     },
     {
       "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",

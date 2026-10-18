@@ -295,6 +295,13 @@
       "quote": "Hold the weight for a second at the top, with straight arms.",
       "status": "verbatim",
       "closest": "Hold the weight for a second at the top, with straight arms."
+    },
+    {
+      "claim": "c10",
+      "source": "stronglifts-bench",
+      "quote": "It makes the weight easier to bench by decreasing the range of motion.",
+      "status": "verbatim",
+      "closest": "It makes the weight easier to bench by decreasing the range of motion."
     }
   ]
 }

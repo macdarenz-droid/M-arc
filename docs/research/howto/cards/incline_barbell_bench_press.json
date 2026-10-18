@@ -527,7 +527,7 @@
         "c9"
       ],
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for an incline-press fault (Boostcamp's \"Common Mistakes to Avoid\" is a heading; \"usually 30–45 degrees\" is the bench setting; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c16) is about all weight training). Two named faults are tied to harm: flared elbows (\"Allowing the elbows to flare out excessively, increasing shoulder strain\", c8, and \"Shoulder strain from flared elbows\", c9; two sources) and the low-back arch (\"lower back arching excessively\" in the same injury-risk line, c9; one source). Step 2's first tie-break picks the flared elbows: they are on Boostcamp's common-mistakes list, and the arch is only in its form tips (\"avoid arching your back excessively\"); the second tie-break (more harm sources) gives the same. An incline set too steep and lifting too heavy are setup and load choices, and \"wrist strain from poor grip angle\" is a grip choice; none is a candidate. drawable is true: in the side view a flared elbow sits level with the shoulder instead of down toward the ribs (as close_grip_bench_press draws its elbow drift); the arch, the head's earlier pick, stays in handlingMistakes."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for an incline-press fault (Boostcamp's \"Common Mistakes to Avoid\" is a heading; \"usually 30–45 degrees\" is the bench setting; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c16) is about all weight training). Two named faults are tied to harm: flared elbows (\"Allowing the elbows to flare out excessively, increasing shoulder strain\", c8, and \"Shoulder strain from flared elbows\", c9; two sources) and the low-back arch (\"lower back arching excessively\" in the same injury-risk line, c9; one source). Step 2's first tie-break picks the flared elbows: they are on Boostcamp's common-mistakes list, and the arch is only in its form tips (\"avoid arching your back excessively\"); the second tie-break (more harm sources) gives the same. Boostcamp's \"Keep your wrists straight to prevent strain.\" ties bent wrists (a joint position, ruling R-LB2-15) to strain, one source, in its tips and not on its common-mistakes list, so the first tie-break still picks the flared elbows. An incline set too steep and lifting too heavy are setup and load choices, and \"wrist strain from poor grip angle\" is a grip choice; none is a candidate. drawable is true: in the side view a flared elbow sits level with the shoulder instead of down toward the ribs (as close_grip_bench_press draws its elbow drift); the arch, the head's earlier pick, stays in handlingMistakes."
     },
     "tells": [
       {
@@ -560,7 +560,10 @@
   "setup": [
     {
       "step": "Set the back pad to about 30 degrees and set the safety catches.",
-      "claim": "c1, c6"
+      "claim": [
+        "c1",
+        "c6"
+      ]
     },
     {
       "step": "Sit back with head, shoulders and hips on the pad, feet flat.",
@@ -601,17 +604,27 @@
     {
       "mistake": "Elbows flared straight out.",
       "fix": "Keep them about 45-75 degrees from your body.",
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c7"
+      ]
     },
     {
       "mistake": "Arching the low back off the pad to finish a rep.",
       "fix": "Keep your back on the pad; build up to heavier weights gradually.",
-      "claim": "c9, c12, c13"
+      "claim": [
+        "c9",
+        "c12",
+        "c13"
+      ]
     },
     {
       "mistake": "Bouncing the bar off the chest.",
-      "fix": "Lower slowly and with control (c7).",
-      "claim": "c8"
+      "fix": "Lower slowly and with control.",
+      "claim": [
+        "c8",
+        "c7"
+      ]
     }
   ],
   "feel": {
@@ -646,16 +659,19 @@
       },
       {
         "where": "Mostly the front of the shoulders, little in the chest",
-        "means": "Usually the bench is set too steep.",
-        "fix": "Lower the back pad toward 30 degrees.",
+        "means": "A bench steeper than 45 degrees shifts the work to the shoulders.",
+        "fix": "Set the back pad between 30 and 45 degrees.",
         "claim": "c1",
         "redFlag": null
       },
       {
-        "where": "Pain in the shoulder or chest",
-        "means": "Usually a warning sign; shoulder injuries are common in lifting.",
-        "fix": "Stop the set.",
-        "claim": "c12",
+        "where": "Shoulder or chest, sudden or severe",
+        "means": "Fault: the elbows flare out too far, which strains the shoulder.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c12",
+          "c8"
+        ],
         "redFlag": "shoulder"
       }
     ]
@@ -663,7 +679,11 @@
   "risks": [
     {
       "risk": "Bar over the face and neck: the upper-chest touch point is closest to the neck; wrap the thumbs and use a spotter or safety catches.",
-      "claim": "c15"
+      "claim": [
+        "c15",
+        "c6",
+        "inherit:0"
+      ]
     },
     {
       "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
@@ -671,7 +691,10 @@
     },
     {
       "risk": "Shoulder injuries are common in lifting and linked to poor technique; flared elbows strain the shoulder.",
-      "claim": "c17"
+      "claim": [
+        "c17",
+        "c8"
+      ]
     }
   ],
   "redFlags": [
@@ -683,7 +706,7 @@
       "kind": "hand",
       "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
-      "claim": "barbell_bench_press:c5"
+      "claim": "inherit:2"
     },
     {
       "key": "back-on-incline-pad",

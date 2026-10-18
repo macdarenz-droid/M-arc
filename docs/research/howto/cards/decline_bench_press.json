@@ -516,7 +516,10 @@
   "setup": [
     {
       "step": "Set the bench in decline and set the safety racks at both sides.",
-      "claim": "c2, c6"
+      "claim": [
+        "c2",
+        "c6"
+      ]
     },
     {
       "step": "Set the bar at a height you can reach without straightening your arms.",
@@ -532,7 +535,10 @@
     },
     {
       "step": "Lift the bar out, ideally with a spotter, and hold it over your chest on locked arms.",
-      "claim": "c7, c6"
+      "claim": [
+        "c7",
+        "c6"
+      ]
     }
   ],
   "posture": [
@@ -549,15 +555,21 @@
       "claim": "c5"
     },
     {
-      "point": "Wrists straight, bar low in the palm (inherited, parent c5).",
-      "claim": "barbell_bench_press:c5"
+      "point": "Wrists straight, bar low in the palm.",
+      "claim": [
+        "inherit:1",
+        "inherit:2"
+      ]
     }
   ],
   "handlingMistakes": [
     {
       "mistake": "Letting the bar land high on the chest, toward the neck.",
       "fix": "Lower it to the lower chest only.",
-      "claim": "c5, c12"
+      "claim": [
+        "c5",
+        "c12"
+      ]
     },
     {
       "mistake": "Benching heavy without safeties or a spotter.",
@@ -566,8 +578,11 @@
     },
     {
       "mistake": "Bouncing the bar off the chest.",
-      "fix": "Lower with control, 2 seconds down (c8).",
-      "claim": "c5"
+      "fix": "Lower with control, 2 seconds down.",
+      "claim": [
+        "c5",
+        "c8"
+      ]
     }
   ],
   "feel": {
@@ -597,16 +612,16 @@
         "redFlag": null
       },
       {
-        "where": "Sharp pain in the chest or front of the shoulder while lowering",
-        "means": "Usually a warning sign.",
-        "fix": "Stop the set.",
+        "where": "Chest or front of the shoulder, sudden or severe, while lowering",
+        "means": "Pec tendon tears happen while lowering.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c14",
         "redFlag": "shoulder"
       },
       {
-        "where": "Pain deep in the front of the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set.",
+        "where": "Deep in the front of the shoulder, sudden or severe",
+        "means": "Poor attention to technique is a named risk for shoulder injuries.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c15",
         "redFlag": "shoulder"
       }
@@ -615,7 +630,12 @@
   "risks": [
     {
       "risk": "Bar over the face and neck: a bar landing high on the chest moves toward the neck, and a failed rep cannot be rolled off; wrap the thumbs and set safety racks.",
-      "claim": "c12, c13, c6, barbell_bench_press:c4"
+      "claim": [
+        "c12",
+        "c13",
+        "c6",
+        "inherit:0"
+      ]
     },
     {
       "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
@@ -635,7 +655,7 @@
       "kind": "hand",
       "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
-      "claim": "barbell_bench_press:c5"
+      "claim": "inherit:3"
     },
     {
       "key": "feet-hooked",
