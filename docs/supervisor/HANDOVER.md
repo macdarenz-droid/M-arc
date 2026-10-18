@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-18 ~05:35 UTC · main `b99a9e25` (train 25) · **8.0n new supervisor running** · by supervisor session `session_01HtNEBU3oDR8NyHKK3uCwUi` (new account). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-18 ~07:00 UTC · main `b99a9e25` (train 25) · **8.0n new supervisor running (update 07:00)** · by supervisor session `session_01HtNEBU3oDR8NyHKK3uCwUi` (new account). Re-capture section 8 live right before each commit of this file.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -840,6 +840,24 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
 - Scratch-branch pushes asked for by LIB-4b ("LIB-4b SCRATCH") and LIB-4c ("LIB-4c SCRATCH").
 - Owed, not started: the variant-line field card (action 14, LB1 critical path); the LIB-6-PM patches and the L0-lib back-box follow-up line (action 11; it needs back-box.mjs on main, so it lands after LIB-5); LIB-10 items.
 - Queue as LIB slots free (a builder posting WAITING frees one): LIB-3b (its first item is now B5(b)), LIB-4d, LIB-8-FIX.
+
+**Update ~07:00 UTC (supersedes "Next for the supervisor" above where they differ).**
+- **Research w2 is merged.** `claude/libht-research` is now `9eaa2480` (the w2 verify head `efc8feda` merged into `9dbc7e0`). Record: docs/research/howto/verify/w2.md.
+  - The fix sessions (W2A, THE8, HELPER, SPLIT) and the recheck critic are archived. Research PRs #242, #243, #254 and #255 carry the heads.
+  - Rulings W2-R1..R12 were posted on those PRs. LR-36 (ties after LR-31 step 3) is in RULINGS.md.
+  - The combined recheck ran on a squashed copy with two supervisor plants, and both were caught. The supervisor's 10 % re-fetch got 8/8 verbatim.
+- **Named head 9eaa248** was posted on #244 and #245 (lib4-cards 14.5). LIB-5 re-copied it @ `b14ff79` (S1 re-pin; 16 modules; 0 lint hits).
+- **TOPFAULT @ 9eaa248** was posted on #244 (record: docs/supervisor/verify/topfault-9eaa248.md). Five keys equal firstKey (pull_up, hanging_leg_raise, leg_press, seated_cable_row, machine_chest_press). Three ids stopped as `none` (barbell_back_squat, dumbbell_lateral_raise, lat_pulldown).
+- **New rulings:** lib4-cards 14.6 (D-LIB5-SPLIT-2: rope-rule's ruled join, floor-body prone, implement.text) and 14.7 (D-LIB5-TEMPO8). Under 14.7, all 7 engine ids stop at H6.tempo, because the cards say 2 s and the approved specs differ. The plates keep their timing, and the exemption reason is re-worded in LIB-5's commit 2.
+- **Card LIB-5v (the variant-line field)** is written and ruled (docs/supervisor/verify/variant-line-card.md). The LIB-5 session takes it after LIB-5 merges, in merge slot 7a.
+- **LIB-9a round 3** (`298fb1b`) was accepted. The supervisor reproduced lb1-plates at 98/98. LIB-9a now re-copies at 9eaa248.
+- **Owner O7-family items**, to offer with the next sheet or APK message: the tell chrome contrast (14.4), and the 7 plates' timing against their verified cards (14.7).
+- **Next:**
+  - CARD FIELDS VERIFIED, after LIB-5's Do 3 b commit 1 and after LIB-9a's re-copy for its changed picks;
+  - the "stamps (O5)" ruling, before LIB-5's Do 6;
+  - the scratch-branch pushes asked for by LIB-4b and LIB-4c;
+  - reviewers on READY.
+  - LIB-4c got a check-in at 06:31; its session had shown as disconnected.
 
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
