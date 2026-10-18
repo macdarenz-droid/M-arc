@@ -55,14 +55,16 @@
    "tier": "A",
    "closest": "lateral_raise",
    "view": "side",
-   "class": "small-motion zoom (SHRUG parent), F1"
+   "class": "small-motion zoom (SHRUG parent), F1",
+   "held": "the shrug zoom (D-LIB8-shrug; follow-up card)"
   },
   {
    "id": "box_jump",
    "tier": "A",
    "closest": "barbell_back_squat",
    "view": "side",
-   "class": "airborne"
+   "class": "airborne",
+   "held": "a tempo strip for plates with no sourced seconds (D-LIB8M-NOSTRIP; follow-up card)"
   },
   {
    "id": "dumbbell_fly",
@@ -141,7 +143,8 @@
    "tier": "B",
    "closest": "barbell_back_squat",
    "view": "side",
-   "class": "split stance (SPLIT parent)"
+   "class": "split stance (SPLIT parent)",
+   "held": "a tempo strip for plates with no sourced seconds (D-LIB8M-NOSTRIP; follow-up card)"
   },
   {
    "id": "plank",
