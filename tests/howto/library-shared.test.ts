@@ -140,3 +140,44 @@ describe('LIB-5 S4-P 3: E1\'s row with back in its riskFlags makes the generator
     expect(existsSync(join(r, 'src/howto/red-flag-back.ts'))).toBe(false);
   }, T);
 });
+
+describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes nothing before Do 9 and stays inside C17', () => {
+  const GATE = 'tools/plates/gen/library-gate.mjs', SHARED_DIR = join(ROOT, 'tools/plates/library/shared');
+  /** Paths render() attributes to the gate, and other files whose header names it. */
+  const gatePaths = (out: Map<string, any>) => [...out].filter(([, o]) => o.writers.includes(GATE)).map(([p]) => p).sort();
+  it('render(): the paths attributed to library-gate.mjs are exactly [] while back-box.mjs holds no box text', async () => {
+    const out = await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render();
+    expect(gatePaths(out)).toEqual([]);
+    expect([...out].filter(([, o]) => o.text.slice(0, 600).includes('library-gate')).map(([p]) => p)).toEqual([]);
+  }, 300_000);
+  it('inputsFor(red-flag-back.ts) is back-box.mjs, its static imports and the back-box card', async () => {
+    const G = await import(/* @vite-ignore */ url(GATE));
+    const imports = [...readFileSync(join(SHARED_DIR, 'back-box.mjs'), 'utf8').matchAll(/^import .* from '([^']+)';$/gm)].map(m => m[1]);
+    expect(imports).toEqual([]);
+    expect(G.inputsFor('src/howto/red-flag-back.ts')).toEqual(['tools/plates/library/shared/back-box.mjs', 'docs/research/howto/shared/back-pain-box.json']);
+    expect(G.inputsFor('src/howto/ids.ts')).toBeUndefined();
+    expect(G.after).toEqual(['tools/plates/gen/content.mjs']);
+    for (const f of [GATE, 'tools/plates/library/shared/back-box.mjs']) expect(G.inputs()).toContain(f);
+  });
+  /** Two directories for checkC17 (it takes directories and skips a path it cannot read): the shared modules, and a
+   *  temp copy of library-gate.mjs. */
+  const c17Dirs = (plant?: 'gate' | 'shared') => {
+    const g = mkdtempSync(join(tmpdir(), 'lib5-c17-gate-')), s = mkdtempSync(join(tmpdir(), 'lib5-c17-shared-'));
+    temps.push(g, s);
+    cpSync(join(ROOT, GATE), join(g, 'library-gate.mjs'));
+    cpSync(SHARED_DIR, s, { recursive: true });
+    if (plant === 'gate') writeFileSync(join(g, 'library-gate.mjs'), readFileSync(join(g, 'library-gate.mjs'), 'utf8') + '\nfetch("x");\n');
+    if (plant === 'shared') writeFileSync(join(s, 'back-box.mjs'), readFileSync(join(s, 'back-box.mjs'), 'utf8') + '\nfetch("x");\n');
+    return [g, s] as [string, string];
+  };
+  it('checkC17 on the shared modules and the gate: [] and each folder holds its file; a planted fetch( is red in either', async () => {
+    const { checkC17 } = await import('./checks/c17');
+    expect(checkC17([SHARED_DIR])).toEqual([]);
+    const [g, s] = c17Dirs();
+    expect(readdirSync(g)).toEqual(['library-gate.mjs']);
+    expect(readdirSync(s)).toEqual(expect.arrayContaining(['back-box.mjs', 'check-bundle.mjs']));
+    expect(checkC17([g, s])).toEqual([]);
+    expect(checkC17(c17Dirs('gate'))).toEqual([expect.stringMatching(/library-gate\.mjs: matches/)]);
+    expect(checkC17(c17Dirs('shared'))).toEqual([expect.stringMatching(/back-box\.mjs: matches/)]);
+  });
+});
