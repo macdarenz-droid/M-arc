@@ -520,16 +520,21 @@
       },
       {
         "where": "Front of the shoulders, body leaning forward",
-        "means": "Usually the weight is too heavy.",
-        "fix": "Lower the weight and stand upright.",
-        "claim": "c7",
+        "means": "Fault: leaning forward, which happens frequently when the weight is too heavy.",
+        "fix": "Lower the weight and keep your trunk vertical.",
+        "claim": [
+          "c7"
+        ],
         "redFlag": null
       },
       {
-        "where": "Pain in the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set.",
-        "claim": "c13, c7",
+        "where": "Shoulder, sudden or severe",
+        "means": "Fault: leaning forward.",
+        "fix": "Stop the set. Don't train through the pain. Lower the weight and keep your trunk vertical.",
+        "claim": [
+          "c7",
+          "c13"
+        ],
         "redFlag": "shoulder"
       }
     ]

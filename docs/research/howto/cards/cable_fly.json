@@ -501,10 +501,13 @@
         "redFlag": null
       },
       {
-        "where": "Pain in the front of the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set.",
-        "claim": "c13, c11",
+        "where": "Front of the shoulder, sudden or severe",
+        "means": "Fault: the joints are not kept stable, so the shoulder is overloaded.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c11",
+          "c13"
+        ],
         "redFlag": "shoulder"
       }
     ]

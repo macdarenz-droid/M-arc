@@ -525,17 +525,21 @@
         "redFlag": null
       },
       {
-        "where": "Pain at the front of the shoulder",
-        "means": "Usually a warning sign: the start puts the shoulder in a vulnerable position.",
-        "fix": "Stop the set.",
-        "claim": "c8",
+        "where": "Front of the shoulder, sudden or severe",
+        "means": "This exercise puts the shoulder in a vulnerable position.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c8"
+        ],
         "redFlag": "shoulder"
       },
       {
         "where": "Body rocking on the seat",
-        "means": "Usually means the weight is too heavy.",
+        "means": "Fault: the weight is so heavy that your body sways or rocks.",
         "fix": "Lower the weight.",
-        "claim": "c14",
+        "claim": [
+          "c14"
+        ],
         "redFlag": null
       }
     ]

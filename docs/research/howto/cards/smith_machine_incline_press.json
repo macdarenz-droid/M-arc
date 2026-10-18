@@ -559,16 +559,21 @@
       },
       {
         "where": "Mostly the front of the shoulders",
-        "means": "Usually the bench is steeper than 45 degrees.",
+        "means": "Fault: the bench is set over 45 degrees.",
         "fix": "Lower the back pad to 30-45 degrees.",
-        "claim": "c1",
+        "claim": [
+          "c1"
+        ],
         "redFlag": null
       },
       {
-        "where": "Pain in the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set.",
-        "claim": "c7, c13",
+        "where": "Shoulder, sudden or severe",
+        "means": "Up to 36% of resistance-training injuries are at the shoulder.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c7",
+          "c13"
+        ],
         "redFlag": "shoulder"
       }
     ]

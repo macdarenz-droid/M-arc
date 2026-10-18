@@ -621,10 +621,13 @@
         "redFlag": null
       },
       {
-        "where": "Pain in the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set.",
-        "claim": "c16, c15",
+        "where": "Shoulder, sudden or severe",
+        "means": "Up to 36% of resistance-training injuries are at the shoulder.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c16",
+          "c15"
+        ],
         "redFlag": "shoulder"
       }
     ]

@@ -592,16 +592,21 @@
       },
       {
         "where": "Lower back aching",
-        "means": "Usually the back is arching.",
+        "means": "Fault: arching the back.",
         "fix": "Keep your spine neutral and brace your abs.",
-        "claim": "c6",
+        "claim": [
+          "c6"
+        ],
         "redFlag": null
       },
       {
-        "where": "Pain in the shoulder",
-        "means": "Usually a warning sign; the shoulder is a common injury site in lifting.",
-        "fix": "Stop the set; check your grip is not too wide.",
-        "claim": "c13, c7",
+        "where": "Shoulder, sudden or severe",
+        "means": "Fault: gripping much wider than shoulder width, or flaring the elbows.",
+        "fix": "Stop the set. Don't train through the pain. Keep your elbows at a 45-degree angle.",
+        "claim": [
+          "c7",
+          "c13"
+        ],
         "redFlag": "shoulder"
       }
     ]
