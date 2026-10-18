@@ -456,7 +456,7 @@
       "claim": "inherit:4"
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c8"
     }
   ],
@@ -549,7 +549,7 @@
   },
   "risks": [
     {
-      "risk": "Bar over face and neck: touch low; wrap thumbs; use pins or a spotter.",
+      "risk": "Bar over face and neck: touch low. Wrap thumbs. Use pins or a spotter.",
       "claim": [
         "c10",
         "c4",
@@ -574,7 +574,7 @@
     {
       "key": "bar-low-palm",
       "kind": "hand",
-      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "right": "Bar in the palm's base, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
       "claim": "inherit:5"
     },

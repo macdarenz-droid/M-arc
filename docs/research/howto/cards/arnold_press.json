@@ -504,7 +504,7 @@
   },
   "setup": [
     {
-      "step": "Set the bench upright; keep your back on the pad.",
+      "step": "Set the bench upright. Keep your back on the pad.",
       "claim": [
         "c2",
         "c3"
@@ -523,7 +523,7 @@
       "claim": "c10"
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c11"
     }
   ],
@@ -612,8 +612,8 @@
     {
       "key": "arnold-palm-turn",
       "kind": "hand",
-      "right": "Palms toward you at the bottom, turning to face forward as you press.",
-      "wrong": "Palms already forward at the bottom (no turn: a normal shoulder press).",
+      "right": "Palms facing you at bottom, turning forward as you press.",
+      "wrong": "Palms already forward at the bottom, so no turn.",
       "claim": "c1"
     },
     {

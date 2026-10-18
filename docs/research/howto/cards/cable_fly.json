@@ -435,7 +435,7 @@
       "claim": "c2"
     },
     {
-      "step": "Staggered or parallel stance; brace your core, legs and glutes.",
+      "step": "Staggered or parallel stance. Brace your trunk, legs and glutes.",
       "claim": "c3"
     },
     {
@@ -443,7 +443,7 @@
       "claim": "c7"
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c14"
     }
   ],
@@ -474,7 +474,7 @@
   "handlingMistakes": [
     {
       "mistake": "Bending elbows into a press.",
-      "fix": "Keep the elbow bend fixed; move at the shoulders.",
+      "fix": "Keep the elbow bend fixed. Move at the shoulders.",
       "claim": [
         "c6",
         "c4"
@@ -511,7 +511,7 @@
     "rows": [
       {
         "where": "Chest and front shoulders, whole rep",
-        "means": "The target muscles are working; cables keep the load on.",
+        "means": "The target muscles are working, cables keep the load on.",
         "fix": null,
         "claim": [
           "c9",
@@ -532,7 +532,7 @@
   },
   "risks": [
     {
-      "risk": "Cable flyes load the shoulder more than bench pressing; keep your joints stable.",
+      "risk": "Cable flyes load the shoulder more than bench pressing. Keep your joints stable.",
       "claim": "c11"
     },
     {
@@ -547,7 +547,7 @@
     {
       "key": "fly-handle",
       "kind": "hand",
-      "right": "Handle held with the wrist at the same angle all rep.",
+      "right": "Wrist held at the same angle all rep.",
       "wrong": "Wrist bending as the hands come together.",
       "claim": "c4"
     },

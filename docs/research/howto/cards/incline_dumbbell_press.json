@@ -478,7 +478,7 @@
     "checkpoints": [
       {
         "label": "Bench at 45°",
-        "what": "Back pad at about 45 degrees; steeper shifts work to the front shoulder.",
+        "what": "Back pad at about 45 degrees. Steeper shifts work to the front shoulder.",
         "claim": "c2"
       },
       {
@@ -538,7 +538,7 @@
       "claim": "c9"
     },
     {
-      "step": "Shoulder blades down and back; feet flat.",
+      "step": "Shoulder blades down and back. Feet flat.",
       "claim": "c4"
     },
     {
@@ -546,7 +546,7 @@
       "claim": "c17"
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c13"
     }
   ],
@@ -624,7 +624,7 @@
   },
   "risks": [
     {
-      "risk": "Dropped weights cause the most bad lifting injuries. A spotter holds your wrists.",
+      "risk": "Dropped weights cause most bad lifting injuries. Have a spotter hold your wrists.",
       "claim": [
         "c15",
         "c10"

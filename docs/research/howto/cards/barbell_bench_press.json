@@ -32,7 +32,7 @@
     },
     {
       "id": "c2",
-      "text": "Lower the bar slowly to the middle of the chest; at the bottom the forearms are vertical.",
+      "text": "Lower the bar slowly to the middle of the chest, tucking the elbows in about 75 degrees; at the bottom the forearms are vertical.",
       "tags": [
         "CONSENSUS"
       ],
@@ -692,7 +692,7 @@
     "viewWhy": "Census view is side; the checkpoints (touch point on the mid-chest, vertical forearms, hips on the bench) and the census-time mistake (hips off the bench) all read in the sagittal plane (c2, c10). The LR-31 top fault, the bar pressed straight up off the chest instead of up and back toward the shoulders (c25, c8), also reads only from the side (ruling R-LB2-4).",
     "equipment": "Flat bench under a rack with J-hooks, safety pins set slightly below the bottom position (c6); barbell; feet flat on the floor (c14).",
     "start": "Supine, feet flat (c14), shoulder blades pulled together (c12), hips on the bench (c1); arms straight with the bar over the shoulders (c8).",
-    "end": "Bar touching the middle of the chest (c2), forearms vertical (c2), upper arms about 45-60 degrees from the torso (c3), hips still on the bench (c3).",
+    "end": "Bar touching the middle of the chest (c2), forearms vertical (c2), elbows tucked about 75 degrees (c2), hips still on the bench (c3).",
     "checkpoints": [
       {
         "label": "Hips down",
@@ -763,7 +763,7 @@
       "claim": "c6"
     },
     {
-      "step": "Shoulders at least 8 cm from uprights; feet flat; blades together.",
+      "step": "Shoulders at least 8 cm from uprights. Feet flat. Blades together.",
       "claim": [
         "c13",
         "c14",
@@ -786,7 +786,7 @@
       ]
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c16"
     }
   ],
@@ -867,7 +867,7 @@
         "redFlag": null
       },
       {
-        "where": "Chest or front-shoulder pain",
+        "where": "Chest or shoulder pain while lowering",
         "means": "Fault: lowering the bar too fast.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c18",
@@ -894,7 +894,7 @@
   },
   "risks": [
     {
-      "risk": "Bar over face and neck: wrap the thumbs; use safety pins or a spotter.",
+      "risk": "Bar over face and neck: wrap the thumbs. Use safety pins or a spotter.",
       "claim": [
         "c9",
         "c4",
@@ -915,7 +915,7 @@
     {
       "key": "bar-low-palm",
       "kind": "hand",
-      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "right": "Bar in the palm's base, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
       "claim": "c5"
     },

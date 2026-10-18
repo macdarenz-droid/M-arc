@@ -620,7 +620,7 @@
       "claim": "c21"
     },
     {
-      "step": "Cradle the top plate, thumbs overlapping behind the handle; grip it securely.",
+      "step": "Cradle the top plate, thumbs overlapping behind the handle. Grip it securely.",
       "claim": [
         "c3",
         "c11"
@@ -665,7 +665,7 @@
       "claim": "c8"
     },
     {
-      "mistake": "Letting go before the spotter.",
+      "mistake": "Letting go too early.",
       "fix": "Grip until the spotter has it or it rests on your thigh.",
       "claim": "c10"
     }
@@ -747,7 +747,7 @@
     {
       "key": "cupped-dumbbell",
       "kind": "hand",
-      "right": "Palms cradle the top plate, thumbs overlapping behind the handle, dumbbell hanging vertically.",
+      "right": "Palms cradle the top plate, thumbs overlapping, dumbbell hanging vertically.",
       "wrong": "Dumbbell tilted flat, held by the wrists.",
       "claim": "c13"
     },

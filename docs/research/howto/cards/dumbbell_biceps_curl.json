@@ -432,7 +432,7 @@
     "checkpoints": [
       {
         "label": "Elbows at sides",
-        "what": "Upper arms stay by the body and never travel back; slightly forward at the top is fine.",
+        "what": "Upper arms stay by the body and never travel back. Slightly forward at the top is fine.",
         "claim": "c3"
       },
       {
@@ -442,7 +442,7 @@
       },
       {
         "label": "Still body",
-        "what": "Torso and knees don't move; only the forearms travel.",
+        "what": "Torso and knees don't move. Only the forearms travel.",
         "claim": "c14"
       }
     ],
@@ -507,11 +507,11 @@
       "claim": "c3"
     },
     {
-      "point": "Upper arms never travel back; slightly forward at the top is fine.",
+      "point": "Upper arms never travel back. Slightly forward at the top is fine.",
       "claim": "c13"
     },
     {
-      "point": "Body stays still; only the arms move.",
+      "point": "Body stays still. Only the arms move.",
       "claim": "c14"
     },
     {
@@ -540,7 +540,7 @@
     },
     {
       "mistake": "Elbows drifting back or forward.",
-      "fix": "Keep the elbows at your sides; never let them travel back.",
+      "fix": "Keep the elbows at your sides. Never let them travel back.",
       "claim": "c4"
     }
   ],
@@ -603,15 +603,15 @@
     {
       "key": "curl-wrist",
       "kind": "hand",
-      "right": "Closed palms-forward grip, thumb wrapped, hand in line with the forearm.",
+      "right": "Closed palms-forward grip, thumb wrapped, hand in line with forearm.",
       "wrong": "Wrist bent back or curled toward the forearm.",
       "claim": "c6"
     },
     {
       "key": "curl-elbow",
       "kind": "posture",
-      "right": "Upper arm by the side at the top of the curl.",
-      "wrong": "Elbow swung back behind the body to cheat the weight up.",
+      "right": "Upper arm by your side at the top.",
+      "wrong": "Elbow swung back behind the body to cheat the weight.",
       "claim": "c4"
     }
   ],

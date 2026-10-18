@@ -519,7 +519,7 @@
       },
       {
         "label": "Back on pad",
-        "what": "Head, shoulders and hips stay on the bench; no big low-back arch.",
+        "what": "Head, shoulders and hips stay on the bench. No big low-back arch.",
         "claim": "c3"
       }
     ],
@@ -564,7 +564,7 @@
   },
   "setup": [
     {
-      "step": "Pad at about 30 degrees; sit with head, shoulders, hips on it.",
+      "step": "Pad at about 30 degrees. Head, shoulders, hips on it, feet flat.",
       "claim": [
         "c1",
         "c3"
@@ -586,7 +586,7 @@
       ]
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c13"
     }
   ],
@@ -623,7 +623,7 @@
     },
     {
       "mistake": "Low back arching off pad.",
-      "fix": "Keep your back on the pad; build up to heavier weights gradually.",
+      "fix": "Keep your back on the pad. Build up to heavier weights gradually.",
       "claim": [
         "c9",
         "c12",
@@ -690,11 +690,12 @@
   },
   "risks": [
     {
-      "risk": "Bar over face and neck: wrap thumbs; use a spotter or safety pins.",
+      "risk": "Bar over face and neck: wrap thumbs. Use a spotter or safety pins.",
       "claim": [
         "c15",
         "c6",
-        "inherit:0"
+        "inherit:0",
+        "inherit:3"
       ]
     },
     {
@@ -702,7 +703,7 @@
       "claim": "c16"
     },
     {
-      "risk": "Shoulder injuries are linked to poor technique; flared elbows strain the shoulder.",
+      "risk": "Shoulder injuries are linked to poor technique. Flared elbows strain the shoulder.",
       "claim": [
         "c17",
         "c8"
@@ -716,7 +717,7 @@
     {
       "key": "bar-low-palm",
       "kind": "hand",
-      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "right": "Bar in the palm's base, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
       "claim": "inherit:2"
     },

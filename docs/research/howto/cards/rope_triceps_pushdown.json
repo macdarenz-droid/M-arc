@@ -540,7 +540,7 @@
       "claim": "c5"
     },
     {
-      "point": "Torso tall; any lean comes from the hips, not an arched back.",
+      "point": "Torso tall. Any lean comes from the hips, not an arched back.",
       "claim": "c10"
     },
     {
@@ -559,7 +559,7 @@
   "handlingMistakes": [
     {
       "mistake": "Leaning over or arching back.",
-      "fix": "Stand taller; tilt only from the hips.",
+      "fix": "Stand taller. Tilt only from the hips.",
       "claim": [
         "c12",
         "c10"
@@ -610,7 +610,7 @@
       {
         "where": "Lower back pain",
         "means": "Fault: leaning too far forward or arching the back.",
-        "fix": "Stop and don't train through the pain. Stand taller; tilt only from the hips.",
+        "fix": "Stop and don't train through the pain. Stand taller, tilt only from the hips.",
         "claim": [
           "c12",
           "c10"
@@ -620,7 +620,7 @@
       {
         "where": "Elbow discomfort or pain",
         "means": "Heavy, low-rep sets feel uncomfortable in the elbows for many.",
-        "fix": "Stop and don't train through the pain. Go lighter; don't lock out your elbows.",
+        "fix": "Stop and don't train through the pain. Go lighter, don't lock out your elbows.",
         "claim": [
           "c16",
           "c9"
@@ -658,7 +658,7 @@
     {
       "key": "rope-spread",
       "kind": "posture",
-      "right": "At the bottom the rope ends spread apart and the hands pass the thighs.",
+      "right": "Bottom: rope ends spread apart, hands passing the thighs.",
       "wrong": "Hands jammed together, rope ends hitting the thighs.",
       "claim": "c4"
     },

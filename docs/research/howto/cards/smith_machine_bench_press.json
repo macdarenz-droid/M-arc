@@ -490,7 +490,7 @@
       },
       {
         "label": "Stops set",
-        "what": "Safety stops set just below the lowest point of the bar (where it touches your chest) before you start.",
+        "what": "Safety stops set just below where the bar touches your chest, before you start.",
         "claim": [
           "c4",
           "c3"
@@ -549,21 +549,21 @@
       ]
     },
     {
-      "step": "Lie back, feet flat, shoulder blades down; grip slightly wider than shoulders.",
+      "step": "Lie back, feet flat, shoulder blades down. Grip slightly wider than shoulders.",
       "claim": [
         "c1",
         "c2"
       ]
     },
     {
-      "step": "Start with just the bar; rotate it off the hooks.",
+      "step": "Start with just the bar. Rotate it off the hooks.",
       "claim": [
         "c6",
         "c5"
       ]
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c13"
     }
   ],
@@ -666,7 +666,7 @@
       ]
     },
     {
-      "risk": "You lift less on the Smith, so a free-bar load doesn't carry over.",
+      "risk": "People lift less on the Smith bench, so a free-bar load doesn't carry over.",
       "claim": "c10"
     },
     {
@@ -681,14 +681,14 @@
     {
       "key": "bar-low-palm",
       "kind": "hand",
-      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "right": "Bar in the palm's base, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
       "claim": "inherit:4"
     },
     {
       "key": "smith-bench-position",
       "kind": "posture",
-      "right": "Bench placed so the bar lands on the mid-chest; stops just below where the bar touches the chest.",
+      "right": "Bar lands on the mid-chest. Stops just below that point.",
       "wrong": "Back arched excessively.",
       "claim": [
         "c2",

@@ -610,7 +610,7 @@
   },
   "setup": [
     {
-      "step": "Bench at 70 degrees; the bar should just clear your nose.",
+      "step": "Bench at 70 degrees. The bar should just clear your nose.",
       "claim": [
         "c1",
         "c2",
@@ -626,7 +626,7 @@
       "claim": "c4"
     },
     {
-      "step": "Grip wider than shoulders, thumbs wrapped; rotate the bar off the hooks.",
+      "step": "Grip wider than shoulders, thumbs wrapped. Rotate the bar off the hooks.",
       "claim": [
         "c5",
         "c13",
@@ -634,7 +634,7 @@
       ]
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c15"
     }
   ],
@@ -745,7 +745,7 @@
   },
   "risks": [
     {
-      "risk": "Bar passes your face: it should just clear your nose; set stops, wrap thumbs.",
+      "risk": "Bar passes your face: it should just clear your nose. Set stops, wrap thumbs.",
       "claim": [
         "c3",
         "c7",
@@ -780,7 +780,7 @@
       "key": "smith-ohp-bench",
       "kind": "posture",
       "right": "Bench at about 70 degrees, bar just clears the nose.",
-      "wrong": "Bench too far back, bar running far in front of the face.",
+      "wrong": "Bench too far back, bar far in front of face.",
       "claim": [
         "c1",
         "c3"

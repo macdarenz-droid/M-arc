@@ -541,7 +541,7 @@
       ]
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c11"
     }
   ],
@@ -577,7 +577,7 @@
     },
     {
       "mistake": "Heavy without safeties or spotter.",
-      "fix": "Set the safety racks; use a spotter or go lighter.",
+      "fix": "Set the safety racks. Use a spotter or go lighter.",
       "claim": "c6"
     },
     {
@@ -616,7 +616,7 @@
         "redFlag": null
       },
       {
-        "where": "Chest or front-shoulder pain",
+        "where": "Chest or shoulder pain while lowering",
         "means": "Fault: lowering the bar without control.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
@@ -636,7 +636,7 @@
   },
   "risks": [
     {
-      "risk": "Bar over face and neck: touch low; wrap thumbs; set the safety racks.",
+      "risk": "Bar over face and neck: touch low. Wrap thumbs. Set the safety racks.",
       "claim": [
         "c12",
         "c6",
@@ -655,7 +655,7 @@
     {
       "key": "bar-low-palm",
       "kind": "hand",
-      "right": "Bar in the base of the palm, thumb wrapped, wrist straight.",
+      "right": "Bar in the palm's base, thumb wrapped, wrist straight.",
       "wrong": "Bar high toward the fingers, wrist bent back.",
       "claim": "inherit:3"
     },

@@ -565,13 +565,13 @@
       "claim": "c19"
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c17"
     }
   ],
   "posture": [
     {
-      "point": "Hips back; don't reach the dumbbell down.",
+      "point": "Hips back. Don't reach the dumbbell down.",
       "claim": "c9"
     },
     {
@@ -579,7 +579,7 @@
       "claim": "c8"
     },
     {
-      "point": "Hips level; the lifted side does not turn up.",
+      "point": "Hips level. The lifted side does not turn up.",
       "claim": "c5"
     },
     {
@@ -602,7 +602,7 @@
     },
     {
       "mistake": "Opening the lifted-leg hip.",
-      "fix": "Keep both hips pointing at the floor; shorten the range if needed.",
+      "fix": "Keep both hips pointing at the floor. Shorten the range if needed.",
       "claim": "c5"
     },
     {
@@ -661,10 +661,10 @@
   },
   "risks": [
     {
-      "risk": "Losing balance on one leg: keep the lifted leg's toes touching if needed.",
+      "risk": "Losing balance on one leg: keep the free leg's toes on the floor.",
       "claim": [
-        "c13",
-        "c6"
+        "c6",
+        "c13"
       ]
     },
     {

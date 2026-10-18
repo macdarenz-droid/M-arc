@@ -525,7 +525,7 @@
       "claim": "c2"
     },
     {
-      "step": "Handles outside shoulder width, elbows just below 90 degrees, wrists over elbows.",
+      "step": "Handles just outside shoulders, elbows just below 90 degrees, wrists over elbows.",
       "claim": "c3"
     },
     {
@@ -656,7 +656,7 @@
       ]
     },
     {
-      "risk": "Too much weight costs form and raises injury risk; add weight in small steps.",
+      "risk": "Too much weight costs form and raises injury risk. Add weight in small steps.",
       "claim": [
         "c7",
         "c14"

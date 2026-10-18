@@ -550,7 +550,7 @@
       "claim": "c3"
     },
     {
-      "step": "Feet shoulder width; overhand grip slightly wider, thumbs around the bar.",
+      "step": "Feet shoulder width. Overhand grip slightly wider, thumbs around the bar.",
       "claim": [
         "c8",
         "c2",
@@ -558,7 +558,7 @@
       ]
     },
     {
-      "step": "Bend at the hips, back straight, knees slightly bent; arms straight.",
+      "step": "Bend at the hips, back straight, knees slightly bent. Arms straight.",
       "claim": [
         "c3",
         "c5"
@@ -569,7 +569,7 @@
       "claim": "c19"
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c14"
     }
   ],
@@ -599,7 +599,7 @@
     },
     {
       "mistake": "Rounding the back.",
-      "fix": "Keep the back flat; if it rounds, lower the weight.",
+      "fix": "Keep the back flat. If it rounds, lower the weight.",
       "claim": [
         "c4",
         "c7"
@@ -645,7 +645,7 @@
     "rows": [
       {
         "where": "Between and around the shoulder blades",
-        "means": "The lats, trapezius and rear delts are the main movers.",
+        "means": "The lats, traps and rear delts are the main movers.",
         "fix": null,
         "claim": [
           "c12"
@@ -702,7 +702,7 @@
       "key": "row-back",
       "kind": "posture",
       "right": "Flat back, hips hinged, soft knees.",
-      "wrong": "Rounded back, or torso rising up as the bar is heaved.",
+      "wrong": "Rounded back, or torso rising as the bar is heaved.",
       "claim": "c4"
     }
   ],

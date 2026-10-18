@@ -597,7 +597,7 @@
     "checkpoints": [
       {
         "label": "Hips back",
-        "what": "The hips move back to lower the bar; knees stay at a fixed slight bend.",
+        "what": "The hips move back to lower the bar. Knees stay at a fixed slight bend.",
         "claim": "c2"
       },
       {
@@ -607,7 +607,7 @@
       },
       {
         "label": "Flat back",
-        "what": "The back stays neutral; depth stops where it would round.",
+        "what": "The back stays neutral. Depth stops where it would round.",
         "claim": "c5"
       }
     ],
@@ -661,7 +661,7 @@
       "claim": "c10"
     },
     {
-      "step": "Grip slightly wider than shoulders; shoulders back and down.",
+      "step": "Grip slightly wider than shoulders. Shoulders back and down.",
       "claim": "c9"
     },
     {
@@ -675,11 +675,11 @@
   ],
   "posture": [
     {
-      "point": "Knees fixed at a slight bend; the movement is at the hips.",
+      "point": "Knees fixed at a slight bend. The movement is at the hips.",
       "claim": "c4"
     },
     {
-      "point": "Spine neutral; stop before it rounds.",
+      "point": "Spine neutral. Stop before it rounds.",
       "claim": "c5"
     },
     {
@@ -687,7 +687,7 @@
       "claim": "c3"
     },
     {
-      "point": "Typically down to about mid-shin; spine position beats depth.",
+      "point": "Typically down to about mid-shin. Spine position beats depth.",
       "claim": "c6"
     },
     {
@@ -698,7 +698,7 @@
   "handlingMistakes": [
     {
       "mistake": "Rounding the lower back.",
-      "fix": "Stop where the back stays flat; if it rounds, lower the weight.",
+      "fix": "Stop where the back stays flat. If it rounds, lower the weight.",
       "claim": [
         "c7",
         "c8"
@@ -710,7 +710,7 @@
       "claim": "c7"
     },
     {
-      "mistake": "So much weight form breaks.",
+      "mistake": "Too heavy, form breaks.",
       "fix": "Go lighter and move smoothly.",
       "claim": "c8"
     }
@@ -780,7 +780,7 @@
       "claim": "c21"
     },
     {
-      "risk": "Too much too soon can leave the back sore; ease into heavy sets gradually.",
+      "risk": "Too much too soon can leave the back sore. Ease into heavy sets gradually.",
       "claim": [
         "c17",
         "c19"
@@ -804,7 +804,7 @@
     {
       "key": "rdl-bottom",
       "kind": "posture",
-      "right": "Hips back, flat back, knees slightly bent, bar at mid-shin close to the legs.",
+      "right": "Hips back, flat back, knees slightly bent, bar at mid-shin.",
       "wrong": "Rounded lower back, or knees bent deep like a squat.",
       "claim": "c7"
     },

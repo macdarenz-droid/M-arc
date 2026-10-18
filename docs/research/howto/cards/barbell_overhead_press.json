@@ -614,7 +614,7 @@
   },
   "setup": [
     {
-      "step": "In the power rack, set the crossbars; bar at shoulder height.",
+      "step": "In the power rack, set the crossbars. Bar at shoulder height.",
       "claim": [
         "c11",
         "c1"
@@ -629,7 +629,7 @@
       ]
     },
     {
-      "step": "Feet hip-width and flat; elbows forward so the forearms are vertical.",
+      "step": "Feet hip-width and flat. Elbows forward so the forearms are vertical.",
       "claim": [
         "c10",
         "c5"
@@ -640,13 +640,13 @@
       "claim": "c11"
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c16"
     }
   ],
   "posture": [
     {
-      "point": "Low back neutral; lean comes from the hips, not the spine.",
+      "point": "Low back neutral. Lean comes from the hips, not the spine.",
       "claim": [
         "c8",
         "c6"
@@ -745,7 +745,7 @@
     {
       "key": "bar-heel-of-palm",
       "kind": "hand",
-      "right": "Bar on the heel of the palm, wrist almost straight, thumb wrapped.",
+      "right": "Bar on the palm's heel, wrist almost straight, thumb wrapped.",
       "wrong": "Bar in mid-palm, wrist bent back.",
       "claim": "c4"
     },

@@ -446,7 +446,7 @@
     "checkpoints": [
       {
         "label": "Elbows pinned",
-        "what": "Upper arms stay against the sides; only the forearms move.",
+        "what": "Upper arms stay against the sides. Only the forearms move.",
         "claim": "c5"
       },
       {
@@ -528,7 +528,7 @@
       "claim": "c5"
     },
     {
-      "point": "Torso tall; any lean comes from the hips, not an arched back.",
+      "point": "Torso tall. Any lean comes from the hips, not an arched back.",
       "claim": "c4"
     },
     {
@@ -551,7 +551,7 @@
   "handlingMistakes": [
     {
       "mistake": "Leaning over or arching back.",
-      "fix": "Stand taller; tilt only from the hips.",
+      "fix": "Stand taller. Tilt only from the hips.",
       "claim": [
         "c11",
         "c4"
@@ -559,7 +559,7 @@
     },
     {
       "mistake": "Elbows drifting forward.",
-      "fix": "Keep the elbows at your sides; stop the return at upper-chest level.",
+      "fix": "Keep the elbows at your sides. Stop the return at upper-chest level.",
       "claim": "c6"
     },
     {
@@ -597,7 +597,7 @@
       {
         "where": "Lower back pain",
         "means": "Fault: leaning too far forward or arching the back.",
-        "fix": "Stop and don't train through the pain. Stand taller; tilt only from the hips.",
+        "fix": "Stop and don't train through the pain. Stand taller, tilt only from the hips.",
         "claim": [
           "c11",
           "c4"
@@ -637,7 +637,7 @@
     {
       "key": "pushdown-wrist",
       "kind": "hand",
-      "right": "Overhand full grip, thumbs wrapped, hands in line with the forearms.",
+      "right": "Overhand full grip, thumbs wrapped, hands in line with forearms.",
       "wrong": "Wrists bent back over the bar.",
       "claim": "c9"
     },

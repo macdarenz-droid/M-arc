@@ -418,7 +418,7 @@
   },
   "setup": [
     {
-      "step": "Head, shoulders and buttocks on the backrest; feet flat; trunk braced.",
+      "step": "Head, shoulders and buttocks on the backrest. Feet flat. Trunk braced.",
       "claim": "c1"
     },
     {
@@ -434,7 +434,7 @@
       "claim": "c7"
     },
     {
-      "step": "Add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c11"
     }
   ],
