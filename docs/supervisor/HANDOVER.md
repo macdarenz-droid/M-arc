@@ -929,6 +929,46 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - LIB-3b READY, then its reviewer.
   - Queued: LIB-4d, LIB-8-FIX, LIB-3c (after #245), LIB-5v (after LIB-5).
 
+**Update ~15:00 UTC.**
+- **Owner answers and asks (owner chat):**
+  - ETA asked at ~13:05. Answer given: all 153 drawings about 5-6 weeks from 10-18 (about 22-29 Nov); best about 4 weeks, worst about 9 weeks. LB1 is on the phone about 3-5 days after the back-box answer. Re-forecast after LB2.
+  - **Back-pain box: option 1 (50 words)** at ~13:15. Recorded in three places:
+    - `claude/libht-research` @ `0393aac9`: back-pain-box.json is `owner-approved`; its appliesTo is the 35 non-golden cards that link redFlag back (D-LIB-W2B); R-W0-1 is updated;
+    - #244 comment 6250331645, which keeps route (b);
+    - the new card **BOX-CAP** (box-cap-card.md; amendment 1 D-BOXCAP-WIRE).
+  - **Leg-press option images** were sent at ~14:15: horizontal leg press A (knee close-up), B (as drawn) or C (named list), recommending B; calf raise recommending C. **Waiting for his letters** ("1B, 2C").
+    - The images came from LIB-9a's mockups (#245 6250897460; artifact v7).
+    - The LP check is on #259 (`claude/libht-research-lp` @ `dd54051e`): no sourced number would clear H3.
+- **LB1 critic: done.** Round 4 VALID (13.8): **all 12 drawn LB1 plates pass the calibrated critic.** horizontal_leg_press and leg_press_calf_raise wait for the owner's letters.
+- **LIB-5 review: PASS @ `1d1fe9e`** (0/0/0/3; reviewer archived). It is **frozen** and merges after LIB-4b and LIB-4c (plan slot 4). The Lows are routed:
+  - Low 1 on the 1d1fe9e change: it reduces worker RPC load. main shows the same `onTaskUpdate` timeout under doubled load, so this is not a fixed root cause.
+  - Low 2: the O5 field rule goes to the LIB-8 merge card, with verifyChain.
+  - Low 3: c15-stamps.test.ts:91's exact-8 pin goes into LIB-10's batch-card lines.
+- **P = 4 withdrawn** (LIB-4b `7679566f`; HT9/show stall on Chromium 141 with no P-independent cause). LIB-4c is back at P = 1 (`bd61bd73`, D-LIB4c-P1) and the scratch is refreshed @ `243574c6`; C14 at P = 1 is next.
+  - **Risk:** at P = 1, one CI job per id (~18 min) means about 154 jobs per full run at 153 ids.
+  - Mitigation: card **LIB-4e** (re-qualify P = 4, lib-4e-card.md), queued after LIB-4b/4c merge and LIB-4d.
+- **Sessions:**
+  - LIB-3b reviewer session_017PGYdVKAyJkwyomGGxwDu2;
+  - BOX-CAP builder session_01WLyzwuYeV2k1jZjS6XTSqU (READY @ `2bea5685`) and its reviewer session_01CkjmC2qrMRioLhgxgtYmas;
+  - **LIB-4d** builder session_01AxVKssCnX9Z2aRpykGP7up;
+  - **LIB-8-FIX** builder session_01QdGHXtEjcSa8a26UskJnC4 (#109, rulings CARRY and ENV quoted);
+  - the LP research session was archived.
+  - Active LIB builders: LIB-4b, LIB-4c, LIB-4d and LIB-8-FIX = 4. LIB-9a, LIB-3b, BOX-CAP and LIB-5 are WAITING.
+- **LIB-4b:** a container restart killed the B2 P = 1 run. It was restarted detached at 14:39, ETA ~17:00, then B8-B10 and READY.
+- **Merge plan to LB1:**
+  1. LIB-4b, then LIB-4c (with #249), then LIB-5, then BOX-CAP;
+  2. LIB-3b, any time in checklist order, before #245;
+  3. Do 9 (`claude/lib-5-back-box`), then LIB-5v;
+  4. LIB-6-PM patches and LIB-4d;
+  5. LIB-9a's Do 9 comparator;
+  6. LB1 (#245).
+- **Card queue:**
+  - LIB-3c (after #245);
+  - LIB-5 Do 9 and LIB-5v (after LIB-5 and BOX-CAP);
+  - LIB-4e;
+  - LIB-6-PM;
+  - the LIB-8 merge card (with verifyChain and O5 Low 2).
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
