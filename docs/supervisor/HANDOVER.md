@@ -980,6 +980,25 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
 - **LIB-4d:** D-LIB4d-A1A2 (#261). The lib-4a A1/A2 beforeAll error on the synthetic 22 tree is a clone artifact (PINS-2), reproduced on main. It goes in S8 as "synthetic 22 tree only" and must pass at real 22.
 - **Waiting on the owner:** the leg-press letters (1A/1B/1C, 2C), and watch G1-G6 (unchanged).
 
+**Update ~19:00 UTC.**
+- **Owner decisions (16:10-16:20):**
+  - horizontal_leg_press gets a **zoom view**: "I like with zoom view but dont put any angles. As people tend to ignore that since they would not follow."
+  - Then "1. A, 2. A":
+    - **leg_press_calf_raise is left out for now** and goes on the named list, decided at the release candidate;
+    - **no angle numbers in zoom views only**; plate labels keep their sourced angles.
+  - New card **LIB-ZOOM** (lib-zoom-card.md @ `60767c08`): a hard card with a design note first (an inline circle, or the golden-B posture zoom), no angle text, and the same H3 bar at the zoom's scale. It is queued after LB1. LB1 is the 12 passing plates.
+- **BOX-CAP:** review PASS @ `2bea568` (0/0/0/2; reviewer archived). It is frozen and merges right after LIB-5. Low: c7.ts:13's header wording goes to the next PR that touches c7.ts.
+- **LIB-4b:**
+  - B2 is green on the final head `7679566` at P = 1 (Chromium 141). It ran in 4 family chunks because of container restarts; the union is exactly 2,947 tuples, with 0 px off.
+  - `--once 1`, the 3 `--blind` runs, B10 and the gate are running.
+- **LIB-4c:**
+  - c0 = 2.9 (D-LIB4c-C0). One push broke the 2 h limit; it was self-reported and data-only.
+  - C12 is met (seeds 1-3 red as expected). C13 (5 full dispatches on scratch `42716893`) is running; 4 of 5 were done at 18:00.
+- **LIB-4d:** D-LIB4d-A1A2 (#261). The lib-4a A1/A2 error on the synthetic 22 tree is a clone artifact.
+- **LIB-8-FIX:** D-LIB8FIX-IMPORTS (#109). The imports test is split per spec at the default timeout, and the "no timeout" rule stands. Its title says "[ready for review]" at `200f8c33`; the READY comment is awaited.
+- **Active LIB builders:** LIB-4b, LIB-4c, LIB-4d and LIB-8-FIX = 4.
+- **Merge order to LB1:** LIB-4b → LIB-4c (+#249) → LIB-5 → BOX-CAP → Do 9 (+LIB-5v) → LIB-4d → LIB-9a's Do 9 comparator → LB1 (12 plates). LIB-8-FIX/#109 merges in plan slot 7.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
