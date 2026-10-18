@@ -29,14 +29,6 @@
       "why": "true for this child because the incline guideline asks for wrists in line with the forearms throughout (c1), the parent's target."
     },
     {
-      "field": "setup['Pick the weight. Start lighter than you think; if you have to bend your wrist back to hold it, it is too heavy.']",
-      "why": "true for this child because the wrist-fold fault it prevents comes from the same handle and grip."
-    },
-    {
-      "field": "setup['If the machine has a foot bar, use it to bring the handles out to the start and to take them back at the end, instead of pulling a heavy handle in with bent wrists.']",
-      "why": "true for this child because incline lever machines can carry the same foot bar; the step applies only where one exists, as in the parent."
-    },
-    {
       "field": "posture['Straight wrist, forearm behind the handle']",
       "why": "true for this child because the same neutral-wrist rule is given for the incline press (c1)."
     },
@@ -199,7 +191,7 @@
     },
     {
       "id": "c8",
-      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo. Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -210,9 +202,26 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
           "where": "abstract"
         },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Load goes up by 2-10% once the target reps are beaten by one or two.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
         {
           "source": "acsm2009",
           "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
@@ -260,7 +269,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-17"
     }
   ],
   "plate": {
@@ -290,7 +299,8 @@
       "what": "Shoulder blades roll forward off the pad at the top of the press.",
       "why": "ACE names it as very frequent on the machine chest press and tells you to avoid it on the incline press; on the flat press ACE says it makes the muscles that hold the shoulder blades to the ribcage less stable.",
       "claim": "c5",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: \"Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest.\" is written for the flat seated chest press, another exercise, so it does not count (c5). Step 2: no quote ties a named fault to harm (\"This promotes instability within the muscles that hold the shoulder blades to the ribcage.\" names no injury, pain, stress or discomfort). Step 3: no common-mistakes list; three faults are each told to be avoided by the same two read sources (ace-incline-press, ace-chest-press): the shoulder blades rounding forward (c5), arching the lower back (c4) and locking the elbows (c3). Tie left open by LR-31: the pick on the head is kept. Tie ruled by the supervisor (W2-R5/W2-R6): the head's pick stays because the census view was chosen for it; LR-31 gives no further order."
     },
     "tells": [
       {
@@ -338,7 +348,7 @@
     },
     {
       "step": "Add 2-10% load only when you can do one or two reps more than your target.",
-      "claim": "c8"
+      "claim": "c9"
     }
   ],
   "posture": [
@@ -482,7 +492,12 @@
     "why": "exercises.json lists upper_chest primary and front_delts, triceps, chest secondary; c6 supports this (bench-press data, MECH). No change."
   },
   "anchorSource": "ace-incline-press",
+  "gaps": [
+    "Start lighter, and a weight that makes you bend the wrist back to hold it is too heavy: no source read for this card and no claim on cards/machine_chest_press.json states it (LR-34).",
+    "A foot bar to bring the handles out and back: no source read for this card and no parent claim describes one, and shared/foot-bar.json does not list this card (LR-34)."
+  ],
   "notes": [
-    "The anchor is ACE's seated incline press on a cable machine, the closest exercise-specific guideline found; its setup and path lines apply to a lever incline machine, but its closing note about cable freedom does not, and is not used. No EMG study of an incline chest press machine was found; the feel spec rests on bench-press inclination data (Rodriguez-Ridao 2020), tagged MECH. The machine's own incline is fixed, so the >45 degree finding (c7) informs the watch muscle only, not a setup step. The wrist feel row is re-sourced here (c1), not inherited."
+    "The anchor is ACE's seated incline press on a cable machine, the closest exercise-specific guideline found; its setup and path lines apply to a lever incline machine, but its closing note about cable freedom does not, and is not used. No EMG study of an incline chest press machine was found; the feel spec rests on bench-press inclination data (Rodriguez-Ridao 2020), tagged MECH. The machine's own incline is fixed, so the >45 degree finding (c7) informs the watch muscle only, not a setup step. The wrist feel row is re-sourced here (c1), not inherited.",
+    "LR-34 check (W2-53, 2026-10-18) against cards/machine_chest_press.json and verified shared cards on head 5036283d; shipped sheet tools/plates/layers/exercises/machine_chest_press.howto.mjs on main b99a9e25. Grip type, thumb, hand contact and wrist hold: machine_chest_press c2 and c13 (MECH), restating the zoom caption 'Heel of your palm, thumb wrapped, wrist straight.' Pick-the-weight step fails: no parent claim states starting lighter or the bent-wrist test, and way (1) found no quote in this card's sources, so it is in gaps (a load line, not routed to a drawing convention). Foot-bar step fails: the shipped sheet has no string for it, shared/foot-bar.json does not list this card, and way (1) found no quote, so it is in gaps. Straight wrist holds: c2 and c13, restating the checkpoint label 'Straight wrist'. Feet flat, hips back holds: c1 and c3, restating the setup string 'Sit right back, hips on the pad, feet flat.' Hand zoom holds: c2 and c13, same caption. Seven inherit entries are left."
   ]
 }

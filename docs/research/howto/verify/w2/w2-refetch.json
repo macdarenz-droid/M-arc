@@ -1,0 +1,694 @@
+{
+ "head": "9dbc7e0af0f3da0490d1800012569973ed511c32",
+ "rule": "first 41 LB1/LB2 claims by sha256('<head>:<card>:<claimId>') ascending",
+ "claims": [
+  {
+   "card": "dumbbell_bench_press",
+   "claim": "c12",
+   "source": "saeterbakken2011",
+   "quote": "Electrical activity in the pectoralis major and anterior deltoid did not differ during the lifts.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "dumbbell_bench_press",
+   "claim": "c12",
+   "source": "saeterbakken2011",
+   "quote": "triceps brachii activity was reduced using dumbbells versus barbell",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "dumbbell_bench_press",
+   "claim": "c12",
+   "source": "saeterbakken2011",
+   "quote": "The dumbbell load was 14% less than that for the Smith machine",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "inverted_row",
+   "claim": "c6",
+   "source": "ace-best-back",
+   "quote": "The subject paused at the top of the motion and then slowly extended the elbows and returned to starting position.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped; first attempt returned HTTP 403 (Azure WAF JS challenge), re-fetched once and got HTTP 200"
+  },
+  {
+   "card": "barbell_bench_press",
+   "claim": "c20",
+   "source": "saeterbakken2021",
+   "quote": "Biceps brachii activity increased with increasing grip width, whereas wide grip displayed lower triceps brachii activation than medium and narrow. In the anterior deltoid, greater activity was observed using a medium compared to narrow grip.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "barbell_bench_press",
+   "claim": "c20",
+   "source": "saeterbakken2021",
+   "quote": "Both groups demonstrated lower 6-RM loads using a narrow grip compared to the other grips.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "skull_crusher",
+   "claim": "c15",
+   "source": "gaviria2020",
+   "quote": "Triceps tendon ruptures (TTRs) are rare and often occur as a result of falling on an outstretched hand, forceful eccentric contraction, direct trauma to the elbow, or lifting against resistance. TTRs are most commonly seen in middle-aged men, football players, and weightlifters.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "assisted_pull_up",
+   "claim": "c5",
+   "source": "bullbar-assist-safety",
+   "quote": "Choose the lowest assistance weight that still allows you to complete 3\u20135 controlled reps with good form.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "assisted_pull_up",
+   "claim": "c5",
+   "source": "bullbar-assist-safety",
+   "quote": "If you can't complete one rep without swinging, increase the assistance slightly.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "incline_machine_press",
+   "claim": "c5",
+   "source": "ace-incline-press",
+   "quote": "Do not allow your back to bend, avoid the rounding of your shoulder blades and maintain stability of your head during the movement.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "incline_machine_press",
+   "claim": "c5",
+   "source": "ace-chest-press",
+   "quote": "Very frequently individuals will press the bar to a point where the shoulder blades round themselves forward and move off the backrest. This promotes instability within the muscles that hold the shoulder blades to the ribcage.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "single_arm_lat_pulldown",
+   "claim": "c15",
+   "source": "odriscoll-1992",
+   "quote": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "single_arm_lat_pulldown",
+   "claim": "c15",
+   "source": "odriscoll-1992",
+   "quote": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "single_arm_lat_pulldown",
+   "claim": "c15",
+   "source": "odriscoll-1992",
+   "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "incline_barbell_bench_press",
+   "claim": "c2",
+   "source": "coratella2020",
+   "quote": "During the concentric phase, [d effect size: 2.78/7.80] clavicular head was more excited in IBP and less excited in CP (d: -9.69/-4.39) compared to all other exercises.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "incline_barbell_bench_press",
+   "claim": "c2",
+   "source": "coratella2020",
+   "quote": "Muscle excitation during the eccentric phase followed a similar pattern, with the exception of the greater (d: 3.89/11.32) excitation in the clavicular head in BP compared to all other exercises.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "decline_bench_press",
+   "claim": "c1",
+   "source": "workoutlabs-decline",
+   "quote": "Secure your feet under the stirrup, bar or strap at the high end of the bench and lie flat on your back with the rack slightly behind you.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "barbell_overhead_press",
+   "claim": "c14",
+   "source": "kolber2013",
+   "quote": "A significant association existed between performance of exercises that require the \"high-five\" position (behind-the-neck latissimus pull-downs and military press) and clinical characteristics of AI.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "barbell_overhead_press",
+   "claim": "c14",
+   "source": "esenkaya2000",
+   "quote": "should be counseled to use safer alternative techniques such as frontal military presses that do not allow movement posterior to the plane of the body",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "close_grip_bench_press",
+   "claim": "c5",
+   "source": "strengthlog-cgbp",
+   "quote": "Lie on the bench, pull your shoulder blades together and down, and slightly arch your back.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "close_grip_pulldown",
+   "claim": "c9",
+   "source": "ace-lat-pulldown",
+   "quote": "initiate the downward pull by first depressing (lower) your scapulae",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "skull_crusher",
+   "claim": "c3",
+   "source": "ace-lying-tri-ext",
+   "quote": "Maintain a neutral wrist position (no flexion or extension at the wrist).",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "chin_up",
+   "claim": "c19",
+   "source": "barbend-chin-up",
+   "quote": "A strong grip and forearms are needed to both keep you holding on to the bar itself as well as provide a stable connection to pull from.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "dumbbell_shoulder_press",
+   "claim": "c2",
+   "source": "ace-seated-ohp",
+   "quote": "slowly lift the dumbbells to your shoulder level with a closed, pronated grip (palms facing forward and thumbs wrapped around the handles), with the dumbbells at shoulder-width or slightly wider and wrists in a neutral position",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "dumbbell_pullover",
+   "claim": "c14",
+   "source": "bm-pullover",
+   "quote": "excessive elbow bend is also associated with \u201cflared,\u201d or outward-pointing, elbows. This position reflects internal rotation of the shoulder and may increase stress on the inside of the elbow",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "dumbbell_pullover",
+   "claim": "c14",
+   "source": "bm-pullover",
+   "quote": "Focus on keeping your elbows pointing forward and/or up during the dumbbell pullover.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "chest_supported_row",
+   "claim": "c3",
+   "source": "ace-row-machine",
+   "quote": "Depress and retract your scapulae (pull shoulders back and down), maintain a neutral wrist position (i.e., wrist in line with your forearms) and attempt to hold these positions throughout the exercise.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "chest_supported_row",
+   "claim": "c11",
+   "source": "fenwick2009",
+   "quote": "The 3 rowing exercises investigated are the inverted row, standing bent-over row, and the standing 1-armed cable row.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "chest_supported_row",
+   "claim": "c11",
+   "source": "fenwick2009",
+   "quote": "The standing bent-over row produced large activation symmetrically across the back but produced the largest lumbar spine load.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "chest_supported_row",
+   "claim": "c11",
+   "source": "saeterbakken2015",
+   "quote": "In bilateral free-weight row, EMG activity in erector spinae was greater than bilateral machine- (+34%, P=0.004) and unilateral free-weight rows (+12%, P=0.016).",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "dumbbell_shoulder_press",
+   "claim": "c8",
+   "source": "saeterbakken2013",
+   "quote": "1-RM strength for standing dumbbells was ~7% lower than standing barbell (p = 0.002) and ~10% lower than seated dumbbells (p < 0.001).",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "dumbbell_shoulder_press",
+   "claim": "c8",
+   "source": "saeterbakken2013",
+   "quote": "the exercise with the greatest stability requirement (standing and dumbbells) demonstrated the highest neuromuscular activity of the deltoid muscles",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "chest_supported_row",
+   "claim": "c9",
+   "source": "lehman2004",
+   "quote": "Highest levels of myoelectric activity in the middle trapezius/rhomboid muscle group occurred during the seated row. Actively retracting the scapula did not influence middle trapezius/rhomboid activity.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "horizontal_leg_press",
+   "claim": "c13",
+   "source": "ace-seated-leg-press",
+   "quote": "Pause momentarily, then slowly return to your starting position",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "horizontal_leg_press",
+   "claim": "c13",
+   "source": "webmd-seated-leg-press",
+   "quote": "Take a pause, and slowly return your body to the starting position.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "dumbbell_pullover",
+   "claim": "c19",
+   "source": "kerr2010",
+   "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "incline_barbell_bench_press",
+   "claim": "c12",
+   "source": "boostcamp-incline",
+   "quote": "Stop immediately if you feel pain or discomfort in your shoulders or chest.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "incline_barbell_bench_press",
+   "claim": "c12",
+   "source": "boostcamp-incline",
+   "quote": "Progress gradually to heavier weights to avoid injury.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "decline_bench_press",
+   "claim": "c7",
+   "source": "workoutlabs-decline",
+   "quote": "Set a barbell in a weight rack at the low end of a decline bench, making sure it is at a height you can reach without fully extending your arms.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "decline_bench_press",
+   "claim": "c7",
+   "source": "workoutlabs-decline",
+   "quote": "Push up to lift the bar from the rack and hold it directly over you with your arms locked.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "close_grip_pulldown",
+   "claim": "c4",
+   "source": "ace-lat-pulldown",
+   "quote": "Lean back slightly (no more than a 30 degree angle), using your legs to support your body (low back).",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "close_grip_pulldown",
+   "claim": "c4",
+   "source": "ace-lat-pulldown",
+   "quote": "Avoid any additional backwards lean during the pull movement.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "horizontal_leg_press",
+   "claim": "c5",
+   "source": "ace-seated-leg-press",
+   "quote": "Do not allow your upper thighs to compress your ribcage.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "horizontal_leg_press",
+   "claim": "c5",
+   "source": "webmd-seated-leg-press",
+   "quote": "When returning to the start position, do not let your thigh lower to below the 90-degree level at the knee. If the thighs dip too low, you could hurt the knees.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "close_grip_bench_press",
+   "claim": "c3",
+   "source": "ace-cgbp",
+   "quote": "Push the feet into the floor, and press the hips into the bench as the bar is pushed away from the chest to return to the starting position.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped; first attempt returned HTTP 403 (Azure WAF JS challenge), re-fetched once and got HTTP 200"
+  },
+  {
+   "card": "close_grip_pulldown",
+   "claim": "c10",
+   "source": "lusk-2010",
+   "quote": "Participants maintained a cadence of 2-second concentric and 2-second eccentric phases.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "incline_dumbbell_press",
+   "claim": "c17",
+   "source": "hk-db-bench",
+   "quote": "Lean back into a supine position on the bench while positioning your hands and dumbbells over your shoulders.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "incline_dumbbell_press",
+   "claim": "c17",
+   "source": "hk-db-bench",
+   "quote": "All other positions and movement cues are similar.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "resistance_band_row",
+   "claim": "c12",
+   "source": "theraband-manual",
+   "quote": "Begin with palms up and ends of band between the thumb and palm. Rotate your palms inward, bringing the band around the back of your hands. Repeat as needed. Firmly grasp.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; PDF text via pdftotext"
+  },
+  {
+   "card": "skull_crusher",
+   "claim": "c7",
+   "source": "strengthshop-skull",
+   "quote": "Upper arms drifting back: the most common fault, and the one that reduces tricep involvement by shifting the load onto the shoulder.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "dumbbell_pullover",
+   "claim": "c10",
+   "source": "bm-pullover",
+   "quote": "The pullover requires a spotter due to movement of the dumbbell over your face and head.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "dumbbell_pullover",
+   "claim": "c10",
+   "source": "bm-pullover",
+   "quote": "If you are training solo (at your own risk), bring the dumbbell to your thigh.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "dumbbell_pullover",
+   "claim": "c10",
+   "source": "bm-pullover",
+   "quote": "Ensure the spotter has full control of the dumbbell before you let go. If training alone, maintain a secure grip until the dumbbell rests on your thigh.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "chest_supported_row",
+   "claim": "c6",
+   "source": "ace-row-machine",
+   "quote": "Avoid leaning back and arching your low back and attempt to minimize any movement of your head during the movement.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "chest_supported_row",
+   "claim": "c6",
+   "source": "ace-row-machine",
+   "quote": "Additionally, reduce unnecessary stresses into your low back by avoiding any backwards lean during the pull movements.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "hanging_knee_raise",
+   "claim": "c7",
+   "source": "workman-2008",
+   "quote": "The Janda sit-up and the posterior tilt were significantly greater (p < 0.01 and p < 0.05, respectively) than the anterior tilt for the URA and LRA muscles.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "chin_up",
+   "claim": "c10",
+   "source": "youdas-2010",
+   "quote": "The pectoralis major and biceps brachii had significantly higher EMG activation during the chin-up than during the pull-up, whereas the lower trapezius was significantly more active during the pull-up.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "skull_crusher",
+   "claim": "c1",
+   "source": "ace-lying-tri-ext",
+   "quote": "Holding a barbell with a closed, pronated grip (palms facing your feet and thumbs wrapped around the bar), lie supine (on your back) on a flat bench with your feet firmly placed on the floor.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "chest_supported_row",
+   "claim": "c4",
+   "source": "ace-row-machine",
+   "quote": "Flex (bend) your elbows and pull them towards your chest keeping your elbows close to the sides of your body. Continue to maintain a neutral wrist position, and contact with your chest against the chest pad.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "close_grip_pulldown",
+   "claim": "c7",
+   "source": "ace-lat-pulldown",
+   "quote": "Continue pulling until the bar nears or touches your chest, or more importantly, you observe your elbows no longer moving downward, but now beginning to move backwards.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "close_grip_pulldown",
+   "claim": "c7",
+   "source": "ace-lat-pulldown",
+   "quote": "Avoid any further pulling as this places additiomnal stresses into the shoulder joint.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "single_arm_lat_pulldown",
+   "claim": "c3",
+   "source": "barbend-single-arm-lat-pulldown",
+   "quote": "Brace your core and set your scapula, then drive straight downward, leading by dropping your shoulder away from your ear and then following through by pulling your elbow downward until your upper arm is flush with your torso.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; HTML tags stripped"
+  },
+  {
+   "card": "horizontal_leg_press",
+   "claim": "c11",
+   "source": "macdougall1985",
+   "quote": "The purpose of this study was to record the blood pressure response to heavy weight-lifting exercise in five experienced body builders.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "horizontal_leg_press",
+   "claim": "c11",
+   "source": "macdougall1985",
+   "quote": "Exercises included single-arm curls, overhead presses, and both double- and single-leg presses performed to failure at 80, 90, 95, and 100% of maximum.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "horizontal_leg_press",
+   "claim": "c11",
+   "source": "macdougall1985",
+   "quote": "Systolic and diastolic blood pressures rose rapidly to extremely high values during the concentric contraction phase for each lift",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "horizontal_leg_press",
+   "claim": "c11",
+   "source": "macdougall1985",
+   "quote": "The greatest peak pressures occurred during the double-leg press where the mean value for the group was 320/250 mmHg, with pressures in one subject exceeding 480/350 mmHg.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "horizontal_leg_press",
+   "claim": "c11",
+   "source": "macdougall1985",
+   "quote": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver.",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  },
+  {
+   "card": "arnold_press",
+   "claim": "c14",
+   "source": "kerr2010",
+   "quote": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+   "status": "verbatim",
+   "http": 200,
+   "closest": null,
+   "note": "normalised substring match; fetched via PubMed efetch"
+  }
+ ],
+ "counts": {
+  "claims": 41,
+  "quotes": 68,
+  "verbatim": 68,
+  "close": 0,
+  "missing": 0,
+  "unreachable": 0
+ }
+}

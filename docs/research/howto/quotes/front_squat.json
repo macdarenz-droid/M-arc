@@ -56,6 +56,12 @@
       "url": "https://www.nhs.uk/conditions/knee-pain/",
       "access": "full",
       "notes": "fetched with curl, HTTP 200; no metadata to check"
+    },
+    {
+      "id": "stronglifts-squat",
+      "url": "https://stronglifts.com/squat/",
+      "access": "full",
+      "notes": "fetched with curl, HTTP 200, 2026-10-18 (W2-R7)"
     }
   ],
   "quotes": [
@@ -364,6 +370,13 @@
       "claim": "c25",
       "source": "rep-fail",
       "text": "Practice this movement with lighter weights to get comfortable with the process.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c26",
+      "source": "stronglifts-squat",
+      "text": "Then walk back by taking one step back with each leg.",
       "status": "verbatim",
       "closest": null
     }

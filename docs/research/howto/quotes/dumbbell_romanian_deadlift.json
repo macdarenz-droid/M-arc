@@ -1,6 +1,6 @@
 {
   "id": "dumbbell_romanian_deadlift",
-  "checked": "2026-09-30",
+  "checked": "2026-10-17",
   "quotes": [
     {
       "claim": "c1",
@@ -229,9 +229,17 @@
     {
       "claim": "c20",
       "source": "acsm2009",
-      "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
       "status": "verbatim",
-      "closest": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "acsm2009",
+      "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+      "status": "verbatim",
+      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
       "note": ""
     },
     {
@@ -333,8 +341,8 @@
     {
       "id": "acsm2009",
       "access": "abstract",
-      "checked": "2026-09-30",
-      "changes": "none"
+      "checked": "2026-10-17",
+      "changes": "none to the source record; LR-15 re-check: c20's tempo quote replaced by Q1 (intermediate to advanced scope) and Q2 (heavy loading, 1-2 s CON; 1-2 s ECC), both verbatim in the efetch abstract (PMID 19204579)"
     },
     {
       "id": "nhs-back-pain",

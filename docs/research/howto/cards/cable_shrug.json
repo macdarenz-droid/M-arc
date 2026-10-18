@@ -147,31 +147,30 @@
     },
     {
       "id": "c7",
-      "text": "Tempo: about 1-2 s up and 1-2 s down, with a one-second hold at the top and a slow lowering (the slow lowering is from the ACE barbell shrug page; same shoulder movement on a cable).",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, with a one-second hold at the top. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
       "tags": [
         "CONSENSUS",
-        "MECH"
+        "WEAK"
       ],
       "sources": [
         "acsm2009",
-        "exercise-com-cable-shrug",
-        "ace-shrug"
+        "exercise-com-cable-shrug"
       ],
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
           "source": "exercise-com-cable-shrug",
           "text": "Hold the contraction at the top for a second.",
           "where": "Step 3"
-        },
-        {
-          "source": "ace-shrug",
-          "text": "lowering slowly to the original starting position.",
-          "where": "exercise description"
         }
       ]
     },
@@ -341,6 +340,24 @@
           "where": "abstract, results"
         }
       ]
+    },
+    {
+      "id": "c16",
+      "text": "The lowering is slow, back to the starting position (from the ACE barbell shrug page; same shoulder movement on a cable).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "ace-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "ace-shrug",
+          "text": "lowering slowly to the original starting position.",
+          "where": "exercise description"
+        }
+      ]
     }
   ],
   "sources": [
@@ -362,7 +379,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-17"
     },
     {
       "id": "ace-shrug",
@@ -488,7 +505,10 @@
       "up": 1,
       "down": 2,
       "pause": 1,
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c16"
+      ]
     },
     "variantLine": null
   },
@@ -537,7 +557,10 @@
     },
     {
       "point": "Hold the top for a second, lower slowly.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c16"
+      ]
     }
   ],
   "handlingMistakes": [
@@ -624,5 +647,8 @@
     "remove": [],
     "why": "Library primary upper_traps matches (c8, c15). The anchor names no other muscle."
   },
-  "anchorSource": "exercise-com-cable-shrug"
+  "anchorSource": "exercise-com-cable-shrug",
+  "notes": [
+    "c7 is split (2026-10-18, W2-45). The ACE barbell-shrug slow lowering is now c16 [CONSENSUS, MECH], and c7 keeps the top hold plus the ACSM seconds as a drawing convention [CONSENSUS, WEAK] (LR-15, D-W2-TEMPO). Each tag set now matches one the 8 use (CARD-V2). plate.tempo and posture[3] cite both."
+  ]
 }
