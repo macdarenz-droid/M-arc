@@ -572,6 +572,13 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
     expect(next.once).toEqual({ run: 63, shard: 12 });
     expect([next.default, next.c0]).toEqual([t.default, t.c0]);
   });
+  it('D-LIB4c-5: an id\'s seconds are its share of the shard\'s wall time after the once-states (P > 1 jobs overlap)', () => {
+    const m = (k: number, seconds: any, once: number, wall: number) => ({ meta: { job: { k }, seconds, onceSeconds: once, shardSeconds: wall } });
+    // C14 run 1, shard 2 at P = 4: 3,158.3 job-seconds in 847.6 s, 18.3 s of them once-states
+    const next = refreshLibraryTimes(readTimes(ROOT), [m(2, { x: 1054.3, y: 1064.7, z: 1039.3 }, 18.3, 847.6)]);
+    expect(next.ids).toEqual({ x: 276.8, y: 279.6, z: 272.9 });
+    expect(Object.values(next.ids).reduce((a: number, b: any) => a + b, 0)).toBeCloseTo(847.6 - 18.3, 0);
+  });
   it('compare.mjs: identical runs pass; a dropped row, a flipped result or a changed px is the first difference', () => {
     const run1: any = [{ sha: SHA, rows: [{ id: 'a', theme: 't', state: 'L3/N@390', result: 'pass' }, { id: 'a', theme: 't', state: 'L3/M@390', result: 'pass' }], meta: { px: { 'a|t|L3/N@390': 0 } } }];
     expect(firstDifference([run1, clone(run1), clone(run1)])).toBeNull();
