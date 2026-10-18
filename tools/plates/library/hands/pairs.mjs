@@ -7,6 +7,7 @@ import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { renderHandPair } from '../../layers/engine/hand.mjs';
 import { mergePose } from '../render/closeup/common.mjs';
+import { PANEL_WORDS, panelHtml } from './panel.mjs';
 
 export const HERE = dirname(fileURLToPath(import.meta.url));
 export const ROOT = join(HERE, '../../../..');
@@ -276,9 +277,56 @@ export function importClosure(files) {
 /** The files one id's drawing reads (LIB-2 per-output inputsSha256): its key file and the mechanism, with everything they
  *  import, plus the key's declared INPUTS (sizes matched to a composer). A change to another key never marks it stale. */
 export function inputsFor(id, index = INDEX) {
+  // LIB-7-FIX (D-LIB7FIX-API): a pair key gives the list of its ids (keys hold '-', ids never do; keyIndexOf throws on a clash)
+  if (!index.drawn.has(id)) { const k = (index === INDEX ? KEYS : keyIndexOf(index)).keys.get(id); if (k) id = k.ids[0]; }
   const e = index.drawn.get(id);
   if (!e) throw new Error(`hand pairs: inputsFor: ${id} has no pair`);
   const lib = p => `tools/plates/library/${p}`;
-  return [...new Set([...importClosure([lib('hands/pairs.mjs'), lib('hands/zoom.mjs'), e.mod.FILE, ...(e.mod.VIEW_FILES ?? [])]), ...(e.mod.INPUTS ?? [])])].sort();
+  return [...new Set([...importClosure([lib('hands/pairs.mjs'), lib('hands/zoom.mjs'), e.mod.FILE, ...(e.mod.VIEW_FILES ?? [])]), ...(e.mod.INPUTS ?? []), PANEL_WORDS])].sort();
+}
+
+// ---- LIB-7-FIX: main's loader contract (tools/plates/gen/handpairs.mjs:3-4; hands/DESIGN.md §8) ----
+const EXERCISE_IDS = new Set(JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => e.id));
+const GOLDEN_IDS = new Set(Object.keys(JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8'))));
+export const KEY_RE = /^[a-z0-9-]+$/;
+/** The pair key of one drawn id: module KEY, variant and orientation (D-LIB7FIX-KEY). */
+export const keyOfCfg = (mod, cfg) => `${mod.KEY}-${cfg.variant}-${cfg.orientation}`;
+
+/** key -> { key, triple, faults, ids }, id -> key. A key is KEY x variant x orientation x the ordered fault list; throws
+ *  when ids on one key differ in faults, two triples give one string, a key is not [a-z0-9-], one key + '-' starts
+ *  another, a key equals a drawn id, a drawn id is not in src/data/exercises.json or is one of the 8. */
+export function keyIndexOf(index = INDEX) {
+  const keys = new Map(), keyOf = new Map();
+  for (const [id, { mod, cfg }] of index.drawn) {
+    const key = keyOfCfg(mod, cfg), triple = `${mod.KEY}/${cfg.variant}/${cfg.orientation}`, faults = cfg.faults.join(',');
+    if (!KEY_RE.test(key)) throw new Error(`hand pairs: key ${key} (${id}) is not ${KEY_RE}`);
+    if (!EXERCISE_IDS.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is not in src/data/exercises.json`);
+    if (GOLDEN_IDS.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is one of the 8 (tools/plates/plates.json); it keeps its own hand`);
+    const k = keys.get(key);
+    if (!k) keys.set(key, { key, triple, faults: cfg.faults, ids: [id] });
+    else if (k.triple !== triple) throw new Error(`hand pairs: ${k.triple} and ${triple} both give key ${key}`);
+    else if (k.faults.join(',') !== faults) throw new Error(`hand pairs: key ${key}: ${k.ids[0]} has faults [${k.faults}], ${id} has [${cfg.faults}]`);
+    else k.ids.push(id);
+    keyOf.set(id, key);
+  }
+  for (const a of keys.keys()) {
+    if (index.drawn.has(a)) throw new Error(`hand pairs: key ${a} equals a drawn id`);
+    for (const b of keys.keys()) if (a !== b && b.startsWith(`${a}-`)) throw new Error(`hand pairs: key ${a} + '-' starts key ${b}`);
+  }
+  return { keys, keyOf };
+}
+const KEYS = keyIndexOf(INDEX);
+/** Every drawn id of any owner, as `lib_<card id>` -> pair key. Never one of the 8 or a gap. */
+export const HAND_OF_ID = Object.freeze(Object.fromEntries([...KEYS.keyOf].map(([id, k]) => [`lib_${id}`, k])));
+/** The pair keys, in first-drawn order. */
+export const keysOf = (index = INDEX) => [...(index === INDEX ? KEYS : keyIndexOf(index)).keys.keys()];
+
+/** The exercise-neutral hand close-up of one pair key: a `<div class="zx"` panel whose ids all start `hp-<key>-`, one
+ *  page per fault, each the key's first id drawn by renderPair with the uid `hp-<key>-<fault>`; words from panel-words.json. */
+export async function pairPanel(key, index = INDEX) {
+  const k = (index === INDEX ? KEYS : keyIndexOf(index)).keys.get(key);
+  if (!k) throw new Error(`hand pairs: pairPanel: no key ${key}`);
+  const s = pairSpec(k.ids[0], index);
+  return panelHtml(key, s.wrong.map(w => ({ fault: w.key, svg: renderPair(k.ids[0], { fault: w.key, uid: `hp-${key}-${w.key}`, index }).svg })));
 }
 
