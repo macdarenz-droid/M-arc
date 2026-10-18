@@ -23,7 +23,7 @@ describe('D-HT10-A4: the How-to total ceiling', () => {
     const reg = await import(/* @vite-ignore */ new URL('../../tools/plates/library/registry.mjs', import.meta.url).href) as { shippedIds: () => string[] };
     const { totalCeiling } = await import(/* @vite-ignore */ new URL('../../tools/plates/library/budgets/total.mjs', import.meta.url).href) as { totalCeiling: (m: number, n: number) => number };
     const n = reg.shippedIds().length;
-    expect(n).toBeGreaterThanOrEqual(8);
+    expect(reg.shippedIds().slice(0, 8)).toEqual(Object.keys(JSON.parse(readFileSync('tools/plates/plates.json', 'utf8'))));   // the 8 ship first, in plates.json order
     const upper = (v: number) => (n === 8 ? ceil10(v) : totalCeiling(v, n));
     expect(t.rawMax).toBeGreaterThanOrEqual(t.measuredRaw);
     expect(t.rawMax).toBeLessThanOrEqual(upper(t.measuredRaw));

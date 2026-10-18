@@ -53,7 +53,7 @@ Rules judged: 50 · verdicts: {"correct": 28, "questionable": 15, "wrong": 7}. P
 - Source: P4
 
 ### DATES-F7 · One missed scheduled day ends the streak
-- Severity **medium** · status **confirmed** · where `src/brain/weekly.ts:96-111; src/slices/today/Today.tsx:55; src/escobar/tools/read.ts:138`
+- Severity **medium** · status **streak part fixed by BUG-39 (D-BUG39); the weeks-on-plan report and 28-day rate stay open** · where `src/brain/weekly.ts:96-111; src/slices/today/Today.tsx:55; src/escobar/tools/read.ts:138`
 - What the code does: Walking back from today, the first past scheduled day with no session stops the count. 'Weeks on plan' with a free miss is not built.
 - What is correct: Plan :217 and :647: never reset the streak to zero for one miss, and report weeks on plan with one free miss per 4 weeks.
 - Evidence: checker2-session 'R50': Mon-Fri schedule, 4 weeks with one missed Tuesday -> { scheduledDaysTrained: 19, withMiss: 2, noMiss: 20 }. Only one 'weeks on plan' item exists in src: adherenceRate (weeklyReview.ts:91).
