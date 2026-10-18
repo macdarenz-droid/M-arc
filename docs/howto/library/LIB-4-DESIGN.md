@@ -113,4 +113,51 @@ Day-1 result (#232): LIB-2's generator at 54d37f2d emitted no plate or layer chu
 
 ## 6. Results
 
-Filled in from the final-head runs (D-LIB4b-COUNTS: values quoted from the runs; "unverified" where a check was not run).
+Values are quoted from the runs (D-LIB4b-COUNTS); "unverified" means a check was not run. All runs used Chromium 141.0.7390.37 in the container (nproc 4).
+
+### B5: library path, final tree
+
+Tree: 575fa75 + #181 9b8f76e, scratch only. 575fa75 and this branch's later heads differ only in `.github/` and `docs/`. Steps: `fixture.mjs <tree> all`, `generate` and `--check` (PASS, 78 files), `npm run build`, fixture budgets.
+
+- **Rows:** 1,100 of 1,100 pass, which equals `libraryTuples` of the 3 ids. Max px off is 0 on all 3. The run took 2,793.5 s at P=1.
+- **Seconds per id:** underhand lat pulldown 933.3, chest-supported row 929.4, cable chest press 930.4.
+- **Seconds per family:**
+
+  | Family | Seconds |
+  |---|---|
+  | L2 | 0 |
+  | HT7 | 201.9 |
+  | HT8 | 228.4 |
+  | PQH | 136.7 |
+  | entry | 24.1 |
+  | offline | 6.4 |
+  | HT4 | 97.5 |
+  | plate | 425.1 |
+  | HT6 | 306.5 |
+  | HT9 | 393.2 |
+  | HT10 | 973.4 |
+
+- **F5:** 3.57:1 on the 3 ids, the same as on lat pulldown, seated row and machine chest press (D-LIB4b-F5).
+- **HT6/A7-lazy:** runs in a fresh browser context per (id, theme), because `openAppTrain` opens a new context.
+
+**Mutations**
+
+| Mutation | Result |
+|---|---|
+| (a) 1 px `translateX` on the chest-supported row's plate, page CSS | 68 of 357 plate rows fail, all of them that id's (L3 and L2b). The other two ids stay at 0 px. |
+| (b) One source byte changed (that id's spec start tilt, 8 → 9) | Only that id's 11 PQH rows fail. PQH/PQ-H7 fails too, because the report is not ok; the root is PQ-H1 (measure 79.8 vs 87). A deliberately nondeterministic pulley radius did not trip `H7.determinism` (33 of 33 pass); why is unverified. |
+| (c) Research card removed (cable chest press) | `QaRefused: plate QA refused lib_cable_chest_press: PQ-H6 no verified card plate facts` |
+| (d) F5 exemption removed from the underhand lat pulldown | Only that id's `PQH/flags` fails ("F5 raised without a named exemption"); its other PQH rows fail as "report not ok". The re-pin is byte-identical. |
+| (e) The seated row copy edit reverted | `QaRefused: plate QA refused lib_chest_supported_row: PQ-H8 normal.tall.cue "Sit tall; no rocking, the torso finishes upright.": semicolon` |
+| POSES (7) | 48 calls; PASS. A Right override `{ base: 'end', pose: { neck: 4 } }` on the underhand pulldown's pad zoom fails only `HT4/A5-poses` (11 of 12 pass). |
+
+### B7: P decision (dry run, 624d7e8 + LIB-4a 4a2c12e)
+
+| P | Rows | Max px | Wall time |
+|---|---|---|---|
+| 1 | 2,947 of 2,947 | 0 | 7,511 s |
+| 4 | 2,947 of 2,947 | 0 | 2,036 s |
+
+- Rows and px are identical across all 1,009 pixel tuples, so `par.mjs` gives P = 4. That is a 3.69× speed-up.
+- A forced 1-row difference keeps P = 1.
+- The default stays P = 1 until B7 runs on the final head.
