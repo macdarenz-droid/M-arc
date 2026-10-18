@@ -304,6 +304,29 @@
           "where": "closing notes"
         }
       ]
+    },
+    {
+      "id": "c17",
+      "text": "Lower the bar over about 3 seconds: this retailer coaching blog asks for a controlled eccentric of two to three seconds, and gives three seconds down as the fix for rushing the lowering.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "strengthshop-skull"
+      ],
+      "quotes": [
+        {
+          "source": "strengthshop-skull",
+          "text": "Skull crushers respond well to a controlled eccentric — two to three seconds down — which increases time under tension and maximises the stimulus on the long head.",
+          "where": "How to do skull crushers: what not to do"
+        },
+        {
+          "source": "strengthshop-skull",
+          "text": "Fix: three seconds down, controlled at the bottom, press back up.",
+          "where": "Common skull crusher mistakes and how to fix them"
+        }
+      ]
     }
   ],
   "sources": [
@@ -420,9 +443,13 @@
     ],
     "tempo": {
       "up": 1,
-      "down": 2,
+      "down": 3,
       "pause": 0,
-      "claim": "c13"
+      "claim": [
+        "c17",
+        "c13"
+      ],
+      "text": "3 s down: the only value in both of Strength Shop's lines for this exercise (c17, WEAK, retailer blog; ruling R-LB2-1). 1 s up keeps ACSM's 1-2 s, stated for intermediate to advanced training (c13, WEAK; LR-15). Pause 0: no quote asks for a pause right after the press; Strength Shop's \"Squeeze the triceps at the top\" gives no pause or seconds."
     },
     "variantLine": "exercises.json lists \"EZ Bar / Barbell\". The EZ bar is drawn (census ezBar; StrengthLog uses it, c10). The setup, arm path and wrist rules (c1-c6) come from ACE's barbell version and hold for both; the EZ bar's easier wrist angle (c8) is the only difference."
   },
