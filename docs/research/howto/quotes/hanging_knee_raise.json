@@ -41,6 +41,11 @@
       "id": "yessis-hanging-knee-leg-raise",
       "access": "full",
       "fixes": null
+    },
+    {
+      "id": "bullbar-calluses",
+      "access": "full",
+      "fixes": null
     }
   ],
   "quotes": [
@@ -230,6 +235,27 @@
       "claim": "c16",
       "source": "odriscoll-1992",
       "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c17",
+      "source": "bullbar-calluses",
+      "quote": "When you hang, the bar should sit just below the base of your fingers—where your fingers meet your palm.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c18",
+      "source": "bullbar-calluses",
+      "quote": "For dead hangs or carries: shoulder-width, palms facing away (pronated grip).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c19",
+      "source": "bullbar-calluses",
+      "quote": "Pull your shoulder blades down and back",
       "status": "verbatim",
       "closest": null
     }

@@ -65,7 +65,7 @@
    "text": "At the of your set, either lower the weights to the floor or, with your arms bent, just sit back up and return to your starting position. Alternatively, if you have spotters nearby, allow them to take the weights from you.",
    "status": "verbatim",
    "closest": "At the of your set, either lower the weights to the floor or, with your arms bent, just sit back up and return to your starting position. Alternatively, if you have spotters nearby, allow them to take the weights from you.",
-   "note": "Source retrieved via WebFetch (direct curl blocked by Sucuri JS challenge); WebFetch confirmed this passage verbatim, keeping the source's own typo 'At the of your set'."
+   "note": "Re-checked by curl 2026-10-18 (desktop UA): the source URL answers HTTP 301 to https://fitnessvolt.com/dumbbell-bench-press-guide/, which returns HTTP 200 with the full page text; this passage matches verbatim, keeping the source's own typo 'At the of your set'."
   },
   {
    "claim": "c5",
@@ -73,7 +73,7 @@
    "text": "This is less of an issue with dumbbells because, if you get stuck, you can simply drop the weights out to the side.",
    "status": "verbatim",
    "closest": "This is less of an issue with dumbbells because, if you get stuck, you can simply drop the weights out to the side.",
-   "note": "Source retrieved via WebFetch (direct curl blocked by Sucuri JS challenge); WebFetch confirmed this passage verbatim."
+   "note": "Re-checked by curl 2026-10-18 (desktop UA): the source URL answers HTTP 301 to https://fitnessvolt.com/dumbbell-bench-press-guide/, which returns HTTP 200 with the full page text; this passage matches verbatim."
   },
   {
    "claim": "c4",
