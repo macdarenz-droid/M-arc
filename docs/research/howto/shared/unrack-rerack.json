@@ -127,7 +127,7 @@
    "steps": [
     {
      "kind": "adjust",
-     "text": "Hooks at about mid-chest; pins just below your bottom position.",
+     "text": "Hooks at about mid-chest, pins just below your bottom position.",
      "claim": [
       "c13",
       "c14"
@@ -135,13 +135,11 @@
     },
     {
      "kind": "position",
-     "text": "Feet under the bar; stand straight up to unrack.",
-     "claim": "c15"
-    },
-    {
-     "kind": "position",
-     "text": "Walk back one step with each leg. Keep it short.",
-     "claim": "c16"
+     "text": "Feet under the bar, stand straight up, one step back per leg.",
+     "claim": [
+      "c15",
+      "c16"
+     ]
     },
     {
      "kind": "finish",
@@ -171,12 +169,7 @@
    "steps": [
     {
      "kind": "safety",
-     "text": "Set the safety stops just below your lowest point.",
-     "claim": "c20"
-    },
-    {
-     "kind": "safety",
-     "text": "Test the stops with a light rep first.",
+     "text": "Set stops just below your lowest point. Test with a light rep.",
      "claim": "c20"
     },
     {

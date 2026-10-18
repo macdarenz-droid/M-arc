@@ -37,33 +37,21 @@
   },
   {
    "kind": "adjust",
-   "text": "Set the seat and pads before you sit down.",
-   "claim": "c1"
-  },
-  {
-   "kind": "adjust",
-   "text": "Check each adjusting pin is fully in its hole.",
+   "text": "Set the seat and pads with each pin fully in its hole.",
    "claim": "c1"
   },
   {
    "kind": "get-in",
-   "text": "Sit or lie down in the start position.",
-   "claim": "c3"
-  },
-  {
-   "kind": "load",
-   "text": "Pick a weight you can lift and control.",
+   "text": "Sit or lie in position. Pick a weight you can control.",
    "claim": "c3"
   },
   {
    "kind": "finish",
-   "text": "At the end, return the weight fully to its resting start.",
-   "claim": "c4"
-  },
-  {
-   "kind": "finish",
-   "text": "Lower the stack gently. Never let it slam.",
-   "claim": "c6"
+   "text": "After the set, ease the weight back to rest. Never slam it.",
+   "claim": [
+    "c4",
+    "c6"
+   ]
   }
  ],
  "variants": {

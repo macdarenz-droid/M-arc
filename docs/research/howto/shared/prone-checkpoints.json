@@ -9,8 +9,8 @@
   "checkpoints": [
     {
       "key": "hips-on-pad",
-      "label": "Hips on the pad",
-      "detail": "Front of the hips stays pressed against the pad; stop the curl before the hips lift.",
+      "label": "Hips on pad",
+      "detail": "Front of the hips stays pressed against the pad. Stop the curl before the hips lift.",
       "claim": [
         "c1",
         "c2"
@@ -22,7 +22,7 @@
     {
       "key": "neck-in-line",
       "label": "Neck in line",
-      "detail": "Head and neck stay neutral, eyes down; don't lift your head too high.",
+      "detail": "Head and neck stay neutral, eyes down. Don't lift your head too high.",
       "claim": [
         "c3",
         "c4"

@@ -31,7 +31,7 @@
     ]
   },
   "rightPose": {
-    "text": "Closed grip, thumb wrapped, wrist straight in line with the forearm while the elbow bends.",
+    "text": "Thumb wrapped, wrist straight with the forearm as you curl.",
     "claim": [
       "c1",
       "c3"
@@ -59,11 +59,11 @@
     }
   ],
   "widthNote": {
-    "text": "If holding the dumbbells at your sides bends your wrists, hold them where your wrists stay straight.",
+    "text": "Some people can't hold the dumbbells at their sides without bending their wrists. Hold them where your wrists stay straight.",
     "claim": "c5"
   },
   "gripLine": {
-    "text": "Wrap your thumbs round the handle and keep your wrists straight, in line with your forearms.",
+    "text": "Wrap your thumbs round the handle. Keep your wrists straight, in line with your forearms.",
     "claim": [
       "c1",
       "c3"

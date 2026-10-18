@@ -30,7 +30,7 @@
     ]
   },
   "contactPoint": {
-    "text": "Whole palm and fingers flat on the floor; push through the heel and outer edge of the palm.",
+    "text": "Whole hand flat",
     "claim": [
       "c2",
       "c5"
@@ -44,7 +44,7 @@
     ]
   },
   "wrist": {
-    "text": "Shoulders directly over the hands; in a push-up, forearms over the wrists at the bottom.",
+    "text": "Shoulders directly over the hands. In a push-up, forearms over the wrists at the bottom.",
     "claim": [
       "c1",
       "c3",
@@ -52,7 +52,7 @@
     ]
   },
   "rightPose": {
-    "text": "Hands shoulder-width, flat, fingers spread and facing forward, directly under the shoulders.",
+    "text": "Hands flat under the shoulders, fingers spread and facing forward.",
     "claim": [
       "c1",
       "c2",
@@ -81,7 +81,7 @@
     }
   ],
   "soreWrist": {
-    "text": "Sore wrist: push up on the knuckles, which keeps the wrist straight, or hold dumbbells if the wrists lack flexibility; if it still hurts on the knuckles, stop.",
+    "text": "Sore wrist: push up on knuckles to keep it straight, or hold dumbbells if stiff. Stop if it still hurts on knuckles.",
     "claim": [
       "c8",
       "c9"
@@ -94,11 +94,12 @@
     ]
   },
   "gripLine": {
-    "text": "Hands flat under your shoulders, fingers spread and facing forward, the whole hand pressing the floor.",
+    "text": "Hands flat under your shoulders, fingers spread and facing forward. Push through the heel and outer edge of the palm.",
     "claim": [
       "c2",
       "c3",
-      "c4"
+      "c4",
+      "c5"
     ]
   },
   "cue": {
