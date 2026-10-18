@@ -253,6 +253,13 @@ describe('LIB-9a Do 3 / A2: composers draw what they claim', { timeout: T }, () 
     expect(misL.length).toBe(2);
     misL.forEach((it, i) => it.pts.forEach((p: number[], j: number) => expect(hyp(p, endL[i].pts[j]), 'Mistake lever = end lever').toBeLessThan(1e-6)));
   });
+  // Research head 9eaa248 (W2-10, LR-2): the plate draws the close handles with the elbows pointing forward (c7)
+  it('shoulder_press: close handles with the elbows pointing forward at the start (c7): elbow at least 15 cm in front of the shoulder, within 6 cm of it sideways', async () => {
+    const sp = await spOf(), L = qaEng.poseLandmarks(Eng(), sp).lm.start;
+    expect(L['elbow.r'][2] - L['shoulder.r'][2], 'elbow in front of the shoulder (m)').toBeGreaterThanOrEqual(0.15);
+    expect(Math.abs(L['elbow.r'][0] - L['shoulder.r'][0]), 'elbow out to the side (m)').toBeLessThanOrEqual(0.06);
+    expect(Math.abs(L['grip.r'][0] - L['grip.l'][0]), 'handles closer than shoulder width (m)').toBeLessThan(Math.abs(L['shoulder.r'][0] - L['shoulder.l'][0]));
+  });
   it('shoulder_press: the start lever and handle are a dashed phantom in the end pose, never in the Mistake pose', async () => {
     const sp = await spOf();
     const start = itemsIn(sp, 'start').items.filter(it => it.part === 'lever' && it.type === 'poly');

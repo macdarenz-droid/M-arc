@@ -3,19 +3,20 @@
 // lever drawn the same way, here with an overhead arm path (census gap pivotArmOverhead: the lever pivot sits above and
 // behind the shoulders, so the handles rise up and slightly back, in front of the shoulders).
 // View: side (card plate.view): the handle height at the start, the press overhead and the fault (the low back arching
-// off the pad) are all sagittal. The 4-and-8 o'clock elbow position (c3) is a top-view detail and stays in the text.
+// off the pad) are all sagittal. Research head 9eaa248 (W2-10, LR-2): the plate draws the close handles with the elbows
+// pointing forward (c7); the standard 4-and-8 o'clock handles (c3) stay in the text.
 // Source: docs/research/howto/cards/shoulder_press.json (claude/libht-research). Claims used: c1 (back on the pad,
-// handles level with or just above the shoulders), c2 (full grip, straight wrists), c3 (elbows slightly in front of the
-// body), c4 (feet planted, natural low-back curve, no arch, shoulders down), c5 (press up without arching), c6 (elbows
+// handles level with or just above the shoulders), c2 (full grip, straight wrists), c7 (close handles, elbows pointing
+// forward), c4 (feet planted, natural low-back curve, no arch, shoulders down), c5 (press up without arching), c6 (elbows
 // straight but not locked, brief pause, lower slowly), c12 (tempo 2 s up, 2 s down).
 // Geometry decisions (assumed typical commercial selectorised machine; no card claim gives sizes):
 //  - Seat top 46 cm and back pad as machine_chest_press, the pad near upright (pelvis and thorax 6 deg back), so the
 //    back pad is tangent to the upper back and the buttock in the start and end poses.
-//  - Handles 66 cm apart (grip centres +-33 cm, the hands about 10 cm outside the shoulder joints), neutral and
-//    vertical (c2; the pivot-arm grip, card variantLine). Start: grip 10 cm above the shoulder joint and 24 cm in front
-//    of it, so the hands sit level with or just above the shoulders and the elbows are bent about 130 deg, under the
-//    hands and in front of the trunk (c1, c3). End: grip 65 cm above the shoulder joint and 12 cm in front of it,
-//    elbows 16 deg short of straight (c6: straight but not locked).
+//  - Close handles 30 cm apart (grip centres +-15 cm, inside the shoulder joints), neutral and vertical (c2; the
+//    pivot-arm grip, card variantLine). Start: grip 10 cm above the shoulder joint and 24 cm in front of it, so the
+//    hands sit level with or just above the shoulders; the elbows are bent about 130 deg and point forward, 23 cm in
+//    front of the shoulder and within 4 cm of it sideways (c1, c7). End: grip 65 cm above the shoulder joint and 12 cm
+//    in front of it, elbows 20 deg short of straight, still pointing forward (c6: straight but not locked).
 //  - Lever 0.60 m from a pivot behind the back pad, on the perpendicular bisector of the start-end chord, so both
 //    handles sit on its circle and the path rises up and slightly back (census gap pivotArmOverhead: pivot above and
 //    behind the shoulders). The lever and handle are `poly` bars (eq/polybar.mjs); the start lever is an end-pose
@@ -29,7 +30,8 @@
 //    open left side and cross the upright and the back pad, because the back-on-pad contact has the pad behind it.
 //    Second tell 'gap' (lib4-cards 13.3 Q-D5-4): the card's "off the pad", anchored on the gap mark.
 // CARD: handles level with or just above the shoulders at the start (c1), elbows straight but not locked (c6), tempo
-//  (card `tempo`). Unsourced numbers: SEAT_TOP 0.46 m, TILT -6, GX 33 cm (the card names no width), START_G 10 cm above
+//  (card `tempo`). Unsourced numbers: SEAT_TOP 0.46 m, TILT -6, GX 15 cm (the card names no width), the elbow poles
+//  (forward, c7),, START_G 10 cm above
 //  and 24 cm in front of the shoulder joint, END_G 65.2 cm above and 12 cm in front, L 0.60 m, the Mistake size
 //  (SLIDE 5.5 cm, ARCH_P 10 deg, a 28 deg total spine extension solved on the torso outline; card gives no size),
 //  HANDLE 14 cm. All illustrative: the card gives no machine sizes and no fault size.
@@ -42,7 +44,7 @@ const SEAT_TOP = 0.46;
 const SEAT = [0, SEAT_TOP, 0];
 const TILT = -6;
 const feet = { l: { at: [0.10, 0, 0.47] }, r: { at: [-0.10, 0, 0.47] } };
-const GX = 0.33;
+const GX = 0.15;
 const base = { root: { at: rootOnSeat(SEAT, TILT, H), tilt: TILT }, trunk: 0, neck: 0, plant: feet };
 const lm0 = landmarksOf({ ...base, shoulder: { flex: 0 } }, H);
 const SH = lm0['shoulder.r'];
@@ -63,9 +65,9 @@ const onArc = t => {   // handle centre at fraction t of the press (0 start, 1 e
 };
 const grips = (g, pole) => ({ l: { at: [GX, g[1], g[2]], pole: [-pole[0], pole[1], pole[2]] }, r: { at: [-GX, g[1], g[2]], pole } });
 
-const start = { ...base, scap: { elev: 0, pro: 0 }, reach: grips(START_G, [-0.8, -1, 0.3]) };
-const end = { ...base, scap: { elev: 1, pro: 0 }, reach: grips(END_G, [-1, 0, 0.3]) };
-const via = [1 / 3, 2 / 3].map(t => ({ ...base, scap: { elev: t, pro: 0 }, reach: grips(onArc(t), [-0.9, -1 + t, 0.3]) }));
+const start = { ...base, scap: { elev: 0, pro: 0 }, reach: grips(START_G, [-0.15, -1, 1]) };
+const end = { ...base, scap: { elev: 1, pro: 0 }, reach: grips(END_G, [-0.3, 0, 1]) };
+const via = [1 / 3, 2 / 3].map(t => ({ ...base, scap: { elev: t, pro: 0 }, reach: grips(onArc(t), [-0.15 - 0.15 * t, -1 + t, 1]) }));
 
 // Back pad: tangent to the upper back and the buttock of the correct pose.
 const lmS = landmarksOf(start, H);
@@ -92,7 +94,7 @@ const archAt = lean => {
 };
 const ARCH_L = (() => { let lo = 0, hi = 40; for (let i = 0; i < 30; i++) { const m = (lo + hi) / 2; if (archAt(m).gap > 0) lo = m; else hi = m; } return (lo + hi) / 2; })();
 const misRoot = archAt(ARCH_L).root;
-const misBody = { root: { at: misRoot, tilt: TILT + ARCH_P }, trunk: -(ARCH_P + ARCH_L), reach: grips(END_G, [-1, 0, 0.3]) };   // the handles stay at the top: the arch is the one change
+const misBody = { root: { at: misRoot, tilt: TILT + ARCH_P }, trunk: -(ARCH_P + ARCH_L), reach: grips(END_G, [-0.3, 0, 1]) };   // the handles stay at the top: the arch is the one change
 // Gap dimension, as machine_chest_press draws its pad gap: from the pad face to the arched mid back, with two 4 px ticks
 // laid along the pad (the tell's leader meets the sacrum below it, so the two marks stay apart).
 const lmM = landmarksOf({ ...end, ...misBody }, H);
@@ -139,7 +141,7 @@ export default {
   ghosts: { count: 3, parts: ['lever'] },
   trace: { point: 'grip.r', trim: [12, 12] },
   callouts: [
-    { key: 'height', text: 'Handles at<br>shoulders', anchor: 'start:grip.r', box: { left: 204, top: 150 }, cue: 'Set the seat so the handles start level with or just above the shoulders.' },
+    { key: 'height', text: 'Handles at<br>shoulders', anchor: 'start:grip.r', box: { left: 214, top: 150 }, cue: 'Set the seat so the handles start level with or just above the shoulders.' },
     { key: 'back', text: 'No back<br>arch', anchor: 'backMid', box: { left: 30, top: 226 }, cue: 'Keep the natural low-back curve against the pad and do not arch as you press.' },
     { key: 'elbows', text: 'Soft elbows<br>overhead', anchor: 'elbow.r', box: { left: 14, top: 92 }, cue: 'Finish with the elbows straight but not locked.' },
   ],

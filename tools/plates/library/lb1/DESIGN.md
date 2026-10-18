@@ -180,6 +180,10 @@ lever circle), never the helper maths alone.
   - underhand_lat_pulldown was a one-tell plate (`rock`) at `9dbc7e0`. Its LR-31 Mistake, the past-end pull, has two
     signs the card names ("pulling the bar further down", "the elbows start moving backwards"), drawn as `past` and
     `back`, close_grip's pair.
+- **Do 6 re-copy at `9eaa248`: drawing changes.** underhand_lat_pulldown's Mistake is now the past-end pull (LR-31):
+  the bar 25.7 cm below the end bar, the elbows 7.4 cm behind the end backMid (red cap 8.9 px clear), the set lean
+  kept. shoulder_press draws the close handles with the elbows pointing forward (card variantLine, W2-10, LR-2, c7):
+  grip centres +-15 cm, the start elbow 23 cm in front of the shoulder. Every other plate is unchanged.
 - **Tall machines and F1.** The pulldown station and the assist tower are 2.2-2.3 m tall, so `fit` lands at 126-133
   px/m, inside F1 (123.9-146.3) with little room. Machines are kept at the 8's heights.
 
