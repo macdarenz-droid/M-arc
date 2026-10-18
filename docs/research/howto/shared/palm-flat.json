@@ -63,7 +63,7 @@
   "faults": [
     {
       "key": "hand-ahead",
-      "label": "Hands too far forward",
+      "label": "Hand ahead",
       "what": "Hands wide and in front of the shoulders instead of under them.",
       "claim": "c3"
     },

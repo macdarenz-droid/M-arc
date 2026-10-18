@@ -36,8 +36,8 @@
   },
   "faults": [
     {
-      "key": "rope-wrist-curl",
-      "label": "Wrists curl",
+      "key": "curled",
+      "label": "Wrist curled",
       "what": "The wrists bend toward the palms as the rope is pushed down.",
       "claim": "c6"
     }

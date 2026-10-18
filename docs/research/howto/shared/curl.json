@@ -39,7 +39,7 @@
   },
   "faults": [
     {
-      "key": "wrist-curl-cheat",
+      "key": "curled",
       "label": "Wrist curled",
       "what": "Wrist bent forward (flexed) during the curl.",
       "claim": [
@@ -48,7 +48,7 @@
       ]
     },
     {
-      "key": "bent-back-bottom",
+      "key": "bent-back",
       "label": "Wrist bent back",
       "what": "Wrist bent back (extended).",
       "claim": [
@@ -206,7 +206,7 @@
   "gaps": [
     "Contact point: no source read says where the handle sits in the palm (GA: across the middle of the palm). Drawn as GA's default, recorded as a drawing convention, not a claim.",
     "The thumb and wrist rules are sourced on dumbbell curls (seated curl, hammer curl, standing curl). They are applied to barbell, EZ-bar, cable and preacher curls by inference; their own verified cards carry their own wrist claims (barbell_curl c8, ez_bar_curl c8, preacher_curl c8, reverse_curl c6, cable_curl c9).",
-    "The fault names wrist-curl-cheat and bent-back-bottom come from GA; the sources name the wrong positions (flexion, extension, a forced bend at the bottom), not a cheating motion. The labels describe positions only."
+    "The fault keys curled and bent-back are LIB-7's (hands/radial-rules.mjs), which replace GA's wrist-curl-cheat and bent-back-bottom; the labels are D-LIB7-10's. The sources name the wrong positions (flexion, extension, a forced bend at the bottom), not a cheating motion. The labels describe positions only."
   ],
   "notes": [
     "Same rules sourced in cards/dumbbell_biceps_curl.json c1, c6, c7 and cards/hammer_curl.json c1, c4, c10 (ACE, StrengthLog). Re-read ACE seated curl, ACE hammer curl and StrengthLog dumbbell curl in full on 2026-10-01; quotes copied from that read.",
