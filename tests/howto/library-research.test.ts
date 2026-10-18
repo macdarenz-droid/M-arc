@@ -86,7 +86,7 @@ describe(`LIB-5 S1: the 38 shared research files equal the named research head $
   });
   it('mutation: one byte changed is red', () => {
     const t = copy(), f = join(t, HOWTO, 'shared/curl.json'), b = readFileSync(f);
-    b[b.length - 2] ^= 1;
+    b.writeUInt8(b.readUInt8(b.length - 2) ^ 1, b.length - 2);
     writeFileSync(f, b);
     expect(s1Problems(t)).toEqual([expect.stringMatching(/^shared\/curl\.json: sha256 /)]);
   });
