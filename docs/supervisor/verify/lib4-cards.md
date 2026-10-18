@@ -1418,6 +1418,12 @@ Conditions:
     - (d) LIB-4a's READY does not wait for LIB-4d: no LIB-4a acceptance row covers `npm test` at 153 beyond lib-4a.test's A1/A2 and A7, which pass.
     - Why nothing is loosened: no test, assertion, timeout or fixture changes in LIB-4a; the defects are named and owned, not hidden.
 
+21. **Freed-slot queue and the LIB-3b card (D-LIB-LANE-ACTIVE amended, 2026-10-18 ~02:3x UTC).**
+    - The freed-slot order (item 2) gains three cards after LIB-5 (Do 2 on): **LIB-3b** (PQ-H10 values and envelope, `docs/supervisor/verify/lib-3b-card.md`), then **LIB-4d** (D-LIB4a-SCALE, item 20), then **LIB-8-FIX** (the pilot A #109 review findings). The existing items (the LIB-7 fixer, LIB-6-PM, LIB-9a's second drawer) keep their place behind LIB-5. A card in this queue moves ahead of them only when its deadline is next in the merge queue: LIB-3b before any D or T row on any branch; LIB-4d before any merge that ships lib_barbell_row or lib_cable_lateral_raise or takes main past 22 shipped rows; LIB-8-FIX before pilot A's plan-slot-7 merge. If a park is needed, these three park before LIB-9a and LIB-5.
+    - LIB-3b merges before #245 (LIB-9a). Section 13 Q5 (c) is amended: once LIB-3b is on main, the clean D copy gets `H10.envelope:camera.maxScale` (the envelope names no PARAMS key), and "green on PQ-H10" there reads "only H10.envelope, which proves the envelope is read". The two lb1-plates.test.ts expectations (the clean row and the one-byte row, at :790 and :801 on `e035bdf`) change in LIB-3b's PR only if #245 is already on main; otherwise LIB-9a updates them when it merges main after LIB-3b.
+    - Open for LIB-10, before its first D or T row: (i) where approved PARAMS ranges live (envelope.json cannot hold a hand row: selftest.mjs:23-25 compares the whole file with a fresh measurement of the 8, and pin.mjs --write rewrites it); (ii) whether PQ-H10 must also prove the drawn D plate equals derive(parent, params) (candidate.mjs:66 takes a D row's drawing from its source file). Both are supervisor rulings; neither is LIB-3b's.
+    - Why nothing is loosened: the queue change moves no check; LIB-3b only adds failures (fail-closed) to H10.
+
 ### 13.1 Slice look and Do 5 (D-LIB9a-SLICE, 2026-10-18 ~00:1x UTC; #245 @ `6285b4f`)
 
 Reviewed from two sides: a fixes-and-evidence audit that re-ran the tests and 4 mutations in a worktree, and a blind plate critic that rendered both plates beside lat_pulldown and pull_up on the plan 3.4 rubric. A judge decided.
