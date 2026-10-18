@@ -1960,6 +1960,50 @@ Why nothing is loosened: the replacement pins the travel to the leg's own moveme
 
 Also for LIB-9a's replacement, from research w2 (`claude/libht-verify-w2` @ `531b77c`, `verify/w2/w2-rulings-final.md`): LR-31 turns assisted_pull_up to drawable:false (a speed fault), and its Mistake then needs a fast-lowering fault key; underhand's spec draws `past`; LR-32's lib-9a-card.md edits are held until the w2 recheck. These take effect only when w2 merges into claude/libht-research and LIB-9a re-copies the cards.
 
+### 13.5 LB1 calibrated critic (D-CRITIC-CAL3, 2026-10-18 ~11:00 UTC; #245 @ `a4458f1a`)
+
+**What ran:** two rounds of the pilot-a-critic pattern (plan 3.4) on the 14 LB1 plates. Each round had a panel of 3 fresh Opus critics, 2 hidden approved anchors and 2 plants: P02 inverted_row (Mistake "Hips sagging" drawn as hips up, R5) and P05 underhand_lat_pulldown (the "Elbows down, back" leader moved to the shoulder, R4).
+
+| Round | Anchors (low medians) | Plants | Script verdict |
+|---|---|---|---|
+| 1 | pull_up R6 = 3; lat_pulldown R4 = 3 | P02 R5 = 2, P05 R4 = 2: both caught | discarded (anchor below 4) |
+| 2 | hanging_leg_raise R1 = 2, R7 = 3; leg_press R3 = 3, R5 = 2 | P02 R5 = 2, P05 R4 = 2: both caught | discarded (anchor below 4) |
+
+**Ruling D-CRITIC-CAL3:** round 1 is the valid calibration. The fix list is the union of the LB1 findings from both rounds (`docs/supervisor/verify/lb1-critic-findings.md`), less one withdrawn row.
+
+Why:
+- The anchor check exists to catch a harsh critic. D-CRITIC-CAL2 already ruled that a golden plate with a verified weak spot is not a clean anchor. Round 1's only anchor lows are one item each, and the supervisor confirmed both on the PNGs:
+  - pull_up R6: the trace lies on the forearm;
+  - lat_pulldown R4: the lean-back mark sits at the elbow.
+  Every other anchor item has a median of 4 or more, and both plants were caught. A critic that finds a real defect is accurate, not harsh.
+- No clean anchor is left that resembles these plates. Seated_cable_row and machine_chest_press were excluded by D-CRITIC-CAL2, and barbell_back_squat is tier A without a rack. Round 1 and round 2 together have now flagged lat_pulldown, pull_up, hanging_leg_raise and leg_press. A third round could only repeat this.
+- Round 2 is not used for validity, because its anchors got the wrong facts. Both anchors were given their research-card plateFacts, not their golden-B facts. hanging_leg_raise R1 = 2 compares the plate with the card's "toes to the bar".
+- Round 2's LB1 findings are still kept. That is stricter: nothing is dropped, and each finding needs 2 of 3 critics either way.
+
+**The rule from now on.** A round counts as calibrated only if all of these hold:
+- both plants are caught (D-CRITIC-CAL);
+- every anchor item has a median of 4 or more, except at most one item per anchor where:
+  - the supervisor has confirmed the defect on the PNG;
+  - it is recorded as a golden-B follow-up in HANDOVER;
+  - the round's other anchor items are all 4 or more.
+- Anchors are scored on their own golden-B facts.
+
+**Withdrawn:** the round 2 row "hanging_knee_raise R7" [3, 3, 4]. Its ceiling mount matches the approved hanging_leg_raise mount pixel for pixel in every row sampled (dark.png y 38-126). The same panel scored that anchor R7 = 3 for the same mount. The mount is on purpose: the vendor spec says "ceiling mount (no wall for the swing to hit)". So this is a golden-B question, not an LB1 defect.
+
+**Limit:** on resistance_band_row (R7 in both rounds), the critics' fix, "scale 1.3x", is not allowed. Q-R2-3 pins 159.02 px/m within 0.5 px/m, and 1.3x would also pass D-LIB8-floor's ×1.35 ceiling. LIB-9a fixes the framing some other way that keeps every check, or posts why none exists.
+
+**For LIB-9a (card Do 8):**
+- Fix only what the file names. One fix round, then a fresh calibrated recheck on the changed plates under the rule above.
+- After two failed rounds on one plate, stop and report.
+- A fix never edits a card. If a fix would break a hard check, a pinned test or a ruling, post the conflict with its evidence instead, and the supervisor rules.
+- R8 and R9 stay unscored (13.1).
+
+**Golden-B follow-ups**, owner-visible and not blocking LB1, recorded in HANDOVER:
+- pull_up R6 trace;
+- lat_pulldown R4 lean mark;
+- hanging_leg_raise mount level with the SIDE VIEW title, and its bar style differs from pull_up's;
+- leg_press: "Knees cave" cannot be seen side-on (R5), and a floating back (R3). The panel flagged both; the supervisor's check is pending.
+
 ## 14. LIB-5 design-note rulings (D-LIB5-NOTE, 2026-10-17 ~23:xx UTC; #244 @ ee7f40f)
 
 A 3-lens review read the note. A judge ruled each open point, and one adversarial verifier checked each ruling. Where the verifier corrected a ruling, the corrected text is the ruling. It is changed here only where it clashed with sections 12 and 13 or with another item, and each ruling says in one line what changed. An earlier re-check of the LIB-5 card found 23 defects. Their fixes are merged into the card amendments below.
