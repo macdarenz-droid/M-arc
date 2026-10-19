@@ -237,7 +237,7 @@ describe('LIB-12-FIX R8-DRIFT: values copied from golden-B hand.mjs and the pair
   });
 });
 
-const lib12Renders = () => C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-12').flatMap((m: any) => Object.entries<any>(m.IDS).flatMap(([id, c]) => c.faults.map((f: string) => ({ m, id, f, r: P.renderPair(id, { fault: f }) })))), 20, 'LIB-12 renders');
+const lib12Renders = () => C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-12').flatMap((m: any) => Object.entries<any>(m.IDS).flatMap(([id, c]) => c.faults.map((f: string) => ({ m, id, f, r: P.renderPair(id, { fault: f }) })))), 17, 'LIB-12 renders');   // D-LIB12FIX-R8-GAPS
 const belowFloor = (rep: any) => ['right', 'wrong'].filter(h => Math.max(...rep[h].outline.map((p: number[]) => p[1])) > 1e-6);
 const thumbProblems = (rep: any) => ['right', 'wrong'].filter(h => !(rep[h].thumbOfHL >= 0.3 && rep[h].thumbOfHL <= 0.42)).map(h => `${h}: thumb ${rep[h].thumbOfHL} of HL`);
 

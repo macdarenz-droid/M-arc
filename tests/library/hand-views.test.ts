@@ -197,7 +197,7 @@ describe('LIB-12 A6: close-up QA (H2 vocabulary, H7 determinism)', () => {
   });
   it('H7: two builds are byte-identical; mutation: a random uid differs', () => {
     for (const { m, id, f } of drawnPairs()) expect(m.render(specOf(m, id, f)).svg).toBe(m.render(specOf(m, id, f)).svg);
-    const m = mods.find(q => q.KEY === 'front-rack'), s = specOf(m, 'front_squat', 'bar-off-shoulders');
+    const m = mods.find(q => q.KEY === 'palm-flat'), s = specOf(m, 'push_up', 'hand-ahead');   // a drawn id (D-LIB12FIX-R8-GAPS, #191 6274835211)
     const rnd = () => m.render({ ...s, uid: `t-${Math.random().toString(36).slice(2, 8)}` }).svg;
     expect(rnd()).not.toBe(rnd());
   });
