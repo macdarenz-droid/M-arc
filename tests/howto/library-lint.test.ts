@@ -31,6 +31,9 @@ describe('LIB-5 S7: golden B\'s limits are imported, and lint/** defines no box 
   const boxLimitProblems = (dir: string) => readdirSync(dir).filter(f => f.endsWith('.mjs')).flatMap(f => {
     const t = readFileSync(join(dir, f), 'utf8'), bad = [...t.matchAll(/\b(\w*(?:BOX|Box|box)\w*)\s*[=:]\s*(\d+)/g)].map(m => `${f}: ${m[1]} = ${m[2]}`);
     if (f === 'index.mjs' && !/import \{[^}]*\bRED_FLAG_BOX_MAX_WORDS\b[^}]*\} from '\.\.\/\.\.\/layers\/artifact\/copy-lint\.mjs'/.test(t)) bad.push(`${f}: RED_FLAG_BOX_MAX_WORDS is not imported from copy-lint.mjs`);
+    // BOX-CAP (D-BOXCAP-WIRE): a quoted key holding a number is a limit too ('x': 50). box-caps.mjs is the one named
+    // exception (D-BOXCAP-1), its table pinned below to { 'back-pain-box': 50 }.
+    if (f !== 'box-caps.mjs') bad.push(...[...t.matchAll(/(['"`])([^'"`\n]*)\1\s*:\s*(\d+)/g)].map(m => `${f}: '${m[2]}' = ${m[3]}`));
     return bad;
   });
   it('c7\'s LIMITS.redFlagBoxWords and golden B\'s RED_FLAG_BOX_MAX_WORDS are both 30', () => {
@@ -44,6 +47,14 @@ describe('LIB-5 S7: golden B\'s limits are imported, and lint/** defines no box 
     cpSync(dir, t, { recursive: true });
     writeFileSync(join(t, 'index.mjs'), `${readFileSync(join(t, 'index.mjs'), 'utf8')}\nexport const BACK_BOX_MAX_WORDS = 50;\n`);
     expect(boxLimitProblems(t)).toEqual(['index.mjs: BACK_BOX_MAX_WORDS = 50']);
+  });
+  it('BOX-CAP (D-BOXCAP-1): box-caps.mjs is the one named exception, pinned; a quoted \'x\': 50 anywhere else is red', async () => {
+    const C = await import(/* @vite-ignore */ url('tools/plates/library/lint/box-caps.mjs'));
+    expect(C.NAMED_BOX_CAPS).toEqual({ 'back-pain-box': 50 });
+    const dir = join(ROOT, 'tools/plates/library/lint'), t = mkdtempSync(join(tmpdir(), 'boxcap-s7-')); temps.push(t);
+    cpSync(dir, t, { recursive: true });
+    writeFileSync(join(t, 'index.mjs'), `${readFileSync(join(t, 'index.mjs'), 'utf8')}\nexport const CAPS = { 'x': 50 };\n`);
+    expect(boxLimitProblems(t)).toEqual(["index.mjs: 'x' = 50"]);
   });
 });
 
