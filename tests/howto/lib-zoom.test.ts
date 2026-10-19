@@ -16,14 +16,14 @@ let zoom: any, qz: any, qaIdx: any, qaEng: any, browser: any, build: any, cand: 
 let pins: any, E: any, mirror = '', html = '', all: any, c0: any, hlp: any;
 beforeAll(async () => {
   [zoom, qz, qaIdx, qaEng, browser, build, cand, bp] = await Promise.all(['zoom/inline.mjs', 'qa/zoom.mjs', 'qa/index.mjs', 'qa/engine.mjs',
-    'qa/browser.mjs', 'lb1/build.mjs', 'candidate.mjs', 'build-page.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    'qa/browser.mjs', 'zoom/build.mjs', 'candidate.mjs', 'build-page.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
   golden = await import(/* @vite-ignore */ new URL('../../tools/plates/golden.mjs', import.meta.url).href);
   hlp = (await import(/* @vite-ignore */ lib(`specs/${ID}.mjs`))).default;
   pins = qaIdx.loadPins();
   mirror = golden.makeMirror();
   E = await qaEng.loadEngine(mirror);
-  all = build.lb1All();
-  html = (await build.buildLb1Page({ all, ids: [LID] })).html.toString('utf8');
+  all = build.zoomAll();
+  html = (await build.buildZoomPage({ all })).html.toString('utf8');
   c0 = await cand.candidateOf(LID, { all, platesHtml: html, engine: E, authoring: true });
 }, T);
 afterAll(() => { if (mirror) qaEng.dropMirror(mirror); });
