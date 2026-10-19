@@ -1171,6 +1171,41 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - sheet cosmetics for the next rebuild: capitalise the held lines, and write the F5 line in plain words.
 - **Merge order:** unchanged (LIB-5 Do 9 → LIB-6+PM → LIB-7+FIX → LIB-7b → LIB-12+FIX → LIB-8M → LIB-5v → LIB-7c → LB1). HT-11 merges before LIB-13.
 
+**Update ~11:30 UTC (10-19).** Cards branch `claude/sup-lib4-cards` @ `5144ecc6`. Research head **`892d6516`**.
+- **LB3 research is done.** It is on claude/libht-research as `892d6516`: #272 merged as `2dd60ae0`, then #275.
+  - LR-29 verify: two blind Opus halves, both VALID, all 4 plants caught. The verifier re-fetched 359/359 quotes verbatim; the supervisor's 10 % re-fetch got 36/36.
+  - Rulings R-LB3-1..12 (lb3-research-verify.md and lb3-research-recheck.md on the cards branch).
+  - Follow-ups:
+    - F-LB3-1: #109 re-copies 3 breath lines under a supervisor diff check (#109 6264369545).
+    - F-LB3-2: LB2's shoulder stop rows.
+    - F-LB3-3: hold-wrist alignment.
+    - F-LB3-4: barbell_shrug's 7 copy-lint hits.
+    - F-LB3-5: the DB RDL and sumo variantLine texts move to notes.
+    - F-LB3-6: t_bar_row joins the LIB-ZOOM small-motion question.
+- **LIB-13 started** (LB3 build-ahead; card lib-13-card.md @ `5144ecc6`, critic-reviewed, 23 findings applied; #274; session_01PfNzDw3QCuJfeECLioJymX).
+  - Split: LIB-13 draws the non-shrug ids; LIB-13s (the 3 shrugs) waits for LIB-ZOOM.
+  - Note RULED: all H, plateFacts [], drawn-item tests Q1 and Q2.
+  - D-LIB13-LANDMINE-2: research found "smaller plates" and "until the plates touch the torso". landmine_row draws a 228 mm plate as a drawing convention with its own flag.
+  - D-LIB13-TBAR: t_bar_row is HELD. Its card-true hand rise is 11-12 cm against about 30 cm for PQ-H3. LIB-13 now draws 7.
+  - Merge: after rows 1-12 of the checklist, LIB-11 included, and after HT-11.
+- **HT-11** (#273; card ht-11-card.md; session_019fSiZ166dkvKgzrqiZ7BWf).
+  - Note RULED. Base chunks are 37.6-62.9 % smaller in gz, byte-preserving.
+  - R1-R4 are yes, plus a no-eval test. D-HT11-CROPREF (b): no crop refs, and HT7-A5 is unchanged.
+  - Follow-ups: F-HT11-1 (one shared decoder needs vite.config) and F-HT11-2.
+- **LIB-7c** (#271): panel round 2 VALID (lib4-cards 25), with 6 ids approved @ `3bdd609`. Round 1 was invalid: one plant was too subtle.
+  - golden-B follow-up 18: dumbbell_lateral_raise's Wrong handle floats.
+  - 7c-A5 pins @ `88ad31b`; the words look passed.
+  - **WAITING** for #193 to merge (Do 8).
+- **LIB-5 Do 9 READY @ `121df94`** (#270). Reviewer session_018H7am5XjyzXrMNSRHuWTQ2. The builder saw the gate timing probes red on a busy container while CI was green; the reviewer runs them 3 times idle, against main.
+- **LIB-12-FIX** (#191): D-LIB12FIX-CI1 (6263538456). The source-gate red @ `c99cb66` is library-fidelity:46 at 5235 ms against a 5 s timeout.
+  - The builder measures main against the head, 10 runs each. The run was restarted at 10:27 after a container recycle; the result is due about 12:30.
+  - If the red is not this PR's: the critic head, then the R8 panel.
+- **VITEST-RPC** (#276): note RULED A + B. A: D-LIB4c-3's generator calls become async. B: the generator fan-outs in S7 and in "7 mutations" are capped at 2. The second symptom, the fidelity 5 s timeout, is CPU starvation from those fan-outs. Next: READY with its proof list.
+- **Lesson:** a builder that leaves a long background run while its session is idle can lose its container. The fix is check-ins every 20 minutes. The tip went to all builders.
+- **Lanes (4 of 4):** LIB-12-FIX, HT-11, LIB-13, and one free slot while LIB-5 waits on review (LIB-11's card is being drafted for it).
+- **WAITING:** LIB-10, LIB-8M (owner sheet), LIB-6-PM (LIB-5 Do 9 merge), LIB-7-FIX (merge order), LIB-7c (#193).
+- **Owner:** the pilot A sheet answers are still due. Nothing else is owed.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
