@@ -129,7 +129,9 @@ export default {
   mistake: {
     pose: mistakePose,
     parts: ['leg.r', 'sled'],
-    guides: [],
+    // the locked leg's axis, hip -> ankle: the skeleton is straight (knee 0.5 deg) but the tapered thigh and the calf
+    // make its outline kink at the knee (LIB-ZOOM panel R5), so one straight line through the knee shows the lock
+    guides: [{ kind: 'line', pts: [{ at: 'hip.r', pose: 'mistake' }, { at: 'ankle.r', pose: 'mistake' }] }],
     tells: [
       { key: 'lock', text: 'Knees<br>locked', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 204, top: 256 }, cue: 'The knees snap straight and lock at the end of the push.' },
     ],

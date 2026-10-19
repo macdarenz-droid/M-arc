@@ -73,6 +73,20 @@ describe('LIB-ZOOM clean: horizontal_leg_press with its Mistake zoom', { timeout
   });
 });
 
+describe('LIB-ZOOM panel fix (R5): the locked leg reads straight', { timeout: T }, () => {
+  it('the Mistake knee lies on the hip -> ankle line (within 0.5 px), and the Mistake draws that line', () => {
+    const r = E.renderPlate(hlp, { id: 'x' }), cam = qaEng.cameraOf(hlp, r.report), L = qaEng.poseLandmarks(E, hlp).lm.mistake;
+    const [h, k, a] = ['hip.r', 'knee.r', 'ankle.r'].map(n => cam.P(L[n]));
+    const off = Math.abs((a[0] - h[0]) * (h[1] - k[1]) - (h[0] - k[0]) * (a[1] - h[1])) / Math.hypot(a[0] - h[0], a[1] - h[1]);
+    expect(off).toBeLessThan(0.5);
+    expect(hlp.mistake.guides).toEqual([{ kind: 'line', pts: [{ at: 'hip.r', pose: 'mistake' }, { at: 'ankle.r', pose: 'mistake' }] }]);
+    const m = E.renderPlate(hlp, { id: 'x', mistake: true }).svg.match(/<path class="m-arrow" d="M([\d.-]+),?\s*([\d.-]+)L([\d.-]+),?\s*([\d.-]+)"/);
+    expect(m).not.toBeNull();
+    expect(Math.hypot(+m![1]! - h[0]!, +m![2]! - h[1]!)).toBeLessThan(0.5);
+    expect(Math.hypot(+m![3]! - a[0]!, +m![4]! - a[1]!)).toBeLessThan(0.5);
+  });
+});
+
 describe('LIB-ZOOM mutations: each row turns red on its planted fault', { timeout: T }, () => {
   it('no zoom field: the plate-scale H3 deviation is red again (the bar is never lowered)', async () => {
     const r = await qa(await mutated('s => ({ ...s, zoom: undefined })'));
