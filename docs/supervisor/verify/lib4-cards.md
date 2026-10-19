@@ -4207,3 +4207,5 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
   - seated_leg_curl: R4 [3,3,3]. PAD ABOVE SHOES and CALVES PUSH both end on the heel.
   - cable_fly: R3 [4,3,3]. The cables stop at the elbows.
 - One fix round: equipment and leaders only, no pose changes (#278 6275943464). A focused recheck with new plants follows 'PILOT B PANEL FIX'.
+- **Recheck @ `d3b231d`** (page `ff3e017c…`; 'PILOT B PANEL FIX'): **VALID**. New critics, plants and shuffle. Plants caught: seated_leg_curl end knee cut to 75°, R1 [3,2,3]; smith stop moved off the rail, R2 [3,3,2]. lat_pulldown has every median ≥ 4. pull_up R1 [3,3,4]: the head is tipped back about 20° at the top, with the chin pushed toward the bar. The supervisor confirmed it on the PNG. It is excepted (one item per anchor) and recorded as **golden-B follow-up 20**.
+- **All 4 pilot B plates are APPROVED** @ `d3b231d`. smith, seated_leg_curl and cable_fly have every median ≥ 4. push_up passed in round 1 and is byte-identical. crunch stays held.
