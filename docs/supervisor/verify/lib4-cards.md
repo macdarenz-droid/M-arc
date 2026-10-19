@@ -4166,7 +4166,7 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - **Recheck @ `9fbdfb5`: VALID**, with new plants and a re-shuffle. Plants caught: foot off the plate, R3 [3,3,3] and R1 [3,3,3]; axis to the toe, R5 [3,3,3]. Anchor pull_up at every median ≥ 4. Anchor lat_pulldown at R1 3 [3,3,4], confirmed by the supervisor on the PNG: the start ghost's trunk is more upright than the end pose, so the lean grows by about 10° against its own "lean stays the same" tell. Excepted under D-CRITIC-CAL3 (one item per anchor) and recorded as **golden-B follow-up 19**.
 - **horizontal_leg_press APPROVED @ `9fbdfb5`**: every median ≥ 4 (R5 4 [4,4,4], R11 4 [4,4,4]).
 
-## 27. LIB-12 R8 critic panel (D-LIB12FIX-R8, 2026-10-19 ~18:00 UTC; #191 @ `2aa3732`)
+## 27. LIB-12 R8 critic panel (D-LIB12FIX-R8, 2026-10-19 ~17:45 UTC; #191 @ `2aa3732`, round 2 @ `6b6e5ab`)
 
 - Set: the 6 LIB-12 tiles (5 keys; palm-flat has 2 pages) carrying all 12 drawn ids, from `hands/sheet.mjs --critic --calibrate`. LIB-7's 7 tiles are already panel-approved (section 25) and stay out. Anchors: lat_pulldown/p2 and dumbbell_lateral_raise. pull_up/p1 (the --calibrate default) stays out under follow-up 10, and it is also a labelled reference. References: LIB-7c's six. Plants: wall_ball Right/Wrong swap (C1) and battle_ropes contactAt 2.2 (C3).
 - **VALID.** Both plants were caught: C1 [1,1,1] and C3 [2,2,2]. lat_pulldown/p2 has every median ≥ 4. dumbbell_lateral_raise C3 [5,3,3] is golden-B follow-up 18 (section 25), already confirmed on the PNG and excepted.
@@ -4181,3 +4181,18 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
   - D-LIB12FIX-CARRY's byte pins are re-based only for the failing keys' hand and view files, and for view-common.mjs if the note proves it is needed. battle-rope stays byte-identical.
   - A fix note comes first, then the build, then a panel on the changed keys. A key that still fails moves to GAPS by ruling.
   - The owner gets a changed-ids sheet with the new cupped and front-rack scores before PILOT A PIN GO (D-LIB12FIX-SHIP (2)).
+- **Fix round (R8 NOTE RULED 6273461815, then R8 FIXED @ `6b6e5ab`).**
+  - front-rack uses golden B's handGeometry.
+  - A new `hands/lib12-hand.mjs` (renamed from view-hand.mjs because of A7) draws palm-flat, goblet and ball.
+  - R8-DRIFT pins 21 copied engine values.
+  - R8-SCALE pins front-rack only; the others are width-bound, and that is accepted.
+- **Round 2 @ `6b6e5ab`: VALID.** New critics, plants (a goblet swap at C1 [1,1,1]; a palm sunk through the floor at C3 [2,2,1]) and shuffle. Both anchors have every median ≥ 4.
+  - palm-flat (both pages): PASS.
+  - ball-contact: C3 [3,2,3]. The fingers and thumbs splay off the ball.
+  - front-rack: C1 [2,3,3], C2, C3 [2,3,2], C5, C7. The shoulder is hidden, so the bar reads as held in the hand.
+  - cupped-goblet: C5 [2,4,3]. It reads as a clamp.
+- **D-LIB12FIX-R8-GAPS (#191 6274835211):**
+  - Approved: palm-flat and battle-rope.
+  - To GAPS: wall_ball, front_squat and goblet_squat. Code and words stay; counts are re-based to exact values.
+  - Follow-up **F-LIB12-R8B**: redraw those three to the R8 bar.
+  - The owner gets the changed-ids sheet (goblet_squat and front_squat lose the close-up; mountain_climbers' palm-flat is redrawn) before PILOT A PIN GO.
