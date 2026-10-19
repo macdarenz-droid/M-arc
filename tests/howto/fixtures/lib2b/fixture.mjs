@@ -14,6 +14,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, 
 import { tmpdir } from 'node:os';
 import { dirname, join, posix } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { markScratch, writeScratchStamps } from '../../../../tools/plates/library/research/stamps.mjs';
 
 export const HERE = dirname(fileURLToPath(import.meta.url));
 export const REPO = join(HERE, '..', '..', '..', '..');
@@ -88,6 +89,7 @@ export function stageTree({ row = BATCH_ROW, page = readFileSync(PAGE_FIXTURE), 
   put(root, PAGES.plates, json({ groups: [{ id: 'scratch', title: 'Scratch', ids: [ID] }] }));
   put(root, PAGES.layersConfig, json(LAYERS_CONFIG));
   if (page) put(root, PAGES.layers, page);
+  markScratch(root);
   return root;
 }
 
@@ -142,6 +144,7 @@ export async function pairPanel() {
   return divAt(page, a);
 }
 `);
+  writeScratchStamps(root, [ID]);
   return m;
 }
 

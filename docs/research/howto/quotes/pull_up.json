@@ -1,0 +1,307 @@
+{
+  "id": "pull_up",
+  "checked": "2026-10-17",
+  "sources": [
+    {
+      "id": "catalyst-pullup",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "nasm-chinup",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "baechle-earle",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "youdas2010",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "acsm2009",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "prinold2016",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "kolber2010",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "odriscoll1992",
+      "access": "abstract",
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "catalyst-pullup",
+      "quote": "Hang from a pull-up bar with your hands pronated (palms facing forward) and just outside shoulder width, allowing your shoulder to open completely.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "nasm-chinup",
+      "quote": "A pull-up uses a pronated, overhand grip (palms facing away), usually a bit wider than shoulder-width, and involves shoulder adduction.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "baechle-earle",
+      "quote": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "catalyst-pullup",
+      "quote": "Lower under control until the elbows are completely extended and shoulders are fully open again.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "nasm-chinup",
+      "quote": "partial range of motion (coach a full hang at the bottom to a chin-clearing top)",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "catalyst-pullup",
+      "quote": "Pull yourself up until your chin is above the bar, keeping the upper back extended and squeezing the shoulder blades back and down.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "youdas2010",
+      "quote": "The mean absolute elbow joint range of motion was 93.4 ± 14.6°, 100.6 ± 14.5°, and 99.8 ± 11.7° for the pull-up, chin-up, and rotational exercise using the Perfect·Pullup™ twisting handles, respectively.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "youdas2010",
+      "quote": "Twenty-one men (24.9 ± 2.4 years) and 4 women (23.5 ± 1 years) volunteered to participate.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "catalyst-pullup",
+      "quote": "Try to keep your head as level as possible and minimize reaching with the chin.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "nasm-chinup",
+      "quote": "Set the scapulae first, cueing 'pull the shoulder blades down and back' before the arms take over, so the client leads with the back rather than yanking with the arms.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "nasm-chinup",
+      "quote": "Maintain a controlled tempo in both directions and a braced, slightly hollow body position to prevent excessive swing.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "nasm-chinup",
+      "quote": "Discourage the common faults: kipping and momentum on strict-strength work, partial range of motion (coach a full hang at the bottom to a chin-clearing top), and craning the neck.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "nasm-chinup",
+      "quote": "Maintain a controlled tempo in both directions",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "acsm2009",
+      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "acsm2009",
+      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "nasm-chinup",
+      "quote": "Band-assisted reps or an assisted pull-up machine to practice the full pattern with reduced load.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "nasm-chinup",
+      "quote": "Eccentric (negative) reps: jump or step to the top, then lower slowly",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "nasm-chinup",
+      "quote": "Apply progressive overload deliberately, more reps, less assistance, then added load",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "nasm-chinup",
+      "quote": "once reps come easily, added load via a belt or dumbbell for continued overload",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "catalyst-pullup",
+      "quote": "Sets of 8-15 reps are usually appropriate",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "catalyst-pullup",
+      "quote": "Resistance can be reduced for those unable to perform pull-ups with their full body weight by using rubber bands to partially unload weight as necessary, or by keeping the feet on a box or bench to allow the legs to assist only as much as needed.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "catalyst-pullup",
+      "quote": "Weighted pull-ups can also be used to push strength with sets of 1-5 reps using a belt to hang weight plates between the legs.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "youdas2010",
+      "quote": "latissimus dorsi (117-130%), biceps brachii (78-96%), infraspinatus (71-79%), lower trapezius (45-56%), pectoralis major (44-57%)",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c15",
+      "source": "youdas2010",
+      "quote": "whereas the lower trapezius was significantly more active during the pull-up",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c16",
+      "source": "prinold2016",
+      "quote": "High arm elevation during pull-ups reduces sub-acromial space and increases pressure, increasing the risk of impingement injury.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c17",
+      "source": "prinold2016",
+      "quote": "The wide technique has a reduced range of pro/retraction in the same HT plane of elevation and 90° of arm abduction with 45° external rotation was observed. All these factors suggest increased sub-acromial impingement risk.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c17",
+      "source": "prinold2016",
+      "quote": "Wide and reverse pull-ups demonstrate kinematics patterns linked with increased impingement risk.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c18",
+      "source": "prinold2016",
+      "quote": "Weight-assisted front pull-ups require further investigation and could be recommended for weaker participants.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c19",
+      "source": "kolber2010",
+      "quote": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c19",
+      "source": "kolber2010",
+      "quote": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "nasm-chinup",
+      "quote": "progress gradually to avoid overuse issues like elbow tendon irritation",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c20",
+      "source": "nasm-chinup",
+      "quote": "if a client reports shoulder or elbow pain, numbness, or tingling that persists, refer them to a physician or physical therapist rather than training through it.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "quote": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "quote": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c21",
+      "source": "odriscoll1992",
+      "quote": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c22",
+      "source": "catalyst-pullup",
+      "quote": "It has the added benefit of grip strength and stamina development.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c23",
+      "source": "catalyst-pullup",
+      "quote": "The natural tendency is to round the back as you near the bar, but it’s important to keep it extended instead to fully engage all of the back musculature.",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}

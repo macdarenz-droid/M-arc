@@ -1,0 +1,119 @@
+{
+ "id": "shared-palm-flat",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-pushup",
+   "text": "Slowly bend forward to place your palms flat on the mat, positioning your hands shoulder-width apart with your fingers facing forward or turned slightly inward. Slowly shift your weight forward until your shoulders are positioned directly over your hands.",
+   "status": "verbatim",
+   "closest": "Slowly bend forward to place your palms flat on the mat, positioning your hands shoulder-width apart with your fingers facing forward or turned slightly inward. Slowly shift your weight forward until your shoulders are positioned directly over your hands.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bm-pushwrist",
+   "text": "Your hands should be facing forward, not angled, and all parts of your hand should make contact with the ground. Avoid cupping the palm or lifting up your fingers.",
+   "status": "verbatim",
+   "closest": "Your hands should be facing forward, not angled, and all parts of your hand should make contact with the ground. Avoid cupping the palm or lifting up your fingers.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bm-pushwrist",
+   "text": "If you do this, the heel of your hand will take on all of the pressure and force, which inevitably leads to some wrist discomfort.",
+   "status": "verbatim",
+   "closest": "If you do this, the heel of your hand will take on all of the pressure and force, which inevitably leads to some wrist discomfort.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bm-pushwrist",
+   "text": "Beginners tend to keep their hands wide and far in front of the chest. They also relax their hands and fingers. Sometimes I even see people rotate their hands in one direction or another. All these positions place unnecessary strain on the wrist, leading to pain.",
+   "status": "verbatim",
+   "closest": "Beginners tend to keep their hands wide and far in front of the chest. They also relax their hands and fingers. Sometimes I even see people rotate their hands in one direction or another. All these positions place unnecessary strain on the wrist, leading to pain.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bm-pushwrist",
+   "text": "At the top of the push up, your hands should be directly under your shoulders. Placing your hands in front of or behind the shoulder will increase pressure on your wrists.",
+   "status": "verbatim",
+   "closest": "At the top of the push up, your hands should be directly under your shoulders. Placing your hands in front of or behind the shoulder will increase pressure on your wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bws-pushup",
+   "text": "First, start by pushing your knuckle down to the floor. Spread your hands such that there's space between each of your fingers.",
+   "status": "verbatim",
+   "closest": "First, start by pushing your knuckle down to the floor. Spread your hands such that there's space between each of your fingers.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-pushup",
+   "text": "Pushing through the heel and outside surface of your palm provides greater force in your press and stability to your shoulders.",
+   "status": "verbatim",
+   "closest": "Pushing through the heel and outside surface of your palm provides greater force in your press and stability to your shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ace-birddog",
+   "text": "Reposition your hands and knees as necessary so that your knees are directly under your hips and hands are directly under your shoulders.",
+   "status": "verbatim",
+   "closest": "Reposition your hands and knees as necessary so that your knees are directly under your hips and hands are directly under your shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bws-pushup",
+   "text": "Forearms should end up on top of your wrists in a straight line - Avoid having your forearms bent at an angle.",
+   "status": "verbatim",
+   "closest": "Forearms should end up on top of your wrists in a straight line - Avoid having your forearms bent at an angle.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "nance-2017",
+   "text": "Many exercise disciplines incorporate upper extremity weight-bearing exercises in an extended wrist posture, for example push-ups, plank position, and various yoga and Pilates poses.",
+   "status": "verbatim",
+   "closest": "Many exercise disciplines incorporate upper extremity weight-bearing exercises in an extended wrist posture, for example push-ups, plank position, and various yoga and Pilates poses.",
+   "note": "fetched via NCBI eutils abstract text (PubMed web page itself returns a cookie/bot-challenge wall); abstract found verbatim"
+  },
+  {
+   "claim": "c7",
+   "source": "nance-2017",
+   "text": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist. Occult dorsal ganglion cysts are the most common cause of dorsal wrist pain, followed by partial scapholunate tears.",
+   "status": "verbatim",
+   "closest": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist. Occult dorsal ganglion cysts are the most common cause of dorsal wrist pain, followed by partial scapholunate tears.",
+   "note": "fetched via NCBI eutils abstract text; abstract found verbatim"
+  },
+  {
+   "claim": "c8",
+   "source": "bm-pushwrist",
+   "text": "Until then, incorporate some knuckle push ups in your program. These will ensure your wrists are aligned.",
+   "status": "verbatim",
+   "closest": "Until then, incorporate some knuckle push ups in your program. These will ensure your wrists are aligned.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bws-pushup",
+   "text": "You may need to hold onto dumbbells if your wrists aren't very flexible.",
+   "status": "verbatim",
+   "closest": "You may need to hold onto dumbbells if your wrists aren't very flexible.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bm-pushwrist",
+   "text": "If you continue to have wrist pain even while doing push ups on your knuckles, stop until you’ve consulted with your physiotherapist to prevent further injury.",
+   "status": "verbatim",
+   "closest": "If you continue to have wrist pain even while doing push ups on your knuckles, stop until you’ve consulted with your physiotherapist to prevent further injury.",
+   "note": ""
+  }
+ ]
+}

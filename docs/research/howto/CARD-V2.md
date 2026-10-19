@@ -1,0 +1,96 @@
+# Research card v2 (library How-to)
+
+This follows docs/howto/library/inputs/content.md section 3.2. There is one JSON file per exercise, `cards/<id>.json`, where `<id>` is the exercises.json id without the `lib_` prefix. Cards hold facts and claims, not user copy: the sheet's words are written later, under the copy lint.
+
+```jsonc
+{
+  "id": "dumbbell_bench_press",           // no lib_ prefix
+  "libId": "lib_dumbbell_bench_press",
+  "name": "Dumbbell Bench Press",
+  "family": "BENCH",                       // template family or pattern, as in the library plan (6.1/6.2)
+  "tier": "A",                             // A/B/C from content.md appendix B (tiers.py); census.json "tier" is a different field
+  "archetype": { "hand": "press-dumbbell", "contact": ["palm-heel"] },   // GA section 3 and appendix B names
+  "parent": null,                          // or the parent card id (difference card)
+  "inherit": [],                           // children only: [{ "field": "grip.thumb", "why": "true for this child because ..." }]
+
+  "claims": [
+    { "id": "c1", "text": "plain fact, one sentence",
+      "tags": ["DATA"],                    // DATA | MECH | CONSENSUS | WEAK (combine only as the 8 do, e.g. ["MECH","WEAK"])
+      "sources": ["acsm-bench"],
+      "quotes": [{ "source": "acsm-bench", "text": "<= 50 verbatim words", "where": "abstract | section name | paragraph" }] }
+  ],
+  "sources": [
+    { "id": "acsm-bench", "url": "https://...", "title": "...", "kind": "guideline | peer-reviewed | coach | textbook",
+      "year": 2021, "pmid": null }         // the fetcher adds "access" (full|abstract|summary|unreachable) and "checked" (ISO date)
+  ],
+
+  "plate": {                               // what the Technical Plate needs (golden-A standard)
+    "view": "side | front | three-quarter", "viewWhy": "claim id or reason",
+    "equipment": "what is drawn, positions that matter (bench angle, bar height)",
+    "start": "joint positions in words and rough angles, each with a claim id",
+    "end": "the same, for the end position",
+    "checkpoints": [                       // exactly 3, the top form checkpoints; they become callouts
+      { "label": "1-3 words", "what": "what it means", "claim": "c2" } ],
+    "mistake": { "what": "the single most common fault the engine can draw from this view",
+                 "why": "why it is common or risky", "claim": "c5", "rankNote": "the LR-31 step that picked the top fault, with claim ids",
+                 "drawable": true },       // false when the top fault needs a view the plate lacks: then name the most common drawable fault
+    "tells": [ { "text": "how you know you are doing it right (<= 8 words)", "claim": "c6" } ],   // 1-3
+    "tempo": { "up": 1, "down": 2, "pause": 0, "claim": "c7" },
+    "variantLine": null                    // when exercises.json lists two kinds of equipment: which one is drawn, and which claims hold for both
+  },
+
+  "grip":  { "type": "", "width": "", "thumb": "", "handContact": "", "wrist": "", "claims": [] },
+  "setup": [ { "step": "", "claim": "" } ],              // up to 5
+  "posture": [ { "point": "", "claim": "" } ],           // up to 6
+  "handlingMistakes": [ { "mistake": "", "fix": "", "claim": "" } ],   // up to 3, most common and most risky first
+  "feel": { "primary": [ { "muscleId": "", "claim": "" } ], "secondary": [], "watch": [],
+            "rows": [ { "where": "", "means": "", "fix": "", "claim": "", "redFlag": null } ] },  // up to 4
+  "risks": [ { "risk": "", "claim": "" } ],              // up to 3
+  "redFlags": [ "wrist" ],                               // shared blocks: wrist | shoulder | knee | elbow | back (new)
+  "zooms": [ { "key": "", "kind": "hand | posture", "right": "", "wrong": "", "claim": "" } ],   // 2-4
+  "libraryDiff": { "add": [], "remove": [], "why": "" },  // muscles vs src/data/exercises.json, with a reason each
+  "anchorSource": "id of at least one exercise-specific technique source read in full",
+  "gaps": [],                              // optional: points the card should carry but no source supports (listed, never filled by invention)
+  "tierA": { "wayOut": null },             // optional, tier A: sourced safety points; an unsourced way-out lives in "gaps" only
+  "notes": []                              // optional: verifier or writer notes that are not facts
+}
+```
+
+The rules:
+- Every factual line points to a claim, and every claim has at least one source with a verbatim quote of at most 50 words. There are no free-text citations.
+- Every listed source is cited by at least one claim, so there are no orphan sources.
+- Muscle ids come from `src/data/muscles.ts` on main. In `feel` (C2; LR-35): `brachialis` and `rotator_cuff` have no drawn region (text-only), so use them only in `feel.secondary` and `feel.watch`, never in `feel.primary` or a row's `at.muscles`; `core` has a misleading region, so use it in none of `feel.primary`, `feel.secondary` and `feel.watch`. `libraryDiff` may use any muscles.ts id.
+- Never infer from another exercise without saying so in the claim, with the tag `MECH` or `WEAK`.
+- Tier-A exercises (spinal loading, overhead, high skill) carry the safety points the safety checker will look for:
+  - safeties or J-hooks where they apply;
+  - a bar path clear of the neck;
+  - load progression.
+- `"claim"` on any line is one claim id (`"c2"`), a list when the line uses words from several claims (`["c2","c5"]`), or `"inherit:<n>"` when the line restates the child's `inherit[n]` field. Every word of a line comes from the claims it cites.
+- A difference card's parent must be a verified card on `claude/libht-research`, or an approved golden exercise. Once a golden parent has a verified card on the branch, that card, and any verified shared card whose appliesTo lists the child, governs the child's inherited lines; an inherit entry stays only where the parent's shipped How-to string for it holds whole there, and golden-B research is a source map only (LR-34). Parent picks follow the library architecture (6.1/6.2), which supersedes content.md appendix A (ruling LR-7).
+- Rulings on verifier open items: `RULINGS.md` in this folder.
+- A source may carry an optional `archiveUrl` (a web.archive.org copy) when the live page no longer answers; `checked` then refers to the archived copy (ruling LR-25).
+- A zoom's `wrong` may be `null` when no wrong position is sourced; the sheet then shows only the right position (LR-25).
+- The top fault follows LR-31 on every card, on LR-31's rollout. `plate.mistake.rankNote` records the step, the claim ids and each frequency or harm quote set aside; `handlingMistakes[0]` is the top fault; a fault seen only as speed is never drawable. `rankNote` is research data, never shown (LR-28).
+
+## Machine fields
+
+Three optional top-level keys that the library plate QA reads (D-LIB9-CARDFIELDS; lib4-cards.md 12 item 9, 13 Q1 and Q3, 14). They are read exactly as `tools/plates/library/candidate.mjs` `researchOf` (:44-48), `qa/node.mjs` H6 (:153-176) and F7 (:293) read them. Nothing else in a card changes for them.
+
+```jsonc
+{
+  "plateFacts": [                          // H6: each fact within ±2° or ±1 cm of the drawn plate
+    { "kind": "angle", "measure": true, "pose": "end", "deg": 125, "claim": "c4" },        // compared with spec.measure.expect and the drawn measure
+    { "kind": "angle", "joint": "elbow.r", "pose": "end", "deg": 160, "claim": "c6" },     // compared with the engine's angle at that pose
+    { "kind": "contact", "landmark": "grip.r", "pose": "end", "claim": "c2" },
+    { "kind": "height", "landmark": "hip.r", "pose": "end", "m": 0.95, "claim": "c3" }
+  ],
+  "tempo": [ { "phase": "Pull", "s": 2, "move": true }, { "phase": "Hold", "s": 1 }, { "phase": "Lower", "s": 3, "move": true } ],
+  "topFault": "swing"
+}
+```
+
+- `plateFacts`: every fact names the claim whose verbatim quote states it (`claim`, which H6 does not read). A card for an exercise with a spec carries the key only when it is non-empty and holds the measured-joint angle fact in the form the ruled form table gives for that exercise (`measure: true` or a `joint` fact). Otherwise the key is absent, never `[]`. `plateFacts` and `tempo` go in together or not at all.
+- `tempo`: the spec's phase array, compared with `JSON.stringify`, so the key order is `{ phase, s, move: true }` for a moving phase and `{ phase, s }` otherwise, and no entry carries a `claim` key. Each `s` comes from the card's verified `plate.tempo` (`up`, `down` or `pause`, cited by `plate.tempo.claim`) through the ruled map for that batch, or is a ruled constant with its own verified claim and quote. A moving phase takes `up` or `down`, never a constant. Phase names, order and move flags are labels from the ruled map.
+- `topFault`: the plate Mistake key of the card's top fault, chosen from the plate's tells by a blind pass over the card's own words, never copied from the drawn plate. It cites `plate.mistake.claim`. On a card with `plate.mistake.drawable: false` it is the key of the top fault the card names in `mistake.why` or `handlingMistakes`, and it must differ from the drawn Mistake's key, so F7 stays raised for the owner.
+- A content verifier with one planted wrong number checks these keys before any plate QA uses them.
+- The keys are research data for the plate checks. They are never shown in the app.

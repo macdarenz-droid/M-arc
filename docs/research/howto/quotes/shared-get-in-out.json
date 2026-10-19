@@ -1,0 +1,95 @@
+{
+ "id": "shared-get-in-out",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "matrix-go-s34",
+   "text": "If applicable, adjust seat pads, leg pads, foot pads, range of motion adjustment, or any other type of adjustment mechanisms to a comfortable start position.",
+   "status": "verbatim",
+   "closest": "If applicable, adjust seat pads, leg pads, foot pads, range of motion adjustment, or any other type of adjustment mechanisms to a comfortable start position.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "matrix-go-s34",
+   "text": "Make certain that the adjusting mechanism is fully engaged to prevent unintentional movement and to avoid injury.",
+   "status": "verbatim",
+   "closest": "Make certain that the adjusting mechanism is fully engaged to prevent unintentional movement and to avoid injury.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "lf-circuit",
+   "text": "When adjusting any seat, knee hold down pad, range of motion limiter, foothold pad or any other type of adjuster, make certain that the adjusting pin is fully engaged in the hole to avoid injury.",
+   "status": "verbatim",
+   "closest": "When adjusting any seat, knee hold down pad, range of motion limiter, foothold pad or any other type of adjuster, make certain that the adjusting pin is fully engaged in the hole to avoid injury.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "matrix-go-s34",
+   "text": "If applicable, set safety stops to appropriate height.",
+   "status": "verbatim",
+   "closest": "If applicable, set safety stops to appropriate height.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "matrix-go-s34",
+   "text": "Sit on bench (if applicable) and get into appropriate position for exercise.",
+   "status": "verbatim",
+   "closest": "Sit on bench (if applicable) and get into appropriate position for exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "matrix-go-s34",
+   "text": "Exercise using no more weight than you can safely lift and control.",
+   "status": "verbatim",
+   "closest": "Exercise using no more weight than you can safely lift and control.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "matrix-go-s34",
+   "text": "Return weight to its fully-supported start position.",
+   "status": "verbatim",
+   "closest": "Return weight to its fully-supported start position.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "lf-circuit",
+   "text": "Raise the thigh pad to locked position and exit the machine.",
+   "status": "verbatim",
+   "closest": "Raise the thigh pad to locked position and exit the machine.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "illinois-fit",
+   "text": "Lift weights in a controlled manner, refraining from slamming weight stacks.",
+   "status": "verbatim",
+   "closest": "Lift weights in a controlled manner, refraining from slamming weight stacks.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "utah-fit",
+   "text": "Dropping, throwing, or slamming weights or weight stacks, not only damages them, but also the floor.",
+   "status": "verbatim",
+   "closest": "Dropping, throwing, or slamming weights or weight stacks, not only damages them, but also the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "utah-fit",
+   "text": "A good practice to follow is to gently return the weights to their resting position.",
+   "status": "verbatim",
+   "closest": "A good practice to follow is to gently return the weights to their resting position.",
+   "note": ""
+  }
+ ]
+}
