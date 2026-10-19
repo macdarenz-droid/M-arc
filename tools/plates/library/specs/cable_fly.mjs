@@ -128,6 +128,10 @@ export default {
   checks: [
     { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'ball.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
+    { landmark: 'grip.r', at: start.reach.r.at, pose: 'start', tol: 0.5 },          // hands on the handles (c3)
+    { landmark: 'grip.l', at: start.reach.l.at, pose: 'start', tol: 0.5 },
+    { landmark: 'grip.r', at: end.reach.r.at, pose: 'end', tol: 0.5 },              // the handles in front of the chest (c8)
+    { landmark: 'grip.l', at: end.reach.l.at, pose: 'end', tol: 0.5 },
   ],
   ghosts: { count: 3, parts: ['arm.r', 'arm.l'] },
   trace: { point: 'grip.r', trim: [12, 12] },

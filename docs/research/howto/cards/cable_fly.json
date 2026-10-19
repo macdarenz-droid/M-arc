@@ -573,7 +573,7 @@
   "notes": [
     "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick (elbows bending into a press) is unchanged here. Verify #3's critic notes PureGym ties range and the soft elbow to 'minimising strain to the shoulder joint' (c7), so LR-31 step 2 may pick opening past the chest line (handlingMistakes[2]); that reading needs a supervisor ruling."
   ],
-  "plateFacts": [],
+  "plateFacts": [{"kind":"contact","landmark":"grip.r","pose":"start","cardPose":"start","claim":"c3","note":"c3 \"grip each handle\"; a setup quote, start pose only"},{"kind":"contact","landmark":"grip.l","pose":"start","cardPose":"start","claim":"c3","note":"c3 \"grip each handle\"; a setup quote, start pose only"},{"kind":"contact","landmark":"grip.r","pose":"end","cardPose":"end","claim":"c8","note":"c8 \"Press the cable handles so they are in front of your chest\": the hands on the handles at the end"},{"kind":"contact","landmark":"grip.l","pose":"end","cardPose":"end","claim":"c8","note":"c8 \"Press the cable handles so they are in front of your chest\": the hands on the handles at the end"}],
   "tempo": [{"phase":"Close","s":1,"move":true},{"phase":"Hold","s":1},{"phase":"Open","s":2,"move":true}],
   "topFault": "press"
 }

@@ -118,6 +118,7 @@ export default {
   equipment: [{ type: 'floor', from: -1.15, to: 0.42 }],
   checks: [
     { landmark: 'wrist.r', plane: { point: [0, WRIST_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // palm flat on the floor (LIB-26)
+    { landmark: 'wrist.l', plane: { point: [0, WRIST_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // both palms (c1)
     { landmark: 'wrist.r', plane: { point: SH, normal: [0, 0, 1] }, pose: 'end', tol: 0.5 },                // shoulders over the hands (c1, c6)
     { landmark: 'elbow.r', plane: { point: SH, normal: [0, 0, 1] }, pose: 'end', tol: 0.5 },                // over the elbows (c6)
     { landmark: 'toe.r', plane: FLOOR, pose: 'all', tol: 0.5 },                                              // on the toes (c2)

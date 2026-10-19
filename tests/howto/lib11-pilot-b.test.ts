@@ -422,17 +422,19 @@ describe('LIB-11 A10, A6 and Q1 (Do 5 b): the card fields, the ruled tempo map a
     const c = cardOf('push_up'); c.plate.mistake.drawable = false;
     expect(topFaultProblems(c, 'sag')).toEqual(['drawable:false but topFault equals the drawn fault']);
   });
-  /** Kind on every fact, one form per fact, a claim of the card's own, and a pose that is the ruled image of its quote's pose. */
-  const CARD_POSE: Record<string, Record<string, string>> = {   // fact claim -> the card pose its quote states (plate.start / plate.end)
-    smith_machine_bench_press: { c1: 'plate.start', c2: 'plate.start', c3: 'plate.end' }, seated_leg_curl: { c2: 'plate.start', c4: 'plate.start', c5: 'plate.start' },
-    push_up: { c1: 'plate.start', c3: 'plate.end' },
+  /** Kind on every fact, one form per fact, a claim of the card's own, a contact's cardPose equal to the pose its quote
+   *  states, and a pose that is the ruled image of that card pose (CARD FIELDS RULED item 1, D-LIB11-FACTS2). */
+  const CARD_POSE: Record<string, Record<string, string>> = {   // fact claim -> the card pose its quote states
+    smith_machine_bench_press: { c1: 'start', c2: 'start', c3: 'end' }, seated_leg_curl: { c2: 'start', c4: 'start', c5: 'start' },
+    cable_fly: { c3: 'start', c8: 'end' }, push_up: { c1: 'start', c3: 'end' },
   };
-  const specPose = (id: string, cardPose: string) => { const m = POSE_MAP[id] ?? { start: 'plate.start', end: 'plate.end' }; return Object.keys(m).find(k => m[k] === cardPose); };
+  const specPose = (id: string, cardPose: string) => { const m = POSE_MAP[id] ?? { start: 'plate.start', end: 'plate.end' }; return Object.keys(m).find(k => m[k] === `plate.${cardPose}`); };
   const factProblems = (id: string, c: any) => c.plateFacts.flatMap((f: any, i: number) => [
     ...(['contact', 'angle', 'height'].includes(f.kind) ? [] : [`${i}: kind`]),
     ...(f.joint && f.measure === true ? [`${i}: both joint and measure`] : []),
     ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
-    ...(f.pose === specPose(id, CARD_POSE[id]?.[f.claim] ?? '') ? [] : [`${i}: pose ${f.pose}`]),
+    ...(f.kind === 'contact' && f.cardPose !== CARD_POSE[id]?.[f.claim] ? [`${i}: cardPose ${f.cardPose}`] : []),
+    ...(f.pose === specPose(id, f.cardPose ?? CARD_POSE[id]?.[f.claim] ?? '') ? [] : [`${i}: pose ${f.pose}`]),
   ]);
   it('every plate fact has a kind, one form, a claim of its own card and the ruled pose; each How-to names its card', async () => {
     for (const id of DRAWN) {
@@ -440,13 +442,21 @@ describe('LIB-11 A10, A6 and Q1 (Do 5 b): the card fields, the ruled tempo map a
       const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
       expect(h).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
-    expect(cardOf('cable_fly').plateFacts).toEqual([]);
+    // the ruled contact set (CARD FIELDS RULED @ 24d2b68, #278 6272494659): landmark@pose per card, nothing more or less
+    const RULED_CONTACTS: Record<string, string[]> = {
+      smith_machine_bench_press: ['chest@end', 'backUpper@start', 'grip.r@start', 'grip.l@start', 'sole.r@start', 'sole.l@start'],
+      seated_leg_curl: ['backUpper@start', 'seat@start', 'thighTop.r@start', 'thighTop.l@start', 'thighUnder.r@start', 'thighUnder.l@start', 'grip.r@start', 'grip.l@start'],
+      cable_fly: ['grip.r@start', 'grip.l@start', 'grip.r@end', 'grip.l@end'], push_up: ['wrist.r@end', 'wrist.l@end', 'chest@start'],
+    };
+    for (const id of DRAWN) expect(cardOf(id).plateFacts.filter((f: any) => f.kind === 'contact').map((f: any) => `${f.landmark}@${f.pose}`).sort(), id).toEqual(RULED_CONTACTS[id]!.slice().sort());
   });
   it('mutations: a fact with both joint and measure: true, and a start fact named with the unmapped pose, are red', () => {
     const c = cardOf('smith_machine_bench_press'); c.plateFacts.push({ kind: 'angle', joint: 'knee.r', measure: true, deg: 30, pose: 'end', claim: 'c3' });
     expect(factProblems('smith_machine_bench_press', c)).toEqual([`${c.plateFacts.length - 1}: both joint and measure`]);
     const p = cardOf('push_up'); p.plateFacts = p.plateFacts.map((f: any) => (f.claim === 'c1' ? { ...f, pose: 'start' } : f));
     expect(factProblems('push_up', p).some((x: string) => /pose start/.test(x))).toBe(true);
+    const q = cardOf('push_up'); q.plateFacts = q.plateFacts.map((f: any) => (f.claim === 'c3' ? { ...f, cardPose: 'start' } : f));
+    expect(factProblems('push_up', q).some((x: string) => /cardPose start/.test(x))).toBe(true);
   });
   const h6 = (s: any, research: any) => {
     const R = { normal: plate.renderPlate(s, { id: 'x' }), mistake: plate.renderPlate(s, { id: 'x', mistake: true }) };

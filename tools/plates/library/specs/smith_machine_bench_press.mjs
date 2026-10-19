@@ -163,7 +163,10 @@ export default {
     { landmark: 'head', above: { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] }, pose: 'all' },
     { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },          // feet flat (c2)
     { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
-    { landmark: 'grips', at: [0, BAR1[1], BAR1[2]], pose: 'end', tol: 0.5 },                             // the bar touches the mid-chest (c3)
+    { landmark: 'grips', at: [0, BAR1[1], BAR1[2]], pose: 'end', tol: 0.5 },                             // the bar at the touch point (c3)
+    { landmark: 'chest', plane: { point: [0, BAR1[1] - BAR_R, 0], normal: [0, 1, 0] }, pose: 'end', tol: 1 }, // the chest touches the bar's underside (c3)
+    { landmark: 'grip.r', at: topReach('r').at, pose: 'start', tol: 0.5 },                               // hands on the bar (c1)
+    { landmark: 'grip.l', at: topReach('l').at, pose: 'start', tol: 0.5 },
   ],
   startParts: ['arm.r', 'arm.l', 'bar', 'carriage', 'hook'],
   ghosts: { count: 2, parts: ['arm.r', 'bar'] },

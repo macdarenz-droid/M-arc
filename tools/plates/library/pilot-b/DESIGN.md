@@ -133,29 +133,27 @@ All drawable:true, so topFault = the plate.mistake key and the first tell carrie
 
 ## 9. Facts (D-LIB8M-FACTS with 22's scope; D-LIB11-FACTS2: quoted contacts in drawn poses are facts too)
 
-Ruled: 'PILOT B MAPS RULED @ 6ade71ef' (#278 6269835256). Each fact's pose is the spec pose that the ruled pose map gives
-for the pose its quote states; a setup quote states the start pose only (D-LIB9-FACTPOSE). Contacts go through H6's
-`checks` path, so each has a spec check on that landmark and pose.
+Ruled: 'PILOT B MAPS RULED @ 6ade71ef' (#278 6269835256) and 'PILOT B CARD FIELDS RULED @ 24d2b68' (#278 6272494659).
+Every contact fact is `{kind:'contact', landmark, pose, cardPose, claim}`: `cardPose` is the card pose its quote states
+(a setup quote states the start pose only, D-LIB9-FACTPOSE) and `pose` is the ruled pose map's image of it. Each has a
+spec check on that landmark and pose (H6's `checks` path). `grip` names a hand holding a bar or handle; `wrist` a flat
+palm (ruled).
 
-| id | fact | quantity / contact | claim |
-|---|---|---|---|
-| smith_machine_bench_press | `angle sh.r.elev end 45` | the 3D angle between the upper arm and the trunk at the bottom (engine shoulder elevation; NOTE RULED item 1) | c3 |
-| smith_machine_bench_press | `contact grips end` | "until it touches your chest": the bar (grip midpoint) at the touch point on the mid-chest | c3 |
-| smith_machine_bench_press | `contact backUpper start` | "Lie on the bench" (setup) | c1 |
-| smith_machine_bench_press | `contact sole.r start`, `contact sole.l start` | "feet flat on the floor" (setup) | c2 |
-| seated_leg_curl | `contact backUpper start` | "keep your back flat against it" (setup) | c4 |
-| seated_leg_curl | `contact seat start` | "ground your hips down into the seat", before the curl | c5 |
-| seated_leg_curl | `contact thighTop.r start` | "the thigh pad will be snug just above your knees" (setup) | c2 |
-| seated_leg_curl | `contact grip.r start` | "grasp the handles on either side of you", before the curl | c5 |
-| push_up | `contact wrist.r end` | "place your palms flat on the mat" (card plate.start = spec end; the flat palm sits the wrist at the forearm's distal radius, LIB-26) | c1 |
-| push_up | `contact chest start` | "until your chest or chin touch the mat/floor" (card plate.end = spec start) | c3 |
-| cable_fly | none (`[]`) | no quote gives a number, and "bring both hands together" (c5) does not say the hands touch | — |
+| id | facts (landmark pose/cardPose) | claims |
+|---|---|---|
+| smith_machine_bench_press | angle `sh.r.elev` end 45 (the 3D upper arm to trunk angle, NOTE RULED item 1); contact `chest` end/end (the chest touches the bar: check on the plane of the bar's underside); `backUpper` start/start; `grip.r`, `grip.l` start/start; `sole.r`, `sole.l` start/start | c3; c3; c1; c1; c2 |
+| seated_leg_curl | `backUpper`, `seat`, `thighTop.r`, `thighTop.l`, `thighUnder.r`, `thighUnder.l`, `grip.r`, `grip.l`, all start/start | c4, c5, c2, c2, c2 ("sandwiching your legs between it and the seat"), c2, c5, c5 |
+| cable_fly | `grip.r`, `grip.l` start/start; `grip.r`, `grip.l` end/end | c3 ("grip each handle"); c8 ("Press the cable handles so they are in front of your chest") |
+| push_up | `wrist.r`, `wrist.l` end/start; `chest` start/end | c1; c3 |
+
+Pose change for the fix round: seated_leg_curl's HIP_FLEX 80 → 74 (an unsourced posture number), so the thigh
+undersides rest on the seat (0.1 cm) as c2's "sandwiching" states; at 80 they sat 2.3 cm above it.
 
 Not facts, each with its reason: seated_leg_curl's ankle pad "under your legs just above your shoes" (c3) is a contact
 on the lower shank, where the body model has no landmark, so H6 cannot check it; it is proven by the drawn-item test
-(A2) instead and no key is invented. "Knees in line with the machine's joint" (c1) is an alignment, not a contact (the
-spec's `knee.r` check proves it). Contacts are never carried to the end pose by inference ("thighs, hips and back
-unchanged" is card text over setup quotes). crunch's heel distance stays a drawn-item test (NOTE RULED item 4).
+(A2) and no key is invented. "Knees in line with the machine's joint" (c1) is an alignment, not a contact (the spec's
+`knee.r` check proves it). Contacts are never carried to another pose by inference. crunch's heel distance stays a
+drawn-item test (NOTE RULED item 4).
 
 ## 10. Unsourced numbers (no card gives them)
 

@@ -38,7 +38,7 @@ import { legCurlMachine, LEG_CURL_ITEMS } from '../eq/legCurlMachine.mjs';
 const H = 1.75;
 const SEAT_Y = 0.56, SEAT_Z = 0.06;                   // seat pad top (m) and its centre (world z)
 const SEAT = [0, SEAT_Y, 0];                          // the seat landmark's contact point
-const TILT = -10, HIP_FLEX = 80;                      // pelvis reclined 10 deg; thighs level (deg)
+const TILT = -10, HIP_FLEX = 74;                      // pelvis reclined 10 deg; thigh undersides on the seat (c2: sandwiched) (deg)
 const KNEE_START = 10, KNEE_END = 120;                // knee flexion (deg): legs out in front / curled under the seat
 export const ANKLE_RIGHT = -30, MIS_ANKLE = 0;        // ankle (deg, + dorsiflexion): toes pointed / flexed as when standing (c10)
 const ANKLE_T = 0.85;                                 // ankle pad contact: fraction of the shank from the knee (c3)
@@ -90,7 +90,11 @@ export default {
     { landmark: 'buttock', plane: { point: lmE.backUpper, normal: [0, -(lmE.backUpper[2] - lmE.buttock[2]), lmE.backUpper[1] - lmE.buttock[1]].map((v, i, a) => v / Math.hypot(...a)) }, pose: 'all', tol: 1 },
     { landmark: 'knee.r', at: lmE['knee.r'], pose: 'all', tol: 1 },                                              // knee at the pivot (c1)
     { landmark: 'thighTop.r', at: lmE['thighTop.r'], pose: 'all', tol: 1 },
-    { landmark: 'grip.r', at: [-HANDLE[0], HANDLE[1], HANDLE[2]], pose: 'all', tol: 0.5 },   // hands on the side handles (c5)   // thigh pad on the thigh (c2)
+    { landmark: 'grip.r', at: [-HANDLE[0], HANDLE[1], HANDLE[2]], pose: 'all', tol: 0.5 },   // hands on the side handles (c5)
+    { landmark: 'grip.l', at: HANDLE, pose: 'all', tol: 0.5 },
+    { landmark: 'thighTop.l', at: lmE['thighTop.l'], pose: 'all', tol: 1 },                  // the pad on both thighs (c2)
+    { landmark: 'thighUnder.r', plane: { point: SEAT, normal: [0, 1, 0] }, pose: 'all', tol: 1 },   // legs sandwiched on the seat (c2)
+    { landmark: 'thighUnder.l', plane: { point: SEAT, normal: [0, 1, 0] }, pose: 'all', tol: 1 },   // thigh pad on the thigh (c2)
   ],
   startParts: ['leg.r', 'leg.l', 'lever'],
   ghosts: { count: 2, parts: ['leg.r', 'lever'] },
@@ -107,7 +111,7 @@ export default {
       { kind: 'arc-arrow', center: { at: 'ankle.r', pose: 'mistake' }, r: 36, a0: 72, a1: 28 },   // the foot turns up about the ankle
     ],
     tells: [
-      { key: 'flexed', text: 'Feet<br>flexed up', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 228, top: 300 }, cue: 'Your feet flex up as if you were standing.' },
+      { key: 'flexed', text: 'Feet<br>flexed up', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 254, top: 300 }, cue: 'Your feet flex up as if you were standing.' },
       { key: 'calves', text: 'Calves<br>push', anchor: { at: 'heel.r', pose: 'mistake' }, box: { left: 48, top: 284 }, cue: 'You push the pad with your calves instead of pointing your toes.' },
     ],
   },
