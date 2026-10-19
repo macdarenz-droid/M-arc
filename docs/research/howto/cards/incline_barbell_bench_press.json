@@ -764,7 +764,7 @@
       "pose": "end",
       "deg": 60,
       "claim": "c7",
-      "note": "c7 gives 45-75 degrees from the torso; 60 is its midpoint (supervisor, LB2 CARD FIELDS verify @ 2bd89d0)"
+      "note": "c7: \"keeping your elbows at a 45-75 degree angle relative to your torso\"; 60 is the midpoint of 45-75 (supervisor, LB2 CARD FIELDS verify @ 2bd89d0)"
     }
   ],
   "tempo": [
