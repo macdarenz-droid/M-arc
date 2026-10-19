@@ -236,6 +236,12 @@ an arc from the end elbow, read in the side view as the elbow at shoulder height
   The Trace runs the c8 diagonal. Tempo Lower 2, Press 1, Hold 1. Mistake `path` (c25): the bar driven 36 cm
   straight up from the touch, drawn as a dashed vertical path, a dashed bar and an arrow; tells `path` (Straight up)
   and `chest` (Stays over chest). A plumb datum through the elbow shows the vertical forearm.
+- **dumbbell_pullover (H):** the anchor's supine body, the bench ending at the crown (c2); both hands 5 cm off the
+  midline on one dumbbell hanging straight down, axis vertical, 11 cm under the grips (c3, c13); the elbow bend 15°
+  in every pose and along the path (11 via keys keep it within 2°, c6); start: arms straight up over the upper chest
+  (c4); end: swung 97° back, grips 8 cm under shoulder height (c5). Tempo Lower 2, Pull 1 (c18). Mistake `bend` (c7):
+  the upper arm stops 60° back and the elbow folds to 86°, so the dumbbell comes 17 cm in toward the shoulders and
+  hangs past the bench end (2.9 cm clear); tells `bend` and `near`.
 - **Flat-bench rack (both barbell plates):** the head-side upright under the racked bar over the brow, the foot-side
   upright RACK_DEPTH 1.6 m away (a deep power rack; at 1.2 m it stood where the labels need room), 1.5 m tall, the pin
   3 cm under the bar's underside at the touch. All unsourced, listed in the spec headers.

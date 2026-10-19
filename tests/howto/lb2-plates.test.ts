@@ -20,7 +20,7 @@ const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const dist = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!);
 
 let eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, reg: any, pins: any;
-let dbp: any, dbpMod: any, sc: any, scMod: any, cg: any, cgMod: any, bb: any, bbMod: any;
+let dbp: any, dbpMod: any, sc: any, scMod: any, cg: any, cgMod: any, bb: any, bbMod: any, po: any, poMod: any;
 beforeAll(async () => {
   [eng, body, qaNode, qaEng, qaIdx, plate, closure, reg] = await Promise.all([
     'engine.mjs', '../vendor/engine/body.mjs', 'qa/node.mjs', 'qa/engine.mjs', 'qa/index.mjs', '../vendor/engine/plate.mjs',
@@ -35,6 +35,8 @@ beforeAll(async () => {
   cg = cgMod.default;
   bbMod = await import(/* @vite-ignore */ lib('specs/barbell_bench_press.mjs'));
   bb = bbMod.default;
+  poMod = await import(/* @vite-ignore */ lib('specs/dumbbell_pullover.mjs'));
+  po = poMod.default;
 }, T);
 
 const Eng = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eng.PRIMITIVES, body });
@@ -75,7 +77,7 @@ describe('LIB-10 A2 / Do 4: declineBench and the H slice plates draw PRIMITIVES 
     }
   });
   it('every item the slice plates draw is a PRIMITIVES type, in every drawn pose', () => {
-    for (const spec of [dbp, sc, cg, bb]) for (const pose of posesOf(spec))
+    for (const spec of [dbp, sc, cg, bb, po]) for (const pose of posesOf(spec))
       for (const it of itemsIn(spec, pose).items) expect(Object.keys(eng.PRIMITIVES), `${spec.id} ${pose}`).toContain(it.type);
   });
   it('the slice plates pass PQ-H9', () => {
@@ -83,12 +85,13 @@ describe('LIB-10 A2 / Do 4: declineBench and the H slice plates draw PRIMITIVES 
     expect(h9(sc)).toEqual([]);
     expect(h9(cg)).toEqual([]);
     expect(h9(bb)).toEqual([]);
+    expect(h9(po)).toEqual([]);
   });
   it('mutation: an item of an unknown type ({type: wedge}) turns H9.type red', () => {
     expect(h9({ ...dbp, equipment: [...dbp.equipment, { type: 'wedge', at: [0, 0, 0] }] }).some((k: string) => k.startsWith('H9.type:'))).toBe(true);
   });
   it('the engine draws both slice plates with no engine issue and every check within its tolerance', () => {
-    for (const spec of [dbp, sc, cg, bb]) {
+    for (const spec of [dbp, sc, cg, bb, po]) {
       const r = plate.renderPlate(spec, { id: 'x' }).report;
       expect(r.issues ?? [], spec.id).toEqual([]);
       for (const c of r.checks) if ('cm' in c) expect(c.cm, `${spec.id} ${c.landmark} ${c.pose}`).toBeLessThanOrEqual(1);
@@ -196,11 +199,11 @@ describe('LIB-10 Do 2 a: skull_crusher draws the elbow-only arm', { timeout: T }
 });
 
 describe('LIB-10 H slice Mistakes (research 2b6747f8; D-LIB10-NOTE section 10)', { timeout: T }, () => {
-  const KEYS: Record<string, string> = { decline_bench_press: 'high', skull_crusher: 'drift', close_grip_bench_press: 'flare', barbell_bench_press: 'path' };
+  const KEYS: Record<string, string> = { decline_bench_press: 'high', skull_crusher: 'drift', close_grip_bench_press: 'flare', barbell_bench_press: 'path', dumbbell_pullover: 'bend' };
   /** The ruled first-tell key check (13 Q1(a)): tells[0].key is the card's ruled key. */
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each slice plate draws its Mistake, and its first tell carries the ruled key', () => {
-    for (const spec of [dbp, sc, cg, bb]) expect(keyProblems(spec)).toEqual([]);
+    for (const spec of [dbp, sc, cg, bb, po]) expect(keyProblems(spec)).toEqual([]);
   });
   it('mutation: the first tell key swapped is red', () => {
     expect(keyProblems({ ...dbp, mistake: { ...dbp.mistake, tells: [...dbp.mistake.tells].reverse() } })).toEqual(['decline_bench_press: first tell neck']);
@@ -209,6 +212,7 @@ describe('LIB-10 H slice Mistakes (research 2b6747f8; D-LIB10-NOTE section 10)',
     expect(dbp.mistake.tells.length).toBeGreaterThanOrEqual(2);
     expect(cg.mistake.tells.length).toBeGreaterThanOrEqual(2);
     expect(bb.mistake.tells.length).toBeGreaterThanOrEqual(2);
+    expect(po.mistake.tells.length).toBeGreaterThanOrEqual(2);
     expect(sc.mistake.tells.length).toBe(1);
   });
   it('decline: the Mistake bar touches the chest at least 15 cm headward of the end touch and nearer the chin (c5, c12)', () => {
@@ -225,13 +229,14 @@ describe('LIB-10 H slice Mistakes (research 2b6747f8; D-LIB10-NOTE section 10)',
     expect(scMod.mistakeInfo().barClearsCrownCm).toBeGreaterThan(5);
   });
   it('every Mistake guide is dashed or an arrow (red parts over the solid end figure are dashed, 13.1)', () => {
-    for (const spec of [dbp, sc, cg, bb]) for (const g of spec.mistake.guides) expect(['dashed', 'arrow'], spec.id).toContain(g.kind);
+    for (const spec of [dbp, sc, cg, bb, po]) for (const g of spec.mistake.guides) expect(['dashed', 'arrow'], spec.id).toContain(g.kind);
   });
   it('the tempo strips are the ruled arrays (D-LIB10-NOTE sections 6 and 9)', () => {
     expect(dbp.tempo).toEqual([{ phase: 'Lower', s: 2, move: true }, { phase: 'Pause', s: 1 }, { phase: 'Press', s: 1, move: true }]);
     expect(sc.tempo).toEqual([{ phase: 'Lower', s: 3, move: true }, { phase: 'Extend', s: 1, move: true }]);
     expect(cg.tempo).toEqual([{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }]);
     expect(bb.tempo).toEqual([{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }]);
+    expect(po.tempo).toEqual([{ phase: 'Lower', s: 2, move: true }, { phase: 'Pull', s: 1, move: true }]);
   });
   it('mutation (A2, Q4 (a)-(b)): the moving bar swapped for a rackUpright gives exactly H9.moving-line:eq<i>.rackUpright.1', () => {
     // premise: exactly one item (the barbell) is swapped, in one entry, and it moves between the end and the Mistake
@@ -251,7 +256,7 @@ describe('LIB-10 H slice Mistakes (research 2b6747f8; D-LIB10-NOTE section 10)',
     const dseg = (p: number[], [a, b]: number[][]) => { const dx = b![0]! - a![0]!, dy = b![1]! - a![1]!, L2 = dx * dx + dy * dy || 1;
       const t = Math.max(0, Math.min(1, ((p[0]! - a![0]!) * dx + (p[1]! - a![1]!) * dy) / L2)); return Math.hypot(p[0]! - a![0]! - t * dx, p[1]! - a![1]! - t * dy); };
     const leaderOk = (d: string) => /^ML*H?$/.test(d.replace(/[\d.\s,-]/g, ''));
-    for (const spec of [dbp, sc, cg, bb]) for (const mistake of [false, true]) {
+    for (const spec of [dbp, sc, cg, bb, po]) for (const mistake of [false, true]) {
       const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg;
       const avoid = [...svg.matchAll(/<path class="(?:trace|eq-cable|eq-solid)[^"]*"[^>]*? d="([^"]+)"/g)].flatMap(m => segs(xy(m[1]!)));
       expect(avoid.length, spec.id).toBeGreaterThan(0);
@@ -352,9 +357,41 @@ describe('LIB-10 barbell_bench_press (H, D-LIB10-BBELBOW): drawn facts', { timeo
   });
 });
 
+describe('LIB-10 dumbbell_pullover (H): drawn facts', { timeout: T }, () => {
+  it('c6: the elbow bend is the same (within 2 deg) at t = 0..1 in tenths; c4: the start arm is vertical over the upper chest', () => {
+    const bends = Array.from({ length: 11 }, (_, k) => poMod.elbowBend(pathLm(po, k / 10)));
+    for (const b of bends) expect(Math.abs(b - bends[0])).toBeLessThan(2);
+    const s = pathLm(po, 0);
+    expect(Math.abs(s['grip.r'][2] - s['shoulder.r'][2])).toBeLessThan(0.01);
+    expect(s['grip.r'][1]).toBeGreaterThan(s['shoulder.r'][1] + 0.5);
+  });
+  it('c5: at the end the arms are back past the head, the grips under shoulder height; c2: the bench ends at the crown', () => {
+    const e = itemsIn(po, 'end').lm;
+    expect(e['grip.r'][2]).toBeLessThan(e.head[2]);
+    expect(e['grip.r'][1]).toBeLessThan(e['shoulder.r'][1]);
+    const i = poMod.info();
+    expect(Math.abs(i.headTopZ - i.benchHeadEndZ)).toBeLessThan(0.005);
+  });
+  it('c3, c13: one dumbbell, axis vertical, hanging under the grips in every drawn pose', () => {
+    for (const pose of ['start', 'end', 'mistake']) {
+      const { items, lm } = itemsIn(po, pose), db = items.filter(it => it.type === 'dumbbell');
+      expect(db.length, pose).toBe(1);
+      expect(db[0].axis, pose).toEqual([0, 1, 0]);
+      expect(db[0].at[1], pose).toBeLessThan(lm.grips[1]);
+      expect(Math.abs(db[0].at[2] - lm.grips[2]), pose).toBeLessThan(0.001);
+    }
+  });
+  it('c7 Mistake `bend`: the elbow bends at least 60 deg more, the weight comes in at least 10 cm, and the dumbbell clears the bench end', () => {
+    const i = poMod.info(), d = poMod.misDb();
+    expect(i.misElbowDeg - i.endElbowDeg).toBeGreaterThanOrEqual(60);
+    expect(i.misGripNearerShoulderCm).toBeGreaterThanOrEqual(10);
+    expect(d.dbClearOfBenchEndCm).toBeGreaterThan(0);
+  });
+});
+
 describe('LIB-10 D-LIB9-CLONE b: each copied root finder throws on a bracket with no root', () => {
   it('decline_bench_press and skull_crusher', () => {
-    for (const m of [dbpMod, scMod, cgMod, bbMod]) {
+    for (const m of [dbpMod, scMod, cgMod, bbMod, poMod]) {
       expect(() => m.bisect((x: number) => x - 5, 0, 1)).toThrow(/no solution/);
       expect(m.bisect((x: number) => x - 0.25, 0, 1)).toBeCloseTo(0.25, 9);
     }
