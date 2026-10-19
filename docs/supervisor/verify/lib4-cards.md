@@ -4109,3 +4109,8 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - Pilot A now pins 13 ids.
 
 **Golden-B note:** none new. The anchors' single 3s are 1-of-3.
+
+### 21.7 CARD FIELDS VERIFIED (D-LIB8M-CF2, 2026-10-19 ~06:05 UTC; #109 @ `1d2a809`)
+- A focused re-verify of the two fixed cards (single_leg_romanian_deadlift, romanian_deadlift) ran with a fresh, blind Opus verifier and one new plant (the RDL measure fact moved from 165 to 160). It caught the plant and found nothing else. The SLRDL midpoint facts (17.5, c10) and the RDL start fact (15, c4) check out.
+- With 21.5's full run (valid; all 14 topFault values and every tempo array right), **CARD FIELDS is VERIFIED @ `1d2a809`** for the 14 cards.
+- The verdict carries to the incline-hold head only if A6/A7 there show the 13 pinned cards byte-identical to `1d2a809`. Incline's card follows the held-id handling.
