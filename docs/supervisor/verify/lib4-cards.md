@@ -4114,3 +4114,21 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - A focused re-verify of the two fixed cards (single_leg_romanian_deadlift, romanian_deadlift) ran with a fresh, blind Opus verifier and one new plant (the RDL measure fact moved from 165 to 160). It caught the plant and found nothing else. The SLRDL midpoint facts (17.5, c10) and the RDL start fact (15, c4) check out.
 - With 21.5's full run (valid; all 14 topFault values and every tempo array right), **CARD FIELDS is VERIFIED @ `1d2a809`** for the 14 cards.
 - The verdict carries to the incline-hold head only if A6/A7 there show the 13 pinned cards byte-identical to `1d2a809`. Incline's card follows the held-id handling.
+
+## 22. LB2 CARD FIELDS verify (D-LIB10-CF1, 2026-10-19 ~06:25 UTC; #265 @ `2bd89d0`, research `7d7c52e1`)
+**What ran.** A fresh, blind Opus content verifier on a copy of the 7 LB2 cards. It had their quotes, lb2/tempo.json, the ruled fault→key map (lb2/DESIGN.md §8), the tells of the 5 drawn plates and a rules file. One wrong number was planted.
+
+**Calibration: VALID.** The plant was caught: skull_crusher tempo Lower 2 against plate.tempo down 3. All 7 topFault values check. The 6 other tempo arrays check, including decline's Pause 1 constant (c8 "Pause for a count of one.").
+
+**D-LIB8M-FACTS scope, made exact (applies to every batch, pilot A included).**
+- The numbers that must become plate facts are those the card's own drawn-pose fields state with a claim: plate.start and plate.end.
+- A number in plate.equipment becomes a fact only when the plate shows it with a measure callout, as incline's bench angle does.
+- A quote that research set aside as a shown target is not one. Example: barbell_bench_press c3's 45-60°, set aside by R-LB2-24.
+- Why this is not a loosening: H6 checks body poses through report angles and measure callouts. An equipment angle with no callout has no H6 path, and the spec's own checks plus the critic's R2 hold it. Pilot A's facts already meet this scope.
+
+**Findings, ruled:**
+1. **barbell_bench_press:** missing the end-pose elbow-tuck fact. plate.end says "elbows tucked about 75 degrees (c2)", and c2 says "tucking your elbows in about 75°". Add it, using H6's joint path for the upper-arm-to-torso angle, or a measure fact if the plate shows a measure for it. If the engine report has no such angle and the plate has no measure, report it and do not invent a key.
+2. **incline_barbell_bench_press:** missing the end-pose elbow fact. c7 says "45-75 degree angle relative to your torso", and plate.end uses it. Write deg 60 (the midpoint) with a note. The plate is not drawn yet, so H6 checks the fact when it is.
+3. **dumbbell_pullover:** the buttock contact fact citing c8 is wrong, because c8's quotes do not state that contact. Remove it. The c1 fact already carries the buttock contact correctly.
+4. **Withdrawn under the scope above:** the bench angles of barbell_bench_press (0°, c19, an EMG condition), decline (-15°, plate.equipment) and arnold (backrest 90°, plate.equipment). The plates show none of them with a measure.
+5. **Next:** LIB-10 makes points 1-3 and nothing else. It re-runs qa.mjs for the drawn ids that changed (H6 must pass), then posts 'LB2 CARD FIELDS FIX @ <sha>'. A focused re-verify of the 3 cards with a new plant follows.
