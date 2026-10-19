@@ -176,7 +176,7 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'arrow', from: { at: 'hip.r', pose: 'end', off: [-26, 0] }, to: { at: 'hip.r', pose: 'mistake', off: [-26, 0] } },
+      { kind: 'arrow', from: { at: 'hip.r', pose: 'end', off: [-28, 0] }, to: { at: 'hip.r', pose: 'mistake', off: [-28, 0] } },   // 6 px clear of the solid end figure (A15)
     ],
     tells: [
       { key: 'hips', text: 'Hips shoot<br>up', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 8, top: 176 }, cue: 'The hips rise first while the bar stays on the floor.' },

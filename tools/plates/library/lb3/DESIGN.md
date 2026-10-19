@@ -219,11 +219,16 @@ only when no quote gives a number or a contact for a pose the plate draws"). One
 | id | contact (claim) | spec pose (card pose) | landmarks: the plane |
 |---|---|---|---|
 | pendlay_row | bar to the abs or chest (c4) | start (end) | chest, navel: the navel-to-chest line, CLEAR (2 cm, shaft and clothing) behind the top bar; 0 cm |
-| one_arm_dumbbell_row | support knee and hand on the bench (c1) | start (start) | knee.l, wrist.l: the bench-top planes; 0 cm |
+| one_arm_dumbbell_row | support knee and hand on the bench (c1) | start (start), end (end) | knee.l, wrist.l: the bench-top planes; 0 cm (end added on the verifier's tightening, #274 6269741671) |
 | conventional_deadlift | shins to the bar (c1) | end (start) | knee.r, ankle.r: parallel to the shin, its radius at the bar plus the shaft radius behind the bar; 0.5 cm (BAR_GAP) |
 | dumbbell_romanian_deadlift | dumbbells on the legs (c4) | start (start), end (end) | hip.r, knee.r on the thigh plane at start; knee.r, ankle.r on the shin plane at end; 0.5 cm (BAR_GAP, the hex face) |
 | sumo_deadlift | bar against the shins (c13) | end (start) | knee.r, ankle.r: as conventional_deadlift; 0.5 cm |
 | back_extension | thighs on the pad (c3 on the card's start; c1 on its end: c1 is the quote that places the pad on the thighs, c2 is the pad-height mistake) | end (start), start (end) | hip.r, knee.r: the thigh axis, thighR(PAD_T) behind the pad face; 0 cm |
+
+A15 (Do 7 lessons) on drawn items: every Mistake arrow (the only solid red part; the Mistake figure and the other guides
+are dashed) stays at least 6 px clear of the solid end figure, measured on the Mistake svg against the engine's
+bodyShapes; one_arm_dumbbell_row's arrow now stops 6 px short of the end grip and sumo_deadlift's sits 2 px further
+back. Each tier-A R10 item in section 7 has one drawn-item check, and the test counts them against the table.
 
 The drawn via poses are not facts (the cards name start and end). A test moves each fact pose's whole body 2 cm along
 its plane's normal (root, reach and plant targets together): exactly that pose's facts go red.

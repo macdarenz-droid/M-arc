@@ -117,7 +117,7 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'mistake' }, to: { at: 'grip.r', pose: 'end' } },
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'mistake' }, to: { at: 'grip.r', pose: 'end', off: [14, 21] } },   // stops 6 px clear of the solid end figure (A15)
     ],
     tells: [
       { key: 'short', text: 'Stops<br>short', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 246, top: 234 }, cue: 'The pull stops short of the hip.' },

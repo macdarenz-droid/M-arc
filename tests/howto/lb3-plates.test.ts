@@ -455,16 +455,17 @@ describe('LIB-13 hinge bulk: sumo_deadlift, dumbbell_romanian_deadlift, back_ext
   const trunkDeg = (l: any) => deg(l['hip.r'], l['shoulder.r']);
   // Q2 (LB3 NOTE RULED): c4 "trunk more upright than conventional": sumo's drawn trunk angle from vertical at the card's
   // start (spec end, the floor) is smaller than conventional_deadlift's at its card start (also spec end).
-  const q2 = (sumo: number, conv: number) => (sumo < conv ? [] : [`sumo ${sumo.toFixed(1)} >= conventional ${conv.toFixed(1)}`]);
-  it('Q2: sumo_deadlift\'s trunk at the floor is more upright than conventional_deadlift\'s (5-10 deg, c4)', () => {
+  // The verifier's tightening (#274 6269741671): c4 gives the difference as "5-10 degrees", so the drawn difference must
+  // fall in that range, not only be positive.
+  const q2 = (sumo: number, conv: number) => (conv - sumo >= 5 && conv - sumo <= 10 ? [] : [`conventional ${conv.toFixed(1)} - sumo ${sumo.toFixed(1)} is outside 5-10 deg`]);
+  it('Q2: sumo_deadlift\'s trunk at the floor is 5-10 deg more upright than conventional_deadlift\'s (c4)', () => {
     const a = trunkDeg(lm('sumo_deadlift', 'end')), b = trunkDeg(lm('conventional_deadlift', 'end'));
     expect(q2(a, b)).toEqual([]);
-    expect(b - a).toBeGreaterThanOrEqual(5);
-    expect(b - a).toBeLessThanOrEqual(10);
   });
-  it('Q2 mutation: the two values swapped is red', () => {
+  it('Q2 mutations: the two values swapped, and a 12 deg difference, are red', () => {
     const a = trunkDeg(lm('sumo_deadlift', 'end')), b = trunkDeg(lm('conventional_deadlift', 'end'));
     expect(q2(b, a).length).toBe(1);
+    expect(q2(b - 12, b).length).toBe(1);
   });
   it('sumo c13, parent c23: the 45 cm plates on the floor line, the bar over mid-foot and in front of the shins; c14: knees within 3 deg of straight at the top', () => {
     const bar = itemsIn(S.sumo_deadlift, 'end').items.find(it => it.type === 'barbell'), e = lm('sumo_deadlift', 'end');
@@ -867,7 +868,7 @@ describe('LIB-13 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
   const C = (lms: string[], pose: string, cardPose: string, claim: string) => lms.map(landmark => ({ kind: 'contact', landmark, pose, cardPose, claim }));
   const FACTS: Record<string, any[]> = {
     pendlay_row: C(['chest', 'navel'], 'start', 'end', 'c4'),
-    one_arm_dumbbell_row: C(['knee.l', 'wrist.l'], 'start', 'start', 'c1'),
+    one_arm_dumbbell_row: [...C(['knee.l', 'wrist.l'], 'start', 'start', 'c1'), ...C(['knee.l', 'wrist.l'], 'end', 'end', 'c1')],
     conventional_deadlift: C(['knee.r', 'ankle.r'], 'end', 'start', 'c1'),
     dumbbell_romanian_deadlift: [...C(['hip.r', 'knee.r'], 'start', 'start', 'c4'), ...C(['knee.r', 'ankle.r'], 'end', 'end', 'c4')],
     sumo_deadlift: C(['knee.r', 'ankle.r'], 'end', 'start', 'c13'),
@@ -926,5 +927,95 @@ describe('LIB-13 A4: F7 on one_arm_dumbbell_row (drawable false) is raised; topF
       expect(await raised(c)).toEqual(expected);
       expect(await raised({ ...c, research: { ...c.research, topFault: 'short' } })).not.toEqual(expected);
     } finally { qaEng.dropMirror(mirror); }
+  });
+});
+
+describe('LIB-13 A15: the Mistake clears the solid end figure, and every tier-A R10 item is drawn (DESIGN.md section 7)', { timeout: T }, () => {
+  const PXM = 146.28571428571428;
+  const inPoly = (poly: number[][], [x, y]: number[]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!; if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
+  const segD = (p: number[], a: number[], b: number[]) => { const dx = b[0]! - a[0]!, dy = b[1]! - a[1]!, L2 = dx * dx + dy * dy, t = L2 ? Math.max(0, Math.min(1, ((p[0]! - a[0]!) * dx + (p[1]! - a[1]!) * dy) / L2)) : 0; return Math.hypot(p[0]! - a[0]! - dx * t, p[1]! - a[1]! - dy * t); };
+  /** Signed px distance of a screen point from the drawn end figure (every body shape, far limbs included): > 0 outside. */
+  const outside = (polys: number[][][], p: number[]) => { let d = Infinity, inn = false; for (const P of polys) { if (inPoly(P, p)) inn = true; for (let i = 0; i < P.length; i++) d = Math.min(d, segD(p, P[i]!, P[(i + 1) % P.length]!)); } return inn ? -d : d; };
+  /** 13.1, 13.4 must-fix 1: the solid red parts (the Mistake arrows, as drawn in the Mistake svg) clear the solid end
+   *  figure (the engine's bodyShapes at the plate's px/m) by at least 6 px; the Mistake figure and guides are dashed. */
+  const clearance = (spec: any) => {
+    const b = { height: 1.75 }, cam = { view: 'side', near: 'r', pxm: PXM, P: (w: number[]) => [spec.camera.x0 + w[2]! * PXM, spec.camera.y0 - w[1]! * PXM] };
+    const polys = body.bodyShapes(body.fk(body.resolve(body.normPose(spec.poses.end, b), b).q, b), cam).filter((x: any) => x.poly).map((x: any) => x.poly);
+    const svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
+    return [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].flatMap(m => {
+      const pts = [...m[1]!.matchAll(/(-?[\d.]+) (-?[\d.]+)/g)].map(x => [+x[1]!, +x[2]!]), samp: number[][] = [];
+      for (let i = 0; i + 1 < pts.length; i++) for (let k = 0; k <= 20; k++) samp.push(pts[i]!.map((v, j) => v + (pts[i + 1]![j]! - v) * k / 20));
+      const min = Math.min(...samp.map(p => outside(polys, p)));
+      return min >= 6 ? [] : [`${spec.id}: arrow ${min.toFixed(1)} px from the end figure`];
+    });
+  };
+  it('every drawn plate: each Mistake arrow stays at least 6 px clear of the solid end figure', () => {
+    for (const id of drawn()) { expect(S[id].mistake.guides.some((g: any) => g.kind === 'arrow'), id).toBe(true); expect(clearance(S[id]), id).toEqual([]); }
+  });
+  it('mutation: one_arm_dumbbell_row\'s arrow tip moved onto the end grip (inside the figure\'s 6 px clearance) is red', () => {
+    const s = S.one_arm_dumbbell_row, guides = s.mistake.guides.map((g: any) => (g.kind === 'arrow' ? { ...g, to: { at: 'grip.r', pose: 'end' } } : g));
+    expect(clearance({ ...s, mistake: { ...s.mistake, guides } }).length).toBe(1);
+  });
+
+  // R10 (DESIGN.md section 7): one drawn-item check per tier-A item, in the table's order.
+  const rep = (id: string) => plate.renderPlate(S[id], { id: 'x' }).report;
+  const lm = (id: string, p: string) => itemsIn(S[id], p).lm;
+  const fromV = (l: any) => Math.atan2(l['shoulder.r'][2] - l['hip.r'][2], l['shoulder.r'][1] - l['hip.r'][1]) * 180 / Math.PI;
+  const flat = (id: string, poses: string[]) => poses.flatMap(p => (rep(id).angles[p].trunk <= 5 ? [] : [`${p}: lumbar ${rep(id).angles[p].trunk}`]));
+  const onCheck = (id: string, landmarks: string[], pose: string, cm = 1) => landmarks.flatMap(l => {
+    const k = rep(id).checks.filter((c: any) => c.landmark === l && c.pose === pose && c.cm != null);
+    return k.length && k.every((c: any) => c.cm <= cm) ? [] : [`${pose}: ${l} ${k.map((c: any) => c.cm).join('/') || 'unchecked'}`];
+  });
+  const item = (id: string, pose: string, type: string) => itemsIn(S[id], pose).items.find((it: any) => it.type === type);
+  const R10: Record<string, [string, () => string[]][]> = {
+    pendlay_row: [
+      ['back flat and level at the floor start', () => [...flat('pendlay_row', ['end']), ...((l => Math.abs(Math.atan2(l.backUpper[1] - l.sacrum[1], l.backUpper[2] - l.sacrum[2]) * 180 / Math.PI) <= 2)(lm('pendlay_row', 'end')) ? [] : ['back line not level'])]],
+      ['bar set down, plates on the floor line', () => (Math.abs(item('pendlay_row', 'end', 'barbell').at[1] - 0.225) <= 0.002 ? [] : ['bar off the floor'])],
+    ],
+    landmine_row: [
+      ['back straight, torso roughly parallel', () => [...flat('landmine_row', ['start', 'end']), ...(Math.abs(fromV(lm('landmine_row', 'start')) - 90) <= 15 ? [] : ['torso not parallel'])]],
+      ['bar pinned at the floor pivot', () => posesOf(S.landmine_row).flatMap(p => { const sh = itemsIn(S.landmine_row, p).items.filter((it: any) => it.type === 'poly')[0], y = (sh.pts[0][1] + sh.pts[3][1]) / 2; return Math.abs(y - lmEq.LANDMINE.hingeH) <= 0.001 ? [] : [`${p}: pivot off`]; })],
+      ['the loaded end in front of the feet', () => posesOf(S.landmine_row).flatMap(p => { const pl = itemsIn(S.landmine_row, p).items.filter((it: any) => it.type === 'poly')[2], z = Math.min(...pl.pts.map((q: number[]) => q[2])); return z > lm('landmine_row', p)['toe.r'][2] ? [] : [`${p}: plate over the feet`]; })],
+    ],
+    dumbbell_romanian_deadlift: [
+      ['flat back', () => flat('dumbbell_romanian_deadlift', ['start', 'end'])],
+      ['dumbbells on the legs', () => [...onCheck('dumbbell_romanian_deadlift', ['hip.r', 'knee.r'], 'start'), ...onCheck('dumbbell_romanian_deadlift', ['knee.r', 'ankle.r'], 'end')]],
+      ['gaze to the floor at the bottom, neck in line', () => (Math.abs(rep('dumbbell_romanian_deadlift').angles.end.neck) <= 5 ? [] : ['neck bent'])],
+    ],
+    conventional_deadlift: [
+      ['flat back from floor to lockout', () => flat('conventional_deadlift', ['start', 'end'])],
+      ['bar over mid-foot, shins close', () => [...(Math.abs(item('conventional_deadlift', 'end', 'barbell').at[2]) <= 0.005 ? [] : ['bar off mid-foot']), ...onCheck('conventional_deadlift', ['knee.r', 'ankle.r'], 'end')]],
+      ['bar close to the legs', () => tenths.flatMap(t => { const l = pathLm(S.conventional_deadlift, t); return Math.abs(l.grips[2]) <= 0.02 ? [] : [`t ${t}: bar ${l.grips[2].toFixed(3)} m off the plumb line`]; })],
+    ],
+    sumo_deadlift: [
+      ['chest up, back flat', () => flat('sumo_deadlift', ['start', 'end'])],
+      ['bar against the shins', () => onCheck('sumo_deadlift', ['knee.r', 'ankle.r'], 'end')],
+      ['hips and knees lock together at the top', () => { const a = rep('sumo_deadlift').angles.start; return a['knee.r'] <= 3 && Math.abs(fromV(lm('sumo_deadlift', 'start'))) <= 3 ? [] : ['not locked out']; }],
+    ],
+    back_extension: [
+      ['pad below the hip bones, on the thighs', () => { const l = lm('back_extension', 'start'), pad = M.back_extension.BX.pad.at, d = [l['knee.r'][1] - l['hip.r'][1], l['knee.r'][2] - l['hip.r'][2]], L = Math.hypot(d[0]!, d[1]!), t = ((pad[1] - l['hip.r'][1]) * d[0]! + (pad[2] - l['hip.r'][2]) * d[1]!) / L / L; return [...(t > 0.05 && t < 0.5 ? [] : [`pad at ${t.toFixed(2)} of the thigh`]), ...onCheck('back_extension', ['hip.r', 'knee.r'], 'start'), ...onCheck('back_extension', ['hip.r', 'knee.r'], 'end')]; }],
+      ['feet secured on the foot plate under the heel pad', () => posesOf(S.back_extension).flatMap(p => onCheck('back_extension', ['sole.r', 'sole.l'], p, 0.5))],
+      ['top in one straight line, no arch past it', () => { const t = lm('back_extension', 'start'), ang = (p: number[], q: number[]) => Math.atan2(q[1]! - p[1]!, q[2]! - p[2]!) * 180 / Math.PI; return [...flat('back_extension', ['start']), ...(Math.abs(ang(t['hip.r'], t['shoulder.r']) - ang(t['ankle.r'], t['hip.r'])) <= 5 ? [] : ['not one line'])]; }],
+    ],
+  };
+  /** The tier-A rows of DESIGN.md section 7 (drawn ids), each with its number of items (split on '; '). */
+  const tableItems = () => {
+    const sec = readFileSync('tools/plates/library/lb3/DESIGN.md', 'utf8').split('## 7. R10')[1]!.split('\n## ')[0]!;
+    return Object.fromEntries([...sec.matchAll(/^\| (\w+) \| (.+) \|$/gm)].filter(m => drawn().includes(m[1]!)).map(m => [m[1]!, m[2]!.split('; ').length]));
+  };
+  const r10Problems = (reg: Record<string, [string, () => string[]][]>) => {
+    const want = tableItems(), out: string[] = [];
+    for (const [id, n] of Object.entries(want)) {
+      if ((reg[id] ?? []).length !== n) out.push(`${id}: ${(reg[id] ?? []).length} checks for ${n} items`);
+      for (const [name, f] of reg[id] ?? []) for (const p of f()) out.push(`${id} ${name}: ${p}`);
+    }
+    return out;
+  };
+  it('every tier-A drawn id has one passing drawn-item check per R10 item (one_arm_dumbbell_row is tier C)', () => {
+    expect(Object.keys(tableItems()).sort()).toEqual(drawn().filter(id => id !== 'one_arm_dumbbell_row').sort());
+    expect(r10Problems(R10)).toEqual([]);
+  });
+  it('mutation: one tier-A R10 item removed is red', () => {
+    expect(r10Problems({ ...R10, sumo_deadlift: R10.sumo_deadlift!.slice(1) })).toEqual(['sumo_deadlift: 2 checks for 3 items']);
   });
 });
