@@ -301,9 +301,9 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     const real = await inputsMap(ROOT);
     expect(real.why).toEqual([]);
     expect(real.proven).toBe(true);
-    expect(real.inputs.size).toBe(60);
+    expect(real.inputs.size).toBe(61);
     const r = await run(tree, ['--input-type=module', '-e', "import { inputsMap } from './tools/plates/library/ci/affected.mjs'; const m = await inputsMap(); console.log('@@' + JSON.stringify({ proven: m.proven, why: m.why, n: m.inputs.size }));"]);
-    expect(JSON.parse(r.out.split('\n').find(l => l.startsWith('@@'))!.slice(2))).toEqual({ proven: true, why: [], n: 66 });
+    expect(JSON.parse(r.out.split('\n').find(l => l.startsWith('@@'))!.slice(2))).toEqual({ proven: true, why: [], n: 67 });
   });
   it('D-LIB4c-3: a new composer imported only by the fixture id\'s spec selects all (ids.ts, ids-node.mjs and sources.json list it); a path only per-id files list (the batch\'s layersConfig) selects that id; one the 8\'s outputs list selects all', async () => {
     const SPEC = F.SPEC as string, gen = (root: string) => execFileSync(process.execPath, ['tools/plates/generate.mjs'], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });

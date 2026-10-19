@@ -1,6 +1,7 @@
-// LIB-5: the shared layer modules (D-LIB5-*; docs/howto/library/LIB-5-DESIGN.md). S4-P: the back box fails closed
-// until the owner answers decision 6 (back-box.mjs, library-gate.mjs, check-bundle.mjs on temp folders written at run
-// time from the copied card, and E1's row in a per-case copy of E1's tree, D-LIB5-FIXTURE).
+// LIB-5: the shared layer modules (D-LIB5-*; docs/howto/library/LIB-5-DESIGN.md). S4 (Do 9): the owner-approved back
+// box (decision 6, option 1) is exact, within BOX-CAP's named 50-word limit for this box only, written by
+// library-gate.mjs as src/howto/red-flag-back.ts and present whole in the built app (check-bundle.mjs's Do 9 rule, on
+// temp folders written at run time from the copied card); E1's back-flagged row is linted with it (D-LIB5-FIXTURE).
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { spawn, spawnSync } from 'node:child_process';
 import type { RiskJoint } from '../../src/howto/content-types';
@@ -29,33 +30,44 @@ function folder({ chunk = true, extra = {} as Record<string, string> } = {}) {
 }
 const run = (dir: string) => spawnSync(process.execPath, [SCRIPT, dir], { encoding: 'utf8' });
 
-describe('LIB-5 S4-P: check-bundle.mjs (D-LIB5-BUNDLE)', () => {
-  it('reads the three whole box values from the copied card', () => {
+describe('LIB-5 S4: check-bundle.mjs, the Do 9 rule (D-LIB5-BUNDLE)', () => {
+  /** A folder holding every answered value in its HowToSheet chunk, less `drop`. */
+  const withValues = (drop: string[] = [], extra: Record<string, string> = {}) => {
+    const v = B.boxValues(), keep = Object.entries(v).filter(([f]) => !drop.includes(f)).map(([, t]) => t);
+    return folder({ extra: { 'assets/HowToSheet-AbCd1234.js': `export const b = ${JSON.stringify(keep)};`, ...extra } });
+  };
+  it('reads the three whole box values from the copied, owner-approved card', () => {
     const v = B.boxValues();
     expect(Object.keys(v)).toEqual(['name', 'now', 'doctor']);
     for (const t of Object.values(v)) expect(typeof t === 'string' && (t as string).length > 0).toBe(true);
   });
-  it('a clean folder passes (exit 0)', () => {
-    const r = run(folder());
+  it('all three answered values present -> exit 0', () => {
+    const r = run(withValues());
     expect([r.status, r.stderr]).toEqual([0, '']);
+    expect(r.stdout).toContain('every answered back-box value present');
   });
   for (const f of ['name', 'now', 'doctor']) {
-    it(`mutation: box.${f}.text planted in a shipped file -> exit 1, naming that field`, () => {
-      const r = run(folder({ extra: { 'assets/index-Zz9.js': `const a = ${JSON.stringify(B.boxValues()[f])};` } }));
+    it(`mutation: box.${f}.text missing -> exit 1, naming that field`, () => {
+      const r = run(withValues([f]));
       expect(r.status).toBe(1);
-      expect(r.stderr).toContain(`assets/index-Zz9.js: holds box.${f}.text`);
-      expect(r.stderr.match(/holds box\./g)).toHaveLength(1);
+      expect(r.stderr.match(/no file holds box\.\w+\.text/g)).toEqual([`no file holds box.${f}.text`]);
     });
   }
+  it('the 9dbc7e0 draft now is the answered now (option 1 kept it), so its presence is allowed; were it not the answer, it is red', () => {
+    expect(B.draftNow()).toBe(B.boxValues().now);
+    const v = { ...B.boxValues(), now: 'Another answered now line? Get help today.' };
+    const d = folder({ extra: { 'assets/HowToSheet-AbCd1234.js': JSON.stringify(Object.values(v)), 'assets/index-Zz9.js': JSON.stringify(B.draftNow()) } });
+    expect(B.bundleProblems(d, v)).toEqual(['assets/index-Zz9.js: holds the 9dbc7e0 draft box.now.text']);
+  });
   it('mutation: no HowToSheet chunk -> exit 1', () => {
-    const r = run(folder({ chunk: false }));
+    const r = run(folder({ chunk: false, extra: { 'assets/index-Zz9.js': JSON.stringify(Object.values(B.boxValues())) } }));
     expect(r.status).toBe(1);
     expect(r.stderr).toContain('no assets/HowToSheet-*.js chunk');
   });
   it('a value in any file under the folder counts (index.html, sw.js, nested)', () => {
     const v = B.boxValues();
-    expect(B.bundleProblems(folder({ extra: { 'index.html': v.doctor, 'nested/deep/m.json': v.now } }), v).sort())
-      .toEqual(['index.html: holds box.doctor.text', 'nested/deep/m.json: holds box.now.text']);
+    const d = folder({ extra: { 'index.html': v.doctor, 'nested/deep/m.json': v.now, 'sw.js': v.name } });
+    expect(B.bundleProblems(d, v)).toEqual([]);
   });
 });
 
@@ -72,42 +84,49 @@ const node = (cwd: string, args: string[]) => new Promise<{ code: number; out: s
   c.on('close', code => resolve({ code: code ?? 1, out }));
 });
 
-describe('LIB-5 S4-P: the back box fails closed (D-LIB5-BOX)', () => {
+describe('LIB-5 S4: the back box is exact and inside its reach (D-LIB5-BOX, D-BOXCAP-WIRE)', () => {
   const MOD = join(ROOT, 'tools/plates/library/shared/back-box.mjs');
-  it('1. back-box.mjs holds no box text and backBox() throws the exact message', async () => {
+  const OUT = join(ROOT, 'src/howto/red-flag-back.ts');
+  let M: any;
+  beforeAll(async () => { M = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')); });
+  it('1. back-box.mjs holds no box text; backBox() is the owner-approved card\'s box, byte for byte, with its boxClaim', () => {
     const src = readFileSync(MOD, 'utf8');
     for (const [f, v] of Object.entries(VALUES)) expect([f, src.includes(v)]).toEqual([f, false]);
-    expect(src).not.toMatch(/back-pain-box\.json|readFileSync|\bnow\s*:|\bdoctor\s*:/);
-    const M = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs'));
-    expect(M.BACK_BOX_WAITS).toBe('LIB-5: back box waits for owner decision 6 (plan 8 item 6)');
-    expect(() => M.backBox()).toThrow(/^LIB-5: back box waits for owner decision 6 \(plan 8 item 6\)$/);
-    expect(() => M.refuseBack('lib_x', ['wrist', 'back'])).toThrow('lib_x: LIB-5: back box waits for owner decision 6 (plan 8 item 6)');
-    expect(() => M.refuseBack('lib_x', ['wrist', 'shoulder'])).not.toThrow();
+    expect(BOX.status).toBe('owner-approved');
+    expect(M.backBox()).toEqual({ name: VALUES.name, now: VALUES.now, doctor: VALUES.doctor, claim: BOX.box.boxClaim });
+    expect(M.backBox().claim.sources).toContain('nhs-back');
   });
-  it('2. none of the three whole box values appears in any file under src/ (0 hits on main 49a2853, recorded on #244)', () => {
+  it('2. src/howto/red-flag-back.ts exports RED_FLAG_BACK = backBox(); the values appear under src/ in that file only', async () => {
+    const { RED_FLAG_BACK } = await import('../../src/howto/red-flag-back');
+    expect(RED_FLAG_BACK).toEqual(M.backBox());
     const files = walkFiles(join(ROOT, 'src'));
     expect(files.length).toBeGreaterThan(100);
     const hits = files.flatMap(f => { const t = readFileSync(f, 'utf8'); return Object.entries(VALUES).filter(([, v]) => t.includes(v)).map(([k]) => `${f.slice(ROOT.length)}: box.${k}.text`); });
-    expect(hits).toEqual([]);
+    expect(hits).toEqual(['src/howto/red-flag-back.ts: box.name.text', 'src/howto/red-flag-back.ts: box.now.text', 'src/howto/red-flag-back.ts: box.doctor.text']);
+    expect(readFileSync(OUT, 'utf8')).toMatch(/^\/\/ GENERATED, do not edit\. Written by tools\/plates\/generate\.mjs \(tools\/plates\/gen\/library-gate\.mjs\)\./);
   });
-  it('4. RiskJoint has no back yet', () => {
-    // @ts-expect-error RiskJoint gains 'back' only in Do 9, with the answered box (S4-P)
+  it('3. RiskJoint holds back, and Risks.tsx\'s FLAG maps it to RED_FLAG_BACK', () => {
     const back: RiskJoint = 'back';
     expect(back).toBe('back');
-    expect(readFileSync(join(ROOT, 'src/howto/content-types.ts'), 'utf8')).toMatch(/export type RiskJoint = 'wrist' \| 'shoulder' \| 'knee' \| 'elbow';/);
+    expect(readFileSync(join(ROOT, 'src/howto/content-types.ts'), 'utf8')).toMatch(/export type RiskJoint = 'wrist' \| 'shoulder' \| 'knee' \| 'elbow' \| 'back';/);
+    expect(readFileSync(join(ROOT, 'src/slices/howto/sections/Risks.tsx'), 'utf8')).toMatch(/\n  back: RED_FLAG_BACK,\n\};/);
   });
-  it('5. guard: box text in back-box.mjs needs D-LIB5-BACKBOX and a settled card whose box it equals', async () => {
-    const M = await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs'));
-    let block: any = null;
-    try { block = M.backBox(); } catch { /* the placeholder */ }
-    if (block === null) return;
+  it('4. backBox() refuses a draft card, another key and a missing line', () => {
+    const t = mkdtempSync(join(tmpdir(), 'lib5-box-')); temps.push(t);
+    const put = (c: any) => { mkdirSync(join(t, 'docs/research/howto/shared'), { recursive: true }); writeFileSync(join(t, M.BACK_CARD), JSON.stringify(c)); };
+    put({ ...BOX, status: 'draft' }); expect(() => M.backBox(t)).toThrow('is still a draft');
+    put({ ...BOX, key: 'spine-pain-box' }); expect(() => M.backBox(t)).toThrow('has key "spine-pain-box"');
+    put({ ...BOX, box: { ...BOX.box, doctor: { text: '' } } }); expect(() => M.backBox(t)).toThrow('has no box.doctor.text');
+  });
+  it('5. guard: box text in the app needs D-LIB5-BACKBOX and a settled card whose box it equals', async () => {
+    const block = M.backBox();
     expect(readFileSync(join(ROOT, 'docs/COACHING-DECISIONS.md'), 'utf8')).toContain('D-LIB5-BACKBOX');
     expect(BOX.status).not.toBe('draft');
     expect([block.name, block.now, block.doctor]).toEqual([VALUES.name, VALUES.now, VALUES.doctor]);
   });
 });
 
-describe('LIB-5 S4-P 3: E1\'s row with back in its riskFlags makes the generator throw (D-LIB5-FIXTURE)', () => {
+describe('LIB-5 S4: E1\'s row with back in its riskFlags is linted with the answered box (D-LIB5-FIXTURE, D-LIB5-WORDS)', () => {
   const T = 900_000;
   let F: any, tree: string;
   beforeAll(async () => {
@@ -123,37 +142,54 @@ describe('LIB-5 S4-P 3: E1\'s row with back in its riskFlags makes the generator
     writeFileSync(p, s.replace(from, to));
     return r;
   };
-  it('riskFlags gains back -> exactly the placeholder message, naming lib_cable_lateral_raise', async () => {
+  it('riskFlags gains back -> the library lint counts the 50-word box: pull-up\'s 449 + 50 is over 450, naming the row', async () => {
     const r = copyWith("riskFlags: ['wrist', 'shoulder', 'elbow']", "riskFlags: ['wrist', 'shoulder', 'elbow', 'back']");
     const g = await node(r, ['tools/plates/generate.mjs']);
     expect(g.code).not.toBe(0);
-    expect(g.out).toContain('Error: lib_cable_lateral_raise: LIB-5: back box waits for owner decision 6 (plan 8 item 6)');
+    expect(g.out).toContain('Error: lib_cable_lateral_raise: library lint:');
+    expect(g.out).toMatch(/\(sheet\): visible words > 450 \(\d+\)/);
+    expect(g.out).not.toContain('red-flag box >');
   }, T);
-  it('control: the unedited tree generates, and with its card removed QA refuses first (PQ-H6)', async () => {
+  it('control: the unedited tree generates and writes red-flag-back.ts; with the card removed QA refuses first (PQ-H6)', async () => {
     const ok = await node(tree, ['tools/plates/generate.mjs']);
     expect([ok.code, ok.out.slice(-400)]).toEqual([0, expect.stringContaining('generate: wrote')]);
+    expect(readFileSync(join(tree, 'src/howto/red-flag-back.ts'), 'utf8')).toBe(readFileSync(join(ROOT, 'src/howto/red-flag-back.ts'), 'utf8'));
     const r = copyWith("riskFlags: ['wrist', 'shoulder', 'elbow']", "riskFlags: ['wrist', 'shoulder', 'elbow', 'back']");
     rmSync(join(r, F.CARD_FILE));
     const g = await node(r, ['tools/plates/generate.mjs']);
     expect(g.code).not.toBe(0);
     expect(g.out).toMatch(/plate QA refused lib_cable_lateral_raise:[\s\S]*PQ-H6/);
-    expect(existsSync(join(r, 'src/howto/red-flag-back.ts'))).toBe(false);
+  }, T);
+  it('mutations through the generator, each red: a box over its named 50; a kept trigger dropped; nhs-back removed from boxClaim', async () => {
+    const card = (edit: (c: any) => void) => { const r = mkdtempSync(join(tmpdir(), 'lib5-e1-')); temps.push(r); cpSync(tree, r, { recursive: true, verbatimSymlinks: true });
+      const p = join(r, 'docs/research/howto/shared/back-pain-box.json'), c = JSON.parse(readFileSync(p, 'utf8')); edit(c); writeFileSync(p, JSON.stringify(c, null, 2)); return r; };
+    // one generator at a time (c15-stamps.test.ts: three at once beside the other suites overload the runner)
+    const over = await node(card(c => { c.box.doctor.text = 'No better in a few weeks? See a doctor soon.'; }), ['tools/plates/generate.mjs']);
+    const trigger = await node(card(c => { c.box.now.text = c.box.now.text.replace(' Chest pain?', ''); }), ['tools/plates/generate.mjs']);
+    const nhs = await node(card(c => { c.box.boxClaim.sources = []; }), ['tools/plates/generate.mjs']);
+    expect(over.code).not.toBe(0);
+    expect(over.out).toContain('Error: back box: library lint:\n  RED_FLAG_BACK: red-flag box > 50 words (51 words)');
+    expect(trigger.code).not.toBe(0);
+    expect(trigger.out).toContain('RED_FLAG_BACK.now: kept back-box trigger missing (D-LIB5-BOX) ("Chest pain?")');
+    expect(nhs.code).not.toBe(0);
+    expect(nhs.out).toContain('RED_FLAG_BACK.claim: the back box must cite nhs-back (S4)');
   }, T);
 });
 
-describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes nothing before Do 9 and stays inside C17', () => {
+describe('LIB-5 D-LIB5-GATE: library-gate.mjs writes only red-flag-back.ts and stays inside C17', () => {
   const GATE = 'tools/plates/gen/library-gate.mjs', SHARED_DIR = join(ROOT, 'tools/plates/library/shared');
   /** Paths render() attributes to the gate, and other files whose header names it. */
   const gatePaths = (out: Map<string, any>) => [...out].filter(([, o]) => o.writers.includes(GATE)).map(([p]) => p).sort();
-  it('render(): the paths attributed to library-gate.mjs are exactly [] while back-box.mjs holds no box text', async () => {
+  it('render(): the paths attributed to library-gate.mjs are exactly [src/howto/red-flag-back.ts], and no other header names it', async () => {
     const out = await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render();
-    expect(gatePaths(out)).toEqual([]);
-    expect([...out].filter(([, o]) => o.text.slice(0, 600).includes('library-gate')).map(([p]) => p)).toEqual([]);
+    expect(gatePaths(out)).toEqual(['src/howto/red-flag-back.ts']);
+    expect([...out].filter(([, o]) => o.text.slice(0, 600).includes('library-gate')).map(([p]) => p)).toEqual(['src/howto/red-flag-back.ts']);
   }, 300_000);
-  it('inputsFor(red-flag-back.ts) is back-box.mjs, its static imports and the back-box card', async () => {
+  it('inputsFor(red-flag-back.ts) is back-box.mjs, its static imports (node:* only) and the back-box card', async () => {
     const G = await import(/* @vite-ignore */ url(GATE));
     const imports = [...readFileSync(join(SHARED_DIR, 'back-box.mjs'), 'utf8').matchAll(/^import .* from '([^']+)';$/gm)].map(m => m[1]);
-    expect(imports).toEqual([]);
+    expect(imports.every(m => m!.startsWith('node:'))).toBe(true);
+    expect(imports.length).toBeGreaterThan(0);
     expect(G.inputsFor('src/howto/red-flag-back.ts')).toEqual(['tools/plates/library/shared/back-box.mjs', 'docs/research/howto/shared/back-pain-box.json']);
     expect(G.inputsFor('src/howto/ids.ts')).toBeUndefined();
     expect(G.after).toEqual(['tools/plates/gen/content.mjs']);
@@ -360,4 +396,26 @@ describe('LIB-5 S6: the shared modules equal their cards (D-LIB5-SPLIT; research
     const note = card('selector-pin').notes[0], planted = out.map(([p, t], i) => [p, i === 0 ? `${t}\n// ${note}\n` : t] as [string, string]);
     expect(leaks(dataValues(card('selector-pin')), planted)).toEqual([`${out[0]![0]}: notes[0]`]);
   }, 300_000);
+});
+
+describe('LIB-5 S5 (Do 9): the app renders the back box', () => {
+  type VN = { type?: unknown; props?: Record<string, any> };
+  const elements = (n: unknown): VN[] => {
+    if (n == null || typeof n === 'boolean' || typeof n === 'string' || typeof n === 'number') return [];
+    if (Array.isArray(n)) return n.flatMap(elements);
+    const v = n as VN;
+    return v.type ? [v, ...elements(v.props?.children)] : elements(v.props?.children);
+  };
+  const text = (n: unknown): string => (typeof n === 'string' ? n : Array.isArray(n) ? n.map(text).join('') : (n as VN)?.props ? text((n as VN).props!.children) : '');
+  it('renderRisks emits <pre>-redflag-back holding RED_FLAG_BACK for a back-flagged fixture row; the wrong block is red', async () => {
+    const [{ renderRisks }, { chromeIdOf }, { RED_FLAG_BACK }, { readHowTo }] = await Promise.all([
+      import('../../src/slices/howto/sections/Risks'), import('../../src/slices/howto/PlateView'), import('../../src/howto/red-flag-back'), import('./generated-module')]);
+    const row = { ...readHowTo('pull-up', ROOT), riskFlags: ['wrist', 'back'] as RiskJoint[] }, pre = chromeIdOf(row);
+    const flags = elements(renderRisks(row)).filter(v => typeof v.props?.class === 'string' && v.props.class.split(' ').includes('redflag'));
+    expect(flags.map(v => v.props!.id)).toEqual([`${pre}-redflag-wrist`, `${pre}-redflag-back`]);
+    const back = flags[1]!, lines = elements(back).filter(v => v.type === 'p').map(v => text(v.props!.children));
+    expect(lines).toEqual([RED_FLAG_BACK.name, RED_FLAG_BACK.now, RED_FLAG_BACK.doctor]);
+    const wrist = elements(flags[0]).filter(v => v.type === 'p').map(v => text(v.props!.children));
+    expect(wrist).not.toEqual(lines);
+  });
 });

@@ -1,5 +1,5 @@
 // LIB-5 S1: the 38 shared research files (19 cards, 19 quote files) are byte copies of the named research head
-// (claude/libht-research @ 9eaa248, lib4-cards.md 14.5: the one re-copy, after 9dbc7e0 of 14.2).
+// (claude/libht-research @ 9eaa248, lib4-cards.md 14.5: the one re-copy, after 9dbc7e0 of 14.2); the back box at 0393aac9 (Do 9).
 import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
@@ -9,10 +9,12 @@ import { afterAll, describe, expect, it } from 'vitest';
 const ROOT = join(new URL('.', import.meta.url).pathname, '..', '..');
 const HOWTO = 'docs/research/howto';
 const RESEARCH_HEAD = '9eaa2480fea8f8f82a52ac2596c14d9a0da08ca5';
+/** Do 9 (D-LIB5-BOX, #244 6250331645): the owner-approved back box is copied from this head; its box text equals 9eaa248's. */
+const BOX_HEAD = '0393aac9ecfb67ad05b92a93308805158c1836ca';
 
-/** path under docs/research/howto -> sha256 of the file bytes at RESEARCH_HEAD. */
+/** path under docs/research/howto -> sha256 of the file bytes at RESEARCH_HEAD (shared/back-pain-box.json: at BOX_HEAD). */
 const PINS: Record<string, string> = {
-  'shared/back-pain-box.json': '4039694652f6ebf0ce3efdaf63b0531c43c5aa4a7d48e843f966face85a4cd00',
+  'shared/back-pain-box.json': 'eb503620429d84b311d0e8c30ab7e164f49cacc1a8df577fc35496a069113aa4',
   'shared/cupped-thumb.json': 'd671abc3cef92e90bba70e1d204775b5f44cd57ab5e2611af3927f6de1ee7a89',
   'shared/curl.json': '8fda3d8dbc51a6480ca923178f627a8c585b60bdf6eea4e357faed4867a23d99',
   'shared/dumbbell-kickup.json': '45028bdde15be1a8a07197a1bed8c4ada1c2cc4a442275581c3042915b7b5719',
@@ -78,7 +80,7 @@ function copy(): string {
 }
 afterAll(() => { for (const t of temps) rmSync(t, { recursive: true, force: true }); });
 
-describe(`LIB-5 S1: the 38 shared research files equal the named research head ${RESEARCH_HEAD.slice(0, 7)}`, () => {
+describe(`LIB-5 S1: the 38 shared research files equal the named research heads ${RESEARCH_HEAD.slice(0, 7)} and ${BOX_HEAD.slice(0, 7)} (back box)`, () => {
   it('19 cards and 19 quote files, each byte-equal to its pin', () => {
     expect(Object.keys(PINS).filter(p => p.startsWith('shared/')).length).toBe(19);
     expect(Object.keys(PINS).filter(p => p.startsWith('quotes/shared-')).length).toBe(19);
@@ -148,7 +150,7 @@ describe('LIB-5 S2: every shared card is valid (tools/plates/library/research/va
   // in both, a card's own wordCap 999 never lifts the cap.
   it('wordCap and words are data: a settled back-pain box with wordCap 999 is red at 51 words under its named 50', () => {
     const c = rd('shared/back-pain-box.json'), q = rd('quotes/shared-back-pain-box.json'), s = clone(c);
-    expect(V.validateShared(c, q, { file: 'back-pain-box.json' })).toEqual([]);   // the draft is not judged (S4-P keeps it out of the app)
+    expect(V.validateShared(c, q, { file: 'back-pain-box.json' })).toEqual([]);   // owner-approved (Do 9): 50 words, its named cap
     s.status = 'settled'; s.box.wordCap = { limit: 999, basis: 'test' }; s.box.words = 51;
     s.box.name.text = 'Back pain'; s.box.now.text = Array.from({ length: 44 }, () => 'numb').join(' ') + ' today?'; s.box.doctor.text = 'See a doctor soon.';
     expect(V.validateShared(s, q, { file: 'back-pain-box.json' })).toEqual(['shared/back-pain-box.json: box has 51 words, at most 50']);
