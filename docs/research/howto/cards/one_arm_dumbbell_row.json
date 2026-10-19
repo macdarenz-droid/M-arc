@@ -401,6 +401,29 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c20",
+      "text": "The NHS advises people with shoulder pain not to do things that seem to make it worse, or to use heavy gym equipment (NHS shoulder-pain self-care advice, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-shoulder-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-shoulder-pain",
+          "text": "do not do things that seem to make it worse",
+          "where": "How to ease shoulder pain yourself: Don’t"
+        },
+        {
+          "source": "nhs-shoulder-pain",
+          "text": "do not make up your own strenuous exercises or use heavy gym equipment",
+          "where": "How to ease shoulder pain yourself: Don’t"
+        }
+      ]
     }
   ],
   "sources": [
@@ -473,6 +496,16 @@
       "pmid": 1538102,
       "access": "abstract",
       "checked": "2026-10-19"
+    },
+    {
+      "id": "nhs-shoulder-pain",
+      "url": "https://www.nhs.uk/conditions/shoulder-pain/",
+      "title": "Shoulder pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
     }
   ],
   "plate": {
@@ -495,11 +528,14 @@
       {
         "label": "Elbow to hip",
         "what": "Upper arm drives back close to the body, dumbbell toward the hip.",
-        "claim": "c9"
+        "claim": [
+          "c9",
+          "c6"
+        ]
       }
     ],
     "mistake": {
-      "what": "Short range: the arm never straightens at the bottom and the elbow stops short at the top.",
+      "what": "Short range: the arm never straightens at the bottom, or the shoulder blade is not pulled back at the top.",
       "why": "Excessive momentum, first on the common-mistakes list (c10), is seen only as speed, so it cannot be drawn; an incomplete range of motion, next on the same list (c10), shows side-on.",
       "claim": "c10",
       "drawable": false,
@@ -558,7 +594,10 @@
     },
     {
       "step": "Brace, then let the working arm hang straight down.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "c5"
+      ]
     }
   ],
   "posture": [
@@ -587,7 +626,11 @@
     {
       "mistake": "Jerking it up with momentum.",
       "fix": "Pull slowly and lower gently.",
-      "claim": "c10"
+      "claim": [
+        "c10",
+        "c14",
+        "c8"
+      ]
     },
     {
       "mistake": "Twisting to lift higher.",
@@ -609,13 +652,13 @@
       {
         "muscleId": "mid_back",
         "claim": "c11"
-      }
-    ],
-    "secondary": [
+      },
       {
         "muscleId": "rear_delts",
         "claim": "c11"
-      },
+      }
+    ],
+    "secondary": [
       {
         "muscleId": "biceps",
         "claim": "c11"
@@ -654,10 +697,10 @@
         "redFlag": null
       },
       {
-        "where": "Shoulder pain",
-        "means": "Poor technique is a risk for shoulder injuries.",
+        "where": "Pain in your shoulder",
+        "means": "Is it getting worse?",
         "fix": "Stop the set. Don't train through the pain.",
-        "claim": "c18",
+        "claim": "c20",
         "redFlag": "shoulder"
       }
     ]
@@ -676,7 +719,7 @@
       "key": "oadr-support",
       "kind": "posture",
       "right": "Hand under the shoulder, knee under the hip, back flat.",
-      "wrong": "Hand far forward, back rounded.",
+      "wrong": "Hand far forward of the shoulder.",
       "claim": "c2"
     },
     {
@@ -693,7 +736,11 @@
       "forearms"
     ],
     "remove": [],
-    "why": "Library primary lats and secondary mid_back, biceps fit (c11: lats and trapezius primary). Add rear_delts as secondary: c11 names the posterior deltoids as a primary mover. Add forearms as secondary: c11 names the forearm flexors. core stays as the text-only stabiliser; obliques shown as a watch feel only (c13, inferred)."
+    "why": "Library primary lats and secondary mid_back, biceps fit (c11: lats and trapezius primary). Add rear_delts: c11 names the posterior deltoids as a primary mover, so the feel shows them as primary. Add forearms as secondary: c11 names the forearm flexors. core stays as the text-only stabiliser; obliques shown as a watch feel only (c13, inferred)."
   },
-  "anchorSource": "ace-single-arm-row"
+  "anchorSource": "ace-single-arm-row",
+  "notes": [
+    "posture[3] follows ACE, the anchor: \"without allowing your torso to rotate or shoulder to move towards the floor\" (c5). StrengthLog instead allows \"let your scapula slide forward at the bottom of the movement\". The card keeps ACE.",
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Handle across the base of the fingers and top of the palm (pull archetype); a strap is allowed when the grip gives out first.\") and the drawn palm direction (the dumbbell primitive's natural grip; no source states it, grip.type) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3)."
+  ]
 }

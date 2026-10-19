@@ -138,7 +138,7 @@
     },
     {
       "id": "c6",
-      "text": "A named fault is raising the back angle (standing partly up) to yank the bar; it usually means the load is too heavy.",
+      "text": "A named fault is raising the back angle (standing partly up) to yank the bar; it probably means the load is too heavy.",
       "tags": [
         "CONSENSUS"
       ],
@@ -237,7 +237,7 @@
     },
     {
       "id": "c10",
-      "text": "Both feet stay flat, about shoulder width, with the knees slightly bent to reach the bar; heels lifting mid-lift usually means the weight is too heavy.",
+      "text": "Both feet stay flat and firmly planted, about shoulder width, with the knees slightly bent to reach the bar; heels lifting mid-lift usually means the weight is too heavy.",
       "tags": [
         "CONSENSUS"
       ],
@@ -258,6 +258,11 @@
         {
           "source": "ggr-pendlay",
           "text": "If your heels are losing contact with the floor mid-lift, consider using lighter weights.",
+          "where": "Common Pendlay Row Mistakes: Heels Coming Off the Floor"
+        },
+        {
+          "source": "ggr-pendlay",
+          "text": "Proper Pendlay row form requires keeping both feet firmly planted on the floor from start to finish.",
           "where": "Common Pendlay Row Mistakes: Heels Coming Off the Floor"
         }
       ]
@@ -635,7 +640,7 @@
   "plate": {
     "view": "side",
     "viewWhy": "The level torso, the bar path from floor to chest, the rounded back at the start (the top fault, c8, c23) and the back-angle rise all happen front-to-back (c2, c4, c6); the census draws it side, like the parent.",
-    "equipment": "Straight barbell with plates resting on the floor line under the shoulders at the start (c1, c3).",
+    "equipment": "Straight barbell with plates resting on the floor line at the start (c1, c3).",
     "start": "Hips hinged a little higher than a deadlift (c1), torso parallel to the floor with shoulders and hips level (c2), knees slightly bent, feet about shoulder width (c10), arms straight down to the bar on the floor (c3).",
     "end": "Same torso and hip angle (c4); bar touching the base of the chest or abs (c4, c5).",
     "checkpoints": [
@@ -823,11 +828,11 @@
       "claim": "c8"
     },
     {
-      "risk": "Bent-over rows load the lower spine most of the rows tested.",
+      "risk": "Of the rows tested, the bent-over row loaded the lower spine most.",
       "claim": "c18"
     },
     {
-      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c17"
     }
   ],
@@ -851,7 +856,11 @@
       "kind": "posture",
       "right": "Bar at the base of the chest, torso still level.",
       "wrong": "Torso risen up to yank the bar.",
-      "claim": "c6"
+      "claim": [
+        "c5",
+        "c2",
+        "c6"
+      ]
     }
   ],
   "libraryDiff": {
@@ -859,5 +868,8 @@
     "remove": [],
     "why": "Library primary mid_back and secondary lats, biceps, rear_delts, with lower_back as stabiliser, fit the sources (c11 names lats, traps and rear delts as primary; the card shows lats as a primary feel, as the parent does). Hamstrings hold the position isometrically (c11); shown as a watch feel only, not proposed for the library list."
   },
-  "anchorSource": "barbend-pendlay"
+  "anchorSource": "barbend-pendlay",
+  "notes": [
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the base of the fingers and top of the palm (pull archetype); straps allowed when the grip gives out first.\") and the drawn palm direction (palms down, as grip.type states from c1) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3)."
+  ]
 }

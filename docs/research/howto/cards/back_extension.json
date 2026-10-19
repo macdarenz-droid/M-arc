@@ -443,6 +443,24 @@
           "where": "Exercises and stretches for back pain"
         }
       ]
+    },
+    {
+      "id": "c21",
+      "text": "Tempo: hold the top for a second and lower slowly; no source gives the up or down seconds, so up 1 and down 2 are a drawing convention.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position.",
+          "where": "How to Do Back Extensions"
+        }
+      ]
     }
   ],
   "plate": {
@@ -479,7 +497,7 @@
         "c19"
       ],
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the rounded back (c6, c19). The head's pick, the pad set too high (c2), is a pad setting, not a candidate (LR-31); the rounding it causes is. Step 1: no frequency word counts for a fault. Set aside: FitnessVolt's \"An uncooperative lower back that aches is often the result of, well, weak lower back muscles.\" (weak muscles, not a fault), \"Hyperextensions, especially loaded heavy, are often utilized by bodybuilders\" (the exercise) and \"Typically, 2-4 sets to failure, or 6-15 reps is a good range for most people.\" (the load); StrengthLog's \"a neutral spine position throughout the lift is often emphasized\" (other exercises) and \"we bend our spine all the time, and often under load\" (daily life). Step 2: two faults on FitnessVolt's common-mistakes list are tied to harm. Momentum: \"Not only are you increasing the risk of injury\" (c9). The rounded back: \"you should be able to bend your upper body without rounding your back. Although, this is more dangerous when using additional weight.\" (c19, FitnessVolt's depth answer). Both are on the list (rounding under \"Wrong hip pad height\" and \"Using too much back\": \"there should be minimal to no back rounding\", c6); one source ties each to harm; both are sourced directly; the list names rounding first, so it wins. If \"this is more dangerous\" is read as about the depth, not the rounding, momentum wins step 2; it is seen only as speed, so it is not drawable, and the plate would still draw the rounded back, first on the same list (step 3). Set aside as stating no harm: \"rounding your back too much, especially under heavy weight loads, is not recommended\" (c2) and Physitrack's \"do not over arch your lower spine\" (c5); StrengthLog's \"If you do too much, too soon, they can.\" (c12) is the training load. drawable true: the rounded back is a still sign the side view shows. Pick changed: handlingMistakes[0], the pad-height item, is reworded as the fault the sources name (R-LB2-12), with the pad cue kept in its fix."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the rounded back (c6, c19). The head's pick, the pad set too high (c2), is a pad setting, not a candidate (LR-31); the rounding it causes is. Step 1: no frequency word counts for a fault. Set aside: FitnessVolt's \"An uncooperative lower back that aches is often the result of, well, weak lower back muscles.\" (weak muscles, not a fault), \"Hyperextensions, especially loaded heavy, are often utilized by bodybuilders\" (the exercise) and \"Typically, 2-4 sets to failure, or 6-15 reps is a good range for most people.\" (the load); StrengthLog's \"a neutral spine position throughout the lift is often emphasized\" (other exercises) and \"we bend our spine all the time, and often under load\" (daily life). The NHS lines (\"Back pain, particularly lower back pain, is very common.\", \"A common cause of back pain is an injury like a pulled muscle (strain).\") are about back pain in general and tie no fault of this exercise to it. Step 2: two faults on FitnessVolt's common-mistakes list are tied to harm. Momentum: \"Not only are you increasing the risk of injury\" (c9). The rounded back: \"you should be able to bend your upper body without rounding your back. Although, this is more dangerous when using additional weight.\" (c19, FitnessVolt's depth answer). Both are on the list (rounding under \"Wrong hip pad height\" and \"Using too much back\": \"there should be minimal to no back rounding\", c6); one source ties each to harm; both are sourced directly; the list names rounding first, so it wins. If \"this is more dangerous\" is read as about the depth, not the rounding, momentum wins step 2; it is seen only as speed, so it is not drawable, and the plate would still draw the rounded back, first on the same list (step 3). Set aside as stating no harm: \"rounding your back too much, especially under heavy weight loads, is not recommended\" (c2) and Physitrack's \"do not over arch your lower spine\" (c5); StrengthLog's \"If you do too much, too soon, they can.\" (c12) is the training load. drawable true: the rounded back is a still sign the side view shows. Pick changed: handlingMistakes[0], the pad-height item, is reworded as the fault the sources name (R-LB2-12), with the pad cue kept in its fix."
     },
     "tells": [
       {
@@ -487,7 +505,7 @@
         "claim": "c5"
       },
       {
-        "text": "Pump in glutes, not deep ache",
+        "text": "Pump in the muscles, not deep ache",
         "claim": "c13"
       }
     ],
@@ -495,8 +513,11 @@
       "up": 1,
       "down": 2,
       "pause": 1,
-      "claim": "c8",
-      "text": "Pause 1 s at the top: StrengthLog's \"Hold this position for a second\" (c8) is right after the lift and gives its seconds (LR-33); Physitrack's \"Hold briefly\" agrees. Up 1 and down 2 are drawing values for StrengthLog's \"slowly lower your upper body\" (c8); no source gives their seconds."
+      "claim": [
+        "c8",
+        "c21"
+      ],
+      "text": "Pause 1 s at the top: StrengthLog's \"Hold this position for a second\" (c8) is right after the lift and gives its seconds (LR-33); Physitrack's \"Hold briefly\" agrees. Up 1 and down 2 are drawing values for StrengthLog's \"slowly lower your upper body\" (c8); no source gives their seconds, so c21 (WEAK) names them a drawing convention."
     },
     "variantLine": null
   },
@@ -516,12 +537,15 @@
       "claim": "c1"
     },
     {
-      "step": "Feet about shoulder width, secured under the heel pad, knees slightly bent.",
+      "step": "Feet about shoulder width and secured, knees slightly bent.",
       "claim": "c3"
     },
     {
       "step": "Cross your arms over your chest (hands behind the head is harder).",
-      "claim": "c4"
+      "claim": [
+        "c4",
+        "c17"
+      ]
     },
     {
       "step": "Start with body weight. Add weight after 12 to 15 good reps.",
@@ -563,7 +587,10 @@
     {
       "mistake": "Swinging with momentum.",
       "fix": "Slow down. Hold the top for a second.",
-      "claim": "c9"
+      "claim": [
+        "c9",
+        "c8"
+      ]
     },
     {
       "mistake": "Arching past straight.",
@@ -741,5 +768,10 @@
       "access": "full",
       "checked": "2026-10-19"
     }
+  ],
+  "notes": [
+    "StrengthLog, the anchor, also offers a \"roll-up\" version (\"creating a rolling or wave-like motion in your spine\"). The card follows FitnessVolt's stiff-spine version (\"there should be minimal to no back rounding\", c6), because rounding is more dangerous with added weight (c19); compare LR-18.",
+    "Foot width: the card follows StrengthLog and Physitrack (shoulder width, c3); FitnessVolt sets the feet roughly hip width apart.",
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): no hand contact and no palm direction are drawn as grip facts: the arms are crossed over the chest or the hands are behind the head (c4), and the drawn arm and hand pose is a drawing convention."
   ]
 }

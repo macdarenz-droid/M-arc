@@ -267,6 +267,11 @@
           "source": "sl-deadlift",
           "text": "Initiate the eccentric by pushing your butt back and leaning your torso forward. The knees bend, but not as fast as your hip. Lower the bar along your legs like this until you’ve cleared the knees.",
           "where": "Setting the Bar Down"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "At this point you take out the rest of the movement with your knees, and simply bend them until the bar touches the ground.",
+          "where": "Setting the Bar Down: Knee bend"
         }
       ]
     },
@@ -603,7 +608,7 @@
       "why": "Lifters, especially newer ones, round more as the load rises (c8); a flexed back loads the spine's passive structures (c19).",
       "claim": "c8",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the rounded lower back (c8, c19). Cherni's review says \"trained lifters often exhibit natural lumbar flexion without clear prospective evidence of increased injury risk\" (c19): a frequency word for the back rounding in the deadlift. No other fault passes step 1. Set aside: StrengthLog's \"they tend to round their back more and more\" (c8) uses \"tend\"; \"swift increases in training are a common source of injury\" is about the load; \"the most common sticking point in the deadlift\" and \"the beginning of a deadlift is where most lifters get stuck and fail their lift\" are about where lifts fail, not a fault; \"most powerlifting injuries seem to creep up over time, rather than being acute\" names no fault; \"The mixed grip is the most common grip technique in powerlifting.\" and \"More common and the best fit for most people\" are a grip and a stance. If Cherni's line is not read as a fault, because it calls the flexion natural, the steps still give the rounded back. Step 2: StrengthLog ties two named faults to harm, the flexed back (\"lifting with a flexed back increases the load on passive structures in your spine, such as your vertebraes or intervertebral discs\", c19) and bent arms (\"straight arms with relaxed biceps will likely minimize your risk of a bicep strain or even rupture\", c4); neither is on a common-mistakes list, one source ties each to harm, both are sourced directly, and no list names both. Step 3: more read sources tell the lifter to keep the back flat (ACE's \"Keeping the back flat\" and StrengthLog's \"Strive to lift with a neutral back\", c7) than to keep the arms straight (StrengthLog only). The hips shooting up (c9) moves work to the back, which is no stated harm. drawable stays true: the side view shows the rounded back, a still sign. Pick unchanged."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the rounded lower back (c8, c19). Cherni's review says \"trained lifters often exhibit natural lumbar flexion without clear prospective evidence of increased injury risk\" (c19): a frequency word for the back rounding in the deadlift. No other fault passes step 1. Set aside: StrengthLog's \"they tend to round their back more and more\" (c8) uses \"tend\"; \"swift increases in training are a common source of injury\" is about the load; \"the most common sticking point in the deadlift\" and \"the beginning of a deadlift is where most lifters get stuck and fail their lift\" are about where lifts fail, not a fault; \"most powerlifting injuries seem to creep up over time, rather than being acute\" names no fault; \"The mixed grip is the most common grip technique in powerlifting.\" and \"More common and the best fit for most people\" are a grip and a stance. If Cherni's line is not read as a fault, because it calls the flexion natural, the steps still give the rounded back. Step 2: StrengthLog ties two named faults to harm, the flexed back (\"lifting with a flexed back increases the load on passive structures in your spine, such as your vertebraes or intervertebral discs\", c19) and bent arms (\"straight arms with relaxed biceps will likely minimize your risk of a bicep strain or even rupture\", c4); neither is on a common-mistakes list, one source ties each to harm, both are sourced directly, and no list names both. Step 3: more read sources tell the lifter to keep the back flat (ACE's \"Keeping the back flat\" and StrengthLog's \"Strive to lift with a neutral back\", c7) than to keep the arms straight (StrengthLog only). The hips shooting up (c9) moves work to the back, which is no stated harm. Also set aside: StrengthLog's \"Most powerlifters set the bar down pretty much as quickly as they can, both in training and competition.\" is a lowering speed, seen only as speed and offered as a choice, and only the rounded back is tied to harm in step 2; its \"you probably take a greater risk of sustaining with the more uncontrolled technique of touch and go\" is about a speed-only rep style, not a named fault. The NHS lines (\"Back pain, particularly lower back pain, is very common.\", \"A common cause of back pain is an injury like a pulled muscle (strain).\") are about back pain in general and tie no fault of this exercise to it. drawable stays true: the side view shows the rounded back, a still sign. Pick unchanged."
     },
     "tells": [
       {
@@ -624,7 +629,7 @@
       "down": 2,
       "pause": 0,
       "claim": "c12",
-      "text": "Down 2 rests on StrengthLog's \"lower it under, say, at least two seconds\" (c12); up 1 keeps ACSM's 1-2 s, stated for intermediate to advanced training (c12, WEAK; LR-15). Pause 0: no quote on the card asks for a pause right after the lift. StrengthLog's \"pausing as close to the floor as possible (just an inch or so above), and for a count of three\" is the paused-deadlift variation, a pause on the way up, and its \"perhaps over 1–3 seconds before the bar finally breaks the ground\" is tension built before the lift; neither is this field (LR-33)."
+      "text": "Down 2 rests on StrengthLog's \"lower it under, say, at least two seconds\" (c12); up 1 keeps ACSM's 1-2 s, stated for intermediate to advanced training (c12, WEAK; LR-15). Pause 0: no quote on the card asks for a pause right after the lift. StrengthLog's \"pausing as close to the floor as possible (just an inch or so above), and for a count of three\" is the paused-deadlift variation, a pause on the way up, and its \"perhaps over 1–3 seconds before the bar finally breaks the ground\" is tension built before the lift; neither is this field (LR-33). StrengthLog recommends the dead start (\"set the bar down until it is completely still, and start your next rep from a dead start\"): a pause at the bottom between reps, named here with no seconds because no source gives them; pause stays 0 (LR-33)."
     },
     "variantLine": null
   },
@@ -670,7 +675,7 @@
       "claim": "c1"
     },
     {
-      "point": "Arms straight like ropes.",
+      "point": "Arms straight.",
       "claim": "c4"
     },
     {
@@ -686,7 +691,7 @@
       "claim": "c10"
     },
     {
-      "point": "Lower hips-back first, then bend the knees past them.",
+      "point": "Push the hips back first. Bend the knees once the bar passes them.",
       "claim": "c11"
     }
   ],
@@ -711,7 +716,10 @@
     "primary": [
       {
         "muscleId": "glutes",
-        "claim": "c14"
+        "claim": [
+          "c14",
+          "c16"
+        ]
       },
       {
         "muscleId": "hamstrings",
@@ -779,11 +787,11 @@
   },
   "risks": [
     {
-      "risk": "A rounded back under heavy load loads the spine's discs and bones more.",
+      "risk": "A rounded back loads the spine's discs and bones more.",
       "claim": "c19"
     },
     {
-      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c20"
     },
     {
@@ -803,17 +811,22 @@
       "kind": "hand",
       "right": "Overhand, thumbs wrapped, hands shoulder width, outside the knees.",
       "wrong": "Hands too wide, arms bent.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "c21",
+        "c4"
+      ]
     },
     {
       "key": "dl-start",
       "kind": "posture",
       "right": "Bar over mid-foot, shins near it, arms straight, back flat.",
-      "wrong": "Rounded lower back, bar out over the toes.",
+      "wrong": "Rounded lower back, bar away from the shins.",
       "claim": [
         "c1",
         "c4",
-        "c7"
+        "c7",
+        "c8"
       ]
     },
     {
@@ -924,5 +937,9 @@
       "access": "full",
       "checked": "2026-10-19"
     }
+  ],
+  "notes": [
+    "The breath risk (c20) sits beside the anchor's brace cue, \"Inhale, brace your core, and lift the bar\" (c5). The card keeps both: the brace is the lifting cue, and the risk line names the blood-pressure cost of a held breath on heavy reps.",
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the middle of the palm, fingers wrapped (inherited).\") and the drawn palm direction (double overhand, as grip.type states from c21) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Neutral, in line with the forearm (inherited).\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3). grip.handContact and grip.wrist are inherited from romanian_deadlift (inherit[1], inherit[2]); their \"neutral\" wrist differs from the shrug cards' \"bent back about 35 degrees\" for the same hold archetype, which F-LB3-3 settles."
   ]
 }

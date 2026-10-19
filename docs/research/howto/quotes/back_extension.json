@@ -294,6 +294,13 @@
       "text": "But stop if your pain gets worse and see a GP for advice.",
       "status": "verbatim",
       "closest": "But stop if your pain gets worse and see a GP for advice."
+    },
+    {
+      "claim": "c21",
+      "source": "sl-back-extension",
+      "text": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position.",
+      "status": "verbatim",
+      "closest": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position."
     }
   ],
   "sources": [

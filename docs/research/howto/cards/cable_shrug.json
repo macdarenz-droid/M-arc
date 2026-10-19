@@ -358,6 +358,29 @@
           "where": "exercise description"
         }
       ]
+    },
+    {
+      "id": "c17",
+      "text": "The NHS advises people with shoulder pain not to do things that seem to make it worse, or to use heavy gym equipment (NHS shoulder-pain self-care advice, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-shoulder-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-shoulder-pain",
+          "text": "do not do things that seem to make it worse",
+          "where": "How to ease shoulder pain yourself: Don’t"
+        },
+        {
+          "source": "nhs-shoulder-pain",
+          "text": "do not make up your own strenuous exercises or use heavy gym equipment",
+          "where": "How to ease shoulder pain yourself: Don’t"
+        }
+      ]
     }
   ],
   "sources": [
@@ -460,6 +483,16 @@
       "pmid": 18339796,
       "access": "abstract",
       "checked": "2026-10-19"
+    },
+    {
+      "id": "nhs-shoulder-pain",
+      "url": "https://www.nhs.uk/conditions/shoulder-pain/",
+      "title": "Shoulder pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
     }
   ],
   "plate": {
@@ -528,7 +561,7 @@
   },
   "setup": [
     {
-      "step": "Straight bar on the low pulley.",
+      "step": "Bar attachment on the low pulley.",
       "claim": "c1"
     },
     {
@@ -607,17 +640,17 @@
         "redFlag": null
       },
       {
-        "where": "Shoulder pain",
-        "means": "Poor technique is a risk for shoulder injuries.",
+        "where": "Pain in your shoulder",
+        "means": "Is it getting worse?",
         "fix": "Stop the set. Don't train through the pain.",
-        "claim": "c14",
+        "claim": "c17",
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c13"
     },
     {
@@ -641,7 +674,11 @@
       "kind": "posture",
       "right": "Shoulders up, arms straight, standing straight.",
       "wrong": "Elbows bent, curling the bar up.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c3",
+        "c4"
+      ]
     }
   ],
   "libraryDiff": {
@@ -651,6 +688,7 @@
   },
   "anchorSource": "exercise-com-cable-shrug",
   "notes": [
-    "c7 is split (2026-10-18, W2-45). The ACE barbell-shrug slow lowering is now c16 [CONSENSUS, MECH], and c7 keeps the top hold plus the ACSM seconds as a drawing convention [CONSENSUS, WEAK] (LR-15, D-W2-TEMPO). Each tag set now matches one the 8 use (CARD-V2). plate.tempo and posture[3] cite both."
+    "c7 is split (2026-10-18, W2-45). The ACE barbell-shrug slow lowering is now c16 [CONSENSUS, MECH], and c7 keeps the top hold plus the ACSM seconds as a drawing convention [CONSENSUS, WEAK] (LR-15, D-W2-TEMPO). Each tag set now matches one the 8 use (CARD-V2). plate.tempo and posture[3] cite both.",
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the middle of the palm, fingers wrapped (hold archetype).\") and the drawn palm direction (palms down, as grip.type states from c1) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3). The straight bar is a drawing convention too: c1's quote says only \"cable bar attachment\"."
   ]
 }

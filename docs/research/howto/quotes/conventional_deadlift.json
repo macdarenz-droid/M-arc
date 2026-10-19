@@ -147,6 +147,13 @@
       "note": ""
     },
     {
+      "claim": "c11",
+      "source": "sl-deadlift",
+      "text": "At this point you take out the rest of the movement with your knees, and simply bend them until the bar touches the ground.",
+      "status": "verbatim",
+      "closest": "At this point you take out the rest of the movement with your knees, and simply bend them until the bar touches the ground."
+    },
+    {
       "claim": "c12",
       "source": "acsm2009",
       "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",

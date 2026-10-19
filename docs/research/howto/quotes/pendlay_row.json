@@ -152,6 +152,13 @@
       "closest": "If your heels are losing contact with the floor mid-lift, consider using lighter weights."
     },
     {
+      "claim": "c10",
+      "source": "ggr-pendlay",
+      "text": "Proper Pendlay row form requires keeping both feet firmly planted on the floor from start to finish.",
+      "status": "verbatim",
+      "closest": "Proper Pendlay row form requires keeping both feet firmly planted on the floor from start to finish."
+    },
+    {
       "claim": "c11",
       "source": "ggr-pendlay",
       "text": "Primary muscles worked: Lats, traps, rear deltoids",

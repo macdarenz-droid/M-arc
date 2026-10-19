@@ -556,7 +556,7 @@
     "viewWhy": "The parallel torso, the hinge and the bar end rising to the chest are front-to-back (c3, c6); the census draws it side.",
     "equipment": "Landmine rig: barbell pinned at a floor pivot behind the lifter, running forward between the feet; plates on the free end in front, the lifter straddling the loaded end with the shoulders ahead of the weight (layout inferred from c1, c2); hands one above the other on the bar just behind the plates (c4). Needs the landmine composer (census gap).",
     "start": "Straddling the loaded end, feet between hip and shoulder width (c2), hips and knees bent, back straight, torso roughly parallel to the floor (c3), arms straight to the bar just behind the plates (c4, c8).",
-    "end": "Same torso angle; elbows driven back, bar end at the chest, shoulder blades squeezed together (c6).",
+    "end": "Same torso angle; elbows driven back, bar end pulled toward the chest, shoulder blades squeezed together (c6).",
     "checkpoints": [
       {
         "label": "Torso parallel",
@@ -577,13 +577,16 @@
     "mistake": {
       "what": "Rounded lower back over the bar.",
       "why": "The anchor’s bracing and spine cues exist to stop it (c5, c9); on the landmine T-bar it is named one of the most common mistakes (c11), and the lift loads the lower back (c15).",
-      "claim": "c11",
+      "claim": [
+        "c9",
+        "c11"
+      ],
       "drawable": true,
       "rankNote": "No source measures how often each fault happens. LR-31 step 2: the rounded lower back (c9, c11). Step 1: no frequency word counts for a fault of this exercise. Set aside: GGR's \"Lifters round their backs is one of the most common mistakes I see when training.\" and \"Be mindful of these common pitfalls\" are written for the T-bar row with a V-handle (another exercise; c11 is WEAK) and the second is a list sentence; the NHS lines on back pain name no fault. Step 2: the rounded back is the only named fault a quote ties to harm. REP: \"Keep your back straight and avoid rounding to protect your lower back.\" (c9), a cue that reduces harm; GGR, for the handle version: \"can place a tremendous strain on your spinal erectors and ramp up your chances of suffering a lower-back injury\" (c11). REP's momentum line (\"Avoid using momentum to lift the bar; instead, focus on a controlled motion to maximize muscle engagement\") and its bracing line (\"prevent rounding your lower back\", c5) state no harm. Set aside as not about a fault: REP's \"reduces stress on your lower back\" and \"reduces strain on your lower back\" (the exercise) and \"reducing injury risk\" (a strong upper back); Fenwick's \"produced the largest lumbar spine load\" (c15, the exercise). drawable stays true: the side view shows the rounded back, a still sign. Pick unchanged."
     },
     "tells": [
       {
-        "text": "Bar end reaches your chest",
+        "text": "Bar end comes up toward your chest",
         "claim": "c6"
       },
       {
@@ -664,11 +667,14 @@
     {
       "mistake": "Rounding the lower back.",
       "fix": "Brace before each rep and use a lighter load.",
-      "claim": "c11"
+      "claim": [
+        "c11",
+        "c5"
+      ]
     },
     {
       "mistake": "Jerking it up with momentum.",
-      "fix": "Slow, controlled pulls.",
+      "fix": "Controlled, deliberate pulls.",
       "claim": "c7"
     },
     {
@@ -716,7 +722,10 @@
         "where": "Lower back rounding or straining",
         "means": "Fault: the lower back rounding under load.",
         "fix": "Brace first and use a lighter load.",
-        "claim": "c11",
+        "claim": [
+          "c11",
+          "c5"
+        ],
         "redFlag": null
       },
       {
@@ -734,11 +743,11 @@
       "claim": "c11"
     },
     {
-      "risk": "Bent-over rows load the lower spine most of the rows tested.",
+      "risk": "Of the rows tested, the bent-over row loaded the lower spine most.",
       "claim": "c15"
     },
     {
-      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c14"
     }
   ],
@@ -758,7 +767,12 @@
       "kind": "posture",
       "right": "Back straight, torso level, braced.",
       "wrong": "Lower back rounded over the bar.",
-      "claim": "c11"
+      "claim": [
+        "c3",
+        "c9",
+        "c5",
+        "c11"
+      ]
     }
   ],
   "libraryDiff": {
@@ -768,5 +782,8 @@
     "remove": [],
     "why": "Library primary mid_back and secondary lats, biceps fit (c10: lats, traps, rhomboids primary). Add rear_delts as secondary: c10 lists the rear delts as a secondary muscle. Lower back is shown as a watch feel (c15, inferred) and not proposed for the library list."
   },
-  "anchorSource": "rep-landmine-row"
+  "anchorSource": "rep-landmine-row",
+  "notes": [
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the base of the fingers and top of the palm (pull archetype).\") and the drawn palm direction (palms down, as grip.type states from c4) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3)."
+  ]
 }

@@ -225,6 +225,11 @@
           "source": "sweat-db-rdl",
           "text": "your back should remain in a neutral position.",
           "where": "Technique tips: Back"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "but the strength to power the movement should be coming from your hamstrings and glutes",
+          "where": "Technique tips: Back"
         }
       ]
     },
@@ -274,7 +279,7 @@
     },
     {
       "id": "c13",
-      "text": "Feel tension in the back of the thighs on the way down and the glutes on the way up; no hamstring feel usually means push the hips back or reduce knee bend.",
+      "text": "Feel tension in the back of the thighs on the way down and the glutes on the way up; with no hamstring feel, push the hips back or reduce knee bend.",
       "tags": [
         "CONSENSUS"
       ],
@@ -335,6 +340,11 @@
         {
           "source": "sweat-db-rdl",
           "text": "Your arms really aren’t doing anything here beyond holding your weights",
+          "where": "Technique tips: Arms and hands"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "Keep them straight and keep your hands close to your legs.",
           "where": "Technique tips: Arms and hands"
         }
       ]
@@ -502,6 +512,24 @@
           "where": "Exercises and stretches for back pain"
         }
       ]
+    },
+    {
+      "id": "c24",
+      "text": "Wrap the thumbs around the handle (a barbell grip rule, applied here to the dumbbell handle).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Grip selection and location"
+        }
+      ]
     }
   ],
   "plate": {
@@ -509,7 +537,7 @@
     "viewWhy": "Hips back, the soft fixed knee bend, a flat back and the dumbbells grazing the legs are front-to-back positions (c3, c4, c6); the side view shows them, and the arched back while standing up (the top fault, c10).",
     "equipment": "A pair of dumbbells held in front of the thighs, palms facing the body (c1); floor line. Optional plate under the feet (c12) not drawn.",
     "start": "Standing tall, feet about shoulder width, dumbbells in front of the thighs (c1), shoulders back and down (c2), knees softly bent (c6).",
-    "end": "Hips pushed back, flat back, knees still softly bent behind the toes, dumbbells about halfway down the shins and touching the legs (c3, c4, c6), eyes toward the floor (c7).",
+    "end": "Hips pushed back, flat back (c8, c10), knees still softly bent behind the toes, dumbbells about halfway down the shins and touching the legs (c3, c4, c6), eyes toward the floor (c7).",
     "checkpoints": [
       {
         "label": "Hips back",
@@ -519,12 +547,18 @@
       {
         "label": "Bells on legs",
         "what": "Dumbbells run down the thighs and shins, touching the legs.",
-        "claim": "c4"
+        "claim": [
+          "c4",
+          "c3"
+        ]
       },
       {
         "label": "Flat back",
         "what": "Back stays neutral. Stop where it would round.",
-        "claim": "c8"
+        "claim": [
+          "c8",
+          "c10"
+        ]
       }
     ],
     "mistake": {
@@ -532,11 +566,11 @@
       "why": "Named a common mistake: thinking you are using your back strength to stand up leads to an arched back in the second half of each rep; the back should stay neutral (c10).",
       "claim": "c10",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the arched back while standing up (c10). Sweat's dumbbell Romanian deadlift technique tip says \"A common deadlift mistake is to think you’re using your back strength to stand up, leading to an arched back in the second half of each rep\": a frequency word for one named fault, given for this exercise. No other fault passes step 1. Set aside: Fitbod's \"Common Form Mistakes\" is a list heading. StrengthLog's deadlift guide (c22) is written for the barbell deadlift, and its frequency lines are about the load (\"swift increases in training are a common source of injury\"), a grip (\"The mixed grip is the most common grip technique in powerlifting\"), the lift's sticking point (\"the most common sticking point in the deadlift\") or the stance (\"More common and the best fit for most people\"); none names a fault. If \"a common deadlift mistake\" is read as about the barbell deadlift, another exercise, step 2 gives the rounded back instead: it is the only named fault a quote ties to harm (\"Rounding your back will allow you to reach closer to the floor, but also increases your risk of injury\", c8); Sweat's neck line (\"your neck will become strained\", c7) is about the gaze, a head position kept as a risk. drawable true: the arched back is a still sign the side view shows. Pick changed: rounding the back to reach lower, the head's pick until now, is handlingMistakes[1]."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the arched back while standing up (c10). Sweat's dumbbell Romanian deadlift technique tip says \"A common deadlift mistake is to think you’re using your back strength to stand up, leading to an arched back in the second half of each rep\": a frequency word for one named fault, given for this exercise. No other fault passes step 1. Set aside: Fitbod's \"Common Form Mistakes\" is a list heading. StrengthLog's deadlift guide (c22) is written for the barbell deadlift, and its frequency lines are about the load (\"swift increases in training are a common source of injury\"), a grip (\"The mixed grip is the most common grip technique in powerlifting\"), the lift's sticking point (\"the most common sticking point in the deadlift\") or the stance (\"More common and the best fit for most people\"); none names a fault. If \"a common deadlift mistake\" is read as about the barbell deadlift, another exercise, step 2 gives the rounded back instead: it is the only named fault a quote ties to harm (\"Rounding your back will allow you to reach closer to the floor, but also increases your risk of injury\", c8). Sweat's gaze line (\"your neck will become strained and arched\", c7) also ties a fault to harm, but the rounded back is on Fitbod's common-mistakes list and the gaze is not, so the rounded back would win that step-2 tie. drawable true: the arched back is a still sign the side view shows. Pick changed: rounding the back to reach lower, the head's pick until now, is handlingMistakes[1]."
     },
     "tells": [
       {
-        "text": "Stretch in the backs of thighs",
+        "text": "Tension in the backs of thighs",
         "claim": "c13"
       },
       {
@@ -601,7 +635,10 @@
     },
     {
       "point": "Down to about mid-shin, only as low as the hinge allows.",
-      "claim": "c9"
+      "claim": [
+        "c9",
+        "c3"
+      ]
     },
     {
       "point": "Back neutral going down and coming up.",
@@ -620,7 +657,10 @@
     {
       "mistake": "Arching to stand up.",
       "fix": "Drive with glutes and hamstrings. Keep the back neutral.",
-      "claim": "c10"
+      "claim": [
+        "c10",
+        "c5"
+      ]
     },
     {
       "mistake": "Rounding to reach lower.",
@@ -688,12 +728,11 @@
       },
       {
         "where": "Lower back more than the hamstrings",
-        "means": "Fault: the back rounding or arching to do the work.",
-        "fix": "Shorten the range and go lighter.",
+        "means": "Fault: using the back to stand up.",
+        "fix": "Use your glutes and hamstrings to stand up.",
         "claim": [
-          "c8",
           "c10",
-          "c22"
+          "c5"
         ],
         "redFlag": null
       },
@@ -712,7 +751,7 @@
       "claim": "c8"
     },
     {
-      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c19"
     },
     {
@@ -732,7 +771,7 @@
       "claim": [
         "c4",
         "c1",
-        "inherit:0"
+        "c24"
       ]
     },
     {
@@ -837,6 +876,19 @@
       "pmid": null,
       "access": "full",
       "checked": "2026-10-19"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
     }
+  ],
+  "notes": [
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Handle across the middle of the palm, fingers wrapped (hold archetype).\") and the drawn palm direction (palms facing the body, as grip.type states from c1) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Neutral (inherited).\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3)."
   ]
 }

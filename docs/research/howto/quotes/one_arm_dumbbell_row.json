@@ -222,6 +222,20 @@
       "status": "verbatim",
       "closest": "Grip strength is significantly reduced when wrist position deviates from this self-selected optimum position.",
       "note": "Re-read 2026-09-30 in the PubMed abstract (E-utilities efetch)."
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-shoulder-pain",
+      "text": "do not do things that seem to make it worse",
+      "status": "verbatim",
+      "closest": "do not do things that seem to make it worse"
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-shoulder-pain",
+      "text": "do not make up your own strenuous exercises or use heavy gym equipment",
+      "status": "verbatim",
+      "closest": "do not make up your own strenuous exercises or use heavy gym equipment"
     }
   ]
 }

@@ -29,7 +29,7 @@
       "why": "true for this child because both feet stand flat on the floor (standing-feet); only the stance width changes (c1, c2)."
     },
     {
-      "field": "setup[0] (bar on the floor with full-size plates, parent c23)",
+      "field": "plate.equipment (bar on the floor with full-size plates, parent c23)",
       "why": "true for this child because the sumo lift also starts from a bar resting on the floor (c1)."
     }
   ],
@@ -374,6 +374,11 @@
           "source": "barbend-sumo",
           "text": "Take your time when setting up to ensure your technique is just right.",
           "where": "Common Sumo Deadlift Mistakes: Rushing the Setup"
+        },
+        {
+          "source": "barbend-sumo",
+          "text": "Everything from your foot angle to your torso brace to how you physically get your hands on the bar requires attention and practice.",
+          "where": "Common Sumo Deadlift Mistakes: Rushing the Setup"
         }
       ]
     },
@@ -530,11 +535,11 @@
       }
     ],
     "mistake": {
-      "what": "Hips shoot up before the bar leaves the floor, tipping the chest forward.",
+      "what": "Hips shoot up before the bar leaves the floor.",
       "why": "Named a common sumo mistake: lifters shoot the hips up to lift with the back (c12).",
       "claim": "c12",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the hips shooting up first (c12). BarBend's Hips Rising Early item says \"To compensate, many athletes shoot their hips up in an attempt to lift with their backs.\": a frequency word for this fault of the sumo deadlift. No other fault passes step 1. Set aside: \"Here are some of the most common errors that befall sumo deadlifters.\" is a list sentence; \"the conventional deadlift is often fast off the floor\" is another exercise; \"most people can lift a bit more weight\", \"the sumo deadlift usually allows for a heavier load\" and \"for most people, sumo deadlifts create a slight leverage advantage\" are about the load; \"they’re often one of the key limiting factors\" is about the spinal erectors; \"the sumo deadlift is so common at powerlifting meets\" and Escamilla's \"Strength athletes often employ the deadlift\" are about the exercise; StrengthLog's \"the most common deadlift variation\" is another exercise. drawable stays true: hips high with the chest down is a still sign the side view shows. Pick unchanged."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the hips shooting up first (c12). BarBend's Hips Rising Early item says \"To compensate, many athletes shoot their hips up in an attempt to lift with their backs.\": a frequency word for this fault of the sumo deadlift. No other fault passes step 1. Set aside: \"Here are some of the most common errors that befall sumo deadlifters.\" is a list sentence; \"the conventional deadlift is often fast off the floor\" is another exercise; \"most people can lift a bit more weight\", \"the sumo deadlift usually allows for a heavier load\" and \"for most people, sumo deadlifts create a slight leverage advantage\" are about the load; \"they’re often one of the key limiting factors\" is about the spinal erectors; \"the sumo deadlift is so common at powerlifting meets\" and Escamilla's \"Strength athletes often employ the deadlift\" are about the exercise; StrengthLog's \"the most common deadlift variation\" is another exercise. StrengthLog's deadlift guide (c3, c4) names no fault with a frequency word: its hits are about the load (\"swift increases in training are a common source of injury\"), a grip (\"The mixed grip is the most common grip technique in powerlifting.\"), where lifts fail (\"the most common sticking point in the deadlift\") and the lowering speed (\"Most powerlifters set the bar down pretty much as quickly as they can, both in training and competition.\", seen only as speed and on no list). The NHS lines (\"Back pain, particularly lower back pain, is very common.\", \"A common cause of back pain is an injury like a pulled muscle (strain).\") are about back pain in general and tie no fault of this exercise to it. drawable stays true: hips high with the chest down is a still sign the side view shows. Pick unchanged."
     },
     "tells": [
       {
@@ -716,7 +721,7 @@
       ]
     },
     {
-      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c19"
     },
     {
@@ -731,19 +736,23 @@
     {
       "key": "sumo-grip",
       "kind": "hand",
-      "right": "Overhand, thumbs wrapped, hands inside the knees.",
+      "right": "Thumbs wrapped, hands inside the knees.",
       "wrong": "Hands outside the knees as in a conventional pull.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "inherit:0"
+      ]
     },
     {
       "key": "sumo-start",
       "kind": "posture",
       "right": "Chest up, trunk upright, bar on the shins, back flat.",
-      "wrong": "Hips high, chest down, bar away from the shins.",
+      "wrong": "Hips shot up, bar away from the shins.",
       "claim": [
         "c13",
         "c4",
-        "c15"
+        "c15",
+        "c12"
       ]
     },
     {
@@ -867,5 +876,9 @@
       "access": "full",
       "checked": "2026-10-19"
     }
+  ],
+  "notes": [
+    "The breath risk (c19) sits beside c10's cue, \"Hold your breath, brace your core slightly, and lift the bar.\" The card keeps both: the brace is the lifting cue, and the risk line names the blood-pressure cost of a held breath on heavy reps.",
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the middle of the palm, fingers wrapped (inherited).\") and the drawn palm direction (overhand, as grip.type gives it; no claim on this card names the grip type) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Neutral (inherited).\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3). grip.handContact and grip.wrist are inherited from conventional_deadlift; F-LB3-3 settles the hold wrist across cards."
   ]
 }

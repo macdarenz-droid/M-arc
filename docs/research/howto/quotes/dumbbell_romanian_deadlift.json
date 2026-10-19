@@ -123,6 +123,13 @@
       "note": ""
     },
     {
+      "claim": "c10",
+      "source": "sweat-db-rdl",
+      "text": "but the strength to power the movement should be coming from your hamstrings and glutes",
+      "status": "verbatim",
+      "closest": "but the strength to power the movement should be coming from your hamstrings and glutes"
+    },
+    {
       "claim": "c11",
       "source": "sl-db-rdl",
       "text": "Inhale, brace your core slightly, and lean forward by hinging in your hips. Keep your knees almost completely extended.",
@@ -201,6 +208,13 @@
       "status": "verbatim",
       "closest": "Your arms really aren't doing anything here beyond holding your weights",
       "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "sweat-db-rdl",
+      "text": "Keep them straight and keep your hands close to your legs.",
+      "status": "verbatim",
+      "closest": "Keep them straight and keep your hands close to your legs."
     },
     {
       "claim": "c16",
@@ -312,6 +326,13 @@
       "text": "But stop if your pain gets worse and see a GP for advice.",
       "status": "verbatim",
       "closest": "But stop if your pain gets worse and see a GP for advice."
+    },
+    {
+      "claim": "c24",
+      "source": "baechle-grip",
+      "text": "Perform all grips with your thumbs around the bar.",
+      "status": "verbatim",
+      "closest": "Perform all grips with your thumbs around the bar."
     }
   ],
   "sources": [
