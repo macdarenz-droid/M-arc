@@ -106,3 +106,14 @@ export function wrapSpec(mirror, specId, fnSource) {
 /** A copy of a mirror (so one clean mirror can seed many mutated ones). */
 export function copyMirror(src, dst) { mkdirSync(dst, { recursive: true }); cpSync(src, dst, { recursive: true }); return dst; }
 export const readMirror = (mirror, p) => readFileSync(join(mirror, p), 'utf8');
+
+/** A tell anchor re-pinned to one pose: every pose it names (`pose:`, a "pose:landmark" string) becomes `pose`, so the
+ *  same body point is resolved in each pose. Fixed points (arrays) stay fixed. */
+export function anchorInPose(ref, pose) {
+  if (Array.isArray(ref)) return ref;
+  if (typeof ref === 'string') return `${pose}:${ref.includes(':') ? ref.split(':')[1] : ref}`;
+  const out = { ...ref, pose };
+  if (ref.at != null) out.at = anchorInPose(ref.at, pose);
+  if (ref.along) out.along = ref.along.map(r => anchorInPose(r, pose));
+  return out;
+}
