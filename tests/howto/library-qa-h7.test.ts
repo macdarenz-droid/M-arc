@@ -32,6 +32,12 @@ function variant(name: string, body: string, head = '') {
   writeFileSync(join(root, file), `import base from './${F.CARD}.mjs';\n${head}\n${body}\n`);
   return `library/specs/h7_${name}.mjs`;
 }
+/** Module-top code that fixes RR at import time to a value no other evaluation of it gets: a counter kept in a file
+ *  (so it also differs across processes), stepped once per evaluation. Random values could round to the same bytes. */
+const importTimeRR = (name: string, base = '0.01', step = '0.01') => `import { existsSync as __e, readFileSync as __r, writeFileSync as __w } from 'node:fs';
+const __f = ${JSON.stringify(join(root, `.h7-${name}.n`))}, __n = (__e(__f) ? +__r(__f, 'utf8') : 0) + 1;
+__w(__f, String(__n));
+const RR = ${base} + ${step} * __n;`;
 const line = (z: string) => `{ type: 'line', cls: 'eq-thin', pts: [[0, 0.02, ${z}], [0, 0.02, -1]] }`;
 const withLine = (item: string) => `export default { ...base, equipment: [...base.equipment, ${item}] };`;
 const h7Keys = (r: any) => r.hard['PQ-H7'].problems.map((p: any) => p.key);
@@ -47,13 +53,13 @@ describe('LIB-3c 3c-A2 PQ-H7 from a fresh import (library row)', { timeout: T },
     expect(h7Keys(await qa(null))).toEqual([]);
   });
   it('a value fixed at import time that reaches a drawn dimension gives H7.determinism', async () => {
-    const src = variant('import', withLine(line('-0.9 - RR')), 'const RR = 0.01 + Math.random() * 0.02;');
+    const src = variant('import', withLine(line('-0.9 - RR')), importTimeRR('import'));
     const keys = h7Keys(await qa(src));
     expect(keys.filter((k: string) => k.startsWith('H7.determinism:')).length).toBeGreaterThan(0);
     expect(keys).toContain('H7.determinism:normal.svg');
   });
   it('control: a per-call random value still gives H7.determinism', async () => {
-    const src = variant('call', withLine(`() => (${line('-0.9 - Math.random() * 0.02')})`));
+    const src = variant('call', `export default { ...base, equipment: [...base.equipment, () => (${line('-0.9 - Math.random() * 0.5')}), () => (${line('-0.4 - Math.random() * 0.5')})] };`);
     expect(h7Keys(await qa(src))).toContain('H7.determinism:normal.svg');
   });
   it('control: M8\'s per-call counter (reset by a fresh import) still gives H7.determinism', async () => {
@@ -93,14 +99,14 @@ describe('LIB-3c 3c-A2 PQ-H7 from a fresh import (\'approved\' path, D-LIB3b-H7\
     expect(await seated(null)).toEqual([]);
   });
   it('the pulley radius fixed at import time gives H7.determinism', async () => {
-    const keys = await seated(s => s.replace('pulley: { at: PULLEY, r: 0.045 }', 'pulley: { at: PULLEY, r: RR }').replace(/\nexport default/, '\nconst RR = 0.045 + Math.random() * 0.02;\nexport default'));
+    const keys = await seated(s => s.replace('pulley: { at: PULLEY, r: 0.045 }', 'pulley: { at: PULLEY, r: RR }').replace(/\nexport default/, `\n${importTimeRR('seated', '0.04', '0.005')}\nexport default`));
     expect(keys.filter((k: string) => k.startsWith('H7.determinism:')).length).toBeGreaterThan(0);
   });
 });
 
 describe('LIB-3c 3c-A3 h7Builds is wired: two page builds catch a value a composer fixes at import time', { timeout: T }, () => {
   it('a composer\'s import-time value: the fresh spec import misses it, the two builds do not', async () => {
-    writeFileSync(join(root, SPEC_DIR, 'h7_composer_part.mjs'), 'export const RR = 0.01 + Math.random() * 0.02;\n');
+    writeFileSync(join(root, SPEC_DIR, 'h7_composer_part.mjs'), `${importTimeRR('composer')}\nexport { RR };\n`);
     const src = variant('composer', withLine(line('-0.9 - RR')), "import { RR } from './h7_composer_part.mjs';");
     expect(h7Keys(await qa(src))).toEqual(['H7.determinism:build']);
   });
