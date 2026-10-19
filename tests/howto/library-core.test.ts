@@ -253,13 +253,13 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
     h = await import(/* @vite-ignore */ url('tools/plates/fidelity/harness.mjs'));
   });
 
-  it('the generator writes 60 files: the 54 fingerprinted, the 2 it rewrites, and ids-node.mjs, lib-id.ts, loaders.ts, coverage.ts', async () => {
-    // LIB-2b (D-LIB2b-PINS (10)): 60 for the 8, plus for each shipped library row its ht-, feel-, posture-, zoom- css and
+  it('the generator writes 61 files: the 54 fingerprinted, the 2 it rewrites, and ids-node.mjs, lib-id.ts, loaders.ts, coverage.ts, red-flag-back.ts', async () => {
+    // LIB-2b (D-LIB2b-PINS (10)): 61 for the 8's set (60 plus red-flag-back.ts), plus for each shipped library row its ht-, feel-, posture-, zoom- css and
     // research card, plus one handpair-<key>.ts per distinct key the shipped rows use
     const hp = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs'));
     const { keys } = hp.pairsOf(await hp.loadPairs(), reg.shippedIds());
-    expect(out.size).toBe(60 + 5 * LIBRARY.length + new Set(keys).size);
-    for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts']) expect(out.has(p), p).toBe(true);
+    expect(out.size).toBe(61 + 5 * LIBRARY.length + new Set(keys).size);
+    for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts', 'src/howto/red-flag-back.ts']) expect(out.has(p), p).toBe(true);
   });
 
   /** L2-A6: hasHowTo (both twins) against the LOADERS keys and the shipped rows, over every exercises.json id. */
