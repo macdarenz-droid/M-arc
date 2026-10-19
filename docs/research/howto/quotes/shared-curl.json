@@ -1,0 +1,63 @@
+{
+ "id": "shared-curl",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-seatedcurl",
+   "text": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles)",
+   "status": "verbatim",
+   "closest": "Grasp two dumbbells with a closed, supinated grip (palms facing forward and thumbs wrapped around the handles)",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-hammer",
+   "text": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+   "status": "verbatim",
+   "closest": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles with your palms facing your body).",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-seatedcurl",
+   "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
+   "status": "verbatim",
+   "closest": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-hammer",
+   "text": "Maintain a neutral wrist position (wrist straight without any bend with your palms facing your body)",
+   "status": "verbatim",
+   "closest": "Maintain a neutral wrist position (wrist straight without any bend with your palms facing your body)",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-dbcurl",
+   "text": "Not locking your wrists. Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "status": "verbatim",
+   "closest": "Not locking your wrists. Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-seatedcurl",
+   "text": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+   "status": "verbatim",
+   "closest": "As some of us show structural differences at the elbow, we may not be able to hold the dumbbells against our sides in the lowered position unless we force a bend at our wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-seatedcurl",
+   "text": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+   "status": "verbatim",
+   "closest": "The dumbbell position selected should be one that is most comfortable for you and keeps the wrists aligned straight with the forearm.",
+   "note": ""
+  }
+ ]
+}

@@ -2441,6 +2441,26 @@ Card LIB-4a (docs/supervisor/verify/lib4-cards.md on claude/sup-lib4-cards, sect
 - **D-BUG40-3, evidence.** `tests/bug-40-records.test.ts`: the premise (18 records from the fixture, `recordsInWeek` matches the owner's screen), the chip and Show all behaviour (AC2), and the no-button case when everything already fits in 12 (AC3). Mutations checked red: chip back to `records.length`, the button's `onClick` as a no-op, the button always rendered, and `slice(0, 12)` kept after Show all.
 - **D-LIB4a-7 (builder).** Merging main 72c94fc (train 24) brings BUG-41's guarded block after LIB-4a's; both are kept, in that order, and E1 becomes an exact 103. E7 (stripped gate == stripped main plus LIB-4a's lines) is unchanged.
 
+## LIB-5: the 8's machine cards (LIB-5 builder, 2026-10-18)
+
+- **D-LIB5-TEMPO8 (supervisor ruling, lib4-cards 14.7).** The 8's tempo map and plateFacts form table are LIB-5's (`TEMPO8` in `tools/plates/library/research/validate.mjs`; literal copies in `tests/howto/library-cards8.test.ts`). On research `9eaa2480` every one of the 7 ids with a spec stops at H6.tempo: the verified cards give 2 s up and 2 s down, and each spec's concentric phase is 1 s (hanging leg raise 1.5 s). Five ids also have a Rest with no verified source. The plates and specs keep their approved timing, and the cards keep their verified values; neither is changed to match the other. So the 7 ids keep 'H6:no-card' and 'F7', and each reason now reads "the verified card's tempo differs from the approved plate's timing; approved timing kept (D-LIB5-TEMPO8)" in place of "LIB-5 adds their cards". No exemption is added or removed. The per-id differences are in #244's stop report (comment 6247430295).
+- **D-LIB5-CARDS8.** CARDS_8 is empty. The 8's cards and quotes are on main as byte copies of `9eaa2480`, with no plateFacts, tempo or topFault key. lib_dumbbell_lateral_raise, lib_barbell_back_squat and lib_lat_pulldown also stop on the blind TOPFAULT pass's `none`. `qa/approved.mjs` and `tests/howto/library-qa.test.ts` are unchanged (lib_pull_up is not wired). S3 and S12 run on the fixture card `tests/howto/fixtures/lib5/research/` (card amendment 39). CARD FIELDS VERIFIED @ `33302cc` (#244 comment 6247457715).
+- **D-LIB5-BOX, D-LIB5-BUNDLE (S4-P).** The back-pain box fails closed until the owner answers decision 6: `shared/back-box.mjs` holds no box text and throws `LIB-5: back box waits for owner decision 6 (plan 8 item 6)`. `library-gate.mjs` refuses any shipped row whose riskFlags name `back`. `check-bundle.mjs` fails a build whose files hold any whole box value, or which has no HowToSheet chunk.
+- **D-LIB5-GATE.** `tools/plates/gen/library-gate.mjs` is the one refusal point. It runs after content.mjs and writes no file before Do 9. Its order: family rule (a) once; then per row the back-box refusal, the inheritance refusal and, for library rows, the library lint; then the C15 stamp check.
+- **D-LIB5-SPLIT, D-LIB5-SPLIT-2 (lib4-cards 14.3, 14.6).**
+  - Shared-card fields reach the sheet only through `shared/card.mjs`'s ruled path and kind table, with golden B's lint unchanged.
+  - Two fields on one one-value path throw. The one exception is rope-rule's ruled width.text join.
+  - A list path takes one entry per field.
+  - `exempts` and `prone` are data. `implement.text` is a typed id that must name an exercises.json row.
+  - The 73 Do 2 hits were reworded by research (9eaa2480). LIB-5 reworded, trimmed or exempted nothing.
+- **D-LIB5-SPLIT (builder reading).** A field's scope is the ids its sheet names: a variant's `appliesTo` for its steps, else the field's own `appliesTo`, else the card's. So two variants with disjoint ids never clash.
+- **D-LIB5-FAULTKEYS, D-LIB5-FAMILY.**
+  - One label per fault key holds over the shipped rows, the shared modules and every `hands/hand-*.mjs`. The reader is proven on a fixture hand module.
+  - A row that declares inheritance (`extends`, or a card `inherit` other than `[]`) is refused until LIB-9's ruled comparator replaces the refusal.
+- **D-LIB5-STAMPS, D-LIB5-SCRATCH, D-LIB-O5 (lib4-cards 14.8).**
+  - C15 is strict: every shipped row needs a reviews.json entry matching its content hash, and an empty file fails every row.
+  - The 8's entries are the supervisor's (`approvedBy: 'supervisor'`, `decision: 'D-LIB5-STAMPS'`, approved at `33302cc`).
+  - Scratch stamps count only in a tree that holds `LIB5-SCRATCH-ROOT`. Main holds no marker and no scratch entry.
 ## GATE-FLAKE-4: BUG-34's launch probe races its captures (2026-10-18)
 
 Card: `docs/supervisor/verify/gate-flake-4-card.md` (claude/sup-lib4-cards), Ruling D-GF4-R.
@@ -2509,3 +2529,12 @@ Card `docs/supervisor/verify/lib-4d-card.md` (lib4-cards 12 items 20-22, D-LIB4a
   - L2-A4's base comes from the tree's disk, not a second render: its generated files are its own generator's output for the 8 (rewritten by ownRowsTree, or main's committed files, which `generate --check` keeps fresh). One render instead of two: 67 s at 153 against 145 s.
   - L2-A4 and E1 render a whole tree, so they keep their own 180_000 / 600_000 / 900_000 limits, not vitest's 5 s default (one render per tree: L2-A4 took 33.5 s at the 8 and 66.7 s at 153 in the card's runs). "Under 5 s" (D-LIB4a-SCALE (c), lib4-cards 12 item 22) applies to the tests on the default timeout.
 - **D-LIB4d-READ.** Tests that read every shipped ht-<slug>.ts read it from its text (`readHowTo`, tests/howto/generated-module.ts), not through vite's transform, which took 8.9-17.4 s for 153 modules against 129 ms. readHowTo accepts only the generator's exact shape (header, the one type import, `export default {` … `} satisfies BuiltHowTo;`, no import or export line inside) and throws naming the path otherwise; lib-4d R1 ties it to import() for the 8 and to loaders.ts for every shipped id. Used by css HT2-A6, generate 'own hashes', hint HT6-A8 and sections-risks HT9-A3. A test reads `generatedOnDisk()` once, never once per file: generate HT2-A2 'plates.mjs writes exactly…' counts its reads and is red at the 8 on a re-read per file.
+## D-BOXCAP-1: a named 50-word limit for the back-pain box (card BOX-CAP, 2026-10-18)
+Card: `docs/supervisor/verify/box-cap-card.md` (claude/sup-lib4-cards @ 3d9b8e10, amendment 1 = ruling D-BOXCAP-WIRE).
+- **The owner's answer:** decision 6, option 1, 2026-10-18 ~13:15 UTC. The back-pain box keeps all six NHS emergency triggers in 50 words (R-W0-1; `claude/libht-research` @ 0393aac9 `shared/back-pain-box.json`, status `owner-approved`).
+- **The identity rule:** `tools/plates/library/lint/box-caps.mjs` holds the one table, `NAMED_BOX_CAPS = { 'back-pain-box': 50 }`, and `boxCapOf(key, fallback)`. A cap is chosen by the box's shared-card key only, never by its text, its word count or the card's own `wordCap`. The module imports nothing, and the fallback is required, so each site keeps its own default:
+  - `validate.mjs`: settled red-flag cards use `boxCapOf(card.key, RED_FLAG_BOX_MAX_WORDS)`;
+  - the library lint: `boxReach(path, box, names, key)`, with `lintLibraryRow(..., { boxKeys })` passing `boxKeys[flag]` (Do 9's gate call passes `{ back: 'back-pain-box' }`);
+  - c7: `checkC7(content, { boxKey })`, with `LIMITS.redFlagBoxWords` as the fallback, so c7 still never imports copy-lint.mjs.
+- **Every other box stays at 30.** Golden B's `copy-lint.mjs` (RED_FLAG_BOX_MAX_WORDS 30) is byte-identical (sha256 pin), c7's `LIMITS.redFlagBoxWords` stays 30, and library-lint.test's [30, 30] pin is unchanged. With no key, every site gives 30. S7 now also catches a quoted key holding a number; box-caps.mjs is its one named exception, pinned to `{ 'back-pain-box': 50 }`.
+- **Evidence:** `tests/howto/box-cap.test.ts` BC-1..BC-4 (BC-1, BC-3's back-key rows and BC-4 red on base 1d1fe9ea), library-research.test.ts's wordCap rows (back-pain key red at 51 under 50; another key red at 31 under 30), and the mutations listed on PR #260.
