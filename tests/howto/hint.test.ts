@@ -8,7 +8,9 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { howToHint } from '@/howto/ids';
 // LIB-2: the shipped id list moved out of the main bundle into the lazy loaders chunk (ids.ts keeps only hashes).
-import { HOWTO_IDS, LOADERS } from '@/howto/generated/loaders';
+import { HOWTO_IDS } from '@/howto/generated/loaders';
+import { SHIPPED } from './shipped-rows';
+import { readHowTo } from './generated-module';
 
 const walk = (d: string): string[] => readdirSync(d).flatMap(n => { const p = join(d, n); return statSync(p).isDirectory() ? walk(p) : [p]; });
 const TRAIN = readFileSync('src/slices/workout/Train.tsx', 'utf8');
@@ -33,7 +35,7 @@ describe('HT6-A8: the push hint', () => {
     expect(keys.length).toBeGreaterThan(0);
     for (const id of keys) expect(HOWTO_IDS as readonly string[]).toContain(id);
     for (const id of HOWTO_IDS) {
-      const h = (await LOADERS[id]!()).default as unknown as { handling?: { archetype: string; cue?: string } };
+      const h = readHowTo(SHIPPED.find(r => r.id === id)!.slug) as unknown as { handling?: { archetype: string; cue?: string } };
       if (h.handling?.archetype === 'push') expect(howToHint(id), id).toBe(h.handling.cue);
       else expect(howToHint(id), id).toBeUndefined();
     }

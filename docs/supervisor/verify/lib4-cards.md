@@ -325,7 +325,7 @@ hard card: post the design note (D-LIB4-SCOPE table, the tuple contract, the twi
 | ID | Criterion | Evidence | Red before because | Mutation |
 |---|---|---|---|---|
 | B1 | Tuples come from source and match the 8's counts | library-fidelity.test: for each family, the count on the 8 equals the count its HT block observes and prints, and is at least every bound the block asserts (HT-6 A6 prints `stats.pairs` and asserts ≥ 32; HT-9 Show: 17). The list is exact | New module | Drop one tell in the parser → red |
-| B2 | Equivalent to the HT blocks on the 8 | `--ids golden8` on the merged head, in the container (Chromium 141) and in a CI dispatch on the scratch branch (Chrome 153): every row passes, and the max px off per id equals HT-3's printed value (0 where HT-3 reports 0). Each failure fixture turns red on the same id and family as its block | New | The 4 fixtures, each red |
+| B2 | Equivalent to the HT blocks on the 8 | `--ids golden8` on the merged head, in the container (Chromium 141) and in a CI dispatch on the scratch branch (Chrome 153): every row passes, and the max px off per id equals HT-3's printed value (0 where HT-3 reports 0). Each fixture gives the same outcome as its HT block, on the same id and family. Amended 10-18 ~11:15 by D-LIB4b-B2FIX: `fixtureSection` is HT-3's sections guard 1, a pass guard (harness.mjs:909-914), so it must pass with at least 4 pairs compared. `fixtureLeakSection` (L2b word-spacing), the 1 px shift and HT-10's `inject` must each turn red | New | The 4 fixtures: section passes with ≥ 4 pairs; leak, shift and inject red |
 | B3 | Twin drift tripwire | Test: each twin's pinned sha256 equals `parseGate`'s text of its group at HEAD, for every twinned group | New | Edit one character in HT-7's or HT-4's block → red with "re-check the library twin" |
 | B4 | Per-id entry | One `entry` row per id | New | Hide `.ht-entry` for one id (fixture) → that row fails |
 | B5 | Library path | A scratch branch with #181 merged and 3 source-level scratch ids (D-LIB4-FIXTURE), pages from `buildPlatesPage` and `build-layers-page.mjs`: all rows pass, and the tuple count equals `libraryTuples` | New | A 1 px change in one id's plates page → only that id's L3 rows fail; one changed source byte in a PQ-H7-relevant field → that id's `PQH/PQ-H7` fails |
@@ -1960,6 +1960,133 @@ Why nothing is loosened: the replacement pins the travel to the leg's own moveme
 
 Also for LIB-9a's replacement, from research w2 (`claude/libht-verify-w2` @ `531b77c`, `verify/w2/w2-rulings-final.md`): LR-31 turns assisted_pull_up to drawable:false (a speed fault), and its Mistake then needs a fast-lowering fault key; underhand's spec draws `past`; LR-32's lib-9a-card.md edits are held until the w2 recheck. These take effect only when w2 merges into claude/libht-research and LIB-9a re-copies the cards.
 
+### 13.5 LB1 calibrated critic (D-CRITIC-CAL3, 2026-10-18 ~11:00 UTC; #245 @ `a4458f1a`)
+
+**What ran:** two rounds of the pilot-a-critic pattern (plan 3.4) on the 14 LB1 plates. Each round had a panel of 3 fresh Opus critics, 2 hidden approved anchors and 2 plants: P02 inverted_row (Mistake "Hips sagging" drawn as hips up, R5) and P05 underhand_lat_pulldown (the "Elbows down, back" leader moved to the shoulder, R4).
+
+| Round | Anchors (low medians) | Plants | Script verdict |
+|---|---|---|---|
+| 1 | pull_up R6 = 3; lat_pulldown R4 = 3 | P02 R5 = 2, P05 R4 = 2: both caught | discarded (anchor below 4) |
+| 2 | hanging_leg_raise R1 = 2, R7 = 3; leg_press R3 = 3, R5 = 2 | P02 R5 = 2, P05 R4 = 2: both caught | discarded (anchor below 4) |
+
+**Ruling D-CRITIC-CAL3:** round 1 is the valid calibration. The fix list is the union of the LB1 findings from both rounds (`docs/supervisor/verify/lb1-critic-findings.md`), less one withdrawn row.
+
+Why:
+- The anchor check exists to catch a harsh critic. D-CRITIC-CAL2 already ruled that a golden plate with a verified weak spot is not a clean anchor. Round 1's only anchor lows are one item each, and the supervisor confirmed both on the PNGs:
+  - pull_up R6: the trace lies on the forearm;
+  - lat_pulldown R4: the lean-back mark sits at the elbow.
+  Every other anchor item has a median of 4 or more, and both plants were caught. A critic that finds a real defect is accurate, not harsh.
+- No clean anchor is left that resembles these plates. Seated_cable_row and machine_chest_press were excluded by D-CRITIC-CAL2, and barbell_back_squat is tier A without a rack. Round 1 and round 2 together have now flagged lat_pulldown, pull_up, hanging_leg_raise and leg_press. A third round could only repeat this.
+- Round 2 is not used for validity, because its anchors got the wrong facts. Both anchors were given their research-card plateFacts, not their golden-B facts. hanging_leg_raise R1 = 2 compares the plate with the card's "toes to the bar".
+- Round 2's LB1 findings are still kept. That is stricter: nothing is dropped, and each finding needs 2 of 3 critics either way.
+
+**The rule from now on.** A round counts as calibrated only if all of these hold:
+- both plants are caught (D-CRITIC-CAL);
+- every anchor item has a median of 4 or more, except at most one item per anchor where:
+  - the supervisor has confirmed the defect on the PNG;
+  - it is recorded as a golden-B follow-up in HANDOVER;
+  - the round's other anchor items are all 4 or more.
+- Anchors are scored on their own golden-B facts.
+
+**Withdrawn:** the round 2 row "hanging_knee_raise R7" [3, 3, 4]. Its ceiling mount matches the approved hanging_leg_raise mount pixel for pixel in every row sampled (dark.png y 38-126). The same panel scored that anchor R7 = 3 for the same mount. The mount is on purpose: the vendor spec says "ceiling mount (no wall for the swing to hit)". So this is a golden-B question, not an LB1 defect.
+
+**Limit:** on resistance_band_row (R7 in both rounds), the critics' fix, "scale 1.3x", is not allowed. Q-R2-3 pins 159.02 px/m within 0.5 px/m, and 1.3x would also pass D-LIB8-floor's ×1.35 ceiling. LIB-9a fixes the framing some other way that keeps every check, or posts why none exists.
+
+**For LIB-9a (card Do 8):**
+- Fix only what the file names. One fix round, then a fresh calibrated recheck on the changed plates under the rule above.
+- After two failed rounds on one plate, stop and report.
+- A fix never edits a card. If a fix would break a hard check, a pinned test or a ruling, post the conflict with its evidence instead, and the supervisor rules.
+- R8 and R9 stay unscored (13.1).
+
+**Golden-B follow-ups**, owner-visible and not blocking LB1, recorded in HANDOVER:
+- pull_up R6 trace;
+- lat_pulldown R4 lean mark;
+- hanging_leg_raise mount level with the SIDE VIEW title, and its bar style differs from pull_up's;
+- leg_press: "Knees cave" cannot be seen side-on (R5), and a floating back (R3). The panel flagged both; the supervisor's check is pending.
+
+### 13.6 LB1 fix round ruled (D-LIB9a-FIX1, 2026-10-18 ~11:55 UTC; #245 @ `1a4947d`)
+
+LIB-9a's "LB1 FIX ROUND READY" (#245 comment 6249481646) fixed four rows and reported five as not fixable. The supervisor checked each report against the critics' own coordinates and the cards on `claude/libht-research` @ `9eaa2480`.
+
+**Accepted, to the recheck:**
+- chest_supported_row R4: tell at the sacrum, arrow, arch 16°. The arrow and the 12.8 px gap at mid-back stand in for the "10 px at the lumbar" ask. The engine's outline bends there by 8 px at most, with a label on the figure.
+- close_grip_pulldown and underhand_lat_pulldown R4: the lean arc behind the back.
+- inverted_row R7: a 2.0 m upright and one start ghost.
+
+**R1 withdrawn on chin_up, close_grip_pulldown, underhand_lat_pulldown and single_arm_lat_pulldown (end elbow position).** No change.
+
+Why:
+- **The critics' targets need longer limbs than the body has.** At the plate scale (×2 in the PNGs), the vendored forearm-to-grip is 0.342 m: 90 px on chin_up and 91 px on the pulldowns.
+  - chin_up: the critics' target elbows, (370,270) and (400,260), sit 122 px and 114 px from the hand (377,148). That is 1.27-1.35× the forearm.
+  - underhand: an elbow under the shoulder (242,421) at the upper-arm length sits 114 px from the bar (285,402), which is 1.26×. The critics' (250,500) is 104 px, 1.15×, and it also shortens the upper arm to 79 px (the arm is 86.5 px).
+- **The cards fix the grip above the shoulder joint.** Their stop points are "Bar just below the chin" (underhand), "Handle just below the chin" (close_grip), "Handle just past the chin" (single_arm), and chin over the bar for chin_up (pinned c3). With the arm's lengths, that puts the elbow in front. LIB-9a's pole sweeps show the drawn elbows are already the furthest back the cards allow. The supervisor checked the arithmetic above; the sweeps are LIB-9a's.
+- **The asked fix would draw the Mistake as the Right.** close_grip's card Mistake is "Handle pulled past the chin, elbows moving back behind the body". The round 1 critic noted the same for underhand: its Mistake labels the elbows going back as the fault.
+- The cards' "elbows down and back toward the glutes" and "upper arms tucked" describe the path of the pull. The end pose meets them as far as the stop point allows: the elbows are down from overhead, and on close_grip they are turned in.
+- Not loosened: no card, check or pin changes. Each plate's DESIGN.md records the sweep numbers.
+
+**Recheck brief change (every plate, anchors and plants alike).** Any pose fix a critic proposes must keep the drawn segment lengths, and must state the lengths it assumes. A finding whose own fix breaks that does not count. The rule applies to every plate in the set, so calibration is unchanged.
+
+**inverted_row R3: fix it.** The start arm is right: the grip is on the bar, and the arm is straight at 0.665 m. But its middle is hidden behind the solid end torso, so it reads short. Draw the hidden part of the start arm as a dashed outline over the end torso. pull_up and hanging_leg_raise redraw hidden parts this way (13.4, close_grip's dashed handle). Pinned c1 (arms straight at the start) stays.
+
+**resistance_band_row R7: no allowed fix in scale or floor.**
+- The scale stays pinned by Q-R2-3 and the floor by D-LIB8-floor. A seated floor figure has no tall equipment, and at 186 px/m the plate's width is the limit (13.4 Q-R2-3).
+- The recheck scores it beside floor-level approved plates as well as seated_cable_row. Use pilot A's panel-approved plank and mountain_climbers (#109 @ `e6f39ff`, D-CRITIC-CAL2), rendered at the same size.
+- If R7 fails again, that is the plate's second failed round. LIB-9a stops on it and reports, and the supervisor rules.
+
+**chest_supported_row R4, second half:** accepted as drawn above. The recheck decides.
+
+**Next:**
+- LIB-9a makes the inverted_row R3 dashed-arm fix and adds the DESIGN.md records.
+- It renders plank and mountain_climbers @ `e6f39ff` into the recheck reference set.
+- It pushes, as a supervisor-asked milestone under the 2-hour rule, and posts "LB1 RECHECK READY @ <sha>".
+- The supervisor then runs the calibrated recheck under 13.5's rule, on chest_supported_row, close_grip_pulldown, underhand_lat_pulldown, inverted_row and resistance_band_row.
+
+### 13.7 LB1 recheck (round 3) ruled (D-LIB9a-R3, 2026-10-18 ~13:00 UTC; #245 @ `17e3e98`)
+
+**What ran.** A calibrated recheck under 13.5's rule, with 3 fresh Opus critics on 9 plates.
+- The 5 plates: chest_supported_row, close_grip_pulldown, underhand_lat_pulldown, inverted_row and resistance_band_row.
+- Hidden anchors: lat_pulldown and pull_up.
+- Plants, rebuilt on `17e3e98`, both passing all 10 hard checks:
+  - inverted_row's Mistake drawn as hips up (R5);
+  - underhand's 'Elbows down, back' leader moved to the shoulder (R4, box at top 120).
+- The references add pilot A's plank and mountain_climbers. The brief adds 13.6's segment-length rule.
+- The supervisor rebuilt the plates page at `17e3e98` and got LIB-9a's sha256 `ed3b344c…`.
+
+**Calibration: VALID.**
+- Both plants were caught on their target items: inverted_row plant R5 [2, 1, 1]; underhand plant R4 [3, 3, 2].
+- pull_up scored 4 or more on every item.
+- lat_pulldown first scored R5 [3, 2, 2], and every other item 5. The cause was the supervisor's input error: its facts.json carried the research card's Mistake ("behind the neck") instead of golden B's "Lean and heave" (vendor lat_pulldown.mjs:19, :70, :164-165). That broke 13.5's "anchors are scored on their golden-B facts".
+  - With only that field corrected, the same 3 critics re-scored P04 alone: 5 on every item.
+  - Every other plate's entry stayed byte-identical. The pre-correction files are kept.
+- Rule from now on: the supervisor diffs every anchor's facts.json against its vendor spec's mistake and tells before a round starts.
+
+**Result:**
+- Pass on every scored item: chest_supported_row, close_grip_pulldown, inverted_row and resistance_band_row. Under the floor-level references, band row R7 passes, so Q-R2-3's scale holds.
+- underhand_lat_pulldown: R5 [3, 4, 3]. Its Mistake's low bar and arm are drawn under the solid forearm, so "Pulled too low" does not read. This is a new row; rounds 1 and 2 did not flag it. Since this is the plate's second failed round, LIB-9a stops on it and the supervisor rules:
+  - One targeted fix: draw the Mistake's low bar and arm as red dashed lines above the solid figure, keeping the segment lengths. The critics' own fix checks out at 84.5 and 88.1 px against the drawn 84 and 88. The arrow ends on the low bar.
+  - Then a single-plate calibrated recheck, with 2 anchors and 2 plants. A third failure goes to the supervisor, who rules again and does not loosen anything.
+- The LB1 plates now passing the calibrated critic (R1-R7 and R10; R8 and R9 stay unscored, 13.1): chin_up, hanging_knee_raise, assisted_pull_up, inverted_row, close_grip_pulldown, single_arm_lat_pulldown, straight_arm_pulldown, chest_supported_row, resistance_band_row, incline_machine_press and shoulder_press. That is 11. underhand is open. horizontal_leg_press and leg_press_calf_raise stay held (13.3/13.4).
+
+### 13.8 Underhand single-plate recheck (round 4) (D-LIB9a-R4, 2026-10-18 ~13:35 UTC; #245 @ `38b436d`)
+
+**What ran.** 3 fresh Opus critics on 5 plates.
+- The target: underhand_lat_pulldown @ `38b436d`. The supervisor rebuilt its page and got LIB-9a's sha256 `9b683745…`.
+- The hidden anchors: lat_pulldown and pull_up. Their facts.json now carries golden B's own Mistake text (vendor lat_pulldown.mjs:70, :164-165; pull_up.mjs:112-120), per 13.7's rule.
+- The plants:
+  - inverted_row's Mistake drawn as hips up (R5);
+  - underhand's 'Elbows down, back' leader on the shoulder (R4), rebuilt on `38b436d` and passing all 10 hard checks.
+
+**Calibration: VALID.**
+- Both anchors scored 4 or more on every item.
+- Both plants were caught on their target items: inverted_row R5 [2, 2, 1], and the underhand plant R4 [2, 3, 2].
+
+**Result: underhand_lat_pulldown passes every scored item.** All 12 drawn LB1 plates now pass the calibrated critic (R1-R7 and R10; R8 and R9 stay unscored, 13.1). Card Do 8's critic gate is met for LB1.
+- horizontal_leg_press and leg_press_calf_raise stay held.
+- LP check (#259, `claude/libht-research-lp` @ `dd54051e`, verify/lp-check.md):
+  - horizontal_leg_press has no sourced number for the top knee angle;
+  - the calf raise has a study-group range of -25° to +25° (kassiano2023, abstract), not a cue, and Yessis keeps 30-45° and "limit ROM".
+- So both go to the owner as a design option (D-LIB8-shrug). The supervisor prepares the option images.
+
 ## 14. LIB-5 design-note rulings (D-LIB5-NOTE, 2026-10-17 ~23:xx UTC; #244 @ ee7f40f)
 
 A 3-lens review read the note. A judge ruled each open point, and one adversarial verifier checked each ruling. Where the verifier corrected a ruling, the corrected text is the ruling. It is changed here only where it clashed with sections 12 and 13 or with another item, and each ruling says in one line what changed. An earlier re-check of the LIB-5 card found 23 defects. Their fixes are merged into the card amendments below.
@@ -2974,3 +3101,534 @@ Rule for every row: a moving phase takes `up` (concentric) or `down` (eccentric)
 - Is a plates-page `page` re-pin that moves no pinned plate fragment a golden update? Until it is ruled, it needs `'owner'`.
 - Before #109 or #245 merges, check whether either holds a real batch entry written with the interim `'owner'`.
 - Check whether LIB-4c reads approvedBy.
+
+## 15. LB2 rulings (D-LIB10-*, 2026-10-18)
+
+
+Heads read: main `2078913c` (train 27, LIB-3b on main); claude/sup-lib4-cards `60767c0`; plan claude/howto-options `4a9fd86`; research claude/libht-research `0393aac`; pilot A claude/lib-8-pilot-a `200f8c3`; LIB-9a claude/lib-9-lb1 `38b436d`. Every file:line is on main `2078913c` unless another head is named. (i) and (ii) answer lib4-cards.md:1424 (section 13, amendment 21). Both hold before LB2's first T row (LB2 has no D row).
+
+---
+
+### (i) D-LIB10-RANGES: where approved PARAMS ranges live
+
+1. Approved PARAMS ranges live in one new file, `tools/plates/library/qa/param-ranges.json`. envelope.json stays as it is: measured on the 8, never hand-set.
+2. The file is keyed by family, then by PARAMS key, in exactly the envelope shape derive.mjs reads (`{ key: [min, max] }` or `{ key: [allowed values] }`, derive.mjs:14). A family is the template name for a T row (BENCH, SEATPRESS) and `D:<parent id>` for a D row. Each family row also carries its ruling id and, per bound or value, its basis.
+3. A basis is either a pinned approved plate that shows the value (its batch golden entry), or a verified card claim that states it. A rig value with its own anchor (incline, decline, Smith, ...) enters a family only after that anchor's plate entry is pinned (plan 3.1:243-244). A child's own value also needs its own basis: a claim on its own verified card, cited next to the param in rows.json and checked by the CARD FIELDS verifier. A range only bounds; it never stands in for that claim.
+4. Only the supervisor adds or changes rows, each by a ruling with a COACHING-DECISIONS entry. The builder proposes rows, with their basis, in its design note.
+4b. Route: the supervisor's ruling quotes each family row byte for byte. LIB-3c commits it if the ruling is posted before LIB-3c's READY. Otherwise one small supervisor PR from claude/sup-param-ranges commits it, rows only, with the loader test green and a fresh review. LIB-10 never edits the file.
+5. pin.mjs and selftest.mjs never read or write the file.
+6. PQ-H10 and the child proof's derive() read one object per row (D-LIB3c-SHARED, 15.1): for each PARAMS key, the family row's range when the row's family names that key, else ctx.envelope's range. h10 builds it and passes it to the derivation's child rebuild; no other code reads the file. A D spec's own derive() call is not a check, and no spec or template imports the file. On the real path ctx.envelope is envelope.json, which names no PARAMS key, so a missing file, family or key fails closed with H10.envelope, as node.mjs:289 does today. (i)'s loader and any family row reach main only in the same merge as (ii)'s child proof, or after it. Mutation: with test family rows present, the child proof removed → the test that expects H10.child for "make, then move one callout" is red (ranges alone never pass it).
+7. Built by LIB-3c (item 11). registry.mjs stays byte-identical (Q-A, #245 6242372604; registry.mjs:61). The `template` field rides on the row as data (registry.mjs:52 keeps it). candidate.mjs refuses a T row whose `template` is not a string matching /^[A-Za-z0-9_-]+$/ that names an existing tools/plates/library/templates/<name>.mjs (fail closed; `'../derive'` would otherwise pass). Mutation: `template` removed from a T row → candidateOf throws.
+8. Tests, each red and then restored:
+   - a PARAMS row added to envelope.json (not committed) turns red the 3b-A6 premise (library-qa-h10.test.ts:125, which runs in npm test), LIB-3c's 3c-A4 premise and a local selftest.mjs run (selftest.mjs:25; in CI only from LIB-4b #232's qa-selftest row);
+   - a value outside its family's range gives H10.value;
+   - a value ruled only for SEATPRESS, used on a BENCH row, is red;
+   - with the pinned envelope, a family or key with no row gives H10.envelope; with a test envelope that names the key and no family row, the key is checked against the test envelope (the fallback);
+   - a row without a ruling id or basis makes the loader throw;
+   - derive() and H10 read one object: the object h10 passes to the child rebuild gives the same value result as H10's check; a changed family row changes it (in range: the object passed to the rebuild; out of range: H10.value, and no child rebuild runs).
+
+Why: envelope.json cannot hold a hand row (plan 3.3 :292; pin.mjs:1-3, :64; selftest.mjs:23-25), and one global PARAMS range would let a value approved for one family pass on another; a supervisor-owned per-family file is narrower and keeps the limit apart from the plate under test.
+
+---
+
+### (ii) D-LIB10-CHILDPROOF: PQ-H10 proves the drawn plate equals its derivation
+
+1. For every D and T row whose params have no other H10 problem (D-LIB3c-SHARED, 15.1), PQ-H10 also checks that the plate on the batch page (the candidate's `plate`, candidate.mjs:61) equals, on all 9 fragments, the child rebuilt alone from its derivation:
+   - D: `derive(parentSpec, row.params, obj)`, obj being (i) 6's one object (derive.mjs:39-45);
+   - T: `template.make(row.params, facts)`, with `facts` taken from the child's spec module export.
+   A difference gives a new key, `H10.child:<fragment>`. A row with a param problem is already red and gets no child proof, so no verdict changes. A derivation with clean params and no child rebuild gives `H10.child:threw`; node.mjs:298's early return stays as it is, so M21-M23 (mutations.mjs:98-103, :116) keep their keys.
+2. For T rows, the parent proof goes through the template: `make(parentParams, parentFacts)`, rebuilt alone, equals the parent's pinned fragments (plan 3.1:246). parentParams and parentFacts are exported by the template, which is frozen with it. Today's rebuild of the parent from its own source stays as well.
+3. LIB-3c builds it, in candidate.mjs (the derivation gains a child rebuild and, for T, a template rebuild of the parent) and in qa/node.mjs h10. buildPlatesPage loads specs by file URL (build-page.mjs:47-48, :95). How a derived spec reaches it, for example a module written to a temp directory, is for LIB-3c's design note. A golden parent's spec is imported from a mirror (golden.mjs makeMirror), never from tools/plates/vendor in place: its engine needs the font only the mirror has (measured by the LIB-3c critic: ENOENT). A rebuild that throws gives `H10.child:threw`. LIB-3c reports every lb1-plates.test.ts row its change moves, with the exact new keys: at least the four `it`s of the in-memory D-copy describe (:1128-1153 @ `38b436d`: clean :1139, A7 :1143, A4 :1146, one byte :1149), measured on a local merge of its head into `38b436d` (LIB-3c 3c-A11); #245 changes those expectations when it merges main, as amendment 21 did for LIB-3b. LIB-3c's note gives the added seconds per row against LIB-4c's per-shard budget.
+4. Mutations, each red and then restored:
+   - a D source that derives and then sets one more field (tempo) → H10.child:tempo;
+   - a T source that calls make and then moves one callout → H10.child;
+   - a T source whose default export uses params other than row.params → H10.child;
+   - one byte of a template constant → H10.byte on the template parent proof;
+   - the template parent proof switched back to the parent's own source, with a template byte changed → red (proves the template path is the one checked).
+5. Deadline: on main before any T row's QA counts as evidence, and before any D row exists on any branch (LB4's front_squat, goblet_squat and bodyweight_squat; LB6's smith_machine_squat).
+
+Why: today h10 checks the params and rebuilds the parent only (node.mjs:299-302), while the drawing comes from the row's own file (candidate.mjs:66; plates-page.mjs:38), so a source that derives and then edits passes; that is the raw-spec escape hatch plan 3.1:232-233 forbids. Only comparisons are added.
+
+---
+
+### Other rulings
+
+3. **D-LIB10-AHEAD (build-ahead stage ceiling for LB2).**
+   - LIB-10 may push with its 7 LB2 rows at stage drawing or review in `tools/plates/library/lb2/rows.json`. Nothing goes under batches/, tests/howto/golden/, src/ or tools/plates/gen/, and its A9 test enforces this.
+   - Every D-LIB4-ENTRY condition still holds before any of the 7 drawn here is approved-plate, pinned, in batches/ or shipped. The 4 reused ids follow pilot A's pins (D-LIB10-PA).
+   - Why: D-LIB4-ENTRY-2 (12 item 4) names LIB-9 only, and its reason (K cannot rise while no id ships) holds for LB2; the ceiling is a committed test with mutations.
+
+4. **D-LIB10-TEMPLATES (who builds BENCH and SEATPRESS).**
+   - LIB-10 builds BENCH after pilot A is on main. It builds SEATPRESS only if the design-note ruling makes arnold_press T; otherwise SEATPRESS waits for its first T child in a later batch (plan 3.1:239 asks for at least 3 members).
+   - Each template is proven by the byte proof against its parent's pinned fragments: the card's A7, and PQ-H10 once LIB-3c is in. This amends plan 3.1:248 ("in the PR of its parent").
+   - Why: pilot A has no templates/ folder (`200f8c3`) and its head is frozen for LIB-8-FIX (lib-8-fix-card.md:11); the byte proof needs the parent's pin, which exists only after pilot A merges (candidate.mjs:28-41).
+
+5. **D-LIB10-PA (the 5 pilot A ids in LB2).**
+   - Reuse: the 4 approved plates (dumbbell_bench_press, dumbbell_shoulder_press, incline_dumbbell_press, barbell_overhead_press) ship as pilot A pins them. They are not redrawn and get no new plate entry or plate critic. The R8 and R9 scoring the ship card needs (card merge_prerequisites; 13.1) covers them too. LIB-10 adds no rows for them, because a second row throws (registry.mjs:34-36). The ship card moves their stage and adds their layers. Approval status: 16 approved at `e6f39ff` (HANDOVER:1223).
+   - Modes: the LIB-8 merge card registers the two template parents as 'H' (they were hand-drawn), not 'P'; candidate.mjs:60 throws for 'P'. The template-parent link lives on the children (`parent`, `template`) and in the template module. incline_dumbbell_press stays as pinned; its plan mark "T" names its family only. LIB-10's note may, as an option, show that make(its params, its facts) rebuilds its pinned plate byte for byte, as a second anchor for BENCH's incline branch.
+   - Card keys: the LIB-8 merge card writes the three keys for pilot A's cards. Each topFault comes from D-LIB5-TOPFAULT's blind pass (lib4-cards 14 OPEN-3: the card's fault and quotes, the plate's tells shuffled, no firstKey), on a head where LR-31 is applied, and never from mistake.firstKey. Any of its stop answers holds that id. The CARD FIELDS verifier re-checks the key on the same blind inputs. LIB-10 never writes these cards; they reach its branch when main, holding the merge card, is merged in.
+     - Checked for the 4 reused cards: plate.tempo maps through Q3 exactly onto the pilot A specs' tempo (for example dumbbell_bench_press.mjs:143: Lower 2, Press 1; the card: up 1, down 2, pause 0). dumbbell_fly [unverified]. plateFacts against the pinned plates [unverified].
+   - dumbbell_fly: held on pilot A ("needs a raised foot-end camera", pilot-a/plates.json; D-LIB8-fly). Its fix is `camera.pitch` in LIB-20 (D-SPIKE-pitch, COACHING-DECISIONS.md:2116), still a proposal (D-SPIKE-status, :2137). LB2 ships 11 ids. dumbbell_fly ships with LB2 only if LIB-20 with pitch is on main and its own drawing passes QA and the critic first; otherwise it rolls to the next sheet (plan 3.5:340). If the owner says no-go on pitch, it needs its own ruling.
+   - Why: one writer per file; the pinned bytes are the approval; pilot A's plates still pass LIB-3's QA on the merge card, with every flag named.
+
+6. **D-LIB10-DECLINE (decline_bench_press's mode).**
+   - Draw it as H. Its spec copies dumbbell_bench_press's supine code from the #109 head D-LIB8FIX-CARRY names (D-LIB9-CLONE (a)-(c)), never imports it, and adds the declineBench composer. Once BENCH exists, the note lists every difference between decline's copy and the template.
+   - 'decline' joins BENCH's range only after its plate is pinned. LB2's plan marks become P2 T5 H5 (P2 T4 H6 if arnold_press is ruled H).
+   - Why: as a BENCH child it would use 'decline' before its own anchor is approved (plan 2.2:164; 3.1:243-244); an H plate runs every check. Cost about +2.5 Opus-hours [est].
+
+7. **D-LIB10-FACTS (what a T child's `facts` may hold).**
+   - Each template exports a closed facts schema, and unknown keys throw.
+   - Allowed: callouts (text, landmark, box), tells, cue, tempo (from the verified card), alt, mistakeAlt, and the Mistake, chosen from the template's own list of fault builders, each with named magnitudes.
+   - Not allowed: poses, equipment, camera, trace, measure, checks, datum, ghosts, view, or any other key.
+   - Every number the card does not give is listed under "Unsourced numbers" in the child's spec header (13.3 must-fix 14).
+   - The supervisor rules each template's schema at the design note.
+   - Why: no facts schema exists yet (plan 3.1:238 names make(params, facts) only), and an open facts object would reopen the escape hatch that params close (node.mjs:17).
+
+8. **D-LIB10-ANCHORS (the critic's hidden anchors for LB2).**
+   - A hidden anchor may be an approved, pinned pilot A plate, scored on the card facts it was approved with at its approving head. 13.7's facts diff checks it before the round. A hidden anchor is never the plate shown as the visible reference beside an LB2 plate in the same round.
+   - The pair: barbell_overhead_press (pilot A) and pull_up (valid in 13.7 and 13.8).
+   - For a pilot A anchor, the one-item exception needs the defect confirmed on the PNG and recorded as a pilot A follow-up in HANDOVER. Every other part of 13.5 applies unchanged.
+   - Why: 13.5 was written for the 8, and LB2's census closest plate, machine_chest_press, is excluded (D-CRITIC-CAL2); pilot A's plates passed a VALID panel (D-PILOTA-R5).
+
+9. **D-LIB10-PARENTS (plate parent and card parent).**
+   - Two BENCH T children (incline_barbell_bench_press, close_grip_bench_press) and the H decline_bench_press name barbell_bench_press as card `parent` (research `0393aac`). The children's template parent is dumbbell_bench_press (plan 6.2, P:BENCH).
+   - The registry row's `parent` is the plate's derivation parent. The card's `parent` governs only copy inheritance and the D-LIB5-FAMILY comparator.
+   - The comparator, when ruled on LIB-9's PR (Do 9), accepts a parent row at stage shipped in the same head and refuses a parent below shipped. barbell_bench_press ships in the same batch as its children [unverified: the comparator is not built yet].
+   - Why: both proofs run: H10's byte proof covers the plate parent, and the comparator's `===` covers the copy parent.
+
+10. **LIB-3c carries D-LIB9-AUTHORQA.**
+    - LIB-3c starts from main now. Its first step lands #245's D-LIB9-AUTHORQA hunk byte for byte (candidate.mjs as on `38b436d`, from `git diff origin/main...38b436d -- tools/plates/library/candidate.mjs`), with #245's A8 assertions. No separate card.
+    - #245's A8 tests read LB1's files, which are not on main, so LIB-3c ports their assertions to the LIB-2b fixture; #245 keeps its own.
+    - When #245 next merges main, its candidate.mjs equals main's (it takes main's file whole if git reports a conflict there), so the AUTHORQA lines it was reviewed on do not change. LIB-3c's other changes (fresh-import PQ-H7, the ranges, the child proof) do change #245's results. #245 updates the expectations LIB-3c reports (D-LIB10-CHILDPROOF item 3: at least the four D-copy `it`s, with any other row 3c-A11 lists) when it merges main, as it did for LIB-3b (lib4-cards section 13 amendment 21), then re-runs its evidence on that merged head. LB2's QA (LIB-10 Do 5 and Do 8) waits only for LIB-3c, not for LB1's ship.
+    - Why: one PR, one review and one lane slot carry both; the lane cap D-LIB-LANE-ACTIVE is 4, and LIB-4b, LIB-4c, LIB-10 and LIB-3c fill it.
+
+11. **LIB-3c's scope.**
+    - LIB-3c (card lib-3c-card.md) takes, in this order: D-LIB9-AUTHORQA (item 10); D-LIB3b-H7's queued fix, "PQ-H7 builds twice from fresh spec imports" (lib-3b-card.md:151; COACHING-DECISIONS.md:2452); (i) D-LIB10-RANGES; (ii) D-LIB10-CHILDPROOF.
+    - It starts from main now and may merge before #245, in a merge train.
+    - Its deadline is (ii)'s item 5, and D-LIB3b-H7's: before the first batch after LB1 is QA'd.
+    - Why: all of these change the spec loader and the derivation in candidate.mjs and the H checks in qa/, so one PR avoids two edits of the same lines.
+
+### 15.1 D-LIB3c-SHARED (supervisor, 2026-10-18; LIB-3c card critic B1)
+
+**Ruling.**
+- PQ-H10 and the child proof's derive() read one object: for each PARAMS key, the family row's range when the row's family names that key, else ctx.envelope's range.
+- On the real path ctx.envelope is envelope.json, which names no PARAMS key (library-qa-h10.test.ts:125 guards that in CI), so such a key fails closed with H10.envelope.
+- The child proof runs only when the row's params have no other H10 problem; such a row is already red, so no verdict changes.
+- library-qa-h10.test.ts stays unedited and green.
+- h10 builds the object and passes it to the derivation's child rebuild. No other code reads param-ranges.json; pin.mjs, selftest.mjs and loadPins never read it (15 (i) 5).
+- A derivation with clean params and no child rebuild gives `H10.child:threw`. node.mjs:298's early return stays as it is.
+
+**Amends:** 15 (i) items 6 and 8, and (ii) items 1 and 3. The same edit also fixes (i) 7 (LIB-3c critic L3) and item 10 (critic M7). Line changes below.
+
+**Why:**
+- It keeps the existing tests as the anti-loosening guard: LIB-3b's library-qa-h10.test.ts builds every case as a D child of lib_pull_up (:27-28) and injects test ranges through ctx.envelope. Under (i) 6 and (ii) 1 as first written, derive() would throw on every case (no `D:lib_pull_up` family row), so its `[[], true]` rows and exact-key rows would go red, and no design could meet both the ruling and an unedited test.
+- The real path is unchanged: every runQa caller loads the pins (gen/plates.mjs:139; proof.mjs:15; fidelity.mjs:214 on #232/#246; lb1/qa.mjs:17-24 on #245), and envelope.json names no PARAMS key.
+- The LIB-3c critic rendered the fixture's derived plates byte-identical to the vendored pull_up (svg and overlay, normal and mistake, for `camera.maxScale: 1`, `bar.kind: 'straight'` and `handedness: 'both'`), so the clean rows stay `[[], true]` with the child proof on [page-level fragments unverified].
+
+**Why nothing is loosened:** a key with no family row still fails closed on the real path; a row with any param problem is already red; the child proof and every existing H10 key keep their meaning; the test that guards envelope.json (library-qa-h10.test.ts:125) runs in npm test.
+
+## 16. LIB-8M rulings (D-LIB8M-*, 2026-10-18)
+
+Supervisor rulings for card LIB-8M (the LIB-8 merge card), 2026-10-18. They apply with lib-8-merge-card.md and amend D-LIB8FIX-CARRY and D-LIB8FIX-ENV (lib4-cards.md:1429-1430) only where they say so. Heads: main 2078913c; #109 200f8c33; research #263 e777388d and 2fad80ce ("LB2-RESEARCH FIXED", 6255337111; R-LB2-16, 6255377801); LIB-4c #246 68f15560; LIB-5 #244 1d1fe9ea.
+
+D-LIB8M-CHAIN (gap 2; implements D-LIB-O5 6(b)-(c))
+- tools/plates/golden.mjs: `verifyChain(entries, { batch = false } = {})`. With batch false (GOLDEN.json; golden.mjs:271 and gen/plates.mjs:88) every rule is unchanged, so approvedBy is 'owner' only.
+- verifyBatchChain passes { batch: true }. approvedBy is then 'owner' or 'supervisor', and nothing else.
+- 'supervisor' is valid only on one of these:
+  - an entry with supersedes null whose kind is 'plate' or 'page';
+  - a 'layers-page' entry whose supersedes is null or names a 'supervisor' entry.
+  In both cases it needs a non-empty `decision`, and an `approval` matching `https://github.com/macdarenz-droid/M-arc/(pull|issues)/<n>#issuecomment-<id> @ <40-hex sha>`.
+- 14.8 point 4's "golden-B design kinds alone" is checked by the fresh reviewer on each layers-page pin and recorded in that entry's `why`.
+- The change is LIB-8M's first non-merge commit. The generated files whose inputs include golden.mjs are regenerated in the same commit. Tests go in tests/howto/lib8-chain.test.ts; golden.test.ts and L2-A14 stay unedited.
+- 6(b)'s "until it is on main" reads: earlier in the same PR, before any pin commit.
+- Why: 14.8 fixed the scope; this fixes the mechanics and makes `approval` checkable, with the GOLDEN path untouched.
+
+D-LIB8M-QA (gap 4)
+- After 'PILOT A CARD FIELDS VERIFIED', on the exact head, for each pinned id: runQa's full report (node and browser halves) on `candidateOf(id, { all, authoring: true })`, with qa/envelope.json and zero exemptions.
+- Every hard check must pass. No hard check is exempted. A failure goes to D-LIB8M-CARDTRUE.
+- Each raised flag goes on the sheet with its value and range.
+  - The owner names each non-F5 flag he accepts (D-LIB8FIX-ENV; Q1 and OPEN-3 for a drawable-fault F7).
+  - F5 is the supervisor's under D-LIB9-F5: value exactly 3.57, element the selected Mistake tell. The report carries the value only (qa/browser.mjs:168), so the element is recorded in the Do 9 table from qa/browser.mjs's own measurePage output for that plate (cards[chromeId][theme][width][mode].where.label; browser.mjs:67, :90-111): at the cell where the label contrast is lowest, `where.label` must be a `button.plate-callout.m…[pressed]` element in midnight. A scratch script prints that cell, the value and the `where` string; it is never committed.
+  - The pin's `exemptions` equal his names, plus 'F5' where D-LIB9-F5 holds.
+- After the pin, the default path with pinned exemptions gives ok true for every pinned id.
+- Plan 3.5's "changed-ids sheet" is met by this first full pilot A sheet.
+- Why: pilot A rows are not shipped, so this is their only full QA before the pin, and zero exemptions shows every flag.
+
+D-LIB8M-CARRY (replaces D-LIB8FIX-CARRY's whole-page test for LIB-8M)
+- The baseline is extractPlates on blob d774614a with the card-box-jump and card-reverse-lunge article spans removed. Exactly 15 cards remain.
+- An e6f39ff approval (D-PILOTA-R5) counts on a later #109 head for an id only when its 9 fragment shas there equal the baseline's.
+- barbell_overhead_press counts on its 8 non-tempo fragments, plus H6.tempo green and the supervisor's look. The pilot A critic ignores tempo (HANDOVER:1596).
+- The five redraws, and any CARDTRUE redraw, need a fresh calibrated critic run and the supervisor's per-exercise approval on that head.
+- Why: the redraws, the OHP tempo, the refreshed sources lines and the held ids all move the page, while a plate entry pins exactly the 9 fragments.
+
+D-LIB8M-SCOPE (what LIB-8M pins)
+- The pin is the 14 ids approved at e6f39ff, minus any id held later:
+  - dumbbell_bench_press, incline_dumbbell_press, dumbbell_shoulder_press, barbell_overhead_press;
+  - barbell_row, romanian_deadlift, single_leg_romanian_deadlift;
+  - dumbbell_biceps_curl, upright_row, triceps_pushdown, rope_triceps_pushdown;
+  - pec_fly, plank, mountain_climbers.
+- Held: barbell_shrug, dumbbell_fly, bent_over_dumbbell_rear_delt_fly, box_jump and reverse_lunge.
+- Card keys, LR-31 and Do 9 cover all 14. LR-31 for the last 7 cards is at e777388d.
+- The Mistakes LIB-8M redraws are:
+  - dumbbell_shoulder_press (c10) and incline_dumbbell_press (c8): R-LB2-7;
+  - dumbbell_biceps_curl (c6), triceps_pushdown (c11) and rope_triceps_pushdown (c12): R-LB2-7 with R-LB2-13 to R-LB2-15;
+  - single_leg_romanian_deadlift, as a sixth redraw, only when D-LIB8M-SLRDL says so.
+- Why: D-LIB10-PA and R-LB2-2 put every pilot A card under LR-31, and gap 4 needs each pinned id's card.
+
+D-LIB8M-SLRDL (single_leg_romanian_deadlift's topFault)
+- At e777388d the card is in conflict with itself:
+  - plate.mistake is the rounding (c7), drawable false;
+  - its why names the lifted hip rotating up (c5) as what the engine cannot draw;
+  - its rankNote cites c7's "many trainees", which may be an LR-31 step-1 frequency word;
+  - handlingMistakes[0] is the rounding.
+- Research settles it by LR-31 under R-LB2-16 (#263 6255377801), verified in the run after 2fad80ce's, which is the last verify that covers SLRDL:
+  - (a) If the top fault is c5 and drawable stays false: handlingMistakes[0] becomes "Opening the hip of the lifted leg." (c5), and topFault is the ruled key 'hip-open', citing c5. The verifier checks it differs from the drawn 'round'. F7 stays raised for the owner's named exemption.
+  - (b) If the top fault is c7: drawable becomes true, the blind pass picks the key, and F7 is not raised.
+- The plate changes only when research's verified head makes it change: when plate.mistake (branch (a): the next fault by R-LB2-16; branch (b): the top fault) is not the drawn first tell 'round', or when the blind pass answers 'low' or 'several'. c7's frequency quote is about touching the dumbbell to the floor, which is the second tell 'low' (specs/single_leg_romanian_deadlift.mjs:178-180), so this can happen.
+  - Then SLRDL is a sixth redraw, in Do 6 with the other five and in the same critic set. Its Mistake tells are reordered, or its Mistake redrawn, so the first tell is plate.mistake's fault (Q1, lib4-cards.md:1256; D-LIB8M-CARDTRUE).
+  - It is never exempted. If no card-true drawing passes every hard check, it is held. A card value is never moved to fit the drawing.
+- Branch (b) makes SLRDL a drawable:true plate. The supervisor then amends the plan as a docs action on claude/howto-options (not the builder's), as Q1 (c) did: 3.1:85 and :155 (the drawable-fault list), 3.3:303 (the count of drawable-fault ids) and 6.1:646 (SLRDL's "drawable-fault" label). The Owner's sheet then lists the drawable-fault convention among those not judged on this sheet, and has no expected F7.
+- Why: OPEN-3 stops a drawable:false id whose key equals firstKey, and a new key needs a ruling.
+
+D-LIB8M-TEMPO (pilot A's tempo map)
+- The concentric phase takes up and the eccentric takes down. Hold takes pause, right after the concentric, only if pause > 0.
+- Any other static phase, and the Work and Rest phases of a cycle plate, is a constant only with a quote that states its seconds. This extends 14.7 to the cycle plate's moving Work phase.
+- A range is written as the quote's string.
+- Rows:
+  - barbell_overhead_press: Press ← up 1, Hold ← pause 1, Lower ← down 2. No bottom rest from c20 (Q3: a constant is allowed, never required).
+  - plank: Hold = '10–60' (c12, "Hold: 10–60 seconds").
+  - mountain_climbers: Work 15 move, Rest 15 (c13, "15 seconds of work and 15 seconds of rest").
+- The map lives in tools/plates/library/pilot-a/tempo.json, and lib8-pin.test.ts builds each card's tempo only from it.
+- A spec whose seconds differ from its card follows the card (D-LIB8M-CARDTRUE).
+- Why: one map rule for every batch; H6 compares exactly; pilot A has no owner approval of its timing to keep.
+
+D-LIB8M-NOSTRIP (box_jump and reverse_lunge)
+- Both are held: stage review, `held` in plates.json, off the page and the pin. Their held lines go in before LIB-8M's first build.
+- The cause: the approved card structure needs a tempo strip (golden.mjs:115-116; PQ-H2 'H2.chrome:tempo', qa/node.mjs:92). The vendored builder draws none without seconds (vendor build-page.mjs:174), and neither verified card gives seconds.
+- Research is not asked.
+- Both go on the named follow-up list as "a tempo strip for plates with no sourced seconds", a design card shown to the owner. They are never exempted.
+- Plan 8 decision 3's airborne convention stays open until then.
+- Why: with either card on the page, extractPlates throws for every id.
+
+D-LIB8M-CARDTRUE
+- This applies when Do 9 shows H6 (a fact or tempo) or F7 red on a pinned id, or when LR-31 changes its pick.
+- The plate follows the card. The spec is redrawn (eq/** only by a separate ruling), re-QA'd, re-critiqued and re-approved before the sheet.
+- If no card-true drawing passes every hard check, the id is held (stage review, off the page and the pin), reported, and put on the follow-up list.
+- A redraw of romanian_deadlift, barbell_row or dumbbell_bench_press is reported on #245 too.
+- Why: the owner has approved nothing on pilot A yet, and a card value is never moved to fit a drawing (LR-33; D-LIB8-shrug).
+
+D-LIB8M-PAGES (replaces the proposed PLATESONLY)
+- batches/pilot-a.json carries the full `pages` object at D-LIB2b-PAGES (1)'s paths:
+  - plates: 'tools/plates/library/pages/pilot-a.json';
+  - layers: 'tests/howto/golden/library/pilot-a.layers.html';
+  - layersConfig: 'tools/plates/library/pages/pilot-a.layers.json'.
+- LIB-8M does not create the two layers files (D-LIB2b-PAGES (3)). The ship card creates them with its layers-page pin.
+- No code changes: registry.mjs, LIB-4c's files and the page entry's fields stay as they are.
+- lib8-pin.test.ts asserts that pilot-a.json has no 'layers-page' entry and that neither layers path exists.
+- Why: that is the ruled state for an unshipped batch, and L1 and C0 already cover it, unchanged (shown at 68f15560).
+
+D-LIB8M-PAGESET
+- The pinned plates page holds exactly the 14 ids with plate entries.
+- Held ids get no row in batches/pilot-a.json and no entry in the chain. Their specs and cards stay unpinned.
+- An id the GO leaves out is held. The page and the sheet are rebuilt without it, and the sheet is re-sent. The pin waits for an approval naming the new page sha, and A9 holds for the rest.
+- Why: pageConfig needs a row per page id, a held row would block the batch that later ships it (registry.mjs:34-36), and a held plate inside a pinned page would force an 'owner' re-pin.
+
+D-LIB8M-CARDS
+- Each pinned id's card and quotes file live only at docs/research/howto/cards/<id>.json and quotes/<id>.json. They are byte copies from <RESEARCH_HEAD>, plus the three keys inserted as one text block before the final brace.
+- pilot-a/cards/ is deleted. build.mjs:23, the :138 research line and plates.json's `cards` field point at that path and head.
+- The supervisor merges the field commit back into claude/libht-research.
+- Why: 17 of the 19 pilot A copies are stale, and QA and the sheet must read one card.
+
+D-LIB8M-SHEET (amends D-LIB8FIX-ENV's "sheet's flag lines")
+- Each plate's aside lists LIB-3's flags from the Do 9 report as its only F-lines. The report is a JSON in the scratch folder, passed to build() and never committed.
+- ENVELOPE's results show as 'Page order: …' and still set the page order.
+- The critic's scores replace 'pending'.
+- The hand renders shown, in plates.json `hands`:
+  - LIB-12's cupped and front-rack, as committed today (evidence/lib12-*.png);
+  - LIB-7's curl, rope and EZ pairs, one exercise id per kind: curl dumbbell_biceps_curl, rope rope_triceps_pushdown, EZ ez_bar_curl (the IDS maps in hands/hand-curl.mjs, hand-rope.mjs and hand-ez.mjs on #193 @ 55e91e9f). Each is rendered with renderPair(id) (hands/pairs.mjs:229) from main after #193 merges, at 390 px in Silent Black and Paper as LIB-12's are, and saved as tools/plates/library/pilot-a/evidence/lib7-<key>-silent-black.png and lib7-<key>-paper.png (key curl, rope or ez: 6 new files);
+  - band: one line, no render. LIB-7 has no band pair yet (hands/hand-band.mjs:1-7 on 55e91e9f: "pilot A's band kind waits on a research band-hand claim"), so the owner's look at band (plan 2.3) waits for that pair.
+- The back-pain box is not re-shown: the owner chose option 1 on 2026-10-18.
+- Golden B is already approvedBy 'owner' on main (tools/plates/layers/MANIFEST.json pageApproval.current; COACHING-DECISIONS.md:1501). No record changes, and the sheet need not show it.
+- Why: the owner names flags by F-number, so the sheet must show exactly the flags that gate the pin (plan 3.5; plan 2.3's pilot A kinds).
+
+D-LIB8M-ENTRY
+- 'page' entry: { kind: 'page', pageSha256, bytes, approvedBy: 'supervisor', decision: 'D-LIB-PILOTA', approval, date, why, supersedes: null, prev }.
+- 'plate' entry, one per pinned id: { kind: 'plate', id, src, slug, prefix, chromeId, fragments (the 9), exemptions, approvedBy: 'supervisor', decision: 'D-LIB-PILOTA', approval, date, why, supersedes: null, prev }.
+- `approval` is the supervisor's per-exercise approval comment, posted after Do 9 and Do 11 on the sheet head. It names each id, the head sha, the critic run each id rests on (wf_cad21b92-9ed @ e6f39ff for carried ids; the new run for redraws) and the Do 9 table.
+- `why` holds: the 10-01 delegation; the owner's flag answers verbatim, with their date; for F5, the 8's reason quoted from qa/exemptions.json.
+- No layers-page entry, template sha or card stamp hash: the ship card adds them with the layers.
+- Why: 14.8 points 5 and 7 (first entries are the supervisor's, with this evidence); GOLDEN.json's entries set the field pattern.
+
+D-LIB8M-PIN
+- 'PILOT A PIN GO @ <head>' names:
+  - the pinned ids and the page sha;
+  - the supervisor's approval comment;
+  - each id's exemptions;
+  and quotes the owner's flag answers verbatim, with their date.
+- After it, the builder makes the one `[golden update]` commit on #109, using golden.mjs's helpers: stages, chain and MANIFEST rows.
+- The supervisor checks that the commit equals the GO before the fresh review.
+- Why: the supervisor fixes the content (plan 3.5's intent), and one writer on the branch avoids a mid-card push.
+
+D-LIB8M-O5GATE (LIB-5 review Low 2)
+- In stampProblems (research/stamps.mjs:50 @ 1d1fe9ea), a matching entry that is not scratch is a problem when:
+  - approvedBy is not 'supervisor';
+  - decision or approval is empty;
+  - or open is not 0.
+- Scratch entries in a marked root behave as before.
+- c15.ts and c15-stamps.test.ts stay unedited. Tests go in tests/howto/lib8-stamps.test.ts.
+- stamps.mjs is in no generated file's inputsFor at 1d1fe9ea (gen/library-gate.mjs:28, :36 and :54). Confirm with generate --check on the commit.
+- Why: 14.8 points 3 and 7 make every real stamp 'supervisor', and today the gate accepts an 'owner' or open: 1 stamp.
+
+D-LIB8M-GENERATED
+- LIB-8M may change generated files only through `node tools/plates/generate.mjs`:
+  - gen/plates.mjs's outputs: line 1;
+  - src/howto/coverage.ts: the 14 pinned ids' `stage` only ('review', then 'approved-plate');
+  - ids.ts, loaders.ts and ids-node.mjs: line 1.
+- After the merge nothing changes on screen:
+  - no app file imports coverage.ts (only tests do);
+  - the 14 still have no How-to entry;
+  - the 8 are unchanged.
+- The supervisor sends the train's APK to the owner after the merge.
+- Why: coverage.ts and the ids files hash registryInputs(), which lists every batch file (gen/ids.mjs:117-130), so a batch row must regenerate them.
+
+D-LIB8M-ORDER
+- #109 merges in checklist slot 7, after LIB-6 #181, LIB-7 #193, LIB-4d and LIB-3c (or its first two commits, 8c1973ac and 8123b50f, as their own reviewed change if the supervisor amends 15 item 10). It merges before LIB-5v (7a) and LB1 (8).
+- HANDOVER:1000 reads: LIB-4b → LIB-4c (+#249) → LIB-5 → BOX-CAP → LIB-5 Do 9 → LIB-4d → LIB-6 #181 → LIB-7 #193 → LIB-3c (AUTHORQA) → #109 pilot A (7) → LIB-5v (7a) → LIB-9a's Do 9 comparator → LB1.
+- Only the stalled-batch rule (plan 6.3, owner decision 8) can move #109 behind LB1, after its sheet has waited more than 2 days.
+- Why: AGENTS.md's checklist rule and lib-9a-card.md:28 put LB1 after LIB-8.
+
+14.8's open items, closed
+- #109 @ 200f8c33 holds no real batch entry written with the interim 'owner': it has no batches/ row and no golden/library file.
+- LIB-4c @ 68f15560 does not read approvedBy outside golden.mjs.
+- The page re-pin question is not needed by LIB-8M, whose page entry is a first entry. It stays 'owner' until ruled.
+
+Supervisor follow-ups
+- Add to lib-9a-card (LB1's pin): D-LIB8M-CHAIN's approval form, and the D-LIB8M-PAGES `pages` shape.
+- LIB-10: D-LIB10-PA's "not redrawn" no longer holds for dumbbell_shoulder_press and incline_dumbbell_press; LIB-10 reuses whatever LIB-8M pins. barbell_overhead_press's approving head for D-LIB10-ANCHORS becomes the head of LIB-8M's approval. LIB-10's A5 ("dumbbell_fly is in no LB2 file") needs an amendment if LIB-20 lands in time.
+- Plan docs, only under D-LIB8M-SLRDL branch (b): amend plan 3.1:85 and :155, 3.3:303 and 6.1:646 on claude/howto-options (SLRDL is no longer a drawable-fault plate).
+- Band hand kind: the owner sees band on a pilot sheet before LB1 merges (plan 2.3); LIB-7 has no band pair yet, so this follows the research band-hand claim, not LIB-8M.
+- Follow-up list: a tempo strip for plates with no sourced seconds (box_jump, reverse_lunge); the shrug zoom (D-LIB8-shrug); dumbbell_fly (LIB-20 pitch); the rear-delt fly front view.
+
+## 17. LIB-6-PM rulings and merge order (D-LIB6PM-*, D-LIB-ORDER-2, 2026-10-18)
+
+Rulings for card LIB-6-PM (supervisor, 2026-10-18; from lib-6-pm-rulings-proposed.md and lib-6-pm-critic.md, all findings accepted). Cites: cards claude/sup-lib4-cards @ 1e85584a; main 2078913c; #181 9b8f76e6.
+
+D-LIB-ORDER-2 (merge order; amends D-LIB8M-ORDER at lib4-cards :3396 and HANDOVER :1000)
+- Order: LIB-4b → LIB-4c + #249 → LIB-4d (slot 3d) → LIB-5 + sup-lib5-bundle → BOX-CAP → LIB-5 Do 9 → LIB-6 #181 + LIB-6-PM → LIB-7 #193 + LIB-7-FIX → LIB-8M #109 (7) → LIB-5v (7a) → LB1 #245 (8).
+- LIB-3c may merge any time after its review.
+- BOX-CAP and Do 9 do not gate #181 (lib4-cards :1181).
+- Post on #181 and #261.
+- Reason:
+  - D-LIB8M-ORDER :3396 placed LIB-4d between Do 9 and #181.
+  - LIB-4d's deadline (:1428, before the first merge that ships a library row) allows any earlier slot, so merging it before LIB-5 removes that wait.
+  - LIB-5v was always 7a (variant-line-card :12).
+  - Checked: three-way merges of #261 with #181 @ 9b8f76e6 and with #244 @ 1d1fe9ea are clean.
+
+D-LIB6PM-FIXTURE (amends D-LIB5-PAGE's helper :2677-2681 and lib-5-card :165)
+- The back-flagged helper makes these exact-once replacements in a copy of E1's How-to, each exact-once or it throws:
+  - `riskFlags: ['wrist', 'shoulder', 'elbow']` → `riskFlags: ['wrist', 'back']`;
+  - the row at pull_up.howto.mjs:285, `zoom: 'top', redFlag: 'shoulder', ` → `zoom: 'top', redFlag: 'back', `;
+  - the row at :289, `redFlag: 'elbow', claim` → `claim`;
+  - SOURCES gains 'nhs-back' as ruled (`use: 'CONSENSUS'`).
+- Only S5-L's word row may add exact-once copy edits, for its two boundary variants (exactly 450 with the box, and words.total exactly 450).
+- Owner: LIB-6-PM, at tests/howto/fixtures/lib5/back-page.mjs. LIB-5's write_scope loses the helper, and Do 9 never writes one.
+- Do 9 writes S5-L only if #181 is on main first. In that case it uses this helper unchanged and D-LIB6PM-CAP (D-LIB5-PAGE :2682, "whichever merges second"; Do 9 does not gate #181, :1181).
+- Post on #244 and on the Do 9 PR before Do 9 starts.
+- Reason: the first form measures 449 + 50 = 499 words, over 450, so S5-L and the generator's lint would refuse it. This form measures 390 + 50 = 440 with 0 violations, verified twice (golden B lintHowto; BOX-CAP lintLibraryRow).
+
+D-LIB6PM-CAP (extends lib-5-card :27 to S5-L wherever it runs)
+- In S5-L, the back box is held to BOX-CAP's named limit, imported from tools/plates/library/lint/box-caps.mjs through boxReach's key 'back-pain-box' and never copied.
+- Every other box stays at 30, and the total stays at 450.
+- Mutations, each red: the back box at limit + 1 words; another box at 31 words.
+- Reason: under D-LIB-ORDER-2, #181 carries S5-L, and 50 is the owner's answer for this one box (option 1, #244 6250331645).
+
+D-LIB6PM-L0 (amends Supervisor action 11, lib4-cards :2944: the line moves from LIB-4c's card to LIB-6-PM)
+- tools/plates/library/ci/manifest.mjs adds three files, add-only, for every pinned row whose batch has a row whose How-to riskFlags include 'back':
+  - back-box.mjs;
+  - every repo module it imports statically;
+  - docs/research/howto/shared/back-pain-box.json.
+- back-box.mjs is loaded only on pages with a back box (D-LIB6PM-ANCHORS), so it is not in BUILDERS.
+- C0 mutation: one byte of back-pain-box.json on a pinned fixture row in such a batch → red.
+- LIB-4c's library-manifest.test.ts stays unedited.
+- Reason: LIB-4c merges before back-box.mjs exists, and the layers page is one file per batch (manifest.mjs:67-68), so the input lands with the patch that creates it, keyed per batch.
+
+D-LIB6PM-PLATE (extends D-LIB9-ENGINE's implementation line, :1111)
+- One exact-once patch to the mirrored build-page.mjs makes :59 and :63 render each spec with the engine its imports name. The default is the layers engine.
+- Every patch is applied for every plan and spec; the engine is chosen at run time, never by skipping a patch.
+- Evidence: the 8's page at PAGE_SHA256; E1 and B5 byte-identical; the poly and flat-palm fixture's plate block through the vendor engine.
+- Mutation: the patch dropped → red.
+- Reason: D-LIB9-ENGINE answers which engine draws a library plate on its layers page (:646), and the plate block uses the layers renderPlate, which throws on poly (layers plate.mjs:45). Vendor PLATE_CSS equals layers PLATE_CSS, so no CSS changes.
+
+D-LIB6PM-ANCHORS (amends D-LIB5-PAGE's "two exact-once patches", :2665)
+- One extra anchor is allowed: a module-scope holder (for example `const __BACK = {};`).
+  - It is exact-once and applied for every plan.
+  - It is covered by closeups.test.ts:66-73, with a red move-mutation.
+- The existing 'renderer dispatch' replacement gains the load: `if (mods.some(M => (M.default.riskFlags ?? []).includes('back'))) __BACK.backBox = (await import(BACK_BOX_URL)).backBox;`. Its anchor is unchanged and already covered.
+- FLAG's `back` getter calls `__BACK.backBox()`.
+- back-box.mjs loads only on a page with a back-flagged sheet. It is never imported at module scope or statically, by either the mirror or build-layers-page.mjs.
+- Mutation: the load made unconditional → red.
+- Reason: risksSection is synchronous, so a lazy read needs a holder filled from the async dispatch, and loading only for flagged pages keeps the L0 set exact.
+
+D-LIB6PM-WAITS (amends D-LIB5-PAGE's "before Do 9 … throw BACK_BOX_WAITS", :2674)
+- A committed test writes LIB-5's placeholder (#244 @ 1d1fe9ea back-box.mjs, all 15 lines) into a tree copy. There:
+  - the back-flagged page rejects, and its message contains the line `Error: lib_cable_lateral_raise: LIB-5: back box waits for owner decision 6 (plan 8 item 6)`;
+  - the unflagged page builds byte-identical.
+- Mutation: FLAG made eager → red.
+- Reason: Do 9 merges before #181, so only a placeholder tree can show this after Do 9. The page runs in a child process (build-layers-page.mjs:103), which is LIB-5's own form (library-shared.test.ts :130).
+
+D-LIB6PM-CI (fulfils #181 ruling D-LIB6-ci, comment 5936426770)
+- The supervisor adds, add-only, a step `node --test tools/plates/library/test/*.test.mjs` to the existing source-gate job in .github/workflows/build-apk.yml, after "Unit tests in two more time zones" (:44), in #181's train.
+- Reason: no LIB-4 card or workflow ever wired these tests, so nothing in CI would rebuild the 8's page through the renderer at e7b81413.
+
+D-LIB6PM-BRANCH (amends D-LIB9-HANDPAGE, lib4-cards :1156, section 12 item 10)
+- LIB-6-PM is the only writer of claude/lib-6-closeup-renderer until #181 merges.
+- The LIB-7 fixer (LIB-7-FIX) works on #193, which is based on #181's branch, and may edit build-layers-page.mjs there.
+- After #181 merges, the supervisor sets #193's base to main and #193 merges main.
+- Reason: two writers on one branch collide, and slot 5 must not carry slot-6 code (hands/pairs.mjs).
+
+D-LIB6PM-LANE (amends D-LIB-LANE-ACTIVE's freed-slot order, lib4-cards :1030)
+- LIB-6-PM takes a freed slot before the LIB-7 fixer.
+- Reason: slot 5 merges before slot 6, and no LIB-7 fixer card exists yet (HANDOVER :1033).
+
+## 18. LIB-7-FIX and LIB-7b rulings (D-LIB7FIX-*, D-LIB7b-*, 2026-10-18)
+
+Rulings for cards LIB-7-FIX and LIB-7b (supervisor, 2026-10-18; from lib-7-fix-rulings-proposed.md and lib-7-fix-critic.md, all findings accepted). Cites: cards claude/sup-lib4-cards @ 0b85c963; main 2078913c; #193 55e91e9f; #181 9b8f76e6; #246 68f15560.
+
+D-LIB7FIX-CARRY
+- #193's head is unfrozen for LIB-7-FIX only.
+- The 12 approvals at 55e91e9 (D-PILOTA-R5; #193 5975538224) count on a later #193 head only when all of these hold on that exact head:
+  - the pins at tests/library/hand-pairs.test.ts:132 (2f9d3b7f…), :403 (fcd57af5…) and :404 (5feecaf0…) pass, with those lines unedited;
+  - these files are byte-identical to 55e91e9: hands/hand-*.mjs, radial-rules.mjs, checks.mjs, claims.json, claims-extract.mjs, census-scope.json, sheet.mjs, page.mjs and gate.mjs;
+  - tools/plates/library/render/closeup/zoom-css.mjs is byte-identical to 9b8f76e;
+  - for each approved id and fault, the SVG in `pairPanel(HAND_OF_ID['lib_'+id])` equals `renderPair(id, { fault }).svg` with every `hp-<id dashed>-<fault>` replaced by the panel's uid.
+- This applies to each head the card pushes, including every merge. A head without that run carries no approval.
+- Reason: approvals carry only on byte proof against the pinned render (critic R5: 22 of 22 pages hold), and the sheet's unpinned CSS is held fixed.
+
+D-LIB7FIX-BRANCH (one text with D-LIB6PM-BRANCH, lib4-cards :3483; amends its "and may edit build-layers-page.mjs there" and 12 item 10's "on LIB-6's branch", :1156)
+- LIB-6-PM is the only writer of claude/lib-6-closeup-renderer until #181 merges.
+- LIB-7-FIX works on #193 only. It edits none of these: build-layers-page.mjs, layers-spec.mjs, gen/hands.mjs, gen/handpairs.mjs, tools/plates/library/fidelity/**.
+- After #181 merges, the supervisor sets #193's base to main and #193 merges main.
+- Split:
+  - #193 merges with the contract, D-LIB7FIX-A21, D-LIB7FIX-SCALE, D-LIB7FIX-GATE, the two Lows, D-LIB7FIX-BUDGET and D-LIB7FIX-WORDS;
+  - the page hook, the generator's pair-row lines, the runner's HT-6 twin and their proofs go to card LIB-7b, on main after #193 merges.
+- D-LIB4-ENTRY and 11.1 item 10 (b) are unchanged.
+- Reason: none of the moved items is a merge rule for #193. Shared keys gate LIB-9's shipping; page work gates a library layers page, and LIB-8M builds none (lib-8-merge-card.md:291). So #193 merges right after #181.
+
+D-LIB7FIX-KEY
+- **Key string:** `<KEY>-<variant>-<orientation>`.
+- **Identity:** module KEY × variant × orientation × the ordered fault list.
+- **The loader throws when:**
+  - ids on one key differ in fault list;
+  - two triples give one string;
+  - a key is outside `/^[a-z0-9-]+$/`;
+  - `k1 + '-'` is a prefix of another key;
+  - a key equals a drawn id.
+- **HAND_OF_ID** maps `lib_<card id>` → key for every drawn id of any owner. It never maps one of the 8 or a gap.
+- **Panel ids** start with `hp-<key>-`.
+- **pairs.mjs exports `keyIndexOf(index = INDEX)`,** so mutations run in memory.
+- Ids that draw the same picture under different keys keep separate keys.
+- Reason: this follows 12 item 10's "variant × orientation × fault set" (:1155) with a checked identity. The probe and R4 found 8 keys over 12 ids and 7 pictures.
+
+D-LIB7FIX-API
+- `inputsFor(x)` takes a pair key (main's contract, gen/handpairs.mjs:3-4) or a drawn id.
+- Both give the same list for every id on a key.
+- The loader throws if a key string equals a drawn id.
+- LIB-7's tests (hand-pairs.test.ts:514-524) and LIB-12's (hand-views.test.ts:211, :217) stay unedited.
+- Reason: ids and keys are disjoint (no exercises.json id has '-'; every key has two), so one name serves the contract with no edit to frozen tests.
+
+D-LIB7FIX-A21
+- Applies to tests/howto/library-core.test.ts, L2-A21's first test only.
+- Its title becomes "with the repo's own pair loader (or none): the written pairs and HAND's pair imports follow the shipped rows' keys".
+- In its `if (pairs)` branch, :411 `expect(keys.length).toBeGreaterThan(0);` is replaced by `expect(Object.keys(pairs.HAND_OF_ID).length).toBeGreaterThan(0);`, with the comment `// D-LIB7FIX-A21: LIB-7's loader lands before any row ships a key, so keys may be []; a shipped row that needs a pair and has none is refused by gen/ids.mjs missingChunks in this file's beforeAll render`.
+- Every other line of the file is unedited.
+- Covering proof, in tests/library/lib7-fix.test.ts:
+  - `missingChunks([{ id: 'lib_x', chromeId: 'x', slug: 'x' }], n => n !== 'hand-x', {}, { lib_x: 'curl' }, () => true)` throws /lib_x: no .*hand pair/;
+  - with pairOf `{ x: 'k' }` it does not throw;
+  - mutation: a temp copy of gen/ids.mjs in os.tmpdir() (never under tools/plates/, so no plugin glob or core hash sees it), its relative imports rewritten to the repo files' file URLs and its hand clause (:58, `if (archetypes[r.id] !== 'none' && …) throw`) removed → the first call no longer throws → red. The copy is deleted in `finally`.
+- The "before" is recorded on a local contract-only commit (:411 red) and never pushed alone.
+- Reason: `> 0` is false for the correct tree (R3). The wrong tree it stood for stays refused by missingChunks, and the mutation proves it.
+
+D-LIB7FIX-GATE
+- At the main merge, LIB-7's gate block keeps its body unchanged and goes inside `if (gate.runs('LIB-7')) { … }` before `await gate.done();`.
+- tests/gate-split.test.ts:55 goes 103 → 104 (exact toBe; "+ LIB-7" in its comment).
+- scripts/gate-times.json gains "LIB-7", measured as 11.1 item 16 (b) says.
+- Reason: this is the only merge conflict, and 11.1 item 16 (a)/(b) sets this pattern for every card that adds a block (R3: gate-split 29/29 at 104; LIB-7 gate PASS, 22 pages).
+
+D-LIB7FIX-SCALE
+- LIB-7-FIX adds one line to tools/plates/library/scale/synthetic.mjs, directly after :22 (`symlinkSync(...)`), in a block marked LIB-7-FIX: `rmSync(join(root, 'tools/plates/library/hands/pairs.mjs'), { force: true });   // LIB-7-FIX: the clones never use LIB-7's pairs; write-ids writes its own loader, and a real one imported here would stay cached (ESM) after write-ids replaces it`.
+- Evidence: tests/howto/lib-4a.test.ts A1/A2 are red before with a real loader ('no hand pair', on the local contract-only commit), then green after (R8: 10/10).
+- Mutation: the line removed → A1/A2 red.
+- Reason: write-ids.mjs:35-56 already replaces the loader with one pair per clone. The line only stops a stale cached module being used, and no assertion changes, so nothing is loosened.
+
+D-LIB7FIX-BUDGET
+- The cap is `handCeiling('pull-up')` (gen/hands.mjs:131; 92,917 B raw, 26,286 B gz), the largest of the 8's hand ceilings.
+- (a) For every key, `pairText(key, await pairPanel(key))` is within the cap.
+- (b) tests/howto/budgets.test.ts gains one test named LIB-7-FIX:
+  - every key a shipped row uses has a `handpair-<key>-*.js` entry, and none is stale;
+  - each entry is within the cap;
+  - it is proven red on a fixture shipped list.
+- (c) LIB-7's gate block checks that:
+  - the built `handpair-*.js` chunks equal the shipped keys;
+  - each is within its entry and the cap;
+  - a missing entry fails;
+  - a self-check with an oversize fixture asset is red.
+- The batch PR that first ships a key adds its entry at measured + 10 %, never above the cap.
+- Reason: no per-chunk ceiling holds a built handpair chunk. Only LIB-2 A25's superset How-to total counts it (screenshot-gate.mjs:9228-9251), and 11.1 item 6 (:633) sends the per-key budget here.
+
+D-LIB7FIX-WORDS
+- Every shown word of `pairPanel(key)` is approved wording, recorded with its source in tools/plates/library/hands/panel-words.json. hand-*.mjs stays frozen.
+- The heading is golden B's approved hand-zoom heading, 'Hand: right and wrong'.
+- Each caption is at most 10 words (CAPTION_MAX_WORDS, golden B copy-lint.mjs:47, imported). It comes from the cards' approved wording, else it is the key's label only: the approved Right note and the D-LIB7-10 fault labels already in the approved SVG.
+- Pager labels are the D-LIB7-10 fault labels.
+- No explaining text (the owner's UI copy rule).
+- The supervisor looks at the panels on a sheet before any key ships.
+- Reason: the critic approved drawings only (#193 5975538224), and LIB-7's per-pair alt texts run up to 18 words.
+
+D-LIB7b-SCOPE (card LIB-7b; after its design note)
+Each item below is one block marked LIB-7b, with its own test and mutation. Anything else in another card's file means stop.
+- (a) **tools/plates/library/build-layers-page.mjs:** one post-build replacement in `buildLayersPage`.
+  - For each spec row whose closeups entry names `pair`, the hand zx block becomes `await pairPanel(key)` verbatim.
+  - Every page reference to it names the panel's id.
+  - The page's style gains the pair scope's rules once per key.
+  - No exact-once anchor is added to the vendored text.
+- (b) **tools/plates/library/layers-spec.mjs:** a row is a pair row only when its batch's layers config names it (`closeups: { <id>: { …, pair: '<key>' } }`). The entry is already copied whole (:57-60); this card adds its validation only. No page build reads a pairs loader to choose rows, so configs that name no pair (the 8, E1, B5, LIB-4c scratch) build exactly as today.
+- (c) **tools/plates/gen/handpairs.mjs, add-only:**
+  - `export const after = ['tools/plates/gen/hands.mjs']`;
+  - a shipped row whose config names pair K must have `HAND_OF_ID[id] === K` and an archetype other than 'none';
+  - a 'none' row whose page holds a pair panel throws;
+  - a pair row's zoom-<chromeId>.css (ctx.prev) gains the rules that style its pair panel.
+  - The converse, every keyed row naming its pair, is LIB-9's D-LIB4-ENTRY check, not a generator throw.
+  - gen/hands.mjs is not edited.
+- (d) **tools/plates/library/fidelity/twins/ht6.mjs** (:21, :48-51 and the readers that use them): it finds a pair row's panel by its pair markup. The 8's HT-6 gate block is never touched.
+- Reason: this places the page and generator work with 0 header moves (R6: hands.mjs 27, the others 0) and no loop through the scratch loaders (critic finding 5).
+
+D-LIB7b-PAGEDUP (open until LIB-7b's Do 3 (e) measurement)
+- Two pair rows on one key may repeat the panel's ids on a batch page, or one after the other in an app context, only when all three hold:
+  - (1) in Chromium 141 and Chrome 153, each card's panel renders pixel-equal to the same panel alone on a page, with the other copy hidden;
+  - (2) the note names every id-uniqueness check: HT7-A2 (zooms.test.ts:147-176), gate HT-7 A2 (:7382) and its twin (ht7.mjs:201), and shoot2.mjs:200;
+  - (3) a new check asserts that every repeated id belongs to byte-identical pair panels of one key.
+- HT7-A2's "none between two" does not apply between two rows on one pair key, because they hold one shared chunk.
+- An added probe runs in one app context: open card A's hand close-up, close it, open card B's on the same key; no duplicate id is in the document (the HT-7 A2 probe).
+- If (1) fails, the options, each needing a ruling, are:
+  - (B) a page-only id namespace per card, with equality checked after that one named rewrite;
+  - (C) ids that share a key go on separate layers pages.
+- Reason: per-card byte equality stays exact, and only exact copies may repeat.
+
+D-LIB7b-SLOT (amends D-LIB-ORDER-2, lib4-cards :3416-3417, which amends D-LIB8M-ORDER :3396)
+- LIB-7b takes checklist slot 6b. The order reads: LIB-4b → LIB-4c + #249 → LIB-4d (3d) → LIB-5 + sup-lib5-bundle → BOX-CAP → LIB-5 Do 9 → LIB-6 #181 + LIB-6-PM → LIB-7 #193 + LIB-7-FIX (6) → LIB-7b (6b) → LIB-8M #109 (7) → LIB-5v (7a) → LB1 #245 (8). LIB-3c may still merge any time after its review.
+- No library pin commit is made on a head that lacks LIB-7b:
+  - 'PILOT A PIN GO' (D-LIB8M-PIN; LIB-8M Do 13, lib-8-merge-card.md:53) is sent only after LIB-7b is on main and merged into #109;
+  - #109's merge prerequisites (lib-8-merge-card.md:56) gain "6b LIB-7b".
+- Post on #109, #193 and LIB-7b's PR.
+- Reason:
+  - A pinned row's MANIFEST.json entry lists the static closure of every page builder, build-layers-page.mjs and hands/pairs.mjs (with panel.mjs) included (ci/manifest.mjs:4-7, :27, :60-62).
+  - A keyed row's entry also lists `inputsFor(key)` (:69-71). Pilot A's plates include dumbbell_biceps_curl and rope_triceps_pushdown (lib-8-merge-card.md:117, :119), which are LIB-7 keyed ids.
+  - Entries are written in the pin commit (lib-8-merge-card.md:208, :262) and change only in a commit that adds or replaces a pin (ci/manifest.mjs:14; lib4-cards :1086).
+  - So merging LIB-7b before #109 is not enough on its own. A pilot A pin made before LIB-7b reaches #109 goes stale (C0 red) when #109 merges main, and would need a `[golden update]` pin replacement.
+
+Recheck (critic, 2026-10-18, against lib4-cards @ 0b85c963 sections 16-17):
+- recheck N1: applied. In D-LIB7FIX-A21 the mutation is now "hand clause (:58) removed in a temp copy outside tools/plates/". The critic's original "`!pairOf[c]` deleted" makes the check throw more, so it could not go red.
+- recheck N2: applied. D-LIB7b-SLOT states 6b only and writes out the amended order. It adds the pin-timing rule (no library pin on a head without LIB-7b; 'PILOT A PIN GO' after LIB-7b is merged into #109), because MANIFEST rows are written at pin time, not merge time. It also adds the #109 prerequisite and the posts.
+- recheck N3: applied. D-LIB7FIX-BRANCH wording: "edits none of these".
+
+- Supervisor (LIB-6-PM critic finding 12, from the LIB-7-FIX critic): no early hand-pairs check is added to LIB-6-PM; LIB-7-FIX catches a moved pin. Section 16 (LIB-8M) is amended by D-LIB7b-SLOT: #109 merge prerequisites gain LIB-7b (6b), and PILOT A PIN GO waits until LIB-7b is merged into #109.
