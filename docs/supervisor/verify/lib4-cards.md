@@ -4032,3 +4032,22 @@ D-LIBHANDS-COUNT (as ruled on #193 6257376224 and amended by 6257562588; applied
 7. Order: one fix round holding the incline fix and the points 2 and 3 redraws, then 'PILOT A FIX READY @ <sha>'. The supervisor then runs the blind pass (point 3) and one calibrated recheck on every changed plate (2 anchors, 2 plants). Meanwhile Do 7 may write the keys for the 8 settled ids (points 1 and 4, plus the bench if point 2 is a pure reorder); one CARD FIELDS verify covers all 14 at the end.
 
 **Why nothing is loosened.** F7, OPEN-3's stop answers and its no-repeat rule stand: no stopped id gets a key from its first answer, and each new pass reads new tells only. Each redraw follows the card, never the reverse, and passes every hard check, Do 9 and the critic. A plate that still fails is held, not exempted.
+
+### 21.3 Do 9 at the fix head (D-LIB8M-TF2, 2026-10-19 ~04:15 UTC; #109 6259400298 @ `013f84e`)
+**Found.** Authoring QA on `013f84e` (not yet evidence; CARD FIELDS comes first):
+- upright_row H3.deviation 0.0 px: point 3's single tell kept its chin anchor, and the chin does not move.
+- incline_dumbbell_press H3.deviation 7.8 px < 11.4 and H4.small 'hips' hit box 36.5 × 40.1 px < 40.1. Both were already red at `83735ab`; 21.1's fix kept the pose and the tells, so it could not clear them.
+- Flags differ from the note's expected set: F3 also on incline, the shoulder press, OHP and upright_row; F2 on OHP, upright_row and the curl; F4 also on incline.
+
+**Rulings.**
+1. upright_row: the builder's fix stands. The tell's anchor moves to the Mistake bar (`grip.l`); deviation 38.7 px, H3 passes. Key, label and cue stay byte-identical, so TOPFAULT 'chin' stands. The drawing changed, so it joins the incline recheck (point 3).
+2. incline_dumbbell_press: one more card-true fix (the builder's option (a)); holding it would cost LB2 a plate that a card-true drawing can still reach.
+   - H3: a larger arch, so that the 'arch' tell's anchor (on the low back) moves at least 11.4 px from end to Mistake. Every segment length stays; the seat solver must hold; 21.1's background gap and perpendicular arrow stay.
+   - H4: the 'hips' label grows to a hit box of at least 40.1 px, in 3 words or fewer, still naming the hips tipping (the builder picks the words and reports them).
+   - The tells' text changes, so a fresh blind pass runs on incline's new tells at the new head. A key other than 'arch', or 'several' or 'none', holds incline.
+   - Then Do 9 for incline (every hard check passes) and one calibrated recheck of incline and upright_row (2 anchors, 2 plants). This is incline's last critic run: a fail holds it (CARDTRUE), reported on #109 and #265.
+3. Flags: the expected set (Do 5 e) becomes the set measured at the final head. Every raised flag goes on the sheet with its value and range, and none is dropped. Where it differs from the note's prediction, the sheet adds one line: "predicted / measured". Flags inform the owner; they never gate the merge (D-LIB8FIX-ENV).
+4. The recheck panel already running on `013f84e` continues. Its results stand for the 5 plates that do not change again (dumbbell_bench_press, triceps_pushdown, rope_triceps_pushdown, pec_fly, plank). Incline's and upright_row's scores there are advisory only, and their next run is the one that counts.
+5. One push carries both fixes. Post 'PILOT A FIX2 READY @ <sha>' with the incline Do 9 rows, the new tells and the moved fragments.
+
+**Why nothing is loosened.** Every hard check must pass on the final head. The new tells get their own blind pass, the changed drawings get a calibrated recheck, and a second fail holds the id. Flags are reported in full.
