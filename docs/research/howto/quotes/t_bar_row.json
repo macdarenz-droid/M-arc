@@ -150,6 +150,13 @@
       "closest": "Slowly lower the barbell back to the starting position"
     },
     {
+      "claim": "c15",
+      "source": "barbend-t-bar",
+      "text": "After you lift the weights, pause slightly at the top to get a strong isometric contraction.",
+      "status": "verbatim",
+      "closest": "After you lift the weights, pause slightly at the top to get a strong isometric contraction."
+    },
+    {
       "claim": "c16",
       "source": "macdougall1985",
       "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",

@@ -477,8 +477,8 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "The flat, level back, the knee-and-hand support and the arm driving back to the hip read side-on (c2, c4, c6, c9); the census draws it side.",
-    "equipment": "Flat bench at knee height with one knee and the same-side hand on it; one dumbbell hanging from the other hand; floor line (c1, c2).",
+    "viewWhy": "The flat, level back, the knee-and-hand support and the arm driving back to the hip read side-on (c2, c4, c6, c9); the census draws it side. The top fault, excessive momentum (c10), shows only as speed, so the plate draws the next fault, the short range (c10).",
+    "equipment": "Flat bench with one knee and the same-side hand on it; one dumbbell hanging from the other hand; floor line (c1, c2).",
     "start": "Supporting hand under the shoulder and knee under the hip (c2), back flat and parallel to the floor, head in line (c3, c4), working arm hanging straight down (c5).",
     "end": "Same back and support (c7); elbow bent and upper arm driven back close to the body, dumbbell near the hip (c6, c9).",
     "checkpoints": [
@@ -500,9 +500,10 @@
     ],
     "mistake": {
       "what": "Short range: the arm never straightens at the bottom and the elbow stops short at the top.",
-      "why": "Twisting the torso to lift higher (c6, c7) is a rotation the engine cannot draw; a short range is a listed common mistake (c10) and shows side-on.",
+      "why": "Excessive momentum, first on the common-mistakes list (c10), is seen only as speed, so it cannot be drawn; an incomplete range of motion, next on the same list (c10), shows side-on.",
       "claim": "c10",
-      "drawable": false
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: excessive momentum (c10), first on StrengthLog's \"Common Mistakes in the Dumbbell Row\". Step 1: no frequency word counts for a fault. Set aside: StrengthLog's \"Typically, your back is stronger than your grip.\" (the grip), \"Most people can do significantly more reps or use heavier weights if they use lifting straps\" (straps and the load) and \"it’s common to use heavier weights and a less strict form\" (the Kroc row, another exercise, and the load); Kolber's \"the most prevalent regions of injury\" (c18) is about where training injuries happen, not a fault. Step 2: no quote ties a named fault to harm. The list's own lines state lost effect, not harm: \"compromises form and reduces muscle engagement in your upper back\" (momentum), \"reduces the exercise’s effectiveness\" (range), \"can shift the focus away from the target muscles\" (elbows). Kolber's \"improper attention to exercise technique\" (c18) names no fault, and ACE's \"Avoid rotating your body or changing the position of your spine throughout the lift\" (c7) states no harm. Step 3: StrengthLog's list, written for this exercise, names excessive momentum first. Momentum is seen only as speed, so it is never drawable; plate.mistake names the next fault by the same steps, the incomplete range of motion, second on the same list, a still sign the side view shows (the arm short of straight at the bottom). drawable stays false. Top fault changed: torso twisting, handlingMistakes[0] until now, is now [1]; plate.mistake is unchanged."
     },
     "tells": [
       {
@@ -544,7 +545,7 @@
       "claim": "c1"
     },
     {
-      "step": "Put one knee and the same-side hand on the bench, the other foot on the floor.",
+      "step": "One knee and the same-side hand on the bench.",
       "claim": "c1"
     },
     {
@@ -584,17 +585,17 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Twisting the torso to lift the dumbbell higher.",
-      "fix": "Stop the pull where your torso would have to turn.",
-      "claim": "c6"
-    },
-    {
-      "mistake": "Jerking the dumbbell up with momentum.",
+      "mistake": "Jerking it up with momentum.",
       "fix": "Pull slowly and lower gently.",
       "claim": "c10"
     },
     {
-      "mistake": "Elbow flaring out to the side.",
+      "mistake": "Twisting to lift higher.",
+      "fix": "Stop the pull where your torso would have to turn.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Elbow flaring out.",
       "fix": "Keep the elbow close to the body and drive it back.",
       "claim": "c10"
     }
@@ -632,30 +633,30 @@
     ],
     "rows": [
       {
-        "where": "Side of the back and around the shoulder blade",
-        "means": "Usually means the lats and upper back are doing the rowing.",
+        "where": "Side of back, around shoulder blade",
+        "means": "The lats, traps and rear delts are the main movers.",
         "fix": null,
         "claim": "c11",
         "redFlag": null
       },
       {
         "where": "Mostly the biceps",
-        "means": "Usually means the dumbbell is going toward the shoulder.",
+        "means": "Pulling toward the shoulder works the biceps more.",
         "fix": "Pull toward your hip instead.",
         "claim": "c9",
         "redFlag": null
       },
       {
         "where": "Grip giving out before the back",
-        "means": "Usually means the grip is limiting the set.",
+        "means": "Your back is usually stronger than your grip.",
         "fix": "Use a lifting strap.",
         "claim": "c16",
         "redFlag": null
       },
       {
-        "where": "Sharp pain in the shoulder joint",
-        "means": "The shoulder is a common injury site in weight training; poor technique adds risk.",
-        "fix": null,
+        "where": "Shoulder pain",
+        "means": "Poor technique is a risk for shoulder injuries.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c18",
         "redFlag": "shoulder"
       }
@@ -663,7 +664,7 @@
   },
   "risks": [
     {
-      "risk": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+      "risk": "The shoulder is a common injury site in weight training. Poor technique adds risk.",
       "claim": "c18"
     }
   ],

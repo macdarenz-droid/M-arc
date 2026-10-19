@@ -305,6 +305,13 @@
       "status": "verbatim",
       "closest": "Throughout each rep, you want your body to form one nice straight line from your back to your head, so as you lower down, your eyes should start by looking straight ahead, but then move to a spot on the floor in front of you as you lower down.",
       "note": "added by fixer 2026-09-30 after critic finding; checked against the fetched page"
+    },
+    {
+      "claim": "c23",
+      "source": "nhs-back-pain",
+      "text": "But stop if your pain gets worse and see a GP for advice.",
+      "status": "verbatim",
+      "closest": "But stop if your pain gets worse and see a GP for advice."
     }
   ],
   "sources": [

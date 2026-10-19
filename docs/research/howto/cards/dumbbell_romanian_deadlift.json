@@ -484,18 +484,36 @@
           "where": "So - Should You Deadlift With a Neutral or Flexed Spine?"
         }
       ]
+    },
+    {
+      "id": "c23",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Hips back, the soft fixed knee bend, a flat back and the dumbbells grazing the legs are front-to-back positions (c3, c4, c6); the side view shows them.",
+    "viewWhy": "Hips back, the soft fixed knee bend, a flat back and the dumbbells grazing the legs are front-to-back positions (c3, c4, c6); the side view shows them, and the arched back while standing up (the top fault, c10).",
     "equipment": "A pair of dumbbells held in front of the thighs, palms facing the body (c1); floor line. Optional plate under the feet (c12) not drawn.",
     "start": "Standing tall, feet about shoulder width, dumbbells in front of the thighs (c1), shoulders back and down (c2), knees softly bent (c6).",
     "end": "Hips pushed back, flat back, knees still softly bent behind the toes, dumbbells about halfway down the shins and touching the legs (c3, c4, c6), eyes toward the floor (c7).",
     "checkpoints": [
       {
         "label": "Hips back",
-        "what": "Push the hips back, not down; knees stay softly bent.",
+        "what": "Push the hips back, not down. Knees stay softly bent.",
         "claim": "c6"
       },
       {
@@ -505,15 +523,16 @@
       },
       {
         "label": "Flat back",
-        "what": "Back stays neutral; stop where it would round.",
+        "what": "Back stays neutral. Stop where it would round.",
         "claim": "c8"
       }
     ],
     "mistake": {
-      "what": "Back rounds to push the dumbbells lower.",
-      "why": "A named common mistake: rounding reaches closer to the floor but raises injury risk (c8).",
-      "claim": "c8",
-      "drawable": true
+      "what": "Back arches to stand up: the lifter uses back strength in the second half of the rep.",
+      "why": "Named a common mistake: thinking you are using your back strength to stand up leads to an arched back in the second half of each rep; the back should stay neutral (c10).",
+      "claim": "c10",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the arched back while standing up (c10). Sweat's dumbbell Romanian deadlift technique tip says \"A common deadlift mistake is to think you’re using your back strength to stand up, leading to an arched back in the second half of each rep\": a frequency word for one named fault, given for this exercise. No other fault passes step 1. Set aside: Fitbod's \"Common Form Mistakes\" is a list heading. StrengthLog's deadlift guide (c22) is written for the barbell deadlift, and its frequency lines are about the load (\"swift increases in training are a common source of injury\"), a grip (\"The mixed grip is the most common grip technique in powerlifting\"), the lift's sticking point (\"the most common sticking point in the deadlift\") or the stance (\"More common and the best fit for most people\"); none names a fault. If \"a common deadlift mistake\" is read as about the barbell deadlift, another exercise, step 2 gives the rounded back instead: it is the only named fault a quote ties to harm (\"Rounding your back will allow you to reach closer to the floor, but also increases your risk of injury\", c8); Sweat's neck line (\"your neck will become strained\", c7) is about the gaze, a head position kept as a risk. drawable true: the arched back is a still sign the side view shows. Pick changed: rounding the back to reach lower, the head's pick until now, is handlingMistakes[1]."
     },
     "tells": [
       {
@@ -533,7 +552,8 @@
       "up": 1,
       "down": 2,
       "pause": 0,
-      "claim": "c20"
+      "claim": "c20",
+      "text": "Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c20, WEAK; LR-15). Pause 0: no quote on the card asks for a pause right after the lift. Sweat's \"squeeze your glutes at the top before starting your next rep\" (c13) asks for a squeeze with no pause length and no brief or momentary hold (LR-33)."
     },
     "variantLine": "Drawn with dumbbells in front of the thighs, palms facing the body (Sweat, c1). Fitbod starts them beside the hips (c1); the hinge claims hold for both."
   },
@@ -550,7 +570,7 @@
   },
   "setup": [
     {
-      "step": "Feet about shoulder width, a dumbbell in each hand in front of your legs.",
+      "step": "Feet shoulder width, dumbbells in front of your legs.",
       "claim": "c1"
     },
     {
@@ -598,19 +618,22 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Rounding the back to reach lower.",
-      "fix": "Stop higher, where the back stays flat (c8); lighten the dumbbells if it still rounds (c22).",
-      "claim": "c8"
+      "mistake": "Arching to stand up.",
+      "fix": "Drive with glutes and hamstrings. Keep the back neutral.",
+      "claim": "c10"
     },
     {
-      "mistake": "Going lower than the hips can hinge.",
+      "mistake": "Rounding to reach lower.",
+      "fix": "Stop where the back stays flat. If it rounds, go lighter.",
+      "claim": [
+        "c8",
+        "c22"
+      ]
+    },
+    {
+      "mistake": "Going too low.",
       "fix": "Stop where the hamstrings stop the hinge.",
       "claim": "c9"
-    },
-    {
-      "mistake": "Arching the back to stand up.",
-      "fix": "Drive with glutes and hamstrings; keep the back neutral.",
-      "claim": "c10"
     }
   ],
   "feel": {
@@ -650,31 +673,35 @@
     ],
     "rows": [
       {
-        "where": "Back of the thighs, stretching on the way down",
-        "means": "Usually means the hips are hinging correctly.",
+        "where": "Backs of thighs, going down",
+        "means": "This tension is what you should feel.",
         "fix": null,
         "claim": "c13",
         "redFlag": null
       },
       {
         "where": "No feeling in the hamstrings",
-        "means": "Usually means the knees bend too much or the hips are not going back.",
+        "means": "Fault: too much knee bend, or hips not going back.",
         "fix": "Push the hips back and keep only a slight knee bend.",
         "claim": "c13",
         "redFlag": null
       },
       {
         "where": "Lower back more than the hamstrings",
-        "means": "Usually means the back is rounding or arching to do the work.",
-        "fix": "Shorten the range (c8) and lighten the dumbbells (c22).",
-        "claim": "c8",
+        "means": "Fault: the back rounding or arching to do the work.",
+        "fix": "Shorten the range and go lighter.",
+        "claim": [
+          "c8",
+          "c10",
+          "c22"
+        ],
         "redFlag": null
       },
       {
-        "where": "Back pain with pain or numbness in both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop.",
-        "claim": "c18",
+        "where": "Lower back pain while lifting",
+        "means": "Is it getting worse?",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c23",
         "redFlag": "back"
       }
     ]
@@ -700,16 +727,24 @@
     {
       "key": "dbrdl-grip",
       "kind": "hand",
-      "right": "Dumbbells in front of the thighs, palms facing you, thumbs wrapped, wrists straight.",
+      "right": "Dumbbells on the thighs, palms facing you, thumbs wrapped.",
       "wrong": "Dumbbells hanging away from the legs.",
-      "claim": "c4"
+      "claim": [
+        "c4",
+        "c1",
+        "inherit:0"
+      ]
     },
     {
       "key": "dbrdl-bottom",
       "kind": "posture",
-      "right": "Hips back, flat back, knees soft, dumbbells at mid-shin on the legs.",
+      "right": "Hips back, flat back, soft knees, dumbbells at mid-shin.",
       "wrong": "Rounded back reaching the dumbbells to the floor.",
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c3",
+        "c6"
+      ]
     }
   ],
   "libraryDiff": {

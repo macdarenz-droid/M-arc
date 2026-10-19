@@ -138,7 +138,7 @@
     },
     {
       "id": "c6",
-      "text": "A common fault is raising the back angle (standing partly up) to yank the bar; it usually means the load is too heavy.",
+      "text": "A named fault is raising the back angle (standing partly up) to yank the bar; it usually means the load is too heavy.",
       "tags": [
         "CONSENSUS"
       ],
@@ -337,7 +337,7 @@
     },
     {
       "id": "c14",
-      "text": "Tempo: a fast pull (about 1 s), a slow controlled lowering (about 2 s), and a brief dead stop on the floor. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
+      "text": "Tempo: a fast pull (about 1 s) and a slow controlled lowering (about 2 s), with the bar set down at a dead stop on the floor between reps. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -521,6 +521,23 @@
           "where": "Exercises and stretches for back pain"
         }
       ]
+    },
+    {
+      "id": "c23",
+      "text": "Too much spinal flexion leaves the back open to shear forces that may lead to pain, strains or disc herniations.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-pendlay"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-pendlay",
+          "text": "Too much spinal flexion or extension leaves the back susceptible to shear forces that may lead to pain, strains, or disc herniations",
+          "where": "Common Pendlay Row Mistakes: Rounding Your Back"
+        }
+      ]
     }
   ],
   "sources": [
@@ -617,7 +634,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "The level torso, the bar path from floor to chest and the back-angle fault all happen front-to-back (c2, c4, c6); the census draws it side, like the parent.",
+    "viewWhy": "The level torso, the bar path from floor to chest, the rounded back at the start (the top fault, c8, c23) and the back-angle rise all happen front-to-back (c2, c4, c6); the census draws it side, like the parent.",
     "equipment": "Straight barbell with plates resting on the floor line under the shoulders at the start (c1, c3).",
     "start": "Hips hinged a little higher than a deadlift (c1), torso parallel to the floor with shoulders and hips level (c2), knees slightly bent, feet about shoulder width (c10), arms straight down to the bar on the floor (c3).",
     "end": "Same torso and hip angle (c4); bar touching the base of the chest or abs (c4, c5).",
@@ -629,7 +646,7 @@
       },
       {
         "label": "Torso still",
-        "what": "Only the bar and arms move; no standing up to pull.",
+        "what": "Only the bar and arms move. No standing up to pull.",
         "claim": "c4"
       },
       {
@@ -639,10 +656,14 @@
       }
     ],
     "mistake": {
-      "what": "Back angle rises: the lifter stands partly up to yank the bar.",
-      "why": "Named as a common fault and a sign of too much weight (c6); it turns a strict row into a heave on a lift that loads the lower back (c18).",
-      "claim": "c6",
-      "drawable": true
+      "what": "Back rounded at the start: the lifter reaches the bar with a rounded back.",
+      "why": "Starting the row with a rounded back is dangerous (c8): too much spinal flexion leaves the back open to shear forces that may lead to pain, strains or disc herniations (c23).",
+      "claim": [
+        "c8",
+        "c23"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the rounded back at the start (c8, c23). Step 1: no frequency word counts for a fault. Set aside: GGR's \"Here are the most common mistakes associated with the Pendlay row\" and BarBend's \"you’re bound to run into some common mistakes\" are a list heading and a list sentence; GGR's \"the barbell may pull you forward off your heels, typically during the eccentric phase of the movement\" says when, not how often; \"increasing weight too quickly often works against you\" is about the load; BarBend's \"the Pendlay row is more advanced for most beginners\" is about the exercise; the NHS lines (\"Back pain, particularly lower back pain, is very common.\", \"A common cause of back pain is an injury like a pulled muscle (strain).\") are about back pain in general, with no fault. Step 2: two faults on GGR's common-mistakes list are tied to harm. The rounded back: \"it’s also dangerous\" (c8) and \"Too much spinal flexion or extension leaves the back susceptible to shear forces that may lead to pain, strains, or disc herniations\" (c23). Flared elbows: \"it puts the shoulders in a potentially dangerous position, which may lead to pain or a shoulder injury\" (GGR). Both are on a common-mistakes list; one source ties each to harm (BarBend's \"can put your shoulders in a compromising position\", c9, names no injury, pain, stress or discomfort, so it is not counted); both are sourced directly; GGR's list names the rounded back first, so it wins. GGR's heels line (\"it also is important for preventing injuries\") is about controlling the lowering and comes third on the same list. Standing partly up to yank (c6), the head's pick until now, states no harm (BarBend's Back Angle and Going Too Heavy sections). Set aside as not about a fault: BarBend's \"minimizing injury risk\" (back exercises in general) and \"completely removes any stress on your lower back\" (the seal row); Fenwick's \"produced the largest lumbar spine load\" (c18, the exercise). drawable stays true: the rounded back is a still sign the side view shows. Pick changed: standing partly up to yank is now handlingMistakes[1]."
     },
     "tells": [
       {
@@ -657,8 +678,9 @@
     "tempo": {
       "up": 1,
       "down": 2,
-      "pause": 1,
-      "claim": "c14"
+      "pause": 0,
+      "claim": "c14",
+      "text": "Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c14, WEAK; LR-15). The dead stop on the floor between reps (c3, c14) is at the bottom, not right after the pull, so pause is 0 (LR-33); no source gives its seconds. GGR's \"Squeeze the contraction at the top of the movement.\" asks for no pause length and no brief or momentary hold, so it sets no pause."
     },
     "variantLine": null
   },
@@ -681,19 +703,19 @@
       "claim": "c13"
     },
     {
-      "step": "Bar on the floor; stand over it with feet about shoulder width.",
+      "step": "Bar on the floor. Stand over it, feet shoulder width.",
       "claim": "c10"
     },
     {
-      "step": "Hinge with the hips a little higher than a deadlift; grip overhand, slightly wider than the shoulders.",
+      "step": "Hips a little above deadlift height. Overhand grip, slightly wider than shoulders.",
       "claim": "c1"
     },
     {
-      "step": "Can’t reach it with a flat back? Raise the bar on blocks or plates.",
+      "step": "Back rounds to reach it? Raise the bar on blocks or plates.",
       "claim": "c8"
     },
     {
-      "step": "Learn it with a light weight; add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c7"
     }
   ],
@@ -703,7 +725,7 @@
       "claim": "c2"
     },
     {
-      "point": "Upper body still; only the bar and arms move.",
+      "point": "Upper body still. Only the bar and arms move.",
       "claim": "c4"
     },
     {
@@ -711,7 +733,7 @@
       "claim": "c5"
     },
     {
-      "point": "Shoulders not shrugged; hips don’t come forward.",
+      "point": "Shoulders not shrugged. Hips don’t come forward.",
       "claim": "c5"
     },
     {
@@ -725,18 +747,18 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Standing partly up to yank the bar.",
+      "mistake": "Starting with a rounded back.",
+      "fix": "Raise the bar on blocks or plates. Keep the back flat.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Standing partly up to yank.",
       "fix": "Use less weight and keep the torso level.",
       "claim": "c6"
     },
     {
-      "mistake": "Starting with a rounded back.",
-      "fix": "Raise the bar on blocks or plates until you can grip it with a flat back.",
-      "claim": "c8"
-    },
-    {
-      "mistake": "Elbows flared wide to the sides.",
-      "fix": "Lighten the load; pull the bar toward the hips.",
+      "mistake": "Elbows flared wide.",
+      "fix": "Lighten the load. Pull the bar toward the hips.",
       "claim": "c9"
     }
   ],
@@ -773,22 +795,22 @@
     ],
     "rows": [
       {
-        "where": "Upper back and the sides of the back",
-        "means": "Usually means the lats and upper back are doing the rowing.",
+        "where": "Upper back and sides",
+        "means": "The lats, traps and rear delts are the main movers.",
         "fix": null,
         "claim": "c11",
         "redFlag": null
       },
       {
-        "where": "Backs of the thighs and lower back, working",
-        "means": "Usually means they are holding the bent-over position, which is expected.",
+        "where": "Hamstrings and lower back, working",
+        "means": "They hold the bent-over position.",
         "fix": null,
         "claim": "c11",
         "redFlag": null
       },
       {
-        "where": "Back pain that gets worse during the set",
-        "means": "Back pain that gets worse is a sign to stop exercising.",
+        "where": "Pain in your back while rowing",
+        "means": "Is it getting worse?",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c22",
         "redFlag": "back"
@@ -797,11 +819,11 @@
   },
   "risks": [
     {
-      "risk": "Starting a rep with a rounded back is a named danger on this lift.",
+      "risk": "Starting a rep with a rounded back is dangerous.",
       "claim": "c8"
     },
     {
-      "risk": "Bent-over barbell rows put the largest load on the lower spine of the rows tested.",
+      "risk": "Bent-over rows load the lower spine most of the rows tested.",
       "claim": "c18"
     },
     {
@@ -816,9 +838,13 @@
     {
       "key": "pendlay-start",
       "kind": "posture",
-      "right": "Bar on the floor, torso level, back flat, hips a little above deadlift height.",
+      "right": "Torso level, back flat, hips a little above deadlift height.",
       "wrong": "Back rounded to reach the bar.",
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c1",
+        "c2"
+      ]
     },
     {
       "key": "pendlay-top",
