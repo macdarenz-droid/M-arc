@@ -70,7 +70,25 @@ export async function filesOf(row, { root = ROOT, all = rows(root) } = {}) {
     const pairs = await import(pathToFileURL(join(root, `${L}hands/pairs.mjs`)).href), key = pairs.HAND_OF_ID?.[row.id];
     if (key != null) for (const p of await pairs.inputsFor(key)) add(p);
   }
+  // LIB-6-PM (D-LIB6PM-L0): the layers page is one file per batch, and it loads back-box.mjs by URL only when a sheet on it
+  // is back-flagged (D-LIB6PM-ANCHORS); the box reads back-pain-box.json. Keyed on the whole batch.
+  if (await batchHasBack(batch, root)) {
+    for (const p of await importClosure([BACK_BOX], root)) add(p);
+    add(BACK_BOX_RESEARCH);
+  }
   return [...set].sort();
+}
+
+/** LIB-6-PM (D-LIB6PM-L0): the back box module and the research file it reads. */
+export const BACK_BOX = `${L}shared/back-box.mjs`, BACK_BOX_RESEARCH = 'docs/research/howto/shared/back-pain-box.json';
+/** True when a row of `batch` has a How-to whose riskFlags include 'back' (read by importing it, as the page does). */
+export async function batchHasBack(batch, root = ROOT) {
+  for (const r of batch) {
+    const src = sourceOf(r.id, root);
+    if (!src || !existsSync(join(root, src))) continue;
+    if (((await import(pathToFileURL(join(root, src)).href)).default?.riskFlags ?? []).includes('back')) return true;
+  }
+  return false;
 }
 
 /** The manifest at `root`: { rows: { id: { entry, files: { path: sha256 } } } }, rows and files sorted. */
