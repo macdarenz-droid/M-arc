@@ -213,6 +213,12 @@ back to `machine-grip`, `hand.mjs:115`).
   - `bent_over_dumbbell_rear_delt_fly` at pitch 15 with the volume trunk (:42).
   - `bicycle_crunch` is not shown. The spike rates it conditional (it reads only near top-down, :45), so on a go its
     plate is judged in LB9 like any other.
+  - What the renders show (LIB-11, #278 6277350376). side_plank draws its card's Mistake (hips sinking) with roll and
+    `trunk.lat`. russian_twist has no Mistake tile: its card's fault, hips and knees swinging with the trunk, needs the
+    pelvis to turn about the vertical axis (`root.yaw`), a sixth field the spike lacks. dumbbell_fly shows the pitch-45
+    camera with the spike's older fault (below the chest), not the card's current one (wrists bent, c13).
+  - So a go covers the five fields. russian_twist's Mistake then needs `root.yaw` added in LIB-20, or it goes on the
+    named list; dumbbell_fly's Mistake is drawn from its card in its own batch.
 - **Status: proposal** until the owner answers on the renders (D-SPIKE-status). Until then the two fields above, and
   LIB-20 before LB9, stay the plan. The spike ran in phase 0 in scratch.
   - Go: the engine change lands through LIB-20 (row 20), merged before LB7 instead of LB9 (D-SPIKE-one-card).
