@@ -444,7 +444,7 @@ describe('LIB-11 A10, A6 and Q1 (Do 5 b): the card fields, the ruled tempo map a
     }
     // the ruled contact set (CARD FIELDS RULED @ 24d2b68, #278 6272494659): landmark@pose per card, nothing more or less
     const RULED_CONTACTS: Record<string, string[]> = {
-      smith_machine_bench_press: ['chest@end', 'backUpper@start', 'grip.r@start', 'grip.l@start', 'sole.r@start', 'sole.l@start'],
+      smith_machine_bench_press: ['chest@end', 'backUpper@start', 'buttock@start', 'grip.r@start', 'grip.l@start', 'sole.r@start', 'sole.l@start'],
       seated_leg_curl: ['backUpper@start', 'seat@start', 'thighTop.r@start', 'thighTop.l@start', 'thighUnder.r@start', 'thighUnder.l@start', 'grip.r@start', 'grip.l@start'],
       cable_fly: ['grip.r@start', 'grip.l@start', 'grip.r@end', 'grip.l@end'], push_up: ['wrist.r@end', 'wrist.l@end', 'chest@start'],
     };

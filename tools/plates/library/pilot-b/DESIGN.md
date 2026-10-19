@@ -141,7 +141,7 @@ palm (ruled).
 
 | id | facts (landmark pose/cardPose) | claims |
 |---|---|---|
-| smith_machine_bench_press | angle `sh.r.elev` end 45 (the 3D upper arm to trunk angle, NOTE RULED item 1); contact `chest` end/end (the chest touches the bar: check on the plane of the bar's underside); `backUpper` start/start; `grip.r`, `grip.l` start/start; `sole.r`, `sole.l` start/start | c3; c3; c1; c1; c2 |
+| smith_machine_bench_press | angle `sh.r.elev` end 45 (the 3D upper arm to trunk angle, NOTE RULED item 1); contact `chest` end/end (the chest touches the bar: check on the plane of the bar's underside); `backUpper`, `buttock` start/start; `grip.r`, `grip.l` start/start; `sole.r`, `sole.l` start/start | c3; c3; c1; c1; c2 |
 | seated_leg_curl | `backUpper`, `seat`, `thighTop.r`, `thighTop.l`, `thighUnder.r`, `thighUnder.l`, `grip.r`, `grip.l`, all start/start | c4, c5, c2, c2, c2 ("sandwiching your legs between it and the seat"), c2, c5, c5 |
 | cable_fly | `grip.r`, `grip.l` start/start; `grip.r`, `grip.l` end/end | c3 ("grip each handle"); c8 ("Press the cable handles so they are in front of your chest") |
 | push_up | `wrist.r`, `wrist.l` end/start; `chest` start/end | c1; c3 |
@@ -149,7 +149,10 @@ palm (ruled).
 Pose change for the fix round: seated_leg_curl's HIP_FLEX 80 → 74 (an unsourced posture number), so the thigh
 undersides rest on the seat (0.1 cm) as c2's "sandwiching" states; at 80 they sat 2.3 cm above it.
 
-Not facts, each with its reason: seated_leg_curl's ankle pad "under your legs just above your shoes" (c3) is a contact
+Not facts, each with its reason: seated_leg_curl's `sacrum` on the back pad (c4; asked at CARD FIELDS VERIFIED): the engine
+body's sacrum sits 3.5 cm off the straight pad that touches backUpper and buttock (the lumbar hollow; trunk -10 to +5
+deg gives 4.5 to 2.9 cm, and smith's flat bench shows the same 3.9 cm), so no card-true pose meets H6's 1 cm; reported,
+no tolerance loosened. seated_leg_curl's ankle pad "under your legs just above your shoes" (c3) is a contact
 on the lower shank, where the body model has no landmark, so H6 cannot check it; it is proven by the drawn-item test
 (A2) and no key is invented. "Knees in line with the machine's joint" (c1) is an alignment, not a contact (the spec's
 `knee.r` check proves it). Contacts are never carried to another pose by inference. crunch's heel distance stays a
