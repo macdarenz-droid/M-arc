@@ -3632,3 +3632,286 @@ Recheck (critic, 2026-10-18, against lib4-cards @ 0b85c963 sections 16-17):
 - recheck N3: applied. D-LIB7FIX-BRANCH wording: "edits none of these".
 
 - Supervisor (LIB-6-PM critic finding 12, from the LIB-7-FIX critic): no early hand-pairs check is added to LIB-6-PM; LIB-7-FIX catches a moved pin. Section 16 (LIB-8M) is amended by D-LIB7b-SLOT: #109 merge prerequisites gain LIB-7b (6b), and PILOT A PIN GO waits until LIB-7b is merged into #109.
+
+## 19. Six-key rulings, LIB-7c and D-LIB7FIX-PERKEY (2026-10-19)
+
+### Six LB1 hand keys: rulings (D-LIB7c-*), final
+
+Answer to LIB-7-FIX's SIX-KEY PROPOSAL (#193 6256335507). The critic's findings (lib-7c-critic.md) are applied, and D-LIB7FIX-PERKEY is ruled as option A of the critic's H2 (lib-7-fix-amend-perkey.md). Card: lib-7c-card.md. Heads: main 2078913c; #193 da65b13a; #245 38b436d5; #246 f5174db1; cards 9d06627c; research 9eaa2480 (the six cards are byte-identical at 0393aac9 and at LB2 7bced914); plan and GA 6550ce28.
+
+D-LIB7c-KEYS
+- Two new key modules, OWNER 'LIB-7c', VIEW 'radial'. Each declares its own entries under PERKEY:
+  - `hand-bar.mjs` (KEY 'bar'), with variants `hang` (32 mm, archetype hang), `row` (32 mm, pull) and `pulldown` (28 mm, pull);
+  - `hand-v-handle.mjs` (KEY 'v-handle'), with variant `pull` (30 mm, pull).
+- Keys, when every drawing passes:
+
+| key | ids |
+|---|---|
+| `bar-hang-under` | chin_up |
+| `bar-hang-over` | hanging_knee_raise, assisted_pull_up |
+| `bar-row-over` | inverted_row |
+| `bar-pulldown-under` | underhand_lat_pulldown |
+| `v-handle-pull-neutral-overhead` | close_grip_pulldown |
+
+- Fault list: `['curled']` for every id.
+- Counts come from the key set: the drawn ids are the six minus the GAPS of D-LIB7c-SHIP; one words file per drawn key.
+- Research head: 9eaa2480.
+
+D-LIB7c-ORIENT (points 1 and 3)
+- Every id cites its card's `#grip.type`. Its first orientation phrase must be the drawn orientation. That phrase is the earliest match among the PHRASES lists (ANGLED counted as 'angled'); a tie or no match is refused.
+- chin_up's only orientation ref is `cards/chin_up.json#grip.type` ("Underhand (supinated), palms facing you, full closed grip."). This is the first stated-orientation use of `#grip.type`. #c1 is cited as a thumb claim.
+- The other ids also cite: hanging_knee_raise#c2, assisted_pull_up#c1, inverted_row#c2, underhand_lat_pulldown#c1 and close_grip_pulldown#c1.
+- inverted_row is drawn overhand. The sheet flags #c2 as naming both grips.
+- A3's phrase list (hand-pairs.test.ts:302) is not widened. Widening it would be a loosening, and the file is reserved for LIB-7c. No research edit; no gap.
+- LIB-7c's checker holds hand-pairs.test.ts:300-331 verbatim, with one substitution (`'LIB-7'` → `'LIB-7c'`), proven equal by a text test. Its added rules run in a separate function.
+
+D-LIB7c-CONTACT (point 2)
+- Contact is one flagged `ga:` convention per variant, never a claim:
+  - `row`, `pulldown` and `v-handle/pull` cite `ga:pull-base`;
+  - `hang` cites `ga:hang-base`: 'GA 3.1 hang: top of the palm where the fingers start; extension 0 to 35'. It is declared in hand-bar.mjs.
+- chin_up#c25 and hanging_knee_raise#c17 are recorded in DESIGN §10 as agreeing with the convention.
+- A variant's convention must belong to its archetype, and every `ga:` ref must be in the merged CONVENTIONS.
+
+D-LIB7c-FAULT (point 4)
+- The study claims are the `curled` evidence: chin_up#c20, hanging_knee_raise#c16, assisted_pull_up#c14, inverted_row#c15, close_grip_pulldown#c15 and underhand_lat_pulldown#c18.
+- Golden B sets the drawing values only.
+- The hang Wrong rests on each card's `zooms.hand.wrong` ("Wrist curled forward."). GA 3.1 hang lists no curled fault.
+- Every Wrong is the curl at the wrist alone, -30, with contact and fingers as in the Right. Never hanging_leg_raise's slip pose (golden-B follow-up 11).
+- Label: "Wrist curled".
+- Each element of a variant cites at least one ref from each drawn id's own card.
+
+D-LIB7c-SHARED (point 5)
+- `bar-hang-over` stays one key for hanging_knee_raise and assisted_pull_up.
+- LIB-7c needs no LIB-7b code.
+- LB1 ships these two ids only with LIB-7b's 7b-A3 on main (D-LIB4-ENTRY). LB1's one layers page is D-LIB7b-PAGEDUP's case, ruled before LB1 pins its page.
+
+D-LIB7c-HANDLE (point 6)
+- Separate keys stand whatever the picture.
+- Each handle equals the bar its plate draws:
+  - hang and row: 32 mm (pullupBar d);
+  - pulldown: 28 mm (latBar d);
+  - v-handle: 30 mm (2 × the vHandle grip half-thickness, = HANDLES['v-handle']).
+- hang Right:
+  - golden B hanging_leg_raise's pose values (ext 10, contactAt 1.0, forearm 180, thumb wrapped, squeeze firm), gravity, wristRange [0, 35];
+  - `loadLine: false`, so no force line (as pull_up);
+  - the contact dot kept for G4 (as the lateral raise);
+  - Right note 'Base of fingers';
+  - flagged on the sheet: "hang: no force line (pull_up), contact dot kept (G4)".
+- `row`, `pulldown` and `v-handle/pull` use LIB-7's pullVariant unchanged.
+
+D-LIB7c-LB1NOTE (point 7)
+- LIB-9a fixes its own note in its next allowed push:
+  - lb1/DESIGN.md:54 becomes `d-handle-pull-unstated`;
+  - the six "no key yet" cells take the drawn keys.
+- LIB-7c never edits lb1/**.
+
+D-LIB7c-SHIP (point 8)
+- A row whose archetype is not 'none' ships only with its key on main (gen/hands.mjs:192).
+- A key still failing the critic after one fix round moves its ids to its module's GAPS, with the finding as the reason, and its words file is removed. The card merges with the rest.
+- This includes a median below 4 on palm direction for a `bar-*-under` key.
+- A row's archetype is never set to 'none' to ship it.
+
+D-LIB7c-SCOPE (E2)
+- LIB-7c adds only new files under hands/: the two modules, words/<key>.json for its drawn keys, lib7c-claims.mjs/.json, lib7c-sheet.mjs and lib7c-gate.mjs. It also adds tests/library/lib7c.test.ts and its fixtures.
+- The claims file is in no `inputsFor`. lib7c-sheet attaches CLAIMS_TEXT to module copies.
+- Lines in other cards' files:
+  - lib7-fix.test.ts:69 `8` → `8 + |D|` (exact);
+  - one guarded 'LIB-7c' gate block;
+  - gate-split.test.ts:55 +1 (exact);
+  - one gate-times.json entry.
+- D-LIB7FIX-CARRY's "hands/hand-*.mjs" means LIB-7's five key files (lib7-fix.test.ts:208-212).
+
+D-LIB7c-CAMERA (E3)
+- hand-v-handle.mjs declares orientation `neutral-overhead` → camera 'side', with camera words 'Seen from the thumb side' written as a literal: a key module never imports pairs.mjs, because the import never settles under its top-level await (:64). A test checks the literal equals THUMB_SIDE. The checker maps it to the `neutral` phrase list.
+- For LIB-7c's keys, orientation `neutral` is allowed only with a level forearm (Right forearm 90). Follow-up for LIB-12, not this card: battle_ropes is drawn `neutral` at forearm 180, so "Seen from above" (hand-battle-rope.mjs:16, :27; #191).
+- Overhead under and over draw no facing row; the mirror carries the palm direction. A facing row needs its own ruling.
+
+D-LIB7c-OWNERLOOK (E1)
+- No extra pilot sheet.
+- LB1's owner sheet shows the drawn keys' panels in a labelled "New hand pairs" group, with two new views flagged: underhand overhead (mirrored), and the V-handle overhead from the thumb side.
+- The five-second phone test for the new tier-A keys runs on the release APK (plan :839).
+
+D-LIB7c-SLOT (E4, under D-LIB7FIX-PERKEY)
+- Lane: LIB-7c takes the next free LIB builder slot after PERKEY lands on #193. Fallback: the LIB-7-FIX session while it WAITS on its review, counted as its slot, in its own worktree, with a handoff post at handback.
+- Checklist slot 7b: after LIB-5v (7a), before LB1 #245 (8). The supervisor may renumber it to any point after #193 (6) when it is READY earlier.
+- 'PILOT A PIN GO' does not wait for LIB-7c, and #109's prerequisites do not include it. LIB-7c moves no file a pinned row lists (PERKEY PK4; card 7c-A10), and none of its six ids is a pilot A plate (#109 pilot-a/plates.json).
+- Under the PERKEY exception, keying a pinned id changes that row's MANIFEST set (ci/manifest.mjs:69-71). So LB1's pin commit is made only on a head that holds LIB-7c.
+- The same exception binds LIB-12: mountain_climbers is a pilot A plate and a LIB-12 drawn id. Slot LIB-12 before 'PILOT A PIN GO', or accept an `'owner'` pin replacement for that row.
+- 'PILOT A PIN GO' still waits for LIB-7b (D-LIB7b-SLOT unchanged).
+- Order: … LIB-6 #181 + LIB-6-PM → LIB-7 #193 + LIB-7-FIX with PERKEY (6) → LIB-7b (6b) → LIB-8M #109 (7) → LIB-5v (7a) → **LIB-7c (7b)** → LB1 #245 (8).
+
+Posts
+- #193: these rulings and D-LIB7FIX-PERKEY, with 'LIB-7-FIX resume'.
+- #245: D-LIB7c-LB1NOTE, D-LIB7c-OWNERLOOK and the PAGEDUP note.
+- #109: 'PILOT A PIN GO' does not wait for LIB-7c.
+- Record as lib4-cards section 19.
+
+Recheck (critic, 2026-10-19):
+- recheck N1: applied. D-LIB7c-CAMERA's level-forearm rule is scoped to LIB-7c's keys. LIB-12's battle_ropes (neutral, forearm 180) is a follow-up for LIB-12. The camera words are a literal, since a key module cannot import pairs.mjs (the import never settles; reproduced, exit 13).
+- recheck N2: applied. D-LIB7c-SLOT states the PERKEY exception: keying a pinned id changes its MANIFEST set. So LB1 pins only on a head that holds LIB-7c, and LIB-12's mountain_climbers (a pilot A plate) is flagged.
+- Checked, no change needed: rulings 1-8 and E1-E5 carry the critic's verdicts and fixes. The order line matches the card's slot 7b. No contradiction with lib4-cards sections 16-18: D-LIB7b-SLOT stands, #109's prerequisites are unchanged, and D-LIB7FIX-WORDS is amended through PERKEY.
+
+### D-LIB7FIX-PERKEY (amendment to LIB-7-FIX, before its READY)
+
+
+
+Ruled by the supervisor as option A of the LIB-7c critic's H2 (lib-7c-critic.md). It is sent with 'LIB-7-FIX resume'. Every file:line below was opened at #193 da65b13a (the head at amendment time, unchanged since the design note), main 2078913c or #246 f5174db1.
+
+#### Decision
+
+Adding a hand pair key never edits a file that a pinned row lists. A new key is new files only: its `hand-<KEY>.mjs` and one `hands/words/<key>.json` per pair key.
+
+One exception, by design: a key that maps an id which is already a pinned row adds `inputsFor(key)` to that row's MANIFEST set (ci/manifest.mjs:69-71 @ f5174db1). Such a key lands before that id's pin, or together with that row's pin replacement (`'owner'`, lib4-cards :3083-3085).
+
+1. **Words, one file per key.**
+   - `tools/plates/library/hands/panel-words.json` splits into:
+     - `hands/words/chrome.json`, holding its `about` and `chrome` objects;
+     - `hands/words/<key>.json`, one per pair key, each holding exactly the old `keys.<key>` object.
+   - The text and source of every word are unchanged.
+   - panel-words.json is removed.
+2. **Declarations per module.**
+   - A key module may export `CONVENTIONS`, `ORIENTATIONS` and `CAMERA_TEXT` entries, written as literals.
+   - A key module never imports pairs.mjs or any module that imports it. pairs.mjs loads key modules under top-level await (:64), so such an import never settles: node exits 13 with "unsettled top-level await" (checked on a two-file repro). A module that needs THUMB_SIDE's words writes the literal, and a test asserts it equals pairs.mjs's THUMB_SIDE.
+   - pairs.mjs merges them into its exported objects of the same names (:21, :23-28, :34) after MODULES loads (:64) and before INDEX (:65). The frozen readers therefore see the merged objects: sheet.mjs:49 and checks.mjs:5, :144.
+   - pairs.mjs's own entries stay as they are.
+   - The loader throws when:
+     - a name is already defined, by pairs.mjs or by another module;
+     - a module's CAMERA_TEXT names an orientation the merge does not hold;
+     - a module uses (an IDS orientation, or a variant's `ga:` ref) a name declared by another module.
+3. **Discovery without a list.** Key modules stay found by filename (pairs.mjs:15, :37-45). No registry or list of keys is added anywhere.
+4. **Inputs per key.** `inputsFor(x)` = the static import closure of pairs.mjs, zoom.mjs and the key's own FILE (with VIEW_FILES), plus the key's INPUTS, `words/chrome.json` and that key's own `words/<key>.json`.
+   - So a pinned row's MANIFEST file list holds its own key's files and the shared engine only (ci/manifest.mjs:27, :60-62, :69-71 @ f5174db1).
+   - The shared engine is pairs.mjs with its static closure (panel.mjs, render/closeup/common.mjs, golden B's engine/hand.mjs and copy-lint.mjs), zoom.mjs and words/chrome.json.
+
+#### Changes on #193 (da65b13a or later)
+
+- **tools/plates/library/hands/panel.mjs**
+  - :12-13 (`PANEL_WORDS`, `WORDS`) are replaced by:
+    - `WORDS_DIR = 'tools/plates/library/hands/words'`;
+    - `CHROME_WORDS = WORDS_DIR + '/chrome.json'`;
+    - `wordsFileOf(key)`, which gives `WORDS_DIR/<key>.json` and throws unless key matches `/^[a-z0-9-]+$/` (panel.mjs cannot import pairs.mjs: pairs.mjs imports it, :10);
+    - `readWords(key)`, which gives `{ chrome, keys: { [key]: … } }` from those two files and throws `hand panel <key>: no words in <path>`;
+    - `allWords()`, which gives every key file, for tests and sweeps only and never for a panel.
+  - :25 becomes `wordsOf(key, faults, all = readWords(key))`. :38 becomes `panelHtml(key, pages, all = readWords(key))`.
+  - The markup and output bytes are unchanged.
+- **tools/plates/library/hands/panel-words.json:** removed. In its place come new `hands/words/chrome.json` and eight `hands/words/<key>.json` files, one for each key in the card's outcome list.
+- **tools/plates/library/hands/pairs.mjs**
+  - :10 imports `CHROME_WORDS`, `wordsFileOf` and `panelHtml`.
+  - New, exported: `BASE`, a frozen deep copy of the three objects at :21-34, taken before any merge.
+  - New, exported: `declarationsOf(mods, base = BASE)`, a pure function that gives `{ CONVENTIONS, ORIENTATIONS, CAMERA_TEXT, ownerOf }` and makes the decision's throws. It never reads the merged exports, so a second call on the loaded MODULES does not throw "already defined".
+  - Between :64 and :65 the loader applies it with `Object.assign` onto the exported objects.
+  - The merge state lives only in that pairs.mjs instance. A fresh import (hand-pairs.test.ts:505-513; F1's fresh import) builds its own.
+  - :285: `PANEL_WORDS` becomes `CHROME_WORDS` plus `wordsFileOf(keyOfCfg(e.mod, e.cfg))`.
+  - :21-34 are byte-identical.
+- **tests/library/lib7-fix.test.ts** (this card's own file):
+  - :74 asserts CHROME_WORDS and `wordsFileOf(k)`, and that no other `words/*.json` is listed;
+  - :141 and :187-195 read `PN.allWords()`;
+  - :181 becomes "the key files under hands/words/ equal keysOf()";
+  - PK1-PK4 are added.
+- **hands/DESIGN.md:**
+  - §1 :26 reads "a change to another key, adding a key included, never marks it stale";
+  - §8 names the words files and the declarations.
+- **docs/COACHING-DECISIONS.md:** a D-LIB7FIX-PERKEY entry.
+- **src/howto/generated/loaders.ts:** its header only, through generate.mjs (pairs.mjs bytes; gen/ids.mjs:121-122).
+- Not changed:
+  - the FROZEN files (lib7-fix.test.ts:202-217);
+  - renderPair, pairSpec, indexOf, INDEX and MODULES (signatures and outputs);
+  - zoom.mjs, gen/**, ci/**, build-layers-page.mjs.
+
+#### Acceptance (each with evidence and the mutation that must turn red)
+
+- **PK1 Words split, panels unchanged.**
+  - Before the edit, on da65b13a:
+    - record the sha256 of `await pairPanel(k)` for each of the 8 keys in the PR body, as evidence for that head only. They are not pinned in a test, because LIB-7b may change panelHtml's wrapper bytes (DESIGN §8 (b); Interactions below);
+    - record the parsed panel-words.json in a test fixture, tests/library/fixtures/lib7fix/panel-words-da65b13a.json.
+  - After the edit:
+    - on the PERKEY head, the 8 panels' sha256 equal the recorded ones (in the PR body);
+    - in the test, for each key, `await pairPanel(k)` equals `panelHtml(k, pages, fixtureWords(k))` byte for byte, through the same panelHtml, where fixtureWords(k) is `{ chrome, keys: { [k]: … } }` from the fixture;
+    - `{ about, chrome }` from chrome.json plus every words/<key>.json deep-equals the fixture;
+    - the key files equal `keysOf()`;
+    - no tool or test file names panel-words.json, apart from PK1's fixture and its reader.
+  - Mutations, each red, run in memory and never as files in the repo tree:
+    - one word changed in curl-dumbbell-neutral's words (both the deep-equal and that panel's equality);
+    - an extra key 'zz-extra' in the allWords() list (the :181 check);
+    - `readWords('zz-missing')` (throws, naming the path).
+- **PK2 Inputs per key.**
+  - For every key k, the entries of `inputsFor(k)` that equal WORDS_DIR or start with `WORDS_DIR + '/'` are exactly [CHROME_WORDS, wordsFileOf(k)]. Every entry is a file (statSync().isFile()), and there is no other `hand-*.mjs` (F1 :69-77 as amended). A `words/*.json` glob alone would not catch the WORDS_DIR mutation.
+  - Mutations, each red:
+    - inputsFor lists every words file;
+    - inputsFor lists WORDS_DIR.
+- **PK3 Declarations per module.**
+  - `declarationsOf(MODULES.filter(m => m.OWNER === 'LIB-7'))` equals BASE (LIB-7's modules declare nothing). It is filtered by owner, so a later card's declaring module (LIB-7c) leaves it green.
+  - Over MODULES of every owner, `ownerOf` gives each name exactly one owner, and the exported objects equal `declarationsOf(MODULES)`.
+  - Lines :21-34 of pairs.mjs equal da65b13a's (a text compare).
+  - A fixture module in memory declares `ga:zz`, orientation `zz` and its CAMERA_TEXT. indexOf, pairSpec, sheet.mjs:49 and checks.mjs:144 read the exported objects. So the test applies `declarationsOf([...MODULES, fixture])` onto them with Object.assign in a try, and deletes the fixture's names in finally, as hand-pairs.test.ts:94-97 restores HAND_PROP. Its id then:
+    - passes `indexOf` and `pairSpec`;
+    - shows `ga:zz` resolved in `sheet.buildSheet({ mods })`, not as "convention: undefined";
+    - is checked by G8 against its own camera text.
+  - Mutations, each throwing and naming both modules or the name:
+    - a module redefining `ga:pull-base`;
+    - two fixture modules declaring one name;
+    - a module using another module's declared orientation or convention;
+    - CAMERA_TEXT for an undeclared orientation.
+  - The H7 fresh import (hand-pairs.test.ts:505-513) and F1's fresh import stay green.
+- **PK4 Adding a key moves no pinned row's files.**
+  - (a) In memory, with `idx2 = indexOf([...MODULES, dummy])`, where dummy is a fixture key module with its own declaration, applied and removed as in PK3, and one drawn id. That id is outside LB1 and LB2 (D-LIB-SCRATCHIDS), in no module's IDS or GAPS, and not a pinned row (ci/manifest.mjs pinnedRows on a LIB-4c head; the exception in the decision). For every existing key k:
+    - `inputsFor(k, idx2)` deep-equals `inputsFor(k)`;
+    - `await pairPanel(k, idx2)` equals `await pairPanel(k)`.
+  - (b) Files: a scratch git worktree of HEAD in os.tmpdir(), removed in `finally`, gains `hands/hand-zz-dummy.mjs` and `hands/words/<dummy key>.json`. Between that tree and HEAD:
+    - for every existing key, `inputsFor(k)` is equal, and so is the sha256 of each listed file;
+    - the esbuild import closure of `tools/plates/library/hands/pairs.mjs` is equal. It is computed as ci/manifest.mjs:34-38 does, and is the BUILDERS term of filesOf (:27, :60-62).
+    - It holds no `hand-<KEY>.mjs` and no `words/<key>.json`.
+  - (c) On a head that holds LIB-4c, which merges before #193 (D-LIB-ORDER-2), (b) uses ci/manifest.mjs's own `importClosure(BUILDERS)`. It also compares, on both trees, `inputsFor(HAND_OF_ID[id])` for each keyed id, which is filesOf's other hand term (:69-71).
+  - Mutations, each red, made in the scratch worktree or in memory only:
+    - pairs.mjs given a static `import './hand-curl.mjs'` (the closure gains a key file);
+    - inputsFor listing every module FILE;
+    - inputsFor listing WORDS_DIR.
+- **PK5 Approvals carry (D-LIB7FIX-CARRY).**
+  - The pins at hand-pairs.test.ts :132, :403 and :404 are unedited and green.
+  - The FROZEN sha256s (lib7-fix.test.ts:202-217) match.
+  - F4 is 22/22.
+  - `generate --check` is clean, with only loaders.ts's header moved.
+- **PK6 No regression:** F12 on the READY head.
+
+#### Nothing is loosened
+
+- No check is removed.
+- F1's :74 and F3's :181 change only the file names they read. Each keeps its assertion: the own words file is listed, the words equal the keys, and every word is approved with a source.
+- The eight panels are proven byte-equal to the panels built from da65b13a's words through the same panelHtml, their sha256 are recorded for that head, and the words deep-equal.
+- The redefinition and cross-module throws, and the PK4 property, are new, each with a mutation.
+
+#### Interactions
+
+- **The 12 approvals.** D-LIB7FIX-CARRY holds unchanged:
+  - no FROZEN file and no render path changes;
+  - F4's SVG equality and the three pins are untouched;
+  - the panels are proven byte-equal (PK1).
+- **LIB-7b.** It starts on main after #193, on top of PERKEY.
+  - Its depends_on line "panel-words.json" reads "hands/words/chrome.json and words/<key>.json".
+  - Its right to change only panelHtml's wrapper bytes is unchanged.
+  - 7b-A3's scratch-only IDS edit joins an existing LIB-7 key, so it needs no words file.
+  - D-LIB7b-SLOT stands for LIB-7b itself. It edits build-layers-page.mjs, a BUILDER (ci/manifest.mjs:27), and may edit panel.mjs. So PILOT A PIN GO still waits for LIB-7b.
+- **LIB-7c.** It adds only new files: two key modules with their own declarations, and one words file per drawn key.
+  - PK4 proves that no pinned row's file list or MANIFEST entry moves.
+  - So PILOT A PIN GO does not wait for LIB-7c, and its slot is "before LB1". LB1's pin commit is made on a head that holds LIB-7c, because the six ids become keyed (the decision's exception).
+- **LIB-12 (#191).** When it merges #193, each LIB-12 key adds its own words file as a new file. Its camera words stay in its own view-common.mjs.
+  - The decision's exception applies. mountain_climbers is a pilot A plate (#109 pilot-a/plates.json) and a LIB-12 drawn id (hand-palm-flat.mjs:27). If LIB-12 merges after 'PILOT A PIN GO', mountain_climbers' MANIFEST set gains LIB-12's inputsFor(key) and needs a pin replacement (`'owner'`). The supervisor slots LIB-12 before the pin or accepts that cost.
+  - LIB-7c: none of its six ids is a pilot A plate (checked), so the exception does not bite before LB1.
+- **Card text.** If accepted, the supervisor makes these edits to lib-7-fix-card.md and the rulings:
+  - **write_scope:** "New: tools/plates/library/hands/panel-words.json …" reads "New: tools/plates/library/hands/words/chrome.json and words/<key>.json, one per key (D-LIB7FIX-PERKEY); panel-words.json is removed". The pairs.mjs line adds "and `declarationsOf` with its call (D-LIB7FIX-PERKEY)".
+  - **risk line L0-lib (:364):** "Any later edit to the shared engine (pairs.mjs and its static closure, panel.mjs included; zoom.mjs; words/chrome.json) needs a pin replacement. Adding a key (its hand-<KEY>.mjs and words/<key>.json) does not (PK4)."
+  - **D-LIB7FIX-WORDS (:3579):** "recorded with its source in tools/plates/library/hands/panel-words.json" reads "recorded with its source in tools/plates/library/hands/words/chrome.json (chrome) and words/<key>.json (one file per key)".
+  - **Do:** add a Do 7b, "D-LIB7FIX-PERKEY: PK1-PK4", before Do 9. Do 9's re-runs include PK1-PK5.
+  - **Design note:** post the §8 delta on #193. The supervisor's look 6256326739 stands for the words, because only file names change.
+- **Cost:** one fix round of a few hours before READY [est]. #193 cannot merge before #181 and LIB-6-PM anyway, so the hours fit inside that wait unless #181 is ready first.
+
+#### Recheck (critic, 2026-10-19, against #193 da65b13a, #246 f5174db1, #109 28853e71, #191 0d268a71)
+- recheck N1: applied. PK3's first check, `declarationsOf(MODULES)` equal to the base, would turn red as soon as LIB-7c's declaring module lands, so LIB-7c would have to edit this card's test. It is now filtered to OWNER 'LIB-7', with an `ownerOf` check over every owner. `BASE` is a pre-merge snapshot, so a call after the load does not throw "already defined". The PK3 and PK4 (a) fixtures apply their declarations to the exported objects in try/finally, because indexOf (:55), pairSpec, sheet.mjs:49 and checks.mjs:144 read those objects. As written, `indexOf` would throw "unknown orientation zz".
+- recheck N2: applied. PK1 no longer pins the 8 panel sha256s in a test. LIB-7b keeps its right to change panelHtml's wrapper bytes (DESIGN §8 (b)), and pinned panel bytes would turn red there and force a re-pin in this card's file. PK1 now proves each panel byte-equal to the panel built through the same panelHtml from da65b13a's recorded words. The sha256s go in the PR body. Its mutations run in memory, not as files in the repo tree. PK1's own fixture is exempt from "no file names panel-words.json".
+- recheck N3: applied. PK2's mutation "inputsFor lists WORDS_DIR" could not turn red: the directory is not a `words/*.json`. PK2 now checks the entries at or under WORDS_DIR exactly, and that every entry is a file.
+- recheck N4: applied. A key module that imports pairs.mjs never settles (the top-level await at :64; node exits 13, reproduced). Declarations are literals, and THUMB_SIDE's words are checked by a test.
+- recheck N5: applied. "Adding a key moves no pinned row's files" does not hold when the key maps an id that is already pinned: filesOf adds `inputsFor(HAND_OF_ID[row.id])` (ci/manifest.mjs:69-71). This is now stated as the exception. PK4's dummy id must not be a pinned row. LIB-12 and mountain_climbers (a pilot A plate) is flagged. LB1 pins only on a head that holds LIB-7c.
+- recheck N6: applied. PK4's mutations run only in the scratch worktree or in memory.
+- Checked, no change needed: no FROZEN file is touched and no render path changes, so the three pins, F4 and CARRY hold. :21-34 stay byte-identical. The esbuild closure of pairs.mjs holds no key or words file: the hand modules are loaded by a computed dynamic import (:40), and panel.mjs reads its words with readFileSync, not import. No other importer of panel.mjs or panel-words.json exists on #193 (grep). LIB-12's A7 inputsFor tests (hand-views.test.ts:205-219) assert membership only. No contradiction with lib4-cards sections 16-18: D-LIB7FIX-WORDS is amended by its own text, D-LIB7b-SLOT stands, and D-LIB7FIX-API's "key and id give one list" holds through keyOfCfg.
+
+- Supervisor note: LIB-12 (#191) keys mountain_climbers, a pilot A plate, so LIB-12 merges after #193 and before LIB-8M's pin commit (ci/manifest.mjs:69-71). LB1 pins only on a head that holds LIB-7c.
