@@ -5,7 +5,8 @@
 //  - the hook rail: a slotted upright beside the rod (the vendored rackUpright and its hole row), one per side, one line;
 //  - the carriage: the sleeve that rides the rod with the bar, and its hook, which reaches from the carriage to the hook
 //    rail's face (c5: the bar is rotated off and back onto the hooks);
-//  - the safety stop: a collar clamped on the rod, its top below the bar's lowest drawn point (c4);
+//  - the safety stop: a catch on the rod, its top below the bar's lowest drawn point (c4); `stop` sets its size and
+//    `stopZ` its layer (a spec draws it in front of the body so it reads as a solid catch, D-LIB11-PANEL1);
 //  - the frame: a floor beam and a top cross-member joining rod and hook rail.
 // Built only from existing primitives (sideBar's backPad, box, rackUpright, poly). Reads no file. The carriage and its
 // hook move with the bar (start to end); in the Mistake the bar stays on its line, so nothing moves between end and
@@ -29,10 +30,10 @@ export const hookFaceZ = railZ => railZ + HOOK_GAP - UPRIGHT_W / 2;
 /**
  * p.railZ: world z of the rod (the bar's line). p.bar: world centre of the bar in this pose ([x, y, z]; x is ignored,
  *   y is read, z must equal railZ: the composer throws if it does not, c8). p.stopY: world height of the stop's top.
- * p.top: frame height. p.base: [zFrom, zTo] of the floor beam. Returns SMITH_ITEMS items, the moving ones first:
+ * p.stop: the stop's { w, h } (default STOP). p.stopZ: its layer (default `z`). p.top: frame height. p.base: [zFrom, zTo] of the floor beam. Returns SMITH_ITEMS items, the moving ones first:
  *   [carriage, hook, stop, rod, hook rail, top member, floor beam]; wrap it with perItem() (parts.mjs).
  */
-export function smith({ railZ, bar, stopY, top = 2.1, base = null, z = 'back' }) {
+export function smith({ railZ, bar, stopY, stop: st = STOP, stopZ = null, top = 2.1, base = null, z = 'back' }) {
   if (Math.abs(bar[2] - railZ) > 1e-9) throw new Error(`smith: the bar centre (z ${bar[2]}) is off the rail (z ${railZ}): the bar path is straight (c8)`);
   const y = bar[1], face = hookFaceZ(railZ);
   const carriage = { ...sideBar([0, y, railZ - CARRIAGE.w / 2], [0, y, railZ + CARRIAGE.w / 2], CARRIAGE.h, { z }), part: 'carriage' };
@@ -40,7 +41,7 @@ export function smith({ railZ, bar, stopY, top = 2.1, base = null, z = 'back' })
   const c = railZ + CARRIAGE.w / 2, t = 0.015, lip = 0.02, y0 = y - CARRIAGE.h / 2;
   const P = (zz, yy) => [0, yy, zz];
   const hook = { type: 'poly', pts: [P(c, y0), P(face, y0), P(face, y0 + lip + t), P(face - t, y0 + lip + t), P(face - t, y0 + t), P(c, y0 + t)], cls: 'eq', z, part: 'hook' };
-  const stop = { type: 'box', at: [0, stopY - STOP.h / 2, railZ], w: STOP.w, h: STOP.h, z };
+  const stop = { type: 'box', at: [0, stopY - st.h / 2, railZ], w: st.w, h: st.h, z: stopZ ?? z };
   const rod = sideBar([0, 0.05, railZ], [0, top, railZ], RAIL_T, { z });
   const upright = { type: 'rackUpright', at: [0, 0, railZ + HOOK_GAP], h: top, z };
   const b = base ?? [railZ - 0.35, railZ + 0.45];

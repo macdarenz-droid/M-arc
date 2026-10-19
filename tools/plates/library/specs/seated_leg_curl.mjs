@@ -70,6 +70,11 @@ export const rigOf = lm => { const ap = anklePadOf(lm);
 // redrawn as a dashed phantom in the end layer (hidden-part rule, 13 Q2 (c)).
 const START_PAD = (() => { const ap = anklePadOf(lmS), r = 0.055, c = [0, ap.at[1] + ap.normal[1] * r, ap.at[2] + ap.normal[2] * r];
   return Array.from({ length: 17 }, (_, k) => [0, c[1] + r * Math.sin(k * Math.PI / 8), c[2] + r * Math.cos(k * Math.PI / 8)]); })();
+// Label anchors on drawn marks (D-LIB11-PANEL1, R4): the ankle roller's centre in the end pose, and the calf outline
+// a hand's width above the pad (the Mistake changes only the ankle, so the shank is the end pose's).
+const ROLLER_END = (() => { const ap = anklePadOf(lmE), r = 0.055; return [0, ap.at[1] + ap.normal[1] * r, ap.at[2] + ap.normal[2] * r]; })();
+const CALF = (() => { const k = lmE['knee.r'], a = lmE['ankle.r'], u = [0, a[1] - k[1], a[2] - k[2]], n = [0, -u[2], u[1]].map(v => v / Math.hypot(u[1], u[2])), t = ANKLE_T - 0.2;
+  return [0, k[1] + u[1] * t + n[1] * shankR(t), k[2] + u[2] * t + n[2] * shankR(t)]; })();
 export const info = () => ({ pivotToKneeCm: [lmS, lmE].map(l => +(Math.hypot(l['knee.r'][1] - PIVOT[1], l['knee.r'][2] - PIVOT[2]) * 100).toFixed(2)),
   ankleAboveAnkleJointCm: +((1 - ANKLE_T) * Math.hypot(lmE['ankle.r'][1] - lmE['knee.r'][1], lmE['ankle.r'][2] - lmE['knee.r'][2]) * 100).toFixed(1),
   endAnkleZ: +lmE['ankle.r'][2].toFixed(3), seatFrontZ: SEAT_Z + 0.2, endToeY: +lmE['toe.r'][1].toFixed(3), startToe: lmS['toe.r'].map(v => +v.toFixed(3)) });
@@ -103,7 +108,7 @@ export default {
   callouts: [
     { key: 'pivot', text: 'Knee at<br>pivot', anchor: 'knee.r', box: { left: 214, top: 194 }, cue: 'Line your knees up with the machine’s pivot.' },
     { key: 'thigh', text: 'Pad above<br>knees', anchor: [0, lmE['thighTop.r'][1] + 0.11, lmE['thighTop.r'][2]], box: { left: 150, top: 148 }, cue: 'Set the thigh pad snug just above your knees.' },
-    { key: 'ankle', text: 'Pad above<br>shoes', anchor: { at: 'ankle.r', off: [-8, 4] }, box: { left: 40, top: 286 }, cue: 'Set the ankle pad just above your shoes, below your calves.' },
+    { key: 'ankle', text: 'Pad above<br>shoes', anchor: ROLLER_END, box: { left: 40, top: 286 }, cue: 'Set the ankle pad just above your shoes, below your calves.' },
   ],
   mistake: {
     pose: mistakePose,
@@ -112,7 +117,7 @@ export default {
     ],
     tells: [
       { key: 'flexed', text: 'Feet<br>flexed up', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 250, top: 300 }, cue: 'Your feet flex up as if you were standing.' },
-      { key: 'calves', text: 'Calves<br>push', anchor: { at: 'heel.r', pose: 'mistake' }, box: { left: 48, top: 284 }, cue: 'You push the pad with your calves instead of pointing your toes.' },
+      { key: 'calves', text: 'Calves<br>push', anchor: CALF, box: { left: 48, top: 284 }, cue: 'You push the pad with your calves instead of pointing your toes.' },
     ],
   },
   alt: 'Seated leg curl, side view. Seated with the back on the pad, knees in line with the machine pivot, the thigh pad just above the knees and the ankle pad just above the shoes, the lifter curls the feet under the seat with the toes pointed.',

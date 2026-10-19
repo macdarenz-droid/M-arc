@@ -112,6 +112,13 @@ const handle = sd => lm => {
   const g = lm[`grip.${sd}`], ring = ringOf(g, PULLEY[sd]), a = [g[0], g[1] + HANDLE / 2, g[2]], b = [g[0], g[1] - HANDLE / 2, g[2]];
   return { type: 'line', cls: 'eq-line', pts: [a, ring, b], z: 'mid', part: 'handle' };
 };
+// The cable from the pulley to the handle, redrawn in front of the arms (D-LIB11-PANEL1, R3): the column's own cable
+// runs behind the arm fill, so it read as tied to the elbow. Same line: from the pulley's tangent point (the vendored
+// cableColumn's tangentPoint, solved here in screen orientation, y down) straight to the handle ring.
+const tangentW = (c, r, P, side) => { const dx = P[0] - c[0], dy = -(P[1] - c[1]), D = Math.hypot(dx, dy), a = Math.atan2(dy, dx), b = Math.acos(r / D) * side;
+  return [c[0] + r * Math.cos(a + b), c[1] - r * Math.sin(a + b), c[2]]; };
+const frontCable = sd => lm => { const p = PULLEY[sd], to = ringOf(lm[`grip.${sd}`], p);
+  return { type: 'cable', from: tangentW(p, 0.045, to, sd === 'r' ? 1 : -1), to, z: 'front', part: 'cable' }; };
 export const info = () => { const e = landmarksOf(end, H), m = landmarksOf({ ...end, ...mistakePose }, H), s = lmStart;
   return { shoulderY: +S[1].toFixed(3), pulleyY: +PULLEY.r[1].toFixed(3), handleY: +HANDLE_Y.toFixed(3), closeAngle: +CLOSE_ANGLE.toFixed(1),
     startGripX: +s['grip.r'][0].toFixed(3), endGripX: +e['grip.r'][0].toFixed(3), misGrip: misGrip.map(v => +v.toFixed(3)),
@@ -123,7 +130,7 @@ export default {
   poses: { start, end, via },
   equipment: [
     { type: 'floor', from: -1.15, to: 1.15 },
-    column('r'), column('l'), handle('r'), handle('l'),
+    column('r'), column('l'), handle('r'), handle('l'), frontCable('r'), frontCable('l'),
   ],
   checks: [
     { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },

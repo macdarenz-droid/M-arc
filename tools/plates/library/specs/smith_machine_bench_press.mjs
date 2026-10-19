@@ -23,19 +23,20 @@
 //  - End (bottom, c3): the bar's underside on the chest surface at mid-chest; each elbow placed on the circle the two
 //    arm lengths allow, at END_ELEV from the torso axis (shoulder elevation, the 3D upper-arm-to-torso angle), the
 //    lateral solution. The IK pole aims at it.
-//  - Stops (c4): the stop's top STOP_BELOW under the bar's lowest drawn point (the bar end's underside at the touch).
+//  - Stops (c4): the stop's top STOP_BELOW under the bar's lowest drawn point (the bar end's underside at the touch),
+//    drawn as a solid catch in front of the torso (STOP_SIZE, D-LIB11-PANEL1).
 //  - Engine limit (as barbell_bench_press): the start bar end is a dashed dot in the end layer.
 //  - Scale: reference 146.29 px/m.
 // Plate labels (card @ 38d5f9c6): callouts = plate.checkpoints c2 (Bar over mid-chest), c4/c3 (Stops set), c1 (Blades
 //   together); Mistake = plate.mistake c7, c3 (key `flare`): the elbows flared wide, level with the shoulder in the
 //   side view, the bar still on its line at the mid-chest; tempo = plate.tempo c12, c18 (up 1, down 2, pause 0).
 // Unsourced numbers (no card claim gives them; 13.3 must-fix 14): BENCH_TOP, BENCH_LEN, BENCH_Z and FOOT_Z (the
-//   anchor's), TOP_ELBOW (the anchor's), GRIP_X 0.30 (as LB2), PLATE_D (45 cm, as the 8), STOP_BELOW, the rig's sizes
+//   anchor's), TOP_ELBOW (the anchor's), GRIP_X 0.30 (as LB2), PLATE_D (45 cm, as the 8), STOP_BELOW, STOP_SIZE, the rig's sizes
 //   (eq/smith.mjs: rail angle 0 degrees (vertical), rod 3 cm, hook rail 9 cm footward, carriage, hook, stop collar,
 //   frame top 2.1 m), MIS_GHOST (the flared arm's capsule radii, as close_grip_bench_press).
 import { landmarksOf, fk, resolve, normPose, WINTER, REF } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
-import { smith, SMITH_ITEMS, STOP } from '../eq/smith.mjs';
+import { smith, SMITH_ITEMS } from '../eq/smith.mjs';
 
 const H = 1.75, BODY = { height: H };
 const R = Math.PI / 180;
@@ -49,6 +50,7 @@ export const END_ELEV = 45;                           // end: upper arm from the
 const BAR_R = 0.025;                                  // the drawn bar end's radius (m), as barbell_bench_press
 const PLATE_D = 0.45;                                 // plate diameter (m)
 const STOP_BELOW = 0.02;                              // stop top under the bar's lowest drawn point (m) (c4)
+const STOP_SIZE = { w: 0.25, h: 0.05 };               // the catch: 36.6 x 7.3 px at 146.29 px/m (D-LIB11-PANEL1: 34-40 x 6-9 px)
 const OCCIPUT = [0, 0.955, -0.056];                   // back of the skull on the side head outline (head frame, H)
 
 // ---- supine class (copied from barbell_bench_press @ 2dcbac1; the bisect throws on a bracket with no root, D-LIB9-CLONE b) ----
@@ -135,11 +137,7 @@ export const info = () => ({ endElev: elevOf(lmE, 'r'), misElev: elevOf(lmM, 'r'
 
 export const STOP_Y = BAR1[1] - BAR_R - STOP_BELOW;   // the stop's top (c4)
 const barOf = lm => [0, lm.grips[1], RAIL_Z];
-export const rigOf = lm => smith({ railZ: RAIL_Z, bar: barOf(lm), stopY: STOP_Y, base: [RAIL_Z - 0.12, RAIL_Z + 0.45] });
-// The stop sits beside the chest, behind the torso in side view: its hidden outline is redrawn dashed in the end pose
-// (hidden-part rule, 13 Q2 (c)), so the callout points at a drawn mark.
-const STOP_PHANTOM = (() => { const y0 = STOP_Y - STOP.h, z0 = RAIL_Z - STOP.w / 2, z1 = RAIL_Z + STOP.w / 2;
-  return { type: 'line', cls: 'eq-line m-line', z: 'front', part: 'stop', pts: [[0, y0, z0], [0, STOP_Y, z0], [0, STOP_Y, z1], [0, y0, z1], [0, y0, z0]] }; })();
+export const rigOf = lm => smith({ railZ: RAIL_Z, bar: barOf(lm), stopY: STOP_Y, stop: STOP_SIZE, stopZ: 'front', base: [RAIL_Z - 0.12, RAIL_Z + 0.45] });
 // The shoulder line (Mistake guide): straight out from the shoulder at 90 degrees to the torso, where the flared elbow sits.
 const SHOULDER_LINE = [[0, S.r[1] + 0.22, S.r[2]], [0, BENCH_TOP + 0.01, S.r[2]]];
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, BAR0[1] + 0.025 * Math.sin(k * Math.PI / 8), BAR0[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
@@ -155,7 +153,6 @@ export default {
     lm => [{ type: 'barbell', at: barOf(lm), plateD: PLATE_D, plates: [0.045], part: 'plate', z: 'back' },
       { type: 'pulley', at: barOf(lm), r: BAR_R, part: 'bar', z: 'front' }],
     (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-cable m-line', pts: START_DOT, z: 'front', part: 'startbar' } : null),
-    (lm, ctx) => (ctx.pose === 'end' && !ctx.mistake ? STOP_PHANTOM : null),
   ],
   checks: [
     { landmark: 'backUpper', plane: { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] }, pose: 'all', tol: 1 },
@@ -174,7 +171,7 @@ export default {
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }],
   callouts: [
     { key: 'midchest', text: 'Bar over<br>mid-chest', anchor: 'grip.r', box: { left: 200, top: 200 }, cue: 'Set the bench so the bar comes down onto the middle of your chest.' },
-    { key: 'stops', text: 'Stops<br>set', anchor: [0, STOP_Y - STOP.h / 2, RAIL_Z - STOP.w / 2], box: { left: 56, top: 202 }, cue: 'Set the safety stops just below where the bar touches your chest.' },
+    { key: 'stops', text: 'Stops<br>set', anchor: [0, STOP_Y - STOP_SIZE.h / 2, RAIL_Z - STOP_SIZE.w / 2], box: { left: 56, top: 202 }, cue: 'Set the safety stops just below where the bar touches your chest.' },
     { key: 'blades', text: 'Blades<br>together', anchor: [0, BENCH_TOP, S.r[2]], box: { left: 70, top: 294 }, cue: 'Pull your shoulder blades together and down, and hold your chest up.' },
   ],
   mistake: {
