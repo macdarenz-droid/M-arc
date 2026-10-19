@@ -2,6 +2,7 @@
 // CLAIMS_TEXT attached from lib7c-claims.json (sheet.mjs:47-49), plus the labelled golden-B references LIB-7's sheet has
 // no archetype entry for: the hang beside pull_up/p1, the V-handle beside seated_cable_row. Never `calibrate: true`.
 //   node tools/plates/library/hands/lib7c-sheet.mjs <out dir> [--critic] [--plant plant.json] [--anchors anchors.json] [--chromium <path>]
+// --panels writes the drawn keys' exercise-neutral panels (pairPanel) instead, for the words look (D-LIB7FIX-WORDS).
 // --anchors [[id, page|null], [id, page|null]]: the supervisor's two golden-B pages, inserted unlabelled as sheet.mjs:83-87
 // does; the key goes to <out>/calibration-key.json, never onto the sheet. A page that is also a labelled reference is
 // refused.
@@ -10,7 +11,7 @@ import { createRequire } from 'node:module';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { esc } from '../render/closeup/common.mjs';
-import { MODULES, ROOT } from './pairs.mjs';
+import { INDEX, MODULES, pairPanel, ROOT } from './pairs.mjs';
 import { pageHtml } from './page.mjs';
 import { approvedHand, buildSheet, REFERENCE } from './sheet.mjs';
 
@@ -50,21 +51,32 @@ export async function buildLib7cSheet({ critic = false, plants = [], anchors = [
   return { body: head.replace('Hand pairs (LIB-7)', 'Hand pairs (LIB-7c)') + rows.join(''), key };
 }
 
+/** The drawn LIB-7c keys' panels, each under its key, in first-drawn order. */
+export async function buildPanels(index = INDEX) {
+  const keys = [];
+  for (const [id, e] of index.drawn) if (e.mod.OWNER === 'LIB-7c') { const k = `${e.mod.KEY}-${e.cfg.variant}-${e.cfg.orientation}`; if (!keys.includes(k)) keys.push(k); }
+  const parts = [];
+  for (const k of keys) parts.push(`<section class="tile"><h2 style="font-size:15px">${esc(k)}</h2>${await pairPanel(k, index)}</section>`);
+  // the panels ship closed (`hidden`, opened by the page); the look sheet shows them open, bytes unchanged
+  return { body: `<h1 style="font-size:18px">Hand pair panels (LIB-7c)</h1><style>.zx[hidden]{display:block}</style>${parts.join('')}`, keys };
+}
+
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const args = process.argv.slice(2), out = resolve(args[0] ?? 'out/lib7c-sheet'), at = f => args.indexOf(f);
   const json = f => at(f) >= 0 ? JSON.parse(readFileSync(args[at(f) + 1], 'utf8')) : [];
-  const { body, key } = await buildLib7cSheet({ critic: args.includes('--critic'), plants: json('--plant'), anchors: json('--anchors') });
+  const panels = args.includes('--panels');
+  const { body, key = [] } = panels ? await buildPanels() : await buildLib7cSheet({ critic: args.includes('--critic'), plants: json('--plant'), anchors: json('--anchors') });
   mkdirSync(out, { recursive: true });
   if (key.length) writeFileSync(join(out, 'calibration-key.json'), JSON.stringify(key, null, 1));
   const { chromium } = createRequire(join(ROOT, 'package.json'))('playwright');
   const browser = await chromium.launch({ executablePath: at('--chromium') >= 0 ? args[at('--chromium') + 1] : '/opt/pw-browsers/chromium' });
   try {
     for (const [theme, scheme] of [['silent-black', 'dark'], ['paper', 'light']]) {
-      const file = join(out, `lib7c-${theme}.html`);
+      const file = join(out, `lib7c-${panels ? 'panels-' : ''}${theme}.html`);
       writeFileSync(file, pageHtml(body, theme));
       const p = await browser.newPage({ viewport: { width: 390, height: 800 }, deviceScaleFactor: 2, colorScheme: scheme });
       await p.goto(pathToFileURL(file).href); await p.evaluate(() => document.fonts.ready);
-      await p.screenshot({ path: join(out, `lib7c-${theme}.png`), fullPage: true });
+      await p.screenshot({ path: join(out, `lib7c-${panels ? 'panels-' : ''}${theme}.png`), fullPage: true });
       await p.close();
     }
   } finally { await browser.close(); }

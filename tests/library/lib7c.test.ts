@@ -445,3 +445,37 @@ describe('LIB-7c 7c-A6: panels and words (D-LIB7FIX-WORDS, -BUDGET)', () => {
     expect(() => PN.readWords('bar-zz-missing')).toThrow(/hand panel bar-zz-missing: no words in .*words\/bar-zz-missing.json/);
   });
 });
+
+// 7c-A5 (D-CRITIC-CAL3; D-PILOTA-R5): the panel approved all six ids on 3bdd609 (#271 6264406128; lib4-cards §25,
+// D-LIB7c-PANEL1). Pinned on that sha, never re-pinned: sha256 over every approved page (`id/fault\0svg\0`, as
+// hand-pairs.test.ts:128-132) and over lib7c-sheet.mjs's normal and --critic bodies.
+const APPROVED7C = ['chin_up', 'hanging_knee_raise', 'assisted_pull_up', 'inverted_row', 'underhand_lat_pulldown', 'close_grip_pulldown'];
+const PAGES_SHA = '35723cffd9eb7518047c92239f4bda2e4a85d70dafdc77a1b337b4d4c03a364e';
+const SHEET_SHA = '497f6fa8a0cc724960ac308be92577798aeb66fc5a408a0dd147d59b299cb507';
+const CRITIC_SHA = '6bc7bfe6def174de3fd0a64e0691400da2f1b603218151c0f4aa8acdc7f91399';
+const pagesSha = (index?: any) => {
+  const h = createHash('sha256');
+  for (const id of APPROVED7C) for (const w of P.pairSpec(id, index).wrong) h.update(`${id}/${w.key}\0${P.renderPair(id, { fault: w.key, index }).svg}\0`);
+  return h.digest('hex');
+};
+const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
+
+describe('LIB-7c 7c-A5: approved pages and sheets pinned (D-CRITIC-CAL3, D-PILOTA-R5)', () => {
+  let L: any;
+  beforeAll(async () => { L = await import(/* @vite-ignore */ url('tools/plates/library/hands/lib7c-sheet.mjs')); });
+  it('the six approved ids draw their approved pages byte for byte; the sheets are the approved ones', async () => {
+    expect([...lib7cDrawn()].sort()).toEqual([...APPROVED7C].sort());
+    expect(pagesSha()).toBe(PAGES_SHA);
+    expect(sha256((await L.buildLib7cSheet()).body)).toBe(SHEET_SHA);
+    expect(sha256((await L.buildLib7cSheet({ critic: true })).body)).toBe(CRITIC_SHA);
+  }, 60_000);
+  it('mutations: a pose value 1 degree off, a LIB-7c ref text changed in the sheet, an anchor that is a labelled reference', async () => {
+    expect(pagesSha(P.indexOf(withMods(m => { key(m, 'bar').VARIANTS.hang.right.wrist.ext = 11; })))).not.toBe(PAGES_SHA);
+    const ref = `${card('chin_up')}#c1`, keep = L.CLAIMS.claims[ref];
+    try { L.CLAIMS.claims[ref] = keep.replace('ACE', 'ACE.'); expect(sha256((await L.buildLib7cSheet()).body)).not.toBe(SHEET_SHA); } finally { L.CLAIMS.claims[ref] = keep; }
+    expect(sha256((await L.buildLib7cSheet()).body)).toBe(SHEET_SHA);
+    await expect(L.buildLib7cSheet({ anchors: [['pull_up', 'p1'], ['leg_press', null]] })).rejects.toThrow(/anchor pull_up\/p1 is a labelled reference/);
+    await expect(L.buildLib7cSheet({ anchors: [['seated_cable_row', null], ['leg_press', null]] })).rejects.toThrow(/anchor seated_cable_row is a labelled reference/);
+    await expect(L.buildLib7cSheet({ anchors: [['lat_pulldown', 'p1'], ['leg_press', null]] })).rejects.toThrow(/anchor lat_pulldown\/p1 is a labelled reference/);
+  }, 120_000);
+});
