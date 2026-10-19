@@ -5,8 +5,9 @@ import { gzipSync } from 'node:zlib';
 import { BANNED } from '../../layers/artifact/copy-lint.mjs';
 import { moduleText, viewOf } from '../../gen/plates.mjs';
 import { pathLength, pathsOf, tags, unesc, vocabularyOf, words } from './markup.mjs';
-import { REF_CHROME, equipmentItems, poseLandmarks, cameraOf, resolvePoint } from './engine.mjs';
+import { REF_CHROME, equipmentItems, poseLandmarks, cameraOf, resolvePoint, specIdOf } from './engine.mjs';
 import { PARAMS, paramProblems } from '../derive.mjs';
+import { fragmentsOf } from '../../golden.mjs';
 
 /** Medical-claim bans for new plate copy (content.md 4, "Medical-claim bans"). */
 export const MEDICAL = [
@@ -185,17 +186,37 @@ export function chunkBytes(c) {
   const p = c.plate, text = moduleText(c.id, p, { fragments: {} }, '0'.repeat(64));
   return { raw: Buffer.byteLength(text), gz: gzipSync(text, { level: 9 }).length };
 }
-export function h7(c, ctx, R) {
+/** LIB-3c (D-LIB3b-H7): PQ-H7 also renders from a fresh import of the spec ('approved': ctx.engine.spec; H, D, T: the
+ *  candidate's freshSpec) and, for H, D and T, builds the plate twice in two processes (h7Builds, the candidate's
+ *  rebuild), so a value fixed at import time in the spec or in a module it imports is caught. Missing loaders and a
+ *  fresh import or render that throws fail closed. */
+export async function h7(c, ctx, R) {
   const out = [];
   if (R) {
     const again = rendersOf(c, ctx.engine);
     for (const k of Object.keys(R)) for (const f of ['svg', 'overlay']) if (R[k][f] !== again[k]?.[f]) out.push(P(`H7.determinism:${k}.${f}`, `two renders of ${k} differ in ${f}`));
+    out.push(...await h7Fresh(c, ctx, R, out));
   }
   const b = chunkBytes(c);
   if (b.raw > LIMITS.chunkRaw) out.push(P('H7.chunk-raw', `chunk ${b.raw} B raw > ${LIMITS.chunkRaw}`));
   if (b.gz > LIMITS.chunkGz) out.push(P('H7.chunk-gz', `chunk ${b.gz} B gz > ${LIMITS.chunkGz}`));
   const s0 = s0Elements(c.article);
   if (s0 > LIMITS.s0) out.push(P('H7.s0', `S0 ${s0} elements > ${LIMITS.s0}`));
+  return out;
+}
+async function h7Fresh(c, ctx, R, found) {
+  const approved = c.mode === 'approved', load = approved ? (typeof ctx.engine?.spec === 'function' ? () => ctx.engine.spec(specIdOf(c.chromeId)) : null) : c.freshSpec;
+  if (typeof load !== 'function' || (!approved && typeof c.rebuild !== 'function')) return [P('H7.determinism:fresh-missing', `${c.mode} plate without a fresh spec loader and a page rebuild (candidate.mjs)`)];
+  const out = [];
+  try {
+    const fresh = rendersOf({ ...c, spec: await load() }, ctx.engine);
+    for (const k of Object.keys(R)) for (const f of ['svg', 'overlay']) {
+      const key = `H7.determinism:${k}.${f}`;
+      if (R[k][f] !== fresh[k]?.[f] && !found.some(p => p.key === key)) out.push(P(key, `a fresh import of the spec renders ${k} differently in ${f}`));
+    }
+    // a rebuild with no plate for the id is "null" twice, which would compare equal: fail closed instead
+    if (!approved) out.push(...await h7Builds(c, async () => { const b = await c.rebuild(); if (b === 'null') throw new Error('the rebuilt page has no plate for the id'); return b; }));
+  } catch (e) { out.push(P('H7.determinism:fresh-threw', `a fresh import, render or build threw: ${e.message}`)); }
   return out;
 }
 /** Two page builds byte-identical (LIB-2's builder, or the HT-1 gallery build for the 8). */
@@ -275,7 +296,7 @@ export function validateParams(params, schema) {
 /** LIB-3b: derive.mjs's own rule (its PARAMS and paramProblems) against the pinned envelope, for each key that
  *  validateParams did not flag (`flagged`), so a key gets one problem. A malformed envelope row fails closed, because
  *  derive.mjs would let values through it. Never reads the candidate's schema. */
-const rowOk = (p, row) => (p.type === 'number'
+export const rowOk = (p, row) => (p.type === 'number'
   ? Array.isArray(row) && row.length === 2 && row.every(x => typeof x === 'number' && Number.isFinite(x)) && row[0] <= row[1]
   : Array.isArray(row) && row.length > 0 && row.every(x => p.values.includes(x)));
 export function paramEnvelopeProblems(params, flagged, envelope) {
@@ -296,11 +317,35 @@ export async function h10(c, ctx = {}) {
   if (c.mode !== 'D' && c.mode !== 'T') return [];
   const d = c.derivation;
   if (!d || typeof d.rebuildParent !== 'function' || !d.parentFragments) return [P('H10:missing', `${c.mode} plate without a derivation proof`)];
+  // LIB-3c (D-LIB10-RANGES, D-LIB3c-SHARED): one object per row, the family's approved ranges (param-ranges.json) first,
+  // then ctx.envelope; the value check and the child rebuild both read it. Only this branch loads the ranges file.
+  const { familyObject, loadRanges } = await import('./param-ranges.mjs');
+  const obj = familyObject(d.family, ctx.envelope, loadRanges());
   const out = validateParams(d.params, d.schema);
-  out.push(...paramEnvelopeProblems(d.params, out, ctx.envelope));
+  out.push(...paramEnvelopeProblems(d.params, out, obj));
+  const clean = out.length === 0;
   const got = await d.rebuildParent();
   for (const k of FRAG_KEYS) if (got?.[k] !== d.parentFragments[k]) out.push(P(`H10.byte:${k}`, `parent rebuilt with its own PARAMS: ${k} differs from its GOLDEN fragment`));
+  if (c.mode === 'T') {   // D-LIB10-CHILDPROOF 2: the parent through its template, make(parentParams, parentFacts)
+    if (typeof d.rebuildTemplateParent !== 'function') out.push(P('H10:missing', 'T plate without a template rebuild of its parent'));
+    else {
+      let t = null;
+      try { t = await d.rebuildTemplateParent(); } catch (e) { out.push(P('H10.child:threw', `the parent rebuilt through its template threw: ${e.message}`)); }
+      if (t !== null) for (const k of FRAG_KEYS) if (t?.[k] !== d.parentFragments[k]) out.push(P(`H10.byte:${k}`, `parent rebuilt through its template: ${k} differs from its pinned fragment`));
+    }
+  }
+  if (clean) out.push(...await childProof(c, d, obj));   // D-LIB10-CHILDPROOF 1: a row with a param problem is already red
   return out;
+}
+/** The plate on the batch page against the child rebuilt alone from its derivation, on all 9 fragments. */
+async function childProof(c, d, obj) {
+  let got;
+  try {
+    if (typeof d.rebuildChild !== 'function') throw new Error('no child rebuild');
+    got = await d.rebuildChild(obj);
+  } catch (e) { return [P('H10.child:threw', `the child rebuilt alone from its derivation threw: ${e.message}`)]; }
+  const plate = fragmentsOf(c.plate);
+  return FRAG_KEYS.filter(k => got?.[k] !== plate[k]).map(k => P(`H10.child:${k}`, `the plate on the batch page differs from its derivation rebuilt alone in ${k}`));
 }
 
 // ---------------------------------------------------------------- flags (node half) ----

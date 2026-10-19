@@ -10,15 +10,20 @@
 //     GOLDEN.json for one of the 8, else the one batch golden file that holds the parent's plate entry); exemptions are
 //     the batch golden plate entry's `exemptions` (flag names, D-LIB3-flags).
 // The generator (gen/plates.mjs) gates the node half before it emits a library row; LIB-4b's PQH rows gate the full report.
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+// LIB-3c (D-LIB3b-H7, D-LIB10-RANGES, D-LIB10-CHILDPROOF): a library candidate also carries freshSpec() (row.src imported
+// afresh) and rebuild() (its plate built alone in its own process) for PQ-H7; a D/T derivation also carries its family,
+// rebuildChild(obj) (the child rebuilt alone from its derivation: D derive(parent, params, obj), T make(params, facts))
+// and, for T, rebuildTemplateParent() (make(parentParams, parentFacts)). Rebuild modules live under os.tmpdir() only.
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { ROOT } from '../lib/inputs.mjs';
-import { GOLDEN_JSON, extractPlates, fragmentsOf, latestEntries, verifyBatchChain } from '../golden.mjs';
+import { GOLDEN_JSON, extractPlates, fragmentsOf, latestEntries, makeMirror, verifyBatchChain } from '../golden.mjs';
 import { articlesOf, candidatesOf } from './qa/approved.mjs';
 import { buildPlatesPage } from './build-page.mjs';
 import { PARAMS } from './derive.mjs';
-import { groupsConfig } from './plates-page.mjs';
+import { cardIdOf, groupsConfig, specIdOf } from './plates-page.mjs';
 import { LIBRARY_GOLDEN_DIR, rows, sourceOf } from './registry.mjs';
 import { pinOf } from './batch-golden.mjs';
 
@@ -40,6 +45,26 @@ export function parentEntry(parent, root = ROOT) {
   return hits[0];
 }
 
+/** The fragments of `id`'s plate on a page built for `id` alone from `all`; `module` (text, written under os.tmpdir()
+ *  and removed after the build) replaces the spec under `key` when given. `mirror` is set when the module imports a
+ *  spec of the 8 (its engine needs the mirror's font); it is kept until the build returns. */
+async function plateAlone(id, all, where, module = null, key = null, { mirror = null } = {}) {
+  const dir = module ? mkdtempSync(join(tmpdir(), 'lib3c-rebuild-')) : null;
+  try {
+    const cfg = await groupsConfig({ groups: [{ id: 'one', title: 'One', ids: [id] }] }, all, where);
+    if (module) { const f = join(dir, 'spec.mjs'); writeFileSync(f, module); cfg.specs = { ...cfg.specs, [key]: f }; }
+    const row = all.find(r => r.id === id), { html } = await buildPlatesPage(cfg);
+    const p = extractPlates(html.toString('utf8')).find(x => x.chromeId === row.chromeId);
+    return p ? fragmentsOf(p) : null;
+  } finally {
+    if (dir) rmSync(dir, { recursive: true, force: true });
+    if (mirror) rmSync(mirror, { recursive: true, force: true });
+  }
+}
+const href = p => JSON.stringify(pathToFileURL(p).href);
+const TEMPLATE_NAME = /^[A-Za-z0-9_-]+$/;
+let fresh = 0;
+
 /** The research facts a How-to's card names, or null when it names none or the file is missing. */
 export function researchOf(howto, root = ROOT) {
   const card = howto.research?.card;
@@ -48,9 +73,18 @@ export function researchOf(howto, root = ROOT) {
   return Object.fromEntries(['plateFacts', 'tempo', 'topFault'].filter(k => k in c).map(k => [k, c[k]]));
 }
 
-export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = rows(root) } = {}) {
+/** D-LIB9-AUTHORQA: authoring-time QA of a row still in drawing or review. `authoring: true` returns the same candidate
+ *  with exemptions [] and reads no pin; it is refused at stage approved-plate or shipped. The generator, LIB-4b's PQH rows
+ *  and LIB-4c never pass it. */
+export const AUTHORING_REFUSED = ['approved-plate', 'shipped'];
+/** The How-to source of a row in the injected `all`: registry sourceOf's rule for a library row, applied to `all`.
+ *  (registry.mjs is an input of every generated file, so it is not edited: D-LIB9-AUTHORQA asks for an `all` parameter
+ *  on sourceOf; this keeps generate --check unchanged: ruling Q-A, #245 comment 6242372604.) */
+export const howtoOf = (id, root, all) => (all.some(r => r.id === id && r.mode !== 'golden') ? `tools/plates/library/howto/${id}.howto.mjs` : sourceOf(id, root));
+export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = rows(root), authoring = false } = {}) {
   const row = all.find(r => r.id === id);
   if (!row) throw new Error(`candidate: no registry row for ${id}`);
+  if (authoring && AUTHORING_REFUSED.includes(row.stage)) fail(row, `authoring QA is refused at stage ${row.stage} (D-LIB9-AUTHORQA)`);
   if (typeof platesHtml !== 'string') fail(row, 'no plates page');
   if (row.mode === 'golden') {
     const c = (await candidatesOf(platesHtml, engine)).find(x => x.id === id);
@@ -62,14 +96,17 @@ export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = r
   if (!plate) fail(row, `card-${row.chromeId} is not in its plates page`);
   if (!row.view) fail(row, 'no census view (batch row field `view`)');
   if (typeof row.censusRef !== 'string' || !/^[0-9a-f]{7,40}$/.test(row.censusRef)) fail(row, 'its batch file records no census source (`censusRef`)');
-  for (const f of [`tools/plates/${row.src}`, sourceOf(id, root)]) if (!existsSync(join(root, f))) fail(row, `no source file ${f}`);
+  for (const f of [`tools/plates/${row.src}`, howtoOf(id, root, all)]) if (!existsSync(join(root, f))) fail(row, `no source file ${f}`);
   const spec = (await import(pathToFileURL(join(root, 'tools/plates', row.src)).href)).default;
-  const howto = (await import(pathToFileURL(join(root, sourceOf(id, root))).href)).default;
+  const howto = (await import(pathToFileURL(join(root, howtoOf(id, root, all))).href)).default;
   let derivation = null;
   if (row.mode === 'D' || row.mode === 'T') {
     const parent = all.find(r => r.id === row.parent);
     if (!parent) fail(row, `parent ${row.parent} has no registry row`);
+    const tpl = row.mode === 'T' ? join(root, 'tools/plates/library/templates', `${row.template}.mjs`) : null;
+    if (tpl && (typeof row.template !== 'string' || !TEMPLATE_NAME.test(row.template) || !existsSync(tpl))) fail(row, `template ${JSON.stringify(row.template)} names no tools/plates/library/templates/<name>.mjs`);
     const entry = parentEntry(parent, root);
+    const parentKey = parent.mode === 'golden' ? specIdOf(parent) : cardIdOf(parent);
     derivation = {
       params: row.params, schema: PARAMS, parentFragments: entry.fragments,
       rebuildParent: async () => {
@@ -77,12 +114,20 @@ export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = r
         const p = extractPlates(html.toString('utf8')).find(x => x.chromeId === parent.chromeId);
         return p ? fragmentsOf(p) : null;
       },
+      family: row.mode === 'T' ? row.template : `D:${parent.id}`,
+      rebuildChild: async obj => {
+        if (tpl) return plateAlone(id, all, `${id}'s child`, `import { make } from ${href(tpl)};\nimport { facts } from ${href(join(root, 'tools/plates', row.src))};\nexport default make(${JSON.stringify(row.params)}, facts);\n`, cardIdOf(row));
+        const mirror = parent.mode === 'golden' ? makeMirror() : null;
+        const src = mirror ? join(mirror, 'exercises', `${parentKey}.mjs`) : join(root, 'tools/plates', parent.src);
+        return plateAlone(id, all, `${id}'s child`, `import parent from ${href(src)};\nimport { derive } from ${href(fileURLToPath(new URL('./derive.mjs', import.meta.url)))};\nexport default derive(parent, ${JSON.stringify(row.params)}, ${JSON.stringify(obj)});\n`, cardIdOf(row), { mirror });
+      },
+      ...(tpl ? { rebuildTemplateParent: () => plateAlone(parent.id, all, `${id}'s parent through ${row.template}`, `import { make, parentParams, parentFacts } from ${href(tpl)};\nexport default make(parentParams, parentFacts);\n`, parentKey) } : {}),
     };
   }
   return {
-    id, chromeId: row.chromeId, mode: row.mode, spec, plate, article: articlesOf(platesHtml).get(row.chromeId),
+    id, chromeId: row.chromeId, mode: row.mode, spec, freshSpec: async () => (await import(`${pathToFileURL(join(root, 'tools/plates', row.src)).href}?h7=${++fresh}`)).default, rebuild: () => plateAlone(id, all, `${id} alone`).then(f => JSON.stringify(f)), plate, article: articlesOf(platesHtml).get(row.chromeId),
     research: researchOf(howto, root), census: { view: row.view }, mistakeFault: plate.mistake.firstKey, derivation,
-    exemptions: pinOf(row, 'plate', root).exemptions ?? [],
+    exemptions: authoring ? [] : pinOf(row, 'plate', root).exemptions ?? [],
   };
 }
 
