@@ -71,7 +71,7 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
       expect(byKey.length).toBeGreaterThan(0);
       expect(byKey).toContain(file);
       expect(byKey).toContain('tools/plates/library/hands/panel.mjs');
-      expect(byKey.filter((f: string) => f === PN.WORDS_DIR || f.startsWith(`${PN.WORDS_DIR}/`))).toEqual([PN.CHROME_WORDS, PN.wordsFileOf(k)]);   // PK2: its own words file only
+      expect(byKey.filter((f: string) => f === PN.WORDS_DIR || f.startsWith(`${PN.WORDS_DIR}/`))).toEqual([PN.CHROME_WORDS, PN.wordsFileOf(k)].sort());   // PK2: its own words file only (inputsFor sorts: D-LIB12FIX-ORDER)
       expect(byKey.filter((f: string) => /library\/hands\/hand-[a-z0-9-]+\.mjs$/.test(f))).toEqual([file]);
       for (const id of idsOfKey(k)) expect([k, id, P.inputsFor(id)]).toEqual([k, id, byKey]);
     }
@@ -287,10 +287,10 @@ const fixtureWords = (k: string) => ({ chrome: WORDS_FIXTURE.chrome, keys: { [k]
 const pagesOf = (k: string, index = P.INDEX) => { const id = P.keyIndexOf(index).keys.get(k).ids[0]; return P.pairSpec(id, index).wrong.map((w: any) => ({ fault: w.key, svg: P.renderPair(id, { fault: w.key, uid: `hp-${k}-${w.key}`, index }).svg })); };
 const wordsSplit = (all: any) => ({ about: all.about, chrome: all.chrome, keys: all.keys });
 /** PK2: the inputs at or under hands/words/ are exactly chrome.json and the key's own file, and every input is a file. */
-const wordsInputProblems = (k: string, list: string[]) => {
+const wordsInputProblems = (k: string, list: string[], files = true) => {
   const bad: string[] = [], under = list.filter(f => f === PN.WORDS_DIR || f.startsWith(`${PN.WORDS_DIR}/`));
-  if (JSON.stringify(under) !== JSON.stringify([PN.CHROME_WORDS, PN.wordsFileOf(k)])) bad.push(`${k}: words inputs ${under}`);
-  for (const f of list) if (!existsSync(f) || !statSync(f).isFile()) bad.push(`${k}: ${f} is not a file`);
+  if (JSON.stringify(under) !== JSON.stringify([PN.CHROME_WORDS, PN.wordsFileOf(k)].sort())) bad.push(`${k}: words inputs ${under}`);   // exact, order included (inputsFor sorts; D-LIB12FIX-ORDER)
+  if (files) for (const f of list) if (!existsSync(f) || !statSync(f).isFile()) bad.push(`${k}: ${f} is not a file`);
   return bad;
 };
 // a key module with its own declarations (literals; THUMB_SIDE's words written out), drawing one id outside LB1/LB2, in no
@@ -343,6 +343,19 @@ describe('LIB-7-FIX PK2: inputs per key', () => {
     expect(wordsInputProblems(k, every).join('\n')).toMatch(/rope-push-neutral: words inputs/);
     expect(wordsInputProblems(k, [...base, PN.WORDS_DIR].sort()).join('\n')).toMatch(/words inputs.*\n.*tools\/plates\/library\/hands\/words is not a file/);
   });
+  it('D-LIB12FIX-ORDER: a key that sorts before chrome passes the sorted pair and fails the fixed order; a missing chrome file is red', async () => {
+    const fx = { ...fixtureModule('aa-fix'), FILE: P.MODULES.find((m: any) => m.KEY === 'd-handle').FILE };   // a real file for importClosure
+    await withDeclared([...P.MODULES, fx], () => {
+      const idx2 = P.indexOf([...P.MODULES, fx]), k = 'aa-fix-pull-zz', list = P.inputsFor(k, idx2);
+      const under = list.filter((f: string) => f.startsWith(`${PN.WORDS_DIR}/`));
+      expect(under).toEqual([PN.CHROME_WORDS, PN.wordsFileOf(k)].sort());   // F1's row, new check
+      expect(under).not.toEqual([PN.CHROME_WORDS, PN.wordsFileOf(k)]);      // F1's row, the old fixed order: red
+      expect(wordsInputProblems(k, list, false)).toEqual([]);                // PK2's row (its words file exists only in memory)
+      expect(JSON.stringify(under) !== JSON.stringify([PN.CHROME_WORDS, PN.wordsFileOf(k)])).toBe(true);   // PK2's old comparison: red
+    });
+    const k = 'rope-push-neutral';
+    expect(wordsInputProblems(k, P.inputsFor(k).filter((f: string) => f !== PN.CHROME_WORDS)).join('\n')).toMatch(/rope-push-neutral: words inputs/);
+  }, 60_000);
 });
 
 describe('LIB-7-FIX PK3: declarations per module', () => {
