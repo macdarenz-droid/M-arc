@@ -256,3 +256,75 @@ Card LIB-7-FIX; rulings D-LIB7FIX-* (lib4-cards section 18). Nothing here change
 - `declarationsOf(mods, BASE)` merges them over pairs.mjs's own entries (`BASE`, a frozen copy taken before the merge) between `MODULES` and `INDEX`, so `indexOf`, `pairSpec`, sheet.mjs and checks.mjs read the merged objects. It throws on a name already defined, camera words for an orientation nobody holds, and a module using a name another module declares.
 - Key modules are still found by filename; there is no list of keys.
 - The shared engine (pairs.mjs with its static closure, zoom.mjs, `words/chrome.json`) is what every keyed row lists; editing it after a pin needs a pin replacement.
+
+## 10. LB1 hand pairs (LIB-7c)
+
+Design note for card LIB-7c (lib-7c-card.md @ 9eaa2480's card head). I read lib4-cards section 19 at `f7824b5b` (lines 3636-3918: every D-LIB7c-* ruling, D-LIB7FIX-PERKEY and both rechecks) and sections 22 and 23 on `claude/sup-lib4-cards`. Base: #193's PERKEY head `a8ec1a6`. Research: `9eaa2480`. Every point below was rendered from uncommitted scratch modules on that head (the files of (a), byte for byte as they will be committed), and settled by a measured render or a file:line.
+
+### (a) Modules, variants and handles (D-LIB7c-KEYS, -HANDLE)
+- `hand-bar.mjs`: KEY 'bar', OWNER 'LIB-7c', VIEW 'radial', INPUTS radial-rules.mjs and golden-B engine/equipment.mjs (the composer the sizes match). Declares `CONVENTIONS['ga:hang-base']` = 'GA 3.1 hang: top of the palm where the fingers start; extension 0 to 35'.
+- `hand-v-handle.mjs`: KEY 'v-handle', same owner, view and INPUTS. Declares `ORIENTATIONS['neutral-overhead'] = 'side'` and `CAMERA_TEXT['neutral-overhead'] = 'Seen from the thumb side'` as literals. Neither imports pairs.mjs.
+
+| variant | handle (profile, mm) | plate composer | archetype | Right | Wrong |
+|---|---|---|---|---|---|
+| bar/hang | bar-32, 32 | pullupBar `d = 0.032` (equipment.mjs:45) | hang | (b) | curled: wrist -30 only |
+| bar/row | bar-32, 32 | pullupBar `d = 0.032` | pull | pullVariant (radial-rules.mjs:45-55) | pullVariant curled (:52) |
+| bar/pulldown | pulldown-bar, 28 | latBar `d = 0.028` (:113) | pull | pullVariant | pullVariant curled |
+| v-handle/pull | v-handle, 30 | vHandle grip `bar(..., 0.015 * m)`, 0.015 a half-thickness (:132; geom.mjs:56) = HANDLES['v-handle'].d 30 (engine/hand.mjs:35) | pull | pullVariant | pullVariant curled |
+
+Keys (all five render and pass G1-G9 on the scratch modules: `pairProblems(id)` = [] for each of the six ids):
+
+| key | ids |
+|---|---|
+| bar-hang-under | chin_up |
+| bar-hang-over | hanging_knee_raise, assisted_pull_up |
+| bar-row-over | inverted_row |
+| bar-pulldown-under | underhand_lat_pulldown |
+| v-handle-pull-neutral-overhead | close_grip_pulldown |
+
+G (gaps) = none so far; D = the five keys. Both are restated here after the critic (Do 7) and before the 7c-A5 pins.
+
+### (b) The hang variant
+- Right: golden B hanging_leg_raise's pose values (hanging_leg_raise.howto.mjs:92-93): forearm 180, ext 10, contactAt 1.0, fingers curl 1, thumb wrapped, squeeze firm, load gravity. wristRange [0, 35]; loadAxis 'across'; contact 'base' (CONTACT_AT 1.0).
+- `loadLine: false`: renderPair strips the force line, its head and the wrist tick (pairs.mjs:273-277). Measured: no `h-load`, `h-load-head` or `h-tick` in the SVG; `h-contact` is kept, and G4 passes. Flag on the variant: "hang: no force line (pull_up), contact dot kept (G4)".
+- Right note 'Base of fingers'. Alt texts are LIB-7's approved pullVariant strings (radial-rules.mjs:49, :53).
+- Wrong: `{ wrist: { ext: -30 } }` only, label 'Wrist curled'. Contact, fingers and thumb are the Right's. Golden B's slip pose (contactAt 1.4, fingers open 0.4; follow-up 11) is not used and not a reference.
+
+### (c) Cameras and palm direction (D-LIB7c-CAMERA)
+- Every bar key is seen from the side. Under and over differ only by the engine's mirror (PALM_UP, pairs.mjs:32, :100); no facing row is drawn.
+- Measured on the Right half (`report.measured`, px; handle x minus wrist x): chin_up -12.48 and underhand_lat_pulldown -17.34 (under); hanging_knee_raise +12.48, assisted_pull_up +12.48, inverted_row +19.21 (over). Under is on the opposite side of the wrist from over, and every id of one orientation is on the same side. 7c-A4 asserts this.
+- close_grip_pulldown: camera 'side', aria label "Seen from the thumb side. …" and the label SEEN FROM THE THUMB SIDE (renderPair's cameraText path, :263-266); G8 passes against the merged CAMERA_TEXT. Rendered, the thumb side faces the camera as in golden B's radial view, so Do 3 (c) does not stop.
+
+### (d) Claims at 9eaa2480 and the checker (D-LIB7c-ORIENT, -CONTACT, -FAULT)
+
+| id | orientation refs | thumb | wrist | curled |
+|---|---|---|---|---|
+| chin_up | #grip.type ("Underhand (supinated), …") | #c1 | #c3 | #c20 |
+| hanging_knee_raise | #grip.type, #c2 | #c3 | #c16 | #c16 |
+| assisted_pull_up | #grip.type, #c1 | #c12 | #c14 | #c14 |
+| inverted_row | #grip.type ("Overhand (pronated) drawn, …"), #c2 (names both grips; flagged on the sheet) | #c14 | #c15 | #c15 |
+| underhand_lat_pulldown | #grip.type, #c1 | #c2 ("allows a wrapped or thumbless grip"; the only thumb claim on the card) | #c18 | #c18 |
+| close_grip_pulldown | #grip.type, #c1 | #c16 | #c15 | #c15 |
+
+- Contact: `ga:hang-base` (hang), `ga:pull-base` (row, pulldown, v-handle pull). chin_up#c25 and hanging_knee_raise#c17 ("just below the base of the fingers") agree with ga:hang-base and are recorded here, not cited.
+- The hang variant's thumb, wrist and curled claims hold one ref from each of its three ids' cards (rule (ii)).
+- First orientation phrase (rule (i)), the earliest PHRASES match in #grip.type: Underhand → under (chin_up, underhand_lat_pulldown); Overhand → over (the other three bar ids); Neutral → neutral (close_grip_pulldown, `neutral-overhead` mapped to PHRASES.neutral).
+- lib7c-claims.mjs extracts 24 refs from the 6 card files at 9eaa2480, with each file's sha256. The checker copies hand-pairs.test.ts:300-331 verbatim with the one substitution, proven equal by a text test; rules (i)-(v) run in a separate function.
+
+### (e) Sheet
+- lib7c-sheet.mjs calls `buildSheet({ mods })` on copies of the LIB-7c modules with CLAIMS_TEXT from lib7c-claims.json, never `calibrate: true`. Labelled references: golden B pull_up/p1 on both hang tiles; seated_cable_row on the V-handle tile. buildSheet itself adds lat_pulldown/p1 to every pull tile.
+- `--anchors [[id, page], [id, page]]` inserts two golden-B pages unlabelled (as sheet.mjs:83-87), writes the key to calibration-key.json, and refuses any page shown labelled (pull_up/p1, seated_cable_row, lat_pulldown/p1).
+- Pages the supervisor may pick its two anchors from (each renders through approvedHand): dumbbell_lateral_raise, barbell_back_squat, machine_chest_press, leg_press, lat_pulldown/p2, pull_up/p2. hanging_leg_raise is left out: its Wrong is golden-B follow-up 11's defect.
+
+### (f) Lines in other cards' files (D-LIB7c-SCOPE)
+- tests/library/lib7-fix.test.ts:69: `8` → `8 + 5` as the literal 13 with "+ LIB-7c 5 (D-LIB7c-SCOPE)" (|D| as ruled after Do 7).
+- scripts/screenshot-gate.mjs: one block `if (gate.runs('LIB-7c')) { … }` inserted before `await gate.done();` (:9453).
+- tests/gate-split.test.ts:55: 104 → 105, with "+ LIB-7c".
+- scripts/gate-times.json: one "LIB-7c" entry, measured as 11.1 item 16 (b).
+- Nothing else outside the new files, this §10 and appended D-LIB7c-* entries in docs/COACHING-DECISIONS.md.
+- Known reds until #193's D-LIB12FIX-ORDER head is merged: lib7-fix.test.ts F1 (:74) and PK2 expect `[CHROME_WORDS, wordsFileOf(k)]` in sort order, and `words/bar-*.json` sorts before chrome.json.
+
+### Risks
+- The hang has no golden-B pure-curl precedent; the angle is golden B's, the pose LIB-7's approved curl. If it fails after one fix round, its three ids go to GAPS (D-LIB7c-SHIP).
+- Palm direction on `bar-*-under` rests on the mirror alone; a median below 4 sends the key to GAPS.
+- 7c-A10 early check: with the scratch modules loaded, `inputsFor(k)` and every listed file's sha256 for the 8 LIB-7 keys equal the base's (digest 267ce6e6… on both trees).
