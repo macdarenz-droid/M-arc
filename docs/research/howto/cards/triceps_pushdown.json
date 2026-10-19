@@ -654,5 +654,8 @@
     "remove": [],
     "why": "triceps primary is sourced (c15). exercises.json lists forearms as secondary; no source I read names the forearms for the bar pushdown (StrengthLog lists only the triceps), so it is kept unchanged and flagged unsourced rather than removed without evidence."
   },
-  "anchorSource": "ace-pushdown"
+  "anchorSource": "ace-pushdown",
+  "plateFacts": [],
+  "tempo": [{"phase":"Press","s":1,"move":true},{"phase":"Hold","s":1},{"phase":"Return","s":2,"move":true}],
+  "topFault": "lean"
 }

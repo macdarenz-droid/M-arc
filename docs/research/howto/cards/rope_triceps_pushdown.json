@@ -675,5 +675,8 @@
     "remove": [],
     "why": "triceps primary and forearms secondary match exercises.json (c17). NFPT also names the biceps as secondary; not added because it is one coaching source with no measurement behind it."
   },
-  "anchorSource": "nfpt-rope"
+  "anchorSource": "nfpt-rope",
+  "plateFacts": [],
+  "tempo": [{"phase":"Press","s":1,"move":true},{"phase":"Hold","s":1},{"phase":"Return","s":3,"move":true}],
+  "topFault": "lean"
 }

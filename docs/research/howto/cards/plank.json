@@ -498,5 +498,8 @@
   "notes": [
     "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c12 adds Harvard Health's front-plank hold, rest and build-up; the hold and rest are no longer unsourced.",
     "W1 fix round 2026-10-03: F22/R-W1-3 risks[0] now stays within c4's words; \"loads the lower back\" removed (no source says it)."
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [{"phase":"Hold","s":"10–60"}],
+  "topFault": "sag"
 }

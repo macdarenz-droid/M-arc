@@ -32,7 +32,7 @@ const HELD = ['barbell_shrug', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly
 // census views (claude/howto-options 4a9fd86, docs/howto/library/inputs/census.json blob 70553d5d)
 const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id === 'upright_row' || id === 'pec_fly' ? 'front' : 'side']));
 // the pilot A page the registry builds (build.mjs's page at the Do 6 head); the pin's page entry must equal it
-const PAGE = { sha256: '13794948305db2f5301849c046ff15c169c54cf6f9acf2405b6d9ff867763bd6', bytes: 1424476 };
+const PAGE = { sha256: 'f0665cdba344cfacaa015a2f532dd21e04b0d86b68920c630510eefecacd4340', bytes: 1424478 };
 const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
 // Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
 const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
@@ -52,12 +52,14 @@ const TOPFAULT: Record<string, string> = {
   incline_dumbbell_press: 'arch', dumbbell_shoulder_press: 'behind', barbell_overhead_press: 'elbows', barbell_row: 'swing',
   romanian_deadlift: 'round', single_leg_romanian_deadlift: 'round', mountain_climbers: 'hike', dumbbell_bench_press: 'arch',
   dumbbell_biceps_curl: 'wrist-bend',   // drawable false: the bent wrist (c6), not the drawn 'elbows' (D-LIB8M-TF1 4)
+  triceps_pushdown: 'lean', rope_triceps_pushdown: 'lean', upright_row: 'chin', pec_fly: 'short', plank: 'sag',   // 6259314475
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const builtTempo = (rows: any[], t: any) => rows.filter(r => !(r.from === 'pause' && !(t.pause > 0)))
   .map(r => { const s = 'constant' in r ? r.constant : t[r.from]; return r.move ? { phase: r.phase, s, move: true } : { phase: r.phase, s }; });
 
 describe('LIB-8M A7: card keys and the tempo map', () => {
+  it('every pinned id has a ruled topFault', () => { expect(Object.keys(TOPFAULT).sort()).toEqual([...PINNED].sort()); });
   const map = JSON.parse(read('tools/plates/library/pilot-a/tempo.json')).rows;
   it('tempo.json has one row list per pinned id; every constant has a claim and a verbatim quote of that claim', () => {
     expect(Object.keys(map).sort()).toEqual([...PINNED].sort());

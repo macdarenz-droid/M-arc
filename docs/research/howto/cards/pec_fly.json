@@ -588,5 +588,8 @@
     "remove": [],
     "why": "chest primary is sourced (c10: ACE EMG and Pinto 2025 pec deck hypertrophy). front_delts secondary matches exercises.json but rests only on a free-weight chest fly study (c11, MECH/WEAK); kept, flagged weak."
   },
-  "anchorSource": "ace-top3-chest"
+  "anchorSource": "ace-top3-chest",
+  "plateFacts": [],
+  "tempo": [{"phase":"Close","s":2,"move":true},{"phase":"Hold","s":2},{"phase":"Open","s":2,"move":true}],
+  "topFault": "short"
 }

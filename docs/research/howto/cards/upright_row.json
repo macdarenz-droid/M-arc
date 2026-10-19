@@ -607,5 +607,8 @@
     "remove": [],
     "why": "Library primary side_delts, upper_traps and secondary biceps match (c7, c8). Add front_delts as secondary: StrengthLog names them (c8)."
   },
-  "anchorSource": "lesmills-upright-row"
+  "anchorSource": "lesmills-upright-row",
+  "plateFacts": [],
+  "tempo": [{"phase":"Pull","s":1,"move":true},{"phase":"Lower","s":2,"move":true}],
+  "topFault": "chin"
 }
