@@ -321,6 +321,7 @@ G (gaps) = none so far; D = the five keys. Both are restated here after the crit
 - scripts/screenshot-gate.mjs: one block `if (gate.runs('LIB-7c')) { … }` inserted before `await gate.done();` (:9453).
 - tests/gate-split.test.ts:55: 104 → 105, with "+ LIB-7c".
 - scripts/gate-times.json: one "LIB-7c" entry, measured as 11.1 item 16 (b).
+- tests/howto/library-lint.test.ts, the five D-LIBHANDS-COUNT lines (lib4-cards §20; "a card that adds hand modules raises these five lines"): hands 13 → 17 (3 + 14 fault entries), 10 → 14, the title, the 7 sorted modules, [10, 10] → [14, 14]. LIB-7c adds 4 fault entries (bar: hang, row, pulldown; v-handle: pull).
 - Nothing else outside the new files, this §10 and appended D-LIB7c-* entries in docs/COACHING-DECISIONS.md.
 - Known reds until #193's D-LIB12FIX-ORDER head is merged: lib7-fix.test.ts F1 (:74) and PK2 expect `[CHROME_WORDS, wordsFileOf(k)]` in sort order, and `words/bar-*.json` sorts before chrome.json.
 
