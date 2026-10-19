@@ -419,3 +419,25 @@ describe('LIB-5 S5 (Do 9): the app renders the back box', () => {
     expect(wrist).not.toEqual(lines);
   });
 });
+
+describe('LIB-5 D-LIB5-TWIN (Do 9): the HT-9 twin knows the back box', () => {
+  const TWIN = join(ROOT, 'tools/plates/library/fidelity/twins/ht9.mjs');
+  /** The twin's FLAG keys, and whether its esbuild entry re-exports red-flag-back.ts, read from its text. */
+  const twinOf = (t: string) => ({
+    keys: [...(t.match(/const FLAG = \{([^}]*)\};/)?.[1] ?? '').matchAll(/(\w+): C\.RED_FLAG\w*/g)].map(m => m[1]).sort(),
+    reexport: /export \* from \$\{JSON\.stringify\(join\(root, 'src\/howto\/red-flag-back\.ts'\)\)\}/.test(t),
+  });
+  const riskJoints = () => [...readFileSync(join(ROOT, 'src/howto/content-types.ts'), 'utf8').match(/export type RiskJoint = ([^;]+);/)![1]!.matchAll(/'(\w+)'/g)].map(m => m[1]).sort();
+  const risksKeys = () => [...readFileSync(join(ROOT, 'src/slices/howto/sections/Risks.tsx'), 'utf8').match(/const FLAG[^=]*= \{([^}]*)\};/)![1]!.matchAll(/(\w+): RED_FLAG\w*/g)].map(m => m[1]).sort();
+  it('FLAG keys === RiskJoint === Risks.tsx FLAG keys, and the entry re-exports red-flag-back.ts', () => {
+    const t = twinOf(readFileSync(TWIN, 'utf8'));
+    expect(riskJoints()).toEqual(['back', 'elbow', 'knee', 'shoulder', 'wrist']);
+    expect([t.keys, risksKeys()]).toEqual([riskJoints(), riskJoints()]);
+    expect(t.reexport).toBe(true);
+  });
+  it('mutations, each red: back dropped from FLAG; the re-export dropped', () => {
+    const src = readFileSync(TWIN, 'utf8');
+    expect(twinOf(src.replace(', back: C.RED_FLAG_BACK', '')).keys).not.toEqual(riskJoints());
+    expect(twinOf(src.replace("export * from ${JSON.stringify(join(root, 'src/howto/red-flag-back.ts'))};\\n", '')).reexport).toBe(false);
+  });
+});
