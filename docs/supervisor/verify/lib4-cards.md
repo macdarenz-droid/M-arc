@@ -3978,3 +3978,57 @@ D-LIBHANDS-COUNT (as ruled on #193 6257376224 and amended by 6257562588; applied
 - Mutation: remove a hand module that has fault entries (LIB-7: hand-rope.mjs; LIB-12: hand-palm-flat.mjs); each line that depends on it turns red.
 
 - Also ruled on #109 (01:1x): D-LIB8M-O5GATE-2 (c15-stamps.test.ts:52 input becomes a complete real stamp; bare entry pinned in lib8-stamps.test.ts) and D-LIB8M-MISTAKEPARTS, D-LIB8M-DEG, -NOFACTS, -SLRDLLINE (comments 6257604182, 6257123813, 6257000888). R-LB2-27 merged (#268, research f57e7944).
+
+## 21. Pilot A critic panel and TOPFAULT (D-LIB8M-CRIT1, D-LIB8M-TF1, 2026-10-19 ~02:40 UTC; #109 @ `83735ab`)
+
+### 21.1 Critic panel (D-LIB8M-CRIT1)
+**What ran.** 13.5's calibrated panel: 3 fresh Opus critics on 9 plates, page sha256 `06d427a2…` rebuilt at `83735ab` (equal to #109's).
+- The 5 redraws: triceps_pushdown, dumbbell_biceps_curl, rope_triceps_pushdown, dumbbell_shoulder_press, incline_dumbbell_press.
+- Hidden anchors: pull_up and lat_pulldown, on golden B's own facts (13.7's facts diff done before the round: lat_pulldown.mjs:19, :70, :163-166; pull_up.mjs:112-120).
+- Plants, both passing every hard check: the curl's 'Elbows at sides' leader moved to the shoulder (R4); triceps_pushdown's 'Leaning over' Mistake drawn leaning back (R5).
+
+**Calibration: VALID.**
+- Both plants caught on their target items: curl R4 [2, 2, 2]; pushdown R5 [2, 2, 2].
+- Each anchor has one low item, R2 [3, 3, 4], every other item 4 or more. The supervisor confirmed both on the PNGs (13.5's one-item exception):
+  - pull_up: the bar bracket ends in a wall plate with no wall, upright or floor line (dark.png x 365-494, y 118-185).
+  - lat_pulldown: the thigh roller at (385, 512) has no post, and the seat base (x 228-362) is not joined to the tower base (x 458 on).
+  - Both are golden-B follow-ups in HANDOVER. Rounds 13.7 and 13.8 scored R2 at 4 or more; the defects are real on the PNGs, so this panel is accurate, not harsh.
+
+**Result** (medians; R8 and R9 unscored, 13.1):
+- Pass on every scored item: triceps_pushdown (R1 5, R2 5, R3 5, R4 4, R5 4, R6 5, R7 4), dumbbell_biceps_curl (4, 5, 5, 5, 4, 5, 5), rope_triceps_pushdown (5, 4, 5, 5, 4, 5, 4), dumbbell_shoulder_press (4, 4, 5, 5, 4, 4, 4, R10 5).
+- incline_dumbbell_press R5 [4, 3, 3] (the rest 5; R10 4): 'LOW BACK ARCHES' is a red dashed half-dome over the belly (mistake-dark.png x 313-390, y 467-535) with an arrow from (350, 512) to (375, 480). The low back never leaves the pad, so it reads as a belly, not an arch. Confirmed on the PNG.
+- **Fix (card Do 10, round 1).** In the Mistake only: remove the dome. Draw the red dashed back outline in the approved Mistake style (plank 'LOW BACK SAGS'): it leaves the pad just below the shoulder blades (about (300-318, 455-462)), rises about 18-20 px off the pad at the lumbar spine (about (361-364, 482-491)) and meets the pad again at the buttock (about (400, 548-555)), leaving a visible gap of background between back and pad. The arrow runs perpendicular to the pad from inside that gap to the peak. 'HIPS TIP' stays as drawn. Shoulder (316, 433) and hip (420, 519) stay, so every measured segment is kept (trunk 134-135 px). The tells (keys, labels, cues, order) stay byte-identical, so 21.2's 'arch' answer stands. Every hard check passes; Do 9 re-runs for it.
+
+### 21.2 TOPFAULT @ `f57e7944`, plate head `83735ab` (D-LIB8M-TF1)
+**What ran.** D-LIB5-TOPFAULT's blind pass (OPEN-3), once per pinned id, each a fresh Opus agent reading one input file: the card's fault, its claim ids and verbatim quotes, and the plate's Mistake tells (key, label, cue) shuffled, with no firstKey. The 14 cards equal `f57e7944`'s blobs. The answers were posted on #109 before any comparison.
+
+| id | answer | ruling |
+|---|---|---|
+| incline_dumbbell_press | arch | topFault 'arch' |
+| dumbbell_shoulder_press | behind | topFault 'behind' |
+| barbell_overhead_press | elbows | topFault 'elbows' |
+| barbell_row | swing | topFault 'swing' |
+| romanian_deadlift | round | topFault 'round' |
+| single_leg_romanian_deadlift | round | topFault 'round' (D-LIB8M-SLRDL branch (b)) |
+| mountain_climbers | hike | topFault 'hike' |
+| dumbbell_bench_press | arch | stop: differs from firstKey 'hips' (point 2) |
+| triceps_pushdown | several: lean, arch | stop (point 3) |
+| rope_triceps_pushdown | several: lean, arch | stop (point 3) |
+| upright_row | several: chin, elbows | stop (point 3) |
+| pec_fly | several: apart, short | stop (point 3) |
+| plank | several: sag, drop | stop (point 3) |
+| dumbbell_biceps_curl | none (drawable:false; top fault: wrists bending, c6) | point 4 |
+
+**Rulings.**
+1. The seven single-key answers equal their firstKey: Do 7 writes them as topFault.
+2. dumbbell_bench_press: the card's fault is the low-back arch; the plate's first tell is the hip lift. The plate follows the card (D-LIB8M-CARDTRUE, as D-LIB8M-SLRDL does): reorder the Mistake tells so 'arch' is first. If keys, labels and cues stay byte-identical, the blind inputs are unchanged and the posted 'arch' stands (no new pass). If the pose or any tell text must change, it is a redraw under point 3. It joins the critic recheck and Do 9. Report it on #245 (CARDTRUE) and for LIB-10 (D-LIB10-PA reuses this plate).
+3. The 5 'several' ids: on each plate both tells name the card's one fault (the same fault said twice, or the card's fault split in two), so the plate does not say which drawn tell is the card's fault. The plate follows the card (CARDTRUE):
+   - Redraw the Mistake tells, and the pose only where needed, so exactly one tell names plate.mistake.what's fault and is first. A second tell, if kept, names a different fault from the card's handlingMistakes that the pose shows. Never edit a card; every hard check passes.
+   - Then Do 9 for the id, the critic recheck, and one fresh blind pass on the redrawn tells at the new plate head (card L6: TOPFAULT is read on the redrawn tells). That pass is final: 'none', 'several' or a key that differs from firstKey holds the id (CARDTRUE: stage review, off the page and the pin, on the follow-up list). The first answers stay posted; no pass is ever repeated on the same tells.
+   - For these 5 the recheck is their first critic run, so plan 3.4's one fix round and one recheck apply. For incline_dumbbell_press the recheck is its second run, and a second fail goes to the supervisor.
+4. dumbbell_biceps_curl (drawable:false since R-LB2-27): no tell names the bent wrist, so OPEN-3 needs a ruled key. topFault is 'wrist-bend', citing c6 (as D-LIB8M-SLRDL (a) ruled 'hip-open'; the key is unused at `83735ab`). The CARD FIELDS verifier checks it differs from the drawn 'elbows' (Q1's drawable:false check). F7 stays raised: the curl joins the expected flag set as a drawable-fault plate ("bent wrist, c6, not visible side-on; R-LB2-27") and needs the owner's named yes on the sheet. The plate is unchanged.
+5. single_leg_romanian_deadlift is branch (b): drawable true, F7 not raised, not a redraw. The supervisor makes the plan amendments on claude/howto-options (3.1:85 and :155, 3.3:303, 6.1:646), and adds the curl as a drawable-fault plate in the same docs action.
+6. Card amendments: A4 reads "F7 is not raised, except on dumbbell_biceps_curl (D-LIB8M-TF1 4)"; A4's redraw set adds the point 2 and point 3 ids; the note's expected flag set (Do 5 e) adds F7 on dumbbell_biceps_curl.
+7. Order: one fix round holding the incline fix and the points 2 and 3 redraws, then 'PILOT A FIX READY @ <sha>'. The supervisor then runs the blind pass (point 3) and one calibrated recheck on every changed plate (2 anchors, 2 plants). Meanwhile Do 7 may write the keys for the 8 settled ids (points 1 and 4, plus the bench if point 2 is a pure reorder); one CARD FIELDS verify covers all 14 at the end.
+
+**Why nothing is loosened.** F7, OPEN-3's stop answers and its no-repeat rule stand: no stopped id gets a key from its first answer, and each new pass reads new tells only. Each redraw follows the card, never the reverse, and passes every hard check, Do 9 and the critic. A plate that still fails is held, not exempted.
