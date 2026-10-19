@@ -1133,6 +1133,44 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
 - **Scratch tooling:** critic-pa{,2,3}, topfault-pa{,2,3}, cfpa{,2}. Answer keys and plants are in *-private/ or the *-plant.txt files, never in shared files.
 - **Owner:** nothing is owed now. The pilot A sheet will carry the curl's F7 question (D-LIB8M-TF1 4) and the measured flags.
 
+**Update ~09:00 UTC (10-19).** Cards branch `claude/sup-lib4-cards` @ `fa3ce1a6`.
+- **Pilot A (#109):**
+  - @`9f656cc`: 13 pinned (incline held). Do 9 passes every hard check on all 13, Do 11 carry is proven, and CARD FIELDS carries (the docs/research diff is empty).
+  - **The sheet went to the owner at 07:1x** (@`48d49bb`, page `43a264e5…`, sheet `7e5deff7…`, reproduced byte-identical). It asks for OK, or names of plates to change, plus a named yes on F1, F2, F3, F4 and F7. No answer yet.
+  - PIN GO waits for: the owner's answers; LIB-7b; LIB-12 on main and merged in; LIB-12's R8 hand panel.
+  - LIB-8M is WAITING.
+  - **D-LIB8M-RPC (b):** #109's source-gate went red twice on `[vitest-worker]: Timeout calling "onTaskUpdate"`. That is a real defect, so there are no more re-runs. The root cause is library-ci D-LIB4c-3, which calls execFileSync generate 4 times, longer than vitest's 60 s birpc limit. The fix goes through VITEST-RPC.
+- **VITEST-RPC** (card `a2f0da69`; CI-health lane, no LIB slot): session_01XobygLfvdTDCUZASfA2C8E on claude/vitest-rpc. Next is its 'VITEST-RPC NOTE READY', then the ruling.
+- **LIB-7-FIX #193:**
+  - review PASS @`a8ec1a6`;
+  - D-LIB12FIX-ORDER fix @`9c70344`, delta review PASS.
+  - It rides its train after #181.
+- **LIB-12-FIX #191** (session_01JQUfc9aqCRBZPa3TJ22Zcp): the words note @`c99cb66` (merged #193 `9c70344`) passed the supervisor's look. Next:
+  1. its Do 11 critic head;
+  2. the calibrated R8 hand panel on LIB-12's 12 drawn ids (hands/DESIGN.md §5, sheet.mjs --plant);
+  3. the cupped and front-rack scores to the owner.
+- **LIB-7c #271** (session_01StPqb429KznqycToN9K17p; claude/lib-7c-lb1-hands from `a8ec1a6`): starts by reference (D-LIB7c-STARTREF, lib4-cards 23 @`f579d20e`). Its note @`a88daef` was accepted. Next: Do 4-8, then its panel.
+- **LB2 / LIB-10 #265:**
+  - CARD FIELDS VERIFIED @`ccbe6f5` (lib4-cards 22; the D-LIB8M-FACTS scope is exact).
+  - Do 8 QA @`2dcbac1`.
+  - Panel 1 (lib4-cards 24, D-LIB10-PANEL1: golden-B anchors until pilot A is pinned) is VALID: 5 plates approved @`2dcbac1` (6263322398).
+  - LIB-10 is **WAITING @`2dcbac1`**. incline_barbell, arnold and the incline_dumbbell redraw wait for pilot A on main.
+  - Advisory: the pilot A report's "nothing under a label" check fails on bench, decline and pullover, while LB2's own QA passes. This is decided after #109 merges.
+  - golden-B follow-ups 16 and 17 stand (8.0n ~03:25).
+- **LB3 research** (brief lb3-research-card.md @`08e9234c`): session_01UnpUkKrqrJbEAKHWNwjLAv on claude/libht-research-lb3. It holds no slot. It covers the 10 non-pilot LB3 cards (readiness, LR-31, LR-33), followed by an LR-29 verify by hand.
+- **HT-11 started** (card ht-11-card.md @`fa3ce1a6`; no card existed before). Library plan 5.1 says HT-11 must merge before LB3, and LIB-13 depends on HT-11 and LIB-10.
+  - Builder session_019fSiZ166dkvKgzrqiZ7BWf, on claude/ht-11-delta from main `565ea5a4`.
+  - Do 0 (design note) comes first, then 'HT-11 NOTE RULED'.
+- **Lanes (4 of 4 active):** LIB-5 Do 9 #270, LIB-7c #271, LIB-12-FIX #191, HT-11.
+- **WAITING:** LIB-10 (pilot A on main), LIB-8M (owner sheet), LIB-6-PM #181 @`7215896` (LIB-5 Do 9), LIB-7-FIX (merge order).
+- **Next for the supervisor:**
+  - rule the HT-11 note and the VITEST-RPC note;
+  - review LIB-5 Do 9 when READY, then its train, then LIB-6-PM Do 7;
+  - run the R8 panel when LIB-12-FIX posts its critic head;
+  - verify LB3 by hand when it is READY, then draft the LIB-13 card;
+  - sheet cosmetics for the next rebuild: capitalise the held lines, and write the F5 line in plain words.
+- **Merge order:** unchanged (LIB-5 Do 9 → LIB-6+PM → LIB-7+FIX → LIB-7b → LIB-12+FIX → LIB-8M → LIB-5v → LIB-7c → LB1). HT-11 merges before LIB-13.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
