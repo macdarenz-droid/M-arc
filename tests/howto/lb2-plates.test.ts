@@ -674,3 +674,86 @@ describe('LIB-10 A11 and A6 (Do 6): the card fields, the ruled tempo map and the
     expect(cardOf('dumbbell_pullover').plateFacts.some((x: any) => x.claim === 'c8')).toBe(false);
   });
 });
+
+describe('LIB-10 A4: runQa node half on an LB2 plate (lib_close_grip_bench_press), LIB-3 M1-M7 and a colour literal', { timeout: T }, () => {
+  const ID = 'lib_close_grip_bench_press';
+  let build: any, cand: any, muts: any, golden: any, mirror: any, E: any, all: any, html: string;
+  beforeAll(async () => {
+    [build, cand, muts, golden] = await Promise.all(['lb2/build.mjs', 'candidate.mjs', 'qa/mutations.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    mirror = golden.makeMirror(); E = await qaEng.loadEngine(mirror); all = build.lb2All();
+    html = (await build.buildLb2Page({ all, ids: [ID] })).html.toString('utf8');
+    return () => qaEng.dropMirror(mirror);
+  }, T);
+  const node = (r: any) => qaIdx.HARD.flatMap((h: string) => r.hard[h].problems.map((p: any) => p.key)).filter((k: string) => k !== 'browser:not-run');
+  const qa = async (c: any) => qaIdx.runQa(c, { engine: E, pins });
+  const candOf = (page = html) => cand.candidateOf(ID, { all, platesHtml: page, engine: E, authoring: true });
+  const M = (id: string) => muts.SPEC_MUTATIONS.find((m: any) => m.id.startsWith(`${id} `));
+  // A spec mutation built the way the page builds it: a scratch module that imports the real spec and applies fn.
+  const mutated = async (fn: string, arg: any = null) => {
+    const dir = mkdtempSync(join(tmpdir(), 'lb2-mut-')), file = join(dir, 'close_grip_bench_press.mjs');
+    writeFileSync(file, `import s from ${JSON.stringify(lib('specs/close_grip_bench_press.mjs'))};\nconst fn = ${fn};\nexport default fn(s, ${JSON.stringify(arg)});\n`);
+    try {
+      const spec = (await import(/* @vite-ignore */ `file://${file}`)).default;
+      const cid = (await import(/* @vite-ignore */ lib('plates-page.mjs'))).cardIdOf(all.find((r: any) => r.id === ID));
+      const { html: h } = await (await import(/* @vite-ignore */ lib('build-page.mjs'))).buildPlatesPage({
+        groups: [{ id: 'lb2', title: 'LB2', ids: [cid] }], sources: { [cid]: ['mutation'] }, specs: { [cid]: file } });
+      return { ...(await candOf(h.toString('utf8'))), spec };
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  };
+  it('clean: no node-half problem, and the only raised flags wait on the browser half (F2, F5)', async () => {
+    const r = await qa(await candOf());
+    expect(node(r)).toEqual([]);
+    expect(qaIdx.FLAGS.filter((f: string) => r.flags[f].raised && !['F2', 'F5'].includes(f))).toEqual([]);
+  });
+  it('A4 M1 a label 1 px onto the figure (the ribs callout) turns PQ-H1 red; 1 px back is clean', async () => {
+    const c0 = cg.callouts.find((x: any) => x.key === 'ribs'), at = (box: any) => ({ ...cg, callouts: cg.callouts.map((x: any) => (x.key === 'ribs' ? { ...x, box } : x)) });
+    let hit: any = null;
+    for (const [dx, dy] of [[0, -1], [1, 0], [-1, 0], [0, 1]]) {
+      for (let d = 1; d <= 80 && !hit; d++) {
+        const box = { left: c0.box.left + dx! * d, top: c0.box.top + dy! * d }, is = plate.renderPlate(at(box), { id: 'm' }).report.issues;
+        if (is.some((i: string) => !i.startsWith(`figure:${c0.text}`))) break;
+        if (is.length) hit = { box, clean: { left: box.left - dx!, top: box.top - dy! } };
+      }
+      if (hit) break;
+    }
+    expect(hit).toBeTruthy();
+    expect(plate.renderPlate(at(hit.clean), { id: 'm' }).report.issues).toEqual([]);
+    const c = { ...(await candOf()), spec: at(hit.box) };
+    expect(node(await qa(c)).some((k: string) => k.startsWith('H1.engine:normal:figure:'))).toBe(true);
+  });
+  it('A4 M2 a contact 1 cm off (the bench-pad plane under the buttock moved 1.1 cm along its normal) turns PQ-H1 red', async () => {
+    const shift = (s: any) => ({ ...s, checks: s.checks.map((k: any) => {
+      if (k.landmark !== 'buttock' || !k.plane) return k;
+      const n = k.plane.normal, L = Math.hypot(...n);
+      return { ...k, plane: { ...k.plane, point: k.plane.point.map((v: number, i: number) => v + n[i] / L * 0.011) } };
+    }) });
+    const c = { ...(await candOf()), spec: shift(cg) };
+    expect(node(await qa(c)).some((k: string) => /^H1\.engine:normal:check:/.test(k))).toBe(true);
+  });
+  it('A4 M3 a Trace below the minimum turns PQ-H3 red', async () => {
+    const a = M('M3').prepare(E, cg, pins.envelope);
+    const c = await mutated('(s, a) => ({ ...s, trace: { ...s.trace, trim: [s.trace.trim?.[0] ?? 8, a.t] } })', a);
+    expect(node(await qa(c))).toContain('H3.trace');
+  });
+  it('A4 M4 the Mistake equal to the end pose turns PQ-H3 red', async () => {
+    const c = await mutated('s => ({ ...s, mistake: { ...s.mistake, pose: {}, parts: undefined } })');
+    expect(node(await qa(c))).toContain('H3.mistake-outline');
+  });
+  it('A4 M5 the start equal to the end pose turns PQ-H3 red', async () => {
+    const c = await mutated('s => ({ ...s, poses: { ...s.poses, start: s.poses.end, via: [] } })');
+    expect(node(await qa(c))).toContain('H3.start-is-end');
+  });
+  it('A4 M6 an unapproved type (rackUpright) as a moving line part turns PQ-H9 red', async () => {
+    const extra = (lm: any, ctx: any) => ({ type: 'rackUpright', at: [0.5, 0, ctx.pose === 'mistake' ? -1.3 : -1.22], h: 0.5 });
+    const c = { ...(await candOf()), spec: { ...cg, equipment: [...cg.equipment, extra] } };
+    expect(node(await qa(c)).some((k: string) => k.startsWith(`H9.moving-line:eq${cg.equipment.length}.rackUpright.`))).toBe(true);
+  });
+  it('A4 M7 an unknown equipment type turns PQ-H9 red', async () => {
+    const c = { ...(await candOf()), spec: { ...cg, equipment: [...cg.equipment, { type: 'rope3d', at: [0, 0, 0] }] } };
+    expect(node(await qa(c)).some((k: string) => k.startsWith('H9.type:'))).toBe(true);
+  });
+  it('A4 a colour literal turns PQ-H2 red (H2.colour)', async () => {
+    const m = muts.CANDIDATE_MUTATIONS.find((x: any) => x.id.startsWith('M9 '));
+    expect(node(await qa(m.apply(await candOf()))).some((k: string) => k.startsWith('H2.colour:'))).toBe(true);
+  });
+});
