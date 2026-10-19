@@ -1245,7 +1245,7 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
 - **Train 31 merged** (#280 → `7307b30`): VITEST-RPC, the vitest RPC timeout fix. It changes tests only, so no APK. LIB-12-FIX and LIB-8M are told to merge main at their next push.
 - **LIB-ZOOM (#279):**
   - Panel VALID; horizontal_leg_press APPROVED @ `9fbdfb5` (lib4-cards 26 @ `fcc43fde`; golden-B follow-up 19).
-  - Rebased on #245 `9e5d966` by a merge and pushed `f0dc516`.
+  - Merged #245 `9e5d966` in (merge commit) and pushed `f0dc516`.
   - Its container was reclaimed during a local gate, so it was nudged at 17:05 to re-run, merge main and post READY.
 - **LB1 (#245):** MAIN565 FIXED @ `9e5d966` accepted. The root cause was LIB-3c's h10 ctx (a test-only fix). The HLP row is dropped. LIB-9a is WAITING (slot 8).
 - **LIB-13 LB3 (#274):** CARD FIELDS VERIFIED @ `eced1c1` (focused re-verify; plant caught). Two tightenings are asked: one_arm end-pose contacts and the sumo Q2 range test. The session had been idle since 14:57 (container reclaimed) and was nudged at 17:05.
