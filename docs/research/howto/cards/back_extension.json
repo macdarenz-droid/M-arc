@@ -461,6 +461,23 @@
           "where": "How to Do Back Extensions"
         }
       ]
+    },
+    {
+      "id": "c22",
+      "text": "The back extension can be done on a mat or bench, or on a back extension machine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "The back extension exercise can be performed on a mat or bench, or using a back extension machine.",
+          "where": "Back Extension Variations"
+        }
+      ]
     }
   ],
   "plate": {
@@ -519,7 +536,7 @@
       ],
       "text": "Pause 1 s at the top: StrengthLog's \"Hold this position for a second\" (c8) is right after the lift and gives its seconds (LR-33); Physitrack's \"Hold briefly\" agrees. Up 1 and down 2 are drawing values for StrengthLog's \"slowly lower your upper body\" (c8); no source gives their seconds, so c21 (WEAK) names them a drawing convention."
     },
-    "variantLine": null
+    "variantLine": "Drawn: body weight on the 45-degree back-extension bench (Roman chair), pad on the upper thighs (c1, c4, c15); StrengthLog calls this bench a back extension machine (c22), so the library's \"Bodyweight / Machine\" is covered when \"Machine\" means it, and the card's claims hold for it. If \"Machine\" means the seated back-extension machine, only c15 covers it: the same lower-back work as the Roman chair, less glute and hamstring work. No read source gives that machine's setup or technique, so it is in gaps."
   },
   "grip": {
     "type": "No grip: arms crossed over the chest, or hands behind the head.",
@@ -773,5 +790,8 @@
     "StrengthLog, the anchor, also offers a \"roll-up\" version (\"creating a rolling or wave-like motion in your spine\"). The card follows FitnessVolt's stiff-spine version (\"there should be minimal to no back rounding\", c6), because rounding is more dangerous with added weight (c19); compare LR-18.",
     "Foot width: the card follows StrengthLog and Physitrack (shoulder width, c3); FitnessVolt sets the feet roughly hip width apart.",
     "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): no hand contact and no palm direction are drawn as grip facts: the arms are crossed over the chest or the hands are behind the head (c4), and the drawn arm and hand pose is a drawing convention."
+  ],
+  "gaps": [
+    "Seated back-extension machine (the library's \"Machine\", if it means this kind): no read source gives its setup, seat or pad position, range or technique; only c15 (Andersen 2021) measures its muscle work. Nothing is written for it (R-LB3-9)."
   ]
 }

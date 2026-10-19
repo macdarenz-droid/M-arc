@@ -19,6 +19,7 @@ Record of the LR-29 verify of the 10 LB3 non-pilot cards (#272) and its one fix 
 - R-LB3-6: back_extension c17 (mayer1999) is cited on setup[2] (hands behind the head is harder). conventional_deadlift c16 (lee2018) is cited on feel.primary glutes.
 - R-LB3-7: every other finding takes the critic's fix as written (table below). conventional_deadlift's tempo.text names the bottom dead start with no seconds; pause stays 0.
 - R-LB3-8: one round only.
+- R-LB3-9 (supervisor, during the fix round): back_extension's plate.variantLine was null while its library row says "Bodyweight / Machine" (D-LIB5-VARIANT). It now names the drawn 45-degree bench with body weight. A new claim, c22 (StrengthLog: "The back extension exercise can be performed on a mat or bench, or using a back extension machine.", re-fetched by curl, verbatim), says that bench is a back extension machine. Only c15 covers the seated back-extension machine, so its setup and technique are in gaps.
 
 ## Fix round checks
 - Valid JSON: all 20 files.
@@ -103,4 +104,5 @@ All fixes are in the fix-round commit named on #272 as "LB3 RESEARCH FIXED".
 | sumo_deadlift-3 | low | c17 gains the "Everything from your foot angle ... requires attention and practice." quote |
 | sumo_deadlift-4 | low | inherit[4] points at plate.equipment |
 | sumo_deadlift-5 | low | rankNote: StrengthLog deadlift and NHS hits set aside (R-LB3-2) |
+| R-LB3-9 | ruling | back_extension variantLine written; c22 added; seated machine in gaps |
 | sumo_deadlift-6 | low | breath line (R-LB3-3 wording); notes: conflict with c10's breath-hold cue |

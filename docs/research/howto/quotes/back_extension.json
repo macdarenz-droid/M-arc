@@ -301,6 +301,13 @@
       "text": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position.",
       "status": "verbatim",
       "closest": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position."
+    },
+    {
+      "claim": "c22",
+      "source": "sl-back-extension",
+      "text": "The back extension exercise can be performed on a mat or bench, or using a back extension machine.",
+      "status": "verbatim",
+      "closest": "The back extension exercise can be performed on a mat or bench, or using a back extension machine."
     }
   ],
   "sources": [
