@@ -127,3 +127,12 @@ trace sits inside its circle; the build clips it to the circle.
 - horizontal_leg_press: `zoom: { view: 'mistake', k: 2 }`. The deviation is 8.17 px at plate scale and 16.34 px in the
   zoom. Renders: `evidence/built-hlp-{paper,silent-black}.png` (leg_press normal and Mistake, then horizontal_leg_press
   normal and Mistake).
+
+## Rows and approval
+
+- **Rows:** horizontal_leg_press lives in `zoom/rows.json`, not LB1's rows. LB1 held the row out (D-LIB9a-MAIN565,
+  D-LIBZOOM-HLP), and the LB1 page bytes are unchanged.
+- **Build and QA:** `node tools/plates/library/zoom/build.mjs` builds the zoom page and runs the authoring QA on it,
+  node and browser halves.
+- **Approval:** the recheck panel approved the plate @ `9fbdfb5`. Its 9 fragment sha256s are pinned in
+  `zoom/approved.json`, and `lib-zoom.test.ts` checks them on the zoom page.
