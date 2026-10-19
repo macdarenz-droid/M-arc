@@ -482,6 +482,24 @@
           "where": "Non-urgent advice, list"
         }
       ]
+    },
+    {
+      "id": "c22",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
     }
   ],
   "plate": {
@@ -498,12 +516,16 @@
       },
       {
         "label": "Chest up",
-        "what": "Chest up and back straight; the trunk is more upright than conventional.",
-        "claim": "c13"
+        "what": "Chest up, back straight. Trunk more upright than conventional.",
+        "claim": [
+          "c13",
+          "c15",
+          "c4"
+        ]
       },
       {
         "label": "Legs drive first",
-        "what": "Push the floor with the legs to break the bar; hips do not rise first.",
+        "what": "Legs push to break the bar. Hips don’t rise first.",
         "claim": "c11"
       }
     ],
@@ -511,7 +533,8 @@
       "what": "Hips shoot up before the bar leaves the floor, tipping the chest forward.",
       "why": "Named a common sumo mistake: lifters shoot the hips up to lift with the back (c12).",
       "claim": "c12",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the hips shooting up first (c12). BarBend's Hips Rising Early item says \"To compensate, many athletes shoot their hips up in an attempt to lift with their backs.\": a frequency word for this fault of the sumo deadlift. No other fault passes step 1. Set aside: \"Here are some of the most common errors that befall sumo deadlifters.\" is a list sentence; \"the conventional deadlift is often fast off the floor\" is another exercise; \"most people can lift a bit more weight\", \"the sumo deadlift usually allows for a heavier load\" and \"for most people, sumo deadlifts create a slight leverage advantage\" are about the load; \"they’re often one of the key limiting factors\" is about the spinal erectors; \"the sumo deadlift is so common at powerlifting meets\" and Escamilla's \"Strength athletes often employ the deadlift\" are about the exercise; StrengthLog's \"the most common deadlift variation\" is another exercise. drawable stays true: hips high with the chest down is a still sign the side view shows. Pick unchanged."
     },
     "tells": [
       {
@@ -531,7 +554,8 @@
       "up": 1,
       "down": 2,
       "pause": 0,
-      "claim": "c21"
+      "claim": "c21",
+      "text": "Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c21, WEAK; LR-15); StrengthLog asks to lower \"with control\" and gives no seconds. Pause 0: no quote on the card asks for a pause right after the lift (LR-33)."
     },
     "variantLine": "Side view is drawn. The wide stance, turned-out feet and hands inside the knees (c1-c3) need the front view; they appear in text and setup, not on the plate."
   },
@@ -547,8 +571,11 @@
   },
   "setup": [
     {
-      "step": "Take a wide stance, toes out, bar over mid-foot, shins vertical seen from the front.",
-      "claim": "c1"
+      "step": "Wide stance, toes out, bar over mid-foot, shins vertical from the front.",
+      "claim": [
+        "c1",
+        "c2"
+      ]
     },
     {
       "step": "Grip the bar with arms inside the knees.",
@@ -563,7 +590,7 @@
       "claim": "c10"
     },
     {
-      "step": "Practise with light weight; add load in small steps.",
+      "step": "Practise with light weight. Add load in small steps.",
       "claim": "c18"
     }
   ],
@@ -577,7 +604,7 @@
       "claim": "c15"
     },
     {
-      "point": "Legs start the lift; hips do not rise first.",
+      "point": "Legs start the lift. Hips do not rise first.",
       "claim": "c11"
     },
     {
@@ -595,7 +622,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Hips shooting up so the back does the lift.",
+      "mistake": "Hips shooting up first.",
       "fix": "Be patient and keep driving with the legs.",
       "claim": "c12"
     },
@@ -605,7 +632,7 @@
       "claim": "c17"
     },
     {
-      "mistake": "Bar drifting away from the shins.",
+      "mistake": "Bar drifting off the shins.",
       "fix": "Chest up and keep the bar against the shins.",
       "claim": "c13"
     }
@@ -651,39 +678,42 @@
     ],
     "rows": [
       {
-        "where": "Front of the thighs as the bar leaves the floor",
-        "means": "Usually means the legs are driving the start, as sumo needs.",
+        "where": "Front thighs, off the floor",
+        "means": "The quads drive the start of the lift.",
         "fix": null,
         "claim": "c11",
         "redFlag": null
       },
       {
         "where": "Glutes and inner thighs",
-        "means": "Usually normal: the wide stance works the glutes hard; glutes and inner thighs work most in the low part of the lift.",
+        "means": "Glutes and inner thighs work hardest low in the lift.",
         "fix": null,
         "claim": "c8",
         "redFlag": null
       },
       {
-        "where": "Lower back taking over at the start",
-        "means": "Usually means the hips shot up first.",
-        "fix": "Be patient and keep driving with the legs.",
+        "where": "Lower back takes over early",
+        "means": "Fault: the hips shooting up first.",
+        "fix": "Stay patient and keep driving with the legs.",
         "claim": "c12",
         "redFlag": null
       },
       {
-        "where": "Back pain with pain or numbness in both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop.",
-        "claim": "c20",
+        "where": "Lower back pain while lifting",
+        "means": "Is it getting worse?",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c22",
         "redFlag": "back"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Sumo loads the lower back a little less (c5), but heavier weight can cancel that out (c6).",
-      "claim": "c5"
+      "risk": "Sumo loads the lower back a little less, but heavier weight can offset that.",
+      "claim": [
+        "c5",
+        "c6"
+      ]
     },
     {
       "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
@@ -708,16 +738,23 @@
     {
       "key": "sumo-start",
       "kind": "posture",
-      "right": "Chest up, trunk fairly upright, bar against the shins, back flat.",
+      "right": "Chest up, trunk upright, bar on the shins, back flat.",
       "wrong": "Hips high, chest down, bar away from the shins.",
-      "claim": "c13"
+      "claim": [
+        "c13",
+        "c4",
+        "c15"
+      ]
     },
     {
       "key": "sumo-liftoff",
       "kind": "posture",
-      "right": "Legs push first; hips and chest rise together.",
+      "right": "Legs push first. Hips don’t rise early.",
       "wrong": "Hips shoot up while the bar stays on the floor.",
-      "claim": "c12"
+      "claim": [
+        "c12",
+        "c11"
+      ]
     }
   ],
   "libraryDiff": {
@@ -738,7 +775,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "barbend-sumo",
@@ -748,7 +785,7 @@
       "year": 2025,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "escamilla2000",
@@ -758,7 +795,7 @@
       "year": 2000,
       "pmid": 10912892,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "sl-deadlift",
@@ -768,7 +805,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "cholewicki1991",
@@ -778,7 +815,7 @@
       "year": 1991,
       "pmid": 1758295,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "escamilla2002",
@@ -788,7 +825,7 @@
       "year": 2002,
       "pmid": 11932579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "hanen2025",
@@ -798,7 +835,7 @@
       "year": 2025,
       "pmid": 40497251,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "acsm2009",
@@ -808,7 +845,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-19"
     },
     {
       "id": "macdougall1985",
@@ -818,7 +855,7 @@
       "year": 1985,
       "pmid": 3980383,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "nhs-back-pain",
@@ -828,7 +865,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     }
   ]
 }

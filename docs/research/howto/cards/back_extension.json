@@ -139,7 +139,7 @@
     },
     {
       "id": "c6",
-      "text": "Hinge at the hips with the spine stiff and straight rather than rounding the back.",
+      "text": "Hinge at the hips with the spine stiff and straight rather than rounding the back; there should be minimal to no back rounding.",
       "tags": [
         "CONSENSUS"
       ],
@@ -150,6 +150,11 @@
         {
           "source": "fitnessvolt-back-extension",
           "text": "Use your core to stiffen your spine, keep your back completely straight, and focus on hinging at the hips to initiate the movement.",
+          "where": "Common Mistakes: Using too much back"
+        },
+        {
+          "source": "fitnessvolt-back-extension",
+          "text": "Therefore, there should be minimal to no back rounding.",
           "where": "Common Mistakes: Using too much back"
         }
       ]
@@ -403,19 +408,57 @@
           "where": "Non-urgent advice, list"
         }
       ]
+    },
+    {
+      "id": "c19",
+      "text": "Bend the upper body without rounding the back; rounding is more dangerous with added weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitnessvolt-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "fitnessvolt-back-extension",
+          "text": "you should be able to bend your upper body without rounding your back. Although, this is more dangerous when using additional weight.",
+          "where": "How far down should I go during 45-degree hyperextensions?"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Pad height at the hip crease, the hinge at the hips and the straight line at the top are front-to-back positions (c1, c5, c6); only the side view shows them.",
+    "viewWhy": "Pad height at the hip crease, the hinge at the hips, the rounded back (the top fault, c6, c19) and the straight line at the top are front-to-back positions (c1, c5, c6); only the side view shows them.",
     "equipment": "45-degree Roman chair (back extension bench, census need romanChair): hip pad at the top of the thighs just below the hip bones (c1, c2), foot plate with heel pad. Drawn bodyweight, arms crossed on the chest (c4).",
     "start": "Bottom: thighs on the pad, feet secured, knees slightly bent (c3); upper body hanging off the edge of the machine, arms crossed on the chest (c4), hinged at the hips with the torso slightly below parallel to the floor, back straight (c6, c7).",
     "end": "Top: shoulders, spine and hips in one straight line in line with the legs, glutes squeezed, no arch past straight (c5).",
     "checkpoints": [
       {
         "label": "Pad below hips",
-        "what": "Pad on the top of the thighs, below the hip bones, so the hips can bend.",
-        "claim": "c2"
+        "what": "Pad on the upper thighs, below the hip bones.",
+        "claim": [
+          "c2",
+          "c1"
+        ]
       },
       {
         "label": "Hinge at hips",
@@ -424,15 +467,19 @@
       },
       {
         "label": "Straight line",
-        "what": "Rise to a straight line from shoulders to hips; no arch past it.",
+        "what": "Rise to a straight line, shoulders to hips. No arch past it.",
         "claim": "c5"
       }
     ],
     "mistake": {
-      "what": "Pad set too high, so the back rounds (a crunch) instead of the hips bending.",
-      "why": "Listed first among common mistakes; the high pad turns the hinge into a rounding movement (c2).",
-      "claim": "c2",
-      "drawable": true
+      "what": "Back rounds over the pad instead of the hips hinging.",
+      "why": "The move is a hip hinge with minimal to no back rounding (c6); rounding is more dangerous when using additional weight (c19), and a pad set too high turns the hinge into a crunch (c2).",
+      "claim": [
+        "c6",
+        "c19"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the rounded back (c6, c19). The head's pick, the pad set too high (c2), is a pad setting, not a candidate (LR-31); the rounding it causes is. Step 1: no frequency word counts for a fault. Set aside: FitnessVolt's \"An uncooperative lower back that aches is often the result of, well, weak lower back muscles.\" (weak muscles, not a fault), \"Hyperextensions, especially loaded heavy, are often utilized by bodybuilders\" (the exercise) and \"Typically, 2-4 sets to failure, or 6-15 reps is a good range for most people.\" (the load); StrengthLog's \"a neutral spine position throughout the lift is often emphasized\" (other exercises) and \"we bend our spine all the time, and often under load\" (daily life). Step 2: two faults on FitnessVolt's common-mistakes list are tied to harm. Momentum: \"Not only are you increasing the risk of injury\" (c9). The rounded back: \"you should be able to bend your upper body without rounding your back. Although, this is more dangerous when using additional weight.\" (c19, FitnessVolt's depth answer). Both are on the list (rounding under \"Wrong hip pad height\" and \"Using too much back\": \"there should be minimal to no back rounding\", c6); one source ties each to harm; both are sourced directly; the list names rounding first, so it wins. If \"this is more dangerous\" is read as about the depth, not the rounding, momentum wins step 2; it is seen only as speed, so it is not drawable, and the plate would still draw the rounded back, first on the same list (step 3). Set aside as stating no harm: \"rounding your back too much, especially under heavy weight loads, is not recommended\" (c2) and Physitrack's \"do not over arch your lower spine\" (c5); StrengthLog's \"If you do too much, too soon, they can.\" (c12) is the training load. drawable true: the rounded back is a still sign the side view shows. Pick changed: handlingMistakes[0], the pad-height item, is reworded as the fault the sources name (R-LB2-12), with the pad cue kept in its fix."
     },
     "tells": [
       {
@@ -448,7 +495,8 @@
       "up": 1,
       "down": 2,
       "pause": 1,
-      "claim": "c8"
+      "claim": "c8",
+      "text": "Pause 1 s at the top: StrengthLog's \"Hold this position for a second\" (c8) is right after the lift and gives its seconds (LR-33); Physitrack's \"Hold briefly\" agrees. Up 1 and down 2 are drawing values for StrengthLog's \"slowly lower your upper body\" (c8); no source gives their seconds."
     },
     "variantLine": null
   },
@@ -464,7 +512,7 @@
   },
   "setup": [
     {
-      "step": "Set the pad on the top of your thighs, just below the hip bones.",
+      "step": "Pad on the top of your thighs, just below the hip bones.",
       "claim": "c1"
     },
     {
@@ -476,7 +524,7 @@
       "claim": "c4"
     },
     {
-      "step": "Start with body weight only.",
+      "step": "Start with body weight. Add weight after 12 to 15 good reps.",
       "claim": "c11"
     }
   ],
@@ -490,7 +538,7 @@
       "claim": "c7"
     },
     {
-      "point": "Rise to a straight line; squeeze the glutes.",
+      "point": "Rise to a straight line. Squeeze the glutes.",
       "claim": "c5"
     },
     {
@@ -504,17 +552,21 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Pad too high, so the back rounds instead of the hips bending.",
-      "fix": "Move the pad down below the hip bones.",
-      "claim": "c2"
+      "mistake": "Rounding the back.",
+      "fix": "Hinge at the hips. Set the pad below your hip bones.",
+      "claim": [
+        "c6",
+        "c19",
+        "c2"
+      ]
     },
     {
-      "mistake": "Swinging up and down with momentum.",
-      "fix": "Slow down; hold the top for a second.",
+      "mistake": "Swinging with momentum.",
+      "fix": "Slow down. Hold the top for a second.",
       "claim": "c9"
     },
     {
-      "mistake": "Arching the lower back at the top.",
+      "mistake": "Arching past straight.",
       "fix": "Stop at a straight line and squeeze the glutes.",
       "claim": "c5"
     }
@@ -545,30 +597,33 @@
     "rows": [
       {
         "where": "Glutes, hamstrings and lower back",
-        "means": "Usually means the hips are doing the hinge.",
+        "means": "These are the muscles it works.",
         "fix": null,
-        "claim": "c2",
+        "claim": "c14",
         "redFlag": null
       },
       {
         "where": "Pump or tiredness in the muscles",
-        "means": "Usually the normal feeling.",
+        "means": "This is the feeling you want.",
         "fix": null,
         "claim": "c13",
         "redFlag": null
       },
       {
         "where": "Deep ache in the lower back",
-        "means": "Usually means too much too soon (c12) or a form fault to revise (c13).",
+        "means": "Too much too soon, or a form fault to revise.",
         "fix": "Take a week or two off, then come back lighter.",
-        "claim": "c13",
+        "claim": [
+          "c13",
+          "c12"
+        ],
         "redFlag": null
       },
       {
-        "where": "Back pain with pain or numbness in both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop.",
-        "claim": "c18",
+        "where": "Lower back pain while lifting",
+        "means": "Is it getting worse?",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c20",
         "redFlag": "back"
       }
     ]
@@ -583,8 +638,8 @@
       "claim": "c9"
     },
     {
-      "risk": "A pad set too high turns the move into a crunch; rounding is especially unwise under heavy weight.",
-      "claim": "c2"
+      "risk": "Rounding the back is more dangerous with added weight.",
+      "claim": "c19"
     }
   ],
   "redFlags": [
@@ -594,9 +649,12 @@
     {
       "key": "bext-pad",
       "kind": "posture",
-      "right": "Pad on the top of the thighs, below the hip bones; hips free to bend.",
-      "wrong": "Pad up on the belly; the back curls over it.",
-      "claim": "c2"
+      "right": "Pad on the upper thighs, below the hip bones.",
+      "wrong": "Pad too high, back curled over it.",
+      "claim": [
+        "c2",
+        "c1"
+      ]
     },
     {
       "key": "bext-top",
@@ -621,7 +679,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "physitrack-back-extension",
@@ -631,7 +689,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "fitnessvolt-back-extension",
@@ -641,7 +699,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "andersen2021",
@@ -651,7 +709,7 @@
       "year": 2021,
       "pmid": 33948095,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "lariviere2011",
@@ -661,7 +719,7 @@
       "year": 2011,
       "pmid": 20508534,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "mayer1999",
@@ -671,7 +729,7 @@
       "year": 1999,
       "pmid": 10414757,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "nhs-back-pain",
@@ -681,7 +739,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     }
   ]
 }

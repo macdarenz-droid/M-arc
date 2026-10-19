@@ -297,6 +297,13 @@
       "status": "verbatim",
       "closest": "it does not improve after treating it at home for a few weeks",
       "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c22",
+      "source": "nhs-back-pain",
+      "text": "But stop if your pain gets worse and see a GP for advice.",
+      "status": "verbatim",
+      "closest": "But stop if your pain gets worse and see a GP for advice."
     }
   ],
   "sources": [

@@ -147,7 +147,7 @@
     },
     {
       "id": "c7",
-      "text": "Tempo: about 1-2 s up and 1-2 s down, with a one-second hold at the top. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, with a one-second hold at the top. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the up and down seconds are a drawing convention; the 1 s top hold is sourced.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -369,7 +369,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "acsm2009",
@@ -379,7 +379,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-19"
     },
     {
       "id": "ace-shrug",
@@ -389,7 +389,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "sl-barbell-shrug",
@@ -399,7 +399,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "baechle-grip",
@@ -409,7 +409,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "odriscoll1992",
@@ -419,7 +419,7 @@
       "year": 1992,
       "pmid": 1538102,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "macdougall1985",
@@ -429,7 +429,7 @@
       "year": 1985,
       "pmid": 3980383,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "kolber2010",
@@ -439,7 +439,7 @@
       "year": 2010,
       "pmid": 20508476,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "ekstrom2003",
@@ -449,7 +449,7 @@
       "year": 2003,
       "pmid": 12774999,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "andersen2008",
@@ -459,7 +459,7 @@
       "year": 2008,
       "pmid": 18339796,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     }
   ],
   "plate": {
@@ -471,7 +471,7 @@
     "checkpoints": [
       {
         "label": "Straight arms",
-        "what": "The biceps don’t lift; only the shoulders move.",
+        "what": "The biceps don’t lift. Only the shoulders move.",
         "claim": "c5"
       },
       {
@@ -489,7 +489,8 @@
       "what": "Elbows bend to curl the bar up instead of the shoulders lifting it.",
       "why": "The anchor’s first tip names it (c5); bent arms are visible side-on. Rolling (c9) cannot be drawn.",
       "claim": "c5",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3, then LR-36: the arms bending to lift the bar (c5). Step 1: no frequency word counts for a fault. Set aside: StrengthLog's \"Dumbbells, barbell, and trap bar are all common tools for this exercise.\" (the equipment); Kolber's \"the most prevalent regions of injury\" (where injuries happen, no fault) and \"A majority of the available research was retrospective\" (the research). Step 2: no quote ties a named fault to harm; Kolber's \"improper attention to exercise technique\" (c14) names no fault. Step 3: no read source has a common-mistakes list. Two faults are each one source's \"avoid\": the biceps lifting the bar (Exercise.com: \"Do not use your biceps to lift the bar.\", c5) and rolling the shoulders (ACE, for the barbell shrug: \"DO NOT roll the shoulders.\", c9). StrengthLog's \"Hold a barbell in straight arms in front of your body.\" and Exercise.com's \"Stand up straight while performing the exercise.\" are instructions, not faults to avoid. Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it; LR-31 gives no further order. plate.viewWhy names the straight arms (c5) that the bent arms break. drawable stays true: the side view shows the bent elbows, a still sign. Pick unchanged."
     },
     "tells": [
       {
@@ -508,7 +509,8 @@
       "claim": [
         "c7",
         "c16"
-      ]
+      ],
+      "text": "Pause 1 s at the top: Exercise.com's \"Hold the contraction at the top for a second.\" (c3, c7) is right after the lift and gives its seconds (LR-33). Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c7, WEAK; LR-15); ACE asks for \"lowering slowly to the original starting position\" (c16)."
     },
     "variantLine": null
   },
@@ -530,7 +532,7 @@
       "claim": "c1"
     },
     {
-      "step": "Overhand grip, hands shoulder width or a little wider, thumbs around the bar.",
+      "step": "Overhand grip, hands shoulder width or a little wider.",
       "claim": "c1"
     },
     {
@@ -548,7 +550,7 @@
       "claim": "c4"
     },
     {
-      "point": "Arms straight; only the shoulders move.",
+      "point": "Arms straight. Only the shoulders move.",
       "claim": "c5"
     },
     {
@@ -565,7 +567,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Curling the bar up with the biceps.",
+      "mistake": "Curling the bar up.",
       "fix": "Keep the arms straight.",
       "claim": "c5"
     },
@@ -591,23 +593,23 @@
     "watch": [],
     "rows": [
       {
-        "where": "Top of the shoulders, between neck and shoulder",
-        "means": "Usually means the upper traps are lifting.",
+        "where": "Top of shoulders, beside the neck",
+        "means": "The upper traps do the lifting.",
         "fix": null,
         "claim": "c8",
         "redFlag": null
       },
       {
         "where": "Biceps working",
-        "means": "Usually means the arms are bending to lift the bar.",
+        "means": "Fault: bending the arms to lift the bar.",
         "fix": "Keep the arms straight.",
         "claim": "c5",
         "redFlag": null
       },
       {
-        "where": "Sharp pain in the shoulder joint",
-        "means": "The shoulder is a common injury site in weight training; poor technique adds risk.",
-        "fix": null,
+        "where": "Shoulder pain",
+        "means": "Poor technique is a risk for shoulder injuries.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c14",
         "redFlag": "shoulder"
       }
@@ -619,7 +621,7 @@
       "claim": "c13"
     },
     {
-      "risk": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+      "risk": "The shoulder is a common injury site in weight training. Poor technique adds risk.",
       "claim": "c14"
     }
   ],

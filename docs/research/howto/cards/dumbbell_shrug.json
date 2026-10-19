@@ -207,7 +207,7 @@
     },
     {
       "id": "c11",
-      "text": "Tempo: about 1-2 s up and 1-2 s down, with a short pause at the top. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, with a short pause at the top. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention; no source gives the top pause's seconds, so its 1 s is a drawing convention too.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -388,7 +388,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "acsm2009",
@@ -398,7 +398,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-19"
     },
     {
       "id": "ace-shrug",
@@ -408,7 +408,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "baechle-grip",
@@ -418,7 +418,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "odriscoll1992",
@@ -428,7 +428,7 @@
       "year": 1992,
       "pmid": 1538102,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "macdougall1985",
@@ -438,7 +438,7 @@
       "year": 1985,
       "pmid": 3980383,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "kolber2010",
@@ -448,7 +448,7 @@
       "year": 2010,
       "pmid": 20508476,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "ekstrom2003",
@@ -458,7 +458,7 @@
       "year": 2003,
       "pmid": 12774999,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "andersen2008",
@@ -468,19 +468,19 @@
       "year": 2008,
       "pmid": 18339796,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     }
   ],
   "plate": {
     "view": "front",
-    "viewWhy": "With a dumbbell at each side the weights hide behind the thighs side-on; front-on shows both shoulders rising level toward the ears and both arms staying straight (c1, c3). The census draws it front.",
+    "viewWhy": "With a dumbbell at each side the weights hide behind the thighs side-on; front-on shows both shoulders rising level toward the ears and both arms staying straight (c1, c3), so it shows the top fault, bent working arms (c6). The census draws it front.",
     "equipment": "Two dumbbells hanging at the sides from straight arms; floor line (c1).",
     "start": "Standing tall, trunk braced (c4), arms straight at the sides holding the dumbbells, shoulders relaxed down (c1, c3).",
     "end": "Same body; both shoulders lifted straight up toward the ears (c2, c3), arms still straight (c3).",
     "checkpoints": [
       {
         "label": "Straight arms",
-        "what": "Arms hang straight and passive; the shoulders do the lifting.",
+        "what": "Arms hang straight and passive. The shoulders do the lifting.",
         "claim": "c3"
       },
       {
@@ -496,9 +496,10 @@
     ],
     "mistake": {
       "what": "Elbows bend to pull the dumbbells up instead of the shoulders lifting them.",
-      "why": "Rolling the shoulders (c12, from the barbell shrug page) is a rotation the engine cannot draw; bent, working arms are a named common mistake (c6) and show front-on as the dumbbells rise with the forearms.",
+      "why": "First in the common-mistakes list: the arms should be straight and passive, with the lift coming entirely from the shoulders and traps (c6). Bent, working arms show front-on as the dumbbells rise with the forearms.",
       "claim": "c6",
-      "drawable": false
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: bent, working arms (c6), the first fault in StrengthLog's \"Common Mistakes in Dumbbell Shrugs\" (\"Your arms should be straight and passive\"). Step 1: no frequency word counts for a fault. Set aside: \"most lifters find it easier to lift heavier in the barbell version\" (the load, another exercise), \"very accessible for most lifters\" (the equipment) and \"typically lends itself best to the medium rep range of 6–15 reps\" (the load); Kolber's \"the most prevalent regions of injury\" (where injuries happen, no fault) and \"A majority of the available research was retrospective\" (the research); \"it’s easy to pick both a weight that’s too heavy\" uses \"easy to\" and is a load choice. Step 2: no quote ties a named fault to harm. Kolber's \"improper attention to exercise technique\" (c17) names no fault; ACE's \"DO NOT roll the shoulders\" (c12) and StrengthLog's list state no harm; Andersen's neck-pain lines (c18) describe the study group. Step 3: StrengthLog's list, written for this exercise, opens with \"Not maintaining correct form\", whose first named fault is arms that are not straight and passive, before \"The shoulders should go straight up and down and not move forward/backward.\" drawable changes to true: plate.viewWhy says the front view shows both arms staying straight, so it shows the bent arms; the head's false came from taking shoulder rolling, which no step picks, as the top fault. Pick unchanged."
     },
     "tells": [
       {
@@ -514,7 +515,8 @@
       "up": 1,
       "down": 2,
       "pause": 1,
-      "claim": "c11"
+      "claim": "c11",
+      "text": "StrengthLog asks for \"a short pause in the top position\" (c5, c11), right after the lift, and no source gives its seconds, so the 1 s pause is a drawing convention (c11, WEAK; LR-33). Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c11, WEAK; LR-15)."
     },
     "variantLine": null
   },
@@ -541,8 +543,11 @@
       "claim": "c1"
     },
     {
-      "step": "Brace your trunk; arms straight and relaxed.",
-      "claim": "c4"
+      "step": "Brace your trunk. Arms straight and passive.",
+      "claim": [
+        "c4",
+        "c6"
+      ]
     }
   ],
   "posture": [
@@ -551,7 +556,7 @@
       "claim": "c4"
     },
     {
-      "point": "Arms straight; the shoulders do the lifting.",
+      "point": "Arms straight. The shoulders do the lifting.",
       "claim": "c3"
     },
     {
@@ -565,17 +570,20 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Bending the arms to pull the dumbbells up.",
+      "mistake": "Bending the arms to pull.",
       "fix": "Keep the arms straight and passive.",
       "claim": "c6"
     },
     {
-      "mistake": "Rolling the shoulders or moving them forward and back.",
+      "mistake": "Rolling or shifting the shoulders.",
       "fix": "Straight up, straight down.",
-      "claim": "c12"
+      "claim": [
+        "c12",
+        "c6"
+      ]
     },
     {
-      "mistake": "Going too heavy to keep good form.",
+      "mistake": "Going too heavy.",
       "fix": "Use lighter dumbbells, or straps if the grip is the limit.",
       "claim": "c7"
     }
@@ -596,23 +604,23 @@
     "watch": [],
     "rows": [
       {
-        "where": "Top of the shoulders, between neck and shoulder",
-        "means": "Usually means the upper traps are lifting.",
+        "where": "Top of shoulders, beside the neck",
+        "means": "The upper traps do the lifting.",
         "fix": null,
         "claim": "c9",
         "redFlag": null
       },
       {
         "where": "Forearms and grip tiring first",
-        "means": "Usually means the grip is limiting the set.",
+        "means": "Your grip is holding back the load.",
         "fix": "Use lifting straps.",
         "claim": "c8",
         "redFlag": null
       },
       {
-        "where": "Sharp pain in the shoulder joint",
-        "means": "The shoulder is a common injury site in weight training; poor technique adds risk.",
-        "fix": null,
+        "where": "Shoulder pain",
+        "means": "Poor technique is a risk for shoulder injuries.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c17",
         "redFlag": "shoulder"
       }
@@ -624,7 +632,7 @@
       "claim": "c16"
     },
     {
-      "risk": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+      "risk": "The shoulder is a common injury site in weight training. Poor technique adds risk.",
       "claim": "c17"
     }
   ],

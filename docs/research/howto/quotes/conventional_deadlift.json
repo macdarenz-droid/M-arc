@@ -243,6 +243,13 @@
       "note": ""
     },
     {
+      "claim": "c19",
+      "source": "cherni2026",
+      "text": "Evidence suggests that trained lifters often exhibit natural lumbar flexion without clear prospective evidence of increased injury risk.",
+      "status": "verbatim",
+      "closest": "Evidence suggests that trained lifters often exhibit natural lumbar flexion without clear prospective evidence of increased injury risk."
+    },
+    {
       "claim": "c20",
       "source": "macdougall1985",
       "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
@@ -361,6 +368,13 @@
       "status": "verbatim",
       "closest": "Perhaps you are not strong enough to break the bar off the floor without rounding your back and thus decreasing the moment arms of your prime movers by bringing the bar closer to their respective joints.",
       "note": "added by fixer 2026-09-30 after critic finding; checked against the fetched page"
+    },
+    {
+      "claim": "c25",
+      "source": "nhs-back-pain",
+      "text": "But stop if your pain gets worse and see a GP for advice.",
+      "status": "verbatim",
+      "closest": "But stop if your pain gets worse and see a GP for advice."
     }
   ],
   "sources": [
