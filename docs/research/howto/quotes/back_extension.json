@@ -107,6 +107,13 @@
       "note": ""
     },
     {
+      "claim": "c6",
+      "source": "fitnessvolt-back-extension",
+      "text": "Therefore, there should be minimal to no back rounding.",
+      "status": "verbatim",
+      "closest": "Therefore, there should be minimal to no back rounding."
+    },
+    {
       "claim": "c7",
       "source": "fitnessvolt-back-extension",
       "text": "Stop when your torso is slightly below parallel to the floor.",
@@ -273,6 +280,34 @@
       "status": "verbatim",
       "closest": "it does not improve after treating it at home for a few weeks",
       "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c19",
+      "source": "fitnessvolt-back-extension",
+      "text": "you should be able to bend your upper body without rounding your back. Although, this is more dangerous when using additional weight.",
+      "status": "verbatim",
+      "closest": "you should be able to bend your upper body without rounding your back. Although, this is more dangerous when using additional weight."
+    },
+    {
+      "claim": "c20",
+      "source": "nhs-back-pain",
+      "text": "But stop if your pain gets worse and see a GP for advice.",
+      "status": "verbatim",
+      "closest": "But stop if your pain gets worse and see a GP for advice."
+    },
+    {
+      "claim": "c21",
+      "source": "sl-back-extension",
+      "text": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position.",
+      "status": "verbatim",
+      "closest": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position."
+    },
+    {
+      "claim": "c22",
+      "source": "sl-back-extension",
+      "text": "The back extension exercise can be performed on a mat or bench, or using a back extension machine.",
+      "status": "verbatim",
+      "closest": "The back extension exercise can be performed on a mat or bench, or using a back extension machine."
     }
   ],
   "sources": [

@@ -211,6 +211,13 @@
       "note": ""
     },
     {
+      "claim": "c17",
+      "source": "barbend-sumo",
+      "text": "Everything from your foot angle to your torso brace to how you physically get your hands on the bar requires attention and practice.",
+      "status": "verbatim",
+      "closest": "Everything from your foot angle to your torso brace to how you physically get your hands on the bar requires attention and practice."
+    },
+    {
       "claim": "c18",
       "source": "barbend-sumo",
       "text": "To Practice Technique: 4-6 sets of 2-4 reps with a light weight.",
@@ -297,6 +304,13 @@
       "status": "verbatim",
       "closest": "it does not improve after treating it at home for a few weeks",
       "note": "list formatting (list rendered as running text)"
+    },
+    {
+      "claim": "c22",
+      "source": "nhs-back-pain",
+      "text": "But stop if your pain gets worse and see a GP for advice.",
+      "status": "verbatim",
+      "closest": "But stop if your pain gets worse and see a GP for advice."
     }
   ],
   "sources": [

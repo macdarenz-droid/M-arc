@@ -147,6 +147,13 @@
       "note": ""
     },
     {
+      "claim": "c11",
+      "source": "sl-deadlift",
+      "text": "At this point you take out the rest of the movement with your knees, and simply bend them until the bar touches the ground.",
+      "status": "verbatim",
+      "closest": "At this point you take out the rest of the movement with your knees, and simply bend them until the bar touches the ground."
+    },
+    {
       "claim": "c12",
       "source": "acsm2009",
       "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
@@ -241,6 +248,13 @@
       "status": "verbatim",
       "closest": "On the one hand, lifting with a flexed back increases the load on passive structures in your spine, such as your vertebraes or intervertebral discs.",
       "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "cherni2026",
+      "text": "Evidence suggests that trained lifters often exhibit natural lumbar flexion without clear prospective evidence of increased injury risk.",
+      "status": "verbatim",
+      "closest": "Evidence suggests that trained lifters often exhibit natural lumbar flexion without clear prospective evidence of increased injury risk."
     },
     {
       "claim": "c20",
@@ -361,6 +375,13 @@
       "status": "verbatim",
       "closest": "Perhaps you are not strong enough to break the bar off the floor without rounding your back and thus decreasing the moment arms of your prime movers by bringing the bar closer to their respective joints.",
       "note": "added by fixer 2026-09-30 after critic finding; checked against the fetched page"
+    },
+    {
+      "claim": "c25",
+      "source": "nhs-back-pain",
+      "text": "But stop if your pain gets worse and see a GP for advice.",
+      "status": "verbatim",
+      "closest": "But stop if your pain gets worse and see a GP for advice."
     }
   ],
   "sources": [

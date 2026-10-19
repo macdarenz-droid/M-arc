@@ -401,6 +401,29 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c20",
+      "text": "The NHS advises people with shoulder pain not to do things that seem to make it worse, or to use heavy gym equipment (NHS shoulder-pain self-care advice, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-shoulder-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-shoulder-pain",
+          "text": "do not do things that seem to make it worse",
+          "where": "How to ease shoulder pain yourself: Don’t"
+        },
+        {
+          "source": "nhs-shoulder-pain",
+          "text": "do not make up your own strenuous exercises or use heavy gym equipment",
+          "where": "How to ease shoulder pain yourself: Don’t"
+        }
+      ]
     }
   ],
   "sources": [
@@ -412,7 +435,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "sl-dumbbell-row",
@@ -422,7 +445,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "saeterbakken2015",
@@ -432,7 +455,7 @@
       "year": 2015,
       "pmid": 26134664,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "acsm2009",
@@ -442,7 +465,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-19"
     },
     {
       "id": "baechle-grip",
@@ -452,7 +475,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "kolber2010",
@@ -462,7 +485,7 @@
       "year": 2010,
       "pmid": 20508476,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "odriscoll1992",
@@ -472,13 +495,23 @@
       "year": 1992,
       "pmid": 1538102,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "nhs-shoulder-pain",
+      "url": "https://www.nhs.uk/conditions/shoulder-pain/",
+      "title": "Shoulder pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "The flat, level back, the knee-and-hand support and the arm driving back to the hip read side-on (c2, c4, c6, c9); the census draws it side.",
-    "equipment": "Flat bench at knee height with one knee and the same-side hand on it; one dumbbell hanging from the other hand; floor line (c1, c2).",
+    "viewWhy": "The flat, level back, the knee-and-hand support and the arm driving back to the hip read side-on (c2, c4, c6, c9); the census draws it side. The top fault, excessive momentum (c10), shows only as speed, so the plate draws the next fault, the short range (c10).",
+    "equipment": "Flat bench with one knee and the same-side hand on it; one dumbbell hanging from the other hand; floor line (c1, c2).",
     "start": "Supporting hand under the shoulder and knee under the hip (c2), back flat and parallel to the floor, head in line (c3, c4), working arm hanging straight down (c5).",
     "end": "Same back and support (c7); elbow bent and upper arm driven back close to the body, dumbbell near the hip (c6, c9).",
     "checkpoints": [
@@ -495,14 +528,18 @@
       {
         "label": "Elbow to hip",
         "what": "Upper arm drives back close to the body, dumbbell toward the hip.",
-        "claim": "c9"
+        "claim": [
+          "c9",
+          "c6"
+        ]
       }
     ],
     "mistake": {
-      "what": "Short range: the arm never straightens at the bottom and the elbow stops short at the top.",
-      "why": "Twisting the torso to lift higher (c6, c7) is a rotation the engine cannot draw; a short range is a listed common mistake (c10) and shows side-on.",
+      "what": "Short range: the arm never straightens at the bottom, or the shoulder blade is not pulled back at the top.",
+      "why": "Excessive momentum, first on the common-mistakes list (c10), is seen only as speed, so it cannot be drawn; an incomplete range of motion, next on the same list (c10), shows side-on.",
       "claim": "c10",
-      "drawable": false
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: excessive momentum (c10), first on StrengthLog's \"Common Mistakes in the Dumbbell Row\". Step 1: no frequency word counts for a fault. Set aside: StrengthLog's \"Typically, your back is stronger than your grip.\" (the grip), \"Most people can do significantly more reps or use heavier weights if they use lifting straps\" (straps and the load) and \"it’s common to use heavier weights and a less strict form\" (the Kroc row, another exercise, and the load); Kolber's \"the most prevalent regions of injury\" (c18) is about where training injuries happen, not a fault. Step 2: no quote ties a named fault to harm. The list's own lines state lost effect, not harm: \"compromises form and reduces muscle engagement in your upper back\" (momentum), \"reduces the exercise’s effectiveness\" (range), \"can shift the focus away from the target muscles\" (elbows). Kolber's \"improper attention to exercise technique\" (c18) names no fault, and ACE's \"Avoid rotating your body or changing the position of your spine throughout the lift\" (c7) states no harm. Step 3: StrengthLog's list, written for this exercise, names excessive momentum first. Momentum is seen only as speed, so it is never drawable; plate.mistake names the next fault by the same steps, the incomplete range of motion, second on the same list, a still sign the side view shows (the arm short of straight at the bottom). drawable stays false. Top fault changed: torso twisting, handlingMistakes[0] until now, is now [1]; plate.mistake is unchanged."
     },
     "tells": [
       {
@@ -544,7 +581,7 @@
       "claim": "c1"
     },
     {
-      "step": "Put one knee and the same-side hand on the bench, the other foot on the floor.",
+      "step": "One knee and the same-side hand on the bench.",
       "claim": "c1"
     },
     {
@@ -557,7 +594,10 @@
     },
     {
       "step": "Brace, then let the working arm hang straight down.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "c5"
+      ]
     }
   ],
   "posture": [
@@ -584,17 +624,21 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Twisting the torso to lift the dumbbell higher.",
+      "mistake": "Jerking it up with momentum.",
+      "fix": "Pull slowly and lower gently.",
+      "claim": [
+        "c10",
+        "c6",
+        "c8"
+      ]
+    },
+    {
+      "mistake": "Twisting to lift higher.",
       "fix": "Stop the pull where your torso would have to turn.",
       "claim": "c6"
     },
     {
-      "mistake": "Jerking the dumbbell up with momentum.",
-      "fix": "Pull slowly and lower gently.",
-      "claim": "c10"
-    },
-    {
-      "mistake": "Elbow flaring out to the side.",
+      "mistake": "Elbow flaring out.",
       "fix": "Keep the elbow close to the body and drive it back.",
       "claim": "c10"
     }
@@ -608,13 +652,13 @@
       {
         "muscleId": "mid_back",
         "claim": "c11"
-      }
-    ],
-    "secondary": [
+      },
       {
         "muscleId": "rear_delts",
         "claim": "c11"
-      },
+      }
+    ],
+    "secondary": [
       {
         "muscleId": "biceps",
         "claim": "c11"
@@ -632,38 +676,38 @@
     ],
     "rows": [
       {
-        "where": "Side of the back and around the shoulder blade",
-        "means": "Usually means the lats and upper back are doing the rowing.",
+        "where": "Side of back, around shoulder blade",
+        "means": "The lats, traps and rear delts are the main movers.",
         "fix": null,
         "claim": "c11",
         "redFlag": null
       },
       {
         "where": "Mostly the biceps",
-        "means": "Usually means the dumbbell is going toward the shoulder.",
+        "means": "Pulling toward the shoulder works the biceps more.",
         "fix": "Pull toward your hip instead.",
         "claim": "c9",
         "redFlag": null
       },
       {
         "where": "Grip giving out before the back",
-        "means": "Usually means the grip is limiting the set.",
+        "means": "Your back is usually stronger than your grip.",
         "fix": "Use a lifting strap.",
         "claim": "c16",
         "redFlag": null
       },
       {
-        "where": "Sharp pain in the shoulder joint",
-        "means": "The shoulder is a common injury site in weight training; poor technique adds risk.",
-        "fix": null,
-        "claim": "c18",
+        "where": "Pain in your shoulder",
+        "means": "Is it getting worse?",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c20",
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
     {
-      "risk": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+      "risk": "The shoulder is a common injury site in weight training. Poor technique adds risk.",
       "claim": "c18"
     }
   ],
@@ -675,7 +719,7 @@
       "key": "oadr-support",
       "kind": "posture",
       "right": "Hand under the shoulder, knee under the hip, back flat.",
-      "wrong": "Hand far forward, back rounded.",
+      "wrong": "Hand far forward of the shoulder.",
       "claim": "c2"
     },
     {
@@ -692,7 +736,12 @@
       "forearms"
     ],
     "remove": [],
-    "why": "Library primary lats and secondary mid_back, biceps fit (c11: lats and trapezius primary). Add rear_delts as secondary: c11 names the posterior deltoids as a primary mover. Add forearms as secondary: c11 names the forearm flexors. core stays as the text-only stabiliser; obliques shown as a watch feel only (c13, inferred)."
+    "why": "Library primary lats and secondary mid_back, biceps fit (c11: lats and trapezius primary). Add rear_delts: c11 names the posterior deltoids as a primary mover, so the feel shows them as primary. Add forearms as secondary: c11 names the forearm flexors. core stays as the text-only stabiliser; obliques shown as a watch feel only (c13, inferred)."
   },
-  "anchorSource": "ace-single-arm-row"
+  "anchorSource": "ace-single-arm-row",
+  "notes": [
+    "posture[3] follows ACE, the anchor: \"without allowing your torso to rotate or shoulder to move towards the floor\" (c5). StrengthLog instead allows \"let your scapula slide forward at the bottom of the movement\". The card keeps ACE.",
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Handle across the base of the fingers and top of the palm (pull archetype); a strap is allowed when the grip gives out first.\") and the drawn palm direction (the dumbbell primitive's natural grip; no source states it, grip.type) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3).",
+    "The NHS shoulder \"Don't\" list also says \"do not completely stop using your shoulder\". The shown row stops only the set, so it does not conflict; a later writer must not widen it to stopping all shoulder use."
+  ]
 }

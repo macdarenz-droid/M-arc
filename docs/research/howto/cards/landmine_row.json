@@ -468,7 +468,7 @@
       "year": 2024,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "ggr-t-bar",
@@ -478,7 +478,7 @@
       "year": 2024,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "acsm2009",
@@ -488,7 +488,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-19"
     },
     {
       "id": "macdougall1985",
@@ -498,7 +498,7 @@
       "year": 1985,
       "pmid": 3980383,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "fenwick2009",
@@ -508,7 +508,7 @@
       "year": 2009,
       "pmid": 19620925,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "nhs-back-pain",
@@ -518,7 +518,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "baechle-grip",
@@ -528,7 +528,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "cissik-landmine",
@@ -538,7 +538,7 @@
       "year": 2022,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "odriscoll1992",
@@ -548,7 +548,7 @@
       "year": 1992,
       "pmid": 1538102,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     }
   ],
   "plate": {
@@ -556,7 +556,7 @@
     "viewWhy": "The parallel torso, the hinge and the bar end rising to the chest are front-to-back (c3, c6); the census draws it side.",
     "equipment": "Landmine rig: barbell pinned at a floor pivot behind the lifter, running forward between the feet; plates on the free end in front, the lifter straddling the loaded end with the shoulders ahead of the weight (layout inferred from c1, c2); hands one above the other on the bar just behind the plates (c4). Needs the landmine composer (census gap).",
     "start": "Straddling the loaded end, feet between hip and shoulder width (c2), hips and knees bent, back straight, torso roughly parallel to the floor (c3), arms straight to the bar just behind the plates (c4, c8).",
-    "end": "Same torso angle; elbows driven back, bar end at the chest, shoulder blades squeezed together (c6).",
+    "end": "Same torso angle; elbows driven back, bar end pulled toward the chest, shoulder blades squeezed together (c6).",
     "checkpoints": [
       {
         "label": "Torso parallel",
@@ -577,12 +577,16 @@
     "mistake": {
       "what": "Rounded lower back over the bar.",
       "why": "The anchor’s bracing and spine cues exist to stop it (c5, c9); on the landmine T-bar it is named one of the most common mistakes (c11), and the lift loads the lower back (c15).",
-      "claim": "c11",
-      "drawable": true
+      "claim": [
+        "c9",
+        "c11"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the rounded lower back (c9, c11). Step 1: no frequency word counts for a fault of this exercise. Set aside: GGR's \"Lifters round their backs is one of the most common mistakes I see when training.\" and \"Be mindful of these common pitfalls\" are written for the T-bar row with a V-handle (another exercise; c11 is WEAK) and the second is a list sentence; the NHS lines on back pain name no fault. Step 2: the rounded back is the only named fault a quote ties to harm. REP: \"Keep your back straight and avoid rounding to protect your lower back.\" (c9), a cue that reduces harm; GGR, for the handle version: \"can place a tremendous strain on your spinal erectors and ramp up your chances of suffering a lower-back injury\" (c11). REP's momentum line (\"Avoid using momentum to lift the bar; instead, focus on a controlled motion to maximize muscle engagement\") and its bracing line (\"prevent rounding your lower back\", c5) state no harm. Set aside as not about a fault: REP's \"reduces stress on your lower back\" and \"reduces strain on your lower back\" (the exercise) and \"reducing injury risk\" (a strong upper back); Fenwick's \"produced the largest lumbar spine load\" (c15, the exercise). drawable stays true: the side view shows the rounded back, a still sign. Pick unchanged."
     },
     "tells": [
       {
-        "text": "Bar end reaches your chest",
+        "text": "Bar end comes up toward your chest",
         "claim": "c6"
       },
       {
@@ -594,7 +598,8 @@
       "up": 1,
       "down": 2,
       "pause": 0,
-      "claim": "c12"
+      "claim": "c12",
+      "text": "Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c12, WEAK; LR-15). Pause 0: no quote on the card asks for a pause right after the pull. REP's \"Focus on squeezing your shoulder blades together at the top of the movement.\" (c6) asks for a squeeze with no pause length and no brief or momentary hold (LR-33)."
     },
     "variantLine": null
   },
@@ -612,11 +617,11 @@
   },
   "setup": [
     {
-      "step": "Anchor one end of a barbell in a landmine; load the free end.",
+      "step": "Anchor a barbell end in a landmine. Load the free end.",
       "claim": "c1"
     },
     {
-      "step": "Straddle the loaded end of the bar, feet between hip and shoulder width.",
+      "step": "Straddle the loaded end, feet between hip and shoulder width.",
       "claim": "c2"
     },
     {
@@ -624,11 +629,11 @@
       "claim": "c3"
     },
     {
-      "step": "Both hands overhand just below the plates, one above the other, thumbs around the bar.",
+      "step": "Both hands overhand below the plates, one above the other.",
       "claim": "c4"
     },
     {
-      "step": "Start with a weight that keeps good form; add 2-10% once you beat your target reps by one or two.",
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c13"
     }
   ],
@@ -662,11 +667,14 @@
     {
       "mistake": "Rounding the lower back.",
       "fix": "Brace before each rep and use a lighter load.",
-      "claim": "c11"
+      "claim": [
+        "c11",
+        "c5"
+      ]
     },
     {
-      "mistake": "Jerking the bar up with momentum.",
-      "fix": "Slow, controlled pulls.",
+      "mistake": "Jerking it up with momentum.",
+      "fix": "Controlled, deliberate pulls.",
       "claim": "c7"
     },
     {
@@ -705,21 +713,24 @@
     "rows": [
       {
         "where": "Between and around the shoulder blades",
-        "means": "Usually means the upper back is doing the rowing.",
+        "means": "The lats, traps and rhomboids do most of the work.",
         "fix": null,
         "claim": "c10",
         "redFlag": null
       },
       {
         "where": "Lower back rounding or straining",
-        "means": "Usually means the brace was lost or the load is too heavy.",
+        "means": "Fault: the lower back rounding under load.",
         "fix": "Brace first and use a lighter load.",
-        "claim": "c11",
+        "claim": [
+          "c11",
+          "c5"
+        ],
         "redFlag": null
       },
       {
-        "where": "Back pain that gets worse during the set",
-        "means": "Back pain that gets worse is a sign to stop exercising.",
+        "where": "Pain in your back while rowing",
+        "means": "Is it getting worse?",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": "c19",
         "redFlag": "back"
@@ -732,11 +743,11 @@
       "claim": "c11"
     },
     {
-      "risk": "A lab test found the standing bent-over row loads the lower spine most of three rows tested; likely similar here, though the landmine row was not tested.",
+      "risk": "Of the rows tested, the bent-over row loaded the lower spine most.",
       "claim": "c15"
     },
     {
-      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c14"
     }
   ],
@@ -756,7 +767,12 @@
       "kind": "posture",
       "right": "Back straight, torso level, braced.",
       "wrong": "Lower back rounded over the bar.",
-      "claim": "c11"
+      "claim": [
+        "c3",
+        "c9",
+        "c5",
+        "c11"
+      ]
     }
   ],
   "libraryDiff": {
@@ -766,5 +782,8 @@
     "remove": [],
     "why": "Library primary mid_back and secondary lats, biceps fit (c10: lats, traps, rhomboids primary). Add rear_delts as secondary: c10 lists the rear delts as a secondary muscle. Lower back is shown as a watch feel (c15, inferred) and not proposed for the library list."
   },
-  "anchorSource": "rep-landmine-row"
+  "anchorSource": "rep-landmine-row",
+  "notes": [
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the base of the fingers and top of the palm (pull archetype).\") and the drawn palm direction (palms down, as grip.type states from c4) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3)."
+  ]
 }

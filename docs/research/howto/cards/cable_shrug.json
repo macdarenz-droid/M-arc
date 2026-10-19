@@ -147,7 +147,7 @@
     },
     {
       "id": "c7",
-      "text": "Tempo: about 1-2 s up and 1-2 s down, with a one-second hold at the top. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, with a one-second hold at the top. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the up and down seconds are a drawing convention; the 1 s top hold is sourced.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -358,6 +358,29 @@
           "where": "exercise description"
         }
       ]
+    },
+    {
+      "id": "c17",
+      "text": "The NHS advises people with shoulder pain not to do things that seem to make it worse, or to use heavy gym equipment (NHS shoulder-pain self-care advice, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-shoulder-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-shoulder-pain",
+          "text": "do not do things that seem to make it worse",
+          "where": "How to ease shoulder pain yourself: Don’t"
+        },
+        {
+          "source": "nhs-shoulder-pain",
+          "text": "do not make up your own strenuous exercises or use heavy gym equipment",
+          "where": "How to ease shoulder pain yourself: Don’t"
+        }
+      ]
     }
   ],
   "sources": [
@@ -369,7 +392,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "acsm2009",
@@ -379,7 +402,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-19"
     },
     {
       "id": "ace-shrug",
@@ -389,7 +412,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "sl-barbell-shrug",
@@ -399,7 +422,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "baechle-grip",
@@ -409,7 +432,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "odriscoll1992",
@@ -419,7 +442,7 @@
       "year": 1992,
       "pmid": 1538102,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "macdougall1985",
@@ -429,7 +452,7 @@
       "year": 1985,
       "pmid": 3980383,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "kolber2010",
@@ -439,7 +462,7 @@
       "year": 2010,
       "pmid": 20508476,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "ekstrom2003",
@@ -449,7 +472,7 @@
       "year": 2003,
       "pmid": 12774999,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "andersen2008",
@@ -459,7 +482,17 @@
       "year": 2008,
       "pmid": 18339796,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "nhs-shoulder-pain",
+      "url": "https://www.nhs.uk/conditions/shoulder-pain/",
+      "title": "Shoulder pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
     }
   ],
   "plate": {
@@ -471,7 +504,7 @@
     "checkpoints": [
       {
         "label": "Straight arms",
-        "what": "The biceps don’t lift; only the shoulders move.",
+        "what": "The biceps don’t lift. Only the shoulders move.",
         "claim": "c5"
       },
       {
@@ -489,7 +522,8 @@
       "what": "Elbows bend to curl the bar up instead of the shoulders lifting it.",
       "why": "The anchor’s first tip names it (c5); bent arms are visible side-on. Rolling (c9) cannot be drawn.",
       "claim": "c5",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3, then LR-36: the arms bending to lift the bar (c5). Step 1: no frequency word counts for a fault. Set aside: StrengthLog's \"Dumbbells, barbell, and trap bar are all common tools for this exercise.\" (the equipment); Kolber's \"the most prevalent regions of injury\" (where injuries happen, no fault) and \"A majority of the available research was retrospective\" (the research). Step 2: no quote ties a named fault to harm; Kolber's \"improper attention to exercise technique\" (c14) names no fault. Step 3: no read source has a common-mistakes list. Two faults are each one source's \"avoid\": the biceps lifting the bar (Exercise.com: \"Do not use your biceps to lift the bar.\", c5) and rolling the shoulders (ACE, for the barbell shrug: \"DO NOT roll the shoulders.\", c9). StrengthLog's \"Hold a barbell in straight arms in front of your body.\" and Exercise.com's \"Stand up straight while performing the exercise.\" are instructions, not faults to avoid. Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it; LR-31 gives no further order. plate.viewWhy names the straight arms (c5) that the bent arms break. drawable stays true: the side view shows the bent elbows, a still sign. Pick unchanged."
     },
     "tells": [
       {
@@ -508,7 +542,8 @@
       "claim": [
         "c7",
         "c16"
-      ]
+      ],
+      "text": "Pause 1 s at the top: Exercise.com's \"Hold the contraction at the top for a second.\" (c3, c7) is right after the lift and gives its seconds (LR-33). Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c7, WEAK; LR-15); ACE asks for \"lowering slowly to the original starting position\" (c16)."
     },
     "variantLine": null
   },
@@ -526,11 +561,11 @@
   },
   "setup": [
     {
-      "step": "Straight bar on the low pulley.",
+      "step": "Bar attachment on the low pulley.",
       "claim": "c1"
     },
     {
-      "step": "Overhand grip, hands shoulder width or a little wider, thumbs around the bar.",
+      "step": "Overhand grip, hands shoulder width or a little wider.",
       "claim": "c1"
     },
     {
@@ -548,7 +583,7 @@
       "claim": "c4"
     },
     {
-      "point": "Arms straight; only the shoulders move.",
+      "point": "Arms straight. Only the shoulders move.",
       "claim": "c5"
     },
     {
@@ -565,7 +600,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Curling the bar up with the biceps.",
+      "mistake": "Curling the bar up.",
       "fix": "Keep the arms straight.",
       "claim": "c5"
     },
@@ -591,35 +626,35 @@
     "watch": [],
     "rows": [
       {
-        "where": "Top of the shoulders, between neck and shoulder",
-        "means": "Usually means the upper traps are lifting.",
+        "where": "Top of shoulders, beside the neck",
+        "means": "The upper traps do the lifting.",
         "fix": null,
         "claim": "c8",
         "redFlag": null
       },
       {
         "where": "Biceps working",
-        "means": "Usually means the arms are bending to lift the bar.",
+        "means": "Fault: bending the arms to lift the bar.",
         "fix": "Keep the arms straight.",
         "claim": "c5",
         "redFlag": null
       },
       {
-        "where": "Sharp pain in the shoulder joint",
-        "means": "The shoulder is a common injury site in weight training; poor technique adds risk.",
-        "fix": null,
-        "claim": "c14",
+        "where": "Pain in your shoulder",
+        "means": "Is it getting worse?",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c17",
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c13"
     },
     {
-      "risk": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+      "risk": "The shoulder is a common injury site in weight training. Poor technique adds risk.",
       "claim": "c14"
     }
   ],
@@ -639,7 +674,11 @@
       "kind": "posture",
       "right": "Shoulders up, arms straight, standing straight.",
       "wrong": "Elbows bent, curling the bar up.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c3",
+        "c4"
+      ]
     }
   ],
   "libraryDiff": {
@@ -649,6 +688,8 @@
   },
   "anchorSource": "exercise-com-cable-shrug",
   "notes": [
-    "c7 is split (2026-10-18, W2-45). The ACE barbell-shrug slow lowering is now c16 [CONSENSUS, MECH], and c7 keeps the top hold plus the ACSM seconds as a drawing convention [CONSENSUS, WEAK] (LR-15, D-W2-TEMPO). Each tag set now matches one the 8 use (CARD-V2). plate.tempo and posture[3] cite both."
+    "c7 is split (2026-10-18, W2-45). The ACE barbell-shrug slow lowering is now c16 [CONSENSUS, MECH], and c7 keeps the top hold plus the ACSM seconds as a drawing convention [CONSENSUS, WEAK] (LR-15, D-W2-TEMPO). Each tag set now matches one the 8 use (CARD-V2). plate.tempo and posture[3] cite both.",
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the middle of the palm, fingers wrapped (hold archetype).\") and the drawn palm direction (palms down, as grip.type states from c1) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3). The straight bar is a drawing convention too: c1's quote says only \"cable bar attachment\".",
+    "The NHS shoulder \"Don't\" list also says \"do not completely stop using your shoulder\". The shown row stops only the set, so it does not conflict; a later writer must not widen it to stopping all shoulder use."
   ]
 }

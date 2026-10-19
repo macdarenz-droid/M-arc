@@ -267,6 +267,11 @@
           "source": "sl-deadlift",
           "text": "Initiate the eccentric by pushing your butt back and leaning your torso forward. The knees bend, but not as fast as your hip. Lower the bar along your legs like this until you’ve cleared the knees.",
           "where": "Setting the Bar Down"
+        },
+        {
+          "source": "sl-deadlift",
+          "text": "At this point you take out the rest of the movement with your knees, and simply bend them until the bar touches the ground.",
+          "where": "Setting the Bar Down: Knee bend"
         }
       ]
     },
@@ -414,18 +419,24 @@
     },
     {
       "id": "c19",
-      "text": "Lifting with a rounded (flexed) back increases load on the spine's passive structures such as discs.",
+      "text": "Lifting with a rounded (flexed) back increases load on the spine's passive structures such as discs; a narrative review notes trained lifters often show some lumbar flexion, with no clear evidence yet that it raises injury risk.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "sl-deadlift"
+        "sl-deadlift",
+        "cherni2026"
       ],
       "quotes": [
         {
           "source": "sl-deadlift",
           "text": "On the one hand, lifting with a flexed back increases the load on passive structures in your spine, such as your vertebraes or intervertebral discs.",
           "where": "Injury Risk"
+        },
+        {
+          "source": "cherni2026",
+          "text": "Evidence suggests that trained lifters often exhibit natural lumbar flexion without clear prospective evidence of increased injury risk.",
+          "where": "abstract"
         }
       ]
     },
@@ -549,6 +560,24 @@
           "where": "Non-urgent advice, list"
         }
       ]
+    },
+    {
+      "id": "c25",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
     }
   ],
   "plate": {
@@ -578,7 +607,8 @@
       "what": "Lower back rounds as the bar leaves the floor.",
       "why": "Lifters, especially newer ones, round more as the load rises (c8); a flexed back loads the spine's passive structures (c19).",
       "claim": "c8",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the rounded lower back (c8, c19). Cherni's review says \"trained lifters often exhibit natural lumbar flexion without clear prospective evidence of increased injury risk\" (c19): a frequency word for the back rounding in the deadlift. No other fault passes step 1. Set aside: StrengthLog's \"they tend to round their back more and more\" (c8) uses \"tend\"; \"swift increases in training are a common source of injury\" is about the load; \"the most common sticking point in the deadlift\" and \"the beginning of a deadlift is where most lifters get stuck and fail their lift\" are about where lifts fail, not a fault; \"most powerlifting injuries seem to creep up over time, rather than being acute\" names no fault; \"The mixed grip is the most common grip technique in powerlifting.\" and \"More common and the best fit for most people\" are a grip and a stance. If Cherni's line is not read as a fault, because it calls the flexion natural, the steps still give the rounded back. Step 2: StrengthLog ties two named faults to harm, the flexed back (\"lifting with a flexed back increases the load on passive structures in your spine, such as your vertebraes or intervertebral discs\", c19) and bent arms (\"straight arms with relaxed biceps will likely minimize your risk of a bicep strain or even rupture\", c4); neither is on a common-mistakes list, one source ties each to harm, both are sourced directly, and no list names both. Step 3: more read sources tell the lifter to keep the back flat (ACE's \"Keeping the back flat\" and StrengthLog's \"Strive to lift with a neutral back\", c7) than to keep the arms straight (StrengthLog only). The hips shooting up (c9) moves work to the back, which is no stated harm. Also set aside: StrengthLog's \"Most powerlifters set the bar down pretty much as quickly as they can, both in training and competition.\" is a lowering speed, seen only as speed and offered as a choice, and only the rounded back is tied to harm in step 2; its \"you probably take a greater risk of sustaining with the more uncontrolled technique of touch and go\" is about a speed-only rep style, not a named fault. The NHS lines (\"Back pain, particularly lower back pain, is very common.\", \"A common cause of back pain is an injury like a pulled muscle (strain).\") are about back pain in general and tie no fault of this exercise to it. drawable stays true: the side view shows the rounded back, a still sign. Pick unchanged."
     },
     "tells": [
       {
@@ -598,7 +628,8 @@
       "up": 1,
       "down": 2,
       "pause": 0,
-      "claim": "c12"
+      "claim": "c12",
+      "text": "Down 2 rests on StrengthLog's \"lower it under, say, at least two seconds\" (c12); up 1 keeps ACSM's 1-2 s, stated for intermediate to advanced training (c12, WEAK; LR-15). Pause 0: no quote on the card asks for a pause right after the lift. StrengthLog's \"pausing as close to the floor as possible (just an inch or so above), and for a count of three\" is the paused-deadlift variation, a pause on the way up, and its \"perhaps over 1–3 seconds before the bar finally breaks the ground\" is tension built before the lift; neither is this field (LR-33). StrengthLog recommends the dead start (\"set the bar down until it is completely still, and start your next rep from a dead start\"): a pause at the bottom between reps, named here with no seconds because no source gives them; pause stays 0 (LR-33)."
     },
     "variantLine": null
   },
@@ -619,8 +650,11 @@
       "claim": "c23"
     },
     {
-      "step": "Step up so the bar is over the middle of your feet, feet about hip width.",
-      "claim": "c1"
+      "step": "Bar over the middle of your feet, feet about hip width.",
+      "claim": [
+        "c1",
+        "c2"
+      ]
     },
     {
       "step": "Grip about shoulder width, arms straight outside the knees.",
@@ -641,7 +675,7 @@
       "claim": "c1"
     },
     {
-      "point": "Arms straight like ropes.",
+      "point": "Arms straight.",
       "claim": "c4"
     },
     {
@@ -657,18 +691,18 @@
       "claim": "c10"
     },
     {
-      "point": "Lower hips-back first, then bend the knees past them.",
+      "point": "Push the hips back first. Bend the knees once the bar passes them.",
       "claim": "c11"
     }
   ],
   "handlingMistakes": [
     {
-      "mistake": "Back rounding as the weight gets heavier.",
+      "mistake": "Back rounding under heavier weight.",
       "fix": "Lower the weight or do fewer reps per set.",
       "claim": "c8"
     },
     {
-      "mistake": "Hips shooting up before the bar moves.",
+      "mistake": "Hips shooting up first.",
       "fix": "Be patient off the floor so the legs start the pull.",
       "claim": "c9"
     },
@@ -682,7 +716,10 @@
     "primary": [
       {
         "muscleId": "glutes",
-        "claim": "c14"
+        "claim": [
+          "c14",
+          "c16"
+        ]
       },
       {
         "muscleId": "hamstrings",
@@ -720,46 +757,49 @@
     "rows": [
       {
         "where": "Glutes and back of the thighs",
-        "means": "Usually means the hips are doing the lifting.",
+        "means": "Done properly, these should feel the work.",
         "fix": null,
         "claim": "c13",
         "redFlag": null
       },
       {
         "where": "Lower back taking over",
-        "means": "Usually means the back is rounding or the load is too heavy.",
+        "means": "Fault: the back rounding as the weight goes up.",
         "fix": "Lower the weight or do fewer reps.",
         "claim": "c8",
         "redFlag": null
       },
       {
-        "where": "Front of the thighs off the floor",
-        "means": "Usually normal: the quads help break the bar from the floor.",
+        "where": "Front thighs, off the floor",
+        "means": "The quads help break the bar from the floor.",
         "fix": null,
         "claim": "c9",
         "redFlag": null
       },
       {
-        "where": "Back pain with pain or numbness in both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop.",
-        "claim": "c24",
+        "where": "Lower back pain while lifting",
+        "means": "Is it getting worse?",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c25",
         "redFlag": "back"
       }
     ]
   },
   "risks": [
     {
-      "risk": "A rounded back under heavy load increases load on the spine's discs and joints.",
+      "risk": "A rounded back loads the spine's discs and bones more.",
       "claim": "c19"
     },
     {
-      "risk": "Holding your breath hard on heavy reps sends blood pressure very high.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c20"
     },
     {
-      "risk": "Big jumps in load appear linked with more injuries (c18); add weight in small steps (c17).",
-      "claim": "c18"
+      "risk": "Big load jumps appear linked with more injuries. Add weight in small steps.",
+      "claim": [
+        "c18",
+        "c17"
+      ]
     }
   ],
   "redFlags": [
@@ -769,21 +809,30 @@
     {
       "key": "dl-grip",
       "kind": "hand",
-      "right": "Overhand, thumbs wrapped, hands about shoulder width just outside the knees.",
+      "right": "Overhand, thumbs wrapped, hands shoulder width, outside the knees.",
       "wrong": "Hands too wide, arms bent.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "c21",
+        "c4"
+      ]
     },
     {
       "key": "dl-start",
       "kind": "posture",
-      "right": "Bar over mid-foot, shins near the bar, arms straight, back flat.",
-      "wrong": "Rounded lower back, bar out over the toes.",
-      "claim": "c1"
+      "right": "Bar over mid-foot, shins near it, arms straight, back flat.",
+      "wrong": "Rounded lower back, bar away from the shins.",
+      "claim": [
+        "c1",
+        "c4",
+        "c7",
+        "c8"
+      ]
     },
     {
       "key": "dl-liftoff",
       "kind": "posture",
-      "right": "Legs start the pull; the hips wait for the bar to move.",
+      "right": "Legs start the pull, hips wait for the bar.",
       "wrong": "Hips shoot up before the bar moves.",
       "claim": "c9"
     }
@@ -806,7 +855,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "ace-deadlift",
@@ -816,7 +865,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "acsm2009",
@@ -826,7 +875,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-19"
     },
     {
       "id": "martinfuentes2020",
@@ -836,7 +885,7 @@
       "year": 2020,
       "pmid": 32107499,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "lee2018",
@@ -846,7 +895,7 @@
       "year": 2018,
       "pmid": 30662500,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "cherni2026",
@@ -856,7 +905,7 @@
       "year": 2026,
       "pmid": 42043083,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "macdougall1985",
@@ -866,7 +915,7 @@
       "year": 1985,
       "pmid": 3980383,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "baechle-grip",
@@ -876,7 +925,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     },
     {
       "id": "nhs-back-pain",
@@ -886,7 +935,11 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-19"
     }
+  ],
+  "notes": [
+    "The breath risk (c20) sits beside the anchor's brace cue, \"Inhale, brace your core, and lift the bar\" (c5). The card keeps both: the brace is the lifting cue, and the risk line names the blood-pressure cost of a held breath on heavy reps.",
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the middle of the palm, fingers wrapped (inherited).\") and the drawn palm direction (double overhand, as grip.type states from c21) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Neutral, in line with the forearm (inherited).\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3). grip.handContact and grip.wrist are inherited from romanian_deadlift (inherit[1], inherit[2]); their \"neutral\" wrist differs from the shrug cards' \"bent back about 35 degrees\" for the same hold archetype, which F-LB3-3 settles."
   ]
 }

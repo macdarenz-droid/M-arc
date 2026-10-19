@@ -152,6 +152,13 @@
       "closest": "If your heels are losing contact with the floor mid-lift, consider using lighter weights."
     },
     {
+      "claim": "c10",
+      "source": "ggr-pendlay",
+      "text": "Proper Pendlay row form requires keeping both feet firmly planted on the floor from start to finish.",
+      "status": "verbatim",
+      "closest": "Proper Pendlay row form requires keeping both feet firmly planted on the floor from start to finish."
+    },
+    {
       "claim": "c11",
       "source": "ggr-pendlay",
       "text": "Primary muscles worked: Lats, traps, rear deltoids",
@@ -323,6 +330,13 @@
       "status": "verbatim",
       "closest": "But stop if your pain gets worse and see a GP for advice.",
       "note": "Re-read 2026-09-30 in the fetched NHS back-pain page."
+    },
+    {
+      "claim": "c23",
+      "source": "ggr-pendlay",
+      "text": "Too much spinal flexion or extension leaves the back susceptible to shear forces that may lead to pain, strains, or disc herniations",
+      "status": "verbatim",
+      "closest": "Too much spinal flexion or extension leaves the back susceptible to shear forces that may lead to pain, strains, or disc herniations"
     }
   ]
 }
