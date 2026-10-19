@@ -22,6 +22,18 @@ LB3 research verify (LR-29) on #272 @ 14ca323b: result, rulings and findings (20
 - **R-LB3-7.** Every other medium and low: apply the critic's fix as written. Where a fix adds a quote, fetch it verbatim (at most 50 words) and add it to quotes/<id>.json. conventional_deadlift's tempo.text names the bottom dead start with no seconds (LR-33); pause stays 0.
 - **R-LB3-8.** One round only. Before pushing: valid JSON; the dry run; copy lint and C8 at 0 hits; every new quote re-fetched. Write the record docs/research/howto/verify/lb3.md from this file: the run, the counts, the rulings and the finding → commit table. Then post 'LB3 RESEARCH FIXED @ <sha>'. The supervisor rechecks the changed lines and merges.
 
+## Close (2026-10-19 ~09:50 UTC)
+- R-LB3-9: back_extension variantLine, sourced on c1, c3 and c4 ("the machine"); the seated machine is in gaps.
+- Recheck @ f4907abe (lb3-research-recheck.md @ afe77cef): 71/72 findings done; 1 medium (the variantLine misread c22) and 8 lows, all closed by R-LB3-10 @ 14eb7270 (supervisor diff check: claims resolve, quotes one for one, LR-22 sources still cited).
+- R-LB3-11 @ c6d2930b: the breath line on the parents barbell_row, barbell_shrug and romanian_deadlift (3 lines only), so the D-LIB5-FAMILY `===` holds for the LB3 children.
+- **Merged:** #272 into claude/libht-research as **2dd60ae0** = the named LB3 research head.
+- Follow-ups:
+  - F-LB3-1 (route ruled): LIB-8M re-copies the three parents' breath line into #109 under a supervisor diff check before #109 merges.
+  - F-LB3-2: the next research pass checks LB2's shoulder rows that carry the stop line on a technique quote alone.
+  - F-LB3-3: the hand lane decides the drawn hold wrist across cards.
+  - F-LB3-4: barbell_shrug carries 7 copy-lint hits from before this PR (5 semicolons, one mistake label over 5 words, one row "where" over 6 words). They are fixed in the research pass before LIB-13s.
+  - verify/lb3.md on the research head does not mention R-LB3-11; this section is the record of it.
+
 ## Findings (id-n, severity, field: problem. Fix)
 
 **dumbbell_romanian_deadlift**
