@@ -111,7 +111,7 @@ export default {
       { kind: 'arc-arrow', center: { at: 'ankle.r', pose: 'mistake' }, r: 36, a0: 72, a1: 28 },   // the foot turns up about the ankle
     ],
     tells: [
-      { key: 'flexed', text: 'Feet<br>flexed up', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 254, top: 300 }, cue: 'Your feet flex up as if you were standing.' },
+      { key: 'flexed', text: 'Feet<br>flexed up', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 250, top: 300 }, cue: 'Your feet flex up as if you were standing.' },
       { key: 'calves', text: 'Calves<br>push', anchor: { at: 'heel.r', pose: 'mistake' }, box: { left: 48, top: 284 }, cue: 'You push the pad with your calves instead of pointing your toes.' },
     ],
   },
