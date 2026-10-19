@@ -3915,3 +3915,66 @@ One exception, by design: a key that maps an id which is already a pinned row ad
 - Checked, no change needed: no FROZEN file is touched and no render path changes, so the three pins, F4 and CARRY hold. :21-34 stay byte-identical. The esbuild closure of pairs.mjs holds no key or words file: the hand modules are loaded by a computed dynamic import (:40), and panel.mjs reads its words with readFileSync, not import. No other importer of panel.mjs or panel-words.json exists on #193 (grep). LIB-12's A7 inputsFor tests (hand-views.test.ts:205-219) assert membership only. No contradiction with lib4-cards sections 16-18: D-LIB7FIX-WORDS is amended by its own text, D-LIB7b-SLOT stands, and D-LIB7FIX-API's "key and id give one list" holds through keyOfCfg.
 
 - Supervisor note: LIB-12 (#191) keys mountain_climbers, a pilot A plate, so LIB-12 merges after #193 and before LIB-8M's pin commit (ci/manifest.mjs:69-71). LB1 pins only on a head that holds LIB-7c.
+
+## 20. LIB-12-FIX rulings (D-LIB12FIX-*, D-LIBHANDS-COUNT, 2026-10-19)
+
+LIB-12-FIX rulings (D-LIB12FIX-*, supervisor, 2026-10-19; from lib-12-fix-rulings-proposed.md and lib-12-fix-critic.md, all findings accepted). Heads: #191 0d268a71; #193 da65b13a (PERKEY head not yet on origin); main f125edab; #109 774becf9; cards 39c71b01.
+
+D-LIB12FIX-CARRY
+- LIB-12's reviews (#191 5976224674 @ 0d268a7 and before) and pilot A's LIB-12 evidence (rendered at 06519f9) count on a LIB-12-FIX head only when, on that exact head:
+  - each of the 20 `renderPair(id, { fault }).svg` has the sha256 recorded at 0d268a71, pinned in tests/library/lib12-fix.test.ts (combined, by the card's M1 method: `0bc3ba3d…5fee0`);
+  - the 15 LIB-12 files are byte-identical to 0d268a71: the 8 hand-<key>.mjs, the 5 view-*.mjs, lib12-claims.json and gate-lib12.mjs;
+  - for each LIB-12 key and fault (6 pages), the panel's SVG equals renderPair(first id, { fault }).svg with the uid swapped (lib7-fix F4's method).
+- A head without that run carries nothing. A moved render stops the card; only the critic fix round re-bases the pins, by a supervisor ruling that names the new head.
+
+D-LIB12FIX-SHIP
+- No LIB-12 key ships (no shipped row maps to it, gen/hands.mjs:192) until, for that key:
+  - (1) a calibrated R8 critic panel, VALID under D-CRITIC-CAL3, passes it on a head where D-LIB12FIX-CARRY's pins hold; its approval then carries by that byte proof, as D-LIB7FIX-CARRY;
+  - (2) the owner has seen its kind on its pilot sheet with the critic scores: cupped and front-rack on pilot A (D-LIB8M-SHEET), palm-flat, ball-contact and battle-rope on pilot B;
+  - (3) the supervisor's words look (D-LIB12FIX-WORDS).
+
+D-LIB12FIX-WORDS
+- For LIB-12's keys, D-LIB7FIX-WORDS's "approved Right note and fault labels already in the approved SVG" reads: the key module's rightNote and fault label as drawn in the reviewed SVG (#191 5976224674). Where a research shared card carries the same fault key, the label must equal that card's label.
+- Words, one hands/words/<key>.json each (PERKEY decision 1):
+  | key | fault | right | wrong = pager |
+  |---|---|---|---|
+  | ball-contact-catch-under | side-sandwich | Hands under (hand-ball-contact.mjs:14) | Hands on sides (:18; implement-wall-ball faults[0]) |
+  | battle-rope-rope-neutral | death-grip | Palms facing (hand-battle-rope.mjs:17) | Too tight (:21; implement-battle-ropes faults[1]) |
+  | cupped-goblet-under | weight-away | Against the chest (hand-cupped.mjs:14) | Weight away (:18; no shared card) |
+  | front-rack-rack-under | bar-off-shoulders | On the shoulders (hand-front-rack.mjs:15) | Bar on hands (:19; front-rack-exemption faults[0]) |
+  | palm-flat-floor-over | cupped-palm | Whole hand down (hand-palm-flat.mjs:14) | Palm cupped (:18; palm-flat faults[1]) |
+  | palm-flat-floor-over | hand-ahead | Whole hand down | Hand ahead (:20; palm-flat faults[0], D-LIB5-FAULTKEYS) |
+  The heading is 'Hand: right and wrong' for all, with LIB-7's source.
+- The supervisor looks at the five panels on a sheet (390 px, Silent Black and Paper) before READY. The look checks words only. It does not replace the calibrated R8 critic (hands/DESIGN.md §5; plan 3.4; D-CRITIC-CAL3) or the owner's pilot-sheet look (plan 2.3).
+
+D-LIB12FIX-GATE
+- LIB-12's gate block keeps its body byte-identical. The line `if (gate.runs('LIB-12'))` goes alone above its existing `{`, as LIB-7's block (screenshot-gate.mjs:9406-9407 @ da65b13a), directly after LIB-7's guarded block and before `await gate.done();`.
+- tests/gate-split.test.ts:55 becomes the merged head's count + 1, exact, with "+ LIB-12" in its comment.
+- scripts/gate-times.json gains "LIB-12", measured as 11.1 item 16 (b) says.
+
+D-LIB12FIX-SLOT (amends D-LIB7b-SLOT and D-LIB7c-SLOT's order and lane lines)
+- LIB-12 #191 + LIB-12-FIX takes checklist slot 6c: … LIB-6 #181 + LIB-6-PM → LIB-7 #193 + LIB-7-FIX with PERKEY (6) → LIB-7b (6b) → LIB-12 #191 + LIB-12-FIX (6c) → LIB-8M #109 (7) → LIB-5v (7a) → LIB-7c (7b) → LB1 #245 (8).
+- The supervisor may renumber LIB-12 to 6a if it is READY before LIB-7b.
+- Lane: the next free LIB builder slot after PERKEY lands on #193 goes to LIB-12-FIX, then LIB-7c. LIB-7c keeps its fallback (the LIB-7-FIX session while it WAITS).
+- 'PILOT A PIN GO' is sent only after LIB-12 is on main and merged into #109, and after (b) below. lib-8-merge-card.md:53 gains "LIB-7b (6b) and LIB-12 (6c) on main and merged in", and :56 gains "6b LIB-7b; 6c LIB-12", in the cards commit that records this ruling.
+- (b) The supervisor runs the calibrated R8 critic panel (hands/DESIGN.md §5, sheet.mjs `--plant`; D-CRITIC-CAL3) on LIB-12's 12 drawn ids on the LIB-12-FIX head, before the pilot A sheet goes to the owner if it fits, and in any case before 'PILOT A PIN GO'. The owner sees cupped and front-rack with the critic scores, as LIB-7's hands are shown: on the pilot A sheet when the panel runs first; otherwise the supervisor sends him their scores (with a changed-ids sheet if a picture changed) before 'PILOT A PIN GO', so D-LIB12FIX-SHIP (2) holds.
+  - Findings get one fix round inside LIB-12-FIX. D-LIB12FIX-CARRY's pins are re-based by a supervisor ruling naming the new head.
+  - A key that still fails moves its ids to its module's GAPS (the D-LIB7c-SHIP pattern), and its words file is removed.
+  - If cupped or front-rack change after the pilot A sheet was sent, the owner gets a changed-ids sheet before the pin (plan 3.5).
+- After the pin, any edit to hand-palm-flat.mjs, view-palm-flat.mjs, view-common.mjs (shared by every LIB-12 view and imported by hand-battle-rope.mjs) or words/palm-flat-floor-over.json needs an `'owner'` pin replacement for mountain_climbers. A later fix to another LIB-12 view is made without touching view-common.mjs, or carries that replacement; the builder tells the supervisor first.
+- Fallback: if LIB-12-FIX is not READY when #109 is otherwise ready to pin, the supervisor may move LIB-12 after #109 and accept the `'owner'` pin replacement for mountain_climbers, recorded as a ruling.
+- Posts: #191, #109, LIB-7b's PR once open, #193.
+
+D-LIB12FIX-ROPE (D-LIB7c-CAMERA's follow-up for LIB-12): deferred
+- battle_ropes stays as drawn (orientation `neutral`, Right forearm 180, relabelled "Seen from above", hand-battle-rope.mjs:16, :27, :33-38). LIB-12-FIX changes no battle_ropes byte.
+- Its pilot B look (critic and owner) rules one of: (i) keep; (ii) redraw at a level forearm (Right forearm 90) with the camera words 'Seen from above' and no YOU / MACHINE row (D-LIB7-11, D-LIB12-7); (iii) another camera.
+- battle_ropes' row does not ship until that look has ruled.
+- LIB-12-FIX appends this to docs/COACHING-DECISIONS.md and flags it on its words sheet.
+
+D-LIBHANDS-COUNT (as ruled on #193 6257376224 and amended by 6257562588; applied by LIB-12-FIX)
+- In tests/howto/library-lint.test.ts (line numbers at f125edab), a card that adds hand modules raises these five lines to exact values, in the same commit as its modules or its main merge: :241 `hands <3 + Σ fault entries>`; :302 the exact fault-entry count; :305 the test title names the real set; :307 `mods.map(m => m.src)` equals the exact sorted module list; :308 the exact pair of counts.
+- LIB-7: 13; 10; 5 modules; [10, 10]. With LIB-12: 19; 16; 13 modules; [16, 16].
+- No other line changes. Each value is derived and shown in the PR body.
+- Mutation: remove a hand module that has fault entries (LIB-7: hand-rope.mjs; LIB-12: hand-palm-flat.mjs); each line that depends on it turns red.
+
+- Also ruled on #109 (01:1x): D-LIB8M-O5GATE-2 (c15-stamps.test.ts:52 input becomes a complete real stamp; bare entry pinned in lib8-stamps.test.ts) and D-LIB8M-MISTAKEPARTS, D-LIB8M-DEG, -NOFACTS, -SLRDLLINE (comments 6257604182, 6257123813, 6257000888). R-LB2-27 merged (#268, research f57e7944).
