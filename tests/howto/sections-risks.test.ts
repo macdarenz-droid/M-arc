@@ -8,6 +8,7 @@ import type { VNode } from 'preact';
 import { renderRisks } from '@/slices/howto/sections/Risks';
 import { chromeIdOf } from '@/slices/howto/PlateView';
 import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER } from '@/howto/archetypes';
+import { RED_FLAG_BACK } from '@/howto/red-flag-back';
 import type { BuiltHowTo } from '@/howto/types';
 import type { RiskJoint } from '@/howto/content-types';
 import { readHowTo } from './generated-module';
@@ -29,6 +30,7 @@ const modules = () => readdirSync('src/howto/generated').filter(f => /^ht-.*\.ts
 
 const FLAG: Readonly<Record<RiskJoint, { name: string; now: string; doctor: string }>> = {
   wrist: RED_FLAG, shoulder: RED_FLAG_SHOULDER, knee: RED_FLAG_KNEE, elbow: RED_FLAG_ELBOW,
+  back: RED_FLAG_BACK,
 };
 
 describe('HT9-A3: Risks ("Risks and when to stop")', () => {
