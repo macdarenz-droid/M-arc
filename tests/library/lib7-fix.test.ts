@@ -1,7 +1,6 @@
 // LIB-7-FIX (card lib-7-fix-card.md; hands/DESIGN.md §8): LIB-7's loader contract for main's gen/handpairs.mjs. F1 the
 // contract, F2 key identity, F3 exercise-neutral panels with approved words, F4 the approvals carry (byte proof against
 // the pinned render), F6 (a) the per-key budget, F7 L2-A21's covering proof. Each check has its mutation in the same test.
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -311,8 +310,11 @@ async function withDeclared<T>(mods: any[], f: () => Promise<T> | T): Promise<T>
 
 describe('LIB-7-FIX PK1: words split per key, panels unchanged', () => {
   it('the 8 panels === panelHtml with da65b13a\'s words; chrome.json + words/<key>.json deep-equal panel-words.json; key files = keysOf()', async () => {
-    for (const k of C.sweep(P.keysOf(), 8, 'pair keys')) expect([k, (await P.pairPanel(k)) === PN.panelHtml(k, pagesOf(k), fixtureWords(k))]).toEqual([k, true]);
-    expect(wordsSplit(PN.allWords())).toEqual(WORDS_FIXTURE);
+    // LIB-7's 8 keys, the ones da65b13a's file held; a later card's keys add their own files (D-LIB7FIX-PERKEY)
+    const lib7 = C.sweep(Object.keys(WORDS_FIXTURE.keys), 8, 'LIB-7 pair keys in da65b13a\'s words');
+    for (const k of lib7) expect([k, (await P.pairPanel(k)) === PN.panelHtml(k, pagesOf(k), fixtureWords(k))]).toEqual([k, true]);
+    const all = PN.allWords();
+    expect({ ...wordsSplit(all), keys: Object.fromEntries(lib7.map(k => [k, all.keys[k]])) }).toEqual(WORDS_FIXTURE);
     expect(Object.keys(PN.allWords().keys)).toEqual([...P.keysOf()].sort());
   }, 60_000);
   it('no tool, script or test file names panel-words.json, apart from this reader', () => {
@@ -323,7 +325,7 @@ describe('LIB-7-FIX PK1: words split per key, panels unchanged', () => {
   it('mutations (in memory): one word changed, an extra key, a missing key file are each red', async () => {
     const k = 'curl-dumbbell-neutral', changed = structuredClone(PN.allWords());
     changed.keys[k].faults.curled.wrong.text = 'Wrist bent';
-    expect(wordsSplit(changed)).not.toEqual(WORDS_FIXTURE);
+    expect({ ...wordsSplit(changed), keys: Object.fromEntries(Object.keys(WORDS_FIXTURE.keys).map(x => [x, changed.keys[x]])) }).not.toEqual(WORDS_FIXTURE);
     expect(PN.panelHtml(k, pagesOf(k), { chrome: changed.chrome, keys: { [k]: changed.keys[k] } })).not.toBe(await P.pairPanel(k));
     const extra = { ...PN.allWords().keys, 'zz-extra': PN.allWords().keys[k] };
     expect(Object.keys(extra).sort()).not.toEqual([...P.keysOf()].sort());
@@ -409,6 +411,7 @@ describe('LIB-7-FIX PK4: adding a key moves no existing key\'s files', () => {
     });
   }, 60_000);
   it('(b) files: a scratch worktree of HEAD with a new key module and words file lists the same files, bytes and closure', async () => {
+    const { execFileSync } = await import('node:child_process');
     const wt = join(tmpdir(), `lib7fix-pk4-${process.pid}-${Date.now()}`), git = (...a: string[]) => execFileSync('git', a, { stdio: 'pipe' }).toString();
     try {
       git('worktree', 'add', '--detach', '--no-checkout', wt, 'HEAD');
