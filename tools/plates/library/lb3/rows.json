@@ -2,5 +2,33 @@
  "note": "LB3 build-ahead rows (LIB-13, D-LIB13-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
  "batch": "LB3",
  "censusRef": "4a9fd86",
- "rows": {}
+ "rows": {
+  "lib_landmine_row": {
+   "src": "library/specs/landmine_row.mjs",
+   "slug": "landmine-row",
+   "prefix": "landmine-row",
+   "chromeId": "landmine-row",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_one_arm_dumbbell_row": {
+   "src": "library/specs/one_arm_dumbbell_row.mjs",
+   "slug": "one-arm-dumbbell-row",
+   "prefix": "one-arm-dumbbell-row",
+   "chromeId": "one-arm-dumbbell-row",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_conventional_deadlift": {
+   "src": "library/specs/conventional_deadlift.mjs",
+   "slug": "conventional-deadlift",
+   "prefix": "conventional-deadlift",
+   "chromeId": "conventional-deadlift",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
 }

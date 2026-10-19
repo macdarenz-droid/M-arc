@@ -231,6 +231,27 @@ landmine_row with `eq/landmine.mjs`, one_arm_dumbbell_row and conventional_deadl
 temporary worktree of #109 `48d49bb`), the unit tests, the two-build plates-page sha256 and the Do 8 QA table, A9 and
 each mutation shown red then restored. Authoring QA counts as evidence only after Do 6's verdict.
 
+- **conventional_deadlift (H).** Spec start = standing (card plate.end), spec end = the bar on the floor (card
+  plate.start; pose map, section 9). Floor: the 45 cm plates on the floor line (bar centre 0.225 m, c23), the bar over
+  mid-foot, the arms vertical in the side view, the trunk SOLVED (67.6° from vertical) so the bar is 5 mm in front of
+  the shin (c1, c3, c4); knee 64°, hips 0.705 m. Top: trunk upright, knees 2°, the arm hanging 10.7° forward so the bar
+  rests on the thighs over mid-foot (c6, c10). Five via poses on the mid-foot plumb line keep the bar path vertical and
+  out of the legs (c6; a test samples t = 0..1). Tempo Lower 2, Lift 1. Mistake `round` (c8): the bar 2 cm off the
+  floor, pelvis tucked 30°, lumbar flexed (solved 37°) so the vertical arms still reach the bar; a dashed hump guide;
+  tells `round` and `tuck`. 'Bar over midfoot' ends on the mid-foot plumb line under the bar; 'Bar close' on the bar at
+  the shin.
+- **one_arm_dumbbell_row (H, support anchor).** The far knee and far flat palm on a flat bench (top 0.42 m), the near
+  foot on the floor, the near arm working. The pelvis tilt is SOLVED (94.85°) so the drawn back line is level (c4); the
+  far thigh vertical (knee under the hip), the far wrist under the far shoulder (c2; checks). With all three on one
+  flat bench the support elbow bends about 75° (the arm is longer than the thigh): card-true, flagged for R1/R3. Start:
+  the working arm plumb by joint angles (c5); end: the dumbbell at the hip, the elbow driven back (c6, c9). Tempo Pull 2,
+  Lower 2. Mistake `short` (c10): the dumbbell stops at 45% of the rise, the shoulder blade not pulled back; tells
+  `short` and `blade`; `pilot.drawableFault` names momentum (F7).
+- **landmine_row (H, landmine anchor): CONFLICT posted (#274, comment 6265024757).** The card's inferred layout (pivot
+  behind, plates in front, shoulders ahead of the weight) puts the edge-on plate under the chest: the solved top (plate
+  corner or hand 1 cm off the torso front) lifts the hands 19.2 cm with 45 cm plates, so PQ-H3's Trace is 6.7 px
+  (< 22.11). Not tuned; waits for the supervisor's ruling. Everything else on the plate passes (QA table).
+
 ## 12. Work split (if a second drawer joins)
 
 - Drawer A (this branch): rows (landmine composer, landmine_row, t_bar_row, pendlay_row, one_arm_dumbbell_row); owns
