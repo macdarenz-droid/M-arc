@@ -4,15 +4,15 @@
 //     css: {…zoom-css.mjs} }
 // `e1`: the first sheet's edition (lateral raise), whose posture section puts the feel link on its own line.
 import { captions, chipRowOf, esc, feelLink, I, zoomTop } from './common.mjs';
-import { engineCrop, refSrcCrop } from './crop.mjs';
+import { LAYERS_ENGINE, engineCrop, refSrcCrop } from './crop.mjs';
 import { handZoomOf } from './hand.mjs';
 import { zoomCss } from './zoom-css.mjs';
 
-export function zoomApi(mod, o) {
+export function zoomApi(mod, o, engine = LAYERS_ENGINE) {
   const howto = mod.default;
   const { handZoom, PAGES } = handZoomOf(mod, o.hand, o.thumb);
   let cropHalf = null;
-  const crop = () => (cropHalf ??= o.crop.source === 'refSrc' ? refSrcCrop(howto) : engineCrop(howto, o.crop));
+  const crop = () => (cropHalf ??= o.crop.source === 'refSrc' ? refSrcCrop(howto) : engineCrop(howto, o.crop, engine));
   function postureZoom(z) {
     const sub = role => z.callout[role].text.replace(/<br\s*\/?>/g, ' ');   // the crop's own label, printed once under the word
     const head = ok => `<div class="z-head ${ok ? 'ok' : 'm'}">${ok ? I.check(18) : I.x(18)}<b>${ok ? 'Right' : 'Wrong'}</b></div><div class="z-sub ${ok ? 'ok' : 'm'}">${esc(sub(ok ? 'right' : 'wrong').toUpperCase())}</div>`;

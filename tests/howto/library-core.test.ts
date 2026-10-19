@@ -1,7 +1,8 @@
 // LIB-2 (library plan 5.2, 5.3; design docs/howto/library/LIB-2-DESIGN.md): the scale core. Each block names its
 // design acceptance id (L2-A*). Every sweep asserts its count and is shown red on an empty input.
-import { readFileSync } from 'node:fs';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { cpSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 import { LIBRARY } from './shipped-rows';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -69,21 +70,28 @@ export function hashLineProblems(paths: string[], a: Map<string, { text: string 
 
 describe('L2-A4: a new library batch row stales none of the 8\'s generated files', () => {
   it('with a synthetic batch row, the 54 fingerprinted files keep their header and the 8 ht- modules their hashes: line; the id files see the row', async () => {
-    const reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+    const F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
+    const t = F.ownRowsTree(), LB = 'tests/howto/fixtures/batches/lb-test.json';
+    onTestFinished(() => F.drop(t));
+    cpSync(LB, join(t, LB));
+    const ID_FILES = ['src/howto/ids.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts'];
+    const reg = await import(/* @vite-ignore */ F.url(t, 'tools/plates/library/registry.mjs'));
+    const tgen = await import(/* @vite-ignore */ F.url(t, 'tools/plates/generate.mjs'));
     const paths = Object.keys(fixture().bodies);
     expect(paths).toHaveLength(54);
     expect(paths.filter(p => /\/ht-[a-z-]+\.ts$/.test(p))).toHaveLength(8);
     const before = reg.rows().length;   // LIB-2b: the registry's rows (the 8 on main), never fewer
     expect(before).toBeGreaterThanOrEqual(8);
-    reg.__setExtraBatches(['tests/howto/fixtures/batches/lb-test.json']);
+    const base = new Map([...paths, ...ID_FILES].map(p => [p, { text: readFileSync(join(t, p), 'utf8') }]));
+    reg.__setExtraBatches([LB]);
     let withRow: Map<string, { text: string }>;
     try {
       expect(reg.rows()).toHaveLength(before + 1);
-      withRow = await gen.render();
+      withRow = await tgen.render();
     } finally { reg.__setExtraBatches([]); }
-    expect(hashLineProblems(paths, out, withRow)).toEqual([]);
-    for (const p of ['src/howto/ids.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts']) expect(withRow.get(p)!.text.split('\n')[0], p).not.toBe(out.get(p)!.text.split('\n')[0]);
-    expect(hashLineProblems([], out, withRow)).toEqual(['no files compared']);
+    expect(hashLineProblems(paths, base, withRow)).toEqual([]);
+    for (const p of ID_FILES) expect(withRow.get(p)!.text.split('\n')[0], p).not.toBe(base.get(p)!.text.split('\n')[0]);
+    expect(hashLineProblems([], base, withRow)).toEqual(['no files compared']);
   }, 180_000);
 });
 
@@ -347,12 +355,13 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
     expect(checkC6(exerciseIds(), COVERAGE)).toEqual([]);
     expect(() => idsGen.coverageEntries({}, reg.rows(), exerciseIds())).toThrow(/must hold every exercises.json id once/);
     const arch = JSON.parse(readFileSync('tools/plates/library/coverage-archetypes.json', 'utf8')).archetypes;
-    const withShip = [...reg.rows(), { id: 'lib_barbell_row', stage: 'shipped' }];
+    const own = reg.rows(undefined, { batches: [] });
+    const withShip = [...own, { id: 'lib_barbell_row', stage: 'shipped' }];
     expect(idsGen.coverageEntries(arch, withShip, exerciseIds()).find(([id]: [string]) => id === 'lib_barbell_row')[1]).toEqual({ status: 'approved' });
-    const plated = [...reg.rows(), { id: 'lib_barbell_row', stage: 'approved-plate' }];
+    const plated = [...own, { id: 'lib_barbell_row', stage: 'approved-plate' }];
     expect(idsGen.coverageEntries(arch, plated, exerciseIds()).find(([id]: [string]) => id === 'lib_barbell_row')[1]).toEqual({ status: 'pending', archetype: arch.lib_barbell_row, stage: 'approved-plate' });
     expect(reg.shippedIds(plated)).not.toContain('lib_barbell_row');
-    expect(() => idsGen.coverageEntries({ ...arch, lib_barbell_row: null }, reg.rows(), exerciseIds())).toThrow(/no archetype/);
+    expect(() => idsGen.coverageEntries({ ...arch, lib_barbell_row: null }, own, exerciseIds())).toThrow(/no archetype/);
   });
   it('L2-A16: the gate\'s no-How-to control is the first exercises.json id that does not ship, and moves on when it ships', () => {
     expect(h.firstWithoutHowTo()).toBe(exerciseIds().find(id => !reg.shippedIds().includes(id)) ?? null);

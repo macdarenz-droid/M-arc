@@ -12,10 +12,14 @@
 // The ref-src crop (lateral raise, from the approved ref-src plate drawing) is refSrcCrop below.
 import { renderPlate } from '../../../layers/engine/plate.mjs';
 import { landmarksOf } from '../../../layers/engine/body.mjs';
+import { legPressFace } from '../../../layers/engine/equipment.mjs';
 import { arm as refArm } from '../../../layers/ref-src/plate.mjs';
 import { esc, f, mergeDeep } from './common.mjs';
 
 export const PANEL = 171, PH = 171;
+/** D-LIB9-ENGINE: golden B's layers engine, the default engine of every crop (the 8, LIB-2b's fixture, B5's clones). A
+ *  spec that imports tools/plates/library/engine.mjs is cropped by the vendor engine instead (closeups.mjs engineOf). */
+export const LAYERS_ENGINE = Object.freeze({ name: 'layers', renderPlate, landmarksOf, legPressFace });
 const ZONLY = ['level', 'drop', 'cap'];
 
 /** The crop svg frame every posture crop shares. */
@@ -27,7 +31,8 @@ const frame = (z, role, vx, vy, s, inner, overlay, label) => `<svg class="z-crop
 const unwrap = svg => svg.replace(/<svg class="plate-svg"[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/<rect width="358" height="358" fill="url\(#[^)]*\)"\/>/, '');
 
 /** cropHalf(z, role) for engine-spec plates. */
-export function engineCrop(howto, o) {
+export function engineCrop(howto, o, engine = LAYERS_ENGINE) {
+  const { renderPlate, landmarksOf } = engine;   // D-LIB9-ENGINE: every plate and landmark below comes from the spec's engine
   const base = renderPlate(howto.plate, { id: 'base' });
   const CAM = base.report.camera;                    // the fitted camera of the plate on screen; every crop reuses it
   const H = howto.plate.body?.height ?? 1.75;
