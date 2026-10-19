@@ -4146,3 +4146,8 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - **Plants:** two, rebuilt on LB2 plates at `2dcbac1`. Each passes report ok, and only the planted state differs from its unplanted render. One is an R4 leader on the wrong landmark; the other an R5 Mistake drawn in the wrong direction.
 - **Reference:** the PA2 reference (15 files, no plank), plus pilot A's approved dumbbell_bench_press @ `013f84e` as the bench reference. No anchor is shown as a reference.
 - 13.5's rule applies unchanged. The LIB-10 card's one fix round and one recheck apply per plate.
+- **Result (D-LIB10-CRIT1, ~09:00 UTC; page `03637233…` @ `2dcbac1`): VALID, with no exception.**
+  - Plants caught: skull_crusher drift reversed R5 [2,2,2]; close_grip leader on the head R4 [2,2,2].
+  - Anchor medians are all 4 or more (lat_pulldown R1 [3,4,5], R2 [4,4,3]; pull_up R4 [5,3,5]).
+  - **Approved on every scored item (R1-R7, R10)**, with no item that 2 of 3 critics scored 3 or less: barbell_bench_press, close_grip_bench_press, decline_bench_press, skull_crusher and dumbbell_pullover.
+  - The prep found that pilot A's own report check ("nothing drawn under a label") reports cells on barbell_bench_press ('Hips down' 3, 'Straight up' 33 in the Mistake), decline ('Lower-chest touch' 4) and pullover ('Weight comes in' 31 in the Mistake). That is a pilot A tool, not an LB2 gate. LIB-3's H4 passes, and the panel scored R4 and R7 at the bar. It is recorded here and no change is asked.
