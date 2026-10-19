@@ -157,5 +157,6 @@ export default {
       { key: 'tuck', text: 'Hips tuck<br>under', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 30, top: 150 }, cue: 'The hips tuck under and the back curls down.' },
     ],
   },
+  pilot: { note: 'F2 cover 0.163 (named flag): a held hinge, only the arms and the bar move' },
   alt: 'Pendlay row, side view. Hinged with the torso level with the floor and the knees slightly bent, the lifter pulls the bar from a dead stop on the floor up to the base of the chest, moving only the arms, and sets it back down each rep.',
 };

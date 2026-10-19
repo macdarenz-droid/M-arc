@@ -20,8 +20,8 @@ const RESEARCH_HEAD = '892d6516c4dcd88f7b7e22b8cbbf19dc762a8342';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 
-const COMPOSERS = ['landmine'];
-const SLICE = ['pendlay_row', 'landmine_row', 'one_arm_dumbbell_row', 'conventional_deadlift'];
+const COMPOSERS = ['landmine', 'romanChair'];
+const SLICE = ['pendlay_row', 'landmine_row', 'one_arm_dumbbell_row', 'dumbbell_romanian_deadlift', 'conventional_deadlift', 'sumo_deadlift', 'back_extension'];
 const dist = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!);
 
 let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, pins: any, lmEq: any;
@@ -331,16 +331,18 @@ describe('LIB-13 A2: the landmine bar on landmine_row, per drawn pose (13.1)', {
     const g = plateGap(lifted, 'end');
     expect(g.cross || g.cm > 1).toBe(true);
   });
-  /** c3 (Cissik): "at least a 45 degree angle between your upper body and the ground", read as the hinge depth: the upper
-   *  body (near hip to near shoulder, side view) is at least 45 deg from upright, i.e. at most 45 deg above the ground. */
+  /** c3 (REP, the source the drawn pose follows; D-LIB13-Q1b): "roughly parallel to the floor": the near hip-to-shoulder
+   *  line at start within 15 deg of horizontal, i.e. 75-105 deg from vertical. Cissik's 45 deg is the differing source. */
   const hingeDeg = (lm: any) => deg(lm['hip.r'], lm['shoulder.r']);
-  it('Q1 (D-LIB13 note ruling): the drawn start torso meets c3\'s bound: the hip-to-shoulder line at least 45 deg from vertical', () => {
-    expect(hingeDeg(itemsIn(S.landmine_row, 'start').lm)).toBeGreaterThanOrEqual(45);
+  it('Q1 (D-LIB13-Q1b): the drawn start torso is roughly parallel (REP, c3): the hip-to-shoulder line 75-105 deg from vertical', () => {
+    const d = hingeDeg(itemsIn(S.landmine_row, 'start').lm);
+    expect(d).toBeGreaterThanOrEqual(75);
+    expect(d).toBeLessThanOrEqual(105);
   });
-  it('Q1 mutation: the torso drawn past the bound (thorax 40 deg from vertical) is red', () => {
+  it('Q1 mutation: the torso drawn at 40 deg from vertical is outside the range (red)', () => {
     const s = S.landmine_row, st = s.poses.start, upright = { ...st, root: { ...st.root, tilt: 40 - st.trunk } };
     const lm = pathLm({ ...s, poses: { start: upright, end: upright } }, 0);
-    expect(hingeDeg(lm)).toBeLessThan(45);
+    expect(hingeDeg(lm)).toBeLessThan(75);
   });
   const swapEntry = (spec: any, fn: (it: any, ctx: any) => any) => ({ ...spec, equipment: spec.equipment.map((e: any) => (typeof e !== 'function' ? e
     : (lm: any, ctx: any) => { const r = e(lm, ctx); return Array.isArray(r) ? r.map(it => fn(it, ctx)) : (r ? fn(r, ctx) : r); })) });
@@ -448,6 +450,83 @@ describe('LIB-13 pendlay_row (H, ruling 4): drawn facts', { timeout: T }, () => 
   });
 });
 
+describe('LIB-13 hinge bulk: sumo_deadlift, dumbbell_romanian_deadlift, back_extension drawn facts', { timeout: T }, () => {
+  const lm = (id: string, p: string) => itemsIn(S[id], p).lm;
+  const trunkDeg = (l: any) => deg(l['hip.r'], l['shoulder.r']);
+  // Q2 (LB3 NOTE RULED): c4 "trunk more upright than conventional": sumo's drawn trunk angle from vertical at the card's
+  // start (spec end, the floor) is smaller than conventional_deadlift's at its card start (also spec end).
+  const q2 = (sumo: number, conv: number) => (sumo < conv ? [] : [`sumo ${sumo.toFixed(1)} >= conventional ${conv.toFixed(1)}`]);
+  it('Q2: sumo_deadlift\'s trunk at the floor is more upright than conventional_deadlift\'s (5-10 deg, c4)', () => {
+    const a = trunkDeg(lm('sumo_deadlift', 'end')), b = trunkDeg(lm('conventional_deadlift', 'end'));
+    expect(q2(a, b)).toEqual([]);
+    expect(b - a).toBeGreaterThanOrEqual(5);
+    expect(b - a).toBeLessThanOrEqual(10);
+  });
+  it('Q2 mutation: the two values swapped is red', () => {
+    const a = trunkDeg(lm('sumo_deadlift', 'end')), b = trunkDeg(lm('conventional_deadlift', 'end'));
+    expect(q2(b, a).length).toBe(1);
+  });
+  it('sumo c13, parent c23: the 45 cm plates on the floor line, the bar over mid-foot and in front of the shins; c14: knees within 3 deg of straight at the top', () => {
+    const bar = itemsIn(S.sumo_deadlift, 'end').items.find(it => it.type === 'barbell'), e = lm('sumo_deadlift', 'end');
+    expect(Math.abs(bar.at[1] - 0.225)).toBeLessThanOrEqual(0.002);
+    expect(Math.abs(bar.at[2])).toBeLessThanOrEqual(0.005);
+    expect(e.grips[2] - e['knee.r'][2]).toBeGreaterThan(0);
+    expect(plate.renderPlate(S.sumo_deadlift, { id: 'x' }).report.angles.start['knee.r']).toBeLessThanOrEqual(3);
+  });
+  it('sumo c12 Mistake: the hips at least 8 cm higher with the bar still on the floor, the trunk tipped further forward', () => {
+    const e = lm('sumo_deadlift', 'end'), m = itemsIn(S.sumo_deadlift, 'mistake').lm;
+    expect(m['hip.r'][1] - e['hip.r'][1]).toBeGreaterThanOrEqual(0.08);
+    expect(dist(m.grips, e.grips)).toBeLessThanOrEqual(0.005);
+    expect(trunkDeg(m)).toBeGreaterThan(trunkDeg(e) + 5);
+  });
+  it('dumbbell_romanian_deadlift c1, c3, c4: a dumbbell in the hands in every pose, at mid-shin at the bottom (±1 cm), touching the legs (hex 0-1 cm off the drawn leg)', () => {
+    for (const p of posesOf(S.dumbbell_romanian_deadlift)) expect(itemsIn(S.dumbbell_romanian_deadlift, p).items.filter(it => it.type === 'dumbbell').length, p).toBe(1);
+    const e = lm('dumbbell_romanian_deadlift', 'end');
+    expect(Math.abs(e.grips[1] - (e['knee.r'][1] + e['ankle.r'][1]) / 2)).toBeLessThanOrEqual(0.01);
+    const R = eng.RADII, H = 1.75, hex = 0.119 * 0.866 / 2;
+    const shin = (() => { const a = e['knee.r'], b = e['ankle.r'], p = e.grips, d: any = [b[1] - a[1], b[2] - a[2]], L2 = d[0] ** 2 + d[1] ** 2, t = Math.max(0, Math.min(1, ((p[1] - a[1]) * d[0] + (p[2] - a[2]) * d[1]) / L2));
+      const [rA, rM, rB, m] = R.shank, r = t < m ? rA + (rM - rA) * Math.sin((t / m) * Math.PI / 2) : rM + (rB - rM) * (1 - Math.cos(((t - m) / (1 - m)) * Math.PI / 2));
+      return Math.hypot(p[1] - a[1] - d[0] * t, p[2] - a[2] - d[1] * t) - r * H - hex; })();
+    expect(shin).toBeGreaterThanOrEqual(0);
+    expect(shin).toBeLessThanOrEqual(0.01);
+  });
+  it('dumbbell_romanian_deadlift: knees fixed at a soft bend (15 ± 2 deg) in start and end; c10 Mistake: the lumbar extends at least 20 deg (the arch)', () => {
+    const r = plate.renderPlate(S.dumbbell_romanian_deadlift, { id: 'x' }).report;
+    for (const p of ['start', 'end']) expect(Math.abs(r.angles[p]['knee.r'] - 15), p).toBeLessThanOrEqual(2);
+    expect(S.dumbbell_romanian_deadlift.poses.via[0].trunk - S.dumbbell_romanian_deadlift.mistake.pose.trunk).toBeGreaterThanOrEqual(20);
+  });
+  it('back_extension Do 4 (13.1): the romanChair pad sits under the front of the near thigh, within 1 cm, below the hip joint, in every pose; the chair is static', () => {
+    const s = S.back_extension, pad = M.back_extension.BX.pad;
+    const chairOf = (p: string) => itemsIn(s, p).items.filter(it => it.type === 'backPad' || it.type === 'kneePad').map(it => JSON.stringify({ ...it, entry: 0 }));
+    for (const p of posesOf(s)) {
+      const l = lm('back_extension', p), a = l['hip.r'], b = l['knee.r'], d: any = [b[1] - a[1], b[2] - a[2]], L = Math.hypot(...d);
+      const off = Math.abs(((pad.at[1] - a[1]) * -d[1] + (pad.at[2] - a[2]) * d[0]) / L) - eng.RADII.thigh[0] * 1.75;
+      expect(Math.abs(off), p).toBeLessThanOrEqual(0.012);
+      expect(pad.at[1], p).toBeLessThan(a[1]);
+      expect(chairOf(p), p).toEqual(chairOf('end'));
+    }
+  });
+  it('back_extension mutation: the pad moved 5 cm along the thigh normal is red', () => {
+    const l = lm('back_extension', 'end'), a = l['hip.r'], b = l['knee.r'], d: any = [b[1] - a[1], b[2] - a[2]], L = Math.hypot(...d), n: any = [-d[1] / L, d[0] / L];
+    const pad = M.back_extension.BX.pad.at, moved: any = [0, pad[1] + n[0] * 0.05, pad[2] + n[1] * 0.05];
+    const off = Math.abs(((moved[1] - a[1]) * -d[1] + (moved[2] - a[2]) * d[0]) / L) - eng.RADII.thigh[0] * 1.75;
+    expect(Math.abs(off)).toBeGreaterThan(0.012);
+  });
+  it('back_extension c5: one straight line at the top (hip-to-shoulder line within 5 deg of the hip-to-ankle line); c7: the torso slightly below parallel at the bottom (95-105 deg)', () => {
+    const t = lm('back_extension', 'start'), e = lm('back_extension', 'end');
+    const ang = (p: number[], q: number[]) => Math.atan2(q[1]! - p[1]!, q[2]! - p[2]!) * 180 / Math.PI;
+    expect(Math.abs(ang(t['hip.r'], t['shoulder.r']) - ang(t['ankle.r'], t['hip.r']))).toBeLessThanOrEqual(5);
+    const fromUp = (l: any) => Math.atan2(l['shoulder.r'][2] - l['hip.r'][2], l['shoulder.r'][1] - l['hip.r'][1]) * 180 / Math.PI;   // signed: > 90 below horizontal
+    expect(fromUp(e)).toBeGreaterThanOrEqual(95);
+    expect(fromUp(e)).toBeLessThanOrEqual(105);
+  });
+  it('back_extension c6, c19 Mistake: the pelvis tilts at least 20 deg less and the lumbar flexes at least 20 deg', () => {
+    const e = S.back_extension.poses.end, m = S.back_extension.mistake.pose;
+    expect(e.root.tilt - m.root.tilt).toBeGreaterThanOrEqual(20);
+    expect(m.trunk - e.trunk).toBeGreaterThanOrEqual(20);
+  });
+});
+
 describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn facts', { timeout: T }, () => {
   const s = () => S.one_arm_dumbbell_row, lm = (p: string) => itemsIn(s(), p).lm;
   it('c2: the far hand straight under the far shoulder (±1 cm) and the far knee under the hip (±1 cm), on one bench top', () => {
@@ -487,9 +566,12 @@ describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn
 });
 
 describe('LIB-13 H slice Mistakes, tells, cues and tempo (DESIGN.md sections 8-9)', { timeout: T }, () => {
-  const KEYS: Record<string, string> = { pendlay_row: 'round', landmine_row: 'round', one_arm_dumbbell_row: 'short', conventional_deadlift: 'round' };
+  const KEYS: Record<string, string> = { pendlay_row: 'round', landmine_row: 'round', one_arm_dumbbell_row: 'short', dumbbell_romanian_deadlift: 'arch', conventional_deadlift: 'round', sumo_deadlift: 'hips', back_extension: 'round' };
   const TEMPO: Record<string, any[]> = {
     pendlay_row: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Pull', s: 1, move: true }],
+    dumbbell_romanian_deadlift: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Stand', s: 1, move: true }],
+    sumo_deadlift: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Lift', s: 1, move: true }],
+    back_extension: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Raise', s: 1, move: true }, { phase: 'Hold', s: 1 }],
     landmine_row: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
     one_arm_dumbbell_row: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Lower', s: 2, move: true }],
     conventional_deadlift: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Lift', s: 1, move: true }],
@@ -549,7 +631,7 @@ describe('LIB-13 H slice Mistakes, tells, cues and tempo (DESIGN.md sections 8-9
       }
       return min;
     };
-    for (const id of ['pendlay_row', 'one_arm_dumbbell_row', 'conventional_deadlift']) expect(minGap(S[id]), id).toBeGreaterThanOrEqual(6);
+    for (const id of SLICE.filter(i => i !== 'landmine_row')) expect(minGap(S[id]), id).toBeGreaterThanOrEqual(6);
     const s = S.landmine_row, lm = itemsIn(s, 'end').lm, cam = plate.renderPlate(s, { id: 'x' }).report.camera;
     const at = (w: number[]) => [cam.x0 + w[2]! * cam.pxPerM, cam.y0 - w[1]! * cam.pxPerM];
     const p = at(lmEq.alongBar(M.landmine_row.LM_ROW.pivot, lm['grip.r'], 0.6));
@@ -560,7 +642,7 @@ describe('LIB-13 H slice Mistakes, tells, cues and tempo (DESIGN.md sections 8-9
 
 describe('LIB-13 D-LIB9-CLONE b: each copied root finder throws on a bracket with no root', () => {
   it('the drawn slice specs', () => {
-    for (const [id, f] of [['pendlay_row', 'solve'], ['landmine_row', 'solve'], ['one_arm_dumbbell_row', 'solve'], ['conventional_deadlift', 'bisect']] as const) {
+    for (const [id, f] of [['dumbbell_romanian_deadlift', 'bisect'], ['sumo_deadlift', 'bisect'], ['back_extension', 'bisect'], ['pendlay_row', 'solve'], ['landmine_row', 'solve'], ['one_arm_dumbbell_row', 'solve'], ['conventional_deadlift', 'bisect']] as const) {
       expect(() => M[id][f]((x: number) => x - 5, 0, 1), id).toThrow(/no solution/);
       expect(M[id][f]((x: number) => x - 0.25, 0, 1), id).toBeCloseTo(0.25, 9);
     }

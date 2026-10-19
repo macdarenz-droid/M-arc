@@ -30,11 +30,38 @@
    "stage": "drawing",
    "view": "side"
   },
+  "lib_dumbbell_romanian_deadlift": {
+   "src": "library/specs/dumbbell_romanian_deadlift.mjs",
+   "slug": "dumbbell-romanian-deadlift",
+   "prefix": "dumbbell-romanian-deadlift",
+   "chromeId": "dumbbell-romanian-deadlift",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
   "lib_conventional_deadlift": {
    "src": "library/specs/conventional_deadlift.mjs",
    "slug": "conventional-deadlift",
    "prefix": "conventional-deadlift",
    "chromeId": "conventional-deadlift",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_sumo_deadlift": {
+   "src": "library/specs/sumo_deadlift.mjs",
+   "slug": "sumo-deadlift",
+   "prefix": "sumo-deadlift",
+   "chromeId": "sumo-deadlift",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_back_extension": {
+   "src": "library/specs/back_extension.mjs",
+   "slug": "back-extension",
+   "prefix": "back-extension",
+   "chromeId": "back-extension",
    "mode": "H",
    "stage": "drawing",
    "view": "side"

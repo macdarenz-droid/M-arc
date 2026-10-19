@@ -119,6 +119,7 @@ rejects the support anchor (ruling 7).
 
 - **F5 on all 8** (D-LIB9-F5, 14.4): `exemptions: ['F5']` for the selected Mistake tell in Midnight at exactly 3.57
   only.
+- **F2 on pendlay_row** (named flag, ruled #274 6267110489): cover 0.163, a held hinge.
 - **F7 on one_arm_dumbbell_row**: drawable false (plan 1:85-88). Its top fault, momentum (c10, first on StrengthLog's
   list), is seen only as speed; the plate draws the next fault on the same list, the short range (c10). Spec
   `pilot: { drawableFault: '...' }`. topFault 'momentum' ≠ the drawn key 'short', so F7 stays raised and needs the
@@ -208,7 +209,7 @@ checked):
 |---|---|---|---|
 | pendlay_row, t_bar_row, one_arm_dumbbell_row, dumbbell_romanian_deadlift, conventional_deadlift | none | `plateFacts: []` | "parallel", "slightly bent", "halfway down the shins" give no number |
 | landmine_row | c3: Cissik "at least a 45 degree angle between your upper body and the ground" | **none proposed (question Q1)** | a lower bound from the source the card sets aside ("the drawn pose follows REP": roughly parallel); a fact at 45° would contradict the drawn, card-true parallel torso |
-| sumo_deadlift | c2: stance 70 ± 11 vs 32 ± 8 cm, toe-out 42 ± 8 vs 14 ± 6° (competitive lifters); c4: trunk 5-10° more vertical than conventional | **none proposed (question Q2)** | stance width shows only from the front (card viewWhy); no fact kind measures a stance width or a foot angle (H6 kinds: angle by joint or measure, contact, height; 22 point 1: report, never invent a key); c4 is relative to another plate. Drawn card-true anyway: mid-soles 70 cm apart, toes out 42°, and the sumo trunk 7.5° (c4 midpoint) more vertical than conventional_deadlift's drawn trunk, each a drawn-item test |
+| sumo_deadlift | c2: stance 70 ± 11 vs 32 ± 8 cm, toe-out 42 ± 8 vs 14 ± 6° (competitive lifters); c4: trunk 5-10° more vertical than conventional | **none proposed (question Q2)** | stance width shows only from the front (card viewWhy); no fact kind measures a stance width or a foot angle (H6 kinds: angle by joint or measure, contact, height; 22 point 1: report, never invent a key); c4 is relative to another plate. Drawn: the sumo trunk 7.5° (c4 midpoint) more vertical than conventional_deadlift's drawn trunk, a drawn-item test (Q2 ruled). The feet are drawn 30 cm apart, toes out 10°, not c2's 70 cm and 42°: the engine foot has no roll (section 11) |
 | back_extension | c7 "slightly below parallel": no number | `plateFacts: []` | |
 
 Equipment numbers (fact only with a measure callout): conventional_deadlift's 45 cm plates / 22.5 cm bar (c23) and
@@ -254,11 +255,10 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
   before the plates make contact with your torso". The end is solved at the first contact as the bar turns up about the
   pivot: the nearest point of the plate or of the bar's surface sits 5 mm off the engine's drawn torso and head outline
   (bodyShapes); hand rise 30.6 cm. Trunk 80° from vertical, knees 30°. Tempo Pull 1, Lower 2. Mistake `round` (c9, c11):
-  pelvis tucked 30°, lumbar 40°, hump guide; tells `round` and `tuck`. Q1 (note ruling): the start torso is 80° from
-  vertical, which meets Cissik's "at least a 45 degree angle between your upper body and the ground" (c3), read as the
-  depth of the hinge: the upper body at least 45° from upright. Read literally (the angle between the upper body and
-  the floor is at least 45°), the bound would contradict the card's own drawn pose (c3: "the drawn pose follows REP",
-  roughly parallel). The test names the angle it measures: the near hip-to-shoulder line, from vertical.
+  pelvis tucked 30°, lumbar 40°, hump guide; tells `round` and `tuck`. Q1 (D-LIB13-Q1b, #274 comment 6267110489): c3's
+  drawn pose follows REP ("roughly parallel to the floor"); Cissik's "at least a 45 degree angle between your upper
+  body and the ground" is the differing source c3 records, not a bound on the drawing. The test checks REP's words: the
+  near hip-to-shoulder line at start within 15° of horizontal (75-105° from vertical; drawn 80°).
 - **Plate (drawing convention, D-LIB13-LANDMINE-2 2-3).** One 10 lb iron plate per side, 228 mm across and 31 mm thick
   (Rogue Machined Olympic Plates: "10LB: 228MM", "10LB Plate Width 1.22\"", roguefitness.com, read 2026-10-19). It is
   the largest catalogue iron plate that passes PQ-H3 card-true on landmine_row: the 25 lb plate (300 mm) leaves a
@@ -282,8 +282,32 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
   Pull 1. Mistake `round` (c8, c23): the bar still on the floor, pelvis tucked 30°, lumbar flexed (solved 42°), the
   hump guide; tells `round` and `tuck`. Stance: mid-soles 24 cm apart, as barbell_row (wider stances leave the IK foot
   off the floor with this level trunk; the side view hides it).
-  - **Measured flag to rule (ruling 13): F2 0.163** (coverage) against the envelope's [0.191, 0.549]. The figure is
-    compact (a held hinge, only the arm and bar move), and nothing is padded to raise it.
+  - **F2 0.163, a named flag (ruled, #274 comment 6267110489; plan 8 decision 9):** coverage under the envelope's
+    [0.191, 0.549]: a held hinge where only the arms and the bar move. On the owner sheet with its value and reason;
+    never padded. A4's expected set on pendlay_row: F2 and F5.
+- **sumo_deadlift (H, ruling 4; hinge bulk, LB3 hinge BULK GO).** Pose map as conventional_deadlift (spec end = the
+  floor start). Floor: the trunk 60.1° from vertical, 7.5° (c4's 5-10°, its midpoint) more upright than
+  conventional_deadlift's drawn 67.6° (Q2, the drawn-item test and its swap mutation); lumbar 3°; straight arms reach
+  the bar over mid-foot; the root SOLVED so the bar is 5 mm in front of the near shin (c13). Feet 30 cm apart, toes out
+  10°: the engine foot has no roll, so c2's 70 cm and 42° leave the heel or ball 0.6-2.1 cm off the floor (36-70 cm
+  stances at 20-42°; the check's limit is 0.5 cm). The side view hides the stance (card viewWhy); the text carries it.
+  Grip 36 cm apart, inside the knees (unsourced). Mistake `hips` (c12): the bar still on the floor, the hips raised
+  10 cm, the trunk angle SOLVED so the straight arms still reach the bar. Tempo Lower 2, Lift 1.
+- **dumbbell_romanian_deadlift (H; HINGE not built).** romanian_deadlift's hinge solve (48d49bb, copied) with the bar
+  swapped for a pair of dumbbells: hands 24 cm apart; the hex face 5 mm off the drawn leg (the hex half across the flats
+  in place of the shaft radius, c4); the bottom trunk SOLVED so the dumbbell centre is at mid-shin (c3); knees 15°. The
+  start is drawn standing tall with the arm SOLVED to rest the dumbbell on the thigh; the root-finder brackets are
+  scanned in 1 cm steps (the clone's fixed brackets missed the root with the dumbbell's larger radius). Mistake `arch`
+  (c10): at the half-way via, pelvis +25°, lumbar -25°, a dashed arch guide; tells `arch` and `hips`. Tempo Lower 2,
+  Stand 1.
+- **back_extension (H, own parent; support class after one_arm_dumbbell_row, ruling 7).** The 45° Roman chair
+  (eq/romanChair.mjs): legs along the bench at 45° from vertical, knees 5°. The legs are held by joint angles (the hip
+  flexes as much as the pelvis tilts past the top), not by foot IK: the foot plate is not level and the plant IK left
+  the soles 7.9 cm off it; the soles' plane checks hold in every pose. The hip pad's top face is SOLVED onto the near
+  thigh's front 18% of the way from the hip to the knee (c1, c2; a test moves the pad 5 cm and goes red). Top: one
+  straight line (c5); bottom: the thorax 100° from vertical, slightly below parallel (c7); arms crossed on the chest by
+  IK (c4). Mistake `round` (c6, c19): the pelvis held at 60°, the lumbar flexed to the same thorax depth, the hump
+  guide; tells `round` and `hips`. Tempo Lower 2, Raise 1, Hold 1.
 - **Straight arms with the bent-back wrist (all pull plates).** The engine's IK turns the forearm by the hand's bend
   (about 9°, body.mjs solveReach), so the pull specs reach at 99.98% of the IK's own full length: the arm reads straight
   with the report's elbow at about 11°.
