@@ -13,6 +13,7 @@
 // per-sheet redFlag block gets its own RED_FLAG_BOX_MAX_WORDS cap plus the "today"/"doctor" wording checks; and a
 // VISIBLE_WORDS_MAX budget sums every shown field once (excluding alt texts) plus the redFlag box.
 import type { HandFault, HowToContent } from '../../../src/howto/content-types';
+import { boxCapOf } from '../../../tools/plates/library/lint/box-caps.mjs';
 
 /** Length caps (README.md "Compact-copy update" table = copy-lint.mjs's own exported constants). */
 export const LIMITS = {
@@ -139,7 +140,7 @@ function checkListCap(field: string, length: number, max: number, what: string):
   return length > max ? [`C7: ${field}: ${length} ${what}, at most ${max}`] : [];
 }
 
-export function checkC7(content: HowToContent): string[] {
+export function checkC7(content: HowToContent, { boxKey }: { boxKey?: string } = {}): string[] {
   const bad: string[] = [];
   const scan = (field: string, text: string | undefined) => { if (text) bad.push(...scanText(field, text)); };
   const visible = new Map<string, string>();
@@ -296,7 +297,8 @@ export function checkC7(content: HowToContent): string[] {
   scan('redFlag.now', rf.now);
   scan('redFlag.doctor', rf.doctor);
   const boxWords = words(`${rf.name} ${rf.now} ${rf.doctor}`);
-  if (boxWords > LIMITS.redFlagBoxWords) bad.push(`C7: redFlag: ${boxWords} words, at most ${LIMITS.redFlagBoxWords}`);
+  const boxCap = boxCapOf(boxKey, LIMITS.redFlagBoxWords);   // BOX-CAP: the box's shared-card key picks a named cap
+  if (boxWords > boxCap) bad.push(`C7: redFlag: ${boxWords} words, at most ${boxCap}`);
   if (!/today/i.test(rf.now)) bad.push('C7: redFlag.now must say "today"');
   if (!/doctor/i.test(rf.doctor)) bad.push('C7: redFlag.doctor must say "doctor"');
 

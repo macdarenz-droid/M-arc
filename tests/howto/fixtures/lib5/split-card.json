@@ -1,0 +1,9 @@
+{
+ "key": "fixture-split",
+ "kind": "fixture",
+ "appliesTo": ["fixture_exercise"],
+ "gripLine": { "text": "Hold the handle in the middle of the palm.", "claim": "c1" },
+ "replacementRule": { "text": "Use the strap grip instead.", "claim": "c1" },
+ "claims": [{ "id": "c1", "text": "Fixture claim.", "tags": ["CONSENSUS"], "sources": ["fx"] }],
+ "sources": [{ "id": "fx", "title": "Fixture source" }]
+}

@@ -1,0 +1,868 @@
+{
+  "id": "pull_up",
+  "libId": "lib_pull_up",
+  "name": "Pull-Up",
+  "family": "Vertical pull",
+  "tier": "A",
+  "archetype": {
+    "hand": "hang",
+    "contact": [
+      "hang-support"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Catalyst Athletics starts the pull-up hanging from the bar with the hands pronated (palms facing forward), just outside shoulder width, letting the shoulders open completely.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-pullup"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-pullup",
+          "text": "Hang from a pull-up bar with your hands pronated (palms facing forward) and just outside shoulder width, allowing your shoulder to open completely.",
+          "where": "Instructions, paragraph 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "NASM describes the pull-up grip as pronated and overhand (palms facing away), usually a bit wider than shoulder-width.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chinup"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chinup",
+          "text": "A pull-up uses a pronated, overhand grip (palms facing away), usually a bit wider than shoulder-width, and involves shoulder adduction.",
+          "where": "The Grip Difference and What It Changes"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Textbook grip guidance (NSCA editors) is to perform all grips with the thumbs around the bar. It is written for barbell lifts and applied to the pull-up bar by inference.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "baechle-earle"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-earle",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Grip Selection and Location drill"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Elbow at the start and end of each rep: the lowering goes until the elbows are completely extended and the shoulders fully open again; NASM coaches a full hang at the bottom.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-pullup",
+        "nasm-chinup"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-pullup",
+          "text": "Lower under control until the elbows are completely extended and shoulders are fully open again.",
+          "where": "Instructions, paragraph 2"
+        },
+        {
+          "source": "nasm-chinup",
+          "text": "partial range of motion (coach a full hang at the bottom to a chin-clearing top)",
+          "where": "Coaching Clean Technique"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Top of the rep: pull until the chin is above the bar, keeping the upper back extended and squeezing the shoulder blades back and down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-pullup"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-pullup",
+          "text": "Pull yourself up until your chin is above the bar, keeping the upper back extended and squeezing the shoulder blades back and down.",
+          "where": "Instructions, paragraph 1"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Measured in 21 men and 4 women, the mean absolute elbow joint range of motion in the pull-up was 93.4 ± 14.6 degrees (chin-up 100.6 ± 14.5 degrees). The source gives the range moved, not the elbow angle at the top.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "youdas2010"
+      ],
+      "quotes": [
+        {
+          "source": "youdas2010",
+          "text": "The mean absolute elbow joint range of motion was 93.4 ± 14.6°, 100.6 ± 14.5°, and 99.8 ± 11.7° for the pull-up, chin-up, and rotational exercise using the Perfect·Pullup™ twisting handles, respectively.",
+          "where": "abstract"
+        },
+        {
+          "source": "youdas2010",
+          "text": "Twenty-one men (24.9 ± 2.4 years) and 4 women (23.5 ± 1 years) volunteered to participate.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Keep the head as level as possible and minimise reaching with the chin.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-pullup"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-pullup",
+          "text": "Try to keep your head as level as possible and minimize reaching with the chin.",
+          "where": "Instructions, paragraph 1"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Set the shoulder blades first, pulling them down and back before the arms take over, so the back leads instead of the arms yanking.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chinup"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chinup",
+          "text": "Set the scapulae first, cueing 'pull the shoulder blades down and back' before the arms take over, so the client leads with the back rather than yanking with the arms.",
+          "where": "Coaching Clean Technique"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Keep a controlled tempo in both directions and a braced, slightly hollow body to prevent excessive swing.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chinup"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chinup",
+          "text": "Maintain a controlled tempo in both directions and a braced, slightly hollow body position to prevent excessive swing.",
+          "where": "Coaching Clean Technique"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "NASM names the common faults: kipping and momentum on strict-strength work, partial range of motion, and craning the neck. How often each happens is not measured.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chinup"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chinup",
+          "text": "Discourage the common faults: kipping and momentum on strict-strength work, partial range of motion (coach a full hang at the bottom to a chin-clearing top), and craning the neck.",
+          "where": "Coaching Clean Technique"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Tempo: NASM asks for a controlled tempo both ways but gives no seconds. ACSM's moderate speed of 1-2 s up and 1-2 s down is stated for intermediate to advanced lifters on heavy loads, not for novices, so the plate's 2 s up, 2 s down, no pause is a drawing convention inside that range.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "nasm-chinup",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chinup",
+          "text": "Maintain a controlled tempo in both directions",
+          "where": "Coaching Clean Technique"
+        },
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Before the first full pull-up: band-assisted reps or an assisted pull-up machine, and lowering-only reps (jump or step to the top, then lower slowly).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chinup"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chinup",
+          "text": "Band-assisted reps or an assisted pull-up machine to practice the full pattern with reduced load.",
+          "where": "Building Toward the First Rep"
+        },
+        {
+          "source": "nasm-chinup",
+          "text": "Eccentric (negative) reps: jump or step to the top, then lower slowly",
+          "where": "Building Toward the First Rep"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "NASM's progression is more reps, then less assistance, then added load; once reps come easily, load is added with a belt or dumbbell.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chinup"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chinup",
+          "text": "Apply progressive overload deliberately, more reps, less assistance, then added load",
+          "where": "Programming Variables and Progression"
+        },
+        {
+          "source": "nasm-chinup",
+          "text": "once reps come easily, added load via a belt or dumbbell for continued overload",
+          "where": "Programming Variables and Progression"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Catalyst Athletics programs sets of 8-15 reps; lifters who cannot pull their full body weight use rubber bands, or keep the feet on a box or bench so the legs help only as much as needed; weighted sets of 1-5 reps use a belt.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-pullup"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-pullup",
+          "text": "Sets of 8-15 reps are usually appropriate",
+          "where": "Programming"
+        },
+        {
+          "source": "catalyst-pullup",
+          "text": "Resistance can be reduced for those unable to perform pull-ups with their full body weight by using rubber bands to partially unload weight as necessary, or by keeping the feet on a box or bench to allow the legs to assist only as much as needed.",
+          "where": "Programming"
+        },
+        {
+          "source": "catalyst-pullup",
+          "text": "Weighted pull-ups can also be used to push strength with sets of 1-5 reps using a belt to hang weight plates between the legs.",
+          "where": "Programming"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Measured with EMG across the pull-up, chin-up and a rotating-handle version, the lats were the most active muscle, then the biceps; the lower trapezius was more active in the pull-up than in the chin-up.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "youdas2010"
+      ],
+      "quotes": [
+        {
+          "source": "youdas2010",
+          "text": "latissimus dorsi (117-130%), biceps brachii (78-96%), infraspinatus (71-79%), lower trapezius (45-56%), pectoralis major (44-57%)",
+          "where": "abstract"
+        },
+        {
+          "source": "youdas2010",
+          "text": "whereas the lower trapezius was significantly more active during the pull-up",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "With the arms high overhead in a pull-up, the space under the shoulder roof gets smaller and pressure rises, which the authors link to impingement risk.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "prinold2016"
+      ],
+      "quotes": [
+        {
+          "source": "prinold2016",
+          "text": "High arm elevation during pull-ups reduces sub-acromial space and increases pressure, increasing the risk of impingement injury.",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "The wide-grip pull-up showed a smaller range of shoulder-blade protraction and retraction (sliding forward and back), and the arm also reached 90 degrees out to the side with 45 degrees turned out; the authors link wide (and reverse) pull-ups to higher impingement risk.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "prinold2016"
+      ],
+      "quotes": [
+        {
+          "source": "prinold2016",
+          "text": "The wide technique has a reduced range of pro/retraction in the same HT plane of elevation and 90° of arm abduction with 45° external rotation was observed. All these factors suggest increased sub-acromial impingement risk.",
+          "where": "Results"
+        },
+        {
+          "source": "prinold2016",
+          "text": "Wide and reverse pull-ups demonstrate kinematics patterns linked with increased impingement risk.",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Weight-assisted front pull-ups could be recommended for weaker people, though the authors say this needs more study.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "prinold2016"
+      ],
+      "quotes": [
+        {
+          "source": "prinold2016",
+          "text": "Weight-assisted front pull-ups require further investigation and could be recommended for weaker participants.",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "In a review, up to 36% of documented resistance-training injuries were at the shoulder, and poor attention to exercise technique was a risk factor. Not specific to the pull-up.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "NASM warns to progress gradually to avoid elbow overuse, and to send persistent shoulder or elbow pain, numbness or tingling to a professional instead of training through it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-chinup"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-chinup",
+          "text": "progress gradually to avoid overuse issues like elbow tendon irritation",
+          "where": "Injury Prevention and Scope"
+        },
+        {
+          "source": "nasm-chinup",
+          "text": "if a client reports shoulder or elbow pain, numbness, or tingling that persists, refer them to a physician or physical therapist rather than training through it.",
+          "where": "Injury Prevention and Scope"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (35 degrees of extension) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including flexion (curled forward). Applied to holding a bar by reasoning, not measured on this exercise.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "The pull-up also builds grip strength and stamina.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-pullup"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-pullup",
+          "text": "It has the added benefit of grip strength and stamina development.",
+          "where": "Purpose"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "text": "The natural tendency is to round the back near the bar; keep it extended to engage all of the back muscles.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-pullup"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-pullup",
+          "text": "The natural tendency is to round the back as you near the bar, but it’s important to keep it extended instead to fully engage all of the back musculature.",
+          "where": "Notes"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "catalyst-pullup",
+      "url": "https://www.catalystathletics.com/exercise/39/Pull-up/",
+      "title": "Pull-up (Catalyst Athletics exercise library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "nasm-chinup",
+      "url": "https://www.nasm.org/resource-center/blog/training/chin-ups-vs-pull-ups-the-difference-the-benefits-muscles-worked",
+      "title": "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog, H. Cherry)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "baechle-earle",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location, excerpt from Weight Training: Steps to Success (Baechle and Earle, Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "youdas2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/21068680/",
+      "title": "Surface electromyographic activation patterns and elbow joint motion during a pull-up, chin-up, or perfect-pullup rotational exercise (Youdas et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "21068680",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (Med Sci Sports Exerc)",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "prinold2016",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26383875/",
+      "title": "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport)",
+      "kind": "peer-reviewed",
+      "year": 2016,
+      "pmid": "26383875",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review (Kolber et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "odriscoll1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "census",
+    "equipment": "Fixed overhead pull-up bar and floor line. Feet clear the floor in the full hang (bar height itself is not sourced; drawing convention).",
+    "start": "Full hang: elbows completely extended, shoulders fully open (c4, c1); palms facing forward, hands just outside shoulder width (c1); body braced and slightly hollow, not swinging (c9).",
+    "end": "Chin above the bar (c5); upper back extended, shoulder blades squeezed back and down (c5, c23); head level, no reaching with the chin (c7).",
+    "checkpoints": [
+      {
+        "label": "Shoulders set",
+        "what": "Shoulder blades pulled down and back before the arms take over.",
+        "claim": "c8"
+      },
+      {
+        "label": "Chin over bar",
+        "what": "Pull until the chin is above the bar, upper back extended.",
+        "claim": "c5"
+      },
+      {
+        "label": "Straight arms",
+        "what": "Lower under control until the elbows are completely extended.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Kipping: the body swings, using momentum to get the chin over the bar.",
+      "why": "NASM lists kipping and momentum first among the common faults on strict-strength work (c10) and asks for a braced, slightly hollow body to prevent swing (c9). How often it happens is not measured.",
+      "claim": [
+        "c10",
+        "c9"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word for a pull-up fault (Catalyst's \"natural tendency\" to round the back near the bar, c23, is not one under LR-31), and no quote ties one of NASM's listed faults to harm. Kipping and momentum come first in NASM's common-faults list (c10); NASM's \"Discourage the common faults\" is a list sentence, not a ranking. Scan (2026-10-18): Prinold's \"Avoiding impingement risk with training changes\" ties grip choices (c17) and the overhead arm position itself (c16) to impingement risk, not a technique fault; NASM's \"progress gradually to avoid overuse (like elbow tendon irritation)\" (c20) is about progression and load; Kolber's \"one of the most prevalent regions of injury\" (c19) covers all resistance training. None counts."
+    },
+    "tells": [
+      {
+        "text": "Body braced and still, no swing",
+        "claim": "c9"
+      },
+      {
+        "text": "Elbows completely straight at the bottom",
+        "claim": "c4"
+      },
+      {
+        "text": "Chin above the bar at the top",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 0,
+      "claim": "c11",
+      "text": "Drawing convention: controlled both ways (c11); no source gives seconds for the pull-up. 2 s up and 2 s down sit inside ACSM 1-2 s each way, which is stated for intermediate to advanced heavy training (LR-15, WEAK)."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (pronated), palms facing forward/away from the face (c1, c2).",
+    "width": "Just outside shoulder width (c1); NASM: usually a bit wider than shoulder-width (c2). Prinold links the wide grip to impingement risk (c17).",
+    "thumb": "Wrapped around the bar (c3; textbook barbell guidance, applied by inference).",
+    "handContact": "Not sourced on this card: drawn as the bar primitive natural hang grip (LR-4 drawing convention, see notes).",
+    "wrist": "Not curled forward: grip is weaker when the wrist moves into flexion (c21). No source on this card sets a wrist angle for the hang.",
+    "claims": [
+      "c1",
+      "c2",
+      "c3",
+      "c21"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Hang from the bar with your palms facing forward and your hands just outside shoulder width.",
+      "claim": "c1"
+    },
+    {
+      "step": "Keep your thumbs around the bar.",
+      "claim": "c3"
+    },
+    {
+      "step": "Let your shoulders open fully, elbows completely straight.",
+      "claim": [
+        "c1",
+        "c4"
+      ]
+    },
+    {
+      "step": "Brace your body slightly hollow so it does not swing.",
+      "claim": "c9"
+    },
+    {
+      "step": "Pull your shoulder blades down and back before your arms take over.",
+      "claim": "c8"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Bottom: elbows completely straight, shoulders fully open.",
+      "claim": "c4"
+    },
+    {
+      "point": "Shoulder blades down and back before the arms pull.",
+      "claim": "c8"
+    },
+    {
+      "point": "Body braced and slightly hollow, no swing.",
+      "claim": "c9"
+    },
+    {
+      "point": "Top: chin above the bar, shoulder blades squeezed back and down.",
+      "claim": "c5"
+    },
+    {
+      "point": "Keep the upper back extended near the bar; do not round it.",
+      "claim": [
+        "c5",
+        "c23"
+      ]
+    },
+    {
+      "point": "Head level; do not reach with the chin.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Kipping: swinging and using momentum to get the chin over the bar.",
+      "fix": "Brace slightly hollow and keep the body still. If you cannot finish strict reps, use a band, the assisted machine or your feet on a box, or do slow lowering-only reps.",
+      "claim": [
+        "c10",
+        "c9",
+        "c12",
+        "c14"
+      ]
+    },
+    {
+      "mistake": "Partial reps: not reaching a full hang at the bottom or the chin over the bar at the top.",
+      "fix": "Lower until the elbows are completely straight, then pull until the chin is above the bar, every rep.",
+      "claim": [
+        "c10",
+        "c4",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Craning the neck to reach the bar with the chin.",
+      "fix": "Keep your head as level as you can and stop reaching with the chin.",
+      "claim": [
+        "c10",
+        "c7"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lats",
+        "claim": "c15"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "biceps",
+        "claim": "c15"
+      },
+      {
+        "muscleId": "mid_back",
+        "claim": "c15"
+      },
+      {
+        "muscleId": "forearms",
+        "claim": "c22"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Sides of your back, under the arms",
+        "means": "Expected: the lats are the most active muscle in the pull-up.",
+        "fix": "Nothing to fix.",
+        "claim": "c15",
+        "redFlag": null
+      },
+      {
+        "where": "Shoulder",
+        "means": "Arms high overhead narrow the space under the shoulder roof; a wide grip adds a pattern linked to pinching there.",
+        "fix": "Bring your hands in to just outside shoulder width. Don't train through the pain.",
+        "claim": [
+          "c16",
+          "c17",
+          "c1",
+          "c20"
+        ],
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Elbow",
+        "means": "Too much pulling, too soon, can irritate the elbow tendons.",
+        "fix": "Build up gradually. Don't train through the pain.",
+        "claim": "c20",
+        "redFlag": "elbow"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder: arms high overhead shrink the space under the shoulder roof; wide grips add a pattern linked to pinching there.",
+      "claim": [
+        "c16",
+        "c17"
+      ]
+    },
+    {
+      "risk": "Up to 36% of weight-training injuries are at the shoulder, and poor technique is a risk factor.",
+      "claim": "c19"
+    },
+    {
+      "risk": "Elbow overuse when pulling volume rises too fast.",
+      "claim": "c20"
+    }
+  ],
+  "redFlags": [
+    "shoulder",
+    "elbow"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Overhand grip, thumb around the bar, wrist not curled forward.",
+      "wrong": "Wrist curled forward over the bar.",
+      "claim": [
+        "c1",
+        "c3",
+        "c21"
+      ]
+    },
+    {
+      "key": "shoulders",
+      "kind": "posture",
+      "right": "Shoulder blades pulled down and back before the arms bend.",
+      "wrong": null,
+      "claim": "c8"
+    },
+    {
+      "key": "top",
+      "kind": "posture",
+      "right": "Chin above the bar, head level, upper back extended.",
+      "wrong": "Neck craned, chin reaching for the bar.",
+      "claim": [
+        "c5",
+        "c7",
+        "c10"
+      ]
+    },
+    {
+      "key": "body line",
+      "kind": "posture",
+      "right": "Body braced, slightly hollow and still under the bar.",
+      "wrong": "Body swinging (kipping).",
+      "claim": [
+        "c9",
+        "c10"
+      ]
+    }
+  ],
+  "loadProgression": {
+    "text": "If you cannot do a strict rep yet, use a band, the assisted machine or your feet on a box, or slow lowering-only reps. Then add reps, then use less help, then add load with a belt or dumbbell once reps come easily.",
+    "claims": [
+      "c12",
+      "c14",
+      "c13"
+    ]
+  },
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "forearms",
+        "role": "secondary",
+        "why": "The pull-up builds grip strength and stamina (c22)."
+      }
+    ],
+    "remove": [],
+    "why": "exercises.json lists lats primary and biceps and mid_back secondary; the EMG supports this: lats most active, then biceps, and the lower trapezius (folded into mid_back) more active than in the chin-up (c15). forearms is added for the grip (c22)."
+  },
+  "anchorSource": "catalyst-pullup",
+  "gaps": [
+    "Tier A: no sourced way to get down from the bar or to fail a rep safely (dismount); left out, not invented (LR-3, LIB-WAYOUT).",
+    "Tier A: safeties/J-hooks and a bar path clear of the neck do not apply (bodyweight hang on a fixed bar). Load progression is sourced (c12, c13, c14); how much load to add, and when, is not."
+  ],
+  "tierA": {
+    "wayOut": null
+  },
+  "notes": [
+    "Elbow positions: the start (elbows completely extended) and the top (chin above the bar) are coach words (c4, c5). The only number is Youdas 2010: the mean elbow range of motion, 93.4 ± 14.6 degrees (c6). It is a range, not a pose: the abstract gives no start or end angle and does not say the range starts from a full hang, so the plate does not use it. No source gives the elbow angle at the top. The plate draws the top from c5, c23 and c7 (chin above the bar, upper back extended, head level), and the elbow bend that puts the chin there is a drawing convention, not a sourced angle.",
+    "Tempo: no source gives seconds for the pull-up. ACSM 2009 1-2 s is for intermediate to advanced heavy training (LR-15), so c11 is WEAK and the plate numbers are a drawing convention.",
+    "Grip hand contact (where the bar sits in the palm) and bar height are not sourced on this card; drawn as conventions (LR-4).",
+    "Breath: no pull-up source here gives a breathing line; none shown (not a heavy two-leg lift).",
+    "Leads not used: Dickie 2017 and Snarr 2017 (grip and handle types give similar EMG), Urbanczyk 2020 (modelled forces by grip), Di Fonza 2026 (review). None is needed for a shown line.",
+    "2026-10-18 (W2-22): The shoulder and elbow feel fixes drop 'If the pain persists'. NASM (c20) gives no time for 'persists', so the row gives none (LR-28, D-LR23-9). The research-based time comes from the linked shoulder and elbow boxes. 'Don't train through the pain' is from c20 ('rather than training through it'). 'Stop the set' is not added because no pull_up source says to stop (LR-6).",
+    "Start pose (D-LIB9-FACTPOSE, W2-32, 2026-10-18): the plate draws the open full hang as the start, elbows completely extended and shoulders fully open (c1, c4; c4's quote returns to 'fully open again' at the bottom, and catalyst-pullup's Notes, re-read 2026-10-18, ask that each rep start from a genuinely open shoulder position). Setting the shoulder blades down and back (c8) is the first move of the pull, 'before the arms take over', so it is drawn as the first phase, shown by the 'Shoulders set' checkpoint and the shoulders zoom, not as part of the start pose.",
+    "2026-10-18 (W2-33): c17's abstract sentence is ambiguous. The full text (PMC4916995, Discussion and Conclusion) treats the two wide-grip findings separately: \"a reduced range of ScT pro/retraction with a similar range of HT plane of elevation, and the achievement of 90° of arm abduction with 45° external rotation\". prinold2016 access stays \"abstract\" unless the full text is cited as a quote."
+  ]
+}

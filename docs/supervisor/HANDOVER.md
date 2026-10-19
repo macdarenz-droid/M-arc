@@ -876,6 +876,177 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - The PR rides **train 26** with this handover and the cards branch. The cards branch carries the AGENTS.md third exception, following the precedent of LIB-4a's second exception in train 25.
   - Train 26 changes no app code, so no APK is owed.
 
+**Update ~11:00 UTC.**
+- **Train 26 merged** (#256, main `0628270a`): GATE-FLAKE-4 @ `49ef5ff`, the cards branch @ `ae9239f1` (AGENTS.md third exception) and the handover @ `d996c073`. No app code changed, so no APK is owed.
+- **LB1 calibrated critic: VALID under D-CRITIC-CAL3** (lib4-cards 13.5, cards branch @ `0ec6e424`).
+  - Two rounds ran on #245 @ `a4458f1a`. Each used 3 Opus critics, 2 hidden anchors and 2 plants, and both rounds caught both plants.
+  - The script discarded each round on an anchor median below 4.
+  - Round 1 counts: its only anchor lows were pull_up R6 and lat_pulldown R4, and the supervisor confirmed both defects on the PNGs.
+  - Round 2's anchors were given research-card facts instead of golden-B facts, so it is not used for validity. Its LB1 findings are kept.
+  - Fix list: docs/supervisor/verify/lb1-critic-findings.md, the union of both rounds, with hanging_knee_raise R7 withdrawn (its mount is identical to the approved hanging_leg_raise mount). Posted on #245 (6248984955), and LIB-9a was triggered for its one fix round.
+  - **New rule:**
+    - Anchors are scored on their golden-B facts.
+    - An anchor may have at most one low item, and only if that defect is supervisor-confirmed and listed below.
+    - Both plants must still be caught.
+- **LIB-4b:**
+  - B7 is final, with P = 4 at `e607bb5`.
+  - Scratch run 39118115597 (B2 on Chrome 153) finished green at 10:52. LIB-4b was told to record the artifact, then do B8-B10 and READY.
+  - LIB-4c was told to merge `e607bb5` and was checked in at 11:06.
+- **LIB-5:**
+  - Idle at `33302cc` since 10:07. It was checked in at 11:06 for: merge main, re-check the stamp hashes, commit 2 and the Do 6 commit.
+- **Gotcha:** a builder's background job stops at about 2 h. Long runs (B2, B7, mutation sweeps) must be detached processes (`setsid nohup … &` with a log file), polled by the builder. Every builder message now says so.
+- **Next:**
+  - LIB-9a's `LB1 FIX ROUND READY`, then a calibrated recheck of the changed plates under 13.5;
+  - LIB-4b B8-B10 and READY;
+  - "LIB-4c SCRATCH" (push `claude/lib-4c-scratch` for C11-C14);
+  - LIB-5's commit 2 and Do 6;
+  - reviewers on READY, then trains.
+  - Queue as slots free: LIB-3b (first item B5(b)), LIB-4d, LIB-8-FIX, and LIB-5v after LIB-5 merges.
+
+**Update ~13:00 UTC.**
+- **Sessions started:**
+  - LIB-5 reviewer session_013484ehdaXkSp6xn5vdzMJy (Opus), on READY @ `1d1fe9e`. LIB-5 is WAITING and holds no slot.
+  - LIB-3b builder session_01CckQsL6t3JEMEXR2jsfu3a (#258), card @ `5bf0d64a`, amendment 1: base `0628270a`, with Do 0 = B5(b).
+  - Active LIB builders: LIB-4b, LIB-4c, LIB-9a and LIB-3b = 4.
+- **Rulings** (cards branch now `680b30d6`):
+  - D-LIB4b-B2FIX (lib4-cards section 4, B2 row): fixtureSection is HT-3's pass guard 1, so it passes with ≥ 4 pairs. The other three fixtures are red. Still open:
+    - LIB-4b's Chromium 141 settleApp timeout (machine_chest_press, paper, HT9/show-1..3), being root-caused;
+    - the pair count.
+    LIB-4b was checked in at 13:01.
+  - D-LIB3b-H7 (lib-3b-card amendment 2): PQ-H7 misses import-time nondeterminism. LIB-3b goes on with H10 alone, and the new card **LIB-3c** ("PQ-H7 builds twice from fresh spec imports") is queued. It starts after #245 merges and must merge before the first post-LB1 batch QA.
+  - D-LIB4c-ONCESEED: times.json once = 971.1/13.9, from C11's CI log. D-LIB4c-SCRATCHREDS: the scratch-only reds in other tasks' main-tree checks are attributed and not counted for C12-C14.
+  - D-LIB9a-FIX1 (13.6): the end-elbow R1 rows are withdrawn on chin_up, close_grip, underhand and single_arm, because the critics' targets need a forearm 1.15-1.35× too long. inverted_row R3 gets a dashed hidden start arm. The recheck brief gains the segment-length rule.
+  - D-LIB9a-R3 (13.7): the recheck round 3 is VALID, and **11 of the 12 drawn LB1 plates pass**. underhand R5 gets one targeted fix, then a single-plate recheck. horizontal_leg_press and leg_press_calf_raise stay held.
+- **LIB-4c:**
+  - C11 is met: run 39123273382 on scratch `a0250935` (draft #257, never merged; the supervisor pushes it).
+  - The scratch was refreshed @ `0f7c96f9` with the once seed. C14 is next.
+- **Supervisor gotcha (13.7):** before every critic round, diff each hidden anchor's facts.json against its vendor spec's mistake and tells. `scratchpad/critic-lb1/cards-approved/lat_pulldown.json` is the research card, not golden B. That broke one round and needed a P04 re-score.
+- **Next:**
+  - LIB-5 review verdict, then train;
+  - `LB1 UNDERHAND READY`, then the single-plate recheck;
+  - LIB-4c C14, then C12 and C13;
+  - LIB-4b root cause and B8-B10;
+  - LIB-3b READY, then its reviewer.
+  - Queued: LIB-4d, LIB-8-FIX, LIB-3c (after #245), LIB-5v (after LIB-5).
+
+**Update ~15:00 UTC.**
+- **Owner answers and asks (owner chat):**
+  - ETA asked at ~13:05. Answer given: all 153 drawings about 5-6 weeks from 10-18 (about 22-29 Nov); best about 4 weeks, worst about 9 weeks. LB1 is on the phone about 3-5 days after the back-box answer. Re-forecast after LB2.
+  - **Back-pain box: option 1 (50 words)** at ~13:15. Recorded in three places:
+    - `claude/libht-research` @ `0393aac9`: back-pain-box.json is `owner-approved`; its appliesTo is the 35 non-golden cards that link redFlag back (D-LIB-W2B); R-W0-1 is updated;
+    - #244 comment 6250331645, which keeps route (b);
+    - the new card **BOX-CAP** (box-cap-card.md; amendment 1 D-BOXCAP-WIRE).
+  - **Leg-press option images** were sent at ~14:15: horizontal leg press A (knee close-up), B (as drawn) or C (named list), recommending B; calf raise recommending C. **Waiting for his letters** ("1B, 2C").
+    - The images came from LIB-9a's mockups (#245 6250897460; artifact v7).
+    - The LP check is on #259 (`claude/libht-research-lp` @ `dd54051e`): no sourced number would clear H3.
+- **LB1 critic: done.** Round 4 VALID (13.8): **all 12 drawn LB1 plates pass the calibrated critic.** horizontal_leg_press and leg_press_calf_raise wait for the owner's letters.
+- **LIB-5 review: PASS @ `1d1fe9e`** (0/0/0/3; reviewer archived). It is **frozen** and merges after LIB-4b and LIB-4c (plan slot 4). The Lows are routed:
+  - Low 1 on the 1d1fe9e change: it reduces worker RPC load. main shows the same `onTaskUpdate` timeout under doubled load, so this is not a fixed root cause.
+  - Low 2: the O5 field rule goes to the LIB-8 merge card, with verifyChain.
+  - Low 3: c15-stamps.test.ts:91's exact-8 pin goes into LIB-10's batch-card lines.
+- **P = 4 withdrawn** (LIB-4b `7679566f`; HT9/show stall on Chromium 141 with no P-independent cause). LIB-4c is back at P = 1 (`bd61bd73`, D-LIB4c-P1) and the scratch is refreshed @ `243574c6`; C14 at P = 1 is next.
+  - **Risk:** at P = 1, one CI job per id (~18 min) means about 154 jobs per full run at 153 ids.
+  - Mitigation: card **LIB-4e** (re-qualify P = 4, lib-4e-card.md), queued after LIB-4b/4c merge and LIB-4d.
+- **Sessions:**
+  - LIB-3b reviewer session_017PGYdVKAyJkwyomGGxwDu2;
+  - BOX-CAP builder session_01WLyzwuYeV2k1jZjS6XTSqU (READY @ `2bea5685`) and its reviewer session_01CkjmC2qrMRioLhgxgtYmas;
+  - **LIB-4d** builder session_01AxVKssCnX9Z2aRpykGP7up;
+  - **LIB-8-FIX** builder session_01QdGHXtEjcSa8a26UskJnC4 (#109, rulings CARRY and ENV quoted);
+  - the LP research session was archived.
+  - Active LIB builders: LIB-4b, LIB-4c, LIB-4d and LIB-8-FIX = 4. LIB-9a, LIB-3b, BOX-CAP and LIB-5 are WAITING.
+- **LIB-4b:** a container restart killed the B2 P = 1 run. It was restarted detached at 14:39, ETA ~17:00, then B8-B10 and READY.
+- **Merge plan to LB1:**
+  1. LIB-4b, then LIB-4c (with #249), then LIB-5, then BOX-CAP;
+  2. LIB-3b, any time in checklist order, before #245;
+  3. Do 9 (`claude/lib-5-back-box`), then LIB-5v;
+  4. LIB-6-PM patches and LIB-4d;
+  5. LIB-9a's Do 9 comparator;
+  6. LB1 (#245).
+- **Card queue:**
+  - LIB-3c (after #245);
+  - LIB-5 Do 9 and LIB-5v (after LIB-5 and BOX-CAP);
+  - LIB-4e;
+  - LIB-6-PM;
+  - the LIB-8 merge card (with verifyChain and O5 Low 2).
+
+**Update ~16:00 UTC.**
+- **Train 27 merged:** #262, main `2078913c`, carrying LIB-3b #258 @ `5a764fc`.
+  - The review passed (6251512215; 0/0/0/2, PR-body Lows only; reviewer archived). LIB-3b is numbered checklist slot 2b.
+  - All 15 checks were green on train head `99c3f138`. No app code changed, so no APK is owed.
+  - #245 was told to update its lb1-plates h10 expectations at its next main merge (12 item 21).
+- **LIB-4c:** C14 is met at P = 1 (runs 39133500575 and 39134810143; compare PASS).
+  - c0 must come from C14's data in LIB-4c's next push. The supervisor's first "c0 unchanged" line was corrected on #246.
+  - The scratch was refreshed @ `42716893`. C12's three seed refs are being pushed one at a time by `scratchpad/c12-seeds.sh` (a background task). Then C13, 5 full dispatches.
+- **LIB-4d:** D-LIB4d-A1A2 (#261). The lib-4a A1/A2 beforeAll error on the synthetic 22 tree is a clone artifact (PINS-2), reproduced on main. It goes in S8 as "synthetic 22 tree only" and must pass at real 22.
+- **Waiting on the owner:** the leg-press letters (1A/1B/1C, 2C), and watch G1-G6 (unchanged).
+
+**Update ~19:00 UTC.**
+- **Owner decisions (16:10-16:20):**
+  - horizontal_leg_press gets a **zoom view**: "I like with zoom view but dont put any angles. As people tend to ignore that since they would not follow."
+  - Then "1. A, 2. A":
+    - **leg_press_calf_raise is left out for now** and goes on the named list, decided at the release candidate;
+    - **no angle numbers in zoom views only**; plate labels keep their sourced angles.
+  - New card **LIB-ZOOM** (lib-zoom-card.md @ `60767c08`): a hard card with a design note first (an inline circle, or the golden-B posture zoom), no angle text, and the same H3 bar at the zoom's scale. It is queued after LB1. LB1 is the 12 passing plates.
+- **BOX-CAP:** review PASS @ `2bea568` (0/0/0/2; reviewer archived). It is frozen and merges right after LIB-5. Low: c7.ts:13's header wording goes to the next PR that touches c7.ts.
+- **LIB-4b:**
+  - B2 is green on the final head `7679566` at P = 1 (Chromium 141). It ran in 4 family chunks because of container restarts; the union is exactly 2,947 tuples, with 0 px off.
+  - `--once 1`, the 3 `--blind` runs, B10 and the gate are running.
+- **LIB-4c:**
+  - c0 = 2.9 (D-LIB4c-C0). One push broke the 2 h limit; it was self-reported and data-only.
+  - C12 is met (seeds 1-3 red as expected). C13 (5 full dispatches on scratch `42716893`) is running; 4 of 5 were done at 18:00.
+- **LIB-4d:** D-LIB4d-A1A2 (#261). The lib-4a A1/A2 error on the synthetic 22 tree is a clone artifact.
+- **LIB-8-FIX:** D-LIB8FIX-IMPORTS (#109). The imports test is split per spec at the default timeout, and the "no timeout" rule stands. Its title says "[ready for review]" at `200f8c33`; the READY comment is awaited.
+- **Active LIB builders:** LIB-4b, LIB-4c, LIB-4d and LIB-8-FIX = 4.
+- **Merge order to LB1:** LIB-4b → LIB-4c (+#249) → LIB-5 → BOX-CAP → Do 9 (+LIB-5v) → LIB-4d → LIB-9a's Do 9 comparator → LB1 (12 plates). LIB-8-FIX/#109 merges in plan slot 7.
+
+**Update ~22:00 UTC.**
+- **Reviews:**
+  - LIB-4d PASS @ `e7502cd` (0/0/0/1). It is frozen. Its Low (the COACHING-DECISIONS order) is fixed in its pre-train main merge, which gets a delta review by the same reviewer (session_01FgX75qDGNc7Tdon9ki4RfC).
+  - LIB-8-FIX PASS @ `200f8c3` (0/0/0/1). Its Low goes into LIB-8M's first push.
+  - LIB-4c READY @ `68f1556` (C12 and C13 met). Its reviewer is session_01NLY7iwsASk7emzYfNvaC1d.
+  - #249 re-merged LIB-4c as `4a4d29dc`; CI is all green (howto-rebuild, howto-shard 1/1, gate-verdict, android-gate).
+  - The scratch PR #257 and the seed refs stay until LIB-4c merges.
+- **Plan:** `claude/howto-options` @ `6550ce28` (D-LIB4-DOCS-2 and D-LIB4-DOCS plan parts; posted on #246).
+  - Still owed from D-LIB4-DOCS: SPEED.md :25/:62, GATE-SPLIT design 3.5 and the AGENTS.md screenshot-gate row pointer (in the first supervisor docs PR), plus plan 3.5's D-LIB2b-PAGES line.
+- **New cards on `claude/sup-lib4-cards`**, each written, then critiqued, fixed and re-checked:
+  - `be4b18f1`: LIB-10 (LB2 build-ahead), section 15 D-LIB10-*, and the LB2 research card.
+  - `95928e1f`: LIB-3c (AUTHORQA hunk, fresh-import H7, PARAMS ranges, child proof) and 15.1 D-LIB3c-SHARED.
+  - `1e85584a`: LIB-8M (the pilot A merge) and section 16 D-LIB8M-*.
+- **Started:**
+  - LIB-10 builder session_01ETPEGTYndpyzuNBELX3zNy (#265). Its design note is ruled D-LIB10-NOTE (6255216039).
+  - LIB-3c builder session_01L9b8Vf8JXiJ6CcaWgbk7BX (#264). Its design note is accepted (6254903885).
+  - LIB-8M on the LIB-8-FIX session session_01QdGHXtEjcSa8a26UskJnC4 (#109, "LIB-8M start").
+  - LB2 research session_01AnygddDGdN8kjnwH1HXbuy (#263; no slot).
+- **Active LIB builders:** 4 of 4 (LIB-4b, LIB-10, LIB-3c, LIB-8M). LIB-4c and LIB-4d are WAITING.
+- **Research (#263):**
+  - R-LB2-1..18 are posted there. LR-31 is applied to the 12 LB2 cards and to 7 pilot A cards. Pick changes:
+    - LB2: barbell_bench_press, incline_barbell_bench_press;
+    - pilot A: dumbbell_shoulder_press, incline_dumbbell_press, dumbbell_biceps_curl, triceps_pushdown, rope_triceps_pushdown;
+    - dumbbell_fly, which is held to LIB-20.
+  - Verify #1 (`2b6747f`, 12 cards) and #2 (`2fad80c`, 25 cards) were both VALID; the plants were caught. Fix round 2 is in progress, then verify #3 on the changed cards plus single_leg_romanian_deadlift (R-LB2-16, `863280a`).
+  - LIB-10 draws against `2b6747f8`.
+  - The verify is run by hand (a plant agent plus a blind critic agent) under `scratchpad/vlb2*`. Keep the answer key out of shared files until the critic ends.
+- **Pilot A (LIB-8M):**
+  - 19 ids; 14 are pinned. Held: box_jump and reverse_lunge (no tempo strip; named follow-up: a design for a tempo strip without seconds) and 3 others per D-LIB8M-PAGESET.
+  - It redraws 5 Mistakes, or 6 if SLRDL's tells change, and changes OHP's tempo (Hold 1 s).
+  - The owner sees the pilot A sheet and answers only the non-F5 flags. After the train, the APK goes to him (nothing visible changes).
+- **Cards being drafted:**
+  - LIB-7-FIX: drafting.
+  - LIB-6-PM: a fixer on #181's branch. Drafted; a critic is running. Do 0-4 can be done locally now, the back patches after LIB-5, S5-L after Do 9.
+- **Merge order to LB1 (checklist order; corrects 19:00):**
+  1. LIB-4b
+  2. LIB-4c with #249
+  3. LIB-5 with sup-lib5-bundle
+  4. BOX-CAP
+  5. LIB-5 Do 9 (back box)
+  6. LIB-6 #181 with LIB-6-PM
+  7. LIB-7 #193 with LIB-7-FIX
+  8. LIB-4d
+  9. LIB-8M #109
+  10. slot 7a: LIB-5v
+  11. slot 8: LB1 #245
+  - LIB-3c may merge before #245. LB1 cannot merge before #109.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
@@ -1436,6 +1607,10 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 9. Barbell back squat hand close-up p1 (golden B): same defect as 8. The Right says "HEEL OF PALM" but draws the bar mid-fist, about 80 px (2×) above the wrist pivot and in front of the dashed forearm axis. 3 panel critics on LIB-7 `f3e285c` gave it a C3 median of 3 in both rounds. The supervisor confirmed it on the render (10-04 00:1x). Recorded, not changed here. It is no longer a hand-critic anchor; the anchors are now lat_pulldown p1 and pull_up p1 (D-LIB7-19). LIB-7's push Rights copied this pose; under D-LIB7-19a they are gaps until this is fixed.
 10. Pull-up hand close-up p1 (golden B): the Right says "TOP OF PALM" and draws a straight wrist with the bar mid-fist. Its own facts say "hook the bar where your fingers start" with the "wrist tipped back a little" (about 35°). Panel critics on LIB-7 `55e91e9` scored it C1/C4/C7 = 3 and C3 2-3 in both rounds. The supervisor confirmed this on the render (10-04 01:3x). Recorded, not changed. It is no longer an anchor; the anchors are lat_pulldown p1 and hanging_leg_raise p1, both of which read coherently (bar at the base of the fingers, load line through the wrist).
 11. Hanging leg raise hand close-up p1 (golden B), Wrong "SLIPPING OUT": the bar floats about 20 px (2×) below the opened fingers, and only the thumb's edge touches it. The "30°" label sits on the hand outline. 3 of 3 panel critics on LIB-7 `55e91e9` gave C3 a median of 3, and in round 2 also C7. The supervisor confirmed both on the render (10-04 02:0x). Recorded, not changed. Under D-CRITIC-CAL3 (below) the run stays valid.
+12. Pull-up (golden B), R6: the motion trace lies on the forearm, from the elbow (362,245) to the chin (343,148), and does not start at the start-ghost chin, which is about 150 px lower. Supervisor-confirmed (D-CRITIC-CAL3, lib4-cards 13.5).
+13. Lat pulldown (golden B), R4: the "LEAN BACK" angle mark sits at x 268-292, y 450-468, in the V of the elbow, about 85 px above its hip vertex (291,537). It reads as an elbow mark. Supervisor-confirmed (13.5).
+14. Hanging leg raise (golden B), R7: the ceiling line sits level with the SIDE VIEW title (y about 46), and the bar style differs from pull_up's wall arm. The ceiling mount is deliberate (spec: "no wall for the swing to hit"). Flagged by the panel (13.5 round 2); this is a style choice only.
+15. Leg press (golden B): "Knees cave" cannot be seen in a side view (R5 = 2), and the back looks off the pad (R3 = 3). Flagged by the panel (13.5 round 2); the supervisor has not checked them yet.
 
 **First audit, 32 findings (4 P1 + 28 P2): COMPLETE 07:56.**
 
