@@ -63,6 +63,19 @@ export function boxReach(path, box, names = [], key) {
   return out;
 }
 
+/** Do 9 (D-LIB5-BOX, S4): every trigger question the owner-approved back box keeps (option 1, R-W0-1: the NHS
+ *  emergency questions (c1), then the same-day questions (c4)), pinned so that losing one is red. */
+export const BACK_BOX_TRIGGERS = Object.freeze(['Pain, numbness, tingling or weakness in both legs?', 'Numb genitals or anus?',
+  'Bladder, bowel or sexual changes?', 'Chest pain?', 'Serious accident?', 'Sudden severe or fast-worsening pain?', 'Hot, cold, shivery or unwell?']);
+/** The back box's own rules (S4): one violation per pinned trigger missing from its `now` line, and its claim must
+ *  cite the NHS back-pain page (nhs-back). */
+export function backBoxRules(path, box) {
+  const out = [], t = plain(box?.now ?? '');
+  for (const x of BACK_BOX_TRIGGERS) if (!t.includes(x)) v(out, `${path}.now`, 'kept back-box trigger missing (D-LIB5-BOX)', `"${x}"`);
+  if (!(box?.claim?.sources ?? []).includes('nhs-back')) v(out, `${path}.claim`, 'the back box must cite nhs-back (S4)');
+  return out;
+}
+
 /** The red-flag box a flag shows: golden B's shared block, or one of `extraBoxes` (flags RED_FLAG_BLOCKS lacks). */
 const boxOf = (flag, shared, extraBoxes) => (RED_FLAG_BLOCKS[flag] ? shared[RED_FLAG_BLOCKS[flag].exp] : extraBoxes[flag]);
 
