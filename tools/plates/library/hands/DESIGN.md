@@ -23,7 +23,7 @@ Each key is one file, `hands/hand-<key>.mjs`. It exports:
 - It implements main's loader contract (`tools/plates/gen/handpairs.mjs:3-4`): `HAND_OF_ID` (`lib_<card id>` → pair key), `inputsFor(key)` and `pairPanel(key)`, plus `keyIndexOf(index)` and `keysOf()`. §8 (LIB-7-FIX) has the keys, the panel and its words.
 - `pairSpec(id)` returns the record a pair needs: camera, loadAxis, right, the wrong pages, notes, alt and extras.
 - `renderPair(id, opts)` calls `module.render ?? renderHandPair` (golden-B, unchanged), then applies the extras: the force-line strip (D-LIB7-7), bend-label placement (D-LIB7-6) and the thumb-side camera label (D-LIB7-4).
-- `inputsFor(id)` lists everything that drawing depends on, for LIB-2's per-output `inputsSha256`: the static import closure of `pairs.mjs`, `zoom.mjs` and the id's key file (with `VIEW_FILES`), plus the key's declared `INPUTS` (the rope's sizes are matched to `eq/rope.mjs`). Other key files are never in it, so a change to another key never marks this id stale.
+- `inputsFor(id)` lists everything that drawing depends on, for LIB-2's per-output `inputsSha256`: the static import closure of `pairs.mjs`, `zoom.mjs` and the id's key file (with `VIEW_FILES`), plus the key's declared `INPUTS` (the rope's sizes are matched to `eq/rope.mjs`). Other key files are never in it, so a change to another key, adding a key included, never marks it stale (D-LIB7FIX-PERKEY).
 
 ### Zoom wrapper (`hands/zoom.mjs`, new path)
 - It builds the hand zoom page from `renderPair`, reusing LIB-6 helpers (`zoomTop`, `captions`, `pagerOf`, `feelLink`, `esc`).
@@ -232,7 +232,7 @@ Card LIB-7-FIX; rulings D-LIB7FIX-* (lib4-cards section 18). Nothing here change
 | ez-curl-over | reverse_curl | bent-back, curled |
 | rope-push-neutral | rope_triceps_pushdown | curled |
 
-- `inputsFor(x)` takes a key or a drawn id and gives one list for both (D-LIB7FIX-API): the id path is unchanged, and the list now also holds `panel.mjs` (in `pairs.mjs`'s import closure, with golden B's `copy-lint.mjs`) and `panel-words.json`.
+- `inputsFor(x)` takes a key or a drawn id and gives one list for both (D-LIB7FIX-API): the id path is unchanged, and the list now also holds `panel.mjs` (in `pairs.mjs`'s import closure, with golden B's `copy-lint.mjs`), `words/chrome.json` and the key's own `words/<key>.json`, never another key's (D-LIB7FIX-PERKEY).
 
 **(b) Panel markup (`hands/panel.mjs`).**
 - golden B's close-up panel as `artifact/howto-layers.mjs:162-171` builds it and `cleanZoom` (:140-157) tidies it:
@@ -243,9 +243,16 @@ Card LIB-7-FIX; rulings D-LIB7FIX-* (lib4-cards section 18). Nothing here change
 - The pair's CSS is not in the chunk (main's `pairText` writes the panel only); LIB-7b adds the pair scope's rules (D-LIB7b-SCOPE (a), (c)).
 - LIB-7b may change only the wrapper bytes, under its own review, while F3 and F4 still hold.
 
-**(c) Words (`hands/panel-words.json`, D-LIB7FIX-WORDS).**
+**(c) Words (`hands/words/chrome.json` and one `hands/words/<key>.json` per key, D-LIB7FIX-WORDS as amended by D-LIB7FIX-PERKEY).**
 - Heading, every key: "Hand: right and wrong", golden B's approved hand-zoom heading (`exercises/lat_pulldown.howto.mjs:254`, `dumbbell_lateral_raise.howto.mjs:202`, `machine_chest_press.howto.mjs:101`).
 - Captions: the key's label only. Right = the approved Right note already in the SVG ("Middle of palm": curl and ez keys `radial-rules.mjs:16`, rope `hand-rope.mjs:18`; "Base of fingers": d-handle `radial-rules.mjs:48`). Wrong = the D-LIB7-10 fault label ("Wrist curled" `radial-rules.mjs:20`/`:52`, `hand-rope.mjs:22`; "Wrist bent back" `radial-rules.mjs:22`). Each is 2-3 words, within CAPTION_MAX_WORDS (10).
 - Pager labels: the D-LIB7-10 fault labels.
 - Chrome (golden B's, every close-up): the close label "Close the close-up and show the plate" (`howto-layers.mjs:170`), the sr-only "Right: " / "Wrong: " and the pager's "Hand pages" and "<label>, page <i> of <n>" (LIB-6 `common.mjs:15-18`).
 - `panel.mjs` throws on a key or fault with no words, an entry without text and source, or a caption over 10 words. No key ships before the supervisor has seen the 8 panels (the sheet posted on #193).
+
+**(d) Adding a key (D-LIB7FIX-PERKEY).**
+- A new key is new files only: its `hand-<KEY>.mjs` and one `words/<key>.json` per pair key. No file a pinned row lists moves (PK4), except that a key mapping an already pinned id adds `inputsFor(key)` to that row's MANIFEST set (ci/manifest.mjs:69-71): such a key lands before that id's pin or with its pin replacement.
+- A key module may export its own `CONVENTIONS`, `ORIENTATIONS` and `CAMERA_TEXT` entries, as literals. It never imports `pairs.mjs` (the loader's top-level await never settles); camera words such as "Seen from the thumb side" are written out.
+- `declarationsOf(mods, BASE)` merges them over pairs.mjs's own entries (`BASE`, a frozen copy taken before the merge) between `MODULES` and `INDEX`, so `indexOf`, `pairSpec`, sheet.mjs and checks.mjs read the merged objects. It throws on a name already defined, camera words for an orientation nobody holds, and a module using a name another module declares.
+- Key modules are still found by filename; there is no list of keys.
+- The shared engine (pairs.mjs with its static closure, zoom.mjs, `words/chrome.json`) is what every keyed row lists; editing it after a pin needs a pin replacement.
