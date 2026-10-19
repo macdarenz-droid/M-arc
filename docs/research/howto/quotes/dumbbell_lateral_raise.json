@@ -1,0 +1,180 @@
+{
+  "id": "dumbbell_lateral_raise",
+  "checked": "2026-10-17",
+  "sources": [
+    {
+      "id": "ace-lateral-raise",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "coratella2020",
+      "access": "full",
+      "fixes": null
+    },
+    {
+      "id": "andersen2008",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "kolber2014",
+      "access": "abstract",
+      "fixes": null
+    },
+    {
+      "id": "graichen1999",
+      "access": "abstract",
+      "fixes": null
+    }
+  ],
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ace-lateral-raise",
+      "quote": "Stand holding dumbbells in your hands with a closed, neutral grip (thumbs around the handles and palms facing your body). Position the dumbbells alongside your thighs with your elbows extended or holding a slight bend.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c2",
+      "source": "ace-lateral-raise",
+      "quote": "Assume either a split-stance position to stabilize your body or position your feet slightly wider than hip-width apart.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c3",
+      "source": "ace-lateral-raise",
+      "quote": "Stiffen your torso by contracting your abdominal and core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining this position throughout the exercise. Your head position should be aligned with your spine.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c4",
+      "source": "ace-lateral-raise",
+      "quote": "Exhale and slowly raise the dumbbells up and out to your sides. Your elbows and upper arms should rise together and be slightly ahead of your forearms and dumbbells.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-lateral-raise",
+      "quote": "As your arms move past 60 - 70 degrees (nearing shoulder level), rotate them slightly upwards so that the front edge of the dumbbells point slightly upwards.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c5",
+      "source": "ace-lateral-raise",
+      "quote": "the slight external rotation initiated at the 60-70 degree mark may reduce potential impingement in the shoulder joint.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c6",
+      "source": "ace-lateral-raise",
+      "quote": "Continue raising the dumbbells until your arms are level with your shoulders and approximately parallel with the floor. Maintain your torso erect (no arching your low back) and neutral wrist position (avoid flexion and extension of your wrists).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c7",
+      "source": "ace-lateral-raise",
+      "quote": "Inhale and gently lower the dumbbells back towards your starting position keeping your elbows slightly extended and holding the neutral grip position.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "coratella2020",
+      "quote": "For LR-neutral, the participants were required to abduct laterally the humerus up to 90°, with the humerus neutrally rotated (i.e., thumbs forward).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "coratella2020",
+      "quote": "For all these exercises, the elbow was almost fully extended, and the wrist in line with the forearm",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "coratella2020",
+      "quote": "Each exercise was performed with the pacing of 2 s for the concentric and 2 s for the eccentric phase and 0.5 s for the isometric phase at the beginning and at the end of each movement.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "coratella2020",
+      "quote": "Ten competitive bodybuilders performed the exercises.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "coratella2020",
+      "quote": "each exercise was performed seated with a load that allowed eight repetitions (i.e., 8-RM).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c9",
+      "source": "coratella2020",
+      "quote": "A metronome was used to pace the intended duty cycle",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c10",
+      "source": "coratella2020",
+      "quote": "Medial deltoid was more active during LR with straight vs. flexed elbow.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c11",
+      "source": "coratella2020",
+      "quote": "Lastly, upper trapezius showed greater activity when humerus tended to be rotated internally.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c12",
+      "source": "andersen2008",
+      "quote": "For the trapezius muscle, the highest level of muscle activation was found during the shrug (102+/-11% of MVC), lateral raise (97+/-6% of MVC), and upright row (85+/-5% of MVC) exercises, but the latter 2 exercises required smaller training loads (3-10 kg)",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2014",
+      "quote": "A significant association existed between clinical characteristics of SIS (p ≤ 0.004) and both lateral deltoid raises and upright rows above 90°.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c13",
+      "source": "kolber2014",
+      "quote": "Avoiding performance of lateral deltoid raises and upright rows beyond an angle of 90° and efforts to strengthen the external rotators may serve as a useful means to mitigate characteristics associated with SIS.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "graichen1999",
+      "quote": "The minimal acromio-humeral distance decreased significantly from 30 degrees of abduction (mean 7.0 mm +/- 1.6 mm) to 120 degrees (mean 3.9 mm; +/- 1.8 mm; p < 0.0001).",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
+      "claim": "c14",
+      "source": "graichen1999",
+      "quote": "the supraspinatus is in closest contact to the anterior inferior border of the acromion in 90 degrees of abduction with 45 degrees internal rotation.",
+      "status": "verbatim",
+      "closest": null
+    }
+  ]
+}
