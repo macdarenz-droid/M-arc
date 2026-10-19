@@ -19,7 +19,8 @@ Record of the LR-29 verify of the 10 LB3 non-pilot cards (#272) and its one fix 
 - R-LB3-6: back_extension c17 (mayer1999) is cited on setup[2] (hands behind the head is harder). conventional_deadlift c16 (lee2018) is cited on feel.primary glutes.
 - R-LB3-7: every other finding takes the critic's fix as written (table below). conventional_deadlift's tempo.text names the bottom dead start with no seconds; pause stays 0.
 - R-LB3-8: one round only.
-- R-LB3-9 (supervisor, during the fix round): back_extension's plate.variantLine was null while its library row says "Bodyweight / Machine" (D-LIB5-VARIANT). It now names the drawn 45-degree bench with body weight. A new claim, c22 (StrengthLog: "The back extension exercise can be performed on a mat or bench, or using a back extension machine.", re-fetched by curl, verbatim), says that bench is a back extension machine. Only c15 covers the seated back-extension machine, so its setup and technique are in gaps.
+- R-LB3-10 (supervisor recheck, docs/supervisor/verify/lb3-research-recheck.md @ afe77cef): 71 of 72 findings done, 1 partly; fix 1 medium (M1, the back_extension variant line) and 8 lows in one commit. Applied as the rows at the end of the table.
+- R-LB3-9 (supervisor, during the fix round): back_extension's plate.variantLine was null while its library row says "Bodyweight / Machine" (D-LIB5-VARIANT). It now names the drawn 45-degree bench with body weight. StrengthLog's own steps call that bench "the machine" (c1, c3, c4), and the library row's aliases ("hyperextension", "45 degree back extension") point to it. A new claim, c22 (StrengthLog: "The back extension exercise can be performed on a mat or bench, or using a back extension machine.", re-fetched by curl, verbatim), lists bench and machine as separate options. Only c15 covers the seated back-extension machine, so its setup and technique are in gaps. (Corrected under R-LB3-10: the first version said c22 calls the bench a machine, which it does not.)
 
 ## Fix round checks
 - Valid JSON: all 20 files.
@@ -104,5 +105,15 @@ All fixes are in the fix-round commit named on #272 as "LB3 RESEARCH FIXED".
 | sumo_deadlift-3 | low | c17 gains the "Everything from your foot angle ... requires attention and practice." quote |
 | sumo_deadlift-4 | low | inherit[4] points at plate.equipment |
 | sumo_deadlift-5 | low | rankNote: StrengthLog deadlift and NHS hits set aside (R-LB3-2) |
-| R-LB3-9 | ruling | back_extension variantLine written; c22 added; seated machine in gaps |
 | sumo_deadlift-6 | low | breath line (R-LB3-3 wording); notes: conflict with c10's breath-hold cue |
+| R-LB3-9 | ruling | back_extension variantLine written; c22 added; seated machine in gaps |
+| R-LB3-10 M1 | medium | back_extension variantLine rests on c1, c3 and c4 ("the machine") and the library aliases; c22 described as listing bench and machine separately; lb3.md R-LB3-9 line corrected |
+| R-LB3-10 L1 | low | back_extension foot-width note: StrengthLog shoulder width (c3); Physitrack gives no width; FitnessVolt hip width |
+| R-LB3-10 L2 | low | sumo_deadlift and dumbbell_romanian_deadlift rankNotes set aside "most powerlifting injuries seem to creep up over time, rather than being acute" (no fault) and "the beginning of a deadlift is where most lifters get stuck and fail their lift" (where lifts fail) |
+| R-LB3-10 L3 | low | sumo_deadlift rankNote: "hips high is a still sign the side view shows" |
+| R-LB3-10 L4 | low | pendlay_row c10 text: "heels lifting mid-lift: use a lighter weight." |
+| R-LB3-10 L5 | low | no change: the supervisor rated setup[2] citing c17 acceptable |
+| R-LB3-10 L6 | low | one_arm_dumbbell_row handlingMistakes[0] cites [c10, c6, c8] (no WEAK tempo claim on a shown line) |
+| R-LB3-10 L7 | low | dumbbell_romanian_deadlift inherit[0] (grip.thumb) dropped; c24 sources the thumb on the card; grip.claims gains c24 |
+| R-LB3-10 L8 | low | this table's R-LB3-9 row moved below the findings; the duplicate FIXED post on #272 is left as posted |
+| R-LB3-10 note | info | one_arm_dumbbell_row, dumbbell_shrug and cable_shrug notes record the NHS "do not completely stop using your shoulder" line so the stop line is never widened |

@@ -13,10 +13,6 @@
   "parent": "romanian_deadlift",
   "inherit": [
     {
-      "field": "grip.thumb",
-      "why": "true for this child because a dumbbell handle is held with the same hold archetype; the parent's wrapped-thumb rule (parent c22, baechle-grip) applies to any handle gripped under load."
-    },
-    {
       "field": "grip.wrist",
       "why": "true for this child because the arms hang straight and only hold the weights (c15), so the wrist stays neutral as in the parent."
     },
@@ -566,7 +562,7 @@
       "why": "Named a common mistake: thinking you are using your back strength to stand up leads to an arched back in the second half of each rep; the back should stay neutral (c10).",
       "claim": "c10",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the arched back while standing up (c10). Sweat's dumbbell Romanian deadlift technique tip says \"A common deadlift mistake is to think you’re using your back strength to stand up, leading to an arched back in the second half of each rep\": a frequency word for one named fault, given for this exercise. No other fault passes step 1. Set aside: Fitbod's \"Common Form Mistakes\" is a list heading. StrengthLog's deadlift guide (c22) is written for the barbell deadlift, and its frequency lines are about the load (\"swift increases in training are a common source of injury\"), a grip (\"The mixed grip is the most common grip technique in powerlifting\"), the lift's sticking point (\"the most common sticking point in the deadlift\") or the stance (\"More common and the best fit for most people\"); none names a fault. If \"a common deadlift mistake\" is read as about the barbell deadlift, another exercise, step 2 gives the rounded back instead: it is the only named fault a quote ties to harm (\"Rounding your back will allow you to reach closer to the floor, but also increases your risk of injury\", c8). Sweat's gaze line (\"your neck will become strained and arched\", c7) also ties a fault to harm, but the rounded back is on Fitbod's common-mistakes list and the gaze is not, so the rounded back would win that step-2 tie. drawable true: the arched back is a still sign the side view shows. Pick changed: rounding the back to reach lower, the head's pick until now, is handlingMistakes[1]."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the arched back while standing up (c10). Sweat's dumbbell Romanian deadlift technique tip says \"A common deadlift mistake is to think you’re using your back strength to stand up, leading to an arched back in the second half of each rep\": a frequency word for one named fault, given for this exercise. No other fault passes step 1. Set aside: Fitbod's \"Common Form Mistakes\" is a list heading. StrengthLog's deadlift guide (c22) is written for the barbell deadlift, and its frequency lines are about the load (\"swift increases in training are a common source of injury\"), a grip (\"The mixed grip is the most common grip technique in powerlifting\"), the lift's sticking point (\"the most common sticking point in the deadlift\") or the stance (\"More common and the best fit for most people\"); \"most powerlifting injuries seem to creep up over time, rather than being acute\" names no fault, and \"the beginning of a deadlift is where most lifters get stuck and fail their lift\" is about where lifts fail; none names a fault. If \"a common deadlift mistake\" is read as about the barbell deadlift, another exercise, step 2 gives the rounded back instead: it is the only named fault a quote ties to harm (\"Rounding your back will allow you to reach closer to the floor, but also increases your risk of injury\", c8). Sweat's gaze line (\"your neck will become strained and arched\", c7) also ties a fault to harm, but the rounded back is on Fitbod's common-mistakes list and the gaze is not, so the rounded back would win that step-2 tie. drawable true: the arched back is a still sign the side view shows. Pick changed: rounding the back to reach lower, the head's pick until now, is handlingMistakes[1]."
     },
     "tells": [
       {
@@ -594,12 +590,13 @@
   "grip": {
     "type": "One dumbbell in each hand, palms facing the body.",
     "width": "Hands in front of the thighs, dumbbells close to the legs.",
-    "thumb": "Wrapped around the handle (inherited).",
+    "thumb": "Wrapped around the handle.",
     "handContact": "Handle across the middle of the palm, fingers wrapped (hold archetype).",
     "wrist": "Neutral (inherited).",
     "claims": [
       "c1",
-      "c4"
+      "c4",
+      "c24"
     ]
   },
   "setup": [

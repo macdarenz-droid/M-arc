@@ -536,7 +536,7 @@
       ],
       "text": "Pause 1 s at the top: StrengthLog's \"Hold this position for a second\" (c8) is right after the lift and gives its seconds (LR-33); Physitrack's \"Hold briefly\" agrees. Up 1 and down 2 are drawing values for StrengthLog's \"slowly lower your upper body\" (c8); no source gives their seconds, so c21 (WEAK) names them a drawing convention."
     },
-    "variantLine": "Drawn: body weight on the 45-degree back-extension bench (Roman chair), pad on the upper thighs (c1, c4, c15); StrengthLog calls this bench a back extension machine (c22), so the library's \"Bodyweight / Machine\" is covered when \"Machine\" means it, and the card's claims hold for it. If \"Machine\" means the seated back-extension machine, only c15 covers it: the same lower-back work as the Roman chair, less glute and hamstring work. No read source gives that machine's setup or technique, so it is in gaps."
+    "variantLine": "Drawn: body weight on the 45-degree back-extension bench (Roman chair), pad on the upper thighs (c1, c4, c15). StrengthLog's own steps call this bench \"the machine\" (\"First, adjust the machine\", c1; \"Step onto the machine\", c3; \"hanging off the edge of the machine\", c4), and the library row's aliases (\"hyperextension\", \"45 degree back extension\") point to the same 45-degree bench, so the card's claims hold for it. c22 lists the options separately (\"on a mat or bench, or using a back extension machine\"). If the library's \"Machine\" means the seated back-extension machine, only c15 covers it: the same lower-back work as the Roman chair, less glute and hamstring work. No read source gives that machine's setup or technique, so it is in gaps."
   },
   "grip": {
     "type": "No grip: arms crossed over the chest, or hands behind the head.",
@@ -788,7 +788,7 @@
   ],
   "notes": [
     "StrengthLog, the anchor, also offers a \"roll-up\" version (\"creating a rolling or wave-like motion in your spine\"). The card follows FitnessVolt's stiff-spine version (\"there should be minimal to no back rounding\", c6), because rounding is more dangerous with added weight (c19); compare LR-18.",
-    "Foot width: the card follows StrengthLog and Physitrack (shoulder width, c3); FitnessVolt sets the feet roughly hip width apart.",
+    "Foot width: the card follows StrengthLog (shoulder width, c3). Physitrack gives no width. FitnessVolt sets the feet roughly hip width apart.",
     "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): no hand contact and no palm direction are drawn as grip facts: the arms are crossed over the chest or the hands are behind the head (c4), and the drawn arm and hand pose is a drawing convention."
   ],
   "gaps": [
