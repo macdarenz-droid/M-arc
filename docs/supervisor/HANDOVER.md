@@ -1302,6 +1302,27 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - In review: LIB-12-FIX.
   - WAITING: LIB-9a #245, LIB-10 #265, LIB-7c #271, HT-11 #273, LIB-7-FIX #193, LIB-8M #109.
 
+**Update ~23:15 UTC (10-19): USAGE PAUSE.** main `07ad7f1`. Cards @ `f371edbc`. Plan @ `b41ac833`.
+- **Pause** (owner, 15:00 and 15:02): pause at 80 % of the weekly limit, and let each agent finish its current task first.
+  - The meter read 0.79 at 22:51. The pause started at 22:58 UTC; starting at 0.79 keeps the overshoot from finishing work small.
+  - LIB-6-PM, LIB-11 and LIB-13 finished their current steps and posted WAITING. Every other lane was already WAITING or frozen. No session is building.
+  - The supervisor's hourly routine `trig_019LBJDA2jX95HgcWEgQPMJ6` is disabled. A one-shot resume is scheduled for Sat 24 Oct 11:05 UTC (the reset is 11:00 UTC). The owner can resume sooner.
+- **On resume, in this order:**
+  1. Re-enable the routine and restart /loop. Read the usage meter: `list_events(kinds:["rate_limit_event"])` → seven_day.utilization.
+  2. **#181 LIB-6-PM** is READY @ `56d3bbbf` (CI 17/17; S5-L and PM-A8 green). Start a fresh Opus reviewer; it is plan slot 2, the next train.
+  3. **#274 LIB-13:** D-LIB13-PANEL2, a second focused round on pendlay_row (the bar glyph's centre) and one_arm_dumbbell_row (the full Mistake arm), then a recheck. 5 of 7 are approved @ `423acc1` (lib4-cards 29).
+  4. Merge order: #181 → #193 LIB-7-FIX (PASS) → LIB-7b (starts after #193 is on main; card lib-7b-card.md) → #191 LIB-12-FIX (PASS; first its pre-train push with Lows 2-4, then a delta review) → #109 LIB-8M (PIN GO waits for LIB-7b, LIB-12 on main and merged in; R8 done) → LIB-5v → #271 LIB-7c → #245 LB1 → #279 LIB-ZOOM (PASS) → #265 LB2 → #278 LIB-11 (pilot B approved; the pin waits for #109) → #273 HT-11 (PASS) → #274 LIB-13.
+  5. **Owner sheets:**
+     - before PILOT A PIN GO, the changed-ids sheet: goblet_squat and front_squat lose their close-ups (GAPS), and mountain_climbers' palm-flat is redrawn;
+     - the pilot B sheet (LIB-11 Do 10): the E-R5 one answer with advisory scores, the hand kinds, battle_ropes' camera;
+     - the LB3 sheet: the one_arm bent support arm line, the sumo side-view line, pendlay F2 and landmine's 228 mm plate.
+- **Follow-ups:**
+  - F-LIB12-R8B: redraw ball-contact, front-rack and cupped-goblet.
+  - F-LB3-7: research the one_arm support-arm form.
+  - F-PB-1: stale research notes.
+  - golden-B follow-ups 18-21.
+  - Watch HT-8: if the timeout recurs, it gets a GATE-FLAKE card.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
