@@ -89,7 +89,8 @@ export default {
     { landmark: 'backUpper', plane: { point: lmE.buttock, normal: [0, -(lmE.backUpper[2] - lmE.buttock[2]), lmE.backUpper[1] - lmE.buttock[1]].map((v, i, a) => v / Math.hypot(...a)) }, pose: 'all', tol: 1 },   // back flat on the pad (c4)
     { landmark: 'buttock', plane: { point: lmE.backUpper, normal: [0, -(lmE.backUpper[2] - lmE.buttock[2]), lmE.backUpper[1] - lmE.buttock[1]].map((v, i, a) => v / Math.hypot(...a)) }, pose: 'all', tol: 1 },
     { landmark: 'knee.r', at: lmE['knee.r'], pose: 'all', tol: 1 },                                              // knee at the pivot (c1)
-    { landmark: 'thighTop.r', at: lmE['thighTop.r'], pose: 'all', tol: 1 },   // thigh pad on the thigh (c2)
+    { landmark: 'thighTop.r', at: lmE['thighTop.r'], pose: 'all', tol: 1 },
+    { landmark: 'grip.r', at: [-HANDLE[0], HANDLE[1], HANDLE[2]], pose: 'all', tol: 0.5 },   // hands on the side handles (c5)   // thigh pad on the thigh (c2)
   ],
   startParts: ['leg.r', 'leg.l', 'lever'],
   ghosts: { count: 2, parts: ['leg.r', 'lever'] },

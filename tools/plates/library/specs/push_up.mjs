@@ -44,7 +44,7 @@ const H = 1.75;
 const WRIST_Y = RADII.fore[2] * H;            // flat palm (LIB-26): the wrist sits the forearm's distal radius over the floor
 const WRIST = 90;                             // arms plumb at the top, so the wrist extends 90 deg and the palm lies flat
 const TOE_Z = -1.05;                          // toe tips on the floor (m), mountain_climbers'
-export const CHEST_GAP = 0.01;                // bottom: the chest landmark this far over the floor (m): touches lightly (c3, c13)
+export const CHEST_GAP = 0.005;                // bottom: the chest landmark this far over the floor (m): touches lightly (c3, c13)
 const ELBOW_POLE = [1, 0, -1];                // bottom: elbow aim (x outward per side): out to the side and back (c7)
 export const SAG_HIP = -20;                   // Mistake: hip extension (deg): the hips sag (c5)
 
@@ -121,7 +121,7 @@ export default {
     { landmark: 'wrist.r', plane: { point: SH, normal: [0, 0, 1] }, pose: 'end', tol: 0.5 },                // shoulders over the hands (c1, c6)
     { landmark: 'elbow.r', plane: { point: SH, normal: [0, 0, 1] }, pose: 'end', tol: 0.5 },                // over the elbows (c6)
     { landmark: 'toe.r', plane: FLOOR, pose: 'all', tol: 0.5 },                                              // on the toes (c2)
-    { landmark: 'chest', plane: { point: [0, CHEST_GAP, 0], normal: [0, 1, 0] }, pose: 'start', tol: 0.5 }, // chest to the floor (c3)
+    { landmark: 'chest', plane: FLOOR, pose: 'start', tol: 1 },                                           // the chest touches the floor (c3)
   ],
   startParts: ['torso', 'leg.r', 'leg.l', 'arm.r'],
   ghosts: { count: 2, parts: ['arm.r'] },

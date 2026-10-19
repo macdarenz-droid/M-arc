@@ -1,6 +1,7 @@
 // LIB-11 (lib-11-card Do 2, Do 3, Do 4; acceptance A2, A3, A5, A7, A9, A13): the pilot B build-ahead plates. Node only:
 // the browser half of the plate QA runs in tools/plates/library/pilot-b/qa.mjs. Every test reads what is drawn (the
 // items a spec emits, the engine's landmarks and report), never a helper's own maths.
+import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -340,5 +341,125 @@ describe('LIB-11 A9: the pilot B plates page is deterministic (PQ-H7)', { timeou
     const t0 = Date.now(), one = b.sha256((await b.buildPbPage()).html), two = b.sha256((await b.buildPbPage()).html);
     expect(one).toBe(two);
     expect(Date.now() - t0).toBeLessThan(45_000);   // each build is one child process, well under vitest's 60 s RPC limit
+  });
+});
+
+describe('LIB-11 A10, A6 and Q1 (Do 5 b): the card fields, the ruled tempo map and the plate facts', { timeout: T }, () => {
+  // The ruled table ('PILOT B MAPS RULED @ 6ade71ef', #278 6269835256): phase names, order and source per id; no constants.
+  // Copied from the ruling, never read from tempo.json or a spec.
+  const RULED: Record<string, [string, string][]> = {
+    smith_machine_bench_press: [['Lower', 'down'], ['Press', 'up']], seated_leg_curl: [['Curl', 'up'], ['Return', 'down']],
+    cable_fly: [['Close', 'up'], ['Hold', 'pause'], ['Open', 'down']], push_up: [['Press', 'up'], ['Lower', 'down']],
+  };
+  const POSE_MAP: Record<string, Record<string, string>> = { push_up: { start: 'plate.end', end: 'plate.start' } };
+  const KEYS = ['plateFacts', 'tempo', 'topFault'];
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  const built = (rows: any[], pt: any) => rows.flatMap((r: any) => (r.from === 'pause' ? (pt.pause > 0 ? [{ phase: r.phase, s: pt.pause }] : []) : [{ phase: r.phase, s: pt[r.from], move: true }]));
+  const tempoProblems = (tj: any, cards: Record<string, any>, specs: Record<string, any>) => {
+    const bad: string[] = [];
+    if (Object.keys(tj.constants).length) bad.push('constants: not the ruled (empty) set');
+    if (JSON.stringify(tj.poseMap ? Object.fromEntries(Object.entries<any>(tj.poseMap).map(([k, v]) => [k, { start: v.start, end: v.end }])) : {}) !== JSON.stringify(POSE_MAP)) bad.push('poseMap: not the ruled map');
+    if (JSON.stringify(Object.keys(tj.ids).sort()) !== JSON.stringify(DRAWN.slice().sort())) bad.push('ids: not the drawn 4');
+    for (const id of DRAWN) {
+      const t = tj.ids[id], c = cards[id], pt = c.plate.tempo;
+      if (JSON.stringify(t?.rows?.map((r: any) => [r.phase, r.constant ? 'const' : r.from])) !== JSON.stringify(RULED[id])) bad.push(`${id}: tempo.json rows != the ruled table`);
+      if (JSON.stringify(t?.claim) !== JSON.stringify(pt.claim)) bad.push(`${id}: claim`);
+      const hold = c.tempo.some((p: any) => p.phase === 'Hold');
+      if (hold !== pt.pause > 0) bad.push(`${id}: Hold present ${hold} but pause ${pt.pause}`);
+      if (c.tempo.some((p: any) => p.phase === 'Rest')) bad.push(`${id}: Rest`);
+      if (JSON.stringify(c.tempo) !== JSON.stringify(built(t?.rows ?? [], pt))) bad.push(`${id}: card tempo != the array built from the ruled table and plate.tempo`);
+      if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(c.tempo)) bad.push(`${id}: spec tempo != card tempo`);
+    }
+    return bad;
+  };
+  const clean = () => ({ tj: readJson('tools/plates/library/pilot-b/tempo.json'), cards: Object.fromEntries(DRAWN.map(id => [id, cardOf(id)])),
+    specs: Object.fromEntries(DRAWN.map(id => [id, spec(id)])) as Record<string, any> });
+  const copy = (x: any) => JSON.parse(JSON.stringify(x));
+  it('tempo.json, every card tempo and every spec tempo follow the ruled map', () => {
+    const { tj, cards, specs } = clean();
+    expect(tempoProblems(tj, cards, specs)).toEqual([]);
+  });
+  it('mutations (i)-(vi) and a changed second are each red', () => {
+    const red = (f: (s: any) => void) => { const s = copy({ tj: clean().tj, cards: clean().cards }); s.specs = { ...clean().specs }; f(s); return tempoProblems(s.tj, s.cards, s.specs).length > 0; };
+    const setAll = (s: any, id: string, rows: any[] | null, tempo: any[]) => { if (rows) s.tj.ids[id].rows = rows; s.cards[id].tempo = tempo; s.specs[id] = { ...s.specs[id], tempo }; };
+    expect(red(s => { setAll(s, 'seated_leg_curl', null, [...s.cards.seated_leg_curl.tempo, { phase: 'Rest', s: 1 }]); }), '(i) Rest added').toBe(true);
+    expect(red(s => { s.tj.constants['seated_leg_curl.Rest'] = { s: 1, claim: 'c7', quote: 'x' }; }), '(ii) a constant').toBe(true);
+    expect(red(s => { setAll(s, 'cable_fly', null, s.cards.cable_fly.tempo.map((p: any) => (p.phase === 'Hold' ? { ...p, s: 2 } : p))); }), '(iii) Hold s').toBe(true);
+    expect(red(s => { const rows = [...s.tj.ids.push_up.rows.slice(0, 1), { phase: 'Hold', from: 'pause' }, ...s.tj.ids.push_up.rows.slice(1)];
+      setAll(s, 'push_up', rows, [s.cards.push_up.tempo[0], { phase: 'Hold', s: 0 }, s.cards.push_up.tempo[1]]); }), '(iv) Hold 0 on push_up').toBe(true);
+    expect(red(s => { const rows = s.tj.ids.cable_fly.rows.filter((r: any) => r.from !== 'pause'); setAll(s, 'cable_fly', rows, built(rows, s.cards.cable_fly.plate.tempo)); }), '(v) Hold removed').toBe(true);
+    expect(red(s => { const rows = s.tj.ids.smith_machine_bench_press.rows.map((r: any) => ({ ...r, from: r.from === 'up' ? 'down' : r.from === 'down' ? 'up' : r.from }));
+      setAll(s, 'smith_machine_bench_press', rows, built(rows, s.cards.smith_machine_bench_press.plate.tempo)); }), '(vi) up/down swapped').toBe(true);
+    expect(red(s => { s.cards.push_up.tempo[0].s = 3; }), 'one tempo second').toBe(true);
+  });
+  // D-LIB8M-CARDS: the three keys are one text block before the final brace; replacing it by `\n}` gives the research copy.
+  const cardsSha = readJson('tools/plates/library/pilot-b/cards.sha.json');
+  const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
+  const BLOCK = /,\n( +)"plateFacts": [^\n]*,\n\1"tempo": [^\n]*,\n\1"topFault": [^\n]*\n}\n$/;
+  const unkeyed = (text: string) => (BLOCK.test(text) ? text.replace(BLOCK, '\n}\n') : null);
+  it('each card differs from its research-head copy (38d5f9c6) only in the three-key block; each quotes file is a byte copy', () => {
+    expect(cardsSha.researchHead).toBe('38d5f9c608b492587b3f923382ccb02bea8f1345');
+    for (const id of DRAWN) {
+      const text = readFileSync(`docs/research/howto/cards/${id}.json`, 'utf8');
+      expect(sha(unkeyed(text) ?? ''), id).toBe(cardsSha.cards[id]);
+      expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
+      expect(Object.keys(JSON.parse(text)).slice(-3), id).toEqual(KEYS);
+    }
+    for (const id of HELD) expect(sha(readFileSync(`docs/research/howto/cards/${id}.json`)), id).toBe(cardsSha.cards[id]);
+  });
+  it('mutation: any other card key edited is red', () => {
+    const text = readFileSync('docs/research/howto/cards/cable_fly.json', 'utf8').replace('"view": "front"', '"view": "side"');
+    expect(sha(unkeyed(text) ?? '')).not.toBe(cardsSha.cards.cable_fly);
+  });
+  const KEY: Record<string, string> = { smith_machine_bench_press: 'flare', seated_leg_curl: 'flexed', cable_fly: 'press', push_up: 'sag' };
+  const topFaultProblems = (card: any, drawnKey: string) => (card.plate.mistake.drawable
+    ? (card.topFault === drawnKey ? [] : ['drawable:true but topFault is not the drawn fault'])
+    : (card.topFault !== drawnKey ? [] : ['drawable:false but topFault equals the drawn fault']));
+  it('Q1: every card is drawable:true, its topFault is the ruled key, and each first tell carries it', () => {
+    for (const id of DRAWN) { const c = cardOf(id); expect(c.plate.mistake.drawable, id).toBe(true); expect(topFaultProblems(c, KEY[id]!), id).toEqual([]); expect(spec(id).mistake.tells[0].key, id).toBe(c.topFault); }
+  });
+  it('Q1 mutation: drawable:false with topFault equal to the drawn key is red', () => {
+    const c = cardOf('push_up'); c.plate.mistake.drawable = false;
+    expect(topFaultProblems(c, 'sag')).toEqual(['drawable:false but topFault equals the drawn fault']);
+  });
+  /** Kind on every fact, one form per fact, a claim of the card's own, and a pose that is the ruled image of its quote's pose. */
+  const CARD_POSE: Record<string, Record<string, string>> = {   // fact claim -> the card pose its quote states (plate.start / plate.end)
+    smith_machine_bench_press: { c1: 'plate.start', c2: 'plate.start', c3: 'plate.end' }, seated_leg_curl: { c2: 'plate.start', c4: 'plate.start', c5: 'plate.start' },
+    push_up: { c1: 'plate.start', c3: 'plate.end' },
+  };
+  const specPose = (id: string, cardPose: string) => { const m = POSE_MAP[id] ?? { start: 'plate.start', end: 'plate.end' }; return Object.keys(m).find(k => m[k] === cardPose); };
+  const factProblems = (id: string, c: any) => c.plateFacts.flatMap((f: any, i: number) => [
+    ...(['contact', 'angle', 'height'].includes(f.kind) ? [] : [`${i}: kind`]),
+    ...(f.joint && f.measure === true ? [`${i}: both joint and measure`] : []),
+    ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
+    ...(f.pose === specPose(id, CARD_POSE[id]?.[f.claim] ?? '') ? [] : [`${i}: pose ${f.pose}`]),
+  ]);
+  it('every plate fact has a kind, one form, a claim of its own card and the ruled pose; each How-to names its card', async () => {
+    for (const id of DRAWN) {
+      expect(factProblems(id, cardOf(id)), id).toEqual([]);
+      const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
+      expect(h).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+    }
+    expect(cardOf('cable_fly').plateFacts).toEqual([]);
+  });
+  it('mutations: a fact with both joint and measure: true, and a start fact named with the unmapped pose, are red', () => {
+    const c = cardOf('smith_machine_bench_press'); c.plateFacts.push({ kind: 'angle', joint: 'knee.r', measure: true, deg: 30, pose: 'end', claim: 'c3' });
+    expect(factProblems('smith_machine_bench_press', c)).toEqual([`${c.plateFacts.length - 1}: both joint and measure`]);
+    const p = cardOf('push_up'); p.plateFacts = p.plateFacts.map((f: any) => (f.claim === 'c1' ? { ...f, pose: 'start' } : f));
+    expect(factProblems('push_up', p).some((x: string) => /pose start/.test(x))).toBe(true);
+  });
+  const h6 = (s: any, research: any) => {
+    const R = { normal: plate.renderPlate(s, { id: 'x' }), mistake: plate.renderPlate(s, { id: 'x', mistake: true }) };
+    return qaNode.h6({ spec: s, research }, { engine: Eng(), pins }, R).map((p: any) => p.key);
+  };
+  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault }; };
+  it('A6: PQ-H6 is green on every drawn plate against its card', () => {
+    for (const id of DRAWN) expect(h6(spec(id), research(id)), id).toEqual([]);
+  });
+  it('A6 mutations: smith\'s 45° fact +3°, the card path removed, a contact on an unchecked landmark are red', () => {
+    const r = research('smith_machine_bench_press'), s = spec('smith_machine_bench_press');
+    expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any) => (f.kind === 'angle' ? { ...f, deg: f.deg + 3 } : f)) })).toEqual(['H6.fact:0:angle:sh.r.elev']);
+    expect(h6(s, null)).toEqual(['H6:no-card']);
+    expect(h6(s, { ...r, plateFacts: [...r.plateFacts, { kind: 'contact', landmark: 'chin', pose: 'end', claim: 'c3' }] }).some((k: string) => k.startsWith('H6.fact:'))).toBe(true);
   });
 });

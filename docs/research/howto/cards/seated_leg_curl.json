@@ -583,5 +583,8 @@
   "knee-pivot zoom: wrong is null (LR-25): the sources say the knee must line up with the pivot but name no direction for the fault, so no wrong position is drawn.",
   "Tempo numbers are a drawing convention (plate.tempo.text), not ACSM (LR-15).",
   "W1 fixer round 2026-10-03: F06 / R-W1-7: plate.mistake changed from the knee-to-pivot fault (no sourced direction) to the ankle pad set high on the calves (c3), which has a direction and matches zooms[1]."
- ]
+ ],
+ "plateFacts": [{"kind":"contact","landmark":"backUpper","pose":"start","claim":"c4","note":"c4 \"so that you can keep your back flat against it\" (the back pad); a setup quote, start pose only"},{"kind":"contact","landmark":"seat","pose":"start","claim":"c5","note":"c5 \"ground your hips down into the seat\", before the curl: start pose"},{"kind":"contact","landmark":"thighTop.r","pose":"start","claim":"c2","note":"c2 \"the thigh pad will be snug just above your knees\"; a setup quote, start pose only"},{"kind":"contact","landmark":"grip.r","pose":"start","claim":"c5","note":"c5 \"grasp the handles on either side of you\", before the curl: start pose"}],
+ "tempo": [{"phase":"Curl","s":1,"move":true},{"phase":"Return","s":2,"move":true}],
+ "topFault": "flexed"
 }

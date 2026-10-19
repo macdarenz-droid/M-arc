@@ -131,17 +131,31 @@ its seconds). Question 3 asks the supervisor to confirm.
 
 All drawable:true, so topFault = the plate.mistake key and the first tell carries it.
 
-## 9. Facts plan (D-LIB8M-FACTS with 22's scope)
+## 9. Facts (D-LIB8M-FACTS with 22's scope; D-LIB11-FACTS2: quoted contacts in drawn poses are facts too)
 
-| id | fact | form | quantity measured | claim |
-|---|---|---|---|---|
-| smith_machine_bench_press | `{kind:'angle', joint:'sh.r.elev', pose:'end', deg:45}` | joint (H6's angles path; the report's `sh.r` "elev") | the 3D angle between the upper arm and the trunk at the bottom: the engine's shoulder elevation from the thorax's long axis. c3 states no view, so the view-independent angle is the reading (ruled, NOTE RULED item 1); a top-view reading is not used | c3 |
-| crunch | heel to tailbone 30-45 cm (c1, start pose: a setup quote) | **no H6 form**: H6 has angle, contact and height kinds; a horizontal distance is none of them. Drawn at the midpoint 37.5 cm (allowed: 15 cm ≥ 2 × LIMITS.cm) and pinned by a drawn-item test. No key is invented | heel to sacrum, along the floor | c1 |
-| seated_leg_curl | none: no quote gives a number for a drawn pose (D-LIB8M-NOFACTS: `plateFacts: []`) | — | — | — |
-| cable_fly | none: "slightly bent" and "at or slightly above shoulder height" give no number | — | — | — |
-| push_up | none expected (shoulder-width, straight line: no number) | — | — | — |
+Ruled: 'PILOT B MAPS RULED @ 6ade71ef' (#278 6269835256). Each fact's pose is the spec pose that the ruled pose map gives
+for the pose its quote states; a setup quote states the start pose only (D-LIB9-FACTPOSE). Contacts go through H6's
+`checks` path, so each has a spec check on that landmark and pose.
 
-smith's engine report gives `sh.r` elev 45.0 at the end (drawn), so the fact is within ±2°.
+| id | fact | quantity / contact | claim |
+|---|---|---|---|
+| smith_machine_bench_press | `angle sh.r.elev end 45` | the 3D angle between the upper arm and the trunk at the bottom (engine shoulder elevation; NOTE RULED item 1) | c3 |
+| smith_machine_bench_press | `contact grips end` | "until it touches your chest": the bar (grip midpoint) at the touch point on the mid-chest | c3 |
+| smith_machine_bench_press | `contact backUpper start` | "Lie on the bench" (setup) | c1 |
+| smith_machine_bench_press | `contact sole.r start`, `contact sole.l start` | "feet flat on the floor" (setup) | c2 |
+| seated_leg_curl | `contact backUpper start` | "keep your back flat against it" (setup) | c4 |
+| seated_leg_curl | `contact seat start` | "ground your hips down into the seat", before the curl | c5 |
+| seated_leg_curl | `contact thighTop.r start` | "the thigh pad will be snug just above your knees" (setup) | c2 |
+| seated_leg_curl | `contact grip.r start` | "grasp the handles on either side of you", before the curl | c5 |
+| push_up | `contact wrist.r end` | "place your palms flat on the mat" (card plate.start = spec end; the flat palm sits the wrist at the forearm's distal radius, LIB-26) | c1 |
+| push_up | `contact chest start` | "until your chest or chin touch the mat/floor" (card plate.end = spec start) | c3 |
+| cable_fly | none (`[]`) | no quote gives a number, and "bring both hands together" (c5) does not say the hands touch | — |
+
+Not facts, each with its reason: seated_leg_curl's ankle pad "under your legs just above your shoes" (c3) is a contact
+on the lower shank, where the body model has no landmark, so H6 cannot check it; it is proven by the drawn-item test
+(A2) instead and no key is invented. "Knees in line with the machine's joint" (c1) is an alignment, not a contact (the
+spec's `knee.r` check proves it). Contacts are never carried to the end pose by inference ("thighs, hips and back
+unchanged" is card text over setup quotes). crunch's heel distance stays a drawn-item test (NOTE RULED item 4).
 
 ## 10. Unsourced numbers (no card gives them)
 

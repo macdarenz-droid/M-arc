@@ -647,5 +647,8 @@
   "The shoulder feel row uses ACE's 'may reduce stresses in the shoulder joint' (c7) as place + the source's fault + fix (LR-6); it carries no symptom-to-cause claim beyond that.",
   "Elbow angle: ACE's standard form lets the elbows flare (c7); BarBend gives no elbow angle. The plate draws ACE's standard form; the elbows-close option is a text line only.",
   "Tempo numbers are a drawing convention (plate.tempo.text); ACSM's 1-2 s is not cited because it is stated for intermediate to advanced lifters (LR-15)."
- ]
+ ],
+ "plateFacts": [{"kind":"contact","landmark":"wrist.r","pose":"end","claim":"c1","note":"c1 \"place your palms flat on the mat\": the palm flat with the wrist at the forearm's distal radius (LIB-26); card plate.start = spec end (pose map, MAPS RULED); a setup quote, that pose only"},{"kind":"contact","landmark":"chest","pose":"start","claim":"c3","note":"c3 \"until your chest or chin touch the mat/floor\": card plate.end = spec start (pose map, MAPS RULED)"}],
+ "tempo": [{"phase":"Press","s":1,"move":true},{"phase":"Lower","s":2,"move":true}],
+ "topFault": "sag"
 }

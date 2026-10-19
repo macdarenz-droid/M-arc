@@ -749,5 +749,8 @@
   "anchorSource": "motra-smith-bench",
   "notes": [
     "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick (arching) is unchanged here. Verify #3's critic found no harm-tied fault on any source, so LR-31 step 3 would pick the first item on Motra's list, 'Flaring elbows wide' (c7), not the arch (third)."
-  ]
+  ],
+  "plateFacts": [{"kind":"angle","joint":"sh.r.elev","pose":"end","deg":45,"claim":"c3","note":"c3 \"with elbows at 45 degrees\": the 3D angle between the upper arm and the trunk at the bottom, the engine shoulder elevation (ruled, PILOT B NOTE RULED item 1)"},{"kind":"contact","landmark":"grips","pose":"end","claim":"c3","note":"c3 \"Lower the bar with control until it touches your chest.\": the bar on the chest at the bottom"},{"kind":"contact","landmark":"backUpper","pose":"start","claim":"c1","note":"c1 \"Lie on the bench\": the back on the pad; a setup quote, start pose only (D-LIB9-FACTPOSE)"},{"kind":"contact","landmark":"sole.r","pose":"start","claim":"c2","note":"c2 \"Lie back with feet flat on the floor\"; a setup quote, start pose only"},{"kind":"contact","landmark":"sole.l","pose":"start","claim":"c2","note":"c2 \"Lie back with feet flat on the floor\"; a setup quote, start pose only"}],
+  "tempo": [{"phase":"Lower","s":2,"move":true},{"phase":"Press","s":1,"move":true}],
+  "topFault": "flare"
 }
