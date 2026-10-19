@@ -21,7 +21,13 @@ const unescape = (s: string) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').re
 function pageBox(html: string, pre: string) {
   const id = `id="${pre}-redflag-back"`, count = html.split(id).length - 1, at = html.indexOf(id);
   const block = at < 0 ? '' : html.slice(at, html.indexOf('</div></div>', at));
-  return { count, ps: [...block.matchAll(/<p[^>]*>([^<]*)<\/p>/g)].map(m => unescape(m[1])) };
+  return { count, ps: [...block.matchAll(/<p[^>]*>([^<]*)<\/p>/g)].map(m => unescape(m[1] ?? '')) };
+}
+/** The page's back box as a Box (throws unless the block holds exactly three texts). */
+function boxOnPage(html: string, pre: string): Box {
+  const [name, now, doctor, ...rest] = pageBox(html, pre).ps;
+  if (name === undefined || now === undefined || doctor === undefined || rest.length) throw new Error('S5-L: the back box does not hold exactly three <p>');
+  return { name, now, doctor };
 }
 /** The sheet's visible total with the back box (lintHowto's total drops 'back', so its words are added here). */
 const sheetTotal = (M: any, box: Box) => CL.lintHowto(M, shared).words.total + CL.words([box.name, box.now, box.doctor].join(' '));
@@ -70,13 +76,12 @@ describe('S5-L: the back box on E1\'s back-flagged layers page', { timeout: 300_
   });
 
   it('D-LIB5-REACH on the page\'s box, with the key \'back-pain-box\' (BOX-CAP\'s named limit)', () => {
-    const [name, now, doctor] = pageBox(page, F.CHROME).ps;
     expect(BB.BACK_BOX_KEY).toBe('back-pain-box');
-    expect(reach({ name, now, doctor }, BB.BACK_BOX_KEY)).toEqual([]);
+    expect(reach(boxOnPage(page, F.CHROME), BB.BACK_BOX_KEY)).toEqual([]);
   });
 
   it('lintHowto\'s words.total plus the back box is within VISIBLE_WORDS_MAX; the variant at exactly 450 with the box is green', async () => {
-    const M = await import(/* @vite-ignore */ F.url(root, F.HOWTO)), [name, now, doctor] = pageBox(page, F.CHROME).ps, box = { name, now, doctor };
+    const M = await import(/* @vite-ignore */ F.url(root, F.HOWTO)), box = boxOnPage(page, F.CHROME);
     expect(CL.lintHowto(M, shared).words.total).toBe(390);
     expect(sheetTotal(M, box)).toBe(440);
     expect(wordProblems(M, box)).toEqual([]);
