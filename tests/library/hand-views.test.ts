@@ -236,6 +236,18 @@ describe('LIB-12 on LIB-7\'s pilot and critic sheet (review Blocker, #191 @ 1ff3
     expect(refs).toEqual([]);
     for (const m of mods.filter(q => q.OWNER === 'LIB-12' && Object.keys(q.IDS).length)) expect([m.KEY, m.FLAGS]).toEqual([m.KEY, ['sizes and pose values: drawing values (D-LIB12-2, D-LIB12-9)']]);
     expect(html.includes('sizes and pose values: drawing values (D-LIB12-2, D-LIB12-9)')).toBe(true);
+    // LIB-12-FIX (review Low 1, #191 5972033371): each claim a drawn LIB-12 id cites is on the sheet as `<ref>: <text>`,
+    // text from lib12-claims.json, escaped as the sheet escapes it; red with the claim lines dropped from the sheet
+    const { esc } = await import(/* @vite-ignore */ url('tools/plates/library/render/closeup/common.mjs'));
+    const cited = new Set<string>();
+    for (const m of mods.filter(q => q.OWNER === 'LIB-12')) for (const id of Object.keys(m.IDS)) {
+      const s = pairs.pairSpec(id), V = s.mod.VARIANTS[s.variant];
+      for (const r of [...Object.values<string[]>(V.claims ?? {}).flat(), ...s.wrong.flatMap((w: any) => w.claims ?? []), ...(m.IDS[id].claims ?? [])]) if (!r.startsWith('ga:')) cited.add(r);
+    }
+    const body: string = (await S.buildSheet()).body;
+    const unshown = (b: string) => [...common.sweep([...cited], 23, 'cited LIB-12 claims')].filter(r => typeof CLAIMS.claims[r] !== 'string' || !b.includes(`<li>${esc(`${r}: ${CLAIMS.claims[r]}`)}</li>`));
+    expect(unshown(body)).toEqual([]);
+    expect(unshown(body.replace(/<details><summary>Claims<\/summary><ul>[\s\S]*?<\/ul>/g, '<details><summary>Claims</summary><ul></ul>'))).toEqual([...cited]);
   }, 180_000);
 });
 
