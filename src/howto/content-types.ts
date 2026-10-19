@@ -125,7 +125,7 @@ export interface RedFlagBlock {
   readonly doctor: string;
   readonly claim: Claim;
 }
-export type RiskJoint = 'wrist' | 'shoulder' | 'knee' | 'elbow';
+export type RiskJoint = 'wrist' | 'shoulder' | 'knee' | 'elbow' | 'back';
 
 /** Per exercise. */
 export interface HandlingSpec {
