@@ -1,0 +1,738 @@
+{
+  "id": "incline_barbell_bench_press",
+  "libId": "lib_incline_barbell_bench_press",
+  "name": "Incline Barbell Bench Press",
+  "family": "BENCH-BB",
+  "tier": "A",
+  "archetype": {
+    "hand": "push",
+    "contact": [
+      "bench-lying"
+    ]
+  },
+  "parent": "barbell_bench_press",
+  "inherit": [
+    {
+      "field": "grip.thumb",
+      "why": "true for this child because the bar still travels over the face, neck and chest (GA overBody list includes the incline presses), so the parent's wrapped-thumb rule (parent c4) applies unchanged."
+    },
+    {
+      "field": "grip.handContact",
+      "why": "true for this child because the same straight bar is pressed from the base of the palm; this card's own source also requires straight wrists (c4), which is what the parent's low-palm rule (parent c5) delivers."
+    },
+    {
+      "field": "zooms.bar-low-palm",
+      "why": "true for this child because the hand, bar and wrist rule are the same as the parent's (parent c5; c4 here)."
+    },
+    {
+      "field": "setup.safety-pins",
+      "why": "true for this child because the bar is still lowered from a rack over the face, neck and chest, so the parent's pin height (parent c6: set the pins slightly lower than the bottom position) applies to the incline's safety catches (c6)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the bench at 30-45 degrees; steeper shifts work to the shoulders. In EMG data the upper chest peaked at 30 degrees, and above 45 degrees front-shoulder activity was significantly higher and chest performance lower.",
+      "tags": [
+        "CONSENSUS",
+        "DATA"
+      ],
+      "sources": [
+        "boostcamp-incline",
+        "rodriguezridao2020"
+      ],
+      "quotes": [
+        {
+          "source": "boostcamp-incline",
+          "text": "Set the bench to an incline angle of 30 to 45 degrees. A steeper angle shifts more focus to the shoulders, while a lower angle targets the chest more effectively.",
+          "where": "Setup"
+        },
+        {
+          "source": "rodriguezridao2020",
+          "text": "The results showed that the maximal EMG activity for PMUP occurred at a bench inclination of 30°.",
+          "where": "abstract"
+        },
+        {
+          "source": "rodriguezridao2020",
+          "text": "Inclinations greater than 45° produce significantly higher activation of the anterior deltoid and decrease the muscular performance of the pectoralis major.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "While pressing up, the upper (clavicular) chest was more active on a 45-degree incline barbell bench than on the flat bench or chest-press machine; while lowering, the flat bench was higher.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "coratella2020",
+          "text": "During the concentric phase, [d effect size: 2.78/7.80] clavicular head was more excited in IBP and less excited in CP (d: -9.69/-4.39) compared to all other exercises.",
+          "where": "abstract"
+        },
+        {
+          "source": "coratella2020",
+          "text": "Muscle excitation during the eccentric phase followed a similar pattern, with the exception of the greater (d: 3.89/11.32) excitation in the clavicular head in BP compared to all other exercises.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Head, shoulders and hips stay firmly on the bench; feet flat on the floor or footrests.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boostcamp-incline"
+      ],
+      "quotes": [
+        {
+          "source": "boostcamp-incline",
+          "text": "Lie back on the incline bench with your feet flat on the ground or footrests for stability. Position your head, shoulders, and hips firmly against the bench.",
+          "where": "Setup"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Grip slightly wider than shoulder-width, palms forward, wrists straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boostcamp-incline"
+      ],
+      "quotes": [
+        {
+          "source": "boostcamp-incline",
+          "text": "Grasp the barbell with a slightly wider-than-shoulder-width grip. Your palms should face forward, and your wrists should remain straight.",
+          "where": "Barbell Incline Bench Press"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Start with the bar unracked and held on straight arms above the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "strengthlog-incline"
+      ],
+      "quotes": [
+        {
+          "source": "strengthlog-incline",
+          "text": "Sitting on an inclined bench, unrack a barbell and hold it on straight arms above your shoulders.",
+          "where": "How to Incline Bench Press"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "A way out: use a spotter for the lift-off and for heavier sets, and safety catches.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boostcamp-incline",
+        "boostcamp-incline-ex"
+      ],
+      "quotes": [
+        {
+          "source": "boostcamp-incline",
+          "text": "With the help of a spotter, unrack the barbell and hold it directly above your chest with arms fully extended.",
+          "where": "Barbell Incline Bench Press"
+        },
+        {
+          "source": "boostcamp-incline",
+          "text": "Use a spotter, especially for barbell lifts.",
+          "where": "Safety Precautions"
+        },
+        {
+          "source": "boostcamp-incline-ex",
+          "text": "use safety catches if needed.",
+          "where": "Form & Technique Tips"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Lower the bar slowly to the upper chest with the elbows about 45-75 degrees from the torso.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boostcamp-incline",
+        "boostcamp-incline-ex"
+      ],
+      "quotes": [
+        {
+          "source": "boostcamp-incline",
+          "text": "Slowly lower the barbell toward your upper chest, maintaining control and keeping your elbows at a 45-75 degree angle relative to your torso.",
+          "where": "Barbell Incline Bench Press"
+        },
+        {
+          "source": "boostcamp-incline-ex",
+          "text": "Unrack the bar and lower it to the upper chest.",
+          "where": "How To"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Common faults: an incline set too steep, elbows flared out (shoulder strain), and bouncing the bar off the chest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boostcamp-incline"
+      ],
+      "quotes": [
+        {
+          "source": "boostcamp-incline",
+          "text": "Setting the incline too steep, which shifts focus away from the chest.",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "boostcamp-incline",
+          "text": "Allowing the elbows to flare out excessively, increasing shoulder strain.",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "boostcamp-incline",
+          "text": "Using momentum or bouncing the barbell off your chest.",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Keep a neutral spine and do not over-arch the low back; excessive arching is named as an injury risk.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boostcamp-incline",
+        "boostcamp-incline-ex"
+      ],
+      "quotes": [
+        {
+          "source": "boostcamp-incline",
+          "text": "Maintain a neutral spine and avoid arching your back excessively.",
+          "where": "Tips for Proper Form"
+        },
+        {
+          "source": "boostcamp-incline-ex",
+          "text": "Shoulder strain from flared elbows, lower back arching excessively, wrist strain from poor grip angle",
+          "where": "Injury Risks"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Triceps activity was similar at every bench angle from flat to 60 degrees.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "rodriguezridao2020"
+      ],
+      "quotes": [
+        {
+          "source": "rodriguezridao2020",
+          "text": "TB showed similar EMG activities at all bench inclinations.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The lower chest still works at 30 degrees (about 87% of maximal voluntary activation, vs about 100% flat), and drops at 45 degrees.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "lauver2016"
+      ],
+      "quotes": [
+        {
+          "source": "lauver2016",
+          "text": "The sEMG of lower pectoralis was greater during -15° (100.4 ± 5.7% MVIC), 30° (86.6 ± 4.8% MVIC) and horizontal (100.1 ± 5.2% MVIC) bench conditions compared to the 45° (71.9 ± 4.5% MVIC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Stop if you feel pain in the shoulders or chest, and progress to heavier weights gradually.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boostcamp-incline"
+      ],
+      "quotes": [
+        {
+          "source": "boostcamp-incline",
+          "text": "Stop immediately if you feel pain or discomfort in your shoulders or chest.",
+          "where": "Safety Precautions"
+        },
+        {
+          "source": "boostcamp-incline",
+          "text": "Progress gradually to heavier weights to avoid injury.",
+          "where": "Safety Precautions"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Add load in small steps: ACSM recommends a 2-10% increase once the current load can be done for one to two reps over the target.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "For intermediate to advanced lifters with an eventual emphasis on heavy loads (1-6 RM), ACSM advises a moderate speed of 1-2 seconds up and 1-2 seconds down; the plate uses it only as a drawing convention for tempo.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Barbells pressing on the neck have killed weightlifters by traumatic asphyxia; the incline touch point (upper chest) is the one closest to the neck.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "jumbelic2007",
+        "boostcamp-incline-ex"
+      ],
+      "quotes": [
+        {
+          "source": "jumbelic2007",
+          "text": "an unrecognized source of accidental asphyxia--compression of the neck by barbells",
+          "where": "abstract"
+        },
+        {
+          "source": "jumbelic2007",
+          "text": "There have been at least 11 similar deaths reported to the United States Consumer Product Safety Commission (CPSC) and cataloged in the National Electronic Injury Surveillance System between 1999 and 2002.",
+          "where": "abstract"
+        },
+        {
+          "source": "boostcamp-incline-ex",
+          "text": "Unrack the bar and lower it to the upper chest.",
+          "where": "How To"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Across US emergency-department weight-training injuries, the most common mechanism was weights dropping on the person, and 90% involved free weights.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kerr2010"
+      ],
+      "quotes": [
+        {
+          "source": "kerr2010",
+          "text": "The most common mechanism of injury was weights dropping on the person (65.5%). A large number of injuries occurred with free weights (90.4%).",
+          "where": "abstract, results"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Up to 36% of documented resistance-training injuries are at the shoulder, and poor attention to technique is a named risk factor.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2010"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2010",
+          "text": "The results of the review indicated that up to 36% of documented RT-related injuries and disorders occur at the shoulder complex.",
+          "where": "abstract"
+        },
+        {
+          "source": "kolber2010",
+          "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "boostcamp-incline",
+      "url": "https://www.boostcamp.app/blogs/incline-bench-press-exercise-guide",
+      "title": "Incline Bench Press Exercise Guide (Boostcamp)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "boostcamp-incline-ex",
+      "url": "https://www.boostcamp.app/exercises/incline-bench-press-barbell",
+      "title": "Incline Bench Press (Barbell) exercise page (Boostcamp)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "strengthlog-incline",
+      "url": "https://www.strengthlog.com/incline-bench-press/",
+      "title": "How to Do Incline Bench Press: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "rodriguezridao2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33049982/",
+      "title": "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": "33049982",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "coratella2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31397215/",
+      "title": "Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": "31397215",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "lauver2016",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25799093/",
+      "title": "Influence of bench angle on upper extremity muscular activation during bench press exercise",
+      "kind": "peer-reviewed",
+      "year": 2016,
+      "pmid": "25799093",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "jumbelic2007",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/17456099/",
+      "title": "Traumatic asphyxia in weightlifters",
+      "kind": "peer-reviewed",
+      "year": 2007,
+      "pmid": "17456099",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kerr2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20139328/",
+      "title": "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20139328",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "kolber2010",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508476/",
+      "title": "Shoulder injuries attributed to resistance training: a brief review",
+      "kind": "peer-reviewed",
+      "year": 2010,
+      "pmid": "20508476",
+      "access": "abstract",
+      "checked": "2026-09-30"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; bench angle, the upper-chest touch point and the low-back arch all read in the sagittal plane (c1, c7, c9). The LR-31 top fault, elbows flared out (c8, c9), reads from the side as the elbow level with the shoulder instead of below it toward the ribs (ruling R-LB2-4).",
+    "equipment": "Incline bench with its own rack, back pad at 30 degrees (inside the 30-45 range of c1, and the angle where upper-chest EMG peaked, c1); barbell; feet flat (c3). Safety catches are drawn on the rack (c6).",
+    "start": "On the incline, head, shoulders and hips on the pad, feet flat (c3); bar on straight arms above the shoulders (c5).",
+    "end": "Bar touching the upper chest (c7), elbows about 45-75 degrees from the torso (c7), back and hips still on the pad (c3, c9).",
+    "checkpoints": [
+      {
+        "label": "Bench at 30°",
+        "what": "Back pad at about 30 degrees, not steeper than 45.",
+        "claim": "c1"
+      },
+      {
+        "label": "To upper chest",
+        "what": "Bar comes down under control to the top of the chest, not the neck.",
+        "claim": "c7"
+      },
+      {
+        "label": "Back on pad",
+        "what": "Head, shoulders and hips stay on the bench. No big low-back arch.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows flaring out excessively as the bar comes down, instead of staying about 45-75 degrees from the torso.",
+      "why": "Boostcamp lists allowing the elbows to flare out excessively, increasing shoulder strain, among its common mistakes (c8), and its exercise page names shoulder strain from flared elbows as an injury risk (c9). How often it happens is not measured in any source read.",
+      "claim": [
+        "c8",
+        "c9",
+        "c7"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for an incline-press fault (Boostcamp's \"Common Mistakes to Avoid\" is a heading; \"usually 30–45 degrees\" is the bench setting; Kerr's \"The most common mechanism of injury was weights dropping on the person\" (c16) is about all weight training). Two named faults are tied to harm: flared elbows (\"Allowing the elbows to flare out excessively, increasing shoulder strain\", c8, and \"Shoulder strain from flared elbows\", c9; two sources) and the low-back arch (\"lower back arching excessively\" in the same injury-risk line, c9; one source). Step 2's first tie-break picks the flared elbows: they are on Boostcamp's common-mistakes list, and the arch is only in its form tips (\"avoid arching your back excessively\"); the second tie-break (more harm sources) gives the same. Boostcamp's \"Keep your wrists straight to prevent strain.\" ties bent wrists (a joint position, ruling R-LB2-15) to strain, one source, in its tips and not on its common-mistakes list, so the first tie-break still picks the flared elbows. An incline set too steep and lifting too heavy are setup and load choices, and \"wrist strain from poor grip angle\" is a grip choice; none is a candidate. drawable is true: in the side view a flared elbow sits level with the shoulder instead of down toward the ribs (as close_grip_bench_press draws its elbow drift); the arch, the head's earlier pick, stays in handlingMistakes."
+    },
+    "tells": [
+      {
+        "text": "Hips and shoulders stay on pad",
+        "claim": "c3"
+      },
+      {
+        "text": "Bar touches the upper chest",
+        "claim": "c7"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c14"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed grip, palms forward (c4); thumbs wrapped (inherited, parent c4).",
+    "width": "Slightly wider than shoulder-width (c4).",
+    "thumb": "Wrapped (inherited, parent c4).",
+    "handContact": "Bar in the base of the palm (inherited, parent c5).",
+    "wrist": "Straight (c4).",
+    "claims": [
+      "c4"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Pad at about 30 degrees. Head, shoulders, hips on it, feet flat.",
+      "claim": [
+        "c1",
+        "c3"
+      ]
+    },
+    {
+      "step": "Set the safety pins slightly below where the bar touches your chest.",
+      "claim": "inherit:3"
+    },
+    {
+      "step": "Grip slightly wider than shoulders, wrists straight.",
+      "claim": "c4"
+    },
+    {
+      "step": "With a spotter, unrack to straight arms above your shoulders.",
+      "claim": [
+        "c6",
+        "c5"
+      ]
+    },
+    {
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c13"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Head, shoulders and hips on the pad.",
+      "claim": "c3"
+    },
+    {
+      "point": "No big low-back arch.",
+      "claim": "c9"
+    },
+    {
+      "point": "Elbows about 45-75 degrees from the torso, not flared.",
+      "claim": "c7"
+    },
+    {
+      "point": "Wrists straight.",
+      "claim": "c4"
+    },
+    {
+      "point": "Bar to the upper chest, never the neck.",
+      "claim": "c15"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Elbows flared straight out.",
+      "fix": "Keep them about 45-75 degrees from your body.",
+      "claim": [
+        "c8",
+        "c7"
+      ]
+    },
+    {
+      "mistake": "Low back arching off pad.",
+      "fix": "Keep your back on the pad. Build up to heavier weights gradually.",
+      "claim": [
+        "c9",
+        "c12",
+        "c13"
+      ]
+    },
+    {
+      "mistake": "Bar bouncing off the chest.",
+      "fix": "Lower slowly and with control.",
+      "claim": [
+        "c8",
+        "c7"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "upper_chest",
+        "claim": "c2"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c1"
+      },
+      {
+        "muscleId": "triceps",
+        "claim": "c10"
+      },
+      {
+        "muscleId": "chest",
+        "claim": "c11"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Upper chest and front shoulders",
+        "means": "The target muscles are working.",
+        "fix": null,
+        "claim": "c2",
+        "redFlag": null
+      },
+      {
+        "where": "Mostly front shoulders, little chest",
+        "means": "A bench steeper than 45 degrees shifts the work to the shoulders.",
+        "fix": "Set the back pad between 30 and 45 degrees.",
+        "claim": "c1",
+        "redFlag": null
+      },
+      {
+        "where": "Shoulder or chest pain or discomfort",
+        "means": "Fault: the elbows flare out too far, which strains the shoulder.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c12",
+          "c8"
+        ],
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Bar over face and neck: wrap thumbs. Use a spotter or safety pins.",
+      "claim": [
+        "c15",
+        "c6",
+        "inherit:0",
+        "inherit:3"
+      ]
+    },
+    {
+      "risk": "Weights dropping on the lifter is the most common weight-room injury mechanism.",
+      "claim": "c16"
+    },
+    {
+      "risk": "Shoulder injuries are linked to poor technique. Flared elbows strain the shoulder.",
+      "claim": [
+        "c17",
+        "c8"
+      ]
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "bar-low-palm",
+      "kind": "hand",
+      "right": "Bar in the palm's base, thumb wrapped, wrist straight.",
+      "wrong": "Bar high toward the fingers, wrist bent back.",
+      "claim": "inherit:2"
+    },
+    {
+      "key": "back-on-incline-pad",
+      "kind": "posture",
+      "right": "Head, shoulders and hips on the pad.",
+      "wrong": "Low back arched off the pad, hips pushing up.",
+      "claim": "c9"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "exercises.json: upper_chest primary; front_delts, triceps and chest secondary. c2 (upper chest), c1 (front delts), c10 (triceps) and c11 (lower chest) support this. StrengthLog lists the front deltoid as a primary; the EMG data (c1) show front-delt activity rising mainly above 45 degrees, so no change at 30 degrees."
+  },
+  "anchorSource": "boostcamp-incline"
+}
