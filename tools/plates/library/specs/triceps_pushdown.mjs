@@ -194,8 +194,7 @@ export default {
       { kind: 'arc-arrow', center: 'hips', r: 108, a0: -84, a1: -56 },   // the trunk tipping forward from the hips
     ],
     tells: [
-      { key: 'lean', text: 'Leaning<br>over', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'You lean far forward over the bar to push it down.' },
-      { key: 'arch', text: 'Back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, cue: 'Your back arches as you press.' },
+      { key: 'lean', text: 'Leaning<br>over', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'You lean far over the bar or arch your back to push it down.' },
     ],
   },
   alt: 'Triceps pushdown, side view. Standing at a high cable tower with a slight forward lean, upper arms pinned at the sides, the lifter presses a straight bar from forearms about level down in an arc to straight arms in front of the thighs.',

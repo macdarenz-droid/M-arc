@@ -148,8 +148,8 @@ export default {
       { kind: 'line', pts: [gapBot, gapTop] }, tick(gapBot), tick(gapTop),
     ],
     tells: [
-      { key: 'hips', text: 'Hips<br>lift off', anchor: gapBot, cue: 'Your hips lift off the bench to push the weight up.' },
       { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'navel', pose: 'mistake' }, cue: 'Your low back arches and the belly pushes up.' },
+      { key: 'hips', text: 'Hips<br>lift off', anchor: gapBot, cue: 'Your hips lift off the bench to push the weight up.' },
     ],
   },
   alt: 'Dumbbell bench press, side view. Lying on a flat bench, head, shoulders and hips on the pad, feet flat, the lifter lowers the dumbbells from straight arms to mid-chest, each forearm vertical under its dumbbell, then presses back up.',

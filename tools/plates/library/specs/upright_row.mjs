@@ -128,10 +128,8 @@ export default {
       { kind: 'arrow', from: { at: 'elbow.l', pose: 'end', off: [10, 0] }, to: { at: 'elbow.l', pose: 'mistake', off: [10, 0] } },
     ],
     tells: [
-      // c5
-      { key: 'chin', text: 'Bar under<br>chin', anchor: { at: 'chin', pose: 'mistake' }, cue: 'The bar is pulled up under the chin.' },
-      // c5
-      { key: 'elbows', text: 'Elbows above<br>shoulders', anchor: { at: 'elbow.l', pose: 'mistake' }, cue: 'The elbows rise above the shoulders.' },
+      // c5: one tell for the card's one fault (D-LIB8M-TF1 3)
+      { key: 'chin', text: 'Bar under<br>chin', anchor: { at: 'chin', pose: 'mistake' }, cue: 'The bar comes up under the chin, the elbows above the shoulders.' },
     ],
   },
   alt: 'Barbell upright row, front view. Standing upright, overhand grip wider than the shoulders, the lifter pulls the bar straight up close to the body from the thighs to the lower ribs, elbows leading out to the sides and stopping level with the shoulders, higher than the hands.',

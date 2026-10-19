@@ -149,8 +149,7 @@ export default {
     pose: mistakePose,
     guides: [{ kind: 'line', pts: GAP }, tick(GAP[0]), tick(GAP[1])],
     tells: [
-      { key: 'short', text: 'Stops<br>short', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'The arms stop partway instead of closing the full range.' },
-      { key: 'apart', text: 'Handles<br>apart', anchor: { along: GAP, t: 0.5 }, cue: 'The handles finish well apart in front of the chest.' },
+      { key: 'short', text: 'Stops<br>short', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'The arms stop short: the handles finish well apart in front.' },
     ],
   },
   pilot: { note: 'pec_fly front view after critic run 2: pivots over the shoulders, straight levers clear of the head, frame to the floor; closed arms stay short foreshortened capsules (engine limit)' },

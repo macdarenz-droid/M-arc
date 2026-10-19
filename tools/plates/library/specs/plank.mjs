@@ -148,8 +148,7 @@ export default {
       { kind: 'arrow', from: { at: 'hip.r', pose: 'end' }, to: { at: 'hip.r', pose: 'mistake' } },
     ],
     tells: [
-      { key: 'drop', text: 'Hips drop', anchor: { at: 'buttock', pose: 'mistake' }, cue: 'The hips drop below the shoulder-to-heel line.' },
-      { key: 'sag', text: 'Low back<br>sags', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 150, top: 192 }, cue: 'The low back sags toward the floor.' },
+      { key: 'sag', text: 'Low back<br>sags', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 150, top: 192 }, cue: 'The low back sags and the hips drop below the shoulder-heel line.' },
     ],
   },
   // Tempo (supervisor, from the wave-1 research c12): hold 10-60 s. A range, not one number: the locked page builder

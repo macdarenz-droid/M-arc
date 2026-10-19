@@ -183,8 +183,7 @@ export default {
       { kind: 'arc-arrow', center: 'hips', r: 108, a0: -84, a1: -56 },   // the trunk tipping forward from the hips
     ],
     tells: [
-      { key: 'lean', text: 'Leaning<br>over', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'You lean far forward over the rope to push it down.' },
-      { key: 'arch', text: 'Back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, cue: 'Your back arches as you press.' },
+      { key: 'lean', text: 'Leaning<br>over', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'You lean far over the rope or arch your back to push it down.' },
     ],
   },
   pilot: { note: 'rope now LIB-25 poly: sagging strands with clubbed ends read in the ghosts; at the solid bottom it sits mostly behind the forearm' },
