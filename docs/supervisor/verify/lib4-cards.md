@@ -4165,3 +4165,19 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - **Round 1 @ `7c26b77`: VALID.** Plants caught: R4 leader on the hip [2,2,2]; R11 zoom on the wrong region [2,2,2]. Golden-B anchors (pull_up, lat_pulldown) at every median ≥ 4. horizontal_leg_press: R11 4, but R5 3 [4,3,3], because the locked leg's outline kinks at the knee. Fix @ `9fbdfb5`: the skeleton was already collinear (knee 0.5°), so the Mistake gains the engine's straight red hip→ankle axis guide. Card-true, and nothing is loosened.
 - **Recheck @ `9fbdfb5`: VALID**, with new plants and a re-shuffle. Plants caught: foot off the plate, R3 [3,3,3] and R1 [3,3,3]; axis to the toe, R5 [3,3,3]. Anchor pull_up at every median ≥ 4. Anchor lat_pulldown at R1 3 [3,3,4], confirmed by the supervisor on the PNG: the start ghost's trunk is more upright than the end pose, so the lean grows by about 10° against its own "lean stays the same" tell. Excepted under D-CRITIC-CAL3 (one item per anchor) and recorded as **golden-B follow-up 19**.
 - **horizontal_leg_press APPROVED @ `9fbdfb5`**: every median ≥ 4 (R5 4 [4,4,4], R11 4 [4,4,4]).
+
+## 27. LIB-12 R8 critic panel (D-LIB12FIX-R8, 2026-10-19 ~18:00 UTC; #191 @ `2aa3732`)
+
+- Set: the 6 LIB-12 tiles (5 keys; palm-flat has 2 pages) carrying all 12 drawn ids, from `hands/sheet.mjs --critic --calibrate`. LIB-7's 7 tiles are already panel-approved (section 25) and stay out. Anchors: lat_pulldown/p2 and dumbbell_lateral_raise. pull_up/p1 (the --calibrate default) stays out under follow-up 10, and it is also a labelled reference. References: LIB-7c's six. Plants: wall_ball Right/Wrong swap (C1) and battle_ropes contactAt 2.2 (C3).
+- **VALID.** Both plants were caught: C1 [1,1,1] and C3 [2,2,2]. lat_pulldown/p2 has every median ≥ 4. dumbbell_lateral_raise C3 [5,3,3] is golden-B follow-up 18 (section 25), already confirmed on the PNG and excepted.
+- **Verdict** (finding = 2 of 3 critics score ≤ 3):
+  - battle-rope-rope-neutral: PASS.
+  - palm-flat-floor-over, both pages: C5 [3,3,3]. The cupped-palm page also fails C3 [3,3,4].
+  - front-rack-rack-under: C1 [3,2,3], C4 [3,4,3], C5 [2,2,2], C7 [3,3,3].
+  - ball-contact-catch-under: C5 [2,2,2].
+  - cupped-goblet-under: C5 [2,1,1], C6 [3,3,3].
+  - Findings and fixes are in #191 6273389908.
+- **D-LIB12FIX-R8:** one fix round under LIB-12-FIX (X9).
+  - D-LIB12FIX-CARRY's byte pins are re-based only for the failing keys' hand and view files, and for view-common.mjs if the note proves it is needed. battle-rope stays byte-identical.
+  - A fix note comes first, then the build, then a panel on the changed keys. A key that still fails moves to GAPS by ruling.
+  - The owner gets a changed-ids sheet with the new cupped and front-rack scores before PILOT A PIN GO (D-LIB12FIX-SHIP (2)).
