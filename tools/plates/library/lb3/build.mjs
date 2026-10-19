@@ -2,6 +2,8 @@
 // (it never goes into batches/: D-LIB13-AHEAD). Each row's sources lines come from its research card (as pilot A's
 // sheet does), in memory only. The page holds every LB3 row whose spec exists (the build-ahead draws in steps).
 //   node tools/plates/library/lb3/build.mjs     builds the page twice into a temp directory and prints both sha256
+//   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb3/build.mjs --shots [theme] [lib_id ...]
+//     screenshots each drawn card's Mistake (theme default paper, 390 px wide) into a temp directory (sheet review)
 import { createHash } from 'node:crypto';
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -38,7 +40,30 @@ export async function buildLb3Page({ root = ROOT, all = lb3All(root), ids = draw
 
 export const sha256 = b => createHash('sha256').update(b).digest('hex');
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+/** PNG screenshots of each card's Mistake in `theme` at 390 px: [{ id, path }] in `dir`. */
+export async function mistakeShots({ ids = drawnIds(), theme = 'paper', dir = mkdtempSync(join(tmpdir(), 'lb3-shots-')) } = {}) {
+  const { launch } = await import('../qa/browser.mjs'), { openGolden, settle } = await import('../../fidelity/harness.mjs');
+  const { html } = await buildLb3Page({ ids }), data = read(ROOT, LB3_ROWS), browser = await launch(), out = [];
+  try {
+    const { ctx, page } = await openGolden(browser, theme, { viewport: { width: 390, height: 844 }, html });
+    try {
+      for (const id of ids) {
+        const cid = data.rows[id].chromeId;
+        await page.evaluate(c => { const pill = document.getElementById(`${c}-mistake`); if (pill.getAttribute('aria-pressed') !== 'true') pill.click(); }, cid);
+        await settle(page);
+        const path = join(dir, `${id}-${theme}-mistake.png`);
+        await page.locator(`#card-${cid}`).screenshot({ path });
+        out.push({ id, path });
+      }
+    } finally { await ctx.close(); }
+  } finally { await browser.close(); }
+  return out;
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1] && process.argv[2] === '--shots') {
+  const [theme = 'paper', ...ids] = process.argv.slice(3);
+  for (const { path } of await mistakeShots({ theme, ...(ids.length ? { ids } : {}) })) console.log(path);
+} else if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const dir = mkdtempSync(join(tmpdir(), 'lb3-page-')), shas = [];
   for (const n of [1, 2]) {
     const { html, warnings } = await buildLb3Page();
