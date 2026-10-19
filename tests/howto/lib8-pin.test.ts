@@ -32,7 +32,7 @@ const HELD = ['barbell_shrug', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly
 // census views (claude/howto-options 4a9fd86, docs/howto/library/inputs/census.json blob 70553d5d)
 const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id === 'upright_row' || id === 'pec_fly' ? 'front' : 'side']));
 // the pilot A page the registry builds (build.mjs's page at the Do 6 head); the pin's page entry must equal it
-const PAGE = { sha256: '930558569fcf5d240da32a4964b67fcbf38ac028a1b091914493778372d24464', bytes: 1419789 };
+const PAGE = { sha256: '06d427a2bc728a596b728ec7c5e07cc3a5e94ad6fbc81a5344b04155bd4ade4e', bytes: 1425200 };
 const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
 // Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
 const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
