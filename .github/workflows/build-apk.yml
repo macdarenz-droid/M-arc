@@ -201,10 +201,94 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+  # LIB-4c (docs/supervisor/verify/lib-4c-card.md; plan 5.4; supervisor wiring 10-17, add-only): library How-to CI.
+  # howto-rebuild plans the run (full on main, train heads and dispatches; affected ids otherwise), rebuilds every
+  # pinned page and checks it against its pin (L1), and gives K shards (K >= 1). howto-shard runs the library checks
+  # of one shard in Chromium (UTC). gate-verdict adds the library family: only 'library: full' is merge evidence.
+  howto-rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      ks: ${{ steps.plan.outputs.ks }}
+      K: ${{ steps.plan.outputs.K }}
+      mode: ${{ steps.plan.outputs.mode }}
+    steps:
+      # Default fetch-depth 1 with the persisted token: howto-rebuild.mjs runs its own `git fetch --depth=1 origin main`.
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Plan the library run and rebuild the pinned pages (LIB-4c)
+        id: plan
+        run: node scripts/howto-rebuild.mjs
+      - name: Upload the rebuild proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-howto-rebuild-proof
+          path: screenshots/howto-rebuild-proof.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload the rebuilt pages for the shards
+        uses: actions/upload-artifact@v4
+        with:
+          name: howto-pages
+          path: howto-pages/
+          if-no-files-found: error
+          retention-days: 3
+
+  howto-shard:
+    name: howto-shard (${{ matrix.k }}/${{ needs.howto-rebuild.outputs.K }})
+    needs: [howto-rebuild]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30  # runaway limit; D-GATESPLIT-BUDGET's 1800 s is red inside the verdict
+    strategy:
+      fail-fast: false
+      matrix:
+        k: ${{ fromJSON(needs.howto-rebuild.outputs.ks) }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build the web app
+        run: npm run build
+      - name: Install Chromium for the library checks
+        run: npx playwright install --with-deps chromium
+      - uses: actions/download-artifact@v4
+        with:
+          name: howto-pages
+          path: howto-pages/
+      - name: Library How-to checks, one shard (LIB-4c)
+        env:
+          TZ: UTC
+          MARC_LIB_SHARD: ${{ matrix.k }}/${{ needs.howto-rebuild.outputs.K }}
+        run: node scripts/howto-shard.mjs
+      - name: Upload the shard proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MARC-howto-proof-${{ matrix.k }}
+          path: screenshots/howto-proof-*.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload the shard evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: howto-evidence-${{ matrix.k }}
+          path: screenshots/howto-evidence/
+          if-no-files-found: warn
+          retention-days: 30
+
   # GATE-SPLIT: one verdict over every shard's proof (every block x time zone and every HT-10 tuple x time
   # zone exactly once, on this sha, all passing, each gate step under 30 min).
   gate-verdict:
-    needs: [source-gate, visual-gate-tz, gate-shard, ht10-gate]
+    needs: [source-gate, visual-gate-tz, gate-shard, ht10-gate, howto-rebuild, howto-shard]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 10
