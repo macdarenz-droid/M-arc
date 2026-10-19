@@ -2540,3 +2540,12 @@ Card: `docs/supervisor/verify/box-cap-card.md` (claude/sup-lib4-cards @ 3d9b8e10
 - **Pose maps for faults at the card's start pose.** The engine draws the Mistake against the end pose, so pendlay_row, conventional_deadlift and sumo_deadlift draw the floor start as the spec's end (standing or bar at the chest first; Lower, then Lift or Pull), and back_extension draws the top first. Proposed in DESIGN.md section 9.
 - **Landmine anchor conflict (posted on #274, not tuned).** With the card's inferred layout (pivot behind, plates in front, shoulders ahead of the weight), the edge-on plate meets the chest after a hand rise of 19-31 cm, depending on plate size and trunk angle, so PQ-H3's Trace minimum cannot be met card-true. It waits for a ruling; no trim or pose was changed to pass the check.
 - **one_arm_dumbbell_row's support:** with the knee under the hip, the hand under the shoulder and a level back on one flat bench, the support elbow bends (about 75°). That is card-true, and it is flagged for the critic's R1/R3.
+## LIB-5 Do 9: the back-pain box ships (LIB-5 builder, 2026-10-19)
+
+- **D-LIB5-BACKBOX.** The owner answered decision 6 with option 1 on 2026-10-18 (#244 comment 6250331645): the 50-word back-pain box that keeps every NHS emergency question.
+  - `docs/research/howto/shared/back-pain-box.json` is copied from `claude/libht-research` @ `0393aac9` (owner-approved) and pinned (S1). Its box text equals the reviewed draft's.
+  - `backBox()` reads the box from that card. `library-gate.mjs` writes it as `src/howto/red-flag-back.ts` (`RED_FLAG_BACK`), after the library box reach under its BOX-CAP key `back-pain-box` (50 words, this box only, D-BOXCAP-1) and the box's own rules: every kept trigger question is pinned (`BACK_BOX_TRIGGERS`), and the claim cites nhs-back.
+  - `RiskJoint` gains `'back'`, and `Risks.tsx` maps it to `RED_FLAG_BACK`. A library row whose riskFlags name `back` is linted with the box counted in its 450-word total.
+  - check-bundle.mjs switches to its Do 9 rule: each answered value must appear in the built app.
+  - Every other box stays at 30, and golden B's and c7's limits are unchanged.
+- **D-LIB5-RISKSTEST.** `tests/howto/sections-risks.test.ts` (HT-9's) gains exactly two lines, the `RED_FLAG_BACK` import and `back: RED_FLAG_BACK` in its typed FLAG map, because `RiskJoint` now has `'back'`. Every assertion stays. Without the entry, typecheck is red.

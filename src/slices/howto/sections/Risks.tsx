@@ -7,6 +7,7 @@
 import { chromeIdOf } from '../PlateView';
 import { iconBase } from '@/ui/icons';
 import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER } from '@/howto/archetypes';
+import { RED_FLAG_BACK } from '@/howto/red-flag-back';
 import type { RedFlagBlock, RiskJoint } from '@/howto/content-types';
 import type { SectionProps } from './index';
 import { useAfterFirstPaint } from './Setup';
@@ -19,6 +20,7 @@ const FLAG: Readonly<Record<RiskJoint, RedFlagBlock>> = {
   shoulder: RED_FLAG_SHOULDER,
   knee: RED_FLAG_KNEE,
   elbow: RED_FLAG_ELBOW,
+  back: RED_FLAG_BACK,
 };
 
 /** Pure render: no hooks, so it is unit-testable by calling it directly (project convention: no jsdom). */
