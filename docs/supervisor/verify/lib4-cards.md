@@ -4209,3 +4209,14 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - One fix round: equipment and leaders only, no pose changes (#278 6275943464). A focused recheck with new plants follows 'PILOT B PANEL FIX'.
 - **Recheck @ `d3b231d`** (page `ff3e017c…`; 'PILOT B PANEL FIX'): **VALID**. New critics, plants and shuffle. Plants caught: seated_leg_curl end knee cut to 75°, R1 [3,2,3]; smith stop moved off the rail, R2 [3,3,2]. lat_pulldown has every median ≥ 4. pull_up R1 [3,3,4]: the head is tipped back about 20° at the top, with the chin pushed toward the bar. The supervisor confirmed it on the PNG. It is excepted (one item per anchor) and recorded as **golden-B follow-up 20**.
 - **All 4 pilot B plates are APPROVED** @ `d3b231d`. smith, seated_leg_curl and cable_fly have every median ≥ 4. push_up passed in round 1 and is byte-identical. crunch stays held.
+
+## 29. LB3 critic panel (D-LIB13-PANEL1, 2026-10-19 ~22:15 UTC; #274 @ `59d3d78`, page `dee497a9…`)
+
+- Set: the 7 drawn plates (t_bar_row held). Anchors are golden B's pull_up and lat_pulldown. Plants: back_extension's top arched past the line (R1), and the DRDL "Hips back" leader ending on the knee (R4).
+- **VALID.** Plants caught: R1 [2,2,2] (with R10 [2,2,2]) and R4 [2,2,2]. pull_up has every median ≥ 4. lat_pulldown R2 [3,4,3]: the thigh roller is unmounted. The supervisor confirmed it on the PNG. It is excepted and recorded as **golden-B follow-up 21**.
+- **Verdict:**
+  - PASS: landmine_row, dumbbell_romanian_deadlift, conventional_deadlift, sumo_deadlift.
+  - back_extension: R2 [3,3,3] and R3 [2,3,3]. Pad, upright and foot plate.
+  - pendlay_row: R3 [3,3,3]. The hand does not reach the bar.
+  - one_arm_dumbbell_row: R1 [2,3,4], R3 [3,3,3], R5 [3,3,2]. Support arm, flat hand, Mistake size.
+- One fix round (#274 6278550928). The sumo side-view stance goes on the sheet as an owner line.
