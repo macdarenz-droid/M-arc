@@ -10,14 +10,15 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const read = (p: string) => readFileSync(ROOT + p, 'utf8');
 const url = (p: string) => new URL('../../' + p, import.meta.url).href;
 
-// git blob ids at claude/libht-research f57e7944ebb366a71f812146287ff0c4a6d2edef (<RESEARCH_HEAD>): [card, quotes]
+// git blob ids at claude/libht-research f57e7944ebb366a71f812146287ff0c4a6d2edef (<RESEARCH_HEAD>): [card, quotes];
+// barbell_row's and romanian_deadlift's cards at 2dd60ae0 (F-LB3-1, R-LB3-11: one risks[breath] line each)
 const BLOBS: Record<string, [string, string]> = {
   dumbbell_bench_press: ['0909c439a381bd3e4f811c73e5ca2b86a4f3a3d6', '10e7af71570695df876660d7ae5c1a9939e87999'],
   incline_dumbbell_press: ['8a98fb1a4cf12e1ac629565fe13632e5aa9f09d6', 'dcfab01e746a8742569e4b6f17a79482b5600f83'],
   dumbbell_shoulder_press: ['a147b41c3b1a94308d0f30f63b5121778a4ddcf7', '34902cba78c352df7fb58b180cb4a153e394a9e8'],
   barbell_overhead_press: ['58bae6ec014446e79f09e8aa3840c669c1224788', 'f5a6a8578119f24165fc636c09b7e2e4e7cd9af0'],
-  barbell_row: ['53e5e705c0c4ddda1d4f1dc9d4a111a06bac6b3d', '39b3664967f02e85e60a43603fc67ee12d99003a'],
-  romanian_deadlift: ['e7833c9dd353a7f8f3b49910bb2888f6ba631ad7', '6e4aa71f63047f761ca38f52c66dd9420c3c2f94'],
+  barbell_row: ['dc61ba764ea04eb61be857317a6e49b5fd6d658e', '39b3664967f02e85e60a43603fc67ee12d99003a'],
+  romanian_deadlift: ['15184699e9ff3b3e6f4cfedbc8d77b5ada25bfb8', '6e4aa71f63047f761ca38f52c66dd9420c3c2f94'],
   single_leg_romanian_deadlift: ['9874cb3beb8dfa75f139289a97082d4d14ed286e', '3882c497e30a3ff07de49e0783d07b012148c782'],
   dumbbell_biceps_curl: ['bbd133c23072327b8785b403ab4b9615bd3dfc1b', '09285b1e34edf488db2b179d28a7439a08f8c64d'],
   upright_row: ['706dee0d1df5cfcecb6bcd8d6e47528a4c826149', '58a0afecd8f77548e7507c373de37e8d9f18c822'],
