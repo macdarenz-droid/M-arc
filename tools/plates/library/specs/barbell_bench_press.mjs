@@ -152,9 +152,9 @@ export default {
   datum: [{ x: 'elbow.r', from: 'elbow.r', to: { at: 'grip.r', off: [0, -16] }, mistake: false }],   // plumb through the elbow: the forearm is vertical (c2)
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }],
   callouts: [
-    { key: 'hips', text: 'Hips<br>down', anchor: 'buttock', box: { left: 176, top: 160 }, cue: 'Keep your buttocks on the bench for every rep.' },
-    { key: 'touch', text: 'Mid-chest<br>touch', anchor: 'grip.r', box: { left: 184, top: 198 }, cue: 'Lower the bar to the middle of your chest, never toward the neck.' },
-    { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: ['elbow.r', 'grip.r'], t: 0.45 }, box: { left: 88, top: 286 }, cue: 'At the bottom your forearms point straight up under the bar.' },
+    { key: 'hips', text: 'Hips<br>down', anchor: 'buttock', box: { left: 200, top: 202 }, cue: 'Keep your buttocks on the bench for every rep.' },
+    { key: 'touch', text: 'Mid-chest<br>touch', anchor: 'grip.r', box: { left: 180, top: 150 }, cue: 'Lower the bar to the middle of your chest, never toward the neck.' },
+    { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: ['elbow.r', 'grip.r'], t: 0.45 }, box: { left: 110, top: 288 }, cue: 'At the bottom your forearms point straight up under the bar.' },
   ],
   mistake: {
     pose: mistakePose,
