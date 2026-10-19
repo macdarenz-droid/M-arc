@@ -4197,7 +4197,7 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
   - Follow-up **F-LIB12-R8B**: redraw those three to the R8 bar.
   - The owner gets the changed-ids sheet (goblet_squat and front_squat lose the close-up; mountain_climbers' palm-flat is redrawn) before PILOT A PIN GO.
 
-## 28. Pilot B critic panel (D-LIB11-PANEL1, 2026-10-19 ~20:10 UTC; #278 @ `4033daf`, page `94fe6085…`)
+## 28. Pilot B critic panel (D-LIB11-PANEL1, 2026-10-19 ~19:50 UTC; #278 @ `4033daf`, page `94fe6085…`)
 
 - Set: the 4 drawn plates (crunch held). Anchors are golden B's pull_up and lat_pulldown (D-LIB10-PANEL1). Plants: smith's feet 5 cm above the floor (R3), and cable_fly's "Soft elbows" leader ending on the knee (R4). LB2's method; R11 was added word for word from section 26 and is null throughout.
 - **VALID.** Plants caught: R3 [3,2,2] and R4 [2,2,2]. Both anchors have every median ≥ 4.
