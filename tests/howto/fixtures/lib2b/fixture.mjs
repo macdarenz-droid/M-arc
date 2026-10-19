@@ -10,10 +10,11 @@
 //     own engine report, topFault = its selected mistake tell), a hand-pair loader whose panel is the clone's own hand
 //     close-up cut from the page, and the batch golden file, pinned by appendEntry over the pages built in the tree.
 import { spawnSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, posix } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { markScratch, writeScratchStamps } from '../../../../tools/plates/library/research/stamps.mjs';
 
 export const HERE = dirname(fileURLToPath(import.meta.url));
 export const REPO = join(HERE, '..', '..', '..', '..');
@@ -53,17 +54,42 @@ const COPY = ['index.html', 'vite.config.ts', 'package.json', 'tsconfig.json', '
 const put = (root, p, text) => { mkdirSync(dirname(join(root, p)), { recursive: true }); writeFileSync(join(root, p), text); };
 const json = v => `${JSON.stringify(v, null, 2)}\n`;
 
-/** A temp repo copy with the sources, configs and page, but no batch golden file and no research card yet. */
-export function stageTree({ row = BATCH_ROW, page = readFileSync(PAGE_FIXTURE), src = REPO } = {}) {
+/** D-LIB4d-OWNROWS: a temp repo copy that holds the 8 and no batch row. With no batch .json file it is the plain copy;
+ *  else each batch file, its batch golden file and its pages are removed, and the generated files are rewritten for the
+ *  8 alone (stale ones removed), so no shipped batch row can collide with a fixture's own row. */
+export function ownRowsTree({ src = REPO } = {}) {
   const root = mkdtempSync(join(tmpdir(), 'lib2b-'));
   for (const p of COPY) if (existsSync(join(src, p))) cpSync(join(src, p), join(root, p), { recursive: true });
   symlinkSync(join(src, 'node_modules'), join(root, 'node_modules'), 'dir');
+  const dir = join(root, 'tools/plates/library/batches');
+  const files = existsSync(dir) ? readdirSync(dir).filter(n => n.endsWith('.json')) : [];
+  if (files.length === 0) return root;
+  for (const n of files) {
+    const b = JSON.parse(readFileSync(join(dir, n), 'utf8'));
+    rmSync(join(dir, n), { force: true });
+    rmSync(join(root, 'tests/howto/golden/library', n), { force: true });
+    for (const p of Object.values(b.pages ?? {})) rmSync(join(root, p), { force: true });
+  }
+  node(root, `
+    import { rmSync, writeFileSync } from 'node:fs';
+    import { diff, render } from './tools/plates/generate.mjs';
+    const out = await render();
+    for (const b of diff(out)) if (b.why.startsWith('stale')) rmSync(b.path);
+    for (const [p, { text }] of out) writeFileSync(p, text);
+  `);
+  return root;
+}
+
+/** A temp repo copy with the sources, configs and page, but no batch golden file and no research card yet. */
+export function stageTree({ row = BATCH_ROW, page = readFileSync(PAGE_FIXTURE), src = REPO } = {}) {
+  const root = ownRowsTree({ src });
   const { spec, howto } = transformSources(src);
   put(root, SPEC, spec); put(root, HOWTO, howto);
   put(root, BATCH, json({ batch: 'LB-LIB2B', censusRef: '48153c4', pages: PAGES, rows: { [ID]: row } }));
   put(root, PAGES.plates, json({ groups: [{ id: 'scratch', title: 'Scratch', ids: [ID] }] }));
   put(root, PAGES.layersConfig, json(LAYERS_CONFIG));
   if (page) put(root, PAGES.layers, page);
+  markScratch(root);
   return root;
 }
 
@@ -118,6 +144,7 @@ export async function pairPanel() {
   return divAt(page, a);
 }
 `);
+  writeScratchStamps(root, [ID]);
   return m;
 }
 

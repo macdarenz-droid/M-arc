@@ -1,0 +1,327 @@
+{
+ "id": "shared-unrack-rerack",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "stronglifts-bench",
+   "text": "Set these pins slightly lower than the bottom position when you Bench Press. The bar can\u2019t touch the pins on good reps.",
+   "status": "verbatim",
+   "closest": "Set these pins slightly lower than the bottom position when you Bench Press. The bar can\u2019t touch the pins on good reps.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "stronglifts-bench",
+   "text": "If you fail to bench the weight, lower the bar to your mid-chest. Then flatten your torso to lower the bar on the safety pins.",
+   "status": "verbatim",
+   "closest": "If you fail to bench the weight, lower the bar to your mid-chest. Then flatten your torso to lower the bar on the safety pins.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sbs-bench",
+   "text": "you should be able to comfortably get the bar over the hooks without needing to \u201creach\u201d up, protract your shoulder blades, and lose scapular position.",
+   "status": "verbatim",
+   "closest": "you should be able to comfortably get the bar over the hooks without needing to \u201creach\u201d up, protract your shoulder blades, and lose scapular position.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sbs-bench",
+   "text": "In general, you should be able to comfortably clear the hooks by about an inch or two (2-5cm).",
+   "status": "verbatim",
+   "closest": "In general, you should be able to comfortably clear the hooks by about an inch or two (2-5cm).",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "hk-bench-youth",
+   "text": "To avoid hitting the upright supports, position your shoulders at least 3 inches (~8 cm) from the supports before you start.",
+   "status": "verbatim",
+   "closest": "To avoid hitting the upright supports, position your shoulders at least 3 inches (~8 cm) from the supports before you start.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "stronglifts-bench",
+   "text": "Squeeze your shoulder-blades before you unrack the weight.",
+   "status": "verbatim",
+   "closest": "Squeeze your shoulder-blades before you unrack the weight.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "stronglifts-bench",
+   "text": "Unrack. Straighten your arms to lift the bar out of the uprights. Move it horizontally until it\u2019s balanced over your shoulders.",
+   "status": "verbatim",
+   "closest": "Unrack. Straighten your arms to lift the bar out of the uprights. Move it horizontally until it\u2019s balanced over your shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "stronglifts-bench",
+   "text": "Don\u2019t lower the bar from the uprights to your chest in an incline line.",
+   "status": "verbatim",
+   "closest": "Don\u2019t lower the bar from the uprights to your chest in an incline line.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "stronglifts-bench",
+   "text": "Rack the bar by moving it back against the vertical parts of your Power Rack. Then lower it into the uprights by bending your arms. Don\u2019t aim for the uprights, you could miss them.",
+   "status": "verbatim",
+   "closest": "Rack the bar by moving it back against the vertical parts of your Power Rack. Then lower it into the uprights by bending your arms. Don\u2019t aim for the uprights, you could miss them.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "stronglifts-bench",
+   "text": "Don\u2019t Bench Press the bar straight into the uprights. You can miss them by pressing the bar under them.",
+   "status": "verbatim",
+   "closest": "Don\u2019t Bench Press the bar straight into the uprights. You can miss them by pressing the bar under them.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "hk-bench-youth",
+   "text": "A spotter should be behind the lifter's head and should assist the lifter with getting the barbell into the starting position and returning the barbell to the rack when finished.",
+   "status": "verbatim",
+   "closest": "A spotter should be behind the lifter's head and should assist the lifter with getting the barbell into the starting position and returning the barbell to the rack when finished.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "strengthlog-incline",
+   "text": "Sitting on an inclined bench, unrack a barbell and hold it on straight arms above your shoulders.",
+   "status": "verbatim",
+   "closest": "Sitting on an inclined bench, unrack a barbell and hold it on straight arms above your shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "workoutlabs-decline",
+   "text": "Set a barbell in a weight rack at the low end of a decline bench, making sure it is at a height you can reach without fully extending your arms.",
+   "status": "verbatim",
+   "closest": "Set a barbell in a weight rack at the low end of a decline bench, making sure it is at a height you can reach without fully extending your arms.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "workoutlabs-decline",
+   "text": "Push up to lift the bar from the rack and hold it directly over you with your arms locked.",
+   "status": "verbatim",
+   "closest": "Push up to lift the bar from the rack and hold it directly over you with your arms locked.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "strengthlog-decline",
+   "text": "Remember to set up safety racks on your sides while decline benching, as you cannot roll the bar down your belly if you fail.",
+   "status": "verbatim",
+   "closest": "Remember to set up safety racks on your sides while decline benching, as you cannot roll the bar down your belly if you fail.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ace-standing-sp",
+   "text": "Place a barbell in a rack at about shoulder-height.",
+   "status": "verbatim",
+   "closest": "Place a barbell in a rack at about shoulder-height.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ace-standing-sp",
+   "text": "Dip under the bar to bring it off the rack letting it rest across the top of the shoulders",
+   "status": "verbatim",
+   "closest": "Dip under the bar to bring it off the rack letting it rest across the top of the shoulders",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ace-standing-sp",
+   "text": "Step back, keeping the back straight and tall",
+   "status": "verbatim",
+   "closest": "Step back, keeping the back straight and tall",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "nsca-ch15-summary",
+   "text": "Overhead exercises and ones with the bar on the back or shoulders must be done within a power rack with crossbars at the right height.",
+   "status": "verbatim",
+   "closest": "Overhead exercises and ones with the bar on the back or shoulders must be done within a power rack with crossbars at the right height.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "stronglifts-ohp",
+   "text": "If you fail to press the weight, you can simply lower it back on your shoulders. You then rack it in your Power Rack or return it to the floor.",
+   "status": "verbatim",
+   "closest": "If you fail to press the weight, you can simply lower it back on your shoulders. You then rack it in your Power Rack or return it to the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "stronglifts-squat",
+   "text": "This is unsafe because you have to get on your toes to rack/unrack the bar.",
+   "status": "verbatim",
+   "closest": "This is unsafe because you have to get on your toes to rack/unrack the bar.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "stronglifts-squat",
+   "text": "Set the uprights mid-chest level so you just have to straighten your bent legs to unrack the bar.",
+   "status": "verbatim",
+   "closest": "Set the uprights mid-chest level so you just have to straighten your bent legs to unrack the bar.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "stronglifts-squat",
+   "text": "Set the pins just below where you break parallel.",
+   "status": "verbatim",
+   "closest": "Set the pins just below where you break parallel.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "rep-fail",
+   "text": "Ensure your safeties or pins are set just below your lowest squat depth.",
+   "status": "verbatim",
+   "closest": "Ensure your safeties or pins are set just below your lowest squat depth.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "rep-fail",
+   "text": "Similar to the back squat, set the safety bars at an appropriate height.",
+   "status": "verbatim",
+   "closest": "Similar to the back squat, set the safety bars at an appropriate height.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "stronglifts-squat",
+   "text": "Put your feet under the bar, Squat straight up and keep your heels on the floor.",
+   "status": "verbatim",
+   "closest": "Put your feet under the bar, Squat straight up and keep your heels on the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "stronglifts-squat",
+   "text": "Don\u2019t unrack lunge-style with one foot back or you\u2019ll put uneven stress on your spine.",
+   "status": "verbatim",
+   "closest": "Don\u2019t unrack lunge-style with one foot back or you\u2019ll put uneven stress on your spine.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "stronglifts-squat",
+   "text": "Then walk back by taking one step back with each leg. Don\u2019t take a ton of steps back. Keep the walk back short to save strength. This also keeps the uprights close when your set is done.",
+   "status": "verbatim",
+   "closest": "Then walk back by taking one step back with each leg. Don\u2019t take a ton of steps back. Keep the walk back short to save strength. This also keeps the uprights close when your set is done.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "stronglifts-squat",
+   "text": "Don\u2019t try to Squat it straight into the uprights.",
+   "status": "verbatim",
+   "closest": "Don\u2019t try to Squat it straight into the uprights.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "stronglifts-squat",
+   "text": "Rack the bar by walking forward until it hits the vertical parts of your Power Rack. Then bend your legs and the bar will land in the uprights.",
+   "status": "verbatim",
+   "closest": "Rack the bar by walking forward until it hits the vertical parts of your Power Rack. Then bend your legs and the bar will land in the uprights.",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "stronglifts-squat",
+   "text": "When you fail to Squat the weight up, lower the bar to the pins by Squatting straight down. Don\u2019t drop it forward or back or you\u2019ll lose balance.",
+   "status": "verbatim",
+   "closest": "When you fail to Squat the weight up, lower the bar to the pins by Squatting straight down. Don\u2019t drop it forward or back or you\u2019ll lose balance.",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "rep-fail",
+   "text": "If you need to bail, quickly release the bar from your shoulders and let it drop forward onto the safety bars. Step back simultaneously to avoid any contact with the falling bar.",
+   "status": "verbatim",
+   "closest": "If you need to bail, quickly release the bar from your shoulders and let it drop forward onto the safety bars. Step back simultaneously to avoid any contact with the falling bar.",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "eos-smith",
+   "text": "Set the safety stops just below your lowest movement point to catch the bar if needed.",
+   "status": "verbatim",
+   "closest": "Set the safety stops just below your lowest movement point to catch the bar if needed.",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "golds-smith-squat",
+   "text": "Slide or pin them just below your lowest squat depth, and always test them with a light rep before loading heavy.",
+   "status": "verbatim",
+   "closest": "Slide or pin them just below your lowest squat depth, and always test them with a light rep before loading heavy.",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "motra-smith-squat",
+   "text": "Always set safety stops before unracking",
+   "status": "verbatim",
+   "closest": "Always set safety stops before unracking",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "eos-smith",
+   "text": "Rotate your wrists forward to unlock the bar from the hooks.",
+   "status": "verbatim",
+   "closest": "Rotate your wrists forward to unlock the bar from the hooks.",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "golds-smith-squat",
+   "text": "Grip the bar just outside your shoulders and rotate it forward to unlock.",
+   "status": "verbatim",
+   "closest": "Grip the bar just outside your shoulders and rotate it forward to unlock.",
+   "note": ""
+  },
+  {
+   "claim": "c22",
+   "source": "eos-smith",
+   "text": "Rotate your wrists back to lock the bar into place when you\u2019re done.",
+   "status": "verbatim",
+   "closest": "Rotate your wrists back to lock the bar into place when you\u2019re done.",
+   "note": ""
+  },
+  {
+   "claim": "c22",
+   "source": "golds-smith-squat",
+   "text": "Rotate the bar backward to engage the safety hooks. Listen for the click and double-check that it\u2019s secure on both sides.",
+   "status": "verbatim",
+   "closest": "Rotate the bar backward to engage the safety hooks. Listen for the click and double-check that it\u2019s secure on both sides.",
+   "note": ""
+  },
+  {
+   "claim": "c23",
+   "source": "eos-smith",
+   "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+   "status": "verbatim",
+   "closest": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
+   "note": ""
+  }
+ ]
+}
