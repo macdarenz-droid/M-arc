@@ -1,8 +1,9 @@
 // LIB-7-FIX (card lib-7-fix-card.md; hands/DESIGN.md §8): LIB-7's loader contract for main's gen/handpairs.mjs. F1 the
 // contract, F2 key identity, F3 exercise-neutral panels with approved words, F4 the approvals carry (byte proof against
 // the pinned render), F6 (a) the per-key budget, F7 L2-A21's covering proof. Each check has its mutation in the same test.
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -71,7 +72,7 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
       expect(byKey.length).toBeGreaterThan(0);
       expect(byKey).toContain(file);
       expect(byKey).toContain('tools/plates/library/hands/panel.mjs');
-      expect(byKey).toContain('tools/plates/library/hands/panel-words.json');
+      expect(byKey.filter((f: string) => f === PN.WORDS_DIR || f.startsWith(`${PN.WORDS_DIR}/`))).toEqual([PN.CHROME_WORDS, PN.wordsFileOf(k)]);   // PK2: its own words file only
       expect(byKey.filter((f: string) => /library\/hands\/hand-[a-z0-9-]+\.mjs$/.test(f))).toEqual([file]);
       for (const id of idsOfKey(k)) expect([k, id, P.inputsFor(id)]).toEqual([k, id, byKey]);
     }
@@ -138,7 +139,7 @@ function shownWords(h: string) {
   const t = svgFree(h).replace(/<svg[\s\S]*?<\/svg>/g, '');
   return [...t.split(/<[^>]+>/).map(s => s.trim()).filter(Boolean), ...[...t.matchAll(/aria-label="([^"]*)"/g)].map(m => m[1]!)];
 }
-function wordProblems(k: string, h: string, words = PN.WORDS) {
+function wordProblems(k: string, h: string, words = PN.allWords()) {
   const bad: string[] = [], W = words.keys[k], ch = words.chrome;
   if (!W) return [`${k}: no words`];
   const ok = new Set<string>([W.heading.text, ch.close.text, ch.right.text.trim(), ch.wrong.text.trim(), ch.pages.text]);
@@ -178,20 +179,20 @@ describe('LIB-7-FIX F3: exercise-neutral panels, approved words (D-LIB7FIX-WORDS
       expect(neutralProblems(k, h)).toEqual([]);
       expect(wordProblems(k, h)).toEqual([]);
     }
-    expect(Object.keys(PN.WORDS.keys).sort()).toEqual([...P.keysOf()].sort());   // no words for a key that is not drawn
+    expect(Object.keys(PN.allWords().keys).sort()).toEqual([...P.keysOf()].sort());   // the key files under hands/words/ equal keysOf(): no words for a key that is not drawn
   }, 60_000);
   it('mutations: a uid from an id, an 11-word caption, a caption with no source, a heading taken from a card are each red', async () => {
     const k = 'curl-dumbbell-neutral', id = 'hammer_curl', faults = P.pairSpec(id).wrong.map((w: any) => w.key);
     const byId = PN.panelHtml(k, faults.map((f: string) => ({ fault: f, svg: P.renderPair(id, { fault: f, uid: `${id.replace(/_/g, '-')}-hand-${f}` }).svg })));
     expect(neutralProblems(k, byId).join('\n')).toMatch(/names hammer-curl/);
-    const words = structuredClone(PN.WORDS), real = await P.pairPanel(k);
+    const words = structuredClone(PN.allWords()), real = await P.pairPanel(k);
     words.keys[k].faults.curled.wrong.text = 'Wrist curled forward toward the forearm while you lift it up';
     expect(() => PN.panelHtml(k, faults.map((f: string) => ({ fault: f, svg: '' })), words)).toThrow(/curled.wrong has 11 words \(max 10\)/);
     expect(wordProblems(k, real, words).join('\n')).toMatch(/wrong caption over 10 words/);
-    const noSrc = structuredClone(PN.WORDS); noSrc.keys[k].faults['bent-back'].right.source = '';
+    const noSrc = structuredClone(PN.allWords()); noSrc.keys[k].faults['bent-back'].right.source = '';
     expect(() => PN.panelHtml(k, faults.map((f: string) => ({ fault: f, svg: '' })), noSrc)).toThrow(/bent-back.right has no approved text and source/);
     expect(wordProblems(k, real, noSrc).join('\n')).toMatch(/right without a source/);
-    const card = structuredClone(PN.WORDS); card.keys[k].heading.text = 'Hammer Curl: right and wrong';
+    const card = structuredClone(PN.allWords()); card.keys[k].heading.text = 'Hammer Curl: right and wrong';
     const h = PN.panelHtml(k, faults.map((f: string) => ({ fault: f, svg: P.renderPair(id, { fault: f, uid: `hp-${k}-${f}` }).svg })), card);
     expect(wordProblems(k, h, card).join('\n')).toMatch(/heading Hammer Curl/);
     expect(neutralProblems(k, h).join('\n')).toMatch(/names "Hammer Curl"/i);
@@ -278,5 +279,167 @@ describe('LIB-7-FIX F7: L2-A21\'s covering proof (D-LIB7FIX-A21)', () => {
       const mutated = await import(/* @vite-ignore */ pathToFileURL(file).href);
       expect(() => mutated.missingChunks(row, has, {}, { lib_x: 'curl' }, () => true)).not.toThrow();
     } finally { rmSync(file, { force: true }); }
+  }, 60_000);
+});
+
+// ---- D-LIB7FIX-PERKEY (lib4-cards section 19): adding a key never edits a file that a pinned row lists ----
+const WORDS_FIXTURE = JSON.parse(readFileSync('tests/library/fixtures/lib7fix/panel-words-da65b13a.json', 'utf8'));   // panel-words.json at da65b13a, parsed
+const fixtureWords = (k: string) => ({ chrome: WORDS_FIXTURE.chrome, keys: { [k]: WORDS_FIXTURE.keys[k] } });
+const pagesOf = (k: string, index = P.INDEX) => { const id = P.keyIndexOf(index).keys.get(k).ids[0]; return P.pairSpec(id, index).wrong.map((w: any) => ({ fault: w.key, svg: P.renderPair(id, { fault: w.key, uid: `hp-${k}-${w.key}`, index }).svg })); };
+const wordsSplit = (all: any) => ({ about: all.about, chrome: all.chrome, keys: all.keys });
+/** PK2: the inputs at or under hands/words/ are exactly chrome.json and the key's own file, and every input is a file. */
+const wordsInputProblems = (k: string, list: string[]) => {
+  const bad: string[] = [], under = list.filter(f => f === PN.WORDS_DIR || f.startsWith(`${PN.WORDS_DIR}/`));
+  if (JSON.stringify(under) !== JSON.stringify([PN.CHROME_WORDS, PN.wordsFileOf(k)])) bad.push(`${k}: words inputs ${under}`);
+  for (const f of list) if (!existsSync(f) || !statSync(f).isFile()) bad.push(`${k}: ${f} is not a file`);
+  return bad;
+};
+// a key module with its own declarations (literals; THUMB_SIDE's words written out), drawing one id outside LB1/LB2, in no
+// module and not a pinned row (D-LIB-SCRATCHIDS)
+const fixtureModule = (KEY: string, decl: any = { CONVENTIONS: { 'ga:zz': 'fixture convention: base of the fingers' }, ORIENTATIONS: { zz: 'side' }, CAMERA_TEXT: { zz: 'Seen from the thumb side' } }) => {
+  const dh = P.MODULES.find((m: any) => m.KEY === 'd-handle'), pull = structuredClone(dh.VARIANTS.pull);
+  pull.claims.contact = ['ga:zz'];
+  return { ...dh, KEY, OWNER: 'LIB-7-FIX-FIXTURE', FILE: `fixture/${KEY}`, ...decl, VARIANTS: { pull }, GAPS: {}, IDS: { box_jump: { variant: 'pull', orientation: 'zz', faults: ['curled'], claims: [] } } };
+};
+const KINDS = ['CONVENTIONS', 'ORIENTATIONS', 'CAMERA_TEXT'];
+/** Apply declarationsOf(mods) onto pairs.mjs's exported objects for `f`, then remove what it added (hand-pairs.test.ts:94-97). */
+async function withDeclared<T>(mods: any[], f: () => Promise<T> | T): Promise<T> {
+  const d = P.declarationsOf(mods), added: [string, string][] = [];
+  for (const K of KINDS) for (const n of Object.keys(d[K])) if (!(n in P[K])) { P[K][n] = d[K][n]; added.push([K, n]); }
+  try { return await f(); } finally { for (const [K, n] of added) delete P[K][n]; }
+}
+
+describe('LIB-7-FIX PK1: words split per key, panels unchanged', () => {
+  it('the 8 panels === panelHtml with da65b13a\'s words; chrome.json + words/<key>.json deep-equal panel-words.json; key files = keysOf()', async () => {
+    for (const k of C.sweep(P.keysOf(), 8, 'pair keys')) expect([k, (await P.pairPanel(k)) === PN.panelHtml(k, pagesOf(k), fixtureWords(k))]).toEqual([k, true]);
+    expect(wordsSplit(PN.allWords())).toEqual(WORDS_FIXTURE);
+    expect(Object.keys(PN.allWords().keys)).toEqual([...P.keysOf()].sort());
+  }, 60_000);
+  it('no tool, script or test file names panel-words.json, apart from this reader', () => {
+    const hits: string[] = [], walk = (d: string) => { for (const n of readdirSync(d)) { const p = `${d}/${n}`; if (n === 'node_modules' || n === '.gen') continue; if (statSync(p).isDirectory()) walk(p); else if (/\.(mjs|js|ts|json)$/.test(n) && readFileSync(p, 'utf8').includes('panel-words.json')) hits.push(p); } };
+    for (const d of ['tools', 'scripts', 'tests', 'src']) walk(d);
+    expect(hits).toEqual(['tests/library/lib7-fix.test.ts']);
+  });
+  it('mutations (in memory): one word changed, an extra key, a missing key file are each red', async () => {
+    const k = 'curl-dumbbell-neutral', changed = structuredClone(PN.allWords());
+    changed.keys[k].faults.curled.wrong.text = 'Wrist bent';
+    expect(wordsSplit(changed)).not.toEqual(WORDS_FIXTURE);
+    expect(PN.panelHtml(k, pagesOf(k), { chrome: changed.chrome, keys: { [k]: changed.keys[k] } })).not.toBe(await P.pairPanel(k));
+    const extra = { ...PN.allWords().keys, 'zz-extra': PN.allWords().keys[k] };
+    expect(Object.keys(extra).sort()).not.toEqual([...P.keysOf()].sort());
+    expect(() => PN.readWords('zz-missing')).toThrow('hand panel zz-missing: no words in tools/plates/library/hands/words/zz-missing.json');
+  }, 60_000);
+});
+
+describe('LIB-7-FIX PK2: inputs per key', () => {
+  it('each key lists chrome.json and its own words file only under hands/words/, and only files', () => {
+    for (const k of P.keysOf()) expect(wordsInputProblems(k, P.inputsFor(k))).toEqual([]);
+  });
+  it('mutations: inputsFor listing every words file, or WORDS_DIR, is red', () => {
+    const k = 'rope-push-neutral', base = P.inputsFor(k);
+    const every = [...new Set([...base, ...P.keysOf().map((x: string) => PN.wordsFileOf(x))])].sort();
+    expect(wordsInputProblems(k, every).join('\n')).toMatch(/rope-push-neutral: words inputs/);
+    expect(wordsInputProblems(k, [...base, PN.WORDS_DIR].sort()).join('\n')).toMatch(/words inputs.*\n.*tools\/plates\/library\/hands\/words is not a file/);
+  });
+});
+
+describe('LIB-7-FIX PK3: declarations per module', () => {
+  it('LIB-7 declares nothing; every name has one owner; the exports are the merge; pairs.mjs :21-34 unchanged', () => {
+    const lib7 = P.declarationsOf(P.MODULES.filter((m: any) => m.OWNER === 'LIB-7'));
+    for (const K of KINDS) expect([K, lib7[K]]).toEqual([K, P.BASE[K]]);
+    const all = P.declarationsOf(P.MODULES);
+    for (const K of KINDS) {
+      expect([K, { ...P[K] }]).toEqual([K, all[K]]);
+      expect(Object.keys(all[K]).sort()).toEqual(Object.keys(all.ownerOf).filter((n: string) => n.startsWith(`${K}.`)).map((n: string) => n.slice(K.length + 1)).sort());
+    }
+    const text = readFileSync('tools/plates/library/hands/pairs.mjs', 'utf8').split('\n').slice(20, 34).join('\n') + '\n';
+    expect(sha(text)).toBe('ab4c0c17658f00c928a3d230626d1dc6f1c0d2978d1326db2ae944408e1afba1');   // lines 21-34 at da65b13a
+    expect(readFileSync('tools/plates/library/hands/pairs.mjs', 'utf8').match(/THUMB_SIDE = '([^']+)'/)![1]).toBe('Seen from the thumb side');   // the fixture's literal
+  });
+  it('a fixture module\'s own convention, orientation and camera words are read by indexOf, pairSpec, the sheet and G8', async () => {
+    const fx = fixtureModule('zz-fix');
+    await withDeclared([...P.MODULES, fx], async () => {
+      const idx = P.indexOf([...P.MODULES, fx]), s = P.pairSpec('box_jump', idx);
+      expect([s.orientation, s.camera, s.extras.cameraText]).toEqual(['zz', 'side', 'Seen from the thumb side']);
+      expect((await S.buildSheet({ mods: [fx] })).body).toContain('ga:zz (convention: fixture convention: base of the fingers)');
+      const { spec, pages } = C.renderedPages('box_jump', idx);
+      expect(C.problemsOf(spec, pages).filter((p: string) => /G8 camera/.test(p))).toEqual([]);
+      const keep = P.CAMERA_TEXT.zz;
+      try { P.CAMERA_TEXT.zz = 'Seen from elsewhere'; expect(C.problemsOf(spec, pages).join('\n')).toMatch(/G8 camera "Seen from the thumb side", want "Seen from elsewhere"/); } finally { P.CAMERA_TEXT.zz = keep; }
+    });
+    expect('zz' in P.ORIENTATIONS || 'ga:zz' in P.CONVENTIONS || 'zz' in P.CAMERA_TEXT).toBe(false);
+  }, 60_000);
+  it('mutations: a redefined name, one name from two modules, a foreign name used, camera words for no orientation each throw naming it', () => {
+    expect(() => P.declarationsOf([...P.MODULES, fixtureModule('zz-a', { CONVENTIONS: { 'ga:pull-base': 'x' } })])).toThrow('hand pairs: zz-a declares CONVENTIONS.ga:pull-base, already defined by pairs.mjs');
+    expect(() => P.declarationsOf([fixtureModule('zz-a'), fixtureModule('zz-b')])).toThrow('hand pairs: zz-b declares CONVENTIONS.ga:zz, already defined by zz-a');
+    expect(() => P.declarationsOf([fixtureModule('zz-a'), fixtureModule('zz-b', {})])).toThrow('hand pairs: zz-b uses ORIENTATIONS.zz, declared by zz-a');
+    const convUser = { ...fixtureModule('zz-b', { ORIENTATIONS: { yy: 'side' } }) }; convUser.IDS = { box_jump: { ...convUser.IDS.box_jump, orientation: 'yy' } };
+    expect(() => P.declarationsOf([fixtureModule('zz-a'), convUser])).toThrow('hand pairs: zz-b uses CONVENTIONS.ga:zz, declared by zz-a');
+    expect(() => P.declarationsOf([fixtureModule('zz-a', { CONVENTIONS: { 'ga:zz': 'x' }, ORIENTATIONS: { zz: 'side' }, CAMERA_TEXT: { qq: 'Seen from q' } })])).toThrow('hand pairs: zz-a declares CAMERA_TEXT.qq for an orientation no module or pairs.mjs holds');
+  });
+});
+
+// PK4 (b): the esbuild import closure, as tools/plates/library/ci/manifest.mjs importClosure computes it (the BUILDERS term)
+async function esbuildClosure(entries: string[], root: string) {
+  const { build } = await import('esbuild');
+  const r = await build({ entryPoints: entries, bundle: true, write: false, metafile: true, format: 'esm', platform: 'node', packages: 'external', logLevel: 'silent', absWorkingDir: root, outdir: 'l0-out' });
+  return Object.keys(r.metafile.inputs).map(p => p.split('\\').join('/')).sort();
+}
+const DUMMY_MODULE = `// LIB-7-FIX PK4 scratch key module (a scratch worktree only; never in the repo tree)
+import { pullVariant, RULES_FILE } from './radial-rules.mjs';
+export const KEY = 'zz-dummy', OWNER = 'LIB-7-FIX-FIXTURE', VIEW = 'radial', INPUTS = [RULES_FILE];
+export const HANDLE = { profile: 'd-handle', diameterMm: 30 };
+export const ORIENTATIONS = { zz: 'side' };
+export const CAMERA_TEXT = { zz: 'Seen from the thumb side' };
+export const VARIANTS = { pull: pullVariant({ thumbClaims: [], wristClaims: [], curledClaims: [] }) };
+export const IDS = { box_jump: { variant: 'pull', orientation: 'zz', faults: ['curled'], claims: [] } };
+export const GAPS = {};
+`;
+
+describe('LIB-7-FIX PK4: adding a key moves no existing key\'s files', () => {
+  it('(a) in memory: with a declaring fixture key added, every existing key\'s inputsFor and panel are equal', async () => {
+    const fx = fixtureModule('zz-fix');
+    await withDeclared([...P.MODULES, fx], async () => {
+      const idx2 = P.indexOf([...P.MODULES, fx]);
+      expect(P.keysOf(idx2)).toContain('zz-fix-pull-zz');
+      for (const k of P.keysOf()) {
+        expect([k, P.inputsFor(k, idx2)]).toEqual([k, P.inputsFor(k)]);
+        expect([k, (await P.pairPanel(k, idx2)) === (await P.pairPanel(k))]).toEqual([k, true]);
+      }
+    });
+  }, 60_000);
+  it('(b) files: a scratch worktree of HEAD with a new key module and words file lists the same files, bytes and closure', async () => {
+    const wt = join(tmpdir(), `lib7fix-pk4-${process.pid}-${Date.now()}`), git = (...a: string[]) => execFileSync('git', a, { stdio: 'pipe' }).toString();
+    try {
+      git('worktree', 'add', '--detach', '--no-checkout', wt, 'HEAD');
+      git('-C', wt, 'checkout', 'HEAD', '--', 'tools/plates', 'src/data');
+      writeFileSync(join(wt, 'tools/plates/library/hands/hand-zz-dummy.mjs'), DUMMY_MODULE);
+      writeFileSync(join(wt, 'tools/plates/library/hands/words/zz-dummy-pull-zz.json'), JSON.stringify(PN.allWords().keys['d-handle-pull-unstated'], null, 1));
+      const W = await import(/* @vite-ignore */ pathToFileURL(join(wt, 'tools/plates/library/hands/pairs.mjs')).href);
+      expect(W.HAND_OF_ID.lib_box_jump).toBe('zz-dummy-pull-zz');
+      expect(W.keysOf().filter((k: string) => k !== 'zz-dummy-pull-zz')).toEqual(P.keysOf());
+      for (const k of P.keysOf()) {
+        expect([k, W.inputsFor(k)]).toEqual([k, P.inputsFor(k)]);
+        for (const f of P.inputsFor(k)) expect([k, f, sha(readFileSync(join(wt, f)))]).toEqual([k, f, sha(readFileSync(f))]);
+      }
+      const PAIRS = 'tools/plates/library/hands/pairs.mjs', here = await esbuildClosure([PAIRS], process.cwd());
+      expect(await esbuildClosure([PAIRS], wt)).toEqual(here);
+      expect(here.filter(f => /library\/hands\/(hand-[a-z0-9-]+\.mjs|words\/)/.test(f))).toEqual([]);
+      // mutations (scratch worktree only): a static key-file import in pairs.mjs grows the closure; inputsFor listing every module FILE moves
+      const src = readFileSync(join(wt, PAIRS), 'utf8');
+      writeFileSync(join(wt, PAIRS), `import './hand-curl.mjs';\n${src}`);
+      expect((await esbuildClosure([PAIRS], wt)).filter(f => /hand-curl\.mjs$/.test(f))).toEqual(['tools/plates/library/hands/hand-curl.mjs']);
+      writeFileSync(join(wt, PAIRS), src);
+      const everyFile = (X: any, k: string) => [...X.inputsFor(k), ...X.MODULES.map((m: any) => m.FILE)].sort();
+      expect(everyFile(W, 'rope-push-neutral')).not.toEqual(everyFile(P, 'rope-push-neutral'));
+      // (c) once LIB-4c is on this head: its own importClosure(BUILDERS term) and each keyed id's inputsFor(HAND_OF_ID[id])
+      if (existsSync('tools/plates/library/ci/manifest.mjs')) {
+        const M = await import(/* @vite-ignore */ url('tools/plates/library/ci/manifest.mjs'));
+        expect(await M.importClosure([PAIRS], wt)).toEqual(await M.importClosure([PAIRS]));
+        for (const [lid, k] of Object.entries<string>(P.HAND_OF_ID)) expect([lid, W.inputsFor(W.HAND_OF_ID[lid])]).toEqual([lid, P.inputsFor(k)]);
+      }
+    } finally {
+      try { git('worktree', 'remove', '--force', wt); } catch { rmSync(wt, { recursive: true, force: true }); git('worktree', 'prune'); }
+    }
   }, 60_000);
 });
