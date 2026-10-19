@@ -4089,3 +4089,23 @@ D-LIBHANDS-COUNT (as ruled on #193 6257376224 and amended by 6257562588; applied
    - If H6 shows a drawn knee outside ±2°, that is a CARDTRUE redraw, never a moved card value.
 
 **Why nothing is loosened.** H6's ±2° stays, and the facts only add checks. Every number is tied to its verbatim quote.
+
+### 21.6 Last recheck at FIX2 (D-LIB8M-CRIT3, 2026-10-19 ~05:45 UTC; #109 @ `94c551f`, page `ad57fb3b…`)
+**What ran.** 13.5's panel: 3 fresh Opus critics on 6 plates.
+- incline_dumbbell_press and upright_row;
+- golden-B anchors pull_up and lat_pulldown;
+- plants rebuilt on `94c551f`: the curl leader on the shoulder (R4), and the pushdown leaning back (R5).
+The prep agent also checked, by cmp, that the 7 approved plates render byte-identically to their approved heads (bench, both pushdowns, pec_fly and plank to `013f84e`; shoulder press and curl to `83735ab`).
+
+**Calibration: VALID, with no exception.** Plants: curl R4 [3, 3, 3]; pushdown R5 [2, 2, 2]. Anchor medians are all 4 or more (lat_pulldown R2 [3, 5, 5]; pull_up R1 [3, 5, 4]).
+
+**Result:**
+- **upright_row:** passes every scored item. Approved at `94c551f`.
+- **incline_dumbbell_press:** R5 [3, 3, 2]. The arch still does not read at phone size: the dashed back sits inside the torso near the elbow, and no gap from the pad shows. This was its last critic run (21.3 point 2), so it is **held** (D-LIB8M-CARDTRUE):
+  - stage review; off the page and the pin; on the follow-up list;
+  - handled like the other held ids (a held line in pilot-a/plates.json with its reason);
+  - its card keys and research stay as verified.
+- **Follow-up for incline:** after #109 merges, its Mistake redraw goes to LB2 (LIB-10's lane, D-LIB10-PA). Use the critics' common fix: one red dashed back curve off the pad at the low back, plus a gap marker like golden B's chest-press "OFF THE PAD". Keep R3's head-on-pad point from critic 3 as an advisory note. It then gets LB2's own blind pass, Do 9 and critic run.
+- Pilot A now pins 13 ids.
+
+**Golden-B note:** none new. The anchors' single 3s are 1-of-3.
