@@ -1,0 +1,95 @@
+{
+ "id": "shared-prone-checkpoints",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "fv-lyingcurl",
+   "text": "Hold the handles, gently tighten your abs, and keep the front of your hips in contact with the pad.",
+   "status": "verbatim",
+   "closest": "Hold the handles, gently tighten your abs, and keep the front of your hips in contact with the pad.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "fv-lyingcurl",
+   "text": "Stop when you reach the end of your controlled range or before your hips begin to lift.",
+   "status": "verbatim",
+   "closest": "Stop when you reach the end of your controlled range or before your hips begin to lift.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "fv-lyingcurl",
+   "text": "If the load pulls your pelvis off the bench, reduce the weight or stop the curl slightly earlier. Lifting the hips changes the position of the hamstrings and often introduces lower-back movement that does not help the target action.",
+   "status": "verbatim",
+   "closest": "If the load pulls your pelvis off the bench, reduce the weight or stop the curl slightly earlier. Lifting the hips changes the position of the hamstrings and often introduces lower-back movement that does not help the target action.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "lifto-lyingcurl",
+   "text": "Curl the Legs: Bend your knees to lift the weighted lever towards your glutes. Keep your hips pressed against the pad.",
+   "status": "verbatim",
+   "closest": "Curl the Legs: Bend your knees to lift the weighted lever towards your glutes. Keep your hips pressed against the pad.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "lifto-lyingcurl",
+   "text": "Lifting hips off the pad.",
+   "status": "verbatim",
+   "closest": "Lifting hips off the pad.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-lyingcurl",
+   "text": "Slowly exhale and contract your hamstrings, flexing (bending) the knees and moving the resistance pad i na controlled manner towards your butt. Avoid arching your back during this movement.",
+   "status": "verbatim",
+   "closest": "Slowly exhale and contract your hamstrings, flexing (bending) the knees and moving the resistance pad i na controlled manner towards your butt.  Avoid arching your back during this movement.",
+   "note": "source has a double space before 'Avoid' and the typo 'i na' (for 'in a'); both reproduced in the source page, counted as whitespace-only difference"
+  },
+  {
+   "claim": "c3",
+   "source": "ucal-superman",
+   "text": "Keep neutral head/neck position throughout the exercise by looking down at the ground",
+   "status": "verbatim",
+   "closest": "Keep neutral head/neck position throughout the exercise by looking down at the ground",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ucal-superman",
+   "text": "Head/neck to moving out of neutral line",
+   "status": "verbatim",
+   "closest": "Head/neck to moving out of neutral line",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ucal-superman",
+   "text": "Cue \"Eyes down\"",
+   "status": "verbatim",
+   "closest": "Cue \"Eyes down\"",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "lifto-superman",
+   "text": "Keep your neck in a neutral position; avoid straining it.",
+   "status": "verbatim",
+   "closest": "Keep your neck in a neutral position; avoid straining it.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "lifto-superman",
+   "text": "Avoid lifting your head too high to prevent neck strain.",
+   "status": "verbatim",
+   "closest": "Avoid lifting your head too high to prevent neck strain.",
+   "note": ""
+  }
+ ]
+}

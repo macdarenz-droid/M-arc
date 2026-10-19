@@ -1,0 +1,63 @@
+{
+ "id": "shared-foot-bar",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "mit-chest",
+   "text": "Once you have your weight selected, use your legs to press out the foot advance pedal. This will bring the handles to the start position.",
+   "status": "verbatim",
+   "closest": "Once you have your weight selected, use your legs to press out the foot advance pedal. This will bring the handles to the start position.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "legend-cp-prod",
+   "text": "Wide foot bar raises handles to starting position.",
+   "status": "verbatim",
+   "closest": "Wide foot bar raises handles to starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "mit-chest",
+   "text": "After each set, place your feet back on the advance pedal. Then, drop your arms to your side and slowly lower the handles back to their resting position.",
+   "status": "verbatim",
+   "closest": "After each set, place your feet back on the advance pedal. Then, drop your arms to your side and slowly lower the handles back to their resting position.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "legend-cp",
+   "text": "The foot-assist pre-stretch lever arm allows for easy starting and ending exercise positions.",
+   "status": "verbatim",
+   "closest": "The foot-assist pre-stretch lever arm allows for easy starting and ending exercise positions.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "mit-chest",
+   "text": "Those with shoulder limitations should always use the foot advance pedal when setting the handles to the start position.",
+   "status": "verbatim",
+   "closest": "Those with shoulder limitations should always use the foot advance pedal when setting the handles to the start position.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "legend-pullover",
+   "text": "Foot lever brings the handles to a comfortable starting position.",
+   "status": "verbatim",
+   "closest": "Foot lever brings the handles to a comfortable starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "legend-pullover",
+   "text": "The foot pedal brings the weight to you so you’re not over-extending and risking injury.",
+   "status": "verbatim",
+   "closest": "The foot pedal brings the weight to you so you’re not over-extending and risking injury.",
+   "note": ""
+  }
+ ]
+}
