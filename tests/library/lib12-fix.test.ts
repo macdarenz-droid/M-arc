@@ -120,7 +120,7 @@ function renderProblems(index = P.INDEX) {
   for (const [id, f, h] of rows) if (RENDERS[`${id} ${f}`] !== h) bad.push(`${id} ${f}: render ${h}`);
   return bad;
 }
-const fileProblems = (read = (f: string) => readFileSync(f)) => C.sweep(Object.keys(FILES), 15, 'LIB-12 files').filter(f => sha(read(f)) !== FILES[f]);
+const fileProblems = (read = (f: string) => readFileSync(f)) => C.sweep(Object.keys(FILES), 15, 'LIB-12 files').filter((f: string) => sha(read(f)) !== FILES[f]);
 
 describe('LIB-12-FIX X1: words per LIB-12 key (D-LIB12FIX-WORDS)', () => {
   it('the five LIB-12 keys have words files; right = rightNote, wrong = pager = the drawn label, each with a source; heading golden B\'s', async () => {
