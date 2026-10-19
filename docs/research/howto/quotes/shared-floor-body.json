@@ -1,0 +1,63 @@
+{
+ "id": "shared-floor-body",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-pushup",
+   "text": "Reposition your hands as needed to allow full extension of your body without any bend at the hips or knees.",
+   "status": "verbatim",
+   "closest": "Reposition your hands as needed to allow full extension of your body without any bend at the hips or knees.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "ace-pushup",
+   "text": "Slowly lower your body towards the floor while maintaining a rigid torso and head aligned with your spine. Do not allow your low back to sag or your hips to hike upwards during this downward phase.",
+   "status": "verbatim",
+   "closest": "Slowly lower your body towards the floor while maintaining a rigid torso and head aligned with your spine. Do not allow your low back to sag or your hips to hike upwards during this downward phase.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-plank",
+   "text": "Slowly lift your entire torso off the floor or mat, maintaining a stiff torso and legs. Avoid any arching (sagging) in your low back, hiking (upwards) in your hips or bending in the knees.",
+   "status": "verbatim",
+   "closest": "Slowly lift your entire torso off the floor or mat, maintaining a stiff torso and legs. Avoid any arching (sagging) in your low back, hiking (upwards) in your hips or bending in the knees.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-pushup",
+   "text": "Press upwards through your arms while maintaining a rigid torso and head aligned with your spine.",
+   "status": "verbatim",
+   "closest": "Press upwards through your arms while maintaining a rigid torso and head aligned with your spine.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-birddog",
+   "text": "Your head should remain aligned with the spine throughout the movement.",
+   "status": "verbatim",
+   "closest": "Your head should remain aligned with the spine throughout the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-birddog",
+   "text": "Only raise the limbs to heights where the low back position can be maintained through the combined actions of the core and abdominal muscles.",
+   "status": "verbatim",
+   "closest": "Only raise the limbs to heights where the low back position can be maintained through the combined actions of the core and abdominal muscles.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-plank",
+   "text": "If you experience any pain in the low back with this movement, stop the exercise immediately and consult with your doctor.",
+   "status": "verbatim",
+   "closest": "If you experience any pain in the low back with this movement, stop the exercise immediately and consult with your doctor.",
+   "note": ""
+  }
+ ]
+}

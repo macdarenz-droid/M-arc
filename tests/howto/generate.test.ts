@@ -6,6 +6,7 @@ import { dirname, join, relative } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { BuiltHowTo, GoldenFile, GoldenPlateEntry } from '../../src/howto/types';
 import { LIBRARY, SHIPPED } from './shipped-rows';
+import { readHowTo } from './generated-module';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -76,7 +77,8 @@ describe('HT2-A1 (L2): each ht-<slug>.ts holds exactly the golden fragments', ()
 });
 
 describe('HT2-A2 (freshness): every generated file starts with a fresh header over its own inputs only', () => {
-  const onDisk = () => gen.generatedOnDisk() as string[];
+  let reads = 0;
+  const onDisk = () => { reads++; return gen.generatedOnDisk() as string[]; };
   // LIB-2 (per-output inputs, design 6.1): a plugin that gives a file its own inputs exports inputsFor(path); the
   // recomputation below uses it, so it stays exact with no render.
   // LIB-2b: a plugin without inputsFor that gives an output its own inputs in outputs() (handpairs.mjs, with a pair
@@ -91,14 +93,16 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
   const PLATES = 'tools/plates/gen/plates.mjs';
   const writersOf = (p: string) => core.parseHeader(readFileSync(p, 'utf8')).writers as string[];
   it('plates.mjs writes exactly the 8 modules, the loader index and plate.css; no file in generated/ is hand-written', () => {
-    expect(onDisk().filter(p => writersOf(p).includes(PLATES))).toEqual([
+    const r0 = reads, disk = onDisk();
+    expect(disk.filter(p => writersOf(p).includes(PLATES))).toEqual([
       'src/howto/generated/ht-barbell-back-squat.ts', 'src/howto/generated/ht-dumbbell-lateral-raise.ts', 'src/howto/generated/ht-hanging-leg-raise.ts',
       'src/howto/generated/ht-lat-pulldown.ts', 'src/howto/generated/ht-leg-press.ts', 'src/howto/generated/ht-machine-chest-press.ts',
       'src/howto/generated/ht-pull-up.ts', 'src/howto/generated/ht-seated-cable-row.ts', 'src/howto/generated/index.ts',
       'src/slices/howto/css/plate.css',
       ...LIBRARY.map(r => `src/howto/generated/ht-${r.slug}.ts`),   // LIB-2b: one per shipped library row
     ].sort());
-    for (const f of readdirSync('src/howto/generated')) expect(onDisk(), `hand-written file in generated/: ${f}`).toContain(`src/howto/generated/${f}`);
+    for (const f of readdirSync('src/howto/generated')) expect(disk, `hand-written file in generated/: ${f}`).toContain(`src/howto/generated/${f}`);
+    expect(reads - r0).toBe(1);
   });
 
   it('every header names real plugins: one writer per file, except ht-<slug>.ts (plates.mjs) and ids.ts (ids.mjs, LIB-2), which content.mjs (run after it) may extend', async () => {
@@ -134,7 +138,7 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
     expect(SHIPPED.slice(0, 8).map(r => r.id)).toEqual([...latest().keys()].filter(id => id in rows()));
     for (const { id, slug } of SHIPPED) {   // LIB-2b: every shipped row, library rows included
       const h = core.parseHeader(readFileSync(`src/howto/generated/ht-${slug}.ts`, 'utf8'));
-      expect((await load(slug)).hashes.inputsSha256, id).toBe(h.hash);
+      expect(readHowTo(slug).hashes.inputsSha256, id).toBe(h.hash);
     }
   });
 
