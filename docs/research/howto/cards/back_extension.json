@@ -1,0 +1,797 @@
+{
+  "id": "back_extension",
+  "libId": "lib_back_extension",
+  "name": "Back Extension",
+  "family": "HINGE (standalone parent, mode H)",
+  "tier": "A",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "brace-pad"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the top pad against the top/front of the thighs, just below the hip bones.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-back-extension",
+        "physitrack-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "First, adjust the machine: The top pad should be positioned against the top of your thighs.",
+          "where": "How to Do Back Extensions"
+        },
+        {
+          "source": "physitrack-back-extension",
+          "text": "Adjust the position of the back extension so that the pads press against the front of your quads, just below your hip bones.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "A pad set too high turns the move into a crunch and rounds the back; keep it below the top of the pelvis so the hips can bend. Listed first among common mistakes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitnessvolt-back-extension",
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "fitnessvolt-back-extension",
+          "text": "Hyperextensions are a hip hinge movement, but if you adjust the pad too high, you’ll be doing more of a crunch. And rounding your back too much, especially under heavy weight loads, is not recommended.",
+          "where": "Common Mistakes: Wrong hip pad height"
+        },
+        {
+          "source": "fitnessvolt-back-extension",
+          "text": "the hip pad should be below the top of the pelvis bone, giving your hips adequate movement.",
+          "where": "Common Mistakes: Wrong hip pad height"
+        },
+        {
+          "source": "sl-back-extension",
+          "text": "To ensure that your hips can bend and your glutes can work properly, make sure to keep the top pad against the top of your thighs.",
+          "where": "FAQ: Are Back Extensions Good for the Glutes?"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Feet about shoulder width and secured, knees slightly bent and in line with the feet.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-back-extension",
+        "physitrack-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "Step onto the machine and position yourself with your feet shoulder-width apart and your upper thighs against the top pad.",
+          "where": "How to Do Back Extensions"
+        },
+        {
+          "source": "physitrack-back-extension",
+          "text": "Bend your knees slightly and secure your feet, keeping them in line with your knees.",
+          "where": "instructions"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Start with the upper body hanging off the edge of the machine, arms crossed over the chest or hands behind the head; hands behind the head is harder, hands on hips easier.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "Your upper body should be hanging off the edge of the machine, with your arms crossed over your chest or your hands behind your head.",
+          "where": "How to Do Back Extensions"
+        },
+        {
+          "source": "sl-back-extension",
+          "text": "Hold your hands behind your head to make the exercise harder, or place them on your hips to make it easier.",
+          "where": "Back Extension Variations"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Rise until shoulders, spine and hips form a straight line; squeeze the glutes and do not over-arch the lower back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "physitrack-back-extension",
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "physitrack-back-extension",
+          "text": "Exhale and move up until your shoulders, spine, and hips are in line.",
+          "where": "instructions"
+        },
+        {
+          "source": "physitrack-back-extension",
+          "text": "Squeeze your glutes tight and do not over arch your lower spine.",
+          "where": "instructions"
+        },
+        {
+          "source": "sl-back-extension",
+          "text": "engage your lower back muscles to lift your upper body until your body forms a straight line.",
+          "where": "How to Do Back Extensions"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Hinge at the hips with the spine stiff and straight rather than rounding the back; there should be minimal to no back rounding.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitnessvolt-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "fitnessvolt-back-extension",
+          "text": "Use your core to stiffen your spine, keep your back completely straight, and focus on hinging at the hips to initiate the movement.",
+          "where": "Common Mistakes: Using too much back"
+        },
+        {
+          "source": "fitnessvolt-back-extension",
+          "text": "Therefore, there should be minimal to no back rounding.",
+          "where": "Common Mistakes: Using too much back"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Lower to slightly below parallel to the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitnessvolt-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "fitnessvolt-back-extension",
+          "text": "Stop when your torso is slightly below parallel to the floor.",
+          "where": "Step 3 - Hip flexion and torso angle"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Hold the top for about a second, then lower slowly; move slowly and without momentum.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position.",
+          "where": "How to Do Back Extensions"
+        },
+        {
+          "source": "sl-back-extension",
+          "text": "Make sure to keep your movements slow and controlled, and don’t use momentum to swing your body up or down.",
+          "where": "How to Do Back Extensions"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Swinging with momentum raises injury risk and takes work off the target muscles.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitnessvolt-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "fitnessvolt-back-extension",
+          "text": "Not only are you increasing the risk of injury, but there’s no way the target muscles are benefitting as much as they could be.",
+          "where": "Common Mistakes: Using momentum"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Breathe in at the bottom and out as you lift.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "Take a deep breath in, and as you exhale, engage your lower back muscles to lift your upper body until your body forms a straight line.",
+          "where": "How to Do Back Extensions"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Start with body weight; add weight (a plate held to the chest) only once you can do 12-15 good reps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitnessvolt-back-extension",
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "fitnessvolt-back-extension",
+          "text": "Start with your body weight only, get good at the movement, and then add weight once you can perform 15 solid reps!",
+          "where": "Tips"
+        },
+        {
+          "source": "sl-back-extension",
+          "text": "If you can do more than twelve reps using just your own bodyweight, consider adding weight, for example by holding a weight plate against your chest.",
+          "where": "Back Extension Workout"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Back extensions can hurt the back if you do too much too soon; start light and build up gradually.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "So, do back extensions hurt your back? If you do too much, too soon, they can. If you start light and gradually increase your training, on the other hand, they will build muscle and make your back stronger.",
+          "where": "FAQ: Do Back Extensions Hurt Your Back?"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "You should feel a pump or tiredness in the muscles, not a deep ache in the lower back; if back aches follow, rest a week or two and come back lighter.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "More specifically, it should be a feeling of pump or tiredness in your muscles, not an aching feeling deep in your lower back.",
+          "where": "FAQ: Where Should I Feel Back Extensions?"
+        },
+        {
+          "source": "sl-back-extension",
+          "text": "If you get back aches after doing back extensions, consider taking a week or two off from training back extensions. When you pick it up again, lower your training volume and weights, revise your form",
+          "where": "FAQ: Where Should I Feel Back Extensions?"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "The back extension works the lower back, glutes and hamstrings.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "The back extension is a classic exercise for strengthening your lower back, glutes, and hamstrings.",
+          "where": "Introduction to the Back Extension Exercise"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In trained women, the 45-degree Roman chair worked the hamstrings (biceps femoris) more than the RDL, and, like the RDL, the glutes more than a seated back-extension machine; lower-back activity did not differ.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "andersen2021"
+      ],
+      "quotes": [
+        {
+          "source": "andersen2021",
+          "text": "For the biceps femoris the Roman chair elicited higher activation compared to both the Romanian deadlift and the seated machine back extension (71-174%).",
+          "where": "abstract"
+        },
+        {
+          "source": "andersen2021",
+          "text": "The results showed that the Romanian deadlift and the Roman chair back extension activated the gluteus maximus more than the seated machine back extension (94-140%, p < 0.01).",
+          "where": "abstract"
+        },
+        {
+          "source": "andersen2021",
+          "text": "There were no differences in activation of the erector spinae between the three exercises (p = 1.00).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "In a Roman chair study, the glutes showed clear fatigue; the lower back showed less clear signs of fatigue.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "lariviere2011"
+      ],
+      "quotes": [
+        {
+          "source": "lariviere2011",
+          "text": "In both groups, EMG revealed clear evidence of muscle fatigue for the gluteus maximus, less clear evidence of fatigue for the lower back muscles, and motor unit recruitment (without fatigue) for the upper back muscles and biceps femoris.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Lower-back muscle work rises as the Roman chair angle gets more horizontal, and it also changes with hand position.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "mayer1999"
+      ],
+      "quotes": [
+        {
+          "source": "mayer1999",
+          "text": "EMG activity increased progressively among hand positions and as the VARC angle became more horizontal.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Back pain with weakness or numbness in both legs, or loss of feeling around the genitals, needs 999; pain not better after a few weeks needs a GP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "Call 999 or go to A&E if:",
+          "where": "Immediate action required"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "See a GP if:",
+          "where": "Non-urgent advice"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice, list"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Bend the upper body without rounding the back; rounding is more dangerous with added weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitnessvolt-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "fitnessvolt-back-extension",
+          "text": "you should be able to bend your upper body without rounding your back. Although, this is more dangerous when using additional weight.",
+          "where": "How far down should I go during 45-degree hyperextensions?"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Tempo: hold the top for a second and lower slowly; no source gives the up or down seconds, so up 1 and down 2 are a drawing convention.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "Hold this position for a second, then inhale as you slowly lower your upper body back down to the starting position.",
+          "where": "How to Do Back Extensions"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "The back extension can be done on a mat or bench, or on a back extension machine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-back-extension"
+      ],
+      "quotes": [
+        {
+          "source": "sl-back-extension",
+          "text": "The back extension exercise can be performed on a mat or bench, or using a back extension machine.",
+          "where": "Back Extension Variations"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Pad height at the hip crease, the hinge at the hips, the rounded back (the top fault, c6, c19) and the straight line at the top are front-to-back positions (c1, c5, c6); only the side view shows them.",
+    "equipment": "45-degree Roman chair (back extension bench, census need romanChair): hip pad at the top of the thighs just below the hip bones (c1, c2), foot plate with heel pad. Drawn bodyweight, arms crossed on the chest (c4).",
+    "start": "Bottom: thighs on the pad, feet secured, knees slightly bent (c3); upper body hanging off the edge of the machine, arms crossed on the chest (c4), hinged at the hips with the torso slightly below parallel to the floor, back straight (c6, c7).",
+    "end": "Top: shoulders, spine and hips in one straight line in line with the legs, glutes squeezed, no arch past straight (c5).",
+    "checkpoints": [
+      {
+        "label": "Pad below hips",
+        "what": "Pad on the upper thighs, below the hip bones.",
+        "claim": [
+          "c2",
+          "c1"
+        ]
+      },
+      {
+        "label": "Hinge at hips",
+        "what": "Bend at the hips with a stiff, straight back.",
+        "claim": "c6"
+      },
+      {
+        "label": "Straight line",
+        "what": "Rise to a straight line, shoulders to hips. No arch past it.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Back rounds over the pad instead of the hips hinging.",
+      "why": "The move is a hip hinge with minimal to no back rounding (c6); rounding is more dangerous when using additional weight (c19), and a pad set too high turns the hinge into a crunch (c2).",
+      "claim": [
+        "c6",
+        "c19"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the rounded back (c6, c19). The head's pick, the pad set too high (c2), is a pad setting, not a candidate (LR-31); the rounding it causes is. Step 1: no frequency word counts for a fault. Set aside: FitnessVolt's \"An uncooperative lower back that aches is often the result of, well, weak lower back muscles.\" (weak muscles, not a fault), \"Hyperextensions, especially loaded heavy, are often utilized by bodybuilders\" (the exercise) and \"Typically, 2-4 sets to failure, or 6-15 reps is a good range for most people.\" (the load); StrengthLog's \"a neutral spine position throughout the lift is often emphasized\" (other exercises) and \"we bend our spine all the time, and often under load\" (daily life). The NHS lines (\"Back pain, particularly lower back pain, is very common.\", \"A common cause of back pain is an injury like a pulled muscle (strain).\") are about back pain in general and tie no fault of this exercise to it. Step 2: two faults on FitnessVolt's common-mistakes list are tied to harm. Momentum: \"Not only are you increasing the risk of injury\" (c9). The rounded back: \"you should be able to bend your upper body without rounding your back. Although, this is more dangerous when using additional weight.\" (c19, FitnessVolt's depth answer). Both are on the list (rounding under \"Wrong hip pad height\" and \"Using too much back\": \"there should be minimal to no back rounding\", c6); one source ties each to harm; both are sourced directly; the list names rounding first, so it wins. If \"this is more dangerous\" is read as about the depth, not the rounding, momentum wins step 2; it is seen only as speed, so it is not drawable, and the plate would still draw the rounded back, first on the same list (step 3). Set aside as stating no harm: \"rounding your back too much, especially under heavy weight loads, is not recommended\" (c2) and Physitrack's \"do not over arch your lower spine\" (c5); StrengthLog's \"If you do too much, too soon, they can.\" (c12) is the training load. drawable true: the rounded back is a still sign the side view shows. Pick changed: handlingMistakes[0], the pad-height item, is reworded as the fault the sources name (R-LB2-12), with the pad cue kept in its fix."
+    },
+    "tells": [
+      {
+        "text": "Body straight at the top",
+        "claim": "c5"
+      },
+      {
+        "text": "Pump in the muscles, not deep ache",
+        "claim": "c13"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": [
+        "c8",
+        "c21"
+      ],
+      "text": "Pause 1 s at the top: StrengthLog's \"Hold this position for a second\" (c8) is right after the lift and gives its seconds (LR-33); Physitrack's \"Hold briefly\" agrees. Up 1 and down 2 are drawing values for StrengthLog's \"slowly lower your upper body\" (c8); no source gives their seconds, so c21 (WEAK) names them a drawing convention."
+    },
+    "variantLine": "Drawn: body weight on the 45-degree back-extension bench (Roman chair), pad on the upper thighs (c1, c4, c15). StrengthLog's own steps call this bench \"the machine\" (\"First, adjust the machine\", c1; \"Step onto the machine\", c3; \"hanging off the edge of the machine\", c4), and the library row's aliases (\"hyperextension\", \"45 degree back extension\") point to the same 45-degree bench, so the card's claims hold for it. c22 lists the options separately (\"on a mat or bench, or using a back extension machine\"). If the library's \"Machine\" means the seated back-extension machine, only c15 covers it: the same lower-back work as the Roman chair, less glute and hamstring work. No read source gives that machine's setup or technique, so it is in gaps."
+  },
+  "grip": {
+    "type": "No grip: arms crossed over the chest, or hands behind the head.",
+    "width": "n/a",
+    "thumb": "n/a",
+    "handContact": "none (hand archetype none)",
+    "wrist": "n/a",
+    "claims": [
+      "c4"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Pad on the top of your thighs, just below the hip bones.",
+      "claim": "c1"
+    },
+    {
+      "step": "Feet about shoulder width and secured, knees slightly bent.",
+      "claim": "c3"
+    },
+    {
+      "step": "Cross your arms over your chest (hands behind the head is harder).",
+      "claim": [
+        "c4",
+        "c17"
+      ]
+    },
+    {
+      "step": "Start with body weight. Add weight after 12 to 15 good reps.",
+      "claim": "c11"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Bend at the hips, back stiff and straight.",
+      "claim": "c6"
+    },
+    {
+      "point": "Lower to just below parallel.",
+      "claim": "c7"
+    },
+    {
+      "point": "Rise to a straight line. Squeeze the glutes.",
+      "claim": "c5"
+    },
+    {
+      "point": "Do not arch the lower back past straight.",
+      "claim": "c5"
+    },
+    {
+      "point": "Hold the top a second, lower slowly.",
+      "claim": "c8"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Rounding the back.",
+      "fix": "Hinge at the hips. Set the pad below your hip bones.",
+      "claim": [
+        "c6",
+        "c19",
+        "c2"
+      ]
+    },
+    {
+      "mistake": "Swinging with momentum.",
+      "fix": "Slow down. Hold the top for a second.",
+      "claim": [
+        "c9",
+        "c8"
+      ]
+    },
+    {
+      "mistake": "Arching past straight.",
+      "fix": "Stop at a straight line and squeeze the glutes.",
+      "claim": "c5"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c16"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c15"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c13"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Glutes, hamstrings and lower back",
+        "means": "These are the muscles it works.",
+        "fix": null,
+        "claim": "c14",
+        "redFlag": null
+      },
+      {
+        "where": "Pump or tiredness in the muscles",
+        "means": "This is the feeling you want.",
+        "fix": null,
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "Deep ache in the lower back",
+        "means": "Too much too soon, or a form fault to revise.",
+        "fix": "Take a week or two off, then come back lighter.",
+        "claim": [
+          "c13",
+          "c12"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Lower back pain while lifting",
+        "means": "Is it getting worse?",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c20",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Doing too much too soon can hurt the back.",
+      "claim": "c12"
+    },
+    {
+      "risk": "Swinging with momentum raises injury risk.",
+      "claim": "c9"
+    },
+    {
+      "risk": "Rounding the back is more dangerous with added weight.",
+      "claim": "c19"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "bext-pad",
+      "kind": "posture",
+      "right": "Pad on the upper thighs, below the hip bones.",
+      "wrong": "Pad too high, back curled over it.",
+      "claim": [
+        "c2",
+        "c1"
+      ]
+    },
+    {
+      "key": "bext-top",
+      "kind": "posture",
+      "right": "Shoulders, spine and hips in one straight line.",
+      "wrong": "Lower back arched past straight.",
+      "claim": "c5"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library primary lower_back and secondary glutes, hamstrings match the sources (c14, c15). Glutes are listed primary in the feel spec because they fatigue clearly in Roman chair sets (c16) and, like the RDL, work more than on a seated back-extension machine (c15); promoting them in the library is a role change for the supervisor."
+  },
+  "anchorSource": "sl-back-extension",
+  "sources": [
+    {
+      "id": "sl-back-extension",
+      "url": "https://www.strengthlog.com/back-extension/",
+      "title": "How to Do Back Extensions: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "physitrack-back-extension",
+      "url": "https://us.physitrack.com/home-exercise-video/45-degree-back-extension",
+      "title": "45 degree back extension (Physitrack exercise library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "fitnessvolt-back-extension",
+      "url": "https://fitnessvolt.com/45-degree-hyperextension/",
+      "title": "45-Degree Hyperextension: Strengthen Your Back and Glutes (Fitness Volt)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "andersen2021",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/33948095/",
+      "title": "Comparison of Muscle Activity in Three Single-Joint, Hip Extension Exercises in Resistance-Trained Women.",
+      "kind": "peer-reviewed",
+      "year": 2021,
+      "pmid": 33948095,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "lariviere2011",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/20508534/",
+      "title": "Specificity of a back muscle roman chair exercise in healthy and back pain subjects.",
+      "kind": "peer-reviewed",
+      "year": 2011,
+      "pmid": 20508534,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "mayer1999",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/10414757/",
+      "title": "Electromyographic activity of the lumbar extensor muscles: effect of angle and hand position during Roman chair exercise.",
+      "kind": "peer-reviewed",
+      "year": 1999,
+      "pmid": 10414757,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    }
+  ],
+  "notes": [
+    "StrengthLog, the anchor, also offers a \"roll-up\" version (\"creating a rolling or wave-like motion in your spine\"). The card follows FitnessVolt's stiff-spine version (\"there should be minimal to no back rounding\", c6), because rounding is more dangerous with added weight (c19); compare LR-18.",
+    "Foot width: the card follows StrengthLog (shoulder width, c3). Physitrack gives no width. FitnessVolt sets the feet roughly hip width apart.",
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): no hand contact and no palm direction are drawn as grip facts: the arms are crossed over the chest or the hands are behind the head (c4), and the drawn arm and hand pose is a drawing convention."
+  ],
+  "gaps": [
+    "Seated back-extension machine (the library's \"Machine\", if it means this kind): no read source gives its setup, seat or pad position, range or technique; only c15 (Andersen 2021) measures its muscle work. Nothing is written for it (R-LB3-9)."
+  ]
+}

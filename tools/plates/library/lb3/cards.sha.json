@@ -1,0 +1,24 @@
+{
+ "note": "sha256 per LB3 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\" (the research files own form); and sha256 of each quotes file, a byte copy from the same head.",
+ "researchHead": "2dd60ae0349b06a4aac88a11347edac5536f8424",
+ "cards": {
+  "pendlay_row": "4bbc7cace88c4e9df9c1a49c1c89ffd22f04e22d683ef722aef7f3e5b4b91d55",
+  "t_bar_row": "1407be63bd6dd03fe722bae1a872256f3d1354cc9319cec3cb05c6bbe17ec7ce",
+  "landmine_row": "1e97c668a78a83d0df4754e5d43fd0b8f2e0d41949d201a6f4a89a09c4cc84f9",
+  "one_arm_dumbbell_row": "ad90cca370bd40a1685093efe5e8ad29ed0daca9c19c312e1ab9c0a220558670",
+  "dumbbell_romanian_deadlift": "9400a02b5d29d2cea3cd0479e6930156e799798a0f491bb7e593e61cf912206d",
+  "conventional_deadlift": "bdc204b6adb4050f0fe98534bdf8cbf2291c740d08570cf055254f2da106f1c5",
+  "sumo_deadlift": "f9899a4bb8fa58f68da0af6596ed58faa5adb9eac9f1e707bdccc7f42f97fadd",
+  "back_extension": "b4b3f42743f2c52e8516476f56cc39a0c0c97a93619f12611632dac8abf53421"
+ },
+ "quotes": {
+  "pendlay_row": "2836e9a92f965fe64406c443706ceed0a6a8367363ecd10b5027f8e65caa546c",
+  "t_bar_row": "fe897cca3c44908f6a607f5375b1b45366924a998b35f747938c4c12ae90b8a0",
+  "landmine_row": "144c519f55c1b147ba435abe91dcd4dd0f151722d13e701a5f5b01c8af529cb6",
+  "one_arm_dumbbell_row": "126f3ef75d513f6eb08d49b5e4b58f000eb19ff745ca4c842815e3e8705496ad",
+  "dumbbell_romanian_deadlift": "525bd10e6a32380c7e50505bba81bdcbcb1a8791f2912c5437420e04c0b076ab",
+  "conventional_deadlift": "499b67ea5bcb04e58d52e6ec2d0bb4d42f6ad370bfe32a479888423bdb390eb5",
+  "sumo_deadlift": "c6b26c63101f56551a1fbd3cc8554caa6de2b37b0cad593b2eac211eb13fd358",
+  "back_extension": "cb2f6e77872d468ed0df7a8ee4e2e6604cf8c38d9e6e203f492606c50d6ef254"
+ }
+}
