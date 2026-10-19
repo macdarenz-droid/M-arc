@@ -1,7 +1,7 @@
 // LIB-ZOOM (lib-zoom-card; ruling LIB-ZOOM NOTE RULED on #279): the inline zoom circle and its QA rows. Node only; the
 // browser half (label and hit boxes at 390/360/340 px, ring contrast) is judged here on synthetic measurements and run
 // for real by tools/plates/library/lb1/qa.mjs.
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -70,6 +70,14 @@ describe('LIB-ZOOM clean: horizontal_leg_press with its Mistake zoom', { timeout
     expect(z.svg).toContain('<g class="pz-in" clip-path="url(#x-m-zclip)">');
     expect(z.svg.match(/class="m-pose"/g)?.length).toBe(plain.svg.match(/class="m-pose"/g)?.length);
     expect(Math.hypot(z.circle.c[0] - z.focus[0], z.circle.c[1] - z.focus[1])).toBeGreaterThan(52 + 26 + 6);
+  });
+});
+
+describe('LIB-ZOOM approved bytes (supervisor recheck panel @ 9fbdfb5)', { timeout: T }, () => {
+  it('horizontal_leg_press renders the pinned plate fragments, zoom circle included', async () => {
+    const pin = JSON.parse(readFileSync(join(process.cwd(), 'tools/plates/library/zoom/approved.json'), 'utf8'));
+    const p = golden.extractPlates(html).find((x: any) => x.chromeId === pin.chromeId);
+    expect(golden.fragmentsOf(p)).toEqual(pin.fragments);
   });
 });
 
