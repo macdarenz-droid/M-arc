@@ -1284,6 +1284,24 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - In review: LIB-ZOOM.
   - WAITING: LIB-9a #245, LIB-10 #265, LIB-7c #271, HT-11 #273 (PASS), LIB-7-FIX #193 (PASS), LIB-8M #109.
 
+**Update ~22:20 UTC (10-19).** main `07ad7f1`. Cards `claude/sup-lib4-cards` @ `c3f1d6eb`. Plan `claude/howto-options` @ `b41ac833`.
+- **Usage:** the meter read 0.77 at 22:13, so 0.80 is about 23:20 UTC. At 0.80 the pause rule (update ~17:05) starts: nothing new starts, every running session finishes its current step, then posts WAITING. Every builder has already been told.
+- **Pilot B (#278):** all 4 drawn plates are approved @ `d3b231d` (lib4-cards 28: round 1, one fix round, recheck VALID; golden-B follow-up 20, pull_up's head tipped back). crunch stays held.
+  - **E-R5 SCOPE RULED** (plan 2.4, row 20, decision 5, risk 6, 6.1 hand kinds). The proposal is five engine fields, and the owner answers once on four renders.
+  - The renders were posted and reproduced byte for byte. russian_twist's Mistake needs `root.yaw`, which the spike lacks; this is recorded in 2.4.
+  - Advisory scores were posted: the renders are below the plate bar, and that is expected for a spike.
+  - Next: LIB-11's sheet, which the supervisor sends to the owner, then 'PILOT B PIN GO' once #109 is on main.
+- **LB3 (#274):** READY @ `59d3d78`. The panel is VALID: landmine, DRDL, conventional and sumo PASS. back_extension, pendlay_row and one_arm_dumbbell_row get one fix round (lib4-cards 29; golden-B follow-up 21, lat_pulldown's roller unmounted). Then a focused recheck.
+- **LIB-12-FIX (#191):** READY @ `ea916e9` (9 drawn, 12 gaps). The removal of the 3 GAPS words files is accepted. Reviewer session_013tXthxaGVshCnf4bNfZFBy.
+- **LIB-ZOOM (#279):** the review FAILed on 1 High: three ruled QA rows had no mutation. A test-only fix is under way, then the same reviewer's delta review.
+- **LIB-6-PM (#181):** Do 7 plus the main merge. It is re-running its regression after a container kill and after its own CI red at be56b05 ("cause is mine"). READY is next; it is slot 2.
+- **Follow-ups added today:** F-LIB12-R8B (redraw ball-contact, front-rack and cupped-goblet), F-PB-1 (stale research notes), golden-B 20 and 21.
+- **HT-8 timeout:** HT-8 Paper timed out once on #274's gate-shard (3/4, UTC) and passed on its re-run. If it recurs, it gets a GATE-FLAKE card.
+- **Lanes now.**
+  - Active LIB, 4 of 4: LIB-13, LIB-11, LIB-6-PM, LIB-ZOOM (the fix).
+  - In review: LIB-12-FIX.
+  - WAITING: LIB-9a #245, LIB-10 #265, LIB-7c #271, HT-11 #273, LIB-7-FIX #193, LIB-8M #109.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
