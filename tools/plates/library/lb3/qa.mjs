@@ -42,9 +42,24 @@ export const tableOf = reports => [
   }),
 ];
 
+/** The ruled expected flags (DESIGN.md section 6): F5 on every id at exactly the approved chrome's 3.57:1 (D-LIB9-F5),
+ *  F2 on pendlay_row (#274 6267110489), F7 on one_arm_dumbbell_row (drawable false). */
+export const EXPECTED = id => ['F5', ...(id === 'lib_pendlay_row' ? ['F2'] : []), ...(id === 'lib_one_arm_dumbbell_row' ? ['F7'] : [])].sort();
+export const F5_EXEMPT = 3.57;
+/** Each report's differences from the ruled set: a missing or extra flag, or F5 at any value other than 3.57. */
+export const flagProblems = reports => reports.flatMap(r => {
+  const raised = FLAGS.filter(f => r.flags[f].raised).sort(), want = EXPECTED(r.id), out = [];
+  if (JSON.stringify(raised) !== JSON.stringify(want)) out.push(`${r.id}: flags ${raised.join(',') || 'none'} != ruled ${want.join(',')}`);
+  if (r.flags.F5.raised && +r.flags.F5.value.toFixed(2) !== F5_EXEMPT) out.push(`${r.id}: F5 ${r.flags.F5.value.toFixed(2)}:1 != the exempt ${F5_EXEMPT}:1`);
+  return out;
+});
+
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const ids = process.argv.slice(2);
   const { sha, reports } = await qaLb3(ids.length ? { ids } : {});
   console.log(`LB3 plates page sha256 ${sha}`);
   for (const line of tableOf(reports)) console.log(line);
+  const bad = flagProblems(reports);
+  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the ruled set (F5 3.57 on all; F2 pendlay_row; F7 one_arm_dumbbell_row)');
+  if (bad.length || reports.some(r => HARD.some(h => !r.hard[h].pass))) process.exit(1);
 }
