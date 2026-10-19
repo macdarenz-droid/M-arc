@@ -103,3 +103,27 @@ trace sits inside its circle; the build clips it to the circle.
    - If #245 drops it before merging (the 12 plates), this PR adds it back as its own row and the LB1 bytes stay pinned.
    - If #245 keeps it, its plate on that page changes in this PR only, and the other 12 plates stay byte-identical.
    - Asked for the ruling.
+
+## As built (after LIB-ZOOM NOTE RULED, #279)
+
+- `zoom/inline.mjs`:
+  - `zoomOf` (placement and render), `applyZooms` (the post-step of `build-page.mjs`), `plateZooms` (`candidate.mjs`
+    moves each zoom group out of the plate svg into `plate.zoom`, so the plate-scale checks read the engine plate alone).
+  - A dashed link joins the source ring to the circle, so the two read as one pair (ruling condition 3).
+  - Placement takes the nearest spot to the fault that clears the figure and equipment by 6 px and stays off every
+    label box, leader and the link.
+- `qa/zoom.mjs`, the rows (keys):
+  - `H2.zoom:text`, `H2.zoom:angle`;
+  - `H3.zoom:{field,unexpected,missing,shape,k,not-needed,trace,deviation,content}`;
+  - `H4.zoom:{margin,ink,leader,label,source}`.
+  - `qa/node.mjs` h3 skips the plate-scale bar only on the zoomed view.
+- `qa/browser.mjs`:
+  - `H4.zoom:{label,hit}:<width>:<mode>:<key>` at 390, 360 and 340 px;
+  - the ring is held to the ink floor (H5) in all 5 themes;
+  - plate coverage ignores the zoom.
+- `anchorInPose` moved from `qa/node.mjs` to `qa/engine.mjs` and is re-exported from `qa/node.mjs`. Without the move,
+  `build-page.mjs` → `zoom/inline.mjs` → `qa/node.mjs` → `gen/plates.mjs` → `batch-golden.mjs` → `build-page.mjs` is a
+  cycle, and vitest hung on it.
+- horizontal_leg_press: `zoom: { view: 'mistake', k: 2 }`. The deviation is 8.17 px at plate scale and 16.34 px in the
+  zoom. Renders: `evidence/built-hlp-{paper,silent-black}.png` (leg_press normal and Mistake, then horizontal_leg_press
+  normal and Mistake).
