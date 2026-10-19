@@ -33,7 +33,7 @@
 //  - Scale: reference 146.29 px/m.
 // Plate labels (verified card): callouts = plate.checkpoints c2 (Bench at 45°), c7 (Elbows
 //   under wrists), c6 (To upper chest); measure = back-pad angle from vertical, expect 45 (c1); Mistake = plate.mistake
-//   c8 (low back arches off the pad: pelvis tips forward 16 deg, buttocks and upper back stay on the pads, dashed
+//   c8 (low back arches off the pad: pelvis tips forward 36 deg, buttocks and upper back stay on the pads, dashed
 //   back outline off the pad, gap arrow); tempo = plate.tempo c14 (up 1, down 2, no pause: Lower then Press).
 // CARD: bench angle (BACK), seat tilt (SEAT_TILT), seat height (SEAT_TOP), top grip over the shoulder joint (TOP_X, TOP_ELBOW),
 //   bottom flare/depth/width (BOTTOM_ABD, BOTTOM_DIP, BOTTOM_X), feet (FOOT_Z), scapular set (SCAP).
@@ -129,7 +129,8 @@ const startDbPhantom = [{ type: 'line', pts: ring(startDb, 0.119 / 2, 6), cls: '
 // existing all-pose checks require); the lumbar spine extends until the upper back is back on the pad (trunk solved)
 // and the neck puts the back of the skull on the pad, so only the low back leaves the pad. The grips move with the
 // shoulders, so the arms keep the bottom shape.
-const MIS_TILT = 16;                                  // pelvis tips forward (deg), an exaggerated arch so it reads
+const MIS_TILT = 36;                                  // pelvis tips forward (deg), an exaggerated arch so it reads: the lumbar spine
+                                                      // moves 9.1 cm (13.3 px) from the end pose (PQ-H3 deviation)
 const padDist = p => (p[1] - F.back.point[1]) * F.back.normal[1] + (p[2] - F.back.point[2]) * F.back.normal[2];
 const SEAT_T = [0, Math.sin(SEAT_TILT * R), Math.cos(SEAT_TILT * R)];          // along the seat face, toward the front
 const tiltM = REC.pose.root.tilt + MIS_TILT;
@@ -137,8 +138,8 @@ const rootAt = sl => ({ at: rootOnSeat(REC.seatPt.map((v, i) => v + SEAT_T[i] * 
 const slideM = (() => { const f = sl => padDist(landmarksOf({ ...end, root: rootAt(sl) }, H).buttock);
   return f(-0.2) > f(0.2) ? bisect(sl => -f(sl), -0.2, 0.2) : bisect(f, -0.2, 0.2); })();
 const rootM = rootAt(slideM);
-const trunkM = bisect(t => padDist(landmarksOf({ ...end, root: rootM, trunk: t }, H).backUpper), -40, 20);
-const neckM = bisect(n => padDist(skOf({ ...end, root: rootM, trunk: trunkM, neck: n }).head(OCCIPUT)), -40, 40);
+const trunkM = bisect(t => padDist(landmarksOf({ ...end, root: rootM, trunk: t }, H).backUpper), -70, 20);
+const neckM = bisect(n => padDist(skOf({ ...end, root: rootM, trunk: trunkM, neck: n }).head(OCCIPUT)), -40, 60);
 const misReach = (() => { const E = landmarksOf(end, H), M = landmarksOf({ ...end, root: rootM, trunk: trunkM, neck: neckM }, H), out = {};
   for (const sd of ['l', 'r']) { const d = [0, 1, 2].map(i => M[`shoulder.${sd}`][i] - E[`shoulder.${sd}`][i]);
     out[sd] = { ...end.reach[sd], at: end.reach[sd].at.map((v, i) => v + d[i]) }; }
@@ -150,7 +151,8 @@ const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
 // blades (backUpper on the pad), rises ARCH off the pad at the lumbar spine (ARCH_AT along the pad from the top) and
 // meets the pad again at the buttock, so a gap of background shows between the low back and the pad. An arrow runs
 // perpendicular to the pad from inside the gap to the peak.
-const ARCH = 0.065;                                   // lumbar peak off the pad (m): 9.5 px at the plate scale (19 px in the 712 px PNG)
+const ARCH = 0.09;                                    // lumbar peak off the pad (m): 13 px at the plate scale (26 px in the 712 px PNG),
+                                                      // outside the Mistake body's back (backMid 7 cm off the pad)
 const ARCH_AT = 0.55;                                 // peak position along the pad, backUpper (0) to buttock (1)
 const ARCH_MIN = 0.035;                               // the Mistake's backMid clears the pad by at least this (2.2 cm in the correct pose)
 const onPad = p => p.map((v, i) => v - F.back.normal[i] * padDist(p));
@@ -208,8 +210,8 @@ export default {
       { kind: 'arrow', from: { at: 'navel', pose: 'mistake', off: [2, -2] }, to: { at: 'navel', pose: 'mistake', off: [14, -14] } },   // belly pushes up
     ],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: gapFrom, cue: 'Your low back arches off the bench as you press.' },
-      { key: 'hips', text: 'Hips<br>tip', anchor: { at: 'navel', pose: 'mistake' }, cue: 'Your hips tip and your belly pushes up.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, prefer: 'below', cue: 'Your low back arches off the bench as you press.' },
+      { key: 'hips', text: 'Hips<br>tipping', anchor: { at: 'navel', pose: 'mistake' }, cue: 'Your hips tip and your belly pushes up.' },
     ],
   },
   alt: 'Incline dumbbell press, side view. On a bench set to 45 degrees, head, back and hips on the pads, feet flat, the lifter lowers the dumbbells from straight arms above the shoulders to the upper chest, forearms vertical, then presses back up.',
