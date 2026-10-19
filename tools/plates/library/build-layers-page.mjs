@@ -83,14 +83,23 @@ export function patchHowtoLayers(src, plan) {
     `  const __lib = await import(${JSON.stringify(RENDERER_URL)}), __opts = ${plan.optionsUrl ? `(await import(${JSON.stringify(plan.optionsUrl)})).CLOSEUP_OPTIONS` : '{}'};\n`
     + `  const __keys = ${JSON.stringify(plan.keys)};\n`
     + `  for (const id of HOWTO_IDS) apis[id] = LEGACY[id] ? await loadRenderer(id)\n`
-    + `    : __lib.closeupApi((await import(pathToFileURL(join(root, 'exercises', \`\${id}.howto.mjs\`)).href)), __opts[__keys[id]], { root });\n`
+    + `    : __lib.closeupApi((await import(pathToFileURL(join(root, 'exercises', \`\${id}.howto.mjs\`)).href)), __opts[__keys[id]], { root, specFile: __lib.specFileOf(root, id), engine: await __lib.engineOf(__lib.specFileOf(root, id), { root }) });\n`
     + (plan.regionFix ? `  (await import(${JSON.stringify(REGION_FIX_URL)})).applyRegionFix((await import('../engine/bodymap-parts.mjs')).FRONT_PARTS);\n` : ''));
   return src;
 }
 
+/** The vendored specExercise head the 'plate engine' patch (D-LIB6PM-PLATE) replaces. */
+export const PLATE_ENGINE_ANCHOR = "const specExercise = async id => {\n  const spec = (await import(pathToFileURL(join(root, 'exercises', `${id}.mjs`)).href)).default;\n  const pre = id.replace(/_/g, '-');\n";
+
 /** The patched build-page.mjs source. */
 export function patchBuildPage(src, spec) {
   src = patchOnce(src, 'GROUPS', between(src, 'GROUPS', 'const GROUPS = [', '];\n'), `const GROUPS = ${JSON.stringify(spec.groups)};\n`);
+  // D-LIB6PM-PLATE: each plate block is drawn by its spec's engine (default the mirror's own layers renderPlate). The inner
+  // renderPlate shadows the import in specExercise only; __layersPlate is bound here, outside its declaration's TDZ.
+  src = patchOnce(src, 'plate engine', PLATE_ENGINE_ANCHOR,
+    `const __lib = await import(${JSON.stringify(RENDERER_URL)}), __layersPlate = renderPlate;   // LIB-6-PM: D-LIB6PM-PLATE\n`
+    + PLATE_ENGINE_ANCHOR.replace("  const pre = id.replace(/_/g, '-');\n",
+      "  const pre = id.replace(/_/g, '-'), renderPlate = await __lib.plateEngine(id, join(root, 'exercises', `${id}.mjs`), { root, layers: { name: 'layers', renderPlate: __layersPlate } });\n"));
   if (spec.jump !== undefined) src = patchOnce(src, 'jump link', GOLDEN_B_JUMP, spec.jump ?? '');
   return src;
 }
