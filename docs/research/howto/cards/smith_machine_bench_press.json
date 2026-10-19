@@ -382,6 +382,41 @@
           "where": "Safety Notes"
         }
       ]
+    },
+    {
+      "id": "c17",
+      "text": "Keep the chest up and the ribs down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-smith-bench"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-bench",
+          "text": "Chest up, ribs down",
+          "where": "Form Cues"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Tempo: Motra lists a 2-1-1 tempo for this lift without saying which phase each digit is; read as lower, pause, press, it gives 2 s down, a 1 s pause at the bottom and 1 s up.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-smith-bench"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-bench",
+          "text": "2-1-1",
+          "where": "Form Cues: Tempo"
+        }
+      ]
     }
   ],
   "sources": [
@@ -478,7 +513,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; bench placement under the bar, the mid-chest touch point, the stop height and the back arch all read in the sagittal plane (c2, c3, c4, c7).",
+    "viewWhy": "Census view is side; bench placement under the bar, the mid-chest touch point, the stop height and the back arch all read in the sagittal plane (c2, c3, c4, c7), and so does the top fault, flared elbows: a flared elbow sits level with the shoulder instead of down toward the ribs (c3, c7).",
     "equipment": "Smith machine (rails, bar, hooks; the bar runs in a straight path, c8) with a flat bench placed so the bar lines up with the mid-chest (c2); safety stops just below the lowest point of the bar, where it touches the chest (c4, c3); feet flat on the floor (c2).",
     "start": "Lying face up, shoulder blades together, chest up (c1), feet flat (c2); bar unhooked and held on straight arms over the mid-chest (c2, c5).",
     "end": "Bar lowered with control until it touches the mid-chest, elbows at about 45 degrees (c3); back not excessively arched (c7).",
@@ -503,10 +538,14 @@
       }
     ],
     "mistake": {
-      "what": "Back arched excessively to press the bar.",
-      "why": "Motra lists it among the common Smith bench mistakes; how often it happens is not measured in any source read.",
-      "claim": "c7",
-      "drawable": true
+      "what": "Elbows flared wide as the bar comes down, instead of at about 45 degrees.",
+      "why": "First on Motra's list of common Smith bench mistakes (\"Flaring elbows wide\", c7); the elbows should be at about 45 degrees as the bar comes to the mid-chest (c3). How often it happens is not measured in any source read.",
+      "claim": [
+        "c7",
+        "c3"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: flaring the elbows wide (c7), first on Motra's common-mistakes list for this exercise. Step 1: no frequency word counts for a fault. Set aside: EōS's \"At EōS, you’ll commonly find:\" (the equipment) and \"typically lowering the bar for a 3–5 second count\" (a tempo variation); Cotterman's \"are commonly used strength\" (the equipment, c10); Kolber's \"the most prevalent regions of injury\" (where injuries happen, no fault, c15). Step 2: no quote ties a named fault to harm. Motra's incline page says \"Do not train through shoulder pain\" (c16) and names no fault; EōS's \"avoid unnecessary strain\" is about adjusting the machine (a setup choice) and \"less shoulder strain\" is about the incline press; Kolber's \"improper attention to exercise technique\" (c15) names no fault; Motra's Safety Notes line \"Avoid bouncing or rapid uncontrolled reps\" names no harm word (a safety heading read onto an item, as LR-31 treats a common-mistakes heading). If it were read as a harm tie, bouncing would be handlingMistakes[0]; it shows only as speed, so the plate would still draw the flared elbows. Step 3: Motra's list, written for the Smith bench, names \"Flaring elbows wide\" first, before \"Bouncing bar off chest\", \"Arching back excessively\" (the head's pick) and \"Locking elbows at top\" (c7), as verify #3 noted (R-LB2-20). drawable true: in the side view a flared elbow sits level with the shoulder instead of down toward the ribs, as incline_barbell_bench_press draws it. Pick changed: the arch is now handlingMistakes[1]."
     },
     "tells": [
       {
@@ -522,7 +561,11 @@
       "up": 1,
       "down": 2,
       "pause": 0,
-      "claim": "c12"
+      "claim": [
+        "c12",
+        "c18"
+      ],
+      "text": "Motra lists a 2-1-1 tempo (c18, WEAK: the page does not say which phase each digit is). Read as lower, pause, press, it backs down 2 and up 1 and gives the bottom pause 1 s; ACSM's 1-2 s each way agrees (c12, WEAK; LR-15). Pause 0: no quote asks for a pause right after the press. Motra's \"Pause briefly as the bar touches your chest.\" is that bottom pause, between lowering and pressing, so it is named here with its 1 s from the 2-1-1 reading and not written in pause (LR-33). EōS's tempo press (\"lowering the bar for a 3–5 second count, pausing briefly at the bottom\") is a slower variation, not this lift."
     },
     "variantLine": null
   },
@@ -594,19 +637,19 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Arching the back too much.",
-      "fix": "Use lighter weights until you can press with good form.",
-      "claim": [
-        "c7",
-        "c6"
-      ]
-    },
-    {
       "mistake": "Flaring the elbows wide.",
       "fix": "Keep the elbows at about 45 degrees.",
       "claim": [
         "c7",
         "c3"
+      ]
+    },
+    {
+      "mistake": "Arching the back too much.",
+      "fix": "Chest up, ribs down. Don't arch too much.",
+      "claim": [
+        "c7",
+        "c17"
       ]
     },
     {

@@ -274,12 +274,13 @@
   ],
   "mistake": {
    "what": "Hips and knees swinging with the trunk instead of staying still.",
-   "why": "StrengthLog says to keep the hips stable while the torso twists (c4); BarBend says keep the buttocks planted to avoid leaning and losing balance (c5). No source ranks Russian-twist faults.",
+   "why": "The top fault, fast uncontrolled twists that can jar the lower back (c8), shows only as speed, so the plate draws the next fault: the hips moving with the trunk. StrengthLog says to keep the hips stable while the torso twists (c4); BarBend says keep the buttocks planted to avoid leaning and losing balance (c5).",
    "claim": [
     "c4",
     "c5"
    ],
-   "drawable": true
+   "drawable": false,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: fast, uncontrolled twists (c8). Step 1: no frequency word counts for a fault. Set aside: BarBend's \"people most commonly think of the contraction and lengthening phases\", \"The vast majority of core strengthening and stabilization training occurs when load is placed on the body during heavy lifts.\", \"Most fitness athletes will use Russian twists\", \"Most gymgoers will perform Russian twists with the hopes of removing stubborn fat\" and \"the core is often under stress for prolonged periods of time\" are about training, athletes or the core; \"the most common questions about the Russian twist\" is a heading. Step 2: BarBend's low-back answer, \"Generally speaking, the Russian twist is a safe lower back exercise when done correctly, however some lifters may find it can be jarring if they do not pay close attention to staying controlled with the movement.\" and \"If you find it hurts your lower back\" (c8), ties not staying controlled to a jarring, hurting lower back; it is the only named fault tied to harm. The heavy load (c10) is a load choice, not a candidate. The top fault is seen only as speed, so it is never drawable; plate.mistake names the next fault by the same steps. No read source has a common-mistakes list, so step 3 takes the fault the most read sources tell the lifter to avoid: the hips moving (StrengthLog: \"keeping your hips stable\", c4; BarBend: \"keep the buttocks firmly planted on the floor to minimize leaning or loss of balance\", c5). If instructions count, the back also has two: StrengthLog's \"Lean slightly back with a straight back and engaged core.\" (c3) and BarBend's \"While keeping the torso erect\" (c2); that would tie it with the hips, and LR-36 keeps the hips because plate.viewWhy names them (c4). If \"jarring\" is not read as harm, step 3 gives the hips outright, drawable as before. Top fault changed: the hips item is now handlingMistakes[1]; plate.mistake is unchanged, and drawable is false; the owner rules on this card's real top fault (E-R5)."
   },
   "tells": [
    {
@@ -299,7 +300,7 @@
     "c5",
     "c7"
    ],
-   "text": "Drawing convention: one turn each way, smooth and controlled (c5, c7); no source gives seconds. 'up' and 'down' mean the turn out and the turn back."
+   "text": "Drawing convention: one turn each way, smooth and controlled (c5, c7); no source gives seconds. 'up' and 'down' mean the turn out and the turn back. Pause 0: no quote on the card asks for a pause after the turn (LR-33); BarBend's \"hold the end positions longer\" (c6) is an easier variation for building isometric strength, with no seconds."
   },
   "variantLine": "Bodyweight / Weight: the plate draws the medicine-ball version (c2); every line holds with clasped hands too (c2), and load is added only once the reps are controlled (c7)."
  },
@@ -362,19 +363,20 @@
  ],
  "handlingMistakes": [
   {
+   "mistake": "Twisting without control.",
+   "fix": "Slow down until every rep is controlled.",
+   "claim": [
+    "c5",
+    "c8",
+    "c7"
+   ]
+  },
+  {
    "mistake": "Hips swinging with the turn.",
    "fix": "Keep your buttocks planted; turn only your trunk.",
    "claim": [
     "c4",
     "c5"
-   ]
-  },
-  {
-   "mistake": "Fast, jerky twists.",
-   "fix": "Slow down until every rep is controlled.",
-   "claim": [
-    "c7",
-    "c8"
    ]
   },
   {

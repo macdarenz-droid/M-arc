@@ -378,9 +378,10 @@
   ],
   "mistake": {
    "what": "Hips sinking toward the floor.",
-   "why": "BarBend: when the hips sink the core does much less of the work (c5); it is the one posture fault on its list (the others are breathing and shrugging).",
+   "why": "BarBend lists sinking hips second among its typical side plank mistakes: when the hips sink, the core does much less of the work (c5). The first item, holding the breath (c6), has no sign the plate can draw.",
    "claim": "c5",
-   "drawable": true
+   "drawable": false,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 3: holding the breath (c6), first in BarBend's list of typical side plank mistakes. Step 1: no frequency word counts for a candidate. Set aside: BarBend's \"many lifters may end their sets too early\" is about the set's length, a choice and not a position or movement during the set; \"Here are a few typical mistakes in the side plank that you’ll want to avoid.\" is a list sentence; \"the side plank can be accessible to many beginners\" is about the exercise. Step 2: no quote ties a named candidate to harm. ACE's \"Any excessive pressure on the inside of your upper foot or upper knee may cause undesirable stresses on those joints and merits termination of this exercise.\" (c8) names a sensation and a stop rule on the modified version, not a position fault; BarBend's \"To avoid the discomfort that can come with exercises like this\" is why lifters stop early; \"When your hips start to sink, your core muscles become much less involved\" (c5) states lost effect, not harm; \"One of the biggest crimes you can commit during your side plank is forgetting to breathe.\" states no harm. Step 3: BarBend's list, written for this exercise, runs Holding Your Breath, Sinking Your Hips, Not Holding Long Enough (a set-length choice) and Shrugging Your Shoulder, so holding the breath is the top fault. It has no sign the plate can draw, so drawable is false and plate.mistake names the next fault by the same steps, the sinking hips, second on the list. If breath-holding is read as not a position or movement candidate, the sinking hips are the top fault outright, drawable as before. Top fault changed: the hips item is now handlingMistakes[1]; plate.mistake is unchanged; the owner rules on this card's real top fault (E-R5)."
   },
   "tells": [
    {
@@ -396,7 +397,7 @@
    "set": null,
    "hold": "5-60 s",
    "rest": null,
-   "text": "Hold for as long as form stays good: 5-15 s for some, built a few seconds at a time toward 30-60 s per side (c9). No source sets the rest.",
+   "text": "Hold for as long as form stays good: 5-15 s for some, built a few seconds at a time toward 30-45 s; aim for 30-60 s per side (c9). No source sets the rest. This is an isometric hold, so there is no pause after a lift (LR-33); BarBend's \"pause for a moment\" belongs to a rotating variation, not this hold.",
    "claim": "c9"
   },
   "variantLine": "Easier: top foot in front of the bottom foot, or bottom knee down (c4, c8). The plate draws the stacked-leg version (c1)."
@@ -459,17 +460,18 @@
  ],
  "handlingMistakes": [
   {
+   "mistake": "Holding your breath.",
+   "fix": "Keep the brace and take slow belly breaths.",
+   "claim": "c6"
+  },
+  {
    "mistake": "Hips sinking.",
    "fix": "Lift your hips back in line; end the hold if you can't.",
    "claim": [
     "c5",
-    "c9"
+    "c9",
+    "c2"
    ]
-  },
-  {
-   "mistake": "Holding your breath.",
-   "fix": "Keep the brace and take slow belly breaths.",
-   "claim": "c6"
   },
   {
    "mistake": "Shrugging the bottom shoulder.",

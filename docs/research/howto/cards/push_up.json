@@ -265,7 +265,7 @@
   },
   {
    "id": "c11",
-   "text": "In 18 young men over 8 weeks, push-ups set to a load like a 40% 1-RM bench press gave similar muscle growth and strength gain to that bench press.",
+   "text": "In 18 young men over 8 weeks, push-ups set to a load like a 40% 1-RM bench press gave similar muscle growth and strength gain to that bench press; growth was measured as muscle thickness at the biceps, triceps and pectoralis major.",
    "tags": [
     "DATA"
    ],
@@ -282,6 +282,11 @@
      "source": "kikuchi-2017",
      "text": "Eighteen male participants",
      "where": "abstract, methods"
+    },
+    {
+     "source": "kikuchi-2017",
+     "text": "Muscle thickness at three sites (biceps, triceps, and pectoralis major), bench-press 1RM, maximum repetition at 40%1RM, and power output (medicine ball throw) were measured before and after the training period.",
+     "where": "abstract (methods)"
     }
    ]
   },
@@ -450,7 +455,8 @@
    "what": "Hips sag toward the floor and the low back arches.",
    "why": "BarBend names poor trunk rigidity among the most common push-up faults, with sagging hips or an arched low back (c5); ACE says not to let the low back sag (c3).",
    "claim": "c5",
-   "drawable": true
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: the hips sagging and the low back arching (c5). BarBend says \"Poor trunk rigidity is among the most common technical faults for most gymgoers who perform the push-up.\" and \"Many beginners will inadvertently sag at the hips or unknowingly let their lower backs fall into an arched position.\" (c5): frequency words for this fault of this exercise. No other fault passes step 1. Set aside: \"The push-up is one of the first exercises most people ever perform.\", \"While commonly (and rightfully) considered a beginner’s exercise\" and \"Even though most people have done push-ups at some point in their lives\" are about the exercise; \"answers to common questions\" and \"Frequently Asked Questions\" are headings; \"An often-overlooked benefit of bodyweight training\" and \"Push ups can be performed relatively regularly\" are about training. Step 2 is not needed; BarBend's \"Set your shoulders directly over your wrists to increase force output and reduce the risk of injury\" ties the hand-placement fault (c6) to harm, and ACE's \"may reduce stresses in the shoulder joint\" (c7) is about an elbows-close option, but step 1 decides. drawable stays true: the side view shows the hips sagging below the body line. Pick unchanged."
   },
   "tells": [
    {
@@ -467,7 +473,7 @@
    "down": 2,
    "pause": 0,
    "claim": "c13",
-   "text": "Drawing convention: the sources say lower slowly and under strict control (c13) and give no seconds; 2 s down and 1 s up shows a slower lowering than lifting."
+   "text": "Drawing convention: the sources say lower slowly and under strict control (c13) and give no seconds; 2 s down and 1 s up shows a slower lowering than lifting. Pause 0: no quote on the card asks for a pause right after the press (LR-33). BarBend's \"try to “squeeze” the floor with your hands\" (c14) is a grip cue, not a pause."
   },
   "variantLine": null
  },
@@ -548,7 +554,10 @@
   "primary": [
    {
     "muscleId": "chest",
-    "claim": "c9"
+    "claim": [
+     "c9",
+     "c11"
+    ]
    }
   ],
   "secondary": [

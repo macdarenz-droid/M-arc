@@ -390,7 +390,8 @@
       "what": "Elbows bending and straightening, turning the fly into a press.",
       "why": "StrengthLog names it among the common cable fly mistakes, with too much weight, which the plate cannot show. How often it happens is not measured.",
       "claim": "c6",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the elbows bending into a press (c6, c7). Step 1: no frequency word counts for a fault. Set aside: StrengthLog's \"Common Mistakes in the Standing Cable Chest Fly\" and PureGym's \"Commonly Asked Questions On Cable Flyes\" are headings; Schutz's \"Injuries to the shoulder are very common in sports that involve overhead arm or throwing movements.\" is about other sports, and \"four common strength exercises for chest muscles\" and \"Another common method to improve chest muscle strength\" are about the exercises; Kolber's \"the most prevalent regions of injury\" (c13) names no fault. Step 2: PureGym ties form and range to harm: \"Having the correct form and range of motion is important in minimising strain to the shoulder joint. Select a weight that allows you to maintain a soft bend in the elbow and only go as far as hands in line with chest.\" (c7). Its cues correct two named faults: the elbows bending more than slightly (StrengthLog: \"Don’t turn the chest fly into a chest press by bending your elbows more than just slightly.\", c6) and the arms opening past the chest line (handlingMistakes[2]). The weight choice in the same quote is a load choice, not a candidate. Tie order: the elbow fault is on StrengthLog's common-mistakes list (\"Not keeping a strict form\"), and the range fault is on no list (PureGym's \"Cable Fly Tips\" is not a common-mistakes list, R-LB2-14), so the elbow fault wins. If the soft-bend cue is read as not correcting the press fault, the range fault is the only harm-tied fault and wins step 2; that reading was flagged by verify #3 (R-LB2-20) and is named here for the verify. Schutz's \"there is also a reported risk of injury due to overstressing or incorrect exercise execution\" and \"bench press exercises present with lower and less fluctuating joint loading than cable pulley exercises\" name no fault (c11). PureGym's \"lowering the dumbbells too far can injure the shoulders\" is the dumbbell fly, another exercise. drawable stays true: the front view shows the elbow angle changing. Pick unchanged."
     },
     "tells": [
       {
@@ -409,7 +410,8 @@
       "claim": [
         "c12",
         "c5"
-      ]
+      ],
+      "text": "Pause 1 s at the top: ACE's \"When the hands are together, pause for one second before slowly returning the arms to the starting position.\" (c5) is right after the lift and gives its seconds (LR-33). Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c12, WEAK; LR-15)."
     },
     "variantLine": null
   },

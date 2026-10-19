@@ -233,6 +233,11 @@
      "source": "bb-legcurl",
      "text": "Try pointing your toes instead of keeping your feet out as though you were standing regularly.",
      "where": "Common mistakes, calf cramps"
+    },
+    {
+     "source": "bb-legcurl",
+     "text": "In this position, you’ll be more likely to recruit force from your hamstrings and spare your calves some tension.",
+     "where": "Common Leg Curl Mistakes: Pushing With Your Calves"
     }
    ]
   },
@@ -365,7 +370,7 @@
  ],
  "plate": {
   "view": "side",
-  "viewWhy": "Census view is side; the knee-to-pivot line (c1), the pads (c2, c3) and the knee bend all read from the side.",
+  "viewWhy": "Census view is side; the knee-to-pivot line (c1), the pads (c2, c3) and the knee bend all read from the side, and so does the top fault, the feet flexed up as the calves push instead of the toes pointed (c10).",
   "equipment": "Seated leg curl machine composed from seat, back pad and roller pads (census 'legCurlMachine', compose): thigh pad snug just above the knees (c2), ankle pad under the lower legs just above the shoes (c3), machine pivot level with the knee (c1), handles at the sides of the seat (c5).",
   "start": "Seated, back flat on the back pad (c4), hips pressed into the seat (c5), knees in line with the pivot (c1), legs out in front with the ankle pad just above the shoes (c3); hands on the side handles (c5).",
   "end": "Knees bent as far as they go, feet curled under the seat (c5, c6); thighs, hips and back unchanged (c2, c4, c5).",
@@ -387,10 +392,11 @@
    }
   ],
   "mistake": {
-   "what": "Ankle pad set high on the calves.",
-   "why": "BarBend: a pad set too high presses on the calves and shortens the range; keep it well below the calf muscle (c3). The knee-to-pivot fault (c1, c9) has no sourced direction, so it is not drawn (R-W1-7).",
-   "claim": "c3",
-   "drawable": true
+   "what": "Feet flexed up as if standing, pushing with the calves, instead of toes pointed.",
+   "why": "BarBend lists pushing with your calves among common leg curl mistakes: with heavy loads you might unconsciously recruit your calves and they might cramp; pointing the toes makes you more likely to recruit the hamstrings and spare the calves (c10).",
+   "claim": "c10",
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: pushing with the calves, feet flexed (c10). Candidates: setup and equipment choices are not candidates, so StrengthLog's \"Not adjusting the machine correctly\" (c9), the knees in line with the machine's joint (c1, set by adjusting the machine), BarBend's \"Incorrect Seat Position\" and \"Incorrect Ankle Pad Position\" (c3, the head's pick until now) are set aside. Step 1: no frequency word counts for a fault. Set aside: StrengthLog's \"it’s easy to start relying on the momentum and swinging the weight\" (c8) uses \"easy to\"; \"most people cannot do the concentric phase of the Nordic hamstring curl\" is another exercise; BarBend's \"try to avoid “cheating” your reps in any way for the vast majority of each set\" is about cheating in general, \"it’s often all laid out for you\" is about machines and \"many lifters neglect direct hamstring training\" is about training. Step 2: one candidate is tied to harm or discomfort: BarBend's \"Pushing With Your Calves\" item, \"With heavy loads, you might unconsciously recruit your calves to try and assist. If your calves aren’t ready to handle that kind of weight, they might cramp up.\" and \"Try pointing your toes instead of keeping your feet out as though you were standing regularly.\" (c10). StrengthLog's swinging item says \"this can cause harm to the machine as well\", which is harm to the machine, not the lifter. If a cramp is not read as harm, step 3 picks swinging, first on StrengthLog's list after the setup item; swinging is seen only as speed, so it is not drawable, and the plate would still draw the flexed feet, next on the lists (BarBend). drawable true: the flexed ankle is a still sign the side view shows. Pick changed. handlingMistakes keeps three items (the cap): the top fault, the machine-adjustment item, which is StrengthLog's first listed mistake and covers the leg pad and seat height (c9, c1), and swinging (c8). The ankle-pad item leaves because the machine-adjustment item already covers the leg pad; its cue stays in setup and zooms."
   },
   "tells": [
    {
@@ -410,7 +416,7 @@
     "c7",
     "c13"
    ],
-   "text": "Drawing convention: the sources ask for a slow, controlled lowering (c7, c13) and give no seconds; 2 s down and 1 s up shows that."
+   "text": "Drawing convention: the sources ask for a slow, controlled lowering (c7, c13) and give no seconds; 2 s down and 1 s up shows that. Pause 0: no quote on the card asks for a pause right after the curl (LR-33). BarBend's \"Just before they make contact, begin your next rep.\" (c7) asks for no pause where the legs straighten."
   },
   "variantLine": null
  },
@@ -471,17 +477,17 @@
  ],
  "handlingMistakes": [
   {
-   "mistake": "Seat and pads not set to your body.",
-   "fix": "Line your knees up with the pivot; set both pads.",
+   "mistake": "Pushing with your calves.",
+   "fix": "Point your toes, or lower the weight.",
+   "claim": "c10"
+  },
+  {
+   "mistake": "Machine not adjusted.",
+   "fix": "Knees in line with the pivot. Set the seat and leg pad.",
    "claim": [
     "c1",
     "c9"
    ]
-  },
-  {
-   "mistake": "Ankle pad high on the calves.",
-   "fix": "Move it down to just above your shoes.",
-   "claim": "c3"
   },
   {
    "mistake": "Swinging a weight that's too heavy.",
@@ -493,7 +499,10 @@
   "primary": [
    {
     "muscleId": "hamstrings",
-    "claim": "c12"
+    "claim": [
+     "c12",
+     "c11"
+    ]
    }
   ],
   "secondary": [

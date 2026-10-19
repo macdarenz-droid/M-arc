@@ -170,6 +170,13 @@
    "status": "verbatim",
    "closest": "you can increase the load by holding a weight against your chest.",
    "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "ace-crunch",
+   "text": "Hold this position briefly.",
+   "status": "verbatim",
+   "closest": "Hold this position briefly."
   }
  ]
 }
