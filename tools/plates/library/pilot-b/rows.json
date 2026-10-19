@@ -1,0 +1,43 @@
+{
+ "note": "Pilot B build-ahead rows (LIB-11, D-LIB10-AHEAD pattern): stage drawing or review only, never in batches/ before the pin (Do 11). Mode H for all 5 (D-LIB10-PA; smith_machine_bench_press: D-LIB10-BENCH-H, no Smith PARAMS value). Only drawn ids that are not held. censusRef: the census commit (claude/howto-options).",
+ "batch": "PILOT-B",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_smith_machine_bench_press": {
+   "src": "library/specs/smith_machine_bench_press.mjs",
+   "slug": "smith-machine-bench-press",
+   "prefix": "smith-machine-bench-press",
+   "chromeId": "smith-machine-bench-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_seated_leg_curl": {
+   "src": "library/specs/seated_leg_curl.mjs",
+   "slug": "seated-leg-curl",
+   "prefix": "seated-leg-curl",
+   "chromeId": "seated-leg-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_crunch": {
+   "src": "library/specs/crunch.mjs",
+   "slug": "crunch",
+   "prefix": "crunch",
+   "chromeId": "crunch",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_cable_fly": {
+   "src": "library/specs/cable_fly.mjs",
+   "slug": "cable-fly",
+   "prefix": "cable-fly",
+   "chromeId": "cable-fly",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  }
+ }
+}
