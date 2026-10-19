@@ -39,3 +39,14 @@ For each option, state:
 - The new primitive or wiring has its own tests and mutations, including the no-angle lint row.
 - The 8's and LB1's pinned pages are byte-identical.
 - A fresh Opus review.
+
+**Supervisor amendment (2026-10-19 ~12:40 UTC; D-LIBZOOM-NOW).** Start now, so the small-motion plates stop queueing.
+- **Base:** #245's head `38b436d58b60c80abc1683bca1c6c0fd169bd711` (the card's "or from #245's head" route). Merge origin/main into it first, with a merge commit. Merge #245's later heads the same way when they move. LIB-ZOOM merges only after LB1 (#245) is on main.
+- **Wider design question, same note.** Five more plates are HELD for the same reason, a card-true motion too small for PQ-H3 at plate scale:
+  - barbell_shrug (pilot A, #109 @ `48d49bb`; D-LIB8-shrug);
+  - dumbbell_shrug and cable_shrug (LB3, LIB-13s, not drawn yet);
+  - t_bar_row (LIB-13 #274: hand rise 10.8-12.1 cm; D-LIB13-TBAR);
+  - crunch (LIB-11 #278: trace 9.4 px against 22.11, deviation 7.6 px against 11.39; D-LIB11-SMALL).
+  The note shows that the recommended option meets **both** H3 bars at the zoom's own scale, the trace length (22.11 px) and the Mistake deviation (11.39 px). Give one 390 px render per motion class: knee lock (horizontal_leg_press), shoulder elevation (barbell_shrug, from #109's spec), short row rise (t_bar_row, from #274's spec) and blade lift (crunch, from #278's spec). Read the other lanes' specs with `git show`; never commit them here.
+- **Scope of this PR stays horizontal_leg_press**, plus the convention, its QA rules and its tests. Once the convention is ruled, the other lanes draw their own held plates: LIB-8M or the ship card for barbell_shrug, LIB-13s for the shrugs and t_bar_row, LIB-11 for crunch.
+- Owner rule unchanged: no angle number in any zoom view.
