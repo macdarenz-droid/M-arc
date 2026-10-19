@@ -119,6 +119,19 @@ describe('LIB-ZOOM mutations: each row turns red on its planted fault', { timeou
     const r = await qa(await mutated("s => ({ ...s, zoom: { view: 'normal', k: 2 } })"));
     expect(zoomKeys(r)).toContain('H3.zoom:not-needed:normal');
   });
+  // the normal-view rows the held lanes use next (barbell_shrug, t_bar_row, crunch): planted on a normal-view zoom
+  it('normal-view zoom: the source ring moved 30 px off the trace, and the trace cut short inside the circle', async () => {
+    const c = await mutated("s => ({ ...s, zoom: { view: 'normal', k: 1.5 } })"), z = c.plate.zoom.normal;
+    const at = (zz: string) => ({ ...c, plate: { ...c.plate, zoom: { ...c.plate.zoom, normal: zz } } });
+    expect(zoomKeys(await qa(c))).not.toContain('H3.zoom:content:normal');
+    expect(zoomKeys(await qa(c))).not.toContain('H3.zoom:trace');
+    const moved = z.replace(/(<circle class="pz-src" cx=")([\d.]+)/, (_: string, a: string, v: string) => `${a}${+v - 30}`);
+    expect(zoomKeys(await qa(at(moved)))).toContain('H3.zoom:content:normal');
+    const [, x, y] = z.match(/<path class="trace"[^>]*? d="M([\d.-]+)[ ,]([\d.-]+)/)!;
+    const cut = z.replace(/(<path class="trace"[^>]*? d=")[^"]*"/, `$1M${x} ${y}L${+x! + 5} ${y}"`);
+    expect(cut).not.toBe(z);
+    expect(zoomKeys(await qa(at(cut)))).toContain('H3.zoom:trace');
+  });
   it('a zoom circle the spec does not ask for, and a missing one', async () => {
     expect(zoomKeys(await qa({ ...c0, spec: { ...c0.spec, zoom: undefined } }))).toEqual(['H3.zoom:unexpected:mistake']);
     expect(zoomKeys(await qa(withZoom(null as any)))).toEqual(['H3.zoom:missing:mistake']);
