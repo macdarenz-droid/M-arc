@@ -1047,6 +1047,48 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   11. slot 8: LB1 #245
   - LIB-3c may merge before #245. LB1 cannot merge before #109.
 
+**Update ~01:00 UTC (10-19).**
+- **Train 28 merged** (#266, main `d9dbd067`): LIB-4b, LIB-4c + #249, LIB-4d, cards `9d06627c`, handover `651a767f`. No app change, so no APK. LIB-4b/4c/4d builders and reviewers are archived. #257 is closed.
+  - Deleting the scratch refs (claude/lib-4c-seed-1..3, lib-4c-scratch, lib-4b-scratch) was refused with HTTP 403. They are left as they are.
+- **Train 29** (#267, `83075956`): LIB-5 + sup-lib5-bundle + BOX-CAP. Local checks are green; CI is running. After it merges:
+  - resume the LIB-5 builder (session_01EtPBie8dERvuaHFMj9AWUU) for Do 9, the back box;
+  - archive the BOX-CAP builder (session_01WLyzwuYeV2k1jZjS6XTSqU);
+  - LIB-8M Do 3 and LIB-6-PM's back patches open.
+- **Research:** #263 merged into `claude/libht-research` @ `7d7c52e1`.
+  - That was 3 LR-29 verifies with plants (all valid), 5 fix rounds and 2 focused re-checks. Copy lint and C8 are 0 on the 26 cards.
+  - Rulings R-LB2-1..26 are on #263.
+  - R-LB2-27 (dumbbell_biceps_curl drawable false; plate.mistake becomes elbow positioning c4, so the curl is a redraw) is #268 @ `f7d3ea7`. It merges when CI is green, and that gives the new <RESEARCH_HEAD>.
+  - Process: the verify runs by hand (a plant agent, then a blind critic agent) under scratchpad `vlb2*`. Keep the answer key out of shared files while the critic runs.
+- **New cards on `claude/sup-lib4-cards`:**
+  - `0b85c963`: LIB-6-PM, section 17, D-LIB-ORDER-2.
+  - `9d06627c`: LIB-7-FIX, LIB-7b, section 18.
+  - `39c71b01`: LIB-7c and section 19 (six-key rulings, D-LIB7FIX-PERKEY).
+  - Each card was critiqued and re-checked before it started.
+- **Posted rulings:**
+  - D-LIBHANDS-COUNT, on #193: hand-adding cards raise library-lint :241, :302 and :307 exactly.
+  - D-LIB8M-DEG, -NOFACTS, -SLRDLLINE and -MISTAKEPARTS, on #109.
+  - D-LIB10-BENCH-H, -BBELBOW and -SKULL1, on #265: the three BENCH ids are H, so BENCH is not built in LB2.
+- **Lanes (4 of 4 active):**
+  - LIB-10 #265 is drawing barbell_bench_press and close_grip; incline_bb and arnold wait for pilot A.
+  - LIB-7-FIX #193 is building PERKEY, then READY.
+  - LIB-8M #109: 4 redraws are pushed (`774becf`). The curl redraw comes next. Then one calibrated critic panel (D-CRITIC-CAL3) on all 5.
+  - LIB-3c #264 passed review @ `a76b72c` and is fixing M1/L1/L2 plus a main merge.
+  - WAITING: LIB-6-PM #181 @ `02ebed5` (needs LIB-5).
+- **Being drafted or critiqued:** LIB-12-FIX on #191, slot 6c. It needs per-key words files, the lint and gate counts, and a gate guard. LIB-12 keys mountain_climbers, so it merges before the pilot A pin.
+- **Merge order (checklist):**
+  1. LIB-5 + bundle and BOX-CAP (train 29)
+  2. LIB-5 Do 9
+  3. LIB-6 #181 + LIB-6-PM
+  4. LIB-7 #193 + LIB-7-FIX
+  5. LIB-7b (6b)
+  6. LIB-12 #191 + LIB-12-FIX (6c)
+  7. LIB-8M #109 (7). PIN GO waits for LIB-7b and LIB-12.
+  8. LIB-5v (7a)
+  9. LIB-7c (7b, before LB1)
+  10. LB1 #245 (8)
+  - LIB-3c can merge any time after its delta passes.
+- **Owner:** nothing is owed to him now. The pilot A sheet comes after LIB-8M's critic and QA.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
