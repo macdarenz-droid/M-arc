@@ -1237,6 +1237,29 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - VITEST-RPC's READY review;
   - the follow-ups F-LB3-1..6, F-HT11-1..2 and golden-B 18.
 
+**Update ~17:05 UTC (10-19).** main **`7307b30`** (train 31). Cards `claude/sup-lib4-cards` @ `fcc43fde`. Research head `38d5f9c6`.
+- **Owner usage rule (15:00, 15:02):** pause all work at 80 % of the weekly limit. At the trigger, start nothing new. Every builder, reviewer and research session finishes its current task to its next milestone post, then posts WAITING and stops. Going a little past 80 % to finish is fine. Resume after the reset (Sat 24 Oct 11:00 UTC) or on the owner's word.
+  - Meter: `list_events(kinds:["rate_limit_event"])` on any busy session gives `unifiedWindows.seven_day.utilization`. It read 0.61 at 16:31 and rises about 2 %/h, so 0.80 is about 02:00 UTC Tue.
+  - From 0.75 on, check every 20 min.
+  - The guard notes are in the supervisor's scratch usage-guard.md; this line is the rule.
+- **Train 31 merged** (#280 → `7307b30`): VITEST-RPC, the vitest RPC timeout fix. It changes tests only, so no APK. LIB-12-FIX and LIB-8M are told to merge main at their next push.
+- **LIB-ZOOM (#279):**
+  - Panel VALID; horizontal_leg_press APPROVED @ `9fbdfb5` (lib4-cards 26 @ `fcc43fde`; golden-B follow-up 19).
+  - Rebased on #245 `9e5d966` by a merge and pushed `f0dc516`.
+  - Its container was reclaimed during a local gate, so it was nudged at 17:05 to re-run, merge main and post READY.
+- **LB1 (#245):** MAIN565 FIXED @ `9e5d966` accepted. The root cause was LIB-3c's h10 ctx (a test-only fix). The HLP row is dropped. LIB-9a is WAITING (slot 8).
+- **LIB-13 LB3 (#274):** CARD FIELDS VERIFIED @ `eced1c1` (focused re-verify; plant caught). Two tightenings are asked: one_arm end-pose contacts and the sumo Q2 range test. The session had been idle since 14:57 (container reclaimed) and was nudged at 17:05.
+- **LIB-11 pilot B (#278):**
+  - MAPS RULED @ `6ade71ef` (D-LIB11-FACTS2: quoted contacts are facts).
+  - CARD FIELDS READY @ `24d2b68`. The blind verify was VALID (plant caught).
+  - RULED (6272494659): tempo and topFault pass; plateFacts gets one fix round (cardPose on every contact, plus the missing contacts listed there).
+  - Follow-up **F-PB-1** (research lane): stale notes, smith `notes[0]` and seated_leg_curl `notes[3]`.
+- **LIB-12-FIX (#191):** the measurement shows the timeout is not this PR's (15:25). 'LIB-12-FIX CRITIC HEAD' is next, then the R8 hand panel.
+- **Lanes now.**
+  - Active LIB, 4 of 4: LIB-12-FIX, LIB-13, LIB-11, LIB-ZOOM.
+  - WAITING: LIB-9a #245, LIB-10 #265, LIB-7c #271, HT-11 #273 (PASS), LIB-6-PM #181, LIB-7-FIX #193 (PASS), LIB-8M #109 (pilot A ok; PIN GO waits for LIB-7b, LIB-12 and R8).
+  - In review: LIB-5 Do 9 #270 (reviewer session_018H7am5XjyzXrMNSRHuWTQ2). It is first in merge order.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
