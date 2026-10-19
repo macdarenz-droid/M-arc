@@ -1206,6 +1206,37 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
 - **WAITING:** LIB-10, LIB-8M (owner sheet), LIB-6-PM (LIB-5 Do 9 merge), LIB-7-FIX (merge order), LIB-7c (#193).
 - **Owner:** the pilot A sheet answers are still due. Nothing else is owed.
 
+**Update ~14:00 UTC (10-19).** Cards `claude/sup-lib4-cards` @ `7c389904`. Research head **`38d5f9c6`** (pilot B, on top of LB3's `892d6516`).
+- **Owner, 12:10: "Pilot a ok"** (#109 6266791221). All 13 plates are approved. Each flag's shown default (approve as named exemptions) is accepted for F1-F4 and F7, and the held plates stay held. PIN GO still waits for LIB-7b, for LIB-12 on main, and for its R8 panel. F-LB3-1 (3 breath lines) rides #109's next push.
+- **Pilot B research is merged** (#277 → `38d5f9c6`).
+  - Focused LR-29 verify VALID: both plants caught, 263/263 quotes verbatim, and the supervisor's 10 % sample 18/18.
+  - Rulings R-PB-1..5 (pb-research-verify.md @ `712e2433`).
+  - PICK CHANGED: smith (flared elbows) and seated_leg_curl (pushing with the calves).
+- **LIB-11 pilot B started** (#278; card lib-11-card.md @ `70eb1460`, critic-reviewed with 26 findings; session_017gk3dd83jc9VpFjQCvYZqm).
+  - Note RULED: smith `sh.r.elev` 45; cable_fly F2 as a named flag.
+  - **crunch is HELD** (small motion; trace 9.4 px against 22.11).
+  - Slice look PASS (smith, seated_leg_curl, cable_fly), then PILOT B BULK GO (push_up).
+  - The E-R5 renders are done in scratch from #190's full spike set.
+- **LIB-13 LB3 (#274):**
+  - Slice look PASS, then rows and hinge BULK GO.
+  - D-LIB13-Q1b: landmine's Q1 test is REP's "roughly parallel", within 15°.
+  - pendlay F2 is a named flag.
+  - CARD FIELDS verify VALID. Fix D-LIB13-FACTS2: contact facts on 6 cards. This corrects my numbers-only reading; a focused re-verify follows.
+- **LIB-ZOOM started** (#279; amendment D-LIBZOOM-NOW @ `7c389904`, base #245 `38b436d`; session_01RBW26AifVHZ7uWufU2BJRx).
+  - Note RULED: option 1, the inline zoom circle, which is the owner's chosen form.
+  - It covers the 6 small-motion plates: horizontal_leg_press, barbell_shrug, dumbbell_shrug, cable_shrug, t_bar_row and crunch.
+  - Build @ `7c26b77`; its calibrated panel is running (S/critic-zoom), with R11 "zoom reads".
+  - D-LIBZOOM-HLP: #245 drops horizontal_leg_press's row before LB1 merges.
+- **LB1 (#245) fails 2 of its own tests on today's main** (lb1-plates :1140 and :1151, H10). Queued as D-LIB9a-MAIN565 for the next free slot.
+- **HT-11:** REVIEW PASS @ `e072214` (2 lows; R1b recorded). It is WAITING for merge slot 11, which comes after rows 1-10.
+- **In review:** LIB-5 Do 9 (#270; reviewer session_018H7am5XjyzXrMNSRHuWTQ2, running idle gate timing runs).
+- **Active LIB (4):** LIB-12-FIX (CI1 measurement), LIB-13, LIB-11, LIB-ZOOM.
+- **WAITING:** LIB-10, LIB-8M, LIB-6-PM, LIB-7-FIX, LIB-7c, HT-11. LB1 is queued.
+- **Supervisor owes:**
+  - before pilot B's renders reach the owner: plan 2.4 and row 20 E-R5 scope, and plan 6.1:663 hands;
+  - VITEST-RPC's READY review;
+  - the follow-ups F-LB3-1..6, F-HT11-1..2 and golden-B 18.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
