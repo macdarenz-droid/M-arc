@@ -757,6 +757,14 @@
       "pose": "end",
       "deg": 30,
       "claim": "c1"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.r.elev",
+      "pose": "end",
+      "deg": 60,
+      "claim": "c7",
+      "note": "c7 gives 45-75 degrees from the torso; 60 is its midpoint (supervisor, LB2 CARD FIELDS verify @ 2bd89d0)"
     }
   ],
   "tempo": [

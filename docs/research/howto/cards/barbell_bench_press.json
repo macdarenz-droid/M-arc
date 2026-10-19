@@ -943,6 +943,13 @@
       "kind": "contact",
       "landmark": "sole.r",
       "claim": "c14"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.r.elev",
+      "pose": "end",
+      "deg": 75,
+      "claim": "c2"
     }
   ],
   "tempo": [

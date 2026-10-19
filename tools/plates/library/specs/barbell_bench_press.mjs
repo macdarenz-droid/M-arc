@@ -13,14 +13,15 @@
 // from mid-chest to over the shoulders), c10 (buttocks stay on the bench), c12 (blades together), c14 (feet flat),
 // c25 (the Mistake: the bar driven straight up off the chest instead of up and back), c26, c18, c17 (tempo).
 // c3's "45 to 60 degrees" is no fact and no label (D-LIB10-BBELBOW): on this body a mid-chest touch with a vertical
-// forearm puts the upper arm at about 70° (#265 comment 6256258126); research reconciles c3 (R-LB2-24).
+// forearm puts the upper arm at about 70° (#265 comment 6256258126); research reconciles c3 (R-LB2-24). The card's c2
+// fact (LB2 CARD FIELDS verify @ 2bd89d0) is the 75° tuck, so the touch sits 2 cm above the nipple line (MID_CHEST).
 // Geometry decisions:
 //  - Supine class (copied): checks prove backUpper and buttock on the pad (plane, tol 1 cm), head clearance and soles
 //    on the floor (c10, c14).
 //  - Grip (c1): GRIP_X off the midline, LB2's one number for "slightly wider than shoulder-width" (decline_bench_press's
 //    GRIP_X, D-LIB10-NOTE Q1(b) condition 2).
 //  - Start (top, c8): arms straight (TOP_ELBOW 4) and vertical, the bar over the shoulder joints.
-//  - End (bottom, c2): the bar's underside on the chest surface at the nipple line (thorax 0.72 H, the anchor's MID);
+//  - End (bottom, c2): the bar's underside on the chest surface at mid-chest (thorax 0.74 H, 2 cm above the nipple line);
 //    the elbow straight under the bar in the side view (forearm vertical, c2), placed by the two arm lengths; the
 //    forearm leans in the front plane, which the side view does not show.
 //  - Bar path (c8): the Trace runs the diagonal from mid-chest to over the shoulders.
@@ -42,7 +43,7 @@ const FOOT_Z = 0.51;                                  // mid-sole in front of th
 const SCAP = { elev: -1, pro: -3 };                   // blades together (cm) (c12)
 const TOP_ELBOW = 4;                                  // top: elbow flexion (deg), arms straight
 const GRIP_X = 0.30;                                  // grip centre off the midline (m): slightly wider than shoulder-width (c1)
-const MID_CHEST = 0.72;                               // end: thorax height (H) of the touch, the nipple line (c2)
+const MID_CHEST = 0.74;                               // end: thorax height (H) of the touch, mid-chest at the 75° tuck (c2)
 const BAR_R = 0.014;                                  // bar shaft radius (m), the vendored 28 mm shaft
 const RACK_ELBOW = 25;                                // elbow bend when the hands reach the racked bar (deg)
 const RACK_H = 1.5;                                   // upright height (m)

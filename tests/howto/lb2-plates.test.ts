@@ -330,16 +330,16 @@ describe('LIB-10 close_grip_bench_press (H, D-LIB10-BENCH-H): drawn facts', { ti
 });
 
 describe('LIB-10 barbell_bench_press (H, D-LIB10-BBELBOW): drawn facts', { timeout: T }, () => {
-  it('c2: the end bar sits at mid-chest (the nipple line) and the forearm is vertical in the side view (within 1 deg)', () => {
-    const lm = itemsIn(bb, 'end').lm, nipple = body.fk(body.resolve(body.normPose(bb.poses.end, { height: 1.75 }), { height: 1.75 }).q, { height: 1.75 }).thorax([0, 0.72, 0.072]);
+  it('c2: the end bar sits at mid-chest (thorax 0.74 H) and the forearm is vertical in the side view (within 1 deg)', () => {
+    const lm = itemsIn(bb, 'end').lm, nipple = body.fk(body.resolve(body.normPose(bb.poses.end, { height: 1.75 }), { height: 1.75 }).q, { height: 1.75 }).thorax([0, 0.74, 0.072]);
     expect(Math.abs(lm.grips[2] - nipple[2])).toBeLessThan(0.01);
     const tilt = Math.atan2(Math.abs(lm['grip.r'][2] - lm['elbow.r'][2]), lm['grip.r'][1] - lm['elbow.r'][1]) * 180 / Math.PI;
     expect(tilt).toBeLessThan(1);
   });
-  it('the upper arm at the end is 65-75 deg from the torso axis (c2 StrongLifts "about 75°"; c3 is no fact, D-LIB10-BBELBOW); no label names c3', () => {
+  it('the upper arm at the end is 75 ± 2 deg from the torso axis (c2 StrongLifts "about 75°", the card fact; c3 is no fact, D-LIB10-BBELBOW); no label names c3', () => {
     const a = bbMod.info().upperArmFromTorsoDeg;
-    expect(a).toBeGreaterThanOrEqual(65);
-    expect(a).toBeLessThanOrEqual(75);
+    expect(a).toBeGreaterThanOrEqual(73);
+    expect(a).toBeLessThanOrEqual(77);
     for (const c of [...bb.callouts, ...bb.mistake.tells]) expect(c.text + c.cue).not.toMatch(/45|60|degree/i);
   });
   it('c8: the start bar is over the shoulder joints; the Trace runs the diagonal from there to mid-chest (footward and down)', () => {
@@ -665,5 +665,12 @@ describe('LIB-10 A11 and A6 (Do 6): the card fields, the ruled tempo map and the
     expect(h6(cg, { ...r, plateFacts: [{ kind: 'angle', joint: 'knee.r', pose: 'end', deg: drawn, claim: 'c3' }] })).toEqual([]);
     expect(h6(cg, { ...r, plateFacts: [{ kind: 'angle', joint: 'knee.r', pose: 'end', deg: drawn + 3, claim: 'c3' }] }).some((k: string) => k.startsWith('H6.fact:'))).toBe(true);
     expect(h6(cg, null)).toEqual(['H6:no-card']);
+  });
+  it('fields fix (verify @ 2bd89d0): the BB c2 75° tuck is matched on the joint path and red at 72°; incline holds c7 at 60°; pullover cites no c8', () => {
+    const r = research('barbell_bench_press'), f = r.plateFacts.find((x: any) => x.claim === 'c2');
+    expect(f).toEqual({ kind: 'angle', joint: 'sh.r.elev', pose: 'end', deg: 75, claim: 'c2' });
+    expect(h6(bb, { ...r, plateFacts: r.plateFacts.map((x: any) => (x === f ? { ...x, deg: 72 } : x)) })).toEqual(['H6.fact:2:angle:sh.r.elev']);
+    expect(cardOf('incline_barbell_bench_press').plateFacts.find((x: any) => x.claim === 'c7')).toMatchObject({ kind: 'angle', joint: 'sh.r.elev', pose: 'end', deg: 60 });
+    expect(cardOf('dumbbell_pullover').plateFacts.some((x: any) => x.claim === 'c8')).toBe(false);
   });
 });

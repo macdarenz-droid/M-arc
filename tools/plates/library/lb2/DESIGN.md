@@ -32,7 +32,7 @@ machine_chest_press is excluded as a hidden anchor (D-CRITIC-CAL2), so it is nev
 
 | id | mode and reason | template parent / clone source (approving sha) | composer / primitives | hand zoom: pair key |
 |---|---|---|---|---|
-| barbell_bench_press | H (D-LIB10-BENCH-H; D-LIB10-BBELBOW). Drawn from c2: the bar on the chest at the nipple line (thorax 0.72 H), the forearm vertical in the side view, the upper arm 68.4° from the torso (inside c2's StrongLifts "about 75°"); c3's 45-60° is no fact and no label (research R-LB2-24 reconciles c3; the card keys wait for it). Mistake `path` (c25, c8) | dumbbell_bench_press's supine code (e6f39ff), copied | close_grip_bench_press's rig: vendor rackUpright x2 + parts.mjs sideBar pin, vendor barbell | `bar-low-palm`: no LIB-7 key yet |
+| barbell_bench_press | H (D-LIB10-BENCH-H; D-LIB10-BBELBOW). Drawn from c2: the bar on the chest at mid-chest (thorax 0.74 H), the forearm vertical in the side view, the upper arm 74.8° from the torso (the card's c2 fact, 75°); c3's 45-60° is no fact and no label (research R-LB2-24 reconciles c3; the card keys wait for it). Mistake `path` (c25, c8) | dumbbell_bench_press's supine code (e6f39ff), copied | close_grip_bench_press's rig: vendor rackUpright x2 + parts.mjs sideBar pin, vendor barbell | `bar-low-palm`: no LIB-7 key yet |
 | incline_barbell_bench_press | H (D-LIB10-BENCH-H). Facts feasible: upper chest with a side-view vertical forearm gives 53-60°, inside c7's 45-75°. Waits for pilot A on main (its rig is pilot A's inclineBench, imported). Mistake `flare` (c8, c9) | dumbbell_bench_press's supine code and incline_dumbbell_press's reclined solve (e6f39ff), copied | inclineBench (pilot A, imported), vendor rackUpright, barbell | `bar-low-palm`: no key yet |
 | close_grip_bench_press | H (D-LIB10-BENCH-H). Drawn: grips in line with the shoulder joints (c1, read from landmarks: 2 × 0.2266 m), the bar on the chest where the ribs end (c4, thorax 0.66 H), the elbow by the ribs (c2); the card gives no forearm rule. Mistake `flare` (c2) | dumbbell_bench_press's supine code (e6f39ff), copied | vendor rackUpright x2 (head-side J-hook) + parts.mjs sideBar pin, vendor barbell | `bar-low-palm`: no key yet |
 | decline_bench_press | H (D-LIB10-DECLINE). New pose class (declined) and rig; 'decline' is not a BENCH value until its plate is pinned | dumbbell_bench_press's supine code (e6f39ff), copied | **declineBench** (new, single use), vendor barbell | `bar-low-palm`: no key yet |
@@ -231,8 +231,8 @@ an arc from the end elbow, read in the side view as the elbow at shoulder height
   tells `flare` and `high`.
 - **barbell_bench_press (H, D-LIB10-BBELBOW):** the anchor's supine body; grips 0.30 m off the midline (LB2's one
   number for "slightly wider than shoulder-width", as decline_bench_press); start: straight arms over the shoulder
-  joints (c8); end: the bar's underside on the chest at the nipple line, 12 cm footward of the shoulder, the elbow
-  straight under it in the side view (solved from the two arm lengths), so the upper arm sits 68.4° from the torso.
+  joints (c8); end: the bar's underside on the chest at mid-chest (thorax 0.74 H), 8.5 cm footward of the shoulder, the elbow
+  straight under it in the side view (solved from the two arm lengths), so the upper arm sits 74.8° from the torso (c2's 75° fact).
   The Trace runs the c8 diagonal. Tempo Lower 2, Press 1, Hold 1. Mistake `path` (c25): the bar driven 36 cm
   straight up from the touch, drawn as a dashed vertical path, a dashed bar and an arrow; tells `path` (Straight up)
   and `chest` (Stays over chest). A plumb datum through the elbow shows the vertical forearm.
