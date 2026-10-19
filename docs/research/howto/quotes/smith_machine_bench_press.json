@@ -211,6 +211,20 @@
       "text": "Do not train through shoulder pain",
       "status": "verbatim",
       "closest": "Do not train through shoulder pain"
+    },
+    {
+      "claim": "c17",
+      "source": "motra-smith-bench",
+      "text": "Chest up, ribs down",
+      "status": "verbatim",
+      "closest": "Chest up, ribs down"
+    },
+    {
+      "claim": "c18",
+      "source": "motra-smith-bench",
+      "text": "2-1-1",
+      "status": "verbatim",
+      "closest": "2-1-1"
     }
   ]
 }

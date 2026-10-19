@@ -345,7 +345,7 @@
    "why": "ACE says people usually do the crunch too fast and pull with the hip flexors, which tilts the pelvis and stresses the low back (c6).",
    "claim": "c6",
    "drawable": true,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 1: jerking up fast with the hip flexors, the pelvis tipping forward (c6). ACE says \"Individuals usually perform this movement too rapidly and recruit the hip flexors to assist with the upward phase.\" (c6): a frequency word for this fault of this exercise. No other fault passes step 1. Set aside: BarBend's \"How often should you train your abs in this journey toward strength?\" is about training. Step 2 is not needed; ACE ties the same fault to harm (\"This technique tilts the pelvis anteriorly, increasing the stress on the low back and should be avoided.\"), and BarBend's \"The cousin of straining your neck is crunching your shoulders instead of your abs.\" ties neck pulling to strain, but step 1 decides. drawable stays true: the fault has a still sign the side view shows, the pelvis tipped forward and the low back lifting off the mat, though speed also causes it (LR-31). Pick unchanged."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: jerking up fast with the hip flexors, the pelvis tipping forward (c6). ACE says \"Individuals usually perform this movement too rapidly and recruit the hip flexors to assist with the upward phase.\" (c6): a frequency word for this fault of this exercise. No other fault passes step 1. Set aside: BarBend's \"How often should you train your abs in this journey toward strength?\" is about training. Step 2 is not needed; ACE ties the same fault to harm (\"This technique tilts the pelvis anteriorly, increasing the stress on the low back and should be avoided.\"), and BarBend's \"Straining Your Neck\" heading names neck strain as a mistake, but step 1 decides. drawable stays true: the fault has a still sign the side view shows, the pelvis tipped forward and the low back lifting off the mat, though speed also causes it (LR-31). Pick unchanged."
   },
   "tells": [
    {
@@ -367,7 +367,7 @@
     "c5",
     "c11"
    ],
-   "text": "Pause 1 s at the top: ACE's \"Hold this position briefly.\" comes right after the curl up and gives no seconds, so the 1 s is a drawing convention named in the WEAK tempo claim c12 (LR-33). Up 1 and down 2 are drawing values for \"slowly curling your torso towards your thighs\" (c3) and \"slowly uncurl\" (c5, c11); no seconds are given. BarBend's \"give your abs a final squeeze\" at the top (c4) asks for no pause length."
+   "text": "Pause 1 s at the top: ACE's \"Hold this position briefly.\" comes right after the curl up and gives no seconds, so the 1 s is a drawing convention named in the WEAK tempo claim c12 (LR-33). Up 1 and down 2 are drawing values for \"slowly curling your torso towards your thighs\" (c3) and \"slowly uncurl\" (c5) and \"very slow, deliberate reps\" (c11); no seconds are given. BarBend's \"give your abs a final squeeze\" at the top (c4) asks for no pause length."
   },
   "variantLine": null
  },

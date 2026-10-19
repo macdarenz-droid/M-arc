@@ -397,7 +397,7 @@
    "set": null,
    "hold": "5-60 s",
    "rest": null,
-   "text": "Hold for as long as form stays good: 5-15 s for some, built a few seconds at a time toward 30-60 s per side (c9). No source sets the rest. This is an isometric hold, so there is no pause after a lift (LR-33); BarBend's \"pause for a moment\" belongs to a rotating variation, not this hold.",
+   "text": "Hold for as long as form stays good: 5-15 s for some, built a few seconds at a time toward 30-45 s; aim for 30-60 s per side (c9). No source sets the rest. This is an isometric hold, so there is no pause after a lift (LR-33); BarBend's \"pause for a moment\" belongs to a rotating variation, not this hold.",
    "claim": "c9"
   },
   "variantLine": "Easier: top foot in front of the bottom foot, or bottom knee down (c4, c8). The plate draws the stacked-leg version (c1)."
@@ -469,7 +469,8 @@
    "fix": "Lift your hips back in line; end the hold if you can't.",
    "claim": [
     "c5",
-    "c9"
+    "c9",
+    "c2"
    ]
   },
   {
