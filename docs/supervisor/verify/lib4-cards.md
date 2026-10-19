@@ -4220,3 +4220,8 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
   - pendlay_row: R3 [3,3,3]. The hand does not reach the bar.
   - one_arm_dumbbell_row: R1 [2,3,4], R3 [3,3,3], R5 [3,3,2]. Support arm, flat hand, Mistake size.
 - One fix round (#274 6278550928). The sumo side-view stance goes on the sheet as an owner line.
+- **Recheck @ `423acc1`** (page `8248b8eb…`): **VALID**. New critics, plants and shuffle. Plants caught: one_arm Mistake drawn as the correct pose, R5 [2,1,2]; back_extension pad 8 cm off the thighs, R3 [2,2,2]. pull_up has every median ≥ 4. lat_pulldown R1 [5,3,3] is golden-B follow-up 19, already confirmed, and excepted.
+  - **back_extension PASS.** Approved @ `423acc1`: landmine_row, dumbbell_romanian_deadlift, conventional_deadlift, sumo_deadlift, back_extension (5 of 7).
+  - pendlay_row: R2 [3,3,4]. The bar glyph came apart off its plate centre, a regression from the grip fix.
+  - one_arm_dumbbell_row: R5 [3,2,3]. The Mistake is still a fragment; "Blade not back" shows no fault. R1 is read under D-LIB13-ONEARM (a card-true bent support arm).
+  - **D-LIB13-PANEL2** (#274): a second focused round for those two at the resume, then a recheck. If either still fails, it is held (D-LIB8M-CARDTRUE).
