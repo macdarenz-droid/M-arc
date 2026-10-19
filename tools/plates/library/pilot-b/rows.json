@@ -21,15 +21,6 @@
    "stage": "drawing",
    "view": "side"
   },
-  "lib_crunch": {
-   "src": "library/specs/crunch.mjs",
-   "slug": "crunch",
-   "prefix": "crunch",
-   "chromeId": "crunch",
-   "mode": "H",
-   "stage": "drawing",
-   "view": "side"
-  },
   "lib_cable_fly": {
    "src": "library/specs/cable_fly.mjs",
    "slug": "cable-fly",

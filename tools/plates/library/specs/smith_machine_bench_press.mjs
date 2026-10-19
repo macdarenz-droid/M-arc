@@ -39,7 +39,7 @@ import { smith, SMITH_ITEMS, STOP } from '../eq/smith.mjs';
 
 const H = 1.75, BODY = { height: H };
 const R = Math.PI / 180;
-const BENCH_TOP = 0.43, BENCH_LEN = 1.2, BENCH_Z = -0.40;   // the anchor's flat bench (m)
+const BENCH_TOP = 0.43, BENCH_LEN = 1.2, BENCH_Z = -0.46;   // the anchor's flat bench (m), set 6 cm headward so the bar meets the mid-chest with the pad under the head
 const FOOT_Z = 0.51;                                  // mid-sole in front of the hip joint (m), the anchor's
 const SCAP = { elev: -1, pro: -3 };                   // blades together and down (cm) (c1)
 const TOP_ELBOW = 4;                                  // top: elbow flexion (deg), arms straight
@@ -135,7 +135,7 @@ export const info = () => ({ endElev: elevOf(lmE, 'r'), misElev: elevOf(lmM, 'r'
 
 export const STOP_Y = BAR1[1] - BAR_R - STOP_BELOW;   // the stop's top (c4)
 const barOf = lm => [0, lm.grips[1], RAIL_Z];
-export const rigOf = lm => smith({ railZ: RAIL_Z, bar: barOf(lm), stopY: STOP_Y, base: [RAIL_Z - 0.40, RAIL_Z + 0.40] });
+export const rigOf = lm => smith({ railZ: RAIL_Z, bar: barOf(lm), stopY: STOP_Y, base: [RAIL_Z - 0.12, RAIL_Z + 0.45] });
 // The stop sits beside the chest, behind the torso in side view: its hidden outline is redrawn dashed in the end pose
 // (hidden-part rule, 13 Q2 (c)), so the callout points at a drawn mark.
 const STOP_PHANTOM = (() => { const y0 = STOP_Y - STOP.h, z0 = RAIL_Z - STOP.w / 2, z1 = RAIL_Z + STOP.w / 2;
@@ -170,8 +170,8 @@ export default {
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }],
   callouts: [
     { key: 'midchest', text: 'Bar over<br>mid-chest', anchor: 'grip.r', box: { left: 200, top: 200 }, cue: 'Set the bench so the bar comes down onto the middle of your chest.' },
-    { key: 'stops', text: 'Stops<br>set', anchor: [0, STOP_Y - STOP.h / 2, RAIL_Z - STOP.w / 2], box: { left: 24, top: 170 }, cue: 'Set the safety stops just below where the bar touches your chest.' },
-    { key: 'blades', text: 'Blades<br>together', anchor: 'shoulderTop.r', box: { left: 16, top: 212 }, cue: 'Pull your shoulder blades together and down, and hold your chest up.' },
+    { key: 'stops', text: 'Stops<br>set', anchor: [0, STOP_Y - STOP.h / 2, RAIL_Z - STOP.w / 2], box: { left: 56, top: 202 }, cue: 'Set the safety stops just below where the bar touches your chest.' },
+    { key: 'blades', text: 'Blades<br>together', anchor: [0, BENCH_TOP, S.r[2]], box: { left: 70, top: 294 }, cue: 'Pull your shoulder blades together and down, and hold your chest up.' },
   ],
   mistake: {
     pose: mistakePose,
@@ -182,8 +182,8 @@ export default {
       { kind: 'dashed', pts: SHOULDER_LINE },                                                        // the shoulder line: 90 degrees to the torso
     ],
     tells: [
-      { key: 'flare', text: 'Elbows<br>flare wide', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbows flare out wide, level with your shoulders.' },
-      { key: 'level', text: 'Level with<br>shoulders', anchor: SHOULDER_LINE[0], cue: 'Your upper arms stick straight out, not about 45 degrees from your sides.' },
+      { key: 'flare', text: 'Elbows<br>flare wide', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 184, top: 200 }, cue: 'Your elbows flare out wide, level with your shoulders.' },
+      { key: 'level', text: 'Level with<br>shoulders', anchor: SHOULDER_LINE[0], box: { left: 30, top: 150 }, cue: 'Your upper arms stick straight out, not about 45 degrees from your sides.' },
     ],
   },
   alt: 'Smith machine bench press, side view. Lying on a flat bench under the Smith bar, feet flat and shoulder blades together, the lifter lowers the bar straight down its rails to the middle of the chest, elbows about 45 degrees from the sides, stops set just below.',
