@@ -265,7 +265,7 @@
   },
   {
    "id": "c11",
-   "text": "In 18 young men over 8 weeks, push-ups set to a load like a 40% 1-RM bench press gave similar muscle growth and strength gain to that bench press.",
+   "text": "In 18 young men over 8 weeks, push-ups set to a load like a 40% 1-RM bench press gave similar muscle growth and strength gain to that bench press; growth was measured as muscle thickness at the biceps, triceps and pectoralis major.",
    "tags": [
     "DATA"
    ],
@@ -282,6 +282,11 @@
      "source": "kikuchi-2017",
      "text": "Eighteen male participants",
      "where": "abstract, methods"
+    },
+    {
+     "source": "kikuchi-2017",
+     "text": "Muscle thickness at three sites (biceps, triceps, and pectoralis major), bench-press 1RM, maximum repetition at 40%1RM, and power output (medicine ball throw) were measured before and after the training period.",
+     "where": "abstract (methods)"
     }
    ]
   },
@@ -549,7 +554,10 @@
   "primary": [
    {
     "muscleId": "chest",
-    "claim": "c9"
+    "claim": [
+     "c9",
+     "c11"
+    ]
    }
   ],
   "secondary": [

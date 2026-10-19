@@ -499,7 +499,10 @@
   "primary": [
    {
     "muscleId": "hamstrings",
-    "claim": "c12"
+    "claim": [
+     "c12",
+     "c11"
+    ]
    }
   ],
   "secondary": [
