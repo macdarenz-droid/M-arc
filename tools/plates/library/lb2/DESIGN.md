@@ -32,7 +32,7 @@ machine_chest_press is excluded as a hidden anchor (D-CRITIC-CAL2), so it is nev
 
 | id | mode and reason | template parent / clone source (approving sha) | composer / primitives | hand zoom: pair key |
 |---|---|---|---|---|
-| barbell_bench_press | H (D-LIB10-BENCH-H). **Held for a ruling:** c2 (mid-chest, forearms perpendicular to the floor) and c3 (upper arms 45-60°) cannot both hold on this body; a mid-chest touch with a side-view vertical forearm puts the upper arm at 68-71° (#265 comment 6256258126). Mistake `path` (c25, c8) | dumbbell_bench_press's supine code (e6f39ff), copied | vendor rackUpright x2 + parts.mjs sideBar pin, vendor barbell | `bar-low-palm`: no LIB-7 key yet |
+| barbell_bench_press | H (D-LIB10-BENCH-H; D-LIB10-BBELBOW). Drawn from c2: the bar on the chest at the nipple line (thorax 0.72 H), the forearm vertical in the side view, the upper arm 68.4° from the torso (inside c2's StrongLifts "about 75°"); c3's 45-60° is no fact and no label (research R-LB2-24 reconciles c3; the card keys wait for it). Mistake `path` (c25, c8) | dumbbell_bench_press's supine code (e6f39ff), copied | close_grip_bench_press's rig: vendor rackUpright x2 + parts.mjs sideBar pin, vendor barbell | `bar-low-palm`: no LIB-7 key yet |
 | incline_barbell_bench_press | H (D-LIB10-BENCH-H). Facts feasible: upper chest with a side-view vertical forearm gives 53-60°, inside c7's 45-75°. Waits for pilot A on main (its rig is pilot A's inclineBench, imported). Mistake `flare` (c8, c9) | dumbbell_bench_press's supine code and incline_dumbbell_press's reclined solve (e6f39ff), copied | inclineBench (pilot A, imported), vendor rackUpright, barbell | `bar-low-palm`: no key yet |
 | close_grip_bench_press | H (D-LIB10-BENCH-H). Drawn: grips in line with the shoulder joints (c1, read from landmarks: 2 × 0.2266 m), the bar on the chest where the ribs end (c4, thorax 0.66 H), the elbow by the ribs (c2); the card gives no forearm rule. Mistake `flare` (c2) | dumbbell_bench_press's supine code (e6f39ff), copied | vendor rackUpright x2 (head-side J-hook) + parts.mjs sideBar pin, vendor barbell | `bar-low-palm`: no key yet |
 | decline_bench_press | H (D-LIB10-DECLINE). New pose class (declined) and rig; 'decline' is not a BENCH value until its plate is pinned | dumbbell_bench_press's supine code (e6f39ff), copied | **declineBench** (new, single use), vendor barbell | `bar-low-palm`: no key yet |
@@ -229,6 +229,16 @@ an arc from the end elbow, read in the side view as the elbow at shoulder height
   Mistake `flare` (c2): the bar lands at thorax 0.77 H, 19.2 cm headward (19.2 cm from the chin, never the neck), the
   elbow swings 25 cm out; dashed ghost upper arm and forearm, a dashed bar ring, arrows from the end bar and elbow;
   tells `flare` and `high`.
+- **barbell_bench_press (H, D-LIB10-BBELBOW):** the anchor's supine body; grips 0.30 m off the midline (LB2's one
+  number for "slightly wider than shoulder-width", as decline_bench_press); start: straight arms over the shoulder
+  joints (c8); end: the bar's underside on the chest at the nipple line, 12 cm footward of the shoulder, the elbow
+  straight under it in the side view (solved from the two arm lengths), so the upper arm sits 68.4° from the torso.
+  The Trace runs the c8 diagonal. Tempo Lower 2, Press 1, Hold 1. Mistake `path` (c25): the bar driven 36 cm
+  straight up from the touch, drawn as a dashed vertical path, a dashed bar and an arrow; tells `path` (Straight up)
+  and `chest` (Stays over chest). A plumb datum through the elbow shows the vertical forearm.
+- **Flat-bench rack (both barbell plates):** the head-side upright under the racked bar over the brow, the foot-side
+  upright RACK_DEPTH 1.6 m away (a deep power rack; at 1.2 m it stood where the labels need room), 1.5 m tall, the pin
+  3 cm under the bar's underside at the touch. All unsourced, listed in the spec headers.
 - **Q4 (ruled):** c5 governs the start: the start bar sits over the shoulder joints, 12.3 cm footward of the chin (c2
   says "above your face"). No plateFacts fact is written from c2 at pose `start`; the verifier is told both.
 - Render defects R7 (the upright behind the head) and R8 (the floating knee, unsourced leg angles) are recorded; a test

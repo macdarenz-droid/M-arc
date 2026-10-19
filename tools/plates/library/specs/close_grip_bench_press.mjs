@@ -33,7 +33,7 @@
 //   neck; key `flare`); tempo = plate.tempo c9 (up 1, down 2, no pause): Lower 2, Press 1 (D-LIB10-NOTE section 9).
 // Unsourced numbers (no card claim gives them; 13.3 must-fix 14): BENCH_TOP, BENCH_LEN, BENCH_Z and FOOT_Z (the
 //   anchor's), TOP_ELBOW (the anchor's), BOT_POLE (the elbow's aim), RACK_ELBOW 25 and the bar over the brow (as
-//   decline_bench_press), HIP_UPRIGHT_Z, RACK_H, SAFETY_BELOW, PLATE_D (45 cm, as the 8), MIS_CHEST and MIS_POLE (the
+//   decline_bench_press), RACK_DEPTH (1.6 m, a deep power rack: the foot-side upright stands clear of the labels), RACK_H, SAFETY_BELOW, PLATE_D (45 cm, as the 8), MIS_CHEST and MIS_POLE (the
 //   Mistake's touch and elbow aim).
 import { landmarksOf, fk, resolve, normPose, WINTER, REF } from '../engine.mjs';
 import { sideBar } from '../eq/parts.mjs';
@@ -48,8 +48,8 @@ const RIBS_END = 0.66;                                // end: thorax height (H) 
 const BOT_POLE = [0.25, -1, 0.3];                    // end: the elbow's aim (x outward per side): down, by the ribs (c1, c2)                     // end: the elbow's aim (x outward per side): down, footward (c1, c2)                     // end: the elbow's aim (x outward per side): down, footward (c1, c2)                     // end: the elbow's aim (x outward per side): down, footward (c1, c2)
 const BAR_R = 0.014;                                  // bar shaft radius (m), the vendored 28 mm shaft
 const RACK_ELBOW = 25;                                // elbow bend when the hands reach the racked bar (deg)
-const HIP_UPRIGHT_Z = 0.12;                           // the second upright, by the hips (m)
 const RACK_H = 1.5;                                   // upright height (m)
+const RACK_DEPTH = 1.6;                               // upright to upright, front to back (m): a deep power rack, its foot-side upright clear of the labels
 const SAFETY_BELOW = 0.03;                            // safety pin top under the bar's underside at the touch (m)
 const PLATE_D = 0.45;                                 // plate diameter (m)
 const MIS_CHEST = 0.77;                               // Mistake: thorax height (H) of the high touch (c2: high on the chest)
@@ -116,6 +116,7 @@ const reachLen = Math.sqrt(L1 * L1 + L2 * L2 + 2 * L1 * L2 * Math.cos(RACK_ELBOW
 const RACK_BAR = (() => { const sh = S.r, dz = RACK_Z - sh[2]; return [0, sh[1] + Math.sqrt(reachLen * reachLen - dz * dz), RACK_Z]; })();
 const HOOK_Y = RACK_BAR[1] - BAR_R, UPRIGHT_W = 0.076;
 const HEAD_UPRIGHT_Z = RACK_Z - UPRIGHT_W / 2 - 0.055;            // the bar sits in the hook, 5.5 cm out from the face
+const HIP_UPRIGHT_Z = HEAD_UPRIGHT_Z + RACK_DEPTH;                  // the second upright, a typical power rack's depth footward
 const SAFETY_Y = BAR1[1] - BAR_R - SAFETY_BELOW, PIN_T = 0.05;
 const PIN = sideBar([0, SAFETY_Y - PIN_T / 2, HEAD_UPRIGHT_Z], [0, SAFETY_Y - PIN_T / 2, HIP_UPRIGHT_Z], PIN_T, { z: 'back' });
 const PIN_PHANTOM = [SAFETY_Y, SAFETY_Y - PIN_T].map(y => ({ type: 'line', cls: 'eq-line m-line', z: 'front', part: 'safety', pts: [[0, y, S.r[2]], [0, y, HIP_UPRIGHT_Z]] }));
@@ -152,9 +153,9 @@ export default {
   trace: { point: 'grip.r', trim: [12, 12] },
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }],
   callouts: [
-    { key: 'ribs', text: 'Elbows<br>to ribs', anchor: 'elbow.r', cue: 'Keep your elbows close to your ribs as the bar comes down.' },
-    { key: 'touch', text: 'Low-chest<br>touch', anchor: 'grip.r', cue: 'Touch the bar low on your chest, where the ribs end.' },
-    { key: 'hips', text: 'Hips<br>pressed down', anchor: 'buttock', cue: 'Push your feet into the floor and keep your hips on the bench.' },
+    { key: 'ribs', text: 'Elbows<br>to ribs', anchor: 'elbow.r', box: { left: 110, top: 288 }, cue: 'Keep your elbows close to your ribs as the bar comes down.' },
+    { key: 'touch', text: 'Low-chest<br>touch', anchor: 'grip.r', box: { left: 180, top: 150 }, cue: 'Touch the bar low on your chest, where the ribs end.' },
+    { key: 'hips', text: 'Hips<br>pressed down', anchor: 'buttock', box: { left: 200, top: 198 }, cue: 'Push your feet into the floor and keep your hips on the bench.' },
   ],
   mistake: {
     pose: mistakePose,

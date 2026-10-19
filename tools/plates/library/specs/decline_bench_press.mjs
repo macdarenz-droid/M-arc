@@ -170,7 +170,7 @@ export default {
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Pause', s: 1 }, { phase: 'Press', s: 1, move: true }],
   callouts: [
     { key: 'feet', text: 'Feet<br>hooked', anchor: 'ankle.r', cue: 'Lock your feet under the pads at the high end.' },
-    { key: 'touch', text: 'Lower-chest<br>touch', anchor: 'grip.r', cue: 'Touch the bar to your lower chest only, never high toward the neck.' },
+    { key: 'touch', text: 'Lower-chest<br>touch', anchor: 'grip.r', box: { left: 176, top: 142 }, cue: 'Touch the bar to your lower chest only, never high toward the neck.' },
     { key: 'blades', text: 'Blades<br>together', anchor: BLADES, box: { left: 118, top: 282 }, cue: 'Pull your shoulder blades together and down, chest up.' },
   ],
   mistake: {
