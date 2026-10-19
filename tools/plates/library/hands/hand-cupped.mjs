@@ -22,8 +22,11 @@ export const VARIANTS = {
     claims: [`${G}#g1`, `${G}#g2`, `${G}#g5`, `${G}#g6`],
   },
 };
-export const IDS = { goblet_squat: { variant: 'goblet', orientation: 'under', faults: ['weight-away'], claims: [`${G}#g1`] } };
+// D-LIB12FIX-R8-GAPS (#191 6274835211): goblet_squat moved to GAPS after the one R8 fix round; its variant, words file and view
+// code stay for follow-up F-LIB12-R8B.
+export const IDS = {};
 export const GAPS = {
+  goblet_squat: 'R8 panel 2026-10-19: below the hand bar (lib4-cards 27)',
   dumbbell_overhead_triceps_extension: 'no hand fault sourced for the cupped grip (shared/cupped-thumb.json gap 1); its own card zooms on the handle wrap',
 };
 /** Census scope: plan 2.3 "cupped (2)". */

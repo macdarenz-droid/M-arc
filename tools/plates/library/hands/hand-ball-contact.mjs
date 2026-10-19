@@ -22,8 +22,10 @@ export const VARIANTS = {
     claims: [`${B}#c1`, `${B}#c2`, `${B}#c3`, `${B}#c4`],
   },
 };
-export const IDS = { wall_ball: { variant: 'catch', orientation: 'under', faults: ['side-sandwich'], claims: [`${B}#c1`] } };
-export const GAPS = { medicine_ball_slam: 'no hand placement, thumb, wrist or hand fault sourced (shared/implement-medicine-ball-slam.json gaps)' };
+// D-LIB12FIX-R8-GAPS (#191 6274835211): wall_ball moved to GAPS after the one R8 fix round; its variant, words file and view
+// code stay for follow-up F-LIB12-R8B.
+export const IDS = {};
+export const GAPS = { wall_ball: 'R8 panel 2026-10-19: below the hand bar (lib4-cards 27)', medicine_ball_slam: 'no hand placement, thumb, wrist or hand fault sourced (shared/implement-medicine-ball-slam.json gaps)' };
 /** Census scope: plan 2.3 "ball-contact (2)". */
 export const CENSUS = { source: 'plan 2.3 ball-contact (2)', count: 2 };
 

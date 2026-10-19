@@ -9463,7 +9463,7 @@ if (gate.runs('LIB-12'))
   try {
     const { problems, stats } = await runLib12Gate(lib12);
     for (const p of problems) errors.push(`${tag}: ${p}`);
-    if (stats.pairs !== 20 * 5) errors.push(`${tag}: ${stats.pairs} pair renders, expected 100 (20 pairs x 5 themes)`);
+    if (stats.pairs !== 17 * 5) errors.push(`${tag}: ${stats.pairs} pair renders, expected 85 (17 pairs x 5 themes; D-LIB12FIX-R8-GAPS)`);
     if (!problems.length) console.log(`${tag}: ${stats.pairs / 5} hand pairs x 5 themes x 3 widths fit, contrast >= golden B, Right != Wrong, stable (${((Date.now() - t0) / 1000).toFixed(1)} s)`);
   } finally {
     await lib12.close();

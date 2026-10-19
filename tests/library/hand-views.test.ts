@@ -13,9 +13,10 @@ const CLAIMS = JSON.parse(readFileSync(new URL('../../tools/plates/library/hands
 // implement 5, plan 2.3 for cupped 2, front-rack 1, ball-contact 2; the pair keys from plan 2.3 and LIB-7 §2).
 const SCOPE: Record<string, { drawn: string[]; gaps: string[] }> = {
   'palm-flat': { drawn: ['bear_crawl', 'bird_dog', 'burpee', 'diamond_push_up', 'incline_push_up', 'mountain_climbers', 'pike_push_up', 'push_up'], gaps: ['bench_dip', 'renegade_row'] },
-  cupped: { drawn: ['goblet_squat'], gaps: ['dumbbell_overhead_triceps_extension'] },
-  'front-rack': { drawn: ['front_squat'], gaps: [] },
-  'ball-contact': { drawn: ['wall_ball'], gaps: ['medicine_ball_slam'] },
+  // goblet_squat, front_squat and wall_ball moved to GAPS (D-LIB12FIX-R8-GAPS, #191 6274835211)
+  cupped: { drawn: [], gaps: ['dumbbell_overhead_triceps_extension', 'goblet_squat'] },
+  'front-rack': { drawn: [], gaps: ['front_squat'] },
+  'ball-contact': { drawn: [], gaps: ['medicine_ball_slam', 'wall_ball'] },
   'battle-rope': { drawn: ['battle_ropes'], gaps: [] },
   implement: { drawn: [], gaps: ['jump_rope', 'kettlebell_swing', 'sled_pull'] },
   'dip-bar': { drawn: [], gaps: ['weighted_dip'] },
@@ -24,8 +25,8 @@ const SCOPE: Record<string, { drawn: string[]; gaps: string[] }> = {
 /** The LIB-12 sweep: every count asserted through `sweep` (red on empty input), per key drawn + gap = scope. */
 function lib12Sweep(all: any[]) {
   const sweep = common.sweep, mine: any[] = sweep(all.filter(m => m.OWNER === 'LIB-12'), 8, 'LIB-12 keys');
-  sweep(mine.filter(m => Object.keys(m.IDS).length), 5, 'drawn keys');
-  sweep(mine.filter(m => !Object.keys(m.IDS).length), 3, 'gap keys');
+  sweep(mine.filter(m => Object.keys(m.IDS).length), 2, 'drawn keys');      // D-LIB12FIX-R8-GAPS, #191 6274835211
+  sweep(mine.filter(m => !Object.keys(m.IDS).length), 6, 'gap keys');
   let drawn = 0, gaps = 0;
   for (const m of mine) {
     const s = SCOPE[m.KEY];
@@ -36,7 +37,7 @@ function lib12Sweep(all: any[]) {
     if (m.CENSUS.count !== s.drawn.length + s.gaps.length && m.KEY !== 'implement') throw new Error(`${m.KEY}: census ${m.CENSUS.count}`);
     drawn += Object.keys(m.IDS).length; gaps += Object.keys(m.GAPS).length;
   }
-  sweep(Array(drawn), 12, 'drawn ids'); sweep(Array(gaps), 9, 'gap ids');
+  sweep(Array(drawn), 9, 'drawn ids'); sweep(Array(gaps), 12, 'gap ids');   // D-LIB12FIX-R8-GAPS, #191 6274835211
   return pairs.indexOf(all);   // throws when an id is in two keys
 }
 /** The spec renderPair builds (pairs.mjs), built here so a test can swap or change the halves. */
@@ -60,7 +61,7 @@ beforeAll(async () => {
 });
 
 describe('LIB-12 A5: sweeps (drawn + gap = census scope per key)', () => {
-  it('8 keys, 12 drawn, 9 gaps, each id in exactly one key', () => {
+  it('8 keys, 9 drawn, 12 gaps, each id in exactly one key', () => {
     const idx = lib12Sweep(mods);
     for (const s of Object.values(SCOPE)) { for (const id of s.drawn) expect(idx.drawn.has(id)).toBe(true); for (const id of s.gaps) expect(idx.gaps.has(id)).toBe(true); }
   });
@@ -70,7 +71,7 @@ describe('LIB-12 A5: sweeps (drawn + gap = census scope per key)', () => {
     const imp = mods.find(m => m.KEY === 'implement'), pf = mods.find(m => m.KEY === 'palm-flat');
     const { kettlebell_swing: _k, ...rest } = imp.GAPS;
     const bad = mods.map(m => (m === imp ? { ...m, IDS: { kettlebell_swing: pf.IDS.push_up }, VARIANTS: pf.VARIANTS, GAPS: rest } : m));
-    expect(() => lib12Sweep(bad)).toThrow(/sweep drawn keys: 6 items, expected 5/);                     // a gap key became a drawn key
+    expect(() => lib12Sweep(bad)).toThrow(/sweep drawn keys: 3 items, expected 2/);                     // a gap key became a drawn key
     const { bench_dip: _b, ...pfGaps } = pf.GAPS;                                                              // a gap drawn inside a drawn key
     const bad2 = mods.map(m => (m === pf ? { ...m, IDS: { ...pf.IDS, bench_dip: pf.IDS.push_up }, GAPS: pfGaps } : m));
     expect(() => lib12Sweep(bad2)).toThrow(/palm-flat: drawn \[bear_crawl,bench_dip,.*\] gaps \[renegade_row\] differ from scope/);
@@ -84,12 +85,12 @@ describe('LIB-12 A5: sweeps (drawn + gap = census scope per key)', () => {
 
 describe('LIB-12 A2 + A3: geometry per view, Right and Wrong not swapped (R8 machine half)', () => {
   it('every drawn pair and fault passes its view checks', () => {
-    const list = common.sweep(drawnPairs(), 20, 'view pairs');   // palm-flat 8 x 2 faults + goblet + front squat + wall ball + battle ropes
+    const list = common.sweep(drawnPairs(), 17, 'view pairs');   // palm-flat 8 x 2 faults + battle ropes (D-LIB12FIX-R8-GAPS, #191 6274835211)
     for (const { m, id, f } of list) expect([id, f, m.render(specOf(m, id, f)).report.problems]).toEqual([id, f, []]);
   });
   it('every drawn id and fault renders through LIB-7\'s renderPair with no problem', () => {
     const ids = mods.filter(m => m.OWNER === 'LIB-12').flatMap(m => Object.entries(m.IDS).flatMap(([id, c]: any) => c.faults.map((f: string) => [id, f])));
-    for (const [id, f] of common.sweep(ids, 20, 'renderPair pairs')) expect([id, f, pairs.renderPair(id, { fault: f }).report.problems]).toEqual([id, f, []]);
+    for (const [id, f] of common.sweep(ids, 17, 'renderPair pairs')) expect([id, f, pairs.renderPair(id, { fault: f }).report.problems]).toEqual([id, f, []]);
   });
   it('battle_ropes renders through pairs.mjs on golden-B renderHandPair with the explicit 38 mm rope', () => {
     const r = pairs.renderPair('battle_ropes');
@@ -189,7 +190,7 @@ describe('LIB-12 A6: close-up QA (H2 vocabulary, H7 determinism)', () => {
     expect(h2(br.svg, 't-br', V)).toEqual([]);
   });
   it('mutation H2: a colour literal and a duplicated id are red', async () => {
-    const V = await vocab(), m = mods.find(q => q.KEY === 'cupped'), s = specOf(m, 'goblet_squat', 'weight-away'), svg = m.render(s).svg;
+    const V = await vocab(), m = mods.find(q => q.KEY === 'palm-flat'), s = specOf(m, 'push_up', 'cupped-palm'), svg = m.render(s).svg;   // a drawn id (D-LIB12FIX-R8-GAPS, #191 6274835211)
     expect(h2(svg.replace('<path class="h-divider"', '<path fill="#f00" class="h-divider"'), s.uid, V)).toContain('colour literal');
     const dup = svg.replace('</defs>', `<path id="${s.uid}-r-p0" d="M0 0"/></defs>`);
     expect(h2(dup, s.uid, V)).toContain('duplicate id');
@@ -214,8 +215,8 @@ describe('LIB-12 A7: inputsFor covers each id\'s view files', () => {
     }
   });
   it('mutation: a list without the view file is red', () => {
-    const cu = mods.find(m => m.KEY === 'cupped'), ins = pairs.inputsFor('goblet_squat').filter((f: string) => !f.endsWith('view-cupped.mjs'));
-    expect(missing(cu, ins)).toEqual(['tools/plates/library/hands/view-cupped.mjs']);
+    const pf = mods.find(m => m.KEY === 'palm-flat'), ins = pairs.inputsFor('push_up').filter((f: string) => !f.endsWith('view-palm-flat.mjs'));   // a drawn id (D-LIB12FIX-R8-GAPS, #191 6274835211)
+    expect(missing(pf, ins)).toEqual(['tools/plates/library/hands/view-palm-flat.mjs']);
   });
 });
 
@@ -223,10 +224,10 @@ describe('LIB-12 on LIB-7\'s pilot and critic sheet (review Blocker, #191 @ 1ff3
   it('problemsOf reads each LIB-12 key\'s own checks: [] for every drawn id; a planted swap is red', async () => {
     const C = await import(/* @vite-ignore */ url('tools/plates/library/hands/checks.mjs'));
     const S = await import(/* @vite-ignore */ url('tools/plates/library/hands/sheet.mjs'));
-    const ids = common.sweep(mods.filter(m => m.OWNER === 'LIB-12').flatMap(m => Object.keys(m.IDS)), 12, 'sheet ids');
+    const ids = common.sweep(mods.filter(m => m.OWNER === 'LIB-12').flatMap(m => Object.keys(m.IDS)), 9, 'sheet ids');   // D-LIB12FIX-R8-GAPS, #191 6274835211
     for (const id of ids) { const { spec, pages } = C.renderedPages(id, pairs.INDEX); expect([id, C.problemsOf(spec, pages)]).toEqual([id, []]); }
-    const idx = pairs.indexOf(S.planted(mods, [{ id: 'goblet_squat', op: 'swap' }])), { spec, pages } = C.renderedPages('goblet_squat', idx);
-    expect(C.problemsOf(spec, pages).join('\n')).toMatch(/goblet_squat\/weight-away: right: weight 60 mm off the chest/);
+    const idx = pairs.indexOf(S.planted(mods, [{ id: 'push_up', op: 'swap' }])), { spec, pages } = C.renderedPages('push_up', idx);   // a drawn id (D-LIB12FIX-R8-GAPS, #191 6274835211)
+    expect(C.problemsOf(spec, pages).join('\n')).toMatch(/push_up\/cupped-palm: right: floor run/);
   });
   it('buildSheet runs with every module loaded, shows every LIB-12 id and resolves every LIB-12 claim', async () => {
     const S = await import(/* @vite-ignore */ url('tools/plates/library/hands/sheet.mjs'));
@@ -245,7 +246,7 @@ describe('LIB-12 on LIB-7\'s pilot and critic sheet (review Blocker, #191 @ 1ff3
       for (const r of [...Object.values<string[]>(V.claims ?? {}).flat(), ...s.wrong.flatMap((w: any) => w.claims ?? []), ...(m.IDS[id].claims ?? [])]) if (!r.startsWith('ga:')) cited.add(r);
     }
     const body: string = (await S.buildSheet()).body;
-    const unshown = (b: string) => [...common.sweep([...cited], 23, 'cited LIB-12 claims')].filter(r => typeof CLAIMS.claims[r] !== 'string' || !b.includes(`<li>${esc(`${r}: ${CLAIMS.claims[r]}`)}</li>`));
+    const unshown = (b: string) => [...common.sweep([...cited], 9, 'cited LIB-12 claims')].filter(r => typeof CLAIMS.claims[r] !== 'string' || !b.includes(`<li>${esc(`${r}: ${CLAIMS.claims[r]}`)}</li>`));   // 9: palm-flat and battle-rope (D-LIB12FIX-R8-GAPS)
     expect(unshown(body)).toEqual([]);
     expect(unshown(body.replace(/<details><summary>Claims<\/summary><ul>[\s\S]*?<\/ul>/g, '<details><summary>Claims</summary><ul></ul>'))).toEqual([...cited]);
   }, 180_000);
@@ -255,7 +256,7 @@ describe('LIB-12 palm directions (D-LIB7-PIN2): ids of one variant with differen
   // The drawing of one id and fault with its uid taken out, so two ids compare by ink alone.
   const ink = (id: string, fault: string, index: any) => pairs.renderPair(id, { uid: 'x', fault, index }).svg;
   function sameHands(index: any) {
-    const ids = common.sweep([...index.drawn].filter(([, e]: any) => e.mod.OWNER === 'LIB-12').map(([id]: any) => id), 12, 'LIB-12 drawn ids'), bad: string[] = [];
+    const ids = common.sweep([...index.drawn].filter(([, e]: any) => e.mod.OWNER === 'LIB-12').map(([id]: any) => id), 9, 'LIB-12 drawn ids'), bad: string[] = [];   // D-LIB12FIX-R8-GAPS, #191 6274835211
     for (const a of ids) for (const b of ids) {
       const A = pairs.pairSpec(a, index), B = pairs.pairSpec(b, index);
       if (a >= b || A.pair !== B.pair || A.orientation === B.orientation) continue;

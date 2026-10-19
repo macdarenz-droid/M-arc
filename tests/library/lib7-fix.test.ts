@@ -66,7 +66,7 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
       .toThrow(/lib_dumbbell_lateral_raise is one of the 8/);
   });
   it('inputsFor(key) and inputsFor(id) are equal and non-empty for every id on a key, with the key\'s module file and no other', () => {
-    for (const k of C.sweep(P.keysOf(), 8 + 5, 'pair keys')) {
+    for (const k of C.sweep(P.keysOf(), 8 + 2, 'pair keys')) {   // LIB-7's 8 + LIB-12's 2 (D-LIB12FIX-R8-GAPS, #191 6274835211)
       const byKey = P.inputsFor(k), file = P.INDEX.drawn.get(idsOfKey(k)[0]).mod.FILE;
       expect(byKey.length).toBeGreaterThan(0);
       expect(byKey).toContain(file);

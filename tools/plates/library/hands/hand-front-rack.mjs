@@ -23,8 +23,10 @@ export const VARIANTS = {
     claims: [`${X}#c1`, `${X}#c4`, `${X}#c5`, `${F}#c3`, `${F}#c4`, `${F}#c7`],
   },
 };
-export const IDS = { front_squat: { variant: 'rack', orientation: 'under', faults: ['bar-off-shoulders'], claims: [`${X}#c5`] } };
-export const GAPS = {};
+// D-LIB12FIX-R8-GAPS (#191 6274835211): front_squat moved to GAPS after the one R8 fix round; its variant, words file and view
+// code stay for follow-up F-LIB12-R8B.
+export const IDS = {};
+export const GAPS = { front_squat: 'R8 panel 2026-10-19: below the hand bar (lib4-cards 27)' };
 /** Census scope: plan 2.3 "front-rack (1)". */
 export const CENSUS = { source: 'plan 2.3 front-rack (1)', count: 1 };
 
