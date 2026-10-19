@@ -29,11 +29,11 @@
 //  - Scale: reference 146.29 px/m.
 // Plate labels (verified card): callouts = plate.checkpoints c1 (Back on pad), c5 (Elbows
 //   forward), c4 (Full lockout); measure = elbow at the top, expect 180 ("fully straight", c4); Mistake = plate.mistake
-//   c4 (low back arches off the pad: pelvis tips forward 10 deg, lumbar extends, 4.6 cm gap at backMid); tempo =
+//   c10 (dumbbells lowered behind the head: grips 6 cm behind the back of the skull at ear height); tempo =
 //   plate.tempo c12 (up 1, down 2, no pause: Press then Lower). The card still gives no bench angle (BACK stays 10).
 // CARD: bench angle (BACK: not in the card's sources), seat tilt/height, start height/width/forwardness (START_DY,
 //   START_X, START_DZ), top elbow (END_ELBOW), top width (END_X), feet (FOOT_Z), scapular set (SCAP).
-import { landmarksOf, WINTER, REF, fk, resolve, normPose, bodyShapes, rootOnSeat } from '../engine.mjs';
+import { landmarksOf, WINTER, REF, fk, resolve, normPose, bodyShapes } from '../engine.mjs';
 import { inclineBench } from '../eq/inclineBench.mjs';
 import { reclined } from './incline_dumbbell_press.mjs';
 
@@ -107,43 +107,51 @@ const startArmPhantom = (() => {
   return runs.map(r => ({ type: 'line', pts: r.map(p => [0, -p[1], p[0]]), cls: 'eq-line m-line', z: 'front' }));
 })();
 
-// Mistake (card plate.mistake, c4): the low back arches away from the pad as the dumbbells go up. The pelvis tips
-// forward MIS_TILT on the seat (seat landmark stays on the seat), the lumbar spine extends until the upper back is back
-// on the pad (trunk solved), so the low back and the buttocks leave the pad. Arms keep the overhead grip.
-const MIS_TILT = 16;                                  // pelvis tips forward (deg): lumbar extends 35 deg (an exaggerated arch,
-                                                      //  so the tell anchors move >= 11.4 px, LIB-3 PQ-H3; 12 deg gave 9.0 px)
-const bis = (f, lo, hi) => { for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (f(m) > 0) hi = m; else lo = m; } return (lo + hi) / 2; };
-const tiltM = REC.pose.root.tilt + MIS_TILT, rootM = { at: rootOnSeat(REC.seatPt, tiltM, H), tilt: tiltM };
-const padDist = p => (p[1] - F.back.point[1]) * F.back.normal[1] + (p[2] - F.back.point[2]) * F.back.normal[2];
-const trunkM = bis(t => padDist(landmarksOf({ ...end, root: rootM, trunk: t }, H).backUpper), -40, 20);
-const occM = n => fk(resolve(normPose({ ...end, root: rootM, trunk: trunkM, neck: n }, { height: H }), { height: H }).q, { height: H }).head([0, 0.955, -0.056]);
-const neckM = bis(n => padDist(occM(n)), -40, 40);                                  // back of the skull stays on the pad
-// The arch lowers and moves the shoulders, so the dumbbells move with them: each grip target is the end grip shifted
-// by its shoulder's displacement (the arms keep the lockout shape; without it the straight arms miss by 1 cm).
-const misReach = (() => { const E = landmarksOf(end, H), M = landmarksOf({ ...end, root: rootM, trunk: trunkM, neck: neckM }, H), out = {};
-  for (const sd of ['l', 'r']) { const d = [0, 1, 2].map(i => M[`shoulder.${sd}`][i] - E[`shoulder.${sd}`][i]);
-    out[sd] = { ...end.reach[sd], at: end.reach[sd].at.map((v, i) => v + d[i]) }; }
-  return out; })();
-const mistakePose = { root: rootM, trunk: trunkM, neck: neckM, reach: misReach };
+// Mistake (card plate.mistake, c10): the dumbbells are lowered behind the head, into the behind-the-neck position
+// ("movement posterior to the plane of the body"). Body as at the top (back, head and buttocks on the pad); only the
+// arms change: the upper arms swing back, so each grip sits MIS_BACK behind the back outline of the skull (MIS_HEAD_BACK,
+// the skull point the reclined solve puts on the pad) at ear height, MIS_X off the midline, and the elbow IK pole
+// points out, down and back, so the forearms stand about vertical behind the head.
+const MIS_BACK = 0.06;                                // grip behind the back of the skull (m): the whole dumbbell head is behind it
+const MIS_X = 0.40;                                   // grip off the midline (m): wide, as for a behind-the-neck press
+const MIS_POLE = [0.8, -0.2, -0.8];                   // elbow IK pole (left side; mirrored in x for the right): out, down, back
+const MIS_HEAD_BACK = (() => { const bd = { height: H };
+  return fk(resolve(normPose(end, bd), bd).q, bd).head([0, 0.955, -0.056])[2]; })();      // back of the skull (world z)
+const lmEnd = landmarksOf(end, H);
+const misReach = side => { const s = side === 'l' ? 1 : -1;
+  return { at: [s * MIS_X, lmEnd.ear[1], MIS_HEAD_BACK - MIS_BACK], pole: [s * MIS_POLE[0], MIS_POLE[1], MIS_POLE[2]] }; };
+const mistakePose = { reach: { l: misReach('l'), r: misReach('r') } };
 const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
-// R5 (critic on ae7c8c0, 2 of 3): the engine blends the outline over the lumbar bend, so the drawn arch was only ~6 cm
-// (~17 px in the 780 px shots). A dashed red lumbar line (a Mistake guide, not masked) bows from the buttocks on the pad
-// to the upper back on the pad, its middle ARCH off the pad: 12.7 cm = 18.6 plate px = ~37 px in the 780 px shots. The
-// gap between the pad and the top of the bow is marked with the house gap marker (line with end ticks).
-const ARCH = 0.127;
-const onPad = p => p.map((v, i) => v - F.back.normal[i] * padDist(p));
-const ARCH_PTS = (() => {
-  const A = onPad(lmMis.buttock), B = lmMis.backUpper, P = A.map((v, i) => (v + B[i]) / 2 + F.back.normal[i] * ARCH);
-  const C = P.map((v, i) => 2 * v - (A[i] + B[i]) / 2);                                   // the bow passes P at t = 0.5
-  return Array.from({ length: 17 }, (_, k) => { const t = k / 16; return A.map((v, i) => (1 - t) ** 2 * v + 2 * t * (1 - t) * C[i] + t * t * B[i]); });
+// The engine masks the faulty arm's outline inside the faulty body (here the head and the torso it crosses), so the
+// faulty near arm is drawn as Mistake guides, which are not masked: the union outline of the engine's own arm shapes
+// (startArmPhantom's method), dashed red. The faulty dumbbell crosses the pad and the skull outline, so it gets a
+// dashed ring too. A short arrow behind the head shows the drop.
+const misArm = (() => {
+  const body = { height: H }, sk = fk(resolve(normPose({ ...end, ...mistakePose }, body), body).q, body);
+  const cam = { view: 'side', facing: 'right', near: 'r', pxm: 1, P: w => [w[2], -w[1]] };
+  const keys = ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'];
+  const polys = bodyShapes(sk, cam).filter(sh => keys.includes(sh.key)).map(sh => sh.poly);
+  const runs = [];
+  polys.forEach((poly, k) => {
+    let run = [];
+    const flush = () => { if (run.length > 1) runs.push(run); run = []; };
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length], n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 0.002));
+      for (let j = 0; j < n; j++) {
+        const p = [a[0] + (b[0] - a[0]) * j / n, a[1] + (b[1] - a[1]) * j / n];
+        if (polys.some((q, m) => m !== k && insidePoly(p, q))) flush(); else run.push(p);
+      }
+    }
+    flush();
+  });
+  return runs.map(r => ({ kind: 'dashed', pts: r.map(p => [0, -p[1], p[0]]) }));
 })();
-// The gap itself: the region between the pad and the bow is cleared to the card colour ('eq', end layer, Mistake only),
-// so the solid (correct) figure does not hide it.
-const GAP_FILL = { type: 'poly', pts: [...ARCH_PTS, onPad(lmMis.backUpper)], cls: 'eq', z: 'front', part: 'archgap' };
-const gapTo = ARCH_PTS[8], gapCm = padDist(gapTo), gapFrom = onPad(gapTo);
-const PU = F.back.up, TICK = 2 / 146.29;
-const tick = p => ({ kind: 'line', pts: [p.map((v, i) => v - PU[i] * TICK), p.map((v, i) => v + PU[i] * TICK)] });
-export const mistakeInfo = () => ({ sacrumGapCm: +(padDist(lmMis.sacrum) * 100).toFixed(1), trunkDeg: +trunkM.toFixed(1), neckDeg: +neckM.toFixed(1), lowBackGapCm: +(gapCm * 100).toFixed(1), buttockGapCm: +(padDist(lmMis.buttock) * 100).toFixed(1) });
+const MIS_DB = { kind: 'dashed', pts: ring(lmMis['grip.r'], 0.119 / 2, 6) };
+const MIS_DROP = [[0, lmMis['grip.r'][1] + 0.20, lmMis['grip.r'][2]], [0, lmMis['grip.r'][1] + 0.085, lmMis['grip.r'][2]]];   // arrow tail, head (m)
+/** Side-view numbers of the Mistake: grip behind the skull, elbow behind the shoulder, forearm from vertical (+ = forward). */
+export const mistakeCheck = () => { const fromV = (a, b) => +(Math.atan2(b[2] - a[2], b[1] - a[1]) / R).toFixed(1);
+  return { gripBehindSkullCm: +((MIS_HEAD_BACK - lmMis['grip.r'][2]) * 100).toFixed(1), gripAboveEarCm: +((lmMis['grip.r'][1] - lmEnd.ear[1]) * 100).toFixed(1),
+    elbowBehindShoulderCm: +((lmMis['shoulder.r'][2] - lmMis['elbow.r'][2]) * 100).toFixed(1), forearmFromVertical: fromV(lmMis['elbow.r'], lmMis['grip.r']) }; };
 
 export default {
   id: 'dumbbell_shoulder_press', name: 'Seated Dumbbell Shoulder Press', view: 'side', facing: 'right',
@@ -152,7 +160,7 @@ export default {
   equipment: [
     { type: 'floor', from: -0.75, to: 0.95 },
     ...inclineBench({ hinge: HINGE, back: BACK, seatTilt: SEAT_TILT, backLen: BACK_LEN, beamZ: BEAM_Z }),
-    (lm, ctx) => (ctx.pose === 'end' ? [...startArmPhantom, ...startDbPhantom, ...(ctx.mistake ? [GAP_FILL] : [])] : null),
+    (lm, ctx) => (ctx.pose === 'end' ? [...startArmPhantom, ...startDbPhantom] : null),
     lm => [{ type: 'dumbbell', at: lm['grip.l'], axis: [1, 0, 0], z: 'back', part: 'db.l' },
       { type: 'dumbbell', at: lm['grip.r'], axis: [1, 0, 0], z: 'front', part: 'db' }],
   ],
@@ -161,7 +169,7 @@ export default {
     { landmark: 'backUpper', plane: { point: F.back.point, normal: F.back.normal }, pose: 'all', tol: 1 },  // upper back ON the pad (c1)
     { landmark: 'buttock', plane: { point: F.back.point, normal: F.back.normal }, pose: 'start', tol: 1 },  // buttocks ON the pad (c1)
     { landmark: 'buttock', plane: { point: F.back.point, normal: F.back.normal }, pose: 'end', tol: 1 },
-    { landmark: 'backMid', above: { point: F.back.point, normal: F.back.normal }, pose: 'mistake' },       // gap shown in report
+    { landmark: 'grip.r', above: { point: [0, 0, MIS_HEAD_BACK], normal: [0, 0, -1] }, pose: 'mistake' },  // fault: grip behind the head (c10)
     { landmark: 'head', above: { point: F.back.point, normal: F.back.normal }, pose: 'all' },               // head never inside it
     { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },          // feet ON the floor
     { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
@@ -178,14 +186,15 @@ export default {
   tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
+    parts: ['arm.r', 'arm.l', 'db', 'db.l'],
     guides: [
-      { kind: 'dashed', pts: ARCH_PTS },                                                   // the arched low back
-      { kind: 'line', pts: [gapFrom, gapTo] }, tick(gapFrom), tick(gapTo),                 // pad-to-low-back gap
-      { kind: 'arrow', from: { at: 'navel', pose: 'mistake', off: [3, 0] }, to: { at: 'navel', pose: 'mistake', off: [20, -2] } },   // belly pushes forward
+      ...misArm,                                                                           // the faulty arm, swung back
+      MIS_DB,                                                                              // the faulty dumbbell, behind the head
+      { kind: 'arrow', from: MIS_DROP[0], to: MIS_DROP[1] },                                // the dumbbell drops behind the head
     ],
     tells: [
-      { key: 'arch', text: 'Back<br>off pad', anchor: gapFrom, cue: 'Your low back arches away from the pad as you press.' },
-      { key: 'hips', text: 'Hips tip<br>forward', anchor: { at: 'navel', pose: 'mistake' }, box: { left: 208, top: 170 }, cue: 'Your hips tip forward and your belly pushes out.' },
+      { key: 'behind', text: 'Behind<br>the head', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 40, top: 118 }, cue: 'The dumbbells drop behind your head.' },
+      { key: 'elbows', text: 'Elbows<br>back', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'The elbows pull back behind your shoulders.' },
     ],
   },
   pilot: { note: 'Bench angle 10° not in the verified card sources' },

@@ -180,6 +180,5 @@ export default {
       { key: 'low', text: 'Dumbbell<br>too low', anchor: 'grip.r', cue: 'The dumbbell is reached to the floor, well past mid-shin.' },
     ],
   },
-  pilot: { drawableFault: 'Top fault (hip of the lifted leg rotating up, c5) is a rotation the engine cannot draw; drawn: rounding while reaching too low (c7).' },
   alt: 'Single-leg Romanian deadlift, side view. Standing on the left leg with the knee bent about 15 to 20 degrees and a dumbbell in the right hand, the lifter pushes the hips back until the dumbbell is about mid-shin, head, back and right leg in one straight line.',
 };

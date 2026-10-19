@@ -49,7 +49,7 @@
 //   HOOK_Y = the front-rack bar's underside, so the bar was unracked at shoulder height (critic 10-02 tier A check).
 // Phase 2 (card plate section): callouts = the 3 verified plate.checkpoints (c5 forearms vertical, c6 head back then through,
 //  c7 over mid-foot); mistake = plate.mistake (c5: elbows back, forearms tilted, bar curves forward away from the face),
-//  tells = its two visible signs; tempo = plate.tempo (c17: up 1 s, down 2 s, pause 0, so no hold phase is invented).
+//  tells = its two visible signs; tempo = plate.tempo (up 1 s, down 2 s, c17; Hold 1 s at the top, c20, R-LB2-6).
 //  Measure: shoulder elevation at lockout (arm hanging to straight overhead, drawn 179 deg), value in words and no
 //  `expect`, since the card gives no number (c7 "bar over the shoulders"). The arc sweeps in front of the chest, clear
 //  of the start arm and head phantoms. "Head through" is boxed beside the face (auto placement gave a 75 px leader
@@ -238,7 +238,7 @@ export default {
       guide: [{ at: 'ear', pose: 'start' }, 'ear'], box: { left: 258, top: 96 } },
     { key: 'midfoot', text: 'Over<br>mid-foot', anchor: { at: 'grip.r', off: [6, -2] }, cue: 'Lock out with the bar over your shoulders and mid-foot.' },
   ],
-  tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
+  tempo: [{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
     parts: ['arm.r', 'arm.l'],

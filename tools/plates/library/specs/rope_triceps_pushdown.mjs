@@ -1,6 +1,6 @@
 // Rope triceps pushdown (rope attachment, high pulley, neutral grip), side view, figure faces the column (screen right).
-// View: SIDE (card plate.view). The elbow bends front-to-back and the fault the card names (elbows drifting forward,
-// c7) plus the bottom line of wrist, elbow and shoulder (c9) read side-on. The rope ends spreading apart at the bottom
+// View: SIDE (card plate.view). The elbow bends front-to-back and the fault the card names (leaning forward over the
+// rope or arching the back, c12) plus the bottom line of wrist, elbow and shoulder (c9) read side-on. The rope ends spreading apart at the bottom
 // (c4) is lateral and does not show in this view (card: it goes to a zoom); the hands are still spread in the pose, so
 // the rope strands and the angles are true.
 // Form sources: research card rope_triceps_pushdown (claims c1-c11: ACE triceps pressdown; NSCA Exercise Technique
@@ -25,10 +25,10 @@
 //  - Station: the same selectorised tower as triceps_pushdown / the approved lat pulldown (boom, head pulley 2.03 m up,
 //    column pulley, 16 x 5 kg stack), pulley at its top position (c1). Stack travel = cable change (1:1), 3 cm pre-lift.
 // CARD: START_ELBOW (c8), END_ELBOW (c9), TILT + TRUNK lean (c10), ROOT knee bend, GRIP_X0 / GRIP_X1 (c4), ARM_FWD (c9),
-//  pulley height (c1), Mistake drift and lean (MIS_*, c7 gives none).
+//  pulley height (c1), Mistake lean and arch (MIS_*, c12 gives none).
 // Callouts, Mistake, tempo (card plate section): the 3 checkpoints (c6, c5, c9) are the callouts, with "Vertical finish"
-//  on a plumb line through the shoulder joint that proves c9; the Mistake is the card's top fault, elbows drifting
-//  forward plus the swing forward (c7); tempo press 1 s, pause 1 s, return 3 s (c13 "2-3 s, never faster": the card's
+//  on a plumb line through the shoulder joint that proves c9; the Mistake is the card's plate.mistake, leaning too far
+//  forward over the rope or arching the back to press it down (c12); tempo press 1 s, pause 1 s, return 3 s (c13 "2-3 s, never faster": the card's
 //  plate.tempo says 3), no Rest phase. Measure: the end elbow, value "not locked" (c9).
 // Rope: drawn with LIB-25's poly rope composer (tapered, sagging strands with clubbed stoppers, a ferrule), which
 //  replaced the dumbbell-primitive strands that read as rigid mini-handles at 390 px (flagged on PR #109).
@@ -104,13 +104,17 @@ const gripsOf = lm => ({ l: lm['grip.l'], r: lm['grip.r'] });
 const ferruleOf = lm => ropeGeometry({ pulley: headTangent(mid(lm)), grips: gripsOf(lm) }).ferrule;
 const cableLen = lm => { const f = ferruleOf(lm); return Math.hypot(f[1] - HEAD.y, f[2] - HEAD.z); };
 
-// Mistake (card plate.mistake, c7): "elbows drifting forward as the rope comes up (and swinging forward to start the
-// press)". Drawn at the top of the rep, as the card places it: the upper arms swing forward off the sides (about 40 deg
-// in the world) and the torso tips further in. The card gives no angle for either, so MIS_* are drawn just large
+// Mistake (card plate.mistake, c12): "Leaning too far forward over the rope or arching the back to press it down."
+// Drawn mid-press, the same construction as triceps_pushdown: the trunk tips well forward from the hips over the rope
+// (pelvis MIS_TILT further forward, hips MIS_HIPS back so the weight stays over the feet, knees kept soft), the low
+// back arches a little (the lumbar extends MIS_ARCH, so the thorax tips less than the pelvis), the upper arms stay at
+// the torso sides and the elbows bend to press the rope down. The card gives no angle, so MIS_* are drawn just large
 // enough to read at 390 px. The rope strands carry `poly` and the composer adds the cable twin in the Mistake pose.
-const MIS_LEAN = 8, MIS_SHOULDER = 60, MIS_ELBOW = 100;   // extra lean; shoulder flexion relative to the leaning thorax
-const mistakePose = { root: { at: ROOT, tilt: TILT + MIS_LEAN }, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: MIS_ELBOW, wrist: 0 };
-// R5 (critic 10-03): the drifted upper arm drawn as the clear solid red segment: the engine's own outline of the faulty
+const MIS_TILT = 42, MIS_ARCH = 14, MIS_SHOULDER = 25, MIS_ELBOW = 75;   // extra pelvis tilt, lumbar extension, upper arm
+                                                       //  flexion relative to the leaning thorax (arm along the side), elbow
+const MIS_HIPS = 0.07, MIS_DROP = 0.008;              // hips pushed back as the trunk tips (weight over the feet), knees kept soft
+const mistakePose = { root: { at: [ROOT[0], ROOT[1] - MIS_DROP, ROOT[2] - MIS_HIPS], tilt: TILT + MIS_TILT }, trunk: TRUNK - MIS_ARCH, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: MIS_ELBOW, wrist: 0 };
+// R5 (critic 10-03): the faulty upper arm drawn as the clear solid red segment: the engine's own outline of the faulty
 // near upper arm (side view, sampled on its Catmull-Rom spline) as a solid Mistake guide, and the faulty forearm and
 // hand as dashed guides, kept apart from the dashed leaning torso and head (the masked engine arm outline tangled with
 // them, so the near arm is no longer in `parts`).
@@ -174,13 +178,13 @@ export default {
     pose: mistakePose,
     parts: ['torso', 'head', 'rope'],   // the near arm is drawn as guides (R5); far arm doubles it; the stack's travel is not the fault
     guides: [
-      { kind: 'line', pts: misArm.upper },                                          // the drifted upper arm, solid (R5)
+      { kind: 'line', pts: misArm.upper },                                          // the faulty upper arm, solid (R5)
       ...misArm.rest.map(pts => ({ kind: 'dashed', pts })),
-      { kind: 'arc-arrow', center: 'shoulder.r', r: 50, a0: 88, a1: 58 },   // the upper arm swinging forward off the side
+      { kind: 'arc-arrow', center: 'hips', r: 108, a0: -84, a1: -56 },   // the trunk tipping forward from the hips
     ],
     tells: [
-      { key: 'elbows', text: 'Elbows<br>forward', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 34, top: 180 }, cue: 'The elbows drift forward off the sides as the rope comes up.' },
-      { key: 'lean', text: 'Leaning<br>in', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 54, top: 133 }, cue: 'The torso tips forward over the rope to start the press.' },
+      { key: 'lean', text: 'Leaning<br>over', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'You lean far forward over the rope to push it down.' },
+      { key: 'arch', text: 'Back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, cue: 'Your back arches as you press.' },
     ],
   },
   pilot: { note: 'rope now LIB-25 poly: sagging strands with clubbed ends read in the ghosts; at the solid bottom it sits mostly behind the forearm' },

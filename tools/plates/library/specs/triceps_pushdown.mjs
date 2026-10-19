@@ -24,9 +24,9 @@
 //    front of the hip joints, so the cable runs 14 deg (top) to 16 deg (bottom) off vertical toward the lifter and
 //    clears the forearm. Stack travel = cable paid out (1:1, 60 cm), 3 cm pre-lift at the start (tension on).
 // CARD: TOP_BAR_T -> START_ELBOW (c7), END_ELBOW (c8), TILT + TRUNK lean (c4), ROOT knee bend, FEET stance (c3),
-//  GRIP_X (c2), ARM_FWD (c5), bar length, pulley height (c1), Mistake drift and lean (MIS_*, c6 gives none).
+//  GRIP_X (c2), ARM_FWD (c5), bar length, pulley height (c1), Mistake lean and arch (MIS_*, c11 gives none).
 // Callouts, Mistake, tempo (card plate section): the 3 checkpoints (c5, c4, c9) are the callouts; the Mistake is the
-//  card's top fault, elbows drifting forward as the bar comes up plus the swing forward (c6); tempo press 1 s, pause
+//  card's plate.mistake, leaning too far forward over the bar or arching the back to press it down (c11); tempo press 1 s, pause
 //  1 s, return 2 s (c12), no Rest phase (the card gives none). Measure: the end elbow, value "not locked" (c8), no
 //  number (the card gives none).
 import { landmarksOf, bodyShapes, fk, resolve, normPose } from '../engine.mjs';
@@ -112,13 +112,17 @@ function headTangent(b) {                              // cable from the bar to 
 const barOf = lm => [0, lm.grips[1], lm.grips[2]];
 const cableLen = b => Math.hypot(b[1] - HEAD.y, b[2] - HEAD.z);
 
-// Mistake (card plate.mistake, c6): "elbows drifting forward as the bar comes up (and swinging forward to start the
-// press)". Drawn at the top of the rep, where the card places it: the upper arms swing forward off the sides and the
-// torso tips further in over the bar. The card gives no angle for either, so MIS_* are drawn just large enough to read
-// at 390 px. The bar's cable is a line (no `poly`), so the faulty cable is a dashed guide (the lat pulldown's method).
-const MIS_LEAN = 8, MIS_SHOULDER = 60, MIS_ELBOW = 110;   // extra forward lean, upper arm forward of the torso, elbow
-const mistakePose = { root: { at: ROOT, tilt: TILT + MIS_LEAN }, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: MIS_ELBOW, wrist: 0 };
-// R5 (critic 10-03): the drifted upper arm drawn as the clear solid red segment: the engine's own outline of the faulty
+// Mistake (card plate.mistake, c11): "Leaning too far forward over the bar or arching the back to press it down."
+// Drawn mid-press: the trunk tips well forward from the hips over the bar (pelvis MIS_TILT further forward), the low
+// back arches a little (the lumbar extends MIS_ARCH, so the thorax tips less than the pelvis), the upper arms stay at
+// the torso sides and the elbows bend to press the bar down. The card gives no angle, so MIS_* are drawn just large
+// enough to read at 390 px. The bar's cable is a line (no `poly`), so the faulty cable is a dashed guide (the lat
+// pulldown's method).
+const MIS_TILT = 42, MIS_ARCH = 14, MIS_SHOULDER = 25, MIS_ELBOW = 75;   // extra pelvis tilt, lumbar extension, upper arm
+                                                       //  flexion relative to the leaning thorax (arm along the side), elbow
+const MIS_HIPS = 0.07, MIS_DROP = 0.008;              // hips pushed back as the trunk tips (weight over the feet), knees kept soft
+const mistakePose = { root: { at: [ROOT[0], ROOT[1] - MIS_DROP, ROOT[2] - MIS_HIPS], tilt: TILT + MIS_TILT }, trunk: TRUNK - MIS_ARCH, reach: null, shoulder: { flex: MIS_SHOULDER }, elbow: MIS_ELBOW, wrist: 0 };
+// R5 (critic 10-03): the faulty upper arm drawn as the clear solid red segment: the engine's own outline of the faulty
 // near upper arm (side view, sampled on its Catmull-Rom spline) as a solid Mistake guide, and the faulty forearm and
 // hand as dashed guides, kept apart from the dashed leaning torso and head (the masked engine arm outline tangled with
 // them, so the near arm is no longer in `parts`).
@@ -184,14 +188,14 @@ export default {
     pose: mistakePose,
     parts: ['torso', 'head', 'bar'],   // the near arm is drawn as guides (R5); far arm doubles it; the stack's travel is not the fault
     guides: [
-      { kind: 'line', pts: misArm.upper },                                          // the drifted upper arm, solid (R5)
+      { kind: 'line', pts: misArm.upper },                                          // the faulty upper arm, solid (R5)
       ...misArm.rest.map(pts => ({ kind: 'dashed', pts })),
       { kind: 'dashed', pts: [MIS_BAR, headTangent(MIS_BAR)] },
-      { kind: 'arc-arrow', center: 'shoulder.r', r: 50, a0: 84, a1: 54 },   // the upper arm swinging forward off the side
+      { kind: 'arc-arrow', center: 'hips', r: 108, a0: -84, a1: -56 },   // the trunk tipping forward from the hips
     ],
     tells: [
-      { key: 'elbows', text: 'Elbows<br>forward', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 34, top: 180 }, cue: 'The elbows drift forward off the sides as the bar comes up.' },
-      { key: 'lean', text: 'Leaning<br>in', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 54, top: 133 }, cue: 'The torso tips forward over the bar to start the press.' },
+      { key: 'lean', text: 'Leaning<br>over', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'You lean far forward over the bar to push it down.' },
+      { key: 'arch', text: 'Back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, cue: 'Your back arches as you press.' },
     ],
   },
   alt: 'Triceps pushdown, side view. Standing at a high cable tower with a slight forward lean, upper arms pinned at the sides, the lifter presses a straight bar from forearms about level down in an arc to straight arms in front of the thighs.',
