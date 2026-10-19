@@ -1,0 +1,15 @@
+{
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. No Rest. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 9 pose map). PROPOSED in the LB3 note; binding only after 'LB3 NOTE RULED'.",
+ "research": "claude/libht-research 2dd60ae0349b06a4aac88a11347edac5536f8424",
+ "constants": {},
+ "rows": {
+  "pendlay_row": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Pull", "from": "up", "move": true }],
+  "t_bar_row": [{ "phase": "Pull", "from": "up", "move": true }, { "phase": "Hold", "from": "pause" }, { "phase": "Lower", "from": "down", "move": true }],
+  "landmine_row": [{ "phase": "Pull", "from": "up", "move": true }, { "phase": "Lower", "from": "down", "move": true }],
+  "one_arm_dumbbell_row": [{ "phase": "Pull", "from": "up", "move": true }, { "phase": "Lower", "from": "down", "move": true }],
+  "dumbbell_romanian_deadlift": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Stand", "from": "up", "move": true }],
+  "conventional_deadlift": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Lift", "from": "up", "move": true }],
+  "sumo_deadlift": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Lift", "from": "up", "move": true }],
+  "back_extension": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Raise", "from": "up", "move": true }, { "phase": "Hold", "from": "pause" }]
+ }
+}
