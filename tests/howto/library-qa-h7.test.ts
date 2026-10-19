@@ -104,6 +104,9 @@ describe('LIB-3c 3c-A3 h7Builds is wired: two page builds catch a value a compos
     const src = variant('composer', withLine(line('-0.9 - RR')), "import { RR } from './h7_composer_part.mjs';");
     expect(h7Keys(await qa(src))).toEqual(['H7.determinism:build']);
   });
+  it('a rebuild that finds no plate for the id gives H7.determinism:fresh-threw', async () => {
+    expect(h7Keys(await qa(null, c => { c.rebuild = async () => 'null'; }))).toEqual(['H7.determinism:fresh-threw']);
+  });
   it('an engine candidate without the rebuild gives H7.determinism:fresh-missing', async () => {
     expect(h7Keys(await qa(null, c => { c.rebuild = undefined; }))).toEqual(['H7.determinism:fresh-missing']);
   });

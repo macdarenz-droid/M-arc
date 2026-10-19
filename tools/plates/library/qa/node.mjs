@@ -214,7 +214,8 @@ async function h7Fresh(c, ctx, R, found) {
       const key = `H7.determinism:${k}.${f}`;
       if (R[k][f] !== fresh[k]?.[f] && !found.some(p => p.key === key)) out.push(P(key, `a fresh import of the spec renders ${k} differently in ${f}`));
     }
-    if (!approved) out.push(...await h7Builds(c, c.rebuild));
+    // a rebuild with no plate for the id is "null" twice, which would compare equal: fail closed instead
+    if (!approved) out.push(...await h7Builds(c, async () => { const b = await c.rebuild(); if (b === 'null') throw new Error('the rebuilt page has no plate for the id'); return b; }));
   } catch (e) { out.push(P('H7.determinism:fresh-threw', `a fresh import, render or build threw: ${e.message}`)); }
   return out;
 }
