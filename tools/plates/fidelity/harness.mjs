@@ -224,11 +224,11 @@ export async function settleApp(page) {
 }
 
 /** A fresh app context at `viewport` in `theme`, on the Train page with the seeded split started. */
-export async function openAppTrain(browser, port, theme, { viewport = DEVICE.viewport, reducedMotion = 'no-preference', onError } = {}) {
+export async function openAppTrain(browser, port, theme, { viewport = DEVICE.viewport, reducedMotion = 'no-preference', onError, order = HT_ORDER, custom = HT_CUSTOM } = {}) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: DEVICE.deviceScaleFactor, reducedMotion });
   const page = await ctx.newPage();
   if (onError) page.on('pageerror', e => onError(e.message));
-  await page.addInitScript(htSeed, [theme, HT_ORDER, HT_CUSTOM]);
+  await page.addInitScript(htSeed, [theme, order, custom]);
   await page.goto(`http://localhost:${port}/`);
   await page.waitForSelector('.nav');
   await page.waitForFunction(() => !document.getElementById('launch'), null, { timeout: 5000 }).catch(() => {});
@@ -1136,14 +1136,14 @@ export async function ht10Script(pre) {
  * mistakes) and feel rows (`.fr-btn`), counted in each card of the golden-B page after its own script ran.
  */
 export const HT10_GOLDEN_B = join(ROOT, 'tools/plates/layers/artifact/technical-plates.html');
-export async function ht10GoldenCounts(browser) {
-  const g = await openGolden(browser, 'silent-black', { html: readFileSync(HT10_GOLDEN_B) });
+export async function ht10GoldenCounts(browser, { html = readFileSync(HT10_GOLDEN_B), ids = HT_PLATES.map(p => p[0]) } = {}) {
+  const g = await openGolden(browser, 'silent-black', { html });
   try {
     return await g.page.evaluate(ids => Object.fromEntries(ids.map(id => {
       const c = document.getElementById(`card-${id}`);
       const n = s => (c ? c.querySelectorAll(s).length : -1);
       return [id, { chips: n('.zx-chip[data-zoom]'), shows: n('.st-show'), rows: n('.fr-btn') }];
-    })), HT_PLATES.map(p => p[0]));
+    })), ids);
   } finally { await g.ctx.close(); }
 }
 
@@ -1304,14 +1304,14 @@ export function ht10C19Inputs() {
  * no animation runs at all. `inject(pre)` (failure fixtures only) runs in the page after the sheet opens.
  * Returns { problems, stats }.
  */
-export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p => p[0]), reduced = false, expectRisks = true, inject = null, golden = null } = {}) {
+export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p => p[0]), reduced = false, expectRisks = true, inject = null, golden = null, order = HT_ORDER, custom = HT_CUSTOM, indexOf = id => HT_PLATES.findIndex(p => p[0] === id) } = {}) {
   const want = golden ?? await ht10GoldenCounts(browser);
   const problems = [], stats = { sheets: 0, steps: 0, probes: 0, controls: 0, named: 0, anims: 0, paused: 0, exempt: new Set(), ms: 0 };
   const t0 = Date.now();
   const tag = `${theme}${reduced ? ' (reduced motion)' : ''}`;
   const END = ht10EndMs();
   const c19 = ht10C19Inputs();
-  const { ctx, page } = await openAppTrain(browser, port, theme, { reducedMotion: reduced ? 'reduce' : 'no-preference', onError: m => problems.push(`${tag}: page error: ${m}`) });
+  const { ctx, page } = await openAppTrain(browser, port, theme, { reducedMotion: reduced ? 'reduce' : 'no-preference', onError: m => problems.push(`${tag}: page error: ${m}`), order, custom });
   try {
     const cdp = await ctx.newCDPSession(page);
     await cdp.send('DOM.enable');
@@ -1344,7 +1344,7 @@ export async function ht10Sweep(browser, port, theme, { ids = HT_PLATES.map(p =>
     });
     for (const id of ids) {
       cur = id;
-      const index = HT_PLATES.findIndex(p => p[0] === id);
+      const index = indexOf(id);
       await openHowTo(page, index);
       stats.sheets++;
       if (inject) await page.evaluate(inject, id);

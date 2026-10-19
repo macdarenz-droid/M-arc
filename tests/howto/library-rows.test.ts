@@ -28,13 +28,15 @@ const run = (cwd: string, args: string[]) => new Promise<{ code: number; out: st
 const CLONE_OUTPUTS = ['src/howto/generated/ht-cable-lateral-raise.ts', 'src/howto/generated/feel-cable-lateral-raise.ts', 'src/howto/generated/posture-cable-lateral-raise.ts',
   'src/slices/howto/css/zoom-cable-lateral-raise.css', 'docs/research/howto/lib_cable_lateral_raise.json', 'src/howto/generated/handpair-lib2b-scratch.ts'];
 
-let mainOut: Map<string, any>, treeOut: Map<string, any>;
+let mainOut: Map<string, any>, repoOut: Map<string, any>, treeOut: Map<string, any>;
 beforeAll(async () => {
   F = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs'));
   root = F.fixtureTree(); tmps.push(root);
   const g = await run(root, ['tools/plates/generate.mjs']);
   if (g.code !== 0) throw new Error(`generate failed in the E1 tree:\n${g.out}`);
-  mainOut = await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render();
+  const eight = F.ownRowsTree();
+  try { mainOut = await (await import(/* @vite-ignore */ F.url(eight, 'tools/plates/generate.mjs'))).render(); } finally { F.drop(eight); }
+  repoOut = await (await import(/* @vite-ignore */ url('tools/plates/generate.mjs'))).render();
   treeOut = await (await import(/* @vite-ignore */ turl('tools/plates/generate.mjs'))).render();
 }, 600_000);
 afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
@@ -160,7 +162,7 @@ describe('E1/E3/E7 failure paths: the generator throws, naming the id and the fi
 
 describe('E3: no dangling chunk', () => {
   it('every import in loaders.ts is an output, on the repo and on the E1 tree', () => {
-    for (const o of [mainOut, treeOut]) expect(danglingImports(o.get('src/howto/generated/loaders.ts').text, new Set(o.keys()))).toEqual([]);
+    for (const o of [repoOut, treeOut]) expect(danglingImports(o.get('src/howto/generated/loaders.ts').text, new Set(o.keys()))).toEqual([]);
     expect(danglingImports('', new Set())).toEqual(['no imports in loaders.ts']);
     expect(danglingImports("x: () => import('./ht-nope'),", new Set())).toEqual(['ht-nope']);
   });
@@ -201,7 +203,7 @@ async function inputsOf(base: string, out: Map<string, any>) {
 describe('E2: inputs cover every imported composer', { timeout: 180_000 }, () => {
   it('every ht- and research output of every shipped row lists its How-to source\'s whole import closure (and a library plate its spec\'s)', async () => {
     const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
-    for (const [base, out] of [[repo, mainOut], [root, treeOut]] as const) {
+    for (const [base, out] of [[repo, repoOut], [root, treeOut]] as const) {
       const { res } = await inputsOf(base, out);
       const reg = await import(/* @vite-ignore */ new URL('tools/plates/library/registry.mjs', `file://${base}/`).href);
       const { closureOf } = await import(/* @vite-ignore */ new URL('tools/plates/library/inputs-closure.mjs', `file://${base}/`).href);
