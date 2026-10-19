@@ -4139,3 +4139,10 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - Heads named in the start:
   - #193's PERKEY head `a8ec1a6`: review PASS 0/0/0/0, PK1-PK5 green (6261875603). Its ORDER fix (D-LIB12FIX-ORDER) follows and is named on the LIB-7c PR.
   - research head `9eaa2480`: the card's head. No shared hand file changed up to `f57e7944`, checked by `git diff --name-only`.
+
+## 24. LB2 critic panel on the 5 drawn plates (D-LIB10-PANEL1, 2026-10-19 ~08:15 UTC; #265 @ `2dcbac1`)
+- The panel runs now on the 5 drawn LB2 plates (barbell_bench_press, close_grip_bench_press, decline_bench_press, skull_crusher, dumbbell_pullover). It does not wait for incline_barbell_bench_press and arnold_press, which need pilot A on main. Those two get their own calibrated run when drawn. Running now means fixes can proceed in parallel.
+- **Anchors:** D-LIB10-ANCHORS allows a pilot A anchor only once it is *pinned*. Until pilot A is pinned, LB2 uses the golden-B pair pull_up and lat_pulldown, as in 13.7, 13.8 and 21.1-21.6, scored on their golden-B facts. barbell_overhead_press becomes eligible after the pin.
+- **Plants:** two, rebuilt on LB2 plates at `2dcbac1`. Each passes report ok, and only the planted state differs from its unplanted render. One is an R4 leader on the wrong landmark; the other an R5 Mistake drawn in the wrong direction.
+- **Reference:** the PA2 reference (15 files, no plank), plus pilot A's approved dumbbell_bench_press @ `013f84e` as the bench reference. No anchor is shown as a reference.
+- 13.5's rule applies unchanged. The LIB-10 card's one fix round and one recheck apply per plate.
