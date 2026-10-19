@@ -142,3 +142,8 @@ I report any difference before any other step.
   - Its Mistake-pose check needs the elbow 10 cm in front of the shoulder joint's plane; the correct pose is 10 cm short of it.
   - Expected flags gain F7 on dumbbell_biceps_curl: the drawn fault (elbows) is not the card's top fault (the bent wrist). It stays raised for the owner's named exemption (section 13 Q1, drawable false).
 - Research head for all 14 cards: f57e7944. Only the curl card differs from 7d7c52e1.
+- Critic panel and TOPFAULT (D-LIB8M-CRIT1, D-LIB8M-TF1; lib4-cards.md section 21 @ 47ade203; #109 6258287101, 6258289883):
+  - fix round: the incline press arch is a dashed back outline off the pad, with its tells byte-identical. The bench tells are reordered so 'arch' is first.
+  - triceps_pushdown, rope_triceps_pushdown, upright_row, pec_fly and plank now have one tell, which names the card's one fault: 'lean', 'lean', 'chin', 'short', 'sag'.
+  - A4 now reads: F7 is not raised, except on dumbbell_biceps_curl (D-LIB8M-TF1 4). A4's redraw set adds dumbbell_bench_press and the five ids above.
+  - The expected flags (e) add F7 on dumbbell_biceps_curl, a drawable-fault plate (bent wrist, c6, not visible side-on; R-LB2-27). Its topFault is 'wrist-bend'.

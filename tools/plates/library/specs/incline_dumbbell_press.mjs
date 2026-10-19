@@ -34,7 +34,7 @@
 // Plate labels (verified card): callouts = plate.checkpoints c2 (Bench at 45°), c7 (Elbows
 //   under wrists), c6 (To upper chest); measure = back-pad angle from vertical, expect 45 (c1); Mistake = plate.mistake
 //   c8 (low back arches off the pad: pelvis tips forward 16 deg, buttocks and upper back stay on the pads, dashed
-//   lumbar bow and gap marker); tempo = plate.tempo c14 (up 1, down 2, no pause: Lower then Press).
+//   back outline off the pad, gap arrow); tempo = plate.tempo c14 (up 1, down 2, no pause: Lower then Press).
 // CARD: bench angle (BACK), seat tilt (SEAT_TILT), seat height (SEAT_TOP), top grip over the shoulder joint (TOP_X, TOP_ELBOW),
 //   bottom flare/depth/width (BOTTOM_ABD, BOTTOM_DIP, BOTTOM_X), feet (FOOT_Z), scapular set (SCAP).
 import { landmarksOf, fk, resolve, normPose, rootOnSeat, WINTER, REF } from '../engine.mjs';
@@ -145,23 +145,26 @@ const misReach = (() => { const E = landmarksOf(end, H), M = landmarksOf({ ...en
   return out; })();
 const mistakePose = { root: rootM, trunk: trunkM, neck: neckM, reach: misReach };
 const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
-// The engine blends the outline over the lumbar bend, so the drawn arch alone is small. A dashed red lumbar line (a
-// Mistake guide, not masked) bows from the buttocks on the pad to the upper back on the pad, its middle ARCH off the
-// pad, and the gap between the pad and the top of the bow is marked with the house gap marker (line with end ticks).
-const ARCH = 0.127;
+// The engine blends the outline over the lumbar bend, so the drawn arch alone is small. The arched back is drawn as a
+// dashed red back outline (the Mistake style, as plank 'Low back sags'): it leaves the pad just below the shoulder
+// blades (backUpper on the pad), rises ARCH off the pad at the lumbar spine (ARCH_AT along the pad from the top) and
+// meets the pad again at the buttock, so a gap of background shows between the low back and the pad. An arrow runs
+// perpendicular to the pad from inside the gap to the peak.
+const ARCH = 0.065;                                   // lumbar peak off the pad (m): 9.5 px at the plate scale (19 px in the 712 px PNG)
+const ARCH_AT = 0.55;                                 // peak position along the pad, backUpper (0) to buttock (1)
 const ARCH_MIN = 0.035;                               // the Mistake's backMid clears the pad by at least this (2.2 cm in the correct pose)
 const onPad = p => p.map((v, i) => v - F.back.normal[i] * padDist(p));
 const ARCH_PTS = (() => {
-  const A = onPad(lmMis.buttock), B = onPad(lmMis.backUpper), P = A.map((v, i) => (v + B[i]) / 2 + F.back.normal[i] * ARCH);
-  const C = P.map((v, i) => 2 * v - (A[i] + B[i]) / 2);                                   // the bow passes P at t = 0.5
-  return Array.from({ length: 17 }, (_, k) => { const t = k / 16; return A.map((v, i) => (1 - t) ** 2 * v + 2 * t * (1 - t) * C[i] + t * t * B[i]); });
+  const B = onPad(lmMis.backUpper), A = onPad(lmMis.buttock);
+  return Array.from({ length: 25 }, (_, k) => { const t = k / 24, s = t < ARCH_AT ? t / ARCH_AT / 2 : 0.5 + (t - ARCH_AT) / (1 - ARCH_AT) / 2, h = ARCH * Math.sin(Math.PI * s);
+    return B.map((v, i) => v + (A[i] - v) * t + F.back.normal[i] * h); });
 })();
-const gapTo = ARCH_PTS[8], gapFrom = onPad(gapTo);
-// The gap itself: the region between the pad and the bow is cleared to the card colour ('eq', end layer, Mistake only),
-// so the solid (correct) figure does not hide it.
-const GAP_FILL = { type: 'poly', pts: [...ARCH_PTS, onPad(lmMis.backUpper)], cls: 'eq', z: 'front', part: 'archgap' };
-const TICK = 2 / 146.29;
-const tick = p => ({ kind: 'line', pts: [p.map((v, i) => v - F.back.up[i] * TICK), p.map((v, i) => v + F.back.up[i] * TICK)] });
+const peak = ARCH_PTS[ARCH_PTS.reduce((b, p, k) => (padDist(p) > padDist(ARCH_PTS[b]) ? k : b), 0)];
+const gapTo = peak, gapFrom = onPad(peak);
+const arrowFrom = gapFrom.map((v, i) => v + F.back.normal[i] * ARCH * 0.2);
+// The gap itself: the region between the pad and the back outline is cleared to the card colour ('eq', end layer,
+// Mistake only), so the solid (correct) figure does not hide it.
+const GAP_FILL = { type: 'poly', pts: ARCH_PTS, cls: 'eq', z: 'front', part: 'archgap' };
 export const mistakeInfo = () => ({ pelvisTiltDeg: MIS_TILT, slideCm: +(slideM * 100).toFixed(1), trunkDeg: +trunkM.toFixed(1), neckDeg: +neckM.toFixed(1),
   lowBackGapCm: +(padDist(gapTo) * 100).toFixed(1), backMidGapCm: +(padDist(lmMis.backMid) * 100).toFixed(1), buttockGapCm: +(padDist(lmMis.buttock) * 100).toFixed(1) });
 // label and measure points on the back face of the back pad (PAD = 7 cm, the composer default)
@@ -200,8 +203,8 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'dashed', pts: ARCH_PTS },                                                   // the arched low back
-      { kind: 'line', pts: [gapFrom, gapTo] }, tick(gapFrom), tick(gapTo),                 // pad-to-low-back gap
+      { kind: 'dashed', pts: ARCH_PTS, smooth: true },                                     // the arched low back, off the pad
+      { kind: 'arrow', from: arrowFrom, to: gapTo },                                       // low back lifts off the pad
       { kind: 'arrow', from: { at: 'navel', pose: 'mistake', off: [2, -2] }, to: { at: 'navel', pose: 'mistake', off: [14, -14] } },   // belly pushes up
     ],
     tells: [
