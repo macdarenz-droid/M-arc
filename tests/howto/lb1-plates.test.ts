@@ -15,6 +15,10 @@ const LB1 = ['chin_up', 'hanging_knee_raise', 'assisted_pull_up', 'inverted_row'
   'single_arm_lat_pulldown', 'straight_arm_pulldown', 'chest_supported_row', 'resistance_band_row', 'incline_machine_press',
   'shoulder_press', 'horizontal_leg_press', 'leg_press_calf_raise'];
 const IDS = LB1.map(i => `lib_${i}`);
+// D-LIB9a-MAIN565 / D-LIBZOOM-HLP: horizontal_leg_press's stage is held, so its row is out of lb1/rows.json until
+// LIB-ZOOM (#279) re-adds it with its approved zoom. Its spec, card and tempo stay; it still must never ship.
+const HELD = ['lib_horizontal_leg_press'];
+const ROW_IDS = IDS.filter(i => !HELD.includes(i));
 const ROWS = 'tools/plates/library/lb1/rows.json';
 const COMPOSERS = ['assistMachine', 'chestRowMachine', 'band', 'dHandle', 'polybar'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -927,13 +931,13 @@ describe('LIB-9a A3: spec and composer closures are pure and drawn by the vendor
   });
 });
 
-describe('LIB-9a A5: lb1/rows.json holds exactly the 14 LB1 ids, all mode H', () => {
+describe('LIB-9a A5: lb1/rows.json holds exactly the 13 LB1 ids not held, all mode H', () => {
   /** Row keys counted in the raw text, so a duplicated key (which JSON.parse would merge) is seen. */
   const rowKeys = (text: string) => [...text.matchAll(/^ {2}"(lib_[a-z0-9_]+)": \{/gm)].map(m => m[1]);
   const a5 = (text: string) => {
     const keys = rowKeys(text), bad: string[] = [];
-    for (const id of IDS) if (keys.filter(k => k === id).length !== 1) bad.push(`${id} x${keys.filter(k => k === id).length}`);
-    for (const k of keys) if (!IDS.includes(k!)) bad.push(`extra ${k}`);
+    for (const id of ROW_IDS) if (keys.filter(k => k === id).length !== 1) bad.push(`${id} x${keys.filter(k => k === id).length}`);
+    for (const k of keys) if (!ROW_IDS.includes(k!)) bad.push(`extra ${k}`);
     return bad;
   };
   it('each plan 6.2 LB1 id exactly once in the raw text, nothing else', () => {
@@ -945,15 +949,17 @@ describe('LIB-9a A5: lb1/rows.json holds exactly the 14 LB1 ids, all mode H', ()
     expect(a5(JSON.stringify(drop, null, 1))).toEqual(['lib_chin_up x0']);
     const dup = text.replace('  "lib_chin_up": {', `  "lib_chin_up": ${JSON.stringify(j.rows.lib_chin_up)},\n  "lib_chin_up": {`);
     expect(a5(dup)).toEqual(['lib_chin_up x2']);
+    const held = { ...j, rows: { ...j.rows, lib_horizontal_leg_press: j.rows.lib_leg_press_calf_raise } };
+    expect(a5(JSON.stringify(held, null, 1))).toEqual(['extra lib_horizontal_leg_press']);
   });
-  it('every row points at its own spec file, carries the census view, and is mode H (14 H, 0 D; the guard for the H10 gap)', () => {
+  it('every row points at its own spec file, carries the census view, and is mode H (13 H, 0 D; the guard for the H10 gap)', () => {
     const rows = readJson(ROWS).rows;
     for (const [id, r] of Object.entries<any>(rows)) {
       expect(r.src).toBe(`library/specs/${id.slice(4)}.mjs`);
       expect(r.chromeId).toBe(id.slice(4).replace(/_/g, '-'));
       expect(r.view).toBe('side');
     }
-    expect(Object.values<any>(rows).map(r => r.mode)).toEqual(Array(14).fill('H'));
+    expect(Object.values<any>(rows).map(r => r.mode)).toEqual(Array(13).fill('H'));
     expect(readJson(ROWS)).toMatchObject({ batch: 'LB1', censusRef: '4a9fd86' });
   });
 });
@@ -964,7 +970,7 @@ describe('LIB-9a A9: nothing ships (D-LIB4-ENTRY-2)', { timeout: T }, () => {
   });
   it('no LB1 id is shipped, even with lb1/rows.json read as a batch file', () => {
     const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(14);
+    expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(13);
     expect(reg.shippedIds(rows).filter((i: string) => IDS.includes(i))).toEqual([]);
   });
   /** Problems of a batches/ listing [[name, text]]: an LB1 id as a whole token. */
@@ -1029,11 +1035,11 @@ describe('LIB-9a A8 (Do 4, D-LIB9-AUTHORQA): the authoring option', { timeout: T
 describe('LIB-9a Q-A (#245): candidate.mjs resolves the How-to source exactly as registry sourceOf does', () => {
   // registry.mjs stays byte-identical (it is an input of every generated file); candidateOf resolves the source of a row
   // in the injected rows itself. It must equal sourceOf for every main row and, with lb1/rows.json read as an extra
-  // batch file through the registry's own test hook, for the 14 LB1 rows.
-  it('equal to sourceOf for every main row and the 14 LB1 rows', () => {
+  // batch file through the registry's own test hook, for the 13 LB1 rows.
+  it('equal to sourceOf for every main row and the 13 LB1 rows', () => {
     for (const r of reg.rows()) expect(cand.howtoOf(r.id, undefined, all), r.id).toBe(reg.sourceOf(r.id));
     reg.__setExtraBatches([ROWS]);
-    try { for (const id of IDS) expect(cand.howtoOf(id, undefined, all), id).toBe(reg.sourceOf(id)); } finally { reg.__setExtraBatches([]); }
+    try { for (const id of ROW_IDS) expect(cand.howtoOf(id, undefined, all), id).toBe(reg.sourceOf(id)); } finally { reg.__setExtraBatches([]); }
   });
   // The changed-path mutation is a source mutation (candidate.mjs howto/ -> how-to/), listed red on the PR.
   it('an unknown id throws', () => {
@@ -1131,14 +1137,30 @@ describe('LIB-9a Q5 / A7 and A4 (H10): the D path on an in-memory D copy of lib_
     data.rows.lib_close_grip_pulldown = { ...r, mode: 'D', parent: 'lib_lat_pulldown', params };   // replaced, not added
     return build.lb1All(undefined, data);
   };
-  const h10 = async (params: any, change?: (c: any) => any) => {
+  // LIB-3c fails closed when neither the family (param-ranges.json) nor ctx.envelope names a PARAMS key, so the D copy
+  // carries a test-only envelope row for camera.maxScale, LIB-3b/3c's TEST_ENV row; nothing is written.
+  const TEST_ENV = { 'camera.maxScale': [0.9, 1.1] };
+  const h10 = async (params: any, change?: (c: any) => any, ctx: any = { envelope: TEST_ENV }) => {
     let c = await cand.candidateOf('lib_close_grip_pulldown', { all: dAll(params), platesHtml: html, engine: E, authoring: true });
     if (change) c = change(c);
-    return (await qaNode.h10(c)).map((p: any) => p.key);
+    if (ctx.keepChild !== true && c.derivation) {   // the copy is close_grip's own H drawing, so LIB-3c's child proof is pinned on its own below
+      const own = golden.fragmentsOf(c.plate);
+      c = { ...c, derivation: { ...c.derivation, rebuildChild: async () => own } };
+    }
+    return (await qaNode.h10(c, ctx)).map((p: any) => p.key);
   };
   it('clean: the plan parent lib_lat_pulldown rebuilt alone matches its GOLDEN.json fragments (H10\'s checks bite; not "a valid D")', async () => {
     expect(await h10({ 'camera.maxScale': 1 })).toEqual([]);
     expect(readJson(ROWS).rows.lib_close_grip_pulldown.mode).toBe('H');   // nothing written
+  });
+  it('LIB-3c child proof: the copy, close_grip\'s own drawing, is not lat_pulldown derived, so every fragment gives H10.child', async () => {
+    expect(await h10({ 'camera.maxScale': 1 }, undefined, { envelope: TEST_ENV, keepChild: true })).toEqual(qaNode.FRAG_KEYS.map((k: string) => `H10.child:${k}`));
+  });
+  it('mutation: no envelope row for camera.maxScale fails closed with H10.envelope (LIB-3c)', async () => {
+    expect(await h10({ 'camera.maxScale': 1 }, undefined, {})).toEqual(['H10.envelope:camera.maxScale']);
+  });
+  it('mutation: camera.maxScale outside the envelope row gives H10.value', async () => {
+    expect(await h10({ 'camera.maxScale': 1.2 })).toEqual(['H10.value:camera.maxScale']);
   });
   it('mutation A7: a key outside PARAMS gives H10.unknown', async () => {
     expect(await h10({ gripWidth: 0.5 })).toEqual(['H10.unknown:gripWidth']);

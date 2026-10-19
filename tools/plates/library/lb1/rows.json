@@ -1,5 +1,5 @@
 {
- "note": "LB1 build-ahead rows (LIB-9a, D-LIB4-ENTRY-2): stage drawing or review only, never in batches/. Mode H for all 14 (lb1/DESIGN.md 1). censusRef: the census commit (claude/howto-options).",
+ "note": "LB1 build-ahead rows (LIB-9a, D-LIB4-ENTRY-2): stage drawing or review only, never in batches/. Mode H for all 13 (lb1/DESIGN.md 1); horizontal_leg_press is held out until LIB-ZOOM (#279) re-adds it (D-LIB9a-MAIN565). censusRef: the census commit (claude/howto-options).",
  "batch": "LB1",
  "censusRef": "4a9fd86",
  "rows": {
@@ -107,15 +107,6 @@
    "slug": "shoulder-press",
    "prefix": "shoulder-press",
    "chromeId": "shoulder-press",
-   "mode": "H",
-   "stage": "drawing",
-   "view": "side"
-  },
-  "lib_horizontal_leg_press": {
-   "src": "library/specs/horizontal_leg_press.mjs",
-   "slug": "horizontal-leg-press",
-   "prefix": "horizontal-leg-press",
-   "chromeId": "horizontal-leg-press",
    "mode": "H",
    "stage": "drawing",
    "view": "side"
