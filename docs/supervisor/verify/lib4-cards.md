@@ -4065,3 +4065,27 @@ D-LIBHANDS-COUNT (as ruled on #193 6257376224 and amended by 6257562588; applied
 - Approved at `013f84e` on every scored item (R1-R7, R10; R8 and R9 unscored): dumbbell_bench_press, triceps_pushdown, rope_triceps_pushdown, pec_fly, plank.
 - Advisory only (21.3 point 4), with no low item: upright_row; incline_dumbbell_press (R5 [4, 3, 4]). Both change in FIX2 and get their counted run then.
 - Round 1's approvals stand: dumbbell_shoulder_press and dumbbell_biceps_curl. Their fragments are unchanged since `83735ab`, per LIB-8M's fix table.
+
+### 21.5 CARD FIELDS verify at `94c551f` (D-LIB8M-CF1, 2026-10-19 ~05:30 UTC)
+**What ran.** A fresh, blind Opus content verifier on a copy of the 14 cards, their quotes, tempo.json, the TOPFAULT blind inputs and a rules file. One wrong number was planted, and the verifier was not told about it.
+
+**Calibration: VALID.** The verifier caught the plant (barbell_overhead_press tempo Lower 3 against plate.tempo down 2). All 14 topFault values check out, and so do all 14 tempo arrays apart from the plant.
+
+**Findings, ruled:**
+1. **single_leg_romanian_deadlift `plateFacts: []`: real.** D-LIB8M-NOFACTS allows `[]` only when no quote gives a number for a drawn pose. c10 ("Ideally, you want about 15-20 degrees of knee flexion") does, for the stance knee in plate.start and plate.end, and the spec draws it at 17.5°. Fix: add a joint angle fact for the stance knee in each key pose the card ties to c10, citing c10.
+2. **romanian_deadlift: start pose.** The card's plate.start also gives "knees about 15 degrees bent (c4)", but the one fact covers only the end pose (the measure callout). Ruled strict: add a joint angle fact for the start knee, citing c4.
+3. **Rule D-LIB8M-FACTS (from now on, every batch).**
+   - Every number a quote gives for a pose the plate draws becomes a plate fact.
+   - A joint fact uses H6's joint path, with deg in the report-angle convention (knee flexion). A measure fact (`measure: true`) uses the plate's measure.expect convention.
+   - A quoted range [a, b] is written as its midpoint, with a note that holds the quote and the range. This is allowed only when b − a ≥ 2 × LIMITS.angleDeg, so that H6's ±2° keeps the drawn value inside the quoted range. A narrower range needs a ruling.
+   - For c10, deg 17.5 is checked to ±2°, which gives 15.5-19.5, inside 15-20.
+4. **Findings 3 and 4 of the report (no `joint` on the RDL and incline facts): withdrawn.** A `measure: true` fact carries no joint by design; 14.7's mutation "a fact with both joint and measure: true" turns red. The rules file given to the verifier left this out, and that was the supervisor's input error.
+5. **Next.**
+   - LIB-8M adds the facts in points 1 and 2. Nothing else in the cards changes.
+   - It re-runs Do 9 for both ids; H6 must pass.
+   - It posts the head.
+   - A fresh verifier then rechecks only the two cards' plateFacts, with one new plant.
+   - CARD FIELDS VERIFIED follows on that head.
+   - If H6 shows a drawn knee outside ±2°, that is a CARDTRUE redraw, never a moved card value.
+
+**Why nothing is loosened.** H6's ±2° stays, and the facts only add checks. Every number is tied to its verbatim quote.
