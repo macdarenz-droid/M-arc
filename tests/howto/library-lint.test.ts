@@ -7,6 +7,7 @@ import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writ
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { mapLimit } from './limit';
 import exercises from '../../src/data/exercises.json';
 import { LIMITS, checkC7 } from './checks/c7';
 import { checkC15 } from './checks/c15';
@@ -243,7 +244,7 @@ describe('LIB-5 S7 generator cases: E1\'s row in per-case copies of E1\'s tree (
       ['control: inherit [] on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": [],\n  "topFault":'), null],
       ['control: the unedited tree', () => tree, null],
     ];
-    const results = await Promise.all(cases.map(async ([name, make, want]) => ({ name, want, ...(await node(make(), ['tools/plates/generate.mjs'])) })));
+    const results = await mapLimit(cases, 2, async ([name, make, want]) => ({ name, want, ...(await node(make(), ['tools/plates/generate.mjs'])) }));
     for (const x of results) {
       if (x.want === null) expect([x.name, x.code, x.out.slice(-300)]).toEqual([x.name, 0, expect.stringContaining('generate: wrote')]);
       else { expect([x.name, x.code]).not.toEqual([x.name, 0]); expect(x.out, x.name).toContain(`Error: ${x.want}`); }
