@@ -850,8 +850,9 @@ new paths, and merges its dependencies' heads in before review. It still **merge
    as drawn there.*
 4. **View conflicts** (`dumbbell_fly`, `bent_over_dumbbell_rear_delt_fly`), go/no-go on pilot A. *Default: ship the
    view that passes every check with critic scores ≥ 4; otherwise the named list.*
-5. **Roll and yaw** (side plank, Russian twist, bicycle crunch), go/no-go on pilot B. *Default: if E-R5 fails, the
-   named list, decided at the release candidate.*
+5. **Roll and yaw** (side plank, Russian twist, bicycle crunch), go/no-go on pilot B: one answer on the four renders
+   in 2.4, which also cover the dumbbell fly and the rear-delt fly (D-LIB11-ER5). *Default: if E-R5 fails, the named
+   list, decided at the release candidate.*
 6. **Back-pain box** wording (NHS-sourced triggers, 30 words or fewer, a region-neutral "Get emergency help now."
    instead of the UK-only "Call 999"), on pilot A. *Default: the critic-checked draft.*
 7. **Text-only feel state** where no drawn muscle is honest, on pilot B. *Default: yes.*
@@ -945,7 +946,7 @@ verbatim, and "next batch" (plan O4, answered by this plan).
 | 3 | A rejected anchor wastes work | Anchor rule: nothing is built from an unapproved anchor; pilots come one batch or more ahead; a rejection re-plans only the dependent ids |
 | 4 | A template or parent card change silently moves children | Frozen templates (`v2` files); L1 refuses byte moves; parent hash chained into child golden entries and card stamps |
 | 5 | A composer can't draw a closed angled or moving part | PQ-H9; conditional `poly` primitive by golden update (LIB-25) |
-| 6 | E-R5 fails the bar | Spike in phase 0; go/no-go on pilot B; named list for 3 ids with renders |
+| 6 | E-R5 fails the bar | Spike in phase 0; one go/no-go on pilot B on the four renders in 2.4; named list for the ids that need the fields |
 | 7 | Renderer can't reproduce all 8 | Legacy scripts frozen for any it can't; the 5 `render-*` must reproduce; critic and owner flag for the affected family |
 | 8 | CI pixel instability (HT-3 red today) | Entry condition of 5 identical reruns; golden-vs-golden 0 px per shard; root-cause, never retry; the threshold never changes (plan R6) |
 | 9 | Gate time or queueing | Shards sized by measurement (C14: K = N + 1 at P = 1); `gate-verdict`'s library family proves full coverage; affected-id shards on other pushes; full runs on `main`, merge-train heads and `workflow_dispatch`, and only `library: full` is merge evidence (D-LIB4-MODE); queue triggers (D-LIB4-QUEUE) (D-LIB4-DOCS) |
