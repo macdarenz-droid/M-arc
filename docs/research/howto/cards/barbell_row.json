@@ -229,9 +229,10 @@
     },
     {
       "id": "c13",
-      "text": "Tempo: about 1-2 s up and 1-2 s down (moderate velocity), with the lowering done slowly.",
+      "text": "Tempo: about 1-2 s up and 1-2 s down (moderate velocity), with the lowering done slowly. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm2009",
@@ -240,7 +241,12 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -441,7 +447,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-17"
     },
     {
       "id": "macdougall1985",
@@ -493,15 +499,19 @@
       },
       {
         "label": "Bar to belly",
-        "what": "Bar pulled to the belly button or low chest, not to the neck.",
-        "claim": "c5"
+        "what": "Bar pulled to the belly button or low chest.",
+        "claim": [
+          "c5",
+          "c6"
+        ]
       }
     ],
     "mistake": {
       "what": "Torso swings up to heave the bar (hips and lower back throw the weight).",
-      "why": "Too much weight is the usual cause; it takes work off the upper back and adds lower-back stress on a lift that already loads the lumbar spine most (c7, c10).",
+      "why": "Too much weight is the usual cause; it takes work off the upper back and adds lower-back work on a lift that already loads the lumbar spine most (c7, c10).",
       "claim": "c7",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3. Step 1: no frequency word counts for a row fault. Set aside: StrengthLog's \"The most common cause of swinging in the barbell row is that you are using too much weight\" (c7) names a cause, the load, not how often lifters swing; \"Barbell rows are typically done with an overhand (pronated) grip\" is a grip; \"Most people can do significantly more reps or use heavier weights if they use lifting straps\" is about straps and load; \"In real life (or competitions), we often use momentum\" is about all lifting. Step 2: no quote ties a named fault to harm. Swinging, \"you increase the amount of work done by your lower back\" (c7) is work, not harm; \"this grip probably increases the risk of a biceps tear\" (c20) is about the underhand grip, a grip choice (R-LB2-3); \"heavier weights mean more stress\" is about load. Step 3: no common-mistakes list; one StrengthLog quote each tells the lifter to avoid swinging (\"you should avoid swinging the barbell up\") and a flexed or arched back (\"Aim to keep your back in a neutral position; neither flexed forward nor arched.\", c4). Tie ruled by the supervisor (R-LB2-13): the head's pick stays because the census view was chosen for it; LR-31 gives no further order. drawable stays true: the swing has a still sign, the torso higher than the set angle, which the side view shows."
     },
     "tells": [
       {
@@ -536,24 +546,31 @@
   },
   "setup": [
     {
-      "step": "Set the bar in a rack at about thigh height and lift it out.",
+      "step": "Lift the bar from the rack.",
       "claim": "c3"
     },
     {
-      "step": "Feet about shoulder width, toes forward or slightly out.",
-      "claim": "c8"
+      "step": "Feet shoulder width. Overhand grip slightly wider, thumbs around the bar.",
+      "claim": [
+        "c8",
+        "c2",
+        "c16"
+      ]
     },
     {
-      "step": "Overhand grip, slightly wider than shoulders, thumbs around the bar.",
-      "claim": "c2"
-    },
-    {
-      "step": "Bend forward at the hips with a flat back and soft knees; arms hang straight.",
-      "claim": "c3"
+      "step": "Bend at the hips, back straight, knees slightly bent. Arms straight.",
+      "claim": [
+        "c3",
+        "c5"
+      ]
     },
     {
       "step": "Breathe in, then pull.",
       "claim": "c19"
+    },
+    {
+      "step": "Beat target by one or two reps? Add 2 to 10 percent.",
+      "claim": "c14"
     }
   ],
   "posture": [
@@ -576,17 +593,20 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Swinging the bar up with the hips.",
+      "mistake": "Swinging the bar up.",
       "fix": "Go lighter and row strictly.",
       "claim": "c7"
     },
     {
       "mistake": "Rounding the back.",
-      "fix": "Keep the back flat; if it rounds, end the set or lower the weight.",
-      "claim": "c4"
+      "fix": "Keep the back flat. If it rounds, lower the weight.",
+      "claim": [
+        "c4",
+        "c7"
+      ]
     },
     {
-      "mistake": "Switching to an underhand grip for heavy sets.",
+      "mistake": "Underhand grip for heavy sets.",
       "fix": "Keep the overhand grip for this row.",
       "claim": "c20"
     }
@@ -625,23 +645,30 @@
     "rows": [
       {
         "where": "Between and around the shoulder blades",
-        "means": "Usually means the upper back is doing the rowing.",
+        "means": "The lats, traps and rear delts are the main movers.",
         "fix": null,
-        "claim": "c12",
+        "claim": [
+          "c12"
+        ],
         "redFlag": null
       },
       {
         "where": "Lower back, working hard",
-        "means": "Usually means the lower back is holding the bent-over position, which is expected.",
+        "means": "The free-weight row works the lower-back muscles harder than a machine row.",
         "fix": null,
-        "claim": "c11",
+        "claim": [
+          "c11"
+        ],
         "redFlag": null
       },
       {
-        "where": "Lower back pain, or pain or numbness down both legs",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop the set.",
-        "claim": "c18",
+        "where": "Lower back pain while rowing",
+        "means": "Fault: rounding the back, or swinging the bar up with the hips.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c4",
+          "c7"
+        ],
         "redFlag": "back"
       }
     ]
@@ -656,7 +683,7 @@
       "claim": "c15"
     },
     {
-      "risk": "Swinging heavy weight shifts stress to the lower back.",
+      "risk": "Swinging the bar up with your hips shifts work to the lower back.",
       "claim": "c7"
     }
   ],
@@ -668,14 +695,14 @@
       "key": "row-grip",
       "kind": "hand",
       "right": "Overhand, thumbs wrapped, wrists straight, hands just outside shoulder width.",
-      "wrong": "Wrist curled forward with the bar sliding to the fingertips.",
+      "wrong": null,
       "claim": "c1"
     },
     {
       "key": "row-back",
       "kind": "posture",
       "right": "Flat back, hips hinged, soft knees.",
-      "wrong": "Rounded back, or torso rising up as the bar is heaved.",
+      "wrong": "Rounded back, or torso rising as the bar is heaved.",
       "claim": "c4"
     }
   ],
@@ -686,5 +713,8 @@
     "remove": [],
     "why": "Library primary mid_back and secondary lats, biceps, rear_delts, with lower_back and core as stabilisers, match the sources (c12, c11). StrengthLog lists lats as primary; the card keeps the library split and shows lats as a primary feel (c12). Add forearms as secondary: StrengthLog names the forearm flexors as secondary movers (c12)."
   },
-  "anchorSource": "sl-barbell-row"
+  "anchorSource": "sl-barbell-row",
+  "gaps": [
+    "tier-A way out: no read source says how to set the bar down or fail a stuck rep on this exercise (LIB-WAYOUT)"
+  ]
 }

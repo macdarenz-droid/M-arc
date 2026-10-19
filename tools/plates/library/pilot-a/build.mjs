@@ -20,7 +20,7 @@ const ALL = PLATES_JSON.plates;
 const HANDS = PLATES_JSON.hands ?? [];   // LIB-12 hand renders: shown on the sheet only (evidence images), never on the plates page
 const PILOT = ALL.filter(p => !p.held);   // held plates stay off both pages (supervisor ruling), one line each on the sheet
 const HELD = ALL.filter(p => p.held);
-const CARDS = join(here, 'cards');   // verified research cards (card v2), copied from claude/libht-research
+const CARDS = join(ROOT, 'docs', 'research', 'howto', 'cards');   // verified research cards, byte copies from claude/libht-research 7d7c52e (D-LIB8M-CARDS)
 
 // Flag envelope (plan 3.3), measured on the 7 engine-drawn approved plates by report.mjs `measures` (the lateral
 // raise is hand-drawn, at the reference 146.29 px/m). Kept for this sheet and page order only (D-LIB8FIX-ENV): F2 and F3 here are other measures than LIB-3's; LIB-3's qa flags (qa/envelope.json) gate the merge.
@@ -135,7 +135,7 @@ export async function build({ draft = false, list: LIST = PILOT, specPath = id =
   // 5. the sheet: the plates page with a row per card (card + aside), heading with the plates page sha
   // Owner decision LR-23 (2026-09-30): no Sources section and no source, study or organisation names in the sheet's
   // visible text; sources stay in the card data. The footer line and the golden chrome's sources list are dropped here.
-  const sheetHeading = { ...heading, foot: 'Pilot sheet for the owner\'s review. Drawings are computed by our own code from the verified research cards.', title: 'M/ARC Library Plates · Pilot A sheet', intro: `${heading.intro}</p><p>Each row: the plate as it will ship (live), its Mistake, a Paper thumbnail, the closest approved plate and every flag. Research: the verified cards at claude/libht-research e2a70bc. Plates page sha256 <span class="pg-sha">${pageSha}</span> (${plates.length.toLocaleString('en')} B); the cards on this sheet are byte-identical to that page.${HELD.map(h => `</p><p>Held off this sheet: ${h.id.replace(/_/g, ' ')}. ${h.held}.`).join('')}` };
+  const sheetHeading = { ...heading, foot: 'Pilot sheet for the owner\'s review. Drawings are computed by our own code from the verified research cards.', title: 'M/ARC Library Plates · Pilot A sheet', intro: `${heading.intro}</p><p>Each row: the plate as it will ship (live), its Mistake, a Paper thumbnail, the closest approved plate and every flag. Research: the verified cards at claude/libht-research 7d7c52e. Plates page sha256 <span class="pg-sha">${pageSha}</span> (${plates.length.toLocaleString('en')} B); the cards on this sheet are byte-identical to that page.${HELD.map(h => `</p><p>Held off this sheet: ${h.id.replace(/_/g, ' ')}. ${h.held}.`).join('')}` };
   let sheet = (await buildPlatesPage({ groups, sources, specs, heading: sheetHeading })).html.toString();
   sheet = sheet.replace('</style>', `${SHEET_CSS}</style>`);
   const src = sheet.match(/\n  <details id="sources">[\s\S]*?<\/details>/g);

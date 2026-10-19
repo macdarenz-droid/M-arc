@@ -258,6 +258,72 @@
           "where": "abstract, conclusion"
         }
       ]
+    },
+    {
+      "id": "c13",
+      "text": "Programmed by time: beginners 2–3 sets of 15 seconds on, 15 off; intermediate 3–4 sets of 20 on, 20 off; well conditioned 4–5 sets of 30 on, 30 off.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lohre-mc"
+      ],
+      "quotes": [
+        {
+          "source": "lohre-mc",
+          "text": "Mountain climbers are usually programmed by time rather than reps. Beginners should start with 2 to 3 sets of 15 seconds of work and 15 seconds of rest, which totals about 1 to 2 minutes.",
+          "where": "FAQ: How many mountain climbers should I do?"
+        },
+        {
+          "source": "lohre-mc",
+          "text": "At intermediate level, use 3 to 4 sets of 20 seconds on and 20 seconds off, and if you are well conditioned, 4 to 5 sets of 30 seconds on and 30 seconds off.",
+          "where": "FAQ: How many mountain climbers should I do?"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "For strength, 2–3 sets of 10–15 slow, controlled reps (slow is better for beginners); for HIIT, 6–8 rounds of 20 seconds fast with 10 seconds rest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hl-mc",
+          "text": "As part of an overall program focusing on muscular strength and conditioning, complete 2–3 sets of 10–15 slow and controlled repetitions.",
+          "where": "How to do mountain climbers"
+        },
+        {
+          "source": "hl-mc",
+          "text": "As part of a cardiovascular program with a HIIT focus, complete 6–8 rounds of fast mountain climbers for 20 seconds, with a 10-second rest in between.",
+          "where": "How to do mountain climbers"
+        },
+        {
+          "source": "hl-mc",
+          "text": "They can also be performed at a slow, controlled tempo, which is better for beginners.",
+          "where": "Benefits"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Progress by lengthening the interval before adding sets, and end the set as soon as the hips start bouncing rather than pushing to the clock.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lohre-mc"
+      ],
+      "quotes": [
+        {
+          "source": "lohre-mc",
+          "text": "Progress by extending the interval before adding sets, and end the set as soon as your hips start bouncing rather than pushing to the clock.",
+          "where": "FAQ: How many mountain climbers should I do?"
+        }
+      ]
     }
   ],
   "sources": [
@@ -280,6 +346,26 @@
       "pmid": "29085728",
       "access": "abstract",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "lohre-mc",
+      "url": "https://julielohre.com/mountain-climbers/",
+      "title": "Mountain Climbers: Proper Form, Muscles Worked, and Reps (Julie Lohre, trainer)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-03"
+    },
+    {
+      "id": "hl-mc",
+      "url": "https://www.healthline.com/health/fitness/what-do-mountain-climbers-work",
+      "title": "What Do Mountain Climbers Work? (Healthline; medically reviewed by a CPT)",
+      "kind": "coach",
+      "year": 2022,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-03"
     }
   ],
   "plate": {
@@ -327,8 +413,16 @@
       "up": null,
       "down": null,
       "pause": null,
-      "text": "Cycle: switch legs quickly, as if running; beginners step instead of hopping. No source gives a cadence.",
-      "claim": "c4"
+      "sets": "2-3",
+      "work": "15 s",
+      "rest": "15 s",
+      "text": "Default (beginner): 2-3 sets of 15 s on, 15 s off (c13), switching legs quickly, as if running (c4); slow and controlled suits beginners (c14). Progressions: 20 s on/20 s off, then 30 s on/30 s off, lengthening the interval before adding sets; end the set when the hips start bouncing (c13, c15). High-intensity option only: 6-8 rounds of 20 s fast, 10 s rest (c14). No source gives steps per second.",
+      "claim": [
+        "c13",
+        "c4",
+        "c14",
+        "c15"
+      ]
     },
     "variantLine": null
   },
@@ -477,10 +571,21 @@
   "anchorSource": "hinge-mc",
   "anchorNote": "Hinge Health (physical therapists) mountain climbers page read in full. No ACE, NSCA or ACSM mountain climber page was reachable, and PubMed has no technique or EMG study of the exercise (search 2026-09-30: 3 hits for mountain climber AND EMG, none relevant).",
   "unsourced": [
-    "Cadence or seconds per cycle.",
+    "Cadence (steps per second); work and rest times are now sourced (c13, c14).",
     "Finger spread and weight through the heel of the hand (palm-flat archetype).",
     "Whether fists or push-up handles help a sore wrist.",
     "Breathing.",
     "Where the driving foot lands (toe tap vs floating)."
-  ]
+  ],
+  "notes": [
+    "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c13 (Julie Lohre) and c14 (Healthline) add timed work and rest; no source gives a cadence.",
+    "W1 fix round 2026-10-03: F05/R-W1-2 tempo default is the beginner row (2-3 × 15 s on/15 s off, c13); 20/20 and 30/30 are progressions; 20/10 is labelled as the high-intensity option (c14). c15 adds Lohre's progression and stop cue; loadProgression added from c13 and c15."
+  ],
+  "loadProgression": {
+    "text": "Start with 2-3 sets of 15 seconds on, 15 off; lengthen the interval before adding sets; stop the set when your hips start bouncing.",
+    "claims": [
+      "c13",
+      "c15"
+    ]
+  }
 }

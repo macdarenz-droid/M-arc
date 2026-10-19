@@ -206,9 +206,10 @@
     },
     {
       "id": "c10",
-      "text": "Tempo: about 1-2 s up and 1-2 s down, controlled.",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, controlled. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm2009",
@@ -217,7 +218,12 @@
       "quotes": [
         {
           "source": "acsm2009",
-          "text": "using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
         },
         {
@@ -306,6 +312,23 @@
           "where": "Lifting Fundamentals Drill 1"
         }
       ]
+    },
+    {
+      "id": "c15",
+      "text": "If the shoulder joints feel any discomfort, turn the bar back earlier, before the upper arms rise above shoulder height.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-upright-row"
+      ],
+      "quotes": [
+        {
+          "source": "sl-upright-row",
+          "text": "If you do feel any discomfort in your shoulder joints, you can try to revert the movement earlier, before your upper arms are above shoulder height.",
+          "where": "How to do barbell upright rows"
+        }
+      ]
     }
   ],
   "sources": [
@@ -347,7 +370,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-17"
     },
     {
       "id": "kolber2010",
@@ -379,7 +402,7 @@
     "checkpoints": [
       {
         "label": "Elbows lead",
-        "what": "Elbows go out to the sides and stay above the hands.",
+        "what": "Elbows go out to the sides.",
         "claim": "c3"
       },
       {
@@ -397,7 +420,8 @@
       "what": "Bar pulled up under the chin with the elbows above the shoulders.",
       "why": "Raising the elbows above the shoulders raises impingement risk (c5), and the top is where upright-row shoulder pain comes from (c2).",
       "claim": "c5",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: no frequency word for an upright-row fault (McAllister's \"commonly used to develop the deltoid\" is about the exercise; Kolber's \"one of the most prevalent regions of injury\", c13, is about the shoulder in all resistance training). Les Mills ties three listed items to shoulder impingement (c5), but hands too close together (\"increase the chance of impingement\") is a grip width, a grip statement set aside under R-LB2-3. Two candidates remain on that common-mistakes list: shoulders rounded forward (\"a high likelihood that those two bony prominences will impact\") and the bar pulled up under the chin with the elbows above the shoulders (\"another road to increase the likelihood of shoulder impingement\"). The next tie rule decides: the pull above shoulder height has two harm sources, Les Mills and StrengthLog's \"you can mitigate the risk of shoulder pain\" by \"avoiding elevating your upper arms above shoulder height at the top of the movement\" (c2); the rounded shoulders have one. StrengthLog's own mistakes (lifting with the wrists, a too-wide grip) state no harm. drawable stays true: the front view shows the elbows against shoulder height."
     },
     "tells": [
       {
@@ -405,7 +429,7 @@
         "claim": "c6"
       },
       {
-        "text": "Elbows stay higher than hands",
+        "text": "Bar stays close to your body",
         "claim": "c3"
       }
     ],
@@ -438,7 +462,11 @@
     },
     {
       "step": "Overhand grip about shoulder width or wider, thumbs around the bar.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c1",
+        "c14"
+      ]
     },
     {
       "step": "Draw the shoulder blades back before the first pull.",
@@ -469,7 +497,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Pulling the bar up under the chin.",
+      "mistake": "Bar pulled under the chin.",
       "fix": "Stop at the lower ribs, elbows level with the shoulders.",
       "claim": "c5"
     },
@@ -479,7 +507,7 @@
       "claim": "c5"
     },
     {
-      "mistake": "Lifting with the wrists and letting the elbows drop.",
+      "mistake": "Lifting with wrists, elbows dropping.",
       "fix": "Lead with the elbows out to the sides.",
       "claim": "c3"
     }
@@ -509,23 +537,31 @@
     "rows": [
       {
         "where": "Side of the shoulders",
-        "means": "Usually means the side delts are lifting.",
+        "means": "The side delts are the main movers.",
         "fix": null,
-        "claim": "c8",
+        "claim": [
+          "c8"
+        ],
         "redFlag": null
       },
       {
         "where": "Mostly the biceps",
-        "means": "Usually means the grip is narrow.",
+        "means": "A narrower grip gives more biceps work and less shoulder work.",
         "fix": "Widen the grip.",
-        "claim": "c7",
+        "claim": [
+          "c7"
+        ],
         "redFlag": null
       },
       {
-        "where": "Pinch at the top of the shoulder near the top of the lift",
-        "means": "Usually means the elbows are going too high or the grip is too narrow.",
-        "fix": "Stop lower, widen the grip, go lighter.",
-        "claim": "c5",
+        "where": "Shoulder discomfort or pain",
+        "means": "Fault: elbows above the shoulders, or the bar pulled under the chin.",
+        "fix": "Stop and don't train through the pain. Keep upper arms below shoulder height.",
+        "claim": [
+          "c15",
+          "c5",
+          "c2"
+        ],
         "redFlag": "shoulder"
       }
     ]
@@ -547,9 +583,14 @@
     {
       "key": "urow-grip",
       "kind": "hand",
-      "right": "Overhand about shoulder width or wider, thumbs wrapped, wrists straight.",
-      "wrong": "Hands touching in the middle, wrists curled up.",
-      "claim": "c5"
+      "right": "Overhand about shoulder width or wider, thumbs wrapped.",
+      "wrong": "Hands too narrowly placed.",
+      "claim": [
+        "c1",
+        "c7",
+        "c14",
+        "c5"
+      ]
     },
     {
       "key": "urow-top",

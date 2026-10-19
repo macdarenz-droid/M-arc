@@ -221,6 +221,33 @@
           "where": "abstract, results"
         }
       ]
+    },
+    {
+      "id": "c12",
+      "text": "Front plank: 1–6 reps of a 10–60 second hold, resting 30–60 seconds between reps; build up from a few seconds (3, then 4, then 10), with a full minute as the goal.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "harvard-plank"
+      ],
+      "quotes": [
+        {
+          "source": "harvard-plank",
+          "text": "Front plank Reps: 1–6 Sets: 1 Hold: 10–60 seconds Rest: 30–60 seconds between reps",
+          "where": "Core strength exercises: Planks, front plank"
+        },
+        {
+          "source": "harvard-plank",
+          "text": "\"If you can hold it for three seconds, try it for four. If you can hold it for four, try to get to 10 seconds,\" says Dr. Edward Phillips, assistant professor of physical medicine and rehabilitation at Harvard Medical School.",
+          "where": "Test yourself"
+        },
+        {
+          "source": "harvard-plank",
+          "text": "The ultimate goal is to be able to hold your plank for a full minute.",
+          "where": "Test yourself"
+        }
+      ]
     }
   ],
   "sources": [
@@ -253,6 +280,16 @@
       "pmid": "27787465",
       "access": "abstract",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "harvard-plank",
+      "url": "https://www.health.harvard.edu/back-pain/try-this-move-for-better-core-strength",
+      "title": "Try this move for better core strength (Harvard Health Publishing; quotes Dr. Edward Phillips, Harvard Medical School)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-03"
     }
   ],
   "plate": {
@@ -298,10 +335,13 @@
     ],
     "tempo": {
       "set": null,
-      "hold": "5+ s",
-      "rest": null,
-      "text": "Set / Hold / Rest: hold for a set time of 5 seconds or more while breathing (ACE); 30 s holds were used in the EMG study (c9). No source sets the rest.",
-      "claim": "c6"
+      "hold": "10-60 s",
+      "rest": "30-60 s",
+      "text": "Hold 10–60 seconds, 1–6 reps, rest 30–60 seconds (c12); beginners build up from a few seconds toward a full minute (c12). ACE: at least 5 seconds while breathing (c6).",
+      "claim": [
+        "c12",
+        "c6"
+      ]
     },
     "variantLine": null
   },
@@ -415,7 +455,7 @@
   },
   "risks": [
     {
-      "risk": "A sagging low back loads the lower back.",
+      "risk": "Low back sagging (arching) during the hold.",
       "claim": "c4"
     },
     {
@@ -453,8 +493,10 @@
   "anchorNote": "ACE Front Plank page read in full.",
   "unsourced": [
     "Glute squeeze cue.",
-    "Head and neck position.",
-    "Rest time between holds.",
-    "Hold-time progression beyond '5+ seconds'."
+    "Head and neck position."
+  ],
+  "notes": [
+    "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c12 adds Harvard Health's front-plank hold, rest and build-up; the hold and rest are no longer unsourced.",
+    "W1 fix round 2026-10-03: F22/R-W1-3 risks[0] now stays within c4's words; \"loads the lower back\" removed (no source says it)."
   ]
 }
