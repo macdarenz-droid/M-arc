@@ -4051,3 +4051,17 @@ D-LIBHANDS-COUNT (as ruled on #193 6257376224 and amended by 6257562588; applied
 5. One push carries both fixes. Post 'PILOT A FIX2 READY @ <sha>' with the incline Do 9 rows, the new tells and the moved fragments.
 
 **Why nothing is loosened.** Every hard check must pass on the final head. The new tells get their own blind pass, the changed drawings get a calibrated recheck, and a second fail holds the id. Flags are reported in full.
+
+### 21.4 Recheck panel at the fix head (D-LIB8M-CRIT2, 2026-10-19 ~04:30 UTC; #109 @ `013f84e`, page `13794948…`)
+**What ran.** 13.5's calibrated panel: 3 fresh Opus critics on 11 plates.
+- The 7 changed plates: incline_dumbbell_press, dumbbell_bench_press, triceps_pushdown, rope_triceps_pushdown, upright_row, pec_fly, plank.
+- The hidden golden-B anchors pull_up and lat_pulldown (byte copies of round 1's).
+- Plants rebuilt on `013f84e`, both report ok: the curl's 'Elbows at sides' leader on the shoulder (R4), and triceps_pushdown's Mistake drawn leaning back (R5).
+- plank was removed from the reference, since it is a candidate.
+
+**Calibration: VALID, with no exception.** Both plants were caught: curl R4 [3, 3, 3]; pushdown R5 [2, 2, 2]. Every anchor item has a median of 4 or more.
+
+**Result.** No candidate has an item that 2 of 3 critics scored 3 or less.
+- Approved at `013f84e` on every scored item (R1-R7, R10; R8 and R9 unscored): dumbbell_bench_press, triceps_pushdown, rope_triceps_pushdown, pec_fly, plank.
+- Advisory only (21.3 point 4), with no low item: upright_row; incline_dumbbell_press (R5 [4, 3, 4]). Both change in FIX2 and get their counted run then.
+- Round 1's approvals stand: dumbbell_shoulder_press and dumbbell_biceps_curl. Their fragments are unchanged since `83735ab`, per LIB-8M's fix table.
