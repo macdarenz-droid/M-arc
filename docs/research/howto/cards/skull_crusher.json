@@ -605,5 +605,30 @@
   "anchorSource": "ace-lying-tri-ext",
   "gaps": [
     "tier-A way out: the read sources give only a spotter for a first-time lifter; no source says how to end a failed rep without one (LIB-WAYOUT)"
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.r",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 3,
+      "move": true
+    },
+    {
+      "phase": "Extend",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "drift"
 }

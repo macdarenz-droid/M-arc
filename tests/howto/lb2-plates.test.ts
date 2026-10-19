@@ -2,6 +2,7 @@
 // plates. Node only: the browser half of the plate QA runs in tools/plates/library/lb2/qa.mjs once LIB-3c is on main.
 // Every test reads what is drawn (the items a spec emits, the engine's landmarks and report), never a helper's own maths.
 import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -17,6 +18,7 @@ const HELD = 'dumbbell_fly';
 const ROWS = 'tools/plates/library/lb2/rows.json';
 const COMPOSERS = ['declineBench'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
+const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const dist = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!);
 
 let eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, reg: any, pins: any;
@@ -538,5 +540,130 @@ describe('LIB-10 A9: nothing ships (D-LIB10-AHEAD)', { timeout: T }, () => {
       expect(text, p).not.toMatch(/library\/lb2\/|declineBench/);
       for (const id of LB2) expect(text, p).not.toMatch(new RegExp(`library/(specs|howto)/(lib_)?${id}\\b`));
     }
+  });
+});
+
+describe('LIB-10 A10: the LB2 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
+  it('two builds of the drawn LB2 ids are byte-identical', async () => {
+    const build = await import(/* @vite-ignore */ lib('lb2/build.mjs'));
+    expect(build.drawnIds().length).toBeGreaterThanOrEqual(5);
+    const a = await build.buildLb2Page(), b = await build.buildLb2Page();
+    expect(sha(a.html)).toBe(sha(b.html));
+  });
+});
+
+describe('LIB-10 A11 and A6 (Do 6): the card fields, the ruled tempo map and the plate facts', { timeout: T }, () => {
+  // The ruled table (D-LIB10-NOTE section 9 and Q5, #265 comment 6255216039): phase names, order and source per id, and
+  // the one ruled constant (decline's bottom Pause, c8 "Pause for a count of one."). Copied from the ruling, never read
+  // from tempo.json or a spec.
+  const RULED: Record<string, [string, string][]> = {
+    barbell_bench_press: [['Lower', 'down'], ['Press', 'up'], ['Hold', 'pause']], incline_barbell_bench_press: [['Lower', 'down'], ['Press', 'up']],
+    close_grip_bench_press: [['Lower', 'down'], ['Press', 'up']], decline_bench_press: [['Lower', 'down'], ['Pause', 'const'], ['Press', 'up']],
+    arnold_press: [['Press', 'up'], ['Lower', 'down']], skull_crusher: [['Lower', 'down'], ['Extend', 'up']], dumbbell_pullover: [['Lower', 'down'], ['Pull', 'up']],
+  };
+  const CONST = { 'decline_bench_press.Pause': { s: 1, claim: 'c8', quote: 'Pause for a count of one.' } };
+  const KEYS = ['plateFacts', 'tempo', 'topFault'];
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  const built = (rows: any[], pt: any, consts: any) => rows.flatMap((r: any) => (r.constant ? [{ phase: r.phase, s: consts[r.constant].s }]
+    : r.from === 'pause' ? (pt.pause > 0 ? [{ phase: r.phase, s: pt.pause }] : []) : [{ phase: r.phase, s: pt[r.from], move: true }]));
+  const tempoProblems = (tj: any, cards: Record<string, any>, specs: Record<string, any>) => {
+    const bad: string[] = [];
+    if (JSON.stringify(Object.keys(tj.constants)) !== JSON.stringify(Object.keys(CONST))) bad.push('constants: not the ruled set');
+    for (const [k, v] of Object.entries<any>(CONST)) if (tj.constants[k]?.s !== v.s || tj.constants[k]?.claim !== v.claim || tj.constants[k]?.quote !== v.quote) bad.push(`constant ${k}`);
+    if (JSON.stringify(Object.keys(tj.ids).sort()) !== JSON.stringify(LB2.slice().sort())) bad.push('ids: not the 7');
+    for (const id of LB2) {
+      const t = tj.ids[id], c = cards[id], pt = c.plate.tempo;
+      if (JSON.stringify(t?.rows?.map((r: any) => [r.phase, r.constant ? 'const' : r.from])) !== JSON.stringify(RULED[id])) bad.push(`${id}: tempo.json rows != the ruled table`);
+      if (JSON.stringify(t?.claim) !== JSON.stringify(pt.claim)) bad.push(`${id}: claim`);
+      const hold = c.tempo.some((p: any) => p.phase === 'Hold');
+      if (hold !== pt.pause > 0) bad.push(`${id}: Hold present ${hold} but pause ${pt.pause}`);
+      if (c.tempo.some((p: any) => p.phase === 'Rest')) bad.push(`${id}: Rest`);
+      if (JSON.stringify(c.tempo) !== JSON.stringify(built(t?.rows ?? [], pt, CONST))) bad.push(`${id}: card tempo != the array built from the ruled table and plate.tempo`);
+      if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(c.tempo)) bad.push(`${id}: spec tempo != card tempo`);
+    }
+    return bad;
+  };
+  const clean = () => ({ tj: readJson('tools/plates/library/lb2/tempo.json'), cards: Object.fromEntries(LB2.map(id => [id, cardOf(id)])),
+    specs: { decline_bench_press: dbp, skull_crusher: sc, close_grip_bench_press: cg, barbell_bench_press: bb, dumbbell_pullover: po } as Record<string, any> });
+  const copy = (x: any) => JSON.parse(JSON.stringify(x));
+  it('tempo.json, every card tempo and every drawn spec tempo follow the ruled map', () => {
+    const { tj, cards, specs } = clean();
+    expect(tempoProblems(tj, cards, specs)).toEqual([]);
+  });
+  it('mutations (i)-(vi) and a changed second are each red', () => {
+    const red = (f: (s: any) => void) => { const s = copy({ tj: clean().tj, cards: clean().cards }); s.specs = { ...clean().specs }; f(s); return tempoProblems(s.tj, s.cards, s.specs).length > 0; };
+    const setAll = (s: any, id: string, rows: any[] | null, tempo: any[]) => { if (rows) s.tj.ids[id].rows = rows; s.cards[id].tempo = tempo; if (s.specs[id]) s.specs[id] = { ...s.specs[id], tempo }; };
+    expect(red(s => { setAll(s, 'skull_crusher', null, [...s.cards.skull_crusher.tempo, { phase: 'Rest', s: 1 }]); }), '(i) Rest added').toBe(true);
+    expect(red(s => { s.tj.constants['skull_crusher.Rest'] = { s: 1, claim: 'c13', quote: 'x' }; }), '(ii) a constant').toBe(true);
+    expect(red(s => { setAll(s, 'barbell_bench_press', null, s.cards.barbell_bench_press.tempo.map((p: any) => (p.phase === 'Hold' ? { ...p, s: 2 } : p))); }), '(iii) Hold s').toBe(true);
+    expect(red(s => { const rows = [{ phase: 'Lower', from: 'down' }, { phase: 'Extend', from: 'up' }, { phase: 'Hold', from: 'pause' }];
+      setAll(s, 'skull_crusher', rows, [...s.cards.skull_crusher.tempo, { phase: 'Hold', s: 0 }]); }), '(iv) Hold 0').toBe(true);
+    expect(red(s => { const rows = s.tj.ids.barbell_bench_press.rows.filter((r: any) => r.from !== 'pause'); setAll(s, 'barbell_bench_press', rows, built(rows, s.cards.barbell_bench_press.plate.tempo, CONST)); }), '(v) Hold removed').toBe(true);
+    expect(red(s => { const rows = s.tj.ids.decline_bench_press.rows.filter((r: any) => !r.constant); delete s.tj.constants['decline_bench_press.Pause'];
+      setAll(s, 'decline_bench_press', rows, built(rows, s.cards.decline_bench_press.plate.tempo, CONST)); }), '(v) constant Pause removed').toBe(true);
+    expect(red(s => { const rows = s.tj.ids.skull_crusher.rows.map((r: any) => ({ ...r, from: r.from === 'up' ? 'down' : r.from === 'down' ? 'up' : r.from })); setAll(s, 'skull_crusher', rows, built(rows, s.cards.skull_crusher.plate.tempo, CONST)); }), '(vi) up/down swapped').toBe(true);
+    expect(red(s => { s.cards.close_grip_bench_press.tempo[0].s = 3; }), 'one tempo second').toBe(true);
+  });
+  const cardsSha = readJson('tools/plates/library/lb2/cards.sha.json');
+  const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
+  it('each card differs from its research-head copy (7d7c52e1) only in the three keys; each quotes file is a byte copy', () => {
+    expect(cardsSha.researchHead).toBe('7d7c52e1a69debb0735dc6bb4a3d73ea46740ed5');
+    for (const id of LB2) {
+      expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
+      expect(sha(readFileSync(`docs/research/howto/quotes/${id}.json`)), id).toBe(cardsSha.quotes[id]);
+      expect(Object.keys(cardOf(id)).slice(-3), id).toEqual(KEYS);
+    }
+  });
+  it('mutation: any other card key edited is red', () => {
+    const c = cardOf('skull_crusher'); c.plate.view = 'front';
+    expect(sha(canon(c))).not.toBe(cardsSha.cards.skull_crusher);
+  });
+  // The ruled fault->key map (D-LIB10-NOTE section 10 at 2b6747f8; unchanged at 7d7c52e1). All 7 cards are drawable:true.
+  const DRAWN: Record<string, string> = { barbell_bench_press: 'path', incline_barbell_bench_press: 'flare', close_grip_bench_press: 'flare', decline_bench_press: 'high',
+    arnold_press: 'arch', skull_crusher: 'drift', dumbbell_pullover: 'bend' };
+  const topFaultProblems = (card: any, drawnKey: string) => (card.plate.mistake.drawable
+    ? (card.topFault === drawnKey ? [] : ['drawable:true but topFault is not the drawn fault'])
+    : (card.topFault !== drawnKey ? [] : ['drawable:false but topFault equals the drawn fault']));
+  it('Q1: every card is drawable:true and its topFault is the ruled key; every drawn first tell carries it', () => {
+    for (const id of LB2) { const c = cardOf(id); expect(c.plate.mistake.drawable, id).toBe(true); expect(topFaultProblems(c, DRAWN[id]!), id).toEqual([]); }
+    for (const spec of [dbp, sc, cg, bb, po]) expect(spec.mistake.tells[0].key, spec.id).toBe(cardOf(spec.id).topFault);
+  });
+  it('Q1 mutation: drawable:false with topFault equal to the drawn key is red', () => {
+    const c = cardOf('skull_crusher'); c.plate.mistake.drawable = false;
+    expect(topFaultProblems(c, 'drift')).toEqual(['drawable:false but topFault equals the drawn fault']);
+  });
+  /** 14.7 rules 10, 15 and D-LIB9-CARDFIELDS: kind on every fact, one form per fact, a claim of the card's own. */
+  const factProblems = (c: any) => c.plateFacts.flatMap((f: any, i: number) => [
+    ...(['contact', 'angle', 'height'].includes(f.kind) ? [] : [`${i}: kind`]),
+    ...(f.joint && f.measure === true ? [`${i}: both joint and measure`] : []),
+    ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
+  ]);
+  it('every plate fact has a kind, one form and a claim of its own card; the How-to of each LB2 id names its card', async () => {
+    for (const id of LB2) {
+      expect(factProblems(cardOf(id)), id).toEqual([]);
+      const h = (await import(/* @vite-ignore */ lib(`howto/lib_${id}.howto.mjs`))).default;
+      expect(h).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
+    }
+  });
+  it('mutation: a fact with both joint and measure: true is red', () => {
+    const c = cardOf('incline_barbell_bench_press'); c.plateFacts.push({ kind: 'angle', joint: 'knee.r', measure: true, deg: 30, claim: 'c1' });
+    expect(factProblems(c)).toEqual([`${c.plateFacts.length - 1}: both joint and measure`]);
+  });
+  // A6 on the node path the QA uses: PQ-H6 against each drawn plate's engine report, its card's facts and tempo.
+  const h6 = (spec: any, research: any) => {
+    const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
+    return qaNode.h6({ spec, research }, { engine: Eng(), pins }, R).map((p: any) => p.key);
+  };
+  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault }; };
+  it('A6: PQ-H6 is green on all 5 drawn plates against their cards', () => {
+    for (const spec of [dbp, sc, cg, bb, po]) expect(h6(spec, research(spec.id)), spec.id).toEqual([]);
+  });
+  it('A6 mutations: a contact fact on a landmark the plate does not check, an angle +3°, and the card path removed are red', () => {
+    const r = research('close_grip_bench_press');
+    expect(h6(cg, { ...r, plateFacts: [...r.plateFacts, { kind: 'contact', landmark: 'chest', claim: 'c2' }] }).some((k: string) => k.startsWith('H6.fact:'))).toBe(true);
+    const drawn = plate.renderPlate(cg, { id: 'x' }).report.angles.end['knee.r'];
+    expect(h6(cg, { ...r, plateFacts: [{ kind: 'angle', joint: 'knee.r', pose: 'end', deg: drawn, claim: 'c3' }] })).toEqual([]);
+    expect(h6(cg, { ...r, plateFacts: [{ kind: 'angle', joint: 'knee.r', pose: 'end', deg: drawn + 3, claim: 'c3' }] }).some((k: string) => k.startsWith('H6.fact:'))).toBe(true);
+    expect(h6(cg, null)).toEqual(['H6:no-card']);
   });
 });

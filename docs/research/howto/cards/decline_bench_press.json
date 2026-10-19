@@ -672,5 +672,29 @@
     "remove": [],
     "why": "exercises.json: chest primary; triceps and front_delts secondary. c9 and c10 support this; the front delts work less than on other presses (c10) but are still a secondary mover. No change."
   },
-  "anchorSource": "workoutlabs-decline"
+  "anchorSource": "workoutlabs-decline",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Pause",
+      "s": 1
+    },
+    {
+      "phase": "Press",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "high"
 }

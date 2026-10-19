@@ -591,5 +591,30 @@
     "remove": [],
     "why": "exercises.json: triceps primary; chest and front_delts secondary. c6 and c7 support this. No change."
   },
-  "anchorSource": "ace-cgbp"
+  "anchorSource": "ace-cgbp",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.r",
+      "claim": "c3"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Press",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "flare"
 }

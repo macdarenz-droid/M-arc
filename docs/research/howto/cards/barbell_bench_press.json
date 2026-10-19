@@ -932,5 +932,34 @@
     "remove": [],
     "why": "exercises.json: chest primary; front_delts and triceps secondary. c19, c20 and c21 support all three. No change."
   },
-  "anchorSource": "stronglifts-bench"
+  "anchorSource": "stronglifts-bench",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.r",
+      "claim": "c14"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Press",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    }
+  ],
+  "topFault": "path"
 }

@@ -1,0 +1,22 @@
+{
+ "note": "sha256 per LB2 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\" (the research files own form); and sha256 of each quotes file, a byte copy from the same head.",
+ "researchHead": "7d7c52e1a69debb0735dc6bb4a3d73ea46740ed5",
+ "cards": {
+  "barbell_bench_press": "acf057bcf78853989deb41a2a6d35f15f18e380a64827393ccdac21b16364e54",
+  "incline_barbell_bench_press": "52bd2f65b67e253bb3cb484f035c9cecc8a814934bebc7fe3ba303c9cb99936c",
+  "close_grip_bench_press": "f5514cdb23e5051487ff6d422268155e72cc853a2c8288b844abec5b53a2fd1f",
+  "decline_bench_press": "0ee2c026241b760286daef94bbe2d48d23df33efcdb963a31457bb36bfe455aa",
+  "arnold_press": "7129ed35781e11e677c926c90bc2d8225f1cbfac603435666aa266073fadad94",
+  "skull_crusher": "18e9ebcc1052c384b588947e4e228577d452bc6adaed57edeb0a0070af036f82",
+  "dumbbell_pullover": "6cb9ae12aeb8a20807070a57156dd99595dac3408b1b3f81d0814856b24ced94"
+ },
+ "quotes": {
+  "barbell_bench_press": "c5a02cd4e5ba05fab0f664fedbb5450b90a4194686f5f739fd6c8ac9112a04b5",
+  "incline_barbell_bench_press": "6116f8abdc6d10355d143738d0c45f5edccec90c1449bffe00f9fb81d5ca0106",
+  "close_grip_bench_press": "e891f111111f5dc4cbbed5cac492c9318dd98889603b0f11b7c44357362b21d3",
+  "decline_bench_press": "cbb31d25be24f14533e290d5aaaf0a33764cd92148162a1af92701717a2f60a2",
+  "arnold_press": "1c8dd97dc7184cee4596aba03276df5dce3568a4e4c7f26321040017af43d867",
+  "skull_crusher": "b44d629fec3e688c9276176a90a2365819e46e16aba54f8a4aff6c4904958f74",
+  "dumbbell_pullover": "dcb38c3b19ddb9318d0beeab402768754a05ddf2b1abce47ae96b8e076bced38"
+ }
+}

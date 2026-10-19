@@ -766,5 +766,40 @@
     "remove": [],
     "why": "exercises.json: lats and chest primary; triceps secondary. c16 supports all three (c15 adds that the chest can outwork the lats in barbell data, and c17 that the balance depends on how the lift is done). Proposed add: rear_delts as secondary, because c16 reports the posterior deltoid active and an efficient shoulder extensor in the pullover (coach summary citing EMG and moment-arm studies; the supervisor may keep or drop it)."
   },
-  "anchorSource": "bm-pullover"
+  "anchorSource": "bm-pullover",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.r",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "claim": "c8"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Pull",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "bend"
 }

@@ -734,5 +734,42 @@
     "remove": [],
     "why": "exercises.json: upper_chest primary; front_delts, triceps and chest secondary. c2 (upper chest), c1 (front delts), c10 (triceps) and c11 (lower chest) support this. StrengthLog lists the front deltoid as a primary; the EMG data (c1) show front-delt activity rising mainly above 45 degrees, so no change at 30 degrees."
   },
-  "anchorSource": "boostcamp-incline"
+  "anchorSource": "boostcamp-incline",
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.r",
+      "claim": "c3"
+    },
+    {
+      "kind": "angle",
+      "measure": true,
+      "pose": "end",
+      "deg": 30,
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Press",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "flare"
 }

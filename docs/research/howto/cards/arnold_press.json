@@ -632,5 +632,25 @@
   "anchorSource": "fitfather-arnold",
   "gaps": [
     "tier-A way out: the only shown way out is a spotter; no read source gives a seated failed-rep way out without one (LR-30; LIB-WAYOUT)"
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "claim": "c3"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Press",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "arch"
 }
