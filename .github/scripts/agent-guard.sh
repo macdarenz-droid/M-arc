@@ -40,6 +40,12 @@ if git rev-parse --verify -q "$BASE_REF" >/dev/null; then
       HIT=$(echo "$CHANGED" | grep -E '^src/(slices/workout/session\.ts|core/models\.ts|core/store\.ts)$' || true)
       [ -z "$HIT" ] || warn 'Gate B files touched' "session/models/store changed: $(echo $HIT | tr '\n' ' ')" 'only for Gate B, built on the R2.8 ids already on main (ActiveSession.id, entry id, set id, set status); no second id scheme.'
       ;;
+    ccr-061c7350-tjvpo6|ccr-8cef8a15-l12swp)
+      HIT=$(echo "$CHANGED" | grep -E '^(escobar-worker/|src/escobar/|src/brain/|docs/(REMEDIATION|QA-|qa/))' || true)
+      [ -z "$HIT" ] || err 'Watch agent outside its files' "the watch branch changes files owned by the remediation work: $(echo $HIT | tr '\n' ' ')" 'revert these paths to origin/main; ask the owner if the watch needs a change there.'
+      HIT=$(echo "$CHANGED" | grep -E '^src/(slices/workout/session\.ts|core/models\.ts|core/store\.ts)$' || true)
+      [ -z "$HIT" ] || warn 'Gate B files touched' "session/models/store changed: $(echo $HIT | tr '\n' ' ')" 'only for Gate B, built on the R2.8 ids already on main (ActiveSession.id, entry id, set id, set status); no second id scheme.'
+      ;;
     claude/*)
       HIT=$(echo "$CHANGED" | grep -E '^(native/wear/|src/native/wearEngine\.ts|src/slices/settings/WatchLab\.tsx)' || true)
       [ -z "$HIT" ] || err 'Claude builder in watch files' "this claude/* branch changes watch-owned files: $(echo $HIT | tr '\n' ' ')" 'revert these paths; they belong to codex/gt6-gate-a-watch-lab.'
@@ -49,6 +55,19 @@ if git rev-parse --verify -q "$BASE_REF" >/dev/null; then
   [ "$BEHIND" -eq 0 ] || warn 'Behind main' "this branch is $BEHIND commits behind main." "git fetch origin main && git merge origin/main (keep both sides; never drop the signing steps)."
 else
   warn 'No main to compare' "$BASE_REF not fetched; ownership rules skipped." 'fetch origin/main.'
+fi
+
+# Rule 4 (LIB-4c, D-LIB4c-1 (b); library plan 3.5): the library pin manifest changes only in a commit that says so.
+if git rev-parse --verify -q "$BASE_REF" >/dev/null; then
+  MB=$(git merge-base HEAD "$BASE_REF")
+  MF=tools/plates/library/MANIFEST.json
+  for c in $(git rev-list --no-merges "$MB..HEAD" -- "$MF"); do
+    # One exemption (D-LIB4c-1 (b) amended): creating the manifest as exactly {"rows": {}} pins nothing, so it needs no tag.
+    if ! git cat-file -e "$c^:$MF" 2>/dev/null && git show "$c:$MF" 2>/dev/null | jq -e -s '. == [{"rows": {}}]' >/dev/null 2>&1; then continue; fi
+    # grep reads the whole message (no -q), so a long message cannot end the pipe early under pipefail.
+    git log -1 --format=%B "$c" | grep -F '[golden update]' >/dev/null \
+      || err 'Library manifest without [golden update]' "commit ${c:0:8} changes tools/plates/library/MANIFEST.json, but its message does not carry '[golden update]'." "only the commit that adds or replaces an approved pin changes MANIFEST.json, and its message carries '[golden update]'; never edit the manifest in any other commit."
+  done
 fi
 
 [ $fail -eq 0 ] && echo "Agent guard passed for $BRANCH$( [ $warnn -eq 1 ] && echo ' (with warnings)')."

@@ -16,6 +16,7 @@ import { discardSession, startSession } from '@/slices/workout/session';
 import { addGym, saveProfile, setActiveGym } from '@/slices/workout/units';
 import { acceptDeload } from '@/slices/coach/coach';
 import { resyncReminders } from '@/slices/settings/reminders';
+import { setHapticsEnabled } from '@/native/haptics';
 import type { GoalId } from '@/data/goals';
 import { fingerprint } from './tools/actions';
 import type { Conversation, DecisionEvent, ProposalRecord } from './types';
@@ -155,6 +156,7 @@ const APPLIERS: Record<string, Applier> = {
     const v = input.value;
     const day = todayKey();
     const logBefore = state.value.weightLog.find(w => w.day === day);
+    const lastEvent = state.value.profileHistory.at(-1);
     switch (field) {
       case 'bodyWeightKg': logWeight(Number(v), 'escobar'); break;
       case 'heightCm': setHeight(Number(v), 'escobar'); break;
@@ -164,13 +166,23 @@ const APPLIERS: Record<string, Applier> = {
       case 'plannedDays': setPlannedDays(Number(v), 'escobar'); break;
       default: throw new Error('unknown field');
     }
-    const added = field === 'bodyWeightKg' ? { day, kg: Number(v) } : null;
-    return { message: 'Profile updated', undo: () => update(s => ({
-      ...s,
-      profile: { ...s.profile, [field]: before },
-      // Only the entry this change wrote: a later weigh-in stays.
-      weightLog: added ? [...s.weightLog.filter(w => !(w.day === added.day && w.kg === added.kg)), ...(logBefore ? [logBefore] : [])].sort((a, b) => a.day.localeCompare(b.day)) : s.weightLog,
-    })) };
+    // IMP-E03 (D-A3-1): what this Apply wrote, by identity. Undo reverts each piece only while it is still Apply's.
+    const after = state.value.profile[field];
+    const added = field === 'bodyWeightKg' ? state.value.weightLog.find(w => w.day === day) ?? null : null;
+    const event = state.value.profileHistory.at(-1) !== lastEvent ? state.value.profileHistory.at(-1) : undefined;
+    return { message: 'Profile updated', undo: () => {
+      const s = state.value;
+      const fieldMine = s.profile[field] === after;
+      const rowMine = !!added && s.weightLog.includes(added);
+      // A newer value or weigh-in replaced both: nothing of this change is left to undo.
+      if (!fieldMine && !rowMine) throw new UndoUnavailable();
+      update(x => ({
+        ...x,
+        profile: fieldMine ? { ...x.profile, [field]: before } : x.profile,
+        weightLog: rowMine ? [...x.weightLog.filter(w => w !== added), ...(logBefore ? [logBefore] : [])].sort((a, b) => a.day.localeCompare(b.day)) : x.weightLog,
+        profileHistory: event ? x.profileHistory.filter(h => h !== event) : x.profileHistory,
+      }));
+    } };
   },
   propose_custom_exercise: input => {
     const primary = input.primary as MuscleId[];
@@ -189,7 +201,11 @@ const APPLIERS: Record<string, Applier> = {
     const { key, value } = input.setting as { key: string; value: unknown };
     const p = state.value.preferences as unknown as Record<string, unknown>;
     const before = key === 'rest.mode' ? state.value.preferences.rest.mode : p[key];
-    const put = (v: unknown) => update(s => ({ ...s, preferences: key === 'rest.mode' ? { ...s.preferences, rest: { ...s.preferences.rest, mode: v as 'time' | 'heart' } } : { ...s.preferences, [key]: v } }));
+    const put = (v: unknown) => {
+      update(s => ({ ...s, preferences: key === 'rest.mode' ? { ...s.preferences, rest: { ...s.preferences.rest, mode: v as 'time' | 'heart' } } : { ...s.preferences, [key]: v } }));
+      // IMP-E06: as the Settings toggle does, so Apply and Undo take effect at once.
+      if (key === 'haptics') setHapticsEnabled(v as boolean);
+    };
     put(value);
     return { message: 'Setting changed', undo: () => put(before) };
   },
@@ -267,10 +283,16 @@ export const hasUndo = (conversationId: string, proposalId: string): boolean => 
 export const undoOpen = (conversationId: string, p: Pick<ProposalRecord, 'id' | 'appliedAt'>, now = Date.now()): boolean =>
   !!p.appliedAt && now - Date.parse(p.appliedAt) < UNDO_WINDOW_MS && hasUndo(conversationId, p.id);
 
-/** UI entry: decide, persist through the session, toast with Undo. */
-export async function onProposal(proposalId: string, choice: 'apply' | 'dismiss' | 'undo'): Promise<ApplyResult> {
+/**
+ * UI entry: decide, persist through the session, toast with Undo. IMP-E02: `conversationId` names
+ * the conversation the decision belongs to; when it is not the visible one, that conversation is
+ * looked up and saved quietly, and the visible chat stays as it is.
+ */
+export async function onProposal(proposalId: string, choice: 'apply' | 'dismiss' | 'undo', conversationId?: string): Promise<ApplyResult> {
   const session = await import('./session');
-  const c = session.activeConversation.value;
+  const visible = session.activeConversation.value;
+  const own = !conversationId || visible?.id === conversationId;
+  const c = own ? visible : session.storeSig.value.conversations.find(x => x.id === conversationId) ?? null;
   if (!c) return { ok: false, status: 'failed', message: 'No conversation.' };
   const key = undoKey(c.id, proposalId);
   let fn = undos.get(key);
@@ -279,10 +301,11 @@ export async function onProposal(proposalId: string, choice: 'apply' | 'dismiss'
     if (!p?.appliedAt || Date.now() - Date.parse(p.appliedAt) >= UNDO_WINDOW_MS) { undos.delete(key); fn = undefined; }
   }
   const { conversation, result } = decide(c, proposalId, choice, fn);
-  if (conversation !== c) session.updateConversation(conversation);
+  if (conversation !== c) { if (own) session.updateConversation(conversation); else session.updateConversationQuietly(conversation); }
   if (choice === 'apply' && result.ok && result.undo) {
     undos.set(key, result.undo);
-    showToast(result.message, 'Undo', () => { void onProposal(proposalId, 'undo'); });
+    const id = c.id;
+    showToast(result.message, 'Undo', () => { void onProposal(proposalId, 'undo', id); });
   } else if (choice === 'undo') { undos.delete(key); if (!result.ok) showToast(result.message); }
   else if (!result.ok) showToast(result.message);
   return result;

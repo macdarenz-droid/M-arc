@@ -1,0 +1,25 @@
+export const meta = {
+  name: 'gate-flake-4',
+  description: 'Root-cause the BUG-34 launch-first-frame CI miss (strokeDashoffset at 740 ms, silent-black 4x, Auckland shard 4/4) and draft a GATE-FLAKE-4 card, then check it',
+  phases: [{ title: 'Investigate' }, { title: 'Card' }, { title: 'Check' }],
+}
+const A = args
+const CTX = `Repo clone ${A.repo} (git fetch -q origin first). Never edit, commit or push in the repo; work in your own scratch copy (git worktree add <scratch dir> origin/main, or git archive) under ${A.scratch}. Chromium: /opt/pw-browsers/chromium (MARC_CHROMIUM). Rules: AGENTS.md (no guessing; a fix needs a test that fails before and passes after; never loosen a check, never raise a limit to get green, never skip; a 4x-CPU timing miss is root-caused, not re-run).
+The failure: train 25 head bdd309be (main 72c94fc + CI-only and docs changes), job "gate-shard (4/4, Pacific/Auckland)", run log saved at ${A.log}. Its only error: 'launch first frame (BUG-34) silent-black 4x: at 740 ms strokeDashoffset is 45.8355, want at least 10 below 46.6814' (scripts/screenshot-gate.mjs:5353 on main). The same job's summary line says BUG-34 checked 5 themes x 1x/4x with timings silent-black {"firstPaint":84,"firstAnimated":91}. Earlier record: D-GATESPLIT-FLAKES in docs/COACHING-DECISIONS.md (BUG-34 local misses at UTC 2/4 went to GATE-FLAKE; #179 is closed, so a repeat becomes a new GATE-FLAKE card). GATE-FLAKE-3 (D-GF3-1/2 in COACHING-DECISIONS.md, scripts/c11-anims.mjs, tests/gate/gf3-c11-race.mjs) is the model for a race-free capture plus a lag-probe repro.`
+phase('Investigate')
+const inv = await agent(`${CTX}
+
+Root-cause it. Read the BUG-34 block in scripts/screenshot-gate.mjs (find it around :5280-5360 on main; read the whole block, its samples s1..s3, how 'at' times are taken, the bundle hold of 1500 ms, CPU throttle), the BUG-34 decisions in COACHING-DECISIONS.md, and the app code it measures (the launch splash/ring animation: find the strokeDashoffset animation in src/). Decide exactly why, on a loaded runner, the ring moved only ~0.85 units between the second and third sample: is the sample clock (page time vs wall time, performance.now vs CDP), the throttle, the animation start, or a real app defect (an animation that starts late or stalls under load, which a user on a slow phone would see)? Reproduce locally: run the BUG-34 group alone (MARC_GATE_JOB, or extract its code into a probe) with extra CPU throttle or an injected delay, and show the exact same error text; then show what changes would make the check race-free WITHOUT loosening it (the rule 'the ring advances at least 10 units between the samples' must stay or get stricter, measured on the page's own clock or animation timeline). If the cause is a real app defect, say so with evidence. Return: the cause with file:line, the repro commands and outputs, and the proposed fix with the evidence it would need.`, { label: 'investigate', phase: 'Investigate' })
+phase('Card')
+const card = await agent(`${CTX}
+
+Investigation result:
+${inv}
+
+Write card GATE-FLAKE-4 to ${A.out}, in the format of docs/supervisor/verify/lib-5-card.md on origin/claude/sup-lib4-cards (id, model, branch claude/gate-flake-4, base origin/main @ ${A.main} or newer, depends_on, merge_prerequisites, hard card, design_reference, write_scope, reserved_paths, outcome, deliverable, evidence, finish, read_first, Do, Acceptance with mutations, verification, risk_and_recovery, return). It is an HT/gate lane card (its own cap, not a LIB slot). write_scope must be the smallest: the BUG-34 block's lines in scripts/screenshot-gate.mjs only if the fix must be there (it is BUG-34's block; name the exact lines), a new helper file if needed, a repro probe under tests/gate/, gate-times.json only if the block's time changes, COACHING-DECISIONS.md append-only (D-GF4-*). Acceptance: the repro probe red with main's read and green with the new one under the lag/throttle, N runs; seeded defects (ring that never animates, ring that animates too slowly, ring stalled for 500 ms) still red; the full gate green in both TZ; nothing loosened (the rule's numbers equal or stricter). Plain short sentences. Return the card path and a 5-line summary.`, { label: 'card', phase: 'Card' })
+phase('Check')
+const chk = await agent(`${CTX}
+
+Adversarially check the card at ${A.out} against the code and the investigation below. Re-run its repro yourself. Look for: a fix that loosens the check (wider window, fewer samples, lower threshold, a retry), a write_scope that edits another task's block beyond BUG-34's own lines, an acceptance row without a red mutation, a wrong file:line. Fix every confirmed defect directly in ${A.out} and return a table of finding -> applied/rejected -> reason.
+Investigation: ${inv}`, { label: 'check', phase: 'Check' })
+return { inv, card, chk }

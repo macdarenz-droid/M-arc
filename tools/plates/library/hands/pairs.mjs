@@ -7,6 +7,7 @@ import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { renderHandPair } from '../../layers/engine/hand.mjs';
 import { mergePose } from '../render/closeup/common.mjs';
+import { CHROME_WORDS, panelHtml, wordsFileOf } from './panel.mjs';
 
 export const HERE = dirname(fileURLToPath(import.meta.url));
 export const ROOT = join(HERE, '../../../..');
@@ -31,6 +32,9 @@ export const CONVENTIONS = {
 export const PALM_UP = new Set(['under', 'angled']);
 export const THUMB_SIDE = 'Seen from the thumb side', ALONG_ANGLED = 'Seen along the angled grip';
 export const CAMERA_TEXT = { unstated: THUMB_SIDE, angled: ALONG_ANGLED };
+// D-LIB7FIX-PERKEY: the three objects above as pairs.mjs declares them, before any key module's own entries are merged in
+const deepFreeze = o => { for (const v of Object.values(o)) if (v && typeof v === 'object') deepFreeze(v); return Object.freeze(o); };
+export const BASE = deepFreeze(structuredClone({ CONVENTIONS, ORIENTATIONS, CAMERA_TEXT }));
 
 /** Every key module in `dir`, sorted by filename. The file name must match the module's KEY. */
 export async function loadKeyModules(dir = HERE) {
@@ -60,7 +64,28 @@ export function indexOf(mods) {
   return { drawn, gaps };
 }
 
+/** D-LIB7FIX-PERKEY: the key modules' own CONVENTIONS, ORIENTATIONS and CAMERA_TEXT entries (literals; a key module never
+ *  imports pairs.mjs) merged over `base`. Pure: never reads the merged exports. Throws on a name already defined (by
+ *  pairs.mjs or another module), CAMERA_TEXT for an orientation the merge does not hold, and a module using (an IDS
+ *  orientation, a variant's ga: ref) a name another module declares. ownerOf: '<KIND>.<name>' -> 'pairs.mjs' or KEY. */
+export function declarationsOf(mods, base = BASE) {
+  const KINDS = ['CONVENTIONS', 'ORIENTATIONS', 'CAMERA_TEXT'], out = {}, ownerOf = {};
+  for (const K of KINDS) { out[K] = { ...base[K] }; for (const n of Object.keys(base[K])) ownerOf[`${K}.${n}`] = 'pairs.mjs'; }
+  for (const m of mods) for (const K of KINDS) for (const [n, v] of Object.entries(m[K] ?? {})) {
+    const at = `${K}.${n}`;
+    if (ownerOf[at]) throw new Error(`hand pairs: ${m.KEY} declares ${at}, already defined by ${ownerOf[at]}`);
+    out[K][n] = v; ownerOf[at] = m.KEY;
+  }
+  for (const m of mods) for (const n of Object.keys(m.CAMERA_TEXT ?? {})) if (!(n in out.ORIENTATIONS)) throw new Error(`hand pairs: ${m.KEY} declares CAMERA_TEXT.${n} for an orientation no module or pairs.mjs holds`);
+  const foreign = (m, at) => { const o = ownerOf[at]; if (o && o !== 'pairs.mjs' && o !== m.KEY) throw new Error(`hand pairs: ${m.KEY} uses ${at}, declared by ${o}`); };
+  for (const m of mods) {
+    for (const c of Object.values(m.IDS ?? {})) foreign(m, `ORIENTATIONS.${c.orientation}`);
+    for (const V of Object.values(m.VARIANTS ?? {})) for (const refs of Object.values(V.claims ?? {})) for (const r of refs) if (r.startsWith('ga:')) foreign(m, `CONVENTIONS.${r}`);
+  }
+  return { ...out, ownerOf };
+}
 export const MODULES = await loadKeyModules();
+{ const d = declarationsOf(MODULES); Object.assign(CONVENTIONS, d.CONVENTIONS); Object.assign(ORIENTATIONS, d.ORIENTATIONS); Object.assign(CAMERA_TEXT, d.CAMERA_TEXT); }
 export const INDEX = indexOf(MODULES);
 
 /** The pair record of one drawn id: camera, poses, faults, notes, alt and extras. */
@@ -276,9 +301,58 @@ export function importClosure(files) {
 /** The files one id's drawing reads (LIB-2 per-output inputsSha256): its key file and the mechanism, with everything they
  *  import, plus the key's declared INPUTS (sizes matched to a composer). A change to another key never marks it stale. */
 export function inputsFor(id, index = INDEX) {
+  // LIB-7-FIX (D-LIB7FIX-API): a pair key gives the list of its ids (keys hold '-', ids never do; keyIndexOf throws on a clash)
+  if (!index.drawn.has(id)) { const k = (index === INDEX ? KEYS : keyIndexOf(index)).keys.get(id); if (k) id = k.ids[0]; }
   const e = index.drawn.get(id);
   if (!e) throw new Error(`hand pairs: inputsFor: ${id} has no pair`);
   const lib = p => `tools/plates/library/${p}`;
-  return [...new Set([...importClosure([lib('hands/pairs.mjs'), lib('hands/zoom.mjs'), e.mod.FILE, ...(e.mod.VIEW_FILES ?? [])]), ...(e.mod.INPUTS ?? [])])].sort();
+  return [...new Set([...importClosure([lib('hands/pairs.mjs'), lib('hands/zoom.mjs'), e.mod.FILE, ...(e.mod.VIEW_FILES ?? [])]), ...(e.mod.INPUTS ?? []), CHROME_WORDS, wordsFileOf(keyOfCfg(e.mod, e.cfg))])].sort();
+}
+
+// ---- LIB-7-FIX: main's loader contract (tools/plates/gen/handpairs.mjs:3-4; hands/DESIGN.md §8) ----
+const EXERCISE_IDS = new Set(JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).map(e => e.id));
+const GOLDEN_IDS = new Set(Object.keys(JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8'))));
+export const KEY_RE = /^[a-z0-9-]+$/;
+/** The pair key of one drawn id: module KEY, variant and orientation (D-LIB7FIX-KEY). */
+export const keyOfCfg = (mod, cfg) => `${mod.KEY}-${cfg.variant}-${cfg.orientation}`;
+
+/** key -> { key, triple, faults, ids }, id -> key. A key is KEY x variant x orientation x the ordered fault list; throws
+ *  when ids on one key differ in faults, two triples give one string, a key is not [a-z0-9-], one key + '-' starts
+ *  another, a key equals a drawn id, a drawn id is not in src/data/exercises.json or is one of the 8. */
+export function keyIndexOf(index = INDEX) {
+  const keys = new Map(), keyOf = new Map();
+  for (const [id, { mod, cfg }] of index.drawn) {
+    const key = keyOfCfg(mod, cfg), triple = `${mod.KEY}/${cfg.variant}/${cfg.orientation}`, faults = cfg.faults.join(',');
+    if (!KEY_RE.test(key)) throw new Error(`hand pairs: key ${key} (${id}) is not ${KEY_RE}`);
+    const k = keys.get(key);
+    if (!k) keys.set(key, { key, triple, faults: cfg.faults, ids: [id] });
+    else if (k.triple !== triple) throw new Error(`hand pairs: ${k.triple} and ${triple} both give key ${key}`);
+    else if (k.faults.join(',') !== faults) throw new Error(`hand pairs: key ${key}: ${k.ids[0]} has faults [${k.faults}], ${id} has [${cfg.faults}]`);
+    else k.ids.push(id);
+    keyOf.set(id, key);
+  }
+  for (const [a, k] of keys) {
+    if (index.drawn.has(a)) throw new Error(`hand pairs: key ${a} (${k.ids}) equals a drawn id`);
+    for (const b of keys.keys()) if (a !== b && b.startsWith(`${a}-`)) throw new Error(`hand pairs: key ${a} + '-' starts key ${b}`);
+  }
+  for (const id of keyOf.keys()) {
+    if (!EXERCISE_IDS.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is not in src/data/exercises.json`);
+    if (GOLDEN_IDS.has(`lib_${id}`)) throw new Error(`hand pairs: lib_${id} is one of the 8 (tools/plates/plates.json); it keeps its own hand`);
+  }
+  return { keys, keyOf };
+}
+const KEYS = keyIndexOf(INDEX);
+/** Every drawn id of any owner, as `lib_<card id>` -> pair key. Never one of the 8 or a gap. */
+export const HAND_OF_ID = Object.freeze(Object.fromEntries([...KEYS.keyOf].map(([id, k]) => [`lib_${id}`, k])));
+/** The pair keys, in first-drawn order. */
+export const keysOf = (index = INDEX) => [...(index === INDEX ? KEYS : keyIndexOf(index)).keys.keys()];
+
+/** The exercise-neutral hand close-up of one pair key: a `<div class="zx"` panel whose ids all start `hp-<key>-`, one
+ *  page per fault, each the key's first id drawn by renderPair with the uid `hp-<key>-<fault>`; words from words/chrome.json and words/<key>.json. */
+export async function pairPanel(key, index = INDEX) {
+  const k = (index === INDEX ? KEYS : keyIndexOf(index)).keys.get(key);
+  if (!k) throw new Error(`hand pairs: pairPanel: no key ${key}`);
+  const s = pairSpec(k.ids[0], index);
+  return panelHtml(key, s.wrong.map(w => ({ fault: w.key, svg: renderPair(k.ids[0], { fault: w.key, uid: `hp-${key}-${w.key}`, index }).svg })));
 }
 

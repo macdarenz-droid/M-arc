@@ -2,7 +2,7 @@
 import type { Exercise, LoggedExercise, Session, Weekday } from '@/core/models';
 import { WEEKDAYS } from '@/core/models';
 import { addDays, daysBetween, weekStart, weekdayOf, trainedToday } from '@/core/dates';
-import { isWorkingSet, weeklyMuscleSets } from './exposure';
+import { hasWorkingSets, isWorkingSet, weeklyMuscleSets } from './exposure';
 import { recordsInWeek, type PersonalRecord } from './prs';
 import { modeOf } from './history';
 import type { MuscleId } from '@/data/muscles';
@@ -53,7 +53,7 @@ export interface WeekSummary {
 export function weekSummary(sessions: Session[], today: string, custom: Exercise[] = [], plannedPerWeek: number | null = 3, bw?: BodyWeightAt): WeekSummary {
   const start = weekStart(today);
   const end = addDays(start, 6);
-  const inWeek = sessions.filter(s => s.day >= start && s.day <= end);
+  const inWeek = sessions.filter(s => s.day >= start && s.day <= end && hasWorkingSets(s));
   const activeDays = [...new Set(inWeek.map(s => s.day))].sort();
   const { sets, volumeKg } = sessionTotals(inWeek, custom, bw);
   const weeks = weeklyMuscleSets(sessions, today, 2, custom);
@@ -75,11 +75,6 @@ export function weekSummary(sessions: Session[], today: string, custom: Exercise
   };
 }
 
-/**
- * Streak that respects the schedule: rest days never break it, a missed
- * scheduled day in the past does, and today's unfinished session does not.
- * Without a schedule it falls back to consecutive training days.
- */
 /**
  * RG-19: scheduled days this week (Mon–Sun) that were not taken off; the weekSummary target.
  * Null when nothing is scheduled on any weekday (QA-R6-10), so "all taken off" (0) is not "no plan".
@@ -121,7 +116,43 @@ export function fullWeekSessions(plan: WeekPlan | undefined, day: string): numbe
   return Math.max(2, plannedSessions(plan, day) ?? DEFAULT_WEEK_SESSIONS);
 }
 
-export function trainingStreak(sessions: Session[], schedule: Record<Weekday, string | null>, today: string, daysOff: string[] = []): number {
+/**
+ * D-BUG39: days trained (at least one working set) up to today, kept while every finished Mon–Sun week
+ * reaches its planned sessions (plannedSessions: the schedule minus days off, else plannedDays) on any weekdays.
+ * Today's week and the first week trained are never judged. A week one session short is forgiven once per
+ * 4 weeks; any other short week ends the streak and adds nothing. Past weeks use the current schedule.
+ * With no plan at all (no weekday scheduled, no plannedDays): consecutive training days, today forgiven.
+ */
+export function trainingStreak(sessions: Session[], schedule: Record<Weekday, string | null>, today: string, daysOff: string[] = [], plannedDays?: number): number {
+  const plan = { schedule, daysOff, plannedDays };
+  if (plannedSessions(plan, today) === null) return consecutiveStreak(sessions, schedule, today, daysOff);
+  const weeks = new Map<string, { sessions: number; days: Set<string> }>();
+  let first = today;
+  for (const s of sessions) {
+    if (s.day > today || !hasWorkingSets(s)) continue;
+    const k = weekStart(s.day);
+    const w = weeks.get(k) ?? { sessions: 0, days: new Set<string>() };
+    w.sessions++;
+    w.days.add(s.day);
+    weeks.set(k, w);
+    if (s.day < first) first = s.day;
+  }
+  if (!weeks.size) return 0;
+  const firstWeek = weekStart(first);
+  let streak = 0, lastForgiven = -Infinity;
+  for (let w = 0, start = weekStart(today); start >= firstWeek; w++, start = addDays(start, -7)) {
+    const week = weeks.get(start);
+    if (w > 0 && start !== firstWeek) {
+      const short = Math.max(0, (plannedSessions(plan, start) ?? 0) - (week?.sessions ?? 0));
+      if (short >= 2 || (short === 1 && w - lastForgiven < 4)) break;
+      if (short === 1) lastForgiven = w;
+    }
+    streak += week?.days.size ?? 0;
+  }
+  return streak;
+}
+
+function consecutiveStreak(sessions: Session[], schedule: Record<Weekday, string | null>, today: string, daysOff: string[]): number {
   const trained = new Set(sessions.filter(s => s.exercises.some(e => e.sets.some(isWorkingSet))).map(s => s.day));
   const off = new Set(daysOff);
   const hasSchedule = WEEKDAYS.some(d => schedule[d]);

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- OLD-ANDROID-1a: plain monochrome status-bar icon for the watch notification (not the adaptive launcher icon). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M3,20V4h3.2L12,12.2L17.8,4H21v16h-3V9.2l-6,8.3l-6,-8.3V20z" />
+</vector>

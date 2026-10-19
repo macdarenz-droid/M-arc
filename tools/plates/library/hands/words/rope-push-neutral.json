@@ -1,0 +1,22 @@
+{
+ "heading": {
+  "text": "Hand: right and wrong",
+  "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
+ },
+ "faults": {
+  "curled": {
+   "right": {
+    "text": "Middle of palm",
+    "source": "the approved Right note, tools/plates/library/hands/hand-rope.mjs:18 (rope/push); approved SVG, #193 5975538224 (D-LIB7FIX-WORDS: the key's label only)"
+   },
+   "wrong": {
+    "text": "Wrist curled",
+    "source": "the D-LIB7-10 fault label, tools/plates/library/hands/hand-rope.mjs:22 (rope/push); approved SVG, #193 5975538224 (D-LIB7FIX-WORDS: the key's label only)"
+   },
+   "pager": {
+    "text": "Wrist curled",
+    "source": "the D-LIB7-10 fault label, tools/plates/library/hands/hand-rope.mjs:22 (rope/push) (pager labels, D-LIB7FIX-WORDS)"
+   }
+  }
+ }
+}

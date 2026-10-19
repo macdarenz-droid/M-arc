@@ -1,0 +1,87 @@
+{
+ "id": "shared-implement-medicine-ball-slam",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "hl-slam-ball",
+   "text": "Gripping the ball firming, extend your arms and bring the ball overhead.",
+   "status": "verbatim",
+   "closest": "Gripping the ball firming, extend your arms and bring the ball overhead.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bodbot-mb-slam",
+   "text": "Hold the medicine ball with both hands in front of your chest.",
+   "status": "verbatim",
+   "closest": "Hold the medicine ball with both hands in front of your chest.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "im-mb-slam",
+   "text": "Hold a soft medicine ball with both hands directly in front of your torso.",
+   "status": "verbatim",
+   "closest": "Hold a soft medicine ball with both hands directly in front of your torso.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bodbot-mb-slam",
+   "text": "Raise the ball overhead with extended arms.",
+   "status": "verbatim",
+   "closest": "Raise the ball overhead with extended arms.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "hl-slam-ball",
+   "text": "Gripping the ball firming, extend your arms and bring the ball overhead.",
+   "status": "verbatim",
+   "closest": "Gripping the ball firming, extend your arms and bring the ball overhead.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bodbot-mb-slam",
+   "text": "Catch the ball on the bounce (if it rebounds) or pick it up quickly.",
+   "status": "verbatim",
+   "closest": "Catch the ball on the bounce (if it rebounds) or pick it up quickly.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "im-mb-slam",
+   "text": "Retrieve the medicine ball with both hands and return to the starting position.",
+   "status": "verbatim",
+   "closest": "Retrieve the medicine ball with both hands and return to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "wl-mb-slam",
+   "text": "Catch the ball as it bounces back up, and bring it back up above your head.",
+   "status": "verbatim",
+   "closest": "Catch the ball as it bounces back up, and bring it back up above your head.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "vit-mb-slam",
+   "text": "a slam ball is softer and doesn’t bounce back when you slam it on the floor. Hence, the risk of injury with this ball is minimal.",
+   "status": "verbatim",
+   "closest": "a slam ball is softer and doesn’t bounce back when you slam it on the floor. Hence, the risk of injury with this ball is minimal.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "vit-mb-slam",
+   "text": "Using a slam ball instead will allow you to perform the workout without fearing a strong bounce off the floor.",
+   "status": "verbatim",
+   "closest": "Using a slam ball instead will allow you to perform the workout without fearing a strong bounce off the floor.",
+   "note": ""
+  }
+ ]
+}

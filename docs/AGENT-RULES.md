@@ -9,6 +9,7 @@ The step-by-step procedures for each role are in `.claude/skills/builder/SKILL.m
 | Supervisor (Claude, acting for the owner) | its own docs branch | the task board, the merge queue, CI files and these rules |
 | Builders (Claude sessions, one per task) | `claude/*` | what their task card lists |
 | Watch companion (GPT/Codex) | `codex/gt6-gate-a-watch-lab` (Gates A–E of `docs/WATCH-ARCHITECTURE.md`) | `native/wear/**`, `src/native/wearEngine.ts`, `src/slices/settings/WatchLab.tsx`, its Watch-lab row in `Settings.tsx`, and its lines in the CI workflows |
+| Watch lane (Claude cloud sessions) | `ccr-061c7350-tjvpo6` and `ccr-8cef8a15-l12swp` only (other `ccr-*` branches are not the watch lane); the guard checks them like `codex/*` | the same files as the watch companion |
 
 ## Why you are being watched
 
@@ -30,6 +31,7 @@ The step-by-step procedures for each role are in `.claude/skills/builder/SKILL.m
 | **Watch agent outside its files** | The watch branch must not change `escobar-worker/`, `src/escobar/`, `src/brain/` or the remediation and QA docs. Revert those paths to `origin/main`. If the watch genuinely needs a change there, write it down for the owner instead. |
 | **Claude builder in watch files** | A `claude/*` branch must not change `native/wear/**`, `src/native/wearEngine.ts` or `WatchLab.tsx`. Revert those paths. |
 | **Gate B files touched** (warning) | `session.ts`, `models.ts` and `store.ts` are allowed for Gate B only, built on the R2.8 identities already on `main` (`ActiveSession.id`, entry `id`, set `id`, set `status`). Do not create a second id scheme. |
+| **Library manifest without [golden update]** | `tools/plates/library/MANIFEST.json` pins the files behind each approved library plate. It changes only in the commit that adds or replaces that pin, and that commit's message carries `[golden update]` (library plan 3.5, ruling D-LIB4c-1). The one exemption is the commit that creates it as exactly `{"rows": {}}`, which pins nothing. Move the manifest change into the pin commit, or drop it. |
 | **Behind main** (warning) | `git fetch origin main && git merge origin/main`. Keep both sides of every conflict, and never drop the signing steps or another agent's CI lines. |
 
 Also:

@@ -10,6 +10,7 @@ import { chromeIdOf } from '@/slices/howto/PlateView';
 import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER } from '@/howto/archetypes';
 import type { BuiltHowTo } from '@/howto/types';
 import type { RiskJoint } from '@/howto/content-types';
+import { readHowTo } from './generated-module';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type AnyVNode = VNode<Record<string, any>>;
@@ -24,7 +25,7 @@ const byTag = (tree: AnyVNode, tag: string) => elements(tree).filter(v => v.type
 const hasClass = (v: AnyVNode, cls: string) => typeof v.props?.class === 'string' && v.props.class.split(' ').includes(cls);
 
 const modules = () => readdirSync('src/howto/generated').filter(f => /^ht-.*\.ts$/.test(f))
-  .map(async f => (await import(`../../src/howto/generated/${f.replace(/\.ts$/, '')}`)).default as BuiltHowTo);
+  .map(async f => readHowTo(f.slice(3, -3)));
 
 const FLAG: Readonly<Record<RiskJoint, { name: string; now: string; doctor: string }>> = {
   wrist: RED_FLAG, shoulder: RED_FLAG_SHOULDER, knee: RED_FLAG_KNEE, elbow: RED_FLAG_ELBOW,

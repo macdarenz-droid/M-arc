@@ -14,7 +14,7 @@ const RULES = `Never use WebFetch or WebSearch (they summarise with a small mode
 phase('Prepare')
 const prep = await agent(`You prepare a blind research-verify set (M/ARC library How-to research, ruling LR-29).
 1. In ${A.worktree} confirm HEAD is ${A.head} (git rev-parse HEAD). Create ${W}/copy/ (delete it first if it exists) and copy these files into it with their repo-relative paths, but WITHOUT any git metadata: ${A.files.join(', ')}. Also copy docs/research/howto/CARD-V2.md and docs/research/howto/RULINGS.md into ${W}/copy/ref/, and from origin/claude/howto-options (git show) docs/howto/library/inputs/content.md into ${W}/copy/ref/content.md. Nothing else.
-2. Plant exactly 2 errors in the COPY only (never in ${A.worktree}):
+2. Plant exactly 2 errors in the COPY only (never in ${A.worktree})${A.plantScope ? `, and ONLY inside this scope, which is what the critic reviews in full: ${A.plantScope}` : ''}:
    - P1, tier A: change one safety-relevant shown line (a stop sign, a way out, a "never" rule or a red-flag line) so it becomes unsafe or contradicts its own claim's quote, in a way a careful expert would catch.
    - P2: change one number or direction in a shown technique line (tempo seconds, a range, an angle, left/right, up/down) so it contradicts its claim's quote.
    Keep the JSON valid (node -e "JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))" <file>). Change nothing else, and do not touch quote files, notes or gaps for the plants.

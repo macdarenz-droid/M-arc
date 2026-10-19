@@ -7,6 +7,8 @@
 # Run with Bash run_in_background and timeout 7200000: the default 30 min kills it while a queue of CI runs is still waiting.
 # HT-10 split (10-03): on a sha whose build-apk.yml has job ht10-gate, set HT10_LEGS=4 so all four
 # 'ht10-gate (shard, tz)' legs must exist and be complete too (android-gate needs them, so it waits anyway).
+# GATE-SPLIT (10-04): on a sha whose build-apk.yml has jobs gate-shard and gate-verdict, set GATE_LEGS=6 so all six
+# 'gate-shard (k/4, tz)' legs and gate-verdict must exist and be complete too.
 declare -A done
 while true; do
   left=0
@@ -22,6 +24,8 @@ runs=d.get('check_runs',[])
 req={'guard','source-gate','visual-gate-tz','android-gate'}
 if not req <= {x['name'] for x in runs} or any(x['status']!='completed' for x in runs): sys.exit()
 if sum(1 for x in runs if x['name'].startswith('ht10-gate')) < int('${HT10_LEGS:-0}'): sys.exit()
+if sum(1 for x in runs if x['name'].startswith('gate-shard')) < int('${GATE_LEGS:-0}'): sys.exit()
+if int('${GATE_LEGS:-0}') and 'gate-verdict' not in {x['name'] for x in runs}: sys.exit()
 print(' '.join(f\"{x['name']}={x['conclusion']}\" for x in runs))" 2>/dev/null)
     if [ -n "$r" ]; then echo "CI $l ${s:0:7}: $r"; done[$s]=1; fi
   done

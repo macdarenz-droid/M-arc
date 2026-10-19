@@ -20,7 +20,7 @@ import { volumeChartWeeks } from './volumeChart';
 import { findExercise } from '@/core/exercises';
 import { modeLoadText, lastTopStats, loadColumnLabel, loadAriaLabel, bodyweightShare, effectiveLoadKg, statHasReps, statLoadLabel, statReadout } from '@/brain/bodyweight';
 import { EffortBars, effortSplit, effortUsesSets } from '@/ui/EffortBars';
-import { progressHint, progressTrend, progressValue } from './progressTrend';
+import { progressHint, progressSeries } from './progressTrend';
 import { DATA_LABEL } from '@/brain/trend';
 import { muscleLabel } from '@/data/muscles';
 import { showToast } from '@/app/toast';
@@ -292,9 +292,23 @@ export function SessionEditor({ session, onClose }: { session: Session; onClose:
   // stand alone with reps at 0), so it gets the same explicit removal the rest of the editor uses.
   const removeDraftSet = (ei: number, si: number) => setDraft(d => ({ ...d, exercises: d.exercises.map((e, i) => (i !== ei ? e : { ...e, sets: e.sets.filter((_, j) => j !== si) })) }));
   const save = () => {
-    const cleaned = { ...draft, exercises: draft.exercises.map(e => ({ ...e, sets: e.sets.filter(hasEntry) })).filter(e => e.sets.length) };
+    // A3-4 (UI-R04, plan 6.17.2): a corrected set is 'edited'. Matched by id; a legacy set with no
+    // id by position, only while its exercise kept its set count.
+    const exercises = draft.exercises.map((e, ei) => {
+      const was = session.exercises[ei]?.sets ?? [];
+      return { ...e, sets: e.sets.map((st, si) => {
+        const old = st.id ? was.find(w => w.id === st.id) : was.length === e.sets.length ? was[si] : undefined;
+        const same = !!old && old.kg === st.kg && old.reps === st.reps && old.effort === st.effort && old.durationSec === st.durationSec;
+        return same ? st : { ...st, fidelity: 'edited' as const };
+      }).filter(hasEntry) };
+    }).filter(e => e.sets.length);
     // An edit that leaves no sets is a delete, with its Undo (UI-24).
-    if (!cleaned.exercises.length) { remove(); return; }
+    if (!exercises.length) { remove(); return; }
+    // The live share is recomputed over the sets finishSession rated (committed working sets) plus
+    // any now edited; an edit never raises timing trust.
+    const rated = exercises.flatMap(e => e.sets).filter(st => st.kind !== 'warmup' && (st.at || st.fidelity));
+    const liveShare = rated.length ? rated.filter(st => (st.fidelity ?? 'live') === 'live').length / rated.length : draft.logging.liveShare;
+    const cleaned = { ...draft, exercises, logging: { ...draft.logging, liveShare, timingTrusted: draft.logging.timingTrusted && liveShare >= 0.7 } };
     // Every history edit relearns the recovery model from what is left (UI-12).
     update(s => withSessions(s, s.sessions.map(x => (x.id === session.id ? cleaned : x))));
     showToast('Session updated'); onClose();
@@ -471,7 +485,9 @@ function Stats() {
   const s = state.value;
   const u = unit.value;
   const w = weekSummary(s.sessions, today.value, s.customExercises, plannedThisWeek(s.schedule, s.daysOff, today.value), bodyWeightAt.value);
-  const records = useMemo(() => allRecords(s.sessions, s.customExercises, u).slice(0, 12), [s.sessions, u]);
+  const allRecs = useMemo(() => allRecords(s.sessions, s.customExercises, u), [s.sessions, s.customExercises, u]);
+  const [allShown, setAllShown] = useState(false);
+  const records = allShown ? allRecs : allRecs.slice(0, 12);
   const exerciseIds = useMemo(() => { const m = new Map<string, string>(); for (const x of [...s.sessions].reverse()) for (const e of x.exercises) if (!m.has(e.exerciseId)) m.set(e.exerciseId, e.name); return [...m]; }, [s.sessions]);
   const panel = openPanel.value;
   const fromPanel = panel?.id === 'exercise-stats' ? panel.params?.exerciseId : undefined;
@@ -480,25 +496,28 @@ function Stats() {
   usePalaceFocus(exercise ? 'history.exercise-stats' : 'history.week', exercise ? { exerciseId: exercise } : undefined);
   const hist = exercise ? exerciseHistory(s.sessions, exercise, s.customExercises) : [];
   const mode = modeOf(exercise, s.customExercises);
-  const t = progressTrend(hist, mode);
+  // BUG-41: the line, its label and the trend tile read one series.
+  const series = progressSeries(hist, mode);
+  const t = series.trend;
+  const sparkPoints = series.metric === 'e1rm' || series.metric === 'top' || series.metric === 'volume' || series.metric === 'assist' ? series.values.map(v => kgToDisplay(v, u)) : series.values;
   const lastTop = hist.length ? lastTopStats(hist[hist.length - 1]!, findExercise(exercise, s.customExercises), bodyWeightAt.value, u) : null;
   const muscleRows = (Object.entries(w.muscleSets) as Array<[string, number]>).sort((a, b) => b[1] - a[1]).slice(0, 6);
   const maxSets = muscleRows[0]?.[1] ?? 1;
-  // O4: the same last 12 sessions as the trend line, split into easy/right/max/unrated work.
-  const hist12 = hist.slice(-12);
+  // O4: the same sessions as the trend line, split into easy/right/max/unrated work.
+  const rows = series.rows;
   const bwAt = (day: string, addedKg: number): number | null => {
     const bw = bodyWeightAt.value;
     return bw ? effectiveLoadKg(addedKg, mode, bodyweightShare(findExercise(exercise, s.customExercises)), bw(day)) : null;
   };
-  const effortKg = effortSplit(hist12, mode, bwAt);
-  const effortInSets = effortUsesSets(hist12, mode);
+  const effortKg = effortSplit(rows, mode, bwAt);
+  const effortInSets = effortUsesSets(rows, mode);
   const effortPoints = effortInSets ? effortKg : effortKg.map(p => ({ day: p.day, easy: kgToDisplay(p.easy, u), ideal: kgToDisplay(p.ideal, u), max: kgToDisplay(p.max, u), unrated: kgToDisplay(p.unrated, u) }));
   const [selectedBar, setSelectedBar] = useState<number | null>(null);
   const [sparkScrub, setSparkScrub] = useState<number | null>(null);
   useEffect(() => { setSelectedBar(null); setSparkScrub(null); }, [exercise]);
   // A6: the sparkline's readout shows the scrubbed session's actual top set, not just its plotted value.
-  const sparkIdx = sparkScrub ?? hist12.length - 1;
-  const sparkSession = hist12[sparkIdx];
+  const sparkIdx = sparkScrub ?? rows.length - 1;
+  const sparkSession = rows[sparkIdx];
   const sparkStats = sparkSession ? lastTopStats(sparkSession, findExercise(exercise, s.customExercises), bodyWeightAt.value, u) : null;
   const sparkReadout = sparkSession && sparkStats
     ? `${statReadout(sparkStats, mode, sparkSession.bestDistanceM, sparkSession.bestDurationSec, sparkSession.bestReps)} · ${formatDay(sparkSession.day, { day: 'numeric', month: 'short' })}`
@@ -526,8 +545,9 @@ function Stats() {
             <select value={exercise} onChange={e => { setExercise((e.target as HTMLSelectElement).value); if (fromPanel) closePanel('exercise-stats'); }}>{exerciseIds.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select>
             {hist.length >= 2 ? (
               <div class="stack-sm" style={{ marginTop: 12 }}>
-                <ChartReadout text={sparkReadout} />
-                <Sparkline points={hist12.map(h => progressValue(h, mode))} dates={hist12.map(h => h.day)} height={96} labels scrub onScrubIndex={setSparkScrub} />
+                {rows.length >= 2 && <ChartReadout text={sparkReadout} />}
+                {rows.length >= 2 && <Sparkline points={sparkPoints} dates={rows.map(h => h.day)} height={96} labels scrub onScrubIndex={setSparkScrub} />}
+                {rows.length >= 2 && <p class="hint">{progressHint(mode, series.metric)}</p>}
                 {(() => {
                   const lastHist = hist[hist.length - 1];
                   const lastDistance = lastHist?.bestDistanceM ?? 0, lastDuration = lastHist?.bestDurationSec ?? 0, lastReps = lastHist?.bestReps ?? 0;
@@ -541,22 +561,22 @@ function Stats() {
                   );
                 })()}
                 <EffortBars points={effortPoints} unit={effortInSets ? 'sets' : u} selected={selectedBar} onSelect={i => setSelectedBar(sel => (sel === i ? null : i))} />
-                {selectedBar != null && hist12[selectedBar] && (
-                  <p class="hint">{formatDay(hist12[selectedBar]!.day)} · {hist12[selectedBar]!.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span>)}</p>
+                {selectedBar != null && rows[selectedBar] && (
+                  <p class="hint">{formatDay(rows[selectedBar]!.day)} · {rows[selectedBar]!.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span>)}</p>
                 )}
                 <div class="list">{[...hist].reverse().slice(0, 5).map(h => <Row key={h.sessionId} class="stat-hist-row" trailing={<span class="hint num">{h.sets.map((st, i) => <span key={i}>{i ? ' · ' : ''}<span style={{ whiteSpace: 'nowrap' }}>{setLabel(st, u, mode)}<UnitTag st={st} u={u} /></span></span>)}</span>}><span class="small">{formatDay(h.day)}</span></Row>)}</div>
-                <p class="hint">{progressHint(mode)}</p>
               </div>
             ) : <p class="small muted" style={{ marginTop: 10 }}>One session so far.</p>}
           </Card>
         )}
       </Section>
 
-      <Section title="Records" palace="history.records" aside={<Chip tone="positive"><IconTrophy size={16} /> {records.length}</Chip>}>
+      <Section title="Records" palace="history.records" aside={<Chip tone="positive"><IconTrophy size={16} /> {allRecs.length}</Chip>}>
         <Card>
           {!records.length ? <p class="small muted">No records yet.</p> : (
             <div class="list">{records.map((r, i) => <Row key={i} trailing={<span class="hint">{formatDay(r.day)}</span>}><div class="small">{r.exerciseName}</div><div class="hint">{PR_LABEL[r.kind]} · {r.detail}</div></Row>)}</div>
           )}
+          {records.length < allRecs.length && <Button variant="quiet" size="sm" onClick={() => setAllShown(true)}>Show all</Button>}
         </Card>
       </Section>
     </div>

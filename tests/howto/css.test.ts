@@ -5,7 +5,11 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { THEMES, themeToCss } from '@/theme/themes';
-import { HOWTO_IDS } from '@/howto/ids';
+import { HOWTO_IDS } from '@/howto/generated/loaders';   // LIB-2: the shipped id list lives in the lazy loaders chunk
+import { SHIPPED } from './shipped-rows';
+import { readHowTo } from './generated-module';
+/** LIB-2b: slugs from the registry's shipped rows (plates.json holds no library slug). */
+const SLUG_OF = new Map(SHIPPED.map(r => [r.id, r.slug]));
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 let c: any, g: any;
@@ -125,8 +129,9 @@ describe('HT2-A6 lints on src/slices/howto/css/*.css', () => {
 describe('HT2-A6 inline custom properties in generated markup', () => {
   it('every style="" custom property in every generated string is on the allow list', async () => {
     let seen = 0;
+    expect(HOWTO_IDS).toEqual(SHIPPED.map(r => r.id));
     for (const id of HOWTO_IDS) {
-      const m = (await import(/* @vite-ignore */ new URL(`../../src/howto/generated/ht-${rows[id]!.slug}.ts`, import.meta.url).href)).default;
+      const m = readHowTo(SLUG_OF.get(id)!);
       const strings = [m.plate.normal.svg, m.plate.normal.overlay, m.plate.mistake.svg, m.plate.mistake.overlay, m.plate.tells, m.plate.tempo];
       for (const v of strings.flatMap(inlineVars)) { seen++; expect(INLINE_ALLOW, `${id}: ${v}`).toContain(v); }
     }

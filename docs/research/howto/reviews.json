@@ -1,4 +1,140 @@
 {
   "schema": 1,
-  "entries": []
+  "entries": [
+    {
+      "scope": "lib_dumbbell_lateral_raise",
+      "hash": "9f3c6c9ea48c0444ff4cb84e4f849a0abf6b61dc0622bb6e4eae7d67522587e0",
+      "date": "2026-10-18",
+      "fetcher": "S-2 (tools/plates/layers/README.md:27-45; review line :45): no record of a source fetch; compact rewrite (README.md:52-90; checks :85-90): no record of a source fetch",
+      "critic": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on design, copy and safety, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on accuracy and safety against the research cards (15 findings), refixed and rechecked",
+      "safety": "S-2 (tools/plates/layers/README.md:27-45; review line :45): the same design, copy and safety verifier; compact rewrite (README.md:52-90; checks :85-90): the same accuracy and safety verifier",
+      "reviewer": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on fidelity and behaviour, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on the reader's view in a real browser at 390 px (17 findings), refixed and rechecked; the supervisor re-ran build, lint, fidelity (0 px), state check and hand test",
+      "findings": [
+        "HANDOVER 8.2 golden-B follow-up 3: recorded, not changed: golden B is locked (plan 2.8)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB5-STAMPS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb"
+    },
+    {
+      "scope": "lib_barbell_back_squat",
+      "hash": "5133a80beb23027851157c5dd07590c6dc1bc450fc4170d74340e0ab4d1a1210",
+      "date": "2026-10-18",
+      "fetcher": "S-2 (tools/plates/layers/README.md:27-45; review line :45): no record of a source fetch; compact rewrite (README.md:52-90; checks :85-90): no record of a source fetch",
+      "critic": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on design, copy and safety, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on accuracy and safety against the research cards (15 findings), refixed and rechecked",
+      "safety": "S-2 (tools/plates/layers/README.md:27-45; review line :45): the same design, copy and safety verifier; compact rewrite (README.md:52-90; checks :85-90): the same accuracy and safety verifier",
+      "reviewer": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on fidelity and behaviour, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on the reader's view in a real browser at 390 px (17 findings), refixed and rechecked; the supervisor re-ran build, lint, fidelity (0 px), state check and hand test",
+      "findings": [
+        "HANDOVER 8.2 golden-B follow-up 9: recorded, not changed: golden B is locked (plan 2.8)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB5-STAMPS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb"
+    },
+    {
+      "scope": "lib_pull_up",
+      "hash": "3590b4cc85cb0bb79f6d8d5cfb4f520f403619418d70af0a4dd25224eed96eec",
+      "date": "2026-10-18",
+      "fetcher": "S-2 (tools/plates/layers/README.md:27-45; review line :45): no record of a source fetch; compact rewrite (README.md:52-90; checks :85-90): no record of a source fetch",
+      "critic": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on design, copy and safety, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on accuracy and safety against the research cards (15 findings), refixed and rechecked",
+      "safety": "S-2 (tools/plates/layers/README.md:27-45; review line :45): the same design, copy and safety verifier; compact rewrite (README.md:52-90; checks :85-90): the same accuracy and safety verifier",
+      "reviewer": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on fidelity and behaviour, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on the reader's view in a real browser at 390 px (17 findings), refixed and rechecked; the supervisor re-ran build, lint, fidelity (0 px), state check and hand test",
+      "findings": [
+        "HANDOVER 8.2 golden-B follow-up 3: recorded, not changed: golden B is locked (plan 2.8)",
+        "HANDOVER 8.2 golden-B follow-up 10: recorded, not changed: golden B is locked (plan 2.8)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB5-STAMPS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb"
+    },
+    {
+      "scope": "lib_hanging_leg_raise",
+      "hash": "68e4646d14eeca21ac2fc59d19b48d1afd11fa90dafc81a76b81418c2f00e137",
+      "date": "2026-10-18",
+      "fetcher": "S-2 (tools/plates/layers/README.md:27-45; review line :45): no record of a source fetch; compact rewrite (README.md:52-90; checks :85-90): no record of a source fetch",
+      "critic": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on design, copy and safety, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on accuracy and safety against the research cards (15 findings), refixed and rechecked",
+      "safety": "S-2 (tools/plates/layers/README.md:27-45; review line :45): the same design, copy and safety verifier; compact rewrite (README.md:52-90; checks :85-90): the same accuracy and safety verifier",
+      "reviewer": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on fidelity and behaviour, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on the reader's view in a real browser at 390 px (17 findings), refixed and rechecked; the supervisor re-ran build, lint, fidelity (0 px), state check and hand test",
+      "findings": [
+        "HANDOVER 8.2 golden-B follow-up 11: recorded, not changed: golden B is locked (plan 2.8)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB5-STAMPS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb"
+    },
+    {
+      "scope": "lib_lat_pulldown",
+      "hash": "956f3a8c4448d105e57b9b111317ace2055032fcfef375c67ae6a725556c39e2",
+      "date": "2026-10-18",
+      "fetcher": "S-2 (tools/plates/layers/README.md:27-45; review line :45): no record of a source fetch; compact rewrite (README.md:52-90; checks :85-90): no record of a source fetch",
+      "critic": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on design, copy and safety, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on accuracy and safety against the research cards (15 findings), refixed and rechecked",
+      "safety": "S-2 (tools/plates/layers/README.md:27-45; review line :45): the same design, copy and safety verifier; compact rewrite (README.md:52-90; checks :85-90): the same accuracy and safety verifier",
+      "reviewer": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on fidelity and behaviour, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on the reader's view in a real browser at 390 px (17 findings), refixed and rechecked; the supervisor re-ran build, lint, fidelity (0 px), state check and hand test",
+      "findings": [
+        "HANDOVER 8.2 golden-B follow-up 2: recorded, not changed: golden B is locked (plan 2.8)",
+        "HANDOVER 8.2 golden-B follow-up 3: recorded, not changed: golden B is locked (plan 2.8)",
+        "HANDOVER 8.0k golden-B follow-up 12: recorded, not changed: golden B is locked (plan 2.8)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB5-STAMPS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb"
+    },
+    {
+      "scope": "lib_seated_cable_row",
+      "hash": "8083f5c121d3badfa21b5645f034215591251a6139b44ce817f8aa54368e4570",
+      "date": "2026-10-18",
+      "fetcher": "S-2 (tools/plates/layers/README.md:27-45; review line :45): no record of a source fetch; compact rewrite (README.md:52-90; checks :85-90): no record of a source fetch",
+      "critic": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on design, copy and safety, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on accuracy and safety against the research cards (15 findings), refixed and rechecked",
+      "safety": "S-2 (tools/plates/layers/README.md:27-45; review line :45): the same design, copy and safety verifier; compact rewrite (README.md:52-90; checks :85-90): the same accuracy and safety verifier",
+      "reviewer": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on fidelity and behaviour, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on the reader's view in a real browser at 390 px (17 findings), refixed and rechecked; the supervisor re-ran build, lint, fidelity (0 px), state check and hand test",
+      "findings": [
+        "HANDOVER 8.2 golden-B follow-up 1: recorded, not changed: golden B is locked (plan 2.8)",
+        "HANDOVER 8.2 golden-B follow-up 2: recorded, not changed: golden B is locked (plan 2.8)",
+        "HANDOVER 8.2 golden-B follow-up 3: recorded, not changed: golden B is locked (plan 2.8)",
+        "HANDOVER 8.2 golden-B follow-up 6: recorded, not changed: golden B is locked (plan 2.8)",
+        "HANDOVER 8.0k golden-B follow-up 12: recorded, not changed: golden B is locked (plan 2.8)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB5-STAMPS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb"
+    },
+    {
+      "scope": "lib_leg_press",
+      "hash": "41db7a545ce58f3916fcdd66f42d0360aacce566c2d5a024cf472b3ca75dcdac",
+      "date": "2026-10-18",
+      "fetcher": "S-2 (tools/plates/layers/README.md:27-45; review line :45): no record of a source fetch; compact rewrite (README.md:52-90; checks :85-90): no record of a source fetch",
+      "critic": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on design, copy and safety, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on accuracy and safety against the research cards (15 findings), refixed and rechecked",
+      "safety": "S-2 (tools/plates/layers/README.md:27-45; review line :45): the same design, copy and safety verifier; compact rewrite (README.md:52-90; checks :85-90): the same accuracy and safety verifier",
+      "reviewer": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on fidelity and behaviour, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on the reader's view in a real browser at 390 px (17 findings), refixed and rechecked; the supervisor re-ran build, lint, fidelity (0 px), state check and hand test",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB5-STAMPS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb"
+    },
+    {
+      "scope": "lib_machine_chest_press",
+      "hash": "e3ce2703780a7dd4e66784dbe799638b19dcc4572271d683089faab030822574",
+      "date": "2026-10-18",
+      "fetcher": "S-2 (tools/plates/layers/README.md:27-45; review line :45): no record of a source fetch; compact rewrite (README.md:52-90; checks :85-90): no record of a source fetch",
+      "critic": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on design, copy and safety, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on accuracy and safety against the research cards (15 findings), refixed and rechecked",
+      "safety": "S-2 (tools/plates/layers/README.md:27-45; review line :45): the same design, copy and safety verifier; compact rewrite (README.md:52-90; checks :85-90): the same accuracy and safety verifier",
+      "reviewer": "S-2 (tools/plates/layers/README.md:27-45; review line :45): fresh-context verifier on fidelity and behaviour, with a recheck after the fixes; compact rewrite (README.md:52-90; checks :85-90): verifier on the reader's view in a real browser at 390 px (17 findings), refixed and rechecked; the supervisor re-ran build, lint, fidelity (0 px), state check and hand test",
+      "findings": [
+        "HANDOVER 8.2 golden-B follow-up 3: recorded, not changed: golden B is locked (plan 2.8)",
+        "HANDOVER 8.2 golden-B follow-up 7: recorded, not changed: golden B is locked (plan 2.8)",
+        "HANDOVER 8.2 golden-B follow-up 8: recorded, not changed: golden B is locked (plan 2.8)"
+      ],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB5-STAMPS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb"
+    }
+  ]
 }

@@ -1,0 +1,95 @@
+{
+ "id": "shared-rope-rule",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "nfpt-rope",
+   "text": "Grip the rope with your hand against the clubbed end.",
+   "status": "verbatim",
+   "closest": "Grip the rope with your hand against the clubbed end.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-pushdown",
+   "text": "Attach the handle or rope and grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+   "status": "verbatim",
+   "closest": "Attach the handle or rope and grasp it firmly with a full grip (thumbs clasped around the handle or rope).",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "motra-ohrope",
+   "text": "Attach a rope to the low pulley. Stand facing away from the machine, holding the rope with a neutral grip, and step forward to create tension, positioning hands behind your head with elbows bent.",
+   "status": "verbatim",
+   "closest": "Attach a rope to the low pulley. Stand facing away from the machine, holding the rope with a neutral grip, and step forward to create tension, positioning hands behind your head with elbows bent.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "nfpt-rope",
+   "text": "Your wrists should be straight throughout the movement, press the handle down toward the floor to the extended position.",
+   "status": "verbatim",
+   "closest": "Your wrists should be straight throughout the movement, press the handle down toward the floor to the extended position.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-pushdown",
+   "text": "wrists in neutral positon (i.e., aligned with your forearms). This arm and wrist position should be maintained",
+   "status": "verbatim",
+   "closest": "wrists in neutral positon (i.e., aligned with your forearms). This arm and wrist position should be maintained",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "motra-ohrope",
+   "text": "Wrist neutral mobility",
+   "status": "verbatim",
+   "closest": "Wrist neutral mobility",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bws-tri",
+   "text": "Letting the forearms takeover is a little harder to catch but is just as common - especially when the bar attachment is used.",
+   "status": "verbatim",
+   "closest": "Letting the forearms takeover is a little harder to catch but is just as common - especially when the bar attachment is used.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bws-tri",
+   "text": "And this happens when you flex your wrists as you push the weight down.",
+   "status": "verbatim",
+   "closest": "And this happens when you flex your wrists as you push the weight down.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bws-tri",
+   "text": "This not only shifts tension away from the triceps and onto the forearms, but also:",
+   "status": "verbatim",
+   "closest": "This not only shifts tension away from the triceps and onto the forearms, but also:",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bws-tri",
+   "text": "puts your wrists at a mechanical disadvantage",
+   "status": "verbatim",
+   "closest": "puts your wrists at a mechanical disadvantage",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bws-tri",
+   "text": "stresses the elbow joint",
+   "status": "verbatim",
+   "closest": "stresses the elbow joint",
+   "note": ""
+  }
+ ]
+}

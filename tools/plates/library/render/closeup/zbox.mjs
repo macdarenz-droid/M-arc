@@ -3,7 +3,7 @@
 // an exercise does differently is a named option (closeup/zbox-options.mjs) choosing entries from the registries in
 // zbox-geometry.mjs (camera, still, guide kinds), zbox-hand.mjs (hand edit steps) and zbox-css.mjs (rule blocks).
 // Returns the API the vendored artifact/howto-layers.mjs reads: { zoomSection, chipRow, ZCSS, howto, PAGES }.
-import { renderPlate, landmarksOf } from '../../../layers/engine/index.mjs';
+import { LAYERS_ENGINE } from './crop.mjs';
 import { CAMERAS, STILLS, GUIDES, f } from './zbox-geometry.mjs';
 import { handZoom } from './zbox-hand.mjs';
 import { zboxCss } from './zbox-css.mjs';
@@ -27,13 +27,13 @@ export const HAND_LINES = {
 
 const pick = (reg, what, name) => { const v = reg[name]; if (!v) throw new Error(`zbox: unknown ${what} ${name}`); return v; };
 
-export function zboxApi(mod, options) {
+export function zboxApi(mod, options, engine = LAYERS_ENGINE) {
   const howto = mod.default, plateSpec = howto.plate, stills = mod.stills, H = options.bodyHeight;
-  const REF = pick(CAMERAS, 'camera', options.camera.kind)(plateSpec, options.camera);
+  const REF = pick(CAMERAS, 'camera', options.camera.kind)(plateSpec, options.camera, engine);
   const P = w => [REF.x0 + w[2] * REF.pxPerM, REF.y0 - w[1] * REF.pxPerM];
-  const ctx = { mod, howto, plateSpec, stills, H, REF, P };
+  const ctx = { mod, howto, plateSpec, stills, H, REF, P, engine };
   ctx.stillSpec = pick(STILLS, 'still', options.still.kind)(ctx, options.still);
-  ctx.lmOf = still => landmarksOf(ctx.stillSpec(still).poses.end, H);
+  ctx.lmOf = still => engine.landmarksOf(ctx.stillSpec(still).poses.end, H);
   const stillOf = side => (side === 'start' || side === 'end') ? stills[side] : stills[side.still];
   const refPt = (ref, still) => { const [x, y] = P(ctx.lmOf(still)[ref.landmark]); return [x + (ref.dx ?? 0), y + (ref.dy ?? 0)]; };
   const guide = (name, still, role) => {
@@ -48,7 +48,7 @@ export function zboxApi(mod, options) {
   function cropPanel(zoom, side, { x, y, S, uid }) {
     const still = stillOf(zoom[side]), over = zoom[side].over;
     const spec = over ? { ...ctx.stillSpec(stills[over]), mistake: { pose: still.pose, guides: [], tells: [] } } : ctx.stillSpec(still);
-    const plate = renderPlate(spec, { id: `${uid}`, mistake: !!over });
+    const plate = engine.renderPlate(spec, { id: `${uid}`, mistake: !!over });
     const inner = plate.svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/<rect width="358" height="358" fill="url\([^)]*\)"\/>/, '');
     const crop = zoom.crop, c = refPt(crop.center, stills[zoom.right]);
     const s = crop.sizePx, vx = c[0] - s / 2, vy = c[1] - s / 2;

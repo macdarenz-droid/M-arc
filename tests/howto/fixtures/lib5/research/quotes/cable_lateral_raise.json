@@ -1,0 +1,11 @@
+{
+ "id": "cable_lateral_raise",
+ "checked": "2026-10-18",
+ "sources": [{ "id": "lib5-fixture", "access": "full", "fixes": null }],
+ "quotes": [
+  { "claim": "c1", "source": "lib5-fixture", "quote": "Fixture quote: elbow 146.5 degrees at the end.", "status": "verbatim", "closest": null },
+  { "claim": "c2", "source": "lib5-fixture", "quote": "Fixture quote: 1 second up, 2 seconds down, half a second hold.", "status": "verbatim", "closest": null },
+  { "claim": "c3", "source": "lib5-fixture", "quote": "Fixture quote: rest half a second between reps.", "status": "verbatim", "closest": null },
+  { "claim": "c4", "source": "lib5-fixture", "quote": "Fixture quote: the legs kick to swing up.", "status": "verbatim", "closest": null }
+ ]
+}
