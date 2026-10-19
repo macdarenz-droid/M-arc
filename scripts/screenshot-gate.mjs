@@ -9399,6 +9399,45 @@ if (gate.runs('BUG-41'))
   if (!errors.some(e => e.startsWith(`${tag} `))) console.log(`${tag}: Rear Delt and Lateral read Improving with the line ending highest, "Top load" under the line once, max label in kg and lb, readout 35.5 kg × 10, line points = bars; a one-row carry draws no line and keeps its tiles, bars and rows`);
 }
 
+if (gate.runs('HT-11'))
+{
+  // HT-11 (card ht-11-card.md): the path-encoded chunks, as built and run in Chromium. Each base chunk is at most 65 %
+  // of its main 565ea5a4 gz bytes (tests/howto/delta.test.ts pins the same 8 values), and each built ht-* and posture-*
+  // chunk, imported in the served app, decodes its strings (minified decoder) to the golden bytes: the plate figures by
+  // sha256 against their latest GOLDEN.json entry, the posture panels === golden B's.
+  const tag = 'HT-11';
+  const { gzipSync } = await import('node:zlib');
+  const G = await import('../tools/plates/golden.mjs');
+  const Z = await import('../tools/plates/gen/zooms.mjs');
+  const MAIN_GZ = { 'dumbbell-lateral-raise': 15286, 'barbell-back-squat': 24008, 'pull-up': 31339, 'hanging-leg-raise': 30631, 'lat-pulldown': 27005, 'seated-cable-row': 28371, 'leg-press': 20813, 'machine-chest-press': 22590 };
+  const rows = Object.entries(JSON.parse(readFileSync(join(ROOT, 'tools/plates/plates.json'), 'utf8')));
+  const latest = G.latestEntries(JSON.parse(readFileSync(G.GOLDEN_JSON, 'utf8')).entries);
+  const layers = readFileSync(join(ROOT, 'tests/howto/golden/howto-layers.html'), 'utf8');
+  const assets = readdirSync(join(ROOT, 'www/assets')), one = re => assets.filter(f => re.test(f));
+  if (rows.length !== 8 || Object.keys(MAIN_GZ).length !== 8) errors.push(`${tag}: expected the 8 plates.json rows, found ${rows.length}`);
+  const ctx = await browser.newContext(), page = await ctx.newPage();
+  await page.goto(`http://localhost:${PORT}/`);
+  let checked = 0;
+  for (const [id, row] of rows) {
+    const ht = one(new RegExp(`^ht-${row.slug}-[\\w-]{8}\\.js$`)), po = one(new RegExp(`^posture-${row.chromeId}-[\\w-]{8}\\.js$`));
+    if (ht.length !== 1 || po.length !== 1) { errors.push(`${tag}: ${id}: expected one ht- and one posture- chunk, found ${[...ht, ...po].join(', ') || 'none'}`); continue; }
+    const gz = gzipSync(readFileSync(join(ROOT, 'www/assets', ht[0]))).length, max = Math.floor(MAIN_GZ[row.slug] * 0.65);
+    if (!(gz <= max)) errors.push(`${tag}: ${ht[0]} is ${gz} B gz, over 65 % of its main 565ea5a4 ${MAIN_GZ[row.slug]} B (${max})`);
+    const got = await page.evaluate(async ([a, b]) => {
+      const sha = async s => [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)))].map(x => x.toString(16).padStart(2, '0')).join('');
+      const h = (await import(new URL(`assets/${a}`, location.href).href)).default.plate, p = await import(new URL(`assets/${b}`, location.href).href);
+      return { normalSvg: await sha(h.normal.svg), normalOverlay: await sha(h.normal.overlay), mistakeSvg: await sha(h.mistake.svg), mistakeOverlay: await sha(h.mistake.overlay), panels: p.panels };
+    }, [ht[0], po[0]]);
+    const f = latest.get(id)?.fragments;
+    for (const k of ['normalSvg', 'normalOverlay', 'mistakeSvg', 'mistakeOverlay']) { if (got[k] !== f?.[k]) errors.push(`${tag}: ${id}.${k} decodes in Chromium to sha256 ${got[k]}, GOLDEN ${f?.[k]}`); else checked++; }
+    const want = Z.posturePanels(layers, row.chromeId);
+    if (Object.keys(got.panels).length !== want.length) errors.push(`${tag}: ${row.chromeId}: ${Object.keys(got.panels).length} posture panels, golden B has ${want.length}`);
+    for (const w of want) { if (got.panels[w.key] !== w.panel) errors.push(`${tag}: ${row.chromeId}.${w.key}: the posture panel decoded in Chromium !== golden B's`); else checked++; }
+  }
+  await ctx.close();
+  if (!errors.some(e => e.startsWith(`${tag}: `))) console.log(`${tag}: 8 base chunks at most 65 % of their main gz; ${checked} decoded strings (plate figures by GOLDEN sha256, posture panels ===) equal the golden in Chromium`);
+}
+
 await gate.done();
 await browser.close();
 stopping = true;

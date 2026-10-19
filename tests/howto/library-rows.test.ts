@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { LIBRARY } from './shipped-rows';
+import { readHowTo } from './generated-module';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -477,8 +478,12 @@ describe('D-LIB2b-PINS (11): HT2-A1 and the class-map check for each shipped lib
       for (const k of ['src', 'slug', 'prefix', 'chromeId']) expect(e[k], `${row.id}.${k}`).toBe(row[k]);
       const text = readFileSync(join(base, `src/howto/generated/ht-${row.slug}.ts`), 'utf8');
       const strings = { normalSvg: p.normal.svg, normalOverlay: p.normal.overlay, mistakeSvg: p.mistake.svg, mistakeOverlay: p.mistake.overlay, tells: p.tells, tempo: p.tempo };
+      // HT-11 (ruling R2): the figure strings ship path-encoded, so they are compared decoded, with ===; tells and tempo stay literals
+      const m = readHowTo(row.slug, base).plate;
+      const decoded: Record<string, string> = { normalSvg: m.normal.svg, normalOverlay: m.normal.overlay, mistakeSvg: m.mistake.svg, mistakeOverlay: m.mistake.overlay };
       for (const [k, s] of Object.entries(strings) as [string, string][]) {
-        expect(text.includes(JSON.stringify(s)), `${row.id}.${k} ships verbatim`).toBe(true);
+        if (k in decoded) expect(decoded[k] === s, `${row.id}.${k} decodes to its bytes`).toBe(true);
+        else expect(text.includes(JSON.stringify(s)), `${row.id}.${k} ships verbatim`).toBe(true);
         const tokens = [...s.matchAll(/class="([^"]*)"/g)].flatMap(m => m[1]!.split(/\s+/).filter(Boolean));
         expect(tokens.length, `${row.id}.${k}`).toBeGreaterThan(0);
         expect(tokens.filter(t => t === 'plate' || t === 'plate-fit'), `${row.id}.${k}`).toEqual([]);
