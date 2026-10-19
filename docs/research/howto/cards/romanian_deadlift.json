@@ -827,7 +827,7 @@
   "gaps": [
     "tier-A way out: no read source says how to set the bar down or fail a stuck rep on this exercise (LIB-WAYOUT); setup's lifting blocks are an option to avoid reversing a heavy bar, not a failed-rep way out"
   ],
-  "plateFacts": [{"kind":"angle","measure":true,"pose":"end","deg":165,"claim":"c4","note":"c4 \"about 15°\" knee bend, written as the included knee angle 180 - 15; approximate (D-LIB8M-DEG)"}],
+  "plateFacts": [{"kind":"angle","measure":true,"pose":"end","deg":165,"claim":"c4","note":"c4 \"about 15°\" knee bend, written as the included knee angle 180 - 15; approximate (D-LIB8M-DEG)"},{"kind":"angle","joint":"knee.r","pose":"start","deg":15,"claim":"c4","note":"c4 \"you lock your knees at a slight bend (about 15°)\": knee flexion in the start pose (D-LIB8M-CF1 2)"}],
   "tempo": [{"phase":"Lower","s":2,"move":true},{"phase":"Stand","s":1,"move":true}],
   "topFault": "round"
 }

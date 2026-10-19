@@ -702,7 +702,7 @@
   "gaps": [
     "tier-A way out: no read source says how to end a failed or off-balance rep on this exercise (LIB-WAYOUT)"
   ],
-  "plateFacts": [],
+  "plateFacts": [{"kind":"angle","joint":"knee.l","pose":"start","deg":17.5,"claim":"c10","note":"c10 \"about 15-20 degrees of knee flexion\": the quoted range 15-20 written as its midpoint 17.5; H6 checks it to ±2°, inside the range (D-LIB8M-FACTS)"},{"kind":"angle","joint":"knee.l","pose":"end","deg":17.5,"claim":"c10","note":"c10 \"about 15-20 degrees of knee flexion\": the quoted range 15-20 written as its midpoint 17.5; H6 checks it to ±2°, inside the range (D-LIB8M-FACTS)"}],
   "tempo": [{"phase":"Lower","s":2,"move":true},{"phase":"Stand","s":1,"move":true},{"phase":"Balance","s":1}],
   "topFault": "round"
 }
