@@ -1,0 +1,259 @@
+{
+ "batch": "PILOT-A",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/pilot-a.json",
+  "layers": "tests/howto/golden/library/pilot-a.layers.html",
+  "layersConfig": "tools/plates/library/pages/pilot-a.layers.json"
+ },
+ "rows": {
+  "lib_barbell_row": {
+   "src": "library/specs/barbell_row.mjs",
+   "slug": "barbell-row",
+   "prefix": "barbell-row",
+   "chromeId": "barbell-row",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "ACE Exercise Library: Bent-over Row. https://www.acefitness.org/resources/everyone/exercise-library/12/bent-over-row/",
+    "How to Do Barbell Rows: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/barbell-row/",
+    "Comparison of different rowing exercises: trunk muscle activation and lumbar spine motion, load, and stiffness. (2009). https://pubmed.ncbi.nlm.nih.gov/19620925/ PMID 19620925",
+    "The Effect of Performing Bi- and Unilateral Row Exercises on Core Muscle Activation. (2015). https://pubmed.ncbi.nlm.nih.gov/26134664/ PMID 26134664",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
+   ],
+   "stage": "review"
+  },
+  "lib_dumbbell_bench_press": {
+   "src": "library/specs/dumbbell_bench_press.mjs",
+   "slug": "dumbbell-bench-press",
+   "prefix": "dumbbell-bench-press",
+   "chromeId": "dumbbell-bench-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Chest Press (dumbbell), ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/19/chest-press/",
+    "NSCA CSCS Chapter 15 (Exercise Technique) study summary, PTPioneer. https://www.ptpioneer.com/personal-training/certifications/nsca-cscs/cscs-chapter-15/",
+    "How to Bench Press: The Definitive Guide (Stronger by Science). https://www.strongerbyscience.com/how-to-bench/",
+    "How to perform a dumbbell bench press (Human Kinetics excerpt). https://us.humankinetics.com/blogs/excerpt/how-to-perform-a-dumbbell-bench-press",
+    "A comparison of muscle activity and 1-RM strength of three chest-press exercises with different stability requirements (2011). https://pubmed.ncbi.nlm.nih.gov/21225489/ PMID 21225489",
+    "Electromyographic activity of the pectoralis major and anterior deltoid muscles during three upper-body lifts (2005). https://pubmed.ncbi.nlm.nih.gov/15903389/ PMID 15903389",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Pectoralis Major Rupture: Evaluation and Management (2022). https://pubmed.ncbi.nlm.nih.gov/35025841/ PMID 35025841",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476"
+   ],
+   "stage": "review"
+  },
+  "lib_incline_dumbbell_press": {
+   "src": "library/specs/incline_dumbbell_press.mjs",
+   "slug": "incline-dumbbell-press",
+   "prefix": "incline-dumbbell-press",
+   "chromeId": "incline-dumbbell-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Incline Chest Press, ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/",
+    "How to perform a dumbbell bench press (Human Kinetics excerpt). https://us.humankinetics.com/blogs/excerpt/how-to-perform-a-dumbbell-bench-press",
+    "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise (2020). https://pubmed.ncbi.nlm.nih.gov/33049982/ PMID 33049982",
+    "Dumbbell Incline Bench Press (Liftosaur exercise guide). https://liftosaur.com/exercises/dumbbell-incline-bench-press",
+    "Influence of bench angle on upper extremity muscular activation during bench press exercise (2016). https://pubmed.ncbi.nlm.nih.gov/25799093/ PMID 25799093",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476"
+   ],
+   "stage": "review"
+  },
+  "lib_dumbbell_shoulder_press": {
+   "src": "library/specs/dumbbell_shoulder_press.mjs",
+   "slug": "dumbbell-shoulder-press",
+   "prefix": "dumbbell-shoulder-press",
+   "chromeId": "dumbbell-shoulder-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Seated Overhead Press, ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/45/seated-overhead-press/",
+    "Effects of body position and loading modality on muscle activity and strength in shoulder presses (2013). https://pubmed.ncbi.nlm.nih.gov/23096062/ PMID 23096062",
+    "Characteristics of anterior shoulder instability and hyperlaxity in the weight-training population (2013). https://pubmed.ncbi.nlm.nih.gov/22836608/ PMID 22836608",
+    "Bilateral anterior shoulder dislocation in a weight lifter (2000). https://pubmed.ncbi.nlm.nih.gov/20086631/ PMID 20086631",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328"
+   ],
+   "stage": "review"
+  },
+  "lib_barbell_overhead_press": {
+   "src": "library/specs/barbell_overhead_press.mjs",
+   "slug": "barbell-overhead-press",
+   "prefix": "barbell-overhead-press",
+   "chromeId": "barbell-overhead-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Standing Shoulder Press (barbell), ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/71/standing-shoulder-press/",
+    "How to Overhead Press with Proper Form: The Definitive Guide (StrongLifts) (2024). https://stronglifts.com/overhead-press/",
+    "NSCA CSCS Chapter 15 (Exercise Technique) study summary, PTPioneer. https://www.ptpioneer.com/personal-training/certifications/nsca-cscs/cscs-chapter-15/",
+    "Effects of body position and loading modality on muscle activity and strength in shoulder presses (2013). https://pubmed.ncbi.nlm.nih.gov/23096062/ PMID 23096062",
+    "Characteristics of anterior shoulder instability and hyperlaxity in the weight-training population (2013). https://pubmed.ncbi.nlm.nih.gov/22836608/ PMID 22836608",
+    "Bilateral anterior shoulder dislocation in a weight lifter (2000). https://pubmed.ncbi.nlm.nih.gov/20086631/ PMID 20086631",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328"
+   ],
+   "stage": "review"
+  },
+  "lib_romanian_deadlift": {
+   "src": "library/specs/romanian_deadlift.mjs",
+   "slug": "romanian-deadlift",
+   "prefix": "romanian-deadlift",
+   "chromeId": "romanian-deadlift",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "ACE Exercise Library: Romanian Deadlift. https://www.acefitness.org/resources/everyone/exercise-library/317/romanian-deadlift/",
+    "How to Do Romanian Deadlift: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/romanian-deadlift/",
+    "Romanian Deadlift Barbell (NASM). https://blog.nasm.org/romanian-deadlift-basics",
+    "Muscle activation during various hamstring exercises. (2014). https://pubmed.ncbi.nlm.nih.gov/24149748/ PMID 24149748",
+    "Electromyographic activity in deadlift exercise and its variants. A systematic review. (2020). https://pubmed.ncbi.nlm.nih.gov/32107499/ PMID 32107499",
+    "An electromyographic and kinetic comparison of conventional and Romanian deadlifts. (2018). https://pubmed.ncbi.nlm.nih.gov/30662500/ PMID 30662500",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
+   ],
+   "stage": "review"
+  },
+  "lib_single_leg_romanian_deadlift": {
+   "src": "library/specs/single_leg_romanian_deadlift.mjs",
+   "slug": "single-leg-romanian-deadlift",
+   "prefix": "single-leg-romanian-deadlift",
+   "chromeId": "single-leg-romanian-deadlift",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "ACE Exercise Library: Single-arm, Single-leg Romanian Dead Lift. https://www.acefitness.org/resources/everyone/exercise-library/127/single-arm-single-leg-romanian-dead-lift/",
+    "How to Do Single Leg Romanian Deadlift: Muscles Worked & Proper form (StrengthLog). https://www.strengthlog.com/single-leg-romanian-deadlift/",
+    "Perfecting the 1-Legged RDL (Tony Gentilcore) (2011). https://tonygentilcore.com/2011/06/perfecting-the-1legged-rdl/",
+    "Effects of loading positions on the activation of trunk and hip muscles during flywheel and dumbbell single-leg Romanian deadlift exercises. (2023). https://pubmed.ncbi.nlm.nih.gov/38093908/ PMID 38093908",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
+   ],
+   "stage": "review"
+  },
+  "lib_upright_row": {
+   "src": "library/specs/upright_row.mjs",
+   "slug": "upright-row",
+   "prefix": "upright-row",
+   "chromeId": "upright-row",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "How to Do Barbell Upright Row: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/barbell-upright-row/",
+    "Upright rows (Bryce Hastings, Les Mills Fit Planet) (2024). https://www.lesmills.com/fit-planet/fitness/upright-rows",
+    "Effect of grip width on electromyographic activity during the upright row. (2013). https://pubmed.ncbi.nlm.nih.gov/22362088/ PMID 22362088",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Shoulder injuries attributed to resistance training: a brief review. (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
+   ],
+   "stage": "review"
+  },
+  "lib_pec_fly": {
+   "src": "library/specs/pec_fly.mjs",
+   "slug": "pec-fly",
+   "prefix": "pec-fly",
+   "chromeId": "pec-fly",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "What are the Top 3 Most Effective Chest Exercises? (Schanke, Porcari et al., ACE Certified News) (2011). https://www.acefitness.org/certifiednewsarticle/3003/what-are-the-top-3-most-effective-chest-exercises/",
+    "Pectoral Fly Machine Video Exercise Guide (Virtuagym) (2023). https://exercises.virtuagym.com/exercise/pectoral-fly-machine/",
+    "How and Why to Use a Pec Deck Machine (2019). https://www.healthline.com/health/pec-deck",
+    "Pectoralis Clavicular and Sternocostal Thicknesses Increase Similarly in Response to One and Three Sets of Pec Deck Resistance Training in Untrained Young Men (2025). https://pubmed.ncbi.nlm.nih.gov/40266636/ PMID 40266636",
+    "Influence of exercise order on electromyographic activity during upper body resistance training (2014). https://pmc.ncbi.nlm.nih.gov/articles/PMC4327372/ PMID 25713681",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "review"
+  },
+  "lib_dumbbell_biceps_curl": {
+   "src": "library/specs/dumbbell_biceps_curl.mjs",
+   "slug": "dumbbell-biceps-curl",
+   "prefix": "dumbbell-biceps-curl",
+   "chromeId": "dumbbell-biceps-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Dumbbell Curl: Muscles Worked & Proper Form (2020). https://www.strengthlog.com/dumbbell-curl/",
+    "Seated Biceps Curl (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl (2018). https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/ PMID 30013836",
+    "Effect of the shoulder position on the biceps brachii emg in different dumbbell curls (2009). https://pmc.ncbi.nlm.nih.gov/articles/PMC3737788/ PMID 24150552",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328"
+   ],
+   "stage": "review"
+  },
+  "lib_rope_triceps_pushdown": {
+   "src": "library/specs/rope_triceps_pushdown.mjs",
+   "slug": "rope-triceps-pushdown",
+   "prefix": "rope-triceps-pushdown",
+   "chromeId": "rope-triceps-pushdown",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to do Tricep Pushdowns with the Rope (Robert Bovee, NFPT) (2025). https://nfpt.com/how-to-do-tricep-pushdowns-with-the-rope/",
+    "Triceps Pushdowns (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+    "How to Do Tricep Pushdown With Rope: Muscles Worked & Proper Form (2023). https://www.strengthlog.com/?p=2541",
+    "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (2023). https://www.strengthlog.com/tricep-pushdown/",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "review"
+  },
+  "lib_plank": {
+   "src": "library/specs/plank.mjs",
+   "slug": "plank",
+   "prefix": "plank",
+   "chromeId": "plank",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Front Plank (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/",
+    "An electromyographic comparison of a modified version of the plank with a long lever and posterior tilt versus the traditional plank exercise (2014). https://pubmed.ncbi.nlm.nih.gov/25325773/ PMID 25325773",
+    "Influence of Scapular Position on the Core Musculature Activation in the Prone Plank Exercise (2017). https://pubmed.ncbi.nlm.nih.gov/27787465/ PMID 27787465",
+    "Try this move for better core strength (Harvard Health Publishing; quotes Dr. Edward Phillips, Harvard Medical School). https://www.health.harvard.edu/back-pain/try-this-move-for-better-core-strength"
+   ],
+   "stage": "review"
+  },
+  "lib_mountain_climbers": {
+   "src": "library/specs/mountain_climbers.mjs",
+   "slug": "mountain-climbers",
+   "prefix": "mountain-climbers",
+   "chromeId": "mountain-climbers",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to do mountain climbers: a Hinge Health guide. https://www.hingehealth.com/resources/articles/mountain-climbers/",
+    "Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study (2017). https://pubmed.ncbi.nlm.nih.gov/29085728/ PMID 29085728",
+    "Mountain Climbers: Proper Form, Muscles Worked, and Reps (Julie Lohre, trainer). https://julielohre.com/mountain-climbers/",
+    "What Do Mountain Climbers Work? (Healthline; medically reviewed by a CPT) (2022). https://www.healthline.com/health/fitness/what-do-mountain-climbers-work"
+   ],
+   "stage": "review"
+  },
+  "lib_triceps_pushdown": {
+   "src": "library/specs/triceps_pushdown.mjs",
+   "slug": "triceps-pushdown",
+   "prefix": "triceps-pushdown",
+   "chromeId": "triceps-pushdown",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Triceps Pushdowns (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/185/triceps-pushdowns/",
+    "How To Do a Tricep Pressdown (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/333/tricep-pressdown/",
+    "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (2023). https://www.strengthlog.com/tricep-pushdown/",
+    "Muscle Fatigue in the Three Heads of Triceps Brachii During Intensity and Speed Variations of Triceps Push-Down Exercise (2020). https://pmc.ncbi.nlm.nih.gov/articles/PMC7047337/ PMID 32153422",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "review"
+  }
+ }
+}

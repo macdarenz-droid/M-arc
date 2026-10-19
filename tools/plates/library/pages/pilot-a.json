@@ -1,0 +1,43 @@
+{
+ "groups": [
+  {
+   "id": "tier-a",
+   "title": "Tier A: over the face, spinal load, overhead, explosive",
+   "ids": [
+    "lib_barbell_row",
+    "lib_dumbbell_bench_press",
+    "lib_incline_dumbbell_press",
+    "lib_dumbbell_shoulder_press",
+    "lib_barbell_overhead_press",
+    "lib_romanian_deadlift",
+    "lib_single_leg_romanian_deadlift"
+   ]
+  },
+  {
+   "id": "tier-b",
+   "title": "Tier B",
+   "ids": [
+    "lib_upright_row",
+    "lib_pec_fly"
+   ]
+  },
+  {
+   "id": "tier-c",
+   "title": "Tier C",
+   "ids": [
+    "lib_dumbbell_biceps_curl",
+    "lib_rope_triceps_pushdown",
+    "lib_plank",
+    "lib_mountain_climbers",
+    "lib_triceps_pushdown"
+   ]
+  }
+ ],
+ "heading": {
+  "title": "M/ARC Library Plates · Pilot A",
+  "kicker": "M/ARC · How to do it · Library pilot A",
+  "h1": "Pilot A · 14 pattern plates",
+  "intro": "Still drawings computed from joint angles by the same locked engine as the approved 8, in the app's own colours. Tap Trace to play the path once, Mistake to see the common fault, and a label to highlight its cue.",
+  "foot": "Pilot sheet for the owner's review. Drawings are computed by our own code from the verified research cards (Winter 2009 body proportions); sources per exercise below."
+ }
+}

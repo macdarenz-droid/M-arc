@@ -1,0 +1,94 @@
+// LIB-8M (pilot A merge): the 14 pinned cards are research's bytes (A6), the registry rebuilds the pilot A page (A10),
+// and the rows, pages and held ids are as ruled (A11; D-LIB8M-PAGES, -PAGESET, -NOSTRIP).
+// Run: npx vitest run tests/howto/lib8-pin.test.ts
+import { createHash } from 'node:crypto';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { describe, expect, it } from 'vitest';
+
+const ROOT = fileURLToPath(new URL('../../', import.meta.url));
+const read = (p: string) => readFileSync(ROOT + p, 'utf8');
+const url = (p: string) => new URL('../../' + p, import.meta.url).href;
+
+// git blob ids at claude/libht-research 7d7c52e1a69debb0735dc6bb4a3d73ea46740ed5 (<RESEARCH_HEAD>): [card, quotes]
+const BLOBS: Record<string, [string, string]> = {
+  dumbbell_bench_press: ['0909c439a381bd3e4f811c73e5ca2b86a4f3a3d6', '10e7af71570695df876660d7ae5c1a9939e87999'],
+  incline_dumbbell_press: ['8a98fb1a4cf12e1ac629565fe13632e5aa9f09d6', 'dcfab01e746a8742569e4b6f17a79482b5600f83'],
+  dumbbell_shoulder_press: ['a147b41c3b1a94308d0f30f63b5121778a4ddcf7', '34902cba78c352df7fb58b180cb4a153e394a9e8'],
+  barbell_overhead_press: ['58bae6ec014446e79f09e8aa3840c669c1224788', 'f5a6a8578119f24165fc636c09b7e2e4e7cd9af0'],
+  barbell_row: ['53e5e705c0c4ddda1d4f1dc9d4a111a06bac6b3d', '39b3664967f02e85e60a43603fc67ee12d99003a'],
+  romanian_deadlift: ['e7833c9dd353a7f8f3b49910bb2888f6ba631ad7', '6e4aa71f63047f761ca38f52c66dd9420c3c2f94'],
+  single_leg_romanian_deadlift: ['9874cb3beb8dfa75f139289a97082d4d14ed286e', '3882c497e30a3ff07de49e0783d07b012148c782'],
+  dumbbell_biceps_curl: ['134e36ee0bbdb6724bbc6819a8160a7f595291ca', '09285b1e34edf488db2b179d28a7439a08f8c64d'],
+  upright_row: ['706dee0d1df5cfcecb6bcd8d6e47528a4c826149', '58a0afecd8f77548e7507c373de37e8d9f18c822'],
+  triceps_pushdown: ['af1ae69e480bdf93dbda01ba79bf834543381077', 'fe1b1fb826f7c9fe50bf67b9f5a86c2611008caf'],
+  rope_triceps_pushdown: ['dbdf966aebcc76d914c195c2dbf83a5199c63fad', '6ab0c376511bcabd58f2bfefab98e61dbc7f149c'],
+  pec_fly: ['28f6c1b5e44870a53da965862a95c8c45b801da8', '6a05573d57ba3c9d1e5956b88c17fe4487d95fc1'],
+  plank: ['2d51c7013b3900986350f1b11d0b07de4bbbccf6', '5ac3c7cf04a9bc200256725357d05741d767e07b'],
+  mountain_climbers: ['1509d52c6c9f0360f83ce40b84d5fd5fd8514306', '3686899e207320cdb159cb90181f5097e4477667'],
+};
+const PINNED = Object.keys(BLOBS);
+const HELD = ['barbell_shrug', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly', 'box_jump', 'reverse_lunge'];
+// census views (claude/howto-options 4a9fd86, docs/howto/library/inputs/census.json blob 70553d5d)
+const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id === 'upright_row' || id === 'pec_fly' ? 'front' : 'side']));
+// the pilot A page the registry builds (build.mjs's page at the Do 6 head); the pin's page entry must equal it
+const PAGE = { sha256: '930558569fcf5d240da32a4964b67fcbf38ac028a1b091914493778372d24464', bytes: 1419789 };
+const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
+// Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
+const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
+
+describe('LIB-8M A6: the 14 pinned cards and quotes are the research bytes', () => {
+  it.each(PINNED)('%s', id => {
+    expect(blobId(Buffer.from(withoutKeys(read(`docs/research/howto/cards/${id}.json`))))).toBe(BLOBS[id]![0]);
+    expect(blobId(readFileSync(`${ROOT}docs/research/howto/quotes/${id}.json`))).toBe(BLOBS[id]![1]);
+  });
+  it("barbell_overhead_press's first handling mistake is the elbows-back fault (c5)", () => {
+    expect(JSON.parse(read('docs/research/howto/cards/barbell_overhead_press.json')).handlingMistakes[0].claim).toBe('c5');
+  });
+});
+
+describe('LIB-8M A11: rows, pages and held ids', () => {
+  const raw = read('tools/plates/library/batches/pilot-a.json'), batch = JSON.parse(raw);
+  it('batches/pilot-a.json holds exactly the 14 pinned ids, each once, mode H, census view, one stage', () => {
+    for (const id of PINNED) expect(raw.split(`"lib_${id}"`).length - 1).toBe(1);
+    expect(Object.keys(batch.rows).sort()).toEqual(PINNED.map(id => `lib_${id}`).sort());
+    const stages = new Set(Object.values(batch.rows).map((r: any) => r.stage));
+    expect(stages.size).toBe(1);
+    expect(['review', 'approved-plate']).toContain([...stages][0]);
+    for (const id of PINNED) expect(batch.rows[`lib_${id}`]).toMatchObject({ src: `library/specs/${id}.mjs`, chromeId: id.replace(/_/g, '-'), mode: 'H', view: VIEW[id] });
+    expect(batch.censusRef).toBe('4a9fd86');
+  });
+  it('its pages object is the ruled three paths, and neither layers file exists', () => {
+    expect(batch.pages).toEqual({ plates: 'tools/plates/library/pages/pilot-a.json', layers: 'tests/howto/golden/library/pilot-a.layers.html', layersConfig: 'tools/plates/library/pages/pilot-a.layers.json' });
+    expect(existsSync(ROOT + batch.pages.layers)).toBe(false);
+    expect(existsSync(ROOT + batch.pages.layersConfig)).toBe(false);
+    const chain = ROOT + 'tests/howto/golden/library/pilot-a.json';
+    if (existsSync(chain)) expect(JSON.parse(readFileSync(chain, 'utf8')).entries.some((e: any) => e.kind === 'layers-page')).toBe(false);
+  });
+  it('the five held ids appear in no batch or library golden file', () => {
+    const files = [...readdirSync(ROOT + 'tools/plates/library/batches').filter(f => f.endsWith('.json')).map(f => `tools/plates/library/batches/${f}`),
+      ...(existsSync(ROOT + 'tests/howto/golden/library') ? readdirSync(ROOT + 'tests/howto/golden/library').map(f => `tests/howto/golden/library/${f}`) : [])];
+    for (const f of files) for (const id of HELD) expect(new RegExp(`\\b${id}\\b`).test(read(f)), `${id} in ${f}`).toBe(false);
+  });
+  it('the page config lists the 14 ids once each, as registry ids', () => {
+    const ids = JSON.parse(read('tools/plates/library/pages/pilot-a.json')).groups.flatMap((g: any) => g.ids);
+    expect([...ids].sort()).toEqual(PINNED.map(id => `lib_${id}`).sort());
+  });
+});
+
+describe('LIB-8M A10: the pilot A page through the registry', () => {
+  it('pageConfig(pages/pilot-a.json) builds the pilot A page, the same bytes twice', async () => {
+    const pp = await import(/* @vite-ignore */ url('tools/plates/library/plates-page.mjs'));
+    const bp = await import(/* @vite-ignore */ url('tools/plates/library/build-page.mjs'));
+    const g = await import(/* @vite-ignore */ url('tools/plates/golden.mjs'));
+    const a = (await bp.buildPlatesPage(await pp.pageConfig('tools/plates/library/pages/pilot-a.json'))).html;
+    const b = (await bp.buildPlatesPage(await pp.pageConfig('tools/plates/library/pages/pilot-a.json'))).html;
+    expect(g.sha256(a)).toBe(g.sha256(b));
+    expect({ sha256: g.sha256(a), bytes: a.length }).toEqual(PAGE);
+    const chain = ROOT + 'tests/howto/golden/library/pilot-a.json';
+    if (existsSync(chain)) {
+      const page = JSON.parse(readFileSync(chain, 'utf8')).entries.filter((e: any) => e.kind === 'page').at(-1);
+      expect({ sha256: page.pageSha256, bytes: page.bytes }).toEqual(PAGE);
+    }
+  }, 120_000);
+});
