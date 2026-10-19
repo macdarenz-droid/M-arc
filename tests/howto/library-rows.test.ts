@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -150,13 +151,13 @@ describe('E1/E3/E7 failure paths: the generator throws, naming the id and the fi
     ['no hand pair', r => rmSync(join(r, 'tools/plates/library/hands/pairs.mjs')), /hands: lib_cable_lateral_raise: no hand pair/],
   ];
   it(`${cases.length} mutations, each refused`, async () => {
-    const results = await Promise.all(cases.map(async ([name, mutate, want]) => {
+    const results = await mapLimit(cases, 2, async ([name, mutate, want]) => {
       const r = mkdtempSync(join(tmpdir(), 'lib2b-mut-')); tmps.push(r);
       cpSync(root, r, { recursive: true, verbatimSymlinks: true });
       mutate(r);
       const g = await run(r, ['tools/plates/generate.mjs']);
       return { name, code: g.code, ok: want.test(g.out), out: g.out.slice(-1500) };
-    }));
+    });
     for (const x of results) {
       expect(x.code, x.name).not.toBe(0);
       expect(x.ok, `${x.name}:\n${x.out}`).toBe(true);
