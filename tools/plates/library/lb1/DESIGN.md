@@ -31,12 +31,22 @@ Nothing here ships: every LB1 row stays at stage `drawing` or `review` in `lb1/r
   { authoring: true }) on an in-memory D copy of lib_close_grip_pulldown with its plan parent lib_lat_pulldown and
   params { 'camera.maxScale': n }, then h10. Clean first, then a key outside PARAMS (H10.unknown), a raw-spec key
   (H10.raw) and one byte of a parent fragment (H10.byte), each red. The clean result means "H10's checks bite", never
-  "a valid D". The test asserts 14 H and 0 D in rows.json.
+  "a valid D". The test asserts 13 H and 0 D in rows.json (horizontal_leg_press held, below).
 - **Known H10 gap (recorded, not fixed here: qa/ is reserved).** On the real path `validateParams` (qa/node.mjs) checks
   only key names: it ignores PARAMS `values`, number ranges and the envelope, and allows empty params
   ('bar.kind':'banana', 'camera.maxScale':99 and 'handedness':7 all pass H10 on main). candidate.mjs passes PARAMS as the
   schema, whose `{type:'enum', values}` shape validateParams does not read. The supervisor routes the fix before any D
   row exists on any branch.
+- **Closed by LIB-3c (main 565ea5a, D-LIB9a-MAIN565).** h10 now reads one object per row: the family's range from
+  `qa/param-ranges.json`, else `ctx.envelope`. `param-ranges.json` names no family and `qa/envelope.json` names no
+  PARAMS key, so `camera.maxScale` fails closed (`H10.envelope`), and on a clean value h10 also rebuilds the child alone
+  (`H10.child:*`). That was the root cause of the two reds after the merge: the Q5 test called `h10(c)` with no envelope.
+  The test now passes LIB-3b/3c's test-only row `{ 'camera.maxScale': [0.9, 1.1] }` through ctx, and pins both new
+  checks as their own tests: no row gives `H10.envelope`, 1.2 gives `H10.value`, and the D copy (close_grip's own
+  drawing) gives `H10.child` on all 9 fragments. The parent-rebuild tests stub only the child rebuild, so each still
+  checks one thing. Nothing in qa/, the envelope or param-ranges.json changed.
+- **horizontal_leg_press held (D-LIBZOOM-HLP).** Its row is out of `rows.json` while its stage is held; LIB-ZOOM (#279)
+  re-adds it with its approved zoom. Its spec, card, quotes and tempo stay, and it is still checked never to ship.
 
 ## 2. Per id
 
@@ -217,7 +227,7 @@ lever circle), never the helper maths alone.
   should not reach the accessor; if any LB1 path does, stop and report (never stub it).
 - **D-LIB-SCRATCHIDS:** LIB-4b's B5 fixture targets two LB1 ids; it is never run on this branch.
 - **H10 value and envelope gap** (Q5 f): see section 1. qa/ is reserved, so the supervisor routes the fix to a separate
-  qa/ card before any D row exists on any branch; rows.json stays 14 H, 0 D (tested).
+  qa/ card before any D row exists on any branch; rows.json stays 13 H, 0 D (tested).
 - **F2 coverage on tall rigs:** checked in the preview runs (assist tower 0.43, pulldown station 0.38, inside
   0.19-0.55).
 
@@ -241,7 +251,7 @@ lever circle), never the helper maths alone.
 5. Q5: the D path is proven on an in-memory D copy of lib_close_grip_pulldown (section 1).
 6. Q-A (#245, comment 6242372604): registry.mjs stays byte-identical, because goldenInputs (registry.mjs:61) makes it an
    input of every generated file; candidate.mjs resolves the How-to source of a row in the injected rows with sourceOf's
-   own rule, and a test proves it equals sourceOf for every main row and the 14 LB1 rows. This is D-LIB9-AUTHORQA's
+   own rule, and a test proves it equals sourceOf for every main row and the 13 LB1 rows. This is D-LIB9-AUTHORQA's
    sourceOf part.
 7. D-LIB9a-HOWTOID (lib4-cards 13.1): LB1 How-to sources hold `id` beside `research` (071e078c), because library-scale's
    synthetic N = 153 reader checks the id of any existing source. Nothing else goes in those files.
