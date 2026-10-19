@@ -195,3 +195,16 @@ Tests added (each fails before and passes after; mutations listed in the PR):
   with base refs for the four rows in section 3 where they gain. Hand and feel chunks share nothing with their base and
   stay as they are (hands.test pins their imports).
 - **R4.** LIB-3 H7 keeps sizing the unpacked `moduleText` (stricter than shipped), so L2-A19 stays pinned. Proposal: keep.
+
+## 8. As built (after HT-11 NOTE RULED and D-HT11-CROPREF)
+
+- R1-R4 as ruled. Crop refs are not built (D-HT11-CROPREF = (b): HT7-A5 keeps its one import). The 8 posture chunks are
+  packed with their own tables.
+- The generated modules carry `decoderSource()`, which is unpack read from the src/howto/delta.js file text, not
+  `String(unpack)`. vitest's loader transforms delta.js, so `String()` gave other bytes under vitest than under node,
+  and L2-A3's fingerprints differed between the two. tests/howto/delta.test.ts D4 checks that each module holds that
+  text once.
+- R1 re-pins the 8 posture bodies with the 8 ht bodies: R3 packs them, so their bodies change on purpose.
+- Built sizes (gz, zlib default) are in the PR's READY table. Hand and feel chunks are unchanged, and loaders-*.js is
+  4,561 / 1,088 B against its 5,018 / 1,197 B ceiling.
+- F-HT11-1 (follow-up, not this card): one shared decoder copy needs a supervisor-owned `vite.config.ts` change.
