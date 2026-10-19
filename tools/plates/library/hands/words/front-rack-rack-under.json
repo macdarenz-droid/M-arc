@@ -1,0 +1,22 @@
+{
+ "heading": {
+  "text": "Hand: right and wrong",
+  "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
+ },
+ "faults": {
+  "bar-off-shoulders": {
+   "right": {
+    "text": "On the shoulders",
+    "source": "the rightNote, tools/plates/library/hands/hand-front-rack.mjs:15; drawn in the reviewed SVG, #191 5976224674 @ 0d268a7 (D-LIB12FIX-WORDS)"
+   },
+   "wrong": {
+    "text": "Bar on hands",
+    "source": "the fault label, tools/plates/library/hands/hand-front-rack.mjs:19; drawn in the reviewed SVG, #191 5976224674 @ 0d268a7 (D-LIB12FIX-WORDS); equals the research label, docs/research/howto/shared/front-rack-exemption.json faults[0] bar-off-shoulders (main f125edab)"
+   },
+   "pager": {
+    "text": "Bar on hands",
+    "source": "the fault label, tools/plates/library/hands/hand-front-rack.mjs:19; equals the research label, docs/research/howto/shared/front-rack-exemption.json faults[0] bar-off-shoulders (main f125edab) (pager labels, D-LIB7FIX-WORDS)"
+   }
+  }
+ }
+}

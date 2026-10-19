@@ -1,0 +1,22 @@
+{
+ "heading": {
+  "text": "Hand: right and wrong",
+  "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
+ },
+ "faults": {
+  "side-sandwich": {
+   "right": {
+    "text": "Hands under",
+    "source": "the rightNote, tools/plates/library/hands/hand-ball-contact.mjs:14; drawn in the reviewed SVG, #191 5976224674 @ 0d268a7 (D-LIB12FIX-WORDS)"
+   },
+   "wrong": {
+    "text": "Hands on sides",
+    "source": "the fault label, tools/plates/library/hands/hand-ball-contact.mjs:18; drawn in the reviewed SVG, #191 5976224674 @ 0d268a7 (D-LIB12FIX-WORDS); equals the research label, docs/research/howto/shared/implement-wall-ball.json faults[0] side-sandwich (main f125edab)"
+   },
+   "pager": {
+    "text": "Hands on sides",
+    "source": "the fault label, tools/plates/library/hands/hand-ball-contact.mjs:18; equals the research label, docs/research/howto/shared/implement-wall-ball.json faults[0] side-sandwich (main f125edab) (pager labels, D-LIB7FIX-WORDS)"
+   }
+  }
+ }
+}
