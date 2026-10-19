@@ -147,3 +147,9 @@ I report any difference before any other step.
   - triceps_pushdown, rope_triceps_pushdown, upright_row, pec_fly and plank now have one tell, which names the card's one fault: 'lean', 'lean', 'chin', 'short', 'sag'.
   - A4 now reads: F7 is not raised, except on dumbbell_biceps_curl (D-LIB8M-TF1 4). A4's redraw set adds dumbbell_bench_press and the five ids above.
   - The expected flags (e) add F7 on dumbbell_biceps_curl, a drawable-fault plate (bent wrist, c6, not visible side-on; R-LB2-27). Its topFault is 'wrist-bend'.
+- incline_dumbbell_press held (D-LIB8M-CARDTRUE, D-LIB8M-CRIT3; lib4-cards.md 21.6 @ b3b904e9): the arch still does not read at phone size after its last critic run.
+  - A `held` line in plates.json; no batch row, no How-to file, off the page and the pin. Pilot A pins 13 ids; 6 are held.
+  - Its card copy, quotes and the three keys stay as verified (A6 and A7 still check them); its tempo.json row stays with its card.
+  - Its coverage stage reads `queued`, like the other held ids: the registry takes a stage only from a batch row, and a held id has none (A11).
+  - Follow-up: its Mistake redraw goes to LB2 (LIB-10, D-LIB10-PA).
+  - The page drops its article and nothing else: no fragment of the 13 moved, and their order is unchanged.

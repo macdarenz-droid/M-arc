@@ -47,25 +47,6 @@
    ],
    "stage": "review"
   },
-  "lib_incline_dumbbell_press": {
-   "src": "library/specs/incline_dumbbell_press.mjs",
-   "slug": "incline-dumbbell-press",
-   "prefix": "incline-dumbbell-press",
-   "chromeId": "incline-dumbbell-press",
-   "mode": "H",
-   "view": "side",
-   "sources": [
-    "Incline Chest Press, ACE Exercise Library. https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/",
-    "How to perform a dumbbell bench press (Human Kinetics excerpt). https://us.humankinetics.com/blogs/excerpt/how-to-perform-a-dumbbell-bench-press",
-    "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise (2020). https://pubmed.ncbi.nlm.nih.gov/33049982/ PMID 33049982",
-    "Dumbbell Incline Bench Press (Liftosaur exercise guide). https://liftosaur.com/exercises/dumbbell-incline-bench-press",
-    "Influence of bench angle on upper extremity muscular activation during bench press exercise (2016). https://pubmed.ncbi.nlm.nih.gov/25799093/ PMID 25799093",
-    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
-    "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328",
-    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476"
-   ],
-   "stage": "review"
-  },
   "lib_dumbbell_shoulder_press": {
    "src": "library/specs/dumbbell_shoulder_press.mjs",
    "slug": "dumbbell-shoulder-press",

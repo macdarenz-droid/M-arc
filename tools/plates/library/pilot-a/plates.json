@@ -13,7 +13,8 @@
    "tier": "A",
    "closest": "machine_chest_press",
    "view": "side",
-   "class": "incline; inclineBench (BENCH child)"
+   "class": "incline; inclineBench (BENCH child)",
+   "held": "the arch does not read at phone size after its last critic run (D-LIB8M-CARDTRUE, lib4-cards 21.6); its Mistake redraw goes to LB2 (D-LIB10-PA)"
   },
   {
    "id": "dumbbell_shoulder_press",
