@@ -10,7 +10,7 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const read = (p: string) => readFileSync(ROOT + p, 'utf8');
 const url = (p: string) => new URL('../../' + p, import.meta.url).href;
 
-// git blob ids at claude/libht-research 7d7c52e1a69debb0735dc6bb4a3d73ea46740ed5 (<RESEARCH_HEAD>): [card, quotes]
+// git blob ids at claude/libht-research f57e7944ebb366a71f812146287ff0c4a6d2edef (<RESEARCH_HEAD>): [card, quotes]
 const BLOBS: Record<string, [string, string]> = {
   dumbbell_bench_press: ['0909c439a381bd3e4f811c73e5ca2b86a4f3a3d6', '10e7af71570695df876660d7ae5c1a9939e87999'],
   incline_dumbbell_press: ['8a98fb1a4cf12e1ac629565fe13632e5aa9f09d6', 'dcfab01e746a8742569e4b6f17a79482b5600f83'],
@@ -19,7 +19,7 @@ const BLOBS: Record<string, [string, string]> = {
   barbell_row: ['53e5e705c0c4ddda1d4f1dc9d4a111a06bac6b3d', '39b3664967f02e85e60a43603fc67ee12d99003a'],
   romanian_deadlift: ['e7833c9dd353a7f8f3b49910bb2888f6ba631ad7', '6e4aa71f63047f761ca38f52c66dd9420c3c2f94'],
   single_leg_romanian_deadlift: ['9874cb3beb8dfa75f139289a97082d4d14ed286e', '3882c497e30a3ff07de49e0783d07b012148c782'],
-  dumbbell_biceps_curl: ['134e36ee0bbdb6724bbc6819a8160a7f595291ca', '09285b1e34edf488db2b179d28a7439a08f8c64d'],
+  dumbbell_biceps_curl: ['bbd133c23072327b8785b403ab4b9615bd3dfc1b', '09285b1e34edf488db2b179d28a7439a08f8c64d'],
   upright_row: ['706dee0d1df5cfcecb6bcd8d6e47528a4c826149', '58a0afecd8f77548e7507c373de37e8d9f18c822'],
   triceps_pushdown: ['af1ae69e480bdf93dbda01ba79bf834543381077', 'fe1b1fb826f7c9fe50bf67b9f5a86c2611008caf'],
   rope_triceps_pushdown: ['dbdf966aebcc76d914c195c2dbf83a5199c63fad', '6ab0c376511bcabd58f2bfefab98e61dbc7f149c'],

@@ -28,10 +28,14 @@
 //   bottom of the curl reads. The start upper arm is the end upper arm (shoulder 0 in both), so it is not repeated.
 // CARD: end elbow angle (ELBOW_END; card c3 says only "fully bent"), start elbow angle (ELBOW_START; c12 "arms
 //  straight again"), shoulder flexion at the top (SHOULDER_FLEX_END; c13 allows "slightly forward"), stance width
-//  (FOOT_X, c2), knee bend (KNEE_SOFT, c2), scapula set (SCAP, c8), Mistake lean and hip drive (MIS_*, c5 gives none).
+//  (FOOT_X, c2), knee bend (KNEE_SOFT, c2), scapula set (SCAP, c8), Mistake elbow drift (MIS_FLEX, MIS_MARGIN; c4 gives none).
 // Callouts, Mistake, tempo (card plate section): the 3 checkpoints (c3, c6, c14) are the callouts; the Mistake is the
-//  card's drawable top fault, swinging (c5), with tells for its two visible signs (lean back, hip and knee drive);
-//  critic run 2 (R5): the hip-drive tell ends on the hip arrow; the Mistake outlines the near leg only (one contour);
+//  card's plate.mistake (c4, drawable false: the top fault, the bent wrist, cannot be drawn): the elbows drift forward
+//  while lifting. One direction is drawn (forward, c4's front-delt case), near the top of the curl: only the arms change
+//  (shoulder flexion MIS_FLEX, elbow MIS_ELBOW), body as the end pose. Guides: the faulty arm's dashed outline (masked
+//  otherwise), a dashed side line through the shoulder joint and an arrow from the pinned elbow to the drifted one.
+//  Tells: elbows forward, the shoulder takes over. A Mistake check proves the elbow sits at least MIS_MARGIN in front of
+//  the shoulder plane: the Mistake elbow is 13.0 cm past it, the end pose's would be 10.0 cm short (fails);
 //  tempo up 1 s, down 2 s, pause 0 (c9), so there is no Hold, and no Rest phase (the card gives none). Measure: the elbow
 //  sweep from the start forearm, value "full range" (c12), no number (the card gives none). The card's plate.tells
 //  ("how you know you are doing it right") have no slot on the plate; they belong to the app layer.
@@ -52,16 +56,18 @@ const ELBOW_END = 140;                           // fully curled: forearm 40 deg
 const SHOULDER_FLEX_START = 0, SHOULDER_FLEX_END = 0;   // elbows pinned at the sides: upper arm vertical (c3)
 const SCAP = { elev: -1, pro: -1 };              // cm: shoulders set down and slightly back (c8)
 const HEX_R = 0.119 / 2;
-// Mistake (card plate.mistake, c5): swinging, "leaning back and driving with the hips and knees to throw the dumbbells
-// up". The card gives no lean or knee number, so these are drawn only large enough to read at 390 px (MIS_*).
-const MIS_TILT = -10, MIS_TRUNK = -6;            // pelvis tipped back + spine extended: ~16 deg lean back
-const MIS_HIPS = [0, -0.035, 0.05];              // hips driven forward and down: knees bend under the thrust                         // dumbbell primitive: hex 11.9 cm across the corners
+// Mistake (card plate.mistake, c4): "Elbows drifting forward or back during the curl instead of staying at the sides."
+// The card gives no angle, so the drift is drawn only large enough to read at 390 px, well past c13's "slightly forward".
+const MIS_FLEX = 45;                             // deg shoulder flexion: the upper arm swings forward off the side
+const MIS_MARGIN = 0.10;                         // m: the drifted elbow is at least this far in front of the shoulder plane
+const MIS_ELBOW = 120;                           // deg: near the top of the curl, the forearm a little past vertical
+const MIS_SIDE = SCAP.pro / 100;                 // z of the shoulder joint (the side line), scapulae 1 cm back
 
 const feet = { l: { at: [FOOT_X, 0, FOOT_Z] }, r: { at: [-FOOT_X, 0, FOOT_Z] } };
 const base = { root: { at: [0, ROOT_Y, 0], tilt: 0 }, trunk: 0, neck: 0, scap: SCAP, wrist: 0, plant: feet };
 const start = { ...base, shoulder: { flex: SHOULDER_FLEX_START, rot: 0 }, elbow: ELBOW_START };
 const end = { ...base, shoulder: { flex: SHOULDER_FLEX_END, rot: 0 }, elbow: ELBOW_END };
-const mistakePose = { root: { at: [0, ROOT_Y + MIS_HIPS[1], MIS_HIPS[2]], tilt: MIS_TILT }, trunk: MIS_TRUNK };
+const mistakePose = { shoulder: { flex: MIS_FLEX, rot: 0 }, elbow: MIS_ELBOW };   // merged over the end pose: only the arms change
 // Dashed start dumbbell (hex face, the primitive's orientation: a corner points screen-right = +z).
 const startHex = g => Array.from({ length: 7 }, (_, k) => [g[0], g[1] - HEX_R * Math.sin(k * Math.PI / 3), g[2] + HEX_R * Math.cos(k * Math.PI / 3)]);
 // Start forearm as hidden lines (the approved pull_up method): engine body shapes on a 1000 px/m probe camera,
@@ -96,6 +102,16 @@ function hiddenForearm() {
   return items.map(r => ({ type: 'line', pts: r.map(([x, y]) => [0, -y / 1000, x / 1000]), cls: 'eq-cable m-line', z: 'front', part: 'startarm' }));
 }
 const START_FORE = hiddenForearm();
+// The faulty arm (Mistake only): the engine masks its outline inside the faulty body, so it is redrawn as Mistake
+// guides (dashed outline polylines, not masked), as barbell_overhead_press does: engine body shapes on the probe
+// camera, on the engine's spline, mapped back to world metres.
+function misArm() {
+  const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
+  const keys = ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'];
+  return bodyShapes(fk(resolve(normPose({ ...end, ...mistakePose }, bd), bd).q, bd), probe).filter(sh => keys.includes(sh.key))
+    .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
+}
+const MIS_ARM = misArm();
 
 export default {
   id: 'dumbbell_biceps_curl', name: 'Dumbbell Biceps Curl', view: 'side', facing: 'right',
@@ -114,6 +130,8 @@ export default {
     ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', plane: { point: [0, 0, SCAP.pro / 100], normal: [0, 0, 1] }, pose, tol: 0.5 })),
     // top: the dumbbell centre stays in front of the sternum (hex radius 6 cm + chest line), never inside the chest
     { landmark: 'grip.r', above: { point: [0, 0, 0.072 * H + 0.06], normal: [0, 0, 1] }, pose: 'end' },
+    // fault (c4): the elbow drifts forward, at least MIS_MARGIN in front of the shoulder plane (+z = figure forward)
+    { landmark: 'elbow.r', above: { point: [0, 0, MIS_SIDE + MIS_MARGIN], normal: [0, 0, 1] }, pose: 'mistake' },
   ],
   startParts: ['arm.r'],
   ghosts: { count: 3, parts: ['arm.r'] },
@@ -127,14 +145,15 @@ export default {
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['torso', 'head', 'arm.r', 'leg.r'],   // near leg only: the far leg's outline tripled the leg contour
+    parts: ['arm.r'],
     guides: [
-      { kind: 'arc-arrow', center: 'hip.r', r: 80, a0: -104, a1: -124 },   // the lean, behind the upper back
-      { kind: 'arrow', from: { at: 'hip.r', off: [4, 0] }, to: { at: 'hip.r', pose: 'mistake', off: [14, 0] } },
+      ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the faulty arm, swung forward off the side
+      { kind: 'dashed', pts: [[0, 1.42, MIS_SIDE], [0, 0.98, MIS_SIDE]] },   // the side line through the shoulder joint
+      { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [3, 0] }, to: { at: 'elbow.r', pose: 'mistake', off: [-6, 2] } },
     ],
     tells: [
-      { key: 'lean', text: 'Leaning<br>back', anchor: 'backUpper', cue: 'The torso leans back to throw the dumbbells up.' },
-      { key: 'hips', text: 'Hips<br>drive', anchor: { at: 'hip.r', pose: 'mistake', off: [16, 0] }, cue: 'The hips and knees push forward to heave the weight.' },
+      { key: 'elbows', text: 'Elbows<br>forward', anchor: { at: 'elbow.r', pose: 'mistake', off: [0, 7] }, cue: 'Your elbows drift forward off your sides.' },
+      { key: 'shoulder', text: 'Shoulder<br>takes over', anchor: { at: 'shoulder.r', pose: 'mistake', off: [8, -2] }, cue: 'The front of your shoulder takes over the lift.' },
     ],
   },
   alt: 'Dumbbell biceps curl, side view. Standing tall with a dumbbell in each hand, palms forward. The elbows stay at the sides while the forearms curl the dumbbells from the thighs up to the front of the shoulders.',

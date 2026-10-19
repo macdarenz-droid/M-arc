@@ -131,3 +131,14 @@ I report any difference before any other step.
 1. romanian_deadlift's fact: is 165 (= 180 − the quoted 15° bend, the inside angle the measure states) an allowed value, or does the fact need a quote that states 165 or a knee "bend from straight" measure? The alternative is `[]` for this id too.
 2. plateFacts `[]`: H6 returns 'H6:no-card' when plateFacts is missing (qa/node.mjs:155), and no hard check may be exempted (Stops 3). So `[]` is the only way for tempo to be checked on an id with no sourced number. LIB-5's rule for the 8 ("never []", lib4-cards 14 item 24) kept their 'H6:no-card' exemption, which pilot A cannot have. Is `[]` allowed for these 12 (or 13) ids?
 3. single_leg_romanian_deadlift's `pilot.drawableFault` (spec :183) says the top fault is c5 and cannot be drawn. The card at 7d7c52e now says c7, drawable true. That line is outside the `mistake` object, and it raises build.mjs's sheet F7, which also sets the page order (SLRDL is now second in tier A). Removing it moves the page order but no fragment. May Do 6 remove it?
+
+## Changes after the ruling
+
+- D-LIB8M-DEG, D-LIB8M-NOFACTS and D-LIB8M-SLRDLLINE (#109 6257000888): the three questions are answered as proposed.
+- D-LIB8M-MISTAKEPARTS (6257123813): for the redraw ids, a `checks` entry with `pose: 'mistake'` and an `equipment` term that draws only when `ctx.mistake` is set count as part of the Mistake.
+- dumbbell_biceps_curl (R-LB2-27, research f57e7944ebb366a71f812146287ff0c4a6d2edef, #109 6257414726):
+  - The bent wrist (c6) does not read in the side view (6257128107). Its card is now drawable false; plate.mistake is the elbows drifting (c4), and handlingMistakes[0] stays the bent wrist.
+  - The curl is the fifth redraw. Its Mistake: the elbows drift forward near the top. Tells: 'elbows' (first), then 'shoulder'.
+  - Its Mistake-pose check needs the elbow 10 cm in front of the shoulder joint's plane; the correct pose is 10 cm short of it.
+  - Expected flags gain F7 on dumbbell_biceps_curl: the drawn fault (elbows) is not the card's top fault (the bent wrist). It stays raised for the owner's named exemption (section 13 Q1, drawable false).
+- Research head for all 14 cards: f57e7944. Only the curl card differs from 7d7c52e1.

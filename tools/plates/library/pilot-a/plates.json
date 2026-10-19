@@ -167,7 +167,7 @@
    }
   }
  ],
- "cards": "docs/research/howto/cards/ = verified research cards, byte copies from claude/libht-research 7d7c52e1a69debb0735dc6bb4a3d73ea46740ed5",
+ "cards": "docs/research/howto/cards/ = verified research cards, byte copies from claude/libht-research f57e7944ebb366a71f812146287ff0c4a6d2edef",
  "handsNote": "hands: LIB-12 hand renders shown on the sheet only (not plates), renderPair(id) from tools/plates/library/hands/pairs.mjs on claude/lib-12-hand-views 06519f9 (LIB-7 loader aacebf5 merged), Silent Black and Paper at 390 px; flags as the LIB-12 note on PR #109 (2026-10-02 14:10).",
  "hands": [
   {

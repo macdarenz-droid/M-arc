@@ -1,6 +1,6 @@
 {
  "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16 @ 1e85584a): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase, and a cycle plate's Work and Rest, is a constant only with a quote that states its seconds; a range is the quote's string. Phase names, order and move flags are labels.",
- "research": "claude/libht-research 7d7c52e1a69debb0735dc6bb4a3d73ea46740ed5",
+ "research": "claude/libht-research f57e7944ebb366a71f812146287ff0c4a6d2edef",
  "rows": {
   "dumbbell_bench_press": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Press", "from": "up", "move": true }],
   "incline_dumbbell_press": [{ "phase": "Lower", "from": "down", "move": true }, { "phase": "Press", "from": "up", "move": true }],
