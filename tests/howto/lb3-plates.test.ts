@@ -16,7 +16,7 @@ const IDS = LB3.map(i => `lib_${i}`);
 const REUSED = ['barbell_row', 'romanian_deadlift', 'single_leg_romanian_deadlift', 'upright_row'];
 const SHRUGS = ['dumbbell_shrug', 'cable_shrug', 'barbell_shrug'];
 const ROWS = 'tools/plates/library/lb3/rows.json';
-const RESEARCH_HEAD = '2dd60ae0349b06a4aac88a11347edac5536f8424';
+const RESEARCH_HEAD = '892d6516c4dcd88f7b7e22b8cbbf19dc762a8342';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 
@@ -60,8 +60,11 @@ const pathLm = (spec: any, t: number) => {
 const tenths = Array.from({ length: 11 }, (_, k) => k / 10);
 const deg = (a: number[], b: number[]) => Math.atan2(Math.abs(b[2]! - a[2]!), Math.abs(b[1]! - a[1]!)) * 180 / Math.PI;   // from vertical, side plane
 
-/** The LB3 ids whose spec file exists (drawn), in LB3 order. */
-const drawn = () => LB3.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`));
+// Held pending the supervisor's ruling (#274 comment 6265604594: t_bar_row cannot pass PQ-H3 card-true at any real
+// plate size): its spec exists, it has no row (D-LIB8M-PAGESET).
+const HELD = ['t_bar_row'];
+/** The LB3 ids whose spec file exists and that are not held (drawn), in LB3 order. */
+const drawn = () => LB3.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`) && !HELD.includes(id));
 
 describe('LIB-13 A5: lb3/rows.json holds exactly the drawn, non-held LB3 ids', () => {
   const rowKeys = (text: string) => [...text.matchAll(/^ {2}"(lib_[a-z0-9_]+)": \{/gm)].map(m => m[1]);
@@ -288,8 +291,49 @@ describe('LIB-13 A2: the landmine bar on landmine_row, per drawn pose (13.1)', {
       const { pivot, end, plate: pl } = barOf(S.landmine_row, pose), u = end.map((v, i) => v - pivot[i]!), across = pl.pts[0].map((v: number, i: number) => v - pl.pts[3][i]);
       const dot = (u[1]! * across[1] + u[2]! * across[2]) / Math.hypot(u[1]!, u[2]!) / Math.hypot(across[1], across[2]);
       expect(Math.abs(dot), pose).toBeLessThan(1e-9);
-      expect(Math.hypot(across[1], across[2]), pose).toBeCloseTo(lmEq.LANDMINE.plateD, 6);
+      expect(Math.hypot(across[1], across[2]), pose).toBeCloseTo(M.landmine_row.PLATE_D, 6);
     }
+  });
+  /** The drawn plate's gap (cm) to the engine's drawn torso and head outline in a pose, and whether they cross. */
+  const plateGap = (spec: any, pose: string, poseObj?: any) => {
+    const PXM = 100, cam = { view: 'side', near: 'r', pxm: PXM, P: (w: number[]) => [w[2]! * PXM, -w[1]! * PXM] }, b = { height: 1.75 };
+    const p = poseObj ?? (pose === 'mistake' ? { ...spec.poses.end, ...spec.mistake.pose } : spec.poses[pose]);
+    const sk = eng.fk(eng.resolve(eng.normPose(p, b), b).q, b), polys = eng.bodyShapes(sk, cam).filter((x: any) => ['torso', 'head'].includes(x.key)).map((x: any) => x.poly);
+    const plateIt = itemsIn(spec, pose).items.filter(it => it.type === 'poly')[2], rect = plateIt.pts.map(cam.P);
+    const inside = (q: number[], poly: number[][]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!; if ((yi! > q[1]!) !== (yj! > q[1]!) && q[0]! < ((xj! - xi!) * (q[1]! - yi!)) / (yj! - yi!) + xi!) c = !c; } return c; };
+    const dseg = (q: number[], a: number[], c: number[]) => { const dx = c[0]! - a[0]!, dy = c[1]! - a[1]!, L2 = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((q[0]! - a[0]!) * dx + (q[1]! - a[1]!) * dy) / L2)); return Math.hypot(q[0]! - a[0]! - t * dx, q[1]! - a[1]! - t * dy); };
+    const edges = (poly: number[][]) => poly.map((q, i) => [q, poly[(i + 1) % poly.length]!]);
+    let min = Infinity, cross = false;
+    for (const poly of polys) {
+      for (const c of rect) { if (inside(c, poly)) cross = true; for (const [a, e] of edges(poly)) min = Math.min(min, dseg(c, a!, e!)); }
+      for (const v of poly) { if (inside(v, rect)) cross = true; for (const [a, e] of edges(rect)) min = Math.min(min, dseg(v, a!, e!)); }
+    }
+    return { cm: min / PXM * 100, cross };
+  };
+  it('c6, c20: at the end and in the Mistake the plate edge meets the drawn torso outline: within 1 cm of it, never crossing it', () => {
+    for (const pose of ['end', 'mistake']) {
+      const g = plateGap(S.landmine_row, pose);
+      expect(g.cross, pose).toBe(false);
+      expect(g.cm, pose).toBeLessThanOrEqual(1);
+    }
+  });
+  it('mutation: the hands lifted 2 cm further along the bar arc at the end crosses (or is not within 1 cm), so the test is red', () => {
+    const s = S.landmine_row, piv = M.landmine_row.LM_ROW.pivot, r = s.poses.end.reach;
+    const lift = (p: number[]) => { const a = Math.atan2(p[1]! - piv[1], p[2]! - piv[2]), L = Math.hypot(p[1]! - piv[1], p[2]! - piv[2]), d = 0.02 / L; return [p[0], piv[1] + L * Math.sin(a + d), piv[2] + L * Math.cos(a + d)]; };
+    const lifted = { ...s, poses: { ...s.poses, end: { ...s.poses.end, reach: { r: { ...r.r, at: lift(r.r.at) }, l: { ...r.l, at: lift(r.l.at) } } } } };
+    const g = plateGap(lifted, 'end');
+    expect(g.cross || g.cm > 1).toBe(true);
+  });
+  /** c3 (Cissik): "at least a 45 degree angle between your upper body and the ground", read as the hinge depth: the upper
+   *  body (near hip to near shoulder, side view) is at least 45 deg from upright, i.e. at most 45 deg above the ground. */
+  const hingeDeg = (lm: any) => deg(lm['hip.r'], lm['shoulder.r']);
+  it('Q1 (D-LIB13 note ruling): the drawn start torso meets c3\'s bound: the hip-to-shoulder line at least 45 deg from vertical', () => {
+    expect(hingeDeg(itemsIn(S.landmine_row, 'start').lm)).toBeGreaterThanOrEqual(45);
+  });
+  it('Q1 mutation: the torso drawn past the bound (thorax 40 deg from vertical) is red', () => {
+    const s = S.landmine_row, st = s.poses.start, upright = { ...st, root: { ...st.root, tilt: 40 - st.trunk } };
+    const lm = pathLm({ ...s, poses: { start: upright, end: upright } }, 0);
+    expect(hingeDeg(lm)).toBeLessThan(45);
   });
   const swapEntry = (spec: any, fn: (it: any, ctx: any) => any) => ({ ...spec, equipment: spec.equipment.map((e: any) => (typeof e !== 'function' ? e
     : (lm: any, ctx: any) => { const r = e(lm, ctx); return Array.isArray(r) ? r.map(it => fn(it, ctx)) : (r ? fn(r, ctx) : r); })) });
@@ -549,10 +593,10 @@ describe('LIB-13 A4: runQa node half on an LB3 plate (lib_conventional_deadlift)
       return { ...(await candOf(h.toString('utf8'))), spec };
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
-  it('clean: no node-half problem, and the only raised flags wait on the browser half (F2, F5) or on Do 6 b (F7: no card top fault yet)', async () => {
+  it('clean: no node-half problem, and the only raised flags wait on the browser half (F2, F5)', async () => {
     const r = await qa(await candOf());
-    expect(node(r)).toEqual(['H6:no-card']);   // expected before Do 6 b (card Do 2 a)
-    expect(qaIdx.FLAGS.filter((f: string) => r.flags[f].raised && !['F2', 'F5', 'F7'].includes(f))).toEqual([]);
+    expect(node(r)).toEqual([]);
+    expect(qaIdx.FLAGS.filter((f: string) => r.flags[f].raised && !['F2', 'F5'].includes(f))).toEqual([]);
   });
   it('A4 M1 a label 1 px onto the figure (the Flat back callout) turns PQ-H1 red; 1 px back is clean', async () => {
     const c0 = cg().callouts.find((x: any) => x.key === 'back'), at = (box: any) => ({ ...cg(), callouts: cg().callouts.map((x: any) => (x.key === 'back' ? { ...x, box } : x)) });
@@ -608,5 +652,127 @@ describe('LIB-13 A4: runQa node half on an LB3 plate (lib_conventional_deadlift)
   it('A4 a colour literal turns PQ-H2 red (H2.colour)', async () => {
     const m = muts.CANDIDATE_MUTATIONS.find((x: any) => x.id.startsWith('M9 '));
     expect(node(await qa(m.apply(await candOf()))).some((k: string) => k.startsWith('H2.colour:'))).toBe(true);
+  });
+});
+
+describe('LIB-13 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the pose map and the plate facts', { timeout: T }, () => {
+  // The ruled table (LB3 NOTE RULED, #274 comment 6264733030; DESIGN.md section 8): phase names, order and source per
+  // id. Copied from the ruling, never read from tempo.json or a spec. No constants.
+  const RULED: Record<string, [string, string][]> = {
+    pendlay_row: [['Lower', 'down'], ['Pull', 'up']], t_bar_row: [['Pull', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
+    landmine_row: [['Pull', 'up'], ['Lower', 'down']], one_arm_dumbbell_row: [['Pull', 'up'], ['Lower', 'down']],
+    dumbbell_romanian_deadlift: [['Lower', 'down'], ['Stand', 'up']], conventional_deadlift: [['Lower', 'down'], ['Lift', 'up']],
+    sumo_deadlift: [['Lower', 'down'], ['Lift', 'up']], back_extension: [['Lower', 'down'], ['Raise', 'up'], ['Hold', 'pause']],
+  };
+  // The ruled pose map (DESIGN.md section 9): the spec pose each card pose is drawn as.
+  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB3.map(id => [id,
+    ['pendlay_row', 'conventional_deadlift', 'sumo_deadlift', 'back_extension'].includes(id) ? { start: 'end', end: 'start' } : { start: 'start', end: 'end' }]));
+  const KEYS = ['plateFacts', 'tempo', 'topFault'];
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  const built = (rows: any[], pt: any) => rows.flatMap((r: any) => (r.from === 'pause' ? (pt.pause > 0 ? [{ phase: r.phase, s: pt.pause }] : []) : [{ phase: r.phase, s: pt[r.from], move: true }]));
+  const tempoProblems = (tj: any, cards: Record<string, any>, specs: Record<string, any>) => {
+    const bad: string[] = [];
+    if (Object.keys(tj.constants).length) bad.push('constants: not the ruled (empty) set');
+    if (JSON.stringify(Object.keys(tj.ids).sort()) !== JSON.stringify(LB3.slice().sort())) bad.push('ids: not the 8');
+    for (const id of LB3) {
+      const t = tj.ids[id], c = cards[id], pt = c.plate.tempo;
+      if (JSON.stringify(t?.rows?.map((r: any) => [r.phase, r.constant ? 'const' : r.from])) !== JSON.stringify(RULED[id])) bad.push(`${id}: tempo.json rows != the ruled table`);
+      if (JSON.stringify(t?.claim) !== JSON.stringify(pt.claim)) bad.push(`${id}: claim`);
+      const hold = c.tempo.some((p: any) => p.phase === 'Hold');
+      if (hold !== pt.pause > 0) bad.push(`${id}: Hold present ${hold} but pause ${pt.pause}`);
+      if (c.tempo.some((p: any) => p.phase === 'Rest')) bad.push(`${id}: Rest`);
+      if (JSON.stringify(c.tempo) !== JSON.stringify(built(t?.rows ?? [], pt))) bad.push(`${id}: card tempo != the array built from the ruled table and plate.tempo`);
+      if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(c.tempo)) bad.push(`${id}: spec tempo != card tempo`);
+    }
+    return bad;
+  };
+  const clean = () => ({ tj: readJson('tools/plates/library/lb3/tempo.json'), cards: Object.fromEntries(LB3.map(id => [id, cardOf(id)])), specs: { ...S } as Record<string, any> });
+  const copy = (x: any) => JSON.parse(JSON.stringify(x));
+  it('tempo.json, every card tempo and every drawn spec tempo follow the ruled map', () => {
+    const { tj, cards, specs } = clean();
+    expect(tempoProblems(tj, cards, specs)).toEqual([]);
+  });
+  it('mutations (i)-(vi) and a changed second are each red', () => {
+    const red = (f: (s: any) => void) => { const s = copy({ tj: clean().tj, cards: clean().cards }); s.specs = { ...clean().specs }; f(s); return tempoProblems(s.tj, s.cards, s.specs).length > 0; };
+    const setAll = (s: any, id: string, rows: any[] | null, tempo: any[]) => { if (rows) s.tj.ids[id].rows = rows; s.cards[id].tempo = tempo; if (s.specs[id]) s.specs[id] = { ...s.specs[id], tempo }; };
+    expect(red(s => { setAll(s, 'conventional_deadlift', null, [...s.cards.conventional_deadlift.tempo, { phase: 'Rest', s: 1 }]); }), '(i) Rest added').toBe(true);
+    expect(red(s => { s.tj.constants['pendlay_row.Stop'] = { s: 1, claim: 'c3', quote: 'x' }; }), '(ii) a constant').toBe(true);
+    expect(red(s => { setAll(s, 'back_extension', null, s.cards.back_extension.tempo.map((p: any) => (p.phase === 'Hold' ? { ...p, s: 2 } : p))); }), '(iii) Hold s').toBe(true);
+    expect(red(s => { const rows = [...s.tj.ids.landmine_row.rows, { phase: 'Hold', from: 'pause' }]; setAll(s, 'landmine_row', rows, [...s.cards.landmine_row.tempo, { phase: 'Hold', s: 0 }]); }), '(iv) Hold 0').toBe(true);
+    for (const id of ['t_bar_row', 'back_extension'])
+      expect(red(s => { const rows = s.tj.ids[id].rows.filter((r: any) => r.from !== 'pause'); setAll(s, id, rows, built(rows, s.cards[id].plate.tempo)); }), `(v) Hold removed: ${id}`).toBe(true);
+    expect(red(s => { const rows = s.tj.ids.conventional_deadlift.rows.map((r: any) => ({ ...r, from: r.from === 'up' ? 'down' : r.from === 'down' ? 'up' : r.from })); setAll(s, 'conventional_deadlift', rows, built(rows, s.cards.conventional_deadlift.plate.tempo)); }), '(vi) up/down swapped').toBe(true);
+    expect(red(s => { s.cards.one_arm_dumbbell_row.tempo[0].s = 3; }), 'one tempo second').toBe(true);
+  });
+  const cardsSha = readJson('tools/plates/library/lb3/cards.sha.json');
+  const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
+  it('each card differs from its research-head copy only in the three keys, written last', () => {
+    for (const id of LB3) {
+      expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
+      expect(Object.keys(cardOf(id)).slice(-3), id).toEqual(KEYS);
+    }
+  });
+  const DRAWN: Record<string, string> = { pendlay_row: 'round', t_bar_row: 'round', landmine_row: 'round', one_arm_dumbbell_row: 'short',
+    dumbbell_romanian_deadlift: 'arch', conventional_deadlift: 'round', sumo_deadlift: 'hips', back_extension: 'round' };
+  const topFaultProblems = (card: any, drawnKey: string) => (card.plate.mistake.drawable
+    ? (card.topFault === drawnKey ? [] : ['drawable:true but topFault is not the drawn fault'])
+    : (card.topFault !== drawnKey ? [] : ['drawable:false but topFault equals the drawn fault']));
+  it('Q1: each topFault follows the ruled fault->key map; one_arm_dumbbell_row is drawable:false with topFault momentum; every drawn first tell carries the drawn key', () => {
+    for (const id of LB3) expect(topFaultProblems(cardOf(id), DRAWN[id]!), id).toEqual([]);
+    expect([cardOf('one_arm_dumbbell_row').plate.mistake.drawable, cardOf('one_arm_dumbbell_row').topFault]).toEqual([false, 'momentum']);
+    for (const id of SLICE) expect(S[id].mistake.tells[0].key, id).toBe(DRAWN[id]);
+  });
+  it('Q1 mutations: drawable:false with topFault equal to the drawn key, and a drawable:true card with another key, are red', () => {
+    const c = cardOf('one_arm_dumbbell_row'); c.topFault = 'short';
+    expect(topFaultProblems(c, 'short')).toEqual(['drawable:false but topFault equals the drawn fault']);
+    const d = cardOf('conventional_deadlift'); d.topFault = 'tuck';
+    expect(topFaultProblems(d, 'round')).toEqual(['drawable:true but topFault is not the drawn fault']);
+  });
+  /** 14.7 rules 10, 15, D-LIB9-CARDFIELDS and the pose map: kind, one form, a claim of its own card, and a pose that is
+   *  the map's image of a card pose. */
+  const factProblems = (id: string, c: any) => c.plateFacts.flatMap((f: any, i: number) => [
+    ...(['contact', 'angle', 'height'].includes(f.kind) ? [] : [`${i}: kind`]),
+    ...(f.joint && f.measure === true ? [`${i}: both joint and measure`] : []),
+    ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
+    ...(f.cardPose && POSE_MAP[id]![f.cardPose] !== (f.pose ?? 'end') ? [`${i}: pose ${f.pose ?? 'end'} is not the map's image of card ${f.cardPose}`] : []),
+  ]);
+  it('every card\'s plateFacts is [] (LB3 NOTE RULED: no number in any plate.start or plate.end)', () => {
+    for (const id of LB3) { expect(cardOf(id).plateFacts, id).toEqual([]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
+  });
+  it('mutations: a fact with both joint and measure: true, and a start fact named with the unmapped pose, are red', () => {
+    const c = cardOf('landmine_row'); c.plateFacts.push({ kind: 'angle', joint: 'knee.r', measure: true, deg: 30, claim: 'c3' });
+    expect(factProblems('landmine_row', c)).toEqual(['0: both joint and measure']);
+    const p = cardOf('pendlay_row'); p.plateFacts.push({ kind: 'angle', joint: 'knee.r', pose: 'start', cardPose: 'start', deg: 30, claim: 'c10' });
+    expect(factProblems('pendlay_row', p)).toEqual(["0: pose start is not the map's image of card start"]);
+  });
+  const h6 = (spec: any, research: any) => {
+    const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
+    return qaNode.h6({ spec, research }, { engine: Eng(), pins }, R).map((p: any) => p.key);
+  };
+  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault }; };
+  it('A6: PQ-H6 is green on the drawn slice plates against their cards', () => {
+    for (const id of SLICE) expect(h6(S[id], research(id)), id).toEqual([]);
+  });
+  it('A6 mutations: an angle fact +3 deg off the drawn one, and the card path removed, are red', () => {
+    const s = S.conventional_deadlift, r = research('conventional_deadlift'), drawnKnee = plate.renderPlate(s, { id: 'x' }).report.angles.end['knee.r'];
+    expect(h6(s, { ...r, plateFacts: [{ kind: 'angle', joint: 'knee.r', pose: 'end', deg: drawnKnee, claim: 'c1' }] })).toEqual([]);
+    expect(h6(s, { ...r, plateFacts: [{ kind: 'angle', joint: 'knee.r', pose: 'end', deg: drawnKnee + 3, claim: 'c1' }] })).toEqual(['H6.fact:0:angle:knee.r']);
+    expect(h6(s, null)).toEqual(['H6:no-card']);
+  });
+});
+
+describe('LIB-13 A4: F7 on one_arm_dumbbell_row (drawable false) is raised; topFault set to the drawn key turns the expectation red', { timeout: T }, () => {
+  it('F7 raised with the card topFault momentum; with topFault "short" it is not raised, so the ruled expected set fails', async () => {
+    const [build, cand, golden] = await Promise.all(['lb3/build.mjs', 'candidate.mjs', '../golden.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+    const mirror = golden.makeMirror();
+    try {
+      const E = await qaEng.loadEngine(mirror), all = build.lb3All(), ID = 'lib_one_arm_dumbbell_row';
+      const html = (await build.buildLb3Page({ all, ids: [ID] })).html.toString('utf8');
+      const c = await cand.candidateOf(ID, { all, platesHtml: html, engine: E, authoring: true });
+      const raised = async (cc: any) => { const r = await qaIdx.runQa(cc, { engine: E, pins }); return qaIdx.FLAGS.filter((f: string) => !['F2', 'F5'].includes(f) && r.flags[f].raised); };
+      const expected = ['F7'];
+      expect(await raised(c)).toEqual(expected);
+      expect(await raised({ ...c, research: { ...c.research, topFault: 'short' } })).not.toEqual(expected);
+    } finally { qaEng.dropMirror(mirror); }
   });
 });

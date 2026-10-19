@@ -177,6 +177,8 @@ pose (plate.mjs:208), so a fault at the card's start pose needs the start drawn 
 | back_extension | plate.end (top, straight line) | plate.start (bottom, hinged over the pad) | the back rounds over the pad at the bottom (c6, c19) |
 | t_bar_row, landmine_row, one_arm_dumbbell_row, dumbbell_romanian_deadlift | plate.start | plate.end | identity: the fault reads against the card's end pose |
 
+Ruled: LB3 NOTE RULED, #274 comment 6264733030 (sections 1, 6, 8, 9 and 10 accepted; Q1 and Q2 drawn-item tests added).
+
 A fact with no pose defaults to the spec's `end` (node.mjs h6), so every fact about the spec's start says pose
 `start`. Do 6 writes each fact's pose as this map's image of the pose its quote states. The phantom rule (Q2 (c))
 applies wherever a start part is hidden: the start bar dot of the deadlifts and the Pendlay row (as pilot A's).
@@ -247,10 +249,25 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
   the working arm plumb by joint angles (c5); end: the dumbbell at the hip, the elbow driven back (c6, c9). Tempo Pull 2,
   Lower 2. Mistake `short` (c10): the dumbbell stops at 45% of the rise, the shoulder blade not pulled back; tells
   `short` and `blade`; `pilot.drawableFault` names momentum (F7).
-- **landmine_row (H, landmine anchor): CONFLICT posted (#274, comment 6265024757).** The card's inferred layout (pivot
-  behind, plates in front, shoulders ahead of the weight) puts the edge-on plate under the chest: the solved top (plate
-  corner or hand 1 cm off the torso front) lifts the hands 19.2 cm with 45 cm plates, so PQ-H3's Trace is 6.7 px
-  (< 22.11). Not tuned; waits for the supervisor's ruling. Everything else on the plate passes (QA table).
+- **landmine_row (H, landmine anchor; D-LIB13-LANDMINE-2, research head 892d6516).** The card's layout (pivot behind,
+  plates in front, shoulders ahead of the weight) with c20 (MECH, from the T-bar row): the row goes "as far as possible
+  before the plates make contact with your torso". The end is solved at the first contact as the bar turns up about the
+  pivot: the nearest point of the plate or of the bar's surface sits 5 mm off the engine's drawn torso and head outline
+  (bodyShapes); hand rise 30.6 cm. Trunk 80° from vertical, knees 30°. Tempo Pull 1, Lower 2. Mistake `round` (c9, c11):
+  pelvis tucked 30°, lumbar 40°, hump guide; tells `round` and `tuck`. Q1 (note ruling): the start torso is 80° from
+  vertical, which meets Cissik's "at least a 45 degree angle between your upper body and the ground" (c3), read as the
+  depth of the hinge: the upper body at least 45° from upright. Read literally (the angle between the upper body and
+  the floor is at least 45°), the bound would contradict the card's own drawn pose (c3: "the drawn pose follows REP",
+  roughly parallel). The test names the angle it measures: the near hip-to-shoulder line, from vertical.
+- **Plate (drawing convention, D-LIB13-LANDMINE-2 2-3).** One 10 lb iron plate per side, 228 mm across and 31 mm thick
+  (Rogue Machined Olympic Plates: "10LB: 228MM", "10LB Plate Width 1.22\"", roguefitness.com, read 2026-10-19). It is
+  the largest catalogue iron plate that passes PQ-H3 card-true on landmine_row: the 25 lb plate (300 mm) leaves a
+  17.8 px Trace. Sheet note on both landmine plates: "plate size: drawing convention (228 mm)". A4's expected flag set
+  for these ids is F5 plus this sheet note.
+- **t_bar_row: HELD pending the supervisor's ruling (#274, comment 6265604594).** The V-handle hangs 22 cm under the bar,
+  9 in from the plates (c1), so the plate corner meets the sternum after a hand rise of 10.5 cm (228 mm plate), 12.1 cm
+  (162 mm, the smallest Rogue change plate) and at most 18.5 cm with a 15 cm handle. PQ-H3 needs about 30 cm. Its spec is
+  on the branch; it has no row.
 
 ## 12. Work split (if a second drawer joins)
 
@@ -267,6 +284,7 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
 |---|---|---|---|
 | dumbbell_shrug | LIB-13s | D-LIB8-shrug; D-LIB13-SHRUG (ruling 6) | LIB-ZOOM's convention is ruled and extended to the shrugs |
 | cable_shrug | LIB-13s | D-LIB8-shrug; D-LIB13-SHRUG | as above |
+| t_bar_row | LIB-13 (pending ruling) | D-LIB13-LANDMINE-2; D-LIB8M-CARDTRUE (proposed, #274 6265604594) | the supervisor rules |
 | barbell_shrug | pilot A held (pilot-a/plates.json @ `48d49bb`), then LIB-13s | D-LIB8-shrug; D-LIB13-PA | as above |
 
 ## 14. Risks and mitigations

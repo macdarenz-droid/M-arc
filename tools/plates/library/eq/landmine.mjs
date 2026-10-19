@@ -38,10 +38,10 @@ const rect = (a, b, n, w) => { const o = mul(n, w / 2); return [add(a, o), add(b
 
 /**
  * p.pivot: the hinge point (hingeAt). p.to: a world point on the bar's axis (the grip). p.plates: plate thicknesses
- * per side from the inner collar outward (default one 5 cm plate). p.z: the draw layer of the bar and plates
+ * per side from the inner collar outward (default one 5 cm plate). p.plateD: the plate diameter (default 45 cm). p.z: the draw layer of the bar and plates
  * (default 'center': the bar runs between the feet, behind the near leg).
  */
-export function landmine({ pivot, to, plates = [LANDMINE.plateT], z = 'center' } = {}) {
+export function landmine({ pivot, to, plates = [LANDMINE.plateT], plateD = LANDMINE.plateD, z = 'center' } = {}) {
   const { u, n, end, collar } = barFrame(pivot, to);
   const out = [
     { type: 'box', at: [pivot[0], LANDMINE.baseH / 2, pivot[2]], w: LANDMINE.baseW, h: LANDMINE.baseH, z: 'back' },
@@ -52,7 +52,7 @@ export function landmine({ pivot, to, plates = [LANDMINE.plateT], z = 'center' }
   let s = 0;
   for (const t of plates) {
     const a = add(collar, mul(u, s + 0.01)), b = add(collar, mul(u, s + 0.01 + t));
-    out.push({ type: 'poly', pts: rect(a, b, n, LANDMINE.plateD), cls: 'eq-solid', z });
+    out.push({ type: 'poly', pts: rect(a, b, n, plateD), cls: 'eq-solid', z });
     s += t;
   }
   return out;

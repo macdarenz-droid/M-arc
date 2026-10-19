@@ -880,5 +880,19 @@
   "notes": [
     "The breath risk (c19) sits beside c10's cue, \"Hold your breath, brace your core slightly, and lift the bar.\" The card keeps both: the brace is the lifting cue, and the risk line names the blood-pressure cost of a held breath on heavy reps.",
     "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the middle of the palm, fingers wrapped (inherited).\") and the drawn palm direction (overhand, as grip.type gives it; no claim on this card names the grip type) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Neutral (inherited).\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3). grip.handContact and grip.wrist are inherited from conventional_deadlift; F-LB3-3 settles the hold wrist across cards."
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Lift",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "hips"
 }

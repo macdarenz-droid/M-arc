@@ -463,6 +463,50 @@
           "where": "Exercises and stretches for back pain"
         }
       ]
+    },
+    {
+      "id": "c23",
+      "text": "The row goes up as far as possible before the plates make contact with the torso; smaller plates on the bar, or the feet raised on plates or blocks, increase the range of motion.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mh-uk-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "mh-uk-t-bar",
+          "text": "Draw your elbows up and back, keeping them close to your body, rowing the weight up as far as possible before the plates make contact with your torso.",
+          "where": "How to Do the T-Bar Row"
+        },
+        {
+          "source": "mh-uk-t-bar",
+          "text": "Elevate your feet by standing on plates or blocks to increase the range of motion, alternatively you can use smaller plates on the bar for a similar effect.",
+          "where": "How to Do the T-Bar Row"
+        }
+      ]
+    },
+    {
+      "id": "c24",
+      "text": "Straddle the bar and hinge until the torso is near parallel to the ground; the handle passes under the barbell, behind the plates.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mh-uk-t-bar"
+      ],
+      "quotes": [
+        {
+          "source": "mh-uk-t-bar",
+          "text": "Straddle the bar and hinge at the hips until your torso is near parallel to the ground.",
+          "where": "How to Do the T-Bar Row"
+        },
+        {
+          "source": "mh-uk-t-bar",
+          "text": "Use a set of gymnastics rings, straps, a rope or even just a towel, passing it under the barbell, behind the plates to create a set of ‘handles’.",
+          "where": "How to Do the T-Bar Row"
+        }
+      ]
     }
   ],
   "sources": [
@@ -545,14 +589,24 @@
       "pmid": 1538102,
       "access": "abstract",
       "checked": "2026-10-19"
+    },
+    {
+      "id": "mh-uk-t-bar",
+      "url": "https://www.menshealth.com/uk/how-tos/a735444/t-bar-row/",
+      "title": "How to Do the T-Bar Row: Best Landmine Move to Build Your Back (Kate Neudecker, Men's Health UK, updated 2024-10-02)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
     }
   ],
   "plate": {
     "view": "side",
     "viewWhy": "The chest-parallel back, the hinge and the handle path to the lower chest are front-to-back (c2, c3, c4); the census draws it side.",
-    "equipment": "Landmine rig: a barbell pinned at a floor pivot behind the lifter, plates on the free end, a V-handle hooked under the bar 8-10 inches from the plates (c1). Needs the landmine composer (census gap).",
+    "equipment": "Landmine rig: a barbell pinned at a floor pivot behind the lifter, plates on the free end, a V-handle hooked under the bar 8-10 inches from the plates (c1), behind the plates, with the lifter straddling the bar (c24). Smaller plates on the bar, or the feet raised on plates or blocks, give more range before the plates reach the torso (c23); the drawn plate size is a drawing convention (gaps). Needs the landmine composer (census gap).",
     "start": "Standing over the bar, feet about shoulder width, knees slightly bent (c2), hips hinged, back straight, chest parallel to the floor (c3), arms straight down to the handle.",
-    "end": "Same back angle (c3); elbows driven back, handle pulled toward the lower chest, shoulder blades pulled back (c4).",
+    "end": "Same back angle (c3); elbows driven back, handle pulled toward the lower chest, shoulder blades pulled back (c4); the row stops as far up as it goes before the plates make contact with the torso (c23).",
     "checkpoints": [
       {
         "label": "Chest parallel",
@@ -774,5 +828,27 @@
   "anchorSource": "ggr-t-bar",
   "notes": [
     "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Handle across the base of the fingers and top of the palm (pull archetype); straps allowed on heavy sets.\") and the drawn palm direction (palms facing each other, as grip.type states from c6) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3). plate.start's \"arms straight down to the handle\" is a drawing convention too: no quote places the arms at the start."
-  ]
+  ],
+  "gaps": [
+    "Plate size (R-LB3-12 a): no read source gives a plate diameter or weight for this row. Men's Health says only that smaller plates on the bar, or the feet raised on plates or blocks, increase the range of motion (c23). The drawn plate size is a drawing convention.",
+    "Plates relative to the hands (R-LB3-12 b): the sources place the handle under the bar 8-10 inches from the plates (c1) and \"behind the plates\" (c24), with the lifter standing over or straddling the bar (c2, c24); none gives a distance from the plates to the feet or torso."
+  ],
+  "plateFacts": [],
+  "tempo": [
+    {
+      "phase": "Pull",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "round"
 }
