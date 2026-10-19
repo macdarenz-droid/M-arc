@@ -68,7 +68,7 @@ export const SHEET_NOTES = {
   lib_pendlay_row: ['F2 cover 0.163 (named flag, #274 6267110489): a held hinge, only the arms and the bar move'],
   lib_landmine_row: ['plate size: drawing convention (228 mm) (D-LIB13-TBAR)', 'new rig: the landmine composer (D-LIB13-LANDMINE; landmine anchor)'],
   lib_one_arm_dumbbell_row: ['F7: drawable fault. The top fault, momentum (c10), shows only as speed; the plate draws the next fault on the list, the short range (needs your named yes)', 'support anchor (D-LIB13-SUPPORT): back_extension is shown with it'],
-  lib_sumo_deadlift: ['stance drawn 30 cm apart, toes out 10 deg: the engine foot has no roll, so c2\'s 70 cm and 42 deg cannot be drawn; the side view hides it'],
+  lib_sumo_deadlift: ['a pure side view cannot show the wide stance and turned-out feet, so it reads close to a conventional deadlift with low hips (panel note, D-LIB13-PANEL1)', 'stance drawn 30 cm apart, toes out 10 deg: the engine foot has no roll, so c2\'s 70 cm and 42 deg cannot be drawn'],
   lib_back_extension: ['shown with its support anchor, one_arm_dumbbell_row (D-LIB13-SUPPORT); redrawn if the anchor is rejected'],
 };
 const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');

@@ -27,10 +27,12 @@
 //   the elbow bent and driven back, the upper arm close to the body, the dumbbell at the hip: the grip END_DZ behind
 //   the shoulder line toward the hip and END_DY below the back. Shoulder blades: 2 cm forward at the bottom, pulled
 //   back 4 cm at the top. Wrist bent back 35 deg into the pull grip (the card's recorded convention, R-LB3-5).
-//  Mistake (c10, short range): the pull stops short: the grip half way up (M_FRAC of the end's rise) and in front of
-//   the hip, the shoulder blade not pulled back (pro 2 cm, as at the start).
+//  Mistake (c10, short range): the pull stops short: the grip low, M_DY under and M_DZ behind the shoulder (the arm
+//   swung part way back, clear of the body: panel fix D-LIB13-PANEL1 R5), the shoulder blade not pulled back (pro 2 cm,
+//   as at the start).
+//  Support hand flat on the bench (the engine's flat palm), the wrist angle SOLVED so the palm lies level (R3).
 // Unsourced numbers: BENCH_TOP 0.42 m (the low end of the vendor bench's 42-45 cm, so the near leg reaches the floor), the bench length and position, ankle -40, the
-//  near foot spot, END_DZ, END_DY, M_FRAC 0.45, PRO 2 / -4 cm, WRIST -35 (convention).
+//  near foot spot, END_DZ, END_DY, M_DY 0.50, M_DZ 0.30, PRO 2 / -4 cm, WRIST -35 (convention).
 import { landmarksOf, RADII } from '../engine.mjs';
 
 const H = 1.75;
@@ -38,7 +40,7 @@ const BENCH_TOP = 0.42, SHANK_R = RADII.shank[1] * H;
 const WRIST_Y = RADII.fore[2] * H;                       // flat palm: the wrist sits the forearm's distal radius up
 
 const PRO_START = 2, PRO_END = -4, WRIST = -35;
-const END_DZ = 0.40, END_DY = 0.28, M_FRAC = 0.45;
+const END_DZ = 0.40, END_DY = 0.28, M_DY = 0.50, M_DZ = 0.30;
 
 // Bracketed root finder (Illinois regula falsi): throws when f(a) and f(b) have the same sign (D-LIB9-CLONE b).
 export const solve = (f, a, b) => {
@@ -50,26 +52,32 @@ export const solve = (f, a, b) => {
   }
   return (a + b) / 2;
 };
-const body0 = (y, pro, tilt) => ({ root: { at: [0, y, 0], tilt }, trunk: 0, neck: 0, scap: { l: { pro: 0 }, r: { pro } },
-  hip: { l: tilt, r: 0 }, knee: { l: 90, r: 0 }, ankle: { l: -40, r: 0 }, wrist: { l: 90, r: WRIST },
+const body0 = (y, pro, tilt, wl = 90) => ({ root: { at: [0, y, 0], tilt }, trunk: 0, neck: 0, scap: { l: { pro: 0 }, r: { pro } },
+  hip: { l: tilt, r: 0 }, knee: { l: 90, r: 0 }, ankle: { l: -40, r: 0 }, wrist: { l: wl, r: WRIST },
   plant: { r: { at: [-0.14, 0, 0.03] } } });
 // The drawn back level (c4 "parallel to the ground"): the pelvis tilt is SOLVED (bracket 70-100 deg) so the back line,
 // sacrum to upper back, is horizontal; the far hip flexes the same, so the far thigh stays vertical.
 const TILT = solve(t => { const l = landmarksOf(body0(1, PRO_START, t), H); return l.backUpper[1] - l.sacrum[1]; }, 70, 100);
-const base = (y, pro) => body0(y, pro, TILT);
-const ROOT_Y = solve(y => landmarksOf(base(y, PRO_START), H)['knee.l'][1] - SHANK_R - BENCH_TOP, 0.7, 1.2);
+const base0 = (y, pro, wl) => body0(y, pro, TILT, wl);
+const ROOT_Y = solve(y => landmarksOf(base0(y, PRO_START), H)['knee.l'][1] - SHANK_R - BENCH_TOP, 0.7, 1.2);
 
 // The far palm: grip target moved until the wrist is WRIST_Y over the pad, straight under the far shoulder.
-const S_L = landmarksOf(base(ROOT_Y, PRO_START), H)['shoulder.l'];
+const S_L = landmarksOf(base0(ROOT_Y, PRO_START), H)['shoulder.l'];
 const WRIST_AT = [S_L[0] - 0.03, BENCH_TOP + WRIST_Y, S_L[2]];
-const farHand = (() => {
+const farHandFor = wl => {
   let t = [WRIST_AT[0], WRIST_AT[1] + 0.05, WRIST_AT[2] + 0.07];
-  for (let k = 0; k < 3; k++) {
-    const w = landmarksOf({ ...base(ROOT_Y, PRO_START), reach: { l: { at: t, pole: [0, 0, -1] } } }, H)['wrist.l'];
+  for (let k = 0; k < 4; k++) {
+    const w = landmarksOf({ ...base0(ROOT_Y, PRO_START, wl), reach: { l: { at: t, pole: [0, 0, -1] } } }, H)['wrist.l'];
     t = t.map((v, i) => v + WRIST_AT[i] - w[i]);
   }
   return { at: t, pole: [0, 0, -1] };
-})();
+};
+// Palm flat on the bench (panel fix D-LIB13-PANEL1 R3; drawn with the engine's flat palm, spec `hand`): the far
+// wrist angle is SOLVED (bracket 0-90 deg) so the hand (wrist -> grip) lies level, pointing forward along the bench.
+const handRise = wl => { const l = landmarksOf({ ...base0(ROOT_Y, PRO_START, wl), reach: { l: farHandFor(wl) } }, H); return l['grip.l'][1] - l['wrist.l'][1]; };
+const WRIST_L = solve(handRise, 0, 90);
+const base = (y, pro) => base0(y, pro, WRIST_L);
+const farHand = farHandFor(WRIST_L);
 const withArms = (pro, near, pole) => ({ ...base(ROOT_Y, pro), reach: { l: farHand, r: { at: near, pole } } });
 // Start (c5): the working arm by joint angles, hanging plumb from the level trunk: shoulder flexion 90 (the trunk is
 // 90 deg forward), elbow 0; only the far hand uses IK.
@@ -81,7 +89,11 @@ const SE_R = landmarksOf(base(ROOT_Y, PRO_END), H)['shoulder.r'];
 const LB = landmarksOf(base(ROOT_Y, PRO_END), H);
 const END_GRIP = [SE_R[0] - 0.03, LB.backUpper[1] - END_DY, SE_R[2] - END_DZ];
 const end = withArms(PRO_END, END_GRIP, [-0.3, 1, -0.4]);
-const MIST_GRIP = START_GRIP.map((v, i) => v + (END_GRIP[i] - v) * M_FRAC);
+// The short pull (panel fix D-LIB13-PANEL1 R5): the dumbbell stops low, M_DY under and M_DZ behind the shoulder, the
+// arm swung only part way back, so the whole red working arm sits in open space, clear of the support arm, the near
+// leg and the torso (the Mistake outline is masked inside the body; searched on the engine's bodyShapes: 81% of the arm
+// outline shows, against under 35% for any grip at the old half-way height).
+const MIST_GRIP = [START_GRIP[0], SE_R[1] - M_DY, SE_R[2] - M_DZ];
 const mistakePose = { scap: { l: { pro: 0 }, r: { pro: PRO_START } }, reach: { l: farHand, r: { at: MIST_GRIP, pole: [-0.3, 1, -0.4] } } };
 
 const LS = landmarksOf(start, H);
@@ -105,6 +117,7 @@ export default {
     { landmark: 'wrist.l', plane: { point: [0, BENCH_TOP + WRIST_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },  // palm flat on the bench
     { landmark: 'wrist.l', plane: { point: S_L, normal: [0, 0, 1] }, pose: 'start', tol: 0.5 },                         // hand under the shoulder (c2)
   ],
+  hand: { l: 'flat' },
   startParts: ['arm.r'],
   ghosts: { count: 2, parts: ['arm.r'] },
   trace: { point: 'grip.r', trim: [10, 12] },
@@ -117,7 +130,7 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'mistake' }, to: { at: 'grip.r', pose: 'end', off: [14, 21] } },   // stops 6 px clear of the solid end figure (A15)
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'mistake', off: [12, 12] }, to: { at: 'grip.r', pose: 'end', off: [14.9, 21.2] } },   // 80% of the way to the end grip, 12 px off the near leg: 6 px clear of the solid end figure (A15)
     ],
     tells: [
       { key: 'short', text: 'Stops<br>short', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 246, top: 234 }, cue: 'The pull stops short of the hip.' },

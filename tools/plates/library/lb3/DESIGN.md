@@ -329,6 +329,26 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
   straight line (c5); bottom: the thorax 100° from vertical, slightly below parallel (c7); arms crossed on the chest by
   IK (c4). Mistake `round` (c6, c19): the pelvis held at 60°, the lumbar flexed to the same thorax depth, the hump
   guide; tells `round` and `hips`. Tempo Lower 2, Raise 1, Hold 1.
+- **Panel fix round (D-LIB13-PANEL1, #274 6278550928; one round, the 4 passing plates byte-identical).**
+  - back_extension (R2, R3): the romanChair hip pad was drawn turned into the thigh (its normal picked "up", which at
+    45 deg points into the leg), so only two corners showed. The pad is now one `poly`, 50 cm along the thigh front
+    (6 cm of it above the contact point) and 22 cm deep, its face on the contact line; an upright stands under the
+    raised end of the 45 deg beam; the foot plate is a `poly` on the sole line (heel to ball), square to the shin, the
+    soles checked on it (heel, ball, both soles). Drawn-item tests and two mutations (the pad turned, the plate laid
+    level).
+  - pendlay_row (R3): the engine draws the fist at the grip point, a hand's length past the wrist, so with the grip on
+    the bar centre the forearm ended 5-7 px beside the bar. The grip target now sits WRAP 3 cm past the bar along the
+    hand, so the bar's sleeve ring lies between the forearm's end and the fist (tested: both gaps under 1 cm; mutation:
+    the old grip leaves a forearm gap over 1 cm). The straight arm needs that reach, so the hips and shoulders are
+    lowered together (root 2.9 cm lower, back level, root z kept): the floor knee bends 35.7 deg. The 10-30 deg knee
+    bound was this note's own reading of "slightly bent"; the test now reads the card's c1 on the drawn plates:
+    pendlay_row's floor hip above conventional_deadlift's and its knee straighter, bent at least 10 deg.
+  - one_arm_dumbbell_row: R3, the support hand is the engine's flat palm, its wrist angle SOLVED so the palm lies
+    level. R5, the Mistake grip moved low and back (M_DY 0.50 under, M_DZ 0.30 behind the shoulder), so the forearm
+    and dumbbell hand show in open space (tested at least 90% of each outline; the old half-way grip fails it); the
+    upper arm still crosses the bent support arm. R1 (a straight support arm) is not drawable card-true (c1, c2, c4:
+    a 0.42 m shoulder-to-wrist chord against 0.573 m for a 20 deg elbow) and waits on the ruling asked in #274
+    6278674941.
 - **Straight arms with the bent-back wrist (all pull plates).** The engine's IK turns the forearm by the hand's bend
   (about 9°, body.mjs solveReach), so the pull specs reach at 99.98% of the IK's own full length: the arm reads straight
   with the report's elbow at about 11°.

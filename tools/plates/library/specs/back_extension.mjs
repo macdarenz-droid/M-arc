@@ -45,8 +45,10 @@ export const bisect = (f, a, b) => {
 const top0 = { root: { at: ROOT, tilt: LEG_INCL }, trunk: 0, neck: 0, hip: KNEE, knee: KNEE, ankle: 0 };
 const LT = landmarksOf(top0, H);
 const SOLE = side => LT[`sole.${side}`];
-// The foot plate's face normal: from the sole toward the ankle (the soles press on the plate).
-const PLATE_N = (() => { const d = LT['ankle.r'].map((v, i) => v - LT['sole.r'][i]), L = Math.hypot(...d); return d.map(v => v / L); })();
+// The foot plate lies on the sole line (heel to ball, square to the shin at ankle 0; panel fix D-LIB13-PANEL1): its
+// face runs heel -> toe, its normal points from the plate toward the ankle (the soles press on the plate).
+const PLATE_U = (() => { const d = [0, LT['ball.r'][1] - LT['heel.r'][1], LT['ball.r'][2] - LT['heel.r'][2]], L = Math.hypot(...d); return d.map(v => v / L); })();
+const PLATE_N = (() => { let n = [0, -PLATE_U[2], PLATE_U[1]]; const a = LT['ankle.r']; if ((a[1] - LT['heel.r'][1]) * n[1] + (a[2] - LT['heel.r'][2]) * n[2] < 0) n = n.map(v => -v); return n; })();
 // The legs are held by joint angles: the hip flexes as much as the pelvis tilts past the top, so the thighs, shins and
 // feet stay on the pad and the foot plate in every pose (no foot IK: the plate is not level).
 const legsAt = tilt => ({ hip: KNEE + tilt - LEG_INCL, knee: KNEE, ankle: 0 });
@@ -92,8 +94,8 @@ const HUMP_PTS = (() => {
 })();
 const HUMP_OUT = k => HUMP_PTS.apex.map((v, i) => v + HUMP_PTS.n[i] * k);
 
-export const BX = { pad: { at: PAD.at, along: PAD.along }, plateN: PLATE_N, heel: HEEL };
-const chair = () => romanChair({ pad: PAD, foot: { at: SOLE('r'), along: (() => { const n = PLATE_N; return [0, -n[2], n[1]]; })() }, heel: HEEL, floorZ: [SOLE('r')[2] - 0.15, PAD.at[2] + 0.1] });
+export const BX = { pad: { at: PAD.at, along: PAD.along, normal: PAD.n }, plateU: PLATE_U, plateN: PLATE_N, heel: HEEL };
+const chair = () => romanChair({ pad: { at: PAD.at, along: PAD.along, normal: PAD.n }, foot: { at: LT['heel.r'], along: PLATE_U, normal: PLATE_N }, heel: HEEL, floorZ: [SOLE('r')[2] - 0.15, PAD.at[2] + 0.1] });
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   id: 'back_extension', name: 'Back Extension', view: 'side', facing: 'right',
@@ -104,8 +106,10 @@ export default {
     ...perItem(chair, ROMAN_CHAIR_ITEMS),
   ],
   checks: [
-    { landmark: 'sole.r', plane: { point: SOLE('r'), normal: PLATE_N }, pose: 'all', tol: 0.5 },     // feet on the foot plate (c3)
-    { landmark: 'sole.l', plane: { point: SOLE('l'), normal: PLATE_N }, pose: 'all', tol: 0.5 },
+    { landmark: 'sole.r', plane: { point: LT['heel.r'], normal: PLATE_N }, pose: 'all', tol: 0.5 },   // feet on the foot plate (c3)
+    { landmark: 'sole.l', plane: { point: LT['heel.r'], normal: PLATE_N }, pose: 'all', tol: 0.5 },
+    { landmark: 'heel.r', plane: { point: LT['heel.r'], normal: PLATE_N }, pose: 'all', tol: 0.5 },
+    { landmark: 'ball.r', plane: { point: LT['heel.r'], normal: PLATE_N }, pose: 'all', tol: 0.5 },
     { landmark: 'hip.r', plane: THIGH_ON_PAD, pose: 'all' },                                          // c1, c3 thighs on the pad (H6 contact fact)
     { landmark: 'knee.r', plane: THIGH_ON_PAD, pose: 'all' },
   ],

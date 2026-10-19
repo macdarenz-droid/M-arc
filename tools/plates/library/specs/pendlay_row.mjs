@@ -68,8 +68,25 @@ const kneeOf = lm => {
 const hipY = z => solve(y => kneeOf(landmarksOf(body(y, z, TILT, PRO_END), H)) - KNEE, 0.5, 0.935);
 const barZOf = z => { const S = landmarksOf(body(hipY(z), z, TILT, PRO_END), H)['shoulder.r'], d = armDrop(S); return S[2] - Math.sqrt(d * d - (S[1] - PLATE_R) ** 2); };
 const ROOT_Z = solve(barZOf, -0.6, 0);
-const FLOOR_BAR = [0, PLATE_R, 0], ROOT = [0, hipY(ROOT_Z), ROOT_Z];
-const end = { ...body(ROOT[1], ROOT[2], TILT, PRO_END), reach: hands(FLOOR_BAR, [-0.2, 0, -1]) };
+const FLOOR_BAR = [0, PLATE_R, 0];
+// The hand wraps the bar (LB3 panel fix, D-LIB13-PANEL1, #274 6278550928): the engine draws the fist at the grip point,
+// a hand's length past the wrist, so with the grip on the bar centre the forearm stopped 5-7 px beside the bar. The
+// grip target sits WRAP past the bar along the hand (wrist -> grip), so the bar lies between the forearm's end and the
+// fist; the bar is drawn back at grip - WRAP along the hand (barAt). At the floor the straight arm needs that much more
+// reach, so the hips and shoulders are lowered together, back level, root height SOLVED (bracket 0.5 m to the knee-20
+// height) with the root z kept: the knees bend more (the report's knee angle, tested 10-30 deg, c10).
+const WRAP = 0.03;
+const handDir = lm => { const d = [0, lm['grip.r'][1] - lm['wrist.r'][1], lm['grip.r'][2] - lm['wrist.r'][2]], L = Math.hypot(...d); return d.map(v => v / L); };
+const wrapped = (bar, h) => [0, bar[1] + h[1] * WRAP, bar[2] + h[2] * WRAP];
+const floorFit = h => {
+  const T = wrapped(FLOOR_BAR, h);
+  const y = solve(yy => { const S = landmarksOf(body(yy, ROOT_Z, TILT, PRO_END), H)['shoulder.r']; return Math.hypot(S[1] - T[1], S[2] - T[2]) - armDrop(S); }, 0.5, hipY(ROOT_Z));
+  const pose = { ...body(y, ROOT_Z, TILT, PRO_END), reach: hands(T, [-0.2, 0, -1]) };
+  return { y, T, pose, h: handDir(landmarksOf(pose, H)) };
+};
+const FLOOR_FIT = (() => { let f = floorFit(handDir(landmarksOf({ ...body(hipY(ROOT_Z), ROOT_Z, TILT, PRO_END), reach: hands(FLOOR_BAR, [-0.2, 0, -1]) }, H))); for (let i = 0; i < 6; i++) f = floorFit(f.h); return f; })();
+const ROOT = [0, FLOOR_FIT.y, ROOT_Z], FLOOR_GRIP = FLOOR_FIT.T;
+const end = FLOOR_FIT.pose;
 
 // The top: the bar on the torso front (navel -> chest line, CLEAR out), straight above the floor bar when that point is
 // on the line, else at the chest end of it.
@@ -87,7 +104,10 @@ const TOP_BAR = onFront(LT0, BAR_T);
 // chest and navel lie on it while the bar rests on the torso front; a torso moved off the bar opens it.
 const FRONT_TOP = (() => { const d = [LT0.chest[1] - LT0.navel[1], LT0.chest[2] - LT0.navel[2]]; let n = [-d[1], d[0]].map(v => v / Math.hypot(...d)); if (n[0] * (LT0.chest[1] - LT0.backUpper[1]) + n[1] * (LT0.chest[2] - LT0.backUpper[2]) < 0) n = n.map(v => -v); return { point: [0, TOP_BAR[1] - n[0] * CLEAR, TOP_BAR[2] - n[1] * CLEAR], normal: [0, n[0], n[1]] }; })();
 const dorsal = (() => { const d = [0, 1, 2].map(i => LT0.backUpper[i] - LT0.chest[i]), L = Math.hypot(...d); return d.map(v => v / L); })();
-const topAt = out => ({ ...top0, reach: hands(TOP_BAR, [-out, dorsal[1], dorsal[2]]) });
+const topAt0 = (out, T) => ({ ...top0, reach: hands(T, [-out, dorsal[1], dorsal[2]]) });
+// The top grip wraps the bar too (as the floor): iterate the hand direction to a fixed point.
+const TOP_GRIP = (() => { let T = TOP_BAR; for (let i = 0; i < 6; i++) T = wrapped(TOP_BAR, handDir(landmarksOf(topAt0(1, T), H))); return T; })();
+const topAt = out => topAt0(out, TOP_GRIP);
 // Elbow pole lateral share SOLVED (bracket 0.05-5) so the elbow sits straight above the bar (the bent-back wrist turns the forearm about 9 deg off it).
 const ELBOW_OUT = solve(out => landmarksOf(topAt(out), H)['elbow.r'][2] - TOP_BAR[2], 0.05, 5);
 const start = topAt(ELBOW_OUT);
@@ -95,9 +115,9 @@ const start = topAt(ELBOW_OUT);
 // Mistake (c8, c23): the back rounded to reach the bar on the floor.
 const M_TUCK = 30;
 const mistOf = sp => ({ ...end, root: { at: end.root.at, tilt: TILT - M_TUCK }, trunk: sp });
-const reachErr = sp => { const S = landmarksOf(mistOf(sp), H)['shoulder.r']; return Math.hypot(S[1] - FLOOR_BAR[1], S[2] - FLOOR_BAR[2]) - armDrop(S); };
+const reachErr = sp => { const S = landmarksOf(mistOf(sp), H)['shoulder.r']; return Math.hypot(S[1] - FLOOR_GRIP[1], S[2] - FLOOR_GRIP[2]) - armDrop(S); };
 const M_SPINE = solve(reachErr, SPINE, 80);
-const mistakePose = { root: mistOf(M_SPINE).root, trunk: M_SPINE, reach: hands(FLOOR_BAR, [-0.2, 0, -1]) };
+const mistakePose = { root: mistOf(M_SPINE).root, trunk: M_SPINE, reach: hands(FLOOR_GRIP, [-0.2, 0, -1]) };
 
 const HUMP = 0.094;
 const LM_M = landmarksOf({ ...end, ...mistakePose }, H), LM_E = landmarksOf(end, H);
@@ -116,7 +136,7 @@ const ROUND_OFF = (() => { const a = HUMP_PTS.pts[7], b = LM_M.lumbar; return [+
 export const prInfo = { armDeg: +(() => { const l = landmarksOf(end, H); return Math.atan2(l['shoulder.r'][2] - l.grips[2], l['shoulder.r'][1] - l.grips[1]) / R; })().toFixed(1), tilt: +TILT.toFixed(2), root: ROOT.map(v => +v.toFixed(3)), knee: +kneeOf(LM_E).toFixed(1), tPlumb: +T_PLUMB.toFixed(2),
   topBar: TOP_BAR.map(v => +v.toFixed(3)), mSpine: +M_SPINE.toFixed(1) };
 
-const barAt = lm => [0, lm.grips[1], lm.grips[2]];
+const barAt = lm => { const h = handDir(lm); return [0, lm.grips[1] - h[1] * WRAP, lm.grips[2] - h[2] * WRAP]; };
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, TOP_BAR[1] + 0.025 * Math.sin(k * Math.PI / 8), TOP_BAR[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
@@ -136,8 +156,8 @@ export default {
     { landmark: 'ball.r', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'heel.l', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'ball.l', plane: floor, pose: 'all', tol: 0.5 },
-    { landmark: 'grips', at: FLOOR_BAR, pose: 'end', tol: 0.5 },      // c3: the bar on the floor (plates on the floor line)
-    { landmark: 'grips', at: TOP_BAR, pose: 'start', tol: 0.5 },      // c4, c5: the bar on the torso
+    { landmark: 'grips', at: FLOOR_GRIP, pose: 'end', tol: 0.5 },     // c3: the hand around the bar on the floor (WRAP past its centre)
+    { landmark: 'grips', at: TOP_GRIP, pose: 'start', tol: 0.5 },     // c4, c5: the hand around the bar on the torso
     { landmark: 'chest', plane: FRONT_TOP, pose: 'start' },          // c4: the bar to the abs or chest (H6 contact fact)
     { landmark: 'navel', plane: FRONT_TOP, pose: 'start' },
   ],
