@@ -4132,3 +4132,10 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 3. **dumbbell_pullover:** the buttock contact fact citing c8 is wrong, because c8's quotes do not state that contact. Remove it. The c1 fact already carries the buttock contact correctly.
 4. **Withdrawn under the scope above:** the bench angles of barbell_bench_press (0°, c19, an EMG condition), decline (-15°, plate.equipment) and arnold (backrest 90°, plate.equipment). The plates show none of them with a measure.
 5. **Next:** LIB-10 makes points 1-3 and nothing else. It re-runs qa.mjs for the drawn ids that changed (H6 must pass), then posts 'LB2 CARD FIELDS FIX @ <sha>'. A focused re-verify of the 3 cards with a new plant follows.
+
+## 23. LIB-7c start by reference (D-LIB7c-STARTREF, 2026-10-19 ~07:25 UTC)
+- lib-7c-card's build_prerequisites ask the 'LIB-7c start' message to quote D-LIB7c-KEYS … -SLOT and D-LIB7FIX-PERKEY. Section 19 holds them in 26 kB of text.
+- **Ruling:** the start message names this file at commit `f7824b5b`, lines 3636-3918 (section 19, every D-LIB7c-* ruling, D-LIB7FIX-PERKEY and both rechecks), as binding word for word. The builder reads those lines with `git show` before Do 1, and its design note confirms it read them. This is the same text the quote would carry, read from a pinned commit (the ULTIMATE RULE's token limit).
+- Heads named in the start:
+  - #193's PERKEY head `a8ec1a6`: review PASS 0/0/0/0, PK1-PK5 green (6261875603). Its ORDER fix (D-LIB12FIX-ORDER) follows and is named on the LIB-7c PR.
+  - research head `9eaa2480`: the card's head. No shared hand file changed up to `f57e7944`, checked by `git diff --name-only`.
