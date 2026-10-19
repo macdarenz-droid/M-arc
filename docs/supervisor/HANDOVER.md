@@ -1108,6 +1108,31 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
 - **Merge order:** unchanged from the 01:00 update, less LIB-3c (merged).
 - **Owner:** nothing is owed to him now. The pilot A sheet comes after the recheck, Do 9 and CARD FIELDS; it carries the curl's F7 question.
 
+**Update ~06:00 UTC (10-19).**
+- **Pilot A (#109) is through its critic, TOPFAULT and CARD FIELDS gates** (lib4-cards 21.3-21.7; `claude/sup-lib4-cards` @ `1ff18a84`).
+  - Approved on every scored item (calibrated panels, all VALID):
+    - at `83735ab`: dumbbell_shoulder_press and dumbbell_biceps_curl;
+    - at `013f84e`: dumbbell_bench_press, triceps_pushdown, rope_triceps_pushdown, pec_fly and plank;
+    - at `94c551f`: upright_row.
+    The rest carry from their earlier approval with their fragments unchanged.
+  - **incline_dumbbell_press is held** (D-LIB8M-CRIT3): its R5 arch failed the last run, [3,3,2]. After #109 merges, its redraw goes to LB2 (LIB-10; #265 6260478491). Pilot A pins **13**.
+  - TOPFAULT settled for all 14. The 5 'several' ids were redrawn to one tell each, and a final blind pass gave 5/5. incline's blind pass after FIX2 gave 'arch'.
+  - **CARD FIELDS VERIFIED @ `1d2a809`** (D-LIB8M-CF1/CF2): a full blind run plus a focused re-verify, each catching its plant. New rule **D-LIB8M-FACTS**: every number a quote gives for a drawn pose becomes a plate fact, and a range is written as its midpoint when it is at least 4° wide.
+  - Do 9 at `94c551f`: every hard check passes on all 14. Flags are the measured set (D-LIB8M-TF2 3).
+  - **Next:** the incline-hold push, then Do 9 on that head, Do 11 (carry), Do 12 (the sheet), then the owner sheet. PIN GO waits for LIB-7b, for LIB-12 on main and merged in, and for LIB-12's R8 panel.
+- **Lanes (4 of 4 active):**
+  - LIB-10 #265: 5 of 7 drawn (`c3195a4`). Do 6 is open (research `7d7c52e1`).
+  - LIB-8M #109.
+  - LIB-5 Do 9 #270: D-LIB5-TWIN plus two B2 golden8 runs at P=1, about 2 h each. READY about 07:15 or later.
+  - LIB-12-FIX #191: started 05:33 (session_01JQUfc9aqCRBZPa3TJ22Zcp; "LIB-12-FIX start" 6260420122 carries the verbatim rulings; #193's PERKEY head is `a8ec1a6`).
+- **WAITING:**
+  - LIB-7-FIX #193: READY `a8ec1a6`; reviewer session_014mbWcrLHLUs3oFjNUV6Uxv.
+  - LIB-6-PM #181 `7215896`: Do 5-6 done; Do 7 waits for LIB-5 Do 9.
+- **Queue:** LIB-7c when a slot frees. LIB-7b after #193 merges.
+- **Merge order:** unchanged. Merge #3 (LIB-6 + LIB-6-PM) is the chain's bottleneck: it waits for LIB-5 Do 9, then LIB-6-PM Do 7.
+- **Scratch tooling:** critic-pa{,2,3}, topfault-pa{,2,3}, cfpa{,2}. Answer keys and plants are in *-private/ or the *-plant.txt files, never in shared files.
+- **Owner:** nothing is owed now. The pilot A sheet will carry the curl's F7 question (D-LIB8M-TF1 4) and the measured flags.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
