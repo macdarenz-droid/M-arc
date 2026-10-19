@@ -100,7 +100,7 @@ of six concepts; the owner decides each concept once, on one example, before the
 | Small range: zoomed camera | 4 shrugs, wrist_curl, cable_external_rotation, flutter_kicks | existing `camera.maxScale`; the lint's minimum Trace length (3.4) must be met | barbell_shrug (SHRG pilot) |
 | View conflict | dumbbell_fly, bent_over_dumbbell_rear_delt_fly, decline_bench_press, weighted_dip, walking_lunge | pick the view that shows the fault; the other plane goes to a posture close-up | dumbbell_fly |
 | Airborne or ballistic: take-off and landing frames | jumping_jacks, box_jump, jump_squat, kettlebell_swing, medicine_ball_slam, wall_ball | two ground-contact frames; Trace on the hip or the implement | box_jump |
-| Fault needs roll or yaw | one_arm_dumbbell_row, renegade_row, pallof_press, bird_dog, single_leg_romanian_deadlift (single_arm_lat_pulldown is fixed by E-1) | the plate's Mistake uses the next most common drawable fault; the rotation fault is a handling-mistake row in the layers | one_arm_dumbbell_row |
+| Fault needs roll or yaw | one_arm_dumbbell_row, renegade_row, pallof_press, bird_dog (single_arm_lat_pulldown is fixed by E-1; single_leg_romanian_deadlift's top fault is the rounding, R-LB2-16) | the plate's Mistake uses the next most common drawable fault; the rotation fault is a handling-mistake row in the layers | one_arm_dumbbell_row |
 | Cycle or travel: one cycle, two phases | mountain_climbers, high_knees, jump_rope, battle_ropes, bear_crawl, sled_push, sled_pull, farmer_s_carry, burpee | start/end = the two phases of one stride or cycle; Trace on the driving point; tempo = rhythm. Burpee: the drop to plank and back (its riskiest phase); the other phases are setup steps | mountain_climbers |
 
 side_plank is drawn after E-1 (roll). russian_twist and bicycle_crunch depend on E-2.
@@ -514,7 +514,7 @@ estimate moved by more than a week.
 | L12 | Tier-3 and yaw ids cannot reach the bar | concepts decided on the pilot sheet; E-2 time-boxed with a pass bar; failure goes to the owner's list with the reason |
 | L13 | The owner's review load becomes the bottleneck | pilots and critic clear problems before he looks; about 7 rounds, not 21 sessions; only changed ids are re-shown; stalled-family rule |
 | L14 | A parent-card error spreads to its children | child inherits line by line with a reason; the parent's hash chains into its children's stamps |
-| L15 | Rotation faults (5 ids) cannot be drawn | the plate uses the next drawable fault; the rotation fault is a handling-mistake row |
+| L15 | Rotation faults (4 ids) cannot be drawn | the plate uses the next drawable fault; the rotation fault is a handling-mistake row |
 | L16 | The dumbbell primitive (28 ids) is not at quality | the CURL pilot is the checkpoint; a kit dumbbell if needed; the locked one stays |
 | L17 | Other lanes add exercises during the program | C6 coverage: a new id needs a `queued` row; it joins the family that fits or a final batch |
 | L18 | Token cost | Sonnet for fetching and mechanical steps; templates shrink per-exercise authoring to 20-40 lines; one critic per family, not per plate; no duplicate reviewers |

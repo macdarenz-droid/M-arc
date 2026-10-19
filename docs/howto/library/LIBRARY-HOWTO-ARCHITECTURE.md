@@ -82,8 +82,9 @@ document in place.
   - **Cycle plate** (mountain climbers, high knees, jumping jacks, jump rope, battle ropes, bear crawl, sled push and
     pull, farmer's carry, burpee): one half-cycle or stride. Trace follows the driving point, and the tempo covers one
     cycle. The burpee uses the engine's `via` poses.
-  - **Drawable-fault rule** (single-arm pulldown, one-arm row, renegade row, Pallof press, bird dog, single-leg RDL):
-    their top fault needs roll or yaw. The Mistake shows the most common fault the engine can draw, and the card must
+  - **Drawable-fault rule** (single-arm pulldown, one-arm row, renegade row, Pallof press, bird dog; dumbbell biceps
+    curl): their top fault needs roll or yaw, or, on the curl, is a bent wrist the side view cannot show (R-LB2-27).
+    The Mistake shows the most common fault the engine can draw, and the card must
     source it as real and common. The rotation fault is taught in the layers.
   - **Small-motion zoom** (4 shrugs, wrist curl; likely also the 4 calf raises, whose heel travel of about 10 cm is
     about 15 px at the reference 146.29 px/m, est.): `camera.maxScale`, with an alt text that says the view is
@@ -152,13 +153,13 @@ fewer users is approved on its own batch sheet.
 | supine | 15 | `dumbbell_bench_press` (pilot A, bench); `crunch` (pilot B, floor); `inverted_row` (LB1, under a bar) | `rootOnSeat` does not fit lying poses; use `checks {plane}` (probe A) |
 | plank | 9 | `plank` (pilot A, hold); `push_up` (pilot B) | |
 | split | 9 | `reverse_lunge` (pilot A) | |
-| single leg | 6 | `single_leg_romanian_deadlift` (pilot A; also shows the drawable-fault rule) | |
+| single leg | 6 | `single_leg_romanian_deadlift` (pilot A) | |
 | airborne | 5 | `box_jump` (pilot A) | `root.at` is free |
 | incline | 4 | `incline_dumbbell_press` (pilot A) | |
 | support | 4 | `one_arm_dumbbell_row` (LB3, approved before LB7's dips) | |
 | kneel | 3 | `assisted_pull_up` (LB1) | no contact IK; angles plus a `checks` plane (probe C) |
 | engine-drawn front view (22 ids) | 22 | `upright_row` (pilot A); falls back to the cable version if the barbell front view fails | today front view is proven only by the hand-drawn lateral raise |
-| engine `dumbbell` primitive (28 ids) | 28 | `dumbbell_biceps_curl` (pilot A) | the approved lateral raise is hand-drawn (`ref-src`) |
+| engine `dumbbell` primitive (28 ids) | 28 | `dumbbell_biceps_curl` (pilot A; also shows the drawable-fault rule) | the approved lateral raise is hand-drawn (`ref-src`) |
 | standing overhead press | 4 | `barbell_overhead_press` (pilot A) | probe E |
 | view conflicts | 2 | `dumbbell_fly`, `bent_over_dumbbell_rear_delt_fly` (pilot A spikes, early go/no-go) | census 4.3 |
 | floor-sit, prone, bridge, quadruped (2 each); decline, wall (1 each) | 10 | the first user, on its own batch sheet | |
@@ -635,7 +636,7 @@ hand-authored · pA / pB = anchor approved on pilot A / pilot B.
   - It must be answered before LB1's `straight_arm_pulldown` (hinge) and `inverted_row` (supine) start, and before
     any LB2 child. LB1's D plates need only the 8, so they can start first.
   - Plates:
-    - `dumbbell_biceps_curl` (dumbbell primitive, CURL);
+    - `dumbbell_biceps_curl` (dumbbell primitive, CURL, drawable-fault);
     - `upright_row` (engine front view);
     - `barbell_overhead_press`;
     - `dumbbell_bench_press` (BENCH, supine);
@@ -643,7 +644,7 @@ hand-authored · pA / pB = anchor approved on pilot A / pilot B.
     - `dumbbell_shoulder_press` (SEATPRESS, `inclineBench`);
     - `barbell_row` (HROW);
     - `romanian_deadlift` (HINGE);
-    - `single_leg_romanian_deadlift` (single leg, drawable-fault);
+    - `single_leg_romanian_deadlift` (single leg);
     - `barbell_shrug` (SHRUG, zoom F1);
     - `reverse_lunge` (SPLIT);
     - `box_jump` (airborne);
