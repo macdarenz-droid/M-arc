@@ -692,5 +692,8 @@
     "remove": [],
     "why": "exercises.json lists chest primary, front_delts and triceps secondary; c12 and c13 support all three. No change."
   },
-  "anchorSource": "ace-db-chest-press"
+  "anchorSource": "ace-db-chest-press",
+  "plateFacts": [],
+  "tempo": [{"phase":"Lower","s":2,"move":true},{"phase":"Press","s":1,"move":true}],
+  "topFault": "arch"
 }

@@ -587,5 +587,8 @@
       "c13",
       "c15"
     ]
-  }
+  },
+  "plateFacts": [],
+  "tempo": [{"phase":"Work","s":15,"move":true},{"phase":"Rest","s":15}],
+  "topFault": "hike"
 }

@@ -47,6 +47,46 @@ describe('LIB-8M A6: the 14 pinned cards and quotes are the research bytes', () 
   });
 });
 
+// the ruled topFault per id (PILOT A TOPFAULT #109 6258287101, ruled 6258289883, D-LIB8M-TF1)
+const TOPFAULT: Record<string, string> = {
+  incline_dumbbell_press: 'arch', dumbbell_shoulder_press: 'behind', barbell_overhead_press: 'elbows', barbell_row: 'swing',
+  romanian_deadlift: 'round', single_leg_romanian_deadlift: 'round', mountain_climbers: 'hike', dumbbell_bench_press: 'arch',
+  dumbbell_biceps_curl: 'wrist-bend',   // drawable false: the bent wrist (c6), not the drawn 'elbows' (D-LIB8M-TF1 4)
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const builtTempo = (rows: any[], t: any) => rows.filter(r => !(r.from === 'pause' && !(t.pause > 0)))
+  .map(r => { const s = 'constant' in r ? r.constant : t[r.from]; return r.move ? { phase: r.phase, s, move: true } : { phase: r.phase, s }; });
+
+describe('LIB-8M A7: card keys and the tempo map', () => {
+  const map = JSON.parse(read('tools/plates/library/pilot-a/tempo.json')).rows;
+  it('tempo.json has one row list per pinned id; every constant has a claim and a verbatim quote of that claim', () => {
+    expect(Object.keys(map).sort()).toEqual([...PINNED].sort());
+    for (const id of PINNED) for (const r of map[id]) {
+      expect('from' in r !== 'constant' in r, `${id} ${r.phase}: exactly one of from/constant`).toBe(true);
+      if ('from' in r) expect(['up', 'down', 'pause']).toContain(r.from);
+      else {
+        const claim = JSON.parse(read(`docs/research/howto/cards/${id}.json`)).claims.find((c: any) => c.id === r.claim);
+        expect(claim?.quotes.some((q: any) => q.text === r.quote), `${id} ${r.phase}: quote of ${r.claim}`).toBe(true);
+      }
+    }
+  });
+  it.each(Object.keys(TOPFAULT))('%s: exactly the three keys, its tempo from the map, its ruled topFault', async id => {
+    const text = read(`docs/research/howto/cards/${id}.json`), card = JSON.parse(text);
+    expect(Object.keys(card).slice(-3)).toEqual(['plateFacts', 'tempo', 'topFault']);
+    expect(Object.keys(JSON.parse(withoutKeys(text)))).toEqual(Object.keys(card).slice(0, -3));
+    expect(card.tempo).toEqual(builtTempo(map[id], card.plate.tempo));
+    const spec = (await import(/* @vite-ignore */ url(`tools/plates/library/specs/${id}.mjs`))).default;
+    expect(JSON.stringify(card.tempo)).toBe(JSON.stringify(spec.tempo));
+    expect(card.topFault).toBe(TOPFAULT[id]);
+    expect(Array.isArray(card.plateFacts)).toBe(true);
+    for (const f of card.plateFacts) {
+      expect(f.kind).toBe('angle');
+      expect('joint' in f && f.measure === true, `${id}: one form per fact`).toBe(false);
+      expect(card.claims.some((c: any) => c.id === f.claim)).toBe(true);
+    }
+  });
+});
+
 describe('LIB-8M A11: rows, pages and held ids', () => {
   const raw = read('tools/plates/library/batches/pilot-a.json'), batch = JSON.parse(raw);
   it('batches/pilot-a.json holds exactly the 14 pinned ids, each once, mode H, census view, one stage', () => {

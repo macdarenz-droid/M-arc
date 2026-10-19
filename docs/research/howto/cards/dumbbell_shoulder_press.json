@@ -551,5 +551,8 @@
   "anchorSource": "ace-seated-ohp",
   "gaps": [
     "tier-A way out: the only shown way out is a spotter; no read source gives a seated failed-rep way out without one (LR-30; LIB-WAYOUT)"
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [{"phase":"Press","s":1,"move":true},{"phase":"Lower","s":2,"move":true}],
+  "topFault": "behind"
 }

@@ -701,5 +701,8 @@
   "anchorSource": "gentilcore-slrdl",
   "gaps": [
     "tier-A way out: no read source says how to end a failed or off-balance rep on this exercise (LIB-WAYOUT)"
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [{"phase":"Lower","s":2,"move":true},{"phase":"Stand","s":1,"move":true},{"phase":"Balance","s":1}],
+  "topFault": "round"
 }

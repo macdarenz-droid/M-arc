@@ -716,5 +716,8 @@
   "anchorSource": "sl-barbell-row",
   "gaps": [
     "tier-A way out: no read source says how to set the bar down or fail a stuck rep on this exercise (LIB-WAYOUT)"
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [{"phase":"Pull","s":1,"move":true},{"phase":"Lower","s":2,"move":true}],
+  "topFault": "swing"
 }

@@ -659,5 +659,8 @@
     "remove": [],
     "why": "exercises.json: upper_chest primary; front_delts, triceps, chest secondary. c2 supports upper_chest and front_delts, and triceps (Rodríguez-Ridao: similar triceps activity at all inclines, barbell data); c12 supports chest. No change."
   },
-  "anchorSource": "ace-incline-press"
+  "anchorSource": "ace-incline-press",
+  "plateFacts": [{"kind":"angle","measure":true,"pose":"start","deg":45,"claim":"c1"}],
+  "tempo": [{"phase":"Lower","s":2,"move":true},{"phase":"Press","s":1,"move":true}],
+  "topFault": "arch"
 }

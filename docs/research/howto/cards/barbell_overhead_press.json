@@ -765,5 +765,8 @@
   "anchorSource": "stronglifts-ohp",
   "gaps": [
     "safety crossbar height: no read source gives the crossbar height for the overhead press; plate.equipment keeps it as a drawing note only (LR-3)"
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [{"phase":"Press","s":1,"move":true},{"phase":"Hold","s":1},{"phase":"Lower","s":2,"move":true}],
+  "topFault": "elbows"
 }

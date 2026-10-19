@@ -620,5 +620,8 @@
     "remove": [],
     "why": "biceps as primary (c11: biceps activation, Oliveira 2009) and forearms as secondary (c11: brachioradialis, Marcolin 2018; StrengthLog 'forearm flexors') both match exercises.json. StrengthLog also names brachialis, which is text-only."
   },
-  "anchorSource": "sl-dbcurl"
+  "anchorSource": "sl-dbcurl",
+  "plateFacts": [],
+  "tempo": [{"phase":"Curl","s":1,"move":true},{"phase":"Lower","s":2,"move":true}],
+  "topFault": "wrist-bend"
 }
