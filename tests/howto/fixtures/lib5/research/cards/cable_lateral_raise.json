@@ -1,0 +1,20 @@
+{
+ "$comment": "LIB-5 S3 fixture card (D-LIB5-FIXTURE 4): scratch. Never placed under docs/research/howto/cards; written over E1's CARD_FILE only in a temp copy. Its plateFacts equal E1's measured fact, and its tempo is built from the test's fixture map row and plate.tempo below.",
+ "id": "cable_lateral_raise",
+ "libId": "lib_cable_lateral_raise",
+ "scratch": true,
+ "claims": [
+  { "id": "c1", "text": "Fixture: the elbow ends about 146.5 degrees from straight.", "tags": ["FIXTURE"], "sources": ["lib5-fixture"], "quotes": [{ "source": "lib5-fixture", "text": "Fixture quote: elbow 146.5 degrees at the end.", "where": "fixture" }] },
+  { "id": "c2", "text": "Fixture: 1 s up, 2 s down, 0.5 s held after the pull.", "tags": ["FIXTURE"], "sources": ["lib5-fixture"], "quotes": [{ "source": "lib5-fixture", "text": "Fixture quote: 1 second up, 2 seconds down, half a second hold.", "where": "fixture" }] },
+  { "id": "c3", "text": "Fixture: rest 0.5 s between reps.", "tags": ["FIXTURE"], "sources": ["lib5-fixture"], "quotes": [{ "source": "lib5-fixture", "text": "Fixture quote: rest half a second between reps.", "where": "fixture" }] },
+  { "id": "c4", "text": "Fixture: the legs kick to swing the body up.", "tags": ["FIXTURE"], "sources": ["lib5-fixture"], "quotes": [{ "source": "lib5-fixture", "text": "Fixture quote: the legs kick to swing up.", "where": "fixture" }] }
+ ],
+ "sources": [{ "id": "lib5-fixture", "url": "fixture:lib5", "title": "LIB-5 S3 fixture source (not a real source)", "kind": "fixture", "access": "full", "checked": "2026-10-18" }],
+ "plate": {
+  "tempo": { "up": 1, "down": 2, "pause": 0.5, "claim": "c2" },
+  "mistake": { "what": "The legs kick to swing the body up.", "claim": "c4", "drawable": true }
+ },
+ "plateFacts": [{ "kind": "angle", "joint": "elbow.r", "pose": "end", "deg": 146.5, "claim": "c1" }],
+ "tempo": [{ "phase": "Pull", "s": 1, "move": true }, { "phase": "Hold", "s": 0.5 }, { "phase": "Lower", "s": 2, "move": true }, { "phase": "Rest", "s": 0.5 }],
+ "topFault": "kick"
+}

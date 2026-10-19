@@ -1,0 +1,175 @@
+{
+ "id": "shared-back-pain-box",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "nhs-back",
+   "text": "Immediate action required: Call 999 or go to A&E if:",
+   "status": "verbatim",
+   "closest": "Immediate action required: Call 999 or go to A&E if:",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nhs-back",
+   "text": "pain, tingling, weakness or numbness in both legs",
+   "status": "verbatim",
+   "closest": "pain, tingling, weakness or numbness in both legs",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nhs-back",
+   "text": "a loss of feeling around your genitals or anus",
+   "status": "verbatim",
+   "closest": "a loss of feeling around your genitals or anus",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nhs-back",
+   "text": "changes in your bladder or bowels, such as difficulty peeing, or peeing or pooing yourself",
+   "status": "verbatim",
+   "closest": "changes in your bladder or bowels, such as difficulty peeing, or peeing or pooing yourself",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nhs-back",
+   "text": "changes in how your penis or vagina feels during sex, not being able to get or keep an erection, or not being able to orgasm",
+   "status": "verbatim",
+   "closest": "changes in how your penis or vagina feels during sex, not being able to get or keep an erection, or not being able to orgasm",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nhs-back",
+   "text": "chest pain",
+   "status": "verbatim",
+   "closest": "chest pain",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "nhs-back",
+   "text": "it started after a serious accident, such as a car accident",
+   "status": "verbatim",
+   "closest": "it started after a serious accident, such as a car accident",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "nhs-back",
+   "text": "Non-urgent advice: See a GP if:",
+   "status": "verbatim",
+   "closest": "Non-urgent advice: See a GP if:",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "nhs-back",
+   "text": "it does not improve after treating it at home for a few weeks",
+   "status": "verbatim",
+   "closest": "it does not improve after treating it at home for a few weeks",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "nhs-back",
+   "text": "it's stopping you doing your day-to-day activities",
+   "status": "verbatim",
+   "closest": "it's stopping you doing your day-to-day activities",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "nhs-back",
+   "text": "you've lost weight without trying to",
+   "status": "verbatim",
+   "closest": "you've lost weight without trying to",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "nhs-back",
+   "text": "there's a lump or swelling in your back, or your back has changed shape",
+   "status": "verbatim",
+   "closest": "there's a lump or swelling in your back, or your back has changed shape",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "nhs-back",
+   "text": "it does not improve after resting or is worse at night",
+   "status": "verbatim",
+   "closest": "it does not improve after resting or is worse at night",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "nhs-back",
+   "text": "it's worse when sneezing, coughing or pooing",
+   "status": "verbatim",
+   "closest": "it's worse when sneezing, coughing or pooing",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "nhs-back",
+   "text": "it's coming from the top of your back (between your shoulders), rather than your lower back",
+   "status": "verbatim",
+   "closest": "it's coming from the top of your back (between your shoulders), rather than your lower back",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "nhs-back",
+   "text": "you're worried about the pain or you're struggling to cope",
+   "status": "verbatim",
+   "closest": "you're worried about the pain or you're struggling to cope",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "nhs-back",
+   "text": "Urgent advice: Ask for an urgent GP appointment or get help from 111 if:",
+   "status": "verbatim",
+   "closest": "Urgent advice: Ask for an urgent GP appointment or get help from 111 if:",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "nhs-back",
+   "text": "you feel hot, cold, shivery or generally unwell",
+   "status": "verbatim",
+   "closest": "you feel hot, cold, shivery or generally unwell",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "nhs-back",
+   "text": "it's severe pain that starts suddenly, or it's getting worse quickly",
+   "status": "verbatim",
+   "closest": "it's severe pain that starts suddenly, or it's getting worse quickly",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "nhs-back",
+   "text": "It usually improves within a few weeks but can sometimes last longer or keep coming back.",
+   "status": "verbatim",
+   "closest": "It usually improves within a few weeks but can sometimes last longer or keep coming back.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "nhs-back",
+   "text": "There are specific exercises and stretches you can do to help with back pain. But stop if your pain gets worse and see a GP for advice.",
+   "status": "verbatim",
+   "closest": "There are specific exercises and stretches you can do to help with back pain. But stop if your pain gets worse and see a GP for advice.",
+   "note": ""
+  }
+ ]
+}

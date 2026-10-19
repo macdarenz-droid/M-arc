@@ -1,0 +1,823 @@
+{
+  "id": "hanging_leg_raise",
+  "libId": "lib_hanging_leg_raise",
+  "name": "Hanging Leg Raise",
+  "family": "Hip flexion and leg raise",
+  "tier": "A",
+  "archetype": {
+    "hand": "hang",
+    "contact": [
+      "hang-support"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "The bar must be high enough to hang freely with straight legs and the feet off the floor; jump, or step up on a low stool, to reach it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-hlr",
+        "strengthlog-hlr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hlr",
+          "text": "Jump or step up on a low stool to grasp a high bar so that the body can hang freely without the feet touching the floor.",
+          "where": "Execution, step 1"
+        },
+        {
+          "source": "strengthlog-hlr",
+          "text": "Jump up and grab a bar, placed high enough that you can hang from it with straight legs.",
+          "where": "How to Do Hanging Leg Raises, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Hip at the start: each rep starts from, and returns to, a full hang with the legs hanging. Yessis adds a slight arch (neutral or slightly exaggerated) in the lower back at the start. No source gives a hip angle for the start.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-hlr",
+        "catalyst-hlr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hlr",
+          "text": "Assume a full hanging position with a slight arch in the lower back, ie, with a neutral or a slightly exaggerated arched position in the lumbar spine.",
+          "where": "Execution, step 2"
+        },
+        {
+          "source": "catalyst-hlr",
+          "text": "Return the legs to the hanging position under control.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Hip at the end: the straight legs rise until the toes reach the bar, the abs tightening to curl the pelvis up as in a crunch, so the motion is not simply hip flexion.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-hlr"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-hlr",
+          "text": "Without swinging, lift your straight legs up until the toes reach the bar, tightening the abs to curl the pelvis up as you would in a crunch so the motion is not simply hip flexion.",
+          "where": "Instructions"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Expert opinion (not measured): hip flexion reaches its maximum at approximately 30-45 degrees from the vertical; after that the abs rotate the pelvis backward so the legs keep rising, while the leg-hip joint angle stays the same. The numbers are the source's words, not converted.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "yessis-hlr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hlr",
+          "text": "As hip flexion reaches it maximum range of motion (approximately 30-45 degrees from the vertical position) the hips and pelvic girdle maintain their position via isometric contraction of the hip flexors.",
+          "where": "Muscle Joint Actions"
+        },
+        {
+          "source": "yessis-hlr",
+          "text": "The leg-hip joint angle remains the same as the pelvis is rotated backward (the top of the pelvis moves backward).",
+          "where": "Muscle Joint Actions"
+        },
+        {
+          "source": "yessis-hlr",
+          "text": "The abdominals do not begin to shorten until the thighs reach approximately the 30-45 degree angle from the vertical.",
+          "where": "Training Tips"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Start with the bent-knee version, about half as hard; once it is easy, move to straight legs, working up to touching the bar with the feet.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-hlr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hlr",
+          "text": "When first attemtping this exercise, begin with the bent knee variant which is half as difficult as the straight leg variant.",
+          "where": "Training Tips"
+        },
+        {
+          "source": "yessis-hlr",
+          "text": "When the bent leg version becomes easy, do the exercise with straight legs.",
+          "where": "Execution"
+        },
+        {
+          "source": "yessis-hlr",
+          "text": "Work up to being able to touch the bar with the feet with straight legs.",
+          "where": "Execution"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Do not swing: the body is perfectly still before the legs start to rise, and the legs are lifted without swinging.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yessis-hlr",
+        "strengthlog-hlr"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hlr",
+          "text": "Do not swing the body when executing this exercise. Be sure the body is perfectly still when you begin raising the legs.",
+          "where": "Training Tips"
+        },
+        {
+          "source": "strengthlog-hlr",
+          "text": "Without swinging, lift your legs as high as you can in front of you.",
+          "where": "How to Do Hanging Leg Raises, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The hanging version is potentially the easiest leg raise to do with bad form, because users may swing to cheat with momentum. How often this happens is not measured.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "wiki-leg-raise"
+      ],
+      "quotes": [
+        {
+          "source": "wiki-leg-raise",
+          "text": "easiest to use bad form on, because users may use a swinging motion to 'cheat' by building up momentum.",
+          "where": "Angles, Hanging"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "If the abs are not properly engaged, the spine can hyperextend into an anterior (forward) pelvic tilt; to target the rectus abdominis the pelvis should go into posterior (backward) tilt.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "wiki-leg-raise"
+      ],
+      "quotes": [
+        {
+          "source": "wiki-leg-raise",
+          "text": "If the abs are not properly engaged, the spine can easily hyperextend and go into anterior pelvic tilt. It should be going into posterior pelvic tilt if the movement is being done to target the rectus abdominis.",
+          "where": "Angles, Hanging"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "On a pull-up bar, control the speed to minimise swinging, and lower the legs with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-hlr",
+        "strengthlog-hlr"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-hlr",
+          "text": "If performing from pull-up bars, control the speed to minimize swinging.",
+          "where": "Notes"
+        },
+        {
+          "source": "strengthlog-hlr",
+          "text": "Lower your legs again, with control.",
+          "where": "How to Do Hanging Leg Raises, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Tempo: Yessis holds the top for approximately one to two seconds, then returns the legs and pauses momentarily; no source gives seconds for the lift or the lowering. ACSM's 1-2 s up and 1-2 s down is stated for intermediate to advanced heavy training, so the plate's 2 s up and 2 s down are a drawing convention inside it, and the 1 s top pause is the low end of Yessis's one to two seconds.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "yessis-hlr",
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "yessis-hlr",
+          "text": "Hold the up position for approximately one-two seconds to ensure maximum shortening and tension of the abdominals.",
+          "where": "Execution"
+        },
+        {
+          "source": "yessis-hlr",
+          "text": "Then pause momentarily and repeat.",
+          "where": "Execution"
+        },
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC).",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Programming and load: sets of 10-30+ reps; partial or bent-knee raises lead up to the full movement; strong athletes add ankle weights or a dumbbell between the ankles, and Yessis adds weight only once straight legs touch the bar on every rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-hlr",
+        "yessis-hlr"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-hlr",
+          "text": "Hanging leg raises can be performed in sets of 10-30+ reps. Strong athletes can add weight with ankle weights or holding a dumbbell between the ankles.",
+          "where": "Programming"
+        },
+        {
+          "source": "catalyst-hlr",
+          "text": "Partial raises or raises with bent knees can be used to progress athletes to the full movement if necessary.",
+          "where": "Variations"
+        },
+        {
+          "source": "yessis-hlr",
+          "text": "When you can do straight leg raises with the feet touching the bar on each repetition then you should add more weight.",
+          "where": "Training Tips"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Modelled in 14 men, the hanging straight leg raise created about 3000 N of spine compression and the highest abdominal challenge of the exercises tested (over 130% MVC rectus abdominis, 88% MVC external oblique).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "mcgill2015"
+      ],
+      "quotes": [
+        {
+          "source": "mcgill2015",
+          "text": "On average, the hanging straight leg raise created approximately 3000 N of spine compression while the body saw created less than 2500 N.",
+          "where": "abstract"
+        },
+        {
+          "source": "mcgill2015",
+          "text": "The hanging straight leg raise created the highest challenge to the abdominal wall (>130% MVC in rectus abdominis, 88% MVC in external oblique).",
+          "where": "abstract"
+        },
+        {
+          "source": "mcgill2015",
+          "text": "Fourteen males performed the exercises while muscle activity, external force and 3D body segment motion were recorded. A sophisticated and anatomically detailed 3D model used muscle activity and body segment kinematics to estimate muscle force",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "The exercise trains the abs (in trunk flexion) and the hip flexors (through a long range of motion).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "catalyst-hlr",
+        "strengthlog-hlr"
+      ],
+      "quotes": [
+        {
+          "source": "catalyst-hlr",
+          "text": "The hanging leg raise strengthens the abs in trunk flexion, and the hip flexors through a long range of motion.",
+          "where": "Purpose"
+        },
+        {
+          "source": "strengthlog-hlr",
+          "text": "Hanging leg raises train your abs and your hip flexors.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "In lying and sitting exercises, the hip flexors were highly active only when the hip flexed, and lifting both legs together needed the abdominal muscles. Not measured on a bar, so indirect for the hanging raise.",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "andersson1997"
+      ],
+      "quotes": [
+        {
+          "source": "andersson1997",
+          "text": "The hip flexors were highly activated only in exercises involving hip flexion, either lifting the whole upper body or the legs.",
+          "where": "abstract"
+        },
+        {
+          "source": "andersson1997",
+          "text": "Bilateral, but not unilateral, leg lifts required activation of abdominal muscles.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In a lying isometric double leg lift, a posterior (backward) pelvic tilt gave more upper and lower rectus abdominis activity than an anterior tilt. Not measured on a bar, so indirect support for curling the pelvis.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "workman2008"
+      ],
+      "quotes": [
+        {
+          "source": "workman2008",
+          "text": "The Janda sit-up and the posterior tilt were significantly greater (p < 0.01 and p < 0.05, respectively) than the anterior tilt for the URA and LRA muscles.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "With the arms high overhead the space under the shoulder roof gets smaller and pressure rises (measured in pull-ups; applied to the hang by reasoning).",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "prinold2016"
+      ],
+      "quotes": [
+        {
+          "source": "prinold2016",
+          "text": "High arm elevation during pull-ups reduces sub-acromial space and increases pressure, increasing the risk of impingement injury.",
+          "where": "Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Textbook grip guidance (NSCA editors) is to perform all grips with the thumbs around the bar. Written for barbell lifts; applied to the hanging bar by inference.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "baechle-earle"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-earle",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Grip Selection and Location drill"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (35 degrees of extension) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including flexion (curled forward). Applied to holding a bar by reasoning, not measured on this exercise.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "odriscoll1992"
+      ],
+      "quotes": [
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength and wrist position were recorded in the self-selected position and then again while the subjects voluntarily deviated the wrist randomly into flexion, extension, or radial or ulnar deviation of 10 to 15 degrees.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "The self-selected position was 35 degrees of extension and 7 degrees of ulnar deviation.",
+          "where": "abstract"
+        },
+        {
+          "source": "odriscoll1992",
+          "text": "Grip strength was significantly less in any position of deviation from this self-selected position, even after accounting for fatigue.",
+          "where": "abstract"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "yessis-hlr",
+      "url": "https://doctoryessis.com/2013/01/01/hanging-leg-raise/",
+      "title": "Hanging Leg Raise (Dr. Yessis SportLab)",
+      "kind": "coach",
+      "year": 2013,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "catalyst-hlr",
+      "url": "https://catalystathletics.com/exercise/45/Hanging-Leg-Raise/",
+      "title": "Hanging Leg Raise (Catalyst Athletics exercise library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "strengthlog-hlr",
+      "url": "https://www.strengthlog.com/hanging-leg-raise/",
+      "title": "How to Do Hanging Leg Raise: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "wiki-leg-raise",
+      "url": "https://en.wikipedia.org/wiki/Leg_raise",
+      "title": "Leg raise (Wikipedia)",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (Med Sci Sports Exerc)",
+      "kind": "guideline",
+      "year": 2009,
+      "pmid": "19204579",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "mcgill2015",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25111163/",
+      "title": "Muscle activity and spine load during anterior chain whole body linkage exercises: the body saw, hanging leg raise and walkout from a push-up (McGill, Andersen, Cannon, J Sports Sci)",
+      "kind": "peer-reviewed",
+      "year": 2015,
+      "pmid": "25111163",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "andersson1997",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/9118976/",
+      "title": "Abdominal and hip flexor muscle activation during various training exercises (Andersson et al., Eur J Appl Physiol)",
+      "kind": "peer-reviewed",
+      "year": 1997,
+      "pmid": "9118976",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "workman2008",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/18714231/",
+      "title": "Influence of pelvis position on the activation of abdominal and hip flexor muscles (Workman et al., J Strength Cond Res)",
+      "kind": "peer-reviewed",
+      "year": 2008,
+      "pmid": "18714231",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "prinold2016",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26383875/",
+      "title": "Scapula kinematics of pull-up techniques: Avoiding impingement risk with training changes (Prinold and Bull, J Sci Med Sport)",
+      "kind": "peer-reviewed",
+      "year": 2016,
+      "pmid": "26383875",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "baechle-earle",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location, excerpt from Weight Training: Steps to Success (Baechle and Earle, Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-17"
+    },
+    {
+      "id": "odriscoll1992",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+      "title": "The relationship between wrist position, grasp size, and grip strength (O'Driscoll et al., J Hand Surg Am)",
+      "kind": "peer-reviewed",
+      "year": 1992,
+      "pmid": "1538102",
+      "access": "abstract",
+      "checked": "2026-10-17"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "census",
+    "equipment": "Fixed overhead bar high enough that the body hangs freely with straight legs, feet off the floor (c1); floor line.",
+    "start": "Full hang, legs hanging straight under the bar, body perfectly still (c2, c1, c6). No source gives a start hip angle; Yessis starts with a slight lower-back arch (c2).",
+    "end": "Straight legs raised until the toes reach the bar, pelvis curled up by the abs as in a crunch (c3); pelvis in posterior tilt, not hyperextended (c8). No end hip angle is drawn: Yessis's approximately 30-45 degrees (c4) is where hip flexion stops while the legs keep rising, and the page does not say which vertical it is measured from (notes[0]).",
+    "checkpoints": [
+      {
+        "label": "Still start",
+        "what": "The body is perfectly still before the legs start to rise.",
+        "claim": "c6"
+      },
+      {
+        "label": "Pelvis curls up",
+        "what": "Tighten the abs to curl the pelvis up, as in a crunch.",
+        "claim": [
+          "c3",
+          "c8"
+        ]
+      },
+      {
+        "label": "Toes to bar",
+        "what": "Lift the straight legs until the toes reach the bar.",
+        "claim": "c3"
+      }
+    ],
+    "mistake": {
+      "what": "Swinging: the body swings to build momentum and kick the legs up.",
+      "why": "Yessis and StrengthLog say not to swing (c6), and Catalyst says to lift without swinging and, on a pull-up bar, to control the speed to minimise swinging (c3, c9). The hanging raise is described as potentially the easiest leg raise to cheat with a swing (c7). How often it happens is not measured.",
+      "claim": [
+        "c7",
+        "c6",
+        "c3",
+        "c9"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no frequency word (Wikipedia's \"easiest to use bad form on\" and \"may use a swinging motion\", c7, say what can happen, not how often), no common-mistakes list, and no quote ties a named fault to harm. Swinging is the fault the most read sources warn against (Yessis and StrengthLog c6, Catalyst c9, Wikipedia c7). Scan (2026-10-18): Yessis's hip-flexor involvement that \"has been negatively criticized by many\" is about muscle activity; Prinold's \"Avoiding impingement risk with training changes\" (c16) is pull-up data on the overhead arm position, not a named fault. Neither counts."
+    },
+    "tells": [
+      {
+        "text": "Body perfectly still before each lift",
+        "claim": "c6"
+      },
+      {
+        "text": "Pelvis curls up at the top",
+        "claim": "c3"
+      },
+      {
+        "text": "Legs lowered with control",
+        "claim": "c9"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": "c10",
+      "text": "Top hold approximately one-two seconds (c10, source seconds; 1 s drawn). Up and down: no source gives seconds; 2 s each is a drawing convention inside ACSM 1-2 s, which is stated for intermediate to advanced heavy training (LR-15, WEAK)."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Not sourced on this card (the sources say only to hang from the bar): drawn as the bar primitive natural overhand hang grip (LR-4 drawing convention).",
+    "width": "Not sourced on this card.",
+    "thumb": "Wrapped around the bar (c17; textbook barbell guidance, applied by inference).",
+    "handContact": "Not sourced on this card (LR-4 drawing convention).",
+    "wrist": "Not curled forward: grip is weaker when the wrist moves into flexion (c18).",
+    "claims": [
+      "c17",
+      "c18"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Use a bar high enough that you hang with straight legs, feet off the floor. Jump, or step up on a low stool, to reach it.",
+      "claim": "c1"
+    },
+    {
+      "step": "Keep your thumbs around the bar.",
+      "claim": "c17"
+    },
+    {
+      "step": "Hang fully and wait until your body is perfectly still.",
+      "claim": [
+        "c2",
+        "c6"
+      ]
+    },
+    {
+      "step": "New to it? Start with bent knees; go to straight legs once that is easy.",
+      "claim": "c5"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Start from a still, full hang; no swing.",
+      "claim": [
+        "c2",
+        "c6"
+      ]
+    },
+    {
+      "point": "Lift the straight legs until the toes reach the bar.",
+      "claim": "c3"
+    },
+    {
+      "point": "Tighten the abs to curl the pelvis up, as in a crunch.",
+      "claim": "c3"
+    },
+    {
+      "point": "Pelvis tilts back at the top; the lower back does not over-arch.",
+      "claim": "c8"
+    },
+    {
+      "point": "Control the speed, and lower the legs with control.",
+      "claim": "c9"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging the body to build momentum and kick the legs up.",
+      "fix": "Start each rep perfectly still and control the speed. If you cannot lift without swinging, bend your knees or do partial raises.",
+      "claim": [
+        "c7",
+        "c6",
+        "c9",
+        "c11"
+      ]
+    },
+    {
+      "mistake": "Lifting only the legs: the abs stay loose and the lower back over-arches into a forward pelvic tilt.",
+      "fix": "Tighten your abs and curl your pelvis up as in a crunch, so the move is not only the hips bending.",
+      "claim": [
+        "c8",
+        "c3"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "abs",
+        "claim": [
+          "c12",
+          "c13"
+        ]
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hip_flexors",
+        "claim": [
+          "c13",
+          "c14"
+        ]
+      },
+      {
+        "muscleId": "obliques",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of your stomach",
+        "means": "Expected: this raise works the abs very hard.",
+        "fix": "Nothing to fix.",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Front of your hips",
+        "means": "Expected: the hip flexors lift the legs.",
+        "fix": "Curl your pelvis up at the top so the abs work too.",
+        "claim": [
+          "c13",
+          "c3"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Loose abs let the lower back over-arch into a forward pelvic tilt.",
+        "fix": "Tighten your abs and curl your pelvis up; bend your knees until you can.",
+        "claim": [
+          "c8",
+          "c3",
+          "c11"
+        ],
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Spine: the straight-leg hanging raise puts about 3000 N of compression on the spine, estimated in a small lab sample.",
+      "claim": "c12"
+    },
+    {
+      "risk": "Lower back: with loose abs the spine can over-arch into a forward pelvic tilt.",
+      "claim": "c8"
+    },
+    {
+      "risk": "Shoulder: hanging with the arms high overhead narrows the space under the shoulder roof.",
+      "claim": "c16"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "hand",
+      "kind": "hand",
+      "right": "Thumb around the bar, wrist not curled forward.",
+      "wrong": "Wrist curled forward over the bar.",
+      "claim": [
+        "c17",
+        "c18"
+      ]
+    },
+    {
+      "key": "pelvis",
+      "kind": "posture",
+      "right": "Abs tight, pelvis curled up and tilted back at the top.",
+      "wrong": "Lower back over-arched, pelvis tipped forward.",
+      "claim": [
+        "c3",
+        "c8"
+      ]
+    },
+    {
+      "key": "body line",
+      "kind": "posture",
+      "right": "Body perfectly still under the bar before the lift.",
+      "wrong": "Body swinging to kick the legs up.",
+      "claim": [
+        "c6",
+        "c7"
+      ]
+    }
+  ],
+  "loadProgression": {
+    "text": "Start with bent knees or partial raises, then straight legs up to the bar. Add ankle weights or a dumbbell between the ankles only once straight legs touch the bar on every rep.",
+    "claims": [
+      "c5",
+      "c11"
+    ]
+  },
+  "libraryDiff": {
+    "add": [
+      {
+        "muscleId": "obliques",
+        "role": "secondary",
+        "why": "The straight-leg hanging raise reached 88% MVC in the external oblique (c12)."
+      }
+    ],
+    "remove": [],
+    "why": "exercises.json lists abs primary and hip_flexors secondary; both are named by the technique sources (c13) and the EMG (c12, c14). obliques is added (c12)."
+  },
+  "anchorSource": "yessis-hlr",
+  "gaps": [
+    "Tier A: no sourced way to get down from the bar safely (dismount) or to stop mid-set; left out, not invented (LR-3, LIB-WAYOUT).",
+    "Tier A: safeties/J-hooks and a bar path clear of the neck do not apply (bodyweight hang). Load progression is sourced (c5, c11).",
+    "Tier A: no source on this card says what to do if a lower-back ache stays; the back row links the shared back box (pending, LR-23, LR-26).",
+    "Tier A: no source says to move the stool clear of the legs once hanging (golden-B's box-clearance setup line, dropped as unsourced); not shown, not invented (LR-3, LIB-WAYOUT). Added 2026-10-18."
+  ],
+  "tierA": {
+    "wayOut": null
+  },
+  "notes": [
+    "Hip angle: no source gives a start angle (c2: full hang). The end is coach words, toes to the bar (c3). The only numbers are Yessis expert opinion, approximately 30-45 degrees from the vertical where hip flexion stops and the pelvis takes over (c4). The Training Tips sentence names the thighs (\"until the thighs reach approximately the 30-45 degree angle from the vertical\"), but the page has no figure and does not say whether that vertical is the hanging line or straight up, so the words are kept, not converted and not drawn; plate.end draws only toes to the bar and the posterior tilt (c3, c8). Corrected 2026-10-18: the earlier note said the page does not name the thigh.",
+    "Yessis starts with a slight lower-back arch (c2), while Wikipedia names a hyperextended spine with anterior pelvic tilt as the fault (c8). The plate draws the still full hang at the start and the posterior tilt at the top; the start arch is not drawn.",
+    "Yessis also says to inhale and hold the breath during the lift; not used or shown (not a heavy two-leg lift; no other source supports it).",
+    "Grip type, width and hand contact are not stated by any hanging-leg-raise source here: drawing convention (LR-4).",
+    "The Yessis page refused the plain Mozilla/5.0 agent (Mod_Security 406); a full Chrome user-agent string got the live page.",
+    "Leads not used: Escamilla 2006 (hanging knee-up in arm straps, a different exercise), Axler 1997, Juker 1998, ACE abs press release (captain chair), lifting-strap studies.",
+    "Tempo (fact 2): the only seconds sourced are the top hold, approximately one-two seconds (c10, expert opinion). No source gives lifting or lowering seconds for this exercise or for novices; up 2 and down 2 are a drawing convention inside ACSM 2009 1-2 s, which is stated for intermediate to advanced training (LR-15, WEAK)."
+  ]
+}
