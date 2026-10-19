@@ -314,7 +314,7 @@ describe('LIB-7-FIX PK1: words split per key, panels unchanged', () => {
     const lib7 = C.sweep(Object.keys(WORDS_FIXTURE.keys), 8, 'LIB-7 pair keys in da65b13a\'s words');
     for (const k of lib7) expect([k, (await P.pairPanel(k)) === PN.panelHtml(k, pagesOf(k), fixtureWords(k))]).toEqual([k, true]);
     const all = PN.allWords();
-    expect({ ...wordsSplit(all), keys: Object.fromEntries(lib7.map(k => [k, all.keys[k]])) }).toEqual(WORDS_FIXTURE);
+    expect({ ...wordsSplit(all), keys: Object.fromEntries(lib7.map((k: string) => [k, all.keys[k]])) }).toEqual(WORDS_FIXTURE);
     expect(Object.keys(PN.allWords().keys)).toEqual([...P.keysOf()].sort());
   }, 60_000);
   it('no tool, script or test file names panel-words.json, apart from this reader', () => {
