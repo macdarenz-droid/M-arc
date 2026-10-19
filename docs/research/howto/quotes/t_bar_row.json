@@ -250,6 +250,34 @@
       "status": "verbatim",
       "closest": "But stop if your pain gets worse and see a GP for advice.",
       "note": "Re-read 2026-09-30 in the fetched NHS back-pain page."
+    },
+    {
+      "claim": "c23",
+      "source": "mh-uk-t-bar",
+      "text": "Draw your elbows up and back, keeping them close to your body, rowing the weight up as far as possible before the plates make contact with your torso.",
+      "status": "verbatim",
+      "closest": "Draw your elbows up and back, keeping them close to your body, rowing the weight up as far as possible before the plates make contact with your torso."
+    },
+    {
+      "claim": "c23",
+      "source": "mh-uk-t-bar",
+      "text": "Elevate your feet by standing on plates or blocks to increase the range of motion, alternatively you can use smaller plates on the bar for a similar effect.",
+      "status": "verbatim",
+      "closest": "Elevate your feet by standing on plates or blocks to increase the range of motion, alternatively you can use smaller plates on the bar for a similar effect."
+    },
+    {
+      "claim": "c24",
+      "source": "mh-uk-t-bar",
+      "text": "Straddle the bar and hinge at the hips until your torso is near parallel to the ground.",
+      "status": "verbatim",
+      "closest": "Straddle the bar and hinge at the hips until your torso is near parallel to the ground."
+    },
+    {
+      "claim": "c24",
+      "source": "mh-uk-t-bar",
+      "text": "Use a set of gymnastics rings, straps, a rope or even just a towel, passing it under the barbell, behind the plates to create a set of ‘handles’.",
+      "status": "verbatim",
+      "closest": "Use a set of gymnastics rings, straps, a rope or even just a towel, passing it under the barbell, behind the plates to create a set of ‘handles’."
     }
   ]
 }
