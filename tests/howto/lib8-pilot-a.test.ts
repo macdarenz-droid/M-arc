@@ -93,3 +93,29 @@ describe('LIB-8 OHP Mistake arm on the drawn shoulder (ohp-mistake.test.mjs)', (
     expect(tilt >= 25 && tilt <= 35, `forearm tilt ${tilt.toFixed(1)} deg`).toBe(true);
   });
 });
+
+describe('LIB-8M sheet F-lines are LIB-3\'s raised flags (D-LIB8M-SHEET)', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let b: any;
+  beforeAll(async () => { b = await imp('pilot-a/build.mjs'); });
+  const entry = (flags: object) => [{ id: 'lib_plank', f5Element: { where: 'button.plate-callout.m[sag][pressed]', theme: 'midnight', width: 390 }, report: { flags } }];
+  const F1 = { value: 174.22, range: [123.91, 146.29], raised: true }, F5 = { value: 3.57, min: 4.5, raised: true }, F3 = { value: 60, range: [49.3, 82.3], raised: false };
+
+  it('lists only the raised flags, in F order, with no line when the prediction holds', () => {
+    expect(b.qaFlagsOf('plank', entry({ F5, F3, F1 }))).toEqual({ lines: [
+      { id: 'F1', text: 'Scale 174.22 px/m, approved 123.91-146.29' },
+      { id: 'F5', text: 'Tell contrast 3.57, minimum 4.5 (button.plate-callout.m[sag][pressed], midnight, 390 px)' },
+    ], differs: null });
+  });
+  it('prints predicted / measured where they differ', () => {
+    expect(b.qaFlagsOf('plank', entry({ F5, F3: { ...F3, value: 90, raised: true } })).differs).toBe('Predicted F1, F5 / measured F3, F5');
+  });
+  it('refuses an id the report does not hold', () => {
+    expect(() => b.qaFlagsOf('pec_fly', entry({ F5 }))).toThrow(/pec_fly: not in the Do 9 report/);
+  });
+  it('every pinned plate has a critic line and a prediction', () => {
+    const pinned = PJ.plates.filter(p => !(p as { held?: string }).held).map(p => p.id);
+    expect(Object.keys(b.CRITIC).sort()).toEqual([...pinned].sort());
+    for (const id of pinned) expect(b.PREDICTED[id], id).toBeDefined();
+  });
+});

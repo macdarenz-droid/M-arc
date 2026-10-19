@@ -29,6 +29,49 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(
 const TIER_TITLE = { A: 'Tier A: over the face, spinal load, overhead, explosive', B: 'Tier B', C: 'Tier C' };
 const APPROVED_CHROME = { lateral_raise: 'lateral-raise' };
 
+// D-LIB8M-SHEET: the sheet's F-lines are LIB-3's raised flags from the Do 9 report (runQa per id, passed to build() as
+// `qa`); MERGE.md section e's prediction (with D-LIB8M-TF1 4's F7 on the curl) shows as "predicted / measured" where they differ.
+const QA_FLAG = {
+  F1: (f) => `Scale ${r2(f.value)} px/m, approved ${f.range.map(v => r2(v)).join('-')}`,
+  F2: (f) => `Figure box area ${r2(f.value, 3)}, approved ${f.range.map(v => r2(v, 3)).join('-')}`,
+  F3: (f) => `Longest leader ${r2(f.value, 1)} px, approved ${f.range.map(v => r2(v, 1)).join('-')}`,
+  F4: (f) => `${f.value} hand-placed labels, approved ${f.range.join('-')}`,
+  F5: (f, at) => `Tell contrast ${f.value}, minimum ${f.min}${at ? ` (${at.where}, ${at.theme}, ${at.width} px)` : ''}`,
+  F6: (f) => `Drawn in ${f.value} view; the census says ${f.expect}`,
+  F7: (f) => `Mistake draws '${f.value}'; the card's top fault is '${f.expect}' (drawable-fault rule)`,
+};
+const r2 = (v, d = 2) => +Number(v).toFixed(d);
+export const PREDICTED = {
+  barbell_row: ['F4', 'F5'], single_leg_romanian_deadlift: ['F4', 'F5'], dumbbell_bench_press: ['F4', 'F5'], incline_dumbbell_press: ['F4', 'F5'],
+  dumbbell_shoulder_press: ['F4', 'F5'], barbell_overhead_press: ['F5'], romanian_deadlift: ['F5'], upright_row: ['F5'], pec_fly: ['F5'],
+  dumbbell_biceps_curl: ['F4', 'F5', 'F7'], triceps_pushdown: ['F5'], rope_triceps_pushdown: ['F5'], plank: ['F1', 'F5'], mountain_climbers: ['F1', 'F3', 'F5'],
+};
+/** The raised LIB-3 flags of one id from the Do 9 report, in F-number order, and the predicted / measured line if they differ. */
+export function qaFlagsOf(id, qa) {
+  const e = qa.find(x => x.id === `lib_${id}`);
+  if (!e) throw new Error(`${id}: not in the Do 9 report`);
+  const raised = Object.entries(e.report.flags).filter(([, f]) => f.raised).sort(([a], [b]) => a.localeCompare(b));
+  const lines = raised.map(([k, f]) => ({ id: k, text: QA_FLAG[k](f, k === 'F5' ? e.f5Element : null) }));
+  const got = raised.map(([k]) => k).join(', '), want = (PREDICTED[id] ?? []).join(', ');
+  return { lines, differs: got === want ? null : `Predicted ${want || 'none'} / measured ${got || 'none'}` };
+}
+// The critic run each plate's approval rests on (lib4-cards 13.5 panel; medians R1-R7, then R10 where scored; R8, R9 unscored).
+export const CRITIC = {
+  dumbbell_shoulder_press: 'approved, round 1 @ 83735ab (D-LIB8M-CRIT1): 4, 4, 5, 5, 4, 4, 4; R10 5',
+  dumbbell_biceps_curl: 'approved, round 1 @ 83735ab (D-LIB8M-CRIT1): 4, 5, 5, 5, 4, 5, 5',
+  dumbbell_bench_press: 'approved, recheck @ 013f84e (D-LIB8M-CRIT2), no item at 3 or less',
+  triceps_pushdown: 'approved, recheck @ 013f84e (D-LIB8M-CRIT2), no item at 3 or less',
+  rope_triceps_pushdown: 'approved, recheck @ 013f84e (D-LIB8M-CRIT2), no item at 3 or less',
+  pec_fly: 'approved, recheck @ 013f84e (D-LIB8M-CRIT2), no item at 3 or less',
+  plank: 'approved, recheck @ 013f84e (D-LIB8M-CRIT2), no item at 3 or less',
+  upright_row: 'approved, last recheck @ 94c551f (D-LIB8M-CRIT3), every scored item passes',
+  barbell_row: 'approved, wf_cad21b92-9ed @ e6f39ff (carried, D-LIB8M-CARRY)',
+  romanian_deadlift: 'approved, wf_cad21b92-9ed @ e6f39ff (carried, D-LIB8M-CARRY)',
+  single_leg_romanian_deadlift: 'approved, wf_cad21b92-9ed @ e6f39ff (carried, D-LIB8M-CARRY)',
+  barbell_overhead_press: 'approved, wf_cad21b92-9ed @ e6f39ff (carried; tempo strip new, D-LIB8M-CARRY)',
+  mountain_climbers: 'approved, wf_cad21b92-9ed @ e6f39ff (carried, D-LIB8M-CARRY)',
+};
+
 /** Flags F1-F4 from the measures, F6 from the census view, F7 from the plate's `pilot` note; F5 is chrome-identical. */
 export function flagsOf(entry, measures, spec) {
   const f = [];
@@ -86,7 +129,7 @@ const SHEET_CSS = `
 .pg-sha { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; overflow-wrap: anywhere; color: var(--pg-text); }
 `;
 
-export async function build({ draft = false, list: LIST = PILOT, specPath = id => join(LIB, 'specs', `${id}.mjs`), out: OUT = OUT_DIR } = {}) {
+export async function build({ draft = false, qa = null, list: LIST = PILOT, specPath = id => join(LIB, 'specs', `${id}.mjs`), out: OUT = OUT_DIR } = {}) {
   mkdirSync(OUT, { recursive: true });
   const specs = Object.fromEntries(LIST.map(p => [p.id, specPath(p.id)]));
   const missing = LIST.filter(p => !existsSync(specs[p.id])).map(p => p.id);
@@ -143,9 +186,11 @@ export async function build({ draft = false, list: LIST = PILOT, specPath = id =
   sheet = sheet.replace(src[0], '');
   for (const p of LIST) {
     const cid = p.id.replace(/_/g, '-'), s = shots[cid], apId = APPROVED_CHROME[p.closest] ?? p.closest.replace(/_/g, '-');
-    const fl = flags[p.id], spec = specMods[p.id];
+    const spec = specMods[p.id], env = flags[p.id].filter(f => f.id !== 'Note'), notes = flags[p.id].filter(f => f.id === 'Note');
+    const q = qa ? qaFlagsOf(p.id, qa) : null;
+    const fl = [...(q ? q.lines : [{ id: 'LIB-3', text: 'flags not measured: no Do 9 report passed' }]), ...notes];
     const aside = `<aside class="pilot-aside" aria-label="${esc(spec.name)}: review notes">
-  <div class="pilot-meta"><span><b>Tier ${p.tier}</b> · ${esc(p.class)}</span><span>Closest approved: <b>${esc(p.closest.replace(/_/g, ' '))}</b></span>${spec.pilot?.note ? `<span>${esc(spec.pilot.note)}</span>` : ''}<span>Engine report: <b>${rep[p.id].ok ? 'clean' : 'NOT clean'}</b> · ${rep[p.id].measures.pxPerM} px/m · critic scores: pending (supervisor's visual critic)</span></div>
+  <div class="pilot-meta"><span><b>Tier ${p.tier}</b> · ${esc(p.class)}</span><span>Closest approved: <b>${esc(p.closest.replace(/_/g, ' '))}</b></span>${spec.pilot?.note ? `<span>${esc(spec.pilot.note)}</span>` : ''}<span>Engine report: <b>${rep[p.id].ok ? 'clean' : 'NOT clean'}</b> · ${rep[p.id].measures.pxPerM} px/m</span><span>Critic: ${esc(CRITIC[p.id] ?? 'pending')}</span><span>Page order: ${env.length ? esc(env.map(f => f.id).join(', ')) : 'no envelope flag'}</span>${q?.differs ? `<span>${esc(q.differs)}</span>` : ''}</div>
   <ul class="pilot-flags">${fl.length ? fl.map(f => `<li><b>${f.id}</b> ${esc(f.text)}</li>`).join('') : '<li class="none">No flags</li>'}</ul>
   <div class="pilot-shots">
     <figure>${img(s.mistake, `${spec.name}: Mistake, Silent Black`, 'shot')}<figcaption>Mistake · ${esc((spec.mistake?.tells ?? []).map(t => t.text.replace(/<br\s*\/?>/g, ' ')).join(' · '))}</figcaption></figure>
@@ -161,9 +206,9 @@ export async function build({ draft = false, list: LIST = PILOT, specPath = id =
   // LIB-12 hand renders (sheet only): one row per hand kind, Silent Black and Paper, with its flags
   if (HANDS.length) {
     const rows = HANDS.map(h => `<div class="pilot-row" id="row-hand-${h.key}"><aside class="pilot-aside" aria-label="${esc(h.name)}: hand render">
-  <div class="pilot-meta"><span><b>${esc(h.name)}</b> · ${esc(h.id.replace(/_/g, ' '))}</span></div>
+  <div class="pilot-meta"><span><b>${esc(h.name)}</b>${h.id ? ` · ${esc(h.id.replace(/_/g, ' '))}` : ''}</span></div>
   <ul class="pilot-flags">${h.flags.map(f => `<li>${esc(f)}</li>`).join('')}</ul>
-  <div class="pilot-shots">${h.urls.map((u, i) => `<figure>${img(u, `${h.name}: ${i ? 'Paper' : 'Silent Black'}`, 'shot')}<figcaption>${i ? 'Paper' : 'Silent Black'}</figcaption></figure>`).join('')}</div>
+  ${h.urls.length ? `<div class="pilot-shots">${h.urls.map((u, i) => `<figure>${img(u, `${h.name}: ${i ? 'Paper' : 'Silent Black'}`, 'shot')}<figcaption>${i ? 'Paper' : 'Silent Black'}</figcaption></figure>`).join('')}</div>` : ''}
 </aside></div>`).join('\n');
     const end = sheet.lastIndexOf('\n</main>');
     if (end < 0) throw new Error('sheet: </main> not found');
@@ -188,7 +233,8 @@ export async function build({ draft = false, list: LIST = PILOT, specPath = id =
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const s = await build({ draft: process.argv.includes('--draft') });
+  const qi = process.argv.indexOf('--qa');
+  const s = await build({ draft: process.argv.includes('--draft'), qa: qi > 0 ? JSON.parse(readFileSync(process.argv[qi + 1], 'utf8')) : null });
   console.log(JSON.stringify({ ...s, plates: s.plates.map(p => `${p.tier} ${p.id} ${p.ok ? 'ok' : 'NOT OK'} ${p.flags.join(',')} ${p.issues.join('; ')}`) }, null, 1));
   process.exitCode = s.plates.every(p => p.ok) ? 0 : 1;
 }

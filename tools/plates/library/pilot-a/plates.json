@@ -198,6 +198,14 @@
     "Drawing value (D-LIB12-2), not sourced: bar 28 mm (golden B's value)",
     "Wrist: no number drawn; the front-rack exemption replaces the on-body range"
    ]
+  },
+  {
+   "key": "band",
+   "name": "Band",
+   "images": [],
+   "flags": [
+    "No render: LIB-7 has no band pair yet (hands/hand-band.mjs on #193 @ 55e91e9f); the look at band (plan 2.3) waits for that pair"
+   ]
   }
  ]
 }
