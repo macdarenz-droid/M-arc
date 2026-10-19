@@ -1089,6 +1089,25 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - LIB-3c can merge any time after its delta passes.
 - **Owner:** nothing is owed to him now. The pilot A sheet comes after LIB-8M's critic and QA.
 
+**Update ~03:25 UTC (10-19).**
+- **Train 29 merged** (#267, main `f125edab`): LIB-5 + bundle + BOX-CAP. No app change, so no APK. The BOX-CAP builder is archived.
+- **Train 30 merged** (#269, main `565ea5a4`): LIB-3c #264 @ `4309cfc` (delta PASS, 0 findings; the train tree equals `4309cfc`; CI green on every leg). No app change, so no APK. LIB-8M's Do 9 and LIB-10's qa.mjs are open.
+- **Research:** #268 (R-LB2-27, curl drawable false) merged; `claude/libht-research` @ `f57e7944` is pilot A's <RESEARCH_HEAD>. LB2 stays on `7d7c52e1` (named on #265); every LB2 card is byte-identical on both.
+- **Pilot A critic panel and TOPFAULT** (lib4-cards section 21 @ `47ade203`; #109 6258287101 and 6258289883):
+  - Panel VALID. Approved @ `83735ab`: dumbbell_shoulder_press, dumbbell_biceps_curl. incline_dumbbell_press R5 fails (the arch reads as a belly): fix round 1.
+  - TOPFAULT (14 blind Opus passes): 7 single keys equal firstKey. dumbbell_bench_press answered 'arch' against firstKey 'hips': the tells are reordered. 5 answered 'several' (triceps_pushdown, rope_triceps_pushdown, upright_row, pec_fly, plank): both tells name the card's one fault, so their tells are redrawn (CARDTRUE), followed by one final blind pass on the new tells. The curl (drawable false) has the ruled key 'wrist-bend' (c6); F7 stays raised for the owner's named yes on the sheet.
+  - The pilot A panel is run by hand under scratchpad critic-pa/ and topfault-pa/ (private keys in *-private/).
+  - The plan is amended on `claude/howto-options` @ `a5e87d9e`: SLRDL leaves the drawable-fault list and the curl joins it; the count stays 6.
+- **Lanes (4 of 4 active):**
+  - LIB-8M #109: fix round (incline, bench reorder, 5 tell redraws), then 'PILOT A FIX READY'. The supervisor then runs the final blind pass and one calibrated recheck. Do 7 for the settled ids runs meanwhile; Do 9 follows on a head with main merged.
+  - LIB-7-FIX #193: `5354a38` is red because the D-LIBHANDS-COUNT lines were not raised (source-gate job 117851558354). Nudged at 03:01.
+  - LIB-10 #265 @ `c3195a4`: 5 of 7 drawn (pullover added). Do 6 is open; incline_bb and arnold wait for pilot A on main.
+  - LIB-5 Do 9 #270 (on `claude/lib-5-shared-layers`, restarted from main, `eef8685`): waiting for 'LIB-5 DO9 READY'.
+  - WAITING: LIB-6-PM #181 @ `02ebed5` (its back patches are open now that LIB-5 is on main; resume at the next free slot).
+- **Queue as slots free:** LIB-6-PM back patches, then LIB-12-FIX (after PERKEY lands on #193; card `f7824b5b`), then LIB-7c (`39c71b01`). LIB-12's calibrated hand-view panel (12 ids) runs before PILOT A PIN GO.
+- **Merge order:** unchanged from the 01:00 update, less LIB-3c (merged).
+- **Owner:** nothing is owed to him now. The pilot A sheet comes after the recheck, Do 9 and CARD FIELDS; it carries the curl's F7 question.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
@@ -1653,6 +1672,8 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 13. Lat pulldown (golden B), R4: the "LEAN BACK" angle mark sits at x 268-292, y 450-468, in the V of the elbow, about 85 px above its hip vertex (291,537). It reads as an elbow mark. Supervisor-confirmed (13.5).
 14. Hanging leg raise (golden B), R7: the ceiling line sits level with the SIDE VIEW title (y about 46), and the bar style differs from pull_up's wall arm. The ceiling mount is deliberate (spec: "no wall for the swing to hit"). Flagged by the panel (13.5 round 2); this is a style choice only.
 15. Leg press (golden B): "Knees cave" cannot be seen in a side view (R5 = 2), and the back looks off the pad (R3 = 3). Flagged by the panel (13.5 round 2); the supervisor has not checked them yet.
+16. Pull-up (golden B), R2: the bar bracket ends in a wall plate with no wall, upright or floor line (dark.png x 365-494, y 118-185), so the bar floats. Pilot A panel [3, 3, 4]; supervisor-confirmed (D-LIB8M-CRIT1, lib4-cards 21.1).
+17. Lat pulldown (golden B), R2: the thigh roller at (385, 512) has no post, and the seat base (x 228-362) is not joined to the tower base (x 458 on). Pilot A panel [3, 3, 4]; supervisor-confirmed (21.1).
 
 **First audit, 32 findings (4 P1 + 28 P2): COMPLETE 07:56.**
 
