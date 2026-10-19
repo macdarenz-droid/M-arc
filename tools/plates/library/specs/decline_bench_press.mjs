@@ -182,8 +182,8 @@ export default {
       { kind: 'dashed', pts: [[0, BARM[1], BARM[2] - 0.04], [0, CHIN[1], CHIN[2] + 0.01]] },          // the short way left to the chin and neck
     ],
     tells: [
-      { key: 'high', text: 'Bar lands<br>high', anchor: [0, BARM[1] + 0.04, BARM[2]], cue: 'The bar touches high on your chest instead of the lower chest.' },
-      { key: 'neck', text: 'Near the<br>neck', anchor: { at: 'chin', pose: 'mistake' }, cue: 'The bar comes down close to your neck.' },
+      { key: 'high', text: 'Bar lands<br>high', anchor: { at: 'grip.r', pose: 'mistake', off: [0, -8] }, cue: 'The bar touches high on your chest instead of the lower chest.' },
+      { key: 'neck', text: 'Near the<br>neck', anchor: { at: 'chin', pose: 'mistake' }, box: { left: 96, top: 286 }, cue: 'The bar comes down close to your neck.' },
     ],
   },
   alt: 'Decline bench press, side view. Lying on a bench that falls toward the head, feet hooked under the pads at the high end, the lifter lowers the bar from locked arms to touch the lower chest, then presses back up. Safety arms sit at the sides.',

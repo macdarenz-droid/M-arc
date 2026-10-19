@@ -130,9 +130,9 @@ export default {
   ghosts: { count: 3, parts: ['arm.r', 'bar'] },
   trace: { point: 'grip.r', trim: [12, 12] },
   callouts: [
-    { key: 'upper', text: 'Upper arms<br>vertical', anchor: 'elbow.r', cue: 'Keep your upper arms upright and move only your forearms.' },
-    { key: 'forehead', text: 'Bar to<br>forehead', anchor: 'grip.r', cue: 'Lower the bar slowly to just above your forehead.' },
-    { key: 'wrists', text: 'Wrists<br>neutral', anchor: { at: 'wrist.r', pose: 'start' }, cue: 'Keep your wrists straight, neither bent back nor curled.' },
+    { key: 'upper', text: 'Upper arms<br>vertical', anchor: 'elbow.r', box: { left: 152, top: 182 }, cue: 'Keep your upper arms upright and move only your forearms.' },
+    { key: 'forehead', text: 'Bar to<br>forehead', anchor: 'grip.r', box: { left: 10, top: 250 }, cue: 'Lower the bar slowly to just above your forehead.' },
+    { key: 'wrists', text: 'Wrists<br>neutral', anchor: { at: 'wrist.r', pose: 'start' }, box: { left: 192, top: 118 }, cue: 'Keep your wrists straight, neither bent back nor curled.' },
   ],
   tempo: [{ phase: 'Lower', s: 3, move: true }, { phase: 'Extend', s: 1, move: true }],
   mistake: {
@@ -144,7 +144,7 @@ export default {
       { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [-4, -8] }, to: { at: 'elbow.r', pose: 'mistake', off: [4, -8] } },
     ],
     tells: [
-      { key: 'drift', text: 'Upper arms<br>drift back', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbows swing back toward your head as the bar comes down.' },
+      { key: 'drift', text: 'Arms drift<br>back', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbows swing back toward your head as the bar comes down.' },
     ],
   },
   alt: 'Skull crusher, side view. Lying on a flat bench, head near its end, feet flat, the lifter holds an EZ bar on straight arms over the shoulders and bends only the elbows, upper arms upright, to lower the bar to just above the forehead, then straightens the arms.',

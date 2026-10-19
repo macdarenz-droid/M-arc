@@ -152,7 +152,7 @@ export default {
   datum: [{ x: 'elbow.r', from: 'elbow.r', to: { at: 'grip.r', off: [0, -16] }, mistake: false }],   // plumb through the elbow: the forearm is vertical (c2)
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }],
   callouts: [
-    { key: 'hips', text: 'Hips<br>down', anchor: 'buttock', box: { left: 160, top: 286 }, cue: 'Keep your buttocks on the bench for every rep.' },
+    { key: 'hips', text: 'Hips<br>down', anchor: 'buttock', box: { left: 176, top: 160 }, cue: 'Keep your buttocks on the bench for every rep.' },
     { key: 'touch', text: 'Mid-chest<br>touch', anchor: 'grip.r', box: { left: 184, top: 198 }, cue: 'Lower the bar to the middle of your chest, never toward the neck.' },
     { key: 'forearms', text: 'Forearms<br>vertical', anchor: { along: ['elbow.r', 'grip.r'], t: 0.45 }, box: { left: 88, top: 286 }, cue: 'At the bottom your forearms point straight up under the bar.' },
   ],
@@ -164,8 +164,8 @@ export default {
       { kind: 'arrow', from: [0, BARM[1] - 0.09, BARM[2]], to: [0, BARM[1] - 0.035, BARM[2]] },
     ],
     tells: [
-      { key: 'path', text: 'Straight<br>up', anchor: [0, (BAR1[1] + BARM[1]) / 2, BARM[2]], box: { left: 148, top: 100 }, cue: 'You drive the bar straight up off your chest.' },
-      { key: 'chest', text: 'Stays over<br>chest', anchor: [0, BARM[1] + 0.03, BARM[2]], box: { left: 98, top: 70 }, cue: 'The bar stays over your chest instead of moving back over your shoulders.' },
+      { key: 'path', text: 'Straight<br>up', anchor: { at: 'grip.r', pose: 'mistake', off: [0, 30] }, box: { left: 208, top: 206 }, cue: 'You drive the bar straight up off your chest.' },
+      { key: 'chest', text: 'Stays over<br>chest', anchor: [0, BARM[1] + 0.03, BARM[2]], box: { left: 184, top: 150 }, cue: 'The bar stays over your chest instead of moving back over your shoulders.' },
     ],
   },
   alt: 'Barbell bench press, side view. Lying on a flat bench in a rack, feet flat and hips down, the lifter lowers the bar from straight arms over the shoulders to the middle of the chest, forearms vertical, then presses it up and back toward the shoulders.',

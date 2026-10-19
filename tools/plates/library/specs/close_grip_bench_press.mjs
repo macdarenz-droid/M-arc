@@ -167,8 +167,8 @@ export default {
       { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [-4, -4] }, to: { at: 'elbow.r', pose: 'mistake', off: [3, 3] } },   // the elbow leaves the ribs
     ],
     tells: [
-      { key: 'flare', text: 'Elbows<br>flare out', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your elbows drift away from your ribs.' },
-      { key: 'high', text: 'Bar<br>high', anchor: [0, BARM[1] + 0.03, BARM[2] - 0.03], box: { left: 38, top: 208 }, cue: 'The bar touches high on your chest instead of low.' },
+      { key: 'flare', text: 'Elbows<br>flare out', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 208, top: 198 }, cue: 'Your elbows drift away from your ribs.' },
+      { key: 'high', text: 'Lands<br>high', anchor: [0, BARM[1] + 0.03, BARM[2] - 0.03], box: { left: 16, top: 198 }, cue: 'The bar touches high on your chest instead of low.' },
     ],
   },
   alt: 'Close-grip bench press, side view. Lying on a flat bench in a rack, hands in line with the shoulders, feet flat and hips down, the lifter lowers the bar from straight arms to the low chest where the ribs end, elbows close to the ribs, then presses back up.',
