@@ -39,7 +39,10 @@ is drawable:false at the research head, so the drawable-fault convention (dumbbe
 Pose map (Q2(b)): for every id, card plate.start = spec `start` and plate.end = spec `end`. The Mistake is drawn
 against the end pose (plate.mjs:78, :208), and every card's fault is a fault of the end pose or of the move into it.
 smith's drawn start is the card's own (bar unhooked on straight arms over the mid-chest, c2, c5), not the free bar's
-start over the shoulders.
+start over the shoulders. **push_up is the one exception (NOTE AMENDED): spec `start` = card plate.end (bottom, chest
+on the floor) and spec `end` = card plate.start (top, arms straight).** At the bottom the straight body is about a hand's
+width off the floor, so sagging hips would pass through it; at the top the sag reads against the solid straight body,
+as in pilot A's plank. The tempo order follows the drawn start: Press, then Lower.
 
 ## 3. Composers (Do 3)
 
@@ -75,7 +78,10 @@ Each is `(lm, ctx) => item[]` through `perItem` (parts.mjs), PRIMITIVES types on
 LIB-3 flags (A4's equality, measured on qa.mjs's table):
 - F5 on every plate (14.4; D-LIB9-F5): the selected Mistake tell in Midnight at 3.57 only. qa.mjs shows 3.6 on all four
   slice plates; the element and the exact value are confirmed in the Mistakes slice post.
-- F1 on push_up and crunch (D-LIB8-floor).
+- F1 on crunch (D-LIB8-floor; held). **push_up raises no F1 (measured, NOTE AMENDED):** its floor camera
+  `{ fit: { right: 76 }, maxScale: 1.35, y0: 339 }` gives 144.57 px/m, inside 123.91-146.29. At the full fit (177.18 px/m)
+  'Chest to floor' has no clear box (`edge:` and `figure:…:270cells`), so the smaller scale follows Q-R2-3 (the smaller
+  overshoot when labels need room); the scale is pinned ±0.5 px/m in the test.
 - F7: none (all 5 cards drawable:true at the research head).
 - F2 on cable_fly: a named flag (NOTE RULED, #278 6267313038, item 2; as LB3's pendlay F2): cover 0.628 against 0.549,
   the two full-height columns outside the open hands. No unsourced size is picked to pass it.
@@ -107,7 +113,7 @@ follows the drawn start. No constants are proposed.
 | seated_leg_curl | 1/2/0, c7 c13 | Curl ← up, Return ← down |
 | crunch | 1/2/1, c12 c3 c5 c11 | Curl ← up, Hold ← pause, Lower ← down |
 | cable_fly | 1/2/1, c12 c5 | Close ← up, Hold ← pause, Open ← down |
-| push_up | 1/2/0, c13 | Lower ← down, Press ← up |
+| push_up | 1/2/0, c13 | Press ← up, Lower ← down (drawn start = the bottom, pose map above) |
 
 smith's tempo.text names a 1 s bottom pause (Motra's 2-1-1, c18, WEAK) that is not written in `pause` (LR-33). The
 quote does not say which digit is which phase, so it is not a constant here (14.7: a constant needs a quote that states

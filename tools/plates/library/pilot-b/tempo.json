@@ -3,7 +3,13 @@
  "ruling": "pending PILOT B MAPS RULED",
  "research": "38d5f9c608b492587b3f923382ccb02bea8f1345",
  "constants": {},
- "poseMap": {},
+ "poseMap": {
+  "push_up": {
+   "start": "plate.end",
+   "end": "plate.start",
+   "why": "the Mistake is the end pose plus an override (plate.mjs:78, :208): at the bottom the body is a hand's width off the floor, so sagging hips would pass through it; at the top the sag reads against the solid straight body, as pilot A's plank"
+  }
+ },
  "ids": {
   "smith_machine_bench_press": {
    "claim": [
@@ -45,12 +51,12 @@
    "claim": "c13",
    "rows": [
     {
-     "phase": "Lower",
-     "from": "down"
-    },
-    {
      "phase": "Press",
      "from": "up"
+    },
+    {
+     "phase": "Lower",
+     "from": "down"
     }
    ]
   },

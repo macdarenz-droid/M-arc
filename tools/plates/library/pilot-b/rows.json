@@ -29,6 +29,15 @@
    "mode": "H",
    "stage": "drawing",
    "view": "front"
+  },
+  "lib_push_up": {
+   "src": "library/specs/push_up.mjs",
+   "slug": "push-up",
+   "prefix": "push-up",
+   "chromeId": "push-up",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }

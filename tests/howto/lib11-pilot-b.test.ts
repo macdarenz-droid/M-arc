@@ -10,7 +10,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
 const PILOT_B = ['smith_machine_bench_press', 'cable_fly', 'push_up', 'seated_leg_curl', 'crunch'];
-const DRAWN = ['smith_machine_bench_press', 'seated_leg_curl', 'cable_fly'];   // drawn, not held (rows.json)
+const DRAWN = ['smith_machine_bench_press', 'seated_leg_curl', 'cable_fly', 'push_up'];   // drawn, not held (rows.json)
 const HELD = ['crunch'];                                                       // D-LIB11-SMALL (DESIGN.md section 13)
 const ROWS = 'tools/plates/library/pilot-b/rows.json';
 const COMPOSERS = ['smith', 'legCurlMachine'];
@@ -24,7 +24,7 @@ beforeAll(async () => {
     'inputs-closure.mjs', 'registry.mjs',
   ].map(f => import(/* @vite-ignore */ lib(f))));
   pins = qaIdx.loadPins();
-  for (const id of [...DRAWN, ...HELD]) mods[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`));
+  for (const id of [...new Set([...DRAWN, ...HELD])]) mods[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`));
 }, T);
 const spec = (id: string) => mods[id].default;
 
@@ -179,11 +179,27 @@ describe('LIB-11 A2: legCurlMachine on seated_leg_curl, per drawn pose (c1, c2, 
   });
 });
 
+describe('LIB-11 push_up: the floor scale (D-LIB8-floor; Q-R2-3)', { timeout: T }, () => {
+  it('is pinned at 144.57 px/m (±0.5), inside F1 (no F1 raised)', () => {
+    const r = plate.renderPlate(spec('push_up'), { id: 'x' }).report;
+    expect(Math.abs(r.camera.pxPerM - 144.57)).toBeLessThanOrEqual(0.5);
+    expect(r.camera.pxPerM).toBeLessThanOrEqual(pins.envelope.F1[1]);
+  });
+});
+
 describe('LIB-11 D-LIB9-CLONE b: each copied root finder throws on a bracket with no root', () => {
   it('smith_machine_bench_press', () => {
     const m = mods.smith_machine_bench_press;
     expect(() => m.bisect((x: number) => x - 5, 0, 1)).toThrow(/no solution/);
     expect(m.bisect((x: number) => x - 0.25, 0, 1)).toBeCloseTo(0.25, 9);
+  });
+  it('crunch (held): its bisect', () => {
+    expect(() => mods.crunch.bisect((x: number) => x - 5, 0, 1)).toThrow(/no solution/);
+  });
+  it('push_up: its Newton solve throws when the residual has no root', () => {
+    const m = mods.push_up, pose = (q: any) => ({ root: { at: [0, q.y, 0], tilt: 0 } });
+    expect(() => m.solve({ y: 1 }, pose, () => [1])).toThrow(/did not converge/);
+    expect(m.solve({ y: 1 }, pose, (lm: any) => [lm.hips[1] - 0.9]).y).toBeCloseTo(0.9, 5);
   });
 });
 
