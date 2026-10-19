@@ -1260,6 +1260,30 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   - WAITING: LIB-9a #245, LIB-10 #265, LIB-7c #271, HT-11 #273 (PASS), LIB-6-PM #181, LIB-7-FIX #193 (PASS), LIB-8M #109 (pilot A ok; PIN GO waits for LIB-7b, LIB-12 and R8).
   - In review: LIB-5 Do 9 #270 (reviewer session_018H7am5XjyzXrMNSRHuWTQ2). It is first in merge order.
 
+**Update ~19:50 UTC (10-19).** main **`07ad7f1`** (train 32). Cards `claude/sup-lib4-cards` @ `1e6bc1b4`.
+- **Train 32 merged** (#281 → `07ad7f1`): LIB-5 Do 9, the back-pain box (#270, plan slot 1).
+  - Review @ 121df94 FAILed on 1 Medium: two S4 mutations were missing. The supervisor fixed it in a test-only commit @ `d2d3be0`, a small fix done directly to keep slot 1 moving. The delta review PASSed. CI was 17/17 green.
+  - **No APK.** The APK built and the fingerprint step passed (run 39307996359, artifact 12216217541), but nothing changes on screen: the box shows only on sheets flagged `back`, and none of the 8 shipped sheets is. This follows train 22's precedent. The next app-visible train sends an APK that carries this code too. The last APK sent is still train 24's.
+- **Usage meter:** 0.69 at 19:08, rising about 2.5 %/h, so 0.80 is about 23:30 UTC. When the meter reaches 0.80, the pause rule (update ~17:05) applies. Every running builder has already been told to finish to its next milestone, then post WAITING.
+- **LIB-12-FIX (#191):**
+  - The R8 panel round 1 @ `2aa3732` was VALID: battle-rope passed, and 4 keys failed.
+  - D-LIB12FIX-R8 gave one fix round, with an R8-DRIFT test. FIXED @ `6b6e5ab` adds a new `hands/lib12-hand.mjs`.
+  - Round 2 was VALID: palm-flat PASSES. ball-contact, front-rack and cupped-goblet still fail and move to GAPS (D-LIB12FIX-R8-GAPS; wall_ball, front_squat, goblet_squat).
+  - Follow-up **F-LIB12-R8B** redraws those three. The record is lib4-cards 27.
+  - Next: 'LIB-12-FIX READY', then a fresh reviewer.
+  - Owner: before PILOT A PIN GO, he gets the changed-ids sheet. goblet_squat and front_squat lose their close-up, and mountain_climbers' palm-flat is redrawn (D-LIB12FIX-SHIP (2)).
+- **#109 LIB-8M:** F-LB3-1 plus the main merge @ `ff7c5c4`; the diff check PASSED. WAITING for PIN GO (LIB-7b, LIB-12 on main, R8 done).
+- **LIB-11 pilot B (#278):**
+  - CARD FIELDS VERIFIED @ `0d97059` (focused re-verify VALID).
+  - PLATES READY @ `4033daf` (page `94fe6085…`). The smith `buttock` fact is diff-checked. D-LIB11-SACRUM: seated_leg_curl uses `buttock` for c4, because of the lumbar hollow.
+  - Calibrated panel running: S/critic-pb; golden-B anchors; plants on smith feet (R3) and on the cable_fly leader (R4).
+  - Before pilot B renders reach the owner, the supervisor still writes the E-R5 scope into plan 2.4 and row 20.
+- **LIB-ZOOM (#279):** READY @ `29316a6`. Reviewer session_017mpinCbWveN3VVAWJvrxzy reviews its own diff over the scratch merge of #245 and main. It merges after LB1 (#245, slot 8).
+- **Lanes now.**
+  - Active LIB, 4 of 4: LIB-12-FIX, LIB-13 (LB3; working through an R10 failure in build.mjs), LIB-11, and LIB-6-PM (#181 `claude/lib-6-closeup-renderer`; resumed for Do 7 now that Do 9 is on main; next in merge order, slot 2).
+  - In review: LIB-ZOOM.
+  - WAITING: LIB-9a #245, LIB-10 #265, LIB-7c #271, HT-11 #273 (PASS), LIB-7-FIX #193 (PASS), LIB-8M #109.
+
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
 ### 8.0m HANDOFF 10-18 ~04:50 UTC: new supervisor account (read first; supersedes 8.0l and 8.0k where they differ)
