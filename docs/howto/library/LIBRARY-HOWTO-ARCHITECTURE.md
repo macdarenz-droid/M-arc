@@ -190,9 +190,38 @@ back to `machine-grip`, `hand.mjs:115`).
 - **What it unlocks:** `side_plank`, `russian_twist`, `bicycle_crunch`.
 - **Rejected on purpose:** an arms-only twist. Twisting with the arms only is the classic Russian-twist fault, so
   drawing it as "right" would teach the mistake.
-- **Schedule.** A spike runs in phase 0 in scratch. The owner rules go/no-go on the renders on pilot B. The PR
-  (LIB-20) merges before LB9.
-- **Fallback:** the 3 ids go on the named list with the renders.
+- **Proposal: the spike's real scope (D-LIB11-ER5).** The spike (#190 @ `82ae2d40`, scratch, do not merge) needs five
+  fields, not two. All default to 0 or off, sit in `engine/body.mjs` and `engine/plate.mjs`, and land as one
+  `[golden update]` card with one re-vendor (D-SPIKE-one-card). Cites are lines of its
+  `tools/plates/library/spike/REPORT.md`.
+
+  | Field | What a plate can show with it | REPORT.md |
+  |---|---|---|
+  | `root.roll` | the whole body turned on its side: the side plank, elbow under the shoulder, lower foot on the floor | :12, :43 |
+  | `trunk.yaw` | the chest turned against the hips: Russian twist, bicycle crunch | :13, :44-45 |
+  | `trunk.lat` | the trunk bent sideways, so the hips can sag (the side plank's Mistake); roll alone draws only the hold | :14, :43 |
+  | `camera.pitch` | the front view from a raised camera looking down: the dumbbell fly's head, chest, arm arc, knees and feet together | :11, :41 |
+  | `torso: 'volume'` | a trunk that keeps its depth seen end-on, drawn over the legs when nearer the camera: the rear-delt fly's hinged back with the head in front | :15, :42 |
+
+  Pitch alone does not fix the rear-delt fly: at pitch 35 the legs still cover a flat band (:42; D-SPIKE-hinge).
+- **Renders.** The owner gives one answer on four renders, on the pilot B sheet (plan 8, decision 5; LIB-11 makes
+  them):
+  - `side_plank` and `russian_twist`, re-rendered by LIB-11 from their cards' `plate.mistake` (the spike drew the
+    arms-only twist instead). In the spike the side plank uses roll and lat (:43), the twist yaw, pitch 20 and the
+    volume trunk (:44);
+  - `dumbbell_fly` at pitch 45 (:41);
+  - `bent_over_dumbbell_rear_delt_fly` at pitch 15 with the volume trunk (:42).
+  - `bicycle_crunch` is not shown. The spike rates it conditional (it reads only near top-down, :45), so on a go its
+    plate is judged in LB9 like any other.
+- **Status: proposal** until the owner answers on the renders (D-SPIKE-status). Until then the two fields above, and
+  LIB-20 before LB9, stay the plan. The spike ran in phase 0 in scratch.
+  - Go: the engine change lands through LIB-20 (row 20), merged before LB7 instead of LB9 (D-SPIKE-one-card).
+    Section 9 changes then.
+  - No-go: the default stands. The ids that need these fields go on the named list, decided at the release candidate
+    (plan 8, decisions 4 and 5).
+- **Golden B and pins.** Nothing here changes golden B or any pinned plate. With every field at 0 or off, the spike
+  rebuilds golden A, golden B's layers page and pilot A's plates page byte-identical (:21-23). Golden A has no
+  engine-drawn front view, so LIB-20's L1 also checks a pinned page that has one (:34-35; D-SPIKE-L1-blind).
 
 ### 2.5 Conditional `poly` primitive (LIB-25)
 - **Trigger:** a composer fails PQ-H9, or scores below 4 on equipment realism twice. Examples: an angled closed sled
@@ -659,9 +688,13 @@ hand-authored · pA / pB = anchor approved on pilot A / pilot B.
 - **Pilot B, card LIB-11: 5 plates.** Shown with the LB2 sheet, and answered before LB6 starts.
   - Plates: `smith_machine_bench_press` (`smith`), `cable_fly` (CFLY), `push_up` (PUSHUP), `seated_leg_curl`
     (`legCurlMachine`), `crunch` (SUPCORE, floor supine).
-  - The E-R5 go/no-go on `side_plank` and `russian_twist` renders.
-  - Layer kinds shown: palm-flat, dip bar, kettlebell, ab-wheel, ball and implement hands, and the text-only feel
-    state.
+  - The E-R5 go/no-go: one answer on the four renders in 2.4 (D-LIB11-ER5).
+  - Layer kinds shown: the hand kinds below, and the text-only feel state.
+    - Drawn and panel-approved at R8 (D-LIB12FIX-R8-GAPS): palm-flat, both faults (hand-ahead, cupped-palm), and
+      battle-rope (death-grip). battle_ropes' camera, (i), (ii) or (iii), stays the owner's choice (D-LIB12FIX-ROPE).
+    - "No drawing yet" lines (D-LIB11-HANDS): ball-contact (`wall_ball`), front-rack (`front_squat`) and
+      cupped-goblet (`goblet_squat`), moved to GAPS after the R8 fix round, to be redrawn under F-LIB12-R8B; dip bar,
+      kettlebell, ab wheel and implements.
 - **Pilot plates merge pinned but with no button.** Their app modules and layers ship in their own batch.
 
 ### 6.2 Batches LB1-LB10 (145 ids)
@@ -775,7 +808,7 @@ new paths, and merges its dependencies' heads in before review. It still **merge
 | 17 | LIB-17 | LB6 (16) | LIB-11, LIB-16 | opus | L | no |
 | 18 | LIB-18 | LB7 (14) | LIB-17 | opus | L | no |
 | 19 | LIB-19 | LB8 (13) | LIB-18 | opus | L | no |
-| 20 | LIB-20 | E-R5 roll and yaw, `[golden update]`, L1 byte-identical on golden A and every pinned page | LIB-2 | opus | M | spike yes (scratch) |
+| 20 | LIB-20 | E-R5 roll and yaw, `[golden update]`, L1 byte-identical on golden A and every pinned page; only on the owner's go (2.4). Proposal (D-LIB11-ER5, D-SPIKE-status): add `trunk.lat`, `camera.pitch` and the volume trunk with its depth order in the same re-vendor, merge before LB7 (LIB-18), and include a pinned engine-drawn front view in L1 (D-SPIKE-L1-blind) | LIB-2 | opus | M | spike yes (scratch; #190 @ `82ae2d40`) |
 | 21 | LIB-21 | LB9 (15) | LIB-19, LIB-20 | opus | L | no |
 | 22 | LIB-22 | LB10 (13) | LIB-21 | opus | L | no |
 | 23 | LIB-23 | Release candidate: full regression and full QA once, on the finished build and exact APK; owner device checks; named list; C6 release check | all | opus | M | no |
