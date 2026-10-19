@@ -32,7 +32,7 @@ const HELD = ['barbell_shrug', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly
 // census views (claude/howto-options 4a9fd86, docs/howto/library/inputs/census.json blob 70553d5d)
 const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id === 'upright_row' || id === 'pec_fly' ? 'front' : 'side']));
 // the pilot A page the registry builds (build.mjs's page at the Do 6 head); the pin's page entry must equal it
-const PAGE = { sha256: 'f0665cdba344cfacaa015a2f532dd21e04b0d86b68920c630510eefecacd4340', bytes: 1424478 };
+const PAGE = { sha256: 'ad57fb3b090ca4dd30a2a092dce7715c4b5f3f2bfbedb5c52b028dc7a8f53bf4', bytes: 1424510 };
 const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
 // Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
 const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
@@ -119,18 +119,26 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
 });
 
 describe('LIB-8M A10: the pilot A page through the registry', () => {
-  it('pageConfig(pages/pilot-a.json) builds the pilot A page, the same bytes twice', async () => {
+  // two builds in two tests, so no single test blocks its worker for both (CI: a vitest worker RPC timeout at 013f84e)
+  const build = async () => {
     const pp = await import(/* @vite-ignore */ url('tools/plates/library/plates-page.mjs'));
     const bp = await import(/* @vite-ignore */ url('tools/plates/library/build-page.mjs'));
     const g = await import(/* @vite-ignore */ url('tools/plates/golden.mjs'));
-    const a = (await bp.buildPlatesPage(await pp.pageConfig('tools/plates/library/pages/pilot-a.json'))).html;
-    const b = (await bp.buildPlatesPage(await pp.pageConfig('tools/plates/library/pages/pilot-a.json'))).html;
-    expect(g.sha256(a)).toBe(g.sha256(b));
-    expect({ sha256: g.sha256(a), bytes: a.length }).toEqual(PAGE);
+    const html = (await bp.buildPlatesPage(await pp.pageConfig('tools/plates/library/pages/pilot-a.json'))).html;
+    return { sha256: g.sha256(html), bytes: html.length };
+  };
+  let first: { sha256: string; bytes: number } | null = null;
+  it('pageConfig(pages/pilot-a.json) builds the pilot A page (and the pinned page entry, once pinned)', async () => {
+    first = await build();
+    expect(first).toEqual(PAGE);
     const chain = ROOT + 'tests/howto/golden/library/pilot-a.json';
     if (existsSync(chain)) {
       const page = JSON.parse(readFileSync(chain, 'utf8')).entries.filter((e: any) => e.kind === 'page').at(-1);
       expect({ sha256: page.pageSha256, bytes: page.bytes }).toEqual(PAGE);
     }
+  }, 120_000);
+  it('a second build gives the same bytes', async () => {
+    expect(first).not.toBeNull();
+    expect(await build()).toEqual(first);
   }, 120_000);
 });
