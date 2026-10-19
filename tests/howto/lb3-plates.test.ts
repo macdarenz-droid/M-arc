@@ -21,7 +21,7 @@ const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 
 const COMPOSERS = ['landmine'];
-const SLICE = ['landmine_row', 'one_arm_dumbbell_row', 'conventional_deadlift'];
+const SLICE = ['pendlay_row', 'landmine_row', 'one_arm_dumbbell_row', 'conventional_deadlift'];
 const dist = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!);
 
 let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, pins: any, lmEq: any;
@@ -60,8 +60,8 @@ const pathLm = (spec: any, t: number) => {
 const tenths = Array.from({ length: 11 }, (_, k) => k / 10);
 const deg = (a: number[], b: number[]) => Math.atan2(Math.abs(b[2]! - a[2]!), Math.abs(b[1]! - a[1]!)) * 180 / Math.PI;   // from vertical, side plane
 
-// Held pending the supervisor's ruling (#274 comment 6265604594: t_bar_row cannot pass PQ-H3 card-true at any real
-// plate size): its spec exists, it has no row (D-LIB8M-PAGESET).
+// Held (D-LIB13-TBAR, #274 comment 6265616772: t_bar_row cannot pass PQ-H3 card-true at any real plate size): its spec
+// exists for LIB-13s; it has no row (D-LIB8M-PAGESET).
 const HELD = ['t_bar_row'];
 /** The LB3 ids whose spec file exists and that are not held (drawn), in LB3 order. */
 const drawn = () => LB3.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`) && !HELD.includes(id));
@@ -82,6 +82,13 @@ describe('LIB-13 A5: lb3/rows.json holds exactly the drawn, non-held LB3 ids', (
       for (const id of [...REUSED, ...SHRUGS]) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id} as a row`).toBe(false);
     }
     for (const id of SHRUGS) expect(new RegExp(`\\b(lib_)?${id}\\b`).test(readFileSync(ROWS, 'utf8')), id).toBe(false);
+  });
+  it('each held id is in DESIGN.md\'s held table with its ruling and in no rows file', () => {
+    const design = readFileSync('tools/plates/library/lb3/DESIGN.md', 'utf8'), table = design.slice(design.indexOf('## 13. Held ids'));
+    for (const id of [...HELD, 'dumbbell_shrug', 'cable_shrug', 'barbell_shrug']) {
+      expect(new RegExp(`^\\| ${id} \\| [^|]+ \\| [^|]*D-LIB[^|]+ \\|`, 'm').test(table), id).toBe(true);
+      expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
+    }
   });
   it('mutations: a dropped row, a duplicated row, a reused id added and a held id added are red', () => {
     const row = { src: 'library/specs/x.mjs', mode: 'H', stage: 'drawing', view: 'side' };
@@ -405,6 +412,42 @@ describe('LIB-13 conventional_deadlift (H, ruling 4): drawn facts', { timeout: T
   });
 });
 
+describe('LIB-13 pendlay_row (H, ruling 4): drawn facts', { timeout: T }, () => {
+  const s = () => S.pendlay_row, lm = (p: string) => itemsIn(s(), p).lm;
+  const backDeg = (l: any) => Math.atan2(l.backUpper[1] - l.sacrum[1], l.backUpper[2] - l.sacrum[2]) * 180 / Math.PI;
+  it('c2, c4: the back line is level (within 2 deg) and the trunk is held the same in start, end and the ruled pose map', () => {
+    for (const p of ['start', 'end']) expect(Math.abs(backDeg(lm(p))), p).toBeLessThanOrEqual(2);
+    expect(s().poses.start.root).toEqual(s().poses.end.root);
+    expect(s().poses.start.trunk).toBe(s().poses.end.trunk);
+  });
+  it('c3: at the floor start (spec end) the 45 cm plates rest on the floor line (bar centre 22.5 cm), the bar over mid-foot, the arms straight', () => {
+    const bar = itemsIn(s(), 'end').items.find(it => it.type === 'barbell'), r = plate.renderPlate(s(), { id: 'x' }).report;
+    expect(Math.abs(bar.at[1] - 0.225)).toBeLessThanOrEqual(0.002);
+    expect(Math.abs(bar.at[2])).toBeLessThanOrEqual(0.005);
+    expect(r.angles.end['elbow.r']).toBeLessThanOrEqual(13);   // the bent-back wrist alone turns the forearm about 9 deg (body.mjs solveReach)
+    expect(lm('end').grips[2] - lm('end')['knee.r'][2]).toBeGreaterThan(0);   // the bar in front of the knees
+  });
+  it('c10: the knees slightly bent (10-30 deg) at the floor', () => {
+    const k = plate.renderPlate(s(), { id: 'x' }).report.angles.end['knee.r'];
+    expect(k).toBeGreaterThanOrEqual(10);
+    expect(k).toBeLessThanOrEqual(30);
+  });
+  it('c4, c5: at the top (spec start) the bar is on the torso front between the navel and the chest, straight above the floor bar (±1 cm), the elbow straight above the bar (±1 cm, as barbell_row finishes)', () => {
+    const t = lm('start');
+    expect(Math.abs(t.grips[2] - lm('end').grips[2])).toBeLessThanOrEqual(0.01);
+    expect(t.grips[2]).toBeGreaterThan(Math.min(t.navel[2], t.chest[2]) - 0.01);
+    expect(t.grips[2]).toBeLessThan(Math.max(t.navel[2], t.chest[2]) + 0.01);
+    expect(Math.abs(t['elbow.r'][2] - t.grips[2])).toBeLessThanOrEqual(0.01);
+  });
+  it('c8, c23 Mistake: the bar still on the floor, the lumbar flexed at least 20 deg more, the pelvis tucked, the hips held', () => {
+    const e = s().poses.end, m = s().mistake.pose, ml = itemsIn(s(), 'mistake').lm;
+    expect(dist(ml.grips, lm('end').grips)).toBeLessThanOrEqual(0.005);
+    expect(m.trunk - e.trunk).toBeGreaterThanOrEqual(20);
+    expect(m.root.tilt).toBeLessThan(e.root.tilt);
+    expect(m.root.at).toEqual(e.root.at);
+  });
+});
+
 describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn facts', { timeout: T }, () => {
   const s = () => S.one_arm_dumbbell_row, lm = (p: string) => itemsIn(s(), p).lm;
   it('c2: the far hand straight under the far shoulder (±1 cm) and the far knee under the hip (±1 cm), on one bench top', () => {
@@ -444,8 +487,9 @@ describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn
 });
 
 describe('LIB-13 H slice Mistakes, tells, cues and tempo (DESIGN.md sections 8-9)', { timeout: T }, () => {
-  const KEYS: Record<string, string> = { landmine_row: 'round', one_arm_dumbbell_row: 'short', conventional_deadlift: 'round' };
+  const KEYS: Record<string, string> = { pendlay_row: 'round', landmine_row: 'round', one_arm_dumbbell_row: 'short', conventional_deadlift: 'round' };
   const TEMPO: Record<string, any[]> = {
+    pendlay_row: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Pull', s: 1, move: true }],
     landmine_row: [{ phase: 'Pull', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
     one_arm_dumbbell_row: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Lower', s: 2, move: true }],
     conventional_deadlift: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Lift', s: 1, move: true }],
@@ -505,7 +549,7 @@ describe('LIB-13 H slice Mistakes, tells, cues and tempo (DESIGN.md sections 8-9
       }
       return min;
     };
-    for (const id of ['one_arm_dumbbell_row', 'conventional_deadlift']) expect(minGap(S[id]), id).toBeGreaterThanOrEqual(6);
+    for (const id of ['pendlay_row', 'one_arm_dumbbell_row', 'conventional_deadlift']) expect(minGap(S[id]), id).toBeGreaterThanOrEqual(6);
     const s = S.landmine_row, lm = itemsIn(s, 'end').lm, cam = plate.renderPlate(s, { id: 'x' }).report.camera;
     const at = (w: number[]) => [cam.x0 + w[2]! * cam.pxPerM, cam.y0 - w[1]! * cam.pxPerM];
     const p = at(lmEq.alongBar(M.landmine_row.LM_ROW.pivot, lm['grip.r'], 0.6));
@@ -515,8 +559,8 @@ describe('LIB-13 H slice Mistakes, tells, cues and tempo (DESIGN.md sections 8-9
 });
 
 describe('LIB-13 D-LIB9-CLONE b: each copied root finder throws on a bracket with no root', () => {
-  it('the 3 slice specs', () => {
-    for (const [id, f] of [['landmine_row', 'solve'], ['one_arm_dumbbell_row', 'solve'], ['conventional_deadlift', 'bisect']] as const) {
+  it('the drawn slice specs', () => {
+    for (const [id, f] of [['pendlay_row', 'solve'], ['landmine_row', 'solve'], ['one_arm_dumbbell_row', 'solve'], ['conventional_deadlift', 'bisect']] as const) {
       expect(() => M[id][f]((x: number) => x - 5, 0, 1), id).toThrow(/no solution/);
       expect(M[id][f]((x: number) => x - 0.25, 0, 1), id).toBeCloseTo(0.25, 9);
     }

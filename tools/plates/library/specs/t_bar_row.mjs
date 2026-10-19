@@ -41,9 +41,10 @@ const H = 1.75, R = Math.PI / 180;
 const FOOT_X = 0.2266, TOE_OUT = 5;
 const TRUNK_INCL = 80, SPINE = 3, KNEE = 20, ROOT_Z = -0.15;
 const ARM_BACK = 10, CLEAR = 0.005, WRIST = -35;
-// Shoulder to grip centre with the arm straight and the wrist bent back WRIST deg (measured on the engine body), at
-// 99.8% so the IK keeps a hair of elbow bend (as barbell_row's REACH).
-const REACH = (() => { const l = landmarksOf({ root: { at: [0, 1, 0], tilt: 0 }, elbow: 0, wrist: WRIST }, H); return Math.hypot(...l['shoulder.r'].map((v, i) => v - l['grip.r'][i])) * 0.998; })();
+// Shoulder to grip centre at full reach as the engine's IK measures it with the wrist bent back WRIST deg (body.mjs
+// solveReach: upper arm + the forearm-and-hand chord), at 99.98%: the IK then turns the forearm only by the hand's
+// bend (about 9 deg), so the arm reads straight.
+const REACH = (() => { const g = 0.46 * 0.108 * H, w = WRIST * Math.PI / 180; return (0.186 * H + Math.hypot(0.146 * H + g * Math.cos(w), g * Math.sin(w))) * 0.9998; })();
 const PRO_START = 2, PRO_END = -4;
 export const PLATE_D = 0.228, PLATE_T = 0.031;
 const HOOK = 0.229, HANDLE_L = 0.22, RING_DROP = 0.006, GRIP_SEP = 0.15;

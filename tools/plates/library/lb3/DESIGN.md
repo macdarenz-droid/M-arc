@@ -264,10 +264,29 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
   the largest catalogue iron plate that passes PQ-H3 card-true on landmine_row: the 25 lb plate (300 mm) leaves a
   17.8 px Trace. Sheet note on both landmine plates: "plate size: drawing convention (228 mm)". A4's expected flag set
   for these ids is F5 plus this sheet note.
-- **t_bar_row: HELD pending the supervisor's ruling (#274, comment 6265604594).** The V-handle hangs 22 cm under the bar,
-  9 in from the plates (c1), so the plate corner meets the sternum after a hand rise of 10.5 cm (228 mm plate), 12.1 cm
-  (162 mm, the smallest Rogue change plate) and at most 18.5 cm with a 15 cm handle. PQ-H3 needs about 30 cm. Its spec is
-  on the branch; it has no row.
+- **t_bar_row: HELD (D-LIB13-TBAR, #274 comment 6265616772; D-LIB13-LANDMINE-2 route 3; D-LIB8M-CARDTRUE).** Stage
+  review, no lb3/rows.json row, off the page and the pin, on the follow-up list; it joins the LIB-ZOOM small-motion
+  question and moves with LIB-13s once that convention is ruled (F-LB3-6). Its card keys are written once in Do 6 b.
+  The measured record: the V-handle hangs 22 cm under the bar, 9 in from the plates (c1), so the plate corner meets the
+  sternum after a hand rise of 10.8 cm (195 mm plate), 12.1 cm (162 mm, the smallest Rogue change plate), 10.5 cm
+  (228 mm), and at most 17.3 / 18.5 cm with a 15 cm handle (195 / 162 mm). PQ-H3 needs about 30 cm. Raised feet (c23)
+  do not help: the bottom is set by the hanging arms, not the floor. The spec stays on the branch for LIB-13s.
+- **pendlay_row (H, ruling 4; in the rows slice by D-LIB13-TBAR).** Spec start = the bar at the chest (card plate.end),
+  spec end = the bar on the floor (card plate.start; pose map, section 9). The pelvis tilt is SOLVED (92.5°) so the
+  drawn back line is level (c2), held in both poses (c4). Floor: the 45 cm plates on the floor line, the bar over
+  mid-foot, the arms straight; knees 20° ("slightly bent", c10); the root SOLVED for the knee and the bar over mid-foot,
+  so the shoulders sit ahead of the bar and the arms lean 21° back from vertical, as pilot A's approved barbell_row,
+  whose card also says "arms straight down". A level back with plumb arms is not drawable on this body with 45 cm
+  plates (the hip joint would have to sit above its standing height), so plumb arms were not used. Top: the bar on the
+  torso front between the navel and the chest, straight above the floor bar, the elbow straight above it. Tempo Lower 2,
+  Pull 1. Mistake `round` (c8, c23): the bar still on the floor, pelvis tucked 30°, lumbar flexed (solved 42°), the
+  hump guide; tells `round` and `tuck`. Stance: mid-soles 24 cm apart, as barbell_row (wider stances leave the IK foot
+  off the floor with this level trunk; the side view hides it).
+  - **Measured flag to rule (ruling 13): F2 0.163** (coverage) against the envelope's [0.191, 0.549]. The figure is
+    compact (a held hinge, only the arm and bar move), and nothing is padded to raise it.
+- **Straight arms with the bent-back wrist (all pull plates).** The engine's IK turns the forearm by the hand's bend
+  (about 9°, body.mjs solveReach), so the pull specs reach at 99.98% of the IK's own full length: the arm reads straight
+  with the report's elbow at about 11°.
 
 ## 12. Work split (if a second drawer joins)
 
@@ -284,7 +303,7 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
 |---|---|---|---|
 | dumbbell_shrug | LIB-13s | D-LIB8-shrug; D-LIB13-SHRUG (ruling 6) | LIB-ZOOM's convention is ruled and extended to the shrugs |
 | cable_shrug | LIB-13s | D-LIB8-shrug; D-LIB13-SHRUG | as above |
-| t_bar_row | LIB-13 (pending ruling) | D-LIB13-LANDMINE-2; D-LIB8M-CARDTRUE (proposed, #274 6265604594) | the supervisor rules |
+| t_bar_row | LIB-13s (LIB-ZOOM small-motion question) | D-LIB13-TBAR; D-LIB13-LANDMINE-2 route 3; D-LIB8M-CARDTRUE | the LIB-ZOOM convention is ruled (F-LB3-6) |
 | barbell_shrug | pilot A held (pilot-a/plates.json @ `48d49bb`), then LIB-13s | D-LIB8-shrug; D-LIB13-PA | as above |
 
 ## 14. Risks and mitigations

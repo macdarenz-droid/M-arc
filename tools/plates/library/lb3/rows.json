@@ -3,6 +3,15 @@
  "batch": "LB3",
  "censusRef": "4a9fd86",
  "rows": {
+  "lib_pendlay_row": {
+   "src": "library/specs/pendlay_row.mjs",
+   "slug": "pendlay-row",
+   "prefix": "pendlay-row",
+   "chromeId": "pendlay-row",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
   "lib_landmine_row": {
    "src": "library/specs/landmine_row.mjs",
    "slug": "landmine-row",
