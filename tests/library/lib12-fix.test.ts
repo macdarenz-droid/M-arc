@@ -236,7 +236,7 @@ describe('LIB-12-FIX R8-DRIFT: values copied from golden-B hand.mjs and the pair
     expect(viaHand(ring)).toBe(viaCommon(ring));
   });
   it('mutation: a different outline on one side is red', () => {
-    expect(viaHand(ring.map(([x, y]) => [x, y + 1]))).not.toBe(viaCommon(ring));
+    expect(viaHand(ring.map(p => [p[0]!, p[1]! + 1]))).not.toBe(viaCommon(ring));
   });
 });
 
@@ -246,7 +246,7 @@ const thumbProblems = (rep: any) => ['right', 'wrong'].filter(h => !(rep[h].thum
 
 describe('LIB-12-FIX R8-PF: palm-flat is a hand on the floor (critic C5 boot/mitten, thumb length; cupped-palm C3)', () => {
   it('on all 16 pages: no outline point below the floor; the visible thumb is 0.30-0.42 of the hand length (golden-B HAND_PROP)', () => {
-    const pages = lib12Renders().filter(x => x.m.KEY === 'palm-flat');
+    const pages = lib12Renders().filter((x: any) => x.m.KEY === 'palm-flat');
     C.sweep(pages, 16, 'palm-flat pages');
     for (const { id, f, r } of pages) { expect([id, f, belowFloor(r.report)]).toEqual([id, f, []]); expect([id, f, thumbProblems(r.report)]).toEqual([id, f, []]); }
   }, 60_000);
