@@ -77,8 +77,9 @@ LIB-3 flags (A4's equality, measured on qa.mjs's table):
   slice plates; the element and the exact value are confirmed in the Mistakes slice post.
 - F1 on push_up and crunch (D-LIB8-floor).
 - F7: none (all 5 cards drawable:true at the research head).
-- **F2 on cable_fly (measured, not planned; question 2 below).** No other flag is planned; any other raised flag is a
-  defect to fix.
+- F2 on cable_fly: a named flag (NOTE RULED, #278 6267313038, item 2; as LB3's pendlay F2): cover 0.628 against 0.549,
+  the two full-height columns outside the open hands. No unsourced size is picked to pass it.
+- No other flag is planned; any other raised flag is a defect to fix.
 
 Sheet flags (shown as their own lines): the two new rigs, smith and legCurlMachine, each with its later users; any
 drawing convention the supervisor rules (D-LIB13-LANDMINE-2).
@@ -128,7 +129,7 @@ All drawable:true, so topFault = the plate.mistake key and the first tell carrie
 
 | id | fact | form | quantity measured | claim |
 |---|---|---|---|---|
-| smith_machine_bench_press | `{kind:'angle', joint:'sh.r.elev', pose:'end', deg:45}` | joint (H6's angles path; the report's `sh.r` "elev") | upper arm from the thorax's long axis (shoulder elevation), "elbows at about 45 degrees" | c3 |
+| smith_machine_bench_press | `{kind:'angle', joint:'sh.r.elev', pose:'end', deg:45}` | joint (H6's angles path; the report's `sh.r` "elev") | the 3D angle between the upper arm and the trunk at the bottom: the engine's shoulder elevation from the thorax's long axis. c3 states no view, so the view-independent angle is the reading (ruled, NOTE RULED item 1); a top-view reading is not used | c3 |
 | crunch | heel to tailbone 30-45 cm (c1, start pose: a setup quote) | **no H6 form**: H6 has angle, contact and height kinds; a horizontal distance is none of them. Drawn at the midpoint 37.5 cm (allowed: 15 cm ≥ 2 × LIMITS.cm) and pinned by a drawn-item test. No key is invented | heel to sacrum, along the floor | c1 |
 | seated_leg_curl | none: no quote gives a number for a drawn pose (D-LIB8M-NOFACTS: `plateFacts: []`) | — | — | — |
 | cable_fly | none: "slightly bent" and "at or slightly above shoulder height" give no number | — | — | — |
@@ -186,7 +187,11 @@ volume trunk) from the spike's own specs. 390 px, Silent Black and Paper, normal
 contacts; the post carries every sha and the full scratch text (A15). If a Mistake needs a field the spike lacks (a
 pelvis turn for "hips and knees swinging"), the post says so.
 
-## 15. Questions for the supervisor
+## 15. Questions for the supervisor (all ruled: 'PILOT B NOTE RULED @ a5a7238c', #278 6267313038)
+
+Rulings: 1 accepted (3D shoulder elevation, section 9); 2 F2 is a named flag (section 4); 3 confirmed, no bottom-pause
+constant; 4 confirmed, drawn-item test only; crunch HELD accepted. The questions as asked:
+
 
 1. smith's 45°: drawn as the 3D shoulder elevation the engine reports (upper arm from the thorax axis). The alternative
    reading, 45° seen from above, has no engine angle; the fact above uses elev. Rule the reading.
