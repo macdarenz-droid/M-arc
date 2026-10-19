@@ -1,6 +1,8 @@
 // LIB-12-FIX (card docs/supervisor/verify/lib-12-fix-card.md; rulings D-LIB12FIX-*): X1 the words of LIB-12's five pair keys
-// (D-LIB12FIX-WORDS) and X3 LIB-12's reviewed pictures carry (D-LIB12FIX-CARRY: the 20 renders and 15 files pinned at
-// #191 0d268a71, and each panel page equal to its first id's render). Each check has its mutation in the same describe.
+// (D-LIB12FIX-WORDS), X3 LIB-12's pictures carry (D-LIB12FIX-CARRY: the 20 renders and the LIB-12 files pinned, re-based by
+// D-LIB12FIX-R8 for the fix round; each panel page equal to its first id's render) and R8-* the critic findings' fixes
+// (D-LIB12FIX-R8: copied engine values pinned to golden B, palm-flat, front-rack, cupped and ball geometry). Each check
+// has its mutation in the same describe.
 import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -10,54 +12,66 @@ import { beforeAll, describe, expect, it } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
-let P: any, C: any, PN: any;
+let P: any, C: any, PN: any, L: any, VC: any, PF: any, FR: any, CU: any, BA: any, hand: any;
 beforeAll(async () => {
   P = await import(/* @vite-ignore */ url('tools/plates/library/hands/pairs.mjs'));
   C = await import(/* @vite-ignore */ url('tools/plates/library/hands/checks.mjs'));
   PN = await import(/* @vite-ignore */ url('tools/plates/library/hands/panel.mjs'));
+  L = await import(/* @vite-ignore */ url('tools/plates/library/hands/lib12-hand.mjs'));
+  VC = await import(/* @vite-ignore */ url('tools/plates/library/hands/view-common.mjs'));
+  PF = await import(/* @vite-ignore */ url('tools/plates/library/hands/view-palm-flat.mjs'));
+  FR = await import(/* @vite-ignore */ url('tools/plates/library/hands/view-front-rack.mjs'));
+  CU = await import(/* @vite-ignore */ url('tools/plates/library/hands/view-cupped.mjs'));
+  BA = await import(/* @vite-ignore */ url('tools/plates/library/hands/view-ball.mjs'));
+  hand = await import(/* @vite-ignore */ url('tools/plates/layers/engine/hand.mjs'));
 }, 60_000);
 
-// `renderPair(id, { fault }).svg` sha256 at #191 0d268a71 (Do 2; combined by the card's M1 method: 0bc3ba3d…5fee0)
+// `renderPair(id, { fault }).svg` sha256, re-based by D-LIB12FIX-R8 (#191 6273389908) on the fix round; battle_ropes keeps
+// its 0d268a71 value (6905ad26…), asserted below. 0d268a71's combined value was 0bc3ba3d…5fee0.
 const RENDERS: Record<string, string> = {
   'battle_ropes death-grip': '6905ad26ee6b33f71572948bf11adc0cd12e1f2e962a338a9e596390b634dac9',
-  'bear_crawl cupped-palm': '1b492929f207aab1c0112739662a855e6bbb07fc8252c12f3cbc86d03fc4f794',
-  'bear_crawl hand-ahead': '996ce08df2f0c165d77c37dd544464da6b6b37b5cbe3506ae6fe7b4bbedd5968',
-  'bird_dog cupped-palm': 'fbdfd75e9a01e379f9faf9fa8e4115805654209e56930075674df7cff2db151b',
-  'bird_dog hand-ahead': '53afdd644e3005a8440cf979aff83fd5177cf81ce4596401fdd66d11901cf0bd',
-  'burpee cupped-palm': '740bb7787b7bcc4c8dd8ddbba257cba8cf47bd1e25db53c74274ac5cbfef173f',
-  'burpee hand-ahead': '51ecd56142c776f4b008aa84cad40589ed4ca6c14e0599d84523aef46868c284',
-  'diamond_push_up cupped-palm': 'd3eca4bef59016749a26181756ff9c1f489eca6bbff5babb7e08faaf140701e7',
-  'diamond_push_up hand-ahead': '0503f7488e9879885da228e81d8fb091cf12933b764c8bf21f4455ced4b4183a',
-  'front_squat bar-off-shoulders': '79bc170b0424040234688c84df62c8150a7f75ac2e00516015ca80df01e0d5f3',
-  'goblet_squat weight-away': 'a82af960be855eb53b3a3cf1de511a370686013398ec887711eeb60860e81ef4',
-  'incline_push_up cupped-palm': '9a980cbe86b95517560257cd898b47dc7ef4701956a3c6d4ca66b7c89a60bddd',
-  'incline_push_up hand-ahead': '773c0aa0594d959f6302643f5a5f537d41b09688d5cf71cd1da757f5545418c8',
-  'mountain_climbers cupped-palm': '16a6cb54366d3a37e21a78fa3c92152447f5c310b06ff42f29d04c2a52bf878c',
-  'mountain_climbers hand-ahead': 'c28de9f6d6e2a6d9c09eb7ae5fc5bd3443c7f2639292160e20b33494739681b9',
-  'pike_push_up cupped-palm': 'e5e15410934739c4e6cf2e5e30688b762649746801d62f1ccedd9e79f5baa42d',
-  'pike_push_up hand-ahead': '2fafa1e40f0df5f79efb40816419e2cefeabb58d8d7f9d4703f11de2bb3829ef',
-  'push_up cupped-palm': 'd077e3b9f944227a792a0d40b46715d537e21bdd5e012a750802beea9b6b5e62',
-  'push_up hand-ahead': '5fdcbfc24bfca8e31f731feeeae843ebadda8e20947a86aeb92dba6ccb077e4b',
-  'wall_ball side-sandwich': '78eadb1bee166e4338abcd580f59d3b5698b5148892e6572c7ed387233f39678',
+  'bear_crawl cupped-palm': 'fac0517c29b438060d9cfdea8c605c55f43f9ff64b05a28aa8d9eaf573429055',
+  'bear_crawl hand-ahead': 'c345f8a28a9eccacf014ffde028645e621c0cb0fefb068c08b24a960a0a6fc79',
+  'bird_dog cupped-palm': '5756407c3d03c1859357543cceca2cb4778417ca8c7da0710c510af7460f170e',
+  'bird_dog hand-ahead': 'efb650c677445997a98d22e5c75895ce0365bcb45f36eb18e58ffbba9b462ed7',
+  'burpee cupped-palm': 'a5f846b23bbf68a8291c964e0b3780e637d0f07feba762f994b9cd80181c2203',
+  'burpee hand-ahead': '529e1a6c1b225730391caf4a7b2646dcf85d27c8a99da602a746967d34af8433',
+  'diamond_push_up cupped-palm': 'c0e3f1ad7ae04106a7550872a8b9ecab2b99b8627f30f1d87d0bcb962d0aeae3',
+  'diamond_push_up hand-ahead': 'ee3bec5379878a81aeaa585e7f6740e69f2addc32a98b098123e934b0e4df7ae',
+  'front_squat bar-off-shoulders': '466f2b448fcb331f04d67e3453fc2d4bd21a951243b8b6f7c7441c3d93a8f6ff',
+  'goblet_squat weight-away': '5ff3e92d1dbf8d392e0194c249a50e8469ee487a06becb0c7370b50b6c3f2fd7',
+  'incline_push_up cupped-palm': 'a18df8d32d879e281e0a93a3723e05d167c5c446a3515755159cbac9c3375ef2',
+  'incline_push_up hand-ahead': 'ca7866806e1ba96405e15e6019fd706bba1edc1d3e8af267ecd9733c0f83d1b3',
+  'mountain_climbers cupped-palm': 'f3ee0373c153f3257e91a878ee87beb70b61630130f12358d4ae6009f8b983af',
+  'mountain_climbers hand-ahead': 'b3c334b86f5eac9db64e6a4993396403982b0cffa47ce1ffb2abc3b65fd15453',
+  'pike_push_up cupped-palm': '6aaca4f1b12ef8c87ab4bcfcaabe4b1c9c099e5d6043d31edfcf7f325f092223',
+  'pike_push_up hand-ahead': '40378349c5b9d53bb94ff86ec4343a33e4b101b9391134d4080336fb42c3f4fd',
+  'push_up cupped-palm': 'f0c348b8721d1f47867076b5e7a3f309e05e7ec58887ca96a7efa4bc0f9d628d',
+  'push_up hand-ahead': '616b67507ad9f282b89b06659a5559c339d0269c4880a39f80add80afe8a593f',
+  'wall_ball side-sandwich': '1bf5b66dfc87095260606cd24c19bf4079f54c10cefe7add54dcfd76f1eb4775',
 };
-const COMBINED = '0bc3ba3d2ef53820b72812a848fb9a8688b432025189e789295ed2cfd0e5fee0';
-// D-LIB12FIX-CARRY's 15 files, sha256 at #191 0d268a71
+const COMBINED = '7dab8a4eba8b3bdcc456a74bc04e37feb9937916d6c9fca4c911b2cc34886fda';
+const BATTLE_ROPES_0D268A71 = '6905ad26ee6b33f71572948bf11adc0cd12e1f2e962a338a9e596390b634dac9';
+// D-LIB12FIX-CARRY's 15 files plus lib12-hand.mjs, sha256 re-based by D-LIB12FIX-R8: the 4 failing keys' hand and view
+// files and the new lib12-hand.mjs changed; hand-ab-wheel, hand-dip-bar, hand-implement, hand-battle-rope, view-common,
+// lib12-claims.json and gate-lib12.mjs keep their 0d268a71 bytes
 const FILES: Record<string, string> = {
   'tools/plates/library/hands/hand-ab-wheel.mjs': 'baedc7b1fef16979d7299419bc62a74901bd0c6460ba7cbf614a6938f3550bfd',
-  'tools/plates/library/hands/hand-ball-contact.mjs': 'd857e20378f41e0d19d544de4d05783ddb1dcd0e4d631a33a3b70294f6b7412c',
+  'tools/plates/library/hands/hand-ball-contact.mjs': '6ba31838abaef9104e5cfb275f2e8c636142fd9f6550fbd2d2f2ad916184e00a',
   'tools/plates/library/hands/hand-battle-rope.mjs': '7fbc952477412fff7f8dfd58cc93259b8d103375c512fd59931f4156b7de355c',
-  'tools/plates/library/hands/hand-cupped.mjs': '590e6b4c5037552e00a9cda04aba092d46a117ace9cbb641b2adae67c3123884',
+  'tools/plates/library/hands/hand-cupped.mjs': 'f1931f51cde88a84e62c5da329dd3ef16e195ee4169abb6915629e6207c1b352',
   'tools/plates/library/hands/hand-dip-bar.mjs': 'd203314d315ab7086d381cd97e85d4f8a1b67acab271a72fee87f1a0ff8bd33c',
-  'tools/plates/library/hands/hand-front-rack.mjs': '7c4c5dd7a8e3f5fa48417f92061ec798899fa5e184041c3f4912c2d596200b34',
+  'tools/plates/library/hands/hand-front-rack.mjs': 'c5e9746a9eaa92ca66f77fb64ea847151c6c048f7e19bb7baa14f29328cb9498',
   'tools/plates/library/hands/hand-implement.mjs': 'a3ebf113cce043057efc3762f6a46a80bedf516c2ce0771240cdd00a6ed5e9ad',
-  'tools/plates/library/hands/hand-palm-flat.mjs': 'bd271af03f15830d28e2df139137c7b30eff27e53b7bf5f7bdb3df8f91da6017',
-  'tools/plates/library/hands/view-ball.mjs': '9834ee832ed60162d175a3f7bfc20c7ffa4f722deaf7eddceee246ded7f9b434',
+  'tools/plates/library/hands/hand-palm-flat.mjs': '3049d21f99571f74d1da503377c28c4baa3ca8cfc0ce90a2c519b533119f262d',
+  'tools/plates/library/hands/view-ball.mjs': '0a456eb6aa99b6d8e21f9530ebf1e143ca50dd67c36f0d20b4274f8365ffd80c',
   'tools/plates/library/hands/view-common.mjs': '5b558ccc78eb46bbe1e5b49d47ab6d87062748316ce0f5c11e5c254a029840eb',
-  'tools/plates/library/hands/view-cupped.mjs': '24bc2f199c280758908a6ee35eea3f1a09f33a20fa8aedee87b5176711cfe19c',
-  'tools/plates/library/hands/view-front-rack.mjs': '3dab86f0c90302cbeefc3d569274b21a38477fd5fbea351518ba7fce744156ee',
-  'tools/plates/library/hands/view-palm-flat.mjs': '1a27dfe5c974bcb96c6b8f60652415abe393eb9ccd79b691fee74d0aebb46610',
+  'tools/plates/library/hands/view-cupped.mjs': '5734f4ebdc29b4d899e66dc9c38cfe0ea0005339848f2739c3805110ec8d3b90',
+  'tools/plates/library/hands/view-front-rack.mjs': '333a98d75f6b8f49e7137b53e39f311c41699d3f2e442e5f9029902920ad5b93',
+  'tools/plates/library/hands/view-palm-flat.mjs': 'af896f09360fe69524ce39dc0ee143e2aa87c84e2e2ad61e74d186ed163cc285',
   'tools/plates/library/hands/lib12-claims.json': '8d38035cd870440d093cd071caa055ec51e015716abbf3400a282682e32669bc',
   'tools/plates/library/hands/gate-lib12.mjs': '025c1e3ba9a086ffcf652ff947ecfe9edec40180f921c32945cf16f22bb81ee4',
+  'tools/plates/library/hands/lib12-hand.mjs': '8f28d24a003597b5962c69b016731c53ca2e9ed3f74c70597031ddf8ce1f37c2',
 };
 // the research shared cards that carry a LIB-12 fault key (main f125edab): [file, fault key, label]
 const RESEARCH = [
@@ -120,7 +134,7 @@ function renderProblems(index = P.INDEX) {
   for (const [id, f, h] of rows) if (RENDERS[`${id} ${f}`] !== h) bad.push(`${id} ${f}: render ${h}`);
   return bad;
 }
-const fileProblems = (read = (f: string) => readFileSync(f)) => C.sweep(Object.keys(FILES), 15, 'LIB-12 files').filter((f: string) => sha(read(f)) !== FILES[f]);
+const fileProblems = (read = (f: string) => readFileSync(f)) => C.sweep(Object.keys(FILES), 16, 'LIB-12 files').filter((f: string) => sha(read(f)) !== FILES[f]);
 
 describe('LIB-12-FIX X1: words per LIB-12 key (D-LIB12FIX-WORDS)', () => {
   it('the five LIB-12 keys have words files; right = rightNote, wrong = pager = the drawn label, each with a source; heading golden B\'s', async () => {
@@ -154,11 +168,12 @@ describe('LIB-12-FIX X1: words per LIB-12 key (D-LIB12FIX-WORDS)', () => {
 });
 
 describe('LIB-12-FIX X3: LIB-12\'s pictures carry (D-LIB12FIX-CARRY)', () => {
-  it('the 20 renders equal 0d268a71\'s, combined by M1\'s method; the 15 files are byte-identical', () => {
+  it('the 20 renders equal their pins (battle_ropes 0d268a71\'s), combined by M1\'s method; the 16 files are byte-identical', () => {
     expect(renderProblems()).toEqual([]);
     const rows = Object.entries(RENDERS).map(([k, h]) => [...k.split(' '), h]).sort((a, b) => a[0]! < b[0]! ? -1 : a[0]! > b[0]! ? 1 : a[1]! < b[1]! ? -1 : a[1]! > b[1]! ? 1 : 0);
     expect(sha(rows.map(r => r[2]).join('\n'))).toBe(COMBINED);
     expect(fileProblems()).toEqual([]);
+    expect(RENDERS['battle_ropes death-grip']).toBe(BATTLE_ROPES_0D268A71);
   }, 60_000);
   it('each LIB-12 panel page === renderPair(first id, { fault }).svg with hp-<id>-<fault> swapped for hp-<key>-<fault> (6 pages)', async () => {
     let n = 0;
@@ -189,4 +204,104 @@ describe('LIB-12-FIX X3: LIB-12\'s pictures carry (D-LIB12FIX-CARRY)', () => {
       expect(fileProblems(p => p === f ? readFileSync(join(dir, 'view-cupped.mjs')) : readFileSync(p))).toEqual([f]);
     } finally { rmSync(dir, { recursive: true, force: true }); }
   }, 60_000);
+});
+
+// ---------- D-LIB12FIX-R8: the fix round ----------
+const ENGINE_SRC = readFileSync('tools/plates/layers/engine/hand.mjs', 'utf8');
+/** Numbers of a source text, in order ('- 2' read as -2), compared by size: the source text itself is matched verbatim. */
+const numsOf = (t: string) => (t.replace(/- (\d)/g, '-$1').match(/-?\d+(\.\d+)?/g) ?? []).map(Number);
+const inOrder = (want: number[], have: number[]) => { let i = 0; for (const h of have) if (i < want.length && Math.abs(h) === Math.abs(want[i]!)) i++; return i === want.length; };
+const drift = (src = ENGINE_SRC, copied = L.ENGINE_COPIED) => Object.entries<any>(copied)
+  .filter(([, v]) => !v.src.every((t: string) => src.includes(t)) || !inOrder(v.value.flat(), v.src.flatMap(numsOf))).map(([k]) => k);
+
+describe('LIB-12-FIX R8-DRIFT: values copied from golden-B hand.mjs and the pair chrome stay golden B\'s (D-LIB12FIX-R8)', () => {
+  it('every ENGINE_COPIED value is in hand.mjs at its source text, in order; view-common\'s FINGER_T is the copied one', () => {
+    C.sweep(Object.keys(L.ENGINE_COPIED), 21, 'copied engine values');
+    expect(drift()).toEqual([]);
+    expect(L.ENGINE_COPIED.fingerT.value).toBe(VC.FINGER_T);
+  });
+  it('mutations: an engine value changed in hand.mjs, a copied value changed, a source line gone are each red', () => {
+    expect(drift(ENGINE_SRC.replace('const tPP = 9.8 * s', 'const tPP = 9.9 * s'))).toEqual(['fingerT']);
+    const c2 = structuredClone(L.ENGINE_COPIED); c2.dorsal.value[2][1] = 18.5;
+    expect(drift(ENGINE_SRC, c2)).toEqual(['dorsal']);
+    expect(drift(ENGINE_SRC.replace('det += bone(-13, -8, -8) + bone(9, 7, -12);', ''))).toEqual(['bones']);
+  });
+  const ring = [[0, 0], [40, 0], [40, 30], [0, 30]];
+  const spec = { uid: 'dr', camera: 'side', rightNote: 'A', wrongNote: 'B', alt: { right: 'r', wrong: 'w' } };
+  const viaCommon = (r: number[][]) => VC.viewPair({ ...spec, right: { parts: [{ kind: 'skin', ring: r }, { kind: 'joint', at: [10, 10] }], anchor: [0, 0], report: {} },
+    wrong: { parts: [{ kind: 'skin', ring }, { kind: 'contact', at: [20, 5] }], anchor: [0, 0], report: {} } }).svg;
+  const viaHand = (r: number[][]) => L.handPair({ ...spec, right: { layers: [{ union: 'h-skin', rings: [{ ring: r, smooth: true }] }, { joint: true, at: [10, 10] }], anchor: [0, 0], report: {} },
+    wrong: { layers: [{ union: 'h-skin', rings: [{ ring, smooth: true }] }, { contact: true, at: [20, 5] }], anchor: [0, 0], report: {} } }).svg;
+  it('handPair draws the same parts byte-identically to view-common viewPair (chrome, fit, unions, joint, contact)', () => {
+    expect(viaHand(ring)).toBe(viaCommon(ring));
+  });
+  it('mutation: a different outline on one side is red', () => {
+    expect(viaHand(ring.map(([x, y]) => [x, y + 1]))).not.toBe(viaCommon(ring));
+  });
+});
+
+const lib12Renders = () => C.sweep(P.MODULES.filter((m: any) => m.OWNER === 'LIB-12').flatMap((m: any) => Object.entries<any>(m.IDS).flatMap(([id, c]) => c.faults.map((f: string) => ({ m, id, f, r: P.renderPair(id, { fault: f }) })))), 20, 'LIB-12 renders');
+const belowFloor = (rep: any) => ['right', 'wrong'].filter(h => Math.max(...rep[h].outline.map((p: number[]) => p[1])) > 1e-6);
+const thumbProblems = (rep: any) => ['right', 'wrong'].filter(h => !(rep[h].thumbOfHL >= 0.3 && rep[h].thumbOfHL <= 0.42)).map(h => `${h}: thumb ${rep[h].thumbOfHL} of HL`);
+
+describe('LIB-12-FIX R8-PF: palm-flat is a hand on the floor (critic C5 boot/mitten, thumb length; cupped-palm C3)', () => {
+  it('on all 16 pages: no outline point below the floor; the visible thumb is 0.30-0.42 of the hand length (golden-B HAND_PROP)', () => {
+    const pages = lib12Renders().filter(x => x.m.KEY === 'palm-flat');
+    C.sweep(pages, 16, 'palm-flat pages');
+    for (const { id, f, r } of pages) { expect([id, f, belowFloor(r.report)]).toEqual([id, f, []]); expect([id, f, thumbProblems(r.report)]).toEqual([id, f, []]); }
+  }, 60_000);
+  it('cupped-palm Wrong: heel and tip pads only, the finger off the floor along its length; hand-ahead Wrong keeps it flat', () => {
+    const cup = P.renderPair('push_up', { fault: 'cupped-palm' }).report.wrong, ahead = P.renderPair('push_up', { fault: 'hand-ahead' }).report.wrong;
+    expect([cup.floorBetweenHeelAndKnuckle, cup.fingerFloorRun <= 0.15, ahead.fingerFloorRun > 0.5]).toEqual([0, true, true]);
+  });
+  it('mutations: an outline point 4 mm under the floor, the old 0.82 thumb, a flat cupped Wrong are each red', () => {
+    const rep = P.renderPair('push_up', { fault: 'cupped-palm' }).report;
+    expect(belowFloor({ ...rep, right: { ...rep.right, outline: [...rep.right.outline, [30, 4]] } })).toEqual(['right']);
+    expect(thumbProblems({ ...rep, wrong: { ...rep.wrong, thumbOfHL: 0.82 } })).toEqual(['wrong: thumb 0.82 of HL']);
+    const flat = { right: PF.palmFlatHalf({}).report, wrong: PF.palmFlatHalf({ cup: 0 }, { role: 'wrong' }).report };
+    expect(PF.palmFlatProblems(flat, 'cupped-palm').join('\n')).toMatch(/the finger lies on the floor along 0\.\d+ of its length/);
+  });
+});
+
+describe('LIB-12-FIX R8-FR: front-rack is golden B\'s hand under the bar at reference scale (critic C1, C4, C5, C7)', () => {
+  it('palm up or back to the shoulder, wrist bent back, bar on the fingers, the bar\'s + mark, scale within 20 % of golden B\'s pull pair', async () => {
+    const r = P.renderPair('front_squat'), rr = r.report.right;
+    expect([rr.palmUpOrBack, rr.wristExtDeg >= 60, rr.barAlongPalm > 1, rr.fingersTouch]).toEqual([true, true, true, true]);
+    expect((r.svg.match(/class="h-eq-core" d="M[^"]+L[^"]+M[^"]+L[^"]+"/g) ?? []).length).toBe(2);   // one + per half
+    const pairs = await import(/* @vite-ignore */ url('tools/plates/layers/engine/hand-pairs.mjs'));
+    const kRef = hand.renderHandPair(pairs.PAIRS.pull).report.scalePxPerMm;
+    expect(Math.abs(r.report.scalePxPerMm / kRef - 1)).toBeLessThanOrEqual(0.2);
+  });
+  it('mutations: a palm facing down over the bar, the old body-diagram scale are each red', async () => {
+    const r = P.renderPair('front_squat').report;
+    expect(FR.frontRackProblems({ ...r, right: { ...r.right, palmUpOrBack: false } })).toEqual(['right: the palm faces down and forward, over the bar']);
+    const pairs = await import(/* @vite-ignore */ url('tools/plates/layers/engine/hand-pairs.mjs'));
+    expect(Math.abs(0.463 / hand.renderHandPair(pairs.PAIRS.pull).report.scalePxPerMm - 1)).toBeGreaterThan(0.2);   // front_squat's scale at 0d268a71 (measured)
+  });
+});
+
+describe('LIB-12-FIX R8-CU: goblet is a cupped hand under the head and one dumbbell (critic C5, C6)', () => {
+  it('thumb along the handle, fingers up the head\'s edge, the handle drawn through the forearm as a dashed hidden line', () => {
+    const r = P.renderPair('goblet_squat');
+    for (const h of ['right', 'wrong']) expect([h, r.report[h].thumbAlongHandle, r.report[h].fingersClearOfHead]).toEqual([h, true, true]);
+    expect((r.svg.match(/<path class="h-datum" d="M[^"]+Z"\/>/g) ?? []).length).toBe(2);   // the hidden handle, one per half
+  });
+  it('mutations: the thumb off the handle, the fingers in the head are each red', () => {
+    const r = P.renderPair('goblet_squat').report;
+    expect(CU.cuppedProblems({ ...r, right: { ...r.right, thumbAlongHandle: false } })).toEqual(['right: the thumb is not along the handle']);
+    expect(CU.cuppedProblems({ ...r, wrong: { ...r.wrong, fingersClearOfHead: false } })).toEqual(['wrong: the fingers cut into the head']);
+  });
+});
+
+describe('LIB-12-FIX R8-BA: wall-ball hands are front-view hands with five digits (critic C5)', () => {
+  const digits = (rep: any) => ['right', 'wrong'].filter(h => rep[h].digitsPerHand.join() !== '5,5');
+  it('two hands of five digits each, in both halves', () => {
+    const r = P.renderPair('wall_ball');
+    expect(digits(r.report)).toEqual([]);
+    expect((r.svg.match(/class="h-thumb"/g) ?? []).length).toBe(2);
+  });
+  it('mutation: a hand with a digit missing is red', () => {
+    const r = P.renderPair('wall_ball').report;
+    expect(digits({ ...r, wrong: { ...r.wrong, digitsPerHand: [5, 4] } })).toEqual(['wrong']);
+  });
 });

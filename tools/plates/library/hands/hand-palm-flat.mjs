@@ -1,11 +1,12 @@
 // LIB-12 key palm-flat (hands/DESIGN.md §1 module shape; drawing code in view-palm-flat.mjs). Plan 2.3; research
 // shared/palm-flat.json (claims below as <file>#<cid>, pinned in lib12-claims.json). Pilot B (D-LIB12-5).
-import { LIB12_CLAIMS, reportChecks, viewPair } from './view-common.mjs';
+import { LIB12_CLAIMS, reportChecks } from './view-common.mjs';
+import { handPair } from './lib12-hand.mjs';
 import { palmFlatHalf, palmFlatProblems } from './view-palm-flat.mjs';
 
 export const KEY = 'palm-flat', OWNER = 'LIB-12', VIEW = 'palm-flat';
 // no HANDLE: the hand lies on the floor (pairs.mjs requires a diameter only for a radial grip or a named profile)
-export const INPUTS = ['tools/plates/library/hands/view-palm-flat.mjs', 'tools/plates/library/hands/view-common.mjs'];
+export const INPUTS = ['tools/plates/library/hands/view-palm-flat.mjs', 'tools/plates/library/hands/lib12-hand.mjs', 'tools/plates/library/hands/view-common.mjs'];
 export const VIEW_FILES = ['tools/plates/layers/engine/hand.mjs', 'tools/plates/layers/engine/geom.mjs'];
 const PF = 'shared/palm-flat.json';
 export const VARIANTS = {
@@ -34,8 +35,8 @@ export const CENSUS = { source: 'census.json aggregates handZoomsNeeded palm-fla
 
 export function render(spec) {
   const wrongPose = spec.wrong, fault = wrongPose.cup > 0 ? 'cupped-palm' : 'hand-ahead';
-  const out = viewPair({ uid: spec.uid, camera: 'side', right: palmFlatHalf(spec.right), wrong: palmFlatHalf(wrongPose, { role: 'wrong' }),
-    rightNote: spec.rightNote, wrongNote: spec.wrongNote, alt: spec.alt, panelHeight: spec.panelHeight ?? 130 });
+  const out = handPair({ uid: spec.uid, camera: 'side', right: palmFlatHalf(spec.right), wrong: palmFlatHalf(wrongPose, { role: 'wrong' }),
+    rightNote: spec.rightNote, wrongNote: spec.wrongNote, alt: spec.alt, panelHeight: spec.panelHeight ?? 170 });
   const problems = palmFlatProblems(out.report, fault);
   return { svg: out.svg, report: { ...out.report, fault, problems, ok: problems.length === 0 } };
 }

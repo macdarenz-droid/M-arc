@@ -1,12 +1,13 @@
 // LIB-12 key front-rack (hands/DESIGN.md §1 module shape; drawing code in view-front-rack.mjs). Plan 2.3; research
 // shared/front-rack-exemption.json and cards/front_squat.json. The on-body wrist range is replaced by the exemption, so
 // no wrist number is drawn or checked. Pilot A (D-LIB12-5).
-import { LIB12_CLAIMS, reportChecks, viewPair } from './view-common.mjs';
+import { LIB12_CLAIMS, reportChecks } from './view-common.mjs';
+import { handPair } from './lib12-hand.mjs';
 import { FRONT_RACK_BAR, frontRackHalf, frontRackProblems } from './view-front-rack.mjs';
 
 export const KEY = 'front-rack', OWNER = 'LIB-12', VIEW = 'front-rack';
 export const HANDLE = { profile: 'bar-28', diameterMm: FRONT_RACK_BAR.diameterMm };   // golden B's bar value, explicit (D-LIB12-2)
-export const INPUTS = ['tools/plates/library/hands/view-front-rack.mjs', 'tools/plates/library/hands/view-common.mjs'];
+export const INPUTS = ['tools/plates/library/hands/view-front-rack.mjs', 'tools/plates/library/hands/lib12-hand.mjs', 'tools/plates/library/hands/view-common.mjs'];
 export const VIEW_FILES = ['tools/plates/layers/engine/hand.mjs', 'tools/plates/layers/engine/geom.mjs'];
 const X = 'shared/front-rack-exemption.json', F = 'cards/front_squat.json';
 export const VARIANTS = {
@@ -28,7 +29,7 @@ export const GAPS = {};
 export const CENSUS = { source: 'plan 2.3 front-rack (1)', count: 1 };
 
 export function render(spec) {
-  const out = viewPair({ uid: spec.uid, camera: 'side', right: frontRackHalf(spec.right), wrong: frontRackHalf(spec.wrong, { role: 'wrong' }),
+  const out = handPair({ uid: spec.uid, camera: 'side', right: frontRackHalf(spec.right), wrong: frontRackHalf(spec.wrong, { role: 'wrong' }),
     rightNote: spec.rightNote, wrongNote: spec.wrongNote, alt: spec.alt, panelHeight: spec.panelHeight ?? 220 });
   const problems = frontRackProblems(out.report);
   return { svg: out.svg, report: { ...out.report, problems, ok: problems.length === 0 } };

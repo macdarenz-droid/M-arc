@@ -1,11 +1,12 @@
 // LIB-12 key ball-contact (hands/DESIGN.md §1 module shape; drawing code in view-ball.mjs). Plan 2.3; research
 // shared/implement-wall-ball.json. Front camera (the spec's camera is not used). Pilot B (D-LIB12-5).
-import { LIB12_CLAIMS, reportChecks, viewPair } from './view-common.mjs';
+import { LIB12_CLAIMS, reportChecks } from './view-common.mjs';
+import { handPair } from './lib12-hand.mjs';
 import { WALL_BALL, ballHalf, ballProblems } from './view-ball.mjs';
 
 export const KEY = 'ball-contact', OWNER = 'LIB-12', VIEW = 'ball';
 export const HANDLE = { profile: 'wall-ball', diameterMm: WALL_BALL.diameterMm };   // D-LIB12-2
-export const INPUTS = ['tools/plates/library/hands/view-ball.mjs', 'tools/plates/library/hands/view-common.mjs'];
+export const INPUTS = ['tools/plates/library/hands/view-ball.mjs', 'tools/plates/library/hands/lib12-hand.mjs', 'tools/plates/library/hands/view-common.mjs'];
 export const VIEW_FILES = ['tools/plates/layers/engine/hand.mjs', 'tools/plates/layers/engine/geom.mjs'];
 const B = 'shared/implement-wall-ball.json';
 export const VARIANTS = {
@@ -27,7 +28,7 @@ export const GAPS = { medicine_ball_slam: 'no hand placement, thumb, wrist or ha
 export const CENSUS = { source: 'plan 2.3 ball-contact (2)', count: 2 };
 
 export function render(spec) {
-  const out = viewPair({ uid: spec.uid, camera: 'front', right: ballHalf(spec.right), wrong: ballHalf(spec.wrong, { role: 'wrong' }),
+  const out = handPair({ uid: spec.uid, camera: 'front', right: ballHalf(spec.right), wrong: ballHalf(spec.wrong, { role: 'wrong' }),
     rightNote: spec.rightNote, wrongNote: spec.wrongNote, alt: spec.alt, panelHeight: spec.panelHeight ?? 200 });
   const problems = ballProblems(out.report);
   return { svg: out.svg, report: { ...out.report, problems, ok: problems.length === 0 } };
