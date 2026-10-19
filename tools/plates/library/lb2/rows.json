@@ -1,0 +1,70 @@
+{
+ "note": "LB2 build-ahead rows (LIB-10, D-LIB10-AHEAD): stage drawing or review only, never in batches/. Mode H for all 7 (D-LIB10-DECLINE, D-LIB10-NOTE Q6, D-LIB10-BENCH-H: BENCH is not built in LB2). censusRef: the census commit (claude/howto-options).",
+ "batch": "LB2",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_barbell_bench_press": {
+   "src": "library/specs/barbell_bench_press.mjs",
+   "slug": "barbell-bench-press",
+   "prefix": "barbell-bench-press",
+   "chromeId": "barbell-bench-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_incline_barbell_bench_press": {
+   "src": "library/specs/incline_barbell_bench_press.mjs",
+   "slug": "incline-barbell-bench-press",
+   "prefix": "incline-barbell-bench-press",
+   "chromeId": "incline-barbell-bench-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_close_grip_bench_press": {
+   "src": "library/specs/close_grip_bench_press.mjs",
+   "slug": "close-grip-bench-press",
+   "prefix": "close-grip-bench-press",
+   "chromeId": "close-grip-bench-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_decline_bench_press": {
+   "src": "library/specs/decline_bench_press.mjs",
+   "slug": "decline-bench-press",
+   "prefix": "decline-bench-press",
+   "chromeId": "decline-bench-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_arnold_press": {
+   "src": "library/specs/arnold_press.mjs",
+   "slug": "arnold-press",
+   "prefix": "arnold-press",
+   "chromeId": "arnold-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_skull_crusher": {
+   "src": "library/specs/skull_crusher.mjs",
+   "slug": "skull-crusher",
+   "prefix": "skull-crusher",
+   "chromeId": "skull-crusher",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_dumbbell_pullover": {
+   "src": "library/specs/dumbbell_pullover.mjs",
+   "slug": "dumbbell-pullover",
+   "prefix": "dumbbell-pullover",
+   "chromeId": "dumbbell-pullover",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}
