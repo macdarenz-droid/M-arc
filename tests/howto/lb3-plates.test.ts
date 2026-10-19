@@ -862,14 +862,27 @@ describe('LIB-13 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
     ...(f.cardPose && POSE_MAP[id]![f.cardPose] !== (f.pose ?? 'end') ? [`${i}: pose ${f.pose ?? 'end'} is not the map's image of card ${f.cardPose}`] : []),
   ]);
-  it('every card\'s plateFacts is [] (LB3 NOTE RULED: no number in any plate.start or plate.end)', () => {
-    for (const id of LB3) { expect(cardOf(id).plateFacts, id).toEqual([]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
+  // D-LIB13-FACTS2 (#274 6267284075): a quoted contact for a drawn pose is a fact, one per checked landmark, its pose
+  // the pose map's image of the card pose; landmine_row and t_bar_row stay [].
+  const C = (lms: string[], pose: string, cardPose: string, claim: string) => lms.map(landmark => ({ kind: 'contact', landmark, pose, cardPose, claim }));
+  const FACTS: Record<string, any[]> = {
+    pendlay_row: C(['chest', 'navel'], 'start', 'end', 'c4'),
+    one_arm_dumbbell_row: C(['knee.l', 'wrist.l'], 'start', 'start', 'c1'),
+    conventional_deadlift: C(['knee.r', 'ankle.r'], 'end', 'start', 'c1'),
+    dumbbell_romanian_deadlift: [...C(['hip.r', 'knee.r'], 'start', 'start', 'c4'), ...C(['knee.r', 'ankle.r'], 'end', 'end', 'c4')],
+    sumo_deadlift: C(['knee.r', 'ankle.r'], 'end', 'start', 'c13'),
+    back_extension: [...C(['hip.r', 'knee.r'], 'end', 'start', 'c3'), ...C(['hip.r', 'knee.r'], 'start', 'end', 'c1')],
+    landmine_row: [], t_bar_row: [],
+  };
+  it('every card\'s plateFacts is the ruled contact set (D-LIB13-FACTS2; no number in any plate.start or plate.end)', () => {
+    expect(Object.keys(FACTS).sort()).toEqual([...LB3].sort());
+    for (const id of LB3) { expect(cardOf(id).plateFacts, id).toEqual(FACTS[id]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
   });
   it('mutations: a fact with both joint and measure: true, and a start fact named with the unmapped pose, are red', () => {
     const c = cardOf('landmine_row'); c.plateFacts.push({ kind: 'angle', joint: 'knee.r', measure: true, deg: 30, claim: 'c3' });
     expect(factProblems('landmine_row', c)).toEqual(['0: both joint and measure']);
     const p = cardOf('pendlay_row'); p.plateFacts.push({ kind: 'angle', joint: 'knee.r', pose: 'start', cardPose: 'start', deg: 30, claim: 'c10' });
-    expect(factProblems('pendlay_row', p)).toEqual(["0: pose start is not the map's image of card start"]);
+    expect(factProblems('pendlay_row', p)).toEqual([`${p.plateFacts.length - 1}: pose start is not the map's image of card start`]);
   });
   const h6 = (spec: any, research: any) => {
     const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
@@ -878,6 +891,19 @@ describe('LIB-13 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
   const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault }; };
   it('A6: PQ-H6 is green on the drawn slice plates against their cards', () => {
     for (const id of SLICE) expect(h6(S[id], research(id)), id).toEqual([]);
+  });
+  // Every numeric triple named `at` in a pose (root, reach and plant targets) moved by v: the whole body moves rigidly.
+  const shiftPose = (p: any, v: number[]): any => Array.isArray(p) ? p.map(x => shiftPose(x, v)) : p && typeof p === 'object'
+    ? Object.fromEntries(Object.entries(p).map(([k, x]: [string, any]) => [k, k === 'at' && Array.isArray(x) && x.length === 3 && x.every((n: any) => typeof n === 'number') ? x.map((n: number, i: number) => n + v[i]!) : shiftPose(x, v)])) : p;
+  it('D-LIB13-FACTS2 mutation: each contact pose\'s body moved 2 cm along its contact plane\'s normal turns exactly that pose\'s facts red', () => {
+    for (const id of Object.keys(FACTS).filter(i => FACTS[i]!.length)) for (const pose of [...new Set(FACTS[id]!.map(f => f.pose))]) {
+      const s = S[id], f0 = FACTS[id]!.find(f => f.pose === pose);
+      const k = s.checks.find((c: any) => c.landmark === f0.landmark && c.plane && (c.pose === pose || c.pose === 'all'));
+      const n = k.plane.normal, L = Math.hypot(...n), v = n.map((x: number) => x / L * 0.02);
+      const moved = { ...s, poses: { ...s.poses, [pose]: shiftPose(s.poses[pose], v) } };
+      const want = FACTS[id]!.flatMap((f, i) => (f.pose === pose ? [`H6.fact:${i}:contact:${f.landmark}`] : []));
+      expect(h6(moved, research(id)), `${id} ${pose}`).toEqual(want);
+    }
   });
   it('A6 mutations: an angle fact +3 deg off the drawn one, and the card path removed, are red', () => {
     const s = S.conventional_deadlift, r = research('conventional_deadlift'), drawnKnee = plate.renderPlate(s, { id: 'x' }).report.angles.end['knee.r'];

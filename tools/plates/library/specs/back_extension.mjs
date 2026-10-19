@@ -57,8 +57,11 @@ const PAD = (() => {
   let n = [0, -u[2], u[1]];
   if (n[2] < 0) n = n.map(v => -v);                                                    // the front of the thigh faces forward
   const p = A.map((v, i) => v + d[i] * PAD_T + n[i] * thighR(PAD_T) * H);
-  return { at: [0, p[1], p[2]], along: u.map(v => -v) };                               // along: toward the head
+  return { at: [0, p[1], p[2]], along: u.map(v => -v), n };                            // along: toward the head
 })();
+// H6 contact plane (D-LIB13-FACTS2): the near thigh's axis, thighR(PAD_T) behind the pad face, parallel to the thigh.
+// hip.r and knee.r lie on it while the thigh rests on the pad; legs moved off the pad open it.
+const THIGH_ON_PAD = { point: PAD.at.map((v, i) => v - PAD.n[i] * thighR(PAD_T) * H), normal: PAD.n };
 const HEEL = (() => { const a = LT['ankle.r'], h = LT['heel.r']; const d = [0, h[1] - a[1], h[2] - a[2]]; return [0, a[1] + d[1] * 0.2 - 0.05, a[2] + d[2] * 0.2 - 0.06]; })();
 const chestHands = lm => {
   const c = lm.chest, s = lm.sternum, n = (() => { const d = [0, s[1] - lm.backUpper[1], s[2] - lm.backUpper[2]], L = Math.hypot(...d); return d.map(v => v / L); })();
@@ -89,7 +92,7 @@ const HUMP_PTS = (() => {
 })();
 const HUMP_OUT = k => HUMP_PTS.apex.map((v, i) => v + HUMP_PTS.n[i] * k);
 
-export const BX = { pad: PAD, plateN: PLATE_N, heel: HEEL };
+export const BX = { pad: { at: PAD.at, along: PAD.along }, plateN: PLATE_N, heel: HEEL };
 const chair = () => romanChair({ pad: PAD, foot: { at: SOLE('r'), along: (() => { const n = PLATE_N; return [0, -n[2], n[1]]; })() }, heel: HEEL, floorZ: [SOLE('r')[2] - 0.15, PAD.at[2] + 0.1] });
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
@@ -103,6 +106,8 @@ export default {
   checks: [
     { landmark: 'sole.r', plane: { point: SOLE('r'), normal: PLATE_N }, pose: 'all', tol: 0.5 },     // feet on the foot plate (c3)
     { landmark: 'sole.l', plane: { point: SOLE('l'), normal: PLATE_N }, pose: 'all', tol: 0.5 },
+    { landmark: 'hip.r', plane: THIGH_ON_PAD, pose: 'all' },                                          // c1, c3 thighs on the pad (H6 contact fact)
+    { landmark: 'knee.r', plane: THIGH_ON_PAD, pose: 'all' },
   ],
   startParts: ['trunk', 'arm.r'],
   ghosts: { count: 2, parts: ['trunk', 'arm.r'] },

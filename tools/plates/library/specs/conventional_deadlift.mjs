@@ -146,6 +146,17 @@ function handPoly(lm) {
   return { type: 'poly', pts, curve: true, cls: 'eq-solid', z: 'front', part: 'hand' };
 }
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
+// H6 contact plane (D-LIB13-FACTS2): parallel to the drawn leg segment a -> b, the segment's radius at the point nearest
+// the bar plus SHAFT_R behind the bar centre. The segment's two joints lie on it when the bar's surface touches the
+// leg, so their distance to it is the bar's gap to the leg (BAR_GAP); a leg moved off the bar opens it.
+const legPlane = (pose, a, b, rf) => {
+  const lm = landmarksOf(pose, H), bar = lm.grips, A = lm[a], B = lm[b], d = [B[1] - A[1], B[2] - A[2]], L = Math.hypot(...d), u = d.map(v => v / L);
+  const t = ((bar[1] - A[1]) * u[0] + (bar[2] - A[2]) * u[1]) / L, off = rf(t) * H + SHAFT_R;
+  let n = [-u[1], u[0]];
+  if (n[0] * (bar[1] - A[1]) + n[1] * (bar[2] - A[2]) < 0) n = n.map(v => -v);
+  return { point: [0, bar[1] - n[0] * off, bar[2] - n[1] * off], normal: [0, n[0], n[1]] };
+};
+const SHIN_END = legPlane(end, 'knee.r', 'ankle.r', shR);
 export default {
   id: 'conventional_deadlift', name: 'Conventional Deadlift', view: 'side', facing: 'right',
   camera: { x0: 172, y0: 339 },
@@ -165,6 +176,8 @@ export default {
     { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'end', tol: 0.5 },          // c1 bar over mid-foot
     { landmark: 'grips', plane: { point: [0, PLATE_R, 0], normal: [0, 1, 0] }, pose: 'end', tol: 0.5 },    // c23 plates on the floor
     { landmark: 'grips', plane: { point: [0, 0, 0], normal: [0, 0, 1] }, pose: 'start', tol: 0.5 },        // lockout over mid-foot
+    { landmark: 'knee.r', plane: SHIN_END, pose: 'end' },                                                // c1 shins to the bar (H6 contact fact)
+    { landmark: 'ankle.r', plane: SHIN_END, pose: 'end' },
   ],
   startParts: ['trunk', 'leg.r', 'arm.r'],
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r'] },

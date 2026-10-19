@@ -872,7 +872,22 @@
   "notes": [
     "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Bar across the base of the fingers and top of the palm (pull archetype); straps allowed when the grip gives out first.\") and the drawn palm direction (palms down, as grip.type states from c1) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Bent back into its natural grip position (about 35 degrees), not curled forward; grip weakens when the wrist moves away from it.\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3)."
   ],
-  "plateFacts": [],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "chest",
+      "pose": "start",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "navel",
+      "pose": "start",
+      "cardPose": "end",
+      "claim": "c4"
+    }
+  ],
   "tempo": [
     {
       "phase": "Lower",

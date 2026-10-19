@@ -212,6 +212,22 @@ checked):
 | sumo_deadlift | c2: stance 70 ± 11 vs 32 ± 8 cm, toe-out 42 ± 8 vs 14 ± 6° (competitive lifters); c4: trunk 5-10° more vertical than conventional | **none proposed (question Q2)** | stance width shows only from the front (card viewWhy); no fact kind measures a stance width or a foot angle (H6 kinds: angle by joint or measure, contact, height; 22 point 1: report, never invent a key); c4 is relative to another plate. Drawn: the sumo trunk 7.5° (c4 midpoint) more vertical than conventional_deadlift's drawn trunk, a drawn-item test (Q2 ruled). The feet are drawn 30 cm apart, toes out 10°, not c2's 70 cm and 42°: the engine foot has no roll (section 11) |
 | back_extension | c7 "slightly below parallel": no number | `plateFacts: []` | |
 
+**Contact facts (D-LIB13-FACTS2, #274 comment 6267284075).** A quoted contact for a drawn pose is a fact too ("[]
+only when no quote gives a number or a contact for a pose the plate draws"). One `contact` fact per checked landmark,
+`pose` the pose map's image of `cardPose`; each landmark has a spec `checks` plane, and H6 needs it within 1 cm:
+
+| id | contact (claim) | spec pose (card pose) | landmarks: the plane |
+|---|---|---|---|
+| pendlay_row | bar to the abs or chest (c4) | start (end) | chest, navel: the navel-to-chest line, CLEAR (2 cm, shaft and clothing) behind the top bar; 0 cm |
+| one_arm_dumbbell_row | support knee and hand on the bench (c1) | start (start) | knee.l, wrist.l: the bench-top planes; 0 cm |
+| conventional_deadlift | shins to the bar (c1) | end (start) | knee.r, ankle.r: parallel to the shin, its radius at the bar plus the shaft radius behind the bar; 0.5 cm (BAR_GAP) |
+| dumbbell_romanian_deadlift | dumbbells on the legs (c4) | start (start), end (end) | hip.r, knee.r on the thigh plane at start; knee.r, ankle.r on the shin plane at end; 0.5 cm (BAR_GAP, the hex face) |
+| sumo_deadlift | bar against the shins (c13) | end (start) | knee.r, ankle.r: as conventional_deadlift; 0.5 cm |
+| back_extension | thighs on the pad (c3 on the card's start; c1 on its end: c1 is the quote that places the pad on the thighs, c2 is the pad-height mistake) | end (start), start (end) | hip.r, knee.r: the thigh axis, thighR(PAD_T) behind the pad face; 0 cm |
+
+The drawn via poses are not facts (the cards name start and end). A test moves each fact pose's whole body 2 cm along
+its plane's normal (root, reach and plant targets together): exactly that pose's facts go red.
+
 Equipment numbers (fact only with a measure callout): conventional_deadlift's 45 cm plates / 22.5 cm bar (c23) and
 t_bar_row's 8-10 in handle position (c1) have no measure callout (a measure is an angle), so they are not facts. They
 are drawn exactly (bar centre 0.225 m over the floor at the floor pose; handle 0.229 m from the plates) and tested on

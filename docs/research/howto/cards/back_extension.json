@@ -794,7 +794,36 @@
   "gaps": [
     "Seated back-extension machine (the library's \"Machine\", if it means this kind): no read source gives its setup, seat or pad position, range or technique; only c15 (Andersen 2021) measures its muscle work. Nothing is written for it (R-LB3-9)."
   ],
-  "plateFacts": [],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "hip.r",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "knee.r",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "hip.r",
+      "pose": "start",
+      "cardPose": "end",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "knee.r",
+      "pose": "start",
+      "cardPose": "end",
+      "claim": "c1"
+    }
+  ],
   "tempo": [
     {
       "phase": "Lower",

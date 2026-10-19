@@ -83,6 +83,9 @@ const top0 = body(ROOT[1], ROOT[2], TILT, PRO_START), LT0 = landmarksOf(top0, H)
 const T_PLUMB = (() => { const a = onFront(LT0, 0), b = onFront(LT0, 1); return (FLOOR_BAR[2] - a[2]) / (b[2] - a[2]); })();
 const BAR_T = Math.max(0, Math.min(1, T_PLUMB));
 const TOP_BAR = onFront(LT0, BAR_T);
+// H6 contact plane (D-LIB13-FACTS2): the navel-to-chest line, CLEAR (the shaft and clothing) behind the top bar.
+// chest and navel lie on it while the bar rests on the torso front; a torso moved off the bar opens it.
+const FRONT_TOP = (() => { const d = [LT0.chest[1] - LT0.navel[1], LT0.chest[2] - LT0.navel[2]]; let n = [-d[1], d[0]].map(v => v / Math.hypot(...d)); if (n[0] * (LT0.chest[1] - LT0.backUpper[1]) + n[1] * (LT0.chest[2] - LT0.backUpper[2]) < 0) n = n.map(v => -v); return { point: [0, TOP_BAR[1] - n[0] * CLEAR, TOP_BAR[2] - n[1] * CLEAR], normal: [0, n[0], n[1]] }; })();
 const dorsal = (() => { const d = [0, 1, 2].map(i => LT0.backUpper[i] - LT0.chest[i]), L = Math.hypot(...d); return d.map(v => v / L); })();
 const topAt = out => ({ ...top0, reach: hands(TOP_BAR, [-out, dorsal[1], dorsal[2]]) });
 // Elbow pole lateral share SOLVED (bracket 0.05-5) so the elbow sits straight above the bar (the bent-back wrist turns the forearm about 9 deg off it).
@@ -135,6 +138,8 @@ export default {
     { landmark: 'ball.l', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'grips', at: FLOOR_BAR, pose: 'end', tol: 0.5 },      // c3: the bar on the floor (plates on the floor line)
     { landmark: 'grips', at: TOP_BAR, pose: 'start', tol: 0.5 },      // c4, c5: the bar on the torso
+    { landmark: 'chest', plane: FRONT_TOP, pose: 'start' },          // c4: the bar to the abs or chest (H6 contact fact)
+    { landmark: 'navel', plane: FRONT_TOP, pose: 'start' },
   ],
   startParts: ['arm.r'],
   ghosts: { count: 3, parts: ['arm.r', 'bardot'] },

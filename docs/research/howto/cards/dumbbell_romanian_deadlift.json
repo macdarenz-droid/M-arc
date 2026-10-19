@@ -888,7 +888,36 @@
   "notes": [
     "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Handle across the middle of the palm, fingers wrapped (hold archetype).\") and the drawn palm direction (palms facing the body, as grip.type states from c1) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Neutral (inherited).\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3)."
   ],
-  "plateFacts": [],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "hip.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "knee.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "knee.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ankle.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    }
+  ],
   "tempo": [
     {
       "phase": "Lower",

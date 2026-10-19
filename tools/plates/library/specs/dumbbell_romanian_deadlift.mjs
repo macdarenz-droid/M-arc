@@ -120,6 +120,17 @@ const DB = lm => ({ type: 'dumbbell', at: lm['grip.r'], part: 'bell' });
 const START_GRIP = landmarksOf(start, H)['grip.r'];
 const START_HEX = Array.from({ length: 7 }, (_, k) => [0, START_GRIP[1] + 0.0595 * Math.sin(k * Math.PI / 3 + Math.PI / 6), START_GRIP[2] + 0.0595 * Math.cos(k * Math.PI / 3 + Math.PI / 6)]);
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
+// H6 contact plane (D-LIB13-FACTS2): parallel to the drawn leg segment a -> b, the segment's radius at the point nearest
+// the bar plus SHAFT_R behind the dumbbell centre. The segment's two joints lie on it when the dumbbell's hex face touches the
+// leg, so their distance to it is the dumbbell's gap to the leg (BAR_GAP); a leg moved off the dumbbell opens it.
+const legPlane = (pose, a, b, rf) => {
+  const lm = landmarksOf(pose, H), bar = lm.grips, A = lm[a], B = lm[b], d = [B[1] - A[1], B[2] - A[2]], L = Math.hypot(...d), u = d.map(v => v / L);
+  const t = ((bar[1] - A[1]) * u[0] + (bar[2] - A[2]) * u[1]) / L, off = rf(t) * H + SHAFT_R;
+  let n = [-u[1], u[0]];
+  if (n[0] * (bar[1] - A[1]) + n[1] * (bar[2] - A[2]) < 0) n = n.map(v => -v);
+  return { point: [0, bar[1] - n[0] * off, bar[2] - n[1] * off], normal: [0, n[0], n[1]] };
+};
+const THIGH_START = legPlane(start, 'hip.r', 'knee.r', thR), SHIN_END = legPlane(end, 'knee.r', 'ankle.r', shR);
 export default {
   id: 'dumbbell_romanian_deadlift', name: 'Dumbbell Romanian Deadlift', view: 'side', facing: 'right',
   camera: { x0: 172, y0: 339 },
@@ -136,6 +147,10 @@ export default {
     { landmark: 'heel.l', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'ball.l', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'grips', plane: { point: [0, MID_SHIN, 0], normal: [0, 1, 0] }, pose: 'end', tol: 0.5 },   // c3 mid-shin
+    { landmark: 'hip.r', plane: THIGH_START, pose: 'start' },                                            // c4 dumbbells on the thighs (H6 contact fact)
+    { landmark: 'knee.r', plane: THIGH_START, pose: 'start' },
+    { landmark: 'knee.r', plane: SHIN_END, pose: 'end' },                                                // c4 dumbbells on the shins (H6 contact fact)
+    { landmark: 'ankle.r', plane: SHIN_END, pose: 'end' },
   ],
   startParts: ['trunk', 'leg.r', 'arm.r'],
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r'] },
