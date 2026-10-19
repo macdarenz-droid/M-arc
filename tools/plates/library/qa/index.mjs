@@ -8,6 +8,8 @@
 //              | { kind: 'height', landmark, pose?, m }], tempo, topFault },
 //   census { view }, mistakeFault, derivation { params, schema, rebuildParent(), parentFragments } (D and T),
 //   exemptions: flag names with a named exemption (supervisor, owner-visible on the sheet), recorded by id and key on the batch sheet (D-LIB3-flags), e.g. ['F1'].
+//   LIB-3c: a library candidate (H, D, T) also carries freshSpec() and rebuild() for PQ-H7 (candidate.mjs); a D/T
+//   derivation also carries family, rebuildChild(obj) and, for T, rebuildTemplateParent() for PQ-H10.
 // ctx: { engine (engine.mjs loadEngine), vocabulary, envelope, approvedStrings (approved.mjs), browser?: Map(id ->
 //   browser.mjs result) }. A report without its browser half is never ok.
 import { readFileSync } from 'node:fs';
@@ -35,7 +37,7 @@ export async function runQa(c, ctx) {
   const M = nodeMetrics(c, env, R);
   const raw = {
     'PQ-H1': h1Engine(c, R, renderError), 'PQ-H2': h2(c, env), 'PQ-H3': h3(c, env, R, M), 'PQ-H4': [], 'PQ-H5': [],
-    'PQ-H6': h6(c, env, R), 'PQ-H7': h7(c, env, R), 'PQ-H8': h8(c, env), 'PQ-H9': h9(c, env, R), 'PQ-H10': await h10(c, env),
+    'PQ-H6': h6(c, env, R), 'PQ-H7': await h7(c, env, R), 'PQ-H8': h8(c, env), 'PQ-H9': h9(c, env, R), 'PQ-H10': await h10(c, env),
   };
   if (c.mode === 'approved' && !APPROVED_IDS.includes(c.id)) raw['PQ-H2'].push({ key: 'mode', text: `${c.id} is not one of the 8 and cannot be 'approved'` });
   const flags = nodeFlags(c, env, M);
