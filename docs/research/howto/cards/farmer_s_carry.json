@@ -33,7 +33,7 @@
     {
      "source": "fv-farmers",
      "text": "You can use kettlebells, dumbbells, a trap bar, or dedicated Farmer’s Walk handles.",
-     "where": "Introduction"
+     "where": "Opening paragraphs, under the page subtitle 'Learn how to do this full-body exercise and improve many aspects of your fitness'"
     }
    ]
   },
@@ -50,7 +50,7 @@
     {
      "source": "fv-farmers",
      "text": "Clear a level, dry route before picking up the weights. Leave space to turn and a clear area to set them down, away from your feet and other people.",
-     "where": "How To Do The Farmer’s Walk"
+     "where": "How To Do The Farmer’s Walk (below the in-page 'Get Fitter, Faster' promo heading)"
     }
    ]
   },
@@ -69,7 +69,7 @@
     {
      "source": "fv-farmers",
      "text": "Stand between the weights with your feet about hip-width apart. Bend at your hips and knees, take a secure grip, brace your trunk, and stand up without jerking the handles.",
-     "where": "How To Do The Farmer’s Walk"
+     "where": "How To Do The Farmer’s Walk (below the in-page 'Get Fitter, Faster' promo heading)"
     },
     {
      "source": "bb-farmers",
@@ -102,7 +102,7 @@
     {
      "source": "fv-farmers",
      "text": "Keep your arms long, your torso upright, and your gaze ahead. Walk with controlled steps.",
-     "where": "How To Do The Farmer’s Walk"
+     "where": "How To Do The Farmer’s Walk (below the in-page 'Get Fitter, Faster' promo heading)"
     }
    ]
   },
@@ -125,7 +125,7 @@
     {
      "source": "fv-farmers",
      "text": "Avoid forcing your shoulders into a shrug or an exaggerated shoulders-back position.",
-     "where": "How To Do The Farmer’s Walk"
+     "where": "How To Do The Farmer’s Walk (below the in-page 'Get Fitter, Faster' promo heading)"
     }
    ]
   },
@@ -233,7 +233,7 @@
     {
      "source": "fv-farmers",
      "text": "You should be able to lift the weights, walk without leaning or stumbling, and lower them under control.",
-     "where": "How To Do The Farmer’s Walk"
+     "where": "How To Do The Farmer’s Walk (below the in-page 'Get Fitter, Faster' promo heading)"
     }
    ]
   },
@@ -390,7 +390,7 @@
     {
      "source": "fv-farmers",
      "text": "Slow before a turn and change direction with several small steps, moving your feet and torso together. Avoid a sharp pivot with your feet planted. If space is tight, finish the carry and set the weights down before repositioning.",
-     "where": "How To Do The Farmer’s Walk"
+     "where": "How To Do The Farmer’s Walk (below the in-page 'Get Fitter, Faster' promo heading)"
     }
    ]
   },
@@ -408,7 +408,7 @@
     {
      "source": "fv-farmers",
      "text": "Start with a manageable load and a short route.",
-     "where": "How To Do The Farmer’s Walk"
+     "where": "How To Do The Farmer’s Walk (below the in-page 'Get Fitter, Faster' promo heading)"
     },
     {
      "source": "fv-farmers",
@@ -606,7 +606,7 @@
    "url": "https://barbend.com/farmers-carry/",
    "title": "How to Do the Farmer’s Carry: Benefits and Expert Tips | BarBend",
    "kind": "coach",
-   "year": null,
+   "year": 2026,
    "pmid": null,
    "access": "full",
    "checked": "2026-10-22"
@@ -636,7 +636,7 @@
    "url": "https://www.strengthlog.com/farmers-walk/",
    "title": "How to Do Farmers Walk: Muscles Worked & Proper Form – StrengthLog",
    "kind": "coach",
-   "year": null,
+   "year": 2023,
    "pmid": null,
    "access": "full",
    "checked": "2026-10-22"
@@ -646,7 +646,7 @@
    "url": "https://barbend.com/farmers-walk-breakdown/",
    "title": "A Step by Step Breakdown of the Farmer’s Walk | BarBend",
    "kind": "coach",
-   "year": null,
+   "year": 2023,
    "pmid": null,
    "access": "full",
    "checked": "2026-10-22"
@@ -680,7 +680,7 @@
    "why": "BarBend says many lifters may try to make up for fatigue by shrugging their shoulders high, and lists it under poor upper back positioning; keep the shoulders back and down (c5).",
    "claim": "c5",
    "drawable": true,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 1: shrugging the shoulders high (c5). BarBend's \"Many lifters may try to compensate for fatigue by shrugging their shoulders high.\" sits under its own item \"Poor Upper Back Positioning\" on its farmer's-carry mistakes list and says many lifters make this exercise's fault, so it is a step-1 hit (D-SUP-LB7-DIPREPS: a \"many …\" sentence about this exercise's own fault counts); it is the item's own sentence, not a list sentence read onto one item. LR-31 names 'may' as no frequency word, but the frequency word here is \"Many lifters\"; the other reading is recorded in the writer's notes as a ruling ask. No other step-1 hit. Set aside: BarBend's heading \"Common Farmer’s Carry Mistakes\" and intro \"Be sure you’re not falling prey to these common flaws in farmer’s carry training.\", and Garage Gym Reviews' heading and intro \"Here are some of the most common mistakes associated with the farmer’s carry.\" (list headings and list sentences); Garage Gym Reviews' \"These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.\" (c6) says what the tension faults point to (their cause, the load), not how often they happen (renegade_row precedent); BarBend's \"which is usually lacking in beginners\" (balance in beginners), \"there are often advantages to taking it more accessible\" (load), \"Strongman competitions typically use special handles\" and \"athletes typically perform heavy carries\" (equipment, programming), \"Using a dumbbell will likely be the easiest implement for most beginners\" (an implement); Garage Gym Reviews' \"many farmers have strength\", \"Sets of farmer’s carries often consist of just one walk\" and \"most lifters can move more weight on a barbell bench press ... trap-bar carries often allow you to carry more weight\" (farmers, programming, another exercise and a load); the farmer's-walk breakdown op-ed's \"a common strongman event\" (the exercise), \"most likely causing you to drop\" (where the hands sit on strongman handles: a grip, LR-31) and \"you will most likely feel more comfortable with an even stance\" (stance comfort, not a fault). Harm quotes about faults, set aside because step 1 decides: Garage Gym Reviews' rushing line (\"a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee\", c7; speed only, handlingMistakes[1]); \"The farmer’s walk exercise can wreak havoc on your lower back if you’re not bracing your core.\" (c10; a tip, the fault on no list); \"tensing too hard in the wrong places may produce adverse effects\" (its list item, c6); \"the weights may slip from your grasp, land on your toe, bounce into your ankle\" (c14; a grip); the op-ed's \"if the weight is heavy enough it will put more strain on your lower back\" (c24, WEAK, walking before standing tall on strongman handles). Load lines are not candidates: Garage Gym Reviews' \"Struggling to move weights that are too heavy may cause our form to deteriorate, leaving us susceptible to injury\" and BarBend's \"Going Too Light\". Not faults: BarBend's \"a large amount of strain is placed on the shoulder joint\" (holding a load, muscles section), Garage Gym Reviews' trap-bar \"helps reduce the strain on the lower back\" (equipment), Fitness Volt's \"Stop if you feel pain.\" (a stop line, c15). drawable is true: the census view is side, and shoulders shrugged high are a still sign that the side view shows (shoulder height against the neck). Step 3 would not decide here; for the record, BarBend's list names the shrug third, after a load choice (going too light, not a candidate) and stride length."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: shrugging the shoulders high (c5). BarBend's \"Many lifters may try to compensate for fatigue by shrugging their shoulders high.\" sits under its own item \"Poor Upper Back Positioning\" on its farmer's-carry mistakes list and says many lifters make this exercise's fault, so it is a step-1 hit (D-SUP-LB7-DIPREPS: a \"many …\" sentence about this exercise's own fault counts); it is the item's own sentence, not a list sentence read onto one item. LR-31 names 'may' as no frequency word, but the frequency word here is \"Many lifters\"; the other reading is recorded in the writer's notes as a ruling ask. No other step-1 hit. Set aside: BarBend's heading \"Common Farmer’s Carry Mistakes\" and intro \"Be sure you’re not falling prey to these common flaws in farmer’s carry training.\", and Garage Gym Reviews' heading and intro \"Here are some of the most common mistakes associated with the farmer’s carry.\" (list headings and list sentences); Garage Gym Reviews' \"These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.\" (c6) says what the tension faults point to (their cause, the load), not how often they happen (renegade_row precedent); BarBend's \"which is usually lacking in beginners\" (balance in beginners), \"there are often advantages to taking it more accessible\" (load), \"Strongman competitions typically use special handles\" and \"athletes typically perform heavy carries\" (equipment, programming), \"Using a dumbbell will likely be the easiest implement for most beginners\" (an implement); Garage Gym Reviews' \"many farmers have strength\", \"Sets of farmer’s carries often consist of just one walk\" and \"most lifters can move more weight on a barbell bench press ... trap-bar carries often allow you to carry more weight\" (farmers, programming, another exercise and a load); the farmer's-walk breakdown op-ed's \"a common strongman event\" (the exercise), \"most likely causing you to drop\" (where the hands sit on strongman handles: a grip, LR-31) and \"you will most likely feel more comfortable with an even stance\" (stance comfort, not a fault). Harm quotes about faults, set aside because step 1 decides: Garage Gym Reviews' rushing line (\"a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee\", c7; speed only, handlingMistakes[1]); \"The farmer’s walk exercise can wreak havoc on your lower back if you’re not bracing your core.\" (c10; a tip, the fault on no list); \"tensing too hard in the wrong places may produce adverse effects\" (its list item, c6); \"the weights may slip from your grasp, land on your toe, bounce into your ankle\" (c14; a grip); the op-ed's \"if the weight is heavy enough it will put more strain on your lower back\" (c24, WEAK, walking before standing tall on strongman handles). Load lines are not candidates: Garage Gym Reviews' \"Struggling to move weights that are too heavy may cause our form to deteriorate, leaving us susceptible to injury\" and BarBend's \"Going Too Light\". Not faults: BarBend's \"a large amount of strain is placed on the shoulder joint\" (holding a load, muscles section), Garage Gym Reviews' trap-bar \"helps reduce the strain on the lower back\" (equipment), Fitness Volt's \"Stop if you feel pain.\" (a stop line, c15). drawable is true: the census view is side, and shoulders shrugged high are a still sign that the side view shows (shoulder height against the neck). Step 3 would not decide here; for the record, BarBend's list names the shrug third, after a load choice (going too light, not a candidate) and stride length. Other scan hits set aside: Garage Gym Reviews' \"abdominal bracing stabilizes the spine, which may reduce your risk of injury\" is the brace cue (its fault, not bracing, is on no list); \"take your time on these to reap the most benefit from each carry and minimize your risk of injury\" is the rushing item's own advice (speed only); \"you’re bound to get less of a workout in the long run if you’re dropping the weights left and right\" is under the load item; BarBend's \"Trying to take regular-sized steps as a beginner might throw you off balance.\" (its stride-length item) and \"It will also help prevent you from resting the weights on your sides.\" (the shrug item) state no LR-31 harm word; BarBend's benefit lines (\"the prevention and reduction of low back pain\", \"aiding in injury prevention\", \"the protection of the spine\", \"can help alleviate lower back pain\", \"protecting the spine\") are about the exercise, not a fault; the op-ed's \"the weight can start to swing forward and back, making it harder to hold onto\" and its turning line \"to avoid momentum twisting the farmers in front of you causing it impede your steps or even drop the handles\" are written for strongman handles and name no harm word; Fitness Volt's \"not a guarantee against injury\", \"an injury-free load for every reader\", \"or prevent injury\" and \"Do not judge a carry by how much discomfort you can tolerate\" are disclaimers and programming, not faults; BarBend's \"Using a dumbbell will likely be the easiest implement for most beginners\", \"Use about 60 to 65 percent of your typical weight\", \"the most notable benefits\", \"most commonly known\", \"commonly referred to\", \"most notably\", \"many disciplines\", \"many variations\" and \"the most beneficial to maximal output\", and Garage Gym Reviews' \"common mistakes to avoid\" (intro) and \"everyone can benefit\" are about implements, loads, muscles, benefits or the article, not how often a fault happens. Reading applied: \"Many lifters\" is read as LR-31's frequency word and the \"may\" as not removing it (ruling ask in the writer's notes); under the other reading the pick changes as the notes say."
   },
   "tells": [
    {

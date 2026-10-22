@@ -335,9 +335,9 @@
    "claim": "c19",
    "source": "ggr-sledpush",
    "text": "Rounded Back",
-   "status": "close",
-   "closest": "It may seem easier to grab and go, but pushing or pulling a sled with a rounded back will not favor your spine.",
-   "note": "matches only after normalising quotes/dashes/case"
+   "status": "verbatim",
+   "closest": "Rounded Back",
+   "note": ""
   },
   {
    "claim": "c19",
@@ -345,7 +345,7 @@
    "text": "Improper Foot Strike",
    "status": "verbatim",
    "closest": "Improper Foot Strike",
-   "note": "served HTML only"
+   "note": ""
   },
   {
    "claim": "c19",
@@ -353,7 +353,7 @@
    "text": "Too Heavy",
    "status": "verbatim",
    "closest": "Too Heavy",
-   "note": "served HTML only"
+   "note": ""
   }
  ]
 }
