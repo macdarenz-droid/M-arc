@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-22 17:00 UTC · main `66ff5500` · **8.0p (update 17:00): LIB-7b merged; research LB7, LB8, LB10 merged, LB9 fixing; LIB-15, LIB-16, LIB-12-FIX fix building; LIB-7c in review** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-22 19:45 UTC · main `b0370201` · **8.0p (update 19:45): LIB-12-FIX #191 merged; LB7 note ruled, CARD FIELDS VERIFIED, BULK GO; LB5 panel VALID (3 approved); LB6 BULK GO; LIB-8M changed-ids sheet building; LB9 blocked on the owner** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -889,6 +889,25 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **LIB-17 (LB7 H build-ahead) card:** a helper is drafting it. Start it when a LIB slot is free.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
+
+**Update 19:45 UTC** (usage 7-day 0.34, 5-hour 0.10 at 18:58):
+- **#191 LIB-12-FIX merged** (main `b0370201`). The X3 fix `62549cc` passed a delta review (6348810322, 0/0/0/0), and CI was 17/17 green. Builder archived. **Lesson:** run `git fetch` right before every catch-up merge (`c6e55f9b` merged a stale main).
+- **LB9 research (#295) is BLOCKED on the owner.** The auto-mode classifier denied session_01RczpBxQgJ8UfXenHSJxrH4's fix round. The owner was told at 18:00 to approve it in that session. Never work around it.
+- **#271 LIB-7c:** REVIEW PASS @ 4b894f1 (6347992738; Medium and Low are doc-only). The fixes @ `7791b44` passed the supervisor's diff-check (6348263063). Reviewer archived. It merges after #109 and #282.
+- **#109 LIB-8M:** new builder session_01DtfGjqYEVnEwyRxtRGwSj6 for the **pilot A changed-ids sheet** (main merged in; sheet `b00970e8…`; page `43a264e5…` unchanged). **D-LIB8M-SCRATCH7B** (6349402613): LIB-7b's scratch id `lib_barbell_row` collides with pilot-a.json. The fix is a non-library id added only to the fixture's scratch-tree exercises.json, plus a guard. Then 'PILOT A CHANGED SHEET READY', which the supervisor sends to the owner (owner item F1, plus the plank and mountain_climbers routed items).
+- **LIB-17 (#299, LB7):**
+  - Note ruled (6347885720): tells `lean`→`hips`, `traps` dropped, `below`→`parallel`. The bench_dip heel is start-only (D-LIB9-FACTPOSE; the note's wider rule was corrected).
+  - **CARD FIELDS VERIFIED @ `109e82b2`** (6348241751; **D-LIB17-ORCHOICE:** an "or" between two end points or stop points is a choice, not a fact). Merged back as #300 (`e3814561`).
+  - Slice NO-GO (6348157337), then **BULK GO** after the re-look @ `1457e06` (6349108629).
+  - **D-LIB17-DIPBAL** (6348947992): weighted_dip draws option P (shoulder on the parallel line, 15° lean, legs back, elbow flexion about 112.5°; balance on body plus plate). **F-LB7-1** (#301, merged `e5ed66ca`) dropped the card's elbow-90 fact. weighted_dip's re-copied card needs a supervisor diff-check at READY.
+- **LIB-16 (#297, LB6):** the LB6 slice-look helper died before handing back. Its notes (slice-lb6/notes.md) gave GO, so **LB6 BULK GO** was posted at 19:0x (6348852288), with the crunch "Arms pull" leader, crossProblems extended to the Mistake figure, and the crunch start phantom. **Lesson:** each tick, check that every helper started has handed back.
+- **LIB-15 (#290, LB5):**
+  - **Calibrated panel VALID** @ `138c7a8c` (6349640307): **preacher_curl, cable_curl and bayesian_cable_curl approved**. concentration_curl gets one fix round (R5: ghost upper arm and elbow; R7: smooth Trace arc).
+  - CARD FIELDS: the run was VALID (6349063103) and the fix @ `42988823` passed the diff-check (6349512355). New rulings: **D-LIB15-MIRROR**; an "or" stop point is no fact (DOTE c5 and concentration c7 removed); hand contacts come from grip quotes.
+  - **F-LB5-2** (#302, CI running) adds the concentration each-side quote (BarBend, verified on the live page). After it merges: the builder re-copies the card, posts 'LB5 PANEL FIX', then the focused panel recheck (concentration only) and the focused CF re-verify (8 cards, new plant).
+- **GATE-FLAKE-5 (#292):** the D-GF5-TWINS deviation is accepted as D-GF5-TWINS-B6 (6348857532). The builder is running its gates.
+- **Active LIB builders: 4** (LIB-15, LIB-16, LIB-17, LIB-8M). LIB-7c is waiting at no slot; GATE-FLAKE-5 is a CI lane.
+- **Merge queue:** #109 (owner sheet first), #282 LIB-5v (frozen `2ad1bf3c`, 7a), #271 LIB-7c, #245, #279, #265, #278, #273, #274…
 
 ### 8.0o TAKEOVER 10-22: the owner moves the work to his other account (read first; supersedes 8.0n and section 10 where they differ)
 
