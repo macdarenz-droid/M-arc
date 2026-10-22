@@ -172,5 +172,50 @@
   ],
   "notes": [
     "LR-34 check (W2-53, 2026-10-18) against cards/barbell_back_squat.json on head 5036283d; shipped sheet tools/plates/layers/exercises/barbell_back_squat.howto.mjs on main b99a9e25. Feet flat, knees follow the toes holds: barbell_back_squat c8 (knees in line with the thighs and feet, heels flat), restating the checkpoint label 'Knees follow toes'. One inherit entry is left."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "g1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "g1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "g4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "g4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "g4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "g4"
+    }
+  ],
+  "topFault": "lean"
 }
