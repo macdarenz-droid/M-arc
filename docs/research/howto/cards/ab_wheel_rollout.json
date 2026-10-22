@@ -29,17 +29,17 @@
     {
      "source": "sl-abwheel",
      "text": "Sit with your knees on a soft pad, and place the ab wheel on the floor in front of you.",
-     "where": "How to, step 1"
+     "where": "How to Do Kneeling Ab Wheel Roll-Outs, step 1"
     },
     {
      "source": "sl-abex",
      "text": "Start by kneeling on the floor with your hands on the ab wheel, placed directly in front of your knees.",
-     "where": "Ab wheel rollout, how to"
+     "where": "How to Perform Ab Wheel Rollouts"
     },
     {
      "source": "bb-bestab",
      "text": "Kneel and grip a wheel or barbell, loaded with round plates, with your hands set shoulder-width apart.",
-     "where": "Ab rollout, how to"
+     "where": "1. Ab Rollout, How To Do It"
     }
    ]
   },
@@ -57,17 +57,17 @@
     {
      "source": "sl-abex",
      "text": "Engage your core and slowly roll the wheel forward until your body forms a straight line from your knees to your head.",
-     "where": "Ab wheel rollout, how to"
+     "where": "How to Perform Ab Wheel Rollouts"
     },
     {
      "source": "sl-abex",
      "text": "Be sure to keep your back straight and your core engaged throughout the entire movement.",
-     "where": "Ab wheel rollout, how to"
+     "where": "How to Perform Ab Wheel Rollouts"
     },
     {
      "source": "sl-abwheel",
      "text": "Roll out as far as you can, and maintain a straight back throughout the movement.",
-     "where": "How to, step 2"
+     "where": "How to Do Kneeling Ab Wheel Roll-Outs, step 2"
     }
    ]
   },
@@ -84,7 +84,7 @@
     {
      "source": "bb-bestab",
      "text": "Extend your hips toward the floor and let your chest sink forward toward the ground. Avoid arching your lower back as you extend your arms above your head.",
-     "where": "Ab rollout, how to"
+     "where": "1. Ab Rollout, How To Do It"
     }
    ]
   },
@@ -102,18 +102,18 @@
     {
      "source": "sl-abwheel",
      "text": "Reverse the movement with control, and return to the starting position.",
-     "where": "How to, step 3"
+     "where": "How to Do Kneeling Ab Wheel Roll-Outs, step 3"
     },
     {
      "source": "bb-bestab",
      "text": "Squeeze your lat muscles and pull yourself back to the starting position.",
-     "where": "Ab rollout, how to"
+     "where": "1. Ab Rollout, How To Do It"
     }
    ]
   },
   {
    "id": "c5",
-   "text": "Move slowly: rolling out too fast raises the risk of the trunk twisting or arching. Start each rep with the core and glutes, not by pushing the wheel with the arms.",
+   "text": "Move slowly: rolling out too fast and rushing can increase the risk of the torso rotating or extending. Every rep, squeeze the glutes and start the movement with the core, not by starting the roll with the arms.",
    "tags": [
     "CONSENSUS"
    ],
@@ -124,12 +124,12 @@
     {
      "source": "bb-abrollouts",
      "text": "Tempo is important. Rolling out too fast and rushing through this movement can increase your risk of torso rotation/extension.",
-     "where": "Key takeaways"
+     "where": "Important Takeaways"
     },
     {
      "source": "bb-abrollouts",
      "text": "Every rep cue yourself to squeeze the glutes and initiate the movement with the core, as opposed to starting the roll with the arms.",
-     "where": "Key takeaways"
+     "where": "Important Takeaways"
     }
    ]
   },
@@ -146,17 +146,17 @@
     {
      "source": "bb-abrollouts",
      "text": "The ab rollout is a slightly tougher core exercise, and without proper progressions can actually increase injury to areas like the lower back.",
-     "where": "Intro"
+     "where": "The Benefits of Ab Rollouts and Progressions to Perform Them (intro)"
     },
     {
      "source": "bb-abrollouts",
      "text": "This is an exercise that comes with an inherent risk of injury, so they shouldn’t be performed haphazardly in a program.",
-     "where": "Key takeaways"
+     "where": "Important Takeaways"
     },
     {
      "source": "bb-abrollouts",
      "text": "If you can hold a weighted plank with (10-25 lbs) for a minute, then there’s a good chance you can experiment with ab rollouts safely. Second, if you can perform a hollow body hold for a minute with ease.",
-     "where": "Readiness"
+     "where": "Should You Use the Ab Rollout?"
     }
    ]
   },
@@ -177,17 +177,17 @@
     {
      "source": "bb-abrollouts",
      "text": "try moving through a limited set range of motion before working to your full extension on the ab wheel.",
-     "where": "Progressions, ab wheel"
+     "where": "Ab Wheel Rollout"
     },
     {
      "source": "bb-bestab",
      "text": "The farther forward you roll out from your body, the harder the move will be. So shorten your range of motion if need be.",
-     "where": "Ab rollout, coach's tip"
+     "where": "1. Ab Rollout, Modifications (Coach’s Tip)"
     },
     {
      "source": "sl-coreex",
      "text": "you can limit your range of motion by performing kneeling ab-wheels facing a wall. Have the wall stop you at a suitable distance, and then work on increasing your distance to the wall over time.",
-     "where": "Ab wheel roll-out"
+     "where": "1. Ab Wheel Roll-Out"
     },
     {
      "source": "sl-abwheel",
@@ -197,13 +197,13 @@
     {
      "source": "sl-abex",
      "text": "It’s suitable for experienced fitness enthusiasts looking for an even greater challenge.",
-     "where": "Regular vs kneeling"
+     "where": "Regular vs. Kneeling Version"
     }
    ]
   },
   {
    "id": "c8",
-   "text": "Two people suffered spinal cord injury after falling during a standing rollout while drunk; the case report warns that misuse of ab rollers can cause extremely serious disability.",
+   "text": "A case report describes two spinal cord injuries from a fall while using an abdominal roller; both happened during the standing rollout by a patient who was drunk, and the report warns that using ab rollers may result in extremely serious disabilities.",
    "tags": [
     "DATA"
    ],
@@ -211,6 +211,16 @@
     "yamane-2023"
    ],
    "quotes": [
+    {
+     "source": "yamane-2023",
+     "text": "Spinal cord injury without radiological abnormality due to a fall while using an abdominal roller: A report of two cases.",
+     "where": "title"
+    },
+    {
+     "source": "yamane-2023",
+     "text": "Two cases of spinal cord injuries caused by a roller are reported.",
+     "where": "abstract, case presentation"
+    },
     {
      "source": "yamane-2023",
      "text": "In both cases, injuries occurred during the standing rollout by a patient in an inebriated state",
@@ -238,22 +248,22 @@
     {
      "source": "sl-abwheel",
      "text": "Primary muscles worked: Abs Secondary muscles worked: Obliques",
-     "where": "Muscles worked box"
+     "where": "Muscles Worked in Kneeling Ab Wheel Roll-Outs"
     },
     {
      "source": "sl-abex",
      "text": "Your rectus abdominis gets a thorough thrashing as it works overtime to keep your entire body straight as you roll out and to bring you back to the starting position.",
-     "where": "Muscles worked"
+     "where": "1. Ab Wheel Roll-Out"
     },
     {
      "source": "sl-abex",
      "text": "The internal and external oblique muscles are fully engaged to keep your upper body stable during the movement.",
-     "where": "Muscles worked"
+     "where": "1. Ab Wheel Roll-Out"
     },
     {
      "source": "bb-bestab",
      "text": "Muscles Worked Abdominals, lats",
-     "where": "Ab rollout box"
+     "where": "1. Ab Rollout (box)"
     }
    ]
   },
@@ -297,7 +307,53 @@
     {
      "source": "bb-bestab",
      "text": "Sets & Reps 2-4 x 5-10",
-     "where": "Ab rollout box"
+     "where": "1. Ab Rollout (box)"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "The rollout needs coordination and self-awareness to avoid injury: the torso nearing lumbar extension or torso rotation can result in injury, and the lighter ab wheel needs more core control to avoid rotation and extension.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-abrollouts"
+   ],
+   "quotes": [
+    {
+     "source": "bb-abrollouts",
+     "text": "This is a movement that requires coordination an self awareness to avoid injury, and can be useful method for teaching athletes to monitor their torso positioning when nearing times like lumbar extension or torso rotation, which can result in injury.",
+     "where": "The Benefits of Ab Rollouts and Progressions to Perform Them (intro, Coordination & Awareness)"
+    },
+    {
+     "source": "bb-abrollouts",
+     "text": "In addition, they’re lighter in weight, so they require more core control to avoid rotation and extension.",
+     "where": "Ab Wheel Rollout"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Tempo: the roll-out is slow and the return is controlled; no rollout source gives seconds for either phase, so the plate's 2 s down (the roll-out) and 1 s up (the roll back) is a drawing convention.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "sl-abex",
+    "sl-abwheel"
+   ],
+   "quotes": [
+    {
+     "source": "sl-abex",
+     "text": "Engage your core and slowly roll the wheel forward until your body forms a straight line from your knees to your head.",
+     "where": "How to Perform Ab Wheel Rollouts"
+    },
+    {
+     "source": "sl-abwheel",
+     "text": "Reverse the movement with control, and return to the starting position.",
+     "where": "How to Do Kneeling Ab Wheel Roll-Outs, step 3"
     }
    ]
   }
@@ -311,7 +367,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-abex",
@@ -321,7 +377,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-coreex",
@@ -331,7 +387,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   },
   {
    "id": "bb-bestab",
@@ -341,7 +397,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   },
   {
    "id": "bb-abrollouts",
@@ -351,7 +407,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   },
   {
    "id": "escamilla-2006",
@@ -361,7 +417,7 @@
    "year": 2006,
    "pmid": 16649890,
    "access": "abstract",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   },
   {
    "id": "yamane-2023",
@@ -371,7 +427,7 @@
    "year": 2023,
    "pmid": 37780607,
    "access": "abstract",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   }
  ],
  "plate": {
@@ -394,18 +450,22 @@
    {
     "label": "Roll slowly",
     "what": "Slow and controlled, out and back.",
-    "claim": "c5"
+    "claim": [
+     "c2",
+     "c4",
+     "c5"
+    ]
    }
   ],
   "mistake": {
-   "what": "Low back arching (sagging toward the floor) at the far end of the roll-out.",
-   "why": "BarBend says avoid arching the low back (c3), that rolling out too fast raises the risk of extension (c5), and that without progressions the rollout can injure the low back (c6). No source ranks rollout faults.",
+   "what": "Low back arching as the arms reach forward overhead.",
+   "why": "BarBend ties lumbar extension (the low back arching) to injury (c13) and says to avoid arching the lower back as the arms extend overhead (c3); rolling out too fast can increase the risk of extension (c5). LR-31 step 2, with step 3's count deciding the tie with torso rotation (rankNote).",
    "claim": [
     "c3",
-    "c5",
-    "c6"
+    "c13"
    ],
-   "drawable": true
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the low back arching (lumbar extension) (c13, c3). Step 1 finds no frequency word for a fault of this exercise. Set aside: BarBend's \"it’s not something most can easily pick up and start doing right away\" is about who can do the exercise, not a fault; its \"Typically, ab wheels will be much smaller and lower to the ground compared to the above two progressions\" ('Ab Wheel Rollout') is about the equipment, not a fault; StrengthLog's \"The first is accessible for most people, while the second is one of the most demanding core exercises you can do.\" is about who can do the kneeling version, not a fault; and its \"many ab exercises (and exercises for other muscle groups) benefit from performing the movements relatively slowly\" sits in its dead bug section and is about exercises in general (R-LB7-3); BarBend's \"Most stomach movements, such as crunches and knee raises, flex the abs.\" is about other exercises. No read source has a common-mistakes list for the rollout. Step 2: BarBend's \"This is a movement that requires coordination an self awareness to avoid injury, and can be useful method for teaching athletes to monitor their torso positioning when nearing times like lumbar extension or torso rotation, which can result in injury.\" (c13) ties two named faults to harm, the low back arching and the torso rotating. Tie: neither is on a common-mistakes list; one source each ties it to harm; both are sourced directly; that sentence names lumbar extension first, but the same page also names them the other way (\"torso rotation/extension\", c5), so step 3's count is given too (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each (sources, not lists): low back arching 2 (BarBend best-ab \"Avoid arching your lower back as you extend your arms above your head.\", c3; BarBend ab-rollouts \"they require more core control to avoid rotation and extension\", c13); torso rotation 1 (BarBend ab-rollouts, c13). Not counted, as they only give the right position: StrengthLog's \"Be sure to keep your back straight\" and \"maintain a straight back throughout the movement\" (c2). The arch leads 2 to 1, so no list tie-break is needed. Set aside at step 2: rolling out too fast (c5, \"Rolling out too fast and rushing through this movement can increase your risk of torso rotation/extension.\") is a speed fault tied to the two faults, not to harm, and is never drawable; \"without proper progressions can actually increase injury to areas like the lower back\" and \"This is an exercise that comes with an inherent risk of injury\" (c6) and the case report's standing rollout falls (c8) are progression or version choices, not candidates; StrengthLog's \"You should feel a stretch but not pain.\" is in its Jefferson curl steps, another exercise, and its \"you should be careful not to do too much too soon, as that increases your risk of injury\" is about weekly sets. Also set aside, from the fetcher's scan: BarBend's \"After all, the last thing you want to do is injure yourself performing an additional accessory movement.\" and 'Wrapping Up' \"as it does come with an inherent risk of injury\" are about the exercise as a whole, with no fault named (the same reason as c6's \"inherent risk of injury\"; c6's \"without proper progressions can actually increase injury to areas like the lower back\" ties harm to skipping progressions, a programming choice, not a position or movement during the set); the case report's \"there are few reports of such injuries caused by a roller\" is about how often injuries are reported, names no fault, and 'few' is not a step-1 word; StrengthLog's 'Benefits of Strong Abs' lines (\"A solid core makes you less likely to suffer from lower back pain.\") are benefits, and its lying leg raise and dead bug lines are other exercises; BarBend's 'Boost Spinal Stability' lines (\"to prevent the athlete from experiencing a severe injury like a slipped disc or muscle tear\") are about loaded lifts; Escamilla's rectus femoris line (\"may be problematic for some people with low back problems\") is about the pike, knee-up and other exercises, not the roll-out, and names no fault. drawable stays true: the side view shows the low back arched as the arms reach overhead, a still sign. Pick unchanged; handlingMistakes[0] is already the arch."
   },
   "tells": [
    {
@@ -413,8 +473,11 @@
     "claim": "c2"
    },
    {
-    "text": "The roll-out stays slow and steady",
-    "claim": "c5"
+    "text": "The roll-out stays slow",
+    "claim": [
+     "c2",
+     "c5"
+    ]
    }
   ],
   "tempo": {
@@ -422,11 +485,12 @@
    "down": 2,
    "pause": 0,
    "claim": [
+    "c14",
     "c2",
     "c4",
     "c5"
    ],
-   "text": "Drawing convention: 'down' is the roll-out, slow (c2, c5); 'up' is the roll back, controlled (c4). No source gives seconds."
+   "text": "Drawing convention (WEAK c14): 'down' is the roll-out, slow (\"slowly roll the wheel forward\", c14, c2); 'up' is the roll back, with control (c14, c4); no source gives seconds, so 2 s down and 1 s up only show a slower roll-out than return (R-LB7-6). Pause 0: no quote on the card asks for a pause right after the roll back (LR-33). BarBend's 'Make It Harder: Pause at the bottom of each repetition to build strength while your abs are stretched.' (not cited on the card) is a pause at full roll-out, a harder option with no seconds; it is not the pause field."
   },
   "variantLine": "Kneeling version drawn (c1, c7). The standing roll-out is the hard version for experienced lifters (c7) and the one in the fall cases (c8)."
  },
@@ -469,7 +533,10 @@
  "posture": [
   {
    "point": "Roll out slowly.",
-   "claim": "c5"
+   "claim": [
+    "c2",
+    "c5"
+   ]
   },
   {
    "point": "Knees to head in one straight line.",
@@ -499,8 +566,11 @@
   },
   {
    "mistake": "Rolling out too fast.",
-   "fix": "Slow down so you control every inch.",
-   "claim": "c5"
+   "fix": "Roll out slowly.",
+   "claim": [
+    "c5",
+    "c2"
+   ]
   },
   {
    "mistake": "Starting with the standing version.",
@@ -557,12 +627,12 @@
    },
    {
     "where": "Low back",
-    "means": "Your back is arching on a roll-out that's too long or fast.",
+    "means": "Fault: an arching low back can result in injury.",
     "fix": "Roll out less far and slower.",
     "claim": [
      "c3",
+     "c13",
      "c5",
-     "c6",
      "c7"
     ],
     "redFlag": "back"
@@ -571,11 +641,12 @@
  },
  "risks": [
   {
-   "risk": "Rolling out too far or too fast can strain the low back.",
-   "claim": [
-    "c5",
-    "c6"
-   ]
+   "risk": "An arching or rotating torso can result in injury.",
+   "claim": "c13"
+  },
+  {
+   "risk": "Rolling out too fast can increase the risk of arching or rotating.",
+   "claim": "c5"
   },
   {
    "risk": "A fall in a standing rollout has caused serious spine injury.",
@@ -590,7 +661,7 @@
    "key": "back-line",
    "kind": "posture",
    "right": "Straight line from knees to head.",
-   "wrong": "Low back arched, hips sagging.",
+   "wrong": "Low back arched.",
    "claim": [
     "c2",
     "c3"
@@ -626,7 +697,7 @@
  "gaps": [
   "Way out (LR-3, LIB-WAYOUT): what to do when you can't roll back (lowering to the floor safely). No source found; no way-out line is shown.",
   "Thumb and wrist on the wheel handles (push archetype, LIB-12 hand pair): no rollout source.",
-  "Fault ranking: no source names the most common rollout fault; the plate's mistake follows the low-back cue (c3, c5, c6)."
+  "Fault frequency: no source measures how often each rollout fault happens; the top fault follows LR-31 step 2 and step 3's count (plate.mistake.rankNote)."
  ],
  "notes": [
   "Anchor: StrengthLog's ab-exercises page (sl-abex) has the fullest how-to and muscles; its kneeling-rollout page (sl-abwheel) is short. Both read in full. BarBend has no single ab-wheel page (404); its best-ab-exercises and ab-rollouts pages are used.",
@@ -634,6 +705,7 @@
   "c8 is a two-case report; the shown risk line keeps 'has caused' and does not give a rate. The fall cases were standing rollouts after drinking; no line on alcohol is shown.",
   "The back row restates the sources' own fault and fix (c3, c5, c6, c7), no added cause (LR-6); the back box link stays pending (LR-26, LR-27).",
   "Range zoom wrong is null (LR-25).",
-  "W1 fixer round 2026-10-03: F13: c9 drops 'the deep abs' and 'chest' (no quote supports them); libraryDiff.why drops the chest."
+  "W1 fixer round 2026-10-03: F13: c9 drops 'the deep abs' and 'chest' (no quote supports them); libraryDiff.why drops the chest.",
+  "LB9 LR-31/LR-33 pass 2026-10-22: rankNote added (step 2, c13; pick unchanged). New claims c13 (BarBend's harm line and ab-wheel control line) and c14 (WEAK tempo convention, R-LB7-6); c8 gains the case report's title and case sentence, so 'fall' and 'spinal cord' rest on quotes. Shown-line fixes under CARD-V2:68 and LR-6: mistake.what keeps c3's words (no 'sagging'); back-line zoom wrong drops 'hips sagging' (c3 asks the hips to extend toward the floor); tells 2 drops 'steady'; handlingMistakes[1] fix drops 'every inch'; the low-back row reads 'Fault: ...' in LR-6 shape with no symptom-to-cause clause; risks[0] no longer says 'too far' or 'strain' (no quote ties either to harm) and splits into the c13 harm line and the c5 speed line. c5's text keeps the source's 'can'."
  ]
 }
