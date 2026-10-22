@@ -102,10 +102,11 @@ write_scope:
 - tests/gate/gf5-race.mjs (new): the repro and proof probe.
 - scripts/gate-times.json: the three values, only under Do 9.
 - docs/COACHING-DECISIONS.md: append the section "GATE-FLAKE-5" (D-GF5-1 to D-GF5-3).
+- tools/plates/library/fidelity/twins/pins.json: the `gate:HT-8` and `gate:HT-9` keys only (sha256 and map), after LIB-4b's B2 re-run (D-GF5-TWINS, supervisor 2026-10-22, #292; twins.mjs:3-5; lib4-cards item 26). The twins themselves (fidelity/twins/ht8.mjs, ht9.mjs) stay reserved and unchanged.
 
 reserved_paths:
 - Every other line of scripts/screenshot-gate.mjs, every other block included.
-- src/**, public/sw.js, index.html, tools/plates/fidelity/harness.mjs, tools/plates/**.
+- src/**, public/sw.js, index.html, tools/plates/fidelity/harness.mjs, tools/plates/** (except the pins.json keys above).
 - tests/gate-split.test.ts, scripts/gate-blocks.mjs, gate-split.mjs, ci-verdict.mjs, gate-times.mjs, error-list.mjs, tests/gate/gf3-c11-race.mjs, tests/gate/gf4-bug34-race.mjs.
 - tests/theme.test.ts, src/ui/styles.css, .github/**, package.json, package-lock.json, AGENTS.md.
 
