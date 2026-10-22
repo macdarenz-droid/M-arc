@@ -11,6 +11,11 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { cleanupMirror, makeMirror } from '../layers.mjs';
 import { LEGACY_SCRIPTS } from './render/legacy.mjs';
+import { zoomCss } from './render/closeup/zoom-css.mjs';   // LIB-7b: the pair sheet CSS (hands/page.mjs CSS)
+import { allThemesCss } from '../layers/engine/themes.mjs';   // LIB-7b
+import { PLATE_CSS } from '../layers/engine/index.mjs';   // LIB-7b
+import { HAND_CSS } from '../layers/engine/hand.mjs';   // LIB-7b
+import { FEEL_CSS } from '../layers/engine/feelmap.mjs';   // LIB-7b
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const RENDERER_URL = pathToFileURL(join(HERE, 'render', 'closeups.mjs')).href;
@@ -163,9 +168,7 @@ export function divAt(html, start) {
 }
 /** golden B's rendererCss (artifact/howto-layers.mjs:69-96): a close-up sheet's CSS without the shared engine blocks,
  *  the pager's tab state as cleanZoom leaves it, scoped to `scope` (page-level rules and @font-face dropped). */
-export async function scopedSheetCss(css, scope) {
-  const [{ allThemesCss }, { PLATE_CSS }, { HAND_CSS }, { FEEL_CSS }] = await Promise.all([import('../layers/engine/themes.mjs'),
-    import('../layers/engine/index.mjs'), import('../layers/engine/hand.mjs'), import('../layers/engine/feelmap.mjs')]);
+export function scopedSheetCss(css, scope) {
   const shared = [readFileSync(join(HERE, '../layers/engine/tokens.css'), 'utf8'), allThemesCss(), PLATE_CSS, HAND_CSS, FEEL_CSS];
   for (const s of shared) css = css.split(s).join('');
   return scopeCss(css.split('.pager-btn[aria-selected="true"]').join('.pager-btn[aria-pressed="true"]'), scope);
@@ -191,8 +194,10 @@ function scopeCss(css, scope) {
   }
   return out;
 }
-/** The pair scope's rules: the sheet CSS the pair pages are drawn and approved in (hands/page.mjs CSS), scoped. */
-export const pairCss = async key => scopedSheetCss((await import('./hands/page.mjs')).CSS, `.hx-hp-${key}`);
+/** The sheet CSS the pair pages are drawn and approved in: hands/page.mjs `CSS` (page.mjs:9, frozen by D-LIB7FIX-CARRY). */
+export const PAIR_SHEET_CSS = zoomCss({ thumb: 'plain' });
+/** The pair scope's rules: PAIR_SHEET_CSS scoped to `.hx-hp-<key>` (also read by gen/zooms.mjs, D-LIB7b-ZOOMS). */
+export const pairCss = key => scopedSheetCss(PAIR_SHEET_CSS, `.hx-hp-${key}`);
 /** golden B's HOWTO_CSS text (build-page.mjs), which the page's style holds right after the cards' close-up CSS. */
 const howtoCssText = () => {
   const src = readFileSync(join(HERE, '../layers/artifact/build-page.mjs'), 'utf8'), a = src.indexOf('const HOWTO_CSS = `'), b = src.indexOf('\n`;', a);
@@ -231,7 +236,7 @@ export async function withPairPanels(html, spec, panelOf) {
   const at = once(html, howtoCssText(), 'HOWTO_CSS') - 1;
   if (html[at] !== '\n') throw new Error('layers page: HOWTO_CSS does not follow the close-up CSS');
   let css = '';
-  for (const k of done) css += `\n/* close-ups: ${PAIR_LABEL} hp-${k} */\n${await pairCss(k)}`;
+  for (const k of done) css += `\n/* close-ups: ${PAIR_LABEL} hp-${k} */\n${pairCss(k)}`;
   return html.slice(0, at) + css + html.slice(at);
 }
 /** D-LIB7b-PAGEDUP check (3): every pair panel on a page, its one named rewrite reversed, === pairPanel(key); no id
