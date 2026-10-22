@@ -60,7 +60,8 @@
       "tags": ["MECH"], "sources": ["hackett-2013"],
       "quotes": [
         { "source": "hackett-2013", "text": "a brief Valsalva maneuver (VM) is unavoidable when lifting heavy loads (>80% of maximal voluntary contraction) or when lifting lighter loads to failure.", "where": "abstract" },
-        { "source": "hackett-2013", "text": "The VM was associated with an increase in blood pressure during resistance exercise", "where": "abstract" } ] },
+        { "source": "hackett-2013", "text": "The VM was associated with an increase in blood pressure during resistance exercise", "where": "abstract" },
+        { "source": "hackett-2013", "text": "The health risks associated with the VM during resistance exercise remain unconfirmed.", "where": "abstract" } ] },
     { "id": "g13", "text": "NHS back pain: call 999 for pain, tingling, weakness or numbness in both legs, or bladder or bowel changes; see a GP if it does not improve after a few weeks.",
       "tags": ["CONSENSUS"], "sources": ["nhs-back"],
       "quotes": [
@@ -93,11 +94,11 @@
       { "label": "Thighs parallel", "what": "Squat to thighs parallel or deeper if mobility allows.", "claim": "g4" }
     ],
     "mistake": {
-      "what": "Chest droops and the weight drifts away from the body, torso leaning far forward.",
+      "what": "Torso leans far forward, the chest droops and the weight drifts away from the body.",
       "why": "NASM lists both as common mistakes; excess lean increases lower-back strain (g6).",
       "claim": "g6",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: NASM's Common Mistakes list ties two faults to harm, \"Leaning excessively forward, which shifts weight distribution and increases lower back strain\" (g6) and \"Jerky or uncontrolled movements, which increase injury risk\" (g7). Both are on the list, each is tied to harm by one source, and both are sourced directly; leaning comes earlier on the list, so it is the top fault. Set aside: the knee cave (\"indicates poor motor control\"), shallow depth (\"limits lower body stimulus\") and the drooping chest name no harm; the \"Common Mistakes\" heading is not a frequency word; NASM's \"injury prevention\" line names no fault; Hackett's \"often advised to avoid the VM\" is about all resistance training; the NHS pages' \"very common\" and \"often during exercise\" lines name no fault of this exercise. A weight too heavy to keep the chest upright is a load choice, not a candidate, so it leaves handlingMistakes (setup[0] keeps the load line); the jerky reps (step 2 harm) come before the drifting weight. plate.mistake already names the forward lean with the drooping chest (g6), a still sign the side view shows, so the pick and drawable true stand."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: NASM's Common Mistakes list ties two faults to harm, \"Leaning excessively forward, which shifts weight distribution and increases lower back strain\" (g6) and \"Jerky or uncontrolled movements, which increase injury risk\" (g7). Both are on the list, each is tied to harm by one source, and both are sourced directly; leaning comes earlier on the list, so it is the top fault. Set aside: the knee cave (\"indicates poor motor control\"), shallow depth (\"limits lower body stimulus\") and the drooping chest name no harm; the \"Common Mistakes\" heading is not a frequency word; NASM's \"injury prevention\" line names no fault; NASM's \"The goblet position encourages upright posture, reduces lower back stress, and facilitates deeper squat depth.\" and \"reduces lower back stress compared to back-loaded variations\" are benefits of the goblet position over back-loaded squats and name no fault (read as the cue that corrects the lean, they would only add to the lean, which already wins on list order); Hackett's \"often advised to avoid the VM\" is about all resistance training; the NHS pages' \"very common\" and \"often during exercise\" lines name no fault of this exercise. A weight too heavy to keep the chest upright is a load choice, not a candidate, so it leaves handlingMistakes (setup[0] keeps the load line); the jerky reps (step 2 harm) come before the drifting weight. plate.mistake already names the forward lean with the drooping chest (g6), a still sign the side view shows, so the pick and drawable true stand."
     },
     "tells": [
       { "text": "Elbows stay close to your ribs", "claim": "g2" },
@@ -161,7 +162,8 @@
   "anchorSource": "nasm-goblet",
   "anchorNote": "NASM goblet squat page read in full; ACE goblet squat page read in full.",
   "gaps": [
-    "Tier-A way out: setting the dumbbell or kettlebell down after a failed rep. No source found, so no way-out line is shown until one is (LR-3, tracker LIB-WAYOUT)."
+    "Tier-A way out: setting the dumbbell or kettlebell down after a failed rep. No source found, so no way-out line is shown until one is (LR-3, tracker LIB-WAYOUT).",
+    "Goblet-squat load progression (no read source gives one)."
   ],
   "unsourced": [
     "Thumb position and wrist angle for the cupped hold.",

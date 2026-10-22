@@ -175,6 +175,13 @@
       "closest": null
     },
     {
+      "claim": "g12",
+      "source": "hackett-2013",
+      "text": "The health risks associated with the VM during resistance exercise remain unconfirmed.",
+      "status": "verbatim",
+      "closest": null
+    },
+    {
       "claim": "g13",
       "source": "nhs-back",
       "text": "pain, tingling, weakness or numbness in both legs",

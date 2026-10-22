@@ -94,7 +94,7 @@
     },
     {
       "id": "c5",
-      "text": "While lunging, bend slightly forward at the hips with a flat back.",
+      "text": "While lunging, bend forward at the hips with a flat back.",
       "tags": [
         "CONSENSUS"
       ],
@@ -242,7 +242,7 @@
     "viewWhy": "Forward step in the sagittal plane; hip drop (c3), thigh depth and shin lean (c4) and flat back (c5) read from the side. Sideways tilt (c2) needs a front view.",
     "equipment": "Floor line only; no weights.",
     "start": "Standing, feet together, shoulders down and back, trunk braced (c1).",
-    "end": "Front foot stepped forward, front thigh about parallel to the floor, front shin leaning slightly forward (c4), hips bent slightly with a flat back (c5).",
+    "end": "Front foot stepped forward, front thigh about parallel to the floor, front shin leaning slightly forward (c4), hips bent forward with a flat back (c5).",
     "checkpoints": [
       {
         "label": "Hips drop down",
@@ -256,7 +256,7 @@
       },
       {
         "label": "Flat back",
-        "what": "Slight bend at the hips with a flat back.",
+        "what": "Bend forward at the hips with a flat back.",
         "claim": "c5"
       }
     ],
@@ -265,7 +265,7 @@
       "why": "ACE's cue to drop the hips exists to control this forward shin travel (c3).",
       "claim": "c3",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no read source uses a frequency word for a fault (Catalyst's \"Many athletes try to load lunges too heavily\" is about the load, which LR-31 does not count), no named fault is tied to harm, and there is no common-mistakes list. Counting the read sources that tell the lifter to avoid each named fault, all tie at one: driving the hips forward (ACE, \"rather than driving your hips forward\", c3); sideways tilt (ACE, \"Avoid any sideways tilting or swaying\", c2); a moving stance foot (ACE, \"try not to move the stance (supporting) foot\"); arching the low back at the start (ACE, \"without arching your low back\", c1); losing the upright trunk, the controlled descent or the balance between the feet (Catalyst, written for loaded lunges). Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it (viewWhy names the hip drop, c3); LR-31 gives no further order. Set aside: Catalyst's \"Sets of 3-10 reps per leg are usually appropriate\" is about sets; the NHS knee page's \"often\" lines name no fault of this exercise. Hips and shin driven forward are a still sign the side view shows, so drawable is true and the pick is unchanged."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no read source uses a frequency word for a fault (Catalyst's \"Many athletes try to load lunges too heavily and lose the position in which the exercise will be most effective.\" is about the load chosen, which LR-31 does not count, and \"the position\" names no single fault; reading the next sentence's three items onto it would read one sentence onto list items (R-LB4-3)), no named fault is tied to harm, and there is no common-mistakes list. Counting the read sources that tell the lifter to avoid each named fault, all tie at one: driving the hips forward (ACE, \"rather than driving your hips forward\", c3); sideways tilt (ACE, \"Avoid any sideways tilting or swaying\", c2); a moving stance foot (ACE, \"try not to move the stance (supporting) foot\"); arching the low back at the start (ACE, \"without arching your low back\", c1); losing the upright trunk, the controlled descent or the balance between the feet (Catalyst, written for loaded lunges). Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it (viewWhy names the hip drop, c3); LR-31 gives no further order. Set aside: Catalyst's \"Sets of 3-10 reps per leg are usually appropriate\" is about sets; the NHS knee page's \"often\" lines name no fault of this exercise. Hips and shin driven forward are a still sign the side view shows, so drawable is true and the pick is unchanged."
     },
     "tells": [
       {
@@ -326,7 +326,7 @@
       "claim": "c4"
     },
     {
-      "point": "Flat back with a slight bend at the hips.",
+      "point": "Flat back, bent forward at the hips.",
       "claim": "c5"
     },
     {
@@ -338,7 +338,10 @@
     {
       "mistake": "Driving the hips forward.",
       "fix": "Land heel first and drop the hips straight down.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "c2"
+      ]
     },
     {
       "mistake": "Upper body swaying sideways.",
@@ -348,7 +351,10 @@
     {
       "mistake": "Wobbling on one leg.",
       "fix": "Practise standing on one leg first.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c2"
+      ]
     }
   ],
   "feel": {
@@ -375,7 +381,7 @@
       {
         "where": "Mostly backs of thighs and glutes",
         "means": "A longer step works these more.",
-        "fix": "Shorten the step for more thigh work.",
+        "fix": "Shorten the step for more front-thigh work.",
         "claim": "c9",
         "redFlag": null
       },
@@ -391,7 +397,10 @@
   "risks": [
     {
       "risk": "Losing balance on the step. Learn single-leg standing first.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c2"
+      ]
     },
     {
       "risk": "Uncontrolled forward shin travel when the hips drive forward.",
@@ -412,7 +421,7 @@
     {
       "key": "back",
       "kind": "posture",
-      "right": "Slight hip bend with a flat back.",
+      "right": "Hips bent forward, back flat.",
       "wrong": "Rounded back.",
       "claim": "c5",
       "wrongNote": "The wrong drawing is the inverse of c5; no source describes it directly."

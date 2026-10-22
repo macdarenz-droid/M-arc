@@ -86,6 +86,13 @@
       "status": "verbatim",
       "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
       "closest": null
+    },
+    {
+      "claim": "c1",
+      "source": "cat-splitsquat",
+      "status": "verbatim",
+      "text": "position your feet in your jerk split stance",
+      "closest": "position your feet in your jerk split stance"
     }
   ],
   "sources": [

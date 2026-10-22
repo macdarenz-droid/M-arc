@@ -436,7 +436,10 @@
     },
     {
       "step": "Step the trailing foot back down first, controlling the way down.",
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c2"
+      ]
     },
     {
       "step": "Repeat on the same leg or alternate.",

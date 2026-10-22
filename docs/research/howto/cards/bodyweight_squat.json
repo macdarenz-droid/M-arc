@@ -80,7 +80,7 @@
   "grip": { "type": "", "width": "", "thumb": "", "handContact": "", "wrist": "", "claims": [], "note": "Hand archetype none. Hands by the sides at the start (b1)." },
   "setup": [
     { "step": "Feet slightly wider than hip width, toes slightly out.", "claim": "b1" },
-    { "step": "Shoulders down and back, brace, chest up.", "claim": "b2" }
+    { "step": "Shoulders down and back, brace, chest up.", "claim": ["b1", "b2"] }
   ],
   "posture": [
     { "point": "Hips back then down.", "claim": "b3" },
@@ -100,7 +100,7 @@
     "secondary": [ { "muscleId": "glutes", "claim": "b9" } ],
     "watch": [],
     "rows": [
-      { "where": "Front of thighs and buttocks", "means": "The target areas are working.", "fix": "", "claim": "b9", "redFlag": null },
+      { "where": "Thighs and buttocks", "means": "The target areas are working.", "fix": "", "claim": "b9", "redFlag": null },
       { "where": "Lower back", "means": "The torso is rounding at the bottom.", "fix": "Stop higher, where the back is still flat.", "claim": "b4", "redFlag": null },
       { "where": "Very painful, locking or giving-way knee", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "b10", "redFlag": "knee" }
     ]
@@ -111,7 +111,7 @@
   "redFlags": ["knee"],
   "zooms": [
     { "key": "feet-and-knees", "kind": "posture", "right": "Knees over the second toe, feet flat.", "wrong": "Knees collapsing inward, ankles rolling.", "claim": "b5" },
-    { "key": "bottom", "kind": "posture", "right": "Shin and torso parallel, back flat, heels down.", "wrong": "Heels lifted, back rounded.", "claim": "b6" }
+    { "key": "bottom", "kind": "posture", "right": "Shin and torso parallel, back flat, heels down.", "wrong": "Heels lifted, back rounded.", "claim": ["b6", "b4", "b7"] }
   ],
   "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, glutes secondary. ACE's target list (thighs, butt/hips) fits both (b9) but ranks nothing, so this is WEAK support. No EMG source for the unloaded squat was read. No change." },
   "anchorSource": "ace-bwsquat",

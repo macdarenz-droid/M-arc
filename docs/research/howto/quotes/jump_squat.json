@@ -214,6 +214,13 @@
       "text": "achieving triple extension (pushing and extending your ankles, knees and hips simultaneously)",
       "status": "verbatim",
       "closest": null
+    },
+    {
+      "claim": "j18",
+      "source": "nasm-boxjump",
+      "text": "Landing with straight knees, which increases joint stress and reduces proper force absorption",
+      "status": "verbatim",
+      "closest": null
     }
   ]
 }

@@ -78,9 +78,9 @@
     {
       "claim": "c7",
       "source": "cat-boxjump",
-      "text": "Generally it's a good idea to use a box well under what you can actually jump onto so you can focus on jumping as high as possible and coming down onto the box",
+      "text": "Generally it’s a good idea to use a box well under what you can actually jump onto so you can focus on jumping as high as possible and coming down onto the box",
       "status": "verbatim",
-      "closest": "Generally it's a good idea to use a box well under what you can actually jump onto so you can focus on jumping as high as possible and coming down onto the box",
+      "closest": "Generally it’s a good idea to use a box well under what you can actually jump onto so you can focus on jumping as high as possible and coming down onto the box",
       "note": ""
     },
     {
@@ -210,6 +210,14 @@
       "status": "verbatim",
       "closest": "Demand on actual leg and hip power can be increased by removing the swinging of the arms—hold the hands loosely at the chest instead.",
       "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "nasm-boxjump",
+      "text": "Reset your position and prepare for the next repetition. Allow adequate recovery between repetitions.",
+      "status": "verbatim",
+      "closest": "Reset your position and prepare for the next repetition. Allow adequate recovery between repetitions.",
+      "note": "fetched by curl 2026-10-22 (LB4 fix round)"
     }
   ]
 }

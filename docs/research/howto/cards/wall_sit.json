@@ -77,7 +77,7 @@
     "checkpoints": [
       { "label": "Back on wall", "what": "Back and buttocks stay on the wall.", "claim": "w5" },
       { "label": "Knees over ankles", "what": "Shins vertical, knees directly above the ankles.", "claim": "w4" },
-      { "label": "90 degrees", "what": "Hips and knees at about 90 degrees; shallower is easier.", "claim": "w2" }
+      { "label": "90 degrees", "what": "Hips and knees at about 90 degrees; shallower is easier.", "claim": ["w2", "w7"] }
     ],
     "mistake": {
       "what": "Feet too close to the wall, knees pushed forward past the toes.",
@@ -96,7 +96,7 @@
   "grip": { "type": "", "width": "", "thumb": "", "handContact": "", "wrist": "", "claims": [], "note": "Hand archetype none; no source gives a hand position." },
   "setup": [
     { "step": "Back on the wall, feet out front, shoulder width, toes slightly out.", "claim": ["w4", "w2"] },
-    { "step": "Slide down until hips and knees are about 90 degrees.", "claim": "w2" },
+    { "step": "Slide down until hips and knees are about 90 degrees.", "claim": ["w2", "w3"] },
     { "step": "Knees right above the ankles. Move the feet if not.", "claim": ["w8", "w4"] },
     { "step": "Hold 30-60 seconds.", "claim": "w3" }
   ],
@@ -108,14 +108,14 @@
   "handlingMistakes": [
     { "mistake": "Feet too close to wall.", "fix": "Walk the feet out until the knees are over the ankles.", "claim": "w8" },
     { "mistake": "Holding your breath.", "fix": "Keep breathing steadily.", "claim": "w10" },
-    { "mistake": "Knee discomfort at 90 degrees.", "fix": "Hold higher on the wall, with less knee bend.", "claim": "w9" }
+    { "mistake": "Back leaving the wall.", "fix": "Keep your back and buttocks on the wall.", "claim": "w5" }
   ],
   "feel": {
     "primary": [ { "muscleId": "quads", "claim": "w11" } ],
     "secondary": [],
     "watch": [],
     "rows": [
-      { "where": "Front of the thighs, burning", "means": "The quads are doing the hold.", "fix": "", "claim": "w11", "redFlag": null },
+      { "where": "Front of the thighs", "means": "The quads are doing the hold.", "fix": "", "claim": "w11", "redFlag": null },
       { "where": "Around the kneecap", "means": "Feet too close to the wall, or the hold is too deep.", "fix": "Walk your feet further out. Hold higher on the wall.", "claim": ["w8", "w9"], "redFlag": null },
       { "where": "Very painful, locking or giving-way knee", "means": "Not a training feeling.", "fix": "Stop the hold.", "claim": "w12", "redFlag": "knee" }
     ]

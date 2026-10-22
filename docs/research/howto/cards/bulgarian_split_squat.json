@@ -560,9 +560,8 @@
       "key": "stance-length",
       "kind": "posture",
       "right": "Front foot about three foot-lengths ahead of the bench.",
-      "wrong": "Front foot too close to the bench (short stance).",
-      "claim": "c2",
-      "wrongNote": "The wrong drawing is the inverse of c2; no source describes it directly."
+      "wrong": null,
+      "claim": "c2"
     },
     {
       "key": "rear-knee",
@@ -578,7 +577,7 @@
     "why": "Library: quads and glutes primary, hamstrings secondary, core stabilizer. EMG (c11) and kinetics (c12) support quads and glutes as primary and show hamstring activity at the bottom (c11). The rear-leg hip-flexor stretch (c10) is a watch line, not a worked muscle, so no library change."
   },
   "loadProgression": {
-    "text": "Start with 8-15 smooth reps. Do 3-6 heavier reps only with full control.",
+    "text": "Sets of 8-15 smooth reps. Sets of 3-6 only with full control of the position.",
     "claims": [
       "c8"
     ]

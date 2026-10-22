@@ -28,6 +28,11 @@
           "source": "cat-splitsquat",
           "text": "Bend both knees to move down until the back knee lightly contacts the floor.",
           "where": "technique"
+        },
+        {
+          "source": "cat-splitsquat",
+          "text": "position your feet in your jerk split stance",
+          "where": "technique"
         }
       ]
     },
@@ -315,7 +320,10 @@
     {
       "mistake": "Dropping fast into the bottom.",
       "fix": "Lower smoothly until the back knee just touches.",
-      "claim": "c6"
+      "claim": [
+        "c6",
+        "c1"
+      ]
     }
   ],
   "feel": {
@@ -393,7 +401,7 @@
     "why": "Library: quads primary, glutes secondary. Catalyst (c4, c5) names quads and glutes; loaded EMG shows less glute activity with the feet fixed than when stepping (c7), which fits glutes as secondary. No change."
   },
   "loadProgression": {
-    "text": "Do sets of 5-10 smooth reps with no crash into the bottom. Add dumbbells or other implements to load it.",
+    "text": "Move smoothly with no crash into the bottom. With dumbbells or other implements, do sets of 5-10.",
     "claims": [
       "c6",
       "c8"

@@ -170,6 +170,27 @@
       "status": "verbatim",
       "text": "your knee locks, gives way or painfully clicks – painless clicking is normal",
       "closest": null
+    },
+    {
+      "claim": "c8",
+      "source": "goulette-2021",
+      "status": "verbatim",
+      "text": "20 asymptomatic females.",
+      "closest": "20 asymptomatic females."
+    },
+    {
+      "claim": "c12",
+      "source": "bezerra-2021",
+      "status": "verbatim",
+      "text": "Twelve women (24 ± 3 years) were selected and performed the lunge exercise with an overload of 30% of body weight",
+      "closest": "Twelve women (24 ± 3 years) were selected and performed the lunge exercise with an overload of 30% of body weight"
+    },
+    {
+      "claim": "c12",
+      "source": "bezerra-2021",
+      "status": "verbatim",
+      "text": "in two trunk positions (straight, and inclined) during three lunge exercises (static, step-forwarding, and walking) in trained young women",
+      "closest": "in two trunk positions (straight, and inclined) during three lunge exercises (static, step-forwarding, and walking) in trained young women"
     }
   ],
   "sources": [

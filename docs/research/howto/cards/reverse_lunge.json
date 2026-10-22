@@ -122,7 +122,7 @@
         },
         {
           "source": "cat-revlunge",
-          "text": "If you can't maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight.",
+          "text": "If you can’t maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight.",
           "where": "Notes"
         }
       ]
@@ -312,7 +312,7 @@
       "quotes": [
         {
           "source": "pel-revlunge",
-          "text": "\"So you want to slowly lower yourself down and then you can go a little quicker on the way up.\"",
+          "text": "“So you want to slowly lower yourself down and then you can go a little quicker on the way up.”",
           "where": "Common mistakes: too fast"
         },
         {
@@ -435,7 +435,7 @@
       "why": "Peloton's Form Mistakes to Avoid list warns against flaring the ribcage, and its cue, tucking the pelvis under, is given \"to protect the lower back\" (c18): the one named fault a read source ties to harm (D-SUP-PROTECT).",
       "claim": "c18",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2 (D-SUP-LB4-REVLUNGE as corrected; D-SUP-PROTECT): Peloton's \"Form Mistakes to Avoid When Doing Reverse Lunges\" list, written for this exercise, ties one named fault to harm through the cue that corrects it: \"Jess also warns against flaring the ribcage.\" and \"make sure to tuck the pelvis under to protect the lower back\" (c18). Under D-SUP-PROTECT a cue that protects a named body part is a step-2 tie to harm (LR-31 counts a correcting cue, seated_cable_row c9). No other named fault is tied to harm, so the flared ribcage is the top fault, handlingMistakes[0] and plate.mistake. Step 1 set aside: \"many people have too narrow of a stance\" is a statement about a stance, which LR-31 does not count as a frequency word; \"Another common error is doing reverse lunges too fast\" is the list's \"common technique errors\" sentence read onto one item. Also set aside: Peloton's \"build up your hamstring and glute strength to protect your knees\" and \"if you’re looking to protect your knees, reverse is the way to go\" name benefits of the exercise, not a fault; Catalyst's \"Many athletes try to load lunges too heavily\" is about the load (c6); \"Sets of 3-10 reps per leg are usually appropriate\" is about sets; Peloton's \"usually more knee-friendly than forward lunges\" and Fit&Well's \"can be gentler on your knees\" compare exercises; Lin's \"stretching your groin and adductor and maybe your back\" is about the forward lunge; Bezerra's lower-back activity (c8) is a muscle-activity finding; the NHS knee page's \"often\" lines name no fault of this exercise. A flared ribcage with an untucked pelvis is a still sign the side view shows, so drawable is true. The head's pick, the trunk pitching forward (c6), had no harm quote and is on no list; the held plate's Mistake moves to the flared ribcage when it returns for re-approval (D-LIB8M-CARDTRUE)."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2 (D-SUP-LB4-REVLUNGE as corrected; D-SUP-PROTECT): Peloton's \"Form Mistakes to Avoid When Doing Reverse Lunges\" list, written for this exercise, ties one named fault to harm through the cue that corrects it: \"Jess also warns against flaring the ribcage.\" and \"make sure to tuck the pelvis under to protect the lower back\" (c18). Under D-SUP-PROTECT a cue that protects a named body part is a step-2 tie to harm (LR-31 counts a correcting cue, seated_cable_row c9). No other named fault is tied to harm, so the flared ribcage is the top fault, handlingMistakes[0] and plate.mistake. Step 1 set aside: \"many people have too narrow of a stance\" is a statement about a stance, which LR-31 does not count as a frequency word; \"Another common error is doing reverse lunges too fast\" is the list's \"common technique errors\" sentence read onto one item. Also set aside: Peloton's \"build up your hamstring and glute strength to protect your knees\" and \"if you’re looking to protect your knees, reverse is the way to go\" name benefits of the exercise, not a fault; Catalyst's \"Many athletes try to load lunges too heavily and lose the position in which the exercise will be most effective.\" is about the load chosen, which LR-31 does not count, and \"the position\" names no single fault; reading the next sentence's three items onto it would read one sentence onto list items (R-LB4-3) (c6); \"Sets of 3-10 reps per leg are usually appropriate\" is about sets; Peloton's \"usually more knee-friendly than forward lunges\" and Fit&Well's \"can be gentler on your knees\" compare exercises; Lin's \"stretching your groin and adductor and maybe your back\" is about the forward lunge; Bezerra's lower-back activity (c8) is a muscle-activity finding; the NHS knee page's \"often\" lines name no fault of this exercise. A flared ribcage with an untucked pelvis is a still sign the side view shows, so drawable is true. The head's pick, the trunk pitching forward (c6), had no harm quote and is on no list; the held plate's Mistake moves to the flared ribcage when it returns for re-approval (D-LIB8M-CARDTRUE)."
     },
     "tells": [
       {
@@ -481,7 +481,10 @@
     },
     {
       "step": "Step one foot back, a full-length step.",
-      "claim": "c7"
+      "claim": [
+        "c1",
+        "c7"
+      ]
     },
     {
       "step": "Lower the back knee slowly toward the floor, chest up.",
@@ -524,7 +527,10 @@
     {
       "mistake": "Dropping fast into the bottom.",
       "fix": "Lower slowly. Use a weight that lets you move smoothly.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c16"
+      ]
     }
   ],
   "feel": {
@@ -557,7 +563,10 @@
         "where": "Lower back",
         "means": "Leaning the chest forward can make the lower-back muscles work harder.",
         "fix": "Stay upright. Go lighter if you can't.",
-        "claim": "c8",
+        "claim": [
+          "c8",
+          "c6"
+        ],
         "redFlag": null
       },
       {
@@ -605,7 +614,7 @@
     "why": "Library: quads and glutes primary, hamstrings secondary, core stabilizer. Catalyst names legs and hips with a slight quad emphasis (c9), which matches; no source found that justifies a change."
   },
   "loadProgression": {
-    "text": "Start light or unloaded. Add weight only while the step stays full and the descent smooth.",
+    "text": "Add weight only while the step stays full and the descent smooth.",
     "claims": [
       "c14",
       "c6"
