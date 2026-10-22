@@ -1,0 +1,26 @@
+{
+ "note": "sha256 per LB5 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\"; and sha256 of each quotes file, a byte copy from the same head.",
+ "researchHead": "3812989f59c000705731f7944d7a1a275e86045d",
+ "cards": {
+  "overhead_cable_triceps_extension": "bd3c9ed2970945e7531e9e968669329a6c418c5b059b66c3eebf5e42697bcd31",
+  "dumbbell_overhead_triceps_extension": "8b871081ec46d494788a11a93964980fb2280a41eef3ad19cd1589d9a245df50",
+  "cross_body_hammer_curl": "ef77459e098a51b3122f78aea41a569ec1cb0b574365bef3db4fdbece11be27d",
+  "cable_curl": "9f5623f41d5d514e52c0f1c4cb289ae5b428a5d3b827999bbe0effca25c69bf3",
+  "bayesian_cable_curl": "60253cd4100c6dc64b8426462ed20a037ad8cfcfa35f7086449e615b19869be7",
+  "preacher_curl": "862b79ead56714058c26c76e4840c3eaea5c7da6a040a6361f80cba758ca4fc1",
+  "incline_dumbbell_curl": "a5eeed889b7789070b66ea22821cac19045ccc30e3f57669ce33c94da1f74917",
+  "concentration_curl": "d271e4189605630b991cf5e77fde0d009ab27d21c5c1c9e645003cbd32e06111",
+  "wrist_curl": "a803a2ca0768f4f589bab57f8eeca428dab9789fed76e525752e98e6b5a4f1ba"
+ },
+ "quotes": {
+  "overhead_cable_triceps_extension": "e7c5d6560426e1e94d88dc6cbce4d1e85d669aaeacca8c33e152f516b6aef018",
+  "dumbbell_overhead_triceps_extension": "1702ec36c4eeb0e3aab71641c421bd4af7bda9cedb6a32c88b8d6327cf9cc739",
+  "cross_body_hammer_curl": "ceb49204b77f3e94cf2367096ce59976b241055321559ef8d2a4cea8bb8f130d",
+  "cable_curl": "0415a959b24881829e6423c4c537ac6c59d4513ed62d7c21cfefeceb915700b1",
+  "bayesian_cable_curl": "e0b7f6c52b2a8613a09c6ce67065854e6d4b4229195394c5116942e7632ffd29",
+  "preacher_curl": "75fc3442260cde1c3ed614ff9c0eadb66574eb4ada8f0fe8979313457e37067c",
+  "incline_dumbbell_curl": "7220e2390d689e307654202ff96b05e12f852c98ca5ba859d4b15fd3d8e04a2c",
+  "concentration_curl": "94223991184018edd00d47d2cc01e25a2a8c06be1f93bda8d2a635b696f0834f",
+  "wrist_curl": "e6090e2870c278995c5fae9457e4bbb047100972685ea369a959c94a65d65758"
+ }
+}

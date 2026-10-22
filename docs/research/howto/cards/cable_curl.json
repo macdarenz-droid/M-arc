@@ -1,0 +1,582 @@
+{
+ "id": "cable_curl",
+ "libId": "lib_cable_curl",
+ "name": "Cable Curl",
+ "family": "CURL",
+ "tier": "C",
+ "archetype": {
+  "hand": "curl",
+  "contact": [
+   "standing-feet"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Attach a bar to the low pulley, take an underhand (palms-up) grip about shoulder-width apart, and step back from the stack.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-cablecurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-cablecurl",
+     "text": "Fasten a bar in the lower position of a cable cross. Grip the bar with an underhand (supinated) grip, hands about shoulder-width apart, and take a step back.",
+     "where": "How to, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Stand upright with the feet about hip-width apart, palms facing up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fb-cablecurl"
+   ],
+   "quotes": [
+    {
+     "source": "fb-cablecurl",
+     "text": "Stand upright with your feet hip width apart while grabbing the handle so that your palms are facing up.",
+     "where": "Instructions for proper form"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Curl the bar toward the shoulders by bending the elbows, with the elbows kept close to the torso; the upper arms stay still or move only slightly forward, never back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-cablecurl",
+    "fb-cablecurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-cablecurl",
+     "text": "Don’t let your upper arm travel back during the curl, keep it still or move it slightly forward.",
+     "where": "How to, step 3"
+    },
+    {
+     "source": "fb-cablecurl",
+     "text": "Bend your elbows to raise the handle up towards your shoulders keeping your elbows close your torso.",
+     "where": "Instructions for proper form"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Lift with control and return to the start under control.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-cablecurl",
+    "fb-cablecurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-cablecurl",
+     "text": "Lift the bar with control, by flexing your elbows.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "fb-cablecurl",
+     "text": "Controllably return to the starting position.",
+     "where": "Instructions for proper form"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Because the cable pulls at a slight diagonal, the arm flexors find it harder to relax than in a barbell curl, and the cable keeps tension near the top of the range.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-cablecurl",
+    "fb-cablecurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-cablecurl",
+     "text": "Because the direction of pull is slightly diagonal to the ground, it is harder for the arm flexors to relax in this exercise.",
+     "where": "Commentary"
+    },
+    {
+     "source": "fb-cablecurl",
+     "text": "This is especially helpful for applying tension at the top of your range of motion.",
+     "where": "Introduction"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "StrengthLog lists the biceps as the primary muscle and the forearm flexors as secondary; the brachioradialis, a forearm muscle, also bends the elbow.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-cablecurl",
+    "marcolin-2018"
+   ],
+   "quotes": [
+    {
+     "source": "sl-cablecurl",
+     "text": "Primary muscles worked: Biceps Secondary muscles worked: Forearm Flexors",
+     "where": "Muscles worked box"
+    },
+    {
+     "source": "marcolin-2018",
+     "text": "Biceps brachii is a robust forearm supinator and an elbow flexor while brachioradialis, the most superficial muscle of the forearm considering the radial part, acts as an elbow flexor",
+     "where": "Discussion"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Inferred from the dumbbell curl (same elbow action): elbows moving forward during the lift shift load to the front delts, and elbows moving back let you cheat the weight up.",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "sl-dbcurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dbcurl",
+     "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps. If your elbows move backward, you’ll also move the load from your biceps and be able to “cheat up” the weight.",
+     "where": "Common mistakes, elbow positioning"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Inferred from the dumbbell curl: swinging the body is the sign of a load that is too heavy; the fix is less weight and a controlled lift, with the body still and only the arms moving.",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "sl-dbcurl"
+   ],
+   "quotes": [
+    {
+     "source": "sl-dbcurl",
+     "text": "If you start to swing, you should probably remove some weight instead and focus on performing the movement with control.",
+     "where": "Proper form"
+    },
+    {
+     "source": "sl-dbcurl",
+     "text": "Make sure to keep your elbows close to the body the entire time. Your body shouldn’t move, just the arms.",
+     "where": "Proper form"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Inferred from the dumbbell curl: keep the wrists straight; bent wrists add load to them and can cause discomfort.",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "ace-seated-curl",
+    "sl-dbcurl"
+   ],
+   "quotes": [
+    {
+     "source": "ace-seated-curl",
+     "text": "Maintain a neutral wrist position (avoid flexion and extension of your wrists)",
+     "where": "Step 2, upward phase"
+    },
+    {
+     "source": "sl-dbcurl",
+     "text": "Keep your wrists straight during the movement. If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.",
+     "where": "Common mistakes, not locking your wrists"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up and 2 s down, inside ACSM's moderate speed of 1-2 s each way, which is stated for advanced training (LR-15). No quote on the card asks for a pause.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "acsm-2009"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "In a 10-week study of unilateral cable curls, training with the shoulder neutral or maximally extended gave similar elbow-flexor growth when effort and range were matched.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "larsen-2026"
+   ],
+   "quotes": [
+    {
+     "source": "larsen-2026",
+     "text": "altering shoulder extension angle in isolation does not appear to produce meaningful differences in elbow flexor hypertrophy in untrained men over 10 weeks.",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Fitbod calls losing tension at the bottom, with the arms fully extended, very common; the fix is to limit the range and keep the arm slightly bent between reps to maintain tension in the biceps.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fb-cablecurl"
+   ],
+   "quotes": [
+    {
+     "source": "fb-cablecurl",
+     "text": "It’s very common to lose tension at the bottom of the movement when your arms are fully extended. Limit your range of motion and keep your arm slightly bent to maintain tension in your biceps between reps.",
+     "where": "Common mistakes, limit range of motion at the bottom"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "The NHS advises people with wrist pain to stop or cut down the activities causing it and not to lift heavy objects or grip anything too tightly (NHS wrist-pain self-care advice, applied here to training; R-LB5-2). The source is data only.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "nhs-wrist-pain"
+   ],
+   "quotes": [
+    {
+     "source": "nhs-wrist-pain",
+     "text": "stop or cut down activities that are causing the pain",
+     "where": "How you can ease wrist pain yourself: Do"
+    },
+    {
+     "source": "nhs-wrist-pain",
+     "text": "do not lift heavy objects or grip anything too tightly",
+     "where": "How you can ease wrist pain yourself: Don't"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "sl-cablecurl",
+   "url": "https://www.strengthlog.com/cable-curl-with-bar/",
+   "title": "How to Do Cable Curl With Bar: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fb-cablecurl",
+   "url": "https://fitbod.me/exercises/cable-bicep-curl",
+   "title": "Cable Bicep Curl: Form, Muscles Worked, Target Weight & Variations",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-dbcurl",
+   "url": "https://www.strengthlog.com/dumbbell-curl/",
+   "title": "How to Dumbbell Curl: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": 2020,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ace-seated-curl",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+   "title": "Seated Biceps Curl | Exercise Library | ACE",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "marcolin-2018",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/",
+   "title": "Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl.",
+   "kind": "peer-reviewed",
+   "year": 2018,
+   "pmid": 30013836,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "acsm-2009",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+   "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+   "kind": "guideline",
+   "year": 2009,
+   "pmid": 19204579,
+   "access": "abstract",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "larsen-2026",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/41988507/",
+   "title": "The effects of shoulder extension angle on elbow flexor hypertrophy in the cable curl exercise.",
+   "kind": "peer-reviewed",
+   "year": 2026,
+   "pmid": 41988507,
+   "access": "abstract",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "nhs-wrist-pain",
+   "url": "https://www.nhs.uk/symptoms/hand-pain/wrist-pain/",
+   "title": "Wrist pain (NHS)",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Elbow bending runs front-to-back, so the elbow angle, including the slight bend at the bottom (c13), elbow drift (c3, c7) and body swing (c8) read side-on. Census view is side.",
+  "equipment": "Cable column with the pulley at the lowest position and a straight bar (c1); the lifter stands a step back from the stack on the floor line.",
+  "start": "Standing upright, feet about hip-width (c2), a step back from the low pulley (c1); arms down with the elbows slightly bent, not fully extended (c13), palms up on the bar, hands about shoulder-width (c1); elbows close to the torso (c3); wrists straight (c9).",
+  "end": "Elbows fully bent, bar near the shoulders (c3); upper arms still or slightly forward, never back (c3); body in the same upright position (c8); wrists straight (c9).",
+  "checkpoints": [
+   {
+    "label": "Elbows at sides",
+    "what": "Elbows close to the torso. Upper arms never travel back.",
+    "claim": "c3"
+   },
+   {
+    "label": "Straight wrists",
+    "what": "Hand in line with the forearm.",
+    "claim": "c9"
+   },
+   {
+    "label": "Still body",
+    "what": "Torso stays upright. Only the arms move.",
+    "claim": "c8"
+   }
+  ],
+  "mistake": {
+   "what": "Arms fully extended at the bottom, so the biceps lose tension between reps.",
+   "why": "Fitbod's cable-curl page calls it very common; keeping the arm slightly bent maintains tension in the biceps.",
+   "claim": "c13",
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: losing tension at the bottom with the arms fully extended (c13), from Fitbod's \"It’s very common to lose tension at the bottom of the movement when your arms are fully extended.\" The frequency word sits on the fault itself, in a source written for this exercise. Set aside: Fitbod's \"one of the most common isolation, biceps exercises\", \"a staple exercise in most workouts\" and \"Unlike many other Hammer Curl variations\" are about other exercises; StrengthLog's dumbbell-curl \"one of the most common movements we do with our arms\", \"Barbell curls often allow for heavier weights\" and \"most offering a fixed grip width\" are about exercises, a load and equipment; ACE's \"most comfortable for you\" is about comfort; the 'Common Form Mistakes' and 'Common Mistakes in the Dumbbell Curl' headings are headings. StrengthLog's cable-curl page holds no frequency or harm word. drawable is true: the side view shows the elbow angle at the bottom, fully straight against the slight bend of the start (c13). Pick unchanged; handlingMistakes already has it first."
+  },
+  "tells": [
+   {
+    "text": "Upper arms stay by your sides",
+    "claim": "c3"
+   },
+   {
+    "text": "Only your arms move",
+    "claim": "c8"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 0,
+   "claim": "c10"
+  },
+  "variantLine": "Drawn with the straight bar StrengthLog uses (c1); Fitbod's single-handle version (c2, c3) uses the same stance and elbow rules."
+ },
+ "grip": {
+  "type": "Underhand (supinated), palms up, on a straight cable bar.",
+  "width": "Hands about shoulder-width apart.",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "Straight, in line with the forearm (inferred from the dumbbell curl).",
+  "claims": [
+   "c1",
+   "c9"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Set the pulley to the lowest position and attach a bar.",
+   "claim": "c1"
+  },
+  {
+   "step": "Take an underhand grip, hands about shoulder-width.",
+   "claim": "c1"
+  },
+  {
+   "step": "Step back from the stack and stand upright, feet about hip-width.",
+   "claim": [
+    "c1",
+    "c2"
+   ]
+  },
+  {
+   "step": "Pick a weight you can curl without swinging.",
+   "claim": "c8"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Elbows stay close to the torso.",
+   "claim": "c3"
+  },
+  {
+   "point": "Upper arms stay still or move slightly forward, never back.",
+   "claim": "c3"
+  },
+  {
+   "point": "Body stays still. Only the arms move.",
+   "claim": "c8"
+  },
+  {
+   "point": "Wrists stay straight.",
+   "claim": "c9"
+  },
+  {
+   "point": "Lower under control.",
+   "claim": "c4"
+  },
+  {
+   "point": "Keep the arm slightly bent at the bottom to maintain tension.",
+   "claim": "c13"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Arms straight at the bottom.",
+   "fix": "Limit the range. Keep the arm slightly bent between reps.",
+   "claim": "c13"
+  },
+  {
+   "mistake": "Upper arms travelling back.",
+   "fix": "Keep the upper arms still by your sides.",
+   "claim": [
+    "c3",
+    "c7"
+   ]
+  },
+  {
+   "mistake": "Swinging the body.",
+   "fix": "Use less weight and lift with control.",
+   "claim": "c8"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "biceps",
+    "claim": "c6"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "forearms",
+    "claim": "c6"
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "front_delts",
+    "claim": "c7"
+   }
+  ],
+  "rows": [
+   {
+    "where": "Front of the upper arm",
+    "means": "The biceps are working against the cable.",
+    "fix": "",
+    "claim": "c5",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the shoulder",
+    "means": "Fault: the elbows drifting well forward, which loads the front delts.",
+    "fix": "Keep the elbows at your sides.",
+    "claim": "c7",
+    "redFlag": null
+   },
+   {
+    "where": "Wrist discomfort or pain",
+    "means": "Fault: the wrists bent up or down under load.",
+    "fix": "Stop and don't train through the pain. Keep the wrist straight.",
+    "claim": [
+     "c9",
+     "c14"
+    ],
+    "redFlag": "wrist"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Bent wrists under load can cause wrist discomfort.",
+   "claim": "c9"
+  }
+ ],
+ "redFlags": [
+  "wrist"
+ ],
+ "zooms": [
+  {
+   "key": "curl-wrist",
+   "kind": "hand",
+   "right": "Palms up, hand in line with the forearm.",
+   "wrong": "Wrist bent back under the bar.",
+   "claim": "c9"
+  },
+  {
+   "key": "curl-elbow",
+   "kind": "posture",
+   "right": "Upper arm by the side at the top.",
+   "wrong": "Upper arm swung back behind the body.",
+   "claim": "c7"
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "biceps primary and forearms secondary match exercises.json and StrengthLog's cable-curl listing (c6)."
+ },
+ "anchorSource": "sl-cablecurl"
+}
