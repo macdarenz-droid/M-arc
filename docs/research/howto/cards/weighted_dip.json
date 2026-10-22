@@ -435,7 +435,7 @@
   "viewWhy": "Census view is side; depth (c4, c14), the near-upright torso (c5), the shrug fault (c6) and the hanging plate (c8) all read from the side.",
   "equipment": "Parallel dip bars on a frame (census 'dipBars', missing), hands about shoulder-width (c1); dip belt round the waist with a plate hanging low on a chain, near the shins (c8; belt and plate are not drawn today, census note).",
   "start": "Top: arms straight on the bars (c2), shoulders down and back, core braced (c3), torso nearly upright (c5), ankles crossed with a slight knee bend (c3), plate hanging still below (c8).",
-  "end": "Bottom: elbows bent to about 90 degrees with the upper arm about level with the floor (c4), elbows pointing back (c4), shoulders still down (c6), torso nearly upright with a slight lean (c5).",
+  "end": "Bottom: elbows bent with the upper arm about level with the floor (c4), elbows pointing back (c4), shoulders still down (c6), torso nearly upright with a slight lean (c5).",
   "checkpoints": [
    {
     "label": "Shoulders down",
@@ -698,7 +698,8 @@
   "The shoulder feel row restates the sources' own form faults (c4, c5, c6, c11) and their swap (c10), with no added cause (LR-6).",
   "W1 fixer round 2026-10-03: F03 / R-W1-5: setup[3] 'Climb or jump up' -> 'Climb up to straight arms.'; c2 text drops 'or jump', says the mount is from the bodyweight dip, tag CONSENSUS -> MECH; gaps[0] names the loaded mount and dismount under LIB-WAYOUT. F12: risks[1] keeps the source's hedge ('can stress'). F18: front_delts removed from feel.watch (stays secondary; the shoulder row carries the warning).",
   "W1 lows round 2026-10-03: low 7: c2 text drops 'Stand between the bars' (in neither c2 quote). Older item: gaps[1-2] (thumb, wrist) moved to unsourced, and the depth entry moved to notes (LR-20); gaps keeps only the tier-A way-out. Depth note: Depth: StrengthLog's competition depth (shoulder below elbow) is deeper than BarBend's parallel; the card follows the more cautious line (parallel or slightly below, or as deep as is comfortable), c4.",
-  "LB7 LR-31/LR-33 pass 2026-10-22: top fault re-ranked by LR-31 step 1 (c14, new); handlingMistakes gets 'Cutting reps short.' at [0] from c14 and c7's quotes, the shrug moves to [1], and the last item ('Going far below parallel.' / 'Stop at about parallel, or where it's comfortable.', c4) is dropped to keep 3 (R-LB2-2); it stays in risks[1], zooms[1] and checkpoints[2]. c10 gains StrengthLog's shoulder-pain quote so the shoulder row's 'If it still hurts' names pain from a cited quote (R-LB6-6); the row's text is unchanged. c15 (new) holds the bottom pause named in tempo.text."
+  "LB7 LR-31/LR-33 pass 2026-10-22: top fault re-ranked by LR-31 step 1 (c14, new); handlingMistakes gets 'Cutting reps short.' at [0] from c14 and c7's quotes, the shrug moves to [1], and the last item ('Going far below parallel.' / 'Stop at about parallel, or where it's comfortable.', c4) is dropped to keep 3 (R-LB2-2); it stays in risks[1], zooms[1] and checkpoints[2]. c10 gains StrengthLog's shoulder-pain quote so the shoulder row's 'If it still hurts' names pain from a cited quote (R-LB6-6); the row's text is unchanged. c15 (new) holds the bottom pause named in tempo.text.",
+  "F-LB7-1 (D-LIB17-DIPBAL, option P, 2026-10-22): the 90 degrees in c4's \"until your elbows are bent at 90 degrees\" is a rough cue, not a fact, so plateFacts drops the two elbow-90 angle facts and plate.end drops the number while the quote stays, because with the hands on the bars, the centre of mass over them and a slight lean (c5), the shoulder reaches the parallel line only at about 112.5 degrees of elbow bend and an elbow at 90 leaves it 8-13 cm above (measured table, PR #299 comment 6348923058)."
  ],
  "unsourced": [
   "Thumb position on the dip bars (push archetype): no dip source.",
@@ -718,22 +719,6 @@
    "pose": "start",
    "cardPose": "start",
    "claim": "c2"
-  },
-  {
-   "kind": "angle",
-   "joint": "elbow.l",
-   "pose": "end",
-   "cardPose": "end",
-   "deg": 90,
-   "claim": "c4"
-  },
-  {
-   "kind": "angle",
-   "joint": "elbow.r",
-   "pose": "end",
-   "cardPose": "end",
-   "deg": 90,
-   "claim": "c4"
   },
   {
    "kind": "contact",

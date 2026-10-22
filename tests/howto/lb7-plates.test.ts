@@ -23,7 +23,7 @@ const NOSECS = ['cable_rear_delt_fly', 'renegade_row'];
 const HELD = ['cable_rear_delt_fly', 'renegade_row', 'resistance_band_pull_apart'];
 const FRONT = ['cable_lateral_raise', 'cable_rear_delt_fly', 'cable_external_rotation', 'resistance_band_pull_apart'];
 const ROWS = 'tools/plates/library/lb7/rows.json';
-const RESEARCH_HEAD = '8d750bfe0dd9863862da88761268505d0089f5b2';
+const RESEARCH_HEAD = 'e5ed66ca1c7c7c2f6418001d262d053431b4c67f';
 const COMPOSERS = ['dipBars'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
@@ -399,12 +399,52 @@ describe('LIB-17 A2: dipBars on weighted_dip, per drawn pose (13.1)', { timeout:
 describe('LIB-17 weighted_dip (H; tier A; dipBars anchor): drawn facts and R10 (DESIGN.md section 7)', { timeout: T }, () => {
   const s = () => S.weighted_dip;
   const flex = (pose: string, side = 'r') => { const L = lmOf(s(), pose); return 180 - angle3(L[`shoulder.${side}`], L[`elbow.${side}`], L[`grip.${side}`]); };
-  it('c2: arms straight at the top; c4: elbows about 90 at the bottom with the upper arm level (+-2 deg); c14: the Mistake\'s half rep at the ruled 60', () => {
+  it('c2: arms straight at the top; c4 (D-LIB17-DIPBAL P): the bottom shoulder on the parallel line (+-1 cm) at the balanced elbow END_FLEX; c14: the Mistake shoulder M_DEPTH of the way down', () => {
+    const W = M.weighted_dip, E = lmOf(s(), 'end'), Mi = lmOf(s(), 'mistake');
     expect(flex('start')).toBeLessThan(3);
-    for (const side of ['r', 'l']) expect(Math.abs(flex('end', side) - 90), side).toBeLessThanOrEqual(2);
-    const E = lmOf(s(), 'end'), ua = Math.atan2(E['elbow.r'][1] - E['shoulder.r'][1], Math.abs(E['elbow.r'][2] - E['shoulder.r'][2])) * 180 / Math.PI;
-    expect(Math.abs(ua)).toBeLessThanOrEqual(2);
-    expect(Math.abs(flex('mistake') - M.weighted_dip.SIZES.M_BEND)).toBeLessThanOrEqual(2);
+    expect(Math.abs(E['shoulder.r'][1] - W.PAR_Y)).toBeLessThanOrEqual(0.01);
+    for (const side of ['r', 'l']) expect(Math.abs(flex('end', side) - W.END_FLEX), side).toBeLessThanOrEqual(0.5);
+    expect(W.END_FLEX).toBeGreaterThan(105);
+    expect(W.END_FLEX).toBeLessThan(120);
+    expect(Math.abs(Mi['shoulder.r'][1] - W.M_Y)).toBeLessThanOrEqual(0.01);
+    expect(Mi['shoulder.r'][1]).toBeGreaterThan(W.PAR_Y + 0.05);
+    const ua = Math.atan2(E['shoulder.r'][1] - E['elbow.r'][1], Math.abs(E['elbow.r'][2] - E['shoulder.r'][2])) * 180 / Math.PI;
+    console.log(`LIB-17 weighted_dip bottom: elbow ${W.END_FLEX.toFixed(1)} deg, upper arm ${ua.toFixed(1)} deg above level, shoulder on the parallel line`);
+  });
+  /** D-LIB17-DIPBAL condition 3 (amended 6348947992): body plus the drawn plate (PLATE_KG on BODY_KG) at the belt point,
+   *  the centre of mass over the grips (+-2 cm, fore and aft) in every pose. The body alone is logged, not tested. */
+  const balanceProblems = (spec: any, plateKg = M.weighted_dip.SIZES.PLATE_KG) => ['start', 'end', 'mistake'].flatMap(pose => {
+    const L = lmOf(spec, pose), W = M.weighted_dip, bk = W.SIZES.BODY_KG, b = W.bodyCom(L);
+    const belt = itemsIn(spec, pose).items.find((i: any) => i.part === 'chain').pts[0];
+    const com = b.map((v: number, i: number) => (bk * v + plateKg * belt[i]) / (bk + plateKg)), gz = (L['grip.l'][2] + L['grip.r'][2]) / 2;
+    return Math.abs(com[2] - gz) <= 0.02 ? [] : [`${pose}: centre of mass ${((com[2] - gz) * 100).toFixed(1)} cm off the grips`];
+  });
+  it('balance: body plus plate at the belt point over the grips (+-2 cm) in every pose; the body alone logged', () => {
+    expect(balanceProblems(s())).toEqual([]);
+    const alone = ['start', 'end', 'mistake'].map(pose => { const L = lmOf(s(), pose); return ((M.weighted_dip.bodyCom(L)[2] - (L['grip.l'][2] + L['grip.r'][2]) / 2) * 100).toFixed(1); });
+    console.log(`LIB-17 weighted_dip body-alone offset from the grips (cm): start ${alone[0]}, end ${alone[1]}, Mistake ${alone[2]}`);
+  });
+  it('balance mutations: the plate weight left out, and the bottom shoulder moved 5 cm forward, are red', () => {
+    expect(balanceProblems(s(), 0).length).toBeGreaterThan(0);
+    const e = s().poses.end, bad = { ...s(), poses: { ...s().poses, end: { ...e, root: { ...e.root, at: [e.root.at[0], e.root.at[1], e.root.at[2] + 0.05] } } } };
+    expect(balanceProblems(bad).some(p => p.startsWith('end:'))).toBe(true);
+  });
+  /** Slice look item 3: the plate hangs clear in front of the shins in every pose (the drawn plate disc against the
+   *  drawn shin outlines, plate px). */
+  const shinProblems = (spec: any) => ['start', 'end', 'mistake'].flatMap(pose => {
+    const cam = camOf(spec), shins = shapesIn(spec, pose).filter((x: any) => /^(shin|shank|calf|lower)/.test(x.key) || /^(foot|knee)/.test(x.key)).map((x: any) => x.poly);
+    const disc = itemsIn(spec, pose).items.filter((i: any) => i.part === 'plate').flatMap((it: any) => eng.PRIMITIVES[it.type](it, cam).map((q: any) => q.poly).filter(Boolean));
+    const gap = Math.min(...disc.flat().map((p: number[]) => outside(shins, p)));
+    return gap > 0 ? [] : [`${pose}: the plate ${(-gap).toFixed(1)} px into the legs`];
+  });
+  it('the plate hangs clear of the shins and feet in every pose', () => {
+    expect(shapesIn(s(), 'start').some((x: any) => /^(shin|shank|calf|lower)/.test(x.key))).toBe(true);
+    expect(shinProblems(s())).toEqual([]);
+  });
+  it('mutation: the plate hung 12 cm further back (into the shins) is red', () => {
+    const k = s().equipment.findIndex((x: any) => typeof x === 'function' && ([] as any[]).concat(x(lmOf(s(), 'end'), { pose: 'end' }))[0]?.part === 'plate');
+    const bad = withEq(s(), k, (x: any) => (lm: any, ctx: any) => ([] as any[]).concat(x(lm, ctx)).map((it: any) => ({ ...it, ...(it.at ? { at: [it.at[0], it.at[1], it.at[2] - 0.12] } : {}), ...(it.pts ? { pts: it.pts.map((p: number[]) => [p[0], p[1], p[2]! - 0.12]) } : {}) })));
+    expect(shinProblems(bad).length).toBeGreaterThan(0);
   });
   it('c4: the elbows go back (the elbow behind the shoulder at the bottom)', () => {
     const E = lmOf(s(), 'end');
@@ -422,17 +462,17 @@ describe('LIB-17 weighted_dip (H; tier A; dipBars anchor): drawn facts and R10 (
       if (!(q.scap.r.elev <= -2.9 && q.scap.l.elev <= -2.9)) out.push(`${pose}: shoulders not down`);
       if (!(q.tilt <= d.SIZES.BOTTOM_LEAN + 0.01)) out.push(`${pose}: lean ${q.tilt.toFixed(1)}`);
     }
-    const f = 180 - angle3(lmOf(spec, 'end')['shoulder.r'], lmOf(spec, 'end')['elbow.r'], lmOf(spec, 'end')['grip.r']);
-    if (f > 92) out.push(`end: bottom deeper than parallel (bend ${f.toFixed(1)})`);
+    const sy = lmOf(spec, 'end')['shoulder.r'][1];
+    if (sy < d.PAR_Y - 0.01) out.push(`end: bottom deeper than parallel (shoulder ${((d.PAR_Y - sy) * 100).toFixed(1)} cm below the line)`);
     return out;
   };
   it('R10: the plate hangs plumb, the shoulders are down, the lean is at most slight and the bottom no deeper than parallel', () => {
     expect(r10Problems(s())).toEqual([]);
   });
-  it('R10 mutations: the shoulders shrugged at the bottom, a deeper bottom (bend 110) and a swinging plate are each red', () => {
+  it('R10 mutations: the shoulders shrugged at the bottom, a deeper bottom (the shoulder 10 cm below the line) and a swinging plate are each red', () => {
     const e = s().poses.end, D = M.weighted_dip.WD;
     expect(r10Problems({ ...s(), poses: { ...s().poses, end: { ...e, scap: { elev: 2, pro: -3 } } } })).toContain('end: shoulders not down');
-    expect(r10Problems({ ...s(), poses: { ...s().poses, end: D.poseAt(110) } }).some(p => p.startsWith('end: bottom deeper'))).toBe(true);
+    expect(r10Problems({ ...s(), poses: { ...s().poses, end: D.poseAtY(D.parY - 0.10) } }).some(p => p.startsWith('end: bottom deeper'))).toBe(true);
     const k = s().equipment.findIndex((x: any) => typeof x === 'function' && ([] as any[]).concat(x(lmOf(s(), 'end'), { pose: 'end' }))[0]?.part === 'chain');
     const bad = withEq(s(), k, (x: any) => (lm: any, ctx: any) => { const it = x(lm, ctx); return { ...it, pts: it.pts.map((p: any, i: number) => (i >= 2 ? [p[0], p[1], p[2] + 0.1] : p)) }; });
     expect(r10Problems(bad)).toContain('start: the plate swings');
@@ -861,7 +901,7 @@ describe('LIB-17 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     for (const id of specsDrawn()) { const g = minGap(S[id]); expect(g.min, `${id} ${g.at}`).toBeGreaterThanOrEqual(6); }
   });
   it('mutation: weighted_dip\'s "Elbows back" box lowered onto the near dip bar (its leader along the bar) is red', () => {
-    const s = S.weighted_dip, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'elbows' ? { ...x, box: { left: 16, top: 172 } } : x)) };
+    const s = S.weighted_dip, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'elbows' ? { ...x, box: { left: 200, top: 192 } } : x)) };
     expect(minGap(bad).min).toBeLessThan(6);
   });
   it('mutation: resistance_band_pull_apart\'s "Soft elbows" box moved above the arms (its leader across the band) is red', () => {
@@ -1258,7 +1298,7 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     cable_external_rotation: [...C(['wrist.l'], 'start', 'c2'), ...A(['elbow.l'], 'start', 'c3')],
     resistance_band_pull_apart: [...C(['wrist.l', 'wrist.r'], 'start', 'c1'), ...A(['sh.l.elev', 'sh.r.elev'], 'start', 'c5', SH('"Start with arms extended forward at shoulder height"')), ...A(['sh.l.elev', 'sh.r.elev'], 'end', 'c4', SH('"Pull band apart horizontally until arms align with shoulders"'))],
     renegade_row: C(['wrist.l', 'wrist.r'], 'start', 'c1'),
-    weighted_dip: [...C(['wrist.l', 'wrist.r'], 'start', 'c2'), ...A(['elbow.l', 'elbow.r'], 'end', 'c4'), ...C(['navel'], 'start', 'c8')],
+    weighted_dip: [...C(['wrist.l', 'wrist.r'], 'start', 'c2'), ...C(['navel'], 'start', 'c8')],   // F-LB7-1 (e5ed66ca): the elbow-90 facts dropped
     bench_dip: [...C(['wrist.l', 'wrist.r'], 'start', 'c2'), ...C(['heel.l', 'heel.r'], 'start', 'c3'), ...A(['elbow.l', 'elbow.r'], 'end', 'c5')],
   };
   it('every card\'s plateFacts is the ruled set, each fact well formed', () => {
@@ -1296,9 +1336,9 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
       expect(red.filter((x: string) => others.includes(x)), `${id} ${f.pose} ${f.landmark}`).toEqual([]);
     });
   });
-  it('A6 mutations: an angle fact 3 deg off (weighted_dip\'s end elbow 93), and the card path removed, are red', () => {
-    const s = S.weighted_dip, r = research('weighted_dip'), k = r.plateFacts.findIndex((f: any) => f.joint === 'elbow.r');
-    expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any, i: number) => (i === k ? { ...f, deg: 93 } : f)) })).toEqual([`H6.fact:${k}:angle:elbow.r`]);
+  it('A6 mutations: an angle fact 3 deg off (dumbbell_front_raise\'s end sh.r.elev 93), and the card path removed, are red', () => {
+    const s = S.dumbbell_front_raise, r = research('dumbbell_front_raise'), k = r.plateFacts.findIndex((f: any) => f.joint === 'sh.r.elev');
+    expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any, i: number) => (i === k ? { ...f, deg: 93 } : f)) })).toEqual([`H6.fact:${k}:angle:sh.r.elev`]);
     expect(h6(s, null)).toEqual(['H6:no-card']);
   });
   it('weighted_dip c8: the navel point lies inside the drawn start belt band (the contact fact\'s binding)', () => {

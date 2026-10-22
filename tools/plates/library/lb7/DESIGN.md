@@ -137,7 +137,7 @@ Every anchor gates the plate's sheet, not its drawing (plan 3.1:293-299). None i
 - **F7 on cable_rear_delt_fly, cable_external_rotation and bench_dip only** (D-LIB17-F7): drawable false; each
   topFault is the key of its handlingMistakes[0], which differs from the drawn key (section 9).
 - **No F1**: every plate is drawn at a scale inside 123.9-146.3 px/m: the reference 146.29 (cable_lateral_raise,
-  cable_external_rotation, renegade_row) or the engine `fit` (weighted_dip: **measured** 128.27, the bars and the top
+  cable_external_rotation, renegade_row) or the engine `fit` (weighted_dip: **measured** 137.22 after the option P redraw, the bars and the top
   position's head fill the height). cable_external_rotation passes PQ-H3 at the reference scale (section 12), so
   D-LIB17-ER's F1 route does not arise.
 - **No F6**: every card's plate.view equals its census view (front: cable_lateral_raise, cable_rear_delt_fly,
@@ -258,7 +258,6 @@ claim whose quote states it; each contact gets a `checks` entry in its spec (H6)
 | resistance_band_pull_apart | "Pull band apart horizontally until arms align with shoulders" (c4; plate.end cites c4) | `angle sh.l.elev 90`, `sh.r.elev 90` | end (end) |
 | renegade_row | "gripping the pair of dumbbells" (c1, setup; a pair: both) | `contact wrist.l`, `wrist.r` | start (start) |
 | weighted_dip | "Set your hands evenly on the bars" (c2, setup; "hands": both) | `contact wrist.l`, `wrist.r` | start (start) |
-| weighted_dip | "until your elbows are bent at 90 degrees" (c4; plate.end cites c4; "elbows": both) | `angle elbow.l 90`, `elbow.r 90` | end (end) |
 | weighted_dip | "Secure a dip belt around your waist" (c8, setup) | `contact navel` (the belt's front at the waist), bound by a check and a test that the drawn start belt covers the navel point (ruled) | start (start) |
 | bench_dip | "Place both hands flat on the bench" (c2, setup) | `contact wrist.l`, `wrist.r` | start (start) |
 | bench_dip | "keeping the heels on the ground" (c3, setup steps: "1. Positioning") | `contact heel.l`, `heel.r` | start (start) only; the heels on the floor at the end are held by a `checks` entry and a drawn-item test, no end fact (ruled) |
@@ -290,6 +289,13 @@ claim whose quote states it; each contact gets a `checks` entry in its spec (H6)
 - renegade_row c4 "until the dumbbell touches your ribcage": the body model has no landmark on the side of the ribcage
   (`chest` is the front of the thorax); held by a drawn-item test (the dumbbell's inner head at the ribs). c2 "hands
   underneath your shoulders": a place, not a touch; held by a check. c1 "feet wider than hip-width": a width.
+- weighted_dip c4 "until your elbows are bent at 90 degrees" (F-LB7-1 @ `e5ed66ca`; D-LIB17-DIPBAL option P, #299
+  6348947992): a rough cue, not a fact. With the hands on the bars the body plus plate must balance over the grips, and
+  at the parallel line with c5's slight lean the balanced elbow is 115.7° (the ruling quotes about 112.5), with the
+  upper arm 14° above level and the shoulder on the parallel line. The card keeps the quote; plateFacts has no elbow
+  angle. Drawn and tested: the shoulder on the parallel line (±1 cm), the elbow at END_FLEX (±0.5°), body plus the 20 kg
+  plate at the belt point over the grips (±2 cm) in every pose; the body alone is −3.6 / −4.5 / −4.4 cm (start, end,
+  Mistake), logged only.
 - weighted_dip c1 "about shoulder-width", "within two inches outside": a width the side view cannot show; drawn as BAR_X
   (section 11). c8 "near the shins or feet": near something (D-LIB17-FACTS). c4 SL "until your shoulder is below your
   elbow": the deeper of c4's two readings; the card follows the parallel line (its notes), so the 90 deg fact is BarBend's.
@@ -318,13 +324,16 @@ the bulk proposals.
 | cable_lateral_raise | M_OVER (Mistake) | 20° past level | stated: c19 "above 90", clearly beyond Motra's "or slightly above" (c7) |
 | cable_lateral_raise | PULLEY_Y | 0.12 m | c1 "at its lowest point" |
 | weighted_dip | BAR_X | 0.2266 m | c1 "about shoulder-width": the shoulder joints' width |
-| weighted_dip | BAR_Y | 1.25 m | physical (D-LIB17-DIP): the lowest height keeping the feet and plate FLOOR_GAP (0.15 m) above the floor at the bottom, rounded up to 5 cm |
+| weighted_dip | BAR_Y, POST_FRONT | 1.10 m, 0.50 m | physical (D-LIB17-DIP; option P): the lowest height in 5 cm steps keeping the feet and plate FLOOR_GAP (0.15 m) above the floor at the bottom; the uprights in front of the lifter, clear of the plate |
 | weighted_dip | TOP_LEAN, BOTTOM_LEAN | 4°, 15° | c5 "nearly upright", "at most a slight forward lean" |
 | weighted_dip | KNEE, HIP_ADD, ANKLE | 20°, 6°, -22° | c3 "slight knee bend", "crossing the ankles"; pull_up.mjs:30 |
 | weighted_dip | SCAP_ELEV, SCAP_PRO | -3, -3 cm | pull_up.mjs:36 for c3, c6 |
 | weighted_dip | PLATE_D, HOLE_D | 0.45, 0.05 m | equipment.mjs:261 (the vendor barbell plate and sleeve) |
-| weighted_dip | CHAIN_LEN | solved 0.746 m | c8 "hang it low, near the shins": the plate centre at mid-shin at the top |
-| weighted_dip | M_BEND (Mistake) | 60° | c14 "half reps": the shoulder halfway down from the top to the parallel bottom |
+| weighted_dip | CHAIN_LEN | solved 0.705 m | c8 "hang it low, near the shins": the plate centre at mid-shin at the top |
+| weighted_dip | M_DEPTH (Mistake) | 0.5 | c14 "half reps": the shoulder halfway down from the top (1.768 m) to the parallel line (1.442 m), on the balanced path |
+| weighted_dip | END_Y, TOP_Z, END_FLEX | solved: the parallel line; balanced; 115.7° | D-LIB17-DIPBAL option P (#299 6348947992): the bottom shoulder on the parallel line, the elbow the balanced value (the ruling quotes about 112.5) |
+| weighted_dip | TOP_THIGH, BOTTOM_KNEE, BOTTOM_THIGH | -15°, 90°, -40° | physics: the plate clear of the shins (slice item 3) and the balance; c3 states the top only (condition 1) |
+| weighted_dip | BODY_KG, PLATE_KG | 75 kg, 20 kg | the balance: body plus the 45 cm (20 kg) plate at the belt point (condition 3, amended) |
 | weighted_dip | BELT_W, BELT_T, CHAIN_W, POST_BACK, FLOOR_* | | stated |
 | renegade_row | DB_X | 0.2266 m | c1 "shoulder-width", c2 "under the shoulders" |
 | renegade_row | END_BACK, END_OUT | 0.21, 0.08 m | c4 "until it brushes the ribcage": the lower ribs, the inner head clear of them |
@@ -354,7 +363,7 @@ the bulk proposals.
 |---|---|---|
 | cable_external_rotation | **measured 16.5 px** (the elbow, 20° abduction) | **measured 34.5 px** (the hand, grip.l): passes; no zoom, no F1 (D-LIB17-ER) |
 | cable_lateral_raise | **measured 33.2 px** (the hand, 20° past level) | **measured 122.9 px** (the handle) |
-| weighted_dip | **measured 23.4 px** (the head, the half rep; tell `short`) | **measured 41.9 px** (the shoulder) |
+| weighted_dip | **measured 25.7 px** (option P: the head, the half rep; tell `short`) | **measured 23.4 px** (the shoulder, at 137.22 px/m; 21.5 px at BAR_Y 1.25 before the re-solve) |
 | renegade_row | **measured 0.0 px** with the tell on the corner; the card-true sign, the hex turned 30° onto a corner against the flat one, moves its corners **measured 4.9 px** at 146.29 px/m (each turned vertex against the nearest flat one): **below deviationMin** | **measured 78.9 px** (the near dumbbell) |
 | dumbbell_front_raise | the hips 8 cm forward and the shoulders about 10 cm back: about 15 px [est] | the dumbbells' arc, about 0.8 m: over 100 px [est] |
 | face_pull | the elbow 15 cm down: about 22 px [est] | the rope at the hands, about 0.35 m: about 50 px [est] |
