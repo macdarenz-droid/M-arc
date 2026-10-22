@@ -7,9 +7,14 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, wri
 import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+
+// Most tests here render plates synchronously, and vitest runs back-to-back synchronous tests without returning to the
+// event loop, so the worker could not answer its RPC for 40 s locally (over vitest's 60 s limit on CI: the source-gate's
+// "Timeout calling onTaskUpdate"). One macrotask after every test lets the worker reply.
+afterEach(() => new Promise<void>(r => setImmediate(r)));
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
@@ -973,8 +978,10 @@ describe('LIB-17 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', 
     return out;
   };
   const drawnPolys = (spec: any, pose: string) => { const cam = camOf(spec), out: number[][][] = []; for (const it of itemsIn(spec, pose).items) for (const p of eng.PRIMITIVES[it.type](it, cam)) if (p.poly) out.push(p.poly); return out; };
-  it('A15: every callout and tell anchor sits on an item drawn in its pose (within 3 px)', () => {
-    expect(specsDrawn().flatMap(id => anchorProblems(S[id]))).toEqual([]);
+  it('A15: every callout and tell anchor sits on an item drawn in its pose (within 3 px)', async () => {
+    const out: string[] = [];
+    for (const id of specsDrawn()) { out.push(...anchorProblems(S[id])); await new Promise<void>(r => setImmediate(r)); }   // one spec per macrotask (the RPC note above)
+    expect(out).toEqual([]);
   });
   it('mutation: one tell\'s anchor moved to a point with no drawn item is red', () => {
     const s = S.weighted_dip, tells = [{ ...s.mistake.tells[0], anchor: [0, 2.3, 0.9] }, ...s.mistake.tells.slice(1)];
