@@ -774,5 +774,23 @@
       "item": "Way out: returning the rope or stepping out of tension after the set or a failed rep",
       "why": "No read source describes it (verify/g4.md item 1; LR-13, LIB-WAYOUT)."
     }
-  ]
+  ],
+  "plateFacts": [],
+  "tempo": [
+    {
+      "phase": "Extend",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "arch"
 }

@@ -532,5 +532,45 @@
   "remove": [],
   "why": "biceps primary and forearms secondary match exercises.json, StrengthLog and BarBend (c11)."
  },
- "anchorSource": "bb-concentration"
+ "anchorSource": "bb-concentration",
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "elbow.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "seat",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "elbow.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c7"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Curl",
+   "s": 1,
+   "move": true
+  },
+  {
+   "phase": "Hold",
+   "s": 1
+  },
+  {
+   "phase": "Lower",
+   "s": 2,
+   "move": true
+  }
+ ],
+ "topFault": "knee"
 }

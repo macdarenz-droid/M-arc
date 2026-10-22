@@ -12,29 +12,11 @@
    "stage": "drawing",
    "view": "side"
   },
-  "lib_cross_body_hammer_curl": {
-   "src": "library/specs/cross_body_hammer_curl.mjs",
-   "slug": "cross-body-hammer-curl",
-   "prefix": "cross-body-hammer-curl",
-   "chromeId": "cross-body-hammer-curl",
-   "mode": "H",
-   "stage": "drawing",
-   "view": "front"
-  },
   "lib_preacher_curl": {
    "src": "library/specs/preacher_curl.mjs",
    "slug": "preacher-curl",
    "prefix": "preacher-curl",
    "chromeId": "preacher-curl",
-   "mode": "H",
-   "stage": "drawing",
-   "view": "side"
-  },
-  "lib_wrist_curl": {
-   "src": "library/specs/wrist_curl.mjs",
-   "slug": "wrist-curl",
-   "prefix": "wrist-curl",
-   "chromeId": "wrist-curl",
    "mode": "H",
    "stage": "drawing",
    "view": "side"

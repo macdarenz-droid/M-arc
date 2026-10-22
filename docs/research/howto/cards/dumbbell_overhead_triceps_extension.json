@@ -738,5 +738,32 @@
       "item": "Way out: getting the dumbbell overhead and back down",
       "why": "No read source describes the kick-up, pressing it up from the thigh or seat, or setting it down (verify/g4.md item 2; LR-13)."
     }
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "angle",
+      "joint": "elbow.r",
+      "deg": 90,
+      "pose": "start",
+      "cardPose": "end",
+      "claim": "c5"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Press",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "arch"
 }

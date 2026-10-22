@@ -563,5 +563,28 @@
  "anchorSource": "bb-bayesian",
  "notes": [
   "Angle: BarBend gives the upper arm 'about a 45-degree angle relative to the floor' (c2) and 'at most' 45 degrees (c3), and warns against standing far away. A hanging arm is 90° to the floor, so read literally 'at most 45° to the floor' would allow more stretch, which contradicts the warning; the conservative drawing puts the upper arm about 45° behind vertical (equal to 45° to the floor) and never further back."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "angle",
+   "measure": true,
+   "deg": 45,
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Curl",
+   "s": 1,
+   "move": true
+  },
+  {
+   "phase": "Lower",
+   "s": 2,
+   "move": true
+  }
+ ],
+ "topFault": "swing"
 }

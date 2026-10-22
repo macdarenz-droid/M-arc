@@ -23,8 +23,10 @@ const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
 const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl'];
-// Held ids (DESIGN.md section 13): none yet.
-const HELD: string[] = [];
+// Held ids (DESIGN.md section 13; #290 6340022161, 6340075388): drawn as is, in no rows file and on no QA'd page.
+const HELD = ['wrist_curl', 'cross_body_hammer_curl'];
+/** The LB5 ids whose spec file exists (drawn or held). */
+const specced = () => LB5.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`));
 /** The LB5 ids whose spec file exists and that are not held (drawn), in LB5 order. */
 const drawn = () => LB5.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`) && !HELD.includes(id));
 const pilotAOnMain = () => existsSync('tools/plates/library/eq/inclineBench.mjs');
@@ -36,7 +38,7 @@ beforeAll(async () => {
     'registry.mjs', 'engine.mjs', '../vendor/engine/body.mjs', 'qa/node.mjs', 'qa/engine.mjs', 'qa/index.mjs', '../vendor/engine/plate.mjs',
     'inputs-closure.mjs', 'eq/preacherPad.mjs',
   ].map(f => import(/* @vite-ignore */ lib(f))));
-  for (const id of drawn()) { M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); S[id] = M[id].default; }
+  for (const id of specced()) { M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); S[id] = M[id].default; }
 }, T);
 
 const Eng = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eng.PRIMITIVES, body });
@@ -181,7 +183,7 @@ describe('LIB-15 A9: nothing ships (D-LIB15-AHEAD)', { timeout: T }, () => {
     expect(tokenHits(['cable_curl'], 'p.json', '{"lib_bayesian_cable_curl":1}', { substring: true })).toEqual(['p.json: cable_curl']);
   });
   it('no LB5 spec, composer, How-to, script or test imports anything under hands/', () => {
-    const files = [...drawn().map(i => `tools/plates/library/specs/${i}.mjs`), 'tools/plates/library/eq/preacherPad.mjs',
+    const files = [...specced().map(i => `tools/plates/library/specs/${i}.mjs`), 'tools/plates/library/eq/preacherPad.mjs',
       ...LB5.map(i => `tools/plates/library/howto/lib_${i}.howto.mjs`), 'tools/plates/library/lb5/build.mjs', 'tools/plates/library/lb5/qa.mjs', 'tests/howto/lb5-plates.test.ts'];
     for (const f of files) expect(readFileSync(f, 'utf8'), f).not.toMatch(/from\s+['"][^'"]*\/hands\/|import\(\s*[^)]*\/hands\//);
   });
@@ -230,18 +232,18 @@ describe('LIB-15 A2 / Do 4: the preacherPad composer and the drawn plates draw P
     expect(src).not.toMatch(/layers\//);
   });
   it('every item each drawn plate draws is a PRIMITIVES type, in every drawn pose', () => {
-    for (const id of drawn()) for (const pose of posesOf(S[id]))
+    for (const id of specced()) for (const pose of posesOf(S[id]))
       for (const it of itemsIn(S[id], pose).items) expect(Object.keys(eng.PRIMITIVES), `${id} ${pose}`).toContain(it.type);
   });
   it('the drawn plates pass PQ-H9', () => {
-    for (const id of drawn()) expect(h9(S[id]), id).toEqual([]);
+    for (const id of specced()) expect(h9(S[id]), id).toEqual([]);
   });
   it('mutation: an item of an unknown type ({type: wedge}) turns H9.type red', () => {
     const s = S.preacher_curl;
     expect(h9({ ...s, equipment: [...s.equipment, { type: 'wedge', at: [0, 0, 0] }] }).some((k: string) => k.startsWith('H9.type:'))).toBe(true);
   });
   it('the engine draws each drawn plate with no engine issue and every check and contact within its tolerance', () => {
-    for (const id of drawn()) {
+    for (const id of specced()) {
       const r = plate.renderPlate(S[id], { id: 'x' }).report;
       expect(r.issues ?? [], id).toEqual([]);
       for (const c of r.checks) if ('cm' in c) expect(c.cm, `${id} ${c.landmark} ${c.pose}`).toBeLessThanOrEqual(0.5);
@@ -299,7 +301,7 @@ describe('LIB-15 A2: the preacherPad on preacher_curl, per drawn pose (13.1, D-L
 });
 
 describe('LIB-15 A3: spec and composer closures are pure and drawn by the vendor engine', { timeout: T }, () => {
-  const files = () => drawn().map(i => `tools/plates/library/specs/${i}.mjs`);
+  const files = () => specced().map(i => `tools/plates/library/specs/${i}.mjs`);
   const problems = (f: string, c: string[]) => [
     ...(c.includes('tools/plates/vendor/MANIFEST.json') ? [] : ['no vendor MANIFEST']),
     ...c.filter(p => p.startsWith('tools/plates/layers/')),
@@ -307,7 +309,7 @@ describe('LIB-15 A3: spec and composer closures are pure and drawn by the vendor
     ...c.filter(p => p.startsWith('tools/plates/library/templates/')),
   ];
   it('every drawn LB5 spec passes', () => {
-    expect(files().length).toBeGreaterThanOrEqual(4);
+    expect(files().length).toBeGreaterThanOrEqual(2);
     for (const f of files()) expect(problems(f, closure.closureOf([f])), f).toEqual([]);
   });
   const scratch = (edit: (root: string) => void) => {
@@ -363,7 +365,7 @@ describe('LIB-15 A16: no pilot A composer is copied or forked (D-LIB15-INCLINE; 
 describe('LIB-15 A10: the LB5 plates page is deterministic (PQ-H7)', { timeout: T }, () => {
   it('two builds of the drawn LB5 ids are byte-identical', async () => {
     const build = await import(/* @vite-ignore */ lib('lb5/build.mjs'));
-    expect(build.drawnIds().length).toBeGreaterThanOrEqual(4);
+    expect(build.drawnIds().length).toBeGreaterThanOrEqual(2);
     const a = await build.buildLb5Page(), b = await build.buildLb5Page();
     expect(sha(a.html)).toBe(sha(b.html));
   });
@@ -417,7 +419,7 @@ describe('LIB-15 A7: the tempo strips follow the cards (D-LIB15-SECS; DESIGN.md 
 describe('LIB-15 A8: the drawable-fault ids (D-LIB15-F7)', { timeout: T }, () => {
   it('each drawn F7 id carries pilot.drawableFault, and the QA expectation names F7 for exactly these ids', async () => {
     const qa = await import(/* @vite-ignore */ lib('lb5/qa.mjs'));
-    for (const id of drawn()) {
+    for (const id of specced()) {
       expect(typeof S[id].pilot?.drawableFault === 'string', id).toBe(F7_IDS.includes(id));
       expect(qa.EXPECTED(`lib_${id}`), id).toEqual(F7_IDS.includes(id) ? ['F5', 'F7'] : ['F5']);
     }
@@ -429,7 +431,7 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', incline_dumbbell_curl: 'elbows', concentration_curl: 'knee', wrist_curl: 'lean' };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate has 2-3 tells, the first carrying the proposed key; mutation: the tells swapped is red', () => {
-    for (const id of drawn()) { expect(keyProblems(S[id])).toEqual([]); expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3); }
+    for (const id of specced()) { expect(keyProblems(S[id])).toEqual([]); expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3); }
     const s = S.preacher_curl;
     expect(keyProblems({ ...s, mistake: { ...s.mistake, tells: [...s.mistake.tells].reverse() } })).toEqual(['preacher_curl: first tell heave']);
   });
@@ -439,12 +441,12 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     return [...(w > 15 ? [`${c.key}: ${w} words`] : []), ...(/;/.test(c.cue) ? [`${c.key}: semicolon`] : [])];
   });
   it('cue table: every cue is 15 words or fewer, no semicolon; mutation: a 16-word cue is red', () => {
-    for (const id of drawn()) expect(cueProblems(S[id]), id).toEqual([]);
+    for (const id of specced()) expect(cueProblems(S[id]), id).toEqual([]);
     const s = S.preacher_curl;
     expect(cueProblems({ ...s, callouts: [{ ...s.callouts[0], cue: 'Sit down with the top of the pad right under both of your armpits and chest on it.' }, ...s.callouts.slice(1)] })).toEqual(['armpits: 18 words']);
   });
   it('each callout is one of the card\'s 3 checkpoints, in the card order (labels may wrap with <br>)', () => {
-    for (const id of drawn()) {
+    for (const id of specced()) {
       const c = readJson(`docs/research/howto/cards/${id}.json`);
       expect(S[id].callouts.map((x: any) => x.text.replace(/<br>/g, ' ').toLowerCase()), id).toEqual(c.plate.checkpoints.map((x: any) => x.label.toLowerCase()));
     }
@@ -460,7 +462,7 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     });
   };
   it('every Mistake arrow stays at least 6 px clear of the solid end figure; other Mistake guides are dashed', () => {
-    for (const id of drawn()) {
+    for (const id of specced()) {
       expect(clearance(S[id]), id).toEqual([]);
       expect(S[id].mistake.guides.filter((g: any) => !['dashed', 'arrow'].includes(g.kind)).map((g: any) => g.kind), id).toEqual([]);
     }
@@ -642,5 +644,107 @@ describe('LIB-15 A4: runQa node half on an LB5 plate (lib_preacher_curl), LIB-3 
   it('A4 a colour literal turns PQ-H2 red (H2.colour)', async () => {
     const m = muts.CANDIDATE_MUTATIONS.find((x: any) => x.id.startsWith('M9 '));
     expect(node(await qa(m.apply(await candOf()))).some((k: string) => k.startsWith('H2.colour:'))).toBe(true);
+  });
+});
+
+describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the plate facts (#290 6340022161)', { timeout: T }, () => {
+  // The cards whose fields are written now: the 9 less cross_body_hammer_curl (F-LB5-1) and incline_dumbbell_curl (when drawn).
+  const FIELDED = LB5.filter(id => !['cross_body_hammer_curl', 'incline_dumbbell_curl'].includes(id));
+  const KEYS = ['plateFacts', 'tempo', 'topFault'];
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  // The ruled pose map (D-LIB15-POSE; DESIGN.md section 9): the spec pose each card pose is drawn as.
+  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB5.map(id => [id,
+    ['dumbbell_overhead_triceps_extension', 'cable_curl'].includes(id) ? { start: 'end', end: 'start' } : { start: 'start', end: 'end' }]));
+  // The ruled fault->key map (D-LIB15-FAULTKEY): the drawn key and topFault.
+  const DRAWN: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cable_curl: 'straight',
+    bayesian_cable_curl: 'swing', preacher_curl: 'lift', concentration_curl: 'knee', wrist_curl: 'lean' };
+  const TOP: Record<string, string> = { ...DRAWN, wrist_curl: 'grip' };
+  // The ruled facts (D-LIB15-FACTS), copied from the ruling, never read from a card or a spec.
+  const C = (landmark: string, pose: string, cardPose: string, claim: string) => ({ kind: 'contact', landmark, pose, cardPose, claim });
+  const FACTS: Record<string, any[]> = {
+    overhead_cable_triceps_extension: [],
+    dumbbell_overhead_triceps_extension: [{ kind: 'angle', joint: 'elbow.r', deg: 90, pose: 'start', cardPose: 'end', claim: 'c5' }],
+    cable_curl: [],
+    bayesian_cable_curl: [{ kind: 'angle', measure: true, deg: 45, pose: 'start', cardPose: 'start', claim: 'c2' }],
+    preacher_curl: [C('elbow.r', 'start', 'start', 'c1'), C('chest', 'start', 'start', 'c1'), C('heel.r', 'start', 'start', 'c2'), C('ball.r', 'start', 'start', 'c2'), C('elbow.r', 'end', 'end', 'c4')],
+    concentration_curl: [C('elbow.r', 'start', 'start', 'c1'), C('seat', 'start', 'start', 'c1'), C('elbow.r', 'end', 'end', 'c7')],
+    wrist_curl: [C('wrist.r', 'start', 'start', 'c1'), C('wrist.r', 'end', 'end', 'c1')],
+  };
+  const tj = () => readJson('tools/plates/library/lb5/tempo.json');
+  const built = (rows: any[], pt: any) => rows.flatMap((r: any) => (r.from === 'pause' ? (pt.pause > 0 ? [{ phase: r.phase, s: pt.pause }] : []) : [{ phase: r.phase, s: pt[r.from], move: true }]));
+  const cardsSha = readJson('tools/plates/library/lb5/cards.sha.json');
+  const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
+  it('each fielded card differs from its research-head copy only in the three keys, written last; the others carry none', () => {
+    for (const id of LB5) {
+      expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
+      if (FIELDED.includes(id)) expect(Object.keys(cardOf(id)).slice(-3), id).toEqual(KEYS);
+      else for (const k of KEYS) expect(k in cardOf(id), `${id} ${k}`).toBe(false);
+    }
+  });
+  /** Each card's tempo is built only from the ruled lb5/tempo.json row and its plate.tempo; a drawn spec carries the same. */
+  const tempoProblems = (cards: Record<string, any>, specs: Record<string, any>) => FIELDED.flatMap(id => {
+    const c = cards[id], out: string[] = [];
+    if (JSON.stringify(c.tempo) !== JSON.stringify(built(tj().ids[id].rows, c.plate.tempo))) out.push(`${id}: card tempo`);
+    if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(c.tempo)) out.push(`${id}: spec tempo != card tempo`);
+    return out;
+  });
+  it('A11 tempo: every card tempo and every spec tempo come from the ruled table and plate.tempo; mutation: seconds changed on one card and spec are red', () => {
+    const cards = Object.fromEntries(FIELDED.map(id => [id, cardOf(id)]));
+    expect(tempoProblems(cards, S)).toEqual([]);
+    const c = JSON.parse(JSON.stringify(cards)); c.preacher_curl.tempo[0].s = 2;
+    expect(tempoProblems(c, { ...S, preacher_curl: { ...S.preacher_curl, tempo: c.preacher_curl.tempo } })).toEqual(['preacher_curl: card tempo']);
+  });
+  const topFaultProblems = (card: any, drawnKey: string) => (card.plate.mistake.drawable
+    ? (card.topFault === drawnKey ? [] : ['drawable:true but topFault is not the drawn fault'])
+    : (card.topFault !== drawnKey ? [] : ['drawable:false but topFault equals the drawn fault']));
+  it('Q1 / A8: each topFault follows the ruled map; wrist_curl is drawable:false with topFault grip, unlike its drawn key; every spec\'s first tell carries the drawn key', () => {
+    for (const id of FIELDED) { expect(cardOf(id).topFault, id).toBe(TOP[id]); expect(topFaultProblems(cardOf(id), DRAWN[id]!), id).toEqual([]); }
+    expect([cardOf('wrist_curl').plate.mistake.drawable, cardOf('wrist_curl').topFault]).toEqual([false, 'grip']);
+    for (const id of FIELDED.filter(i => S[i])) expect(S[id].mistake.tells[0].key, id).toBe(DRAWN[id]);
+  });
+  it('A8 mutation: wrist_curl\'s card copied with drawable true and topFault equal to the drawn key is red against the F7 expectation', () => {
+    const c = cardOf('wrist_curl'); c.topFault = 'lean';
+    expect(topFaultProblems(c, 'lean')).toEqual(['drawable:false but topFault equals the drawn fault']);
+    c.plate.mistake.drawable = true;   // the F7 id's expectation is drawable false: a true field is itself the red
+    expect(c.plate.mistake.drawable === false && c.topFault !== 'lean').toBe(false);
+  });
+  const factProblems = (id: string, c: any) => c.plateFacts.flatMap((f: any, i: number) => [
+    ...(['contact', 'angle', 'height'].includes(f.kind) ? [] : [`${i}: kind`]),
+    ...(f.joint && f.measure === true ? [`${i}: both joint and measure`] : []),
+    ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
+    ...(f.cardPose && POSE_MAP[id]![f.cardPose] !== (f.pose ?? 'end') ? [`${i}: pose ${f.pose ?? 'end'} is not the map's image of card ${f.cardPose}`] : []),
+  ]);
+  it('A6 / D-LIB15-FACTS: every fielded card\'s plateFacts is the ruled set, one form each, its pose the pose map\'s image', () => {
+    for (const id of FIELDED) { expect(cardOf(id).plateFacts, id).toEqual(FACTS[id]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
+  });
+  it('mutations: a fact with both joint and measure: true, and a start fact named with the unmapped pose, are red', () => {
+    const c = cardOf('cable_curl'); c.plateFacts.push({ kind: 'angle', joint: 'elbow.r', measure: true, deg: 20, claim: 'c13' });
+    expect(factProblems('cable_curl', c)).toEqual(['0: both joint and measure']);
+    const d = cardOf('dumbbell_overhead_triceps_extension'); d.plateFacts[0].pose = 'end';
+    expect(factProblems('dumbbell_overhead_triceps_extension', d)).toEqual(["0: pose end is not the map's image of card end"]);
+  });
+  it('D-LIB15-POSE: the pose map is pinned on the drawn swapped specs (cable_curl ends at the bottom; the dumbbell extension ends at the top)', () => {
+    if (S.cable_curl) { const a = plate.renderPlate(S.cable_curl, { id: 'x' }).report.angles; expect(a.end['elbow.r']).toBeLessThan(a.start['elbow.r']); }
+    if (S.dumbbell_overhead_triceps_extension) { const a = plate.renderPlate(S.dumbbell_overhead_triceps_extension, { id: 'x' }).report.angles; expect(a.end['elbow.r']).toBeLessThan(a.start['elbow.r']); }
+    expect(POSE_MAP.cable_curl).toEqual({ start: 'end', end: 'start' });
+    expect(POSE_MAP.preacher_curl).toEqual({ start: 'start', end: 'end' });
+  });
+  const h6 = (spec: any, research: any) => {
+    const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
+    return qaNode.h6({ spec, research }, { engine: Eng(), pins: qaIdx.loadPins() }, R).map((p: any) => p.key);
+  };
+  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault }; };
+  it('A6: PQ-H6 is green on every drawn row against its card', () => {
+    for (const id of drawn().filter(i => FIELDED.includes(i))) expect(h6(S[id], research(id)), id).toEqual([]);
+  });
+  it('A6 mutations: an angle fact 3 deg off the drawn one, and the card path removed, are red', () => {
+    const s = S.preacher_curl, r = research('preacher_curl'), drawnElbow = plate.renderPlate(s, { id: 'x' }).report.angles.end['elbow.r'];
+    expect(h6(s, { ...r, plateFacts: [{ kind: 'angle', joint: 'elbow.r', pose: 'end', deg: drawnElbow, claim: 'c4' }] })).toEqual([]);
+    expect(h6(s, { ...r, plateFacts: [{ kind: 'angle', joint: 'elbow.r', pose: 'end', deg: drawnElbow + 3, claim: 'c4' }] })).toEqual(['H6.fact:0:angle:elbow.r']);
+    expect(h6(s, null)).toEqual(['H6:no-card']);
+  });
+  it('D-LIB13-FACTS2 mutation: preacher_curl\'s end upper arm lifted 2 cm off the pad turns its end elbow contact red', () => {
+    const s = S.preacher_curl, end = { ...s.poses.end, shoulder: { ...s.poses.end.shoulder, flex: s.poses.end.shoulder.flex + 3.5 } };
+    expect(h6({ ...s, poses: { ...s.poses, end } }, research('preacher_curl'))).toEqual(['H6.fact:4:contact:elbow.r']);
   });
 });

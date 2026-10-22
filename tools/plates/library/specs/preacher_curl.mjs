@@ -61,7 +61,8 @@ const meet = (p, u, q, v) => { const d = u[1] * v[2] - u[2] * v[1], t = ((q[1] -
 const TOP = meet(onFace(S), FACE, ST, CHEST);
 const BACK = norm(sub(CH, TOP));                       // the chest face: from the top edge through the chest (c1, c2)
 const PAD = { top: TOP, face: FACE, back: BACK };
-const PAD_LO = add(TOP, mul(FACE, PREACHER_PAD.faceLen));   // the arm face's low end, just past the elbows (the callout's anchor)
+const FACE_LO = add(TOP, mul(FACE, PREACHER_PAD.faceLen));
+const PAD_LO = [0, FACE_LO[1] - PREACHER_PAD.bottomT, FACE_LO[2]];   // the pad's front bottom corner, under the elbows (the callout's anchor)
 
 // Mistake (card plate.mistake, c5): "Upper arms lifting off the pad as the body heaves the bar up." The torso rocks back
 // MIS_ROCK from the pad (pelvis tilt) and the upper arms swing up off the face (shoulder flexion MIS_FLEX less), the elbow

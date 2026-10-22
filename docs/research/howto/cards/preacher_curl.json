@@ -674,5 +674,55 @@
   "remove": [],
   "why": "biceps primary and forearms secondary match exercises.json and StrengthLog (c10). brachialis is text-only."
  },
- "anchorSource": "bb-preacher"
+ "anchorSource": "bb-preacher",
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "elbow.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "chest",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "elbow.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c4"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Curl",
+   "s": 1,
+   "move": true
+  },
+  {
+   "phase": "Lower",
+   "s": 2,
+   "move": true
+  }
+ ],
+ "topFault": "lift"
 }

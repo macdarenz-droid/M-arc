@@ -187,6 +187,14 @@ pose, so a fault the card places at its start needs the start drawn as the spec'
 | dumbbell_overhead_triceps_extension | **plate.end** (bottom: elbows about 90°, dumbbell behind the head, c5, c6) | **plate.start** (top: arms vertical, elbows not locked, c4) | the card's start is the top (c4). The fault, the back arching as the dumbbell is pressed up (c9, c12), happens at the press, so it is drawn against the top; the drawn order is the press (bottom → top), the concentric |
 | cable_curl | **plate.end** (top: elbows fully bent, bar near the shoulders, c3) | **plate.start** (bottom: arms down, elbows slightly bent, c13) | the fault is at the bottom ("arms fully extended at the bottom", c13), so it is drawn against the bottom; the drawn order is the lowering (top → bottom), and the Trace still runs between the two card poses |
 
+Ruled (D-LIB15-POSE, #290 6340022161): each swapped spec pose matches the card's own words for that phase:
+dumbbell_overhead_triceps_extension spec start = c5 ("lowering the dumbbell behind your head ... until your elbows
+reach a 90 degree bend") and c6 (upper arms vertical), spec end = c4 ("press the dumbbell overhead, extending your
+elbows until your arms are vertical ... not completely locked"), Mistake c9 ("you may be tempted to arch your back" when the
+weight is too heavy) and c12 ("Arching lower back"), drawn at the press; cable_curl spec start = c3 ("raise the handle up towards your
+shoulders"), spec end = c13 ("the bottom of the movement ... keep your arm slightly bent"), Mistake c13 ("lose tension at
+the bottom of the movement when your arms are fully extended"). A test pins the map.
+
 A fact with no pose defaults to the spec's `end` (node.mjs h6), so every fact about the spec's start names pose
 `start`. Do 6 b writes each fact's pose as this map's image of the pose its quote states (`cardPose` keeps the card's).
 The phantom rule (Q2 (c)) applies wherever a start part is hidden: the start arm and dumbbell of the curls where the
@@ -281,8 +289,10 @@ GO'; incline_dumbbell_curl after pilot A is on main.
 
 | id | held under | release condition |
 |---|---|---|
+| wrist_curl | D-LIB8-shrug pattern, F-LIB15-1 (#290 6340075388): no frame holding the whole figure, bench and dumbbell passes PQ-H3's Trace card-true (5.2 px at 146.29 px/m, 10.4 px at 195.0 px/m) | LIB-ZOOM (#279) on main and merged in; then the zoom circle on the wrist and grip under LIB-ZOOM's convention |
+| cross_body_hammer_curl | D-LIB15-TWIST, F-LB5-1 (#290 6340022161, 6340075388): the wrist twist moves no body landmark (H3 deviation 0 px) | the research fix that names the next drawable fault, its head posted on #290; then that plate.mistake is drawn |
 
-None yet. A slice or bulk plate that cannot pass a hard check card-true is added here with its ruling (D-LIB8M-CARDTRUE).
+A held spec stays drawn as is, builds and is in no rows file and on no QA'd page (D-LIB8M-PAGESET).
 incline_dumbbell_curl is not held: it is not drawn yet (D-LIB15-INCLINE).
 
 ## 14. Risks and mitigations
@@ -313,7 +323,7 @@ incline_dumbbell_curl is not held: it is not drawn yet (D-LIB15-INCLINE).
     that card.
 11. A shared COACHING-DECISIONS append conflict: keep both sides.
 
-## 15. Questions for the supervisor
+## 15. Questions for the supervisor (ruled: #290 6340022161, Q1-Q4 accepted with limits, Q5 held)
 
 - **Q1 (tempo map, section 8):** the nine rows above; cable_curl's order Lower → Curl (drawn top → bottom).
 - **Q2 (pose map, section 9):** dumbbell_overhead_triceps_extension and cable_curl swapped (the fault at the card's
