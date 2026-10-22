@@ -437,6 +437,68 @@
     "unit": "point",
     "basis": "claim: c7 'handles ... as far apart as possible at the end' (the card names the handles): the hand on the handle (D-LIB17-TRACE)"
    }
+  },
+  "resistance_band_pull_apart": {
+   "FOOT_X": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):44, the engine front view's stance (the card gives none)"
+   },
+   "KNEE_SOFT": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):45, knees soft (c1 'knees slightly bent', no number)"
+   },
+   "ELBOW_BEND": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention (D-LIB16-LOCK): machine_chest_press.mjs:45 (the 8), elbows 18 deg short of straight for c1 and c5's 'elbows slightly bent' (not locked)"
+   },
+   "START_PLANE": {
+    "value": 75,
+    "unit": "deg",
+    "basis": "stated reason: c1 'hands wider than the shoulders' with c5 'arms extended forward': the arms 15 deg out from straight ahead, so each fist sits about 7 cm outside its shoulder joint"
+   },
+   "END_PLANE": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "stated reason: c4 'until arms align with shoulders' with c5's band near the chest (D-LIB17-ORCHOICE): 10 deg forward of the frontal plane keeps the band, at the fists' depth (22 cm forward), in front of the chest (13 cm); at 0 deg it would pass through the chest"
+   },
+   "START_ROT": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "solved: the shoulder rotation that puts the fists at shoulder height (c1 'at shoulder height'), bracket -100 to -50"
+   },
+   "END_ROT": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "solved: the shoulder rotation that keeps the fists at shoulder height at the end (c7 'keep arms at shoulder height'), bracket -60 to 0"
+   },
+   "BAND_T": {
+    "value": 0.012,
+    "unit": "m",
+    "basis": "convention (D-LIB17-BAND): LB1's band strand at the hands, 1.2 cm (#245 eq/band.mjs:8-9, :26 @ 9e5d9666, read, never imported), class eq-solid (:33)"
+   },
+   "M_SHRUG": {
+    "value": 5,
+    "unit": "cm",
+    "basis": "convention: the approved dumbbell_lateral_raise's shrug (golden A, ref-src/plate.mjs:147 'shrug_cm 5'), the same fault (c8), the first basis (#290 6343211054 item 1)"
+   },
+   "FLOOR_L": {
+    "value": 1.05,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the outstretched hands"
+   },
+   "FLOOR_R": {
+    "value": 1.05,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the outstretched hands"
+   },
+   "trace": {
+    "value": "grip.l",
+    "unit": "point",
+    "basis": "claim: c4 'pull the band apart horizontally, arms moving out to the sides': the hand on the band (D-LIB17-TRACE)"
+   }
   }
  }
 }
