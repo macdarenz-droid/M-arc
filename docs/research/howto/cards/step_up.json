@@ -388,7 +388,7 @@
       "why": "Catalyst names leaning the body forward for momentum as what to avoid (c1); ACE allows only a slight lean and warns against excessive forward movement (c7).",
       "claim": "c1",
       "drawable": true,
-      "rankNote": "No source ranks step-up faults by frequency. Knee or ankle collapsing inward (c9) needs a front view."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no read source uses a frequency word for a step-up fault, none ties a fault to harm, and there is no common-mistakes list. Lurching the trunk forward for momentum is the fault the most read sources tell the lifter to avoid: Catalyst (\"minimal assistance from the other foot or momentum from leaning the body forward\", c1) and ACE (\"try to avoid excessive forward movement\", c7). Dropping off the box (c2, Catalyst), the knee or ankle collapsing (c9, ACE) and the bottom foot pushing (c1, Catalyst) have one source each. Set aside: Catalyst's \"Unlike most unilateral and bilateral leg exercises\" and \"often using assisted slow eccentrics\" name no fault; Hatfield's \"most biomechanically demanding\" compares tasks; the NHS knee page's \"often\" lines name no fault of this exercise. A trunk thrown forward is a still sign the side view shows, so drawable is true."
     },
     "tells": [
       {
@@ -427,11 +427,11 @@
       "claim": "c5"
     },
     {
-      "step": "Place your whole foot firmly on the box, knee lined up over the second toe.",
+      "step": "Whole foot firmly on the box, knee over the second toe.",
       "claim": "c6"
     },
     {
-      "step": "Stand up using the top leg; keep help from the bottom foot to a minimum.",
+      "step": "Stand up with the top leg, little help from the bottom foot.",
       "claim": "c1"
     },
     {
@@ -449,11 +449,11 @@
       "claim": "c6"
     },
     {
-      "point": "Torso upright; only a slight forward lean.",
+      "point": "Torso upright, only a slight forward lean.",
       "claim": "c7"
     },
     {
-      "point": "Knee over the second toe; foot and ankle don't roll in or out.",
+      "point": "Knee over the second toe. Foot and ankle don't roll in or out.",
       "claim": "c9"
     },
     {
@@ -463,8 +463,8 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Lurching the trunk forward to get up.",
-      "fix": "Stand up with the top leg; go lighter if you can't.",
+      "mistake": "Lurching the trunk forward.",
+      "fix": "Stand up using the top leg, not a forward lean.",
       "claim": "c1"
     },
     {
@@ -502,7 +502,7 @@
     "watch": [],
     "rows": [
       {
-        "where": "Front of the thigh and the glute of the top leg",
+        "where": "Top leg's thigh and glute",
         "means": "The target muscles are working.",
         "fix": "",
         "claim": "c11",
@@ -510,13 +510,13 @@
       },
       {
         "where": "Mostly the bottom leg",
-        "means": "Usually means the bottom foot is pushing you up.",
+        "means": "Fault: the bottom foot pushing you up.",
         "fix": "Let the top leg do the work.",
         "claim": "c1",
         "redFlag": null
       },
       {
-        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "where": "Very painful, locking or giving-way knee",
         "means": "Not a training feeling.",
         "fix": "Stop the set.",
         "claim": "c16",
@@ -560,7 +560,7 @@
     "why": "Library: quads and glutes primary, hamstrings and calves secondary, core stabilizer. Catalyst (c3) and Simenz EMG (c11, c12) support these roles; no change."
   },
   "loadProgression": {
-    "text": "Start with 8-15 reps with little or no weight; move to 3-6 heavier reps for strength. For hip strengthening the step-up is a good starting task: it was the least demanding on the hip of the single-leg tasks tested.",
+    "text": "Start with 8-15 light reps, then 3-6 heavier reps for strength. It was the least demanding single-leg task on the hip.",
     "claims": [
       "c14",
       "c13"

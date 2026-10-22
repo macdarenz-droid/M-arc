@@ -97,7 +97,7 @@
       "why": "NASM lists both as common mistakes; excess lean increases lower-back strain (g6).",
       "claim": "g6",
       "drawable": true,
-      "rankNote": "NASM lists five common mistakes without ranking them. Knee valgus (g7) is front-view; lack of depth is drawable but carries no stated risk. Chest drop with forward lean is the one with a stated risk that reads from the side."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: NASM's Common Mistakes list ties two faults to harm, \"Leaning excessively forward, which shifts weight distribution and increases lower back strain\" (g6) and \"Jerky or uncontrolled movements, which increase injury risk\" (g7). Both are on the list, each is tied to harm by one source, and both are sourced directly; leaning comes earlier on the list, so it is the top fault. Set aside: the knee cave (\"indicates poor motor control\"), shallow depth (\"limits lower body stimulus\") and the drooping chest name no harm; the \"Common Mistakes\" heading is not a frequency word; NASM's \"injury prevention\" line names no fault; Hackett's \"often advised to avoid the VM\" is about all resistance training; the NHS pages' \"very common\" and \"often during exercise\" lines name no fault of this exercise. A weight too heavy to keep the chest upright is a load choice, not a candidate, so it leaves handlingMistakes (setup[0] keeps the load line); the jerky reps (step 2 harm) come before the drifting weight. plate.mistake already names the forward lean with the drooping chest (g6), a still sign the side view shows, so the pick and drawable true stand."
     },
     "tells": [
       { "text": "Elbows stay close to your ribs", "claim": "g2" },
@@ -128,9 +128,9 @@
     { "point": "Knees do not cave inward.", "claim": "g7" }
   ],
   "handlingMistakes": [
-    { "mistake": "The weight drifts away from the chest.", "fix": "Keep elbows close to the ribs and the weight against the chest; use a lighter weight if it keeps drifting.", "claim": ["g6", "g2", "g9"] },
-    { "mistake": "A weight too heavy to keep the chest upright.", "fix": "Go lighter.", "claim": "g9" },
-    { "mistake": "Jerky, bouncing reps.", "fix": "Lower and stand under control.", "claim": "g7" }
+    { "mistake": "Leaning too far forward.", "fix": "Keep your chest upright and the weight at chest height.", "claim": ["g6", "g4"] },
+    { "mistake": "Jerky, uncontrolled reps.", "fix": "Lower and stand under control.", "claim": "g7" },
+    { "mistake": "Weight drifting off the chest.", "fix": "Keep elbows by the ribs and the weight at the chest.", "claim": ["g6", "g2", "g5"] }
   ],
   "feel": {
     "primary": [ { "muscleId": "quads", "claim": "g10" } ],
@@ -138,23 +138,23 @@
     "watch": [ { "muscleId": "lower_back", "claim": "g6" } ],
     "rows": [
       { "where": "Front of the thighs", "means": "The main movers are working.", "fix": "", "claim": "g10", "redFlag": null },
-      { "where": "Lower back more than thighs", "means": "Leaning too far forward, chest dropping.", "fix": "Chest up, weight on the chest; go lighter.", "claim": ["g6", "g9"], "redFlag": "back" },
-      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "g14", "redFlag": "knee" }
+      { "where": "Lower back more than thighs", "means": "Leaning too far forward, chest dropping.", "fix": "Keep your chest upright and the weight at the chest. Go lighter.", "claim": ["g6", "g4", "g5", "g9"], "redFlag": "back" },
+      { "where": "Very painful, locking or giving-way knee", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "g14", "redFlag": "knee" }
     ]
   },
   "risks": [
     { "risk": "Leaning forward under the weight strains the lower back.", "claim": "g6" },
     { "risk": "Jerky, uncontrolled reps raise injury risk.", "claim": "g7" },
-    { "risk": "Holding the breath on heavy sets raises blood pressure (shared breath line).", "claim": "g12" }
+    { "risk": "Holding your breath on heavy sets raises blood pressure.", "claim": "g12" }
   ],
   "redFlags": ["back", "knee"],
   "redFlagNote": "back is the proposed new shared box (content.md 5.3); g13 supplies its NHS triggers.",
   "zooms": [
-    { "key": "goblet-hold", "kind": "hand", "right": "Both palms cupping the top of the upright dumbbell, weight against the chest, elbows by the ribs.", "wrong": "Weight held away from the chest, elbows flared.", "claim": ["g1", "g2", "g6"] },
+    { "key": "goblet-hold", "kind": "hand", "right": "Palms cup the dumbbell's top, weight at the chest.", "wrong": "Weight held away from the chest, elbows flared.", "claim": ["g1", "g2", "g6"] },
     { "key": "chest-up", "kind": "posture", "right": "Upright torso at the bottom, weight at the chest.", "wrong": "Chest dropped, torso folded forward.", "claim": "g6" }
   ],
   "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, glutes secondary. NASM names quads the prime mover and glutes as assisting (g10); Collins 2021 measured strong quad activity (g11). No change." },
-  "loadProgression": { "text": "Choose a weight you can control with an upright chest; 3 sets of 10-15, adjust to capacity.", "claims": ["g9"] },
+  "loadProgression": { "text": "Choose a weight you can control with an upright chest. Do 3 sets of 10-15.", "claims": ["g9"] },
   "tierA": { "wayOut": null },
   "breathing": { "text": "Shared breath-holding line for heavy sets.", "claims": ["g12"] },
   "barPath": null,

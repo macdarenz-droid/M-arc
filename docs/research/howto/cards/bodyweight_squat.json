@@ -68,7 +68,7 @@
       "why": "ACE makes heel lift the point to stop the descent and asks for flat heels on the way up (b4, b7).",
       "claim": "b4",
       "drawable": true,
-      "rankNote": "ACE names stop points (heel lift, torso rounding) but does not rank faults. Knee alignment (b5) is front-view. Heel lift is the fault ACE names first that reads from the side."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no read source uses a frequency word, and no named fault is tied to harm. Fry's \"may minimize stress on the knees\" and \"forces are inappropriately transferred to the hips and low-back region\" (b8, a loaded barbell squat, MECH) are about holding the knees back, which is no fault named on this card. There is no common-mistakes list, so step 3 counts the read sources that tell the lifter to avoid each fault: heel lift (b4, b7), torso rounding (b3, b4) and knees or ankles out of line (b5, b7) each have one source, ACE. Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it (viewWhy names the heel lift); LR-31 gives no further order. The NHS knee page's \"often during exercise\" and \"often caused by repetitive running or jumping\" name no fault of this exercise. Heel lift is a still sign the side view shows, so drawable is true."
     },
     "tells": [
       { "text": "Weight across the whole foot", "claim": "b6" },
@@ -85,7 +85,7 @@
   "posture": [
     { "point": "Hips back then down.", "claim": "b3" },
     { "point": "Knees over the second toe, ankles not rolling.", "claim": "b5" },
-    { "point": "Shins travel forward under control; slightly past the toes is fine.", "claim": "b8" },
+    { "point": "Shins travel forward under control. Slightly past the toes is fine.", "claim": "b8" },
     { "point": "Thighs about parallel at the bottom, back flat.", "claim": "b4" },
     { "point": "Shin and torso parallel at the bottom.", "claim": "b6" },
     { "point": "Hips and torso rise together, heels flat.", "claim": "b7" }
@@ -93,20 +93,20 @@
   "handlingMistakes": [
     { "mistake": "Heels lifting at the bottom.", "fix": "Stop the descent where the heels start to lift.", "claim": "b4" },
     { "mistake": "Back rounding at the bottom.", "fix": "Stop the descent where the torso starts to round.", "claim": "b4" },
-    { "mistake": "Knees drifting in or out of line with the feet.", "fix": "Keep the knees over the second toe.", "claim": "b5" }
+    { "mistake": "Knees drifting in or out.", "fix": "Keep the knees over the second toe.", "claim": "b5" }
   ],
   "feel": {
     "primary": [ { "muscleId": "quads", "claim": "b9" } ],
     "secondary": [ { "muscleId": "glutes", "claim": "b9" } ],
     "watch": [],
     "rows": [
-      { "where": "Front of the thighs and the buttocks", "means": "The target areas are working.", "fix": "", "claim": "b9", "redFlag": null },
+      { "where": "Front of thighs and buttocks", "means": "The target areas are working.", "fix": "", "claim": "b9", "redFlag": null },
       { "where": "Lower back", "means": "The torso is rounding at the bottom.", "fix": "Stop higher, where the back is still flat.", "claim": "b4", "redFlag": null },
-      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "b10", "redFlag": "knee" }
+      { "where": "Very painful, locking or giving-way knee", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "b10", "redFlag": "knee" }
     ]
   },
   "risks": [
-    { "risk": "Stopping the knees from passing the toes shifts load to the hips and lower back (barbell squat data).", "claim": "b8" }
+    { "risk": "Keeping the knees behind the toes likely loads the hips and lower back.", "claim": "b8" }
   ],
   "redFlags": ["knee"],
   "zooms": [

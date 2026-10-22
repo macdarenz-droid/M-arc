@@ -84,7 +84,7 @@
       "why": "Measured in dynamic wall squats and applied to the hold: a short heel-to-wall distance moved the knees past the toes and raised kneecap-joint force and stress (w8); the form sources ask for knees over the ankles (w4).",
       "claim": "w8",
       "drawable": true,
-      "rankNote": "No source ranks wall sit faults. This is the one fault with measured consequences, and it reads from the side."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: feet too close to the wall (w8) is tied to harm by two sources, Escamilla 2023 (\"greater patellofemoral force and stress\") and Escamilla 2009 (\"Patellofemoral force and stress were significantly greater at 90 degrees knee angle in the wall squat short\"), both dynamic wall squats applied to the hold (MECH). Holding the breath (w10) raises blood pressure (\"a breath-hold enhances an exercise-induced increase in MAP\"), which is not one of LR-31's harm words, and one source would lose the count anyway. Knee discomfort at 90 degrees (w9) is a feeling at the prescribed depth, not a fault position. Set aside (no frequency word about a fault): Catalyst's \"Most commonly wall sits are done with 90-degree angles\" and \"usually 30-60 seconds\" are about the set-up and the time; Escamilla's \"commonly used during patellofemoral rehabilitation\" is about the exercise's use; Physitrack's \"Reduces the risk of injuries\" names no fault; the NHS knee page's \"often\" lines name no fault of this exercise. Knees past the toes is a still sign the side view shows, so drawable is true."
     },
     "tells": [
       { "text": "Shins straight up and down", "claim": "w4" },
@@ -95,9 +95,9 @@
   },
   "grip": { "type": "", "width": "", "thumb": "", "handContact": "", "wrist": "", "claims": [], "note": "Hand archetype none; no source gives a hand position." },
   "setup": [
-    { "step": "Back to the wall, feet out in front, shoulder width, toes slightly out.", "claim": "w4" },
+    { "step": "Back on the wall, feet out front, shoulder width, toes slightly out.", "claim": ["w4", "w2"] },
     { "step": "Slide down until hips and knees are about 90 degrees.", "claim": "w2" },
-    { "step": "Check the knees are right above the ankles; move the feet if not.", "claim": "w8" },
+    { "step": "Knees right above the ankles. Move the feet if not.", "claim": ["w8", "w4"] },
     { "step": "Hold 30-60 seconds.", "claim": "w3" }
   ],
   "posture": [
@@ -106,8 +106,8 @@
     { "point": "Hips and knees about 90 degrees.", "claim": "w2" }
   ],
   "handlingMistakes": [
-    { "mistake": "Feet too close to the wall.", "fix": "Walk the feet out until the knees are over the ankles.", "claim": "w8" },
-    { "mistake": "Holding the breath through the hold.", "fix": "Keep breathing steadily.", "claim": "w10" },
+    { "mistake": "Feet too close to wall.", "fix": "Walk the feet out until the knees are over the ankles.", "claim": "w8" },
+    { "mistake": "Holding your breath.", "fix": "Keep breathing steadily.", "claim": "w10" },
     { "mistake": "Knee discomfort at 90 degrees.", "fix": "Hold higher on the wall, with less knee bend.", "claim": "w9" }
   ],
   "feel": {
@@ -116,8 +116,8 @@
     "watch": [],
     "rows": [
       { "where": "Front of the thighs, burning", "means": "The quads are doing the hold.", "fix": "", "claim": "w11", "redFlag": null },
-      { "where": "Front of the knee, around the kneecap", "means": "Feet too close to the wall, or the hold is too deep.", "fix": "Feet further out; hold higher.", "claim": "w8", "redFlag": null },
-      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the hold.", "claim": "w12", "redFlag": "knee" }
+      { "where": "Around the kneecap", "means": "Feet too close to the wall, or the hold is too deep.", "fix": "Walk your feet further out. Hold higher on the wall.", "claim": ["w8", "w9"], "redFlag": null },
+      { "where": "Very painful, locking or giving-way knee", "means": "Not a training feeling.", "fix": "Stop the hold.", "claim": "w12", "redFlag": "knee" }
     ]
   },
   "risks": [
@@ -131,7 +131,7 @@
     { "key": "back-on-wall", "kind": "posture", "right": "Back and buttocks flat on the wall.", "wrong": "Buttocks away from the wall.", "claim": "w5" }
   ],
   "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, no secondary. Physitrack names quads, glutes, hamstrings and calves without ranking them (w11), but it is a coach page with no data. No EMG source for the wall sit was read, so the secondaries are not added." },
-  "loadProgression": { "text": "Build to 60 seconds, then lift one foot, go single-leg, or rest weight on the thighs; depth also sets intensity.", "claims": ["w6", "w7"] },
+  "loadProgression": { "text": "Build to 60 seconds, then lift one foot or hold weight on your thighs. Deeper holds are harder.", "claims": ["w6", "w7"] },
   "breathing": { "text": "Breathe steadily; holding the breath raises blood pressure further during isometric work.", "claims": ["w10"] },
   "anchorSource": "cat-wallsit",
   "anchorNote": "Catalyst Athletics wall sit page read in full; Physitrack wall sit page also read in full.",

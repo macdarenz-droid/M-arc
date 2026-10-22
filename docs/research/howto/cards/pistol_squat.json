@@ -79,16 +79,16 @@
     ],
     "mistake": {
       "what": "The heel of the standing foot lifts at the bottom.",
-      "why": "Listed as a common mistake (p8); the technique asks for the planted foot flat (p3).",
+      "why": "The top fault, bouncing at the bottom (first on REP's common-mistakes list, p8), is seen only as speed and cannot be drawn in a still plate. The knee valgus, next on the list, needs a front view, so the plate draws the heel lift, the next listed fault the side view shows; the technique asks for the planted foot flat (p3).",
       "claim": "p8",
-      "drawable": true,
-      "rankNote": "REP lists three mistakes without ranking. Knee valgus is front-view; bouncing is a motion, not a pose. Heel lift is the one that can be drawn from the side."
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no read source uses a frequency word for a pistol-squat fault, and no named fault is tied to harm. REP's \"Common Mistakes People Make During Pistol Squats\" list (p8), written for this exercise by the anchor source, puts \"Bouncing at the bottom\" first, so bouncing is the top fault and handlingMistakes[0]. Its only sign is speed (\"slow and controlled, without any bounce at the bottom\"), so drawable is false. The drawn fault, by the same steps: the knee valgus is next on the list but needs a front view; the heel lift (\"your planted heel may try and creep up on you\") comes next and the side view shows it, so plate.mistake keeps the heel lift. Set aside: REP's \"there’s a good amount of stress and demand placed on your knees\" is about the exercise itself, not a fault; its fourth item, \"Pushing through knee or ankle issues\", ties pain to the lifter, not to a position or movement; REP's \"reduce your risk of injury\" and Physitrack's \"reduce the risk of injury\" name benefits; \"often used interchangeably\" and \"many people can build the strength\" name no fault; the NHS knee page's \"often\" lines name no fault of this exercise."
     },
     "tells": [
       { "text": "Slow down, no bounce", "claim": "p8" },
       { "text": "Whole standing foot stays flat", "claim": "p3" }
     ],
-    "tempo": { "up": null, "down": null, "pause": null, "text": "Slow and controlled, no bounce at the bottom; no source gives seconds.", "claim": "p8" },
+    "tempo": { "up": null, "down": null, "pause": null, "text": "Slow and controlled, no bounce at the bottom (p8); no source gives seconds. Physitrack's step 4, \"Pause briefly, and repeat.\", places a brief pause after standing up; with no tempo seconds on the card, up, down and pause stay null (LR-33).", "claim": "p8" },
     "variantLine": null
   },
   "grip": { "type": "", "width": "", "thumb": "", "handContact": "", "wrist": "", "claims": [], "note": "Hand archetype none. Arms reach forward for balance (p1)." },
@@ -107,8 +107,8 @@
     { "point": "Knee does not cave inward.", "claim": "p8" }
   ],
   "handlingMistakes": [
-    { "mistake": "Trying the full pistol before the basics.", "fix": "Master air squats and single-leg balance first, then use support or a box.", "claim": ["p6", "p7"] },
-    { "mistake": "Bouncing out of the bottom.", "fix": "Lower slowly and stand without a bounce; use a box if you cannot.", "claim": "p8" },
+    { "mistake": "Bouncing out of the bottom.", "fix": "Lower slowly and stand without a bounce.", "claim": "p8" },
+    { "mistake": "Attempting it before the basics.", "fix": "Master air squats and single-leg balance, then use a box.", "claim": ["p6", "p7"] },
     { "mistake": "Pushing through knee pain.", "fix": "Back off, check your form, or use an easier version.", "claim": "p9" }
   ],
   "feel": {
@@ -118,7 +118,7 @@
     "rows": [
       { "where": "Front of the standing thigh", "means": "The main mover is working.", "fix": "", "claim": "p10", "redFlag": null },
       { "where": "Knee discomfort", "means": "The deep single-leg bend is too much for now.", "fix": "Use a box or support, or an easier version.", "claim": "p9", "redFlag": null },
-      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "p12", "redFlag": "knee" }
+      { "where": "Very painful, locking or giving-way knee", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "p12", "redFlag": "knee" }
     ]
   },
   "risks": [
@@ -128,10 +128,10 @@
   "redFlags": ["knee"],
   "zooms": [
     { "key": "standing-foot", "kind": "posture", "right": "Standing foot flat at the bottom.", "wrong": "Heel lifted, weight on the toes.", "claim": "p8" },
-    { "key": "box-pistol", "kind": "posture", "right": "Single-leg squat down to a box behind you.", "wrong": "Dropping onto the box instead of squatting down to it under control.", "claim": "p7", "wrongNote": "The wrong drawing is the inverse of p7 (squat down until seated on the box); no source describes it directly." }
+    { "key": "box-pistol", "kind": "posture", "right": "Single-leg squat down to a box behind you.", "wrong": "Dropping onto the box, not squatting down to it.", "claim": "p7", "wrongNote": "The wrong drawing is the inverse of p7 (squat down until seated on the box); no source describes it directly." }
   ],
   "libraryDiff": { "add": ["adductors"], "remove": ["abductors"], "why": "Library: quads primary, glutes and abductors secondary. REP names quads as main movers and glutes and the working-leg adductors as helpers (p10), so adductors are proposed as an addition. Abductors are not named by any source read (REP and Physitrack read in full), so removal is proposed for the supervisor to decide; no source supports keeping them. Coach source only, no EMG." },
-  "loadProgression": { "text": "Single-leg balance and air squats, then assisted pistols, box pistols with the box lowered over time, and lowering-only reps.", "claims": ["p7"] },
+  "loadProgression": { "text": "Single-leg balance and air squats, then assisted pistols. Then box pistols with the box lowered over time, and lowering-only reps.", "claims": ["p7"] },
   "tierA": { "wayOut": { "text": "A box behind you to sit onto, or a support to hold, while learning.", "claims": ["p7"] } },
   "anchorSource": "rep-pistol",
   "anchorNote": "REP Fitness pistol squat guide read in full; Physitrack pistol squat page also read in full.",
