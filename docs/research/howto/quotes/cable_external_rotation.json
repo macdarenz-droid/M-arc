@@ -1,334 +1,334 @@
 {
   "id": "cable_external_rotation",
   "checked": "2026-10-22",
-  "fetcher": "pending",
+  "fetcher": "sonnet source fetcher",
   "quotes": [
     {
       "claim": "c1",
       "source": "mo-cable-er",
       "text": "Stand sideways to a cable machine with the pulley at elbow height and a single handle attached.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stand sideways to a cable machine with the pulley at elbow height and a single handle attached.",
       "note": ""
     },
     {
       "claim": "c1",
       "source": "sl-cable-er",
       "text": "Fasten a handle at elbow height in a cable pulley.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Fasten a handle at elbow height in a cable pulley.",
       "note": ""
     },
     {
       "claim": "c1",
       "source": "ace-cuff-er",
       "text": "Place a cable pulley at about waist-height and attach a single handle, holding it in the left hand so that the right side of the body is closest to the machine.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Place a cable pulley at about waist-height and attach a single handle, holding it in the left hand so that the right side of the body is closest to the machine.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "mo-cable-er",
       "text": "Grip the handle with the far hand, elbow bent at 90 degrees and tucked to your side, forearm across your body.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Grip the handle with the far hand, elbow bent at 90 degrees and tucked to your side, forearm across your body.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "sl-cable-er",
       "text": "Stand with your side to the pulley, grasping the handle in the opposite arm.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stand with your side to the pulley, grasping the handle in the opposite arm.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "ace-cuff-er",
       "text": "Place a cable pulley at about waist-height and attach a single handle, holding it in the left hand so that the right side of the body is closest to the machine.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Place a cable pulley at about waist-height and attach a single handle, holding it in the left hand so that the right side of the body is closest to the machine.",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "sl-cable-er",
       "text": "Hold your upper arm and elbow against your side, and bend your elbow to 90 degrees.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Hold your upper arm and elbow against your side, and bend your elbow to 90 degrees.",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "mo-cable-er",
       "text": "Grip the handle with the far hand, elbow bent at 90 degrees and tucked to your side, forearm across your body.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Grip the handle with the far hand, elbow bent at 90 degrees and tucked to your side, forearm across your body.",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "ace-cuff-er",
       "text": "Keep the left elbow tucked in to the body, and turn the shoulder back away from the body to move the left hand to the outside of the body (the cable should pass in front of the stomach).",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Keep the left elbow tucked in to the body, and turn the shoulder back away from the body to move the left hand to the outside of the body (the cable should pass in front of the stomach).",
       "note": ""
     },
     {
       "claim": "c4",
       "source": "mo-cable-er",
       "text": "Rotate from forearm across the body to perpendicular away, with elbow fixed at side and no torso movement.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Rotate from forearm across the body to perpendicular away, with elbow fixed at side and no torso movement.",
       "note": ""
     },
     {
       "claim": "c5",
       "source": "mo-cable-er",
       "text": "Exhale and rotate your shoulder to pull the handle outward, keeping your elbow fixed at your side.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Exhale and rotate your shoulder to pull the handle outward, keeping your elbow fixed at your side.",
       "note": ""
     },
     {
       "claim": "c5",
       "source": "sl-cable-er",
       "text": "Rotate your upper arm outward, without moving your elbow from your side.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Rotate your upper arm outward, without moving your elbow from your side.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "ace-cuff-er",
       "text": "Keep the left elbow tucked in to the body, and turn the shoulder back away from the body to move the left hand to the outside of the body (the cable should pass in front of the stomach).",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Keep the left elbow tucked in to the body, and turn the shoulder back away from the body to move the left hand to the outside of the body (the cable should pass in front of the stomach).",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "mo-cable-er",
       "text": "Rotate from forearm across the body to perpendicular away, with elbow fixed at side and no torso movement.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Rotate from forearm across the body to perpendicular away, with elbow fixed at side and no torso movement.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "mo-cable-er",
       "text": "Inhale and slowly return the handle across your body to the start position.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Inhale and slowly return the handle across your body to the start position.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "sl-cable-er",
       "text": "Return the weight under control.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Return the weight under control.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "mo-cable-er",
       "text": "Engage your core and keep your torso stable.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Engage your core and keep your torso stable.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "mo-cable-er",
       "text": "Rotate from shoulder only",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Rotate from shoulder only",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "mo-cable-er",
       "text": "Twisting torso",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Twisting torso",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "mo-cable-er",
       "text": "Elbow glued to side",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Elbow glued to side",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "mo-cable-er",
       "text": "Allowing elbow to flare out",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Allowing elbow to flare out",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "sl-cuff-article",
       "text": "The important thing to note is that you should keep your upper arm steady against your side, and make sure that you are rotating your arm against the direction of resistance.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "The important thing to note is that you should keep your upper arm steady against your side, and make sure that you are rotating your arm against the direction of resistance.",
       "note": ""
     },
     {
       "claim": "c10",
       "source": "mo-cable-er",
       "text": "Keep forearm parallel to ground",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Keep forearm parallel to ground",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "mo-cable-er",
       "text": "No shrugging",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "No shrugging",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "mo-cable-er",
       "text": "Shrugging shoulders",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Shrugging shoulders",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "mo-cable-er",
       "text": "Using momentum to swing",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Using momentum to swing",
       "note": ""
     },
     {
       "claim": "c13",
       "source": "sl-cable-er",
       "text": "Only a very light weight should be used in this exercise, with full control.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Only a very light weight should be used in this exercise, with full control.",
       "note": ""
     },
     {
       "claim": "c13",
       "source": "mo-cable-er",
       "text": "Use light weight only",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Use light weight only",
       "note": ""
     },
     {
       "claim": "c13",
       "source": "mo-cable-er",
       "text": "Maintain strict form to prevent strain",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Maintain strict form to prevent strain",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "sl-cable-er",
       "text": "This exercise trains some of the muscles of the rotator cuff: primarily infraspinatus, but also supraspinatus and teres minor.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "This exercise trains some of the muscles of the rotator cuff: primarily infraspinatus, but also supraspinatus and teres minor.",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "sl-cable-er",
       "text": "Rotator Cuff",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Rotator Cuff",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "mo-cable-er",
       "text": "Cable external shoulder rotation isolates the rotator cuff to build shoulder stability and prevent injuries; commonly used in rehab, warm-ups, and shoulder health programs.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Cable external shoulder rotation isolates the rotator cuff to build shoulder stability and prevent injuries; commonly used in rehab, warm-ups, and shoulder health programs.",
       "note": ""
     },
     {
       "claim": "c15",
       "source": "sl-cuff-article",
       "text": "Infraspinatus adducts and externally rotates your arm.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Infraspinatus adducts and externally rotates your arm.",
       "note": ""
     },
     {
       "claim": "c15",
       "source": "sl-cuff-article",
       "text": "Teres minor, similar to infraspinatus, adducts and externally rotates your arm.",
-      "status": "pending",
-      "closest": "",
-      "note": ""
+      "status": "verbatim",
+      "closest": "Teres minor, similar to infraspinatus, adducts and externally rotates your arm.",
+      "note": "match only after ignoring whitespace around links/punctuation"
     },
     {
       "claim": "c15",
       "source": "sl-cuff-article",
       "text": "Infraspinatus sits below the spine of your shoulder blade and inserts on the back of your humeral head.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Infraspinatus sits below the spine of your shoulder blade and inserts on the back of your humeral head.",
       "note": ""
     },
     {
       "claim": "c16",
       "source": "mo-cable-er",
       "text": "Rear Delts",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Rear Delts",
       "note": ""
     },
     {
       "claim": "c17",
       "source": "mo-cable-er",
       "text": "Stop if shoulder pain occurs",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stop if shoulder pain occurs",
       "note": ""
     },
     {
       "claim": "c18",
       "source": "ace-cuff-er",
       "text": "Pause for one second before slowly lowering the weight to the starting position.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pause for one second before slowly lowering the weight to the starting position.",
       "note": ""
     },
     {
       "claim": "c18",
       "source": "mo-cable-er",
       "text": "Pause briefly when your forearm is perpendicular to your body.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pause briefly when your forearm is perpendicular to your body.",
       "note": ""
     },
     {
       "claim": "c19",
       "source": "mo-cable-er",
       "text": "2-1-2",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "2-1-2",
       "note": ""
     },
     {
       "claim": "c19",
       "source": "mo-cable-er",
       "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
       "note": ""
     }
   ]

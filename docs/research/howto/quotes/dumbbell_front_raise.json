@@ -1,406 +1,406 @@
 {
   "id": "dumbbell_front_raise",
   "checked": "2026-10-22",
-  "fetcher": "pending",
+  "fetcher": "sonnet source fetcher",
   "quotes": [
     {
       "claim": "c1",
       "source": "ace-front-raise",
       "text": "Stand holding dumbbells in front of you thighs using a closed, pronated grip (thumbs around the handles and palms facing your thighs).",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stand holding dumbbells in front of you thighs using a closed, pronated grip (thumbs around the handles and palms facing your thighs).",
       "note": ""
     },
     {
       "claim": "c1",
       "source": "mo-front-raise",
       "text": "Stand with feet shoulder-width apart, holding a dumbbell in each hand in front of your thighs with palms facing your body and a slight bend in your elbows.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stand with feet shoulder-width apart, holding a dumbbell in each hand in front of your thighs with palms facing your body and a slight bend in your elbows.",
       "note": ""
     },
     {
       "claim": "c1",
       "source": "bb-front-raise",
       "text": "Start with the dumbbells in front of your thighs. Keep your palms down.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Start with the dumbbells in front of your thighs. Keep your palms down.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "ace-front-raise",
       "text": "Position the dumbbells lightly touching the fronts of your thighs with your elbows extended or holding a slight bend.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Position the dumbbells lightly touching the fronts of your thighs with your elbows extended or holding a slight bend.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "mo-front-raise",
       "text": "Keep arms nearly straight with a soft bend in elbows throughout the movement.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Keep arms nearly straight with a soft bend in elbows throughout the movement.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "mo-front-raise",
       "text": "Locking elbows fully",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Locking elbows fully",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "ace-front-raise",
       "text": "Assume either a split-stance position to stabilize your body or position your feet slightly wider than hip-width apart.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Assume either a split-stance position to stabilize your body or position your feet slightly wider than hip-width apart.",
       "note": ""
     },
     {
       "claim": "c4",
       "source": "ace-front-raise",
       "text": "Stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining this position throughout the exercise. Your head position should be aligned with your spine.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining this position throughout the exercise. Your head position should be aligned with your spine.",
       "note": ""
     },
     {
       "claim": "c4",
       "source": "bb-front-raise",
       "text": "Stand tall with your shoulders down away from your ears.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stand tall with your shoulders down away from your ears.",
       "note": ""
     },
     {
       "claim": "c5",
       "source": "ace-front-raise",
       "text": "Exhale and slowly raise the dumbbells up in front of your body. Your elbows and upper arms should rise together and be slightly ahead of your forearms and dumbbells.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Exhale and slowly raise the dumbbells up in front of your body. Your elbows and upper arms should rise together and be slightly ahead of your forearms and dumbbells.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "bb-front-raise",
       "text": "Make sure they stay shoulder-width apart.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Make sure they stay shoulder-width apart.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "ace-front-raise",
       "text": "As your arms move past 60 - 70 degrees (nearing shoulder level), slowly rotate them upwards somewhat so that the inside edge of the dumbbells point slightly upwards.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "As your arms move past 60 - 70 degrees (nearing shoulder level), slowly rotate them upwards somewhat so that the inside edge of the dumbbells point slightly upwards.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "ace-front-raise",
       "text": "Traditionally, this exercise positions the arms into internal rotation during the lift, so the slight external rotation initiated at the 60-70 degree mark may reduce potential impingement in the shoulder joint.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Traditionally, this exercise positions the arms into internal rotation during the lift, so the slight external rotation initiated at the 60-70 degree mark may reduce potential impingement in the shoulder joint.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "ace-front-raise",
       "text": "Continue raising the dumbbells until your arms are level with your shoulders and approximately parallel with the floor.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Continue raising the dumbbells until your arms are level with your shoulders and approximately parallel with the floor.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "mo-front-raise",
       "text": "Start with arms hanging in front of thighs; raise to arms parallel to floor without going above shoulder height.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Start with arms hanging in front of thighs; raise to arms parallel to floor without going above shoulder height.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "mo-front-raise",
       "text": "Raising above shoulders",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Raising above shoulders",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "sl-front-raise",
       "text": "With control, lift the dumbbells forward with straight arms, until the dumbbells are at shoulder height.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "With control, lift the dumbbells forward with straight arms, until the dumbbells are at shoulder height.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "fv-front-raise",
       "text": "With the elbows slightly bent or extended, raise the dumbbells up in front of you until your hands are just above shoulder height.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "With the elbows slightly bent or extended, raise the dumbbells up in front of you until your hands are just above shoulder height.",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "ace-front-raise",
       "text": "Maintain an erect torso (no arching of your low back) and neutral wrist position (avoid flexion and extension of your wrists).",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Maintain an erect torso (no arching of your low back) and neutral wrist position (avoid flexion and extension of your wrists).",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "mo-front-raise",
       "text": "Arching the back",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Arching the back",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "mo-front-raise",
       "text": "Maintain neutral spine.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Maintain neutral spine.",
       "note": ""
     },
     {
       "claim": "c10",
       "source": "ace-front-raise",
       "text": "Inhale and gently lower the dumbbells back towards your starting position keeping your elbows slightly extended.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Inhale and gently lower the dumbbells back towards your starting position keeping your elbows slightly extended.",
       "note": ""
     },
     {
       "claim": "c10",
       "source": "mo-front-raise",
       "text": "Lower the dumbbells slowly and controlled back to the starting position.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Lower the dumbbells slowly and controlled back to the starting position.",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "bb-front-raise",
       "text": "Coach’s Tip: Tension on your muscles is the key here. Avoid letting your hands and dumbbells rest on your thighs.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Coach’s Tip: Tension on your muscles is the key here. Avoid letting your hands and dumbbells rest on your thighs.",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "bb-front-raise",
       "text": "Do not let the dumbbells rest on your thighs between reps.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Do not let the dumbbells rest on your thighs between reps.",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "mo-front-raise",
       "text": "Swinging or using body momentum",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Swinging or using body momentum",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "mo-front-raise",
       "text": "Lead with shoulders, not momentum.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Lead with shoulders, not momentum.",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "bb-front-raise",
       "text": "Don’t use any momentum or hip movement.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Don’t use any momentum or hip movement.",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "bb-front-raise",
       "text": "Coach’s Tip: Fight the urge to move your body around or push your hips forward as you lift the weights. If you have to do that, switch to lighter dumbbells.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Coach’s Tip: Fight the urge to move your body around or push your hips forward as you lift the weights. If you have to do that, switch to lighter dumbbells.",
       "note": ""
     },
     {
       "claim": "c13",
       "source": "bb-front-raise",
       "text": "As fatigue builds up, make sure to not swing the weights, which will add extra stress to your shoulder joints.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "As fatigue builds up, make sure to not swing the weights, which will add extra stress to your shoulder joints.",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "sl-front-raise",
       "text": "This is an exercise where it is easy to pick a weight that is too heavy. Rather err on the lighter side, and strive for a strict form where you focus on getting good contact with your delts.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "This is an exercise where it is easy to pick a weight that is too heavy. Rather err on the lighter side, and strive for a strict form where you focus on getting good contact with your delts.",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "bb-front-raise",
       "text": "As tempting as it might be to load up the weight, this exercise should be performed with moderate to light weights.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "As tempting as it might be to load up the weight, this exercise should be performed with moderate to light weights.",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "mo-front-raise",
       "text": "Start with light weights to master form",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Start with light weights to master form",
       "note": ""
     },
     {
       "claim": "c15",
       "source": "coratella2020",
       "text": "Frontal raise strongly recruited anterior deltoid and the clavicular head of pectoralis major.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Frontal raise strongly recruited anterior deltoid and the clavicular head of pectoralis major.",
       "note": ""
     },
     {
       "claim": "c16",
       "source": "mo-front-raise",
       "text": "An isolation exercise using dumbbells to target the anterior deltoids through shoulder flexion, building front shoulder strength and stability for pushing movements; ideal for hypertrophy and definition.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "An isolation exercise using dumbbells to target the anterior deltoids through shoulder flexion, building front shoulder strength and stability for pushing movements; ideal for hypertrophy and definition.",
       "note": ""
     },
     {
       "claim": "c16",
       "source": "bb-front-raise",
       "text": "The dumbbell front raise is a shoulder isolation exercise that targets the anterior head of your deltoids.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "The dumbbell front raise is a shoulder isolation exercise that targets the anterior head of your deltoids.",
       "note": ""
     },
     {
       "claim": "c16",
       "source": "sl-front-raise",
       "text": "Front Deltoid",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Front Deltoid",
       "note": ""
     },
     {
       "claim": "c17",
       "source": "sl-front-raise",
       "text": "Lateral Deltoid",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Lateral Deltoid",
       "note": ""
     },
     {
       "claim": "c17",
       "source": "mo-front-raise",
       "text": "Medial Delts",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Medial Delts",
       "note": ""
     },
     {
       "claim": "c17",
       "source": "coratella2020",
       "text": "In contrast, given the low activation level recorded here, both medial and posterior deltoids appeared to play a negligible role in frontal raise, in line with previous results [9].",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "In contrast, given the low activation level recorded here, both medial and posterior deltoids appeared to play a negligible role in frontal raise, in line with previous results [9].",
       "note": ""
     },
     {
       "claim": "c18",
       "source": "bb-front-raise",
       "text": "If front raises are adding discomfort to your shoulders, then stop. Drop the weights significantly. You may also want to try to have your hands more out to the sides. Still keep them in front, just less straight out front — like a hybrid front/lateral raise.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "If front raises are adding discomfort to your shoulders, then stop. Drop the weights significantly. You may also want to try to have your hands more out to the sides. Still keep them in front, just less straight out front — like a hybrid front/lateral raise.",
       "note": ""
     },
     {
       "claim": "c19",
       "source": "mo-front-raise",
       "text": "Pause briefly at the top to squeeze the front deltoids.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pause briefly at the top to squeeze the front deltoids.",
       "note": ""
     },
     {
       "claim": "c19",
       "source": "bb-front-raise",
       "text": "Lift the weights to shoulder height. Pause briefly.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Lift the weights to shoulder height. Pause briefly.",
       "note": ""
     },
     {
       "claim": "c20",
       "source": "mo-front-raise",
       "text": "3-1-1",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "3-1-1",
       "note": ""
     },
     {
       "claim": "c20",
       "source": "mo-front-raise",
       "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
-      "status": "pending",
-      "closest": "",
-      "note": ""
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "note": "found only in raw HTML (Tempo tooltip, embedded page JSON)"
     },
     {
       "claim": "c20",
       "source": "bb-front-raise",
       "text": "Perform a strict eccentric lowering of three to four full seconds.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Perform a strict eccentric lowering of three to four full seconds.",
       "note": ""
     },
     {
       "claim": "c21",
       "source": "fv-front-raise",
       "text": "While standing, hold the dumbbells by your sides using a neutral/hammer grip.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "While standing, hold the dumbbells by your sides using a neutral/hammer grip.",
       "note": ""
     },
     {
       "claim": "c21",
       "source": "fv-front-raise",
       "text": "Using a neutral grip is better for the health of the shoulders. The pronated or overhand grip is more likely to cause internal rotation of the shoulder which is not ideal.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Using a neutral grip is better for the health of the shoulders. The pronated or overhand grip is more likely to cause internal rotation of the shoulder which is not ideal.",
       "note": ""
     },
     {
       "claim": "c22",
       "source": "coratella2020",
       "text": "For frontal raise, the participants were required to frontally flex the humerus up to 90°, with humerus neutrally rotated (i.e., thumb-to-thumb).",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "For frontal raise, the participants were required to frontally flex the humerus up to 90°, with humerus neutrally rotated (i.e., thumb-to-thumb).",
       "note": ""
     },
     {
       "claim": "c22",
       "source": "coratella2020",
       "text": "For all these exercises, the elbow was almost fully extended, and the wrist in line with the forearm",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "For all these exercises, the elbow was almost fully extended, and the wrist in line with the forearm",
       "note": ""
     }
   ]
