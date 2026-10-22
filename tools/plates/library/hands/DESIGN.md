@@ -330,7 +330,7 @@ Keys (all five render and pass G1-G9 on the scratch modules: `pairProblems(id)` 
 | bar-pulldown-under | underhand_lat_pulldown |
 | v-handle-pull-neutral-overhead | close_grip_pulldown |
 
-G (gaps) = none so far; D = the five keys. Both are restated here after the critic (Do 7) and before the 7c-A5 pins.
+After Do 7 (D-LIB7c-PANEL1, VALID @ 3bdd609, approvals #271 6264406128): G = ∅ (no gap, so no gap reason); D = bar-hang-under, bar-hang-over, bar-row-over, bar-pulldown-under, v-handle-pull-neutral-overhead (|D| = 5).
 
 ### (b) The hang variant
 - Right: golden B hanging_leg_raise's pose values (hanging_leg_raise.howto.mjs:92-93): forearm 180, ext 10, contactAt 1.0, fingers curl 1, thumb wrapped, squeeze firm, load gravity. wristRange [0, 35]; loadAxis 'across'; contact 'base' (CONTACT_AT 1.0).
