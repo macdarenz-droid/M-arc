@@ -71,9 +71,9 @@
       "claim": "c3",
       "source": "hl-hack",
       "text": "Release the safety handles, inhale, and lower down, bending your knees until they reach a 90-degree angle.",
-      "status": "not-found",
+      "status": "pending",
       "closest": "",
-      "note": "source unreachable (HTTP 404)"
+      "note": "URL corrected 2026-10-22 (was /health/fitness/hack-squat, a 404); re-fetch at /health/fitness-exercise/hack-squat."
     },
     {
       "claim": "c4",
@@ -95,9 +95,9 @@
       "claim": "c4",
       "source": "hl-hack",
       "text": "Pause here, then push up through the back of your feet to extend your legs back to the starting position.",
-      "status": "not-found",
+      "status": "pending",
       "closest": "",
-      "note": "source unreachable (HTTP 404)"
+      "note": "URL corrected 2026-10-22 (was /health/fitness/hack-squat, a 404); re-fetch at /health/fitness-exercise/hack-squat."
     },
     {
       "claim": "c5",
@@ -311,9 +311,9 @@
       "claim": "c17",
       "source": "hl-hack",
       "text": "Start by completing 2 sets of 10–12 reps, then work your way up to 3 sets. Once you can complete this easily, add more weight.",
-      "status": "not-found",
+      "status": "pending",
       "closest": "",
-      "note": "source unreachable (HTTP 404)"
+      "note": "URL corrected 2026-10-22 (was /health/fitness/hack-squat, a 404); re-fetch at /health/fitness-exercise/hack-squat."
     },
     {
       "claim": "c17",
@@ -343,9 +343,9 @@
       "claim": "c19",
       "source": "hl-hack",
       "text": "If you have lower back or knee pain, the hack squat usually isn’t a good choice.",
-      "status": "not-found",
+      "status": "pending",
       "closest": "",
-      "note": "source unreachable (HTTP 404)"
+      "note": "URL corrected 2026-10-22 (was /health/fitness/hack-squat, a 404); re-fetch at /health/fitness-exercise/hack-squat."
     },
     {
       "claim": "c20",

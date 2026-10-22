@@ -182,10 +182,10 @@
     {
       "claim": "c10",
       "source": "motra-hf",
-      "text": "Hip Flexors10/10 Iliopsoas Quads7/10 Rectus Femoris",
-      "status": "near",
+      "text": "Hip Flexors 10/10 Iliopsoas Quads 7/10 Rectus Femoris",
+      "status": "verbatim",
       "closest": "Hip Flexors 10/10 Iliopsoas Quads 7/10 Rectus Femoris",
-      "note": "Words and order identical; page has a space between each muscle name and its score (separate elements: \"Hip Flexors 10/10\"), the card text has none (\"Hip Flexors10/10\"). Whitespace-only difference caused by element boundaries."
+      "note": ""
     },
     {
       "claim": "c11",

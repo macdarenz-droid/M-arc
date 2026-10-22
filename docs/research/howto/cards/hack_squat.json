@@ -561,12 +561,12 @@
     },
     {
       "id": "hl-hack",
-      "url": "https://www.healthline.com/health/fitness/hack-squat",
+      "url": "https://www.healthline.com/health/fitness-exercise/hack-squat",
       "title": "How to Do a Hack Squat the Right Way (Healthline, Nicole Davis; medically reviewed by Daniel Bubnis, NASM-CPT)",
       "kind": "coach",
       "year": 2020,
       "pmid": null,
-      "access": "unreachable",
+      "access": "full",
       "checked": "2026-10-22"
     },
     {
@@ -615,7 +615,7 @@
       },
       {
         "label": "Slight knee bend",
-        "what": "Extend fully without locking the knees; keep a slight bend.",
+        "what": "Extend fully without locking the knees. Keep a slight bend.",
         "claim": [
           "c7"
         ]
@@ -630,7 +630,7 @@
         "c9"
       ],
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the lower back lifting off the back pad at the bottom (c8). Step 1 hits: Fitness Volt's \"Pro Tip: Many people lift their lower back off the back pad to generate momentum when in the hole.\" (c8), a 'many people' sentence about this exercise's own fault, not in a list (D-SUP-LB7-DIPREPS); its \"Many athletes cut the squat short, not reaching the depth necessary to engage the target muscles fully.\" (c5) is a second hit, for cutting the depth short; Men's Health's \"It’s a common occurrence at the bottom of a squat, when your lower back rounds ever so slightly.\" (butt wink, c10) is read as a hit for the same lower-back fault, because the sentence before ties it to the hack squat (\"something you must constantly be aware of when hack squatting\"); the rounding is the lower back leaving the pad at the bottom, so the two are read as one fault. Several faults pass step 1, so step 2's order decides: the lower-back fault is tied to harm (\"Doing so can put unnecessary strain on your lower back and increase your injury risk.\", c8; \"leaves a lot of flexing stress for the lumbar spine if you have limited mobility\", c10; \"Never arch or round your back, as this can cause pain and injury.\", c11) and is on BarBend's common-mistakes list for the machine (\"Letting Your Hips Rise\": \"you may feel your pelvis or lower back drift off of the backrest\", c9); cutting the depth short names no harm (\"A shallow squat limits the activation of the glutes and hamstrings.\"). If the butt wink is read as a separate fault, or its sentence as about squats in general, the pick is the same: Fitness Volt's hit alone picks the lower back off the pad over the depth. Set aside at step 1: Fitness Volt's \"Incorrect foot placement is among the most common hack squat mistakes.\" is a list sentence inside its common-mistakes list, read literally like \"Another common error is ...\" (R-LB4-2), so its feet-too-close harm (\"can place undue stress on the knees\", c12) is not reached; \"The back coming off the back pad is one of the most common signs of a lack of core engagement.\" is a list sentence too, and names the same fault as the pick; \"Many people let their egos get the better of them on the hack squat.\" and \"Folks who cannot perform a single rep ...\" are about the load chosen; \"Many beginners experience shaky calves during a relatively heavy hack squat.\" is a muscle sign, not a position; \"Most people have no idea how to differentiate lactic acid build-up with muscle and joint pain or discomfort.\" is about pain awareness; \"Taller individuals usually find placing their feet higher on the platform more comfortable\" is a stance choice. StrengthLog's \"Most hack squat machines are fairly easy to use\" and \"many hack squat machines have safety locks or brakes\", BarBend's \"Many hack squat stations have fail-safes\" and \"most if not all hack squat machines come with convenient, ergonomic handles\", and Healthline's \"This usually means you’ll be able to lift less\" are about machines or the load; Healthline's \"What are the most common mistakes to watch for?\" is a list heading; Healthline's \"If you have lower back or knee pain, the hack squat usually isn’t a good choice.\" (c19) is about the lifter. Men's Health's \"there are often issues with the fixed back position\" is about the machine, and \"LEG DAY OFTEN MEANS one thing for the vast majority of exercisers\" and \"squats are commonly the backbone of lower body routines\" are about training. Read but not cited (another exercise, R-LB7-5): BarBend's barbell hack squat page, \"In the hack squat, it’s common to flex your spine (round your back) on the way down, letting the weight pull you too fast.\", and Garage Gym Reviews' barbell page, \"Here are the most common ones to look out for while learning how to do the hack squat.\" (a list sentence). Harm quotes about other faults: Fitness Volt's forward lean (\"Leaning too far forward during the movement can strain the lower back\"; \"this places undue stress on the lower back, which skyrockets your chances of getting hurt\") and its overloading and breathing items, and Men's Health's \"So don’t bounce quickly through the motion.\" with \"your lower back has to do too much\", are not step-1 faults, so step 2 does not reach them. drawable true: the side view shows the hips and lower back off the pad, rounded, at the bottom."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the lower back lifting off the back pad at the bottom (c8). Step 1 hits: Fitness Volt's \"Pro Tip: Many people lift their lower back off the back pad to generate momentum when in the hole.\" (c8), a 'many people' sentence about this exercise's own fault, not in a list (D-SUP-LB7-DIPREPS); its \"Many athletes cut the squat short, not reaching the depth necessary to engage the target muscles fully.\" (c5) is a second hit, for cutting the depth short; Men's Health's \"It’s a common occurrence at the bottom of a squat, when your lower back rounds ever so slightly.\" (butt wink, c10) is read as a hit for the same lower-back fault, because the sentence before ties it to the hack squat (\"something you must constantly be aware of when hack squatting\"); the rounding is the lower back leaving the pad at the bottom, so the two are read as one fault. Several faults pass step 1, so step 2's order decides: the lower-back fault is tied to harm (\"Doing so can put unnecessary strain on your lower back and increase your injury risk.\", c8; \"leaves a lot of flexing stress for the lumbar spine if you have limited mobility\", c10; \"Never arch or round your back, as this can cause pain and injury.\", c11) and is on BarBend's common-mistakes list for the machine (\"Letting Your Hips Rise\": \"you may feel your pelvis or lower back drift off of the backrest\", c9); cutting the depth short names no harm (\"A shallow squat limits the activation of the glutes and hamstrings.\"). If the butt wink is read as a separate fault, or its sentence as about squats in general, the pick is the same: Fitness Volt's hit alone picks the lower back off the pad over the depth. Set aside at step 1: Fitness Volt's \"Incorrect foot placement is among the most common hack squat mistakes.\" is a list sentence inside its common-mistakes list, read literally like \"Another common error is ...\" (R-LB4-2), so its feet-too-close harm (\"can place undue stress on the knees\", c12) is not reached; \"The back coming off the back pad is one of the most common signs of a lack of core engagement.\" is a list sentence too, and names the same fault as the pick; \"Many people let their egos get the better of them on the hack squat.\" and \"Folks who cannot perform a single rep ...\" are about the load chosen; \"Many beginners experience shaky calves during a relatively heavy hack squat.\" is a muscle sign, not a position; \"Most people have no idea how to differentiate lactic acid build-up with muscle and joint pain or discomfort.\" is about pain awareness; \"Taller individuals usually find placing their feet higher on the platform more comfortable\" is a stance choice. StrengthLog's \"Most hack squat machines are fairly easy to use\" and \"many hack squat machines have safety locks or brakes\", BarBend's \"Many hack squat stations have fail-safes\" and \"most if not all hack squat machines come with convenient, ergonomic handles\", and Healthline's \"This usually means you’ll be able to lift less\" are about machines or the load; Healthline's \"What are the most common mistakes to watch for?\" is a list heading; Healthline's \"If you have lower back or knee pain, the hack squat usually isn’t a good choice.\" (c19) is about the lifter. Men's Health's \"there are often issues with the fixed back position\" is about the machine, and \"LEG DAY OFTEN MEANS one thing for the vast majority of exercisers\" and \"squats are commonly the backbone of lower body routines\" are about training. Read but not cited (another exercise, R-LB7-5): BarBend's barbell hack squat page, \"In the hack squat, it’s common to flex your spine (round your back) on the way down, letting the weight pull you too fast.\", and Garage Gym Reviews' barbell page, \"Here are the most common ones to look out for while learning how to do the hack squat.\" (a list sentence). Harm quotes about other faults: Fitness Volt's forward lean (\"Leaning too far forward during the movement can strain the lower back\"; \"this places undue stress on the lower back, which skyrockets your chances of getting hurt\") and its overloading and breathing items, and Men's Health's \"So don’t bounce quickly through the motion.\" with \"your lower back has to do too much\", are not step-1 faults, so step 2 does not reach them. drawable true: the side view shows the hips and lower back off the pad, rounded, at the bottom. Scan completion (fetcher scan, 2026-10-22): further harm lines that support the pick are Fitness Volt's \"This contraction is subtle yet powerful, preventing any unwanted forward lean or rounding of the back, which could lead to injury.\" and its core item's \"Actively engage your core throughout the movement to maintain balance and protect your spine.\" (D-SUP-PROTECT, the back coming off the pad); BarBend's \"you run the risk of your hips leaving the security of the backrest\" names no harm. Set aside, not a frequency hit for a fault: Fitness Volt's \"I’ve witnessed every possible mistake people make when performing the hack squat.\" and \"Here are some of the most common ones and how to avoid them to maximize results and minimize injury risk\" (list sentences), \"Powerlifters usually perform the hack squat as an accessory lift in their workouts.\", \"Beginners should start with three sets\" and \"The hack squat is generally safe to perform for most people\" (training and the exercise), \"Short and frequent breaths are some of the best ways to hamper your performance.\" (no frequency word), and a reader comment, \"you drew attention to an extremely common matter!\"; BarBend's \"this usually means stacking all working levers (the joints that bear load) in a line\" (how the body finds a posture), \"Hack squats also have a tall backrest and, usually, handles near where your head is supposed to go\" and \"the backrest may even reduce some of the load that is usually applied to your lumbar spine during free-weight squatting movements\" (the machine; another exercise); StrengthLog's \"typically\" lines (the leg press against the hack squat); Legion's \"the hack squat is often a more joint-friendly option\" and \"the best approach for most people is to include both\" (exercise choice). Set aside, harm not tied to a named fault of this exercise: Fitness Volt's \"Pushing through pain can exacerbate existing issues and lead to serious injury.\" and \"If you experience discomfort, especially in the knees or back, assess and adjust your form or consult a fitness professional.\" (pain awareness), \"Warm up with a few sets of 40 to 60 percent of your one-rep max before training heavy to reduce injury risk.\" (warm-up), \"Remember, going too heavy and compromising your form can significantly increase your injury risk.\" (the load) and \"This will reduce the strain on your lower back.\" (the reverse hack squat, another exercise); StrengthLog's \"which might lead to discomfort or an increased injury risk\" (machine fit, an equipment choice); BarBend's \"this technique may place some extra stress onto your lower back\" (the hack squat good morning, another exercise); Men's Health's \"can be a recipe for chronic pain\" (lifters with knee or lower-spine issues); the barbell pages' \"Going too heavy too fast can cause extra stress on your spine\" and Garage Gym Reviews' rounding and core lines (another exercise, R-LB7-5). Healthline (URL corrected) has no frequency word for a fault; its 'Going too heavy too fast' item is the load."
     },
     "tells": [
       {
@@ -674,7 +674,7 @@
   },
   "setup": [
     {
-      "step": "Shoulders against the pads; back and hips on the back pad.",
+      "step": "Shoulders against the pads. Back and hips on the back pad.",
       "claim": [
         "c1",
         "c2"
@@ -703,7 +703,7 @@
       ]
     },
     {
-      "step": "Push up through your whole foot. Re-engage the lever to finish.",
+      "step": "Push up through your whole foot. Lock the safety lever to finish.",
       "claim": [
         "c6",
         "c16"
@@ -736,7 +736,7 @@
       ]
     },
     {
-      "point": "Hands hold the handles; don't push with your arms.",
+      "point": "Hold the handles. Don't push with your arms.",
       "claim": [
         "c18"
       ]
@@ -744,7 +744,7 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Lower back lifting off the pad.",
+      "mistake": "Lower back off the pad.",
       "fix": "Keep your hips and back on the pad.",
       "claim": [
         "c8",
@@ -760,7 +760,7 @@
       ]
     },
     {
-      "mistake": "Locking the knees at the top.",
+      "mistake": "Knees locked at the top.",
       "fix": "Keep a slight bend in the knees.",
       "claim": [
         "c7"
@@ -818,7 +818,7 @@
       {
         "where": "Knees",
         "means": "Fault: feet too close together.",
-        "fix": "Feet shoulder-width, toes slightly out.",
+        "fix": "Set your feet shoulder-width, toes slightly out.",
         "claim": [
           "c12"
         ],
@@ -902,7 +902,7 @@
   "anchorSource": "fv-hack",
   "anchorNote": "Fitness Volt's machine hack squat page (an ACE-certified trainer; step-by-step form, tips and an 8-item common-mistakes list) read in full. BarBend's hack squat machine page (steps, a common-mistakes list written for the machine, the rail-guard lever), StrengthLog's machine page, Healthline's machine page, Men's Health's page (its 'Fixed Back Position' section is about the machine) and Motra's app guide (no named author, so its claims are WEAK) were read in full. Read, not cited: BarBend's and Garage Gym Reviews' hack squat pages (both teach the barbell hack squat, another exercise), Legion's machine page (its setup lines are covered by the cited sources) and Fitbod's machine page. ExRx not used (403); no ACE or NASM hack squat page was found (404).",
   "loadProgression": {
-    "text": "Start light. Do 2 sets of 10-12, work up to 3, then add weight once it is easy.",
+    "text": "Start light. Do 2 sets of 10-12. Work up to 3, then add weight once it is easy.",
     "claims": [
       "c17"
     ]
@@ -917,6 +917,7 @@
     "Shared card: get-in-out (docs/research/howto/shared/get-in-out.json @ 6d253b9e) lists hack_squat in appliesTo. Its steps (safety stops set, pins engaged, sit or lie in position with a weight you can control, ease the weight back) are cited, not copied. Its gaps say no source covers getting out of the reclined sleds; this card supplies the finish from its own claims: re-engage the rail-guard lever from the standing position (c16, BarBend) after releasing the locks at the start (c3).",
     "Stop lines: none. The lower-back and knee rows are written in LR-6 shape (place + the source's fault + fix) and link the shared back and knee boxes (R-LB3-4, R-LB6-6).",
     "Knee travel: Fitness Volt says people with lower-body joint issues should avoid letting the knees pass the toes on the way down; Legion (read, not cited) lets the knees move forward with the toes. The card draws the knees in line with the toes (c13) and shows no knee-past-toes line.",
-    "Feet too close (c12) is the knee row and a risk, not the top fault: its sentence 'Incorrect foot placement is among the most common hack squat mistakes.' is a list sentence (R-LB4-2), and a narrow stance is not visible from the side."
+    "Feet too close (c12) is the knee row and a risk, not the top fault: its sentence 'Incorrect foot placement is among the most common hack squat mistakes.' is a list sentence (R-LB4-2), and a narrow stance is not visible from the side.",
+    "Round 2 (2026-10-22): hl-hack's URL corrected to https://www.healthline.com/health/fitness-exercise/hack-squat (the page the writer fetched, HTTP 200; the card had a wrong path that returns 404). Its 4 quotes (c3, c4, c17, c19) are unchanged and set to pending for re-fetch. rankNote completed from the fetcher scan; pick unchanged."
   ]
 }
