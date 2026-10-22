@@ -1,0 +1,36 @@
+{
+ "heading": {
+  "text": "Hand: right and wrong",
+  "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
+ },
+ "faults": {
+  "cupped-palm": {
+   "right": {
+    "text": "Whole hand down",
+    "source": "the rightNote, tools/plates/library/hands/hand-palm-flat.mjs:14; drawn in the reviewed SVG, #191 5976224674 @ 0d268a7 (D-LIB12FIX-WORDS)"
+   },
+   "wrong": {
+    "text": "Palm cupped",
+    "source": "the fault label, tools/plates/library/hands/hand-palm-flat.mjs:18; drawn in the reviewed SVG, #191 5976224674 @ 0d268a7 (D-LIB12FIX-WORDS); equals the research label, docs/research/howto/shared/palm-flat.json faults[1] cupped-palm (main f125edab)"
+   },
+   "pager": {
+    "text": "Palm cupped",
+    "source": "the fault label, tools/plates/library/hands/hand-palm-flat.mjs:18; equals the research label, docs/research/howto/shared/palm-flat.json faults[1] cupped-palm (main f125edab) (pager labels, D-LIB7FIX-WORDS)"
+   }
+  },
+  "hand-ahead": {
+   "right": {
+    "text": "Whole hand down",
+    "source": "the rightNote, tools/plates/library/hands/hand-palm-flat.mjs:14; drawn in the reviewed SVG, #191 5976224674 @ 0d268a7 (D-LIB12FIX-WORDS)"
+   },
+   "wrong": {
+    "text": "Hand ahead",
+    "source": "the fault label, tools/plates/library/hands/hand-palm-flat.mjs:20; drawn in the reviewed SVG, #191 5976224674 @ 0d268a7 (D-LIB12FIX-WORDS); equals the research label, docs/research/howto/shared/palm-flat.json faults[0] hand-ahead (D-LIB5-FAULTKEYS) (main f125edab)"
+   },
+   "pager": {
+    "text": "Hand ahead",
+    "source": "the fault label, tools/plates/library/hands/hand-palm-flat.mjs:20; equals the research label, docs/research/howto/shared/palm-flat.json faults[0] hand-ahead (D-LIB5-FAULTKEYS) (main f125edab) (pager labels, D-LIB7FIX-WORDS)"
+   }
+  }
+ }
+}

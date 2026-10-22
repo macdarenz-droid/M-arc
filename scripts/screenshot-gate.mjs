@@ -9450,6 +9450,26 @@ if (gate.runs('LIB-7'))
   } finally { await lib7.close(); }
 }
 
+// LIB-12: the hand views (palm-flat, cupped, front-rack, ball-contact) and the battle-rope pair (card LIB-12; plan 2.3;
+// tools/plates/library/hands/gate-lib12.mjs). Every LIB-12 drawn pair in 5 themes at 390, 360 and 340 px: no horizontal
+// scroll, SVG and text inside the plate (H4); each ink class's contrast >= golden B's minimum for it, measured in the
+// same job (H5); Right and Wrong halves differ; two renders give identical pixels. Red when no pair loads.
+if (gate.runs('LIB-12'))
+{
+  const tag = 'LIB-12';
+  const t0 = Date.now();
+  const { runLib12Gate } = await import('../tools/plates/library/hands/gate-lib12.mjs');
+  const lib12 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    const { problems, stats } = await runLib12Gate(lib12);
+    for (const p of problems) errors.push(`${tag}: ${p}`);
+    if (stats.pairs !== 17 * 5) errors.push(`${tag}: ${stats.pairs} pair renders, expected 85 (17 pairs x 5 themes; D-LIB12FIX-R8-GAPS)`);
+    if (!problems.length) console.log(`${tag}: ${stats.pairs / 5} hand pairs x 5 themes x 3 widths fit, contrast >= golden B, Right != Wrong, stable (${((Date.now() - t0) / 1000).toFixed(1)} s)`);
+  } finally {
+    await lib12.close();
+  }
+}
+
 await gate.done();
 await browser.close();
 stopping = true;
