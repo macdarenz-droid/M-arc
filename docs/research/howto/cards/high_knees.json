@@ -307,7 +307,7 @@
         "claim": "c1"
       },
       {
-        "label": "Thigh to hip height",
+        "label": "Thigh to hip",
         "what": "Knee up to hip height or a little above, opposite arm pumping.",
         "claim": [
           "c2",
@@ -315,7 +315,7 @@
         ]
       },
       {
-        "label": "Balls of the feet",
+        "label": "Balls of feet",
         "what": "Soft knees, springing from the ball of one foot to the other.",
         "claim": "c4"
       }
@@ -361,7 +361,10 @@
   "setup": [
     {
       "step": "Stand tall, feet about hip-width apart, arms at your sides.",
-      "claim": "c1"
+      "claim": [
+        "c1",
+        "c4"
+      ]
     },
     {
       "step": "Brace your core and shift onto the balls of your feet, knees soft.",
@@ -468,7 +471,7 @@
       "claim": "c5"
     },
     {
-      "risk": "Knee or ankle issues? Wear supportive shoes; use a gym floor or grass.",
+      "risk": "Wear supportive shoes. Knee or ankle issues? Ideally use a supportive gym floor or grass.",
       "claim": "c10"
     }
   ],
