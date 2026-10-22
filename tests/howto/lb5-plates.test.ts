@@ -23,6 +23,7 @@ const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
 const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl'];
+const F2_IDS = ['concentration_curl', 'wrist_curl'];
 // Held ids (DESIGN.md section 13; #290 6340022161, 6340075388): drawn as is, in no rows file and on no QA'd page.
 const HELD = ['wrist_curl', 'cross_body_hammer_curl', 'overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension'];
 /** The LB5 ids whose spec file exists (drawn or held). */
@@ -421,8 +422,15 @@ describe('LIB-15 A8: the drawable-fault ids (D-LIB15-F7)', { timeout: T }, () =>
     const qa = await import(/* @vite-ignore */ lib('lb5/qa.mjs'));
     for (const id of specced()) {
       expect(typeof S[id].pilot?.drawableFault === 'string', id).toBe(F7_IDS.includes(id));
-      expect(qa.EXPECTED(`lib_${id}`), id).toEqual(F7_IDS.includes(id) ? ['F5', 'F7'] : ['F5']);
+      expect(qa.EXPECTED(`lib_${id}`), id).toEqual(['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(F2_IDS.includes(id) ? ['F2'] : [])].sort());
     }
+  });
+  it('D-LIB15-F2: F2 is expected on exactly concentration_curl and wrist_curl (#290 6345185694, 6340022161); mutation: F2 raised on an id without the ruling (cable_curl) is red', async () => {
+    const qa = await import(/* @vite-ignore */ lib('lb5/qa.mjs'));
+    expect(qa.F2_IDS).toEqual(F2_IDS.map(i => `lib_${i}`));
+    const report = (id: string, raised: string[]) => ({ id, flags: Object.fromEntries(['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7'].map(f => [f, { raised: raised.includes(f), value: f === 'F5' ? 3.57 : 0 }])) });
+    expect(qa.flagProblems([report('lib_concentration_curl', ['F2', 'F5'])])).toEqual([]);
+    expect(qa.flagProblems([report('lib_cable_curl', ['F2', 'F5'])])).toEqual(['lib_cable_curl: flags F2,F5 != ruled F5']);
   });
 });
 
@@ -432,6 +440,12 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   // One-tell plates: a second tell is drawn only if a claim states it (#290 6343211054 item 2); per-id ruling asked on #290.
   const ONE_TELL = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cable_curl', 'bayesian_cable_curl', 'concentration_curl'];
+  it('each ONE_TELL id has its D-LIB10-SKULL1 record in DESIGN.md section 9: fault, claim ids, "no second sign stated" (#290 6345185694)', () => {
+    const sec = readFileSync('tools/plates/library/lb5/DESIGN.md', 'utf8').split('## 9.')[1]!.split('\n## ')[0]!;
+    const rec = (text: string) => ONE_TELL.filter(id => !new RegExp(`^\\| ${id}(?: \\(held\\))? \\| [^|]+ \\| [^|]*c\\d+[^|]* \\| no second sign stated[^|]* \\|$`, 'm').test(text));
+    expect(rec(sec)).toEqual([]);
+    expect(rec(sec.replace('| cable_curl | arms fully extended at the bottom, the biceps', '| cable_curl_x | arms fully extended at the bottom, the biceps'))).toEqual(['cable_curl']);
+  });
   it('each drawn plate has 2-3 tells (one on the ONE_TELL ids), the first carrying the proposed key; mutation: the tells swapped is red', () => {
     for (const id of specced()) { expect(keyProblems(S[id])).toEqual([]); expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(ONE_TELL.includes(id) ? 1 : 2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(ONE_TELL.includes(id) ? 1 : 3); }
     const s = S.preacher_curl;

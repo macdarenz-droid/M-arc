@@ -135,6 +135,8 @@ None. No family is proposed T here (the PUSHDOWN and CURL children are not on th
   drawn key (section 9), so F7 stays raised and needs the owner's named yes on the LB5 sheet.
 - **F1 on wrist_curl only if** D-LIB15-WRIST's zoom route is ruled after the reference-scale render (section 11).
 - **Before Do 6 b** every drawn id also shows `H6:no-card` and F7 'no card top fault'. Expected (Do 2).
+- **F2 on concentration_curl** (D-LIB15-F2, #290 6345185694): cover 0.16 at the reference scale, a seated hinged
+  figure; a named flag the sheet carries, no zoom, nothing tuned.
 - Others to watch [unverified until drawn]: F2 (coverage) on the cable plates, whose column adds ink (the 8's
   lat_pulldown sits inside the band; rope_triceps_pushdown 0.183), and on cross_body_hammer_curl's front view; F3
   (leader length) on the seated plates. Any other raised flag is posted with its value and range and ruled before
@@ -217,6 +219,17 @@ Fault→key (13 Q1(a)); each spec's first tell carries the key:
 Tells are 2-3 visible signs of the one fault (Q-D5-4; D-LIB10-SKULL1). The cards' `plate.tells` ("Upper arms stay by
 your ears", "Only your hand moves") are cue lines about good form, not still signs of the drawn fault, so the Mistake
 tells restate `plate.mistake.what` (as plank's, one_arm_dumbbell_row's and LB4's).
+
+One-tell plates (D-LIB10-SKULL1 per id, #290 6345185694): one tell where the card's claims state no second visible sign
+of the one fault. Claims read on the copied quotes files:
+
+| id | fault | claims read | record |
+|---|---|---|---|
+| cable_curl | arms fully extended at the bottom, the biceps losing tension | c13 | no second sign stated |
+| bayesian_cable_curl | the upper arm swinging forward so the shoulder helps | c5 (both quotes) | no second sign stated |
+| concentration_curl | the elbow wedged into the knee crease | c3 (both quotes), c4 (both quotes) | no second sign stated ("leverage" is a cause, not a visible sign) |
+| overhead_cable_triceps_extension (held) | the lower back arching | c9 (both quotes) | no second sign stated |
+| dumbbell_overhead_triceps_extension (held) | the back arching | c9, c12 ("Arching lower back"; its other three lines are other faults) | no second sign stated |
 
 ## 10. Facts plan (D-LIB8M-FACTS, 22's scope; D-LIB13-FACTS2) and unsourced numbers
 
@@ -361,7 +374,7 @@ Item fixes (6343211054 items 2-7):
 - preacher_curl: anchors at the armpit (pad top) and the arm-pad contact; faulty arm on top; the pad-gap mark; measure
   radius 30.
 - One tell per plate on overhead_cable_triceps_extension, dumbbell_overhead_triceps_extension, cable_curl, bayesian_cable_curl and concentration_curl: each
-  card names one fault. D-LIB10-SKULL1 wants a per-id ruling for a one-tell plate; asked on #290.
+  card names one fault; ruled per id (#290 6345185694), recorded in section 9.
 
 Flags (authoring QA, 4 rows): F5 only on preacher_curl, cable_curl and bayesian_cable_curl. concentration_curl raises
-F2: cover 0.16 < 0.191 at the reference scale (146.3 px/m; seated, hinged figure). Not tuned away; posted for a ruling.
+F2: cover 0.16 < 0.191 at the reference scale (146.3 px/m; seated, hinged figure), a named flag (D-LIB15-F2, section 6).
