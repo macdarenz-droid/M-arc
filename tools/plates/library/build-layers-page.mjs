@@ -134,6 +134,90 @@ export async function buildLayersPage(spec) {
     writeFileSync(hl, patchHowtoLayers(readFileSync(hl, 'utf8'), plan));
     writeFileSync(bp, patchBuildPage(readFileSync(bp, 'utf8'), spec));
     await runNode(mirror, 'artifact/build-page.mjs');
-    return readFileSync(join(mirror, 'artifact', 'technical-plates.html'));
+    const page = readFileSync(join(mirror, 'artifact', 'technical-plates.html'));
+    return pairRowsOf(spec).length ? Buffer.from(await withPairPanels(page.toString('utf8'), spec)) : page;   // LIB-7b
   } finally { cleanupMirror(mirror); }
+}
+
+// ---- LIB-7b (D-LIB7b-SCOPE (a), D-LIB9-HANDPAGE; hands/DESIGN.md §9): library hand blocks from the pair key --------
+// A spec row whose closeups entry names `pair` gets the app's shared hand close-up on its page: its hand zx block becomes
+// `await pairPanel(key)` byte for byte, each reference to the old block names the panel's id, and the page's style gains
+// the pair scope's rules (`.hx-hp-<key> …`) once per key, after the cards' close-up CSS. A post-build step on the built
+// page: no vendored text is patched. A spec that names no pair returns the built page untouched.
+/** The CSS comment label of a pair scope's close-up rules. */
+export const PAIR_LABEL = 'library/hands/pairs.mjs';
+/** [{ howtoId, pre, key }] for the spec rows that name a pair. */
+export function pairRowsOf(spec) {
+  return Object.entries(spec.closeups ?? {}).filter(([, c]) => c.pair !== undefined).map(([howtoId, c]) => {
+    if (typeof c.pair !== 'string' || !/^[a-z0-9-]+$/.test(c.pair)) throw new Error(`layers page: ${howtoId}: bad pair key ${c.pair}`);
+    return { howtoId, pre: (howtoId === 'dumbbell_lateral_raise' ? 'lateral_raise' : howtoId).replace(/_/g, '-'), key: c.pair };
+  });
+}
+/** The whole element starting at `start` (a `<div`), by balanced div tags (gen/hands.mjs divAt). */
+export function divAt(html, start) {
+  const re = /<div\b|<\/div>/g;
+  re.lastIndex = start;
+  let d = 0;
+  for (let m; (m = re.exec(html));) { d += m[0] === '</div>' ? -1 : 1; if (!d) return html.slice(start, m.index + 6); }
+  throw new Error(`layers page: unclosed div at ${start}`);
+}
+/** golden B's rendererCss (artifact/howto-layers.mjs:69-96): a close-up sheet's CSS without the shared engine blocks,
+ *  the pager's tab state as cleanZoom leaves it, scoped to `scope` (page-level rules and @font-face dropped). */
+export async function scopedSheetCss(css, scope) {
+  const [{ allThemesCss }, { PLATE_CSS }, { HAND_CSS }, { FEEL_CSS }] = await Promise.all([import('../layers/engine/themes.mjs'),
+    import('../layers/engine/index.mjs'), import('../layers/engine/hand.mjs'), import('../layers/engine/feelmap.mjs')]);
+  const shared = [readFileSync(join(HERE, '../layers/engine/tokens.css'), 'utf8'), allThemesCss(), PLATE_CSS, HAND_CSS, FEEL_CSS];
+  for (const s of shared) css = css.split(s).join('');
+  return scopeCss(css.split('.pager-btn[aria-selected="true"]').join('.pager-btn[aria-pressed="true"]'), scope);
+}
+const splitTop = s => { const out = []; let d = 0, cur = ''; for (const ch of s) { if (ch === '(') d++; if (ch === ')') d--; if (ch === ',' && !d) { out.push(cur); cur = ''; } else cur += ch; } out.push(cur); return out; };
+function scopeCss(css, scope) {
+  css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  let out = '', i = 0;
+  while (i < css.length) {
+    const open = css.indexOf('{', i);
+    if (open < 0) break;
+    const head = css.slice(i, open).trim();
+    let depth = 1, j = open + 1;
+    while (depth && j < css.length) { if (css[j] === '{') depth++; else if (css[j] === '}') depth--; j++; }
+    const body = css.slice(open + 1, j - 1);
+    if (/^@(media|supports)/.test(head)) out += `${head}{${scopeCss(body, scope)}}`;
+    else if (/^@keyframes/.test(head)) out += `${head}{${body}}`;
+    else if (!head.startsWith('@')) {
+      const sels = splitTop(head).map(s => s.trim()).filter(s => s && !/^(html|body|:root)\b/.test(s));
+      if (sels.length) out += `${sels.map(s => `${scope} ${s}`).join(',')}{${body.trim()}}\n`;
+    }
+    i = j;
+  }
+  return out;
+}
+/** The pair scope's rules: the sheet CSS the pair pages are drawn and approved in (hands/page.mjs CSS), scoped. */
+export const pairCss = async key => scopedSheetCss((await import('./hands/page.mjs')).CSS, `.hx-hp-${key}`);
+/** golden B's HOWTO_CSS text (build-page.mjs), which the page's style holds right after the cards' close-up CSS. */
+const howtoCssText = () => {
+  const src = readFileSync(join(HERE, '../layers/artifact/build-page.mjs'), 'utf8'), a = src.indexOf('const HOWTO_CSS = `'), b = src.indexOf('\n`;', a);
+  if (a < 0 || b < 0) throw new Error('layers page: no HOWTO_CSS in build-page.mjs');
+  return src.slice(a + 'const HOWTO_CSS = `'.length, b + 1);
+};
+const once = (html, s, what) => { const a = html.indexOf(s); if (a < 0 || html.indexOf(s, a + 1) >= 0) throw new Error(`layers page: ${what}: ${a < 0 ? 'not found' : 'found twice'}`); return a; };
+const idsIn = html => [...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]);
+const refsIn = html => [...html.matchAll(/(?:aria-(?:labelledby|describedby|controls)|for)="([^"]+)"|href="#([^"]+)"|url\(['"]?#([^)'"]+)/g)].flatMap(m => (m[1] ? m[1].split(/\s+/) : [m[2] ?? m[3]]));
+/** The built page with each pair row's hand block replaced by its pair panel. */
+export async function withPairPanels(html, spec, panelOf) {
+  panelOf ??= (await import('./hands/pairs.mjs')).pairPanel;
+  const rows = pairRowsOf(spec), done = new Set();
+  for (const { howtoId, pre, key } of rows) {
+    const old = divAt(html, once(html, `<div class="zx" id="${pre}-zoom-hand" data-zoom="hand"`, `${howtoId}: hand close-up`));
+    const panel = await panelOf(key), zid = `hp-${key}-zoom-hand`;
+    if (!panel.startsWith(`<div class="zx" id="${zid}" data-zoom="hand"`) || divAt(panel, 0) !== panel) throw new Error(`layers page: ${howtoId}: pairPanel(${key}) is not one zx panel`);
+    html = html.replace(old, () => panel).split(`aria-controls="${pre}-zoom-hand"`).join(`aria-controls="${zid}"`);
+    const gone = new Set(idsIn(old)), left = refsIn(html).filter(r => gone.has(r) && !idsIn(panel).includes(r));
+    if (left.length || html.includes(`${pre}-zoom-hand`)) throw new Error(`layers page: ${howtoId}: references to the old hand block left: ${[...new Set(left)]}`);
+    done.add(key);
+  }
+  const at = once(html, howtoCssText(), 'HOWTO_CSS') - 1;
+  if (html[at] !== '\n') throw new Error('layers page: HOWTO_CSS does not follow the close-up CSS');
+  let css = '';
+  for (const k of done) css += `\n/* close-ups: ${PAIR_LABEL} hp-${k} */\n${await pairCss(k)}`;
+  return html.slice(0, at) + css + html.slice(at);
 }
