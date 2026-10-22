@@ -77,7 +77,8 @@ or forked.
   c3) and the bar the open hands rest on (c3, c6). The arm moves start → end (overhead → the belt, c3, c4).
   **Between the end pose and the Mistake** the arm stays at the belt (the card's fault is the back, c8), so no part
   moves; the back pad, belt and foot bar are static. The arm is built from `poly` outlines in any case.
-  As drawn (bulk): 14 items. Static: floor beam, upright behind the back pad, top beam over the shoulder, the drop to
+  As drawn (bulk): 14 items, 16 after the panel fix (a seat post down to the floor beam and a back pad bracket to
+  the upright, #297 6353020731). Static: floor beam, upright behind the back pad, top beam over the shoulder, the drop to
   the pivot hub, the foot bar post, seat, back pad (`PAD_LEN` 1.0 m, so the head rests on it, c7), the belt (a `poly`
   strap across the thighs `BELT_T` along them), the foot bar end-on, the pivot hub (vendor `pulley`). Moving (`part:
   'arm'`): the arm tube from the hub to the elbow pad, the elbow pad (a slab along the upper arm, its face through the
@@ -405,3 +406,8 @@ DRAWING-GUIDE section 2's handle grip as a trace point; Q10 F2 0.161 a named fla
   the Trace, the equipment and the phantom, outside the figures, and no two hit boxes overlap (PQ-H4).
 - QA (lb6/qa.mjs): all 10 hard checks pass; flags F5 only (the ruled set); leaderMax 55, Trace 111.8 px, deviation
   15.4 px.
+- Panel fix (#297 6353020731, R2 "the seat and back pad float"): a centre seat post (a 6 cm frame tube, the width of
+  the 8's chest press seat post) from the cushion's underside to the floor beam, and a level bracket from the upright
+  to the back pad's back face at the middle of its two contact points. The figure is unchanged. Test: the seat pad
+  reaches the floor beam without the back pad, and the back pad without the seat pad; red with the post or the
+  bracket removed. Page 2668c838…e84e; QA unchanged (all 10 pass, F5 only).

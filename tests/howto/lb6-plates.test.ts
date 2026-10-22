@@ -477,6 +477,33 @@ describe('LIB-16 A2: pulloverMachine on machine_pullover, per drawn pose (13.1)'
     for (const k of ['backMid', 'backUpper']) expect(off(l[k]), k).toBeGreaterThan(0.02);
     expect(lmOf(S[ID], 'mistake').head[2] - lmOf(S[ID], 'end').head[2]).toBeGreaterThan(0.04);
   });
+  /** Panel fix (#297 6353020731, R2): the seat cushion and the back pad each join the frame through drawn parts. Two
+   *  static shapes join when their outlines come within 1 px or one holds a point of the other; the seat pad (the seat
+   *  item's first shape) must reach the floor beam (the first static shape, the composer's first item) without passing through the back pad, and
+   *  the back pad without passing through the seat pad, in the end pose (the two pads touch, so neither holds the other up). */
+  const inPoly = (P: number[][], q: number[]) => { let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const [xi, yi] = P[i]!, [xj, yj] = P[j]!; if ((yi! > q[1]!) !== (yj! > q[1]!) && q[0]! < (xj! - xi!) * (q[1]! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
+  const joined = (A: number[][], B: number[][]) => inPoly(A, B[0]!) || inPoly(B, A[0]!)
+    || A.some(p => segs([...B, B[0]!]).some(([a, b]) => segD(p, a!, b!) <= 1)) || B.some(p => segs([...A, A[0]!]).some(([a, b]) => segD(p, a!, b!) <= 1));
+  const floating = (spec: any) => {
+    const shapes = [...drawnItems(spec, 'end').entries()].filter(([, v]) => v.part !== 'arm' && v.type !== 'line' && v.type !== 'floor')
+      .map(([k, v]) => ({ k, type: v.type, pts: (v.poly ?? xy(v.d)) as number[][] })).filter(x => x.pts.length > 2);
+    const reach = (skip: number) => { const r = new Set([0]); let grew = true;
+      while (grew) { grew = false; shapes.forEach((x, i) => { if (i !== skip && !r.has(i) && [...r].some(j => joined(shapes[j]!.pts, x.pts))) { r.add(i); grew = true; } }); }
+      return r; };
+    const seatPad = shapes.findIndex(x => x.k === `eq${entryOf(spec, 'seat')}.seat.0`), pad = shapes.findIndex(x => x.k === `eq${entryOf(spec, 'backPad')}.backPad.0`);
+    if (seatPad < 0 || pad < 0) return ['no seat or back pad'];
+    return [...(reach(pad).has(seatPad) ? [] : ['seat']), ...(reach(seatPad).has(pad) ? [] : ['back pad'])];
+  };
+  const entryOf = (s: any, type: string) => itemsIn(s, 'end').items.find((it: any) => it.type === type && (type !== 'backPad' || it.t === pullEq.PULLOVER_MACHINE.padT)).entry;
+  it('the seat stands on its post and the back pad is bracketed to the upright: both join the frame', () => {
+    expect(floating(S[ID])).toEqual([]);
+  });
+  it('mutations: the seat without its post, and the frame without the back-pad bracket, are red', () => {
+    const s = S[ID], i = entryOf(s, 'seat');
+    expect(floating({ ...s, equipment: s.equipment.filter((_: any, k: number) => k !== i + 1) })).toEqual(['seat']);
+    const noBracket = { ...s, equipment: s.equipment.filter((_: any, k: number) => k !== i + 2) };
+    expect(floating(noBracket)).toEqual(['back pad']);
+  });
 });
 
 describe('LIB-16 hidden start parts: dashed phantoms in the end pose (slice look item 2; DRAWING-GUIDE section 4)', { timeout: T }, () => {
