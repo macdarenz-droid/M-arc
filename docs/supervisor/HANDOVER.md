@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-18 ~08:40 UTC · main `b99a9e25` (train 25; train 26 in CI) · **8.0n new supervisor running (update 08:40)** · by supervisor session `session_01HtNEBU3oDR8NyHKK3uCwUi` (new account). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-22 · main `07ad7f1c` (train 32) · **8.0o TAKEOVER: the owner moves the work to his other account; all lanes paused and WAITING since 10-19 22:58 UTC (usage pause)** · by supervisor session `session_01HtNEBU3oDR8NyHKK3uCwUi` (the account being left). Read 8.0o first.
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -808,6 +808,142 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0o TAKEOVER 10-22: the owner moves the work to his other account (read first; supersedes 8.0n and section 10 where they differ)
+
+**Written by** the old supervisor, session_01HtNEBU3oDR8NyHKK3uCwUi, on the account being left, on 2026-10-22. Nothing has been built since the usage pause of 10-19 22:58 UTC.
+
+#### A. Situation in one paragraph
+On 10-19 the owner ruled: pause at 80 % of the weekly usage limit, and let each agent finish its current task first. The pause started at 0.79 and ended at 0.82, and every lane posted WAITING. On 10-22 the owner said: "Put all info and instructions to new agent in my other claude account. I will continue the work there."
+
+The old account is now fully stopped:
+- its hourly tick `trig_019LBJDA2jX95HgcWEgQPMJ6` is **disabled**;
+- its resume one-shot `trig_01VB7ivEtA6N8YHw9BkoR6ez` is **deleted**;
+- its worker sessions are all idle, with their work pushed.
+
+**The new account cannot message or archive those old sessions.** Never assume one of them is running, and never wait for one. Every lane restarts with a new session on the new account, on the same branch (C below). If an old session ever wakes and pushes, the new builder's `git pull --no-rebase` before every push catches it, and the tick's head check flags it.
+
+#### B. First hour on the new account (in order)
+1. **Session.** The supervisor runs in **auto mode** on an environment with GitHub, the agent proxy's GitHub auth for `curl`, Chromium at `/opt/pw-browsers/chromium`, and Node/npm (10.1). Models allowed: `claude-opus-5-5` for judgement, every reviewer and every non-mechanical card; `claude-sonnet-5` only for fully spelled-out steps. Never Haiku or Fable, so the built-in Explore helper is out; a search helper must name `sonnet`. **Relay is skipped** (owner: "No need to update relay for now"); owed Relay lines go in 8.5.
+2. **Read**, in section 0's order:
+   - this file (this copy is on `claude/sup-handover-1445` until a train merges it);
+   - `AGENTS.md` from `origin/main`;
+   - `.claude/skills/supervisor/*`;
+   - `docs/supervisor/PROMPTS.md` (the exact message templates);
+   - **`docs/supervisor/verify/PANELS.md`** (new: how to run the critic panels, the CARD FIELDS verifies and the usage meter, with every prompt template);
+   - the cards in `docs/supervisor/verify/` on `claude/sup-lib4-cards` (@ `f371edbc`), with `lib4-cards.md` sections 24-29 for the panel records;
+   - the library plan `docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md` on `claude/howto-options` (@ `b41ac833`).
+3. **Usage.** The new account has its own weekly limit. Read the meter as PANELS.md section 9 says, after a few turns on your own session. The owner's rule from 10-19 stands each week unless he changes it: **pause at 80 %, and let every agent finish its current step first**. Check every tick, and every 20 min from 0.75.
+4. **Hourly loop.** Create it with `create_trigger`:
+   - `name` `M/ARC supervisor tick`;
+   - `cron_expression` `57 * * * *`;
+   - no `persistent_session_id`;
+   - `initiation` `human_request`;
+   - `prompt` = the text in H below.
+
+   Then check it with `get_trigger`.
+5. **Watchers.** Use the repo copies in `docs/supervisor/scripts/` (heads.sh has its branch list updated today). Run `monitor.sh` + `heads.sh` under one Monitor with `SINCE=2026-10-19T22:50:00Z`, re-armed every 30 min. `ci-watch.sh` (with `HT10_LEGS=4 GATE_LEGS=6`) runs on every train head; `apk-watch.sh` runs after an app-changing merge.
+6. **Restart the lanes** in the order of D, using the table in C, and the templates in PROMPTS.md: P1 builder (the replacement variant: `source_revision` **and** `outcome_branch` set to the card's branch) and P2 reviewer. **Count the active LIB builders in every start or resume message (at most 4).**
+7. **Tell the owner** in one short message: the takeover is done, what runs now, and the usage reading.
+
+#### C. Lanes (heads checked 10-22 via the GitHub API; re-check live)
+main = `07ad7f1c` (train 32). Research head: `claude/libht-research` @ `38d5f9c6` (LB3 and pilot B research merged).
+
+| PR | card (file on claude/sup-lib4-cards) | branch @ head | state | first action on the new account |
+|---|---|---|---|---|
+| #181 | LIB-6 + PM (`lib-6-pm-card.md`) | claude/lib-6-closeup-renderer @ `56d3bbbf` | **READY** (CI 17/17; S5-L and PM-A8 green; HANDOFF in the PR body) | **Start a fresh Opus reviewer (P2). This is plan slot 2, the next train.** |
+| #193 | LIB-7 + FIX (`lib-7-fix-card.md`) | claude/lib-7-radial-pairs @ `9c70344b` (base: #181's branch) | PASS (delta PASS @ 9c70344), frozen | It trains after #181. It must merge main/#181 first: a pre-train catch-up push with a delta review. |
+| — | LIB-7b (`lib-7b-card.md`) | claude/lib-7b-hand-blocks (new) | not started | Start it after #193 is on main ("LIB-7b start", with D-LIB7b-SCOPE, SLOT and PAGEDUP quoted). It gates #109's PIN GO. |
+| #191 | LIB-12 + FIX (`lib-12-fix-card.md`) | claude/lib-12-hand-views @ `ea916e9f` | PASS (0/0/0/4), frozen | Before its train, post "LIB-12-FIX train next". The builder then makes the pre-train push: main merged, Low 2 (test titles), **Low 3 (R8-DRIFT exact signed and length compare, required)** and Low 4 (6278835457). A delta review by a new reviewer follows. |
+| #109 | LIB-8M pilot A (`lib-8-merge-card.md`, `lib-8-fix-card.md`) | claude/lib-8-pilot-a @ `ff7c5c4f` | WAITING for PILOT A PIN GO. The owner said "Pilot a ok" (10-19 12:10). F-LB3-1 is in, and its diff check PASSED. | PIN GO needs LIB-7b on main, LIB-12 on main and merged in, and **the owner's changed-ids sheet sent first**. On that sheet, goblet_squat and front_squat lose their hand close-ups (GAPS) and mountain_climbers' palm-flat is redrawn (D-LIB12FIX-SHIP (2)). |
+| — | LIB-5v | — | per plan | It is plan slot 7, after #109. Check the plan for its card. |
+| #271 | LIB-7c (`lib-7c-card.md`) | claude/lib-7c-lb1-hands @ `88ad31bd` (base: #193's branch) | WAITING (panel VALID, lib4-cards 25; words look PASS) | It needs a review when its slot comes; re-base it after #193 merges. |
+| #245 | LIB-9a LB1 (`lib-9a-card.md`) | claude/lib-9-lb1 @ `9e5d9666` | WAITING (MAIN565 FIXED accepted; HLP row dropped to LIB-ZOOM) | It is slot 8. It needs a main catch-up and a review at its turn. |
+| #279 | LIB-ZOOM (`lib-zoom-card.md`) | claude/lib-zoom @ `754176a0` (built on #245 9e5d966 and main) | PASS (delta PASS @ 754176a), frozen | It merges right after #245. |
+| #265 | LIB-10 LB2 (`lib-10-card.md`) | claude/lib-10-lb2 @ `2dcbac15` | WAITING (panel VALID, lib4-cards 24) | Slot 9. It needs a main catch-up and a review. |
+| #278 | LIB-11 pilot B (`lib-11-card.md`) | claude/lib-11-pilot-b @ `d3b231d6` | WAITING. **All 4 drawn plates are approved** @ d3b231d (lib4-cards 28); crunch is held. The E-R5 renders are reproduced and scored as advisory. | Next comes Do 10, the owner sheet, once #109 and #191 are on main. Then 'PILOT B PIN GO'. It is slot 10. The sheet sections are in 6276882489, 6277782675 and the hands ruling below. |
+| #273 | HT-11 (`ht-11-card.md`) | claude/ht-11-delta @ `e0722148` | PASS, WAITING | Slot 11, before LIB-13 merges. It needs a main catch-up and regenerate. |
+| #274 | LIB-13 LB3 (`lib-13-card.md`) | claude/lib-13-lb3 @ `423acc18` | WAITING. **5 of 7 approved** @ 423acc1 (landmine, DRDL, conventional, sumo, back_extension); t_bar_row is held. | **D-LIB13-PANEL2:** one more focused fix round on pendlay_row (the bar ring's centre came off the plate) and one_arm_dumbbell_row (draw the whole red working arm from the shoulder; R1 is card-true under D-LIB13-ONEARM). Then a focused recheck panel (PANELS.md). Still failing means HELD. Slot 13. |
+| #190 | engine spike | claude/lib-engine-spike @ `82ae2d40` | do not merge | It is the reference for E-R5 only. |
+| #3, #221, #88 | watch lane | — | **hands off**; never merge #3 | — |
+| #1, #92, #94, #144, #149, #158, #188, #192, #197, #209, #259 | docs, parked or old | — | not in the lanes | Gym Finder #158 is PARKED. #259 (research LP) is stale: check it before using it. |
+
+#### D. Merge order (owner checklist; builds may run ahead, merges may not)
+1. LIB-5 Do 9: **done** (train 32).
+2. #181.
+3. #193.
+4. LIB-7b.
+5. #191.
+6. #109 (pin).
+7. LIB-5v.
+8. #271.
+9. #245.
+10. #279.
+11. #265.
+12. #278 (pin).
+13. #273.
+14. #274.
+
+Each one goes through a merge train (6.8): `claude/sup-merge-train-<N>` from main, `--no-ff` merges of the reviewed heads, local typecheck and vitest, a draft PR, `ci-watch.sh`, ready, then `merge_pull_request` with `expectedHeadSha`. The next train is **33**. Send the APK only when the app visibly changes: train 32 changed only code that nothing ships yet, so no APK was sent, following train 22's precedent. The last APK sent was train 24's.
+
+#### E. Rulings made 10-19 that the next steps depend on
+**Hand close-ups:**
+- **D-LIB12FIX-R8-GAPS:** palm-flat and battle-rope are approved. wall_ball, front_squat and goblet_squat moved to GAPS. Their words files were removed, which is accepted; their view code stays.
+- **D-LIB12FIX-R8:** R8-DRIFT pins the engine values copied in `hands/lib12-hand.mjs`.
+
+**LB3:**
+- **D-LIB13-ONEARM:** the one-arm row's support arm stays bent. The card says hand under the shoulder and back parallel, and on the standard body that needs a bent elbow. The owner sheet carries a line about it.
+- **D-LIB13-PANEL2:** see the #274 row in C.
+- One_arm's end-pose support contacts are accepted. The sumo Q2 range test is 5-10°.
+- pendlay's knee bound is now relational from c1; this is accepted.
+
+**Pilot B:**
+- **D-LIB11-FACTS2:** contact facts are required.
+- **D-LIB11-SACRUM:** the back-pad lower end is `buttock`.
+- **D-LIB11-PANEL1:** one fix round, then the recheck passed.
+- **E-R5 SCOPE RULED:** plan 2.4 and row 20 propose the five engine fields (`root.roll`, `trunk.yaw`, `trunk.lat`, `camera.pitch`, the volume trunk). The owner gives **one** go/no-go on four renders: side_plank, russian_twist, dumbbell_fly at pitch 45, and the rear-delt fly at pitch 15 with the volume trunk. russian_twist's Mistake needs a sixth field, `root.yaw`.
+
+**Other:**
+- **VITEST-RPC** is on main (train 31): the vitest worker RPC timeouts are fixed.
+- An **HT-8 Paper `locator.waitFor` timeout** happened once on #274's gate-shard (3/4, UTC) and passed on its one re-run. If it recurs on any head, open a GATE-FLAKE card. Never re-run to green without a root cause.
+
+#### F. Owner items (send each as one short, plain message when its time comes)
+1. **The pilot A changed-ids sheet, before PILOT A PIN GO.** It shows goblet_squat and front_squat without close-ups (the R8 scores: cupped C5 [2,4,3]; front-rack C1, C3, C5 and C7 below the bar) and mountain_climbers' new palm-flat close-up (R8 PASS).
+2. **The pilot B sheet (LIB-11 Do 10).** It holds:
+   - the 4 plates with critic scores and the smith and legCurlMachine rigs;
+   - the **E-R5 go/no-go**, with the advisory scores beside each render;
+   - the hand kinds (palm-flat, battle-rope; the others are "no drawing yet");
+   - **battle_ropes' camera (i), (ii) or (iii)**.
+3. **The LB3 sheet**, once LB3 is approved. It holds the one_arm bent-arm line, a sumo line (a side view cannot show the wide stance), pendlay's F2 as a named flag, landmine's 228 mm plate, and the one_arm F7 drawable-fault note, which needs his named yes.
+
+#### G. Follow-ups (not blocking)
+- **F-LIB12-R8B:** redraw ball-contact, front-rack and cupped-goblet to the R8 bar, starting from the #191 findings (6273389908, 6274835211).
+- **F-LB3-7:** research the one-arm row's support-arm form.
+- **F-PB-1:** stale research notes (smith `notes[0]`, seated_leg_curl `notes[3]`).
+- **F-LB3-1..6** and **F-HT11-1, -2**: see their records.
+- **Golden-B follow-ups 18-21** (PANELS.md 1.3), done when golden B is next unlocked.
+
+#### H. Hourly tick prompt for the new account (the old prompt, with the old session id removed)
+```text
+Hourly tick. You are the only M/ARC supervisor (this session). Run the tick in .claude/skills/supervisor/tick.md, with docs/supervisor/HANDOVER.md (newest copy per its section 0; section 8 is the live state; read 8.0o first) and AGENTS.md from origin/main. Work from live state: git ls-remote heads, the latest comment on every open lane PR, get_session for every builder/reviewer you started, CI on heads.
+
+OWNER CHAT: write to the owner only for (a) a new APK (link, what changed, what to check on the phone), (b) a problem no agent can solve, (c) a choice only he can make, (d) the finish-line reminder. Otherwise the whole reply is exactly ".". Builders and reviewers never write to him.
+USAGE (owner 10-19): pause all work at 80% of the weekly limit; let every agent finish its current step first, then post WAITING. Read the meter each tick (docs/supervisor/verify/PANELS.md section 9).
+RELAY: "No need to update relay for now." Skip Relay upkeep; keep owed Relay lines in HANDOVER 8.5.
+FOCUS: "continue ur task on working the library drawings, if u can make it faster thats good".
+PARKED: Gym Finder (#158). The iPhone release starts only when all 153 library drawings are merged. No Play closed-test upload before the public release.
+MODELS: claude-opus-5-5 for judgement, every reviewer and any non-mechanical card; claude-sonnet-5 only for fully spelled-out steps; never Haiku or Fable. Sessions in auto mode.
+LANES: at most 4 active LIB builders (D-LIB-LANE-ACTIVE); research sessions hold no LIB slot; count active builders in every start or resume message. Builders run long jobs detached and keep a send_later check-in every 20 minutes (idle containers are reclaimed).
+Each tick: re-arm the PR/branch Monitor if it expired (docs/supervisor/scripts/monitor.sh + heads.sh); answer builder questions with rulings on the PR and by message; one fresh Opus reviewer per READY; run the calibrated critic panels and CARD FIELDS verifies yourself per docs/supervisor/verify/PANELS.md; stalled builder → one message, then replace from its HANDOFF; merge only via merge trains (HANDOVER 6.8: review PASS, all checks green on a train head built on latest main, plan order); APK to the owner after an app-visible merge once the fingerprint step passes; HANDOVER section 8 update in every train or every 3 h.
+NEVER: commit secrets; touch signing, EXPECTED_SHA256 or the keystore; push to main or claude/escobar-v2-implementation-eidx64; rewrite history on a branch you don't own; merge escobar-worker/** without the owner's per-PR yes; merge the watch agent's #3; loosen, skip or delete a test or guard; re-run CI to green without a root cause; work around a permission or classifier denial.
+```
+
+#### I. Lessons from 10-19 (also add them to section 9 at the next edit)
+- **Idle containers are reclaimed, and background jobs die with them.** Every builder, reviewer and helper that runs a job over about 15 minutes keeps a `send_later` check-in every 20 minutes. A run lost to a reclaim is never evidence; re-run it whole.
+- **The supervisor does a small fix itself** when the merge queue waits on it. Example: #270's two missing test mutations, pushed as a test-only supervisor commit `d2d3be0`, then a delta review by the same reviewer. Keep it to small, test-only changes, and say so on the PR.
+- **Critic panels cost about 0.7 M tokens each.** Run them only at READY or FIX points, never speculatively. Scored helpers (panel builders, verifiers, critics) are Opus subagents in the supervisor session, not sessions.
+- **Card truth beats a critic's technique assumption** (D-LIB13-ONEARM). Never tune a drawing off its card to please a critic. Rule it, give the owner a sheet line, and open a research follow-up.
+- **Log times from `date -u`, never from memory.** The 10-19 logs needed several fixes.
 
 ### 8.0n 10-18 ~05:35 UTC: new supervisor running (read first; supersedes 8.0m where they differ)
 
