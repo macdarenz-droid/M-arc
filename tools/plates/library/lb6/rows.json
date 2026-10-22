@@ -3,6 +3,15 @@
  "batch": "LB6",
  "censusRef": "4a9fd86",
  "rows": {
+  "lib_machine_pullover": {
+   "src": "library/specs/machine_pullover.mjs",
+   "slug": "machine-pullover",
+   "prefix": "machine-pullover",
+   "chromeId": "machine-pullover",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
   "lib_machine_crunch": {
    "src": "library/specs/machine_crunch.mjs",
    "slug": "machine-crunch",

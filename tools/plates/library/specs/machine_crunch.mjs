@@ -106,6 +106,31 @@ export const MISTAKE_ARM = (() => {
   });
   return runs.map(r => ({ kind: 'dashed', pts: r.map(p => [0, -p[1], p[0]]) }));
 })();
+// Hidden start parts (slice look #297 6346404542 item 2; DRAWING-GUIDE section 4): the start fist and its handle grip
+// sit under the end head, so they are redrawn in the end pose as a dashed phantom outline (the 8's machine_chest_press
+// startArmPhantom method, copied): the outer boundary of the engine's start fist and of the chestPress grip bar
+// (14 cm, 1.6 cm half-thickness, equipment.mjs:248), in metres, projected by the `line` primitive.
+export const START_PHANTOM = (() => {
+  const b = { height: H }, sk = fk(resolve(normPose(start, b), b).q, b);
+  const cam = { view: 'side', facing: 'right', near: 'r', pxm: 1, P: w => [w[2], -w[1]] };
+  const fist = bodyShapes(sk, cam).find(sh => sh.key === 'fist.r').poly;
+  const g = handleAt(0), hg = 0.07, r = 0.016;
+  const grip = [[g[2] - r, -(g[1] + hg)], [g[2] + r, -(g[1] + hg)], [g[2] + r, -(g[1] - hg)], [g[2] - r, -(g[1] - hg)]];
+  const polys = [fist, grip], runs = [];
+  polys.forEach((poly, k) => {
+    let run = [];
+    const flush = () => { if (run.length > 1) runs.push(run); run = []; };
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], q = poly[(i + 1) % poly.length], n = Math.max(1, Math.ceil(Math.hypot(q[0] - a[0], q[1] - a[1]) / 0.002));
+      for (let j = 0; j < n; j++) {
+        const pt = [a[0] + (q[0] - a[0]) * j / n, a[1] + (q[1] - a[1]) * j / n];
+        if (polys.some((o, m) => m !== k && insidePoly(pt, o))) flush(); else run.push(pt);
+      }
+    }
+    flush();
+  });
+  return runs.map(rr => ({ type: 'line', pts: rr.map(p => [0, -p[1], p[0]]), cls: 'eq-line m-line', z: 'front' }));
+})();
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] }, PAD = { point: padU, normal: padN };
 
 export const MC = { pivot: PIVOT, handleAt, pad: PAD, shin: SHIN, frameZ: FRAME_Z, curl: CURL };
@@ -116,6 +141,7 @@ export default {
   equipment: [
     { type: 'floor', from: FRAME_Z - FLOOR_BACK, to: FEET_Z + FLOOR_FRONT },
     ...perItem(machine, CRUNCH_MACHINE_ITEMS),
+    (lm, ctx) => (ctx.pose === 'end' ? START_PHANTOM : null),   // the hidden start fist and grip, dashed
   ],
   checks: [
     { landmark: 'seat', plane: { point: SEAT, normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },          // pelvis on the seat

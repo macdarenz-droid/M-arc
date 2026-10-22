@@ -26,12 +26,12 @@ const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const PX = 146.29;
 
-let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, crunchEq: any;
+let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, crunchEq: any, pullEq: any;
 const M: Record<string, any> = {}, S: Record<string, any> = {};
 beforeAll(async () => {
-  [reg, eng, body, qaNode, qaEng, qaIdx, plate, closure, crunchEq] = await Promise.all([
+  [reg, eng, body, qaNode, qaEng, qaIdx, plate, closure, crunchEq, pullEq] = await Promise.all([
     'registry.mjs', 'engine.mjs', '../vendor/engine/body.mjs', 'qa/node.mjs', 'qa/engine.mjs', 'qa/index.mjs', '../vendor/engine/plate.mjs',
-    'inputs-closure.mjs', 'eq/crunchMachine.mjs',
+    'inputs-closure.mjs', 'eq/crunchMachine.mjs', 'eq/pulloverMachine.mjs',
   ].map(f => import(/* @vite-ignore */ lib(f))));
   for (const id of LB6.filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`))) { M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); S[id] = M[id].default; }
 }, T);
@@ -85,7 +85,7 @@ describe('LIB-16 A5: lb6/rows.json holds exactly the drawn, non-held LB6 H ids, 
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id exactly once in the raw text, nothing else, every mode H (D-LIB16-B1)', () => {
-    expect(want()).toEqual(['lib_machine_crunch']);
+    expect(want()).toEqual(['lib_machine_pullover', 'lib_machine_crunch']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('none of the 13 LB6 ids not in this card is in any lb6/ file as a row', () => {
@@ -296,19 +296,21 @@ describe('LIB-16 A2: crunchMachine on machine_crunch, per drawn pose (13.1)', { 
     expect(staticProblems(S[ID])).toEqual([]);
   });
   it('the movement arm (chestPress) moves start → end; between the end and the Mistake no part moves (DESIGN.md section 3), and every changed part would carry a poly', () => {
-    expect(moving(S[ID], 'start', 'end').every(k => /chestPress/.test(k))).toBe(true);
+    // the arm moves; the start fist and grip phantom (a dashed line set drawn in the end pose only) is its own entry
+    const ph = S[ID].equipment.length - 1, mv = moving(S[ID], 'start', 'end').filter(k => !k.startsWith(`eq${ph}.`));
+    expect(mv.every(k => /chestPress/.test(k))).toBe(true);
     expect(moving(S[ID], 'start', 'end').length).toBeGreaterThan(0);
     expect(moving(S[ID], 'end', 'mistake')).toEqual([]);
     expect(mistakeDrops(S[ID])).toEqual([]);
   });
   it('mutation: the back pad moved 2 cm in the Mistake is red', () => {
-    const s = S[ID], i = s.equipment.length - 3;   // perItem entry 6 of 9: the back pad
+    const s = S[ID], i = s.equipment.findIndex((e: any, k: number) => itemsIn(s, 'end').items.some((it: any) => it.entry === k && it.type === 'backPad' && it.t === crunchEq.CRUNCH_MACHINE.padT));
     expect(itemsIn(s, 'end').items.find((it: any) => it.entry === i).type).toBe('backPad');
     const moved = { ...s, equipment: s.equipment.map((e: any, k: number) => (k === i ? (lm: any, ctx: any) => { const it = e(lm, ctx); return ctx.pose === 'mistake' ? { ...it, surface: it.surface.map((p: number[]) => [p[0]!, p[1]!, p[2]! - 0.02]) } : it; } : e)) };
     expect(staticProblems(moved)).toEqual(['mistake: eq' + i + '.backPad.0 moved 2.9 px']);
   });
   it('mutation: the movement arm moved in the Mistake and drawn with `line` instead of a poly part is missing from the Mistake view (red)', () => {
-    const s = S[ID], i = s.equipment.length - 1;
+    const s = S[ID], i = s.equipment.findIndex((e: any, k: number) => itemsIn(s, 'end').items.some((it: any) => it.entry === k && it.type === 'chestPress'));
     const lineArm = { ...s, equipment: s.equipment.map((e: any, k: number) => (k === i ? (lm: any, ctx: any) => { const it = e(lm, ctx), h = ctx.pose === 'mistake' ? [0, it.handle[1] - 0.05, it.handle[2]] : it.handle; return { type: 'line', pts: [it.pivot, h], part: 'arm' }; } : e)) };
     expect(mistakeDrops(lineArm)).toEqual([`eq${i}.line.0`]);
   });
@@ -546,12 +548,14 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     const s = S.machine_crunch, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'core' ? { ...x, box: { left: 200, top: 300 } } : x)) };
     expect(minGap(bad).min).toBeLessThan(6);
   });
-  /** No leader runs across the solid figure: away from its first 8 px at the anchor (a joint-centre anchor sits inside
-   *  its limb), a leader stays outside the solid end figure, on the normal and the Mistake plate. */
+  /** No leader runs across a figure: away from its first 8 px at the anchor (a joint-centre anchor sits inside its limb),
+   *  a leader stays outside the solid end figure on the normal plate, and outside both the end figure and the Mistake
+   *  pose's figure (its red dashed outline) on the Mistake plate (slice look #297 6346404542 item 1). */
   const crossProblems = (spec: any) => {
-    const polys = shapesIn(spec, 'end').map((x: any) => x.poly), out: string[] = [];
+    const out: string[] = [];
     for (const mistake of [false, true]) {
       const list = mistake ? spec.mistake.tells : spec.callouts;
+      const polys = [...shapesIn(spec, 'end'), ...(mistake ? shapesIn(spec, 'mistake') : [])].map((x: any) => x.poly);
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
         let inside = 0;
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
@@ -565,6 +569,10 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   };
   it('no leader crosses the solid figure\'s outline', () => {
     expect(specsDrawn().flatMap(id => crossProblems(S[id]))).toEqual([]);
+  });
+  it('mutation: the slice\'s "Arms pull" tell (anchored on the faulty upper arm by the neck, boxed top left) crosses the Mistake figure (red)', () => {
+    const s = S.machine_crunch, tells = s.mistake.tells.map((x: any) => (x.key === 'arms' ? { ...x, anchor: { along: ['mistake:shoulder.r', 'mistake:elbow.r'], t: 0.15, pose: 'mistake' }, box: { left: 40, top: 112 } } : x));
+    expect(crossProblems({ ...s, mistake: { ...s.mistake, tells } })).toContain('machine_crunch mistake arms: crosses the figure');
   });
   it('mutation: the "Core leads" box placed on the figure\'s far side, so its leader crosses the body, is red', () => {
     const s = S.machine_crunch, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'core' ? { ...x, box: { left: 20, top: 220 } } : x)) };
@@ -868,7 +876,8 @@ describe('LIB-16 A17: sizes are fixed in lb6/sizes.json and never sized by PQ-H3
   it('each drawn spec\'s SIZES equals its sizes.json row, and each composer\'s constants equal theirs, every row with a basis that is not PQ-H3', async () => {
     for (const id of specsDrawn()) expect(sizeProblems(M[id].SIZES, sizes.ids[id]), id).toEqual([]);
     expect(sizeProblems({ ...crunchEq.CRUNCH_MACHINE }, sizes.composers.crunchMachine)).toEqual([]);
-    for (const [id, t] of Object.entries<any>(sizes.proposed)) expect(rowProblems(t), id).toEqual([]);
+    expect(sizeProblems({ ...pullEq.PULLOVER_MACHINE }, sizes.composers.pulloverMachine)).toEqual([]);
+    expect(Object.keys(sizes.ids).sort()).toEqual([...LB6].sort());
   });
   it('mutations: one Mistake size changed in its spec only, a row with an empty basis, a row whose basis names PQ-H3 or deviationMin, and a spec number missing from sizes.json are red', () => {
     const s = { ...M.machine_crunch.SIZES }, t = JSON.parse(JSON.stringify(sizes.ids.machine_crunch));
