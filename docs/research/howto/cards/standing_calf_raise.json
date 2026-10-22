@@ -29,7 +29,7 @@
     {
      "source": "motra-scr",
      "text": "Adjust shoulder pads to your height and step onto the platform with balls of feet on the edge, heels hanging off.",
-     "where": "How to Perform"
+     "where": "How to Perform, opening paragraph (before the list)"
     },
     {
      "source": "fv-mscr",
@@ -57,7 +57,7 @@
     {
      "source": "motra-scr",
      "text": "Position shoulders under pads, grasp handles, and stand upright with knees slightly bent and core engaged.",
-     "where": "How to Perform"
+     "where": "How to Perform, opening paragraph (before the list)"
     },
     {
      "source": "fv-calf-svs",
@@ -119,7 +119,7 @@
     {
      "source": "motra-scr",
      "text": "Keep knees slightly bent and posture straight.",
-     "where": "How to Perform, step 4"
+     "where": "How to Perform, list item 4 (\"Keep knees slightly bent and posture straight.\")"
     },
     {
      "source": "motra-scr",
@@ -190,7 +190,7 @@
     {
      "source": "motra-scr",
      "text": "Push through balls of feet to raise heels high, fully extending ankles.",
-     "where": "How to Perform, step 1"
+     "where": "How to Perform, list item 1 (\"Push through balls of feet ...\")"
     },
     {
      "source": "fv-calf-svs",
@@ -218,7 +218,7 @@
     {
      "source": "motra-scr",
      "text": "Squeeze calves at the top and hold briefly.",
-     "where": "How to Perform, step 2"
+     "where": "How to Perform, list item 2 (\"Squeeze calves at the top ...\")"
     },
     {
      "source": "fv-calf-svs",
@@ -243,7 +243,7 @@
     {
      "source": "motra-scr",
      "text": "Slowly lower heels below platform level for a full stretch.",
-     "where": "How to Perform, step 3"
+     "where": "How to Perform, list item 3 (\"Slowly lower heels ...\")"
     },
     {
      "source": "motra-scr",
@@ -519,7 +519,7 @@
     {
      "source": "motra-scr",
      "text": "Squeeze calves at the top and hold briefly.",
-     "where": "How to Perform, step 2"
+     "where": "How to Perform, list item 2 (\"Squeeze calves at the top ...\")"
     },
     {
      "source": "fv-calf-svs",
@@ -618,7 +618,7 @@
     "c5"
    ],
    "drawable": true,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 2: locking the knees (c6, c5). Candidates: the load is not a candidate, so Motra's list item \"Using too much weight\" (c6) and \"Avoid excessive weight to prevent Achilles strain\" (c15) are set aside; setting the shoulder pads (c1) is a setup choice. Step 1: no frequency word for a fault of this exercise. Set aside: Fitness Volt's \"the standing calf raise is arguably the most common and popular choice\", \"Most gyms have a standing calf raise machine\" and \"when most people talk about calf raises, it’s standing calf raises that they’re referring to\" are about the exercise, its machines and its name; its \"some lifters find building bigger calves easy\" is about training; its seated lines (\"The seated calf raise is often overshadowed by the standing variation\", \"less likely to result in form errors\") are another exercise; Motra's \"Popularity Score\" is about the exercise. Step 2: one named fault is tied to harm: locking the knees (Motra's list item 2, \"Locking knees\", c6), by two sources: Motra's \"Maintain slight knee bend to protect joints\" (D-SUP-PROTECT: the cue that corrects the fault protects a named body part) and Fitness Volt's \"Keep your knees slightly bent but stable throughout the exercise to avoid strain.\" ('strain' counts as harm by the lb6 precedent) (c5). Set aside at step 2: \"Avoid excessive weight to prevent Achilles strain\" (c15) ties harm to the load, which is not a candidate; Fitness Volt's \"heavy calf raises put a lot of vertical stress on your spine, which can cause compression of the intervertebral disks\" and \"could even cause back pain\" (c17) are about the load on the shoulders and name no fault; its \"Even padded standing calf raise machines put a lot of pressure on your shoulders.\" is about the machine, and 'pressure' is not an LR-31 harm word; Motra's \"Stop if sharp pain occurs\" (c16) names no fault, and its \"When to Avoid\" items are conditions; Fitness Volt's \"Do not overstretch your calves during the negative portion of the exercise.\" (c10) states no harm; Motra's other list items, \"Bouncing at bottom\", \"Leaning forward\" and \"Partial range of motion\" (c6), are tied to no harm (Fitness Volt's \"half reps get half results!\" is in its seated tips and states no harm). Step 3 is not needed; it would give bouncing at the bottom, first on Motra's list, which is seen only as speed. drawable true: the side view shows a straight, locked knee against a slightly bent one, a still sign. handlingMistakes keeps Motra's list order after the top fault: bouncing at the bottom (speed only), then leaning forward."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: locking the knees (c6, c5). Candidates: the load is not a candidate, so Motra's list item \"Using too much weight\" (c6) and \"Avoid excessive weight to prevent Achilles strain\" (c15) are set aside; setting the shoulder pads (c1) is a setup choice. Step 1: no frequency word for a fault of this exercise. Set aside: Fitness Volt's \"the standing calf raise is arguably the most common and popular choice\", \"Most gyms have a standing calf raise machine\" and \"when most people talk about calf raises, it’s standing calf raises that they’re referring to\" are about the exercise, its machines and its name; its \"some lifters find building bigger calves easy\" is about training; its seated lines (\"The seated calf raise is often overshadowed by the standing variation\", \"usually tucked away in the corner of the gym\", \"Most seated calf machines require very few adjustments\", \"they’re often awkward or inconvenient compared to using a machine\") are another exercise; \"The standing calf raise machine is popular, common, and easy to use.\" is about the machine; \"The most critical calf training decision that most people have to make is choosing between seated and standing calf raises.\" is an exercise choice; \"training them often involves heavy loads\" is about the load; its summary rows \"Easier to master; less likely to result in form errors.\" (seated) and \"May require more attention to form, especially for beginners.\" name no fault; \"That’s because the calves tend to work hardest when standing\" uses 'tend' and is about muscles; \"overweight people often have large calves\", \"women, who often don’t want big calves\", \"For most people, this means 2-3 calf workouts per week\", \"This is usually easiest if you spread those sets over several workouts.\", \"some people believe the gastrocnemius responds best to lower reps\" and \"remember your calves won’t grow if you don’t train them hard and often\" are about people, programming and training. Motra's \"Popularity Score\" (\"How commonly this exercise is used in training programs\") is about the exercise. Pages read but not cited: BarBend's best-calf-exercises (\"most people have a stubborn muscle group\", about training) and ACE's barbell and straight-leg machine calf raise pages (no frequency word); Peloton's calf-raise article (\"The most common mistake I see is people moving too quickly or bouncing through the motion\") teaches the bodyweight raise, another version of the movement, so it is not counted here (R-LB7-5); counted, it would name bouncing (Motra list item 1), which shows only as speed, so the drawn fault (locked knees) would not change, though handlingMistakes[0] would move to bouncing. Step 2: one named fault is tied to harm: locking the knees (Motra's list item 2, \"Locking knees\", c6), by two sources: Motra's \"Maintain slight knee bend to protect joints\" (D-SUP-PROTECT: the cue that corrects the fault protects a named body part) and Fitness Volt's \"Keep your knees slightly bent but stable throughout the exercise to avoid strain.\" ('strain' counts as harm by the lb6 precedent) (c5). Set aside at step 2: \"Avoid excessive weight to prevent Achilles strain\" (c15) ties harm to the load, which is not a candidate; Fitness Volt's \"heavy calf raises put a lot of vertical stress on your spine, which can cause compression of the intervertebral disks\" and \"could even cause back pain\" (c17) are about the load on the shoulders and name no fault; its \"Even padded standing calf raise machines put a lot of pressure on your shoulders.\" is about the machine, and 'pressure' is not an LR-31 harm word; Motra's \"Stop if sharp pain occurs\" (c16) names no fault, and its \"When to Avoid\" items (\"Achilles tendonitis\", \"Lower back issues\", \"Recent ankle injury\") are conditions; Fitness Volt's \"this exercise stresses all three calf muscles relatively equally\" is about muscles, \"While standing calf raises are a safe and effective exercise\" names no fault, and \"seated calf raises are very back-friendly and suitable for exercisers with lower back pain\" and \"seated calf raises can hurt your legs\" are another exercise; BarBend's uncited \"help protect your Achilles tendon against possible injury\" and \"help prevent calf strains\" are benefits of calf training, not a fault; Fitness Volt's \"Do not overstretch your calves during the negative portion of the exercise.\" (c10) states no harm; Motra's other list items, \"Bouncing at bottom\", \"Leaning forward\" and \"Partial range of motion\" (c6), are tied to no harm (Fitness Volt's \"half reps get half results!\" is in its seated tips and states no harm). Step 3 is not needed; it would give bouncing at the bottom, first on Motra's list, which is seen only as speed. drawable true: the side view shows a straight, locked knee against a slightly bent one, a still sign. handlingMistakes keeps Motra's list order after the top fault: bouncing at the bottom (speed only), then leaning forward."
   },
   "tells": [
    {

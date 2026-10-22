@@ -29,7 +29,7 @@
     {
      "source": "motra-seated",
      "text": "Sit on the seated calf raise machine with thighs secured under the pad and knees bent at 90 degrees.",
-     "where": "How to Perform"
+     "where": "How to Perform, opening paragraph (before the list)"
     },
     {
      "source": "bb-best-calf",
@@ -79,7 +79,7 @@
     {
      "source": "motra-seated",
      "text": "Place balls of feet on the platform with heels hanging off, toes forward and hip-width apart.",
-     "where": "How to Perform"
+     "where": "How to Perform, opening paragraph (before the list)"
     },
     {
      "source": "fv-calf-svs",
@@ -136,17 +136,17 @@
     {
      "source": "motra-seated",
      "text": "Load weight plates onto the machine.",
-     "where": "How to Perform, step 1"
+     "where": "How to Perform, list item 1 (\"Load weight plates ...\")"
     },
     {
      "source": "motra-seated",
      "text": "Grip handles and release the safety lever by pressing through your toes.",
-     "where": "How to Perform, step 2"
+     "where": "How to Perform, list item 2 (\"Grip handles ...\")"
     },
     {
      "source": "motra-seated",
      "text": "Lower controlled to repeat, then re-engage safety after set.",
-     "where": "How to Perform, step 7"
+     "where": "How to Perform, list item 7 (\"Lower controlled to repeat ...\")"
     },
     {
      "source": "motra-seated",
@@ -162,7 +162,7 @@
   },
   {
    "id": "c7",
-   "text": "Lower the heels slowly below the platform to a deep stretch and pause briefly there. One source pauses three seconds at the bottom.",
+   "text": "Lower the heels slowly below the platform to a deep stretch and pause there. The bottom pause differs: Motra pauses briefly (1 s in its 2-1-2, c19), BarBend three seconds; both place it at the bottom, after the lowering, not after the lift.",
    "tags": [
     "CONSENSUS"
    ],
@@ -175,12 +175,12 @@
     {
      "source": "motra-seated",
      "text": "Inhale and slowly lower your heels below the platform level for a deep stretch.",
-     "where": "How to Perform, step 3"
+     "where": "How to Perform, list item 3 (\"Inhale and slowly lower ...\")"
     },
     {
      "source": "motra-seated",
      "text": "Pause briefly at the bottom to feel the calf stretch.",
-     "where": "How to Perform, step 4"
+     "where": "How to Perform, list item 4 (\"Pause briefly at the bottom ...\")"
     },
     {
      "source": "fv-calf-svs",
@@ -209,7 +209,7 @@
     {
      "source": "motra-seated",
      "text": "Exhale and push through the balls of your feet to raise heels as high as possible.",
-     "where": "How to Perform, step 5"
+     "where": "How to Perform, list item 5 (\"Exhale and push ...\")"
     },
     {
      "source": "fv-calf-svs",
@@ -238,7 +238,7 @@
     {
      "source": "motra-seated",
      "text": "Squeeze calves at the top for one second.",
-     "where": "How to Perform, step 6"
+     "where": "How to Perform, list item 6 (\"Squeeze calves at the top for one second ...\")"
     },
     {
      "source": "fv-calf-svs",
@@ -415,7 +415,7 @@
     {
      "source": "motra-seated",
      "text": "A machine-based isolation exercise targeting the soleus and gastrocnemius muscles to build calf strength and hypertrophy; performed seated with knees bent for focused lower leg work.",
-     "where": "About Exercise"
+     "where": "unheaded intro paragraph under the title (above the About tab)"
     },
     {
      "source": "sl-seated",
@@ -632,7 +632,7 @@
     "c12"
    ],
    "drawable": false,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 2: using momentum or bouncing at the bottom (c10, c11). Candidates: the load is not a candidate, so Motra's list item \"Excessive weight compromising form\" (c10) is set aside; the pad and seat setting (c2, c17) is a setup choice. Step 1: no frequency word for a fault of this exercise. Set aside: Fitness Volt's \"The seated calf raise is often overshadowed by the standing variation\" and \"the seated calf raise machine is generally less popular\" are about the exercise; \"usually tucked away in the corner of the gym\" and \"Most seated calf machines require very few adjustments\" are about the machines; \"some people may find the seated position uncomfortable\" uses 'some'; its standing lines (\"arguably the most common and popular choice\") are another exercise. BarBend's \"most people have a stubborn muscle group\" and \"some people skip calf training\" are about training. Fitness Volt's machine guide's \"the calf muscles are one of the most stubborn muscles\" is about the muscle. Step 2: one named fault is tied to harm: using momentum or bouncing at the bottom (Motra's list item 1, c10), by Motra's \"Use controlled movements to protect Achilles tendon\" (c11; D-SUP-PROTECT: the cue that corrects the fault protects a named body part); Motra's cues \"Control the descent\" and \"Avoid bouncing\" (c11) correct the same fault. Set aside at step 2: Fitness Volt's \"Do not overstretch your calves as this can cause tendon issues in the lower leg.\" (c12): 'issues' is not an LR-31 harm word, and overstretching is on no common-mistakes list; read as harm, it would still lose step 2's first tie-break (the one on a common-mistakes list). Motra's \"When to Avoid\" item \"Lower back pain if posture poor\" is a condition, not a harm tie for its list item 4 (\"Poor posture with rounded back\"); read as one, the rounded back would lose to bouncing on the list order (\"the earlier on a list that names both\"). Fitness Volt's \"Using heavy weights puts a lot of stress on your thighs\" and \"seated calf raises can hurt your legs\" (c17) are about the load and the pads, not a fault of the set; its \"Avoid leaning back, as doing so takes work away from your calves.\" (c13) states no harm; Motra's other list items, \"Incomplete range of motion\" and \"Allowing ankles to roll inward or outward\" (c10), are tied to no harm (Fitness Volt's \"half reps get half results!\" states no harm). drawable false: bouncing and momentum show only as speed (LR-31). The plate draws the next fault by the same steps: step 2 has no other candidate tied to harm, so step 3's first remaining fault on Motra's list, the one common-mistakes list written for this exercise, decides: incomplete range of motion (c10, c12), which the side view shows as the heels stopping part way. (Reading held for the lead: if Fitness Volt's 'tendon issues' or Motra's 'Lower back pain if posture poor' were read as harm ties, step 2 would give the plate fault instead: overstretching, or the rounded back, list item 4. Both are set aside here on LR-31's literal harm words and the face_pull 'When to Avoid' precedent.) The ankles rolling in or out (list item 3) is sideways and needs a front view. handlingMistakes[0] stays bouncing; [1] incomplete range; [2] the ankles rolling, in Motra's list order."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: using momentum or bouncing at the bottom (c10, c11). Candidates: the load is not a candidate, so Motra's list item \"Excessive weight compromising form\" (c10) is set aside; the pad and seat setting (c2, c17) is a setup choice. Step 1: no frequency word for a fault of this exercise. Set aside: Fitness Volt's \"The seated calf raise is often overshadowed by the standing variation\" and \"the seated calf raise machine is generally less popular\" are about the exercise; \"usually tucked away in the corner of the gym\" and \"Most seated calf machines require very few adjustments\" are about the machines; \"some people may find the seated position uncomfortable\" uses 'some'; its standing lines (\"arguably the most common and popular choice\") are another exercise. BarBend's \"most people have a stubborn muscle group\" and \"some people skip calf training\" are about training. Fitness Volt's machine guide's \"the calf muscles are one of the most stubborn muscles, it’s recommended to train them often\" is about the muscle and training. Also set aside from Fitness Volt's article: \"The most critical calf training decision that most people have to make is choosing between seated and standing calf raises.\" (exercise choice); \"training them often involves heavy loads\" (load); \"Performing seated calf raises typically requires access to specific gym equipment\" and \"they’re often awkward or inconvenient compared to using a machine\" (equipment and free-weight versions); \"Easier to master; less likely to result in form errors.\" (names no fault); \"the calves tend to work hardest when standing\" ('tend', muscles); \"overweight people often have large calves\", \"women, who often don’t want big calves\", \"For most people, this means 2-3 calf workouts per week\", \"some people believe the gastrocnemius responds best to lower reps\" and \"train them hard and often\" (people, programming, training). Motra's \"Popularity Score\" tooltip (\"How commonly this exercise is used\") is about the exercise. Peloton's \"“The most common mistake I see is people moving too quickly or bouncing through the motion,” Matt says.\" (read, not cited) is not counted for this card: Peloton's seated version is a chair with the feet flat on the floor and its main version is the standing bodyweight raise, so for the plate-loaded seated machine it is another version (R-LB7-5). Counted, it would name the same fault this card already ranks first (Motra's list item 1), so only the step number would change (1 instead of 2), not the pick or drawable. Step 2: one named fault is tied to harm: using momentum or bouncing at the bottom (Motra's list item 1, c10), by Motra's \"Use controlled movements to protect Achilles tendon\" (c11; D-SUP-PROTECT: the cue that corrects the fault protects a named body part); Motra's cues \"Control the descent\" and \"Avoid bouncing\" (c11) correct the same fault. Set aside at step 2: Fitness Volt's \"Do not overstretch your calves as this can cause tendon issues in the lower leg.\" (c12): 'issues' is not an LR-31 harm word, and overstretching is on no common-mistakes list; read as harm, it would still lose step 2's first tie-break (the one on a common-mistakes list). Motra's \"When to Avoid\" item \"Lower back pain if posture poor\" is a condition, not a harm tie for its list item 4 (\"Poor posture with rounded back\"); read as one, the rounded back would lose to bouncing on the list order (\"the earlier on a list that names both\"). Fitness Volt's \"Using heavy weights puts a lot of stress on your thighs\" and \"seated calf raises can hurt your legs\" (c17) are about the load and the pads, not a fault of the set; its \"seated calf raises are very back-friendly and suitable for exercisers with lower back pain\" names no fault, and its standing lines (\"Keep your knees slightly bent but stable throughout the exercise to avoid strain.\", the spinal compression and \"could even cause back pain\") are another exercise; Motra's \"Use safeties for heavy loads.\" is equipment, its \"Avoid if acute Achilles or ankle injury present\" a condition, and its tooltip \"Conditions, injuries, or situations where this exercise should be avoided or modified.\" names no fault; BarBend's \"help protect your Achilles tendon against possible injury\" and \"help prevent calf strains\" are benefits of calf training, and \"repetitive stress on your feet\" is the jump rope, another exercise; Peloton's harm lines (\"reduce injury risk\", \"reducing the risk of ankle sprains\", the Achilles overuse study line, \"especially when joint movement is painful\") are benefits and its isometric variation; its \"Avoid leaning back, as doing so takes work away from your calves.\" (c13) states no harm; Motra's other list items, \"Incomplete range of motion\" and \"Allowing ankles to roll inward or outward\" (c10), are tied to no harm (Fitness Volt's \"half reps get half results!\" states no harm). drawable false: bouncing and momentum show only as speed (LR-31). The plate draws the next fault by the same steps: step 2 has no other candidate tied to harm, so step 3's first remaining fault on Motra's list, the one common-mistakes list written for this exercise, decides: incomplete range of motion (c10, c12), which the side view shows as the heels stopping part way. (Reading held for the lead: if Fitness Volt's 'tendon issues' or Motra's 'Lower back pain if posture poor' were read as harm ties, step 2 would give the plate fault instead: overstretching, or the rounded back, list item 4. Both are set aside here on LR-31's literal harm words and the face_pull 'When to Avoid' precedent.) The ankles rolling in or out (list item 3) is sideways and needs a front view. handlingMistakes[0] stays bouncing; [1] incomplete range; [2] the ankles rolling, in Motra's list order."
   },
   "tells": [
    {
@@ -695,7 +695,7 @@
    ]
   },
   {
-   "step": "Re-engage the safety after the set and before unloading.",
+   "step": "Put the safety back on after the set, before unloading.",
    "claim": "c6"
   }
  ],

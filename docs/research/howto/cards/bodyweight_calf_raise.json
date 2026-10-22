@@ -29,7 +29,7 @@
     {
      "source": "motra-bwcr",
      "text": "Stand with feet hip-width apart, toes forward, core engaged, and hands on a wall for balance if needed.",
-     "where": "How to Perform"
+     "where": "How to Perform, opening paragraph (before the list)"
     },
     {
      "source": "peloton-cr",
@@ -98,7 +98,7 @@
     {
      "source": "motra-bwcr",
      "text": "Push through balls of feet to raise heels high.",
-     "where": "How to Perform, step 1"
+     "where": "How to Perform, list item 1 (\"Push through balls of feet ...\")"
     },
     {
      "source": "peloton-cr",
@@ -127,7 +127,7 @@
     {
      "source": "motra-bwcr",
      "text": "Squeeze calves at the top and hold briefly.",
-     "where": "How to Perform, step 2"
+     "where": "How to Perform, list item 2 (\"Squeeze calves at the top ...\")"
     },
     {
      "source": "peloton-cr",
@@ -155,7 +155,7 @@
     {
      "source": "motra-bwcr",
      "text": "Lower heels slowly with control.",
-     "where": "How to Perform, step 3"
+     "where": "How to Perform, list item 3 (\"Lower heels slowly ...\")"
     },
     {
      "source": "motra-bwcr",
@@ -182,7 +182,7 @@
     {
      "source": "motra-bwcr",
      "text": "Repeat for reps, keeping knees straight but unlocked.",
-     "where": "How to Perform, step 4"
+     "where": "How to Perform, list item 4 (\"Repeat for reps ...\")"
     },
     {
      "source": "motra-bwcr",
@@ -310,7 +310,7 @@
     {
      "source": "motra-bwcr",
      "text": "A bodyweight isolation exercise targeting the gastrocnemius and soleus to build calf strength, endurance, and ankle stability; ideal for beginners and performed standing on flat ground.",
-     "where": "About Exercise"
+     "where": "unheaded intro paragraph under the title (above the About tab)"
     },
     {
      "source": "peloton-cr",
@@ -434,7 +434,7 @@
     "c2"
    ],
    "drawable": true,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 1: moving too quickly or bouncing through the motion (c9). Peloton, under 'Common Mistakes to Avoid' for the calf raise: \"“The most common mistake I see is people moving too quickly or bouncing through the motion,” Matt says.\" The sentence before ties it to this exercise (\"The calf raise may be a simple exercise, but proper form matters.\"), and the version taught on the page is the bodyweight standing raise, so it counts as a step-1 hit for this exercise's own fault (D-SUP-LB7-DIPREPS). It is not a list sentence read onto one item: it states the frequency itself. Motra's list item 1, \"Bouncing at bottom\" (c8), is the same fault. Set aside at step 1: Peloton's \"A common starting point is 2-3 sets of 8-12 repetitions\" (c14) is programming; Garage Gym Reviews' \"commonly neglected calf muscles\" is about the muscles and \"Most calf workouts will target the gastrocnemius and the soleus\" about training; Motra's \"Popularity Score\" is about the exercise. drawable false: moving too quickly or bouncing shows only as speed (LR-31). The plate draws the next fault by the same steps. Step 1 has no other hit. Step 2: no other named fault is tied to harm: Motra's \"Avoid hyperextension of knees\" (c7) and \"Use support for balance\" (c11) state no harm; its \"Stop if Achilles pain occurs\" (c10) names no fault; its \"When to Avoid\" items are conditions; Peloton's \"may also help reduce the risk of injury\", its Achilles overuse study line and \"especially when joint movement is painful\" are about the exercise's benefits and its isometric variation, not a fault. Step 3: the first remaining fault on the common-mistakes list written for this exercise, in source order (Motra, c8; Peloton's section names only the speed fault): partial range (c8), which the side view shows as the heels stopping part way. handlingMistakes: [0] moving too fast or bouncing (step 1), [1] partial range, [2] locking the knees, in Motra's list order."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: moving too quickly or bouncing through the motion (c9). Peloton, under 'Common Mistakes to Avoid' for the calf raise: \"“The most common mistake I see is people moving too quickly or bouncing through the motion,” Matt says.\" The sentence before ties it to this exercise (\"The calf raise may be a simple exercise, but proper form matters.\"), and the version taught on the page is the bodyweight standing raise, so it counts as a step-1 hit for this exercise's own fault (D-SUP-LB7-DIPREPS). It is not a list sentence read onto one item: it states the frequency itself. Motra's list item 1, \"Bouncing at bottom\" (c8), is the same fault. Set aside at step 1: Peloton's \"A common starting point is 2-3 sets of 8-12 repetitions\" (c14) is programming; Peloton's heading \"Common Mistakes to Avoid\" is a heading, not a frequency word. Garage Gym Reviews' \"commonly neglected calf muscles\" is about the muscles, \"this often-overlooked muscle group\" and \"answering common questions\" about the muscles and the article, \"Most calf workouts will target the gastrocnemius and the soleus\" about training, \"Calf presses are most often performed using a leg press machine.\" another exercise, and \"give your muscle fibers time to recover fully, usually about forty-eight hours\" programming; Motra's \"Popularity Score\" is about the exercise. drawable false: moving too quickly or bouncing shows only as speed (LR-31). The plate draws the next fault by the same steps. Step 1 has no other hit. Step 2: no other named fault is tied to harm: Motra's \"Avoid hyperextension of knees\" (c7) and \"Use support for balance\" (c11) state no harm; its \"Stop if Achilles pain occurs\" (c10) names no fault; its \"When to Avoid\" items are conditions; Peloton's \"reduce injury risk\", \"further reducing the risk of ankle sprains\", \"may also help reduce the risk of injury\", its Achilles overuse study line and \"especially when joint movement is painful\" are about the exercise's benefits and its isometric variation, not a fault; Garage Gym Reviews' \"more likely going to leave you sore and at risk of injury\" is about training the calves every day, and its \"approximately 50% immediate reduction in Achilles tendon pain\" is the isometric hold, another exercise. Step 3: the first remaining fault on the common-mistakes list written for this exercise, in source order (Motra, c8; Peloton's section names only the speed fault): partial range (c8), which the side view shows as the heels stopping part way. handlingMistakes: [0] moving too fast or bouncing (step 1), [1] partial range, [2] locking the knees, in Motra's list order."
   },
   "tells": [
    {
@@ -486,8 +486,11 @@
    ]
   },
   {
-   "step": "Shoulders relaxed, core engaged.",
-   "claim": "c1"
+   "step": "Shoulders relaxed, core braced.",
+   "claim": [
+    "c1",
+    "c12"
+   ]
   }
  ],
  "posture": [
@@ -645,7 +648,7 @@
  "gaps": [],
  "notes": [
   "Start head: claude/libht-research @ 6d253b9e. Own parent (content.md Appendix A, 'New parents on their own'); no inherit entries. No shared card lists bodyweight_calf_raise in appliesTo at 6d253b9e (floor-body lists glute_bridge, not this id).",
-  "Anchor: Motra's bodyweight calf raise page, read in full (How to Perform, Coaching Tips, Tempo with its tooltip, Range of Motion, Safety, Common Mistakes). Peloton's calf-raise article and Garage Gym Reviews' calf-exercises page (its basic bodyweight calf raise section) were read in full.",
+  "Anchor: Motra's bodyweight calf raise page, read in full (How to Perform, Coaching Tips, Tempo with its tooltip, Range of Motion, Safety, Common Mistakes). Peloton's calf-raise article and Garage Gym Reviews' calf-exercises page were read in full; only GGR's section 1 (Basic Calf Raises (Bodyweight)) is cited. The fetcher's scan covered GGR through section 1; the writer scanned sections 2-15, the FAQs and the references for LR-31 and LR-33 words (2026-10-22): no frequency or harm word about a calf-raise fault (hits: \"Calf presses are most often performed using a leg press machine\", \"especially helpful in strengthening the calf muscle after an injury\", the isometric hold's Achilles pain line, \"leave you sore and at risk of injury\" and \"usually about forty-eight hours\" on daily training, all set aside in the rankNote or naming no fault); pause words only in other exercises' steps (\"Pause, then slowly return\" in sections 2, 3 and 5, \"Hold briefly, then release.\" in the calf press, \"Hold the position\" in the seated barbell raise and the isometric hold).",
   "Surface: Motra describes the raise on flat ground and lowers 'to flat or slightly below if on step' (c2); Peloton says a step or curb gives more range (c2). The census draws the forefoot on a box edge, so the card's setup puts the lifter on a step; the heels-hanging-off line comes from Peloton's eccentric variation steps (c3, WEAK).",
   "Stance width: Motra and Peloton say hip-width; Garage Gym Reviews says shoulder-width (c1). The card follows hip-width.",
   "The Achilles feel row and risk keep Motra's stop quote (c10, \"Stop if Achilles pain occurs\"; R-LB3-4, R-LB6-6). No shared red-flag box covers the ankle, so its redFlag is null. The knee row is place + the source's fault + fix (LR-6), linking the knee box.",
