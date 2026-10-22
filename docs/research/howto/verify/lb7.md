@@ -43,10 +43,28 @@ Main's copy caps (sentence length, label length, semicolons and the other BANNED
 Result: 0 problems on all 13 cards, except renegade_row's existing `core` in feel.secondary. LR-35 sends that to LIB-MUSCLE, and it is not changed here.
 
 ## Per card
-RESULTS_TABLE
+| id | status | tier | LR-31 step | pick (plate.mistake) | drawable | tempo up/down/pause | sources (all fetched) | quotes verbatim | lint hits |
+|---|---|---|---|---|---|---|---|---|---|
+| cable_lateral_raise | new | C | 2 | Raising the arm above shoulder height (beyond 90 degrees). | true | 2/2/1 | 5 | 50/50 | 0 |
+| dumbbell_front_raise | new | C | 2 | Swinging the dumbbells up with body momentum, the hips pushed forward. | true | 1/3/1 | 6 | 50/50 | 0 |
+| cable_rear_delt_fly | new | C | 2 | top: Swinging, lower back overextending. (not drawable); plate: Shoulders not kept rolled back and down as the arms open. | false | null/null/null | 2 | 24/24 | 0 |
+| face_pull | new | C | 2 | Elbows dropping down, below shoulder height, during the pull. | true | 2/3/1 | 4 | 40/40 | 0 |
+| cable_external_rotation | new | C | 3 | top: Swinging with momentum. (not drawable); plate: Elbow flaring out, away from the side, as the handle turns. | false | 2/2/1 | 4 | 41/41 | 0 |
+| resistance_band_pull_apart | new | C | 3 | Shoulders shrugging upward as the band is pulled apart. | true | 2/2/1 | 3 | 32/32 | 0 |
+| incline_push_up | new | C | 2 | Feet too close to the bench, so the shoulder blades stay raised in a shrug. | true | 3/3/0 | 4 | 38/38 | 0 |
+| diamond_push_up | new | C | 2 | Low back and hips sag toward the floor and the low back overextends. | true | null/null/null | 3 | 30/30 | 0 |
+| pike_push_up | new | A | 2 | top: Elbows flaring out. (not drawable); plate: Only the head moves toward the floor, instead of forward and down. | false | null/null/null | 3 | 41/41 | 0 |
+| bench_dip | new | B | 2 | top: Elbows flaring out. (not drawable); plate: Dropping too low into the dip, the upper arms well below level with the floor. | false | 1/2/1 | 5 | 50/50 | 0 |
+| bent_over_dumbbell_rear_delt_fly | LR-31/33 pass | C | 2 | top: Swinging the torso to throw the weights up. (not drawable); plate: Shoulders shrug up toward the ears as the dumbbells rise. | false | 1/2/0 | 5 | 18/18 | 0 |
+| renegade_row | LR-31/33 pass, PICK CHANGED | A | 2 | The dumbbell is lowered too quickly and lands on a corner. | true | null/null/null | 3 | 29/29 | 0 |
+| weighted_dip | LR-31/33 pass, PICK CHANGED | A | 1 | Cutting reps short: stopping well above parallel at the bottom. | true | 1/2/0 | 5 | 35/35 | 0 |
+
+Lint hits: copy lint (wording rules) and C8. renegade_row keeps its existing `core` in feel.secondary for LIB-MUSCLE (LR-35).
 
 ## Rulings asked (PR #288)
-RULINGS_ASKED
+1. **weighted_dip, LR-31 step 1.** bb-dipcorrect ("Perfect Range of Motion"): "Another dip difficulty is a consistent range of motion. Many perform quarter or half reps when learning an exercise, then become frustrated…". Read as a step-1 hit for this exercise's fault (cutting reps short). If "when learning an exercise" makes it a statement about all training, step 1 finds nothing and the head's pick (the shrug, step 2) returns.
+2. **incline_push_up, LR-31 candidates.** Is "feet too close to the box" a body position during the set or a setup choice LR-31 excludes? BarBend: "If your feet are too close to the box, then you're going to be doing the incline push-ups while the scapula is elevated, which might expose you to a greater risk of shoulder impingement." If it is setup, the pick becomes elbow flare (NASM: "increases shoulder stress"), which the side view cannot draw.
+3. **cable_external_rotation, empty feel.primary.** The census primary is rotator_cuff, which LR-35 allows only in feel.secondary and feel.watch. The card leaves feel.primary empty (C2 allows it), with rotator_cuff and rear_delts (WEAK, one coach page) in feel.secondary. No head card has an empty feel.primary. The alternative is to promote rear_delts.
 
 ## Writer calls the rules settle (recorded, not asked)
 - bench_dip: "strain" counts as harm (lb6 precedent: low_to_high_cable_fly, PureGym's "minimising strain to the shoulder joint"). The flared elbows win whether or not "pressure" counts.
