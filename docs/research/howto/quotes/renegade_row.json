@@ -1,6 +1,6 @@
 {
   "id": "renegade_row",
-  "checked": "2026-10-02",
+  "checked": "2026-10-22",
   "fetcher": "sonnet source fetcher",
   "quotes": [
     {
@@ -151,9 +151,9 @@
       "claim": "c9",
       "source": "bb-rr",
       "text": "This can jostle your wrists, making it hard to keep them neutral and even risk straining them.",
-      "status": "pending",
-      "closest": "",
-      "note": ""
+      "status": "verbatim",
+      "closest": "This can jostle your wrists, making it hard to keep them neutral and even risk straining them.",
+      "note": "Confirmed by the fetcher scan of bb-rr (Landing Too Hard), 2026-10-22."
     },
     {
       "claim": "c10",

@@ -1,406 +1,406 @@
 {
  "id": "bench_dip",
  "checked": "2026-10-22",
- "fetcher": "pending",
+ "fetcher": "sonnet source fetcher",
  "quotes": [
   {
    "claim": "c1",
    "source": "hl-benchdip",
    "text": "Sit down on a bench, hands next to your thighs.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Sit down on a bench, hands next to your thighs.",
    "note": ""
   },
   {
    "claim": "c1",
    "source": "fv-benchdip",
    "text": "Begin by sitting on the edge of a sturdy bench or platform.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Begin by sitting on the edge of a sturdy bench or platform.",
    "note": ""
   },
   {
    "claim": "c1",
    "source": "sl-benchdip",
    "text": "Turn your back towards a sturdy training bench, and put your hands on the pad about shoulder-width apart. Extend your legs in front of you.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Turn your back towards a sturdy training bench, and put your hands on the pad about shoulder-width apart. Extend your legs in front of you.",
    "note": ""
   },
   {
    "claim": "c2",
    "source": "fv-benchdip",
    "text": "Place your hands shoulder-width apart beside your hips, with fingers pointing forward.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Place your hands shoulder-width apart beside your hips, with fingers pointing forward.",
    "note": ""
   },
   {
    "claim": "c2",
    "source": "fv-benchdip",
    "text": "Place both hands flat on the bench so that your fingers are pointing laterally away from your body.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Place both hands flat on the bench so that your fingers are pointing laterally away from your body.",
    "note": ""
   },
   {
    "claim": "c3",
    "source": "hl-benchdip",
    "text": "Walk your feet out and extend your legs, lifting your bottom off the bench and holding there with extended arms.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Walk your feet out and extend your legs, lifting your bottom off the bench and holding there with extended arms.",
    "note": ""
   },
   {
    "claim": "c3",
    "source": "fv-benchdip",
    "text": "Extend your legs out in front, keeping the heels on the ground and toes pointing up.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Extend your legs out in front, keeping the heels on the ground and toes pointing up.",
    "note": ""
   },
   {
    "claim": "c3",
    "source": "fv-benchdip",
    "text": "Lift your buttocks off the bench, moving slightly forward to clear the edge.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Lift your buttocks off the bench, moving slightly forward to clear the edge.",
    "note": ""
   },
   {
    "claim": "c4",
    "source": "fv-benchdip",
    "text": "Lift your butt off the bench and extend your legs out straight keeping your butt close to the bench.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Lift your butt off the bench and extend your legs out straight keeping your butt close to the bench.",
    "note": ""
   },
   {
    "claim": "c5",
    "source": "hl-benchdip",
    "text": "Hinging at the elbow, lower your body down as far as you can go, or until your arms form a 90-degree angle.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Hinging at the elbow, lower your body down as far as you can go, or until your arms form a 90-degree angle.",
    "note": ""
   },
   {
    "claim": "c5",
    "source": "hl-benchdip",
    "text": "Make sure you lower down until your upper arm is parallel to the ground and your elbow forms a 90-degree angle.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Make sure you lower down until your upper arm is parallel to the ground and your elbow forms a 90-degree angle.",
    "note": ""
   },
   {
    "claim": "c5",
    "source": "fv-benchdip",
    "text": "Lower your body by bending the elbows, ensuring they remain close to your body and create about a 90-degree angle.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Lower your body by bending the elbows, ensuring they remain close to your body and create about a 90-degree angle.",
    "note": ""
   },
   {
    "claim": "c5",
    "source": "fv-benchdip",
    "text": "Retract your scapula and lean back slightly, then dip to where your upper arm is slightly above parallel.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Retract your scapula and lean back slightly, then dip to where your upper arm is slightly above parallel.",
    "note": ""
   },
   {
    "claim": "c5",
    "source": "sl-benchdip",
    "text": "Lower yourself with control for as far as comfortable by bending your arms.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Lower yourself with control for as far as comfortable by bending your arms.",
    "note": ""
   },
   {
    "claim": "c6",
    "source": "hl-benchdip",
    "text": "Push up through your palms back to start.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Push up through your palms back to start.",
    "note": ""
   },
   {
    "claim": "c6",
    "source": "fv-benchdip",
    "text": "Push through the palms, extending the elbows and using the triceps to raise your body back to the initial position.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Push through the palms, extending the elbows and using the triceps to raise your body back to the initial position.",
    "note": ""
   },
   {
    "claim": "c7",
    "source": "hl-benchdip",
    "text": "When you let your elbows flare out, you move the tension from your triceps to your shoulders, which can cause injury.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "When you let your elbows flare out, you move the tension from your triceps to your shoulders, which can cause injury.",
    "note": ""
   },
   {
    "claim": "c7",
    "source": "hl-benchdip",
    "text": "Ensure that your elbows stay tucked into your body throughout the dip.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Ensure that your elbows stay tucked into your body throughout the dip.",
    "note": ""
   },
   {
    "claim": "c7",
    "source": "fv-benchdip",
    "text": "Elbow Vigilance: Ensure your elbows remain tucked close to your body throughout to prevent undue strain.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Elbow Vigilance: Ensure your elbows remain tucked close to your body throughout to prevent undue strain.",
    "note": ""
   },
   {
    "claim": "c8",
    "source": "hl-benchdip",
    "text": "If you drop too low into the dip, you’ll put too much pressure on your shoulder.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "If you drop too low into the dip, you'll put too much pressure on your shoulder.",
    "note": ""
   },
   {
    "claim": "c8",
    "source": "hl-benchdip",
    "text": "Stop when your upper arms are parallel to the floor and rise back up.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Stop when your upper arms are parallel to the floor and rise back up.",
    "note": ""
   },
   {
    "claim": "c8",
    "source": "fv-benchdip",
    "text": "Shield Your Shoulders: Avoid dipping exceedingly low, as it can impose undue stress on the shoulders. Always maintain a controlled trajectory.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Shield Your Shoulders: Avoid dipping exceedingly low, as it can impose undue stress on the shoulders. Always maintain a controlled trajectory.",
    "note": ""
   },
   {
    "claim": "c9",
    "source": "hl-benchdip",
    "text": "Completing partial reps instead of a full rep won’t fully engage the triceps, negating some of the benefits of the exercise.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Completing partial reps instead of a full rep won't fully engage the triceps, negating some of the benefits of the exercise.",
    "note": ""
   },
   {
    "claim": "c10",
    "source": "hl-benchdip",
    "text": "If you rely on momentum to complete each rep, you miss out on some of the move’s many benefits. Move slowly and with control for maximum results.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "If you rely on momentum to complete each rep, you miss out on some of the move's many benefits. Move slowly and with control for maximum results.",
    "note": ""
   },
   {
    "claim": "c11",
    "source": "hl-benchdip",
    "text": "The bench dip is simple from an equipment angle, but there are some nuances to its form. Watch out for these common mistakes.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "The bench dip is simple from an equipment angle, but there are some nuances to its form. Watch out for these common mistakes.",
    "note": ""
   },
   {
    "claim": "c11",
    "source": "hl-benchdip",
    "text": "You’re not going low enough",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "You're not going low enough",
    "note": ""
   },
   {
    "claim": "c11",
    "source": "hl-benchdip",
    "text": "You’re flaring your elbows",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "You're flaring your elbows",
    "note": ""
   },
   {
    "claim": "c11",
    "source": "hl-benchdip",
    "text": "You’re going too low",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "You're going too low",
    "note": ""
   },
   {
    "claim": "c11",
    "source": "hl-benchdip",
    "text": "You’re moving too quickly",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "You're moving too quickly",
    "note": ""
   },
   {
    "claim": "c12",
    "source": "sl-benchdip",
    "text": "Primary muscles worked: Triceps Secondary muscles worked: Chest Front Deltoid",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Triceps Secondary muscles worked: Chest Front Deltoid",
    "note": ""
   },
   {
    "claim": "c12",
    "source": "sl-benchdip",
    "text": "This exercise puts more emphasis on your triceps than the bar dip does, which instead emphasizes your chest and front delts more.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "This exercise puts more emphasis on your triceps than the bar dip does, which instead emphasizes your chest and front delts more.",
    "note": ""
   },
   {
    "claim": "c12",
    "source": "hl-benchdip",
    "text": "Although this bodyweight exercise mainly targets the triceps, it also hits your chest and anterior deltoid, or the front part of your shoulder.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Although this bodyweight exercise mainly targets the triceps, it also hits your chest and anterior deltoid, or the front part of your shoulder.",
    "note": ""
   },
   {
    "claim": "c12",
    "source": "mckenzie-2022",
    "text": "The bench dip predominantly targets the triceps brachii but requires greater shoulder extension range.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "The bench dip predominantly targets the triceps brachii but requires greater shoulder extension range.",
    "note": ""
   },
   {
    "claim": "c13",
    "source": "mckenzie-2022",
    "text": "Thirteen experienced males performed four repetitions of each dip variation.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Thirteen experienced males performed four repetitions of each dip variation.",
    "note": ""
   },
   {
    "claim": "c13",
    "source": "mckenzie-2022",
    "text": "The bench dip also had the largest shoulder extension ROM, which was on average 88.13° (±8.86°), representing 101.35% (±6.49%) of the maximal ROM test.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "The bench dip also had the largest shoulder extension ROM, which was on average 88.13° (±8.86°), representing 101.35% (±6.49%) of the maximal ROM test.",
    "note": ""
   },
   {
    "claim": "c14",
    "source": "mckenzie-2022",
    "text": "This greater ROM at the shoulder joint may increase the risk of injury to the anterior shoulder capsule through the repetitive submaximal straining of the anterior band of the inferior glenohumeral ligament.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "This greater ROM at the shoulder joint may increase the risk of injury to the anterior shoulder capsule through the repetitive submaximal straining of the anterior band of the inferior glenohumeral ligament.",
    "note": ""
   },
   {
    "claim": "c15",
    "source": "hl-benchdip",
    "text": "Shoot for 3 sets of 10–12 reps here. If this is too challenging, try bending your knees and walking your feet closer to your body to perform the dip.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Shoot for 3 sets of 10-12 reps here. If this is too challenging, try bending your knees and walking your feet closer to your body to perform the dip.",
    "note": ""
   },
   {
    "claim": "c15",
    "source": "hl-benchdip",
    "text": "Continue to inch your feet out week after week, progressing to more advanced variations to challenge yourself.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Continue to inch your feet out week after week, progressing to more advanced variations to challenge yourself.",
    "note": ""
   },
   {
    "claim": "c15",
    "source": "hl-benchdip",
    "text": "Position two benches — or even chairs — across from each other. Place your hands on one and your feet on the other, completing a dip.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Position two benches - or even chairs - across from each other. Place your hands on one and your feet on the other, completing a dip.",
    "note": ""
   },
   {
    "claim": "c15",
    "source": "hl-benchdip",
    "text": "Once this becomes easy, try adding weight. Starting with your feet on the floor again, position a dumbbell or weighted plate in your lap for added resistance.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Once this becomes easy, try adding weight. Starting with your feet on the floor again, position a dumbbell or weighted plate in your lap for added resistance.",
    "note": ""
   },
   {
    "claim": "c15",
    "source": "fv-benchdip",
    "text": "Introduce a weight plate or dumbbell on your lap for added resistance, promoting consistent muscle development.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Introduce a weight plate or dumbbell on your lap for added resistance, promoting consistent muscle development.",
    "note": ""
   },
   {
    "claim": "c16",
    "source": "hl-benchdip",
    "text": "If you rely on momentum to complete each rep, you miss out on some of the move’s many benefits. Move slowly and with control for maximum results.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "If you rely on momentum to complete each rep, you miss out on some of the move's many benefits. Move slowly and with control for maximum results.",
    "note": ""
   },
   {
    "claim": "c16",
    "source": "sl-benchdip",
    "text": "Lower yourself with control for as far as comfortable by bending your arms.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Lower yourself with control for as far as comfortable by bending your arms.",
    "note": ""
   },
   {
    "claim": "c17",
    "source": "mf-benchdip",
    "text": "Make sure you pause at the top of each rep so that you really contract your triceps.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Make sure you pause at the top of each rep so that you really contract your triceps.",
    "note": ""
   },
   {
    "claim": "c18",
    "source": "mf-benchdip",
    "text": "Set two benches beside each other and about three feet apart. Sit on the edge of one bench, positioning the hands beside the hips while placing your feet on the opposite bench.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Set two benches beside each other and about three feet apart. Sit on the edge of one bench, positioning the hands beside the hips while placing your feet on the opposite bench.",
    "note": ""
   },
   {
    "claim": "c18",
    "source": "mf-benchdip",
    "text": "Slowly lower your hips by bending the arms at the elbow until they form a 90-degree angle. Pause for one second, flex the triceps to return to the starting position.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Slowly lower your hips by bending the arms at the elbow until they form a 90-degree angle. Pause for one second, flex the triceps to return to the starting position.",
    "note": ""
   },
   {
    "claim": "c19",
    "source": "mf-benchdip",
    "text": "To protect your shoulders make sure you position your hands in a comfortable position about shoulder-width apart.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "To protect your shoulders make sure you position your hands in a comfortable position about shoulder-width apart.",
    "note": ""
   },
   {
    "claim": "c20",
    "source": "fv-benchdip",
    "text": "Retract your scapula and lean back slightly, then dip to where your upper arm is slightly above parallel.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Retract your scapula and lean back slightly, then dip to where your upper arm is slightly above parallel.",
    "note": ""
   },
   {
    "claim": "c21",
    "source": "hl-benchdip",
    "text": "When performed incorrectly, this exercise can cause a shoulder impingement, or an injury to the muscles between bones in the shoulder area.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "When performed incorrectly, this exercise can cause a shoulder impingement, or an injury to the muscles between bones in the shoulder area.",
    "note": ""
   },
   {
    "claim": "c21",
    "source": "hl-benchdip",
    "text": "Important to note: If you have a preexisting shoulder injury, dips may not be the best option.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Important to note: If you have a preexisting shoulder injury, dips may not be the best option.",
    "note": ""
   }
  ]

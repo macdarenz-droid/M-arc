@@ -1,6 +1,6 @@
 {
  "id": "weighted_dip",
- "checked": "2026-10-02",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -199,8 +199,8 @@
    "claim": "c10",
    "source": "sl-dip",
    "text": "If you’re having trouble performing bar dips without shoulder pain, maybe the bench press could be a good substitute.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "If you’re having trouble performing bar dips without shoulder pain, maybe the bench press could be a good substitute.",
    "note": ""
   },
   {
@@ -263,24 +263,24 @@
    "claim": "c14",
    "source": "bb-dipcorrect",
    "text": "Another dip difficulty is a consistent range of motion. Many perform quarter or half reps when learning an exercise, then become frustrated when attempting to extend the range of motion. Vadnal suggested pause dips as a remedy.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Another dip difficulty is a consistent range of motion. Many perform quarter or half reps when learning an exercise, then become frustrated when attempting to extend the range of motion. Vadnal suggested pause dips as a remedy.",
    "note": ""
   },
   {
    "claim": "c14",
    "source": "bb-dips",
    "text": "That said, aim to go parallel or slightly below parallel with each rep that’s not meant to be a partial rep.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "That said, aim to go parallel or slightly below parallel with each rep that’s not meant to be a partial rep.",
    "note": ""
   },
   {
    "claim": "c15",
    "source": "bb-dipcorrect",
    "text": "Practicing pause dips helps dipping to the correct range automatically. The idea is to stop in that position with a one-second pause.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Practicing pause dips helps dipping to the correct range automatically. The idea is to stop in that position with a one-second pause.",
    "note": ""
   }
  ]

@@ -387,7 +387,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   },
   {
    "id": "bb-dips",
@@ -397,7 +397,7 @@
    "year": 2024,
    "pmid": null,
    "access": "full",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   },
   {
    "id": "bb-dipcorrect",
@@ -407,7 +407,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   },
   {
    "id": "mckenzie-2022",
@@ -417,7 +417,7 @@
    "year": 2022,
    "pmid": 36293792,
    "access": "abstract",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   },
   {
    "id": "acsm-2009",
@@ -427,7 +427,7 @@
    "year": 2009,
    "pmid": 19204579,
    "access": "abstract",
-   "checked": "2026-10-02"
+   "checked": "2026-10-22"
   }
  ],
  "plate": {

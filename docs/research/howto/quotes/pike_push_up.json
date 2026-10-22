@@ -1,334 +1,334 @@
 {
  "id": "pike_push_up",
  "checked": "2026-10-22",
- "fetcher": "pending",
+ "fetcher": "sonnet source fetcher",
  "quotes": [
   {
    "claim": "c1",
    "source": "fv-pike",
    "text": "Adopt the push-up position with your hands roughly shoulder-width apart. Brace your core and pull your shoulders down and back.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Adopt the push-up position with your hands roughly shoulder-width apart. Brace your core and pull your shoulders down and back.",
    "note": ""
   },
   {
    "claim": "c1",
    "source": "ggr-pike",
    "text": "Start from a high plank position with your hands shoulder-width apart.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Start from a high plank position with your hands shoulder-width apart.",
    "note": ""
   },
   {
    "claim": "c1",
    "source": "nasm-pike",
    "text": "Start in a downward dog yoga position with hands slightly wider than shoulder-width apart and your body forming an inverted V-shape.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Start in a downward dog yoga position with hands slightly wider than shoulder-width apart and your body forming an inverted V-shape.",
    "note": ""
   },
   {
    "claim": "c2",
    "source": "fv-pike",
    "text": "Keeping your legs straight, lift your butt into the air so your body resembles an inverted V.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Keeping your legs straight, lift your butt into the air so your body resembles an inverted V.",
    "note": ""
   },
   {
    "claim": "c2",
    "source": "fv-pike",
    "text": "Move your hands closer to your feet to put more weight on your hands and achieve a more inverted position.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Move your hands closer to your feet to put more weight on your hands and achieve a more inverted position.",
    "note": ""
   },
   {
    "claim": "c2",
    "source": "ggr-pike",
    "text": "Lift your hips up and back to form an upside down V with your body.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Lift your hips up and back to form an upside down V with your body.",
    "note": ""
   },
   {
    "claim": "c3",
    "source": "fv-pike",
    "text": "Keeping your hips up, bend your arms and lower your head to within an inch of the floor. Tuck your elbows inward as you descend.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Keeping your hips up, bend your arms and lower your head to within an inch of the floor. Tuck your elbows inward as you descend.",
    "note": ""
   },
   {
    "claim": "c3",
    "source": "nasm-pike",
    "text": "Lower your head toward the floor by bending your elbows, descending until your head nearly touches the floor. Keep your elbows at approximately 45 degrees from your body.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Lower your head toward the floor by bending your elbows, descending until your head nearly touches the floor. Keep your elbows at approximately 45 degrees from your body.",
    "note": ""
   },
   {
    "claim": "c4",
    "source": "fv-pike",
    "text": "Push back up until your arms are straight, and repeat.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Push back up until your arms are straight, and repeat.",
    "note": ""
   },
   {
    "claim": "c4",
    "source": "nasm-pike",
    "text": "Press your body upward by extending your elbows, returning to the pike position. Avoid locking out your elbows at the top to maintain continuous tension in the deltoids.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Press your body upward by extending your elbows, returning to the pike position. Avoid locking out your elbows at the top to maintain continuous tension in the deltoids.",
    "note": ""
   },
   {
    "claim": "c5",
    "source": "fv-pike",
    "text": "Keep your neck neutral with your chin slightly tucked. Do not lift your head and hyperextend your neck.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Keep your neck neutral with your chin slightly tucked. Do not lift your head and hyperextend your neck.",
    "note": ""
   },
   {
    "claim": "c5",
    "source": "ggr-pike",
    "text": "You want to move your head forward and down as you bend your elbows, maintaining a neutral neck and spine from start to finish.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "You want to move your head forward and down as you bend your elbows, maintaining a neutral neck and spine from start to finish.",
    "note": ""
   },
   {
    "claim": "c5",
    "source": "nasm-pike",
    "text": "Keep your head neutral and focus forward to maintain proper spinal alignment.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Keep your head neutral and focus forward to maintain proper spinal alignment.",
    "note": ""
   },
   {
    "claim": "c6",
    "source": "ggr-pike",
    "text": "Moving only your head toward the floor, similar to the handstand push-up, often leads to elbow flaring, poor movement mechanics, and—you guessed it—an increased risk of injury.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Moving only your head toward the floor, similar to the handstand push-up, often leads to elbow flaring, poor movement mechanics, and-you guessed it-an increased risk of injury.",
    "note": ""
   },
   {
    "claim": "c7",
    "source": "ggr-pike",
    "text": "Letting your elbows flare out isn’t just poor movement mechanics. Doing this can contribute to shoulder impingement and, in the most severe cases, lead to a rotator cuff tear down the line.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Letting your elbows flare out isn't just poor movement mechanics. Doing this can contribute to shoulder impingement and, in the most severe cases, lead to a rotator cuff tear down the line.",
    "note": ""
   },
   {
    "claim": "c7",
    "source": "nasm-pike",
    "text": "Elbows flaring too wide, which increases shoulder stress and reduces effectiveness",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Elbows flaring too wide, which increases shoulder stress and reduces effectiveness",
    "note": ""
   },
   {
    "claim": "c7",
    "source": "ggr-pike",
    "text": "“As with the regular push-up, you’ll want to keep your elbows tucked into your body while you move through the pike push-up,” says Kate.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "\"As with the regular push-up, you'll want to keep your elbows tucked into your body while you move through the pike push-up,\" says Kate.",
    "note": ""
   },
   {
    "claim": "c7",
    "source": "ggr-pike",
    "text": "“Letting them flare out to your sides is often a sign that your triceps are being overloaded. Instead of eking out shoddy reps, you should consider scaling down to standard push-ups or modified push-ups from your knees.”",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "\"Letting them flare out to your sides is often a sign that your triceps are being overloaded. Instead of eking out shoddy reps, you should consider scaling down to standard push-ups or modified push-ups from your knees.\"",
    "note": ""
   },
   {
    "claim": "c8",
    "source": "ggr-pike",
    "text": "since you’re nearly upside down when in the pike position, you have a greater risk of experiencing dizziness or lightheadedness, making the possibility of passing out more real.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "since you're nearly upside down when in the pike position, you have a greater risk of experiencing dizziness or lightheadedness, making the possibility of passing out more real.",
    "note": ""
   },
   {
    "claim": "c8",
    "source": "ggr-pike",
    "text": "as you’re bending your elbows to lower yourself down, then exhale as you push yourself back up",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "as you're bending your elbows to lower yourself down, then exhale as you push yourself back up",
    "note": ""
   },
   {
    "claim": "c9",
    "source": "nasm-pike",
    "text": "Allowing hips to sag, which reduces shoulder demand and shifts emphasis to chest",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Allowing hips to sag, which reduces shoulder demand and shifts emphasis to chest",
    "note": ""
   },
   {
    "claim": "c9",
    "source": "nasm-pike",
    "text": "Jerky movements or excessive momentum, which compromises form and control",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Jerky movements or excessive momentum, which compromises form and control",
    "note": ""
   },
   {
    "claim": "c9",
    "source": "nasm-pike",
    "text": "Moving too quickly without controlling both concentric and eccentric phases",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Moving too quickly without controlling both concentric and eccentric phases",
    "note": ""
   },
   {
    "claim": "c9",
    "source": "nasm-pike",
    "text": "Not maintaining adequate pike position depth and angle",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Not maintaining adequate pike position depth and angle",
    "note": ""
   },
   {
    "claim": "c10",
    "source": "fv-pike",
    "text": "Spread your fingers to create a more stable base from which to work.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Spread your fingers to create a more stable base from which to work.",
    "note": ""
   },
   {
    "claim": "c10",
    "source": "fv-pike",
    "text": "Actively engage your abs to maintain a strong piked position.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Actively engage your abs to maintain a strong piked position.",
    "note": ""
   },
   {
    "claim": "c11",
    "source": "nasm-pike",
    "text": "Anterior Deltoid -- primary mover for vertical pressing in pike position",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Anterior Deltoid -- primary mover for vertical pressing in pike position",
    "note": ""
   },
   {
    "claim": "c11",
    "source": "fv-pike",
    "text": "All three heads are involved in pike push-ups, but the anterior deltoid is the most active.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "All three heads are involved in pike push-ups, but the anterior deltoid is the most active.",
    "note": ""
   },
   {
    "claim": "c11",
    "source": "fv-pike",
    "text": "the triceps are heavily involved in pike push-ups and work as synergist or helper muscle.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "the triceps are heavily involved in pike push-ups and work as synergist or helper muscle.",
    "note": ""
   },
   {
    "claim": "c11",
    "source": "fv-pike",
    "text": "All three sets of trap fibers are active during pike push-ups, but the upper traps are the most active.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "All three sets of trap fibers are active during pike push-ups, but the upper traps are the most active.",
    "note": ""
   },
   {
    "claim": "c11",
    "source": "fv-pike",
    "text": "Pike push-ups involve your deltoids or shoulder muscles more and provide very little work for your chest.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Pike push-ups involve your deltoids or shoulder muscles more and provide very little work for your chest.",
    "note": ""
   },
   {
    "claim": "c12",
    "source": "fv-pike",
    "text": "using push-up handles may make pike push-ups more comfortable for your wrists.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "using push-up handles may make pike push-ups more comfortable for your wrists.",
    "note": ""
   },
   {
    "claim": "c12",
    "source": "ggr-pike",
    "text": "your wrist joints may be happier when using one of the best exercise mats for cushioning.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "your wrist joints may be happier when using one of the best exercise mats for cushioning.",
    "note": ""
   },
   {
    "claim": "c13",
    "source": "nasm-pike",
    "text": "Develop adequate upper body and shoulder strength through traditional and incline push-ups before progressing to pike variations.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Develop adequate upper body and shoulder strength through traditional and incline push-ups before progressing to pike variations.",
    "note": ""
   },
   {
    "claim": "c13",
    "source": "nasm-pike",
    "text": "Perform 3 sets of 5-12 repetitions, adjusting based on fitness level and strength.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Perform 3 sets of 5-12 repetitions, adjusting based on fitness level and strength.",
    "note": ""
   },
   {
    "claim": "c13",
    "source": "ggr-pike",
    "text": "I typically recommend starting with something comfortable, even if it’s only one or two reps at a time. Do a few low-rep sets, then aim to increase the number of reps by one or two the next week.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "I typically recommend starting with something comfortable, even if it's only one or two reps at a time. Do a few low-rep sets, then aim to increase the number of reps by one or two the next week.",
    "note": ""
   },
   {
    "claim": "c13",
    "source": "fv-pike",
    "text": "If you can do a few sets of ten or more reps with good form, you are probably ready to move up a level and try a more demanding pike push-up variation.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "If you can do a few sets of ten or more reps with good form, you are probably ready to move up a level and try a more demanding pike push-up variation.",
    "note": ""
   },
   {
    "claim": "c13",
    "source": "fv-pike",
    "text": "if the next variation feels too overly hard, or you cannot do it properly, it’s okay to return to your previous level",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "if the next variation feels too overly hard, or you cannot do it properly, it's okay to return to your previous level",
    "note": ""
   },
   {
    "claim": "c14",
    "source": "ggr-pike",
    "text": "Continue until your elbows are fully bent.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Continue until your elbows are fully bent.",
    "note": ""
   },
   {
    "claim": "c14",
    "source": "ggr-pike",
    "text": "Pause, then extend your elbows to return to the starting position.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "Pause, then extend your elbows to return to the starting position.",
    "note": ""
   },
   {
    "claim": "c15",
    "source": "ggr-pike",
    "text": "The positioning feels awkward to many, especially those prone to dizziness, and requires a solid foundation to maintain control. So, don’t rush these if they’re new to you.",
-   "status": "pending",
-   "closest": "",
+   "status": "verbatim",
+   "closest": "The positioning feels awkward to many, especially those prone to dizziness, and requires a solid foundation to maintain control. So, don't rush these if they're new to you.",
    "note": ""
   }
  ]
