@@ -105,14 +105,11 @@ export const START_ARM = (() => {
 })();
 const START_HANDLE = handleOf(LS['grip.l']).items.map(it => ({ type: 'line', pts: [...it.pts, it.pts[0]], cls: 'eq-line m-line', z: 'front', part: 'startHandle' }));
 
-// The cable's Mistake twin (DRAWING-GUIDE.md 4; eq/rope.mjs's pattern): the column's cable is a line, which the
-// engine never redraws in the Mistake view, so in the Mistake pose a thin `poly` runs from the pulley's rim to the
-// ring, drawn there with the moved handle.
-const CABLE_W = 0.004;
-const cableTwin = ring => {
-  const u = unit(ring.map((v, i) => v - PULLEY[i])), a = PULLEY.map((v, i) => v + u[i] * 0.045), n = unit([-u[1], u[0], 0]).map(v => v * CABLE_W / 2);
-  return { type: 'poly', pts: [a.map((v, i) => v + n[i]), ring.map((v, i) => v + n[i]), ring.map((v, i) => v - n[i]), a.map((v, i) => v - n[i])], cls: 'eq-solid', z: 'center', part: 'cable' };
-};
+// The cable in the Mistake (slice look #299 6348157337 item 1): the column's cable is a line, which the engine never
+// redraws in the Mistake view, and a Mistake `poly` is masked where it falls inside the figure. So the Mistake cable
+// runs as a dashed Mistake guide, drawn above every figure, unbroken from the pulley's rim to the Mistake handle's ring.
+const M_RING = handleOf(landmarksOf({ ...end, ...mistakePose }, H)['grip.l']).ring;
+export const M_CABLE = (() => { const u = unit(M_RING.map((v, i) => v - PULLEY[i])); return [PULLEY.map((v, i) => v + u[i] * 0.045), M_RING]; })();
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 const SIDE_X = LS['elbow.l'][0];
 
@@ -125,7 +122,6 @@ export default {
     (lm, ctx) => { const ring = handleOf(lm['grip.l']).ring; return { type: 'cableColumn', base: [-COLUMN_X, 0, PULLEY_Z], pulley: { at: PULLEY }, to: ring, rest: restFor(ring, ctx) }; },
     lm => handleOf(lm['grip.l']).items[0],
     lm => handleOf(lm['grip.l']).items[1],
-    (lm, ctx) => (ctx.pose === 'mistake' ? cableTwin(handleOf(lm['grip.l']).ring) : null),
     (lm, ctx) => (ctx.pose === 'end' ? [...START_ARM, ...START_HANDLE] : null),
   ],
   checks: [
@@ -144,17 +140,21 @@ export default {
   ghosts: { count: 2, parts: ['arm.l', 'handle'] },
   trace: { point: 'grip.l', trim: [10, 12] },
   callouts: [
-    { key: 'elbow', text: 'Elbow<br>at side', anchor: 'elbow.l', box: { left: 236, top: 222 }, cue: 'Keep your upper arm against your side, elbow bent 90 degrees.' },
-    { key: 'level', text: 'Forearm<br>level', anchor: { along: ['elbow.l', 'wrist.l'], t: 0.6, off: [0, -6] }, box: { left: 252, top: 148 }, cue: 'Keep your forearm parallel to the ground as it turns.' },
-    { key: 'turn', text: 'Turn only', anchor: 'shoulderTop.l', box: { left: 240, top: 88 }, cue: 'Turn from the shoulder only and keep your torso still.' },
+    { key: 'elbow', text: 'Elbow<br>at side', anchor: { along: ['shoulder.l', 'elbow.l'], t: 0.8, off: [8, 0] }, box: { left: 248, top: 126 }, cue: 'Keep your upper arm against your side, elbow bent 90 degrees.' },
+    { key: 'level', text: 'Forearm<br>level', anchor: { along: ['elbow.l', 'wrist.l'], t: 0.6, off: [0, 6] }, box: { left: 248, top: 200 }, cue: 'Keep your forearm parallel to the ground as it turns.' },
+    { key: 'turn', text: 'Turn only', anchor: 'shoulderTop.l', box: { left: 240, top: 78 }, cue: 'Turn from the shoulder only and keep your torso still.' },
   ],
   tempo: [{ phase: 'Turn out', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    guides: [],
+    guides: [
+      { kind: 'dashed', pts: M_CABLE },   // the cable to the Mistake handle
+      // the flare: the elbow's move off the side, under the arm, clear of the end figure
+      { kind: 'arrow', from: { at: 'elbow.l', pose: 'end', off: [9, 20] }, to: { at: 'elbow.l', pose: 'mistake', off: [3, 20] } },
+    ],
     tells: [
       { key: 'flare', text: 'Elbow<br>flares out', anchor: { at: 'elbow.l', pose: 'mistake' }, cue: 'The elbow flares out, away from your side, as the handle turns.' },
-      { key: 'side', text: 'Off<br>the side', anchor: { along: ['mistake:shoulder.l', 'mistake:elbow.l'], t: 0.6, pose: 'mistake' }, cue: 'The upper arm leaves your side.' },
+      { key: 'side', text: 'Off<br>the side', anchor: { along: ['mistake:shoulder.l', 'mistake:elbow.l'], t: 0.5, off: [8, 0], pose: 'mistake' }, box: { left: 262, top: 112 }, cue: 'The upper arm leaves your side.' },
     ],
   },
   pilot: { drawableFault: 'Top fault: swinging with momentum (c12), seen only as speed; the plate draws the next fault on the same list, the elbow flaring out (c9).' },

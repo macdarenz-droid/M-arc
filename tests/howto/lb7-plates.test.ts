@@ -535,11 +535,27 @@ describe('LIB-17 cables (D-LIB17-CABLE): pulley to handle in every pose, above t
       const [a, b] = p.line, pts = Array.from({ length: 81 }, (_, k) => [a[0] + (b[0] - a[0]) * k / 80, a[1] + (b[1] - a[1]) * k / 80]);
       if (pts.some(q => outside(head, q) < 0)) out.push(`${pose}: cable through the head outline`);
     }
-    if (pose === 'mistake') {
-      const tw = items.find((i: any) => i.part === 'cable');
-      if (!tw || tw.type !== 'poly') out.push('mistake: no cable twin');
-    }
     return out;
+  });
+  /** Slice look item 1 (#299 6348157337): in the Mistake the red cable shows unbroken from the pulley to the Mistake
+   *  handle's ring: one dashed Mistake guide (drawn in the mistake layer, above every figure, never masked) whose ends sit
+   *  on the pulley's rim and the ring (+-1 px), and no Mistake `poly` stands in for it. */
+  const mistakeCableProblems = (spec: any) => {
+    const svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, layer = svg.split('<g class="mistake-layer">')[1] ?? '', cam = camOf(spec);
+    const l = lmOf(spec, 'mistake'), ring = M[spec.id][spec.id === 'cable_lateral_raise' ? 'CLR' : 'CER'].handleOf(l['grip.l']).ring, pul = M[spec.id][spec.id === 'cable_lateral_raise' ? 'CLR' : 'CER'].pulley;
+    const [R0, P0] = [cam.P(ring), cam.P(pul)];
+    const hit = [...layer.matchAll(/<path class="m-line" d="([^"]+)"/g)].map(m => xy(m[1]!)).some(p => p.length === 2
+      && Math.hypot(p[1]![0]! - R0[0]!, p[1]![1]! - R0[1]!) <= 1 && Math.abs(Math.hypot(p[0]![0]! - P0[0]!, p[0]![1]! - P0[1]!) - 0.045 * cam.pxm) <= 1);
+    const out = hit ? [] : ['mistake: no unbroken cable guide from the pulley to the handle'];
+    if (itemsIn(spec, 'mistake').items.some((i: any) => i.part === 'cable')) out.push('mistake: a masked cable poly');
+    return out;
+  };
+  it('A15: each cabled plate\'s Mistake shows the cable unbroken from the pulley to the Mistake handle', () => {
+    for (const id of CABLED) expect(mistakeCableProblems(S[id]), id).toEqual([]);
+  });
+  it('A15 mutation: the Mistake cable guide removed (cable_external_rotation) is red', () => {
+    const s = S.cable_external_rotation, bad = { ...s, mistake: { ...s.mistake, guides: s.mistake.guides.filter((g: any) => g.kind !== 'dashed') } };
+    expect(mistakeCableProblems(bad)).toEqual(['mistake: no unbroken cable guide from the pulley to the handle']);
   });
   it('each cabled plate: the cable reaches the handle in every pose and never crosses the head', () => {
     for (const id of CABLED) expect(cableProblems(S[id]), id).toEqual([]);

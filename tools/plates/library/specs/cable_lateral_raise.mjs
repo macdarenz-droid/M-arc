@@ -32,7 +32,7 @@
 // Unsourced numbers (SIZES below; lb7/sizes.json holds each with its basis): FOOT_X, KNEE_SOFT, ELBOW_BEND, START_ELEV,
 //  START_PLANE, LEAD, M_OVER, FREE_ELBOW, COLUMN_X, PULLEY_Y, PULLEY_Z, HANDLE_GRIP, HANDLE_STRAP, FLOOR_L, FLOOR_R.
 //  The elevation 90 is c7's.
-import { WINTER, REF, landmarksOf } from '../engine.mjs';
+import { WINTER, REF, landmarksOf, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
 export const SIZES = Object.freeze({ FOOT_X: 0.18, KNEE_SOFT: 5, ELBOW_BEND: 18, START_ELEV: 12, START_PLANE: 135, LEAD: 8, M_OVER: 20, FREE_ELBOW: 2,
@@ -95,18 +95,35 @@ const restFor = (ring, ctx) => {
 };
 // The start handle as a dashed phantom (end layer): the outline the start layer cannot draw.
 const START_HANDLE = (() => { const it = handleOf(LS['grip.l']).item; return { type: 'line', pts: [...it.pts, it.pts[0]], cls: 'eq-line m-line', z: 'front', part: 'startHandle' }; })();
+// The start arm as a dashed phantom (slice look item 4; Q2 (c)): the hanging start arm and fist lie under the end
+// torso fill, so the outline of the start working arm's union (upper arm, elbow cap, forearm, fist) is redrawn in the end
+// layer (z front), as cable_external_rotation's (machine_chest_press.mjs:80-107's method in the front view).
+const insidePoly = (p, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+  const [xi, yi] = poly[i], [xj, yj] = poly[j];
+  if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
+export const START_ARM = (() => {
+  const body = { height: H }, sk = fk(resolve(normPose(start, body), body).q, body), cam = { view: 'front', pxm: 1, P: w => [w[0], -w[1]] };
+  const polys = bodyShapes(sk, cam).filter(sh => ['upper.l', 'elbowcap.l', 'fore.l', 'fist.l'].includes(sh.key)).map(sh => sh.poly), runs = [];
+  polys.forEach((poly, k) => {
+    let run = [];
+    const flush = () => { if (run.length > 1) runs.push(run); run = []; };
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], b = poly[(i + 1) % poly.length], n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 0.002));
+      for (let j = 0; j < n; j++) { const p = [a[0] + (b[0] - a[0]) * j / n, a[1] + (b[1] - a[1]) * j / n]; if (polys.some((q, m) => m !== k && insidePoly(p, q))) flush(); else run.push(p); }
+    }
+    flush();
+  });
+  return runs.map(r => ({ type: 'line', pts: r.map(p => [p[0], -p[1], LS['grip.l'][2]]), cls: 'eq-line m-line', z: 'front', part: 'startArm' }));
+})();
 // The cable's mid point at the end (the "Cable tight" anchor sits on the drawn cable).
 const END_RING = handleOf(LE['grip.l']).ring;
 export const CABLE_MID = END_RING.map((v, i) => v + (PULLEY[i] - v) * 0.42);
 
-// The cable's Mistake twin (DRAWING-GUIDE.md 4; eq/rope.mjs's pattern): the column's cable is a line, which the
-// engine never redraws in the Mistake view, so in the Mistake pose a thin `poly` runs from the pulley's rim to the
-// ring, drawn there with the moved handle.
-const CABLE_W = 0.004;
-const cableTwin = ring => {
-  const u = unit(ring.map((v, i) => v - PULLEY[i])), a = PULLEY.map((v, i) => v + u[i] * 0.045), n = unit([-u[1], u[0], 0]).map(v => v * CABLE_W / 2);
-  return { type: 'poly', pts: [a.map((v, i) => v + n[i]), ring.map((v, i) => v + n[i]), ring.map((v, i) => v - n[i]), a.map((v, i) => v - n[i])], cls: 'eq-solid', z: 'center', part: 'cable' };
-};
+// The cable in the Mistake (slice look #299 6348157337 item 1): the column's cable is a line, which the engine never
+// redraws in the Mistake view, and a Mistake `poly` is masked where it falls inside the figure. So the Mistake cable
+// runs as a dashed Mistake guide, drawn above every figure, unbroken from the pulley's rim to the Mistake handle's ring.
+const M_RING = handleOf(landmarksOf({ ...end, ...mistakePose }, H)['grip.l']).ring;
+export const M_CABLE = (() => { const u = unit(M_RING.map((v, i) => v - PULLEY[i])); return [PULLEY.map((v, i) => v + u[i] * 0.045), M_RING]; })();
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 const SH_Y = LE['shoulder.l'][1];
 
@@ -118,8 +135,7 @@ export default {
     { type: 'floor', from: -FLOOR_L, to: FLOOR_R },
     (lm, ctx) => { const ring = handleOf(lm['grip.l']).ring; return { type: 'cableColumn', base: [-COLUMN_X, 0, PULLEY_Z], pulley: { at: PULLEY }, to: ring, rest: restFor(ring, ctx) }; },
     lm => handleOf(lm['grip.l']).item,
-    (lm, ctx) => (ctx.pose === 'mistake' ? cableTwin(handleOf(lm['grip.l']).ring) : null),
-    (lm, ctx) => (ctx.pose === 'end' ? START_HANDLE : null),
+    (lm, ctx) => (ctx.pose === 'end' ? [...START_ARM, START_HANDLE] : null),
   ],
   checks: [
     ...['heel.l', 'ball.l', 'heel.r', 'ball.r'].map(landmark => ({ landmark, plane: FLOOR, pose: 'all', tol: 0.5 })),
@@ -140,12 +156,14 @@ export default {
   callouts: [
     { key: 'tight', text: 'Cable<br>tight', anchor: CABLE_MID, box: { left: 250, top: 226 }, cue: 'Step away from the machine so the cable is tight.' },
     { key: 'elbow', text: 'Elbow<br>leads', anchor: 'elbow.l', box: { left: 190, top: 60 }, cue: 'Raise your arm out to the side, elbow leading the hand.' },
-    { key: 'height', text: 'Shoulder<br>height', anchor: { at: 'shoulder.l', off: [118, 0] }, box: { left: 272, top: 94 }, cue: 'Stop when your arm is parallel with the floor.' },
+    { key: 'height', text: 'Shoulder<br>height', anchor: { at: 'shoulder.l', off: [118, 0] }, box: { left: 276, top: 62 }, cue: 'Stop when your arm is parallel with the floor.' },
   ],
   tempo: [{ phase: 'Raise', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    guides: [],
+    guides: [
+      { kind: 'dashed', pts: M_CABLE },   // the cable to the Mistake handle
+    ],
     tells: [
       { key: 'above', text: 'Above<br>shoulder', anchor: { at: 'elbow.l', pose: 'mistake' }, box: { left: 200, top: 64 }, cue: 'The arm rises above shoulder height.' },
       { key: 'past', text: 'Beyond<br>90°', anchor: { at: 'grip.l', pose: 'mistake' }, box: { left: 284, top: 40 }, cue: 'The upper arm goes past level, beyond 90 degrees.' },

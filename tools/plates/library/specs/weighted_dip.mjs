@@ -188,7 +188,7 @@ export default {
   // The parallel line (c4): level through the end elbow, the upper arm lies on it at the bottom; in the Mistake the
   // upper arm stops above it.
   datum: [{ y: 'elbow.r', from: { at: 'elbow.r', off: [-14, 0] }, to: { at: 'shoulder.r', off: [46, 0] } }],
-  measure: { vertex: 'elbow.r', from: { dir: UA }, to: 'grip.r', radius: 20, title: 'Elbow', value: 'about 90° bend', expect: 90, box: { left: 16, top: 128 } },
+  measure: { vertex: 'elbow.r', from: { dir: UA }, to: 'grip.r', radius: 20, title: 'Elbow', value: 'about 90° bend', expect: 90, box: { left: 12, top: 122 } },
   callouts: [
     // c3: the top position's shoulders (the checkpoint's claim c3 is the top), anchored on the start figure
     { key: 'shoulders', text: 'Shoulders<br>down', anchor: { at: 'shoulderTop.r', pose: 'start' }, box: { left: 30, top: 36 }, cue: 'Keep your shoulders down and back, away from your ears.' },
