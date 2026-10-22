@@ -775,7 +775,22 @@
       "why": "No read source describes it (verify/g4.md item 1; LR-13, LIB-WAYOUT)."
     }
   ],
-  "plateFacts": [],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    }
+  ],
   "tempo": [
     {
       "phase": "Extend",

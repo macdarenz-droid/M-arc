@@ -66,6 +66,7 @@ export default {
     lm => ({ type: 'dumbbell', at: dbAt(lm), axis: [0, 1, 0], part: 'db', z: 'mid' }),
   ],
   checks: [
+    ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: lmEnd[landmark], pose: 'end', tol: 0.5 })),   // both hands around the handle (c1; card start = spec end)
     { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     // the upper arms never move (c6, c7): the elbow at one point in start and end

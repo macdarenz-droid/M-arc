@@ -572,6 +572,13 @@
    "pose": "start",
    "cardPose": "start",
    "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
   }
  ],
  "tempo": [

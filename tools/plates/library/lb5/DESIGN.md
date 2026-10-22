@@ -254,6 +254,32 @@ Every number and every contact a quote gives for a drawn pose (quotes read on th
 | wrist_curl | c1 "rest your forearm against your thigh" (start) | `contact wrist.r`, poses `start` and `end`: a `checks` plane on the thigh's top line, offset by the forearm's distal radius (the forearm's far end on the thigh, the hand past the knee) | the forearm stays still (c1, c3); the elbow end of the forearm lies on the thigh too, but one contact per fact is enough to prove it |
 | wrist_curl | c2 "approximately a 90 degree bend at the elbows" | none: c2 is ACE's kneeling version on a bench, not the drawn seated version (D-LIB9-FACTPOSE) | |
 
+Fix round (CARD FIELDS verify, #290 6349063103), applied to the cards' plateFacts:
+- Added, each side of a plural paired part: preacher_curl `elbow.l` start (c1) and end (c4), `heel.l` and `ball.l` start
+  (c2); concentration_curl `heel` and `ball`, `.r` and `.l`, start and end (c5 "throughout the lift").
+- Added, the hands on the implement at the card's start (checked at the wrist, LB6 and LB7's precedent):
+  overhead_cable_triceps_extension both (c3 "positioning hands behind your head", the rope), dumbbell_overhead_triceps_
+  extension both (c1 "wrap both hands", spec end), cross_body_hammer_curl both (c1 "a dumbbell in each hand"), cable_curl
+  both (c1 "hands about shoulder-width apart", spec end), bayesian_cable_curl `wrist.r` (c1 "the handle in one hand"),
+  preacher_curl `wrist.r` (c1 "Grip the curl bar"; c1 names no hands in the plural), concentration_curl and wrist_curl
+  as below.
+
+Not facts:
+- dumbbell_overhead_triceps_extension `elbow.r` 90 (c5): "until your elbows reach a 90 degree bend or until your upper
+  arms begin to move backwards" gives two stop points joined by "or", a choice (D-LIB17-ORCHOICE). The 90° stays drawn,
+  with its measure arc.
+- concentration_curl `elbow.r` end (c7): "once your triceps starts losing touch ... or once your upper arm stops being
+  perpendicular" is a choice (D-LIB17-ORCHOICE), and no other non-setup quote states the triceps on the thigh at the end.
+  The contact stays drawn, held by a `checks` entry.
+- wrist_curl `wrist.r` end (c1): c1 is a setup quote and states the start only (D-LIB9-FACTPOSE). The forearm-on-thigh
+  start is also no fact: c1's first two quotes give "thigh, or alternatively a bench", a choice, and its third ("one
+  forearm on each of your legs") is the two-arm version, while the plate draws one arm. Both contacts stay drawn, held by
+  `checks`. The card keeps `wrist.r` start c1 for the hand on the dumbbell ("Grab a dumbbell").
+- Free hands: concentration_curl c5 ("You can also grip your right knee or the weight bench") and bayesian_cable_curl c7
+  ("out to the side or place it on your hip") are choices.
+- concentration_curl's working side waits on D-LIB15-MIRROR (section 16): its `elbow.r` start fact (c1 names the left
+  arm) stays as it was, and its hand contact is not added, until the side is settled.
+
 Unsourced numbers (13.3 must-fix 14; each spec header lists its own): every pulley height on the low-pulley plates
 (about 15 cm, "lowest position", c1), the column and stack (the 8's lat_pulldown sizes), the rope (the composer's
 sizes), the straight bar (1.2 m cable bar) and single handle sizes; overhead_cable_triceps_extension's step from the
@@ -378,3 +404,9 @@ Item fixes (6343211054 items 2-7):
 
 Flags (authoring QA, 4 rows): F5 only on preacher_curl, cable_curl and bayesian_cable_curl. concentration_curl raises
 F2: cover 0.16 < 0.191 at the reference scale (146.3 px/m; seated, hinged figure), a named flag (D-LIB15-F2, section 6).
+
+D-LIB15-MIRROR (#290 6349063103): concentration_curl's c1 sources name the left arm and the left thigh, with the free
+hand on the right knee (c5). The plate may draw the mirror image only if a claim states that each side is trained. None
+does: no claim or quote on the card mentions the other arm, switching sides, or each side. So the ruling's own branch
+applies: the facts take c1's named side and the plate is redrawn left-handed. That redraw changes the plates page the
+critic panel is running on (4a84a64e…), so it is posted on #290 before it is done.

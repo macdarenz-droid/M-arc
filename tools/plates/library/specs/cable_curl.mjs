@@ -119,6 +119,7 @@ export default {
     lm => ({ type: 'poly', curve: true, cls: 'eq-solid', z: 'mid', part: 'bar', pts: disc(barOf(lm), BAR_R) }),
   ],
   checks: [
+    ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: landmarksOf(end, H)[landmark], pose: 'end', tol: 0.5 })),   // both hands on the bar (c1; card start = spec end)
     { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'ball.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     // the elbows stay at the sides (c3): on the vertical plane through the shoulder joint, start and end

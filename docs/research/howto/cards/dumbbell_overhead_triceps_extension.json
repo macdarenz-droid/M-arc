@@ -741,12 +741,18 @@
   ],
   "plateFacts": [
     {
-      "kind": "angle",
-      "joint": "elbow.r",
-      "deg": 90,
-      "pose": "start",
-      "cardPose": "end",
-      "claim": "c5"
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c1"
     }
   ],
   "tempo": [

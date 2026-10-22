@@ -695,15 +695,20 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
   const TOP: Record<string, string> = { ...DRAWN, wrist_curl: 'grip', cross_body_hammer_curl: 'straight' };
   // The ruled facts (D-LIB15-FACTS), copied from the ruling, never read from a card or a spec.
   const C = (landmark: string, pose: string, cardPose: string, claim: string) => ({ kind: 'contact', landmark, pose, cardPose, claim });
+  // The plate-fact fix round (#290 6349063103): each side of a plural paired part, the hands on the implement at the
+  // card's start (checked at the wrist), and no fact from an 'or' stop point or a setup quote's end pose.
+  const W2 = (pose: string, cp: string, cl: string) => [C('wrist.r', pose, cp, cl), C('wrist.l', pose, cp, cl)];
   const FACTS: Record<string, any[]> = {
-    overhead_cable_triceps_extension: [],
-    dumbbell_overhead_triceps_extension: [{ kind: 'angle', joint: 'elbow.r', deg: 90, pose: 'start', cardPose: 'end', claim: 'c5' }],
-    cross_body_hammer_curl: [],
-    cable_curl: [],
-    bayesian_cable_curl: [{ kind: 'angle', measure: true, deg: 45, pose: 'start', cardPose: 'start', claim: 'c2' }],
-    preacher_curl: [C('elbow.r', 'start', 'start', 'c1'), C('chest', 'start', 'start', 'c1'), C('heel.r', 'start', 'start', 'c2'), C('ball.r', 'start', 'start', 'c2'), C('elbow.r', 'end', 'end', 'c4')],
-    concentration_curl: [C('elbow.r', 'start', 'start', 'c1'), C('seat', 'start', 'start', 'c1'), C('elbow.r', 'end', 'end', 'c7')],
-    wrist_curl: [C('wrist.r', 'start', 'start', 'c1'), C('wrist.r', 'end', 'end', 'c1')],
+    overhead_cable_triceps_extension: W2('start', 'start', 'c3'),
+    dumbbell_overhead_triceps_extension: W2('end', 'start', 'c1'),
+    cross_body_hammer_curl: W2('start', 'start', 'c1'),
+    cable_curl: W2('end', 'start', 'c1'),
+    bayesian_cable_curl: [{ kind: 'angle', measure: true, deg: 45, pose: 'start', cardPose: 'start', claim: 'c2' }, C('wrist.r', 'start', 'start', 'c1')],
+    preacher_curl: [C('elbow.r', 'start', 'start', 'c1'), C('elbow.l', 'start', 'start', 'c1'), C('chest', 'start', 'start', 'c1'), C('heel.r', 'start', 'start', 'c2'), C('heel.l', 'start', 'start', 'c2'),
+      C('ball.r', 'start', 'start', 'c2'), C('ball.l', 'start', 'start', 'c2'), C('wrist.r', 'start', 'start', 'c1'), C('elbow.r', 'end', 'end', 'c4'), C('elbow.l', 'end', 'end', 'c4')],
+    concentration_curl: [C('elbow.r', 'start', 'start', 'c1'), C('seat', 'start', 'start', 'c1'),
+      ...['start', 'end'].flatMap(p => ['heel.r', 'heel.l', 'ball.r', 'ball.l'].map(l => C(l, p, p, 'c5')))],
+    wrist_curl: [C('wrist.r', 'start', 'start', 'c1')],
   };
   const tj = () => readJson('tools/plates/library/lb5/tempo.json');
   const built = (rows: any[], pt: any) => rows.flatMap((r: any) => (r.from === 'pause' ? (pt.pause > 0 ? [{ phase: r.phase, s: pt.pause }] : []) : [{ phase: r.phase, s: pt[r.from], move: true }]));
@@ -754,9 +759,9 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
   });
   it('mutations: a fact with both joint and measure: true, and a start fact named with the unmapped pose, are red', () => {
     const c = cardOf('cable_curl'); c.plateFacts.push({ kind: 'angle', joint: 'elbow.r', measure: true, deg: 20, claim: 'c13' });
-    expect(factProblems('cable_curl', c)).toEqual(['0: both joint and measure']);
-    const d = cardOf('dumbbell_overhead_triceps_extension'); d.plateFacts[0].pose = 'end';
-    expect(factProblems('dumbbell_overhead_triceps_extension', d)).toEqual(["0: pose end is not the map's image of card end"]);
+    expect(factProblems('cable_curl', c)).toEqual([`${c.plateFacts.length - 1}: both joint and measure`]);
+    const d = cardOf('dumbbell_overhead_triceps_extension'); d.plateFacts[0].pose = 'start';
+    expect(factProblems('dumbbell_overhead_triceps_extension', d)).toEqual(["0: pose start is not the map's image of card start"]);
   });
   it('D-LIB15-POSE: the pose map is pinned on the drawn swapped specs (cable_curl ends at the bottom; the dumbbell extension ends at the top)', () => {
     if (S.cable_curl) { const a = plate.renderPlate(S.cable_curl, { id: 'x' }).report.angles; expect(a.end['elbow.r']).toBeLessThan(a.start['elbow.r']); }
@@ -780,6 +785,6 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
   });
   it('D-LIB13-FACTS2 mutation: preacher_curl\'s end upper arm lifted 2 cm off the pad turns its end elbow contact red', () => {
     const s = S.preacher_curl, end = { ...s.poses.end, shoulder: { ...s.poses.end.shoulder, flex: s.poses.end.shoulder.flex + 3.5 } };
-    expect(h6({ ...s, poses: { ...s.poses, end } }, research('preacher_curl'))).toEqual(['H6.fact:4:contact:elbow.r']);
+    expect(h6({ ...s, poses: { ...s.poses, end } }, research('preacher_curl'))).toEqual(['H6.fact:8:contact:elbow.r', 'H6.fact:9:contact:elbow.l']);
   });
 });

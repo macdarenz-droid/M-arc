@@ -685,6 +685,13 @@
   },
   {
    "kind": "contact",
+   "landmark": "elbow.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
    "landmark": "chest",
    "pose": "start",
    "cardPose": "start",
@@ -699,6 +706,13 @@
   },
   {
    "kind": "contact",
+   "landmark": "heel.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
    "landmark": "ball.r",
    "pose": "start",
    "cardPose": "start",
@@ -706,7 +720,28 @@
   },
   {
    "kind": "contact",
+   "landmark": "ball.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
    "landmark": "elbow.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c4"
+  },
+  {
+   "kind": "contact",
+   "landmark": "elbow.l",
    "pose": "end",
    "cardPose": "end",
    "claim": "c4"

@@ -619,7 +619,22 @@
   "why": "exercises.json lists brachialis and biceps primary, forearms secondary; StrengthLog's hammer curl says the same (c9). brachialis is text-only."
  },
  "anchorSource": "fb-cbhammer",
- "plateFacts": [],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  }
+ ],
  "tempo": [
   {
    "phase": "Curl",

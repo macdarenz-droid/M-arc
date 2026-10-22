@@ -501,13 +501,6 @@
    "pose": "start",
    "cardPose": "start",
    "claim": "c1"
-  },
-  {
-   "kind": "contact",
-   "landmark": "wrist.r",
-   "pose": "end",
-   "cardPose": "end",
-   "claim": "c1"
   }
  ],
  "tempo": [

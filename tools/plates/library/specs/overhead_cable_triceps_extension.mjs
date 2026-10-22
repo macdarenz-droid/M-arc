@@ -110,6 +110,7 @@ export default {
     ...perItem((lm, ctx) => rope({ pulley: lowTangent(midOf(lm)), grips: gripsOf(lm), part: 'rope', mistakeTwin: true, ctx }), ROPE_ITEMS),
   ],
   checks: [
+    ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: landmarksOf(start, H)[landmark], pose: 'start', tol: 0.5 })),   // both hands on the rope (c3)
     { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     // the upper arm never moves (c6, c7): the elbow at the same world point in start and end

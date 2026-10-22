@@ -550,10 +550,59 @@
   },
   {
    "kind": "contact",
-   "landmark": "elbow.r",
+   "landmark": "heel.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.r",
    "pose": "end",
    "cardPose": "end",
-   "claim": "c7"
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.l",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.l",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c5"
   }
  ],
  "tempo": [

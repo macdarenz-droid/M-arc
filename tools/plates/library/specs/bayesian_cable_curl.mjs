@@ -121,6 +121,7 @@ export default {
     lm => ({ type: 'poly', cls: 'eq-solid', z: 'front', part: 'handle', pts: handle(lm) }),
   ],
   checks: [
+    { landmark: 'wrist.r', at: landmarksOf(start, H)['wrist.r'], pose: 'start', tol: 0.5 },   // the handle in the working hand (c1)
     { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     // the upper arm stays still (c4, c5): the elbow at one point in start and end

@@ -113,6 +113,10 @@ export default {
     lm => ({ type: 'barbell', at: lm['grip.r'], plateD: PLATE_D, plates: [0.03], part: 'bar' }),
   ],
   checks: [
+    { landmark: 'heel.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
+    { landmark: 'ball.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
+    ...['start', 'end'].map(pose => ({ landmark: 'elbow.l', plane: { point: [-S[0], S[1], S[2]], normal: FACE_N }, pose, tol: 0.5 })),   // each upper arm on the pad (c1, c4)
+    { landmark: 'wrist.r', at: landmarksOf(start, H)['wrist.r'], pose: 'start', tol: 0.5 },   // the hands on the bar (c1)
     { landmark: 'seat', plane: { point: SEAT, normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'ball.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },

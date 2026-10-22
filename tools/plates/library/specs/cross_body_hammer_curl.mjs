@@ -97,6 +97,7 @@ export default {
     (lm, ctx) => (ctx.pose === 'end' && !ctx.mistake ? startDumbbell(ctx.start['grip.r']) : null),
   ],
   checks: [
+    ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: landmarksOf(start, H)[landmark], pose: 'start', tol: 0.5 })),   // a dumbbell in each hand (c1)
     { landmark: 'heel.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'ball.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', at: E, pose, tol: 0.5 })),          // elbow in place (c2)
