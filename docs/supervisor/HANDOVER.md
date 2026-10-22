@@ -823,6 +823,12 @@ All heads matched 8.0o C at 02:03 UTC. Started (active LIB builders 3 of 4):
 
 Free LIB slot: kept for #193's catch-up push after #181 merges.
 
+**Update 03:35 UTC** (usage 7-day 0.01 at 02:47):
+- **#181 REVIEW LIB-6-PM @ 56d3bbb: PASS** (0/0/0/2; 6331958891). Lows ruled with no code change (6331977335): Low 1 is a card note on lib-6-pm-card.md (`ddc99219`); Low 2 is recorded per line in that ruling. Reviewer archived. **#181 rides merge train 33.**
+- **#191 REVIEW LIB-12-FIX @ 8bea5af: PASS** (delta, 0/0/0/0; 6331690104; Low 4 → F-LIB12-R8B). It was run as an Opus helper inside the supervisor session: a one-file test delta needs no reviewer session. Frozen at `8bea5afc` until its slot 5 train. Builder archived.
+- **#282 LIB-5v** (new PR, `claude/lib-5v-variant-line`): STOP @ 732c78e ruled in 6331379360. **D-LIB5v-GENWRITER:** the variant call goes in a new `tools/plates/gen/variant-gate.mjs` plugin with no outputs, so no generated file changes (V10). **D-LIB5v-FIXLINE:** one add-only LIB-5v block each in library-fidelity.test.ts and scratch.mjs C16 allows exactly the one ruled `variantLine` line after `  copy: {` on '/' targets, required there and refused elsewhere, with 3 mutations each. **F-LIB5v-1:** `fixture.mjs all` + `generate` needs scratch stamps (C15) on main.
+- heads.sh now watches `claude/lib-5v-variant-line`.
+
 ### 8.0o TAKEOVER 10-22: the owner moves the work to his other account (read first; supersedes 8.0n and section 10 where they differ)
 
 **Written by** the old supervisor, session_01HtNEBU3oDR8NyHKK3uCwUi, on the account being left, on 2026-10-22. Nothing has been built since the usage pause of 10-19 22:58 UTC.
