@@ -169,7 +169,8 @@ export default {
     pose: mistakePose,
     guides: MISTAKE_ARM,
     tells: [
-      { key: 'arms', text: 'Arms pull', anchor: { along: ['mistake:shoulder.r', 'mistake:elbow.r'], t: 0.15, pose: 'mistake' }, box: { left: 40, top: 112 }, cue: 'The arms drag the handles down.' },
+      // the faulty upper arm's front edge where it leaves the end figure (a point of MISTAKE_ARM), reached from open space
+      { key: 'arms', text: 'Arms pull', anchor: [0, 0.9706, 0.1914], box: { left: 178, top: 114 }, cue: 'The arms drag the handles down.' },
       { key: 'upright', text: 'Trunk<br>upright', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 26, top: 196 }, cue: 'The trunk stays upright and the spine does not curl.' },
     ],
   },

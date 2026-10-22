@@ -142,7 +142,7 @@ const machine = (lm, ctx) => {
     footBar: FOOT_BAR, pivot: PIVOT, arm: armAt(th), frameZ: FRAME_Z, floorZ: [FRAME_Z - BEAM_OUT, FOOT_BAR[2] + BEAM_OUT] });
 };
 
-export const PM = { pivot: PIVOT, theta: [THETA0, THETA1], armAt, belt, pad: PAD, neck: NECK, elbowPlane, footBar: FOOT_BAR };
+export const PM = { padL, pivot: PIVOT, theta: [THETA0, THETA1], armAt, belt, pad: PAD, neck: NECK, elbowPlane, footBar: FOOT_BAR };
 export default {
   id: 'machine_pullover', name: 'Machine Pullover', view: 'side', facing: 'right',
   camera: { x0: 160, y0: 339 },
@@ -173,7 +173,7 @@ export default {
   trace: { point: 'grip.r', trim: [10, 12] },
   callouts: [
     { key: 'pivot', text: 'Shoulders<br>at pivot', anchor: 'shoulderTop.r', box: { left: 30, top: 140 }, cue: 'Set the seat so your shoulders sit just below the machine\'s pivot.' },
-    { key: 'elbows', text: 'Push with<br>elbows', anchor: 'elbow.r', cue: 'Keep your hands open and drive the pads down with your elbows.' },
+    { key: 'elbows', text: 'Push with<br>elbows', anchor: 'start:elbow.r', box: { left: 166, top: 78 }, cue: 'Keep your hands open and drive the pads down with your elbows.' },
     { key: 'pad', text: 'Back on pad', anchor: 'backMid', box: { left: 24, top: 210 }, cue: 'Keep your torso and head against the back pad.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
@@ -183,7 +183,7 @@ export default {
     guides: [],
     tells: [
       { key: 'arch', text: 'Back arches', anchor: { at: 'backMid', pose: 'mistake' }, cue: 'The lower back arches away from the pad.' },
-      { key: 'head', text: 'Head off pad', anchor: { at: 'head', pose: 'mistake' }, cue: 'The head pulls forward off the pad.' },
+      { key: 'head', text: 'Head off pad', anchor: { at: 'head', pose: 'mistake' }, box: { left: 166, top: 84 }, cue: 'The head pulls forward off the pad.' },
     ],
   },
   alt: 'Machine pullover, side view. Seated with the belt on and the back and head on the pad, the lifter drives the elbow pads from overhead down to the waist, open hands resting on the bar, until the bar sits close to the seat belt.',

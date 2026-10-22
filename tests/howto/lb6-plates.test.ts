@@ -406,6 +406,99 @@ describe('LIB-16 A2: cable_chest_press equipment and contacts, per drawn pose (1
   });
 });
 
+describe('LIB-16 A2: pulloverMachine on machine_pullover, per drawn pose (13.1)', { timeout: T }, () => {
+  const ID = 'machine_pullover';
+  const drawnItems = (spec: any, pose: string) => {
+    const cam = camOf(spec), out = new Map<string, any>();
+    for (const it of itemsIn(spec, pose).items) eng.PRIMITIVES[it.type](it, cam).forEach((p: any, j: number) => out.set(`eq${it.entry}.${it.type}.${j}`, { ...p, type: it.type, part: it.part ?? null }));
+    return out;
+  };
+  /** Each static part (seat, back pad, belt, foot bar, frame, hub) at one place (±1 px) in start, end and Mistake. */
+  const staticProblems = (spec: any) => {
+    const bad: string[] = [], e = drawnItems(spec, 'end');
+    for (const pose of posesOf(spec)) for (const [k, v] of drawnItems(spec, pose)) {
+      if (v.part === 'arm' || v.type === 'line' || v.type === 'floor') continue;
+      const a = v.poly ?? xy(v.d), b = e.get(k)?.poly ?? xy(e.get(k)?.d ?? '');
+      const d = Math.max(...a.map((p: number[], i: number) => (b[i] ? Math.hypot(p[0]! - b[i]![0]!, p[1]! - b[i]![1]!) : Infinity)));
+      if (!(d <= 1)) bad.push(`${pose}: ${k} moved ${d.toFixed(1)} px`);
+    }
+    return bad;
+  };
+  const moving = (spec: any, a: string, b: string) => { const A = drawnItems(spec, a), B = drawnItems(spec, b); return [...B.entries()].filter(([k, v]) => A.get(k)?.d !== v.d && v.type !== 'line').map(([k, v]) => ({ k, v })); };
+  it('the seat, back pad, belt, foot bar, frame and hub sit at one fixed place (±1 px) in start, end and Mistake', () => {
+    expect(staticProblems(S[ID])).toEqual([]);
+  });
+  it('only the movement arm (tube, elbow pad, strut, crossbar) moves start → end, every part of it a poly; between the end and the Mistake nothing moves', () => {
+    const mv = moving(S[ID], 'start', 'end');
+    expect(mv.length).toBe(4);
+    expect(mv.every(({ v }) => v.part === 'arm' && v.poly)).toBe(true);
+    expect(moving(S[ID], 'end', 'mistake')).toEqual([]);
+  });
+  it('mutation: the back pad moved 2 cm in the Mistake is red', () => {
+    const s = S[ID], i = s.equipment.findIndex((e: any, k: number) => itemsIn(s, 'end').items.some((it: any) => it.entry === k && it.type === 'backPad' && it.t === pullEq.PULLOVER_MACHINE.padT));
+    const moved = { ...s, equipment: s.equipment.map((e: any, k: number) => (k === i ? (lm: any, ctx: any) => { const it = e(lm, ctx); return ctx.pose === 'mistake' ? { ...it, surface: it.surface.map((p: number[]) => [p[0]!, p[1]!, p[2]! - 0.02]) } : it; } : e)) };
+    expect(staticProblems(moved)).toEqual([`mistake: eq${i}.backPad.0 moved 2.9 px`]);
+  });
+  // The ruled contacts (Q3) on the drawn items: back and buttock on the pad (c7), the elbows on the elbow pads (c3, c4),
+  // the hands on the bar (c3); c1 the shoulders just below the pivot; c7 the back of the head on the pad (no landmark).
+  const PX_ = (spec: any) => camOf(spec).pxm;
+  const contactProblems = (spec: any) => {
+    const bad: string[] = [], pad = M[ID].PM.pad, off = (p: number[]) => (p[1]! - pad.point[1]) * pad.normal[1] + (p[2]! - pad.point[2]) * pad.normal[2];
+    for (const pose of ['start', 'end']) {
+      const l = lmOf(spec, pose);
+      for (const k of ['backUpper', 'buttock']) if (Math.abs(off(l[k])) > 0.005) bad.push(`${pose}: ${k} ${(off(l[k]) * 100).toFixed(1)} cm off the pad`);
+      const ep = itemsIn(spec, pose).items.filter((it: any) => it.type === 'poly' && it.part === 'arm')[0], [f0, f1] = ep.pts;
+      for (const s2 of ['r', 'l']) { const e = l[`elbow.${s2}`], d = segD([e[2], e[1]], [f0[2], f0[1]], [f1[2], f1[1]]) - eng.RADII.elbowCap * 1.75; if (Math.abs(d) > 0.005) bad.push(`${pose}: elbow.${s2} ${(d * 100).toFixed(1)} cm off the pad`); }
+    }
+    const ls = lmOf(spec, 'start'), bar = itemsIn(spec, 'start').items.find((it: any) => it.type === 'poly' && it.part === 'arm' && it.pts.length === 16);
+    const bc = bar.pts.reduce((a: number[], p: number[]) => a.map((v, i) => v + p[i]! / bar.pts.length), [0, 0, 0]);
+    for (const s2 of ['r', 'l']) { const g = ls[`grip.${s2}`]; if (Math.hypot(g[1] - bc[1], g[2] - bc[2]) > 0.05) bad.push(`start: hand.${s2} ${(Math.hypot(g[1] - bc[1], g[2] - bc[2]) * 100).toFixed(1)} cm from the bar`); }
+    const sh = ls['shoulder.r'], pv = M[ID].PIVOT;
+    if (!(pv[1] - sh[1] > 0 && pv[1] - sh[1] <= 0.05)) bad.push('c1: the shoulder is not just below the pivot');
+    // the head's rearmost outline point on the pad face line (within 0.5 cm), measured in plate px across the line
+    const c = camOf(spec), A = c.P(M[ID].PM.padL), Bp = c.P(pad.point), L = Math.hypot(Bp[0]! - A[0]!, Bp[1]! - A[1]!), nx = -(Bp[1]! - A[1]!) / L, ny = (Bp[0]! - A[0]!) / L;
+    for (const pose of ['start', 'end']) {
+      const h = shapesIn(spec, pose).find((x: any) => x.key === 'head').poly, d = Math.min(...h.map((p: number[]) => Math.abs((p[0]! - A[0]!) * nx + (p[1]! - A[1]!) * ny) * Math.sign((p[0]! - A[0]!) * nx + (p[1]! - A[1]!) * ny)));
+      if (Math.abs(d) > 0.005 * PX_(spec)) bad.push(`${pose}: head ${d.toFixed(1)} px off the pad`);
+    }
+    return bad;
+  };
+  it('c7 back and buttock on the pad, c3/c4 elbows on the pads, c3 hands on the bar (start), c1 shoulders just below the pivot, c7 the back of the head on the pad', () => {
+    expect(contactProblems(S[ID])).toEqual([]);
+  });
+  it('mutations: the back moved 2 cm off the pad in the end pose, and the head 2 cm off the pad at start, are red', () => {
+    const s = S[ID], e = s.poses.end;
+    expect(contactProblems({ ...s, poses: { ...s.poses, end: { ...e, root: { ...e.root, at: [e.root.at[0], e.root.at[1], e.root.at[2] + 0.02] } } } }).some(p => p.startsWith('end: backUpper'))).toBe(true);
+    const st = s.poses.start;
+    expect(contactProblems({ ...s, poses: { ...s.poses, start: { ...st, neck: st.neck + 8 } } }).some(p => p.startsWith('start: head'))).toBe(true);
+  });
+  it('c8 Mistake: the low back, upper back and head forward of the pad (at least 2 cm), the arm at the end', () => {
+    const l = lmOf(S[ID], 'mistake'), pad = M[ID].PM.pad, off = (p: number[]) => (p[1]! - pad.point[1]) * pad.normal[1] + (p[2]! - pad.point[2]) * pad.normal[2];
+    for (const k of ['backMid', 'backUpper']) expect(off(l[k]), k).toBeGreaterThan(0.02);
+    expect(lmOf(S[ID], 'mistake').head[2] - lmOf(S[ID], 'end').head[2]).toBeGreaterThan(0.04);
+  });
+});
+
+describe('LIB-16 hidden start parts: dashed phantoms in the end pose (slice look item 2; DRAWING-GUIDE section 4)', { timeout: T }, () => {
+  /** The phantom lines (class m-line) drawn in the end pose, all within r of the start grip (the start layer under the
+   *  end head and lever hides the start fist and grip, slice look #297 6346404542 item 2). */
+  const phantomProblems = (spec: any, r = 0.12) => {
+    const items = itemsIn(spec, 'end').items.filter((it: any) => it.type === 'line' && /m-line/.test(it.cls ?? ''));
+    if (!items.length) return [`${spec.id}: no phantom`];
+    const g = lmOf(spec, 'start')['grip.r'];
+    return items.flatMap((it: any) => it.pts.filter((p: number[]) => Math.hypot(p[1]! - g[1], p[2]! - g[2]) > r).length ? [`${spec.id}: phantom point far from the start grip`] : []);
+  };
+  it('machine_crunch\'s start fist and grip, and machine_pullover\'s start hand and bar, are redrawn as dashed phantoms around the start grip', () => {
+    for (const id of ['machine_crunch', 'machine_pullover']) {
+      expect(phantomProblems(S[id]), id).toEqual([]);
+    }
+  });
+  it('mutation: the phantom entry removed is red', () => {
+    const s = S.machine_crunch;
+    expect(phantomProblems({ ...s, equipment: s.equipment.slice(0, -1) })).toEqual(['machine_crunch: no phantom']);
+  });
+});
+
 describe('LIB-16 machine_crunch (H; crunchMachine anchor): drawn facts', { timeout: T }, () => {
   const ID = 'machine_crunch';
   it('c4, c2: the end curls the spine (lumbar 40 deg, the thorax forward) with the pelvis held on the seat (tilt and root as the start)', () => {
@@ -522,7 +615,7 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     }
     return out;
   };
-  const PAD_CONTACT: Record<string, string[]> = { machine_crunch: ['hips', 'upright'] };
+  const PAD_CONTACT: Record<string, string[]> = { machine_crunch: ['hips', 'upright'], machine_pullover: ['pad', 'arch'] };
   const minGap = (spec: any) => {
     let min = Infinity, at = '';
     for (const mistake of [false, true]) {
@@ -600,7 +693,7 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   /** 6341498444 item 2: a bent arm reads as bent: where the card bends the elbow (machine_crunch c3, machine_pullover
    *  c3), the drawn elbow flexion is at most 150 deg in start and end, and the two elbows sit at least shoulder width
    *  apart (they never meet in one stub). */
-  const BENT: Record<string, string[]> = { machine_crunch: ['start', 'end'], machine_pullover: ['start'] };
+  const BENT: Record<string, string[]> = { machine_crunch: ['start', 'end'], machine_pullover: ['start', 'end'] };
   const armProblems = (spec: any) => (BENT[spec.id] ?? []).flatMap(pose => {
     const a = rep(spec).angles[pose], l = lmOf(spec, pose), out: string[] = [];
     for (const s of ['r', 'l']) if (!(a[`elbow.${s}`] <= 150)) out.push(`${pose}: elbow.${s} ${a[`elbow.${s}`].toFixed(1)}`);
