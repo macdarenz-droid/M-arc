@@ -1,6 +1,6 @@
 LB10 research verify (LR-29) on #296 @ b5ea555c58310a2ed4c9c4c7a3dfbd1195c18722: result, rulings and findings (2026-10-22)
 
-**Ruled by the supervisor (session_01PeNM9HeWPrhrcscMwXzupy, 2026-10-22): R-LB10-1 to R-LB10-10 are accepted as written. h1 is not VALID, so after the fix round a fresh critic re-verifies h1 on the fixed head with new plants (safety target: blocker), and the merge waits on that run being VALID. The mountain_climbers items in "Routed" go to pilot A's owner sheet.**
+**Ruled by the supervisor (session_01PeNM9HeWPrhrcscMwXzupy, 2026-10-22): R-LB10-1 to R-LB10-10 are accepted as written. **Amended (D-SUP-SAFETYTIER, 16:1x): h1 is VALID.** The critic template defined a blocker only as a tier-A safety line, so on a card that is not tier A the safety plant counts when it is caught in the right field with the right problem at high or above; P1a was caught as high. No h1 re-verify. The template now rates any wrong, weakened or missing safety line a blocker on any card. The mountain_climbers items in "Routed" go to pilot A's owner sheet.**
 
 **Proposed rulings R-LB10-1 to R-LB10-10 wait on the supervisor.** Scored with the rulings on #296 (6343484589: D-SUP-LB10-MAY, -BREATH, -FLAT, -BURPEE and rulings 3, 6, 7, 8; 6344717493: D-SUP-LB10-FLAT corrected "the pick follows the count", D-SUP-LB10-FORCE, "impact" under D-SUP-STRAIN), D-SUP-STRAIN (#295 6343824010), D-SUP-LB8-KICKBACK, -ISSUES, -AXIS (#294) and -PILOTS, and the R-LB7, R-LB9 records. The critics did not have the R-LB* rulings; those points are judged here.
 
