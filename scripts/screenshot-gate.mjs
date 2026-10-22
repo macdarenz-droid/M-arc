@@ -8164,7 +8164,7 @@ if (gate.runs('HT-8'))
           await H.closeHowTo(page);
         }
       }
-    } catch (e) { problems.push(`${theme}: crashed: ${e.message.split('\n')[0]}${(m => (m ? ` (${m[0].trim()})` : ''))(/waiting for locator\(.*$/m.exec(e.message))}; ${await ld()}`); } finally { await ctx.close(); await g.ctx.close(); }
+    } catch (e) { problems.push(`${theme}: crashed: ${e.message.split('\n')[0]}${(m => (m ? ` (${m[0].replace(/\u001b\[[\d;]*m/g, '').trim()})` : ''))(/waiting for locator\(.*$/m.exec(e.message))}; ${await ld()}`); } finally { await ctx.close(); await g.ctx.close(); }
     return { problems, stats };
   }
 
@@ -8190,7 +8190,7 @@ if (gate.runs('HT-8'))
         const p = await pair(page, g.page, id, `reduced ${theme} ${id} rest`); pairs++; if (p) problems.push(p);
         await H.closeHowTo(page);
       }
-    } catch (e) { problems.push(`reduced ${theme}: crashed: ${e.message.split('\n')[0]}${(m => (m ? ` (${m[0].trim()})` : ''))(/waiting for locator\(.*$/m.exec(e.message))}; ${await ld()}`); } finally { await ctx.close(); await g.ctx.close(); }
+    } catch (e) { problems.push(`reduced ${theme}: crashed: ${e.message.split('\n')[0]}${(m => (m ? ` (${m[0].replace(/\u001b\[[\d;]*m/g, '').trim()})` : ''))(/waiting for locator\(.*$/m.exec(e.message))}; ${await ld()}`); } finally { await ctx.close(); await g.ctx.close(); }
     return { problems, pairs };
   }
 
@@ -8290,7 +8290,7 @@ if (gate.runs('HT-8'))
         problems.push(`${theme}: 4 s after an early "Feel it" tap: ${JSON.stringify(st)} (want loaded, in view, heading focused, playing)`);
       }
       if (held !== 1) problems.push(`${theme}: the feel chunk was requested ${held} times, expected once (the hold did not apply)`);
-    } catch (e) { problems.push(`${theme}: crashed: ${e.message.split('\n')[0]}${(m => (m ? ` (${m[0].trim()})` : ''))(/waiting for locator\(.*$/m.exec(e.message))}; ${await ld()}`); } finally { await ctx.close(); }
+    } catch (e) { problems.push(`${theme}: crashed: ${e.message.split('\n')[0]}${(m => (m ? ` (${m[0].replace(/\u001b\[[\d;]*m/g, '').trim()})` : ''))(/waiting for locator\(.*$/m.exec(e.message))}; ${await ld()}`); } finally { await ctx.close(); }
     return problems;
   }
 
