@@ -1,0 +1,35 @@
+// LIB-7 key `rope` (hands/DESIGN.md §2): one hand on each rope end, up against its knob (#c1; not the Right note,
+// D-LIB7-17). The strand is the plate's rope
+// composer's (library/eq/rope.mjs:54, thick 0.028 m, knob 0.046 m), seen end-on as one plain section (no rigid-handle
+// core). The knob is coaxial with the strand, past the little-finger edge, so the fist hides it: it is drawn as golden B's
+// dashed hidden-equipment outline over the fist (D-LIB7-13, replacing D-LIB7-9). The fist is curl 2's squared fist
+// (contactAt .6, `ga:rope-fist-mid`, G7 fist front): golden B's fist closes to a point once the rope sits at .85 or more along the palm, so
+// GA 3.1.1's "load in the fingers" is not drawn (D-LIB7-16); lever check off; no source gives the load's direction, so
+// no force line is drawn.
+import { RULES_FILE } from './radial-rules.mjs';
+
+export const KEY = 'rope', OWNER = 'LIB-7', VIEW = 'radial', INPUTS = [RULES_FILE, 'tools/plates/library/eq/rope.mjs'];
+export const HANDLE = { profile: 'rope', diameterMm: 28, plain: true, knobMm: 46 };
+export const VARIANTS = {
+  push: {
+    archetype: 'push', machine: true, flags: ['the knob is hidden by the fist in this view and drawn dashed (D-LIB7-13): its whole rim lies inside the fist outline, at least 2.6 mm in (D-LIB7-17)', 'the Right note names the drawn contact, not #c1\'s hand against the knob: no one view shows both #c1 and the #c6 wrist curl, so #c6 decides (D-LIB7-17)',
+      'the fist is curl 2\'s squared fist (contactAt .6), not GA 3.1.1\'s load in the fingers, which golden B draws as a point (D-LIB7-16)'], loadAxis: 'across', loadLine: false, panelHeight: 170, wristRange: [0, 15], contact: 'mid',
+    right: { view: 'radial', forearm: 90, wrist: { ext: 0, dev: 0 }, contactAt: 0.6, fingers: { curl: 1 }, thumb: 'wrapped', squeeze: 'firm', load: { kind: 'pull' } },
+    rightNote: 'Middle of palm',
+    alt: 'Rope across the middle of the palm, thumb wrapped round it, wrist straight in line with the forearm.',
+    claims: { knob: ['shared/rope-rule.json#c1'], thumb: ['shared/rope-rule.json#c2'], wrist: ['shared/rope-rule.json#c4'], contact: ['ga:rope-fist-mid'] },
+    faults: {
+      curled: { label: 'Wrist curled', side: 'flexed', pose: { wrist: { ext: -30 } }, markers: ['lever-arc'], claims: ['shared/rope-rule.json#c6'],
+        alt: 'Wrist bent toward the palm as the rope is pushed down.' },
+    },
+  },
+};
+export const IDS = {
+  // neutral grip for the pushdown is an inference the research card flags (rope-rule c3)
+  rope_triceps_pushdown: { variant: 'push', orientation: 'neutral', faults: ['curled'], claims: ['shared/rope-rule.json#c3'] },
+};
+export const GAPS = {
+  overhead_cable_triceps_extension: 'rope-rule gap 3: the pushdown rules need a source before an overhead sheet uses them; the card\'s Wrong is an elbow fault',
+  face_pull: 'no research card',
+  cable_crunch: 'no research card',
+};
