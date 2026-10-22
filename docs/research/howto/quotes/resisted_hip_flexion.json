@@ -14,6 +14,14 @@
     {
       "claim": "c2",
       "source": "kovo-hf",
+      "text": "Attach an ankle cuff to a low cable and strap it to your working ankle.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "kovo-hf",
       "text": "Face away from the machine and hold the frame for balance. Drive your knee up and forward against the cable, lifting your thigh toward hip height, then lower with control and repeat before switching legs.",
       "status": "verbatim",
       "closest": "Face away from the machine and hold the frame for balance. Drive your knee up and forward against the cable, lifting your thigh toward hip height, then lower with control and repeat before switching legs.",
@@ -145,6 +153,14 @@
       "text": "Tempo 2-1-2",
       "status": "verbatim",
       "closest": "Tempo 2-1-2",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "motra-hf",
+      "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "pending",
+      "closest": "",
       "note": ""
     },
     {
@@ -282,6 +298,38 @@
       "status": "verbatim",
       "closest": "The primary muscles in your hip flexors are the psoas major and the iliacus. Together, these muscles are referred to as the iliopsoas. Other important muscles in this group include the rectus femoris (one of your quad muscles), the sartorius, and the pectineus.",
       "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+    },
+    {
+      "claim": "c18",
+      "source": "motra-hf",
+      "text": "Swinging leg with momentum.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "motra-hf",
+      "text": "Excessive lower back arch.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "motra-hf",
+      "text": "Leaning torso forward.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "motra-hf",
+      "text": "Letting weight stack crash.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
     }
   ]
 }

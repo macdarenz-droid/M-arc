@@ -56,18 +56,24 @@
     },
     {
       "id": "c3",
-      "text": "Brace the core and keep the back pressed against the backrest the whole time.",
+      "text": "Brace (engage) the core and keep the back pressed against the backrest the whole time.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "sl-pendulum"
+        "sl-pendulum",
+        "yr-pend"
       ],
       "quotes": [
         {
           "source": "sl-pendulum",
           "text": "Engage your core and keep your back pressed against the backrest throughout the movement.",
           "where": "How to, step 3"
+        },
+        {
+          "source": "yr-pend",
+          "text": "Before you move, lightly brace your core.",
+          "where": "3. Set Your Back and Shoulders"
         }
       ]
     },
@@ -214,7 +220,7 @@
     },
     {
       "id": "c12",
-      "text": "The quads work most; the glutes, adductors and hamstrings help.",
+      "text": "The quads work most (the primary driver); the glutes, adductors and hamstrings help.",
       "tags": [
         "CONSENSUS"
       ],
@@ -237,6 +243,11 @@
           "source": "wff-pend",
           "text": "Secondary: Gluteus maximus, hamstrings, adductors, gastrocnemius (knee stability).",
           "where": "Muscles worked"
+        },
+        {
+          "source": "wff-pend",
+          "text": "The quads are the primary driver.",
+          "where": "Technique: The Drive"
         }
       ]
     },
@@ -338,13 +349,13 @@
       "quotes": [
         {
           "source": "boxlife-pend",
-          "text": "Once you've hit your rep count, re-engage the safety and make sure it's on before attempting to get off the machine.",
-          "where": "4. Squat with good form"
+          "text": "Once you’ve hit your rep count, re-engage the safety and make sure it’s on before attempting to get off the machine.",
+          "where": "4. Squat With Good Form"
         },
         {
           "source": "boxlife-pend",
-          "text": "It's a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
-          "where": "3. Get into position"
+          "text": "It’s a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
+          "where": "3. Get Into Position"
         },
         {
           "source": "yr-pend",
@@ -360,6 +371,97 @@
           "source": "yr-pend",
           "text": "Stand tall → engage the safety → confirm it is locked → step out.",
           "where": "8. Re-rack the machine"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Tempo: FORM's trainers ask for a controlled two to three second descent and XcelerateGyms (a gym blog) counts three seconds down; no pendulum source gives seconds for the lifting phase, so the plate's 1 s up is a drawing convention.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "wff-pend",
+        "xcel-pend"
+      ],
+      "quotes": [
+        {
+          "source": "wff-pend",
+          "text": "Rushing the descent: Dropping into the bottom rather than controlling the lowering phase. Fix: a controlled two to three second descent on every rep.",
+          "where": "Common faults"
+        },
+        {
+          "source": "xcel-pend",
+          "text": "Lower slowly by bending your knees, counting three seconds down.",
+          "where": "Step 3: How to Lower Safely (Controlled Eccentric)"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "At the bottom, pause for a second, then drive the feet into the foot plate to stand; keep the movement controlled, not explosive.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boxlife-pend"
+      ],
+      "quotes": [
+        {
+          "source": "boxlife-pend",
+          "text": "Once you’re at the bottom of your squat, pause for a second, and then drive your feet into the foot plate to push yourself up again.",
+          "where": "4. Squat With Good Form"
+        },
+        {
+          "source": "boxlife-pend",
+          "text": "Aim for a controlled movement—there’s no need to be explosive.",
+          "where": "4. Squat With Good Form"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "A machine maker's guide says not to drop quickly to the bottom but to lower under control, and that it often sees people add too much weight and then lose control on the way down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yr-pend"
+      ],
+      "quotes": [
+        {
+          "source": "yr-pend",
+          "text": "Do not drop quickly to the bottom. Lower yourself under control.",
+          "where": "5. Lower Into the Squat"
+        },
+        {
+          "source": "yr-pend",
+          "text": "In my decades of design experience, I often see people add too much weight and then lose control on the way down.",
+          "where": "5. Lower Into the Squat"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "At the top, don't snap the knees straight aggressively: extend fully without locking out hard (the second line is from a gym blog, WEAK).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "yr-pend",
+        "xcel-pend"
+      ],
+      "quotes": [
+        {
+          "source": "yr-pend",
+          "text": "Do not aggressively snap your knees straight at the top.",
+          "where": "7. Push Back Up"
+        },
+        {
+          "source": "xcel-pend",
+          "text": "Extend fully at the top without locking out hard.",
+          "where": "Step 5: Driving Up with Correct Form"
         }
       ]
     }
@@ -448,13 +550,13 @@
     ],
     "mistake": {
       "what": "Heels lift off the platform at the bottom.",
-      "why": "FORM's trainers list it among common faults, from limited ankle mobility (c9); it shifts the weight forward onto the knees (c15).",
+      "why": "The top fault, losing control and dropping into the bottom (c20, c10), is seen only as speed, so the plate draws the next fault by the same steps: heels lifting. FORM's trainers list it, from limited ankle mobility (c9); XcelerateGyms says it shifts the weight forward and strains the knees (c15).",
       "claim": [
         "c9",
         "c15"
       ],
-      "drawable": true,
-      "rankNote": "FORM lists knees caving first (c8), but that needs a front view."
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: losing control and dropping into the bottom (c20, c10). Step 1 hit: YR Fitness's \"In my decades of design experience, I often see people add too much weight and then lose control on the way down.\" (c20). 'often see people' is a frequency word for a fault of this exercise; the load half is a load choice and is set aside, as R-LB6-5 read 'most people ... put more weight on the machine than they can handle and rush through the movement'. It is the only step-1 hit, so it is the top fault (FORM's 'Rushing the descent: Dropping into the bottom', c10). Set aside at step 1: YR's \"rushing the descent often makes the rep harder to control\" (what rushing does, not how often it happens; the same fault), \"For many people, lowering until the thighs reach or pass roughly parallel can feel natural.\" (depth comfort, not a fault) and \"I usually recommend one light practice set before moving to your normal working weight.\" (setup); FORM's \"Clients who struggle to feel their quads during compound lower body work often find the pendulum squat provides immediate and clear quad stimulus\" and \"A common challenge for clients earlier in their training is failing to feel the target muscles during compound exercises\" (muscle feel) and \"one of the least common\" (the machine); BoxLife's \"its biggest disadvantage is that it’s not common\" (the machine), \"In many cases, it’s due to either hip immobility or ankle inflexibility\" (the barbell squat), \"what you usually squat\" (the load) and \"The leg press machine is a much more common squat variation than the pendulum\" (another exercise). StrengthLog and XcelerateGyms have no frequency word for a fault; 'Common Faults', 'Common Mistakes to Avoid' and 'the most common questions' are headings or list sentences. drawable false: losing control on the way down is seen only as speed (LR-31). The plate draws the next fault by the same steps, heels lifting (c9, c15). Step 2 among the rest: three named faults are tied to harm, each by XcelerateGyms only (WEAK) and each on its common-mistakes list: heels lifting (\"This shifts weight forward and strains your knees.\", c15), knees caving (\"This stresses your knee joints and limits glute activation.\", c15) and bouncing at the bottom (\"This uses momentum instead of muscle and risks injury.\", c15). The two lists that name heels and knees give opposite orders (FORM: knees first; XcelerateGyms: heels first), so step 3's count decides (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: knees caving 3 (FORM, XcelerateGyms, YR's \"Avoid letting your knees collapse inward.\"); heels lifting 2 (FORM, XcelerateGyms), or 4 if YR's \"Stop going deeper if: Your heels start lifting.\" and BoxLife's \"You should be squatting as low as you can go without your heels lifting off the platform.\" are counted; bouncing 2 (XcelerateGyms, YR's \"Avoid bouncing out of the bottom.\"). Lines that only give the right position are not counted (\"Keep your feet flat.\", \"Keep heels down at the bottom.\", \"Full foot contact on the platform\"). Knees caving needs a front view and bouncing is seen only as speed, so whichever count is used, the fault the side view shows is heels lifting, and plate.mistake stays heels lifting. Set aside at step 2: XcelerateGyms' \"Speed reduces time under tension and increases injury risk.\" (rushing, the top fault itself) and its list sentence \"Watch out for these five form errors that limit your results and increase injury risk.\"; BoxLife's list sentence \"But if you do it wrong, you could be missing out on the benefits and increasing your chance of injury.\", its 'Forgetting to Adjust It' (\"can be both ineffective and dangerous\"; a setup choice), 'Lifting Too Heavy' (the load) and 'Not Knowing How the Safety Lever Works' (\"without hurting yourself\"; not a position during the set), and its \"Control the descent and you’ll be able to do the movement more safely\" ('safely' is not a harm word); XcelerateGyms' \"Stop if you feel pain or pinching.\" and YR's \"What if you feel pain? Stop the exercise rather than trying to push through it.\" name no fault. Pick changed from the head (written before LR-31): handlingMistakes[0] was knees caving and drawable was true; now the top fault is dropping into the bottom, drawable false, and the plate still draws heels lifting."
     },
     "tells": [
       {
@@ -470,11 +572,14 @@
       }
     ],
     "tempo": {
-      "up": null,
-      "down": null,
-      "pause": null,
-      "text": "Lower over two to three seconds (c10); no source gives the up phase or a pause.",
-      "claim": "c10"
+      "up": 1,
+      "down": 3,
+      "pause": 0,
+      "claim": [
+        "c18",
+        "c19"
+      ],
+      "text": "Down 3: FORM's trainers ask for a controlled two to three second descent on every rep (c10, copied in c18) and XcelerateGyms counts three seconds down (c18); 3 is inside FORM's range and matches the count, each from a source that fixes the lowering phase (R-LB2-1). Up 1 is a drawing convention: no pendulum source fixes the seconds of the lifting phase (c18, WEAK). XcelerateGyms' '3-1-2-0 tempo' has no order key on its page, so it is not read. Pause 0: no quote asks for a pause right after the push up (LR-33); YR's 'Return to the starting position under control, then begin your next rep.' asks none. BoxLife's 'pause for a second' sits at the bottom (c19), so it is named here and not written in pause; XcelerateGyms' 'Hold breath briefly at the bottom' is a breath hold at the bottom."
     },
     "variantLine": null
   },
@@ -506,7 +611,8 @@
       "step": "Release the safety latch and lower slowly until your thighs are at least parallel.",
       "claim": [
         "c4",
-        "c10"
+        "c10",
+        "c6"
       ]
     },
     {
@@ -538,14 +644,17 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Dropping into the bottom.",
+      "fix": "Lower over two to three seconds.",
+      "claim": [
+        "c10",
+        "c20"
+      ]
+    },
+    {
       "mistake": "Knees cave inward.",
       "fix": "Drive them out over your toes; go lighter if it keeps happening.",
       "claim": "c8"
-    },
-    {
-      "mistake": "Dropping into the bottom.",
-      "fix": "Lower over two to three seconds.",
-      "claim": "c10"
     },
     {
       "mistake": "Stopping above parallel.",
@@ -577,8 +686,8 @@
     "watch": [],
     "rows": [
       {
-        "where": "Front of the thighs",
-        "means": "Your quads do most of the work.",
+        "where": "Thighs",
+        "means": "Your quads are the primary driver.",
         "fix": "",
         "claim": "c12",
         "redFlag": null
@@ -665,14 +774,14 @@
   },
   "gaps": [],
   "unsourced": [
-    "Lockout at the top (whether to straighten the knees fully).",
-    "Breathing.",
+    "Breathing: only XcelerateGyms (a gym blog) gives one (breathe in on the way down, hold briefly at the bottom, out on the way up); no claim was added in the LB8 pass.",
     "Foot height on the platform for quad vs glute emphasis (search snippets only)."
   ],
   "notes": [
     "Stance width conflict: StrengthLog says about hip-width (c2), FORM about shoulder-width with toes out slightly (c2). The plate draws between the two; the setup line gives the range.",
     "The knee row links the shared knee box (redFlag 'knee').",
     "c15 and c16 rest on a gym blog written in the first person; they are tagged WEAK.",
-    "Fix round 2026-10-02 (verify w0): A1/R-W0-3: the re-latch and exit was moved out of unsourced and is now sourced (c17: BoxLife, named author; YR Fitness, a machine maker's guide; both read in full), so it is no longer a gap. Setup step 5 adds the lock-then-step-out line. The True Fitness PLS1400 manual PDF returned 404 and its ManualsLib copy covers assembly only; manualzz returned 403."
+    "Fix round 2026-10-02 (verify w0): A1/R-W0-3: the re-latch and exit was moved out of unsourced and is now sourced (c17: BoxLife, named author; YR Fitness, a machine maker's guide; both read in full), so it is no longer a gap. Setup step 5 adds the lock-then-step-out line. The True Fitness PLS1400 manual PDF returned 404 and its ManualsLib copy covers assembly only; manualzz returned 403.",
+    "LB8 pass (2026-10-22, start head 6d253b9e): LR-31 rankNote written. PICK CHANGED: the top fault is now losing control and dropping into the bottom (YR Fitness: 'I often see people add too much weight and then lose control on the way down', c20; LR-31 step 1), seen only as speed, so drawable is false; plate.mistake still draws heels lifting (c9, c15). handlingMistakes reordered (texts unchanged; [0] cites c10 and c20). Tempo was null with the 2-3 s descent in text: now down 3 (c10, c18; R-LB2-1), up 1 drawing convention (c18, WEAK; R-LB7-6), pause 0 (LR-33); BoxLife's bottom pause (c19) is named in tempo.text. Shown-line fixes (CARD-V2:68, R-LB7-7): feel.rows[0] where 'Front of the thighs' -> 'Thighs' (no cited quote has a front word) and means 'Your quads do most of the work.' -> 'Your quads are the primary driver.' (c12 gains FORM's line); c3 gains YR's 'lightly brace your core' for the brace wording in setup and checkpoints; setup[3] also cites c6 ('at least parallel'). c17's two BoxLife quotes now use ’ as the page prints, and their where names match the page's step headings. Lockout is now sourced (c21: YR, XcelerateGyms) and leaves unsourced; no shown line was added for it. The get-in-out shared card does not list pendulum_squat (standing); nothing is taken from it."
   ]
 }
