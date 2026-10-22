@@ -264,7 +264,7 @@ describe('LIB-5 S7 generator cases: E1\'s row in per-case copies of E1\'s tree (
       ['M3: inherit true on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": true,\n  "topFault":'),
         `lib_cable_lateral_raise: family: ${F.CARD_FILE}#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`],
       ['D-LIB5-FAULTKEYS 4: a hand module labels hand-ahead \'Hands forward\'', () => withHand("'hand-ahead': { label: 'Hand ahead'", "'hand-ahead': { label: 'Hands forward'"),
-        'library family (rows 13, shared 14, hands 3):\n  fault hand-ahead: one label per fault key (content.md 4, family consistency) ("Hands forward" (hand-fixture.mjs) vs "Hand ahead" (hands.mjs#PALM_FLAT))'],
+        'library family (rows 13, shared 14, hands 13):\n  fault hand-ahead: one label per fault key (content.md 4, family consistency) ("Hands forward" (hand-fixture.mjs) vs "Hand ahead" (hands.mjs#PALM_FLAT))'],
       ['control: the fixture hand module as it is', () => withHand(), null],
       ['control: inherit [] on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": [],\n  "topFault":'), null],
       ['control: the unedited tree', () => tree, null],
@@ -325,13 +325,13 @@ describe('LIB-5 D-LIB5-FAULTKEYS 4: the family reader over the 8, the shared mod
     const rows = await Promise.all(SHIPPED.map(async r => ({ src: r.id, M: await import(/* @vite-ignore */ url(R.sourceOf(r.id))) })));
     const r = await FM.treeFamily(rows);
     console.log(`family reader (this head): rows ${r.counts.eight}, shared ${r.counts.shared}, hands ${r.counts.hands}`);
-    expect([r.counts.eight > 0, r.counts.shared > 0, r.counts.hands]).toEqual([true, true, 0]);
+    expect([r.counts.eight > 0, r.counts.shared > 0, r.counts.hands]).toEqual([true, true, 10]);
     expect(r.problems).toEqual([]);
   });
-  it('on this head: no hand-*.mjs (LIB-7/12 merge after LIB-5, D-LIB5-ORDER), so the hands count is 0 and equals what is exported', async () => {
+  it('on this head: LIB-7\'s five hand-*.mjs (hand-band.mjs exports no fault), so the hands count is 10 and equals what is exported', async () => {
     const mods = await FM.handModules();
-    expect(mods).toEqual([]);
-    expect([FM.handSources(mods), FM.exportedHandFaults(mods)]).toEqual([[], 0]);
+    expect(mods.map((m: any) => m.src)).toEqual(['hand-band.mjs', 'hand-curl.mjs', 'hand-d-handle.mjs', 'hand-ez.mjs', 'hand-rope.mjs']);
+    expect([FM.handSources(mods).reduce((n: number, h: any) => n + h.faults.length, 0), FM.exportedHandFaults(mods)]).toEqual([10, 10]);
   });
 });
 

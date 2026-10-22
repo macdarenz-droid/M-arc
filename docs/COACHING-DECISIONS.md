@@ -2096,6 +2096,52 @@ Card LIB-3, library plan 3.2, 3.3 and 7 (`docs/howto/library/LIBRARY-HOWTO-ARCHI
 - **D-COPY2-swap (supervisor ruling on #168, applied).** BUG-36's block keeps its assertions and gets a seed-only change so its brief is again taller than the check-in. The ruling named `birthYear: 1960`, but that does not work: `preSessionInsights` keeps the top 3 cards by priority, and the 60+ card (priority 110) loses to the load-target cards (260). So the seed's split became two chest lifts, which leaves fewer soreness rows in the check-in. That meets the ruling's stated aim with no assertion changed. The new add-only "COPY-2 swap" block covers the shrinking swap: one direction (any reversal fails), a downward travel of at least 20 px, no frame step above max(16 px, travel / 4), one sheet throughout, and nothing moving for 100 ms after rest. The snap limit scales with travel because the measured ease over about 100 px peaks at 19.9 px a frame (12.7, 15.7, 19.9, 19.9, 11.5, …), which is smooth. A flat 16 px limit would flag a correct animation. Mutations: an overshoot easing (`cubic-bezier(0.3, 1.8, 0.5, 1)`) fails on reversal and snap in all 4 runs; a 1 ms ease (the old one-frame swap) fails on a 100 px snap in all 4 runs; with the code restored, all 4 pass.
 - **D-COPY2-swap position.** The COPY-2 swap block reads the panel's top with `panel.getBoundingClientRect().top`, which includes the transform and every ancestor's scroll (BUG-37, #173). Thresholds are unchanged. Re-run on that reading: overshoot easing fails (reversal and snap) and the 1 ms ease fails (100 px snap) in all 4 runs; with the code restored, all 4 pass.
 - **D-COPY2-swap2 (supervisor ruling on #168, applied).** BUG-37's check-in → brief swap runs now seed the same two-chest-lift split as BUG-36 (`BUG37_SWAP_EX`), so the brief stays taller than the check-in. Its checked-in runs (start sheet, Settings, nested Gyms) keep the 8-lift seed. The only helper change is an optional `ex` argument to `bug37Load` that defaults to `BUG37_EX`; every assertion and threshold is byte-identical. Blunting check: without `.sheet { overflow: visible }`, BUG-37 fails 96 times both on this head and on main fc38fb8, with the same split by run (24 each for start sheet, check-in, Settings, nested Gyms; its swap runs fail in neither), so the seed change removes no failure.
+## LIB-7: radial hand pairs (LIB-7 builder, 2026-10-02)
+
+Design: `tools/plates/library/hands/DESIGN.md`. Rulings: supervisor on #193, 2026-10-02.
+
+- **D-LIB7-1, app chunk.** A pair chunk is named `src/howto/generated/handpair-<key>.ts`, so it never collides with HT-6's `hand-<chromeId>.ts`. `tests/howto/hands.test.ts` is not edited. The generator belongs to LIB-2 (supervisor ruling).
+- **D-LIB7-2, sizes.** Sizes are drawing values, as golden B's `HANDLES` are. Each module passes its diameter explicitly:
+  - dumbbell 32 mm with a 120 mm head;
+  - bar and EZ 28 mm;
+  - D-handle 30 mm;
+  - rope 28 mm, matched to the plate's rope composer (`eq/rope.mjs:54`).
+- **D-LIB7-3, golden-B reuse.**
+  - `renderHandPair` is called unchanged. `HAND_PROP` and `HAND_OF_H` feed the placement check. The pilot and gate pages use golden B's zoom CSS, which includes `HAND_CSS`.
+  - No golden-B value is read for a diameter.
+  - Golden-B engine files and LIB-6 files are not edited. A1 pins their outputs.
+- **D-LIB7-4, camera and orientation.** The camera follows golden-B `engine/hand.mjs:8-9`: a vertical handle is "seen from above", a horizontal bar "seen from the side". Orientation is carried per id from its claim:
+  - underhand draws the palm up;
+  - overhand draws the palm down;
+  - an id whose claims name no palm direction gets the label "Seen from the thumb side".
+- **D-LIB7-5, wrong angles.** No source gives the size of a wrong bend, so approved precedents are reused and flagged on the sheet:
+  - curled −30 (lat pulldown);
+  - bent back +30 on a curl;
+  - bent back +35 with the handle at 1.05 on a push (chest press).
+- **D-LIB7-6, bend labels.** A bend value whose box would cover its half's outline moves to the first free spot round its wrist, forearm side first. Golden B moved such labels by hand on the lateral raise, lat pulldown and seated row. Check G9 tests it in Node; the gate measures it in the browser.
+- **D-LIB7-7, force lines.** A force line is drawn only on along-forearm loads and pulls, which is where golden B draws one. Curls (gravity across a level forearm, like the lateral raise) and the rope (no source for its direction) have none.
+- **D-LIB7-8, panel height.** Curl and rope pairs use a 170 px panel. The scale is the same at 262 px, so only empty space goes.
+- **D-LIB7-9, no knob ring.** The rope's 46 mm knob lies behind the fist when seen from above. A ring drawn there drew no pixel in the gate (pages with and without it were identical), so it is dropped. The Right note "Against the knob" and the alt text carry the knob claim (shared/rope-rule.json#c1).
+- **D-LIB7-gaps.** 14 ids are not drawn. Each is listed with its reason in its key's `GAPS`:
+  - the band (no band-hand claim; pilot A's band kind waits on research);
+  - cable_chest_press and the two cable flys (no bend direction in their claims);
+  - 7 ids with no research card;
+  - high_to_low_cable_fly (no hand zoom on its card);
+  - overhead_cable_triceps_extension (rope-rule gap 3);
+  - wrist_curl (exempt).
+  - sled_pull goes to LIB-12.
+- **D-LIB7-twist.** The hammer_curl (#c5) and cross_body_hammer_curl (#c7) Wrongs are wrist twists, which the radial view can't show. Those ids draw shared/curl.json's flexion and extension faults instead.
+- **D-LIB7-10, Wrong labels.** Every LIB-7 Wrong reads "Wrist curled" (flexed) or "Wrist bent back" (extended). These are shared/curl.json's labels and golden B's chest press label. A test fails on any other wording.
+- **D-LIB7-11, no YOU/MACHINE row on dumbbells.** For a neutral dumbbell grip, golden B's "seen from above" orientation row (YOU ← MACHINE →) is replaced by "Seen from above" alone. The rope keeps the row. Check G8 tests both.
+- **D-LIB7-12, a level forearm needs a stated orientation.** A level-forearm curl shows the palm up or down, so an id with no orientation claim is not drawn. concentration_curl and bayesian_cable_curl moved to the gaps: their cards and curl.json name no palm direction for them. Count: 14 drawn, 16 gaps.
+- **LIB-12 asks (supervisor OK, 2026-10-02).**
+  - A diameter is required only for radial keys or a key with a handle profile.
+  - LIB-7's sweeps filter by `OWNER`.
+  - A joint check fails when one id is claimed by a LIB-7 and a LIB-12 module.
+- **R8 findings (discarded critic run, checked one by one).**
+  - Fixed: c (wording, D-LIB7-10); the hammer-curl machine row (D-LIB7-11); concentration_curl and bayesian_cable_curl orientation (D-LIB7-12).
+  - Not changed: "push Right mid-hand". It uses golden B's heel contact (.3), measured by G4.
+  - Not changed: "rope knob does not read". The knob lies behind the fist in the radial view (D-LIB7-9). The pilot sheet flags it, and "Against the knob" carries the claim.
 
 ## GATE-SPLIT: parallel gate jobs, design (GATE-SPLIT builder, 2026-10-02)
 
@@ -2237,6 +2283,16 @@ Source: "REVIEW LIB-2 design @ d61cefd: CHANGES NEEDED" on #189. Append-only: ea
 - **D-PLAY-HR-1 (supervisor, 2026-10-03).** `READ_HEART_RATE` is removed by card PLAY-HR (branch `claude/play-hr`): no user-facing feature used it (session heart rate comes from the Bluetooth watch; the Health Connect reading reached only the sync Details sheet), and Play's Health Connect guidance (answer/12991134) forbids requesting data types the app does not need. The Health apps declaration names 4 permissions, category "Activity and Fitness", use case "Fitness, wellness and coaching". The owner may tick the category now; the Health Connect permission declaration and the closed-test release wait for the first Play bundle built after PLAY-HR merges. Bundle 37.1.0.47 and earlier still declare `READ_HEART_RATE` and must not go to testers.
 - **PLAY-PREP review round 1** (#198 @ 48e72e1): fixed every finding as the reviewer wrote it: false permission reasons, missing Data safety details (height, BMI, body fat, safety flags, steps and calories gated, the reply-report purpose on Other info), listing claims, and the timing of the Health apps step.
 - **D-PLAY-HR-1, correction (delta review on #198 @ f381135).** The cutoff "bundle 37.1.0.47 and earlier" in D-PLAY-HR-1 is wrong: later bundles (runs 48 to 52, including the first upload-signed one) still declare `READ_HEART_RATE`. The rule is: only a bundle built from a `main` commit that contains PLAY-HR's merge may be uploaded, and its manifest is checked first for no `android.permission.health.READ_HEART_RATE`.
+- **D-LIB7-13 (replaces D-LIB7-9), rope.** The rope is drawn as a plain section with its 46 mm knob dashed over the fist, coaxial, from the plate composer. It sits in the fingers (contactAt 1.15, GA 3.1.1 drawing value). Check G7 tests it (calibrated critic, 2026-10-03).
+- **D-LIB7-14, push Right.** The handle sits low in the heel, as on golden B's approved squat Right (contactAt -0.1, wrist 8°). The Right force line is re-aimed through the wrist pivot. G4 and G6 test it.
+- **D-LIB7-15, EZ angled grip.** ez_bar_curl's claims (#c1 angled sections, #c2 semi-supinated) name the angled grip. It is drawn with orientation `angled`, labelled "Seen along the angled grip", in its own tile. preacher_curl names no angle and stays underhand.
+- **D-LIB7-16, delta review on #193 @ bfacafb.** ez_bar_curl's angled grip is drawn palm up: the camera looks along the angled section, so the hand shows as an underhand grip does; the camera words carry the angle, and G8 checks it. The rope fist is curl 2's squared fist (contactAt .6) instead of GA 3.1.1's load in the fingers, which golden B draws as a point; G7 measures the fist's front. The push drawing values (-0.1, 8°) are flagged on the sheet.
+- **D-LIB7-16a, rope contact (ruling on #193).** Case 1 applied: no rope_triceps_pushdown claim names where the load sits (shared/rope-rule.json c1-c6; gap 1 says no source does). The .6 square-fist contact is cited as the flagged drawing value `ga:rope-fist-mid`, and the unused `ga:rope-fingers` is removed.
+- **D-LIB7-17 (ruling D-LIB7-17a), rope label.** Case 1 by claim (shared/rope-rule.json#c1, hand against the knob), but no one view shows both #c1 and the #c6 wrist curl, which turns about the rope's own axis; #c6 decides. The top view stays, the Right note is the drawn contact "Middle of palm" (ga:rope-fist-mid), the knob wording is dropped, #c1 stays cited. The knob rim lies wholly inside the fist outline (at least 2.6 mm in), so it stays dashed; G7 checks this.
+- **D-LIB7-18, push Right load line.** Drawn straight down the forearm axis through the wrist pivot, from the level of the contact (G6: within 2° of the axis). The handle stays at the squat pose: golden B's palm keeps the contact 12 px off the axis, and putting it on the axis needs wrist 15° with the handle back at the finger fold.
+- **D-LIB7-18a, push Right without a force line (replaces D-LIB7-18).** As on golden B's squat Right, the push Rights (single_arm_triceps_pushdown, skull_crusher) draw no force line; the contact dot in the heel, the pivot and the reference wrist tick stay. G6 checks it.
+- **D-LIB7-18b (amends D-LIB7-18a).** The push Right follows golden B's squat Right in full: no force line and no wrist tick; the contact dot in the heel and the pivot stay. G6 fails a push Right with no force line that draws a tick.
+- **D-LIB7-19 / D-LIB7-19a, push Rights parked.** Golden B's hand cannot seat a heel push low and over the forearm (golden-B follow-up 9; measured grid on #193), so single_arm_triceps_pushdown and skull_crusher are gaps until plan 2.8 fixes the engine: LIB-7 draws 12 ids, 18 gaps. The push design and its checks are parked, not deleted; a test fixture keeps their failure paths.
 ## A3-6 history and weekly numbers (2026-10-04)
 - **D-A3-6-1 (UI-R02).** `exerciseHistory` trusts a known exercise id (library or custom). The name fallback runs only for an id that resolves to nothing, so two custom exercises with one name keep separate history and a legacy record with a deleted id still resolves by name.
 - **D-A3-6-2 (UI-R06, ruling R8).** `deleteGym` does nothing for the live session's gym, and the Gyms sheet shows no Delete on that gym. No new text. D-AUD10-3 already fixes a running session's gym context; this keeps that gym alive until the workout ends.
@@ -2523,6 +2579,15 @@ Card: `docs/supervisor/verify/lib-3b-card.md` (claude/sup-lib4-cards @ 5551cadd,
 
   A render that throws leaves R null, so the determinism loop is skipped, but PQ-H1 is red (`H1.engine:render-threw`), so it fails closed. A fresh-import H7 needs an async h7 at index.mjs:38 and a spec loader for H/D/T rows in candidate.mjs, which is reserved in this card and collides with #245. Moved to LIB-3c ("PQ-H7 builds twice from fresh spec imports"). node.mjs's H7 lines are unchanged here.
 
+## LIB-7-FIX loader contract on #193 (2026-10-18)
+Card LIB-7-FIX (lib-7-fix-card.md, lib4-cards section 18 D-LIB7FIX-*). Builder decisions inside the rulings:
+- **D-LIB7FIX-B1, panel source.** `pairPanel(key)` draws the key's first id (module order) with the uid `hp-<key>-<fault>`; F2 proves the panel is byte-identical through every id on the key, and F4 that each SVG is the approved render with only the uid swapped (22 of 22 pages).
+- **D-LIB7FIX-B2, markup without golden B's helpers.** golden B's `zoomPanels`, `cleanZoom` and `prefixIds` are module-private (`artifact/howto-layers.mjs`), and `tools/plates/layers/**` is never edited, so `hands/panel.mjs` writes the same wrapper (`howto-layers.mjs:162-171`) and the cleaned pager (:148-153) itself, reusing LIB-6's `captions()` and `pagerOf()`. `splitHalves` is not applied: it rewrites SVG bytes, which D-LIB7FIX-CARRY holds to the approved render (hands/DESIGN.md §8 (b)).
+- **D-LIB7FIX-B3, one more loader throw.** Besides the ruled throws, `keyIndexOf` refuses a drawn id that is one of the 8 (`tools/plates/plates.json`), so HAND_OF_ID can never map one; F1 shows it red. Stricter only.
+- **D-LIB7FIX-B4, words.** Captions are the key's label only (D-LIB7FIX-WORDS): Right = the approved Right note, Wrong and pager = the D-LIB7-10 fault label, heading = golden B's "Hand: right and wrong"; golden B's close label and LIB-6's sr-only and pager words are recorded as `chrome` in `hands/panel-words.json` with their sources.
+- **D-LIB7FIX-B5, inputs.** `inputsFor` (key or id) also lists `hands/panel-words.json` (read with readFileSync, so not in the import closure); `panel.mjs` and golden B's `copy-lint.mjs` enter through `pairs.mjs`'s closure. The id path is otherwise unchanged (hand-pairs.test.ts:514-524 and LIB-12's hand-views.test.ts:211, :217 stay unedited).
+- **D-LIB7FIX-B6, gate time.** `scripts/gate-times.json` "LIB-7": 44.4 s: the group alone (`MARC_GATE_JOB=11/104`) took 47.7 s in UTC and 47.1 s in Pacific/Auckland locally (proof `meta.seconds`), the larger × 0.93 (GATE-SPLIT's local → CI ratio), as 11.1 item 16 (b) says.
+- **D-LIB7FIX-PERKEY (supervisor amendment, lib4-cards section 19; built on #193).** Adding a hand key never edits a file a pinned row lists. panel-words.json is split into `hands/words/chrome.json` and one `hands/words/<key>.json` per key, with every word's text and source unchanged (PK1: the 8 panels are byte-equal to panels built from da65b13a's words, and their sha256 on both heads are in #193's body). Key modules may declare their own conventions, orientations and camera words, merged by `declarationsOf` with throws on clashes and foreign use (PK3). `inputsFor(key)` lists the shared engine plus that key's own files only (PK2), and a scratch worktree with a new key module and words file leaves every existing key's inputs, file bytes and pairs.mjs's esbuild closure unchanged (PK4). Builder note: PK4's dummy id is `box_jump` (in no hand module, outside LB1/LB2, not pinned); PK4 (c) runs once LIB-4c's ci/manifest.mjs is on the head.
 ## LIB-3c: fresh-import PQ-H7, PARAMS ranges and the D/T child proof (LIB-3c builder, 2026-10-18)
 
 Card: `docs/supervisor/verify/lib-3c-card.md` (claude/sup-lib4-cards @ 95928e1). PR #264. Design: `docs/howto/library/LIB-3c-DESIGN.md` (accepted by the supervisor on #264).
