@@ -945,6 +945,44 @@ NEVER: commit secrets; touch signing, EXPECTED_SHA256 or the keystore; push to m
 - **Card truth beats a critic's technique assumption** (D-LIB13-ONEARM). Never tune a drawing off its card to please a critic. Rule it, give the owner a sheet line, and open a research follow-up.
 - **Log times from `date -u`, never from memory.** The 10-19 logs needed several fixes.
 
+#### J. DONE: do not redo (owner, 10-22: "I dont want repeat work")
+**The rule.** A verdict, approval or verify recorded on a PR or in `lib4-cards.md` is valid for the sha it names. If `git ls-remote` shows the same head, **trust it and move on**. Redo a check only when the head changed after it, and then only for the changed part: a delta review, or a focused recheck of the changed plates.
+
+**Done and valid at these heads. Do not repeat any of them:**
+- **Code reviews (PASS):**
+  - #193 @ 9c70344 (delta PASS)
+  - #191 @ ea916e9
+  - #279 @ 754176a (delta PASS)
+  - #273 @ e072214
+  - #109 (LIB-8-FIX PASS; F-LB3-1 diff check PASS @ ff7c5c4)
+  - #270, merged
+
+  Frozen PRs only get a delta review of a later push (a main catch-up or the ruled Lows).
+- **Approved drawings (critic panels):**
+  - LB1 12 plates (#245)
+  - LB2 5 plates (#265, lib4-cards 24)
+  - LIB-7c hand pairs (#271, section 25)
+  - horizontal_leg_press @ 9fbdfb5 (#279, section 26)
+  - LIB-12 palm-flat and battle-rope @ 6b6e5ab (section 27)
+  - pilot B 4 plates @ d3b231d (section 28)
+  - LB3 landmine, DRDL, conventional, sumo and back_extension @ 423acc1 (section 29)
+  - pilot A 13 plates (owner "Pilot a ok")
+- **CARD FIELDS verifies:**
+  - LB3 VERIFIED @ eced1c1, with tightenings diff-checked @ 59d3d78
+  - pilot B VERIFIED @ 0d97059, with buttock tightenings @ 4033daf / d3b231d
+- **Research:** the LB3 and pilot B research verifies are done and merged into `claude/libht-research` @ 38d5f9c6. Do not re-verify.
+- **E-R5:**
+  - the renders are posted and reproduced byte-identically;
+  - the advisory scores are posted (#278 6277782675);
+  - the scope is written into plan 2.4, row 20, decision 5 and risk 6.
+
+  Only the owner's answer is open.
+- **Rulings:** every D-entry in E above is final. Do not re-decide them unless the owner asks.
+
+**Restarting a lane is not restarting its card.** The replacement builder reads the PR body's HANDOFF and the PR comments from the last verdict or ruling on. It continues from the branch head with **only the next open step** named in the C table. It never rebuilds, re-renders or re-verifies anything already posted. Put this sentence in every restart message: "Everything already posted on this PR is done; do only <next step>."
+
+**Read only what you need.** Read 8.0o, then the sections and cards it points to for the step at hand. Sections 8.0a-8.0n are history; open them only to look up a specific ruling.
+
 ### 8.0n 10-18 ~05:35 UTC: new supervisor running (read first; supersedes 8.0m where they differ)
 
 **Supervisor.** session_01HtNEBU3oDR8NyHKK3uCwUi (new account, environment env_013Ap2eNfQ92RBapFBzsfRs7). Hourly routine `trig_019LBJDA2jX95HgcWEgQPMJ6` "M/ARC supervisor tick" (cron 57 * * * *, fires into this session; its prompt carries the owner rules: owner chat ".", Relay skipped, the library focus, the parked items, the models). Watchers: monitor.sh + heads.sh under one Monitor (SKIP adds 188 190 192 197 209 221 237; BR adds claude/libht-research-split). `subscribe_pr_activity` failed on this account too.
