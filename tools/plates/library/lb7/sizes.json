@@ -350,6 +350,93 @@
     "unit": "point",
     "basis": "claim: plate.frames 'Trace follows the near dumbbell' (c4, c5; D-LIB17-TRACE)"
    }
+  },
+  "face_pull": {
+   "KNEE_SOFT": {
+    "value": 6,
+    "unit": "deg",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f):47, the standing side view's soft knees (c3 'stand up straight' gives no angle)"
+   },
+   "START_ELBOW": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "stated reason: c3 'arms extended', drawn short of straight, never locked (D-LIB16-LOCK's basis, machine_chest_press.mjs:45)"
+   },
+   "GRIP_X0": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "convention: rope_triceps_pushdown.mjs (pilot A #109 @ ff7c5c4f):47 GRIP_X0, the rope ends together under the ferrule with the arms extended"
+   },
+   "END_X": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: c7 'hands near ears': the fist centre beside the head (the head's half-width and the fist's)"
+   },
+   "END_FWD": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason: c7 'hands near ears': the fist at the ear, 2 cm in front of the engine's ear landmark"
+   },
+   "M_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: c10 'pulling too low to chin' (Motra): the fists close in front of the chin"
+   },
+   "M_FWD": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: c10 'to chin': the fists in front of the chin, the rope at the chin"
+   },
+   "M_DROP": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated: c9, c10 'below shoulder height', the upper arm clearly sloping down (DESIGN.md section 11 proposal)"
+   },
+   "M_POLE": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "solved: the arm IK pole's angle below level that puts the Mistake elbows M_DROP below the end shoulder line"
+   },
+   "SCAP_START": {
+    "value": -1,
+    "unit": "cm",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f):57 SCAP pro -1, for c4 'shoulders back'"
+   },
+   "SCAP_END": {
+    "value": -3,
+    "unit": "cm",
+    "basis": "convention: vendor/exercises/pull_up.mjs:36's scap pro -3 (the 8), for c6, c7 'squeezing the shoulder blades together'"
+   },
+   "PULLEY_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "solved: c1 'at about head or eye height': the drawn figure's ear landmark height (the engine has no eye landmark; eyes and ears share a level)"
+   },
+   "CABLE_START": {
+    "value": 0.532,
+    "unit": "m",
+    "basis": "stated: c3 'a couple of steps back' = 2 x 0.152 H foot lengths (DESIGN.md section 11), read as the cable paid out from the pulley to the start ferrule"
+   },
+   "COLUMN_BACK": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "convention: seated_cable_row.mjs (vendor/exercises, the 8):25-26, the pulley 8 cm in front of the stack tower"
+   },
+   "FLOOR_B": {
+    "value": 0.45,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line behind the heels"
+   },
+   "FLOOR_F": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the column base"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "claim: c5 'pull the rope toward the face': the near hand on the rope (D-LIB17-TRACE)"
+   }
   }
  }
 }

@@ -95,7 +95,7 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with seconds exactly once in the raw text, nothing else, every mode H (D-LIB17-B1)', () => {
-    expect(want()).toEqual(['lib_cable_lateral_raise', 'lib_cable_external_rotation', 'lib_weighted_dip']);
+    expect(want()).toEqual(['lib_cable_lateral_raise', 'lib_face_pull', 'lib_cable_external_rotation', 'lib_weighted_dip']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('none of the 5 LB7 ids not in this card is in any lb7/ file as a row', () => {
@@ -274,7 +274,7 @@ describe('LIB-17 A2 / Do 4: dipBars and the drawn plates draw PRIMITIVES only', 
     }
   });
   it('every item the drawn specs draw is a PRIMITIVES type, in every drawn pose', () => {
-    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'cable_external_rotation', 'renegade_row', 'weighted_dip']);
+    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'face_pull', 'cable_external_rotation', 'renegade_row', 'weighted_dip']);
     for (const id of specsDrawn()) for (const pose of posesOf(S[id]))
       for (const it of itemsIn(S[id], pose).items) expect(Object.keys(eng.PRIMITIVES), `${id} ${pose}`).toContain(it.type);
   });
@@ -480,7 +480,7 @@ describe('LIB-17 cable_external_rotation (H; plan 1\'s small-motion check, D-LIB
 
 /** 6341498444 item 2: a bent arm reads as bent: where the card bends the elbow, the drawn inside angle is at most 150 deg
  *  (flexion at least 30) in the poses listed, and the two elbows never meet in one stub. */
-const BENT: Record<string, [string, string[]][]> = { cable_external_rotation: [['start', ['l']], ['end', ['l']]], weighted_dip: [['end', ['l', 'r']]] };
+const BENT: Record<string, [string, string[]][]> = { cable_external_rotation: [['start', ['l']], ['end', ['l']]], face_pull: [['end', ['l', 'r']]], weighted_dip: [['end', ['l', 'r']]] };
 const bentProblems = (spec: any) => (BENT[spec.id] ?? []).flatMap(([pose, sides]) => {
   const l = lmOf(spec, pose), out: string[] = [];
   for (const s of sides) { const inside = angle3(l[`shoulder.${s}`], l[`elbow.${s}`], l[`grip.${s}`]); if (!(inside <= 150)) out.push(`${pose}: elbow.${s} ${inside.toFixed(1)} inside`); }
@@ -522,12 +522,15 @@ describe('LIB-17 cable_lateral_raise (H; the front-view cable, the single handle
 });
 
 describe('LIB-17 cables (D-LIB17-CABLE): pulley to handle in every pose, above the body layer, never through the head', { timeout: T }, () => {
-  const CABLED = ['cable_lateral_raise', 'cable_external_rotation'];
+  const CABLED = ['cable_lateral_raise', 'face_pull', 'cable_external_rotation'];
+  /** Where each cable ends (the handle's ring, or face_pull's rope ferrule) and its pulley, from the spec's own export. */
+  const rigOf = (spec: any, l: any) => (spec.id === 'face_pull' ? { ring: M.face_pull.FP.ferruleOf(l), pulley: M.face_pull.FP.pulley }
+    : { ring: M[spec.id][spec.id === 'cable_lateral_raise' ? 'CLR' : 'CER'].handleOf(l['grip.l']).ring, pulley: M[spec.id][spec.id === 'cable_lateral_raise' ? 'CLR' : 'CER'].pulley });
   /** Every pose: the column's cable runs from its pulley to the handle's ring; in the Mistake the twin does. Front view:
    *  the cable is drawn at z center (above the body layer); no cable point lies inside the head outline. */
   const cableProblems = (spec: any) => posesOf(spec).flatMap(pose => {
     const out: string[] = [], items = itemsIn(spec, pose).items, cam = camOf(spec), l = lmOf(spec, pose);
-    const col = items.find((i: any) => i.type === 'cableColumn'), ring = M[spec.id][spec.id === 'cable_lateral_raise' ? 'CLR' : 'CER'].handleOf(l['grip.l']).ring;
+    const col = items.find((i: any) => i.type === 'cableColumn'), { ring } = rigOf(spec, l);
     if (!col || Math.hypot(...col.to.map((v: number, i: number) => v - ring[i])) > 1e-9) out.push(`${pose}: the cable does not reach the handle`);
     const head = shapesIn(spec, pose).filter((x: any) => x.key === 'head').map((x: any) => x.poly);
     for (const it of items) for (const p of eng.PRIMITIVES[it.type](it, cam)) {
@@ -542,7 +545,7 @@ describe('LIB-17 cables (D-LIB17-CABLE): pulley to handle in every pose, above t
    *  on the pulley's rim and the ring (+-1 px), and no Mistake `poly` stands in for it. */
   const mistakeCableProblems = (spec: any) => {
     const svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, layer = svg.split('<g class="mistake-layer">')[1] ?? '', cam = camOf(spec);
-    const l = lmOf(spec, 'mistake'), ring = M[spec.id][spec.id === 'cable_lateral_raise' ? 'CLR' : 'CER'].handleOf(l['grip.l']).ring, pul = M[spec.id][spec.id === 'cable_lateral_raise' ? 'CLR' : 'CER'].pulley;
+    const l = lmOf(spec, 'mistake'), { ring, pulley: pul } = rigOf(spec, l);
     const [R0, P0] = [cam.P(ring), cam.P(pul)];
     const hit = [...layer.matchAll(/<path class="m-line" d="([^"]+)"/g)].map(m => xy(m[1]!)).some(p => p.length === 2
       && Math.hypot(p[1]![0]! - R0[0]!, p[1]![1]! - R0[1]!) <= 1 && Math.abs(Math.hypot(p[0]![0]! - P0[0]!, p[0]![1]! - P0[1]!) - 0.045 * cam.pxm) <= 1);
@@ -841,9 +844,9 @@ describe('LIB-17 A15: Mistake clearance, leaders, the floor and bent arms', { ti
 });
 
 describe('LIB-17 PQ-H3 measured node-side on the slice (DESIGN.md section 12)', { timeout: T }, () => {
-  it('cable_external_rotation, cable_lateral_raise and weighted_dip pass at their ruled sizes; values logged', () => {
+  it('cable_external_rotation, cable_lateral_raise, weighted_dip and face_pull pass at their ruled sizes; values logged', () => {
     const env = pins().envelope;
-    for (const id of ['cable_external_rotation', 'cable_lateral_raise', 'weighted_dip']) {
+    for (const id of ['cable_external_rotation', 'cable_lateral_raise', 'weighted_dip', 'face_pull']) {
       const s = S[id], R = { normal: plate.renderPlate(s, { id: 'x' }), mistake: plate.renderPlate(s, { id: 'x', mistake: true }) };
       const dev = qaNode.deviation({ spec: s }, Eng(), R), tr = markup.pathsOf(R.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0);
       console.log(`LIB-17 H3 ${id}: deviation ${dev.toFixed(1)} px, Trace ${tr.toFixed(1)} px, ${R.normal.report.camera.pxPerM} px/m`);
@@ -1208,5 +1211,71 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     expect(outside([poly], n)).toBeLessThanOrEqual(0.5);
     const lifted = { ...belt, pts: belt.pts.map((p: number[]) => [p[0], p[1]! + 0.06, p[2]]) };
     expect(outside([eng.PRIMITIVES.poly(lifted, cam)[0].poly], n)).toBeGreaterThan(0.5);
+  });
+});
+
+describe('LIB-17 face_pull (H; the rope on main\'s eq/rope.mjs, the eye-height pulley, side view): drawn facts', { timeout: T }, () => {
+  const s = () => S.face_pull, F = () => M.face_pull.FP;
+  it('c3: the start arms extended toward the pulley (elbow bend START_ELBOW +-1), the grips on the shoulder-to-pulley line (+-2 cm); the cable CABLE_START from the pulley to the rope', () => {
+    const l = lmOf(s(), 'start'), P = F().pulley;
+    for (const side of ['l', 'r']) expect(180 - angle3(l[`shoulder.${side}`], l[`elbow.${side}`], l[`grip.${side}`]), side).toBeCloseTo(M.face_pull.SIZES.START_ELBOW, 0);
+    const sh = l['shoulder.r'], g = l['grip.r'], u = [P[1]! - sh[1], P[2]! - sh[2]], k = Math.hypot(...u), v = [g[1] - sh[1], g[2] - sh[2]];
+    expect(Math.abs(u[0]! * v[1]! - u[1]! * v[0]!) / k).toBeLessThanOrEqual(0.02);
+    const col = itemsIn(s(), 'start').items.find((i: any) => i.type === 'cableColumn');
+    expect(Math.hypot(...col.to.map((x: number, i: number) => x - P[i]!))).toBeCloseTo(M.face_pull.SIZES.CABLE_START, 2);
+  });
+  it('c1: the pulley at eye height (the ear landmark, +-1 cm)', () => {
+    expect(Math.abs(F().pulley[1] - lmOf(s(), 'end').ear[1])).toBeLessThanOrEqual(0.01);
+  });
+  it('c5, c7: at the end the hands are by the ears at eye level (+-1 cm in height, within 5 cm front to back), the rope ends apart', () => {
+    const l = lmOf(s(), 'end');
+    for (const side of ['l', 'r']) {
+      expect(Math.abs(l[`grip.${side}`][1] - l.ear[1]), side).toBeLessThanOrEqual(0.01);
+      expect(Math.abs(l[`grip.${side}`][2] - l.ear[2]), side).toBeLessThanOrEqual(0.05);
+    }
+    expect(Math.abs(l['grip.l'][0] - l['grip.r'][0])).toBeGreaterThan(2 * M.face_pull.SIZES.GRIP_X0 + 0.1);
+  });
+  /** c5, c9: the elbows high (above the shoulder line) and wide (out past the shoulders) at the end. */
+  const highProblems = (spec: any) => {
+    const l = lmOf(spec, 'end'), out: string[] = [];
+    for (const side of ['l', 'r']) {
+      if (!(l[`elbow.${side}`][1] > l[`shoulder.${side}`][1])) out.push(`elbow.${side} not above the shoulder`);
+      if (!(Math.abs(l[`elbow.${side}`][0]) > Math.abs(l[`shoulder.${side}`][0]))) out.push(`elbow.${side} not wide`);
+    }
+    return out;
+  };
+  it('c5, c9: the end elbows high and wide; mutation: the end drawn with the Mistake\'s arms (elbows dropped) is red', () => {
+    expect(highProblems(s())).toEqual([]);
+    const bad = { ...s(), poses: { ...s().poses, end: { ...s().poses.end, ...s().mistake.pose } } };
+    expect(highProblems(bad).filter(p => /not above/.test(p)).length).toBe(2);
+  });
+  it('Do 7: the end elbows read as bent (inside 150 or less); mutation: the end arms straightened toward the pulley is red', () => {
+    expect(bentProblems(s())).toEqual([]);
+    const e = s().poses.end, st = s().poses.start;
+    expect(bentProblems({ ...s(), poses: { ...s().poses, end: { ...e, reach: { l: { ...st.reach.l, at: st.reach.l.at.map((v: number, i: number) => v + [0, 0, 0.05][i]!) }, r: { ...st.reach.r, at: st.reach.r.at.map((v: number, i: number) => v + [0, 0, 0.05][i]!) } } } } }).length).toBeGreaterThan(0);
+  });
+  it('c9, c10 Mistake: only the arms change; the elbows M_DROP below the end shoulder line (+-1 cm) and the hands at the chin\'s height (+-1 cm)', () => {
+    expect(Object.keys(s().mistake.pose)).toEqual(['reach']);
+    const l = lmOf(s(), 'mistake'), e = lmOf(s(), 'end');
+    for (const side of ['l', 'r']) {
+      expect(Math.abs(l[`elbow.${side}`][1] - (e[`shoulder.${side}`][1] - M.face_pull.SIZES.M_DROP)), side).toBeLessThanOrEqual(0.01);
+      expect(Math.abs(l[`grip.${side}`][1] - e.chin[1]), side).toBeLessThanOrEqual(0.01);
+    }
+  });
+  it('c4: the body still: root, trunk, neck and feet the same in start, end and Mistake', () => {
+    const pick = (p: any) => JSON.stringify([p.root, p.trunk, p.neck, p.plant]);
+    expect(pick(fullPose(s(), 'start'))).toBe(pick(s().poses.end));
+    expect(pick(fullPose(s(), 'mistake'))).toBe(pick(s().poses.end));
+  });
+  it('the rope: two strands from the ferrule, each ending at its fist (stopper within 7 cm of the grip), in every pose; poly, so drawn in the Mistake', () => {
+    for (const pose of posesOf(s())) {
+      const { items, lm } = itemsIn(s(), pose), strands = items.filter((i: any) => i.part === 'rope' && i.type === 'poly' && i.curve);
+      expect(strands.length, pose).toBe(2);
+      for (const side of ['l', 'r']) expect(Math.min(...strands.map((st: any) => Math.min(...st.pts.map((q: number[]) => Math.hypot(...q.map((v, i) => v - lm[`grip.${side}`][i]!)))))), `${pose} ${side}`).toBeLessThanOrEqual(0.07);
+    }
+  });
+  it('phantom (Q2 (c)): the start rope (dropped from the start layer) is redrawn dashed in the end layer only', () => {
+    expect(itemsIn(s(), 'end').items.filter((i: any) => i.part === 'startRope' && i.cls === 'eq-line m-line').length).toBe(1);
+    expect(itemsIn(s(), 'mistake').items.some((i: any) => i.part === 'startRope')).toBe(false);
   });
 });
