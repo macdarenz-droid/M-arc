@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-22 · main `07ad7f1c` (train 32) · **8.0o TAKEOVER: the owner moves the work to his other account; all lanes paused and WAITING since 10-19 22:58 UTC (usage pause)** · by supervisor session `session_01HtNEBU3oDR8NyHKK3uCwUi` (the account being left). Read 8.0o first.
+**Last updated:** 2026-10-22 02:08 UTC · main `07ad7f1c` (train 32) · **8.0p: new supervisor on the new account; 3 LIB builders and the #181 reviewer running** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -808,6 +808,20 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0p 10-22 ~02:08 UTC: new supervisor running on the new account (read first; supersedes 8.0o where they differ)
+
+**Supervisor:** session_01PeNM9HeWPrhrcscMwXzupy (auto mode, claude-opus-5-5). **Hourly tick:** `trig_01LvkAzRwZUPqSR1m1KAGScf` (`57 * * * *`, bound to this session, prompt = 8.0o H). **Usage (this account):** 7-day 0.00 at 02:01 UTC; weekly reset **Thu 02:00 UTC** (resetsAt 1793239200, 10-29), not Sat as PANELS.md 9 says for the old account. **Watchers:** monitor.sh + heads.sh under one Monitor (SINCE 2026-10-19T22:50Z), re-armed every 30 min. **PR subscriptions fail on this account** ("Could not subscribe"): rely on monitor.sh for comments and ci-watch.sh for CI.
+
+All heads matched 8.0o C at 02:03 UTC. Started (active LIB builders 3 of 4):
+| lane | session | step |
+|---|---|---|
+| #181 LIB-6-PM reviewer | session_018xPdHRpvCFrEn8puLHjwjG | one review of 9b8f76e6..56d3bbbf (**D-SUP-181-R1R2:** the card's R1 and R2 fold into one, as no R1 ran; LIB-6 itself PASSED @ 9b8f76e and is not redone) |
+| #274 LIB-13 builder | session_01Kj5X64C7VWg2YQCfpPxqPY | D-LIB13-PANEL2 only (pendlay_row, one_arm_dumbbell_row); then the supervisor's focused recheck |
+| LIB-5v builder (new PR) | session_01KU566by8W2s7KehqC21gp6 | the whole card (variant-line-card.md, ruled 10-18); fresh Opus fallback, as the LIB-5 session is gone. **D-SUP-LIB5V-NOW:** started now, not after #109: it is `ready`, blocks none of #181/#193/#109, and must be READY before LIB-9 READY |
+| #191 LIB-12-FIX builder | session_01KcC5dTrh5Euq6ts5RJrj6q | **D-SUP-191-EARLY:** the pre-train push (main merge, Lows 2-4 per 6278835457) now instead of at its slot, to take it off the critical path; a delta review follows; the train still waits for slot 5 |
+
+Free LIB slot: kept for #193's catch-up push after #181 merges.
 
 ### 8.0o TAKEOVER 10-22: the owner moves the work to his other account (read first; supersedes 8.0n and section 10 where they differ)
 
