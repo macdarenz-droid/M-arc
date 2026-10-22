@@ -2,5 +2,42 @@
  "note": "LB5 build-ahead rows (LIB-15, D-LIB15-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
  "batch": "LB5",
  "censusRef": "4a9fd86",
- "rows": {}
+ "rows": {
+  "lib_overhead_cable_triceps_extension": {
+   "src": "library/specs/overhead_cable_triceps_extension.mjs",
+   "slug": "overhead-cable-triceps-extension",
+   "prefix": "overhead-cable-triceps-extension",
+   "chromeId": "overhead-cable-triceps-extension",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_cross_body_hammer_curl": {
+   "src": "library/specs/cross_body_hammer_curl.mjs",
+   "slug": "cross-body-hammer-curl",
+   "prefix": "cross-body-hammer-curl",
+   "chromeId": "cross-body-hammer-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "front"
+  },
+  "lib_preacher_curl": {
+   "src": "library/specs/preacher_curl.mjs",
+   "slug": "preacher-curl",
+   "prefix": "preacher-curl",
+   "chromeId": "preacher-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_wrist_curl": {
+   "src": "library/specs/wrist_curl.mjs",
+   "slug": "wrist-curl",
+   "prefix": "wrist-curl",
+   "chromeId": "wrist-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
 }

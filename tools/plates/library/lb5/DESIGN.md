@@ -87,13 +87,15 @@ None. No family is proposed T here (the PUSHDOWN and CURL children are not on th
   2.1:126-128). Returns several items of one type, so the spec takes it through `perItem`.
 - The seat is the vendor `seat` primitive in the spec (census need "seat: exists"), not part of the composer.
 - **EZ bar (D-LIB15-PREACHER; D-LIB10-NOTE Q3):** the vendor `barbell` seen end-on, no composer; the camber is frontal
-  and does not show side-on. Its plate diameter is preacher_curl's own unsourced number (0.23 m, a 5 kg iron plate,
-  chosen so the plate clears the face and the pad at the top of the curl); it does **not** reuse skull_crusher's
+  and does not show side-on. Its plate diameter is preacher_curl's own unsourced number (0.23 m, a drawn
+  value); it does **not** reuse skull_crusher's
   EZ_PLATE_D, and no row takes `bar.kind: 'ez'`, so Q3's condition 2 does not bind.
-- Unsourced numbers (preacher_curl's header, 13.3 must-fix 14): the arm face slope (45° from vertical, a typical
-  preacher bench), face length (38 cm), pad depth at the top (12 cm), post (5 cm tube), seat height (set so the pad top
-  sits under the armpits with the feet flat, c2: solved, then recorded), plate diameter 0.23 m, bar length (1.2 m, a
-  typical EZ bar; drawn end-on, so only its sleeve and plate show).
+- Unsourced numbers (preacher_curl's header, 13.3 must-fix 14): the pad's arm face is built from the body (the line
+  along the back of the upper arm, so its slope is the upper arm's: SH_FLEX), 34 cm long; its chest face runs from the
+  top edge through the chest; the pad 5 cm thick under the arm face's low end; post 6 cm tube, floor foot 44 cm; seat
+  height 60 cm (pad top under the armpits with the feet flat, c2); plate diameter 0.23 m; bar drawn end-on.
+  Drawn: the top edge sits where the upper arm leaves the torso outline in the side view (the visible armpit), because
+  the shoulder joint is 12.6 cm behind the chest front in the engine body (body.mjs landmarks `chest`).
 - A per-pose drawn-item test on the real spec (13.1, A2): the pad at one fixed place (±1 px) in start, end and
   Mistake; the upper-arm contact on the face in start and end, off it in the Mistake.
 - No other composer is proposed. The rope is main's `rope`; columns, pulleys, cables, stacks, bench, seat, dumbbell
