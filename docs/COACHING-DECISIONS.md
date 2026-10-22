@@ -2636,3 +2636,9 @@ Card: `docs/supervisor/verify/box-cap-card.md` (claude/sup-lib4-cards @ 3d9b8e10
   - check-bundle.mjs switches to its Do 9 rule: each answered value must appear in the built app.
   - Every other box stays at 30, and golden B's and c7's limits are unchanged.
 - **D-LIB5-RISKSTEST.** `tests/howto/sections-risks.test.ts` (HT-9's) gains exactly two lines, the `RED_FLAG_BACK` import and `back: RED_FLAG_BACK` in its typed FLAG map, because `RiskJoint` now has `'back'`. Every assertion stays. Without the entry, typecheck is red.
+
+## LIB-15: LB5 plates, build-ahead (LIB-15 builder, 2026-10-22)
+
+- **D-LIB15-MODES (applied, proposed in the note): all nine LB5 H ids are H, no D row.** Five census closests (dumbbell_lateral_raise) have no engine spec, and the four others differ from their closest in pose, equipment and Mistake, so none is a parent with only PARAMS paths set. Record: tools/plates/library/lb5/DESIGN.md section 1.
+- **D-LIB15-POSEMAP (proposed, DESIGN.md section 9 Q2).** dumbbell_overhead_triceps_extension and cable_curl draw the card's end as the spec's start, because each fault sits at the card's start pose (the press to the top, c9; the straight arms at the bottom, c13) and the engine draws the Mistake against the spec's end. The other seven are identity.
+- **D-LIB15-TWIST (found, DESIGN.md section 11 Q5).** The vendor engine has no forearm rotation (body.mjs:132), so cross_body_hammer_curl's wrist twist moves no body landmark and PQ-H3's tell-anchor deviation is expected near 0 px. It is drawn card-true and measured in the slice; the result goes to the supervisor before any hold.

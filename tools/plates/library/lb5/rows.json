@@ -1,0 +1,6 @@
+{
+ "note": "LB5 build-ahead rows (LIB-15, D-LIB15-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
+ "batch": "LB5",
+ "censusRef": "4a9fd86",
+ "rows": {}
+}
