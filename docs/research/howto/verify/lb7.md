@@ -137,3 +137,4 @@ The full record is docs/supervisor/verify/lb7-research-verify.md @ `6e710ace` (c
 | incline_push_up-3 | c17 gains NASM's "Anterior Deltoid" |
 | incline_push_up-4 | rows[1].where "Shoulder" (R-LB7-7) |
 | pike_push_up-1 | c8's quote starts "Inhale during the concentric phase, or as you’re bending …" |
+| pike_push_up (R-LB7-3) | rankNote quotes the "generally speaking" contrast for the set-aside breath line (commit after `d8c68f6f`, same push) |
