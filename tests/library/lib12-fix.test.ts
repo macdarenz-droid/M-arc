@@ -12,7 +12,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
-let P: any, C: any, PN: any, L: any, VC: any, PF: any, FR: any, CU: any, BA: any, hand: any;
+let P: any, C: any, PN: any, L: any, VC: any, PF: any, FR: any, CU: any, BA: any, hand: any, H: any, unsplit: (h: string) => string;
 beforeAll(async () => {
   P = await import(/* @vite-ignore */ url('tools/plates/library/hands/pairs.mjs'));
   C = await import(/* @vite-ignore */ url('tools/plates/library/hands/checks.mjs'));
@@ -24,6 +24,8 @@ beforeAll(async () => {
   CU = await import(/* @vite-ignore */ url('tools/plates/library/hands/view-cupped.mjs'));
   BA = await import(/* @vite-ignore */ url('tools/plates/library/hands/view-ball.mjs'));
   hand = await import(/* @vite-ignore */ url('tools/plates/layers/engine/hand.mjs'));
+  H = await import(/* @vite-ignore */ url('tools/plates/layers/artifact/howto-layers.mjs'));   // LIB-7b: D-LIB7b-HALVES
+  ({ unsplit } = await import(/* @vite-ignore */ url('tests/library/fixtures/lib7b/unsplit.mjs')));
 }, 60_000);
 
 // `renderPair(id, { fault }).svg` sha256, re-based by D-LIB12FIX-R8 (#191 6273389908) on the fix round; battle_ropes keeps
@@ -172,18 +174,33 @@ describe('LIB-12-FIX X3: LIB-12\'s pictures carry (D-LIB12FIX-CARRY)', () => {
     expect(fileProblems()).toEqual([]);
     expect(RENDERS['battle_ropes death-grip']).toBe(BATTLE_ROPES_0D268A71);
   }, 60_000);
-  it('each LIB-12 panel page === renderPair(first id, { fault }).svg with hp-<id>-<fault> swapped for hp-<key>-<fault> (6 pages)', async () => {
-    let n = 0;
+  /** Each LIB-12 panel page against its first id's render, as [key, fault, page === want, unsplit(page) === raw]; `edit`
+   *  changes a page before the compare (mutations). want = splitHalves(raw), as LIB-7-FIX F4 (D-LIB7b-HALVES). */
+  const carry = async (edit = (h: string) => h) => {
+    const out: any[] = [];
     for (const [k, { ids }] of lib12Keys()) {
-      const svgs = [...(await P.pairPanel(k)).matchAll(/<div class="hand-plate">([\s\S]*?)<\/div><div class="zoom-caps">/g)].map(m => m[1]!), id = ids[0];
+      const svgs = [...edit(await P.pairPanel(k)).matchAll(/<div class="hand-plate">([\s\S]*?)<\/div><div class="zoom-caps">/g)].map(m => m[1]!), id = ids[0];
       P.pairSpec(id).wrong.forEach((w: any, i: number) => {
-        const want = P.renderPair(id, { fault: w.key }).svg.split(`hp-${id.replace(/_/g, '-')}-${w.key}`).join(`hp-${k}-${w.key}`);
-        expect([k, w.key, svgs[i] === want]).toEqual([k, w.key, true]);
-        n++;
+        const raw = P.renderPair(id, { fault: w.key }).svg.split(`hp-${id.replace(/_/g, '-')}-${w.key}`).join(`hp-${k}-${w.key}`);
+        out.push([k, w.key, svgs[i] === H.splitHalves(raw, k), unsplit(svgs[i]!) === raw, svgs[i] !== raw]);
       });
       expect([k, svgs.length]).toEqual([k, P.pairSpec(id).wrong.length]);
     }
-    expect(n).toBe(3);   // D-LIB12FIX-R8-GAPS, #191 6274835211
+    return out;
+  };
+  it('each LIB-12 panel page === renderPair(first id, { fault }).svg with hp-<id>-<fault> swapped for hp-<key>-<fault>, after splitHalves (3 pages)', async () => {
+    const rows = await carry();
+    // after splitHalves (D-LIB7b-HALVES, as LIB-7-FIX F4); removing exactly what it adds gives the render (attribute-only)
+    expect(rows).toEqual(rows.map(([k, f]) => [k, f, true, true, true]));
+    expect(rows.length).toBe(3);   // D-LIB12FIX-R8-GAPS, #191 6274835211
+  }, 60_000);
+  it('mutations: one byte changed in a panel page\'s drawing, or a page without its halves, is red', async () => {
+    const byte = await carry(h => { const c = h.indexOf(' cx="', h.indexOf('<div class="hand-plate">')) + 5; return h.slice(0, c) + (h[c] === '1' ? '2' : '1') + h.slice(c + 1); });
+    // the byte is in each key's first page only: exactly those pages are red, the others stay green
+    expect(byte.map(r => r.slice(0, 4))).toEqual([['battle-rope-rope-neutral', 'death-grip', false, false],
+      ['palm-flat-floor-over', 'cupped-palm', false, false], ['palm-flat-floor-over', 'hand-ahead', true, true]]);
+    const plain = await carry(unsplit);
+    expect(plain.every(r => !r[2] && !r[4])).toBe(true);
   }, 60_000);
   it('mutations: palm-flat cupped Wrong at 12 deg, palm-flat at orientation under, one view file\'s bytes changed are each red', () => {
     const lift = clone(), pf0 = lift.find((m: any) => m.KEY === 'palm-flat');   // front-rack's mutation moved with its id to GAPS (D-LIB12FIX-R8-GAPS, #191 6274835211)
