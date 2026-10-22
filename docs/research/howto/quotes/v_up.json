@@ -1,0 +1,207 @@
+{
+ "id": "v_up",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "fv-vup",
+   "text": "Lie on the floor face up with your legs straight out, feet pressed together, and arms extended above your head.",
+   "status": "verbatim",
+   "closest": "Lie on the floor face up with your legs straight out, feet pressed together, and arms extended above your head.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "wh-vup",
+   "text": "Lie face-up on the floor with legs and arms straight. For added challenge, hover limbs off the floor slightly.",
+   "status": "verbatim",
+   "closest": "Lie face-up on the floor with legs and arms straight. For added challenge, hover limbs off the floor slightly.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fv-vup",
+   "text": "Brace your core by pushing the pelvis down, taking a breath in, and tensing the midsection.",
+   "status": "verbatim",
+   "closest": "Brace your core by pushing the pelvis down, taking a breath in, and tensing the midsection.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "fv-vup",
+   "text": "Then, simultaneously lift your legs up toward the center of the body, and reach your arms toward your toes.",
+   "status": "verbatim",
+   "closest": "Then, simultaneously lift your legs up toward the center of the body, and reach your arms toward your toes.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "wh-vup",
+   "text": "In one movement, lift torso and legs as if you're trying to touch your toes.",
+   "status": "verbatim",
+   "closest": "In one movement, lift torso and legs as if you're trying to touch your toes.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fv-vup",
+   "text": "Reverse the motion and return to the starting position while keeping your heels a few inches off the floor. Your back should always be flat against the floor and your core tensed.",
+   "status": "verbatim",
+   "closest": "Reverse the motion and return to the starting position while keeping your heels a few inches off the floor. Your back should always be flat against the floor and your core tensed.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "wh-vup",
+   "text": "Lower body back down. That's 1 rep.",
+   "status": "verbatim",
+   "closest": "Lower body back down. That's 1 rep.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "fv-vup",
+   "text": "Your lower back should be flat against the ground for the entire exercise. If your lower back arches, the hip flexors will take over too much.",
+   "status": "verbatim",
+   "closest": "Your lower back should be flat against the ground for the entire exercise. If your lower back arches, the hip flexors will take over too much.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "wh-vup",
+   "text": "make sure you start with your abs engaged and your lower back touching the ground, instead of arching your back when you're lying down. If you don't, you could experience serious discomfort or pain in your lower back.",
+   "status": "verbatim",
+   "closest": "make sure you start with your abs engaged and your lower back touching the ground, instead of arching your back when you're lying down. If you don't, you could experience serious discomfort or pain in your lower back.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "wh-vup",
+   "text": "Make sure its your upper body that's starting the initiation of coming up, rather than your legs. The key here again is to use that core.",
+   "status": "verbatim",
+   "closest": "Make sure its your upper body that's starting the initiation of coming up, rather than your legs. The key here again is to use that core.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "fv-vup",
+   "text": "Try to keep your legs as straight as possible. Although, do not worry if you can’t. Try your best.",
+   "status": "verbatim",
+   "closest": "Try to keep your legs as straight as possible. Although, do not worry if you can’t. Try your best.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "fv-vup",
+   "text": "You won’t have the balance, stability, and optimal focus if your legs are flopping around during v-ups. It really helps to gently press your toes together which will help you to maintain proper energy balance throughout your body.",
+   "status": "verbatim",
+   "closest": "You won’t have the balance, stability, and optimal focus if your legs are flopping around during v-ups. It really helps to gently press your toes together which will help you to maintain proper energy balance throughout your body.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-vup",
+   "text": "You can perform the movement using a shorter range of movement as a progression to full v-ups.",
+   "status": "verbatim",
+   "closest": "You can perform the movement using a shorter range of movement as a progression to full v-ups.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-vup",
+   "text": "If you cannot do v-ups properly because you lack balance, core strength or stability, coordination, etc, then you’re better off starting with easier progression like cocoons, or simply leg lifts.",
+   "status": "verbatim",
+   "closest": "If you cannot do v-ups properly because you lack balance, core strength or stability, coordination, etc, then you’re better off starting with easier progression like cocoons, or simply leg lifts.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "fv-vup",
+   "text": "Target Muscle Group: Rectus abdominis Secondary Muscles: Obliques, hip flexors",
+   "status": "verbatim",
+   "closest": "Target Muscle Group: Rectus abdominis Secondary Muscles: Obliques, hip flexors",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "schoffstall-2010",
+   "text": "The subjects (n = 21) performed an isometric contraction of the abdominal musculature while performing these exercises.",
+   "status": "verbatim",
+   "closest": "The subjects (n = 21) performed an isometric contraction of the abdominal musculature while performing these exercises.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "schoffstall-2010",
+   "text": "(crunch, supine V-up, prone V-up on ball, prone V-up on slide board, prone V-up on TRX, and prone V-up on Power Wheel)",
+   "status": "verbatim",
+   "closest": "(crunch, supine V-up, prone V-up on ball, prone V-up on slide board, prone V-up on TRX, and prone V-up on Power Wheel)",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "schoffstall-2010",
+   "text": "EMG activity of the RF during the crunch was significantly less than in any of the other 5 exercises.",
+   "status": "verbatim",
+   "closest": "EMG activity of the RF during the crunch was significantly less than in any of the other 5 exercises.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "schoffstall-2010",
+   "text": "However, when examining the IO muscle, the supine V-up exercise displayed significantly greater muscle activity than did the slide exercise.",
+   "status": "verbatim",
+   "closest": "However, when examining the IO muscle, the supine V-up exercise displayed significantly greater muscle activity than did the slide exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "ace-vup",
+   "text": "Starting Position: Assume a seated bent-knee position, feet placed flat on the floor / mat and arms outstretched behind you with your palms flat on the floor / mat and fingers pointed outwards or away from your body.",
+   "status": "verbatim",
+   "closest": "Starting Position: Assume a seated bent-knee position, feet placed flat on the floor / mat and arms outstretched behind you with your palms flat on the floor / mat and fingers pointed outwards or away from your body.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "ace-vup",
+   "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine and attempt to hold this position throughout the exercise (avoid “arching” or “slumping” your low back).",
+   "status": "verbatim",
+   "closest": "Stiffen (“brace”) your abdominal muscles to stabilize your spine and attempt to hold this position throughout the exercise (avoid “arching” or “slumping” your low back).",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "ace-vup",
+   "text": "To maximize the benefits of this exercise and reduce the potential for injury, it is important to control movement speed and monitor changes in your low back carefully.",
+   "status": "verbatim",
+   "closest": "To maximize the benefits of this exercise and reduce the potential for injury, it is important to control movement speed and monitor changes in your low back carefully.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "fv-vup",
+   "text": "You can make v-ups an explosive movement by performing them with more speed.",
+   "status": "verbatim",
+   "closest": "You can make v-ups an explosive movement by performing them with more speed.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "fv-vup",
+   "text": "A few methods include performing reps slower, holding weights/using ankle weights, increasing the range of motion, or using more advanced variations.",
+   "status": "verbatim",
+   "closest": "A few methods include performing reps slower, holding weights/using ankle weights, increasing the range of motion, or using more advanced variations.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "wh-vup",
+   "text": "Starting every rep from a hollow body (the position where you're flat on your back with your arms and legs straight and raised off the floor slightly) will increase your strength and core endurance.",
+   "status": "verbatim",
+   "closest": "Starting every rep from a hollow body (the position where you're flat on your back with your arms and legs straight and raised off the floor slightly) will increase your strength and core endurance.",
+   "note": ""
+  }
+ ]
+}

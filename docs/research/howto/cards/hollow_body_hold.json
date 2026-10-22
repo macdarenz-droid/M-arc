@@ -1,0 +1,698 @@
+{
+ "id": "hollow_body_hold",
+ "libId": "lib_hollow_body_hold",
+ "name": "Hollow Body Hold",
+ "family": "Anti-extension and static core (hold; parent of v_up)",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 2.",
+ "archetype": {
+  "hand": "none",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Lie on the back with the legs straight and together and the arms extended overhead, biceps next to the ears; the hands may be clasped, and a mat is optional.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow",
+    "fv-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "Lie on the floor with your legs straightened and your arms extended behind your head. You can clasp your hands together if you like. Your feet should be together as well.",
+     "where": "How to Do the Hollow Hold, Step 1"
+    },
+    {
+     "source": "bb-hollow",
+     "text": "You might want to grab a yoga mat to lay on, though.",
+     "where": "How to Do the Hollow Hold"
+    },
+    {
+     "source": "fv-hollow",
+     "text": "Lie on your back and extend your arms overhead, so your biceps are next to your ears. Straighten your legs and point your toes, knees, and feet pressed together.",
+     "where": "How to Do Hollow Holds"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Breathe out and pull the ribcage down so the lower back flattens against the floor and stays there the whole time; then lift the shoulders and legs off the floor and hold.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow",
+    "ggr-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "From your starting position, exhale deeply and depress your ribcage. Your lower back should flatten out against the floor and stay flush to the ground the entire time.",
+     "where": "How to Do the Hollow Hold, Step 2"
+    },
+    {
+     "source": "bb-hollow",
+     "text": "Once you feel that point of contact, lift your shoulders and legs off the ground. Hold this position for time.",
+     "where": "How to Do the Hollow Hold, Step 2"
+    },
+    {
+     "source": "ggr-hollow",
+     "text": "Press your lower back and hips into the ground and hold for the desired time.",
+     "where": "How to Hollow Body Hold"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "The lumbar spine and hips stay on the floor, and the body takes the shape of a crescent.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "Your lumbar spine and hips should remain in contact with the ground; your body should resemble a crescent.",
+     "where": "How to Do the Hollow Hold, Step 2, Coach’s Tip"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Leg height: one source says 15 to 30 degrees off the floor, no higher than about 30 degrees; another says only four to six inches off the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow",
+    "ggr-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "Aim to suspend your legs between 15 and 30 degrees off the ground.",
+     "where": "Common Hollow Hold Mistakes, Legs Too Low"
+    },
+    {
+     "source": "bb-hollow",
+     "text": "Ensure that your legs are no higher than about 30 degrees relative to the floor.",
+     "where": "Common Hollow Hold Mistakes, Legs Too High"
+    },
+    {
+     "source": "ggr-hollow",
+     "text": "Your legs only need to be four to six inches off the ground.",
+     "where": "Personal Trainer Tips for Form, Not Too High"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Legs too low: the legs must be lifted off the floor, knees straight if possible; if they are not lifted high enough, it might put too much stress on the hip flexors at the expense of the abs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "To sufficiently challenge your core musculature, you have to lift your legs off the floor when performing the hollow hold. Your knees should be straight and locked if possible as well.",
+     "where": "Common Hollow Hold Mistakes, Legs Too Low"
+    },
+    {
+     "source": "bb-hollow",
+     "text": "If you can’t lift your legs high enough, you might place too much stress onto your hips flexors at the expense of your abs.",
+     "where": "Common Hollow Hold Mistakes, Legs Too Low"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Legs too high: legs pointing at the ceiling turn the hold into a leg raise; one source says feet higher than about four to six inches put the legs in an L-shape and the hip flexors do more of the work.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow",
+    "ggr-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "On the other hand, you shouldn’t lift your legs up so far that they point at the ceiling. This will turn the hollow hold into a leg raise movement, defeating the purpose of the exercise.",
+     "where": "Common Hollow Hold Mistakes, Legs Too High"
+    },
+    {
+     "source": "ggr-hollow",
+     "text": "Your feet need to be around four to six inches off the ground because any more than this will put your legs in an L-shape. Then, your hip flexors will do more of the work, which is not a hollow hold.",
+     "where": "Common Hollow Hold Exercise Mistakes, Just a Little Will Do"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Arching the back: the lower back stays pressed to the floor with no space under it for the whole hold; an arched lower back could lead to injury, and the set is stopped if the lower back lifts (or an easier version is used).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow",
+    "ggr-hollow",
+    "fv-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "You can guarantee that your body is in the correct position by making sure that your lower back stays flush to the ground the entire time.",
+     "where": "Common Hollow Hold Mistakes, Arching Your Back"
+    },
+    {
+     "source": "ggr-hollow",
+     "text": "Your lower back needs to be on the ground for the entire exercise, or else you’ll lose all the juicy ab tension the hollow hold is known for.",
+     "where": "Common Hollow Hold Exercise Mistakes, Keep Your Lower Back On the Floor"
+    },
+    {
+     "source": "fv-hollow",
+     "text": "There should be no space between your lower back and the ground. An arched lower back could lead to injury. Stop your set if you feel your lower back lifting or use one of the easier alternatives elsewhere in this article.",
+     "where": "Hollow Hold Benefits and Drawbacks, A tendency to arch the lower back"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "The shoulder blades and head can drop toward the floor, which makes it harder to keep the lower back in neutral and may result in lower back pain; if that happens, lower the limbs, rest and do another set.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-hollow",
+     "text": "Your shoulder blades and head tend to drop to the ground, making it harder to keep your lower back in neutral, which may result in lower back pain.",
+     "where": "Common Hollow Hold Exercise Mistakes, Keep It Up"
+    },
+    {
+     "source": "ggr-hollow",
+     "text": "If you feel this happening, lower your limbs, rest, and do another quality set.",
+     "where": "Common Hollow Hold Exercise Mistakes, Keep It Up"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Head: keep it neutral to avoid neck strain; with no arm support the neck can hyperextend, which could result in neck pain or injury, so lower the chin and look down the body to the feet without tucking the chin to the chest.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-hollow",
+    "fv-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-hollow",
+     "text": "Raise your upper body off the ground and bring your arms overhead with your biceps by your ears and head in neutral to avoid neck strain.",
+     "where": "How to Hollow Body Hold"
+    },
+    {
+     "source": "fv-hollow",
+     "text": "This can lead to hyperextension of the neck, which could result in neck pain or even injury. Avoid this problem by lowering your chin and looking down your body at your feet.",
+     "where": "Hollow Hold Benefits and Drawbacks, Hyperextended neck"
+    },
+    {
+     "source": "fv-hollow",
+     "text": "Look down your body to your feet; do not tuck your chin into your chest.",
+     "where": "How to Do Hollow Holds"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Breathing: with no movement to cue it, some people may hold their breath by mistake, which causes a significant rise in blood pressure; breathe shallowly throughout instead.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "fv-hollow",
+     "text": "Because hollow holds are isometric, there are no obvious cues for breathing, so some people may mistakenly hold their breath. This causes a significant rise in blood pressure.",
+     "where": "Hollow Hold Benefits and Drawbacks, Breath holding"
+    },
+    {
+     "source": "fv-hollow",
+     "text": "Avoid this problem by breathing shallowly throughout the exercise.",
+     "where": "Hollow Hold Benefits and Drawbacks, Breath holding"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Easier versions: bend the knees to shorten the lever, or keep the arms on the floor or the legs higher.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow",
+    "ggr-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "If you can’t seem to keep your core locked in while your legs are straight, you can dial down the difficulty by bending your knees.",
+     "where": "Hollow Hold Variations, Bent-Leg Hollow Hold"
+    },
+    {
+     "source": "ggr-hollow",
+     "text": "Expert tip: If this position is too difficult at first you can keep your arms on the floor to increase your stability or lift your legs higher.",
+     "where": "How to Hollow Body Hold"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Hold time: beginners start with two sets of holds up to 30 seconds; for endurance, five rounds of 20-30 seconds, adding five seconds a week; 30 to 60 seconds is challenging for most people; start with a few seconds and build up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow",
+    "ggr-hollow",
+    "fv-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "As a Beginner: Start with two sets of holds for time up to 30 seconds.",
+     "where": "Hollow Hold Sets and Reps"
+    },
+    {
+     "source": "bb-hollow",
+     "text": "For Endurance: Try five rounds of 20-30 seconds, adding five seconds per week.",
+     "where": "Hollow Hold Sets and Reps"
+    },
+    {
+     "source": "ggr-hollow",
+     "text": "How long you should hold a hollow hold depends on how long you can hold it with good form. As a general guideline, anywhere from 30 to 60 seconds is considered challenging for most people.",
+     "where": "Hollow Hold Workout: FAQs, How long should you hold a hollow hold?"
+    },
+    {
+     "source": "fv-hollow",
+     "text": "Hold for just a few seconds and then relax, working up to longer holds as you get stronger.",
+     "where": "How to Do Hollow Holds"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "The abs steady the trunk: they pull the ribs down and tilt the pelvis back at the same time, and the rectus abdominis works isometrically, producing no movement.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow",
+    "fv-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "However, your abs also have the role of stabilizing your trunk. They can contract to “square” your ribs by depressing them and, simultaneously, posteriorly tilting your pelvis.",
+     "where": "Muscles Worked by the Hollow Hold, Abdominals"
+    },
+    {
+     "source": "fv-hollow",
+     "text": "During hollow holds, the rectus abdominis works isometrically or statically, which means it generates tension but doesn’t produce any movement.",
+     "where": "Hollow Holds – Muscles Worked, Abs And The Core Muscles"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "The hip flexors, at the front of the upper thigh, also work isometrically; a pinching feeling in the crease of the hips is the hip flexors working overtime, and lifting the legs a bit higher avoids biasing them.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-hollow",
+    "fv-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "bb-hollow",
+     "text": "These muscles are located on the front of your upper thigh, where your leg meets your abdomen. Oftentimes, people trying to train their abs can’t help but feel a distinct pinching sensation in the crease of their hips.",
+     "where": "Muscles Worked by the Hollow Hold, Hip Flexors"
+    },
+    {
+     "source": "bb-hollow",
+     "text": "That’s your hip flexors working overtime on what is supposed to be an ab exercise. While you won’t be able to take them out of the equation entirely during the hollow hold, you can avoid biasing your hip flexors by lifting your legs a bit higher.",
+     "where": "Muscles Worked by the Hollow Hold, Hip Flexors"
+    },
+    {
+     "source": "fv-hollow",
+     "text": "Like all the other muscles involved in hollow holds, your hip flexors work isometrically during this exercise.",
+     "where": "Hollow Holds – Muscles Worked, Iliacus and psoas major"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "The obliques work as stabilisers in the hold.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-hollow",
+    "ggr-hollow"
+   ],
+   "quotes": [
+    {
+     "source": "fv-hollow",
+     "text": "During hollow holds, their main job is to act as a stabilizer to prevent unwanted wobbling.",
+     "where": "Hollow Holds – Muscles Worked, Internal and external obliques"
+    },
+    {
+     "source": "ggr-hollow",
+     "text": "This will help improve core strength in your abs, obliques, and spinal (low back) erectors.",
+     "where": "Hollow Hold Benefits, Improved Core Strength"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-hollow",
+   "url": "https://barbend.com/hollow-hold/",
+   "title": "How to Do the Hollow Hold Position for Six-Pack Abs and Stronger Lifts | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ggr-hollow",
+   "url": "https://www.garagegymreviews.com/hollow-hold-workout",
+   "title": "Hollow Hold Workout: Expert Tips | Garage Gym Reviews",
+   "kind": "coach",
+   "year": 2023,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-hollow",
+   "url": "https://fitnessvolt.com/hollow-hold/",
+   "title": "Hollow Hold: Strengthen Your Core and Hip Flexors Efficiently – Fitness Volt",
+   "kind": "coach",
+   "year": 2026,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side: the lower back on the floor (c2, c7), the crescent shape (c3) and the leg height (c4, c5) read from the side.",
+  "equipment": "Floor line, mat optional (c1).",
+  "frames": "Hold convention: entry (lying flat, c1) then the held pose (c2).",
+  "start": "Entry: lying on the back, legs straight and together, toes pointed, arms extended overhead with the biceps by the ears (c1).",
+  "end": "Held pose: lower back and hips pressed to the floor (c2, c3); shoulders and arms lifted, arms by the ears (c1, c2); legs straight, lifted about 15 degrees off the floor, the low end of the anchor source's 15-30 degrees (c4); body in a crescent (c3); chin lowered, eyes toward the feet (c9).",
+  "checkpoints": [
+   {
+    "label": "Low back down",
+    "what": "Lower back pressed flat to the floor the whole hold.",
+    "claim": [
+     "c2",
+     "c7"
+    ]
+   },
+   {
+    "label": "Legs low",
+    "what": "Legs straight and off the floor, no higher than about 30 degrees.",
+    "claim": [
+     "c4",
+     "c5",
+     "c6"
+    ]
+   },
+   {
+    "label": "Shoulders up",
+    "what": "Shoulders and arms off the floor, biceps by your ears.",
+    "claim": [
+     "c1",
+     "c2",
+     "c9"
+    ]
+   }
+  ],
+  "mistake": {
+   "what": "Legs too low, not lifted high enough off the floor.",
+   "why": "BarBend puts legs too low first in its common hollow hold mistakes: legs not lifted high enough might put too much stress on the hip flexors at the expense of the abs (c5).",
+   "claim": "c5",
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 3, after a step-2 tie: legs too low (c5). Step 1 finds no frequency word for a fault of this exercise. Set aside: BarBend's \"Oftentimes, people trying to train their abs can’t help but feel a distinct pinching sensation in the crease of their hips.\" (c14) is about people training their abs in general and reports a sensation of the hip flexors working (a muscle's activity), not how often a fault of this exercise happens (R-LB7-3, LR-31); read as a hit, its fix (\"lifting your legs a bit higher\") points at legs too low, the same pick. Garage Gym Reviews' \"Your shoulder blades and head tend to drop to the ground\" (c8) and Fitness Volt's \"A tendency to arch the lower back\" use 'tend' and 'tendency', which LR-31 excludes; Fitness Volt's \"some people may mistakenly hold their breath\" (c10) has no frequency word ('some', 'may'); BarBend's \"it’s still easy to mess up the hollow hold\" uses 'easy to'; BarBend's \"Most core exercises only involve movement at one of these crucial points\", Garage Gym Reviews' \"anywhere from 30 to 60 seconds is considered challenging for most people\" (c12) and Fitness Volt's \"most people tend to rely on the same old movements\" and \"many exercisers work out with the specific goal of developing washboard abs\" are about exercises, hold times or training; Fitness Volt's \"your midsection muscles often have to work to prevent extension\", \"if you do the same exercises often enough\", \"usually called the abs\" and \"that’s what a lot of people call them\" are about muscles, training and naming, not a fault. Common-mistakes lists read: BarBend's \"Common Hollow Hold Mistakes\" (1 Legs Too Low, 2 Legs Too High, 3 Arching Your Back) and Garage Gym Reviews' \"Common Hollow Hold Exercise Mistakes\" (1 Keep It Up, the shoulder blades and head dropping; 2 Just a Little Will Do, legs too high; 3 Keep Your Lower Back On the Floor); Garage Gym Reviews' \"Personal Trainer Tips for Form\" (Find Neutral Spine, Set-Up, Not Too High) is a tips list, not a mistakes list. Fitness Volt has no mistakes heading: its faults sit under \"Hollow Hold Benefits and Drawbacks\" (\"there are also a few drawbacks to consider\": A tendency to arch the lower back, Hyperextended neck, Breath holding). Step 2: four named faults are tied to harm. Legs too low (BarBend's list, item 1): \"you might place too much stress onto your hips flexors at the expense of your abs\" (c5). Lower back arching off the floor (BarBend's list item 3, Arching Your Back; Garage Gym Reviews' list item 3, Keep Your Lower Back On the Floor, which names no harm): Fitness Volt's \"An arched lower back could lead to injury.\" (c7). Shoulder blades and head dropping (Garage Gym Reviews' list item 1, Keep It Up): \"which may result in lower back pain\" (c8). Neck hyperextended: Fitness Volt's \"which could result in neck pain or even injury\" and \"This will take pressure off your neck.\", and Garage Gym Reviews' cue \"head in neutral to avoid neck strain\" (c9; the cue that corrects it reduces harm, D-SUP-PROTECT). Set aside: breath holding, Fitness Volt's \"This causes a significant rise in blood pressure.\" (c10), names no injury, pain, stress or discomfort and is on no common-mistakes list; the legs-too-high items, BarBend's \"defeating the purpose of the exercise\" and Garage Gym Reviews' \"your hip flexors will do more of the work\" (c6), and Garage Gym Reviews' back item \"you’ll lose all the juicy ab tension\" (c7) name lost effect, not harm. Also set aside, no named fault of this exercise: Garage Gym Reviews' \"help you build rock-solid core strength without straining your lower back\" (about the whole guide); Fitness Volt's \"done incorrectly, this exercise still has the potential to cause injury\" and \"keeping your risk of injury to a minimum by following these guidelines\" (no fault named), \"it also exposes your lumbar spine to vast amounts of stress\" (a collapsing core in deadlifts and squats), \"This can lead to wear and tear, overuse injuries, and lower back pain.\" (sit-ups and crunches) and \"trying them will probably lead to injury\" (advanced calisthenic moves), all other exercises or no fault; BarBend's \"some direct ab work certainly doesn’t hurt\" is about training. Tie order: the neck is on no common-mistakes list (Fitness Volt's list is headed \"a few drawbacks to consider\"; Garage Gym Reviews' neck line is a how-to step), so it loses the first tie-break. Legs too low, the arch and the dropping are each on a common-mistakes list, each tied to harm by one source, all directly sourced. Earlier on a list that names both: BarBend's list puts legs too low before the arch, and Garage Gym Reviews' list puts the dropping before the arch; no list names both legs too low and the dropping, so step 3's count decides between them. Step 3's count (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: legs too low 1 (BarBend's list, c5); shoulder blades and head dropping 1 (Garage Gym Reviews' list, c8). Lines that only give the right position are not counted (BarBend's \"lift your shoulders and legs off the ground\" and \"Aim to suspend your legs between 15 and 30 degrees off the ground.\", Fitness Volt's \"Lift your feet, legs, shoulders, and arms off of the floor\"). Still tied, so the first of them on the earliest common-mistakes list written for this exercise, in the card's source order (bb-hollow), decides: legs too low. drawable true: the side view shows the straight legs barely off, or on, the floor. Ruling asked of the supervisor: if Fitness Volt's drawbacks list counts as a common-mistakes list, the neck is on a list and is tied to harm by two sources (c9), so it would win step 2."
+  },
+  "tells": [
+   {
+    "text": "Low back stays on the floor",
+    "claim": [
+     "c2",
+     "c7"
+    ]
+   },
+   {
+    "text": "Body curved like a crescent",
+    "claim": "c3"
+   }
+  ],
+  "tempo": {
+   "set": 2,
+   "hold": "up to 30 s",
+   "rest": null,
+   "text": "Beginners: two sets of holds up to 30 s (c12). Warm-up and endurance formats: three rounds of 15-20 s, or five rounds of 20-30 s adding 5 s a week (BarBend); 30-60 s is challenging for most people (Garage Gym Reviews); Fitness Volt starts with a few seconds and builds up (c12). No source sets the rest. This is an isometric hold, so there is no pause after a lift (LR-33).",
+   "claim": "c12"
+  },
+  "variantLine": "Easier: bend the knees, or keep the arms on the floor (c11). The plate draws straight legs and arms overhead (c1)."
+ },
+ "grip": {
+  "type": "",
+  "width": "",
+  "thumb": "",
+  "handContact": "No hand contact: arms extended overhead, biceps by the ears; hands may be clasped (c1).",
+  "wrist": "",
+  "claims": [
+   "c1"
+  ],
+  "note": "Hand archetype none: no hand zoom."
+ },
+ "setup": [
+  {
+   "step": "Lie on your back, legs straight, feet together.",
+   "claim": "c1"
+  },
+  {
+   "step": "Reach your arms overhead, biceps by your ears.",
+   "claim": "c1"
+  },
+  {
+   "step": "Breathe out and pull your ribs down.",
+   "claim": "c2"
+  },
+  {
+   "step": "Press your lower back flat to the floor.",
+   "claim": "c2"
+  },
+  {
+   "step": "Lift your shoulders and legs off the floor and hold.",
+   "claim": "c2"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Lower back and hips stay on the floor, body like a crescent.",
+   "claim": "c3"
+  },
+  {
+   "point": "Legs straight, off the floor, no higher than about 30 degrees.",
+   "claim": [
+    "c4",
+    "c5",
+    "c6"
+   ]
+  },
+  {
+   "point": "Lower your chin and look toward your feet. Don't tuck it.",
+   "claim": "c9"
+  },
+  {
+   "point": "Breathe shallowly. Don't hold your breath.",
+   "claim": "c10"
+  },
+  {
+   "point": "Easier: bend your knees.",
+   "claim": "c11"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Legs too low.",
+   "fix": "Lift your legs off the floor, about 15 to 30 degrees.",
+   "claim": [
+    "c5",
+    "c4"
+   ]
+  },
+  {
+   "mistake": "Lower back arching off the floor.",
+   "fix": "Press your lower back down. Stop the set if it lifts.",
+   "claim": "c7"
+  },
+  {
+   "mistake": "Shoulder blades and head dropping.",
+   "fix": "Lower your limbs, rest, then do another set.",
+   "claim": "c8"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "abs",
+    "claim": "c13"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "obliques",
+    "claim": "c15"
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "hip_flexors",
+    "claim": [
+     "c14",
+     "c5",
+     "c6"
+    ]
+   }
+  ],
+  "rows": [
+   {
+    "where": "Front of the belly",
+    "means": "Your abs are holding your trunk still.",
+    "fix": "",
+    "claim": "c13",
+    "redFlag": null
+   },
+   {
+    "where": "Crease of the hips",
+    "means": "Your hip flexors are working overtime.",
+    "fix": "Legs off the floor, but no higher than about 30 degrees.",
+    "claim": [
+     "c14",
+     "c5",
+     "c4"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Low back",
+    "means": "Fault: your lower back is lifting off the floor.",
+    "fix": "Stop the set, or use an easier version.",
+    "claim": [
+     "c7",
+     "c11"
+    ],
+    "redFlag": "back"
+   },
+   {
+    "where": "Neck",
+    "means": "Fault: your neck is hyperextending.",
+    "fix": "Lower your chin and look down at your feet.",
+    "claim": "c9",
+    "redFlag": null
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "An arched lower back could lead to injury.",
+   "claim": "c7"
+  },
+  {
+   "risk": "Shoulder blades and head dropping may result in lower back pain.",
+   "claim": "c8"
+  },
+  {
+   "risk": "Hyperextending your neck could result in neck pain.",
+   "claim": "c9"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "low-back",
+   "kind": "posture",
+   "right": "Lower back flat on the floor, no space under it.",
+   "wrong": "Lower back arched off the floor.",
+   "claim": [
+    "c2",
+    "c7"
+   ]
+  },
+  {
+   "key": "leg-height",
+   "kind": "posture",
+   "right": "Legs straight, about 15 to 30 degrees off the floor.",
+   "wrong": "Legs not lifted high enough.",
+   "claim": [
+    "c4",
+    "c5"
+   ]
+  },
+  {
+   "key": "head",
+   "kind": "posture",
+   "right": "Chin lowered, eyes down toward your feet.",
+   "wrong": "Neck hyperextended.",
+   "claim": "c9"
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "obliques",
+   "hip_flexors"
+  ],
+  "remove": [],
+  "why": "Add obliques as secondary: Fitness Volt says they stabilise the hold and Garage Gym Reviews names them (c15). Add hip_flexors as secondary: BarBend and Fitness Volt say they work in the hold (c14). abs primary matches c13. The library's core (secondary) stays; it is not used in feel (LR-35)."
+ },
+ "anchorSource": "bb-hollow",
+ "notes": [
+  "Anchor: BarBend (bb-hollow) is read in full and covers setup, the hold, sets and reps, a common-mistakes list, variations and muscles. Garage Gym Reviews and Fitness Volt were also read in full.",
+  "Parent card: this card is the parent of v_up (content.md Appendix A). v_up rests only on its own claims (LR-34 way (1)); nothing here is inherited by it until this card passes verification.",
+  "Shared card: floor-body (docs/research/howto/shared/floor-body.json) lists hollow_body_hold in appliesTo; its gaps say lying face-up ids have no shared checkpoint and stay per exercise, so nothing is cited from it here.",
+  "Leg height conflicts: BarBend says 15-30 degrees off the floor and lifting the legs a bit higher eases the hip flexors (c4, c14); Garage Gym Reviews says four to six inches and that higher puts more work on the hip flexors (c4, c6). Shown lines use only what both say (legs off the floor, not pointing up) plus BarBend's numbers, and the plate draws about 15 degrees.",
+  "Breath: BarBend braces on an exhale (c2) and Fitness Volt on an inhale, then says breathe shallowly through the hold (c10). Setup uses BarBend's exhale (anchor); posture uses Fitness Volt's shallow breathing.",
+  "The low-back feel row's stop comes from Fitness Volt's \"Stop your set if you feel your lower back lifting\" (c7), a fetched stop quote (R-LB3-4); no source names pain there for the arch, so the row names none.",
+  "The neck has no shared red-flag box (wrist, shoulder, knee, elbow, back), so the neck row links none.",
+  "Not reachable: StrengthLog hollow body hold (HTTP 429 on every try, 2026-10-22); Verywell Fit (402).",
+  "Fetcher check 2026-10-22 (Sonnet source fetcher, curl and NCBI efetch): every quote verbatim; titles set to each page's served title."
+ ]
+}
