@@ -306,6 +306,22 @@
       "status": "verbatim",
       "closest": "Extend fully at the top without locking out hard.",
       "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "boxlife-pend",
+      "text": "Make sure you’re very familiar with how the safety catch works in case you need to engage it mid-movement.",
+      "status": "verbatim",
+      "closest": "Make sure you’re very familiar with how the safety catch works in case you need to engage it mid-movement.",
+      "note": "Added in the LB8 fix round; fetched by curl 2026-10-22."
+    },
+    {
+      "claim": "c22",
+      "source": "boxlife-pend",
+      "text": "Plus, it features a safety catch that gives you an “out” if you fail a rep, unlike traditional squats.",
+      "status": "verbatim",
+      "closest": "Plus, it features a safety catch that gives you an “out” if you fail a rep, unlike traditional squats.",
+      "note": "Added in the LB8 fix round; fetched by curl 2026-10-22."
     }
   ]
 }

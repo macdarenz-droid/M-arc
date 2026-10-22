@@ -807,7 +807,9 @@
  "anchorSource": "bb-le",
  "loadProgression": {
   "text": "Start with a lower weight, then add weight gradually as you get stronger.",
-  "claim": "c17"
+  "claims": [
+   "c17"
+  ]
  },
  "gaps": [
   "No read source gives an exercise-specific way to get in or out of the leg extension machine beyond shared get-in-out's general steps."

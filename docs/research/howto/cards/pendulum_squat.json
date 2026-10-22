@@ -446,7 +446,8 @@
       "id": "c21",
       "text": "At the top, don't snap the knees straight aggressively: extend fully without locking out hard (the second line is from a gym blog, WEAK).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "yr-pend",
@@ -462,6 +463,28 @@
           "source": "xcel-pend",
           "text": "Extend fully at the top without locking out hard.",
           "where": "Step 5: Driving Up with Correct Form"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "A way out: know how the safety catch works so you can engage it mid-movement; it gives you a way out if you fail a rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boxlife-pend"
+      ],
+      "quotes": [
+        {
+          "source": "boxlife-pend",
+          "text": "Make sure you’re very familiar with how the safety catch works in case you need to engage it mid-movement.",
+          "where": "Common Mistakes: Not Knowing How the Safety Lever Works"
+        },
+        {
+          "source": "boxlife-pend",
+          "text": "Plus, it features a safety catch that gives you an “out” if you fail a rep, unlike traditional squats.",
+          "where": "Is the Pendulum Squat Safe?"
         }
       ]
     }
@@ -600,12 +623,11 @@
       "claim": "c1"
     },
     {
-      "step": "Feet about hip- to shoulder-width apart.",
-      "claim": "c2"
-    },
-    {
-      "step": "Brace your core and press your back into the pad.",
-      "claim": "c3"
+      "step": "Feet hip- to shoulder-width. Brace and press your back into the pad.",
+      "claim": [
+        "c2",
+        "c3"
+      ]
     },
     {
       "step": "Release the safety latch and lower slowly until your thighs are at least parallel.",
@@ -622,6 +644,10 @@
         "c7",
         "c17"
       ]
+    },
+    {
+      "step": "If you fail a rep, the safety catch gives you an out.",
+      "claim": "c22"
     }
   ],
   "posture": [
@@ -640,6 +666,10 @@
     {
       "point": "Heels flat.",
       "claim": "c9"
+    },
+    {
+      "point": "Extend fully at the top, without locking out hard.",
+      "claim": "c21"
     }
   ],
   "handlingMistakes": [
@@ -702,7 +732,7 @@
       {
         "where": "Knees",
         "means": "Knees caving in or heels lifting puts strain on the knees.",
-        "fix": "Knees over your toes, whole foot down, lighter load.",
+        "fix": "Knees over your toes, whole foot down. Reduce load if the collapse persists.",
         "claim": [
           "c15",
           "c8"

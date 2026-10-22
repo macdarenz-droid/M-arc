@@ -20,6 +20,14 @@
       "note": ""
     },
     {
+      "claim": "c1",
+      "source": "hl-hack",
+      "text": "Step into the machine, placing your feet shoulder-width apart and your shoulders and back against the pads.",
+      "status": "verbatim",
+      "closest": "Step into the machine, placing your feet shoulder-width apart and your shoulders and back against the pads.",
+      "note": "Added in the LB8 fix round; fetched by curl 2026-10-22."
+    },
+    {
       "claim": "c2",
       "source": "fv-hack",
       "text": "Maintain your spine’s natural curvature throughout the exercise. Your upper and lower back and hips should be in contact with the back pad.",

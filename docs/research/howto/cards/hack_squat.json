@@ -21,7 +21,8 @@
         "CONSENSUS"
       ],
       "sources": [
-        "sl-hack"
+        "sl-hack",
+        "hl-hack"
       ],
       "quotes": [
         {
@@ -33,6 +34,11 @@
           "source": "sl-hack",
           "text": "Put your feet on the plate, slightly in front of the base of the sled and about shoulder width apart.",
           "where": "How to Do Hack Squats with Proper Form, step 2"
+        },
+        {
+          "source": "hl-hack",
+          "text": "Step into the machine, placing your feet shoulder-width apart and your shoulders and back against the pads.",
+          "where": "How do you do it?"
         }
       ]
     },
@@ -674,18 +680,10 @@
   },
   "setup": [
     {
-      "step": "Shoulders against the pads. Back and hips on the back pad.",
+      "step": "Shoulders on the pads, back and hips on the pad, feet shoulder-width.",
       "claim": [
         "c1",
         "c2"
-      ]
-    },
-    {
-      "step": "Feet shoulder-width, toes slightly out, middle of the plate.",
-      "claim": [
-        "c1",
-        "c12",
-        "c13"
       ]
     },
     {
@@ -696,18 +694,20 @@
       ]
     },
     {
-      "step": "Lower slowly until your thighs are at least parallel.",
+      "step": "Lower to at least parallel. Push up through your whole foot.",
       "claim": [
         "c4",
-        "c5"
+        "c5",
+        "c6"
       ]
     },
     {
-      "step": "Push up through your whole foot. Lock the safety lever to finish.",
-      "claim": [
-        "c6",
-        "c16"
-      ]
+      "step": "Lock the safety lever to finish.",
+      "claim": "c16"
+    },
+    {
+      "step": "Too heavy? Pull the safety lock or lever to get out.",
+      "claim": "c16"
     }
   ],
   "posture": [
