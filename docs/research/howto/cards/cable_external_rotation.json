@@ -731,5 +731,39 @@
     "End position: ACE moves the hand to the outside of the body (c6); Motra's range ends with the forearm perpendicular to the body (c6). The plate draws ACE's end, hand just outside the body line.",
     "Not used: a towel roll under the arm and other external rotation set-ups (side-lying, prone, 90 degrees of abduction) belong to other exercises or rehab protocols. Reinold 2004 (abstract) and Alizadehkhaiyat 2015 (full text) were read: both are EMG studies of external rotation positions in lab protocols (Alizadehkhaiyat with a 1 kg weight in the hand, including standing at 0 degrees), not this cable exercise, so neither is cited.",
     "Not sourced, so left out: a rep count for beginners, how far to stand from the column, and a way to get the handle on and off the pulley."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "angle",
+      "joint": "elbow.l",
+      "pose": "start",
+      "cardPose": "start",
+      "deg": 90,
+      "claim": "c3"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Turn out",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "swing"
 }

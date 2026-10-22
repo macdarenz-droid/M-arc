@@ -655,5 +655,22 @@
     "Hand-key proposal (R-W0-5, LR-10): a closed handle grip for a floor-supported dumbbell, for the census/GA hand list; palm-flat removed from archetype.hand.",
     "Fix round 2026-10-02 (verify w0): A2 twist direction follows c7 (\"away\"); A3 wrist row is a fault row citing c9 and c8; A18 GGR \"repeat on the other side\" quoted in c5; A19 palm-flat no longer listed.",
     "LB7 LR-31/LR-33 pass 2026-10-22: top fault re-ranked by LR-31 step 2 (c9); handlingMistakes reordered (landing, hip hike, twist), text unchanged; plate.mistake moves from the hip hike to the corner landing (drawable, still sign); c9 gains BarBend's 'This can jostle your wrists ...' quote. Tempo stays null (no seconds, no pause asked). Re-fetch 2026-10-22: the 8 quotes in c6, c7, c8, c9 and c13 now use curly apostrophes (’), as the live BarBend and Garage Gym Reviews pages print them (renegade_row-1, LB7 fix round). feel.secondary still lists core (LR-35, LIB-MUSCLE); left for that item."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    }
+  ],
+  "topFault": "corner"
 }

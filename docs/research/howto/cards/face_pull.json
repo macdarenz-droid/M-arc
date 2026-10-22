@@ -753,5 +753,38 @@
     "Grip conflict: Motra (anchor) says neutral grip, StrengthLog says overhand (c2). BarBend gives no palm direction. The card draws Motra's neutral grip.",
     "BarBend's step 3 says to drive the elbows back behind the shoulders (c6); Motra's end has the hands near the ears with the elbows flared (c7). Both are drawn as the elbows high and back at the end.",
     "Read and not cited: none. Tried and not usable: fitnessvolt.com/face-pulls/ gave 404."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Pull",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 3,
+      "move": true
+    }
+  ],
+  "topFault": "drop"
 }
