@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-22 21:00 UTC · main `b0370201` · **8.0p (update 21:00): LB5 all 4 drawn plates approved (+ CF verified, #304); LB6 BULK READY ruled; LB7 bulk running; F-CI-1 #303 PASS (CI running); LIB-8M sheet; LB9 blocked on the owner** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-23 00:00 UTC · main `1ffd0dac` · **8.0p (update 00:00): LB5, LB6, LB7 drawn rows all approved; F-CI-1 merged; pilot A changed-ids sheet sent to the owner; LB9 still blocked on the owner** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -889,6 +889,17 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **LIB-17 (LB7 H build-ahead) card:** a helper is drafting it. Start it when a LIB slot is free.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
+
+**Update 00:00 UTC (10-23):**
+- **Approved drawn rows** (calibrated panels VALID; D-SUP-ANCHOR-3; golden-B follow-up 19 extended, 23 added):
+  - **LB5** (#290, page `921cb1d5…`): preacher_curl, cable_curl, bayesian_cable_curl, concentration_curl. CF VERIFIED, merged back (#304). D-LIB15-NIT1 (a leader through the ELBOW text stays, a named nit). Next: LIB-15 READY.
+  - **LB6** (#297, page `2668c838…`): machine_crunch, machine_pullover. The pullover's seat post and pad bracket were fixed in round 2. Next: LIB-16 READY.
+  - **LB7** (#299, page `1972ed5b…`): cable_lateral_raise, cable_external_rotation, face_pull, weighted_dip, dumbbell_front_raise. Its RPC test fix (yields between sync render tests) is in. Build-ahead (D-LIB17-AHEAD). Next: LIB-17 READY.
+  - Held (LIB-ZOOM / strip card): LB5 four, LB6 cable_chest_press, LB7 four.
+- **F-CI-1 #303 merged** (main `1ffd0dac`): each Chromium install has its own 15-min cap, and the shard job caps are 50. Review PASS + delta PASS.
+- **#109 LIB-8M:** PILOT A CHANGED SHEET READY @ dcac4a3 (sheet `283f8a72…`; scratch branch `claude/lib-8m-sheet` @ 1df9dda). **Sent to the owner at about 22:00 UTC** with "use proposed on all lines" recommended. Waiting for the answer, then 'PILOT A PIN GO'. D-LIB8M-SCRATCH7B: non-library scratch id + guard.
+- **Owner pending:** the pilot A changed-ids sheet; the LB9 research session's classifier approval (session_01RczpBxQgJ8UfXenHSJxrH4); the no-seconds tempo-strip A/B/C choice (from 10-22 morning).
+- **Lesson:** every helper launched must hand back; the LB6 slice-look helper died silently and LB6 waited 2 h for BULK GO.
 
 **Update 21:00 UTC** (supervisor context about 524k after compaction; the owner was told earlier that the handover is ready for a fresh supervisor):
 - **LIB-15 (#290, LB5): all 4 drawn plates approved** at page `921cb1d5…` (fb69dff3): preacher_curl, cable_curl, bayesian_cable_curl (round 1, byte-identical) and concentration_curl (focused recheck 6350979367).
