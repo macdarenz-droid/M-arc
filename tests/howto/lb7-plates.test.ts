@@ -18,8 +18,9 @@ const IDS = LB7.map(i => `lib_${i}`);
 const NOT_HERE = ['push_up', 'incline_push_up', 'pike_push_up', 'diamond_push_up', 'bent_over_dumbbell_rear_delt_fly'];
 // D-LIB17-SECS: no tempo seconds on these two cards; drawn, never on rows.json until released.
 const NOSECS = ['cable_rear_delt_fly', 'renegade_row'];
-// DESIGN.md section 14: every held id (the two no-seconds ids; renegade_row also under D-LIB8-shrug).
-const HELD = ['cable_rear_delt_fly', 'renegade_row'];
+// DESIGN.md section 14: every held id (the two no-seconds ids; renegade_row also under D-LIB8-shrug; resistance_band_pull_apart
+// under D-LIB8-shrug, D-LIB17-SIZE).
+const HELD = ['cable_rear_delt_fly', 'renegade_row', 'resistance_band_pull_apart'];
 const FRONT = ['cable_lateral_raise', 'cable_rear_delt_fly', 'cable_external_rotation', 'resistance_band_pull_apart'];
 const ROWS = 'tools/plates/library/lb7/rows.json';
 const RESEARCH_HEAD = '8d750bfe0dd9863862da88761268505d0089f5b2';
@@ -143,7 +144,7 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids w
   });
   it('the build\'s held list is this test\'s (D-LIB17-SECS), each with its census view', async () => {
     const build = await import(/* @vite-ignore */ lib('lb7/build.mjs'));
-    expect(build.HELD).toEqual({ cable_rear_delt_fly: 'front', renegade_row: 'side' });
+    expect(build.HELD).toEqual({ cable_rear_delt_fly: 'front', renegade_row: 'side', resistance_band_pull_apart: 'front' });
   });
 });
 
@@ -274,7 +275,7 @@ describe('LIB-17 A2 / Do 4: dipBars and the drawn plates draw PRIMITIVES only', 
     }
   });
   it('every item the drawn specs draw is a PRIMITIVES type, in every drawn pose', () => {
-    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'cable_external_rotation', 'renegade_row', 'weighted_dip']);
+    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'cable_external_rotation', 'resistance_band_pull_apart', 'renegade_row', 'weighted_dip']);
     for (const id of specsDrawn()) for (const pose of posesOf(S[id]))
       for (const it of itemsIn(S[id], pose).items) expect(Object.keys(eng.PRIMITIVES), `${id} ${pose}`).toContain(it.type);
   });
@@ -488,7 +489,8 @@ const bentProblems = (spec: any) => (BENT[spec.id] ?? []).flatMap(([pose, sides]
   return out;
 });
 /** D-LIB16-LOCK's basis: a "slight bend" elbow is drawn at its sized bend, never straight. */
-const SLIGHT: Record<string, [string, string, number][]> = { cable_lateral_raise: [['start', 'l', 18], ['end', 'l', 18]] };
+const SLIGHT: Record<string, [string, string, number][]> = { cable_lateral_raise: [['start', 'l', 18], ['end', 'l', 18]],
+  resistance_band_pull_apart: [['start', 'l', 18], ['start', 'r', 18], ['end', 'l', 18], ['end', 'r', 18]] };
 const slightProblems = (spec: any) => (SLIGHT[spec.id] ?? []).flatMap(([pose, s, want]) => {
   const l = lmOf(spec, pose), f = 180 - angle3(l[`shoulder.${s}`], l[`elbow.${s}`], l[`grip.${s}`]);
   return Math.abs(f - want) <= 1 ? [] : [`${pose}: elbow.${s} bend ${f.toFixed(1)} != ${want}`];
@@ -654,7 +656,7 @@ describe('LIB-17 renegade_row (H; tier A; the plank class; held: D-LIB17-SECS, D
 describe('LIB-17 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { cable_lateral_raise: 'above', dumbbell_front_raise: 'swing', cable_rear_delt_fly: 'roll', face_pull: 'drop', cable_external_rotation: 'flare',
     resistance_band_pull_apart: 'shrug', renegade_row: 'corner', weighted_dip: 'short', bench_dip: 'low' };
-  const ONE_TELL = ['renegade_row'];
+  const ONE_TELL = ['renegade_row', 'resistance_band_pull_apart'];
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells (or one, with its record), the first carrying the proposed key', () => {
     for (const id of specsDrawn()) {
@@ -767,6 +769,10 @@ describe('LIB-17 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   });
   it('mutation: weighted_dip\'s "Elbows back" box lowered onto the near dip bar (its leader along the bar) is red', () => {
     const s = S.weighted_dip, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'elbows' ? { ...x, box: { left: 16, top: 172 } } : x)) };
+    expect(minGap(bad).min).toBeLessThan(6);
+  });
+  it('mutation: resistance_band_pull_apart\'s "Soft elbows" box moved above the arms (its leader across the band) is red', () => {
+    const s = S.resistance_band_pull_apart, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'soft' ? { ...x, box: { left: 30, top: 70 } } : x)) };
     expect(minGap(bad).min).toBeLessThan(6);
   });
   it('mutation: cable_lateral_raise\'s "Elbow leads" box moved below the cable (its leader across the cable) is red', () => {
@@ -1208,5 +1214,100 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     expect(outside([poly], n)).toBeLessThanOrEqual(0.5);
     const lifted = { ...belt, pts: belt.pts.map((p: number[]) => [p[0], p[1]! + 0.06, p[2]]) };
     expect(outside([eng.PRIMITIVES.poly(lifted, cam)[0].poly], n)).toBeGreaterThan(0.5);
+  });
+});
+
+describe('LIB-17 resistance_band_pull_apart (H; the band from poly, D-LIB17-BAND; held: D-LIB8-shrug, D-LIB17-SIZE): drawn facts', { timeout: T }, () => {
+  const s = () => S.resistance_band_pull_apart;
+  const elev = (a: any, pose: string, sd: string) => +/elev (-?[\d.]+)/.exec(a[pose][`sh.${sd}`])![1]!;
+  it('c5, c4: both upper arms at shoulder elevation 90 (+-2) at start and end; c1, c7: the fists at shoulder height (+-1 cm); c1: hands wider than the shoulders at the start', () => {
+    const a = rep(s()).angles;
+    for (const pose of ['start', 'end']) for (const sd of ['l', 'r']) {
+      expect(Math.abs(elev(a, pose, sd) - 90), `${pose} ${sd}`).toBeLessThanOrEqual(2);
+      const l = lmOf(s(), pose);
+      expect(Math.abs(l[`grip.${sd}`][1] - l[`shoulder.${sd}`][1]) * 100, `${pose} ${sd}`).toBeLessThanOrEqual(1);
+    }
+    const st = lmOf(s(), 'start');
+    for (const sd of ['l', 'r']) expect(Math.abs(st[`grip.${sd}`][0]), sd).toBeGreaterThan(Math.abs(st[`shoulder.${sd}`][0]));
+    // start: the arms straight ahead (the fists in front of the shoulders); end: out to the sides (the fists outside the elbows)
+    for (const sd of ['l', 'r']) expect(st[`grip.${sd}`][2] - st[`shoulder.${sd}`][2], sd).toBeGreaterThan(0.5);
+    const en = lmOf(s(), 'end');
+    for (const sd of ['l', 'r']) expect(Math.abs(en[`grip.${sd}`][0]), sd).toBeGreaterThan(Math.abs(en[`elbow.${sd}`][0]));
+  });
+  it('c1, c5: the slight elbow bend in start and end on both arms (ELBOW_BEND, never straight)', () => {
+    expect(slightProblems(s())).toEqual([]);
+  });
+  it('A15 mutation: the end right elbow set to 180 deg (straight) is red', () => {
+    const e = s().poses.end, bad = { ...s(), poses: { ...s().poses, end: { ...e, elbow: { ...e.elbow, r: 0 } } } };
+    expect(slightProblems(bad)).toEqual([expect.stringMatching(/^end: elbow\.r bend 0\.0 != 18$/)]);
+  });
+  const bandIn = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((i: any) => i.part === 'band');
+  it('D-LIB17-BAND: one band in every pose, a `poly` of class eq-solid, BAND_T thick, its two ends at the two fists (+-1 px on screen)', () => {
+    const cam = camOf(s()), T0 = M.resistance_band_pull_apart.SIZES.BAND_T;
+    for (const pose of posesOf(s())) {
+      const b = bandIn(s(), pose);
+      expect(b.length, pose).toBe(1);
+      expect([b[0].type, b[0].cls], pose).toEqual(['poly', 'eq-solid']);
+      const l = lmOf(s(), pose), P = b[0].pts.map((p: number[]) => cam.P(p)), mid = (i: number, j: number) => [(P[i]![0]! + P[j]![0]!) / 2, (P[i]![1]! + P[j]![1]!) / 2];
+      const [gr, gl] = [cam.P(l['grip.r']), cam.P(l['grip.l'])];
+      expect(Math.hypot(mid(0, 3)[0]! - gr![0]!, mid(0, 3)[1]! - gr![1]!), `${pose} grip.r`).toBeLessThanOrEqual(1);
+      expect(Math.hypot(mid(1, 2)[0]! - gl![0]!, mid(1, 2)[1]! - gl![1]!), `${pose} grip.l`).toBeLessThanOrEqual(1);
+      expect(Math.abs(Math.hypot(P[0]![0]! - P[3]![0]!, P[0]![1]! - P[3]![1]!) - T0 * cam.pxm), pose).toBeLessThanOrEqual(0.1);
+    }
+  });
+  it('the band moves into the Mistake with the shrug and is drawn there (a `poly`, PQ-H9); mutation: the band as a `line` is missing from the Mistake view', () => {
+    const cam = camOf(s()), want = eng.PRIMITIVES.poly(bandIn(s(), 'mistake')[0], cam)[0].poly as number[][];
+    const drawnInMistake = (spec: any) => [...plate.renderPlate(spec, { id: 'x', mistake: true }).svg.matchAll(/<path id="x-m-eq\d+" d="([^"]+)"\/>/g)]
+      .map(m => xy(m[1]!)).some(d => d.length === want.length && d.every((p, i) => Math.hypot(p[0]! - want[i]![0]!, p[1]! - want[i]![1]!) <= 0.6));
+    expect(drawnInMistake(s())).toBe(true);
+    const asLine = withEq(s(), 1, () => (lm: any) => { const it = M.resistance_band_pull_apart.bandOf(lm); return { type: 'line', pts: [...it.pts, it.pts[0]], cls: 'eq-line', z: it.z, part: 'band' }; });
+    expect(drawnInMistake(asLine)).toBe(false);
+  });
+  it('c5 (D-LIB17-ORCHOICE: near the chest, not a contact): the end band runs in front of the chest, not through it', () => {
+    const l = lmOf(s(), 'end'), b = bandIn(s(), 'end')[0];
+    expect(b.pts[0][2] - l.chest[2]).toBeGreaterThan(0);
+  });
+  it('c8 Mistake: only the scapulae change: both shoulders M_SHRUG cm higher (+-0.2 cm), the arm angles, hips and feet unchanged', () => {
+    const E = lmOf(s(), 'end'), Mi = lmOf(s(), 'mistake'), k = M.resistance_band_pull_apart.SIZES.M_SHRUG;
+    expect(Object.keys(s().mistake.pose)).toEqual(['scap']);
+    for (const sd of ['l', 'r']) expect(Math.abs((Mi[`shoulder.${sd}`][1] - E[`shoulder.${sd}`][1]) * 100 - k), sd).toBeLessThanOrEqual(0.2);
+    for (const key of ['hips', 'heel.l', 'heel.r']) expect(Math.hypot(...Mi[key].map((v: number, i: number) => v - E[key][i])), key).toBeLessThan(1e-6);
+    const a = rep(s()).angles;
+    for (const sd of ['l', 'r']) { expect(a.mistake[`sh.${sd}`]).toBe(a.end[`sh.${sd}`]); expect(a.mistake[`elbow.${sd}`]).toBe(a.end[`elbow.${sd}`]); }
+  });
+  it('the shrug tell sits on the Mistake shoulder\'s top outline (+-1.5 px), its arrow from the end shoulder upward', () => {
+    const cam = camOf(s()), t = s().mistake.tells[0], l = lmOf(s(), 'mistake'), p = cam.P(l['shoulder.l']), at = [p[0]! + t.anchor.off[0], p[1]! + t.anchor.off[1]];
+    expect(Math.abs(outside(shapesIn(s(), 'mistake').map((x: any) => x.poly), at))).toBeLessThanOrEqual(1.5);
+    const g = s().mistake.guides[0];
+    expect([g.kind, g.from.pose, g.to.pose]).toEqual(['arrow', 'end', 'mistake']);
+  });
+  it('held (D-LIB8-shrug, D-LIB17-SIZE, S2): the card-true shrug at M_SHRUG moves the figure under deviationMin; the Trace passes traceLenMin', () => {
+    const env = pins().envelope, Rr = { normal: plate.renderPlate(s(), { id: 'x' }), mistake: plate.renderPlate(s(), { id: 'x', mistake: true }) };
+    const dev = qaNode.deviation({ spec: s() }, Eng(), Rr), tr = markup.pathsOf(Rr.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0);
+    console.log(`LIB-17 resistance_band_pull_apart held: engine deviation ${dev.toFixed(1)} px (min ${env.deviationMin}), Trace ${tr.toFixed(1)} px (min ${env.traceLenMin})`);
+    expect(M.resistance_band_pull_apart.SIZES.M_SHRUG).toBe(5);
+    expect(dev).toBeLessThan(env.deviationMin);
+    expect(tr).toBeGreaterThanOrEqual(env.traceLenMin);
+  });
+  it('one tell, with its per-id record in DESIGN.md (D-LIB10-SKULL1; #290 6345185694)', () => {
+    expect(s().mistake.tells.length).toBe(1);
+    const d = readFileSync('tools/plates/library/lb7/DESIGN.md', 'utf8');
+    expect(d).toMatch(/resistance_band_pull_apart \(bulk\): fault c8 \(the shrug\)[^\n]*\n?[^\n]*\n?[^\n]*no second visible sign stated, so one tell/);
+  });
+  it('phantoms (Q2 (c)): both start arms and the start band are redrawn dashed in the end layer, and only there', () => {
+    const its = itemsIn(s(), 'end').items, arms = its.filter((i: any) => i.part === 'startArm');
+    expect(arms.some((i: any) => i.pts[0][0] > 0) && arms.some((i: any) => i.pts[0][0] < 0)).toBe(true);
+    expect(its.filter((i: any) => i.part === 'startBand').length).toBe(1);
+    for (const i of [...arms, ...its.filter((x: any) => x.part === 'startBand')]) expect([i.type, i.cls]).toEqual(['line', 'eq-line m-line']);
+    for (const pose of ['start', 'mistake']) expect(itemsIn(s(), pose).items.filter((i: any) => /^start/.test(i.part ?? '')).length, pose).toBe(0);
+  });
+  it('the elbow callouts meet the arm\'s lower outline from below (+-1.5 px), under the band', () => {
+    const cam = camOf(s()), l = lmOf(s(), 'end'), polys = shapesIn(s(), 'end').map((x: any) => x.poly), P = bandIn(s(), 'end')[0].pts.map((p: number[]) => cam.P(p));
+    for (const key of ['level', 'soft']) {
+      const c = s().callouts.find((x: any) => x.key === key), p = cam.P(l[c.anchor.at]), at = [p[0]! + c.anchor.off[0], p[1]! + c.anchor.off[1]];
+      expect(Math.abs(outside(polys, at)), key).toBeLessThanOrEqual(1.5);
+      expect(at[1]!, key).toBeGreaterThan(Math.max(...P.map((q: number[]) => q[1]!)));
+      expect(c.box.top, key).toBeGreaterThan(at[1]!);
+    }
   });
 });

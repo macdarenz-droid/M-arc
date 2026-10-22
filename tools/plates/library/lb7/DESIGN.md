@@ -372,6 +372,7 @@ post. renegade_row's renders come only from `lb7/build.mjs --held`.
 |---|---|---|---|
 | cable_rear_delt_fly | D-LIB17-SECS (D-LIB14-NOSECS) | the card's tempo is null (c9: slow and controlled, no seconds; LR-33, R-LB7-6) | the no-seconds strip card on main, then 'LIB-17 resume' |
 | renegade_row | D-LIB17-SECS (D-LIB14-NOSECS); and D-LIB8-shrug (D-LIB17-SIZE, S2) | tempo null (LR-33); the card-true corner landing moves 4.9 px < 11.39 px (section 12) | the strip card, then 'LIB-17 resume'; LIB-ZOOM (#279) on main for the zoom circle |
+| resistance_band_pull_apart | D-LIB8-shrug (D-LIB17-SIZE, S2) | the card-true shrug at M_SHRUG 5 cm (ref-src/plate.mjs:147) measures 7.3 px < 11.39 px (engine deviation; section 12's estimate held); the Trace is 57.6 px | LIB-ZOOM (#279) on main for the zoom circle |
 
 Held rows are in no rows file; their specs, tests and card keys stay.
 
