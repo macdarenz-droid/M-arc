@@ -151,10 +151,10 @@
     },
     {
       "claim": "c18",
-      "source": "nhs-tennis-elbow",
-      "quote": "avoid or reduce activities that make your symptoms worse",
+      "source": "motra-db-oh",
+      "quote": "Elbow joint pain",
       "status": "verbatim",
-      "closest": "avoid or reduce activities that make your symptoms worse"
+      "closest": "Elbow joint pain"
     }
   ]
 }

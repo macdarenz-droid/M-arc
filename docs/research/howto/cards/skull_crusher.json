@@ -330,19 +330,19 @@
     },
     {
       "id": "c18",
-      "text": "The NHS advises people with tennis elbow to avoid or reduce activities that make the symptoms worse (NHS self-care advice, applied here to elbow pain in training; R-LB5-2). The source is data only.",
+      "text": "Motra's dumbbell overhead extension page lists elbow joint pain under 'When to Avoid' (applied here to the skull crusher, MECH, as on the LB5 overhead extensions). Used for the elbow row's stop line (R-LB5-2).",
       "tags": [
         "CONSENSUS",
         "MECH"
       ],
       "sources": [
-        "nhs-tennis-elbow"
+        "motra-db-oh"
       ],
       "quotes": [
         {
-          "source": "nhs-tennis-elbow",
-          "text": "avoid or reduce activities that make your symptoms worse",
-          "where": "Things you can do to help ease tennis elbow"
+          "source": "motra-db-oh",
+          "text": "Elbow joint pain",
+          "where": "Safety, When to Avoid"
         }
       ]
     }
@@ -419,10 +419,10 @@
       "checked": "2026-09-30"
     },
     {
-      "id": "nhs-tennis-elbow",
-      "url": "https://www.nhs.uk/conditions/tennis-elbow/",
-      "title": "Tennis elbow (NHS)",
-      "kind": "guideline",
+      "id": "motra-db-oh",
+      "url": "https://motra.com/exercises/dumbbellOverheadTricepsExtension",
+      "title": "Dumbbell Overhead Triceps Extension, Exercise Guide (Motra)",
+      "kind": "coach",
       "year": null,
       "pmid": null,
       "access": "full",
@@ -584,7 +584,7 @@
       },
       {
         "where": "Back-of-elbow pain",
-        "means": "Is it getting worse?",
+        "means": "Fault: lowering forcefully.",
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
           "c15",

@@ -27,7 +27,8 @@ Record of the LR-29 verify of the 16 LB5 non-pilot cards (#286) and its one fix 
   - Every phrase quoted in a rankNote, mistake.why or tempo.text is on a page of its card.
 - Parents: claims and quotes match one for one, and the new NHS quotes are verbatim. Their older quotes were verified in LB2; this round did not re-fetch those pages.
 - Copy lint (main's lintHowto, medicalBans and fixVerbs) and C8: 0 hits on the 16 cards and the 3 parents.
-- New sources: nhs-wrist-pain, nhs-back-pain and nhs-tennis-elbow, each fetched by curl on 2026-10-22. overhead_cable_triceps_extension also gains motra-db-oh.
+- New sources: nhs-wrist-pain, nhs-back-pain and nhs-tennis-elbow, each fetched by curl on 2026-10-22. overhead_cable_triceps_extension and skull_crusher also gain motra-db-oh.
+- Supervisor recheck of f6c88244: three parent/child mismatches fixed in a second commit (alternating_dumbbell_curl where, skull_crusher elbow row, single_arm_triceps_pushdown back-row fix).
 - New quote entries: 29, each fetched by curl and verbatim.
 
 ## Finding → fix
@@ -73,11 +74,11 @@ All fixes are in the fix-round commit named on #286 as "LB5 RESEARCH FIXED".
 | straight_bar_triceps_pushdown-5 | low | handlingMistakes[0].fix "Stand taller. Tilt only from the hips." [c11, c3, c4]; setup[2] [c3, c2] |
 | straight_bar_triceps_pushdown-6 | low | zooms[0].wrong null and wrongNote dropped (LR-25); inherit reasons for zooms, grip.thumb and grip.wrist rewritten |
 | straight_bar_triceps_pushdown-7 | low | no change (R-LB5-5) |
-| single_arm_triceps_pushdown-1 | medium | R-LB5-4: back row on c17 + new c19 (NHS back pain); redFlags [elbow, back]; risks[2] "Leaning or arching can strain the lower back."; inherit reason rewritten |
+| single_arm_triceps_pushdown-1 | medium | R-LB5-4: back row on c17 + new c19 (NHS back pain), fix "Stop and don't train through the pain. Stand taller, tilt only from the hips." as straight_bar's; redFlags [elbow, back]; risks[2] "Leaning or arching can strain the lower back."; inherit reason rewritten |
 | single_arm_triceps_pushdown-2 | medium | rows[2] cites new c18 (NHS tennis elbow, MECH); means "Is it getting worse?" |
 | single_arm_triceps_pushdown-3 | low | zooms[0].wrong null (LR-25) |
 | single_arm_triceps_pushdown-4 | low | no change (R-LB5-5) |
-| alternating_dumbbell_curl-1 | medium | rows[1] cites new c15 (nielasher-alt "If you experience any discomfort, stop immediately ..."); where "Wrist discomfort" (the quotes say discomfort) |
+| alternating_dumbbell_curl-1 | medium | rows[1] cites new c15 (nielasher-alt "If you experience any discomfort, stop immediately ..."); where "Wrist discomfort or pain" kept, matching the parent (supervisor recheck: the quote fits) |
 | alternating_dumbbell_curl-2 | low | zooms[0] [c7, c2, c3]; zooms[1] [c6, c14, c1, c4] |
 | barbell_curl-1 | medium | rows[2] cites new c16 (NHS wrist pain, MECH) |
 | barbell_curl-2 | low | posture[4] [c10, c9]; handlingMistakes[1] and rows[1] [c5, c4]; zooms[0] [c8, c1] |
@@ -89,5 +90,5 @@ All fixes are in the fix-round commit named on #286 as "LB5 RESEARCH FIXED".
 | hammer_curl-4 | low | zooms[0] [c5, c1, c4] |
 | reverse_curl-1 | low | rows[3] where "Joints" |
 | reverse_curl-2 | low | no change (LIB-MUSCLE, LR-35) |
-| R-LB5-2 parents | ruling | dumbbell_biceps_curl wrist row + c17 (NHS wrist pain); skull_crusher elbow row + c18 (NHS tennis elbow), means "Is it getting worse?"; triceps_pushdown back row + c19 (NHS back pain) and elbow row + c20 (NHS tennis elbow), both means "Is it getting worse?" |
+| R-LB5-2 parents | ruling | dumbbell_biceps_curl wrist row + c17 (NHS wrist pain); skull_crusher elbow row matches the overhead children (supervisor recheck): "Back-of-elbow pain" / "Fault: lowering forcefully." / "Stop the set. Don't train through the pain.", claims c15 + new c18 (motra-db-oh "Elbow joint pain", MECH; source added; no NHS tennis-elbow quote); triceps_pushdown back row + c19 (NHS back pain) and elbow row + c20 (NHS tennis elbow), both means "Is it getting worse?" |
 | R-LB5-6 | ruling | no change; down stays 2 on both overhead extensions |

@@ -557,7 +557,7 @@
         "redFlag": null
       },
       {
-        "where": "Wrist discomfort",
+        "where": "Wrist discomfort or pain",
         "means": "Fault: the wrists bent up or down under load.",
         "fix": "Stop and don't train through the pain. Keep the wrist straight.",
         "claim": [
