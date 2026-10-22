@@ -419,7 +419,7 @@ describe('L2-A21: hand-pair chunks (gen/handpairs.mjs, design 12, D-LIB7-1)', ()
       const { keys } = hp.pairsOf(pairs, reg.shippedIds());
       expect(Object.keys(pairs.HAND_OF_ID).length).toBeGreaterThan(0);   // D-LIB7FIX-A21: LIB-7's loader lands before any row ships a key, so keys may be []; a shipped row that needs a pair and has none is refused by gen/ids.mjs missingChunks in this file's beforeAll render
       expect(hp.pairProblems(pairs, reg.shippedIds(), written, keys)).toEqual([]);
-      expect([...loaders.matchAll(/import\('\.\/handpair-([a-z0-9-]+)'\)/g)].map(m => m[1]).sort()).toEqual([...new Set(keys)].sort());
+      expect([...new Set([...loaders.matchAll(/import\('\.\/handpair-([a-z0-9-]+)'\)/g)].map(m => m[1]))].sort()).toEqual([...new Set(keys)].sort());   // LIB-7b (D-LIB7b-SCRATCH2 P3): sets on both sides; two ids on one key import its chunk twice
       return;
     }
     expect(written).toEqual([]);
