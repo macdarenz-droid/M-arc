@@ -1,6 +1,6 @@
 {
   "id": "battle_ropes",
-  "checked": "2026-10-02",
+  "checked": "2026-10-22",
   "fetcher": "sonnet source fetcher",
   "quotes": [
     {
@@ -62,9 +62,9 @@
     {
       "claim": "c6",
       "source": "hl-br",
-      "text": "When lifting, swinging, and slamming heavy ropes, it's easy to let your shoulder blades elevate or hunch forward, putting excess strain on your neck. To strengthen your shoulder stabilizers and move pain-free, keep your shoulder blades down, gently sliding them down and back throughout the movements.",
+      "text": "When lifting, swinging, and slamming heavy ropes, it’s easy to let your shoulder blades elevate or hunch forward, putting excess strain on your neck. To strengthen your shoulder stabilizers and move pain-free, keep your shoulder blades down, gently sliding them down and back throughout the movements.",
       "status": "verbatim",
-      "closest": "When lifting, swinging, and slamming heavy ropes, it's easy to let your shoulder blades elevate or hunch forward, putting excess strain on your neck. To strengthen your shoulder stabilizers and move pain-free, keep your shoulder blades down, gently sliding them down and back throughout the movements.",
+      "closest": "When lifting, swinging, and slamming heavy ropes, it’s easy to let your shoulder blades elevate or hunch forward, putting excess strain on your neck. To strengthen your shoulder stabilizers and move pain-free, keep your shoulder blades down, gently sliding them down and back throughout the movements.",
       "note": ""
     },
     {
@@ -78,17 +78,17 @@
     {
       "claim": "c8",
       "source": "hl-br",
-      "text": "Perfect your form first. Before increasing the rope weight or your speed, make sure you're performing the moves properly.",
+      "text": "Perfect your form first. Before increasing the rope weight or your speed, make sure you’re performing the moves properly.",
       "status": "verbatim",
-      "closest": "Perfect your form first. Before increasing the rope weight or your speed, make sure you're performing the moves properly.",
+      "closest": "Perfect your form first. Before increasing the rope weight or your speed, make sure you’re performing the moves properly.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "hl-br",
-      "text": "It's best to start with a lighter and shorter rope, which is usually around 10 feet (3 meters) long and 1.5 inches (3.8 cm) thick.",
+      "text": "It’s best to start with a lighter and shorter rope, which is usually around 10 feet (3 meters) long and 1.5 inches (3.8 cm) thick.",
       "status": "verbatim",
-      "closest": "It's best to start with a lighter and shorter rope, which is usually around 10 feet (3 meters) long and 1.5 inches (3.8 cm) thick.",
+      "closest": "It’s best to start with a lighter and shorter rope, which is usually around 10 feet (3 meters) long and 1.5 inches (3.8 cm) thick.",
       "note": ""
     },
     {
@@ -132,6 +132,22 @@
       "note": ""
     },
     {
+      "claim": "c10",
+      "source": "calatayud-2015",
+      "text": "Surface electromyographic signals were recorded from the anterior deltoid (AD), external oblique (OBLIQ), lumbar erector spinae (LUMB), and gluteus medius (GM) during bilateral waves and unilateral waves and were normalized to the maximum voluntary isometric contraction (MVIC).",
+      "status": "verbatim",
+      "closest": "Surface electromyographic signals were recorded from the anterior deltoid (AD), external oblique (OBLIQ), lumbar erector spinae (LUMB), and gluteus medius (GM) during bilateral waves and unilateral waves and were normalized to the maximum voluntary isometric contraction (MVIC).",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "calatayud-2015",
+      "text": "In conclusion, both wave movements can be used to provide moderate to high levels of muscle activity in the AD, OBLIQ, and LUMB.",
+      "status": "verbatim",
+      "closest": "In conclusion, both wave movements can be used to provide moderate to high levels of muscle activity in the AD, OBLIQ, and LUMB.",
+      "note": ""
+    },
+    {
       "claim": "c11",
       "source": "ace-br-emg",
       "text": "Also, exercise with the battle rope was shown to positively affect grip strength, as reflected by the fact that the palmaris longus was contracting in excess of 75% of MVIC during all exercises.",
@@ -161,7 +177,7 @@
       "text": "Handshake (overhand) grip Microphone (underhand) grip When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
       "status": "verbatim",
       "closest": "Handshake (overhand) grip Microphone (underhand) grip When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     }
   ]
 }

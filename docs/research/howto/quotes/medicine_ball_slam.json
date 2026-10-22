@@ -1,0 +1,359 @@
+{
+  "id": "medicine_ball_slam",
+  "checked": "2026-10-22",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sl-slam",
+      "text": "Stand with your feet about shoulder-width apart, your knees and hips slightly bent, holding the ball in both hands at chest height. Engage your core, and keep a good posture.",
+      "status": "verbatim",
+      "closest": "Stand with your feet about shoulder-width apart, your knees and hips slightly bent, holding the ball in both hands at chest height. Engage your core, and keep a good posture.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "bodbot-mb-slam",
+      "text": "Hold the medicine ball with both hands in front of your chest. Engage your core and slightly bend your knees.",
+      "status": "verbatim",
+      "closest": "Hold the medicine ball with both hands in front of your chest. Engage your core and slightly bend your knees.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "ace-os",
+      "text": "Stand with your feet hip-width apart and holding a medicine ball in both hands directly in front of your chest",
+      "status": "verbatim",
+      "closest": "Stand with your feet hip-width apart and holding a medicine ball in both hands directly in front of your chest",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "sl-slam",
+      "text": "Extend your knees and drive your hips forward while simultaneously lifting the ball. Aim for being as tall as possible, the ball overhead, arms up, hips slightly forward, and on your toes from the force of your drive.",
+      "status": "verbatim",
+      "closest": "Extend your knees and drive your hips forward while simultaneously lifting the ball. Aim for being as tall as possible, the ball overhead, arms up, hips slightly forward, and on your toes from the force of your drive.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "bodbot-mb-slam",
+      "text": "Raise the ball overhead with extended arms. As you lift, come up onto your toes for full extension (jumping if your body has no limitations).",
+      "status": "verbatim",
+      "closest": "Raise the ball overhead with extended arms. As you lift, come up onto your toes for full extension (jumping if your body has no limitations).",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "vit-slam",
+      "text": "The ball should be just above your head and your arms extended. Keep your arms straight and make sure not to lean backward.",
+      "status": "verbatim",
+      "closest": "The ball should be just above your head and your arms extended. Keep your arms straight and make sure not to lean backward.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "sl-slam",
+      "text": "Use your core and arms to slam the medicine ball straight down between your feet with as much force as possible. Press your hips back and bend your knees to further power the slam. Exhale as you slam the ball down.",
+      "status": "verbatim",
+      "closest": "Use your core and arms to slam the medicine ball straight down between your feet with as much force as possible. Press your hips back and bend your knees to further power the slam. Exhale as you slam the ball down.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "bb-slam",
+      "text": "Slam the ball downwards into the floor, and do it aggressively. The goal is to accelerate the ball downwards, not simply let gravity take it to rest.",
+      "status": "verbatim",
+      "closest": "Slam the ball downwards into the floor, and do it aggressively. The goal is to accelerate the ball downwards, not simply let gravity take it to rest.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "ace-os",
+      "text": "Explosively bring the ball down over your head to throw it directly downwards into the floor while dropping your weight back into your hips.",
+      "status": "verbatim",
+      "closest": "Explosively bring the ball down over your head to throw it directly downwards into the floor while dropping your weight back into your hips.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "vit-slam",
+      "text": "Not Working Your Entire Body",
+      "status": "verbatim",
+      "closest": "Not Working Your Entire Body",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "vit-slam",
+      "text": "Although slamming a medicine ball against the ground seems to involve your arms more than other body areas, this workout actively involves your upper and lower body.",
+      "status": "verbatim",
+      "closest": "Although slamming a medicine ball against the ground seems to involve your arms more than other body areas, this workout actively involves your upper and lower body.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "bodbot-mb-slam",
+      "text": "Use your whole body (arms, abs, legs) to generate power. Bend your knees and hips to follow the slam down.",
+      "status": "verbatim",
+      "closest": "Use your whole body (arms, abs, legs) to generate power. Bend your knees and hips to follow the slam down.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-slam",
+      "text": "“Squeeze” the ground with the feet and squat down to grab the ball. Keep your lower back flat and primed to move.",
+      "status": "verbatim",
+      "closest": "“Squeeze” the ground with the feet and squat down to grab the ball. Keep your lower back flat and primed to move.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "ace-heavy",
+      "text": "Careful: Once again, don’t round the back and be sure the movement comes from your hips.",
+      "status": "verbatim",
+      "closest": "Careful: Once again, don’t round the back and be sure the movement comes from your hips.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "ace-heavy",
+      "text": "Careful: As you did with the prep exercises, ensure there is no forward flexion in the lumbar spine, the knees are lined up over the middle toes, and the spine and shin angles remain parallel.",
+      "status": "verbatim",
+      "closest": "Careful: As you did with the prep exercises, ensure there is no forward flexion in the lumbar spine, the knees are lined up over the middle toes, and the spine and shin angles remain parallel.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "ace-os",
+      "text": "As you throw the ball down, make sure you are maintaining the abdominal bracing and hinge from the hips to maintain spinal stability.",
+      "status": "verbatim",
+      "closest": "As you throw the ball down, make sure you are maintaining the abdominal bracing and hinge from the hips to maintain spinal stability.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "sl-slam",
+      "text": "Squat down to pick up the ball from the floor, then immediately move into the next slam by repeating the movement.",
+      "status": "verbatim",
+      "closest": "Squat down to pick up the ball from the floor, then immediately move into the next slam by repeating the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "bodbot-mb-slam",
+      "text": "Catch the ball on the bounce (if it rebounds) or pick it up quickly.",
+      "status": "verbatim",
+      "closest": "Catch the ball on the bounce (if it rebounds) or pick it up quickly.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "ace-heavy",
+      "text": "Drop the hips down and back (this creates the energy) and force the heavy ball into the floor. Drop into your deep squat to retrieve the ball and return to the starting position.",
+      "status": "verbatim",
+      "closest": "Drop the hips down and back (this creates the energy) and force the heavy ball into the floor. Drop into your deep squat to retrieve the ball and return to the starting position.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "ace-heavy",
+      "text": "Careful: Ensure there is no forward flexion (rounding of the back), the knees stay aligned with the middle toes and the feet remain flat.",
+      "status": "verbatim",
+      "closest": "Careful: Ensure there is no forward flexion (rounding of the back), the knees stay aligned with the middle toes and the feet remain flat.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "sl-slam",
+      "text": "Exhale as you slam the ball down.",
+      "status": "verbatim",
+      "closest": "Exhale as you slam the ball down.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "vit-slam",
+      "text": "Release the breath when slamming the ball.",
+      "status": "verbatim",
+      "closest": "Release the breath when slamming the ball.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "im-slam",
+      "text": "Focus on quality, rather than speed by taking a deep breath in between repetitions, and, of course, be sure the ball does not bounce back up toward your face.",
+      "status": "verbatim",
+      "closest": "Focus on quality, rather than speed by taking a deep breath in between repetitions, and, of course, be sure the ball does not bounce back up toward your face.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "bb-slam-ben",
+      "text": "Be careful that it doesn’t bounce back in your face.",
+      "status": "verbatim",
+      "closest": "Be careful that it doesn’t bounce back in your face.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "im-slam",
+      "text": "Focus on quality, rather than speed by taking a deep breath in between repetitions, and, of course, be sure the ball does not bounce back up toward your face.",
+      "status": "verbatim",
+      "closest": "Focus on quality, rather than speed by taking a deep breath in between repetitions, and, of course, be sure the ball does not bounce back up toward your face.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "pg-mb",
+      "text": "This exercise is best done using a medicine ball without much bounce as you don't want it flying straight back into your face.",
+      "status": "verbatim",
+      "closest": "This exercise is best done using a medicine ball without much bounce as you don't want it flying straight back into your face.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "vit-slam",
+      "text": "You may use any type of medicine ball, but a slam ball is a better option. This is because a slam ball is softer and doesn’t bounce back when you slam it on the floor. Hence, the risk of injury with this ball is minimal.",
+      "status": "verbatim",
+      "closest": "You may use any type of medicine ball, but a slam ball is a better option. This is because a slam ball is softer and doesn’t bounce back when you slam it on the floor. Hence, the risk of injury with this ball is minimal.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "pg-mb",
+      "text": "This exercise is best done using a medicine ball without much bounce as you don't want it flying straight back into your face.",
+      "status": "verbatim",
+      "closest": "This exercise is best done using a medicine ball without much bounce as you don't want it flying straight back into your face.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "ace-os",
+      "text": "If using a bouncing medicine ball make sure that you have ample space for safety; if you are using a non-bouncing medicine ball (a \"dead\" ball) make sure you are on a solid, stable floor that can support the force of the weight being thrown explosively into the floor.",
+      "status": "verbatim",
+      "closest": "If using a bouncing medicine ball make sure that you have ample space for safety; if you are using a non-bouncing medicine ball (a \"dead\" ball) make sure you are on a solid, stable floor that can support the force of the weight being thrown explosively into the floor.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bodbot-mb-slam",
+      "text": "Make sure your environment is safe to perform this movement in.",
+      "status": "verbatim",
+      "closest": "Make sure your environment is safe to perform this movement in.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "pg-mb",
+      "text": "Keep your feet a good distance apart and be careful not to throw the ball onto your toes.",
+      "status": "verbatim",
+      "closest": "Keep your feet a good distance apart and be careful not to throw the ball onto your toes.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-slam",
+      "text": "This can vary, but based on the goal of the movement, roughly four to 20 pounds is sufficient depending on your goal. Excessively heavy loads will reduce your ability to generate speed.",
+      "status": "verbatim",
+      "closest": "This can vary, but based on the goal of the movement, roughly four to 20 pounds is sufficient depending on your goal. Excessively heavy loads will reduce your ability to generate speed.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "hl-slam",
+      "text": "If you are new to weightlifting, start with the 10-pound ball and work upwards as you feel comfortable and get stronger.",
+      "status": "verbatim",
+      "closest": "If you are new to weightlifting, start with the 10-pound ball and work upwards as you feel comfortable and get stronger.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "vit-slam",
+      "text": "It is alright to stick to five sets of no more than eight repetitions at the start.",
+      "status": "verbatim",
+      "closest": "It is alright to stick to five sets of no more than eight repetitions at the start.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "bb-slam",
+      "text": "Start by performing 3 – 4 sets of 3 – 5 repetitions. Rest periods should be on a 1:4 to 1:10 ratio, meaning if a series of slams lasts 3 seconds, rest periods can be anywhere from 12-30 seconds long.",
+      "status": "verbatim",
+      "closest": "Start by performing 3 – 4 sets of 3 – 5 repetitions. Rest periods should be on a 1:4 to 1:10 ratio, meaning if a series of slams lasts 3 seconds, rest periods can be anywhere from 12-30 seconds long.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "sl-slam",
+      "text": "Lats",
+      "status": "verbatim",
+      "closest": "Lats",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "sl-slam",
+      "text": "Abs",
+      "status": "verbatim",
+      "closest": "Abs",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "sl-slam",
+      "text": "Obliques",
+      "status": "verbatim",
+      "closest": "Obliques",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "bb-slam",
+      "text": "The abs are used to generate the downwards force during the slam.",
+      "status": "verbatim",
+      "closest": "The abs are used to generate the downwards force during the slam.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "bb-slam",
+      "text": "Taking the medicine ball from overhead to the floor involves drawing the arm down in front of the body. Shoulder extension is a primary function of the lattisimus dorsi, so your back comes heavily into play as a secondary mover in the slam.",
+      "status": "verbatim",
+      "closest": "Taking the medicine ball from overhead to the floor involves drawing the arm down in front of the body. Shoulder extension is a primary function of the lattisimus dorsi, so your back comes heavily into play as a secondary mover in the slam.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "sl-slam",
+      "text": "Glutes",
+      "status": "verbatim",
+      "closest": "Glutes",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "sl-slam",
+      "text": "Front Deltoids",
+      "status": "verbatim",
+      "closest": "Front Deltoids",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "hl-slam",
+      "text": "Gripping the ball firming, extend your arms and bring the ball overhead.",
+      "status": "verbatim",
+      "closest": "Gripping the ball firming, extend your arms and bring the ball overhead.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "bodbot-mb-slam",
+      "text": "Hold the medicine ball with both hands in front of your chest. Engage your core and slightly bend your knees.",
+      "status": "verbatim",
+      "closest": "Hold the medicine ball with both hands in front of your chest. Engage your core and slightly bend your knees.",
+      "note": ""
+    }
+  ]
+}

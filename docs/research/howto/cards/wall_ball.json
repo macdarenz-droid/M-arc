@@ -1,0 +1,845 @@
+{
+  "id": "wall_ball",
+  "libId": "lib_wall_ball",
+  "name": "Wall Ball",
+  "family": "Conditioning and carries (balls and ropes)",
+  "tier": "A",
+  "archetype": {
+    "hand": "implement",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Stand facing a sturdy wall, feet shoulder-width apart with the toes slightly turned out, holding the ball at chest height in both hands, elbows tucked in.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-wb",
+        "pg-wb",
+        "bb-wb"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-wb",
+          "text": "Stand with your feet shoulder-width apart, a medicine ball held at chest height with both hands, and a sturdy wall roughly arm’s length from your position.",
+          "where": "How To Do the Wall Ball, step 1"
+        },
+        {
+          "source": "pg-wb",
+          "text": "Stand with feet shoulder-width apart, toes slightly turned out.",
+          "where": "How To Do Hyrox Wall Balls, step 1"
+        },
+        {
+          "source": "pg-wb",
+          "text": "Hold the medicine ball at chest height with elbows tucked in.",
+          "where": "How To Do Hyrox Wall Balls, step 2"
+        },
+        {
+          "source": "bb-wb",
+          "text": "Then, grab a medicine ball or slam ball and hold the weight directly under your chin with your elbows tucked in. Brace your core, tense your back, and ensure that you feel stable.",
+          "where": "How to Do the Wall Ball, Step 1, Set Up"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Find the distance from the wall with the arms out in front: the ball (or the fingers) touches the wall, about arm's length (Box Life: 20-25 inches). BarBend gives the toes 8-12 inches from the wall and Healthline 2-3 feet; the card follows the arms-out measure.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boxrox-wb5",
+        "boxlife-wallball",
+        "ggr-wb"
+      ],
+      "quotes": [
+        {
+          "source": "boxrox-wb5",
+          "text": "To measure the correct distance, place the ball in two hands (in goblet position) with your arms fully outstretched. When the ball touches the wall then you have your position.",
+          "where": "5. Stand the Right Distance from the Wall"
+        },
+        {
+          "source": "boxlife-wallball",
+          "text": "To measure the proper distance, stand under the target and extend your arms out in front of you. Your fingers should be able to touch the wall or rig. At this point, you should find yourself 20-25 inches from the wall or rig.",
+          "where": "1. Know your distance"
+        },
+        {
+          "source": "ggr-wb",
+          "text": "Stand with your feet shoulder-width apart, a medicine ball held at chest height with both hands, and a sturdy wall roughly arm’s length from your position.",
+          "where": "How To Do the Wall Ball, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Standing too far from the wall: Fitness Volt says a lot of people forget the starting distance; the ball has to be thrown too far forward, the body tilts forward, and the set takes extra work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-wb",
+        "boxrox-wallball",
+        "boxrox-wb5",
+        "boxlife-wallball"
+      ],
+      "quotes": [
+        {
+          "source": "fv-wb",
+          "text": "Though, a lot people forget with Wall Balls is how you start is how you may finish. In other words, if you stand too far away from the wall you’re going to give yourself a lot of extra work.",
+          "where": "Stand the Right Distance from the Wall"
+        },
+        {
+          "source": "boxrox-wallball",
+          "text": "Standing too far away from the wall means you will need more energy to throw the ball to the target. You’ll be forced to throw the ball too far forward and give yourself a big amount of unnecessary extra work.",
+          "where": "MEASURE YOUR DISTANCE CORRECTLY"
+        },
+        {
+          "source": "boxrox-wb5",
+          "text": "If you have to throw the ball too far forward (because you are further away than you need to be), then you will lose the upward momentum as your body tilts forward to correct the movement.",
+          "where": "5. Stand the Right Distance from the Wall"
+        },
+        {
+          "source": "boxlife-wallball",
+          "text": "Stand too far and you’ll find yourself working harder to cover the distance between you and the target.",
+          "where": "1. Know your distance"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "BOXROX's distance tip: standing too close, the ball won't touch the wall and will probably fall on your face; measuring the distance correctly takes strain off the shoulders.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "boxrox-wallball"
+      ],
+      "quotes": [
+        {
+          "source": "boxrox-wallball",
+          "text": "Stand too close and it won’t touch the wall and probably fall on your face as you don’t have enough space to catch it.",
+          "where": "MEASURE YOUR DISTANCE CORRECTLY"
+        },
+        {
+          "source": "boxrox-wallball",
+          "text": "This will take away from the strain on your shoulders.",
+          "where": "MEASURE YOUR DISTANCE CORRECTLY"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Brace the core and keep the torso upright: don't slouch at the start, and don't let the chest and torso fall forward as you stand.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-wb"
+      ],
+      "quotes": [
+        {
+          "source": "bb-wb",
+          "text": "Form Tip: Don’t slouch in this position. Squeeze your shoulder blades back to maintain an upright posture.",
+          "where": "How to Do the Wall Ball, Step 1, Set Up"
+        },
+        {
+          "source": "bb-wb",
+          "text": "Stand up, keeping your hips underneath you, and don’t let your chest and torso fall forward. As you reach full extension, accelerate and continue and push the ball overhead, throwing it at a target above you on the wall.",
+          "where": "How to Do the Wall Ball, Step 3, Stand Up and Throw the Ball"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Squat until the thighs are parallel to the floor or lower (hip crease below the knee; at least 90 degrees), weight in the heels, chest up, knees over the toes. Squatting too shallow is first on PureGym's common-mistakes list.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-wb",
+        "boxrox-wb5",
+        "pg-wb"
+      ],
+      "quotes": [
+        {
+          "source": "bb-wb",
+          "text": "Then, drop down, keeping your torso upright until the bottom of your thighs are parallel to the floor. If you can, aim to squat deeper.",
+          "where": "How to Do the Wall Ball, Step 2, Squat Down"
+        },
+        {
+          "source": "boxrox-wb5",
+          "text": "During Wall Balls, your hip crease must break the plane of the knee joint in the squat.",
+          "where": "2. How Deep should you Squat?"
+        },
+        {
+          "source": "pg-wb",
+          "text": "Squat down, keeping weight in heels, chest up, and knees tracking over toes.",
+          "where": "How To Do Hyrox Wall Balls, step 3"
+        },
+        {
+          "source": "pg-wb",
+          "text": "Squatting too shallow. It is important you are squatting to at least 90 degrees so that your reps count during the race.",
+          "where": "1. Avoid Common Mistakes, item 1"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Drive up through the heels, extending the knees, hips and ankles, and use that leg power to throw the ball to a target above you on the wall; don't rely on the shoulders alone.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-wb",
+        "pg-wb",
+        "hl-wb"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-wb",
+          "text": "Drive through your heels and explosively extend your knees, hips, and ankles to stand up and simultaneously propel the ball into the air.",
+          "where": "How To Do the Wall Ball, step 3"
+        },
+        {
+          "source": "pg-wb",
+          "text": "Drive up explosively, using leg power to launch the ball to the target.",
+          "where": "How To Do Hyrox Wall Balls, step 4"
+        },
+        {
+          "source": "pg-wb",
+          "text": "Keep arms extended naturally—don’t rely solely on shoulders.",
+          "where": "How To Do Hyrox Wall Balls, step 5"
+        },
+        {
+          "source": "hl-wb",
+          "text": "Drive your weight down through your heels and explode your weight upwards, throwing the ball up and against the wall.",
+          "where": "Wall balls, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Catch the ball while still standing, hips and arms extended and the hands near the middle of the face, then squat. BOXROX says squatting too early is a common mistake: catching midway through or at the bottom of the squat lets the ball crush you down and makes the impact feel heavier.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boxrox-wallball",
+        "boxlife-wallball",
+        "pg-wb",
+        "bb-wb"
+      ],
+      "quotes": [
+        {
+          "source": "boxrox-wallball",
+          "text": "Squatting too early is a common mistake athletes make when performing wall balls. Catching the ball midway through a squat – or at the bottom of a squat – will mean the weight of the ball will crush you down.",
+          "where": "START SQUATTING AS YOU CATCH THE BALL"
+        },
+        {
+          "source": "boxrox-wallball",
+          "text": "It’s better to catch the ball with hips and arms extended, bring it to your chest and then start with your squat.",
+          "where": "START SQUATTING AS YOU CATCH THE BALL"
+        },
+        {
+          "source": "boxlife-wallball",
+          "text": "As the ball makes initial contact with your hands, you should still be standing with your hands near the middle of your face. Begin to squat once the ball has made contact. Squatting before you’ve caught the med ball can make the impact feel heavier.",
+          "where": "3. Catch in place"
+        },
+        {
+          "source": "pg-wb",
+          "text": "Catch the ball softly, absorbing the impact by descending into the next squat smoothly.",
+          "where": "How To Do Hyrox Wall Balls, step 6"
+        },
+        {
+          "source": "bb-wb",
+          "text": "Catch the ball on the way down and go directly into your next repetition.",
+          "where": "How to Do the Wall Ball, Step 3, Stand Up and Throw the Ball"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Catch with the hands under the ball (not sandwiching it from the sides), elbows high in front, wrists about six inches apart, and keep the ball as close to the body as possible the whole time.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boxrox-wallball",
+        "boxlife-wallball"
+      ],
+      "quotes": [
+        {
+          "source": "boxrox-wallball",
+          "text": "Having your hands sandwiching the ball and your elbows out will reduce the efficiency of your throw. Instead, catch the ball with your hands underneath the ball and high elbows in front of you.",
+          "where": "HAND PLACEMENT MATTERS"
+        },
+        {
+          "source": "boxrox-wallball",
+          "text": "Keep the ball as close to your body as possible during the entire movement.",
+          "where": "HAND PLACEMENT MATTERS"
+        },
+        {
+          "source": "boxlife-wallball",
+          "text": "Ideally, you want to catch the med ball so that your hands are on the underside of the ball (as opposed to the sides), as close to your body as possible, with your wrists about six inches apart.",
+          "where": "3. Catch in place"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "A ball can smash into the face: Fitness Volt calls it a reminder that form is key, and BOXROX ties it to tired arms and fatigue.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-wb",
+        "boxrox-wb5"
+      ],
+      "quotes": [
+        {
+          "source": "fv-wb",
+          "text": "Keeping the ball as close as possible to your body is key to this exercise. The further the ball travels from your body, the heavier it will feel. A wall ball smashing in your nose is a friendly remainder that form is key here.",
+          "where": "Catching and Positioning the Ball"
+        },
+        {
+          "source": "boxrox-wb5",
+          "text": "The tricky part about keeping the ball close to your face and body is that we have all, whether we like to admit it or not, probably had a Wall Ball smash into our faces at some point during a WOD because of tired arms and fatigue.",
+          "where": "1. Catching and Positioning the Ball"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Breathe with each rep: in as you go down into the squat, out as you spring up and throw.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "boxlife-wallball",
+        "pg-wb"
+      ],
+      "quotes": [
+        {
+          "source": "boxlife-wallball",
+          "text": "As you begin your descent into the squat, inhale. As you spring up, exhale.",
+          "where": "5. Don’t hold your breath"
+        },
+        {
+          "source": "pg-wb",
+          "text": "Breathe in during the squat, out on the throw to control heart rate.",
+          "where": "2. Pace Yourself"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Load: beginners start with a 6-10 pound ball and progress gradually; to make it easier use a lighter ball or a lower target; go only as heavy as proper form allows, for no fewer than eight reps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ggr-wb",
+        "bb-wb"
+      ],
+      "quotes": [
+        {
+          "source": "ggr-wb",
+          "text": "For beginners, we recommend in the range of six to 10 pounds to start and progress gradually as you gain proficiency.",
+          "where": "Wall Ball Workout: FAQs, How heavy should my wall ball be?"
+        },
+        {
+          "source": "ggr-wb",
+          "text": "To modify, use a lighter medicine ball, throw to a lower height, or just substitute wall balls for medicine ball slams, front squats, push presses, or thrusters.",
+          "where": "Modifications, Dial it back"
+        },
+        {
+          "source": "bb-wb",
+          "text": "You can go as heavy as possible while still maintaining proper form. However, we suggest performing no less than eight reps, and with good speed.",
+          "where": "FAQs, How heavy can I train wall balls?"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "The quads (extending the knees in the squat) and the glutes (extending the hips to stand) are the main leg muscles.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-wb",
+        "ggr-wb",
+        "pg-wb",
+        "hl-wb"
+      ],
+      "quotes": [
+        {
+          "source": "bb-wb",
+          "text": "Your quads extend the knees, which is what happens during a squat.",
+          "where": "Muscles Worked by Wall Ball, Quadriceps"
+        },
+        {
+          "source": "bb-wb",
+          "text": "The glute muscles extend the hips as you stand up.",
+          "where": "Muscles Worked by Wall Ball, Gluteals"
+        },
+        {
+          "source": "ggr-wb",
+          "text": "Glutes: Your gluteal muscles are largely responsible for extending your hips, so you’ll need to flex your glutes to get a good hip extension and generate power as you stand back up from your squat.",
+          "where": "Muscles Worked by the Wall Ball"
+        },
+        {
+          "source": "pg-wb",
+          "text": "Quadriceps",
+          "where": "What Are Wall Balls?, main muscles worked"
+        },
+        {
+          "source": "hl-wb",
+          "text": "Muscles worked: glutes, hamstrings, quads, shoulders, and chest",
+          "where": "Wall balls"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "The shoulders and upper chest throw the ball overhead, with the triceps as a secondary muscle extending the elbows.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-wb",
+        "pg-wb"
+      ],
+      "quotes": [
+        {
+          "source": "bb-wb",
+          "text": "The shoulders and upper chest muscles are used to throw the ball overhead after reaching extension in the squat.",
+          "where": "Muscles Worked by Wall Ball, Shoulders and Upper Chest"
+        },
+        {
+          "source": "bb-wb",
+          "text": "The triceps are a secondary muscle group used, which means that while they are not the main mover in the exercise (such as the quads and shoulders), they still play an important role.",
+          "where": "Muscles Worked by Wall Ball, Triceps"
+        },
+        {
+          "source": "pg-wb",
+          "text": "Triceps",
+          "where": "What Are Wall Balls?, main muscles worked"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Two read sources list the hamstrings.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-wb",
+        "hl-wb"
+      ],
+      "quotes": [
+        {
+          "source": "pg-wb",
+          "text": "Hamstrings",
+          "where": "What Are Wall Balls?, main muscles worked"
+        },
+        {
+          "source": "hl-wb",
+          "text": "Muscles worked: glutes, hamstrings, quads, shoulders, and chest",
+          "where": "Wall balls"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Programming: for endurance, four sets of 25 reps or as many reps as possible in five minutes, resting 30 seconds between sets. No source gives seconds for a phase of the rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-wb"
+      ],
+      "quotes": [
+        {
+          "source": "bb-wb",
+          "text": "Do either four sets of 25 reps or set a timer for five minutes and aim to accumulate as many reps as possible. Rest 30 seconds between sets and then rest as needed for the five-minute challenge.",
+          "where": "Wall Ball Sets, Reps, and Programming Recommendations, To Improve Muscle Endurance"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Keep the feet on the floor; a little jump at the top makes each rep less efficient.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "boxrox-wallball"
+      ],
+      "quotes": [
+        {
+          "source": "boxrox-wallball",
+          "text": "Concentrating on keeping your feet on the floor will help your wall balls feel more efficient but, as all tips above, it’s something you need to concentrate on otherwise it won’t happen.",
+          "where": "KEEP YOUR FEET ON THE FLOOR"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bb-wb",
+      "url": "https://barbend.com/wall-balls-exercise-guide/",
+      "title": "The Wall Ball is the Cardio Booster Your Workouts Are Missing (BarBend)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "ggr-wb",
+      "url": "https://www.garagegymreviews.com/wall-ball-workout",
+      "title": "Ball Out With Our Wall Ball Workout (Garage Gym Reviews)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "pg-wb",
+      "url": "https://www.puregym.com/blog/hyrox-wall-ball/",
+      "title": "Hyrox Wall Ball Guide: Everything You Need To Know (PureGym)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "boxlife-wallball",
+      "url": "https://boxlifemagazine.com/5-tips-to-dominate-wall-balls/",
+      "title": "5 Tips To Dominate Wall Balls (Box Life Magazine)",
+      "kind": "coach",
+      "year": 2018,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "boxrox-wallball",
+      "url": "https://www.boxrox.com/?p=106154",
+      "title": "Seven Important Technique Tips to Improve Your Wall Ball Efficiency in CrossFit (BOXROX)",
+      "kind": "coach",
+      "year": 2020,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "boxrox-wb5",
+      "url": "https://www.boxrox.com/5-tips-to-destroy-wall-balls/",
+      "title": "5 Tips to Destroy Wall Balls in Crossfit WODs (BOXROX)",
+      "kind": "coach",
+      "year": 2016,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "fv-wb",
+      "url": "https://fitnessvolt.com/wall-balls-crossfit-athletes/",
+      "title": "Advice On Making Wall Balls Easier For CrossFit Athletes (Fitness Volt)",
+      "kind": "coach",
+      "year": 2019,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "hl-wb",
+      "url": "https://www.healthline.com/health/fitness-exercise/slam-ball-exercises",
+      "title": "Slam Ball Exercises and Benefits (Healthline; medically reviewed by a CSCS), wall balls section",
+      "kind": "secondary",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census: side. The feet-to-wall distance and the forward tilt it causes (c2, c3; the top fault), the squat depth (c6) and the catch above the face before the squat (c8) all read from the side, with the wall and its target drawn in front of the lifter.",
+    "equipment": "Medicine ball (census need medBall, compose) and a wall with a target above head height (census need wall, compose); floor line. The feet stand about arm's length from the wall, the ball touching it with the arms out (c2).",
+    "start": "Standing tall facing the wall at about arm's length (c2), feet shoulder-width apart, toes slightly out (c1); ball at chest height under the chin, elbows tucked in (c1); torso upright (c5).",
+    "end": "Bottom of the squat: thighs parallel to the floor or lower, weight in the heels, chest up (c6); ball close at the chest (c9); then the drive up and the throw to the target (c7).",
+    "checkpoints": [
+      {
+        "label": "Right distance",
+        "what": "Arms out, the ball touches the wall: stand there.",
+        "claim": "c2"
+      },
+      {
+        "label": "Squat depth",
+        "what": "Thighs parallel to the floor or lower, chest up.",
+        "claim": "c6"
+      },
+      {
+        "label": "Catch, then squat",
+        "what": "Catch standing, hands under the ball, then squat.",
+        "claim": [
+          "c8",
+          "c9"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Standing too far from the wall, so the ball is thrown forward and the body tilts forward.",
+      "why": "LR-31 step 1: two faults have frequency words (Fitness Volt on the distance, c3; BOXROX on squatting too early, c8). Step 2's order picks standing too far, the only one tied to harm: BOXROX says measuring the distance correctly \"will take away from the strain on your shoulders\" (c4). The gap between the feet and the wall and the forward tilt show from the side.",
+      "claim": [
+        "c3",
+        "c4"
+      ],
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1, two faults, ordered by step 2: standing too far from the wall (c3, c4). Step 1 hits: Fitness Volt's \"Though, a lot people forget with Wall Balls is how you start is how you may finish. In other words, if you stand too far away from the wall you’re going to give yourself a lot of extra work.\" (c3), read as a \"many people\" sentence about this exercise's own fault (D-SUP-LB7-DIPREPS); the distance is where the feet stay for the whole set, so it is a candidate (D-SUP-LB7-FEET). BOXROX's \"Squatting too early is a common mistake athletes make when performing wall balls.\" (c8) is a sentence about one fault under its own tip, not a common-mistakes heading or a list sentence read onto an item (unlike reverse_lunge's \"Another common error\", R-LB4-2). Step 2's order: BOXROX's \"MEASURE YOUR DISTANCE CORRECTLY\" tip ends \"This will take away from the strain on your shoulders.\" (c4): the cue that corrects the distance reduces harm (the seated_cable_row c9 pattern), so standing too far is tied to harm. Squatting too early is tied to none: BOXROX's \"will mean the weight of the ball will crush you down\" and Box Life's \"Squatting before you’ve caught the med ball can make the impact feel heavier. Over the course of a few reps, this impact can take a toll.\" name no injury, pain, stress or discomfort. Standing too far wins. Set aside at step 1: PureGym's \"Learning what the common mistakes are in wall balls\" (a list sentence; its list is squatting too shallow, poor catch position, rushing); Box Life's \"It’s important to note that being too far from the target is usually better than being too close.\" (compares two distances and says nothing of how often lifters stand too far), \"Athletes sometimes think they’re saving time and energy by not squatting to full depth\" (\"sometimes\" is not a frequency word) and \"It’s unlikely that you’ll need to adjust more than five inches\" (no fault); BOXROX's \"one that many (usually short) people struggle with\" and \"a movement many athletes struggle to go unbroken in\" (the exercise, no fault), \"Some people are stopped or slowed down by intense muscle pain\" (\"some\", no fault) and \"Short athletes especially tend to naturally do a little jump at the top\" (\"tend\"); BOXROX's 2016 tips' \"we have all, whether we like to admit it or not, probably had a Wall Ball smash into our faces at some point during a WOD because of tired arms and fatigue\" (c10: \"probably\", and an outcome of fatigue, not a position); BarBend's \"Most of us know all too well the feeling of the burning lungs\" (no fault), \"The deeper the squat, the better (most of the time)\" (depth advice), \"this movement is typically done for many reps or time\", \"reps are often really, really high\" and \"do these often\" (programming), \"is, typically, more comfortable on the shoulder joint\" (the landmine press, another exercise); Garage Gym Reviews' \"The most common ways of upping the ante\", \"often helps elevate the challenge\", \"almost always involve a running timer\", \"Wall balls work in most WODs\" and \"most workouts with wall balls incorporate elements of HIIT\" (programming) and \"you tend to see them\" (\"tend\"). Harm quotes set aside: BOXROX's \"Stand too close and it won’t touch the wall and probably fall on your face\" (c4) is standing too close, which no step-1 quote names; Fitness Volt's \"A wall ball smashing in your nose is a friendly remainder that form is key here.\" (c10) and Box Life's \"Anyone who’s ever been smacked in the face with a med ball\" name no step-1 fault; BarBend's \"due to shoulder injury or mobility issues\" is about the landmine press. The side view shows the feet far from the wall and the body tilting forward on the throw (c3), so drawable is true. Other reading (ruling ask in the writer record): if Fitness Volt's \"a lot people forget\" is not counted, step 1 has one hit and picks squatting too early (drawable: the catch at the bottom of the squat shows from the side). Also set aside from the fetcher's full scan (2026-10-22): BarBend's \"the wall ball is a common competition movement\" (the exercise, no fault) and \"The wall ball has you move through multiple planes of movement while adding extreme stress to your muscles and cardiovascular system.\" (training load, no fault); Garage Gym Reviews' \"There are many reasons why the wall ball is so widely used\", \"by doing jump squats regularly\" and \"Regularly performing this movement\" (no fault) and \"HIIT may decrease an individual’s risk of cardiovascular disease\" (benefit); PureGym's list items \"Poor catch position.\" (\"to avoid unnecessary movement that can wear you out quicker\") and \"Rushing.\" (\"to avoid early burnout\"), tied to fatigue, not harm, and \"Squatting too shallow.\" (no harm); its \"to ensure you are regularly practicing\" (programming); Box Life's \"one of the sport’s most notorious benchmark workouts\" (a workout) and \"Stand too close and you’ll risk throwing the ball straight up and missing the target completely.\" (a missed target, not harm); BOXROX's \"it’s also the most tying\" (arms held overhead, fatigue); BOXROX 2016's \"avoid this embarrassment\" and \"avoid any further unwanted kisses from your Ball\" (the face strike of c10, no step-1 fault); Healthline's \"Most of them range from 10 to 20 pounds in weight.\" (ball weights) and \"muscles tenderness and soreness (not pain)\" (all its exercises). The fetcher's word scan does not list Fitness Volt's \"a lot people forget\" (no LR-31 word); the card counts it on its plain meaning (ruling ask 1 in the writer record). Reading applied: a sentence that says this exercise's own fault is common or made by many (\"a common mistake\"; \"a lot people\" read as \"many people\") is a step-1 hit (D-SUP-LB7-DIPREPS); the feet-to-wall distance is a candidate (D-SUP-LB7-FEET); a cue whose correction reduces strain ties its fault to harm (seated_cable_row c9); fatigue, burnout and a missed target are not harm.",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Ball stays close to your body",
+        "claim": "c9"
+      },
+      {
+        "text": "Catch tall, then squat",
+        "claim": "c8"
+      },
+      {
+        "text": "Feet stay on the floor",
+        "claim": "c17"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "claim": "c16",
+      "text": "Cyclic and continuous: no read source gives seconds for any phase, so up, down and pause stay null (LR-33). BarBend says to catch the ball and go directly into the next rep (c8); its endurance sets are four sets of 25 or five minutes for as many reps as possible (c16). No quote asks for a pause after the throw. Box Life's and BOXROX's arm rests (drop the arms while the ball is in the air) are rests between reps, with no seconds, not the pause field."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Two hands on the ball at chest height (c1); at the catch, hands under the ball, elbows high in front (c9).",
+    "width": "Wrists about six inches apart at the catch (c9, Box Life).",
+    "thumb": "Not given by any read source (shared/implement-wall-ball.json gaps).",
+    "handContact": "Hands on the underside of the ball, not its sides (c9). Fitness Volt and BOXROX's 2016 tips say to the sides and slightly toward the bottom (notes); the card follows BOXROX 2020 and Box Life, as the shared card does.",
+    "wrist": "Not given by any read source beyond the six-inch spacing.",
+    "claims": [
+      "c1",
+      "c9"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Face a sturdy wall, feet shoulder-width apart, toes slightly out.",
+      "claim": "c1"
+    },
+    {
+      "step": "Arms out, ball touching the wall: stand there.",
+      "claim": "c2"
+    },
+    {
+      "step": "Hold the ball at chest height, elbows tucked in.",
+      "claim": "c1"
+    },
+    {
+      "step": "Brace your core and stand tall.",
+      "claim": [
+        "c1",
+        "c5"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Squat until your thighs are parallel to the floor or lower.",
+      "claim": "c6"
+    },
+    {
+      "point": "Keep your weight in your heels and your chest up.",
+      "claim": "c6"
+    },
+    {
+      "point": "Drive up through your heels and throw the ball to the target.",
+      "claim": "c7"
+    },
+    {
+      "point": "Keep the ball close to your body.",
+      "claim": "c9"
+    },
+    {
+      "point": "Catch while still standing, then squat.",
+      "claim": "c8"
+    },
+    {
+      "point": "Breathe in as you squat, out as you throw.",
+      "claim": "c11"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Standing too far from the wall.",
+      "fix": "Arms out, ball touching the wall: stand there.",
+      "claim": [
+        "c3",
+        "c2"
+      ]
+    },
+    {
+      "mistake": "Squatting before you catch the ball.",
+      "fix": "Catch standing tall, then squat.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Squatting too shallow.",
+      "fix": "Squat until your thighs are parallel to the floor or lower.",
+      "claim": "c6"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c13"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c13"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "upper_chest",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "triceps",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "hamstrings",
+        "claim": "c15"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Thighs and glutes",
+        "means": "Your quads and glutes extend the knees and hips as you stand.",
+        "fix": "",
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "Shoulders and upper chest",
+        "means": "They throw the ball overhead.",
+        "fix": "",
+        "claim": "c14",
+        "redFlag": null
+      },
+      {
+        "where": "Shoulders",
+        "means": "The right distance from the wall takes strain off them.",
+        "fix": "Arms out, ball touching the wall: stand there.",
+        "claim": [
+          "c4",
+          "c2"
+        ],
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "The right distance from the wall takes strain off your shoulders.",
+      "claim": "c4"
+    },
+    {
+      "risk": "Too close to the wall, the ball will probably fall on your face.",
+      "claim": "c4"
+    },
+    {
+      "risk": "Tired arms can let the ball smash into your face.",
+      "claim": "c10"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "wall-distance",
+      "kind": "posture",
+      "right": "Arms out, the ball touches the wall.",
+      "wrong": "Too far back: the ball goes forward and the body tilts.",
+      "claim": [
+        "c2",
+        "c3"
+      ]
+    },
+    {
+      "key": "catch-hands",
+      "kind": "hand",
+      "right": "Hands under the ball, elbows high in front.",
+      "wrong": "Hands sandwiching the ball, elbows out.",
+      "claim": "c9"
+    },
+    {
+      "key": "catch-timing",
+      "kind": "posture",
+      "right": "Catch with hips and arms extended, then squat.",
+      "wrong": "Catching at the bottom of the squat.",
+      "claim": "c8"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "glutes",
+      "upper_chest",
+      "triceps",
+      "hamstrings"
+    ],
+    "remove": [],
+    "why": "Library: quads primary; side_delts and core secondary. quads stays primary (c13). glutes is added as primary (BarBend, Garage Gym Reviews, PureGym and Healthline, c13). upper_chest and triceps are added as secondary (BarBend, c14; PureGym lists triceps), hamstrings as secondary (PureGym, Healthline, c15). side_delts stays: the sources say \"shoulders\" and name no head, so no shoulder id is shown in feel and none is removed. core stays in the library list (Garage Gym Reviews and PureGym name the core), but not in feel (LR-35)."
+  },
+  "anchorSource": "bb-wb",
+  "loadProgression": {
+    "text": "Start with a 6 to 10 pound ball and progress gradually. Go only as heavy as you can with proper form.",
+    "claims": [
+      "c12"
+    ]
+  },
+  "tierA": {
+    "wayOut": null
+  },
+  "gaps": [
+    "Way out (tier A, LR-3): no read source says what to do with a missed or dropped catch, or how to bail out of a rep safely. BOXROX only says a ball thrown from too close will probably fall on your face (c4). No way-out line is shown; this joins the owner's tier-A gap list (LIB-WAYOUT, medicine ball).",
+    "No read source ties a knee or back position in the wall ball to a named harm; no knee or back row is written.",
+    "Thumb and wrist angle at the catch are not sourced (shared/implement-wall-ball.json gaps stand).",
+    "No study found: PubMed searches for \"wall ball shot\", \"wall ball crossfit\" and \"wall balls\" (2026-10-22) returned no technique or injury paper; crossfit.com's wall-ball pages render only with scripts and gave no text to curl."
+  ],
+  "notes": [
+    "Own parent (content.md Appendix A). Shared card shared/implement-wall-ball.json (appliesTo wall_ball, W0B) is cited, not copied: its two sources (Box Life, BOXROX ?p=106154) were fetched again by curl on 2026-10-22, and its hands-under, elbows-high, six-inch and catch-standing lines are this card's own claims c8 and c9.",
+    "Tier A, content.md 5.2: way out in gaps (LR-3); thumb and bar not applicable (no bar); load wording: no fix pushes through pain, loadProgression starts light and caps load by form (c12); warning link: the shoulder row links the shoulder box (c4); risks: three lines, two of them the face-strike lines (c4, c10); breathing: posture[5] (c11); catch: checkpoint 3 is the catch, standing, before the squat (c8, c9); no jump: BOXROX says keep the feet on the floor (c17); no condition names on shown lines; hand pair implement, two hands under the ball.",
+    "Distance conflict: BarBend sets the toes 8-12 inches from the wall (\"with the toes roughly eight to 12 inches away from the all (face the wall)\", sic), Healthline says 2-3 feet, Garage Gym Reviews roughly arm's length, Box Life 20-25 inches, BOXROX 2016 and Fitness Volt the arms-out measure. The card and plate follow the arms-out measure (c2). Box Life adds that too far is usually better than too close (rankNote).",
+    "Hand conflict: Fitness Volt (\"Position your hands to the sides and slightly towards the bottom of the ball during the catch.\") and BOXROX 2016 give the sides and slightly toward the bottom; BOXROX 2020 and Box Life give the underside, not the sides (c9). The card follows c9, as shared/implement-wall-ball.json does.",
+    "Squat depth: BOXROX 2016 says \"You don’t need to super deep, ass to grass\"; BarBend says aim deeper if you can. The card shows parallel or lower (c6).",
+    "Target height (not shown): Garage Gym Reviews gives the CrossFit standard of a 20-lb ball to 10 feet for men and 14 lb to 9 feet for women; PureGym gives Hyrox's 4-9 kg balls to 9 or 10 foot targets."
+  ]
+}

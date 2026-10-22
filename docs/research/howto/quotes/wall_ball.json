@@ -1,0 +1,407 @@
+{
+  "id": "wall_ball",
+  "checked": "2026-10-22",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "ggr-wb",
+      "text": "Stand with your feet shoulder-width apart, a medicine ball held at chest height with both hands, and a sturdy wall roughly arm’s length from your position.",
+      "status": "verbatim",
+      "closest": "Stand with your feet shoulder-width apart, a medicine ball held at chest height with both hands, and a sturdy wall roughly arm’s length from your position.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "pg-wb",
+      "text": "Stand with feet shoulder-width apart, toes slightly turned out.",
+      "status": "verbatim",
+      "closest": "Stand with feet shoulder-width apart, toes slightly turned out.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "pg-wb",
+      "text": "Hold the medicine ball at chest height with elbows tucked in.",
+      "status": "verbatim",
+      "closest": "Hold the medicine ball at chest height with elbows tucked in.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "bb-wb",
+      "text": "Then, grab a medicine ball or slam ball and hold the weight directly under your chin with your elbows tucked in. Brace your core, tense your back, and ensure that you feel stable.",
+      "status": "verbatim",
+      "closest": "Then, grab a medicine ball or slam ball and hold the weight directly under your chin with your elbows tucked in. Brace your core, tense your back, and ensure that you feel stable.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "boxrox-wb5",
+      "text": "To measure the correct distance, place the ball in two hands (in goblet position) with your arms fully outstretched. When the ball touches the wall then you have your position.",
+      "status": "verbatim",
+      "closest": "To measure the correct distance, place the ball in two hands (in goblet position) with your arms fully outstretched. When the ball touches the wall then you have your position.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "boxlife-wallball",
+      "text": "To measure the proper distance, stand under the target and extend your arms out in front of you. Your fingers should be able to touch the wall or rig. At this point, you should find yourself 20-25 inches from the wall or rig.",
+      "status": "verbatim",
+      "closest": "To measure the proper distance, stand under the target and extend your arms out in front of you. Your fingers should be able to touch the wall or rig. At this point, you should find yourself 20-25 inches from the wall or rig.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "ggr-wb",
+      "text": "Stand with your feet shoulder-width apart, a medicine ball held at chest height with both hands, and a sturdy wall roughly arm’s length from your position.",
+      "status": "verbatim",
+      "closest": "Stand with your feet shoulder-width apart, a medicine ball held at chest height with both hands, and a sturdy wall roughly arm’s length from your position.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "fv-wb",
+      "text": "Though, a lot people forget with Wall Balls is how you start is how you may finish. In other words, if you stand too far away from the wall you’re going to give yourself a lot of extra work.",
+      "status": "verbatim",
+      "closest": "Though, a lot people forget with Wall Balls is how you start is how you may finish. In other words, if you stand too far away from the wall you’re going to give yourself a lot of extra work.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "boxrox-wallball",
+      "text": "Standing too far away from the wall means you will need more energy to throw the ball to the target. You’ll be forced to throw the ball too far forward and give yourself a big amount of unnecessary extra work.",
+      "status": "verbatim",
+      "closest": "Standing too far away from the wall means you will need more energy to throw the ball to the target. You’ll be forced to throw the ball too far forward and give yourself a big amount of unnecessary extra work.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "boxrox-wb5",
+      "text": "If you have to throw the ball too far forward (because you are further away than you need to be), then you will lose the upward momentum as your body tilts forward to correct the movement.",
+      "status": "verbatim",
+      "closest": "If you have to throw the ball too far forward (because you are further away than you need to be), then you will lose the upward momentum as your body tilts forward to correct the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "boxlife-wallball",
+      "text": "Stand too far and you’ll find yourself working harder to cover the distance between you and the target.",
+      "status": "verbatim",
+      "closest": "Stand too far and you’ll find yourself working harder to cover the distance between you and the target.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "boxrox-wallball",
+      "text": "Stand too close and it won’t touch the wall and probably fall on your face as you don’t have enough space to catch it.",
+      "status": "verbatim",
+      "closest": "Stand too close and it won’t touch the wall and probably fall on your face as you don’t have enough space to catch it.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "boxrox-wallball",
+      "text": "This will take away from the strain on your shoulders.",
+      "status": "verbatim",
+      "closest": "This will take away from the strain on your shoulders.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-wb",
+      "text": "Form Tip: Don’t slouch in this position. Squeeze your shoulder blades back to maintain an upright posture.",
+      "status": "verbatim",
+      "closest": "Form Tip: Don’t slouch in this position. Squeeze your shoulder blades back to maintain an upright posture.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-wb",
+      "text": "Stand up, keeping your hips underneath you, and don’t let your chest and torso fall forward. As you reach full extension, accelerate and continue and push the ball overhead, throwing it at a target above you on the wall.",
+      "status": "verbatim",
+      "closest": "Stand up, keeping your hips underneath you, and don’t let your chest and torso fall forward. As you reach full extension, accelerate and continue and push the ball overhead, throwing it at a target above you on the wall.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "bb-wb",
+      "text": "Then, drop down, keeping your torso upright until the bottom of your thighs are parallel to the floor. If you can, aim to squat deeper.",
+      "status": "verbatim",
+      "closest": "Then, drop down, keeping your torso upright until the bottom of your thighs are parallel to the floor. If you can, aim to squat deeper.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "boxrox-wb5",
+      "text": "During Wall Balls, your hip crease must break the plane of the knee joint in the squat.",
+      "status": "verbatim",
+      "closest": "During Wall Balls, your hip crease must break the plane of the knee joint in the squat.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "pg-wb",
+      "text": "Squat down, keeping weight in heels, chest up, and knees tracking over toes.",
+      "status": "verbatim",
+      "closest": "Squat down, keeping weight in heels, chest up, and knees tracking over toes.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "pg-wb",
+      "text": "Squatting too shallow. It is important you are squatting to at least 90 degrees so that your reps count during the race.",
+      "status": "verbatim",
+      "closest": "Squatting too shallow. It is important you are squatting to at least 90 degrees so that your reps count during the race.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "ggr-wb",
+      "text": "Drive through your heels and explosively extend your knees, hips, and ankles to stand up and simultaneously propel the ball into the air.",
+      "status": "verbatim",
+      "closest": "Drive through your heels and explosively extend your knees, hips, and ankles to stand up and simultaneously propel the ball into the air.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "pg-wb",
+      "text": "Drive up explosively, using leg power to launch the ball to the target.",
+      "status": "verbatim",
+      "closest": "Drive up explosively, using leg power to launch the ball to the target.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "pg-wb",
+      "text": "Keep arms extended naturally—don’t rely solely on shoulders.",
+      "status": "verbatim",
+      "closest": "Keep arms extended naturally—don’t rely solely on shoulders.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "hl-wb",
+      "text": "Drive your weight down through your heels and explode your weight upwards, throwing the ball up and against the wall.",
+      "status": "verbatim",
+      "closest": "Drive your weight down through your heels and explode your weight upwards, throwing the ball up and against the wall.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "boxrox-wallball",
+      "text": "Squatting too early is a common mistake athletes make when performing wall balls. Catching the ball midway through a squat – or at the bottom of a squat – will mean the weight of the ball will crush you down.",
+      "status": "verbatim",
+      "closest": "Squatting too early is a common mistake athletes make when performing wall balls. Catching the ball midway through a squat – or at the bottom of a squat – will mean the weight of the ball will crush you down.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "boxrox-wallball",
+      "text": "It’s better to catch the ball with hips and arms extended, bring it to your chest and then start with your squat.",
+      "status": "verbatim",
+      "closest": "It’s better to catch the ball with hips and arms extended, bring it to your chest and then start with your squat.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "boxlife-wallball",
+      "text": "As the ball makes initial contact with your hands, you should still be standing with your hands near the middle of your face. Begin to squat once the ball has made contact. Squatting before you’ve caught the med ball can make the impact feel heavier.",
+      "status": "verbatim",
+      "closest": "As the ball makes initial contact with your hands, you should still be standing with your hands near the middle of your face. Begin to squat once the ball has made contact. Squatting before you’ve caught the med ball can make the impact feel heavier.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "pg-wb",
+      "text": "Catch the ball softly, absorbing the impact by descending into the next squat smoothly.",
+      "status": "verbatim",
+      "closest": "Catch the ball softly, absorbing the impact by descending into the next squat smoothly.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "bb-wb",
+      "text": "Catch the ball on the way down and go directly into your next repetition.",
+      "status": "verbatim",
+      "closest": "Catch the ball on the way down and go directly into your next repetition.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "boxrox-wallball",
+      "text": "Having your hands sandwiching the ball and your elbows out will reduce the efficiency of your throw. Instead, catch the ball with your hands underneath the ball and high elbows in front of you.",
+      "status": "verbatim",
+      "closest": "Having your hands sandwiching the ball and your elbows out will reduce the efficiency of your throw. Instead, catch the ball with your hands underneath the ball and high elbows in front of you.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "boxrox-wallball",
+      "text": "Keep the ball as close to your body as possible during the entire movement.",
+      "status": "verbatim",
+      "closest": "Keep the ball as close to your body as possible during the entire movement.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "boxlife-wallball",
+      "text": "Ideally, you want to catch the med ball so that your hands are on the underside of the ball (as opposed to the sides), as close to your body as possible, with your wrists about six inches apart.",
+      "status": "verbatim",
+      "closest": "Ideally, you want to catch the med ball so that your hands are on the underside of the ball (as opposed to the sides), as close to your body as possible, with your wrists about six inches apart.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "fv-wb",
+      "text": "Keeping the ball as close as possible to your body is key to this exercise. The further the ball travels from your body, the heavier it will feel. A wall ball smashing in your nose is a friendly remainder that form is key here.",
+      "status": "verbatim",
+      "closest": "Keeping the ball as close as possible to your body is key to this exercise. The further the ball travels from your body, the heavier it will feel. A wall ball smashing in your nose is a friendly remainder that form is key here.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "boxrox-wb5",
+      "text": "The tricky part about keeping the ball close to your face and body is that we have all, whether we like to admit it or not, probably had a Wall Ball smash into our faces at some point during a WOD because of tired arms and fatigue.",
+      "status": "verbatim",
+      "closest": "The tricky part about keeping the ball close to your face and body is that we have all, whether we like to admit it or not, probably had a Wall Ball smash into our faces at some point during a WOD because of tired arms and fatigue.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "boxlife-wallball",
+      "text": "As you begin your descent into the squat, inhale. As you spring up, exhale.",
+      "status": "verbatim",
+      "closest": "As you begin your descent into the squat, inhale. As you spring up, exhale.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "pg-wb",
+      "text": "Breathe in during the squat, out on the throw to control heart rate.",
+      "status": "verbatim",
+      "closest": "Breathe in during the squat, out on the throw to control heart rate.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "ggr-wb",
+      "text": "For beginners, we recommend in the range of six to 10 pounds to start and progress gradually as you gain proficiency.",
+      "status": "verbatim",
+      "closest": "For beginners, we recommend in the range of six to 10 pounds to start and progress gradually as you gain proficiency.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "ggr-wb",
+      "text": "To modify, use a lighter medicine ball, throw to a lower height, or just substitute wall balls for medicine ball slams, front squats, push presses, or thrusters.",
+      "status": "verbatim",
+      "closest": "To modify, use a lighter medicine ball, throw to a lower height, or just substitute wall balls for medicine ball slams, front squats, push presses, or thrusters.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "bb-wb",
+      "text": "You can go as heavy as possible while still maintaining proper form. However, we suggest performing no less than eight reps, and with good speed.",
+      "status": "verbatim",
+      "closest": "You can go as heavy as possible while still maintaining proper form. However, we suggest performing no less than eight reps, and with good speed.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "bb-wb",
+      "text": "Your quads extend the knees, which is what happens during a squat.",
+      "status": "verbatim",
+      "closest": "Your quads extend the knees, which is what happens during a squat.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "bb-wb",
+      "text": "The glute muscles extend the hips as you stand up.",
+      "status": "verbatim",
+      "closest": "The glute muscles extend the hips as you stand up.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "ggr-wb",
+      "text": "Glutes: Your gluteal muscles are largely responsible for extending your hips, so you’ll need to flex your glutes to get a good hip extension and generate power as you stand back up from your squat.",
+      "status": "verbatim",
+      "closest": "Glutes: Your gluteal muscles are largely responsible for extending your hips, so you’ll need to flex your glutes to get a good hip extension and generate power as you stand back up from your squat.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "pg-wb",
+      "text": "Quadriceps",
+      "status": "verbatim",
+      "closest": "Quadriceps",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "hl-wb",
+      "text": "Muscles worked: glutes, hamstrings, quads, shoulders, and chest",
+      "status": "verbatim",
+      "closest": "Muscles worked: glutes, hamstrings, quads, shoulders, and chest",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "bb-wb",
+      "text": "The shoulders and upper chest muscles are used to throw the ball overhead after reaching extension in the squat.",
+      "status": "verbatim",
+      "closest": "The shoulders and upper chest muscles are used to throw the ball overhead after reaching extension in the squat.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "bb-wb",
+      "text": "The triceps are a secondary muscle group used, which means that while they are not the main mover in the exercise (such as the quads and shoulders), they still play an important role.",
+      "status": "verbatim",
+      "closest": "The triceps are a secondary muscle group used, which means that while they are not the main mover in the exercise (such as the quads and shoulders), they still play an important role.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "pg-wb",
+      "text": "Triceps",
+      "status": "verbatim",
+      "closest": "Triceps",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "pg-wb",
+      "text": "Hamstrings",
+      "status": "verbatim",
+      "closest": "Hamstrings",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "hl-wb",
+      "text": "Muscles worked: glutes, hamstrings, quads, shoulders, and chest",
+      "status": "verbatim",
+      "closest": "Muscles worked: glutes, hamstrings, quads, shoulders, and chest",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "bb-wb",
+      "text": "Do either four sets of 25 reps or set a timer for five minutes and aim to accumulate as many reps as possible. Rest 30 seconds between sets and then rest as needed for the five-minute challenge.",
+      "status": "verbatim",
+      "closest": "Do either four sets of 25 reps or set a timer for five minutes and aim to accumulate as many reps as possible. Rest 30 seconds between sets and then rest as needed for the five-minute challenge.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "boxrox-wallball",
+      "text": "Concentrating on keeping your feet on the floor will help your wall balls feel more efficient but, as all tips above, it’s something you need to concentrate on otherwise it won’t happen.",
+      "status": "verbatim",
+      "closest": "Concentrating on keeping your feet on the floor will help your wall balls feel more efficient but, as all tips above, it’s something you need to concentrate on otherwise it won’t happen.",
+      "note": ""
+    }
+  ]
+}
