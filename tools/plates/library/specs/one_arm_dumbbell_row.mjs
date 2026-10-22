@@ -27,12 +27,13 @@
 //   the elbow bent and driven back, the upper arm close to the body, the dumbbell at the hip: the grip END_DZ behind
 //   the shoulder line toward the hip and END_DY below the back. Shoulder blades: 2 cm forward at the bottom, pulled
 //   back 4 cm at the top. Wrist bent back 35 deg into the pull grip (the card's recorded convention, R-LB3-5).
-//  Mistake (c10, short range): the pull stops short: the grip low, M_DY under and M_DZ behind the shoulder (the arm
-//   swung part way back, clear of the body: panel fix D-LIB13-PANEL1 R5), the shoulder blade not pulled back (pro 2 cm,
-//   as at the start).
+//  Mistake (c10, short range, the bottom half: "arm not fully straight at the bottom"; panel fix 2, D-LIB13-PANEL2,
+//   D-LIB13-ONEARM-M): at the bottom the arm never straightens: the dumbbell M_RISE above the straight-arm start, straight
+//   up from it, the elbow bent; the shoulder blade forward as at the start (pro 2 cm). The top half (the blade not
+//   pulled back) is not drawn: the shoulder joint sits inside the torso outline, so 6 cm of blade shows no still sign.
 //  Support hand flat on the bench (the engine's flat palm), the wrist angle SOLVED so the palm lies level (R3).
 // Unsourced numbers: BENCH_TOP 0.42 m (the low end of the vendor bench's 42-45 cm, so the near leg reaches the floor), the bench length and position, ankle -40, the
-//  near foot spot, END_DZ, END_DY, M_DY 0.50, M_DZ 0.30, PRO 2 / -4 cm, WRIST -35 (convention).
+//  near foot spot, END_DZ, END_DY, M_RISE 0.13, PRO 2 / -4 cm, WRIST -35 (convention).
 import { landmarksOf, RADII } from '../engine.mjs';
 
 const H = 1.75;
@@ -40,7 +41,7 @@ const BENCH_TOP = 0.42, SHANK_R = RADII.shank[1] * H;
 const WRIST_Y = RADII.fore[2] * H;                       // flat palm: the wrist sits the forearm's distal radius up
 
 const PRO_START = 2, PRO_END = -4, WRIST = -35;
-const END_DZ = 0.40, END_DY = 0.28, M_DY = 0.50, M_DZ = 0.30;
+const END_DZ = 0.40, END_DY = 0.28, M_RISE = 0.15, M_FWD = 0.18;
 
 // Bracketed root finder (Illinois regula falsi): throws when f(a) and f(b) have the same sign (D-LIB9-CLONE b).
 export const solve = (f, a, b) => {
@@ -89,11 +90,12 @@ const SE_R = landmarksOf(base(ROOT_Y, PRO_END), H)['shoulder.r'];
 const LB = landmarksOf(base(ROOT_Y, PRO_END), H);
 const END_GRIP = [SE_R[0] - 0.03, LB.backUpper[1] - END_DY, SE_R[2] - END_DZ];
 const end = withArms(PRO_END, END_GRIP, [-0.3, 1, -0.4]);
-// The short pull (panel fix D-LIB13-PANEL1 R5): the dumbbell stops low, M_DY under and M_DZ behind the shoulder, the
-// arm swung only part way back, so the whole red working arm sits in open space, clear of the support arm, the near
-// leg and the torso (the Mistake outline is masked inside the body; searched on the engine's bodyShapes: 81% of the arm
-// outline shows, against under 35% for any grip at the old half-way height).
-const MIST_GRIP = [START_GRIP[0], SE_R[1] - M_DY, SE_R[2] - M_DZ];
+// The arm short of straight at the bottom (panel fix 2, D-LIB13-PANEL2 R5): the grip M_RISE straight above the start
+// grip, the elbow pole up and out, so the whole red working arm hangs from under the shoulder: its outline leaves the
+// torso just below the shoulder and shows in the open between the support arm and the near leg (the Mistake outline is
+// masked inside the faulty body; searched on the engine's bodyShapes: about 90% of the arm outline outside the torso
+// shows, against under 35% for a grip swung back toward the hip, which runs the upper arm inside the torso).
+const MIST_GRIP = [START_GRIP[0], START_GRIP[1] + M_RISE, START_GRIP[2] + M_FWD];
 const mistakePose = { scap: { l: { pro: 0 }, r: { pro: PRO_START } }, reach: { l: farHand, r: { at: MIST_GRIP, pole: [-0.3, 1, -0.4] } } };
 
 const LS = landmarksOf(start, H);
@@ -130,11 +132,11 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'mistake', off: [12, 12] }, to: { at: 'grip.r', pose: 'end', off: [14.9, 21.2] } },   // 80% of the way to the end grip, 12 px off the near leg: 6 px clear of the solid end figure (A15)
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'mistake' }, to: { at: 'grip.r', pose: 'start' } },   // down to the straight-arm bottom
     ],
     tells: [
-      { key: 'short', text: 'Stops<br>short', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 246, top: 234 }, cue: 'The pull stops short of the hip.' },
-      { key: 'blade', text: 'Blade not<br>back', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, box: { left: 230, top: 136 }, cue: 'The shoulder blade is not pulled back at the top.' },
+      { key: 'short', text: 'Arm not<br>straight', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 246, top: 234 }, cue: 'The arm never straightens at the bottom.' },
+      { key: 'lower', text: 'Not<br>lowered', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 276, top: 300 }, cue: 'The dumbbell never comes all the way down.' },
     ],
   },
   pilot: { drawableFault: 'Top fault: excessive momentum (c10), seen only as speed; the plate draws the next fault on the same list, the short range (c10).' },

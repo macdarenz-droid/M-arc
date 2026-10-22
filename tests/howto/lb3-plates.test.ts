@@ -429,8 +429,8 @@ describe('LIB-13 pendlay_row (H, ruling 4): drawn facts', { timeout: T }, () => 
     expect(r.angles.end['elbow.r']).toBeLessThanOrEqual(13);   // the bent-back wrist alone turns the forearm about 9 deg (body.mjs solveReach)
     expect(lm('end').grips[2] - lm('end')['knee.r'][2]).toBeGreaterThan(0);   // the bar in front of the knees
   });
-  // c10 "knees slightly bent", c1 "hips hinged a little higher than a deadlift" (card plate.start): the panel fix
-  // (D-LIB13-PANEL1) lowers the hips so the hand wraps the bar; the bound is the card's own comparison, read on the drawn
+  // c10 "knees slightly bent", c1 "hips hinged a little higher than a deadlift" (card plate.start): the bound is the
+  // card's own comparison (D-LIB13-PANEL1), read on the drawn
   // plates: pendlay_row's floor hip above conventional_deadlift's, its knee bend less, and bent at least 10 deg.
   const floorLegs = (id: string) => ({ hip: itemsIn(S[id], 'end').lm['hip.r'][1], knee: plate.renderPlate(S[id], { id: 'x' }).report.angles.end['knee.r'] });
   const c1Problems = (p: { hip: number, knee: number }, d: { hip: number, knee: number }) => [
@@ -450,18 +450,36 @@ describe('LIB-13 pendlay_row (H, ruling 4): drawn facts', { timeout: T }, () => 
     expect(b[2]).toBeLessThan(Math.max(t.navel[2], t.chest[2]) + 0.01);
     expect(Math.abs(t['elbow.r'][2] - b[2])).toBeLessThanOrEqual(0.01);
   });
-  // The panel's R3 (#274 6278550928): the hand wraps the bar. The bar's sleeve ring (2.5 cm) reaches the forearm's
-  // drawn end (radius RADII.fore[2]) and the fist, at the floor and at the top.
-  const wrapGap = (l: any, bar: any) => {
-    const toW = Math.hypot(bar[1] - l['wrist.r'][1], bar[2] - l['wrist.r'][2]), toG = Math.hypot(bar[1] - l['grip.r'][1], bar[2] - l['grip.r'][2]);
-    return { forearm: toW - 0.025 - eng.RADII.fore[2] * 1.75, fist: toG - 0.025 - eng.RADII.fist * 1.75 };
+  // The panel's R3 (#274 6278550928) as fixed in round 2 (D-LIB13-PANEL2, #274 6279411612): the bar's end-on glyph is one
+  // glyph (the plate, its inner ring, the sleeve ring and the centre dot on one centre, as the approved squat) and the
+  // fist sits on that centre; the drawn hand (conventional_deadlift's hand poly) joins the forearm's end to the bar.
+  const glyphProblems = (spec: any, p: string) => {
+    const { items, lm: l } = itemsIn(spec, p), bar = items.find((it: any) => it.type === 'barbell').at, dot = items.find((it: any) => it.part === 'bardot').at;
+    return [...(dist(bar, dot) <= 0.0005 ? [] : [`${p}: sleeve ring off the plate centre`]), ...(dist(bar, l.grips) <= 0.0005 ? [] : [`${p}: fist off the plate centre`])];
   };
-  it('R3: the bar sits between the forearm\'s end and the fist (gaps under 1 cm) at the floor and at the top', () => {
-    for (const p of ['start', 'end']) { const g = wrapGap(lm(p), barIn(p)); expect(g.forearm, p).toBeLessThanOrEqual(0.01); expect(g.fist, p).toBeLessThanOrEqual(0.01); }
+  const inPoly = (poly: number[][], [x, y]: number[]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!; if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
+  const yz = (q: number[]) => [q[2]!, q[1]!];
+  const handProblems = (spec: any, p: string) => {
+    const { items, lm: l } = itemsIn(spec, p), hand = items.find((it: any) => it.part === 'hand'), bar = items.find((it: any) => it.type === 'barbell').at;
+    if (!hand) return [`${p}: no hand`];
+    const poly = hand.pts.map(yz);
+    return [...(inPoly(poly, yz(l['wrist.r'])) ? [] : [`${p}: hand off the forearm's end`]), ...(inPoly(poly, yz(bar)) ? [] : [`${p}: hand off the bar`])];
+  };
+  it('R3 (round 2): the plate, the sleeve ring, the centre dot and the fist share one centre (0.5 mm) in start, end and the Mistake', () => {
+    for (const p of posesOf(s())) expect(glyphProblems(s(), p), p).toEqual([]);
   });
-  it('R3 mutation: the bar back on the grip centre (the old drawing) leaves a forearm gap over 1 cm', () => {
-    const l = lm('end');
-    expect(wrapGap(l, l.grips).forearm).toBeGreaterThan(0.01);
+  it('R3 (round 2): the drawn hand runs from the forearm\'s end over the bar centre, at the floor and in the Mistake', () => {
+    for (const p of ['end', 'mistake']) expect(handProblems(s(), p), p).toEqual([]);
+  });
+  it('R3 mutations: the 423acc1 drawing (the bar glyph 3 cm back from the fist along the hand) and the hand poly dropped are red', () => {
+    const offBar = { ...s(), equipment: s().equipment.map((e: any) => (typeof e !== 'function' ? e : (l: any, ctx: any) => {
+      const x = e(l, ctx); if (!x || !(x.type === 'barbell' || x.part === 'bardot')) return x;
+      const d = [0, l['grip.r'][1] - l['wrist.r'][1], l['grip.r'][2] - l['wrist.r'][2]], L = Math.hypot(d[1]!, d[2]!);
+      return { ...x, at: [0, x.at[1] - d[1]! / L * 0.03, x.at[2] - d[2]! / L * 0.03] };
+    })) };
+    expect(glyphProblems(offBar, 'end')).toEqual(['end: fist off the plate centre']);
+    const noHand = { ...s(), equipment: s().equipment.filter((e: any) => !(typeof e === 'function' && e(lm('end'), { pose: 'end' })?.part === 'hand')) };
+    expect(handProblems(noHand, 'end')).toEqual(['end: no hand']);
   });
   it('c8, c23 Mistake: the bar still on the floor, the lumbar flexed at least 20 deg more, the pelvis tucked, the hips held', () => {
     const e = s().poses.end, m = s().mistake.pose, ml = itemsIn(s(), 'mistake').lm;
@@ -642,6 +660,28 @@ describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn
     const st = lm('start'), en = lm('end'), half = st['grip.r'].map((v: number, i: number) => v + (en['grip.r'][i] - v) * 0.45);
     const mp = s().mistake.pose, moved = { ...s(), mistake: { ...s().mistake, pose: { ...mp, reach: { ...mp.reach, r: { ...mp.reach.r, at: half } } } } };
     expect(mistakeArmShows(moved).fore).toBeLessThan(0.9);
+  });
+  // R5 round 2 (D-LIB13-PANEL2, D-LIB13-ONEARM-M): the Mistake is c10's bottom half, the arm short of straight at the
+  // bottom: the whole red arm hangs from the shoulder (upper arm within 10 deg of plumb), the elbow bent at least 30 deg
+  // the way an elbow bends (the wrist ahead of the upper-arm line, toward the head), the dumbbell within 20 cm above the
+  // straight-arm start; the top half (the blade) has no tell.
+  const bottomProblems = (spec: any) => {
+    const l = itemsIn(spec, 'mistake').lm, st = itemsIn(spec, 'start').lm, S = l['shoulder.r'], E = l['elbow.r'], W = l['wrist.r'];
+    const u = [E[1] - S[1], E[2] - S[2]], f = [W[1] - E[1], W[2] - E[2]];
+    const bend = Math.acos((u[0]! * f[0]! + u[1]! * f[1]!) / Math.hypot(u[0]!, u[1]!) / Math.hypot(f[0]!, f[1]!)) * 180 / Math.PI;
+    const plumb = Math.abs(Math.atan2(u[1]!, -u[0]!)) * 180 / Math.PI, rise = l['grip.r'][1] - st['grip.r'][1];
+    return [...(plumb <= 10 ? [] : [`upper arm ${plumb.toFixed(0)} deg off plumb`]), ...(bend >= 30 && u[0]! * f[1]! - u[1]! * f[0]! < 0 ? [] : ['elbow not bent forward 30 deg']),
+      ...(rise > 0 && rise <= 0.2 ? [] : [`dumbbell ${rise.toFixed(2)} m above the start`]), ...(spec.mistake.tells.some((t: any) => t.key === 'blade') ? ['blade tell'] : [])];
+  };
+  it('R5 (round 2): the red arm hangs from the shoulder, short of straight at the bottom, and no blade tell', () => {
+    expect(bottomProblems(s())).toEqual([]);
+  });
+  it('R5 (round 2) mutation: the 423acc1 Mistake (grip 0.50 m under and 0.30 m behind the shoulder, the blade tell) is red', () => {
+    const SE = lm('end')['shoulder.r'], mp = s().mistake.pose, at = [mp.reach.r.at[0], SE[1] - 0.50, SE[2] - 0.30];
+    const old = { ...s(), mistake: { ...s().mistake, pose: { ...mp, reach: { ...mp.reach, r: { at, pole: [-0.3, 1, -0.4] } } }, tells: [...s().mistake.tells, { key: 'blade' }] } };
+    const p = bottomProblems(old);
+    expect(p.some(m => /off plumb/.test(m))).toBe(true);
+    expect(p).toContain('blade tell');
   });
   it('drawable false: the spec names the drawable-fault convention (F7 expected)', () => {
     expect(s().pilot.drawableFault).toMatch(/momentum/);

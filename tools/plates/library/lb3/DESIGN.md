@@ -191,7 +191,7 @@ Fault→key (13 Q1(a)); each spec's first tell carries the key:
 | pendlay_row | back rounded at the start, reaching the bar (c8, c23) | true | `round` | `round` |
 | t_bar_row | rounded back over the bar (c7) | true | `round` | `round` |
 | landmine_row | rounded lower back over the bar (c9, c11) | true | `round` | `round` |
-| one_arm_dumbbell_row | short range: the shoulder blade not pulled back at the top, the dumbbell stopping short of the hip (c10) | false | `short` | `momentum` (c10's top fault, speed only; ≠ `short`) |
+| one_arm_dumbbell_row | short range, the bottom half: the arm never straightens at the bottom (c10; D-LIB13-ONEARM-M) | false | `short` | `momentum` (c10's top fault, speed only; ≠ `short`) |
 | dumbbell_romanian_deadlift | back arches to stand up (c10) | true | `arch` | `arch` |
 | conventional_deadlift | lower back rounds as the bar leaves the floor (c8) | true | `round` | `round` |
 | sumo_deadlift | hips shoot up before the bar leaves the floor (c12) | true | `hips` | `hips` |
@@ -269,8 +269,8 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
   far thigh vertical (knee under the hip), the far wrist under the far shoulder (c2; checks). With all three on one
   flat bench the support elbow bends about 75° (the arm is longer than the thigh): card-true, flagged for R1/R3. Start:
   the working arm plumb by joint angles (c5); end: the dumbbell at the hip, the elbow driven back (c6, c9). Tempo Pull 2,
-  Lower 2. Mistake `short` (c10): the dumbbell stops at 45% of the rise, the shoulder blade not pulled back; tells
-  `short` and `blade`; `pilot.drawableFault` names momentum (F7).
+  Lower 2. Mistake `short` (c10, the bottom half; panel fix 2): the arm never straightens at the bottom; tells
+  `short` and `lower`; `pilot.drawableFault` names momentum (F7).
 - **landmine_row (H, landmine anchor; D-LIB13-LANDMINE-2, research head 892d6516).** The card's layout (pivot behind,
   plates in front, shoulders ahead of the weight) with c20 (MECH, from the T-bar row): the row goes "as far as possible
   before the plates make contact with your torso". The end is solved at the first contact as the bar turns up about the
@@ -349,6 +349,24 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
     upper arm still crosses the bent support arm. R1 (a straight support arm) is not drawable card-true (c1, c2, c4:
     a 0.42 m shoulder-to-wrist chord against 0.573 m for a 20 deg elbow) and waits on the ruling asked in #274
     6278674941.
+- **Panel fix round 2 (D-LIB13-PANEL2, #274 6279411612; pendlay_row and one_arm_dumbbell_row only, the 5 approved
+  plates byte-identical).**
+  - pendlay_row (R2): round 1's WRAP put the fist 3 cm past the bar, so the fist ring sat off the plate's centre and
+    read as a bar ring that had come apart. The grip is back on the bar centre: the plate, its inner ring, the sleeve
+    ring, the centre dot and the fist share one centre (as the approved squat), and round 1's root drop is undone (the
+    floor knee is 20 deg again). The hand is drawn as conventional_deadlift's hand poly (copied), from the forearm's
+    end over the bar, so round 1's R3 (the hand reaches the bar) holds. Tests: one centre within 0.5 mm in every pose;
+    the hand poly holds the wrist and the bar centre at the floor and in the Mistake; mutations: the 423acc1 bar 3 cm
+    off the fist, and the hand dropped, each red. Round 1's forearm-gap test measured the WRAP drawing and is replaced
+    by these two.
+  - one_arm_dumbbell_row (R5): the Mistake is c10's bottom half (D-LIB13-ONEARM-M in docs/COACHING-DECISIONS.md): the
+    arm short of straight at the bottom, the grip M_RISE 15 cm up and M_FWD 18 cm forward of the straight-arm start,
+    the upper arm 3 deg off plumb, the elbow bent about 41 deg. Measured on the engine's bodyShapes with the Mistake
+    mask: any grip swung back toward the hip runs the upper arm inside the torso outline (the shoulder joint sits
+    inside it), and a plumb arm overlaps the support arm, which hangs from the same shoulder in this view; this grip is
+    the only near-plumb one that keeps the forearm and the dumbbell hand at least 90% in open space. The blade (the top
+    half) shows no still sign, so its tell is dropped; the second tell is `lower` (the dumbbell never comes all the
+    way down), and the arrow points down to the start dumbbell.
 - **Straight arms with the bent-back wrist (all pull plates).** The engine's IK turns the forearm by the hand's bend
   (about 9°, body.mjs solveReach), so the pull specs reach at 99.98% of the IK's own full length: the arm reads straight
   with the report's elbow at about 11°.
