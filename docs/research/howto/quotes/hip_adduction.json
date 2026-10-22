@@ -1,6 +1,6 @@
 {
   "id": "hip_adduction",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -148,6 +148,20 @@
       "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
       "status": "verbatim",
       "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c4",
+      "source": "mo-hip-add",
+      "quote": "Keep movements slow to prevent strain",
+      "status": "verbatim",
+      "closest": "Keep movements slow to prevent strain"
+    },
+    {
+      "claim": "c9",
+      "source": "mo-hip-add",
+      "quote": "Pause briefly at peak contraction to engage inner thighs.",
+      "status": "verbatim",
+      "closest": "Pause briefly at peak contraction to engage inner thighs."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "id": "rear_delt_fly",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -218,6 +218,20 @@
       "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
       "status": "verbatim",
       "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c17",
+      "source": "mo-rear-delt",
+      "quote": "Shrugging shoulders",
+      "status": "verbatim",
+      "closest": "Shrugging shoulders"
+    },
+    {
+      "claim": "c18",
+      "source": "mo-rear-delt",
+      "quote": "3-1-1",
+      "status": "verbatim",
+      "closest": "3-1-1"
     }
   ]
 }

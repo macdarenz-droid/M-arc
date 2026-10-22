@@ -752,7 +752,7 @@
       },
       {
         "where": "Pressure on the neck",
-        "means": "Usually the bar is sitting on the neck, not the upper traps.",
+        "means": "The bar on your neck puts pressure on a vulnerable area.",
         "fix": "Stop, rack the bar, then move it onto your upper traps.",
         "claim": "c1, c9",
         "redFlag": null

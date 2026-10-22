@@ -1,6 +1,6 @@
 {
   "id": "hip_abduction",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -190,6 +190,13 @@
       "quote": "Letting pads crash together",
       "status": "verbatim",
       "closest": "Letting pads crash together"
+    },
+    {
+      "claim": "c10",
+      "source": "mo-hip-abd",
+      "quote": "Hold briefly at peak contraction.",
+      "status": "verbatim",
+      "closest": "Hold briefly at peak contraction."
     }
   ]
 }
