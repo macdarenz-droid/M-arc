@@ -27,7 +27,7 @@
 //  c3, drawable true): the elbow wedged into the knee crease, i.e. the elbow moved to the near knee's inner side (a place
 //  the card names, not a drawn size), the upper arm leaning forward to it, the body unchanged. Tempo: Curl 1 s, Hold 1 s
 //  (c12's drawing convention, LR-33), Lower 2 s (lb5/tempo.json); no Rest.
-import { WINTER, REF, RADII, landmarksOf, resolve, normPose, rootOnSeat } from '../engine.mjs';
+import { WINTER, REF, RADII, landmarksOf, resolve, normPose, rootOnSeat, bodyShapes, fk } from '../engine.mjs';
 import { add, mul, norm, sub } from '../eq/parts.mjs';
 
 const H = 1.75;
@@ -69,7 +69,7 @@ const poleTo = g => { const u = norm(sub(g, S)), e = sub(E_AT, S), k = e[0] * u[
 const KNEE_L = lmB['knee.l'];
 const freeHand = { at: [KNEE_L[0] - 0.02, KNEE_L[1] + 0.07, KNEE_L[2] - 0.02], pole: [1, 0.2, -0.4] };   // on the far knee (c5)
 const armAt = phi => ({ reach: { r: { at: gripAt(phi), pole: poleTo(gripAt(phi)) }, l: freeHand }, wrist: 0 });
-const SEG = 6;
+const SEG = 48;                                        // one key per Trace sample (the engine draws 48), so the grip path is the arc itself
 const keys = Array.from({ length: SEG + 1 }, (_, i) => ELBOW_START + (ELBOW_END - ELBOW_START) * i / SEG).map(phi => ({ ...body, ...armAt(phi) }));
 const start = keys[0], end = keys[SEG], via = keys.slice(1, SEG);
 // Mistake (c4, c3): the elbow wedged into the knee crease: the elbow at the near knee, medial of it (a place the card
@@ -84,6 +84,25 @@ const U_M = norm(sub(E_MIS, S_M));
 const gripMis = (() => { const r = ELBOW_END * Math.PI / 180; const d = add(mul(U_M, Math.cos(r)), mul(norm(sub([0, 0, 1], mul(U_M, U_M[2]))), Math.sin(r))); return add(E_MIS, mul(d, L2)); })();
 const misPole = (() => { const u = norm(sub(gripMis, S_M)), e = sub(E_MIS, S_M), k = e[0] * u[0] + e[1] * u[1] + e[2] * u[2]; return norm(sub(e, mul(u, k))); })();
 const mistakePose = { ...bodyAt(TILT_MIS), reach: { r: { at: gripMis, pole: misPole }, l: freeHand } };
+// The faulty arm on top (#290 6349640307 R5): closed dashed outlines of the faulty upper arm, elbow, forearm and fist, at
+// the body's own lengths (bayesian_cable_curl's MIS_ARM, from dumbbell_biceps_curl's misArm), so the upper arm reads as
+// one capsule from the faulty shoulder to the elbow at the knee.
+const cr = (ps, k = 8) => {
+  const n = ps.length, g = i => ps[(i + n) % n], out = [];
+  for (let i = 0; i < n; i++) {
+    const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    for (let j = 0; j < k; j++) { const t = j / k, u = 1 - t;
+      out.push([0, 1].map(d => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d])); }
+  }
+  return out;
+};
+const MIS_ARM = (() => {
+  const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
+  const keys = ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'];
+  return bodyShapes(fk(resolve(normPose(mistakePose, bd), bd).q, bd), probe).filter(sh => keys.includes(sh.key))
+    .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
+})();
 
 // the inner-thigh contact plane (c1, c7): through E_AT, normal along the medial direction
 const THIGH_N = [1, 0, 0];
@@ -118,10 +137,10 @@ export default {
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['torso', 'head', 'arm.r', 'db'],
-    guides: [],
+    parts: ['torso', 'head', 'db'],
+    guides: MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),
     tells: [
-      { key: 'knee', text: 'Elbow in<br>knee', anchor: { at: 'elbow.r', pose: 'mistake', off: [0, 4] }, box: { left: 284, top: 268 }, cue: 'Your elbow is wedged into the knee instead of the arm on the thigh.' },
+      { key: 'knee', text: 'Elbow in<br>knee', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 284, top: 268 }, cue: 'Your elbow is wedged into the knee instead of the arm on the thigh.' },
     ],
   },
   alt: 'Concentration curl, side view. Seated on the edge of a bench with the knees wide, hinged forward, the back of the working upper arm braced on the inner thigh. The upper arm hangs vertical while the elbow bends to raise the dumbbell, stopping short of the shoulder.',

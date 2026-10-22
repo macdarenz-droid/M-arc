@@ -410,3 +410,13 @@ hand on the right knee (c5). The plate may draw the mirror image only if a claim
 does: no claim or quote on the card mentions the other arm, switching sides, or each side. So the ruling's own branch
 applies: the facts take c1's named side and the plate is redrawn left-handed. That redraw changes the plates page the
 critic panel is running on (4a84a64e…), so it is posted on #290 before it is done.
+
+Critic panel fix round (D-CRITIC-CAL3, #290 6349640307), concentration_curl only:
+- R5: the faulty arm is drawn on top as closed dashed outlines of the faulty upper arm, elbow, forearm and fist, at
+  the body's own lengths (bayesian_cable_curl's MIS_ARM). The upper arm now reads as one capsule from the faulty shoulder
+  to the elbow at the knee, and the tell's leader ends on that elbow (its 4 px offset is removed). The pose and sizes are
+  unchanged.
+- R7: the grip keys go from 6 chords to 48, one per Trace sample, so the Trace follows the arc about the elbow. A test
+  fails a Trace with any turn over 6° or 2.5× the median (its mutation: the keys cut back to 6 chords).
+- Held plates, for when they resume: cross_body_hammer_curl's Trace turns 10.8° at one key (median 0.2°), and
+  wrist_curl's 4.0° (median 1.0°). Both are redrawn smooth then.

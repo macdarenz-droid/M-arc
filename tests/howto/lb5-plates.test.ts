@@ -440,6 +440,19 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   // One-tell plates: a second tell is drawn only if a claim states it (#290 6343211054 item 2); per-id ruling asked on #290.
   const ONE_TELL = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cable_curl', 'bayesian_cable_curl', 'concentration_curl'];
+  /** #290 6349640307 R7: the Trace is one smooth arc: no turn between its consecutive sample chords over 6 deg or 2.5x their median. */
+  const traceKinks = (spec: any) => {
+    const d = /<path class="trace"[^>]* d="([^"]+)"/.exec(plate.renderPlate(spec, { id: 'x' }).svg)![1]!, n = [...d.matchAll(/-?[\d.]+/g)].map(m => +m[0]);
+    const pts = [[n[0]!, n[1]!]]; for (let i = 2; i + 5 < n.length; i += 6) pts.push([n[i + 4]!, n[i + 5]!]);
+    const turn: number[] = []; for (let i = 1; i + 1 < pts.length; i++) { const a = Math.atan2(pts[i]![1]! - pts[i - 1]![1]!, pts[i]![0]! - pts[i - 1]![0]!), b = Math.atan2(pts[i + 1]![1]! - pts[i]![1]!, pts[i + 1]![0]! - pts[i]![0]!); turn.push(Math.abs((((b - a) * 180 / Math.PI) + 540) % 360 - 180)); }
+    const med = [...turn].sort((x, y) => x - y)[turn.length >> 1]!, max = Math.max(...turn);
+    return max <= 6 && max <= 2.5 * med ? [] : [`${spec.id}: Trace turn ${max.toFixed(1)} deg (median ${med.toFixed(1)})`];
+  };
+  it('every Trace on a row is a smooth arc, no kinks (#290 6349640307 R7); mutation: concentration_curl\'s grip keys cut to 6 chords is red', () => {
+    for (const id of drawn()) expect(traceKinks(S[id]), id).toEqual([]);   // rows only: held cross_body_hammer_curl's Trace (10.8 deg) is redrawn when it resumes
+    const s = S.concentration_curl, v = s.poses.via, six = [8, 16, 24, 32, 40].map(i => v[i - 1]);
+    expect(traceKinks({ ...s, poses: { ...s.poses, via: six } })).toHaveLength(1);
+  });
   it('each ONE_TELL id has its D-LIB10-SKULL1 record in DESIGN.md section 9: fault, claim ids, "no second sign stated" (#290 6345185694)', () => {
     const sec = readFileSync('tools/plates/library/lb5/DESIGN.md', 'utf8').split('## 9.')[1]!.split('\n## ')[0]!;
     const rec = (text: string) => ONE_TELL.filter(id => !new RegExp(`^\\| ${id}(?: \\(held\\))? \\| [^|]+ \\| [^|]*c\\d+[^|]* \\| no second sign stated[^|]* \\|$`, 'm').test(text));
