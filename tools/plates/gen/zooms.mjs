@@ -17,6 +17,8 @@ import { ROOT, sha256 } from '../lib/inputs.mjs';
 import { LAYERS, PAGE_SHA256, buildLayerPage, cleanupMirror, makeMirror, readManifest } from '../layers.mjs';
 import { galleryCss, parse } from '../css.mjs';
 import { chromeRules, divAt, howtoCss, libraryInputs, libraryRows, rewrite } from './hands.mjs';
+import { configPairOf } from './handpairs.mjs';   // LIB-7b (D-LIB7b-ZOOMS)
+import { pairCss } from '../library/build-layers-page.mjs';   // LIB-7b (D-LIB7b-ZOOMS)
 
 export const PLATES_JSON = 'tools/plates/plates.json';
 export const inputs = () => [
@@ -82,7 +84,15 @@ export function postureCssOf(style, chrome) {
  *  page must share with golden B's. */
 export function styleWithout(style, rowsOf) {
   const ids = Object.values(rowsOf).map(r => r.chromeId);
-  return style.replace(/\/\*[\s\S]*?\*\//g, '').split('\n').filter(l => l.trim() && !ids.some(id => l.trimStart().startsWith(`.hx-${id} `))).join('\n');
+  // LIB-7b (D-LIB7b-ZOOMS): a pair key's scope belongs to the rows whose layers config names it. Its `.hx-hp-<K> ` lines
+  // must be exactly the hook's own pairCss(K) lines (else throw), and only then are they dropped with the rows' own.
+  const lines = style.replace(/\/\*[\s\S]*?\*\//g, '').split('\n'), byKey = new Map();
+  for (const r of Object.values(rowsOf)) { const k = configPairOf(r); if (k !== undefined) byKey.set(k, [...(byKey.get(k) ?? []), r.id]); }
+  for (const [k, of] of byKey) {
+    const got = lines.filter(l => l.trimStart().startsWith(`.hx-hp-${k} `)), want = pairCss(k).split('\n').filter(l => l.trim());
+    if (got.join('\n') !== want.join('\n')) throw new Error(`zooms: ${of.join(', ')}: the page's .hx-hp-${k} rules are not pairCss(${k}) exactly`);
+  }
+  return lines.filter(l => l.trim() && !ids.some(id => l.trimStart().startsWith(`.hx-${id} `)) && ![...byKey.keys()].some(k => l.trimStart().startsWith(`.hx-hp-${k} `))).join('\n');
 }
 
 async function outputsOf() {
