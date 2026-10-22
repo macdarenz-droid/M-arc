@@ -1,5 +1,5 @@
-// LIB-12-FIX (card docs/supervisor/verify/lib-12-fix-card.md; rulings D-LIB12FIX-*): X1 the words of LIB-12's five pair keys
-// (D-LIB12FIX-WORDS), X3 LIB-12's pictures carry (D-LIB12FIX-CARRY: the 20 renders and the LIB-12 files pinned, re-based by
+// LIB-12-FIX (card docs/supervisor/verify/lib-12-fix-card.md; rulings D-LIB12FIX-*): X1 the words of LIB-12's 2 pair keys
+// (D-LIB12FIX-WORDS), X3 LIB-12's pictures carry (D-LIB12FIX-CARRY: the 17 renders and the LIB-12 files pinned, re-based by
 // D-LIB12FIX-R8 for the fix round; each panel page equal to its first id's render) and R8-* the critic findings' fixes
 // (D-LIB12FIX-R8: copied engine values pinned to golden B, palm-flat, front-rack, cupped and ball geometry). Each check
 // has its mutation in the same describe.
@@ -123,7 +123,7 @@ function researchProblems(read = (f: string) => readFileSync(`docs/research/howt
   }
   return bad;
 }
-/** X3: the 20 renders against RENDERS, swept at 20. */
+/** X3: the 17 renders against RENDERS, swept at 17. */
 function renderProblems(index = P.INDEX) {
   const bad: string[] = [], rows: string[][] = [];
   for (const m of lib12()) for (const id of Object.keys(m.IDS)) for (const w of P.pairSpec(id, index).wrong) rows.push([id, w.key, sha(P.renderPair(id, { fault: w.key, index }).svg)]);
@@ -134,14 +134,14 @@ function renderProblems(index = P.INDEX) {
 const fileProblems = (read = (f: string) => readFileSync(f)) => C.sweep(Object.keys(FILES), 16, 'LIB-12 files').filter((f: string) => sha(read(f)) !== FILES[f]);
 
 describe('LIB-12-FIX X1: words per LIB-12 key (D-LIB12FIX-WORDS)', () => {
-  it('the five LIB-12 keys have words files; right = rightNote, wrong = pager = the drawn label, each with a source; heading golden B\'s', async () => {
+  it('the 2 LIB-12 keys have words files; right = rightNote, wrong = pager = the drawn label, each with a source; heading golden B\'s', async () => {
     const keys = C.sweep(lib12Keys().keys(), 2, 'LIB-12 pair keys');   // D-LIB12FIX-R8-GAPS, #191 6274835211
     expect(keys.sort()).toEqual(['battle-rope-rope-neutral', 'palm-flat-floor-over']);
     expect(Object.keys(PN.allWords().keys).filter(k => keys.includes(k)).sort()).toEqual(keys);
     expect(wordsProblems()).toEqual([]);
     for (const k of keys) expect((await P.pairPanel(k)).includes(HEADING)).toBe(true);
   }, 60_000);
-  it('the five research pairs equal their shared cards\' labels and the words', () => {
+  it('the 3 research pairs equal their shared cards\' labels and the words', () => {
     expect(researchProblems()).toEqual([]);
   });
   it('mutations: a missing words file, a count one short, an 11-word caption, an empty source, a wrong text off the drawing, a research label changed are each red', async () => {
@@ -165,7 +165,7 @@ describe('LIB-12-FIX X1: words per LIB-12 key (D-LIB12FIX-WORDS)', () => {
 });
 
 describe('LIB-12-FIX X3: LIB-12\'s pictures carry (D-LIB12FIX-CARRY)', () => {
-  it('the 20 renders equal their pins (battle_ropes 0d268a71\'s), combined by M1\'s method; the 16 files are byte-identical', () => {
+  it('the 17 renders equal their pins (battle_ropes 0d268a71\'s), combined by M1\'s method; the 16 files are byte-identical', () => {
     expect(renderProblems()).toEqual([]);
     const rows = Object.entries(RENDERS).map(([k, h]) => [...k.split(' '), h]).sort((a, b) => a[0]! < b[0]! ? -1 : a[0]! > b[0]! ? 1 : a[1]! < b[1]! ? -1 : a[1]! > b[1]! ? 1 : 0);
     expect(sha(rows.map(r => r[2]).join('\n'))).toBe(COMBINED);
@@ -205,23 +205,39 @@ describe('LIB-12-FIX X3: LIB-12\'s pictures carry (D-LIB12FIX-CARRY)', () => {
 
 // ---------- D-LIB12FIX-R8: the fix round ----------
 const ENGINE_SRC = readFileSync('tools/plates/layers/engine/hand.mjs', 'utf8');
-/** Numbers of a source text, in order ('- 2' read as -2), compared by size: the source text itself is matched verbatim. */
+/** Numbers of a source text, in order, signed ('- 2' read as -2); the source text itself is matched verbatim. */
 const numsOf = (t: string) => (t.replace(/- (\d)/g, '-$1').match(/-?\d+(\.\d+)?/g) ?? []).map(Number);
-const inOrder = (want: number[], have: number[]) => { let i = 0; for (const h of have) if (i < want.length && Math.abs(h) === Math.abs(want[i]!)) i++; return i === want.length; };
+/** Each copied value's position among its source's numbers, one per value in order (Low 3 of 6278825702, ruled 6278835457). */
+const AT: Record<string, number[]> = {
+  fingerT: [0, 1, 2], fingerScale: [0, 1], thumbT: [0, 1, 2], dorsal: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  knuckle: [1, 2, 4, 5, 7, 8], palmEnds: [0, 1, 3, 4, 5, 6], foreTip: [0, 1, 2, 3, 4, 5], foreCut: [0, 1, 2, 3, 4, 5, 6, 7],
+  knucklePad: [0, 2, 4], indexTaper: [4, 9, 14], farTaper: [2, 3], thumbTaper: [4, 9], compression: [0], ring: [0], crease: [1, 2],
+  nail: [1, 2, 4, 5, 7, 8], nailT: [3], wristCrease: [0, 1, 2, 3, 6, 8, 10, 11, 14], bones: [0, 4, 5, 6, 7, 8, 9], barMark: [0, 5], resample: [0],
+};
+/** Value positions copied as the size of a term the source subtracts ('19 - 5.5' is read as -5.5, copied as 5.5). */
+const SUBTRACTED: Record<string, number[]> = { wristCrease: [7] };
+const copyBad = (k: string, want: number[], have: number[], at = AT[k] ?? []) => want.length !== at.length
+  || at.some((p, j) => j > 0 && p <= at[j - 1]!)
+  || want.some((x, j) => x !== (SUBTRACTED[k]?.includes(j) ? -1 : 1) * have[at[j]!]!);
 const drift = (src = ENGINE_SRC, copied = L.ENGINE_COPIED) => Object.entries<any>(copied)
-  .filter(([, v]) => !v.src.every((t: string) => src.includes(t)) || !inOrder(v.value.flat(), v.src.flatMap(numsOf))).map(([k]) => k);
+  .filter(([k, v]) => !v.src.every((t: string) => src.includes(t)) || copyBad(k, v.value.flat(), v.src.flatMap(numsOf))).map(([k]) => k);
 
 describe('LIB-12-FIX R8-DRIFT: values copied from golden-B hand.mjs and the pair chrome stay golden B\'s (D-LIB12FIX-R8)', () => {
-  it('every ENGINE_COPIED value is in hand.mjs at its source text, in order; view-common\'s FINGER_T is the copied one', () => {
+  it('every ENGINE_COPIED value equals, signed and in order, its source text\'s number in hand.mjs, one per value; view-common\'s FINGER_T is the copied one', () => {
     C.sweep(Object.keys(L.ENGINE_COPIED), 21, 'copied engine values');
+    expect(Object.keys(AT)).toEqual(Object.keys(L.ENGINE_COPIED));
     expect(drift()).toEqual([]);
     expect(L.ENGINE_COPIED.fingerT.value).toBe(VC.FINGER_T);
   });
-  it('mutations: an engine value changed in hand.mjs, a copied value changed, a source line gone are each red', () => {
+  it('mutations: an engine value changed in hand.mjs, a copied value changed, a source line gone, a copied sign flipped, wristCrease cut short are each red', () => {
     expect(drift(ENGINE_SRC.replace('const tPP = 9.8 * s', 'const tPP = 9.9 * s'))).toEqual(['fingerT']);
     const c2 = structuredClone(L.ENGINE_COPIED); c2.dorsal.value[2][1] = 18.5;
     expect(drift(ENGINE_SRC, c2)).toEqual(['dorsal']);
     expect(drift(ENGINE_SRC.replace('det += bone(-13, -8, -8) + bone(9, 7, -12);', ''))).toEqual(['bones']);
+    const c4 = structuredClone(L.ENGINE_COPIED); c4.bones.value[1] = 13;
+    expect(drift(ENGINE_SRC, c4)).toEqual(['bones']);
+    const c5 = structuredClone(L.ENGINE_COPIED); c5.wristCrease.value = c5.wristCrease.value.slice(0, 5);
+    expect(drift(ENGINE_SRC, c5)).toEqual(['wristCrease']);
   });
   const ring = [[0, 0], [40, 0], [40, 30], [0, 30]];
   const spec = { uid: 'dr', camera: 'side', rightNote: 'A', wrongNote: 'B', alt: { right: 'r', wrong: 'w' } };
