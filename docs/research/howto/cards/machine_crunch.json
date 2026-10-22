@@ -666,5 +666,76 @@
   ],
   "notes": [
     "Conflict on the arms: ACE (anchor) \"Grasp the handles in both hands, and pull down on them to lean forward.\" (c3) and Fitbod \"while pulling the handles down with in order to keep the pads on your shoulders\" against Motra's common mistake \"Pulling with arms\" (c14). The card reads Motra's mistake as the arms doing the pull while the trunk stays upright; holding and pulling the handles to lean forward stays allowed."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "knee.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ankle.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "knee.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ankle.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Crunch",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "arms"
 }
