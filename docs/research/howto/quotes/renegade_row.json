@@ -1,6 +1,6 @@
 {
   "id": "renegade_row",
-  "checked": "2026-10-02",
+  "checked": "2026-10-22",
   "fetcher": "sonnet source fetcher",
   "quotes": [
     {
@@ -78,50 +78,50 @@
     {
       "claim": "c6",
       "source": "ggr-rr",
-      "text": "Hex dumbbells allow you to safely navigate this challenging exercise because their six flat sides give you more stability while in the front plank. You can perform this with kettlebells or round dumbbells, but it's more difficult.",
+      "text": "Hex dumbbells allow you to safely navigate this challenging exercise because their six flat sides give you more stability while in the front plank. You can perform this with kettlebells or round dumbbells, but it’s more difficult.",
       "status": "verbatim",
-      "closest": "Hex dumbbells allow you to safely navigate this challenging exercise because their six flat sides give you more stability while in the front plank. You can perform this with kettlebells or round dumbbells, but it's more difficult.",
-      "note": ""
+      "closest": "Hex dumbbells allow you to safely navigate this challenging exercise because their six flat sides give you more stability while in the front plank. You can perform this with kettlebells or round dumbbells, but it’s more difficult.",
+      "note": "Apostrophes set to ’ as both live pages print them (renegade_row-1, LB7 fix round)."
     },
     {
       "claim": "c6",
       "source": "bb-rr",
-      "text": "Grip a pair of dumbbells (ideally hexagonal dumbbells that won't roll).",
+      "text": "Grip a pair of dumbbells (ideally hexagonal dumbbells that won’t roll).",
       "status": "verbatim",
-      "closest": "Grip a pair of dumbbells (ideally hexagonal dumbbells that won't roll).",
-      "note": ""
+      "closest": "Grip a pair of dumbbells (ideally hexagonal dumbbells that won’t roll).",
+      "note": "Apostrophes set to ’ as both live pages print them (renegade_row-1, LB7 fix round)."
     },
     {
       "claim": "c7",
       "source": "ggr-rr",
-      "text": "There will be some upper-body rotation, but you don't want too much, as this will make the exercise easier and you'll lose some of the core strengthening benefits. If you rotate excessively, get your feet further apart for a broader support base.",
+      "text": "There will be some upper-body rotation, but you don’t want too much, as this will make the exercise easier and you’ll lose some of the core strengthening benefits. If you rotate excessively, get your feet further apart for a broader support base.",
       "status": "verbatim",
-      "closest": "There will be some upper-body rotation, but you don't want too much, as this will make the exercise easier and you'll lose some of the core strengthening benefits. If you rotate excessively, get your feet further apart for a broader support base.",
-      "note": ""
+      "closest": "There will be some upper-body rotation, but you don’t want too much, as this will make the exercise easier and you’ll lose some of the core strengthening benefits. If you rotate excessively, get your feet further apart for a broader support base.",
+      "note": "Apostrophes set to ’ as both live pages print them (renegade_row-1, LB7 fix round)."
     },
     {
       "claim": "c7",
       "source": "bb-rr",
-      "text": "Try not to let your torso twist too far away from the side you're rowing the dumbbell. If it does, use a lighter weight.",
+      "text": "Try not to let your torso twist too far away from the side you’re rowing the dumbbell. If it does, use a lighter weight.",
       "status": "verbatim",
-      "closest": "Try not to let your torso twist too far away from the side you're rowing the dumbbell. If it does, use a lighter weight.",
-      "note": ""
+      "closest": "Try not to let your torso twist too far away from the side you’re rowing the dumbbell. If it does, use a lighter weight.",
+      "note": "Apostrophes set to ’ as both live pages print them (renegade_row-1, LB7 fix round)."
     },
     {
       "claim": "c8",
       "source": "bb-rr",
-      "text": "If you're trying to pull too much weight with this lift, you'll likely hike your shoulder and hip up and back to accomplish the range of motion you need.",
+      "text": "If you’re trying to pull too much weight with this lift, you’ll likely hike your shoulder and hip up and back to accomplish the range of motion you need.",
       "status": "verbatim",
-      "closest": "If you're trying to pull too much weight with this lift, you'll likely hike your shoulder and hip up and back to accomplish the range of motion you need.",
-      "note": ""
+      "closest": "If you’re trying to pull too much weight with this lift, you’ll likely hike your shoulder and hip up and back to accomplish the range of motion you need.",
+      "note": "Apostrophes set to ’ as both live pages print them (renegade_row-1, LB7 fix round)."
     },
     {
       "claim": "c8",
       "source": "bb-rr",
-      "text": "If you're swinging the dumbbell or hiking up your hips, then scale back the weight.",
+      "text": "If you’re swinging the dumbbell or hiking up your hips, then scale back the weight.",
       "status": "verbatim",
-      "closest": "If you're swinging the dumbbell or hiking up your hips, then scale back the weight.",
-      "note": ""
+      "closest": "If you’re swinging the dumbbell or hiking up your hips, then scale back the weight.",
+      "note": "Apostrophes set to ’ as both live pages print them (renegade_row-1, LB7 fix round)."
     },
     {
       "claim": "c8",
@@ -142,10 +142,18 @@
     {
       "claim": "c9",
       "source": "bb-rr",
-      "text": "To maintain your wrist health, you've got to keep your wrists in neutral. Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.",
+      "text": "To maintain your wrist health, you’ve got to keep your wrists in neutral. Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.",
       "status": "verbatim",
-      "closest": "To maintain your wrist health, you've got to keep your wrists in neutral. Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.",
-      "note": ""
+      "closest": "To maintain your wrist health, you’ve got to keep your wrists in neutral. Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.",
+      "note": "Apostrophes set to ’ as both live pages print them (renegade_row-1, LB7 fix round)."
+    },
+    {
+      "claim": "c9",
+      "source": "bb-rr",
+      "text": "This can jostle your wrists, making it hard to keep them neutral and even risk straining them.",
+      "status": "verbatim",
+      "closest": "This can jostle your wrists, making it hard to keep them neutral and even risk straining them.",
+      "note": "Confirmed by the fetcher scan of bb-rr (Landing Too Hard), 2026-10-22."
     },
     {
       "claim": "c10",
@@ -198,10 +206,10 @@
     {
       "claim": "c13",
       "source": "bb-rr",
-      "text": "If you're not ready to add weight to the movement, you can simply practice a dynamic plank variation where you focus on keeping your body still as you row the air with your hands. You can even start on your knees if need be.",
+      "text": "If you’re not ready to add weight to the movement, you can simply practice a dynamic plank variation where you focus on keeping your body still as you row the air with your hands. You can even start on your knees if need be.",
       "status": "verbatim",
-      "closest": "If you're not ready to add weight to the movement, you can simply practice a dynamic plank variation where you focus on keeping your body still as you row the air with your hands. You can even start on your knees if need be.",
-      "note": ""
+      "closest": "If you’re not ready to add weight to the movement, you can simply practice a dynamic plank variation where you focus on keeping your body still as you row the air with your hands. You can even start on your knees if need be.",
+      "note": "Apostrophes set to ’ as both live pages print them (renegade_row-1, LB7 fix round)."
     },
     {
       "claim": "c14",

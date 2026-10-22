@@ -1,0 +1,710 @@
+{
+ "id": "pike_push_up",
+ "libId": "lib_pike_push_up",
+ "name": "Pike Push-Up",
+ "family": "Push-up (own parent; vertical push from an inverted V)",
+ "tier": "A",
+ "tierNote": "Safety tier A (content.md appendix B; the brief: overhead-style loading with the head travelling toward the floor).",
+ "archetype": {
+  "hand": "palm-flat",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Start in a push-up (high plank) position with the hands about shoulder-width apart (one source says slightly wider), brace the core and pull the shoulders down and back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pike",
+    "ggr-pike",
+    "nasm-pike"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pike",
+     "text": "Adopt the push-up position with your hands roughly shoulder-width apart. Brace your core and pull your shoulders down and back.",
+     "where": "How to Do Pike Push-Ups, step 1"
+    },
+    {
+     "source": "ggr-pike",
+     "text": "Start from a high plank position with your hands shoulder-width apart.",
+     "where": "How To Do a Pike Push-Up, step 1"
+    },
+    {
+     "source": "nasm-pike",
+     "text": "Start in a downward dog yoga position with hands slightly wider than shoulder-width apart and your body forming an inverted V-shape.",
+     "where": "Step 1: Setup"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Keeping the legs straight, lift the hips up and back so the body forms an upside-down V; moving the hands closer to the feet puts more weight on the hands and makes the position more upside down.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pike",
+    "ggr-pike"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pike",
+     "text": "Keeping your legs straight, lift your butt into the air so your body resembles an inverted V.",
+     "where": "How to Do Pike Push-Ups, step 2"
+    },
+    {
+     "source": "fv-pike",
+     "text": "Move your hands closer to your feet to put more weight on your hands and achieve a more inverted position.",
+     "where": "How to Do Pike Push-Ups, step 3"
+    },
+    {
+     "source": "ggr-pike",
+     "text": "Lift your hips up and back to form an upside down V with your body.",
+     "where": "How To Do a Pike Push-Up, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Keeping the hips up, bend the arms and lower the head to within an inch of the floor (until it nearly touches), elbows tucked in, about 45 degrees from the body.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pike",
+    "nasm-pike"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pike",
+     "text": "Keeping your hips up, bend your arms and lower your head to within an inch of the floor. Tuck your elbows inward as you descend.",
+     "where": "How to Do Pike Push-Ups, step 4"
+    },
+    {
+     "source": "nasm-pike",
+     "text": "Lower your head toward the floor by bending your elbows, descending until your head nearly touches the floor. Keep your elbows at approximately 45 degrees from your body.",
+     "where": "Step 3: Execute/Drive"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Push back up until the arms are straight; one source says stop short of locking the elbows to keep tension on the shoulders.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pike",
+    "nasm-pike"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pike",
+     "text": "Push back up until your arms are straight, and repeat.",
+     "where": "How to Do Pike Push-Ups, step 5"
+    },
+    {
+     "source": "nasm-pike",
+     "text": "Press your body upward by extending your elbows, returning to the pike position. Avoid locking out your elbows at the top to maintain continuous tension in the deltoids.",
+     "where": "Step 4: Return/Descent"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Keep the neck neutral with the chin slightly tucked; do not lift the head and bend the neck back. Move the head forward and down as the elbows bend, keeping a neutral neck and spine throughout.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pike",
+    "ggr-pike",
+    "nasm-pike"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pike",
+     "text": "Keep your neck neutral with your chin slightly tucked. Do not lift your head and hyperextend your neck.",
+     "where": "Tips"
+    },
+    {
+     "source": "ggr-pike",
+     "text": "You want to move your head forward and down as you bend your elbows, maintaining a neutral neck and spine from start to finish.",
+     "where": "Common mistakes, Improperly Positioning Your Head"
+    },
+    {
+     "source": "nasm-pike",
+     "text": "Keep your head neutral and focus forward to maintain proper spinal alignment.",
+     "where": "Step 2: Brace/Position"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Moving only the head toward the floor, as in a handstand push-up, often leads to elbow flaring, poor mechanics and a higher risk of injury.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-pike"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-pike",
+     "text": "Moving only your head toward the floor, similar to the handstand push-up, often leads to elbow flaring, poor movement mechanics, and—you guessed it—an increased risk of injury.",
+     "where": "Common mistakes, Improperly Positioning Your Head"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Elbows flaring out is a listed pike push-up mistake: it increases shoulder stress and can contribute to shoulder impingement and, at worst, a rotator cuff tear. Keep the elbows tucked in; flaring is often a sign the triceps are overloaded, so scale back to standard or kneeling push-ups instead of grinding out poor reps.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-pike",
+    "nasm-pike"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-pike",
+     "text": "Letting your elbows flare out isn’t just poor movement mechanics. Doing this can contribute to shoulder impingement and, in the most severe cases, lead to a rotator cuff tear down the line.",
+     "where": "Common mistakes, Flaring Out Your Elbows"
+    },
+    {
+     "source": "nasm-pike",
+     "text": "Elbows flaring too wide, which increases shoulder stress and reduces effectiveness",
+     "where": "Common Mistakes, item 3"
+    },
+    {
+     "source": "ggr-pike",
+     "text": "“As with the regular push-up, you’ll want to keep your elbows tucked into your body while you move through the pike push-up,” says Kate.",
+     "where": "Common mistakes, Flaring Out Your Elbows"
+    },
+    {
+     "source": "ggr-pike",
+     "text": "“Letting them flare out to your sides is often a sign that your triceps are being overloaded. Instead of eking out shoddy reps, you should consider scaling down to standard push-ups or modified push-ups from your knees.”",
+     "where": "Common mistakes, Flaring Out Your Elbows"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Holding the breath is a listed mistake: nearly upside down in the pike, there is a greater risk of dizziness or light-headedness and of passing out. Breathe in while lowering and out while pushing back up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-pike"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-pike",
+     "text": "since you’re nearly upside down when in the pike position, you have a greater risk of experiencing dizziness or lightheadedness, making the possibility of passing out more real.",
+     "where": "Common mistakes, Holding Your Breath"
+    },
+    {
+     "source": "ggr-pike",
+     "text": "Inhale during the concentric phase, or as you’re bending your elbows to lower yourself down, then exhale as you push yourself back up",
+     "where": "Common mistakes, Holding Your Breath"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "The other listed pike push-up mistakes are hips sagging (less shoulder work, more chest), jerky or rushed reps without control of both phases, and losing the pike depth and angle.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nasm-pike"
+   ],
+   "quotes": [
+    {
+     "source": "nasm-pike",
+     "text": "Allowing hips to sag, which reduces shoulder demand and shifts emphasis to chest",
+     "where": "Common Mistakes, item 1"
+    },
+    {
+     "source": "nasm-pike",
+     "text": "Jerky movements or excessive momentum, which compromises form and control",
+     "where": "Common Mistakes, item 2"
+    },
+    {
+     "source": "nasm-pike",
+     "text": "Moving too quickly without controlling both concentric and eccentric phases",
+     "where": "Common Mistakes, item 4"
+    },
+    {
+     "source": "nasm-pike",
+     "text": "Not maintaining adequate pike position depth and angle",
+     "where": "Common Mistakes, item 5"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Spread the fingers for a more stable base and actively engage the abs to hold a strong pike.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-pike"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pike",
+     "text": "Spread your fingers to create a more stable base from which to work.",
+     "where": "Tips"
+    },
+    {
+     "source": "fv-pike",
+     "text": "Actively engage your abs to maintain a strong piked position.",
+     "where": "Tips"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "The front deltoids are the main movers, with the triceps working hard and the upper traps also active; the chest does little compared with a regular push-up (one source lists the pec major as an assisting primary).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nasm-pike",
+    "fv-pike"
+   ],
+   "quotes": [
+    {
+     "source": "nasm-pike",
+     "text": "Anterior Deltoid -- primary mover for vertical pressing in pike position",
+     "where": "Muscles Worked, primary"
+    },
+    {
+     "source": "fv-pike",
+     "text": "All three heads are involved in pike push-ups, but the anterior deltoid is the most active.",
+     "where": "Muscles Worked, Deltoids"
+    },
+    {
+     "source": "fv-pike",
+     "text": "the triceps are heavily involved in pike push-ups and work as synergist or helper muscle.",
+     "where": "Muscles Worked, Triceps brachii"
+    },
+    {
+     "source": "fv-pike",
+     "text": "All three sets of trap fibers are active during pike push-ups, but the upper traps are the most active.",
+     "where": "Muscles Worked, Upper trapezius"
+    },
+    {
+     "source": "fv-pike",
+     "text": "Pike push-ups involve your deltoids or shoulder muscles more and provide very little work for your chest.",
+     "where": "FAQ 1"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Hands on push-up handles may make pike push-ups more comfortable for the wrists, and a mat's cushioning may help the wrists too.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "fv-pike",
+    "ggr-pike"
+   ],
+   "quotes": [
+    {
+     "source": "fv-pike",
+     "text": "using push-up handles may make pike push-ups more comfortable for your wrists.",
+     "where": "FAQ 6"
+    },
+    {
+     "source": "ggr-pike",
+     "text": "your wrist joints may be happier when using one of the best exercise mats for cushioning.",
+     "where": "How To Do Pike-Push-Ups At Home"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Be able to do regular (and incline) push-ups well before pike push-ups; do 3 sets of 5-12 reps; start with a few comfortable low-rep sets and add a rep or two each week; after a few sets of ten or more good reps, move to a harder version, and step back if it is too hard.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "nasm-pike",
+    "ggr-pike",
+    "fv-pike"
+   ],
+   "quotes": [
+    {
+     "source": "nasm-pike",
+     "text": "Develop adequate upper body and shoulder strength through traditional and incline push-ups before progressing to pike variations.",
+     "where": "FAQ, prerequisites"
+    },
+    {
+     "source": "nasm-pike",
+     "text": "Perform 3 sets of 5-12 repetitions, adjusting based on fitness level and strength.",
+     "where": "FAQ, how many"
+    },
+    {
+     "source": "ggr-pike",
+     "text": "I typically recommend starting with something comfortable, even if it’s only one or two reps at a time. Do a few low-rep sets, then aim to increase the number of reps by one or two the next week.",
+     "where": "FAQ, how many"
+    },
+    {
+     "source": "fv-pike",
+     "text": "If you can do a few sets of ten or more reps with good form, you are probably ready to move up a level and try a more demanding pike push-up variation.",
+     "where": "FAQ 4"
+    },
+    {
+     "source": "fv-pike",
+     "text": "if the next variation feels too overly hard, or you cannot do it properly, it’s okay to return to your previous level",
+     "where": "FAQ 4"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "One source has a pause at the bottom, with the elbows fully bent, before pressing up; no source gives seconds for any phase.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "ggr-pike"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-pike",
+     "text": "Continue until your elbows are fully bent.",
+     "where": "How To Do a Pike Push-Up, step 4"
+    },
+    {
+     "source": "ggr-pike",
+     "text": "Pause, then extend your elbows to return to the starting position.",
+     "where": "How To Do a Pike Push-Up, step 5"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Pike push-ups feel awkward to many, especially people prone to dizziness, so take them slowly when new.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-pike"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-pike",
+     "text": "The positioning feels awkward to many, especially those prone to dizziness, and requires a solid foundation to maintain control. So, don’t rush these if they’re new to you.",
+     "where": "How To Do a Pike Push-Up"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "fv-pike",
+   "url": "https://fitnessvolt.com/pike-push-up/",
+   "title": "Pike Push-Ups: Target Your Deltoids and Build Upper Body Strength – Fitness Volt",
+   "kind": "coach",
+   "year": 2026,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ggr-pike",
+   "url": "https://www.garagegymreviews.com/how-to-do-pike-push-ups",
+   "title": "How To Do Pike Push-Ups: Tips From An Expert | Garage Gym Reviews",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "nasm-pike",
+   "url": "https://www.nasm.org/resource-center/exercise-library/pike-push-up",
+   "title": "Pike Push-Up (NASM exercise library)",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the inverted V and hip height (c2, c9), the head path forward and down (c5, c6, the plate fault) and the head-to-floor depth (c3) all read from the side.",
+  "equipment": "Floor line only (census need 'floor'). Fitness Volt's folded mat under the head (Tips: \"Place a folded mat on the floor below your head and touch it lightly\") is a range marker, not drawn as equipment.",
+  "start": "Top: arms straight (c4), hands about shoulder-width (c1), legs straight and hips lifted up and back into an upside-down V (c2), head neutral with the chin slightly tucked (c5).",
+  "end": "Bottom: head within an inch of the floor after travelling forward and down (c3, c5); elbows bent and tucked in, about 45 degrees from the body (c3); hips still high (c3).",
+  "checkpoints": [
+   {
+    "label": "Hips high",
+    "what": "Legs straight, hips up in an upside-down V the whole set.",
+    "claim": [
+     "c2",
+     "c3"
+    ]
+   },
+   {
+    "label": "Head forward",
+    "what": "Head travels forward and down, neck neutral.",
+    "claim": "c5"
+   },
+   {
+    "label": "Head near floor",
+    "what": "Lower until the head is about an inch from the floor.",
+    "claim": "c3"
+   }
+  ],
+  "mistake": {
+   "what": "Only the head moves toward the floor, instead of forward and down.",
+   "why": "Garage Gym Reviews lists improper head position as the second of its three pike push-up mistakes: moving only the head toward the floor often leads to elbow flaring and an increased risk of injury (c6). The top fault, elbows flaring (c7), cannot be seen from the side.",
+   "claim": [
+    "c6",
+    "c5"
+   ],
+   "drawable": false,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the elbows flaring out (c7); drawable false, so plate.mistake names the next fault, the head moving only toward the floor (c6). Step 1 counts no hit. Garage Gym Reviews' \"Here are the three most common mistakes to avoid while learning and doing pike push-ups.\" is a list sentence, not read onto one item; \"Forgetting to breathe is pretty common during exercise.\" is about all exercise: the next sentence contrasts \"It’s obviously very important to breathe, generally speaking, but it’s even more critical with an exercise like the pike push-up.\" (R-LB7-3); \"Letting them flare out to your sides is often a sign that your triceps are being overloaded.\" (c7) says what causes the fault, not how often lifters make it; \"Moving only your head toward the floor, similar to the handstand push-up, often leads to elbow flaring, poor movement mechanics, and—you guessed it—an increased risk of injury.\" (c6) says how often one fault leads to another, not how often lifters make it, so it is not counted (if it were, elbow flaring would pass step 1 and the pick would not change); \"The positioning feels awkward to many\" (c15) is about how the position feels; \"you may not see many people performing at the gym\" and \"There are many effective bodyweight exercises\" are about the exercise. Fitness Volt's \"the most popular and widely performed exercise\", \"Almost everyone who works out has done push-ups\" and \"often feature in high school PT classes\" are about push-ups; \"the anterior deltoid is the most active\" and \"the upper traps are the most active\" are about muscles; \"the most common queries\" is a heading line; \"your muscles do most of their growing when you rest\" is about training. NASM's \"Common Mistakes\" is a heading. Not about a fault: Fitness Volt's \"Get more from pike push-ups while keeping your risk of injury to a minimum by following these guidelines\" introduces its whole how-to list. Garage Gym Reviews' \"it’s important to learn the correct form if you’re going to minimize your risk of injury\" introduces its mistakes list (a list sentence). Its \"check in with your form frequently\" is advice, not how often a fault happens. Its \"protecting your spine\" is about what the abs do, and its low-back-pain lines are about core training in general. \"How often can I do pike push-ups?\" is a heading about how many sessions to train. Step 2: three faults on Garage Gym Reviews' list are tied to harm. Elbows flaring (item 1): \"Doing this can contribute to shoulder impingement and, in the most severe cases, lead to a rotator cuff tear down the line.\" and NASM's \"Elbows flaring too wide, which increases shoulder stress and reduces effectiveness\" (c7): two sources. Head moving only toward the floor (item 2): \"an increased risk of injury\" (c6): one source. Holding the breath (item 3): \"a greater risk of experiencing dizziness or lightheadedness, making the possibility of passing out more real\" (c8): one source; breath is not a body position or movement, so it is a doubtful candidate either way. Tie order: all on a common-mistakes list; elbows flaring has the most sources tying it to harm, so it is the top fault. Set aside, no harm word: NASM's \"Allowing hips to sag, which reduces shoulder demand and shifts emphasis to chest\" and \"Not maintaining adequate pike position depth and angle\" (c9); \"Jerky movements or excessive momentum\" and \"Moving too quickly without controlling both concentric and eccentric phases\" (c9) are speed-only faults that name no harm; Fitness Volt's \"Do not lift your head and hyperextend your neck.\" (c5) names no harm; its \"you could end up smacking your head into the floor\" is about a deficit that slips (deficit variation). drawable false: the side view shows how far the elbows bend but not how far they point out to the sides. plate.mistake: the next fault by the same steps is the head moving only toward the floor (item 2, one harm source), ahead of holding the breath (item 3, one harm source, not a position and not visible). The side view shows it: the head goes down toward the floor on its own instead of travelling forward and down with the elbow bend."
+  },
+  "tells": [
+   {
+    "text": "Hips stay high the whole set",
+    "claim": "c3"
+   },
+   {
+    "text": "Head stops an inch off the floor",
+    "claim": "c3"
+   }
+  ],
+  "tempo": {
+   "up": null,
+   "down": null,
+   "pause": null,
+   "claim": "c14",
+   "text": "No source on the card gives seconds for any phase, so up, down and pause stay null (LR-33). NASM names 'Moving too quickly without controlling both concentric and eccentric phases' as a mistake (c9) with no seconds. Garage Gym Reviews has a pause at the bottom with the elbows fully bent (c14); it is not after the press, so it is named here and not in pause. Two read lines belong to other exercises and do not count under LR-33: Garage Gym Reviews' \"Squeeze your glutes, traps, and delts in the end position.\" is in its push press section, and it has no pause words anyway; Fitness Volt's \"Pause for 1-2 seconds\" is in its shoulder press machine section. Pause stays null."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Palms flat on the floor (palm-flat hand pair; shared card docs/research/howto/shared/palm-flat.json, which lists this id by inference only).",
+  "width": "About shoulder-width (Fitness Volt, Garage Gym Reviews); NASM says slightly wider (c1). Fitness Volt says experiment with width (Tips).",
+  "thumb": "No thumb line: no bar or handle (content.md 5.2 thumb-and-bar point does not apply).",
+  "handContact": "Fingers spread for a stable base (c10).",
+  "wrist": "Push-up handles or a cushioned mat may be easier on the wrists (c12). The palm-flat shared card lists pike_push_up for its sore-wrist rule.",
+  "claims": [
+   "c1",
+   "c10",
+   "c12"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Start in a push-up position, hands about shoulder-width.",
+   "claim": "c1"
+  },
+  {
+   "step": "Brace and pull your shoulders down and back.",
+   "claim": "c1"
+  },
+  {
+   "step": "Keep your legs straight and lift your hips into a V.",
+   "claim": "c2"
+  },
+  {
+   "step": "Walk your hands toward your feet to get more upside down.",
+   "claim": "c2"
+  },
+  {
+   "step": "Spread your fingers for a stable base.",
+   "claim": "c10"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Keep your hips up the whole time.",
+   "claim": "c3"
+  },
+  {
+   "point": "Elbows tucked in, about 45 degrees from your body.",
+   "claim": [
+    "c3",
+    "c7"
+   ]
+  },
+  {
+   "point": "Neck neutral, chin slightly tucked.",
+   "claim": "c5"
+  },
+  {
+   "point": "Move your head forward and down as you bend.",
+   "claim": [
+    "c5",
+    "c6"
+   ]
+  },
+  {
+   "point": "Breathe in going down, out going up.",
+   "claim": "c8"
+  },
+  {
+   "point": "Squeeze your abs to hold the pike.",
+   "claim": "c10"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Elbows flaring out.",
+   "fix": "Tuck your elbows in. Too hard? Go back to standard push-ups.",
+   "claim": "c7"
+  },
+  {
+   "mistake": "Moving only your head down.",
+   "fix": "Move your head forward and down as your elbows bend.",
+   "claim": [
+    "c6",
+    "c5"
+   ]
+  },
+  {
+   "mistake": "Holding your breath.",
+   "fix": "Breathe in going down, out going up.",
+   "claim": "c8"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "front_delts",
+    "claim": "c11"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "triceps",
+    "claim": "c11"
+   },
+   {
+    "muscleId": "upper_traps",
+    "claim": "c11"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Shoulders and back of the arms",
+    "means": "Your shoulders and triceps are doing the pressing.",
+    "fix": "",
+    "claim": "c11",
+    "redFlag": null
+   },
+   {
+    "where": "Shoulder",
+    "means": "Flared elbows can hurt the shoulder over time.",
+    "fix": "Tuck your elbows in, or go back to standard push-ups.",
+    "claim": "c7",
+    "redFlag": "shoulder"
+   },
+   {
+    "where": "Head",
+    "means": "Upside down, holding your breath can make you dizzy.",
+    "fix": "Breathe in going down, out going up.",
+    "claim": "c8",
+    "redFlag": null
+   },
+   {
+    "where": "Wrists",
+    "means": "Your hands carry more of your weight here.",
+    "fix": "Use push-up handles or a soft mat.",
+    "claim": [
+     "c2",
+     "c12"
+    ],
+    "redFlag": "wrist"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Elbows flaring out can lead to shoulder injury over time.",
+   "claim": "c7"
+  },
+  {
+   "risk": "Upside down, holding your breath can make you dizzy or light-headed.",
+   "claim": "c8"
+  },
+  {
+   "risk": "Moving only your head toward the floor raises injury risk.",
+   "claim": "c6"
+  }
+ ],
+ "redFlags": [
+  "shoulder",
+  "wrist"
+ ],
+ "zooms": [
+  {
+   "key": "head-path",
+   "kind": "posture",
+   "right": "Head moves forward and down, neck neutral.",
+   "wrong": "Only the head moves toward the floor.",
+   "claim": [
+    "c5",
+    "c6"
+   ]
+  },
+  {
+   "key": "pike",
+   "kind": "posture",
+   "right": "Legs straight, hips high in an upside-down V.",
+   "wrong": "Hips sagging toward the floor.",
+   "claim": [
+    "c2",
+    "c9"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "upper_traps"
+  ],
+  "remove": [],
+  "why": "exercises.json lists front_delts primary and triceps secondary; keep both (c11). Add upper_traps as secondary: Fitness Volt says the upper traps are the most active trap fibres in the pike push-up (c11), and Garage Gym Reviews says the trapezius works to stabilise the shoulders. Chest is not added: NASM lists the pec major as an assisting primary but Fitness Volt says the pike push-up gives the chest very little work (c11)."
+ },
+ "anchorSource": "fv-pike",
+ "loadProgression": {
+  "text": "Master regular push-ups first. Do 3 sets of 5 to 12, adding a rep or two each week.",
+  "claim": "c13"
+ },
+ "tierA": {
+  "wayOut": null
+ },
+ "gaps": [
+  "Way out (tier A, LR-3): no read source says how to end a failed pike push-up rep safely (for example lowering the knees or sitting back). No way-out line is shown; this joins the owner's tier-A gap list (LIB-WAYOUT, bodyweight inverted press).",
+  "Head-to-floor safety: no read source gives a pad or mat under the head as a safety point for the standard pike push-up. Fitness Volt's folded mat is for an even range of motion, and its head-strike warning is for the deficit variation only. Content.md 5.2's 'bar path clear of the neck' has no bar here; the head path is covered by c5 and c6.",
+  "Breathing line for people with a named blood-pressure condition: Garage Gym Reviews' low-blood-pressure line is not carried (condition names and referral wording are not allowed on tier-A sheets)."
+ ],
+ "notes": [
+  "Own parent (no inherit). The palm-flat shared card lists pike_push_up in appliesTo and byRule.inferenceOnly; its hand rules and sore-wrist rule are cited, not copied. floor-body (shared/floor-body.json) leaves pike_push_up out of 'Body in line' ('hips are meant to be high') and lists it under gaps; this card's own checkpoints apply.",
+  "Tier A, content.md 5.2: way out in gaps (LR-3); thumb-and-bar not applicable (no bar); load wording: no fix pushes through pain, and the elbow fix scales back to standard push-ups where the load causes the fault (c7); warning link: the shoulder row links the shoulder box (the most at-risk joint by c7); risks: three lines; breathing: the breath line is a risk and a row (c8); no condition names on shown lines; hand pair palm-flat is not a new key.",
+  "Garage Gym Reviews swaps the phase names in its breathing line ('Inhale during the concentric phase, or as you’re bending your elbows to lower yourself down'); c8 quotes the whole line from 'Inhale' (pike_push_up-1, LB7 fix round), and the card uses only its plain words (breathe in while lowering, out while pushing up).",
+  "Lockout: NASM says avoid locking the elbows at the top; Fitness Volt says push up until the arms are straight (c4). The plate draws straight arms with soft elbows.",
+  "Elbows: NASM gives about 45 degrees from the body; Fitness Volt and Garage Gym Reviews say tuck them in (c3, c7). The plate draws about 45 degrees.",
+  "Read but not usable: StrengthLog and BarBend pike push-up URLs (429/404), Healthline, PureGym, Muscle & Fitness, Nerd Fitness, Bodybuilding.com, Hevy and Built With Science (404), Verywell Fit (402), Muscle & Strength (403), Men's Health (bot page). PubMed has no pike push-up technique study (one 'pike' hit is a Swiss-ball core study, PMID 20436242, not cited). Every page read in full is cited."
+ ]
+}

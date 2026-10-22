@@ -1,0 +1,895 @@
+{
+  "id": "cable_lateral_raise",
+  "libId": "lib_cable_lateral_raise",
+  "name": "Cable Lateral Raise",
+  "family": "Lateral and front raise (difference card of dumbbell_lateral_raise)",
+  "tier": "C",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "dumbbell_lateral_raise",
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the cable pulley at its lowest point and attach a single handle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise",
+        "sl-cable-lat-raise",
+        "fv-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Set the cable pulley to the lowest position and attach a single handle.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-cable-lat-raise",
+          "text": "Grip a handle connected to the lower position on a cable pulley.",
+          "where": "How to Do Cable Lateral Raises, step 1"
+        },
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "Attach a single-grip handle to the lowest point of the cable pulley system.",
+          "where": "How To Do The Cable Lateral Raise, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Stand side-on to the pulley and hold the handle in the outside hand, the one farther from the machine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-cable-lat-raise",
+        "sl-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "Stand sideways to the cable pulley and grip the handle with the outside hand.",
+          "where": "How To Do The Cable Lateral Raise, step 2"
+        },
+        {
+          "source": "sl-cable-lat-raise",
+          "text": "Stand close to the pulley, with the arm holding the handle facing away from the machine.",
+          "where": "How to Do Cable Lateral Raises, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Step away from the machine so the cable has tension before the first rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise",
+        "fv-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Step away to create cable tension.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "The cable should have tension before you begin.",
+          "where": "How To Do The Cable Lateral Raise, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "At the start the working arm hangs down with a slight elbow bend and the torso is braced.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Stand sideways to the machine with the far hand gripping the handle, arm extended down with slight elbow bend, core braced.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The handle may start in front of or behind the body; Fitness Volt says behind may give a deeper stretch in the delts.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "Hold the handle in front of or behind your body so that you feel a slight stretch in the delts.",
+          "where": "How To Do The Cable Lateral Raise, step 4"
+        },
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "You can position your arm in front or behind your body to execute this exercise. Holding the arm behind the body may allow for a deeper stretch in the delts.",
+          "where": "Cable Lateral Raise Tips"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Breathe out and raise the arm out to the side, leading with the elbow.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise",
+        "fv-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Exhale and raise arm out to side, leading with elbow.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "With elbows slightly bent, raise your arm to shoulder level, leading with the elbow.",
+          "where": "How To Do The Cable Lateral Raise, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Lift until the arm is parallel with the floor (upper arm horizontal). Motra's range allows \"or slightly above\"; the card stops at parallel, with Kolber's 90 degree limit (c19).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise",
+        "sl-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Lift until arm is parallel to floor.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-cable-lat-raise",
+          "text": "With control, lift the handle outward to your side, until your upper arm is horizontal.",
+          "where": "How to Do Cable Lateral Raises, step 2"
+        },
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Start with arm extended down at side; raise to parallel with floor or slightly above, avoiding shoulder shrug.",
+          "where": "Coaching Tips, Range of Motion"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Breathe in and lower the arm slowly, with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise",
+        "sl-cable-lat-raise",
+        "fv-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Inhale and lower arm slowly with control.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-cable-lat-raise",
+          "text": "Lower the handle with control.",
+          "where": "How to Do Cable Lateral Raises, step 3"
+        },
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "Slowly lower your arm back down until you feel a stretch in your delts and repeat.",
+          "where": "How To Do The Cable Lateral Raise, step 6"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Keep a slight elbow bend throughout; locked elbows are on Motra's common-mistakes list.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Maintain slight elbow bend throughout.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Locking elbows",
+          "where": "Safety, Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Don't shrug the shoulder as the arm rises; shrugging is on Motra's common-mistakes list.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Shrugging shoulders",
+          "where": "Safety, Common Mistakes"
+        },
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Start with arm extended down at side; raise to parallel with floor or slightly above, avoiding shoulder shrug.",
+          "where": "Coaching Tips, Range of Motion"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Avoid swinging the weight up with momentum; it is first on Motra's common-mistakes list. Fitness Volt says the lift needs no very heavy weight and swinging is a cheat, though it allows slight momentum as a deliberate overload method.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise",
+        "fv-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Swinging with momentum",
+          "where": "Safety, Common Mistakes"
+        },
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Avoid momentum",
+          "where": "Coaching Tips, Form Cues"
+        },
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "The cable lateral raise is an isolation exercise that does not require very heavy weight. You want to challenge the muscle but not have to cheat to swing and use momentum the weight up unless you’re performing cheat reps.",
+          "where": "Cable Lateral Raise Tips"
+        },
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "You can use slight momentum if you really want to overload the delts.",
+          "where": "Cable Lateral Raise Tips"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Stay upright and brace so the torso does not lean; Motra lists a leaning torso as a mistake. Fitness Volt also allows holding the machine and leaning away; the card follows the upright stance, which Fitness Volt also offers.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise",
+        "fv-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Stay upright",
+          "where": "Coaching Tips, Form Cues"
+        },
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Brace core to prevent leaning",
+          "where": "Safety, Safety Notes"
+        },
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Leaning torso",
+          "where": "Safety, Common Mistakes"
+        },
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "Either hold onto the cable system and lean away from it or take a step away and remain upright.",
+          "where": "How To Do The Cable Lateral Raise, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Don't pull the handle up; raise the arm out to the side with the elbow leading the hand.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "Do not pull up the handle. You want the delts to raise laterally to perform the exercise effectively.",
+          "where": "Cable Lateral Raise Tips"
+        },
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "The elbow should lead the hands to maximize the engagement of the lateral deltoids.",
+          "where": "Cable Lateral Raise Tips"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "It is easy to pick a weight that is too heavy; start light and err on the lighter side for strict form.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-lat-raise",
+        "mo-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-lat-raise",
+          "text": "This is an exercise where it is easy to pick a weight that is too heavy. Rather err on the lighter side, and strive for a strict form where you focus on getting good contact with your delts.",
+          "where": "Commentary"
+        },
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Start with light weight",
+          "where": "Safety, Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The cable lateral raise targets the side (lateral) deltoid.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise",
+        "sl-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "A unilateral isolation exercise using a cable machine to target the lateral deltoid for shoulder width and definition.",
+          "where": "About"
+        },
+        {
+          "source": "sl-cable-lat-raise",
+          "text": "Lateral Deltoid",
+          "where": "Muscles Worked, Primary muscles worked"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "In an 8-week training study in resistance-trained lifters, cable and dumbbell lateral raises grew the side deltoid about equally.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "larsen2025"
+      ],
+      "quotes": [
+        {
+          "source": "larsen2025",
+          "text": "In conclusion, our data suggest that both dumbbell and cable lateral raises are similarly effective for increasing lateral deltoid muscle hypertrophy in resistance-trained lifters.",
+          "where": "Abstract, Conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Motra lists the middle and upper trapezius as secondary muscles of the cable lateral raise (4 of 10 in its muscle breakdown).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Mid Traps, Upper Traps",
+          "where": "Muscle Breakdown, Traps 4/10"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "The front deltoid works as a secondary muscle, helping stabilise the arm as it lifts out to the side.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-cable-lat-raise",
+        "fv-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "sl-cable-lat-raise",
+          "text": "Front Deltoid",
+          "where": "Muscles Worked, Secondary muscles worked"
+        },
+        {
+          "source": "fv-cable-lat-raise",
+          "text": "The deltoid anterior or front deltoid is one of three heads that make up the shoulder. It assists in the stabilization of the arm during abduction and with help from the pectoralis major, flexes the arm when walking.",
+          "where": "Muscles Worked, Deltoid Anterior"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "In recreational weight-trainers, lateral raises above 90 degrees were linked with signs of shoulder impingement (case-control association, not cause; the abstract does not say dumbbell or cable); the authors suggest not raising beyond 90 degrees.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "kolber2014"
+      ],
+      "quotes": [
+        {
+          "source": "kolber2014",
+          "text": "A significant association existed between clinical characteristics of SIS (p ≤ 0.004) and both lateral deltoid raises and upright rows above 90°.",
+          "where": "Abstract"
+        },
+        {
+          "source": "kolber2014",
+          "text": "Avoiding performance of lateral deltoid raises and upright rows beyond an angle of 90° and efforts to strengthen the external rotators may serve as a useful means to mitigate characteristics associated with SIS.",
+          "where": "Abstract"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "In the training study some trained lifters felt pain in the shoulder during strict side-on raises; they were allowed to raise the arm midway between straight out to the side and slightly forward (the scapular plane).",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "larsen2025"
+      ],
+      "quotes": [
+        {
+          "source": "larsen2025",
+          "text": "Some participants reported pain in the glenohumeral and/or scapulothoracic joints during strict shoulder abduction lateral raises. In these cases, they were permitted to perform shoulder elevation mid-way between the frontal and scapular plane.",
+          "where": "Methods, Resistance training protocol"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Stop on sharp pain, and do not lift above parallel if it is painful.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Stop on sharp pain",
+          "where": "Safety, Safety Notes"
+        },
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Do not lift above parallel if painful",
+          "where": "Safety, Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "Tempo: Motra asks for a brief pause at the top, right after the lift, and no source gives its seconds, so the 1 s pause is a drawing convention (LR-33).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "Pause briefly and squeeze lateral deltoid.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "text": "Tempo: Motra lists 2-1-2 for this lift and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the lowering, a 1 s pause at the bottom and 2 s for the lift.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-cable-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "2-1-2",
+          "where": "Coaching Tips, Tempo"
+        },
+        {
+          "source": "mo-cable-lat-raise",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip (served HTML)"
+        }
+      ]
+    },
+    {
+      "id": "c24",
+      "text": "In the training study (trained lifters, to failure) each lift and each lowering took about 1 s, with a brief pause at the bottom and none at the top. A study protocol, not a beginner recommendation.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "larsen2025"
+      ],
+      "quotes": [
+        {
+          "source": "larsen2025",
+          "text": "The eccentric and concentric phases of each lift were standardized to approximately 1 s each to try to match shoulder abduction and adduction angular acceleration, which could impact the torque.",
+          "where": "Methods, Resistance training protocol"
+        },
+        {
+          "source": "larsen2025",
+          "text": "Participants were instructed to pause briefly at full shoulder adduction but not at full shoulder abduction.",
+          "where": "Methods, Resistance training protocol"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mo-cable-lat-raise",
+      "url": "https://motra.com/exercises/cableSingleArmLateralRaise",
+      "title": "Cable Single-Arm Lateral Raise: Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-cable-lat-raise",
+      "url": "https://www.strengthlog.com/cable-lateral-raise/",
+      "title": "How to Do Cable Lateral Raise: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "fv-cable-lat-raise",
+      "url": "https://fitnessvolt.com/cable-lateral-raise/",
+      "title": "Cable Lateral Raise (Fitness Volt, Matthew Magnante)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "larsen2025",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12277279/",
+      "title": "Dumbbell versus cable lateral raises for lateral deltoid hypertrophy: an experimental study (Larsen et al., Front Physiol 16:1611468)",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": 40692697,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "kolber2014",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/24077379/",
+      "title": "Characteristics of shoulder impingement in the recreational weight-training population (Kolber et al., J Strength Cond Res 28(4):1081-9)",
+      "kind": "peer-reviewed",
+      "year": 2014,
+      "pmid": 24077379,
+      "access": "abstract",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "census: front. The arm rises sideways in the frontal plane (c6, c7), which reads from the front. The drawn fault, the arm raised above shoulder height (c19, c7), shows from the front.",
+    "equipment": "Cable column with the pulley at its lowest point and a single handle (c1); the lifter stands side-on, a step away, cable taut (c2, c3). The cable runs from the low pulley across the front of the body to the outside hand (c5 allows in front or behind; drawn in front, see notes). Floor line.",
+    "start": "Standing upright, side-on to the column (c2, c12); the outside hand holds the handle, arm hanging down with a slight elbow bend, torso braced (c4); handle in front of the body (c5); cable taut (c3).",
+    "end": "Working arm out to the side, parallel with the floor, upper arm horizontal (c7); elbow slightly bent and leading the hand (c9, c6, c13); shoulder not shrugged (c10); torso upright, not leaning (c12).",
+    "checkpoints": [
+      {
+        "label": "Cable tight",
+        "what": "Step away so the cable has tension before you start.",
+        "claim": "c3"
+      },
+      {
+        "label": "Elbow leads",
+        "what": "Raise the arm out to the side, elbow leading the hand.",
+        "claim": [
+          "c6",
+          "c13"
+        ]
+      },
+      {
+        "label": "Shoulder height",
+        "what": "Stop when your arm is parallel with the floor.",
+        "claim": "c7"
+      }
+    ],
+    "mistake": {
+      "what": "Raising the arm above shoulder height (beyond 90 degrees).",
+      "why": "Kolber 2014 linked lateral raises above 90° with signs of shoulder impingement in recreational weight-trainers (association, not cause) and advises not going beyond 90° (c19); Motra says not to lift above parallel if painful (c21). It is the only named fault a read source ties to harm. No source measures how common it is.",
+      "claim": [
+        "c19",
+        "c7"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: raising the arm above shoulder height, beyond 90 degrees (c19, c7, c21). Step 1: no frequency word for a fault of this exercise. Set aside: Fitness Volt's \"performing a lateral raise is great for warming up the shoulders as this area is often prone to injury\" is about the shoulder area and names no fault, and its \"is often recommended\" (warm-up sets) and \"Typically, isolation exercises are performed after compound movements\" are programming; Motra's \"Typical Rep Range\" is programming and \"Not typically needed\" is about spotting; StrengthLog's \"This is an exercise where it is easy to pick a weight that is too heavy.\" (c14) is the load, and \"easy to\" is not a frequency word; Larsen's \"has been frequently studied\", \"many resistance training interventions\" and \"most participants were in an energy surplus\" are about research and diet; Larsen's \"Some participants reported pain ... during strict shoulder abduction lateral raises\" (c20) has no frequency word (\"some\") and describes the study's own strict side-on path, which no read source names as a fault. Step 2: one named fault is tied to harm, raising above 90 degrees: Kolber's \"A significant association existed between clinical characteristics of SIS (p ≤ 0.004) and both lateral deltoid raises and upright rows above 90°.\" and its advice to avoid going beyond 90° (c19, an injury sign; the abstract does not name the implement), and Motra's \"Do not lift above parallel if painful\" (c21). No other named fault is tied to harm: Motra's common-mistakes list (\"Swinging with momentum\", \"Shrugging shoulders\", \"Leaning torso\", \"Locking elbows\", \"Incomplete range\") carries no harm word, \"Brace core to prevent leaning\" names no harm, and Fitness Volt's swing and pull-up-the-handle tips name none; Motra's \"Stop on sharp pain\" and \"Avoid if shoulder impingement present\" name no fault. So step 2 is not tied and step 3 is not needed (it would give the swing, first on Motra's list, c11). drawable is true: the front view shows the arm rising past the shoulder line. Further scan (2026-10-22, fetcher pages included): Larsen's \"Training programs frequently target the lateral deltoid, yet exercise prescription for this muscle often relies on surface electromyography (sEMG) studies\" and \"localized strain across muscle regions\" are about programming and research; its \"two discontinued (one for personal reasons, one for injury)\" and \"an injury unrelated to the study\" are dropouts, no fault. Kolber's \"Despite reports implicating subacromial impingement syndrome (SIS) as an etiologic source of shoulder pain among weight-training (WT) participants\" is about weight training in general, no fault, and \"painful arc sign\" is a test. Motra's \"Avoid if shoulder impingement present\", \"Do not lift above parallel if painful\" (counted at step 2), \"Brace core to prevent leaning\" (no harm word) and \"Stop on sharp pain\" (no fault) are its safety notes."
+    },
+    "tells": [
+      {
+        "text": "Arm level with the shoulder at the top",
+        "claim": "c7"
+      },
+      {
+        "text": "Elbow leads the hand up",
+        "claim": [
+          "c6",
+          "c13"
+        ]
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": [
+        "c22",
+        "c23"
+      ],
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c23, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause; the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the lift, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the lift: Motra's \"Pause briefly and squeeze lateral deltoid.\" (c22) gives no seconds, so the 1 s is a drawing convention (c22, WEAK; LR-33). Larsen's training protocol (c24) used about 1 s up and 1 s down with a brief pause at the bottom and none at the top; it is a study protocol in trained lifters, so the card keeps Motra's exercise-specific how-to numbers."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "One single handle held in the outside hand, the one farther from the machine (c2, c4).",
+    "width": "One arm; the handle starts in front of the body (drawn) or behind it (c5).",
+    "thumb": "Not given by any source read; the natural grip of a single D-handle is drawn (LR-4, notes).",
+    "handContact": "Not given by any source read.",
+    "wrist": "Not given by any source read.",
+    "claims": [
+      "c2",
+      "c4",
+      "c5"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Set the pulley at its lowest point with a single handle.",
+      "claim": "c1"
+    },
+    {
+      "step": "Stand side-on to the machine. Hold the handle in your outside hand.",
+      "claim": "c2"
+    },
+    {
+      "step": "Step away until the cable is tight.",
+      "claim": "c3"
+    },
+    {
+      "step": "Let the arm hang down, elbow slightly bent. Brace your torso.",
+      "claim": "c4"
+    },
+    {
+      "step": "Pick a lighter weight than you think.",
+      "claim": "c14"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Breathe out and raise your arm out to the side.",
+      "claim": "c6"
+    },
+    {
+      "point": "Lead with the elbow. Don't pull the handle up.",
+      "claim": [
+        "c6",
+        "c13"
+      ]
+    },
+    {
+      "point": "Stop when your arm is parallel with the floor.",
+      "claim": "c7"
+    },
+    {
+      "point": "Keep the elbow slightly bent. Don't lock it.",
+      "claim": "c9"
+    },
+    {
+      "point": "Stay upright. Brace so you don't lean.",
+      "claim": "c12"
+    },
+    {
+      "point": "Breathe in and lower slowly, with control.",
+      "claim": "c8"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Raising above shoulder height.",
+      "fix": "Stop when your arm is parallel with the floor.",
+      "claim": [
+        "c19",
+        "c7"
+      ]
+    },
+    {
+      "mistake": "Swinging with momentum.",
+      "fix": "Go lighter and lift without swinging.",
+      "claim": [
+        "c11",
+        "c14"
+      ]
+    },
+    {
+      "mistake": "Shrugging the shoulder.",
+      "fix": "Keep your shoulder down as the arm rises.",
+      "claim": "c10"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "side_delts",
+        "claim": [
+          "c15",
+          "c16"
+        ]
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c17"
+      },
+      {
+        "muscleId": "front_delts",
+        "claim": "c18"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "upper_traps",
+        "claim": "c10"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Side of the shoulder",
+        "means": "The side delt is doing the work.",
+        "fix": "",
+        "claim": "c15",
+        "redFlag": null
+      },
+      {
+        "where": "Top of the shoulder and neck",
+        "means": "Fault: shrugging the shoulder as the arm rises.",
+        "fix": "Keep your shoulder down as the arm rises.",
+        "claim": "c10",
+        "redFlag": null
+      },
+      {
+        "where": "Shoulder, at the top",
+        "means": "Fault: raising the arm above shoulder height.",
+        "fix": "Stop when your arm is parallel with the floor.",
+        "claim": [
+          "c19",
+          "c7"
+        ],
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Sharp pain in the shoulder",
+        "means": "",
+        "fix": "Stop the set.",
+        "claim": "c21",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder: raises above shoulder height are linked with signs of shoulder pinching.",
+      "claim": "c19"
+    },
+    {
+      "risk": "Shoulder: some lifters felt pain raising straight sideways, and raised a little forward.",
+      "claim": "c20"
+    },
+    {
+      "risk": "It is easy to pick a weight that is too heavy.",
+      "claim": "c14"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "clr-top-height",
+      "kind": "posture",
+      "right": "Arm parallel with the floor, elbow slightly bent.",
+      "wrong": "Arm raised above shoulder height.",
+      "claim": [
+        "c7",
+        "c9",
+        "c19"
+      ]
+    },
+    {
+      "key": "clr-cable-tight",
+      "kind": "posture",
+      "right": "A step away, cable tight at the start.",
+      "wrong": null,
+      "claim": "c3"
+    },
+    {
+      "key": "clr-elbow-lead",
+      "kind": "posture",
+      "right": "Elbow leads, hand follows, out to the side.",
+      "wrong": "Handle pulled straight up.",
+      "claim": [
+        "c6",
+        "c13"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "front_delts"
+    ],
+    "remove": [],
+    "why": "side_delts primary stands: the coach pages name the lateral deltoid as the target (c15) and the training study grew it as much as the dumbbell raise (c16). upper_traps secondary stands, flagged weak (one coach page, c17), and is also watched because shrugging is a listed mistake (c10). front_delts is added as secondary: StrengthLog lists the front deltoid as secondary, and Fitness Volt says it helps stabilise the arm (c18). Motra also lists the obliques (3 of 10); not added, one coach page and no claim on the card."
+  },
+  "anchorSource": "mo-cable-lat-raise",
+  "notes": [
+    "Child of dumbbell_lateral_raise (head 3812989f). No inherit entries: every shown line uses this card's own claims from cable-specific sources (LR-34 way (1)), because the parent's lines are written for two dumbbells held at the thighs (parent c1, c2), which the one-arm low-cable setup does not match. The parent's Kolber claim (parent c13) is re-cited here from its own curl-fetched abstract as c19.",
+    "Grip: no read source names a palm direction, thumb, hand contact or wrist position. LR-4: the plate draws the natural grip of a single D-handle (neutral). Drawing convention, not a claim.",
+    "Cable path: Fitness Volt allows the handle in front of or behind the body (c5); the plate draws it in front. Drawing choice.",
+    "Stance: Fitness Volt also offers holding the column and leaning away (c12); Motra lists a leaning torso as a mistake and says stay upright, and Fitness Volt's other option is upright, so the card and plate are upright.",
+    "Top height: Motra's range of motion says \"or slightly above\" parallel (c7) but also \"Do not lift above parallel if painful\" (c21); Kolber advises not beyond 90 degrees (c19). The card stops at parallel.",
+    "Not sourced, so left out: a wrist position, a rep count for beginners, a way to get the handle on and off the pulley, and a feel for the obliques."
+  ]
+}
