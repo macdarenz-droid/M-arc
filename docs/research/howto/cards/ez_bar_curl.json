@@ -245,9 +245,44 @@
     },
     {
       "id": "c12",
-      "text": "Tempo (up = lifting, down = lowering): lift, pause briefly at the top, lower slowly; a study protocol used 3 s per full repetition and ACSM advises 1-2 s each way.",
+      "text": "Pause briefly at the top without the elbows moving forward, then lower slowly and under control.",
       "tags": [
         "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ez"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ez",
+          "text": "Briefly pause at the top without allowing your elbows to move forward. Slowly lower back to the starting position in a controlled manner.",
+          "where": "How to, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm-2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm-2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Tempo (up = lifting, down = lowering): StrengthLog asks for a brief pause at the top, right after the lift, then a slow lowering, and gives no seconds, so the 1 s pause is a drawing convention (LR-33). A study protocol used 3 s per full repetition, and ACSM's moderate 1-2 s each way is stated for advanced training (LR-15); the plate's 1 s up and 2 s down make that 3 s rep.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "sl-ez",
@@ -271,23 +306,6 @@
           "where": "abstract"
         }
       ]
-    },
-    {
-      "id": "c13",
-      "text": "Load progression: add 2-10% load once you can do one or two reps more than the target number.",
-      "tags": [
-        "CONSENSUS"
-      ],
-      "sources": [
-        "acsm-2009"
-      ],
-      "quotes": [
-        {
-          "source": "acsm-2009",
-          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
-          "where": "abstract"
-        }
-      ]
     }
   ],
   "sources": [
@@ -299,7 +317,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "coratella-2023",
@@ -309,7 +327,7 @@
       "year": 2023,
       "pmid": 36976950,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "marcolin-2018",
@@ -319,7 +337,7 @@
       "year": 2018,
       "pmid": 30013836,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -329,12 +347,12 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Elbow bend and the elbows drifting forward at the top (c4, c5) read side-on; the EZ bar is drawn end-on like a barbell (census). Census view is side.",
+    "viewWhy": "Elbow bend and the elbows drifting forward at the top (c4, c5) read side-on; the EZ bar is drawn end-on like a barbell (census). Census view is side. The LR-31 top fault, the wrists bent up or down (c8), cannot be shown in the side view (as R-LB2-27 found for the parent dumbbell_biceps_curl), so the plate draws the elbows drifting forward (c4, c5), the next fault by LR-31 step 3.",
     "equipment": "EZ bar held at the thighs (drawn end-on like a barbell), standing on the floor line.",
     "start": "Standing upright, feet hip- to shoulder-width, core braced (c3); underhand grip on the angled sections (c1); wrists straight (c8).",
     "end": "Elbows bent, bar near the chest (c4); elbows still by the body, not forward (c4); body still (c4).",
@@ -357,10 +375,13 @@
     ],
     "mistake": {
       "what": "Elbows drifting forward as the bar reaches the top.",
-      "why": "StrengthLog warns against it twice on the EZ page (c4) and says it moves load onto the front delts (c5).",
-      "claim": "c4",
-      "drawable": true,
-      "rankNote": "StrengthLog lists elbow position first of three unranked mistakes; swinging (c6, c7) is also common and is the parent’s drawn fault."
+      "why": "StrengthLog says twice on the EZ page not to let the elbows drift forward (c4), and lists elbow positioning first among the common mistakes: elbows moving forward put an additional load on the front delts instead of the biceps (c5).",
+      "claim": [
+        "c4",
+        "c5"
+      ],
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: bent wrists (c8). Step 1 set aside: StrengthLog's \"The EZ curl is one of the most common variations of the classical barbell curl.\", \"Like most curl variations\", \"one of the most common movements we do with our arms in our daily life\" and \"most offering a fixed grip width\" are about exercises, movements and equipment; the 'Common Mistakes in the EZ Curl' heading is a heading. Step 2: bent wrists are the only named fault a quote ties to harm: \"If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.\" (c8, StrengthLog's EZ-curl list). Set aside: \"putting less stress on the joints\" and \"could reduce wrist and elbow strain\" (c9) are about the bar, an equipment choice; swinging (c6, c7) sits under the too-heavy item, a load choice, with no harm word; the elbows drifting forward (c5) move load to the front delts, no harm. drawable is false: the side view cannot show the bent wrist (as R-LB2-27 ruled for the parent dumbbell_biceps_curl), so handlingMistakes[0] becomes the wrists and plate.mistake names the next fault by the same steps. Step 2 has no other candidate. Step 3: StrengthLog's EZ-curl list opens with elbow positioning (c5); the elbows drifting forward read side-on. plate.mistake is unchanged; handlingMistakes is reordered (wrists, elbows, swinging); drawable becomes false."
     },
     "tells": [
       {
@@ -376,7 +397,7 @@
       "up": 1,
       "down": 2,
       "pause": 1,
-      "claim": "c12"
+      "claim": "c14"
     },
     "variantLine": null
   },
@@ -416,7 +437,7 @@
       "claim": "c4"
     },
     {
-      "point": "Body stays still; only the arms move.",
+      "point": "Body stays still. Only the arms move.",
       "claim": "c4"
     },
     {
@@ -434,19 +455,19 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Elbows drifting forward, or travelling back.",
+      "mistake": "Wrists bending.",
+      "fix": "Keep the hands in line with the forearms.",
+      "claim": "c8"
+    },
+    {
+      "mistake": "Elbows drifting forward or back.",
       "fix": "Keep the elbows close to your body.",
       "claim": "c5"
     },
     {
-      "mistake": "Swinging the body to get the bar up.",
+      "mistake": "Swinging the body.",
       "fix": "Take weight off and lift with control.",
       "claim": "c7"
-    },
-    {
-      "mistake": "Wrists bending.",
-      "fix": "Keep the hands in line with the forearms.",
-      "claim": "c8"
     }
   ],
   "feel": {
@@ -473,15 +494,15 @@
       },
       {
         "where": "Front of the shoulder",
-        "means": "Usually means the elbows are moving forward.",
+        "means": "Fault: the elbows moving forward, which loads the front delts.",
         "fix": "Keep the elbows close to your body.",
         "claim": "c5",
         "redFlag": null
       },
       {
-        "where": "Wrists",
-        "means": "Usually means the wrists are bending.",
-        "fix": "Keep the hands in line with the forearms.",
+        "where": "Wrist discomfort or pain",
+        "means": "Fault: the wrists bent up or down under load.",
+        "fix": "Stop and don't train through the pain. Keep the wrist straight.",
         "claim": "c8",
         "redFlag": "wrist"
       }

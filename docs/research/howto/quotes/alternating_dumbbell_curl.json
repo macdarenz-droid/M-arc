@@ -1,6 +1,6 @@
 {
  "id": "alternating_dumbbell_curl",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -58,6 +58,14 @@
    "status": "verbatim",
    "closest": "Keep your elbows close to your torso and avoid swinging them forward or backward during the curl.",
    "note": "read by fixer in the full page (curl with browser user agent, 2026-09-30); verbatim"
+  },
+  {
+   "claim": "c5",
+   "source": "sl-dbcurl",
+   "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps.",
+   "status": "verbatim",
+   "closest": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps.",
+   "note": "fetched by curl 2026-10-22"
   },
   {
    "claim": "c6",

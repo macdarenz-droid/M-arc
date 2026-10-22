@@ -250,9 +250,10 @@
     },
     {
       "id": "c13",
-      "text": "Tempo (up = lifting, down = lowering): a study protocol used 3 s per full repetition; ACSM advises moderate speed (1-2 s up, 1-2 s down).",
+      "text": "Tempo (up = lifting, down = lowering): a study protocol used 3 s per full repetition; ACSM advises moderate speed (1-2 s up, 1-2 s down), stated for advanced training (LR-15). The plate's 1 s up and 2 s down make that 3 s rep. No quote on the card asks for a pause.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "marcolin-2018",
@@ -325,7 +326,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "ace-bbcurl",
@@ -335,7 +336,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "marcolin-2018",
@@ -345,7 +346,7 @@
       "year": 2018,
       "pmid": 30013836,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-dbcurl",
@@ -355,7 +356,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -365,12 +366,12 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Elbow bend, upper arms travelling back or forward (c4, c5) and body swing (c7) read side-on; the bar is seen end-on. Census view is side.",
+    "viewWhy": "Elbow bend, upper arms travelling back or forward (c4, c5) and body swing (c7) read side-on; the bar is seen end-on. Census view is side. The LR-31 top fault, the wrists bent up or down (c8), cannot be shown in the side view (as R-LB2-27 found for the parent dumbbell_biceps_curl), so the plate draws the elbows moving back or forward (c5), the next fault by LR-31 step 3.",
     "equipment": "Barbell held at the thighs, standing on the floor line (census: barbell hangs at the thighs).",
     "start": "Standing, feet hip-width, core braced (c2); bar held underhand, hands shoulder-width, wrists, elbows and shoulders in a line (c1); wrists straight (c8).",
     "end": "Elbows bent, bar near the shoulders (c3); upper arms at the sides or slightly forward, never back (c4); chest and body still (c9, c3).",
@@ -387,16 +388,22 @@
       },
       {
         "label": "Still body",
-        "what": "Chest and body stay still; only the arms move.",
-        "claim": "c3, c9"
+        "what": "Chest and body stay still. Only the arms move.",
+        "claim": [
+          "c3",
+          "c9"
+        ]
       }
     ],
     "mistake": {
-      "what": "Swinging: moving the trunk and bending the knees to get the bar up with body momentum.",
-      "why": "StrengthLog names swinging as the sign of too much weight (c6, c7); an EMG study watched trunk and knee movement as cheating (c7).",
-      "claim": "c7",
-      "drawable": true,
-      "rankNote": "StrengthLog lists elbow position, too much weight and bent wrists without ranking them; swinging is drawn as on the parent card, and elbows travelling back (c5) is the layer’s second picture."
+      "what": "Elbows moving back to cheat the bar up, or forward during the lift.",
+      "why": "StrengthLog lists elbow positioning first among the barbell curl's common mistakes: elbows moving forward put an additional load on the front delts instead of the biceps, and elbows moving backward move the load from the biceps and let you cheat up the weight (c5).",
+      "claim": [
+        "c5",
+        "c4"
+      ],
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: bent wrists (c8). Step 1 set aside: StrengthLog's \"one of the most classic (and best) exercises\", \"available at most gyms\", \"one of the most common movements we do with our arms in our daily life\" and \"most offering a fixed grip width\" are about the exercise, equipment and movements; \"Barbell curls often allow for heavier weights to be lifted\" (c11) is about a load; the 'Common Mistakes in the Barbell Curl' heading is a heading. Step 2: bent wrists are the only named fault a quote ties to harm: \"If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.\" (c8, StrengthLog's barbell-curl list). Set aside: swinging (c6, c7) sits under the too-heavy item, a load choice, with no harm word; the elbows moving forward or back (c5) move load off the biceps, no harm. drawable is false: the side view cannot show the bent wrist (as R-LB2-27 ruled for the parent dumbbell_biceps_curl), so handlingMistakes[0] becomes the wrists and plate.mistake names the next fault by the same steps. Step 2 has no other candidate. Step 3: StrengthLog's barbell-curl list opens with elbow positioning (c5); the elbows moving back or forward read side-on. PICK CHANGED from swinging (c7, drawable true) to the elbows moving back or forward, matching the parent's plate after R-LB2-27. handlingMistakes is reordered: wrists, elbows, swinging."
     },
     "tells": [
       {
@@ -470,19 +477,19 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Swinging the body to get the bar up.",
-      "fix": "Take weight off and lift with control.",
-      "claim": "c7"
+      "mistake": "Wrists bending.",
+      "fix": "Keep the hands in line with the forearms.",
+      "claim": "c8"
     },
     {
-      "mistake": "Elbows travelling back, or forward during the lift.",
+      "mistake": "Elbows travelling back or forward.",
       "fix": "Keep the upper arms at your sides.",
       "claim": "c5"
     },
     {
-      "mistake": "Wrists bending.",
-      "fix": "Keep the hands in line with the forearms.",
-      "claim": "c8"
+      "mistake": "Swinging the body.",
+      "fix": "Take weight off and lift with control.",
+      "claim": "c7"
     }
   ],
   "feel": {
@@ -509,15 +516,15 @@
       },
       {
         "where": "Front of the shoulder",
-        "means": "Usually means the elbows are moving forward.",
+        "means": "Fault: the elbows moving forward, which loads the front delts.",
         "fix": "Keep the upper arms at your sides.",
         "claim": "c5",
         "redFlag": null
       },
       {
-        "where": "Wrists",
-        "means": "Usually means the wrists are bending.",
-        "fix": "Keep the hands in line with the forearms.",
+        "where": "Wrist discomfort or pain",
+        "means": "Fault: the wrists bent up or down under load.",
+        "fix": "Stop and don't train through the pain. Keep the wrist straight.",
         "claim": "c8",
         "redFlag": "wrist"
       }
@@ -536,15 +543,15 @@
     {
       "key": "bb-curl-wrist",
       "kind": "hand",
-      "right": "Underhand full grip, thumbs wrapped, hands in line with the forearms.",
+      "right": "Underhand full grip, hands in line with the forearms.",
       "wrong": "Wrists bent back under the bar.",
       "claim": "c8"
     },
     {
       "key": "curl-elbow",
       "kind": "posture",
-      "right": "Upper arms by the sides at the top of the curl.",
-      "wrong": "Elbows swung back behind the body to cheat the bar up.",
+      "right": "Upper arms by the sides at the top.",
+      "wrong": "Elbows swung back behind the body to cheat.",
       "claim": "c5"
     }
   ],
