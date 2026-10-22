@@ -2636,3 +2636,10 @@ Card: `docs/supervisor/verify/box-cap-card.md` (claude/sup-lib4-cards @ 3d9b8e10
   - check-bundle.mjs switches to its Do 9 rule: each answered value must appear in the built app.
   - Every other box stays at 30, and golden B's and c7's limits are unchanged.
 - **D-LIB5-RISKSTEST.** `tests/howto/sections-risks.test.ts` (HT-9's) gains exactly two lines, the `RED_FLAG_BACK` import and `back: RED_FLAG_BACK` in its typed FLAG map, because `RiskJoint` now has `'back'`. Every assertion stays. Without the entry, typecheck is red.
+
+## LIB-16: LB6 H plates, build-ahead (LIB-16 builder, 2026-10-22)
+
+- **D-LIB16-B1 (modes): all three LB6 H ids are H, no D row** (plan 6.2 :715, :745-747). Each needs a pose, equipment and tempo its census closest does not have. Record: tools/plates/library/lb6/DESIGN.md section 1.
+- **D-LIB16-B2 (crunchMachine pivot, proposed).** The movement arm pivots on the trunk's bend axis (the engine's one lumbar pivot in the start pose), from c1 mo-crunch "Adjust machine for proper alignment with torso", so the handles turn with the shoulders and the arms hold their bend in the correct rep. Record: DESIGN.md section 3.
+- **D-LIB16-B3 (machine_crunch Mistake, proposed).** The trunk stays as in the start and the arm stays at the end's angle (the same stack travel), so only who does the pull changes (c14, the card's reading). Record: DESIGN.md sections 3 and 11.
+- **D-LIB16-B4 (cable_chest_press S3, posted).** The card's start (c3 elbows just below 90°, c4 nipple line) and c5's "about one inch before touching the chest" cannot hold on the body together: with the elbow at 90° the handles stop about 32 cm in front of the chest. Not drawn until ruled. Record: DESIGN.md section 13.
