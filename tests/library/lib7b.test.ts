@@ -171,8 +171,10 @@ describe('7b-A2 on a scratch tree: the real pipeline with the scratch rows shipp
   it('generate: each pair row\'s zoom-<chromeId>.css (hands.mjs + handpairs.mjs) holds its pair scope\'s rules before HX_TAIL; the handpair files are written', async () => {
     await F.keyTree(tree);
     const out = JSON.parse(node(tree, `
+      import { mkdirSync, writeFileSync } from 'node:fs'; import { dirname } from 'node:path';
       import { render } from './tools/plates/generate.mjs';
       const out = await render(), o = {};
+      for (const [p, v] of out) { mkdirSync(dirname(p), { recursive: true }); writeFileSync(p, v.text); }   // the tree's generated files (D-LIB7b-TUPLES reads them)
       for (const [p, v] of out) if (/zoom-(barbell-row|t-bar-row|smith-machine-shoulder-press)\\.css$|handpair-/.test(p)) o[p] = { writers: v.writers, text: v.text };
       console.log(JSON.stringify(o));
     `).trim().split('\n').pop());
@@ -184,4 +186,16 @@ describe('7b-A2 on a scratch tree: the real pipeline with the scratch rows shipp
       expect([s.id, a > o.text.indexOf(`.hx-${s.pre} `), b < t, o.text.split(/\n/).filter((l: string) => l.includes(`.hx-hp-${s.key} `)).length]).toEqual([s.id, true, true, B.pairCss(s.key).split('\n').filter((l: string) => l.trim()).length]);
     }
   }, 600_000);
+});
+
+describe('D-LIB7b-TUPLES: the HT-6 twin expects the pages of the panel a keyed id ships', () => {
+  it('on the scratch tree: a keyed id\'s hand pages = its key\'s faults (curl-dumbbell-under: 2, rope-push-neutral: 1); an unkeyed id keeps its source zoom\'s pages', () => {
+    const got = JSON.parse(node(tree, `
+      import { sourceFacts } from './tools/plates/library/fidelity/tuples.mjs';
+      const o = {};
+      for (const id of ['lib_barbell_row', 'lib_t_bar_row', 'lib_smith_machine_shoulder_press', 'lib_lat_pulldown', 'lib_seated_cable_row']) o[id] = (await sourceFacts(id)).hand?.pages ?? null;
+      console.log(JSON.stringify(o));
+    `).trim().split('\n').pop());
+    expect(got).toEqual({ lib_barbell_row: 2, lib_t_bar_row: 2, lib_smith_machine_shoulder_press: 1, lib_lat_pulldown: 3, lib_seated_cable_row: 1 });
+  }, 120_000);
 });

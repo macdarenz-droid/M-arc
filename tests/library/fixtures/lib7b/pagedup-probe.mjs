@@ -1,6 +1,8 @@
 // LIB-7b D-LIB7b-PAGEDUP probe (7b-A4 (1); never run in CI). On a built layers page, each pair panel whose key has two
-// or more copies is opened with the other copies present and hidden, and compared pixel for pixel (PNG bytes) with the
-// same panel opened on the page with the other copies removed. Every fault page, light and dark.
+// or more copies is opened with the other copies present and hidden, and compared with the same panel opened on the page
+// with the other copies removed, every fault page, light and dark: the drawing (the page's hand SVG) exactly in every
+// browser; the whole panel exactly, except in Chromium 141, where it may differ by no more than the same run's control
+// (the alone page shot twice), the run-to-run HTML text raster measured on #284 (F-LIB7b-2).
 //   node tests/library/fixtures/lib7b/pagedup-probe.mjs <browser> <page.html> [--verbatim] [--runs N]
 // --control compares the alone page with itself (the browser's own run-to-run variance, no repeat on the page).
 // --verbatim first reverses D-LIB7b-PAGEDUP's one named rewrite on every copy (the ruling's default, verbatim repeats).
@@ -55,17 +57,42 @@ async function shots(f, chrome, scheme) {
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
       });
       if (await p.evaluate(() => document.getAnimations().filter(a => a.playState === 'running').length)) throw new Error(`${chrome}: animation running at the shot`);
-      out.push(await panel.screenshot({ animations: 'disabled' }));
+      const svg = panel.locator('.zx-page:not([hidden]) .hand-plate svg.hand-svg');
+      if (await svg.count() !== 1) throw new Error(`${chrome}: ${await svg.count()} drawings on the page`);
+      out.push({ panel: await panel.screenshot({ animations: 'disabled' }), svg: await svg.screenshot({ animations: 'disabled' }) });
     }
     return { out, version: b.version() };
   } finally { await b.close(); }
 }
+// pixel difference count of two PNGs, decoded in a browser canvas
+const decoder = await chromium.launch({ executablePath: exe }), dp = await decoder.newPage();
+const diffPx = (a, c) => (a.equals(c) ? 0 : dp.evaluate(async ([a, c]) => {
+  const load = s => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = 'data:image/png;base64,' + s; });
+  const [x, y] = await Promise.all([load(a), load(c)]);
+  if (x.width !== y.width || x.height !== y.height) return Infinity;
+  const d = img => { const cv = new OffscreenCanvas(img.width, img.height), g = cv.getContext('2d'); g.drawImage(img, 0, 0); return g.getImageData(0, 0, img.width, img.height).data; };
+  const P = d(x), Q = d(y); let n = 0;
+  for (let i = 0; i < P.length; i += 4) if (P[i] !== Q[i] || P[i + 1] !== Q[i + 1] || P[i + 2] !== Q[i + 2] || P[i + 3] !== Q[i + 3]) n++;
+  return n;
+}, [a.toString('base64'), c.toString('base64')]));
+// D-LIB7b-PAGEDUP condition (1) as ruled (#284 6334672289): the drawing is compared exactly in every browser; the whole
+// panel exactly except in Chromium 141, whose HTML text may differ by no more than the same run's control (alone vs alone).
 let bad = 0, n = 0, version = '';
-for (let r = 1; r <= runs; r++) for (const c of cases) for (const scheme of ['light', 'dark']) {
-  const x = await shots(control ? files[c.chrome] : both, c.chrome, scheme), y = await shots(files[c.chrome], c.chrome, scheme);
-  version = x.version;
-  x.out.forEach((s, i) => { n++; const eq = s.equals(y.out[i]); if (!eq) { bad++; writeFileSync(`${file}.r${r}.${c.chrome}.${scheme}.p${i}.diff-both.png`, s); writeFileSync(`${file}.r${r}.${c.chrome}.${scheme}.p${i}.diff-alone.png`, y.out[i]); }
-    console.log(`run ${r} ${c.k} copy ${c.i} (${c.chrome}) ${scheme} page ${i}: ${eq ? 'equal' : 'DIFFERS'}`); });
+for (let r = 1; r <= runs; r++) {
+  const res = [];
+  for (const c of cases) for (const scheme of ['light', 'dark']) {
+    const x = await shots(control ? files[c.chrome] : both, c.chrome, scheme), y = await shots(files[c.chrome], c.chrome, scheme), z = await shots(files[c.chrome], c.chrome, scheme);
+    version = x.version;
+    for (const [i, s] of x.out.entries()) res.push({ c, scheme, i, svg: s.svg.equals(y.out[i].svg), px: await diffPx(s.panel, y.out[i].panel), ctl: await diffPx(y.out[i].panel, z.out[i].panel), s, y: y.out[i] });
+  }
+  const tol = version.startsWith('141.') ? Math.max(0, ...res.map(q => q.ctl)) : 0;
+  for (const q of res) {
+    n++;
+    const ok = q.svg && q.px <= tol;
+    if (!ok) { bad++; writeFileSync(`${file}.r${r}.${q.c.chrome}.${q.scheme}.p${q.i}.diff-both.png`, q.s.panel); writeFileSync(`${file}.r${r}.${q.c.chrome}.${q.scheme}.p${q.i}.diff-alone.png`, q.y.panel); }
+    console.log(`run ${r} ${q.c.k} copy ${q.c.i} (${q.c.chrome}) ${q.scheme} page ${q.i}: drawing ${q.svg ? 'equal' : 'DIFFERS'}, panel ${q.px} px off (run control max ${tol}, this case's control ${q.ctl}): ${ok ? 'ok' : 'RED'}`);
+  }
 }
-console.log(`${version} ${control ? 'control (alone vs alone)' : verbatim ? 'verbatim' : 'namespaced (B)'}: ${n} shots, ${bad} differ: ${bad ? 'FAIL' : 'PASS'}`);
+await decoder.close();
+console.log(`${version} ${control ? 'control (alone vs alone)' : verbatim ? 'verbatim' : 'namespaced (B)'}: ${n} shots, ${bad} red: ${bad ? 'FAIL' : 'PASS'}`);
 process.exit(bad ? 1 : 0);
