@@ -142,8 +142,10 @@ const machine = (lm, ctx) => {
     footBar: FOOT_BAR, pivot: PIVOT, arm: armAt(th), frameZ: FRAME_Z, floorZ: [FRAME_Z - BEAM_OUT, FOOT_BAR[2] + BEAM_OUT] });
 };
 
-// The pivot hub's front edge: the shoulders sit just below it (c1); a leader reaches it from the open side in front.
-const HUB_FRONT = [0, PIVOT[1], PIVOT[2] + PULLOVER_MACHINE.hubR];
+// The drop that carries the pivot hub, at its front edge above the head: the hub itself sits behind the shoulder, so
+// the end figure and the elbow Trace close it in, and no leader reaches it from open space (D-LIB16-PIVOT-ANCHOR).
+const DROP_AT = 1.84;   // world height on the drop, between the head top and the top beam
+const PIVOT_DROP = [0, DROP_AT, PIVOT[2] + PULLOVER_MACHINE.tubeT / 2];
 export const PM = { padL, pivot: PIVOT, theta: [THETA0, THETA1], armAt, belt, pad: PAD, neck: NECK, elbowPlane, footBar: FOOT_BAR };
 export default {
   id: 'machine_pullover', name: 'Machine Pullover', view: 'side', facing: 'right',
@@ -172,10 +174,10 @@ export default {
   ],
   startParts: ['arm.r', 'arm'],
   ghosts: { count: 2, parts: ['arm.r', 'arm'] },
-  trace: { point: 'grip.r', trim: [10, 12] },
+  trace: { point: 'elbow.r', trim: [10, 12] },   // D-LIB16-PULLOVER-TRACE: the elbows drive the pads (c3); the grip's wider arc closed the pivot and the elbow cue in
   callouts: [
-    { key: 'pivot', text: 'Shoulders<br>at pivot', anchor: HUB_FRONT, box: { left: 220, top: 126 }, cue: 'Set the seat so your shoulders sit just below the machine\'s pivot.' },
-    { key: 'elbows', text: 'Push with<br>elbows', anchor: 'start:elbow.r', box: { left: 166, top: 78 }, cue: 'Keep your hands open and drive the pads down with your elbows.' },
+    { key: 'pivot', text: 'Shoulders<br>at pivot', anchor: PIVOT_DROP, box: { left: 214, top: 24 }, cue: 'Set the seat so your shoulders sit just below the machine\'s pivot.' },
+    { key: 'elbows', text: 'Push with<br>elbows', anchor: { at: 'elbow.r', pose: 'start', off: [2, -6] }, box: { left: 184, top: 72 }, cue: 'Keep your hands open and drive the pads down with your elbows.' },
     { key: 'pad', text: 'Back on pad', anchor: 'backUpper', box: { left: 28, top: 174 }, cue: 'Keep your torso and head against the back pad.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],

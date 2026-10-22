@@ -281,7 +281,7 @@ At the reference 146.29 px/m:
 | cable_chest_press, **measured** (node-side) | 3.0 px: held (section 15) | 6.6 px: held |
 | cable_chest_press | the elbow, 18° → 0°: it moves onto the shoulder-grip line, about 5 cm → about 7.6 px [est]: **below deviationMin**; the grip moves about 1 cm | reading (a) of section 13: the grip 0.45 → 0.65 m, about 0.20 m → 29 px before trims, about 7 px after [est]: **below traceLenMin**; reading (b): about 0.50 m → 73 px |
 | machine_pullover | the arch at M_ARCH 12°: the low back about 3-5 cm off the pad, the head about 4-6 cm: about 5-9 px [unverified until drawn]: **at risk** | the bar on its arc from overhead to the belt, about 0.9 m → well over 100 px |
-| machine_pullover, **measured** (node-side) | 15.4 px: passes (not held) | 150.7 px |
+| machine_pullover, **measured** (authoring QA) | 15.4 px: passes (not held) | 111.8 px, the elbow (elbow.r) after the trims (the bar's grip, first drawn: 150.7 px, not used; D-LIB16-PULLOVER-TRACE) |
 
 A too-small fault is reported with its card-true size and held under D-LIB8-shrug with the LIB-ZOOM route
 (D-LIB16-SIZE); it is never enlarged. cable_chest_press is expected to be held (D-LIB16-LOCK); the slice still shows
@@ -389,3 +389,19 @@ DRAWING-GUIDE section 2's handle grip as a trace point; Q10 F2 0.161 a named fla
 - **Q10 F2 on machine_crunch:** measured 0.161 against the 8's 0.191-0.549 (qa/envelope.json F2): a compact seated
   figure at the reference scale. Proposed as a named flag (as pendlay_row's F2, #274 6267110489); nothing is added to
   dodge it.
+
+### Bulk (machine_pullover, after 'LB6 BULK GO' #297 6346404542)
+
+- Trace: the elbow (`elbow.r`), not the grip. The grip's arc runs in front of the head and the whole upper right, so
+  it closed in the pivot and the start elbow: no leader to either could reach open space without crossing it. The
+  card's cue is the elbows driving the pads (c3), so the elbow's arc is the motion the plate teaches
+  (D-LIB16-PULLOVER-TRACE).
+- "Shoulders at pivot" points at the drop that carries the pivot hub, at its front edge above the head (`PIVOT_DROP`,
+  1.84 m). The hub sits behind the shoulder, hidden by the figure and closed in by the Trace, so no leader reaches it
+  (D-LIB16-PIVOT-ANCHOR).
+- "Push with elbows" meets the start elbow's outer edge (2, -6 px off the joint centre): the start forearm's phantom
+  outline rings the joint centre, so a leader to the centre runs within 6 px of it.
+- Labels: pivot box 214/24, elbows 184/72, pad 28/174; Mistake arch 22/174, head 166/84. Every leader is 6 px clear of
+  the Trace, the equipment and the phantom, outside the figures, and no two hit boxes overlap (PQ-H4).
+- QA (lb6/qa.mjs): all 10 hard checks pass; flags F5 only (the ruled set); leaderMax 55, Trace 111.8 px, deviation
+  15.4 px.
