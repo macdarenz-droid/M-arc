@@ -100,10 +100,11 @@ export async function sourceFacts(id, { root = ROOT, all = registryRows(root) } 
   const hand = zooms.find(z => z.kind === 'hand');
   const chips = new Map(zooms.map(z => [z.key, z.chip]));
   // LIB-7b (D-LIB7b-TUPLES): an id on a pair key ships its key's pair panel, not its How-to's hand zoom, so its HT6 pages
-  // are the panel's: one per fault of the key (hands/panel.mjs draws no thumb page). Every other id keeps the source rule.
+  // are the shipped panel's (`pairPanel(key)`, the loader contract gen/handpairs.mjs reads: one zx-page per fault of a
+  // LIB-7 key, no thumb page). Every other id keeps the source rule.
   const PAIRS = join(root, 'tools/plates/library/hands/pairs.mjs');
   const pairs = hand && existsSync(PAIRS) ? await import(pathToFileURL(PAIRS).href) : null, key = pairs?.HAND_OF_ID?.[id];
-  const pairPages = key ? pairs.pairSpec(id.replace(/^lib_/, '')).wrong.length : null;
+  const pairPages = key ? (await pairs.pairPanel(key)).split('<div class="zx-page" data-page=').length - 1 : null;
   return {
     id, chromeId: row.chromeId,
     normal: keys.normal, tells: keys.tells, firstKey: keys.firstKey,
