@@ -1,6 +1,6 @@
 {
   "id": "cable_chest_press",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -225,6 +225,13 @@
       "text": "Push the cables back to the starting position in a semi explosive tempo. Do not completely lock the elbow just extend it so it is almost locked.",
       "status": "verbatim",
       "closest": "Push the cables back to the starting position in a semi explosive tempo. Do not completely lock the elbow just extend it so it is almost locked."
+    },
+    {
+      "claim": "c16",
+      "source": "motra-cable-press",
+      "text": "2-1-2",
+      "status": "verbatim",
+      "closest": "2-1-2"
     }
   ]
 }

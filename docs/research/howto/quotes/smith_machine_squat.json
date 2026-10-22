@@ -1,6 +1,6 @@
 {
   "id": "smith_machine_squat",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -260,6 +260,20 @@
       "text": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts.",
       "status": "verbatim",
       "closest": "Unlike free weights, the Smith machine has built-in hooks and safety stops. That means you can rack the bar at any time, giving you more control and support during lifts."
+    },
+    {
+      "claim": "c19",
+      "source": "golds-smith-squat",
+      "text": "A dull pain 12 to 24 hours after a workout session is normal.",
+      "status": "verbatim",
+      "closest": "A dull pain 12 to 24 hours after a workout session is normal."
+    },
+    {
+      "claim": "c22",
+      "source": "motra-smith-squat",
+      "text": "3-1-1",
+      "status": "verbatim",
+      "closest": "3-1-1"
     }
   ]
 }

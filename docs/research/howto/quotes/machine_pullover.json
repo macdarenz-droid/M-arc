@@ -1,6 +1,6 @@
 {
   "id": "machine_pullover",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -162,6 +162,13 @@
       "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
       "status": "verbatim",
       "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c14",
+      "source": "vg-pullover",
+      "quote": "Pause briefly at the bottom of the movement, feeling the stretch in your lats.",
+      "status": "verbatim",
+      "closest": "Pause briefly at the bottom of the movement, feeling the stretch in your lats."
     }
   ]
 }

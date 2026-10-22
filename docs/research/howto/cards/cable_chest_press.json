@@ -358,6 +358,24 @@
           "where": "Movement, Phase 2"
         }
       ]
+    },
+    {
+      "id": "c16",
+      "text": "Tempo: Motra lists a 2-1-2 tempo for this lift without saying which phase each digit is; read either way it gives 2 s down and 2 s up, and read as lower, pause, press, a 1 s pause at the bottom.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-cable-press"
+      ],
+      "quotes": [
+        {
+          "source": "motra-cable-press",
+          "text": "2-1-2",
+          "where": "Form Cues: Tempo"
+        }
+      ]
     }
   ],
   "sources": [
@@ -369,7 +387,7 @@
       "year": 2023,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "motra-cable-press",
@@ -379,7 +397,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "nfpt-cable-press",
@@ -389,7 +407,7 @@
       "year": 2025,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-cable-press",
@@ -399,7 +417,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "santana2007",
@@ -409,7 +427,7 @@
       "year": 2007,
       "pmid": "18076235",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "calatayud2014",
@@ -419,7 +437,7 @@
       "year": 2014,
       "pmid": "25419894",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "schutz2022",
@@ -429,7 +447,7 @@
       "year": 2022,
       "pmid": "35202059",
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "kolber2010",
@@ -439,7 +457,7 @@
       "year": 2010,
       "pmid": "20508476",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm2009",
@@ -449,7 +467,7 @@
       "year": 2009,
       "pmid": "19204579",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -479,7 +497,8 @@
       "what": "Arching the lower back to push the handles out.",
       "why": "Bells of Steel names it among the most common cable chest press mistakes and links it to lower-back pain; NFPT asks for a neutral, braced spine. How often it happens is not measured.",
       "claim": "c6",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2, tie left after step 3: STOPPED for a supervisor ruling. Step 1: no frequency word counts for a fault. Set aside: Bells of Steel's \"Here are the most common mistakes to avoid on the cable chest press.\" is a list sentence; Schutz's \"Injuries to the shoulder are very common in sports that involve overhead arm or throwing movements.\" is about other sports and \"Another common method to improve chest muscle strength is to perform strength exercises on a cable pulley system\" about the equipment (c12); Kolber's \"the most prevalent regions of injury\" (c13) names no fault. Step 2: three named faults are tied to harm, each on a common-mistakes list written for this exercise: flared elbows, \"Flaring your elbows: This can put excessive stress on your shoulder joints and reduce the activation of your chest muscles.\" (Bells of Steel, c7); the arched back, \"Arching your back: This can cause lower back pain and remove the core stability challenge.\" (Bells of Steel, c6; the head's pick); and the shoulder blades not pulled back, \"Lack of retraction causes the scapula to anteriorly tilt and elevate the humerus. This can lead to an impingement of the subacromial bursa and the supraspinatus.\" (NFPT, the anchor; not on the card). Tie order: all three are on a list; one source ties each to harm; all are sourced directly; Bells of Steel's list names the elbows before the back, so the back drops out; no list names both the elbows and the retraction. Step 3 then reads two ways: the first of the two on a list (the elbows are the first candidate on Bells of Steel's list, after the load line), or the anchor's list, which names only the retraction. The census viewWhy names neither, so LR-36 cannot keep a pick. Set aside: NFPT's \"Do not grip much wider than shoulder width, it will put stress on the shoulder.\" is a grip width (R-LB2-3); if grip width counts as a candidate it joins the tie on the anchor's list, before the retraction. Bells of Steel's \"Using too much weight: This can compromise your form and increase the risk of injury.\" is the load. Motra's \"Keep slight elbow bend to protect joints.\" names no harm word, so \"Locking elbows at extension.\" does not join step 2. Until the ruling, plate.mistake (the arch) and handlingMistakes are unchanged."
     },
     "tells": [
       {
@@ -495,8 +514,11 @@
       "up": 1,
       "down": 2,
       "pause": 0,
-      "claim": "c15",
-      "text": "Down 2 s sits inside NFPT's 2-3 s lowering (c15). NFPT gives no seconds for the press, only 'semi explosive', so the 1 s up is a drawing convention (c15, WEAK; LR-33 pattern)."
+      "claim": [
+        "c15",
+        "c16"
+      ],
+      "text": "Down 2 s sits inside NFPT's 2-3 s lowering (c15). NFPT gives no seconds for the press, only 'semi explosive', so the 1 s up is a drawing convention (c15, WEAK). Motra lists a 2-1-2 tempo (c16, WEAK: the page does not say which phase each digit is); read either way it gives 2 s up, so the up value is listed for a supervisor ruling (LR-33: sourced seconds are never replaced by the convention; R-LB2-1) and is not changed yet. Pause 0: no quote asks for a pause right after the press; Motra's \"Squeeze chest at peak contraction.\" gives no pause or seconds. Read as lower, pause, press, Motra's middle 1 s is a bottom pause, so it is named here and not written in pause (LR-33, R-PB-3)."
     },
     "variantLine": null
   },
@@ -694,6 +716,6 @@
   },
   "anchorSource": "nfpt-cable-press",
   "notes": [
-    "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick (arching) is unchanged here. Verify #3's critic expects LR-31 step 2 to pick flared elbows: Bells of Steel lists 'Flaring your elbows: This can put excessive stress on your shoulder joints' before 'Arching your back: This can cause lower back pain' (c7, c6); NFPT's lack-of-retraction line is not on the card."
+    "LIB-TOPRANK (LB6): LR-31 is run in plate.mistake.rankNote. R-LB2-20's expected pick (flared elbows) and NFPT's lack-of-retraction line are both weighed there; the card is stopped for a ruling."
   ]
 }

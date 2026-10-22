@@ -272,13 +272,15 @@
     },
     {
       "id": "c14",
-      "text": "Tempo: moderate speed, about 1-2 s each way (ACSM, for heavy sets in trained lifters), with a brief pause at the bottom.",
+      "text": "Tempo: ACSM's moderate 1-2 s each way (for heavy sets in trained lifters) gives up 2 and down 2. Marquette asks for a momentary pause with the bar held at the belt right after the pull, and Virtuagym a brief pause at the bottom of the pull; no source gives its seconds, so the 1 s pause is a drawing convention (LR-33).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm-2009",
-        "mq-pullover"
+        "mq-pullover",
+        "vg-pullover"
       ],
       "quotes": [
         {
@@ -295,6 +297,11 @@
           "source": "mq-pullover",
           "text": "pause momentarily and then recover to the starting position.",
           "where": "Description, b) For machine"
+        },
+        {
+          "source": "vg-pullover",
+          "text": "Pause briefly at the bottom of the movement, feeling the stretch in your lats.",
+          "where": "Pullover Machine Instructions"
         }
       ]
     },
@@ -330,7 +337,7 @@
       },
       {
         "label": "Push with elbows",
-        "what": "Open hands; the elbows drive the pads down.",
+        "what": "Open hands, with the elbows driving the pads down.",
         "claim": "c6"
       },
       {
@@ -343,7 +350,8 @@
       "what": "Back arched off the pad: the lower back and head pull away from the back pad as the arm comes down.",
       "why": "Both sources name it: keep the torso and head on the pad, and avoid excessive arching, which loads the lower back. No source ranks how common it is.",
       "claim": "c8",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the back arching off the pad (c8). Step 1: no frequency word counts for a fault. Set aside: Virtuagym's \"Easily manage your clients with Virtuagym\" is an advert; Di Fonza's \"Electromyographic Analysis of Latissimus Dorsi Activation During Common\" is a title about exercises (c13). Step 2: Planfit's \"Do not excessively arch your back to avoid putting too much pressure on your lower back.\" (c8) ties the arch to stress on the lower back; it is the only named fault tied to harm. Set aside: \"Keep your shoulders relaxed to prevent tension from building up in your neck and shoulders.\" (c10) names tension, not a harm word; \"Avoid excessive weights and choose a weight that allows you to feel good stimulation in your latissimus dorsi.\" (c9) is the load, not a candidate. If \"pressure\" is not read as stress, step 3 gives the same pick: no read source has a common-mistakes list (Planfit's \"Precautions\" is not one, R-LB2-14), and the arch is the fault the most read sources tell the lifter to avoid (Planfit, c8; Marquette's \"Torso and head should remain back touching the back pad.\", c7), against one for the tense shoulders (c10). The Marquette page could not be re-fetched on 2026-10-22 (gaps). drawable true: the side view shows the back leaving the pad. Pick unchanged."
     },
     "tells": [
       {
@@ -359,7 +367,8 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c14"
+      "claim": "c14",
+      "text": "Up 2 and down 2 rest on ACSM's 1-2 s (c14, WEAK; LR-15). Pause 1 is the pause right after the pull: Marquette's \"Hold the bar in tight to the seat belt, pause momentarily\" (c4, c14) and Virtuagym's \"Pause briefly at the bottom of the movement\" (c14). Neither gives seconds, so the 1 s is a drawing convention (c14, WEAK; LR-33)."
     },
     "variantLine": "Drawn: the elbow-pad pullover machine (Nautilus style) from the Marquette description (c1-c7). Some machines use handles only (Virtuagym, Planfit); claims c8-c15 come from those handle-machine pages and hold for both by their wording (weight choice, back arch, breathing, tempo)."
   },
@@ -380,19 +389,19 @@
       "claim": "c1"
     },
     {
-      "step": "Fasten the belt, back flat on the pad, feet on the foot bar.",
+      "step": "Fasten the belt, back flat on the pad, feet on the bar.",
       "claim": "c2"
     },
     {
-      "step": "Push the foot bar down, put the backs of your upper arms on the elbow pads and your open hands on the bar.",
+      "step": "Push the foot bar down. Backs of upper arms on the pads.",
       "claim": "c3"
     },
     {
-      "step": "Take your feet off the bar so the arm sits near or slightly behind your head.",
+      "step": "Feet off the bar, arm near or slightly behind your head.",
       "claim": "c3"
     },
     {
-      "step": "To finish: feet back on the bar, arms off the pads, and lower the stack with your legs.",
+      "step": "To finish: feet on the bar, arms off, legs lower the stack.",
       "claim": "c5"
     }
   ],
@@ -406,7 +415,7 @@
       "claim": "c8"
     },
     {
-      "point": "Hands open; push through the elbows.",
+      "point": "Hands open, push through the elbows.",
       "claim": "c6"
     },
     {
@@ -420,18 +429,18 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Arching the back off the pad to move the weight.",
+      "mistake": "Back arching off the pad.",
       "fix": "Lower the weight and keep your back and head on the pad.",
       "claim": "c8"
     },
     {
-      "mistake": "Taking the arms off the elbow pads before the feet are on the foot bar.",
-      "fix": "Feet on the foot bar first, then arms off the pads; lower the stack with your legs.",
+      "mistake": "Arms off the pads first.",
+      "fix": "Feet on the bar first, then lower the stack with your legs.",
       "claim": "c5"
     },
     {
-      "mistake": "Using so much weight you can't feel your lats.",
-      "fix": "Lower the weight.",
+      "mistake": "Too much weight.",
+      "fix": "Lower the weight until you feel your lats.",
       "claim": "c9"
     }
   ],
@@ -460,7 +469,7 @@
     ],
     "rows": [
       {
-        "where": "Lats, along the sides of the back",
+        "where": "Along the sides of the back",
         "means": "The lats are doing the work.",
         "fix": "",
         "claim": "c12",
@@ -468,14 +477,14 @@
       },
       {
         "where": "Lower back",
-        "means": "Usually means the back is arching off the pad.",
-        "fix": "Lower the weight; keep your back on the pad.",
+        "means": "Arching puts too much pressure on your lower back.",
+        "fix": "Lower the weight. Keep your back on the pad.",
         "claim": "c8",
         "redFlag": null
       },
       {
         "where": "Neck and tops of the shoulders",
-        "means": "Usually means the shoulders are tensing up.",
+        "means": "Tense shoulders let tension build up in your neck.",
         "fix": "Relax your shoulders down.",
         "claim": "c10",
         "redFlag": null
@@ -498,13 +507,13 @@
       "key": "pullover-pivot",
       "kind": "posture",
       "right": "Shoulder just below the machine's pivot.",
-      "wrong": "Seat so low or high that the shoulder is far from the pivot.",
+      "wrong": "Seat too low or high, shoulder far from the pivot.",
       "claim": "c1"
     },
     {
       "key": "pullover-hands",
       "kind": "hand",
-      "right": "Open hand resting on the bar, elbow on the pad doing the pushing.",
+      "right": "Open hand on the bar, elbow pushing the pad.",
       "wrong": "Fist gripping the bar and pulling with the hands.",
       "claim": "c6"
     }
@@ -540,7 +549,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "vg-pullover",
@@ -550,7 +559,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "difonza-2026",
@@ -560,7 +569,7 @@
       "year": 2026,
       "pmid": 42647355,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "bull-2007",
@@ -570,7 +579,7 @@
       "year": 2007,
       "pmid": 18051626,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -580,7 +589,10 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
+  ],
+  "gaps": [
+    "mq-pullover (Marquette, the anchor; c1-c7, c12, c14) could not be re-fetched by curl on 2026-10-22: the live page returns 403 and web.archive.org is blocked by this session's egress policy. Its quotes are kept as verified on 2026-09-30 (g5) and are reported, not re-checked; its checked date is unchanged."
   ]
 }

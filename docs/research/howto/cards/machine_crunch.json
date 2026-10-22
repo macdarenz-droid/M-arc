@@ -273,7 +273,8 @@
       "id": "c12",
       "text": "Tempo: moderate speed, about 1-2 s each way (ACSM, for heavy sets in trained lifters), with a slow return.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm-2009",
@@ -350,6 +351,24 @@
           "where": "Coaching Tips, Form Cues"
         }
       ]
+    },
+    {
+      "id": "c15",
+      "text": "Tempo: Motra lists a 2-1-2 tempo for this lift without saying which phase each digit is; read either way it gives 2 s for the crunch and 2 s for the return.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-crunch"
+      ],
+      "quotes": [
+        {
+          "source": "mo-crunch",
+          "text": "2-1-2",
+          "where": "Form Cues: Tempo"
+        }
+      ]
     }
   ],
   "plate": {
@@ -379,7 +398,8 @@
       "what": "Pulling with the arms: the handles are dragged down by the arms instead of the abs curling the trunk.",
       "why": "Motra lists it first among the machine ab crunch's common mistakes, with its cue to start with the core (c14); the sources cue the abs to do the bending (c8). How often it happens is not measured.",
       "claim": "c14",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: pulling with the arms (c14), first on Motra's common-mistakes list for the ab crunch machine. Step 1: no frequency word counts for a fault. Set aside: Fitbod's \"Common Form Mistakes\" is a heading and \"Crunches are one of the most common exercises out there.\" is about the exercise; Motra's \"Typical Rep Range\" is programming; Sundstrup's \"strengthening exercises on machines usually are performed to induce high level\" is about machine training (c9). Step 2: no named fault is tied to harm. Set aside: Motra's \"Avoid excessive weight to prevent back strain\" (c6) is the load, not a candidate; Motra's \"Straining neck\" (c14) names a harm, not a body or equipment position or movement, and no read source says what the neck does, so it is not a candidate (if the verify reads it as one, it is the only harm-tied fault on a list and wins step 2; it has no sourced still sign, so plate.mistake would stay the arm pull with drawable false); \"Do not hyperextend spine\" is a Safety Note with no harm word; Sundstrup's \"warrant caution for individuals with lumbar pain\" (c10) is about the machine, not a fault. Step 3: Motra's list is written for this machine: \"Pulling with arms\", \"Using momentum\", \"Straining neck\", \"Letting weight rest\". Fitbod's \"Overusing Machines\" is a training choice, and its \"Sitting Up Too Far\" is written for the floor crunch (\"Crunches are designed so you only raise your shoulder blades, not your entire torso.\"), so Motra's list decides. drawable true: the side view shows the arms dragging the handles down. Pick unchanged."
     },
     "tells": [
       {
@@ -395,7 +415,11 @@
       "up": 2,
       "down": 2,
       "pause": 0,
-      "claim": "c12"
+      "claim": [
+        "c12",
+        "c15"
+      ],
+      "text": "Up 2 and down 2: Motra's 2-1-2 gives 2 s each way read either way (c15, WEAK: the page does not say which phase each digit is), inside ACSM's 1-2 s (c12, WEAK; LR-15). Pause 0: Motra's \"Squeeze abs at peak contraction.\" and \"Squeeze at top\" ask for a squeeze with no pause, seconds or brief hold, so no quote asks for a pause right after the crunch. Motra's middle 1 s has no stated place; read as return, pause, crunch, it sits at the start, between the return and the next crunch, so it is named here and not written in pause (LR-33, R-PB-3)."
     },
     "variantLine": "Crunch machines differ: ACE's has a shin roller and handles you pull down (c2, c3); Fitbod's has overhead handles with pads on the shoulders (c3). Drawn: shin roller and handles by the shoulders. Claims c1, c4-c14 hold for both."
   },
@@ -437,7 +461,7 @@
       "claim": "c4"
     },
     {
-      "point": "Return slowly; don't let the stack rest.",
+      "point": "Return slowly, without letting the stack rest.",
       "claim": "c5"
     },
     {
@@ -461,8 +485,8 @@
       "claim": "c6"
     },
     {
-      "mistake": "Letting the weight stack rest between reps.",
-      "fix": "Keep tension; return without letting the stack rest.",
+      "mistake": "Letting the stack rest.",
+      "fix": "Keep tension. Return without letting the stack rest.",
       "claim": "c5, c14"
     }
   ],
@@ -499,21 +523,21 @@
       },
       {
         "where": "Front of the hips",
-        "means": "Usually means the hip flexors are taking over.",
+        "means": "Hinging at the hips shifts work to the hip flexors.",
         "fix": "Curl your ribs toward your pelvis.",
         "claim": "c11",
         "redFlag": null
       },
       {
         "where": "Lower back pain",
-        "means": "Usually means the weight is too heavy.",
-        "fix": "Stop the set; lower the weight next time.",
+        "means": "Too much weight can strain the back.",
+        "fix": "Stop the set. Don't train through the pain.",
         "claim": "c6",
         "redFlag": "back"
       },
       {
         "where": "Neck",
-        "means": "Straining the neck is a named mistake.",
+        "means": "Straining your neck is a mistake.",
         "fix": "Start the crunch with your abs.",
         "claim": "c14",
         "redFlag": null
@@ -537,7 +561,7 @@
     {
       "key": "crunch-arms",
       "kind": "posture",
-      "right": "Elbows held bent; the abs curl the trunk.",
+      "right": "Elbows held bent, the abs curl the trunk.",
       "wrong": "Arms pulling the handles down.",
       "claim": "c3, c14"
     },
@@ -551,7 +575,7 @@
     {
       "key": "crunch-hips",
       "kind": "posture",
-      "right": "Hips pressed against the back of the seat, shins on the roller.",
+      "right": "Hips against the seat back, shins on the roller.",
       "wrong": "Hips sliding forward off the seat back.",
       "claim": "c2"
     }
@@ -574,7 +598,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "mo-crunch",
@@ -584,7 +608,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "fb-crunch",
@@ -594,7 +618,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-crunch",
@@ -604,7 +628,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sundstrup-2012",
@@ -614,7 +638,7 @@
       "year": 2012,
       "pmid": 22893857,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -624,7 +648,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ]
 }

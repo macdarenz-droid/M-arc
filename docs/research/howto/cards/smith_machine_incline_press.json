@@ -349,6 +349,24 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c14",
+      "text": "Tempo: Motra lists a 3-1-1 tempo for this lift without saying which phase each digit is; read as lower, pause, press, it gives 3 s down, a 1 s pause at the bottom and 1 s up.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-smith-incline"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-incline",
+          "text": "3-1-1",
+          "where": "Form Cues: Tempo"
+        }
+      ]
     }
   ],
   "sources": [
@@ -360,7 +378,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-smith-incline",
@@ -370,7 +388,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "eos-smith",
@@ -380,7 +398,7 @@
       "year": 2025,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm2009",
@@ -390,7 +408,7 @@
       "year": 2009,
       "pmid": "19204579",
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-22"
     },
     {
       "id": "jumbelic2007",
@@ -400,7 +418,7 @@
       "year": 2007,
       "pmid": "17456099",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "kolber2010",
@@ -410,12 +428,12 @@
       "year": 2010,
       "pmid": "20508476",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; the bench angle, the upper-chest touch point, the stop height and the back arch all read in the sagittal plane (c1, c3, c5, c6).",
+    "viewWhy": "Census view is side; the bench angle, the upper-chest touch point, the stop height and the back arch all read in the sagittal plane (c1, c3, c5, c6). The flared elbows (c6, c3) read from the side too: a flared elbow sits level with the shoulder instead of down toward the ribs.",
     "equipment": "Smith machine (rails, bar, hooks) with an adjustable bench at 30 degrees, inside the 30-45 range, placed so the bar lines up over the upper chest (c1); safety stops just below the lowest point of the bar, where it touches the upper chest (c5, c3); feet flat (c4).",
     "start": "On the incline, shoulder blades together, chest up (c2), feet flat (c4); bar unhooked on straight arms over the upper chest (c1, c4).",
     "end": "Bar lowered with control to touch the upper chest lightly, elbows at about 45-75 degrees (c3); back not excessively arched (c6).",
@@ -440,9 +458,13 @@
       }
     ],
     "mistake": {
-      "what": "Back arched excessively to press the bar.",
-      "why": "Motra lists it among the common Smith incline mistakes; how often it happens is not measured in any source read.",
-      "claim": "c6",
+      "what": "Elbows flared wide as the bar comes down, instead of at about 45-75 degrees.",
+      "why": "Motra lists \"Flaring elbows wide\" first among its common mistakes for this exercise (c6); its cue is elbows at 45-75 degrees (c3). How often it happens is not measured in any source read.",
+      "claim": [
+        "c6",
+        "c3"
+      ],
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: flaring the elbows wide (c6), first on Motra's common-mistakes list for this exercise. Step 1: no frequency word counts for a fault. Set aside: Motra's \"Typical Rep Range\" is programming; EōS's \"At EōS, you’ll commonly find:\" is about the equipment and \"typically lowering the bar for a 3–5 second count, pausing briefly at the bottom\" is a tempo variation; Kolber's \"the most prevalent regions of injury\" (c13) is about where injuries happen, not a fault. Step 2: no quote ties a named fault to harm. Motra's \"Do not train through shoulder pain\" (c7) names no fault; \"Avoid angles over 45 degrees to prevent shoulder dominance\" (c1) is a bench setting and names no harm word; EōS's \"avoid unnecessary strain\" is about adjusting the machine (a setup choice) and \"Targets your upper chest with controlled angles and less shoulder strain.\" is about the incline press against the flat press; Kolber's \"improper attention to exercise technique\" (c13) names no fault. Step 3: Motra's list, written for the Smith incline press and the anchor, names \"Flaring elbows wide\" first, before \"Bouncing bar off chest\", \"Locking elbows at top\", \"Arching back excessively\" (the head's pick) and \"Uneven bar path\" (c6), as verify #3 noted (R-LB2-20). drawable true: in the side view a flared elbow sits level with the shoulder instead of down toward the ribs, as on smith_machine_bench_press. Pick changed: the arch is now handlingMistakes[1].",
       "drawable": true
     },
     "tells": [
@@ -459,7 +481,11 @@
       "up": 1,
       "down": 2,
       "pause": 0,
-      "claim": "c10"
+      "claim": [
+        "c10",
+        "c14"
+      ],
+      "text": "Motra lists a 3-1-1 tempo (c14, WEAK: the page does not say which phase each digit is). Read as lower, pause, press, it gives 3 s down, a 1 s pause at the bottom and 1 s up; up 1 agrees, and down 2 rests on ACSM's 1-2 s (c10, WEAK; LR-15), so the 3 s down is listed for a supervisor ruling (R-LB2-1) and not drawn yet. Pause 0: no quote asks for a pause right after the press; Motra's \"Touch bar lightly to chest without bouncing.\" (c3) asks for no pause. The bottom pause from the 3-1-1 reading sits between lowering and pressing, so it is named here and not written in pause (LR-33, R-PB-3). EōS's tempo press (\"typically lowering the bar for a 3–5 second count, pausing briefly at the bottom\") is a slower variation, not this lift."
     },
     "variantLine": null
   },
@@ -530,19 +556,19 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Arching the back too much.",
-      "fix": "Use lighter weights until you can press without it.",
-      "claim": [
-        "c6",
-        "c9"
-      ]
-    },
-    {
       "mistake": "Flaring the elbows wide.",
       "fix": "Keep the elbows at about 45-75 degrees.",
       "claim": [
         "c6",
         "c3"
+      ]
+    },
+    {
+      "mistake": "Arching the back too much.",
+      "fix": "Use lighter weights until you can press without it.",
+      "claim": [
+        "c6",
+        "c9"
       ]
     },
     {
@@ -644,6 +670,6 @@
   },
   "anchorSource": "motra-smith-incline",
   "notes": [
-    "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick (arching) is unchanged here. Verify #3's critic found no harm-tied fault on any source, so LR-31 step 3 would pick the first item on Motra's list, 'Flaring elbows wide' (c6), not the arch (fourth)."
+    "LIB-TOPRANK (LB6): LR-31 step 3 picks the flared elbows, as R-LB2-20 expected; see plate.mistake.rankNote."
   ]
 }

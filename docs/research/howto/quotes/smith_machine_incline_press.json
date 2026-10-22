@@ -1,6 +1,6 @@
 {
   "id": "smith_machine_incline_press",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -218,6 +218,13 @@
       "text": "extrinsic risk factors, namely, that of improper attention to exercise technique",
       "status": "verbatim",
       "closest": "extrinsic risk factors, namely, that of improper attention to exercise technique"
+    },
+    {
+      "claim": "c14",
+      "source": "motra-smith-incline",
+      "text": "3-1-1",
+      "status": "verbatim",
+      "closest": "3-1-1"
     }
   ]
 }

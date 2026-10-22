@@ -1,6 +1,6 @@
 {
   "id": "machine_crunch",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -225,6 +225,13 @@
       "quote": "Initiate with core",
       "status": "verbatim",
       "closest": "Initiate with core"
+    },
+    {
+      "claim": "c15",
+      "source": "mo-crunch",
+      "quote": "2-1-2",
+      "status": "verbatim",
+      "closest": "2-1-2"
     }
   ]
 }
