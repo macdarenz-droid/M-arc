@@ -290,7 +290,7 @@ GO'; incline_dumbbell_curl after pilot A is on main.
 | id | held under | release condition |
 |---|---|---|
 | wrist_curl | D-LIB8-shrug pattern, F-LIB15-1 (#290 6340075388): no frame holding the whole figure, bench and dumbbell passes PQ-H3's Trace card-true (5.2 px at 146.29 px/m, 10.4 px at 195.0 px/m) | LIB-ZOOM (#279) on main and merged in; then the zoom circle on the wrist and grip under LIB-ZOOM's convention |
-| cross_body_hammer_curl | D-LIB15-TWIST, F-LB5-1 (#290 6340022161, 6340075388); then the new pick, the shrug (research a8e66f32, #290 6340713424): a 5 cm drawn shrug gives H3 deviation 7.3 px, and passing needs ≥ 7.8 cm, which c5/c6 do not give (reported #290 6340838685) | the supervisor's ruling on 6340838685 |
+| cross_body_hammer_curl | D-LIB15-TWIST, F-LB5-1 (#290 6340022161, 6340075388); then the new pick, the shrug (research a8e66f32, #290 6340713424): a 5 cm drawn shrug gives H3 deviation 7.3 px, and passing needs ≥ 7.8 cm, which c5/c6 do not give (reported #290 6340838685); held under D-LIB8-shrug (#290 6340849204), the 5 cm a drawn value | LIB-ZOOM (#279) on main and merged in; then a zoom circle on the working shoulder under LIB-ZOOM's convention (F-LIB15-1's route), or a sourced shrug size if research finds one |
 
 A held spec stays drawn as is, builds and is in no rows file and on no QA'd page (D-LIB8M-PAGESET).
 incline_dumbbell_curl is not held: it is not drawn yet (D-LIB15-INCLINE).
