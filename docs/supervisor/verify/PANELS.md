@@ -24,7 +24,7 @@ Used for every drawn batch (pilot A/B, LB1-LB10, LIB-ZOOM), after the builder po
 
    The exception: an anchor item below 4 is excepted only if the supervisor confirms that exact defect on the PNG (crop the region and look) and it is recorded as a golden-B follow-up below. An anchor item below 4 that is not a confirmed, recorded defect makes the run not VALID. A FAIL verdict on a candidate also needs every non-excepted anchor item at 4 or more. (D-SUP-ANCHOR-3, 10-22, LB5 recheck: the old "one item per anchor" limit is replaced, because the anchors' recorded defects now draw low scores as they should. An excepted item is a correct critic call, not harshness; the plants still guard against lenient critics. Earlier departure: lib4-cards 4232.) These are already recorded and confirmed:
    - **18:** dumbbell_lateral_raise, the Wrong handle floating in the fingers (hand panels);
-   - **19:** lat_pulldown, the start ghost more upright than the end, so the lean grows;. Its start arm, hung from that more upright start shoulder, reads as leaving the end figure's throat and over-long against the end shoulder (critics measure it from the end pose; confirmed on the LB6 recheck PNG, #297).
+   - **19:** lat_pulldown, the start ghost more upright than the end, so the lean grows. Its start arm, hung from that more upright start shoulder, reads as leaving the end figure's throat and over-long against the end shoulder (critics measure it from the end pose; confirmed on the LB6 recheck PNG, #297).
    - **20:** pull_up, the head tipped back about 20° at the top;
    - **21:** lat_pulldown, the thigh roller with no mount.
    - **22:** pull_up, no floor line, so "feet clear the floor" is never shown (lib4-cards 30).
