@@ -342,7 +342,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "puregym-cable-fly",
@@ -352,7 +352,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-cable-fly",
@@ -362,7 +362,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm2009",
@@ -372,7 +372,7 @@
       "year": 2009,
       "pmid": "19204579",
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-22"
     },
     {
       "id": "kolber2010",
@@ -382,7 +382,7 @@
       "year": 2010,
       "pmid": "20508476",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "schutz2022",
@@ -392,7 +392,7 @@
       "year": 2022,
       "pmid": "35202059",
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -420,9 +420,10 @@
     ],
     "mistake": {
       "what": "Elbows bending deeply, turning the fly into a press.",
-      "why": "ACE names leaning forward as the frequent fault (c7), but a lean needs a side view and this plate is front view; bent elbows are drawn because they break the fixed elbow bend both sources require (c6, c11) and read from the front, not because they are known to be common. How often it happens is not measured.",
+      "why": "ACE names leaning forward as the frequent fault (c7), but a lean needs a side view and this plate is front view. The bent elbows are the next fault by LR-31: PureGym ties keeping a soft elbow bend to less shoulder strain, and StrengthLog lists the press-like elbow bend as a common mistake (c11); they read from the front (c6). How often it happens is not measured.",
       "claim": "c11",
-      "drawable": false
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: leaning forward (c7). ACE's \"Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy.\" (c7) says the lean happens frequently, a frequency word for this fault of this exercise (\"tendency\" alone would not count). No other fault passes step 1. Set aside: PureGym's \"Commonly Asked Questions On Cable Flyes\" and StrengthLog's \"Common Mistakes in the Standing Cable Chest Fly\" are headings; StrengthLog's \"The cable fly is an exercise where adding more weight than you can handle is easy.\" is about the load (\"easy\" is not a frequency word); Schutz's \"Another common method to improve chest muscle strength is to perform strength exercises on a cable pulley system\" and \"four common strength exercises for chest muscles\" are about the exercises (c14); Kolber's \"the most prevalent regions of injury\" (c13) names no fault. drawable false: the lean is a still sign, but it shows only from the side and this plate is the census front view (viewWhy). plate.mistake names the next fault by the same steps. Step 2: PureGym ties form to harm, \"Having the correct form and range of motion is important in minimising strain to the shoulder joint. Select a weight that allows you to maintain a soft bend in the elbow and only go as far as hands in line with chest.\", whose cues correct two named faults: the elbows bending into a press (StrengthLog's \"Not keeping a strict form.\", c11) and the hands going past the chest line (handlingMistakes[2], c4). The elbow fault is on StrengthLog's common-mistakes list and the range fault on none, so the elbows win, as on cable_fly (R-PB-2). Schutz's \"Care has to be taken when performing cable cross-over exercises to ensure proper stabilisation of the joints during exercise execution and avoid joint overloading.\" (c14) names no fault; PureGym's \"lowering the dumbbells too far can injure the shoulders\" is the dumbbell fly, another exercise. The front view shows the elbow angle changing. Pick unchanged: handlingMistakes[0] stays the lean; plate.mistake stays the bent elbows, drawable false."
     },
     "tells": [
       {
@@ -604,6 +605,6 @@
   },
   "anchorSource": "ace-incline-cable-fly",
   "notes": [
-    "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick is unchanged here. Verify #3's critic found it consistent with LR-31: the lean is the top fault, drawable false (speed and load), and the next fault is the bent elbows."
+    "LIB-TOPRANK (LB6): LR-31 step 1 keeps the lean as the top fault; drawable false because the front view cannot show it (not speed); see plate.mistake.rankNote."
   ]
 }

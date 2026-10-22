@@ -249,9 +249,10 @@
     },
     {
       "id": "c12",
-      "text": "Tempo: move at a moderate speed, about 1-2 s each way (ACSM, for heavy sets in trained lifters), with a brief pause where the hands meet.",
+      "text": "Tempo: ACSM's moderate 1-2 s each way (for heavy sets in trained lifters) gives up 2 and down 2. ACE asks to pause momentarily where the hands meet, right after the sweep, and gives no seconds, so the 1 s pause is a drawing convention (LR-33).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm-2009",
@@ -311,8 +312,8 @@
     }
   ],
   "plate": {
-    "view": "side",
-    "viewWhy": "Side view (engine default). The two things that define this exercise read from the side: the path from head-height handles down to below the chest (c1, c5), and the top fault, leaning forward, which ACE says happens frequently (c7). The inward sweep reads only from the front and is left to the text. Census suggested front; the side view is chosen because the frequent fault needs it.",
+    "view": "front",
+    "viewWhy": "Census view is front (CFLY template, census 4a9fd86), so the plate is drawn from the front; the inward sweep from head-height handles to the hands meeting below the chest (c1, c5) and the handles crossing past each other (c8) read from the front. The card first chose side, because the frequent fault, leaning forward (c7), needs it: \"The two things that define this exercise read from the side: the path from head-height handles down to below the chest (c1, c5), and the top fault, leaning forward, which ACE says happens frequently (c7).\" Under LR-31 the census view decides drawable, so the lean stays the top fault with drawable false.",
     "equipment": "Two cable columns (or a crossover station) with single handles set at about the top of the head (c1). Floor line.",
     "start": "Standing upright in a staggered stance (c1), abs braced (c2); arms up and out to the sides with the hands no further back than the armpits (c4), elbows slightly bent, wrists straight (c3).",
     "end": "Hands meet in front of the body below chest level (c5), elbows still slightly bent (c3), trunk still upright (c1, c7).",
@@ -334,10 +335,14 @@
       }
     ],
     "mistake": {
-      "what": "Leaning forward: the trunk tips toward the hands to finish the rep.",
-      "why": "ACE says this happens frequently when the weight is too heavy, and it raises stress in the shoulder joint.",
-      "claim": "c7",
-      "drawable": true
+      "what": "Hands crossing past each other at the front, after the arms opened back behind the torso.",
+      "why": "ACE names leaning forward as the frequent fault (c7), but a lean shows only from the side and this plate is the census front view. The next fault, arms behind the torso and the handles crossed past the midline, carries \"a risk of injury in the shoulder during hyperextension and of the hand when the handles pass so close to each other\" (c8, a bent-forward cable crossover tip applied by inference); ACE's decline fly page also keeps the hands from moving back past the armpits (c4).",
+      "claim": [
+        "c8",
+        "c4"
+      ],
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: leaning forward (c7). ACE's \"Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy.\" (c7) says the lean happens frequently, a frequency word for this fault of this exercise. No other fault passes step 1. Set aside: ACE's chest-study page is about other exercises: \"In addition, many people descend too fast and let their elbows travel upward too much on the ascent, which can cause shoulder injury.\" and \"What many people miss in this motion is the natural arc\" (the barbell bench press), \"Many users will adopt their own technique on this machine to do more weight, which is a big mistake and can result in injury\" and \"Quite often, the lifter will use too much weight and be unable to complete the full range of motion or will lift the upper back off the back pad to finish the motion.\" (the pec deck), \"which one of the most common strength-training exercises is the most effective way\" and \"nine of the most commonly used exercises for strengthening the chest muscles\" (the study); Rabello's \"commonly used exercises and their variations\" (c11) is about exercises. drawable false: the lean is a still sign but shows only from the side, and the census view is front (viewWhy). plate.mistake names the next fault by the same steps. Step 2: the bent-forward cable crossover tip \"While this extreme range of motion may feel good, it does little in terms of muscular conditioning, and there is a risk of injury in the shoulder during hyperextension and of the hand when the handles pass so close to each other.\" (c8, WEAK, applied by inference) ties the arms behind the torso and the crossed handles (handlingMistakes[1]) to harm; no other named fault is tied to harm. If that crossover tip is set aside as another exercise (as cable_fly sets aside the dumbbell fly), step 3 gives the same fault: no source has a common-mistakes list, and the arms going back too far is the fault the most read sources tell the lifter to avoid (ACE decline fly, \"do not allow your hands to move past the midline of your body (level of your armpit).\", c4; the crossover tip, c8), against one for the arched low back (\"attempt to avoid any arching of your low back throughout the exercise\", c2). The front view shows the handles crossing past the midline. Pick changed: plate.mistake moves from the lean to the crossed handles, drawable false; handlingMistakes[0] stays the lean; plate.view now follows the census (front).",
+      "drawable": false
     },
     "tells": [
       {
@@ -353,7 +358,8 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c12"
+      "claim": "c12",
+      "text": "Up 2 and down 2 rest on ACSM's 1-2 s (c12, WEAK; LR-15). Pause 1 is the pause right after the sweep, where the hands meet: ACE's \"Pause momentarily then slowly return to your starting position\" (c5, c12) gives no seconds, so the 1 s is a drawing convention (c12, WEAK; LR-33)."
     },
     "variantLine": null
   },
@@ -370,11 +376,11 @@
   },
   "setup": [
     {
-      "step": "Set both pulleys so the handles are at about the top of your head.",
+      "step": "Set both handles at about the top of your head.",
       "claim": "c1"
     },
     {
-      "step": "Take a handle in each hand and stand in a staggered, walking stance, trunk upright.",
+      "step": "A handle in each hand. Staggered stance, trunk upright.",
       "claim": "c1"
     },
     {
@@ -388,7 +394,7 @@
   ],
   "posture": [
     {
-      "point": "Trunk stays vertical; don't lean toward the hands.",
+      "point": "Trunk stays vertical, no leaning toward the hands.",
       "claim": "c7"
     },
     {
@@ -414,17 +420,17 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Leaning forward to finish the rep.",
+      "mistake": "Leaning forward.",
       "fix": "Lower the weight and stand tall.",
       "claim": "c7"
     },
     {
-      "mistake": "Starting with the arms behind the body or crossing the handles past each other.",
-      "fix": "Stop the hands at the armpits on the way back and let them just meet in front.",
+      "mistake": "Arms behind or handles crossing.",
+      "fix": "Stop at the armpits going back. Let the hands just meet.",
       "claim": "c8, c4"
     },
     {
-      "mistake": "Moving the torso toward the hands.",
+      "mistake": "Torso moving toward the hands.",
       "fix": "Keep the trunk still and let the arms move.",
       "claim": "c9"
     }
@@ -453,14 +459,14 @@
       },
       {
         "where": "Pain in the shoulder",
-        "means": "A warning sign; leaning forward and taking the arms too far back both stress the shoulder.",
-        "fix": "Stop the set; next time go lighter, stand tall and stop the hands at the armpits.",
-        "claim": "c7, c4, c8",
+        "means": "Leaning forward raises stress in the shoulder joint.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c7",
         "redFlag": "shoulder"
       },
       {
         "where": "Low back",
-        "means": "Usually means the low back is arching.",
+        "means": "Fault: arching the low back.",
         "fix": "Brace the abs and lower the weight.",
         "claim": "c2",
         "redFlag": null
@@ -511,7 +517,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "ace-top3-chest",
@@ -521,7 +527,7 @@
       "year": 2011,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "rabello-2024",
@@ -531,7 +537,7 @@
       "year": 2024,
       "pmid": 39593452,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "coratella-2020-bench",
@@ -541,7 +547,7 @@
       "year": 2020,
       "pmid": 31397215,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -551,7 +557,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ]
 }

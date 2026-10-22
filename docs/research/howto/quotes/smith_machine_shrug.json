@@ -1,6 +1,6 @@
 {
   "id": "smith_machine_shrug",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -148,6 +148,13 @@
       "text": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver",
       "status": "verbatim",
       "closest": "indicate that a portion of the observed increase in blood pressure was caused by a Valsalva maneuver"
+    },
+    {
+      "claim": "c11",
+      "source": "motra-smith-shrug",
+      "text": "2-1-2",
+      "status": "verbatim",
+      "closest": "2-1-2"
     }
   ]
 }

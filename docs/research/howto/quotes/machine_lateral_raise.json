@@ -1,6 +1,6 @@
 {
   "id": "machine_lateral_raise",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -225,6 +225,13 @@
       "quote": "Sit facing the machine with the feet out in front and arms slightly bent and the pads resting just above the elbows. Keeping the arms bent at 90 degrees,",
       "status": "verbatim",
       "closest": "Sit facing the machine with the feet out in front and arms slightly bent and the pads resting just above the elbows. Keeping the arms bent at 90 degrees,"
+    },
+    {
+      "claim": "c16",
+      "source": "mo-lat-raise",
+      "quote": "3-1-2",
+      "status": "verbatim",
+      "closest": "3-1-2"
     }
   ]
 }

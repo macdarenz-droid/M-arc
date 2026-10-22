@@ -306,9 +306,10 @@
     },
     {
       "id": "c13",
-      "text": "Tempo: moderate speed, about 1-2 s each way (ACSM, for heavy sets in trained lifters), with a brief pause at the top.",
+      "text": "Tempo: ACSM's moderate 1-2 s each way (for heavy sets in trained lifters) gives up 2 and down 2. Motra asks for a brief pause at the top, right after the lift, and no source gives its seconds, so the 1 s pause is a drawing convention (LR-33).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm-2009",
@@ -365,11 +366,29 @@
           "where": "instructions"
         }
       ]
+    },
+    {
+      "id": "c16",
+      "text": "Tempo: Motra lists a 3-1-2 tempo for this lift without saying which phase each digit is; read as lower, pause, lift it gives 3 s down and 2 s up, and read as lift, pause, lower it gives 3 s up and 2 s down.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-lat-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-lat-raise",
+          "text": "3-1-2",
+          "where": "Form Cues: Tempo"
+        }
+      ]
     }
   ],
   "plate": {
     "view": "front",
-    "viewWhy": "The arms rise sideways in the frontal plane (c4, c5), which reads only from the front (census: front). The drawn fault, shrugging (c6), also shows from the front.",
+    "viewWhy": "The arms rise sideways in the frontal plane (c4, c5), which reads only from the front (census: front). The drawn fault, shrugging (c6), also shows from the front. The arms rising above shoulder level (c5) show from the front too.",
     "equipment": "Seated lateral raise machine (composed, census R3): seat, back pad, two arm pads on levers pivoting at shoulder height, handles (c1-c3). Floor line.",
     "start": "Seated, back on the pad, feet flat (c2); arms at the sides, pads resting just above the elbows, hands on the handles (c3); shoulders level with the pivots (c1).",
     "end": "Upper arms horizontal, elbows level with the shoulders (c5); shoulders down, not shrugged (c6); back still on the pad (c2).",
@@ -391,10 +410,11 @@
       }
     ],
     "mistake": {
-      "what": "Shrugging: the shoulders hike up toward the ears as the arms rise.",
-      "why": "Motra warns that excessive shrugging lets the trapezius take over. No source ranks how common it is; momentum (c8) is the other named fault but can't be drawn in a still picture.",
-      "claim": "c6",
-      "drawable": true
+      "what": "Arms raised above shoulder level, elbows higher than the shoulders.",
+      "why": "Motra's common-mistakes list puts \"Using momentum to lift\" first (c8); it shows only as speed, so it cannot be drawn. \"Arching lower back\" is tied to harm but shows only from the side. \"Raising arms above shoulder level\" is the next fault on the same list (c5) and reads from the front. How often it happens is not measured.",
+      "claim": "c5",
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: using momentum, swinging the body (c8). Step 1: no frequency word counts for a fault. Set aside: StrengthLog's \"This is an exercise where it is easy to pick a weight that is too heavy.\" (c7) is the load, and \"easy to\" is not a frequency word; Motra's \"Typical Rep Range\" is programming; Virtuagym's \"Easily manage your clients with Virtuagym\" is an advert; Rabello's \"commonly used exercises and their variations\" (c11) is about exercises. Step 2: two named faults on Motra's common-mistakes list are tied to harm: momentum, \"Avoid using momentum or swinging your body to complete the exercise, as this reduces the effectiveness and can lead to injury.\" (Virtuagym, c8; Motra's \"Using momentum to lift\"), and the arched lower back, by Motra's cue \"Maintain neutral spine to protect lower back\" for its \"Arching lower back\" (a cue that protects names harm, as on shoulder_press; not on the card). One source each, both direct; Motra's list puts momentum first (\"Using momentum to lift\", \"Raising arms above shoulder level\", \"Locking elbows\", \"Arching lower back\", \"Leaning away from pad\", \"Incomplete range on descent\"). Set aside: \"Avoid excessive shrugging to prevent trap dominance\" (c6) names no harm word; \"Stop if shoulder pain occurs\" names no fault. Momentum shows only as speed, so drawable is false and plate.mistake names the next fault by the same steps: the arched lower back (step 2) shows only from the side, and the census view is front; then step 3, the next fault on Motra's list, \"Raising arms above shoulder level\" (c5), shows from the front as the elbows rising past the shoulders. Pick changed: plate.mistake moves from the shrug (on no common-mistakes list; viewWhy's choice) to the arms above shoulder level; handlingMistakes[0] stays momentum.",
+      "drawable": false
     },
     "tells": [
       {
@@ -410,7 +430,11 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c13"
+      "claim": [
+        "c13",
+        "c16"
+      ],
+      "text": "Up 2 and down 2 rest on ACSM's 1-2 s (c13, WEAK; LR-15). Pause 1 is the pause right after the lift: Motra's \"Pause briefly at top to squeeze deltoids.\" (c13) gives no seconds, so the 1 s is a drawing convention (c13, WEAK; LR-33). Motra also lists a 3-1-2 tempo (c16, WEAK: the page does not say which phase each digit is). Read as lower, pause, lift it gives 3 s down and 2 s up; read as lift, pause, lower (its middle 1 s then the top pause) it gives 3 s up and 2 s down. Either way one phase is 3 s, so the values are listed for a supervisor ruling (R-LB2-1) and not changed yet."
     },
     "variantLine": "Drawn: the back-to-pad machine (Motra, Virtuagym, c1, c2). ACE's version faces the machine with the elbows bent 90 degrees (c15). Claims c3-c14 hold for both."
   },
@@ -431,11 +455,11 @@
       "claim": "c1"
     },
     {
-      "step": "Sit with your back against the pad and feet flat on the floor.",
+      "step": "Sit with your back on the pad, feet flat on the floor.",
       "claim": "c2"
     },
     {
-      "step": "Put your arms on the pads, just above the elbows, and hold the handles.",
+      "step": "Arms on the pads, just above the elbows. Hold the handles.",
       "claim": "c3"
     },
     {
@@ -457,27 +481,27 @@
       "claim": "c5"
     },
     {
-      "point": "Shoulders stay down; don't shrug.",
+      "point": "Shoulders stay down, no shrugging.",
       "claim": "c6"
     },
     {
-      "point": "Lower slowly; stop before the stack rests.",
+      "point": "Lower slowly, stopping before the stack rests.",
       "claim": "c9"
     }
   ],
   "handlingMistakes": [
     {
-      "mistake": "Swinging the body to get the weight up.",
+      "mistake": "Swinging the body up.",
       "fix": "Lower the weight and lift without momentum.",
       "claim": "c8"
     },
     {
-      "mistake": "Shrugging the shoulders as the arms rise.",
-      "fix": "Keep your shoulders down; go lighter if needed.",
+      "mistake": "Shrugging the shoulders.",
+      "fix": "Keep your shoulders down. Go lighter if needed.",
       "claim": "c6"
     },
     {
-      "mistake": "Weight too heavy to get the elbows to shoulder height.",
+      "mistake": "Too heavy for shoulder height.",
       "fix": "Lower the weight.",
       "claim": "c7"
     }
@@ -511,14 +535,14 @@
       },
       {
         "where": "Tops of the shoulders and neck",
-        "means": "Usually means you are shrugging and the traps are taking over.",
-        "fix": "Keep your shoulders down; go lighter.",
+        "means": "Shrugging lets the traps dominate.",
+        "fix": "Keep your shoulders down. Go lighter.",
         "claim": "c6",
         "redFlag": null
       },
       {
         "where": "Body rocking in the seat",
-        "means": "Usually means the weight is too heavy.",
+        "means": "Swinging the body can lead to injury.",
         "fix": "Lower the weight.",
         "claim": "c8, c7",
         "redFlag": null
@@ -567,7 +591,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "vg-lat-raise",
@@ -577,7 +601,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "ace-lat-raise",
@@ -587,7 +611,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "laf-lat-raise",
@@ -607,7 +631,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "rabello-2024",
@@ -617,7 +641,7 @@
       "year": 2024,
       "pmid": 39593452,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -627,7 +651,10 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
+  ],
+  "gaps": [
+    "laf-lat-raise (LA Fitness; c5, c7, c9) could not be re-fetched by curl on 2026-10-22: the live page returns 429 and web.archive.org is blocked by this session's egress policy. Its quotes are kept as verified on 2026-09-30 (g5) and are reported, not re-checked; its checked date is unchanged."
   ]
 }
