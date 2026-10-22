@@ -108,9 +108,13 @@ async function pairRowOutputs(prev, pairs) {
     const key = configPairOf(row), html = layersPage(row).toString();
     pairRowCheck(row, key, pairs?.HAND_OF_ID?.[row.id], archetypes[row.id], html);
     if (key === undefined) continue;
+    // A standalone call (no earlier writer's output, as tests read a plugin's own inputs) runs the checks only.
+    if (!prev.size) continue;
     const path = `src/slices/howto/css/zoom-${row.chromeId}.css`, style = galleryCss(html), flat = H.flatStyle(style), tail = H.chromeRules(H.howtoCss(bp, style), H.HX_TAIL);
     if (H.rewrite(`${H.scopedRules(flat, row.chromeId)}\n${tail}`, { inPanel: true }) !== prev.get(path)) throw new Error(`handpairs: ${row.id}: ${path} is not gen/hands.mjs's text`);
-    out.push({ path, text: H.rewrite(`${H.scopedRules(flat, row.chromeId)}\n${H.scopedRules(flat, `hp-${key}`)}\n${tail}`, { inPanel: true }), inputs: H.libraryInputs(row) });
+    // no own `inputs`: this writer's share is the plugin-wide list (the pair loader and the registry); gen/hands.mjs's
+    // share already lists the row's pinned page and layers config the rules are cut from
+    out.push({ path, text: H.rewrite(`${H.scopedRules(flat, row.chromeId)}\n${H.scopedRules(flat, `hp-${key}`)}\n${tail}`, { inPanel: true }) });
   }
   return out;
 }
