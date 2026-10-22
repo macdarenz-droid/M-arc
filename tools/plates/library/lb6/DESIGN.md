@@ -174,7 +174,8 @@ plural paired part states each side (#289 6342086947); a hand contact is checked
 
 | id | quote (claim) | proposed plateFacts | pose (cardPose) |
 |---|---|---|---|
-| cable_chest_press | "Keep the feet planted on the floor." (c2; "keep" covers the drawn poses; "the feet": both) | `contact heel.r`, `ball.r`, `heel.l`, `ball.l` | start (start), end (end) |
+| cable_chest_press | "Keep the feet planted on the floor." (c2; plate.start and setup[] cite c2, plate.end does not; "the feet": both) | `contact heel.r`, `ball.r`, `heel.l`, `ball.l` | start (start); the end-pose facts removed in the fix round (#297 6346317646) |
+| cable_chest_press | "holding one d-handle in each hand" (c1; setup[] cites c1; "each hand": both) | `contact wrist.r`, `wrist.l` (added in the fix round) | start (start) |
 | cable_chest_press | "Keep the elbows just below 90 degrees ..." (c3; a start setup quote; plate.start cites c3) | `angle elbow.r 90`, `angle elbow.l 90` (the elbows: both), note "just below 90" | start (start). **Section 13 (S3)** |
 | machine_pullover | "position back flat against the back pad" (c2, setup); "Torso and head should remain back touching the back pad." (c7, start and end) | `contact backUpper`, `contact buttock` (a back on a flat pad ends at `buttock`, D-LIB11-SACRUM) | start (start) from c2 and c7; end (end) from c7 |
 | machine_pullover | "place the back of the upper arm on the elbow pads" (c3, setup); "pulling at the elbow pads" (c4, end) | `contact elbow.r`, `elbow.l` (the pads sit at the elbows; the arms: both) | start (c3), end (c4) |

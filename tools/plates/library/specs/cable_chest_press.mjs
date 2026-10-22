@@ -87,6 +87,7 @@ const handleOf = g => {
 const gripOf = lm => [0, lm['grip.r'][1], lm['grip.r'][2]];
 const START_RING = handleOf(gripOf(LS)).ring;
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
+const WS = { r: LS['wrist.r'], l: LS['wrist.l'] };
 
 export const CCP = { pulley: PULLEY, colZ: COL_Z, z: Z, gripY: GRIP_Y, handleOf };
 export default {
@@ -101,6 +102,8 @@ export default {
   ],
   checks: [
     ...['heel.r', 'ball.r', 'heel.l', 'ball.l'].map(landmark => ({ landmark, plane: FLOOR, pose: 'all', tol: 0.5 })),   // c2 feet planted
+    { landmark: 'wrist.r', at: WS.r, pose: 'start', tol: 0.5 },                                      // c1 a handle in each hand
+    { landmark: 'wrist.l', at: WS.l, pose: 'start', tol: 0.5 },
   ],
   startParts: ['arm.r', 'handle'],
   ghosts: { count: 2, parts: ['arm.r', 'handle'] },

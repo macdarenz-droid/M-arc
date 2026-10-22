@@ -783,31 +783,17 @@
     },
     {
       "kind": "contact",
-      "landmark": "heel.r",
-      "pose": "end",
-      "cardPose": "end",
-      "claim": "c2"
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
     },
     {
       "kind": "contact",
-      "landmark": "ball.r",
-      "pose": "end",
-      "cardPose": "end",
-      "claim": "c2"
-    },
-    {
-      "kind": "contact",
-      "landmark": "heel.l",
-      "pose": "end",
-      "cardPose": "end",
-      "claim": "c2"
-    },
-    {
-      "kind": "contact",
-      "landmark": "ball.l",
-      "pose": "end",
-      "cardPose": "end",
-      "claim": "c2"
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
     },
     {
       "kind": "angle",

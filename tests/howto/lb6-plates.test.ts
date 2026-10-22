@@ -927,7 +927,9 @@ describe('LIB-16 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
   const C = (lms: string[], pose: string, cardPose: string, claim: string) => lms.map(landmark => ({ kind: 'contact', landmark, pose, cardPose, claim }));
   const EL = (joint: string) => ({ kind: 'angle', joint, pose: 'start', cardPose: 'start', deg: 90, claim: 'c3', note: '"Keep the elbows just below 90 degrees": drawn 89 deg inside (flexion 91)' });
   const FACTS: Record<string, any[]> = {
-    cable_chest_press: [...C(['heel.r', 'ball.r', 'heel.l', 'ball.l'], 'start', 'start', 'c2'), ...C(['heel.r', 'ball.r', 'heel.l', 'ball.l'], 'end', 'end', 'c2'), EL('elbow.r'), EL('elbow.l')],
+    // CARD FIELDS fix round (#297 6346317646): + wrists at start (c1 "one d-handle in each hand"); the end-pose foot
+    // facts removed (plate.end cites c3, c5, c7, none states a foot contact).
+    cable_chest_press: [...C(['heel.r', 'ball.r', 'heel.l', 'ball.l'], 'start', 'start', 'c2'), ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c1'), EL('elbow.r'), EL('elbow.l')],
     machine_pullover: [...C(['backUpper', 'buttock'], 'start', 'start', 'c7'), ...C(['backUpper', 'buttock'], 'end', 'end', 'c7'), ...C(['elbow.r', 'elbow.l'], 'start', 'start', 'c3'), ...C(['elbow.r', 'elbow.l'], 'end', 'end', 'c4'), ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c3')],
     machine_crunch: [...C(['buttock'], 'start', 'start', 'c2'), ...C(['buttock'], 'end', 'end', 'c2'), ...C(['knee.r', 'ankle.r', 'knee.l', 'ankle.l'], 'start', 'start', 'c2'), ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c3')],
   };
