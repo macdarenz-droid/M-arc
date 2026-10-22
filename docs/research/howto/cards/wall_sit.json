@@ -139,5 +139,58 @@
     "Rest length between holds.",
     "Hand position.",
     "Any EMG data on which muscles work in the wall sit."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "angle",
+      "joint": "knee.r",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "w2"
+    },
+    {
+      "kind": "angle",
+      "joint": "hip.r.flex",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "w2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "w5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "w5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "w5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "w5"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Hold",
+      "s": "30-60"
+    }
+  ],
+  "topFault": "feet"
 }

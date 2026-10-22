@@ -139,5 +139,22 @@
     "Any peer-reviewed study of the pistol squat itself (PubMed 'pistol squat' gave 4 hits, none relevant).",
     "Tempo in seconds.",
     "Torso angle at the bottom."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "p3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "p3"
+    }
+  ],
+  "topFault": "bounce"
 }
