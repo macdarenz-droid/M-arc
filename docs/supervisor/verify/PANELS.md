@@ -22,12 +22,13 @@ Used for every drawn batch (pilot A/B, LB1-LB10, LIB-ZOOM), after the builder po
    - both plants are caught (2 of 3 ≤ 3 on the target item);
    - each anchor's median is ≥ 4 on every item.
 
-   The one exception is one item per anchor, and only if the supervisor confirms the defect on the PNG (crop the region and look) and records it as a golden-B follow-up. These are already recorded and confirmed:
+   The exception: an anchor item below 4 is excepted only if the supervisor confirms that exact defect on the PNG (crop the region and look) and it is recorded as a golden-B follow-up below. An anchor item below 4 that is not a confirmed, recorded defect makes the run not VALID. A FAIL verdict on a candidate also needs every non-excepted anchor item at 4 or more. (D-SUP-ANCHOR-3, 10-22, LB5 recheck: the old "one item per anchor" limit is replaced, because the anchors' recorded defects now draw low scores as they should. An excepted item is a correct critic call, not harshness; the plants still guard against lenient critics. Earlier departure: lib4-cards 4232.) These are already recorded and confirmed:
    - **18:** dumbbell_lateral_raise, the Wrong handle floating in the fingers (hand panels);
    - **19:** lat_pulldown, the start ghost more upright than the end, so the lean grows;
    - **20:** pull_up, the head tipped back about 20° at the top;
    - **21:** lat_pulldown, the thigh roller with no mount.
    - **22:** pull_up, no floor line, so "feet clear the floor" is never shown (lib4-cards 30).
+   - **23:** pull_up, the callout "ELBOW about 145°" at the top is not supported by its card: c6 gives a 93.4 ± 14.6° elbow range (confirmed on the LB5 recheck PNG, #290).
 4. **Verdict.** A plate whose every median is ≥ 4 is **approved at that sha**. A failing plate gets **one fix round**: post the findings with pixel places and buildable fixes. After 'PANEL FIX @ <sha>', run a **focused recheck**: only the fixed plates, the same anchors, new plants and a new shuffle. A plate that still fails gets a second focused round (D-LIB13-PANEL2) or is **HELD** (D-LIB8M-CARDTRUE).
 5. **Card truth wins.** A critic's fix that breaks a quoted card claim is never built. Rule it card-true (D-LIB13-ONEARM: the bent support arm on one_arm_dumbbell_row), tell the next critics in one prompt sentence, and give the owner a sheet line. If the sources might support the other form, open a research follow-up.
 
