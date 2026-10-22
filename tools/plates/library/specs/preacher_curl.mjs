@@ -96,7 +96,7 @@ export default {
   callouts: [
     { key: 'armpits', text: 'Armpits<br>over pad', anchor: 'shoulderTop.r', cue: 'Sit with the pad top under your armpits and your chest on it.' },
     { key: 'arms', text: 'Arms on<br>pad', anchor: PAD_LO, box: { left: 226, top: 250 }, cue: 'Press the backs of your upper arms into the pad all the way up.' },
-    { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', cue: 'Keep the hands in line with the forearms.' },
+    { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', box: { left: 228, top: 90 }, cue: 'Keep the hands in line with the forearms.' },
   ],
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
