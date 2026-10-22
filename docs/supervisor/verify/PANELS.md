@@ -198,7 +198,7 @@ Each card in cards/ carries three top-level keys: `plateFacts`, `tempo` and `top
 
 ## 8. Research verify (LR-29)
 
-Research cards are verified before a batch's research head is named. Every round has:
+Research cards are verified before a batch's research head is named. The critic brief template is `verify/rv-critic.txt` (placeholders <RUN>, <B>, <H>, <EXTRA>; give each critic the batch's supervisor rulings as a rules file). Since 10-22 (D-SUP-SAFETYTIER) it rates any wrong, weakened or missing safety line a blocker on any card. Every round has:
 - a history-free copy of the changed cards and quotes;
 - 2 plants, one of them tier A and rated blocker;
 - one blind Opus critic that re-fetches every source with `curl -sL` (never WebFetch or WebSearch), redoes LR-31 and LR-33, and checks every claim against its quotes;
