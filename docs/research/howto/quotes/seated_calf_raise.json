@@ -1,447 +1,447 @@
 {
- "id": "seated_calf_raise",
- "checked": "2026-10-22",
- "fetcher": "sonnet source fetcher",
- "quotes": [
-  {
-   "claim": "c1",
-   "source": "motra-seated",
-   "text": "Sit on the seated calf raise machine with thighs secured under the pad and knees bent at 90 degrees.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c1",
-   "source": "bb-best-calf",
-   "text": "Sit up straight with your legs bent at 90 degrees with the balls of your feet on the step and the load above the knee on the thigh.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c1",
-   "source": "sl-seated",
-   "text": "Sit down on the seat, and adjust the knee pad to correct height. Place your toes and the ball of your feet on the foot support.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c2",
-   "source": "fv-calf-svs",
-   "text": "Sit down on the calf raise machine and adjust the leg pad so that it sits across your thighs, just above the knees. Make sure it’s snug but not too tight.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c2",
-   "source": "fv-calf-svs",
-   "text": "Position the thigh pad so it’s just above your knees for comfort.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c3",
-   "source": "motra-seated",
-   "text": "Place balls of feet on the platform with heels hanging off, toes forward and hip-width apart.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c3",
-   "source": "fv-calf-svs",
-   "text": "Place the balls of your feet on the footplate, with your heels hanging off the edge. Your feet should be hip-width apart and parallel to each other.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c4",
-   "source": "fv-calf-svs",
-   "text": "Make sure your shins are vertical before starting your set.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c5",
-   "source": "fv-calf-svs",
-   "text": "Hold onto the handles or the sides of the seat for stability. Make sure your back is straight, and your core is engaged.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c6",
-   "source": "motra-seated",
-   "text": "Load weight plates onto the machine.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c6",
-   "source": "motra-seated",
-   "text": "Grip handles and release the safety lever by pressing through your toes.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c6",
-   "source": "motra-seated",
-   "text": "Lower controlled to repeat, then re-engage safety after set.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c6",
-   "source": "motra-seated",
-   "text": "Engage machine safety before loading or unloading",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c6",
-   "source": "fv-mseated",
-   "text": "Move the machine piece that holds the weight up to the side so that you can lower the weight all the way down for a more full range of motion.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c7",
-   "source": "motra-seated",
-   "text": "Inhale and slowly lower your heels below the platform level for a deep stretch.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c7",
-   "source": "motra-seated",
-   "text": "Pause briefly at the bottom to feel the calf stretch.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c7",
-   "source": "fv-calf-svs",
-   "text": "Slowly lower your heels towards the ground, going as far down as comfortably possible to get a good stretch in the calf muscles. This is your starting position.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c7",
-   "source": "bb-best-calf",
-   "text": "Unrack the machine and slowly lower your heels as far as possible to the floor, pausing for three seconds.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c8",
-   "source": "motra-seated",
-   "text": "Exhale and push through the balls of your feet to raise heels as high as possible.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c8",
-   "source": "fv-calf-svs",
-   "text": "Push through the balls of your feet to raise your heels as high as possible.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c8",
-   "source": "sl-seated",
-   "text": "Push the weight up by extending your ankles.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c9",
-   "source": "motra-seated",
-   "text": "Squeeze calves at the top for one second.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c9",
-   "source": "fv-calf-svs",
-   "text": "At the top of the movement, pause for a moment and squeeze your calf muscles for maximum contraction.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c9",
-   "source": "bb-best-calf",
-   "text": "Then lift your heels as far as possible, squeezing your calves at the top of the movement.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c10",
-   "source": "motra-seated",
-   "text": "Using momentum or bouncing at bottom",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c10",
-   "source": "motra-seated",
-   "text": "Incomplete range of motion",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c10",
-   "source": "motra-seated",
-   "text": "Allowing ankles to roll inward or outward",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c10",
-   "source": "motra-seated",
-   "text": "Poor posture with rounded back",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c10",
-   "source": "motra-seated",
-   "text": "Excessive weight compromising form",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c11",
-   "source": "motra-seated",
-   "text": "Use controlled movements to protect Achilles tendon",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c11",
-   "source": "motra-seated",
-   "text": "Control the descent",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c11",
-   "source": "motra-seated",
-   "text": "Avoid bouncing",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c12",
-   "source": "motra-seated",
-   "text": "Lower heels to maximum dorsiflexion below platform level, then raise to full ankle extension where calves are fully contracted.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c12",
-   "source": "motra-seated",
-   "text": "Ensure full but comfortable stretch without overstretching",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c12",
-   "source": "fv-calf-svs",
-   "text": "Use as large a range of motion as possible; half reps get half results!",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c12",
-   "source": "fv-mseated",
-   "text": "Do not overstretch your calves as this can cause tendon issues in the lower leg.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c12",
-   "source": "fv-mseated",
-   "text": "Now, slowly lower your heels down until you feel a slight stretch in your calves.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c13",
-   "source": "motra-seated",
-   "text": "Keep knees bent at 90 degrees",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c13",
-   "source": "motra-seated",
-   "text": "Maintain straight back",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c13",
-   "source": "fv-calf-svs",
-   "text": "Avoid leaning back, as doing so takes work away from your calves.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c14",
-   "source": "motra-seated",
-   "text": "Inhale during the lowering phase and exhale forcefully as you raise your heels.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c15",
-   "source": "motra-seated",
-   "text": "A machine-based isolation exercise targeting the soleus and gastrocnemius muscles to build calf strength and hypertrophy; performed seated with knees bent for focused lower leg work.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c15",
-   "source": "sl-seated",
-   "text": "Seated calf raises mostly train the inner calf muscle (solues), because the outer calf muscle (gastrocnemius) is in a shortened position.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c15",
-   "source": "fv-calf-svs",
-   "text": "The soleus is the agonist or prime mover during seated calf raises. In other words, it’s the muscle doing most of the work.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c15",
-   "source": "fv-calf-svs",
-   "text": "Because it crosses the back of your knee, the gastrocnemius is in a somewhat slackened position during seated calf raises.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c16",
-   "source": "kinoshita2023",
-   "text": "Fourteen untrained adults conducted calf-raise training with one leg in a standing/knee-extended position and the other leg in a seated/knee 90°-flexed position at 70% of one-repetition maximum.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c16",
-   "source": "kinoshita2023",
-   "text": "Each leg performed 10 repetitions/set, 5 sets/session, 2 sessions/week for 12 weeks.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c16",
-   "source": "kinoshita2023",
-   "text": "Muscle volume significantly increased in all three muscles and the whole triceps surae for both legs (p ≤ 0.031), except for the gastrocnemius muscles of the seated condition leg (p = 0.147-0.508).",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c16",
-   "source": "kinoshita2023",
-   "text": "The changes in muscle volume were significantly greater for the standing than seated condition leg in the lateral gastrocnemius (12.4% vs. 1.7%), medial gastrocnemius (9.2% vs. 0.6%), and whole triceps surae (5.6% vs. 2.1%) (p ≤ 0.011), but similar between legs in the soleus (2.1% vs. 2.9%, p = 0.410).",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c17",
-   "source": "fv-calf-svs",
-   "text": "Using heavy weights puts a lot of stress on your thighs. As such, some people may find the seated position uncomfortable or awkward, affecting their exercise enjoyment.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c17",
-   "source": "fv-calf-svs",
-   "text": "Getting the pads in the right place can help with this problem, but even then, and especially if you are lightly muscled or very lean, seated calf raises can hurt your legs.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c18",
-   "source": "fv-calf-svs",
-   "text": "Start by selecting a weight you can lift for 10-12 reps with good form.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c18",
-   "source": "motra-seated",
-   "text": "Start with light weight to master form",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c19",
-   "source": "motra-seated",
-   "text": "2-1-2",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  },
-  {
-   "claim": "c19",
-   "source": "motra-seated",
-   "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
-   "status": "pending",
-   "closest": "",
-   "note": ""
-  }
- ]
+  "id": "seated_calf_raise",
+  "checked": "2026-10-22",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "motra-seated",
+      "text": "Sit on the seated calf raise machine with thighs secured under the pad and knees bent at 90 degrees.",
+      "status": "verbatim",
+      "closest": "Sit on the seated calf raise machine with thighs secured under the pad and knees bent at 90 degrees.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "bb-best-calf",
+      "text": "Sit up straight with your legs bent at 90 degrees with the balls of your feet on the step and the load above the knee on the thigh.",
+      "status": "verbatim",
+      "closest": "Sit up straight with your legs bent at 90 degrees with the balls of your feet on the step and the load above the knee on the thigh.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "sl-seated",
+      "text": "Sit down on the seat, and adjust the knee pad to correct height. Place your toes and the ball of your feet on the foot support.",
+      "status": "verbatim",
+      "closest": "Sit down on the seat, and adjust the knee pad to correct height. Place your toes and the ball of your feet on the foot support.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "fv-calf-svs",
+      "text": "Sit down on the calf raise machine and adjust the leg pad so that it sits across your thighs, just above the knees. Make sure it’s snug but not too tight.",
+      "status": "verbatim",
+      "closest": "Sit down on the calf raise machine and adjust the leg pad so that it sits across your thighs, just above the knees. Make sure it’s snug but not too tight.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "fv-calf-svs",
+      "text": "Position the thigh pad so it’s just above your knees for comfort.",
+      "status": "verbatim",
+      "closest": "Position the thigh pad so it’s just above your knees for comfort.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "motra-seated",
+      "text": "Place balls of feet on the platform with heels hanging off, toes forward and hip-width apart.",
+      "status": "verbatim",
+      "closest": "Place balls of feet on the platform with heels hanging off, toes forward and hip-width apart.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "fv-calf-svs",
+      "text": "Place the balls of your feet on the footplate, with your heels hanging off the edge. Your feet should be hip-width apart and parallel to each other.",
+      "status": "verbatim",
+      "closest": "Place the balls of your feet on the footplate, with your heels hanging off the edge. Your feet should be hip-width apart and parallel to each other.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "fv-calf-svs",
+      "text": "Make sure your shins are vertical before starting your set.",
+      "status": "verbatim",
+      "closest": "Make sure your shins are vertical before starting your set.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "fv-calf-svs",
+      "text": "Hold onto the handles or the sides of the seat for stability. Make sure your back is straight, and your core is engaged.",
+      "status": "verbatim",
+      "closest": "Hold onto the handles or the sides of the seat for stability. Make sure your back is straight, and your core is engaged.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "motra-seated",
+      "text": "Load weight plates onto the machine.",
+      "status": "verbatim",
+      "closest": "Load weight plates onto the machine.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "motra-seated",
+      "text": "Grip handles and release the safety lever by pressing through your toes.",
+      "status": "verbatim",
+      "closest": "Grip handles and release the safety lever by pressing through your toes.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "motra-seated",
+      "text": "Lower controlled to repeat, then re-engage safety after set.",
+      "status": "verbatim",
+      "closest": "Lower controlled to repeat, then re-engage safety after set.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "motra-seated",
+      "text": "Engage machine safety before loading or unloading",
+      "status": "verbatim",
+      "closest": "Engage machine safety before loading or unloading",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "fv-mseated",
+      "text": "Move the machine piece that holds the weight up to the side so that you can lower the weight all the way down for a more full range of motion.",
+      "status": "verbatim",
+      "closest": "Move the machine piece that holds the weight up to the side so that you can lower the weight all the way down for a more full range of motion.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "motra-seated",
+      "text": "Inhale and slowly lower your heels below the platform level for a deep stretch.",
+      "status": "verbatim",
+      "closest": "Inhale and slowly lower your heels below the platform level for a deep stretch.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "motra-seated",
+      "text": "Pause briefly at the bottom to feel the calf stretch.",
+      "status": "verbatim",
+      "closest": "Pause briefly at the bottom to feel the calf stretch.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "fv-calf-svs",
+      "text": "Slowly lower your heels towards the ground, going as far down as comfortably possible to get a good stretch in the calf muscles. This is your starting position.",
+      "status": "verbatim",
+      "closest": "Slowly lower your heels towards the ground, going as far down as comfortably possible to get a good stretch in the calf muscles. This is your starting position.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "bb-best-calf",
+      "text": "Unrack the machine and slowly lower your heels as far as possible to the floor, pausing for three seconds.",
+      "status": "verbatim",
+      "closest": "Unrack the machine and slowly lower your heels as far as possible to the floor, pausing for three seconds.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "motra-seated",
+      "text": "Exhale and push through the balls of your feet to raise heels as high as possible.",
+      "status": "verbatim",
+      "closest": "Exhale and push through the balls of your feet to raise heels as high as possible.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "fv-calf-svs",
+      "text": "Push through the balls of your feet to raise your heels as high as possible.",
+      "status": "verbatim",
+      "closest": "Push through the balls of your feet to raise your heels as high as possible.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "sl-seated",
+      "text": "Push the weight up by extending your ankles.",
+      "status": "verbatim",
+      "closest": "Push the weight up by extending your ankles.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "motra-seated",
+      "text": "Squeeze calves at the top for one second.",
+      "status": "verbatim",
+      "closest": "Squeeze calves at the top for one second.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "fv-calf-svs",
+      "text": "At the top of the movement, pause for a moment and squeeze your calf muscles for maximum contraction.",
+      "status": "verbatim",
+      "closest": "At the top of the movement, pause for a moment and squeeze your calf muscles for maximum contraction.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bb-best-calf",
+      "text": "Then lift your heels as far as possible, squeezing your calves at the top of the movement.",
+      "status": "verbatim",
+      "closest": "Then lift your heels as far as possible, squeezing your calves at the top of the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "motra-seated",
+      "text": "Using momentum or bouncing at bottom",
+      "status": "verbatim",
+      "closest": "Using momentum or bouncing at bottom",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "motra-seated",
+      "text": "Incomplete range of motion",
+      "status": "verbatim",
+      "closest": "Incomplete range of motion",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "motra-seated",
+      "text": "Allowing ankles to roll inward or outward",
+      "status": "verbatim",
+      "closest": "Allowing ankles to roll inward or outward",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "motra-seated",
+      "text": "Poor posture with rounded back",
+      "status": "verbatim",
+      "closest": "Poor posture with rounded back",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "motra-seated",
+      "text": "Excessive weight compromising form",
+      "status": "verbatim",
+      "closest": "Excessive weight compromising form",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "motra-seated",
+      "text": "Use controlled movements to protect Achilles tendon",
+      "status": "verbatim",
+      "closest": "Use controlled movements to protect Achilles tendon",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "motra-seated",
+      "text": "Control the descent",
+      "status": "verbatim",
+      "closest": "Control the descent",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "motra-seated",
+      "text": "Avoid bouncing",
+      "status": "verbatim",
+      "closest": "Avoid bouncing",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "motra-seated",
+      "text": "Lower heels to maximum dorsiflexion below platform level, then raise to full ankle extension where calves are fully contracted.",
+      "status": "verbatim",
+      "closest": "Lower heels to maximum dorsiflexion below platform level, then raise to full ankle extension where calves are fully contracted.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "motra-seated",
+      "text": "Ensure full but comfortable stretch without overstretching",
+      "status": "verbatim",
+      "closest": "Ensure full but comfortable stretch without overstretching",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "fv-calf-svs",
+      "text": "Use as large a range of motion as possible; half reps get half results!",
+      "status": "verbatim",
+      "closest": "Use as large a range of motion as possible; half reps get half results!",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "fv-mseated",
+      "text": "Do not overstretch your calves as this can cause tendon issues in the lower leg.",
+      "status": "verbatim",
+      "closest": "Do not overstretch your calves as this can cause tendon issues in the lower leg.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "fv-mseated",
+      "text": "Now, slowly lower your heels down until you feel a slight stretch in your calves.",
+      "status": "verbatim",
+      "closest": "Now, slowly lower your heels down until you feel a slight stretch in your calves.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "motra-seated",
+      "text": "Keep knees bent at 90 degrees",
+      "status": "verbatim",
+      "closest": "Keep knees bent at 90 degrees",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "motra-seated",
+      "text": "Maintain straight back",
+      "status": "verbatim",
+      "closest": "Maintain straight back",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "fv-calf-svs",
+      "text": "Avoid leaning back, as doing so takes work away from your calves.",
+      "status": "verbatim",
+      "closest": "Avoid leaning back, as doing so takes work away from your calves.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "motra-seated",
+      "text": "Inhale during the lowering phase and exhale forcefully as you raise your heels.",
+      "status": "verbatim",
+      "closest": "Inhale during the lowering phase and exhale forcefully as you raise your heels.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "motra-seated",
+      "text": "A machine-based isolation exercise targeting the soleus and gastrocnemius muscles to build calf strength and hypertrophy; performed seated with knees bent for focused lower leg work.",
+      "status": "verbatim",
+      "closest": "A machine-based isolation exercise targeting the soleus and gastrocnemius muscles to build calf strength and hypertrophy; performed seated with knees bent for focused lower leg work.",
+      "note": "Verbatim, but the page has no \"About Exercise\" heading: the text is the unheaded intro paragraph under the title (also in meta/JSON-LD)."
+    },
+    {
+      "claim": "c15",
+      "source": "sl-seated",
+      "text": "Seated calf raises mostly train the inner calf muscle (solues), because the outer calf muscle (gastrocnemius) is in a shortened position.",
+      "status": "verbatim",
+      "closest": "Seated calf raises mostly train the inner calf muscle (solues), because the outer calf muscle (gastrocnemius) is in a shortened position.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "fv-calf-svs",
+      "text": "The soleus is the agonist or prime mover during seated calf raises. In other words, it’s the muscle doing most of the work.",
+      "status": "verbatim",
+      "closest": "The soleus is the agonist or prime mover during seated calf raises. In other words, it’s the muscle doing most of the work.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "fv-calf-svs",
+      "text": "Because it crosses the back of your knee, the gastrocnemius is in a somewhat slackened position during seated calf raises.",
+      "status": "verbatim",
+      "closest": "Because it crosses the back of your knee, the gastrocnemius is in a somewhat slackened position during seated calf raises.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "kinoshita2023",
+      "text": "Fourteen untrained adults conducted calf-raise training with one leg in a standing/knee-extended position and the other leg in a seated/knee 90°-flexed position at 70% of one-repetition maximum.",
+      "status": "verbatim",
+      "closest": "Fourteen untrained adults conducted calf-raise training with one leg in a standing/knee-extended position and the other leg in a seated/knee 90°-flexed position at 70% of one-repetition maximum.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "kinoshita2023",
+      "text": "Each leg performed 10 repetitions/set, 5 sets/session, 2 sessions/week for 12 weeks.",
+      "status": "verbatim",
+      "closest": "Each leg performed 10 repetitions/set, 5 sets/session, 2 sessions/week for 12 weeks.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "kinoshita2023",
+      "text": "Muscle volume significantly increased in all three muscles and the whole triceps surae for both legs (p ≤ 0.031), except for the gastrocnemius muscles of the seated condition leg (p = 0.147-0.508).",
+      "status": "verbatim",
+      "closest": "Muscle volume significantly increased in all three muscles and the whole triceps surae for both legs (p ≤ 0.031), except for the gastrocnemius muscles of the seated condition leg (p = 0.147-0.508).",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "kinoshita2023",
+      "text": "The changes in muscle volume were significantly greater for the standing than seated condition leg in the lateral gastrocnemius (12.4% vs. 1.7%), medial gastrocnemius (9.2% vs. 0.6%), and whole triceps surae (5.6% vs. 2.1%) (p ≤ 0.011), but similar between legs in the soleus (2.1% vs. 2.9%, p = 0.410).",
+      "status": "verbatim",
+      "closest": "The changes in muscle volume were significantly greater for the standing than seated condition leg in the lateral gastrocnemius (12.4% vs. 1.7%), medial gastrocnemius (9.2% vs. 0.6%), and whole triceps surae (5.6% vs. 2.1%) (p ≤ 0.011), but similar between legs in the soleus (2.1% vs. 2.9%, p = 0.410).",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "fv-calf-svs",
+      "text": "Using heavy weights puts a lot of stress on your thighs. As such, some people may find the seated position uncomfortable or awkward, affecting their exercise enjoyment.",
+      "status": "verbatim",
+      "closest": "Using heavy weights puts a lot of stress on your thighs. As such, some people may find the seated position uncomfortable or awkward, affecting their exercise enjoyment.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "fv-calf-svs",
+      "text": "Getting the pads in the right place can help with this problem, but even then, and especially if you are lightly muscled or very lean, seated calf raises can hurt your legs.",
+      "status": "verbatim",
+      "closest": "Getting the pads in the right place can help with this problem, but even then, and especially if you are lightly muscled or very lean, seated calf raises can hurt your legs.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "fv-calf-svs",
+      "text": "Start by selecting a weight you can lift for 10-12 reps with good form.",
+      "status": "verbatim",
+      "closest": "Start by selecting a weight you can lift for 10-12 reps with good form.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "motra-seated",
+      "text": "Start with light weight to master form",
+      "status": "verbatim",
+      "closest": "Start with light weight to master form",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "motra-seated",
+      "text": "2-1-2",
+      "status": "verbatim",
+      "closest": "2-1-2",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "motra-seated",
+      "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "note": ""
+    }
+  ]
 }

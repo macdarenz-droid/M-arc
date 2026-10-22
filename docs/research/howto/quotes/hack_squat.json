@@ -7,376 +7,376 @@
       "claim": "c1",
       "source": "sl-hack",
       "text": "Adjust the machine to the correct height and place your shoulders against the shoulder pads.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Adjust the machine to the correct height and place your shoulders against the shoulder pads.",
       "note": ""
     },
     {
       "claim": "c1",
       "source": "sl-hack",
       "text": "Put your feet on the plate, slightly in front of the base of the sled and about shoulder width apart.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Put your feet on the plate, slightly in front of the base of the sled and about shoulder width apart.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "fv-hack",
       "text": "Maintain your spine’s natural curvature throughout the exercise. Your upper and lower back and hips should be in contact with the back pad.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Maintain your spine’s natural curvature throughout the exercise. Your upper and lower back and hips should be in contact with the back pad.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "fv-hack",
       "text": "Keep your back and glutes glued to the back pad throughout the range of motion.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Keep your back and glutes glued to the back pad throughout the range of motion.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "bb-hackmachine",
       "text": "Find a stance that allows you to keep your hips and torso firmly connected with the seat at all times.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Find a stance that allows you to keep your hips and torso firmly connected with the seat at all times.",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "sl-hack",
       "text": "Extend your legs and disengage the sled’s locks.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Extend your legs and disengage the sled’s locks.",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "bb-hackmachine",
       "text": "Once you’re set up against the backrest and have your feet where you want them, push against the foot plate to release the sled from where it rests against the safety handles.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Once you’re set up against the backrest and have your feet where you want them, push against the foot plate to release the sled from where it rests against the safety handles.",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "bb-hackmachine",
       "text": "Then, remove the railguards by adjusting the lever (there should be one on the side of the machine near your head or hips).",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Then, remove the railguards by adjusting the lever (there should be one on the side of the machine near your head or hips).",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "hl-hack",
       "text": "Release the safety handles, inhale, and lower down, bending your knees until they reach a 90-degree angle.",
-      "status": "pending",
+      "status": "not-found",
       "closest": "",
-      "note": ""
+      "note": "source unreachable (HTTP 404)"
     },
     {
       "claim": "c4",
       "source": "fv-hack",
       "text": "Take a deep breath into your belly and hold it as you slowly lower into a squat by flexing your hips, knees, and ankles.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Take a deep breath into your belly and hold it as you slowly lower into a squat by flexing your hips, knees, and ankles.",
       "note": ""
     },
     {
       "claim": "c4",
       "source": "fv-hack",
       "text": "Go down as far as your mobility allows. Your upper and lower legs should be at a right angle at the bottom.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Go down as far as your mobility allows. Your upper and lower legs should be at a right angle at the bottom.",
       "note": ""
     },
     {
       "claim": "c4",
       "source": "hl-hack",
       "text": "Pause here, then push up through the back of your feet to extend your legs back to the starting position.",
-      "status": "pending",
+      "status": "not-found",
       "closest": "",
-      "note": ""
+      "note": "source unreachable (HTTP 404)"
     },
     {
       "claim": "c5",
       "source": "fv-hack",
       "text": "Many athletes cut the squat short, not reaching the depth necessary to engage the target muscles fully. A shallow squat limits the activation of the glutes and hamstrings.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Many athletes cut the squat short, not reaching the depth necessary to engage the target muscles fully. A shallow squat limits the activation of the glutes and hamstrings.",
       "note": ""
     },
     {
       "claim": "c5",
       "source": "fv-hack",
       "text": "How To Avoid: Aim to lower your body until your thighs are at least parallel to the floor, ensuring deeper muscle engagement. Remember, depth should be achieved without compromising form. Avoid rounding your back on eccentrics.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "How To Avoid: Aim to lower your body until your thighs are at least parallel to the floor, ensuring deeper muscle engagement. Remember, depth should be achieved without compromising form. Avoid rounding your back on eccentrics.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "fv-hack",
       "text": "Breathe out sharply and extend your knees, ankles, and hips while pushing through your whole feet to return to the starting position.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Breathe out sharply and extend your knees, ankles, and hips while pushing through your whole feet to return to the starting position.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "sl-hack",
       "text": "Reverse the movement with control, and extend your legs again until you’re back in the starting position. Exhale on the way up.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Reverse the movement with control, and extend your legs again until you’re back in the starting position. Exhale on the way up.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "motra-hs",
       "text": "Exhale near the top of the movement, keeping a slight bend in the knees.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Exhale near the top of the movement, keeping a slight bend in the knees.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "motra-hs",
       "text": "Lower until thighs are parallel to the footplate or deeper; extend fully without locking knees.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Lower until thighs are parallel to the footplate or deeper; extend fully without locking knees.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "motra-hs",
       "text": "Do not lock knees aggressively",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Do not lock knees aggressively",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "motra-hs",
       "text": "Locking knees at top",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Locking knees at top",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "fv-hack",
       "text": "Pro Tip: Many people lift their lower back off the back pad to generate momentum when in the hole. Doing so can put unnecessary strain on your lower back and increase your injury risk. Limit the movement to the quads and glutes.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pro Tip: Many people lift their lower back off the back pad to generate momentum when in the hole. Doing so can put unnecessary strain on your lower back and increase your injury risk. Limit the movement to the quads and glutes.",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "bb-hackmachine",
       "text": "If your feet are placed too far up the plate, they may fall out of alignment with your hips.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "If your feet are placed too far up the plate, they may fall out of alignment with your hips.",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "bb-hackmachine",
       "text": "To compensate, you may feel your pelvis or lower back drift off of the backrest while you exert effort. This is a major no-no for the hack squat machine.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "To compensate, you may feel your pelvis or lower back drift off of the backrest while you exert effort. This is a major no-no for the hack squat machine.",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "bb-hackmachine",
       "text": "However, put your feet too high, and you run the risk of diminishing your force output, or even having your hips leave the backrest. Start by placing your feet roughly in-line with your knees or slightly “ahead,” and tweak from there.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "However, put your feet too high, and you run the risk of diminishing your force output, or even having your hips leave the backrest. Start by placing your feet roughly in-line with your knees or slightly “ahead,” and tweak from there.",
       "note": ""
     },
     {
       "claim": "c10",
       "source": "mh-hack",
       "text": "If you haven’t heard of “butt wink,” it’s something you must constantly be aware of when hack squatting. It’s a common occurrence at the bottom of a squat, when your lower back rounds ever so slightly.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "If you haven’t heard of “butt wink,” it’s something you must constantly be aware of when hack squatting. It’s a common occurrence at the bottom of a squat, when your lower back rounds ever so slightly.",
       "note": ""
     },
     {
       "claim": "c10",
       "source": "mh-hack",
       "text": "Placing the back against a board and going too deep when hack squatting leaves a lot of flexing stress for the lumbar spine if you have limited mobility.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Placing the back against a board and going too deep when hack squatting leaves a lot of flexing stress for the lumbar spine if you have limited mobility.",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "fv-hack",
       "text": "Never arch or round your back, as this can cause pain and injury.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Never arch or round your back, as this can cause pain and injury.",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "fv-hack",
       "text": "Placing your feet too close can place undue stress on the knees, while too wide a stance can shift the focus away from the quadriceps.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Placing your feet too close can place undue stress on the knees, while too wide a stance can shift the focus away from the quadriceps.",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "fv-hack",
       "text": "How To Avoid: Position your feet shoulder-width apart with toes slightly pointed out in the middle of the foot platform to get the best of all worlds.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "How To Avoid: Position your feet shoulder-width apart with toes slightly pointed out in the middle of the foot platform to get the best of all worlds.",
       "note": ""
     },
     {
       "claim": "c13",
       "source": "fv-hack",
       "text": "Turn out your feet slightly and ensure your knees align with your toes.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Turn out your feet slightly and ensure your knees align with your toes.",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "fv-hack",
       "text": "If your legs start trembling during a hack squat and your heels come off the platform, it is a sign that you should lower the weight.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "If your legs start trembling during a hack squat and your heels come off the platform, it is a sign that you should lower the weight.",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "motra-hs",
       "text": "Heels lifting off platform",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Heels lifting off platform",
       "note": ""
     },
     {
       "claim": "c15",
       "source": "bb-hackmachine",
       "text": "Like all squat variations out there, your quadriceps will perform the vast majority of the work for the duration of your set, since most of the anatomical movement comes from the knee joint upon which your quads attach.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Like all squat variations out there, your quadriceps will perform the vast majority of the work for the duration of your set, since most of the anatomical movement comes from the knee joint upon which your quads attach.",
       "note": ""
     },
     {
       "claim": "c15",
       "source": "sl-hack",
       "text": "The machine hack squat is a classic leg exercise that’s great for targeting several of your large leg muscles, such as your quads, glutes, and adductors.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "The machine hack squat is a classic leg exercise that’s great for targeting several of your large leg muscles, such as your quads, glutes, and adductors.",
       "note": ""
     },
     {
       "claim": "c15",
       "source": "fv-hack",
       "text": "While the quads are the stars, the hamstrings are the essential supporting cast.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "While the quads are the stars, the hamstrings are the essential supporting cast.",
       "note": ""
     },
     {
       "claim": "c16",
       "source": "sl-hack",
       "text": "In addition, many hack squat machines have safety locks or brakes that you can pull if the weight gets too heavy and you need to get out.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "In addition, many hack squat machines have safety locks or brakes that you can pull if the weight gets too heavy and you need to get out.",
       "note": ""
     },
     {
       "claim": "c16",
       "source": "bb-hackmachine",
       "text": "Coach’s Tip: You can terminate the set from a “standing” position by re-engaging the rail guard lever.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Coach’s Tip: You can terminate the set from a “standing” position by re-engaging the rail guard lever.",
       "note": ""
     },
     {
       "claim": "c16",
       "source": "bb-hackmachine",
       "text": "Many hack squat stations have fail-safes at the bottom of the rail that will prevent you from collapsing onto your legs should you reach muscular failure. Moreover, the rail guard lever is easily accessible while you’re lifting, so you can terminate the set quickly if needed.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Many hack squat stations have fail-safes at the bottom of the rail that will prevent you from collapsing onto your legs should you reach muscular failure. Moreover, the rail guard lever is easily accessible while you’re lifting, so you can terminate the set quickly if needed.",
       "note": ""
     },
     {
       "claim": "c17",
       "source": "hl-hack",
       "text": "Start by completing 2 sets of 10–12 reps, then work your way up to 3 sets. Once you can complete this easily, add more weight.",
-      "status": "pending",
+      "status": "not-found",
       "closest": "",
-      "note": ""
+      "note": "source unreachable (HTTP 404)"
     },
     {
       "claim": "c17",
       "source": "fv-hack",
       "text": "Start off light and gradually increase your working weights as you become stronger.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Start off light and gradually increase your working weights as you become stronger.",
       "note": ""
     },
     {
       "claim": "c18",
       "source": "fv-hack",
       "text": "Hold the machine’s handles in a comfortable position with a neutral grip.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Hold the machine’s handles in a comfortable position with a neutral grip.",
       "note": ""
     },
     {
       "claim": "c18",
       "source": "bb-hackmachine",
       "text": "However, don’t get caught up in trying to “push” against the handles with your arms to move the weight. Moreover, definitely don’t get into the habit of placing your hands onto your knees and assisting yourself that way.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "However, don’t get caught up in trying to “push” against the handles with your arms to move the weight. Moreover, definitely don’t get into the habit of placing your hands onto your knees and assisting yourself that way.",
       "note": ""
     },
     {
       "claim": "c19",
       "source": "hl-hack",
       "text": "If you have lower back or knee pain, the hack squat usually isn’t a good choice.",
-      "status": "pending",
+      "status": "not-found",
       "closest": "",
-      "note": ""
+      "note": "source unreachable (HTTP 404)"
     },
     {
       "claim": "c20",
       "source": "motra-hs",
       "text": "3-1-1",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "3-1-1",
       "note": ""
     },
     {
       "claim": "c20",
       "source": "motra-hs",
       "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
       "note": ""
     },
     {
       "claim": "c21",
       "source": "fv-hack",
       "text": "Pause and contract your quads and glutes at the isometric contraction point.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pause and contract your quads and glutes at the isometric contraction point.",
       "note": ""
     },
     {
       "claim": "c22",
       "source": "fv-hack",
       "text": "How To Avoid: Reduce the weight and use slow and controlled eccentrics and concentrics to make the most of this exercise.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "How To Avoid: Reduce the weight and use slow and controlled eccentrics and concentrics to make the most of this exercise.",
       "note": ""
     }
   ]
