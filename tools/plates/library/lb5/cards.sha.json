@@ -1,10 +1,10 @@
 {
- "note": "sha256 per LB5 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\"; and sha256 of each quotes file, a byte copy from the same head.",
- "researchHead": "3812989f59c000705731f7944d7a1a275e86045d",
+ "note": "sha256 per LB5 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\"; and sha256 of each quotes file, a byte copy from the same head. Research head a8e66f32 (F-LB5-1, #291): only cross_body_hammer_curl changed from 3812989f; the other 8 cards and all 9 quotes are byte-identical.",
+ "researchHead": "a8e66f32e34e1746075ffa4da35ea18c80dd4776",
  "cards": {
   "overhead_cable_triceps_extension": "bd3c9ed2970945e7531e9e968669329a6c418c5b059b66c3eebf5e42697bcd31",
   "dumbbell_overhead_triceps_extension": "8b871081ec46d494788a11a93964980fb2280a41eef3ad19cd1589d9a245df50",
-  "cross_body_hammer_curl": "ef77459e098a51b3122f78aea41a569ec1cb0b574365bef3db4fdbece11be27d",
+  "cross_body_hammer_curl": "9b45a5464224f8436f0cc5a147b0cf480a253856a81ded800a1d15769d7ee12a",
   "cable_curl": "9f5623f41d5d514e52c0f1c4cb289ae5b428a5d3b827999bbe0effca25c69bf3",
   "bayesian_cable_curl": "60253cd4100c6dc64b8426462ed20a037ad8cfcfa35f7086449e615b19869be7",
   "preacher_curl": "862b79ead56714058c26c76e4840c3eaea5c7da6a040a6361f80cba758ca4fc1",

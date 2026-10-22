@@ -18,7 +18,7 @@ const IDS = LB5.map(i => `lib_${i}`);
 const OTHER = ['triceps_pushdown', 'rope_triceps_pushdown', 'straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'dumbbell_biceps_curl',
   'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'reverse_curl'];
 const ROWS = 'tools/plates/library/lb5/rows.json';
-const RESEARCH_HEAD = '3812989f59c000705731f7944d7a1a275e86045d';
+const RESEARCH_HEAD = 'a8e66f32e34e1746075ffa4da35ea18c80dd4776';
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
@@ -427,7 +427,7 @@ describe('LIB-15 A8: the drawable-fault ids (D-LIB15-F7)', { timeout: T }, () =>
 });
 
 describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn items (DESIGN.md sections 7, 9)', { timeout: T }, () => {
-  const KEYS: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cross_body_hammer_curl: 'twist',
+  const KEYS: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cross_body_hammer_curl: 'shrug',
     cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', incline_dumbbell_curl: 'elbows', concentration_curl: 'knee', wrist_curl: 'lean' };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate has 2-3 tells, the first carrying the proposed key; mutation: the tells swapped is red', () => {
@@ -648,22 +648,24 @@ describe('LIB-15 A4: runQa node half on an LB5 plate (lib_preacher_curl), LIB-3 
 });
 
 describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the plate facts (#290 6340022161)', { timeout: T }, () => {
-  // The cards whose fields are written now: the 9 less cross_body_hammer_curl (F-LB5-1) and incline_dumbbell_curl (when drawn).
-  const FIELDED = LB5.filter(id => !['cross_body_hammer_curl', 'incline_dumbbell_curl'].includes(id));
+  // The cards whose fields are written now: the 9 less incline_dumbbell_curl (written when drawn).
+  const FIELDED = LB5.filter(id => id !== 'incline_dumbbell_curl');
   const KEYS = ['plateFacts', 'tempo', 'topFault'];
   const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
   // The ruled pose map (D-LIB15-POSE; DESIGN.md section 9): the spec pose each card pose is drawn as.
   const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB5.map(id => [id,
     ['dumbbell_overhead_triceps_extension', 'cable_curl'].includes(id) ? { start: 'end', end: 'start' } : { start: 'start', end: 'end' }]));
   // The ruled fault->key map (D-LIB15-FAULTKEY): the drawn key and topFault.
-  const DRAWN: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cable_curl: 'straight',
-    bayesian_cable_curl: 'swing', preacher_curl: 'lift', concentration_curl: 'knee', wrist_curl: 'lean' };
-  const TOP: Record<string, string> = { ...DRAWN, wrist_curl: 'grip' };
+  // cross_body_hammer_curl: the shrug after F-LB5-1 (research a8e66f32, #290 6340713424); its top fault, the straight arm, keys `straight`.
+  const DRAWN: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cross_body_hammer_curl: 'shrug',
+    cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', concentration_curl: 'knee', wrist_curl: 'lean' };
+  const TOP: Record<string, string> = { ...DRAWN, wrist_curl: 'grip', cross_body_hammer_curl: 'straight' };
   // The ruled facts (D-LIB15-FACTS), copied from the ruling, never read from a card or a spec.
   const C = (landmark: string, pose: string, cardPose: string, claim: string) => ({ kind: 'contact', landmark, pose, cardPose, claim });
   const FACTS: Record<string, any[]> = {
     overhead_cable_triceps_extension: [],
     dumbbell_overhead_triceps_extension: [{ kind: 'angle', joint: 'elbow.r', deg: 90, pose: 'start', cardPose: 'end', claim: 'c5' }],
+    cross_body_hammer_curl: [],
     cable_curl: [],
     bayesian_cable_curl: [{ kind: 'angle', measure: true, deg: 45, pose: 'start', cardPose: 'start', claim: 'c2' }],
     preacher_curl: [C('elbow.r', 'start', 'start', 'c1'), C('chest', 'start', 'start', 'c1'), C('heel.r', 'start', 'start', 'c2'), C('ball.r', 'start', 'start', 'c2'), C('elbow.r', 'end', 'end', 'c4')],

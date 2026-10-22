@@ -206,7 +206,7 @@ Fault→key (13 Q1(a)); each spec's first tell carries the key:
 |---|---|---|---|---|
 | overhead_cable_triceps_extension | lower back arching as the rope is pushed overhead (c9) | true | `arch` (`ribs`: the chest and ribs tip back over the arched low back) | `arch` |
 | dumbbell_overhead_triceps_extension | back arching as the dumbbell is pressed up (c9, c12) | true | `arch` (`ribs`) | `arch` |
-| cross_body_hammer_curl | wrists twisting off neutral during the lift (c7, c5) | **false** (D-LIB15-XBODY: the card's field reads true; F-LB5-1 sets it false) | `twist` (`palm`: the palm turns up off the body) | `range` (handlingMistakes[0], "Arm fully straight at bottom.", c15; ≠ `twist`) |
+| cross_body_hammer_curl | working shoulder shrugging as the dumbbell rises (c5, c6; research a8e66f32, F-LB5-1) | **false** | `shrug` (`ear`: the gap between the shoulder and the ear closes) | `straight` (handlingMistakes[0], "Arm fully straight at bottom.", c15; ≠ `shrug`) |
 | cable_curl | arms fully extended at the bottom, tension lost (c13) | true | `straight` (`drop`: the bar sinks lower) | `straight` |
 | bayesian_cable_curl | upper arm swinging forward so the shoulder helps (c5) | true | `swing` (`shoulder`: the shoulder takes over) | `swing` |
 | preacher_curl | upper arms lifting off the pad as the body heaves the bar up (c5) | true | `lift` (`heave`: the torso rocks back off the pad) | `lift` |
@@ -290,7 +290,7 @@ GO'; incline_dumbbell_curl after pilot A is on main.
 | id | held under | release condition |
 |---|---|---|
 | wrist_curl | D-LIB8-shrug pattern, F-LIB15-1 (#290 6340075388): no frame holding the whole figure, bench and dumbbell passes PQ-H3's Trace card-true (5.2 px at 146.29 px/m, 10.4 px at 195.0 px/m) | LIB-ZOOM (#279) on main and merged in; then the zoom circle on the wrist and grip under LIB-ZOOM's convention |
-| cross_body_hammer_curl | D-LIB15-TWIST, F-LB5-1 (#290 6340022161, 6340075388): the wrist twist moves no body landmark (H3 deviation 0 px) | the research fix that names the next drawable fault, its head posted on #290; then that plate.mistake is drawn |
+| cross_body_hammer_curl | D-LIB15-TWIST, F-LB5-1 (#290 6340022161, 6340075388); then the new pick, the shrug (research a8e66f32, #290 6340713424): a 5 cm drawn shrug gives H3 deviation 7.3 px, and passing needs ≥ 7.8 cm, which c5/c6 do not give (reported #290 6340838685) | the supervisor's ruling on 6340838685 |
 
 A held spec stays drawn as is, builds and is in no rows file and on no QA'd page (D-LIB8M-PAGESET).
 incline_dumbbell_curl is not held: it is not drawn yet (D-LIB15-INCLINE).

@@ -2,7 +2,7 @@
 // View: FRONT (card plate.view = census view "Front view: the curl crosses the body"). The dumbbell's arc across the
 // body toward the opposite shoulder (c2, c3) and the shoulders staying level (c5) show only from the front. The figure's
 // right arm works (the viewer's left); the left arm hangs with its dumbbell, as at the start.
-// Form: research card docs/research/howto/cards/cross_body_hammer_curl.json (research head 3812989f, LR-29 VALID), plate
+// Form: research card docs/research/howto/cards/cross_body_hammer_curl.json (research head a8e66f32, F-LB5-1), plate
 //  section: start "Standing, feet about shoulder-width (c1); dumbbells in front of you, palms facing the body (c1), elbows
 //  slightly bent, about shoulder-width apart (c14); shoulders down and back (c6)"; end "Working elbow bent, dumbbell
 //  raised in an arc to near the opposite shoulder (c2); elbow in the same place (c2); wrist straight, palm still facing
@@ -20,16 +20,16 @@
 //  - End: the grip on the sphere toward the front of the opposite shoulder (c2 "toward your opposite shoulder").
 //  - Neutral grip (c5, c7): the handle stays perpendicular to the forearm in the arc's plane (the thumb leads), so it
 //    turns with the forearm and stays side-on (`dumbbell` `axis`).
-// Engine limit (DESIGN.md section 11, D-LIB15-TWIST): the vendor body has no forearm rotation (body.mjs:132), so the
-//  Mistake, the wrist twisting off neutral, turns only the drawn dumbbell; no body landmark moves.
+// Mistake history (D-LIB15-TWIST, F-LB5-1): the earlier pick, the wrist twist, is a forearm rotation the vendor body
+//  cannot draw (body.mjs:132); research a8e66f32 moved plate.mistake to the shrug.
 // Unsourced numbers (13.3 must-fix 14): FOOT_X, KNEE_SOFT, GRIP0 (start hands), the end point's distance in front of the
-//  opposite shoulder, the dumbbells (vendor default), the Mistake's twist (MIS_TWIST; c7 gives none).
+//  opposite shoulder, the dumbbells (vendor default), the Mistake's shrug (MIS_SHRUG; c5, c6 give none).
 // Callouts, Mistake, tempo: the 3 checkpoints are the callouts (c7, c2, c5); the Mistake is the card's plate.mistake
-//  (c7, c5), drawn against the end pose; the card's field reads drawable true, but its rankNote says the top fault, the
-//  arm fully straight at the bottom (c15), is a small elbow bend toward the camera the front view cannot show
-//  (D-LIB15-XBODY), so the plate draws the next fault and carries pilot.drawableFault (F7, D-LIB15-F7).
+//  (research a8e66f32: c5, c6, drawable false), drawn against the end pose: the top fault, the arm fully straight at the
+//  bottom (c15), is a small elbow bend toward the camera the front view cannot show, so the plate draws the next fault
+//  and carries pilot.drawableFault (F7, D-LIB15-F7).
 //  Tempo: Curl 1 s, Hold 1 s (c11's drawing convention, LR-33), Lower 2 s (lb5/tempo.json); no Rest.
-import { WINTER, REF, landmarksOf } from '../engine.mjs';
+import { WINTER, REF, landmarksOf, normPose, resolve } from '../engine.mjs';
 import { add, mul, norm, sub } from '../eq/parts.mjs';
 
 const H = 1.75, R = Math.PI / 180;
@@ -68,12 +68,15 @@ const end = rest.pop(), via = rest;
 
 // The handle: perpendicular to the forearm in the arc's plane (neutral grip, the thumb leading, c5, c7).
 const handle = lm => norm(cross(PN, norm(sub(lm['grip.r'], lm['elbow.r']))));
-// Mistake (card plate.mistake, c7, c5): "Wrists twisting during the lift, so the grip is no longer neutral." The working
-// wrist turns MIS_TWIST toward palm up about the forearm axis, so the handle turns out of the arc's plane toward the camera.
-// The card gives no angle: drawn large enough to read at 390 px.
-const MIS_TWIST = 70;
-const rotAbout = (v, k, a) => { const c = Math.cos(a), s = Math.sin(a), d = k[0] * v[0] + k[1] * v[1] + k[2] * v[2], x = cross(k, v); return v.map((vi, i) => vi * c + x[i] * s + k[i] * d * (1 - c)); };
-const twisted = lm => rotAbout(handle(lm), norm(sub(lm['grip.r'], lm['elbow.r'])), -MIS_TWIST * R);
+// Mistake (card plate.mistake after F-LB5-1, research a8e66f32, c5, c6): "Working shoulder shrugging as the dumbbell
+// rises." Drawn against the end pose: the working (right) shoulder girdle elevates MIS_SHRUG cm (scapula elevation),
+// and the arm, held at the end pose's joint angles, rises with it (the dumbbell lifts with the shrug). The left shoulder
+// stays set down and back. c5/c6 give no size: MIS_SHRUG is drawn, not sourced (Q-D5-3: never enlarged to pass a check).
+const MIS_SHRUG = 5;
+const LEVEL_Y = landmarksOf(end, H)['shoulderTop.l'][1];
+const endQ = resolve(normPose(end, { height: H }), { height: H }).q;
+const mistakePose = { reach: null, shoulder: { l: endQ.sh.l, r: endQ.sh.r }, elbow: { l: endQ.elbow.l, r: endQ.elbow.r },
+  scap: { l: { elev: -1, pro: -1 }, r: { elev: -1 + MIS_SHRUG, pro: -1 } } };
 
 // The start dumbbell is dropped from the start layer (it moves), so it is redrawn as a dashed phantom in the end pose
 // (pilot A's start-bar method): the side-on outline, heads 7 cm long and 10.3 cm across the flats, handle 13 cm.
@@ -90,7 +93,7 @@ export default {
   equipment: [
     { type: 'floor', from: -0.5, to: 0.5 },
     lm => ({ type: 'dumbbell', at: lm['grip.l'], axis: [1, 0, 0], z: 'mid' }),
-    (lm, ctx) => ({ type: 'dumbbell', at: lm['grip.r'], axis: ctx.pose === 'mistake' ? twisted(lm) : handle(lm), part: 'db', z: 'front' }),
+    lm => ({ type: 'dumbbell', at: lm['grip.r'], axis: handle(lm), part: 'db', z: 'front' }),
     (lm, ctx) => (ctx.pose === 'end' && !ctx.mistake ? startDumbbell(ctx.start['grip.r']) : null),
   ],
   checks: [
@@ -109,14 +112,17 @@ export default {
   ],
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
-    pose: {},
-    parts: ['db'],
-    guides: [],
+    pose: mistakePose,
+    parts: ['arm.r', 'db'],
+    guides: [
+      { kind: 'arrow', from: { at: 'shoulderTop.r', pose: 'end', off: [-10, -4] }, to: { at: 'shoulderTop.r', pose: 'mistake', off: [-10, -4] } },   // the shoulder rises
+      { kind: 'dashed', pts: [[-0.30, LEVEL_Y, 0.2], [0.30, LEVEL_Y, 0.2]] },   // the level line of the set shoulders (c5, c6)
+    ],
     tells: [
-      { key: 'twist', text: 'Wrist<br>twists', anchor: { at: 'wrist.r', pose: 'mistake' }, cue: 'Your wrist twists during the lift, so the grip is no longer neutral.' },
-      { key: 'palm', text: 'Palm<br>turns up', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'Your palm turns up off your body as the dumbbell rises.' },
+      { key: 'shrug', text: 'Shoulder<br>shrugs', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, cue: 'Your working shoulder hikes up toward your ear as the dumbbell rises.' },
+      { key: 'ear', text: 'Shoulder<br>near ear', anchor: { at: 'trap.r', pose: 'mistake' }, cue: 'The gap between your shoulder and ear closes.' },
     ],
   },
-  pilot: { drawableFault: 'top fault: the arm fully straight at the bottom (c15), a small elbow bend toward the camera the front view cannot show; drawn: the next fault, the wrist twist (c7)' },
+  pilot: { drawableFault: 'top fault: the arm fully straight at the bottom (c15), a small elbow bend toward the camera the front view cannot show; drawn: the next fault, the working shoulder shrugging (c5, c6)' },
   alt: 'Cross-body hammer curl, front view. Standing with a dumbbell in each hand, palms facing the body, the lifter curls the right dumbbell in an arc across the body toward the left shoulder, the elbow staying in place and the grip neutral.',
 };
