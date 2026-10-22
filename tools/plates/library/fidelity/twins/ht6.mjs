@@ -22,7 +22,7 @@ const S = sub => stateOf('HT6', sub, WIDTH);
 // `.hx-hp-<key>` scope, in its card on the page or in the app's How-to sheet (the page may namespace a repeated copy's
 // ids, D-LIB7b-PAGEDUP (B)); any other id keeps `#<chromeId>-zoom-hand`. PAIR_KEY: chromeId -> key, set by run().
 const PAIR_KEY = {};
-const panelSel = id => (PAIR_KEY[id] ? `:is(#card-${id}, dialog.sheet.ht) .zx[data-zoom="hand"]:has(> .hx-hp-${PAIR_KEY[id]})` : `#${id}-zoom-hand`);
+const panelSel = id => (PAIR_KEY[id] ? `.zx[data-zoom="hand"]:has(> .hx-hp-${PAIR_KEY[id]}):is(#card-${id} *, dialog.sheet.ht *)` : `#${id}-zoom-hand`);
 const closeSel = id => (PAIR_KEY[id] ? `${panelSel(id)} .zx-close` : `${panelSel(id)}-close`);   // LIB-7b
 const click = (page, sel) => page.evaluate(s => { const b = document.querySelector(s); if (!b) throw new Error(`no ${s}`); b.click(); }, sel);
 const rectOf = (page, sel) => page.evaluate(s => { const r = document.querySelector(s).getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; }, sel);
