@@ -6,7 +6,7 @@
 # Run it with the Monitor tool (timeout_ms 1800000), so each printed line wakes the supervisor. Re-arm every 30 min with SINCE backdated 1-3 min so no comment is missed.
 last=${SINCE:-$(date -u -d '-2 minutes' +%Y-%m-%dT%H:%M:%SZ)}
 prev=""
-SKIP="1 3 88 92 94 144 149 158"
+SKIP="1 3 88 92 94 144 149 158 188 190 192 197 209 221 237 242 243 254 255 257 259 262"
 while true; do
   now=$(date -u +%Y-%m-%dT%H:%M:%SZ)
   pulls=$(curl -s "https://api.github.com/repos/macdarenz-droid/M-arc/pulls?state=open&per_page=40" 2>/dev/null)
