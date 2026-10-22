@@ -355,7 +355,8 @@ the bulk proposals.
 | resistance_band_pull_apart | BAND_T | from band.mjs:8-9 @ `9e5d9666` | convention (D-LIB17-BAND) |
 | resistance_band_pull_apart | ELBOW_BEND | 18° | machine_chest_press.mjs:45 for c1, c5 "slightly bent" |
 | bench_dip | BENCH_TOP | 0.42 m | one_arm_dumbbell_row.mjs (#274 @ `a6f4bd07`) BENCH_TOP (the vendor bench's low end) |
-| bench_dip | M_FLEX (Mistake) | the upper arm 25° below level [proposed] | stated: c8 "well below" level, clearly past c5's "slightly above" reading |
+| bench_dip | M_FLEX (Mistake) | the upper arm 20° below level (drawn; 25° was proposed) | stated: c8 "well below" level, clearly past c5's "slightly above" reading; with the legs straight and the heels planted, 25° put the drawn buttock 0.5 cm through the floor, so the deepest whole 5° step that keeps it above |
+| bench_dip | HIP_CLEAR, TOP_LEAN, ANKLE, SCAP_PRO, FINGER_IN | 8 cm; 5° back; 0°; 3 cm back; 1 cm | c3 "slightly forward to clear the edge" and c4 "close": the least whole cm at which the drawn torso outline stays off the drawn pad in every drawn pose (7 cm put the Mistake 0.1 px into it); c20 "lean back slightly"; c3 "toes pointing up"; pull_up.mjs:36 for c20's blades back; c1, c2 (lb7/sizes.json) |
 
 ## 12. PQ-H3 (deviationMin 11.39 px, traceLenMin 22.11 px; qa/envelope.json)
 
@@ -369,7 +370,7 @@ the bulk proposals.
 | face_pull | the elbow 15 cm down: about 22 px [est] | the rope at the hands, about 0.35 m: about 50 px [est] |
 | cable_rear_delt_fly | the shoulder line 3 cm up: about 4-5 px [est]: **measured 4.4 px at the bulk, held** (section 14) | the handles, about 0.8 m: over 100 px [est]; measured 93.5 px |
 | resistance_band_pull_apart | the shrug at 5 cm: about 7.3 px [est] (LB5's shrug measured 7.3 px, #290 6340849204): **likely below** | the hands, about 0.55 m: about 80 px [est] |
-| bench_dip | the shoulder about 8-10 cm lower: about 12-15 px [est]: **at risk** | the shoulder, about 0.25 m: about 36 px [est] |
+| bench_dip | **measured 16.6 px** (the hips' underside, tell `low`; M_FLEX 20°) | **measured 10.2 px** (the shoulder, trim [10, 12]; 32.6 px untrimmed at 146.29 px/m): **below traceLenMin**, held (section 14) |
 
 A too-small fault is reported with its card-true size and held under D-LIB8-shrug (D-LIB17-SIZE, S2), route LIB-ZOOM;
 never enlarged, widened, cropped or re-scaled.
@@ -385,6 +386,7 @@ post. renegade_row's renders come only from `lb7/build.mjs --held`.
 | id | ruling | why | route |
 |---|---|---|---|
 | cable_rear_delt_fly | D-LIB17-SECS (D-LIB14-NOSECS); and D-LIB8-shrug (D-LIB17-SIZE, S2) | tempo null (c9: slow and controlled, no seconds; LR-33, R-LB7-6); the card-true shoulder roll (scapulae 3 cm up, 3 cm forward) measures 4.4 px < 11.39 px (section 12) | the strip card, then 'LIB-17 resume'; LIB-ZOOM (#279) on main for the zoom circle |
+| bench_dip | D-LIB8-shrug (D-LIB17-SIZE, S2; the builder's hold, posted for the supervisor) | the Trace at the ruled point (the shoulder, D-LIB17-TRACE) measures 10.2 px < 22.11 px (section 12; 11.2 px before HIP_CLEAR was set from the drawn outline); never enlarged, re-trimmed or moved to another point | LIB-ZOOM (#279) on main |
 | renegade_row | D-LIB17-SECS (D-LIB14-NOSECS); and D-LIB8-shrug (D-LIB17-SIZE, S2) | tempo null (LR-33); the card-true corner landing moves 4.9 px < 11.39 px (section 12) | the strip card, then 'LIB-17 resume'; LIB-ZOOM (#279) on main for the zoom circle |
 | resistance_band_pull_apart | D-LIB8-shrug (D-LIB17-SIZE, S2) | the card-true shrug at M_SHRUG 5 cm (ref-src/plate.mjs:147) measures 7.3 px < 11.39 px (engine deviation; section 12's estimate held); the Trace is 57.6 px | LIB-ZOOM (#279) on main for the zoom circle |
 

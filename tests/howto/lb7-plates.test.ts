@@ -19,8 +19,8 @@ const NOT_HERE = ['push_up', 'incline_push_up', 'pike_push_up', 'diamond_push_up
 // D-LIB17-SECS: no tempo seconds on these two cards; drawn, never on rows.json until released.
 const NOSECS = ['cable_rear_delt_fly', 'renegade_row'];
 // DESIGN.md section 14: every held id (the two no-seconds ids; renegade_row also under D-LIB8-shrug; resistance_band_pull_apart
-// under D-LIB8-shrug, D-LIB17-SIZE).
-const HELD = ['cable_rear_delt_fly', 'renegade_row', 'resistance_band_pull_apart'];
+// and bench_dip under D-LIB8-shrug, D-LIB17-SIZE).
+const HELD = ['cable_rear_delt_fly', 'renegade_row', 'resistance_band_pull_apart', 'bench_dip'];
 const FRONT = ['cable_lateral_raise', 'cable_rear_delt_fly', 'cable_external_rotation', 'resistance_band_pull_apart'];
 const ROWS = 'tools/plates/library/lb7/rows.json';
 const RESEARCH_HEAD = 'e5ed66ca1c7c7c2f6418001d262d053431b4c67f';
@@ -144,7 +144,7 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids w
   });
   it('the build\'s held list is this test\'s (D-LIB17-SECS), each with its census view', async () => {
     const build = await import(/* @vite-ignore */ lib('lb7/build.mjs'));
-    expect(build.HELD).toEqual({ cable_rear_delt_fly: 'front', renegade_row: 'side', resistance_band_pull_apart: 'front' });
+    expect(build.HELD).toEqual({ cable_rear_delt_fly: 'front', renegade_row: 'side', resistance_band_pull_apart: 'front', bench_dip: 'side' });
   });
 });
 
@@ -275,7 +275,7 @@ describe('LIB-17 A2 / Do 4: dipBars and the drawn plates draw PRIMITIVES only', 
     }
   });
   it('every item the drawn specs draw is a PRIMITIVES type, in every drawn pose', () => {
-    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'dumbbell_front_raise', 'cable_rear_delt_fly', 'face_pull', 'cable_external_rotation', 'resistance_band_pull_apart', 'renegade_row', 'weighted_dip']);
+    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'dumbbell_front_raise', 'cable_rear_delt_fly', 'face_pull', 'cable_external_rotation', 'resistance_band_pull_apart', 'renegade_row', 'weighted_dip', 'bench_dip']);
     for (const id of specsDrawn()) for (const pose of posesOf(S[id]))
       for (const it of itemsIn(S[id], pose).items) expect(Object.keys(eng.PRIMITIVES), `${id} ${pose}`).toContain(it.type);
   });
@@ -541,7 +541,7 @@ describe('LIB-17 cable_external_rotation (H; plan 1\'s small-motion check, D-LIB
 
 /** 6341498444 item 2: a bent arm reads as bent: where the card bends the elbow, the drawn inside angle is at most 150 deg
  *  (flexion at least 30) in the poses listed, and the two elbows never meet in one stub. */
-const BENT: Record<string, [string, string[]][]> = { cable_external_rotation: [['start', ['l']], ['end', ['l']]], face_pull: [['end', ['l', 'r']]], weighted_dip: [['end', ['l', 'r']]] };
+const BENT: Record<string, [string, string[]][]> = { cable_external_rotation: [['start', ['l']], ['end', ['l']]], face_pull: [['end', ['l', 'r']]], weighted_dip: [['end', ['l', 'r']]], bench_dip: [['end', ['l', 'r']]] };
 const bentProblems = (spec: any) => (BENT[spec.id] ?? []).flatMap(([pose, sides]) => {
   const l = lmOf(spec, pose), out: string[] = [];
   for (const s of sides) { const inside = angle3(l[`shoulder.${s}`], l[`elbow.${s}`], l[`grip.${s}`]); if (!(inside <= 150)) out.push(`${pose}: elbow.${s} ${inside.toFixed(1)} inside`); }
@@ -786,6 +786,127 @@ describe('LIB-17 cable_rear_delt_fly (H; front view; held: D-LIB17-SECS and D-LI
   });
   it('the spec carries no tempo (D-LIB17-SECS)', () => {
     expect(s().tempo).toBeUndefined();
+  });
+});
+
+describe('LIB-17 bench_dip (H; tier B; the support class, the bench; held: D-LIB8-shrug, S2): drawn facts', { timeout: T }, () => {
+  const s = () => S.bench_dip;
+  const B = { height: 1.75 };
+  /** Every drawn pose of a spec, by name (start, both via poses, end, the Mistake), as full poses. */
+  const drawnPoses = (spec: any): [string, any][] => [['start', spec.poses.start], ...spec.poses.via.map((p: any, i: number) => [`via${i + 1}`, p]), ['end', spec.poses.end], ['mistake', fullPose(spec, 'mistake')]];
+  const lmP = (p: any) => body.landmarksOf(p, 1.75);
+  const shapesP = (spec: any, p: any) => body.bodyShapes(body.fk(body.resolve(body.normPose(p, B), B).q, B), camOf(spec), { hand: spec.hand }).filter((x: any) => x.poly);
+  const benchPolys = (spec: any) => eng.PRIMITIVES.bench(spec.equipment.find((e: any) => e.type === 'bench'), camOf(spec)).map((p: any) => p.poly);
+  it('c1, c2: both palms flat on the bench pad, fingers forward, at one place in every drawn pose', () => {
+    const pad = benchPolys(s())[0], top = Math.min(...pad.map((p: number[]) => p[1]!)), W0 = lmP(s().poses.start);
+    for (const [pose, p] of drawnPoses(s())) {
+      const L = lmP(p);
+      for (const side of ['l', 'r']) {
+        const palm = shapesP(s(), p).find((x: any) => x.key === `palm.${side}`);
+        expect(palm, `${pose} palm.${side}`).toBeTruthy();
+        expect(Math.abs(Math.max(...palm.poly.map((q: number[]) => q[1]!)) - top), `${pose} palm.${side} on the pad`).toBeLessThanOrEqual(1);
+        expect(L[`grip.${side}`][2], `${pose} fingers forward`).toBeGreaterThan(L[`wrist.${side}`][2] + 0.05);
+        expect(Math.hypot(...L[`wrist.${side}`].map((v: number, i: number) => v - W0[`wrist.${side}`][i])) * 100, `${pose} wrist.${side} fixed`).toBeLessThanOrEqual(0.5);
+      }
+    }
+  });
+  it('c3, c6: arms straight at the top; c5: elbows 90 (+-2) at the bottom with the upper arm level (+-1 cm); c3, c4: legs straight in every drawn pose', () => {
+    const T0 = lmP(s().poses.start), E = lmP(s().poses.end);
+    for (const side of ['l', 'r']) {
+      expect(angle3(T0[`shoulder.${side}`], T0[`elbow.${side}`], T0[`wrist.${side}`]), `start elbow.${side}`).toBeGreaterThan(179.5);
+      expect(Math.abs(angle3(E[`shoulder.${side}`], E[`elbow.${side}`], E[`wrist.${side}`]) - 90), `end elbow.${side}`).toBeLessThanOrEqual(2);
+      expect(Math.abs(E[`shoulder.${side}`][1] - E[`elbow.${side}`][1]) * 100, `end upper arm.${side} level`).toBeLessThanOrEqual(1);
+    }
+    for (const [pose, p] of drawnPoses(s())) { const L = lmP(p); for (const side of ['l', 'r']) expect(angle3(L[`hip.${side}`], L[`knee.${side}`], L[`ankle.${side}`]), `${pose} knee.${side}`).toBeGreaterThan(179.5); }
+  });
+  /** c3 (ruled: an end check and this drawn-item test, no end fact): the drawn heels touch the floor line (+-0.5 px) at
+   *  the start and the end, the heel points never slide along the floor, and the spec checks the heels at the end. */
+  const heelProblems = (spec: any) => {
+    const fy = camOf(spec).P([0, 0, 0])[1], out: string[] = [], H0 = lmP(spec.poses.start);
+    for (const [pose, p] of drawnPoses(spec)) {
+      const feet = shapesP(spec, p).filter((x: any) => /^foot\./.test(x.key));
+      for (const f of feet) { const low = Math.max(...f.poly.map((q: number[]) => q[1]!)); if ((pose === 'start' || pose === 'end') && Math.abs(low - fy) > 0.5) out.push(`${pose}: ${f.key} ${(fy - low).toFixed(1)} px off the floor`); }
+      const L = lmP(p);
+      for (const side of ['l', 'r']) if (Math.abs(L[`heel.${side}`][2] - H0[`heel.${side}`][2]) * 100 > 0.5) out.push(`${pose}: heel.${side} slid`);
+    }
+    for (const side of ['l', 'r']) if (!spec.checks.some((c: any) => c.landmark === `heel.${side}` && c.pose === 'end')) out.push(`no end check on heel.${side}`);
+    return out;
+  };
+  it('c3 heels: the drawn heels on the floor line at the start and the end, never sliding, with an end check on each heel', () => {
+    expect(heelProblems(s())).toEqual([]);
+    const r = rep(s()).checks.filter((c: any) => /^heel\./.test(c.landmark) && c.pose === 'end');
+    expect(r.length).toBe(4);
+  });
+  it('mutations: the end pose with the hips flexed 4 deg more (the heels lift) and the heels\' end checks removed are red', () => {
+    const e = s().poses.end, lifted = { ...s(), poses: { ...s().poses, end: { ...e, hip: { flex: e.hip.flex + 4 } } } };
+    expect(heelProblems(lifted).some(p => /^end: foot\.r .* off the floor$/.test(p))).toBe(true);
+    const unchecked = { ...s(), checks: s().checks.filter((c: any) => !(/^heel\./.test(c.landmark) && c.pose === 'end')) };
+    expect(heelProblems(unchecked)).toEqual(['no end check on heel.l', 'no end check on heel.r']);
+  });
+  /** The body's centre of mass (Winter 2009 table 4.1 fractions on the drawn landmarks) lies between the hands and the
+   *  heels along the floor in every drawn pose: the support holds the body. */
+  const lerp3 = (a: number[], b: number[], t: number) => a.map((v, i) => v + (b[i]! - v) * t);
+  const comOf = (L: any) => {
+    const parts: [number, number[]][] = [[0.497, lerp3(L.hips, L.shoulders, 0.5)], [0.081, L.ear]];
+    for (const side of ['l', 'r']) parts.push([0.028, lerp3(L[`shoulder.${side}`], L[`elbow.${side}`], 0.436)], [0.016, lerp3(L[`elbow.${side}`], L[`wrist.${side}`], 0.430)],
+      [0.006, lerp3(L[`wrist.${side}`], L[`grip.${side}`], 0.5)], [0.100, lerp3(L[`hip.${side}`], L[`knee.${side}`], 0.433)], [0.0465, lerp3(L[`knee.${side}`], L[`ankle.${side}`], 0.433)],
+      [0.0145, lerp3(L[`ankle.${side}`], L[`toe.${side}`], 0.5)]);
+    const m = parts.reduce((t, [w]) => t + w, 0);
+    return parts.reduce((t, [w, p]) => t.map((v, i) => v + w * p[i]! / m), [0, 0, 0]);
+  };
+  const comProblems = (spec: any) => drawnPoses(spec).flatMap(([pose, p]) => {
+    const L = lmP(p), z = comOf(L)[2]!, hands = Math.max(L['wrist.l'][2], L['wrist.r'][2]), heels = Math.min(L['heel.l'][2], L['heel.r'][2]);
+    return z > hands && z < heels ? [] : [`${pose}: centre of mass z ${z.toFixed(3)} not between the hands ${hands.toFixed(3)} and the heels ${heels.toFixed(3)}`];
+  });
+  it('the centre of mass sits between the hands and the heels in every drawn pose', () => {
+    for (const [pose, p] of drawnPoses(s())) { const L = lmP(p); console.log(`LIB-17 bench_dip ${pose}: centre of mass z ${comOf(L)[2]!.toFixed(3)} m, hands ${L['wrist.r'][2].toFixed(3)}, heels ${L['heel.r'][2].toFixed(3)}`); }
+    expect(comProblems(s())).toEqual([]);
+  });
+  it('mutation: the end pose with the arms reaching forward (the hands in front of the body) is red', () => {
+    const e = s().poses.end, bad = { ...s(), poses: { ...s().poses, end: { ...e, shoulder: { flex: 80 }, elbow: 0, wrist: 0 } } };
+    expect(comProblems(bad).some(p => p.startsWith('end:'))).toBe(true);
+  });
+  /** c3, c4: the drawn torso stays off the drawn bench pad in every drawn pose; at the top the buttock is HIP_CLEAR in
+   *  front of the bench's front edge (lb7/sizes.json). */
+  const padProblems = (spec: any) => {
+    const pad = benchPolys(spec)[0], out: string[] = [];
+    for (const [pose, p] of drawnPoses(spec)) {
+      const torso = shapesP(spec, p).filter((x: any) => x.key === 'torso');
+      const min = Math.min(...torso.flatMap((x: any) => x.poly.map((q: number[]) => outside([pad], q))));
+      if (min < 0) out.push(`${pose}: torso ${(-min).toFixed(1)} px into the pad`);
+    }
+    return out;
+  };
+  it('c4 hips close: the drawn torso off the pad in every drawn pose; the start buttock HIP_CLEAR in front of the edge (+-0.5 cm)', () => {
+    expect(padProblems(s())).toEqual([]);
+    const pad = benchPolys(s())[0], cam = camOf(s()), edge = (Math.max(...pad.map((q: number[]) => q[0]!)) - cam.P([0, 0, 0])[0]!) / cam.pxm;
+    expect(Math.abs(lmP(s().poses.start).buttock[2] - edge - M.bench_dip.SIZES.HIP_CLEAR) * 100).toBeLessThanOrEqual(0.5);
+  });
+  it('mutation: the start pose 12 cm further back (the hips over the pad) is red', () => {
+    const st = s().poses.start, at = st.root.at, bad = { ...s(), poses: { ...s().poses, start: { ...st, root: { ...st.root, at: [at[0], at[1], at[2] - 0.12] } } } };
+    expect(padProblems(bad).some(p => p.startsWith('start:'))).toBe(true);
+  });
+  it('c8 Mistake: the upper arm M_FLEX below level (the shoulder under the elbow), the hips lower than the end\'s, nothing through the floor; tells low and parallel', () => {
+    const Ms = lmP(fullPose(s(), 'mistake')), E = lmP(s().poses.end);
+    const below = Math.atan2(Ms['elbow.r'][1] - Ms['shoulder.r'][1], Math.abs(Ms['elbow.r'][2] - Ms['shoulder.r'][2])) * 180 / Math.PI;
+    expect(Math.abs(below - M.bench_dip.SIZES.M_FLEX)).toBeLessThanOrEqual(1);
+    expect(Ms.hips[1]).toBeLessThan(E.hips[1] - 0.05);
+    const fy = camOf(s()).P([0, 0, 0])[1];
+    expect(Math.max(...shapesP(s(), fullPose(s(), 'mistake')).flatMap((x: any) => x.poly.map((q: number[]) => q[1]!)))).toBeLessThanOrEqual(fy + 0.5);
+    expect(s().mistake.tells.map((t: any) => t.key)).toEqual(['low', 'parallel']);
+  });
+  it('mutation: the Mistake at the proposed 25 deg puts the drawn buttock through the floor (red)', () => {
+    const p = M.bench_dip.BD.poseFor(-115, 115), fy = camOf(s()).P([0, 0, 0])[1];
+    const torso = shapesP(s(), p).find((x: any) => x.key === 'torso');
+    expect(Math.max(...torso.poly.map((q: number[]) => q[1]!))).toBeGreaterThan(fy + 0.5);
+  });
+  it('held (D-LIB8-shrug, D-LIB17-SIZE, S2): the Trace at the ruled shoulder point is under traceLenMin; the Mistake deviation passes', () => {
+    const env = pins().envelope, R = { normal: plate.renderPlate(s(), { id: 'x' }), mistake: plate.renderPlate(s(), { id: 'x', mistake: true }) };
+    const dev = qaNode.deviation({ spec: s() }, Eng(), R), tr = markup.pathsOf(R.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0);
+    console.log(`LIB-17 bench_dip held: Trace ${tr.toFixed(1)} px (min ${env.traceLenMin}), deviation ${dev.toFixed(1)} px (min ${env.deviationMin})`);
+    expect(s().trace).toEqual({ point: 'shoulder.r', trim: [10, 12] });
+    expect(tr).toBeLessThan(env.traceLenMin);
+    expect(dev).toBeGreaterThanOrEqual(env.deviationMin);
   });
 });
 
