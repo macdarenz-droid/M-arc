@@ -1,6 +1,6 @@
 {
- "note": "sha256 per LB5 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\"; and sha256 of each quotes file, a byte copy from the same head. Research head a8e66f32 (F-LB5-1, #291): only cross_body_hammer_curl changed from 3812989f; the other 8 cards and all 9 quotes are byte-identical.",
- "researchHead": "a8e66f32e34e1746075ffa4da35ea18c80dd4776",
+ "note": "sha256 per LB5 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\"; and sha256 of each quotes file, a byte copy from the same head. Research head a8e66f32 (F-LB5-1, #291): only cross_body_hammer_curl changed from 3812989f; the other 8 cards and all 9 quotes are byte-identical. Research head baf2ff09 (F-LB5-2, #302): only concentration_curl changed (claim c14, notes, quotes).",
+ "researchHead": "baf2ff09cf2e91232f536cfc6c766fdf68925217",
  "cards": {
   "overhead_cable_triceps_extension": "bd3c9ed2970945e7531e9e968669329a6c418c5b059b66c3eebf5e42697bcd31",
   "dumbbell_overhead_triceps_extension": "8b871081ec46d494788a11a93964980fb2280a41eef3ad19cd1589d9a245df50",
@@ -9,7 +9,7 @@
   "bayesian_cable_curl": "60253cd4100c6dc64b8426462ed20a037ad8cfcfa35f7086449e615b19869be7",
   "preacher_curl": "862b79ead56714058c26c76e4840c3eaea5c7da6a040a6361f80cba758ca4fc1",
   "incline_dumbbell_curl": "a5eeed889b7789070b66ea22821cac19045ccc30e3f57669ce33c94da1f74917",
-  "concentration_curl": "d271e4189605630b991cf5e77fde0d009ab27d21c5c1c9e645003cbd32e06111",
+  "concentration_curl": "640e1d3dd0219d914b8b5f05d94dbf824aead885fd945cf5f69a06da6ec7660a",
   "wrist_curl": "a803a2ca0768f4f589bab57f8eeca428dab9789fed76e525752e98e6b5a4f1ba"
  },
  "quotes": {
@@ -20,7 +20,7 @@
   "bayesian_cable_curl": "e0b7f6c52b2a8613a09c6ce67065854e6d4b4229195394c5116942e7632ffd29",
   "preacher_curl": "75fc3442260cde1c3ed614ff9c0eadb66574eb4ada8f0fe8979313457e37067c",
   "incline_dumbbell_curl": "7220e2390d689e307654202ff96b05e12f852c98ca5ba859d4b15fd3d8e04a2c",
-  "concentration_curl": "94223991184018edd00d47d2cc01e25a2a8c06be1f93bda8d2a635b696f0834f",
+  "concentration_curl": "a82bd8f5211cded32323d4308b9fecb67ff1f2a11a728d64b13605e781641d5f",
   "wrist_curl": "e6090e2870c278995c5fae9457e4bbb047100972685ea369a959c94a65d65758"
  }
 }

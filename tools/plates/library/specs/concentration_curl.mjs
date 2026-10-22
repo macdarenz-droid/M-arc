@@ -3,7 +3,7 @@
 // View: SIDE (card plate.view = census view). The forward hinge, the upper arm hanging vertical (c2), the elbow sweep and
 // the fault, the elbow wedged into the knee instead of the upper arm on the inner thigh (c3, c4), are sagittal enough to
 // read side-on; the arm sits inside the near thigh (the engine draws the near arm on top).
-// Form: research card docs/research/howto/cards/concentration_curl.json (research head a8e66f32, identical at 3812989f),
+// Form: research card docs/research/howto/cards/concentration_curl.json (research head baf2ff09, F-LB5-2: c14, notes),
 //  plate section: start "Seated on the bench edge, knees wide, hinged forward with a neutral spine (c1); back of the
 //  working upper arm braced on the inner thigh, upper arm near vertical (c1, c2); arm straight, dumbbell low (c8); feet
 //  pressed into the floor, free hand on the other knee (c5)"; end "Elbow bent, dumbbell raised until the upper arm would
@@ -20,7 +20,8 @@
 //    never moves (c6); the grip sits on the forearm sphere about E, the IK pole toward E (rope_triceps_pushdown's method).
 //  - Start: arm straight (c8 "lower slowly to a straight arm"), elbow ELBOW_START. End: ELBOW_END, dumbbell_biceps_curl's
 //    "near the top of the curl" (pilot A :63, 120 deg; c7 stops short of the shoulder).
-//  - Free hand on the far knee (c5), by IK.
+//  - Free hand on the far knee (c5), by IK. The working side is the mirror of c1's named left (D-LIB15-MIRROR: c14 trains
+//    each side in turn, card notes): the right arm on the right inner thigh, the free hand on the left knee.
 // Unsourced numbers (13.3 must-fix 14): SEAT_TOP (45 cm, a flat bench), FOOT_X, FOOT_Z, ALONG, the bench length and place,
 //  the dumbbell (vendor default).
 // Callouts, Mistake, tempo: the 3 checkpoints are the callouts (c3, c2, c8); the Mistake is the card's plate.mistake (c4,
@@ -117,6 +118,7 @@ export default {
     lm => ({ type: 'dumbbell', at: lm['grip.r'], part: 'db' }),
   ],
   checks: [
+    { landmark: 'wrist.r', at: landmarksOf(start, H)['wrist.r'], pose: 'start', tol: 0.5 },   // the dumbbell in the working hand (c1)
     { landmark: 'heel.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
     { landmark: 'ball.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // feet pressed down throughout (c5)
     { landmark: 'seat', plane: { point: SEAT, normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },

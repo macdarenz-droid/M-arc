@@ -277,8 +277,9 @@ Not facts:
   `checks`. The card keeps `wrist.r` start c1 for the hand on the dumbbell ("Grab a dumbbell").
 - Free hands: concentration_curl c5 ("You can also grip your right knee or the weight bench") and bayesian_cable_curl c7
   ("out to the side or place it on your hip") are choices.
-- concentration_curl's working side waits on D-LIB15-MIRROR (section 16): its `elbow.r` start fact (c1 names the left
-  arm) stays as it was, and its hand contact is not added, until the side is settled.
+- concentration_curl's working side: D-LIB15-MIRROR stands on c14 (F-LB5-2, research baf2ff09: "Keep your reps even on
+  both sides"), so the plate draws the mirror of c1's named left; `elbow.r` start stays and `wrist.r` start (c1 "Grasp a
+  dumbbell") is added.
 
 Unsourced numbers (13.3 must-fix 14; each spec header lists its own): every pulley height on the low-pulley plates
 (about 15 cm, "lowest position", c1), the column and stack (the 8's lat_pulldown sizes), the rope (the composer's
@@ -420,3 +421,5 @@ Critic panel fix round (D-CRITIC-CAL3, #290 6349640307), concentration_curl only
   fails a Trace with any turn over 6° or 2.5× the median (its mutation: the keys cut back to 6 chords).
 - Held plates, for when they resume: cross_body_hammer_curl's Trace turns 10.8° at one key (median 0.2°), and
   wrist_curl's 4.0° (median 1.0°). Both are redrawn smooth then.
+- F-LB5-2 (#302, research baf2ff09) added c14 and the card notes. The card and quotes are re-copied (cards.sha.json),
+  so the mirror stands on a claim and no redraw is needed.

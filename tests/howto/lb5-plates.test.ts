@@ -18,7 +18,7 @@ const IDS = LB5.map(i => `lib_${i}`);
 const OTHER = ['triceps_pushdown', 'rope_triceps_pushdown', 'straight_bar_triceps_pushdown', 'single_arm_triceps_pushdown', 'dumbbell_biceps_curl',
   'alternating_dumbbell_curl', 'barbell_curl', 'ez_bar_curl', 'hammer_curl', 'reverse_curl'];
 const ROWS = 'tools/plates/library/lb5/rows.json';
-const RESEARCH_HEAD = 'a8e66f32e34e1746075ffa4da35ea18c80dd4776';
+const RESEARCH_HEAD = 'baf2ff09cf2e91232f536cfc6c766fdf68925217';   // F-LB5-2 (#302): concentration_curl's c14 and notes
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex');
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
@@ -720,7 +720,7 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
     preacher_curl: [C('elbow.r', 'start', 'start', 'c1'), C('elbow.l', 'start', 'start', 'c1'), C('chest', 'start', 'start', 'c1'), C('heel.r', 'start', 'start', 'c2'), C('heel.l', 'start', 'start', 'c2'),
       C('ball.r', 'start', 'start', 'c2'), C('ball.l', 'start', 'start', 'c2'), C('wrist.r', 'start', 'start', 'c1'), C('elbow.r', 'end', 'end', 'c4'), C('elbow.l', 'end', 'end', 'c4')],
     concentration_curl: [C('elbow.r', 'start', 'start', 'c1'), C('seat', 'start', 'start', 'c1'),
-      ...['start', 'end'].flatMap(p => ['heel.r', 'heel.l', 'ball.r', 'ball.l'].map(l => C(l, p, p, 'c5')))],
+      ...['start', 'end'].flatMap(p => ['heel.r', 'heel.l', 'ball.r', 'ball.l'].map(l => C(l, p, p, 'c5'))), C('wrist.r', 'start', 'start', 'c1')],   // D-LIB15-MIRROR, c14
     wrist_curl: [C('wrist.r', 'start', 'start', 'c1')],
   };
   const tj = () => readJson('tools/plates/library/lb5/tempo.json');
