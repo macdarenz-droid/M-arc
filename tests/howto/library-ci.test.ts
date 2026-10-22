@@ -2,11 +2,12 @@
 // temporary git repos (a light tree with three registry rows, and LIB-2b's fixtureTree with its generated files for
 // class 3); C5, C6 and C8 run the verdict family on fixture proofs; C7 scans the How-to sources and a fresh build; C9
 // rebuilds the pinned pages of LIB-2b's fixtureTree. The CI runs (C11-C14) are recorded on the PR.
-import { execFileSync, spawn } from 'node:child_process';
+import { execFile, execFileSync, spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { promisify } from 'node:util';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 // @ts-expect-error plain .mjs build tool, no types
 import { JOB_BUDGET_S, SHARD_TARGET_S as LIB_TARGET, idsOfShard, libraryIds, libraryPlan, planK, readTimes, shardLoads } from '../../tools/plates/library/ci/plan.mjs';
@@ -286,8 +287,8 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     base = git(tree, 'rev-parse', 'HEAD');
   }, 600_000);
   /** affectedIds in a child process of the tree (its own modules, so the map is built from the tree). */
-  const inTree = async (edit: (root: string) => void) => {
-    edit(tree);
+  const inTree = async (edit: (root: string) => void | Promise<void>) => {
+    await edit(tree);
     git(tree, 'add', '-A'); git(tree, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-qm', 'case');
     try {
       const changed = git(tree, 'diff', '--name-only', base, 'HEAD').split('\n').filter(Boolean);
@@ -301,31 +302,31 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     const real = await inputsMap(ROOT);
     expect(real.why).toEqual([]);
     expect(real.proven).toBe(true);
-    expect(real.inputs.size).toBe(60);
+    expect(real.inputs.size).toBe(61);
     const r = await run(tree, ['--input-type=module', '-e', "import { inputsMap } from './tools/plates/library/ci/affected.mjs'; const m = await inputsMap(); console.log('@@' + JSON.stringify({ proven: m.proven, why: m.why, n: m.inputs.size }));"]);
-    expect(JSON.parse(r.out.split('\n').find(l => l.startsWith('@@'))!.slice(2))).toEqual({ proven: true, why: [], n: 66 });
+    expect(JSON.parse(r.out.split('\n').find(l => l.startsWith('@@'))!.slice(2))).toEqual({ proven: true, why: [], n: 67 });
   });
   it('D-LIB4c-3: a new composer imported only by the fixture id\'s spec selects all (ids.ts, ids-node.mjs and sources.json list it); a path only per-id files list (the batch\'s layersConfig) selects that id; one the 8\'s outputs list selects all', async () => {
-    const SPEC = F.SPEC as string, gen = (root: string) => execFileSync(process.execPath, ['tools/plates/generate.mjs'], { cwd: root, stdio: ['ignore', 'pipe', 'pipe'] });
-    let r = await inTree(root => {
+    const SPEC = F.SPEC as string, gen = (root: string) => promisify(execFile)(process.execPath, ['tools/plates/generate.mjs'], { cwd: root });
+    let r = await inTree(async root => {
       put(root, 'tools/plates/library/composers/c4.mjs', 'export const C4 = 1;\n');
       const f = join(root, SPEC); writeFileSync(f, `import { C4 } from '../composers/c4.mjs';\n${readFileSync(f, 'utf8')}`);
-      gen(root);
+      await gen(root);
     });
     const c3 = r.reasons.find((x: any) => x.path === 'tools/plates/library/composers/c4.mjs');
     expect(c3).toMatchObject({ cls: 3, ids: 'all' });
     expect(c3.why).toMatch(/src\/howto\/ids\.ts|tools\/plates\/library\/ids-node\.mjs|docs\/research\/howto\/sources\.json/);
-    r = await inTree(root => {
+    r = await inTree(async root => {
       const f = join(root, F.PAGES.layersConfig), c = JSON.parse(readFileSync(f, 'utf8'));
       writeFileSync(f, `${JSON.stringify({ ...c, $comment: 'C4 class 3' }, null, 2)}\n`);
-      gen(root);
+      await gen(root);
     });
     expect(r.reasons.find((x: any) => x.path === F.PAGES.layersConfig)).toMatchObject({ cls: 3, ids: [F.ID] });
     expect(r.class3.active).toBe(true);
-    r = await inTree(root => { put(root, 'tools/plates/layers.mjs', `${readFileSync(join(root, 'tools/plates/layers.mjs'), 'utf8')}// c4\n`); gen(root); });
+    r = await inTree(async root => { put(root, 'tools/plates/layers.mjs', `${readFileSync(join(root, 'tools/plates/layers.mjs'), 'utf8')}// c4\n`); await gen(root); });
     expect(r.reasons.find((x: any) => x.path === 'tools/plates/layers.mjs')).toMatchObject({ cls: 3, ids: 'all' });
     // every output lists src/data/exercises.json (registryInputs), yet it is outside tools/plates/**: class 4, never 3
-    r = await inTree(root => { const f = join(root, 'src/data/exercises.json'); writeFileSync(f, `${readFileSync(f, 'utf8')}\n`); put(root, 'tools/plates/layers.mjs', `${readFileSync(join(root, 'tools/plates/layers.mjs'), 'utf8')}// c4\n`); gen(root); });
+    r = await inTree(async root => { const f = join(root, 'src/data/exercises.json'); writeFileSync(f, `${readFileSync(f, 'utf8')}\n`); put(root, 'tools/plates/layers.mjs', `${readFileSync(join(root, 'tools/plates/layers.mjs'), 'utf8')}// c4\n`); await gen(root); });
     expect(r.class3.active).toBe(true);
     expect(r.reasons.find((x: any) => x.path === 'src/data/exercises.json')).toMatchObject({ cls: 4, ids: 'all' });
   });
