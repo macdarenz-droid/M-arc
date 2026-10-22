@@ -1,0 +1,359 @@
+{
+ "id": "sled_push",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-sledpush",
+   "text": "Stand behind the sled and grab hold of the handles with both hands.",
+   "status": "verbatim",
+   "closest": "Stand behind the sled and grab hold of the handles with both hands.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bb-sledpush",
+   "text": "Place the hands about halfway down the sled handles.",
+   "status": "verbatim",
+   "closest": "Place the hands about halfway down the sled handles.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "fv-sledpush",
+   "text": "Grab the sled handles at roughly their center.",
+   "status": "verbatim",
+   "closest": "Grab the sled handles at roughly their center.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-sledpush",
+   "text": "You can set your hands higher for a more upright push or lower for a forward lean. Low handles can feel more athletic, but they also require better trunk control.",
+   "status": "verbatim",
+   "closest": "You can set your hands higher for a more upright push or lower for a forward lean. Low handles can feel more athletic, but they also require better trunk control.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-sledpush",
+   "text": "Step back so your body leans forward from your head through your hips in a straight line. Your shoulders should be straight behind your hands.",
+   "status": "verbatim",
+   "closest": "Step back so your body leans forward from your head through your hips in a straight line. Your shoulders should be straight behind your hands.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-sledpush",
+   "text": "Assume a staggered stance, and lean forward so that your spine is parallel to the ground and your lower back is flat.",
+   "status": "verbatim",
+   "closest": "Assume a staggered stance, and lean forward so that your spine is parallel to the ground and your lower back is flat.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-sledpush",
+   "text": "Get your torso as close to parallel to the ground as possible to get the best angle on the sled.",
+   "status": "verbatim",
+   "closest": "Get your torso as close to parallel to the ground as possible to get the best angle on the sled.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-sledpush",
+   "text": "You can have your arms straight or bent – keeping them straight is often more comfortable if you’re short, but it can reduce the force you’re able to produce.",
+   "status": "verbatim",
+   "closest": "You can have your arms straight or bent – keeping them straight is often more comfortable if you’re short, but it can reduce the force you’re able to produce.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ggr-sledpush",
+   "text": "Grip each bar on the sled, either with your arms straight or elbows flexed.",
+   "status": "verbatim",
+   "closest": "Grip each bar on the sled, either with your arms straight or elbows flexed.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-sledpush",
+   "text": "Keep your arms locked and begin aggressively driving forward with your legs.",
+   "status": "verbatim",
+   "closest": "Keep your arms locked and begin aggressively driving forward with your legs.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fv-sledpush",
+   "text": "Ensure your elbows are fully extended and locked out, your back is flat, your core and hip muscles are engaged, and you look forward.",
+   "status": "verbatim",
+   "closest": "Ensure your elbows are fully extended and locked out, your back is flat, your core and hip muscles are engaged, and you look forward.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-sledpush",
+   "text": "Bending your arms will place more tension on the legs, as you’re disengaging your upper body, however, it may cause some discomfort to your elbows and shoulders.",
+   "status": "verbatim",
+   "closest": "Bending your arms will place more tension on the legs, as you’re disengaging your upper body, however, it may cause some discomfort to your elbows and shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-sledpush",
+   "text": "Tighten your abs and keep your spine neutral. Keep your eyes just ahead of the sled without craning your neck.",
+   "status": "verbatim",
+   "closest": "Tighten your abs and keep your spine neutral. Keep your eyes just ahead of the sled without craning your neck.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ggr-sledpush",
+   "text": "Hinge at your hips, ensuring your spine is neutral.",
+   "status": "verbatim",
+   "closest": "Hinge at your hips, ensuring your spine is neutral.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "fv-sledpush",
+   "text": "Brace your core muscles to create additional intra-abdominal pressure. Intra-abdominal pressure can help generate more force and ensure back safety.",
+   "status": "verbatim",
+   "closest": "Brace your core muscles to create additional intra-abdominal pressure. Intra-abdominal pressure can help generate more force and ensure back safety.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ggr-sledpush",
+   "text": "It may seem easier to grab and go, but pushing or pulling a sled with a rounded back will not favor your spine. Instead, perform a hip hinge to get the upper body in the correct position and keep your head up and shoulders down.",
+   "status": "verbatim",
+   "closest": "It may seem easier to grab and go, but pushing or pulling a sled with a rounded back will not favor your spine. Instead, perform a hip hinge to get the upper body in the correct position and keep your head up and shoulders down.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ggr-sledpush",
+   "text": "To ensure better lower body drive, strike the ground with the balls of your feet. Your heel should never touch the ground. If you find your heel touching the ground, focus on driving the knees higher and remaining on your tippy toes during the sled push.",
+   "status": "verbatim",
+   "closest": "To ensure better lower body drive, strike the ground with the balls of your feet. Your heel should never touch the ground. If you find your heel touching the ground, focus on driving the knees higher and remaining on your tippy toes during the sled push.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "fv-sledpush",
+   "text": "Avoid placing your feet flat on the floor. Ensure that only the balls of your feet make contact with the ground to mimic the sprinting motion closely.",
+   "status": "verbatim",
+   "closest": "Avoid placing your feet flat on the floor. Ensure that only the balls of your feet make contact with the ground to mimic the sprinting motion closely.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "fv-sledpush",
+   "text": "While very heavy loads may necessitate placing your heels down, this technique offers limited benefits for improving sprint performance.",
+   "status": "verbatim",
+   "closest": "While very heavy loads may necessitate placing your heels down, this technique offers limited benefits for improving sprint performance.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "bb-sledpush",
+   "text": "Maintain a forward lean and push through the balls of your feet.",
+   "status": "verbatim",
+   "closest": "Maintain a forward lean and push through the balls of your feet.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-sledpush",
+   "text": "Maintain pressure through the handles and the same body angle through the entire push. Try not to let your hips rise or your chest drop, even if you get tired.",
+   "status": "verbatim",
+   "closest": "Maintain pressure through the handles and the same body angle through the entire push. Try not to let your hips rise or your chest drop, even if you get tired.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-sledpush",
+   "text": "Keep your hips from bouncing up and down as you push.",
+   "status": "verbatim",
+   "closest": "Keep your hips from bouncing up and down as you push.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-sledpush",
+   "text": "Take piston-like, powerful steps. You don’t want to look like you’re jogging behind the sled.",
+   "status": "verbatim",
+   "closest": "Take piston-like, powerful steps. You don’t want to look like you’re jogging behind the sled.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-sledpush",
+   "text": "Take short, quick steps to maintain momentum and maximize speed.",
+   "status": "verbatim",
+   "closest": "Take short, quick steps to maintain momentum and maximize speed.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "sl-sledpush",
+   "text": "Keep your arms in the same position throughout, whether that’s straight or bent. Bending and straightening them while you push will make them the weak link and your entire push weaker.",
+   "status": "verbatim",
+   "closest": "Keep your arms in the same position throughout, whether that’s straight or bent. Bending and straightening them while you push will make them the weak link and your entire push weaker.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "sl-sledpush",
+   "text": "Start with your feet underneath or just behind your hips, then drive one foot into the ground and start pushing the sled forward. Imagine that you’re pushing the ground backward to bring your glutes into play for extra force.",
+   "status": "verbatim",
+   "closest": "Start with your feet underneath or just behind your hips, then drive one foot into the ground and start pushing the sled forward. Imagine that you’re pushing the ground backward to bring your glutes into play for extra force.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "sl-sledpush",
+   "text": "The main muscles involved are the quadriceps, glutes, and calves. The quadriceps extend the knee as you drive the foot into the ground. The glutes extend the hip and create forward power. The calves transfer force through the ground.",
+   "status": "verbatim",
+   "closest": "The main muscles involved are the quadriceps, glutes, and calves. The quadriceps extend the knee as you drive the foot into the ground. The glutes extend the hip and create forward power. The calves transfer force through the ground.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "bb-sledpush",
+   "text": "The sled push is a dynamic movement that primarily trains the lower body, especially the glutes, quadriceps, and calves.",
+   "status": "verbatim",
+   "closest": "The sled push is a dynamic movement that primarily trains the lower body, especially the glutes, quadriceps, and calves.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "fv-sledpush",
+   "text": "The primary muscles worked during sled pushes include the quadriceps, glutes, and calves.",
+   "status": "verbatim",
+   "closest": "The primary muscles worked during sled pushes include the quadriceps, glutes, and calves.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "sl-sledpush",
+   "text": "The trunk muscles work isometrically during sled pushes. The abs, obliques, and trunk stabilizers keep the ribcage and pelvis connected so you can transfer force from your legs into the sled.",
+   "status": "verbatim",
+   "closest": "The trunk muscles work isometrically during sled pushes. The abs, obliques, and trunk stabilizers keep the ribcage and pelvis connected so you can transfer force from your legs into the sled.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "maddigan-2014",
+   "text": "Ten healthy resistance-trained men participated in a randomized crossover design study consisting of 2 preparation sessions and 2 testing sessions.",
+   "status": "verbatim",
+   "closest": "Ten healthy resistance-trained men participated in a randomized crossover design study consisting of 2 preparation sessions and 2 testing sessions.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "maddigan-2014",
+   "text": "were monitored during a 20-step maximum push with the weighted sled apparatus and a 10 repetition maximum with a bilateral back squat.",
+   "status": "verbatim",
+   "closest": "were monitored during a 20-step maximum push with the weighted sled apparatus and a 10 repetition maximum with a bilateral back squat.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "maddigan-2014",
+   "text": "There were main effects for condition with 61.2% greater gastrocnemius EMG with the sled exercise (p = 0.01) and 74.5% greater erector spinae EMG activity with the squat (p = 0.002).",
+   "status": "verbatim",
+   "closest": "There were main effects for condition with 61.2% greater gastrocnemius EMG with the sled exercise (p = 0.01) and 74.5% greater erector spinae EMG activity with the squat (p = 0.002).",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "maddigan-2014",
+   "text": "In summary, the sled and squat exercises provided similar EMG activity for the quadriceps, hamstrings, and TrA/IO.",
+   "status": "verbatim",
+   "closest": "In summary, the sled and squat exercises provided similar EMG activity for the quadriceps, hamstrings, and TrA/IO.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "sl-sledpush",
+   "text": "Start with a light or empty sled and focus on your body position as you push it.",
+   "status": "verbatim",
+   "closest": "Start with a light or empty sled and focus on your body position as you push it.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "sl-sledpush",
+   "text": "For example, you can increase how much weight you load onto the sled, the distance you push it, the number of sets/intervals you do, or how fast you push. Or you can reduce your rest times.",
+   "status": "verbatim",
+   "closest": "For example, you can increase how much weight you load onto the sled, the distance you push it, the number of sets/intervals you do, or how fast you push. Or you can reduce your rest times.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "sl-sledpush",
+   "text": "Progress one thing at a time, not everything at once.",
+   "status": "verbatim",
+   "closest": "Progress one thing at a time, not everything at once.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "sl-sledpush",
+   "text": "For strength, stick with the same distance while you add weight. And make sure your body position doesn’t change.",
+   "status": "verbatim",
+   "closest": "For strength, stick with the same distance while you add weight. And make sure your body position doesn’t change.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "sl-sledpush",
+   "text": "Load the sled and take the time to make sure the path is flat, clear, and long enough before you start.",
+   "status": "verbatim",
+   "closest": "Load the sled and take the time to make sure the path is flat, clear, and long enough before you start.",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "sl-sledpush",
+   "text": "Finish with control. Gradually reduce your effort, stop the sled, and stand upright.",
+   "status": "verbatim",
+   "closest": "Finish with control. Gradually reduce your effort, stop the sled, and stand upright.",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "ggr-sledpush",
+   "text": "Here are a few common hiccups that may stop you from getting the best from your sled push.",
+   "status": "verbatim",
+   "closest": "Here are a few common hiccups that may stop you from getting the best from your sled push.",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "ggr-sledpush",
+   "text": "Rounded Back",
+   "status": "verbatim",
+   "closest": "Rounded Back",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "ggr-sledpush",
+   "text": "Improper Foot Strike",
+   "status": "verbatim",
+   "closest": "Improper Foot Strike",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "ggr-sledpush",
+   "text": "Too Heavy",
+   "status": "verbatim",
+   "closest": "Too Heavy",
+   "note": ""
+  }
+ ]
+}

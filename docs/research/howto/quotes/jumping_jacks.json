@@ -1,6 +1,6 @@
 {
   "id": "jumping_jacks",
-  "checked": "2026-10-02",
+  "checked": "2026-10-22",
   "fetcher": "sonnet source fetcher",
   "quotes": [
     {
@@ -110,10 +110,34 @@
     {
       "claim": "c7",
       "source": "nasm-jumping-jacks",
-      "text": "Hamstrings Calf Muscles Shoulder Stabilizers Core Stabilizers",
+      "text": "Hamstrings",
       "status": "verbatim",
-      "closest": "Hamstrings Calf Muscles Shoulder Stabilizers Core Stabilizers",
-      "note": ""
+      "closest": "Hamstrings",
+      "note": "Separate <li> item under \"Secondary Muscles:\"; re-fetched by curl 2026-10-22 (orchestrator, mechanical check)."
+    },
+    {
+      "claim": "c7",
+      "source": "nasm-jumping-jacks",
+      "text": "Calf Muscles",
+      "status": "verbatim",
+      "closest": "Calf Muscles",
+      "note": "Separate <li> item under \"Secondary Muscles:\"; re-fetched by curl 2026-10-22 (orchestrator, mechanical check)."
+    },
+    {
+      "claim": "c7",
+      "source": "nasm-jumping-jacks",
+      "text": "Shoulder Stabilizers",
+      "status": "verbatim",
+      "closest": "Shoulder Stabilizers",
+      "note": "Separate <li> item under \"Secondary Muscles:\"; re-fetched by curl 2026-10-22 (orchestrator, mechanical check)."
+    },
+    {
+      "claim": "c7",
+      "source": "nasm-jumping-jacks",
+      "text": "Core Stabilizers",
+      "status": "verbatim",
+      "closest": "Core Stabilizers",
+      "note": "Separate <li> item under \"Secondary Muscles:\"; re-fetched by curl 2026-10-22 (orchestrator, mechanical check)."
     },
     {
       "claim": "c8",
@@ -156,6 +180,14 @@
       "note": ""
     },
     {
+      "claim": "c12",
+      "source": "webmd-jj",
+      "text": "Stand in a straight position with your feet together, arms fully extended, hands by your sides, and toes pointed forward.",
+      "status": "verbatim",
+      "closest": "Stand in a straight position with your feet together, arms fully extended, hands by your sides, and toes pointed forward.",
+      "note": ""
+    },
+    {
       "claim": "c13",
       "source": "webmd-jj",
       "text": "Shoulders. Jumping jacks also work your shoulder muscles in different areas, including anterior and posterior deltoids.",
@@ -169,6 +201,22 @@
       "text": "Explosively jump while simultaneously abducting your legs and raising your arms overhead.",
       "status": "verbatim",
       "closest": "Explosively jump while simultaneously abducting your legs and raising your arms overhead.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "el-jj",
+      "text": "To get the most out of the movement and avoid injury, maintain a strong, athletic posture and move with control.",
+      "status": "verbatim",
+      "closest": "To get the most out of the movement and avoid injury, maintain a strong, athletic posture and move with control.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "webmd-jj",
+      "text": "Choose a favorable speed of repetitions throughout your workout session to prevent overuse injuries.",
+      "status": "verbatim",
+      "closest": "Choose a favorable speed of repetitions throughout your workout session to prevent overuse injuries.",
       "note": ""
     }
   ]

@@ -115,7 +115,7 @@
       "quotes": [
         {
           "source": "bb-hk",
-          "text": "If you find your knees getting so high that you arch into your back, you've gone too far. Revisit your technique and make sure you have a solid core brace.",
+          "text": "If you find your knees getting so high that you arch into your back, you’ve gone too far. Revisit your technique and make sure you have a solid core brace.",
           "where": "Common mistakes: knees too high"
         }
       ]
@@ -132,7 +132,7 @@
       "quotes": [
         {
           "source": "bb-hk",
-          "text": "If you're noticing a slow drop off in your knee height, take a brief rest to recover so that the quality remains as high as your knees should go!",
+          "text": "If you’re noticing a slow drop off in your knee height, take a brief rest to recover so that the quality remains as high as your knees should go!",
           "where": "Common mistakes: knees not high enough"
         }
       ]
@@ -149,7 +149,7 @@
       "quotes": [
         {
           "source": "bb-hk",
-          "text": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That's OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
+          "text": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That’s OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
           "where": "Common mistakes: rotation"
         },
         {
@@ -210,7 +210,7 @@
       "quotes": [
         {
           "source": "hl-hk",
-          "text": "Before you get started, make sure you're wearing a comfortable and supportive pair of shoes. Ideally, try to do this exercise on a supportive gym floor or grassy area, especially if you have any knee or ankle issues.",
+          "text": "Before you get started, make sure you’re wearing a comfortable and supportive pair of shoes. Ideally, try to do this exercise on a supportive gym floor or grassy area, especially if you have any knee or ankle issues.",
           "where": "How to, intro"
         }
       ]
@@ -270,27 +270,27 @@
       "year": 2021,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
     },
     {
       "id": "bb-hk",
       "url": "https://barbend.com/high-knees/",
       "title": "Learn How to Do High Knees to Step Up Your Leg & Core Game (BarBend)",
       "kind": "coach",
-      "year": null,
+      "year": 2024,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
     },
     {
       "id": "ace-cardio15",
       "url": "https://www.acefitness.org/resources/everyone/blog/5430/rev-up-your-cardio-with-this-15-minute-drill/",
       "title": "Rev up Your Cardio With This 15-Minute Drill (ACE blog)",
       "kind": "coach",
-      "year": null,
+      "year": 2015,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -307,7 +307,7 @@
         "claim": "c1"
       },
       {
-        "label": "Thigh to hip height",
+        "label": "Thigh to hip",
         "what": "Knee up to hip height or a little above, opposite arm pumping.",
         "claim": [
           "c2",
@@ -315,17 +315,17 @@
         ]
       },
       {
-        "label": "Balls of the feet",
+        "label": "Balls of feet",
         "what": "Soft knees, springing from the ball of one foot to the other.",
         "claim": "c4"
       }
     ],
     "mistake": {
       "what": "Knee driven so high that the lower back arches and the trunk tips back.",
-      "why": "BarBend names it as going too far (c5).",
+      "why": "LR-31 step 3: the first fault on BarBend's common-mistakes list (Too High, Not High Enough, Rotation): if the knees get so high that you arch into your back, you’ve gone too far (c5). No read source ties a named fault to harm.",
       "claim": "c5",
       "drawable": true,
-      "rankNote": "No source ranks faults by frequency. Knee height dropping (c6) is also drawable; leg rotation (c7) is front-view only."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: the knees driven so high that the lower back arches (c5), the first fault on BarBend's common-mistakes list, the only list written for this exercise. Step 1 finds no frequency word for a fault: BarBend's \"High knees are a quick and easy movement to integrate into your training, but there are some key points that often go awry. It’s possible to get your knees too high, not high enough, or start to rotate more than you’d want.\" is the list's intro, a list sentence, and is not read onto one item (LR-31; R-LB4-2); its \"A lot of rotation occurs once your hip flexors start to fatigue.\" (c7) says how much rotation and when, not how often the fault happens (counted, rotation would be handlingMistakes[0], and the side view could not draw it, so plate.mistake would stay); \"Frequently Asked Questions\" is a heading, \"High knees are an exercise that work well with high frequency and repetition counts\" is programming, \"Most of the benefits of performing the high knees exercise period come from hitting that specific knee high\" is about benefits, \"There are many muscles at play\" is about muscles, \"not like your typical resistance training exercise, or even many calisthenics\" is about other exercises, and \"about six inches of height is great for many people\" is the low-box toe-tap, another exercise. Healthline's \"Most of us can recall grinding out a round of high knees in elementary or middle school PE class.\" and \"there’s a good chance we missed learning the steps\" name no fault; \"on most calorie charts\", \"fits into most workouts\" and \"which is often referred to as high intensity circuit training\" are about the exercise and training. Step 2 finds no named fault tied to harm: BarBend's \"If you’re not controlled, you might find yourself leaving your range of motion and starting to hyperextend certain positions.\" and \"you’ve gone too far\" (c5) state no LR-31 harm word; its rotation and knee-height items (c6, c7) state none. Healthline's \"you can count on using your transverse abdominis and obliques to properly execute the move and keep your lower back safe\" is about muscle activity, not a named fault (counted as the core brace that corrects the arch, it picks the same fault at step 2); its \"This turns the move into a low impact exercise, which is easier on the joints\" (c9) is about the marching variation; \"If you have any pain in your ankles, knees, or hips, it’s a good idea to talk with your healthcare provider\" names no fault; BarBend's \"without banging around on your joints\" is a benefit. ACE's drill (c2) gives no fault. Step 3: BarBend's \"Common High Knee Mistakes\" lists Too High, Not High Enough, Rotation, in that order; the first is the knees so high that you arch into your back (c5). The side view shows the arched lower back and the trunk tipping back, so drawable is true. Pick unchanged. Scan completion (fetcher scan 2026-10-22, every read source): step 1 also sets aside Healthline's \"the lower-body muscles most active when performing high knees\" (muscles); BarBend's page-top \"Common Mistakes\" link (a heading) and \"they typically don’t require set-up, tear-down, or equipment\" (equipment); ACE's \"most of us are juggling jobs, families and extracurricular activities\" and \"For many people, lack of time is the single biggest obstacle to fitness.\" (all training). Harm quotes set aside at step 2: Healthline's \"They can help you decide if high knees are right for you and provide guidance on modifying the move to keep you safe.\" (the person); ACE's \"the benefits of exercise and movement definitely outweigh the health risks of not engaging in exercise at all\", \"reduce your stress\" and \"stressed out\" (benefits of exercise). Pause words: BarBend's \"try intentionally pausing with one leg extended and one leg flexed\" and \"holding that position for a full second\" are the easier and paused variations (tempo.text); its sprinter-pose \"Hold this position for a brief moment\" and the jump lunge's \"pause in the down position\" are other exercises; ACE's \"hold this position (deadlift)\" is another exercise. Reading applied: LR-31 literal; the list intro is a list sentence and \"A lot of rotation\" is an amount, so step 3 picks Too High (knees so high the back arches), drawable true."
     },
     "tells": [
       {
@@ -341,7 +341,7 @@
       "up": null,
       "down": null,
       "pause": null,
-      "text": "Cycle: quick, springy switches (c2, c4); 30 seconds on, 30 seconds rest to start (c8). No source gives a cadence.",
+      "text": "Cycle: quick, springy switches (c2, c4); 30 seconds on, 30 seconds rest to start (c8). No source gives a cadence or phase seconds, so up, down and pause stay null (LR-33: a card with no tempo seconds keeps null). BarBend's easier modification (\"try intentionally pausing with one leg extended and one leg flexed\") and its paused high-knee variation (\"holding that position for a full second\") pause at the top of the knee drive, but they are variations, not the drawn move, so no pause is written.",
       "claim": [
         "c2",
         "c8"
@@ -361,7 +361,10 @@
   "setup": [
     {
       "step": "Stand tall, feet about hip-width apart, arms at your sides.",
-      "claim": "c1"
+      "claim": [
+        "c1",
+        "c4"
+      ]
     },
     {
       "step": "Brace your core and shift onto the balls of your feet, knees soft.",
@@ -410,7 +413,7 @@
       ]
     },
     {
-      "mistake": "Knee height drops as you tire.",
+      "mistake": "Knee height slowly drops.",
       "fix": "Take a short rest.",
       "claim": "c6"
     },
@@ -441,7 +444,7 @@
     "rows": [
       {
         "where": "Front of the hips",
-        "means": "Your hip flexors lift each thigh.",
+        "means": "Your hip flexors pull each thigh up.",
         "fix": "",
         "claim": "c11",
         "redFlag": null
@@ -454,7 +457,7 @@
         "redFlag": null
       },
       {
-        "where": "Belly",
+        "where": "Trunk",
         "means": "Your core keeps you balanced as the legs switch.",
         "fix": "",
         "claim": "c12",
@@ -468,7 +471,7 @@
       "claim": "c5"
     },
     {
-      "risk": "Knee or ankle issues? Wear supportive shoes; use a gym floor or grass.",
+      "risk": "Wear supportive shoes. Knee or ankle issues? Ideally use a supportive gym floor or grass.",
       "claim": "c10"
     }
   ],
@@ -515,6 +518,7 @@
   "notes": [
     "Healthline puts the knee 'slightly above waist level' (c2); BarBend says 'at least 90 degrees of flexion' (c3). The plate draws the thigh about horizontal, which meets both.",
     "Writer fix 2026-10-02: risk 2 \"forgiving floor\" changed to \"supportive floor\" to match c10; quote re-read in hl-hk.",
-    "Fix round 2026-10-02 (verify w0): A15 c7 gains the \"some rotation is OK\" sentence and the mistake says the turn-out grows; A16 risk reworded to people with knee or ankle issues; A17 knee height is \"hip height or a little above\"."
+    "Fix round 2026-10-02 (verify w0): A15 c7 gains the \"some rotation is OK\" sentence and the mistake says the turn-out grows; A16 risk reworded to people with knee or ankle issues; A17 knee height is \"hip height or a little above\".",
+    "LR-31/LR-33 pass 2026-10-22 (LB10): rankNote rewritten under LR-31 (step 3), pick and drawable unchanged; plate.mistake.why names the step; tempo.text names LR-33 and BarBend's paused variations (values unchanged, null). Quote characters: c5, c6, c7 and c10 now carry ’ as the live pages print it (R-LB4-5), in the card and the quotes file. Shown-line fixes (CARD-V2:68): feel.rows[2].where \"Belly\" -> \"Trunk\" (c12's \"through your trunk\"); feel.rows[0].means \"lift\" -> \"pull ... up\" (c11's \"pull your thigh\"); handlingMistakes[1] \"Knee height drops as you tire.\" -> \"Knee height slowly drops.\" (c6's \"slow drop off\"). core stays in feel.secondary for LIB-MUSCLE (LR-35; brief). ACE's drill page (ace-cardio15, c2) gave HTTP 403 to the writer's curl on 2026-10-22 but answered 200 to the fetcher on retry the same day; its quote is verbatim. High knees is a child of jumping_jacks in content.md Appendix A but stays a full card: parent null, no inherit entries, every line on its own claims."
   ]
 }

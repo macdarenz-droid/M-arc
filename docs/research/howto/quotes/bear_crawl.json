@@ -1,6 +1,6 @@
 {
   "id": "bear_crawl",
-  "checked": "2026-10-02",
+  "checked": "2026-10-22",
   "fetcher": "sonnet source fetcher",
   "quotes": [
     {
@@ -38,9 +38,9 @@
     {
       "claim": "c5",
       "source": "bb-bc",
-      "text": "When you lift your knees, don't lift your butt, too. Keep it in line with your back to fully engage your core.",
+      "text": "When you lift your knees, don’t lift your butt, too. Keep it in line with your back to fully engage your core.",
       "status": "verbatim",
-      "closest": "When you lift your knees, don't lift your butt, too. Keep it in line with your back to fully engage your core.",
+      "closest": "When you lift your knees, don’t lift your butt, too. Keep it in line with your back to fully engage your core.",
       "note": ""
     },
     {
@@ -54,17 +54,17 @@
     {
       "claim": "c6",
       "source": "bb-bc",
-      "text": "You want to try to avoid wiggling in your hips as you move. If you find they're moving too much, your steps may be too big. Try shortening your steps until your hips no longer sway.",
+      "text": "You want to try to avoid wiggling in your hips as you move. If you find they’re moving too much, your steps may be too big. Try shortening your steps until your hips no longer sway.",
       "status": "verbatim",
-      "closest": "You want to try to avoid wiggling in your hips as you move. If you find they're moving too much, your steps may be too big. Try shortening your steps until your hips no longer sway.",
+      "closest": "You want to try to avoid wiggling in your hips as you move. If you find they’re moving too much, your steps may be too big. Try shortening your steps until your hips no longer sway.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "bb-bc",
-      "text": "Be sure to tighten your core so you don't arch your back. This will help prevent potentially painful hyperextension or raising your hips too high for the movement to be effective.",
+      "text": "Be sure to tighten your core so you don’t arch your back. This will help prevent potentially painful hyperextension or raising your hips too high for the movement to be effective.",
       "status": "verbatim",
-      "closest": "Be sure to tighten your core so you don't arch your back. This will help prevent potentially painful hyperextension or raising your hips too high for the movement to be effective.",
+      "closest": "Be sure to tighten your core so you don’t arch your back. This will help prevent potentially painful hyperextension or raising your hips too high for the movement to be effective.",
       "note": ""
     },
     {
@@ -110,10 +110,10 @@
     {
       "claim": "c9",
       "source": "bb-bc",
-      "text": "Although the core plays a large role in the bear crawl, it's not the only muscle that is activated by this exercise.",
+      "text": "Although the core plays a large role in the bear crawl, it’s not the only muscle that is activated by this exercise.",
       "status": "verbatim",
-      "closest": "Although the core plays a large role in the bear crawl, it's not the only muscle that is activated by this exercise.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "closest": "Although the core plays a large role in the bear crawl, it’s not the only muscle that is activated by this exercise.",
+      "note": ""
     },
     {
       "claim": "c9",
@@ -121,7 +121,7 @@
       "text": "The rectus abdominis are the muscles that make up what is commonly known as the “six-pack.”",
       "status": "verbatim",
       "closest": "The rectus abdominis are the muscles that make up what is commonly known as the “six-pack.”",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c9",
@@ -129,7 +129,7 @@
       "text": "Located on either side of the abdominal walls are the obliques.",
       "status": "verbatim",
       "closest": "Located on either side of the abdominal walls are the obliques.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c10",

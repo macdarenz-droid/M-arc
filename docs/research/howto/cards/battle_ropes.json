@@ -67,7 +67,7 @@
         {
           "source": "ace-br-total",
           "text": "Waves – alternating, asymmetrical pattern with the primary direction of force toward the anchor",
-          "where": "ways to use the ropes"
+          "where": "Grace of the Wave"
         }
       ]
     },
@@ -84,7 +84,7 @@
         {
           "source": "ace-br-emg",
           "text": "All exercises were performed with feet shoulder-width apart, knees slightly bent, back straight, a slight forward lean of the torso, elbows extended, and handles held with a handshake grip.",
-          "where": "Methods"
+          "where": "The Study"
         }
       ]
     },
@@ -101,18 +101,18 @@
         {
           "source": "ace-br-emg",
           "text": "The subject kept the arms in front of the torso by flexing the shoulders until the battle rope handles were approximately shoulder height, and then extended the shoulders until the handles were even with the waist.",
-          "where": "Methods: double alternating arm waves"
+          "where": "The Study, double alternating arm waves"
         },
         {
           "source": "ace-br-emg",
           "text": "The subject alternated the extension and flexion of each shoulder with each arm, so the arms moved in opposite directions.",
-          "where": "Methods: double alternating arm waves"
+          "where": "The Study, double alternating arm waves"
         }
       ]
     },
     {
       "id": "c6",
-      "text": "Shoulder blades tend to lift or hunch forward, straining the neck; keep them down and back throughout.",
+      "text": "It is easy to let the shoulder blades lift or hunch forward, which puts excess strain on the neck; keep them down, sliding them down and back throughout.",
       "tags": [
         "CONSENSUS"
       ],
@@ -122,7 +122,7 @@
       "quotes": [
         {
           "source": "hl-br",
-          "text": "When lifting, swinging, and slamming heavy ropes, it's easy to let your shoulder blades elevate or hunch forward, putting excess strain on your neck. To strengthen your shoulder stabilizers and move pain-free, keep your shoulder blades down, gently sliding them down and back throughout the movements.",
+          "text": "When lifting, swinging, and slamming heavy ropes, it’s easy to let your shoulder blades elevate or hunch forward, putting excess strain on your neck. To strengthen your shoulder stabilizers and move pain-free, keep your shoulder blades down, gently sliding them down and back throughout the movements.",
           "where": "Tips: Mind your shoulders"
         }
       ]
@@ -156,13 +156,13 @@
       "quotes": [
         {
           "source": "hl-br",
-          "text": "Perfect your form first. Before increasing the rope weight or your speed, make sure you're performing the moves properly.",
+          "text": "Perfect your form first. Before increasing the rope weight or your speed, make sure you’re performing the moves properly.",
           "where": "Tips"
         },
         {
           "source": "hl-br",
-          "text": "It's best to start with a lighter and shorter rope, which is usually around 10 feet (3 meters) long and 1.5 inches (3.8 cm) thick.",
-          "where": "How to get started"
+          "text": "It’s best to start with a lighter and shorter rope, which is usually around 10 feet (3 meters) long and 1.5 inches (3.8 cm) thick.",
+          "where": "5 battle rope exercises to try"
         },
         {
           "source": "hl-br",
@@ -190,7 +190,7 @@
     },
     {
       "id": "c10",
-      "text": "In 21 volunteers, alternating and two-arm waves worked the front of the shoulder, the obliques and the lower-back muscles at 51-73 % of maximum; alternating waves worked the obliques more, two-arm waves the lower back more.",
+      "text": "In 21 volunteers, alternating and two-arm waves worked the front of the shoulder (anterior deltoid), the obliques and the lower-back muscles (lumbar erector spinae) at 51-73 % of maximum, moderate to high levels; alternating waves worked the obliques more, two-arm waves the lower back more.",
       "tags": [
         "DATA"
       ],
@@ -205,12 +205,22 @@
         },
         {
           "source": "calatayud-2015",
+          "text": "Surface electromyographic signals were recorded from the anterior deltoid (AD), external oblique (OBLIQ), lumbar erector spinae (LUMB), and gluteus medius (GM) during bilateral waves and unilateral waves and were normalized to the maximum voluntary isometric contraction (MVIC).",
+          "where": "abstract, methods"
+        },
+        {
+          "source": "calatayud-2015",
           "text": "Results showed that muscle activity ranged from 51%MVIC to 73%MVIC for AD, OBLIQ, and LUMB, whereas GM muscle activity was only 14-18%MVIC.",
           "where": "abstract, results"
         },
         {
           "source": "calatayud-2015",
           "text": "Fitness practitioners aiming for higher OBLIQ activity should perform unilateral waves, whereas the bilateral variation of the movement can be used for higher LUMB activity.",
+          "where": "abstract, conclusion"
+        },
+        {
+          "source": "calatayud-2015",
+          "text": "In conclusion, both wave movements can be used to provide moderate to high levels of muscle activity in the AD, OBLIQ, and LUMB.",
           "where": "abstract, conclusion"
         }
       ]
@@ -228,7 +238,7 @@
         {
           "source": "ace-br-emg",
           "text": "Also, exercise with the battle rope was shown to positively affect grip strength, as reflected by the fact that the palmaris longus was contracting in excess of 75% of MVIC during all exercises.",
-          "where": "Discussion"
+          "where": "The Bottom Line"
         }
       ]
     },
@@ -245,13 +255,13 @@
         {
           "source": "ace-br-emg",
           "text": "All of the muscles were contracting above 40% MVIC during double alternating waves, except for the vastus medialis and the rectus abdominis.",
-          "where": "Results"
+          "where": "The Results"
         }
       ]
     },
     {
       "id": "c13",
-      "text": "The feet stay planted, so the heart rate rises without much strain on the lower body.",
+      "text": "Most traditional battle rope exercises keep the feet planted, so the heart rate rises without excessive strain on the lower body.",
       "tags": [
         "CONSENSUS"
       ],
@@ -279,7 +289,7 @@
         {
           "source": "ace-br-total",
           "text": "Handshake (overhand) grip Microphone (underhand) grip When programming, I typically use the more visually expressive terms “handshake” and “microphone” as many people easily get confused on what overhand and underhand means.",
-          "where": "grip types"
+          "where": "Grips"
         }
       ]
     }
@@ -293,17 +303,17 @@
       "year": 2022,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
     },
     {
       "id": "ace-br-emg",
       "url": "https://acefitness.org/education-and-resources/professional/certified/research/7470/muscle-activation-during-battle-rope-exercises",
       "title": "Muscle Activation During Battle Rope Exercises (ACE-sponsored research summary, Salzgeber, Porcari et al.)",
       "kind": "secondary",
-      "year": 2019,
+      "year": 2020,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
     },
     {
       "id": "calatayud-2015",
@@ -313,17 +323,17 @@
       "year": 2015,
       "pmid": "25853917",
       "access": "abstract",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
     },
     {
       "id": "ace-br-total",
       "url": "https://www.acefitness.org/resources/pros/expert-articles/5396/total-body-battle-ropes-workout/",
       "title": "Total-Body Battle Ropes Workout (ACE expert article)",
       "kind": "coach",
-      "year": null,
+      "year": 2015,
       "pmid": null,
-      "access": "full",
-      "checked": "2026-10-02"
+      "access": "summary",
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -357,11 +367,11 @@
       }
     ],
     "mistake": {
-      "what": "Shoulders hunch forward and lift toward the ears.",
-      "why": "Healthline names it as easy to slip into and as straining the neck (c6).",
+      "what": "Shoulder blades lift or hunch forward.",
+      "why": "LR-31 step 2: Healthline ties it to excess strain on the neck (c6), the only named fault a quote ties to harm. The lifted or hunched shoulder blades show from the side.",
       "claim": "c6",
       "drawable": true,
-      "rankNote": "No source ranks faults by frequency; breath-holding (c7) cannot be drawn."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the shoulder blades lifting or hunching forward (c6), the only named fault a quote ties to harm: Healthline's \"it’s easy to let your shoulder blades elevate or hunch forward, putting excess strain on your neck\", with its cue \"To strengthen your shoulder stabilizers and move pain-free, keep your shoulder blades down\" (c6). Step 1: no frequency word for a fault of this exercise. Set aside: Healthline's \"Beginners tend to hold their breath as they swing the ropes.\" (c7; \"tend\") and \"it’s easy to let your shoulder blades elevate\" (\"easy to\"); its \"many people use them\", \"Battle ropes target most of the muscles in your body\", \"Most traditional battle rope exercises require your feet to be planted on the floor\" (c13), \"Most gyms have battle rope stations\", \"which is usually around 10 feet\" (c8, rope size) and \"your typical workout routine\" (no fault); ACE's research summary's \"typically coiled in the corner of the gym\", \"often to the wonder of the rest of the gym members\", \"typically in a high-intensity interval training (HIIT) format\", \"A workout usually consists of\" and \"most of the muscles were contacting at or above the 40% MVIC threshold\" (equipment, programming, muscle activity); ACE's workout article's \"many people easily get confused on what overhand and underhand means\" (c14, grip names) and \"In many ways\" (no fault); the Calatayud abstract has none. Step 2 set aside: breath-holding (c7) \"can hinder your performance and make the exercises less enjoyable\" names no harm; Healthline's \"Engage your core ... This will strengthen your core and ensure that you’re performing the moves safely and effectively.\" names no fault and no harm word; adding rope weight or speed too soon (c8) is a load choice, not a candidate; \"without putting excessive strain on your lower body\" (c13) and \"a good option for people who have lower body injuries\" name no fault. No read source has a common-mistakes list. The side view shows the shoulder blades lifted or hunched forward, so drawable is true; breath-holding cannot be drawn. Also set aside from the fetcher's full scan (2026-10-22): Healthline's \"Battle rope exercises are popular for their many benefits.\", \"Because you can swing battle ropes in many ways\", \"Battle ropes are very versatile, meaning you can move them in many directions.\" and \"battle rope exercises are for everyone\" (no fault), and \"This move is more difficult and is higher impact, so it may not be suitable for everyone.\" (\"may\", jumping slams, another move, no fault); ACE's research summary's \"most of the muscles were contacting at or above the 40% MVIC threshold for the majority of the exercises\" and \"double-arm slams would be the optimal choice, as it was the best exercise for activating the majority of the muscles tested\" (muscle activity, another move). No read source has a mistakes heading or list (scan 3d: none). Reading applied: LR-31 literal; \"tend\" and \"easy to\" are not frequency words; the neck strain in c6 is stated harm tied to the shoulder blades lifting or hunching (D-SUP-PROTECT: its cue \"move pain-free\" corrects that fault); breath-holding's \"hinder your performance\" is not harm; a load or rope choice is not a candidate."
     },
     "tells": [
       {
@@ -377,7 +387,7 @@
       "up": null,
       "down": null,
       "pause": null,
-      "text": "Cycle: continuous alternating waves, 30 seconds on, 30 seconds off (c9); no source gives a wave rate.",
+      "text": "Cycle: continuous alternating waves, 30 seconds on, 30 seconds off (c9). No source gives a wave rate or seconds for any phase, so up, down and pause stay null (LR-33); no read quote asks for a pause or hold.",
       "claim": "c9"
     },
     "variantLine": null
@@ -408,7 +418,7 @@
       ]
     },
     {
-      "step": "Shoulders back, core braced.",
+      "step": "Shoulders back, core engaged.",
       "claim": "c2"
     },
     {
@@ -442,13 +452,13 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Shoulders creep up or hunch forward.",
+      "mistake": "Shoulder blades lift or hunch forward.",
       "fix": "Slide your shoulder blades down and back.",
       "claim": "c6"
     },
     {
       "mistake": "Holding your breath.",
-      "fix": "Breathe harder as the pace rises.",
+      "fix": "Breathe more as you increase your intensity.",
       "claim": "c7"
     },
     {
@@ -486,7 +496,7 @@
     "rows": [
       {
         "where": "Front of the shoulders",
-        "means": "They drive each wave.",
+        "means": "They work at moderate to high levels in both wave types.",
         "fix": "",
         "claim": "c10",
         "redFlag": null
@@ -500,14 +510,14 @@
       },
       {
         "where": "Forearms and grip",
-        "means": "Your grip works hard the whole time.",
+        "means": "Your grip works hard in every rope exercise tested.",
         "fix": "",
         "claim": "c11",
         "redFlag": null
       },
       {
-        "where": "Neck and tops of the shoulders",
-        "means": "Shoulder blades lifting or hunching strains the neck.",
+        "where": "Neck",
+        "means": "Shoulder blades lifting or hunching forward strains the neck.",
         "fix": "Slide your shoulder blades down and back.",
         "claim": "c6",
         "redFlag": null
@@ -516,7 +526,7 @@
   },
   "risks": [
     {
-      "risk": "Shrugged or hunched shoulders strain the neck.",
+      "risk": "Lifted or hunched shoulder blades strain the neck.",
       "claim": "c6"
     }
   ],
@@ -536,7 +546,7 @@
       "key": "shoulder-blades",
       "kind": "posture",
       "right": "Shoulder blades down and back.",
-      "wrong": "Shoulders lifted toward the ears.",
+      "wrong": "Shoulder blades lifted or hunched forward.",
       "claim": "c6"
     }
   ],
@@ -581,6 +591,9 @@
     "Two-arm waves, slams and circles are other battle-rope moves; the plate draws alternating waves, the most common beginner move in the anchor and the one with muscle data (c10, c12).",
     "feel.primary follows the libraryDiff proposal (front_delts) because no source supports side_delts; the supervisor decides at the LIB data card.",
     "Writer fix 2026-10-02: feel row 2 means changed from \"Your core resists the alternating pull\" to follow c10 (obliques higher in unilateral waves); quote re-read in calatayud-2015.",
-    "Fix round 2026-10-02 (verify w0): A11 breath-holding dropped from risks (kept as a handling mistake); A12 lower_back added to libraryDiff, core kept in feel with its reason; A13 c14 quote extended to the grip names."
+    "Fix round 2026-10-02 (verify w0): A11 breath-holding dropped from risks (kept as a handling mistake); A12 lower_back added to libraryDiff, core kept in feel with its reason; A13 c14 quote extended to the grip names.",
+    "LB10 LR-31/LR-33 pass 2026-10-22: rankNote rewritten to LR-31 (step 2, pick unchanged: the shoulder blades lifting or hunching, c6; drawable true). Tempo stays null/null/null (LR-33; no pause quote). Shown-line fixes under CARD-V2:68: plate.mistake.what and handlingMistakes[0] drop \"toward the ears\" and \"creep\" (no quote), handlingMistakes[1].fix and setup[2] use the quotes' words (\"increase your breathing\", \"engage your core\"), feel.rows[0].means, rows[2].means and rows[3] (where \"Neck\": no quote names the tops of the shoulders) follow their claims, risks[0] and zooms[1].wrong follow c6. F-LB7-2 / R-LB7-7: feel.rows[0].where \"Front of the shoulders\" is kept, because c10 now quotes Calatayud's methods sentence naming the \"anterior deltoid (AD)\"; c10 also gains the abstract's \"moderate to high levels\" line. c6 and c13 texts trimmed to their quotes. Three hl-br quotes (c6, c8 x2) now carry the page's ’ (R-LB4-5). core stays in feel.secondary for LIB-MUSCLE (LR-35, R-LB7-8). shared/implement-battle-ropes.json (appliesTo battle_ropes) holds the hand rules (palms facing, about 10 cm from the end, firm but relaxed); none of its lines is copied here, and the card's grip stays the handshake grip of c4 and c14.",
+    "LB10 after the fetcher (2026-10-22): quote `where` fields follow the pages' headings (c8 \"5 battle rope exercises to try\"; ace-br-emg \"The Study\", \"The Results\", \"The Bottom Line\"; ace-br-total \"Grace of the Wave\", \"Grips\"). ace-br-emg year: the page shows no date; its HTML meta dates are 2020-02-07 and 2020-03-14, so year is 2020 (was 2019). ace-br-total: the served page dates it April 28, 2015 (year 2015), and it serves no exercise list under \"The Workout\" (access summary); c3 and c14 sit in the text it does serve.",
+    "LB10 fix round 2026-10-22: battle_ropes-1: feel.rows[2].means \"Your grip works hard in every rope exercise tested.\" (c11)."
   ]
 }
