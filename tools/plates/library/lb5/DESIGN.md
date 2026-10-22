@@ -423,3 +423,18 @@ Critic panel fix round (D-CRITIC-CAL3, #290 6349640307), concentration_curl only
   wrist_curl's 4.0° (median 1.0°). Both are redrawn smooth then.
 - F-LB5-2 (#302, research baf2ff09) added c14 and the card notes. The card and quotes are re-copied (cards.sha.json),
   so the mirror stands on a claim and no redraw is needed.
+
+Named nit (D-LIB15-NIT1, #290 6351388427, ruled option 3): on concentration_curl, the "Slow lowering" leader runs
+straight up from the grip at x 273.5 (plate px) through the "ELBOW" text (x 262-326, y 172-204). The plate stays as
+approved at page 921cb1d5. Scan of every move of that box, its leader or the ELBOW label (engine report and leader checks):
+
+| what moved | result |
+|---|---|
+| "Slow lowering" box, 5 anchor offsets x every 12 px | 18 positions clear the text and the measure leader; all sit below the dumbbell and their leaders run 0.0-0.2 px from the Trace (rule: 6 px) |
+| anchor 12 px left of the grip, box {150, 100} | clears the text by 2-4 px; leader 113 px (F3 > 82) and across the head |
+| anchor at the start-pose grip, box {276, 300} | leader 56 px, across the solid near shin |
+| ELBOW label right, {286, 200} or {276, 172} | its leader crosses or touches (0.5 px) the "Slow lowering" leader |
+| ELBOW label below the grip, {292, 216} | its leader runs through the forearm and the dumbbell |
+| ELBOW label above the "Slow lowering" box | leader 96-115 px (F3) and over the face |
+| ELBOW label left | collides with the head and neck or the left callouts |
+
