@@ -213,7 +213,7 @@
     },
     {
       "id": "c9",
-      "text": "Tempo: Motra lists a 2-1-2 tempo without saying which phase each digit is; read in the order of its own steps (squeeze in, pause briefly at peak contraction, return) it gives 2 s in, a 1 s pause and 2 s out.",
+      "text": "Tempo: Motra lists 2-1-2 and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the return, a 1 s pause at the open start and 2 s for the squeeze in. Its \"Pause briefly at peak contraction to engage inner thighs.\" asks for a brief pause right after the squeeze in and no source gives its seconds, so that 1 s pause is a drawing convention (LR-33).",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -231,6 +231,11 @@
           "source": "mo-hip-add",
           "text": "Pause briefly at peak contraction to engage inner thighs.",
           "where": "How to Perform"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
         }
       ]
     },
@@ -296,8 +301,10 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c9",
-      "text": "Up 2, pause 1 and down 2 read Motra's 2-1-2 (c9) in the order of its own steps: squeeze in, \"Pause briefly at peak contraction to engage inner thighs.\", return. The page does not say which phase each digit is, so c9 is WEAK (R-PB-3); both 2s hold either way. The 1 s pause sits right after the squeeze, where Motra's brief pause is (LR-33); read in the other order, the middle 1 s would sit at the open start, and the brief pause at peak would still give pause 1 as a drawing convention."
+      "claim": [
+        "c9"
+      ],
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c9, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three. Its middle 1 s is a pause at the open start, between the return and the next squeeze in, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the squeeze in: Motra's \"Pause briefly at peak contraction to engage inner thighs.\" gives no seconds, so the 1 s is a drawing convention (c9, WEAK; LR-33). This corrects the earlier reading that put the middle 1 s at the peak."
     },
     "variantLine": null
   },

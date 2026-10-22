@@ -227,7 +227,7 @@
     },
     {
       "id": "c10",
-      "text": "Tempo: Motra lists a 2-1-2 tempo without saying which phase each digit is; read in the order of its own steps (push out, hold briefly at peak contraction, return) it gives 2 s out, a 1 s hold and 2 s back.",
+      "text": "Tempo: Motra lists 2-1-2 and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the return, a 1 s pause at the open start and 2 s for the push out. Its \"Hold briefly at peak contraction.\" asks for a brief pause right after the push out and no source gives its seconds, so that 1 s pause is a drawing convention (LR-33).",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -245,6 +245,11 @@
           "source": "mo-hip-abd",
           "text": "Hold briefly at peak contraction.",
           "where": "How to Perform"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
         }
       ]
     },
@@ -347,8 +352,10 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c10",
-      "text": "Up 2, pause 1 and down 2 read Motra's 2-1-2 (c10) in the order of its own steps: push out, \"Hold briefly at peak contraction.\", return. The page does not say which phase each digit is, so c10 is WEAK (R-PB-3); both 2s hold either way. The 1 s hold sits right after the push out, where Motra's brief hold is (LR-33); read in the other order, the middle 1 s would sit with the knees together, and the brief hold at peak would still give pause 1 as a drawing convention."
+      "claim": [
+        "c10"
+      ],
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c10, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three. Its middle 1 s is a pause at the open start, between the return and the next push out, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the push out: Motra's \"Hold briefly at peak contraction.\" gives no seconds, so the 1 s is a drawing convention (c10, WEAK; LR-33). This corrects the earlier reading that put the middle 1 s at the peak."
     },
     "variantLine": null
   },

@@ -354,7 +354,7 @@
     },
     {
       "id": "c15",
-      "text": "Tempo: Motra lists a 2-1-2 tempo for this lift without saying which phase each digit is; read either way it gives 2 s for the crunch and 2 s for the return.",
+      "text": "Tempo: Motra lists 2-1-2 for this lift and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the return, a 1 s pause at the bottom and 2 s for the crunch.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -367,6 +367,11 @@
           "source": "mo-crunch",
           "text": "2-1-2",
           "where": "Form Cues: Tempo"
+        },
+        {
+          "source": "mo-crunch",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
         }
       ]
     }
@@ -416,10 +421,9 @@
       "down": 2,
       "pause": 0,
       "claim": [
-        "c12",
         "c15"
       ],
-      "text": "Up 2 and down 2: Motra's 2-1-2 gives 2 s each way read either way (c15, WEAK: the page does not say which phase each digit is), inside ACSM's 1-2 s (c12, WEAK; LR-15). Pause 0: Motra's \"Squeeze abs at peak contraction.\" and \"Squeeze at top\" ask for a squeeze with no pause, seconds or brief hold, so no quote asks for a pause right after the crunch. Motra's middle 1 s has no stated place; read as return, pause, crunch, it sits at the start, between the return and the next crunch, so it is named here and not written in pause (LR-33, R-PB-3)."
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c15, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the return and the crunch, so it is named here and not written in pause (LR-33). Pause 0: no quote asks for a pause right after the crunch. Motra's \"Squeeze abs at peak contraction.\" gives no pause or seconds."
     },
     "variantLine": "Crunch machines differ: ACE's has a shin roller and handles you pull down (c2, c3); Fitbod's has overhead handles with pads on the shoulders (c3). Drawn: shin roller and handles by the shoulders. Claims c1, c4-c14 hold for both."
   },

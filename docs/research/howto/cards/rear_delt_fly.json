@@ -389,7 +389,7 @@
     },
     {
       "id": "c18",
-      "text": "Tempo: Motra lists a 3-1-1 tempo for this lift without saying which phase each digit is; read as return, pause, pull, it gives 3 s for the return, a 1 s pause at the start and 1 s for the pull.",
+      "text": "Tempo: Motra lists 3-1-1 for this lift and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 3 s for the return, a 1 s pause at the bottom and 1 s for the pull.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -402,6 +402,11 @@
           "source": "mo-rear-delt",
           "text": "3-1-1",
           "where": "Form Cues: Tempo"
+        },
+        {
+          "source": "mo-rear-delt",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
         }
       ]
     }
@@ -447,14 +452,14 @@
       }
     ],
     "tempo": {
-      "up": 2,
-      "down": 2,
+      "up": 1,
+      "down": 3,
       "pause": 1,
       "claim": [
         "c14",
         "c18"
       ],
-      "text": "Pause 1 is sourced: Fitness Volt's \"Pause and contract your rear delts for a second\" (c14), right after the pull, so the 1 s is not a convention. Fitness Volt's mistakes section also asks \"Pause at the top for a couple of seconds and squeeze the life out of your rear delts.\" and gives a slower 2:2:4:0 method (2 s pull, 2 s hold, 4 s return; c14) as a muscle-building variation; the card keeps the how-to step's 1 s. Up 2 and down 2 rest on ACSM's 1-2 s (c14; LR-15). Motra lists a 3-1-1 tempo (c18, WEAK: the page does not say which phase each digit is); read as return, pause, pull it gives 3 s down and 1 s up, so the values are listed for a supervisor ruling (R-LB2-1) and not changed yet. Motra's \"Squeeze your rear delts and shoulder blades together at the peak.\" gives no seconds."
+      "text": "Up 1 and down 3 are Motra's 3-1-1 (c18, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the return and the pull, so it is named here and not written in pause (LR-33). Pause 1 is sourced: Fitness Volt's \"Pause and contract your rear delts for a second\" (c14), right after the pull. Fitness Volt's mistakes section also asks \"Pause at the top for a couple of seconds and squeeze the life out of your rear delts.\" and gives a slower 2:2:4:0 method as a muscle-building variation; the card keeps the how-to step's 1 s and Motra's up and down. Changed from up 2, down 2 (ACSM or a convention) under R-LB6-2."
     },
     "variantLine": null
   },

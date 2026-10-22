@@ -352,7 +352,7 @@
     },
     {
       "id": "c14",
-      "text": "Tempo: Motra lists a 3-1-1 tempo for this lift without saying which phase each digit is; read as lower, pause, press, it gives 3 s down, a 1 s pause at the bottom and 1 s up.",
+      "text": "Tempo: Motra lists 3-1-1 for this lift and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 3 s for the lowering, a 1 s pause at the bottom and 1 s for the press.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -365,6 +365,11 @@
           "source": "motra-smith-incline",
           "text": "3-1-1",
           "where": "Form Cues: Tempo"
+        },
+        {
+          "source": "motra-smith-incline",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
         }
       ]
     }
@@ -479,13 +484,12 @@
     ],
     "tempo": {
       "up": 1,
-      "down": 2,
+      "down": 3,
       "pause": 0,
       "claim": [
-        "c10",
         "c14"
       ],
-      "text": "Motra lists a 3-1-1 tempo (c14, WEAK: the page does not say which phase each digit is). Read as lower, pause, press, it gives 3 s down, a 1 s pause at the bottom and 1 s up; up 1 agrees, and down 2 rests on ACSM's 1-2 s (c10, WEAK; LR-15), so the 3 s down is listed for a supervisor ruling (R-LB2-1) and not drawn yet. Pause 0: no quote asks for a pause right after the press; Motra's \"Touch bar lightly to chest without bouncing.\" (c3) asks for no pause. The bottom pause from the 3-1-1 reading sits between lowering and pressing, so it is named here and not written in pause (LR-33, R-PB-3). EōS's tempo press (\"typically lowering the bar for a 3–5 second count, pausing briefly at the bottom\") is a slower variation, not this lift."
+      "text": "Up 1 and down 3 are Motra's 3-1-1 (c14, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the press, so it is named here and not written in pause (LR-33). Pause 0: no quote asks for a pause right after the press. EōS's tempo press (\"typically lowering the bar for a 3–5 second count, pausing briefly at the bottom\") is a slower variation, not this lift. Changed from up 1, down 2 (ACSM or a convention) under R-LB6-2."
     },
     "variantLine": null
   },

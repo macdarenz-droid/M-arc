@@ -232,6 +232,13 @@
       "quote": "3-1-1",
       "status": "verbatim",
       "closest": "3-1-1"
+    },
+    {
+      "claim": "c18",
+      "source": "mo-rear-delt",
+      "quote": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds."
     }
   ]
 }

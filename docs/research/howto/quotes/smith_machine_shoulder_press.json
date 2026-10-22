@@ -323,6 +323,13 @@
       "text": "Avoid arching back",
       "status": "verbatim",
       "closest": "Avoid arching back"
+    },
+    {
+      "claim": "c19",
+      "source": "motra-smith-ohp",
+      "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds."
     }
   ]
 }

@@ -361,7 +361,7 @@
     },
     {
       "id": "c16",
-      "text": "Tempo: Motra lists a 2-1-2 tempo for this lift without saying which phase each digit is; read either way it gives 2 s down and 2 s up, and read as lower, pause, press, a 1 s pause at the bottom.",
+      "text": "Tempo: Motra lists 2-1-2 for this lift and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the lowering, a 1 s pause at the bottom and 2 s for the press.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -374,6 +374,11 @@
           "source": "motra-cable-press",
           "text": "2-1-2",
           "where": "Form Cues: Tempo"
+        },
+        {
+          "source": "motra-cable-press",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
         }
       ]
     },
@@ -541,14 +546,14 @@
       }
     ],
     "tempo": {
-      "up": 1,
+      "up": 2,
       "down": 2,
       "pause": 0,
       "claim": [
         "c15",
         "c16"
       ],
-      "text": "Down 2 s sits inside NFPT's 2-3 s lowering (c15). NFPT gives no seconds for the press, only 'semi explosive', so the 1 s up is a drawing convention (c15, WEAK). Motra lists a 2-1-2 tempo (c16, WEAK: the page does not say which phase each digit is); read either way it gives 2 s up, so the up value is listed for a supervisor ruling (LR-33: sourced seconds are never replaced by the convention; R-LB2-1) and is not changed yet. Pause 0: no quote asks for a pause right after the press; Motra's \"Squeeze chest at peak contraction.\" gives no pause or seconds. Read as lower, pause, press, Motra's middle 1 s is a bottom pause, so it is named here and not written in pause (LR-33, R-PB-3)."
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c16, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the press, so it is named here and not written in pause (LR-33). Pause 0: no quote asks for a pause right after the press. Motra's \"Squeeze chest at peak contraction.\" gives no pause or seconds. NFPT's 2-3 s lowering (c15) agrees with down 2. Changed from up 1, down 2 (ACSM or a convention) under R-LB6-2."
     },
     "variantLine": null
   },
