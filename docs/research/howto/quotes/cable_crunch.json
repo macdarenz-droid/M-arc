@@ -1,0 +1,319 @@
+{
+ "id": "cable_crunch",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-cablecrunch",
+   "text": "Fasten a rope handle in the upper position on a cable pulley. Sit down on your knees a few feet away, facing the pulley.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "motra-cablecrunch",
+   "text": "Attach a rope to the high pulley of a cable machine and select a light to moderate weight. Kneel facing the machine, grasp the rope ends, and pull them to position your hands near your shoulders with elbows bent.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bb-cablecrunch",
+   "text": "Kneel down and set your stance about hip to shoulder-width apart. You can face toward or away from the machine, depending on your preference.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-cablecrunch",
+   "text": "The cable crunch is best performed using a triceps extension rope handle.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-cablecrunch",
+   "text": "Using the triceps extension rope attachment, secure each hand at the base (usually there is a knot or hard plastic end piece). With the rope in your hands, lay the attachment across your traps. Hold it in your hands as though you were at the top of a hammer curl.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-cablecrunch",
+   "text": "Hold the ropes on either side of your head throughout the movement.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "motra-cablecrunch",
+   "text": "Kneel facing the machine, grasp the rope ends, and pull them to position your hands near your shoulders with elbows bent.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "motra-cablecrunch",
+   "text": "Hinge slightly backward from hips to elevate them, keeping chin tucked.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "motra-cablecrunch",
+   "text": "Contract abs to curl upper body forward, bringing shoulders toward pelvis while keeping hips stationary.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "motra-cablecrunch",
+   "text": "Hips still and elevated",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "motra-cablecrunch",
+   "text": "Spine flexes, not hips",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-cablecrunch",
+   "text": "Begin your crunch by bracing your core. Flex your quads, glutes, and core. Squeeze the rope attachment in your hands. While breathing out all of your air, contract your abdominals and curl your torso towards the ground. The goal is to curl your spine as much as you can.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-cablecrunch",
+   "text": "Bend your upper body forward by contracting your abs.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "motra-cablecrunch",
+   "text": "Elbows move toward thighs, shortening distance between ribcage and hips.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "motra-cablecrunch",
+   "text": "Start from slight backward hinge with torso upright; crunch until elbows near thighs or lower abs fully contracted, without rounding lower back excessively.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-cablecrunch",
+   "text": "Maintain your brace as much as possible to prevent big changes in your hip positioning throughout the reset. Slowly straighten your torso back to the starting position. Maintain tension on your abs the entire time.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "sl-cablecrunch",
+   "text": "Reverse the motion and return to the starting position with control.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "motra-cablecrunch",
+   "text": "Slowly extend spine to return to start, maintaining tension in abs.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "motra-cablecrunch",
+   "text": "Inhale as you return to the starting position; exhale forcefully during the crunch.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "fv-cablecrunch",
+   "text": "You will see a lot of people doing this exercise by moving their hips too, but that’s a mistake. This takes tension off your abs and places it on your hip flexors instead. Done correctly, only your spine should move.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "motra-cablecrunch",
+   "text": "Using hips to pull",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "motra-cablecrunch",
+   "text": "Yanking with arms",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-cablecrunch",
+   "text": "Yes, you’ll need your arms and traps to hold and support the weight in place, but they by no means should be involved in the actual movement.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-cablecrunch",
+   "text": "One of the consequences of going too heavy is often increased body English, or breaking form to use momentum to complete your reps.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-cablecrunch",
+   "text": "Shoving yourself forward with momentum to complete your reps may take tension off of your abdominals completely.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-cablecrunch",
+   "text": "Keep things strict for the best gains with this exercise.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-cablecrunch",
+   "text": "Keep the load manageable so that you can primarily use your abdominals to move. Otherwise, you’ll risk underloading your abs and overloading your traps, arms, and back instead.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "motra-cablecrunch",
+   "text": "Start light to master form",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "motra-cablecrunch",
+   "text": "Chin tucked",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "motra-cablecrunch",
+   "text": "Not tucking chin",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "motra-cablecrunch",
+   "text": "Keep movement controlled to prevent neck strain",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "motra-cablecrunch",
+   "text": "Rounding lower back",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "motra-cablecrunch",
+   "text": "Avoid if acute lower back pain",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "sl-cablecrunch",
+   "text": "Primary muscles worked: Abs Secondary muscles worked: Obliques",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-cablecrunch",
+   "text": "The primary muscle worked by the cable crunch will be your rectus abdominis.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-cablecrunch",
+   "text": "For Muscle Mass: Perform three to four sets of 10 to 12 reps, using a moderate but challenging load.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "motra-cablecrunch",
+   "text": "3-1-2",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "motra-cablecrunch",
+   "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "motra-cablecrunch",
+   "text": "Pause briefly at bottom to squeeze abs.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  }
+ ]
+}
