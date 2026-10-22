@@ -393,13 +393,6 @@
         "redFlag": null
       },
       {
-        "where": "Groin",
-        "means": "Fast, swinging reps risk strain.",
-        "fix": "Keep the movements slow.",
-        "claim": "c4",
-        "redFlag": null
-      },
-      {
         "where": "Sharp groin stretch at the start",
         "means": "Fault: an excessive stretch at the start.",
         "fix": "Set a narrower start.",
@@ -482,5 +475,8 @@
       "access": "abstract",
       "checked": "2026-10-22"
     }
+  ],
+  "notes": [
+    "feel.rows[1] removed in the LB6 recheck (no cited quote names the groin for this fault); momentum stays at handlingMistakes[0]: Groin / Fast, swinging reps risk strain. / Keep the movements slow."
   ]
 }

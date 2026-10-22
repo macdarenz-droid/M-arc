@@ -546,6 +546,6 @@
   ],
   "notes": [
     "Removed from handlingMistakes in the LB6 fix round (a setting, R-LB2-12; zooms[0] and setup keep the seat cue): \"Seat not set to fit.\" / \"Line your knees up with the pivot.\" (c6).",
-    "feel.rows[2] removed in the LB6 fix round (hip_abduction-7: a movement, not a place, LR-6); the swing stays in handlingMistakes[0]: Upper body rocking / Fault: using your upper body to swing. / Lower the weight.."
+    "feel.rows[2] removed in the LB6 fix round (hip_abduction-7: a movement, not a place, LR-6); the swing stays in handlingMistakes[0]: Upper body rocking / Fault: using your upper body to swing. / Lower the weight."
   ]
 }

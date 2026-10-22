@@ -64,7 +64,7 @@ The LR-29 verify of the 13 LB6 non-pilot cards (#287) and its one fix round. The
 | high_to_low_cable_fly-3 (low) | Claims are now lists. |
 | machine_lateral_raise-1 (low) | Claims gain c7. The zoom is "Shoulders down, elbows at shoulder height." (["c6","c5"]). |
 | machine_lateral_raise-2, -3 (low) | rows[2] ("Body rocking in the seat") is removed and its text kept in notes. The swing stays in handlingMistakes[0] and risks[0]. |
-| machine_lateral_raise-4 (low) | c13 carries only the top-pause convention. |
+| machine_lateral_raise-4 (low) | c13 holds only the top-pause convention: its acsm-2009 source, its two ACSM quotes and the ACSM sentence are removed (recheck). acsm-2009 stays on the card through c14. |
 | machine_lateral_raise-5 (low) | c5 gains Virtuagym's "slightly higher" and states that the card follows Motra. |
 | machine_lateral_raise-6 (low) | laf-lat-raise is re-fetched (HTTP 200, verbatim), checked 2026-10-22, and its gaps entry removed. c9 gains Motra's "Inhale and lower arms slowly with control." |
 | hip_abduction-1 (medium) | rows[1] is "Hip" / "Fault: a machine not set to fit you." / "Line your knees up with the pivot." (["c6","c1"]). |
@@ -74,11 +74,14 @@ The LR-29 verify of the 13 LB6 non-pilot cards (#287) and its one fix round. The
 | hip_abduction-5 (low) | Claims are now lists. |
 | hip_abduction-6 (low) | handlingMistakes[2] is "Incomplete range." / "Open the legs to a full, comfortable range." (["c12","c4"]); the seat item moves to notes. |
 | hip_abduction-7 (low) | rows[2] ("Upper body rocking") is removed and its text kept in notes. |
-| hip_adduction-1 (medium) | risks[1] is "Acute hip or groin injury? Don't use this machine." (c5). rows[1] is "Groin" / "Fast, swinging reps risk strain." / "Keep the movements slow." (c4). |
+| hip_adduction-1 (medium) | risks[1] is "Acute hip or groin injury? Don't use this machine." (c5). rows[1] is removed (recheck: no cited quote names the groin for this fault); its text is kept in notes, and momentum stays at handlingMistakes[0]. |
 | hip_adduction-2 (low) | rankNote names the stack crash as tied too, set aside on list order. |
+
+## Supervisor recheck of e4b11b77
+- 48 of 50 findings were fixed. The two open ones are fixed in the recheck commit: hip_adduction feel.rows[1] (removed) and machine_lateral_raise c13 (ACSM removed). The notes are also tidied: one claim list shown as code text is now "(c3, c2)", and three notes no longer end in "..".
 
 ## Checks on the fix head
 - Valid JSON: 26 files.
 - Dry run: 0 errors.
 - Copy lint (main @ 5158609) and C8: 0 hits on the 13 cards.
-- Quotes: 407/417 verbatim by curl. The other 10 are mq-pullover (403). Every new quote and every phrase quoted in a rankNote, why, tempo.text or note was checked against its fetched page.
+- Quotes: 405/415 verbatim by curl. The other 10 are mq-pullover (403). Every new quote and every phrase quoted in a rankNote, why, tempo.text or note was checked against its fetched page.

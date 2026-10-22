@@ -318,26 +318,15 @@
     },
     {
       "id": "c13",
-      "text": "Tempo: Motra asks for a brief pause at the top, right after the lift, and no source gives its seconds, so the 1 s pause is a drawing convention (LR-33). ACSM's moderate 1-2 s each way is stated for heavy sets in trained lifters (LR-15) and no longer sets up or down here (Motra does, c16).",
+      "text": "Tempo: Motra asks for a brief pause at the top, right after the lift, and no source gives its seconds, so the 1 s pause is a drawing convention (LR-33).",
       "tags": [
         "CONSENSUS",
         "WEAK"
       ],
       "sources": [
-        "acsm-2009",
         "mo-lat-raise"
       ],
       "quotes": [
-        {
-          "source": "acsm-2009",
-          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
-          "where": "abstract"
-        },
-        {
-          "source": "acsm-2009",
-          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-          "where": "abstract"
-        },
         {
           "source": "mo-lat-raise",
           "text": "Pause briefly at top to squeeze deltoids.",
@@ -677,7 +666,7 @@
     }
   ],
   "notes": [
-    "feel.rows[2] removed in the LB6 fix round (machine_lateral_raise-3: not a place, LR-6); the swing stays in handlingMistakes[0] and risks[0]: Body rocking in the seat / Swinging the body can lead to injury. / Lower the weight..",
+    "feel.rows[2] removed in the LB6 fix round (machine_lateral_raise-3: not a place, LR-6); the swing stays in handlingMistakes[0] and risks[0]: Body rocking in the seat / Swinging the body can lead to injury. / Lower the weight.",
     "laf-lat-raise re-fetched by curl on 2026-10-22 with a Safari user agent and Accept, Accept-Language, Referer and Sec-Fetch headers (R-LB6-8): HTTP 200, its quotes verbatim."
   ]
 }
