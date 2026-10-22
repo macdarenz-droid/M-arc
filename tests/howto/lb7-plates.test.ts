@@ -95,7 +95,7 @@ describe('LIB-17 A5: lb7/rows.json holds exactly the drawn, non-held LB7 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with seconds exactly once in the raw text, nothing else, every mode H (D-LIB17-B1)', () => {
-    expect(want()).toEqual(['lib_cable_lateral_raise', 'lib_cable_external_rotation', 'lib_weighted_dip']);
+    expect(want()).toEqual(['lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_cable_external_rotation', 'lib_weighted_dip']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('none of the 5 LB7 ids not in this card is in any lb7/ file as a row', () => {
@@ -274,7 +274,7 @@ describe('LIB-17 A2 / Do 4: dipBars and the drawn plates draw PRIMITIVES only', 
     }
   });
   it('every item the drawn specs draw is a PRIMITIVES type, in every drawn pose', () => {
-    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'cable_external_rotation', 'renegade_row', 'weighted_dip']);
+    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'dumbbell_front_raise', 'cable_external_rotation', 'renegade_row', 'weighted_dip']);
     for (const id of specsDrawn()) for (const pose of posesOf(S[id]))
       for (const it of itemsIn(S[id], pose).items) expect(Object.keys(eng.PRIMITIVES), `${id} ${pose}`).toContain(it.type);
   });
@@ -488,7 +488,8 @@ const bentProblems = (spec: any) => (BENT[spec.id] ?? []).flatMap(([pose, sides]
   return out;
 });
 /** D-LIB16-LOCK's basis: a "slight bend" elbow is drawn at its sized bend, never straight. */
-const SLIGHT: Record<string, [string, string, number][]> = { cable_lateral_raise: [['start', 'l', 18], ['end', 'l', 18]] };
+const SLIGHT: Record<string, [string, string, number][]> = { cable_lateral_raise: [['start', 'l', 18], ['end', 'l', 18]],
+  dumbbell_front_raise: [['start', 'l', 18], ['start', 'r', 18], ['end', 'l', 18], ['end', 'r', 18]] };
 const slightProblems = (spec: any) => (SLIGHT[spec.id] ?? []).flatMap(([pose, s, want]) => {
   const l = lmOf(spec, pose), f = 180 - angle3(l[`shoulder.${s}`], l[`elbow.${s}`], l[`grip.${s}`]);
   return Math.abs(f - want) <= 1 ? [] : [`${pose}: elbow.${s} bend ${f.toFixed(1)} != ${want}`];
@@ -1208,5 +1209,77 @@ describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     expect(outside([poly], n)).toBeLessThanOrEqual(0.5);
     const lifted = { ...belt, pts: belt.pts.map((p: number[]) => [p[0], p[1]! + 0.06, p[2]]) };
     expect(outside([eng.PRIMITIVES.poly(lifted, cam)[0].poly], n)).toBeGreaterThan(0.5);
+  });
+});
+
+describe('LIB-17 dumbbell_front_raise (H; the engine dumbbell, side view; Mistake: the hip swing, c12): drawn facts', { timeout: T }, () => {
+  const s = () => S.dumbbell_front_raise, Z = () => M.dumbbell_front_raise.SIZES;
+  it('c8: both upper arms level at the top (shoulder elevation 90 +-2, the elbow at the shoulder\'s height +-1 cm) against the upright trunk', () => {
+    const a = rep(s()).angles, E = lmOf(s(), 'end');
+    for (const k of ['l', 'r']) {
+      expect(Math.abs(+/elev (-?[\d.]+)/.exec(a.end[`sh.${k}`])![1]! - 90), k).toBeLessThanOrEqual(2);
+      expect(Math.abs(E[`elbow.${k}`][1] - E[`shoulder.${k}`][1]) * 100, k).toBeLessThanOrEqual(1);
+    }
+    expect(a.end.tilt).toBe(0);
+    expect(a.end.trunk).toBe(0);
+  });
+  it('c5: the elbows lead: the hand never above the elbow at the top', () => {
+    const E = lmOf(s(), 'end');
+    for (const k of ['l', 'r']) expect(E[`grip.${k}`][1], k).toBeLessThanOrEqual(E[`elbow.${k}`][1]);
+  });
+  it('c2: the soft elbow bend in start and end on both arms (ELBOW_BEND, never straight)', () => {
+    expect(slightProblems(s())).toEqual([]);
+  });
+  it('A15 mutation: the end elbows set to 180 deg (straight) is red', () => {
+    const bad = { ...s(), poses: { ...s().poses, end: { ...s().poses.end, elbow: 0 } } };
+    expect(slightProblems(bad)).toEqual([expect.stringMatching(/^end: elbow\.l bend 0\.0 != 18$/), expect.stringMatching(/^end: elbow\.r bend 0\.0 != 18$/)]);
+  });
+  /** c1, c2 (DESIGN.md section 10): the drawn start dumbbell's back edge on the near thigh's drawn front outline at the
+   *  dumbbell's height, within 1 cm (plate px). The start dumbbell is the end layer's dashed hex (the start layer drops
+   *  moving equipment). */
+  const thighLine = (spec: any) => {
+    const cam = camOf(spec), hex = itemsIn(spec, 'end').items.find((it: any) => it.part === 'startDb');
+    if (!hex) return ['no start dumbbell drawn'];
+    const pts = hex.pts.map((w: number[]) => cam.P(w)), back = Math.min(...pts.map((p: number[]) => p[0]!));
+    const cy = pts.slice(0, -1).reduce((a: number, p: number[]) => a + p[1]!, 0) / (pts.length - 1);
+    const thigh = shapesIn(spec, 'start').find((x: any) => x.key === 'thigh.r').poly;
+    let front = -Infinity;
+    for (const [a, b] of segs([...thigh, thigh[0]])) if ((a![1]! - cy) * (b![1]! - cy) <= 0 && a![1] !== b![1]) front = Math.max(front, a![0]! + (b![0]! - a![0]!) * (cy - a![1]!) / (b![1]! - a![1]!));
+    const gapCm = (back - front) / cam.pxm * 100;
+    return Math.abs(gapCm) <= 1 ? [] : [`start dumbbell ${gapCm.toFixed(1)} cm off the front thigh line`];
+  };
+  it('c1, c2: the start dumbbell sits against the front of the near thigh (its back edge on the thigh line, +-1 cm), in front of the thigh', () => {
+    expect(thighLine(s())).toEqual([]);
+    const L = lmOf(s(), 'start');
+    for (const k of ['l', 'r']) expect(L[`grip.${k}`][2], k).toBeGreaterThan(L[`hip.${k}`][2]);
+  });
+  it('mutation: the start shoulders flexed 6 deg more (the dumbbell off the thigh) is red', () => {
+    const st = s().poses.start, bad = { ...s(), poses: { ...s().poses, start: { ...st, shoulder: { ...st.shoulder, flex: st.shoulder.flex + 6 } } } };
+    expect(thighLine(bad)).toEqual([expect.stringMatching(/cm off the front thigh line$/)]);
+  });
+  /** c12 Mistake on drawn items: the hips M_HIP forward over planted feet, the trunk leaning back, and the drawn
+   *  Mistake dumbbell above the end one (the swing). */
+  const swingProblems = (spec: any) => {
+    const E = lmOf(spec, 'end'), Mi = lmOf(spec, 'mistake'), out: string[] = [];
+    if (Math.abs((Mi.hips[2] - E.hips[2]) - Z().M_HIP) > 0.005) out.push(`hips ${((Mi.hips[2] - E.hips[2]) * 100).toFixed(1)} cm forward`);
+    for (const k of ['heel.l', 'ball.l', 'heel.r', 'ball.r']) if (Math.hypot(...Mi[k].map((v: number, i: number) => v - E[k][i])) > 0.005) out.push(`${k} moved`);
+    if (!(Mi.shoulders[2] < Mi.hips[2])) out.push('no lean back');
+    const cam = camOf(spec), db = (pose: string) => itemsIn(spec, pose).items.find((it: any) => it.type === 'dumbbell');
+    if (!(cam.P(db('mistake').at)[1]! < cam.P(db('end').at)[1]! - 6)) out.push('the Mistake dumbbell not above the end one');
+    return out;
+  };
+  it('c12, c13 Mistake: the hips pushed forward M_HIP over planted feet, the trunk back, the dumbbells swung above the end pose', () => {
+    expect(swingProblems(s())).toEqual([]);
+  });
+  it('mutation: the Mistake with the hips not pushed forward (the root at the end pose) is red', () => {
+    const m = s().mistake, bad = { ...s(), mistake: { ...m, pose: { root: { ...m.pose.root, at: s().poses.end.root.at } } } };
+    expect(swingProblems(bad)).toContain('hips 0.0 cm forward');
+  });
+  it('PQ-H3 at the ruled sizes: the Mistake and the Trace pass; values logged', () => {
+    const R = { normal: plate.renderPlate(s(), { id: 'x' }), mistake: plate.renderPlate(s(), { id: 'x', mistake: true }) };
+    const dev = qaNode.deviation({ spec: s() }, Eng(), R), tr = markup.pathsOf(R.normal.svg, 'trace').reduce((a: number, d: string) => a + markup.pathLength(d), 0);
+    console.log(`dumbbell_front_raise: deviation ${dev.toFixed(1)} px, trace ${tr.toFixed(1)} px`);
+    expect(dev).toBeGreaterThanOrEqual(11.39);
+    expect(tr).toBeGreaterThanOrEqual(22.11);
   });
 });

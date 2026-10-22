@@ -350,6 +350,68 @@
     "unit": "point",
     "basis": "claim: plate.frames 'Trace follows the near dumbbell' (c4, c5; D-LIB17-TRACE)"
    }
+  },
+  "dumbbell_front_raise": {
+   "FOOT_X": {
+    "value": 0.14,
+    "unit": "m",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f) FOOT_X, the engine dumbbell's standing side view (c3's width is not visible from the side)"
+   },
+   "KNEE_SOFT": {
+    "value": 6,
+    "unit": "deg",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f) KNEE_SOFT, knees soft (the card gives no knee angle)"
+   },
+   "ELBOW_BEND": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention (D-LIB16-LOCK): machine_chest_press.mjs:45 (the 8), elbows 18 deg short of straight for c2's 'soft bend' (not locked)"
+   },
+   "ARM_ROT": {
+    "value": -90,
+    "unit": "deg",
+    "basis": "stated reason: c1's pronated grip (palms down at the top) with c2's soft bend: the upper arm turned in so the bend runs across the body and the hand never rises above the elbow's line (c5 'elbows slightly ahead of the forearms')"
+   },
+   "SCAP_ELEV": {
+    "value": -1,
+    "unit": "cm",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f) SCAP elev -1 for c4 'shoulders down and back'"
+   },
+   "SCAP_PRO": {
+    "value": -1,
+    "unit": "cm",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f) SCAP pro -1 for c4 'shoulders down and back'"
+   },
+   "START_FLEX": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c1 'dumbbells in front of the thighs', c2 'lightly touching the fronts of your thighs': the shoulder flexion that puts the start dumbbell's back corner on the near thigh's front outline at the grip's height (DESIGN.md section 10)"
+   },
+   "M_HIP": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "stated reason (DESIGN.md section 11, ruled): c12 'pushing the hips forward': the hips 8 cm forward over the planted feet, the root height re-solved for the same knee bend"
+   },
+   "M_LEAN": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "stated reason (DESIGN.md section 11, ruled): the body's counter-lean that goes with c12's hip push (the trunk 12 deg back), unlabelled"
+   },
+   "FLOOR_BACK": {
+    "value": 0.5,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line from behind the heels (dumbbell_biceps_curl.mjs's floor -0.5)"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.85,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line under the raised dumbbells, which reach about 0.75 m in front"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "claim: c5 'raise the dumbbells in front of the body': the near hand and its dumbbell (D-LIB17-TRACE)"
+   }
   }
  }
 }
