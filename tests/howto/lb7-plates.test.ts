@@ -274,7 +274,7 @@ describe('LIB-17 A2 / Do 4: dipBars and the drawn plates draw PRIMITIVES only', 
     }
   });
   it('every item the drawn specs draw is a PRIMITIVES type, in every drawn pose', () => {
-    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'cable_external_rotation', 'renegade_row', 'weighted_dip']);
+    expect(specsDrawn()).toEqual(['cable_lateral_raise', 'cable_rear_delt_fly', 'cable_external_rotation', 'renegade_row', 'weighted_dip']);
     for (const id of specsDrawn()) for (const pose of posesOf(S[id]))
       for (const it of itemsIn(S[id], pose).items) expect(Object.keys(eng.PRIMITIVES), `${id} ${pose}`).toContain(it.type);
   });
@@ -508,7 +508,8 @@ const bentProblems = (spec: any) => (BENT[spec.id] ?? []).flatMap(([pose, sides]
   return out;
 });
 /** D-LIB16-LOCK's basis: a "slight bend" elbow is drawn at its sized bend, never straight. */
-const SLIGHT: Record<string, [string, string, number][]> = { cable_lateral_raise: [['start', 'l', 18], ['end', 'l', 18]] };
+const SLIGHT: Record<string, [string, string, number][]> = { cable_lateral_raise: [['start', 'l', 18], ['end', 'l', 18]],
+  cable_rear_delt_fly: [['start', 'l', 18], ['start', 'r', 18], ['end', 'l', 18], ['end', 'r', 18]] };
 const slightProblems = (spec: any) => (SLIGHT[spec.id] ?? []).flatMap(([pose, s, want]) => {
   const l = lmOf(spec, pose), f = 180 - angle3(l[`shoulder.${s}`], l[`elbow.${s}`], l[`grip.${s}`]);
   return Math.abs(f - want) <= 1 ? [] : [`${pose}: elbow.${s} bend ${f.toFixed(1)} != ${want}`];
@@ -668,6 +669,77 @@ describe('LIB-17 renegade_row (H; tier A; the plank class; held: D-LIB17-SECS, D
   });
   it('the spec carries no tempo (D-LIB17-SECS)', () => {
     expect('tempo' in s()).toBe(false);
+  });
+});
+
+describe('LIB-17 cable_rear_delt_fly (H; front view; held: D-LIB17-SECS and D-LIB8-shrug): drawn facts', { timeout: T }, () => {
+  const s = () => S.cable_rear_delt_fly;
+  const C = () => M.cable_rear_delt_fly.CRDF;
+  /** The two drawn cables (the cableColumns' handle runs, plate px) in one pose, by column side. */
+  const cablesIn = (spec: any, pose: string) => {
+    const cam = camOf(spec), out: Record<string, number[][]> = {};
+    for (const it of itemsIn(spec, pose).items.filter((i: any) => i.type === 'cableColumn')) {
+      const side = it.base[0] < 0 ? 'l' : 'r', run = eng.PRIMITIVES.cableColumn(it, cam).find((p: any) => p.cls === 'eq-cable' && p.line);
+      out[side] = run.line;
+    }
+    return out;
+  };
+  const cross = (a: number[][], b: number[][]) => {
+    const [p, q] = a, [r, t] = b, d = (q![0]! - p![0]!) * (t![1]! - r![1]!) - (q![1]! - p![1]!) * (t![0]! - r![0]!);
+    const u = ((r![0]! - p![0]!) * (t![1]! - r![1]!) - (r![1]! - p![1]!) * (t![0]! - r![0]!)) / d, v = ((r![0]! - p![0]!) * (q![1]! - p![1]!) - (r![1]! - p![1]!) * (q![0]! - p![0]!)) / d;
+    return u > 0 && u < 1 && v > 0 && v < 1 ? [p![0]! + (q![0]! - p![0]!) * u, p![1]! + (q![1]! - p![1]!) * u] : null;
+  };
+  it('c2: each hand holds the opposite column\'s cable, which runs from its high pulley to that hand\'s handle ring in every pose; the cables cross', () => {
+    for (const pose of posesOf(s())) {
+      const l = lmOf(s(), pose), cam = camOf(s()), cb = cablesIn(s(), pose);
+      for (const side of ['l', 'r']) { const hand = side;
+        const ring = cam.P(C().handleOf(l[`grip.${hand}`], side).ring), pul = cam.P(C().pulley[side]);
+        expect(Math.sign(pul[0]! - cam.P(l.hips)[0]!), `${pose} ${side}`).toBe(-Math.sign(ring[0]! - cam.P(l.hips)[0]!));
+        expect(Math.hypot(cb[side]![0]![0]! - ring[0]!, cb[side]![0]![1]! - ring[1]!), `${pose} ${side} ring`).toBeLessThan(1);
+      }
+      expect(cross(cb.l!, cb.r!), pose).not.toBeNull();
+    }
+  });
+  it('c4: at the start the drawn cables cross at the ear\'s height (+-2 px), the arms straight ahead with the handles close together', () => {
+    const l = lmOf(s(), 'start'), cam = camOf(s()), x = cross(cablesIn(s(), 'start').l!, cablesIn(s(), 'start').r!)!;
+    expect(Math.abs(x[1]! - cam.P(l.ear)[1]!)).toBeLessThanOrEqual(2);
+    for (const k of ['l', 'r']) expect(l[`grip.${k}`][2] - l[`shoulder.${k}`][2], k).toBeGreaterThan(0.5);
+    expect(Math.abs(l['grip.l'][0] - l['grip.r'][0])).toBeLessThan(Math.abs(l['shoulder.l'][0] - l['shoulder.r'][0]));
+  });
+  it('c6, c7: at the end both arms are out in the body\'s plane, slightly below the shoulder line, the handles wider than at the start', () => {
+    const E = lmOf(s(), 'end'), St = lmOf(s(), 'start');
+    for (const k of ['l', 'r']) {
+      expect(Math.abs(E[`elbow.${k}`][2] - E[`shoulder.${k}`][2]), k).toBeLessThan(0.01);
+      expect(E[`elbow.${k}`][1], k).toBeLessThan(E[`shoulder.${k}`][1]);
+    }
+    expect(Math.abs(E['grip.l'][0] - E['grip.r'][0])).toBeGreaterThan(3 * Math.abs(St['grip.l'][0] - St['grip.r'][0]));
+  });
+  it('c5 Mistake: only the shoulder girdles change: both shoulders M_ELEV cm up and M_PRO cm forward of the end', () => {
+    const E = lmOf(s(), 'end'), Mi = lmOf(s(), 'mistake'), z = M.cable_rear_delt_fly.SIZES;
+    for (const k of ['l', 'r']) {
+      expect(Mi[`shoulder.${k}`][1] - E[`shoulder.${k}`][1], k).toBeCloseTo(z.M_ELEV / 100, 3);
+      expect(Mi[`shoulder.${k}`][2] - E[`shoulder.${k}`][2], k).toBeCloseTo(z.M_PRO / 100, 3);
+    }
+    for (const k of ['hips', 'head', 'heel.l', 'heel.r']) expect(Math.hypot(...Mi[k].map((v: number, i: number) => v - E[k][i])), k).toBeLessThan(1e-6);
+  });
+  it('phantoms (Q2 (c)): both start arms and both start handles are redrawn dashed in the end layer', () => {
+    const its = itemsIn(s(), 'end').items;
+    expect(its.filter((i: any) => i.part === 'startArm').length).toBeGreaterThanOrEqual(2);
+    expect(its.filter((i: any) => i.part === 'startHandle').length).toBe(2);
+  });
+  it('A15 mutation: one end elbow set straight is red on the slight-bend check', () => {
+    const e = s().poses.end, bad = { ...s(), poses: { ...s().poses, end: { ...e, elbow: { ...e.elbow, r: 0 } } } };
+    expect(slightProblems(bad)).toEqual([expect.stringMatching(/^end: elbow\.r bend 0\.0 != 18$/)]);
+  });
+  it('held (D-LIB8-shrug, D-LIB17-SIZE, S2): the card-true shoulder roll moves the plate under deviationMin', () => {
+    const env = pins().envelope, Rr = { normal: plate.renderPlate(s(), { id: 'x' }), mistake: plate.renderPlate(s(), { id: 'x', mistake: true }) };
+    const dev = qaNode.deviation({ spec: s() }, Eng(), Rr);
+    console.log(`LIB-17 cable_rear_delt_fly held: engine deviation ${dev.toFixed(1)} px (min ${env.deviationMin})`);
+    expect(dev).toBeLessThan(env.deviationMin);
+    expect(readFileSync('tools/plates/library/lb7/DESIGN.md', 'utf8')).toMatch(/\| cable_rear_delt_fly \| D-LIB17-SECS \(D-LIB14-NOSECS\); and D-LIB8-shrug/);
+  });
+  it('the spec carries no tempo (D-LIB17-SECS)', () => {
+    expect(s().tempo).toBeUndefined();
   });
 });
 

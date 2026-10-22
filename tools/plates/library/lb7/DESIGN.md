@@ -107,7 +107,12 @@ with `poly`), in LB3's romanChair pattern, with no file reads; the spec takes it
   cable_lateral_raise's twin is long and reads loud on the Mistake plate (slice renders); it is card truth ("from its
   pulley to the handle in every pose"). No cable crosses the head outline. cable_rear_delt_fly (bulk): two cables from
   the high pulleys, crossed in front at eye level at the start (c2, c4), ending at the hands in front of the face
-  (the card's own start). face_pull (bulk): from the head-height pulley to the rope, side view.
+  (the card's own start). Drawn (bulk): the start crossing is solved to the ear's height (START_ELEV 106 deg). At the
+  end (arms out to the sides, c6, c7) the crossed cables from the high pulleys still meet in front of the face and run
+  across the head outline in the front view; that is the card's path (crossed cables, high pulleys, c1, c2), never
+  moved off it (D-LIB17-CABLE), and posted with the renders for the supervisor. The cables also close over both
+  shoulder tops, so the three callouts and two tells anchored at the shoulders meet the arm's underside from the open
+  space below it (no leader within 6 px of a cable). face_pull (bulk): from the head-height pulley to the rope, side view.
 
 ## 5. Pose-class and convention anchors (depends_on; D-LIB17-PILOTB)
 
@@ -353,7 +358,7 @@ the bulk proposals.
 | renegade_row | **measured 0.0 px** with the tell on the corner; the card-true sign, the hex turned 30° onto a corner against the flat one, moves its corners **measured 4.9 px** at 146.29 px/m (each turned vertex against the nearest flat one): **below deviationMin** | **measured 78.9 px** (the near dumbbell) |
 | dumbbell_front_raise | the hips 8 cm forward and the shoulders about 10 cm back: about 15 px [est] | the dumbbells' arc, about 0.8 m: over 100 px [est] |
 | face_pull | the elbow 15 cm down: about 22 px [est] | the rope at the hands, about 0.35 m: about 50 px [est] |
-| cable_rear_delt_fly | the shoulder line 3 cm up: about 4-5 px [est]: **likely below** | the handles, about 0.8 m: over 100 px [est] |
+| cable_rear_delt_fly | the shoulder line 3 cm up: about 4-5 px [est]: **measured 4.4 px at the bulk, held** (section 14) | the handles, about 0.8 m: over 100 px [est]; measured 93.5 px |
 | resistance_band_pull_apart | the shrug at 5 cm: about 7.3 px [est] (LB5's shrug measured 7.3 px, #290 6340849204): **likely below** | the hands, about 0.55 m: about 80 px [est] |
 | bench_dip | the shoulder about 8-10 cm lower: about 12-15 px [est]: **at risk** | the shoulder, about 0.25 m: about 36 px [est] |
 
@@ -370,7 +375,7 @@ post. renegade_row's renders come only from `lb7/build.mjs --held`.
 
 | id | ruling | why | route |
 |---|---|---|---|
-| cable_rear_delt_fly | D-LIB17-SECS (D-LIB14-NOSECS) | the card's tempo is null (c9: slow and controlled, no seconds; LR-33, R-LB7-6) | the no-seconds strip card on main, then 'LIB-17 resume' |
+| cable_rear_delt_fly | D-LIB17-SECS (D-LIB14-NOSECS); and D-LIB8-shrug (D-LIB17-SIZE, S2) | tempo null (c9: slow and controlled, no seconds; LR-33, R-LB7-6); the card-true shoulder roll (scapulae 3 cm up, 3 cm forward) measures 4.4 px < 11.39 px (section 12) | the strip card, then 'LIB-17 resume'; LIB-ZOOM (#279) on main for the zoom circle |
 | renegade_row | D-LIB17-SECS (D-LIB14-NOSECS); and D-LIB8-shrug (D-LIB17-SIZE, S2) | tempo null (LR-33); the card-true corner landing moves 4.9 px < 11.39 px (section 12) | the strip card, then 'LIB-17 resume'; LIB-ZOOM (#279) on main for the zoom circle |
 
 Held rows are in no rows file; their specs, tests and card keys stay.

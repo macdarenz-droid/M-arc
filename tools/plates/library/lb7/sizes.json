@@ -350,6 +350,93 @@
     "unit": "point",
     "basis": "claim: plate.frames 'Trace follows the near dumbbell' (c4, c5; D-LIB17-TRACE)"
    }
+  },
+  "cable_rear_delt_fly": {
+   "FOOT_X": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):44, the engine front view's stance (the card gives none)"
+   },
+   "KNEE_SOFT": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):45, knees soft"
+   },
+   "ELBOW_BEND": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention (D-LIB16-LOCK): machine_chest_press.mjs:45 (the 8), elbows 18 deg short of straight for c4 'not locked' and c6 'a slight, fixed bend'"
+   },
+   "START_ROT": {
+    "value": -90,
+    "unit": "deg",
+    "basis": "stated reason: c6 'a fixed bend ... while the arms open back': with the arms straight ahead the bend lies level, in the plane the arms open in, the forearms toward the midline"
+   },
+   "END_ROT": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "stated reason: c6, the same: with the arms out the bend lies level, in the opening plane, the forearms forward"
+   },
+   "START_ELEV": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "solved: c4 'the cables crossing at about eye level': the shoulder flexion straight ahead (plane 90) at which the two cables cross at the ear's height (the engine has no eye landmark; the ear is level with it), bracket 80-130"
+   },
+   "END_ELEV": {
+    "value": 80,
+    "unit": "deg",
+    "basis": "stated reason: c6 'back and slightly down', c7 'about parallel to the body': the arms in the frontal plane 10 deg below level"
+   },
+   "M_ELEV": {
+    "value": 3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36 (the 8), the scapulae 3 cm down and back for 'shoulders down and back', reversed: 3 cm up (c5's fault)"
+   },
+   "M_PRO": {
+    "value": 3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36 (the 8), reversed: 3 cm forward (c5 'rolled back' not kept)"
+   },
+   "COLUMN_X": {
+    "value": 1,
+    "unit": "m",
+    "basis": "stated reason: a crossover's columns either side with the arms' clear path (c3), the hands at the end inside the pulleys; DESIGN.md section 11 (PULLEY_X +-1.0 m)"
+   },
+   "COLUMN_H": {
+    "value": 2.1,
+    "unit": "m",
+    "basis": "convention: the vendor cableColumn height (equipment.mjs:85)"
+   },
+   "PULLEY_Y": {
+    "value": 1.95,
+    "unit": "m",
+    "basis": "claim: c1 'upper (high) pulley': just under the column's own top pulley (height - 0.09, equipment.mjs:94)"
+   },
+   "HANDLE_GRIP": {
+    "value": 0.13,
+    "unit": "m",
+    "basis": "convention: the vendor dumbbell handle 13 cm (equipment.mjs:30); D-LIB17-HANDLE"
+   },
+   "HANDLE_STRAP": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: #245 eq/dHandle.mjs:4-5 @ 9e5d9666 (read as a pattern; D-LIB17-HANDLE)"
+   },
+   "FLOOR_L": {
+    "value": 1.25,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line under the right column"
+   },
+   "FLOOR_R": {
+    "value": 1.25,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line under the left column"
+   },
+   "trace": {
+    "value": "grip.l",
+    "unit": "point",
+    "basis": "claim: c7 'handles ... as far apart as possible at the end' (the card names the handles): the hand on the handle (D-LIB17-TRACE)"
+   }
   }
  }
 }
