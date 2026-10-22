@@ -12,7 +12,7 @@ Used for every drawn batch (pilot A/B, LB1-LB10, LIB-ZOOM), after the builder po
    - add **2 hidden golden-B anchors**, golden B's `pull_up` and `lat_pulldown` (D-LIB10-PANEL1), until pilot A is pinned;
    - add **2 plants**. Each plant is an extra, planted copy of one candidate; its original stays in the set. The two are on different candidates and each targets a named rubric item. Each must be a real error a careful critic scores ≤ 3, visible at a glance at 390 px in both themes but not cartoonish. Round 1 used a foot off the floor (R3) and a leader moved onto the wrong body part (R4). A recheck uses new kinds of plant: an error on the fixed items, plus one R1/R5/R6;
    - shuffle with a recorded salt (a recheck uses a new salt, so no T holds the same plate as before);
-   - use the references from the last panel: `<S>/critic-pb/reference`, the approved plates;
+   - render the references fresh. A new account has no old scratchpad, so the builder makes them from main's approved pages: golden B's layers page and, once it is pinned, pilot A's plates page. The 10-19 set was seated_cable_row, machine_chest_press, lat_pulldown, mountain_climbers (floor) and dumbbell_bench_press (bench), each in dark, paper and mistake-dark, cropped at 780 px. Never use an anchor as a labelled reference;
    - run a leak check: no id, key, plant or anchor name in any file name, README, alt text or visible text;
    - write the private answer key to `<S>/critic-<SET>-private/KEY.md`, holding the T map, the plant definitions with the reason for each, the anchors and the sha256 of every file.
 
@@ -35,7 +35,7 @@ Used for every drawn batch (pilot A/B, LB1-LB10, LIB-ZOOM), after the builder po
 This is the same method as section 1, with these changes:
 - the sheet is `node tools/plates/library/hands/sheet.mjs <out> --critic --calibrate`;
 - the anchors are the approved hand pairs `lat_pulldown/p2` and `dumbbell_lateral_raise`; pull_up/p1 is barred (follow-up 10);
-- the references are LIB-7c's six PNGs, renamed ref1-ref3;
+- the references are owner-approved hand pairs, rendered fresh with the same sheet tool from main or the approved head: pull_up, lat_pulldown and seated_cable_row, in dark and paper, renamed ref1-ref3 so no file name carries an id;
 - the plants are a Right/Wrong swap (C1) and a contact error (C3);
 - the rubric is C1-C7 (section 6).
 
