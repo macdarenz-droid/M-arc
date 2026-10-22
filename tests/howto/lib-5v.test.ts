@@ -139,6 +139,9 @@ describe('LIB-5v V9: the B5 fixture inserts one one-word line on a "/" target on
       expect(CL.words('Machine.')).toBe(1);
     }
   });
+  it('LIB-4c C16 (copyProblems, D-LIB5v-FIXLINE) passes the 6 clones with lib_t_bar_row\'s line', () => {
+    expect(C.copyProblems(ROOT)).toEqual([]);
+  });
 });
 
 /** Runs `node <args>` in `cwd`; resolves { code, out } (stdout + stderr), as library-lint.test.ts does. */
@@ -177,17 +180,20 @@ describe('LIB-5v V3/V4: the generator refuses a bad line on any shipped row (E1\
     expect(room).toBeGreaterThanOrEqual(1);
     expect(room + 1).toBeLessThanOrEqual(10);
     const clean = room === 1 ? 'Machine.' : neutral(room);
-    const cases: [string, string, string | null, boolean?][] = [
+    const cases: [string, string, string | null, string[]?][] = [
       ['(1) "/" and no line', copyWith(SLASH), `${ID}: copy.variantLine: variant line required: equipment names two kinds (Cable / Machine)`],
-      // the line changes the row's content hash, so (2) re-stamps it in its copy (C15, D-LIB5-STAMPS) before generating
-      ['(2) "/" and a clean line within the room', copyWith(SLASH, line(F.HOWTO, clean)), null, true],
-      ['(3) a line on lib_pull_up (one of the 8, no "/")', copyWith(line('tools/plates/layers/exercises/pull_up.howto.mjs', 'Machine.')), 'lib_pull_up: copy.variantLine: variant line on a row whose equipment names one kind (Bodyweight)'],
-      ['(4) an 11-word line on the "/" row', copyWith(SLASH, line(F.HOWTO, neutral(11))), `${ID}: copy.variantLine: caption > 10 words (11 words)`],
+      // a line changes the row's content hash, so (2) and (3) re-stamp that row in their copy (C15, D-LIB5-STAMPS) before
+      // generating; library-gate.mjs's stamp gate would refuse first otherwise
+      ['(2) "/" and a clean line within the room', copyWith(SLASH, line(F.HOWTO, clean)), null, [ID]],
+      ['(3) a line on lib_pull_up (one of the 8, no "/")', copyWith(line('tools/plates/layers/exercises/pull_up.howto.mjs', 'Machine.')), 'lib_pull_up: copy.variantLine: variant line on a row whose equipment names one kind (Bodyweight)', ['lib_pull_up']],
+      // D-LIB5v-ORDER: library-gate.mjs runs before variant-gate.mjs, so generate stops first on the 450 total; the cap is
+      // shown below on variant-gate.mjs's own outputs() in the same copy
+      ['(4) an 11-word line on the "/" row', copyWith(SLASH, line(F.HOWTO, neutral(11))), `${ID}: library lint:\n  (sheet): visible words > 450 (${450 - room + 11})`],
       ['V4: room + 1 words on the "/" row', copyWith(SLASH, line(F.HOWTO, neutral(room + 1))), `${ID}: library lint:\n  (sheet): visible words > 450 (451)`],
     ];
-    const STAMP = `import { writeScratchStamps } from './tools/plates/library/research/stamps.mjs'; writeScratchStamps(process.cwd(), ['${ID}']);`;
+    const STAMP = (ids: string[]) => `import { writeScratchStamps } from './tools/plates/library/research/stamps.mjs'; writeScratchStamps(process.cwd(), ${JSON.stringify(ids)});`;
     const results = await mapLimit(cases, 2, async ([name, r, want, restamp]) => {
-      const s = restamp ? await node(r, ['--input-type=module', '-e', STAMP]) : { code: 0, out: '' };
+      const s = restamp ? await node(r, ['--input-type=module', '-e', STAMP(restamp)]) : { code: 0, out: '' };
       if (s.code !== 0) return { name, r, want, ...s };
       return { name, r, want, ...(await node(r, ['tools/plates/generate.mjs'])) };
     });
@@ -195,6 +201,10 @@ describe('LIB-5v V3/V4: the generator refuses a bad line on any shipped row (E1\
       if (x.want === null) expect([x.name, x.code, x.out.slice(-300)]).toEqual([x.name, 0, expect.stringContaining('generate: wrote')]);
       else { expect([x.name, x.code]).not.toEqual([x.name, 0]); expect(x.out, x.name).toContain(`Error: ${x.want}`); }
     }
+    const gate = (r: string) => node(r, ['--input-type=module', '-e', "await (await import('./tools/plates/gen/variant-gate.mjs')).outputs(); console.log('variant-gate: pass');"]);
+    const [cap, ok, plain] = await Promise.all([gate(results[3]!.r), gate(results[1]!.r), gate(tree)]);
+    expect([cap.code, cap.out]).toEqual([1, expect.stringContaining(`Error: ${ID}: copy.variantLine: caption > 10 words (11 words)`)]);
+    expect([ok.code, ok.out, plain.code, plain.out]).toEqual([0, expect.stringContaining('variant-gate: pass'), 0, expect.stringContaining('variant-gate: pass')]);
     const built = readFileSync(join(results[1]!.r, `src/howto/generated/ht-${F.CHROME}.ts`), 'utf8');
     expect(built).toContain(`"variantLine": ${JSON.stringify(clean)}`);
   }, T);
