@@ -1,0 +1,853 @@
+{
+ "id": "standing_calf_raise",
+ "libId": "lib_standing_calf_raise",
+ "name": "Standing Calf Raise",
+ "family": "Calf raise",
+ "tier": "B",
+ "tierNote": "Safety tier B (content.md appendix B); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "balance",
+  "contact": [
+   "brace-pad"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Set the shoulder pads to your height and put the balls of the feet on the edge of the platform (the foot support) with the heels hanging off.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr",
+    "fv-mscr",
+    "sl-scr"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Adjust shoulder pads to your height and step onto the platform with balls of feet on the edge, heels hanging off.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "fv-mscr",
+     "text": "Then, place the balls of your feet on the edge of the platforms so your heels are hanging off.",
+     "where": "Exercise Instructions, step 2"
+    },
+    {
+     "source": "sl-scr",
+     "text": "Place your toes and the ball of your feet on the foot support. Place the shoulder pads against your shoulders and stand upright in the starting position.",
+     "where": "How to Do Standing Calf Raises, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Position the shoulders under the pads, grasp the handles and stand upright with the knees slightly bent and the core engaged.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr",
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Position shoulders under pads, grasp handles, and stand upright with knees slightly bent and core engaged.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Step onto the standing calf raise machine, positioning your shoulders under the pads and the balls of your feet on the footplate. Your heels should be hanging off the edge.",
+     "where": "How to Do Standing Calf Raises, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Grasp the handles for stability and use them for balance only; do not pull yourself up with them.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "fv-calf-svs",
+     "text": "Grasp the handles on the machine for stability.",
+     "where": "How to Do Standing Calf Raises, step 3"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Use the handles for balance only; don’t pull yourself up with them.",
+     "where": "Pro Tips (standing)"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "The feet are parallel and hip-width apart.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "fv-calf-svs",
+     "text": "Make sure your feet are parallel and hip-width apart for balanced muscle engagement.",
+     "where": "Pro Tips (standing)"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Keep the knees slightly bent (soft) and stable through the whole set: one source says the slight bend protects the joints, another that it avoids strain.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr",
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Keep knees slightly bent and posture straight.",
+     "where": "How to Perform, step 4"
+    },
+    {
+     "source": "motra-scr",
+     "text": "Keep knees soft",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "motra-scr",
+     "text": "Maintain slight knee bend to protect joints",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Keep your knees slightly bent but stable throughout the exercise to avoid strain.",
+     "where": "Pro Tips (standing)"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "One source's common-mistakes list for the machine standing calf raise names, in this order: bouncing at the bottom, locking the knees, leaning forward, partial range of motion and using too much weight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Bouncing at bottom",
+     "where": "Safety, Common Mistakes, item 1"
+    },
+    {
+     "source": "motra-scr",
+     "text": "Locking knees",
+     "where": "Safety, Common Mistakes, item 2"
+    },
+    {
+     "source": "motra-scr",
+     "text": "Leaning forward",
+     "where": "Safety, Common Mistakes, item 3"
+    },
+    {
+     "source": "motra-scr",
+     "text": "Partial range of motion",
+     "where": "Safety, Common Mistakes, item 4"
+    },
+    {
+     "source": "motra-scr",
+     "text": "Using too much weight",
+     "where": "Safety, Common Mistakes, item 5"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Push through the balls of the feet to raise the heels as high as you can, extending the ankles fully.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr",
+    "fv-calf-svs",
+    "sl-scr"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Push through balls of feet to raise heels high, fully extending ankles.",
+     "where": "How to Perform, step 1"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Push through the balls of your feet to raise your heels as high as you can.",
+     "where": "How to Do Standing Calf Raises, step 5"
+    },
+    {
+     "source": "sl-scr",
+     "text": "Push yourself up by extending your ankles.",
+     "where": "How to Do Standing Calf Raises, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "At the top, squeeze the calves and hold or pause briefly.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr",
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Squeeze calves at the top and hold briefly.",
+     "where": "How to Perform, step 2"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "At the top, pause briefly to squeeze your calf muscles.",
+     "where": "How to Do Standing Calf Raises, step 5"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Lower the heels slowly and under control until the calves stretch.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr",
+    "fv-calf-svs",
+    "fv-mscr",
+    "sl-scr"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Slowly lower heels below platform level for a full stretch.",
+     "where": "How to Perform, step 3"
+    },
+    {
+     "source": "motra-scr",
+     "text": "Control the descent",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Slowly lower your heels back to the starting position, feeling the stretch in your calf muscles.",
+     "where": "How to Do Standing Calf Raises, step 6"
+    },
+    {
+     "source": "fv-mscr",
+     "text": "Slowly lower your heels until you feel a slight stretch in your calf muscles.",
+     "where": "Exercise Instructions, step 4"
+    },
+    {
+     "source": "sl-scr",
+     "text": "Lower yourself down by bending your ankles in a controlled movement.",
+     "where": "How to Do Standing Calf Raises, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Range: the sources ask for a full range, heels as low as they comfortably go and as high as possible. How deep differs: one says a full stretch below the platform, one as much as comfortably possible, and one warns not to overstretch; the card follows a full but comfortable stretch.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr",
+    "fv-calf-svs",
+    "fv-mscr"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Lower heels until calves are fully stretched below platform; raise until ankles are fully extended with heels highest possible.",
+     "where": "Range of Motion"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Focus on a full range of motion, lowering your heels as much as possible and raising them as high as you can.",
+     "where": "Pro Tips (standing)"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Lower your heels towards the ground, stretching your calf muscles as much as comfortably possible. This is your starting position.",
+     "where": "How to Do Standing Calf Raises, step 4"
+    },
+    {
+     "source": "fv-mscr",
+     "text": "Do not overstretch your calves during the negative portion of the exercise.",
+     "where": "Variations & Tips"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Stay upright with the back straight and the core engaged, looking straight ahead, not down at the feet.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr",
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Stay upright",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Keep your back straight and your core engaged. Look straight ahead and not down at your feet.",
+     "where": "How to Do Standing Calf Raises, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Breathe out as the heels rise and in as they lower.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Exhale as you raise your heels; inhale as you lower them. Brace core throughout.",
+     "where": "Coaching Tips, Breathing"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "The calves are the target: the standing calf raise trains both calf muscles, the soleus and the gastrocnemius, at once. In the seated version the soleus is emphasized and the gastrocnemius takes a secondary role; standing, all three calf muscles share top billing.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr",
+    "sl-scr",
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Calves",
+     "where": "Primary Muscle Groups"
+    },
+    {
+     "source": "sl-scr",
+     "text": "Standing calf raises train both the inner (solues) and outer (gastrocnemius) calf muscles simultaneously.",
+     "where": "Commentary"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "So, while seated calf raises emphasize the soleus muscle and the gastrocnemius and plantaris take a secondary role, during standing calf raises, all three muscles share top billing.",
+     "where": "Standing Calf Raise: The Basics, Muscles Worked"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "In 14 untrained adults training one leg standing (knee straight) and the other seated (knee bent 90 degrees) for 12 weeks, the gastrocnemius grew much more on the standing leg (lateral 12.4% vs 1.7%, medial 9.2% vs 0.6%) and the soleus grew about the same; the authors recommend the standing calf raise for gastrocnemius growth.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "kinoshita2023"
+   ],
+   "quotes": [
+    {
+     "source": "kinoshita2023",
+     "text": "Fourteen untrained adults conducted calf-raise training with one leg in a standing/knee-extended position and the other leg in a seated/knee 90°-flexed position at 70% of one-repetition maximum.",
+     "where": "abstract, methods"
+    },
+    {
+     "source": "kinoshita2023",
+     "text": "Each leg performed 10 repetitions/set, 5 sets/session, 2 sessions/week for 12 weeks.",
+     "where": "abstract, methods"
+    },
+    {
+     "source": "kinoshita2023",
+     "text": "The changes in muscle volume were significantly greater for the standing than seated condition leg in the lateral gastrocnemius (12.4% vs. 1.7%), medial gastrocnemius (9.2% vs. 0.6%), and whole triceps surae (5.6% vs. 2.1%) (p ≤ 0.011), but similar between legs in the soleus (2.1% vs. 2.9%, p = 0.410).",
+     "where": "abstract, results"
+    },
+    {
+     "source": "kinoshita2023",
+     "text": "Standing calf-raise was by far more effective, therefore recommended, than seated calf-raise for inducing muscle hypertrophy of the gastrocnemius and consequently the whole triceps surae.",
+     "where": "abstract, conclusion"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Avoid excessive weight to prevent straining the Achilles tendon.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Avoid excessive weight to prevent Achilles strain",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Stop if sharp pain occurs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-scr"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Stop if sharp pain occurs",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "With the load on the shoulders, heavy standing calf raises put a lot of vertical stress on the spine, which can compress the discs and could even cause back pain; with lower back issues, go cautiously.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "fv-calf-svs",
+     "text": "With the load resting on your shoulders, heavy calf raises put a lot of vertical stress on your spine, which can cause compression of the intervertebral disks. In short, this exercise could make you temporarily shorter and could even cause back pain.",
+     "where": "Standing Calf Raise – Cons, Spinal Compression and Lower Back Stress"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "However, if you have any lower back issues, you may want to proceed cautiously with standing calf raises, as they may exacerbate it.",
+     "where": "Standing Calf Raise – Cons, Spinal Compression and Lower Back Stress"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "Choose a weight you can lift for 10-12 reps with good form; if new to the exercise, start lighter and work up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-calf-svs",
+    "motra-scr"
+   ],
+   "quotes": [
+    {
+     "source": "fv-calf-svs",
+     "text": "Choose a weight that allows you to perform 10-12 reps with good form. If you’re new to this exercise, start lighter and work your way up.",
+     "where": "How to Do Standing Calf Raises, step 1"
+    },
+    {
+     "source": "motra-scr",
+     "text": "Use lighter weight if new to exercise.",
+     "where": "Safety, Spotting"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "One source gives the tempo 2-1-2, and its Tempo tooltip gives the order: lowering, bottom pause, lifting, top pause, in seconds. Read in that order: 2 s down, a 1 s pause at the bottom, 2 s up; the page shows three numbers, so no top-pause seconds are given.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "motra-scr"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "2-1-2",
+     "where": "Tempo"
+    },
+    {
+     "source": "motra-scr",
+     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+     "where": "Tempo heading tooltip"
+    }
+   ]
+  },
+  {
+   "id": "c20",
+   "text": "Two sources ask for a brief hold or pause at the top, after the lift, and give no seconds for it; the plate's 1 s pause after the lift is a drawing convention.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "motra-scr",
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "motra-scr",
+     "text": "Squeeze calves at the top and hold briefly.",
+     "where": "How to Perform, step 2"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "At the top, pause briefly to squeeze your calf muscles.",
+     "where": "How to Do Standing Calf Raises, step 5"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "motra-scr",
+   "url": "https://www.motra.com/exercises/machineStandingCalfRaise",
+   "title": "Machine Standing Calf Raise - Exercise Guide | Motra",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-calf-svs",
+   "url": "https://fitnessvolt.com/seated-vs-standing-calf-raise/",
+   "title": "Seated Vs. Standing Calf Raise – Which One Should You Do? – Fitness Volt",
+   "kind": "coach",
+   "year": 2023,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-mscr",
+   "url": "https://fitnessvolt.com/machine-standing-calf-raise-calves/",
+   "title": "Gains Galore: Master the Machine Standing Calf Raise! – Fitness Volt",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-scr",
+   "url": "https://www.strengthlog.com/standing-calf-raise/",
+   "title": "How to Do Standing Calf Raise: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "kinoshita2023",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38156065/",
+   "title": "Triceps surae muscle hypertrophy is greater after standing versus seated calf-raise training",
+   "kind": "peer-reviewed",
+   "year": 2023,
+   "pmid": 38156065,
+   "access": "abstract",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the knee bend (the top fault, locked knees, c5, c6), the heels dropping below and rising above the platform edge (c9, c7) and the upright trunk under the pads (c2, c11) read from the side.",
+  "equipment": "Standing calf raise machine (census calfMachine, compose): shoulder pads set to the lifter's height (c1), a raised platform edge under the balls of the feet with the heels free (c1), handles by the pads (c2, c3).",
+  "start": "Bottom of the rep: standing upright with the shoulders under the pads (c2, c11); balls of the feet on the platform edge, feet parallel and hip-width apart (c1, c4); knees slightly bent (c5); heels lowered below the platform to a full but comfortable stretch (c9, c10); hands on the handles (c2, c3). No source gives joint angles.",
+  "end": "Top of the rep: heels raised as high as possible, ankles fully extended (c7, c10); knees still slightly bent, trunk upright, unchanged from the start (c5, c11).",
+  "checkpoints": [
+   {
+    "label": "Balls of feet",
+    "what": "Balls of the feet on the platform edge, heels hanging off.",
+    "claim": "c1"
+   },
+   {
+    "label": "Knees soft",
+    "what": "Knees slightly bent and stable, never locked.",
+    "claim": [
+     "c5",
+     "c6"
+    ]
+   },
+   {
+    "label": "Upright",
+    "what": "Stand upright under the pads, back straight.",
+    "claim": [
+     "c2",
+     "c11"
+    ]
+   }
+  ],
+  "mistake": {
+   "what": "Knees locked straight while the heels rise and lower.",
+   "why": "Locking the knees is on Motra's common-mistakes list (c6); Motra says to keep a slight knee bend to protect the joints, and Fitness Volt to keep the knees slightly bent but stable to avoid strain (c5).",
+   "claim": [
+    "c6",
+    "c5"
+   ],
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: locking the knees (c6, c5). Candidates: the load is not a candidate, so Motra's list item \"Using too much weight\" (c6) and \"Avoid excessive weight to prevent Achilles strain\" (c15) are set aside; setting the shoulder pads (c1) is a setup choice. Step 1: no frequency word for a fault of this exercise. Set aside: Fitness Volt's \"the standing calf raise is arguably the most common and popular choice\", \"Most gyms have a standing calf raise machine\" and \"when most people talk about calf raises, it’s standing calf raises that they’re referring to\" are about the exercise, its machines and its name; its \"some lifters find building bigger calves easy\" is about training; its seated lines (\"The seated calf raise is often overshadowed by the standing variation\", \"less likely to result in form errors\") are another exercise; Motra's \"Popularity Score\" is about the exercise. Step 2: one named fault is tied to harm: locking the knees (Motra's list item 2, \"Locking knees\", c6), by two sources: Motra's \"Maintain slight knee bend to protect joints\" (D-SUP-PROTECT: the cue that corrects the fault protects a named body part) and Fitness Volt's \"Keep your knees slightly bent but stable throughout the exercise to avoid strain.\" ('strain' counts as harm by the lb6 precedent) (c5). Set aside at step 2: \"Avoid excessive weight to prevent Achilles strain\" (c15) ties harm to the load, which is not a candidate; Fitness Volt's \"heavy calf raises put a lot of vertical stress on your spine, which can cause compression of the intervertebral disks\" and \"could even cause back pain\" (c17) are about the load on the shoulders and name no fault; its \"Even padded standing calf raise machines put a lot of pressure on your shoulders.\" is about the machine, and 'pressure' is not an LR-31 harm word; Motra's \"Stop if sharp pain occurs\" (c16) names no fault, and its \"When to Avoid\" items are conditions; Fitness Volt's \"Do not overstretch your calves during the negative portion of the exercise.\" (c10) states no harm; Motra's other list items, \"Bouncing at bottom\", \"Leaning forward\" and \"Partial range of motion\" (c6), are tied to no harm (Fitness Volt's \"half reps get half results!\" is in its seated tips and states no harm). Step 3 is not needed; it would give bouncing at the bottom, first on Motra's list, which is seen only as speed. drawable true: the side view shows a straight, locked knee against a slightly bent one, a still sign. handlingMistakes keeps Motra's list order after the top fault: bouncing at the bottom (speed only), then leaning forward."
+  },
+  "tells": [
+   {
+    "text": "Heels rise as high as you can",
+    "claim": "c7"
+   },
+   {
+    "text": "Calves stretch at the bottom",
+    "claim": "c9"
+   }
+  ],
+  "tempo": {
+   "up": 2,
+   "down": 2,
+   "pause": 1,
+   "claim": [
+    "c19",
+    "c20"
+   ],
+   "text": "Down 2 and up 2 are Motra's 2-1-2 (c19, WEAK), read in its Tempo tooltip's order: lowering, bottom pause, lifting, top pause (R-LB6-2, R-LB6-7); the page shows three numbers, read as the first three, with no top-pause seconds. Its 1 s bottom pause sits at the stretch with the heels low, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the lift: Motra's \"Squeeze calves at the top and hold briefly.\" and Fitness Volt's \"At the top, pause briefly to squeeze your calf muscles.\" give no seconds, so the 1 s is a drawing convention (c20, WEAK; LR-33)."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Hands on the machine's handles, for balance only (c2, c3).",
+  "width": "",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "",
+  "claims": [
+   "c2",
+   "c3"
+  ],
+  "note": "Hand archetype balance: the hands steady the body, no hand zoom needed. No source gives a hand width, thumb or wrist position."
+ },
+ "setup": [
+  {
+   "step": "Set the shoulder pads to your height.",
+   "claim": "c1"
+  },
+  {
+   "step": "Balls of your feet on the edge, heels hanging off.",
+   "claim": "c1"
+  },
+  {
+   "step": "Feet parallel and hip-width apart.",
+   "claim": "c4"
+  },
+  {
+   "step": "Shoulders under the pads. Hold the handles for balance only.",
+   "claim": [
+    "c2",
+    "c3"
+   ]
+  },
+  {
+   "step": "Stand upright with your knees slightly bent.",
+   "claim": [
+    "c2",
+    "c5"
+   ]
+  }
+ ],
+ "posture": [
+  {
+   "point": "Knees slightly bent and stable the whole set.",
+   "claim": "c5"
+  },
+  {
+   "point": "Back straight. Look ahead, not down at your feet.",
+   "claim": "c11"
+  },
+  {
+   "point": "Push through the balls of your feet to raise your heels high.",
+   "claim": "c7"
+  },
+  {
+   "point": "Squeeze your calves and hold briefly at the top.",
+   "claim": "c8"
+  },
+  {
+   "point": "Lower slowly until your calves stretch.",
+   "claim": [
+    "c9",
+    "c10"
+   ]
+  },
+  {
+   "point": "Breathe out as you rise, in as you lower.",
+   "claim": "c12"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Locking the knees.",
+   "fix": "Keep a slight bend in your knees.",
+   "claim": [
+    "c6",
+    "c5"
+   ]
+  },
+  {
+   "mistake": "Bouncing at the bottom.",
+   "fix": "Lower slowly, with control.",
+   "claim": [
+    "c6",
+    "c9"
+   ]
+  },
+  {
+   "mistake": "Leaning forward.",
+   "fix": "Stay upright, back straight.",
+   "claim": [
+    "c6",
+    "c11"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "calves",
+    "claim": [
+     "c13",
+     "c14"
+    ]
+   }
+  ],
+  "secondary": [],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Calves",
+    "means": "Both calf muscles are working.",
+    "fix": "",
+    "claim": [
+     "c13",
+     "c14"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Knee",
+    "means": "Fault: locked knees.",
+    "fix": "Keep a slight bend in your knees.",
+    "claim": [
+     "c5",
+     "c6"
+    ],
+    "redFlag": "knee"
+   },
+   {
+    "where": "Achilles",
+    "means": "Too much weight can strain it.",
+    "fix": "Use less weight, and stop the set if pain is sharp.",
+    "claim": [
+     "c15",
+     "c16"
+    ],
+    "redFlag": null
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Knees: keep a slight bend to protect the joints.",
+   "claim": "c5"
+  },
+  {
+   "risk": "Too much weight can strain the Achilles.",
+   "claim": "c15"
+  },
+  {
+   "risk": "Heavy loads stress the spine and could even cause back pain.",
+   "claim": "c17"
+  }
+ ],
+ "redFlags": [
+  "knee"
+ ],
+ "zooms": [
+  {
+   "key": "foot-edge",
+   "kind": "posture",
+   "right": "Balls of the feet on the edge, heels off.",
+   "wrong": null,
+   "claim": "c1"
+  },
+  {
+   "key": "knee",
+   "kind": "posture",
+   "right": "Knee slightly bent and stable.",
+   "wrong": "Knee locked straight.",
+   "claim": [
+    "c5",
+    "c6"
+   ]
+  },
+  {
+   "key": "heel-top",
+   "kind": "posture",
+   "right": "Heels as high as they go, calves squeezed.",
+   "wrong": "Heels only part way up.",
+   "claim": [
+    "c7",
+    "c8",
+    "c6"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "calves primary matches every read source (c13; Kinoshita's growth data, c14). Motra alone lists glutes as secondary and hamstrings and abs as accessory; no other read source does, so they are not added."
+ },
+ "anchorSource": "motra-scr",
+ "loadProgression": {
+  "text": "Pick a weight you can lift 10-12 times with good form. New to it? Start lighter and work up.",
+  "claim": "c18"
+ },
+ "gaps": [],
+ "notes": [
+  "Start head: claude/libht-research @ 6d253b9e. Own parent (content.md Appendix A, 'New parents on their own'); no inherit entries.",
+  "Anchor: Motra's machine standing calf raise page, read in full (How to Perform, Coaching Tips, Tempo with its tooltip, Range of Motion, Safety, Common Mistakes). Fitness Volt's seated-vs-standing article (both how-to sections, pro tips, pros and cons), Fitness Volt's machine standing calf raise guide and StrengthLog's standing calf raise page were read in full, and the Kinoshita 2023 abstract through efetch.",
+  "Shared cards: get-in-out (shared/get-in-out.json) leaves standing_calf_raise out of appliesTo (its appliesToWhy: standing); selector-pin does not list it. Nothing is taken from either.",
+  "Related card cards/leg_press_calf_raise.json was read for shape only; no line or claim is carried from it. Every line here rests on this card's own fetched claims.",
+  "Stretch depth conflict (c10): Motra says a full stretch below the platform, Fitness Volt's article as much as comfortably possible, and Fitness Volt's machine guide warns not to overstretch. The card draws and says a full but comfortable stretch.",
+  "The Achilles feel row keeps Motra's stop quote (c16, \"Stop if sharp pain occurs\"; R-LB3-4, R-LB6-6). No shared red-flag box covers the ankle, so its redFlag is null. The knee row is place + the source's fault + fix (LR-6), linking the knee box.",
+  "The spine risk (c17) keeps Fitness Volt's 'could even'. No back feel row is written: no source gives a fix for it beyond going cautiously with existing back issues, so no back box is linked (LR-6).",
+  "Read and not cited: ACE's Calf Raises page (exercise-library/51) is the barbell-on-the-back version on the floor, another version, so it is not used; ACE's Calf Raise page (exercise-library/294) is a seated, straight-leg selectorized machine, another exercise. BarBend has no standing calf raise page (barbend.com/standing-calf-raise/ 404); its best-calf-exercises list has no standing machine section. Healthline, Garage Gym Reviews, Men's Health and NASM guessed URLs gave 404; Verywell Fit 402; Muscle & Fitness 502."
+ ]
+}

@@ -1,0 +1,871 @@
+{
+ "id": "seated_calf_raise",
+ "libId": "lib_seated_calf_raise",
+ "name": "Seated Calf Raise",
+ "family": "Calf raise",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "balance",
+  "contact": [
+   "pivot-pad"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Sit on the machine with the thighs secured under the pad and the knees bent at 90 degrees, sitting up straight, balls of the feet on the step and the load on the thighs above the knees.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated",
+    "bb-best-calf",
+    "sl-seated"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Sit on the seated calf raise machine with thighs secured under the pad and knees bent at 90 degrees.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "bb-best-calf",
+     "text": "Sit up straight with your legs bent at 90 degrees with the balls of your feet on the step and the load above the knee on the thigh.",
+     "where": "Seated Calf Raise, How to Do the Seated Calf Raise"
+    },
+    {
+     "source": "sl-seated",
+     "text": "Sit down on the seat, and adjust the knee pad to correct height. Place your toes and the ball of your feet on the foot support.",
+     "where": "How to Do Seated Calf Raises, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Set the leg pad across the thighs just above the knees, snug but not too tight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "fv-calf-svs",
+     "text": "Sit down on the calf raise machine and adjust the leg pad so that it sits across your thighs, just above the knees. Make sure it’s snug but not too tight.",
+     "where": "How to Do Seated Calf Raises, step 2"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Position the thigh pad so it’s just above your knees for comfort.",
+     "where": "Pro Tips (seated)"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Balls of the feet on the platform with the heels hanging off, toes forward, feet hip-width apart and parallel.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated",
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Place balls of feet on the platform with heels hanging off, toes forward and hip-width apart.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Place the balls of your feet on the footplate, with your heels hanging off the edge. Your feet should be hip-width apart and parallel to each other.",
+     "where": "How to Do Seated Calf Raises, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "The shins are vertical before the set starts.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "fv-calf-svs",
+     "text": "Make sure your shins are vertical before starting your set.",
+     "where": "Pro Tips (seated)"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Hold the handles (or the sides of the seat) for stability, with the back straight and the core engaged.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "fv-calf-svs",
+     "text": "Hold onto the handles or the sides of the seat for stability. Make sure your back is straight, and your core is engaged.",
+     "where": "How to Do Seated Calf Raises, step 4"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Load the plates with the machine safety engaged; grip the handles and release the safety lever by pressing through the toes; after the set, re-engage the safety, and engage it before unloading. Another source moves the weight-holding piece aside so the weight can be lowered all the way.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated",
+    "fv-mseated"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Load weight plates onto the machine.",
+     "where": "How to Perform, step 1"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Grip handles and release the safety lever by pressing through your toes.",
+     "where": "How to Perform, step 2"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Lower controlled to repeat, then re-engage safety after set.",
+     "where": "How to Perform, step 7"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Engage machine safety before loading or unloading",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "fv-mseated",
+     "text": "Move the machine piece that holds the weight up to the side so that you can lower the weight all the way down for a more full range of motion.",
+     "where": "Exercise Instructions, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Lower the heels slowly below the platform to a deep stretch and pause briefly there. One source pauses three seconds at the bottom.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated",
+    "fv-calf-svs",
+    "bb-best-calf"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Inhale and slowly lower your heels below the platform level for a deep stretch.",
+     "where": "How to Perform, step 3"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Pause briefly at the bottom to feel the calf stretch.",
+     "where": "How to Perform, step 4"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Slowly lower your heels towards the ground, going as far down as comfortably possible to get a good stretch in the calf muscles. This is your starting position.",
+     "where": "How to Do Seated Calf Raises, step 5"
+    },
+    {
+     "source": "bb-best-calf",
+     "text": "Unrack the machine and slowly lower your heels as far as possible to the floor, pausing for three seconds.",
+     "where": "Seated Calf Raise, How to Do the Seated Calf Raise"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Push through the balls of the feet to raise the heels as high as possible, extending the ankles.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated",
+    "fv-calf-svs",
+    "sl-seated"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Exhale and push through the balls of your feet to raise heels as high as possible.",
+     "where": "How to Perform, step 5"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Push through the balls of your feet to raise your heels as high as possible.",
+     "where": "How to Do Seated Calf Raises, step 6"
+    },
+    {
+     "source": "sl-seated",
+     "text": "Push the weight up by extending your ankles.",
+     "where": "How to Do Seated Calf Raises, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Squeeze the calves at the top; one source says for one second.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated",
+    "fv-calf-svs",
+    "bb-best-calf"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Squeeze calves at the top for one second.",
+     "where": "How to Perform, step 6"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "At the top of the movement, pause for a moment and squeeze your calf muscles for maximum contraction.",
+     "where": "How to Do Seated Calf Raises, step 6"
+    },
+    {
+     "source": "bb-best-calf",
+     "text": "Then lift your heels as far as possible, squeezing your calves at the top of the movement.",
+     "where": "Seated Calf Raise, How to Do the Seated Calf Raise"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "One source's common-mistakes list for the machine seated calf raise names, in this order: using momentum or bouncing at the bottom, incomplete range of motion, letting the ankles roll inward or outward, poor posture with a rounded back, and excessive weight compromising form.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Using momentum or bouncing at bottom",
+     "where": "Safety, Common Mistakes, item 1"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Incomplete range of motion",
+     "where": "Safety, Common Mistakes, item 2"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Allowing ankles to roll inward or outward",
+     "where": "Safety, Common Mistakes, item 3"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Poor posture with rounded back",
+     "where": "Safety, Common Mistakes, item 4"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Excessive weight compromising form",
+     "where": "Safety, Common Mistakes, item 5"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Use controlled movements, controlling the descent and not bouncing, to protect the Achilles tendon.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Use controlled movements to protect Achilles tendon",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Control the descent",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Avoid bouncing",
+     "where": "Coaching Tips, Form Cues"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Range: lower the heels to the deepest stretch below the platform and raise them to full ankle extension, using as large a range as possible; but the stretch should stay comfortable: one source warns that overstretching can cause tendon issues in the lower leg, and another lowers only to a slight stretch.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated",
+    "fv-calf-svs",
+    "fv-mseated"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Lower heels to maximum dorsiflexion below platform level, then raise to full ankle extension where calves are fully contracted.",
+     "where": "Range of Motion"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Ensure full but comfortable stretch without overstretching",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Use as large a range of motion as possible; half reps get half results!",
+     "where": "Pro Tips (seated)"
+    },
+    {
+     "source": "fv-mseated",
+     "text": "Do not overstretch your calves as this can cause tendon issues in the lower leg.",
+     "where": "Variations & Tips"
+    },
+    {
+     "source": "fv-mseated",
+     "text": "Now, slowly lower your heels down until you feel a slight stretch in your calves.",
+     "where": "Exercise Instructions, step 4"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Keep the knees bent at 90 degrees and the back straight; avoid leaning back, which takes work away from the calves.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated",
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Keep knees bent at 90 degrees",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Maintain straight back",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Avoid leaning back, as doing so takes work away from your calves.",
+     "where": "Pro Tips (seated)"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Breathe in while lowering and out while raising the heels.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "Inhale during the lowering phase and exhale forcefully as you raise your heels.",
+     "where": "Coaching Tips, Breathing"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "The calves are the target; seated, the soleus (inner calf) does most of the work because the gastrocnemius, which crosses the knee, is shortened and slackened.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-seated",
+    "sl-seated",
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "A machine-based isolation exercise targeting the soleus and gastrocnemius muscles to build calf strength and hypertrophy; performed seated with knees bent for focused lower leg work.",
+     "where": "About Exercise"
+    },
+    {
+     "source": "sl-seated",
+     "text": "Seated calf raises mostly train the inner calf muscle (solues), because the outer calf muscle (gastrocnemius) is in a shortened position.",
+     "where": "Commentary"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "The soleus is the agonist or prime mover during seated calf raises. In other words, it’s the muscle doing most of the work.",
+     "where": "Seated Calf Raise: The Basics, Soleus"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Because it crosses the back of your knee, the gastrocnemius is in a somewhat slackened position during seated calf raises.",
+     "where": "Seated Calf Raise: The Basics, Gastrocnemius"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "In 14 untrained adults training one leg seated (knee bent 90 degrees) and the other standing for 12 weeks, the gastrocnemius of the seated leg did not grow significantly, while the soleus grew about the same on both legs.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "kinoshita2023"
+   ],
+   "quotes": [
+    {
+     "source": "kinoshita2023",
+     "text": "Fourteen untrained adults conducted calf-raise training with one leg in a standing/knee-extended position and the other leg in a seated/knee 90°-flexed position at 70% of one-repetition maximum.",
+     "where": "abstract, methods"
+    },
+    {
+     "source": "kinoshita2023",
+     "text": "Each leg performed 10 repetitions/set, 5 sets/session, 2 sessions/week for 12 weeks.",
+     "where": "abstract, methods"
+    },
+    {
+     "source": "kinoshita2023",
+     "text": "Muscle volume significantly increased in all three muscles and the whole triceps surae for both legs (p ≤ 0.031), except for the gastrocnemius muscles of the seated condition leg (p = 0.147-0.508).",
+     "where": "abstract, results"
+    },
+    {
+     "source": "kinoshita2023",
+     "text": "The changes in muscle volume were significantly greater for the standing than seated condition leg in the lateral gastrocnemius (12.4% vs. 1.7%), medial gastrocnemius (9.2% vs. 0.6%), and whole triceps surae (5.6% vs. 2.1%) (p ≤ 0.011), but similar between legs in the soleus (2.1% vs. 2.9%, p = 0.410).",
+     "where": "abstract, results"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "Heavy weights put a lot of stress on the thighs under the pad, which some find uncomfortable; getting the pads in the right place helps, but seated calf raises can still hurt the legs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-calf-svs"
+   ],
+   "quotes": [
+    {
+     "source": "fv-calf-svs",
+     "text": "Using heavy weights puts a lot of stress on your thighs. As such, some people may find the seated position uncomfortable or awkward, affecting their exercise enjoyment.",
+     "where": "Seated Calf Raise – Cons, Uncomfortable for Some People"
+    },
+    {
+     "source": "fv-calf-svs",
+     "text": "Getting the pads in the right place can help with this problem, but even then, and especially if you are lightly muscled or very lean, seated calf raises can hurt your legs.",
+     "where": "Seated Calf Raise – Cons, Uncomfortable for Some People"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "Pick a weight you can lift for 10-12 reps with good form, and start light to master the form.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-calf-svs",
+    "motra-seated"
+   ],
+   "quotes": [
+    {
+     "source": "fv-calf-svs",
+     "text": "Start by selecting a weight you can lift for 10-12 reps with good form.",
+     "where": "How to Do Seated Calf Raises, step 1"
+    },
+    {
+     "source": "motra-seated",
+     "text": "Start with light weight to master form",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "One source gives the tempo 2-1-2, and its Tempo tooltip gives the order: lowering, bottom pause, lifting, top pause, in seconds. Read in that order: 2 s down, a 1 s pause at the bottom, 2 s up; the same page squeezes for one second at the top (c9).",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "motra-seated"
+   ],
+   "quotes": [
+    {
+     "source": "motra-seated",
+     "text": "2-1-2",
+     "where": "Tempo"
+    },
+    {
+     "source": "motra-seated",
+     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+     "where": "Tempo heading tooltip"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "motra-seated",
+   "url": "https://www.motra.com/exercises/seatedCalfRaiseMachine",
+   "title": "Machine Seated Calf Raise - Exercise Guide | Motra",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-calf-svs",
+   "url": "https://fitnessvolt.com/seated-vs-standing-calf-raise/",
+   "title": "Seated Vs. Standing Calf Raise – Which One Should You Do? – Fitness Volt",
+   "kind": "coach",
+   "year": 2023,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-mseated",
+   "url": "https://fitnessvolt.com/machine-seated-calf-raise/",
+   "title": "Ultimate Guide to Machine Seated Calf Raise for Stronger Calves – Fitness Volt",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "bb-best-calf",
+   "url": "https://barbend.com/best-calf-exercises/",
+   "title": "The 8 Best Calf Exercises for Lower Body Support and Power | BarBend",
+   "kind": "coach",
+   "year": 2026,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-seated",
+   "url": "https://www.strengthlog.com/seated-calf-raise/",
+   "title": "How to Do Seated Calf Raise: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "kinoshita2023",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/38156065/",
+   "title": "Triceps surae muscle hypertrophy is greater after standing versus seated calf-raise training",
+   "kind": "peer-reviewed",
+   "year": 2023,
+   "pmid": 38156065,
+   "access": "abstract",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the 90-degree knee under the pad (c1, c2), the vertical shin (c4) and the heels dropping below and rising above the platform (c7, c8, c12) read from the side. The top fault, bouncing at the bottom (c10, c11), shows only as speed, so the plate draws incomplete range of motion (c10, c12), the heels stopping part way.",
+  "equipment": "Seated calf raise machine (census calfMachine, compose, with the kneePad roller pad): knee pad lever snug across the thighs just above the knees (c1, c2), foot platform under the balls of the feet with the heels free (c3), safety lever and handles by the pad (c5, c6).",
+  "start": "Bottom of the rep: seated upright, back straight (c5, c13); knees bent at 90 degrees with the shins vertical (c1, c4); pad across the thighs just above the knees (c2); balls of the feet on the platform, hip-width, toes forward, heels below the platform at a deep but comfortable stretch (c3, c7, c12); hands on the handles (c5).",
+  "end": "Top of the rep: heels as high as possible, ankles fully extended (c8, c12); knees, shins, thighs and trunk unchanged (c13); the pad lifted by the thighs (c1).",
+  "checkpoints": [
+   {
+    "label": "Pad above knees",
+    "what": "Pad snug across the thighs, just above the knees.",
+    "claim": "c2"
+   },
+   {
+    "label": "Knees at 90",
+    "what": "Knees bent at 90 degrees, shins vertical.",
+    "claim": [
+     "c1",
+     "c4",
+     "c13"
+    ]
+   },
+   {
+    "label": "Balls of feet",
+    "what": "Balls of the feet on the platform, heels hanging off.",
+    "claim": "c3"
+   }
+  ],
+  "mistake": {
+   "what": "Heels moving only part way: no deep stretch at the bottom or no full rise at the top.",
+   "why": "The top fault, bouncing or using momentum at the bottom (Motra's common-mistakes item 1; controlled movements protect the Achilles tendon, c10, c11), shows only as speed, so the plate draws the next fault by the same steps: incomplete range of motion, next on Motra's list (c10), against its full range from maximum dorsiflexion to full ankle extension (c12).",
+   "claim": [
+    "c10",
+    "c12"
+   ],
+   "drawable": false,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: using momentum or bouncing at the bottom (c10, c11). Candidates: the load is not a candidate, so Motra's list item \"Excessive weight compromising form\" (c10) is set aside; the pad and seat setting (c2, c17) is a setup choice. Step 1: no frequency word for a fault of this exercise. Set aside: Fitness Volt's \"The seated calf raise is often overshadowed by the standing variation\" and \"the seated calf raise machine is generally less popular\" are about the exercise; \"usually tucked away in the corner of the gym\" and \"Most seated calf machines require very few adjustments\" are about the machines; \"some people may find the seated position uncomfortable\" uses 'some'; its standing lines (\"arguably the most common and popular choice\") are another exercise. BarBend's \"most people have a stubborn muscle group\" and \"some people skip calf training\" are about training. Fitness Volt's machine guide's \"the calf muscles are one of the most stubborn muscles\" is about the muscle. Step 2: one named fault is tied to harm: using momentum or bouncing at the bottom (Motra's list item 1, c10), by Motra's \"Use controlled movements to protect Achilles tendon\" (c11; D-SUP-PROTECT: the cue that corrects the fault protects a named body part); Motra's cues \"Control the descent\" and \"Avoid bouncing\" (c11) correct the same fault. Set aside at step 2: Fitness Volt's \"Do not overstretch your calves as this can cause tendon issues in the lower leg.\" (c12): 'issues' is not an LR-31 harm word, and overstretching is on no common-mistakes list; read as harm, it would still lose step 2's first tie-break (the one on a common-mistakes list). Motra's \"When to Avoid\" item \"Lower back pain if posture poor\" is a condition, not a harm tie for its list item 4 (\"Poor posture with rounded back\"); read as one, the rounded back would lose to bouncing on the list order (\"the earlier on a list that names both\"). Fitness Volt's \"Using heavy weights puts a lot of stress on your thighs\" and \"seated calf raises can hurt your legs\" (c17) are about the load and the pads, not a fault of the set; its \"Avoid leaning back, as doing so takes work away from your calves.\" (c13) states no harm; Motra's other list items, \"Incomplete range of motion\" and \"Allowing ankles to roll inward or outward\" (c10), are tied to no harm (Fitness Volt's \"half reps get half results!\" states no harm). drawable false: bouncing and momentum show only as speed (LR-31). The plate draws the next fault by the same steps: step 2 has no other candidate tied to harm, so step 3's first remaining fault on Motra's list, the one common-mistakes list written for this exercise, decides: incomplete range of motion (c10, c12), which the side view shows as the heels stopping part way. (Reading held for the lead: if Fitness Volt's 'tendon issues' or Motra's 'Lower back pain if posture poor' were read as harm ties, step 2 would give the plate fault instead: overstretching, or the rounded back, list item 4. Both are set aside here on LR-31's literal harm words and the face_pull 'When to Avoid' precedent.) The ankles rolling in or out (list item 3) is sideways and needs a front view. handlingMistakes[0] stays bouncing; [1] incomplete range; [2] the ankles rolling, in Motra's list order."
+  },
+  "tells": [
+   {
+    "text": "Heels drop below the platform",
+    "claim": "c7"
+   },
+   {
+    "text": "One-second squeeze at the top",
+    "claim": "c9"
+   }
+  ],
+  "tempo": {
+   "up": 2,
+   "down": 2,
+   "pause": 1,
+   "claim": [
+    "c19",
+    "c9"
+   ],
+   "text": "Down 2 and up 2 are Motra's 2-1-2 (c19, WEAK), read in its Tempo tooltip's order: lowering, bottom pause, lifting, top pause (R-LB6-2, R-LB6-7). Its 1 s bottom pause matches its \"Pause briefly at the bottom to feel the calf stretch.\" (c7) and sits at the stretch, so it is named here and not written in pause (LR-33); BarBend pauses three seconds at the bottom (c7). Pause 1 is the pause right after the lift, sourced: Motra's \"Squeeze calves at the top for one second.\" (c9); Fitness Volt's \"pause for a moment\" there (c9) agrees."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Hands on the handles, or on the sides of the seat, for stability (c5).",
+  "width": "",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "",
+  "claims": [
+   "c5",
+   "c6"
+  ],
+  "note": "Hand archetype balance: the hands steady the body and work the safety lever (c6); no hand zoom needed. No source gives a hand width, thumb or wrist position."
+ },
+ "setup": [
+  {
+   "step": "Sit with the pad snug across your thighs, just above the knees.",
+   "claim": [
+    "c1",
+    "c2"
+   ]
+  },
+  {
+   "step": "Knees at 90 degrees, shins vertical.",
+   "claim": [
+    "c1",
+    "c4"
+   ]
+  },
+  {
+   "step": "Balls of your feet on the platform, hip-width, heels hanging off.",
+   "claim": "c3"
+  },
+  {
+   "step": "Grip the handles. Press through your toes and release the safety lever.",
+   "claim": [
+    "c5",
+    "c6"
+   ]
+  },
+  {
+   "step": "Re-engage the safety after the set and before unloading.",
+   "claim": "c6"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Knees stay bent at 90 degrees.",
+   "claim": "c13"
+  },
+  {
+   "point": "Back straight. Don't lean back.",
+   "claim": [
+    "c13",
+    "c5"
+   ]
+  },
+  {
+   "point": "Lower slowly to a deep, comfortable stretch.",
+   "claim": [
+    "c7",
+    "c12"
+   ]
+  },
+  {
+   "point": "Push through the balls of your feet to raise your heels high.",
+   "claim": "c8"
+  },
+  {
+   "point": "Squeeze your calves at the top for one second.",
+   "claim": "c9"
+  },
+  {
+   "point": "Breathe in as you lower, out as you raise.",
+   "claim": "c14"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Bouncing at the bottom.",
+   "fix": "Control the descent. Don't bounce.",
+   "claim": [
+    "c10",
+    "c11"
+   ]
+  },
+  {
+   "mistake": "Moving only part way.",
+   "fix": "Lower to a deep stretch, then raise your heels high.",
+   "claim": [
+    "c10",
+    "c12",
+    "c8"
+   ]
+  },
+  {
+   "mistake": "Ankles rolling in or out.",
+   "fix": "Toes forward, feet hip-width apart.",
+   "claim": [
+    "c10",
+    "c3"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "calves",
+    "claim": [
+     "c15",
+     "c16"
+    ]
+   }
+  ],
+  "secondary": [],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Calves",
+    "means": "The inner calf muscle, the soleus, does most of the work.",
+    "fix": "",
+    "claim": [
+     "c15",
+     "c16"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Achilles",
+    "means": "Fault: bouncing or using momentum.",
+    "fix": "Control the descent. Don't bounce.",
+    "claim": [
+     "c10",
+     "c11"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Thighs under the pad",
+    "means": "Heavy weights put a lot of stress here.",
+    "fix": "Set the pad just above your knees.",
+    "claim": [
+     "c17",
+     "c2"
+    ],
+    "redFlag": null
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Achilles: use controlled movements to protect it.",
+   "claim": "c11"
+  },
+  {
+   "risk": "Overstretching your calves can cause tendon issues.",
+   "claim": "c12"
+  },
+  {
+   "risk": "Heavy weights stress the thighs and can hurt your legs.",
+   "claim": "c17"
+  }
+ ],
+ "redFlags": [],
+ "zooms": [
+  {
+   "key": "thigh-pad",
+   "kind": "posture",
+   "right": "Pad snug across the thighs, just above the knees.",
+   "wrong": null,
+   "claim": "c2"
+  },
+  {
+   "key": "heel-range",
+   "kind": "posture",
+   "right": "Heels from a deep stretch to as high as possible.",
+   "wrong": "Heels moving only part way.",
+   "claim": [
+    "c12",
+    "c8",
+    "c10"
+   ]
+  },
+  {
+   "key": "feet",
+   "kind": "posture",
+   "right": "Toes forward, feet hip-width apart.",
+   "wrong": "Ankles rolling in or out.",
+   "claim": [
+    "c3",
+    "c10"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "calves primary matches every read source (c15); the soleus does most of the work seated (c15, c16). No secondary muscle is named by a read source."
+ },
+ "anchorSource": "motra-seated",
+ "loadProgression": {
+  "text": "Start light to master the form. Pick a weight you can lift 10-12 times with good form.",
+  "claim": "c18"
+ },
+ "gaps": [],
+ "notes": [
+  "Start head: claude/libht-research @ 6d253b9e. Own parent (content.md Appendix A, 'New parents on their own'); no inherit entries.",
+  "Anchor: Motra's machine seated calf raise page, read in full (How to Perform, Coaching Tips, Tempo with its tooltip, Range of Motion, Safety, Common Mistakes). Fitness Volt's seated-vs-standing article and its machine seated calf raise guide, BarBend's best-calf-exercises page (its seated calf raise section) and StrengthLog's seated calf raise page were read in full, and the Kinoshita 2023 abstract through efetch.",
+  "Shared card: get-in-out (shared/get-in-out.json @ 6d253b9e) lists seated_calf_raise in appliesTo; it is cited, not copied (LR-29). Its steps (set safety stops if the machine has them, pins fully in, sit and pick a weight you can control, ease the weight back to rest) and its note that on plate-loaded seated_calf_raise the stack-slam step reads as 'return the weight gently' cover getting in and out. This card's own setup lines on the safety lever (setup[3], setup[4]) rest on Motra's steps (c6), fetched for this card.",
+  "Stretch depth conflict (c12): Motra lowers to maximum dorsiflexion with a full but comfortable stretch and no overstretching; Fitness Volt's article says as far down as comfortably possible; Fitness Volt's machine guide lowers to a slight stretch and warns that overstretching can cause tendon issues. The card says a deep, comfortable stretch.",
+  "Bottom pause: Motra pauses briefly (1 s in its 2-1-2) and BarBend three seconds at the bottom (c7). Neither is the pause field (LR-33); both are named in plate.tempo.text.",
+  "The Achilles and thigh feel rows are place + the source's fault or stress + fix (LR-6). No read source for this exercise gives a stop line, so no row says stop (R-LB6-6). No shared red-flag box covers the ankle or thigh, so redFlags is empty.",
+  "Read and not cited: ACE's Calf Raise page (exercise-library/294) is a seated straight-leg selectorized machine, another exercise; Peloton's calf-raise article gives a chair version with the feet flat on the floor, another version. BarBend's seated-calf-raise URL 404s; Fitness Volt's seated-calf-raise URL serves an image."
+ ]
+}
