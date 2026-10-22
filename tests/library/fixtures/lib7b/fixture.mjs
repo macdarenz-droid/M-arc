@@ -19,11 +19,9 @@ export const SCRATCH_7B = [
 ];
 const COPY = ['index.html', 'vite.config.ts', 'package.json', 'tsconfig.json', 'public', 'src', 'tools', 'tests/howto/golden', 'docs/research/howto', 'tests/howto/fixtures/lib2b'];
 
-/** A temp tree of `src` with the scratch rows staged; `pair` false leaves the config with no pair field. */
-export async function pairTree({ src = REPO, scratch = SCRATCH_7B, pair = true } = {}) {
-  const root = mkdtempSync(join(tmpdir(), 'lib7b-'));
-  for (const p of COPY) cpSync(join(src, p), join(root, p), { recursive: true });
-  symlinkSync(join(src, 'node_modules'), join(root, 'node_modules'), 'dir');
+/** Stages the scratch rows into `root` in place (marked as a LIB-5 scratch root); `pair` false leaves the layers config
+ *  with no pair field. */
+export async function stagePairs(root, { scratch = SCRATCH_7B, pair = true } = {}) {
   markScratch(root);
   const F = await import(join(root, 'tools/plates/library/fidelity/fixture.mjs'));
   F.stage(root, { scratch, src: root });
@@ -33,6 +31,13 @@ export async function pairTree({ src = REPO, scratch = SCRATCH_7B, pair = true }
     writeFileSync(f, `${JSON.stringify(c, null, 2)}\n`);
   }
   return root;
+}
+/** A temp tree of `src` with the scratch rows staged. */
+export async function pairTree({ src = REPO, scratch = SCRATCH_7B, pair = true } = {}) {
+  const root = mkdtempSync(join(tmpdir(), 'lib7b-'));
+  for (const p of COPY) cpSync(join(src, p), join(root, p), { recursive: true });
+  symlinkSync(join(src, 'node_modules'), join(root, 'node_modules'), 'dir');
+  return stagePairs(root, { scratch, pair });
 }
 
 /** The tree's batch layers page, built in the tree and written to the batch's layers page path (or `out`). */
@@ -59,10 +64,11 @@ export const IDS_EDITS = {
 };
 /** Pins the tree (LIB-4b's pin: batch golden file, research cards), then puts back the real LIB-7 loader (pin writes
  *  B5's own) and joins each scratch id to its real key by an IDS line after the key's first id. */
-export async function keyTree(root, { scratch = SCRATCH_7B, src = REPO } = {}) {
-  const F = await import(join(root, 'tools/plates/library/fidelity/fixture.mjs'));
+export async function keyTree(root, { scratch = SCRATCH_7B } = {}) {
+  const F = await import(join(root, 'tools/plates/library/fidelity/fixture.mjs')), loader = join(root, 'tools/plates/library/hands/pairs.mjs');
+  const real = readFileSync(loader);
   F.pin(root, { scratch });
-  cpSync(join(src, 'tools/plates/library/hands/pairs.mjs'), join(root, 'tools/plates/library/hands/pairs.mjs'));
+  writeFileSync(loader, real);
   for (const [file, [anchor, line, key]] of Object.entries(IDS_EDITS)) {
     const f = join(root, file), text = readFileSync(f, 'utf8'), ids = scratch.filter(s => s.key === key).map(s => s.id.slice(4));
     if (text.split(anchor).length !== 2) throw new Error(`lib7b fixture: ${file}: anchor not found once`);

@@ -18,7 +18,12 @@ import { WIDTH } from '../tuples.mjs';
 import { plateJob, plateStats } from '../plate.mjs';
 
 const S = sub => stateOf('HT6', sub, WIDTH);
-const panelSel = id => `#${id}-zoom-hand`;
+// LIB-7b (D-LIB7b-SCOPE (d)): a library id on a pair key is found by its pair markup, the zx panel holding its key's
+// `.hx-hp-<key>` scope, in its card on the page or in the app's How-to sheet (the page may namespace a repeated copy's
+// ids, D-LIB7b-PAGEDUP (B)); any other id keeps `#<chromeId>-zoom-hand`. PAIR_KEY: chromeId -> key, set by run().
+const PAIR_KEY = {};
+const panelSel = id => (PAIR_KEY[id] ? `:is(#card-${id}, dialog.sheet.ht) .zx[data-zoom="hand"]:has(> .hx-hp-${PAIR_KEY[id]})` : `#${id}-zoom-hand`);
+const closeSel = id => (PAIR_KEY[id] ? `${panelSel(id)} .zx-close` : `${panelSel(id)}-close`);   // LIB-7b
 const click = (page, sel) => page.evaluate(s => { const b = document.querySelector(s); if (!b) throw new Error(`no ${s}`); b.click(); }, sel);
 const rectOf = (page, sel) => page.evaluate(s => { const r = document.querySelector(s).getBoundingClientRect(); return { x: r.x, y: r.y, width: r.width, height: r.height }; }, sel);
 /** The block's readPanel, unchanged: the visible page of a panel, its words, icons and image labels. */
@@ -45,10 +50,10 @@ const plateState = page => page.evaluate(() => {
 /** The block's A6 `mutate`, unchanged: open and close the hand close-up before the plate compare (runs in the app page). */
 export const openClose = async id => {
   const wait = f => new Promise(r => { const t0 = performance.now(); const k = () => (f() || performance.now() - t0 > 5000 ? r() : requestAnimationFrame(k)); k(); });
-  const p = () => document.getElementById(`${id}-zoom-hand`);
+  const p = () => document.getElementById(`${id}-zoom-hand`) ?? document.querySelector('dialog.sheet.ht .zx[data-zoom="hand"]:has(> [class*="hx-hp-"])');   // LIB-7b: or the pair panel
   document.getElementById(`${id}-chip-hand`).click();
   await wait(() => p() && !p().hidden && !p().getAnimations().length);
-  document.getElementById(`${id}-zoom-hand-close`).click();
+  p().querySelector('.zx-close').click();   // LIB-7b: the panel's own close button (`${id}-zoom-hand-close` for an unkeyed id)
   await wait(() => p().hidden && !document.querySelector('.ht-plate-fit').hidden);
   window.__ht6OpenClosed = (window.__ht6OpenClosed ?? 0) + 1;
 };
@@ -106,6 +111,7 @@ export async function run(ctx, { lib, chrome, index, theme, facts }) {
   const { browser, port, R, pages, order, custom } = ctx;
   const stats = (ctx.stats.byFamily ??= {}).HT6 ??= { pairs: 0, offMax: 0, tall: 0, words: 0, anims: 0, a6: 0, mistakeOrigins: 0 };
   const full = HT_FULL.includes(theme), id = chrome, T = `${theme} ${lib}`;
+  PAIR_KEY[chrome] = (await (pairsP ??= loadPairs()))?.HAND_OF_ID?.[lib];   // LIB-7b
   let cur = full ? S('A8-hint') : S('open-anim');
   const fail = (state, m) => R.fail(lib, theme, state, m);
   const app = await openAppTrain(browser, port, theme, { order, custom, onError: m => fail(cur, `${theme} app page error: ${m}`) });
@@ -183,7 +189,7 @@ export async function run(ctx, { lib, chrome, index, theme, facts }) {
     }
     // closing: golden B's exit animation, the plate state back as before, focus back on the chip
     cur = S('close-anim');
-    const shut = pg => captureAnims(pg, panelSel(id), () => pg.click(`${panelSel(id)}-close`), 'hidden');
+    const shut = pg => captureAnims(pg, panelSel(id), () => pg.click(closeSel(id)), 'hidden');
     const [cA, cG] = await Promise.all([shut(app.page), shut(gold.page)]);
     R.check(lib, theme, cur, c11Bad(cA, cG) ? [`${T} C11 close animation: app ${JSON.stringify(cA)} vs golden ${JSON.stringify(cG)}`] : []);
     await settleApp(app.page); await settle(gold.page);
@@ -198,7 +204,7 @@ export async function run(ctx, { lib, chrome, index, theme, facts }) {
       await click(app.page, `#${id}-chip-hand`);
       await app.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
       const m1 = await plateState(app.page);
-      await click(app.page, `${panelSel(id)}-close`); await settleApp(app.page);
+      await click(app.page, closeSel(id)); await settleApp(app.page);
       const m2 = await plateState(app.page);
       R.check(lib, theme, cur, m0.snap.mode !== 'mistake' || m1.snap.mode !== 'normal' || JSON.stringify(m2) !== JSON.stringify(m0) ? [`${T} A4 Mistake: ${JSON.stringify({ m0: m0.snap, m1: m1.snap, m2: m2.snap })}`] : []);
       await click(app.page, `#${id}-mistake`);
@@ -209,7 +215,7 @@ export async function run(ctx, { lib, chrome, index, theme, facts }) {
         await pg.click(`#${id}-chip-hand`);
         if (inApp) await pg.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
         const o = await pg.evaluate(s => document.querySelector(s).style.transformOrigin, panelSel(id));
-        await click(pg, `${panelSel(id)}-close`);
+        await click(pg, closeSel(id));
         if (inApp) await settleApp(pg); else await settle(pg);
         return o;
       };
@@ -226,7 +232,7 @@ export async function run(ctx, { lib, chrome, index, theme, facts }) {
       await settleApp(app.page);
       await app.page.evaluate(() => history.back());
       await app.page.waitForTimeout(600);
-      const s1 = await app.page.evaluate(i => ({ sheet: !!document.querySelector('dialog.sheet.ht'), zoom: !document.getElementById(`${i}-zoom-hand`)?.hidden }), id);
+      const s1 = await app.page.evaluate(s => ({ sheet: !!document.querySelector('dialog.sheet.ht'), zoom: !document.querySelector(s)?.hidden }), panelSel(id));   // LIB-7b: by panelSel
       await app.page.evaluate(() => history.back());
       await app.page.locator('dialog.sheet.ht').waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
       const s2 = await app.page.evaluate(() => !!document.querySelector('dialog.sheet.ht'));
@@ -247,7 +253,7 @@ export async function run(ctx, { lib, chrome, index, theme, facts }) {
         await rapp.page.locator(`dialog.sheet.ht ${panelSel(id)}`).waitFor({ state: 'visible' });
       }, 'shown');
       let shut = false;
-      const c = await captureAnims(rapp.page, panelSel(id), async () => { shut = await rapp.page.evaluate(s => { document.querySelector(`${s}-close`).click(); return document.querySelector(s).hidden; }, panelSel(id)); }, 'hidden');
+      const c = await captureAnims(rapp.page, panelSel(id), async () => { shut = await rapp.page.evaluate(([s, c]) => { document.querySelector(c).click(); return document.querySelector(s).hidden; }, [panelSel(id), closeSel(id)]); }, 'hidden');
       R.check(lib, theme, st, o.length || c.length || !shut ? [`${theme} C11 reduced motion: open ${JSON.stringify(o)}, close ${JSON.stringify(c)}, closed at once ${shut}`] : []);
     } catch (e) { fail(st, `${theme} reduced crashed: ${e.message.split('\n')[0]}`); } finally { await rapp.ctx.close(); }
   }

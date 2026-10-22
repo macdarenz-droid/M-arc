@@ -300,3 +300,6 @@ Card LIB-7b (lib-7b-card.md @ ddc99219); rulings D-LIB7b-SCOPE, -PAGEDUP, -SLOT 
 - fidelity/twins/ht6.mjs: :21, :48-51 and the readers that take `panelSel` (l3's default, :145-170's `panelSel(id)` calls).
 - panel.mjs: only if D-LIB7b-HALVES is ruled as proposed: one call of splitHalves in `panelHtml`.
 - New: tests/library/lib7b.test.ts, tests/library/fixtures/lib7b/**.
+
+**Rulings as applied (#284 6333886735, 6334052838).** PAGEDUP = (B) (`namespaced` / `unNamespaced` / `pairPanelProblems`); HALVES (panelHtml applies golden B's `splitHalves`; F4 reads "after splitHalves"); ZOOMS (gen/zooms.mjs `styleWithout` drops exactly the named keys' `pairCss(K)` lines, else throws; 10 GENERATED headers moved, bodies byte-identical). Changes to (b) and (g) above: `pairCss` is synchronous, so build-layers-page.mjs gains static imports of zoom-css.mjs and the layers engine CSS (marked LIB-7b; all already in the BUILDERS closure); gen/zooms.mjs gains two imports and the `styleWithout` block. The PAGEDUP probe waits on the page's own reduced-motion state: the one Chrome 153 run that differed (and 2 of 15 later Chromium 141 runs under load) shot after golden B's open animation, which the page runs unless `data-motion="reduce"`, and Chromium can bake that mid-animation scale into SVG text (`docs/supervisor/workflows/README.md:44`).
+

@@ -9,7 +9,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
-let B: any, P: any, H: any, hp: any, F: any, node: any;
+let B: any, P: any, H: any, hp: any, F: any, node: any, unsplit: (h: string) => string;
 const tmps: string[] = [];
 let page = '', raw = '', tree = '';
 
@@ -19,6 +19,7 @@ beforeAll(async () => {
   H = await import(/* @vite-ignore */ url('tools/plates/layers/artifact/howto-layers.mjs'));
   hp = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs'));
   F = await import(/* @vite-ignore */ url('tests/library/fixtures/lib7b/fixture.mjs'));
+  ({ unsplit } = await import(/* @vite-ignore */ url('tests/library/fixtures/lib7b/unsplit.mjs')));
   ({ node } = await import(/* @vite-ignore */ url('tests/howto/fixtures/lib2b/fixture.mjs')));
   const [a, b] = await Promise.all([F.pairTree(), F.pairTree({ pair: false })]);
   tmps.push(a, b); tree = a;
@@ -119,17 +120,6 @@ const PANEL_BEFORE: Record<string, string> = {
   'ez-curl-over': 'ee43d4670a19ff17e3d70159beb0c8987feb4eff59849b5a4a33fdc67df42023',
   'rope-push-neutral': '81b33744d928d84fc84609f9f9b4593d5f476c181970a5cae0c21bfa748ca4a9',
 };
-/** The attributes splitHalves adds, removed (and the root's role and label restored from the halves' labels). */
-function unsplit(h: string): string {
-  return h.replace(/<svg class="hand-svg[^>]*>[\s\S]*?<\/svg>/g, svg => {
-    const halves = [...svg.matchAll(/<g class="(?:h-panel|zx-half) (right|wrong)" role="img" aria-label="(Right|Wrong): ([^"]*)">/g)];
-    if (!halves.length) return svg;
-    const r = halves.find(x => x[1] === 'right')![3], w = halves.find(x => x[1] === 'wrong')![3];
-    return svg.replace(/^(<svg class="hand-svg[^>]*?) role="group" aria-label="([^"]*)"/, (m, a, cam) => `${a} role="img" aria-label="${cam}. Right: ${r} Wrong: ${w}"`)
-      .replace(/<text aria-hidden="true" /g, '<text ')
-      .replace(/<g class="((?:h-panel|zx-half) (?:right|wrong))" role="img" aria-label="[^"]*">/g, '<g class="$1">');
-  });
-}
 describe('D-LIB7b-HALVES: the pair panel gets golden B\'s TalkBack halves, attribute-only', () => {
   it('for LIB-7\'s 8 keys, removing exactly what splitHalves adds gives the panel\'s bytes before it (main 5158609c); halves are labelled', async () => {
     expect(Object.keys(PANEL_BEFORE).every(k => P.keysOf().includes(k))).toBe(true);
