@@ -74,3 +74,66 @@ Lint hits: copy lint (wording rules) and C8. renegade_row keeps its existing `co
 - dumbbell_front_raise: the swing is drawable through BarBend's still sign, "push your hips forward".
 - resistance_band_pull_apart: Fitness Volt's "which can, and often does, cause shoulder problems" is about the grip, which LR-31 excludes.
 - face_pull: "Avoid shoulder pinching by keeping elbows high" counts as stated harm. Step 3 gives the same fault (BarBend's first list item).
+
+## Verify (LR-29) and fix round
+The full record is docs/supervisor/verify/lb7-research-verify.md @ `6e710ace` (claude/sup-lib4-cards).
+
+### Run
+- Verified head: #288 @ `db914b11`. A history-free copy was split into three blind groups (5, 4 and 4 cards). Each group had a fresh Opus critic and 2 plants, with plantScope set to every field. All three groups are **VALID**: 6/6 plants caught, and each safety plant was rated blocker.
+- Re-fetch: 478/478 quotes verbatim, across 52 sources. sl-front-raise answered 200 at scoring. Supervisor 10 % re-fetch: 48/48.
+- LR-31: 13/13 agree. LR-33: 13/13 agree on values.
+- Real findings, plants removed: 0 blocker, 0 high, 2 medium, 24 low.
+
+### Rulings
+- D-SUP-LB7-DIPREPS (weighted_dip), D-SUP-LB7-FEET (incline_push_up) and D-SUP-LB7-NOPRIMARY (cable_external_rotation) settle the three asks. The cards keep their picks.
+- R-LB7-1: the plant findings are not on the real head.
+- R-LB7-2: StrengthLog's front raise page answered 200, and its 4 quotes are verbatim.
+- R-LB7-3: pike_push_up's "Forgetting to breathe is pretty common during exercise." stays set aside, as a statement about all training.
+- R-LB7-4: incline_push_up's rankNote records D-SUP-LB6-CCP's count and cites D-SUP-LB7-FEET.
+- R-LB7-5: bent_over_dumbbell_rear_delt_fly's ACE incline lines are another exercise and are not counted.
+- R-LB7-6: both tempo styles stay. F-LB7-1 waits on the owner's no-seconds strip choice.
+- R-LB7-7: the 3 LB7 "Front of the shoulder" rows become "Shoulder". F-LB7-2 covers other cards in a later pass.
+- R-LB7-8: renegade_row's `core` (LIB-MUSCLE) and band c14's quote length are not actioned.
+- R-LB7-9: every other finding takes its fix as written, in one round.
+
+### Fix round checks
+- Valid JSON on the 18 changed files.
+- Pre-push check: 0 problems on all 13 cards, apart from renegade_row's `core` (R-LB7-8).
+- Copy lint and C8: 0 hits. weighted_dip's advisory caps went from 14 to 13 (the checkpoint semicolon is gone).
+- New quotes: 7 entries, each fetched by curl on 2026-10-22 and verbatim:
+  - bent_over c5: StrengthLog's too-heavy item (40 words);
+  - face_pull c15: three sentences from the PubMed 41964926 abstract (efetch);
+  - incline_push_up c17: NASM's "Anterior Deltoid";
+  - pike_push_up c8: the Garage Gym Reviews breath quote, extended to start at "Inhale".
+- renegade_row: 8 quotes now carry ’ as both live pages print it, re-checked against fresh fetches. The bb-rr twist quote matches; the only difference is a stripper space before "." after a link.
+
+### Findings and fixes (commit `d8c68f6f`)
+| Finding | Fix |
+|---|---|
+| bent_over_dumbbell_rear_delt_fly-1 (medium) | rdfly-hinge claim ["c2","c4","c5"]; rdfly-grip right "Palms facing, elbow slightly bent." ["c2","c12"] |
+| bent_over_dumbbell_rear_delt_fly-2 | risks[0] "Swinging the weights up can stress the lower back and shoulders."; c5 gains StrengthLog's too-heavy quote |
+| bent_over_dumbbell_rear_delt_fly-3 | handlingMistakes[2] claim ["c3","c9"] |
+| bent_over_dumbbell_rear_delt_fly-4 | rows[2].means "Fault: swinging from the hips adds stress here." |
+| bent_over_dumbbell_rear_delt_fly-5 | c1 and c9 texts trimmed to their quotes |
+| bent_over (R-LB7-5) | rankNote "(ruled R-LB7-5: another exercise, not counted)" |
+| cable_lateral_raise-1 | libraryDiff.why names StrengthLog and Fitness Volt's stabilising line (c18) |
+| renegade_row-1 | 8 quotes use ’ (card and quotes file) |
+| renegade_row-2 | c8 and c9 ggr-rr where "Common mistakes: losing control" |
+| renegade_row-3 | risks[2] "Too much weight can make your hip and shoulder hike up." |
+| weighted_dip-1 | c9 names the 1 s up as a drawing convention |
+| weighted_dip-2 | handlingMistakes[1] ["c6","c4"]; [2] ["c7","c8","c4"] |
+| weighted_dip-3 | risks[2] "A swinging plate can make you unsteady." |
+| weighted_dip-4 | checkpoints[2].what "Upper arm about level with the floor, or slightly below." |
+| cable_external_rotation-1 | risks[0] "Shoulder: use only a very light weight. Keep strict form to avoid strain." |
+| cable_rear_delt_fly-1 | risks[0] and risks[1] keep the source's hedges ("can", "may") |
+| face_pull-1 | c15 gains three abstract sentences (aim, OpenSim model, the Tukey comparison) |
+| face_pull-2 | plate.mistake.claim ["c9","c10"] |
+| resistance_band_pull_apart-1 | c14 text drops "(surface EMG, moderate band)" |
+| bench_dip-1 | rows[2].where "Shoulder" (R-LB7-7) |
+| bench_dip-2 | c19 tagged WEAK; text names the two-bench version |
+| diamond_push_up-1 | rows[1].where "Shoulder" (R-LB7-7) |
+| incline_push_up-1 (medium) | risks[2] deleted (2 risks remain) |
+| incline_push_up-2 | rankNote takes R-LB7-4's count text and D-SUP-LB7-FEET |
+| incline_push_up-3 | c17 gains NASM's "Anterior Deltoid" |
+| incline_push_up-4 | rows[1].where "Shoulder" (R-LB7-7) |
+| pike_push_up-1 | c8's quote starts "Inhale during the concentric phase, or as you’re bending …" |
