@@ -1,0 +1,359 @@
+{
+ "id": "superman",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-superman",
+   "text": "Starting Position: Lie prone (on your stomach) on a mat with your legs extended, ankles slightly plantarflexed (toes pointing away from your shins), arms extended overhead with palms facing each other.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "ace-superman",
+   "text": "Relax your head to align it with your spine.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "lifto-superman",
+   "text": "Extend your arms straight in front of you and legs straight behind you.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-superman",
+   "text": "Upward Phase: Exhale, contract your abdominal and core muscles to stabilize your spine and slowly extend both hips (raise both legs) a few inches off the floor while simultaneously raising both arms a few inches off the floor.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-superman",
+   "text": "Squeeze your glutes, low back, and core to raise your arms and feet approximately four to five inches off the floor — or however high you can fly — while keeping your core on the ground.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "mo-superman",
+   "text": "Lift body 3-6 inches off the ground, forming a slight arch without hyperextending the back; hold without sagging.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-superman",
+   "text": "Keep both legs and arms extended and avoiding any rotation in each.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "mo-superman",
+   "text": "Keep arms and legs straight without locking joints.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ucal-superman",
+   "text": "Keep neutral head/neck position throughout the exercise by looking down at the ground",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ucal-superman",
+   "text": "Cue \"Eyes down\"",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-superman",
+   "text": "Maintain your head and torso position, avoiding any arching in your back or raising of your head.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "mo-superman",
+   "text": "Neutral neck gaze down",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "lifto-superman",
+   "text": "Avoid lifting your head too high to prevent neck strain.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "lifto-superman",
+   "text": "Lifting the head too high.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "mo-superman",
+   "text": "Looking up straining neck",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ucal-superman",
+   "text": "Head/neck to moving out of neutral line",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "mo-superman",
+   "text": "Overarching the back",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "mo-superman",
+   "text": "Do not hyperextend spine",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "lifto-superman",
+   "text": "Overextending the lower back.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "mo-superman",
+   "text": "Lifting too high causing strain",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ucal-superman",
+   "text": "Shoulder coming up to ear",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ucal-superman",
+   "text": "Cue \"Shoulders down and back\"",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ucal-superman",
+   "text": "Squeeze glutes to lift legs off the ground",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ucal-superman",
+   "text": "Rounding the back to lift the legs off the ground",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-superman",
+   "text": "Hold this raised position for three seconds and then lower your hands and feet slowly back to the floor.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ucal-superman",
+   "text": "Hold for 2-4 seconds in lifted position before returning to the ground after each rep",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ace-superman",
+   "text": "Hold this position briefly.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "ace-superman",
+   "text": "Downward Phase: Gently inhale and lower your legs and arms back towards your starting position without any movement in your low back or hips.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "lifto-superman",
+   "text": "Slowly lower your arms, chest, and legs back to the starting position.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "mo-superman",
+   "text": "Hold the position while breathing steadily.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "mo-superman",
+   "text": "Holding breath",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-superman",
+   "text": "The superman helps to strengthen the erector spinae muscles, which are the muscles that run along your spine.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "mo-superman",
+   "text": "Bodyweight isometric hold lifting arms, chest, and legs that targets the lower back, glutes, and core for improved posture and spinal stability.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "mo-superman",
+   "text": "Lower Back, Glutes",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-superman",
+   "text": "One of the larger muscles the superman targets are the glutes.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-superman",
+   "text": "It’s a targeted movement focusing on the muscles in the mid and low back, as well as the glutes.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "ekstrom-2008",
+   "text": "Prone lumbar extension to neutral, resisted lumbar extension while sitting, and prone extension with the upper and lower extremities lifted (Superman exercise) produced EMG amplitudes ranging from a mean +/- SD of 77% +/- 13% to 82% +/- 12% MVIC.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "ekstrom-2008",
+   "text": "Groups 1 and 2 each had 30 subjects and group 2 had 29 subjects, ranging in age from 21 to 35 years.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "mo-superman",
+   "text": "Avoid if acute lower back pain",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "mo-superman",
+   "text": "Stop if sharp pain occurs",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "lifto-superman",
+   "text": "Keep your movements controlled to maximize effectiveness and minimize risk of injury.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "mo-superman",
+   "text": "Jerky uncontrolled movements",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "bb-superman",
+   "text": "Hold this raised position for three seconds and then lower your hands and feet slowly back to the floor.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "ucal-superman",
+   "text": "6-10 reps, holding each rep for 2-4 seconds",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  }
+ ]
+}

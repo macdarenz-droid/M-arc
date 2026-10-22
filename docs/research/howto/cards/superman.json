@@ -1,0 +1,814 @@
+{
+ "id": "superman",
+ "libId": "lib_superman",
+ "name": "Superman",
+ "family": "Glute and hip extension",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "none",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Start lying face down on a mat, legs extended with the toes pointing away from the shins, arms extended overhead with the palms facing each other, and the head relaxed in line with the spine.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-superman",
+    "lifto-superman"
+   ],
+   "quotes": [
+    {
+     "source": "ace-superman",
+     "text": "Starting Position: Lie prone (on your stomach) on a mat with your legs extended, ankles slightly plantarflexed (toes pointing away from your shins), arms extended overhead with palms facing each other.",
+     "where": "Step 1"
+    },
+    {
+     "source": "ace-superman",
+     "text": "Relax your head to align it with your spine.",
+     "where": "Step 1"
+    },
+    {
+     "source": "lifto-superman",
+     "text": "Extend your arms straight in front of you and legs straight behind you.",
+     "where": "How to perform, Starting Position"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Contract the abdominal and core muscles to steady the spine, then slowly raise both legs and both arms a few inches off the floor at the same time; one coaching page says about four to five inches, keeping the core on the ground.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-superman",
+    "bb-superman"
+   ],
+   "quotes": [
+    {
+     "source": "ace-superman",
+     "text": "Upward Phase: Exhale, contract your abdominal and core muscles to stabilize your spine and slowly extend both hips (raise both legs) a few inches off the floor while simultaneously raising both arms a few inches off the floor.",
+     "where": "Step 2"
+    },
+    {
+     "source": "bb-superman",
+     "text": "Squeeze your glutes, low back, and core to raise your arms and feet approximately four to five inches off the floor — or however high you can fly — while keeping your core on the ground.",
+     "where": "How to Do the Superman"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Lift the body 3-6 inches off the ground, a slight arch without hyperextending the back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-superman"
+   ],
+   "quotes": [
+    {
+     "source": "mo-superman",
+     "text": "Lift body 3-6 inches off the ground, forming a slight arch without hyperextending the back; hold without sagging.",
+     "where": "Coaching Tips, Range of Motion"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Keep both legs and arms extended, with no rotation in either, straight without locking the joints.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-superman",
+    "mo-superman"
+   ],
+   "quotes": [
+    {
+     "source": "ace-superman",
+     "text": "Keep both legs and arms extended and avoiding any rotation in each.",
+     "where": "Step 2"
+    },
+    {
+     "source": "mo-superman",
+     "text": "Keep arms and legs straight without locking joints.",
+     "where": "How to Perform"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Keep the head and neck neutral throughout by looking down at the ground (\"eyes down\"); hold the head and torso position without raising the head.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ucal-superman",
+    "ace-superman",
+    "mo-superman"
+   ],
+   "quotes": [
+    {
+     "source": "ucal-superman",
+     "text": "Keep neutral head/neck position throughout the exercise by looking down at the ground",
+     "where": "Technical points"
+    },
+    {
+     "source": "ucal-superman",
+     "text": "Cue \"Eyes down\"",
+     "where": "Avoid"
+    },
+    {
+     "source": "ace-superman",
+     "text": "Maintain your head and torso position, avoiding any arching in your back or raising of your head.",
+     "where": "Step 2"
+    },
+    {
+     "source": "mo-superman",
+     "text": "Neutral neck gaze down",
+     "where": "Coaching Tips, Form Cues"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Lifting the head too high, looking up, is a named superman mistake that strains the neck; avoid lifting the head too high to prevent neck strain, and avoid the head and neck moving out of neutral line.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "lifto-superman",
+    "mo-superman",
+    "ucal-superman"
+   ],
+   "quotes": [
+    {
+     "source": "lifto-superman",
+     "text": "Avoid lifting your head too high to prevent neck strain.",
+     "where": "Form Tips"
+    },
+    {
+     "source": "lifto-superman",
+     "text": "Lifting the head too high.",
+     "where": "Common Mistakes"
+    },
+    {
+     "source": "mo-superman",
+     "text": "Looking up straining neck",
+     "where": "Common Mistakes"
+    },
+    {
+     "source": "ucal-superman",
+     "text": "Head/neck to moving out of neutral line",
+     "where": "Avoid"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Overarching the back and overextending the lower back are named mistakes; do not hyperextend the spine.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-superman",
+    "lifto-superman"
+   ],
+   "quotes": [
+    {
+     "source": "mo-superman",
+     "text": "Overarching the back",
+     "where": "Common Mistakes"
+    },
+    {
+     "source": "mo-superman",
+     "text": "Do not hyperextend spine",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "lifto-superman",
+     "text": "Overextending the lower back.",
+     "where": "Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Lifting too high causes strain (a named mistake).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-superman"
+   ],
+   "quotes": [
+    {
+     "source": "mo-superman",
+     "text": "Lifting too high causing strain",
+     "where": "Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Avoid the shoulder coming up to the ear: shoulders down and back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ucal-superman"
+   ],
+   "quotes": [
+    {
+     "source": "ucal-superman",
+     "text": "Shoulder coming up to ear",
+     "where": "Avoid"
+    },
+    {
+     "source": "ucal-superman",
+     "text": "Cue \"Shoulders down and back\"",
+     "where": "Avoid"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Squeeze the glutes to lift the legs; avoid rounding the back to lift the legs off the ground.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ucal-superman"
+   ],
+   "quotes": [
+    {
+     "source": "ucal-superman",
+     "text": "Squeeze glutes to lift legs off the ground",
+     "where": "Technical points"
+    },
+    {
+     "source": "ucal-superman",
+     "text": "Rounding the back to lift the legs off the ground",
+     "where": "Avoid"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Hold the raised position (2-4 seconds, or three seconds), then lower the arms and legs slowly back to the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-superman",
+    "ucal-superman",
+    "ace-superman"
+   ],
+   "quotes": [
+    {
+     "source": "bb-superman",
+     "text": "Hold this raised position for three seconds and then lower your hands and feet slowly back to the floor.",
+     "where": "How to Do the Superman"
+    },
+    {
+     "source": "ucal-superman",
+     "text": "Hold for 2-4 seconds in lifted position before returning to the ground after each rep",
+     "where": "Technical points"
+    },
+    {
+     "source": "ace-superman",
+     "text": "Hold this position briefly.",
+     "where": "Step 2"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Lower the legs and arms gently back to the start without any movement in the low back or hips.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-superman",
+    "lifto-superman"
+   ],
+   "quotes": [
+    {
+     "source": "ace-superman",
+     "text": "Downward Phase: Gently inhale and lower your legs and arms back towards your starting position without any movement in your low back or hips.",
+     "where": "Step 3"
+    },
+    {
+     "source": "lifto-superman",
+     "text": "Slowly lower your arms, chest, and legs back to the starting position.",
+     "where": "How to perform, Execution"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Breathe steadily through the hold; holding the breath is a named mistake.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-superman"
+   ],
+   "quotes": [
+    {
+     "source": "mo-superman",
+     "text": "Hold the position while breathing steadily.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "mo-superman",
+     "text": "Holding breath",
+     "where": "Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "The superman targets the lower back: it strengthens the erector spinae, the muscles that run along the spine.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-superman",
+    "mo-superman"
+   ],
+   "quotes": [
+    {
+     "source": "bb-superman",
+     "text": "The superman helps to strengthen the erector spinae muscles, which are the muscles that run along your spine.",
+     "where": "Benefits of the Superman, Improves Posture"
+    },
+    {
+     "source": "mo-superman",
+     "text": "Bodyweight isometric hold lifting arms, chest, and legs that targets the lower back, glutes, and core for improved posture and spinal stability.",
+     "where": "Page summary"
+    },
+    {
+     "source": "mo-superman",
+     "text": "Lower Back, Glutes",
+     "where": "About Exercise, Primary Muscle Groups"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "The glutes are one of the larger muscles the superman targets; the movement also focuses on the mid back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-superman"
+   ],
+   "quotes": [
+    {
+     "source": "bb-superman",
+     "text": "One of the larger muscles the superman targets are the glutes.",
+     "where": "Benefits of the Superman, Boosts Athletic Performance"
+    },
+    {
+     "source": "bb-superman",
+     "text": "It’s a targeted movement focusing on the muscles in the mid and low back, as well as the glutes.",
+     "where": "Benefits of the Superman, Reduces Low Back Pain"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "In adults aged 21 to 35 (surface EMG), the superman (prone extension with the arms and legs lifted) worked the longissimus thoracis and lumbar multifidus at a mean 77-82 % of maximum, among the higher back-rehabilitation exercises tested.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "ekstrom-2008"
+   ],
+   "quotes": [
+    {
+     "source": "ekstrom-2008",
+     "text": "Prone lumbar extension to neutral, resisted lumbar extension while sitting, and prone extension with the upper and lower extremities lifted (Superman exercise) produced EMG amplitudes ranging from a mean +/- SD of 77% +/- 13% to 82% +/- 12% MVIC.",
+     "where": "abstract, results"
+    },
+    {
+     "source": "ekstrom-2008",
+     "text": "Groups 1 and 2 each had 30 subjects and group 2 had 29 subjects, ranging in age from 21 to 35 years.",
+     "where": "abstract, methods"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "Avoid the exercise with acute lower back pain; stop if sharp pain occurs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-superman"
+   ],
+   "quotes": [
+    {
+     "source": "mo-superman",
+     "text": "Avoid if acute lower back pain",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "mo-superman",
+     "text": "Stop if sharp pain occurs",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "Keep the movements controlled to lower the risk of injury; jerky, uncontrolled movements are a named mistake.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "lifto-superman",
+    "mo-superman"
+   ],
+   "quotes": [
+    {
+     "source": "lifto-superman",
+     "text": "Keep your movements controlled to maximize effectiveness and minimize risk of injury.",
+     "where": "Form Tips"
+    },
+    {
+     "source": "mo-superman",
+     "text": "Jerky uncontrolled movements",
+     "where": "Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "Tempo: the 3 s pause is sourced (hold the raised position for three seconds; another page gives 2-4 s); the lowering is slow but no source gives its seconds, so down 2 and up 1 are a drawing convention.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "bb-superman",
+    "ucal-superman"
+   ],
+   "quotes": [
+    {
+     "source": "bb-superman",
+     "text": "Hold this raised position for three seconds and then lower your hands and feet slowly back to the floor.",
+     "where": "How to Do the Superman"
+    },
+    {
+     "source": "ucal-superman",
+     "text": "6-10 reps, holding each rep for 2-4 seconds",
+     "where": "Programming line"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "ace-superman",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/9/supermans/",
+   "title": "Superman Exercise | Exercise Library | ACE",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ucal-superman",
+   "url": "https://ucalgary.ca/shred-injuries/all-sports/field-hockey/superman-holds",
+   "title": "Superman holds | field hockey | SIPRC – SHRED injuries | University of Calgary",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "lifto-superman",
+   "url": "https://liftosaur.com/exercises/bodyweight-superman",
+   "title": "Bodyweight Superman - How To, Muscles Worked & Form Guide (Liftosaur)",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "mo-superman",
+   "url": "https://www.motra.com/exercises/supermanHold",
+   "title": "Superman Hold - Exercise Guide | Motra",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "bb-superman",
+   "url": "https://barbend.com/benefits-of-superman/",
+   "title": "Six Superb Benefits of the Superman | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ekstrom-2008",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/19195137/",
+   "title": "Surface electromyographic analysis of the low back muscles during rehabilitation exercises.",
+   "kind": "peer-reviewed",
+   "year": 2008,
+   "pmid": 19195137,
+   "access": "abstract",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side (pose prone): the head and neck line (c5, c6), the height of the arms and legs off the floor (c2, c3) and the back's arch (c7) read from the side.",
+  "equipment": "Floor line and mat (c1).",
+  "start": "Lying face down: legs extended, toes pointing away from the shins; arms extended overhead, palms facing each other; head relaxed in line with the spine (c1).",
+  "end": "Both arms and both legs straight and a few inches off the floor, about 3-6 inches, with a slight arch and no hyperextension (c2, c3, c4); head and neck neutral, eyes down (c5); shoulders down and back (c9). Held about 3 s (c11).",
+  "checkpoints": [
+   {
+    "label": "Neck in line",
+    "what": "Head and neck neutral, eyes down.",
+    "claim": "c5"
+   },
+   {
+    "label": "Arms and legs up",
+    "what": "Arms and legs straight, a few inches off the floor.",
+    "claim": [
+     "c2",
+     "c4"
+    ]
+   },
+   {
+    "label": "Low lift",
+    "what": "Lift 3-6 inches, without hyperextending the back.",
+    "claim": [
+     "c3",
+     "c7"
+    ]
+   }
+  ],
+  "mistake": {
+   "what": "Head lifted to look up, the neck out of line.",
+   "why": "LR-31 step 2: Liftosaur lists lifting the head too high first among its common mistakes and says to avoid it to prevent neck strain; Motra lists looking up as straining the neck (c6). The raised head shows from the side. How often it happens is not measured.",
+   "claim": "c6",
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the head lifted too high, looking up (c6). Common-mistakes lists read, in source order: Liftosaur \"Common Mistakes\": Lifting the head too high., Overextending the lower back., Allowing the legs or arms to fall too far out of alignment.; Motra \"Common Mistakes\": Overarching the back, Looking up straining neck, Holding breath, Jerky uncontrolled movements, Lifting too high causing strain. The University of Calgary's \"Avoid\" list (Head/neck to moving out of neutral line, Shoulder coming up to ear, Rounding the back to lift the legs off the ground) is headed \"Avoid\", not a common-mistakes list. ACE, BarBend and Ekstrom have no list. Step 1: no frequency word counts for a fault of this exercise. Set aside: the \"Common Mistakes\" headings (Liftosaur, Motra) are headings; Motra's \"Typical Rep Range\" is programming; BarBend's \"The superman exercise is one of those exercises that’s often neglected because it seems too simple to work and lifters bypass it for more complex exercises.\" is about the exercise, and its \"These exercises can be important for CrossFitters, weightlifters, and powerlifters who tend to see at least a few of these exercises often.\" is about other exercises; BarBend's \"it can be fairly easy to do improperly\" uses 'easy to' and names no fault; Ekstrom's \"a variety of exercises commonly used in low back rehabilitation programs\" is about exercises. Step 2: three named faults are tied to harm. The head lifted too high: Liftosaur's \"Avoid lifting your head too high to prevent neck strain.\" (the cue against its list item 1 \"Lifting the head too high.\") and Motra's list item 2 \"Looking up straining neck\" (c6): 2 sources. Lifting too high: Motra's list item 5 \"Lifting too high causing strain\" (c8): 1 source. Jerky movements: Liftosaur's \"Keep your movements controlled to maximize effectiveness and minimize risk of injury.\" read as the cue against Motra's list item 4 \"Jerky uncontrolled movements\" (c18; D-SUP-PROTECT; ruling asked): 1 source. Tie order: all three are on a common-mistakes list; the one more sources tie to harm wins: the head (2). Set aside at step 2: Liftosaur's \"Keep your neck in a neutral position; avoid straining it.\" is the same head fault; Motra's \"Do not hyperextend spine\" (c7) states no harm; Motra's \"Stop if sharp pain occurs\", \"Avoid if acute lower back pain\", \"Consult professional if pregnant or injured\" and its When to Avoid items \"Chronic lower back pain\" and \"Recent back injuries\" name no fault (stop rules and conditions); the University of Calgary's \"Injury prevention for upper and mid-back\" is the exercise's purpose; BarBend's \"This is a good variation for anyone who feels strain during the standard superman or don’t have the coordination or balance yet.\" is about who picks a variation, and its \"Since you’re on all fours and not lying down, it can help reduce stress in the low back.\" is about the bird dog, another exercise (R-LB7-5); BarBend's \"Studies suggest that poor posture can result in back and neck pain\" is about posture in daily life, not a fault in the set; its other injury and pain lines (\"Reduces Low Back Pain\", \"Guards Against Injury\", \"injury prevention purposes\", \"prevent injury when lifting heavy loads\", \"reduce the risk of overall injuries\", \"A stable spine is important not only in helping reduce the risk of injury\") are benefits; Ekstrom's \"patients with low back pain (LBP)\" is the study context. The head lifted out of line is a still sign the side view shows, so drawable is true.",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Eyes stay on the floor",
+    "claim": "c5"
+   },
+   {
+    "text": "Arms and legs a few inches up",
+    "claim": "c2"
+   },
+   {
+    "text": "Shoulders down, away from your ears",
+    "claim": "c9"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 3,
+   "claim": "c19",
+   "text": "Pause 3 is the hold right after the lift: BarBend's \"Hold this raised position for three seconds\" (c11, c19), sourced (R-LB2-1); the University of Calgary gives 2-4 s and ACE \"Hold this position briefly.\" Down 2 and up 1 are a drawing convention named in the WEAK tempo claim c19, which holds BarBend's slow-lowering quote (R-LB7-6); no source gives seconds for raising or lowering. Motra's Superman Hold page lists 0-5-0, a held variation, not used."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "",
+  "width": "",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "",
+  "claims": [],
+  "note": "Hand archetype none: no hand zoom. Arms extended overhead, palms facing each other (c1)."
+ },
+ "setup": [
+  {
+   "step": "Lie face down on a mat, legs straight.",
+   "claim": "c1"
+  },
+  {
+   "step": "Arms straight overhead, palms facing each other.",
+   "claim": "c1"
+  },
+  {
+   "step": "Relax your head in line with your spine.",
+   "claim": "c1"
+  },
+  {
+   "step": "Contract your abdominal muscles to steady your spine.",
+   "claim": "c2"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Head and neck neutral, eyes down.",
+   "claim": "c5"
+  },
+  {
+   "point": "Arms and legs straight, no rotation.",
+   "claim": "c4"
+  },
+  {
+   "point": "Shoulders down and back, away from your ears.",
+   "claim": "c9"
+  },
+  {
+   "point": "Squeeze your glutes to lift your legs.",
+   "claim": "c10"
+  },
+  {
+   "point": "Lift 3-6 inches. Don't hyperextend your back.",
+   "claim": [
+    "c3",
+    "c7"
+   ]
+  },
+  {
+   "point": "Breathe steadily through the hold.",
+   "claim": "c13"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Lifting your head too high to look up.",
+   "fix": "Eyes down. Keep your neck neutral.",
+   "claim": [
+    "c6",
+    "c5"
+   ]
+  },
+  {
+   "mistake": "Jerky, uncontrolled movements.",
+   "fix": "Keep your movements controlled.",
+   "claim": "c18"
+  },
+  {
+   "mistake": "Lifting too high.",
+   "fix": "Lift 3-6 inches. Don't hyperextend your back.",
+   "claim": [
+    "c8",
+    "c3",
+    "c7"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "lower_back",
+    "claim": [
+     "c14",
+     "c16"
+    ]
+   },
+   {
+    "muscleId": "glutes",
+    "claim": [
+     "c15",
+     "c14"
+    ]
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "mid_back",
+    "claim": "c15"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Low back",
+    "means": "The muscles along your spine are working.",
+    "fix": "",
+    "claim": [
+     "c14",
+     "c16"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Glutes",
+    "means": "Your glutes are working to lift your legs.",
+    "fix": "",
+    "claim": [
+     "c15",
+     "c10"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Neck",
+    "means": "Fault: lifting your head too high strains your neck.",
+    "fix": "Eyes down. Keep your neck neutral.",
+    "claim": [
+     "c6",
+     "c5"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Sharp pain",
+    "means": "",
+    "fix": "Stop the set.",
+    "claim": "c17",
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Lifting your head too high can strain your neck.",
+   "claim": "c6"
+  },
+  {
+   "risk": "Lifting too high can cause strain.",
+   "claim": "c8"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "neck",
+   "kind": "posture",
+   "right": "Neck in line, eyes on the floor.",
+   "wrong": "Head lifted to look up.",
+   "claim": [
+    "c5",
+    "c6"
+   ]
+  },
+  {
+   "key": "lift-height",
+   "kind": "posture",
+   "right": "Arms and legs a few inches up, slight arch.",
+   "wrong": "Lifted too high, back hyperextended.",
+   "claim": [
+    "c2",
+    "c3",
+    "c7",
+    "c8"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   {
+    "muscleId": "glutes",
+    "role": "primary (from secondary)",
+    "claim": [
+     "c15",
+     "c14"
+    ],
+    "why": "BarBend names the glutes as one of the larger muscles the superman targets and Motra lists lower back and glutes as the primary muscle groups (c15, c14)."
+   },
+   {
+    "muscleId": "mid_back",
+    "role": "secondary",
+    "claim": "c15",
+    "why": "BarBend says the movement focuses on the mid and low back (c15)."
+   }
+  ],
+  "remove": [],
+  "why": "Library: lower_back primary, glutes secondary. lower_back stays primary (c14, with EMG of the back extensors at 77-82 % of maximum, c16). glutes move up to primary and mid_back is added as secondary, from the claims named. A proposal for the LIB data card."
+ },
+ "anchorSource": "ace-superman",
+ "gaps": [],
+ "notes": [
+  "Shared cards: prone-checkpoints.json (appliesTo lists superman; checkpoint neck-in-line, its c3 and c4 from ucal-superman and lifto-superman) and floor-body.json (appliesTo lists superman; its prone key points to prone-checkpoints). No line is copied: the card re-quotes the same two pages itself (c5, c6), and its first checkpoint matches the shared one.",
+  "Breathing conflict: ACE exhales on the lift and inhales on the lowering; Liftosaur inhales as you lift; Motra exhales during the lift. No breath direction is shown; the card keeps only steady breathing and not holding the breath (c13).",
+  "Lift height: ACE says a few inches, BarBend about four to five inches \"or however high you can fly\", Motra 3-6 inches with a slight arch (c2, c3). The plate draws a lift of a few inches with a slight arch.",
+  "Arms: ACE extends the arms overhead with the palms facing each other (c1); the University of Calgary starts in a Y-shape with the thumbs up (a field hockey version). The plate draws ACE's arms.",
+  "Not used: Motra's Superman Hold tempo 0-5-0 (a held variation); BarBend's variations (reverse hollow hold, hold and roll, bird dog, alternating superman, swimmer) are other exercises.",
+  "Read and not cited: Atalay 2025 (PMID 40572674, abstract; an unstable superman variant in hyperlordotic and normal groups) and Oliver 2010 (PMID 21079441, abstract; multifidus highest in all exercises, superman values not given). Tried and not found: barbend.com/superman-exercise/, garagegymreviews.com/superman-exercise, healthline and verywellfit slugs (404 or 402); fitnessvolt.com/superman-exercise/ (404)."
+ ]
+}
