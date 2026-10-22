@@ -148,7 +148,7 @@ pose, so a fault the card places at its start needs the start drawn as the spec'
 |---|---|---|---|
 | front_squat, goblet_squat, bodyweight_squat, pistol_squat | plate.start | plate.end | identity: each fault is at the bottom (c7, g6, b4, p8) |
 | wall_sit | plate.start (entry: standing, back and buttocks on the wall, w2, w5) | plate.end (the held pose, w2, w4) | identity: the hold convention (entry dashed, held solid; plank's). The Mistake (feet too close, knees past the toes, w8) is a held pose, drawn against the held pose |
-| step_up | **plate.end** (standing tall on the box, c1) | **plate.start** (lead foot on the box, trail foot on the floor, c1, c6) | proposed: the fault, the trunk thrown forward to get up (c1), happens as the rise starts, so it is drawn against the start position. Trade-off: the drawn order (top → step position) reverses c4's "starts with the lifting part"; the Trace still runs between the two card poses. Alternative: identity, with the Mistake as a lurch drawn against the standing-tall end, which is not where c1 places it. **Q2 below.** |
+| step_up | **plate.end** (standing tall on the box, c1) | **plate.start** (lead foot on the box, trail foot on the floor, c1, c6) | ruled (D-LIB14-STEPUP-POSE). The card's own words: plate.start "One whole foot on the box, the other on the floor (c1, c6)"; plate.end "Standing tall on the box on the lead leg (c1)"; the test pins both and the map. The fault, the trunk thrown forward to get up (c1), happens as the rise starts, so it is drawn against the start position. Trade-off: the drawn order (top → step position) reverses c4's "starts with the lifting part"; the Trace still runs between the two card poses. Alternative: identity, with the Mistake as a lurch drawn against the standing-tall end, which is not where c1 places it. **Q2 below.** |
 
 A fact with no pose defaults to the spec's `end` (node.mjs h6), so every fact about the spec's start names pose
 `start`. Do 6 b writes each fact's pose as this map's image of the pose its quote states. The phantom rule (Q2 (c))
@@ -249,6 +249,13 @@ page (A8).
 9. A shared COACHING-DECISIONS append conflict: keep both sides.
 
 ## 15. Questions for the supervisor
+
+Ruled on #289 (6338977366, 2026-10-22): Q1-Q4 accepted as proposed: D-LIB14-TEMPO (with the en-dash mutation),
+D-LIB14-STEPUP-POSE (each pose matches the card's words, pinned by a test), D-LIB14-FACTS (each fact with its claim id;
+front_squat's shoulder-top contact cites c3, "a shelf for the bar to sit in"; goblet_squat's chest contact g1 at the
+start and g5 at the end; bodyweight_squat b6; step_up c6 on the card's start and c1 on its end; pistol_squat p3),
+D-LIB14-FAULTKEY. A heel lift that cannot pass PQ-H3 card-true is posted with its measurements before any workaround.
+
 
 - **Q1 (tempo map, section 8):** wall_sit's single Hold row `'30-60'` (w6, ASCII hyphen) and no row for the five.
 - **Q2 (pose map, section 9):** step_up drawn top → step position (swap), so the trunk lurch reads against the card's

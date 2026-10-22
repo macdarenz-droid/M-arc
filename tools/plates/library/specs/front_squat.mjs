@@ -13,8 +13,9 @@
 //  Feet: mid-soles 38 cm apart (heels about hip width or a little wider, c8), toes out 20 deg (c8: 15-30; the side view
 //   cannot show it), knees tracking the toes (IK pole = toe line).
 //  Bar (c2, c3): the front rack, in the channel between the throat and the top of the shoulders: the bar centre sits
-//   BAR_T in the standing thorax frame (on the front deltoids, just in front of the throat), so it moves with the
-//   thorax; a `checks` plane holds the shoulder top under the bar (c3: the shoulders hold it).
+//   BAR_T in the standing thorax frame (its underside level with the shoulder tops, just in front of the throat), so it
+//   moves with the thorax; a `checks` plane per pose through the bar's underside, square to the thorax, holds the
+//   shoulder top on it (c3: the shoulders hold the bar; the contact fact).
 //  Arms (c4, c7): hands on the bar just outside the shoulders (GRIP_X), the elbows driven forward and up (IK pole
 //   forward and up, the wrists bent back WRIST), so the upper arms sit near level; the hands only steady the bar (c3).
 //  Start: standing tall, knees 5 deg soft, trunk 3 deg forward. End (c10-c12): the hip joint centre DEPTH below the knee
@@ -37,7 +38,10 @@ import { sideBar } from '../eq/parts.mjs';
 
 const H = 1.75, R = Math.PI / 180, B = { height: H };
 const FOOT_X = 0.19, TOE_OUT = 20, GRIP_X = 0.25;
-const BAR_T = [0, 0.842, 0.045];                          // bar centre in the standing thorax frame (H): front rack
+const BAR_R = 0.014;                                      // the 28 mm shaft
+// Bar centre in the standing thorax frame (H), the front rack: its underside level with the shoulder tops (the shelf
+// the shrugged shoulders make, c3), just in front of the throat (c2).
+const BAR_T = [0, 0.830 + BAR_R / H, 0.045];
 const DEPTH = 0.03, END_INCL = 22, M_INCL = 45, M_CLEAR = 0.02;
 const RACK = { at: 0.55, back: -0.5, t: 0.05 }, SAFETY_DROP = 0.05;
 const PXM = 128, X0 = 150;                                 // camera: scale inside the 8's range (F1), the stand's upright clear of the labels
@@ -101,9 +105,9 @@ const via = [key(START_Y + (END_Y - START_Y) / 3, 8, 0, -1, 1), key(START_Y + 2 
 // falls forward, the thorax M_INCL from vertical, so the bar, riding on the shoulders, travels forward of mid-foot. The
 // hips rise straight up out of the hole by the least amount (SOLVED, bracket 0..0.25 m) that keeps the bar's underside
 // M_CLEAR above the spotter arm: the bar never passes through the set safety.
-const SAFETY_TOP = barOf(landmarksOf(end, H))[1] - 0.014 - SAFETY_DROP;
+const SAFETY_TOP = barOf(landmarksOf(end, H))[1] - BAR_R - SAFETY_DROP;
 const mBody = rise => ({ root: { at: [end.root.at[0], end.root.at[1] + rise, end.root.at[2]], tilt: M_INCL - 10 }, trunk: 10, neck: -10, wrist: WRIST, plant: feet });
-export const M_RISE = solve(rise => barOf(landmarksOf(mBody(rise), H))[1] - 0.014 - (SAFETY_TOP + M_CLEAR), 0, 0.25);
+export const M_RISE = solve(rise => barOf(landmarksOf(mBody(rise), H))[1] - BAR_R - (SAFETY_TOP + M_CLEAR), 0, 0.25);
 const ME = mBody(M_RISE);
 const M_BAR = barOf(landmarksOf(ME, H));
 const mistakeFull = { ...ME, reach: hands(M_BAR, LOW) };
@@ -143,6 +147,12 @@ const START_DOT = Array.from({ length: 17 }, (_, k) => [0, START_BAR[1] + 0.025 
 export const fsInfo = { mRise: M_RISE, mBarZ: M_BAR[2], endY: END_Y, bar: END_BAR, safetyTop: SAFETY_Y + RACK.t / 2, startBar: START_BAR };
 
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
+// The shelf plane in one pose: through the bar's underside, its normal the thorax's up (shoulder joint to shoulder top).
+const shelf = pose => {
+  const l = landmarksOf(pose === 'start' ? start : end, H), b = barOf(l), u = [0, 1, 2].map(i => l['shoulderTop.r'][i] - l['shoulder.r'][i]);
+  const L = Math.hypot(...u), n = u.map(v => v / L);
+  return { landmark: 'shoulderTop.r', plane: { point: b.map((v, i) => v - n[i] * BAR_R), normal: n }, pose, tol: 0.5 };
+};
 export default {
   id: 'front_squat', name: 'Front Squat', view: 'side', facing: 'right',
   camera: { pxPerM: PXM, x0: X0, y0: 339 },
@@ -157,6 +167,7 @@ export default {
   checks: [
     { landmark: 'heel.r', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'ball.r', plane: floor, pose: 'all', tol: 0.5 },
+    shelf('start'), shelf('end'),                        // c3: the bar on the shoulder shelf
   ],
   startParts: ['trunk', 'leg.r'],
   ghosts: { count: 2, parts: ['trunk', 'leg.r'] },

@@ -42,7 +42,7 @@ export const tableOf = reports => [
   }),
 ];
 
-/** The expected flags (DESIGN.md section 6; proposed, awaiting LB4 NOTE RULED): F5 on every id at exactly the approved
+/** The ruled expected flags (DESIGN.md section 6; #289 6338977366): F5 on every id at exactly the approved
  *  chrome's 3.57:1 (D-LIB9-F5), F7 on pistol_squat (drawable false, D-LIB14-PISTOL). */
 export const EXPECTED = id => ['F5', ...(id === 'lib_pistol_squat' ? ['F7'] : [])].sort();
 export const F5_EXEMPT = 3.57;

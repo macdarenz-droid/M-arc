@@ -120,5 +120,22 @@
     "Which thigh muscle does the most work in the unloaded squat (no EMG source read).",
     "Tempo in seconds.",
     "Arm position during the descent (ACE only gives the start)."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "b6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "b6"
+    }
+  ],
+  "topFault": "heels"
 }

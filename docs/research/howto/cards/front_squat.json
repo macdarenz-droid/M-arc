@@ -223,5 +223,22 @@
   "notes": [
     "LR-34 check (W2-53, 2026-10-18) against cards/barbell_back_squat.json and shared/unrack-rerack.json on head 5036283d; shipped sheet tools/plates/layers/exercises/barbell_back_squat.howto.mjs on main b99a9e25. Plate loading holds: barbell_back_squat c3 (plates loaded evenly, collars) and c13 (pins), restating 'Collars on, pins just below your lowest squat to catch a miss.' Unrack and walk-out: standing straight up to unrack holds on barbell_back_squat c3 and shared/unrack-rerack.json c15, which agree; the walk-out fails: 'two or three short steps' is sourced by neither card (barbell_back_squat c3 says step back while staying close; unrack-rerack c16 says one step back on each leg, kept short) and no front-squat source read describes the unrack. It is a tier-A point, so the line and inherit[1] stay as on the head and front_squat is stopped for a supervisor ruling (open point b). Feet flat, knees follow the toes holds: barbell_back_squat c8, restating the checkpoint label 'Knees follow toes'. Three inherit entries are left. (Superseded by the W2-R7 note below.)",
     "W2-R7 (supervisor, 2026-10-18): the walk-out takes way (1). New c26 quotes StrongLifts \"Then walk back by taking one step back with each leg.\" (the sentence behind shared/unrack-rerack.json c16), re-fetched by curl on 2026-10-18 [CONSENSUS, MECH: written for the back squat]. inherit[1] is dropped. The setup is at its 5-step cap (CARD-V2), so the walk-out is merged into the brace step: \"Walk out one step back on each leg. Brace hard each rep.\" (12 words; c26, c9). Standing straight up to unrack stays sourced for this card by shared/unrack-rerack.json c15. front_squat is no longer stopped."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "shoulderTop.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "shoulderTop.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
+    }
+  ],
+  "topFault": "elbows"
 }
