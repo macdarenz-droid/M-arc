@@ -643,26 +643,33 @@ describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn
     for (const p of posesOf(s())) { const l = lm(p), d = [l['grip.l'][1] - l['wrist.l'][1], l['grip.l'][2] - l['wrist.l'][2]]; expect(Math.abs(Math.atan2(d[0]!, d[1]!) * 180 / Math.PI), p).toBeLessThanOrEqual(3); }
   });
   const inPoly = (poly: number[][], [x, y]: number[]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!; if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
-  const mistakeArmShows = (spec: any) => {
+  // R5 round 3 (D-LIB13-PANEL3, #274 6335029737): the engine masks the Mistake outline inside the faulty body, so the
+  // red arm is traced as dashed guides (drawn in the Mistake layer, above every figure and the bench): every point of
+  // the red arm's outer outline lies on a guide (0.5 px), the dumbbell hex is a guide, and the guides follow the m-pose.
+  const traceProblems = (spec: any) => {
     const b = { height: 1.75 }, PXM = 146.28571428571428, cam = { view: 'side', near: 'r', pxm: PXM, P: (w: number[]) => [spec.camera.x0 + w[2]! * PXM, spec.camera.y0 - w[1]! * PXM] };
-    const shp = (pose: any) => body.bodyShapes(body.fk(body.resolve(body.normPose(pose, b), b).q, b), cam).filter((x: any) => x.poly);
-    const M2 = shp({ ...spec.poses.end, ...spec.mistake.pose }), E2 = shp(spec.poses.end).filter((x: any) => x.group !== 'far').map((x: any) => x.poly);
-    const ARM = ['upper.r', 'fore.r', 'fist.r', 'elbowcap.r', 'shcap.r'], rest = M2.filter((x: any) => !ARM.includes(x.key)).map((x: any) => x.poly);
-    const vis = (k: string) => { const poly = M2.find((x: any) => x.key === k).poly; return poly.filter((q: number[]) => !rest.some((P: any) => inPoly(P, q)) && !E2.some((P: any) => inPoly(P, q))).length / poly.length; };
-    return { fore: vis('fore.r'), fist: vis('fist.r') };
+    const M2 = body.bodyShapes(body.fk(body.resolve(body.normPose({ ...spec.poses.end, ...spec.mistake.pose }, b), b).q, b), cam).filter((x: any) => x.poly);
+    const arm = M2.filter((x: any) => ['shcap.r', 'upper.r', 'elbowcap.r', 'fore.r'].includes(x.key));
+    const segs = spec.mistake.guides.filter((g: any) => g.kind === 'dashed').flatMap((g: any) => { const q = g.pts.map(cam.P); return q.slice(1).map((v: number[], i: number) => [q[i], v]); });
+    const near = (p: number[]) => segs.some(([u, v]: number[][]) => { const dx = v![0]! - u![0]!, dy = v![1]! - u![1]!, L2 = dx * dx + dy * dy || 1, t = Math.max(0, Math.min(1, ((p[0]! - u![0]!) * dx + (p[1]! - u![1]!) * dy) / L2)); return Math.hypot(p[0]! - u![0]! - t * dx, p[1]! - u![1]! - t * dy) <= 0.5; });
+    const out: string[] = [];
+    for (const sh of arm) { const miss = sh.poly.filter((q: number[]) => !arm.some((o: any) => o !== sh && inPoly(o.poly, q)) && !near(q)).length; if (miss) out.push(`${sh.key}: ${miss} outline points untraced`); }
+    const G = cam.P(itemsIn(spec, 'mistake').lm['grip.r']);
+    if (!spec.mistake.guides.some((g: any) => g.kind === 'dashed' && g.pts.length === 7 && g.pts.every((w: number[]) => Math.abs(Math.hypot(cam.P(w)[0]! - G[0]!, cam.P(w)[1]! - G[1]!) - 0.0595 * PXM) < 0.5))) out.push('no dumbbell guide');
+    const svg: string = plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
+    if (!(svg.indexOf('class="m-pose"') > 0 && svg.indexOf('class="mistake-layer"') > svg.indexOf('class="m-pose"'))) out.push('guides not above the m-pose');
+    return out;
   };
-  it('R5: the Mistake working arm\'s forearm and dumbbell hand show in open space (at least 90% of each outline)', () => {
-    const v = mistakeArmShows(s());
-    expect(v.fore).toBeGreaterThanOrEqual(0.9);
-    expect(v.fist).toBeGreaterThanOrEqual(0.9);
+  it('R5 (round 3): the whole red arm and the dumbbell are traced as dashed guides drawn above every figure and the bench', () => {
+    expect(traceProblems(s())).toEqual([]);
   });
-  it('R5 mutation: the old half-way grip (hidden behind the leg and the support arm) is red', () => {
-    const st = lm('start'), en = lm('end'), half = st['grip.r'].map((v: number, i: number) => v + (en['grip.r'][i] - v) * 0.45);
-    const mp = s().mistake.pose, moved = { ...s(), mistake: { ...s().mistake, pose: { ...mp, reach: { ...mp.reach, r: { ...mp.reach.r, at: half } } } } };
-    expect(mistakeArmShows(moved).fore).toBeLessThan(0.9);
+  it('R5 (round 3) mutation: the arm guides dropped (the round-2 drawing) are red', () => {
+    const g = s().mistake.guides.filter((x: any) => x.kind !== 'dashed' || x.pts.length === 7);
+    expect(traceProblems({ ...s(), mistake: { ...s().mistake, guides: g } }).some(m => /untraced/.test(m))).toBe(true);
   });
   // R5 round 2 (D-LIB13-PANEL2, D-LIB13-ONEARM-M): the Mistake is c10's bottom half, the arm short of straight at the
-  // bottom: the whole red arm hangs from the shoulder (upper arm within 10 deg of plumb), the elbow bent at least 30 deg
+  // bottom: the red arm hangs from the shoulder with the elbow at D-LIB13-PANEL3's ruled point (upper arm 25 deg, ±3,
+  // behind plumb; it was within 10 deg of plumb in round 2), the elbow bent at least 30 deg
   // the way an elbow bends (the wrist ahead of the upper-arm line, toward the head), the dumbbell within 20 cm above the
   // straight-arm start; the top half (the blade) has no tell.
   const bottomProblems = (spec: any) => {
@@ -670,17 +677,18 @@ describe('LIB-13 one_arm_dumbbell_row (H, support anchor; drawable false): drawn
     const u = [E[1] - S[1], E[2] - S[2]], f = [W[1] - E[1], W[2] - E[2]];
     const bend = Math.acos((u[0]! * f[0]! + u[1]! * f[1]!) / Math.hypot(u[0]!, u[1]!) / Math.hypot(f[0]!, f[1]!)) * 180 / Math.PI;
     const plumb = Math.abs(Math.atan2(u[1]!, -u[0]!)) * 180 / Math.PI, rise = l['grip.r'][1] - st['grip.r'][1];
-    return [...(plumb <= 10 ? [] : [`upper arm ${plumb.toFixed(0)} deg off plumb`]), ...(bend >= 30 && u[0]! * f[1]! - u[1]! * f[0]! < 0 ? [] : ['elbow not bent forward 30 deg']),
+    const back = u[1]! < 0;
+    return [...(back && Math.abs(plumb - 25) <= 3 ? [] : [`upper arm ${plumb.toFixed(0)} deg off the ruled 25 deg`]), ...(bend >= 30 && u[0]! * f[1]! - u[1]! * f[0]! < 0 ? [] : ['elbow not bent forward 30 deg']),
       ...(rise > 0 && rise <= 0.2 ? [] : [`dumbbell ${rise.toFixed(2)} m above the start`]), ...(spec.mistake.tells.some((t: any) => t.key === 'blade') ? ['blade tell'] : [])];
   };
   it('R5 (round 2): the red arm hangs from the shoulder, short of straight at the bottom, and no blade tell', () => {
     expect(bottomProblems(s())).toEqual([]);
   });
   it('R5 (round 2) mutation: the 423acc1 Mistake (grip 0.50 m under and 0.30 m behind the shoulder, the blade tell) is red', () => {
-    const SE = lm('end')['shoulder.r'], mp = s().mistake.pose, at = [mp.reach.r.at[0], SE[1] - 0.50, SE[2] - 0.30];
-    const old = { ...s(), mistake: { ...s().mistake, pose: { ...mp, reach: { ...mp.reach, r: { at, pole: [-0.3, 1, -0.4] } } }, tells: [...s().mistake.tells, { key: 'blade' }] } };
+    const SE = lm('end')['shoulder.r'], mp = s().mistake.pose, at = [lm('start')['grip.r'][0], SE[1] - 0.50, SE[2] - 0.30];
+    const old = { ...s(), mistake: { ...s().mistake, pose: { scap: mp.scap, reach: { l: mp.reach.l, r: { at, pole: [-0.3, 1, -0.4] } } }, tells: [...s().mistake.tells, { key: 'blade' }] } };
     const p = bottomProblems(old);
-    expect(p.some(m => /off plumb/.test(m))).toBe(true);
+    expect(p.some(m => /off the ruled/.test(m))).toBe(true);
     expect(p).toContain('blade tell');
   });
   it('drawable false: the spec names the drawable-fault convention (F7 expected)', () => {

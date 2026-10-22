@@ -28,20 +28,21 @@
 //   the shoulder line toward the hip and END_DY below the back. Shoulder blades: 2 cm forward at the bottom, pulled
 //   back 4 cm at the top. Wrist bent back 35 deg into the pull grip (the card's recorded convention, R-LB3-5).
 //  Mistake (c10, short range, the bottom half: "arm not fully straight at the bottom"; panel fix 2, D-LIB13-PANEL2,
-//   D-LIB13-ONEARM-M): at the bottom the arm never straightens: the dumbbell M_RISE above the straight-arm start, straight
-//   up from it, the elbow bent; the shoulder blade forward as at the start (pro 2 cm). The top half (the blade not
-//   pulled back) is not drawn: the shoulder joint sits inside the torso outline, so 6 cm of blade shows no still sign.
+//   D-LIB13-ONEARM-M): at the bottom the arm never straightens: the upper arm M_SWING behind plumb, the elbow bent
+//   M_ELBOW (the ruled elbow point, D-LIB13-PANEL3); the shoulder blade forward as at the start (pro 2 cm). The red
+//   arm and dumbbell are traced as dashed guides on top of the support arm and bench (panel fix 3). The top half (the
+//   blade not pulled back) is not drawn: the shoulder joint sits inside the torso outline, so it shows no still sign.
 //  Support hand flat on the bench (the engine's flat palm), the wrist angle SOLVED so the palm lies level (R3).
 // Unsourced numbers: BENCH_TOP 0.42 m (the low end of the vendor bench's 42-45 cm, so the near leg reaches the floor), the bench length and position, ankle -40, the
-//  near foot spot, END_DZ, END_DY, M_RISE 0.13, PRO 2 / -4 cm, WRIST -35 (convention).
-import { landmarksOf, RADII } from '../engine.mjs';
+//  near foot spot, END_DZ, END_DY, M_SWING 25, M_ELBOW 70, PRO 2 / -4 cm, WRIST -35 (convention).
+import { landmarksOf, RADII, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 
 const H = 1.75;
 const BENCH_TOP = 0.42, SHANK_R = RADII.shank[1] * H;
 const WRIST_Y = RADII.fore[2] * H;                       // flat palm: the wrist sits the forearm's distal radius up
 
 const PRO_START = 2, PRO_END = -4, WRIST = -35;
-const END_DZ = 0.40, END_DY = 0.28, M_RISE = 0.15, M_FWD = 0.18;
+const END_DZ = 0.40, END_DY = 0.28, M_SWING = 25, M_ELBOW = 70;
 
 // Bracketed root finder (Illinois regula falsi): throws when f(a) and f(b) have the same sign (D-LIB9-CLONE b).
 export const solve = (f, a, b) => {
@@ -90,13 +91,35 @@ const SE_R = landmarksOf(base(ROOT_Y, PRO_END), H)['shoulder.r'];
 const LB = landmarksOf(base(ROOT_Y, PRO_END), H);
 const END_GRIP = [SE_R[0] - 0.03, LB.backUpper[1] - END_DY, SE_R[2] - END_DZ];
 const end = withArms(PRO_END, END_GRIP, [-0.3, 1, -0.4]);
-// The arm short of straight at the bottom (panel fix 2, D-LIB13-PANEL2 R5): the grip M_RISE straight above the start
-// grip, the elbow pole up and out, so the whole red working arm hangs from under the shoulder: its outline leaves the
-// torso just below the shoulder and shows in the open between the support arm and the near leg (the Mistake outline is
-// masked inside the faulty body; searched on the engine's bodyShapes: about 90% of the arm outline outside the torso
-// shows, against under 35% for a grip swung back toward the hip, which runs the upper arm inside the torso).
-const MIST_GRIP = [START_GRIP[0], START_GRIP[1] + M_RISE, START_GRIP[2] + M_FWD];
-const mistakePose = { scap: { l: { pro: 0 }, r: { pro: PRO_START } }, reach: { l: farHand, r: { at: MIST_GRIP, pole: [-0.3, 1, -0.4] } } };
+// The arm short of straight at the bottom (panel fix 3, D-LIB13-PANEL3 #274 6335029737): by joint angles, the upper arm
+// M_SWING behind plumb (the ruled elbow, about 39 px behind and 84 px under the shoulder at 2x) and the elbow bent
+// M_ELBOW, the wrist ahead of the upper-arm line; the far hand stays on the bench (reach.r cleared from the end pose).
+const mistakePose = { scap: { l: { pro: 0 }, r: { pro: PRO_START } }, shoulder: { r: { flex: TILT - M_SWING } }, elbow: { r: M_ELBOW }, reach: { l: farHand, r: null } };
+// The engine masks the Mistake outline inside the faulty body, so where the red arm crosses the support arm only scraps
+// showed. The red working arm (shoulder cap, upper arm, elbow cap, forearm: its outer outline only) and the end-on
+// dumbbell are traced as dashed guides, which the engine draws in the Mistake layer above every figure and the bench.
+const PXM = 146.28571428571428, CAM = { view: 'side', near: 'r', facing: 'right', pxm: PXM, P: w => [150 + w[2] * PXM, 339 - w[1] * PXM] };
+const toW = ([x, y]) => [0, (339 - y) / PXM, (x - 150) / PXM];
+const inPoly = (poly, [x, y]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i], [xj, yj] = poly[j]; if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) c = !c; } return c; };
+const ARM_KEYS = ['shcap.r', 'upper.r', 'elbowcap.r', 'fore.r'];
+export const MIST_ARM = (() => {
+  const b = { height: H }, pose = { ...end, ...mistakePose };
+  const shapes = bodyShapes(fk(resolve(normPose(pose, b), b).q, b), CAM).filter(x => ARM_KEYS.includes(x.key) && x.poly);
+  const runs = [];
+  for (const sh of shapes) {
+    const others = shapes.filter(o => o !== sh).map(o => o.poly), keep = sh.poly.map(q => !others.some(P => inPoly(P, q)));
+    const start = keep.indexOf(false);
+    if (start < 0) { runs.push([...sh.poly, sh.poly[0]]); continue; }
+    let cur = [];
+    for (let k = 1; k <= sh.poly.length; k++) { const i = (start + k) % sh.poly.length; if (keep[i]) cur.push(sh.poly[i]); else if (cur.length) { runs.push(cur); cur = []; } }
+    if (cur.length) runs.push(cur);
+  }
+  return runs.filter(r => r.length > 1).map(r => r.map(toW));
+})();
+const LM_MIST = landmarksOf({ ...end, ...mistakePose }, H), MIST_GRIP = LM_MIST['grip.r'];
+// The arrow runs from the dumbbell's edge down to the straight-arm dumbbell (the start grip, under the shoulder).
+const ARROW_OFF = (() => { const a = CAM.P(MIST_GRIP), b = CAM.P(START_GRIP), L = Math.hypot(b[0] - a[0], b[1] - a[1]), r = 0.119 / 2 * PXM + 1; return [+((b[0] - a[0]) / L * r).toFixed(2), +((b[1] - a[1]) / L * r).toFixed(2)]; })();
+export const MIST_BELL = (() => { const c = CAM.P(MIST_GRIP), r = 0.119 / 2 * PXM; return [0, 60, 120, 180, 240, 300, 360].map(a => toW([c[0] + r * Math.cos(a * Math.PI / 180), c[1] + r * Math.sin(a * Math.PI / 180)])); })();
 
 const LS = landmarksOf(start, H);
 const BENCH_Z0 = LS['knee.l'][2] - 0.25, BENCH_Z1 = LS['wrist.l'][2] + 0.15;
@@ -132,7 +155,9 @@ export default {
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'arrow', from: { at: 'grip.r', pose: 'mistake' }, to: { at: 'grip.r', pose: 'start' } },   // down to the straight-arm bottom
+      ...MIST_ARM.map(pts => ({ kind: 'dashed', pts })),
+      { kind: 'dashed', pts: MIST_BELL },
+      { kind: 'arrow', from: { at: 'grip.r', pose: 'mistake', off: ARROW_OFF }, to: { at: 'grip.r', pose: 'start' } },   // down to the straight-arm bottom
     ],
     tells: [
       { key: 'short', text: 'Arm not<br>straight', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 246, top: 234 }, cue: 'The arm never straightens at the bottom.' },

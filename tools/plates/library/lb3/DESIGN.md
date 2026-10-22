@@ -367,6 +367,15 @@ each mutation shown red then restored. Authoring QA counts as evidence only afte
     the only near-plumb one that keeps the forearm and the dumbbell hand at least 90% in open space. The blade (the top
     half) shows no still sign, so its tell is dropped; the second tell is `lower` (the dumbbell never comes all the
     way down), and the arrow points down to the start dumbbell.
+- **Panel fix round 3 (D-LIB13-PANEL3, #274 6335029737; one_arm_dumbbell_row's Mistake view only).** The recheck
+  read the round-2 red arm as scraps: the engine masks the Mistake outline inside the faulty body, so it vanished under
+  the support arm. The red working arm is now traced as dashed guides (its shoulder cap, upper arm, elbow cap and
+  forearm, outer outline only, taken from the engine's bodyShapes) plus the end-on dumbbell hex; the engine draws
+  guides in the Mistake layer, above every figure and the bench. The pose is set by joint angles at the ruled elbow:
+  the upper arm 25 deg behind plumb, the elbow bent 70 deg (the dumbbell about 9 cm above the straight-arm start), and
+  the arrow runs from the dumbbell's edge down to the start dumbbell. Round 2's open-space test (the masked forearm at
+  least 90% visible) and its 10-deg plumb bound measured the round-2 drawing; they are replaced by the guide-trace test
+  and the ruled 25 deg (±3).
 - **Straight arms with the bent-back wrist (all pull plates).** The engine's IK turns the forearm by the hand's bend
   (about 9°, body.mjs solveReach), so the pull specs reach at 99.98% of the IK's own full length: the arm reads straight
   with the report's elbow at about 11°.
