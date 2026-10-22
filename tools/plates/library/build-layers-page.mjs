@@ -202,22 +202,51 @@ const howtoCssText = () => {
 const once = (html, s, what) => { const a = html.indexOf(s); if (a < 0 || html.indexOf(s, a + 1) >= 0) throw new Error(`layers page: ${what}: ${a < 0 ? 'not found' : 'found twice'}`); return a; };
 const idsIn = html => [...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]);
 const refsIn = html => [...html.matchAll(/(?:aria-(?:labelledby|describedby|controls)|for)="([^"]+)"|href="#([^"]+)"|url\(['"]?#([^)'"]+)/g)].flatMap(m => (m[1] ? m[1].split(/\s+/) : [m[2] ?? m[3]]));
-/** The built page with each pair row's hand block replaced by its pair panel. */
+/** `html` with `f` applied to every id and idref token (id, aria-labelledby/describedby/controls, for, href="#…", url(#…)). */
+const mapIds = (html, f) => html
+  .replace(/(\s(?:id|aria-labelledby|aria-describedby|aria-controls|for)=")([^"]*)"/g, (m, a, v) => `${a}${v.split(/(\s+)/).map(t => (/^\s*$/.test(t) ? t : f(t))).join('')}"`)
+  .replace(/((?:xlink:)?href="#)([^"]+)"/g, (m, a, v) => `${a}${f(v)}"`)
+  .replace(/(url\((['"]?)#)([^)'"]+)/g, (m, a, q, v) => `${a}${f(v)}`);
+/** D-LIB7b-PAGEDUP (B): the page-only id namespace of a repeated copy: `<pre>-` before every `hp-<key>-` id and idref. */
+export const namespaced = (panel, key, pre) => mapIds(panel, t => (t.startsWith(`hp-${key}-`) ? `${pre}-${t}` : t));
+/** The one named rewrite reversed. */
+export const unNamespaced = (panel, key, pre) => mapIds(panel, t => (t.startsWith(`${pre}-hp-${key}-`) ? t.slice(pre.length + 1) : t));
+/** The built page with each pair row's hand block replaced by its pair panel: the first copy of a key verbatim, each
+ *  later copy on the same page under its card's namespace (D-LIB7b-PAGEDUP (B)). */
 export async function withPairPanels(html, spec, panelOf) {
   panelOf ??= (await import('./hands/pairs.mjs')).pairPanel;
   const rows = pairRowsOf(spec), done = new Set();
   for (const { howtoId, pre, key } of rows) {
     const old = divAt(html, once(html, `<div class="zx" id="${pre}-zoom-hand" data-zoom="hand"`, `${howtoId}: hand close-up`));
-    const panel = await panelOf(key), zid = `hp-${key}-zoom-hand`;
-    if (!panel.startsWith(`<div class="zx" id="${zid}" data-zoom="hand"`) || divAt(panel, 0) !== panel) throw new Error(`layers page: ${howtoId}: pairPanel(${key}) is not one zx panel`);
+    const raw = await panelOf(key);
+    if (!raw.startsWith(`<div class="zx" id="hp-${key}-zoom-hand" data-zoom="hand"`) || divAt(raw, 0) !== raw) throw new Error(`layers page: ${howtoId}: pairPanel(${key}) is not one zx panel`);
+    const panel = done.has(key) ? namespaced(raw, key, pre) : raw, zid = idsIn(panel)[0];
     html = html.replace(old, () => panel).split(`aria-controls="${pre}-zoom-hand"`).join(`aria-controls="${zid}"`);
-    const gone = new Set(idsIn(old)), left = refsIn(html).filter(r => gone.has(r) && !idsIn(panel).includes(r));
-    if (left.length || html.includes(`${pre}-zoom-hand`)) throw new Error(`layers page: ${howtoId}: references to the old hand block left: ${[...new Set(left)]}`);
+    const gone = new Set(idsIn(old)), left = refsIn(html).filter(r => gone.has(r));
+    if (left.length || new RegExp(`(?<![a-z0-9-])${pre}-zoom-hand`).test(html)) throw new Error(`layers page: ${howtoId}: references to the old hand block left: ${[...new Set(left)]}`);
     done.add(key);
   }
+  const ids = idsIn(html), dup = ids.filter((x, i) => ids.indexOf(x) !== i);
+  if (dup.length) throw new Error(`layers page: repeated ids after the pair panels: ${[...new Set(dup)].slice(0, 5)}`);
   const at = once(html, howtoCssText(), 'HOWTO_CSS') - 1;
   if (html[at] !== '\n') throw new Error('layers page: HOWTO_CSS does not follow the close-up CSS');
   let css = '';
   for (const k of done) css += `\n/* close-ups: ${PAIR_LABEL} hp-${k} */\n${await pairCss(k)}`;
   return html.slice(0, at) + css + html.slice(at);
+}
+/** D-LIB7b-PAGEDUP check (3): every pair panel on a page, its one named rewrite reversed, === pairPanel(key); no id
+ *  repeats on the page; a namespaced copy keeps no un-namespaced `hp-<key>-` idref. [] when all hold. */
+export async function pairPanelProblems(html, panelOf) {
+  panelOf ??= (await import('./hands/pairs.mjs')).pairPanel;
+  const bad = [], ids = idsIn(html), dup = [...new Set(ids.filter((x, i) => ids.indexOf(x) !== i))];
+  if (dup.length) bad.push(`repeated ids: ${dup.slice(0, 5)}`);
+  for (const m of html.matchAll(/<div class="zx" id="([a-z0-9-]*hp-[a-z0-9-]+-zoom-hand)" data-zoom="hand"/g)) {
+    const block = divAt(html, m.index), key = block.match(/<div class="hx hx-hp-([a-z0-9-]+)">/)?.[1], tail = `hp-${key}-zoom-hand`;
+    if (!key || !(m[1] === tail || m[1].endsWith(`-${tail}`))) { bad.push(`${m[1]}: no pair scope of its own key`); continue; }
+    const pre = m[1].slice(0, -tail.length).replace(/-$/, '');
+    const back = pre ? unNamespaced(block, key, pre) : block;
+    if (back !== await panelOf(key)) bad.push(`${pre || 'first copy'} on ${key}: not pairPanel(${key}) after the one named rewrite`);
+    if (pre && (idsIn(block).some(t => !t.startsWith(`${pre}-hp-${key}-`)) || refsIn(block).some(t => t.startsWith(`hp-${key}-`)))) bad.push(`${pre} on ${key}: an id or idref outside its namespace`);
+  }
+  return bad;
 }

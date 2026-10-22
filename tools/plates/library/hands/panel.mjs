@@ -9,6 +9,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CAPTION_MAX_WORDS, words } from '../../layers/artifact/copy-lint.mjs';
 import { captions, esc, pagerOf } from '../render/closeup/common.mjs';
+import { splitHalves } from '../../layers/artifact/howto-layers.mjs';   // LIB-7b: D-LIB7b-HALVES
 
 // D-LIB7FIX-PERKEY: a new key adds its own words file and edits no shared one (panel.mjs cannot import pairs.mjs, which imports it)
 export const WORDS_DIR = 'tools/plates/library/hands/words';
@@ -65,8 +66,9 @@ export function panelHtml(key, pages, all = readWords(key)) {
       .replace(/<button class="pager-btn" role="tab" aria-selected=/g, () => `<button type="button" class="pager-btn" data-page="${k}" id="${pre}-zb-p${i}-tab${k++}" aria-pressed=`) : '';
     return `<div class="zx-page" data-page="${i}"${i ? ' hidden' : ''}><section class="zoom"><div class="hand-plate">${p.svg}</div>${captions(w.faults[p.fault])}${pg}</section></div>`;
   }).join('');
-  return `<div class="zx" id="${zid}" data-zoom="hand" role="region" aria-labelledby="${zid}-h" hidden>`
+  // LIB-7b (D-LIB7b-HALVES): golden B's TalkBack halves, as cleanZoom gives every card's close-up (attribute-only)
+  return splitHalves(`<div class="zx" id="${zid}" data-zoom="hand" role="region" aria-labelledby="${zid}-h" hidden>`
     + `<div class="zx-top"><h4 class="zx-h" id="${zid}-h" tabindex="-1">${esc(w.heading)}</h4>`
     + `<button type="button" class="zx-close" id="${zid}-close" aria-label="${esc(all.chrome.close.text)}">${X18}</button></div>`
-    + `<div class="hx hx-${pre}">${body}</div></div>`;
+    + `<div class="hx hx-${pre}">${body}</div></div>`, `hand panel ${key}`);
 }
