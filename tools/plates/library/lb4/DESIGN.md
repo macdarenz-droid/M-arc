@@ -196,6 +196,17 @@ card's unsourced list); step_up's box height (45 cm drawn, a drawing value), box
 spot; pistol_squat's torso angle at the bottom (card unsourced list), free-leg height, arm angle; every Mistake
 magnitude (illustrative, never enlarged to pass a check: Q-D5-3).
 
+**CARD FIELDS fix round (#289 6341470610).** front_squat gains `contact wrist.r` at start and end (c4: the hands
+on the bar; the fingertip rack's wrist plane, checked per pose). c8's "toes out 15-30 degrees" is not a fact: the body
+model reports no foot turn-out angle (the plant's toe direction is an input, not a reported joint angle, and the side
+view cannot show it), the same rule as a contact with no landmark; the feet are drawn at 20 deg, inside the range.
+goblet_squat drops `contact chest` (no quote says the weight touches the chest: g1/g5 "at chest height", g2 "in front
+of the chest") and gains `contact wrist.r`, `wrist.l` at start (g1, both hands cupping the weight) and `heel.r`,
+`ball.r` at end (g4, "push both feet into the floor"). bodyweight_squat's heel and ball cite b7 ("keeping the heels
+flat on the floor"). step_up gains the trailing foot's heel.l and ball.l on the floor at spec `end` (card start, c1);
+the hands-on-dumbbells fact from c5 is declined (c5 is the stance before the first step, which the plate draws in no
+pose).
+
 ## 11. PQ-H3 estimates (before drawing; each [unverified until drawn])
 
 deviationMin 11.39 px and traceLenMin 22.11 px (qa/envelope.json) at about 146 px/m:
@@ -212,6 +223,16 @@ deviationMin 11.39 px and traceLenMin 22.11 px (qa/envelope.json) at about 146 p
 A too-small fault is reported with its card-true size, never enlarged (Q-D5-3); any zoom route is the supervisor's
 ruling (as D-LIB13-SHRUG). The heel lift is drawn with the engine's plant (`ref: 'ball'`, the foot pitched about the
 ball, vendor body.mjs:214-236), the knee following.
+
+**Heel-lift convention (slice look item 1, #289 6341498444).** Pilot A's reverse_lunge.mjs:17-22 (#109 @ `ff7c5c4f`),
+copied: the rigid foot is pitched heel-up about the ball and the ball lifted so the toe pad, the lowest outline point,
+touches the floor (a drawn-item test holds it within 0.5 px; `toe.r` stays above the floor by check). Size: the cards
+describe the onset of a lift (pistol p8 "may try and creep up"; bodyweight b4 "stop earlier if the heels start to
+lift"), so the heel is drawn 3.5 cm up, this section's 3-4 cm midpoint, where it clears the floor line by about 5 px;
+never sized to pass PQ-H3. pistol_squat measured node-side (qa/node.mjs `deviation`, not QA evidence): heel tell 10.2
+px, knee tell 19.7 px (the weight moves over the ball, so the hips and knee travel forward), largest 19.7 px against
+11.39. bodyweight_squat follows the same convention in the bulk; if its size is red it is held under D-LIB8-shrug with
+the LIB-ZOOM route.
 
 ## 12. H slice (Do 2; D-LIB14-SLICE)
 

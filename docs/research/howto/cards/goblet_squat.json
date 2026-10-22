@@ -176,17 +176,31 @@
   "plateFacts": [
     {
       "kind": "contact",
-      "landmark": "chest",
+      "landmark": "wrist.r",
       "pose": "start",
       "cardPose": "start",
       "claim": "g1"
     },
     {
       "kind": "contact",
-      "landmark": "chest",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "g1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
       "pose": "end",
       "cardPose": "end",
-      "claim": "g5"
+      "claim": "g4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "g4"
     }
   ],
   "topFault": "lean"

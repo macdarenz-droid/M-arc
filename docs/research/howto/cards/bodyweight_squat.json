@@ -127,14 +127,14 @@
       "landmark": "heel.r",
       "pose": "end",
       "cardPose": "end",
-      "claim": "b6"
+      "claim": "b7"
     },
     {
       "kind": "contact",
       "landmark": "ball.r",
       "pose": "end",
       "cardPose": "end",
-      "claim": "b6"
+      "claim": "b7"
     }
   ],
   "topFault": "heels"

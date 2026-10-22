@@ -299,9 +299,15 @@ describe('LIB-14 wall_sit (H; hold convention): drawn facts', { timeout: T }, ()
     expect(m['knee.r'][2]).toBeGreaterThan(m['toe.r'][2]);
     expect(e['knee.r'][2]).toBeLessThan(e['toe.r'][2]);
   });
-  it('the knee-over-ankle plumb datum runs through the held ankle', () => {
+  it('the knee-over-ankle plumb datum runs through the held ankle, on the correct plate only', () => {
     const d = S.wall_sit.datum[0], l = lmOf(S.wall_sit, 'end');
     expect(d.x[2]).toBeCloseTo(l['ankle.r'][2], 9);
+    expect(d.mistake).toBe(false);
+  });
+  it('w2: the knee arc is drawn at 90 deg (measure expect 90, drawn within 2 deg)', () => {
+    const r = rep(S.wall_sit);
+    expect(S.wall_sit.measure.expect).toBe(90);
+    expect(Math.abs(r.measure.drawnDeg - 90)).toBeLessThanOrEqual(2);
   });
 });
 
@@ -333,11 +339,26 @@ describe('LIB-14 pistol_squat (H; single leg; drawable false): drawn facts', { t
       expect(l['wrist.r'][2] - l['shoulder.r'][2], p).toBeGreaterThan(0.4);
     }
   });
-  it('p8 Mistake: the standing heel at least 5 cm up, the ball on the floor, the knee at least 5 cm further forward', () => {
+  it('p8 Mistake: the standing heel up, the knee at least 5 cm further forward (the weight over the ball)', () => {
     const e = lmOf(S.pistol_squat, 'end'), m = lmOf(S.pistol_squat, 'mistake');
-    expect(m['heel.r'][1] - e['heel.r'][1]).toBeGreaterThanOrEqual(0.05);
-    expect(Math.abs(m['ball.r'][1] - e['ball.r'][1])).toBeLessThanOrEqual(0.005);
+    expect(m['heel.r'][1] - e['heel.r'][1]).toBeGreaterThanOrEqual(0.03);
     expect(m['knee.r'][2] - e['knee.r'][2]).toBeGreaterThanOrEqual(0.05);
+  });
+  /** The Mistake's standing foot outline (the engine's bodyShapes): its lowest point in px below the floor line. */
+  const footSink = (spec: any) => {
+    const b = { height: 1.75 }, c = rep(spec).camera, cam = { view: 'side', near: 'r', pxm: c.pxPerM, P: (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
+    const pose = { ...spec.poses.end, ...spec.mistake.pose };
+    const foot = body.bodyShapes(body.fk(body.resolve(body.normPose(pose, b), b).q, b), cam).find((x: any) => x.key === 'foot.r');
+    return Math.max(...foot.poly.map((q: number[]) => q[1]!)) - c.y0;
+  };
+  it('p8 Mistake (the slice look\'s item 1): the lifted foot\'s toe pad touches the floor line (±0.5 px), never under it; the heel rises 3.5 cm', () => {
+    expect(Math.abs(footSink(S.pistol_squat))).toBeLessThanOrEqual(0.5);
+    expect(lmOf(S.pistol_squat, 'mistake')['heel.r'][1]).toBeCloseTo(0.035, 4);
+  });
+  it('mutation: the slice\'s pitch with no toe lift (25 deg about the ball on the floor) sinks the toes through the floor (red)', () => {
+    const s = S.pistol_squat, a = 25 * Math.PI / 180, r = s.mistake.pose.plant.r;
+    const sunk = { ...s, mistake: { ...s.mistake, pose: { ...s.mistake.pose, plant: { r: { ...r, at: [r.at[0], 0, r.at[2]], normal: [0, Math.cos(a), Math.sin(a)], toe: [0, -Math.sin(a), Math.cos(a)] } } } } };
+    expect(footSink(sunk)).toBeGreaterThan(0.5);
   });
   it('drawable false: the spec names the drawable-fault convention (F7 expected); no tempo (D-LIB14-NOSECS)', () => {
     expect(S.pistol_squat.pilot.drawableFault).toMatch(/bouncing/);
@@ -378,14 +399,30 @@ describe('LIB-14 front_squat (H; the 8\'s squat clone, the rack): drawn facts', 
     expect(Math.min(...zs)).toBeLessThan(l.buttock[2]);
     expect(Math.max(...zs)).toBeGreaterThan(l['knee.r'][2]);
   });
-  it('c7 Mistake (out of the bottom): the trunk tips at least 15 deg further forward, the elbow drops at least 10 cm, the bar drifts at least 5 cm forward, the hips rise 5-15 cm', () => {
+  it('c7 Mistake: the trunk tips at least 3 deg further forward, the elbow drops at least 10 cm, the hips held (no part the card does not name moves)', () => {
     const e = lmOf(S.front_squat, 'end'), m = lmOf(S.front_squat, 'mistake');
     const incl = (l: any) => Math.atan2(l.shoulders[2] - l.hips[2], l.shoulders[1] - l.hips[1]) * 180 / Math.PI;
-    expect(incl(m) - incl(e)).toBeGreaterThanOrEqual(15);
+    expect(incl(m) - incl(e)).toBeGreaterThanOrEqual(3);
     expect(e['elbow.r'][1] - m['elbow.r'][1]).toBeGreaterThanOrEqual(0.10);
-    expect(bar('mistake')[2] - bar('end')[2]).toBeGreaterThanOrEqual(0.05);
-    expect(m['hip.r'][1] - e['hip.r'][1]).toBeGreaterThanOrEqual(0.05);
-    expect(m['hip.r'][1] - e['hip.r'][1]).toBeLessThanOrEqual(0.15);
+    expect(Math.hypot(e['hip.r'][1] - m['hip.r'][1], e['hip.r'][2] - m['hip.r'][2])).toBeLessThanOrEqual(0.005);
+  });
+  it('c7 Mistake: the chest falls as far as the set safety allows (the bar 2 cm above the spotter arm, ±1 mm)', () => {
+    const sb = itemsIn(S.front_squat, 'end').items.find(it => it.type === 'backPad'), top = Math.max(...sb.surface.map((p: number[]) => p[1])) + sb.t;
+    expect(Math.abs(bar('mistake')[1] - 0.014 - top - 0.02)).toBeLessThanOrEqual(0.001);
+  });
+  /** The slice look's item 2: each elbow bent at most 150 deg and the two elbows apart, at least shoulder width. */
+  const armProblems = (spec: any, poses: string[]) => poses.flatMap(p => {
+    const a = rep(spec).angles[p], l = lmOf(spec, p), out: string[] = [];
+    for (const s of ['l', 'r']) if (a[`elbow.${s}`] > 150) out.push(`${p}: elbow.${s} ${a[`elbow.${s}`]}`);
+    if (Math.abs(l['elbow.l'][0] - l['elbow.r'][0]) < Math.abs(l['shoulder.l'][0] - l['shoulder.r'][0])) out.push(`${p}: elbows closer than the shoulders`);
+    return out;
+  });
+  it('c3-c5 fingertip rack: each elbow bends at most 150 deg and the elbows sit at least shoulder width apart, in start and end', () => {
+    expect(armProblems(S.front_squat, ['start', 'end'])).toEqual([]);
+  });
+  it('mutation: the slice\'s closed-grip rack (elbows folded 177 deg at the midline) is red', () => {
+    const s = S.front_squat, fold = (p: any) => ({ ...p, hand: undefined, wrist: -70, reach: { l: { at: [0.25, p.reach.l.at[1], p.reach.l.at[2]], pole: [0, 0.3, 1] }, r: { at: [-0.25, p.reach.r.at[1], p.reach.r.at[2]], pole: [0, 0.3, 1] } } });
+    expect(armProblems({ ...s, poses: { ...s.poses, start: fold(s.poses.start), end: fold(s.poses.end) } }, ['start', 'end']).length).toBeGreaterThan(0);
   });
   it('R2: the bar never passes through the spotter arm (its underside at least 1 cm above the arm\'s top in every pose)', () => {
     const sb = itemsIn(S.front_squat, 'end').items.find(it => it.type === 'backPad'), top = Math.max(...sb.surface.map((p: number[]) => p[1])) + sb.t;
@@ -521,6 +558,21 @@ describe('LIB-14 A15: Mistake clearance, leaders clear of the wall and the Trace
     const s = S.wall_sit, c = rep(s).camera, x = c.x0 + M.wall_sit.WALL_Z * c.pxPerM;
     const bad = { ...s, callouts: [{ ...s.callouts[0], anchor: 'backUpper', box: { left: Math.round(x + 2), top: 60 } }, ...s.callouts.slice(1)] };
     expect(minGap(bad)).toBeLessThan(6);
+  });
+
+  /** The longest leader (its whole path, the label tail included) in the normal and Mistake renders, as PQ's leaderMax. */
+  const leaderMax = (spec: any) => Math.max(...[false, true].flatMap(mistake => [...plate.renderPlate(spec, { id: 'x', mistake }).svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(m => {
+    let x = 0, y = 0, t = 0;
+    for (const c of m[1]!.matchAll(/([MLH])(-?[\d.]+)(?:[ ,](-?[\d.]+))?/g)) { const nx = +c[2]!, ny = c[1] === 'H' ? y : +c[3]!; if (c[1] !== 'M') t += Math.hypot(nx - x, ny - y); x = nx; y = ny; }
+    return t;
+  })));
+  it('F3 (the slice look: no flag is planned): every drawn spec\'s longest leader sits inside the 8\'s range', () => {
+    const [lo, hi] = pins().envelope.F3;
+    for (const id of specsDrawn()) { const v = leaderMax(S[id]); expect(v >= lo && v <= hi, `${id} ${v.toFixed(1)}`).toBe(true); }
+  });
+  it('mutation: pistol_squat\'s "Free leg straight" label placed automatically, as at the slice (84 px leader), is red', () => {
+    const s = S.pistol_squat, moved = { ...s, callouts: s.callouts.map((c: any) => (c.key === 'leg' ? { ...c, box: undefined } : c)) };
+    expect(leaderMax(moved)).toBeGreaterThan(pins().envelope.F3[1]);
   });
 
   // R10 (DESIGN.md section 7): one drawn-item check per tier-A item, in the table's order.
@@ -790,15 +842,16 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
     ...(f.cardPose && POSE_MAP[id]![f.cardPose] !== (f.pose ?? 'end') ? [`${i}: pose ${f.pose ?? 'end'} is not the map's image of card ${f.cardPose}`] : []),
   ]);
-  // D-LIB14-FACTS (#289 6338977366), each with its claim id; one per checked landmark, its pose the map's image.
+  // D-LIB14-FACTS (#289 6338977366) with the verify's fix round (6341470610), each with its claim id; one per checked
+  // landmark, its pose the map's image.
   const C = (lms: string[], pose: string, cardPose: string, claim: string) => lms.map(landmark => ({ kind: 'contact', landmark, pose, cardPose, claim }));
   const FACTS: Record<string, any[]> = {
-    front_squat: [...C(['shoulderTop.r'], 'start', 'start', 'c3'), ...C(['shoulderTop.r'], 'end', 'end', 'c3')],
-    goblet_squat: [...C(['chest'], 'start', 'start', 'g1'), ...C(['chest'], 'end', 'end', 'g5')],
-    bodyweight_squat: C(['heel.r', 'ball.r'], 'end', 'end', 'b6'),
+    front_squat: [...C(['shoulderTop.r'], 'start', 'start', 'c3'), ...C(['shoulderTop.r'], 'end', 'end', 'c3'), ...C(['wrist.r'], 'start', 'start', 'c4'), ...C(['wrist.r'], 'end', 'end', 'c4')],
+    goblet_squat: [...C(['wrist.r', 'wrist.l'], 'start', 'start', 'g1'), ...C(['heel.r', 'ball.r'], 'end', 'end', 'g4')],
+    bodyweight_squat: C(['heel.r', 'ball.r'], 'end', 'end', 'b7'),
     wall_sit: [{ kind: 'angle', joint: 'knee.r', pose: 'end', cardPose: 'end', deg: 90, claim: 'w2' }, { kind: 'angle', joint: 'hip.r.flex', pose: 'end', cardPose: 'end', deg: 90, claim: 'w2' },
       ...C(['backUpper', 'buttock'], 'start', 'start', 'w5'), ...C(['backUpper', 'buttock'], 'end', 'end', 'w5')],
-    step_up: [...C(['heel.r', 'ball.r'], 'end', 'start', 'c6'), ...C(['heel.r', 'ball.r'], 'start', 'end', 'c1')],
+    step_up: [...C(['heel.r', 'ball.r'], 'end', 'start', 'c6'), ...C(['heel.l', 'ball.l'], 'end', 'start', 'c1'), ...C(['heel.r', 'ball.r'], 'start', 'end', 'c1')],
     pistol_squat: C(['heel.r', 'ball.r'], 'end', 'end', 'p3'),
   };
   it('every card\'s plateFacts is the ruled set (D-LIB14-FACTS)', () => {
@@ -821,15 +874,16 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
   // Every numeric triple named `at` in a pose (root, reach and plant targets) moved by v: the whole body moves rigidly.
   const shiftPose = (p: any, v: number[]): any => Array.isArray(p) ? p.map(x => shiftPose(x, v)) : p && typeof p === 'object'
     ? Object.fromEntries(Object.entries(p).map(([k, x]: [string, any]) => [k, k === 'at' && Array.isArray(x) && x.length === 3 && x.every((n: any) => typeof n === 'number') ? x.map((n: number, i: number) => n + v[i]!) : shiftPose(x, v)])) : p;
-  it('A6 mutation: each contact pose\'s body moved 2 cm along its contact plane\'s normal turns exactly that pose\'s contact facts red', () => {
-    for (const id of specsDrawn()) for (const pose of [...new Set(FACTS[id]!.filter(f => f.kind === 'contact').map(f => f.pose))]) {
-      const s = S[id], f0 = FACTS[id]!.find(f => f.kind === 'contact' && f.pose === pose);
-      const k = s.checks.find((c: any) => c.landmark === f0.landmark && c.plane && (c.pose === pose || c.pose === 'all'));
+  it('A6 mutation: for each contact fact, its pose\'s body moved 2 cm along that fact\'s plane normal turns that fact red and no fact of another pose', () => {
+    for (const id of specsDrawn()) FACTS[id]!.forEach((f, i) => {
+      if (f.kind !== 'contact') return;
+      const s = S[id], k = s.checks.find((c: any) => c.landmark === f.landmark && c.plane && (c.pose === f.pose || c.pose === 'all'));
       const n = k.plane.normal, L = Math.hypot(...n), v = n.map((x: number) => x / L * 0.02);
-      const moved = { ...s, poses: { ...s.poses, [pose]: shiftPose(s.poses[pose], v) } };
-      const want = FACTS[id]!.flatMap((f, i) => (f.kind === 'contact' && f.pose === pose ? [`H6.fact:${i}:contact:${f.landmark}`] : []));
-      expect(h6(moved, research(id)).filter((x: string) => x.includes(':contact:')), `${id} ${pose}`).toEqual(want);
-    }
+      const red = h6({ ...s, poses: { ...s.poses, [f.pose]: shiftPose(s.poses[f.pose], v) } }, research(id)).filter((x: string) => x.includes(':contact:'));
+      expect(red, `${id} ${f.pose} ${f.landmark}`).toContain(`H6.fact:${i}:contact:${f.landmark}`);
+      const others = FACTS[id]!.flatMap((g, j) => (g.kind === 'contact' && g.pose !== f.pose ? [`H6.fact:${j}:contact:${g.landmark}`] : []));
+      expect(red.filter((x: string) => others.includes(x)), `${id} ${f.pose} ${f.landmark}`).toEqual([]);
+    });
   });
   it('A6 mutations: an angle fact +3 deg (wall_sit\'s knee 93), and the card path removed, are red', () => {
     const s = S.wall_sit, r = research('wall_sit');

@@ -87,6 +87,7 @@ const start = pose(EQ);
 // contact at 0.2 cm).
 const mistakePose = { plant: feetAt(-FEET_IN, true) };
 const LM = landmarksOf({ ...end, ...mistakePose }, H), LE = landmarksOf(end, H);
+const SHANK_EXT = [LE['knee.r'][2] - LE['ankle.r'][2], LE['knee.r'][1] - LE['ankle.r'][1]];
 export const wsInfo = { held: HQ, entry: EQ, wallZ: WALL_Z, kneeZ: LE['knee.r'][2], ankleZ: LE['ankle.r'][2], mKneeZ: LM['knee.r'][2], toeZ: LE['toe.r'][2], mToeZ: LM['toe.r'][2] };
 
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] }, WALLP = { point: [0, 0, WALL_Z], normal: [0, 0, 1] };
@@ -107,17 +108,22 @@ export default {
   startParts: ['trunk', 'leg.r'],
   ghosts: { count: 2, parts: ['trunk', 'leg.r'] },
   trace: { point: 'hip.r', trim: [8, 10] },
-  datum: [{ x: [0, 0, LE['ankle.r'][2]], from: 349, to: 230 }],
+  // The knee-over-ankle plumb (w4), correct plate only (as the 8's shin line): in the Mistake the faulty knee's own red
+  // plumb and the floor gap to the toes carry the fault.
+  datum: [{ x: [0, 0, LE['ankle.r'][2]], from: 349, to: 230, mistake: false }],
+  // w2: the knee arc, from the shin line extended past the knee to the thigh (the 8's knee measure), expect 90.
+  measure: { vertex: 'knee.r', from: { dir: SHANK_EXT }, to: 'hip.r', radius: 22, title: 'Knee', value: 'about 90°', expect: 90, box: { left: 230, top: 202 } },
   callouts: [
-    { key: 'back', text: 'Back on wall', anchor: 'backUpper', box: { left: 140, top: 168 }, cue: 'Keep your back and buttocks on the wall.' },
-    { key: 'knees', text: 'Knees over<br>ankles', anchor: 'knee.r', box: { left: 236, top: 284 }, cue: 'Keep your shins vertical, knees right above the ankles.' },
-    { key: 'deg', text: '90 degrees', anchor: 'thighTop.r', box: { left: 236, top: 222 }, cue: 'Slide down until your hips and knees are at about 90 degrees.' },
+    { key: 'back', text: 'Back on wall', anchor: 'backUpper', box: { left: 140, top: 164 }, cue: 'Keep your back and buttocks on the wall.' },
+    { key: 'knees', text: 'Knees over<br>ankles', anchor: 'knee.r', box: { left: 232, top: 296 }, cue: 'Keep your shins vertical, knees right above the ankles.' },
+    { key: 'deg', text: '90 degrees', anchor: 'thighTop.r', box: { left: 236, top: 254 }, cue: 'Slide down until your hips and knees are at about 90 degrees.' },
   ],
   tempo: [{ phase: 'Hold', s: '30-60' }],
   mistake: {
     pose: mistakePose,
     guides: [
       { kind: 'dashed', pts: [{ at: 'knee.r', pose: 'mistake' }, [0, 0, LM['knee.r'][2]]] },
+      { kind: 'dashed', pts: [[0, 0.004, LM['toe.r'][2]], [0, 0.004, LM['knee.r'][2]]] },   // the floor gap: toes to the knee's plumb
     ],
     tells: [
       { key: 'feet', text: 'Feet too<br>close', anchor: { at: 'toe.r', pose: 'mistake' }, box: { left: 236, top: 284 }, cue: 'The feet sit too close to the wall.' },

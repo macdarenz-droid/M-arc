@@ -595,6 +595,20 @@
     },
     {
       "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
       "landmark": "heel.r",
       "pose": "start",
       "cardPose": "end",

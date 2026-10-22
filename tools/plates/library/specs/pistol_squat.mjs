@@ -22,19 +22,26 @@
 //   segment overlap), the stance foot flat (checks), hips back with the trunk END_INCL forward (unsourced: the card
 //   lists the torso angle as unsourced), the free leg straight and hovering forward, its heel FREE_CLEAR above the
 //   floor (the free hip flexion SOLVED, bracket; checks).
-//  Mistake (p8, heel lift): at the bottom the standing heel rises HEEL_UP deg about the ball of the foot (plant ref
-//   'ball', sole plane pitched); hips, trunk, arms and free leg as at the bottom, so the knee travels forward over the
+//  Mistake (p8, heel lift): at the bottom the standing heel rises HEEL_RISE about the ball of the foot (plant ref
+//   'ball', sole plane pitched HEEL_UP, solved; the toe pad on the floor, reverse_lunge's convention); hips, trunk, arms and free leg as at the bottom, so the knee travels forward over the
 //   toes.
 // Unsourced numbers: STANCE_X 0.09, START (knee 5, trunk 3, free hip 30), END_KNEE 140, END_INCL 40, FREE_CLEAR
-//  0.05 m, VIA (knee 75, trunk 20), HEEL_UP 25 (the Mistake magnitude, illustrative), arms level.
+//  0.05 m, VIA (knee 75, trunk 20), HEEL_RISE 0.035 m (the Mistake size: p8's heel "may try and creep up", the onset of a lift,
+//  drawn at DESIGN.md section 11's 3-4 cm midpoint, where the heel clears the floor line by about 5 px; never sized to
+//  pass PQ-H3), arms level.
 import { landmarksOf, normPose, resolve } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180, B = { height: H };
-const STANCE_X = 0.09, END_KNEE = 140, END_INCL = 40, FREE_CLEAR = 0.05, HEEL_UP = 25;
+const STANCE_X = 0.09, END_KNEE = 140, END_INCL = 40, FREE_CLEAR = 0.05, HEEL_RISE = 0.035;
+// The heel lift (the convention of pilot A's reverse_lunge.mjs:17-22, #109 @ ff7c5c4f, copied): the engine foot is
+// rigid (no toe joint), so the foot is planted on a plane pitched `heelUp` deg heel-up about the ball (ref 'ball'), and
+// the ball is lifted `toeLift` so the toe pad, the lowest outline point, just touches the floor instead of sinking
+// through it (the real toe joint lets the toes lie flat). A check keeps toe.r above the floor in the Mistake, and a drawn-item test puts
+// the foot outline's lowest point on the floor line (±0.5 px).
+const toeLift = a => -Math.min(...[[0.112, -0.036], [0.120, -0.028], [0.100, -0.038]].map(([z, y]) => ((z - 0.080) * -Math.sin(a * R) + (y + 0.039) * Math.cos(a * R)) * H));
 const stance = (heelUp = 0) => ({ r: heelUp
-  ? { at: [-STANCE_X, 0, 0], ref: 'ball', normal: [0, Math.cos(heelUp * R), Math.sin(heelUp * R)], toe: [0, -Math.sin(heelUp * R), Math.cos(heelUp * R)] }
+  ? { at: [-STANCE_X, toeLift(heelUp), 0], ref: 'ball', normal: [0, Math.cos(heelUp * R), Math.sin(heelUp * R)], toe: [0, -Math.sin(heelUp * R), Math.cos(heelUp * R)] }
   : { at: [-STANCE_X, 0, 0], toe: [0, 0, 1] } });
-
 // Whole-body centre of mass (Winter 2009 Table 4.1; copied from single_leg_romanian_deadlift).
 const L3 = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
 function com(lm) {
@@ -70,10 +77,13 @@ const via = [key({ incl: 20, knee: 75, freeHip: 55 })];
 // End: the free hip flexion SOLVED (bracket 60..130 deg) so the free heel hovers FREE_CLEAR above the floor (p5).
 export const FREE_HIP = solve(fh => landmarksOf(key({ incl: END_INCL, knee: END_KNEE, freeHip: fh, zr: END_ZR }), H)['heel.l'][1] - FREE_CLEAR, 60, 130);
 const end = key({ incl: END_INCL, knee: END_KNEE, freeHip: FREE_HIP, zr: END_ZR });
-// Mistake: the heel rises HEEL_UP about the ball; the knee stays END_KNEE and the root is re-solved so the centre of
+// Mistake: the heel rises HEEL_RISE (pitch HEEL_UP) about the ball; the knee stays END_KNEE and the root is re-solved so the centre of
 // mass sits over the ball of the foot (the weight rolls forward onto the toes), so hips and knee travel forward.
 const BALL_Z = landmarksOf(end, H)['ball.r'][2];
-const MIS = key({ incl: END_INCL, knee: END_KNEE, freeHip: FREE_HIP, zr: [-0.2, 0.15], heelUp: HEEL_UP, comZ: BALL_Z });
+const misAt = a => key({ incl: END_INCL, knee: END_KNEE, freeHip: FREE_HIP, zr: [-0.25, 0.05], heelUp: a, comZ: BALL_Z });
+// The pitch is SOLVED (bracket 2..25 deg) so the heel rises HEEL_RISE off the floor.
+export const HEEL_UP = solve(a => landmarksOf(misAt(a), H)['heel.r'][1] - HEEL_RISE, 2, 25);
+const MIS = misAt(HEEL_UP);
 const mistakePose = { root: MIS.root, plant: MIS.plant };
 const LE = landmarksOf(end, H), LM = landmarksOf({ ...end, ...mistakePose }, H);
 const KNEE_M = LM['knee.r'];
@@ -90,7 +100,7 @@ export default {
     { landmark: 'ball.r', plane: floor, pose: 'start', tol: 0.5 },
     { landmark: 'heel.r', plane: floor, pose: 'end', tol: 0.5 },
     { landmark: 'ball.r', plane: floor, pose: 'end', tol: 0.5 },
-    { landmark: 'ball.r', plane: floor, pose: 'mistake', tol: 0.5 },  // the Mistake: on the ball, heel up
+    { landmark: 'toe.r', above: floor, pose: 'mistake' },             // the Mistake: heel up, the toe above the floor (the outline's toe pad on it: a drawn-item test)
     { landmark: 'heel.l', above: floor, pose: 'all' },                // free leg off the floor (p2)
     { landmark: 'toe.l', above: floor, pose: 'all' },
   ],
@@ -99,7 +109,7 @@ export default {
   trace: { point: 'hip.r', trim: [8, 10] },
   callouts: [
     { key: 'arms', text: 'Arms forward', anchor: 'grip.r', cue: 'Reach your arms forward for balance.' },
-    { key: 'leg', text: 'Free leg<br>straight', anchor: 'knee.l', cue: 'Hold the free leg out in front, knee straight.' },
+    { key: 'leg', text: 'Free leg<br>straight', anchor: 'knee.l', box: { left: 236, top: 254 }, cue: 'Hold the free leg out in front, knee straight.' },
     { key: 'heel', text: 'Heel down', anchor: 'heel.r', cue: 'Keep the whole standing foot flat on the floor.' },
   ],
   mistake: {
@@ -112,7 +122,7 @@ export default {
     ],
     tells: [
       { key: 'heel', text: 'Heel lifts', anchor: { at: 'heel.r', pose: 'mistake' }, cue: 'The standing heel comes off the floor at the bottom.' },
-      { key: 'knee', text: 'Knee shoots<br>forward', anchor: { at: 'knee.r', pose: 'mistake' }, cue: 'The knee drives forward as the weight rolls onto the toes.' },
+      { key: 'knee', text: 'Knee forward', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 246, top: 246 }, cue: 'The knee drives forward as the weight rolls onto the toes.' },
     ],
   },
   pilot: { drawableFault: 'Top fault: bouncing out of the bottom (p8), seen only as speed; the knee cave needs a front view; the plate draws the next listed fault, the standing heel lifting (p8).' },

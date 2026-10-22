@@ -16,8 +16,11 @@
 //   BAR_T in the standing thorax frame (its underside level with the shoulder tops, just in front of the throat), so it
 //   moves with the thorax; a `checks` plane per pose through the bar's underside, square to the thorax, holds the
 //   shoulder top on it (c3: the shoulders hold the bar; the contact fact).
-//  Arms (c4, c7): hands on the bar just outside the shoulders (GRIP_X), the elbows driven forward and up (IK pole
-//   forward and up, the wrists bent back WRIST), so the upper arms sit near level; the hands only steady the bar (c3).
+//  Arms (c3-c5, c7): the fingertip rack (c3: "a fingertip rack position is preferable"; c5). Open hands (flat palm),
+//   wrists bent WRIST, the bar across the fingers FINGER of the way from the wrist to the fingertips at GRIP_X either
+//   side of the midline (rackHands, solved); the elbows forward, out and up (pole HIGH), each bent about 145 deg (the
+//   8's back squat 147) and in front of its shoulder; a `checks` plane per pose holds each near hand on the bar,
+//   measured at the wrist (c4, the contact fact). The hands only steady the bar (c3).
 //  Start: standing tall, knees 5 deg soft, trunk 3 deg forward. End (c10-c12): the hip joint centre DEPTH below the knee
 //   centre (hip crease below the top of the knee, c11), trunk END_INCL from vertical (torso upright, c12), whole foot
 //   down; the hip height is SOLVED (bracket) for the depth, the root z for the bar over mid-foot.
@@ -25,25 +28,26 @@
 //   rackUpright, no J-hook: its side-view hook points away from the lifter), and its spotter arm running back past the lifter (eq/parts
 //   sideBar), its top SAFETY_DROP below the bar's underside at the bottom ("just below your lowest depth", c14).
 //  Camera: PXM 128 px/m (inside the 8's 123.9-146.3) so the labels fit beside the upright.
-//  Mistake (c7, out of the bottom): the elbows drop (IK pole down) and the chest falls forward, the thorax M_INCL
-//   from vertical, so the bar travels forward of mid-foot (fsInfo.mBarZ); the hips rise out of the hole by the least
-//   amount (SOLVED) that keeps the bar M_CLEAR above the spotter arm.
-// Unsourced numbers: BAR_T (the rack spot), GRIP_X 0.25, the elbow pole, WRIST -70 (the card lists the wrist angle
-//  as unsourced), START (knee 5, trunk 3), DEPTH 0.03 m,
-//  END_INCL 22 (the card gives no torso angle), the stand's 2.3 m upright 0.55 m in front of mid-foot and its 5 cm spotter arm
-//  reaching 0.5 m behind,
-//  SAFETY_DROP 0.05 m (c14 "just below"), the 45 cm plate, M_INCL 45 (the Mistake magnitude, illustrative), M_CLEAR 0.02 m.
-import { bodyShapes, fk, landmarksOf, normPose, resolve } from '../engine.mjs';
+//  Mistake (c7, out of the bottom): the elbows drop (IK pole down) and the chest falls forward with the hips where
+//   they were: the thorax inclination SOLVED as the furthest the chest can fall before the bar comes within M_CLEAR of
+//   the spotter arm (fsInfo.mIncl, about 28 deg against 22), so no part the card does not name moves. The faulty upper
+//   body is traced as dashed guides. The bar's own forward drift (fsInfo.mBarZ, about 3 cm) is too small to point at,
+//   so no bar tell is drawn.
+// Unsourced numbers: BAR_T (the rack spot), GRIP_X 0.14 (the finger contact), FINGER 0.6, WRIST 40, the elbow poles
+//  (the card lists the wrist angle as unsourced), START (knee 5, trunk 3), DEPTH 0.03 m, END_INCL 22 (the card gives
+//  no torso angle), the stand's 2.3 m upright 0.45 m in front of mid-foot and its 5 cm spotter arm reaching 0.5 m
+//  behind, SAFETY_DROP 0.05 m (c14 "just below"), the 45 cm plate, M_CLEAR 0.02 m.
+import { bodyShapes, fk, landmarksOf, normPose, resolve, REF, WINTER } from '../engine.mjs';
 import { sideBar } from '../eq/parts.mjs';
 
 const H = 1.75, R = Math.PI / 180, B = { height: H };
-const FOOT_X = 0.19, TOE_OUT = 20, GRIP_X = 0.25;
+const FOOT_X = 0.19, TOE_OUT = 20, GRIP_X = 0.14;
 const BAR_R = 0.014;                                      // the 28 mm shaft
 // Bar centre in the standing thorax frame (H), the front rack: its underside level with the shoulder tops (the shelf
 // the shrugged shoulders make, c3), just in front of the throat (c2).
 const BAR_T = [0, 0.830 + BAR_R / H, 0.045];
-const DEPTH = 0.03, END_INCL = 22, M_INCL = 45, M_CLEAR = 0.02;
-const RACK = { at: 0.55, back: -0.5, t: 0.05 }, SAFETY_DROP = 0.05;
+const DEPTH = 0.03, END_INCL = 22, M_CLEAR = 0.02;
+const RACK = { at: 0.45, back: -0.5, t: 0.05 }, SAFETY_DROP = 0.05;
 const PXM = 128, X0 = 150;                                 // camera: scale inside the 8's range (F1), the stand's upright clear of the labels
 
 const toe = s => [s * Math.sin(TOE_OUT * R), 0, Math.cos(TOE_OUT * R)];
@@ -61,12 +65,25 @@ const W = (() => {
 })();
 const barOf = lm => [0, 1, 2].map(i => W.neck * lm.neck[i] + W.backUpper * lm.backUpper[i] + W.sternum * lm.sternum[i]).map((v, i) => i === 0 ? 0 : v);
 
-const hands = (bar, pole) => ({
-  l: { at: [GRIP_X, bar[1], bar[2]], pole: [pole[0], pole[1], pole[2]] },
-  r: { at: [-GRIP_X, bar[1], bar[2]], pole: [-pole[0], pole[1], pole[2]] },
-});
-const LOW = [0.3, -1, 0.25];                              // the Mistake's elbow pole: down
-const WRIST = -70;                                        // wrists bent back under the bar (front rack; unsourced)
+// Fingertip rack (c3, c5; the panel's slice look 6341498444): open hands (the engine's flat palm), wrists bent WRIST, the
+// bar resting across the fingers FINGER of the way from the wrist to the fingertips, at GRIP_X either side of the
+// midline; the elbows forward, out and up (pole HIGH), so each elbow bends under 150 deg and sits in front of its
+// shoulder. The reach target (the palm's grip point) is SOLVED by damped fixed-point steps so that finger point lies on
+// the bar; it throws if it does not land within 0.1 mm.
+const HIGH = [0.3, 0.2, 1], LOW = [0.3, -1, 0.25];         // elbow poles: forward-out-up (rack), down (the Mistake)
+const WRIST = 40, FINGER = 0.6, K_TIP = WINTER.hand / REF.gripOff;
+const fingerOf = (l, s) => l[`wrist.${s}`].map((v, i) => v + FINGER * K_TIP * (l[`grip.${s}`][i] - v));
+export function rackHands(pose, bar, pole) {
+  const tgt = { l: [GRIP_X, bar[1], bar[2]], r: [-GRIP_X, bar[1], bar[2]] }, G = { l: [...tgt.l], r: [...tgt.r] };
+  const at = () => ({ ...pose, reach: { l: { at: G.l, pole: [pole[0], pole[1], pole[2]] }, r: { at: G.r, pole: [-pole[0], pole[1], pole[2]] } } });
+  for (let k = 0; k < 400; k++) {
+    const l = landmarksOf(at(), H);
+    let err = 0;
+    for (const s of ['l', 'r']) { const F = fingerOf(l, s); G[s] = G[s].map((v, i) => v + 0.2 * (tgt[s][i] - F[i])); err = Math.max(err, Math.hypot(...F.map((v, i) => v - tgt[s][i]))); }
+    if (err < 1e-4) return at().reach;
+  }
+  throw new Error('front_squat: the fingertip rack does not reach the bar');
+}
 // Bracketed root finder (Illinois regula falsi; copied from single_leg_romanian_deadlift, #109): throws on a bracket
 // with no root (D-LIB9-CLONE).
 export const solve = (f, a, b) => {
@@ -85,11 +102,7 @@ function key(hipY, incl, barZ = 0, neck = 0, spine = 0, extra = {}) {
   const pose = { root: { at: [0, hipY, 0], tilt: incl - spine }, trunk: spine, neck, wrist: WRIST, plant: feet, ...extra };
   const b = barOf(landmarksOf(pose, H));
   pose.root.at = [0, hipY, barZ - b[2]];
-  // Elbows high (c4, c7): the elbow pole's rise SOLVED (bracket 0..1.5) so the near upper arm is level, elbow at
-  // shoulder height.
-  const withPole = py => ({ ...pose, reach: hands([0, b[1], barZ], [0, py, 1]) });
-  const py = solve(v => { const l = landmarksOf(withPole(v), H); return l['elbow.r'][1] - l['shoulder.r'][1]; }, 0, 1.5);
-  return withPole(py);
+  return { ...pose, reach: rackHands(pose, [0, b[1], barZ], HIGH) };
 }
 const pole = (s, a) => [s * Math.sin(a * R), 0, Math.cos(a * R)];
 const feetStart = { l: { ...feet.l, pole: pole(1, 14) }, r: { ...feet.r, pole: pole(-1, 14) } };
@@ -101,16 +114,16 @@ const depthAt = y => { const l = landmarksOf(key(y, END_INCL, 0, -4, 4), H); ret
 export const END_Y = solve(depthAt, 0.25, 0.6);
 const end = key(END_Y, END_INCL, 0, -4, 4);
 const via = [key(START_Y + (END_Y - START_Y) / 3, 8, 0, -1, 1), key(START_Y + 2 * (END_Y - START_Y) / 3, 15, 0, -3, 3)];
-// Mistake (c7, "elbows stay up out of the bottom"): coming out of the bottom the elbows drop (pole down) and the chest
-// falls forward, the thorax M_INCL from vertical, so the bar, riding on the shoulders, travels forward of mid-foot. The
-// hips rise straight up out of the hole by the least amount (SOLVED, bracket 0..0.25 m) that keeps the bar's underside
-// M_CLEAR above the spotter arm: the bar never passes through the set safety.
+// Mistake (c7, "elbows stay up out of the bottom"): the elbows drop (pole down) and the chest falls forward with the
+// hips where they were (the end root), so the bar, riding on the shoulders, travels forward of mid-foot and down. The
+// thorax inclination is SOLVED (bracket END_INCL..70 deg) as the furthest the chest can fall before the bar's underside
+// comes within M_CLEAR of the spotter arm: no hip rise or other part the card does not name (slice look item 3).
 const SAFETY_TOP = barOf(landmarksOf(end, H))[1] - BAR_R - SAFETY_DROP;
-const mBody = rise => ({ root: { at: [end.root.at[0], end.root.at[1] + rise, end.root.at[2]], tilt: M_INCL - 10 }, trunk: 10, neck: -10, wrist: WRIST, plant: feet });
-export const M_RISE = solve(rise => barOf(landmarksOf(mBody(rise), H))[1] - BAR_R - (SAFETY_TOP + M_CLEAR), 0, 0.25);
-const ME = mBody(M_RISE);
+const mBody = incl => ({ root: { at: end.root.at, tilt: incl - 10 }, trunk: 10, neck: -10, wrist: WRIST, plant: feet });
+export const M_INCL = solve(incl => barOf(landmarksOf(mBody(incl), H))[1] - BAR_R - (SAFETY_TOP + M_CLEAR), END_INCL, 70);
+const ME = mBody(M_INCL);
 const M_BAR = barOf(landmarksOf(ME, H));
-const mistakeFull = { ...ME, reach: hands(M_BAR, LOW) };
+const mistakeFull = { ...ME, reach: rackHands(ME, M_BAR, LOW) };
 const mistakePose = { root: mistakeFull.root, trunk: mistakeFull.trunk, neck: mistakeFull.neck, reach: mistakeFull.reach };
 
 // The engine masks the Mistake outline inside the faulty body, so the faulty upper body (head, torso and the dropped
@@ -144,7 +157,7 @@ const barItem = lm => [
 // Start bar dot, dashed (the start layer never draws moving equipment; as the 8's squat).
 const START_BAR = barOf(landmarksOf(start, H));
 const START_DOT = Array.from({ length: 17 }, (_, k) => [0, START_BAR[1] + 0.025 * Math.sin(k * Math.PI / 8), START_BAR[2] + 0.025 * Math.cos(k * Math.PI / 8)]);
-export const fsInfo = { mRise: M_RISE, mBarZ: M_BAR[2], endY: END_Y, bar: END_BAR, safetyTop: SAFETY_Y + RACK.t / 2, startBar: START_BAR };
+export const fsInfo = { mIncl: M_INCL, mBarZ: M_BAR[2], endY: END_Y, bar: END_BAR, safetyTop: SAFETY_Y + RACK.t / 2, startBar: START_BAR };
 
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 // The shelf plane in one pose: through the bar's underside, its normal the thorax's up (shoulder joint to shoulder top).
@@ -153,8 +166,16 @@ const shelf = pose => {
   const L = Math.hypot(...u), n = u.map(v => v / L);
   return { landmark: 'shoulderTop.r', plane: { point: b.map((v, i) => v - n[i] * BAR_R), normal: n }, pose, tol: 0.5 };
 };
+// The hand on the bar, checked at the wrist (c4): the plane square to the hand (wrist to grip) through the wrist spot
+// that puts the finger point FINGER of the way to the fingertips on the bar.
+const onBar = pose => {
+  const l = landmarksOf(pose === 'start' ? start : end, H), b = barOf(l), d = [0, 1, 2].map(i => l['grip.r'][i] - l['wrist.r'][i]);
+  const L = Math.hypot(...d), n = d.map(v => v / L), spot = [-GRIP_X, b[1], b[2]].map((v, i) => v - FINGER * K_TIP * d[i]);
+  return { landmark: 'wrist.r', plane: { point: spot, normal: n }, pose, tol: 0.5 };
+};
 export default {
   id: 'front_squat', name: 'Front Squat', view: 'side', facing: 'right',
+  hand: 'flat',
   camera: { pxPerM: PXM, x0: X0, y0: 339 },
   poses: { start, via, end },
   equipment: [
@@ -168,13 +189,14 @@ export default {
     { landmark: 'heel.r', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'ball.r', plane: floor, pose: 'all', tol: 0.5 },
     shelf('start'), shelf('end'),                        // c3: the bar on the shoulder shelf
+    onBar('start'), onBar('end'),                        // c4: the hands on the bar (fingertip rack, checked at the wrist)
   ],
   startParts: ['trunk', 'leg.r'],
   ghosts: { count: 2, parts: ['trunk', 'leg.r'] },
   trace: { point: 'grip.r', trim: [10, 12] },
   datum: [{ x: [0, 0, 0], from: 349, to: 60 }],
   callouts: [
-    { key: 'elbows', text: 'Elbows high', anchor: 'elbow.r', box: { left: 236, top: 186 }, cue: 'Keep your elbows up so your shoulders hold the bar.' },
+    { key: 'elbows', text: 'Elbows high', anchor: 'elbow.r', box: { left: 222, top: 190 }, cue: 'Keep your elbows up so your shoulders hold the bar.' },
     { key: 'chest', text: 'Chest tall', anchor: 'backUpper', cue: 'Keep your torso upright on the way down and up.' },
     { key: 'foot', text: 'Whole foot', anchor: 'heel.r', cue: 'Stay balanced over the whole foot, knees in line with your feet.' },
   ],
@@ -182,12 +204,10 @@ export default {
     pose: mistakePose,
     guides: [
       ...MIST_ARM.map(pts => ({ kind: 'dashed', pts })),
-      { kind: 'dashed', pts: [{ at: 'grip.r', pose: 'mistake', off: [0, 6] }, [0, 0, M_BAR[2]]] },
     ],
     tells: [
-      { key: 'elbows', text: 'Elbows drop', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 236, top: 296 }, cue: 'The elbows drop and the bar starts to slip.' },
-      { key: 'chest', text: 'Chest falls<br>forward', anchor: { at: 'chest', pose: 'mistake' }, box: { left: 236, top: 236 }, cue: 'The chest falls and the torso tips forward.' },
-      { key: 'bar', text: 'Bar rolls<br>forward', anchor: { at: 'grip.r', pose: 'mistake' }, box: { left: 236, top: 168 }, cue: 'The bar rolls forward off the shoulders.' },
+      { key: 'elbows', text: 'Elbows drop', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 218, top: 288 }, cue: 'The elbows drop and the bar starts to slip.' },
+      { key: 'chest', text: 'Chest falls<br>forward', anchor: { at: 'chest', pose: 'mistake' }, box: { left: 218, top: 236 }, cue: 'The chest falls and the torso tips forward.' },
     ],
   },
   alt: 'Front squat, side view. The bar rests on the front of the shoulders with the elbows high, in a rack with safety bars set just below the bottom. The lifter sits straight down until the hips are below the knees, torso upright and the whole foot flat.',
