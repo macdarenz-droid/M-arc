@@ -2,6 +2,7 @@
 // or more copies is opened with the other copies present and hidden, and compared pixel for pixel (PNG bytes) with the
 // same panel opened on the page with the other copies removed. Every fault page, light and dark.
 //   node tests/library/fixtures/lib7b/pagedup-probe.mjs <browser> <page.html> [--verbatim] [--runs N]
+// --control compares the alone page with itself (the browser's own run-to-run variance, no repeat on the page).
 // --verbatim first reverses D-LIB7b-PAGEDUP's one named rewrite on every copy (the ruling's default, verbatim repeats).
 // Deterministic waits: the page's own reduced-motion state (`data-motion="reduce"`, build-page.mjs:349) so no open
 // animation runs (Chromium bakes a mid-animation scale into SVG text: ht7-label-variance-rootcause), fonts loaded,
@@ -10,7 +11,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 import { divAt, unNamespaced } from '../../../../tools/plates/library/build-layers-page.mjs';
 
-const [exe, file, ...rest] = process.argv.slice(2), verbatim = rest.includes('--verbatim');
+const [exe, file, ...rest] = process.argv.slice(2), verbatim = rest.includes('--verbatim'), control = rest.includes('--control');
 const runs = rest.includes('--runs') ? +rest[rest.indexOf('--runs') + 1] : 1;
 let html = readFileSync(file, 'utf8');
 /** [{ id, pre, key, at, block }] for every pair panel on the page. */
@@ -61,10 +62,10 @@ async function shots(f, chrome, scheme) {
 }
 let bad = 0, n = 0, version = '';
 for (let r = 1; r <= runs; r++) for (const c of cases) for (const scheme of ['light', 'dark']) {
-  const x = await shots(both, c.chrome, scheme), y = await shots(files[c.chrome], c.chrome, scheme);
+  const x = await shots(control ? files[c.chrome] : both, c.chrome, scheme), y = await shots(files[c.chrome], c.chrome, scheme);
   version = x.version;
   x.out.forEach((s, i) => { n++; const eq = s.equals(y.out[i]); if (!eq) { bad++; writeFileSync(`${file}.r${r}.${c.chrome}.${scheme}.p${i}.diff-both.png`, s); writeFileSync(`${file}.r${r}.${c.chrome}.${scheme}.p${i}.diff-alone.png`, y.out[i]); }
     console.log(`run ${r} ${c.k} copy ${c.i} (${c.chrome}) ${scheme} page ${i}: ${eq ? 'equal' : 'DIFFERS'}`); });
 }
-console.log(`${version} ${verbatim ? 'verbatim' : 'namespaced (B)'}: ${n} shots, ${bad} differ: ${bad ? 'FAIL' : 'PASS'}`);
+console.log(`${version} ${control ? 'control (alone vs alone)' : verbatim ? 'verbatim' : 'namespaced (B)'}: ${n} shots, ${bad} differ: ${bad ? 'FAIL' : 'PASS'}`);
 process.exit(bad ? 1 : 0);
