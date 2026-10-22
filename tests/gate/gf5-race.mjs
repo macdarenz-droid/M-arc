@@ -143,7 +143,7 @@ async function wrapContext(ctx, opts) {
     page.addInitScript = (f, x) => { if (Array.isArray(x) && typeof x[0] === 'string') info.theme = x[0]; return init(f, x); };
     page.evaluate = async (...args) => {
       const r = await ev(...args);
-      if (Array.isArray(r) && r.length && r[0] && 'top' in r[0] && 'dlg' in r[0]) info.frames = r;
+      if (Array.isArray(r) && r.length && typeof r[0] === 'object' && r[0] && 'top' in r[0] && 'dlg' in r[0]) info.frames = r;
       if (r && typeof r === 'object' && Array.isArray(r.gaps) && Array.isArray(r.atCt)) info.replay = r;
       return r;
     };
@@ -157,8 +157,8 @@ async function wrapContext(ctx, opts) {
   ctx.close = async () => {
     if (TRACE) {
       if (BLOCK === 'copy2') traceC2(info);
-      else if (info.page && !blocked) {
-        const toasts = await info.page.evaluate(() => window.__gf5T ?? []).catch(() => ['(page gone)']);
+      else if (info.page && !blocked && (info.reqs.length || info.arm)) {
+        const toasts = await info.page.evaluate(() => window.__gf5T ?? []).catch(e => [`(not read: ${e.message.split('\n')[0]})`]);
         const sw = await info.page.evaluate(async () => ({ controller: !!navigator.serviceWorker?.controller, reg: (r => (r ? (r.active ? 'active' : r.installing ? 'installing' : r.waiting ? 'waiting' : 'none') : 'none'))(await navigator.serviceWorker?.getRegistration()) })).catch(() => null);
         traceHt(info, toasts, sw);
       }
