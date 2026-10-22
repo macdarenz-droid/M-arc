@@ -1,0 +1,319 @@
+{
+ "id": "jump_rope",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "fv-jumprope",
+   "text": "Stand on the middle of your rope with your feet together and your legs straight. Pull the handles up towards your armpits. If the ends of the handles touch your armpits, the rope is the right size.",
+   "status": "verbatim",
+   "closest": "Stand on the middle of your rope with your feet together and your legs straight. Pull the handles up towards your armpits. If the ends of the handles touch your armpits, the rope is the right size.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "ggr-jumprope",
+   "text": "To size your rope correctly, stand with both feet on the rope and pull the rope taut. The handles, pointed upward, should fall between your collarbone and chin, with the end of the rope hitting close to your armpit height.",
+   "status": "verbatim",
+   "closest": "To size your rope correctly, stand with both feet on the rope and pull the rope taut. The handles, pointed upward, should fall between your collarbone and chin, with the end of the rope hitting close to your armpit height.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ggr-jumprope",
+   "text": "Grab the handles with a relaxed grip toward the end of the handles, not toward where the rope meets the handle.",
+   "status": "verbatim",
+   "closest": "Grab the handles with a relaxed grip toward the end of the handles, not toward where the rope meets the handle.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "elevate-wrist",
+   "text": "Hold the handle firmly enough that it will not fly out of your hand and no firmer.",
+   "status": "verbatim",
+   "closest": "Hold the handle firmly enough that it will not fly out of your hand and no firmer.",
+   "note": "WHERE MISMATCH: card where='What the handles do to your wrists (grip paragraph)', page section='Grip pressure'"
+  },
+  {
+   "claim": "c3",
+   "source": "elevate-wrist",
+   "text": "Most people hold the handles far too tight. A hard grip locks the wrist, and a locked wrist cannot flick.",
+   "status": "verbatim",
+   "closest": "Most people hold the handles far too tight. A hard grip locks the wrist, and a locked wrist cannot flick.",
+   "note": "WHERE MISMATCH: card where='What the handles do to your wrists (grip paragraph)', page section='Grip pressure'"
+  },
+  {
+   "claim": "c3",
+   "source": "elevate-wrist",
+   "text": "If your knuckles are white, that is your answer.",
+   "status": "verbatim",
+   "closest": "If your knuckles are white, that is your answer.",
+   "note": "WHERE MISMATCH: card where='What the handles do to your wrists (grip paragraph)', page section='Grip pressure'"
+  },
+  {
+   "claim": "c4",
+   "source": "ggr-jumprope",
+   "text": "Hold your hands by your sides with the jump rope behind your feet.",
+   "status": "verbatim",
+   "closest": "Hold your hands by your sides with the jump rope behind your feet.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fv-jumprope",
+   "text": "Start with the rope behind you and your feet together. Swing the rope overhead and jump over as it approaches your feet.",
+   "status": "verbatim",
+   "closest": "Start with the rope behind you and your feet together. Swing the rope overhead and jump over as it approaches your feet.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ggr-jumprope",
+   "text": "Keep your elbows in. Don’t flare your elbows out while rotating the rope. Most of the movement should come from your wrists, not your elbows or shoulders.",
+   "status": "verbatim",
+   "closest": "Keep your elbows in. Don’t flare your elbows out while rotating the rope. Most of the movement should come from your wrists, not your elbows or shoulders.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "crossrope-howto",
+   "text": "Use your wrists to turn the rope (not your elbows or shoulders)",
+   "status": "verbatim",
+   "closest": "Use your wrists to turn the rope (not your elbows or shoulders)",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "crossrope-howto",
+   "text": "Movement: you want to make sure there is minimal movement of the elbows and shoulders. Your wrists should generate the jump rope rotation.",
+   "status": "verbatim",
+   "closest": "Movement: you want to make sure there is minimal movement of the elbows and shoulders. Your wrists should generate the jump rope rotation.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "elevate-wrist",
+   "text": "Watch someone who has been skipping for years and their arms barely move. The elbows stay close to the ribs, the hands sit a little in front of the hips, and the rope goes round on a small flick of the wrist.",
+   "status": "verbatim",
+   "closest": "Watch someone who has been skipping for years and their arms barely move. The elbows stay close to the ribs, the hands sit a little in front of the hips, and the rope goes round on a small flick of the wrist.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "elevate-wrist",
+   "text": "Jumping rope hurts your wrists for three reasons: your arms are turning the rope instead of your wrists, your handles are heavier or longer than the job needs, or you added volume faster than your forearms adapted to it.",
+   "status": "verbatim",
+   "closest": "Jumping rope hurts your wrists for three reasons: your arms are turning the rope instead of your wrists, your handles are heavier or longer than the job needs, or you added volume faster than your forearms adapted to it.",
+   "note": "text sits in the opening paragraph under the page H1 (before the first H2); card where 'Intro' is acceptable"
+  },
+  {
+   "claim": "c6",
+   "source": "elevate-wrist",
+   "text": "Beginners do the opposite. The shoulders swing, the elbows come out wide, and the wrist ends up absorbing a movement it did not start. That is where the ache comes from.",
+   "status": "verbatim",
+   "closest": "Beginners do the opposite. The shoulders swing, the elbows come out wide, and the wrist ends up absorbing a movement it did not start. That is where the ache comes from.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "elevate-wrist",
+   "text": "Usually because your arms are turning the rope instead of your wrists.",
+   "status": "verbatim",
+   "closest": "Usually because your arms are turning the rope instead of your wrists.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "elevate-wrist",
+   "text": "Turn the rope with your eyes closed and pay attention to which part of you is working. If you feel it in the shoulders, the turn is starting in the wrong place.",
+   "status": "verbatim",
+   "closest": "Turn the rope with your eyes closed and pay attention to which part of you is working. If you feel it in the shoulders, the turn is starting in the wrong place.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "fv-jumprope",
+   "text": "Keep your hands down at around hip height and only slightly away from your body. If you raise your hands much higher than this, you effectively shorten the rope and increase your likelihood of tripping.",
+   "status": "verbatim",
+   "closest": "Keep your hands down at around hip height and only slightly away from your body. If you raise your hands much higher than this, you effectively shorten the rope and increase your likelihood of tripping.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ggr-jumprope",
+   "text": "Keep your arms down by your sides and your wrists loose as you turn the rope.",
+   "status": "verbatim",
+   "closest": "Keep your arms down by your sides and your wrists loose as you turn the rope.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ggr-jumprope",
+   "text": "Your body weight moves no more than 1 to 2 inches off the ground; just enough for the jump rope to pass gracefully under your feet.",
+   "status": "verbatim",
+   "closest": "Your body weight moves no more than 1 to 2 inches off the ground; just enough for the jump rope to pass gracefully under your feet.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "crossrope-howto",
+   "text": "Your jumps should be roughly 1-2 inches off the ground.",
+   "status": "verbatim",
+   "closest": "Your jumps should be roughly 1-2 inches off the ground.",
+   "note": "WHERE MISMATCH: card where='How to Hold a Jump Rope', page section='Proper Bounding'"
+  },
+  {
+   "claim": "c9",
+   "source": "crossrope-howto",
+   "text": "Keep your jumping height low (½” - 1” off the ground)",
+   "status": "verbatim",
+   "closest": "Keep your jumping height low (½” - 1” off the ground)",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "fv-jumprope",
+   "text": "Remember to just clear it; you aren’t in a high jump competition, you know! Instead, see how close you can stay to the floor. This will allow you to jump faster and also reduces the impact on your feet and joints.",
+   "status": "verbatim",
+   "closest": "Remember to just clear it; you aren’t in a high jump competition, you know! Instead, see how close you can stay to the floor. This will allow you to jump faster and also reduces the impact on your feet and joints.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ggr-jumprope",
+   "text": "Keep your knees slightly bent on the way up and down, but don’t bring them up like a frog hop.",
+   "status": "verbatim",
+   "closest": "Keep your knees slightly bent on the way up and down, but don’t bring them up like a frog hop.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ggr-jumprope",
+   "text": "A basic jump comes from the ankles with only a very slight bend in the knees. Keeping the knees bent means the jump produces less impact on the lower body, making it more suitable for beginners.",
+   "status": "verbatim",
+   "closest": "A basic jump comes from the ankles with only a very slight bend in the knees. Keeping the knees bent means the jump produces less impact on the lower body, making it more suitable for beginners.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "crossrope-howto",
+   "text": "Another important note - make sure there is always a slight bend in your knees and that you are landing softly on the balls of your feet every jump. This will ensure the stresses from jumping are nicely dissipated through your body.",
+   "status": "verbatim",
+   "closest": "Another important note - make sure there is always a slight bend in your knees and that you are landing softly on the balls of your feet every jump. This will ensure the stresses from jumping are nicely dissipated through your body.",
+   "note": "WHERE MISMATCH: card where='How to Hold a Jump Rope', page section='Proper Bounding'"
+  },
+  {
+   "claim": "c10",
+   "source": "crossrope-howto",
+   "text": "You also don't want to pull your feet back or tuck your knees in.",
+   "status": "verbatim",
+   "closest": "You also don't want to pull your feet back or tuck your knees in.",
+   "note": "WHERE MISMATCH: card where='How to Hold a Jump Rope', page section='Proper Bounding'"
+  },
+  {
+   "claim": "c11",
+   "source": "ggr-jumprope",
+   "text": "Think ankles and calves, with knees and quads as pillows to help land.",
+   "status": "verbatim",
+   "closest": "Think ankles and calves, with knees and quads as pillows to help land.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ggr-jumprope",
+   "text": "A basic jump comes from the ankles with only a very slight bend in the knees. Keeping the knees bent means the jump produces less impact on the lower body, making it more suitable for beginners.",
+   "status": "verbatim",
+   "closest": "A basic jump comes from the ankles with only a very slight bend in the knees. Keeping the knees bent means the jump produces less impact on the lower body, making it more suitable for beginners.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "fv-jumprope",
+   "text": "Try to stick to one jump per rope turn and avoid the temptation to “double bounce” between revolutions. Double jumps make it harder to establish a smooth rhythm.",
+   "status": "verbatim",
+   "closest": "Try to stick to one jump per rope turn and avoid the temptation to “double bounce” between revolutions. Double jumps make it harder to establish a smooth rhythm.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "fv-jumprope",
+   "text": "Build up gradually – because of the impact of jumping rope, you should rein in your enthusiasm and avoid doing too much too soon. Long jump rope workouts can leave you with sore feet and shins and could even cause stress fractures.",
+   "status": "verbatim",
+   "closest": "Build up gradually – because of the impact of jumping rope, you should rein in your enthusiasm and avoid doing too much too soon. Long jump rope workouts can leave you with sore feet and shins and could even cause stress fractures.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "fv-jumprope",
+   "text": "Start with short workouts and increase gradually as you become accustomed to the demands of jumping rope.",
+   "status": "verbatim",
+   "closest": "Start with short workouts and increase gradually as you become accustomed to the demands of jumping rope.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "fv-jumprope",
+   "text": "Don’t forget to check overhead; hitting a light fixture or ceiling fan will bring your workout to an abrupt halt and could cause serious injury.",
+   "status": "verbatim",
+   "closest": "Don’t forget to check overhead; hitting a light fixture or ceiling fan will bring your workout to an abrupt halt and could cause serious injury.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "fv-jumprope",
+   "text": "If possible, avoid doing jump rope workouts on unforgiving surfaces like concrete or tarmac. Sprung wooden floors are best, and matted floors work well too.",
+   "status": "verbatim",
+   "closest": "If possible, avoid doing jump rope workouts on unforgiving surfaces like concrete or tarmac. Sprung wooden floors are best, and matted floors work well too.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "ggr-jumprope",
+   "text": "You can practice the arm movement by stepping over the rope, instead of jumping over it, for your first few reps.",
+   "status": "verbatim",
+   "closest": "You can practice the arm movement by stepping over the rope, instead of jumping over it, for your first few reps.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "ggr-jumprope",
+   "text": "Spend 30 seconds practicing jumping rope, followed by 1 minute of rest.",
+   "status": "verbatim",
+   "closest": "Spend 30 seconds practicing jumping rope, followed by 1 minute of rest.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "ggr-jumprope",
+   "text": "As you improve, you can progress by increasing your work and decreasing your rest, like so:",
+   "status": "verbatim",
+   "closest": "As you improve, you can progress by increasing your work and decreasing your rest, like so:",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "ggr-jumprope",
+   "text": "Eventually, you should feel comfortable skipping rope for 10 minutes straight without rest.",
+   "status": "verbatim",
+   "closest": "Eventually, you should feel comfortable skipping rope for 10 minutes straight without rest.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "ggr-jumprope",
+   "text": "If you are still struggling, put the rope down and set a metronome (or click-track for anyone below 50) to 90 beats per minute and do little bounds to the beat.",
+   "status": "verbatim",
+   "closest": "If you are still struggling, put the rope down and set a metronome (or click-track for anyone below 50) to 90 beats per minute and do little bounds to the beat.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "fv-jumprope",
+   "text": "140-160 beats per minute (BPM) is usually about right.",
+   "status": "verbatim",
+   "closest": "140-160 beats per minute (BPM) is usually about right.",
+   "note": ""
+  }
+ ]
+}

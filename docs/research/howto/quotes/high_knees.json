@@ -1,6 +1,6 @@
 {
   "id": "high_knees",
-  "checked": "2026-10-02",
+  "checked": "2026-10-22",
   "fetcher": "sonnet source fetcher",
   "quotes": [
     {
@@ -41,7 +41,7 @@
       "text": "Run in place, pumping your arms and lifting your knees up toward your chest. 2 High Knees = 1 rep",
       "status": "verbatim",
       "closest": "Run in place, pumping your arms and lifting your knees up toward your chest. 2 High Knees = 1 rep",
-      "note": ""
+      "note": "ace-cardio15 fetched live on retry 4 of 5 (HTTP 200; 403 on tries 1-3; Wayback unreachable, connection reset)"
     },
     {
       "claim": "c3",
@@ -70,26 +70,26 @@
     {
       "claim": "c5",
       "source": "bb-hk",
-      "text": "If you find your knees getting so high that you arch into your back, you've gone too far. Revisit your technique and make sure you have a solid core brace.",
+      "text": "If you find your knees getting so high that you arch into your back, you’ve gone too far. Revisit your technique and make sure you have a solid core brace.",
       "status": "verbatim",
-      "closest": "If you find your knees getting so high that you arch into your back, you've gone too far. Revisit your technique and make sure you have a solid core brace.",
+      "closest": "If you find your knees getting so high that you arch into your back, you’ve gone too far. Revisit your technique and make sure you have a solid core brace.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "bb-hk",
-      "text": "If you're noticing a slow drop off in your knee height, take a brief rest to recover so that the quality remains as high as your knees should go!",
+      "text": "If you’re noticing a slow drop off in your knee height, take a brief rest to recover so that the quality remains as high as your knees should go!",
       "status": "verbatim",
-      "closest": "If you're noticing a slow drop off in your knee height, take a brief rest to recover so that the quality remains as high as your knees should go!",
+      "closest": "If you’re noticing a slow drop off in your knee height, take a brief rest to recover so that the quality remains as high as your knees should go!",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "bb-hk",
-      "text": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That's OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
+      "text": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That’s OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
       "status": "verbatim",
-      "closest": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That's OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "closest": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That’s OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
+      "note": ""
     },
     {
       "claim": "c7",
@@ -126,9 +126,9 @@
     {
       "claim": "c10",
       "source": "hl-hk",
-      "text": "Before you get started, make sure you're wearing a comfortable and supportive pair of shoes. Ideally, try to do this exercise on a supportive gym floor or grassy area, especially if you have any knee or ankle issues.",
+      "text": "Before you get started, make sure you’re wearing a comfortable and supportive pair of shoes. Ideally, try to do this exercise on a supportive gym floor or grassy area, especially if you have any knee or ankle issues.",
       "status": "verbatim",
-      "closest": "Before you get started, make sure you're wearing a comfortable and supportive pair of shoes. Ideally, try to do this exercise on a supportive gym floor or grassy area, especially if you have any knee or ankle issues.",
+      "closest": "Before you get started, make sure you’re wearing a comfortable and supportive pair of shoes. Ideally, try to do this exercise on a supportive gym floor or grassy area, especially if you have any knee or ankle issues.",
       "note": ""
     },
     {
