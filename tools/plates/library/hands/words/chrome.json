@@ -1,0 +1,25 @@
+{
+ "about": "LIB-7-FIX (D-LIB7FIX-WORDS; hands/DESIGN.md §8): every word pairPanel(key) shows or speaks, with its approved source. keys.<key>: the heading and, per fault, the Right and Wrong captions (at most CAPTION_MAX_WORDS, golden B copy-lint.mjs:47) and the pager label. chrome: golden B's panel words every close-up carries. A key ships only after the supervisor has seen its panel (D-LIB7FIX-WORDS).",
+ "chrome": {
+  "close": {
+   "text": "Close the close-up and show the plate",
+   "source": "golden B's close button label, tools/plates/layers/artifact/howto-layers.mjs:170"
+  },
+  "right": {
+   "text": "Right: ",
+   "source": "screen-reader prefix of LIB-6 captions(), tools/plates/library/render/closeup/common.mjs:15 (golden B's zoom-caps)"
+  },
+  "wrong": {
+   "text": "Wrong: ",
+   "source": "screen-reader prefix of LIB-6 captions(), tools/plates/library/render/closeup/common.mjs:15 (golden B's zoom-caps)"
+  },
+  "pages": {
+   "text": "Hand pages",
+   "source": "pager group label of LIB-6 pagerOf(), tools/plates/library/render/closeup/common.mjs:17 (golden B's pager)"
+  },
+  "pageOf": {
+   "text": "<label>, page <i> of <n>",
+   "source": "pager button label of LIB-6 pagerOf(), tools/plates/library/render/closeup/common.mjs:18 (golden B's pager)"
+  }
+ }
+}
