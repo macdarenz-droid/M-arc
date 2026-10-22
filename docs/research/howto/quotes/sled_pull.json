@@ -1,6 +1,6 @@
 {
   "id": "sled_pull",
-  "checked": "2026-10-02",
+  "checked": "2026-10-22",
   "fetcher": "sonnet source fetcher",
   "quotes": [
     {
@@ -30,9 +30,9 @@
     {
       "claim": "c4",
       "source": "gs-sled",
-      "text": "As the sled moves closer, feed the rope through your hands with small, continuous pulls; don't let slack build. Keep your elbows tucked in and your wrists firm to maintain control.",
-      "status": "verbatim",
-      "closest": "As the sled moves closer, feed the rope through your hands with small, continuous pulls; don't let slack build. Keep your elbows tucked in and your wrists firm to maintain control.",
+      "text": "As the sled moves closer, feed the rope through your hands with small, continuous pulls; don’t let slack build. Keep your elbows tucked in and your wrists firm to maintain control.",
+      "status": "unchecked",
+      "closest": "",
       "note": ""
     },
     {
@@ -86,25 +86,49 @@
     {
       "claim": "c8",
       "source": "gs-sled",
-      "text": "When the pull becomes too heavy or your core gives way, it's easy to pitch your torso back and let your lower back take the load. But that robs your glutes, quads, and core of involvement - and puts your back at risk.",
-      "status": "verbatim",
-      "closest": "When the pull becomes too heavy or your core gives way, it's easy to pitch your torso back and let your lower back take the load. But that robs your glutes, quads, and core of involvement - and puts your back at risk.",
+      "text": "When the pull becomes too heavy or your core gives way, it’s easy to pitch your torso back and let your lower back take the load. But that robs your glutes, quads, and core of involvement - and puts your back at risk.",
+      "status": "unchecked",
+      "closest": "",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "gs-sled",
-      "text": "Stay anchored, keep your torso braced, and don't let your hips sag.",
-      "status": "verbatim",
-      "closest": "Stay anchored, keep your torso braced, and don't let your hips sag.",
+      "text": "Stay anchored, keep your torso braced, and don’t let your hips sag.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "gs-sled",
+      "text": "A tall, stable torso spreads the effort evenly across your muscles, preventing strain on the lower back.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "gs-sled",
+      "text": "Engage your quads and glutes, and resist sliding or leaning back - your lower body should act like a spring, transferring force efficiently to the rope while protecting your spine.",
+      "status": "unchecked",
+      "closest": "",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "gs-sled",
-      "text": "The backward walk pull is energy-intensive and requires practice to coordinate the footwork with the rope pull. If your rope management slips, it's easy to lose rhythm or trip. Start with lighter loads and shorter distances before building toward race-day weights.",
-      "status": "verbatim",
-      "closest": "The backward walk pull is energy-intensive and requires practice to coordinate the footwork with the rope pull. If your rope management slips, it's easy to lose rhythm or trip. Start with lighter loads and shorter distances before building toward race-day weights.",
+      "text": "The backward walk pull is energy-intensive and requires practice to coordinate the footwork with the rope pull. If your rope management slips, it’s easy to lose rhythm or trip. Start with lighter loads and shorter distances before building toward race-day weights.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "gs-sled",
+      "text": "This might sound too simple, but it’s surprisingly common.",
+      "status": "unchecked",
+      "closest": "",
       "note": ""
     },
     {
@@ -118,9 +142,9 @@
     {
       "claim": "c11",
       "source": "gs-sled",
-      "text": "If your form slips and your back rounds, it can place unnecessary strain on your lower spine, so it's important to keep your core tight and shoulders retracted throughout.",
-      "status": "verbatim",
-      "closest": "If your form slips and your back rounds, it can place unnecessary strain on your lower spine, so it's important to keep your core tight and shoulders retracted throughout.",
+      "text": "If your form slips and your back rounds, it can place unnecessary strain on your lower spine, so it’s important to keep your core tight and shoulders retracted throughout.",
+      "status": "unchecked",
+      "closest": "",
       "note": ""
     },
     {
@@ -153,6 +177,46 @@
       "text": "backward sled drag training session (STS) in strength-trained men (n = 11).",
       "status": "verbatim",
       "closest": "backward sled drag training session (STS) in strength-trained men (n = 11).",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "gs-sled",
+      "text": "Leaning too far back/dumping tension into the lower spine",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "gs-sled",
+      "text": "Forgetting to breathe",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "gs-sled",
+      "text": "Overreaching with straight arms (wasteful pulls)",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "gs-sled",
+      "text": "Stepping out of your “box” or poor rope management",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "gs-sled",
+      "text": "Pulling with slack in the rope/not pre-tensioning",
+      "status": "unchecked",
+      "closest": "",
       "note": ""
     }
   ]

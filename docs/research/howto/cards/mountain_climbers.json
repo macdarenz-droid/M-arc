@@ -77,7 +77,7 @@
       "quotes": [
         {
           "source": "hinge-mc",
-          "text": "From here, hop one foot toward your chest, and then quickly switch legs, as if you're running. Try not to let your hips hike up as you move.",
+          "text": "From here, hop one foot toward your chest, and then quickly switch legs, as if you’re running. Try not to let your hips hike up as you move.",
           "where": "To do mountain climbers, step 3"
         }
       ]
@@ -123,7 +123,7 @@
     },
     {
       "id": "c7",
-      "text": "Bouncing on the toes adds impact; glide the knees forward with smooth steps instead.",
+      "text": "Bouncing on the toes can add impact and may make the movement harder to control; glide the knees forward with smooth steps instead.",
       "tags": [
         "CONSENSUS"
       ],
@@ -324,6 +324,169 @@
           "where": "FAQ: How many mountain climbers should I do?"
         }
       ]
+    },
+    {
+      "id": "c16",
+      "text": "Hips coming up too high (a triangle or Downward Dog shape) is a common technique fault of this exercise; one source lists letting the hips pike up first on its common-mistakes list and cues keeping the hips level rather than letting them rise.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-mc",
+        "lohre-mc"
+      ],
+      "quotes": [
+        {
+          "source": "hl-mc",
+          "text": "As for challenges with technique, it’s common for the hips to come up too high during mountain climbers, creating a triangle or Downward Dog shape.",
+          "where": "Tips for doing mountain climbers"
+        },
+        {
+          "source": "lohre-mc",
+          "text": "Letting your hips pike up. If your backside rises toward the ceiling, you have made the plank easier and taken the core out of the exercise. Keep a straight line from head to heels.",
+          "where": "Common Mistakes to Avoid, item 1"
+        },
+        {
+          "source": "lohre-mc",
+          "text": "Drive one knee in. Lift your right foot off the ground and bring that knee toward your chest, keeping your hips level rather than letting them rise.",
+          "where": "How to Do Mountain Climbers, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Keep a steady breathing rhythm through the whole interval; one coach says holding the breath is very common on this exercise, and that most of her clients do it the first few times.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lohre-mc"
+      ],
+      "quotes": [
+        {
+          "source": "lohre-mc",
+          "text": "Holding your breath. Very common on this one and it kills your endurance. Find a rhythm and keep breathing through the whole interval.",
+          "where": "Common Mistakes to Avoid, item 5"
+        },
+        {
+          "source": "lohre-mc",
+          "text": "Breathe. Find a consistent breathing rhythm rather than holding your breath, which is what most women do the first few times they try this.",
+          "where": "How to Do Mountain Climbers, step 6"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Set a pace at which the hips stay level and the back flat; going faster than you can hold makes the hips bounce, which one coach says almost every woman she watches does.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lohre-mc"
+      ],
+      "quotes": [
+        {
+          "source": "lohre-mc",
+          "text": "Slow down. I know that sounds backwards on an exercise built for speed, but almost every woman I watch do these goes fast enough that her hips start bouncing up and down and the core stops working entirely.",
+          "where": "How to Do Mountain Climbers, step 7"
+        },
+        {
+          "source": "lohre-mc",
+          "text": "Set a pace where your hips stay completely level and your back stays flat, then hold that pace for the whole interval.",
+          "where": "How to Do Mountain Climbers, step 7"
+        },
+        {
+          "source": "lohre-mc",
+          "text": "Going faster than you can hold. Speed is not the goal, sustained position under speed is. If your hips are bouncing, you are past your pace.",
+          "where": "Common Mistakes to Avoid, item 4"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Hands drifting forward, out in front of the shoulders, puts far more load on the shoulders; the hands belong directly under the shoulders.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lohre-mc"
+      ],
+      "quotes": [
+        {
+          "source": "lohre-mc",
+          "text": "Hands drifting forward. Your hands belong directly under your shoulders. When they creep out in front, your shoulders take on far more load than they should.",
+          "where": "Common Mistakes to Avoid, item 3"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Letting the hips sag drops the load into the lower back and can arch it; squeeze the glutes and brace before moving the legs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lohre-mc",
+        "hl-mc"
+      ],
+      "quotes": [
+        {
+          "source": "lohre-mc",
+          "text": "Letting your hips sag. The opposite problem drops the load into your lower back. Squeeze your glutes and brace before you start moving your legs.",
+          "where": "Common Mistakes to Avoid, item 2"
+        },
+        {
+          "source": "hl-mc",
+          "text": "Alternatively, sometimes your hips may drop too low, creating an excessive arch in your lower back.",
+          "where": "Tips for doing mountain climbers"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "If the wrists bother you, raise the hands on a bench (less weight on the wrists) or hold dumbbells or push-up handles to keep the wrists neutral (less wrist extension).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lohre-mc",
+        "hl-mc"
+      ],
+      "quotes": [
+        {
+          "source": "lohre-mc",
+          "text": "If your wrists bother you, elevate your hands on a bench or use dumbbells to keep the wrists neutral.",
+          "where": "Mountain Climber FAQs, Are mountain climbers safe for women over 40?"
+        },
+        {
+          "source": "hl-mc",
+          "text": "This option puts less weight on your wrists and upper body, which is useful if you’re looking to build strength gradually in these areas or need to consider an injury.",
+          "where": "Variations on mountain climbers, Incline modification"
+        },
+        {
+          "source": "hl-mc",
+          "text": "This decreases the amount of extension in your wrists compared with having your hands flat on the floor. It may feel more comfortable if you experience issues with your fingers or wrists.",
+          "where": "Variations on mountain climbers, Pushup handles modification"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "For wrist pain the NHS advises stopping or cutting down the activities that cause it; its examples are not exercise, so applying it to mountain climbers is an inference (R-LB5-2 candidate).",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "nhs-wrist"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-wrist",
+          "text": "stop or cut down activities that are causing the pain – for example, typing, using vibrating tools for work, or playing an instrument",
+          "where": "How you can ease wrist pain yourself, Do"
+        }
+      ]
     }
   ],
   "sources": [
@@ -335,7 +498,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "nance-2017",
@@ -345,7 +508,7 @@
       "year": 2017,
       "pmid": "29085728",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "lohre-mc",
@@ -355,7 +518,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-03"
+      "checked": "2026-10-22"
     },
     {
       "id": "hl-mc",
@@ -365,7 +528,17 @@
       "year": 2022,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-03"
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "nhs-wrist",
+      "url": "https://www.nhs.uk/symptoms/hand-pain/wrist-pain/",
+      "title": "Wrist pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -397,7 +570,7 @@
       "why": "The anchor's own how-to step warns against it (c4); it breaks the plank line the movement depends on (c3, c5).",
       "claim": "c4",
       "drawable": true,
-      "rankNote": "No source ranks faults by frequency. Hinge Health's common-adjustments list also names bouncing, weight shifting backward and back rounding (c6-c8); weight shifting back is also drawable and suits the layers."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the hips coming up (c16, c4; the head's pick). Step 1 hits for faults of this exercise: Healthline's \"As for challenges with technique, it’s common for the hips to come up too high during mountain climbers, creating a triangle or Downward Dog shape.\" (c16); Julie Lohre's \"almost every woman I watch do these goes fast enough that her hips start bouncing up and down\" (c18: going too fast, her list item 4 \"Going faster than you can hold\"), read as a \"most people\" hit (D-SUP-LB7-DIPREPS); her \"Holding your breath. Very common on this one\" (list item 5) and \"rather than holding your breath, which is what most women do the first few times they try this\" (c17), which count only if a held breath is a candidate (CARD-V2:36 names a body position or movement; writer ruling ask). Several faults pass step 1, so step 2's order decides: no quote ties any of them to harm (Lohre's \"you have made the plank easier and taken the core out of the exercise\", \"the core stops working entirely\" and \"it kills your endurance\", and Healthline's \"your head would also hang down too low\", are not harm); all are on Lohre's \"Common Mistakes to Avoid\" list and all are sourced directly; the earliest of them on that list is \"Letting your hips pike up\" (item 1). The hips coming up stays the top fault under either reading of the breath lines. Set aside at step 1: Hinge Health's \"Here are a few common adjustments to keep in mind\" is a list sentence; \"Some people find themselves bouncing on their toes\" (c7) and \"Some rounding in your back is natural\" (c8) use \"some\"; \"Many people believe that exercises like mountain climbers need to be done in a specific way to avoid injury\" is a belief about exercise and names no fault; \"often called the \"six-pack\" muscle\" is a name. Lohre's \"Mountain climbers are usually programmed by time rather than reps\" (c13) is programming; \"This is usually what gives out first on longer intervals\" and \"the upper body often fatigues first on longer intervals\" are about muscles; \"This is where I start most women who cannot yet keep their hips level on the floor\" says where she starts a modification, not how often the fault happens; \"For most women, yes\" and \"a solid finisher for most women\" are about safety and programming. Healthline's \"Mountain climbers are usually performed at a fast pace\" is about use, and \"sometimes your hips may drop too low\" (c20) uses \"sometimes\". Nance's \"Occult dorsal ganglion cysts were the most common sources of pathology (76%)\" is about scan findings, not a fault. Harm quotes about faults that did not pass step 1 (not reached): Hinge Health's bouncing on the toes \"This can add extra impact\" (c7) and gliding that \"minimizes strain on your ankles\"; \"Engaging your core helps to keep your torso steady, which can help you feel stronger and less strained throughout the movement.\" (c8, back rounding); Lohre's sagging hips \"drops the load into your lower back\" (c20) and hands drifting forward \"your shoulders take on far more load than they should\" (c19). Hinge Health's weight shifting backward (c6) states no harm. The side view shows the hips raised above the head-to-heel line, a still sign, so drawable stays true. Pick and drawable unchanged (pilot A plate; D-SUP-LB8-PILOTS)."
     },
     "tells": [
       {
@@ -579,7 +752,8 @@
   ],
   "notes": [
     "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c13 (Julie Lohre) and c14 (Healthline) add timed work and rest; no source gives a cadence.",
-    "W1 fix round 2026-10-03: F05/R-W1-2 tempo default is the beginner row (2-3 × 15 s on/15 s off, c13); 20/20 and 30/30 are progressions; 20/10 is labelled as the high-intensity option (c14). c15 adds Lohre's progression and stop cue; loadProgression added from c13 and c15."
+    "W1 fix round 2026-10-03: F05/R-W1-2 tempo default is the beginner row (2-3 × 15 s on/15 s off, c13); 20/20 and 30/30 are progressions; 20/10 is labelled as the high-intensity option (c14). c15 adds Lohre's progression and stop cue; loadProgression added from c13 and c15.",
+    "LB10 pass 2026-10-22 (research only, pilot A; D-SUP-LB8-PILOTS): all four sources re-fetched by curl, c4 quote now uses the page's ’, c7 text keeps the source's hedge, c16-c22 added (Healthline and Julie Lohre fault lines, wrist options, the NHS wrist stop line as MECH/WEAK); rankNote rewritten under LR-31. LR-33: up, down and pause stay null (no source gives seconds for a step); Lohre's slow variation \"Run the same movement at half speed, pausing briefly with the knee drawn in.\" is a variation's pause at the knee drive with no seconds, not written in pause. Shown-line findings for the supervisor are in the LB10 writer record; no shown line, pick or drawable was changed here."
   ],
   "loadProgression": {
     "text": "Start with 2-3 sets of 15 seconds on, 15 off; lengthen the interval before adding sets; stop the set when your hips start bouncing.",

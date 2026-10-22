@@ -1,6 +1,6 @@
 {
   "id": "mountain_climbers",
-  "checked": "2026-10-03",
+  "checked": "2026-10-22",
   "fetcher": "sonnet source fetcher",
   "quotes": [
     {
@@ -27,9 +27,10 @@
     {
       "claim": "c4",
       "source": "hinge-mc",
-      "text": "From here, hop one foot toward your chest, and then quickly switch legs, as if you're running. Try not to let your hips hike up as you move.",
-      "status": "verbatim",
-      "closest": "From here, hop one foot toward your chest, and then quickly switch legs, as if you're running. Try not to let your hips hike up as you move."
+      "text": "From here, hop one foot toward your chest, and then quickly switch legs, as if you’re running. Try not to let your hips hike up as you move.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
     },
     {
       "claim": "c5",
@@ -189,6 +190,126 @@
       "text": "Progress by extending the interval before adding sets, and end the set as soon as your hips start bouncing rather than pushing to the clock.",
       "status": "verbatim",
       "closest": "Progress by extending the interval before adding sets, and end the set as soon as your hips start bouncing rather than pushing to the clock.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "hl-mc",
+      "text": "As for challenges with technique, it’s common for the hips to come up too high during mountain climbers, creating a triangle or Downward Dog shape.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "lohre-mc",
+      "text": "Letting your hips pike up. If your backside rises toward the ceiling, you have made the plank easier and taken the core out of the exercise. Keep a straight line from head to heels.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "lohre-mc",
+      "text": "Drive one knee in. Lift your right foot off the ground and bring that knee toward your chest, keeping your hips level rather than letting them rise.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "lohre-mc",
+      "text": "Holding your breath. Very common on this one and it kills your endurance. Find a rhythm and keep breathing through the whole interval.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "lohre-mc",
+      "text": "Breathe. Find a consistent breathing rhythm rather than holding your breath, which is what most women do the first few times they try this.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "lohre-mc",
+      "text": "Slow down. I know that sounds backwards on an exercise built for speed, but almost every woman I watch do these goes fast enough that her hips start bouncing up and down and the core stops working entirely.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "lohre-mc",
+      "text": "Set a pace where your hips stay completely level and your back stays flat, then hold that pace for the whole interval.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "lohre-mc",
+      "text": "Going faster than you can hold. Speed is not the goal, sustained position under speed is. If your hips are bouncing, you are past your pace.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "lohre-mc",
+      "text": "Hands drifting forward. Your hands belong directly under your shoulders. When they creep out in front, your shoulders take on far more load than they should.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "lohre-mc",
+      "text": "Letting your hips sag. The opposite problem drops the load into your lower back. Squeeze your glutes and brace before you start moving your legs.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "hl-mc",
+      "text": "Alternatively, sometimes your hips may drop too low, creating an excessive arch in your lower back.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "lohre-mc",
+      "text": "If your wrists bother you, elevate your hands on a bench or use dumbbells to keep the wrists neutral.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "hl-mc",
+      "text": "This option puts less weight on your wrists and upper body, which is useful if you’re looking to build strength gradually in these areas or need to consider an injury.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "hl-mc",
+      "text": "This decreases the amount of extension in your wrists compared with having your hands flat on the floor. It may feel more comfortable if you experience issues with your fingers or wrists.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "nhs-wrist",
+      "text": "stop or cut down activities that are causing the pain – for example, typing, using vibrating tools for work, or playing an instrument",
+      "status": "unchecked",
+      "closest": "",
       "note": ""
     }
   ]

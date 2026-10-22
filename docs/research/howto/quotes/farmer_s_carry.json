@@ -1,0 +1,455 @@
+{
+  "id": "farmer_s_carry",
+  "checked": "2026-10-22",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "bb-farmers",
+      "text": "You can use various tools to perform farmer’s carries with — two barbells loaded with weight plates, farmer’s carry handles, dumbbells or kettlebells. Even a trap bar is a suitable carrying implement. Whichever tool you choose, the base mechanics are the same.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "fv-farmers",
+      "text": "You can use kettlebells, dumbbells, a trap bar, or dedicated Farmer’s Walk handles.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "fv-farmers",
+      "text": "Clear a level, dry route before picking up the weights. Leave space to turn and a clear area to set them down, away from your feet and other people.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "fv-farmers",
+      "text": "Stand between the weights with your feet about hip-width apart. Bend at your hips and knees, take a secure grip, brace your trunk, and stand up without jerking the handles.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "bb-farmers",
+      "text": "Hinge at your hips to bend over and grab each dumbbell. Lift with your legs to stand up with the weights.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "ggr-farmers",
+      "text": "Reach down to grip the handles using a neutral grip, then deadlift the weights to your sides.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "ggr-farmers",
+      "text": "In your starting position, you should have your arms fully extended at your sides, a tall chest, braced core, pinched shoulder blades, and a neutral neck and spine.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "fv-farmers",
+      "text": "Keep your arms long, your torso upright, and your gaze ahead. Walk with controlled steps.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-farmers",
+      "text": "Many lifters may try to compensate for fatigue by shrugging their shoulders high. And while that’s good when you’re trying to perform shrugs, you want to try to keep your shoulders back and down during farmer’s carries to maximize your upper back activation.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "fv-farmers",
+      "text": "Avoid forcing your shoulders into a shrug or an exaggerated shoulders-back position.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "ggr-farmers",
+      "text": "Mentally check that you’re not scrunching your neck, rounding your shoulders forward, arching your back, or locking out your knees while performing your farmer’s carry",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "ggr-farmers",
+      "text": "These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "ggr-farmers",
+      "text": "Rushing through the movement is a recipe for disaster, as a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee, or experience any of many injuries",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "ggr-farmers",
+      "text": "Going slow is the best way to keep your form strong and posture tight.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "fv-farmers",
+      "text": "Do not speed up to squeeze out more distance.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "ggr-farmers",
+      "text": "Start walking in a straight line, taking short, deliberate steps.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "bb-farmers",
+      "text": "Use short, fast strides to increase your performance.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "sl-farmers",
+      "text": "Look ahead, and start moving forward in small steps. Increase the stride length as you increase the speed.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bb-farmers",
+      "text": "Maintain a steady, upright position and posture. Do not allow the weight to move laterally or favor one side over the other.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "sl-farmers",
+      "text": "Try to keep your body in a straight line and not lean excessively forward as you walk.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "fv-farmers",
+      "text": "You should be able to lift the weights, walk without leaning or stumbling, and lower them under control.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "ggr-farmers",
+      "text": "The farmer’s walk exercise can wreak havoc on your lower back if you’re not bracing your core.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "ggr-farmers",
+      "text": "Take a deep breath in, letting your rib cage expand, then exhale, contract your abdominal muscles, and draw the belly button towards your spine",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "sl-farmers",
+      "text": "Inhale, lean forward and grip the handles.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "sl-farmers",
+      "text": "Hold your breath, brace your core slightly, and lift the weights.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "bb-farmers",
+      "text": "Begin walking. Don’t forget to breathe.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "ggr-farmers",
+      "text": "Instead of gripping the handle of your kettlebell or dumbbell with your fingers, reach all the way down until the bottom of your palm is pushed into the handle",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "ggr-farmers",
+      "text": "Then, curl your hand and fingers around the handle, wrap your thumb, and squeeze hard.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "ggr-farmers",
+      "text": "Without a good grip, the weights may slip from your grasp, land on your toe, bounce into your ankle, or cause some other catastrophic series of unfortunate events.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "fv-farmers",
+      "text": "Stop before your grip fails. If a handle starts slipping, your posture changes, or you lose control of your steps, end the carry. Do not speed up to squeeze out more distance. Stop if you feel pain.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "fv-farmers",
+      "text": "Come to a stable stop while you still control the weights. Keep them beside you, bend at your hips and knees, and lower them to the floor with your feet clear. Keep hold until the implements are supported; avoid turning while lowering them.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "sl-farmers",
+      "text": "When you are done, lower the implements back to the ground in a controlled manner.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "fv-farmers",
+      "text": "Slow before a turn and change direction with several small steps, moving your feet and torso together. Avoid a sharp pivot with your feet planted. If space is tight, finish the carry and set the weights down before repositioning.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "fv-farmers",
+      "text": "Start with a manageable load and a short route.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "fv-farmers",
+      "text": "Repeat a manageable load until the pickup, walk, turns, and set-down stay controlled. Then consider a small increase in load or distance, rather than changing both at once.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "ggr-farmers",
+      "text": "Dumbbells that are approximately 25% of your body weight in each hand are a great place to start",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "ggr-farmers",
+      "text": "You may progress to lifting 50%, 75%, or even 100% of your body weight later on, but make sure you scale gradually.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "sl-farmers",
+      "text": "Forearm Flexors",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "fv-farmers",
+      "text": "Forearms – the finger flexors in your forearms work to hold the handles. Grip demands can limit the carry before your legs tire.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "sl-farmers",
+      "text": "Trapezius",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "bb-farmers",
+      "text": "This large muscle plays a vital role in stabilizing the scapula (shoulder blades) as it is the main muscle producing tension in the upper back while holding the weight in your hands.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "sl-farmers",
+      "text": "Obliques",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "sl-farmers",
+      "text": "Glutes",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "bb-farmers",
+      "text": "The farmer’s carry helps strengthen the gluteus medius — a muscle that helps stabilize the torso and pelvis alongside the gluteus maximus",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "bb-farmers",
+      "text": "Be sure you’re not falling prey to these common flaws in farmer’s carry training.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "bb-farmers",
+      "text": "Going Too Light",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "bb-farmers",
+      "text": "Stride Length",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "bb-farmers",
+      "text": "Poor Upper Back Positioning",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "ggr-farmers",
+      "text": "Here are some of the most common mistakes associated with the farmer’s carry.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "ggr-farmers",
+      "text": "Tensing All the Wrong Places",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "ggr-farmers",
+      "text": "Choosing the Wrong Weight",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "bb-farmers",
+      "text": "Load up a trap bar and step inside. Set up for a trap bar deadlift.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "bb-farmers",
+      "text": "Walk carefully while holding the bar with fully extended arms.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "ggr-farmers",
+      "text": "The trap bar’s unique shape helps reduce the strain on the lower back.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c24",
+      "source": "bb-fwbreak",
+      "text": "Drive your heels through the ground, squeeze your glutes and keep your shoulders back until you are standing tall then start walking.",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c24",
+      "source": "bb-fwbreak",
+      "text": "First, if the weight is heavy enough it will put more strain on your lower back (think deadlifting leaned out on your tiptoes).",
+      "status": "unchecked",
+      "closest": "",
+      "note": ""
+    }
+  ]
+}

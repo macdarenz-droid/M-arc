@@ -1,0 +1,956 @@
+{
+ "id": "farmer_s_carry",
+ "libId": "lib_farmer_s_carry",
+ "name": "Farmer's Carry",
+ "family": "Conditioning and carries (carry)",
+ "tier": "A",
+ "tierNote": "Safety tier A (content.md appendix B); census.json difficulty tier 3.",
+ "archetype": {
+  "hand": "hold",
+  "contact": [
+   "standing-feet"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Dumbbells, kettlebells, a trap bar or farmer's handles can be used; one source says the base mechanics are the same whichever tool is used.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-farmers",
+    "fv-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "bb-farmers",
+     "text": "You can use various tools to perform farmer’s carries with — two barbells loaded with weight plates, farmer’s carry handles, dumbbells or kettlebells. Even a trap bar is a suitable carrying implement. Whichever tool you choose, the base mechanics are the same.",
+     "where": "How to Do the Farmer’s Carry, Equipment Needed"
+    },
+    {
+     "source": "fv-farmers",
+     "text": "You can use kettlebells, dumbbells, a trap bar, or dedicated Farmer’s Walk handles.",
+     "where": "Introduction"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Clear a level, dry route first, with room to turn and a clear place to set the weights down, away from the feet and other people.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "fv-farmers",
+     "text": "Clear a level, dry route before picking up the weights. Leave space to turn and a clear area to set them down, away from your feet and other people.",
+     "where": "How To Do The Farmer’s Walk"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Stand between the weights, feet about hip-width apart; bend at the hips and knees, take a secure neutral grip, brace and stand up with the legs, without jerking the handles.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-farmers",
+    "bb-farmers",
+    "ggr-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "fv-farmers",
+     "text": "Stand between the weights with your feet about hip-width apart. Bend at your hips and knees, take a secure grip, brace your trunk, and stand up without jerking the handles.",
+     "where": "How To Do The Farmer’s Walk"
+    },
+    {
+     "source": "bb-farmers",
+     "text": "Hinge at your hips to bend over and grab each dumbbell. Lift with your legs to stand up with the weights.",
+     "where": "How to Do the Farmer’s Carry, Step 1"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "Reach down to grip the handles using a neutral grip, then deadlift the weights to your sides.",
+     "where": "How to Do the Farmer’s Carry"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Start and walk with the arms fully extended (long) at the sides, a tall chest, a braced core, the shoulder blades pinched, the neck and spine neutral, the torso upright and the gaze ahead.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-farmers",
+    "fv-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-farmers",
+     "text": "In your starting position, you should have your arms fully extended at your sides, a tall chest, braced core, pinched shoulder blades, and a neutral neck and spine.",
+     "where": "How to Do the Farmer’s Carry"
+    },
+    {
+     "source": "fv-farmers",
+     "text": "Keep your arms long, your torso upright, and your gaze ahead. Walk with controlled steps.",
+     "where": "How To Do The Farmer’s Walk"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Many lifters may shrug their shoulders high to make up for fatigue; keep the shoulders back and down, without forcing a shrug or an exaggerated shoulders-back position.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-farmers",
+    "fv-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "bb-farmers",
+     "text": "Many lifters may try to compensate for fatigue by shrugging their shoulders high. And while that’s good when you’re trying to perform shrugs, you want to try to keep your shoulders back and down during farmer’s carries to maximize your upper back activation.",
+     "where": "Common Farmer’s Carry Mistakes: Poor Upper Back Positioning"
+    },
+    {
+     "source": "fv-farmers",
+     "text": "Avoid forcing your shoulders into a shrug or an exaggerated shoulders-back position.",
+     "where": "How To Do The Farmer’s Walk"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Check that the neck is not scrunched, the shoulders not rounded forward, the back not arched and the knees not locked out; one source says these usually mean the load is too heavy.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-farmers",
+     "text": "Mentally check that you’re not scrunching your neck, rounding your shoulders forward, arching your back, or locking out your knees while performing your farmer’s carry",
+     "where": "Common Farmer’s Carry Mistakes: Tensing All the Wrong Places"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.",
+     "where": "Common Farmer’s Carry Mistakes: Tensing All the Wrong Places"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Rushing is risky: a single misstep could pull a calf muscle, roll an ankle or twist a knee. Going slow keeps the form strong and the posture tight; do not speed up to get more distance.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-farmers",
+    "fv-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-farmers",
+     "text": "Rushing through the movement is a recipe for disaster, as a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee, or experience any of many injuries",
+     "where": "Trainer Tips for Form: Stay Slow and Steady"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "Going slow is the best way to keep your form strong and posture tight.",
+     "where": "Trainer Tips for Form: Stay Slow and Steady"
+    },
+    {
+     "source": "fv-farmers",
+     "text": "Do not speed up to squeeze out more distance.",
+     "where": "How To Do The Farmer’s Walk, Important tips"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Take short steps: one source says short, deliberate steps; another short, fast strides; a third starts with small steps and lengthens the stride as speed rises.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-farmers",
+    "bb-farmers",
+    "sl-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-farmers",
+     "text": "Start walking in a straight line, taking short, deliberate steps.",
+     "where": "How to Do the Farmer’s Carry"
+    },
+    {
+     "source": "bb-farmers",
+     "text": "Use short, fast strides to increase your performance.",
+     "where": "How to Do the Farmer’s Carry, Step 2"
+    },
+    {
+     "source": "sl-farmers",
+     "text": "Look ahead, and start moving forward in small steps. Increase the stride length as you increase the speed.",
+     "where": "How to Do Farmers Walk, step 4"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Stay steady and upright, with the body in a straight line; don't lean excessively forward, and don't let the weight move sideways or favour one side.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-farmers",
+    "sl-farmers",
+    "fv-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "bb-farmers",
+     "text": "Maintain a steady, upright position and posture. Do not allow the weight to move laterally or favor one side over the other.",
+     "where": "How to Do the Farmer’s Carry, Step 2"
+    },
+    {
+     "source": "sl-farmers",
+     "text": "Try to keep your body in a straight line and not lean excessively forward as you walk.",
+     "where": "How to Do Farmers Walk, step 5"
+    },
+    {
+     "source": "fv-farmers",
+     "text": "You should be able to lift the weights, walk without leaning or stumbling, and lower them under control.",
+     "where": "How To Do The Farmer’s Walk"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Not bracing the core can wreak havoc on the lower back; to brace, take a deep breath in, then exhale and tighten the abdominal muscles.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-farmers",
+     "text": "The farmer’s walk exercise can wreak havoc on your lower back if you’re not bracing your core.",
+     "where": "Trainer Tips for Form: Brace Your Core"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "Take a deep breath in, letting your rib cage expand, then exhale, contract your abdominal muscles, and draw the belly button towards your spine",
+     "where": "Trainer Tips for Form: Brace Your Core"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Breathe in and grip the handles, then hold the breath, brace slightly and lift the weights.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "sl-farmers",
+     "text": "Inhale, lean forward and grip the handles.",
+     "where": "How to Do Farmers Walk, step 2"
+    },
+    {
+     "source": "sl-farmers",
+     "text": "Hold your breath, brace your core slightly, and lift the weights.",
+     "where": "How to Do Farmers Walk, step 3"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Said of the strongman-style carry with farmer's handles: once walking, don't forget to breathe.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "bb-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "bb-farmers",
+     "text": "Begin walking. Don’t forget to breathe.",
+     "where": "Farmer’s Carry Variations and Alternatives: Strongman-Style Farmer’s Carry"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Grip with the bottom of the palm pushed into the handle, not with the fingers alone; curl the hand and fingers around it, wrap the thumb and squeeze hard.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-farmers",
+     "text": "Instead of gripping the handle of your kettlebell or dumbbell with your fingers, reach all the way down until the bottom of your palm is pushed into the handle",
+     "where": "Trainer Tips for Form: Get a Good Grip"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "Then, curl your hand and fingers around the handle, wrap your thumb, and squeeze hard.",
+     "where": "Trainer Tips for Form: Get a Good Grip"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Without a good grip the weights may slip, land on the toe or bounce into the ankle.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-farmers",
+     "text": "Without a good grip, the weights may slip from your grasp, land on your toe, bounce into your ankle, or cause some other catastrophic series of unfortunate events.",
+     "where": "Trainer Tips for Form: Get a Good Grip"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Stop before the grip fails: if a handle starts slipping, the posture changes or the steps lose control, end the carry. Stop if you feel pain.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "fv-farmers",
+     "text": "Stop before your grip fails. If a handle starts slipping, your posture changes, or you lose control of your steps, end the carry. Do not speed up to squeeze out more distance. Stop if you feel pain.",
+     "where": "How To Do The Farmer’s Walk, Important tips"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Set-down: come to a stable stop while still in control, keep the weights beside you, bend at the hips and knees and lower them to the floor with the feet clear, holding on until they are supported and not turning while lowering.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-farmers",
+    "sl-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "fv-farmers",
+     "text": "Come to a stable stop while you still control the weights. Keep them beside you, bend at your hips and knees, and lower them to the floor with your feet clear. Keep hold until the implements are supported; avoid turning while lowering them.",
+     "where": "How To Do The Farmer’s Walk, Important tips: Plan the set-down"
+    },
+    {
+     "source": "sl-farmers",
+     "text": "When you are done, lower the implements back to the ground in a controlled manner.",
+     "where": "How to Do Farmers Walk, step 6"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "Slow before a turn and change direction with several small steps, feet and torso together, not a sharp pivot on planted feet; if space is tight, set the weights down first.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "fv-farmers",
+     "text": "Slow before a turn and change direction with several small steps, moving your feet and torso together. Avoid a sharp pivot with your feet planted. If space is tight, finish the carry and set the weights down before repositioning.",
+     "where": "How To Do The Farmer’s Walk"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "Load progression: start with a manageable load and a short route, about 25% of body weight in each hand for a beginner; repeat it until the pickup, walk, turns and set-down stay controlled, then add a little load or distance, not both, and scale gradually.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-farmers",
+    "ggr-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "fv-farmers",
+     "text": "Start with a manageable load and a short route.",
+     "where": "How To Do The Farmer’s Walk"
+    },
+    {
+     "source": "fv-farmers",
+     "text": "Repeat a manageable load until the pickup, walk, turns, and set-down stay controlled. Then consider a small increase in load or distance, rather than changing both at once.",
+     "where": "How To Do The Farmer’s Walk, Important tips"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "Dumbbells that are approximately 25% of your body weight in each hand are a great place to start",
+     "where": "Common Farmer’s Carry Mistakes: Choosing the Wrong Weight"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "You may progress to lifting 50%, 75%, or even 100% of your body weight later on, but make sure you scale gradually.",
+     "where": "Common Farmer’s Carry Mistakes: Choosing the Wrong Weight"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "The forearm (finger) flexors work to hold the handles, and grip can limit the carry before the legs tire.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-farmers",
+    "fv-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "sl-farmers",
+     "text": "Forearm Flexors",
+     "where": "Muscles Worked in Farmers Walk, Primary muscles worked"
+    },
+    {
+     "source": "fv-farmers",
+     "text": "Forearms – the finger flexors in your forearms work to hold the handles. Grip demands can limit the carry before your legs tire.",
+     "where": "Muscles Worked"
+    }
+   ]
+  },
+  {
+   "id": "c20",
+   "text": "The trapezius steadies the shoulder blades and is the main muscle producing upper-back tension while the weights are held.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-farmers",
+    "bb-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "sl-farmers",
+     "text": "Trapezius",
+     "where": "Muscles Worked in Farmers Walk, Primary muscles worked"
+    },
+    {
+     "source": "bb-farmers",
+     "text": "This large muscle plays a vital role in stabilizing the scapula (shoulder blades) as it is the main muscle producing tension in the upper back while holding the weight in your hands.",
+     "where": "Muscles Worked by the Famer’s Carry: Trapezius"
+    }
+   ]
+  },
+  {
+   "id": "c21",
+   "text": "The glutes and obliques work too: one source lists both as primary muscles, and another says the carry strengthens the gluteus medius, which steadies the torso and pelvis.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-farmers",
+    "bb-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "sl-farmers",
+     "text": "Obliques",
+     "where": "Muscles Worked in Farmers Walk, Primary muscles worked"
+    },
+    {
+     "source": "sl-farmers",
+     "text": "Glutes",
+     "where": "Muscles Worked in Farmers Walk, Primary muscles worked"
+    },
+    {
+     "source": "bb-farmers",
+     "text": "The farmer’s carry helps strengthen the gluteus medius — a muscle that helps stabilize the torso and pelvis alongside the gluteus maximus",
+     "where": "Muscles Worked by the Famer’s Carry: Glutes"
+    }
+   ]
+  },
+  {
+   "id": "c22",
+   "text": "Two common-mistakes lists are written for this exercise. One names, in this order: going too light, stride length, and poor upper back positioning (shrugging). The other names tensing in the wrong places, then choosing the wrong weight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-farmers",
+    "ggr-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "bb-farmers",
+     "text": "Be sure you’re not falling prey to these common flaws in farmer’s carry training.",
+     "where": "Common Farmer’s Carry Mistakes (list intro)"
+    },
+    {
+     "source": "bb-farmers",
+     "text": "Going Too Light",
+     "where": "Common Farmer’s Carry Mistakes, item 1 heading"
+    },
+    {
+     "source": "bb-farmers",
+     "text": "Stride Length",
+     "where": "Common Farmer’s Carry Mistakes, item 2 heading"
+    },
+    {
+     "source": "bb-farmers",
+     "text": "Poor Upper Back Positioning",
+     "where": "Common Farmer’s Carry Mistakes, item 3 heading"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "Here are some of the most common mistakes associated with the farmer’s carry.",
+     "where": "Common Farmer’s Carry Mistakes (list intro)"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "Tensing All the Wrong Places",
+     "where": "Common Farmer’s Carry Mistakes, item 1 heading"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "Choosing the Wrong Weight",
+     "where": "Common Farmer’s Carry Mistakes, item 2 heading"
+    }
+   ]
+  },
+  {
+   "id": "c23",
+   "text": "Trap-bar version: step inside the loaded bar, deadlift it to standing and walk carefully with the arms fully extended; one source says the trap bar's shape helps reduce the strain on the lower back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-farmers",
+    "ggr-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "bb-farmers",
+     "text": "Load up a trap bar and step inside. Set up for a trap bar deadlift.",
+     "where": "Farmer’s Carry Variations and Alternatives: Trap Bar Farmer’s Carry"
+    },
+    {
+     "source": "bb-farmers",
+     "text": "Walk carefully while holding the bar with fully extended arms.",
+     "where": "Farmer’s Carry Variations and Alternatives: Trap Bar Farmer’s Carry"
+    },
+    {
+     "source": "ggr-farmers",
+     "text": "The trap bar’s unique shape helps reduce the strain on the lower back.",
+     "where": "Farmer’s Carry Variations: Trap-Bar Carry"
+    }
+   ]
+  },
+  {
+   "id": "c24",
+   "text": "Said of strongman farmer's handles: stand fully tall before walking; starting to walk before standing up puts more strain on the lower back when the weight is heavy enough.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "bb-fwbreak"
+   ],
+   "quotes": [
+    {
+     "source": "bb-fwbreak",
+     "text": "Drive your heels through the ground, squeeze your glutes and keep your shoulders back until you are standing tall then start walking.",
+     "where": "Set up/Footwork, step 5"
+    },
+    {
+     "source": "bb-fwbreak",
+     "text": "First, if the weight is heavy enough it will put more strain on your lower back (think deadlifting leaned out on your tiptoes).",
+     "where": "Set up/Footwork, step 5"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-farmers",
+   "url": "https://barbend.com/farmers-carry/",
+   "title": "How to Do the Farmer’s Carry: Benefits and Expert Tips | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ggr-farmers",
+   "url": "https://www.garagegymreviews.com/farmers-carry",
+   "title": "How to Do the Farmer's Carry: Expert Tips | Garage Gym Reviews",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-farmers",
+   "url": "https://fitnessvolt.com/farmers-walk/",
+   "title": "Farmer's Walk Guide: How-To, Muscles Worked, Variations, and Benefits – Fitness Volt",
+   "kind": "coach",
+   "year": 2026,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-farmers",
+   "url": "https://www.strengthlog.com/farmers-walk/",
+   "title": "How to Do Farmers Walk: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "bb-fwbreak",
+   "url": "https://barbend.com/farmers-walk-breakdown/",
+   "title": "A Step by Step Breakdown of the Farmer’s Walk | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the tall, upright torso with the arms long at the sides (c4, c9), the shoulders back and down and their fault, the shoulders shrugged high (c5), and the short steps (c8) read from the side.",
+  "equipment": "Two dumbbells (census need dumbbell, exists), one in each hand at the sides; floor line (census floor). The trap bar is the listed alternative (variantLine).",
+  "start": "One step: torso upright, gaze ahead, neck and spine neutral, chest tall (c4); arms fully extended at the sides, a dumbbell in each hand in a neutral grip, thumb wrapped (c3, c4, c13); shoulders back and down, not shrugged (c5); feet about hip-width, one foot starting a short step (c3, c8).",
+  "end": "The next short step, with the same tall torso, long arms and level weights (c4, c8, c9).",
+  "checkpoints": [
+   {
+    "label": "Tall torso",
+    "what": "Torso upright, gaze ahead.",
+    "claim": "c4"
+   },
+   {
+    "label": "Shoulders down",
+    "what": "Shoulders back and down, not shrugged.",
+    "claim": "c5"
+   },
+   {
+    "label": "Arms long",
+    "what": "Arms fully extended at your sides.",
+    "claim": "c4"
+   }
+  ],
+  "mistake": {
+   "what": "Shrugging the shoulders high as fatigue sets in.",
+   "why": "BarBend says many lifters may try to make up for fatigue by shrugging their shoulders high, and lists it under poor upper back positioning; keep the shoulders back and down (c5).",
+   "claim": "c5",
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: shrugging the shoulders high (c5). BarBend's \"Many lifters may try to compensate for fatigue by shrugging their shoulders high.\" sits under its own item \"Poor Upper Back Positioning\" on its farmer's-carry mistakes list and says many lifters make this exercise's fault, so it is a step-1 hit (D-SUP-LB7-DIPREPS: a \"many …\" sentence about this exercise's own fault counts); it is the item's own sentence, not a list sentence read onto one item. LR-31 names 'may' as no frequency word, but the frequency word here is \"Many lifters\"; the other reading is recorded in the writer's notes as a ruling ask. No other step-1 hit. Set aside: BarBend's heading \"Common Farmer’s Carry Mistakes\" and intro \"Be sure you’re not falling prey to these common flaws in farmer’s carry training.\", and Garage Gym Reviews' heading and intro \"Here are some of the most common mistakes associated with the farmer’s carry.\" (list headings and list sentences); Garage Gym Reviews' \"These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.\" (c6) says what the tension faults point to (their cause, the load), not how often they happen (renegade_row precedent); BarBend's \"which is usually lacking in beginners\" (balance in beginners), \"there are often advantages to taking it more accessible\" (load), \"Strongman competitions typically use special handles\" and \"athletes typically perform heavy carries\" (equipment, programming), \"Using a dumbbell will likely be the easiest implement for most beginners\" (an implement); Garage Gym Reviews' \"many farmers have strength\", \"Sets of farmer’s carries often consist of just one walk\" and \"most lifters can move more weight on a barbell bench press ... trap-bar carries often allow you to carry more weight\" (farmers, programming, another exercise and a load); the farmer's-walk breakdown op-ed's \"a common strongman event\" (the exercise), \"most likely causing you to drop\" (where the hands sit on strongman handles: a grip, LR-31) and \"you will most likely feel more comfortable with an even stance\" (stance comfort, not a fault). Harm quotes about faults, set aside because step 1 decides: Garage Gym Reviews' rushing line (\"a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee\", c7; speed only, handlingMistakes[1]); \"The farmer’s walk exercise can wreak havoc on your lower back if you’re not bracing your core.\" (c10; a tip, the fault on no list); \"tensing too hard in the wrong places may produce adverse effects\" (its list item, c6); \"the weights may slip from your grasp, land on your toe, bounce into your ankle\" (c14; a grip); the op-ed's \"if the weight is heavy enough it will put more strain on your lower back\" (c24, WEAK, walking before standing tall on strongman handles). Load lines are not candidates: Garage Gym Reviews' \"Struggling to move weights that are too heavy may cause our form to deteriorate, leaving us susceptible to injury\" and BarBend's \"Going Too Light\". Not faults: BarBend's \"a large amount of strain is placed on the shoulder joint\" (holding a load, muscles section), Garage Gym Reviews' trap-bar \"helps reduce the strain on the lower back\" (equipment), Fitness Volt's \"Stop if you feel pain.\" (a stop line, c15). drawable is true: the census view is side, and shoulders shrugged high are a still sign that the side view shows (shoulder height against the neck). Step 3 would not decide here; for the record, BarBend's list names the shrug third, after a load choice (going too light, not a candidate) and stride length."
+  },
+  "tells": [
+   {
+    "text": "Shoulders stay back and down",
+    "claim": "c5"
+   },
+   {
+    "text": "Torso stays tall and upright",
+    "claim": [
+     "c4",
+     "c9"
+    ]
+   },
+   {
+    "text": "Short, deliberate steps",
+    "claim": "c8"
+   }
+  ],
+  "tempo": {
+   "up": null,
+   "down": null,
+   "pause": null,
+   "text": "Walk: short steps (c8). The sources differ on speed: Garage Gym Reviews and Fitness Volt walk slowly and with control (c7, c4), BarBend uses short, fast strides, and StrengthLog lengthens the stride as speed rises (c8). No source gives seconds, a step rate or a pause, so no seconds are drawn (LR-33; R-LB2-1).",
+   "claim": [
+    "c7",
+    "c8"
+   ]
+  },
+  "variantLine": "exercises.json lists Dumbbells / Trap Bar. The plate draws dumbbells (census need dumbbell). BarBend says the base mechanics are the same whichever tool is used, trap bar included (c1), so the posture, shoulder, step, bracing, breathing, stop and load claims (c4-c11, c15, c18) hold for both. The neutral dumbbell pickup beside the feet (c3), the palm-in grip (c13) and the set-down with the weights beside you (c16) are written for weights at the sides; the trap bar is deadlifted from inside the frame and carried with the arms fully extended (c23)."
+ },
+ "grip": {
+  "type": "Neutral grip, one dumbbell handle in each hand at the sides (c3, c4).",
+  "width": "Hands at the sides of the body (c4).",
+  "thumb": "Wrapped around the handle (c13).",
+  "handContact": "Bottom of the palm pushed into the handle, hand and fingers curled around it (c13).",
+  "wrist": "",
+  "claims": [
+   "c3",
+   "c4",
+   "c13"
+  ],
+  "note": "No source gives a wrist position; the plate draws the hold hand-pair's straight wrist as a drawing convention (LR-4)."
+ },
+ "setup": [
+  {
+   "step": "Clear a level, dry route, with room to set down.",
+   "claim": "c2"
+  },
+  {
+   "step": "Stand between the weights, feet about hip-width apart.",
+   "claim": "c3"
+  },
+  {
+   "step": "Bend at your hips and knees and grip, thumbs wrapped.",
+   "claim": [
+    "c3",
+    "c13"
+   ]
+  },
+  {
+   "step": "Breathe in, brace, and stand up without jerking the weights.",
+   "claim": [
+    "c3",
+    "c11"
+   ]
+  },
+  {
+   "step": "Stand fully tall before your first step.",
+   "claim": "c24"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Torso upright, gaze ahead.",
+   "claim": "c4"
+  },
+  {
+   "point": "Arms long at your sides.",
+   "claim": "c4"
+  },
+  {
+   "point": "Shoulders back and down, not shrugged.",
+   "claim": "c5"
+  },
+  {
+   "point": "Short, deliberate steps.",
+   "claim": "c8"
+  },
+  {
+   "point": "Weights even, not shifting to one side.",
+   "claim": "c9"
+  },
+  {
+   "point": "Slow down and turn with small steps.",
+   "claim": "c17"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Shrugging your shoulders up as you tire.",
+   "fix": "Keep your shoulders back and down.",
+   "claim": "c5"
+  },
+  {
+   "mistake": "Rushing the walk.",
+   "fix": "Slow down and take short, deliberate steps.",
+   "claim": [
+    "c7",
+    "c8"
+   ]
+  },
+  {
+   "mistake": "Leaning forward or to one side.",
+   "fix": "Stay upright, the weights even on both sides.",
+   "claim": "c9"
+  }
+ ],
+ "breathing": {
+  "text": "Breathe in and brace to lift, then keep breathing as you walk.",
+  "claims": [
+   "c11",
+   "c10",
+   "c12"
+  ]
+ },
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "forearms",
+    "claim": "c19"
+   },
+   {
+    "muscleId": "upper_traps",
+    "claim": "c20"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "glutes",
+    "claim": "c21"
+   },
+   {
+    "muscleId": "obliques",
+    "claim": "c21"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Forearms",
+    "means": "They work to hold the handles.",
+    "fix": "",
+    "claim": "c19",
+    "redFlag": null
+   },
+   {
+    "where": "Traps",
+    "means": "They hold your shoulder blades steady under the load.",
+    "fix": "",
+    "claim": "c20",
+    "redFlag": null
+   },
+   {
+    "where": "Hands",
+    "means": "A handle starts slipping.",
+    "fix": "End the carry and set the weights down.",
+    "claim": [
+     "c15",
+     "c16"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Lower back",
+    "means": "Fault: not bracing your core.",
+    "fix": "Brace before you lift. Stop if you feel pain.",
+    "claim": [
+     "c10",
+     "c11",
+     "c15"
+    ],
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Rushing is risky: one misstep could pull a calf, roll an ankle or twist a knee.",
+   "claim": "c7"
+  },
+  {
+   "risk": "Not bracing your core can wreak havoc on your lower back.",
+   "claim": "c10"
+  },
+  {
+   "risk": "Without a good grip, the weights may slip and land on your toe.",
+   "claim": "c14"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "shoulders",
+   "kind": "posture",
+   "right": "Shoulders back and down.",
+   "wrong": "Shoulders shrugged high.",
+   "claim": "c5"
+  },
+  {
+   "key": "grip",
+   "kind": "hand",
+   "right": "Palm pushed into the handle, thumb wrapped.",
+   "wrong": "Held in the fingers only.",
+   "claim": "c13"
+  },
+  {
+   "key": "torso",
+   "kind": "posture",
+   "right": "Tall and upright, arms long.",
+   "wrong": "Leaning forward.",
+   "claim": [
+    "c4",
+    "c9"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "Library: forearms and upper_traps primary; core and glutes secondary. StrengthLog lists the forearm flexors and trapezius as primary (c19, c20), and Fitness Volt and BarBend say they hold the handles and the shoulder blades (c19, c20). StrengthLog also lists glutes and obliques as primary, and BarBend says the carry strengthens the gluteus medius (c21); the card's feel keeps them secondary, as the library does. core goes in no feel role (LR-35), so obliques stand for it in feel; the library's core stays. No change proposed."
+ },
+ "anchorSource": "bb-farmers",
+ "loadProgression": {
+  "text": "Start with a manageable load, about a quarter of your body weight in each hand. Repeat it until the whole carry stays controlled. Then add a little load or distance, not both.",
+  "claims": [
+   "c18"
+  ]
+ },
+ "gaps": [
+  "Breathing (content.md 5.2): no source read gives the squat's blood-pressure breath-holding line. StrengthLog holds the breath to lift (c11) and BarBend's strongman section says keep breathing (c12, WEAK); the card shows only that. Left out, not invented.",
+  "Way out: letting go of the weights in a fall or stumble (dropping them away from the feet) has no source. The sourced way out is ending the carry and the controlled set-down (c15, c16)."
+ ],
+ "tierA": {
+  "wayOut": {
+   "text": "Handle slipping, posture changing or steps out of control? End the carry. Stop while you still control the weights, keep them beside you, bend your hips and knees and lower them, feet clear.",
+   "claims": [
+    "c15",
+    "c16"
+   ]
+  },
+  "safetyPoints": [
+   "Way out: end the carry before the grip fails (c15) and the controlled set-down (c16, c2); dropping the weights in a stumble is a gap.",
+   "Load progression: c18 (loadProgression).",
+   "Breathing: c11, c10, c12 (breathing); the blood-pressure line is a gap.",
+   "Warning link: feel.rows[3] links the back box (c10, c11, c15); its stop line cites Fitness Volt's \"Stop if you feel pain.\" (R-LB6-6).",
+   "Risks: 3 (c7, c10, c14).",
+   "Thumb: wrapped (c13; C4).",
+   "Safeties or J-hooks, bar path clear of the neck: not applicable (no bar overhead or in a rack).",
+   "Jumps: not applicable."
+  ]
+ },
+ "notes": [
+  "Anchor: BarBend's farmer's-carry page (Austin Current), read in full (steps, variations including the trap bar, sets, muscles, common-mistakes list, FAQs). Garage Gym Reviews' farmer's-carry page, Fitness Volt's farmer's-walk page (updated 2026-09-12) and StrengthLog's farmers-walk page were read in full too.",
+  "bb-fwbreak is a BarBend op-ed written for strongman farmer's handles, another implement: its one claim (c24) is WEAK and says so. Its handle-placement and turning lines are implement-specific and not used.",
+  "StrengthLog's steps are written for 'farmers walk-cases, or similar implements'; its lines used here (breath, small steps, straight line, set-down) are not implement-specific.",
+  "Shared cards: none lists lib_farmer_s_carry in appliesTo (shared/ at the start head). The lower-back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28): the sheet cannot ship before the back-pain box, and back-pain-box.json's appliesTo does not yet list this id.",
+  "Shoulders: BarBend says keep the shoulders back and down, Garage Gym Reviews pinches the shoulder blades (c4), and Fitness Volt warns against forcing a shrug or an exaggerated shoulders-back position (c5). The card says back and down, without forcing.",
+  "Speed: Garage Gym Reviews and Fitness Volt say slow and controlled, BarBend short, fast strides (c7, c8). The shown lines say short, deliberate steps and the rushing fault, from the slow line.",
+  "Read but not cited: McGill 2009 (PubMed 19528856, abstract, efetch; Fitness Volt's source [2]): strongman events and spine load, nothing farmer's-walk specific in the abstract. 404 or 502 on 2026-10-22: healthline.com farmers-walk, puregym.com farmers-walk, muscleandfitness.com farmers-walk (502); ACE farmer's-carry URL redirects to the library index."
+ ]
+}
