@@ -2731,3 +2731,5 @@ Card: `docs/supervisor/verify/gate-flake-5-card.md` (claude/sup-lib4-cards @ 684
   - LIB-2 A10: openHowTo only a timeout, thrown out of the block.
   - FG-OFF G6: a named error ('tapping the entry opened no dialog with .ht-plate-fit'), no chunk named.
   - No other block waits on a How-to chunk. Only HT-8's earlyChip blocks service workers.
+## F-CI-1 (supervisor, 2026-10-22; PR #303)
+- **D-F-CI-1 (amends D-GATESPLIT-BUDGET's job caps only).** A slow apt mirror made `npx playwright install --with-deps chromium` take 664 s on #191 (also #289, #290), so howto-shard hit its 30-minute job cap before its checks ended. Each gate-shard, ht10-gate and howto-shard install step now has `timeout-minutes: 15`, and the three job caps are 50 (setup, the install cap and the test budget). The budgets are unchanged and still time the test step itself: `JOB_BUDGET_S = 1800` on `meta.gateSeconds` (scripts/ci-verdict.mjs), the library verdict's `shardSeconds` (tools/plates/library/ci/verdict.mjs) and HT-10's A5 1500 s (tools/plates/fidelity/ht10.mjs). Review: #303 6350585026.
