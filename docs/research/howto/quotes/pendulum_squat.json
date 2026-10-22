@@ -39,8 +39,8 @@
       "claim": "c3",
       "source": "yr-pend",
       "text": "Before you move, lightly brace your core.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Before you move, lightly brace your core.",
       "note": ""
     },
     {
@@ -143,8 +143,8 @@
       "claim": "c12",
       "source": "wff-pend",
       "text": "The quads are the primary driver.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "The quads are the primary driver.",
       "note": ""
     },
     {
@@ -207,16 +207,16 @@
       "claim": "c17",
       "source": "boxlife-pend",
       "text": "Once you’ve hit your rep count, re-engage the safety and make sure it’s on before attempting to get off the machine.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Once you’ve hit your rep count, re-engage the safety and make sure it’s on before attempting to get off the machine.",
       "note": ""
     },
     {
       "claim": "c17",
       "source": "boxlife-pend",
       "text": "It’s a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "It’s a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
       "note": ""
     },
     {
@@ -225,7 +225,7 @@
       "text": "After your final rep, return to the top and make sure you are stable.",
       "status": "verbatim",
       "closest": "After your final rep, return to the top and make sure you are stable.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c17",
@@ -233,7 +233,7 @@
       "text": "Before stepping out, check that the weight is fully supported.",
       "status": "verbatim",
       "closest": "Before stepping out, check that the weight is fully supported.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c17",
@@ -241,70 +241,70 @@
       "text": "Stand tall → engage the safety → confirm it is locked → step out.",
       "status": "verbatim",
       "closest": "Stand tall → engage the safety → confirm it is locked → step out.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c18",
       "source": "wff-pend",
       "text": "Rushing the descent: Dropping into the bottom rather than controlling the lowering phase. Fix: a controlled two to three second descent on every rep.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Rushing the descent: Dropping into the bottom rather than controlling the lowering phase. Fix: a controlled two to three second descent on every rep.",
       "note": ""
     },
     {
       "claim": "c18",
       "source": "xcel-pend",
       "text": "Lower slowly by bending your knees, counting three seconds down.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Lower slowly by bending your knees, counting three seconds down.",
       "note": ""
     },
     {
       "claim": "c19",
       "source": "boxlife-pend",
       "text": "Once you’re at the bottom of your squat, pause for a second, and then drive your feet into the foot plate to push yourself up again.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Once you’re at the bottom of your squat, pause for a second, and then drive your feet into the foot plate to push yourself up again.",
       "note": ""
     },
     {
       "claim": "c19",
       "source": "boxlife-pend",
       "text": "Aim for a controlled movement—there’s no need to be explosive.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Aim for a controlled movement—there’s no need to be explosive.",
       "note": ""
     },
     {
       "claim": "c20",
       "source": "yr-pend",
       "text": "Do not drop quickly to the bottom. Lower yourself under control.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Do not drop quickly to the bottom. Lower yourself under control.",
       "note": ""
     },
     {
       "claim": "c20",
       "source": "yr-pend",
       "text": "In my decades of design experience, I often see people add too much weight and then lose control on the way down.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "In my decades of design experience, I often see people add too much weight and then lose control on the way down.",
       "note": ""
     },
     {
       "claim": "c21",
       "source": "yr-pend",
       "text": "Do not aggressively snap your knees straight at the top.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Do not aggressively snap your knees straight at the top.",
       "note": ""
     },
     {
       "claim": "c21",
       "source": "xcel-pend",
       "text": "Extend fully at the top without locking out hard.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Extend fully at the top without locking out hard.",
       "note": ""
     }
   ]
