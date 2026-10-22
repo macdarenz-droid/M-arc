@@ -291,9 +291,10 @@
   },
   {
    "id": "c14",
-   "text": "Tempo (up = lifting, down = lowering): about 1 s up and a slow 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up and a slow 2 s down, inside ACSM's moderate speed of 1-2 s each way, which is stated for advanced training (LR-15). BarBend's \"adding that squeeze at the top\" gives no pause or seconds, so pause is 0.",
    "tags": [
-    "CONSENSUS"
+    "CONSENSUS",
+    "WEAK"
    ],
    "sources": [
     "acsm-2009",
@@ -339,7 +340,7 @@
    "year": 2024,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-preacher",
@@ -349,7 +350,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "oliveira-2009",
@@ -359,7 +360,7 @@
    "year": 2009,
    "pmid": 24150552,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "nunes-2020",
@@ -369,7 +370,7 @@
    "year": 2020,
    "pmid": 32823490,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "kassiano-2025",
@@ -379,7 +380,7 @@
    "year": 2025,
    "pmid": 39809454,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "jukes-2022",
@@ -389,7 +390,7 @@
    "year": 2022,
    "pmid": 36243942,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "acsm-2009",
@@ -399,7 +400,7 @@
    "year": 2009,
    "pmid": 19204579,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   }
  ],
  "plate": {
@@ -411,7 +412,7 @@
   "checkpoints": [
    {
     "label": "Armpits over pad",
-    "what": "Seat set so the pad top sits under the armpits; chest and upper arms on the pad.",
+    "what": "Pad top under the armpits. Chest and upper arms on the pad.",
     "claim": "c2"
    },
    {
@@ -429,7 +430,8 @@
    "what": "Upper arms lifting off the pad as the body heaves the bar up.",
    "why": "It comes from a load that is too heavy and can put the front delts at risk.",
    "claim": "c5",
-   "drawable": true
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the upper arms leaving the pad as the body heaves a heavy bar up (c5). Step 1 set aside: StrengthLog's \"Typically, most lifters prefer to stay in the medium to high rep range\" is about rep range; \"it is often easier to focus on the muscles worked\" is about machines; Oliveira's \"most lifters may choose a different load\" is about a load; Jukes's \"the usual arm position during DBTR was forearm supination and elbow extension\" (c13) is about tendon ruptures across many activities and names no fault of this exercise; BarBend's \"Below are some of the most common questions\" is the FAQ; the 'Common ... Mistakes' headings are headings. Step 2: two candidates are tied to harm: the arms leaving the pad (BarBend: \"That can put your anterior delts at risk.\", c5) and bent wrists (StrengthLog: \"If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.\", c8). Both are on a common-mistakes list and each has one harm source, both direct. StrengthLog's list names both, the arms-on-pad fix (\"Keep your body still and your upper arms pressed against the pad.\") in its first item and the wrists second, so the arms leaving the pad win; BarBend's list (the anchor, written for this exercise) also opens with it. Set aside: the seat height (c3, \"Either extreme runs the risk of aggravating your shoulders\") is a setup choice, not a candidate (LR-31); \"This forward flexed position might cause discomfort for your front delts\" is about the exercise's position, not a fault. drawable is true: the side view shows the upper arms lifted off the pad. Pick unchanged; handlingMistakes already has it first."
   },
   "tells": [
    {
@@ -466,8 +468,11 @@
    "claim": "c1"
   },
   {
-   "step": "Pad top under your armpits with arms straight; not so high you hunch.",
-   "claim": "c2, c3"
+   "step": "Pad top under your armpits, arms straight. Not so high you hunch.",
+   "claim": [
+    "c2",
+    "c3"
+   ]
   },
   {
    "step": "Feet flat on the floor.",
@@ -492,7 +497,7 @@
    "claim": "c4"
   },
   {
-   "point": "Upper body lightly engaged, not hanging on the pad.",
+   "point": "Upper body kept active, not hanging on the pad.",
    "claim": "c9"
   },
   {
@@ -500,7 +505,7 @@
    "claim": "c8"
   },
   {
-   "point": "Lower well past 90 degrees; stop short if full straightening hurts.",
+   "point": "Lower well past 90 degrees. Stop short if full straightening feels uncomfortable.",
    "claim": "c7"
   },
   {
@@ -510,18 +515,18 @@
  ],
  "handlingMistakes": [
   {
-   "mistake": "Upper arms leaving the pad to heave a heavy bar.",
-   "fix": "Go lighter; keep the arms pressed into the pad.",
+   "mistake": "Upper arms leaving the pad.",
+   "fix": "Go lighter. Keep the arms pressed into the pad.",
    "claim": "c5"
   },
   {
-   "mistake": "Seat too high or too low.",
+   "mistake": "Seat too high or low.",
    "fix": "Reset it so the pad top sits under your armpits.",
    "claim": "c3"
   },
   {
    "mistake": "Dropping fast into the bottom.",
-   "fix": "Lower slowly; go lighter if you can't control it.",
+   "fix": "Lower slowly. Go lighter if you can't control it.",
    "claim": "c6"
   }
  ],
@@ -546,30 +551,39 @@
   ],
   "rows": [
    {
-    "where": "Front of the upper arm, hardest near the bottom",
+    "where": "Front of the upper arm",
     "means": "The biceps are working where the bench loads them most.",
     "fix": "",
-    "claim": "c11",
+    "claim": [
+     "c11",
+     "c10"
+    ],
     "redFlag": null
    },
    {
     "where": "Front of the shoulder",
-    "means": "Usually means the seat height is off or the arms are leaving the pad.",
-    "fix": "Reset the seat; go lighter.",
-    "claim": "c3, c5",
+    "means": "Fault: seat height off, or arms leaving the pad.",
+    "fix": "Reset the seat. Go lighter.",
+    "claim": [
+     "c3",
+     "c5"
+    ],
     "redFlag": "shoulder"
    },
    {
-    "where": "Bottom of the lift, arms fully straight",
+    "where": "Elbow, at full straightening",
     "means": "Full straightening feels uncomfortable for you.",
-    "fix": "Reverse the movement a little earlier; lower slowly.",
-    "claim": "c7, c6",
+    "fix": "Turn back a little earlier. Lower slowly.",
+    "claim": [
+     "c7",
+     "c6"
+    ],
     "redFlag": "elbow"
    },
    {
-    "where": "Wrist",
-    "means": "Usually means the wrist is bending.",
-    "fix": "Straighten the wrist; go lighter if you can't.",
+    "where": "Wrist discomfort or pain",
+    "means": "Fault: the wrists bent up or down under load.",
+    "fix": "Stop and don't train through the pain. Keep the wrist straight.",
     "claim": "c8",
     "redFlag": "wrist"
    }
@@ -577,7 +591,7 @@
  },
  "risks": [
   {
-   "risk": "Heaving a heavy bar with the arms off the pad can put the front of the shoulder at risk.",
+   "risk": "Heaving a heavy bar off the pad can put the front shoulder at risk.",
    "claim": "c5"
   },
   {
@@ -585,7 +599,7 @@
    "claim": "c3"
   },
   {
-   "risk": "Across many activities, most distal biceps tendon ruptures caught on video happened palm-up with the elbow nearly straight.",
+   "risk": "Across many activities, most biceps tendon ruptures on video were palm-up, elbow nearly straight.",
    "claim": "c13"
   }
  ],
@@ -598,9 +612,12 @@
   {
    "key": "preacher-pad",
    "kind": "posture",
-   "right": "Pad top under the armpits, upper arms flat on the pad.",
+   "right": "Pad under the armpits, upper arms flat on the pad.",
    "wrong": "Upper arms lifted off the pad, torso heaving back.",
-   "claim": "c5, c2"
+   "claim": [
+    "c5",
+    "c2"
+   ]
   },
   {
    "key": "curl-wrist",

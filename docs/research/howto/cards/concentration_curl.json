@@ -77,7 +77,7 @@
   },
   {
    "id": "c4",
-   "text": "Wedging the elbow into the knee crease is a tempting and commonly taught habit.",
+   "text": "Wedging the elbow into the knee crease is tempting: many athletes try to anchor the elbow into the knee, and some have seen others do it or been coached to.",
    "tags": [
     "CONSENSUS"
    ],
@@ -89,6 +89,11 @@
      "source": "bb-concentration",
      "text": "It’s tempting to wedge your elbow into the crease of your knee — you might even see other athletes doing it, or have been coached to do it yourself.",
      "where": "Common mistakes, wedging the elbow"
+    },
+    {
+     "source": "bb-concentration",
+     "text": "Many athletes try to anchor their active elbow into their knee.",
+     "where": "FAQ, where should your elbows go"
     }
    ]
   },
@@ -256,9 +261,10 @@
   },
   {
    "id": "c12",
-   "text": "Tempo (up = lifting, down = lowering): about 1 s up, a beat at the top, a slow 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "text": "Tempo (up = lifting, down = lowering): BarBend asks to hold the contraction for a beat at the top, right after the curl, and to lower with slow control; it gives no seconds, so the 1 s pause is a drawing convention (LR-33). 1 s up and 2 s down sit inside ACSM's moderate 1-2 s each way, which is stated for advanced training (LR-15).",
    "tags": [
-    "CONSENSUS"
+    "CONSENSUS",
+    "WEAK"
    ],
    "sources": [
     "acsm-2009",
@@ -274,6 +280,11 @@
      "source": "bb-concentration",
      "text": "After holding for a moment at the top, lower the weight with slow control.",
      "where": "How to, step 4"
+    },
+    {
+     "source": "bb-concentration",
+     "text": "Hold a strong contraction for a beat at the top of your range of motion, keeping your upper arm stable the whole time.",
+     "where": "How to, step 2"
     }
    ]
   },
@@ -304,7 +315,7 @@
    "year": 2024,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-concentration",
@@ -314,7 +325,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "ace-bicepsstudy",
@@ -324,7 +335,7 @@
    "year": 2014,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "acsm-2009",
@@ -334,7 +345,7 @@
    "year": 2009,
    "pmid": 19204579,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   }
  ],
  "plate": {
@@ -346,7 +357,7 @@
   "checkpoints": [
    {
     "label": "Arm on thigh",
-    "what": "Back of the upper arm pressed into the inner thigh, not the elbow into the knee.",
+    "what": "Back of the upper arm on the inner thigh, not the elbow in the knee.",
     "claim": "c3"
    },
    {
@@ -362,9 +373,13 @@
   ],
   "mistake": {
    "what": "Elbow wedged into the knee crease instead of the upper arm resting on the inner thigh.",
-   "why": "It is a tempting, often-taught habit that lets the leg lever the weight and takes work off the biceps.",
-   "claim": "c4, c3",
-   "drawable": true
+   "why": "Many athletes try to anchor the elbow into the knee, and it is tempting (c4); it lets the leg lever the weight up and takes emphasis away from the biceps (c3).",
+   "claim": [
+    "c4",
+    "c3"
+   ],
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: the elbow wedged into the knee (c3, c4), from BarBend's \"Many athletes try to anchor their active elbow into their knee.\" The frequency word puts many people on the fault itself, in a source written for this exercise. Set aside: \"Chasing the pump for the sake of rounder bis is common in the weight room.\" is about training goals; \"you might even see other athletes doing it, or have been coached to do it yourself\" (c4) holds no frequency word; \"get the most out of\", \"receives the most stimulus\" and \"make the most of this lift\" are about the stimulus; \"Here are some answers to the most common concentration curl questions.\" is the FAQ; the 'Common Concentration Curl Mistakes' heading is a heading. No read source ties a fault to harm (BarBend's \"hit failure with relative safety\" names no fault). drawable is true: the side view shows the elbow in the knee crease against the upper arm on the inner thigh. Pick unchanged; handlingMistakes already has it first."
   },
   "tells": [
    {
@@ -413,7 +428,7 @@
    "claim": "c3"
   },
   {
-   "step": "Feet pressed down; free hand on your other knee or the bench.",
+   "step": "Feet pressed down. Free hand on your other knee or the bench.",
    "claim": "c5"
   }
  ],
@@ -427,7 +442,7 @@
    "claim": "c3"
   },
   {
-   "point": "Upper arm stays steady; only the elbow bends.",
+   "point": "Upper arm stays steady. Only the elbow bends.",
    "claim": "c6"
   },
   {
@@ -446,13 +461,13 @@
    "claim": "c3"
   },
   {
-   "mistake": "Forcing the dumbbell up to the shoulder.",
+   "mistake": "Curling up to the shoulder.",
    "fix": "Stop when the upper arm starts to leave vertical.",
    "claim": "c7"
   },
   {
-   "mistake": "Letting the weight drop on the way down.",
-   "fix": "Lower slowly; resist the weight.",
+   "mistake": "Letting the weight drop.",
+   "fix": "Lower slowly. Resist the weight.",
    "claim": "c8"
   }
  ],
@@ -487,7 +502,7 @@
    },
    {
     "where": "Leg doing the lifting",
-    "means": "Usually means the elbow is wedged into the knee.",
+    "means": "Fault: the elbow wedged into the knee.",
     "fix": "Move the upper arm onto the inner thigh.",
     "claim": "c3",
     "redFlag": null
@@ -500,7 +515,7 @@
   {
    "key": "conc-brace",
    "kind": "posture",
-   "right": "Back of the upper arm flat on the inner thigh, upper arm vertical.",
+   "right": "Upper arm flat on the inner thigh and vertical.",
    "wrong": "Elbow jammed into the knee crease.",
    "claim": "c3"
   },

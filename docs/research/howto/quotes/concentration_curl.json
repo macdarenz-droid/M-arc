@@ -1,6 +1,6 @@
 {
  "id": "concentration_curl",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -50,6 +50,14 @@
    "status": "verbatim",
    "closest": "It's tempting to wedge your elbow into the crease of your knee — you might even see other athletes doing it, or have been coached to do it yourself.",
    "note": "differs in curly/straight quotes or nbsp"
+  },
+  {
+   "claim": "c4",
+   "source": "bb-concentration",
+   "text": "Many athletes try to anchor their active elbow into their knee.",
+   "status": "verbatim",
+   "closest": "Many athletes try to anchor their active elbow into their knee.",
+   "note": "fetched by curl 2026-10-22"
   },
   {
    "claim": "c5",
@@ -178,6 +186,14 @@
    "status": "verbatim",
    "closest": "After holding for a moment at the top, lower the weight with slow control.",
    "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-concentration",
+   "text": "Hold a strong contraction for a beat at the top of your range of motion, keeping your upper arm stable the whole time.",
+   "status": "verbatim",
+   "closest": "Hold a strong contraction for a beat at the top of your range of motion, keeping your upper arm stable the whole time.",
+   "note": "fetched by curl 2026-10-22"
   },
   {
    "claim": "c13",
