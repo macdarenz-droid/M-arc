@@ -85,7 +85,7 @@ const mistakePose = { reach: { l: start.reach.l, r: { at: M_GRIP, pole: [0, 0, 1
 const hexAt = (c, r, turn) => [0, 60, 120, 180, 240, 300].map(a => [c[0], c[1] + r * Math.sin((a + turn) * Math.PI / 180), c[2] + r * Math.cos((a + turn) * Math.PI / 180)]);
 export const M_HEX = hexAt(M_GRIP, CIRCUM, M_TURN);   // the vendor hex has flats top and bottom; turned 30, a vertex points straight down
 const M_CORE = Array.from({ length: 12 }, (_, k) => [M_GRIP[0], M_GRIP[1] + 0.0158 * Math.sin(k * Math.PI / 6), M_GRIP[2] + 0.0158 * Math.cos(k * Math.PI / 6)]);
-export const CORNER = M_HEX.reduce((a, p) => (p[1] < a[1] ? p : a));
+export const CORNER = M_HEX.reduce((a, p) => (p[1] < a[1] ? p : a));   // the vertex on the floor; the tell sits on the next corner up (M_HEX[0]), clear of the flat hex
 
 // The plank line (datum, plank.mjs's): shoulder to heel of the held pose, run LINE_RUN past each end.
 const LINE = (() => {
@@ -119,14 +119,14 @@ export default {
   callouts: [
     { key: 'line', text: 'Straight<br>line', anchor: 'buttock', box: { left: 76, top: 206 }, cue: 'Keep one straight line from your head to your heels.' },
     { key: 'feet', text: 'Feet wide', anchor: 'heel.r', cue: 'Set your feet wider than hip-width for a steady base.' },
-    { key: 'row', text: 'Row to<br>ribs', anchor: 'grip.r', box: { left: 120, top: 160 }, cue: 'Row the dumbbell to your ribcage, elbow close to your body.' },
+    { key: 'row', text: 'Row to<br>ribs', anchor: { at: 'grip.r', off: [0, -7] }, box: { left: 120, top: 160 }, cue: 'Row the dumbbell to your ribcage, elbow close to your body.' },
   ],
   mistake: {
     pose: mistakePose,
     guides: [],
     tells: [
       // one tell (D-LIB10-SKULL1 record, DESIGN.md section 9): c9 states the corner landing and no second sign
-      { key: 'corner', text: 'Lands on<br>a corner', anchor: CORNER, cue: 'The dumbbell comes down too fast and lands on a corner.' },
+      { key: 'corner', text: 'Lands on<br>a corner', anchor: M_HEX[0], box: { left: 256, top: 286 }, cue: 'The dumbbell comes down too fast and lands on a corner.' },
     ],
   },
   alt: 'Renegade row, side view. In a high plank on two hex dumbbells, hands under the shoulders, body straight from head to heels, the lifter rows one dumbbell to the ribcage, elbow close to the body, and sets it back down flat.',

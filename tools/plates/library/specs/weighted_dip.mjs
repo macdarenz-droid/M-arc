@@ -186,8 +186,8 @@ export default {
   measure: { vertex: 'elbow.r', from: { dir: UA }, to: 'grip.r', radius: 20, title: 'Elbow', value: 'about 90° bend', expect: 90, box: { left: 16, top: 128 } },
   callouts: [
     // c3: the top position's shoulders (the checkpoint's claim c3 is the top), anchored on the start figure
-    { key: 'shoulders', text: 'Shoulders<br>down', anchor: { at: 'shoulderTop.r', pose: 'start' }, box: { left: 30, top: 54 }, cue: 'Keep your shoulders down and back, away from your ears.' },
-    { key: 'elbows', text: 'Elbows<br>back', anchor: 'elbow.r', box: { left: 30, top: 90 }, cue: 'Lower with your elbows going back, not out.' },
+    { key: 'shoulders', text: 'Shoulders<br>down', anchor: { at: 'shoulderTop.r', pose: 'start' }, box: { left: 30, top: 36 }, cue: 'Keep your shoulders down and back, away from your ears.' },
+    { key: 'elbows', text: 'Elbows<br>back', anchor: 'elbow.r', box: { left: 30, top: 84 }, cue: 'Lower with your elbows going back, not out.' },
     // c4: on the parallel line (the datum), in front of the chest
     { key: 'depth', text: 'Depth to<br>parallel', anchor: { at: 'shoulder.r', off: [40, 0] }, box: { left: 258, top: 146 }, cue: 'Lower until your upper arm is about level with the floor.' },
   ],
@@ -196,8 +196,8 @@ export default {
     pose: mistakePose,
     guides: MIST_ARM.map(pts => ({ kind: 'dashed', pts })),
     tells: [
-      { key: 'short', text: 'Rep cut<br>short', anchor: { at: 'shoulderTop.r', pose: 'mistake' }, box: { left: 40, top: 92 }, cue: 'The rep stops well above parallel at the bottom.' },
-      { key: 'parallel', text: 'Above<br>parallel', anchor: { along: ['mistake:shoulder.r', 'mistake:elbow.r'], t: 0.5, pose: 'mistake' }, box: { left: 26, top: 132 }, cue: 'The upper arm stops well above level with the floor.' },
+      { key: 'short', text: 'Rep cut<br>short', anchor: { at: 'head', pose: 'mistake' }, box: { left: 236, top: 30 }, cue: 'The rep stops well above parallel at the bottom.' },
+      { key: 'parallel', text: 'Above<br>parallel', anchor: { along: ['mistake:elbow.r', 'mistake:shoulder.r'], t: 0.8, pose: 'mistake' }, box: { left: 56, top: 96 }, cue: 'The upper arm stops well above level with the floor.' },
     ],
   },
   alt: 'Weighted dip, side view. On parallel bars, a plate hanging low from a dip belt, the lifter lowers from straight arms until the upper arms are about level with the floor, elbows going back, shoulders down, torso nearly upright.',

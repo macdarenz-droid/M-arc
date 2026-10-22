@@ -7,8 +7,9 @@
 //  plate.checkpoints (c3 Cable tight, c6/c13 Elbow leads, c7 Shoulder height); Mistake = plate.mistake (c19, c7: the arm
 //  raised above shoulder height, beyond 90 degrees, drawable); tempo = plate.tempo (c22, c23: up 2, down 2, pause 1,
 //  c22's WEAK convention).
-// Clone source: upright_row (#109 @ ff7c5c4f) for the standing front-view base, the shoulder datum and the shoulder
-//  arc (upper arm against the hanging line, 90 = level), copied, never imported (D-LIB9-CLONE). The approved
+// Clone source: upright_row (#109 @ ff7c5c4f) for the standing front-view base and the shoulder datum, copied, never
+//  imported (D-LIB9-CLONE). No angle arc: in the armpit it sat on the Trace's path; the datum and the shoulder-height
+//  check carry c7. The approved
 //  dumbbell_lateral_raise (golden A, ref-src) gives the elbow's lead (ref-src/plate.mjs:3, "lead 8").
 // Equipment: the vendor cableColumn (column, low pulley, cable, stack) on the figure's right, the side nearer the
 //  machine (c2), the pulley at its lowest point (c1); floor. The single handle drawn here from `poly` (D-LIB17-HANDLE).
@@ -135,11 +136,10 @@ export default {
   ghosts: { count: 3, parts: ['arm.l', 'handle'] },
   trace: { point: 'grip.l', trim: [10, 12] },
   datum: [{ y: 'shoulder.l', from: 'shoulder.l', to: 346 }],
-  measure: { vertex: 'shoulder.l', from: 'down', to: 'elbow.l', title: 'Shoulder', value: 'level, 90°', expect: 90 },
   callouts: [
-    { key: 'tight', text: 'Cable<br>tight', anchor: CABLE_MID, cue: 'Step away from the machine so the cable is tight.' },
-    { key: 'elbow', text: 'Elbow<br>leads', anchor: 'elbow.l', cue: 'Raise your arm out to the side, elbow leading the hand.' },
-    { key: 'height', text: 'Shoulder<br>height', anchor: { at: 'shoulder.l', off: [118, 0] }, cue: 'Stop when your arm is parallel with the floor.' },
+    { key: 'tight', text: 'Cable<br>tight', anchor: CABLE_MID, box: { left: 250, top: 226 }, cue: 'Step away from the machine so the cable is tight.' },
+    { key: 'elbow', text: 'Elbow<br>leads', anchor: 'elbow.l', box: { left: 190, top: 60 }, cue: 'Raise your arm out to the side, elbow leading the hand.' },
+    { key: 'height', text: 'Shoulder<br>height', anchor: { at: 'shoulder.l', off: [118, 0] }, box: { left: 272, top: 94 }, cue: 'Stop when your arm is parallel with the floor.' },
   ],
   tempo: [{ phase: 'Raise', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
   mistake: {

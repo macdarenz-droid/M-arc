@@ -46,7 +46,7 @@ the Trace path length) at this head; QA evidence comes only after Do 6's verdict
 
 | id | tier | view | mode | clone source (D-LIB17-CLONE) | composer / primitives | hand (merge_prerequisites; drawn) |
 |---|---|---|---|---|---|---|
-| cable_lateral_raise | C | front | H | upright_row (#109; the engine front view: stance, shoulder datum and arc); the 8's cable code (cableColumn) | vendor cableColumn, floor; single handle from `poly` (D-LIB17-HANDLE) | hand-d-handle GAP on main (hand-d-handle.mjs:27-29); fist drawn |
+| cable_lateral_raise | C | front | H | upright_row (#109; the engine front view: stance and shoulder datum; no arc, it sat on the Trace's path); the 8's cable code (cableColumn) | vendor cableColumn, floor; single handle from `poly` (D-LIB17-HANDLE) | hand-d-handle GAP on main (hand-d-handle.mjs:27-29); fist drawn |
 | dumbbell_front_raise | C | side | H | dumbbell_biceps_curl (#109; the engine dumbbell, the standing side view) | vendor dumbbell, floor | 'hold': in no key (census-scope.json:31); fist drawn |
 | cable_rear_delt_fly | C | front | H | upright_row (#109); lat_pulldown and seated_cable_row (the 8) for the cable code | two vendor pulleys and cables on a crossover frame from `line`/`poly`; two single handles (D-LIB17-HANDLE) | hand-d-handle GAP (hand-d-handle.mjs:27-29); fists drawn |
 | face_pull | C | side | H | seated_cable_row (the 8): the cable to the handle, the stack | main's eq/rope.mjs (anchor rope_triceps_pushdown, plan 2.1:135), vendor cableColumn, floor | hand-rope GAP (hand-rope.mjs:33); fists drawn |
@@ -139,7 +139,10 @@ Every anchor gates the plate's sheet, not its drawing (plan 3.1:293-299). None i
   cable_external_rotation, resistance_band_pull_apart; side: the other 5).
 - **Before Do 6 b** every drawn id also shows `H6:no-card` and F7 'no card top fault' (qa/node.mjs:360). Expected.
 - F2 (coverage), F3 (longest leader) and F4 (boxed labels) are measured by authoring QA and posted; any raised flag
-  outside this set is posted with its value and range and ruled before READY.
+  outside this set is posted with its value and range and ruled before READY. **Measured on the slice: F2 0.579 on
+  cable_lateral_raise** (range 0.191-0.549: the 2.1 m column, the cable across the body and the arm's sweep with 3
+  ghosts, at the reference scale); proposed as a named flag, nothing changed to dodge it. F3 and F4 are inside their
+  ranges on the three rows.
 
 ## 7. R10 items (tier A: renegade_row, weighted_dip)
 
@@ -339,8 +342,8 @@ the bulk proposals.
 |---|---|---|
 | cable_external_rotation | **measured 16.5 px** (the elbow, 20° abduction) | **measured 34.5 px** (the hand, grip.l): passes; no zoom, no F1 (D-LIB17-ER) |
 | cable_lateral_raise | **measured 33.2 px** (the hand, 20° past level) | **measured 122.9 px** (the handle) |
-| weighted_dip | **measured 21.8 px** (the shoulder top, the half rep) | **measured 41.9 px** (the shoulder) |
-| renegade_row | **measured 0.0 px** with the tell on the corner; the card-true sign, the hex turned 30° onto a corner against the flat one, moves its corners at most 2 × 5.95 cm × sin 15° = 3.1 cm = **4.5 px** at 146.29 px/m: **below deviationMin** | **measured 78.9 px** (the near dumbbell) |
+| weighted_dip | **measured 23.4 px** (the head, the half rep; tell `short`) | **measured 41.9 px** (the shoulder) |
+| renegade_row | **measured 0.0 px** with the tell on the corner; the card-true sign, the hex turned 30° onto a corner against the flat one, moves its corners **measured 4.9 px** at 146.29 px/m (each turned vertex against the nearest flat one): **below deviationMin** | **measured 78.9 px** (the near dumbbell) |
 | dumbbell_front_raise | the hips 8 cm forward and the shoulders about 10 cm back: about 15 px [est] | the dumbbells' arc, about 0.8 m: over 100 px [est] |
 | face_pull | the elbow 15 cm down: about 22 px [est] | the rope at the hands, about 0.35 m: about 50 px [est] |
 | cable_rear_delt_fly | the shoulder line 3 cm up: about 4-5 px [est]: **likely below** | the handles, about 0.8 m: over 100 px [est] |
@@ -361,7 +364,7 @@ post. renegade_row's renders come only from `lb7/build.mjs --held`.
 | id | ruling | why | route |
 |---|---|---|---|
 | cable_rear_delt_fly | D-LIB17-SECS (D-LIB14-NOSECS) | the card's tempo is null (c9: slow and controlled, no seconds; LR-33, R-LB7-6) | the no-seconds strip card on main, then 'LIB-17 resume' |
-| renegade_row | D-LIB17-SECS (D-LIB14-NOSECS); and D-LIB8-shrug (D-LIB17-SIZE, S2) | tempo null (LR-33); the card-true corner landing moves 4.5 px < 11.39 px (section 12) | the strip card, then 'LIB-17 resume'; LIB-ZOOM (#279) on main for the zoom circle |
+| renegade_row | D-LIB17-SECS (D-LIB14-NOSECS); and D-LIB8-shrug (D-LIB17-SIZE, S2) | tempo null (LR-33); the card-true corner landing moves 4.9 px < 11.39 px (section 12) | the strip card, then 'LIB-17 resume'; LIB-ZOOM (#279) on main for the zoom circle |
 
 Held rows are in no rows file; their specs, tests and card keys stay.
 

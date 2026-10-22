@@ -143,9 +143,9 @@ export default {
   ghosts: { count: 2, parts: ['arm.l', 'handle'] },
   trace: { point: 'grip.l', trim: [10, 12] },
   callouts: [
-    { key: 'elbow', text: 'Elbow<br>at side', anchor: 'elbow.l', cue: 'Keep your upper arm against your side, elbow bent 90 degrees.' },
-    { key: 'level', text: 'Forearm<br>level', anchor: 'wrist.l', cue: 'Keep your forearm parallel to the ground as it turns.' },
-    { key: 'turn', text: 'Turn only', anchor: 'shoulderTop.l', cue: 'Turn from the shoulder only and keep your torso still.' },
+    { key: 'elbow', text: 'Elbow<br>at side', anchor: 'elbow.l', box: { left: 236, top: 222 }, cue: 'Keep your upper arm against your side, elbow bent 90 degrees.' },
+    { key: 'level', text: 'Forearm<br>level', anchor: { along: ['elbow.l', 'wrist.l'], t: 0.6, off: [0, -6] }, box: { left: 252, top: 148 }, cue: 'Keep your forearm parallel to the ground as it turns.' },
+    { key: 'turn', text: 'Turn only', anchor: 'shoulderTop.l', box: { left: 240, top: 88 }, cue: 'Turn from the shoulder only and keep your torso still.' },
   ],
   tempo: [{ phase: 'Turn out', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
   mistake: {
@@ -153,9 +153,9 @@ export default {
     guides: [],
     tells: [
       { key: 'flare', text: 'Elbow<br>flares out', anchor: { at: 'elbow.l', pose: 'mistake' }, cue: 'The elbow flares out, away from your side, as the handle turns.' },
-      { key: 'side', text: 'Arm off<br>the side', anchor: { along: ['mistake:shoulder.l', 'mistake:elbow.l'], t: 0.6, pose: 'mistake' }, cue: 'The upper arm leaves your side.' },
+      { key: 'side', text: 'Off<br>the side', anchor: { along: ['mistake:shoulder.l', 'mistake:elbow.l'], t: 0.6, pose: 'mistake' }, cue: 'The upper arm leaves your side.' },
     ],
   },
   pilot: { drawableFault: 'Top fault: swinging with momentum (c12), seen only as speed; the plate draws the next fault on the same list, the elbow flaring out (c9).' },
-  alt: 'Cable external rotation, front view. Standing side-on to a cable column, the far hand on a single handle at elbow height, the upper arm against the side and the elbow bent 90 degrees, the forearm turns out from across the body until the hand is outside the body line, level with the floor.',
+  alt: 'Cable external rotation, front view. Standing side-on to a cable column, the upper arm against the side and the elbow bent 90 degrees, the forearm turns the handle out from across the body until the hand is outside the body line.',
 };
