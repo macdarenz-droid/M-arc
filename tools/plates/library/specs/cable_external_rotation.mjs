@@ -153,7 +153,7 @@ export default {
       { kind: 'arrow', from: { at: 'elbow.l', pose: 'end', off: [9, 20] }, to: { at: 'elbow.l', pose: 'mistake', off: [3, 20] } },
     ],
     tells: [
-      { key: 'flare', text: 'Elbow<br>flares out', anchor: { at: 'elbow.l', pose: 'mistake' }, cue: 'The elbow flares out, away from your side, as the handle turns.' },
+      { key: 'flare', text: 'Elbow<br>flares out', anchor: { along: ['mistake:shoulder.l', 'mistake:elbow.l'], t: 0.85, off: [8, 0], pose: 'mistake' }, cue: 'The elbow flares out, away from your side, as the handle turns.' },
       { key: 'side', text: 'Off<br>the side', anchor: { along: ['mistake:shoulder.l', 'mistake:elbow.l'], t: 0.5, off: [8, 0], pose: 'mistake' }, box: { left: 262, top: 112 }, cue: 'The upper arm leaves your side.' },
     ],
   },

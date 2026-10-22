@@ -472,6 +472,26 @@ describe('LIB-17 cable_external_rotation (H; plan 1\'s small-motion check, D-LIB
     expect(its.filter((i: any) => i.part === 'startArm').length).toBeGreaterThan(0);
     expect(its.filter((i: any) => i.part === 'startHandle').length).toBe(2);
   });
+  /** BULK GO (6349108629): "Elbow flares out" meets the red upper arm's outer edge just above the elbow, never the solid
+   *  end handle the Mistake elbow sits on (3 px clear of every end-pose handle outline). */
+  const flareProblems = (spec: any) => {
+    const cam = camOf(spec), i = spec.mistake.tells.findIndex((t: any) => t.key === 'flare'), out: string[] = [];
+    const p = leadersOf(plate.renderPlate(spec, { id: 'x', mistake: true }).svg)[i]![0]!, Mi = lmOf(spec, 'mistake');
+    const a = cam.P(Mi['shoulder.l']), b = cam.P(Mi['elbow.l']), dx = b[0] - a[0], dy = b[1] - a[1];
+    const t = ((p[0]! - a[0]) * dx + (p[1]! - a[1]) * dy) / (dx * dx + dy * dy);
+    if (!(t >= 0.7 && t < 1)) out.push(`flare anchor at t ${t.toFixed(2)} along the upper arm`);
+    if (!(segD(p, a, b) <= 12)) out.push(`flare anchor ${segD(p, a, b).toFixed(1)} px off the upper arm`);
+    const handles = itemsIn(spec, 'end').items.filter((it: any) => it.part === 'handle').flatMap((it: any) => eng.PRIMITIVES[it.type](it, cam).map((q: any) => q.poly ?? q.line).filter(Boolean));
+    if (!(outside(handles, p) >= 3)) out.push(`flare anchor ${outside(handles, p).toFixed(1)} px from the end handle`);
+    return out;
+  };
+  it('the flare leader meets the red upper arm just above the elbow, clear of the end handle', () => {
+    expect(flareProblems(s())).toEqual([]);
+  });
+  it('mutation: the flare anchored at the Mistake elbow itself (on the end handle) is red', () => {
+    const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((t: any) => (t.key === 'flare' ? { ...t, anchor: { at: 'elbow.l', pose: 'mistake' } } : t)) } };
+    expect(flareProblems(bad).length).toBeGreaterThan(0);
+  });
   it('A15 mutation: the start elbow set to 170 deg (inside) is red on the bent-arm check', () => {
     const st = s().poses.start, bad = { ...s(), poses: { ...s().poses, start: { ...st, elbow: { ...st.elbow, l: 10 } } } };
     expect(bentProblems(bad).some(p => p.startsWith('start: elbow.l'))).toBe(true);
