@@ -1,0 +1,679 @@
+{
+  "id": "resistance_band_pull_apart",
+  "libId": "lib_resistance_band_pull_apart",
+  "name": "Resistance Band Pull-Apart",
+  "family": "Rear delt and cuff",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Stand tall, feet hip-width apart and knees slightly bent; hold the band out in front at shoulder height with an overhand grip, hands wider than the shoulders, arms straight and the band slightly tense.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart",
+        "sl-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Stand tall with feet hip-width apart, knees slightly bent. Grip a resistance band at shoulder height with overhand grip, hands wider than shoulders, arms straight with slight tension in band.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-band-pull-apart",
+          "text": "Grab an elastic band, and hold it out before you on straight arms.",
+          "where": "How to Do Band Pull-Aparts, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Before use, check the band for damage, pick a band that allows 10-20 controlled reps, and don't stretch it beyond twice its length.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Inspect band for damage before use",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Select band resistance for 10-20 controlled reps",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Avoid overstretching band beyond twice its length",
+          "where": "Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Brace and keep the shoulders down; avoid shrugging.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Engage core and keep shoulders down.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Avoid shrugging shoulders",
+          "where": "Coaching Tips, Form Cues"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Squeeze the shoulder blades together and pull the band apart horizontally, arms moving out to the sides, until the arms line up with the shoulders (StrengthLog: as far as you can, or until the arms point straight out).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart",
+        "sl-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Exhale and squeeze shoulder blades together.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Pull band apart horizontally until arms align with shoulders.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-band-pull-apart",
+          "text": "Pull the band apart by moving your arms to the sides as far as you can, or until your arms are pointing straight out.",
+          "where": "How to Do Band Pull-Aparts, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Range: start with the arms extended forward at shoulder height and pull until the arms are in line with the torso or the band touches the chest, elbows slightly bent.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Start with arms extended forward at shoulder height; pull until arms are in line with torso or band touches chest, keeping elbows slightly bent.",
+          "where": "Coaching Tips, Range of Motion"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Return the hands to the start slowly and under control, keeping tension in the band throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart",
+        "sl-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Inhale and slowly return hands to start under control.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Maintain tension in band throughout.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-band-pull-apart",
+          "text": "Return with control to the starting position.",
+          "where": "How to Do Band Pull-Aparts, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Form cues: keep the arms at shoulder height, drive from the upper back and keep a straight posture.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Keep arms at shoulder height",
+          "where": "Coaching Tips, Form Cues"
+        },
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Drive from upper back",
+          "where": "Coaching Tips, Form Cues"
+        },
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Maintain straight posture",
+          "where": "Coaching Tips, Form Cues"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Motra's common-mistakes list for this exercise names shrugging the shoulders upward first.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Shrugging shoulders upward",
+          "where": "Common Mistakes, item 1"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Bending the elbows excessively is a common mistake (Motra's list, item 2); the elbows stay only slightly bent.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Bending elbows excessively",
+          "where": "Common Mistakes, item 2"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Arching the lower back is a common mistake (Motra's list, item 3); keep a straight posture.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Arching lower back",
+          "where": "Common Mistakes, item 3"
+        },
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Maintain straight posture",
+          "where": "Coaching Tips, Form Cues"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Motra's list also names letting the band snap back (item 4) and the head jutting forward (item 5).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Letting band snap back",
+          "where": "Common Mistakes, item 4"
+        },
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Head jutting forward",
+          "where": "Common Mistakes, item 5"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Stop if shoulder pain occurs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Stop if shoulder pain occurs",
+          "where": "Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "The band pull-apart targets the rhomboids, middle trapezius and rear delts through shoulder-blade retraction.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "A resistance band exercise that targets the rhomboids, mid traps, and rear delts through scapular retraction to build upper back strength and shoulder stability; commonly used as a warm-up or accessory for pressing movements.",
+          "where": "About"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "In 10 healthy men, the infraspinatus and lower trapezius were most active with the palms up, and the upper trapezius and posterior deltoid with the palms down; peak activity ranged from 15.3% to 72.6% of maximum.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "fukunaga-2022"
+      ],
+      "quotes": [
+        {
+          "source": "fukunaga-2022",
+          "text": "There was a significant main effect of hand position for the infraspinatus and lower trapezius, where muscle activity was highest with the palm up hand position (p < 0.001), and for the upper trapezius and posterior deltoid, where muscle activity was highest with the palm down position (p-value range < 0.001-0.004).",
+          "where": "Abstract, Results"
+        },
+        {
+          "source": "fukunaga-2022",
+          "text": "Data were collected from 10 healthy subjects (all males, age 36±12 years). Peak muscle activity ranged from 15.3% to 72.6% of MVC across muscles and exercise conditions.",
+          "where": "Abstract, Results"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Tempo: Motra lists 2-1-2 for this exercise, and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the return, a 1 s pause at the start with the arms forward, and 2 s for the pull apart.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "2-1-2",
+          "where": "Coaching Tips: Tempo"
+        },
+        {
+          "source": "mo-band-pull-apart",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Pause briefly at full retraction, right after the pull apart. No source gives its seconds, so the 1 s drawn is a drawing convention (LR-33).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-band-pull-apart"
+      ],
+      "quotes": [
+        {
+          "source": "mo-band-pull-apart",
+          "text": "Pause briefly at full retraction.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "In the EMG study the pace was set at 3 s for each phase (pull and return) with a metronome, and the band was held without slack or tension at the start of each rep (a lab protocol, not a training recommendation).",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "fukunaga-2022"
+      ],
+      "quotes": [
+        {
+          "source": "fukunaga-2022",
+          "text": "Pace of movement was standardized to three seconds for each phase of movement (i.e., concentric and eccentric) guided by a metronome set to 20 beats per minute.",
+          "where": "Methods"
+        },
+        {
+          "source": "fukunaga-2022",
+          "text": "As the tension of a resistance band is affected by the amount of elongation, subjects were instructed to hold the band without slack or tension at the beginning of each exercise movement.",
+          "where": "Methods"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mo-band-pull-apart",
+      "url": "https://motra.com/exercises/resistanceBandPullApart",
+      "title": "Resistance Band Pull Apart - Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-band-pull-apart",
+      "url": "https://www.strengthlog.com/band-pull-apart/",
+      "title": "How to Do Band Pull-Apart: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "fukunaga-2022",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/35391860/",
+      "title": "Band Pull-Apart Exercise: Effects of Movement Direction and Hand Position on Shoulder Muscle Activity",
+      "kind": "peer-reviewed",
+      "year": 2022,
+      "pmid": 35391860,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "Census: front. The arms open out to the sides at shoulder height until in line with the shoulders (c4, c5), which reads clearly from the front, and so does the top fault, the shoulders shrugging upward (c8).",
+    "equipment": "Resistance band (composed from a line, census R3) held across in front of the lifter at shoulder height (c1). Floor line.",
+    "start": "Standing tall, feet hip-width apart, knees slightly bent (c1); arms extended forward at shoulder height, elbows slightly bent, overhand grip with hands wider than the shoulders, band slightly tense (c1, c5); shoulders down (c3).",
+    "end": "Arms out to the sides in line with the shoulders, band at or near the chest (c4, c5); elbows still slightly bent (c5); shoulder blades squeezed together, shoulders still down (c3, c4).",
+    "checkpoints": [
+      {
+        "label": "Shoulders down",
+        "what": "No shrug as the band pulls apart.",
+        "claim": [
+          "c3",
+          "c8"
+        ]
+      },
+      {
+        "label": "Arms level",
+        "what": "Arms stay at shoulder height.",
+        "claim": "c7"
+      },
+      {
+        "label": "Soft elbows",
+        "what": "Elbows slightly bent, not bent a lot.",
+        "claim": [
+          "c5",
+          "c9"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Shoulders shrugging upward as the band is pulled apart.",
+      "why": "First on Motra's common-mistakes list for this exercise (c8), the only list among the read sources; no source ties a named fault of this exercise to harm (LR-31 step 3). It shows from the front.",
+      "claim": "c8",
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: shrugging the shoulders upward (c8). Step 1: no frequency word for a fault of this exercise. Set aside: Motra's \"commonly used as a warm-up or accessory for pressing movements\" (c13), StrengthLog's \"Band pull-apart is a popular warm-up exercise for the shoulders, often done before upper body exercises such as bench press.\" and Fukunaga's \"The Elastic band pull-apart exercise is commonly used in rehabilitation.\" are about how the exercise is used; Motra's \"Typical Rep Range\" and \"Not typically needed\" are programming and spotting; \"Common Mistakes\" is a heading. Fukunaga's full text: \"Glenohumeral joint pain is widely prevalent in the general population\" is about shoulders in general; \"Commonly performed strengthening exercises\", \"These exercises are often performed with dumbbell or cable resistance\", \"they are often referred to as band pull-apart exercises\", \"These exercises are frequently performed in the prone position\" and \"Exercises targeting shoulder-girdle muscles often aim to minimize upper trapezius and deltoid activity\" are about other exercises or naming. Fitness Volt (read, not cited; it teaches an overhead-start, underhand variation): \"different than how you’ll usually see it performed\" names no fault; \"external shoulder rotators that are often underdeveloped\" and \"Most people don’t do enough work on their rotator cuffs\" are about muscles and training; \"Joint mobility often becomes worse as we age\" is general; \"it’s much safer than internally rotating your shoulders which can, and often does, cause shoulder problems down the road\" is about the grip (palms down versus up), which LR-31 sets aside. Step 2: no named fault is tied to harm. Set aside: Motra's \"Stop if shoulder pain occurs\" (c12) names no fault (it is the stop quote the shown pain row cites); Motra's list items \"Bending elbows excessively\", \"Arching lower back\", \"Letting band snap back\" and \"Head jutting forward\" (c9, c10, c11) are tied to no harm; its \"When to Avoid\" items are conditions; \"Avoid overstretching band beyond twice its length\" (c2) is equipment; Fukunaga's \"There is concern about the palm down hand position, especially when combined with the diagonal up movement, as this may put the shoulder in position of glenohumeral internal rotation\" and Fitness Volt's \"it’s is also safer on the joints\" are about the grip; Fitness Volt's \"some people seem to involve too much lower-body or even lower back, which reduces the overall effectiveness\" states no harm and \"some\" is not a frequency word. Step 3: Motra's list, written for this exercise and the anchor's (c8, c9, c10, c11): \"Shrugging shoulders upward\" first. The front view shows it, so drawable is true. Item 4, \"Letting band snap back\", is speed only and never drawable.",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Shoulder blades squeeze together",
+        "claim": "c4"
+      },
+      {
+        "text": "Arms end in line with shoulders",
+        "claim": "c4"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": [
+        "c15",
+        "c16"
+      ],
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c15, WEAK), whose Tempo tooltip gives the order eccentric (return), bottom pause, concentric (pull apart), top pause (R-LB6-2, R-LB6-7); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits at the start with the arms forward, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the pull: Motra's \"Pause briefly at full retraction.\" (c16) gives no seconds, so the 1 s is a drawing convention (c16, WEAK; LR-33). The EMG study paced each phase at 3 s (c17); that is a lab protocol for three measured reps, not a training instruction, so the card keeps Motra's 2 s."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Overhand (palms down) on the band (c1). The EMG study found palms down gave the most posterior deltoid and upper trapezius activity, palms up the most infraspinatus and lower trapezius (c14).",
+    "width": "Hands wider than the shoulders (c1).",
+    "thumb": "Not given by any source read (pull archetype default).",
+    "handContact": "Not given by any source read (pull archetype default).",
+    "wrist": "Not given by any source read (pull archetype default).",
+    "claims": [
+      "c1",
+      "c14"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Check the band for damage before use.",
+      "claim": "c2"
+    },
+    {
+      "step": "Stand tall, feet hip-width apart, knees slightly bent.",
+      "claim": "c1"
+    },
+    {
+      "step": "Overhand grip, hands wider than your shoulders.",
+      "claim": "c1"
+    },
+    {
+      "step": "Arms straight out at shoulder height, band slightly tense.",
+      "claim": "c1"
+    },
+    {
+      "step": "Keep your shoulders down.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Arms stay at shoulder height.",
+      "claim": "c7"
+    },
+    {
+      "point": "Elbows slightly bent, not bent a lot.",
+      "claim": [
+        "c5",
+        "c9"
+      ]
+    },
+    {
+      "point": "Squeeze the shoulder blades together.",
+      "claim": "c4"
+    },
+    {
+      "point": "Pull until your arms line up with your shoulders.",
+      "claim": "c4"
+    },
+    {
+      "point": "Return slowly. Keep tension in the band.",
+      "claim": "c6"
+    },
+    {
+      "point": "Stand tall, no lower-back arch.",
+      "claim": [
+        "c1",
+        "c10"
+      ]
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Shrugging shoulders upward.",
+      "fix": "Keep your shoulders down.",
+      "claim": [
+        "c8",
+        "c3"
+      ]
+    },
+    {
+      "mistake": "Bending elbows too much.",
+      "fix": "Keep your elbows only slightly bent.",
+      "claim": [
+        "c9",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Arching lower back.",
+      "fix": "Keep a straight posture.",
+      "claim": "c10"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "rear_delts",
+        "claim": "c13"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c13"
+      },
+      {
+        "muscleId": "upper_traps",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "rotator_cuff",
+        "claim": "c14"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Backs of the shoulders",
+        "means": "The rear delts are doing the work.",
+        "fix": "",
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "Between the shoulder blades",
+        "means": "The upper back is squeezing the blades together.",
+        "fix": "",
+        "claim": [
+          "c13",
+          "c4"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Arching the lower back.",
+        "fix": "Keep a straight posture.",
+        "claim": "c10",
+        "redFlag": "back"
+      },
+      {
+        "where": "Shoulder pain",
+        "means": "",
+        "fix": "Stop the set.",
+        "claim": "c12",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder pain means stop.",
+      "claim": "c12"
+    },
+    {
+      "risk": "Don't stretch the band beyond twice its length.",
+      "claim": "c2"
+    }
+  ],
+  "redFlags": [
+    "shoulder",
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "bpa-shoulders",
+      "kind": "posture",
+      "right": "Shoulders down as the band pulls apart.",
+      "wrong": "Shoulders shrugged upward.",
+      "claim": [
+        "c3",
+        "c8"
+      ]
+    },
+    {
+      "key": "bpa-elbows",
+      "kind": "posture",
+      "right": "Elbows slightly bent.",
+      "wrong": "Elbows bent too much.",
+      "claim": [
+        "c5",
+        "c9"
+      ]
+    },
+    {
+      "key": "bpa-grip",
+      "kind": "hand",
+      "right": "Overhand grip, hands wider than your shoulders.",
+      "wrong": null,
+      "claim": "c1"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "mid_back",
+      "rotator_cuff"
+    ],
+    "remove": [],
+    "why": "rear_delts primary matches exercises.json (c13, c14). upper_traps secondary matches (c14: upper trapezius activity measured, highest with palms down). mid_back added: Motra names the rhomboids and mid traps as targets (c13). rotator_cuff (text-only) added: the study measured infraspinatus activity, highest with palms up (c14)."
+  },
+  "anchorSource": "mo-band-pull-apart",
+  "notes": [
+    "Census note \"Band is not an engine item (composed from line).\": the plate composes the band from a line.",
+    "Grip conflict: Motra (anchor) and the standard version use an overhand grip (c1); Fitness Volt (read, not cited) teaches an underhand, overhead-start variation and says it is safer on the joints; the EMG study gives palm-direction activity only (c14). The card draws Motra's overhand grip and makes no safety claim about palm direction.",
+    "Start tension: Motra asks for slight tension in the band at the start (c1); the EMG study had subjects hold it without slack or tension (c17, lab protocol). The card follows Motra.",
+    "Read and not cited: Fitness Volt, https://fitnessvolt.com/band-pull-apart/ (a different variation; LR-31 hits quoted in rankNote). Fukunaga 2022 was read in full through PMC (PMC8975561, efetch db=pmc); the quotes cited are from the PubMed abstract and the Methods.",
+    "Tried and not usable: fitnessvolt.com/band-pull-aparts/, barbend.com/band-pull-apart(s)/, healthline.com band pull-apart page all 404."
+  ]
+}
