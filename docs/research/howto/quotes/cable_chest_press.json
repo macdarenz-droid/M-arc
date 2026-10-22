@@ -232,6 +232,27 @@
       "text": "2-1-2",
       "status": "verbatim",
       "closest": "2-1-2"
+    },
+    {
+      "claim": "c17",
+      "source": "motra-cable-press",
+      "text": "Locking elbows at extension.",
+      "status": "verbatim",
+      "closest": "Locking elbows at extension."
+    },
+    {
+      "claim": "c17",
+      "source": "motra-cable-press",
+      "text": "Extend arms without locking elbows.",
+      "status": "verbatim",
+      "closest": "Extend arms without locking elbows."
+    },
+    {
+      "claim": "c17",
+      "source": "motra-cable-press",
+      "text": "Keep slight elbow bend to protect joints.",
+      "status": "verbatim",
+      "closest": "Keep slight elbow bend to protect joints."
     }
   ]
 }
