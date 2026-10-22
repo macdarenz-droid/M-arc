@@ -1,198 +1,198 @@
 {
   "id": "cable_rear_delt_fly",
   "checked": "2026-10-22",
-  "fetcher": "pending",
+  "fetcher": "sonnet source fetcher",
   "quotes": [
     {
       "claim": "c1",
       "source": "sl-rev-cable-fly",
       "text": "Attach two handles to the upper pulleys of a cable crossover.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Attach two handles to the upper pulleys of a cable crossover.",
       "note": ""
     },
     {
       "claim": "c1",
       "source": "fv-cable-rdf",
       "text": "Attach D-shaped handles to a high cable crossover machine. Alternatively, you can grip the ends of the cables.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Attach D-shaped handles to a high cable crossover machine. Alternatively, you can grip the ends of the cables.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "sl-rev-cable-fly",
       "text": "Reach across your body and grab the right-hand handle with your left hand, and the left-hand handle with your right.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Reach across your body and grab the right-hand handle with your left hand, and the left-hand handle with your right.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "fv-cable-rdf",
       "text": "Take the left cable in your right hand and the right cable in your left hand.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Take the left cable in your right hand and the right cable in your left hand.",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "sl-rev-cable-fly",
       "text": "Position yourself in the center of the machine. Keep your arms straight ahead, your chest up, and brace your core.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Position yourself in the center of the machine. Keep your arms straight ahead, your chest up, and brace your core.",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "sl-rev-cable-fly",
       "text": "Position yourself in the middle between the two pulleys so that your arms have a clear path to move.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Position yourself in the middle between the two pulleys so that your arms have a clear path to move.",
       "note": ""
     },
     {
       "claim": "c4",
       "source": "fv-cable-rdf",
       "text": "Step back and extend your arms so the cables cross at about eye level. Extend but do not lock your elbows.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Step back and extend your arms so the cables cross at about eye level. Extend but do not lock your elbows.",
       "note": ""
     },
     {
       "claim": "c4",
       "source": "sl-rev-cable-fly",
       "text": "Keep your arms straight ahead, your chest up, and brace your core.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Keep your arms straight ahead, your chest up, and brace your core.",
       "note": ""
     },
     {
       "claim": "c5",
       "source": "sl-rev-cable-fly",
       "text": "Your shoulders should be rolled back and down to make sure that you’re targeting the correct muscles and protecting your shoulder joints.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Your shoulders should be rolled back and down to make sure that you’re targeting the correct muscles and protecting your shoulder joints.",
       "note": ""
     },
     {
       "claim": "c5",
       "source": "fv-cable-rdf",
       "text": "Pull your shoulders down and back.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pull your shoulders down and back.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "sl-rev-cable-fly",
       "text": "You should keep your arms in the same position, with a slight bend in the elbow, throughout the movement.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "You should keep your arms in the same position, with a slight bend in the elbow, throughout the movement.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "fv-cable-rdf",
       "text": "Keeping your elbows slightly bent but rigid, open your arms and draw them back and slightly downward.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Keeping your elbows slightly bent but rigid, open your arms and draw them back and slightly downward.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "sl-rev-cable-fly",
       "text": "Keep your elbows slightly bent as you pull your arms back until they are about parallel to your body.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Keep your elbows slightly bent as you pull your arms back until they are about parallel to your body.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "sl-rev-cable-fly",
       "text": "Aim for a full range of motion, bringing the handles close together at the starting point and pulling them as far apart as possible at the end of the movement to fully engage the rear deltoids.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Aim for a full range of motion, bringing the handles close together at the starting point and pulling them as far apart as possible at the end of the movement to fully engage the rear deltoids.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "fv-cable-rdf",
       "text": "Bring your arms in and together to return to the starting position.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Bring your arms in and together to return to the starting position.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "sl-rev-cable-fly",
       "text": "Reverse the movement, and repeat for reps.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Reverse the movement, and repeat for reps.",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "sl-rev-cable-fly",
       "text": "Not keeping form. This is an exercise where it’s easy to use momentum by swinging and/or starting to overextend your lower back. This can place unnecessary stress on the lower back and shoulder joints. Keep the movement slow and controlled.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Not keeping form. This is an exercise where it’s easy to use momentum by swinging and/or starting to overextend your lower back. This can place unnecessary stress on the lower back and shoulder joints. Keep the movement slow and controlled.",
       "note": ""
     },
     {
       "claim": "c10",
       "source": "sl-rev-cable-fly",
       "text": "Picking a weight that’s too heavy. By choosing a weight that is heavier than you can handle, you might end up using excessive momentum or other muscles than the targeted ones to complete the lift, compromising the exercise’s effectiveness and potentially leading to injury.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Picking a weight that’s too heavy. By choosing a weight that is heavier than you can handle, you might end up using excessive momentum or other muscles than the targeted ones to complete the lift, compromising the exercise’s effectiveness and potentially leading to injury.",
       "note": ""
     },
     {
       "claim": "c10",
       "source": "sl-rev-cable-fly",
       "text": "Pick a light weight, so that you can move slowly and controlled without starting to hinge and create excessive momentum.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pick a light weight, so that you can move slowly and controlled without starting to hinge and create excessive momentum.",
       "note": ""
     },
     {
       "claim": "c10",
       "source": "fv-cable-rdf",
       "text": "This exercise is best done using light to moderate weights and medium to high reps.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "This exercise is best done using light to moderate weights and medium to high reps.",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "sl-rev-cable-fly",
       "text": "This is an exercise where it is easy to cheat by using momentum, which takes away the work from the rear deltoid.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "This is an exercise where it is easy to cheat by using momentum, which takes away the work from the rear deltoid.",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "sl-rev-cable-fly",
       "text": "The reverse cable fly primarily works your rotator cuff and rear deltoids, and secondarily your trapezius.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "The reverse cable fly primarily works your rotator cuff and rear deltoids, and secondarily your trapezius.",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "fv-cable-rdf",
       "text": "Rear delt cable flys hit the middle fibers of the traps, which are responsible for pulling your shoulder blades back and together in a movement called retraction.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Rear delt cable flys hit the middle fibers of the traps, which are responsible for pulling your shoulder blades back and together in a movement called retraction.",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "fv-cable-rdf",
       "text": "Rhomboids – located between the shoulder blades and beneath the trapezius, the rhomboids also pull your shoulders back and together in retraction.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Rhomboids – located between the shoulder blades and beneath the trapezius, the rhomboids also pull your shoulders back and together in retraction.",
       "note": ""
     }
   ]

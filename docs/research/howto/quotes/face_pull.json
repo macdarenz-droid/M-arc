@@ -1,326 +1,326 @@
 {
   "id": "face_pull",
   "checked": "2026-10-22",
-  "fetcher": "pending",
+  "fetcher": "sonnet source fetcher",
   "quotes": [
     {
       "claim": "c1",
       "source": "mo-face-pull",
       "text": "Attach rope to cable pulley at head height.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Attach rope to cable pulley at head height.",
       "note": ""
     },
     {
       "claim": "c1",
       "source": "bb-face-pull",
       "text": "Set the Height: Set an adjustable cable fixture with a rope attachment to roughly eye level.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Set the Height: Set an adjustable cable fixture with a rope attachment to roughly eye level.",
       "note": ""
     },
     {
       "claim": "c1",
       "source": "sl-face-pull",
       "text": "Fasten a rope handle in a high position on a cable pulley.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Fasten a rope handle in a high position on a cable pulley.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "mo-face-pull",
       "text": "Stand facing it with feet hip-width apart, grasp ends with neutral grip, and step back until arms are extended with tension.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stand facing it with feet hip-width apart, grasp ends with neutral grip, and step back until arms are extended with tension.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "bb-face-pull",
       "text": "Grip and Brace: Grab the ends of the rope and step back to pull the cable taut with your arms extended in front of you.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Grip and Brace: Grab the ends of the rope and step back to pull the cable taut with your arms extended in front of you.",
       "note": ""
     },
     {
       "claim": "c2",
       "source": "sl-face-pull",
       "text": "Grip the ropes with an overhand grip, and take a step or two back.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Grip the ropes with an overhand grip, and take a step or two back.",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "sl-face-pull",
       "text": "Stand up straight, a couple of steps back from the machine. Some lifters prefer to keep one foot in front of the other, while some prefer to stand with the feet in line, hip-width apart.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stand up straight, a couple of steps back from the machine. Some lifters prefer to keep one foot in front of the other, while some prefer to stand with the feet in line, hip-width apart.",
       "note": ""
     },
     {
       "claim": "c3",
       "source": "mo-face-pull",
       "text": "Stand facing it with feet hip-width apart, grasp ends with neutral grip, and step back until arms are extended with tension.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stand facing it with feet hip-width apart, grasp ends with neutral grip, and step back until arms are extended with tension.",
       "note": ""
     },
     {
       "claim": "c4",
       "source": "mo-face-pull",
       "text": "Engage core and lift chest with shoulders back.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Engage core and lift chest with shoulders back.",
       "note": ""
     },
     {
       "claim": "c4",
       "source": "sl-face-pull",
       "text": "Keep tension in your glutes and your core active so that you keep your entire body still and stable during the movement.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Keep tension in your glutes and your core active so that you keep your entire body still and stable during the movement.",
       "note": ""
     },
     {
       "claim": "c5",
       "source": "mo-face-pull",
       "text": "Pull rope towards face at eye level, flaring elbows high and out.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pull rope towards face at eye level, flaring elbows high and out.",
       "note": ""
     },
     {
       "claim": "c5",
       "source": "sl-face-pull",
       "text": "Pull the rope against you, aiming for the height of your forehead. Keep your elbows high, and rotate your forearms up. Keep the movement slow and controlled.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pull the rope against you, aiming for the height of your forehead. Keep your elbows high, and rotate your forearms up. Keep the movement slow and controlled.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "mo-face-pull",
       "text": "Separate rope ends while squeezing shoulder blades together.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Separate rope ends while squeezing shoulder blades together.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "bb-face-pull",
       "text": "Pull and Rotate: Pull the center of the rope towards your face by driving your elbows back behind your shoulders while attempting to pull the rope apart with your hands.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pull and Rotate: Pull the center of the rope towards your face by driving your elbows back behind your shoulders while attempting to pull the rope apart with your hands.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "bb-face-pull",
       "text": "Coach’s Tip: A good face pull involves rotating your shoulder externally.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Coach's Tip: A good face pull involves rotating your shoulder externally.",
       "note": ""
     },
     {
       "claim": "c6",
       "source": "sl-face-pull",
       "text": "With elbows held high, pull the rope towards you by letting your upper arms move straight out towards your sides while simultaneously rotating your forearms up.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "With elbows held high, pull the rope towards you by letting your upper arms move straight out towards your sides while simultaneously rotating your forearms up.",
       "note": ""
     },
     {
       "claim": "c7",
       "source": "mo-face-pull",
       "text": "Full arm extension forward to hands near ears with elbows flared and shoulder blades pinched.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Full arm extension forward to hands near ears with elbows flared and shoulder blades pinched.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "mo-face-pull",
       "text": "Slowly extend arms forward to start position, keeping tension.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Slowly extend arms forward to start position, keeping tension.",
       "note": ""
     },
     {
       "claim": "c8",
       "source": "sl-face-pull",
       "text": "Return with control to the starting position by letting your arms move forward again.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Return with control to the starting position by letting your arms move forward again.",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "mo-face-pull",
       "text": "Dropping elbows down",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Dropping elbows down",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "mo-face-pull",
       "text": "Avoid shoulder pinching by keeping elbows high",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Avoid shoulder pinching by keeping elbows high",
       "note": ""
     },
     {
       "claim": "c9",
       "source": "bb-face-pull",
       "text": "When you perform face pulls, you shouldn’t let your elbows drop down at any point.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "When you perform face pulls, you shouldn't let your elbows drop down at any point.",
       "note": ""
     },
     {
       "claim": "c10",
       "source": "sl-face-pull",
       "text": "By keeping your elbows below shoulder height, not lifting up your forearms, and pulling more towards your chest instead of your head, the exercise will become easier, but it will also target the wrong muscles.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "By keeping your elbows below shoulder height, not lifting up your forearms, and pulling more towards your chest instead of your head, the exercise will become easier, but it will also target the wrong muscles.",
       "note": ""
     },
     {
       "claim": "c10",
       "source": "mo-face-pull",
       "text": "Pulling too low to chin",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Pulling too low to chin",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "mo-face-pull",
       "text": "Start with light weight to master form",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Start with light weight to master form",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "mo-face-pull",
       "text": "Using momentum from torso",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Using momentum from torso",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "mo-face-pull",
       "text": "Rounding shoulders forward",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Rounding shoulders forward",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "sl-face-pull",
       "text": "Adding too much weight. The face pull is an exercise where it’s easy to start taking shortcuts by involving muscles other than the targeted ones, or by using excessive momentum.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Adding too much weight. The face pull is an exercise where it's easy to start taking shortcuts by involving muscles other than the targeted ones, or by using excessive momentum.",
       "note": ""
     },
     {
       "claim": "c11",
       "source": "bb-face-pull",
       "text": "Loading up the face pull with more weight than is appropriate will severely alter your form, defeating the purpose of the exercise.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Loading up the face pull with more weight than is appropriate will severely alter your form, defeating the purpose of the exercise.",
       "note": ""
     },
     {
       "claim": "c12",
       "source": "mo-face-pull",
       "text": "Maintain neutral spine, no arching",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Maintain neutral spine, no arching",
       "note": ""
     },
     {
       "claim": "c13",
       "source": "mo-face-pull",
       "text": "Stop if any shoulder pain occurs",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Stop if any shoulder pain occurs",
       "note": ""
     },
     {
       "claim": "c13",
       "source": "bb-face-pull",
       "text": "No, if you have pain or discomfort, stop.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "No, if you have pain or discomfort, stop.",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "mo-face-pull",
       "text": "A cable exercise pulling a rope towards the face that targets rear deltoids, rhomboids, and middle traps to build upper back strength and improve shoulder stability; ideal for posture correction and shoulder health.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "A cable exercise pulling a rope towards the face that targets rear deltoids, rhomboids, and middle traps to build upper back strength and improve shoulder stability; ideal for posture correction and shoulder health.",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "sl-face-pull",
       "text": "The face pull is a strength training exercise designed to target and strengthen the muscles in the upper back and shoulders, particularly the posterior deltoids and the rotator cuff, but also the traps and lateral deltoids.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "The face pull is a strength training exercise designed to target and strengthen the muscles in the upper back and shoulders, particularly the posterior deltoids and the rotator cuff, but also the traps and lateral deltoids.",
       "note": ""
     },
     {
       "claim": "c14",
       "source": "bb-face-pull",
       "text": "The rear deltoids are the main muscle used in the face pull, and can be trained directly with the face pull and its variation and alternatives.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "The rear deltoids are the main muscle used in the face pull, and can be trained directly with the face pull and its variation and alternatives.",
       "note": ""
     },
     {
       "claim": "c15",
       "source": "zhu-2025",
       "text": "Kinematic data were collected from ten healthy males performing the Bent-over Dumbbell Lateral Raise (BDLR), Standing Face Pull (SFP), and Bent-over Dumbbell Row (BDR).",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Kinematic data were collected from ten healthy males performing the Bent-over Dumbbell Lateral Raise (BDLR), Standing Face Pull (SFP), and Bent-over Dumbbell Row (BDR).",
       "note": ""
     },
     {
       "claim": "c15",
       "source": "zhu-2025",
       "text": "However, both exercises produced significantly higher muscle forces compared to BDR (47.911 N, p < 0.001).",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "However, both exercises produced significantly higher muscle forces compared to BDR (47.911 N, p < 0.001).",
       "note": ""
     },
     {
       "claim": "c16",
       "source": "mo-face-pull",
       "text": "3-1-2",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "3-1-2",
       "note": ""
     },
     {
       "claim": "c16",
       "source": "mo-face-pull",
       "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
-      "status": "pending",
-      "closest": "",
-      "note": ""
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "note": "found only in raw HTML"
     },
     {
       "claim": "c17",
       "source": "mo-face-pull",
       "text": "Hold contraction briefly at peak.",
-      "status": "pending",
-      "closest": "",
+      "status": "verbatim",
+      "closest": "Hold contraction briefly at peak.",
       "note": ""
     }
   ]
