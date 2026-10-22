@@ -751,5 +751,80 @@
   "anchorSource": "nfpt-cable-press",
   "notes": [
     "LIB-TOPRANK (LB6): the step-2 tie was ruled by D-SUP-LB6-CCP (#287): step 3's source count picks the locked elbows, not R-LB2-20's expected flared elbows; see plate.mistake.rankNote. The dropped handlingMistakes item was \"Gripping wide or flaring elbows.\" / \"Handles just outside shoulder width, elbows about 45 degrees from the body.\" (c7, c3)."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "angle",
+      "joint": "elbow.r",
+      "pose": "start",
+      "cardPose": "start",
+      "deg": 90,
+      "claim": "c3",
+      "note": "\"Keep the elbows just below 90 degrees\": drawn 89 deg inside (flexion 91)"
+    },
+    {
+      "kind": "angle",
+      "joint": "elbow.l",
+      "pose": "start",
+      "cardPose": "start",
+      "deg": 90,
+      "claim": "c3",
+      "note": "\"Keep the elbows just below 90 degrees\": drawn 89 deg inside (flexion 91)"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Press",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "lock"
 }
