@@ -100,8 +100,8 @@ export default {
   trace: { point: 'grip.r', trim: [4, 6] },
   measure: { vertex: 'wrist.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 16, title: 'Wrist', value: 'curl up' },
   callouts: [
-    { key: 'forearm', text: 'Forearm<br>supported', anchor: 'elbow.r', cue: 'Rest the forearm on your thigh. Only the hand moves.' },
-    { key: 'palms', text: 'Palms up', anchor: 'wrist.r', box: { left: 262, top: 172 }, cue: 'Hold the dumbbell underhand with the hand past the knee.' },
+    { key: 'forearm', text: 'Forearm<br>supported', anchor: { at: 'elbow.r', off: [6, 0] }, box: { left: 254, top: 200 }, cue: 'Rest the forearm on your thigh. Only the hand moves.' },
+    { key: 'palms', text: 'Palms up', anchor: 'wrist.r', box: { left: 262, top: 150 }, cue: 'Hold the dumbbell underhand with the hand past the knee.' },
     { key: 'grip', text: 'Grip stays<br>closed', anchor: 'grip.r', box: { left: 272, top: 280 }, cue: 'Squeeze the handle both ways. Never let it roll to the fingers.' },
   ],
   tempo: [{ phase: 'Curl', s: 2, move: true }, { phase: 'Lower', s: 2, move: true }],

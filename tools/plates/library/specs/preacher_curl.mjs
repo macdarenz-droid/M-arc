@@ -28,8 +28,8 @@
 // Callouts, Mistake, tempo: the 3 checkpoints are the callouts (c2, c4, c8); the Mistake is the card's plate.mistake
 //  (c5, drawable true), drawn against the end pose: the torso rocks back off the pad and the upper arms lift off its
 //  face as the bar heaves up. Tempo: Curl 1 s, Lower 2 s (c14; pause 0, so no Hold; lb5/tempo.json); no Rest.
-import { landmarksOf, rootOnSeat, RADII } from '../engine.mjs';
-import { preacherPad, PREACHER_PAD, PREACHER_PAD_ITEMS } from '../eq/preacherPad.mjs';
+import { landmarksOf, rootOnSeat, RADII, bodyShapes, fk, resolve, normPose } from '../engine.mjs';
+import { preacherPad, PREACHER_PAD_ITEMS } from '../eq/preacherPad.mjs';
 import { perItem, sub, add, mul, norm } from '../eq/parts.mjs';
 
 const H = 1.75;
@@ -61,14 +61,46 @@ const meet = (p, u, q, v) => { const d = u[1] * v[2] - u[2] * v[1], t = ((q[1] -
 const TOP = meet(onFace(S), FACE, ST, CHEST);
 const BACK = norm(sub(CH, TOP));                       // the chest face: from the top edge through the chest (c1, c2)
 const PAD = { top: TOP, face: FACE, back: BACK };
-const FACE_LO = add(TOP, mul(FACE, PREACHER_PAD.faceLen));
-const PAD_LO = [0, FACE_LO[1] - PREACHER_PAD.bottomT, FACE_LO[2]];   // the pad's front bottom corner, under the elbows (the callout's anchor)
 
-// Mistake (card plate.mistake, c5): "Upper arms lifting off the pad as the body heaves the bar up." The torso rocks back
-// MIS_ROCK from the pad (pelvis tilt) and the upper arms swing up off the face (shoulder flexion MIS_FLEX less), the elbow
-// part-way up (MIS_ELBOW). The card gives no angle: drawn large enough to read at 390 px.
-const MIS_ROCK = 14, MIS_FLEX = 40, MIS_ELBOW = 95;
-const mistakePose = { root: { at: rootOnSeat(SEAT, TILT - MIS_ROCK, H), tilt: TILT - MIS_ROCK }, shoulder: { flex: SH_FLEX + MIS_FLEX - MIS_ROCK, rot: 0 }, elbow: MIS_ELBOW };
+// Mistake (card plate.mistake, c5): "Upper arms lifting off the pad as the body heaves the bar up." c5 gives no size,
+// so each part cites a basis (#290 6343211054 items 6, 7): the torso rocks back MIS_ROCK, the 8's lat_pulldown "lean and
+// heave" (vendor lat_pulldown.mjs:46 end tilt -10 -> :71 Mistake tilt -28, an 18 deg swing back); the upper arm swings up
+// until the elbow joint is MIS_GAP off the face, DESIGN.md section 11's planned 8-10 cm (its middle); the elbow keeps the
+// end pose's angle. The shoulder flexion is solved for MIS_GAP (bisection; throws with no root).
+const MIS_ROCK = 18, MIS_GAP = 0.09;
+const misBody = { root: { at: rootOnSeat(SEAT, TILT - MIS_ROCK, H), tilt: TILT - MIS_ROCK } };
+const faceGap = p => -((p[1] - onFace(S)[1]) * FACE_N[1] + (p[2] - onFace(S)[2]) * FACE_N[2]) - ARM_R;   // elbow joint off the face, less the arm radius
+export const bisect = (f, lo, hi) => {
+  if (!(f(lo) * f(hi) < 0)) throw new Error('preacher_curl: no solution in the bracket');
+  for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if ((f(m) < 0) === (f(lo) < 0)) lo = m; else hi = m; }
+  return (lo + hi) / 2;
+};
+const misLm = flex => landmarksOf({ ...end, ...misBody, shoulder: { flex, rot: 0 } }, H);
+export const MIS_FLEX = bisect(flex => faceGap(misLm(flex)['elbow.r']) - MIS_GAP, SH_FLEX - MIS_ROCK, SH_FLEX + 90);
+const mistakePose = { ...misBody, shoulder: { flex: MIS_FLEX, rot: 0 } };
+// The faulty arm on top (#290 6343211054 item 5): dumbbell_biceps_curl's misArm (pilot A), dashed outlines, not masked.
+const cr = (ps, k = 8) => {
+  const n = ps.length, g = i => ps[(i + n) % n], out = [];
+  for (let i = 0; i < n; i++) {
+    const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    for (let j = 0; j < k; j++) { const t = j / k, u = 1 - t;
+      out.push([0, 1].map(d => u * u * u * p1[d] + 3 * u * u * t * c1[d] + 3 * u * t * t * c2[d] + t * t * t * p2[d])); }
+  }
+  return out;
+};
+const MIS_ARM = (() => {
+  const bd = { height: H }, probe = { view: 'side', near: 'r', pxm: 1000, P: w => [w[2] * 1000, -w[1] * 1000] };
+  const keys = ['upper.r', 'elbowcap.r', 'fore.r', 'fist.r'];
+  return bodyShapes(fk(resolve(normPose({ ...end, ...mistakePose }, bd), bd).q, bd), probe).filter(sh => keys.includes(sh.key))
+    .map(sh => (sh.key.includes('cap') ? sh.poly : cr(sh.poly, sh.key.startsWith('fist') ? 4 : 8)).map(([x, y]) => [0, -y / 1000, x / 1000]));
+})();
+// The pad gap (machine_chest_press's pad-to-back gap mark): from the face under the faulty elbow to the arm's underside.
+const E_M = side(misLm(MIS_FLEX)['elbow.r']);
+const GAP_TO = add(E_M, mul(FACE_N, ARM_R)), GAP_FROM = add(GAP_TO, mul(FACE_N, MIS_GAP));
+const TICK = 0.012, tick = p => [add(p, mul(FACE, -TICK)), add(p, mul(FACE, TICK))];
+// Callout anchors (#290 6343211054 item 4): the visible armpit on the pad top, and the arm-pad contact by the elbow.
+const ARMPIT = TOP, CONTACT = onFace(E);
 
 export default {
   id: 'preacher_curl', name: 'Preacher Curl', view: 'side', facing: 'right',
@@ -92,22 +124,23 @@ export default {
   ],
   ghosts: { count: 3, parts: ['arm.r', 'bar'] },
   trace: { point: 'grip.r', trim: [10, 12] },
-  measure: { vertex: 'elbow.r', from: { at: 'grip.r', pose: 'start' }, to: 'grip.r', radius: 68, title: 'Elbow', value: 'long range', box: { left: 282, top: 150 } },
+  measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 30, title: 'Elbow', value: 'bar to shoulders', box: { left: 58, top: 120 } },
   callouts: [
-    { key: 'armpits', text: 'Armpits<br>over pad', anchor: 'shoulderTop.r', cue: 'Sit with the pad top under your armpits and your chest on it.' },
-    { key: 'arms', text: 'Arms on<br>pad', anchor: PAD_LO, box: { left: 226, top: 250 }, cue: 'Press the backs of your upper arms into the pad all the way up.' },
-    { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', box: { left: 228, top: 90 }, cue: 'Keep the hands in line with the forearms.' },
+    { key: 'armpits', text: 'Armpits<br>over pad', anchor: ARMPIT, box: { left: 72, top: 172 }, cue: 'Sit with the pad top under your armpits and your chest on it.' },
+    { key: 'arms', text: 'Arms on<br>pad', anchor: { at: CONTACT, off: [10, 0] }, box: { left: 266, top: 236 }, cue: 'Press the backs of your upper arms into the pad all the way up.' },
+    { key: 'wrists', text: 'Straight<br>wrists', anchor: 'wrist.r', box: { left: 150, top: 70 }, cue: 'Keep the hands in line with the forearms.' },
   ],
   tempo: [{ phase: 'Curl', s: 1, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['torso', 'head', 'arm.r', 'bar'],
+    parts: ['torso', 'head', 'bar'],
     guides: [
-      { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [24, 6] }, to: { at: 'elbow.r', pose: 'mistake', off: [24, 6] } },   // the elbow lifts off the pad
+      ...MIS_ARM.map(pts => ({ kind: 'dashed', pts: [...pts, pts[0]] })),   // the faulty arm, on top
+      { kind: 'dashed', pts: [GAP_FROM, GAP_TO] }, { kind: 'dashed', pts: tick(GAP_FROM) }, { kind: 'dashed', pts: tick(GAP_TO) },   // the gap off the pad
     ],
     tells: [
-      { key: 'lift', text: 'Arms off<br>pad', anchor: { at: 'elbow.r', pose: 'mistake' }, cue: 'Your upper arms lift off the pad as you heave the bar.' },
-      { key: 'heave', text: 'Torso<br>heaves back', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'Your torso rocks back off the pad to swing the bar up.' },
+      { key: 'lift', text: 'Arms off<br>pad', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 232, top: 102 }, cue: 'Your upper arms lift off the pad as you heave the bar.' },
+      { key: 'heave', text: 'Torso<br>heaves back', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 28, top: 142 }, cue: 'Your torso rocks back off the pad to swing the bar up.' },
     ],
   },
   alt: 'Preacher curl, side view. Seated at a preacher bench with the chest against the pad and the backs of the upper arms on its sloped face, the lifter curls an EZ bar from nearly straight arms up toward the shoulders while the upper arms stay on the pad.',

@@ -24,7 +24,7 @@ const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex')
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
 const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl'];
 // Held ids (DESIGN.md section 13; #290 6340022161, 6340075388): drawn as is, in no rows file and on no QA'd page.
-const HELD = ['wrist_curl', 'cross_body_hammer_curl'];
+const HELD = ['wrist_curl', 'cross_body_hammer_curl', 'overhead_cable_triceps_extension'];
 /** The LB5 ids whose spec file exists (drawn or held). */
 const specced = () => LB5.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`));
 /** The LB5 ids whose spec file exists and that are not held (drawn), in LB5 order. */
@@ -430,8 +430,10 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
   const KEYS: Record<string, string> = { overhead_cable_triceps_extension: 'arch', dumbbell_overhead_triceps_extension: 'arch', cross_body_hammer_curl: 'shrug',
     cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', incline_dumbbell_curl: 'elbows', concentration_curl: 'knee', wrist_curl: 'lean' };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
-  it('each drawn plate has 2-3 tells, the first carrying the proposed key; mutation: the tells swapped is red', () => {
-    for (const id of specced()) { expect(keyProblems(S[id])).toEqual([]); expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(3); }
+  // One-tell plates: a second tell is drawn only if a claim states it (#290 6343211054 item 2); per-id ruling asked on #290.
+  const ONE_TELL = ['overhead_cable_triceps_extension', 'cable_curl', 'bayesian_cable_curl', 'concentration_curl'];
+  it('each drawn plate has 2-3 tells (one on the ONE_TELL ids), the first carrying the proposed key; mutation: the tells swapped is red', () => {
+    for (const id of specced()) { expect(keyProblems(S[id])).toEqual([]); expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(ONE_TELL.includes(id) ? 1 : 2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(ONE_TELL.includes(id) ? 1 : 3); }
     const s = S.preacher_curl;
     expect(keyProblems({ ...s, mistake: { ...s.mistake, tells: [...s.mistake.tells].reverse() } })).toEqual(['preacher_curl: first tell heave']);
   });
@@ -467,8 +469,8 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
       expect(S[id].mistake.guides.filter((g: any) => !['dashed', 'arrow'].includes(g.kind)).map((g: any) => g.kind), id).toEqual([]);
     }
   });
-  it('mutation: a red Mistake arrow moved onto the end elbow (inside the 6 px clearance) is red', () => {
-    const s = S.preacher_curl, guides = s.mistake.guides.map((g: any) => (g.kind === 'arrow' ? { ...g, from: { at: 'elbow.r', pose: 'end' } } : g));
+  it('mutation: a red Mistake arrow moved onto the end wrist (inside the 6 px clearance) is red', () => {
+    const s = S.wrist_curl, guides = s.mistake.guides.map((g: any) => (g.kind === 'arrow' ? { ...g, from: { at: 'wrist.r', pose: 'end' } } : g));
     expect(clearance({ ...s, mistake: { ...s.mistake, guides } }).length).toBe(1);
   });
   // Leaders: no leader comes within 6 px of the Trace, a cable or the pad, away from its anchor end (8 px).
@@ -538,7 +540,7 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
   /** The tier-A rows of DESIGN.md section 7 (drawn ids), each with its number of items (split on '; '). */
   const tableItems = () => {
     const sec = readFileSync('tools/plates/library/lb5/DESIGN.md', 'utf8').split('## 7. R10')[1]!.split('\n## ')[0]!;
-    return Object.fromEntries([...sec.matchAll(/^\| (\w+) \| (.+) \|$/gm)].filter(m => drawn().includes(m[1]!)).map(m => [m[1]!, m[2]!.split('; ').length]));
+    return Object.fromEntries([...sec.matchAll(/^\| (\w+) \| (.+) \|$/gm)].filter(m => specced().includes(m[1]!)).map(m => [m[1]!, m[2]!.split('; ').length]));
   };
   const r10Problems = (regs: Record<string, [string, () => string[]][]>) => {
     const want = tableItems(), out: string[] = [];
@@ -548,8 +550,8 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     }
     return out;
   };
-  it('every drawn tier-A id has one passing drawn-item check per R10 item', () => {
-    expect(Object.keys(tableItems()).sort()).toEqual(drawn().filter(id => ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension'].includes(id)).sort());
+  it('every drawn tier-A spec (held ones included) has one passing drawn-item check per R10 item', () => {
+    expect(Object.keys(tableItems()).sort()).toEqual(specced().filter(id => ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension'].includes(id)).sort());
     expect(r10Problems(R10)).toEqual([]);
   });
   it('mutation: one tier-A R10 item removed is red', () => {

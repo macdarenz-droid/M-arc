@@ -50,11 +50,20 @@ const base = { root: { at: ROOT, tilt: TILT }, trunk: TRUNK, neck: NECK, scap: S
 const start = { ...base, elbow: ELBOW_START };
 const end = { ...base, elbow: ELBOW_END };
 
-// Mistake (card plate.mistake, c9): "Lower back arching as the rope is pushed overhead." The pelvis tips MIS_TILT further
-// forward and the lumbar spine extends MIS_ARCH, so the thorax (and the arms on it) end MIS_ARCH - MIS_TILT behind the
-// correct lean; the hips stay over the feet. The card gives no angle: drawn large enough to read at 390 px.
-const MIS_TILT = 8, MIS_ARCH = 30;
-const mistakePose = { root: { at: [ROOT[0], ROOT[1], ROOT[2] + 0.02], tilt: TILT + MIS_TILT }, trunk: TRUNK - MIS_ARCH };
+// Mistake (card plate.mistake, c9): "Lower back arching as the rope is pushed overhead." c9 gives no size, so the arch
+// takes the closest approved plate with the same fault (#290 6343211054 item 1): barbell_overhead_press (pilot A) draws no
+// lumbar arch, so LB3's dumbbell_romanian_deadlift (#274 a6f4bd07, specs/dumbbell_romanian_deadlift.mjs:109, M_ARCH 25):
+// the pelvis tips M_ARCH further forward and the lumbar spine extends M_ARCH, so the thorax angle is unchanged and the
+// lower back sways in. Never sized to pass PQ-H3.
+const M_ARCH = 25;
+const mistakePose = { root: { at: ROOT, tilt: TILT + M_ARCH }, trunk: TRUNK - M_ARCH };
+const LM_M = landmarksOf({ ...end, ...mistakePose }, H);
+// The arch as a dashed curve (sacrum -> lumbar -> backMid -> backUpper of the faulty pose, 2 cm up), LB3
+// dumbbell_romanian_deadlift's guide, and an arrow into the lumbar (DRDL's, turned to point forward: this trunk is upright).
+// The arrow points forward into the lumbar from behind, its tip 15 cm behind the faulty lumbar point: the end figure's
+// back lies behind that point, and a tip at 13 cm is 4.8 px from it, inside the 6 px clearance (13.1).
+const ARCH_TIP = LM_M.lumbar.map((v, i) => v + (i === 2 ? -0.15 : 0)), ARCH_TAIL = LM_M.lumbar.map((v, i) => v + (i === 2 ? -0.25 : 0));
+const ARCH_PTS = ['sacrum', 'lumbar', 'backMid', 'backUpper'].map(k => LM_M[k].map((v, i) => v + (i === 1 ? 0.02 : 0)));
 
 // Column behind the lifter (world z < 0), lat_pulldown tower sizes.
 const COL = { z0: -0.95, z1: -1.21, h: 2.14 };         // front and back uprights (front = the lifter's side)
@@ -111,7 +120,7 @@ export default {
   measure: { vertex: 'elbow.r', from: 'shoulder.r', to: 'wrist.r', radius: 18, title: 'Elbow', value: 'not locked', box: { left: 268, top: 136 } },
   callouts: [
     { key: 'ears', text: 'Arms by<br>ears', anchor: 'elbow.r', cue: 'Keep the upper arms by your ears. Only the forearms move.' },
-    { key: 'lean', text: 'Hip lean', anchor: 'backMid', cue: 'Lean slightly from the hips with a straight back and braced core.' },
+    { key: 'lean', text: 'Hip lean', anchor: { at: 'navel', off: [4, 0] }, box: { left: 262, top: 190 }, cue: 'Lean slightly from the hips with a straight back and braced core.' },
     { key: 'lockout', text: 'Soft<br>lockout', anchor: 'grip.r', cue: 'Straighten the arms fully overhead without locking the elbows.' },
   ],
   tempo: [{ phase: 'Extend', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
@@ -119,11 +128,11 @@ export default {
     pose: mistakePose,
     parts: ['torso', 'head', 'arm.r', 'rope'],
     guides: [
-      { kind: 'arrow', from: { at: 'backUpper', pose: 'end', off: [-12, 0] }, to: { at: 'backUpper', pose: 'mistake', off: [-12, 0] } },   // the chest tips back over the arch
+      { kind: 'dashed', pts: ARCH_PTS, smooth: true },
+      { kind: 'arrow', from: ARCH_TAIL, to: ARCH_TIP },
     ],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, cue: 'Your lower back arches as you push the rope overhead.' },
-      { key: 'ribs', text: 'Ribs<br>flare', anchor: { at: 'chest', pose: 'mistake' }, box: { left: 260, top: 112 }, cue: 'Your ribs flare up as the chest tips back over the arch.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'lumbar', pose: 'mistake' }, cue: 'Your lower back arches as you push the rope overhead.' },
     ],
   },
   alt: 'Overhead cable triceps extension, side view. Standing with the back to a low cable pulley, leaning slightly forward from the hips, the upper arms by the ears. The lifter straightens the elbows to push a rope from behind the head to straight arms overhead.',
