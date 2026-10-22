@@ -600,5 +600,94 @@
   ],
   "gaps": [
     "mq-pullover (Marquette, the anchor; c1-c7, c12, c14) could not be re-fetched by curl on 2026-10-22: the live page returns 403 and web.archive.org is blocked by this session's egress policy. Its quotes are kept as verified on 2026-09-30 (g5) and are reported, not re-checked; its checked date is unchanged."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c7"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c7"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c7"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c7"
+    },
+    {
+      "kind": "contact",
+      "landmark": "elbow.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "elbow.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "elbow.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "elbow.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Pull",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "arch"
 }

@@ -42,9 +42,9 @@ export const tableOf = reports => [
   }),
 ];
 
-/** The expected flags (DESIGN.md section 6, for the note's ruling): F5 on every id at exactly the approved chrome's 3.57:1
- *  (D-LIB9-F5); no F7 (all 3 cards drawable true). */
-export const EXPECTED = () => ['F5'];
+/** The ruled expected flags (DESIGN.md section 6; LB6 NOTE RULED, #297 6343632260): F5 on every id at exactly the
+ *  approved chrome's 3.57:1 (D-LIB9-F5), F2 on machine_crunch (Q10, a named flag); no F7 (all 3 cards drawable true). */
+export const EXPECTED = id => ['F5', ...(id === 'lib_machine_crunch' ? ['F2'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, or F5 at any value other than 3.57. */
 export const flagProblems = reports => reports.flatMap(r => {
@@ -60,6 +60,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   console.log(`LB6 plates page sha256 ${sha}`);
   for (const line of tableOf(reports)) console.log(line);
   const bad = flagProblems(reports);
-  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the ruled set (F5 3.57 on all)');
+  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the ruled set (F5 3.57 on all; F2 machine_crunch)');
   if (bad.length || reports.some(r => HARD.some(h => !r.hard[h].pass))) process.exit(1);
 }

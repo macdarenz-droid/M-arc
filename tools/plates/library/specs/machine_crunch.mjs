@@ -132,7 +132,7 @@ export default {
   ],
   startParts: ['trunk', 'arm.r', 'arm'],
   ghosts: { count: 2, parts: ['trunk', 'arm.r', 'arm'] },
-  trace: { point: 'grip.r', trim: [10, 12] },   // the handle's arc about the pivot (the 8's machine plates trace the handle)
+  trace: { point: 'grip.r', trim: [10, 12] },   // D-LIB16-CRUNCH-TRACE: the point of ACE's own motion cue (c3, "pull down on them")
   callouts: [
     { key: 'hips', text: 'Hips back', anchor: 'buttock', box: { left: 16, top: 252 }, cue: 'Keep your hips pressed against the back of the seat.' },
     { key: 'curl', text: 'Curl the<br>spine', anchor: 'backUpper', box: { left: 70, top: 128 }, cue: 'Curl your ribs down toward your pelvis.' },

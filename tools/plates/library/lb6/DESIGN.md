@@ -113,9 +113,9 @@ or forked.
 - **No F7**: all 3 cards are drawable true, and each topFault is the drawn key (section 9).
 - **No F1**: every plate is drawn at the reference 146.29 px/m.
 - **Before Do 6 b** every drawn id also shows `H6:no-card` and F7 'no card top fault' (qa/node.mjs:360). Expected.
-- **F2 on machine_crunch (measured, Q10):** authoring QA gives coverage 0.161 against the pinned 0.191-0.549
-  (qa/envelope.json F2): a compact seated figure at the reference scale. Posted for a ruling as a named flag; nothing
-  is added to dodge it. F3 (49.3-82.3 px) and F4 (2-6 boxed labels) are inside their ranges and tested (A15). Any other
+- **F2 on machine_crunch (ruled a named flag, Q10):** authoring QA gives coverage 0.161 against the pinned 0.191-0.549
+  (qa/envelope.json F2): a compact seated figure at the reference scale; the sheet carries it, nothing is added to dodge
+  it. `lb6/qa.mjs` EXPECTED holds it. F3 (49.3-82.3 px) and F4 (2-6 boxed labels) are inside their ranges and tested (A15). Any other
   raised flag is posted with its value and range and ruled before READY.
 
 ## 7. R10 items
@@ -159,7 +159,7 @@ Fault→key; each spec's first tell carries the key, and topFault is that key (a
 
 | id | plate.mistake (claim) | first tell key (other tells) | topFault |
 |---|---|---|---|
-| cable_chest_press | elbows locked straight at the front (c17, c5) | `lock` (`push`: the handle carried past the end, if it reads) | `lock` |
+| cable_chest_press | elbows locked straight at the front (c17, c5) | `lock` (`line`: the arm ends in one straight line) | `lock` |
 | machine_pullover | back arched off the pad: the lower back and head pull away (c8) | `arch` (`head`: the head off the pad) | `arch` |
 | machine_crunch | the arms dragging the handles down, the trunk upright (c14) | `arms` (`upright`: the trunk not curling) | `arms` |
 
@@ -182,6 +182,16 @@ plural paired part states each side (#289 6342086947); a hand contact is checked
 | machine_crunch | "Sitting with the hips pressed against the back of the seat" (c2; plate.start and plate.end both cite c2 for the hips) | `contact buttock` | start (start), end (end) |
 | machine_crunch | "push the shins against the padded roller" (c2; plate.start cites it, plate.end does not) | `contact knee.r`, `ankle.r`, `knee.l`, `ankle.l` (the shin at its two ends; "the shins": both) | start (start) |
 | machine_crunch | "Grasp the handles in both hands" (c3, setup) | `contact wrist.r`, `wrist.l` | start (start) |
+
+**cable_chest_press start (D-LIB16-CCP-START, #297 6343632260, option (a)).** Measured with the engine: with the
+elbows at 90° (c3) and the handles at the nipple line (c4) the grip centre stops 32.4 cm in front of the chest
+landmark; c5's "about one inch before touching the chest" would fold the elbow to 35° inside; reading c3 as the arms'
+angle would raise the upper arm to 88° (straight out to the side, c7's flaring fault); c7's 45° "throughout" cannot
+hold at the pressed end, where the upper arm sits at about 77°. So the start is drawn as plate.start states it, c5's
+inch and c7's 45° are not facts, and F-LB6-6 (which claim sets the bottom) is logged for research.
+
+**Written (Do 6 b) on all 3 cards**, appended last (`lb6/cards.sha.json` unchanged): plateFacts as the table above,
+tempo built from `lb6/tempo.json` and each card's plate.tempo, topFault `lock`, `arch`, `arms`.
 
 **Not facts**, each with its reason:
 - cable_chest_press c1 "chest height", c4 "roughly where your nipples are": where an item is, not a touch; no
@@ -226,20 +236,23 @@ A17 compares them with `lb6/sizes.json` both ways and checks every basis. The sp
 | machine_crunch | M_TRUNK (Mistake) | 0° | c14 as the card reads it: the trunk stays upright |
 | machine_crunch | M_ARM (Mistake) | 40° (= CURL) | stated: the arm at the end's angle, the same stack travel |
 | crunchMachine | seatLen, padT, tubeT, rollerR, grip | 0.40, 0.07, 0.06, 0.055, 0.14 m | vendor seat, backPad, kneePad, chestPress defaults (equipment.mjs:181, :186, :204, :248); romanChair beamT (#274) |
-| cable_chest_press | PULLEY_Y | the start handle's height | c1 "chest height" with c4 |
-| cable_chest_press | COLUMN_BACK | 0.46 m pulley → rear heel | c1 "a foot or two": the midpoint |
+| cable_chest_press | FEET_X | 0.10 m | machine_chest_press.mjs:31 |
 | cable_chest_press | STAGGER | 0.53 m mid-sole to mid-sole | stated: c2 "one foot in front of the other", the front heel a foot length ahead of the rear toe (2 × 0.152 H) |
-| cable_chest_press | GRIP_Y | 12.8 cm below the shoulder joint | machine_chest_press.mjs:41 (the nipple line, c4) |
-| cable_chest_press | END_ELBOW | 18° short of straight | machine_chest_press.mjs:45 (D-LIB16-LOCK) |
-| cable_chest_press | M_ELBOW (Mistake) | 0° | c17, c5: locked straight |
-| cable_chest_press | HANDLE | grip 0.13 m, strap 0.10 m | equipment.mjs:30 (13 cm handle); strap stated |
+| cable_chest_press | ROOT_DROP | 0.06 m | stated: both legs reach the floor in the stagger with soft knees (23°); the hips over the middle of the ankles |
+| cable_chest_press | GRIP_DY, GRIP_DX | 12.8 cm below, 3 cm outside the shoulder joint | machine_chest_press.mjs:41 (the nipple line, c4); c3 "just outside shoulder width" |
+| cable_chest_press | START_FLEX | 91° (89° inside) | c3 "just below 90 degrees" (D-LIB16-CCP-START) |
+| cable_chest_press | END_FLEX | 18° short of straight | machine_chest_press.mjs:45 (D-LIB16-LOCK) |
+| cable_chest_press | M_FLEX (Mistake) | 0° | c17, c5: locked straight |
+| cable_chest_press | COLUMN_BACK | 0.46 m rear heel → pulley | c1 "a foot or two": the midpoint; the pulley at the start handle's height (c1 "chest height") |
+| cable_chest_press | HANDLE_GRIP, HANDLE_R, HANDLE_STRAP | 0.13, 0.008, 0.10 m | equipment.mjs:30 (13 cm handle); stated (grip bar, strap) |
+| cable_chest_press | FLOOR_BACK, FLOOR_FRONT | 0.25, 0.25 m | stated (layout) |
 | machine_pullover | PIVOT_UP | 3 cm above the shoulder joint | c1 "slightly below the axis" |
 | machine_pullover | ARM_START, ARM_END | bar just behind the head line; bar at the belt | c3, c4 |
 | machine_pullover | M_ARCH (Mistake) | 12° lumbar extension | hanging_leg_raise.mjs:69 (its Mistake arches the low back 12°) |
 | machine_pullover | SEAT_TOP | 0.46 m | machine_chest_press.mjs:28 |
 
-The cable_chest_press and machine_pullover rows are proposals (`sizes.json` "proposed"); each becomes the drawn
-spec's SIZES row, with every further number it needs added before drawing, on 'LB6 NOTE RULED'.
+The machine_pullover rows are proposals (`sizes.json` "proposed"); they become its SIZES row, with every further number
+it needs added before drawing, at the bulk.
 
 ## 12. PQ-H3 estimates (before drawing; deviationMin 11.39 px, traceLenMin 22.11 px; qa/envelope.json)
 
@@ -248,6 +261,8 @@ At the reference 146.29 px/m:
 | id | largest tell-anchor move, end → Mistake | Trace |
 |---|---|---|
 | machine_crunch | backUpper turns back 40° about the lumbar pivot, radius about 0.23 m: about 0.16 m → about 23 px [est] | the handle (grip.r) on its arc about the pivot, radius about 0.48 m over 40°: about 0.34 m → about 49 px before the end trims [est] |
+| machine_crunch, **measured** (authoring QA) | 30.5 px | 28.3 px after the trims (the shoulder top, first drawn: 15.1 px, not used; D-LIB16-CRUNCH-TRACE) |
+| cable_chest_press, **measured** (node-side) | 3.0 px: held (section 15) | 6.6 px: held |
 | cable_chest_press | the elbow, 18° → 0°: it moves onto the shoulder-grip line, about 5 cm → about 7.6 px [est]: **below deviationMin**; the grip moves about 1 cm | reading (a) of section 13: the grip 0.45 → 0.65 m, about 0.20 m → 29 px before trims, about 7 px after [est]: **below traceLenMin**; reading (b): about 0.50 m → 73 px |
 | machine_pullover | the arch at M_ARCH 12°: the low back about 3-5 cm off the pad, the head about 4-6 cm: about 5-9 px [unverified until drawn]: **at risk** | the bar on its arc from overhead to the belt, about 0.9 m → well over 100 px |
 
@@ -288,7 +303,7 @@ Options (Q6). Card truth decides; nothing is tuned off the card (D-LIB10-BENCH-H
   (it is not a fact), which departs from plate.start's words.
 - (c) research settles c3's reading first (F-LB6-6), and cable_chest_press waits.
 
-Until this is ruled, cable_chest_press is not drawn; the slice's other plate, machine_crunch, goes ahead.
+**Ruled (D-LIB16-CCP-START, #297 6343632260): option (a).** Drawn as plate.start states it; held (section 15).
 
 ## 14. H slice (Do 2; D-LIB16-SLICE)
 
@@ -299,8 +314,13 @@ deviation and Trace length beside its size row, A9 and every mutation red and th
 
 ## 15. Held ids
 
-None yet. cable_chest_press is expected to be held under D-LIB16-LOCK and -SIZE (section 12), and machine_pullover may
-be (its arch). A held id is listed here with its ruling and route, and is in no rows file.
+A held id is drawn as its card says, passes its drawn-item tests, and is in no rows file and on no QA'd page.
+
+| id | held under | measured at its ruled sizes (node-side, qa/node.mjs) | route |
+|---|---|---|---|
+| cable_chest_press | D-LIB8-shrug (D-LIB16-SIZE, -LOCK, -CCP-START) | Trace 6.6 px (traceLenMin 22.11), largest tell-anchor move 3.0 px (deviationMin 11.39); also F2 0.56 (above 0.549) and F3 40.2 px (below 49.3) | LIB-ZOOM's zoom circle on the elbow once #279 is on main and 'LIB-16 resume'; F-LB6-6 may change its start |
+
+machine_pullover may join it (its arch, section 12) once drawn.
 
 ## 16. Risks and mitigations
 
@@ -323,6 +343,15 @@ be (its arch). A held id is listed here with its ruling and route, and is in no 
 9. A COACHING-DECISIONS append conflict: keep both sides.
 
 ## 17. Questions for the supervisor ('LB6 NOTE RULED')
+
+**Ruled on #297 (6343632260, 2026-10-22): Q1-Q10 accepted.** Q1 D-LIB16-TEMPO (a test builds each strip only from
+`lb6/tempo.json` and the card; one value off by 1 s is red); Q3 facts as listed under today's CARD FIELDS rules; Q5 the
+size table; Q6 D-LIB16-CCP-START option (a), held under D-LIB8-shrug if under PQ-H3, F-LB6-6 logged; Q7 the `poly`
+handle (a later switch to #245's is a separate step with a pixel diff); Q8 only "Hips back" and "Trunk upright" cross
+the pad; Q9 D-LIB16-CRUNCH-TRACE: the handle (`grip.r`), on the basis of the anchor source's own motion cue, ACE's
+"Grasp the handles in both hands, and pull down on them to lean forward." (c3, named in plate.start), with
+DRAWING-GUIDE section 2's handle grip as a trace point; Q10 F2 0.161 a named flag.
+
 
 - **Q1 tempo map (section 8):** the three phase arrays, D-LIB16-TEMPO as drafted; Motra's bottom pause not drawn.
 - **Q2 pose map (section 9):** identity for all 3.

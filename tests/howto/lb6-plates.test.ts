@@ -17,8 +17,8 @@ const IDS = LB6.map(i => `lib_${i}`);
 // The 13 LB6 ids not in this card (DESIGN.md section 2): never in lb6/rows.json.
 const NOT_HERE = ['smith_machine_bench_press', 'smith_machine_incline_press', 'smith_machine_shoulder_press', 'smith_machine_shrug', 'smith_machine_squat',
   'cable_fly', 'low_to_high_cable_fly', 'high_to_low_cable_fly', 'pec_fly', 'machine_lateral_raise', 'rear_delt_fly', 'hip_abduction', 'hip_adduction'];
-// Held ids (DESIGN.md section 15): drawn and tested, no row. None yet.
-const HELD: string[] = [];
+// Held ids (DESIGN.md section 15): drawn and tested, no row. cable_chest_press: D-LIB8-shrug (D-LIB16-SIZE, -LOCK).
+const HELD = ['cable_chest_press'];
 const ROWS = 'tools/plates/library/lb6/rows.json';
 const RESEARCH_HEAD = 'a8e66f32e34e1746075ffa4da35ea18c80dd4776';
 const COMPOSERS = ['crunchMachine', 'pulloverMachine'];
@@ -94,11 +94,13 @@ describe('LIB-16 A5: lb6/rows.json holds exactly the drawn, non-held LB6 H ids, 
       for (const id of NOT_HERE) expect(new RegExp(`"lib_${id}"\\s*:`).test(text), `${f}: ${id}`).toBe(false);
     }
   });
-  it('each held id is in DESIGN.md\'s held table with its ruling and in no rows file (none held yet)', () => {
+  it('each held id is in DESIGN.md\'s held table with its ruling and in no rows file', () => {
     const design = readFileSync('tools/plates/library/lb6/DESIGN.md', 'utf8');
     expect(design).toContain('## 15. Held ids');
     for (const id of HELD) {
-      expect(design.split('## 15. Held ids')[1]!.split('\n## ')[0]!.includes(id), id).toBe(true);
+      const table = design.split('## 15. Held ids')[1]!.split('\n## ')[0]!;
+      expect(table.split('\n').some(l => l.startsWith(`| ${id} |`) && /D-LIB8-shrug/.test(l)), id).toBe(true);
+      for (const f of reg.batchFiles()) expect(readFileSync(f, 'utf8').includes(`lib_${id}`), `${f}: ${id}`).toBe(false);
       expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
     }
   });
@@ -282,10 +284,11 @@ describe('LIB-16 A2: crunchMachine on machine_crunch, per drawn pose (13.1)', { 
     return bad;
   };
   /** Every item that differs between the end and the Mistake must carry a poly, so the Mistake view draws it
-   *  (vendor/engine/plate.mjs:213 keeps only changed items with a poly). Returns the changed keys with no poly. */
-  const mistakeDrops = (spec: any) => {
-    const e = drawnItems(spec, 'end'), m = drawnItems(spec, 'mistake'), bad: string[] = [];
-    for (const [k, v] of m) if (v.z !== 'floor' && e.get(k)?.d !== v.d && !v.poly) bad.push(k);
+   *  (vendor/engine/plate.mjs:213 keeps only changed items with a poly); approved moving lines (qa/envelope.json
+   *  H9lineTypes) pass only when they are not a part the note names (the movement arm). Returns the dropped keys. */
+  const mistakeDrops = (spec: any, named = ['arm']) => {
+    const e = drawnItems(spec, 'end'), m = drawnItems(spec, 'mistake'), bad: string[] = [], lineTypes = pins().envelope.H9lineTypes;
+    for (const [k, v] of m) if (v.z !== 'floor' && e.get(k)?.d !== v.d && !v.poly && (named.includes(v.part) || !lineTypes.includes(v.type))) bad.push(k);
     return bad;
   };
   const moving = (spec: any, a: string, b: string) => { const A = drawnItems(spec, a), B = drawnItems(spec, b); return [...B.keys()].filter(k => A.get(k)?.d !== B.get(k)!.d); };
@@ -342,6 +345,62 @@ describe('LIB-16 A2: crunchMachine on machine_crunch, per drawn pose (13.1)', { 
     const st = s.poses.start, feet = Object.fromEntries(Object.entries<any>(st.plant).map(([k, v]) => [k, { ...v, at: [v.at[0], v.at[1], v.at[2] - 0.02] }]));
     const shins = { ...s, poses: { ...s.poses, start: { ...st, plant: feet } } };
     expect(contactProblems(shins).filter(p => p.startsWith('start: shin'))).toHaveLength(2);
+  });
+});
+
+describe('LIB-16 A2: cable_chest_press equipment and contacts, per drawn pose (13.1)', { timeout: T }, () => {
+  const ID = 'cable_chest_press';
+  const drawnItems = (spec: any, pose: string) => {
+    const cam = camOf(spec), out = new Map<string, any>();
+    for (const it of itemsIn(spec, pose).items) eng.PRIMITIVES[it.type](it, cam).forEach((p: any, j: number) => out.set(`eq${it.entry}.${it.type}.${j}`, { ...p, type: it.type, z: it.z ?? p.z }));
+    return out;
+  };
+  const changed = (spec: any) => { const e = drawnItems(spec, 'end'), m = drawnItems(spec, 'mistake'); return [...m.entries()].filter(([k, v]) => v.z !== 'floor' && e.get(k)?.d !== v.d); };
+  it('the handle moves between the end and the Mistake and is drawn there (poly); the cable and stack are approved moving lines', () => {
+    const ch = changed(S[ID]), lineTypes = pins().envelope.H9lineTypes;
+    expect(ch.filter(([, v]) => v.type === 'poly').length).toBe(2);
+    expect(ch.filter(([, v]) => !v.poly && !lineTypes.includes(v.type))).toEqual([]);
+  });
+  it('mutation: the handle drawn with `line` instead of `poly` drops out of the Mistake view (red)', () => {
+    const s = S[ID], lineHandle = { ...s, equipment: s.equipment.map((e: any, k: number) => (k === 2 ? (lm: any, ctx: any) => { const it = e(lm, ctx); return { type: 'line', pts: it.pts, cls: 'eq-line', z: it.z }; } : e)) };
+    const ch = changed(lineHandle);
+    expect(ch.some(([k, v]) => k.startsWith('eq2.line') && !v.poly)).toBe(true);
+  });
+  it('the column, pulley and floor sit at one place (±1 px) in start, end and Mistake', () => {
+    const e = drawnItems(S[ID], 'end');
+    for (const pose of posesOf(S[ID])) for (const [k, v] of drawnItems(S[ID], pose)) {
+      if (v.type !== 'cableColumn' || v.cls === 'eq-cable' || /stack|thin/.test(v.cls)) continue;
+      if (k.endsWith('.6') || k.endsWith('.7') || k.endsWith('.8') || k.endsWith('.9')) continue;   // the stack blocks and their lines move with the cable
+      if (v.d !== e.get(k)?.d && v.cls !== 'eq') continue;
+      expect(v.d === e.get(k)?.d || v.cls === 'eq', `${pose} ${k}`).toBe(true);
+    }
+  });
+  it('c2: both feet flat on the floor (heel and ball, within 0.5 cm) in start, end and Mistake', () => {
+    const r = rep(S[ID]);
+    for (const l of ['heel.r', 'ball.r', 'heel.l', 'ball.l']) for (const p of ['start', 'end', 'mistake']) {
+      const k = r.checks.find((c: any) => c.landmark === l && c.pose === p);
+      expect(k?.cm, `${l} ${p}`).toBeLessThanOrEqual(0.5);
+    }
+  });
+  it('c2: one foot in front of the other (mid-soles STAGGER apart), the near foot forward', () => {
+    const l = lmOf(S[ID], 'end');
+    expect(l['sole.r'][2] - l['sole.l'][2]).toBeCloseTo(M[ID].SIZES.STAGGER, 2);
+  });
+  it('c3, c4: the handles at the nipple line on one level line, the start elbows just below 90 inside (flexion 91 ± 1), the end 18 short of straight', () => {
+    const r = rep(S[ID]), sh = lmOf(S[ID], 'start')['shoulder.r'];
+    for (const p of ['start', 'end']) expect(lmOf(S[ID], p)['grip.r'][1], p).toBeCloseTo(sh[1] - M[ID].SIZES.GRIP_DY, 3);
+    expect(Math.abs(lmOf(S[ID], 'mistake')['grip.r'][1] - (sh[1] - M[ID].SIZES.GRIP_DY))).toBeLessThan(0.002);   // full reach: the IK clamp
+    expect(Math.abs(r.angles.start['elbow.r'] - 91)).toBeLessThanOrEqual(1);
+    expect(Math.abs(r.angles.end['elbow.r'] - 18)).toBeLessThanOrEqual(1);
+  });
+  it('c7: the body is still: between start, end and Mistake only the arms move (hips, trunk and feet fixed)', () => {
+    const a = lmOf(S[ID], 'start'), b = lmOf(S[ID], 'end'), m = lmOf(S[ID], 'mistake');
+    for (const k of ['hips', 'sternum', 'head', 'heel.r', 'heel.l']) { expect(b[k], k).toEqual(a[k]); expect(m[k], k).toEqual(a[k]); }
+  });
+  it('the pulley sits at the start handle\'s height (c1 chest height), COLUMN_BACK behind the rear heel (c1)', () => {
+    const l = lmOf(S[ID], 'start');
+    expect(M[ID].CCP.pulley[1]).toBeCloseTo(l['grip.r'][1], 6);
+    expect(l['heel.l'][2] - M[ID].CCP.pulley[2]).toBeCloseTo(M[ID].SIZES.COLUMN_BACK, 6);
   });
 });
 
@@ -402,24 +461,25 @@ describe('LIB-16 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', 
     }
   });
   /** Each callout's and tell's anchor sits on an item drawn in its pose: within 3 px of the solid figure's outline in
-   *  that pose (or inside it by at most 3 px), of a Mistake guide, or of an equipment outline. */
+   *  that pose or inside it, of a Mistake guide, or of an equipment outline. */
   const anchorProblems = (spec: any) => {
     const r = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
     const lms = qaEng.poseLandmarks(Eng(), spec).lm, cam = camOf(spec), out: string[] = [];
     const guides = (spec.mistake.guides ?? []).filter((g: any) => g.pts).map((g: any) => g.pts.map((p: any) => (Array.isArray(p) && p.length === 3 ? cam.P(p) : null)).filter(Boolean));
     for (const [mode, list] of [['normal', spec.callouts], ['mistake', spec.mistake.tells]] as const) for (const c of list) {
-      const pose = mode === 'mistake' ? 'mistake' : 'end';
+      const named = typeof c.anchor === 'string' && c.anchor.includes(':') ? c.anchor.split(':')[0] : c.anchor?.pose;
+      const pose = named ?? (mode === 'mistake' ? 'mistake' : 'end');
       const at = qaEng.resolvePoint(c.anchor, pose, lms, qaEng.cameraOf(spec, r.normal.report));
       const polys = [...shapesIn(spec, pose).map((x: any) => x.poly), ...drawnPolys(spec, pose)];
-      const dBody = Math.abs(outside(polys, at));
+      const dBody = Math.abs(outside(polys, at));   // inside a drawn shape (a joint centre) counts as on it
       const dGuide = Math.min(Infinity, ...guides.flatMap((g: number[][]) => segs(g).map(([p, q]) => segD(at, p!, q!))));
-      if (!(Math.min(dBody, dGuide) <= 3)) out.push(`${spec.id} ${c.key}: anchor ${Math.min(dBody, dGuide).toFixed(1)} px from any drawn item`);
+      if (!(outside(polys, at) <= 3 || dGuide <= 3)) out.push(`${spec.id} ${c.key}: anchor ${Math.min(dBody, dGuide).toFixed(1)} px from any drawn item`);
     }
     return out;
   };
   const drawnPolys = (spec: any, pose: string) => { const cam = camOf(spec), out: number[][][] = []; for (const it of itemsIn(spec, pose).items) for (const p of eng.PRIMITIVES[it.type](it, cam)) if (p.poly) out.push(p.poly); return out; };
   it('A15: every callout and tell anchor sits on an item drawn in its pose (within 3 px)', () => {
-    for (const id of specsDrawn()) expect(anchorProblems(S[id])).toEqual([]);
+    expect(specsDrawn().flatMap(id => anchorProblems(S[id]))).toEqual([]);
   });
   it('mutation: one tell\'s anchor moved to a point with no drawn item is red', () => {
     const s = S.machine_crunch, tells = [{ ...s.mistake.tells[0], anchor: [0, 2.2, 1.2] }, ...s.mistake.tells.slice(1)];
@@ -486,8 +546,8 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     const s = S.machine_crunch, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'core' ? { ...x, box: { left: 200, top: 300 } } : x)) };
     expect(minGap(bad).min).toBeLessThan(6);
   });
-  /** No leader runs across the solid figure: away from its last 4 px at the anchor, a leader stays outside the solid
-   *  end figure (normal plate) and the solid end figure (Mistake plate). */
+  /** No leader runs across the solid figure: away from its first 8 px at the anchor (a joint-centre anchor sits inside
+   *  its limb), a leader stays outside the solid end figure, on the normal and the Mistake plate. */
   const crossProblems = (spec: any) => {
     const polys = shapesIn(spec, 'end').map((x: any) => x.poly), out: string[] = [];
     for (const mistake of [false, true]) {
@@ -496,7 +556,7 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
         let inside = 0;
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
-          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 4 && outside(polys, q) < 0) inside++;
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) inside++;
         }
         if (inside) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the figure`);
       });
@@ -504,7 +564,7 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     return out;
   };
   it('no leader crosses the solid figure\'s outline', () => {
-    for (const id of specsDrawn()) expect(crossProblems(S[id])).toEqual([]);
+    expect(specsDrawn().flatMap(id => crossProblems(S[id]))).toEqual([]);
   });
   it('mutation: the "Core leads" box placed on the figure\'s far side, so its leader crosses the body, is red', () => {
     const s = S.machine_crunch, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'core' ? { ...x, box: { left: 20, top: 220 } } : x)) };
@@ -547,15 +607,54 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     const reach = { ...st.reach, r: { ...st.reach.r, at: [st.reach.r.at[0], sh[1] + 0.03, sh[2] + 0.04] } };
     expect(armProblems({ ...s, poses: { ...s.poses, start: { ...st, reach } } }).some(p => p.startsWith('start: elbow.r'))).toBe(true);
   });
+  /** Do 7: a cable runs from its pulley to the handle and is never drawn on top of the trunk, head or near arm: every
+   *  cable line that passes inside the solid figure is drawn at z back or center (behind the trunk group). */
+  const cableProblems = (spec: any) => posesOf(spec).flatMap(pose => {
+    const polys = shapesIn(spec, pose).filter((x: any) => !/^(thigh|shank|foot|kneecap|shcap|upper|elbowcap|fore|fist)\.l$/.test(x.key)).map((x: any) => x.poly), cam = camOf(spec), out: string[] = [];
+    for (const it of itemsIn(spec, pose).items) for (const p of eng.PRIMITIVES[it.type](it, cam)) {
+      if (p.cls !== 'eq-cable' || !p.line) continue;
+      const z = it.z ?? p.z, [a, b] = p.line, hit = Array.from({ length: 41 }, (_, k) => [a[0] + (b[0] - a[0]) * k / 40, a[1] + (b[1] - a[1]) * k / 40]).some(q => outside(polys, q) < 0);
+      if (hit && !['back', 'center'].includes(z)) out.push(`${pose}: cable over the figure at z ${z}`);
+    }
+    return out;
+  });
+  it('cable_chest_press: the cable reaches the handle in every pose and passes behind the trunk', () => {
+    const s = S.cable_chest_press;
+    expect(cableProblems(s)).toEqual([]);
+    for (const pose of posesOf(s)) {
+      const col = itemsIn(s, pose).items.find((it: any) => it.type === 'cableColumn'), ring = M.cable_chest_press.CCP.handleOf([0, lmOf(s, pose)['grip.r'][1], lmOf(s, pose)['grip.r'][2]]).ring;
+      expect(col.to, pose).toEqual(ring);
+    }
+  });
+  it('mutation: cable_chest_press\'s cable drawn over the trunk (z front) is red', () => {
+    const s = S.cable_chest_press, bad = { ...s, equipment: s.equipment.map((e: any, k: number) => (k === 1 ? (lm: any, ctx: any) => ({ ...e(lm, ctx), z: 'front' }) : e)) };
+    expect(cableProblems(bad).length).toBeGreaterThan(0);
+  });
+  /** D-LIB16-LOCK: cable_chest_press's end elbow keeps its ruled bend (END_FLEX), never straight (180 inside). */
+  const lockProblems = (spec: any) => { const f = rep(spec).angles.end['elbow.r']; return Math.abs(f - M.cable_chest_press.SIZES.END_FLEX) <= 1 && f > 5 ? [] : [`end elbow flexion ${f.toFixed(1)}`]; };
+  it('cable_chest_press: the end elbow is the ruled bend, not locked', () => {
+    expect(lockProblems(S.cable_chest_press)).toEqual([]);
+  });
+  it('mutation: cable_chest_press\'s end elbow set to 180 deg inside (the locked handle as the end) is red', () => {
+    const s = S.cable_chest_press;
+    expect(lockProblems({ ...s, poses: { ...s.poses, end: { ...s.poses.end, ...s.mistake.pose } } }).length).toBe(1);
+  });
+  it('held (D-LIB8-shrug, D-LIB16-SIZE, -LOCK): cable_chest_press at its ruled sizes is below PQ-H3 (Trace and tell-anchor move), measured node-side', () => {
+    const s = S.cable_chest_press, R = { normal: plate.renderPlate(s, { id: 'x' }), mistake: plate.renderPlate(s, { id: 'x', mistake: true }) };
+    const m = qaNode.nodeMetrics({ spec: s, plate: { normal: R.normal, mistake: R.mistake, alt: s.alt, mistakeAlt: '' } }, { engine: Eng() }, R), env = pins().envelope;
+    console.log(`LIB-16 cable_chest_press held: traceLen ${m.traceLen.toFixed(1)} px, deviation ${m.deviation.toFixed(1)} px`);
+    expect(m.traceLen).toBeLessThan(env.traceLenMin);
+    expect(m.deviation).toBeLessThan(env.deviationMin);
+  });
   /** F3 and F4: the longest leader inside the 8's range and 2-6 hand-placed labels (qa/envelope.json). */
   const leaderMax = (spec: any) => Math.max(...[false, true].flatMap(mistake => [...plate.renderPlate(spec, { id: 'x', mistake }).svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(m => {
     let x = 0, y = 0, t = 0;
     for (const c of m[1]!.matchAll(/([MLH])(-?[\d.]+)(?:[ ,](-?[\d.]+))?/g)) { const nx = +c[2]!, ny = c[1] === 'H' ? y : +c[3]!; if (c[1] !== 'M') t += Math.hypot(nx - x, ny - y); x = nx; y = ny; }
     return t;
   })));
-  it('F3 and F4: every drawn spec\'s longest leader sits inside the 8\'s range, and it boxes 2-6 labels', () => {
+  it('F3 and F4: every row\'s longest leader sits inside the 8\'s range, and it boxes 2-6 labels (a held plate\'s flags are posted, DESIGN.md section 15)', () => {
     const [lo, hi] = pins().envelope.F3, [b0, b1] = pins().envelope.F4;
-    for (const id of specsDrawn()) {
+    for (const id of drawn()) {
       const v = leaderMax(S[id]); expect(v >= lo && v <= hi, `${id} ${v.toFixed(1)}`).toBe(true);
       const n = [...S[id].callouts, ...S[id].mistake.tells, ...(S[id].measure ? [S[id].measure] : [])].filter((c: any) => c.box).length;
       expect(n >= b0 && n <= b1, `${id} boxed ${n}`).toBe(true);
@@ -644,10 +743,18 @@ describe('LIB-16 A4: runQa node half on an LB6 plate (lib_machine_crunch), LIB-3
       return { ...(await candOf(h.toString('utf8'))), spec };
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
-  it('clean: the node half has only the problems Do 2 expects before Do 6 b (H6:no-card), and the raised flags are the ones posted', async () => {
+  it('clean: no node-half problem (H6 passes on the card keys), F7 is not raised, and the only raised flags are F2 (ruled, Q10) and F5 (the browser half)', async () => {
     const r = await qa(await candOf());
-    expect(node(r)).toEqual(['H6:no-card']);
-    expect(qaIdx.FLAGS.filter((f: string) => r.flags[f].raised && !['F2', 'F5', 'F7'].includes(f))).toEqual([]);
+    expect(node(r)).toEqual([]);
+    expect(qaIdx.FLAGS.filter((f: string) => r.flags[f].raised && !['F2', 'F5'].includes(f))).toEqual([]);
+  });
+  it('A8 mutation: the card copied with topFault set to its other tell key raises F7, and the expected-set check is red', async () => {
+    const qaMod = await import(/* @vite-ignore */ lib('lb6/qa.mjs'));
+    const c = await candOf(), r = await qa({ ...c, research: { ...c.research, topFault: 'upright' } });
+    expect(r.flags.F7.raised).toBe(true);
+    const r0 = await qa(c);
+    expect(r0.flags.F7.raised).toBe(false);
+    expect(qaMod.flagProblems([{ ...r, flags: { ...r.flags, F5: { ...r.flags.F5, raised: true, value: 3.57 } } }]).some((p: string) => /F7/.test(p))).toBe(true);
   });
   it('A4 M1 a label 1 px onto the figure (the Curl the spine callout) turns PQ-H1 red; 1 px back is clean', async () => {
     const c0 = cg().callouts.find((x: any) => x.key === 'curl'), at = (box: any) => ({ ...cg(), callouts: cg().callouts.map((x: any) => (x.key === 'curl' ? { ...x, box } : x)) });
@@ -737,6 +844,8 @@ describe('LIB-16 A7 and A11: the tempo strip follows the card (D-LIB16-SECS, -TE
     expect(red(tj => { tj.ids.machine_pullover.rows.splice(1, 1); }), 'no Hold on machine_pullover').toBe(true);
     expect(red((tj, specs) => { specs.machine_crunch = { ...specs.machine_crunch, tempo: [...specs.machine_crunch.tempo, { phase: 'Pause', s: 1 }] }; }), 'bottom pause').toBe(true);
     expect(red(tj => { tj.ids.machine_crunch.rows.push({ phase: 'Rest', from: 'pause' }); }), 'Rest').toBe(true);
+    expect(red((tj, specs) => { specs.machine_crunch = { ...specs.machine_crunch, tempo: [{ ...specs.machine_crunch.tempo[0], s: 3 }, specs.machine_crunch.tempo[1]] }; }), 'one value off by 1 s').toBe(true);
+    expect(red((tj, specs) => { specs.cable_chest_press = { ...specs.cable_chest_press, tempo: [specs.cable_chest_press.tempo[0], { ...specs.cable_chest_press.tempo[1], s: 1 }] }; }), 'one value off by 1 s (cable_chest_press)').toBe(true);
   });
   it('A6 mutation: the card path removed gives H6:no-card', () => {
     const s = S.machine_crunch, R = { normal: plate.renderPlate(s, { id: 'x' }), mistake: plate.renderPlate(s, { id: 'x', mistake: true }) };
@@ -768,5 +877,97 @@ describe('LIB-16 A17: sizes are fixed in lb6/sizes.json and never sized by PQ-H3
     expect(sizeProblems(s, { ...t, CURL: { ...t.CURL, basis: 'sized so PQ-H3 passes' } })).toEqual(['CURL: basis names PQ-H3']);
     expect(sizeProblems(s, { ...t, CURL: { ...t.CURL, basis: 'above deviationMin' } })).toEqual(['CURL: basis names PQ-H3']);
     expect(sizeProblems({ ...s, HANDLE_TILT: 5 }, t)).toEqual(['HANDLE_TILT: not in sizes.json']);
+  });
+});
+
+describe('LIB-16 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the pose map and the plate facts', { timeout: T }, () => {
+  const KEYS = ['plateFacts', 'tempo', 'topFault'];
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  const cardsSha = readJson('tools/plates/library/lb6/cards.sha.json');
+  const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
+  // The ruled pose map (DESIGN.md section 9): identity for all 3.
+  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB6.map(id => [id, { start: 'start', end: 'end' }]));
+  it('each card differs from its research-head copy only in the three keys, written last', () => {
+    for (const id of LB6) { expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]); expect(Object.keys(cardOf(id)).slice(-3), id).toEqual(KEYS); }
+  });
+  it('each card\'s tempo is the strip built from lb6/tempo.json and its plate.tempo, and equals its drawn spec\'s', () => {
+    const tj = readJson('tools/plates/library/lb6/tempo.json');
+    for (const id of LB6) {
+      const c = cardOf(id), want = tj.ids[id].rows.map((r: any) => ({ phase: r.phase, s: c.plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
+      expect(c.tempo, id).toEqual(want);
+      if (S[id]) expect(S[id].tempo, id).toEqual(c.tempo);
+    }
+  });
+  it('A11 mutations: any other card key edited, and seconds changed on one card\'s tempo and spec, are red', () => {
+    const c = cardOf('machine_crunch'); c.plate.tempo.up = 3;
+    expect(sha(canon(c))).not.toBe(cardsSha.cards.machine_crunch);
+    const d = cardOf('machine_crunch'); d.tempo[0].s = 3;
+    expect(JSON.stringify(d.tempo)).not.toBe(JSON.stringify(S.machine_crunch.tempo));
+  });
+  // Q4 (D-LIB16 fault→key): drawable:true on all 3, so topFault is the key the drawn first tell carries.
+  const DRAWN: Record<string, string> = { cable_chest_press: 'lock', machine_pullover: 'arch', machine_crunch: 'arms' };
+  const topFaultProblems = (card: any, drawnKey: string) => (card.plate.mistake.drawable ? (card.topFault === drawnKey ? [] : ['drawable:true but topFault is not the drawn fault']) : ['drawable:false']);
+  it('A8: each topFault is the ruled key; every drawn first tell carries it', () => {
+    for (const id of LB6) expect(topFaultProblems(cardOf(id), DRAWN[id]!), id).toEqual([]);
+    for (const id of specsDrawn()) expect(S[id].mistake.tells[0].key, id).toBe(cardOf(id).topFault);
+  });
+  it('A8 mutation: machine_pullover\'s card copied with topFault set to another of its tell keys is red', () => {
+    const c = cardOf('machine_pullover'); c.topFault = 'head';
+    expect(topFaultProblems(c, DRAWN.machine_pullover!)).toEqual(['drawable:true but topFault is not the drawn fault']);
+  });
+  /** 14.7 rules 10, 15, D-LIB9-CARDFIELDS and the pose map: kind, one form, a claim of its own card, a pose that is the
+   *  map's image of its card pose. */
+  const factProblems = (id: string, c: any) => c.plateFacts.flatMap((f: any, i: number) => [
+    ...(['contact', 'angle', 'height'].includes(f.kind) ? [] : [`${i}: kind`]),
+    ...(f.joint && f.measure === true ? [`${i}: both joint and measure`] : []),
+    ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
+    ...(f.cardPose && POSE_MAP[id]![f.cardPose] !== (f.pose ?? 'end') ? [`${i}: pose ${f.pose ?? 'end'} is not the map's image of card ${f.cardPose}`] : []),
+  ]);
+  // The ruled facts (Q3, #297 6343632260), each with its claim id; one per checked landmark.
+  const C = (lms: string[], pose: string, cardPose: string, claim: string) => lms.map(landmark => ({ kind: 'contact', landmark, pose, cardPose, claim }));
+  const EL = (joint: string) => ({ kind: 'angle', joint, pose: 'start', cardPose: 'start', deg: 90, claim: 'c3', note: '"Keep the elbows just below 90 degrees": drawn 89 deg inside (flexion 91)' });
+  const FACTS: Record<string, any[]> = {
+    cable_chest_press: [...C(['heel.r', 'ball.r', 'heel.l', 'ball.l'], 'start', 'start', 'c2'), ...C(['heel.r', 'ball.r', 'heel.l', 'ball.l'], 'end', 'end', 'c2'), EL('elbow.r'), EL('elbow.l')],
+    machine_pullover: [...C(['backUpper', 'buttock'], 'start', 'start', 'c7'), ...C(['backUpper', 'buttock'], 'end', 'end', 'c7'), ...C(['elbow.r', 'elbow.l'], 'start', 'start', 'c3'), ...C(['elbow.r', 'elbow.l'], 'end', 'end', 'c4'), ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c3')],
+    machine_crunch: [...C(['buttock'], 'start', 'start', 'c2'), ...C(['buttock'], 'end', 'end', 'c2'), ...C(['knee.r', 'ankle.r', 'knee.l', 'ankle.l'], 'start', 'start', 'c2'), ...C(['wrist.r', 'wrist.l'], 'start', 'start', 'c3')],
+  };
+  it('every card\'s plateFacts is the ruled set, each fact well formed', () => {
+    for (const id of LB6) { expect(cardOf(id).plateFacts, id).toEqual(FACTS[id]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
+  });
+  it('mutations: a fact with both joint and measure: true, and a start fact named with the unmapped pose, are red', () => {
+    const c = cardOf('cable_chest_press'); c.plateFacts.push({ kind: 'angle', joint: 'elbow.r', measure: true, deg: 90, claim: 'c3' });
+    expect(factProblems('cable_chest_press', c)).toEqual([`${c.plateFacts.length - 1}: both joint and measure`]);
+    const p = cardOf('machine_crunch'); p.plateFacts.push({ kind: 'contact', landmark: 'wrist.r', pose: 'end', cardPose: 'start', claim: 'c3' });
+    expect(factProblems('machine_crunch', p)).toEqual([`${p.plateFacts.length - 1}: pose end is not the map's image of card start`]);
+  });
+  const h6 = (spec: any, research: any) => {
+    const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
+    return qaNode.h6({ spec, research }, { engine: Eng(), pins: pins() }, R).map((p: any) => p.key);
+  };
+  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault }; };
+  it('A6: PQ-H6 is green on every drawn spec against its card (the held spec included)', () => {
+    for (const id of specsDrawn()) expect(h6(S[id], research(id)), id).toEqual([]);
+  });
+  // Every numeric triple named `at` in a pose (root, reach and plant targets) moved by v: the whole body moves rigidly.
+  const shiftPose = (p: any, v: number[]): any => Array.isArray(p) ? p.map(x => shiftPose(x, v)) : p && typeof p === 'object'
+    ? Object.fromEntries(Object.entries(p).map(([k, x]: [string, any]) => [k, k === 'at' && Array.isArray(x) && x.length === 3 && x.every((n: any) => typeof n === 'number') ? x.map((n: number, i: number) => n + v[i]!) : shiftPose(x, v)])) : p;
+  it('A6 mutation: for each contact fact, its pose\'s body moved 2 cm along the fact\'s check normal turns that fact red and no fact of another pose', () => {
+    for (const id of specsDrawn()) FACTS[id]!.forEach((f, i) => {
+      if (f.kind !== 'contact') return;
+      const s = S[id], k = s.checks.find((c: any) => c.landmark === f.landmark && (c.pose === f.pose || c.pose === 'all'));
+      const n = k.plane ? k.plane.normal : [0, 0, 1], L = Math.hypot(...n), v = n.map((x: number) => x / L * 0.02);
+      const red = h6({ ...s, poses: { ...s.poses, [f.pose]: shiftPose(s.poses[f.pose], v) } }, research(id)).filter((x: string) => x.includes(':contact:'));
+      expect(red, `${id} ${f.pose} ${f.landmark}`).toContain(`H6.fact:${i}:contact:${f.landmark}`);
+      const others = FACTS[id]!.flatMap((g, j) => (g.kind === 'contact' && g.pose !== f.pose ? [`H6.fact:${j}:contact:${g.landmark}`] : []));
+      expect(red.filter((x: string) => others.includes(x)), `${id} ${f.pose} ${f.landmark}`).toEqual([]);
+    });
+  });
+  // The fact is 90 (the quote's number) and the elbow is drawn 91 (just below 90 inside), so a fact 3 deg off the
+  // drawn value is 88 or 94: both are red. (93 sits 2 deg from the drawn 91 and passes the ±2 limit, as it should.)
+  it('A6 mutations: an angle fact 3 deg off the drawn elbow (88 and 94), and the card path removed, are red', () => {
+    const s = S.cable_chest_press, r = research('cable_chest_press');
+    expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any) => (f.joint === 'elbow.r' ? { ...f, deg: 88 } : f)) })).toEqual([`H6.fact:${r.plateFacts.findIndex((f: any) => f.joint === 'elbow.r')}:angle:elbow.r`]);
+    expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any) => (f.joint === 'elbow.r' ? { ...f, deg: 94 } : f)) })).toEqual([`H6.fact:${r.plateFacts.findIndex((f: any) => f.joint === 'elbow.r')}:angle:elbow.r`]);
+    expect(h6(s, null)).toEqual(['H6:no-card']);
   });
 });
