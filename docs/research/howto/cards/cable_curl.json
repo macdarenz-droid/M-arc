@@ -203,9 +203,10 @@
   },
   {
    "id": "c10",
-   "text": "Tempo (up = lifting, down = lowering): about 1 s up and 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up and 2 s down, inside ACSM's moderate speed of 1-2 s each way, which is stated for advanced training (LR-15). No quote on the card asks for a pause.",
    "tags": [
-    "CONSENSUS"
+    "CONSENSUS",
+    "WEAK"
    ],
    "sources": [
     "acsm-2009"
@@ -279,7 +280,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "fb-cablecurl",
@@ -289,7 +290,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-dbcurl",
@@ -299,7 +300,7 @@
    "year": 2020,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "ace-seated-curl",
@@ -309,7 +310,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "marcolin-2018",
@@ -319,7 +320,7 @@
    "year": 2018,
    "pmid": 30013836,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "acsm-2009",
@@ -329,7 +330,7 @@
    "year": 2009,
    "pmid": 19204579,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "larsen-2026",
@@ -339,7 +340,7 @@
    "year": 2026,
    "pmid": 41988507,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   }
  ],
  "plate": {
@@ -351,7 +352,7 @@
   "checkpoints": [
    {
     "label": "Elbows at sides",
-    "what": "Elbows close to the torso; upper arms never travel back.",
+    "what": "Elbows close to the torso. Upper arms never travel back.",
     "claim": "c3"
    },
    {
@@ -361,7 +362,7 @@
    },
    {
     "label": "Still body",
-    "what": "Torso stays upright; only the arms move.",
+    "what": "Torso stays upright. Only the arms move.",
     "claim": "c8"
    }
   ],
@@ -370,7 +371,7 @@
    "why": "Fitbod's cable-curl page calls it very common; keeping the arm slightly bent maintains tension in the biceps.",
    "claim": "c13",
    "drawable": true,
-   "rankNote": "The only cable-curl source that ranks a fault by frequency (Fitbod) names this one; it reads side-on as the elbow angle at the bottom. Upper arms travelling back (c3, c7) stays in handlingMistakes and the elbow zoom."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: losing tension at the bottom with the arms fully extended (c13), from Fitbod's \"It’s very common to lose tension at the bottom of the movement when your arms are fully extended.\" The frequency word sits on the fault itself, in a source written for this exercise. Set aside: Fitbod's \"one of the most common isolation, biceps exercises\", \"a staple exercise in most workouts\" and \"Unlike many other Hammer Curl variations\" are about other exercises; StrengthLog's dumbbell-curl \"one of the most common movements we do with our arms\", \"Barbell curls often allow for heavier weights\" and \"most offering a fixed grip width\" are about exercises, a load and equipment; ACE's \"most comfortable for you\" is about comfort; the 'Common Form Mistakes' and 'Common Mistakes in the Dumbbell Curl' headings are headings. StrengthLog's cable-curl page holds no frequency or harm word. drawable is true: the side view shows the elbow angle at the bottom, fully straight against the slight bend of the start (c13). Pick unchanged; handlingMistakes already has it first."
   },
   "tells": [
    {
@@ -429,7 +430,7 @@
    "claim": "c3"
   },
   {
-   "point": "Body stays still; only the arms move.",
+   "point": "Body stays still. Only the arms move.",
    "claim": "c8"
   },
   {
@@ -447,17 +448,20 @@
  ],
  "handlingMistakes": [
   {
-   "mistake": "Arms fully extended at the bottom, losing tension.",
-   "fix": "Limit the range; keep the arm slightly bent between reps.",
+   "mistake": "Arms straight at the bottom.",
+   "fix": "Limit the range. Keep the arm slightly bent between reps.",
    "claim": "c13"
   },
   {
-   "mistake": "Upper arms travelling back to cheat the bar up.",
+   "mistake": "Upper arms travelling back.",
    "fix": "Keep the upper arms still by your sides.",
-   "claim": "c3, c7"
+   "claim": [
+    "c3",
+    "c7"
+   ]
   },
   {
-   "mistake": "Swinging the body to move the weight.",
+   "mistake": "Swinging the body.",
    "fix": "Use less weight and lift with control.",
    "claim": "c8"
   }
@@ -483,7 +487,7 @@
   ],
   "rows": [
    {
-    "where": "Front of the upper arm, including near the top",
+    "where": "Front of the upper arm",
     "means": "The biceps are working against the cable.",
     "fix": "",
     "claim": "c5",
@@ -491,15 +495,15 @@
    },
    {
     "where": "Front of the shoulder",
-    "means": "Usually means the elbows are moving forward during the lift.",
+    "means": "Fault: the elbows moving forward, which loads the front delts.",
     "fix": "Keep the elbows at your sides.",
     "claim": "c7",
     "redFlag": null
    },
    {
-    "where": "Wrist",
-    "means": "Usually means the wrist is bending.",
-    "fix": "Straighten the wrist; go lighter if you can't.",
+    "where": "Wrist discomfort or pain",
+    "means": "Fault: the wrists bent up or down under load.",
+    "fix": "Stop and don't train through the pain. Keep the wrist straight.",
     "claim": "c9",
     "redFlag": "wrist"
    }
@@ -507,7 +511,7 @@
  },
  "risks": [
   {
-   "risk": "Bent wrists under load can cause wrist discomfort (from the dumbbell curl).",
+   "risk": "Bent wrists under load can cause wrist discomfort.",
    "claim": "c9"
   }
  ],
@@ -518,14 +522,14 @@
   {
    "key": "curl-wrist",
    "kind": "hand",
-   "right": "Palms up on the bar, hand in line with the forearm.",
+   "right": "Palms up, hand in line with the forearm.",
    "wrong": "Wrist bent back under the bar.",
    "claim": "c9"
   },
   {
    "key": "curl-elbow",
    "kind": "posture",
-   "right": "Upper arm by the side at the top of the curl.",
+   "right": "Upper arm by the side at the top.",
    "wrong": "Upper arm swung back behind the body.",
    "claim": "c7"
   }

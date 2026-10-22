@@ -1,6 +1,6 @@
 {
  "id": "bayesian_cable_curl",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -74,6 +74,14 @@
    "status": "verbatim",
    "closest": "isolating your biceps and not letting your shoulders take over. To achieve this, your upper arm needs to remain motionless the entire time. This fixes your shoulder in place and prevents you from using your front deltoids to assist with the curl.",
    "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-bayesian",
+   "text": "Steer clear of these common errors if you want to make the most out of the movement.",
+   "status": "verbatim",
+   "closest": "Steer clear of these common errors if you want to make the most out of the movement.",
+   "note": "fetched by curl 2026-10-22"
   },
   {
    "claim": "c6",
@@ -177,14 +185,6 @@
    "text": "Step 4 — Suspend your upper arm motionless and bend at the elbow, curling the weight with your biceps.",
    "status": "verbatim",
    "closest": "Step 4 — Suspend your upper arm motionless and bend at the elbow, curling the weight with your biceps.",
-   "note": "added by fixer 2026-09-30; read in live source"
-  },
-  {
-   "claim": "c5",
-   "source": "bb-bayesian",
-   "text": "Steer clear of these common errors if you want to make the most out of the movement. Moving Your Upper Arm",
-   "status": "verbatim",
-   "closest": "Steer clear of these common errors if you want to make the most out of the movement. Moving Your Upper Arm",
    "note": "added by fixer 2026-09-30; read in live source"
   },
   {

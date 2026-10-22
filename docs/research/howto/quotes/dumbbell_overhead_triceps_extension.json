@@ -1,6 +1,6 @@
 {
  "id": "dumbbell_overhead_triceps_extension",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -140,6 +140,14 @@
    "note": ""
   },
   {
+   "claim": "c12",
+   "source": "motra-db-oh",
+   "text": "Arching lower back",
+   "status": "verbatim",
+   "closest": "Arching lower back",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
    "claim": "c13",
    "source": "motra-db-oh",
    "text": "Spotting not typically required; assist by supporting elbows if needed for heavy sets.",
@@ -218,6 +226,22 @@
    "status": "verbatim",
    "closest": "Exhale and slowly press the dumbbell overhead, extending your elbows until your arms are vertical to the floor, elbows pointing forward, but not completely locked.",
    "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "motra-db-oh",
+   "text": "3-1-1",
+   "status": "verbatim",
+   "closest": "3-1-1",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c18",
+   "source": "motra-db-oh",
+   "text": "Squeeze triceps at top.",
+   "status": "verbatim",
+   "closest": "Squeeze triceps at top.",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

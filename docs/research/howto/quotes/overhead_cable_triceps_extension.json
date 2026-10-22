@@ -1,6 +1,6 @@
 {
  "id": "overhead_cable_triceps_extension",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -92,6 +92,14 @@
    "note": ""
   },
   {
+   "claim": "c9",
+   "source": "healthline-ote",
+   "text": "If the weight is too heavy or you’re fatigued, you may be tempted to arch your back, which can increase the strain on your back and shoulder joints.",
+   "status": "verbatim",
+   "closest": "If the weight is too heavy or you’re fatigued, you may be tempted to arch your back, which can increase the strain on your back and shoulder joints.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
    "claim": "c10",
    "source": "sl-oh-cable",
    "text": "Using weights that are too heavy can lead to poor form, reduced range of motion, and increased risk of injury. Choose a weight that allows you to complete the desired number of repetitions with proper form.",
@@ -156,14 +164,6 @@
    "note": ""
   },
   {
-   "claim": "c13",
-   "source": "acsm-2009",
-   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-   "status": "verbatim",
-   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-   "note": "matched in PubMed abstract"
-  },
-  {
    "claim": "c14",
    "source": "motra-oh-rope",
    "text": "Exhale as you extend your arms overhead; inhale as you lower the rope behind your head.",
@@ -218,6 +218,38 @@
    "status": "verbatim",
    "closest": "This exercise isolates the triceps, leading to improved muscle size, strength, and definition in the upper arm.",
    "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "motra-oh-rope",
+   "text": "3-1-1",
+   "status": "verbatim",
+   "closest": "3-1-1",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c21",
+   "source": "motra-oh-rope",
+   "text": "Pause briefly at the bottom to feel the stretch in the triceps.",
+   "status": "verbatim",
+   "closest": "Pause briefly at the bottom to feel the stretch in the triceps.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c21",
+   "source": "motra-oh-rope",
+   "text": "Squeeze the triceps firmly at the top of the movement.",
+   "status": "verbatim",
+   "closest": "Squeeze the triceps firmly at the top of the movement.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c21",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }
