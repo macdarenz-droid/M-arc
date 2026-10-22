@@ -387,6 +387,11 @@
           "source": "bb-slam",
           "text": "Taking the medicine ball from overhead to the floor involves drawing the arm down in front of the body. Shoulder extension is a primary function of the lattisimus dorsi, so your back comes heavily into play as a secondary mover in the slam.",
           "where": "Muscles Worked by the Medicine Ball Slam, Lats"
+        },
+        {
+          "source": "bb-slam",
+          "text": "The obliques are primarily responsible for rotation of the core, so when you’re doing rainbow slams or rotational throwing variations, the obliques are used to a higher degree.",
+          "where": "Muscles Worked by the Medicine Ball Slam, Obliques"
         }
       ]
     },
@@ -432,6 +437,28 @@
           "source": "bodbot-mb-slam",
           "text": "Hold the medicine ball with both hands in front of your chest. Engage your core and slightly bend your knees.",
           "where": "Instructions, Set-up"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Not using enough force is on Vitruve's mistakes list: a slam that is not powerful does not build power.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "vit-slam"
+      ],
+      "quotes": [
+        {
+          "source": "vit-slam",
+          "text": "Not Using the Required Force to Perform Slam Throws",
+          "where": "Mistakes to Avoid, Not Using the Required Force to Perform Slam Throws"
+        },
+        {
+          "source": "vit-slam",
+          "text": "The main purpose of medicine ball slam throws is to build power, which you will not be able to achieve if your throws are not quite powerful.",
+          "where": "Mistakes to Avoid, Not Using the Required Force to Perform Slam Throws"
         }
       ]
     }
@@ -569,13 +596,13 @@
     ],
     "mistake": {
       "what": "Slamming with the arms only, without bending the hips and knees.",
-      "why": "LR-31 step 3: Vitruve's mistakes list (\"Not Working Your Entire Body\", c4) is the only list written for this exercise, and its earlier items are a load choice, a programming choice, an equipment choice and effort. StrengthLog and BodBot say to press the hips back and bend the knees to power the slam (c3, c4). Straight hips and knees under a slamming arm show from the side.",
+      "why": "LR-31 step 3 (D-SUP-LB10-FORCE): the top fault is a soft slam, \"Not Using the Required Force to Perform Slam Throws\" (Vitruve's list item 4, c16), the first candidate on the only list written for this exercise. Its only sign is the ball's speed, so it is never drawable, and the plate draws the next fault by the same steps: item 5, \"Not Working Your Entire Body\", slamming with the arms only (c4). StrengthLog and BodBot say to press the hips back and bend the knees to power the slam (c3, c4); straight hips and knees under a slamming arm show from the side.",
       "claim": [
         "c4",
         "c3"
       ],
-      "rankNote": "No source measures how often each fault happens. LR-31 step 3: the first candidate on the only common-mistakes list written for this exercise, Vitruve's \"Mistakes to Avoid\": \"Not Working Your Entire Body\" (c4), slamming with the arms only. Step 1: no frequency word for a fault of this exercise. Set aside: BarBend's \"Like most forms of plyometric work\" (all plyometric training), \"three of the most common and widely used slam exercises\" (variations), \"two common alternatives\" (other exercises), \"the two most common ones\" (FAQ questions), \"Many individuals may benefit more from performing slams\" and \"Most sports\" (no fault), \"often between 60-85% of heart rate max\" (cardio); BarBend's benefits page's \"A medicine ball is usually lighter\", \"Typically, you’ll want to use a medicine ball for slams\" and \"Slam balls, on the other hand, are common for overhead tosses, carries, and squats\" (ball types), \"many variations\" and \"many technical intricacies\" (no fault); Vitruve's \"one of the most valuable additions\" and \"One of the most important things about this workout is the perfect posture\" (no fault's frequency); Healthline's \"Most of them range from 10 to 20 pounds in weight\" (ball weights). Step 2: no named fault of this exercise is tied to harm. Set aside: the ball bouncing back into the face (BarBend's benefits page \"Be careful that it doesn’t bounce back in your face.\", Iron Man's \"be sure the ball does not bounce back up toward your face\", PureGym's \"you don't want it flying straight back into your face\", c8): each source ties the rebound to the ball chosen (PureGym's \"best done using a medicine ball without much bounce\"; Vitruve's \"a slam ball is softer and doesn’t bounce back when you slam it on the floor. Hence, the risk of injury with this ball is minimal.\" and ACE's \"If using a bouncing medicine ball make sure that you have ample space for safety\", c9; Iron Man's \"Hold a soft medicine ball\"), an equipment choice that LR-31 excludes, as it excludes a worn or loose band; it stays a risk line (risks[0]) and is a ruling ask in the writer record. Vitruve's \"Using the Wrong Medicine Ball\" (\"it won’t be the safest option\", \"without fearing a strong bounce off the floor\") is the same equipment choice. PureGym's \"be careful not to throw the ball onto your toes\" (c10, handlingMistakes[2]) names no harm word. ACE's \"to stiffen your torso and support your spine\" and \"to maintain spinal stability\" (c5) and ACE's heavy-ball \"Now that you’ve mastered a safe, effective and fun heavy ball slam\" name no harm; BarBend's \"Slams can help you learn to fully utilize your core to both promote force and protect your spine while in motion.\" is a benefit line in its rotational-performance section and is not a cue that corrects a named fault (D-SUP-PROTECT needs a cue that corrects a fault); Healthline's \"muscles tenderness and soreness (not pain)\" is about all its exercises. Step 3: Vitruve's list, in order: \"Using a Too Heavy Ball\" (a load choice, not a candidate); \"Trying to Accomplish Everything Too Fast\" (its text is the set length and rest a beginner picks: \"You do not want to go with a minute of slams followed by a minute of rest if you are new to medicine ball slams.\" and \"It is alright to stick to five sets of no more than eight repetitions at the start.\", a programming choice, not a candidate; ruling ask: read as rushing, it is the top fault, speed only, drawable false, and plate.mistake stays as now); \"Using the Wrong Medicine Ball\" (equipment choice); \"Not Using the Required Force to Perform Slam Throws\" (effort, not a candidate, as rear_delt_fly's \"No Mind-Muscle Connection\" item; read as a movement, its only sign is speed, so it is never drawable and plate.mistake stays as now); then \"Not Working Your Entire Body\" (c4), the first candidate. No other read source has a mistakes list (BarBend's two pages, StrengthLog, both ACE pages, BodBot, Iron Man, PureGym, Healthline). The rounded back (c5: ACE heavy-ball \"don’t round the back\"; BarBend's \"Keep your lower back flat\" and ACE's flat-back step only give the right position) is not on a list and is handlingMistakes[1]. The side view shows the hips and knees staying straight while the arms bring the ball down, so drawable is true. Also set aside from the fetcher's full scan (2026-10-22): BarBend's \"While most athletes rightfully find the Olympic lifts alluring\" (other lifts), \"most importantly load the movement more effectively\" (woodchoppers, another exercise), \"There may not be a better exercise for relieving stress\", \"metabolically challenging movements that stress a wide array of muscles at once\" and \"a stress-reliever\" (training load or mood, no fault); StrengthLog's \"release some stress\" and ACE's heavy-ball \"release the tension of a long, stressful workday\" (mood); Vitruve's \"one of the most sought-after qualities\" (another article) and \"cannot usually be used to identify you\" (cookie text); Iron Man's \"many of us are eager to shed excess body fat\" and \"a fitness goal that many aspire to achieve\" (sidebar, no fault); PureGym's \"one of the most underrated pieces of kit\", \"There are many push up variations\" and \"Perform as many reps as you can\" (other exercises, no fault) and \"Medicine balls are designed to be thrown around without risk of injury or destruction of property\" (the ball's design, no fault). Vitruve's \"Mistakes to Avoid\" heading and \"Here is a brief overview of mistakes you should avoid\" are list sentences, never read onto one item. Reading applied: LR-31 literal; a rebound caused by the ball chosen is an equipment choice, not a candidate (as a worn or loose band); a load, programming or equipment choice and effort are not candidates; \"support your spine\", \"spinal stability\", \"safe\" and a benefit line's \"protect your spine\" are not harm tied to a named fault (D-SUP-PROTECT needs a cue that corrects one). The two ruling asks in the writer record stay open.",
-      "drawable": true
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3 (D-SUP-LB10-FORCE): the top fault is the first candidate on the only common-mistakes list written for this exercise, Vitruve's \"Mistakes to Avoid\": \"Not Using the Required Force to Perform Slam Throws\" (c16), a soft slam (\"The main purpose of medicine ball slam throws is to build power, which you will not be able to achieve if your throws are not quite powerful.\"). Its only sign is the ball's speed, so drawable is false and handlingMistakes[0] is the soft slam; plate.mistake is the next fault by the same steps, item 5, \"Not Working Your Entire Body\" (c4), slamming with the arms only, which the side view shows (the hips and knees staying straight while the arms bring the ball down). Step 1: no frequency word for a fault of this exercise. Set aside: BarBend's \"Like most forms of plyometric work\" (all plyometric training), \"three of the most common and widely used slam exercises\" (variations), \"two common alternatives\" (other exercises), \"the two most common ones\" (FAQ questions), \"Many individuals may benefit more from performing slams\" and \"Most sports\" (no fault), \"often between 60-85% of heart rate max\" (cardio); BarBend's benefits page's \"A medicine ball is usually lighter\", \"Typically, you’ll want to use a medicine ball for slams\" and \"Slam balls, on the other hand, are common for overhead tosses, carries, and squats\" (ball types), \"many variations\" and \"many technical intricacies\" (no fault); Vitruve's \"one of the most valuable additions\" and \"One of the most important things about this workout is the perfect posture\" (no fault's frequency); Healthline's \"Most of them range from 10 to 20 pounds in weight\" (ball weights). Step 2: no named fault of this exercise is tied to harm. Set aside: the ball bouncing back into the face (BarBend's benefits page \"Be careful that it doesn’t bounce back in your face.\", Iron Man's \"be sure the ball does not bounce back up toward your face\", PureGym's \"you don't want it flying straight back into your face\", c8): each source ties the rebound to the ball chosen (PureGym's \"best done using a medicine ball without much bounce\"; Vitruve's \"a slam ball is softer and doesn’t bounce back when you slam it on the floor. Hence, the risk of injury with this ball is minimal.\" and ACE's \"If using a bouncing medicine ball make sure that you have ample space for safety\", c9; Iron Man's \"Hold a soft medicine ball\"), an equipment choice that LR-31 excludes (#296 ruling 7(a), comment 6343484589); it stays a risk line (risks[0]). Vitruve's \"Using the Wrong Medicine Ball\" (\"it won’t be the safest option\", \"without fearing a strong bounce off the floor\") is the same equipment choice. PureGym's \"be careful not to throw the ball onto your toes\" (c10, risks[1]) names no harm word. ACE's \"to stiffen your torso and support your spine\" and \"to maintain spinal stability\" (c5) and ACE's heavy-ball \"Now that you’ve mastered a safe, effective and fun heavy ball slam\" name no harm; BarBend's \"Slams can help you learn to fully utilize your core to both promote force and protect your spine while in motion.\" is a benefit line in its rotational-performance section and is not a cue that corrects a named fault (D-SUP-PROTECT needs a cue that corrects a fault); BarBend's \"crush it on impact\" is the ball (D-SUP-STRAIN); Healthline's \"muscles tenderness and soreness (not pain)\" is about all its exercises. Step 3: Vitruve's list, in order: \"Using a Too Heavy Ball\" (a load choice, not a candidate); \"Trying to Accomplish Everything Too Fast\" (its text is the set length and rest a beginner picks: \"You do not want to go with a minute of slams followed by a minute of rest if you are new to medicine ball slams.\" and \"It is alright to stick to five sets of no more than eight repetitions at the start.\", a programming choice, not a candidate; #296 ruling 7(b)); \"Using the Wrong Medicine Ball\" (equipment choice, #296 ruling 7(a)); \"Not Using the Required Force to Perform Slam Throws\" (c16): a candidate (D-SUP-LB10-FORCE), the first on the list, so the top fault, speed only; then \"Not Working Your Entire Body\" (c4), the plate fault. No other read source has a mistakes list (BarBend's two pages, StrengthLog, both ACE pages, BodBot, Iron Man, PureGym, Healthline). The rounded back (c5: ACE heavy-ball \"don’t round the back\"; BarBend's \"Keep your lower back flat\" and ACE's flat-back step only give the right position) is not on a list and is handlingMistakes[2]. Also set aside from the fetcher's full scan (2026-10-22): BarBend's \"While most athletes rightfully find the Olympic lifts alluring\" (other lifts), \"most importantly load the movement more effectively\" (woodchoppers, another exercise), \"There may not be a better exercise for relieving stress\", \"metabolically challenging movements that stress a wide array of muscles at once\" and \"a stress-reliever\" (training load or mood, no fault); StrengthLog's \"release some stress\" and ACE's heavy-ball \"release the tension of a long, stressful workday\" (mood); Vitruve's \"one of the most sought-after qualities\" (another article) and \"cannot usually be used to identify you\" (cookie text); Iron Man's \"many of us are eager to shed excess body fat\" and \"a fitness goal that many aspire to achieve\" (sidebar, no fault); PureGym's \"one of the most underrated pieces of kit\", \"There are many push up variations\" and \"Perform as many reps as you can\" (other exercises, no fault) and \"Medicine balls are designed to be thrown around without risk of injury or destruction of property\" (the ball's design, no fault). Vitruve's \"Mistakes to Avoid\" heading and \"Here is a brief overview of mistakes you should avoid\" are list sentences, never read onto one item. Reading applied: LR-31 literal; a rebound caused by the ball chosen is an equipment choice, not a candidate (#296 ruling 7(a)); a load, programming or equipment choice is not a candidate (#296 ruling 7(b)); not using the required force is a candidate whose only sign is speed (D-SUP-LB10-FORCE); \"support your spine\", \"spinal stability\", \"safe\" and a benefit line's \"protect your spine\" are not harm tied to a named fault (D-SUP-PROTECT needs a cue that corrects one).",
+      "drawable": false
     },
     "tells": [
       {
@@ -667,6 +694,14 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Slamming too softly.",
+      "fix": "Slam it down with as much force as possible.",
+      "claim": [
+        "c16",
+        "c3"
+      ]
+    },
+    {
       "mistake": "Slamming with the arms only.",
       "fix": "Press your hips back and bend your knees as you slam.",
       "claim": [
@@ -678,14 +713,6 @@
       "mistake": "Rounding the back.",
       "fix": "Keep your back flat and hinge from the hips.",
       "claim": "c5"
-    },
-    {
-      "mistake": "Throwing the ball onto your toes.",
-      "fix": "Slam it straight down between your feet.",
-      "claim": [
-        "c10",
-        "c3"
-      ]
     }
   ],
   "feel": {
@@ -804,7 +831,7 @@
   },
   "anchorSource": "bb-slam",
   "loadProgression": {
-    "text": "Start with a 10-pound ball and work up as you get stronger. Too heavy a ball reduces your speed.",
+    "text": "New to lifting? Start with a 10-pound ball and work up as you get stronger. Too heavy a ball reduces your speed.",
     "claims": [
       "c11"
     ]
@@ -825,6 +852,7 @@
     "Start position: BarBend's set-up page starts with the ball on the floor and squats down to grab it (c5's quote); StrengthLog, BodBot and ACE start standing with the ball at the chest (c1). The plate draws the standing overhead start (census note: overhead start, floor end).",
     "Leaning back at the top: Vitruve says \"make sure not to lean backward\" (c2); ACE's overhead slam says \"lean back while pushing the hips forward to lengthen the abdominal muscles\" (Step 3, not on the card). StrengthLog and BarBend's benefits page give hips slightly forward. The plate draws the trunk tall with the hips slightly forward, and no line asks for a lean.",
     "Read and not cited: WorkoutLabs (workoutlabs.com/exercise-guide/medicine-ball-slams/) says \"Keeping your elbows bent, forcefully throw the ball at the ground.\", which conflicts with the straight arms of c2 and c5's BarBend benefits wording; ACE's \"Throw, Catch, Slam: Smarter Medicine-Ball Training\" (Certified, August 2026) is about programming medicine-ball sessions in general; Fitness Volt's and BarBend's slam-alternatives pages are about other exercises.",
-    "Tried and not usable (2026-10-22): barbend.com/medicine-ball-slam/, garagegymreviews.com (no slam guide in its sitemap), motra.com (no slam page), menshealth.com and puregym.com exercise URLs gave 404; verywellfit.com and shape.com gave 402; muscleandstrength.com 403."
+    "Tried and not usable (2026-10-22): barbend.com/medicine-ball-slam/, garagegymreviews.com (no slam guide in its sitemap), motra.com (no slam page), menshealth.com and puregym.com exercise URLs gave 404; verywellfit.com and shape.com gave 402; muscleandstrength.com 403.",
+    "LB10 fix round 2026-10-22 (lb10-research-verify.md): medicine_ball_slam-1 (R-LB10-6, D-SUP-LB10-FORCE): new c16; handlingMistakes [0] soft slam, [1] arms only, [2] rounding (the toes line stays risks[1], c10); drawable false; why and rankNote rewritten; plate.mistake what and claim unchanged. medicine_ball_slam-2: c13 gains BarBend's obliques sentence. medicine_ball_slam-3: loadProgression keeps Healthline's \"new to\" condition. R-LB10-10: ruling-ask strings replaced by #296 rulings 7(a), 7(b) and D-SUP-LB10-FORCE."
   ]
 }

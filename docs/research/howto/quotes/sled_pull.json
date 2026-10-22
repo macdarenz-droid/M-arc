@@ -218,6 +218,14 @@
    "status": "verbatim",
    "closest": "Pulling with slack in the rope/not pre-tensioning",
    "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "gs-sled",
+   "text": "A good rule of thumb: Aim for 50-70% of bodyweight when learning the technique.",
+   "status": "verbatim",
+   "closest": "A good rule of thumb: Aim for 50-70% of bodyweight when learning the technique.",
+   "note": "Under 'How Much Weight Should You Sled Pull?'. Contiguous string only in the served JSON-LD FAQ answer and (after tag stripping) flat page text. In the visible rendered HTML it splits: paragraph ends 'A good rule of thumb:' then a bullet list item starts 'Aim for 50-70% of bodyweight when learning the technique.' (the figure is bold, in a separate <li>). Quote needs both parts joined."
   }
  ]
 }

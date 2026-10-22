@@ -402,6 +402,30 @@
       "status": "verbatim",
       "closest": "Concentrating on keeping your feet on the floor will help your wall balls feel more efficient but, as all tips above, it’s something you need to concentrate on otherwise it won’t happen.",
       "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "bb-wb",
+      "text": "Set your feet shoulder-width apart, with the toes roughly eight to 12 inches away from the all (face the wall).",
+      "status": "verbatim",
+      "closest": "Set your feet shoulder-width apart, with the toes roughly eight to 12 inches away from the all (face the wall).",
+      "note": "Page has the typo 'all' for 'wall'. Under 'Step 1 — Set Up' in 'How to Do the Wall Ball'."
+    },
+    {
+      "claim": "c2",
+      "source": "hl-wb",
+      "text": "Start with your feet shoulder-width apart while holding the medicine ball, facing a sturdy wall that’s 2 to 3 feet away.",
+      "status": "verbatim",
+      "closest": "Start with your feet shoulder-width apart while holding the medicine ball, facing a sturdy wall that’s 2 to 3 feet away.",
+      "note": "Numbered step 1 of the Healthline slam-ball wall-ball exercise (curly apostrophe matches)."
+    },
+    {
+      "claim": "c14",
+      "source": "bb-wb",
+      "text": "The triceps work to extend the elbows needed to fully throw the wall ball overhead high enough to hit the target.",
+      "status": "verbatim",
+      "closest": "The triceps work to extend the elbows needed to fully throw the wall ball overhead high enough to hit the target.",
+      "note": "Under h3 'Triceps' (muscles worked)."
     }
   ]
 }

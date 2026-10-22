@@ -354,6 +354,30 @@
       "status": "verbatim",
       "closest": "Hold the medicine ball with both hands in front of your chest. Engage your core and slightly bend your knees.",
       "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "vit-slam",
+      "text": "Not Using the Required Force to Perform Slam Throws",
+      "status": "verbatim",
+      "closest": "Not Using the Required Force to Perform Slam Throws",
+      "note": "Visible h3 heading (also in table of contents), under 'Mistakes to Avoid'."
+    },
+    {
+      "claim": "c16",
+      "source": "vit-slam",
+      "text": "The main purpose of medicine ball slam throws is to build power, which you will not be able to achieve if your throws are not quite powerful.",
+      "status": "verbatim",
+      "closest": "The main purpose of medicine ball slam throws is to build power, which you will not be able to achieve if your throws are not quite powerful.",
+      "note": "Visible text, directly under h3 'Not Using the Required Force to Perform Slam Throws'."
+    },
+    {
+      "claim": "c13",
+      "source": "bb-slam",
+      "text": "The obliques are primarily responsible for rotation of the core, so when you’re doing rainbow slams or rotational throwing variations, the obliques are used to a higher degree.",
+      "status": "verbatim",
+      "closest": "The obliques are primarily responsible for rotation of the core, so when you’re doing rainbow slams or rotational throwing variations, the obliques are used to a higher degree.",
+      "note": "Visible text under h3 'Obliques'. 'obliques' is a link in the first sentence; text is contiguous once tags are stripped."
     }
   ]
 }

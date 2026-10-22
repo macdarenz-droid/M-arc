@@ -598,7 +598,7 @@
    "claim": "c17"
   },
   {
-   "step": "Stand behind the sled; hands halfway down the handles.",
+   "step": "Stand behind the sled; hands about halfway down the handles.",
    "claim": "c1"
   },
   {
@@ -757,7 +757,7 @@
   {
    "key": "hands",
    "kind": "hand",
-   "right": "Hands halfway down the handles, arms straight.",
+   "right": "Hands about halfway down the handles, arms straight.",
    "wrong": null,
    "claim": [
     "c1",
@@ -794,6 +794,7 @@
   "Heels: Garage Gym Reviews and Fitness Volt keep the heels off the floor; Fitness Volt adds that very heavy loads may need the heels down (c8). The card follows the heels-up line.",
   "Feel: calves are in feel.primary from c13 and c15 (see libraryDiff). core is in no feel role (LR-35); abs and obliques stand for the trunk (c14).",
   "The finish (c18) and the hand-height choice (c2) are research data, not shown lines.",
-  "Read but not cited: Muscle & Fitness's sled-push page (one paragraph of steps, nothing the cited pages do not cover). 404 on 2026-10-22: garagegymreviews.com/sled-push, row.gymshark.com/blog/article/how-to-sled-push, menshealth.com sled-push, healthline.com sled-push, blog.nasm.org/sled-push, puregym.com sled-push, motra.com/exercises/sled-push, hevyapp.com, hyrox.com/sled-push, womenshealthmag.com; Verywell Fit 402."
+  "Read but not cited: Muscle & Fitness's sled-push page (one paragraph of steps, nothing the cited pages do not cover). 404 on 2026-10-22: garagegymreviews.com/sled-push, row.gymshark.com/blog/article/how-to-sled-push, menshealth.com sled-push, healthline.com sled-push, blog.nasm.org/sled-push, puregym.com sled-push, motra.com/exercises/sled-push, hevyapp.com, hyrox.com/sled-push, womenshealthmag.com; Verywell Fit 402.",
+  "LB10 fix round 2026-10-22 (lb10-research-verify, R-LB10-10): sled_push-1: setup[1] and zooms[2].right keep 'about'."
  ]
 }

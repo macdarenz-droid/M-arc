@@ -598,6 +598,23 @@
      "where": "Set up/Footwork, step 5"
     }
    ]
+  },
+  {
+   "id": "c25",
+   "text": "One source lists stride length as a mistake: regular-sized steps can throw a beginner off balance.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-farmers"
+   ],
+   "quotes": [
+    {
+     "source": "bb-farmers",
+     "text": "Trying to take regular-sized steps as a beginner might throw you off balance.",
+     "where": "Common Farmer’s Carry Mistakes: Stride Length"
+    }
+   ]
   }
  ],
  "sources": [
@@ -654,7 +671,7 @@
  ],
  "plate": {
   "view": "side",
-  "viewWhy": "Census view is side; the tall, upright torso with the arms long at the sides (c4, c9), the shoulders back and down and their fault, the shoulders shrugged high (c5), and the short steps (c8) read from the side.",
+  "viewWhy": "Census view is side; the tall, upright torso with the arms long at the sides (c4, c9), the shoulders back and down and the plate fault, steps too long (c25), and the short steps (c8) read from the side.",
   "equipment": "Two dumbbells (census need dumbbell, exists), one in each hand at the sides; floor line (census floor). The trap bar is the listed alternative (variantLine).",
   "start": "One step: torso upright, gaze ahead, neck and spine neutral, chest tall (c4); arms fully extended at the sides, a dumbbell in each hand in a neutral grip, thumb wrapped (c3, c4, c13); shoulders back and down, not shrugged (c5); feet about hip-width, one foot starting a short step (c3, c8).",
   "end": "The next short step, with the same tall torso, long arms and level weights (c4, c8, c9).",
@@ -676,11 +693,14 @@
    }
   ],
   "mistake": {
-   "what": "Shrugging the shoulders high as fatigue sets in.",
-   "why": "BarBend says many lifters may try to make up for fatigue by shrugging their shoulders high, and lists it under poor upper back positioning; keep the shoulders back and down (c5).",
-   "claim": "c5",
-   "drawable": true,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 1: shrugging the shoulders high (c5). BarBend's \"Many lifters may try to compensate for fatigue by shrugging their shoulders high.\" sits under its own item \"Poor Upper Back Positioning\" on its farmer's-carry mistakes list and says many lifters make this exercise's fault, so it is a step-1 hit (D-SUP-LB7-DIPREPS: a \"many …\" sentence about this exercise's own fault counts); it is the item's own sentence, not a list sentence read onto one item. LR-31 names 'may' as no frequency word, but the frequency word here is \"Many lifters\"; the other reading is recorded in the writer's notes as a ruling ask. No other step-1 hit. Set aside: BarBend's heading \"Common Farmer’s Carry Mistakes\" and intro \"Be sure you’re not falling prey to these common flaws in farmer’s carry training.\", and Garage Gym Reviews' heading and intro \"Here are some of the most common mistakes associated with the farmer’s carry.\" (list headings and list sentences); Garage Gym Reviews' \"These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.\" (c6) says what the tension faults point to (their cause, the load), not how often they happen (renegade_row precedent); BarBend's \"which is usually lacking in beginners\" (balance in beginners), \"there are often advantages to taking it more accessible\" (load), \"Strongman competitions typically use special handles\" and \"athletes typically perform heavy carries\" (equipment, programming), \"Using a dumbbell will likely be the easiest implement for most beginners\" (an implement); Garage Gym Reviews' \"many farmers have strength\", \"Sets of farmer’s carries often consist of just one walk\" and \"most lifters can move more weight on a barbell bench press ... trap-bar carries often allow you to carry more weight\" (farmers, programming, another exercise and a load); the farmer's-walk breakdown op-ed's \"a common strongman event\" (the exercise), \"most likely causing you to drop\" (where the hands sit on strongman handles: a grip, LR-31) and \"you will most likely feel more comfortable with an even stance\" (stance comfort, not a fault). Harm quotes about faults, set aside because step 1 decides: Garage Gym Reviews' rushing line (\"a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee\", c7; speed only, handlingMistakes[1]); \"The farmer’s walk exercise can wreak havoc on your lower back if you’re not bracing your core.\" (c10; a tip, the fault on no list); \"tensing too hard in the wrong places may produce adverse effects\" (its list item, c6); \"the weights may slip from your grasp, land on your toe, bounce into your ankle\" (c14; a grip); the op-ed's \"if the weight is heavy enough it will put more strain on your lower back\" (c24, WEAK, walking before standing tall on strongman handles). Load lines are not candidates: Garage Gym Reviews' \"Struggling to move weights that are too heavy may cause our form to deteriorate, leaving us susceptible to injury\" and BarBend's \"Going Too Light\". Not faults: BarBend's \"a large amount of strain is placed on the shoulder joint\" (holding a load, muscles section), Garage Gym Reviews' trap-bar \"helps reduce the strain on the lower back\" (equipment), Fitness Volt's \"Stop if you feel pain.\" (a stop line, c15). drawable is true: the census view is side, and shoulders shrugged high are a still sign that the side view shows (shoulder height against the neck). Step 3 would not decide here; for the record, BarBend's list names the shrug third, after a load choice (going too light, not a candidate) and stride length. Other scan hits set aside: Garage Gym Reviews' \"abdominal bracing stabilizes the spine, which may reduce your risk of injury\" is the brace cue (its fault, not bracing, is on no list); \"take your time on these to reap the most benefit from each carry and minimize your risk of injury\" is the rushing item's own advice (speed only); \"you’re bound to get less of a workout in the long run if you’re dropping the weights left and right\" is under the load item; BarBend's \"Trying to take regular-sized steps as a beginner might throw you off balance.\" (its stride-length item) and \"It will also help prevent you from resting the weights on your sides.\" (the shrug item) state no LR-31 harm word; BarBend's benefit lines (\"the prevention and reduction of low back pain\", \"aiding in injury prevention\", \"the protection of the spine\", \"can help alleviate lower back pain\", \"protecting the spine\") are about the exercise, not a fault; the op-ed's \"the weight can start to swing forward and back, making it harder to hold onto\" and its turning line \"to avoid momentum twisting the farmers in front of you causing it impede your steps or even drop the handles\" are written for strongman handles and name no harm word; Fitness Volt's \"not a guarantee against injury\", \"an injury-free load for every reader\", \"or prevent injury\" and \"Do not judge a carry by how much discomfort you can tolerate\" are disclaimers and programming, not faults; BarBend's \"Using a dumbbell will likely be the easiest implement for most beginners\", \"Use about 60 to 65 percent of your typical weight\", \"the most notable benefits\", \"most commonly known\", \"commonly referred to\", \"most notably\", \"many disciplines\", \"many variations\" and \"the most beneficial to maximal output\", and Garage Gym Reviews' \"common mistakes to avoid\" (intro) and \"everyone can benefit\" are about implements, loads, muscles, benefits or the article, not how often a fault happens. Reading applied: \"Many lifters\" is read as LR-31's frequency word and the \"may\" as not removing it (ruling ask in the writer's notes); under the other reading the pick changes as the notes say."
+   "what": "Steps too long for a beginner.",
+   "why": "The top fault, rushing (c7), is speed only, so the plate draws the next fault: BarBend's list, the anchor's, names stride length after a load choice (c25), and two sources say short steps (c8).",
+   "claim": [
+    "c25",
+    "c8"
+   ],
+   "drawable": false,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: rushing (c7). Reading applied: D-SUP-LB10-MAY (#296, comment 6343484589). Step 1 finds no hit. Set aside: BarBend's \"Many lifters may try to compensate for fatigue by shrugging their shoulders high.\" ('may', D-SUP-LB10-MAY); Garage Gym Reviews' \"These characteristics usually indicate that you’re struggling to carry a load that’s too heavy for you.\" (c6) says what the tension faults point to, the load, a cause, not how often they happen (renegade_row, R-LB7); the list headings and intros (BarBend's \"Common Farmer’s Carry Mistakes\" and \"Be sure you’re not falling prey to these common flaws in farmer’s carry training.\", Garage Gym Reviews' \"Here are some of the most common mistakes associated with the farmer’s carry.\" and \"common mistakes to avoid\") are list headings and list sentences; BarBend's \"which is usually lacking in beginners\" (balance in beginners), \"there are often advantages to taking it more accessible\" (load), \"Strongman competitions typically use special handles\", \"athletes typically perform heavy carries\", \"Using a dumbbell will likely be the easiest implement for most beginners\", \"Use about 60 to 65 percent of your typical weight\", \"the most notable benefits\", \"commonly referred to\", \"most commonly known\", \"most notably\", \"many disciplines\", \"many variations\" and \"the most beneficial to maximal output\"; Garage Gym Reviews' \"many farmers have strength\", \"Sets of farmer’s carries often consist of just one walk\", \"most lifters can move more weight on a barbell bench press ... trap-bar carries often allow you to carry more weight\" and \"everyone can benefit\"; and the op-ed's \"a common strongman event\", \"most likely causing you to drop\" (hand placement on strongman handles, a grip) and \"you will most likely feel more comfortable with an even stance\" are about implements, loads, muscles, benefits, programming, another exercise or the article, not how often a fault happens. Step 2, named faults (plate.mistake, handlingMistakes or a mistakes list) tied to harm: only rushing, Garage Gym Reviews' \"Rushing through the movement is a recipe for disaster, as a single misstep could be the reason you pull your calf muscle, roll your ankle, twist your knee, or experience any of many injuries\" (c7); its \"take your time on these to reap the most benefit from each carry and minimize your risk of injury\" is the same item's advice. Not tied to harm: the shrug (BarBend's \"to maximize your upper back activation\" and \"It will also help prevent you from resting the weights on your sides.\"); stride length (BarBend's \"might throw you off balance\", c25); Garage Gym Reviews' tensing item (\"may produce adverse effects\": no load and no injury, D-SUP-STRAIN); the lean (c9, no harm). Not named faults, so not counted: not bracing (c10 \"can wreak havoc on your lower back\", and \"abdominal bracing stabilizes the spine, which may reduce your risk of injury\", a tips section); the op-ed's walking before standing tall, \"it will put more strain on your lower back\" (c24, WEAK; 'strain' counts under D-SUP-STRAIN, but the fault is a strongman-handle technique on no list and not on the card's faults), and its \"the weight can start to swing forward and back\" and turning line \"to avoid momentum twisting the farmers in front of you causing it impede your steps or even drop the handles\" (strongman handles, no harm word); the loose grip (c14, a grip, no LR-31 harm word). Not faults: BarBend's \"a large amount of strain is placed on the shoulder joint\" (holding a load, muscles section) and \"without all that pressure on your elbows\" (front-rack variation); BarBend's benefit lines (\"the prevention and reduction of low back pain\", \"aiding in injury prevention\", \"the protection of the spine\", \"can help alleviate lower back pain\", \"protecting the spine\"); Garage Gym Reviews' trap-bar \"reduce the strain on the lower back\" (equipment); load lines (\"Struggling to move weights that are too heavy may cause our form to deteriorate, leaving us susceptible to injury\", \"if you’re dropping the weights left and right\", BarBend's \"Going Too Light\"; LR-31); Fitness Volt's \"not a guarantee against injury\", \"an injury-free load for every reader\", \"or prevent injury\" and \"Do not judge a carry by how much discomfort you can tolerate\" (disclaimers and programming) and \"Stop if you feel pain.\" (a stop line, c15). Rushing is speed only, so drawable is false and handlingMistakes[0] is rushing. plate.mistake by the same steps: step 1 none, step 2 none left, so step 3. Two lists are written for this exercise (BarBend's, Garage Gym Reviews'); the anchor's comes first (anchorSource bb-farmers). Its item 1, \"Going Too Light\", is a load choice, not a candidate; item 2, \"Stride Length\": \"Trying to take regular-sized steps as a beginner might throw you off balance.\" (c25). Steps too long are a still sign the side view shows, so plate.mistake is steps too long for a beginner."
   },
   "tells": [
    {
@@ -780,22 +800,22 @@
  ],
  "handlingMistakes": [
   {
-   "mistake": "Shrugging your shoulders up as you tire.",
-   "fix": "Keep your shoulders back and down.",
-   "claim": "c5"
+   "mistake": "Rushing the walk.",
+   "fix": "Slow down. Don't speed up for more distance.",
+   "claim": "c7"
   },
   {
-   "mistake": "Rushing the walk.",
-   "fix": "Slow down and take short, deliberate steps.",
+   "mistake": "Steps too long for your level.",
+   "fix": "Take short, deliberate steps.",
    "claim": [
-    "c7",
+    "c25",
     "c8"
    ]
   },
   {
-   "mistake": "Leaning forward or to one side.",
-   "fix": "Stay upright, the weights even on both sides.",
-   "claim": "c9"
+   "mistake": "Shrugging your shoulders up as you tire.",
+   "fix": "Keep your shoulders back and down.",
+   "claim": "c5"
   }
  ],
  "breathing": {
@@ -916,7 +936,7 @@
  },
  "anchorSource": "bb-farmers",
  "loadProgression": {
-  "text": "Start with a manageable load, about a quarter of your body weight in each hand. Repeat it until the whole carry stays controlled. Then add a little load or distance, not both.",
+  "text": "Start with a manageable load, about a quarter of your body weight in each hand. Repeat it until the whole carry stays controlled. Then consider a little more load or distance, not both.",
   "claims": [
    "c18"
   ]
@@ -951,6 +971,7 @@
   "Shared cards: none lists lib_farmer_s_carry in appliesTo (shared/ at the start head). The lower-back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28): the sheet cannot ship before the back-pain box, and back-pain-box.json's appliesTo does not yet list this id.",
   "Shoulders: BarBend says keep the shoulders back and down, Garage Gym Reviews pinches the shoulder blades (c4), and Fitness Volt warns against forcing a shrug or an exaggerated shoulders-back position (c5). The card says back and down, without forcing.",
   "Speed: Garage Gym Reviews and Fitness Volt say slow and controlled, BarBend short, fast strides (c7, c8). The shown lines say short, deliberate steps and the rushing fault, from the slow line.",
-  "Read but not cited: McGill 2009 (PubMed 19528856, abstract, efetch; Fitness Volt's source [2]): strongman events and spine load, nothing farmer's-walk specific in the abstract. 404 or 502 on 2026-10-22: healthline.com farmers-walk, puregym.com farmers-walk, muscleandfitness.com farmers-walk (502); ACE farmer's-carry URL redirects to the library index."
+  "Read but not cited: McGill 2009 (PubMed 19528856, abstract, efetch; Fitness Volt's source [2]): strongman events and spine load, nothing farmer's-walk specific in the abstract. 404 or 502 on 2026-10-22: healthline.com farmers-walk, puregym.com farmers-walk, muscleandfitness.com farmers-walk (502); ACE farmer's-carry URL redirects to the library index.",
+  "LB10 fix round 2026-10-22 (lb10-research-verify, R-LB10-3, R-LB10-10): farmer_s_carry-1: D-SUP-LB10-MAY sets the shrug aside at step 1; the top fault is rushing (step 2, c7; speed only, drawable false), handlingMistakes reordered (rushing, steps too long, shrug; the lean stays in posture and zooms), plate.mistake is BarBend's stride length (step 3, new c25), viewWhy and rankNote rewritten. farmer_s_carry-2: loadProgression keeps Fitness Volt's 'consider'."
  ]
 }

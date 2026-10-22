@@ -305,6 +305,23 @@
      "where": "Mistakes To Avoid, item 5 heading"
     }
    ]
+  },
+  {
+   "id": "c14",
+   "text": "A rule of thumb: about 50-70 % of body weight while learning the technique.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "gs-sled"
+   ],
+   "quotes": [
+    {
+     "source": "gs-sled",
+     "text": "A good rule of thumb: Aim for 50-70% of bodyweight when learning the technique.",
+     "where": "How Much Weight Should You Sled Pull?"
+    }
+   ]
   }
  ],
  "sources": [
@@ -313,7 +330,7 @@
    "url": "https://row.gymshark.com/blog/article/how-to-sled-pull",
    "title": "Sled Pull Guide: How To Improve Your Technique, Training & Full-Body Strength | Gymshark Central",
    "kind": "coach",
-   "year": null,
+   "year": 2025,
    "pmid": null,
    "access": "full",
    "checked": "2026-10-22"
@@ -358,7 +375,7 @@
    "why": "Gymshark names it under heavy load or a tired core and says it puts the back at risk (c8).",
    "claim": "c8",
    "drawable": true,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 2: leaning too far back, the torso pitched back and the lower back taking the load (c8). Step 1 finds no frequency word for a candidate fault. Set aside: \"This might sound too simple, but it’s surprisingly common.\" (c10, under the list item \"Forgetting to breathe\") is about forgetting to breathe, which the writer reads as no body or equipment position or movement during the set (CARD-V2:36), so it is not a candidate (R-LB7-3 left this open; it is a ruling ask in the writer's notes: if it is a candidate, it is the step-1 top fault and handlingMistakes[0], not drawable, and plate.mistake stays this pick by step 2); \"Letting the rope drift outside your lane, stepping over boundaries, or creating rope tangles behind you are common mistakes flagged by Hyrox guides.\" is a list sentence naming three faults, read onto none of them (LR-31 exclusion), and is about competition lanes; \"Stretching too far before pulling often feels impactful\" says how the overreach feels, not how often it happens; \"Many experienced Hyrox athletes use a “stomp and shuffle” style\", \"This technique, seen in most Hyrox prep videos\" (c5) and \"the backward walk technique is often the most sustainable choice\" are about techniques, not faults; \"Some athletes begin pulls while there’s slack\" has no frequency word; \"usually with a rope, harness, or straps\", \"often seen as one of the longest stations\", \"you’ll often have to reset quickly\" and \"usually around the 30-40kg range\" are about equipment and the race; \"it’s easy to pitch your torso back\" (c8), \"it’s easy to lose rhythm or trip\" (c9), \"it’s easy to lose power here due to fatigue\" and \"It’s easy to over-rely on your hips\" use 'easy to' (LR-31 exclusion). Step 2: leaning too far back is the first item on the source's \"Mistakes To Avoid\" list (c13), and the source ties it to harm: \"and puts your back at risk\" (c8); under D-SUP-PROTECT, \"A tall, stable torso ... preventing strain on the lower back\" and \"resist sliding or leaning back ... while protecting your spine\" (c8) tie it to harm again. No other named fault is tied to harm: forgetting to breathe \"cuts your endurance\" (c10), the overreach and the slack cost energy and time, rope management is a rhythm and competition point (c5's \"helps maintain rhythm and safety\" names no body part), and yanking the rope (c6) and the hip-drive \"If you rush the movement or fail to brace your core, you’ll start jerking the rope, wasting energy\" state no harm. Set aside: \"If your form slips and your back rounds, it can place unnecessary strain on your lower spine\" (c11) is written for the hand-over-hand pull, another variant (WEAK), and a rounded back is on no list and not in handlingMistakes; it stays as risks[2]. \"soften your knees to stop your lower back from taking the strain\" is a hand-over-hand setup cue whose fault (stiff knees) is named nowhere; \"puts your back at risk\" is read as harm (risk of injury), and the protect cues give the same pick without it. Step 3 gives the same fault (first on the list). drawable is true: the census view is side, and a torso pitched back is a still sign from the side. Other scan hits set aside: \"Hyrox training tips often emphasise pulling only once the rope is taut.\" says how often tips give a cue, not how often the slack fault happens; \"most people find the sled pull harder because of grip fatigue\" compares the exercise with the push; \"Planting your feet in a slight quarter-squat stance locks you into the ground and stops your lower back from overcompensating.\" is a stance cue that names no LR-31 harm word; \"one of the most complete full-body workouts\", \"usually with a rope, harness, or straps\", the grip-training \"replicate that strain\" and \"the pain cave\" are about the exercise, equipment or other drills. Reading applied: a forgotten breath is read as not a body or equipment position or movement, so not a candidate (ruling ask in the writer's notes); under the other reading only handlingMistakes[0] and its drawable change, and plate.mistake stays this pick."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: leaning too far back, the torso pitched back and the lower back taking the load (c8). Step 1 finds no frequency word for a candidate fault. Set aside: \"This might sound too simple, but it’s surprisingly common.\" (c10, under the list item \"Forgetting to breathe\") is about forgetting to breathe, which the writer reads as no body or equipment position or movement during the set (CARD-V2:36), so it is not a candidate (D-SUP-LB10-BREATH, #296, comment 6343484589); \"Letting the rope drift outside your lane, stepping over boundaries, or creating rope tangles behind you are common mistakes flagged by Hyrox guides.\" is a list sentence naming three faults, read onto none of them (LR-31 exclusion), and is about competition lanes; \"Stretching too far before pulling often feels impactful\" says how the overreach feels, not how often it happens; \"Many experienced Hyrox athletes use a “stomp and shuffle” style\", \"This technique, seen in most Hyrox prep videos\" (c5) and \"the backward walk technique is often the most sustainable choice\" are about techniques, not faults; \"Some athletes begin pulls while there’s slack\" has no frequency word; \"usually with a rope, harness, or straps\", \"often seen as one of the longest stations\", \"you’ll often have to reset quickly\" and \"usually around the 30-40kg range\" are about equipment and the race; \"it’s easy to pitch your torso back\" (c8), \"it’s easy to lose rhythm or trip\" (c9), \"it’s easy to lose power here due to fatigue\" and \"It’s easy to over-rely on your hips\" use 'easy to' (LR-31 exclusion). Step 2: leaning too far back is the first item on the source's \"Mistakes To Avoid\" list (c13), and the source ties it to harm: \"and puts your back at risk\" (c8); under D-SUP-PROTECT, \"A tall, stable torso ... preventing strain on the lower back\" and \"resist sliding or leaning back ... while protecting your spine\" (c8) tie it to harm again. No other named fault is tied to harm: forgetting to breathe \"cuts your endurance\" (c10), the overreach and the slack cost energy and time, rope management is a rhythm and competition point (c5's \"helps maintain rhythm and safety\" names no body part), and yanking the rope (c6) and the hip-drive \"If you rush the movement or fail to brace your core, you’ll start jerking the rope, wasting energy\" state no harm. Set aside: \"If your form slips and your back rounds, it can place unnecessary strain on your lower spine\" (c11) is written for the hand-over-hand pull, another variant (WEAK), and a rounded back is on no list and not in handlingMistakes; it stays as risks[2]. \"soften your knees to stop your lower back from taking the strain\" is a hand-over-hand setup cue whose fault (stiff knees) is named nowhere; \"puts your back at risk\" is read as harm (risk of injury), and the protect cues give the same pick without it. Step 3 gives the same fault (first on the list). drawable is true: the census view is side, and a torso pitched back is a still sign from the side. Other scan hits set aside: \"Hyrox training tips often emphasise pulling only once the rope is taut.\" says how often tips give a cue, not how often the slack fault happens; \"most people find the sled pull harder because of grip fatigue\" compares the exercise with the push; \"Planting your feet in a slight quarter-squat stance locks you into the ground and stops your lower back from overcompensating.\" is a stance cue that names no LR-31 harm word; \"one of the most complete full-body workouts\", \"usually with a rope, harness, or straps\", the grip-training \"replicate that strain\" and \"the pain cave\" are about the exercise, equipment or other drills. Reading applied: D-SUP-LB10-BREATH: a forgotten breath is not a candidate."
   },
   "tells": [
    {
@@ -453,7 +470,7 @@
    "claim": "c6"
   },
   {
-   "mistake": "Rope piling up at your feet.",
+   "mistake": "Leaving the rope piled at your feet.",
    "fix": "Flick or step it aside between steps.",
    "claim": "c5"
   }
@@ -575,14 +592,14 @@
  "anchorSource": "gs-sled",
  "anchorNote": "Gymshark Central's sled pull guide read in full (hand-over-hand, hip drive and backward drag). No ACE or NASM sled-pull page was found (NASM URL 404, 2026-10-02); PubMed has sled-towing sprint studies but none on rope-pull technique. West 2014 (abstract) gives one load and recovery data point for backward drags. The Workout Mag page was read but not cited (thin, with no named author).",
  "loadProgression": {
-  "text": "Start with a lighter sled and shorter distances, and build up as your footwork and rope handling settle.",
+  "text": "Start with a lighter sled, about 50-70% of your body weight while you learn, and shorter distances. Build up as your footwork and rope handling settle.",
   "claims": [
-   "c9"
+   "c9",
+   "c14"
   ]
  },
  "gaps": [],
  "unsourced": [
-  "A starting load in % of body weight for beginners.",
   "Stance width for the hand-over-hand variant drawn as an option.",
   "Harness set-up."
  ],
@@ -591,6 +608,7 @@
   "Tier B checklist: no machine depth or lockout; lower back covered (c8, c11).",
   "Writer fix 2026-10-02: feel row 2 means changed from \"They help drive you back\" to stay within c7; quote re-read in gs-sled.",
   "Fix round 2026-10-02 (verify w0): A20 c12 gains West 2014's peak-power sentence; R-W0-4 calves secondary recorded in libraryDiff.proposal.",
-  "LB10 LR-31/LR-33 pass 2026-10-22: rankNote added (LR-31 step 2, pick and drawable unchanged; handlingMistakes order unchanged). gs-sled re-fetched by curl: the page now carries 'Last Edited 23.10.25'; every kept quote is in today's text; 5 quotes in c4, c8, c9 and c11 now carry ’ as the page prints it, and every gs-sled quote's where names today's section heading. New quotes: c8 gains the 'Stack your posture' and 'Anchor with your legs' protect lines (D-SUP-PROTECT); c10 gains the 'surprisingly common' sentence; c13 (new) records the 'Mistakes To Avoid' list. Tempo stays null/null/null: no quote asks for a pause or gives seconds (LR-33). Shown-line fixes (CARD-V2:68, LR-6, hedges): checkpoints[0] and setup[2] 'core engaged' (c2's word); checkpoints[1] drops 'stacked' (not in its claim); setup[1] and setup[4] use their quotes' words; handlingMistakes[0].fix drops 'stacked'; feel.rows[0-1] means use c7's 'lights up'; feel.rows[2].means is in LR-6 shape (no symptom-to-cause clause); risks[2] keeps c11's 'can'. core stays in feel.secondary for LIB-MUSCLE (LR-35, R-LB7-8)."
+  "LB10 LR-31/LR-33 pass 2026-10-22: rankNote added (LR-31 step 2, pick and drawable unchanged; handlingMistakes order unchanged). gs-sled re-fetched by curl: the page now carries 'Last Edited 23.10.25'; every kept quote is in today's text; 5 quotes in c4, c8, c9 and c11 now carry ’ as the page prints it, and every gs-sled quote's where names today's section heading. New quotes: c8 gains the 'Stack your posture' and 'Anchor with your legs' protect lines (D-SUP-PROTECT); c10 gains the 'surprisingly common' sentence; c13 (new) records the 'Mistakes To Avoid' list. Tempo stays null/null/null: no quote asks for a pause or gives seconds (LR-33). Shown-line fixes (CARD-V2:68, LR-6, hedges): checkpoints[0] and setup[2] 'core engaged' (c2's word); checkpoints[1] drops 'stacked' (not in its claim); setup[1] and setup[4] use their quotes' words; handlingMistakes[0].fix drops 'stacked'; feel.rows[0-1] means use c7's 'lights up'; feel.rows[2].means is in LR-6 shape (no symptom-to-cause clause); risks[2] keeps c11's 'can'. core stays in feel.secondary for LIB-MUSCLE (LR-35, R-LB7-8).",
+  "LB10 fix round 2026-10-22 (lb10-research-verify, R-LB10-10): sled_pull-1: c14 (new, gs-sled starting-load rule of thumb), loadProgression cites c9 and c14, unsourced starting-load entry dropped; sled_pull-2: rankNote cites D-SUP-LB10-BREATH; sled_pull-3: handlingMistakes[2].mistake 'Leaving the rope piled at your feet.'; sled_pull-4: gs-sled year 2025."
  ]
 }

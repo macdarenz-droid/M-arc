@@ -450,6 +450,14 @@
    "status": "verbatim",
    "closest": "First, if the weight is heavy enough it will put more strain on your lower back (think deadlifting leaned out on your tiptoes).",
    "note": ""
+  },
+  {
+   "claim": "c25",
+   "source": "bb-farmers",
+   "text": "Trying to take regular-sized steps as a beginner might throw you off balance.",
+   "status": "verbatim",
+   "closest": "Trying to take regular-sized steps as a beginner might throw you off balance.",
+   "note": "Under h3 'Stride Length'. Visible text and served HTML both match."
   }
  ]
 }
