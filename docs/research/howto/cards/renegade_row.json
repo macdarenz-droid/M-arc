@@ -197,7 +197,7 @@
     },
     {
       "id": "c9",
-      "text": "Dumbbells set down too hard, or onto a corner, can hurt the wrists; keep the wrists neutral and lower with control.",
+      "text": "Dumbbells set down too hard, or onto a corner, can hurt the wrists; a corner landing can jostle the wrists and risk straining them. Keep the wrists neutral and lower with control.",
       "tags": [
         "CONSENSUS"
       ],
@@ -215,6 +215,11 @@
           "source": "bb-rr",
           "text": "To maintain your wrist health, you've got to keep your wrists in neutral. Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.",
           "where": "Common mistakes: landing too hard"
+        },
+        {
+          "source": "bb-rr",
+          "text": "This can jostle your wrists, making it hard to keep them neutral and even risk straining them.",
+          "where": "Common Renegade Row Mistakes, Landing Too Hard"
         }
       ]
     },
@@ -378,7 +383,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "The straight head-to-heel line (c2, c3), the row path to the ribcage with the elbow close (c4, c5) and the hip hiking up (c8) read from the side; rotation, the point of the exercise, cannot be drawn (census note).",
+    "viewWhy": "The straight head-to-heel line (c2, c3), the row path to the ribcage with the elbow close (c4, c5), the dumbbell landing on a corner as it is lowered (c9) and the hip hiking up (c8) read from the side; rotation, the point of the exercise, cannot be drawn (census note).",
     "equipment": "Two hex dumbbells on the floor under the shoulders (c2, c6); floor line.",
     "frames": "Rep convention: one row, from both hands on the dumbbells to the near dumbbell at the ribcage; Trace follows the near dumbbell.",
     "start": "High plank on two hex dumbbells, neutral grip, hands under the shoulders (c1, c2, c6); feet wider than hip-width (c1); straight line from head to heels (c3).",
@@ -407,11 +412,11 @@
       }
     ],
     "mistake": {
-      "what": "The hip hikes up as the dumbbell is rowed.",
-      "why": "BarBend ties it to going too heavy (c8).",
-      "claim": "c8",
+      "what": "The dumbbell is lowered too quickly and lands on a corner.",
+      "why": "BarBend lists landing too hard among renegade row mistakes: lowering the dumbbell too quickly can make it land on a corner, which can jostle the wrists and risk straining them; Garage Gym Reviews says you can hurt your wrists when the dumbbells slam to the ground (c9).",
+      "claim": "c9",
       "drawable": true,
-      "rankNote": "Too much torso rotation (c7) is the fault the sources stress most, but it is top- or front-view only."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the dumbbell landing too hard or on a corner (c9). Step 1 finds no frequency word for a fault: BarBend's \"One of the most common problems with pretty much any lift is loading up the weight so heavy that you compromise your form, safety, and the effectiveness of the exercise.\" is about all lifts and the load; its \"Often a symptom of going too heavy, you want to avoid landing too hard with this move.\" says how often a hard landing comes from the load, not how often lifters land hard, so it is not counted (writer OPEN item; counted, step 1 would pick the same fault); \"Check out these common lifting errors\", Garage Gym Reviews' \"it pays to watch out for these common mistakes\" and the 'Common Renegade Row Mistakes' headings are list headings or intros; \"Here are the most common questions\" is about questions; \"This is often the main concern for athletes who support weight overhead\" is about other lifts; 'likely' (\"you’ll likely hike your shoulder and hip up and back\", \"your body will likely try to heft the weight\", \"your body will likely shift to the side\") is not a frequency word. Step 2: the only named fault a quote ties to harm is the hard or corner landing, on both lists written for this exercise (BarBend 'Landing Too Hard', Garage Gym Reviews 'Losing Control'): \"you can hurt your wrists when the dumbbells slam to the ground\" (Garage Gym Reviews, c9) and, after \"Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.\", \"This can jostle your wrists, making it hard to keep them neutral and even risk straining them.\" (BarBend, c9). Set aside: the hip hike (c8, inside BarBend's 'Lifting Too Heavy') and the twist (c7; BarBend 'Twisting Your Body', Garage Gym Reviews 'Excessive Upper Body Rotation') state no harm; \"compromise your form, safety\" belongs to the all-lifts load sentence; going too heavy (both lists) is a load choice, not a candidate; kettlebells tipping over (\"can result in wrist injuries or face planting onto the floor\", c10) is an implement choice; \"To maintain your wrist health, you’ve got to keep your wrists in neutral\" (c9) sits inside the landing item. drawable is true: speed causes the fault (\"too quickly\"), but its sign is still, the dumbbell tipped onto a corner as it touches down, which the side view shows along the neutral-grip handle (LR-31: a still sign is drawable even when speed causes it; writer OPEN item on drawing it). Pick changed: the head's pick, the hip hike (c8), is now handlingMistakes[1] and the twist [2]; handlingMistakes is reordered, text unchanged."
     },
     "tells": [
       {
@@ -427,7 +432,7 @@
       "up": null,
       "down": null,
       "pause": null,
-      "text": "Lower with control, keeping tension (c5, c15); reset the plank between reps (c15). No source gives seconds.",
+      "text": "Lower with control, keeping tension (c5, c15); reset the plank between reps (c15). No source gives seconds, so up, down and pause stay null (LR-33). No quote on the card or its read pages asks for a pause, hold or squeeze right after the row; 'squeeze your glutes' (c2, c4) and the plank hold (c12) are body cues, and the reset (c15) sits between reps.",
       "claim": [
         "c5",
         "c15"
@@ -508,6 +513,14 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Dumbbell lands hard or on a corner.",
+      "fix": "Lower it with control; go lighter.",
+      "claim": [
+        "c9",
+        "c8"
+      ]
+    },
+    {
       "mistake": "Hip and shoulder hike up as you row.",
       "fix": "Use a lighter weight.",
       "claim": "c8"
@@ -516,14 +529,6 @@
       "mistake": "Torso twists too far away from the rowing side.",
       "fix": "Widen your feet; if it still twists, go lighter.",
       "claim": "c7"
-    },
-    {
-      "mistake": "Dumbbell lands hard or on a corner.",
-      "fix": "Lower it with control; go lighter.",
-      "claim": [
-        "c9",
-        "c8"
-      ]
     }
   ],
   "feel": {
@@ -648,6 +653,7 @@
     "Tier-A checks: way out in gaps (LR-3, R-W0-5, LIB-WAYOUT plank set-down); load wording says go lighter (c7, c8, c9); the wrist row is a fault row linking the wrist box; 3 risk lines. No shared risk line applies (no bar over the face, no heavy two-leg lift, no jump).",
     "No wrist-extension claim (Nance 2017): on dumbbell handles the wrist is neutral (c9), not bent back as in a plank on the palms.",
     "Hand-key proposal (R-W0-5, LR-10): a closed handle grip for a floor-supported dumbbell, for the census/GA hand list; palm-flat removed from archetype.hand.",
-    "Fix round 2026-10-02 (verify w0): A2 twist direction follows c7 (\"away\"); A3 wrist row is a fault row citing c9 and c8; A18 GGR \"repeat on the other side\" quoted in c5; A19 palm-flat no longer listed."
+    "Fix round 2026-10-02 (verify w0): A2 twist direction follows c7 (\"away\"); A3 wrist row is a fault row citing c9 and c8; A18 GGR \"repeat on the other side\" quoted in c5; A19 palm-flat no longer listed.",
+    "LB7 LR-31/LR-33 pass 2026-10-22: top fault re-ranked by LR-31 step 2 (c9); handlingMistakes reordered (landing, hip hike, twist), text unchanged; plate.mistake moves from the hip hike to the corner landing (drawable, still sign); c9 gains BarBend's 'This can jostle your wrists ...' quote. Tempo stays null (no seconds, no pause asked). Re-fetch 2026-10-22: the live BarBend and Garage Gym Reviews pages use curly apostrophes (’) where 8 existing quotes in c6, c7, c8, c9 and c13 have straight ones ('); the words match exactly. feel.secondary still lists core (LR-35, LIB-MUSCLE); left for that item."
   ]
 }

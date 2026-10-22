@@ -233,7 +233,7 @@
   },
   {
    "id": "c10",
-   "text": "Dips can feel stressful on the shoulders and breastbone for anyone new to them, so build volume gradually; they can aggravate some shoulders, and close-grip bench press, close-grip push-ups or cable pushdowns work the same muscles.",
+   "text": "Dips can feel stressful on the shoulders and breastbone for anyone new to them, so build volume gradually; they can aggravate some shoulders, and close-grip bench press, close-grip push-ups or cable pushdowns work the same muscles. If dips are hard to do without shoulder pain, the bench press may be a good substitute.",
    "tags": [
     "CONSENSUS"
    ],
@@ -256,6 +256,11 @@
      "source": "bb-dips",
      "text": "lifters can also swap out dips for movements like close-grip bench presses, close-grip push-ups, and cable pushdowns",
      "where": "FAQ"
+    },
+    {
+     "source": "sl-dip",
+     "text": "If you’re having trouble performing bar dips without shoulder pain, maybe the bench press could be a good substitute.",
+     "where": "Bar Dip Alternatives & Variations, Bench Press"
     }
    ]
   },
@@ -331,6 +336,46 @@
      "where": "abstract"
     }
    ]
+  },
+  {
+   "id": "c14",
+   "text": "Many lifters do quarter or half reps when learning the dip; aim for parallel or slightly below parallel on every rep that is not meant to be a partial rep.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-dipcorrect",
+    "bb-dips"
+   ],
+   "quotes": [
+    {
+     "source": "bb-dipcorrect",
+     "text": "Another dip difficulty is a consistent range of motion. Many perform quarter or half reps when learning an exercise, then become frustrated when attempting to extend the range of motion. Vadnal suggested pause dips as a remedy.",
+     "where": "Perfect Range of Motion"
+    },
+    {
+     "source": "bb-dips",
+     "text": "That said, aim to go parallel or slightly below parallel with each rep that’s not meant to be a partial rep.",
+     "where": "Common Dip Mistakes, Not Going Low Enough"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "One physiotherapist-coach suggests pause dips, a one-second stop at the bottom, to learn the correct depth.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "bb-dipcorrect"
+   ],
+   "quotes": [
+    {
+     "source": "bb-dipcorrect",
+     "text": "Practicing pause dips helps dipping to the correct range automatically. The idea is to stop in that position with a one-second pause.",
+     "where": "Perfect Range of Motion"
+    }
+   ]
   }
  ],
  "sources": [
@@ -387,7 +432,7 @@
  ],
  "plate": {
   "view": "side",
-  "viewWhy": "Census view is side; depth (c4), the near-upright torso (c5), the shrug fault (c6) and the hanging plate (c8) all read from the side.",
+  "viewWhy": "Census view is side; depth (c4, c14), the near-upright torso (c5), the shrug fault (c6) and the hanging plate (c8) all read from the side.",
   "equipment": "Parallel dip bars on a frame (census 'dipBars', missing), hands about shoulder-width (c1); dip belt round the waist with a plate hanging low on a chain, near the shins (c8; belt and plate are not drawn today, census note).",
   "start": "Top: arms straight on the bars (c2), shoulders down and back, core braced (c3), torso nearly upright (c5), ankles crossed with a slight knee bend (c3), plate hanging still below (c8).",
   "end": "Bottom: elbows bent to about 90 degrees with the upper arm about level with the floor (c4), elbows pointing back (c4), shoulders still down (c6), torso nearly upright with a slight lean (c5).",
@@ -412,10 +457,14 @@
    }
   ],
   "mistake": {
-   "what": "Shoulders shrugging up toward the ears at the bottom.",
-   "why": "StrengthLog lists not keeping the shoulders down first among bar-dip mistakes: it adds stress on the shoulder joint and can cause neck and shoulder discomfort (c6).",
-   "claim": "c6",
-   "drawable": true
+   "what": "Cutting reps short: stopping well above parallel at the bottom.",
+   "why": "BarBend says many perform quarter or half reps when learning the dip (c14); StrengthLog lists half reps among bar-dip mistakes (c7), and BarBend's mistakes list says to go to parallel or slightly below on every rep not meant to be partial (c14).",
+   "claim": [
+    "c14",
+    "c7"
+   ],
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: cutting reps short (c14, c7). BarBend's \"Another dip difficulty is a consistent range of motion. Many perform quarter or half reps when learning an exercise, then become frustrated when attempting to extend the range of motion.\" (bb-dipcorrect, 'Perfect Range of Motion', c14) says many people make this fault of the dip: its section and its remedy (pause dips) are about the dip, so 'when learning an exercise' is read as when learning the dip (writer OPEN item). No other fault passes step 1. Set aside: StrengthLog's \"Using momentum, swinging the body to complete the movement, arching your lower back, and/or flaring your elbows out to the sides, rather than relying on controlled, targeted muscle activation, is a common mistake while doing bar dips.\" (c7) is a list sentence and is not read onto one item; its \"it’s easy to start to cut off depth\" (c7) uses 'easy to', not a frequency word; BarBend's \"The dip is commonly misunderstood and is often performed with poor form.\" names no fault; StrengthLog's \"for most people, heavy enough to give a good training effect\" and \"Most people prefer to work in a higher rep range\" are about the load and rep range; its \"the requirement for a successful repetition is often that your shoulder passes below your elbow joint\" is a competition rule; BarBend's \"many lifters aspire to complete their first full dip\", \"While this can often be remedied with learning proper technique\", \"Often, lifters who struggle with the lockout phases\", \"Stronger triceps will often correlate\" and \"Perform your dips as you usually would\" name no fault of this exercise; \"often-overlooked\", McKenzie's \"three common dip variations\" and the 'Common mistakes' headings are about the exercise or are headings. Step 2 is not needed. Harm quotes set aside because step 1 decides: the shrug (c6, \"increase the stress on the shoulder joint, and could cause discomfort in the neck and shoulder area\"), going far below parallel (c4, \"Dipping too much deeper can put stress on your shoulder joints\") and slow tempo's \"helping reduce the risk of costochondritis and shoulder, elbow, or wrist injuries\" (c9, a speed point); leaning too far forward (c5, \"you risk inappropriately engaging your shoulders\") and the swinging plate (c8, \"unsteadiness\") use no listed harm word. drawable is true: the side view shows the bottom stopping with the upper arm well above level and the elbows far less bent than 90 degrees, a still sign. Pick changed: the head's pick, the shrug (c6), is now handlingMistakes[1]; the depth item \"Going far below parallel.\" leaves handlingMistakes to keep 3 (R-LB2-2) and stays in risks[1], zooms and checkpoints."
   },
   "tells": [
    {
@@ -435,7 +484,7 @@
     "c4",
     "c9"
    ],
-   "text": "Lower with control (c4); one coach advises 2-5 s down (c9, WEAK). The plate uses 2 s down, 1 s up as a drawing convention."
+   "text": "Lower with control (c4). One coach advises slow descents of 2-5 s (c9, WEAK; it fixes the lowering phase, R-LB2-1): the plate's 2 s down is the low end of that range. 1 s up is a drawing convention. Pause 0: no quote on the card asks for a pause right after the press (LR-33). The same coach's pause dips stop at the bottom for one second (c15, WEAK); that bottom pause is not the pause field. BarBend's 'Flex your triceps hard at the top' (not on the card) asks no pause."
   },
   "variantLine": null
  },
@@ -502,6 +551,15 @@
  ],
  "handlingMistakes": [
   {
+   "mistake": "Cutting reps short.",
+   "fix": "Lower to about parallel on every rep.",
+   "claim": [
+    "c7",
+    "c14",
+    "c4"
+   ]
+  },
+  {
    "mistake": "Shoulders shrugging toward your ears.",
    "fix": "Shoulders down and back through the whole rep.",
    "claim": "c6"
@@ -513,11 +571,6 @@
     "c7",
     "c8"
    ]
-  },
-  {
-   "mistake": "Going far below parallel.",
-   "fix": "Stop at about parallel, or where it's comfortable.",
-   "claim": "c4"
   }
  ],
  "feel": {
@@ -640,7 +693,8 @@
   "c9 rests on one coach (physiotherapist Daniel Vadnal, reported by BarBend) and is tagged WEAK; it is used only for the tempo text, not a shown risk line.",
   "The shoulder feel row restates the sources' own form faults (c4, c5, c6, c11) and their swap (c10), with no added cause (LR-6).",
   "W1 fixer round 2026-10-03: F03 / R-W1-5: setup[3] 'Climb or jump up' -> 'Climb up to straight arms.'; c2 text drops 'or jump', says the mount is from the bodyweight dip, tag CONSENSUS -> MECH; gaps[0] names the loaded mount and dismount under LIB-WAYOUT. F12: risks[1] keeps the source's hedge ('can stress'). F18: front_delts removed from feel.watch (stays secondary; the shoulder row carries the warning).",
-  "W1 lows round 2026-10-03: low 7: c2 text drops 'Stand between the bars' (in neither c2 quote). Older item: gaps[1-2] (thumb, wrist) moved to unsourced, and the depth entry moved to notes (LR-20); gaps keeps only the tier-A way-out. Depth note: Depth: StrengthLog's competition depth (shoulder below elbow) is deeper than BarBend's parallel; the card follows the more cautious line (parallel or slightly below, or as deep as is comfortable), c4."
+  "W1 lows round 2026-10-03: low 7: c2 text drops 'Stand between the bars' (in neither c2 quote). Older item: gaps[1-2] (thumb, wrist) moved to unsourced, and the depth entry moved to notes (LR-20); gaps keeps only the tier-A way-out. Depth note: Depth: StrengthLog's competition depth (shoulder below elbow) is deeper than BarBend's parallel; the card follows the more cautious line (parallel or slightly below, or as deep as is comfortable), c4.",
+  "LB7 LR-31/LR-33 pass 2026-10-22: top fault re-ranked by LR-31 step 1 (c14, new); handlingMistakes gets 'Cutting reps short.' at [0] from c14 and c7's quotes, the shrug moves to [1], and the last item ('Going far below parallel.' / 'Stop at about parallel, or where it's comfortable.', c4) is dropped to keep 3 (R-LB2-2); it stays in risks[1], zooms[1] and checkpoints[2]. c10 gains StrengthLog's shoulder-pain quote so the shoulder row's 'If it still hurts' names pain from a cited quote (R-LB6-6); the row's text is unchanged. c15 (new) holds the bottom pause named in tempo.text."
  ],
  "unsourced": [
   "Thumb position on the dip bars (push archetype): no dip source.",

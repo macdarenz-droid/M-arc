@@ -1,0 +1,879 @@
+{
+  "id": "dumbbell_front_raise",
+  "libId": "lib_dumbbell_front_raise",
+  "name": "Dumbbell Front Raise",
+  "family": "Lateral and front raise (difference card of dumbbell_lateral_raise)",
+  "tier": "C",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "dumbbell_lateral_raise",
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Start standing with the dumbbells in front of the thighs in a closed, pronated grip: thumbs around the handles, palms facing the thighs (palms down).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-front-raise",
+        "mo-front-raise",
+        "bb-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-front-raise",
+          "text": "Stand holding dumbbells in front of you thighs using a closed, pronated grip (thumbs around the handles and palms facing your thighs).",
+          "where": "Step 1, Starting Position"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Stand with feet shoulder-width apart, holding a dumbbell in each hand in front of your thighs with palms facing your body and a slight bend in your elbows.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "bb-front-raise",
+          "text": "Start with the dumbbells in front of your thighs. Keep your palms down.",
+          "where": "Step 1, Grab the Dumbbells and Stand Up Tall"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The elbows stay straight or slightly bent, a soft bend kept through the lift; locking the elbows fully is on Motra's common-mistakes list.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-front-raise",
+        "mo-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-front-raise",
+          "text": "Position the dumbbells lightly touching the fronts of your thighs with your elbows extended or holding a slight bend.",
+          "where": "Step 1, Starting Position"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Keep arms nearly straight with a soft bend in elbows throughout the movement.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Locking elbows fully",
+          "where": "Safety, Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Stand in a split stance or with the feet slightly wider than hip-width apart.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-front-raise",
+          "text": "Assume either a split-stance position to stabilize your body or position your feet slightly wider than hip-width apart.",
+          "where": "Step 1, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Brace the torso, pull the shoulders down and back and hold them there all set, head in line with the spine; stand tall.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-front-raise",
+        "bb-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-front-raise",
+          "text": "Stiffen your torso by contracting your abdominal/core muscles (\"bracing\"), and depress and retract your scapulae (pull your shoulders down and back), maintaining this position throughout the exercise. Your head position should be aligned with your spine.",
+          "where": "Step 2"
+        },
+        {
+          "source": "bb-front-raise",
+          "text": "Stand tall with your shoulders down away from your ears.",
+          "where": "Step 1, Grab the Dumbbells and Stand Up Tall"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Breathe out and raise the dumbbells slowly in front of the body, the elbows and upper arms rising together slightly ahead of the forearms and dumbbells.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-front-raise",
+          "text": "Exhale and slowly raise the dumbbells up in front of your body. Your elbows and upper arms should rise together and be slightly ahead of your forearms and dumbbells.",
+          "where": "Step 3, Upward Phase"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "The dumbbells stay shoulder-width apart as they rise.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "bb-front-raise",
+          "text": "Make sure they stay shoulder-width apart.",
+          "where": "Step 2, Reach the Dumbbells Forward"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Past 60-70 degrees the arms turn slightly outward so the inside edge of the dumbbells points slightly up; ACE says the lift traditionally turns the arms in, and this slight outward turn may reduce potential impingement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-front-raise",
+          "text": "As your arms move past 60 - 70 degrees (nearing shoulder level), slowly rotate them upwards somewhat so that the inside edge of the dumbbells point slightly upwards.",
+          "where": "Step 3, Upward Phase"
+        },
+        {
+          "source": "ace-front-raise",
+          "text": "Traditionally, this exercise positions the arms into internal rotation during the lift, so the slight external rotation initiated at the 60-70 degree mark may reduce potential impingement in the shoulder joint.",
+          "where": "Note after Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Raise until the arms are level with the shoulders and about parallel with the floor, not above shoulder height; raising above the shoulders is on Motra's common-mistakes list. Fitness Volt alone says hands just above shoulder height; the card follows the other four.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-front-raise",
+        "mo-front-raise",
+        "sl-front-raise",
+        "fv-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-front-raise",
+          "text": "Continue raising the dumbbells until your arms are level with your shoulders and approximately parallel with the floor.",
+          "where": "Step 3, Upward Phase"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Start with arms hanging in front of thighs; raise to arms parallel to floor without going above shoulder height.",
+          "where": "Coaching Tips, Range of Motion"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Raising above shoulders",
+          "where": "Safety, Common Mistakes"
+        },
+        {
+          "source": "sl-front-raise",
+          "text": "With control, lift the dumbbells forward with straight arms, until the dumbbells are at shoulder height.",
+          "where": "How to Do Dumbbell Front Raises, step 2"
+        },
+        {
+          "source": "fv-front-raise",
+          "text": "With the elbows slightly bent or extended, raise the dumbbells up in front of you until your hands are just above shoulder height.",
+          "where": "How To Do The Dumbbell Front Raise, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Keep the torso upright with no low-back arch and the wrists neutral; arching the back is on Motra's common-mistakes list.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-front-raise",
+        "mo-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-front-raise",
+          "text": "Maintain an erect torso (no arching of your low back) and neutral wrist position (avoid flexion and extension of your wrists).",
+          "where": "Step 3, Upward Phase"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Arching the back",
+          "where": "Safety, Common Mistakes"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Maintain neutral spine.",
+          "where": "Coaching Tips, Form Cues"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Breathe in and lower the dumbbells gently and slowly, with control, back to the start, elbows slightly extended.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-front-raise",
+        "mo-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "ace-front-raise",
+          "text": "Inhale and gently lower the dumbbells back towards your starting position keeping your elbows slightly extended.",
+          "where": "Step 4, Downward Phase"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Lower the dumbbells slowly and controlled back to the starting position.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Don't let the hands and dumbbells rest on the thighs between reps, so the muscles keep their tension.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "bb-front-raise",
+          "text": "Coach’s Tip: Tension on your muscles is the key here. Avoid letting your hands and dumbbells rest on your thighs.",
+          "where": "Step 1, Coach's Tip"
+        },
+        {
+          "source": "bb-front-raise",
+          "text": "Do not let the dumbbells rest on your thighs between reps.",
+          "where": "Step 3, Lower Slowly and Repeat"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Don't swing the dumbbells up with body momentum or by pushing the hips forward; if you have to, switch to lighter dumbbells. Swinging is first on Motra's common-mistakes list.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-front-raise",
+        "bb-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-front-raise",
+          "text": "Swinging or using body momentum",
+          "where": "Safety, Common Mistakes"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Lead with shoulders, not momentum.",
+          "where": "Coaching Tips, Form Cues"
+        },
+        {
+          "source": "bb-front-raise",
+          "text": "Don’t use any momentum or hip movement.",
+          "where": "Step 2, Reach the Dumbbells Forward"
+        },
+        {
+          "source": "bb-front-raise",
+          "text": "Coach’s Tip: Fight the urge to move your body around or push your hips forward as you lift the weights. If you have to do that, switch to lighter dumbbells.",
+          "where": "Step 2, Coach's Tip"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "As fatigue builds, swinging the weights adds extra stress to the shoulder joints.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "bb-front-raise",
+          "text": "As fatigue builds up, make sure to not swing the weights, which will add extra stress to your shoulder joints.",
+          "where": "Sets and Reps, To Build Endurance"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Use light to moderate weights; it is easy to pick a weight that is too heavy, so err on the lighter side for strict form.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-front-raise",
+        "bb-front-raise",
+        "mo-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "sl-front-raise",
+          "text": "This is an exercise where it is easy to pick a weight that is too heavy. Rather err on the lighter side, and strive for a strict form where you focus on getting good contact with your delts.",
+          "where": "Commentary"
+        },
+        {
+          "source": "bb-front-raise",
+          "text": "As tempting as it might be to load up the weight, this exercise should be performed with moderate to light weights.",
+          "where": "How to Do the Dumbbell Front Raise"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Start with light weights to master form",
+          "where": "Safety, Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In an EMG study of competitive bodybuilders, the frontal raise mainly worked the front deltoid and the clavicular (upper) head of the chest muscle.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "coratella2020",
+          "text": "Frontal raise strongly recruited anterior deltoid and the clavicular head of pectoralis major.",
+          "where": "5. Conclusions"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "The dumbbell front raise is an isolation exercise that targets the front (anterior) deltoid.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-front-raise",
+        "bb-front-raise",
+        "sl-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-front-raise",
+          "text": "An isolation exercise using dumbbells to target the anterior deltoids through shoulder flexion, building front shoulder strength and stability for pushing movements; ideal for hypertrophy and definition.",
+          "where": "About"
+        },
+        {
+          "source": "bb-front-raise",
+          "text": "The dumbbell front raise is a shoulder isolation exercise that targets the anterior head of your deltoids.",
+          "where": "Introduction"
+        },
+        {
+          "source": "sl-front-raise",
+          "text": "Front Deltoid",
+          "where": "Muscles Worked, Primary muscles worked"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "The side deltoid's role is disputed: StrengthLog and Motra list it as a secondary muscle, but in the EMG study the side and rear deltoids played a negligible role in the frontal raise.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "sl-front-raise",
+        "mo-front-raise",
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "sl-front-raise",
+          "text": "Lateral Deltoid",
+          "where": "Muscles Worked, Secondary muscles worked"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "Medial Delts",
+          "where": "Muscle Breakdown, Shoulders 5/10"
+        },
+        {
+          "source": "coratella2020",
+          "text": "In contrast, given the low activation level recorded here, both medial and posterior deltoids appeared to play a negligible role in frontal raise, in line with previous results [9].",
+          "where": "4. Discussion"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "If front raises cause shoulder discomfort, stop; drop the weight a lot, or bring the hands a little more out to the sides (still in front, a hybrid front and lateral raise).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "bb-front-raise",
+          "text": "If front raises are adding discomfort to your shoulders, then stop. Drop the weights significantly. You may also want to try to have your hands more out to the sides. Still keep them in front, just less straight out front — like a hybrid front/lateral raise.",
+          "where": "FAQs, Dumbbell front raises hurt my shoulders"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Tempo: Motra and BarBend ask for a brief pause at the top, right after the lift, and no source gives its seconds, so the 1 s pause is a drawing convention (LR-33).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-front-raise",
+        "bb-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-front-raise",
+          "text": "Pause briefly at the top to squeeze the front deltoids.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "bb-front-raise",
+          "text": "Lift the weights to shoulder height. Pause briefly.",
+          "where": "Step 2, Reach the Dumbbells Forward"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Tempo: Motra lists 3-1-1 for this lift and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 3 s for the lowering, a 1 s pause at the bottom and 1 s for the lift. BarBend also asks for a lowering of three to four seconds.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-front-raise",
+        "bb-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "mo-front-raise",
+          "text": "3-1-1",
+          "where": "Coaching Tips, Tempo"
+        },
+        {
+          "source": "mo-front-raise",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip (served HTML)"
+        },
+        {
+          "source": "bb-front-raise",
+          "text": "Perform a strict eccentric lowering of three to four full seconds.",
+          "where": "Step 3, Lower Slowly and Repeat"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Fitness Volt uses a neutral (hammer) grip instead and says it is better for shoulder health than the overhand grip, which is more likely to turn the shoulder in.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "fv-front-raise"
+      ],
+      "quotes": [
+        {
+          "source": "fv-front-raise",
+          "text": "While standing, hold the dumbbells by your sides using a neutral/hammer grip.",
+          "where": "How To Do The Dumbbell Front Raise, step 1"
+        },
+        {
+          "source": "fv-front-raise",
+          "text": "Using a neutral grip is better for the health of the shoulders. The pronated or overhand grip is more likely to cause internal rotation of the shoulder which is not ideal.",
+          "where": "Dumbbell front raise tips"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "In the EMG study the frontal raise flexed the upper arm forward to 90 degrees in neutral rotation (thumb-to-thumb), with the elbow almost fully extended and the wrist in line with the forearm.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "coratella2020"
+      ],
+      "quotes": [
+        {
+          "source": "coratella2020",
+          "text": "For frontal raise, the participants were required to frontally flex the humerus up to 90°, with humerus neutrally rotated (i.e., thumb-to-thumb).",
+          "where": "2.4 Exercise Protocols"
+        },
+        {
+          "source": "coratella2020",
+          "text": "For all these exercises, the elbow was almost fully extended, and the wrist in line with the forearm",
+          "where": "2.4 Exercise Protocols"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-front-raise",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/54/front-raise/",
+      "title": "Front Raise (ACE exercise library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "mo-front-raise",
+      "url": "https://motra.com/exercises/dumbbellFrontRaise",
+      "title": "Dumbbell Front Raise: Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "bb-front-raise",
+      "url": "https://barbend.com/dumbbell-front-raise/",
+      "title": "How to Do the Dumbbell Front Raise for a Stronger Front Rack Position (BarBend, Mike Dewar)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-front-raise",
+      "url": "https://www.strengthlog.com/dumbbell-front-raise/",
+      "title": "How to Do Dumbbell Front Raise: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "fv-front-raise",
+      "url": "https://fitnessvolt.com/dumbbell-front-raise/",
+      "title": "Dumbbell Front Raise: Build Strong Deltoids & Upper Chest (Fitness Volt, Matthew Magnante)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "coratella2020",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7503819/",
+      "title": "An Electromyographic Analysis of Lateral Raise Variations and Frontal Raise in Competitive Bodybuilders (Coratella et al., Int J Environ Res Public Health 17(17):6015)",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "census: side. The arms rise forward in the sagittal plane (c5, c8), which reads from the side. The drawn fault, swinging with the hips pushed forward (c12), shows from the side, as do the arm height (c8) and a back arch (c9).",
+    "equipment": "A pair of dumbbells and the floor line; feet slightly wider than hip-width apart, or a split stance (c3).",
+    "start": "Standing tall, dumbbells in front of the thighs, palms facing the thighs, closed grip (c1); elbows straight or slightly bent (c2); torso braced, shoulders down and back, head in line with the spine (c4).",
+    "end": "Arms level with the shoulders, about parallel with the floor (c8); elbows with a soft bend, not locked (c2); elbows and upper arms slightly ahead of the forearms and dumbbells (c5); inside edge of the dumbbells slightly up (c7); torso erect with no low-back arch, wrists neutral (c9); hips still (c12).",
+    "checkpoints": [
+      {
+        "label": "Shoulders down",
+        "what": "Shoulders pulled down and back, held there for the whole set.",
+        "claim": "c4"
+      },
+      {
+        "label": "Elbows lead",
+        "what": "Elbows and upper arms rise together, slightly ahead of the hands.",
+        "claim": "c5"
+      },
+      {
+        "label": "Shoulder height",
+        "what": "Stop when your arms are level with your shoulders.",
+        "claim": "c8"
+      }
+    ],
+    "mistake": {
+      "what": "Swinging the dumbbells up with body momentum, the hips pushed forward.",
+      "why": "Motra's common-mistakes list puts \"Swinging or using body momentum\" first (c12), and BarBend says swinging the weights as fatigue builds adds extra stress to the shoulder joints (c13). BarBend names its still sign, pushing the hips forward (c12). How often it happens is not measured.",
+      "claim": [
+        "c12",
+        "c13"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: swinging the dumbbells up with body momentum (c12, c13). Step 1: no frequency word for a named fault. Set aside: BarBend's \"It is also an exercise that is often performed incorrectly, which can cause shoulder pain and discomfort.\" says often but names no fault, so it is not read onto one; Fitness Volt's \"one of the most commonly utilized shoulder isolation exercises\", \"usually the go-to movement\" and \"it’s very common to do the alternating variation\" are about the exercise and a variation; Fitness Volt's \"For many, the front delts are an overdeveloped muscle group\" and \"many times, it’s overdeveloped\", and BarBend's \"the front deltoids often get hammered\", \"The front delts are usually more developed\", \"A vast majority of lifters\", \"the front delts are often overworked\", \"most people don’t need to do a ton of front deltoid isolation work\" and \"You often train your front delts enough\" are about muscles and programming; BarBend's \"is often not recommended or necessary\" (heavy loads under eight reps) and \"usually means that you can lift more weight\" (barbell) are loads; StrengthLog's \"easy to pick a weight that is too heavy\" (c14) is the load, and \"easy to\" is not a frequency word; ACE's \"Traditionally, this exercise positions the arms into internal rotation\" (c7) is excluded; Motra's \"Typical Rep Range\" and \"Spotting not typically required\" are programming and spotting; \"common questions\" is a heading. Step 2: one named fault is tied to harm: swinging, BarBend's \"As fatigue builds up, make sure to not swing the weights, which will add extra stress to your shoulder joints.\" (c13), first on Motra's list (\"Swinging or using body momentum\", \"Arching the back\", \"Locking elbows fully\", \"Raising above shoulders\", \"Neglecting eccentric phase\"). Set aside: BarBend's \"Don’t let speed take over to avoid adding undue stress and strain to the front of your shoulder and biceps.\" is written for the underhand variation and is a speed-only fault; even read onto this lift's \"Neglecting eccentric phase\", it would tie with the swing, and the tie order (both on Motra's list, one harm source each) gives the earlier on the list, the swing. ACE's \"may reduce potential impingement\" (c7) is about the outward-turn cue; arms turned in is on no mistakes list and not a named fault on this card, and if named it would lose the tie as the one on no list. Fitness Volt's \"Using a neutral grip is better for the health of the shoulders\" (c21) is a grip choice (setup, not a candidate). BarBend's \"overly stress your shoulder joint\", \"could end in more injury than results\" and \"higher risks of injury\" are about heavy loads. Step 3 is not needed; it gives the same fault (first on Motra's list). drawable is true: BarBend names a still sign, \"push your hips forward as you lift the weights\" (c12), which the side view shows as the hips moving forward of the feet line while the dumbbells rise."
+    },
+    "tells": [
+      {
+        "text": "Arms level with shoulders at the top",
+        "claim": "c8"
+      },
+      {
+        "text": "Hips stay still as you lift",
+        "claim": "c12"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 3,
+      "pause": 1,
+      "claim": [
+        "c19",
+        "c20"
+      ],
+      "text": "Up 1 and down 3 are Motra's 3-1-1 (c20, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause; the page shows three numbers, read as the first three, with no top pause. BarBend's \"three to four full seconds\" for the lowering (c20) agrees with down 3. Motra's 1 s bottom pause sits between the lowering and the lift, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the lift: Motra's \"Pause briefly at the top to squeeze the front deltoids.\" and BarBend's \"Pause briefly.\" (c19) give no seconds, so the 1 s is a drawing convention (c19, WEAK; LR-33)."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Closed, pronated grip, palms facing the thighs (palms down) (c1). Fitness Volt uses a neutral grip instead (c21) and the EMG protocol a neutral, thumb-to-thumb arm (c22); the plate draws the pronated grip of ACE, Motra and BarBend.",
+    "width": "Dumbbells in front of the thighs (c1), kept shoulder-width apart as they rise (c6).",
+    "thumb": "Around the handles (c1).",
+    "handContact": "Not given by any source read.",
+    "wrist": "Neutral, no flexion or extension (c9); in line with the forearm in the EMG protocol (c22).",
+    "claims": [
+      "c1",
+      "c6",
+      "c9",
+      "c21",
+      "c22"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Stand with feet slightly wider than hips, or in a split stance.",
+      "claim": "c3"
+    },
+    {
+      "step": "Hold the dumbbells in front of your thighs, palms facing them.",
+      "claim": "c1"
+    },
+    {
+      "step": "Thumbs around the handles. Elbows straight or slightly bent.",
+      "claim": [
+        "c1",
+        "c2"
+      ]
+    },
+    {
+      "step": "Brace your torso and pull your shoulders down and back.",
+      "claim": "c4"
+    },
+    {
+      "step": "Pick a lighter weight than you think.",
+      "claim": "c14"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Breathe out and raise the dumbbells slowly in front of you.",
+      "claim": "c5"
+    },
+    {
+      "point": "Keep them shoulder-width apart, elbows slightly bent.",
+      "claim": [
+        "c6",
+        "c2"
+      ]
+    },
+    {
+      "point": "Near shoulder height, turn the inside edge of the dumbbells slightly up.",
+      "claim": "c7"
+    },
+    {
+      "point": "Stop when your arms are level with your shoulders.",
+      "claim": "c8"
+    },
+    {
+      "point": "Torso upright, no arch in the low back. Wrists straight.",
+      "claim": "c9"
+    },
+    {
+      "point": "Breathe in and lower slowly. Don't rest them on your thighs.",
+      "claim": [
+        "c10",
+        "c11"
+      ]
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging the weights up.",
+      "fix": "Use lighter dumbbells. Keep your hips still.",
+      "claim": [
+        "c12",
+        "c13"
+      ]
+    },
+    {
+      "mistake": "Arching the back.",
+      "fix": "Brace and keep your torso upright.",
+      "claim": [
+        "c9",
+        "c4"
+      ]
+    },
+    {
+      "mistake": "Raising above shoulder height.",
+      "fix": "Stop when your arms are level with your shoulders.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "front_delts",
+        "claim": [
+          "c15",
+          "c16"
+        ]
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "upper_chest",
+        "claim": "c15"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the shoulders",
+        "means": "The front delts are doing the work.",
+        "fix": "",
+        "claim": [
+          "c15",
+          "c16"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Upper chest",
+        "means": "Expected: the upper chest works hard in this raise.",
+        "fix": "",
+        "claim": "c15",
+        "redFlag": null
+      },
+      {
+        "where": "Shoulder joints",
+        "means": "Fault: swinging the weights adds stress here.",
+        "fix": "Use lighter dumbbells and lift without swinging.",
+        "claim": [
+          "c13",
+          "c12"
+        ],
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Shoulder discomfort",
+        "means": "",
+        "fix": "Stop. Go much lighter, or raise slightly out to the sides.",
+        "claim": "c18",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Shoulder: swinging the weights adds extra stress to the shoulder joints.",
+      "claim": "c13"
+    },
+    {
+      "risk": "Shoulder: a slight outward turn near shoulder height may reduce shoulder pinching.",
+      "claim": "c7"
+    },
+    {
+      "risk": "It is easy to pick a weight that is too heavy.",
+      "claim": "c14"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "dfr-top-height",
+      "kind": "posture",
+      "right": "Arms level with the shoulders, parallel with the floor.",
+      "wrong": "Dumbbells raised above shoulder height.",
+      "claim": "c8"
+    },
+    {
+      "key": "dfr-hips",
+      "kind": "posture",
+      "right": "Body tall and still as the dumbbells rise.",
+      "wrong": "Hips pushed forward to swing the weights up.",
+      "claim": [
+        "c12",
+        "c4"
+      ]
+    },
+    {
+      "key": "dfr-hand-top",
+      "kind": "hand",
+      "right": "Palms down, inside edge slightly up, wrist straight.",
+      "wrong": null,
+      "claim": [
+        "c1",
+        "c7",
+        "c9"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "front_delts primary stands: the EMG study found the frontal raise strongly recruits the front deltoid (c15) and the coach pages name it as the target (c16). upper_chest secondary stands: the clavicular (upper) head of the chest muscle was strongly recruited (c15). side_delts is not added: two coach pages list it as secondary, but the EMG study found the side and rear deltoids played a negligible role (c17)."
+  },
+  "anchorSource": "ace-front-raise",
+  "notes": [
+    "Child of dumbbell_lateral_raise (head 3812989f). No inherit entries: every shown line uses this card's own claims from front-raise sources (LR-34 way (1)). The parent's lines are written for a raise out to the sides with palms facing the body (parent c1, c4, c6), which the front raise does not match; where ACE's front-raise page repeats the lateral-raise wording (stance, bracing, shoulders down and back), the card cites the front-raise page itself (c3, c4).",
+    "Grip: ACE, Motra and BarBend use palms facing the thighs (pronated); Fitness Volt a neutral grip (c21); the EMG protocol a neutral arm (c22). The plate draws the pronated grip, with the inside edge slightly up near the top (c7).",
+    "Arm height: four sources stop at shoulder height (c8); Fitness Volt says hands just above (c8). The card stops at shoulder height.",
+    "Kolber 2014 (lateral raises and upright rows above 90 degrees) is not cited: it does not name the front raise, so it would be an inference from another exercise, and no read front-raise source ties raising above the shoulders to harm.",
+    "drawable: momentum alone is a speed sign, but BarBend names a still sign for this exercise's swing (hips pushed forward, c12), so the side plate can show it (LR-31: a still sign is drawable even when speed causes it).",
+    "Not sourced, so left out: where the handle sits in the palm, an elbow angle in degrees, and a way to set the dumbbells down."
+  ]
+}

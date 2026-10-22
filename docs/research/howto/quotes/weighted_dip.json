@@ -196,6 +196,14 @@
    "note": ""
   },
   {
+   "claim": "c10",
+   "source": "sl-dip",
+   "text": "If you’re having trouble performing bar dips without shoulder pain, maybe the bench press could be a good substitute.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
    "claim": "c11",
    "source": "sl-dip",
    "text": "Primary muscles worked: Chest Front Deltoid Triceps",
@@ -249,6 +257,30 @@
    "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
    "status": "verbatim",
    "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-dipcorrect",
+   "text": "Another dip difficulty is a consistent range of motion. Many perform quarter or half reps when learning an exercise, then become frustrated when attempting to extend the range of motion. Vadnal suggested pause dips as a remedy.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-dips",
+   "text": "That said, aim to go parallel or slightly below parallel with each rep that’s not meant to be a partial rep.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-dipcorrect",
+   "text": "Practicing pause dips helps dipping to the correct range automatically. The idea is to stop in that position with a one-second pause.",
+   "status": "pending",
+   "closest": "",
    "note": ""
   }
  ]

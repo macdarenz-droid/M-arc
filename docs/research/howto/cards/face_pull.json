@@ -1,0 +1,739 @@
+{
+  "id": "face_pull",
+  "libId": "lib_face_pull",
+  "name": "Face Pull",
+  "family": "Rear delt and cuff",
+  "tier": "C",
+  "archetype": {
+    "hand": "pull",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Attach a rope to a cable pulley set high, at about head or eye height.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull",
+        "bb-face-pull",
+        "sl-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Attach rope to cable pulley at head height.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "bb-face-pull",
+          "text": "Set the Height: Set an adjustable cable fixture with a rope attachment to roughly eye level.",
+          "where": "How To Do the Face Pull, step 1"
+        },
+        {
+          "source": "sl-face-pull",
+          "text": "Fasten a rope handle in a high position on a cable pulley.",
+          "where": "How to Do Face Pulls, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Hold the two ends of the rope. Motra (the anchor) uses a neutral grip (palms facing each other); StrengthLog says overhand. The card follows Motra.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull",
+        "bb-face-pull",
+        "sl-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Stand facing it with feet hip-width apart, grasp ends with neutral grip, and step back until arms are extended with tension.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "bb-face-pull",
+          "text": "Grip and Brace: Grab the ends of the rope and step back to pull the cable taut with your arms extended in front of you.",
+          "where": "How To Do the Face Pull, step 2"
+        },
+        {
+          "source": "sl-face-pull",
+          "text": "Grip the ropes with an overhand grip, and take a step or two back.",
+          "where": "How to Do Face Pulls, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Stand up straight facing the pulley, a couple of steps back, feet hip-width apart (or one foot in front), arms extended with tension in the cable.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-face-pull",
+        "mo-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "sl-face-pull",
+          "text": "Stand up straight, a couple of steps back from the machine. Some lifters prefer to keep one foot in front of the other, while some prefer to stand with the feet in line, hip-width apart.",
+          "where": "Proper Form & Technique, Positioning"
+        },
+        {
+          "source": "mo-face-pull",
+          "text": "Stand facing it with feet hip-width apart, grasp ends with neutral grip, and step back until arms are extended with tension.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Brace and lift the chest with the shoulders back, and keep the whole body still and stable during the movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull",
+        "sl-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Engage core and lift chest with shoulders back.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-face-pull",
+          "text": "Keep tension in your glutes and your core active so that you keep your entire body still and stable during the movement.",
+          "where": "Proper Form & Technique, Positioning"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Pull the rope toward the face at about eye or forehead height, with the elbows high and out to the sides.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull",
+        "sl-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Pull rope towards face at eye level, flaring elbows high and out.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-face-pull",
+          "text": "Pull the rope against you, aiming for the height of your forehead. Keep your elbows high, and rotate your forearms up. Keep the movement slow and controlled.",
+          "where": "Proper Form & Technique, Movement"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "As you pull, separate the rope ends and rotate the forearms up (the shoulder rotates outward), squeezing the shoulder blades together.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull",
+        "bb-face-pull",
+        "sl-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Separate rope ends while squeezing shoulder blades together.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "bb-face-pull",
+          "text": "Pull and Rotate: Pull the center of the rope towards your face by driving your elbows back behind your shoulders while attempting to pull the rope apart with your hands.",
+          "where": "How To Do the Face Pull, step 3"
+        },
+        {
+          "source": "bb-face-pull",
+          "text": "Coach’s Tip: A good face pull involves rotating your shoulder externally.",
+          "where": "How To Do the Face Pull, coach's tip"
+        },
+        {
+          "source": "sl-face-pull",
+          "text": "With elbows held high, pull the rope towards you by letting your upper arms move straight out towards your sides while simultaneously rotating your forearms up.",
+          "where": "How to Do Face Pulls, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "End position: hands near the ears, elbows flared, shoulder blades pinched together.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Full arm extension forward to hands near ears with elbows flared and shoulder blades pinched.",
+          "where": "Coaching Tips, Range of Motion"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Return slowly, extending the arms forward to the start while keeping tension.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull",
+        "sl-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Slowly extend arms forward to start position, keeping tension.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "sl-face-pull",
+          "text": "Return with control to the starting position by letting your arms move forward again.",
+          "where": "How to Do Face Pulls, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Dropping the elbows is on both common-mistakes lists (Motra item 2, BarBend item 1): keep the elbows high for the whole rep; Motra says keeping them high avoids shoulder pinching.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull",
+        "bb-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Dropping elbows down",
+          "where": "Common Mistakes, item 2"
+        },
+        {
+          "source": "mo-face-pull",
+          "text": "Avoid shoulder pinching by keeping elbows high",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "bb-face-pull",
+          "text": "When you perform face pulls, you shouldn’t let your elbows drop down at any point.",
+          "where": "Common Face Pull Mistakes, Dropping Your Elbows"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Not keeping position: elbows below shoulder height, forearms not lifted and pulling toward the chest instead of the head make the exercise easier but target the wrong muscles; Motra lists pulling too low, to the chin, first.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-face-pull",
+        "mo-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "sl-face-pull",
+          "text": "By keeping your elbows below shoulder height, not lifting up your forearms, and pulling more towards your chest instead of your head, the exercise will become easier, but it will also target the wrong muscles.",
+          "where": "Common Mistakes in Face Pulls, item 2"
+        },
+        {
+          "source": "mo-face-pull",
+          "text": "Pulling too low to chin",
+          "where": "Common Mistakes, item 1"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Start with a light weight: too much weight brings in other muscles or momentum and alters form; Motra lists using momentum from the torso and rounding the shoulders forward as mistakes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull",
+        "sl-face-pull",
+        "bb-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Start with light weight to master form",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "mo-face-pull",
+          "text": "Using momentum from torso",
+          "where": "Common Mistakes, item 3"
+        },
+        {
+          "source": "mo-face-pull",
+          "text": "Rounding shoulders forward",
+          "where": "Common Mistakes, item 4"
+        },
+        {
+          "source": "sl-face-pull",
+          "text": "Adding too much weight. The face pull is an exercise where it’s easy to start taking shortcuts by involving muscles other than the targeted ones, or by using excessive momentum.",
+          "where": "Common Mistakes in Face Pulls, item 1"
+        },
+        {
+          "source": "bb-face-pull",
+          "text": "Loading up the face pull with more weight than is appropriate will severely alter your form, defeating the purpose of the exercise.",
+          "where": "Common Face Pull Mistakes, Going Too Heavy"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Keep a neutral spine with no arching.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Maintain neutral spine, no arching",
+          "where": "Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Stop if any shoulder pain or discomfort occurs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull",
+        "bb-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Stop if any shoulder pain occurs",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "bb-face-pull",
+          "text": "No, if you have pain or discomfort, stop.",
+          "where": "FAQs"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "The face pull mainly works the rear deltoids, with the rhomboids, middle traps and rotator cuff.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-face-pull",
+        "sl-face-pull",
+        "bb-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "A cable exercise pulling a rope towards the face that targets rear deltoids, rhomboids, and middle traps to build upper back strength and improve shoulder stability; ideal for posture correction and shoulder health.",
+          "where": "About"
+        },
+        {
+          "source": "sl-face-pull",
+          "text": "The face pull is a strength training exercise designed to target and strengthen the muscles in the upper back and shoulders, particularly the posterior deltoids and the rotator cuff, but also the traps and lateral deltoids.",
+          "where": "Which Muscles Do Face Pulls Work?"
+        },
+        {
+          "source": "bb-face-pull",
+          "text": "The rear deltoids are the main muscle used in the face pull, and can be trained directly with the face pull and its variation and alternatives.",
+          "where": "Muscles Worked by the Face Pull, Rear Delts"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "In a musculoskeletal model of ten healthy men, the standing face pull gave rear-delt force similar to the bent-over dumbbell lateral raise and higher than the bent-over dumbbell row.",
+      "tags": [
+        "DATA",
+        "WEAK"
+      ],
+      "sources": [
+        "zhu-2025"
+      ],
+      "quotes": [
+        {
+          "source": "zhu-2025",
+          "text": "Kinematic data were collected from ten healthy males performing the Bent-over Dumbbell Lateral Raise (BDLR), Standing Face Pull (SFP), and Bent-over Dumbbell Row (BDR).",
+          "where": "Abstract, Methods"
+        },
+        {
+          "source": "zhu-2025",
+          "text": "However, both exercises produced significantly higher muscle forces compared to BDR (47.911 N, p < 0.001).",
+          "where": "Abstract, Results"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Tempo: Motra lists 3-1-2 for this exercise, and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 3 s for the return, a 1 s pause at the start with the arms extended, and 2 s for the pull.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "3-1-2",
+          "where": "Coaching Tips: Tempo"
+        },
+        {
+          "source": "mo-face-pull",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Hold the contraction briefly at the peak, right after the pull. No source gives its seconds, so the 1 s drawn is a drawing convention (LR-33).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-face-pull"
+      ],
+      "quotes": [
+        {
+          "source": "mo-face-pull",
+          "text": "Hold contraction briefly at peak.",
+          "where": "How to Perform"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "mo-face-pull",
+      "url": "https://motra.com/exercises/cableFacePull",
+      "title": "Cable Face Pull - Exercise Guide (Motra, formerly Train Fitness)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "bb-face-pull",
+      "url": "https://barbend.com/face-pulls/",
+      "title": "How to Do Face Pulls: Benefits & Variations (BarBend)",
+      "kind": "coach",
+      "year": 2023,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-face-pull",
+      "url": "https://www.strengthlog.com/face-pull/",
+      "title": "How to Do Face Pull: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "zhu-2025",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41964926/",
+      "title": "Biomechanical evaluation of posterior deltoid exercises and kinematic trajectory modeling",
+      "kind": "peer-reviewed",
+      "year": 2025,
+      "pmid": 41964926,
+      "access": "abstract",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census: side. The pull runs front to back toward the face (c5, c6), and the top fault, the elbows dropping below shoulder height (c9, c10), reads clearly from the side as elbow height against the shoulder.",
+    "equipment": "Single cable column with the pulley at about head or eye height and a rope attachment (c1); census need ropeLikely (status missing, new drawing). Floor line.",
+    "start": "Standing up straight facing the pulley, a couple of steps back, feet hip-width apart (c3); chest up, shoulders back (c4); arms extended forward with tension in the cable, hands on the rope ends with a neutral grip (c2, c3).",
+    "end": "Rope pulled toward the face at about eye level, rope ends apart, hands near the ears (c5, c6, c7); elbows high and flared, at least level with the shoulders (c5, c9); shoulder blades squeezed together (c6, c7); body still (c4).",
+    "checkpoints": [
+      {
+        "label": "Elbows high",
+        "what": "Elbows stay high and wide for the whole rep.",
+        "claim": [
+          "c5",
+          "c9"
+        ]
+      },
+      {
+        "label": "Rope to face",
+        "what": "Pull toward the face at eye level, not the chin.",
+        "claim": [
+          "c5",
+          "c10"
+        ]
+      },
+      {
+        "label": "Body still",
+        "what": "Chest up, body still and stable.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Elbows dropping down, below shoulder height, during the pull.",
+      "why": "LR-31 step 2: the only named fault a quote ties to harm. Motra's \"Avoid shoulder pinching by keeping elbows high\" (c9) says the cue that corrects \"Dropping elbows down\" (its list item 2) avoids shoulder pinching; BarBend lists \"Dropping Your Elbows\" first (c9). Elbow height against the shoulder shows from the side.",
+      "claim": "c9",
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: no frequency word for a fault of this exercise. Set aside: StrengthLog's \"lifters who frequently engage in overhead movements\" and \"if you also do a lot of press work\" are about training; its \"easy to start taking shortcuts\" (c11) uses \"easy to\"; \"Some lifters prefer\" is \"some\" and a stance. BarBend's \"avoiding these common errors:\" is a list sentence and is not read onto one item; \"Face pulls can benefit most lifters and gymgoers\", \"Working on your scapular control will often result in greater shoulder and back health\" and \"most people can find a range of motion that is comfortable for them\" name no fault; \"most of which are smaller in size\" is about muscles. Motra's \"Typical Rep Range\" and \"Not typically needed\" are programming and spotting. Zhu's \"common strengthening exercises\" is about exercises. Step 2: one named fault is tied to harm: the elbows dropping (Motra list item 2 \"Dropping elbows down\", BarBend list item 1 \"Dropping Your Elbows\", c9), by Motra's \"Avoid shoulder pinching by keeping elbows high\" (c9). Shoulder pinching is read as stated harm (pain or discomfort in the shoulder). Set aside: Motra's \"Stop if any shoulder pain occurs\" and BarBend's \"No, if you have pain or discomfort, stop.\" (c13) name no fault; \"Maintain neutral spine, no arching\" (c12) states no harm; StrengthLog's \"target the wrong muscles\" (c10) and BarBend's \"defeating the purpose of the exercise\" (c11) are not harm; BarBend's \"Movements like the bench press and split jerk stress the anterior muscles of the shoulder\" is about other exercises; \"Adding too much weight\" and \"Going Too Heavy\" (c11) are load choices; Motra's \"When to Avoid\" items are conditions. The side view shows the elbows below shoulder height, so drawable is true.",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Hands finish near your ears",
+        "claim": "c7"
+      },
+      {
+        "text": "Elbows stay high and wide",
+        "claim": [
+          "c5",
+          "c9"
+        ]
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 3,
+      "pause": 1,
+      "claim": [
+        "c16",
+        "c17"
+      ],
+      "text": "Up 2 and down 3 are Motra's 3-1-2 (c16, WEAK), whose Tempo tooltip gives the order eccentric (return), bottom pause, concentric (pull), top pause (R-LB6-2, R-LB6-7); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits at the start with the arms extended, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the pull: Motra's \"Hold contraction briefly at peak.\" (c17) gives no seconds, so the 1 s is a drawing convention (c17, WEAK; LR-33). BarBend's warm-up line \"For Shoulder Stability: To warm up your shoulders, do 2 or 3 sets of 15 to 20 reps and pause at the end.\" is a warm-up option with no seconds, not used. StrengthLog asks for slow and controlled reps (c5) with no seconds."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Rope, one hand on each end (c2). Neutral grip, palms facing each other (Motra, the anchor); StrengthLog says overhand. The card follows Motra (c2).",
+    "width": "Set by the rope; the ends separate as you pull, and the hands finish near the ears (c6, c7).",
+    "thumb": "Not given by any source read for the face pull (pull archetype default).",
+    "handContact": "Hands on the ends of the rope (c2). No face-pull source says where on the end; shared/rope-rule.json c1 (hand up against the knob) is sourced for the pushdown and its appliesTo excludes face_pull, so it is not applied here.",
+    "wrist": "Not given by any source read for the face pull (pull archetype default).",
+    "claims": [
+      "c2",
+      "c6",
+      "c7"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Attach a rope to the cable at about head height.",
+      "claim": "c1"
+    },
+    {
+      "step": "Hold the rope ends, palms facing each other.",
+      "claim": "c2"
+    },
+    {
+      "step": "Step back until your arms are straight, with tension.",
+      "claim": [
+        "c2",
+        "c3"
+      ]
+    },
+    {
+      "step": "Stand up straight, feet hip-width apart.",
+      "claim": "c3"
+    },
+    {
+      "step": "Lift your chest, shoulders back.",
+      "claim": "c4"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Keep your elbows high and wide.",
+      "claim": [
+        "c5",
+        "c9"
+      ]
+    },
+    {
+      "point": "Pull toward your face at eye level.",
+      "claim": "c5"
+    },
+    {
+      "point": "Pull the rope ends apart as you pull.",
+      "claim": "c6"
+    },
+    {
+      "point": "Squeeze the shoulder blades together.",
+      "claim": "c6"
+    },
+    {
+      "point": "Keep your whole body still.",
+      "claim": "c4"
+    },
+    {
+      "point": "Neutral spine, no arching.",
+      "claim": "c12"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Dropping the elbows.",
+      "fix": "Keep your elbows high.",
+      "claim": "c9"
+    },
+    {
+      "mistake": "Pulling too low.",
+      "fix": "Pull toward your face, not your chest or chin.",
+      "claim": "c10"
+    },
+    {
+      "mistake": "Momentum from the torso.",
+      "fix": "Start light and keep your whole body still.",
+      "claim": [
+        "c11",
+        "c4"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "rear_delts",
+        "claim": [
+          "c14",
+          "c15"
+        ]
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "rotator_cuff",
+        "claim": "c14"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Backs of the shoulders",
+        "means": "The rear delts are doing the work.",
+        "fix": "",
+        "claim": "c14",
+        "redFlag": null
+      },
+      {
+        "where": "Between the shoulder blades",
+        "means": "The upper back is squeezing the blades together.",
+        "fix": "",
+        "claim": [
+          "c14",
+          "c6"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Pinching in the shoulder",
+        "means": "The elbows are dropping.",
+        "fix": "Keep your elbows high.",
+        "claim": "c9",
+        "redFlag": "shoulder"
+      },
+      {
+        "where": "Shoulder pain",
+        "means": "",
+        "fix": "Stop the set.",
+        "claim": "c13",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Dropped elbows can pinch the shoulder.",
+      "claim": "c9"
+    },
+    {
+      "risk": "Shoulder pain means stop.",
+      "claim": "c13"
+    }
+  ],
+  "redFlags": [
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "fp-elbows",
+      "kind": "posture",
+      "right": "Elbows high and wide, rope to the face.",
+      "wrong": "Elbows below shoulder height.",
+      "claim": [
+        "c5",
+        "c10"
+      ]
+    },
+    {
+      "key": "fp-height",
+      "kind": "posture",
+      "right": "Rope pulled toward the face at eye level.",
+      "wrong": "Rope pulled low, to the chin.",
+      "claim": [
+        "c5",
+        "c10"
+      ]
+    },
+    {
+      "key": "fp-grip",
+      "kind": "hand",
+      "right": "Hands on the rope ends, palms facing each other.",
+      "wrong": null,
+      "claim": "c2"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "rear_delts primary matches exercises.json (c14, c15). mid_back secondary matches (c14: rhomboids, middle traps). rotator_cuff secondary matches (c14). StrengthLog also lists the lateral deltoids (c14); one source only, so side_delts is not added."
+  },
+  "anchorSource": "mo-face-pull",
+  "notes": [
+    "Rope: the shared rope rule (shared/rope-rule.json, key rope-rule) covers rope_triceps_pushdown and overhead_cable_triceps_extension only (sourced in cards/rope_triceps_pushdown.json c2-c5); its appliesToWhy names face_pull as not covered. No rope-rule line is copied here; the face pull's own sources give the rope ends (c2) and the neutral grip (Motra, c2).",
+    "Grip conflict: Motra (anchor) says neutral grip, StrengthLog says overhand (c2). BarBend gives no palm direction. The card draws Motra's neutral grip.",
+    "BarBend's step 3 says to drive the elbows back behind the shoulders (c6); Motra's end has the hands near the ears with the elbows flared (c7). Both are drawn as the elbows high and back at the end.",
+    "Read and not cited: none. Tried and not usable: fitnessvolt.com/face-pulls/ gave 404."
+  ]
+}

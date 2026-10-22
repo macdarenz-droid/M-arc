@@ -1,0 +1,407 @@
+{
+  "id": "cable_lateral_raise",
+  "checked": "2026-10-22",
+  "fetcher": "pending",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "mo-cable-lat-raise",
+      "text": "Set the cable pulley to the lowest position and attach a single handle.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "sl-cable-lat-raise",
+      "text": "Grip a handle connected to the lower position on a cable pulley.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "fv-cable-lat-raise",
+      "text": "Attach a single-grip handle to the lowest point of the cable pulley system.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "fv-cable-lat-raise",
+      "text": "Stand sideways to the cable pulley and grip the handle with the outside hand.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "sl-cable-lat-raise",
+      "text": "Stand close to the pulley, with the arm holding the handle facing away from the machine.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "mo-cable-lat-raise",
+      "text": "Step away to create cable tension.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "fv-cable-lat-raise",
+      "text": "The cable should have tension before you begin.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "mo-cable-lat-raise",
+      "text": "Stand sideways to the machine with the far hand gripping the handle, arm extended down with slight elbow bend, core braced.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "fv-cable-lat-raise",
+      "text": "Hold the handle in front of or behind your body so that you feel a slight stretch in the delts.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "fv-cable-lat-raise",
+      "text": "You can position your arm in front or behind your body to execute this exercise. Holding the arm behind the body may allow for a deeper stretch in the delts.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "mo-cable-lat-raise",
+      "text": "Exhale and raise arm out to side, leading with elbow.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "fv-cable-lat-raise",
+      "text": "With elbows slightly bent, raise your arm to shoulder level, leading with the elbow.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "mo-cable-lat-raise",
+      "text": "Lift until arm is parallel to floor.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "sl-cable-lat-raise",
+      "text": "With control, lift the handle outward to your side, until your upper arm is horizontal.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "mo-cable-lat-raise",
+      "text": "Start with arm extended down at side; raise to parallel with floor or slightly above, avoiding shoulder shrug.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "mo-cable-lat-raise",
+      "text": "Inhale and lower arm slowly with control.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "sl-cable-lat-raise",
+      "text": "Lower the handle with control.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "fv-cable-lat-raise",
+      "text": "Slowly lower your arm back down until you feel a stretch in your delts and repeat.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "mo-cable-lat-raise",
+      "text": "Maintain slight elbow bend throughout.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "mo-cable-lat-raise",
+      "text": "Locking elbows",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "mo-cable-lat-raise",
+      "text": "Shrugging shoulders",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "mo-cable-lat-raise",
+      "text": "Start with arm extended down at side; raise to parallel with floor or slightly above, avoiding shoulder shrug.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "mo-cable-lat-raise",
+      "text": "Swinging with momentum",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "mo-cable-lat-raise",
+      "text": "Avoid momentum",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "fv-cable-lat-raise",
+      "text": "The cable lateral raise is an isolation exercise that does not require very heavy weight. You want to challenge the muscle but not have to cheat to swing and use momentum the weight up unless you’re performing cheat reps.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "fv-cable-lat-raise",
+      "text": "You can use slight momentum if you really want to overload the delts.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "mo-cable-lat-raise",
+      "text": "Stay upright",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "mo-cable-lat-raise",
+      "text": "Brace core to prevent leaning",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "mo-cable-lat-raise",
+      "text": "Leaning torso",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "fv-cable-lat-raise",
+      "text": "Either hold onto the cable system and lean away from it or take a step away and remain upright.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "fv-cable-lat-raise",
+      "text": "Do not pull up the handle. You want the delts to raise laterally to perform the exercise effectively.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "fv-cable-lat-raise",
+      "text": "The elbow should lead the hands to maximize the engagement of the lateral deltoids.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "sl-cable-lat-raise",
+      "text": "This is an exercise where it is easy to pick a weight that is too heavy. Rather err on the lighter side, and strive for a strict form where you focus on getting good contact with your delts.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "mo-cable-lat-raise",
+      "text": "Start with light weight",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "mo-cable-lat-raise",
+      "text": "A unilateral isolation exercise using a cable machine to target the lateral deltoid for shoulder width and definition.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "sl-cable-lat-raise",
+      "text": "Lateral Deltoid",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "larsen2025",
+      "text": "In conclusion, our data suggest that both dumbbell and cable lateral raises are similarly effective for increasing lateral deltoid muscle hypertrophy in resistance-trained lifters.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "mo-cable-lat-raise",
+      "text": "Mid Traps, Upper Traps",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "sl-cable-lat-raise",
+      "text": "Front Deltoid",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "fv-cable-lat-raise",
+      "text": "The deltoid anterior or front deltoid is one of three heads that make up the shoulder. It assists in the stabilization of the arm during abduction and with help from the pectoralis major, flexes the arm when walking.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "kolber2014",
+      "text": "A significant association existed between clinical characteristics of SIS (p ≤ 0.004) and both lateral deltoid raises and upright rows above 90°.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "kolber2014",
+      "text": "Avoiding performance of lateral deltoid raises and upright rows beyond an angle of 90° and efforts to strengthen the external rotators may serve as a useful means to mitigate characteristics associated with SIS.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "larsen2025",
+      "text": "Some participants reported pain in the glenohumeral and/or scapulothoracic joints during strict shoulder abduction lateral raises. In these cases, they were permitted to perform shoulder elevation mid-way between the frontal and scapular plane.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "mo-cable-lat-raise",
+      "text": "Stop on sharp pain",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "mo-cable-lat-raise",
+      "text": "Do not lift above parallel if painful",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "mo-cable-lat-raise",
+      "text": "Pause briefly and squeeze lateral deltoid.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "mo-cable-lat-raise",
+      "text": "2-1-2",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "mo-cable-lat-raise",
+      "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c24",
+      "source": "larsen2025",
+      "text": "The eccentric and concentric phases of each lift were standardized to approximately 1 s each to try to match shoulder abduction and adduction angular acceleration, which could impact the torque.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c24",
+      "source": "larsen2025",
+      "text": "Participants were instructed to pause briefly at full shoulder adduction but not at full shoulder abduction.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    }
+  ]
+}
