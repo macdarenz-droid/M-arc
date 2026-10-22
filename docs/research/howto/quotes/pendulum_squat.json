@@ -1,6 +1,6 @@
 {
   "id": "pendulum_squat",
-  "checked": "2026-10-02",
+  "checked": "2026-10-22",
   "fetcher": "sonnet source fetcher",
   "quotes": [
     {
@@ -33,6 +33,14 @@
       "text": "Engage your core and keep your back pressed against the backrest throughout the movement.",
       "status": "verbatim",
       "closest": "Engage your core and keep your back pressed against the backrest throughout the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "yr-pend",
+      "text": "Before you move, lightly brace your core.",
+      "status": "verbatim",
+      "closest": "Before you move, lightly brace your core.",
       "note": ""
     },
     {
@@ -132,6 +140,14 @@
       "note": ""
     },
     {
+      "claim": "c12",
+      "source": "wff-pend",
+      "text": "The quads are the primary driver.",
+      "status": "verbatim",
+      "closest": "The quads are the primary driver.",
+      "note": ""
+    },
+    {
       "claim": "c13",
       "source": "sl-pendulum",
       "text": "The pendulum squat is an effective exercise for isolating the quadriceps with minimal pressure on the back. The stabilized movement path of the machine allows for full control throughout, making it a safe and joint-friendly option.",
@@ -190,18 +206,18 @@
     {
       "claim": "c17",
       "source": "boxlife-pend",
-      "text": "Once you've hit your rep count, re-engage the safety and make sure it's on before attempting to get off the machine.",
+      "text": "Once you’ve hit your rep count, re-engage the safety and make sure it’s on before attempting to get off the machine.",
       "status": "verbatim",
-      "closest": "Once you've hit your rep count, re-engage the safety and make sure it's on before attempting to get off the machine.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "closest": "Once you’ve hit your rep count, re-engage the safety and make sure it’s on before attempting to get off the machine.",
+      "note": ""
     },
     {
       "claim": "c17",
       "source": "boxlife-pend",
-      "text": "It's a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
+      "text": "It’s a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
       "status": "verbatim",
-      "closest": "It's a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "closest": "It’s a good idea to check before you get on the machine how the stopper/safety works, so you can do it easily when you reach this point.",
+      "note": ""
     },
     {
       "claim": "c17",
@@ -209,7 +225,7 @@
       "text": "After your final rep, return to the top and make sure you are stable.",
       "status": "verbatim",
       "closest": "After your final rep, return to the top and make sure you are stable.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c17",
@@ -217,7 +233,7 @@
       "text": "Before stepping out, check that the weight is fully supported.",
       "status": "verbatim",
       "closest": "Before stepping out, check that the weight is fully supported.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c17",
@@ -225,7 +241,87 @@
       "text": "Stand tall → engage the safety → confirm it is locked → step out.",
       "status": "verbatim",
       "closest": "Stand tall → engage the safety → confirm it is locked → step out.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "wff-pend",
+      "text": "Rushing the descent: Dropping into the bottom rather than controlling the lowering phase. Fix: a controlled two to three second descent on every rep.",
+      "status": "verbatim",
+      "closest": "Rushing the descent: Dropping into the bottom rather than controlling the lowering phase. Fix: a controlled two to three second descent on every rep.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "xcel-pend",
+      "text": "Lower slowly by bending your knees, counting three seconds down.",
+      "status": "verbatim",
+      "closest": "Lower slowly by bending your knees, counting three seconds down.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "boxlife-pend",
+      "text": "Once you’re at the bottom of your squat, pause for a second, and then drive your feet into the foot plate to push yourself up again.",
+      "status": "verbatim",
+      "closest": "Once you’re at the bottom of your squat, pause for a second, and then drive your feet into the foot plate to push yourself up again.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "boxlife-pend",
+      "text": "Aim for a controlled movement—there’s no need to be explosive.",
+      "status": "verbatim",
+      "closest": "Aim for a controlled movement—there’s no need to be explosive.",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "yr-pend",
+      "text": "Do not drop quickly to the bottom. Lower yourself under control.",
+      "status": "verbatim",
+      "closest": "Do not drop quickly to the bottom. Lower yourself under control.",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "yr-pend",
+      "text": "In my decades of design experience, I often see people add too much weight and then lose control on the way down.",
+      "status": "verbatim",
+      "closest": "In my decades of design experience, I often see people add too much weight and then lose control on the way down.",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "yr-pend",
+      "text": "Do not aggressively snap your knees straight at the top.",
+      "status": "verbatim",
+      "closest": "Do not aggressively snap your knees straight at the top.",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "xcel-pend",
+      "text": "Extend fully at the top without locking out hard.",
+      "status": "verbatim",
+      "closest": "Extend fully at the top without locking out hard.",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "boxlife-pend",
+      "text": "Make sure you’re very familiar with how the safety catch works in case you need to engage it mid-movement.",
+      "status": "verbatim",
+      "closest": "Make sure you’re very familiar with how the safety catch works in case you need to engage it mid-movement.",
+      "note": "Added in the LB8 fix round; fetched by curl 2026-10-22."
+    },
+    {
+      "claim": "c22",
+      "source": "boxlife-pend",
+      "text": "Plus, it features a safety catch that gives you an “out” if you fail a rep, unlike traditional squats.",
+      "status": "verbatim",
+      "closest": "Plus, it features a safety catch that gives you an “out” if you fail a rep, unlike traditional squats.",
+      "note": "Added in the LB8 fix round; fetched by curl 2026-10-22."
     }
   ]
 }

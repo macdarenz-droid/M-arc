@@ -1,0 +1,1068 @@
+{
+  "id": "hip_thrust",
+  "libId": "lib_hip_thrust",
+  "name": "Hip Thrust",
+  "family": "Glute and hip extension",
+  "tier": "A",
+  "tierNote": "Safety tier A from content.md appendix B. census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "on-body",
+    "contact": [
+      "bench-lying"
+    ]
+  },
+  "parent": null,
+  "parentNote": "Its own parent (content.md Appendix A: new parents on their own).",
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Sit on the floor with the back against a sturdy bench, roll the barbell over the thighs onto the hips, set the feet on the floor about shoulder-width apart with bent knees, and put the hands on the bar to stabilise it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ht"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ht",
+          "text": "Sit on the floor with your back against a sturdy bench.",
+          "where": "How to Do Hip Thrusts, step 1"
+        },
+        {
+          "source": "sl-ht",
+          "text": "Roll the barbell up over your thighs until it is placed over your hips.",
+          "where": "How to Do Hip Thrusts, step 2"
+        },
+        {
+          "source": "sl-ht",
+          "text": "Place your feet on the floor, about shoulder-width apart, with bent knees.",
+          "where": "How to Do Hip Thrusts, step 3"
+        },
+        {
+          "source": "sl-ht",
+          "text": "Place your hands on the bar to stabilize it.",
+          "where": "How to Do Hip Thrusts, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The bench edge sits at about the bottom of the shoulder blades. PureGym sets the feet hip width apart and Healthline about shoulder-width apart; PureGym places them so the shins are vertical at the top.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht",
+        "pg-bht",
+        "hl-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "For the regular hip thrust, set up in a position with the bench lined up at around the bottom of the shoulder blades.",
+          "where": "The Set Up: Bench Height"
+        },
+        {
+          "source": "pg-bht",
+          "text": "Choose a box or bench height that allows the bottom of your shoulder blades to rest on the edge and place your feet hip width apart at a distance that allows the shins to be vertical at the top of the hip thrust.",
+          "where": "Barbell Hip Thrust Tips"
+        },
+        {
+          "source": "hl-ht",
+          "text": "The bench should hit just below your shoulder blades, and your feet should be about shoulder-width apart.",
+          "where": "How do you do a hip thrust?, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The bar sits in the crease of the hips, with the hands holding it there through the whole movement so it does not slide forward or backward; it stays centred over the hips.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht",
+        "hl-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "The bar should be positioned in the crease of the hip with the hands holding the bar into position throughout the movement so the bar does not move forwards or backwards.",
+          "where": "The Set Up: Bar Position"
+        },
+        {
+          "source": "bc-ht",
+          "text": "Do not let the bar slide forward or backward during the hip thrust – keep it centered over the hips!",
+          "where": "The Set Up: Bar Position"
+        },
+        {
+          "source": "hl-ht",
+          "text": "the barbell should be placed in the crease of the hips with hands on either side to stabilize it throughout the movement.",
+          "where": "Can you add weight?: With a barbell"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Put a pad, folded mat or towel between the bar and the hips to soften the bar's pressure, particularly with a heavy load.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ht",
+        "bb-ht",
+        "pg-ht"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ht",
+          "text": "We recommend placing something between the bar and your pelvis to soften the pressure from the bar, like a folded yoga mat, a towel, or a barbell pad.",
+          "where": "Commentary"
+        },
+        {
+          "source": "bb-ht",
+          "text": "You can add a pad or mat in the hip crease to minimize any painful pressing of the barbell into the pelvis/hip flexors.",
+          "where": "How to Perform the Hip Thrust, step 1"
+        },
+        {
+          "source": "pg-ht",
+          "text": "Use a barbell pad or towel for cushioning the hips, particularly if using a heavy load",
+          "where": "Hip thrust tips"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Heavy hip thrusts without padding are painful on the hips for most lifters; with significant weight you may notice pain where the bar lies, and padding helps prevent discomfort.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht",
+        "hl-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "Heavy hip thrusting is brutal on the hips. While some lifters can tolerate hip thrusting without any padding, most will find the lift excruciatingly painful if padding isn’t used.",
+          "where": "Protecting Your Hips"
+        },
+        {
+          "source": "hl-ht",
+          "text": "When you start to add significant weight to your hip thrust, you may notice pain where the bar lies. Consider using specialized pads or rolling up a yoga mat or towel to cushion your hips and prevent discomfort.",
+          "where": "Can you add weight?: With a hip thrust machine"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Set the feet so the shins are vertical at the top, when the hips are fully extended; the toes can point straight ahead or turn out slightly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "Set your feet so that at the top of hip thrust, when the hips are fully extended, your shins are vertical.",
+          "where": "The Set Up: Feet"
+        },
+        {
+          "source": "bc-ht",
+          "text": "Toes can be pointing straight ahead or turned out slightly.",
+          "where": "The Set Up: Feet"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "In the start position, take a deep breath, brace the core and drive through the heels with the knees in line with the toes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "Once you follow the steps above and are in the correct starting position, take a deep breath, brace the core, and drive through the heels, keeping the knees in line with the toes",
+          "where": "Execution"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "At the top, contract the glutes hard and push the hips forward without overextending the lower back: hips as high as possible with a neutral spine, torso about parallel to the ground (a straight line from shoulders to knees), knees at about 90 degrees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht",
+        "pg-bht",
+        "sl-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "When you approach the top of the movement, finish the lift by contracting your glutes hard and pushing your hips forward. Do not overextend the lower back",
+          "where": "Execution"
+        },
+        {
+          "source": "bc-ht",
+          "text": "Finish the movement with your hips as high as possible while maintaining a neutral spine. At the top of the movement your torso should be parallel to the ground with hips pushed through",
+          "where": "Execution"
+        },
+        {
+          "source": "pg-bht",
+          "text": "push through the heels of your feet to thrust the bar up until your body is in a straight line from shoulders to knees.",
+          "where": "How To Do A Barbell Hip Thrust, step 4"
+        },
+        {
+          "source": "sl-ht",
+          "text": "Push the bar towards the ceiling by extending your hips. Your knees should form a ~90-degree angle at the top.",
+          "where": "How to Do Hip Thrusts, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The upper back is a pivot point on the bench and should not slide back and forth during the movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "For both variations, make sure your back acts as a pivot point around the bench. Do not allow your back to slide back and forth during the movement!",
+          "where": "The Set Up: Bench Height"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Lift with a fluid motion rather than jerking the weight off the floor, and lower the weight under control (slowly) with the spine neutral.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht",
+        "pg-bht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "While performing the hip thrust, it is important to make sure you do not jerk the weight off the floor but use a fluid motion instead.",
+          "where": "Execution"
+        },
+        {
+          "source": "bc-ht",
+          "text": "Lower the weight under control keeping tension on the glutes",
+          "where": "Execution"
+        },
+        {
+          "source": "pg-bht",
+          "text": "Pause and squeeze the glutes before slowly lowering back to the ground, making sure the spine stays neutral throughout.",
+          "where": "How To Do A Barbell Hip Thrust, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Keep the belly tight and the back flat; lifters often arch the lower back and mis-load the hips at the bottom of the position. Avoid arching the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bb-ht",
+          "text": "Once you are set, pull the belly tight and keep the back flat. Often, lifters will arch the lower back and miss-load the hips at the bottom of the position.",
+          "where": "How to Perform the Hip Thrust, step 3"
+        },
+        {
+          "source": "bb-ht",
+          "text": "Coach’s Tip: Keep your abs tight and pinch you glutes together as you lift. Avoid arching your back.",
+          "where": "How to Perform the Hip Thrust, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The lifter arches the back when the glutes cannot lock the weight out; with the ribs up and the lower back arched at the start, the hips do not fully extend. Fix: reduce the load, brace the core through the whole range, move only at the hips, ribs down and lower back neutral.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht",
+        "hl-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "The glutes aren’t strong enough to lock the weight out so the lifter substitutes by arching the back.",
+          "where": "Common Hip Thrust Mistakes: Excessive arching of the low back"
+        },
+        {
+          "source": "bc-ht",
+          "text": "Quick Fix: Reduce the load and brace the core throughout the whole range of motion. Focus on only moving at the hips and on not allowing movement to occur at the lumbar spine.",
+          "where": "Common Hip Thrust Mistakes: Excessive arching of the low back"
+        },
+        {
+          "source": "hl-ht",
+          "text": "If your ribs are up and your lower back is arched — or hyperextended — at the beginning of the movement, you won’t achieve full extension of the hips for glute activation.",
+          "where": "Common mistakes: Your lower back isn’t neutral"
+        },
+        {
+          "source": "hl-ht",
+          "text": "Make sure that your ribs are down and your lower back is neutral to achieve full extension of the hips.",
+          "where": "Common mistakes: Your lower back isn’t neutral"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Overextending the back can put unnecessary pressure on the lower back; a neutral spine, with the pelvis tucked under and the core engaged, helps protect the lumbar spine and keeps it from overarching.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-ht",
+        "pg-bht"
+      ],
+      "quotes": [
+        {
+          "source": "pg-ht",
+          "text": "Avoid overextending your back as this can put unnecessary pressure particularly on the lower back",
+          "where": "Hip thrust tips"
+        },
+        {
+          "source": "pg-bht",
+          "text": "Maintaining a neutral spine will help to protect the lumbar spine. Tuck your pelvis under and engage the core to straighten the spine and prevent it from overarching.",
+          "where": "Barbell Hip Thrust Tips"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Failing to reach full hip extension (stopping short of thighs parallel) is usually due to too heavy a load. Fix: drop the weight so you can lock out, and aim for a 90-degree angle with the legs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht",
+        "hl-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "Failing to reach full hip extension is also usually due to the load being too heavy.",
+          "where": "Common Hip Thrust Mistakes: Insufficient hip extension"
+        },
+        {
+          "source": "bc-ht",
+          "text": "Quick Fix: Drop the weight, allowing you to completely lock out and finish the movement.",
+          "where": "Common Hip Thrust Mistakes: Insufficient hip extension"
+        },
+        {
+          "source": "hl-ht",
+          "text": "If you stop short of thighs parallel, your glutes won’t see full activation. To fix this, make sure you’re aiming for a 90-degree angle with your legs.",
+          "where": "Common mistakes: You aren’t completing the full range of motion"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Some tend to rise onto the balls of the feet at the top, from the foot placement or quad dominance. Fix: reassess the feet, keep the toes on the floor and push through the heels throughout the set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht",
+        "hl-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "Quick Fix: Keep your toes on the floor and focus on pushing through the heels throughout the set (you can also dorsiflex and lift the toes if this helps)",
+          "where": "Common Hip Thrust Mistakes: Rising up onto toes"
+        },
+        {
+          "source": "hl-ht",
+          "text": "Some have the tendency to rise up onto the balls of their feet at the top of the thrust. This happens either because your foot placement is off, or you are quad-dominant.",
+          "where": "Common mistakes: You’re coming up onto your toes"
+        },
+        {
+          "source": "hl-ht",
+          "text": "Reassess where your feet are and ensure that your legs form a 90-degree angle at the top. Then, focus on heel contact throughout the movement.",
+          "where": "Common mistakes: You’re coming up onto your toes"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Feet too far forward shift the feel to the hamstrings; feet too close to the body bring in more of the quads.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-ht"
+      ],
+      "quotes": [
+        {
+          "source": "hl-ht",
+          "text": "If your feet are too far forward, you’ll feel the hip thrust more in your hamstrings. If they’re too far in toward your body, you’ll get more quad engagement.",
+          "where": "Common mistakes: Your foot placement is incorrect"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "In 13 trained women at estimated 10RM loads, the barbell hip thrust gave more gluteus maximus and biceps femoris (hamstring) EMG activity than the back squat.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "contreras-2015"
+      ],
+      "quotes": [
+        {
+          "source": "contreras-2015",
+          "text": "Thirteen trained women (n = 13; age = 28.9 years; height = 164 cm; mass = 58.2 kg) performed estimated 10-repetition maximums (RM) in the back squat and barbell hip thrust.",
+          "where": "abstract"
+        },
+        {
+          "source": "contreras-2015",
+          "text": "The barbell hip thrust activates the gluteus maximus and biceps femoris to a greater degree than the back squat when using estimated 10RM loads.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Coach pages name the glutes as the main target; the hamstrings, quads and adductors also work (StrengthLog lists adductors and quads as secondary; Healthline and PureGym add the hamstrings).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ht",
+        "hl-ht",
+        "pg-ht"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ht",
+          "text": "Glutes",
+          "where": "Muscles Worked: Primary muscles worked"
+        },
+        {
+          "source": "sl-ht",
+          "text": "Adductors",
+          "where": "Muscles Worked: Secondary muscles worked"
+        },
+        {
+          "source": "sl-ht",
+          "text": "Quads",
+          "where": "Muscles Worked: Secondary muscles worked"
+        },
+        {
+          "source": "hl-ht",
+          "text": "The hip thrust motion mainly targets the glutes — both the gluteus maximus and gluteus medius — as well as the hamstrings. Your quads, core, and hip adductors will be working, too.",
+          "where": "What muscles are worked?"
+        },
+        {
+          "source": "pg-ht",
+          "text": "The hip thrust exercise targets the gluteus maximus, which is the biggest muscle in your body. It also activates the hamstrings, quadriceps, and adductors.",
+          "where": "What is a hip thrust?"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Load progression: beginners start with body weight, about 3 sets of 12 building to 20; once you can do multiple reps with good form, add weight slowly and gradually (or progress to one leg).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-ht",
+        "pg-bht",
+        "pg-ht"
+      ],
+      "quotes": [
+        {
+          "source": "hl-ht",
+          "text": "If you’re a beginner, aim for 3 sets of 12 reps, working your way up to 20 using body weight.",
+          "where": "How do you do a hip thrust?"
+        },
+        {
+          "source": "hl-ht",
+          "text": "After that, progress in the exercise by experimenting with a single-leg variation or safely adding weight, either with a barbell, plate, or dumbbell — more on that below.",
+          "where": "How do you do a hip thrust?"
+        },
+        {
+          "source": "pg-bht",
+          "text": "Start with bodyweight and once you can do multiple reps with good form, slowly add weight to continue to build strength.",
+          "where": "Commonly Asked Questions: How Heavy Should You Be Hip Thrusting?"
+        },
+        {
+          "source": "pg-ht",
+          "text": "Start light and gradually increase the weight as you get stronger, focusing on executing the exercise with good technique",
+          "where": "Hip thrust tips"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "A general review of resistance exercise (not hip-thrust data): a brief breath-hold (Valsalva) is unavoidable with heavy loads or sets to failure; it raises blood pressure, with the health risk unconfirmed.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "hackett-2013"
+      ],
+      "quotes": [
+        {
+          "source": "hackett-2013",
+          "text": "a brief Valsalva maneuver (VM) is unavoidable when lifting heavy loads (>80% of maximal voluntary contraction) or when lifting lighter loads to failure.",
+          "where": "abstract"
+        },
+        {
+          "source": "hackett-2013",
+          "text": "The VM was associated with an increase in blood pressure during resistance exercise",
+          "where": "abstract"
+        },
+        {
+          "source": "hackett-2013",
+          "text": "The health risks associated with the VM during resistance exercise remain unconfirmed.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "A hip thrust machine is a bench that lets you hip thrust with a barbell or bands with a very easy setup; no read source describes the machine's own setup.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "hl-ht"
+      ],
+      "quotes": [
+        {
+          "source": "hl-ht",
+          "text": "This specific type of bench allows you to hip thrust with a barbell or resistance bands with a very easy setup.",
+          "where": "Can you add weight?: With a hip thrust machine"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "Tempo (drawing convention): PureGym asks for a pause and glute squeeze at the top and a slow lowering, with no seconds. No hip-thrust source gives seconds, so the plate's 2 s down, 1 s up and 1 s top pause are a drawing convention (R-LB7-6, LR-33).",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "pg-bht"
+      ],
+      "quotes": [
+        {
+          "source": "pg-bht",
+          "text": "Pause and squeeze the glutes before slowly lowering back to the ground, making sure the spine stays neutral throughout.",
+          "where": "How To Do A Barbell Hip Thrust, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "text": "The sources conflict on the neck: Contreras lists a flexed neck as a mistake that can cause cramping and neck discomfort and asks for a neutral neck, while Healthline says keep the chin tucked and PureGym says keep the chin down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bc-ht",
+        "hl-ht",
+        "pg-ht"
+      ],
+      "quotes": [
+        {
+          "source": "bc-ht",
+          "text": "Going into cervical flexion can be problematic for some lifters, causing cramping and neck discomfort.",
+          "where": "Common Hip Thrust Mistakes: Improper neck positioning"
+        },
+        {
+          "source": "bc-ht",
+          "text": "Quick Fix: Be sure to maintain a neutral neck position throughout the movement",
+          "where": "Common Hip Thrust Mistakes: Improper neck positioning"
+        },
+        {
+          "source": "hl-ht",
+          "text": "Keeping your chin tucked, push through your heels until your thighs reach parallel to the floor — your legs should form a 90-degree angle.",
+          "where": "How do you do a hip thrust?, step 3"
+        },
+        {
+          "source": "pg-ht",
+          "text": "Focus on rotating your pelvic tilt posteriorly at the top and crunching your abs slightly or keeping your chin down to help with this",
+          "where": "Hip thrust tips"
+        }
+      ]
+    },
+    {
+      "id": "c24",
+      "text": "Grip: PureGym grips the bar just wider than hip width; Contreras says some prefer an underhand (supinated) grip and others an overhand (pronated) grip, and leaves it to the lifter.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-bht",
+        "bc-ht"
+      ],
+      "quotes": [
+        {
+          "source": "pg-bht",
+          "text": "Pull the barbell towards the crease of your hips and place your feet flat on the floor, knees facing the ceiling, and then grip it just wider than hip width apart.",
+          "where": "How To Do A Barbell Hip Thrust, step 3"
+        },
+        {
+          "source": "bc-ht",
+          "text": "Some feel more comfortable with a supinated grip (some claim this helps improve lat function which subsequently leads to better glute function), while others prefer a pronated grip. This is entirely up to you.",
+          "where": "The Set Up: Bar Position"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bc-ht",
+      "url": "https://bretcontreras.com/how-to-hip-thrust/",
+      "title": "How to Hip Thrust (Bret Contreras)",
+      "kind": "coach",
+      "year": 2014,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "pg-bht",
+      "url": "https://www.puregym.com/exercises/glutes/hip-thrusts/barbell-hip-thrust/",
+      "title": "Barbell Hip Thrusts (PureGym exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "pg-ht",
+      "url": "https://www.puregym.com/exercises/glutes/hip-thrusts/",
+      "title": "How to do Hip Thrusts (PureGym exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "bb-ht",
+      "url": "https://barbend.com/hip-thrust/",
+      "title": "Hip Thrust Exercise Guide (BarBend)",
+      "kind": "coach",
+      "year": 2019,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "hl-ht",
+      "url": "https://www.healthline.com/health/fitness-exercise/hip-thrusts",
+      "title": "How to Do Hip Thrusts the Right Way (Healthline)",
+      "kind": "coach",
+      "year": 2020,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-ht",
+      "url": "https://www.strengthlog.com/hip-thrust/",
+      "title": "How to Do Hip Thrusts: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "contreras-2015",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/26214739/",
+      "title": "A Comparison of Gluteus Maximus, Biceps Femoris, and Vastus Lateralis Electromyographic Activity in the Back Squat and Barbell Hip Thrust Exercises.",
+      "kind": "peer-reviewed",
+      "year": 2015,
+      "pmid": "26214739",
+      "access": "abstract",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "hackett-2013",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23222073/",
+      "title": "The Valsalva maneuver: its effect on intra-abdominal pressure and safety issues during resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 2013,
+      "pmid": "23222073",
+      "access": "abstract",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side. The top fault, the lower back arched with the ribs up (c11, c12), reads from the side, and so do the bar in the hip crease (c3), the bench edge under the shoulder blades (c2), the flat torso and vertical shins at the top (c6, c8).",
+    "equipment": "Barbell with plates and a pad around the bar (c4), resting in the hip crease (c3); flat bench, its edge at about the bottom of the shoulder blades (c2); floor line.",
+    "start": "Bottom: upper back on the bench edge (c2), hips low, knees bent, feet flat on the floor (c1), bar on a pad in the hip crease, hands holding it (c3, c4).",
+    "end": "Top: hips fully extended, torso about parallel to the floor in a straight line from shoulders to knees (c8), shins vertical (c6), knees about 90 degrees (c8), spine neutral with the ribs down (c8, c12), upper back still on the bench (c9).",
+    "checkpoints": [
+      {
+        "label": "Bar in crease",
+        "what": "Bar sits in the hip crease, held there by the hands.",
+        "claim": "c3"
+      },
+      {
+        "label": "Ribs down",
+        "what": "Lower back neutral, not arched, through the whole rep.",
+        "claim": [
+          "c12",
+          "c11",
+          "c10"
+        ]
+      },
+      {
+        "label": "Shins vertical",
+        "what": "At the top the shins are vertical and the torso is flat.",
+        "claim": [
+          "c6",
+          "c8"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Lower back arched (overextended) with the ribs up, instead of neutral.",
+      "why": "BarBend says lifters often arch the lower back (c11); Contreras says it happens when the glutes cannot lock the weight out (c12); PureGym says overextending can put unnecessary pressure on the lower back (c13).",
+      "claim": [
+        "c11",
+        "c12",
+        "c13"
+      ],
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: arching the lower back (c11, c12, c13). BarBend's how-to step 3, not a list sentence: \"Once you are set, pull the belly tight and keep the back flat. Often, lifters will arch the lower back and miss-load the hips at the bottom of the position.\" (c11) says this exercise's own fault happens often (a step-1 hit, as D-SUP-LB7-DIPREPS counted a sentence tied to the exercise). It is the only step-1 hit. Set aside at step 1: Contreras's \"This usually occurs because the weight is too heavy.\" under \"Excessive arching of the low back\" and \"Failing to reach full hip extension is also usually due to the load being too heavy.\" say what causes each fault, not how often it happens (the renegade_row cause reading, lb7); counted, the first names the same fault. Counted, the second also passes step 1, for stopping short of lockout; step 2 then picks the arch, the only one tied to harm (c13; PureGym's \"Maintaining a neutral spine will help to protect the lumbar spine.\", D-SUP-PROTECT), so the pick is the same. \"This typically occurs with people who don’t know how to perform the movement properly and with those who are very quad dominant\" (rising onto the toes) says who, and 'typically' is not a step-1 word; Healthline's \"Some have the tendency to rise up onto the balls of their feet\" uses 'tendency'. \"most will find the lift excruciatingly painful if padding isn’t used\" (Contreras, c5) is about padding, an equipment choice, not a candidate. \"many lifters will find that they can lift heavier weights\" (American-style setup) and PureGym's \"most people can work up to heavy hip thrusts\" are about the load; \"This is what most clients feel most comfortable with\" is the bench height (setup); \"Many women prefer this option\" is a rep style (touch the floor or reverse in mid-air), not a fault; \"many lifters, especially my readers, believe the hip thrust to be the best glute development exercise\" names no fault. BarBend's \"Often, this will mean a controlled eccentric (lowering) or isometric contraction at the top\" describes a tempo variation and \"can be loaded often with high amounts of weight\" the load. Hackett's \"resistance trainers are often advised to avoid the VM\" is about all resistance training (R-LB7-3). Healthline's \"What are the most common mistakes to watch for?\" heading is not a frequency word. Harm quotes, not needed once step 1 decides: PureGym's \"Avoid overextending your back as this can put unnecessary pressure particularly on the lower back\" and \"Maintaining a neutral spine will help to protect the lumbar spine.\" (c13; D-SUP-PROTECT) tie the same fault to harm; Contreras's \"Going into cervical flexion can be problematic for some lifters, causing cramping and neck discomfort.\" ties the flexed neck to discomfort (c23; the sources conflict on the neck, so it is in no shown line); BarBend's \"to minimize any painful pressing of the barbell\" and Healthline's \"you may notice pain where the bar lies\" are about padding, an equipment choice. Also set aside from the full scan: Contreras's \"Below are the most common ways to increase the challenge of the hip thrust after mastering bodyweight:\" (ways to load); \"Many lifters are shocked when they finally decide to purchase padding\" and \"Even worse is that pain will shut down muscle activation\" (padding, an equipment choice); the reader comments \"When I first started doing them I did too much back arching\" (one reader about themself, no frequency word; counted, it names the same fault), \"I really think that a posterior pelvic tilt lockout is the key to a safe, optimally performed hip thrust\" (a reader; it would tie the cue against the arch to safety, the same fault), \"I think most people can figure out what to do\" (band setup) and the bruising and pain reports from the bar on the hips (padding and load, not a form fault); \"I can’t stress this enough – you want a smooth hip thrust, not a spastic hip thrust.\" ('stress' is emphasis; jerking is a speed-only fault with no harm word). Benefit lines name no fault: Healthline's \"Without it, you’re at higher risk of knee pain, low back pain, and other types of injuries.\" (weak glutes) and \"experts agree that they provide benefits for many people\", BarBend's \"Potentially Decrease Knee and Lower Back Pain\", PureGym's \"reduce back pain\" and \"help to avoid the risk of injury\"; Healthline's \"safely adding weight\" is load progression; PureGym's \"typically\" lines describe the set-up of each exercise; BarBend's glute-bridge \"tends to have a smaller range of motion\" is another exercise; Hackett's \"tending to be lower\" is about pressure. None changes the pick. drawable true: the arched lower back with the ribs up is a still sign the side view shows. handlingMistakes after the top fault: stopping short of full hip extension (c14; on both mistakes lists written for this exercise, Contreras's and Healthline's) and rising onto the toes (c15; on both lists). The flexed neck is left out of handlingMistakes because the sources conflict on the fix (c23).",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Upper back pivots, never slides",
+        "claim": "c9"
+      },
+      {
+        "text": "Heels stay down the whole set",
+        "claim": "c15"
+      },
+      {
+        "text": "Bar stays centred over your hips",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c22",
+      "text": "Drawing convention: PureGym asks for a pause and glute squeeze at the top, then a slow lowering, with no seconds (c22, WEAK); Contreras says lower under control (c10). 2 s down and 1 s up show a slower lowering than lifting (R-LB7-6), and the 1 s top pause is the brief pause right after the lift (LR-33). BarBend's tempo hip thrust (a set cadence, often a controlled lowering or a hold at the top) is a variation, not the default rep. Contreras allows touching the floor each rep or reversing in mid-air at the bottom; no bottom pause is asked."
+    },
+    "variantLine": "exercises.json lists Barbell / Machine. The plate draws the barbell on a flat bench (census equipmentNeeds barbell, flatBench, floor). Every setup, posture, mistake and feel line is written for the barbell version. For the machine, one source says only that the hip thrust machine is a bench that takes a barbell or bands with a very easy setup (c21, WEAK); no read source describes the machine's own setup."
+  },
+  "grip": {
+    "type": "Both hands on the bar at the hips, holding it in place (c1, c3).",
+    "width": "Just wider than hip width (c24), hands either side of the hips (c3).",
+    "thumb": "No source addresses the thumb.",
+    "handContact": "Hands hold the bar in the hip crease (c3); overhand or underhand, left to the lifter (c24).",
+    "wrist": "No source gives a wrist angle.",
+    "claims": [
+      "c1",
+      "c3",
+      "c24"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Sit on the floor, back against a sturdy bench.",
+      "claim": "c1"
+    },
+    {
+      "step": "Bench edge at the bottom of your shoulder blades.",
+      "claim": "c2"
+    },
+    {
+      "step": "Roll the bar over your thighs into your hip crease.",
+      "claim": [
+        "c1",
+        "c3"
+      ]
+    },
+    {
+      "step": "Feet flat, knees bent, shins vertical at the top.",
+      "claim": [
+        "c1",
+        "c24",
+        "c6"
+      ]
+    },
+    {
+      "step": "Pad the bar. Hold it in place with both hands.",
+      "claim": [
+        "c4",
+        "c1",
+        "c3"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Take a deep breath, brace, then drive through your heels.",
+      "claim": "c7"
+    },
+    {
+      "point": "Ribs down, lower back neutral.",
+      "claim": [
+        "c12",
+        "c13"
+      ]
+    },
+    {
+      "point": "Upper back pivots on the bench without sliding.",
+      "claim": "c9"
+    },
+    {
+      "point": "At the top, torso flat, shins vertical.",
+      "claim": [
+        "c8",
+        "c6"
+      ]
+    },
+    {
+      "point": "Squeeze your glutes hard at the top.",
+      "claim": "c8"
+    },
+    {
+      "point": "Smooth reps, no jerking. Lower under control.",
+      "claim": "c10"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Arching the lower back.",
+      "fix": "Reduce the load. Brace, ribs down, and move only at the hips.",
+      "claim": [
+        "c11",
+        "c12"
+      ]
+    },
+    {
+      "mistake": "Stopping short of lockout.",
+      "fix": "Drop the weight so you can fully lock out.",
+      "claim": "c14"
+    },
+    {
+      "mistake": "Rising onto your toes.",
+      "fix": "Check your foot position. Push through your heels the whole set.",
+      "claim": "c15"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "glutes",
+        "claim": [
+          "c17",
+          "c18"
+        ]
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": [
+          "c17",
+          "c18"
+        ]
+      },
+      {
+        "muscleId": "quads",
+        "claim": "c18"
+      },
+      {
+        "muscleId": "adductors",
+        "claim": "c18"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c13"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Glutes",
+        "means": "The main movers are working.",
+        "fix": "",
+        "claim": [
+          "c17",
+          "c18"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Hamstrings",
+        "means": "Your feet may be too far forward.",
+        "fix": "Bring your feet in until your shins are vertical at the top.",
+        "claim": [
+          "c16",
+          "c6"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Quads",
+        "means": "Your feet may be too close to your body.",
+        "fix": "Move your feet out until your shins are vertical at the top.",
+        "claim": [
+          "c16",
+          "c6"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Fault: overextending your back can put pressure here.",
+        "fix": "Brace, keep your ribs down, and reduce the load.",
+        "claim": [
+          "c13",
+          "c12"
+        ],
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Overextending your back can put pressure on the lower back.",
+      "claim": "c13"
+    },
+    {
+      "risk": "Heavy sets with no pad on the bar can be painful on the hips.",
+      "claim": [
+        "c5",
+        "c4"
+      ]
+    },
+    {
+      "risk": "Holding your breath on heavy sets raises blood pressure.",
+      "claim": "c20"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "redFlagNote": "back links the shared back box (shared/back-pain-box.json); the row carries no referral wording (LR-27).",
+  "zooms": [
+    {
+      "key": "bar-in-crease",
+      "kind": "hand",
+      "right": "Bar padded in the hip crease, hands holding it.",
+      "wrong": "Bar sliding forward or backward.",
+      "claim": [
+        "c3",
+        "c4"
+      ]
+    },
+    {
+      "key": "ribs-down",
+      "kind": "posture",
+      "right": "Ribs down, lower back neutral, torso flat at the top.",
+      "wrong": "Ribs up, lower back arched.",
+      "claim": [
+        "c12",
+        "c8"
+      ]
+    },
+    {
+      "key": "shins-vertical",
+      "kind": "posture",
+      "right": "Shins vertical at the top, heels down.",
+      "wrong": "Up on the toes.",
+      "claim": [
+        "c6",
+        "c15"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "quads",
+      "adductors"
+    ],
+    "remove": [],
+    "why": "Library: glutes primary, hamstrings secondary; both kept (c17, c18). Add quads and adductors as secondary: StrengthLog lists them as secondary, and Healthline and PureGym say they work too (c18)."
+  },
+  "loadProgression": {
+    "text": "Start with body weight: 3 sets of 12, building to 20. Then add weight slowly, with good form.",
+    "claims": [
+      "c19"
+    ]
+  },
+  "breathing": {
+    "text": "Deep breath and brace before driving up (c7). Shared breath-holding line for heavy sets (c20).",
+    "claims": [
+      "c7",
+      "c20"
+    ]
+  },
+  "barPath": {
+    "text": "The bar rests in the hip crease, held by the hands so it stays centred over the hips and does not slide forward or backward; it rises and lowers with the hips.",
+    "claims": [
+      "c3",
+      "c8"
+    ]
+  },
+  "tierA": {
+    "wayOut": null
+  },
+  "anchorSource": "bc-ht",
+  "anchorNote": "Contreras's hip thrust technique page read in full (set-up, bench height, bar position, padding, feet, execution, a common-mistakes list). PureGym's barbell hip thrust page, BarBend's guide, Healthline's page and StrengthLog's page were also read in full.",
+  "gaps": [
+    "Tier-A way out: no read source says how to fail a rep or get out from under the bar on the hips (no safeties or rack apply). No way-out line is shown until one is found (LR-3, tracker LIB-WAYOUT); this joins the owner's tier-A gap list.",
+    "Getting the bar off the hips after the set: no read source describes it.",
+    "Machine hip thrust setup: no read source describes it (c21 only names the machine)."
+  ],
+  "unsourced": [
+    "Thumb position and wrist angle.",
+    "Tempo in seconds (the plate's numbers are a drawing convention, c22).",
+    "A neck position: the sources conflict (c23), so no neck line is shown."
+  ],
+  "notes": [
+    "Start head 6d253b9e (claude/libht-research). Its own parent; no inherit entries. No shared card on the head lists hip_thrust in appliesTo.",
+    "Stance: StrengthLog and Healthline say about shoulder-width, PureGym hip width (c1, c2). The plate draws about hip-to-shoulder width and the setup line names no width.",
+    "Neck: Contreras asks for a neutral neck and says a flexed neck can cause cramping and neck discomfort; Healthline says keep the chin tucked and PureGym says keep the chin down (c23). The conflict is unresolved, so no shown line names the neck; the plate draws the head in line with the torso.",
+    "Grip: Contreras leaves an overhand or underhand grip to the lifter (c24); the plate draws an overhand grip as a drawing convention (LR-4).",
+    "Breath-holding: the line rests on a general resistance-exercise review (c20, MECH), as goblet_squat's g12 does; no hip-thrust source addresses it. Contreras's 'take a deep breath, brace the core' (c7) is the sourced brace.",
+    "Bar path clear of the neck does not apply: the bar rests on the hips (barPath).",
+    "Thumb (content.md 5.2): the wrapped-thumb rule covers overBody and hang holds; this is an on-body hold resting on the hips, and no read source addresses the thumb (unsourced).",
+    "Load wording (content.md 5.2): every fix where the load causes the fault says to reduce or drop the weight (c12, c14).",
+    "Read but not cited: Neto 2019 systematic review (PubMed 31191088, abstract), which adds nothing the card needs."
+  ]
+}

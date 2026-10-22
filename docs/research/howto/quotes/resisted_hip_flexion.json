@@ -14,6 +14,14 @@
     {
       "claim": "c2",
       "source": "kovo-hf",
+      "text": "Attach an ankle cuff to a low cable and strap it to your working ankle.",
+      "status": "verbatim",
+      "closest": "Attach an ankle cuff to a low cable and strap it to your working ankle.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "kovo-hf",
       "text": "Face away from the machine and hold the frame for balance. Drive your knee up and forward against the cable, lifting your thigh toward hip height, then lower with control and repeat before switching legs.",
       "status": "verbatim",
       "closest": "Face away from the machine and hold the frame for balance. Drive your knee up and forward against the cable, lifting your thigh toward hip height, then lower with control and repeat before switching legs.",
@@ -148,6 +156,14 @@
       "note": ""
     },
     {
+      "claim": "c8",
+      "source": "motra-hf",
+      "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "note": ""
+    },
+    {
       "claim": "c9",
       "source": "motra-hf",
       "text": "Typical Rep Range 10-15 reps Rest Between Sets 60-90 seconds",
@@ -166,9 +182,9 @@
     {
       "claim": "c10",
       "source": "motra-hf",
-      "text": "Hip Flexors10/10 Iliopsoas Quads7/10 Rectus Femoris",
+      "text": "Hip Flexors 10/10 Iliopsoas Quads 7/10 Rectus Femoris",
       "status": "verbatim",
-      "closest": "Hip Flexors10/10 Iliopsoas Quads7/10 Rectus Femoris",
+      "closest": "Hip Flexors 10/10 Iliopsoas Quads 7/10 Rectus Femoris",
       "note": ""
     },
     {
@@ -225,7 +241,7 @@
       "text": "Secure a resistance band with a long loop around a low anchor point. Place the other end of the band around the top of your shoe.",
       "status": "verbatim",
       "closest": "Secure a resistance band with a long loop around a low anchor point. Place the other end of the band around the top of your shoe.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c13",
@@ -233,7 +249,7 @@
       "text": "Stand upright with good posture, facing away from the anchor point of the band. Make sure to stand far enough away to create tension in the band.",
       "status": "verbatim",
       "closest": "Stand upright with good posture, facing away from the anchor point of the band. Make sure to stand far enough away to create tension in the band.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c14",
@@ -241,7 +257,7 @@
       "text": "Keeping your core and glutes tight, drive your knee up to your chest, squeezing your hip flexors.",
       "status": "verbatim",
       "closest": "Keeping your core and glutes tight, drive your knee up to your chest, squeezing your hip flexors.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c14",
@@ -249,7 +265,7 @@
       "text": "You can also opt to hold onto something, such as a wall, for support.",
       "status": "verbatim",
       "closest": "You can also opt to hold onto something, such as a wall, for support.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c15",
@@ -257,7 +273,7 @@
       "text": "Hold and squeeze at the top position for 2-3 seconds. Slowly lower your leg back down, resisting the pull of the band by contracting your hip flexors.",
       "status": "verbatim",
       "closest": "Hold and squeeze at the top position for 2-3 seconds. Slowly lower your leg back down, resisting the pull of the band by contracting your hip flexors.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c16",
@@ -265,7 +281,7 @@
       "text": "Perform 10 to 15 reps before switching legs.",
       "status": "verbatim",
       "closest": "Perform 10 to 15 reps before switching legs.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c16",
@@ -273,7 +289,7 @@
       "text": "Over time, you can replace the current resistance band with one of greater tension. If you have trouble balancing, hold onto a wall or table for support.",
       "status": "verbatim",
       "closest": "Over time, you can replace the current resistance band with one of greater tension. If you have trouble balancing, hold onto a wall or table for support.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
     },
     {
       "claim": "c17",
@@ -281,7 +297,39 @@
       "text": "The primary muscles in your hip flexors are the psoas major and the iliacus. Together, these muscles are referred to as the iliopsoas. Other important muscles in this group include the rectus femoris (one of your quad muscles), the sartorius, and the pectineus.",
       "status": "verbatim",
       "closest": "The primary muscles in your hip flexors are the psoas major and the iliacus. Together, these muscles are referred to as the iliopsoas. Other important muscles in this group include the rectus femoris (one of your quad muscles), the sartorius, and the pectineus.",
-      "note": "added in the W0 fix round; checked by the writer by script against the saved page text (fetched 2026-10-02), not by the separate fetcher"
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "motra-hf",
+      "text": "Swinging leg with momentum.",
+      "status": "verbatim",
+      "closest": "Swinging leg with momentum.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "motra-hf",
+      "text": "Excessive lower back arch.",
+      "status": "verbatim",
+      "closest": "Excessive lower back arch.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "motra-hf",
+      "text": "Leaning torso forward.",
+      "status": "verbatim",
+      "closest": "Leaning torso forward.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "motra-hf",
+      "text": "Letting weight stack crash.",
+      "status": "verbatim",
+      "closest": "Letting weight stack crash.",
+      "note": ""
     }
   ]
 }

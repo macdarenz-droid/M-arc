@@ -1,0 +1,826 @@
+{
+ "id": "leg_extension",
+ "libId": "lib_leg_extension",
+ "name": "Leg Extension",
+ "family": "Knee machines (extension, curl)",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "balance",
+  "contact": [
+   "seat-back",
+   "pivot-pad"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Adjust the machine so the knees line up with the machine's joint or pivot point, with the back pad set so the back presses against it.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-le",
+    "mo-le",
+    "lifto-le"
+   ],
+   "quotes": [
+    {
+     "source": "sl-le",
+     "text": "Make sure that the joint of the machine aligns with your knee joint, and that the back pad is adjusted so that you can press your back against it.",
+     "where": "Leg Extension: Proper Form & Technique, Positioning"
+    },
+    {
+     "source": "mo-le",
+     "text": "Sit on the leg extension machine with your back against the pad. Adjust the seat so your knees align with the machine's pivot point and position the padded lever above your ankles.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "lifto-le",
+     "text": "Adjust the Seat: Position the seat so your back is supported and knees align with the machine's pivot.",
+     "where": "Setup"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Set the pad on the lower shins, just above the ankles or feet.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "lifto-le",
+    "fv-le"
+   ],
+   "quotes": [
+    {
+     "source": "lifto-le",
+     "text": "Leg Pad Position: Adjust the pad so it rests on the lower part of your shins, just above your feet.",
+     "where": "Setup"
+    },
+    {
+     "source": "fv-le",
+     "text": "Adjust the padded bar so it rests on top of your lower shins just above your ankles.",
+     "where": "Tips for Safe and Effective Leg Extensions, Maintain proper form"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Start with the knees bent at about 90 degrees, the lower shins behind the pad; sit back and hold the handles at your sides.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-le",
+    "lifto-le"
+   ],
+   "quotes": [
+    {
+     "source": "bb-le",
+     "text": "Adjust the height of your seat so your legs are bent at 90 degrees with your lower shins behind the pad. Sit back in the chair and hold on to the handles by your sides.",
+     "where": "How to Do the Leg Extension, Step 1"
+    },
+    {
+     "source": "lifto-le",
+     "text": "Starting Position: Sit with your back against the support. Feet should be under the pad, knees bent at a 90-degree angle.",
+     "where": "Execution"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Brace the abs and keep the back against the pad for the whole set; try not to arch the back, to keep a neutral spine.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-le",
+    "lifto-le",
+    "mo-le"
+   ],
+   "quotes": [
+    {
+     "source": "bb-le",
+     "text": "Draw your navel towards your spine to engage your abs. Try not to arch your back to maintain a neutral spine.",
+     "where": "How to Do the Leg Extension, Step 1"
+    },
+    {
+     "source": "bb-le",
+     "text": "Coach’s Tip: Keep your back against the pad and hold the position before starting the movement.",
+     "where": "How to Do the Leg Extension, Step 1"
+    },
+    {
+     "source": "lifto-le",
+     "text": "Body Position: Keep your back pressed against the backrest throughout the exercise.",
+     "where": "Tips"
+    },
+    {
+     "source": "mo-le",
+     "text": "Keep back flat against pad",
+     "where": "Coaching Tips, Form Cues"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Arching the back is common during the leg extension, as you focus on the movement; if you hyperextend the lumbar spine to handle a heavier weight, go lighter until you can lift without arching.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-le"
+   ],
+   "quotes": [
+    {
+     "source": "bb-le",
+     "text": "It’s common to arch your back during the leg extension as you focus your attention and effort on the movement.",
+     "where": "Common Leg Extension Mistakes, Arching Your Back"
+    },
+    {
+     "source": "bb-le",
+     "text": "If you find yourself compensating for a heavier weight by hyperextending your lumbar spine try going a bit lighter until you can lift without arching your back.",
+     "where": "Common Leg Extension Mistakes, Arching Your Back"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Not activating the core, and so arching the lower back, can lead to discomfort and takes the focus off the quads; keep the back pressed firmly against the backrest. Two more sources list the back arching or lifting off the seat as a common mistake.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-le",
+    "mo-le",
+    "lifto-le"
+   ],
+   "quotes": [
+    {
+     "source": "sl-le",
+     "text": "Not activating your core, and therefore arching your lower back during the exercise can lead to discomfort and also move the focus from your quads. Let them do the work, and keep your back pressed firmly against the backrest during the entire movement.",
+     "where": "Common Mistakes in the Leg Extension"
+    },
+    {
+     "source": "mo-le",
+     "text": "Allowing back to arch off the seat",
+     "where": "Safety, Common Mistakes"
+    },
+    {
+     "source": "lifto-le",
+     "text": "Allowing your back to lift from the support.",
+     "where": "Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Breathing in and bracing, then breathing out, extend the legs with the quads until they are straight or nearly straight and about parallel with the ground, without locking the knees.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-le",
+    "mo-le",
+    "fv-le"
+   ],
+   "quotes": [
+    {
+     "source": "bb-le",
+     "text": "Inhale and brace your core. Exhale to extend your lower legs until they are parallel with the ground.",
+     "where": "How to Do the Leg Extension, Step 2"
+    },
+    {
+     "source": "mo-le",
+     "text": "Straighten your legs until nearly fully extended without locking your knees.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "fv-le",
+     "text": "Then, push up using only your legs until they’re straight but not locked at the knees.",
+     "where": "How To Do Leg Extension"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Locking or hyperextending the knees at the top is a listed mistake that can add stress to the knee; avoid full lockout to prevent joint stress (one source instead says to extend until the knees are completely straight, without overextending).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-le",
+    "mo-le",
+    "lifto-le",
+    "sl-le"
+   ],
+   "quotes": [
+    {
+     "source": "bb-le",
+     "text": "The leg extension can be a helpful tool for strengthening your knee joints but be careful not to add extra stress by locking or hyperextending them at the top of the lift.",
+     "where": "Common Leg Extension Mistakes, Locking Your Knees Excessively"
+    },
+    {
+     "source": "mo-le",
+     "text": "Avoid full knee lockout to prevent joint stress",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "mo-le",
+     "text": "Locking knees at the top",
+     "where": "Safety, Common Mistakes"
+    },
+    {
+     "source": "lifto-le",
+     "text": "Locking knees at the top of the extension.",
+     "where": "Common Mistakes"
+    },
+    {
+     "source": "sl-le",
+     "text": "Extend your knees with control, until they are completely straight.",
+     "where": "How to Do Leg Extensions"
+    },
+    {
+     "source": "sl-le",
+     "text": "Make sure not to overextend your knees in the top position.",
+     "where": "Leg Extension: Proper Form & Technique, Movement"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Start the lift from the quads to avoid extra stress on the knees; lift up instead of kicking out, to protect the knee joint.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-le",
+    "fv-le"
+   ],
+   "quotes": [
+    {
+     "source": "bb-le",
+     "text": "Coach’s Tip: Try to initiate the movement from your quads to avoid extra stress on your knees.",
+     "where": "How to Do the Leg Extension, Step 2"
+    },
+    {
+     "source": "fv-le",
+     "text": "Lift up instead of kicking out to protect your knee joint as you exercise.",
+     "where": "Tips for Safe and Effective Leg Extensions, Maintain proper form"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Too much weight can increase the risk of injury and likely leads to excess momentum; using momentum or swinging is a listed mistake; keep the movement slow and controlled.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-le",
+    "mo-le",
+    "lifto-le"
+   ],
+   "quotes": [
+    {
+     "source": "sl-le",
+     "text": "Loading more weight than you can handle can increase the risk of injury and probably lead to using excessive momentum to move the weight.",
+     "where": "Common Mistakes in the Leg Extension"
+    },
+    {
+     "source": "sl-le",
+     "text": "Keep the movement slow and controlled.",
+     "where": "Common Mistakes in the Leg Extension"
+    },
+    {
+     "source": "mo-le",
+     "text": "Using momentum to lift",
+     "where": "Safety, Common Mistakes"
+    },
+    {
+     "source": "lifto-le",
+     "text": "Avoid Swinging: Do not use momentum; focus on a smooth, controlled motion.",
+     "where": "Tips"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Lower the legs slowly with control and resist the weight; dropping the legs quickly after the top is a listed mistake; fast reps can injure you.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-le",
+    "fv-le"
+   ],
+   "quotes": [
+    {
+     "source": "bb-le",
+     "text": "Lower your legs back to starting position slowly with control. Resist the weight and gravity trying to pull you down faster.",
+     "where": "How to Do the Leg Extension, Step 3"
+    },
+    {
+     "source": "bb-le",
+     "text": "If you’re going heavy or are reaching fatigue during the leg extension there may be a tendency to drop your legs quickly after you reach the top.",
+     "where": "Common Leg Extension Mistakes, Not Controlling the Descent"
+    },
+    {
+     "source": "fv-le",
+     "text": "A third issue comes from fast movements. Fast reps can injure you or cheat on muscle growth.",
+     "where": "Common Mistakes to Avoid"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Breathe out as you extend the legs and in as you lower the weight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-le",
+    "lifto-le"
+   ],
+   "quotes": [
+    {
+     "source": "mo-le",
+     "text": "Inhale as you lower the weight, exhale as you extend your legs.",
+     "where": "Coaching Tips, Breathing"
+    },
+    {
+     "source": "lifto-le",
+     "text": "Breathing: Exhale while extending, and inhale while lowering.",
+     "where": "Tips"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "The leg extension works only the quadriceps, the muscles at the front of the thigh, especially the rectus femoris.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-le",
+    "sl-le",
+    "fv-le"
+   ],
+   "quotes": [
+    {
+     "source": "bb-le",
+     "text": "Although it’s important to stabilize your full body when doing this exercise, the leg extension technically only works your quadriceps femoris muscles.",
+     "where": "Muscles Worked by the Leg Extension"
+    },
+    {
+     "source": "sl-le",
+     "text": "The leg extension is an isolation exercise for the quadriceps, especially for the rectus femoris",
+     "where": "Which Muscles Do the Leg Extension Work?"
+    },
+    {
+     "source": "fv-le",
+     "text": "A leg extension is a strength training exercise primarily targeting the quadriceps muscles in the front of your thigh.",
+     "where": "What is a leg extension?"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "If you feel discomfort or pain, or any sharp pain, stop the exercise and reassess your form; feeling it in the knees or back instead of the quads can be a sign of a form error.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "lifto-le",
+    "fv-le"
+   ],
+   "quotes": [
+    {
+     "source": "lifto-le",
+     "text": "If you feel any sharp pain, discontinue the exercise immediately and reassess your form.",
+     "where": "Warning"
+    },
+    {
+     "source": "fv-le",
+     "text": "Always listen to your body – if you feel any discomfort or pain while performing the exercise, stop immediately.",
+     "where": "Tips for Safe and Effective Leg Extensions"
+    },
+    {
+     "source": "fv-le",
+     "text": "Your body also hints at errors in form or posture. Wrong move? You may feel it in your knees or back instead of the quads!",
+     "where": "Tips for Safe and Effective Leg Extensions, Listen to your body"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Tempo: Motra lists 2-1-2 for this exercise and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the lowering, a 1 s pause at the bottom and 2 s for the lift.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "mo-le"
+   ],
+   "quotes": [
+    {
+     "source": "mo-le",
+     "text": "2-1-2",
+     "where": "Coaching Tips, Tempo"
+    },
+    {
+     "source": "mo-le",
+     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+     "where": "Tempo heading tooltip (served HTML)"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Tempo: three sources ask for a brief pause at the top, right after the lift, and none gives its seconds, so the 1 s pause is a drawing convention (LR-33).",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "mo-le",
+    "lifto-le",
+    "fv-le"
+   ],
+   "quotes": [
+    {
+     "source": "mo-le",
+     "text": "Pause briefly at the top and squeeze your quads.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "lifto-le",
+     "text": "Control the Movement: Pause briefly at the top of the movement, ensuring the extension is full but avoiding locking out your knees.",
+     "where": "Execution"
+    },
+    {
+     "source": "fv-le",
+     "text": "Pause here before going back down.",
+     "where": "How To Do Leg Extension"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "Start with a lower weight to get comfortable with the exercise, then increase it gradually as strength improves.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-le"
+   ],
+   "quotes": [
+    {
+     "source": "fv-le",
+     "text": "Start with a lower weight to get comfortable with the exercise, then you can gradually increase as your strength improves.",
+     "where": "Tips for Safe and Effective Leg Extensions"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "Three sources ask for a brief pause at the top, right after the lift.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-le",
+    "lifto-le",
+    "fv-le"
+   ],
+   "quotes": [
+    {
+     "source": "mo-le",
+     "text": "Pause briefly at the top and squeeze your quads.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "lifto-le",
+     "text": "Control the Movement: Pause briefly at the top of the movement, ensuring the extension is full but avoiding locking out your knees.",
+     "where": "Execution"
+    },
+    {
+     "source": "fv-le",
+     "text": "Pause here before going back down.",
+     "where": "How To Do Leg Extension"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-le",
+   "url": "https://barbend.com/leg-extension/",
+   "title": "How to Use the Leg Extension Machine for Quad Growth & Strength | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-le",
+   "url": "https://www.strengthlog.com/leg-extension/",
+   "title": "How to Do Leg Extension: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "mo-le",
+   "url": "https://www.motra.com/exercises/legExtension",
+   "title": "Machine Leg Extension - Exercise Guide | Motra",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "lifto-le",
+   "url": "https://www.liftosaur.com/exercises/leverage-machine-leg-extension",
+   "title": "Leverage Machine Leg Extension - How To, Muscles Worked & Form Guide | Liftosaur",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-le",
+   "url": "https://fitnessvolt.com/leg-extension/",
+   "title": "Leg Extension: Mastering Quadriceps for Stronger Legs – Fitness Volt",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side. The knee-to-pivot line (c1), the shin pad (c2), the 90-degree start (c3), the back on the pad (c4) and the straight-but-not-locked finish (c7, c8) read from the side, and so does the top fault, the back arching off the pad (c5, c6).",
+  "equipment": "Leg extension machine composed from seat, back pad and a shin roller on a lever (census 'legExtMachine', compose; 'seat', 'backPad', 'kneePad'): machine pivot level with the knee (c1), roller on the lower shins just above the ankles (c2), handles at the sides of the seat (c3).",
+  "start": "Seated, back against the pad (c4), knees in line with the pivot (c1), knees bent about 90 degrees with the lower shins behind the pad (c3, c2), hands on the side handles (c3), abs braced (c4).",
+  "end": "Legs straight or nearly straight, about parallel with the floor, knees not locked (c7, c8); back still on the pad (c4).",
+  "checkpoints": [
+   {
+    "label": "Knee at pivot",
+    "what": "Knees line up with the machine's pivot.",
+    "claim": "c1"
+   },
+   {
+    "label": "Back on pad",
+    "what": "Back pressed into the pad. Don't arch.",
+    "claim": [
+     "c4",
+     "c6"
+    ]
+   },
+   {
+    "label": "Knees unlocked",
+    "what": "Straighten without locking your knees.",
+    "claim": [
+     "c7",
+     "c8"
+    ]
+   }
+  ],
+  "mistake": {
+   "what": "Back arching off the back pad as the legs extend.",
+   "why": "BarBend says it is common to arch the back during the leg extension and to go lighter until you can lift without arching (c5); StrengthLog says arching the lower back can lead to discomfort, and Motra and Liftosaur list the back arching or lifting off the seat (c6).",
+   "claim": [
+    "c5",
+    "c6"
+   ],
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: arching the back during the lift (c5). Step 1 hit: BarBend's \"It’s common to arch your back during the leg extension as you focus your attention and effort on the movement.\" (c5), a frequency word about this exercise's own fault, said directly in the sentence (not a heading or a list sentence read onto the item; as D-SUP-LB7-DIPREPS). It is the only step-1 hit, so step 2's order is not needed. The other reading (R-LB4-2's list-sentence exclusion read onto the BarBend item) was ruled out by the lead (D-SUP-LB7-DIPREPS reading); under it, step 2 decides between the arch and the locked knees, both on common-mistakes lists and both sourced directly. Locked knees: two harm sources (BarBend, Motra, c8). Arch: StrengthLog's \"can lead to discomfort\" (c6), plus BarBend's FAQ \"you should still engage your core and protect your spine in the leg extension\" if that cue counts under D-SUP-PROTECT. If it counts, they tie 2-2; the lists disagree on order (BarBend and StrengthLog put the arch first, Motra and Liftosaur the lockout), step 3's count is 4-4 (BarBend, StrengthLog, Motra, Liftosaur tell the lifter to avoid each), and the earliest common-mistakes list written for this exercise in source order (bb-le) gives the arch. If it does not count, the locked knees win on harm sources, drawable true from the side. Set aside at step 1: Fitness Volt's \"Another common mistake is using too much weight.\" is a list sentence (R-LB4-2) and the load; its \"One of the biggest is poor body placement.\" has no frequency word and is a setup choice (\"Not aligning your knees and seat pad properly can cause this.\"); BarBend's \"there may be a tendency to drop your legs quickly after you reach the top\" (c11) uses 'tendency' and is speed only; BarBend's \"Bodybuilders will often do several accessory movements during a leg workout.\" is programming; StrengthLog's \"is one of the most popular leg exercises\" is popularity; Motra's \"Spotting not typically required\" is spotting and \"Typical Rep Range\" programming; the 'Common Mistakes' headings (BarBend, StrengthLog, Motra, Liftosaur, Fitness Volt) are not counted. Read but not cited: Men's Health UK's leg-extension page (\"Therefore they can be placed more frequently in your programme\", programming; \"may be gathering dust in your local gym\", the machine) has no frequency or harm line about a fault. Harm quotes about other faults, not needed after step 1 and recorded here: locking the knees at the top (BarBend \"be careful not to add extra stress by locking or hyperextending them at the top of the lift\"; Motra \"Avoid full knee lockout to prevent joint stress\", c8); kicking instead of lifting (Fitness Volt \"Lift up instead of kicking out to protect your knee joint as you exercise.\"; BarBend \"Try to initiate the movement from your quads to avoid extra stress on your knees.\", c9); fast reps (Fitness Volt \"Fast reps can injure you or cheat on muscle growth.\", c11, speed only); too much weight (StrengthLog \"can increase the risk of injury\", c10, the load). The arch is also tied to harm (StrengthLog \"can lead to discomfort\", c6). Setup lines tied to harm are not candidates: Fitness Volt's \"Setting up the leg extension machine correctly is essential to avoid strain or injury.\" (knees to the pivot, set by the seat, as on seated_leg_curl) and Motra's \"Ensure proper machine adjustment for knee alignment\". Further scan (fetcher, 2026-10-22), set aside: BarBend's \"To get the most out of it, try to avoid these common mistakes.\" is a list intro; its beginners and older-folks lines (\"a great alternative to the leg extension for beginners and older folks\", \"a great and safe option for beginners or older folks\", \"For beginners, bodybuilders, and people recovering from injuries, though, it can be a great supplement.\") are about who should train; Fitness Volt's \"typically using a lever machine\" is the equipment, \"You might make a few mistakes while doing leg extensions.\" a list intro and its FAQ beginners lines are about who. Harm lines with no named fault: Fitness Volt's \"It’s important to keep a good posture while doing this exercise because bad form can hurt off your knees or lower back.\", \"Keep good form to stay safe.\", \"Listen to your body and stop if there’s much pain.\", \"Good form is key while doing this exercise to keep your knees safe\", \"Too much pain means stop, but a light burn is good.\" and \"You want muscle burn, not pain!\" (the load item); its FAQ \"not stuffing your training routine with extra reps or pushing beyond capacity can lead to unnecessary injuries\" is programming; \"this helps protect against injuries from falls or sudden turns\" is a benefit; BarBend's \"The seated position of the leg extension can help protect your back\" is the seat, \"it is the responsibility of your soft tissues ... to withstand that stress\" and \"The leg extension may be safe for someone with a back injury\" are general, and \"you don’t have the added stress of supporting your body weight\" compares exercises; Motra's \"Acute knee pain\" (When to Avoid) is a condition and \"Consult a professional if you have knee injuries\" names no fault; StrengthLog's \"it can increase your injury risk\" is the load. Motra's Range of Motion \"extend to near full leg straightening with a slight bend at the knee to avoid joint stress\" is one more harm line for the locked knees. drawable true: the side view shows the low back arching off the back pad, a still sign. handlingMistakes keeps three: the arch (top fault), the locked knees at the top (two harm sources and on Motra's, Liftosaur's and BarBend's lists, c8), and kicking or momentum (c9, c10). The descent (speed only) stays in posture."
+  },
+  "tells": [
+   {
+    "text": "Back stays on the pad",
+    "claim": "c4"
+   },
+   {
+    "text": "Knees straight but not locked",
+    "claim": "c7"
+   }
+  ],
+  "tempo": {
+   "up": 2,
+   "down": 2,
+   "pause": 1,
+   "claim": [
+    "c15",
+    "c16"
+   ],
+   "text": "Up 2 and down 2 are Motra's 2-1-2 (c15, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause; the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the next lift, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the lift: Motra's \"Pause briefly at the top\", Liftosaur's \"Pause briefly at the top of the movement\" and Fitness Volt's \"Pause here before going back down.\" give no seconds, so the 1 s is a drawing convention (c16, WEAK; LR-33). Men's Health UK (read, not cited) gives a 5 s hold with the legs extended only on the last rep of a set as an intensity method, not every rep, so it is not the pause value."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Hands on the handles at the sides of the seat (c3).",
+  "width": "Handles fixed at the sides of the seat (c3).",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "",
+  "claims": [
+   "c3"
+  ],
+  "note": "Hand archetype balance: the hands steady the body, no hand zoom needed."
+ },
+ "setup": [
+  {
+   "step": "Set the seat so your knees line up with the pivot.",
+   "claim": "c1"
+  },
+  {
+   "step": "Pad on your lower shins, just above the ankles.",
+   "claim": "c2"
+  },
+  {
+   "step": "Start with your knees bent at about 90 degrees.",
+   "claim": "c3"
+  },
+  {
+   "step": "Sit back against the pad. Hold the handles.",
+   "claim": [
+    "c3",
+    "c4"
+   ]
+  },
+  {
+   "step": "Start with a lower weight.",
+   "claim": "c17"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Brace your abs. Keep your back on the pad.",
+   "claim": "c4"
+  },
+  {
+   "point": "Lift with your quads. Don't kick.",
+   "claim": "c9"
+  },
+  {
+   "point": "Straighten your legs without locking your knees.",
+   "claim": [
+    "c7",
+    "c8"
+   ]
+  },
+  {
+   "point": "Pause briefly at the top.",
+   "claim": "c18"
+  },
+  {
+   "point": "Lower slowly with control.",
+   "claim": "c11"
+  },
+  {
+   "point": "Breathe out as you lift, in as you lower.",
+   "claim": "c12"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Arching your back.",
+   "fix": "Brace your abs. Go lighter until you can lift without arching.",
+   "claim": [
+    "c5",
+    "c6",
+    "c4"
+   ]
+  },
+  {
+   "mistake": "Locking knees at the top.",
+   "fix": "Straighten without locking your knees.",
+   "claim": [
+    "c8",
+    "c7"
+   ]
+  },
+  {
+   "mistake": "Kicking up with momentum.",
+   "fix": "Lift with your quads, slow and controlled.",
+   "claim": [
+    "c9",
+    "c10"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "quads",
+    "claim": "c13"
+   }
+  ],
+  "secondary": [],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Front of the thighs",
+    "means": "The quads are doing the work.",
+    "fix": "",
+    "claim": "c13",
+    "redFlag": null
+   },
+   {
+    "where": "Lower back",
+    "means": "Fault: arching your lower back can lead to discomfort.",
+    "fix": "Brace your abs. Keep your back pressed into the pad.",
+    "claim": [
+     "c6",
+     "c4"
+    ],
+    "redFlag": "back"
+   },
+   {
+    "where": "Knee",
+    "means": "Feeling it here, not in the quads, can mean a form error.",
+    "fix": "Stop if the pain is sharp. Reassess your form.",
+    "claim": "c14",
+    "redFlag": "knee"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Locking your knees at the top can add stress to the knee.",
+   "claim": "c8"
+  },
+  {
+   "risk": "Arching your lower back can lead to discomfort.",
+   "claim": "c6"
+  },
+  {
+   "risk": "Too much weight can increase the risk of injury.",
+   "claim": "c10"
+  }
+ ],
+ "redFlags": [
+  "knee",
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "knee-pivot",
+   "kind": "posture",
+   "right": "Knee level with the machine's pivot.",
+   "wrong": null,
+   "claim": "c1"
+  },
+  {
+   "key": "shin-pad",
+   "kind": "posture",
+   "right": "Pad on the lower shins, just above the ankles.",
+   "wrong": null,
+   "claim": "c2"
+  },
+  {
+   "key": "top",
+   "kind": "posture",
+   "right": "Legs straight, knees not locked.",
+   "wrong": "Knees locked or hyperextended at the top.",
+   "claim": [
+    "c7",
+    "c8"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "quads primary and no secondary match exercises.json: BarBend says the leg extension only works the quadriceps (c13). Motra's page lists hamstrings as secondary; no other read source does, so none is added."
+ },
+ "anchorSource": "bb-le",
+ "loadProgression": {
+  "text": "Start with a lower weight, then add weight gradually as you get stronger.",
+  "claims": [
+   "c17"
+  ]
+ },
+ "gaps": [
+  "No read source gives an exercise-specific way to get in or out of the leg extension machine beyond shared get-in-out's general steps."
+ ],
+ "notes": [
+  "Written on claude/libht-research-lb8 from head 6d253b9e. Own parent (content.md Appendix A).",
+  "Shared cards: get-in-out (shared/get-in-out.json) and selector-pin (shared/selector-pin.json) list leg_extension in appliesTo; their steps (set each pin fully in its hole, pick a weight you can control, ease the weight back; push the selector pin all the way in) are cited, not copied. No line on this card restates them.",
+  "Anchor: BarBend's leg-extension page, read in full (steps with coach's tips, sets and reps, a common-mistakes list, muscles, FAQs). StrengthLog, Motra, Liftosaur and Fitness Volt are exercise-specific pages, read in full.",
+  "Top position: BarBend extends to parallel with the ground, Motra and Fitness Volt to nearly straight or straight without locking, Liftosaur to a full extension without locking, and StrengthLog to completely straight but not overextended (c7, c8). The plate draws straight legs, knees not locked.",
+  "Knee to pivot is set by the seat (c1), so it is a setup choice, not an LR-31 candidate, as on seated_leg_curl. Its zoom has wrong null (LR-25): no read source names a direction for the misalignment.",
+  "The knee feel row's stop rests on Liftosaur's verbatim stop quote (c14; R-LB3-4, R-LB6-6). The lower-back row is place + the source's fault + fix (LR-6), with the back box carrying the stop.",
+  "Not reachable: Healthline and PureGym leg-extension URLs (404), Verywell Fit (402), NASM (404), Muscle & Fitness (the library page did not show the exercise), ACE (no leg-extension page found; WAF block on id probing). Read but not cited: Men's Health UK's leg-extension page (set aside in the rankNote)."
+ ]
+}

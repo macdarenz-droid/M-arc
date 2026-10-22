@@ -34,7 +34,7 @@
     },
     {
       "id": "c2",
-      "text": "Face away from the machine holding the frame, drive the knee up and forward against the cable until the thigh nears hip height, lower with control, then switch legs.",
+      "text": "Attach an ankle cuff to a low cable and strap it to the working ankle; face away from the machine holding the frame, drive the knee up and forward against the cable until the thigh nears hip height, lower with control, then switch legs.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -43,6 +43,11 @@
         "kovo-hf"
       ],
       "quotes": [
+        {
+          "source": "kovo-hf",
+          "text": "Attach an ankle cuff to a low cable and strap it to your working ankle.",
+          "where": "How to do it"
+        },
         {
           "source": "kovo-hf",
           "text": "Face away from the machine and hold the frame for balance. Drive your knee up and forward against the cable, lifting your thigh toward hip height, then lower with control and repeat before switching legs.",
@@ -188,7 +193,7 @@
     },
     {
       "id": "c8",
-      "text": "Tempo 2-1-2; breathe in while lowering, out while lifting.",
+      "text": "Tempo: Motra lists 2-1-2 and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s lowering, a 1 s pause at the bottom (the start position), 2 s lifting. Breathe in while lowering, out while lifting.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -206,6 +211,11 @@
           "source": "motra-hf",
           "text": "Tempo 2-1-2",
           "where": "Tempo"
+        },
+        {
+          "source": "motra-hf",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
         }
       ]
     },
@@ -246,7 +256,7 @@
         },
         {
           "source": "motra-hf",
-          "text": "Hip Flexors10/10 Iliopsoas Quads7/10 Rectus Femoris",
+          "text": "Hip Flexors 10/10 Iliopsoas Quads 7/10 Rectus Femoris",
           "where": "Muscle breakdown"
         }
       ]
@@ -406,6 +416,39 @@
           "where": "What are the hip flexors?"
         }
       ]
+    },
+    {
+      "id": "c18",
+      "text": "Motra's common mistakes for this exercise: swinging the leg with momentum, an excessive lower back arch, leaning the torso forward, and letting the weight stack crash.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-hf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hf",
+          "text": "Swinging leg with momentum.",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Excessive lower back arch.",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Leaning torso forward.",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-hf",
+          "text": "Letting weight stack crash.",
+          "where": "Common Mistakes"
+        }
+      ]
     }
   ],
   "sources": [
@@ -417,7 +460,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
     },
     {
       "id": "kovo-hf",
@@ -427,7 +470,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
     },
     {
       "id": "outside-hf",
@@ -437,7 +480,7 @@
       "year": 2025,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -457,7 +500,7 @@
         ]
       },
       {
-        "label": "Thigh to hip height",
+        "label": "Thigh to hip",
         "what": "Knee drives up and forward until the thigh is about parallel.",
         "claim": [
           "c2",
@@ -474,13 +517,16 @@
       }
     ],
     "mistake": {
-      "what": "Leaning back and arching the lower back to lift the knee higher.",
-      "why": "Kovo lists it first among mistakes (c7); Motra's range stops short of a lumbar arch (c5).",
+      "what": "Leaning back and arching the lower back to lift higher.",
+      "why": "Kovo lists it first among its mistakes (c7), Motra lists an excessive lower back arch (c18), and Motra's range stops short of a lumbar arch (c5); Motra's 'Maintain neutral spine to protect lower back.' ties the arch to harm (c11).",
       "claim": [
         "c7",
-        "c5"
+        "c18",
+        "c5",
+        "c11"
       ],
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: leaning back and arching the lower back to lift higher (c7, c18, c5, c11). Step 1 finds no frequency word for a fault: Motra, Kovo and Outside's resisted hip hike section have none; Outside's \"you’re likely focused on stretching them\" and \"there’s a key element you’re probably neglecting: strength-building\" are about training; 'Common Mistakes' and 'Common mistakes' are headings. Step 2: Motra's \"Maintain neutral spine to protect lower back.\" (c11) is a cue said to protect a named body part, so it ties the fault it corrects, the lower back arch, to harm (D-SUP-PROTECT); the arch is on Motra's list (\"Excessive lower back arch.\", c18) and first on Kovo's (\"Don't lean back or arch your lower back to lift higher\", c7), and Motra's range ends \"without lumbar arch\" (c5). If the neutral-spine cue is also read onto Motra's \"Leaning torso forward.\" (c18), the two tie: both on Motra's list, one source each, both WEAK; Motra's list names the arch first, so the arch keeps the pick. No other named fault is tied to harm: swinging the leg (Motra's first item, Kovo's second; \"Lift with hip, not momentum.\") and the stack slam (\"Letting weight stack crash.\", \"Don't let the stack slam at the bottom\") state no harm, and both are seen only as speed. Set aside: \"Stop if balance causes strain.\" (balance, not a named fault), \"Avoid if acute hip or low back pain present.\" and the 'When to Avoid' item \"Lower back strain\" (about the lifter), Outside's \"Hip flexor strengthening exercises are crucial for avoiding unwanted discomfort and injury.\" and \"A lack of hip flexor strength can also cause alignment issues in your hips and knees, increasing the risk of certain injuries such as herniated disks, pinched nerves, and strained quads.\" (about weak muscles, not a fault of this exercise); Outside's \"Do not lean to one side or round your back.\" is in its Standing Resisted Marches section, another exercise, and is not counted (R-LB7-5). drawable true: the side view shows the torso leaning back with the lower back arched. Scan completion (fetcher scan, 2026-10-22): Motra's popularity tooltip (\"How commonly this exercise is used in training programs\") and its range tooltip (\"Full range of motion typically provides better results\") are about the exercise and range, not a fault; its 'When to Avoid' tooltip names no fault; Outside's \"If you have weak hip flexors , you may experience back, hip, and knee pain\" and its other 'beginner' lines are about the lifter or other exercises. LR-33 check: Motra's \"Pause briefly at top to squeeze hip flexors.\" and Outside's \"Hold and squeeze at the top position for 2-3 seconds.\" both place the pause right after the lift, so pause 2 stands."
     },
     "tells": [
       {
@@ -488,7 +534,7 @@
         "claim": "c12"
       },
       {
-        "text": "Hips stay level, no twist",
+        "text": "Hips stay level, no rotation",
         "claim": "c6"
       }
     ],
@@ -496,7 +542,7 @@
       "up": 2,
       "down": 2,
       "pause": 2,
-      "text": "Motra gives 2-1-2 (c8, WEAK); the named band source holds 2-3 s at the top and lowers slowly (c15). Drawn: 2 s up, 2 s hold, 2 s down.",
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c8, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-7); the page shows three numbers, read as the first three. Its middle 1 s is a pause at the bottom, with the leg back at the start, between the lowering and the next lift, so it is named here and not written in pause (LR-33). Pause 2 is the hold right after the lift: Outside's 'Hold and squeeze at the top position for 2-3 seconds.' (c15) gives sourced seconds, drawn at their minimum; sourced seconds are never replaced by the 1 s convention (LR-33). Motra's 'Pause briefly at top to squeeze hip flexors.' (c3) places the same pause at the top, with no seconds.",
       "claim": [
         "c8",
         "c15"
@@ -521,6 +567,7 @@
       "step": "Strap the cuff to one ankle on a low cable, or loop a band round a low anchor and your shoe.",
       "claim": [
         "c1",
+        "c2",
         "c13"
       ]
     },
@@ -537,6 +584,7 @@
       "step": "Brace your core and stand tall.",
       "claim": [
         "c3",
+        "c12",
         "c13",
         "c14"
       ]
@@ -578,15 +626,19 @@
     },
     {
       "point": "Knee travels straight forward.",
-      "claim": "c6"
+      "claim": [
+        "c6",
+        "c2"
+      ]
     }
   ],
   "handlingMistakes": [
     {
       "mistake": "Leaning back to lift higher.",
-      "fix": "Stand tall and stop at thigh level.",
+      "fix": "Stand tall. Lift only as high as you can without arching.",
       "claim": [
         "c7",
+        "c12",
         "c5"
       ]
     },
@@ -642,13 +694,16 @@
         "where": "Lower belly",
         "means": "Your abs help pull the knee up.",
         "fix": "",
-        "claim": "c12",
+        "claim": [
+          "c12",
+          "c10"
+        ],
         "redFlag": null
       },
       {
         "where": "Lower back",
-        "means": "You're leaning back or arching to lift higher.",
-        "fix": "Stand tall, core tight, lighter weight.",
+        "means": "Fault: leaning back or arching to lift higher.",
+        "fix": "Stand tall, core tight.",
         "claim": [
           "c7",
           "c6",
@@ -667,11 +722,11 @@
       ]
     },
     {
-      "risk": "Sudden, recent hip or lower-back pain: skip this exercise.",
+      "risk": "Acute hip or lower-back pain? Skip this exercise.",
       "claim": "c11"
     },
     {
-      "risk": "Balancing on one leg can strain; stop if it does.",
+      "risk": "Stop if balance causes strain.",
       "claim": "c11"
     }
   ],
@@ -687,15 +742,19 @@
       "claim": [
         "c3",
         "c5",
-        "c7"
+        "c7",
+        "c2"
       ]
     },
     {
       "key": "ankle-cuff",
       "kind": "posture",
-      "right": "Cuff around the ankle, cable taut behind you.",
+      "right": "Cuff around the ankle, slight cable tension.",
       "wrong": null,
-      "claim": "c1"
+      "claim": [
+        "c1",
+        "c2"
+      ]
     }
   ],
   "libraryDiff": {
@@ -706,7 +765,7 @@
   "anchorSource": "outside-hf",
   "anchorNote": "R-W0-2: Amber Sayer's Outside article (a named certified personal trainer; byline in the page metadata) read in full; its \"Resisted Hip Hikes\" is this exercise with a band anchored low, facing away (c13-c16). Motra and Kovo (cable, read in full) are app exercise-database pages that name no author, so every claim resting only on them is tagged WEAK. No ACE, NASM or PubMed technique source was found. Also read, not cited: The Prehab Guys (straight-knee kick, a different movement) and Wellen (loop band round both ankles, a marching variant; no named author).",
   "loadProgression": {
-    "text": "Start light; sets of 10-15 reps a leg; add resistance as you get stronger.",
+    "text": "Start light. Do 10-15 reps a leg. Over time, use a band with greater tension.",
     "claims": [
       "c11",
       "c9",
@@ -722,6 +781,7 @@
     "Range conflict: Kovo lifts the thigh toward hip height (c2); Motra allows up to the knee near the chest (c3, c5). The plate draws the thigh about parallel, which both allow.",
     "The lower-back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28); the sheet cannot ship before the back-pain box.",
     "Fix round 2026-10-02 (verify w0): A7/R-W0-2: claims resting only on motra-hf or kovo-hf tagged WEAK; a named source (Outside, Amber Sayer, CPT) added as anchor with c13-c17; setup and tempo now cite it; variantLine rewritten so it does not say the two versions share rules. The anchor is a band source while the plate draws the cable. Supervisor ruling R-W0-7 (2026-10-02, verify/w0.md): the bar is met. The movement is the same (low anchor behind, facing away, knee drive, hold, slow lower), and content.md 3.2 asks for an exercise-specific technique source. The cable-only setup stays on the WEAK full-access pages, and the plate draws nothing that only the band source gives.",
-    "Recheck Low 1 (2026-10-02): loadProgression no longer says \"more weight\", which no cited claim supports; it follows c16 (a band with greater tension)."
+    "Recheck Low 1 (2026-10-02): loadProgression no longer says \"more weight\", which no cited claim supports; it follows c16 (a band with greater tension).",
+    "LB8 pass (2026-10-22, start head 6d253b9e): LR-31 rankNote added; the pick is unchanged (step 2, the lean back and arch; drawable true), and handlingMistakes keeps its order. New claim c18 holds Motra's common-mistakes list. LR-33: values unchanged (2/2/2); c8 gains Motra's Tempo tooltip, and tempo.text now places Motra's middle 1 s at the bottom (the start) and the pause field's 2 s at the top, from Outside's 2-3 s hold (c15). Shown-line fixes (CARD-V2:68, LR-6, R-LB3-4): mistake.what drops 'the knee'; tells[1] 'no twist' -> 'no rotation'; handlingMistakes[0] fix 'Stand tall and stop at thigh level.' -> 'Stand tall. Lift only as high as you can without arching.' (c5 allows up to the knee near the chest; the old line was stricter); feel.rows[2].means is now in LR-6 shape ('Fault: ...'), with no symptom-to-cause clause; risks[1] 'Sudden, recent' -> 'Acute' (c11's word); risks[2] -> 'Stop if balance causes strain.' (c11's own stop line, nothing added); zooms[1] right 'cable taut behind you' -> 'slight cable tension' (c1) and c2 gains Kovo's ankle-cuff line for 'cuff'; loadProgression -> 'Start light. Do 10-15 reps a leg. Over time, use a band with greater tension.' (c16's words). Claim lists widened where a line used another claim's words (setup[0], setup[2], posture[3], feel.rows[1], zooms[0]). No shared card lists resisted_hip_flexion."
   ]
 }
