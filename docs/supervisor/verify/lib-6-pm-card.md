@@ -378,3 +378,5 @@ Recheck (critic, 2026-10-18): all 12 fixes are carried as intended, and D-LIB-OR
 - recheck N1: applied. D-LIB6PM-FIXTURE said "Do 9 writes neither the helper nor S5-L", which contradicts merge_prerequisites' not-on-main case (Do 9 carries S5-L). It now says Do 9 never writes the helper, and writes S5-L only if #181 is on main first, using this helper and D-LIB6PM-CAP. build_prerequisites' post says the same.
 - recheck N2: applied. D-LIB6PM-ANCHORS and PM-A4 listed the dispatch load as a new anchor. It sits inside the existing 'renderer dispatch' replacement, so the only extra anchor is the holder.
 - recheck N3: applied. D-LIB-ORDER-2's reason said LIB-4d's deadline sat between Do 9 and #181. In fact D-LIB8M-ORDER :3396 placed it there, and the deadline allows any earlier slot.
+
+Review note (supervisor, 2026-10-22, REVIEW LIB-6-PM @ 56d3bbb PASS, #181 6331958891 Low 1): PM-A5's "FLAG made eager" mutation is red, but the unflagged build rejects with `TypeError: __BACK.backBox is not a function`, not BACK_BOX_WAITS, because the back-box load stays conditional. Expect that TypeError when re-running it.
