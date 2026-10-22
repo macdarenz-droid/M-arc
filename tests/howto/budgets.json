@@ -234,6 +234,60 @@
       "measuredGz": 14972,
       "setBy": "HT-7",
       "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+    },
+    {
+      "chunk": "ht-barbell-row-*.js",
+      "rawMax": 130538,
+      "gzMax": 29726,
+      "measuredRaw": 118670,
+      "measuredGz": 27023,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "posture-barbell-row-*.js",
+      "rawMax": 119829,
+      "gzMax": 16816,
+      "measuredRaw": 108935,
+      "measuredGz": 15287,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "feel-barbell-row-*.js",
+      "rawMax": 35259,
+      "gzMax": 8855,
+      "measuredRaw": 32053,
+      "measuredGz": 8050,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "ht-t-bar-row-*.js",
+      "rawMax": 133562,
+      "gzMax": 31178,
+      "measuredRaw": 121420,
+      "measuredGz": 28343,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "posture-t-bar-row-*.js",
+      "rawMax": 123865,
+      "gzMax": 17805,
+      "measuredRaw": 112604,
+      "measuredGz": 16186,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
+    },
+    {
+      "chunk": "feel-t-bar-row-*.js",
+      "rawMax": 33115,
+      "gzMax": 8811,
+      "measuredRaw": 30104,
+      "measuredGz": 8010,
+      "setBy": "LIB-4b B5 scratch",
+      "reason": "scratch fixture id, measured + 10 % (lib4-cards 11.1 item 5); never merged"
     }
   ],
   "perId": [

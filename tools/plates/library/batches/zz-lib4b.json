@@ -1,0 +1,35 @@
+{
+  "batch": "LB-LIB4B",
+  "censusRef": "48153c4",
+  "pages": {
+    "plates": "tools/plates/library/pages/zz-lib4b.json",
+    "layers": "tests/howto/golden/library/zz-lib4b.layers.html",
+    "layersConfig": "tools/plates/library/pages/zz-lib4b.layers.json"
+  },
+  "rows": {
+    "lib_barbell_row": {
+      "src": "library/specs/barbell_row.mjs",
+      "slug": "barbell-row",
+      "prefix": "barbell-row",
+      "chromeId": "barbell-row",
+      "mode": "H",
+      "stage": "shipped",
+      "view": "side",
+      "sources": [
+        "Scratch fixture (LIB-4b B5): golden B lat_pulldown sources"
+      ]
+    },
+    "lib_t_bar_row": {
+      "src": "library/specs/t_bar_row.mjs",
+      "slug": "t-bar-row",
+      "prefix": "t-bar-row",
+      "chromeId": "t-bar-row",
+      "mode": "H",
+      "stage": "shipped",
+      "view": "side",
+      "sources": [
+        "Scratch fixture (LIB-4b B5): golden B seated_cable_row sources"
+      ]
+    }
+  }
+}
