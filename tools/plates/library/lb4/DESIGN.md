@@ -234,6 +234,23 @@ px, knee tell 19.7 px (the weight moves over the ball, so the hips and knee trav
 11.39. bodyweight_squat follows the same convention in the bulk; if its size is red it is held under D-LIB8-shrug with
 the LIB-ZOOM route.
 
+## 11a. Bulk record (LB4 BULK GO, #289 6341498444)
+
+- **bodyweight_squat:** feet 26 cm apart, toes out 10°; the centre of mass solved over mid-foot; bottom: hip and knee
+  centres level (b4), the thorax at the shin's angle (38.7°, fixed-point, b6), lumbar 5°; arms by the sides at the
+  start (b1) and forward at the bottom (unsourced; hanging arms put the fists on the floor). Mistake (b4): both heels
+  3.5 cm up on the toe-pad convention, the weight over the balls; node-side deviation: heel tell 10.1 px, toes (knee)
+  tell 14.4 px (largest 14.4 against 11.39; QA after the strip release).
+- **goblet_squat:** the vendor dumbbell upright, rigid with the thorax, its back face 0.5-0.6 cm in front of the chest
+  (g1, g2, g5; no contact, per the CARD FIELDS fix); hands cupping the upper head's underside (wrist planes: the g1
+  contact facts); elbows 136° and down by the ribs (g2), 44-56 cm apart against shoulders 45 cm. Bottom: hip 2 cm below
+  the knee (g4), thorax 28°; the centre of mass with a 0.2 body-mass dumbbell over mid-foot. Mistake (g6): thorax 50°
+  with the hips held, the dumbbell 12 cm further off the chest; upper body and dumbbell traced dashed.
+- **step_up:** 45 cm box (box_jump's precedent; c11's 45.7 cm is in no quote), 128 px/m so the top pose fits. Step
+  position: lead knee 105°, trail knee 10°, trail foot 50 cm behind; top: lead knee 5°, trailing foot lifted 1.4 cm
+  clear of the box, the centre of mass with the dumbbells over the lead mid-foot. Mistake (c1): thorax 40° with the
+  hips held (the sternum 23 cm forward), and the trailing heel 3.5 cm up on its toe pad (the push).
+
 ## 12. H slice (Do 2; D-LIB14-SLICE)
 
 wall_sit with eq/wall.mjs, pistol_squat, front_squat. Posted as 'LB4 SLICE READY @ <sha>' with 390 px renders in Paper

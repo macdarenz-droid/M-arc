@@ -438,10 +438,92 @@ describe('LIB-14 front_squat (H; the 8\'s squat clone, the rack): drawn facts', 
   });
 });
 
+describe('LIB-14 bulk (LB4 BULK GO, 6341498444): bodyweight_squat, goblet_squat, step_up drawn facts', { timeout: T }, () => {
+  const A = (id: string) => rep(S[id]).angles;
+  const fromV = (a: number[], b: number[]) => Math.atan2(b[2]! - a[2]!, b[1]! - a[1]!) * 180 / Math.PI;
+  /** The Mistake's foot outline (bodyShapes) lowest point, px below the floor line. */
+  const sink = (spec: any, key: string) => {
+    const b = { height: 1.75 }, c = rep(spec).camera, cam = { view: 'side', near: 'r', pxm: c.pxPerM, P: (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
+    const f = body.bodyShapes(body.fk(body.resolve(body.normPose({ ...spec.poses.end, ...spec.mistake.pose }, b), b).q, b), cam).find((x: any) => x.key === key);
+    return Math.max(...f.poly.map((q: number[]) => q[1]!)) - c.y0;
+  };
+  it('bodyweight_squat b4, b6: thighs parallel at the bottom (hip and knee centres level, ±1 cm); the torso parallel to the shin (±2 deg)', () => {
+    const l = lmOf(S.bodyweight_squat, 'end');
+    expect(Math.abs(l['hip.r'][1] - l['knee.r'][1])).toBeLessThanOrEqual(0.01);
+    expect(Math.abs(fromV(l['hip.r'], l['shoulder.r']) - fromV(l['ankle.r'], l['knee.r']))).toBeLessThanOrEqual(2);
+  });
+  it('bodyweight_squat b6 mutation: the bottom thorax 10 deg further forward breaks the parallel (red)', () => {
+    const s = S.bodyweight_squat, e = s.poses.end, tipped = { ...s, poses: { ...s.poses, end: { ...e, root: { ...e.root, tilt: e.root.tilt + 10 } } } };
+    const l = lmOf(tipped, 'end');
+    expect(Math.abs(fromV(l['hip.r'], l['shoulder.r']) - fromV(l['ankle.r'], l['knee.r']))).toBeGreaterThan(2);
+  });
+  it('bodyweight_squat b4 Mistake: both heels 3.5 cm up, the toe pads on the floor line (±0.5 px), the knee forward', () => {
+    const e = lmOf(S.bodyweight_squat, 'end'), m = lmOf(S.bodyweight_squat, 'mistake');
+    expect(m['heel.r'][1]).toBeCloseTo(0.035, 4);
+    expect(Math.abs(sink(S.bodyweight_squat, 'foot.r'))).toBeLessThanOrEqual(0.5);
+    expect(m['knee.r'][2] - e['knee.r'][2]).toBeGreaterThanOrEqual(0.03);
+  });
+  it('goblet_squat g4: at the bottom the hip joint centre is below the knee centre', () => {
+    const l = lmOf(S.goblet_squat, 'end');
+    expect(l['hip.r'][1]).toBeLessThan(l['knee.r'][1]);
+  });
+  const db = (p: string) => itemsIn(S.goblet_squat, p).items.find((it: any) => it.type === 'dumbbell');
+  it('goblet_squat g1, g2, g5: the dumbbell upright, directly in front of the chest (its back face 0-2 cm off), at chest height, in start and end', () => {
+    for (const p of ['start', 'end']) {
+      const d = db(p), l = lmOf(S.goblet_squat, p), back = d.at[2] - 0.119 * 0.866 / 2;
+      expect(d.axis, p).toEqual([0, 1, 0]);
+      expect(back - l.chest[2], p).toBeGreaterThanOrEqual(0);
+      expect(back - l.chest[2], p).toBeLessThanOrEqual(0.02);
+      expect(d.at[1], p).toBeGreaterThan(l.navel[1]);
+      expect(d.at[1], p).toBeLessThan(l['shoulder.r'][1]);
+    }
+  });
+  /** Elbow bend at most 150 deg (the slice look's item 2, carried to goblet_squat) and the elbows by the ribs (g2): apart, never at the midline, and within 15 cm of the shoulders' width. */
+  const gobletArms = (spec: any) => ['start', 'end'].flatMap(p => {
+    const a = rep(spec).angles[p], l = lmOf(spec, p), sp = Math.abs(l['elbow.l'][0] - l['elbow.r'][0]), sh = Math.abs(l['shoulder.l'][0] - l['shoulder.r'][0]), out: string[] = [];
+    for (const k of ['l', 'r']) if (a[`elbow.${k}`] > 150) out.push(`${p}: elbow.${k} ${a[`elbow.${k}`]}`);
+    if (sp < 0.30 || sp > sh + 0.15) out.push(`${p}: elbow spacing ${sp.toFixed(3)}`);
+    if (l['elbow.r'][1] > l['shoulder.r'][1] - 0.2) out.push(`${p}: elbow not down by the ribs`);
+    return out;
+  });
+  it('goblet_squat g2: each elbow bends at most 150 deg and the elbows hang down by the ribs, apart', () => {
+    expect(gobletArms(S.goblet_squat)).toEqual([]);
+  });
+  it('goblet_squat mutation: the hands cupped at the midline with the elbows pulled in (pole straight down and in) is red', () => {
+    const s = S.goblet_squat, pin = (p: any) => ({ ...p, reach: { l: { ...p.reach.l, pole: [-1, -0.2, 0] }, r: { ...p.reach.r, pole: [1, -0.2, 0] } } });
+    expect(gobletArms({ ...s, poses: { ...s.poses, start: pin(s.poses.start), end: pin(s.poses.end) } }).length).toBeGreaterThan(0);
+  });
+  it('goblet_squat g6 Mistake: the thorax at least 15 deg further forward, the dumbbell at least 8 cm further from the chest, the hips held', () => {
+    const e = lmOf(S.goblet_squat, 'end'), m = lmOf(S.goblet_squat, 'mistake');
+    expect(fromV(m.hips, m.shoulders) - fromV(e.hips, e.shoulders)).toBeGreaterThanOrEqual(15);
+    expect((db('mistake').at[2] - m.chest[2]) - (db('end').at[2] - e.chest[2])).toBeGreaterThanOrEqual(0.08);
+    expect(Math.hypot(e['hip.r'][1] - m['hip.r'][1], e['hip.r'][2] - m['hip.r'][2])).toBeLessThanOrEqual(0.005);
+  });
+  it('step_up c1, c6: the whole lead foot on the box top in both poses; the trailing foot flat on the floor at the step position and clear of the box when standing tall', () => {
+    const r = rep(S.step_up);
+    for (const [k, p] of [['heel.r', 'start'], ['ball.r', 'start'], ['heel.r', 'end'], ['ball.r', 'end'], ['heel.l', 'end'], ['ball.l', 'end']]) {
+      const c = r.checks.find((x: any) => x.landmark === k && x.pose === p && x.cm != null);
+      expect(c?.cm, `${p} ${k}`).toBeLessThanOrEqual(0.5);
+    }
+    const l = lmOf(S.step_up, 'start');
+    expect(Math.min(l['heel.l'][1], l['toe.l'][1])).toBeGreaterThan(0.45);
+  });
+  it('step_up c6, c7: the torso upright in both poses (hip-to-shoulder line within 10 deg of vertical)', () => {
+    for (const p of ['start', 'end']) { const l = lmOf(S.step_up, p); expect(Math.abs(fromV(l.hips, l.shoulders)), p).toBeLessThanOrEqual(10); }
+  });
+  it('step_up c1 Mistake: the trunk at least 25 deg further forward with the hips held; the trailing heel up 3.5 cm on its toe pad (±0.5 px)', () => {
+    const e = lmOf(S.step_up, 'end'), m = lmOf(S.step_up, 'mistake');
+    expect(fromV(m.hips, m.shoulders) - fromV(e.hips, e.shoulders)).toBeGreaterThanOrEqual(25);
+    expect(Math.hypot(e['hip.r'][1] - m['hip.r'][1], e['hip.r'][2] - m['hip.r'][2])).toBeLessThanOrEqual(0.005);
+    expect(m['heel.l'][1]).toBeCloseTo(0.035, 4);
+    expect(Math.abs(sink(S.step_up, 'foot.l'))).toBeLessThanOrEqual(0.5);
+  });
+});
+
 describe('LIB-14 A8: the D-LIB14-NOSECS hold', { timeout: T }, () => {
   it('each held spec that exists builds, carries no tempo, and is in no rows file', () => {
     const held = HELD.filter(id => S[id]);
-    expect(held).toEqual(['front_squat', 'pistol_squat']);
+    expect(held).toEqual(HELD);
     for (const id of held) {
       expect(() => plate.renderPlate(S[id], { id: 'x' }), id).not.toThrow();
       expect(S[id].tempo, id).toBeUndefined();
@@ -592,6 +674,12 @@ describe('LIB-14 A15: Mistake clearance, leaders clear of the wall and the Trace
       ['bar on the shoulders, not held up by the hands', () => ['start', 'end'].flatMap(p => { const l = lm('front_squat', p), b = fsBar(p); return b[1] > l['shoulder.r'][1] && b[2] > l['shoulder.r'][2] ? [] : [`${p}: bar not over the front of the shoulder`]; })],
       ['elbows high at the start and the bottom', () => ['start', 'end'].flatMap(p => { const l = lm('front_squat', p); return Math.abs(l['elbow.r'][1] - l['shoulder.r'][1]) <= 0.06 && l['elbow.r'][2] > l['shoulder.r'][2] + 0.15 ? [] : [`${p}: elbow not high and forward`]; })],
       ['whole foot down, heels on the floor', () => [...onCheck('front_squat', ['heel.r', 'ball.r'], 'start'), ...onCheck('front_squat', ['heel.r', 'ball.r'], 'end')]],
+    ],
+    goblet_squat: [
+      ['dumbbell upright against the chest at the start and the bottom', () => ['start', 'end'].flatMap(p => { const d = itemsIn(S.goblet_squat, p).items.find((it: any) => it.type === 'dumbbell'), l = lm('goblet_squat', p), gap = d.at[2] - 0.119 * 0.866 / 2 - l.chest[2]; return JSON.stringify(d.axis) === '[0,1,0]' && gap >= 0 && gap <= 0.02 ? [] : [`${p}: dumbbell not upright at the chest`]; })],
+      ['elbows close to the ribs', () => ['start', 'end'].flatMap(p => { const l = lm('goblet_squat', p); return l['elbow.r'][1] < l['shoulder.r'][1] - 0.2 && Math.abs(l['elbow.r'][0]) <= Math.abs(l['shoulder.r'][0]) + 0.075 ? [] : [`${p}: elbow not by the ribs`]; })],
+      ['chest up', () => { const l = lm('goblet_squat', 'end'); return Math.atan2(l.shoulders[2] - l.hips[2], l.shoulders[1] - l.hips[1]) * 180 / Math.PI <= 35 ? [] : ['chest down']; }],
+      ['heels on the floor', () => [...onCheck('goblet_squat', ['heel.r', 'ball.r'], 'start'), ...onCheck('goblet_squat', ['heel.r', 'ball.r'], 'end')]],
     ],
     pistol_squat: [
       ['free leg straight and off the floor in every pose', () => ['start', 'end', 'mistake'].flatMap(p => { const a = rep(S.pistol_squat).angles[p], l = lm('pistol_squat', p); return a['knee.l'] <= 0.5 && l['heel.l'][1] > 0.02 ? [] : [`${p}: free leg`]; })],
