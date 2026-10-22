@@ -99,11 +99,17 @@ export async function sourceFacts(id, { root = ROOT, all = registryRows(root) } 
   const zooms = src.zooms ?? [];
   const hand = zooms.find(z => z.kind === 'hand');
   const chips = new Map(zooms.map(z => [z.key, z.chip]));
+  // LIB-7b (D-LIB7b-TUPLES): an id on a pair key ships its key's pair panel, not its How-to's hand zoom, so its HT6 pages
+  // are the shipped panel's (`pairPanel(key)`, the loader contract gen/handpairs.mjs reads: one zx-page per fault of a
+  // LIB-7 key, no thumb page). Every other id keeps the source rule.
+  const PAIRS = join(root, 'tools/plates/library/hands/pairs.mjs');
+  const pairs = hand && existsSync(PAIRS) ? await import(pathToFileURL(PAIRS).href) : null, key = pairs?.HAND_OF_ID?.[id];
+  const pairPages = key ? (await pairs.pairPanel(key)).split('<div class="zx-page" data-page=').length - 1 : null;
   return {
     id, chromeId: row.chromeId,
     normal: keys.normal, tells: keys.tells, firstKey: keys.firstKey,
     // a hand close-up's pages: one per wrong grip, plus the thumb page (golden B's hand renderer)
-    hand: hand ? { pages: hand.hand.wrong.length + (hand.hand.thumbPage ? 1 : 0) } : null,
+    hand: hand ? { pages: pairPages ?? hand.hand.wrong.length + (hand.hand.thumbPage ? 1 : 0) } : null,   // LIB-7b: pairPages
     posture: zooms.filter(z => z.kind === 'posture').map(z => z.key),
     rows: (src.feel?.rows ?? []).map(r => r.key),
     shows: (src.setup ?? []).filter(s => s.zoom && chips.get(s.zoom)).length,
