@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-22 19:45 UTC · main `b0370201` · **8.0p (update 19:45): LIB-12-FIX #191 merged; LB7 note ruled, CARD FIELDS VERIFIED, BULK GO; LB5 panel VALID (3 approved); LB6 BULK GO; LIB-8M changed-ids sheet building; LB9 blocked on the owner** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-22 21:00 UTC · main `b0370201` · **8.0p (update 21:00): LB5 all 4 drawn plates approved (+ CF verified, #304); LB6 BULK READY ruled; LB7 bulk running; F-CI-1 #303 PASS (CI running); LIB-8M sheet; LB9 blocked on the owner** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -889,6 +889,17 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **LIB-17 (LB7 H build-ahead) card:** a helper is drafting it. Start it when a LIB slot is free.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
+
+**Update 21:00 UTC** (supervisor context about 524k after compaction; the owner was told earlier that the handover is ready for a fresh supervisor):
+- **LIB-15 (#290, LB5): all 4 drawn plates approved** at page `921cb1d5…` (fb69dff3): preacher_curl, cable_curl, bayesian_cable_curl (round 1, byte-identical) and concentration_curl (focused recheck 6350979367).
+  - **CARD FIELDS VERIFIED @ fb69dff3** (6350552705), merged back as #304 (`596dbe07`).
+  - **F-LB5-2** (#302, `baf2ff09`) added BarBend's each-side quote (c14), which is what D-LIB15-MIRROR rests on.
+  - Next: one label tightening (the "Slow lowering" leader through the ELBOW text; supervisor render check), then LIB-15 READY.
+- **D-SUP-ANCHOR-3** (PANELS §1, `e646fb2a`): a confirmed, recorded anchor defect is excepted, and any other anchor item below 4 voids the run. This replaces the one-item limit. **Golden-B follow-up 23:** pull_up's "ELBOW about 145°" callout against its card's c6 (93.4 ± 14.6°).
+- **LIB-16 (#297):** BULK READY @ 21d30bf9 was ruled (6350058285): CF VERIFIED @ ef2e8044 carries, Q8 is extended (D-LIB16-Q8B), and PULLOVER-TRACE is accepted on the c3 basis. Next: 'LB6 PLATES READY', then the calibrated panel (machine_pullover and machine_crunch; cable_chest_press held).
+- **LIB-17 (#299):** bulk running after BULK GO. weighted_dip re-copies the F-LB7-1 card (#301, `e5ed66ca`), and its card diff gets a supervisor diff-check at READY.
+- **F-CI-1 #303** (`claude/sup-f-ci-1`, head `06438492`): REVIEW PASS @ 443385d (6350585026). Review fixes applied: job caps 50, step comments, D-F-CI-1 and GATE-SPLIT-DESIGN updated. Merge when CI is green (a CI-health lane, off the LIB checklist, like VITEST-RPC).
+- **#109 LIB-8M:** D-LIB8M-SCRATCH7B amended to option (2): a non-library scratch id added only to the fixture's scratch-tree exercises.json, plus a guard. Waiting for 'PILOT A CHANGED SHEET READY'.
 
 **Update 19:45 UTC** (usage 7-day 0.34, 5-hour 0.10 at 18:58):
 - **#191 LIB-12-FIX merged** (main `b0370201`). The X3 fix `62549cc` passed a delta review (6348810322, 0/0/0/0), and CI was 17/17 green. Builder archived. **Lesson:** run `git fetch` right before every catch-up merge (`c6e55f9b` merged a stale main).
