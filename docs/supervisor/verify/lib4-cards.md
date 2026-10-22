@@ -4233,3 +4233,10 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - **pendlay_row PASS** (every median ≥ 4). **Approved @ `8781ed0`: 6 of 7** (landmine_row, dumbbell_romanian_deadlift, conventional_deadlift, sumo_deadlift, back_extension, pendlay_row). t_bar_row held.
 - one_arm_dumbbell_row: R5 [3,3,3] only; the red working arm and dumbbell are drawn behind the support arm, the hand and the bench, and the bend is about 20°. **D-LIB13-PANEL3** (#274 6335029737): one last mechanical round on the Mistake view only (fault arm drawn on top, elbow about (431,521)), then a focused R5 recheck; still failing means held (D-LIB8M-CARDTRUE).
 - **one_arm's anchor role:** its support pose passed every item, so back_extension's approval stands (D-LIB13-SUPPORT). It becomes the approved F7 drawable-fault example only when its Mistake passes.
+
+## 31. LB3 focused recheck 3 (D-LIB13-PANEL3, 2026-10-22 ~10:45 UTC; #274 @ `a6f4bd0`, page `6ff09d4c…`)
+
+- Set: one_arm_dumbbell_row only, golden B's pull_up and lat_pulldown as anchors, 2 plants on the candidate (R5: the fault arm drawn behind the support arm again; R6: the Trace moved off the dumbbell path), new salt `0ff10b5f…`.
+- **VALID.** Both plants caught: R5 [3,2,2] and R6 [2,2,2]. lat_pulldown: every median ≥ 4. pull_up: R2 [3,3,3] only, which is golden-B follow-up 22, its one excepted item.
+- **one_arm_dumbbell_row PASS** (every median ≥ 4; R5 4 [4,3,4]). **LB3: 7 of 7 drawn plates approved.** The other 6 are byte-identical from `8781ed0` (proof in the builder's FIX 3 post). one_arm is now the approved F7 example. t_bar_row and the shrugs stay held.
+- LIB-13's builder session is archived. The LB3 owner sheet waits for pilot A to be pinned on main (lib-13-card :20-21).
