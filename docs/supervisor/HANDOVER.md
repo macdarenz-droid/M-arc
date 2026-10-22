@@ -847,6 +847,17 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **No-seconds tempo strip:** a design sheet (options A, B, C; B recommended) was sent to the owner at about 07:15 for his choice. It unblocks about 25 cards, including LB4's 5 build-ahead rows and the held box_jump and reverse_lunge.
 - **LIB-14 (LB4 build-ahead) card:** a DRAFT is on cards `9ceaaf9f`. It waits for the LB4 research merge and the owner's tempo choice.
 
+**Update 11:00 UTC** (usage 7-day 0.13 at 10:54; five-hour 0.25):
+- **Research LB4, LB5 and LB6 merged** into claude/libht-research (#285, #286, #287) → head `3812989f`. The three research sessions are archived.
+- **LB7 card writing** started: session_01WkcFihBxhzv6Y4HBUt7b86, branch claude/libht-research-lb7 (10 new cards, plus the LR-31/33 pass on 3). Brief: `lb7-research-card.md`.
+- **LB3 #274: 7 of 7 drawn plates approved** (recheck 3 VALID, lib4-cards 31; one_arm PASS @ `a6f4bd07`). LIB-13's builder is archived. The LB3 owner sheet waits for pilot A to be pinned on main (lib-13-card :20-21).
+- **LIB-14 (LB4 build-ahead, 6 rows) started:** #289, session_01PXZM4Xmr3uEdw31Q5Xpr7C, card `lib-14-card.md` @ `9d24e30c` (ready, D-LIB14-*). The note's Q1-Q4 are ruled (6338977366).
+- **LIB-7b #284:** D-LIB7b-SCRATCH2 (P1-P5) ruled. The scratch refs are `claude/lib-7b-scratch` @ cdbb3a3 (the "without" record) and **`claude/lib-7b-scratch-2` @ c9e8c814** (a new ref, because the guard refuses force-pushes). Its CI is expected-red only, except one HT-9 Show Paper chunk-fetch failure in Auckland, which the builder showed is unrelated to this PR (6338539064). **Gate-flake lead:** this is the second Paper-theme timing failure after 10-19's HT-8 one. Open a GATE-FLAKE card if it recurs.
+- **LIB-5v #282:** reviewer session_015fLqgHyqJm3GfvALqRjDSX is running on 2ad1bf3c.
+- **LIB-15 (LB5 H slice) card:** being drafted and critiqued by a helper.
+- **Active LIB builders: 2 of 4** (LIB-7b, LIB-14).
+- Containers restart often (3 restarts this morning). Every long job keeps a check-in, and a lost run is re-run whole.
+
 ### 8.0o TAKEOVER 10-22: the owner moves the work to his other account (read first; supersedes 8.0n and section 10 where they differ)
 
 **Written by** the old supervisor, session_01HtNEBU3oDR8NyHKK3uCwUi, on the account being left, on 2026-10-22. Nothing has been built since the usage pause of 10-19 22:58 UTC.
