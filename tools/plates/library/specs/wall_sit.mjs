@@ -115,8 +115,8 @@ export default {
   measure: { vertex: 'knee.r', from: { dir: SHANK_EXT }, to: 'hip.r', radius: 22, title: 'Knee', value: 'about 90°', expect: 90, box: { left: 230, top: 202 } },
   callouts: [
     { key: 'back', text: 'Back on wall', anchor: 'backUpper', box: { left: 140, top: 164 }, cue: 'Keep your back and buttocks on the wall.' },
-    { key: 'knees', text: 'Knees over<br>ankles', anchor: 'knee.r', box: { left: 232, top: 296 }, cue: 'Keep your shins vertical, knees right above the ankles.' },
-    { key: 'deg', text: '90 degrees', anchor: 'thighTop.r', box: { left: 236, top: 254 }, cue: 'Slide down until your hips and knees are at about 90 degrees.' },
+    { key: 'knees', text: 'Knees over<br>ankles', anchor: 'knee.r', box: { left: 226, top: 302 }, cue: 'Keep your shins vertical, knees right above the ankles.' },
+    { key: 'deg', text: '90 degrees', anchor: 'thighTop.r', box: { left: 236, top: 246 }, cue: 'Slide down until your hips and knees are at about 90 degrees.' },
   ],
   tempo: [{ phase: 'Hold', s: '30-60' }],
   mistake: {
