@@ -178,6 +178,22 @@
    "status": "verbatim",
    "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
    "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c15",
+   "source": "nhs-wrist-pain",
+   "text": "stop or cut down activities that are causing the pain",
+   "status": "verbatim",
+   "closest": "stop or cut down activities that are causing the pain",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c15",
+   "source": "nhs-wrist-pain",
+   "text": "do not lift heavy objects or grip anything too tightly",
+   "status": "verbatim",
+   "closest": "do not lift heavy objects or grip anything too tightly",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

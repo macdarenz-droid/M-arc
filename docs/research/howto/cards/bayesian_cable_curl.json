@@ -200,7 +200,7 @@
   },
   {
    "id": "c9",
-   "text": "Holding the arm behind the body asks the small shoulder muscles to hold it in place, and some tension may be felt at the front of the shoulder; it can cause shoulder discomfort for some people.",
+   "text": "Holding the arm behind the body asks the small shoulder muscles to hold it in place, and some tension may be felt at the front of the shoulder; it can cause shoulder discomfort for some people. BarBend says that in such cases you can choose one of its alternative curls instead.",
    "tags": [
     "CONSENSUS"
    ],
@@ -217,6 +217,11 @@
      "source": "bb-bayesian",
      "text": "The cable stations could be busy, it may place stress or discomfort on your shoulders, and so on.",
      "where": "Alternatives"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "In such cases, go for one of these alternatives instead",
+     "where": "Bayesian Curl Alternatives"
     }
    ]
   },
@@ -394,8 +399,7 @@
    "pause": 0,
    "claim": "c12"
   },
-  "variantLine": null,
-  "note": "Angle: BarBend gives the upper arm 'about a 45-degree angle relative to the floor' (c2) and 'at most' 45 degrees (c3), and warns against standing far away. A hanging arm is 90° to the floor, so read literally 'at most 45° to the floor' would allow more stretch, which contradicts the warning; the conservative drawing puts the upper arm about 45° behind vertical (equal to 45° to the floor) and never further back."
+  "variantLine": null
  },
  "grip": {
   "type": "One hand on a single cable handle.",
@@ -455,7 +459,10 @@
   {
    "mistake": "Upper arm moving forward.",
    "fix": "Keep the upper arm still. Only the elbow bends.",
-   "claim": "c5"
+   "claim": [
+    "c5",
+    "c4"
+   ]
   },
   {
    "mistake": "Standing too far away.",
@@ -553,5 +560,8 @@
   "remove": [],
   "why": "biceps primary and forearms secondary match exercises.json and StrengthLog (c8)."
  },
- "anchorSource": "bb-bayesian"
+ "anchorSource": "bb-bayesian",
+ "notes": [
+  "Angle: BarBend gives the upper arm 'about a 45-degree angle relative to the floor' (c2) and 'at most' 45 degrees (c3), and warns against standing far away. A hanging arm is 90° to the floor, so read literally 'at most 45° to the floor' would allow more stretch, which contradicts the warning; the conservative drawing puts the upper arm about 45° behind vertical (equal to 45° to the floor) and never further back."
+ ]
 }

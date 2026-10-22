@@ -27,7 +27,7 @@
     },
     {
       "field": "redFlags",
-      "why": "true for this child because the same elbow-discomfort finding is stated for pushdowns in general (c12), so the elbow box applies. The parent’s back box is dropped: no one-arm source ties this version to lower-back strain."
+      "why": "true for this child for the elbow box, because the same elbow-discomfort finding is stated for pushdowns in general (c12). The back box applies too: the bar pushdown's lean-or-arch harm line holds for the one-arm version (c17, MECH), so the card carries the parent's back row and box (R-LB5-4). LR-28's ship order applies: the sheet cannot ship before the back box."
     }
   ],
   "claims": [
@@ -358,6 +358,42 @@
           "where": "Proper form & technique"
         }
       ]
+    },
+    {
+      "id": "c18",
+      "text": "The NHS advises people with tennis elbow to avoid or reduce activities that make the symptoms worse (NHS self-care advice, applied here to elbow pain in training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-tennis-elbow"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-tennis-elbow",
+          "text": "avoid or reduce activities that make your symptoms worse",
+          "where": "Things you can do to help ease tennis elbow"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
     }
   ],
   "sources": [
@@ -396,6 +432,26 @@
       "url": "https://www.strengthlog.com/tricep-pushdown-with-bar/",
       "title": "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (StrengthLog)",
       "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "nhs-tennis-elbow",
+      "url": "https://www.nhs.uk/conditions/tennis-elbow/",
+      "title": "Tennis elbow (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
       "year": null,
       "pmid": null,
       "access": "full",
@@ -568,10 +624,23 @@
       },
       {
         "where": "Elbow discomfort or pain",
-        "means": "Heavy, low-rep sets feel uncomfortable in the elbows for many.",
+        "means": "Is it getting worse?",
         "fix": "Stop and don't train through the pain. Use lighter weights for more reps.",
-        "claim": "c12",
+        "claim": [
+          "c12",
+          "c18"
+        ],
         "redFlag": "elbow"
+      },
+      {
+        "where": "Lower back pain",
+        "means": "Is it getting worse?",
+        "fix": "Stop and don't train through the pain. Tilt from your hips.",
+        "claim": [
+          "c17",
+          "c19"
+        ],
+        "redFlag": "back"
       }
     ]
   },
@@ -583,19 +652,23 @@
     {
       "risk": "Too much weight moved with momentum can lead to injury.",
       "claim": "c13"
+    },
+    {
+      "risk": "Leaning or arching can strain the lower back.",
+      "claim": "c17"
     }
   ],
   "redFlags": [
-    "elbow"
+    "elbow",
+    "back"
   ],
   "zooms": [
     {
       "key": "single-pushdown-wrist",
       "kind": "hand",
       "right": "Full grip, thumb wrapped, hand in line with the forearm.",
-      "wrong": "Wrist bent back over the handle.",
-      "claim": "c9",
-      "wrongNote": "The wrong drawing is the inverse of c9 (wrist neutral); no source describes it directly."
+      "wrong": null,
+      "claim": "c9"
     },
     {
       "key": "single-pushdown-elbow",

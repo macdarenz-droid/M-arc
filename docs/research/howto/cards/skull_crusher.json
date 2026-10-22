@@ -327,6 +327,24 @@
           "where": "Common skull crusher mistakes and how to fix them"
         }
       ]
+    },
+    {
+      "id": "c18",
+      "text": "The NHS advises people with tennis elbow to avoid or reduce activities that make the symptoms worse (NHS self-care advice, applied here to elbow pain in training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-tennis-elbow"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-tennis-elbow",
+          "text": "avoid or reduce activities that make your symptoms worse",
+          "where": "Things you can do to help ease tennis elbow"
+        }
+      ]
     }
   ],
   "sources": [
@@ -399,6 +417,16 @@
       "pmid": null,
       "access": "full",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-tennis-elbow",
+      "url": "https://www.nhs.uk/conditions/tennis-elbow/",
+      "title": "Tennis elbow (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -556,9 +584,12 @@
       },
       {
         "where": "Back-of-elbow pain",
-        "means": "Fault: lowering the bar forcefully.",
+        "means": "Is it getting worse?",
         "fix": "Stop the set. Don't train through the pain.",
-        "claim": "c15",
+        "claim": [
+          "c15",
+          "c18"
+        ],
         "redFlag": "elbow"
       }
     ]

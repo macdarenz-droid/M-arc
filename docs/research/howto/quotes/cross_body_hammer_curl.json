@@ -52,6 +52,14 @@
    "note": ""
   },
   {
+   "claim": "c2",
+   "source": "fb-cbhammer",
+   "text": "Repeat this action with your other arm.",
+   "status": "verbatim",
+   "closest": "Repeat this action with your other arm.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
    "claim": "c3",
    "source": "fb-cbhammer",
    "text": "Unlike many other Hammer Curl variations, this exercises has you bring the weight across your body instead of straight up and down.",

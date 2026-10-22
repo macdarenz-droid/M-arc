@@ -269,12 +269,35 @@
      "where": "Common mistakes, limit range of motion at the bottom"
     }
    ]
+  },
+  {
+   "id": "c14",
+   "text": "The NHS advises people with wrist pain to stop or cut down the activities causing it and not to lift heavy objects or grip anything too tightly (NHS wrist-pain self-care advice, applied here to training; R-LB5-2). The source is data only.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "nhs-wrist-pain"
+   ],
+   "quotes": [
+    {
+     "source": "nhs-wrist-pain",
+     "text": "stop or cut down activities that are causing the pain",
+     "where": "How you can ease wrist pain yourself: Do"
+    },
+    {
+     "source": "nhs-wrist-pain",
+     "text": "do not lift heavy objects or grip anything too tightly",
+     "where": "How you can ease wrist pain yourself: Don't"
+    }
+   ]
   }
  ],
  "sources": [
   {
    "id": "sl-cablecurl",
-   "url": "https://www.strengthlog.com/cable-curl/",
+   "url": "https://www.strengthlog.com/cable-curl-with-bar/",
    "title": "How to Do Cable Curl With Bar: Muscles Worked & Proper Form – StrengthLog",
    "kind": "coach",
    "year": null,
@@ -340,6 +363,16 @@
    "year": 2026,
    "pmid": 41988507,
    "access": "abstract",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "nhs-wrist-pain",
+   "url": "https://www.nhs.uk/symptoms/hand-pain/wrist-pain/",
+   "title": "Wrist pain (NHS)",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
    "checked": "2026-10-22"
   }
  ],
@@ -413,7 +446,10 @@
   },
   {
    "step": "Step back from the stack and stand upright, feet about hip-width.",
-   "claim": "c2"
+   "claim": [
+    "c1",
+    "c2"
+   ]
   },
   {
    "step": "Pick a weight you can curl without swinging.",
@@ -495,7 +531,7 @@
    },
    {
     "where": "Front of the shoulder",
-    "means": "Fault: the elbows moving forward, which loads the front delts.",
+    "means": "Fault: the elbows drifting well forward, which loads the front delts.",
     "fix": "Keep the elbows at your sides.",
     "claim": "c7",
     "redFlag": null
@@ -504,7 +540,10 @@
     "where": "Wrist discomfort or pain",
     "means": "Fault: the wrists bent up or down under load.",
     "fix": "Stop and don't train through the pain. Keep the wrist straight.",
-    "claim": "c9",
+    "claim": [
+     "c9",
+     "c14"
+    ],
     "redFlag": "wrist"
    }
   ]

@@ -359,6 +359,29 @@
           "where": "abstract, results"
         }
       ]
+    },
+    {
+      "id": "c17",
+      "text": "The NHS advises people with wrist pain to stop or cut down the activities causing it and not to lift heavy objects or grip anything too tightly (NHS wrist-pain self-care advice, applied here to training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-wrist-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-wrist-pain",
+          "text": "stop or cut down activities that are causing the pain",
+          "where": "How you can ease wrist pain yourself: Do"
+        },
+        {
+          "source": "nhs-wrist-pain",
+          "text": "do not lift heavy objects or grip anything too tightly",
+          "where": "How you can ease wrist pain yourself: Don't"
+        }
+      ]
     }
   ],
   "sources": [
@@ -421,6 +444,16 @@
       "pmid": 20139328,
       "access": "abstract",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-wrist-pain",
+      "url": "https://www.nhs.uk/symptoms/hand-pain/wrist-pain/",
+      "title": "Wrist pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -580,7 +613,8 @@
         "means": "Fault: the wrists bent up or down under load.",
         "fix": "Stop and don't train through the pain. Keep the wrist straight.",
         "claim": [
-          "c6"
+          "c6",
+          "c17"
         ],
         "redFlag": "wrist"
       }

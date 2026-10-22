@@ -234,6 +234,22 @@
    "status": "verbatim",
    "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
    "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "nhs-back-pain",
+   "text": "But stop if your pain gets worse and see a GP for advice.",
+   "status": "verbatim",
+   "closest": "But stop if your pain gets worse and see a GP for advice.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c20",
+   "source": "nhs-tennis-elbow",
+   "text": "avoid or reduce activities that make your symptoms worse",
+   "status": "verbatim",
+   "closest": "avoid or reduce activities that make your symptoms worse",
+   "note": "fetched by curl 2026-10-22"
   }
  ],
  "sources": [

@@ -194,6 +194,22 @@
    "status": "verbatim",
    "closest": "If you need to lean slightly forward, make sure to tilt from your hips rather than arching your back.",
    "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c18",
+   "source": "nhs-tennis-elbow",
+   "text": "avoid or reduce activities that make your symptoms worse",
+   "status": "verbatim",
+   "closest": "avoid or reduce activities that make your symptoms worse",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c19",
+   "source": "nhs-back-pain",
+   "text": "But stop if your pain gets worse and see a GP for advice.",
+   "status": "verbatim",
+   "closest": "But stop if your pain gets worse and see a GP for advice.",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

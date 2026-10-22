@@ -64,6 +64,11 @@
      "source": "fb-cbhammer",
      "text": "Maintain tension in your bicep as you bring the dumbbell back to its starting position by reversing the movement.",
      "where": "Instructions, step 7"
+    },
+    {
+     "source": "fb-cbhammer",
+     "text": "Repeat this action with your other arm.",
+     "where": "Instructions, step 8"
     }
    ]
   },
@@ -427,7 +432,7 @@
     "c5"
    ],
    "drawable": true,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 1: losing tension at the bottom with the arm fully extended (c15), from Fitbod's \"It’s very common to lose tension at the bottom of the movement when your arms are fully extended.\" The frequency word sits on the fault itself, in a source written for this exercise. Set aside: Fitbod's \"Unlike many other Hammer Curl variations\" and \"one of the most common isolation, biceps exercises\", StrengthLog's \"available at most gyms\" and \"most bicep curls are actually very functional\", ACE's \"most comfortable for you\" and Coratella's \"the biceps curl is common in practice\" are about exercises, equipment or comfort; Kerr's \"The most common mechanism of injury was weights dropping on the person (65.5%).\" (c13) is about all weight training; the 'Common Form Mistakes' and 'Common Mistakes in the Hammer Curl' headings are headings. drawable is false: the front view cannot show a small elbow bend toward the camera (viewWhy), so handlingMistakes[0] stays the range fault and plate.mistake names the next fault by the same steps. Step 2 for the next fault: swinging (\"increases the risk of injury\", c4) is the only other candidate a quote ties to harm, but its still sign, a trunk lean, is front-to-back and the front view cannot show it. Step 3: Fitbod's list (written for this exercise, the anchor) has no other item; StrengthLog's hammer curl list (the standard hammer curl) comes next: elbow positioning (elbows forward or back) is front-to-back and cannot be drawn front-on; \"Using too heavy weights\" is a load; changing grip, twisting the wrists (c7), is the first drawable item, and the front view shows the dumbbell turned off vertical. The shrug (c5, ACE) is an instruction, not a list item, so it comes after the list. PICK CHANGED: plate.mistake moves from the range fault (drawn as drawable at the head) to the wrist twist; the range fault stays handlingMistakes[0]."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: losing tension at the bottom with the arm fully extended (c15), from Fitbod's \"It’s very common to lose tension at the bottom of the movement when your arms are fully extended.\" The frequency word sits on the fault itself, in a source written for this exercise. Set aside: Fitbod's \"Unlike many other Hammer Curl variations\" and \"one of the most common isolation, biceps exercises\", StrengthLog's \"available at most gyms\" and \"most bicep curls are actually very functional\", ACE's \"most comfortable for you\" and Coratella's \"the biceps curl is common in practice\" are about exercises, equipment or comfort; Kerr's \"The most common mechanism of injury was weights dropping on the person (65.5%).\" (c13) is about all weight training; Kerr's \"The upper trunk (25.3%) and lower trunk (19.7%) were the most commonly injured body parts.\" and \"The most common diagnosis was sprain/strain (46.1%).\" are about all weight training; the 'Common Form Mistakes' and 'Common Mistakes in the Hammer Curl' headings are headings. drawable is false: the front view cannot show a small elbow bend toward the camera (viewWhy), so handlingMistakes[0] stays the range fault and plate.mistake names the next fault by the same steps. Step 2 for the next fault: swinging (\"increases the risk of injury\", c4) is the only other candidate a quote ties to harm, but its still sign, a trunk lean, is front-to-back and the front view cannot show it. Step 3: Fitbod's list (written for this exercise, the anchor) has no other item; StrengthLog's hammer curl list (the standard hammer curl) comes next: elbow positioning (elbows forward or back) is front-to-back and cannot be drawn front-on; \"Using too heavy weights\" is a load; changing grip, twisting the wrists (c7), is the first drawable item, and the front view shows the dumbbell turned off vertical. The shrug (c5, ACE) is an instruction, not a list item, so it comes after the list. PICK CHANGED: plate.mistake moves from the range fault (drawn as drawable at the head) to the wrist twist; the range fault stays handlingMistakes[0]."
   },
   "tells": [
    {
@@ -436,7 +441,10 @@
    },
    {
     "text": "Shoulders stay level and down",
-    "claim": "c5"
+    "claim": [
+     "c5",
+     "c6"
+    ]
    }
   ],
   "tempo": {
@@ -491,7 +499,10 @@
   },
   {
    "point": "Palm keeps facing the body, wrist straight.",
-   "claim": "c7"
+   "claim": [
+    "c7",
+    "c5"
+   ]
   },
   {
    "point": "No shrugging.",
@@ -520,7 +531,10 @@
   {
    "mistake": "Shrugging the shoulder.",
    "fix": "Keep the shoulders down and back.",
-   "claim": "c5"
+   "claim": [
+    "c5",
+    "c6"
+   ]
   }
  ],
  "feel": {

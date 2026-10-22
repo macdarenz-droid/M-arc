@@ -194,6 +194,14 @@
    "status": "verbatim",
    "closest": "Trunk movements together with knee flexions were visually monitored by the researchers to avoid possible cheating.",
    "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "nielasher-alt",
+   "text": "If you experience any discomfort, stop immediately and consult a healthcare provider.",
+   "status": "verbatim",
+   "closest": "If you experience any discomfort, stop immediately and consult a healthcare provider.",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

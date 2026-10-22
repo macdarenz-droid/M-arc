@@ -211,6 +211,11 @@
           "source": "coratella-2023",
           "text": "The anterior deltoid was more excited during the pronated and neutral than the supinated handgrip",
           "where": "Conclusions"
+        },
+        {
+          "source": "coratella-2023",
+          "text": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
+          "where": "abstract, results"
         }
       ]
     },
@@ -260,7 +265,7 @@
     },
     {
       "id": "c12",
-      "text": "Tempo (up = lifting, down = lowering): lift slowly and lower gently, with no seconds given; ACSM advises moderate speed (1-2 s up, 1-2 s down), stated for advanced training (LR-15). No quote on the card asks for a pause. Breathe out on the way up and in on the way down.",
+      "text": "Tempo (up = lifting, down = lowering): lift slowly and lower gently, with no seconds given. 1 s up and 2 s down sit inside ACSM's moderate 1-2 s each way, which is stated for advanced training (LR-15). No quote on the card asks for a pause. Breathe out on the way up and in on the way down.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -531,7 +536,7 @@
   },
   "risks": [
     {
-      "risk": "Too heavy a weight leads to swinging the body and half reps.",
+      "risk": "Too heavy a weight can make you swing and cut reps short.",
       "claim": "c7"
     },
     {
@@ -548,7 +553,11 @@
       "kind": "hand",
       "right": "Closed neutral grip, thumb round the handle, wrist straight.",
       "wrong": "Wrist twisted toward palms-up partway through the curl.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c1",
+        "c4"
+      ]
     },
     {
       "key": "hammer-elbow",

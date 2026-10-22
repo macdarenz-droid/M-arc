@@ -306,6 +306,29 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c15",
+      "text": "The NHS advises people with wrist pain to stop or cut down the activities causing it and not to lift heavy objects or grip anything too tightly (NHS wrist-pain self-care advice, applied here to training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-wrist-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-wrist-pain",
+          "text": "stop or cut down activities that are causing the pain",
+          "where": "How you can ease wrist pain yourself: Do"
+        },
+        {
+          "source": "nhs-wrist-pain",
+          "text": "do not lift heavy objects or grip anything too tightly",
+          "where": "How you can ease wrist pain yourself: Don't"
+        }
+      ]
     }
   ],
   "sources": [
@@ -347,6 +370,16 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "nhs-wrist-pain",
+      "url": "https://www.nhs.uk/symptoms/hand-pain/wrist-pain/",
+      "title": "Wrist pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
       "checked": "2026-10-22"
     }
   ],
@@ -462,7 +495,10 @@
     {
       "mistake": "Elbows drifting forward or back.",
       "fix": "Keep the elbows close to your body.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c4"
+      ]
     },
     {
       "mistake": "Swinging the body.",
@@ -496,14 +532,20 @@
         "where": "Front of the shoulder",
         "means": "Fault: the elbows moving forward, which loads the front delts.",
         "fix": "Keep the elbows close to your body.",
-        "claim": "c5",
+        "claim": [
+          "c5",
+          "c4"
+        ],
         "redFlag": null
       },
       {
         "where": "Wrist discomfort or pain",
         "means": "Fault: the wrists bent up or down under load.",
         "fix": "Stop and don't train through the pain. Keep the wrist straight.",
-        "claim": "c8",
+        "claim": [
+          "c8",
+          "c15"
+        ],
         "redFlag": "wrist"
       }
     ]
@@ -523,7 +565,10 @@
       "kind": "hand",
       "right": "Hands underhand on the angled sections, wrists straight.",
       "wrong": "Wrists bent back under the bar.",
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c1"
+      ]
     },
     {
       "key": "ez-curl-elbow",

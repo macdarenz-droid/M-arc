@@ -140,6 +140,14 @@
    "note": ""
   },
   {
+   "claim": "c9",
+   "source": "bb-bayesian",
+   "text": "In such cases, go for one of these alternatives instead",
+   "status": "verbatim",
+   "closest": "In such cases, go for one of these alternatives instead",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
    "claim": "c10",
    "source": "parpa-2025",
    "text": "the dumbbell biceps curl elicited significantly greater muscle activation compared to the Bayesian curl",

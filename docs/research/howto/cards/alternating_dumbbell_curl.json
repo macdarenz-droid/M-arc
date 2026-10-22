@@ -332,6 +332,23 @@
           "where": "Methods"
         }
       ]
+    },
+    {
+      "id": "c15",
+      "text": "Niel Asher's cautions for this exercise say to stop at once if you feel any discomfort; the healthcare referral is data only (R-LB5-2).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nielasher-alt"
+      ],
+      "quotes": [
+        {
+          "source": "nielasher-alt",
+          "text": "If you experience any discomfort, stop immediately and consult a healthcare provider.",
+          "where": "Contraindications and Cautions"
+        }
+      ]
     }
   ],
   "sources": [
@@ -540,10 +557,13 @@
         "redFlag": null
       },
       {
-        "where": "Wrist discomfort or pain",
+        "where": "Wrist discomfort",
         "means": "Fault: the wrists bent up or down under load.",
         "fix": "Stop and don't train through the pain. Keep the wrist straight.",
-        "claim": "c7",
+        "claim": [
+          "c7",
+          "c15"
+        ],
         "redFlag": "wrist"
       }
     ]
@@ -563,7 +583,11 @@
       "kind": "hand",
       "right": "Closed palms-forward grip, hand in line with the forearm.",
       "wrong": "Wrist bent back or curled toward the forearm.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c2",
+        "c3"
+      ]
     },
     {
       "key": "alt-curl-arms",
@@ -572,7 +596,9 @@
       "wrong": "Trunk moving as the dumbbell swings up.",
       "claim": [
         "c6",
-        "c14"
+        "c14",
+        "c1",
+        "c4"
       ]
     }
   ],

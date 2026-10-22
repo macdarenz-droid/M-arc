@@ -170,6 +170,22 @@
    "status": "verbatim",
    "closest": "The eccentric phase showed a higher activation of the BB muscle in EZ compared to DC (P < 0.01) and in BC compared to DC (P < 0.05).",
    "note": "read by fixer in the PubMed abstract (efetch, PMID 30013836); the PMC page renders the italic P as '( P'"
+  },
+  {
+   "claim": "c16",
+   "source": "nhs-wrist-pain",
+   "text": "stop or cut down activities that are causing the pain",
+   "status": "verbatim",
+   "closest": "stop or cut down activities that are causing the pain",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c16",
+   "source": "nhs-wrist-pain",
+   "text": "do not lift heavy objects or grip anything too tightly",
+   "status": "verbatim",
+   "closest": "do not lift heavy objects or grip anything too tightly",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

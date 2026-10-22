@@ -22,15 +22,15 @@
     },
     {
       "field": "grip.thumb",
-      "why": "true for this child because ACE’s full-grip rule covers any pushdown handle (c2)."
+      "why": "true for this child because ACE's full-grip rule (c2, ace-pushdown) is the pushdown's grip rule, and the bar is this card's own handle: ACE's pressdown page uses a straight bar attachment (c1), StrengthLog's bar page grabs a bar (c2) and Hussain holds the straight bar (c2)."
     },
     {
       "field": "grip.wrist",
-      "why": "true for this child because ACE’s neutral-wrist rule is written for the handle it describes, which includes a bar (c9)."
+      "why": "true for this child because ACE's neutral-wrist rule (c9) is the pushdown's wrist rule, and the bar is covered by StrengthLog's bar page, Hussain and ACE's pressdown page (c1, c2)."
     },
     {
       "field": "zooms",
-      "why": "true for this child because the parent’s two zooms (wrist over the bar, elbow drift) are both straight-bar pictures (c9, c6)."
+      "why": "true for this child for zooms[1] (elbow drift), a straight-bar picture on the parent (c6). zooms[0] keeps the parent's right line; its wrong line is null here because no read source names wrists bent back over the bar (LR-25)."
     },
     {
       "field": "redFlags",
@@ -252,7 +252,7 @@
     },
     {
       "id": "c11",
-      "text": "Leaning too far forward or arching the back strains the lower back and moves work off the triceps.",
+      "text": "Leaning too far forward or arching the back can strain the lower back and moves work off the triceps.",
       "tags": [
         "CONSENSUS"
       ],
@@ -430,6 +430,42 @@
           "where": "Step 1"
         }
       ]
+    },
+    {
+      "id": "c20",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "The NHS advises people with tennis elbow to avoid or reduce activities that make the symptoms worse (NHS self-care advice, applied here to elbow pain in training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-tennis-elbow"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-tennis-elbow",
+          "text": "avoid or reduce activities that make your symptoms worse",
+          "where": "Things you can do to help ease tennis elbow"
+        }
+      ]
     }
   ],
   "sources": [
@@ -482,6 +518,26 @@
       "pmid": 19204579,
       "access": "abstract",
       "checked": "2026-10-22"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "nhs-tennis-elbow",
+      "url": "https://www.nhs.uk/conditions/tennis-elbow/",
+      "title": "Tennis elbow (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -518,7 +574,7 @@
       "why": "StrengthLog lists arching the back first among the bar pushdown's common mistakes: leaning too far forward or arching the back can put unnecessary strain on the lower back and shift the focus away from the triceps (c11).",
       "claim": "c11",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: leaning too far forward or arching the back (c11). Step 1 set aside: StrengthLog's \"Some people tend to lean too far forward or arch their back\" (c11) uses 'tend', not a frequency word; \"This often leads to using momentum to complete the exercise\" (c16) is about using too much weight, a load; \"feels uncomfortable in the elbows for many people\" (c17) is about heavy weights and low reps, a load; \"often performed with a bar or a rope\" and \"One of our most popular\" are about equipment and programs; the 'Common Mistakes in Tricep Pushdown With Bar' heading is a heading. Step 2: the lean or arch is the only candidate a quote ties to harm (\"unnecessary strain on the lower back\"), first on StrengthLog's common-mistakes list. Too much weight (c16, \"can also lead to injury\") is a load choice, not a candidate; if the injury line is read onto the momentum it brings, that fault is second on the same list with one harm source, so the lean still wins on list order. Elbows drifting forward (c6), the head's pick, states no harm: it moves work to the lats. PICK CHANGED from the elbows drifting forward, the same change LB2 made on the parent triceps_pushdown with the same StrengthLog lines. handlingMistakes is reordered: lean or arch, elbows forward, too heavy. drawable is true: the side view shows the trunk lean and the back arch."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: leaning too far forward or arching the back (c11). Step 1 set aside: StrengthLog's \"Some people tend to lean too far forward or arch their back\" (c11) uses 'tend', not a frequency word; \"This often leads to using momentum to complete the exercise\" (c16) is about using too much weight, a load; \"feels uncomfortable in the elbows for many people\" (c17) is about heavy weights and low reps, a load; \"often performed with a bar or a rope\" and \"One of our most popular\" are about equipment and programs; the 'Common Mistakes in Tricep Pushdown With Bar' heading is a heading. Hussain's \"If a subject was frequently unable to maintain the correct posture (i.e., his torso leaned too much or became straight, or his arm abduction varied), a new subject was recruited as a replacement.\" is a rule for replacing study subjects, not a statement that lifters often lean. Step 2: the lean or arch is the only candidate a quote ties to harm (\"unnecessary strain on the lower back\"), first on StrengthLog's common-mistakes list. Too much weight (c16, \"can also lead to injury\") is a load choice, not a candidate; if the injury line is read onto the momentum it brings, that fault is second on the same list with one harm source, so the lean still wins on list order. Elbows drifting forward (c6), the head's pick, states no harm: it moves work to the lats. PICK CHANGED from the elbows drifting forward, the same change LB2 made on the parent triceps_pushdown with the same StrengthLog lines. handlingMistakes is reordered: lean or arch, elbows forward, too heavy. drawable is true: the side view shows the trunk lean and the back arch."
     },
     "tells": [
       {
@@ -560,7 +616,10 @@
     },
     {
       "step": "Stand facing the machine, feet hip- to shoulder-width or staggered, core braced.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "c2"
+      ]
     },
     {
       "step": "Bar at upper-chest level, elbows bent and close to your sides.",
@@ -606,12 +665,11 @@
   "handlingMistakes": [
     {
       "mistake": "Leaning over or arching back.",
-      "fix": "Stand taller. Tilt only from the hips. Go lighter.",
+      "fix": "Stand taller. Tilt only from the hips.",
       "claim": [
         "c11",
         "c3",
-        "c4",
-        "c16"
+        "c4"
       ]
     },
     {
@@ -658,26 +716,30 @@
       },
       {
         "where": "Lower back pain",
-        "means": "Fault: leaning too far forward or arching the back.",
+        "means": "Is it getting worse?",
         "fix": "Stop and don't train through the pain. Stand taller, tilt only from the hips.",
         "claim": [
           "c11",
-          "c4"
+          "c4",
+          "c20"
         ],
         "redFlag": "back"
       },
       {
         "where": "Elbow discomfort or pain",
-        "means": "Heavy, low-rep sets feel uncomfortable in the elbows for many.",
+        "means": "Is it getting worse?",
         "fix": "Stop and don't train through the pain. Use lighter weights for more reps.",
-        "claim": "c17",
+        "claim": [
+          "c17",
+          "c21"
+        ],
         "redFlag": "elbow"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Leaning or arching strains the lower back.",
+      "risk": "Leaning or arching can strain the lower back.",
       "claim": "c11"
     },
     {
@@ -698,12 +760,11 @@
       "key": "pushdown-wrist",
       "kind": "hand",
       "right": "Overhand full grip, thumbs wrapped, hands in line with forearms.",
-      "wrong": "Wrists bent back over the bar.",
+      "wrong": null,
       "claim": [
         "c9",
         "c2"
-      ],
-      "wrongNote": "The wrong drawing is the inverse of c9 (wrists neutral); no source describes wrists bent back directly."
+      ]
     },
     {
       "key": "pushdown-elbow",

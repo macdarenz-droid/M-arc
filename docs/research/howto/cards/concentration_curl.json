@@ -182,7 +182,7 @@
     {
      "source": "bb-concentration",
      "text": "After holding for a moment at the top, lower the weight with slow control. Let your arm straighten to full extension",
-     "where": "How to, step 4"
+     "where": "How to, step 3"
     },
     {
      "source": "bb-concentration",
@@ -279,7 +279,7 @@
     {
      "source": "bb-concentration",
      "text": "After holding for a moment at the top, lower the weight with slow control.",
-     "where": "How to, step 4"
+     "where": "How to, step 3"
     },
     {
      "source": "bb-concentration",
@@ -488,7 +488,7 @@
   "rows": [
    {
     "where": "Front of the upper arm",
-    "means": "The biceps are isolated and doing the work.",
+    "means": "The biceps are doing the work.",
     "fix": "",
     "claim": "c10",
     "redFlag": null

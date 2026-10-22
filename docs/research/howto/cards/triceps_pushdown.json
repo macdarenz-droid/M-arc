@@ -383,6 +383,42 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c19",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "The NHS advises people with tennis elbow to avoid or reduce activities that make the symptoms worse (NHS self-care advice, applied here to elbow pain in training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-tennis-elbow"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-tennis-elbow",
+          "text": "avoid or reduce activities that make your symptoms worse",
+          "where": "Things you can do to help ease tennis elbow"
+        }
+      ]
     }
   ],
   "sources": [
@@ -435,6 +471,26 @@
       "pmid": 19204579,
       "access": "abstract",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "nhs-tennis-elbow",
+      "url": "https://www.nhs.uk/conditions/tennis-elbow/",
+      "title": "Tennis elbow (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -596,20 +652,22 @@
       },
       {
         "where": "Lower back pain",
-        "means": "Fault: leaning too far forward or arching the back.",
+        "means": "Is it getting worse?",
         "fix": "Stop and don't train through the pain. Stand taller, tilt only from the hips.",
         "claim": [
           "c11",
-          "c4"
+          "c4",
+          "c19"
         ],
         "redFlag": "back"
       },
       {
         "where": "Elbow discomfort or pain",
-        "means": "Heavy, low-rep sets feel uncomfortable in the elbows for many.",
+        "means": "Is it getting worse?",
         "fix": "Stop and don't train through the pain. Use lighter weights for more reps.",
         "claim": [
-          "c17"
+          "c17",
+          "c20"
         ],
         "redFlag": "elbow"
       }

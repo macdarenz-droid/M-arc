@@ -577,7 +577,7 @@
     "redFlag": "wrist"
    },
    {
-    "where": "Elbow joint",
+    "where": "Joints",
     "means": "Fault: swinging the bar up with momentum.",
     "fix": "Go lighter and slow down.",
     "claim": [
