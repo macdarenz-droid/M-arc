@@ -15,6 +15,8 @@ import { LEGACY_SCRIPTS } from './render/legacy.mjs';
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const RENDERER_URL = pathToFileURL(join(HERE, 'render', 'closeups.mjs')).href;
 export const REGION_FIX_URL = pathToFileURL(join(HERE, 'render', 'region-fix.mjs')).href;
+/** LIB-5's back box (D-LIB5-PAGE, D-LIB6PM-ANCHORS): loaded by URL, only for a page with a back-flagged sheet. */
+export const BACK_BOX_URL = pathToFileURL(join(HERE, 'shared', 'back-box.mjs')).href;
 /** The CSS comment label of a renderer-drawn exercise that has no golden-B label. */
 export const RENDERER_LABEL = 'library/render/closeups.mjs';
 
@@ -82,9 +84,20 @@ export function patchHowtoLayers(src, plan) {
   src = patchOnce(src, 'renderer dispatch', '  for (const id of HOWTO_IDS) apis[id] = await loadRenderer(id);',
     `  const __lib = await import(${JSON.stringify(RENDERER_URL)}), __opts = ${plan.optionsUrl ? `(await import(${JSON.stringify(plan.optionsUrl)})).CLOSEUP_OPTIONS` : '{}'};\n`
     + `  const __keys = ${JSON.stringify(plan.keys)};\n`
+    + `  if (mods.some(M => (M.default.riskFlags ?? []).includes('back'))) __BACK.backBox = (await import(${JSON.stringify(BACK_BOX_URL)})).backBox;   // LIB-6-PM: D-LIB6PM-ANCHORS\n`
     + `  for (const id of HOWTO_IDS) apis[id] = LEGACY[id] ? await loadRenderer(id)\n`
     + `    : __lib.closeupApi((await import(pathToFileURL(join(root, 'exercises', \`\${id}.howto.mjs\`)).href)), __opts[__keys[id]], { root, specFile: __lib.specFileOf(root, id), engine: await __lib.engineOf(__lib.specFileOf(root, id), { root }) });\n`
     + (plan.regionFix ? `  (await import(${JSON.stringify(REGION_FIX_URL)})).applyRegionFix((await import('../engine/bodymap-parts.mjs')).FRONT_PARTS);\n` : ''));
+  // D-LIB5-PAGE, D-LIB6PM-ANCHORS: the back box. RF links a back-flagged row; FLAG's `back` getter reads the box from the
+  // holder, which the dispatch above fills only when a sheet on the page is back-flagged (risksSection is synchronous).
+  src = patchOnce(src, 'back holder', "import { lintAll, formatViolations, FEEL_ROWS_MAX, SETUP_MAX_STEPS } from './copy-lint.mjs';\n",
+    "import { lintAll, formatViolations, FEEL_ROWS_MAX, SETUP_MAX_STEPS } from './copy-lint.mjs';\n"
+    + 'const __BACK = {};   // LIB-6-PM: the back box, loaded only for a page with a back-flagged sheet\n');
+  src = patchOnce(src, 'RF', "const RF = { true: 'wrist', shoulder: 'shoulder', knee: 'knee', elbow: 'elbow' };",
+    "const RF = { true: 'wrist', shoulder: 'shoulder', knee: 'knee', elbow: 'elbow', back: 'back' };");
+  src = patchOnce(src, 'FLAG', 'const FLAG = { wrist: RED_FLAG, shoulder: RED_FLAG_SHOULDER, knee: RED_FLAG_KNEE, elbow: RED_FLAG_ELBOW };',
+    'const FLAG = { wrist: RED_FLAG, shoulder: RED_FLAG_SHOULDER, knee: RED_FLAG_KNEE, elbow: RED_FLAG_ELBOW, '
+    + 'get back() { try { return __BACK.backBox(); } catch (e) { throw new Error(`${howto.id}: ${e.message}`); } } };');
   return src;
 }
 
