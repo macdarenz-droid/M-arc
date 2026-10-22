@@ -578,5 +578,34 @@
   "remove": [],
   "why": "biceps primary and forearms secondary match exercises.json and StrengthLog's cable-curl listing (c6)."
  },
- "anchorSource": "sl-cablecurl"
+ "anchorSource": "sl-cablecurl",
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "end",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "end",
+   "cardPose": "start",
+   "claim": "c1"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Lower",
+   "s": 2,
+   "move": true
+  },
+  {
+   "phase": "Curl",
+   "s": 1,
+   "move": true
+  }
+ ],
+ "topFault": "straight"
 }

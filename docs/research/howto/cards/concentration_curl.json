@@ -552,5 +552,101 @@
  "anchorSource": "bb-concentration",
  "notes": [
   "F-LB5-2: under D-LIB15-MIRROR the plate may draw the mirror image of c1's named side (the right arm braced on the right inner thigh, the free hand on the left knee), because c14 states that each side is trained in turn."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "elbow.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "seat",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.l",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.l",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c5"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Curl",
+   "s": 1,
+   "move": true
+  },
+  {
+   "phase": "Hold",
+   "s": 1
+  },
+  {
+   "phase": "Lower",
+   "s": 2,
+   "move": true
+  }
+ ],
+ "topFault": "knee"
 }
