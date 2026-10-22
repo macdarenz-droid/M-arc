@@ -1,6 +1,6 @@
 {
   "id": "low_to_high_cable_fly",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -183,6 +183,13 @@
       "text": "Pause momentarily then slowly return to your starting position, allowing your arms to move back outwards in a slow, controlled manner.",
       "status": "verbatim",
       "closest": "Pause momentarily then slowly return to your starting position, allowing your arms to move back outwards in a slow, controlled manner."
+    },
+    {
+      "claim": "c16",
+      "source": "puregym-cable-fly",
+      "text": "Having the correct form and range of motion is important in minimising strain to the shoulder joint. Select a weight that allows you to maintain a soft bend in the elbow and only go as far as hands in line with chest.",
+      "status": "verbatim",
+      "closest": "Having the correct form and range of motion is important in minimising strain to the shoulder joint. Select a weight that allows you to maintain a soft bend in the elbow and only go as far as hands in line with chest."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "id": "machine_lateral_raise",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -193,20 +193,6 @@
     },
     {
       "claim": "c13",
-      "source": "acsm-2009",
-      "quote": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
-      "status": "verbatim",
-      "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training"
-    },
-    {
-      "claim": "c13",
-      "source": "acsm-2009",
-      "quote": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-      "status": "verbatim",
-      "closest": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)"
-    },
-    {
-      "claim": "c13",
       "source": "mo-lat-raise",
       "quote": "Pause briefly at top to squeeze deltoids.",
       "status": "verbatim",
@@ -225,6 +211,34 @@
       "quote": "Sit facing the machine with the feet out in front and arms slightly bent and the pads resting just above the elbows. Keeping the arms bent at 90 degrees,",
       "status": "verbatim",
       "closest": "Sit facing the machine with the feet out in front and arms slightly bent and the pads resting just above the elbows. Keeping the arms bent at 90 degrees,"
+    },
+    {
+      "claim": "c16",
+      "source": "mo-lat-raise",
+      "quote": "3-1-2",
+      "status": "verbatim",
+      "closest": "3-1-2"
+    },
+    {
+      "claim": "c16",
+      "source": "mo-lat-raise",
+      "quote": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds."
+    },
+    {
+      "claim": "c5",
+      "source": "vg-lat-raise",
+      "quote": "Continue lifting until your arms are parallel to the floor, or slightly higher.",
+      "status": "verbatim",
+      "closest": "Continue lifting until your arms are parallel to the floor, or slightly higher."
+    },
+    {
+      "claim": "c9",
+      "source": "mo-lat-raise",
+      "quote": "Inhale and lower arms slowly with control.",
+      "status": "verbatim",
+      "closest": "Inhale and lower arms slowly with control."
     }
   ]
 }

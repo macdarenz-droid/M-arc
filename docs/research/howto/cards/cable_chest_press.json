@@ -338,10 +338,9 @@
     },
     {
       "id": "c15",
-      "text": "Tempo: lower in a controlled 2-3 seconds; the press back is only 'semi explosive', so the 1 s up is a drawing convention (no source gives its seconds).",
+      "text": "Tempo: lower in a controlled 2-3 seconds; NFPT calls the press 'semi explosive' and gives it no seconds.",
       "tags": [
-        "CONSENSUS",
-        "WEAK"
+        "CONSENSUS"
       ],
       "sources": [
         "nfpt-cable-press"
@@ -358,6 +357,56 @@
           "where": "Movement, Phase 2"
         }
       ]
+    },
+    {
+      "id": "c16",
+      "text": "Tempo: Motra lists 2-1-2 for this lift and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the lowering, a 1 s pause at the bottom and 2 s for the press.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-cable-press"
+      ],
+      "quotes": [
+        {
+          "source": "motra-cable-press",
+          "text": "2-1-2",
+          "where": "Form Cues: Tempo"
+        },
+        {
+          "source": "motra-cable-press",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Locking the elbows at the front is a named common mistake: extend the arms without locking them and keep a slight bend to protect the joints (Motra); NFPT also stops the press just short of locked (c5).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-cable-press"
+      ],
+      "quotes": [
+        {
+          "source": "motra-cable-press",
+          "text": "Locking elbows at extension.",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "motra-cable-press",
+          "text": "Extend arms without locking elbows.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "motra-cable-press",
+          "text": "Keep slight elbow bend to protect joints.",
+          "where": "Safety Notes"
+        }
+      ]
     }
   ],
   "sources": [
@@ -369,7 +418,7 @@
       "year": 2023,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "motra-cable-press",
@@ -379,7 +428,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "nfpt-cable-press",
@@ -389,7 +438,7 @@
       "year": 2025,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-cable-press",
@@ -399,7 +448,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "santana2007",
@@ -409,7 +458,7 @@
       "year": 2007,
       "pmid": "18076235",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "calatayud2014",
@@ -419,7 +468,7 @@
       "year": 2014,
       "pmid": "25419894",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "schutz2022",
@@ -429,7 +478,7 @@
       "year": 2022,
       "pmid": "35202059",
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "kolber2010",
@@ -439,7 +488,7 @@
       "year": 2010,
       "pmid": "20508476",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm2009",
@@ -449,12 +498,12 @@
       "year": 2009,
       "pmid": "19204579",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; the staggered stance, the handle height at the nipples and the back position read in the sagittal plane (c2, c4, c6). One column shows in side view.",
+    "viewWhy": "Census view is side; the staggered stance, the handle height at the nipples and the back position read in the sagittal plane (c2, c4, c6). One column shows in side view. The elbows locked at the front (c17, c5) read from the side too.",
     "equipment": "Cable column with the pulley at chest height and a single handle (c1); the lifter stands a foot or two in front, staggered stance (c1, c2); floor line.",
     "start": "Standing in a staggered stance, feet planted (c2), spine neutral and braced (c6); handles at about nipple height, elbows just below 90 degrees, wrists over the elbows (c3, c4).",
     "end": "Arms pressed straight ahead to almost-straight elbows, not locked (c3, c5); body still (c7).",
@@ -476,9 +525,13 @@
       }
     ],
     "mistake": {
-      "what": "Arching the lower back to push the handles out.",
-      "why": "Bells of Steel names it among the most common cable chest press mistakes and links it to lower-back pain; NFPT asks for a neutral, braced spine. How often it happens is not measured.",
-      "claim": "c6",
+      "what": "Elbows locked straight at the front of the press, instead of almost straight.",
+      "why": "Motra lists \"Locking elbows at extension.\" among its common mistakes and says \"Keep slight elbow bend to protect joints.\" (c17); NFPT says \"Do not completely lock the elbow just extend it so it is almost locked.\" (c5). How often it happens is not measured.",
+      "claim": [
+        "c17",
+        "c5"
+      ],
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2, settled by step 3's count (D-SUP-LB6-CCP): locked elbows (c17, c5). Step 1: no frequency word counts for a fault. Set aside: Bells of Steel's \"Here are the most common mistakes to avoid on the cable chest press.\" is a list sentence; Schutz's \"Injuries to the shoulder are very common in sports that involve overhead arm or throwing movements.\" is about other sports and \"Another common method to improve chest muscle strength is to perform strength exercises on a cable pulley system\" about the equipment (c12); Kolber's \"the most prevalent regions of injury\" (c13) names no fault. Step 2: four named faults are tied to harm, each on a common-mistakes list written for this exercise: flared elbows, \"Flaring your elbows: This can put excessive stress on your shoulder joints and reduce the activation of your chest muscles.\" (Bells of Steel, c7); the arched back, \"Arching your back: This can cause lower back pain and remove the core stability challenge.\" (Bells of Steel, c6; the head's pick); and the shoulder blades not pulled back, \"Lack of retraction causes the scapula to anteriorly tilt and elevate the humerus. This can lead to an impingement of the subacromial bursa and the supraspinatus.\" (NFPT, the anchor; not on the card); and locked elbows, by Motra's cue \"Keep slight elbow bend to protect joints.\" for its \"Locking elbows at extension.\" (a cue that protects names harm, as on shoulder_press and landmine_row; NFPT's \"Do not completely lock the elbow\", c5, states none). Tie order: all four are on a list; one source ties each to harm; all are sourced directly; Bells of Steel's list names the elbows before the back, and Motra's names the locked elbows (second) before \"Arching lower back.\" (fourth), so the back drops out; no list names two of the flared elbows, the retraction and the locked elbows. Step 3's count (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: the locked elbows 2 (Motra's list and \"Extend arms without locking elbows.\", c17; NFPT's \"Do not completely lock the elbow just extend it so it is almost locked.\", c5); the flared elbows 1 (Bells of Steel, c7); the missing retraction 1 (NFPT's list). The locked elbows win. Read with positive cues counted as well, the retraction would count 3 (Bells of Steel's \"Position the upper arm at a 90-degree angle with the shoulder blades together.\" and Motra's \"Keep shoulders down and back.\"), against the locked elbows 2; those lines give the right position and do not tell the lifter to avoid a fault, so they are not counted. Set aside: NFPT's \"Do not grip much wider than shoulder width, it will put stress on the shoulder.\" is a grip width, a setup choice, not a candidate (D-SUP-LB6-CCP 3). Bells of Steel's \"Using too much weight: This can compromise your form and increase the risk of injury.\" is the load. The locked elbows were not on handlingMistakes, so they are added at [0] from their quotes (R-LB2-2), and the last item, gripping wide or flaring the elbows (c7, c3), is dropped to keep 3; the flared elbows stay in the shoulder row and risks[0]. drawable true: the side view shows the elbows locked straight at the front instead of almost straight. Pick changed: the arch is now handlingMistakes[1].",
       "drawable": true
     },
     "tells": [
@@ -492,11 +545,14 @@
       }
     ],
     "tempo": {
-      "up": 1,
+      "up": 2,
       "down": 2,
       "pause": 0,
-      "claim": "c15",
-      "text": "Down 2 s sits inside NFPT's 2-3 s lowering (c15). NFPT gives no seconds for the press, only 'semi explosive', so the 1 s up is a drawing convention (c15, WEAK; LR-33 pattern)."
+      "claim": [
+        "c15",
+        "c16"
+      ],
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c16, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the press, so it is named here and not written in pause (LR-33). Pause 0: no quote asks for a pause right after the press. Motra's \"Squeeze chest at peak contraction.\" gives no pause or seconds. NFPT's 2-3 s lowering (c15) agrees with down 2. NFPT calls the press \"semi explosive\" with no seconds (c15); the card takes Motra's 2 s up, as R-LB6-2 rules. Changed from up 1, down 2 (ACSM or a convention) under R-LB6-2."
     },
     "variantLine": null
   },
@@ -561,6 +617,14 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Locking the elbows.",
+      "fix": "Extend your arms without locking the elbows.",
+      "claim": [
+        "c17",
+        "c5"
+      ]
+    },
+    {
       "mistake": "Arching the lower back.",
       "fix": "Keep your spine neutral and brace your abs.",
       "claim": "c6"
@@ -571,14 +635,6 @@
       "claim": [
         "c7",
         "c8"
-      ]
-    },
-    {
-      "mistake": "Gripping wide or flaring elbows.",
-      "fix": "Handles just outside shoulder width, elbows about 45 degrees from the body.",
-      "claim": [
-        "c7",
-        "c3"
       ]
     }
   ],
@@ -629,16 +685,16 @@
       {
         "where": "Lower back pain",
         "means": "Fault: arching the back.",
-        "fix": "Stop and don't train through the pain. Keep your spine neutral.",
+        "fix": "Keep your spine neutral and brace your abs.",
         "claim": [
           "c6"
         ],
         "redFlag": "back"
       },
       {
-        "where": "Shoulder pain",
+        "where": "Shoulder",
         "means": "Fault: gripping much wider than shoulder width, or flaring the elbows.",
-        "fix": "Stop and don't train through the pain. Keep elbows at a 45-degree angle.",
+        "fix": "Keep your elbows at a 45-degree angle.",
         "claim": [
           "c7",
           "c13"
@@ -694,6 +750,6 @@
   },
   "anchorSource": "nfpt-cable-press",
   "notes": [
-    "LIB-TOPRANK (R-LB2-20): no rankNote yet; the pick (arching) is unchanged here. Verify #3's critic expects LR-31 step 2 to pick flared elbows: Bells of Steel lists 'Flaring your elbows: This can put excessive stress on your shoulder joints' before 'Arching your back: This can cause lower back pain' (c7, c6); NFPT's lack-of-retraction line is not on the card."
+    "LIB-TOPRANK (LB6): the step-2 tie was ruled by D-SUP-LB6-CCP (#287): step 3's source count picks the locked elbows, not R-LB2-20's expected flared elbows; see plate.mistake.rankNote. The dropped handlingMistakes item was \"Gripping wide or flaring elbows.\" / \"Handles just outside shoulder width, elbows about 45 degrees from the body.\" (c7, c3)."
   ]
 }

@@ -1,6 +1,6 @@
 {
   "id": "cable_chest_press",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -225,6 +225,41 @@
       "text": "Push the cables back to the starting position in a semi explosive tempo. Do not completely lock the elbow just extend it so it is almost locked.",
       "status": "verbatim",
       "closest": "Push the cables back to the starting position in a semi explosive tempo. Do not completely lock the elbow just extend it so it is almost locked."
+    },
+    {
+      "claim": "c16",
+      "source": "motra-cable-press",
+      "text": "2-1-2",
+      "status": "verbatim",
+      "closest": "2-1-2"
+    },
+    {
+      "claim": "c17",
+      "source": "motra-cable-press",
+      "text": "Locking elbows at extension.",
+      "status": "verbatim",
+      "closest": "Locking elbows at extension."
+    },
+    {
+      "claim": "c17",
+      "source": "motra-cable-press",
+      "text": "Extend arms without locking elbows.",
+      "status": "verbatim",
+      "closest": "Extend arms without locking elbows."
+    },
+    {
+      "claim": "c17",
+      "source": "motra-cable-press",
+      "text": "Keep slight elbow bend to protect joints.",
+      "status": "verbatim",
+      "closest": "Keep slight elbow bend to protect joints."
+    },
+    {
+      "claim": "c16",
+      "source": "motra-cable-press",
+      "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds."
     }
   ]
 }

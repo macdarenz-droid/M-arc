@@ -253,6 +253,29 @@
           "where": "abstract"
         }
       ]
+    },
+    {
+      "id": "c11",
+      "text": "Tempo: Motra lists 2-1-2 for this lift and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the lowering, a 1 s pause at the bottom and 2 s for the shrug.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-smith-shrug"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-shrug",
+          "text": "2-1-2",
+          "where": "Form Cues: Tempo"
+        },
+        {
+          "source": "motra-smith-shrug",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
+        }
+      ]
     }
   ],
   "sources": [
@@ -264,7 +287,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "eos-smith",
@@ -274,7 +297,7 @@
       "year": 2025,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm2009",
@@ -284,7 +307,7 @@
       "year": 2009,
       "pmid": "19204579",
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-22"
     },
     {
       "id": "kolber2010",
@@ -294,7 +317,7 @@
       "year": 2010,
       "pmid": "20508476",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "macdougall1985",
@@ -304,19 +327,19 @@
       "year": 1985,
       "pmid": "3980383",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "As for the parent: long arms, a tall body and a straight-up shoulder path read best side-on (c1, c2); the census draws it side.",
+    "viewWhy": "As for the parent: long arms, a tall body and a straight-up shoulder path read best side-on (c1, c2); the census draws it side. The head pushed forward (c3) reads side-on too.",
     "equipment": "Smith machine (rails, bar, hooks); bar at mid-thigh height in front of the body (c1); safety pins set (c4); floor line.",
     "start": "Standing, feet shoulder-width (c1), arms hanging long with a slight elbow bend, bar at mid-thigh (c1), shoulders relaxed down (c2).",
     "end": "Same body; only the shoulders lifted straight up toward the ears, arms still long (c2).",
     "checkpoints": [
       {
         "label": "Arms long",
-        "what": "Elbows keep only a slight bend; the arms just hang.",
+        "what": "Elbows keep only a slight bend, the arms just hang.",
         "claim": "c1"
       },
       {
@@ -331,9 +354,10 @@
       }
     ],
     "mistake": {
-      "what": "Elbows bending to pull the bar up instead of the shoulders lifting it.",
-      "why": "Motra names excessive elbow bend among the common Smith shrug mistakes, and it reads side-on. Rolling the shoulders is a rotation the engine cannot draw. How often each happens is not measured.",
+      "what": "Head pushed forward as the shoulders rise, instead of staying level.",
+      "why": "Motra lists \"Leaning head forward\" first among its common mistakes for this exercise (c3). How often it happens is not measured.",
       "claim": "c3",
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: leaning the head forward (c3), first on Motra's common-mistakes list for the Smith shrug. Step 1: no frequency word counts for a fault. Set aside: Motra's \"Typical Rep Range\" is programming and \"Spotting not typically needed due to machine guides\" is about spotting; EōS's \"At EōS, you’ll commonly find:\" is the equipment; Kolber's \"the most prevalent regions of injury\" (c9) names no fault. Step 2: no quote ties a named fault to harm. Motra's \"Stop if neck or shoulder pain occurs\" (c4) names no fault; \"Avoid hyperextending spine at top\" is a Safety Note with no harm word; EōS's \"avoid unnecessary strain\" is about adjusting the machine (a setup choice); Kolber's \"improper attention to exercise technique\" (c9) names no fault. Step 3: Motra's list, written for this exercise and the anchor: \"Leaning head forward\", \"Rocking body for momentum\" (handlingMistakes[0] until now), \"Rounding shoulders\", \"Excessive elbow bend\" (plate.mistake until now), \"Dropping weight rapidly\". drawable true: the side view shows the head pushed forward of the shoulders, a still sign. Pick changed: plate.mistake moves from the elbow bend to the head; handlingMistakes is reordered with the head first.",
       "drawable": true
     },
     "tells": [
@@ -347,10 +371,13 @@
       }
     ],
     "tempo": {
-      "up": 1,
+      "up": 2,
       "down": 2,
       "pause": 0,
-      "claim": "c7"
+      "claim": [
+        "c11"
+      ],
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c11, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the shrug, so it is named here and not written in pause (LR-33). Pause 0: no quote asks for a pause right after the shrug. Motra's \"Squeeze trapezius muscles at the top position.\" gives no pause or seconds. Changed from up 1, down 2 (ACSM or a convention) under R-LB6-2."
     },
     "variantLine": null
   },
@@ -367,7 +394,10 @@
   "setup": [
     {
       "step": "Set the bar at mid-thigh height and set the safety pins.",
-      "claim": "c1, c4"
+      "claim": [
+        "c1",
+        "c4"
+      ]
     },
     {
       "step": "Stand with feet shoulder-width apart.",
@@ -375,11 +405,17 @@
     },
     {
       "step": "Grip overhand, slightly wider than the shoulders, thumbs wrapped.",
-      "claim": "c1, barbell_shrug:c10"
+      "claim": [
+        "c1",
+        "inherit:0"
+      ]
     },
     {
       "step": "Rotate the bar off the hooks and let the arms hang long.",
-      "claim": "c6, c1"
+      "claim": [
+        "c6",
+        "c1"
+      ]
     }
   ],
   "posture": [
@@ -402,19 +438,26 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Rocking the body to swing the bar up.",
-      "fix": "Use slow, steady reps; add weight only in small steps.",
-      "claim": "c3, c5, c8"
-    },
-    {
-      "mistake": "Bending the elbows to pull the bar.",
-      "fix": "Keep the arms long; lift with the shoulders.",
-      "claim": "c3, c2"
-    },
-    {
       "mistake": "Pushing the head forward.",
       "fix": "Keep the head level as the shoulders rise.",
       "claim": "c3"
+    },
+    {
+      "mistake": "Rocking the body.",
+      "fix": "Use slow, steady reps. Add weight in small steps.",
+      "claim": [
+        "c3",
+        "c5",
+        "c8"
+      ]
+    },
+    {
+      "mistake": "Bending the elbows.",
+      "fix": "Keep the arms long. Lift with the shoulders.",
+      "claim": [
+        "c3",
+        "c2"
+      ]
     }
   ],
   "feel": {
@@ -428,28 +471,31 @@
     "watch": [],
     "rows": [
       {
-        "where": "Top of the shoulders, between neck and shoulder",
-        "means": "Usually means the upper traps are lifting.",
+        "where": "Between the neck and shoulders",
+        "means": "The upper traps are working.",
         "fix": null,
         "claim": "c5",
         "redFlag": null
       },
       {
-        "where": "Pain in the neck or shoulder",
-        "means": "Not a normal training feeling; the shoulder is a common injury site.",
-        "fix": "Stop the set.",
-        "claim": "c4, c9",
+        "where": "Any neck or shoulder pain",
+        "means": "The shoulder is a common injury site in lifting.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c4",
+          "c9"
+        ],
         "redFlag": "shoulder"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Heavy reps send blood pressure very high; part of it comes from holding your breath.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c10"
     },
     {
-      "risk": "The shoulder is a common injury site in weight training; poor technique adds risk.",
+      "risk": "The shoulder is a common injury site in lifting. Poor technique adds risk.",
       "claim": "c9"
     }
   ],
@@ -462,14 +508,17 @@
       "kind": "hand",
       "right": "Overhand, thumbs wrapped around the bar.",
       "wrong": "Thumb not wrapped around the bar.",
-      "claim": "barbell_shrug:c10"
+      "claim": "inherit:2"
     },
     {
       "key": "smith-shrug-top",
       "kind": "posture",
       "right": "Shoulders up toward the ears, arms long, head level.",
       "wrong": "Elbows bent, pulling the bar up with the arms.",
-      "claim": "c2, c3"
+      "claim": [
+        "c2",
+        "c3"
+      ]
     }
   ],
   "libraryDiff": {

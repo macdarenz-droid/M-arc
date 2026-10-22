@@ -399,7 +399,7 @@
     },
     {
       "id": "c19",
-      "text": "A sudden sharp pain means stop the workout at once and get it checked.",
+      "text": "A dull pain 12 to 24 hours after a session is normal; a sharp pain means stop the workout at once and get it checked.",
       "tags": [
         "CONSENSUS"
       ],
@@ -410,6 +410,11 @@
         {
           "source": "golds-smith-squat",
           "text": "If you feel a sharp pain, stop your workout immediately and seek medical attention.",
+          "where": "Safety Tips: Pay Attention to Pain vs. Muscle Burn"
+        },
+        {
+          "source": "golds-smith-squat",
+          "text": "A dull pain 12 to 24 hours after a workout session is normal.",
           "where": "Safety Tips: Pay Attention to Pain vs. Muscle Burn"
         }
       ]
@@ -458,6 +463,29 @@
           "where": "What is a Smith machine?"
         }
       ]
+    },
+    {
+      "id": "c22",
+      "text": "Tempo: Motra lists 3-1-1 for this lift and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 3 s for the lowering, a 1 s pause at the bottom and 1 s for the rise.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-smith-squat"
+      ],
+      "quotes": [
+        {
+          "source": "motra-smith-squat",
+          "text": "3-1-1",
+          "where": "Form Cues: Tempo"
+        },
+        {
+          "source": "motra-smith-squat",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
+        }
+      ]
     }
   ],
   "sources": [
@@ -469,7 +497,7 @@
       "year": 2025,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "motra-smith-squat",
@@ -479,7 +507,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-smith-squat",
@@ -489,7 +517,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "abelbeck2002",
@@ -499,7 +527,7 @@
       "year": 2002,
       "pmid": "12423179",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm2009",
@@ -509,7 +537,7 @@
       "year": 2009,
       "pmid": "19204579",
       "access": "abstract",
-      "checked": "2026-10-17"
+      "checked": "2026-10-22"
     },
     {
       "id": "schwanbeck2009",
@@ -519,7 +547,7 @@
       "year": 2009,
       "pmid": "19855308",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "cotterman2005",
@@ -529,7 +557,7 @@
       "year": 2005,
       "pmid": "15705030",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "macdougall1985",
@@ -539,7 +567,7 @@
       "year": 1985,
       "pmid": "3980383",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "eos-smith",
@@ -549,7 +577,7 @@
       "year": 2025,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -579,7 +607,8 @@
       "what": "Feet directly under the bar, so the knees travel far forward.",
       "why": "Gold's Gym lists it first among Smith squat mistakes and Motra names it too; a model of a fixed-path squat shows foot position shifts load between knee and hip (c4). StrengthLog teaches feet under the bar, so sources disagree. How often it happens is not measured.",
       "claim": "c3",
-      "drawable": true
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the feet directly under the bar (c3, c2). Step 1: no frequency word counts for a fault. Set aside: Gold's Gym's \"Common Mistakes to Avoid\" is a heading; \"Many lifters benefit from using both styles at different points in their training.\" and \"More experienced lifters often use Smith machine squats later in their sessions\" are about training choices, not a fault; Motra's \"Not typically needed due to built-in safeties\" is about spotting; Cotterman's \"are commonly used strength training modes\" (c17) is about the equipment; EōS's \"typically lowering the bar for a 3–5 second count, pausing briefly at the bottom\" is a bench press variation. Step 2: three faults on Gold's Gym's common-mistakes list are tied to harm: the feet under the bar, by its cue \"Move your feet slightly in front of the bar to maintain balance and reduce joint strain.\" (c3); the back, \"Poor back posture puts more stress on your lower back.\" (c11); and the knees, \"Allowing your knees to cave in can strain the ligaments surrounding the knee, leading to increased wear over time.\" (not on the card; c10 holds the cue). Gold's Gym's other protect lines (D-SUP-PROTECT) tie the same faults again, from the same source: \"This helps protect your knees and keeps your joints in better alignment.\" (the feet, c2), and \"Brace your core to protect your spine and keep your torso stable as you move.\" and \"a tight core protects your spine\" (the back); each fault still has one harm source, so the tie order below holds. Tie order: all three are on a common-mistakes list; one source ties each to harm; all three are sourced directly; Gold's Gym's list names the feet first, and Motra's list (\"Feet too close to bar causing forward lean\", \"Knees caving inward\", \"Rounding back at bottom\", \"Bouncing off heels\") names the feet first too, so the feet win. Set aside at step 2: Motra's \"Use controlled tempo to prevent joint stress\" (a Safety Note); read onto \"Bouncing off heels\", it would add a fourth tied fault that both lists put after the feet. \"Locking out your knees shifts the tension from the muscles to the joints, increasing the risk of injury.\" and \"Never rest the bar on your neck as it puts direct pressure on a vulnerable area and can increase your risk of injury.\" (c1) are Safety Tips, not a common-mistakes list (R-LB2-14), and neither fault is on handlingMistakes; \"Going too heavy too soon isn’t just risky\" is about the load, not a candidate. StrengthLog teaches the feet below the bar (c2), so the sources disagree; the pick follows the steps. drawable true: the side view shows the feet under the bar's path. Pick unchanged."
     },
     "tells": [
       {
@@ -593,9 +622,12 @@
     ],
     "tempo": {
       "up": 1,
-      "down": 2,
+      "down": 3,
       "pause": 0,
-      "claim": "c14"
+      "claim": [
+        "c22"
+      ],
+      "text": "Up 1 and down 3 are Motra's 3-1-1 (c22, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the rise, so it is named here and not written in pause (LR-33). Pause 0: no quote asks for a pause right after the rise. Motra's \"Squeeze glutes at the top without locking knees.\" gives no pause or seconds. Changed from up 1, down 2 (ACSM or a convention) under R-LB6-2."
     },
     "variantLine": null
   },
@@ -615,11 +647,11 @@
       "claim": "c1"
     },
     {
-      "step": "Set the safety stops just below your squat depth and test them with a light rep.",
+      "step": "Set the stops just below squat depth. Test with a light rep.",
       "claim": "c8"
     },
     {
-      "step": "Step under; bar across the upper traps, not the neck.",
+      "step": "Step under, bar across the upper traps, not the neck.",
       "claim": "c1"
     },
     {
@@ -627,8 +659,11 @@
       "claim": "c2"
     },
     {
-      "step": "Hands just outside the shoulders; brace and rotate the bar off the hooks.",
-      "claim": "c5, c20"
+      "step": "Hands outside the shoulders. Brace, then rotate the bar off the hooks.",
+      "claim": [
+        "c5",
+        "c20"
+      ]
     }
   ],
   "posture": [
@@ -661,17 +696,23 @@
     {
       "mistake": "Feet directly under the bar.",
       "fix": "Move your feet a few inches in front of the bar.",
-      "claim": "c3, c2"
+      "claim": [
+        "c3",
+        "c2"
+      ]
     },
     {
       "mistake": "Knees caving in.",
-      "fix": "Reduce the weight and reset; knees in line with the toes.",
+      "fix": "Reduce the weight and reset. Knees in line with the toes.",
       "claim": "c10"
     },
     {
       "mistake": "Rounding or over-arching the back.",
-      "fix": "Brace your core and keep the chest forward; use a manageable weight.",
-      "claim": "c11, c12"
+      "fix": "Brace and keep your chest forward. Use a manageable weight.",
+      "claim": [
+        "c11",
+        "c12"
+      ]
     }
   ],
   "feel": {
@@ -702,47 +743,59 @@
     "watch": [],
     "rows": [
       {
-        "where": "Front of the thighs and the glutes",
+        "where": "Front of the thighs and glutes",
         "means": "The target muscles are working.",
         "fix": null,
         "claim": "c15",
         "redFlag": null
       },
       {
-        "where": "Lower back working more than the legs",
-        "means": "Usually the back is rounding or over-arching.",
-        "fix": "Brace and keep the spine neutral; use a lighter weight.",
-        "claim": "c11, c12",
+        "where": "Lower back",
+        "means": "Poor back posture puts more stress on your lower back.",
+        "fix": "Brace and keep your spine neutral. Use a manageable weight.",
+        "claim": [
+          "c11",
+          "c12"
+        ],
         "redFlag": "back"
       },
       {
         "where": "Sharp pain in the knee",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop the workout at once.",
+        "means": "Not the normal dull pain 12 to 24 hours later.",
+        "fix": "Stop the workout at once. Don't train through the pain.",
         "claim": "c19",
         "redFlag": "knee"
       },
       {
         "where": "Pressure on the neck",
-        "means": "Usually the bar is sitting on the neck, not the upper traps.",
-        "fix": "Rack it and move the bar down onto the upper traps.",
-        "claim": "c1, c9",
+        "means": "The bar on your neck puts pressure on a vulnerable area.",
+        "fix": "Stop, rack the bar, then move it onto your upper traps.",
+        "claim": [
+          "c1",
+          "c9"
+        ],
         "redFlag": null
       }
     ]
   },
   "risks": [
     {
-      "risk": "Heavy two-leg lifts send blood pressure very high; part of it comes from holding your breath.",
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
       "claim": "c18"
     },
     {
-      "risk": "Poor back posture puts more stress on the lower back; set the stops so a missed rep lands on them, and rack the bar on the hooks at any point in the rep if needed.",
-      "claim": "c11, c8, c21"
+      "risk": "Missed rep? Let the stops catch the bar, or rack it any time.",
+      "claim": [
+        "c8",
+        "c21"
+      ]
     },
     {
-      "risk": "Smith loads differ from free-bar loads; add weight in small steps.",
-      "claim": "c17, c13"
+      "risk": "Smith loads differ from free-bar loads. Add weight in small steps.",
+      "claim": [
+        "c17",
+        "c13"
+      ]
     }
   ],
   "redFlags": [
@@ -753,16 +806,19 @@
     {
       "key": "smith-squat-hands",
       "kind": "hand",
-      "right": "Hands just outside the shoulders, wrists neutral, elbows under the bar.",
-      "wrong": "Wrists bent back under the bar (on-body waiter-tray).",
+      "right": "Hands outside the shoulders, wrists neutral, elbows under the bar.",
+      "wrong": null,
       "claim": "c5"
     },
     {
       "key": "smith-squat-feet",
       "kind": "posture",
-      "right": "Feet a few inches in front of the bar, heels down.",
+      "right": "Feet a few inches ahead of the bar, heels down.",
       "wrong": "Feet directly under the bar, knees far forward.",
-      "claim": "c2, c3"
+      "claim": [
+        "c2",
+        "c3"
+      ]
     }
   ],
   "libraryDiff": {

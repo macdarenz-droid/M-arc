@@ -93,7 +93,7 @@
     },
     {
       "id": "c4",
-      "text": "Keep the spine neutral and the back flat against the pad; avoid momentum. Motra lists arching the back off the pad and using momentum to swing the pads as common mistakes.",
+      "text": "Keep the spine neutral and the back flat against the pad; avoid momentum and keep the movements slow to prevent strain. Motra lists arching the back off the pad and using momentum to swing the pads as common mistakes.",
       "tags": [
         "CONSENSUS"
       ],
@@ -120,6 +120,11 @@
           "source": "mo-hip-add",
           "text": "Using momentum to swing pads",
           "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Keep movements slow to prevent strain",
+          "where": "Safety Notes"
         }
       ]
     },
@@ -208,9 +213,10 @@
     },
     {
       "id": "c9",
-      "text": "Tempo: about 2 s in, a 1 s pause, 2 s out.",
+      "text": "Tempo: Motra lists 2-1-2 and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the return, a 1 s pause at the open start and 2 s for the squeeze in. Its \"Pause briefly at peak contraction to engage inner thighs.\" asks for a brief pause right after the squeeze in and no source gives its seconds, so that 1 s pause is a drawing convention (LR-33).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "mo-hip-add"
@@ -220,6 +226,16 @@
           "source": "mo-hip-add",
           "text": "Tempo 2-1-2",
           "where": "Tempo"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "Pause briefly at peak contraction to engage inner thighs.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-hip-add",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
         }
       ]
     },
@@ -266,9 +282,10 @@
     ],
     "mistake": {
       "what": "Starting too wide: the legs are spread into a deep, forced stretch at the start.",
-      "why": "Motra's safety notes warn against an excessive stretch at the start, and it lists forcing beyond a comfortable range as a common mistake. No source ranks how common it is.",
+      "why": "Motra ties keeping the movements slow to preventing strain, against \"Using momentum to swing pads\", first on its common-mistakes list (c4); momentum shows only as speed, so it cannot be drawn. \"Arching back off pad\" shows only from the side and \"Letting weight stack crash\" only as speed. Motra's safety notes warn against an excessive stretch at the start, and \"Forcing beyond comfortable range\" is next on the list (c2); it shows from the front. No source ranks how common it is.",
       "claim": "c2",
-      "drawable": true
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: using momentum to swing the pads (c4). Step 1: no frequency word counts for a fault. Set aside: Brandt's \"Decreased hip muscle strength is frequently reported in patients with\" (c8) is about patients' strength, not a fault; Motra's \"Typical Rep Range\" is programming. Step 2: Motra's cue \"Keep movements slow to prevent strain\" (c4) corrects \"Using momentum to swing pads\", first on its common-mistakes list, and names harm; it also corrects \"Letting weight stack crash\" (third on the list), which ties too and is set aside on list order (and is speed only); no other named fault is tied to harm (\"Avoid excessive stretch in starting position\", c2, names no harm word; \"Do not use if acute hip or groin injury present\", c5, names no fault). Momentum shows only as speed, so drawable is false and plate.mistake names the next fault by the same steps (step 3, Motra's list: \"Using momentum to swing pads\", \"Arching back off pad\", \"Letting weight stack crash\", \"Forcing beyond comfortable range\", \"Locking knees at end\"): the arched back shows only from the side and the census view is front; the crashing stack is speed; forcing beyond a comfortable range, the deep start stretch (c2), shows from the front. Top fault changed: momentum moves to handlingMistakes[0] and the deep stretch to [1]; plate.mistake is unchanged and drawable changes from true to false."
     },
     "tells": [
       {
@@ -284,7 +301,10 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c9"
+      "claim": [
+        "c9"
+      ],
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c9, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three. Its middle 1 s is a pause at the open start, between the return and the next squeeze in, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the squeeze in: Motra's \"Pause briefly at peak contraction to engage inner thighs.\" gives no seconds, so the 1 s is a drawing convention (c9, WEAK; LR-33). This corrects the earlier reading that put the middle 1 s at the peak."
     },
     "variantLine": null
   },
@@ -340,17 +360,17 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Starting with the legs spread into a deep stretch.",
-      "fix": "Set a narrower start: a light stretch only.",
-      "claim": "c2"
-    },
-    {
-      "mistake": "Using momentum to swing the legs together.",
+      "mistake": "Swinging the legs together.",
       "fix": "Squeeze and return slowly.",
       "claim": "c4"
     },
     {
-      "mistake": "Weight too heavy to keep good form.",
+      "mistake": "Starting in a deep stretch.",
+      "fix": "Set a narrower start: a light stretch only.",
+      "claim": "c2"
+    },
+    {
+      "mistake": "Weight too heavy for form.",
       "fix": "Choose a moderate weight.",
       "claim": "c5"
     }
@@ -373,15 +393,8 @@
         "redFlag": null
       },
       {
-        "where": "Groin pain",
-        "means": "A warning sign.",
-        "fix": "Stop the set.",
-        "claim": "c5",
-        "redFlag": null
-      },
-      {
-        "where": "Sharp stretch in the groin at the start",
-        "means": "Usually means the start is set too wide.",
+        "where": "Sharp groin stretch at the start",
+        "means": "Fault: an excessive stretch at the start.",
         "fix": "Set a narrower start.",
         "claim": "c2",
         "redFlag": null
@@ -390,11 +403,11 @@
   },
   "risks": [
     {
-      "risk": "An excessive stretch at the start is one of the machine's safety notes.",
+      "risk": "Avoid an excessive stretch at the start.",
       "claim": "c2"
     },
     {
-      "risk": "Groin pain? Stop the set.",
+      "risk": "Acute hip or groin injury? Don't use this machine.",
       "claim": "c5"
     }
   ],
@@ -430,7 +443,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-hip-add",
@@ -440,7 +453,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "brandt-2013",
@@ -450,7 +463,7 @@
       "year": 2013,
       "pmid": 24377067,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -460,7 +473,10 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
+  ],
+  "notes": [
+    "feel.rows[1] removed in the LB6 recheck (no cited quote names the groin for this fault); momentum stays at handlingMistakes[0]: Groin / Fast, swinging reps risk strain. / Keep the movements slow."
   ]
 }

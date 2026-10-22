@@ -227,9 +227,10 @@
     },
     {
       "id": "c10",
-      "text": "Tempo: about 2 s out, a 1 s hold, 2 s back.",
+      "text": "Tempo: Motra lists 2-1-2 and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the return, a 1 s pause at the start, knees together and 2 s for the push out. Its \"Hold briefly at peak contraction.\" asks for a brief pause right after the push out and no source gives its seconds, so that 1 s pause is a drawing convention (LR-33).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "mo-hip-abd"
@@ -239,6 +240,16 @@
           "source": "mo-hip-abd",
           "text": "Tempo 2-1-2",
           "where": "Tempo"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "Hold briefly at peak contraction.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-hip-abd",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
         }
       ]
     },
@@ -316,15 +327,16 @@
       },
       {
         "label": "Upper body still",
-        "what": "Back flat on the pad; no rocking.",
+        "what": "Back flat on the pad, no rocking.",
         "claim": "c5"
       }
     ],
     "mistake": {
       "what": "Incomplete range: the knees open only a little before the legs come back.",
-      "why": "Motra names an incomplete range of motion among the machine's common mistakes (c12) and cues a full, comfortable range from knees together (c4). Swinging and jerking the weight (c12, c5) are also named but can't be drawn in a still picture. No source ranks how common they are.",
+      "why": "Motra's common-mistakes list puts \"Jerking the weight\" first (c12); it shows only as speed, so it cannot be drawn. \"Arching lower back\" shows only from the side, and \"Using upper body to swing\" is a swing, seen as speed. \"Incomplete range of motion\" is next on the list (c12), against Motra's full, comfortable range from knees together (c4), and reads from the front. No source ranks how common they are.",
       "claim": "c12",
-      "drawable": true
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: jerking the weight, first on Motra's common-mistakes list for this machine (c12; handlingMistakes[0], momentum or rocking, cites it). Step 1: no frequency word counts for a fault (Motra's \"Typical Rep Range\" is programming). Step 2: no named fault is tied to harm. Set aside: \"Adjust machine for proper alignment to avoid hip strain.\" (c6) is a seat setting, not a candidate; \"Do not overextend hips beyond comfort.\" is a Safety Note, not on the common-mistakes list or handlingMistakes, and names no harm word; \"Consult professional if hip pain present.\" (c6) names no fault. Step 3: Motra's list, written for this machine and the anchor: \"Jerking the weight\", \"Arching lower back\", \"Using upper body to swing\", \"Incomplete range of motion\", \"Letting pads crash together\". Jerking shows only as speed, so drawable is false and plate.mistake names the next fault by the same steps: the arched lower back shows only from the side and the census view is front; the upper-body swing is seen as speed; the incomplete range (c12, c4) shows from the front as the knees opening only a little. Pick unchanged: plate.mistake stays the incomplete range; drawable changes from true to false because the top fault, jerking, cannot be drawn."
     },
     "tells": [
       {
@@ -340,7 +352,10 @@
       "up": 2,
       "down": 2,
       "pause": 1,
-      "claim": "c10"
+      "claim": [
+        "c10"
+      ],
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c10, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three. Its middle 1 s is a pause at the start, knees together, between the return and the next push out, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the push out: Motra's \"Hold briefly at peak contraction.\" gives no seconds, so the 1 s is a drawing convention (c10, WEAK; LR-33). This corrects the earlier reading that put the middle 1 s at the peak."
     },
     "variantLine": null
   },
@@ -368,7 +383,7 @@
       "claim": "c1"
     },
     {
-      "step": "Hold the handles and brace your core.",
+      "step": "Hold the handles and brace your trunk.",
       "claim": "c2"
     },
     {
@@ -382,7 +397,7 @@
       "claim": "c5"
     },
     {
-      "point": "Upper body still; no momentum.",
+      "point": "Upper body still, no momentum.",
       "claim": "c5"
     },
     {
@@ -396,19 +411,26 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Using momentum or rocking the upper body.",
-      "fix": "Keep your upper body still; lower the weight.",
-      "claim": "c5, c12"
+      "mistake": "Jerking the weight.",
+      "fix": "Keep your upper body still. Lower the weight.",
+      "claim": [
+        "c12",
+        "c5",
+        "c6"
+      ]
     },
     {
-      "mistake": "Weight so heavy your form breaks.",
+      "mistake": "Weight too heavy for form.",
       "fix": "Lower the weight.",
       "claim": "c6"
     },
     {
-      "mistake": "Seat not set to fit you.",
-      "fix": "Line your knees up with the pivot.",
-      "claim": "c6"
+      "mistake": "Incomplete range.",
+      "fix": "Open the legs to a full, comfortable range.",
+      "claim": [
+        "c12",
+        "c4"
+      ]
     }
   ],
   "feel": {
@@ -426,24 +448,20 @@
     "watch": [],
     "rows": [
       {
-        "where": "Outer hips and side of the glutes",
+        "where": "Outer hips and side of glutes",
         "means": "The hip abductors are doing the work.",
         "fix": "",
         "claim": "c8",
         "redFlag": null
       },
       {
-        "where": "Pain in the hip",
-        "means": "A warning sign.",
-        "fix": "Stop the set; get professional advice.",
-        "claim": "c6",
-        "redFlag": null
-      },
-      {
-        "where": "Upper body rocking",
-        "means": "Usually means the weight is too heavy.",
-        "fix": "Lower the weight.",
-        "claim": "c5, c6",
+        "where": "Hip",
+        "means": "Fault: a machine not set to fit you.",
+        "fix": "Line your knees up with the pivot.",
+        "claim": [
+          "c6",
+          "c1"
+        ],
         "redFlag": null
       }
     ]
@@ -463,7 +481,7 @@
     {
       "key": "abd-pivot",
       "kind": "posture",
-      "right": "Knees level with the machine's pivot, pads on the outer thighs.",
+      "right": "Knees level with the pivot, pads on the outer thighs.",
       "wrong": "Seat set so the knees sit far from the pivot.",
       "claim": "c1"
     },
@@ -472,7 +490,10 @@
       "kind": "posture",
       "right": "Legs opened comfortably wide.",
       "wrong": "Knees opened only a little.",
-      "claim": "c4, c12"
+      "claim": [
+        "c4",
+        "c12"
+      ]
     }
   ],
   "libraryDiff": {
@@ -490,7 +511,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-hip-abd",
@@ -500,7 +521,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "paz-2022",
@@ -510,7 +531,7 @@
       "year": 2022,
       "pmid": 35500965,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -520,7 +541,11 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
+  ],
+  "notes": [
+    "Removed from handlingMistakes in the LB6 fix round (a setting, R-LB2-12; zooms[0] and setup keep the seat cue): \"Seat not set to fit.\" / \"Line your knees up with the pivot.\" (c6).",
+    "feel.rows[2] removed in the LB6 fix round (hip_abduction-7: a movement, not a place, LR-6); the swing stays in handlingMistakes[0]: Upper body rocking / Fault: using your upper body to swing. / Lower the weight."
   ]
 }

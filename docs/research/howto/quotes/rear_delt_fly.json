@@ -1,6 +1,6 @@
 {
   "id": "rear_delt_fly",
-  "checked": "2026-09-30",
+  "checked": "2026-10-22",
   "quotes": [
     {
       "claim": "c1",
@@ -218,6 +218,55 @@
       "quote": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
       "status": "verbatim",
       "closest": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number."
+    },
+    {
+      "claim": "c17",
+      "source": "mo-rear-delt",
+      "quote": "Shrugging shoulders",
+      "status": "verbatim",
+      "closest": "Shrugging shoulders"
+    },
+    {
+      "claim": "c18",
+      "source": "mo-rear-delt",
+      "quote": "3-1-1",
+      "status": "verbatim",
+      "closest": "3-1-1"
+    },
+    {
+      "claim": "c18",
+      "source": "mo-rear-delt",
+      "quote": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds."
+    },
+    {
+      "claim": "c19",
+      "source": "fv-rev-pecdeck",
+      "quote": "While performing this exercise, most people go through the motions for the sake of it. They’ll put more weight on the machine than they can handle and rush through the movement just to achieve their rep target.",
+      "status": "verbatim",
+      "closest": "While performing this exercise, most people go through the motions for the sake of it. They’ll put more weight on the machine than they can handle and rush through the movement just to achieve their rep target."
+    },
+    {
+      "claim": "c19",
+      "source": "fv-rev-pecdeck",
+      "quote": "You should lower the weights and slow down your rep tempo if you can’t achieve a rear delt pump or at least feel muscle contraction.",
+      "status": "verbatim",
+      "closest": "You should lower the weights and slow down your rep tempo if you can’t achieve a rear delt pump or at least feel muscle contraction."
+    },
+    {
+      "claim": "c8",
+      "source": "mo-rear-delt",
+      "quote": "Squeeze your rear delts and shoulder blades together at the peak.",
+      "status": "verbatim",
+      "closest": "Squeeze your rear delts and shoulder blades together at the peak."
+    },
+    {
+      "claim": "c8",
+      "source": "mo-rear-delt",
+      "quote": "Squeeze shoulder blades",
+      "status": "verbatim",
+      "closest": "Squeeze shoulder blades"
     }
   ]
 }
