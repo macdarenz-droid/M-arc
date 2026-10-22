@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-22 02:08 UTC · main `07ad7f1c` (train 32) · **8.0p: new supervisor on the new account; trains 33 and #193 merged; LIB-13, LIB-5v, LIB-7b building** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-22 13:55 UTC · main `5158609c` · **8.0p (update 13:55): LIB-7b, LIB-14, LIB-15, LIB-16 building; LB7 research verified; GATE-FLAKE-5 started** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -857,6 +857,18 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **LIB-15 (LB5 H slice) card:** being drafted and critiqued by a helper.
 - **Active LIB builders: 2 of 4** (LIB-7b, LIB-14).
 - Containers restart often (3 restarts this morning). Every long job keeps a check-in, and a lost run is re-run whole.
+
+**Update 13:55 UTC** (usage 7-day 0.15 at 12:40; five-hour 0.04):
+- **LIB-5v #282: REVIEW PASS** @ 2ad1bf3c (0/0/0/2, 6337619598). It is frozen; Low 1 rides the pre-train catch-up push, and Low 2 went to GATE-FLAKE-5 (6340183618). Reviewer and builder archived. It merges at its plan slot.
+- **F-LB5-1 merged** (#291) → research head **`a8e66f32`**. cross_body_hammer_curl is now drawable false, with plate.mistake = the working shoulder's shrug (c5, c6).
+- **LIB-15 #290** (session_01QfnPtGgguJ3XPQnY2jNEPw): **wrist_curl and cross_body_hammer_curl are HELD under D-LIB8-shrug.** wrist_curl's Trace is 5.2 px; cross_body's shrug gives 7.3 px at 5 cm and needs ≥ 7.8 cm, which no claim states (6340849204). Route: a LIB-ZOOM (#279) zoom circle once it is on main. The slice and the bulk go on with the other 7. 'LB5 BULK GO' comes only after the supervisor's slice look; the builder waits for LB5 SLICE READY.
+- **LIB-14 #289:** CARD FIELDS **VERIFIED @ `12651ff4`** (two blind runs, both VALID: 6341470610 and the tightenings 6342086947). 'LB4 BULK GO' with 6 slice-look items is posted (6341498444); bulk drawing is under way. The field commit is merging back into research as **#293** (CI running).
+- **Lesson (CARD FIELDS):** before ruling a fact's pose, read the card's own plate.start/plate.end claim ids and setup[]. They decide which pose a quote states. Two of my fix-round lines needed correcting on the re-verify. A quote that says "both", or a plural paired part, states each side.
+- **LB7 research #288:** rulings D-SUP-LB7-DIPREPS, -FEET and -NOPRIMARY (6340738518). The LR-29 verify is **VALID** (6/6 plants caught; 0/0/2/24; R-LB7-1..9; record `lb7-research-verify.md` on cards `6e710ace`). Fixed and rechecked @ **`0c7d476c`**. It merges into research when CI is green. **F-LB7-1:** one library rule for "slow quote, no seconds" cards, set together with the owner's strip choice. **F-LB7-2:** verified cards with a "Front of the shoulder" row and no front word (next research pass).
+- **GATE-FLAKE-5** (HT/gate lane, no LIB slot): card `gate-flake-5-card.md` (critic fixes `a92c4fea`). The AGENTS.md fourth exception is on cards `d2aebc1a` and rides its train. Builder session_01TyBfnGyiGtUC5e4qvgX8pB, #292. Root causes: COPY-2 reads a dropped frame as a snap (proven); HT-8 and HT-9 Show see a How-to chunk that never arrives (cause in CI not yet known). **App follow-up:** ZoomHost leaves a failed hand-chunk load unhandled, so the user sees nothing. A BUG card is to be written.
+- **LIB-16 (LB6 H build-ahead: cable_chest_press, machine_pullover, machine_crunch)** started: session_019X62NzhJsMCCchgTPBsnAU, card `lib-16-card.md` @ `4b3c3a6f`. **D-LIB16-PILOTB:** pilot B's answer gates the sheet and the merge, not the drawing. The plan names LB6 as LIB-17; D-LIB16-SCOPE records the id.
+- **Active LIB builders: 4 of 4** (LIB-7b, LIB-14, LIB-15, LIB-16). LIB-7b is still finishing before READY (head `3aa1729a`).
+- **Missed signal:** LB7 CARDS READY (09:06) was not seen until 12:2x. Every tick now reads the latest comment on each open research PR as well.
 
 ### 8.0o TAKEOVER 10-22: the owner moves the work to his other account (read first; supersedes 8.0n and section 10 where they differ)
 
