@@ -247,9 +247,21 @@ describe('LIB-17 A11 (Do 6 a): the 9 cards and quotes are byte copies of the LB7
       expect(h, id).toEqual({ id: `lib_${id}`, research: { card: `docs/research/howto/cards/${id}.json` } });
     }
   });
-  it('research/validate.mjs validateCardFile returns no problem for any of the 9 before Do 6 b (no machine key yet)', async () => {
+  it('research/validate.mjs validateCardFile: no problem on the 7 cards with seconds, exactly the :216 problem on the two no-seconds cards (D-LIB17-SECS)', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
-    for (const id of LB7) expect(v.validateCardFile(`${id}.json`), id).toEqual([]);
+    for (const id of LB7) expect(v.validateCardFile(`${id}.json`), id).toEqual(NOSECS.includes(id) ? [`cards/${id}.json: plateFacts and tempo go in together or not at all`] : []);
+  });
+  it('A11 mutations: one fact\'s claim id removed, and a tempo key added to renegade_row\'s card, are red in validateCardFile', async () => {
+    const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
+    const dir = mkdtempSync(join(tmpdir(), 'lb7-val-'));
+    try {
+      for (const d of ['cards', 'quotes']) cpSync(`docs/research/howto/${d}`, join(dir, 'docs/research/howto', d), { recursive: true });
+      const w = (id: string, f: (c: any) => void) => { const p = join(dir, 'docs/research/howto/cards', `${id}.json`), c = JSON.parse(readFileSync(p, 'utf8')); f(c); writeFileSync(p, JSON.stringify(c, null, 2)); };
+      w('weighted_dip', c => { delete c.plateFacts[0].claim; });
+      w('renegade_row', c => { c.tempo = [{ phase: 'Row', s: 1, move: true }]; });
+      expect(v.validateCardFile('weighted_dip.json', dir).length).toBeGreaterThan(0);
+      expect(v.validateCardFile('renegade_row.json', dir)).not.toContain('cards/renegade_row.json: plateFacts and tempo go in together or not at all');
+    } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });
 
@@ -909,11 +921,16 @@ describe('LIB-17 A4: runQa node half on an LB7 plate (lib_weighted_dip), LIB-3 M
       return { ...(await candOf(h.toString('utf8'))), spec };
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
-  it('clean before Do 6 b: the only node-half problem is H6:no-card (no card keys yet), and F7 reads "no card top fault"', async () => {
+  it('clean: no node-half problem (H6 passes on the card keys), F7 is not raised (drawable true, topFault = the drawn key)', async () => {
     const r = await qa(await candOf());
-    expect(node(r)).toEqual(['H6:no-card']);
+    expect(node(r)).toEqual([]);
+    expect(r.flags.F7.raised).toBe(false);
+  });
+  it('A8 mutation: the card copied with topFault set to its other tell key raises F7, and the expected-set check is red', async () => {
+    const qaMod = await import(/* @vite-ignore */ lib('lb7/qa.mjs'));
+    const c = await candOf(), r = await qa({ ...c, research: { ...c.research, topFault: 'parallel' } });
     expect(r.flags.F7.raised).toBe(true);
-    expect(r.flags.F7.why).toBe('no card top fault');
+    expect(qaMod.flagProblems([{ ...r, flags: { ...r.flags, F5: { ...r.flags.F5, raised: true, value: 3.57 } } }]).some((p: string) => /F7/.test(p))).toBe(true);
   });
   it('A4 M1 a label 1 px onto the figure (the Depth to parallel callout) turns PQ-H1 red; 1 px back is clean', async () => {
     const c0 = cg().callouts.find((x: any) => x.key === 'depth'), at = (box: any) => ({ ...cg(), callouts: cg().callouts.map((x: any) => (x.key === 'depth' ? { ...x, box } : x)) });
@@ -1049,5 +1066,131 @@ describe('LIB-17 A17: sizes and trace points are fixed in lb7/sizes.json and nev
     expect(sizeProblems(m, { ...t, M_ABD: { ...t.M_ABD, basis: 'above deviationMin' } })).toEqual(['M_ABD: basis names PQ-H3']);
     expect(sizeProblems({ ...m, SIZES: { ...m.SIZES, WRIST_TILT: 5 } }, t)).toEqual(['WRIST_TILT: not in sizes.json']);
     expect(sizeProblems({ ...m, default: { ...m.default, trace: { ...m.default.trace, point: 'elbow.l' } } }, t)).toEqual(['trace: spec elbow.l != sizes.json grip.l']);
+  });
+});
+
+describe('LIB-17 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the pose map and the plate facts', { timeout: T }, () => {
+  const KEYS = ['plateFacts', 'tempo', 'topFault'];
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  const cardsSha = readJson('tools/plates/library/lb7/cards.sha.json');
+  const canon = (c: any) => { const o = { ...c }; for (const k of KEYS) delete o[k]; return `${JSON.stringify(o, null, 2)}\n`; };
+  // The ruled pose map (DESIGN.md section 9): identity for all 9.
+  const POSE_MAP: Record<string, Record<string, string>> = Object.fromEntries(LB7.map(id => [id, { start: 'start', end: 'end' }]));
+  it('each card differs from its research-head copy only in the three keys, written last (the two no-seconds cards: plateFacts and topFault)', () => {
+    for (const id of LB7) {
+      expect(sha(canon(cardOf(id))), id).toBe(cardsSha.cards[id]);
+      expect(Object.keys(cardOf(id)).slice(NOSECS.includes(id) ? -2 : -3), id).toEqual(NOSECS.includes(id) ? ['plateFacts', 'topFault'] : KEYS);
+    }
+  });
+  it('each card\'s tempo is the strip built from lb7/tempo.json and its plate.tempo, and equals its drawn spec\'s; none on the no-seconds cards', () => {
+    const tj = readJson('tools/plates/library/lb7/tempo.json');
+    for (const id of LB7) {
+      const c = cardOf(id);
+      if (NOSECS.includes(id)) { expect('tempo' in c, id).toBe(false); continue; }
+      const want = tj.ids[id].rows.filter((r: any) => c.plate.tempo[r.from] > 0).map((r: any) => ({ phase: r.phase, s: c.plate.tempo[r.from], ...(r.move ? { move: true } : {}) }));
+      expect(c.tempo, id).toEqual(want);
+      if (S[id]) expect(S[id].tempo, id).toEqual(c.tempo);
+    }
+  });
+  it('A11 mutations: any other card key edited, and seconds changed on one card\'s tempo and spec, are red', () => {
+    const c = cardOf('weighted_dip'); c.plate.tempo.up = 3;
+    expect(sha(canon(c))).not.toBe(cardsSha.cards.weighted_dip);
+    const d = cardOf('weighted_dip'); d.tempo[0].s = 3;
+    expect(JSON.stringify(d.tempo)).not.toBe(JSON.stringify(S.weighted_dip.tempo));
+  });
+  // The ruled fault->key map (DESIGN.md section 9; #299 6347885720 Q3): the drawn key, and topFault.
+  const DRAWN: Record<string, string> = { cable_lateral_raise: 'above', dumbbell_front_raise: 'swing', cable_rear_delt_fly: 'roll', face_pull: 'drop', cable_external_rotation: 'flare',
+    resistance_band_pull_apart: 'shrug', renegade_row: 'corner', weighted_dip: 'short', bench_dip: 'low' };
+  const TOP: Record<string, string> = { ...DRAWN, cable_rear_delt_fly: 'swing', cable_external_rotation: 'swing', bench_dip: 'flare' };
+  const F7 = ['cable_rear_delt_fly', 'cable_external_rotation', 'bench_dip'];
+  /** D-LIB9-CARDFIELDS, D-LIB17-F7: drawable true: topFault is the drawn key; drawable false: it is the ruled key of
+   *  handlingMistakes[0] and differs from the drawn key. */
+  const topFaultProblems = (id: string, card: any) => {
+    const out: string[] = [];
+    if (card.topFault !== TOP[id]) out.push(`topFault ${card.topFault} != ruled ${TOP[id]}`);
+    if (card.plate.mistake.drawable && card.topFault !== DRAWN[id]) out.push('drawable:true but topFault is not the drawn fault');
+    if (!card.plate.mistake.drawable && card.topFault === DRAWN[id]) out.push('drawable:false but topFault is the drawn key');
+    if (card.plate.mistake.drawable !== !F7.includes(id)) out.push('drawable does not match the F7 set');
+    return out;
+  };
+  it('A8: each topFault is the ruled key; every drawn first tell carries the drawn key; F7 exactly on the three drawable-false cards', () => {
+    for (const id of LB7) expect(topFaultProblems(id, cardOf(id)), id).toEqual([]);
+    for (const id of specsDrawn()) expect(S[id].mistake.tells[0].key, id).toBe(DRAWN[id]);
+  });
+  it('A8 mutations: face_pull\'s card with topFault set to another of its tell keys, and bench_dip\'s card with topFault set to its drawn key, are red', () => {
+    const c = cardOf('face_pull'); c.topFault = 'low';
+    expect(topFaultProblems('face_pull', c)).toContain('drawable:true but topFault is not the drawn fault');
+    const b = cardOf('bench_dip'); b.topFault = 'low';
+    expect(topFaultProblems('bench_dip', b)).toContain('drawable:false but topFault is the drawn key');
+  });
+  /** 14.7 rules 10, 15, D-LIB9-CARDFIELDS and the pose map: kind, one form, a claim of its own card, a pose that is the
+   *  map's image of its card pose. */
+  const factProblems = (id: string, c: any) => c.plateFacts.flatMap((f: any, i: number) => [
+    ...(['contact', 'angle', 'height'].includes(f.kind) ? [] : [`${i}: kind`]),
+    ...(f.joint && f.measure === true ? [`${i}: both joint and measure`] : []),
+    ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
+    ...(f.cardPose && POSE_MAP[id]![f.cardPose] !== (f.pose ?? 'end') ? [`${i}: pose ${f.pose ?? 'end'} is not the map's image of card ${f.cardPose}`] : []),
+  ]);
+  // The ruled facts (#299 6347885720 Q4), each with its claim id; one per checked landmark.
+  const C = (lms: string[], pose: string, claim: string) => lms.map(landmark => ({ kind: 'contact', landmark, pose, cardPose: pose, claim }));
+  const A = (joints: string[], pose: string, claim: string, note?: string) => joints.map(joint => ({ kind: 'angle', joint, pose, cardPose: pose, deg: 90, claim, ...(note ? { note } : {}) }));
+  const SH = (q: string) => `${q}: the upper arm horizontal, read as shoulder elevation 90 against the upright trunk (PANELS.md 7's sh.r.elev reading)`;
+  const FACTS: Record<string, any[]> = {
+    cable_lateral_raise: [...C(['wrist.l'], 'start', 'c2'), ...A(['sh.l.elev'], 'end', 'c7', SH('"until your upper arm is horizontal"'))],
+    dumbbell_front_raise: [...C(['wrist.l', 'wrist.r'], 'start', 'c1'), ...A(['sh.l.elev', 'sh.r.elev'], 'end', 'c8', SH('"until your arms are level with your shoulders"'))],
+    cable_rear_delt_fly: C(['wrist.l', 'wrist.r'], 'start', 'c2'),
+    face_pull: C(['wrist.l', 'wrist.r'], 'start', 'c2'),
+    cable_external_rotation: [...C(['wrist.l'], 'start', 'c2'), ...A(['elbow.l'], 'start', 'c3')],
+    resistance_band_pull_apart: [...C(['wrist.l', 'wrist.r'], 'start', 'c1'), ...A(['sh.l.elev', 'sh.r.elev'], 'start', 'c5', SH('"Start with arms extended forward at shoulder height"')), ...A(['sh.l.elev', 'sh.r.elev'], 'end', 'c4', SH('"Pull band apart horizontally until arms align with shoulders"'))],
+    renegade_row: C(['wrist.l', 'wrist.r'], 'start', 'c1'),
+    weighted_dip: [...C(['wrist.l', 'wrist.r'], 'start', 'c2'), ...A(['elbow.l', 'elbow.r'], 'end', 'c4'), ...C(['navel'], 'start', 'c8')],
+    bench_dip: [...C(['wrist.l', 'wrist.r'], 'start', 'c2'), ...C(['heel.l', 'heel.r'], 'start', 'c3'), ...A(['elbow.l', 'elbow.r'], 'end', 'c5')],
+  };
+  it('every card\'s plateFacts is the ruled set, each fact well formed', () => {
+    for (const id of LB7) { expect(cardOf(id).plateFacts, id).toEqual(FACTS[id]); expect(factProblems(id, cardOf(id)), id).toEqual([]); }
+  });
+  it('mutations: a fact with both joint and measure: true, a start fact named with the unmapped pose, and bench_dip\'s heel fact carried to the end, are red', () => {
+    const c = cardOf('weighted_dip'); c.plateFacts.push({ kind: 'angle', joint: 'elbow.r', measure: true, deg: 90, claim: 'c4' });
+    expect(factProblems('weighted_dip', c)).toEqual([`${c.plateFacts.length - 1}: both joint and measure`]);
+    const p = cardOf('cable_external_rotation'); p.plateFacts.push({ kind: 'contact', landmark: 'wrist.l', pose: 'end', cardPose: 'start', claim: 'c2' });
+    expect(factProblems('cable_external_rotation', p)).toEqual([`${p.plateFacts.length - 1}: pose end is not the map's image of card start`]);
+    const b = cardOf('bench_dip'); b.plateFacts.push(...C(['heel.l'], 'end', 'c3'));
+    expect(b.plateFacts).not.toEqual(FACTS.bench_dip);
+  });
+  const h6 = (spec: any, research: any) => {
+    const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
+    return qaNode.h6({ spec, research }, { engine: Eng(), pins: pins() }, R).map((p: any) => p.key);
+  };
+  const research = (id: string) => { const c = cardOf(id); return { plateFacts: c.plateFacts, tempo: c.tempo, topFault: c.topFault }; };
+  it('A6: PQ-H6 is green on every drawn spec with seconds against its card; the two no-seconds specs pass every fact (their tempo waits)', () => {
+    for (const id of specsDrawn()) {
+      const keys = h6(S[id], research(id));
+      expect(keys, id).toEqual([]);
+    }
+  });
+  // Every numeric triple named `at` in a pose (root, reach and plant targets) moved by v: the whole body moves rigidly.
+  const shiftPose = (p: any, v: number[]): any => Array.isArray(p) ? p.map(x => shiftPose(x, v)) : p && typeof p === 'object'
+    ? Object.fromEntries(Object.entries(p).map(([k, x]: [string, any]) => [k, k === 'at' && Array.isArray(x) && x.length === 3 && x.every((n: any) => typeof n === 'number') ? x.map((n: number, i: number) => n + v[i]!) : shiftPose(x, v)])) : p;
+  it('A6 mutation: for each contact fact, its pose\'s body moved 2 cm turns that fact red and no fact of another pose', () => {
+    for (const id of specsDrawn()) FACTS[id]!.forEach((f, i) => {
+      if (f.kind !== 'contact') return;
+      const s = S[id], v = [0, 0.02, 0.02];
+      const red = h6({ ...s, poses: { ...s.poses, [f.pose]: shiftPose(s.poses[f.pose], v) } }, research(id)).filter((x: string) => x.includes(':contact:'));
+      expect(red, `${id} ${f.pose} ${f.landmark}`).toContain(`H6.fact:${i}:contact:${f.landmark}`);
+      const others = FACTS[id]!.flatMap((g, j) => (g.kind === 'contact' && g.pose !== f.pose ? [`H6.fact:${j}:contact:${g.landmark}`] : []));
+      expect(red.filter((x: string) => others.includes(x)), `${id} ${f.pose} ${f.landmark}`).toEqual([]);
+    });
+  });
+  it('A6 mutations: an angle fact 3 deg off (weighted_dip\'s end elbow 93), and the card path removed, are red', () => {
+    const s = S.weighted_dip, r = research('weighted_dip'), k = r.plateFacts.findIndex((f: any) => f.joint === 'elbow.r');
+    expect(h6(s, { ...r, plateFacts: r.plateFacts.map((f: any, i: number) => (i === k ? { ...f, deg: 93 } : f)) })).toEqual([`H6.fact:${k}:angle:elbow.r`]);
+    expect(h6(s, null)).toEqual(['H6:no-card']);
+  });
+  it('weighted_dip c8: the navel point lies inside the drawn start belt band (the contact fact\'s binding)', () => {
+    const s = S.weighted_dip, cam = camOf(s), belt = itemsIn(s, 'start').items.find((i: any) => i.part === 'belt');
+    const poly = eng.PRIMITIVES.poly(belt, cam)[0].poly, n = cam.P(lmOf(s, 'start').navel);
+    expect(outside([poly], n)).toBeLessThanOrEqual(0.5);
+    const lifted = { ...belt, pts: belt.pts.map((p: number[]) => [p[0], p[1]! + 0.06, p[2]]) };
+    expect(outside([eng.PRIMITIVES.poly(lifted, cam)[0].poly], n)).toBeGreaterThan(0.5);
   });
 });

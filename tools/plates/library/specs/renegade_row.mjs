@@ -110,6 +110,7 @@ export default {
     { landmark: 'toe.r', plane: FLOOR, pose: 'all', tol: 0.5 },                                     // toes on the floor
     { landmark: 'grip.l', at: DB.l, pose: 'all', tol: 0.5 },                                        // c1: the far hand on its dumbbell
     { landmark: 'grip.r', at: DB.r, pose: 'start', tol: 0.5 },                                      // c1: the near hand on its dumbbell
+    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: landmarksOf(start, H)[landmark], pose: 'start', tol: 0.5 })),   // c1 facts
     { landmark: 'shoulder.r', plane: { point: [0, 0, GZ], normal: [0, 0, 1] }, pose: 'all', tol: 0.5 },   // c2: hands under the shoulders
   ],
   startParts: ['arm.r'],

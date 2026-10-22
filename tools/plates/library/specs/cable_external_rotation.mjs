@@ -138,6 +138,7 @@ export default {
     { landmark: 'grip.l', plane: { point: LS['elbow.l'], normal: [0, 1, 0] }, pose: 'end', tol: 0.5 },
     // c1, c2: the handle in the far hand
     { landmark: 'grip.l', at: LS['grip.l'], pose: 'start', tol: 0.5 },
+    { landmark: 'wrist.l', at: LS['wrist.l'], pose: 'start', tol: 0.5 },                         // c2 fact: the hand on the handle
   ],
   startParts: ['arm.l', 'handle'],
   ghosts: { count: 2, parts: ['arm.l', 'handle'] },

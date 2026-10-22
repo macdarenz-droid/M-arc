@@ -211,14 +211,14 @@ Fault→key (13 Q1(a)); each spec's first tell carries the drawn key:
 | id | plate.mistake (claim; drawable) | drawn key (other tells) | handlingMistakes[0] | topFault |
 |---|---|---|---|---|
 | cable_lateral_raise | arm above shoulder height, beyond 90 (c19, c7; true) | `above` (`past`: beyond 90 at the hand) | the same | `above` |
-| dumbbell_front_raise | swinging up with the hips pushed forward (c12, c13; true) | `swing` (`lean`: the trunk leaning back) | the same | `swing` |
-| cable_rear_delt_fly | shoulders not kept rolled back and down (c5; false) | `roll` (`up`: the shoulder line rising) | swinging, the lower back overextending (c9, c10) | `swing` (F7) |
+| dumbbell_front_raise | swinging up with the hips pushed forward (c12, c13; true) | `swing` (`hips`: the hips pushed forward, c12; the counter-lean drawn for balance, unlabelled; ruled) | the same | `swing` |
+| cable_rear_delt_fly | shoulders not kept rolled back and down (c5; false) | `roll` (`up`: the shoulders up, in c5's words rolled, back, down) | swinging, the lower back overextending (c9, c10) | `swing` (F7) |
 | face_pull | elbows dropping below shoulder height (c9, c10; true) | `drop` (`low`: the hands toward the chin) | the same | `drop` |
 | cable_external_rotation | elbow flaring out, away from the side (c9; false) | `flare` (`side`: the upper arm off the side) | swinging with momentum (c12, c13) | `swing` (F7) |
-| resistance_band_pull_apart | shoulders shrugging upward (c8; true) | `shrug` (`traps`: the shoulder line rising) | the same | `shrug` |
+| resistance_band_pull_apart | shoulders shrugging upward (c8; true) | `shrug` (one tell, record below; ruled: c13/c14 name muscles, not a sign) | the same | `shrug` |
 | renegade_row | lowered too quickly, lands on a corner (c9; true) | `corner` (one tell; record below) | the same | `corner` |
 | weighted_dip | cutting reps short, well above parallel (c14, c7; true) | `short` (`parallel`: the upper arm above level) | the same | `short` |
-| bench_dip | dropping too low, upper arms well below level (c8; false) | `low` (`below`: the upper arm below level) | elbows flaring out (c7) | `flare` (F7) |
+| bench_dip | dropping too low, upper arms well below level (c8; false) | `low` (`parallel`: c8's "Stop when your upper arms are parallel to the floor"; ruled) | elbows flaring out (c7) | `flare` (F7) |
 
 Tells are 2-3 visible signs of the one fault, words from the claims (CARD-V2:68); the cards' plate.tells are
 right-pose cues (CARD-V2:37), so the Mistake tells restate plate.mistake.what with the claims' words.
@@ -227,11 +227,14 @@ right-pose cues (CARD-V2:37), so the Mistake tells restate plate.mistake.what wi
 c9 (both quotes: "Dumbbells set down too hard, or onto a corner, can hurt the wrists"; BarBend's "This can jostle your
 wrists ..."), c8, c15, and plate.mistake; no second visible sign stated (the jostled wrist is a consequence the quotes
 name, with no drawn position or size), so the plate has one tell.
+resistance_band_pull_apart (bulk): fault c8 (the shrug); claim ids read: c8, c3 ("keep the shoulders down; avoid
+shrugging"), c13, c14 (target muscles and EMG, no sign); no second visible sign stated, so one tell.
 
 ## 10. Facts plan (D-LIB8M-FACTS, 22's scope, D-LIB13-FACTS2, D-LIB17-FACTS)
 
-Read on the copied quotes. A setup quote states the start pose only unless the card's own plate.start/plate.end cites
-it for another pose; "both" or a plural paired part states each side; a hand contact is checked at the wrist
+Read on the copied quotes (ruled: LB7 NOTE RULED, #299 6347885720). A setup quote states the start pose only
+(D-LIB9-FACTPOSE); the card's plate.start/plate.end claim citations decide the pose of non-setup quotes only; a contact
+is never carried to another pose; "both" or a plural paired part states each side; a hand contact is checked at the wrist
 (PANELS.md 7); contacts only for drawn poses, none from a height or a place near something. Each fact will cite the
 claim whose quote states it; each contact gets a `checks` entry in its spec (H6).
 
@@ -251,9 +254,9 @@ claim whose quote states it; each contact gets a `checks` entry in its spec (H6)
 | renegade_row | "gripping the pair of dumbbells" (c1, setup; a pair: both) | `contact wrist.l`, `wrist.r` | start (start) |
 | weighted_dip | "Set your hands evenly on the bars" (c2, setup; "hands": both) | `contact wrist.l`, `wrist.r` | start (start) |
 | weighted_dip | "until your elbows are bent at 90 degrees" (c4; plate.end cites c4; "elbows": both) | `angle elbow.l 90`, `elbow.r 90` | end (end) |
-| weighted_dip | "Secure a dip belt around your waist" (c8, setup; plate.start cites c8) | `contact navel` (the belt's front at the waist) | start (start) |
+| weighted_dip | "Secure a dip belt around your waist" (c8, setup) | `contact navel` (the belt's front at the waist), bound by a check and a test that the drawn start belt covers the navel point (ruled) | start (start) |
 | bench_dip | "Place both hands flat on the bench" (c2, setup) | `contact wrist.l`, `wrist.r` | start (start) |
-| bench_dip | "keeping the heels on the ground" (c3; plate.start and plate.end both cite c3) | `contact heel.l`, `heel.r` | start (start); end (end) |
+| bench_dip | "keeping the heels on the ground" (c3, setup steps: "1. Positioning") | `contact heel.l`, `heel.r` | start (start) only; the heels on the floor at the end are held by a `checks` entry and a drawn-item test, no end fact (ruled) |
 | bench_dip | "until your arms form a 90-degree angle" / "your elbow forms a 90-degree angle" (c5; plate.end cites c5) | `angle elbow.l 90`, `elbow.r 90` | end (end) |
 
 **Not facts**, each with its reason:
@@ -262,7 +265,8 @@ claim whose quote states it; each contact gets a `checks` entry in its spec (H6)
 - cable_lateral_raise c7 Motra "parallel to floor": the same pose as SL's "upper arm is horizontal", one fact per pose
   and joint.
 - dumbbell_front_raise c2 "lightly touching the fronts of your thighs": a dumbbell against the mid-thigh, where the body
-  model has no landmark (thighTop is just above the knee, 17 cm lower); so no contact. c2 "elbows extended or holding a
+  model has no landmark (thighTop is just above the knee, 17 cm lower); so no contact (ruled). START_FLEX draws it: a
+  drawn-item test binds the dumbbell against the front thigh line at the start (±1 cm), as renegade_row's ribs. c2 "elbows extended or holding a
   slight bend", Motra "soft bend": no number. c3 "feet slightly wider than hip-width": a width the side view cannot show.
 - cable_rear_delt_fly c4 "the cables cross at about eye level": where an item is, not a touch (D-LIB17-FACTS); c4 and c6
   "slight bend": no number. c7 "about parallel to the body": no number and no joint convention for it.
@@ -386,7 +390,7 @@ Held rows are in no rows file; their specs, tests and card keys stay.
    branch's paths in its temporary tree; the full `npm test` (A12) runs it; a red is S5.
 8. **Shared appends**: docs/COACHING-DECISIONS.md is append-only; conflicts keep both sides.
 
-## 16. Questions for the supervisor ('LB7 NOTE RULED')
+## 16. Questions for the supervisor (ruled: 'LB7 NOTE RULED', #299 6347885720: Q1-Q7 accepted, with the changes in sections 9-11)
 
 1. The tempo map (section 8, `lb7/tempo.json`): as D-LIB17-TEMPO.
 2. The pose map (section 9): identity for all 9; renegade_row's Mistake compared with the flat far dumbbell.

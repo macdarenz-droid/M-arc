@@ -839,5 +839,68 @@
   "McKenzie (c13, c14) also writes: 'As the TB can be activated to similar levels in other exercises that do not require loaded end-range extension, the bench dip should not be part of regular strength training or rehabilitation protocols.' That is a programming judgement about the exercise, not a form point, so no shown line says it; risks[2] keeps the authors' 'may'.",
   "Tier B: the critic's tier-B checks that apply here are depth (c5, c8) and lockout; Muscle & Fitness's 'elbows are locked out' at the top is in its two-bench steps only, so the card says straight arms (c3, c6) and no lock line.",
   "Read but not cited: BarBend (barbend.com/bench-dip/, /bench-dips/, /tricep-dips/: 404), ACE (no bench-dip page in its arms, chest, shoulders or bench listings; exercise-library/14 is the bird dog), Muscle & Strength (403), Fitness Volt bench-dip-guide (404), Verywell Fit (402), Garage Gym Reviews and Men's Health (404), Motra (404), Mayo Clinic (403), NASM (404)."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c3"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c3"
+  },
+  {
+   "kind": "angle",
+   "joint": "elbow.l",
+   "pose": "end",
+   "cardPose": "end",
+   "deg": 90,
+   "claim": "c5"
+  },
+  {
+   "kind": "angle",
+   "joint": "elbow.r",
+   "pose": "end",
+   "cardPose": "end",
+   "deg": 90,
+   "claim": "c5"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Lower",
+   "s": 2,
+   "move": true
+  },
+  {
+   "phase": "Press",
+   "s": 1,
+   "move": true
+  },
+  {
+   "phase": "Hold",
+   "s": 1
+  }
+ ],
+ "topFault": "flare"
 }

@@ -891,5 +891,40 @@
     "Stance: Fitness Volt also offers holding the column and leaning away (c12); Motra lists a leaning torso as a mistake and says stay upright, and Fitness Volt's other option is upright, so the card and plate are upright.",
     "Top height: Motra's range of motion says \"or slightly above\" parallel (c7) but also \"Do not lift above parallel if painful\" (c21); Kolber advises not beyond 90 degrees (c19). The card stops at parallel.",
     "Not sourced, so left out: a wrist position, a rep count for beginners, a way to get the handle on and off the pulley, and a feel for the obliques."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.l.elev",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c7",
+      "note": "\"until your upper arm is horizontal\": the upper arm horizontal, read as shoulder elevation 90 against the upright trunk (PANELS.md 7's sh.r.elev reading)"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Raise",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "above"
 }

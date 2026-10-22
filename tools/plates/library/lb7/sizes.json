@@ -328,7 +328,7 @@
    "M_TURN": {
     "value": 30,
     "unit": "deg",
-    "basis": "claim: c9 'onto a corner': the hex turned 30 deg, a corner straight down (the vendor hex sits on a flat, equipment.mjs:33-35)"
+    "basis": "claim: c9 'onto a corner'; 30 deg is the geometry of a hex resting on a corner (a vertex straight down; the vendor hex sits on a flat, equipment.mjs:33-35), not a chosen size (ruled #299 6347885720)"
    },
    "FLOOR_BACK": {
     "value": 0.12,

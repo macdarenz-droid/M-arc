@@ -131,6 +131,7 @@ export default {
     { landmark: 'elbow.l', above: { point: [0, SH_Y, 0], normal: [0, 1, 0] }, pose: 'mistake' },
     // c2: the handle in the outside hand
     { landmark: 'grip.l', at: LS['grip.l'], pose: 'start', tol: 0.5 },
+    { landmark: 'wrist.l', at: LS['wrist.l'], pose: 'start', tol: 0.5 },                         // c2 fact: the hand on the handle
   ],
   startParts: ['arm.l', 'handle'],
   ghosts: { count: 3, parts: ['arm.l', 'handle'] },

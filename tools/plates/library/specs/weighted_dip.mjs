@@ -95,6 +95,9 @@ export const loadOf = lm => {
     chain: [[0, b.front[1], b.front[2] - w], [0, b.front[1], b.front[2] + w], [0, hole[1], hole[2] + w], [0, hole[1], hole[2] - w]],
   };
 };
+// The point of the drawn start belt band at the navel's height on the front skin (the band spans BELT_Y +- BELT_W/2
+// and runs from the back contour to FRONT_Z), which the c8 contact fact checks the navel against.
+const BELT_AT_NAVEL = at(pelvisFrame(LS), BELT_Y, 0.066 * H);
 const LOAD = [
   lm => ({ type: 'poly', pts: loadOf(lm).plate, cls: 'eq', z: 'center', part: 'plate' }),
   lm => ({ type: 'poly', pts: loadOf(lm).ring, cls: 'eq-solid', z: 'center', part: 'plate' }),
@@ -175,6 +178,8 @@ export default {
   ],
   checks: [
     onBar('l'), onBar('r'),                                                                   // c1, c2: hands on the bars
+    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: LS[landmark], pose: 'start', tol: 0.5 })),   // c2 facts: the hands on the bars at the start
+    { landmark: 'navel', at: BELT_AT_NAVEL, pose: 'start', tol: 0.5 },                         // c8 fact: the belt round the waist, at the navel
     ...['toe.r', 'toe.l', 'heel.r', 'heel.l'].map(landmark => ({ landmark, above: FLOOR, pose: 'all', tol: 0 })),   // feet clear of the floor
     ...['toe.r', 'toe.l', 'heel.r', 'heel.l'].map(landmark => ({ landmark, above: { point: [0, FLOOR_GAP, 0], normal: [0, 1, 0] }, pose: 'end', tol: 0 })),   // BAR_Y's rule
   ],

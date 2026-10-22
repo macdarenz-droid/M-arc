@@ -543,5 +543,22 @@
     "Fitness Volt says the standing cable version has \"very little lower back stress to worry about\"; StrengthLog's mistakes list says swinging and overextending the lower back stresses it (c9). The card follows StrengthLog for the fault: Fitness Volt compares with free-weight bent-over versions and names no fault.",
     "Census note \"Crossed cables.\" is sourced by c2.",
     "Read and not cited: none. Fetched and not usable: motra.com has no page for this exercise (cableBentoverRearDeltFlySingleArm is a bent-over single-arm variant); barbend.com, puregym.com, garagegymreviews.com slugs tried gave 404; muscleandstrength.com and acefitness.org gave 403."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    }
+  ],
+  "topFault": "swing"
 }

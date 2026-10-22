@@ -675,5 +675,74 @@
     "Start tension: Motra asks for slight tension in the band at the start (c1); the EMG study had subjects hold it without slack or tension (c17, lab protocol). The card follows Motra.",
     "Read and not cited: Fitness Volt, https://fitnessvolt.com/band-pull-apart/ (a different variation; LR-31 hits quoted in rankNote). Fukunaga 2022 was read in full through PMC (PMC8975561, efetch db=pmc); the quotes cited are from the PubMed abstract and the Methods.",
     "Tried and not usable: fitnessvolt.com/band-pull-aparts/, barbend.com/band-pull-apart(s)/, healthline.com band pull-apart page all 404."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.l.elev",
+      "pose": "start",
+      "cardPose": "start",
+      "deg": 90,
+      "claim": "c5",
+      "note": "\"Start with arms extended forward at shoulder height\": the upper arm horizontal, read as shoulder elevation 90 against the upright trunk (PANELS.md 7's sh.r.elev reading)"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.r.elev",
+      "pose": "start",
+      "cardPose": "start",
+      "deg": 90,
+      "claim": "c5",
+      "note": "\"Start with arms extended forward at shoulder height\": the upper arm horizontal, read as shoulder elevation 90 against the upright trunk (PANELS.md 7's sh.r.elev reading)"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.l.elev",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c4",
+      "note": "\"Pull band apart horizontally until arms align with shoulders\": the upper arm horizontal, read as shoulder elevation 90 against the upright trunk (PANELS.md 7's sh.r.elev reading)"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.r.elev",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c4",
+      "note": "\"Pull band apart horizontally until arms align with shoulders\": the upper arm horizontal, read as shoulder elevation 90 against the upright trunk (PANELS.md 7's sh.r.elev reading)"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Pull apart",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "shrug"
 }

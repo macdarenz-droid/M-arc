@@ -703,5 +703,57 @@
  "unsourced": [
   "Thumb position on the dip bars (push archetype): no dip source.",
   "Wrist position over the bars: no dip source."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "angle",
+   "joint": "elbow.l",
+   "pose": "end",
+   "cardPose": "end",
+   "deg": 90,
+   "claim": "c4"
+  },
+  {
+   "kind": "angle",
+   "joint": "elbow.r",
+   "pose": "end",
+   "cardPose": "end",
+   "deg": 90,
+   "claim": "c4"
+  },
+  {
+   "kind": "contact",
+   "landmark": "navel",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c8"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Lower",
+   "s": 2,
+   "move": true
+  },
+  {
+   "phase": "Press",
+   "s": 1,
+   "move": true
+  }
+ ],
+ "topFault": "short"
 }
