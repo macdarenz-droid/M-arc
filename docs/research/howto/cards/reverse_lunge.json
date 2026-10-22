@@ -190,28 +190,6 @@
       ]
     },
     {
-      "id": "c10",
-      "text": "The backward lunge produced lower kneecap-joint (patellofemoral) loading than the forward lunge in 20 women without knee pain, with more forward trunk tilt.",
-      "tags": [
-        "DATA"
-      ],
-      "sources": [
-        "goulette-2021"
-      ],
-      "quotes": [
-        {
-          "source": "goulette-2021",
-          "text": "Quadriceps force, PFJ reaction force, and knee flexion angle were larger in the FL movement and Up phases. PFJ loading rate was greater in the FL movement along with a lower forward trunk tilt.",
-          "where": "abstract, results"
-        },
-        {
-          "source": "goulette-2021",
-          "text": "The FL produced greater PFJ loading variables compared to the BL.",
-          "where": "abstract, conclusion"
-        }
-      ]
-    },
-    {
       "id": "c11",
       "text": "The reverse lunge can be loaded with dumbbells or kettlebells held at the sides, or with a barbell.",
       "tags": [
@@ -343,6 +321,50 @@
           "where": "Progressions"
         }
       ]
+    },
+    {
+      "id": "c17",
+      "text": "Peloton's form mistakes for the reverse lunge start with too narrow a stance: the feet should be about hip-width apart, then one foot steps directly back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pel-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "pel-revlunge",
+          "text": "For starters, many people have too narrow of a stance.",
+          "where": "Form Mistakes to Avoid When Doing Reverse Lunges"
+        },
+        {
+          "source": "pel-revlunge",
+          "text": "“Feet should be about hip-width apart to start, then step directly back,” Jess says.",
+          "where": "Form Mistakes to Avoid When Doing Reverse Lunges"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Peloton's next form mistake is flaring the ribcage: when stepping back, tuck the pelvis under to protect the lower back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pel-revlunge"
+      ],
+      "quotes": [
+        {
+          "source": "pel-revlunge",
+          "text": "Jess also warns against flaring the ribcage.",
+          "where": "Form Mistakes to Avoid When Doing Reverse Lunges"
+        },
+        {
+          "source": "pel-revlunge",
+          "text": "“When you step back, make sure to tuck the pelvis under to protect the lower back,” she says.",
+          "where": "Form Mistakes to Avoid When Doing Reverse Lunges"
+        }
+      ]
     }
   ],
   "sources": [
@@ -364,16 +386,6 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
-    },
-    {
-      "id": "goulette-2021",
-      "url": "https://pubmed.ncbi.nlm.nih.gov/33310585/",
-      "title": "Patellofemoral joint loading during the forward and backward lunge",
-      "kind": "peer-reviewed",
-      "year": 2021,
-      "pmid": "33310585",
-      "access": "abstract",
       "checked": "2026-09-30"
     },
     {
@@ -419,7 +431,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "The movement is a front-to-back step in the sagittal plane; every checkpoint (shin angle c2, upright trunk c3, knee lowered to the floor c4) and the mistake (trunk pitch, c6/c8) read from the side.",
+    "viewWhy": "The movement is a front-to-back step in the sagittal plane; every checkpoint (shin angle c2, upright trunk c3, knee lowered to the floor c4) and the drawn mistake (flared ribcage, c18) read from the side; the top fault, too narrow a stance (c17), needs a front view (R-LB2-4).",
     "equipment": "Two dumbbells hanging at the sides (c11), floor line.",
     "start": "Standing tall, feet about hip to shoulder width apart (c1), dumbbells at the sides (c11).",
     "end": "One foot stepped back, back knee lowered toward the floor (c4), front shin roughly vertical (c2), trunk upright, weight about even on both feet (c3).",
@@ -441,11 +453,11 @@
       }
     ],
     "mistake": {
-      "what": "Trunk pitches forward over the front thigh at the bottom (upright trunk lost).",
-      "why": "Named by the anchor source as the position athletes lose when the lunge is loaded too heavily (c6); a forward-inclined trunk roughly doubled lower-back muscle activity in a lunge EMG study (c8, other lunge types).",
-      "claim": "c6",
-      "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2 (reading A; reading B below): Peloton's \"Form Mistakes to Avoid When Doing Reverse Lunges\" list, written for this exercise, ties one fault to its harm through the cue that corrects it: \"Jess also warns against flaring the ribcage. “When you step back, make sure to tuck the pelvis under to protect the lower back,” she says.\" (LR-31 counts a cue that reduces the harm, seated_cable_row c9.) No other named fault is tied to harm, so the flared ribcage is the top fault. Reading B: \"protect the lower back\" carries none of LR-31's harm words, so step 2 is empty and step 3 takes the first fault on that list, the narrow stance (\"many people have too narrow of a stance\"), which needs a front view; drawable would be false and the next listed fault, the flared ribcage, would be drawn. Either way the drawn fault is the flared ribcage, a still sign the side view shows. Step 1 set aside: \"many people have too narrow of a stance\" is a statement about a stance, which LR-31 does not count; \"Another common error is doing reverse lunges too fast\" is the list's \"common technique errors\" sentence read onto one item. If it were counted, the top fault would be going too fast, seen only as speed (drawable false), and the drawn fault would again come from the steps above. Also set aside: Catalyst's \"Many athletes try to load lunges too heavily\" is about the load (c6); \"Sets of 3-10 reps per leg are usually appropriate\" is about sets; Peloton's \"usually more knee-friendly than forward lunges\" and Fit&Well's \"can be gentler on your knees\" compare exercises; Lin's \"stretching your groin and adductor and maybe your back\" is about the forward lunge; Bezerra's lower-back activity (c8) is a muscle-activity finding; the NHS knee page's \"often\" lines name no fault of this exercise. The head's pick (the trunk pitching forward, c6) has no harm quote and is on no list. Pilot A plate, held (D-LIB8M-NOSTRIP): plate.mistake, handlingMistakes and the shown copy are not changed here; the changed pick is reported to the supervisor (D-LIB5-TOPFAULT)."
+      "what": "Flaring the ribcage as you step back, instead of tucking the pelvis under.",
+      "why": "The top fault, too narrow a stance (first on Peloton's Form Mistakes to Avoid list, c17), needs a front view, so the plate draws the next listed fault, flaring the ribcage (c18); Peloton's cue is to tuck the pelvis under to protect the lower back.",
+      "claim": "c18",
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3 (D-SUP-LB4-REVLUNGE, reading B): step 1 has no counted hit and step 2 is empty. Peloton's \"Form Mistakes to Avoid When Doing Reverse Lunges\" list, written for this exercise, ties no fault to a named harm: \"make sure to tuck the pelvis under to protect the lower back\" (c18) carries none of LR-31's harm words (injury, pain, stress, discomfort or a study-linked injury sign), so it is set aside at step 2. Step 3 takes the first fault on that list: too narrow a stance (\"For starters, many people have too narrow of a stance.\", c17), a body position during the set and so a candidate. It is handlingMistakes[0] (added, R-LB2-2). A side view cannot show stance width, so drawable is false, and plate.mistake takes the next fault on the list, flaring the ribcage (c18), a still sign the side view shows. Step 1 set aside: \"many people have too narrow of a stance\" is a statement about a stance, which LR-31 does not count as a frequency word; \"Another common error is doing reverse lunges too fast\" is the list's \"common technique errors\" sentence read onto one item. Also set aside: Catalyst's \"Many athletes try to load lunges too heavily\" is about the load (c6); \"Sets of 3-10 reps per leg are usually appropriate\" is about sets; Peloton's \"usually more knee-friendly than forward lunges\" and Fit&Well's \"can be gentler on your knees\" compare exercises; Lin's \"stretching your groin and adductor and maybe your back\" is about the forward lunge; Bezerra's lower-back activity (c8) is a muscle-activity finding; the NHS knee page's \"often\" lines name no fault of this exercise. The head's pick, the trunk pitching forward (c6), had no harm quote and is on no list; the held plate's Mistake moves to the flared ribcage when it returns for re-approval (D-LIB8M-CARDTRUE)."
     },
     "tells": [
       {
@@ -483,8 +495,11 @@
   },
   "setup": [
     {
-      "step": "Hold the dumbbells at your sides and stand with feet about hip to shoulder width apart.",
-      "claim": "c1"
+      "step": "Dumbbells at your sides, feet about hip to shoulder width apart.",
+      "claim": [
+        "c1",
+        "c11"
+      ]
     },
     {
       "step": "Step one foot back, a full-length step.",
@@ -495,7 +510,7 @@
       "claim": "c4"
     },
     {
-      "step": "Press the front foot into the floor and bring the back leg forward to stand.",
+      "step": "Press the front foot down, swing the back leg forward to stand.",
       "claim": "c5"
     },
     {
@@ -519,13 +534,18 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Leaning the chest forward at the bottom.",
+      "mistake": "Stance too narrow.",
+      "fix": "Feet about hip-width apart, then step directly back.",
+      "claim": "c17"
+    },
+    {
+      "mistake": "Leaning the chest forward.",
       "fix": "Go lighter until you can stay upright and controlled.",
       "claim": "c6"
     },
     {
       "mistake": "Dropping fast into the bottom.",
-      "fix": "Lower slowly; use a weight that lets you move smoothly.",
+      "fix": "Lower slowly. Use a weight that lets you move smoothly.",
       "claim": "c7"
     }
   ],
@@ -549,7 +569,7 @@
     ],
     "rows": [
       {
-        "where": "Front of the thigh and the hips",
+        "where": "Front of thighs and hips",
         "means": "The target muscles are working.",
         "fix": "",
         "claim": "c9",
@@ -558,12 +578,12 @@
       {
         "where": "Lower back",
         "means": "Leaning the chest forward can make the lower-back muscles work harder.",
-        "fix": "Stay upright; go lighter if you can't.",
+        "fix": "Stay upright. Go lighter if you can't.",
         "claim": "c8",
         "redFlag": null
       },
       {
-        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "where": "Very painful, locking or giving-way knee",
         "means": "Not a training feeling.",
         "fix": "Stop the set.",
         "claim": "c13",
@@ -607,7 +627,7 @@
     "why": "Library: quads and glutes primary, hamstrings secondary, core stabilizer. Catalyst names legs and hips with a slight quad emphasis (c9), which matches; no source found that justifies a change."
   },
   "loadProgression": {
-    "text": "Start light or unloaded; add weight only while the step stays full and the descent smooth.",
+    "text": "Start light or unloaded. Add weight only while the step stays full and the descent smooth.",
     "claims": [
       "c14",
       "c6"
@@ -625,6 +645,7 @@
     "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c15 (Fit&Well, Woolcock) and c16 (Peloton, Schumer) added. down: 3 is from the tempo progression, not the standard lunge; the supervisor decides whether the plate uses it.",
     "W1 fix round 2026-10-03: F04/R-W1-1 plate.tempo.down set to null; \"3 s down\" is a progression line only (c15), the default is \"lower slowly, rise a little quicker\" (c7, c16).",
     "W1 fix round 2026-10-03: F23/R-W1-3 feel.rows[1].means no longer says \"usually means\"; it states the fault and its effect in c8's terms (EMG, WEAK).",
-    "W1 lows round 2026-10-03: low 4: feel.rows[1].means keeps c8's hedge ('can make'; c8 is DATA and WEAK)."
+    "W1 lows round 2026-10-03: low 4: feel.rows[1].means keeps c8's hedge ('can make'; c8 is DATA and WEAK).",
+    "LB4 research 2026-10-22 (D-SUP-LB4-PACOPY, D-SUP-LB4-REVLUNGE): LR-31 reading B moves the top fault to too narrow a stance (c17, new) and the drawn fault to the flared ribcage (c18, new); both quotes fetched by curl from pel-revlunge. LR-22: c10 (goulette-2021, backward vs forward lunge kneecap loading) was cited by no line and no shown line uses it, so the claim and its source are dropped. Tempo unchanged (R-W1-1). Shown-copy changes for the owner's re-approval sheet are listed on PR #285."
   ]
 }

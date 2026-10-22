@@ -116,14 +116,6 @@
       "note": "read via NCBI efetch (db=pmc) XML of PMC11166134; the PMC page itself is behind a captcha for curl"
     },
     {
-      "claim": "c10",
-      "source": "janikov-2023",
-      "text": "Finally, BJ significantly decreased peak impact force by ~51% compared to CMJ and HJ.",
-      "status": "verbatim",
-      "closest": "Finally, BJ significantly decreased peak impact force by ~51% compared to CMJ and HJ.",
-      "note": ""
-    },
-    {
       "claim": "c11",
       "source": "nasm-boxjump",
       "text": "Due to high neuromuscular demand, perform 3-5 sets of 3-5 repetitions with complete rest between sets. Never perform to failure with plyometrics, as fatigue significantly compromises landing mechanics and increases injury risk.",
