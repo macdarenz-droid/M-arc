@@ -462,15 +462,16 @@
     "view": "side",
     "viewWhy": "Census view is side. The top fault, the lower back overarching at the top (c6, c7), reads from the side, and so do the straight line from shoulders to knees and the 90-degree knee at the top (c4).",
     "equipment": "Floor line only (bodyweight version; census equipmentNeeds floor).",
-    "start": "Lying on the back, arms straight by the sides, knees bent, feet flat and hip-width apart (c1); abs braced and pelvis tucked so the low back is flat on the floor (c2).",
+    "start": "Lying on the back, arms straight by the sides, knees bent, feet flat and hip-width apart (c1); core engaged and pelvis tucked so the low back is flat on the floor (c2).",
     "end": "Hips up so shoulders, hips and knees form a straight line, shin and thigh at roughly 90 degrees (c4); low back not arched (c5, c6); heels pressing into the floor (c3).",
     "checkpoints": [
       {
         "label": "Pelvis tucked",
-        "what": "Abs braced, pelvis tucked, low back not arched.",
+        "what": "Core tight, pelvis tucked, low back not arched.",
         "claim": [
           "c2",
-          "c6"
+          "c6",
+          "c12"
         ]
       },
       {
@@ -491,7 +492,7 @@
         "c6",
         "c7"
       ],
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the lower back overarching (c6, c7, c8). Candidates: the back overarching, the feet set in the wrong place (held for the whole set, so a body position: D-SUP-LB7-FEET), the hips pushed too high, the power coming from the feet, not the hips, and the knees out of line with the toes. Step 1: no frequency word counts for a fault. Set aside: PureGym's \"Common mistakes when perfoming glute bridges is not having the correct foot positioning for your body or overarching the back.\" (c8) is a list sentence (LR-31, R-LB4-2); ACE's \"which normally occurs if your attempt to push your hips as high as possible\" and \"this generally increases the amount of hyperextension (arching) in your low back\" say what causes the arch, not how often it happens, and 'normally' and 'generally' are not step-1 words; PureGym's \"glute bridges are often done bodyweight only\" is about the load; Healthline's \"are common bridge exercise variations\" names variations; PureGym's \"sitting down for most of the day\" names no fault. Step 2: two candidates are tied to harm. The overarching back: PureGym's hub \"Keep your core engaged throughout the exercise to avoid overextending your back, which can lead to lower back pain.\" (c7) and PureGym's how-to \"Keeping a neutral spine helps to prevent tension from switching from the glutes to the lower back, making sure the glutes are worked hard and the back is protected from injury.\" (c7; the cue that corrects the arch, D-SUP-PROTECT), so 2 sources; and PureGym's hub answer to \"Why do glute bridges hurt my back?\" (c8), which names the foot position and the overarching back. The foot position: that same answer only, 1 source. Both are on the same common-mistakes sentence, so the next tie-break, the one more sources tie to harm, picks the overarching back (2 against 1). drawable true: the arched lower back is a still sign the side view shows. handlingMistakes: [1] the foot position (step 2, harm-tied, 1 source); [2] the hips pushed too high (ACE, c6), which ACE names as the cause of the arch and states no harm of its own. The power from the feet (c9) and the knees out of line (c12) are posture lines.",
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the lower back overarching (c6, c7, c8). Candidates: the back overarching, the feet set in the wrong place (held for the whole set, so a body position: D-SUP-LB7-FEET), the hips pushed too high, the power coming from the feet, not the hips, and the knees out of line with the toes. Step 1: no frequency word counts for a fault. Set aside: PureGym's \"Common mistakes when perfoming glute bridges is not having the correct foot positioning for your body or overarching the back.\" (c8) is a list sentence (LR-31, R-LB4-2); ACE's \"which normally occurs if your attempt to push your hips as high as possible\" and \"this generally increases the amount of hyperextension (arching) in your low back\" say what causes the arch, not how often it happens, and 'normally' and 'generally' are not step-1 words; PureGym's \"glute bridges are often done bodyweight only\" is about the load; Healthline's \"are common bridge exercise variations\" names variations; PureGym's \"sitting down for most of the day\" names no fault. Step 2: two candidates are tied to harm. The overarching back: PureGym's hub \"Keep your core engaged throughout the exercise to avoid overextending your back, which can lead to lower back pain.\" (c7) and PureGym's how-to \"Keeping a neutral spine helps to prevent tension from switching from the glutes to the lower back, making sure the glutes are worked hard and the back is protected from injury.\" (c7; the cue that corrects the arch, D-SUP-PROTECT), so 2 sources; and PureGym's hub answer to \"Why do glute bridges hurt my back?\" (c8), which names the foot position and the overarching back. The foot position: that same answer only, 1 source. Both are on the same common-mistakes sentence, so the next tie-break, the one more sources tie to harm, picks the overarching back (2 against 1). Also set aside from the full scan (no fault named, or another exercise or version): PureGym's \"find hip thrusts hurt your lower back\" (another exercise), \"The muscles in the lower back are worked in glute bridges, however they should not feel painful during or after this exercise.\" (names no fault), \"Strengthening the glutes in hip extension can help improve posture, reduce back pain, lower risk of injury\" (a benefit) and \"an ideal exercise for beginners\"; PureGym's barbell page \"There is also less opportunity to overextend the spine in the glute bridge, making it more suitable for those with back pain\" compares exercises, and \"reducing back and knee pain\" is a benefit; Healthline's \"ideal for those with knee or hip discomfort\" (a benefit) and \"Yoga mat optional to minimize back discomfort.\" (equipment). None changes the pick. drawable true: the arched lower back is a still sign the side view shows. handlingMistakes: [1] the foot position (step 2, harm-tied, 1 source); [2] the hips pushed too high (ACE, c6), which ACE names as the cause of the arch and states no harm of its own. The power from the feet (c9) and the knees out of line (c12) are posture lines.",
       "drawable": true
     },
     "tells": [
@@ -509,7 +510,7 @@
       "down": 2,
       "pause": 1,
       "claim": "c15",
-      "text": "Pause 1 is sourced: PureGym holds the top position for a second (c5, c15), right after the lift (LR-33). Down and up are a drawing convention: PureGym and ACE ask for a slow lowering (c5, c3) and give no seconds for either phase, so 2 s down and 1 s up show a slower lowering than lifting (c15, WEAK; R-LB7-6). Healthline's 30-second hold (c13) is a separate way to do the exercise, not part of the rep."
+      "text": "Pause 1 is sourced: PureGym holds the top position for a second (c5, c15), right after the lift (LR-33). Down and up are a drawing convention: PureGym and ACE ask for a slow lowering (c5, c3) and give no seconds for either phase, so 2 s down and 1 s up show a slower lowering than lifting (c15, WEAK; R-LB7-6). Healthline's 30-second hold (c13) is a separate way to do the exercise, not part of the rep. The same PureGym page's embedded video description says \"Hold for a couple of seconds squeezing your glutes before slowly returning to the start position\"; the page's own written steps say one second, so the card keeps the 1 s (no source picks between them), and PureGym's barbell page says only \"Pause at the top\" (c14), no seconds."
     },
     "variantLine": "exercises.json lists Bodyweight / Barbell. The plate draws the bodyweight bridge on the floor (census equipmentNeeds floor only). Setup steps c1 and c2, posture, mistakes and feel hold for both versions. The barbell version adds rolling the bar over the legs until it is centred above the hips, feet close to the glutes, an overhand grip just outside hip width with the hands stopping the bar rolling, and a pause at the top before a slow lowering (c14); its arms are on the bar, not by the sides."
   },
@@ -539,7 +540,7 @@
       "claim": "c1"
     },
     {
-      "step": "Brace your abs and tuck your pelvis, low back flat.",
+      "step": "Pull your belly button in, tuck your pelvis, low back flat.",
       "claim": "c2"
     }
   ],
@@ -575,7 +576,7 @@
   "handlingMistakes": [
     {
       "mistake": "Overarching the lower back.",
-      "fix": "Keep your core engaged. Keep the pelvis tucked.",
+      "fix": "Pull your belly button in and tuck your pelvis.",
       "claim": [
         "c7",
         "c6",
@@ -649,7 +650,7 @@
       {
         "where": "Lower back",
         "means": "Fault: overextending your back can lead to pain here.",
-        "fix": "Keep your core engaged and your pelvis tucked.",
+        "fix": "Pull your belly button in and tuck your pelvis.",
         "claim": [
           "c7",
           "c2"
@@ -676,12 +677,13 @@
     {
       "key": "spine-top",
       "kind": "posture",
-      "right": "Abs braced, pelvis tucked, straight line at the top.",
+      "right": "Core tight, pelvis tucked, straight line at the top.",
       "wrong": "Hips pushed too high, low back arched.",
       "claim": [
         "c2",
         "c4",
-        "c6"
+        "c6",
+        "c12"
       ]
     },
     {
