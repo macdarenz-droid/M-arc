@@ -103,9 +103,9 @@ with `poly`), in LB3's romanChair pattern, with no file reads; the spec takes it
   (c6); both are the vendor cableColumn's cable (z `center`: above the body layer in the front view, under the arm
   when it is drawn ahead), from the pulley to the handle's ring in every pose. The stack stays at the end pose's lift in
   the Mistake (only the fault changes there). In the Mistake pose a thin `poly` twin of the cable runs from the pulley
-  rim to the Mistake ring (the column's cable is a line, which the Mistake view never redraws; DRAWING-GUIDE.md 4):
-  cable_lateral_raise's twin is long and reads loud on the Mistake plate (slice renders); it is card truth ("from its
-  pulley to the handle in every pose"). No cable crosses the head outline. cable_rear_delt_fly (bulk): two cables from
+  rim to the Mistake ring (the column's cable is a line, which the Mistake view never redraws; DRAWING-GUIDE.md 4).
+  Replaced after the slice look (#299 6348157337 item 1): every cabled plate draws its Mistake cable as a dashed Mistake
+  guide from the pulley's rim to the Mistake ring, above every figure, never masked (A15). No cable crosses the head outline. cable_rear_delt_fly (bulk): two cables from
   the high pulleys, crossed in front at eye level at the start (c2, c4), ending at the hands in front of the face
   (the card's own start). Drawn (bulk): the start crossing is solved to the ear's height (START_ELEV 106 deg). At the
   end (arms out to the sides, c6, c7) the crossed cables from the high pulleys still meet in front of the face and run
@@ -342,11 +342,12 @@ the bulk proposals.
 | **bulk proposals** | | | |
 | dumbbell_front_raise | FOOT_X, KNEE_SOFT | from dumbbell_biceps_curl (#109) | convention (c3's width is not visible from the side) |
 | dumbbell_front_raise | ELBOW_BEND | 18° | machine_chest_press.mjs:45 (D-LIB16-LOCK) for c2 "soft bend" |
-| dumbbell_front_raise | START_FLEX | the dumbbells at the fronts of the thighs | c1, c2 (solved: the grip just in front of the thigh line) |
-| dumbbell_front_raise | M_HIP, M_LEAN (Mistake) | hips 8 cm forward, trunk 12° back [proposed] | stated: c12 "pushing the hips forward" with the body's counter-lean; no approved plate draws this swing (dumbbell_biceps_curl's Mistake is the elbow drift) |
-| face_pull | PULLEY_Y, COLUMN_Z | eye height; two steps back | c1 "head or eye height"; c3 "a couple of steps back" (2 × 0.152 H foot lengths, stated) |
+| dumbbell_front_raise | START_FLEX | the dumbbells at the fronts of the thighs (solved 13.6°) | c1, c2 (solved: the grip just in front of the thigh line) |
+| dumbbell_front_raise | ARM_ROT | -90° (bulk) | stated reason: c1's pronated grip and c2's soft bend: the bend runs across the body so the hand never rises above the elbow (c5, the elbows lead) |
+| dumbbell_front_raise | M_HIP, M_LEAN (Mistake) | hips 8 cm forward, trunk 12° back (drawn at the bulk) | stated: c12 "pushing the hips forward" with the body's counter-lean; no approved plate draws this swing (dumbbell_biceps_curl's Mistake is the elbow drift) |
+| face_pull | PULLEY_Y, CABLE_START | solved: the ear's height (1.626 m); 0.532 m | c1 "head or eye height"; c3 "a couple of steps back" (2 × 0.152 H foot lengths, stated), read at the bulk as the cable from the pulley to the rope at the start: read as toes to column it cannot hold, since the extended arms and the rope already reach about 0.85 m |
 | face_pull | END grip | hands by the ears, elbows at shoulder height and behind | c5, c7 |
-| face_pull | M_DROP (Mistake) | elbows 15 cm below the shoulder line [proposed] | stated: c9, c10 "below shoulder height", the upper arm clearly sloping down |
+| face_pull | M_DROP (Mistake) | elbows 15 cm below the shoulder line (drawn at the bulk) | stated: c9, c10 "below shoulder height", the upper arm clearly sloping down |
 | cable_rear_delt_fly | PULLEY_Y, PULLEY_X | the column tops 2.1 m, ±1.0 m | equipment.mjs:85 (the vendor column height); stated (a crossover's width) |
 | cable_rear_delt_fly | ELBOW_BEND | 18° | machine_chest_press.mjs:45 (D-LIB16-LOCK) for c4 "not locked", c6 "slight bend" |
 | cable_rear_delt_fly | END elevation | the arms out at about 80° (back and slightly down) | c6 "slightly downward", c7 "about parallel to the body" |
@@ -366,10 +367,10 @@ the bulk proposals.
 | cable_lateral_raise | **measured 33.2 px** (the hand, 20° past level) | **measured 122.9 px** (the handle) |
 | weighted_dip | **measured 25.7 px** (option P: the head, the half rep; tell `short`) | **measured 23.4 px** (the shoulder, at 137.22 px/m; 21.5 px at BAR_Y 1.25 before the re-solve) |
 | renegade_row | **measured 0.0 px** with the tell on the corner; the card-true sign, the hex turned 30° onto a corner against the flat one, moves its corners **measured 4.9 px** at 146.29 px/m (each turned vertex against the nearest flat one): **below deviationMin** | **measured 78.9 px** (the near dumbbell) |
-| dumbbell_front_raise | the hips 8 cm forward and the shoulders about 10 cm back: about 15 px [est] | the dumbbells' arc, about 0.8 m: over 100 px [est] |
-| face_pull | the elbow 15 cm down: about 22 px [est] | the rope at the hands, about 0.35 m: about 50 px [est] |
+| dumbbell_front_raise | **measured 18.0 px** | **measured 97.9 px** |
+| face_pull | **measured 61.3 px** | **measured 67.1 px** |
 | cable_rear_delt_fly | the shoulder line 3 cm up: about 4-5 px [est]: **measured 4.4 px at the bulk, held** (section 14) | the handles, about 0.8 m: over 100 px [est]; measured 93.5 px |
-| resistance_band_pull_apart | the shrug at 5 cm: about 7.3 px [est] (LB5's shrug measured 7.3 px, #290 6340849204): **likely below** | the hands, about 0.55 m: about 80 px [est] |
+| resistance_band_pull_apart | the shrug at 5 cm: about 7.3 px [est] (LB5's shrug measured 7.3 px, #290 6340849204): **measured 7.3 px, held** (section 14) | **measured 57.6 px** |
 | bench_dip | **measured 16.6 px** (the hips' underside, tell `low`; M_FLEX 20°) | **measured 10.2 px** (the shoulder, trim [10, 12]; 32.6 px untrimmed at 146.29 px/m): **below traceLenMin**, held (section 14) |
 
 A too-small fault is reported with its card-true size and held under D-LIB8-shrug (D-LIB17-SIZE, S2), route LIB-ZOOM;

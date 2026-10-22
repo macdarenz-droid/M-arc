@@ -243,8 +243,8 @@ export default {
   datum: [{ y: PAR_Y, from: { at: 'elbow.r', off: [-14, 0] }, to: { at: 'shoulder.r', off: [46, 0] } }],
   callouts: [
     // c3: the top position's shoulders (the checkpoint's claim c3 is the top), anchored on the start figure
-    { key: 'shoulders', text: 'Shoulders<br>down', anchor: { at: 'shoulderTop.r', pose: 'start' }, box: { left: 30, top: 36 }, cue: 'Keep your shoulders down and back, away from your ears.' },
-    { key: 'elbows', text: 'Elbows<br>back', anchor: { at: 'elbow.r', off: [-7, 0] }, box: { left: 30, top: 84 }, cue: 'Lower with your elbows going back, not out.' },
+    { key: 'shoulders', text: 'Shoulders<br>down', anchor: { at: 'shoulderTop.r', pose: 'start' }, box: { left: 106, top: 48 }, cue: 'Keep your shoulders down and back, away from your ears.' },
+    { key: 'elbows', text: 'Elbows<br>back', anchor: { at: 'elbow.r', off: [-7, 0] }, box: { left: 62, top: 112 }, cue: 'Lower with your elbows going back, not out.' },
     // c4: on the parallel line (the datum), in front of the chest
     { key: 'depth', text: 'Depth to<br>parallel', anchor: { at: 'shoulder.r', off: [40, 0] }, box: { left: 268, top: 96 }, cue: 'Lower until your upper arm is about level with the floor.' },
   ],
