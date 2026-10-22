@@ -123,14 +123,15 @@
     },
     {
       "id": "c5",
-      "text": "Lift until the upper arms are horizontal, with the elbows level with the shoulders, and not above shoulder level.",
+      "text": "Lift until the upper arms are horizontal, with the elbows level with the shoulders, and not above shoulder level. Virtuagym allows going \"slightly higher\"; the card follows Motra, which lists raising the arms above shoulder level as a mistake.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
         "sl-lat-raise",
         "laf-lat-raise",
-        "mo-lat-raise"
+        "mo-lat-raise",
+        "vg-lat-raise"
       ],
       "quotes": [
         {
@@ -147,6 +148,11 @@
           "source": "mo-lat-raise",
           "text": "Raising arms above shoulder level",
           "where": "Common Mistakes"
+        },
+        {
+          "source": "vg-lat-raise",
+          "text": "Continue lifting until your arms are parallel to the floor, or slightly higher.",
+          "where": "Instructions"
         }
       ]
     },
@@ -230,7 +236,8 @@
         "CONSENSUS"
       ],
       "sources": [
-        "laf-lat-raise"
+        "laf-lat-raise",
+        "mo-lat-raise"
       ],
       "quotes": [
         {
@@ -242,6 +249,11 @@
           "source": "laf-lat-raise",
           "text": "Keep control of the weight as you lower your arms down.",
           "where": "Tip"
+        },
+        {
+          "source": "mo-lat-raise",
+          "text": "Inhale and lower arms slowly with control.",
+          "where": "How to Perform"
         }
       ]
     },
@@ -306,7 +318,7 @@
     },
     {
       "id": "c13",
-      "text": "Tempo: ACSM's moderate 1-2 s each way (for heavy sets in trained lifters) gives up 2 and down 2. Motra asks for a brief pause at the top, right after the lift, and no source gives its seconds, so the 1 s pause is a drawing convention (LR-33).",
+      "text": "Tempo: Motra asks for a brief pause at the top, right after the lift, and no source gives its seconds, so the 1 s pause is a drawing convention (LR-33). ACSM's moderate 1-2 s each way is stated for heavy sets in trained lifters (LR-15) and no longer sets up or down here (Motra does, c16).",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -498,12 +510,18 @@
     {
       "mistake": "Swinging the body up.",
       "fix": "Lower the weight and lift without momentum.",
-      "claim": "c8"
+      "claim": [
+        "c8",
+        "c7"
+      ]
     },
     {
       "mistake": "Shrugging the shoulders.",
       "fix": "Keep your shoulders down. Go lighter if needed.",
-      "claim": "c6"
+      "claim": [
+        "c6",
+        "c7"
+      ]
     },
     {
       "mistake": "Too heavy for shoulder height.",
@@ -542,14 +560,10 @@
         "where": "Tops of the shoulders and neck",
         "means": "Shrugging lets the traps dominate.",
         "fix": "Keep your shoulders down. Go lighter.",
-        "claim": "c6",
-        "redFlag": null
-      },
-      {
-        "where": "Body rocking in the seat",
-        "means": "Swinging the body can lead to injury.",
-        "fix": "Lower the weight.",
-        "claim": "c8, c7",
+        "claim": [
+          "c6",
+          "c7"
+        ],
         "redFlag": null
       }
     ]
@@ -569,9 +583,12 @@
     {
       "key": "latm-shrug",
       "kind": "posture",
-      "right": "Shoulders down, neck long, elbows at shoulder height.",
+      "right": "Shoulders down, elbows at shoulder height.",
       "wrong": "Shoulders hiked up toward the ears.",
-      "claim": "c6"
+      "claim": [
+        "c6",
+        "c5"
+      ]
     },
     {
       "key": "latm-pivot",
@@ -626,7 +643,7 @@
       "year": 2016,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-lat-raise",
@@ -659,7 +676,8 @@
       "checked": "2026-10-22"
     }
   ],
-  "gaps": [
-    "laf-lat-raise (LA Fitness; c5, c7, c9) could not be re-fetched by curl on 2026-10-22: the live page returns 429 and web.archive.org is blocked by this session's egress policy. Its quotes are kept as verified on 2026-09-30 (g5) and are reported, not re-checked; its checked date is unchanged."
+  "notes": [
+    "feel.rows[2] removed in the LB6 fix round (machine_lateral_raise-3: not a place, LR-6); the swing stays in handlingMistakes[0] and risks[0]: Body rocking in the seat / Swinging the body can lead to injury. / Lower the weight..",
+    "laf-lat-raise re-fetched by curl on 2026-10-22 with a Safari user agent and Accept, Accept-Language, Referer and Sec-Fetch headers (R-LB6-8): HTTP 200, its quotes verbatim."
   ]
 }

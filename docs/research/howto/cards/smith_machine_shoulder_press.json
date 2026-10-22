@@ -95,7 +95,7 @@
     },
     {
       "id": "c5",
-      "text": "Grip wider than shoulder width, palms forward; elbows in front of the shoulders but not straight out in front.",
+      "text": "Grip wider than shoulder width, palms forward; elbows in front of the shoulders but not straight out in front, to maximize pressing ability and protect the shoulder joints.",
       "tags": [
         "CONSENSUS"
       ],
@@ -117,6 +117,11 @@
         {
           "source": "fv-smith-ohp",
           "text": "Your elbows should be in front of your shoulders but not directly in front of you.",
+          "where": "Step 2: Perfecting your form"
+        },
+        {
+          "source": "fv-smith-ohp",
+          "text": "This is both to maximize your pressing ability and protect your shoulder joints.",
           "where": "Step 2: Perfecting your form"
         }
       ]
@@ -584,7 +589,7 @@
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Census view is side; the bench recline, the bar passing just in front of the nose and the arm depth all read in the sagittal plane (c1, c3, c6). The back arching off the pad (c4, c9) reads in the same plane.",
+    "viewWhy": "Census view is side; the bench recline, the bar passing just in front of the nose and the arm depth all read in the sagittal plane (c1, c3, c6). The back arching off the pad (c4, c9) reads in the same plane. The flared elbows (c10, c5) read from the side as the elbow level with the shoulder instead of in front of it.",
     "equipment": "Smith machine (rails, bar, hooks) with an adjustable bench at about 70 degrees (c1), placed so the bar just misses the nose (c3); safety stops just below the lowest bar position (c7); feet flat (c4).",
     "start": "Seated, back and upper back on the pad, feet flat (c4); bar unhooked and held just short of lockout over the head (c6, c8).",
     "end": "Bar lowered in front of the face until the upper arms are about parallel to the floor or slightly below (c6), elbows in front of the shoulders (c5), back still on the pad (c4).",
@@ -606,13 +611,13 @@
       }
     ],
     "mistake": {
-      "what": "Lower back arching off the pad to press the bar, instead of the core braced.",
-      "why": "Fitness Volt asks you to \"Engage your core muscles to stabilize your spine which is important for supporting the weight and protecting your lower back.\" (c4); Motra lists \"Poor core engagement\" among its common mistakes and says \"Avoid excessive back arch\" (c9). How often it happens is not measured.",
+      "what": "Elbows flared wide, out level with the shoulders instead of in front of them.",
+      "why": "Motra lists \"Flaring elbows wide\" first among its common mistakes for this exercise (c10). Fitness Volt says \"Your elbows should be in front of your shoulders but not directly in front of you. This is both to maximize your pressing ability and protect your shoulder joints.\" (c5). How often it happens is not measured.",
       "claim": [
-        "c4",
-        "c9"
+        "c10",
+        "c5"
       ],
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the back arching off the pad with the core not braced (c4, c9). Step 1: no frequency word counts for a fault. Set aside: Fitness Volt's \"When it comes to barbell presses in general, many beginners especially don’t have enough training experience to understand safe and effective hand placement.\" is about a grip in all barbell presses; its \"typically other than musclebound freaks or strength athletes\" and \"Here are the common sets and reps recommendations.\" are about who trains and programming; StrongLifts' \"Most people press with their elbows back at the bottom.\" and \"Most people Overhead Press with their elbows behind the bar.\" are written for the free-bar overhead press, another exercise; Motra's \"Typical Rep Range\" is programming; EōS's \"At EōS, you’ll commonly find:\" is the equipment; Kolber's \"the most prevalent regions of injury\" (c16) names no fault. Step 2: the only named fault of this exercise tied to harm is the arch with a loose core: Fitness Volt's cue \"Engage your core muscles to stabilize your spine which is important for supporting the weight and protecting your lower back.\" (c4) corrects \"Poor core engagement\", on Motra's common-mistakes list, and its sign \"Avoid arching back\" (c9); a cue that protects names harm, as on shoulder_press and landmine_row. Set aside: Fitness Volt's \"if it’s too far away from your body this is a terrible position for your shoulders\" (c3) is a bench placement, a setup choice (R-LB2-12; the head's pick) with no harm word; \"plus your shoulders are in an unsafe position\" is a grip width (R-LB2-3); \"it removes the tension from your deltoid muscles\" names no harm. StrongLifts' \"To avoid shoulder pain, Overhead Press with a narrow grip so you don’t flare your elbows.\" and \"Extreme arching of your lower spine (hyper-extension) squeezes your spinal discs from the back which can result in back pain.\" are written for the free-bar overhead press, another exercise (as cable_fly sets aside the dumbbell fly). If the verify counts the first, the flared elbows (first on Motra's list, c10) win step 2's list tie-break and are drawable from the side. drawable true: the side view shows the lower back leaving the pad. Pick changed: the bench placement is now handlingMistakes[1]; it is a setup choice (R-LB2-12), kept as written because this pass does not change handlingMistakes text.",
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: flaring the elbows wide (c10, c5), by list order (R-LB6-4, D-SUP-PROTECT). Step 1: no frequency word counts for a fault. Set aside: Fitness Volt's \"When it comes to barbell presses in general, many beginners especially don’t have enough training experience to understand safe and effective hand placement.\" is about a grip in all barbell presses; its \"typically other than musclebound freaks or strength athletes\" and \"Here are the common sets and reps recommendations.\" are about who trains and programming; StrongLifts' \"Most people press with their elbows back at the bottom.\" and \"Most people Overhead Press with their elbows behind the bar.\" are written for the free-bar overhead press, another exercise; Motra's \"Typical Rep Range\" is programming; EōS's \"At EōS, you’ll commonly find:\" is the equipment; Kolber's \"the most prevalent regions of injury\" (c16) names no fault. Step 2: two named faults on Motra's common-mistakes list are tied to harm by a cue that protects (D-SUP-PROTECT): the flared elbows, by Fitness Volt's \"Your elbows should be in front of your shoulders but not directly in front of you. This is both to maximize your pressing ability and protect your shoulder joints.\" (c5) against \"Flaring elbows wide\" (c10), and the arch with a loose core, by \"Engage your core muscles to stabilize your spine which is important for supporting the weight and protecting your lower back.\" (c4) against \"Poor core engagement\" (c9). Tie order: both are on a common-mistakes list; one source ties each to harm; both are sourced directly; Motra's list, which names both, puts \"Flaring elbows wide\" first and \"Poor core engagement\" fourth, so the flared elbows win and the arch is set aside on list order. Set aside: Fitness Volt's \"if it’s too far away from your body this is a terrible position for your shoulders\" (c3) is a bench placement, a setup choice (R-LB2-12) with no harm word; \"plus your shoulders are in an unsafe position\" is a grip width (R-LB2-3); \"it removes the tension from your deltoid muscles\" names no harm. StrongLifts' \"To avoid shoulder pain, Overhead Press with a narrow grip so you don’t flare your elbows.\", \"Extreme arching of your lower spine (hyper-extension) squeezes your spinal discs from the back which can result in back pain.\" and \"They’ll usually be inclined because your elbows are too far back.\" are written for the free-bar overhead press, another exercise. drawable true: in the side view a flared elbow sits level with the shoulder instead of in front of it. Pick changed (R-LB6-4): the flared elbows are handlingMistakes[0] and the arch [1]; the bench placement, a setting (R-LB2-12), leaves handlingMistakes and stays in setup[0].",
       "drawable": true
     },
     "tells": [
@@ -650,7 +655,7 @@
   },
   "setup": [
     {
-      "step": "Bench at 70 degrees. The bar should just clear your nose.",
+      "step": "Bench at about 70 degrees. The bar should just clear your nose.",
       "claim": [
         "c1",
         "c2",
@@ -711,19 +716,19 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Elbows flaring wide.",
+      "fix": "Keep your elbows in front of your shoulders.",
+      "claim": [
+        "c10",
+        "c5"
+      ]
+    },
+    {
       "mistake": "Back arching off the pad.",
       "fix": "Press your upper back into the pad, brace, start light.",
       "claim": [
         "c9",
         "c4"
-      ]
-    },
-    {
-      "mistake": "Bench set too far back.",
-      "fix": "Move the bench until the bar just clears your nose.",
-      "claim": [
-        "c3",
-        "c2"
       ]
     },
     {
@@ -762,9 +767,9 @@
         "redFlag": null
       },
       {
-        "where": "Lower back pain",
+        "where": "Lower back",
         "means": "Fault: an excessive back arch.",
-        "fix": "Stop and don't train through the pain. Press your upper back into the pad.",
+        "fix": "Press your upper back into the pad.",
         "claim": [
           "c9",
           "c4"
@@ -777,7 +782,8 @@
         "fix": "Stop the set. Don't train through the pain.",
         "claim": [
           "c9",
-          "c10"
+          "c10",
+          "c5"
         ],
         "redFlag": "shoulder"
       }
@@ -834,6 +840,7 @@
   },
   "anchorSource": "fv-smith-ohp",
   "notes": [
-    "LIB-TOPRANK (LB6): LR-31 step 2 picks the back arch, as verify #3's critic expected (R-LB2-20); see plate.mistake.rankNote."
+    "LIB-TOPRANK (LB6): R-LB6-4 picks the flared elbows at step 2 (Fitness Volt's protect-the-shoulder cue, Motra's list order); see plate.mistake.rankNote.",
+    "Removed from handlingMistakes under R-LB6-4 (a setting, R-LB2-12; setup[0] keeps the cue): \"Bench set too far back.\" / \"Move the bench until the bar just clears your nose.\" (['c3', 'c2'])."
   ]
 }

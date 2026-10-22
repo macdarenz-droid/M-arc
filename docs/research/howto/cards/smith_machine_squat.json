@@ -608,7 +608,7 @@
       "why": "Gold's Gym lists it first among Smith squat mistakes and Motra names it too; a model of a fixed-path squat shows foot position shifts load between knee and hip (c4). StrengthLog teaches feet under the bar, so sources disagree. How often it happens is not measured.",
       "claim": "c3",
       "drawable": true,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the feet directly under the bar (c3, c2). Step 1: no frequency word counts for a fault. Set aside: Gold's Gym's \"Common Mistakes to Avoid\" is a heading; \"Many lifters benefit from using both styles at different points in their training.\" and \"More experienced lifters often use Smith machine squats later in their sessions\" are about training choices, not a fault; Motra's \"Not typically needed due to built-in safeties\" is about spotting; Cotterman's \"are commonly used strength training modes\" (c17) is about the equipment; EōS's \"typically lowering the bar for a 3–5 second count, pausing briefly at the bottom\" is a bench press variation. Step 2: three faults on Gold's Gym's common-mistakes list are tied to harm: the feet under the bar, by its cue \"Move your feet slightly in front of the bar to maintain balance and reduce joint strain.\" (c3); the back, \"Poor back posture puts more stress on your lower back.\" (c11); and the knees, \"Allowing your knees to cave in can strain the ligaments surrounding the knee, leading to increased wear over time.\" (not on the card; c10 holds the cue). Tie order: all three are on a common-mistakes list; one source ties each to harm; all three are sourced directly; Gold's Gym's list names the feet first, and Motra's list (\"Feet too close to bar causing forward lean\", \"Knees caving inward\", \"Rounding back at bottom\", \"Bouncing off heels\") names the feet first too, so the feet win. Set aside at step 2: Motra's \"Use controlled tempo to prevent joint stress\" (a Safety Note); read onto \"Bouncing off heels\", it would add a fourth tied fault that both lists put after the feet. \"Locking out your knees shifts the tension from the muscles to the joints, increasing the risk of injury.\" and \"Never rest the bar on your neck as it puts direct pressure on a vulnerable area and can increase your risk of injury.\" (c1) are Safety Tips, not a common-mistakes list (R-LB2-14), and neither fault is on handlingMistakes; \"Going too heavy too soon isn’t just risky\" is about the load, not a candidate. StrengthLog teaches the feet below the bar (c2), so the sources disagree; the pick follows the steps. drawable true: the side view shows the feet under the bar's path. Pick unchanged."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the feet directly under the bar (c3, c2). Step 1: no frequency word counts for a fault. Set aside: Gold's Gym's \"Common Mistakes to Avoid\" is a heading; \"Many lifters benefit from using both styles at different points in their training.\" and \"More experienced lifters often use Smith machine squats later in their sessions\" are about training choices, not a fault; Motra's \"Not typically needed due to built-in safeties\" is about spotting; Cotterman's \"are commonly used strength training modes\" (c17) is about the equipment; EōS's \"typically lowering the bar for a 3–5 second count, pausing briefly at the bottom\" is a bench press variation. Step 2: three faults on Gold's Gym's common-mistakes list are tied to harm: the feet under the bar, by its cue \"Move your feet slightly in front of the bar to maintain balance and reduce joint strain.\" (c3); the back, \"Poor back posture puts more stress on your lower back.\" (c11); and the knees, \"Allowing your knees to cave in can strain the ligaments surrounding the knee, leading to increased wear over time.\" (not on the card; c10 holds the cue). Gold's Gym's other protect lines (D-SUP-PROTECT) tie the same faults again, from the same source: \"This helps protect your knees and keeps your joints in better alignment.\" (the feet, c2), and \"Brace your core to protect your spine and keep your torso stable as you move.\" and \"a tight core protects your spine\" (the back); each fault still has one harm source, so the tie order below holds. Tie order: all three are on a common-mistakes list; one source ties each to harm; all three are sourced directly; Gold's Gym's list names the feet first, and Motra's list (\"Feet too close to bar causing forward lean\", \"Knees caving inward\", \"Rounding back at bottom\", \"Bouncing off heels\") names the feet first too, so the feet win. Set aside at step 2: Motra's \"Use controlled tempo to prevent joint stress\" (a Safety Note); read onto \"Bouncing off heels\", it would add a fourth tied fault that both lists put after the feet. \"Locking out your knees shifts the tension from the muscles to the joints, increasing the risk of injury.\" and \"Never rest the bar on your neck as it puts direct pressure on a vulnerable area and can increase your risk of injury.\" (c1) are Safety Tips, not a common-mistakes list (R-LB2-14), and neither fault is on handlingMistakes; \"Going too heavy too soon isn’t just risky\" is about the load, not a candidate. StrengthLog teaches the feet below the bar (c2), so the sources disagree; the pick follows the steps. drawable true: the side view shows the feet under the bar's path. Pick unchanged."
     },
     "tells": [
       {
@@ -660,7 +660,10 @@
     },
     {
       "step": "Hands outside the shoulders. Brace, then rotate the bar off the hooks.",
-      "claim": "c5, c20"
+      "claim": [
+        "c5",
+        "c20"
+      ]
     }
   ],
   "posture": [
@@ -693,7 +696,10 @@
     {
       "mistake": "Feet directly under the bar.",
       "fix": "Move your feet a few inches in front of the bar.",
-      "claim": "c3, c2"
+      "claim": [
+        "c3",
+        "c2"
+      ]
     },
     {
       "mistake": "Knees caving in.",
@@ -703,7 +709,10 @@
     {
       "mistake": "Rounding or over-arching the back.",
       "fix": "Brace and keep your chest forward. Use a manageable weight.",
-      "claim": "c11, c12"
+      "claim": [
+        "c11",
+        "c12"
+      ]
     }
   ],
   "feel": {
@@ -741,10 +750,13 @@
         "redFlag": null
       },
       {
-        "where": "Lower back working more than legs",
+        "where": "Lower back",
         "means": "Poor back posture puts more stress on your lower back.",
         "fix": "Brace and keep your spine neutral. Use a manageable weight.",
-        "claim": "c11, c12",
+        "claim": [
+          "c11",
+          "c12"
+        ],
         "redFlag": "back"
       },
       {
@@ -758,7 +770,10 @@
         "where": "Pressure on the neck",
         "means": "The bar on your neck puts pressure on a vulnerable area.",
         "fix": "Stop, rack the bar, then move it onto your upper traps.",
-        "claim": "c1, c9",
+        "claim": [
+          "c1",
+          "c9"
+        ],
         "redFlag": null
       }
     ]
@@ -770,11 +785,17 @@
     },
     {
       "risk": "Missed rep? Let the stops catch the bar, or rack it any time.",
-      "claim": "c8, c21"
+      "claim": [
+        "c8",
+        "c21"
+      ]
     },
     {
       "risk": "Smith loads differ from free-bar loads. Add weight in small steps.",
-      "claim": "c17, c13"
+      "claim": [
+        "c17",
+        "c13"
+      ]
     }
   ],
   "redFlags": [
@@ -786,7 +807,7 @@
       "key": "smith-squat-hands",
       "kind": "hand",
       "right": "Hands outside the shoulders, wrists neutral, elbows under the bar.",
-      "wrong": "Wrists bent back under the bar (on-body waiter-tray).",
+      "wrong": null,
       "claim": "c5"
     },
     {
@@ -794,7 +815,10 @@
       "kind": "posture",
       "right": "Feet a few inches ahead of the bar, heels down.",
       "wrong": "Feet directly under the bar, knees far forward.",
-      "claim": "c2, c3"
+      "claim": [
+        "c2",
+        "c3"
+      ]
     }
   ],
   "libraryDiff": {

@@ -156,7 +156,7 @@
         {
           "source": "ace-incline-cable-fly",
           "text": "Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy. To protect your shoulders from potential injury, lower the resistance, align your trunk vertically and follow the instructions provided.",
-          "where": "Step 4"
+          "where": "Exercise tip (after Step 5)"
         }
       ]
     },
@@ -331,6 +331,23 @@
           "where": "Step 4"
         }
       ]
+    },
+    {
+      "id": "c16",
+      "text": "Correct form and range of motion keep strain off the shoulder joint: keep a soft bend in the elbow and only go as far as the hands in line with the chest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "puregym-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "puregym-cable-fly",
+          "text": "Having the correct form and range of motion is important in minimising strain to the shoulder joint. Select a weight that allows you to maintain a soft bend in the elbow and only go as far as hands in line with chest.",
+          "where": "Cable Fly Tips"
+        }
+      ]
     }
   ],
   "sources": [
@@ -421,9 +438,12 @@
     "mistake": {
       "what": "Elbows bending deeply, turning the fly into a press.",
       "why": "ACE names leaning forward as the frequent fault (c7), but a lean needs a side view and this plate is front view. The bent elbows are the next fault by LR-31: PureGym ties keeping a soft elbow bend to less shoulder strain, and StrengthLog lists the press-like elbow bend as a common mistake (c11); they read from the front (c6). How often it happens is not measured.",
-      "claim": "c11",
+      "claim": [
+        "c11",
+        "c16"
+      ],
       "drawable": false,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: leaning forward (c7). ACE's \"Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy.\" (c7) says the lean happens frequently, a frequency word for this fault of this exercise (\"tendency\" alone would not count). No other fault passes step 1. Set aside: PureGym's \"Commonly Asked Questions On Cable Flyes\" and StrengthLog's \"Common Mistakes in the Standing Cable Chest Fly\" are headings; StrengthLog's \"The cable fly is an exercise where adding more weight than you can handle is easy.\" is about the load (\"easy\" is not a frequency word); Schutz's \"Another common method to improve chest muscle strength is to perform strength exercises on a cable pulley system\" and \"four common strength exercises for chest muscles\" are about the exercises (c14); Kolber's \"the most prevalent regions of injury\" (c13) names no fault. drawable false: the lean is a still sign, but it shows only from the side and this plate is the census front view (viewWhy). plate.mistake names the next fault by the same steps. Step 2: PureGym ties form to harm, \"Having the correct form and range of motion is important in minimising strain to the shoulder joint. Select a weight that allows you to maintain a soft bend in the elbow and only go as far as hands in line with chest.\", whose cues correct two named faults: the elbows bending into a press (StrengthLog's \"Not keeping a strict form.\", c11) and the hands going past the chest line (handlingMistakes[2], c4). The elbow fault is on StrengthLog's common-mistakes list and the range fault on none, so the elbows win, as on cable_fly (R-PB-2). Schutz's \"Care has to be taken when performing cable cross-over exercises to ensure proper stabilisation of the joints during exercise execution and avoid joint overloading.\" (c14) names no fault; PureGym's \"lowering the dumbbells too far can injure the shoulders\" is the dumbbell fly, another exercise. The front view shows the elbow angle changing. Pick unchanged: handlingMistakes[0] stays the lean; plate.mistake stays the bent elbows, drawable false."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: leaning forward (c7). ACE's \"Avoid the tendency to lean forward during this exercise as this increases the stresses within the shoulder joint, which happens frequently when the resistance used is too heavy.\" (c7) says the lean happens frequently, a frequency word for this fault of this exercise (\"tendency\" alone would not count). No other fault passes step 1. Set aside: PureGym's \"Commonly Asked Questions On Cable Flyes\" and StrengthLog's \"Common Mistakes in the Standing Cable Chest Fly\" are headings; StrengthLog's \"The cable fly is an exercise where adding more weight than you can handle is easy.\" is about the load (\"easy\" is not a frequency word); Schutz's \"Another common method to improve chest muscle strength is to perform strength exercises on a cable pulley system\" and \"four common strength exercises for chest muscles\" are about the exercises (c14); Kolber's \"the most prevalent regions of injury\" (c13) names no fault. Schutz's \"Injuries to the shoulder are very common in sports that involve overhead arm or throwing movements.\" is about sports, not a fault of this exercise. drawable false: the lean is a still sign, but it shows only from the side and this plate is the census front view (viewWhy). plate.mistake names the next fault by the same steps. Step 2: PureGym ties form to harm, \"Having the correct form and range of motion is important in minimising strain to the shoulder joint. Select a weight that allows you to maintain a soft bend in the elbow and only go as far as hands in line with chest.\", (c16) whose cues correct two named faults: the elbows bending into a press (StrengthLog's \"Not keeping a strict form.\", c11) and the hands going past the chest line (handlingMistakes[2], c4). The elbow fault is on StrengthLog's common-mistakes list and the range fault on none, so the elbows win, as on cable_fly (R-PB-2). Schutz's \"Care has to be taken when performing cable cross-over exercises to ensure proper stabilisation of the joints during exercise execution and avoid joint overloading.\" (c14) names no fault; PureGym's \"lowering the dumbbells too far can injure the shoulders\" is the dumbbell fly, another exercise. The front view shows the elbow angle changing. Pick unchanged: handlingMistakes[0] stays the lean; plate.mistake stays the bent elbows, drawable false."
     },
     "tells": [
       {
@@ -436,13 +456,14 @@
       }
     ],
     "tempo": {
-      "up": 1,
+      "up": 2,
       "down": 2,
       "pause": 1,
       "claim": [
         "c12",
         "c15"
-      ]
+      ],
+      "text": "Up 2 and down 2 sit inside ACSM's 1-2 s (c12, WEAK; LR-15); ACE asks to \"slowly squeeze your chest muscles\" on the lift and to \"slowly return\" (c5), so both are drawn at ACSM's upper 2 s, as on high_to_low_cable_fly (up changed from 1). Pause 1 is the pause right after the lift: ACE's \"Pause momentarily\" gives no seconds, so the 1 s is a drawing convention (c15, WEAK; LR-33)."
     },
     "variantLine": null
   },
@@ -553,9 +574,9 @@
         "redFlag": null
       },
       {
-        "where": "Shoulder pain",
+        "where": "Shoulder",
         "means": "Fault: leaning forward.",
-        "fix": "Stop and don't train through the pain. Keep your trunk vertical.",
+        "fix": "Lower the weight. Keep your trunk vertical.",
         "claim": [
           "c7"
         ],
@@ -605,6 +626,7 @@
   },
   "anchorSource": "ace-incline-cable-fly",
   "notes": [
-    "LIB-TOPRANK (LB6): LR-31 step 1 keeps the lean as the top fault; drawable false because the front view cannot show it (not speed); see plate.mistake.rankNote."
+    "LIB-TOPRANK (LB6): LR-31 step 1 keeps the lean as the top fault; drawable false because the front view cannot show it (not speed); see plate.mistake.rankNote.",
+    "Trunk conflict: PureGym's low-to-high steps say \"Hinge very slightly forward at the hips.\" and StrengthLog suggests \"a slight forward lean\", while ACE (the anchor) keeps the trunk vertical and names leaning forward as the frequent fault (c7). The card follows ACE."
   ]
 }

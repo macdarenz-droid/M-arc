@@ -394,7 +394,10 @@
   "setup": [
     {
       "step": "Set the bar at mid-thigh height and set the safety pins.",
-      "claim": "c1, c4"
+      "claim": [
+        "c1",
+        "c4"
+      ]
     },
     {
       "step": "Stand with feet shoulder-width apart.",
@@ -402,11 +405,17 @@
     },
     {
       "step": "Grip overhand, slightly wider than the shoulders, thumbs wrapped.",
-      "claim": "c1, inherit:0"
+      "claim": [
+        "c1",
+        "inherit:0"
+      ]
     },
     {
       "step": "Rotate the bar off the hooks and let the arms hang long.",
-      "claim": "c6, c1"
+      "claim": [
+        "c6",
+        "c1"
+      ]
     }
   ],
   "posture": [
@@ -436,12 +445,19 @@
     {
       "mistake": "Rocking the body.",
       "fix": "Use slow, steady reps. Add weight in small steps.",
-      "claim": "c3, c5, c8"
+      "claim": [
+        "c3",
+        "c5",
+        "c8"
+      ]
     },
     {
       "mistake": "Bending the elbows.",
       "fix": "Keep the arms long. Lift with the shoulders.",
-      "claim": "c3, c2"
+      "claim": [
+        "c3",
+        "c2"
+      ]
     }
   ],
   "feel": {
@@ -465,7 +481,10 @@
         "where": "Any neck or shoulder pain",
         "means": "The shoulder is a common injury site in lifting.",
         "fix": "Stop the set. Don't train through the pain.",
-        "claim": "c4, c9",
+        "claim": [
+          "c4",
+          "c9"
+        ],
         "redFlag": "shoulder"
       }
     ]
@@ -496,7 +515,10 @@
       "kind": "posture",
       "right": "Shoulders up toward the ears, arms long, head level.",
       "wrong": "Elbows bent, pulling the bar up with the arms.",
-      "claim": "c2, c3"
+      "claim": [
+        "c2",
+        "c3"
+      ]
     }
   ],
   "libraryDiff": {

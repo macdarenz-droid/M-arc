@@ -338,10 +338,9 @@
     },
     {
       "id": "c15",
-      "text": "Tempo: lower in a controlled 2-3 seconds; the press back is only 'semi explosive', so the 1 s up is a drawing convention (no source gives its seconds).",
+      "text": "Tempo: lower in a controlled 2-3 seconds; NFPT calls the press 'semi explosive' and gives it no seconds.",
       "tags": [
-        "CONSENSUS",
-        "WEAK"
+        "CONSENSUS"
       ],
       "sources": [
         "nfpt-cable-press"
@@ -553,7 +552,7 @@
         "c15",
         "c16"
       ],
-      "text": "Up 2 and down 2 are Motra's 2-1-2 (c16, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the press, so it is named here and not written in pause (LR-33). Pause 0: no quote asks for a pause right after the press. Motra's \"Squeeze chest at peak contraction.\" gives no pause or seconds. NFPT's 2-3 s lowering (c15) agrees with down 2. Changed from up 1, down 2 (ACSM or a convention) under R-LB6-2."
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c16, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the press, so it is named here and not written in pause (LR-33). Pause 0: no quote asks for a pause right after the press. Motra's \"Squeeze chest at peak contraction.\" gives no pause or seconds. NFPT's 2-3 s lowering (c15) agrees with down 2. NFPT calls the press \"semi explosive\" with no seconds (c15); the card takes Motra's 2 s up, as R-LB6-2 rules. Changed from up 1, down 2 (ACSM or a convention) under R-LB6-2."
     },
     "variantLine": null
   },
@@ -686,16 +685,16 @@
       {
         "where": "Lower back pain",
         "means": "Fault: arching the back.",
-        "fix": "Stop and don't train through the pain. Keep your spine neutral.",
+        "fix": "Keep your spine neutral and brace your abs.",
         "claim": [
           "c6"
         ],
         "redFlag": "back"
       },
       {
-        "where": "Shoulder pain",
+        "where": "Shoulder",
         "means": "Fault: gripping much wider than shoulder width, or flaring the elbows.",
-        "fix": "Stop and don't train through the pain. Keep elbows at a 45-degree angle.",
+        "fix": "Keep your elbows at a 45-degree angle.",
         "claim": [
           "c7",
           "c13"

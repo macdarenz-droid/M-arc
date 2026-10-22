@@ -401,7 +401,7 @@
     ],
     "mistake": {
       "what": "Pulling with the arms: the handles are dragged down by the arms instead of the abs curling the trunk.",
-      "why": "Motra lists it first among the machine ab crunch's common mistakes, with its cue to start with the core (c14); the sources cue the abs to do the bending (c8). How often it happens is not measured.",
+      "why": "Motra lists it first among the machine ab crunch's common mistakes, with its cue to start with the core (c14); the sources cue the abs to do the bending (c8). How often it happens is not measured. The sources differ on the arms: ACE, the anchor, says \"Grasp the handles in both hands, and pull down on them to lean forward.\" (c3) and Fitbod's steps say \"while pulling the handles down with in order to keep the pads on your shoulders\", while Motra lists \"Pulling with arms\" as a mistake (c14); the drawn fault is the arms doing the pull while the trunk stays upright.",
       "claim": "c14",
       "drawable": true,
       "rankNote": "No source measures how often each fault happens. LR-31 step 3: pulling with the arms (c14), first on Motra's common-mistakes list for the ab crunch machine. Step 1: no frequency word counts for a fault. Set aside: Fitbod's \"Common Form Mistakes\" is a heading and \"Crunches are one of the most common exercises out there.\" is about the exercise; Motra's \"Typical Rep Range\" is programming; Sundstrup's \"strengthening exercises on machines usually are performed to induce high level\" is about machine training (c9). Step 2: no named fault is tied to harm. Set aside: Motra's \"Avoid excessive weight to prevent back strain\" (c6) is the load, not a candidate; Motra's \"Straining neck\" (c14) names a harm, not a body or equipment position or movement, and no read source says what the neck does, so it is not a candidate (if the verify reads it as one, it is the only harm-tied fault on a list and wins step 2; it has no sourced still sign, so plate.mistake would stay the arm pull with drawable false); \"Do not hyperextend spine\" is a Safety Note with no harm word; Sundstrup's \"warrant caution for individuals with lumbar pain\" (c10) is about the machine, not a fault. Step 3: Motra's list is written for this machine: \"Pulling with arms\", \"Using momentum\", \"Straining neck\", \"Letting weight rest\". Fitbod's \"Overusing Machines\" is a training choice, and its \"Sitting Up Too Far\" is written for the floor crunch (\"Crunches are designed so you only raise your shoulder blades, not your entire torso.\"), so Motra's list decides. drawable true: the side view shows the arms dragging the handles down. Pick unchanged."
@@ -491,7 +491,10 @@
     {
       "mistake": "Letting the stack rest.",
       "fix": "Keep tension. Return without letting the stack rest.",
-      "claim": "c5, c14"
+      "claim": [
+        "c5",
+        "c14"
+      ]
     }
   ],
   "feel": {
@@ -533,16 +536,16 @@
         "redFlag": null
       },
       {
-        "where": "Lower back pain",
+        "where": "Lower back",
         "means": "Too much weight can strain the back.",
-        "fix": "Stop the set. Don't train through the pain.",
+        "fix": "Avoid excessive weight.",
         "claim": "c6",
         "redFlag": "back"
       },
       {
         "where": "Neck",
         "means": "Straining your neck is a mistake.",
-        "fix": "Start the crunch with your abs.",
+        "fix": null,
         "claim": "c14",
         "redFlag": null
       }
@@ -555,7 +558,10 @@
     },
     {
       "risk": "Lower back pain? This machine works the hip flexors hard, so take care.",
-      "claim": "c10, c9"
+      "claim": [
+        "c10",
+        "c9"
+      ]
     }
   ],
   "redFlags": [
@@ -566,8 +572,11 @@
       "key": "crunch-arms",
       "kind": "posture",
       "right": "Elbows held bent, the abs curl the trunk.",
-      "wrong": "Arms pulling the handles down.",
-      "claim": "c3, c14"
+      "wrong": "Arms doing the pull while the trunk stays upright.",
+      "claim": [
+        "c3",
+        "c14"
+      ]
     },
     {
       "key": "crunch-curl",
@@ -654,5 +663,8 @@
       "access": "abstract",
       "checked": "2026-10-22"
     }
+  ],
+  "notes": [
+    "Conflict on the arms: ACE (anchor) \"Grasp the handles in both hands, and pull down on them to lean forward.\" (c3) and Fitbod \"while pulling the handles down with in order to keep the pads on your shoulders\" against Motra's common mistake \"Pulling with arms\" (c14). The card reads Motra's mistake as the arms doing the pull while the trunk stays upright; holding and pulling the handles to lean forward stays allowed."
   ]
 }

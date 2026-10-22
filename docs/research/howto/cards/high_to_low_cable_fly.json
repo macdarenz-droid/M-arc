@@ -427,7 +427,10 @@
     {
       "mistake": "Arms behind or handles crossing.",
       "fix": "Stop at the armpits going back. Let the hands just meet.",
-      "claim": "c8, c4"
+      "claim": [
+        "c8",
+        "c4"
+      ]
     },
     {
       "mistake": "Torso moving toward the hands.",
@@ -458,16 +461,16 @@
         "redFlag": null
       },
       {
-        "where": "Pain in the shoulder",
+        "where": "Shoulder",
         "means": "Leaning forward raises stress in the shoulder joint.",
-        "fix": "Stop the set. Don't train through the pain.",
+        "fix": "Lower the weight and stand tall.",
         "claim": "c7",
         "redFlag": "shoulder"
       },
       {
         "where": "Low back",
         "means": "Fault: arching the low back.",
-        "fix": "Brace the abs and lower the weight.",
+        "fix": "Brace your abs.",
         "claim": "c2",
         "redFlag": null
       }

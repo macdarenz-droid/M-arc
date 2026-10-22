@@ -190,7 +190,7 @@
     },
     {
       "id": "c8",
-      "text": "Don't go too heavy: heavy loads let the traps dominate, and feeling the shoulder blades squeeze together is a sign the weight is too heavy.",
+      "text": "Don't go too heavy: heavy loads let the traps dominate, and Fitness Volt (the anchor) says feeling the shoulder blades squeeze together is a sign the weight is too heavy. Motra instead cues squeezing the shoulder blades together at the peak; the card follows Fitness Volt.",
       "tags": [
         "CONSENSUS"
       ],
@@ -208,6 +208,16 @@
           "source": "fv-rev-pecdeck",
           "text": "If you feel a scapular retraction, you are probably going too heavy.",
           "where": "Tips"
+        },
+        {
+          "source": "mo-rear-delt",
+          "text": "Squeeze your rear delts and shoulder blades together at the peak.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "mo-rear-delt",
+          "text": "Squeeze shoulder blades",
+          "where": "Coaching Tips: Form Cues"
         }
       ]
     },
@@ -307,7 +317,8 @@
       "id": "c14",
       "text": "Tempo: about 1-2 s each way at a moderate speed (ACSM, for heavy sets in trained lifters), with a short squeeze at the back (Fitness Volt suggests a slower 2 s up, 2 s hold, 4 s down).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm-2009",
@@ -409,6 +420,28 @@
           "where": "Tempo heading tooltip"
         }
       ]
+    },
+    {
+      "id": "c19",
+      "text": "Most people go through the motions on this exercise: they overload the machine and rush through the reps; slow down the rep tempo if you can't feel the rear delts working.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-rev-pecdeck"
+      ],
+      "quotes": [
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "While performing this exercise, most people go through the motions for the sake of it. They’ll put more weight on the machine than they can handle and rush through the movement just to achieve their rep target.",
+          "where": "Common mistakes: 2. No Mind-Muscle Connection"
+        },
+        {
+          "source": "fv-rev-pecdeck",
+          "text": "You should lower the weights and slow down your rep tempo if you can’t achieve a rear delt pump or at least feel muscle contraction.",
+          "where": "Common mistakes: 2. No Mind-Muscle Connection"
+        }
+      ]
     }
   ],
   "plate": {
@@ -438,7 +471,7 @@
       "what": "Shoulders shrugged up toward the ears as the arms open.",
       "why": "Fitness Volt's list, the anchor's, puts momentum first (c6); its sign, the chest pulling off the pad, shows only from the side, and the census view is front. Its next item, a slouched back, is also a side-view sign. Motra's list for this machine names \"Shrugging shoulders\" first (c17); it shows from the front. How often it happens is not measured.",
       "claim": "c17",
-      "rankNote": "No source measures how often each fault happens. LR-31 step 3: using momentum (c6), first on Fitness Volt's common-mistakes list, the anchor's. Step 1: no frequency word counts for a fault. Set aside: Fitness Volt's \"Here are the most recurrent mistakes people make while performing the reverse pec deck fly:\" is a list sentence and \"If we had to point out the biggest mistake people make while doing the machine reverse fly, it would be their use of momentum.\" (c6) ranks by size, not frequency; \"While performing this exercise, most people go through the motions for the sake of it.\" sits under \"No Mind-Muscle Connection\", which is about muscle contraction and effort, not a body or equipment position (if the verify reads its rushing as a movement fault, it is speed only and not drawable); \"While many lifters like to perform the rear peck deck fly as a finisher\", \"Although most people think rows only target the back\" and \"they are a lagging muscle group for most lifters\" are about programming and muscles; Motra's \"commonly scaled by adjusting seat height\" is a setting and \"Typical Rep Range\" programming; StrengthLog's \"trains many of the antagonists of common pressing exercises\" is about muscles. Step 2: no named fault is tied to harm. Fitness Volt's \"Lifting too heavy can hamper your form and put you at a greater risk of injury.\" is the load; Motra's \"Stop if you feel sharp pain in the front shoulder\" (c9) names no fault. Step 3: both lists are written for this exercise, so the anchor's decides: Fitness Volt's \"1. Using Momentum\", \"2. No Mind-Muscle Connection\", \"3. Slouching Your Back\". Momentum's sign, the chest pulled off the pad (c6), is a still sign but shows only from the side, and the census view is front, so drawable is false and plate.mistake names the next fault by the same steps: the mind-muscle item is not a candidate, the slouched back (c7) is a side-view sign, then Motra's list (\"Shrugging shoulders\", \"Using momentum\", \"Hyperextending lower back\", \"Bending elbows too much\") gives the shrug first, which shows from the front. Pick changed: plate.mistake moves from the bent elbows (fourth on Motra's list) to the shrug, drawable false; handlingMistakes[0] stays momentum.",
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: rushing the reps (c19), R-LB6-5. Fitness Volt's \"While performing this exercise, most people go through the motions for the sake of it. They’ll put more weight on the machine than they can handle and rush through the movement just to achieve their rep target.\" (c19) says most people rush this exercise's reps, a frequency word for a candidate fault of this exercise; the load half is a load and is set aside. No other fault passes step 1. Set aside: Fitness Volt's \"The reverse pec deck fly is one of the most popular but incorrectly performed exercises.\" is about popularity and names no fault; \"Here are the most recurrent mistakes people make while performing the reverse pec deck fly:\" is a list sentence; \"If we had to point out the biggest mistake people make while doing the machine reverse fly, it would be their use of momentum.\" (c6) ranks by size, not frequency; \"While many lifters like to perform the rear peck deck fly as a finisher\", \"Although most people think rows only target the back\" and \"they are a lagging muscle group for most lifters\" are about programming and muscles; Motra's \"commonly scaled by adjusting seat height\" is a setting and \"Typical Rep Range\" programming; StrengthLog's \"trains many of the antagonists of common pressing exercises\" is about muscles. Rushing shows only as speed, so drawable is false and plate.mistake names the next fault by the same steps. Step 2: no named fault is tied to harm (Fitness Volt's \"Lifting too heavy can hamper your form and put you at a greater risk of injury.\" is the load; Motra's \"Stop if you feel sharp pain in the front shoulder\", c9, names no fault). Step 3: both lists are written for this exercise, so the anchor's decides: Fitness Volt's \"1. Using Momentum\", \"2. No Mind-Muscle Connection\", \"3. Slouching Your Back\". Momentum's sign, the chest pulled off the pad (c6), is a still sign but shows only from the side, and the census view is front, so it is not drawn either: the mind-muscle item's rushing is already the top fault, the slouched back (c7) is a side-view sign, then Motra's list (\"Shrugging shoulders\", \"Using momentum\", \"Hyperextending lower back\", \"Bending elbows too much\") gives the shrug first, which shows from the front. Pick changed: plate.mistake moves from the bent elbows (fourth on Motra's list) to the shrug, drawable false; handlingMistakes[0] is now rushing (R-LB6-5) and momentum [1].",
       "drawable": false
     },
     "tells": [
@@ -489,7 +522,10 @@
     },
     {
       "step": "Take the handles with a neutral grip, elbows slightly bent.",
-      "claim": "c10, c3"
+      "claim": [
+        "c10",
+        "c3"
+      ]
     }
   ],
   "posture": [
@@ -520,19 +556,24 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Rushing the reps.",
+      "fix": "Slow down your rep tempo.",
+      "claim": [
+        "c19"
+      ]
+    },
+    {
       "mistake": "Momentum, chest off the pad.",
       "fix": "Lower the weight and keep your chest on the pad.",
-      "claim": "c6"
+      "claim": [
+        "c6",
+        "c8"
+      ]
     },
     {
       "mistake": "Too heavy, traps take over.",
       "fix": "Lower the weight.",
       "claim": "c8"
-    },
-    {
-      "mistake": "Hunching the back.",
-      "fix": "Sit upright for the whole set.",
-      "claim": "c7"
     }
   ],
   "feel": {
@@ -615,7 +656,10 @@
       "kind": "hand",
       "right": "Neutral grip, palms facing each other. Overhand also fine.",
       "wrong": null,
-      "claim": "c10, c3"
+      "claim": [
+        "c10",
+        "c3"
+      ]
     }
   ],
   "libraryDiff": {
@@ -677,5 +721,8 @@
       "access": "abstract",
       "checked": "2026-10-22"
     }
+  ],
+  "notes": [
+    "Removed from handlingMistakes under R-LB6-5 to keep 3 (R-LB2-2; posture[1] keeps the cue): \"Hunching the back.\" / \"Sit upright for the whole set.\" (c7)."
   ]
 }

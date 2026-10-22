@@ -227,7 +227,7 @@
     },
     {
       "id": "c10",
-      "text": "Tempo: Motra lists 2-1-2 and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the return, a 1 s pause at the open start and 2 s for the push out. Its \"Hold briefly at peak contraction.\" asks for a brief pause right after the push out and no source gives its seconds, so that 1 s pause is a drawing convention (LR-33).",
+      "text": "Tempo: Motra lists 2-1-2 and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 2 s for the return, a 1 s pause at the start, knees together and 2 s for the push out. Its \"Hold briefly at peak contraction.\" asks for a brief pause right after the push out and no source gives its seconds, so that 1 s pause is a drawing convention (LR-33).",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -355,7 +355,7 @@
       "claim": [
         "c10"
       ],
-      "text": "Up 2 and down 2 are Motra's 2-1-2 (c10, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three. Its middle 1 s is a pause at the open start, between the return and the next push out, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the push out: Motra's \"Hold briefly at peak contraction.\" gives no seconds, so the 1 s is a drawing convention (c10, WEAK; LR-33). This corrects the earlier reading that put the middle 1 s at the peak."
+      "text": "Up 2 and down 2 are Motra's 2-1-2 (c10, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-2); the page shows three numbers, read as the first three. Its middle 1 s is a pause at the start, knees together, between the return and the next push out, so it is named here and not written in pause (LR-33). Pause 1 is the pause right after the push out: Motra's \"Hold briefly at peak contraction.\" gives no seconds, so the 1 s is a drawing convention (c10, WEAK; LR-33). This corrects the earlier reading that put the middle 1 s at the peak."
     },
     "variantLine": null
   },
@@ -411,9 +411,13 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Momentum or upper-body rocking.",
+      "mistake": "Jerking the weight.",
       "fix": "Keep your upper body still. Lower the weight.",
-      "claim": "c5, c12"
+      "claim": [
+        "c12",
+        "c5",
+        "c6"
+      ]
     },
     {
       "mistake": "Weight too heavy for form.",
@@ -421,9 +425,12 @@
       "claim": "c6"
     },
     {
-      "mistake": "Seat not set to fit.",
-      "fix": "Line your knees up with the pivot.",
-      "claim": "c6"
+      "mistake": "Incomplete range.",
+      "fix": "Open the legs to a full, comfortable range.",
+      "claim": [
+        "c12",
+        "c4"
+      ]
     }
   ],
   "feel": {
@@ -448,17 +455,13 @@
         "redFlag": null
       },
       {
-        "where": "Pain in the hip",
-        "means": "",
-        "fix": "Stop the set. Don't train through the pain.",
-        "claim": "c6",
-        "redFlag": null
-      },
-      {
-        "where": "Upper body rocking",
-        "means": "Fault: using your upper body to swing.",
-        "fix": "Lower the weight.",
-        "claim": "c12, c6",
+        "where": "Hip",
+        "means": "Fault: a machine not set to fit you.",
+        "fix": "Line your knees up with the pivot.",
+        "claim": [
+          "c6",
+          "c1"
+        ],
         "redFlag": null
       }
     ]
@@ -487,7 +490,10 @@
       "kind": "posture",
       "right": "Legs opened comfortably wide.",
       "wrong": "Knees opened only a little.",
-      "claim": "c4, c12"
+      "claim": [
+        "c4",
+        "c12"
+      ]
     }
   ],
   "libraryDiff": {
@@ -537,5 +543,9 @@
       "access": "abstract",
       "checked": "2026-10-22"
     }
+  ],
+  "notes": [
+    "Removed from handlingMistakes in the LB6 fix round (a setting, R-LB2-12; zooms[0] and setup keep the seat cue): \"Seat not set to fit.\" / \"Line your knees up with the pivot.\" (c6).",
+    "feel.rows[2] removed in the LB6 fix round (hip_abduction-7: a movement, not a place, LR-6); the swing stays in handlingMistakes[0]: Upper body rocking / Fault: using your upper body to swing. / Lower the weight.."
   ]
 }

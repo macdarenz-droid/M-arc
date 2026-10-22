@@ -330,6 +330,13 @@
       "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
       "status": "verbatim",
       "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds."
+    },
+    {
+      "claim": "c5",
+      "source": "fv-smith-ohp",
+      "text": "This is both to maximize your pressing ability and protect your shoulder joints.",
+      "status": "verbatim",
+      "closest": "This is both to maximize your pressing ability and protect your shoulder joints."
     }
   ]
 }

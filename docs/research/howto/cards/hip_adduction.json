@@ -285,7 +285,7 @@
       "why": "Motra ties keeping the movements slow to preventing strain, against \"Using momentum to swing pads\", first on its common-mistakes list (c4); momentum shows only as speed, so it cannot be drawn. \"Arching back off pad\" shows only from the side and \"Letting weight stack crash\" only as speed. Motra's safety notes warn against an excessive stretch at the start, and \"Forcing beyond comfortable range\" is next on the list (c2); it shows from the front. No source ranks how common it is.",
       "claim": "c2",
       "drawable": false,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: using momentum to swing the pads (c4). Step 1: no frequency word counts for a fault. Set aside: Brandt's \"Decreased hip muscle strength is frequently reported in patients with\" (c8) is about patients' strength, not a fault; Motra's \"Typical Rep Range\" is programming. Step 2: Motra's cue \"Keep movements slow to prevent strain\" (c4) corrects \"Using momentum to swing pads\", first on its common-mistakes list, and names harm; no other named fault is tied to harm (\"Avoid excessive stretch in starting position\", c2, names no harm word; \"Do not use if acute hip or groin injury present\", c5, names no fault). Momentum shows only as speed, so drawable is false and plate.mistake names the next fault by the same steps (step 3, Motra's list: \"Using momentum to swing pads\", \"Arching back off pad\", \"Letting weight stack crash\", \"Forcing beyond comfortable range\", \"Locking knees at end\"): the arched back shows only from the side and the census view is front; the crashing stack is speed; forcing beyond a comfortable range, the deep start stretch (c2), shows from the front. Top fault changed: momentum moves to handlingMistakes[0] and the deep stretch to [1]; plate.mistake is unchanged and drawable changes from true to false."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: using momentum to swing the pads (c4). Step 1: no frequency word counts for a fault. Set aside: Brandt's \"Decreased hip muscle strength is frequently reported in patients with\" (c8) is about patients' strength, not a fault; Motra's \"Typical Rep Range\" is programming. Step 2: Motra's cue \"Keep movements slow to prevent strain\" (c4) corrects \"Using momentum to swing pads\", first on its common-mistakes list, and names harm; it also corrects \"Letting weight stack crash\" (third on the list), which ties too and is set aside on list order (and is speed only); no other named fault is tied to harm (\"Avoid excessive stretch in starting position\", c2, names no harm word; \"Do not use if acute hip or groin injury present\", c5, names no fault). Momentum shows only as speed, so drawable is false and plate.mistake names the next fault by the same steps (step 3, Motra's list: \"Using momentum to swing pads\", \"Arching back off pad\", \"Letting weight stack crash\", \"Forcing beyond comfortable range\", \"Locking knees at end\"): the arched back shows only from the side and the census view is front; the crashing stack is speed; forcing beyond a comfortable range, the deep start stretch (c2), shows from the front. Top fault changed: momentum moves to handlingMistakes[0] and the deep stretch to [1]; plate.mistake is unchanged and drawable changes from true to false."
     },
     "tells": [
       {
@@ -393,10 +393,10 @@
         "redFlag": null
       },
       {
-        "where": "Groin pain",
-        "means": "",
-        "fix": "Stop the set. Don't train through the pain.",
-        "claim": "c5",
+        "where": "Groin",
+        "means": "Fast, swinging reps risk strain.",
+        "fix": "Keep the movements slow.",
+        "claim": "c4",
         "redFlag": null
       },
       {
@@ -414,7 +414,7 @@
       "claim": "c2"
     },
     {
-      "risk": "Groin pain? Stop the set.",
+      "risk": "Acute hip or groin injury? Don't use this machine.",
       "claim": "c5"
     }
   ],
