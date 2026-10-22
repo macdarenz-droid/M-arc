@@ -395,14 +395,15 @@
     },
     {
       "id": "c21",
-      "text": "Tempo (up = extending, down = lowering). Motra's page lists a tempo of \"3-1-1\" without saying which digit is which phase, so it is WEAK here; read as lowering-pause-lifting it gives 3 s down, a 1 s pause at the bottom stretch and 1 s up. ACSM's moderate 1-2 s each way is stated for advanced training (LR-15). The card keeps 1 s up and 2 s down. Motra's brief pause is at the bottom stretch, and its \"Squeeze the triceps firmly at the top\" gives no pause or seconds, so no quote asks for a pause right after the extension.",
+      "text": "Tempo (up = extending, down = lowering). Healthline's overhead extension page (dumbbell how-to; the cable is a listed variation) asks to hold the fully extended position for a moment, right after the extension, and gives no seconds, so the 1 s pause is a drawing convention (LR-33). Motra's page lists a tempo of \"3-1-1\" without saying which digit is which phase, so it is WEAK here; read as lowering-pause-lifting it gives 3 s down, a 1 s pause at the bottom stretch and 1 s up. ACSM's moderate 1-2 s each way is stated for advanced training (LR-15). The card keeps 1 s up and 2 s down. Motra's brief pause at the bottom stretch is not this field, and its \"Squeeze the triceps firmly at the top\" gives no pause or seconds.",
       "tags": [
         "CONSENSUS",
         "WEAK"
       ],
       "sources": [
         "motra-oh-rope",
-        "acsm-2009"
+        "acsm-2009",
+        "healthline-ote"
       ],
       "quotes": [
         {
@@ -424,6 +425,11 @@
           "source": "acsm-2009",
           "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
           "where": "abstract"
+        },
+        {
+          "source": "healthline-ote",
+          "text": "Then, at the lowest point, straighten your elbows and extend the weight back overhead. Hold the fully extended position for a moment, then repeat.",
+          "where": "How to do overhead tricep extensions"
         }
       ]
     }
@@ -536,12 +542,12 @@
     "tempo": {
       "up": 1,
       "down": 2,
-      "pause": 0,
+      "pause": 1,
       "claim": [
         "c21",
         "c13"
       ],
-      "text": "Pause 0 (LR-33): Motra's \"Pause briefly at the bottom to feel the stretch in the triceps.\" (c13) places the pause at the bottom stretch, not after the extension, and its \"Squeeze the triceps firmly at the top of the movement.\" gives no pause or seconds. Motra's \"3-1-1\" (c21, WEAK: the page does not define the digit order, R-PB-3), read as lowering-pause-lifting, gives that bottom pause 1 s. It would also give 3 s down; the card keeps 2 s down (ACSM, stated for advanced training, WEAK, LR-15) and lists the 3 s on the PR for a ruling (R-LB2-1). Up 1 s sits inside both."
+      "text": "Pause 1 (LR-33): Healthline's \"Hold the fully extended position for a moment, then repeat.\" (c21) asks for a pause right after the extension and gives no seconds, so the 1 s is a drawing convention (WEAK). Healthline's how-to is written for the dumbbell version, with the cable listed as a variation. Motra's \"Pause briefly at the bottom to feel the stretch in the triceps.\" (c13) is a second pause at the bottom stretch, not this field; Motra's \"3-1-1\" (c21, WEAK: the page does not define the digit order, R-PB-3), read as lowering-pause-lifting, gives that bottom pause 1 s. It would also give 3 s down; the card keeps 2 s down (ACSM, stated for advanced training, WEAK, LR-15) and lists the 3 s on the PR for a ruling (R-LB2-1). Up 1 s sits inside both."
     },
     "variantLine": "Drawn with the low pulley (the anchor source). A high or mid pulley works the same muscles (c2) and makes it easier to get the rope overhead (c17)."
   },

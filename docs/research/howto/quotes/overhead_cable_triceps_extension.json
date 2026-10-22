@@ -250,6 +250,14 @@
    "status": "verbatim",
    "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
    "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c21",
+   "source": "healthline-ote",
+   "text": "Then, at the lowest point, straighten your elbows and extend the weight back overhead. Hold the fully extended position for a moment, then repeat.",
+   "status": "verbatim",
+   "closest": "Then, at the lowest point, straighten your elbows and extend the weight back overhead. Hold the fully extended position for a moment, then repeat.",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

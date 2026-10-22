@@ -349,7 +349,7 @@
     },
     {
       "id": "c18",
-      "text": "Tempo (up = pressing to straight arms, down = lowering): lower slowly and under control. ACSM's moderate 1-2 s each way is stated for advanced training (LR-15). Motra lists a tempo of \"3-1-1\" without saying which digit is which phase (WEAK); read as lowering-pause-lifting it gives 3 s down, a 1 s pause at the bottom and 1 s up. Motra's \"Squeeze triceps at top.\" gives no pause or seconds. Breathe in on the way down and out on the way up.",
+      "text": "Tempo (up = pressing to straight arms, down = lowering): lower slowly and under control. Healthline asks to hold the fully extended position for a moment, right after the press, and gives no seconds, so the 1 s pause is a drawing convention (LR-33). ACSM's moderate 1-2 s each way is stated for advanced training (LR-15). Motra lists a tempo of \"3-1-1\" without saying which digit is which phase (WEAK); read as lowering-pause-lifting it gives 3 s down, a 1 s pause at the bottom and 1 s up. Motra's \"Squeeze triceps at top.\" gives no pause or seconds. Breathe in on the way down and out on the way up.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -357,7 +357,8 @@
       "sources": [
         "acsm-2009",
         "ace-oh-ext",
-        "motra-db-oh"
+        "motra-db-oh",
+        "healthline-ote"
       ],
       "quotes": [
         {
@@ -384,6 +385,11 @@
           "source": "motra-db-oh",
           "text": "Squeeze triceps at top.",
           "where": "How to perform, step 5"
+        },
+        {
+          "source": "healthline-ote",
+          "text": "Then, at the lowest point, straighten your elbows and extend the weight back overhead. Hold the fully extended position for a moment, then repeat.",
+          "where": "How to do overhead tricep extensions"
         }
       ]
     }
@@ -509,9 +515,9 @@
     "tempo": {
       "up": 1,
       "down": 2,
-      "pause": 0,
+      "pause": 1,
       "claim": "c18",
-      "text": "Pause 0 (LR-33): no quote asks for a pause right after the press; Motra's \"Squeeze triceps at top.\" gives no pause or seconds. Motra's \"3-1-1\" (c18, WEAK: the page does not define the digit order, R-PB-3), read as lowering-pause-lifting, names a 1 s pause at the bottom, which is not this field. It would also give 3 s down; the card keeps 2 s down (ACSM, stated for advanced training, WEAK, LR-15; ACE's \"slowly\" gives no seconds) and lists the 3 s on the PR for a ruling (R-LB2-1). Up 1 s sits inside both."
+      "text": "Pause 1 (LR-33): Healthline's \"Hold the fully extended position for a moment, then repeat.\" (c18) asks for a pause right after the press and gives no seconds, so the 1 s is a drawing convention (WEAK); Motra's \"Squeeze triceps at top.\" gives no pause or seconds. Motra's \"3-1-1\" (c18, WEAK: the page does not define the digit order, R-PB-3), read as lowering-pause-lifting, names a 1 s pause at the bottom, which is not this field. It would also give 3 s down; the card keeps 2 s down (ACSM, stated for advanced training, WEAK, LR-15; ACE's \"slowly\" gives no seconds) and lists the 3 s on the PR for a ruling (R-LB2-1). Up 1 s sits inside both."
     },
     "variantLine": "Drawn standing in a split stance (ACE, anchor). A seated version on a bench with back support is also used (c11); the technique claims hold for both."
   },
