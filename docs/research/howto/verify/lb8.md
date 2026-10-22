@@ -37,8 +37,8 @@ Result: 0 problems on all 12 cards; 0 advisory hits on the 10 new cards (after t
 ## Per card
 | id | status | tier | LR-31 step | pick (plate.mistake) | drawable | tempo up/down/pause | sources (all fetched) | quotes verbatim | lint hits |
 |---|---|---|---|---|---|---|---|---|---|
-| hack_squat | new | B | 1 | At the bottom, the lower back rounds and lifts off the back pad. | true | 1/3/1 | 6 | 47/47 | 0 |
-| leg_extension | new | C | 1 | Back arching off the back pad as the legs extend. | true | 2/2/1 | 5 | 48/48 | 0 |
+| hack_squat | new | B | 1 | At the bottom, the lower back rounds and lifts off the back pad. | true | 1/3/1 | 6 | 48/48 | 0 |
+| leg_extension | new | C | 1 | Back arching off the back pad as the legs extend. | true | 2/2/1 | 5 | 51/51 | 0 |
 | lying_leg_curl | new (D-SUP-LB8-AXIS) | C | 2 | top: Knees off the machine's axis (not drawable); plate: Lower back arching as the legs curl. | false | 1/3/1 | 7 | 58/58 | 0 |
 | standing_leg_curl | new, child | C | 1 | top: Dropping the weight down (speed only); plate: Lower back arching as the leg curls. | false | 1/2/1 | 4 | 32/32 | 0 |
 | standing_calf_raise | new (R-LB8-4) | B | 1 | top: Bouncing at the bottom (speed only); plate: Knees locked straight while the heels rise and lower. | false | 2/2/1 | 5 | 51/51 | 0 |
@@ -46,8 +46,8 @@ Result: 0 problems on all 12 cards; 0 advisory hits on the 10 new cards (after t
 | bodyweight_calf_raise | new | C | 1 | top: Moving too fast or bouncing (speed only); plate: Heels moving only part way up or down. | false | 2/2/1 | 3 | 33/33 | 0 |
 | hip_thrust | new | A | 1 | Lower back arched (overextended) with the ribs up, instead of neutral. | true | 1/2/1 | 8 | 63/63 | 0 |
 | glute_bridge | new | C | 2 | Lower back overarching at the top, the hips pushed too high. | true | 1/2/1 | 6 | 38/38 | 0 |
-| cable_kickback | new (D-SUP-LB8-KICKBACK) | C | 1 | Lower back arching as the leg kicks back. | true | 1/2/1 | 5 | 33/33 | 0 |
-| pendulum_squat | LR-31/33 pass, PICK CHANGED | B | 1 | top: Dropping into the bottom (speed only); plate: Heels lift off the platform at the bottom. | false (was true) | 1/3/0 (was null) | 5 | 38/38 | 0 (9 advisory, unchanged lines) |
+| cable_kickback | new (D-SUP-LB8-KICKBACK) | C | 1 | Lower back arching as the leg kicks back. | true | 1/2/1 | 5 | 35/35 | 0 |
+| pendulum_squat | LR-31/33 pass, PICK CHANGED | B | 1 | top: Dropping into the bottom (speed only); plate: Heels lift off the platform at the bottom. | false (was true) | 1/3/0 (was null) | 5 | 40/40 | 0 (8 advisory, unchanged lines) |
 | resisted_hip_flexion | LR-31/33 pass | C | 2 | Leaning back and arching the lower back to lift higher. | true | 2/2/2 (unchanged) | 3 | 41/41 | 0 (6 advisory, unchanged lines) |
 
 ## Tier A (hip_thrust)
@@ -55,7 +55,7 @@ Result: 0 problems on all 12 cards; 0 advisory hits on the 10 new cards (after t
 - Load progression (c19); 3 risks; the lower-back row links `redFlag: "back"`; the breath line (c20) rests on Hackett 2013, tagged MECH, as goblet_squat g12; bar in the hip crease and a pad on the bar (c3, c4).
 
 ## Verify (LR-29) and fix round
-- Record: docs/supervisor/verify/lb8-research-verify.md on `claude/sup-lib4-cards` @ `174a8228`, run on #294 @ `8c490333`. Three blind groups of 4, each with a fresh Opus critic and 2 plants. h2 and h3 VALID; h1 (pendulum_squat, resisted_hip_flexion, hack_squat, leg_extension) NOT VALID: its stop-line safety plant was found but rated medium (R-LB8-2), so a fresh critic re-verifies h1's 4 cards on the fixed head with 2 new plants before the merge.
+- Record: docs/supervisor/verify/lb8-research-verify.md on `claude/sup-lib4-cards` @ `174a8228`, run on #294 @ `8c490332`. Three blind groups of 4, each with a fresh Opus critic and 2 plants. h2 and h3 VALID; h1 (pendulum_squat, resisted_hip_flexion, hack_squat, leg_extension) NOT VALID: its stop-line safety plant was found but rated medium (R-LB8-2), so a fresh critic re-verifies h1's 4 cards on the fixed head with 2 new plants before the merge.
 - Counts: 63/63 sources fetched; 537/537 quotes verbatim; the supervisor's 10 % re-fetch 54/54. LR-31 12/12 and LR-33 12/12 agree. Real findings, plants removed: 0 blocker, 0 high, 1 medium, 22 low. Routed (pilot cards): none.
 - Rulings R-LB8-1 to R-LB8-8 accepted by the supervisor: R-LB8-3 (D-SUP-STRAIN: "strain" and "pressure" on a named body part are harm words; glute_bridge's "hurt my back" counts); R-LB8-4 (Peloton, Reading B); R-LB8-5 (cable_kickback's other reading at step 3's list order); R-LB8-6 (pendulum_squat count: heels lifting 4, knees caving 3, bouncing 2); R-LB8-7 (not actioned); R-LB8-8 (one round). F-LB8-1: hip_thrust, glute_bridge, cable_kickback and standing_leg_curl (2 s down / 1 s up by convention) and pendulum_squat (1 s up) join F-LB7-1's "slow quote, no seconds" list. F-LB9-1 closes for pendulum_squat and resisted_hip_flexion.
 - Pick and drawable changes in the fix round: standing_calf_raise only (handlingMistakes[0] bouncing, drawable false; plate unchanged). The CARD FIELDS verifier runs for it when its fields are written.
@@ -86,3 +86,19 @@ Result: 0 problems on all 12 cards; 0 advisory hits on the 10 new cards (after t
 | cable_kickback-6 | c1 text drops "and face the machine" | a19855bb |
 | glute_bridge-1 | handlingMistakes[1].fix keeps "roughly" and "at the top" | a19855bb |
 | hip_thrust-1 | rankNote: the second cause line, counted, gives the same pick | a19855bb |
+
+## h1 re-verify and fix round R-LB8-9
+- The h1 re-verify on `594b5029` (pendulum_squat, resisted_hip_flexion, hack_squat, leg_extension; 2 new plants) is VALID (#294, 6345604635). Its real findings went into one short fix round (R-LB8-9), with no further blind run.
+- Totals after the round: 12 cards, 63 sources, 545/545 quotes verbatim; check.mjs 0 problems on all 12.
+
+| finding | fix | commit |
+|---|---|---|
+| hack_squat way out (blocker) | setup[4] "Too heavy? Pull the safety lock or lever to get out." (c16); the normal finish stays as setup[3]; setup merged to 5 steps of at most 12 words (LR-30) | ffd09a97 |
+| pendulum_squat way out (blocker) | new claim c22 with BoxLife's "Make sure you’re very familiar with how the safety catch works in case you need to engage it mid-movement." and "Plus, it features a safety catch that gives you an “out” if you fail a rep, unlike traditional squats." (curl, 2026-10-22, verbatim); setup[4] "If you fail a rep, the safety catch gives you an out."; setup[1] and [2] merged | ffd09a97 |
+| pendulum_squat lockout (medium) | posture[4] "Extend fully at the top, without locking out hard." (c21) | ffd09a97 |
+| hack_squat c1 (medium) | c1 gains Healthline's "Step into the machine, placing your feet shoulder-width apart and your shoulders and back against the pads." (curl, verbatim, "How do you do it?") | ffd09a97 |
+| pendulum_squat feel.rows[2].fix (low) | keeps c8's condition: "Reduce load if the collapse persists." | ffd09a97 |
+| pendulum_squat c21 (low) | tags ["CONSENSUS","WEAK"] | ffd09a97 |
+| resisted_hip_flexion feel.rows[2].fix (low) | "lighter weight" dropped: "Stand tall, core tight." | ffd09a97 |
+| leg_extension loadProgression (low) | key "claims" (R-LB9-6, the majority shape) | ffd09a97 |
+| lb8.md (low) | run sha `8c490332`; per-card quote counts | this commit |
