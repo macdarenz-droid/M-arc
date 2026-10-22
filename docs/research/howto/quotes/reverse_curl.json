@@ -1,6 +1,6 @@
 {
  "id": "reverse_curl",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -181,14 +181,6 @@
   },
   {
    "claim": "c13",
-   "source": "acsm-2009",
-   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-   "status": "verbatim",
-   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-   "note": ""
-  },
-  {
-   "claim": "c13",
    "source": "sl-revcurl",
    "text": "To accomplish this, you could try to avoid letting your elbows travel backwards during the lift, and also keep tension in the muscles in the bottom position.",
    "status": "verbatim",
@@ -234,6 +226,22 @@
    "status": "verbatim",
    "closest": "If you can’t achieve the curling motion or control the descent of the weight without swinging your arms, you’re not recruiting the muscles properly.",
    "note": "Added in verify g4; read live 2026-09-30."
+  },
+  {
+   "claim": "c15",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c15",
+   "source": "tg-revcurl",
+   "text": "Slowly lower the weights down to the starting position and repeat for reps.",
+   "status": "verbatim",
+   "closest": "Slowly lower the weights down to the starting position and repeat for reps.",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

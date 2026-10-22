@@ -327,6 +327,24 @@
           "where": "Common skull crusher mistakes and how to fix them"
         }
       ]
+    },
+    {
+      "id": "c18",
+      "text": "Motra's dumbbell overhead extension page lists elbow joint pain under 'When to Avoid' (applied here to the skull crusher, MECH, as on the LB5 overhead extensions). Used for the elbow row's stop line (R-LB5-2).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "motra-db-oh"
+      ],
+      "quotes": [
+        {
+          "source": "motra-db-oh",
+          "text": "Elbow joint pain",
+          "where": "Safety, When to Avoid"
+        }
+      ]
     }
   ],
   "sources": [
@@ -399,6 +417,16 @@
       "pmid": null,
       "access": "full",
       "checked": "2026-09-30"
+    },
+    {
+      "id": "motra-db-oh",
+      "url": "https://motra.com/exercises/dumbbellOverheadTricepsExtension",
+      "title": "Dumbbell Overhead Triceps Extension, Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -556,9 +584,12 @@
       },
       {
         "where": "Back-of-elbow pain",
-        "means": "Fault: lowering the bar forcefully.",
+        "means": "Fault: lowering forcefully.",
         "fix": "Stop the set. Don't train through the pain.",
-        "claim": "c15",
+        "claim": [
+          "c15",
+          "c18"
+        ],
         "redFlag": "elbow"
       }
     ]

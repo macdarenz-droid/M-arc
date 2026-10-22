@@ -117,18 +117,24 @@
     },
     {
       "id": "c5",
-      "text": "Keep the elbows close to the torso and do not swing them forward or back.",
+      "text": "Keep the elbows close to the torso and do not swing them forward or back; StrengthLog lists elbow positioning first among the dumbbell curl's common mistakes, since elbows moving forward put extra load on the front delts instead of the biceps.",
       "tags": [
         "CONSENSUS"
       ],
       "sources": [
-        "nielasher-alt"
+        "nielasher-alt",
+        "sl-dbcurl"
       ],
       "quotes": [
         {
           "source": "nielasher-alt",
           "text": "Keep your elbows close to your torso and avoid swinging them forward or backward during the curl.",
           "where": "Tips, keep elbows stationary"
+        },
+        {
+          "source": "sl-dbcurl",
+          "text": "If your elbows move forward while you’re lifting the weight, it will put an additional load on your front delts, instead of focusing on your biceps.",
+          "where": "Common mistakes, elbow positioning"
         }
       ]
     },
@@ -213,9 +219,10 @@
     },
     {
       "id": "c10",
-      "text": "Tempo (up = lifting, down = lowering): a study protocol used 3 s per full repetition; ACSM advises moderate speed (1-2 s up, 1-2 s down).",
+      "text": "Tempo (up = lifting, down = lowering): a study protocol used 3 s per full repetition; ACSM advises moderate speed (1-2 s up, 1-2 s down), stated for advanced training (LR-15). The plate's 1 s up and 2 s down make that 3 s rep. No quote on the card asks for a pause.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "marcolin-2018",
@@ -325,6 +332,23 @@
           "where": "Methods"
         }
       ]
+    },
+    {
+      "id": "c15",
+      "text": "Niel Asher's cautions for this exercise say to stop at once if you feel any discomfort; the healthcare referral is data only (R-LB5-2).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nielasher-alt"
+      ],
+      "quotes": [
+        {
+          "source": "nielasher-alt",
+          "text": "If you experience any discomfort, stop immediately and consult a healthcare provider.",
+          "where": "Contraindications and Cautions"
+        }
+      ]
     }
   ],
   "sources": [
@@ -336,7 +360,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "nielasher-alt",
@@ -346,7 +370,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-dbcurl",
@@ -356,7 +380,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "marcolin-2018",
@@ -366,7 +390,7 @@
       "year": 2018,
       "pmid": 30013836,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -376,12 +400,12 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Elbow bend, elbow drift (c4, c5) and body swing (c6) read side-on; the resting arm hangs beside the working one. Census view is side.",
+    "viewWhy": "Elbow bend, elbow drift (c4, c5) and body swing (c6) read side-on; the resting arm hangs beside the working one. Census view is side. The LR-31 top fault, the wrist bent up or down (c7), cannot be shown in the side view (as R-LB2-27 found for the parent dumbbell_biceps_curl), so the plate draws the elbow moving forward or back (c5), the next fault by LR-31 step 3.",
     "equipment": "One dumbbell per hand, standing on the floor line (split stance, c3). No bench.",
     "start": "Standing tall, split stance, torso braced, shoulders down (c3); both arms hanging straight, palms forward (c2); wrists straight (c7).",
     "end": "Working elbow fully bent with the dumbbell near the front of the shoulder (c12), upper arm still by the side (c5); resting arm hanging straight in the start position (c1); torso upright and still (c4, c14).",
@@ -403,11 +427,14 @@
       }
     ],
     "mistake": {
-      "what": "Swinging: moving the trunk to get the dumbbell up with momentum.",
-      "why": "Swinging for momentum is the sign of a weight that is too heavy (c6); a study watched for trunk and knee movement as cheating (c14).",
-      "claim": "c6, c14",
-      "drawable": true,
-      "rankNote": "No source ranks alternating-curl faults by frequency; this matches the parent’s drawn fault."
+      "what": "Working elbow swinging forward or back during the curl.",
+      "why": "Niel Asher says to keep the elbows close to the torso and avoid swinging them forward or backward; StrengthLog lists elbow positioning first among the dumbbell curl's common mistakes, since elbows moving forward put an additional load on the front delts instead of the biceps (c5).",
+      "claim": [
+        "c5",
+        "c4"
+      ],
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: bent wrists (c7). Step 1 set aside: StrengthLog's \"one of the most common movements we do with our arms in our daily life\", \"Barbell curls often allow for heavier weights\" and \"most offering a fixed grip width\" are about movements, a load and equipment; ACE's \"most comfortable for you\" is about comfort; Niel Asher's \"approach it with common sense\" is not about a fault; the 'Common Mistakes in the Dumbbell Curl' heading is a heading. Step 2: bent wrists are the only named fault a quote ties to harm: \"If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.\" (c7, StrengthLog's common-mistakes list). Set aside: Niel Asher's \"If you experience any discomfort, stop immediately and consult a healthcare provider.\" and \"Do not perform this exercise if you are experiencing severe pain\" name no fault; swinging (c6) sits under StrengthLog's too-heavy item, a load choice, with no harm word; the elbows moving forward (c5) put load on the front delts, no harm. drawable is false: the side view cannot show the bent wrist (as R-LB2-27 ruled for the parent dumbbell_biceps_curl), so handlingMistakes[0] becomes the wrist and plate.mistake names the next fault by the same steps. Step 2 has no other candidate. Step 3: StrengthLog's dumbbell-curl list opens with elbow positioning (c5), then too-heavy weights with swinging; the elbow moving forward or back reads side-on. PICK CHANGED from swinging (c6, drawable true) to the elbow moving forward or back, matching the parent's plate after R-LB2-27. handlingMistakes is reordered: wrist, elbow, swinging."
     },
     "tells": [
       {
@@ -443,18 +470,24 @@
   "setup": [
     {
       "step": "Pick dumbbells light enough to curl without swinging.",
-      "claim": "c11, c6"
+      "claim": [
+        "c11",
+        "c6"
+      ]
     },
     {
       "step": "Stand in a split stance, torso braced, shoulders down and back.",
       "claim": "c3"
     },
     {
-      "step": "Take a palms-forward grip, thumbs round the handles, arms hanging at your sides.",
-      "claim": "c2, c3"
+      "step": "Palms-forward grip, thumbs round the handles, arms at your sides.",
+      "claim": [
+        "c2",
+        "c3"
+      ]
     },
     {
-      "step": "Curl one arm while the other stays down; lower it before curling the other.",
+      "step": "Curl one arm while the other stays down. Lower before switching.",
       "claim": "c1"
     }
   ],
@@ -468,7 +501,7 @@
       "claim": "c5"
     },
     {
-      "point": "Torso upright; no arching the lower back.",
+      "point": "Torso upright. No arching the lower back.",
       "claim": "c4"
     },
     {
@@ -480,15 +513,15 @@
       "claim": "c12"
     },
     {
-      "point": "Body stays still; only the arm moves.",
+      "point": "Body stays still. Only the arm moves.",
       "claim": "c14"
     }
   ],
   "handlingMistakes": [
     {
-      "mistake": "Swinging the body to get the dumbbell up.",
-      "fix": "Use a lighter dumbbell and lift with control.",
-      "claim": "c6"
+      "mistake": "Wrist bending up or down.",
+      "fix": "Keep the hand in line with the forearm.",
+      "claim": "c7"
     },
     {
       "mistake": "Elbow swinging forward or back.",
@@ -496,9 +529,9 @@
       "claim": "c5"
     },
     {
-      "mistake": "Wrist bending up or down.",
-      "fix": "Keep the hand in line with the forearm.",
-      "claim": "c7"
+      "mistake": "Swinging the body.",
+      "fix": "Use a lighter dumbbell and lift with control.",
+      "claim": "c6"
     }
   ],
   "feel": {
@@ -524,10 +557,13 @@
         "redFlag": null
       },
       {
-        "where": "Wrist",
-        "means": "Usually means the wrist is bending.",
-        "fix": "Straighten the wrist.",
-        "claim": "c7",
+        "where": "Wrist discomfort or pain",
+        "means": "Fault: the wrists bent up or down under load.",
+        "fix": "Stop and don't train through the pain. Keep the wrist straight.",
+        "claim": [
+          "c7",
+          "c15"
+        ],
         "redFlag": "wrist"
       }
     ]
@@ -545,16 +581,25 @@
     {
       "key": "curl-wrist",
       "kind": "hand",
-      "right": "Closed palms-forward grip, thumb wrapped, hand in line with the forearm.",
+      "right": "Closed palms-forward grip, hand in line with the forearm.",
       "wrong": "Wrist bent back or curled toward the forearm.",
-      "claim": "c7"
+      "claim": [
+        "c7",
+        "c2",
+        "c3"
+      ]
     },
     {
       "key": "alt-curl-arms",
       "kind": "posture",
       "right": "Working arm curled, resting arm hanging straight, torso upright.",
       "wrong": "Trunk moving as the dumbbell swings up.",
-      "claim": "c6, c14"
+      "claim": [
+        "c6",
+        "c14",
+        "c1",
+        "c4"
+      ]
     }
   ],
   "libraryDiff": {

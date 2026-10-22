@@ -27,7 +27,7 @@
     },
     {
       "field": "redFlags",
-      "why": "true for this child because the same elbow-discomfort finding is stated for pushdowns in general (c12), so the elbow box applies. The parent’s back box is dropped: no one-arm source ties this version to lower-back strain."
+      "why": "true for this child for the elbow box, because the same elbow-discomfort finding is stated for pushdowns in general (c12). The back box applies too: the bar pushdown's lean-or-arch harm line holds for the one-arm version (c17, MECH), so the card carries the parent's back row and box (R-LB5-4). LR-28's ship order applies: the sheet cannot ship before the back box."
     }
   ],
   "claims": [
@@ -197,9 +197,10 @@
     },
     {
       "id": "c10",
-      "text": "Tempo (up = working phase, the press down; down = return): moderate speed, 1-2 s each way (ACSM); press slowly, pause briefly at the bottom, return slowly (ACE). The plate's 1 s press and 2 s return sit inside that range; the 1 s pause is ACE's 'pause momentarily'.",
+      "text": "Tempo (up = working phase, the press down; down = return): press in about 1 s, pause at the bottom right after the press, return slowly in about 2 s. ACE asks to \"Pause momentarily\" and gives no seconds, so the 1 s pause is a drawing convention (LR-33); ACSM's moderate 1-2 s each way is stated for advanced training, so those seconds are a drawing convention too (LR-15).",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "ace-pushdown",
@@ -335,6 +336,64 @@
           "where": "Step 1"
         }
       ]
+    },
+    {
+      "id": "c17",
+      "text": "Inferred from the bar pushdown (same cable movement, one arm here): leaning too far forward or arching the back can strain the lower back and shift work off the triceps; if you lean, tilt from the hips rather than arching.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "sl-pushdown"
+      ],
+      "quotes": [
+        {
+          "source": "sl-pushdown",
+          "text": "Some people tend to lean too far forward or arch their back, which can put unnecessary strain on the lower back and shift the focus away from the triceps.",
+          "where": "Common mistakes, arching your back"
+        },
+        {
+          "source": "sl-pushdown",
+          "text": "If you need to lean slightly forward, make sure to tilt from your hips rather than arching your back.",
+          "where": "Proper form & technique"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "The NHS advises people with tennis elbow to avoid or reduce activities that make the symptoms worse (NHS self-care advice, applied here to elbow pain in training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-tennis-elbow"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-tennis-elbow",
+          "text": "avoid or reduce activities that make your symptoms worse",
+          "where": "Things you can do to help ease tennis elbow"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training; R-LB5-2). The source is data only.",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
     }
   ],
   "sources": [
@@ -346,7 +405,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "centr-single",
@@ -356,7 +415,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -366,7 +425,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-pushdown",
@@ -376,12 +435,32 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "nhs-tennis-elbow",
+      "url": "https://www.nhs.uk/conditions/tennis-elbow/",
+      "title": "Tennis elbow (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "The working elbow bends front-to-back and elbow drift (c6) reads side-on; torso rotation (c4) is a rotation the engine cannot draw. Census view is side.",
+    "viewWhy": "The working elbow bends front-to-back and elbow drift (c6) reads side-on; torso rotation (c4) is a rotation the engine cannot draw. Census view is side. The LR-31 top fault, leaning too far forward or arching the back (c17), is a trunk lean this view shows (R-LB2-4).",
     "equipment": "Cable column with the pulley above head height and a single handle on the cable (c1, c2). Floor line.",
     "start": "Standing facing the stack, torso vertical and braced (c16), shoulders and hips square (c4); working elbow at the side, hand at about upper-chest level (c7); wrist neutral (c9).",
     "end": "Working arm straight, elbow still at the side and not locked (c5, c8); torso unchanged and not turned (c4).",
@@ -393,7 +472,7 @@
       },
       {
         "label": "Square torso",
-        "what": "Shoulders and hips stay square; the body does not turn.",
+        "what": "Shoulders and hips stay square. The body does not turn.",
         "claim": "c4"
       },
       {
@@ -403,11 +482,11 @@
       }
     ],
     "mistake": {
-      "what": "The working elbow drifting forward as the handle comes up.",
-      "why": "ACE names it as the fault to monitor: it brings in the lats and takes load off the triceps.",
-      "claim": "c6",
+      "what": "Leaning too far forward or arching the back to press the handle down.",
+      "why": "StrengthLog's bar pushdown lists it first among the common mistakes: leaning too far forward or arching the back can put unnecessary strain on the lower back and shift the focus away from the triceps (c17, MECH: same cable movement, one arm here).",
+      "claim": "c17",
       "drawable": true,
-      "rankNote": "No source ranks one-arm pushdown faults by frequency. Turning the torso (c4) is the one-arm-specific fault Centr warns about, but it is a rotation the engine cannot draw, so it goes to text only."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: leaning too far forward or arching the back (c17). Step 1 set aside: StrengthLog's \"Some people tend to lean too far forward or arch their back\" (c17) uses 'tend', not a frequency word; \"This often leads to using momentum to complete the exercise\" (c13) is about using too much weight, a load; \"feels uncomfortable in the elbows for many people\" (c12) is about heavy weights and low reps, a load; \"often performed with a bar or a rope\" and \"One of our most popular\" are about equipment and programs; the 'Common Mistakes in Tricep Pushdown With Bar' heading is a heading. Step 2: StrengthLog's bar-pushdown page is a read source of this card (c12, c13), and its mistakes list names the lean or arch with harm (\"unnecessary strain on the lower back\"); it is the only named fault a quote ties to harm, so it is the top fault, applied to the one-arm version as MECH (c17), as LB5 applies StrengthLog's dumbbell-curl wrist line on incline_dumbbell_curl. Set aside: too much weight (c13, \"can also lead to injury\") is a load choice; Centr's \"Don't slouch as this can lead to compensating with the wrong muscles\" (c4) and its torso-rotation line name no harm; elbows drifting forward (c6), the head's pick, moves work to the lats, no harm. PICK CHANGED from the elbow drifting forward, matching LB2's parent triceps_pushdown. The top fault was missing from handlingMistakes, so it is added at [0] and the load item (too heavy, c13, kept in risks[1]) leaves to keep 3 (R-LB2-2). drawable is true: the side view shows the trunk lean and the back arch."
     },
     "tells": [
       {
@@ -441,7 +520,10 @@
   "setup": [
     {
       "step": "Set the pulley above head height and attach a single handle.",
-      "claim": "c1, c2"
+      "claim": [
+        "c1",
+        "c2"
+      ]
     },
     {
       "step": "Grip the handle firmly, thumb wrapped.",
@@ -449,11 +531,17 @@
     },
     {
       "step": "Stand facing the machine with your shoulders and hips square.",
-      "claim": "c1, c4"
+      "claim": [
+        "c1",
+        "c4"
+      ]
     },
     {
-      "step": "Brace; working elbow at your side, hand at upper-chest level.",
-      "claim": "c16, c7"
+      "step": "Brace. Working elbow at your side, hand at upper-chest level.",
+      "claim": [
+        "c16",
+        "c7"
+      ]
     },
     {
       "step": "Pick a weight you can move with control.",
@@ -466,7 +554,7 @@
       "claim": "c5"
     },
     {
-      "point": "Shoulders and hips stay square; no twisting.",
+      "point": "Shoulders and hips stay square, no twisting.",
       "claim": "c4"
     },
     {
@@ -488,19 +576,23 @@
   ],
   "handlingMistakes": [
     {
+      "mistake": "Leaning over or arching back.",
+      "fix": "Tilt from your hips. Don't arch your back.",
+      "claim": "c17"
+    },
+    {
       "mistake": "Elbow drifting forward.",
-      "fix": "Keep the elbow at your side; stop the return at upper-chest level.",
-      "claim": "c6, c5, c7"
+      "fix": "Keep the elbow at your side. Stop the return at upper-chest level.",
+      "claim": [
+        "c6",
+        "c5",
+        "c7"
+      ]
     },
     {
       "mistake": "Turning the torso.",
       "fix": "Keep shoulders and hips square.",
       "claim": "c4"
-    },
-    {
-      "mistake": "Weight too heavy, moved with momentum.",
-      "fix": "Go lighter and move with control.",
-      "claim": "c13"
     }
   ],
   "feel": {
@@ -522,18 +614,33 @@
       },
       {
         "where": "Side of the back (lats)",
-        "means": "Usually means the elbow is drifting forward.",
-        "fix": "Keep the elbow at your side.",
-        "claim": "c6, c5",
+        "means": "Fault: the elbow drifting forward, which brings in the lats.",
+        "fix": "Pin the elbow to your side.",
+        "claim": [
+          "c6",
+          "c5"
+        ],
         "redFlag": null
       },
       {
-        "where": "Elbow",
-        "means": "Heavy, low-rep sets often feel this way.",
-        "fix": "Use a lighter weight for more reps. Sharp or lasting elbow pain: stop the set.",
-        "claim": "c12",
-        "redFlag": "elbow",
-        "fixNote": "The 'sharp or lasting elbow pain: stop the set' part follows the shared elbow warning box this row links; the claim covers only the discomfort and the lighter-weight advice."
+        "where": "Elbow discomfort or pain",
+        "means": "Is it getting worse?",
+        "fix": "Stop and don't train through the pain. Use lighter weights for more reps.",
+        "claim": [
+          "c12",
+          "c18"
+        ],
+        "redFlag": "elbow"
+      },
+      {
+        "where": "Lower back pain",
+        "means": "Is it getting worse?",
+        "fix": "Stop and don't train through the pain. Stand taller, tilt only from the hips.",
+        "claim": [
+          "c17",
+          "c19"
+        ],
+        "redFlag": "back"
       }
     ]
   },
@@ -545,24 +652,28 @@
     {
       "risk": "Too much weight moved with momentum can lead to injury.",
       "claim": "c13"
+    },
+    {
+      "risk": "Leaning or arching can strain the lower back.",
+      "claim": "c17"
     }
   ],
   "redFlags": [
-    "elbow"
+    "elbow",
+    "back"
   ],
   "zooms": [
     {
       "key": "single-pushdown-wrist",
       "kind": "hand",
-      "right": "Full grip on the handle, thumb wrapped, hand in line with the forearm.",
-      "wrong": "Wrist bent back over the handle.",
-      "claim": "c9",
-      "wrongNote": "The wrong drawing is the inverse of c9 (wrist neutral); no source describes it directly."
+      "right": "Full grip, thumb wrapped, hand in line with the forearm.",
+      "wrong": null,
+      "claim": "c9"
     },
     {
       "key": "single-pushdown-elbow",
       "kind": "posture",
-      "right": "Working elbow against the side at the top of the return.",
+      "right": "Working elbow against the side at the top.",
       "wrong": "Elbow drifted forward, upper arm swung up.",
       "claim": "c6"
     }

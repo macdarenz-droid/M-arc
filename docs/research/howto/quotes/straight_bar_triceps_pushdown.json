@@ -1,6 +1,6 @@
 {
  "id": "straight_bar_triceps_pushdown",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -250,6 +250,22 @@
    "status": "verbatim",
    "closest": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
    "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "nhs-back-pain",
+   "text": "But stop if your pain gets worse and see a GP for advice.",
+   "status": "verbatim",
+   "closest": "But stop if your pain gets worse and see a GP for advice.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c21",
+   "source": "nhs-tennis-elbow",
+   "text": "avoid or reduce activities that make your symptoms worse",
+   "status": "verbatim",
+   "closest": "avoid or reduce activities that make your symptoms worse",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

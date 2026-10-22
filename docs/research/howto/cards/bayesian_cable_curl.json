@@ -126,8 +126,8 @@
     },
     {
      "source": "bb-bayesian",
-     "text": "Steer clear of these common errors if you want to make the most out of the movement. Moving Your Upper Arm",
-     "where": "Common mistakes, first heading"
+     "text": "Steer clear of these common errors if you want to make the most out of the movement.",
+     "where": "Common Bayesian Curl Mistakes, intro; the first item's heading is 'Moving Your Upper Arm'"
     }
    ]
   },
@@ -200,7 +200,7 @@
   },
   {
    "id": "c9",
-   "text": "Holding the arm behind the body asks the small shoulder muscles to hold it in place, and some tension may be felt at the front of the shoulder; it can cause shoulder discomfort for some people.",
+   "text": "Holding the arm behind the body asks the small shoulder muscles to hold it in place, and some tension may be felt at the front of the shoulder; it can cause shoulder discomfort for some people. BarBend says that in such cases you can choose one of its alternative curls instead.",
    "tags": [
     "CONSENSUS"
    ],
@@ -217,6 +217,11 @@
      "source": "bb-bayesian",
      "text": "The cable stations could be busy, it may place stress or discomfort on your shoulders, and so on.",
      "where": "Alternatives"
+    },
+    {
+     "source": "bb-bayesian",
+     "text": "In such cases, go for one of these alternatives instead",
+     "where": "Bayesian Curl Alternatives"
     }
    ]
   },
@@ -256,9 +261,10 @@
   },
   {
    "id": "c12",
-   "text": "Tempo (up = lifting, down = lowering): about 1 s up and a slow 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up and a slow 2 s down, inside ACSM's moderate speed of 1-2 s each way, which is stated for advanced training (LR-15). StrengthLog's \"contracting your biceps at the top\" gives no pause or seconds, so pause is 0.",
    "tags": [
-    "CONSENSUS"
+    "CONSENSUS",
+    "WEAK"
    ],
    "sources": [
     "acsm-2009",
@@ -304,7 +310,7 @@
    "year": 2024,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-bayesian",
@@ -314,7 +320,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "parpa-2025",
@@ -324,7 +330,7 @@
    "year": 2025,
    "pmid": 41133617,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "attarieh-2025",
@@ -334,7 +340,7 @@
    "year": 2025,
    "pmid": 40082069,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "acsm-2009",
@@ -344,7 +350,7 @@
    "year": 2009,
    "pmid": 19204579,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   }
  ],
  "plate": {
@@ -361,7 +367,7 @@
    },
    {
     "label": "Upper arm still",
-    "what": "The upper arm does not move; only the forearm travels.",
+    "what": "The upper arm does not move. Only the forearm travels.",
     "claim": "c5"
    },
    {
@@ -374,7 +380,8 @@
    "what": "Upper arm swinging forward so the shoulder helps lift the handle.",
    "why": "BarBend's first listed common mistake: letting the shoulders take over brings the front delts into the curl.",
    "claim": "c5",
-   "drawable": true
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 3: moving the upper arm (c5), the first item on BarBend's 'Common Bayesian Curl Mistakes' list, a list written for this exercise by the anchor source. Step 1 set aside: \"Steer clear of these common errors if you want to make the most out of the movement.\" is a list sentence read onto items; \"one of the most underrated biceps exercises\", \"one of the most unique\", \"Unlike many other curls\" and \"you can usually find a cable station somewhere\" are about the exercise and equipment; \"typically performed as a unilateral exercise\" is about how it is done; \"Here are a few common questions\" is the FAQ. Step 2: no named fault is tied to harm. Set aside: \"it may place stress or discomfort on your shoulders\" (c9) is about the exercise as a whole, a reason to choose another curl, not a fault; \"applying lots of physical stress to the muscle itself\" and \"your biceps are already placed under stress\" are about training stimulus; the FAQ \"Is the Bayesian curl safe for my shoulders?\" answers yes and names no fault; standing too far away (c3) has a fix (\"try standing a bit closer\") but no harm word. Step 3: BarBend's list order puts moving the upper arm first, standing too far away second. drawable is true: the side view shows the upper arm swinging forward. Pick unchanged; handlingMistakes already has it first."
   },
   "tells": [
    {
@@ -392,8 +399,7 @@
    "pause": 0,
    "claim": "c12"
   },
-  "variantLine": null,
-  "note": "Angle: BarBend gives the upper arm 'about a 45-degree angle relative to the floor' (c2) and 'at most' 45 degrees (c3), and warns against standing far away. A hanging arm is 90° to the floor, so read literally 'at most 45° to the floor' would allow more stretch, which contradicts the warning; the conservative drawing puts the upper arm about 45° behind vertical (equal to 45° to the floor) and never further back."
+  "variantLine": null
  },
  "grip": {
   "type": "One hand on a single cable handle.",
@@ -411,11 +417,11 @@
    "claim": "c1"
   },
   {
-   "step": "Take the handle in your working hand and turn your back to the machine.",
+   "step": "Handle in your working hand, back to the machine.",
    "claim": "c1"
   },
   {
-   "step": "Step forward until the cable has light tension and your arm is drawn behind you.",
+   "step": "Step forward to light cable tension, arm drawn behind you.",
    "claim": "c2"
   },
   {
@@ -441,7 +447,7 @@
    "claim": "c5"
   },
   {
-   "point": "Trunk braced; no tilting side to side.",
+   "point": "Trunk braced, no tilting side to side.",
    "claim": "c7"
   },
   {
@@ -451,18 +457,21 @@
  ],
  "handlingMistakes": [
   {
-   "mistake": "Upper arm moving forward so the shoulder helps.",
-   "fix": "Keep the upper arm still; only the elbow bends.",
-   "claim": "c5"
+   "mistake": "Upper arm moving forward.",
+   "fix": "Keep the upper arm still. Only the elbow bends.",
+   "claim": [
+    "c5",
+    "c4"
+   ]
   },
   {
-   "mistake": "Standing too far from the cable, forcing a big stretch.",
+   "mistake": "Standing too far away.",
    "fix": "Stand a bit closer to the cable.",
    "claim": "c3"
   },
   {
-   "mistake": "Tilting the trunk side to side.",
-   "fix": "Brace your core; free hand on your hip.",
+   "mistake": "Tilting side to side.",
+   "fix": "Brace the trunk. Free hand on your hip.",
    "claim": "c7"
   }
  ],
@@ -497,14 +506,20 @@
     "where": "Front of the shoulder, a stretch",
     "means": "Some tension here can come with the arm held back.",
     "fix": "Stand closer if it is more than a stretch.",
-    "claim": "c9, c3",
+    "claim": [
+     "c9",
+     "c3"
+    ],
     "redFlag": null
    },
    {
     "where": "Front of the shoulder, pain",
-    "means": "The position may not suit your shoulder today.",
+    "means": "Holding the arm back may stress the shoulder.",
     "fix": "Stand closer to the cable, or choose another curl.",
-    "claim": "c9, c3",
+    "claim": [
+     "c9",
+     "c3"
+    ],
     "redFlag": "shoulder"
    }
   ]
@@ -524,14 +539,20 @@
    "kind": "posture",
    "right": "Upper arm held still, drawn back behind the torso.",
    "wrong": "Upper arm swinging forward as the handle rises.",
-   "claim": "c5, c2"
+   "claim": [
+    "c5",
+    "c2"
+   ]
   },
   {
    "key": "bayes-reach",
    "kind": "posture",
    "right": "A step from the cable, light tension, modest stretch.",
    "wrong": "Standing far away with the arm pulled far behind.",
-   "claim": "c3, c2"
+   "claim": [
+    "c3",
+    "c2"
+   ]
   }
  ],
  "libraryDiff": {
@@ -539,5 +560,8 @@
   "remove": [],
   "why": "biceps primary and forearms secondary match exercises.json and StrengthLog (c8)."
  },
- "anchorSource": "bb-bayesian"
+ "anchorSource": "bb-bayesian",
+ "notes": [
+  "Angle: BarBend gives the upper arm 'about a 45-degree angle relative to the floor' (c2) and 'at most' 45 degrees (c3), and warns against standing far away. A hanging arm is 90° to the floor, so read literally 'at most 45° to the floor' would allow more stretch, which contradicts the warning; the conservative drawing puts the upper arm about 45° behind vertical (equal to 45° to the floor) and never further back."
+ ]
 }

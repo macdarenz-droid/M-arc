@@ -1,6 +1,6 @@
 {
  "id": "incline_dumbbell_curl",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -100,6 +100,14 @@
    "note": ""
   },
   {
+   "claim": "c6",
+   "source": "bb-incline",
+   "text": "However, note that the biceps is actually a biarticular muscle — it crosses both the elbow and shoulder joints.",
+   "status": "verbatim",
+   "closest": "However, note that the biceps is actually a biarticular muscle — it crosses both the elbow and shoulder joints.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
    "claim": "c7",
    "source": "oliveira-2009",
    "text": "The Incline Dumbbell Curl and the Dumbbell Biceps Curl resulted in a considerable neuromuscular effort throughout the whole elbow range of motion.",
@@ -186,6 +194,22 @@
    "status": "verbatim",
    "closest": "Sixty-three young women performed the preacher biceps curl (n=30) or the incline biceps curl (n=33) for 8 weeks, twice a week.",
    "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c15",
+   "source": "nhs-wrist-pain",
+   "text": "stop or cut down activities that are causing the pain",
+   "status": "verbatim",
+   "closest": "stop or cut down activities that are causing the pain",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c15",
+   "source": "nhs-wrist-pain",
+   "text": "do not lift heavy objects or grip anything too tightly",
+   "status": "verbatim",
+   "closest": "do not lift heavy objects or grip anything too tightly",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

@@ -21,7 +21,8 @@
    ],
    "sources": [
     "sl-dbwristcurl",
-    "sl-bbwristcurl"
+    "sl-bbwristcurl",
+    "bb-wristcurl"
    ],
    "quotes": [
     {
@@ -33,6 +34,11 @@
      "source": "sl-bbwristcurl",
      "text": "Grab a barbell with an underhand grip and rest your forearms against your thighs, or alternatively against a bench.",
      "where": "How to, step 1"
+    },
+    {
+     "source": "bb-wristcurl",
+     "text": "While you’re sitting in a chair or on a bench, grasp a barbell or a pair of dumbbells with a supinated grip and rest one forearm on each of your legs.",
+     "where": "Seated wrist curl, what is it"
     }
    ]
   },
@@ -94,13 +100,15 @@
   },
   {
    "id": "c5",
-   "text": "People sometimes loosen the grip and let the dumbbell roll to the fingertips on the way down; ACE says this raises the risk of wrist injury and of dropping the weight, and advises squeezing hard in both phases. StrengthLog instead tells lifters to let the weight roll out into the fingers.",
+   "text": "People sometimes loosen the grip and let the dumbbell roll to the fingertips on the way down; ACE says this raises the risk of wrist injury and of dropping the weight, and advises squeezing hard in both phases. Three of the four technique sources say the opposite: StrengthLog's dumbbell and barbell pages tell lifters to let the weight roll out into the fingers, and BarBend to let the handle glide down into the fingertips. ACE is the only read source that ties the roll to harm, so the closed grip stays the shown line (LR-18, R-LB5-3).",
    "tags": [
     "CONSENSUS"
    ],
    "sources": [
     "ace-wristcurl",
-    "sl-dbwristcurl"
+    "sl-dbwristcurl",
+    "bb-wristcurl",
+    "sl-bbwristcurl"
    ],
    "quotes": [
     {
@@ -116,6 +124,16 @@
     {
      "source": "sl-dbwristcurl",
      "text": "Lower your hand towards the floor, and let the dumbbell roll out in your fingers.",
+     "where": "How to, step 2"
+    },
+    {
+     "source": "bb-wristcurl",
+     "text": "So, when you’re performing wrist curling motions in particular, allow the handle of the weight to glide down into your fingertips and then curl it back into the base of your palm as you contract.",
+     "where": "Wrist training tips"
+    },
+    {
+     "source": "sl-bbwristcurl",
+     "text": "Lower your hands towards the floor, and let the barbell roll out in your fingers.",
      "where": "How to, step 2"
     }
    ]
@@ -200,9 +218,10 @@
   },
   {
    "id": "c10",
-   "text": "Tempo (up = lifting, down = lowering): a slow 2 s up and 2 s down, the slow end of ACSM's moderate 1-2 s each way, with a brief hold at the bottom (ACE: hold the end position; BarBend: slow and controlled).",
+   "text": "Tempo (up = lifting, down = lowering): a slow 2 s up and 2 s down, the slow end of ACSM's moderate 1-2 s each way, which is stated for advanced training (LR-15); ACE asks for slow movement both ways and BarBend for a slow and controlled tempo, with no seconds. ACE's brief hold is at the bottom, after the lowering, with no seconds; no quote asks for a pause right after the curl up.",
    "tags": [
-    "CONSENSUS"
+    "CONSENSUS",
+    "WEAK"
    ],
    "sources": [
     "ace-wristcurl",
@@ -237,7 +256,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-dbwristcurl",
@@ -247,7 +266,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-bbwristcurl",
@@ -257,7 +276,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "bb-wristcurl",
@@ -267,7 +286,7 @@
    "year": 2024,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "acsm-2009",
@@ -277,7 +296,7 @@
    "year": 2009,
    "pmid": 19204579,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   }
  ],
  "plate": {
@@ -289,17 +308,20 @@
   "checkpoints": [
    {
     "label": "Forearm supported",
-    "what": "Forearm rests on the thigh or bench; only the hand moves.",
+    "what": "Forearm rests on the thigh or bench. Only the hand moves.",
     "claim": "c1"
    },
    {
     "label": "Palms up",
     "what": "Underhand grip, hand past the edge.",
-    "claim": "c1, c2"
+    "claim": [
+     "c1",
+     "c2"
+    ]
    },
    {
     "label": "Grip stays closed",
-    "what": "Squeeze the weight both ways; don't let it roll to the fingertips.",
+    "what": "Squeeze the weight both ways. Don't let it roll to the fingertips.",
     "claim": "c5"
    }
   ],
@@ -308,7 +330,7 @@
    "claim": "c3",
    "drawable": false,
    "why": "The fault ACE names, the grip opening so the dumbbell rolls to the fingertips (c5), raises the risk of wrist injury and of dropping the weight but needs fingers the engine does not draw (fist circle), so it is shown in the hand zoom; ACE's lowering step rules out extending the arms or leaning (c3), which shows side-on.",
-   "rankNote": "No source ranks the c3 fault as common; it is drawn because the only named fault (c5) cannot be drawn on the body plate."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: loosening the grip so the dumbbell rolls to the fingertips (c5). Step 1 set aside: ACE's \"Individuals sometimes release their grip during the lowering phase\" uses 'sometimes', which is not a frequency word; BarBend's \"Most wrist curl variations neglect radial and ulnar deviation\", \"common in many sports\", \"Many of the muscles in your wrist and forearm also control your fingers\", \"in most cases\" and \"In the overwhelming majority of cases\" are about exercises, muscles, progression and scheduling. Step 2: the grip release is the only named fault a quote ties to harm: \"it also increases the risk of wrist injury and dropping the dumbbells\" (ACE, c5). Set aside: BarBend's \"places them in a somewhat precarious position\" (c6) is about hands over an edge, a setup, and the heavy-weight item is a load choice; \"less risky\" and \"safely\" are about other variations. Three of the four technique sources let the weight roll: StrengthLog's dumbbell page (\"let the dumbbell roll out in your fingers\"), StrengthLog's barbell page (\"Lower your hands towards the floor, and let the barbell roll out in your fingers.\") and BarBend (\"allow the handle of the weight to glide down into your fingertips\"), all c5. ACE is the only read source that ties the roll to harm, so the card keeps ACE's harm-linked fault and the closed grip stays the shown line (LR-18, R-LB5-3). drawable is false: the fault needs open fingers, which the engine does not draw (fist circle), so it is shown in the hand zoom, handlingMistakes[0] stays the grip release, and plate.mistake names the next fault by the same steps. Step 2 has no other candidate. Step 3: no read source has a common-mistakes list, so the fault the most read sources tell the lifter to avoid: extending the arms or leaning forward or back (ACE, c3), the only other fault a source says to avoid; it reads side-on. Pick unchanged."
   },
   "tells": [
    {
@@ -323,8 +345,9 @@
   "tempo": {
    "up": 2,
    "down": 2,
-   "pause": 1,
-   "claim": "c10"
+   "pause": 0,
+   "claim": "c10",
+   "text": "Pause 0 (LR-33): ACE's \"Hold this end position briefly.\" ends the downward phase, so the hold is at the bottom with the wrist bent back, not right after the curl up, and it gives no seconds. No quote on the card asks for a pause after the curl up. Up 2 and down 2 rest on ACSM's 1-2 s (stated for advanced training, WEAK, LR-15) at its slow end, with ACE's \"slowly\" in both phases and BarBend's \"slow and controlled tempo\"."
   },
   "variantLine": "Drawn seated with one dumbbell, forearm on the thigh (StrengthLog, c1). The barbell version (c1) and ACE's kneeling version on a bench (c2) share the grip, lowering and grip-closed lines (c3, c4, c5)."
  },
@@ -346,12 +369,18 @@
    "claim": "c6"
   },
   {
-   "step": "Sit and rest your forearm on your thigh or a bench, hand past the edge.",
-   "claim": "c1, c2"
+   "step": "Sit, forearm on your thigh or a bench, hand past the edge.",
+   "claim": [
+    "c1",
+    "c2"
+   ]
   },
   {
    "step": "Hold the dumbbell palm up in a closed grip.",
-   "claim": "c1, c5"
+   "claim": [
+    "c1",
+    "c5"
+   ]
   }
  ],
  "posture": [
@@ -360,7 +389,7 @@
    "claim": "c1"
   },
   {
-   "point": "Arms and body stay still; no leaning.",
+   "point": "Arms and body stay still. No leaning.",
    "claim": "c3"
   },
   {
@@ -368,25 +397,31 @@
    "claim": "c5"
   },
   {
-   "point": "Lower slowly; hold the bottom briefly.",
+   "point": "Lower slowly. Hold the bottom briefly.",
    "claim": "c3"
   }
  ],
  "handlingMistakes": [
   {
-   "mistake": "Letting the weight roll to the fingertips.",
+   "mistake": "Weight rolling to the fingertips.",
    "fix": "Squeeze the weight hard both ways.",
    "claim": "c5"
   },
   {
-   "mistake": "Leaning or straightening the arms to move the weight.",
-   "fix": "Keep the forearm down; use a lighter weight.",
-   "claim": "c3, c1, c6"
+   "mistake": "Leaning or straightening the arms.",
+   "fix": "Keep the forearm down.",
+   "claim": [
+    "c3",
+    "c1"
+   ]
   },
   {
-   "mistake": "Going heavy with the hands over the edge.",
-   "fix": "Stay light; add reps before weight.",
-   "claim": "c6"
+   "mistake": "Going heavy over the edge.",
+   "fix": "Stay light. Add reps before weight.",
+   "claim": [
+    "c6",
+    "c7"
+   ]
   }
  ],
  "feel": {
@@ -400,24 +435,30 @@
   "watch": [],
   "rows": [
    {
-    "where": "Top of the forearm, the palm-up side",
+    "where": "Top of the forearm, palm-up side",
     "means": "The forearm flexors are working.",
     "fix": "",
-    "claim": "c4, c1",
+    "claim": [
+     "c4",
+     "c1"
+    ],
     "redFlag": null
    },
    {
     "where": "Wrist joint",
-    "means": "Usually means the load is too heavy or the grip has opened.",
+    "means": "Fault: too heavy, or the grip opening.",
     "fix": "Go lighter and keep the fist closed.",
-    "claim": "c5, c6",
+    "claim": [
+     "c5",
+     "c6"
+    ],
     "redFlag": "wrist"
    }
   ]
  },
  "risks": [
   {
-   "risk": "Loosening the grip at the bottom raises the risk of wrist injury and of dropping the weight.",
+   "risk": "Loosening the grip raises the risk of wrist injury and a dropped weight.",
    "claim": "c5"
   },
   {
@@ -441,7 +482,10 @@
    "kind": "posture",
    "right": "Forearm flat on the thigh, only the hand moving.",
    "wrong": "Arms extending or body leaning forward to move the weight.",
-   "claim": "c3, c1"
+   "claim": [
+    "c3",
+    "c1"
+   ]
   }
  ],
  "libraryDiff": {

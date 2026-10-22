@@ -289,21 +289,15 @@
   },
   {
    "id": "c13",
-   "text": "Tempo (up = lifting, down = lowering): about 1 s up and 2 s down, inside ACSM's moderate speed of 1-2 s each way; keep tension at the bottom.",
+   "text": "Keep tension in the muscles at the bottom, and lower the bar slowly back to the start.",
    "tags": [
     "CONSENSUS"
    ],
    "sources": [
-    "acsm-2009",
     "sl-revcurl",
     "tg-revcurl"
    ],
    "quotes": [
-    {
-     "source": "acsm-2009",
-     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-     "where": "abstract"
-    },
     {
      "source": "sl-revcurl",
      "text": "To accomplish this, you could try to avoid letting your elbows travel backwards during the lift, and also keep tension in the muscles in the bottom position.",
@@ -332,6 +326,30 @@
      "where": "abstract"
     }
    ]
+  },
+  {
+   "id": "c15",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up and a slow 2 s down, inside ACSM's moderate 1-2 s each way, which is stated for advanced training (LR-15); Tom's Guide asks for a slow lowering and gives no seconds. No quote on the card asks for a pause.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "acsm-2009",
+    "tg-revcurl"
+   ],
+   "quotes": [
+    {
+     "source": "acsm-2009",
+     "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+     "where": "abstract"
+    },
+    {
+     "source": "tg-revcurl",
+     "text": "Slowly lower the weights down to the starting position and repeat for reps.",
+     "where": "How to"
+    }
+   ]
   }
  ],
  "sources": [
@@ -343,7 +361,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "ace-revcurl",
@@ -353,7 +371,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "tg-revcurl",
@@ -363,7 +381,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "caufriez-2018",
@@ -373,7 +391,7 @@
    "year": 2018,
    "pmid": 29409427,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "coratella-2023",
@@ -383,7 +401,7 @@
    "year": 2023,
    "pmid": 36976950,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "acsm-2009",
@@ -393,7 +411,7 @@
    "year": 2009,
    "pmid": 19204579,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   }
  ],
  "plate": {
@@ -406,7 +424,10 @@
    {
     "label": "Palms down",
     "what": "Overhand grip about shoulder-width, kept all the way up.",
-    "claim": "c1, c3"
+    "claim": [
+     "c1",
+     "c3"
+    ]
    },
    {
     "label": "Straight wrists",
@@ -415,15 +436,19 @@
    },
    {
     "label": "Elbows at sides",
-    "what": "Upper arms don't travel back; elbows close to the ribs.",
-    "claim": "c4, c7"
+    "what": "Upper arms don't travel back. Elbows close to the ribs.",
+    "claim": [
+     "c4",
+     "c7"
+    ]
    }
   ],
   "mistake": {
    "what": "Swinging the arms, using momentum to get the bar up.",
-   "why": "It means the weight is above your ability, cuts the effect and could hurt your joints.",
+   "why": "Tom's Guide lists swinging first among the reverse curl's common mistakes: relying on momentum signals you are lifting above your ability, reduces the effect and could also hurt your joints (c5).",
    "claim": "c5",
-   "drawable": true
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: swinging the arms to get the bar up with momentum (c5). Step 1 set aside: Tom's Guide's \"These are the most common mistakes we see.\" is a list sentence read onto items, not a frequency word on one fault; \"Reverse curls are commonly adopted within resistance training programs\" is about the exercise. Step 2: two candidates on Tom's Guide's 'Reverse curls: Common mistakes' list are tied to harm: swinging (\"it could also hurt your joints\", c5) and flexing the wrists (\"Your wrists should remain neutral without excessive strain on the wrists.\", c6). Each has one harm source (Tom's Guide), both direct, so the earlier on the list that names both wins: swinging is first, flexing wrists second, flaring elbows (c7, no harm) third. Set aside: \"stop if you experience sharp and prolonged pain\" names no fault. drawable is true: the side view shows the arms swinging forward and back. Pick unchanged; handlingMistakes already has it first, then the wrists and the elbows in list order."
   },
   "tells": [
    {
@@ -439,7 +464,7 @@
    "up": 1,
    "down": 2,
    "pause": 0,
-   "claim": "c13"
+   "claim": "c15"
   },
   "variantLine": "Drawn with the EZ bar; the straight-bar guidance (c1, c3, c4) applies to both, and c9 (joint comfort) is the only EZ-specific line."
  },
@@ -456,7 +481,7 @@
  },
  "setup": [
   {
-   "step": "Start light; add weight as you get stronger.",
+   "step": "Start light. Add weight as you get stronger.",
    "claim": "c5"
   },
   {
@@ -486,7 +511,7 @@
    "claim": "c6"
   },
   {
-   "point": "Stand tall; no arching the back.",
+   "point": "Stand tall. No arching the back.",
    "claim": "c8"
   },
   {
@@ -507,7 +532,7 @@
   },
   {
    "mistake": "Elbows flaring outward.",
-   "fix": "Reduce the weight; keep the elbows close to your ribs.",
+   "fix": "Reduce the weight. Keep the elbows close to your ribs.",
    "claim": "c7"
   }
  ],
@@ -546,16 +571,19 @@
    },
    {
     "where": "Wrist",
-    "means": "Usually means the wrist is bending.",
-    "fix": "Straighten the wrist; go lighter if you can't.",
+    "means": "Fault: the wrist bending.",
+    "fix": "Keep a straight line from hands to elbows.",
     "claim": "c6",
     "redFlag": "wrist"
    },
    {
-    "where": "Elbow joint",
-    "means": "Momentum could be loading your joints.",
+    "where": "Joints",
+    "means": "Fault: swinging the bar up with momentum.",
     "fix": "Go lighter and slow down.",
-    "claim": "c5, c13",
+    "claim": [
+     "c5",
+     "c13"
+    ],
     "redFlag": "elbow"
    }
   ]
@@ -585,9 +613,12 @@
   {
    "key": "curl-elbow",
    "kind": "posture",
-   "right": "Upper arm by the side at the top of the curl.",
+   "right": "Upper arm by the side at the top.",
    "wrong": "Arms swinging, using momentum to get the bar up.",
-   "claim": "c5, c4"
+   "claim": [
+    "c5",
+    "c4"
+   ]
   }
  ],
  "libraryDiff": {

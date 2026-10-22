@@ -151,7 +151,7 @@
     },
     {
       "id": "c8",
-      "text": "Getting the weight into position is often the hardest part; use a weight you can get to the start position safely.",
+      "text": "Getting the weight into position is sometimes the hardest part; use a weight you can get to the start position safely.",
       "tags": [
         "CONSENSUS"
       ],
@@ -219,7 +219,7 @@
     },
     {
       "id": "c12",
-      "text": "Listed common mistakes include flaring the elbows outward, swinging the weight with momentum, and locking the elbows at the top.",
+      "text": "Listed common mistakes: flaring the elbows outward, swinging the weight with momentum, arching the lower back and locking the elbows at the top.",
       "tags": [
         "CONSENSUS",
         "WEAK"
@@ -236,6 +236,11 @@
         {
           "source": "motra-db-oh",
           "text": "Using momentum to swing weight",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "motra-db-oh",
+          "text": "Arching lower back",
           "where": "Common mistakes"
         },
         {
@@ -344,13 +349,16 @@
     },
     {
       "id": "c18",
-      "text": "Tempo (up = pressing to straight arms, down = lowering): lower slowly and under control; ACSM advises moderate speed (1-2 s each way). Breathe in on the way down and out on the way up.",
+      "text": "Tempo (up = pressing to straight arms, down = lowering): lower slowly and under control. Healthline asks to hold the fully extended position for a moment, right after the press, and gives no seconds, so the 1 s pause is a drawing convention (LR-33). ACSM's moderate 1-2 s each way is stated for advanced training (LR-15). Motra lists a tempo of \"3-1-1\" without saying which digit is which phase (WEAK); read as lowering-pause-lifting it gives 3 s down, a 1 s pause at the bottom and 1 s up. Motra's \"Squeeze triceps at top.\" gives no pause or seconds. Breathe in on the way down and out on the way up.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "acsm-2009",
-        "ace-oh-ext"
+        "ace-oh-ext",
+        "motra-db-oh",
+        "healthline-ote"
       ],
       "quotes": [
         {
@@ -367,6 +375,39 @@
           "source": "ace-oh-ext",
           "text": "Exhale and slowly press the dumbbell overhead, extending your elbows until your arms are vertical to the floor, elbows pointing forward, but not completely locked.",
           "where": "Upward phase"
+        },
+        {
+          "source": "motra-db-oh",
+          "text": "3-1-1",
+          "where": "Coaching Tips, Tempo"
+        },
+        {
+          "source": "motra-db-oh",
+          "text": "Squeeze triceps at top.",
+          "where": "How to perform, step 5"
+        },
+        {
+          "source": "healthline-ote",
+          "text": "Then, at the lowest point, straighten your elbows and extend the weight back overhead. Hold the fully extended position for a moment, then repeat.",
+          "where": "How to do overhead tricep extensions"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Motra lists elbow joint pain under 'When to Avoid' for this exercise. Used for the elbow row's stop line (R-LB5-2).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-db-oh"
+      ],
+      "quotes": [
+        {
+          "source": "motra-db-oh",
+          "text": "Elbow joint pain",
+          "where": "Safety, When to Avoid"
         }
       ]
     }
@@ -380,7 +421,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "healthline-ote",
@@ -390,7 +431,7 @@
       "year": 2021,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "motra-db-oh",
@@ -400,7 +441,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "alves-2018",
@@ -410,7 +451,7 @@
       "year": 2018,
       "pmid": 28677940,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "kerr-2010",
@@ -420,7 +461,7 @@
       "year": 2010,
       "pmid": 20139328,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "gaviria-2020",
@@ -430,7 +471,7 @@
       "year": 2020,
       "pmid": 32539261,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -440,7 +481,7 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -452,8 +493,11 @@
     "checkpoints": [
       {
         "label": "Arms vertical",
-        "what": "Upper arms stay vertical and still; only the elbows bend.",
-        "claim": "c6, c7"
+        "what": "Upper arms stay vertical and still. Only the elbows bend.",
+        "claim": [
+          "c6",
+          "c7"
+        ]
       },
       {
         "label": "Braced torso",
@@ -468,10 +512,13 @@
     ],
     "mistake": {
       "what": "Back arching as the dumbbell is pressed up.",
-      "why": "Healthline names it as what happens when the weight is too heavy or you are tired, straining the back and shoulders (c9).",
-      "claim": "c9",
-      "drawable": false,
-      "rankNote": "No source ranks faults by frequency. Motra lists flaring the elbows first (c12), which is sideways and cannot be drawn from the side; the drawable back arch is shown."
+      "why": "Healthline says that when the weight is too heavy or you are tired you may be tempted to arch the back, which can increase the strain on the back and shoulder joints (c9). Motra lists it among the common mistakes (c12).",
+      "claim": [
+        "c9",
+        "c12"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: arching the back (c9). Step 1 set aside: Motra's \"Spotting not typically required\" is about spotting; Alves's \"two commonly prescribed elbow extension exercises\" is about the exercise, not a fault; Healthline's \"The most common way to perform this exercise is using a dumbbell\", \"the long head tends to be most active\" and \"sometimes the most difficult part is getting the weight into position\" are about equipment, a muscle's activity ('tend' is not a frequency word) and getting into position; Kerr's \"The most common mechanism of injury was weights dropping on the person (65.5%).\" (c15), \"the most commonly injured body parts\" and \"The most common diagnosis was sprain/strain\" are about all weight training; Gaviria's \"Triceps tendon ruptures (TTRs) are rare and often occur as a result of falling on an outstretched hand, forceful eccentric contraction, direct trauma to the elbow, or lifting against resistance.\" (c16) is about ruptures in general, and forceful lowering is seen only as speed; Gaviria's \"TTRs are most commonly seen in middle-aged men, football players, and weightlifters.\" says who gets ruptures, not that a fault of this exercise happens often; Motra's 'Common Mistakes' heading is a heading. Step 2: the arch is the only candidate a quote ties to harm (Healthline: \"you may be tempted to arch your back, which can increase the strain on your back and shoulder joints\"), and it is on Motra's list (\"Arching lower back\"). Motra's other items, \"Flaring elbows outward\", \"Using momentum to swing weight\" and \"Locking elbows at top\", and Healthline's \"avoid momentum to focus on your form\" name no harm. Motra's 'When to Avoid' items (\"Elbow joint pain\", \"Recent rotator cuff injury\") are conditions, not faults. The head's pick (the arch drawn, the flare called first) is replaced by step 2: the arch is the top fault and drawable is true, because the side view shows the back arch. handlingMistakes already has it first."
     },
     "tells": [
       {
@@ -486,9 +533,9 @@
     "tempo": {
       "up": 1,
       "down": 2,
-      "pause": 0,
+      "pause": 1,
       "claim": "c18",
-      "tempoNote": "ACE says to press and lower slowly (c18); Motra gives 3-1-1 (3 s lowering, 1 s pause, 1 s up). The card keeps ACSM's 1-2 s each way: 1 s up and 2 s down sit inside it, with the lowering the slower phase as ACE and Motra both stress."
+      "text": "Pause 1 (LR-33): Healthline's \"Hold the fully extended position for a moment, then repeat.\" (c18) asks for a pause right after the press and gives no seconds, so the 1 s is a drawing convention (WEAK); Motra's \"Squeeze triceps at top.\" gives no pause or seconds. Motra's \"3-1-1\" (c18, WEAK: the page does not define the digit order, R-PB-3), read as lowering-pause-lifting, names a 1 s pause at the bottom, which is not this field. It would also give 3 s down; the card keeps 2 s down (ACSM, stated for advanced training, WEAK, LR-15; ACE's \"slowly\" gives no seconds) and lists the 3 s on the PR for a ruling (R-LB2-1). Up 1 s sits inside both."
     },
     "variantLine": "Drawn standing in a split stance (ACE, anchor). A seated version on a bench with back support is also used (c11); the technique claims hold for both."
   },
@@ -511,8 +558,11 @@
       "claim": "c8"
     },
     {
-      "step": "Stand in a split stance (or sit on a bench with back support).",
-      "claim": "c11, c1"
+      "step": "Stand in a split stance, or sit on a back-supported bench.",
+      "claim": [
+        "c11",
+        "c1"
+      ]
     },
     {
       "step": "Wrap both hands around the handle.",
@@ -529,8 +579,11 @@
   ],
   "posture": [
     {
-      "point": "Upper arms vertical and still, elbows shoulder-width apart; no flaring.",
-      "claim": "c6, c12"
+      "point": "Upper arms vertical and still, elbows shoulder-width apart, no flaring.",
+      "claim": [
+        "c6",
+        "c12"
+      ]
     },
     {
       "point": "For heavy sets, a spotter can help by supporting your elbows.",
@@ -541,8 +594,11 @@
       "claim": "c5"
     },
     {
-      "point": "Torso braced; do not arch your back.",
-      "claim": "c9, c3"
+      "point": "Torso braced. Don't arch your back.",
+      "claim": [
+        "c9",
+        "c3"
+      ]
     },
     {
       "point": "Head, torso, wrists and feet stay still.",
@@ -555,19 +611,29 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Arching the back to press the weight up.",
-      "fix": "Brace; if the back still arches, use a lighter dumbbell.",
-      "claim": "c9"
+      "mistake": "Arching the back.",
+      "fix": "Brace. If the back still arches, use a lighter dumbbell.",
+      "claim": [
+        "c9",
+        "c3"
+      ]
     },
     {
-      "mistake": "Elbows flaring outward or upper arms moving back.",
-      "fix": "Keep the upper arms vertical, elbows shoulder-width; stop lowering when the upper arms start to move.",
-      "claim": "c6, c5, c12"
+      "mistake": "Elbows flare, upper arms move.",
+      "fix": "Keep upper arms vertical, elbows shoulder-width. Stop lowering if they move.",
+      "claim": [
+        "c6",
+        "c5",
+        "c12"
+      ]
     },
     {
       "mistake": "Swinging the weight with momentum.",
       "fix": "Slow down and avoid momentum.",
-      "claim": "c10"
+      "claim": [
+        "c10",
+        "c12"
+      ]
     }
   ],
   "feel": {
@@ -589,33 +655,39 @@
       },
       {
         "where": "Lower back",
-        "means": "Usually means the back is arching.",
+        "means": "Fault: arching the back.",
         "fix": "Brace and use a lighter dumbbell.",
-        "claim": "c9",
+        "claim": [
+          "c9",
+          "c3"
+        ],
         "redFlag": "back"
       },
       {
         "where": "Shoulders",
-        "means": "Usually means the back is arching or the weight is too heavy.",
+        "means": "Fault: arching the back under a heavy weight.",
         "fix": "Use a lighter dumbbell.",
         "claim": "c9",
         "redFlag": "shoulder"
       },
       {
-        "where": "Back of the elbow",
-        "means": "Triceps tendon ruptures are rare, but often follow forceful lowering.",
-        "fix": "Stop the set.",
-        "claim": "c16",
+        "where": "Back-of-elbow pain",
+        "means": "Fault: lowering forcefully.",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c16",
+          "c19"
+        ],
         "redFlag": "elbow",
-        "fixNote": "'Stop the set' and any pain wording follow the shared elbow warning box this row links; c16 covers only the rupture and its usual cause (not specific to this exercise)."
+        "fixNote": "The stop line rests on c19 (Motra, 'When to Avoid': \"Elbow joint pain\", WEAK; R-LB5-2); c16 covers the rupture and its usual cause (not specific to this exercise). The shared elbow box carries the referral (LR-27 R5)."
       }
     ]
   },
   "risks": [
     {
-      "risk": "Dumbbell over the head: dropped weights are one of the most common causes of weight-training injuries; wrap both hands round the handle, lower slowly, keep it clear of your head, and pick a weight you can get overhead safely.",
-      "claim": "c15, c1, c5, c8",
-      "riskNote": "Kerr 2010 says the most common mechanism across all weight training; the wording here stays at \"one of the most common\" because the figure is not specific to this exercise."
+      "risk": "Across weight training, dropped weights are the most common way people get badly hurt.",
+      "claim": "c15",
+      "riskNote": "Kerr 2010's \"most common mechanism\" covers all weight training, so the line says so (dumbbell_biceps_curl's wording, LB2). Wrapping both hands round the handle (setup[2], c1), keeping the dumbbell clear of the head (posture[2], c5) and a weight you can get overhead safely (setup[0], c8) are shown in their own lines."
     },
     {
       "risk": "Triceps tendon rupture (rare), often from forceful lowering or lifting against resistance.",
@@ -623,7 +695,7 @@
       "riskNote": "Back arching under a heavy weight (c9) left the risks list to make room for the separate progression line; it stays as the plate mistake, in handlingMistakes, posture and the back and shoulder feel rows."
     },
     {
-      "risk": "Adding weight in big jumps. Add 2-10% only once you can do one or two reps over your target.",
+      "risk": "Beat target by one or two reps? Add 2 to 10 percent.",
       "claim": "c17"
     }
   ],
@@ -638,15 +710,21 @@
       "kind": "hand",
       "right": "Both hands wrapped round the handle, dumbbell hanging vertically.",
       "wrong": "Hands not wrapped round the handle.",
-      "claim": "c1, c4",
+      "claim": [
+        "c1",
+        "c4"
+      ],
       "wrongNote": "The wrong drawing is the inverse of c1 (both hands wrapped around the handle); no source describes it directly."
     },
     {
       "key": "db-oh-elbows",
       "kind": "posture",
-      "right": "Upper arms vertical, elbows shoulder-width, dumbbell clear of the head at 90°.",
+      "right": "Upper arms vertical, dumbbell clear of the head at 90°.",
       "wrong": "Upper arms dropped back, dumbbell touching the head.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c6"
+      ]
     }
   ],
   "libraryDiff": {
@@ -654,5 +732,11 @@
     "remove": [],
     "why": "triceps primary matches exercises.json (c14). No secondary muscle is listed there. Motra's muscle breakdown rates Shoulders 4/10 (anterior delts), Forearms 3/10 (flexors) and Abs 2/10; not added, because it is a single coach source with unexplained ratings and no other source read names them."
   },
-  "anchorSource": "ace-oh-ext"
+  "anchorSource": "ace-oh-ext",
+  "gaps": [
+    {
+      "item": "Way out: getting the dumbbell overhead and back down",
+      "why": "No read source describes the kick-up, pressing it up from the thigh or seat, or setting it down (verify/g4.md item 2; LR-13)."
+    }
+  ]
 }

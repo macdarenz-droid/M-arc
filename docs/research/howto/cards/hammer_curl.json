@@ -211,6 +211,11 @@
           "source": "coratella-2023",
           "text": "The anterior deltoid was more excited during the pronated and neutral than the supinated handgrip",
           "where": "Conclusions"
+        },
+        {
+          "source": "coratella-2023",
+          "text": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
+          "where": "abstract, results"
         }
       ]
     },
@@ -260,9 +265,10 @@
     },
     {
       "id": "c12",
-      "text": "Tempo (up = lifting, down = lowering): lift slowly and lower gently; ACSM advises moderate speed (1-2 s up, 1-2 s down). Breathe out on the way up and in on the way down.",
+      "text": "Tempo (up = lifting, down = lowering): lift slowly and lower gently, with no seconds given. 1 s up and 2 s down sit inside ACSM's moderate 1-2 s each way, which is stated for advanced training (LR-15). No quote on the card asks for a pause. Breathe out on the way up and in on the way down.",
       "tags": [
-        "CONSENSUS"
+        "CONSENSUS",
+        "WEAK"
       ],
       "sources": [
         "ace-hammer",
@@ -313,7 +319,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "sl-hammer",
@@ -323,7 +329,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "coratella-2023",
@@ -333,7 +339,7 @@
       "year": 2023,
       "pmid": 36976950,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "caufriez-2018",
@@ -343,7 +349,7 @@
       "year": 2018,
       "pmid": 29409427,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "acsm-2009",
@@ -353,19 +359,19 @@
       "year": 2009,
       "pmid": 19204579,
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
     "view": "side",
-    "viewWhy": "Elbow bend, elbows moving forward (c4, c6) and body swing (c7) read side-on. Twisting the wrists out of the neutral grip (c5) is a forearm rotation the engine cannot draw. Census view is side.",
+    "viewWhy": "Elbow bend, elbows moving forward (c4, c6) and body swing (c7) read side-on. Twisting the wrists out of the neutral grip (c5) is a forearm rotation the engine cannot draw. Census view is side. The LR-31 top fault, the elbows moving forward or back (c6), reads side-on (R-LB2-4).",
     "equipment": "One dumbbell per hand, handles vertical (neutral grip), standing on the floor line in a split stance (c1, c2).",
     "start": "Split stance, torso braced, shoulders down and back, head in line (c2); dumbbells alongside the thighs, palms facing the body, elbows straight (c1).",
     "end": "Elbows bent, dumbbells near the front of the shoulders (c3); elbows not forward, torso upright, wrists straight (c4); grip still neutral (c5).",
     "checkpoints": [
       {
         "label": "Neutral grip",
-        "what": "Palms face the body from bottom to top; wrists do not twist.",
+        "what": "Palms face the body from bottom to top. Wrists do not twist.",
         "claim": "c5"
       },
       {
@@ -381,10 +387,13 @@
     ],
     "mistake": {
       "what": "Elbows moving forward as the dumbbells come up.",
-      "why": "ACE warns against it in the lift (c4) and StrengthLog says it shifts the load to the front delts (c6).",
-      "claim": "c6",
-      "drawable": false,
-      "rankNote": "No source ranks hammer-curl faults by frequency. The hammer-specific fault, twisting out of the neutral grip (c5), is a forearm rotation the engine cannot draw, so the drawable elbow fault is shown."
+      "why": "StrengthLog lists elbow positioning first among the hammer curl's common mistakes: elbows moving forward put an additional load on the front delts instead of the biceps (c6); ACE says to curl without moving the elbows forward (c4).",
+      "claim": [
+        "c6",
+        "c4"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: the elbows moving forward or back (c6), the first item on StrengthLog's 'Common Mistakes in the Hammer Curl' list, a list written for this exercise. Step 1 set aside: StrengthLog's \"available at most gyms\", \"most bicep curls are actually very functional\" and \"they are often worked in big compound exercises\" are about equipment, exercises and training; ACE's \"most comfortable for you\" is about comfort; the 'Common Mistakes in the Hammer Curl' heading is a heading; Coratella's \"the general idea that biceps curl with a neutral handgrip should increase the role of brachioradialis\" (c9) is about a muscle's activity. Step 2: no read source ties a fault to harm: StrengthLog's elbow item moves load to the front delts, its too-heavy item (swinging, half reps; c7) is a load choice, and its grip item (\"It’s easy to start twisting the wrists during the lift, without thinking about it.\", c5) uses 'easy to', not a frequency word, and names no harm. Step 3: StrengthLog's list order is elbow positioning, too-heavy weights, changing grip, so the elbows are the top fault and the wrist twist third on that list. The head drew the elbows as the next drawable fault after the wrist twist; by the steps the elbows are the top fault, so handlingMistakes is reordered (elbows, wrist twist, swinging) and drawable becomes true: the side view shows the elbows forward or back."
     },
     "tells": [
       {
@@ -437,7 +446,7 @@
   ],
   "posture": [
     {
-      "point": "Palms keep facing your body; no wrist twist.",
+      "point": "Palms keep facing your body, no wrist twist.",
       "claim": "c5"
     },
     {
@@ -445,7 +454,7 @@
       "claim": "c4"
     },
     {
-      "point": "Torso upright; no arching the lower back.",
+      "point": "Torso upright. No arching the lower back.",
       "claim": "c4"
     },
     {
@@ -463,17 +472,20 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Twisting the wrists out of the neutral grip.",
+      "mistake": "Elbows moving forward or back.",
+      "fix": "Keep the elbows at your sides.",
+      "claim": [
+        "c6",
+        "c4"
+      ]
+    },
+    {
+      "mistake": "Wrists twisting out of neutral.",
       "fix": "Keep the palms facing your body the whole way.",
       "claim": "c5"
     },
     {
-      "mistake": "Elbows moving forward or back.",
-      "fix": "Keep the elbows at your sides.",
-      "claim": "c6"
-    },
-    {
-      "mistake": "Swinging the body to get the weight up.",
+      "mistake": "Swinging the body.",
       "fix": "Take weight off and lift with control.",
       "claim": "c7"
     }
@@ -494,31 +506,37 @@
     "watch": [],
     "rows": [
       {
-        "where": "Front of the upper arm and top of the forearm",
+        "where": "Front of upper arm and forearm",
         "means": "The elbow flexors are doing the work.",
         "fix": "",
-        "claim": "c8, c11",
+        "claim": [
+          "c8",
+          "c11"
+        ],
         "redFlag": null
       },
       {
         "where": "Front of the shoulder",
-        "means": "Usually means the elbows are moving forward.",
+        "means": "Fault: the elbows moving forward, which loads the front delts.",
         "fix": "Keep the elbows at your sides.",
         "claim": "c6",
         "redFlag": null
       },
       {
         "where": "Wrist",
-        "means": "Usually means the wrist is bending or twisting.",
+        "means": "Fault: the wrist bending or twisting.",
         "fix": "Keep the wrist straight, palms facing your body.",
-        "claim": "c4, c5",
+        "claim": [
+          "c4",
+          "c5"
+        ],
         "redFlag": "wrist"
       }
     ]
   },
   "risks": [
     {
-      "risk": "Too heavy a weight leads to swinging the body and half reps.",
+      "risk": "Too heavy a weight can make you swing and cut reps short.",
       "claim": "c7"
     },
     {
@@ -535,7 +553,11 @@
       "kind": "hand",
       "right": "Closed neutral grip, thumb round the handle, wrist straight.",
       "wrong": "Wrist twisted toward palms-up partway through the curl.",
-      "claim": "c5"
+      "claim": [
+        "c5",
+        "c1",
+        "c4"
+      ]
     },
     {
       "key": "hammer-elbow",

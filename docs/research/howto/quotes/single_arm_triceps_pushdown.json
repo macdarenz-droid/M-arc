@@ -1,6 +1,6 @@
 {
  "id": "single_arm_triceps_pushdown",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -178,6 +178,38 @@
    "status": "verbatim",
    "closest": "Depress and retract your scapulae (pull shoulders back and down) and attempt to hold this position throughout the exercise.",
    "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "sl-pushdown",
+   "text": "Some people tend to lean too far forward or arch their back, which can put unnecessary strain on the lower back and shift the focus away from the triceps.",
+   "status": "verbatim",
+   "closest": "Some people tend to lean too far forward or arch their back, which can put unnecessary strain on the lower back and shift the focus away from the triceps.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c17",
+   "source": "sl-pushdown",
+   "text": "If you need to lean slightly forward, make sure to tilt from your hips rather than arching your back.",
+   "status": "verbatim",
+   "closest": "If you need to lean slightly forward, make sure to tilt from your hips rather than arching your back.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c18",
+   "source": "nhs-tennis-elbow",
+   "text": "avoid or reduce activities that make your symptoms worse",
+   "status": "verbatim",
+   "closest": "avoid or reduce activities that make your symptoms worse",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c19",
+   "source": "nhs-back-pain",
+   "text": "But stop if your pain gets worse and see a GP for advice.",
+   "status": "verbatim",
+   "closest": "But stop if your pain gets worse and see a GP for advice.",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

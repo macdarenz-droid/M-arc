@@ -234,6 +234,22 @@
    "status": "verbatim",
    "closest": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
    "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "nhs-wrist-pain",
+   "text": "stop or cut down activities that are causing the pain",
+   "status": "verbatim",
+   "closest": "stop or cut down activities that are causing the pain",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c17",
+   "source": "nhs-wrist-pain",
+   "text": "do not lift heavy objects or grip anything too tightly",
+   "status": "verbatim",
+   "closest": "do not lift heavy objects or grip anything too tightly",
+   "note": "fetched by curl 2026-10-22"
   }
  ],
  "sources": [

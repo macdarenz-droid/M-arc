@@ -1,6 +1,6 @@
 {
  "id": "ez_bar_curl",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -140,22 +140,6 @@
    "note": ""
   },
   {
-   "claim": "c12",
-   "source": "marcolin-2018",
-   "text": "The metronome was set so that each repetition duration was 3 s.",
-   "status": "verbatim",
-   "closest": "The metronome was set so that each repetition duration was 3 s.",
-   "note": ""
-  },
-  {
-   "claim": "c12",
-   "source": "acsm-2009",
-   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-   "status": "verbatim",
-   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
-   "note": "matched in PubMed abstract"
-  },
-  {
    "claim": "c13",
    "source": "acsm-2009",
    "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
@@ -170,6 +154,46 @@
    "status": "verbatim",
    "closest": "Bend your elbows and lift the bar towards your chest by contracting your biceps.",
    "note": "read by fixer in live page 2026-09-30"
+  },
+  {
+   "claim": "c14",
+   "source": "sl-ez",
+   "text": "Briefly pause at the top without allowing your elbows to move forward. Slowly lower back to the starting position in a controlled manner.",
+   "status": "verbatim",
+   "closest": "Briefly pause at the top without allowing your elbows to move forward. Slowly lower back to the starting position in a controlled manner.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c14",
+   "source": "marcolin-2018",
+   "text": "The metronome was set so that each repetition duration was 3 s.",
+   "status": "verbatim",
+   "closest": "The metronome was set so that each repetition duration was 3 s.",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c14",
+   "source": "acsm-2009",
+   "text": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "status": "verbatim",
+   "closest": "at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c15",
+   "source": "nhs-wrist-pain",
+   "text": "stop or cut down activities that are causing the pain",
+   "status": "verbatim",
+   "closest": "stop or cut down activities that are causing the pain",
+   "note": "fetched by curl 2026-10-22"
+  },
+  {
+   "claim": "c15",
+   "source": "nhs-wrist-pain",
+   "text": "do not lift heavy objects or grip anything too tightly",
+   "status": "verbatim",
+   "closest": "do not lift heavy objects or grip anything too tightly",
+   "note": "fetched by curl 2026-10-22"
   }
  ]
 }

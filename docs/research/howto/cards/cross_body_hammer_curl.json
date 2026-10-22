@@ -64,6 +64,11 @@
      "source": "fb-cbhammer",
      "text": "Maintain tension in your bicep as you bring the dumbbell back to its starting position by reversing the movement.",
      "where": "Instructions, step 7"
+    },
+    {
+     "source": "fb-cbhammer",
+     "text": "Repeat this action with your other arm.",
+     "where": "Instructions, step 8"
     }
    ]
   },
@@ -242,9 +247,10 @@
   },
   {
    "id": "c11",
-   "text": "Tempo (up = lifting, down = lowering): about 1 s up, a brief hold at the top, about 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "text": "Tempo (up = lifting, down = lowering): Fitbod asks to hold the dumbbell at the top for a moment, right after the lift, and gives no seconds, so the 1 s pause is a drawing convention (LR-33). 1 s up and 2 s down sit inside ACSM's moderate 1-2 s each way, which is stated for advanced training (LR-15).",
    "tags": [
-    "CONSENSUS"
+    "CONSENSUS",
+    "WEAK"
    ],
    "sources": [
     "acsm-2009",
@@ -341,7 +347,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "ace-hammer",
@@ -351,7 +357,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-hammer",
@@ -361,7 +367,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "coratella-2023",
@@ -371,7 +377,7 @@
    "year": 2023,
    "pmid": 36976950,
    "access": "full",
-   "checked": "2026-09-30",
+   "checked": "2026-10-22",
    "pmcid": "PMC10054060"
   },
   {
@@ -382,7 +388,7 @@
    "year": 2009,
    "pmid": 19204579,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "kerr-2010",
@@ -392,19 +398,19 @@
    "year": 2010,
    "pmid": 20139328,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   }
  ],
  "plate": {
   "view": "front",
-  "viewWhy": "The dumbbell travels across the body toward the opposite shoulder (c2, c3), which only reads face-on. Census view is front.",
+  "viewWhy": "The dumbbell travels across the body toward the opposite shoulder (c2, c3), which only reads face-on. Census view is front. The top fault, the working arm fully straight at the bottom (c15), differs from the slight bend of the start (c14) only by a small elbow bend toward the camera, which the front view cannot show. The plate draws the wrist twist (c7), which turns the dumbbell off vertical and reads face-on.",
   "equipment": "One dumbbell per hand, standing on the floor line. No bench.",
   "start": "Standing, feet about shoulder-width (c1); dumbbells in front of you, palms facing the body (c1), elbows slightly bent, about shoulder-width apart (c14); shoulders down and back (c6).",
   "end": "Working elbow bent, dumbbell raised in an arc to near the opposite shoulder (c2); elbow in the same place (c2); wrist straight, palm still facing the body (c5, c7); shoulders level, not shrugged (c5).",
   "checkpoints": [
    {
     "label": "Palms face body",
-    "what": "Neutral grip, kept for the whole lift; no wrist twist.",
+    "what": "Neutral grip, kept for the whole lift. No wrist twist.",
     "claim": "c7"
    },
    {
@@ -419,11 +425,14 @@
    }
   ],
   "mistake": {
-   "what": "Working arm fully extended at the bottom, so the biceps lose tension between reps.",
-   "why": "Fitbod's cross-body page calls it very common; keeping the arm slightly bent maintains tension in the biceps.",
-   "claim": "c15",
+   "what": "Wrists twisting during the lift, so the grip is no longer neutral.",
+   "why": "StrengthLog's hammer curl lists changing grip among its common mistakes: keep the grip neutral during the movement, since it is easy to start twisting the wrists during the lift without thinking about it (c7, MECH: same neutral grip). ACE asks for a neutral wrist with the palms facing the body (c5).",
+   "claim": [
+    "c7",
+    "c5"
+   ],
    "drawable": true,
-   "rankNote": "Fitbod names two faults: swinging (c4), a trunk movement that reads side-on, and losing tension at the bottom (c15), which it calls very common and which shows front-on as a straight working arm against the slight bend of the start (c14). The shrug (c5, from the hammer curl) stays in handlingMistakes and the cross-arc zoom."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: losing tension at the bottom with the arm fully extended (c15), from Fitbod's \"It’s very common to lose tension at the bottom of the movement when your arms are fully extended.\" The frequency word sits on the fault itself, in a source written for this exercise. Set aside: Fitbod's \"Unlike many other Hammer Curl variations\" and \"one of the most common isolation, biceps exercises\", StrengthLog's \"available at most gyms\" and \"most bicep curls are actually very functional\", ACE's \"most comfortable for you\" and Coratella's \"the biceps curl is common in practice\" are about exercises, equipment or comfort; Kerr's \"The most common mechanism of injury was weights dropping on the person (65.5%).\" (c13) is about all weight training; Kerr's \"The upper trunk (25.3%) and lower trunk (19.7%) were the most commonly injured body parts.\" and \"The most common diagnosis was sprain/strain (46.1%).\" are about all weight training; the 'Common Form Mistakes' and 'Common Mistakes in the Hammer Curl' headings are headings. drawable is false: the front view cannot show a small elbow bend toward the camera (viewWhy), so handlingMistakes[0] stays the range fault and plate.mistake names the next fault by the same steps. Step 2 for the next fault: swinging (\"increases the risk of injury\", c4) is the only other candidate a quote ties to harm, but its still sign, a trunk lean, is front-to-back and the front view cannot show it. Step 3: Fitbod's list (written for this exercise, the anchor) has no other item; StrengthLog's hammer curl list (the standard hammer curl) comes next: elbow positioning (elbows forward or back) is front-to-back and cannot be drawn front-on; \"Using too heavy weights\" is a load; changing grip, twisting the wrists (c7), is the first drawable item, and the front view shows the dumbbell turned off vertical. The shrug (c5, ACE) is an instruction, not a list item, so it comes after the list. PICK CHANGED: plate.mistake moves from the range fault (drawn as drawable at the head) to the wrist twist; the range fault stays handlingMistakes[0]."
   },
   "tells": [
    {
@@ -432,7 +441,10 @@
    },
    {
     "text": "Shoulders stay level and down",
-    "claim": "c5"
+    "claim": [
+     "c5",
+     "c6"
+    ]
    }
   ],
   "tempo": {
@@ -479,19 +491,25 @@
    "claim": "c2"
   },
   {
-   "point": "Elbow stays in place; arm slightly bent at the bottom.",
-   "claim": "c2, c15"
+   "point": "Elbow stays in place, arm slightly bent at the bottom.",
+   "claim": [
+    "c2",
+    "c15"
+   ]
   },
   {
-   "point": "Palm keeps facing the body; wrist straight.",
-   "claim": "c7"
+   "point": "Palm keeps facing the body, wrist straight.",
+   "claim": [
+    "c7",
+    "c5"
+   ]
   },
   {
    "point": "No shrugging.",
    "claim": "c5"
   },
   {
-   "point": "Torso upright; no arching the lower back.",
+   "point": "Torso upright. No arching the lower back.",
    "claim": "c6"
   },
   {
@@ -501,19 +519,22 @@
  ],
  "handlingMistakes": [
   {
-   "mistake": "Arms fully extended at the bottom, losing tension.",
-   "fix": "Limit the range; keep the arm slightly bent between reps.",
+   "mistake": "Arm fully straight at bottom.",
+   "fix": "Limit the range. Keep the arm slightly bent between reps.",
    "claim": "c15"
   },
   {
    "mistake": "Swinging the dumbbells with momentum.",
-   "fix": "Go lighter and control the weight; if you're struggling, use a seated variation.",
+   "fix": "Go lighter, control the weight. Still swinging? Try it seated.",
    "claim": "c4"
   },
   {
-   "mistake": "Shrugging the shoulder as the weight rises.",
+   "mistake": "Shrugging the shoulder.",
    "fix": "Keep the shoulders down and back.",
-   "claim": "c5"
+   "claim": [
+    "c5",
+    "c6"
+   ]
   }
  ],
  "feel": {
@@ -552,9 +573,13 @@
    },
    {
     "where": "Wrist",
-    "means": "Usually means the wrist is bending or twisting.",
-    "fix": "Keep the palm facing your body; go lighter if you can't.",
-    "claim": "c7",
+    "means": "Fault: the wrist bending or twisting.",
+    "fix": "Keep the palm facing your body. Go lighter if you can't.",
+    "claim": [
+     "c7",
+     "c5",
+     "c4"
+    ],
     "redFlag": "wrist"
    }
   ]

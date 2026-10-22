@@ -145,6 +145,11 @@
      "source": "sl-incline",
      "text": "Another consequence is that it is slightly harder to cheat with your technique in this exercise.",
      "where": "Commentary"
+    },
+    {
+     "source": "bb-incline",
+     "text": "However, note that the biceps is actually a biarticular muscle — it crosses both the elbow and shoulder joints.",
+     "where": "Muscles worked, biceps"
     }
    ]
   },
@@ -252,9 +257,10 @@
   },
   {
    "id": "c12",
-   "text": "Tempo (up = lifting, down = lowering): about 1 s up and 2 s down, inside ACSM's moderate speed of 1-2 s each way.",
+   "text": "Tempo (up = lifting, down = lowering): about 1 s up and 2 s down, inside ACSM's moderate speed of 1-2 s each way, which is stated for advanced training (LR-15). No quote on the card asks for a pause.",
    "tags": [
-    "CONSENSUS"
+    "CONSENSUS",
+    "WEAK"
    ],
    "sources": [
     "acsm-2009"
@@ -300,6 +306,29 @@
      "where": "abstract, results"
     }
    ]
+  },
+  {
+   "id": "c15",
+   "text": "The NHS advises people with wrist pain to stop or cut down the activities causing it and not to lift heavy objects or grip anything too tightly (NHS wrist-pain self-care advice, applied here to training; R-LB5-2). The source is data only.",
+   "tags": [
+    "CONSENSUS",
+    "MECH"
+   ],
+   "sources": [
+    "nhs-wrist-pain"
+   ],
+   "quotes": [
+    {
+     "source": "nhs-wrist-pain",
+     "text": "stop or cut down activities that are causing the pain",
+     "where": "How you can ease wrist pain yourself: Do"
+    },
+    {
+     "source": "nhs-wrist-pain",
+     "text": "do not lift heavy objects or grip anything too tightly",
+     "where": "How you can ease wrist pain yourself: Don't"
+    }
+   ]
   }
  ],
  "sources": [
@@ -311,7 +340,7 @@
    "year": 2024,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-incline",
@@ -321,7 +350,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "oliveira-2009",
@@ -331,7 +360,7 @@
    "year": 2009,
    "pmid": 24150552,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "kassiano-2025",
@@ -341,7 +370,7 @@
    "year": 2025,
    "pmid": 39809454,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "ace-bicepsstudy",
@@ -351,7 +380,7 @@
    "year": 2014,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "ace-seated-curl",
@@ -361,7 +390,7 @@
    "year": null,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "sl-dbcurl",
@@ -371,7 +400,7 @@
    "year": 2020,
    "pmid": null,
    "access": "full",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "acsm-2009",
@@ -381,7 +410,7 @@
    "year": 2009,
    "pmid": 19204579,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
   },
   {
    "id": "kerr-2010",
@@ -391,20 +420,33 @@
    "year": 2010,
    "pmid": 20139328,
    "access": "abstract",
-   "checked": "2026-09-30"
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "nhs-wrist-pain",
+   "url": "https://www.nhs.uk/symptoms/hand-pain/wrist-pain/",
+   "title": "Wrist pain (NHS)",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
   }
  ],
  "plate": {
   "view": "side",
-  "viewWhy": "The bench angle (c1), arms hanging behind the torso (c2) and elbow drift (c3, c4) all read side-on. Census view is side.",
+  "viewWhy": "The bench angle (c1), arms hanging behind the torso (c2) and elbow drift (c3, c4) all read side-on. Census view is side. The LR-31 top fault, the wrist bent up or down (c11), cannot be shown in the side view (as ruling R-LB2-27 found for dumbbell_biceps_curl), so the plate draws the elbow drift (c4), the next fault by LR-31 step 3.",
   "equipment": "Adjustable bench at about 45-65 degrees from the floor (c1); one dumbbell per hand.",
   "start": "Seated, back against the incline pad (c2); arms hanging straight down, square to the floor, behind the torso line (c2, c3); palms forward, wrists straight (c11).",
   "end": "Elbows bent, dumbbells raised as high as they go without the elbows drifting forward (c3); upper arms still behind the torso, elbows back (c4); back still on the pad (c2, c11).",
   "checkpoints": [
    {
     "label": "Bench 45-65°",
-    "what": "High incline, not upright; too low loads the front of the shoulder.",
-    "claim": "c1, c5"
+    "what": "High incline, not upright. Too low loads the front of the shoulder.",
+    "claim": [
+     "c1",
+     "c5"
+    ]
    },
    {
     "label": "Arms hang down",
@@ -413,15 +455,22 @@
    },
    {
     "label": "Elbows back",
-    "what": "Elbows stay pinned back; stop before they drift forward.",
-    "claim": "c4, c3"
+    "what": "Elbows stay pinned back. Stop before they drift forward.",
+    "claim": [
+     "c4",
+     "c3"
+    ]
    }
   ],
   "mistake": {
    "what": "Elbows drifting forward as the dumbbells rise.",
-   "why": "It cuts the stretch and tension on the biceps and may mean you are forcing too much range.",
-   "claim": "c4, c3",
-   "drawable": true
+   "why": "BarBend lists drifting the arm forward among the common mistakes: it reduces some of the stretch and tension on the biceps (c4), and it may mean you are forcing too much range of motion (c3).",
+   "claim": [
+    "c4",
+    "c3"
+   ],
+   "drawable": false,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: bent wrists (c11). Step 1 set aside: BarBend's \"you’re likely going to feel the most tension in the front of your shoulder\" uses 'likely', not a frequency word, and is about the bench setting; \"The drag curl isn’t an exercise you’ll often see\", \"the vast majority of curls\" and \"can’t really find in many other places\" are about exercises; ACE's study page lines (\"the eight most commonly used exercises\", \"which lifts and exercises the members did most often\", \"significantly less than most of the other exercises\") are about exercises and muscle activity; Kerr's \"The most common mechanism of injury was weights dropping on the person (65.5%).\" (c14) is about all weight training; Kerr's \"The upper trunk (25.3%) and lower trunk (19.7%) were the most commonly injured body parts.\" and \"The most common diagnosis was sprain/strain (46.1%).\" are about all weight training; the 'Common ... Mistakes' headings are headings. Step 2: bent wrists are the only named fault (handlingMistakes) a quote ties to harm: StrengthLog's dumbbell curl \"If they’re bent, it can put an unnecessary load on them and lead to discomfort and maybe even injuries.\" (c11, MECH, same grip), with ACE's \"Maintain a neutral wrist position\". Set aside: the bench set too low (c5: \"If the posture of the incline curl causes you shoulder discomfort\"; \"lower than about 40 degrees could cause shoulder discomfort\") is a bench setting, not a candidate (LR-31, R-LB2-12); the arm drifting forward reduces stretch and tension, no harm; \"incur a lot of muscle damage\" is about the training stimulus. drawable is false: the side view cannot show the bent wrist (as R-LB2-27 ruled for dumbbell_biceps_curl), so handlingMistakes[0] becomes the wrist and plate.mistake names the next fault by the same steps. Step 2 has no other candidate, so step 3: BarBend's 'Common Incline Dumbbell Curl Mistakes' list (the anchor, written for this exercise) has the bench setting (not a candidate), then drifting the arm forward (c4), which the side view shows. plate.mistake is unchanged; handlingMistakes is reordered (wrist, elbows forward, bench); drawable becomes false."
   },
   "tells": [
    {
@@ -463,7 +512,7 @@
    "claim": "c1"
   },
   {
-   "step": "Lean back on the pad; let your arms hang straight down.",
+   "step": "Lean back on the pad. Let your arms hang straight down.",
    "claim": "c2"
   },
   {
@@ -474,14 +523,17 @@
  "posture": [
   {
    "point": "Head, shoulders and buttocks stay on the bench.",
-   "claim": "c2, c11"
+   "claim": [
+    "c2",
+    "c11"
+   ]
   },
   {
    "point": "Arms stay behind the torso.",
    "claim": "c3"
   },
   {
-   "point": "Elbows pinned back; no forward drift.",
+   "point": "Elbows pinned back, no forward drift.",
    "claim": "c4"
   },
   {
@@ -495,19 +547,22 @@
  ],
  "handlingMistakes": [
   {
-   "mistake": "Elbows drifting forward to finish the curl.",
-   "fix": "Keep the elbows back; stop the curl a little lower.",
-   "claim": "c4"
+   "mistake": "Wrists bending under the dumbbells.",
+   "fix": "Keep the hand in line with the forearm.",
+   "claim": "c11"
+  },
+  {
+   "mistake": "Elbows drifting forward.",
+   "fix": "Keep the elbows back. Stop the curl a little lower.",
+   "claim": [
+    "c4",
+    "c3"
+   ]
   },
   {
    "mistake": "Bench set too low.",
    "fix": "Raise it toward 45-65 degrees.",
    "claim": "c5"
-  },
-  {
-   "mistake": "Wrists bending under the dumbbells.",
-   "fix": "Keep the hand in line with the forearm.",
-   "claim": "c11"
   }
  ],
  "feel": {
@@ -526,35 +581,41 @@
   "watch": [],
   "rows": [
    {
-    "where": "Front of the upper arm, through the whole lift",
+    "where": "Front of the upper arm",
     "means": "The biceps are working from a stretched start.",
     "fix": "",
-    "claim": "c7, c6",
+    "claim": [
+     "c7",
+     "c6"
+    ],
     "redFlag": null
    },
    {
     "where": "Front of the shoulder",
-    "means": "Usually means the bench is set too low.",
+    "means": "Fault: the bench set too low.",
     "fix": "Raise the bench a bit.",
     "claim": "c5",
     "redFlag": "shoulder"
    },
    {
-    "where": "Wrist",
-    "means": "Usually means the wrist is bending.",
-    "fix": "Straighten the wrist; go lighter if you can't.",
-    "claim": "c11",
+    "where": "Wrist discomfort or pain",
+    "means": "Fault: the wrists bent up or down under load.",
+    "fix": "Stop and don't train through the pain. Keep the wrist straight.",
+    "claim": [
+     "c11",
+     "c15"
+    ],
     "redFlag": "wrist"
    }
   ]
  },
  "risks": [
   {
-   "risk": "A bench set too low can move tension to the front of the shoulder and cause discomfort.",
+   "risk": "Bench too low: tension moves to the front shoulder, which can cause discomfort.",
    "claim": "c5"
   },
   {
-   "risk": "Across all weight training, not this curl specifically, dropped weights are the most common way people get badly hurt.",
+   "risk": "Across weight training, dropped weights are the most common way people get badly hurt.",
    "claim": "c14"
   }
  ],
@@ -566,7 +627,7 @@
   {
    "key": "incline-elbow",
    "kind": "posture",
-   "right": "Upper arm behind the torso, elbow pinned back at the top.",
+   "right": "Upper arm behind the torso, elbow pinned back.",
    "wrong": "Elbow drifted forward past the torso line.",
    "claim": "c4"
   },

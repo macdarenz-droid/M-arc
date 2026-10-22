@@ -1,6 +1,6 @@
 {
  "id": "hammer_curl",
- "checked": "2026-09-30",
+ "checked": "2026-10-22",
  "fetcher": "sonnet source fetcher",
  "quotes": [
   {
@@ -130,6 +130,14 @@
    "status": "verbatim",
    "closest": "The anterior deltoid was more excited during the pronated and neutral than the supinated handgrip",
    "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "coratella-2023",
+   "text": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
+   "status": "verbatim",
+   "closest": "During the ascending phase, (i) biceps brachii excitation was greater with the supinated compared to the pronated [+19(7)%, ES: 2.60] and neutral handgrip [+12(9)%, ES: 1.24]",
+   "note": "fetched by curl 2026-10-22"
   },
   {
    "claim": "c10",
