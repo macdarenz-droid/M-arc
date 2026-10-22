@@ -838,6 +838,15 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - Active LIB builders: 3 of 4 (LIB-13 #274, LIB-5v #282, LIB-7b #284). An Opus helper is mapping the batches after LB3/pilot B for the 4th slot.
 - HT-11 #273 conflicts with main (screenshot-gate.mjs, loaders.ts, gate-split.test.ts); it needs its catch-up and regenerate at slot 11.
 
+**Update 08:00 UTC** (usage 7-day 0.09 at 07:38; heavy verify burst, about 0.016 per hour; watch it):
+- **Research for LB4, LB5 and LB6** (no LIB slot): briefs `lb4/5/6-research-card.md` (cards `f9a608df`). Sessions: LB4 session_018wXZ18trjB6gd3oCG511EP (#285), LB5 session_01CcEQFyk7tDxmYu7j5GnXHF (#286), LB6 session_01VEuBusV1m1mqtiEqNWiEyq (#287). All three LR-29 verifies are **VALID**; records `lb4/5/6-research-verify.md`. Fix rounds are done and rechecked: LB4 @ `3f0330e6` PASS; LB5 @ `9bdf4084` (3 parent/child fixes after recheck); LB6 @ `51d5bb58` (2 fixes after recheck). **Next: merge each PR into claude/libht-research once CI is green**, then name the heads to LIB-14 (LB4) and to the later LB5/LB6 cards.
+- **New rulings:** D-SUP-PROTECT (a "protects" cue counts as LR-31 step-2 harm; verified precedent), D-SUP-LB6-CCP, D-SUP-LB4-PACOPY, D-SUP-LB4-REVLUNGE (corrected to reading A), R-LB4-1..7, R-LB5-1..7, R-LB6-1..10. **Lesson:** check verified precedent before ruling an LR reading (D-SUP-LB4-REVLUNGE needed a correction).
+- **LB3 (#274):** recheck 2 VALID (lib4-cards 30): **pendlay PASS, so 6 of 7 are approved**; golden-B follow-up 22 (pull_up floor). one_arm fails R5 only (draw order), so **D-LIB13-PANEL3** is one mechanical round, then an R5 recheck.
+- **LIB-7b (#284):** rulings D-LIB7b-ZOOMS (A), -TUPLES (A), -PAGEDUP-141 (i); F-LIB7b-1 and -2 logged. Do 6's scratch ref `claude/lib-7b-scratch` is being built by the supervisor.
+- **LIB-5v (#282) READY @ 2ad1bf3c**; reviewer session_015fLqgHyqJm3GfvALqRjDSX is running.
+- **No-seconds tempo strip:** a design sheet (options A, B, C; B recommended) was sent to the owner at about 07:15 for his choice. It unblocks about 25 cards, including LB4's 5 build-ahead rows and the held box_jump and reverse_lunge.
+- **LIB-14 (LB4 build-ahead) card:** a DRAFT is on cards `9ceaaf9f`. It waits for the LB4 research merge and the owner's tempo choice.
+
 ### 8.0o TAKEOVER 10-22: the owner moves the work to his other account (read first; supersedes 8.0n and section 10 where they differ)
 
 **Written by** the old supervisor, session_01HtNEBU3oDR8NyHKK3uCwUi, on the account being left, on 2026-10-22. Nothing has been built since the usage pause of 10-19 22:58 UTC.
