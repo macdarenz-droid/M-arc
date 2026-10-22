@@ -100,7 +100,9 @@ const C2_SEEDS = {
 const C2_SEED_SRC = SEED && BLOCK === 'copy2' && `(() => { const orig = Element.prototype.animate; Element.prototype.animate = function (kf, o) {
   if (!(this.classList?.contains('sheet-panel') && Array.isArray(kf) && /^translateY\\(-/.test(kf[0]?.transform || ''))) return orig.call(this, kf, o);
   ${C2_SEEDS[SEED]} }; })()`;
-const HIDDEN_FEEL = `(() => { const s = document.createElement('style'); s.textContent = 'dialog.sheet.ht .feel { visibility: hidden }'; (document.head || document.documentElement).append(s); })()`;
+const HIDDEN_FEEL = `(() => { const s = document.createElement('style'); s.textContent = 'dialog.sheet.ht .feel { visibility: hidden }';
+  const add = () => (document.head || document.documentElement).append(s);
+  if (document.documentElement) add(); else new MutationObserver((_, o) => { if (document.documentElement) { o.disconnect(); add(); } }).observe(document, { childList: true }); })()`;
 /** The chunk fault: wait for the worker to control the page, delete the chunk from every marc-* cache, then arm. */
 const FAULT_RE = FAIL || DELAY;
 const FAULT_SRC = FAULT_RE && `(() => { if (location.port !== '${PORT}' || !('serviceWorker' in navigator)) return;
