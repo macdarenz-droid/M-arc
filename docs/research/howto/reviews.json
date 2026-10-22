@@ -135,6 +135,18 @@
       "approvedBy": "supervisor",
       "decision": "D-LIB5-STAMPS",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb"
+    },
+    {
+      "scope": "lib_barbell_row",
+      "hash": "e79009ee0a85570085b26910ec2138e82f179ca999f59353af6c279d962a554f",
+      "date": "2026-01-01",
+      "scratch": true
+    },
+    {
+      "scope": "lib_t_bar_row",
+      "hash": "8f7fe4e150834f6dfb64b45df984afe6100b36b752c2ba3a20c654eac377373d",
+      "date": "2026-01-01",
+      "scratch": true
     }
   ]
 }

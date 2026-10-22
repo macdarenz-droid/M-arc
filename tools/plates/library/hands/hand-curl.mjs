@@ -12,6 +12,8 @@ export const VARIANTS = {
 const BOTH = ['curled', 'bent-back'];
 export const IDS = {
   dumbbell_biceps_curl: { variant: 'dumbbell', orientation: 'under', faults: BOTH, claims: ['cards/dumbbell_biceps_curl.json#c1'] },
+  barbell_row: { variant: 'dumbbell', orientation: 'under', faults: BOTH, claims: ['cards/dumbbell_biceps_curl.json#c1'] },
+  t_bar_row: { variant: 'dumbbell', orientation: 'under', faults: BOTH, claims: ['cards/dumbbell_biceps_curl.json#c1'] },
   alternating_dumbbell_curl: { variant: 'dumbbell', orientation: 'under', faults: BOTH, claims: ['cards/alternating_dumbbell_curl.json#c2'] },
   incline_dumbbell_curl: { variant: 'dumbbell', orientation: 'under', faults: BOTH, claims: ['cards/incline_dumbbell_curl.json#c11'] },
   // the cards' own Wrongs (a twist toward palms up, hammer_curl #c5; "twisted or bent", cross_body #c7) are rotations

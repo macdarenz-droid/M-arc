@@ -1,0 +1,12 @@
+{
+  "groups": [
+    {
+      "id": "scratch",
+      "title": "Scratch",
+      "ids": [
+        "lib_barbell_row",
+        "lib_t_bar_row"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "lib_barbell_row": {
+    "plates": "/tmp/claude-0/-home-user-M-arc/a42b3a8b-ff04-5ce8-9841-91f65eab9169/scratchpad/wt-7bs/tests/howto/fixtures/lib4b/zz-lib4b.plates.html",
+    "layers": "/tmp/claude-0/-home-user-M-arc/a42b3a8b-ff04-5ce8-9841-91f65eab9169/scratchpad/wt-7bs/tests/howto/golden/library/zz-lib4b.layers.html"
+  },
+  "lib_t_bar_row": {
+    "plates": "/tmp/claude-0/-home-user-M-arc/a42b3a8b-ff04-5ce8-9841-91f65eab9169/scratchpad/wt-7bs/tests/howto/fixtures/lib4b/zz-lib4b.plates.html",
+    "layers": "/tmp/claude-0/-home-user-M-arc/a42b3a8b-ff04-5ce8-9841-91f65eab9169/scratchpad/wt-7bs/tests/howto/golden/library/zz-lib4b.layers.html"
+  }
+}

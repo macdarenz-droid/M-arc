@@ -1,0 +1,24 @@
+{
+  "groups": [
+    {
+      "id": "scratch",
+      "title": "Scratch",
+      "ids": [
+        "lib_barbell_row",
+        "lib_t_bar_row"
+      ]
+    }
+  ],
+  "optionsModule": "tools/plates/library/render/closeups-8.mjs",
+  "closeups": {
+    "lib_barbell_row": {
+      "optionsKey": "lat_pulldown",
+      "pair": "curl-dumbbell-under"
+    },
+    "lib_t_bar_row": {
+      "optionsKey": "seated_cable_row",
+      "pair": "curl-dumbbell-under"
+    }
+  },
+  "jump": null
+}
