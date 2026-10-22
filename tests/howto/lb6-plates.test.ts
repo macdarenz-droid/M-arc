@@ -480,13 +480,20 @@ describe('LIB-16 A2: pulloverMachine on machine_pullover, per drawn pose (13.1)'
 });
 
 describe('LIB-16 hidden start parts: dashed phantoms in the end pose (slice look item 2; DRAWING-GUIDE section 4)', { timeout: T }, () => {
-  /** The phantom lines (class m-line) drawn in the end pose, all within r of the start grip (the start layer under the
-   *  end head and lever hides the start fist and grip, slice look #297 6346404542 item 2). */
+  /** The phantom lines (class m-line) drawn in the end pose, all within r of the hidden start part they redraw (the start
+   *  layer under the end head and lever hides it, slice look #297 6346404542 item 2): machine_crunch's fist and grip,
+   *  around the start grip; machine_pullover's palm, forearm and bar, along the start forearm (elbow to grip). */
+  const PHANTOM_FROM: Record<string, string> = { machine_crunch: 'grip.r', machine_pullover: 'elbow.r' };
   const phantomProblems = (spec: any, r = 0.12) => {
     const items = itemsIn(spec, 'end').items.filter((it: any) => it.type === 'line' && /m-line/.test(it.cls ?? ''));
     if (!items.length) return [`${spec.id}: no phantom`];
-    const g = lmOf(spec, 'start')['grip.r'];
-    return items.flatMap((it: any) => it.pts.filter((p: number[]) => Math.hypot(p[1]! - g[1], p[2]! - g[2]) > r).length ? [`${spec.id}: phantom point far from the start grip`] : []);
+    const L = lmOf(spec, 'start'), a = L[PHANTOM_FROM[spec.id]!], b = L['grip.r'];
+    const d = (p: number[]) => {
+      const ux = b[1] - a[1], uy = b[2] - a[2], uu = ux * ux + uy * uy;
+      const t = uu ? Math.max(0, Math.min(1, ((p[1]! - a[1]) * ux + (p[2]! - a[2]) * uy) / uu)) : 0;
+      return Math.hypot(p[1]! - a[1] - t * ux, p[2]! - a[2] - t * uy);
+    };
+    return items.flatMap((it: any) => it.pts.filter((p: number[]) => d(p) > r).length ? [`${spec.id}: phantom point far from the hidden start part`] : []);
   };
   it('machine_crunch\'s start fist and grip, and machine_pullover\'s start hand and bar, are redrawn as dashed phantoms around the start grip', () => {
     for (const id of ['machine_crunch', 'machine_pullover']) {
@@ -496,6 +503,11 @@ describe('LIB-16 hidden start parts: dashed phantoms in the end pose (slice look
   it('mutation: the phantom entry removed is red', () => {
     const s = S.machine_crunch;
     expect(phantomProblems({ ...s, equipment: s.equipment.slice(0, -1) })).toEqual(['machine_crunch: no phantom']);
+  });
+  it('mutation: machine_pullover\'s phantom moved 15 cm off the start forearm is red', () => {
+    const s = S.machine_pullover, shift = (it: any) => ({ ...it, pts: it.pts.map((p: number[]) => [p[0], p[1]! + 0.15, p[2]]) });
+    const equipment = [...s.equipment.slice(0, -1), (lm: any, ctx: any) => (s.equipment.at(-1)(lm, ctx) ?? null)?.map(shift) ?? null];
+    expect(phantomProblems({ ...s, equipment }).length).toBeGreaterThan(0);
   });
 });
 

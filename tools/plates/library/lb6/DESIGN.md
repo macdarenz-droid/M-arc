@@ -77,9 +77,17 @@ or forked.
   c3) and the bar the open hands rest on (c3, c6). The arm moves start → end (overhead → the belt, c3, c4).
   **Between the end pose and the Mistake** the arm stays at the belt (the card's fault is the back, c8), so no part
   moves; the back pad, belt and foot bar are static. The arm is built from `poly` outlines in any case.
+  As drawn (bulk): 14 items. Static: floor beam, upright behind the back pad, top beam over the shoulder, the drop to
+  the pivot hub, the foot bar post, seat, back pad (`PAD_LEN` 1.0 m, so the head rests on it, c7), the belt (a `poly`
+  strap across the thighs `BELT_T` along them), the foot bar end-on, the pivot hub (vendor `pulley`). Moving (`part:
+  'arm'`): the arm tube from the hub to the elbow pad, the elbow pad (a slab along the upper arm, its face through the
+  elbow), the strut to the crossbar and the crossbar end-on. The arm angle is solved, not chosen: start THETA0 puts the
+  bar `BAR_BEHIND` behind the back of the head; end THETA1 puts the bar `BAR_OVER_BELT` over the belt.
 - Tests (A2): per drawn pose (start, end, Mistake), every static part at one place (±1 px); each moving part drawn
   in the Mistake view; the ruled contacts on the drawn items (machine_crunch: the buttock on the pad at start and
-  end, the shins on the roller at start, the wrists on the handles at start; machine_pullover in the bulk).
+  end, the shins on the roller at start, the wrists on the handles at start; machine_pullover: the back and buttock on
+  the pad and the elbows on the elbow pads at start and end, the hands on the bar at start, the shoulder at the pivot,
+  the head on the pad; mutations: the back pad 2 cm, the back 2 cm off the pad at end, the neck +8° at start).
 
 ## 4. The single handle and the cable (cable_chest_press; D-LIB16-HANDLE)
 
@@ -153,7 +161,10 @@ concentric, is drawn against the end pose (Q2 (f)).
 
 All identity. A fact with no pose defaults to the spec's `end` (node.mjs h6), so every start fact names pose `start`.
 The phantom rule (Q2 (c)) applies where a start part is hidden: cable_chest_press's start near arm and handle under
-the end trunk (the 8's chest press phantom); machine_crunch's start arm is not hidden (start parts are drawn dashed).
+the end trunk (the 8's chest press phantom). Correction (slice look #297 6346404542 item 2): machine_crunch's start
+fist and grip are hidden by the end head and lever, so they are redrawn as a dashed phantom (`START_PHANTOM`, end pose
+only); machine_pullover's start palm, forearm and bar are hidden the same way and get the same phantom. A test checks
+each phantom is drawn and lies on the hidden start part (with a removal and a 15 cm shift mutation).
 
 Fault→key; each spec's first tell carries the key, and topFault is that key (all drawable true):
 
@@ -248,12 +259,16 @@ A17 compares them with `lb6/sizes.json` both ways and checks every basis. The sp
 | cable_chest_press | HANDLE_GRIP, HANDLE_R, HANDLE_STRAP | 0.13, 0.008, 0.10 m | equipment.mjs:30 (13 cm handle); stated (grip bar, strap) |
 | cable_chest_press | FLOOR_BACK, FLOOR_FRONT | 0.25, 0.25 m | stated (layout) |
 | machine_pullover | PIVOT_UP | 3 cm above the shoulder joint | c1 "slightly below the axis" |
-| machine_pullover | ARM_START, ARM_END | bar just behind the head line; bar at the belt | c3, c4 |
-| machine_pullover | M_ARCH (Mistake) | 12° lumbar extension | hanging_leg_raise.mjs:69 (its Mistake arches the low back 12°) |
-| machine_pullover | SEAT_TOP | 0.46 m | machine_chest_press.mjs:28 |
+| machine_pullover | BAR_BEHIND, BAR_OVER_BELT | 3 cm behind the back of the head; 3 cm over the belt | c3 (overhead, behind the head), c4 (to the belt); stated clearance |
+| machine_pullover | ELBOW_FLEX | 90° | c3 (bent arms on the pads) |
+| machine_pullover | M_ARCH, M_NECK (Mistake) | 12° lumbar extension, the neck 12° forward | hanging_leg_raise.mjs:69 (12° arch); c8 the head off the pad, the same 12° |
+| machine_pullover | SEAT_TOP, SEAT_Z, FEET_X, FEET_Z | 0.46, 0.10, 0.10, 0.47 m | machine_chest_press.mjs:28 (seat); machine_crunch's seated row |
+| machine_pullover | BELT_T, PAD_LEN, PAD_BELOW | 0.25 along the thigh, 1.0, 0.08 m | stated: the belt across the lap (c2); the pad up to the head (c7) |
+| machine_pullover | FRAME_BACK, FOOT_BAR_UP, FOOT_BAR_FWD, BEAM_OUT, FLOOR_BACK, FLOOR_FRONT | 0.15, 0.30, 0.10, 0.10, 0.20, 0.30 m | stated (frame clearance, the foot bar in front of the shins, c2, layout) |
+| pulloverMachine | seatLen, padT, tubeT, armT, elbowPadLen, barR, beltW, beltT, footBarR, hubR | 0.40, 0.07, 0.06, 0.05, 0.20, 0.016, 0.05, 0.015, 0.03, 0.045 m | vendor seat, backPad, chestPress grip, pulley defaults; romanChair beamT; stated (arm, pad, belt, foot bar) |
 
-The machine_pullover rows are proposals (`sizes.json` "proposed"); they become its SIZES row, with every further number
-it needs added before drawing, at the bulk.
+`sizes.json` holds every row above with its basis (the "proposed" block is gone); A17 compares each spec's SIZES both
+ways.
 
 ## 12. PQ-H3 estimates (before drawing; deviationMin 11.39 px, traceLenMin 22.11 px; qa/envelope.json)
 
@@ -266,6 +281,7 @@ At the reference 146.29 px/m:
 | cable_chest_press, **measured** (node-side) | 3.0 px: held (section 15) | 6.6 px: held |
 | cable_chest_press | the elbow, 18° → 0°: it moves onto the shoulder-grip line, about 5 cm → about 7.6 px [est]: **below deviationMin**; the grip moves about 1 cm | reading (a) of section 13: the grip 0.45 → 0.65 m, about 0.20 m → 29 px before trims, about 7 px after [est]: **below traceLenMin**; reading (b): about 0.50 m → 73 px |
 | machine_pullover | the arch at M_ARCH 12°: the low back about 3-5 cm off the pad, the head about 4-6 cm: about 5-9 px [unverified until drawn]: **at risk** | the bar on its arc from overhead to the belt, about 0.9 m → well over 100 px |
+| machine_pullover, **measured** (node-side) | 15.4 px: passes (not held) | 150.7 px |
 
 A too-small fault is reported with its card-true size and held under D-LIB8-shrug with the LIB-ZOOM route
 (D-LIB16-SIZE); it is never enlarged. cable_chest_press is expected to be held (D-LIB16-LOCK); the slice still shows
@@ -327,14 +343,16 @@ machine_pullover may join it (its arch, section 12) once drawn.
 
 1. cable_chest_press's lock and Trace are below the PQ-H3 minimums at the card's sizes: held, zoom route (section 12).
 2. The S3 conflict on cable_chest_press (section 13): posted, not drawn until ruled.
-3. machine_pullover's arch below deviationMin [unverified until drawn]: held the same way, never enlarged.
+3. machine_pullover's arch below deviationMin: measured 15.4 px once drawn (section 12), so it is not held.
 4. The cable reads as passing through the body: it runs behind the trunk at z `center`; if it still reads as through
    the body, it is reported with renders.
 5. machine_crunch's movement arm drawn over the trunk (z `mid`) crowds the callouts: leaders are tested to stay 6 px
    clear of the Trace, the lever, the roller, the seat and the pads (A15). Two anchors are contacts on the back pad
    itself (normal "Hips back", the buttock on the pad, c2; Mistake "Trunk upright", the upright back on the pad), so
    their leaders cross that pad and the upright behind it once, at the anchor end; the test exempts only those two
-   leaders from the pad and its frame, and every other line still binds them (Q8).
+   leaders from the pad and its frame, and every other line still binds them (Q8). machine_pullover's "Back on pad"
+   (the back on the pad, c7) and "Back arches" (the Mistake back off it, c8) are pad contacts of the same kind and get
+   the same exemption; Q8 named only the crunch labels, so this extension is put to the supervisor in the bulk post.
 6. The pullover's lever cannot keep the elbows on the pads in every drawn pose [unverified until drawn]: S3, never
    moved off the card.
 7. machine_crunch's Mistake leaves the arm where the end has it, so the faulty arm lies over the end trunk, where the
