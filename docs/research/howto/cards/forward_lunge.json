@@ -436,7 +436,7 @@
       "why": "ACE's forward-lunge cue exists to control this forward shin travel (c3); the forward lunge already loads the kneecap joint more than the reverse lunge (c8).",
       "claim": "c3",
       "drawable": true,
-      "rankNote": "No source ranks forward-lunge faults by frequency. Catalyst notes a shorter step with the knee ahead of the toes as a deliberate quad variation (c13), so the drawn fault is the uncontrolled drive on landing, not any knee-past-toe position."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no read source uses a frequency word for a fault (Catalyst's \"Many athletes try to load lunges too heavily\" is about the load, which LR-31 does not count), no named fault is tied to harm (Goulette's greater kneecap-joint loading, c8, compares the forward lunge with the backward lunge; Farrokhi and Bezerra, c11, c12, report muscle activity), and there is no common-mistakes list. Counting the read sources that tell the lifter to avoid each named fault, all tie at one: driving the hips forward (ACE, \"rather than driving your hips forward\", c3); sideways tilt and a moving stance foot (ACE, \"Avoid any sideways tilting or swaying\", \"try not to move the stance (supporting) foot\"); the back knee touching the floor (ACE barbell, \"without touching the ground\", c1); losing the upright trunk, the controlled descent or the balance between the feet (Catalyst, c6). The three ACE pages' \"keep the back straight\" and \"maintaining a flat back\" are instructions, which step 3 counts only when no source names a fault; ACE's forward-lunge page also asks for a forward bend at the hips, so the flat back is not the trunk pitch. Catalyst's vertical front shin is an instruction too, and it allows \"shorter steps with the knee moving in front of the toes\" (c13). Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it (viewWhy names the hip drop and shin travel, c3); LR-31 gives no further order. Set aside: Catalyst's \"Sets of 3-10 reps per leg are usually appropriate\" is about sets; the NHS knee page's \"often\" lines name no fault of this exercise. Hips and shin driven forward are a still sign the side view shows, so drawable is true and the pick is unchanged."
     },
     "tells": [
       {
@@ -452,7 +452,7 @@
       "up": null,
       "down": null,
       "pause": null,
-      "text": "Land heel first and shift the weight slowly (c4); lower smoothly with no crash (c7). No source gives seconds.",
+      "text": "Land heel first and shift the weight slowly (c4); lower smoothly with no crash (c7). No source gives seconds, so up, down and pause stay null (LR-33). ACE's forward-lunge page asks to \"Hold this position momentarily before stepping forward\" (the one-leg stand at the top, before each step); with no tempo seconds on the card it is named here, not in pause.",
       "claim": "c4"
     },
     "variantLine": "exercises.json lists Dumbbells / Barbell. The plate draws dumbbells at the sides (c5). ACE gives both a barbell (c1) and a dumbbell (c5) version with the same step; Catalyst (c2) is load-agnostic."
@@ -470,11 +470,11 @@
   },
   "setup": [
     {
-      "step": "Stand with feet hip width apart, a dumbbell in each hand at your sides, palms facing in.",
+      "step": "Feet hip width apart, a dumbbell in each hand, palms in.",
       "claim": "c5"
     },
     {
-      "step": "Step forward and land heel first, moving the weight onto the front foot slowly.",
+      "step": "Step forward heel first, moving the weight onto it slowly.",
       "claim": "c4"
     },
     {
@@ -482,7 +482,7 @@
       "claim": "c1"
     },
     {
-      "step": "Push the front foot into the floor and step back to the start.",
+      "step": "Push through the front foot and step back to the start.",
       "claim": "c2"
     },
     {
@@ -504,25 +504,28 @@
       "claim": "c5"
     },
     {
-      "point": "A longer step works the glutes and hamstrings more; a shorter one the quads.",
+      "point": "A longer step works the glutes and hamstrings more. A shorter one, the quads.",
       "claim": "c13"
     }
   ],
   "handlingMistakes": [
     {
-      "mistake": "Driving the hips and knee forward on landing.",
+      "mistake": "Driving the hips forward.",
       "fix": "Land heel first and drop the hips straight down.",
       "claim": "c3"
     },
     {
-      "mistake": "Chest pitching forward at the bottom under a heavy load.",
+      "mistake": "Chest pitching forward.",
       "fix": "Go lighter until you can stay upright and controlled.",
       "claim": "c6"
     },
     {
       "mistake": "Dropping fast into the bottom.",
-      "fix": "Lower slowly; use a weight that lets you move smoothly.",
-      "claim": "c7"
+      "fix": "Lower slowly. Use a weight you can move smoothly.",
+      "claim": [
+        "c7",
+        "c6"
+      ]
     }
   ],
   "feel": {
@@ -533,7 +536,10 @@
       },
       {
         "muscleId": "glutes",
-        "claim": "c9"
+        "claim": [
+          "c9",
+          "c11"
+        ]
       }
     ],
     "secondary": [
@@ -558,7 +564,7 @@
     ],
     "rows": [
       {
-        "where": "Front of the thigh and the glutes",
+        "where": "Front thighs and glutes",
         "means": "The target muscles are working.",
         "fix": "",
         "claim": "c9",
@@ -566,9 +572,12 @@
       },
       {
         "where": "Lower back",
-        "means": "Usually means the chest is leaning forward.",
-        "fix": "Stay upright; go lighter if you can't.",
-        "claim": "c12",
+        "means": "Fault: the chest leaning forward.",
+        "fix": "Stay upright. Go lighter if you can't.",
+        "claim": [
+          "c12",
+          "c6"
+        ],
         "redFlag": null
       },
       {
@@ -579,7 +588,7 @@
         "redFlag": null
       },
       {
-        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "where": "Very painful, locking or giving-way knee",
         "means": "Not a training feeling.",
         "fix": "Stop the set.",
         "claim": "c14",
@@ -639,7 +648,7 @@
     "why": "Library: quads and glutes primary, hamstrings secondary, core stabilizer. One EMG study of the loaded forward lunge (c9) supports all of these and adds moderate calf and adductor activity."
   },
   "loadProgression": {
-    "text": "Start light or unloaded; add weight only while the step stays full and the descent smooth.",
+    "text": "Start light or unloaded. Add weight only while the step stays full and the descent smooth.",
     "claims": [
       "c7",
       "c6"

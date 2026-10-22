@@ -265,7 +265,7 @@
       "why": "ACE's cue to drop the hips exists to control this forward shin travel (c3).",
       "claim": "c3",
       "drawable": true,
-      "rankNote": "No source ranks bodyweight-lunge faults by frequency. Sideways tilt of the upper body (c2) needs a front view."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no read source uses a frequency word for a fault (Catalyst's \"Many athletes try to load lunges too heavily\" is about the load, which LR-31 does not count), no named fault is tied to harm, and there is no common-mistakes list. Counting the read sources that tell the lifter to avoid each named fault, all tie at one: driving the hips forward (ACE, \"rather than driving your hips forward\", c3); sideways tilt (ACE, \"Avoid any sideways tilting or swaying\", c2); a moving stance foot (ACE, \"try not to move the stance (supporting) foot\"); arching the low back at the start (ACE, \"without arching your low back\", c1); losing the upright trunk, the controlled descent or the balance between the feet (Catalyst, written for loaded lunges). Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it (viewWhy names the hip drop, c3); LR-31 gives no further order. Set aside: Catalyst's \"Sets of 3-10 reps per leg are usually appropriate\" is about sets; the NHS knee page's \"often\" lines name no fault of this exercise. Hips and shin driven forward are a still sign the side view shows, so drawable is true and the pick is unchanged."
     },
     "tells": [
       {
@@ -281,7 +281,7 @@
       "up": null,
       "down": null,
       "pause": null,
-      "text": "Slow weight transfer onto the front foot. No source gives seconds.",
+      "text": "Slow weight transfer onto the front foot (c2). No source gives seconds, so up, down and pause stay null (LR-33). ACE asks to \"Hold this position momentarily before stepping forward\" (the one-leg stand at the top, before each step); with no tempo seconds on the card it is named here, not in pause.",
       "claim": "c2"
     },
     "variantLine": null
@@ -305,8 +305,11 @@
       "claim": "c2"
     },
     {
-      "step": "Drop the hips until the front thigh is about parallel, or to a comfortable depth.",
-      "claim": "c4"
+      "step": "Drop the hips until the front thigh is about parallel.",
+      "claim": [
+        "c4",
+        "c3"
+      ]
     },
     {
       "step": "Push off firmly with the front leg to stand back up.",
@@ -333,17 +336,17 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Driving the hips and knee forward on landing.",
+      "mistake": "Driving the hips forward.",
       "fix": "Land heel first and drop the hips straight down.",
       "claim": "c3"
     },
     {
-      "mistake": "Upper body tilting or swaying sideways.",
+      "mistake": "Upper body swaying sideways.",
       "fix": "Keep the upper body level, without tilting or swaying.",
       "claim": "c2"
     },
     {
-      "mistake": "Wobbling on one leg before the step.",
+      "mistake": "Wobbling on one leg.",
       "fix": "Practise standing on one leg first.",
       "claim": "c7"
     }
@@ -363,21 +366,21 @@
     "watch": [],
     "rows": [
       {
-        "where": "Front of the thigh and the glutes",
+        "where": "Front thighs and glutes",
         "means": "The target muscles are working.",
         "fix": "",
         "claim": "c6",
         "redFlag": null
       },
       {
-        "where": "Back of the thigh and glutes more than the front",
-        "means": "Usually means a long step.",
+        "where": "Mostly backs of thighs and glutes",
+        "means": "A longer step works these more.",
         "fix": "Shorten the step for more thigh work.",
         "claim": "c9",
         "redFlag": null
       },
       {
-        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "where": "Very painful, locking or giving-way knee",
         "means": "Not a training feeling.",
         "fix": "Stop the set.",
         "claim": "c10",
@@ -387,7 +390,7 @@
   },
   "risks": [
     {
-      "risk": "Losing balance on the step; learn single-leg standing first.",
+      "risk": "Losing balance on the step. Learn single-leg standing first.",
       "claim": "c7"
     },
     {
