@@ -129,7 +129,7 @@ jobs:
     name: gate-shard (${{ matrix.k }}/4, ${{ matrix.tz }})
     if: ${{ inputs.arrangement != 'serial' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45  # F-CI-1: 15 min install cap + the shard; D-GATESPLIT-BUDGET's 1800 s is still red inside the verdict
     strategy:
       fail-fast: false
       matrix:
@@ -147,6 +147,7 @@ jobs:
       - name: Build the web app
         run: npm run build
       - name: Install Chromium for the visual gate
+        timeout-minutes: 15  # F-CI-1: a slow apt mirror (664 s on #191) fails here, not inside the test budget
         run: npx playwright install --with-deps chromium
       - name: Visual gate, one shard (GATE-SPLIT)
         env:
@@ -169,7 +170,7 @@ jobs:
   ht10-gate:
     name: ht10-gate (${{ matrix.shard }}, ${{ matrix.tz }})
     runs-on: ubuntu-latest
-    timeout-minutes: 35  # A5: each shard must finish within 25 min (checked inside the block)
+    timeout-minutes: 50  # A5: each shard must finish within 25 min (checked inside the block); F-CI-1: +15 min install cap
     strategy:
       fail-fast: false
       matrix:
@@ -185,6 +186,7 @@ jobs:
       - name: Build the web app
         run: npm run build
       - name: Install Chromium for the visual gate
+        timeout-minutes: 15  # F-CI-1: a slow apt mirror (664 s on #191) fails here, not inside the test budget
         run: npx playwright install --with-deps chromium
       - name: Gate block HT-10, one shard
         env:
@@ -245,7 +247,7 @@ jobs:
     name: howto-shard (${{ matrix.k }}/${{ needs.howto-rebuild.outputs.K }})
     needs: [howto-rebuild]
     runs-on: ubuntu-latest
-    timeout-minutes: 30  # runaway limit; D-GATESPLIT-BUDGET's 1800 s is red inside the verdict
+    timeout-minutes: 45  # runaway limit; D-GATESPLIT-BUDGET's 1800 s is red inside the verdict; F-CI-1: +15 min install cap
     strategy:
       fail-fast: false
       matrix:
@@ -260,6 +262,7 @@ jobs:
       - name: Build the web app
         run: npm run build
       - name: Install Chromium for the library checks
+        timeout-minutes: 15  # F-CI-1: a slow apt mirror (664 s on #191) fails here, not inside the test budget
         run: npx playwright install --with-deps chromium
       - uses: actions/download-artifact@v4
         with:
