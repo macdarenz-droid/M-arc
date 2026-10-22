@@ -5,6 +5,8 @@
 // shapes and report), never a helper's own maths.
 import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -213,14 +215,19 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
     for (const f of files) expect(bad(f), f).toEqual([]);
   });
   it('generate --check is green, and no generated file is read from lb7/, the LB7 specs, dipBars or How-to sources', async () => {
-    const gen = await import(/* @vite-ignore */ new URL('../../tools/plates/generate.mjs', import.meta.url).href);
-    const t0 = Date.now(), out = await gen.render();
-    expect(gen.diff(out)).toEqual([]);
-    console.log(`LIB-17 A9: generate --check render took ${((Date.now() - t0) / 1000).toFixed(1)} s`);
-    for (const [p, { text }] of out) {
-      expect(text, p).not.toMatch(/library\/lb7\/|eq\/dipBars\.mjs/);
-      for (const id of LB7) expect(text, p).not.toMatch(new RegExp(`library/(specs|howto)/(lib_)?${id}\\b`));
-    }
+    // In a child process, awaited (VITEST-RPC ruling A, #276): an in-process render blocks the worker past vitest's 60 s
+    // RPC limit on a loaded runner. The child prints the diff and, per output, whether it names an LB7 path.
+    const script = `const gen = await import(${JSON.stringify(new URL('../../tools/plates/generate.mjs', import.meta.url).href)});
+const ids = ${JSON.stringify(LB7)}, out = await gen.render(), bad = [];
+for (const [p, { text }] of out) { if (/library\\/lb7\\/|eq\\/dipBars\\.mjs/.test(text)) bad.push(p + ': lb7/ or dipBars');
+  for (const id of ids) if (new RegExp('library/(specs|howto)/(lib_)?' + id + '\\\\b').test(text)) bad.push(p + ': ' + id); }
+console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;
+    const t0 = Date.now(), { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 });
+    const r = JSON.parse(stdout.trim().split('\n').pop()!);
+    console.log(`LIB-17 A9: generate --check render took ${((Date.now() - t0) / 1000).toFixed(1)} s (${r.n} outputs)`);
+    expect(r.n).toBeGreaterThan(0);
+    expect(r.diff).toEqual([]);
+    expect(r.bad).toEqual([]);
   });
 });
 
