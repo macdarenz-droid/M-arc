@@ -304,6 +304,23 @@
      "where": "abstract"
     }
    ]
+  },
+  {
+   "id": "c14",
+   "text": "Both sides are trained, one at a time with the single dumbbell of c1: repeat for reps and keep the reps even on both sides.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-concentration"
+   ],
+   "quotes": [
+    {
+     "source": "bb-concentration",
+     "text": "Re-establish tension and repeat for reps. Keep your reps even on both sides.",
+     "where": "How to, step 3"
+    }
+   ]
   }
  ],
  "sources": [
@@ -532,5 +549,8 @@
   "remove": [],
   "why": "biceps primary and forearms secondary match exercises.json, StrengthLog and BarBend (c11)."
  },
- "anchorSource": "bb-concentration"
+ "anchorSource": "bb-concentration",
+ "notes": [
+  "F-LB5-2: under D-LIB15-MIRROR the plate may draw the mirror image of c1's named side (the right arm braced on the right inner thigh, the free hand on the left knee), because c14 states that each side is trained in turn."
+ ]
 }

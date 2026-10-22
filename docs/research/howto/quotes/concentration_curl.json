@@ -212,6 +212,15 @@
    "status": "verbatim",
    "closest": "Prepare for your curl by bracing your core and tightening your glutes. Squeeze your (empty) right hand and hold it out away from your body to counterbalance yourself.",
    "note": "added by fixer 2026-09-30; read in live source"
+  },
+  {
+   "claim": "c14",
+   "source": "bb-concentration",
+   "text": "Re-establish tension and repeat for reps. Keep your reps even on both sides.",
+   "status": "verbatim",
+   "closest": "Re-establish tension and repeat for reps. Keep your reps even on both sides.",
+   "note": "fetched by curl 2026-10-22 (F-LB5-2); 'reps' is a link in the HTML, rendered text unchanged",
+   "where": "How to, step 3"
   }
  ]
 }
