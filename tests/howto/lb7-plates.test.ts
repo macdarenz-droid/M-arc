@@ -1578,6 +1578,23 @@ describe('LIB-17 resistance_band_pull_apart (H; the band from poly, D-LIB17-BAND
 
 describe('LIB-17 dumbbell_front_raise (H; the engine dumbbell, side view; Mistake: the hip swing, c12): drawn facts', { timeout: T }, () => {
   const s = () => S.dumbbell_front_raise, Z = () => M.dumbbell_front_raise.SIZES;
+  /** Panel R1 (#299): the soft bend reads in the side view: at the top the drawn grip lies below the drawn
+   *  shoulder-elbow line by at least 90% of the bend's offset (forearm-to-grip length x sin ELBOW_BEND), so the arm is
+   *  never collinear and the elbow leads; at the start the bend shows the same way, forward of the upper arm's line. */
+  const bendProblems = (spec: any) => (['start', 'end'] as const).flatMap(pose => {
+    const cam = camOf(spec), l = lmOf(spec, pose), [a, e, g] = ['shoulder.r', 'elbow.r', 'grip.r'].map(k => cam.P(l[k]));
+    const ux = e![0]! - a![0]!, uy = e![1]! - a![1]!, L = Math.hypot(ux, uy), side = ((g![0]! - a![0]!) * uy - (g![1]! - a![1]!) * ux) / L;
+    const want = 0.9 * Math.hypot(g![0]! - e![0]!, g![1]! - e![1]!) * Math.sin(M.dumbbell_front_raise.SIZES.ELBOW_BEND * Math.PI / 180);
+    const sign = pose === 'end' ? -1 : 1;   // end: the grip below the line (screen y down); start: forward of it
+    return sign * side >= want ? [] : [`${pose}: the grip ${side.toFixed(1)} px off the shoulder-elbow line (want ${sign > 0 ? '' : '-'}${want.toFixed(1)})`];
+  });
+  it('R1: the soft bend is drawn in the side-view plane, the end arm never collinear, the elbow leading', () => {
+    expect(bendProblems(s())).toEqual([]);
+  });
+  it('R1 mutation: the old across-the-body bend (ARM_ROT -90) makes the end arm collinear (red)', () => {
+    const e = s().poses.end, bad = { ...s(), poses: { ...s().poses, end: { ...e, shoulder: { ...e.shoulder, rot: -90 } } } };
+    expect(bendProblems(bad).some(p => p.startsWith('end:'))).toBe(true);
+  });
   it('c8: both upper arms level at the top (shoulder elevation 90 +-2, the elbow at the shoulder\'s height +-1 cm) against the upright trunk', () => {
     const a = rep(s()).angles, E = lmOf(s(), 'end');
     for (const k of ['l', 'r']) {

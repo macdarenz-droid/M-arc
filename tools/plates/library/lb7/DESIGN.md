@@ -343,7 +343,7 @@ the bulk proposals.
 | dumbbell_front_raise | FOOT_X, KNEE_SOFT | from dumbbell_biceps_curl (#109) | convention (c3's width is not visible from the side) |
 | dumbbell_front_raise | ELBOW_BEND | 18° | machine_chest_press.mjs:45 (D-LIB16-LOCK) for c2 "soft bend" |
 | dumbbell_front_raise | START_FLEX | the dumbbells at the fronts of the thighs (solved 13.6°) | c1, c2 (solved: the grip just in front of the thigh line) |
-| dumbbell_front_raise | ARM_ROT | -90° (bulk) | stated reason: c1's pronated grip and c2's soft bend: the bend runs across the body so the hand never rises above the elbow (c5, the elbows lead) |
+| dumbbell_front_raise | ARM_ROT, START_ROT | 180°, 0° (panel R1 fix; was -90°) | panel R1 (#299): the 18° soft bend in the side-view plane, at the top the forearm dropping below the level upper arm so the elbow leads (c2, c5); at the start forward of the hanging upper arm |
 | dumbbell_front_raise | M_HIP, M_LEAN (Mistake) | hips 8 cm forward, trunk 12° back (drawn at the bulk) | stated: c12 "pushing the hips forward" with the body's counter-lean; no approved plate draws this swing (dumbbell_biceps_curl's Mistake is the elbow drift) |
 | face_pull | PULLEY_Y, CABLE_START | solved: the ear's height (1.626 m); 0.532 m | c1 "head or eye height"; c3 "a couple of steps back" (2 × 0.152 H foot lengths, stated), read at the bulk as the cable from the pulley to the rope at the start: read as toes to column it cannot hold, since the extended arms and the rope already reach about 0.85 m |
 | face_pull | END grip | hands by the ears, elbows at shoulder height and behind | c5, c7 |

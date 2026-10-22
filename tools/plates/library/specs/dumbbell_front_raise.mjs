@@ -18,8 +18,9 @@
 // Geometry decisions (confirmed by the engine report `angles` and `checks`):
 //  Stance: dumbbell_biceps_curl's feet and soft knees (FOOT_X, KNEE_SOFT); trunk upright (c4, c9).
 //  Arms (both, the same): the elbow bent ELBOW_BEND in every pose (c2 "soft bend"; D-LIB16-LOCK's basis,
-//   machine_chest_press.mjs:45); the upper arm turned in ARM_ROT, so the soft bend runs across the body with the palms
-//   down (c1's pronated grip) and the hand never rises above the elbow's line (the elbows lead, c5). Start: the shoulder
+//   machine_chest_press.mjs:45); the bend drawn in the side-view plane (panel R1, #299): at the top the upper arm turned
+//   ARM_ROT so the forearm drops below the level upper arm by the bend and the elbow leads the dumbbell (c5); at the
+//   hanging start START_ROT, so the forearm bends forward of the upper arm's line. Start: the shoulder
 //   flexed START_FLEX, SOLVED (bracket 0 to 40) so the dumbbell's back sits on the front thigh line (c1, c2; DESIGN.md
 //   section 10). End: shoulder flexion 90 (c8).
 //  Scapulae SCAP down and back (c4), as dumbbell_biceps_curl's set.
@@ -29,14 +30,14 @@
 //  Hidden start parts: the hanging start forearm, fist and dumbbell lie over the thigh under the filled end body, so
 //   their outline is redrawn as dashed hidden lines in the end layer (dumbbell_biceps_curl's method); the start upper
 //   arm too, since the end upper arm is level.
-// Unsourced numbers (SIZES below; lb7/sizes.json holds each with its basis): FOOT_X, KNEE_SOFT, ELBOW_BEND, ARM_ROT,
+// Unsourced numbers (SIZES below; lb7/sizes.json holds each with its basis): FOOT_X, KNEE_SOFT, ELBOW_BEND, ARM_ROT, START_ROT,
 //  SCAP_ELEV, SCAP_PRO, M_HIP, M_LEAN, FLOOR_BACK, FLOOR_FRONT. START_FLEX is solved; the flexion 90 is c8's.
 import { WINTER, REF, landmarksOf, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.14, KNEE_SOFT: 6, ELBOW_BEND: 18, ARM_ROT: -90, SCAP_ELEV: -1, SCAP_PRO: -1, M_HIP: 0.08, M_LEAN: 12,
+export const SIZES = Object.freeze({ FOOT_X: 0.14, KNEE_SOFT: 6, ELBOW_BEND: 18, ARM_ROT: 180, START_ROT: 0, SCAP_ELEV: -1, SCAP_PRO: -1, M_HIP: 0.08, M_LEAN: 12,
   FLOOR_BACK: 0.5, FLOOR_FRONT: 0.85 });
-const { FOOT_X, KNEE_SOFT, ELBOW_BEND, ARM_ROT, SCAP_ELEV, SCAP_PRO, M_HIP, M_LEAN, FLOOR_BACK, FLOOR_FRONT } = SIZES;
+const { FOOT_X, KNEE_SOFT, ELBOW_BEND, ARM_ROT, START_ROT, SCAP_ELEV, SCAP_PRO, M_HIP, M_LEAN, FLOOR_BACK, FLOOR_FRONT } = SIZES;
 const LEVEL = 90;   // c8 "arms level with the shoulders"
 const HEX_R = 0.119 / 2;   // the vendor dumbbell's hex, 11.9 cm across the corners (equipment.mjs:30)
 
@@ -58,7 +59,7 @@ const LEG = (() => { const a = WINTER.thigh * H, b = WINTER.shank * H, k = KNEE_
 const rootY = dz => Math.sqrt(LEG * LEG - (FOOT_X - REF.hjcX * H) ** 2 - dz * dz) + WINTER.ankleH * H;
 const feet = { l: { at: [FOOT_X, 0, FOOT_Z] }, r: { at: [-FOOT_X, 0, FOOT_Z] } };
 const base = { root: { at: [0, rootY(0), 0], tilt: 0 }, trunk: 0, neck: 0, scap: { elev: SCAP_ELEV, pro: SCAP_PRO }, wrist: 0, plant: feet };
-const armAt = flex => ({ shoulder: { flex, rot: ARM_ROT }, elbow: ELBOW_BEND });
+const armAt = (flex, rot) => ({ shoulder: { flex, rot }, elbow: ELBOW_BEND });
 
 // The side-view probe (world metres, x = world z, y = -world y), as the engine draws the figure facing right.
 const probe = { view: 'side', near: 'r', pxm: 1, P: w => [w[2], -w[1]] };
@@ -74,10 +75,10 @@ export const thighFrontAt = (pose, y) => {
   return z;
 };
 // START_FLEX: the start dumbbell's back corner (the hex's corner at -z) on the front thigh line at the grip's height.
-const gapAt = flex => { const p = { ...base, ...armAt(flex) }, g = landmarksOf(p, H)['grip.r']; return g[2] - HEX_R - thighFrontAt(p, g[1]); };
+const gapAt = flex => { const p = { ...base, ...armAt(flex, START_ROT) }, g = landmarksOf(p, H)['grip.r']; return g[2] - HEX_R - thighFrontAt(p, g[1]); };
 export const START_FLEX = solve(gapAt, 0, 40);
-const start = { ...base, ...armAt(START_FLEX) };
-const end = { ...base, ...armAt(LEVEL) };
+const start = { ...base, ...armAt(START_FLEX, START_ROT) };
+const end = { ...base, ...armAt(LEVEL, ARM_ROT) };
 const mistakePose = { root: { at: [0, rootY(M_HIP), M_HIP], tilt: -M_LEAN } };   // merged over the end pose
 const LS = landmarksOf(start, H), LE = landmarksOf(end, H);
 
