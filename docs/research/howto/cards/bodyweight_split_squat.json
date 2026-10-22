@@ -28,6 +28,11 @@
           "source": "cat-splitsquat",
           "text": "Bend both knees to move down until the back knee lightly contacts the floor.",
           "where": "technique"
+        },
+        {
+          "source": "cat-splitsquat",
+          "text": "position your feet in your jerk split stance",
+          "where": "technique"
         }
       ]
     },
@@ -244,7 +249,7 @@
       "why": "The anchor allows only a very slight shift toward the front leg and keeps the front shin about vertical (c2).",
       "claim": "c2",
       "drawable": true,
-      "rankNote": "No source ranks split-squat faults by frequency; this is the one position the anchor limits explicitly. The wrong pose is the inverse of c2."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no read source uses a frequency word for a fault (Catalyst's \"Sets of 5-10 reps are usually appropriate\" is about sets and \"a barbell in the back squat position is most common\" about loading), no named fault is tied to harm (Escamilla's lower glute activity with the feet fixed, c7, is a muscle-activity finding), and there is no common-mistakes list. Catalyst, the only technique source, tells the lifter to avoid two things, one source each: letting the front shin go past vertical (\"allow yourself to shift very slightly toward the front leg naturally, but keep the front shin approximately vertical in the bottom\", c2) and crashing into the bottom (\"no crashing into the bottom position\", c6). Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it (viewWhy names the vertical front shin, c2); LR-31 gives no further order. Other reading: if the shin line is taken as an instruction rather than a fault to avoid, the crash is the only named fault and the top fault; it is seen only as speed, so drawable would be false, and the drawn fault, the break of the instruction, would again be the front shin by LR-36. The NHS knee page's \"often\" lines name no fault of this exercise. The front knee slid forward is a still sign the side view shows, so drawable is true and the pick is unchanged."
     },
     "tells": [
       {
@@ -308,14 +313,17 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Front knee sliding forward at the bottom.",
+      "mistake": "Front knee sliding forward.",
       "fix": "Keep the front shin about vertical at the bottom.",
       "claim": "c2"
     },
     {
       "mistake": "Dropping fast into the bottom.",
       "fix": "Lower smoothly until the back knee just touches.",
-      "claim": "c6"
+      "claim": [
+        "c6",
+        "c1"
+      ]
     }
   ],
   "feel": {
@@ -347,13 +355,13 @@
       },
       {
         "where": "Front of the back hip",
-        "means": "A stretch in the rear hip flexors; expected, stronger with a longer split.",
+        "means": "A stretch in the rear hip flexors, more with a longer split.",
         "fix": "",
         "claim": "c4",
         "redFlag": null
       },
       {
-        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "where": "Very painful, locking or giving-way knee",
         "means": "Not a training feeling.",
         "fix": "Stop the set.",
         "claim": "c9",
@@ -393,7 +401,7 @@
     "why": "Library: quads primary, glutes secondary. Catalyst (c4, c5) names quads and glutes; loaded EMG shows less glute activity with the feet fixed than when stepping (c7), which fits glutes as secondary. No change."
   },
   "loadProgression": {
-    "text": "Sets of 5-10 reps at a load that allows a smooth movement with no crash into the bottom; it can be loaded with dumbbells or other implements.",
+    "text": "Move smoothly with no crash into the bottom. With dumbbells or other implements, do sets of 5-10.",
     "claims": [
       "c6",
       "c8"

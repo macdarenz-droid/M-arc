@@ -147,13 +147,13 @@
       "why": "Human Kinetics: without high elbows the bar may slip out of position, and the lift exists to break the habit of leaning forward (c7).",
       "claim": "c7",
       "drawable": true,
-      "rankNote": "No source ranks front squat faults. This is the one fault both technique sources name in the side plane; knees caving is front-view and not named in the sources read."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the chest falling forward as the elbows drop (c7, c24) is the top fault. Harm: StrongLifts' squat page ties leaning forward to the lower back (\"put your lower back at risk\", \"stresses your lower back\"; written for the back squat, MECH) and lists \"Leaning Forward\" under its Common Issues; Yavuz ties the back squat's \"greater trunk lean\" to the front squat \"preventing possible lumbar injuries\" (c24, MECH); StrongLifts' front-squat paragraph says of low elbows \"yours would most likely hurt if you try this without wrist wraps\". Holding the bar up with the hands (c3) is tied to harm by one source, written for the back squat (\"your wrists and elbows will hurt once the weight gets heavy\", MECH), and is not on that list, so the chest wins the step-2 tie on the list and on the source count. Lower-back rounding is on the same back-squat list (\"you’ll get hip pain\" comes with knees pointing forward), and so is the knee cave (\"Squatting with your knees caved in is bad for your knees\", \"will cause pain inside your knees\"); each is tied to harm by one source (MECH), so the chest wins on source count, 2 to 1. Bailing with no safeties is a safeties choice, not a candidate. Set aside (no frequency word for a front-squat fault): StrongLifts' \"most people lack the flexibility to Squat deep without their back rounding\", \"most people can’t keep their lower back neutral when they Squat deep\", \"Many people do partial Squats\", \"ass-to-grass or your lower back will usually round\" and the ass-to-grass \"Your lower back will most likely round at the bottom\" are about the back squat (and \"most likely\" is a likelihood, not a frequency word); \"Many strong Squatters look up during Squats and seem to be fine\", \"it usually means your Squat form is wrong\", \"The Buttwink is usually just lower back rounding\" and \"Most people don’t have the hip flexibility\" are about the back squat; \"Most people set them too high\" is a rack setup choice and \"Most people don’t know how to spot\" a spotter choice; \"Bodybuilders also often Front Squat\" names no fault; Hackett's \"often advised to avoid the VM\" is about all resistance training; the NHS pages' \"very common\" and \"often during exercise\" lines name no fault of this exercise; rep-fail's \"Regularly bailing can damage your equipment\" is about equipment. Under D-SUP-PROTECT, rep-fail's \"Protect Your Back: Always maintain a neutral spine and avoid twisting or bending awkwardly when bailing\" is about the bail, no fault named on this card, and StrongLifts' \"protects it against injury\" lines name benefits, so they are set aside. handlingMistakes gains the top fault at [0] (R-LB2-2); bar pressing on the throat leaves the list under the cap of 3 (no harm word; risks[2] and feel.rows[2] keep it). The side view shows the chest and elbows, so drawable is true."
     },
     "tells": [
       { "text": "Bar rests on your shoulders, hands loose", "claim": "c3" },
       { "text": "Elbows stay up out of the bottom", "claim": "c7" }
     ],
-    "tempo": { "up": null, "down": null, "pause": null, "text": "Controlled descent, drive up; some sets with control and pauses at the bottom. No source gives seconds.", "claim": "c21" },
+    "tempo": { "up": null, "down": null, "pause": null, "text": "Controlled descent, drive up; some sets with control and pauses at the bottom (c21). No source gives seconds for the standard rep. The anchor lists variations, among them \"a pause in the bottom\" and \"slow eccentrics (usually 3-6 seconds)\"; these are options, not the default rep, so up, down and pause stay null (LR-33).", "claim": "c21" },
     "variantLine": null
   },
   "grip": {
@@ -165,8 +165,8 @@
     "claims": ["c3", "c4", "c5", "c6"]
   },
   "setup": [
-    { "step": "Set the safety bars just below your lowest squat depth before loading.", "claim": "c14" },
-    { "step": "Bar in the channel between throat and shoulders, touching the throat lightly; shoulders pushed forward and slightly up.", "claim": ["c2", "c3"] },
+    { "step": "Set the safety bars just below your lowest squat depth.", "claim": "c14" },
+    { "step": "Bar between throat and shoulders. Shoulders pushed forward and slightly up.", "claim": ["c2", "c3"] },
     { "step": "Loose full grip, elbows high.", "claim": "c4" },
     { "step": "Heels hip width or a little wider, toes out 15-30 degrees.", "claim": "c8" },
     { "step": "Walk out one step back on each leg. Brace hard each rep.", "claim": ["c26", "c9"] }
@@ -180,35 +180,35 @@
     { "point": "Torso upright on the way up.", "claim": "c12" }
   ],
   "handlingMistakes": [
-    { "mistake": "Holding the bar up with the hands instead of resting it on the shoulders.", "fix": "Push the shoulders forward and up to make a shelf; loosen the grip or go to a fingertip rack.", "claim": "c3" },
-    { "mistake": "Bar pressing on the throat.", "fix": "Shrug the shoulders slightly up so the bar only touches the throat lightly.", "claim": ["c2", "c3"] },
-    { "mistake": "Bailing with no safeties set.", "fix": "Set the safeties first; to bail, let go so the bar drops forward, and step back.", "claim": "c14" }
+    { "mistake": "Chest falling forward, elbows dropping.", "fix": "Keep the elbows high and the chest tall.", "claim": "c7" },
+    { "mistake": "Hands holding the bar up.", "fix": "Push your shoulders forward and up. Try a fingertip rack.", "claim": "c3" },
+    { "mistake": "Bailing with no safeties set.", "fix": "Set the safeties. To bail, drop the bar forward and step back.", "claim": "c14" }
   ],
   "feel": {
     "primary": [ { "muscleId": "quads", "claim": "c17" } ],
     "secondary": [ { "muscleId": "glutes", "claim": "c18" } ],
     "watch": [ { "muscleId": "lower_back", "claim": "c24" } ],
     "rows": [
-      { "where": "Wrists or fingers", "means": "The hands are holding the bar up.", "fix": "Shoulders forward and up, loose or fingertip grip.", "claim": "c3", "redFlag": "wrist" },
-      { "where": "Lower back more than thighs", "means": "Usually means the torso is tipping forward.", "fix": "Elbows up, chest tall.", "claim": "c24", "redFlag": "back" },
-      { "where": "Pressure on the throat", "means": "Bar too far back or shoulders not up.", "fix": "Shrug the shoulders to lift the bar off the throat.", "claim": ["c2", "c3"], "redFlag": null },
-      { "where": "Very painful knee, or the knee locks or gives way", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "c23", "redFlag": "knee" }
+      { "where": "Wrists or fingers", "means": "The hands are holding the bar up.", "fix": "Push your shoulders forward and up. Try a fingertip rack.", "claim": "c3", "redFlag": "wrist" },
+      { "where": "Lower back more than thighs", "means": "Fault: the torso tipping forward.", "fix": "Keep the elbows high and the chest tall.", "claim": "c24", "redFlag": "back" },
+      { "where": "Pressure on the throat", "means": "Bar too far back or shoulders not up.", "fix": "Raise your shoulders slightly so the bar only touches lightly.", "claim": ["c2", "c3"], "redFlag": null },
+      { "where": "Very painful, locking or giving-way knee", "means": "Not a training feeling.", "fix": "Stop the set.", "claim": "c23", "redFlag": "knee" }
     ]
   },
   "risks": [
-    { "risk": "A failed rep with no safeties set (shared risk line: safeties).", "claim": "c14" },
-    { "risk": "Breath-holding under heavy load raises blood pressure (shared breath line).", "claim": "c19" },
+    { "risk": "A failed rep with no safeties set.", "claim": "c14" },
+    { "risk": "Holding your breath under heavy load raises blood pressure.", "claim": "c19" },
     { "risk": "Bar pressing on the throat.", "claim": "c2" }
   ],
   "redFlags": ["wrist", "back", "knee"],
   "redFlagNote": "back is the proposed new shared box (content.md 5.3); nhs-back supplies its triggers (c22). The wrist box text is the existing shared NHS box; this card only links it.",
   "zooms": [
-    { "key": "front-rack", "kind": "hand", "right": "Bar on the shoulders in the throat channel, loose full grip, elbows high.", "wrong": "Bar held up in the hands, elbows down, bar off the shoulders.", "claim": "c3" },
-    { "key": "cross-arm", "kind": "hand", "right": "Arms crossed over the bar, elbows high.", "wrong": "Crossed arms with elbows dropped.", "claim": "c6" },
+    { "key": "front-rack", "kind": "hand", "right": "Bar on the shoulders, loose grip, elbows high.", "wrong": "Bar held in the hands, off the shoulders.", "claim": ["c3", "c4"] },
+    { "key": "cross-arm", "kind": "hand", "right": "Arms crossed over the bar, elbows high.", "wrong": "Crossed arms with elbows dropped.", "claim": ["c6", "c7"] },
     { "key": "upright-torso", "kind": "posture", "right": "Chest tall, elbows high at the bottom.", "wrong": "Chest falling forward, elbows dropping.", "claim": "c7" }
   ],
   "libraryDiff": { "add": [], "remove": [], "why": "Library: quads primary, glutes secondary. Yavuz 2015 (c17) supports quads as the main mover; Human Kinetics names glutes and hamstrings (c18). Hamstrings not added: the only EMG source found shows the hamstring muscle more active in the back squat, so no data supports it as a front squat mover. No change." },
-  "loadProgression": { "text": "Add load progressively within your limits; safeties are for emergencies.", "claims": ["c15"] },
+  "loadProgression": { "text": "Add load progressively within your limits. Safeties are for emergencies.", "claims": ["c15"] },
   "tierA": { "wayOut": { "text": "Safeties just below your lowest depth, or a spotter when heavy; practise bailing with light weight first. To bail, let go, let the bar drop forward onto the safeties, and step back.", "claims": ["c14", "c25"] } },
   "breathing": { "text": "Brace before each rep; release a little air on the way up if dizzy. Shared breath-holding line applies.", "claims": ["c9", "c13", "c19"] },
   "barPath": { "text": "The bar sits in front of the throat, touching lightly, never pressing (clear of the neck).", "claims": ["c2"] },
@@ -218,7 +218,7 @@
     "Rack hook height for the front squat (parent's line is back-squat specific, so it is not inherited).",
     "A wrist angle for the front rack.",
     "Tempo in seconds.",
-    "Knees caving (front view): not named in the sources read."
+    "Knees caving (front view): StrongLifts names it for the back squat only; no front-squat source names it."
   ],
   "notes": [
     "LR-34 check (W2-53, 2026-10-18) against cards/barbell_back_squat.json and shared/unrack-rerack.json on head 5036283d; shipped sheet tools/plates/layers/exercises/barbell_back_squat.howto.mjs on main b99a9e25. Plate loading holds: barbell_back_squat c3 (plates loaded evenly, collars) and c13 (pins), restating 'Collars on, pins just below your lowest squat to catch a miss.' Unrack and walk-out: standing straight up to unrack holds on barbell_back_squat c3 and shared/unrack-rerack.json c15, which agree; the walk-out fails: 'two or three short steps' is sourced by neither card (barbell_back_squat c3 says step back while staying close; unrack-rerack c16 says one step back on each leg, kept short) and no front-squat source read describes the unrack. It is a tier-A point, so the line and inherit[1] stay as on the head and front_squat is stopped for a supervisor ruling (open point b). Feet flat, knees follow the toes holds: barbell_back_squat c8, restating the checkpoint label 'Knees follow toes'. Three inherit entries are left. (Superseded by the W2-R7 note below.)",

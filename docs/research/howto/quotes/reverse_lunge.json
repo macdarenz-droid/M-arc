@@ -55,9 +55,9 @@
     {
       "claim": "c6",
       "source": "cat-revlunge",
-      "text": "If you can't maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight.",
+      "text": "If you can’t maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight.",
       "status": "verbatim",
-      "closest": "If you can't maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight."
+      "closest": "If you can’t maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight."
     },
     {
       "claim": "c7",
@@ -93,20 +93,6 @@
       "text": "The reverse lunge strengthens the legs and hips and improves hip stability with the unilateral effort",
       "status": "verbatim",
       "closest": "The reverse lunge strengthens the legs and hips and improves hip stability with the unilateral effort"
-    },
-    {
-      "claim": "c10",
-      "source": "goulette-2021",
-      "text": "Quadriceps force, PFJ reaction force, and knee flexion angle were larger in the FL movement and Up phases. PFJ loading rate was greater in the FL movement along with a lower forward trunk tilt.",
-      "status": "verbatim",
-      "closest": "Quadriceps force, PFJ reaction force, and knee flexion angle were larger in the FL movement and Up phases. PFJ loading rate was greater in the FL movement along with a lower forward trunk tilt."
-    },
-    {
-      "claim": "c10",
-      "source": "goulette-2021",
-      "text": "The FL produced greater PFJ loading variables compared to the BL.",
-      "status": "verbatim",
-      "closest": "The FL produced greater PFJ loading variables compared to the BL."
     },
     {
       "claim": "c11",
@@ -183,9 +169,9 @@
     {
       "claim": "c16",
       "source": "pel-revlunge",
-      "text": "\"So you want to slowly lower yourself down and then you can go a little quicker on the way up.\"",
+      "text": "“So you want to slowly lower yourself down and then you can go a little quicker on the way up.”",
       "status": "verbatim",
-      "closest": "\"So you want to slowly lower yourself down and then you can go a little quicker on the way up.\"",
+      "closest": "“So you want to slowly lower yourself down and then you can go a little quicker on the way up.”",
       "note": ""
     },
     {
@@ -195,6 +181,22 @@
       "status": "verbatim",
       "closest": "One easy way Schumer likes to progress reverse lunges is to spend more time at the bottom. Start by adding just one or two seconds, then you could work up to about five seconds.",
       "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "pel-revlunge",
+      "text": "Jess also warns against flaring the ribcage.",
+      "status": "verbatim",
+      "closest": "Jess also warns against flaring the ribcage.",
+      "note": "fetched by curl 2026-10-22 (LB4 research)"
+    },
+    {
+      "claim": "c18",
+      "source": "pel-revlunge",
+      "text": "“When you step back, make sure to tuck the pelvis under to protect the lower back,” she says.",
+      "status": "verbatim",
+      "closest": "“When you step back, make sure to tuck the pelvis under to protect the lower back,” she says.",
+      "note": "fetched by curl 2026-10-22 (LB4 research)"
     }
   ]
 }

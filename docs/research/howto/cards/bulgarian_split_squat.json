@@ -397,7 +397,7 @@
         "c8"
       ],
       "drawable": true,
-      "rankNote": "No source ranks split-squat faults by frequency. The front knee moving inward (c4) is named by the anchor but needs a front view; the drawn fault is the depth and control fault both sources name."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no read source uses a frequency word for a fault of this exercise, none ties a named fault to harm, and there is no common-mistakes list. Letting the rear knee drop onto the floor is the fault the most read sources tell the lifter to avoid: Catalyst (\"lightly contacts the floor without resting on it\", c3; \"no crashing into the bottom position\", c8) and ACE (\"Before the left knee hits the floor\", c3). The front knee moving in or out (c4, Catalyst) and a back that is not straight (c5, ACE) have one source each. Set aside: Catalyst's \"Sets of 8-15 reps are most often appropriate\" is about sets; Arakawa's \"often performed as an alternative\" is about the exercise's use; Aygun's \"reducing injury risk\" and \"preventing injuries\" name no fault; the NHS knee page's \"often\" lines name no fault of this exercise. A rear knee resting on the floor is a still sign the side view shows, so drawable is true and the pick is unchanged."
     },
     "tells": [
       {
@@ -438,7 +438,7 @@
       "claim": "c2"
     },
     {
-      "step": "Put the top of your rear foot on it and the front foot about three foot-lengths ahead.",
+      "step": "Rear foot on it, front foot about three foot-lengths ahead.",
       "claim": "c2"
     },
     {
@@ -446,7 +446,7 @@
       "claim": "c9"
     },
     {
-      "step": "Lower under control until the rear knee lightly touches the floor, then push up through the whole front foot.",
+      "step": "Lower under control until the rear knee lightly touches the floor.",
       "claim": "c3"
     },
     {
@@ -474,20 +474,20 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Dropping fast and resting the rear knee on the floor.",
-      "fix": "Lower under control and stop as the knee touches lightly; go lighter if you can't.",
+      "mistake": "Rear knee resting on floor.",
+      "fix": "Lower under control. Stop as the knee lightly touches.",
       "claim": [
         "c3",
         "c8"
       ]
     },
     {
-      "mistake": "Front knee moving inward or outward.",
+      "mistake": "Knee moving in or out.",
       "fix": "Keep the front knee over the front foot.",
       "claim": "c4"
     },
     {
-      "mistake": "Crashing into the bottom under a heavy weight.",
+      "mistake": "Crashing into the bottom.",
       "fix": "Use a weight you can move smoothly.",
       "claim": "c8"
     }
@@ -500,7 +500,10 @@
       },
       {
         "muscleId": "glutes",
-        "claim": "c12"
+        "claim": [
+          "c12",
+          "c13"
+        ]
       }
     ],
     "secondary": [
@@ -517,7 +520,7 @@
     ],
     "rows": [
       {
-        "where": "Front thigh and glute of the front leg",
+        "where": "Front leg's thigh and glute",
         "means": "The target muscles are working, most at the bottom.",
         "fix": "",
         "claim": "c11",
@@ -525,13 +528,13 @@
       },
       {
         "where": "Front of the rear hip",
-        "means": "A stretch in the rear leg's hip flexors; expected.",
+        "means": "A stretch in the rear leg's hip flexors.",
         "fix": "",
         "claim": "c10",
         "redFlag": null
       },
       {
-        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "where": "Very painful, locking or giving-way knee",
         "means": "Not a training feeling.",
         "fix": "Stop the set.",
         "claim": "c14",
@@ -541,7 +544,7 @@
   },
   "risks": [
     {
-      "risk": "Too heavy a load costs a smooth descent and ends in a crash into the bottom.",
+      "risk": "Too heavy a load ends in a crash into the bottom.",
       "claim": "c8"
     },
     {
@@ -557,9 +560,8 @@
       "key": "stance-length",
       "kind": "posture",
       "right": "Front foot about three foot-lengths ahead of the bench.",
-      "wrong": "Front foot too close to the bench (short stance).",
-      "claim": "c2",
-      "wrongNote": "The wrong drawing is the inverse of c2; no source describes it directly."
+      "wrong": null,
+      "claim": "c2"
     },
     {
       "key": "rear-knee",
@@ -575,7 +577,7 @@
     "why": "Library: quads and glutes primary, hamstrings secondary, core stabilizer. EMG (c11) and kinetics (c12) support quads and glutes as primary and show hamstring activity at the bottom (c11). The rear-leg hip-flexor stretch (c10) is a watch line, not a worked muscle, so no library change."
   },
   "loadProgression": {
-    "text": "Start with 8-15 smooth reps; go down to 3-6 heavier reps only with full control of the position.",
+    "text": "Sets of 8-15 smooth reps. Sets of 3-6 only with full control of the position.",
     "claims": [
       "c8"
     ]
