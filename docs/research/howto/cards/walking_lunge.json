@@ -452,7 +452,7 @@
       "why": "The lunge anchor names it as a position lost to heavy loading (c7); a forward-inclined trunk doubled lower-back activity in a study that included walking lunges (c9), and the walking lunge already showed the most lower-back activity (c10).",
       "claim": "c7",
       "drawable": true,
-      "rankNote": "No source ranks walking-lunge faults by frequency. Sideways tilt (c5) needs a front view."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: no read source uses a frequency word for a fault (Catalyst's \"Many athletes try to load lunges too heavily\" is about the load, which LR-31 does not count), no named fault is tied to harm (Bezerra's \"greater lower lumbar erector spinae activation\" with a forward-inclined trunk is a muscle-activity finding), and there is no common-mistakes list. Counting the read sources that tell the lifter to avoid each fault, all tie at one: losing the upright trunk, the controlled descent or the balance between the feet (Catalyst, c7, c8); driving the hips forward instead of lowering them (ACE, \"rather than driving your hips forward\", c3); sideways tilt of the upper body (ACE, c5). Catalyst's vertical front shin is an instruction, not a fault to avoid: it allows \"shorter steps with the knee moving in front of the toes\" for the quads. Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it (viewWhy names the trunk, c7, c9); LR-31 gives no further order. Set aside: Catalyst's \"Sets of 3-10 reps per leg are usually appropriate\" is about sets; the NHS knee page's \"often\" lines name no fault of this exercise. The trunk pitched forward is a still sign the side view shows, so drawable is true and the pick is unchanged."
     },
     "tells": [
       {
@@ -468,8 +468,11 @@
       "up": null,
       "down": null,
       "pause": null,
-      "text": "Controlled descent with a full-length step; no crash into the bottom. No source gives seconds for the standard walking lunge.",
-      "claim": "c8"
+      "text": "Controlled descent with a full-length step; no crash into the bottom (c8). No source gives seconds for the standard walking lunge, so up, down and pause stay null (LR-33). Eccentric lunge walking, a slow variant, holds the body on the stepping leg \"for ~ 3 s\" (c11); it is not the standard lunge, so its seconds are not drawn. ACE's twist variant says \"Hold this position momentarily before stepping forward\" for the one-leg balance before the first step only; it is not in pause.",
+      "claim": [
+        "c8",
+        "c11"
+      ]
     },
     "variantLine": "exercises.json lists Dumbbells / Barbell. The plate draws dumbbells at the sides (c12). Step, shin and trunk claims (c1, c2, c7) come from Catalyst's load-agnostic lunge page, so they hold for both."
   },
@@ -490,15 +493,18 @@
       "claim": "c6"
     },
     {
-      "step": "Step forward, landing heel first, and let the weight move onto that foot slowly.",
+      "step": "Step forward heel first, moving the weight onto it slowly.",
       "claim": "c5"
     },
     {
-      "step": "Drop the hips until the back knee lightly touches the floor, front shin about vertical.",
-      "claim": "c2"
+      "step": "Drop the hips until the back knee lightly touches the floor.",
+      "claim": [
+        "c2",
+        "c3"
+      ]
     },
     {
-      "step": "Push the front foot into the floor to stand, then swing the back leg forward into the next step.",
+      "step": "Push through the front foot to stand. Swing the back leg forward.",
       "claim": "c4"
     },
     {
@@ -526,19 +532,22 @@
   ],
   "handlingMistakes": [
     {
-      "mistake": "Chest pitching forward at the bottom.",
+      "mistake": "Chest pitching forward.",
       "fix": "Go lighter until you can stay upright and controlled.",
       "claim": "c7"
     },
     {
-      "mistake": "Driving the hips and knee forward on landing.",
-      "fix": "Drop the hips down; aim the back knee at the front heel.",
+      "mistake": "Driving the hips forward.",
+      "fix": "Drop the hips down. Aim the back knee at the front heel.",
       "claim": "c3"
     },
     {
       "mistake": "Dropping fast into the bottom.",
-      "fix": "Lower slowly; use a weight that lets you move smoothly.",
-      "claim": "c8"
+      "fix": "Lower slowly. Use a weight you can move smoothly.",
+      "claim": [
+        "c8",
+        "c7"
+      ]
     }
   ],
   "feel": {
@@ -570,7 +579,7 @@
     ],
     "rows": [
       {
-        "where": "Front of the thigh and the glutes",
+        "where": "Front thighs and glutes",
         "means": "The target muscles are working.",
         "fix": "",
         "claim": "c14",
@@ -578,13 +587,16 @@
       },
       {
         "where": "Lower back",
-        "means": "Usually means the chest is leaning forward.",
-        "fix": "Stay upright; go lighter if you can't.",
-        "claim": "c9",
+        "means": "Fault: the chest leaning forward.",
+        "fix": "Stay upright. Go lighter if you can't.",
+        "claim": [
+          "c9",
+          "c7"
+        ],
         "redFlag": null
       },
       {
-        "where": "Knee pain that is very bad, or the knee locks or gives way",
+        "where": "Very painful, locking or giving-way knee",
         "means": "Not a training feeling.",
         "fix": "Stop the set.",
         "claim": "c15",
@@ -627,7 +639,7 @@
     "why": "Library: quads and glutes primary, hamstrings and calves secondary, core stabilizer. Walking-lunge EMG (c10) supports glutes; forward-lunge EMG applied by analogy (c14) supports quads primary and hamstrings and calves secondary. No change."
   },
   "loadProgression": {
-    "text": "Start light or unloaded; add weight only while the step stays full and the descent smooth.",
+    "text": "Start light or unloaded. Add weight only while the step stays full and the descent smooth.",
     "claims": [
       "c8",
       "c7"
