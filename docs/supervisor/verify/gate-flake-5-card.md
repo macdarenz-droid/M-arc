@@ -78,7 +78,7 @@ Every other line of the three blocks stays byte-identical.
 outcome: COPY-2 can no longer turn red because the machine dropped a frame, and it now also catches a snap or bounce hidden inside a dropped frame, which main cannot. When a How-to chunk fails, HT-8 and HT-9 Show say which chunk, how it failed and through which path, instead of an 8000 ms timeout with no cause; and the real cause is either found and fixed or narrowed to evidence the supervisor can rule on.
 deliverable: one PR.
 evidence: S1-S9.
-finish: merged, with COPY-2, HT-8 and HT-9 green in every gate shard of both time zones and in visual-gate-tz on the PR's READY head and on the train head; and D-GF5-3 records Part B's cause (found and fixed) or the runs that did not reproduce it plus the open question for the supervisor. You will notice: nothing in the app. Only the gate changes.
+finish: merged, with COPY-2, HT-8 and HT-9 green in every gate shard of both time zones and in visual-gate-tz on the PR's READY head and on the train head; and D-GF5-3 records Part B's result under Do 7: fixed here, handed to the supervisor with its trace (an app or worker cause), or not reproduced (with the runs). You will notice: nothing in the app. Only the gate changes.
 
 design_reference:
 - This card's "Root cause, in short", Evidence and Research appendix.
@@ -111,7 +111,7 @@ Do:
 1. Branch from origin/main. Run `npm ci` and `npm run build`.
 2. The probe first (the test that fails before). Commit tests/gate/gf5-race.mjs with the blocks unchanged, then run S1 on that commit. The probe:
    - Has a header comment like gf4-bug34-race.mjs: what it proves, that it needs `npm run build`, and its usage.
-   - `--block copy2|ht8|ht9show` picks one block. It runs that block's bytes unchanged: the slice from its guard to the next guard (HT-9 Show: the guard before `const tag = 'HT-9 Show';`), as an AsyncFunction with the names the slice reads (an unknown name throws, so a missing one cannot pass silently). gate.runs returns true only for that block's key.
+   - `--block copy2|ht8|ht9show` picks one block. The run counts below are sized to each block's length (gate-times.json: COPY-2 19.6 s, HT-8 260.3 s, HT-9's four blocks 330.3 s; HT-9 Show alone logged 58.6 s in sighting 2's job). It runs that block's bytes unchanged: the slice from its guard to the next guard (HT-9 Show: the guard before `const tag = 'HT-9 Show';`), as an AsyncFunction with the names the slice reads (an unknown name throws, so a missing one cannot pass silently). gate.runs returns true only for that block's key.
    - The HT-8 and HT-9 Show slices `import('../tools/plates/fidelity/harness.mjs')` relative to scripts/. Resolve that without changing the slice: for example, run the slice from a temporary module file in scripts/ that is deleted after the run and never committed. The sha256 check below runs on the slice text, so a changed slice cannot pass.
    - Source: the working tree's scripts/screenshot-gate.mjs. `--gate <file>` runs another copy (the mutations). `--old` runs `git show 5158609c:scripts/screenshot-gate.mjs`; its slice must have the sha256 listed under base, or the probe exits 2 and prints the hash it got.
    - Serves www/ with `vite preview --port 4182 --strictPort`, and launches Chromium from MARC_CHROMIUM.
@@ -130,10 +130,11 @@ Do:
    - `fast-80`: the swap's duration is 80 ms.
    - `overshoot`: the swap's easing is `cubic-bezier(0.3, 1.8, 0.5, 1)` (D-COPY2-swap's own mutation).
    - `mid-jump`: at the swap's 3rd frame the panel's margin-top grows by 30 px (a layout jump while the animation runs).
+   - `blip`: the swap's keyframes gain a 3 px step back (the panel moves up) lasting two frames (about 34 ms) in mid-ease, then the ease goes on. A bounce main can miss: run it with a stall long enough (about 60 ms) and placed so the gap covers the step back (--trace shows where), and the raw pair across the gap moves forward.
 6. Hunt Part B's real cause (S3). With 8 busy processes (`node -e 'for(;;){}'`, scratch only, stopped after) and with --trace on the new blocks: `--block ht9show --runs 20` and `--block ht8 --runs 5`. Then once each: the full gate's UTC 3/4 shard as CI packs it (`TZ=UTC MARC_GATE_JOB=3/4`) and the whole gate in Pacific/Auckland (the visual-gate-tz run), both under the same load. Record every failed request: file, errorText, page or worker, and whether the worker controlled the page and had the file in its cache. Record the machine's core count.
 7. Decide Part B by what Do 6 shows. Write the result in D-GF5-3 either way.
    - A failure reproduced and its cause lies in how the gate drives the app (for example a block closing or loading something that breaks a fetch): fix it inside B1-B6 if the lines allow it, prove it with S2's rows, and record it. If the lines do not allow it, stop and report.
-   - It lies in the app or its service worker (for example the cache missing a precached file, or install failing under load): stop and report it on the PR with the trace, for a BUG card and a supervisor ruling. Do not block the worker in these contexts yourself (earlyChip's `serviceWorkers: 'block'` at :8218 is the precedent the supervisor would rule on).
+   - It lies in the app or its service worker (for example the cache missing a precached file, or install failing under load): stop and report it on the PR with the trace, for a BUG card and a supervisor ruling, and wait for that ruling before READY. Do not block the worker in these contexts yourself (earlyChip's `serviceWorkers: 'block'` at :8218 is the precedent the supervisor would rule on).
    - Nothing reproduced: record the runs and counts. B1-B6 ship as they are, so the next CI sighting names the chunk, the error and the path. The supervisor keeps the watch item.
 8. Run S4-S6 and `node scripts/gate-blocks.mjs --check`. Run the mutations on scratch copies with --gate. Never commit them.
 9. gate-times.json. Time each of the three groups alone, before (main) and after (your head): 3 runs each, TZ=UTC and TZ=Pacific/Auckland, with the solo jobs under base. Take the seconds from screenshots/gate-proof-*.json, meta.seconds. For each group: if the larger after median is within 10% of the larger before median, leave its value alone; otherwise set it to the larger after median x 0.93 (D-GATESPLIT-LIB2's local-to-CI ratio). Record all medians in D-GF5-2.
@@ -158,7 +159,8 @@ Acceptance (each with mutations that must turn red; list them in the PR):
   - ht8 `--delay-chunk 'feel-barbell-back-squat-' 3000` exits 0 (green: a chunk that arrives in time still passes, as on main).
   - Plain: ht9show `--runs 5` and ht8 `--runs 2` exit 0.
 - S3 Real load (Do 6). 8 busy processes. copy2 `--runs 10` exits 0 on the head; record main's (--old) red count under the same load. ht9show `--runs 20` and ht8 `--runs 5`: record every failed request, or none. The PR gives the core count and the gate runs of Do 6.
-- S4 Seeded defects stay red. For each COPY-2 seed, `--block copy2 --seed <name> --runs 3 --expect red` exits 0 on the new block with no stall, with `--stall 40 --at-frame 1` and with `--stall 40 --at-frame 2`, and on --old with no stall. If a seed is green on --old, record it and report; do not tune it. Not run while this card was written: the seeds are D-COPY2-swap's two mutations plus three new ones.
+- S4 Seeded defects stay red. For each COPY-2 seed except `blip`, `--block copy2 --seed <name> --runs 3 --expect red` exits 0 on the new block with no stall, with `--stall 40 --at-frame 1` and with `--stall 40 --at-frame 2`, and on --old with no stall. If a seed is green on --old, record it and report; do not tune it. Not run while this card was written: the seeds are D-COPY2-swap's two mutations plus four new ones.
+  - `blip` is the one seed main can miss: with its covering stall (Do 5) the head must be red 3 of 3 (A4's replayed check); record --old's result on the same command (expected green: the stricter half of S5). Without the stall it is red on both or on neither; record which.
   - For Part B, on both --old and the head: `--fail-chunk` red (S1, S2); a seed that adds `dialog.sheet.ht .feel { visibility: hidden }` before the app runs: ht8 red on both (B3's wait must not take a present but hidden section as in).
 - S5 Nothing loosened:
   - `git diff origin/main -- scripts/screenshot-gate.mjs` holds only A1-A7 and B1-B6. The PR lists each hunk against its number, and every number the Ruling keeps with its old and new line.
@@ -171,7 +173,7 @@ Acceptance (each with mutations that must turn red; list them in the PR):
   - MA2 the gap threshold 25 ms raised to 60 ms: the `--stall 40` rows of S2 are red again;
   - MA3 the replay step 1000/60 ms replaced by the whole gap (main's reading): the `--stall 40` rows of S2 are red;
   - MA4 the replay's easing forced to 'linear': A6 is red on plain runs, so S2's plain row is red (A6 really compares);
-  - MA5 A4's replayed sequence not checked (raw reversal only): `--seed overshoot` with a stall over its overshoot frames turns green, so that S4 row is red (the builder picks the stall frame from --trace and records it);
+  - MA5 A4's replayed sequence not checked (raw reversal only): S4's `blip` row with its covering stall turns green, so it is red;
   - MB1 B3's early end resolves as a pass: the ht8 `--fail-chunk` run turns green, so S2's row (--expect red) exits 1;
   - MB2 B3's bound raised from 8000 to 20000 ms: the `--delay-chunk 12000` run turns green, so S2's row exits 1;
   - MB3 B5 removed: S2's ht9show row no longer names the errorText, so it is red;
