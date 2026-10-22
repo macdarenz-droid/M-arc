@@ -27,6 +27,7 @@ Used for every drawn batch (pilot A/B, LB1-LB10, LIB-ZOOM), after the builder po
    - **19:** lat_pulldown, the start ghost more upright than the end, so the lean grows;
    - **20:** pull_up, the head tipped back about 20° at the top;
    - **21:** lat_pulldown, the thigh roller with no mount.
+   - **22:** pull_up, no floor line, so "feet clear the floor" is never shown (lib4-cards 30).
 4. **Verdict.** A plate whose every median is ≥ 4 is **approved at that sha**. A failing plate gets **one fix round**: post the findings with pixel places and buildable fixes. After 'PANEL FIX @ <sha>', run a **focused recheck**: only the fixed plates, the same anchors, new plants and a new shuffle. A plate that still fails gets a second focused round (D-LIB13-PANEL2) or is **HELD** (D-LIB8M-CARDTRUE).
 5. **Card truth wins.** A critic's fix that breaks a quoted card claim is never built. Rule it card-true (D-LIB13-ONEARM: the bent support arm on one_arm_dumbbell_row), tell the next critics in one prompt sentence, and give the owner a sheet line. If the sources might support the other form, open a research follow-up.
 
