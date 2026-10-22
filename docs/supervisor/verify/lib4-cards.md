@@ -4225,3 +4225,11 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
   - pendlay_row: R2 [3,3,4]. The bar glyph came apart off its plate centre, a regression from the grip fix.
   - one_arm_dumbbell_row: R5 [3,2,3]. The Mistake is still a fragment; "Blade not back" shows no fault. R1 is read under D-LIB13-ONEARM (a card-true bent support arm).
   - **D-LIB13-PANEL2** (#274): a second focused round for those two at the resume, then a recheck. If either still fails, it is held (D-LIB8M-CARDTRUE).
+
+## 30. LB3 focused recheck 2 (D-LIB13-PANEL2 → D-LIB13-PANEL3, 2026-10-22 ~07:50 UTC; #274 @ `8781ed0`, page `872fc6f7…`)
+
+- Set: pendlay_row and one_arm_dumbbell_row, golden B's pull_up and lat_pulldown as anchors, 2 new plants (pendlay R2 glyph off-centre; one_arm R1 rounded trunk), new salt `e9ee2ee4…`. Supervisor in session_01PeNM9HeWPrhrcscMwXzupy (new account).
+- **VALID.** Both plants caught: R2 [3,3,3] and R1 [3,3,2]. lat_pulldown: every median ≥ 4. pull_up: R1 [3,3,4] is golden-B follow-up 20; R2 [3,3,3] is a missing floor line, confirmed on the PNG and recorded as **golden-B follow-up 22**. Two excepted items on one anchor depart from the one-item limit, accepted because both were confirmed on the image, the other anchor was clean and both plants were caught.
+- **pendlay_row PASS** (every median ≥ 4). **Approved @ `8781ed0`: 6 of 7** (landmine_row, dumbbell_romanian_deadlift, conventional_deadlift, sumo_deadlift, back_extension, pendlay_row). t_bar_row held.
+- one_arm_dumbbell_row: R5 [3,3,3] only; the red working arm and dumbbell are drawn behind the support arm, the hand and the bench, and the bend is about 20°. **D-LIB13-PANEL3** (#274 6335029737): one last mechanical round on the Mistake view only (fault arm drawn on top, elbow about (431,521)), then a focused R5 recheck; still failing means held (D-LIB8M-CARDTRUE).
+- **one_arm's anchor role:** its support pose passed every item, so back_extension's approval stands (D-LIB13-SUPPORT). It becomes the approved F7 drawable-fault example only when its Mistake passes.
