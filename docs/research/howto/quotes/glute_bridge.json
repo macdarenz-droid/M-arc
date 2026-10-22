@@ -1,0 +1,311 @@
+{
+  "id": "glute_bridge",
+  "checked": "2026-10-22",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "pg-gb",
+      "text": "Lie flat on your back with arms straight by your side, knees bent hip-width apart, and feet flat on the floor.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "ace-gb",
+      "text": "Lie supine (on your back) on an exercise mat or the floor in a bent-knee position with your feet flat on the floor. Place your feet hip-width apart with the toes facing away from you.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "pg-gb",
+      "text": "Engage your core by pulling the belly button towards the spine and tucking your pelvis under so your lower back is flat against the floor.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "ace-gb",
+      "text": "Gently contract your abdominal muscles to flatten your low back into the floor. Attempt to maintain this gentle muscle contraction throughout the exercise",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "sl-gb",
+      "text": "Tuck the pelvis in to properly activate the glutes.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "ace-gb",
+      "text": "Gently exhale while holding your abdominal contraction and press your hips upwards off the floor into extension by contracting your glutes (butt muscles). At the same time press your heels into the floor for more stability.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "ace-gb",
+      "text": "Inhale and slowly lower yourself back towards your starting position.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "pg-gb",
+      "text": "Use your glutes to push your hips towards the ceiling so your shoulders, hips and knees are in a straight line. Your shin and thigh should roughly be at a 90 degree angle.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "hl-gb",
+      "text": "At the top of the movement, your shoulders, hips, and knees should be in a straight line.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "pg-gb",
+      "text": "Squeeze your glutes and hold the top position for a second before slowly returning to the start position, making sure your back doesn’t overarch.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "sl-gb",
+      "text": "Squeeze your glutes at the top.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "ace-gb",
+      "text": "Avoid pushing your hips too high as this generally increases the amount of hyperextension (arching) in your low back. Maintaining your abdominal contraction helps avoid excessive arching in your low back.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "ace-gb",
+      "text": "Avoid arching your lower back as your press your hips upward which normally occurs if your attempt to push your hips as high as possible. This can be achieved by contracting your abdominal muscles prior to lifting, and keeping them engaged throughout the lift",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "pg-gb",
+      "text": "Preventing the lower back from arching is key to ensuring the glutes power the hip extension, rather than the lower back.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "pg-gbhub",
+      "text": "Keep your core engaged throughout the exercise to avoid overextending your back, which can lead to lower back pain.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "pg-gb",
+      "text": "Keeping a neutral spine helps to prevent tension from switching from the glutes to the lower back, making sure the glutes are worked hard and the back is protected from injury.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "pg-gbhub",
+      "text": "Performing glute bridges should not be hurting your back. If you're feeling tension in your back performing glute bridges, then you may be performing the exercises incorrectly or your body may be compensating for other weaknesses.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "pg-gbhub",
+      "text": "Common mistakes when perfoming glute bridges is not having the correct foot positioning for your body or overarching the back.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "pg-gbhub",
+      "text": "When performed correctly, you should feel the pressure in the glutes and hamstrings.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "pg-gbhub",
+      "text": "When adopting the bridge position, the thrust of power should come from your hips rather than your feet.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "pg-gb",
+      "text": "Glute bridges do work the hamstrings, however the glutes are the main muscle group strengthened in this exercise.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "sl-gb",
+      "text": "Glutes",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "sl-gb",
+      "text": "Quads",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "pg-gbhub",
+      "text": "Glute bridges primarily strengthen the glutes, however the hamstrings and core are also worked in this exercise.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "hl-gb",
+      "text": "Focusing on pressing through your heels as you elevate your hips will isolate your glute muscles and hamstring muscles the most, versus pressing down through your toes.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "hl-gb",
+      "text": "Driving your weight down through your toes will force your quadricep muscles to do more work.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "hl-gb",
+      "text": "Be sure to keep your back and core tight throughout the entire movement.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "hl-gb",
+      "text": "Focus on squeezing your buttocks and keeping your knees and toes in the same line.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "hl-gb",
+      "text": "Perform 3 sets of 15 repetitions, or 3 rounds of a 30-second hold.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "hl-gb",
+      "text": "You can elevate the difficulty of any glute bridge variation by simply placing a weight on your hips.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "pg-gbhub",
+      "text": "Progress your glute bridges with dumbbells. Adding weight increases the challenge for bigger gains.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "pg-gbhub",
+      "text": "Barbell glute bridges are ideal for when you have progressed to lifting 20kg or more.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "pg-bgb",
+      "text": "Load a barbell to the desired weight using bumper plates, then sit in front of the barbell with your legs extended straight out and roll the barbell until it is centred above your hips.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "pg-bgb",
+      "text": "Lie your upper body back and bring your feet flat on the floor around hip width apart, close to your glutes, knees bent and facing the ceiling.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "pg-bgb",
+      "text": "Firmly grip the barbell with a pronated (overhand) grip just outside hip width apart.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "pg-bgb",
+      "text": "Use your hands to prevent the bar from rolling down your body.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "pg-bgb",
+      "text": "Pause at the top before slowly lowering back to the ground.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "pg-gb",
+      "text": "Squeeze your glutes and hold the top position for a second before slowly returning to the start position, making sure your back doesn’t overarch.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    }
+  ]
+}

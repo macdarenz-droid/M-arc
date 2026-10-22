@@ -1,0 +1,271 @@
+{
+  "id": "cable_kickback",
+  "checked": "2026-10-22",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "bb-gk",
+      "text": "Step 1 — Place the ankle strap on the cable machine carabiner and adjust its height to the lowest position",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "pg-ck",
+      "text": "Attach the ankle cuff to the cable pulley and set it on the lowest setting. Attach the cuff to your ankle.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "sl-ck",
+      "text": "Attach an ankle strap to a cable machine and place it around your ankle.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "pg-ck",
+      "text": "Face the pulley and hinge forward by about 45 degrees at the hips. You can hold on to the pulley machine for support if needed.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "bb-gk",
+      "text": "Step 2 — With the ankle strap around your ankle, face the cable machine and lightly hinge to stabilize. Place most of your weight on the non-working leg. This is your starting position.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "fb-che",
+      "text": "Stand upright facing the pulley with your feet hip-width apart and grab ahold of the steel frame.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "bb-gk",
+      "text": "Step 3 — Using your hands and free leg to brace, press into the machine to create a counterforce to your kickback. Brace your core, tighten your legs, and secure your grip on the cable machine as stability points.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "sl-ck",
+      "text": "Brace your core, keep your body still, and start to press your leg backward and upwards by activating the glute.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "fb-che",
+      "text": "Brace your core to maintain a neutral spine.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-gk",
+      "text": "Step 4 — Keep your working leg long, with only a subtle bend at the knee. Squeeze your glute on the working side as you drive your leg backward against the resistance.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "fb-che",
+      "text": "Keeping your right leg extended with the knee slightly flexed, extend it behind you by flexing your right glute.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "pg-ck",
+      "text": "Engage your abs, then use your glutes to drive back your leg as far as possible.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "sl-ck",
+      "text": "Push the leg as far up as you can without rotating in the hips, then return to the starting position.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "pg-ck",
+      "text": "Squeeze your glutes at the top of the movement and pause for a second before slowly returning back to the starting position.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "bb-gk",
+      "text": "Step 5 – Once your glute has fully contracted, slowly lower back to the starting position. Perform for repetitions.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "bb-gk",
+      "text": "While that may sound silly, the reality is that a lot of lifters move other parts of their body to accomplish the glute kickback.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "bb-gk",
+      "text": "Do not allow your lower back to arch, don’t flare your upper back, or sway your hips. Brace up, and only contract your glutes. Movement from your butt should move that pulley, nothing else.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "pg-ck",
+      "text": "Having good form is key to isolating the glutes in this exercise – poor form is likely to recruit the lower back instead. Once you have hinged forward, engage your core by pulling the belly button in towards the spine to flatten your back.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "pg-ck",
+      "text": "Make sure you are hinging forward at the hips and engaging the core to keep a neutral spine and avoid using momentum to swing the weight. It should be a smooth and controlled movement.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bb-gk",
+      "text": "Be disciplined, brace up, and only contract your glutes with proper form and a full range of motion.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "pg-ck",
+      "text": "If you are unable to move the weight without swinging your legs to create momentum, drop the weight.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "fb-che",
+      "text": "Keep your hips level to the ground. Twisting will let you raise your leg higher, but it will also reduce the effectiveness of this exercise. Focus on pointing your toe straight down towards the ground.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-gk",
+      "text": "The glute kickback isn’t one that you’re going to do for max load. Since you are using a long lever with your leg, heavier loading would break down your form too quickly.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-gk",
+      "text": "For Muscle Mass: Perform 2-4 sets of 10-15 repetitions.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-gk",
+      "text": "Aim for loading schemes that allow you to mainly feel the glute, maintain position, and hit close to muscle failure around 10 to 15 repetitions.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "sl-ck",
+      "text": "Glutes",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "sl-ck",
+      "text": "Hamstrings",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "sl-ck",
+      "text": "Adductors",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "pg-ck",
+      "text": "While the hamstrings, quads, calves and core help to stabilise the movement, the glute muscles are the key driver in this exercise.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "bb-gk",
+      "text": "The glutes are the major muscle group worked by the glute kickback.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "pg-gkhub",
+      "text": "Make sure you are using your full range of motion. Aim to kickback your leg as far as you comfortably can, rather than stopping when it starts to get challenging.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "pg-gkhub",
+      "text": "Use the glutes to drive the movement, and make sure to squeeze the glutes at the top of the kickback.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "pg-ck",
+      "text": "Squeeze your glutes at the top of the movement and pause for a second before slowly returning back to the starting position.",
+      "status": "pending",
+      "closest": "",
+      "note": ""
+    }
+  ]
+}
