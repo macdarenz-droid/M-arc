@@ -2636,3 +2636,9 @@ Card: `docs/supervisor/verify/box-cap-card.md` (claude/sup-lib4-cards @ 3d9b8e10
   - check-bundle.mjs switches to its Do 9 rule: each answered value must appear in the built app.
   - Every other box stays at 30, and golden B's and c7's limits are unchanged.
 - **D-LIB5-RISKSTEST.** `tests/howto/sections-risks.test.ts` (HT-9's) gains exactly two lines, the `RED_FLAG_BACK` import and `back: RED_FLAG_BACK` in its typed FLAG map, because `RiskJoint` now has `'back'`. Every assertion stays. Without the entry, typecheck is red.
+
+## LIB-14: LB4 plates, build-ahead (LIB-14 builder, 2026-10-22)
+
+- **D-LIB14-MODES applied: all six drawn LB4 ids are H, no D row.** front_squat, goblet_squat and bodyweight_squat each need a tempo the parent barbell_back_squat does not carry (their cards give no seconds) and their own Mistake, so they cannot be the parent with only PARAMS paths set. Record: tools/plates/library/lb4/DESIGN.md section 1.
+- **D-LIB14-NOSECS applied.** Only wall_sit has quoted seconds (w6, "30-60-second holds": one Hold row, the quote's ASCII hyphen). The other five are drawn and tested but held off the rows file, the plates page, QA and the critic until the owner's strip design lands; no seconds are invented. Record: DESIGN.md sections 8 and 13.
+- **step_up pose map (proposed, DESIGN.md section 9 Q2).** The trunk lurch happens as the rise starts (c1), so the plate is proposed to draw standing-on-the-box first and the step position as the spec's end, the pose the Mistake is drawn against.
