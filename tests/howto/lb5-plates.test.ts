@@ -24,7 +24,7 @@ const sha = (t: string | Buffer) => createHash('sha256').update(t).digest('hex')
 const SLICE = ['overhead_cable_triceps_extension', 'preacher_curl', 'wrist_curl', 'cross_body_hammer_curl'];
 const F7_IDS = ['cross_body_hammer_curl', 'incline_dumbbell_curl', 'wrist_curl'];
 // Held ids (DESIGN.md section 13; #290 6340022161, 6340075388): drawn as is, in no rows file and on no QA'd page.
-const HELD = ['wrist_curl', 'cross_body_hammer_curl', 'overhead_cable_triceps_extension'];
+const HELD = ['wrist_curl', 'cross_body_hammer_curl', 'overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension'];
 /** The LB5 ids whose spec file exists (drawn or held). */
 const specced = () => LB5.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`));
 /** The LB5 ids whose spec file exists and that are not held (drawn), in LB5 order. */
@@ -431,7 +431,7 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
     cable_curl: 'straight', bayesian_cable_curl: 'swing', preacher_curl: 'lift', incline_dumbbell_curl: 'elbows', concentration_curl: 'knee', wrist_curl: 'lean' };
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   // One-tell plates: a second tell is drawn only if a claim states it (#290 6343211054 item 2); per-id ruling asked on #290.
-  const ONE_TELL = ['overhead_cable_triceps_extension', 'cable_curl', 'bayesian_cable_curl', 'concentration_curl'];
+  const ONE_TELL = ['overhead_cable_triceps_extension', 'dumbbell_overhead_triceps_extension', 'cable_curl', 'bayesian_cable_curl', 'concentration_curl'];
   it('each drawn plate has 2-3 tells (one on the ONE_TELL ids), the first carrying the proposed key; mutation: the tells swapped is red', () => {
     for (const id of specced()) { expect(keyProblems(S[id])).toEqual([]); expect(S[id].mistake.tells.length, id).toBeGreaterThanOrEqual(ONE_TELL.includes(id) ? 1 : 2); expect(S[id].mistake.tells.length, id).toBeLessThanOrEqual(ONE_TELL.includes(id) ? 1 : 3); }
     const s = S.preacher_curl;
@@ -535,6 +535,23 @@ describe('LIB-15 A15: Mistakes, tells, cues, leaders and the R10 items, on drawn
       ['slight forward lean from the hips with a straight back', () => ['start', 'end'].flatMap(p => { const a = rep('overhead_cable_triceps_extension').angles[p]; return a.tilt > 0 && a.tilt <= 20 && a.trunk === 0 ? [] : [`${p}: tilt ${a.tilt} trunk ${a.trunk}`]; })],
       ['arms straight overhead at the end, elbows not locked', () => { const e = rep('overhead_cable_triceps_extension').angles.end['elbow.r']; return e > 0 && e <= 15 ? [] : [`elbow ${e}`]; }],
       ['feet flat on the floor', () => posesOf(S.overhead_cable_triceps_extension).flatMap(p => onCheck('overhead_cable_triceps_extension', ['sole.r', 'sole.l'], p))],
+    ],
+    dumbbell_overhead_triceps_extension: [
+      ['split stance, both feet flat', () => { const D = 'dumbbell_overhead_triceps_extension', l = lm(D, 'end'); return [...(l['sole.l'][2] - l['sole.r'][2] >= 0.3 ? [] : ['feet not split']), ...posesOf(S[D]).flatMap(p => onCheck(D, ['sole.r', 'sole.l'], p))]; }],
+      ['one dumbbell held vertically in both hands', () => ['start', 'end'].flatMap(p => {
+        const { items, lm: l } = itemsIn(S.dumbbell_overhead_triceps_extension, p), db = items.filter((it: any) => it.type === 'dumbbell');
+        return db.length === 1 && db[0].axis.join() === '0,1,0' && Math.abs(db[0].at[2] - l.grips[2]) < 1e-9 && Math.abs(l['grip.l'][2] - l['grip.r'][2]) < 0.01 && Math.abs(l['grip.l'][1] - l['grip.r'][1]) < 0.01 ? [] : [`${p}: not one vertical dumbbell in both hands`];
+      })],
+      ['upper arms vertical in both poses', () => ['start', 'end'].flatMap(p => { const l = lm('dumbbell_overhead_triceps_extension', p), a = deg(l['shoulder.r'], l['elbow.r']); return Math.abs(a) <= 5 ? [] : [`${p}: upper arm ${a.toFixed(1)} deg off vertical`]; })],
+      ['about 90 deg at the elbow at the bottom, the dumbbell behind and clear of the head', () => {
+        const D = 'dumbbell_overhead_triceps_extension', s = S[D], cam = camOf(s), e = rep(D).angles.start['elbow.r'], { items, lm: l } = itemsIn(s, 'start'), c = items.find((it: any) => it.type === 'dumbbell').at;
+        const head = shapesIn(s, 'start', cam).filter((x: any) => x.key === 'head').map((x: any) => x.poly), pts: number[][] = [];
+        for (let k = 0; k <= 20; k++) for (const [y, z] of [[-0.135 + 0.27 * k / 20, -0.0595], [-0.135 + 0.27 * k / 20, 0.0595], [-0.135, -0.0595 + 0.119 * k / 20], [0.135, -0.0595 + 0.119 * k / 20]]) pts.push(cam.P([0, c[1] + y!, c[2] + z!]));
+        const gap = Math.min(...pts.map(p => outside(head, p)));
+        return [...(e === 90 ? [] : [`elbow ${e}`]), ...(c[2] < l.ear[2] ? [] : ['dumbbell not behind the head']), ...(head.length && gap >= 6 ? [] : [`dumbbell ${gap.toFixed(1)} px from the head`])];
+      }],
+      ['elbows not locked at the top', () => { const e = rep('dumbbell_overhead_triceps_extension').angles.end['elbow.r']; return e > 0 && e <= 15 ? [] : [`elbow ${e}`]; }],
+      ['braced torso, head in line', () => ['start', 'end'].flatMap(p => { const a = rep('dumbbell_overhead_triceps_extension').angles[p]; return a.tilt === 0 && a.trunk === 0 && a.neck === 0 ? [] : [`${p}: tilt ${a.tilt} trunk ${a.trunk} neck ${a.neck}`]; })],
     ],
   };
   /** The tier-A rows of DESIGN.md section 7 (drawn ids), each with its number of items (split on '; '). */

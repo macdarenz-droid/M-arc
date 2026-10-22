@@ -291,7 +291,8 @@ GO'; incline_dumbbell_curl after pilot A is on main.
 |---|---|---|
 | wrist_curl | D-LIB8-shrug pattern, F-LIB15-1 (#290 6340075388): no frame holding the whole figure, bench and dumbbell passes PQ-H3's Trace card-true (5.2 px at 146.29 px/m, 10.4 px at 195.0 px/m) | LIB-ZOOM (#279) on main and merged in; then the zoom circle on the wrist and grip under LIB-ZOOM's convention |
 | cross_body_hammer_curl | D-LIB15-TWIST, F-LB5-1 (#290 6340022161, 6340075388); then the new pick, the shrug (research a8e66f32, #290 6340713424): a 5 cm drawn shrug gives H3 deviation 7.3 px, and passing needs ≥ 7.8 cm, which c5/c6 do not give (reported #290 6340838685); held under D-LIB8-shrug (#290 6340849204), the 5 cm a drawn value | LIB-ZOOM (#279) on main and merged in; then a zoom circle on the working shoulder under LIB-ZOOM's convention (F-LIB15-1's route), or a sourced shrug size if research finds one |
-| overhead_cable_triceps_extension | D-LIB8-shrug (#290 6343211054 item 1): at the approved arch size (LB3 dumbbell_romanian_deadlift.mjs:109, M_ARCH 25) the tell-anchor deviation is 9.98 px < 11.39; the arch is never sized to pass H3. dumbbell_overhead_triceps_extension copies this arch and waits with it | LIB-ZOOM (#279) on main and merged in, then its zoom route, or a sourced arch size |
+| overhead_cable_triceps_extension | D-LIB8-shrug (#290 6343211054 item 1): at the approved arch size (LB3 dumbbell_romanian_deadlift.mjs:109, M_ARCH 25) the tell-anchor deviation is 9.98 px < 11.39; the arch is never sized to pass H3. dumbbell_overhead_triceps_extension copies this arch | LIB-ZOOM (#279) on main and merged in, then its zoom route, or a sourced arch size |
+| dumbbell_overhead_triceps_extension | D-LIB8-shrug (#290 6343237796): released into the bulk at M_ARCH 25 with one `arch` tell and the dashed guide; the tell-anchor deviation is 10.56 px < 11.39 at 141.6 px/m, so held the same way as overhead_cable_triceps_extension; never sized to pass H3 | as overhead_cable_triceps_extension |
 
 A held spec stays drawn as is, builds and is in no rows file and on no QA'd page (D-LIB8M-PAGESET).
 incline_dumbbell_curl is not held: it is not drawn yet (D-LIB15-INCLINE).
@@ -339,13 +340,15 @@ incline_dumbbell_curl is not held: it is not drawn yet (D-LIB15-INCLINE).
 
 ## 16. Bulk (LB5 BULK GO, #290 6343211054)
 
-Drawn on the GO: cable_curl, bayesian_cable_curl, concentration_curl (rows.json with preacher_curl). Sizes and bases
+Drawn on the GO: cable_curl, bayesian_cable_curl, concentration_curl (rows.json with preacher_curl), and
+dumbbell_overhead_triceps_extension (released in 6343237796; red on H3 at M_ARCH 25, so held, section 13). Sizes and bases
 (each spec header lists its own; unsourced numbers as section 10):
 
 | id | drawn sizes and their basis | Mistake | H3 deviation (min 11.39) |
 |---|---|---|---|
 | cable_curl | elbow 140 top (dumbbell_biceps_curl :55), 18 soft bottom (machine_chest_press.mjs:45, c13); upper arm vertical (c3) | elbow 0, arms fully straight (c13) | 11.69 px |
 | bayesian_cable_curl | upper arm 45 behind vertical (c2, c3; the measure, `expect: 45`); lean 11 (rope_triceps_pushdown 8 + 3, c2); elbow 140 end (dumbbell_biceps_curl :55) | upper arm 45 forward (dumbbell_biceps_curl :61, c5) | 61.6 px |
+| dumbbell_overhead_triceps_extension | split stance (bayesian_cable_curl's); upper arms vertical (c6; SH_FLEX 178, overhead_cable_triceps_extension's); elbow 90 bottom (c5, the fact and measure), 8 top (c4; overhead_cable_triceps_extension's, item 7); dumbbell vertical, the hands under the top head (c1, c4) | LB3 dumbbell_romanian_deadlift's arch, M_ARCH 25 (c9; :109) | 10.56 px (red: held) |
 | concentration_curl | elbow on the inner thigh at 0.62 of its length (c1, c3); elbow 120 end (dumbbell_biceps_curl :63, c7); hinge tilt solved | elbow at the knee crease, tilt solved (c4) | 28.45 px |
 
 Item fixes (6343211054 items 2-7):
@@ -357,7 +360,7 @@ Item fixes (6343211054 items 2-7):
 - wrist_curl (held): "Forearm supported" boxed in front of the forearm, above the hand; "Palms up" moved up to make room.
 - preacher_curl: anchors at the armpit (pad top) and the arm-pad contact; faulty arm on top; the pad-gap mark; measure
   radius 30.
-- One tell per plate on overhead_cable_triceps_extension, cable_curl, bayesian_cable_curl and concentration_curl: each
+- One tell per plate on overhead_cable_triceps_extension, dumbbell_overhead_triceps_extension, cable_curl, bayesian_cable_curl and concentration_curl: each
   card names one fault. D-LIB10-SKULL1 wants a per-id ruling for a one-tell plate; asked on #290.
 
 Flags (authoring QA, 4 rows): F5 only on preacher_curl, cable_curl and bayesian_cable_curl. concentration_curl raises
