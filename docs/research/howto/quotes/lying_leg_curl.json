@@ -1,0 +1,471 @@
+{
+ "id": "lying_leg_curl",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "fv-llc",
+   "text": "Lie face down and place your knees close to the edge of the bench. Adjust your position so the machine’s rotational axis lines up with your knee joint.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "ace-llc",
+   "text": "Lie on your stomach on the machine, aligning the mid-point of your knee joint with the axis of rotation of the moving lever (arm) of the machine.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-llc",
+   "text": "The most important aspect is to place the machine’s joint in line with your knees.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "mo-llc",
+   "text": "Ensure knees align with the machine's axis of rotation to prevent joint stress.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "mo-llc",
+   "text": "Incorrect knee alignment",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fv-llc",
+   "text": "Misaligning the knee and machine pivot: Poor alignment can make the movement feel awkward and changes the machine’s leverage.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "fv-llc",
+   "text": "Set the roller against the lower calf, just above the heel rather than directly on the Achilles tendon.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "lifto-llc",
+   "text": "Adjust the Machine: Set the pad to rest just above your heels.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "mo-llc",
+   "text": "Lie face-down on the machine with your knees aligned with the pivot point and the roller pad resting just above your heels.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-llc",
+   "text": "Position the backs of the lower 1/3 of your lower legs under the resistance pads, avoiding contact with the pads at, or just above the heel.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fv-llc",
+   "text": "A pad set too high on the calf shortens the lever and may let you use more weight without creating the same knee-flexion demand. A pad pressing into the heel or Achilles tendon can be uncomfortable.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fv-llc",
+   "text": "Use the lowest comfortable position on the calf that still lets you control the machine.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "fv-llc",
+   "text": "Hold the handles, gently tighten your abs, and keep the front of your hips in contact with the pad.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "mo-llc",
+   "text": "Grasp the handles and brace your core to keep your hips pressed firmly against the bench.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "nasm-llc",
+   "text": "Ensure your hips remain on the machine throughout the movement.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "fv-llc",
+   "text": "Start with your knees nearly straight, but do not force them into a painful locked position.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "mo-llc",
+   "text": "Avoid hyperextending the knees at the bottom of the movement.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "fv-llc",
+   "text": "Bend your knees and bring the roller toward your glutes. Stop when you reach the end of your controlled range or before your hips begin to lift.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-llc",
+   "text": "Continue contracting the hamstrings and moving the resistance pad until your knees are bent more than 90 degrees, or your lower legs are aligned vertical to the floor, or the pads come close to touching your butt.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "mo-llc",
+   "text": "Exhale and curl your heels toward your glutes by flexing the knees.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "fv-llc",
+   "text": "Letting the pelvis lift: Keep the front of the hips against the pad and use only the range you can own.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "fv-llc",
+   "text": "If the load pulls your pelvis off the bench, reduce the weight or stop the curl slightly earlier. Lifting the hips changes the position of the hamstrings and often introduces lower-back movement that does not help the target action.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "lifto-llc",
+   "text": "Lifting hips off the pad.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "mo-llc",
+   "text": "Lifting hips off the pad",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-llc",
+   "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid movement in your low back throughout the exercise.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-llc",
+   "text": "Avoid arching your back during this movement.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-llc",
+   "text": "Stabilize your low back throughout the exercise and use a lighter resistance if you are unable to control movement in the low back.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "lifto-llc",
+   "text": "Avoid Overextension: Do not hyperextend your lower back.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "mo-llc",
+   "text": "Hyperextending the lower back",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "fv-llc",
+   "text": "The curl should come from the knee, not from lifting your hips or arching your lower back.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "hl-hc",
+   "text": "It’s important to keep your back neutral during hamstring curls. If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "hl-hc",
+   "text": "To avoid arching your back, contract your abs during the exercise.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "fv-llc",
+   "text": "Return the weight under control.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "fv-llc",
+   "text": "Keep the stack from slamming down and maintain the same hip position throughout the rep.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "fv-llc",
+   "text": "Dropping the eccentric: The lowering phase is part of the rep. Resist the machine instead of letting the stack pull your legs down.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "lifto-llc",
+   "text": "Lower the Weight: Slowly extend your legs back to the starting position without letting the weight stack touch down.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "mo-llc",
+   "text": "Maintain tension at the bottom without letting the weight stack touch.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "mo-llc",
+   "text": "Exhale as you curl the weight up, inhale as you lower it.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "lifto-llc",
+   "text": "Breathing: Exhale when curling up and inhale while lowering the weight.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "fv-llc",
+   "text": "Loading more than you can control: If the first rep requires a hip pop, the weight is too heavy for the intended movement.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "lifto-llc",
+   "text": "Using too much weight, leading to poor form.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "lifto-llc",
+   "text": "Maintain Control: Avoid using momentum; focus on muscle contraction.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "nasm-llc",
+   "text": "Jerky or uncontrolled movements, which reduce time under tension",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "mo-llc",
+   "text": "Using momentum",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "hl-hc",
+   "text": "It’s also best to move slowly. Sudden, jerking movements can lead to injury, so your movements should be controlled.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "hl-hc",
+   "text": "Stop doing hamstring curls if you feel pain in your knees, hips, or back.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "fv-llc",
+   "text": "Muscular effort in the back of the thigh is expected. Sharp pain behind the knee, cramping that does not settle after changing the load, or back and hip discomfort caused by the machine setup are reasons to stop and reassess.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "fv-llc",
+   "text": "Try a lighter load, a different pad position, or another curl variation.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "fv-llc",
+   "text": "The hamstrings do most of the work, while the gastrocnemius assists because it also crosses the knee.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "nasm-llc",
+   "text": "Hamstring Group (Biceps Femoris, Semitendinosus, Semimembranosus) -- primary mover for knee flexion and hamstring curling motion",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "nasm-llc",
+   "text": "Gastrocnemius",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "mo-llc",
+   "text": "3-1-1",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "mo-llc",
+   "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "fv-llc",
+   "text": "A two-to-three-second lowering is an optional coaching target, not a tempo tested by the cited study.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "ace-llc",
+   "text": "Pause momentarily, then slowly return to your starting position by lowering the resistance pads in a controlled manner.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "lifto-llc",
+   "text": "Pause: At the top of the curl, squeeze your hamstrings for a moment.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "fv-llc",
+   "text": "3 to 4 sets of 8 to 15 reps",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "fv-llc",
+   "text": "Add a small amount of weight after reaching the top of the range with controlled reps.",
+   "status": "pending",
+   "closest": "",
+   "note": ""
+  }
+ ]
+}
