@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-22 13:55 UTC · main `5158609c` · **8.0p (update 13:55): LIB-7b, LIB-14, LIB-15, LIB-16 building; LB7 research verified; GATE-FLAKE-5 started** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-22 17:00 UTC · main `66ff5500` · **8.0p (update 17:00): LIB-7b merged; research LB7, LB8, LB10 merged, LB9 fixing; LIB-15, LIB-16, LIB-12-FIX fix building; LIB-7c in review** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -869,6 +869,26 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **LIB-16 (LB6 H build-ahead: cable_chest_press, machine_pullover, machine_crunch)** started: session_019X62NzhJsMCCchgTPBsnAU, card `lib-16-card.md` @ `4b3c3a6f`. **D-LIB16-PILOTB:** pilot B's answer gates the sheet and the merge, not the drawing. The plan names LB6 as LIB-17; D-LIB16-SCOPE records the id.
 - **Active LIB builders: 4 of 4** (LIB-7b, LIB-14, LIB-15, LIB-16). LIB-7b is still finishing before READY (head `3aa1729a`).
 - **Missed signal:** LB7 CARDS READY (09:06) was not seen until 12:2x. Every tick now reads the latest comment on each open research PR as well.
+
+**Update 17:00 UTC** (usage 7-day 0.28 at 15:45; five-hour 0.53; bursts of verifies run about 0.04 per hour):
+- **LIB-7b merged** (#284 → main **`66ff5500`**, D-SUP-SINGLE, REVIEW PASS 0/0/0/2). No APK: src/** changed only in GENERATED header lines. The Lows are **F-LIB7b-3**: select pair rows by the row's own key in goldenB.mjs:134, harness.mjs:1079 and ht6.mjs:53.
+- **#191 LIB-12-FIX catch-up:** my first merge `c6e55f9b` used a stale origin/main. **Lesson: always `git fetch` right before a catch-up merge.** `bc2f2715` merges the real main, and X3 (lib12-fix.test.ts:181, battle_ropes death-grip) is red from LIB-7b's HALVES. A builder fixes it: session_01Cw7EowZxJKe64uRLTcSLcC. Then a delta review and the merge at slot 2.
+- **#271 LIB-7c:** Do 8-9 done, READY @ `4b894f10`. Reviewer session_013yguxvE82fPB4sP7xgNhiZ.
+- **Research, LB7, LB8 and LB10 merged** into claude/libht-research (now **`53cb2845`**). **LB9 (#295)** is in its fix round (session_01RczpBxQgJ8UfXenHSJxrH4). Records: `lb7/8/9/10-research-verify.md` on cards.
+  - Rulings: D-SUP-LB7-*, D-SUP-LB8-KICKBACK/-ISSUES/-AXIS/-PILOTS, D-SUP-LB9-*, D-SUP-LB10-*, R-LB7..10-*.
+  - **D-SUP-STRAIN:** "strain", and "pressure" or "impact" on a named body part, are harm words; vague words such as "issues" are not.
+  - **D-SUP-SAFETYTIER:** the critic brief now rates any wrong, weakened or missing safety line a blocker on any card.
+  - LB8's h1 was re-verified; it found two missing failed-rep way outs, now fixed. **F-WAYOUT-1:** check verified machine cards for a failed-rep way out that is sourced but not shown.
+- **Routed to the pilot A owner sheet (D-SUP-LB8-PILOTS):** these go on pilot A's changed-ids sheet before the PIN GO.
+  - plank: top fault "Hips hiked up." (D-SUP-LB9-PLANK), and the handlingMistakes[0] fix "Brace your trunk. Can't hold it? Rest on your knees." (new c14);
+  - mountain_climbers: 2 medium and 7 low shown-line items (lb10-research-verify.md "Routed").
+- **LIB-14 (#289): CARD FIELDS VERIFIED @ `12651ff4`** (merged back to research as #293). PLATES READY @ `6846c5a`: wall_sit is on the page; front/goblet/bodyweight/pistol/step_up are drawn and held (NOSECS; step_up also waits on reverse_lunge). The builder is archived. **On 'LIB-14 resume', after the strip release:** one critic panel for all six.
+- **LIB-15 (#290):** LB5 BULK GO. **Held under D-LIB8-shrug (route LIB-ZOOM #279):** wrist_curl, cross_body_hammer_curl, overhead_cable_triceps_extension and dumbbell_overhead_triceps_extension (the M_ARCH 25 arch is under PQ-H3). concentration_curl's F2 is a named flag; one-tell plates are ruled per id (D-LIB10-SKULL1, with a record).
+- **LIB-16 (#297, LB6):** note ruled (Q1-Q10; cable_chest_press is plate.start as written, and held if under H3). CARD FIELDS verify VALID with a fix round on cable_chest_press. Slice look running.
+- **GATE-FLAKE-5 (#292):** D-GF5-TWINS (pins.json HT-8/HT-9 keys; B2 re-run before the re-pin) is done @ `87673b4`.
+- **LIB-17 (LB7 H build-ahead) card:** a helper is drafting it. Start it when a LIB slot is free.
+- **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
+- **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
 ### 8.0o TAKEOVER 10-22: the owner moves the work to his other account (read first; supersedes 8.0n and section 10 where they differ)
 
