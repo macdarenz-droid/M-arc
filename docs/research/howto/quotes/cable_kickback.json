@@ -140,6 +140,14 @@
       "note": ""
     },
     {
+      "claim": "c7",
+      "source": "bb-gk",
+      "text": "Anchoring yourself in place with a strong brace and counterforce against the machine (using your arms to lock yourself in a specific position) are key ways to isolate your glutes.",
+      "status": "verbatim",
+      "closest": "Anchoring yourself in place with a strong brace and counterforce against the machine (using your arms to lock yourself in a specific position) are key ways to isolate your glutes.",
+      "note": "Added in the LB8 fix round; fetched by curl 2026-10-22."
+    },
+    {
       "claim": "c8",
       "source": "pg-ck",
       "text": "Having good form is key to isolating the glutes in this exercise – poor form is likely to recruit the lower back instead. Once you have hinged forward, engage your core by pulling the belly button in towards the spine to flatten your back.",
@@ -242,6 +250,14 @@
       "status": "verbatim",
       "closest": "The glutes are the major muscle group worked by the glute kickback.",
       "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "fb-che",
+      "text": "Hamstrings",
+      "status": "verbatim",
+      "closest": "Hamstrings",
+      "note": "Added in the LB8 fix round; fetched by curl 2026-10-22."
     },
     {
       "claim": "c13",

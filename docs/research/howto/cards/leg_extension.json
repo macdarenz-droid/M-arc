@@ -483,6 +483,35 @@
      "where": "Tips for Safe and Effective Leg Extensions"
     }
    ]
+  },
+  {
+   "id": "c18",
+   "text": "Three sources ask for a brief pause at the top, right after the lift.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-le",
+    "lifto-le",
+    "fv-le"
+   ],
+   "quotes": [
+    {
+     "source": "mo-le",
+     "text": "Pause briefly at the top and squeeze your quads.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "lifto-le",
+     "text": "Control the Movement: Pause briefly at the top of the movement, ensuring the extension is full but avoiding locking out your knees.",
+     "where": "Execution"
+    },
+    {
+     "source": "fv-le",
+     "text": "Pause here before going back down.",
+     "where": "How To Do Leg Extension"
+    }
+   ]
   }
  ],
  "sources": [
@@ -652,7 +681,7 @@
   },
   {
    "point": "Pause briefly at the top.",
-   "claim": "c16"
+   "claim": "c18"
   },
   {
    "point": "Lower slowly with control.",

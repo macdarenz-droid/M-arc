@@ -468,10 +468,11 @@
  },
  "setup": [
   {
-   "step": "Balls of your feet on a step edge, heels off.",
+   "step": "On a step: balls of your feet on the edge, heels off.",
    "claim": [
     "c2",
-    "c3"
+    "c3",
+    "c4"
    ]
   },
   {

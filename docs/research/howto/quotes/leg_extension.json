@@ -386,6 +386,30 @@
       "status": "verbatim",
       "closest": "Start with a lower weight to get comfortable with the exercise, then you can gradually increase as your strength improves.",
       "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "mo-le",
+      "text": "Pause briefly at the top and squeeze your quads.",
+      "status": "verbatim",
+      "closest": "Pause briefly at the top and squeeze your quads.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "lifto-le",
+      "text": "Control the Movement: Pause briefly at the top of the movement, ensuring the extension is full but avoiding locking out your knees.",
+      "status": "verbatim",
+      "closest": "Control the Movement: Pause briefly at the top of the movement, ensuring the extension is full but avoiding locking out your knees.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "fv-le",
+      "text": "Pause here before going back down.",
+      "status": "verbatim",
+      "closest": "Pause here before going back down.",
+      "note": ""
     }
   ]
 }

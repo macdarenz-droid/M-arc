@@ -17,7 +17,7 @@
   "claims": [
     {
       "id": "c1",
-      "text": "Attach an ankle strap or cuff to the cable at its lowest setting, put it around the working ankle and face the machine.",
+      "text": "Attach an ankle strap or cuff to the cable at its lowest setting and put it around the working ankle.",
       "tags": [
         "CONSENSUS"
       ],
@@ -189,6 +189,11 @@
           "source": "bb-gk",
           "text": "Do not allow your lower back to arch, don’t flare your upper back, or sway your hips. Brace up, and only contract your glutes. Movement from your butt should move that pulley, nothing else.",
           "where": "Common Glute Kickback Mistakes: Not Bracing Properly"
+        },
+        {
+          "source": "bb-gk",
+          "text": "Anchoring yourself in place with a strong brace and counterforce against the machine (using your arms to lock yourself in a specific position) are key ways to isolate your glutes.",
+          "where": "Common Glute Kickback Mistakes: Not Bracing Properly"
         }
       ]
     },
@@ -290,7 +295,8 @@
       "sources": [
         "sl-ck",
         "pg-ck",
-        "bb-gk"
+        "bb-gk",
+        "fb-che"
       ],
       "quotes": [
         {
@@ -317,6 +323,11 @@
           "source": "bb-gk",
           "text": "The glutes are the major muscle group worked by the glute kickback.",
           "where": "Muscles Worked by the Glute Kickback"
+        },
+        {
+          "source": "fb-che",
+          "text": "Hamstrings",
+          "where": "Target muscles worked: Secondary Muscles"
         }
       ]
     },
@@ -448,7 +459,7 @@
         "c7",
         "c8"
       ],
-      "rankNote": "No source measures how often each fault happens. LR-31 step 1: not bracing, so other parts of the body move, shown by the lower back arching (c7). BarBend's \"Not Bracing Properly\" item, a sentence of its own, not a list sentence: \"While that may sound silly, the reality is that a lot of lifters move other parts of their body to accomplish the glute kickback.\" (c7), followed by \"Do not allow your lower back to arch, don’t flare your upper back, or sway your hips.\" Read 'a lot of lifters' as 'many lifters', a step-1 hit about this exercise's own fault (D-SUP-LB7-DIPREPS). This reading is held for a ruling: LR-31 names 'most or many people', and 'a lot of' is not that word. If it does not count, step 2 finds no harm quote for any fault (no read source ties a kickback fault to injury, pain, stress or discomfort; PureGym's \"poor form is likely to recruit the lower back instead\" is a muscle-use line), and step 3's count (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each fault, is: momentum 2 (BarBend's list item and its \"only contract your glutes\" line, c9; PureGym's \"avoid using momentum to swing the weight\" and \"If you are unable to move the weight without swinging your legs to create momentum, drop the weight.\", c8, c9); twisting the hips 2 (StrengthLog's \"without rotating in the hips\", c6; Fitbod's \"Hips Square\" item, c10); the lower back arching 1 (BarBend, c7). Not counted, lines that only give the right position: StrengthLog's \"keep your body still\", Fitbod's \"Brace your core to maintain a neutral spine.\", PureGym's \"to flatten your back\" (R-LB7-4). Momentum and twisting tie at 2; the earliest common-mistakes list written for this exercise in source order is BarBend's (source 1), where momentum comes first, so momentum would be handlingMistakes[0]. Momentum is seen only as speed, so it is never drawable; twisting is a rotation the side view cannot show; the next fault, the lower back arching, is drawn. plate.mistake is the same under both readings; only handlingMistakes[0] would change. Set aside at step 1: BarBend's \"there are still some common mistakes that flare up from time to time\" and \"Not bracing properly, adding too much momentum, and improper load selection are the biggest culprits.\" are a list heading and a list sentence (R-LB4-2); \"Momentum is an issue with nearly every exercise from time to time.\" is about all training (R-LB7-3); \"which is often your weaker side\", \"The glute kickback is often overlooked as a prominent glute exercise\" and \"Many athletes do moves like this one to warm up for squats\" (another exercise) name no kickback fault; PureGym's \"Most gyms will have dedicated ankle straps\" is equipment, and its hub's \"the terms are often used interchangeably\" is about names. BarBend's 'Too Much Weight' item is a load choice, not a candidate. Harm words in the full scan tie no kickback fault to harm, so step 2 stays empty under either reading (D-SUP-PROTECT needs a cue that corrects a named fault): PureGym's hub \"Having strong glutes helps to protect the lower back, hamstrings, and knees, and stabilise the pelvis.\" is a benefit of strong glutes, not a form cue; PureGym's \"Unilateral exercises are great for improving muscular imbalances which can result in greater overall strength as well as reduced risk of injury.\" is a benefit of one-sided training; BarBend's \"without the added strain of another heavy barbell\" and \"You can load heavily without strain on your lower back or overall body.\" are about other exercises (barbell lifts, the hip abduction machine); \"helps stress your gluteus medius a bit more\" is muscle use. Other frequency words: Fitbod's \"usually bodyweight exercise\" is the dumbbell hip thrust (another exercise); BarBend's \"mostly by reliving all of his mistakes\" is the author bio. drawable true: the arched lower back is a still sign the side view shows.",
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: not bracing, so other parts of the body move, shown by the lower back arching (c7). BarBend's \"Not Bracing Properly\" item, a sentence of its own, not a list sentence: \"While that may sound silly, the reality is that a lot of lifters move other parts of their body to accomplish the glute kickback.\" (c7), followed by \"Do not allow your lower back to arch, don’t flare your upper back, or sway your hips.\" Read 'a lot of lifters' as 'many lifters', a step-1 hit about this exercise's own fault (D-SUP-LB7-DIPREPS). D-SUP-LB8-KICKBACK (#294, 6343216702) rules it a step-1 hit: 'a lot of lifters' is LR-31's 'many people' in other words, tied to this exercise's fault. If it does not count, step 2 finds no harm quote for any fault (no read source ties a kickback fault to injury, pain, stress or discomfort; PureGym's \"poor form is likely to recruit the lower back instead\" is a muscle-use line), so LR-31 step 3 takes the first fault on a common-mistakes list written for this exercise, in source order: BarBend's (\"Not Bracing Properly\", \"Momentum\", \"Too Much Weight\"), so not bracing, the lower back arching, is still the top fault; Fitbod's one-item list (\"Hips Square\") comes later in source order. Step 3's count is used only when no source has a list. The pick, handlingMistakes[0] and drawable are the same under both readings. Set aside at step 1: BarBend's \"there are still some common mistakes that flare up from time to time\" and \"Not bracing properly, adding too much momentum, and improper load selection are the biggest culprits.\" are a list heading and a list sentence (R-LB4-2); \"Momentum is an issue with nearly every exercise from time to time.\" is about all training (R-LB7-3); \"which is often your weaker side\", \"The glute kickback is often overlooked as a prominent glute exercise\" and \"Many athletes do moves like this one to warm up for squats\" (another exercise) name no kickback fault; PureGym's \"Most gyms will have dedicated ankle straps\" is equipment, and its hub's \"the terms are often used interchangeably\" is about names. BarBend's 'Too Much Weight' item is a load choice, not a candidate. Harm words in the full scan tie no kickback fault to harm, so step 2 stays empty under either reading (D-SUP-PROTECT needs a cue that corrects a named fault): PureGym's hub \"Having strong glutes helps to protect the lower back, hamstrings, and knees, and stabilise the pelvis.\" is a benefit of strong glutes, not a form cue; PureGym's \"Unilateral exercises are great for improving muscular imbalances which can result in greater overall strength as well as reduced risk of injury.\" is a benefit of one-sided training; BarBend's \"without the added strain of another heavy barbell\" and \"You can load heavily without strain on your lower back or overall body.\" are about other exercises (barbell lifts, the hip abduction machine); \"helps stress your gluteus medius a bit more\" is muscle use. Other frequency words: Fitbod's \"usually bodyweight exercise\" is the dumbbell hip thrust (another exercise); BarBend's \"mostly by reliving all of his mistakes\" is the author bio. drawable true: the arched lower back is a still sign the side view shows.",
       "drawable": true
     },
     "tells": [
@@ -494,8 +505,8 @@
     {
       "step": "Face the machine and hold it for support.",
       "claim": [
-        "c1",
-        "c2"
+        "c2",
+        "c4"
       ]
     },
     {
