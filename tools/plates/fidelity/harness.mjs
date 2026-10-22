@@ -1071,8 +1071,13 @@ export async function ht10Script(pre) {
     if (!shown(chip)) { fails.push(`chip ${k}: not on screen to tap`); continue; }
     tapped.chips++;
     chip.click();
-    const p = await until(() => shown(q(`#${pre}-zoom-${k}`))) ? q(`#${pre}-zoom-${k}`) : null;
-    if (!p) { fails.push(`chip ${k}: its close-up did not open`); continue; }
+    // LIB-7b (D-LIB7b-SCRATCH2 P5): the close-up by data-zoom in the sheet, exactly one; its id is today's `<pre>-zoom-<k>`
+    // for a row with no pair key and its pair panel's `hp-<key>-zoom-hand` for a pair row (the panel's own .hx-hp- scope)
+    const zoomOf = () => { const zs = [...qa(`dialog.sheet.ht .zx[data-zoom="${k}"]`)]; return zs.length === 1 ? zs[0] : null; };
+    const p = await until(() => shown(zoomOf())) ? zoomOf() : null;
+    if (!p) { const n = [...qa(`dialog.sheet.ht .zx[data-zoom="${k}"]`)].length; fails.push(n > 1 ? `chip ${k}: ${n} close-ups with data-zoom ${k}` : `chip ${k}: its close-up did not open`); continue; }
+    const pk = p.querySelector(':scope > .hx[class*="hx-hp-"]')?.className.match(/\bhx-hp-([a-z0-9-]+)/)?.[1], zid = pk && k === 'hand' ? `hp-${pk}-zoom-hand` : `${pre}-zoom-${k}`;
+    if (p.id !== zid) { fails.push(`chip ${k}: its close-up is #${p.id}, expected #${zid}`); continue; }
     await settle(); await P(`close-up ${k}`);
     const pages = p.querySelectorAll('.zx-page').length;
     for (let i = 1; i < pages; i++) {

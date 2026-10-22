@@ -253,13 +253,13 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
     h = await import(/* @vite-ignore */ url('tools/plates/fidelity/harness.mjs'));
   });
 
-  it('the generator writes 60 files: the 54 fingerprinted, the 2 it rewrites, and ids-node.mjs, lib-id.ts, loaders.ts, coverage.ts', async () => {
-    // LIB-2b (D-LIB2b-PINS (10)): 60 for the 8, plus for each shipped library row its ht-, feel-, posture-, zoom- css and
+  it('the generator writes 61 files: the 54 fingerprinted, the 2 it rewrites, and ids-node.mjs, lib-id.ts, loaders.ts, coverage.ts, red-flag-back.ts', async () => {
+    // LIB-2b (D-LIB2b-PINS (10)): 61 for the 8's set (60 plus red-flag-back.ts), plus for each shipped library row its ht-, feel-, posture-, zoom- css and
     // research card, plus one handpair-<key>.ts per distinct key the shipped rows use
     const hp = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs'));
     const { keys } = hp.pairsOf(await hp.loadPairs(), reg.shippedIds());
-    expect(out.size).toBe(60 + 5 * LIBRARY.length + new Set(keys).size);
-    for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts']) expect(out.has(p), p).toBe(true);
+    expect(out.size).toBe(61 + 5 * LIBRARY.length + new Set(keys).size);
+    for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts', 'src/howto/red-flag-back.ts']) expect(out.has(p), p).toBe(true);
   });
 
   /** L2-A6: hasHowTo (both twins) against the LOADERS keys and the shipped rows, over every exercises.json id. */
@@ -412,14 +412,14 @@ describe('L2-A21: hand-pair chunks (gen/handpairs.mjs, design 12, D-LIB7-1)', ()
     idsGen = await import(/* @vite-ignore */ url('tools/plates/gen/ids.mjs'));
     reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
   });
-  it('on main (no LIB-7 pair loader yet) nothing is written and HAND imports no hand pair', async () => {
+  it('with the repo\'s own pair loader (or none): the written pairs and HAND\'s pair imports follow the shipped rows\' keys', async () => {
     const pairs = await hp.loadPairs(), written = [...out.keys()].filter(p => p.includes('/handpair-'));
     const loaders = readFileSync('src/howto/generated/loaders.ts', 'utf8');
     if (pairs) {   // LIB-2b: a tree with a pair loader (LIB-7, or a fixture): the written pairs follow the shipped rows' keys
       const { keys } = hp.pairsOf(pairs, reg.shippedIds());
-      expect(keys.length).toBeGreaterThan(0);
+      expect(Object.keys(pairs.HAND_OF_ID).length).toBeGreaterThan(0);   // D-LIB7FIX-A21: LIB-7's loader lands before any row ships a key, so keys may be []; a shipped row that needs a pair and has none is refused by gen/ids.mjs missingChunks in this file's beforeAll render
       expect(hp.pairProblems(pairs, reg.shippedIds(), written, keys)).toEqual([]);
-      expect([...loaders.matchAll(/import\('\.\/handpair-([a-z0-9-]+)'\)/g)].map(m => m[1]).sort()).toEqual([...new Set(keys)].sort());
+      expect([...new Set([...loaders.matchAll(/import\('\.\/handpair-([a-z0-9-]+)'\)/g)].map(m => m[1]))].sort()).toEqual([...new Set(keys)].sort());   // LIB-7b (D-LIB7b-SCRATCH2 P3): sets on both sides; two ids on one key import its chunk twice
       return;
     }
     expect(written).toEqual([]);

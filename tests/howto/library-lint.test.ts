@@ -125,6 +125,25 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
       expect([name, ref]).toEqual([name, want]);
     }
   });
+  it('S4 (Do 9): the answered back box under its key: lint === c7 (boxKey) + C19 === []; at the named limit + 1, both name the count', async () => {
+    const back = (await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs'))).backBox();
+    const { content: c } = await content.loadContent('lib_pull_up'), KEY = 'back-pain-box';
+    const both = (B: any) => [lintTokens(L.boxReach('redFlag(back)', B, [], KEY)), refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B, DISCLAIMER: shared.DISCLAIMER }, 'back'))];
+    expect(CL.words([back.name, back.now, back.doctor].join(' '))).toBe(50);
+    expect(both(back)).toEqual([[], []]);
+    expect(L.backBoxRules('RED_FLAG_BACK', back)).toEqual([]);
+    expect(both({ ...back, doctor: 'No better in a few weeks? See a doctor soon.' })).toEqual([['count'], ['count']]);
+    // 'Call 999' and 'today' removed on the answered box itself (S4; review 121df94)
+    expect(both({ ...back, now: back.now.replace('Get emergency help now.', 'Call 999 now.') })).toEqual([['contact', 'safety'], ['contact', 'safety']]);
+    expect(both({ ...back, now: back.now.replace('See a doctor today.', 'See a doctor.') })).toEqual([['today'], ['today']]);
+    // with no key the box is held to 30, in both the lint and c7: BOX-CAP names this one key only
+    expect([lintTokens(L.boxReach('redFlag(back)', back)), refTokens(checkC7({ ...c, redFlag: back }), [])]).toEqual([['count'], ['count']]);
+    expect((back.now.match(/Get emergency help now\./g) ?? []).length).toBe(1);
+    // each kept trigger dropped, and nhs-back removed, is red
+    for (const t of L.BACK_BOX_TRIGGERS) expect(L.backBoxRules('RED_FLAG_BACK', { ...back, now: back.now.replace(t, '') }).map((x: any) => x.rule)).toEqual(['kept back-box trigger missing (D-LIB5-BOX)']);
+    expect(L.backBoxRules('RED_FLAG_BACK', { ...back, claim: { tags: ['CONSENSUS'], sources: [] } }).map((x: any) => x.rule)).toEqual(['the back box must cite nhs-back (S4)']);
+    expect(L.BACK_BOX_TRIGGERS).toHaveLength(7);
+  });
   it('the same comparison on every shipped row\'s red-flag boxes', async () => {
     for (const r of SHIPPED) {
       const M = await import(/* @vite-ignore */ url((await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'))).sourceOf(r.id)));
@@ -239,7 +258,7 @@ describe('LIB-5 S7 generator cases: E1\'s row in per-case copies of E1\'s tree (
       ['M3: inherit true on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": true,\n  "topFault":'),
         `lib_cable_lateral_raise: family: ${F.CARD_FILE}#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`],
       ['D-LIB5-FAULTKEYS 4: a hand module labels hand-ahead \'Hands forward\'', () => withHand("'hand-ahead': { label: 'Hand ahead'", "'hand-ahead': { label: 'Hands forward'"),
-        'library family (rows 13, shared 14, hands 3):\n  fault hand-ahead: one label per fault key (content.md 4, family consistency) ("Hands forward" (hand-fixture.mjs) vs "Hand ahead" (hands.mjs#PALM_FLAT))'],
+        'library family (rows 13, shared 14, hands 19):\n  fault hand-ahead: one label per fault key (content.md 4, family consistency) ("Hands forward" (hand-fixture.mjs) vs "Hand ahead" (hands.mjs#PALM_FLAT))'],
       ['control: the fixture hand module as it is', () => withHand(), null],
       ['control: inherit [] on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": [],\n  "topFault":'), null],
       ['control: the unedited tree', () => tree, null],
@@ -300,13 +319,13 @@ describe('LIB-5 D-LIB5-FAULTKEYS 4: the family reader over the 8, the shared mod
     const rows = await Promise.all(SHIPPED.map(async r => ({ src: r.id, M: await import(/* @vite-ignore */ url(R.sourceOf(r.id))) })));
     const r = await FM.treeFamily(rows);
     console.log(`family reader (this head): rows ${r.counts.eight}, shared ${r.counts.shared}, hands ${r.counts.hands}`);
-    expect([r.counts.eight > 0, r.counts.shared > 0, r.counts.hands]).toEqual([true, true, 0]);
+    expect([r.counts.eight > 0, r.counts.shared > 0, r.counts.hands]).toEqual([true, true, 16]);
     expect(r.problems).toEqual([]);
   });
-  it('on this head: no hand-*.mjs (LIB-7/12 merge after LIB-5, D-LIB5-ORDER), so the hands count is 0 and equals what is exported', async () => {
+  it('on this head: LIB-7\'s five and LIB-12\'s eight hand-*.mjs (hand-ab-wheel, hand-band, hand-dip-bar and hand-implement export no fault), so the hands count is 16 and equals what is exported', async () => {
     const mods = await FM.handModules();
-    expect(mods).toEqual([]);
-    expect([FM.handSources(mods), FM.exportedHandFaults(mods)]).toEqual([[], 0]);
+    expect(mods.map((m: any) => m.src)).toEqual(['hand-ab-wheel.mjs', 'hand-ball-contact.mjs', 'hand-band.mjs', 'hand-battle-rope.mjs', 'hand-cupped.mjs', 'hand-curl.mjs', 'hand-d-handle.mjs', 'hand-dip-bar.mjs', 'hand-ez.mjs', 'hand-front-rack.mjs', 'hand-implement.mjs', 'hand-palm-flat.mjs', 'hand-rope.mjs']);
+    expect([FM.handSources(mods).reduce((n: number, h: any) => n + h.faults.length, 0), FM.exportedHandFaults(mods)]).toEqual([16, 16]);
   });
 });
 
