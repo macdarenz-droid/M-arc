@@ -577,5 +577,64 @@
     "Box stability or non-slip surface.",
     "Tempo in seconds.",
     "Breathing."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "start",
+      "cardPose": "end",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "start",
+      "cardPose": "end",
+      "claim": "c1"
+    }
+  ],
+  "topFault": "lean"
 }
