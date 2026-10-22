@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-22 02:08 UTC · main `07ad7f1c` (train 32) · **8.0p: new supervisor on the new account; 3 LIB builders and the #181 reviewer running** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-22 02:08 UTC · main `07ad7f1c` (train 32) · **8.0p: new supervisor on the new account; trains 33 and #193 merged; LIB-13, LIB-5v, LIB-7b building** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -828,6 +828,15 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **#191 REVIEW LIB-12-FIX @ 8bea5af: PASS** (delta, 0/0/0/0; 6331690104; Low 4 → F-LIB12-R8B). It was run as an Opus helper inside the supervisor session: a one-file test delta needs no reviewer session. Frozen at `8bea5afc` until its slot 5 train. Builder archived.
 - **#282 LIB-5v** (new PR, `claude/lib-5v-variant-line`): STOP @ 732c78e ruled in 6331379360. **D-LIB5v-GENWRITER:** the variant call goes in a new `tools/plates/gen/variant-gate.mjs` plugin with no outputs, so no generated file changes (V10). **D-LIB5v-FIXLINE:** one add-only LIB-5v block each in library-fidelity.test.ts and scratch.mjs C16 allows exactly the one ruled `variantLine` line after `  copy: {` on '/' targets, required there and refused elsewhere, with 3 mutations each. **F-LIB5v-1:** `fixture.mjs all` + `generate` needs scratch stamps (C15) on main.
 - heads.sh now watches `claude/lib-5v-variant-line`.
+
+**Update 06:05 UTC** (usage 7-day 0.02 at 05:43; five-hour 0.06):
+- **Train 33 merged** (#283 → main `2647c3a6`): #181 LIB-6 + LIB-6-PM and this handover. No APK (nothing visible changes).
+- **#193 merged by itself** (main `5158609c`, 05:37). The supervisor caught it up with merge commit `7f39a1a` (clean). A fresh Opus helper delta-reviewed it: PASS 0/0/0/0 (6333171349), CI 17/17 green. **D-SUP-SINGLE:** a PR whose reviewed head already contains the latest main merges by itself (6.8 single-PR steps), with no train and no extra CI cycle. The handover rides the next real train.
+- #193 and #271 were retargeted to base `main`.
+- **LIB-7b started** (#284, session_01FX6LmsD7bEMtPPnueqrYT9). Design note approved (6333886735). **D-LIB7b-PAGEDUP = (B)**: a page-only id prefix on the 2nd+ copies; check (3) is reverse-rewrite `===` pairPanel and no id repeats. Its condition: explain Chrome 153's cold first-run difference. **D-LIB7b-HALVES:** panelHtml applies golden B's `splitHalves` (attribute-only, proven by test, 70/70 pixel-equal; F4 reads "after splitHalves"); C16 is not exempted. When LIB-7b lands, #271 and #191 merge main and re-run their pair checks.
+- **#271 LIB-7c is held until LIB-7b is on main**, then resumes with Do 8-9 (main merge, 7c-A1..A10, READY). Doing it now would mean redoing it after HALVES changes panelHtml. **#265 LIB-10** waits for pilot A on main (its WAITING 6263372543).
+- Active LIB builders: 3 of 4 (LIB-13 #274, LIB-5v #282, LIB-7b #284). An Opus helper is mapping the batches after LB3/pilot B for the 4th slot.
+- HT-11 #273 conflicts with main (screenshot-gate.mjs, loaders.ts, gate-split.test.ts); it needs its catch-up and regenerate at slot 11.
 
 ### 8.0o TAKEOVER 10-22: the owner moves the work to his other account (read first; supersedes 8.0n and section 10 where they differ)
 
