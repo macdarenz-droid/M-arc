@@ -12,6 +12,15 @@
    "stage": "drawing",
    "view": "front"
   },
+  "lib_dumbbell_front_raise": {
+   "src": "library/specs/dumbbell_front_raise.mjs",
+   "slug": "dumbbell-front-raise",
+   "prefix": "dumbbell-front-raise",
+   "chromeId": "dumbbell-front-raise",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
   "lib_cable_external_rotation": {
    "src": "library/specs/cable_external_rotation.mjs",
    "slug": "cable-external-rotation",
