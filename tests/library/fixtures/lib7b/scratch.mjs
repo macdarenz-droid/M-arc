@@ -9,6 +9,7 @@
 //     --pages tests/howto/fixtures/lib4b/pages.json --json lib7b-ht6.json
 //   MARC_CHROMIUM=… node tests/library/fixtures/lib7b/app-probe.mjs lib_barbell_row lib_t_bar_row
 import { execFileSync } from 'node:child_process';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { REPO, SCRATCH_7B, keyTree, pageOf, stagePairs } from './fixture.mjs';
 
@@ -24,6 +25,10 @@ if (process.argv[2] === 'build') {
   sh(process.execPath, ['node_modules/vite/bin/vite.js', 'build', '--logLevel', 'error']);
   const F = await import(join(root, 'tools/plates/library/fidelity/fixture.mjs'));
   console.log('budgets', F.budgets(root, { scratch: SCRATCH_A3 }));
+  // LIB-4b's helper stamps setBy 'LIB-4b B5 scratch', which HT-3c B3's setBy format refuses; this tree's entries name LIB-7b
+  const bf = join(root, 'tests/howto/budgets.json'), bj = JSON.parse(readFileSync(bf, 'utf8'));
+  for (const e of bj.budgets) if (e.setBy === F.SET_BY && SCRATCH_A3.some(s => e.chunk.includes(`-${s.pre}-`))) e.setBy = 'LIB-7b-scratch';
+  writeFileSync(bf, `${JSON.stringify(bj, null, 2)}\n`);
   console.log('pages', F.pagesFile(root, { scratch: SCRATCH_A3 }));
   sh(process.execPath, ['node_modules/vite/bin/vite.js', 'build', '--logLevel', 'error']);
   console.log(sh(process.execPath, ['tools/plates/generate.mjs', '--check']).trim().split('\n').pop());
