@@ -201,6 +201,20 @@
       "pose": "end",
       "cardPose": "end",
       "claim": "g4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "g4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "g4"
     }
   ],
   "topFault": "lean"

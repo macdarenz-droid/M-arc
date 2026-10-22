@@ -108,6 +108,8 @@ export default {
     { landmark: 'ball.r', plane: floor, pose: 'start', tol: 0.5 },
     { landmark: 'heel.r', plane: floor, pose: 'end', tol: 0.5 },     // b7: heels flat (the contact fact)
     { landmark: 'ball.r', plane: floor, pose: 'end', tol: 0.5 },
+    { landmark: 'heel.l', plane: floor, pose: 'end', tol: 0.5 },     // b7: both feet
+    { landmark: 'ball.l', plane: floor, pose: 'end', tol: 0.5 },
     { landmark: 'toe.r', above: floor, pose: 'mistake' },             // heels up, the toes above the floor (the toe pad on it: a drawn-item test)
   ],
   startParts: ['trunk', 'leg.r'],

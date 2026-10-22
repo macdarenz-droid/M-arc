@@ -609,6 +609,20 @@
     },
     {
       "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "end",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
       "landmark": "heel.r",
       "pose": "start",
       "cardPose": "end",

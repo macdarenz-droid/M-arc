@@ -930,16 +930,16 @@ describe('LIB-14 A11 and A6 (Do 6 b): the card fields, the ruled tempo map, the 
     ...(c.claims.some((x: any) => x.id === f.claim) ? [] : [`${i}: claim ${f.claim}`]),
     ...(f.cardPose && POSE_MAP[id]![f.cardPose] !== (f.pose ?? 'end') ? [`${i}: pose ${f.pose ?? 'end'} is not the map's image of card ${f.cardPose}`] : []),
   ]);
-  // D-LIB14-FACTS (#289 6338977366) with the verify's fix round (6341470610), each with its claim id; one per checked
+  // D-LIB14-FACTS (#289 6338977366) with the verify's fix rounds (6341470610, 6342086947), each with its claim id; one per checked
   // landmark, its pose the map's image.
   const C = (lms: string[], pose: string, cardPose: string, claim: string) => lms.map(landmark => ({ kind: 'contact', landmark, pose, cardPose, claim }));
   const FACTS: Record<string, any[]> = {
-    front_squat: [...C(['shoulderTop.r'], 'start', 'start', 'c3'), ...C(['shoulderTop.r'], 'end', 'end', 'c3'), ...C(['wrist.r'], 'start', 'start', 'c4'), ...C(['wrist.r'], 'end', 'end', 'c4')],
-    goblet_squat: [...C(['wrist.r', 'wrist.l'], 'start', 'start', 'g1'), ...C(['heel.r', 'ball.r'], 'end', 'end', 'g4')],
-    bodyweight_squat: C(['heel.r', 'ball.r'], 'end', 'end', 'b7'),
+    front_squat: [...C(['shoulderTop.r'], 'start', 'start', 'c3'), ...C(['shoulderTop.r'], 'end', 'end', 'c3'), ...C(['wrist.r'], 'start', 'start', 'c4')],
+    goblet_squat: [...C(['wrist.r', 'wrist.l'], 'start', 'start', 'g1'), ...C(['heel.r', 'ball.r', 'heel.l', 'ball.l'], 'end', 'end', 'g4')],
+    bodyweight_squat: C(['heel.r', 'ball.r', 'heel.l', 'ball.l'], 'end', 'end', 'b7'),
     wall_sit: [{ kind: 'angle', joint: 'knee.r', pose: 'end', cardPose: 'end', deg: 90, claim: 'w2' }, { kind: 'angle', joint: 'hip.r.flex', pose: 'end', cardPose: 'end', deg: 90, claim: 'w2' },
       ...C(['backUpper', 'buttock'], 'start', 'start', 'w5'), ...C(['backUpper', 'buttock'], 'end', 'end', 'w5')],
-    step_up: [...C(['heel.r', 'ball.r'], 'end', 'start', 'c6'), ...C(['heel.l', 'ball.l'], 'end', 'start', 'c1'), ...C(['heel.r', 'ball.r'], 'start', 'end', 'c1')],
+    step_up: [...C(['heel.r', 'ball.r'], 'end', 'start', 'c6'), ...C(['heel.l', 'ball.l'], 'end', 'start', 'c1'), ...C(['wrist.r', 'wrist.l'], 'end', 'start', 'c5'), ...C(['heel.r', 'ball.r'], 'start', 'end', 'c1')],
     pistol_squat: C(['heel.r', 'ball.r'], 'end', 'end', 'p3'),
   };
   it('every card\'s plateFacts is the ruled set (D-LIB14-FACTS)', () => {

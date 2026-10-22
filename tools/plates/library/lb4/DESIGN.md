@@ -159,7 +159,7 @@ Fault→key (13 Q1(a)); each spec's first tell carries the key:
 
 | id | plate.mistake (claim) | drawable | first tell key (tells) | topFault |
 |---|---|---|---|---|
-| front_squat | elbows drop and the chest falls forward, the bar rolls off the shoulders (c7) | true | `elbows` (`chest`, `bar`) | `elbows` |
+| front_squat | elbows drop and the chest falls forward, the bar rolls off the shoulders (c7) | true | `elbows` (`chest`; the `bar` tell dropped at the slice look: the bar's drift is 2.8 cm) | `elbows` |
 | goblet_squat | torso leans far forward, chest droops, weight drifts from the body (g6) | true | `lean` (`drift`) | `lean` |
 | bodyweight_squat | heels lift at the bottom, weight rolls onto the toes (b4) | true | `heels` (`toes`) | `heels` |
 | wall_sit | feet too close to the wall, knees past the toes (w8) | true | `feet` (`knees`) | `feet` |
@@ -205,7 +205,10 @@ of the chest") and gains `contact wrist.r`, `wrist.l` at start (g1, both hands c
 `ball.r` at end (g4, "push both feet into the floor"). bodyweight_squat's heel and ball cite b7 ("keeping the heels
 flat on the floor"). step_up gains the trailing foot's heel.l and ball.l on the floor at spec `end` (card start, c1);
 the hands-on-dumbbells fact from c5 is declined (c5 is the stance before the first step, which the plate draws in no
-pose).
+pose). **Re-verify tightenings (6342086947):** front_squat's end `wrist.r` fact is removed (c4 is a setup quote: it
+states the start pose only); step_up gains `wrist.r`, `wrist.l` at spec `end` (card start; plate.start cites c5); a
+quote naming a paired part in the plural states both sides, so goblet_squat (g4) and bodyweight_squat (b7) gain
+`heel.l`, `ball.l` at end. Each new fact has its `checks` plane.
 
 ## 11. PQ-H3 estimates (before drawing; each [unverified until drawn])
 

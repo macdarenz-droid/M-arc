@@ -89,6 +89,12 @@ const LS = landmarksOf(start, H), LE = landmarksOf(end, H), LM = landmarksOf({ .
 export const suInfo = { endZ: END_Z, topZ: TOP_Z, pushUp: PUSH_UP, trailClear: Math.min(LS['heel.l'][1], LS['toe.l'][1]) - BOX_H, mSternumFwd: LM.sternum[2] - LE.sternum[2] };
 
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] }, boxTop = { point: [0, BOX_H, 0], normal: [0, 1, 0] };
+// The dumbbell in the hand (c5), checked at the wrist: the plane square to the hand (wrist to grip) through the wrist spot
+// that puts the grip on the dumbbell's handle centre, at the step position (spec end).
+const inHand = s => {
+  const d = [0, 1, 2].map(i => LE[`grip.${s}`][i] - LE[`wrist.${s}`][i]), L = Math.hypot(...d), n = d.map(v => v / L);
+  return { landmark: `wrist.${s}`, plane: { point: hang(LE)[s].at.map((v, i) => v - d[i]), normal: n }, pose: 'end', tol: 0.5 };
+};
 export default {
   id: 'step_up', name: 'Step-Up', view: 'side', facing: 'right',
   camera: { pxPerM: 128, x0: 196, y0: 339 },   // 128 px/m (inside the 8's 123.9-146.3): standing tall on the box fits under the header
@@ -106,6 +112,7 @@ export default {
     { landmark: 'heel.l', above: boxTop, pose: 'start' },              // standing tall: the trailing foot clear of the box
     { landmark: 'toe.l', above: boxTop, pose: 'start' },
     { landmark: 'toe.l', above: floor, pose: 'mistake' },              // the push: heel up, the toe pad on the floor
+    inHand('r'), inHand('l'),                                          // c5: the dumbbells in both hands at the step position
   ],
   startParts: ['trunk', 'leg.r', 'leg.l'],
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'leg.l', 'arm.r'] },

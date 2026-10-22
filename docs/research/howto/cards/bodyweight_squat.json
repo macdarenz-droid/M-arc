@@ -135,6 +135,20 @@
       "pose": "end",
       "cardPose": "end",
       "claim": "b7"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "b7"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "b7"
     }
   ],
   "topFault": "heels"

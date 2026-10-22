@@ -245,13 +245,6 @@
       "pose": "start",
       "cardPose": "start",
       "claim": "c4"
-    },
-    {
-      "kind": "contact",
-      "landmark": "wrist.r",
-      "pose": "end",
-      "cardPose": "end",
-      "claim": "c4"
     }
   ],
   "topFault": "elbows"

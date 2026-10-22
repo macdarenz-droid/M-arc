@@ -145,6 +145,8 @@ export default {
   checks: [
     { landmark: 'heel.r', plane: floor, pose: 'all', tol: 0.5 },
     { landmark: 'ball.r', plane: floor, pose: 'all', tol: 0.5 },
+    { landmark: 'heel.l', plane: floor, pose: 'all', tol: 0.5 },     // g4: both feet
+    { landmark: 'ball.l', plane: floor, pose: 'all', tol: 0.5 },
     cupCheck('start', 'r'), cupCheck('start', 'l'), cupCheck('end', 'r'), cupCheck('end', 'l'),
   ],
   startParts: ['trunk', 'leg.r'],
