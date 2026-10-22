@@ -39,31 +39,67 @@ import { perItem } from '../eq/parts.mjs';
 import { dipBars, DIP_BARS_ITEMS } from '../eq/dipBars.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ BAR_X: 0.2266, BAR_Y: 1.25, POST_BACK: 0.36, TOP_LEAN: 4, BOTTOM_LEAN: 15, KNEE: 20, HIP_ADD: 6, ANKLE: -22,
-  SCAP_ELEV: -3, SCAP_PRO: -3, BELT_W: 0.06, BELT_T: 0.012, CHAIN_W: 0.008, PLATE_D: 0.45, HOLE_D: 0.05, FLOOR_GAP: 0.15, FLOOR_BACK: 0.30, FLOOR_FRONT: 0.30, M_BEND: 60 });
-const { BAR_X, BAR_Y, POST_BACK, TOP_LEAN, BOTTOM_LEAN, KNEE, HIP_ADD, ANKLE, SCAP_ELEV, SCAP_PRO, BELT_W, BELT_T, CHAIN_W, PLATE_D, HOLE_D, FLOOR_GAP, FLOOR_BACK, FLOOR_FRONT, M_BEND } = SIZES;
-export const BENDS = Object.freeze({ start: 0, end: 90, mistake: M_BEND });   // c2 straight; c4 elbow about 90; c14 the half rep
+export const SIZES = Object.freeze({ BAR_X: 0.2266, BAR_Y: 1.25, POST_BACK: 0.36, TOP_LEAN: 4, BOTTOM_LEAN: 15, KNEE: 20, BOTTOM_KNEE: 90, BOTTOM_THIGH: -40,
+  HIP_ADD: 6, ANKLE: -22, SCAP_ELEV: -3, SCAP_PRO: -3, BELT_W: 0.06, BELT_T: 0.012, CHAIN_W: 0.008, PLATE_D: 0.45, HOLE_D: 0.05, FLOOR_GAP: 0.15,
+  FLOOR_BACK: 0.30, FLOOR_FRONT: 0.30, M_DEPTH: 0.5, BODY_KG: 75, PLATE_KG: 20 });
+const { BAR_X, BAR_Y, POST_BACK, TOP_LEAN, BOTTOM_LEAN, KNEE, BOTTOM_KNEE, BOTTOM_THIGH, HIP_ADD, ANKLE, SCAP_ELEV, SCAP_PRO, BELT_W, BELT_T, CHAIN_W,
+  PLATE_D, HOLE_D, FLOOR_GAP, FLOOR_BACK, FLOOR_FRONT, M_DEPTH, BODY_KG, PLATE_KG } = SIZES;
 
 const L_UA = WINTER.upperArm * H, L_FG = (WINTER.forearm + REF.gripOff) * H;
 const GRIP = s => [s * BAR_X, BAR_Y, 0];
-// The body at bend b: the pelvis lean, then the root placed so the near shoulder joint sits on the dip path.
-const leanAt = b => TOP_LEAN + (BOTTOM_LEAN - TOP_LEAN) * b / 90;
-const bodyAt = (b, root) => {
-  const tilt = leanAt(b);
+// Bracketed root finder (bisection): throws when f(a) and f(b) have the same sign (D-LIB9-CLONE b).
+export const bisect = (f, a, b, what) => {
+  let fa = f(a), fb = f(b);
+  if (fa * fb > 0) throw new Error(`weighted_dip: no ${what} in [${a}, ${b}]`);
+  for (let i = 0; i < 70; i++) { const m = (a + b) / 2, fm = f(m); if (fa * fm <= 0) { b = m; fb = fm; } else { a = m; fa = fm; } }
+  return (a + b) / 2;
+};
+// Body centre of mass (D-LIB17-DIPBAL): Winter (2009) table 4.1 mass fractions and centre positions from each
+// segment's proximal end, on the engine's landmarks (upper arm .028 at .436, forearm .016 at .430, hand .006 at .5,
+// thigh .100 at .433, shank .0465 at .433, foot .0145 at .5, trunk .497 at the hip-shoulder midpoint, head and neck .081
+// at the ear).
+const lerp3 = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+export const bodyCom = L => {
+  const parts = [[0.497, lerp3(L.hips, L.shoulders, 0.5)], [0.081, L.ear]];
+  for (const s of ['l', 'r']) parts.push([0.028, lerp3(L[`shoulder.${s}`], L[`elbow.${s}`], 0.436)], [0.016, lerp3(L[`elbow.${s}`], L[`wrist.${s}`], 0.430)],
+    [0.006, lerp3(L[`wrist.${s}`], L[`grip.${s}`], 0.5)], [0.100, lerp3(L[`hip.${s}`], L[`knee.${s}`], 0.433)], [0.0465, lerp3(L[`knee.${s}`], L[`ankle.${s}`], 0.433)],
+    [0.0145, lerp3(L[`ankle.${s}`], L[`toe.${s}`], 0.5)]);
+  const m = parts.reduce((t, [w]) => t + w, 0);
+  return parts.reduce((t, [w, p]) => t.map((v, i) => v + w * p[i] / m), [0, 0, 0]);
+};
+// The body at depth d (0 the top, 1 the bottom): the lean, the knees and the thighs move with the depth (c3's slight
+// bend at the top only; D-LIB17-DIPBAL's legs at the bottom), the spine and neck in line; the root placed so the near
+// shoulder joint sits at [y, z].
+const bodyAt = (d, root) => {
+  const tilt = TOP_LEAN + (BOTTOM_LEAN - TOP_LEAN) * d, thigh = BOTTOM_THIGH * d;
   return { root: { at: root, tilt }, trunk: 0, neck: 0, scap: { elev: SCAP_ELEV, pro: SCAP_PRO },
-    hip: { l: { flex: tilt, abd: -HIP_ADD }, r: { flex: tilt, abd: -HIP_ADD } }, knee: KNEE, ankle: ANKLE };
+    hip: { l: { flex: tilt + thigh, abd: -HIP_ADD }, r: { flex: tilt + thigh, abd: -HIP_ADD } }, knee: KNEE + (BOTTOM_KNEE - KNEE) * d, ankle: ANKLE };
 };
-const shoulderAt = b => [-BAR_X, BAR_Y + L_FG + L_UA * Math.cos(b * R), L_UA * Math.sin(b * R)];
-const poseAt = b => {
-  const off = landmarksOf(bodyAt(b, [0, 0, 0]), H)['shoulder.r'], S = shoulderAt(b);
-  const root = [0, S[1] - off[1], S[2] - off[2]];
-  const p = bodyAt(b, root);
-  const pole = [0, 0, -1];
-  return { ...p, reach: { l: { at: GRIP(1), pole }, r: { at: GRIP(-1), pole } } };
+const pole = [0, 0, -1];   // c4 "elbows going back"
+const poseFor = (d, y, z) => {
+  const off = landmarksOf(bodyAt(d, [0, 0, 0]), H)['shoulder.r'];
+  return { ...bodyAt(d, [0, y - off[1], z - off[2]]), reach: { l: { at: GRIP(1), pole }, r: { at: GRIP(-1), pole } } };
 };
-const start = poseAt(BENDS.start), end = poseAt(BENDS.end);
-const via = [30, 60].map(poseAt);
-const mistakePose = poseAt(BENDS.mistake);
+const flexOf = L => 180 - Math.acos((([a, b]) => a.reduce((t, v, i) => t + v * b[i], 0) / Math.hypot(...a) / Math.hypot(...b))(
+  [L['shoulder.r'], L['grip.r']].map(p => p.map((v, i) => v - L['elbow.r'][i])))) / R;
+// Balance: the shoulder's z solved (bisection) so the body's centre of mass sits over the grips.
+const balancedZ = (d, y) => bisect(z => bodyCom(landmarksOf(poseFor(d, y, z), H))[2], -0.3, 0.6, 'balanced shoulder position');
+export const TOP_Y = BAR_Y + L_FG + L_UA - 0.0001;                                   // c2: straight arms
+export const PAR_Y = BAR_Y + L_FG;                                                    // the parallel line (c4: upper arm level, forearm plumb)
+// The bottom (D-LIB17-DIPBAL, option C'): the elbow bent 90 (the c4 fact) on the balanced path: the shoulder height
+// solved (bisection) so the elbow is 90 with the centre of mass over the grips; the upper arm then sits below level.
+globalThis.__wdProbe = y => flexOf(landmarksOf(poseFor(1, y, balancedZ(1, y)), H));
+export const END_Y = bisect(y => flexOf(landmarksOf(poseFor(1, y, balancedZ(1, y)), H)) - 90, PAR_Y - 0.3, PAR_Y + 0.25, 'bottom with the elbow at 90');
+const depthOfY = y => (TOP_Y - y) / (TOP_Y - END_Y);
+const poseAtY = y => { const d = depthOfY(y); return poseFor(d, y, d === 0 ? 0 : balancedZ(d, y)); };
+const start = poseFor(0, TOP_Y, 0);                                                    // the top: the shoulder plumb over the grip
+const end = poseAtY(END_Y);
+const via = [1 / 3, 2 / 3].map(t => poseAtY(TOP_Y + (END_Y - TOP_Y) * t));
+// The Mistake (c14's half rep; ruled, D-LIB17-DIPBAL condition 4): the shoulder M_DEPTH of the way from the top down to
+// the parallel line, on the same balanced path, so it stays well above parallel.
+export const M_Y = TOP_Y + (PAR_Y - TOP_Y) * M_DEPTH;
+const mistakePose = poseAtY(M_Y);
+const shoulderAt = () => [-BAR_X, END_Y, landmarksOf(end, H)['shoulder.r'][2]];
 
 const LS = landmarksOf(start, H), LE = landmarksOf(end, H);
 // Belt, chain and plate (c8), from the pelvis landmarks of each pose: the pelvis frame (up, forward) solved from the
@@ -165,13 +201,13 @@ const POST_Z = -POST_BACK;
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 const onBar = s => ({ landmark: `grip.${s}`, at: GRIP(s === 'l' ? 1 : -1), pose: 'all', tol: 0.5 });
 
-export const WD = { grip: GRIP, shoulderAt, poseAt, loadOf, postZ: POST_Z, chainLen: CHAIN_LEN };
+export const WD = { grip: GRIP, shoulderAt, poseAtY, poseFor, loadOf, postZ: POST_Z, chainLen: CHAIN_LEN, endY: END_Y, mY: M_Y, parY: PAR_Y, topY: TOP_Y, bodyCom };
 export default {
   id: 'weighted_dip', name: 'Weighted Dip', view: 'side', facing: 'right',
   camera: { fit: true, x0: 150 },
   poses: { start, via, end },
   equipment: [
-    { type: 'floor', from: POST_Z - FLOOR_BACK, to: shoulderAt(90)[2] + FLOOR_FRONT },
+    { type: 'floor', from: POST_Z - FLOOR_BACK, to: shoulderAt()[2] + FLOOR_FRONT },
     ...perItem(() => dipBars({ barY: BAR_Y, barX: BAR_X, postZ: POST_Z }), DIP_BARS_ITEMS),
     ...LOAD,
     (lm, ctx) => (ctx.pose === 'end' ? START_ARM : null),

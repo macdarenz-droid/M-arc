@@ -277,6 +277,9 @@ claim whose quote states it; each contact gets a `checks` entry in its spec (H6)
   the body, not against equipment or a support (PANELS.md 7's contact kinds); held by `checks` (the elbow on the side
   line) and a drawn-item test instead. c10 "parallel to ground": no number; held by a check (the grip at the elbow's
   height). c1 "at elbow height": a height of an item, not a touch.
+- resistance_band_pull_apart c5 "pull until arms are in line with torso or band touches chest": an "or" between two end
+  points states a choice, not a contact that always happens (the card's plate.end: "band at or near the chest");
+  ruled D-LIB17-ORCHOICE (#299 6348241751), the same reason as cable_lateral_raise c5's "in front of or behind".
 - resistance_band_pull_apart c1 "knees slightly bent": no number; c1 "hands wider than shoulders": a width, no fact
   kind.
 - renegade_row c4 "until the dumbbell touches your ribcage": the body model has no landmark on the side of the ribcage
