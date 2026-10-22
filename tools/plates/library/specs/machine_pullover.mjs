@@ -142,6 +142,8 @@ const machine = (lm, ctx) => {
     footBar: FOOT_BAR, pivot: PIVOT, arm: armAt(th), frameZ: FRAME_Z, floorZ: [FRAME_Z - BEAM_OUT, FOOT_BAR[2] + BEAM_OUT] });
 };
 
+// The pivot hub's front edge: the shoulders sit just below it (c1); a leader reaches it from the open side in front.
+const HUB_FRONT = [0, PIVOT[1], PIVOT[2] + PULLOVER_MACHINE.hubR];
 export const PM = { padL, pivot: PIVOT, theta: [THETA0, THETA1], armAt, belt, pad: PAD, neck: NECK, elbowPlane, footBar: FOOT_BAR };
 export default {
   id: 'machine_pullover', name: 'Machine Pullover', view: 'side', facing: 'right',
@@ -172,9 +174,9 @@ export default {
   ghosts: { count: 2, parts: ['arm.r', 'arm'] },
   trace: { point: 'grip.r', trim: [10, 12] },
   callouts: [
-    { key: 'pivot', text: 'Shoulders<br>at pivot', anchor: 'shoulderTop.r', box: { left: 30, top: 140 }, cue: 'Set the seat so your shoulders sit just below the machine\'s pivot.' },
+    { key: 'pivot', text: 'Shoulders<br>at pivot', anchor: HUB_FRONT, box: { left: 220, top: 126 }, cue: 'Set the seat so your shoulders sit just below the machine\'s pivot.' },
     { key: 'elbows', text: 'Push with<br>elbows', anchor: 'start:elbow.r', box: { left: 166, top: 78 }, cue: 'Keep your hands open and drive the pads down with your elbows.' },
-    { key: 'pad', text: 'Back on pad', anchor: 'backMid', box: { left: 24, top: 210 }, cue: 'Keep your torso and head against the back pad.' },
+    { key: 'pad', text: 'Back on pad', anchor: 'backUpper', box: { left: 28, top: 174 }, cue: 'Keep your torso and head against the back pad.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
   mistake: {
@@ -182,7 +184,7 @@ export default {
     parts: ['trunk'],   // the fault is the back and head; the arms and legs follow the hips by a few mm
     guides: [],
     tells: [
-      { key: 'arch', text: 'Back arches', anchor: { at: 'backMid', pose: 'mistake' }, cue: 'The lower back arches away from the pad.' },
+      { key: 'arch', text: 'Back arches', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 22, top: 174 }, cue: 'The lower back arches away from the pad.' },
       { key: 'head', text: 'Head off pad', anchor: { at: 'head', pose: 'mistake' }, box: { left: 166, top: 84 }, cue: 'The head pulls forward off the pad.' },
     ],
   },
