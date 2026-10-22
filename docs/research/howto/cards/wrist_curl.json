@@ -493,5 +493,27 @@
   "remove": [],
   "why": "forearms primary matches exercises.json and StrengthLog (c8); no secondary listed in either."
  },
- "anchorSource": "ace-wristcurl"
+ "anchorSource": "ace-wristcurl",
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Curl",
+   "s": 2,
+   "move": true
+  },
+  {
+   "phase": "Lower",
+   "s": 2,
+   "move": true
+  }
+ ],
+ "topFault": "grip"
 }
