@@ -350,6 +350,78 @@
     "unit": "point",
     "basis": "claim: plate.frames 'Trace follows the near dumbbell' (c4, c5; D-LIB17-TRACE)"
    }
+  },
+  "bench_dip": {
+   "BENCH_TOP": {
+    "value": 0.42,
+    "unit": "m",
+    "basis": "convention: one_arm_dumbbell_row.mjs (#274 @ a6f4bd07):41 BENCH_TOP 0.42, the vendor bench's low end (DESIGN.md section 11)"
+   },
+   "BENCH_W": {
+    "value": 0.29,
+    "unit": "m",
+    "basis": "convention: the vendor bench's pad width (equipment.mjs:158 width 0.29), seen end-on (the lifter sits on its long side, c1)"
+   },
+   "FINGER_IN": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "stated reason: c1 'put the hands on it', c2 'fingers pointing forward': the fingertips 1 cm in from the bench's front edge"
+   },
+   "HIP_CLEAR": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "claim: c3 'moving slightly forward to clear the edge', c4 'keeping your butt close to the bench': the buttock this far in front of the bench's front edge at the top; the least whole cm at which the drawn torso outline stays off the drawn bench pad in every drawn pose (start, both via poses, end and the Mistake; 7 cm put the Mistake's outline 0.1 px into the pad). The bench's legs stand at its ends, outside the body's width, so only the pad can collide"
+   },
+   "TOP_LEAN": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "claim: c20 'lean back slightly': the pelvis tilted 5 deg back at the top"
+   },
+   "ANKLE": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "claim: c3 'toes pointing up': the foot square to the shin"
+   },
+   "SCAP_PRO": {
+    "value": -3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36's 3 cm (the 8's shoulder blades back) for c20 'Pull the shoulder blades back'"
+   },
+   "M_FLEX": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated: c8 'well below' level, clearly past c5's 'about parallel' and 'slightly above'; with the legs straight and the heels planted, 25 deg (the note's proposal) put the drawn buttock 0.5 cm through the floor, so the deepest whole 5 deg step that keeps it above the floor"
+   },
+   "FLOOR_BACK": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the bench's back edge"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the toes"
+   },
+   "TOP_U": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c3 'holding there with extended arms' with HIP_CLEAR: the straight arm's slope from plumb that puts the buttock HIP_CLEAR in front of the edge (-36.6 deg)"
+   },
+   "END_TILT": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c3 'heels on the ground', c4 'legs out straight': the pelvis tilt that keeps the straight-legged heel on its floor point at the bottom (2.8 deg)"
+   },
+   "M_TILT": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "the END_TILT rule in the Mistake (2.0 deg)"
+   },
+   "trace": {
+    "value": "shoulder.r",
+    "unit": "point",
+    "basis": "claim: c5, the lowering cue (the elbow bend, whose moving end is the shoulder; DESIGN.md section 16 item 6; D-LIB17-TRACE)"
+   }
   }
  }
 }
