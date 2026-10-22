@@ -156,7 +156,7 @@ string. No Rest. The phase order follows the drawn order (section 9's pose map).
 
 | id | card up/down/pause (claim) | drawn order | spec tempo |
 |---|---|---|---|
-| overhead_cable_triceps_extension | 1/2/1 (c21) | hands behind head → overhead | `[{ phase: 'Extend', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }]` |
+| overhead_cable_triceps_extension | 1/2/1 (c21, c13; the claim pair the card gives) | hands behind head → overhead | `[{ phase: 'Extend', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }]` |
 | dumbbell_overhead_triceps_extension | 1/2/1 (c18) | bottom → top (swap, section 9) | `[{ phase: 'Press', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }]` |
 | cross_body_hammer_curl | 1/2/1 (c11) | bottom → top | `[{ phase: 'Curl', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }]` |
 | cable_curl | 1/2/0 (c10) | top → bottom (swap, section 9) | `[{ phase: 'Lower', s: 2, move: true }, { phase: 'Curl', s: 1, move: true }]` |

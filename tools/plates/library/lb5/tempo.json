@@ -4,7 +4,10 @@
  "constants": {},
  "ids": {
   "overhead_cable_triceps_extension": {
-   "claim": "c21",
+   "claim": [
+    "c21",
+    "c13"
+   ],
    "rows": [
     {
      "phase": "Extend",
