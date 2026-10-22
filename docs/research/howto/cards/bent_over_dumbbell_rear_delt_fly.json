@@ -15,7 +15,7 @@
   "claims": [
     {
       "id": "c1",
-      "text": "Hold a pair of dumbbells, lean forward, let the arms hang, then raise them out to the sides with a slight elbow bend and lower back down.",
+      "text": "Hold a pair of dumbbells, lean forward, let the arms hang, then raise them out to the sides with a slight elbow bend.",
       "tags": [
         "CONSENSUS"
       ],
@@ -100,6 +100,11 @@
           "source": "sl-reverse-fly",
           "text": "This is an exercise where it’s easy to start using a swinging motion to help lift the weights. This can place unnecessary stress on the lower back and shoulder joints. Keep the movement slow and controlled.",
           "where": "Common Mistakes: Not keeping form"
+        },
+        {
+          "source": "sl-reverse-fly",
+          "text": "By choosing a pair of dumbbells that are heavier than you can handle, you might end up using excessive momentum or other muscles than the targeted ones to complete the lift, compromising the exercise’s effectiveness and potentially leading to injury.",
+          "where": "Common mistakes, 1. Picking too heavy dumbbells"
         }
       ]
     },
@@ -168,7 +173,7 @@
     },
     {
       "id": "c9",
-      "text": "Chest-supported version: palms facing, elbows slightly bent, raise to about shoulder level with the dumbbells in line with or slightly in front of the ears; raising them behind the head shifts work to the lats.",
+      "text": "Chest-supported version: the dumbbells end in line with or slightly in front of the ears; raising them behind the head shifts work to the lats.",
       "tags": [
         "CONSENSUS",
         "MECH"
@@ -334,7 +339,7 @@
       "why": "LR-31 step 2 picks swinging the torso to throw the weights (c5, c4) as the top fault, but its sign shows from the side and the census view is front. Shrugging (c3) is the next fault by the same steps (step 3, the one other fault the anchor tells the lifter to avoid), and the front view shows it.",
       "claim": "c3",
       "drawable": false,
-      "rankNote": "No source measures how often each fault happens. LR-31 step 2: swinging the torso to lift the weights (c5, c4). Step 1 finds no frequency word for a fault of this exercise. Set aside: StrengthLog's \"This is an exercise where it is easy to cheat by using momentum from your hips or lower back\" (c4) and \"This is an exercise where it’s easy to start using a swinging motion to help lift the weights.\" (c5) use \"easy to\"; \"Many lifters have stronger pushing muscles\" and \"trains many of the antagonists of common pressing exercises\" are about muscles; \"Common Mistakes in Reverse Dumbbell Flyes\" is a heading; \"many more workouts and programs\" is programming. Schoenfeld's \"There seems to be little consensus as to which hand position most effectively targets the posterior deltoid despite this option on most machines\" is about a grip and machines; Zhu's \"common strengthening exercises\" is about exercises. ACE and ACSM have none. Step 2: the swing, StrengthLog's list item 2 \"Not keeping form\", is the only named fault a quote ties to harm: \"This can place unnecessary stress on the lower back and shoulder joints.\" (c5). Set aside: item 1 \"Picking too heavy dumbbells. By choosing a pair of dumbbells that are heavier than you can handle, you might end up using excessive momentum or other muscles than the targeted ones to complete the lift, compromising the exercise’s effectiveness and potentially leading to injury.\" is a load choice, not a candidate; its harm runs through momentum, which is the swing already picked, so it adds no second fault. The swing shows from the side (torso and hips), and the census view is front, so drawable is false and plate.mistake names the next fault by the same steps. Step 2 has no other harm-tied fault; StrengthLog's list has no other candidate (item 1 is the load). Step 3 then takes the fault the most read sources tell the lifter to avoid: StrengthLog (the anchor, the only read technique source written for this exercise) says \"Avoid shrugging your shoulders during the exercise.\" (c3). ACE's \"Avoid arching your back during the upward phase by keeping your torso firmly pressed into the backrest.\" and its behind-the-head end position (c9, MECH) are written for the chest-supported incline reverse fly, another exercise, and are not counted (OPEN for the supervisor: if they count, the shrug, the arch and the behind-the-head end tie at one source each, LR-36 applies, and viewWhy names none of them). The shrug shows from the front. Pick unchanged: plate.mistake the shrug, drawable false; handlingMistakes[0] the swing."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: swinging the torso to lift the weights (c5, c4). Step 1 finds no frequency word for a fault of this exercise. Set aside: StrengthLog's \"This is an exercise where it is easy to cheat by using momentum from your hips or lower back\" (c4) and \"This is an exercise where it’s easy to start using a swinging motion to help lift the weights.\" (c5) use \"easy to\"; \"Many lifters have stronger pushing muscles\" and \"trains many of the antagonists of common pressing exercises\" are about muscles; \"Common Mistakes in Reverse Dumbbell Flyes\" is a heading; \"many more workouts and programs\" is programming. Schoenfeld's \"There seems to be little consensus as to which hand position most effectively targets the posterior deltoid despite this option on most machines\" is about a grip and machines; Zhu's \"common strengthening exercises\" is about exercises. ACE and ACSM have none. Step 2: the swing, StrengthLog's list item 2 \"Not keeping form\", is the only named fault a quote ties to harm: \"This can place unnecessary stress on the lower back and shoulder joints.\" (c5). Set aside: item 1 \"Picking too heavy dumbbells. By choosing a pair of dumbbells that are heavier than you can handle, you might end up using excessive momentum or other muscles than the targeted ones to complete the lift, compromising the exercise’s effectiveness and potentially leading to injury.\" is a load choice, not a candidate; its harm runs through momentum, which is the swing already picked, so it adds no second fault. The swing shows from the side (torso and hips), and the census view is front, so drawable is false and plate.mistake names the next fault by the same steps. Step 2 has no other harm-tied fault; StrengthLog's list has no other candidate (item 1 is the load). Step 3 then takes the fault the most read sources tell the lifter to avoid: StrengthLog (the anchor, the only read technique source written for this exercise) says \"Avoid shrugging your shoulders during the exercise.\" (c3). ACE's \"Avoid arching your back during the upward phase by keeping your torso firmly pressed into the backrest.\" and its behind-the-head end position (c9, MECH) are written for the chest-supported incline reverse fly, another exercise, and are not counted (ruled R-LB7-5: another exercise, not counted). The shrug shows from the front. Pick unchanged: plate.mistake the shrug, drawable false; handlingMistakes[0] the swing."
     },
     "tells": [
       {
@@ -419,7 +424,10 @@
     {
       "mistake": "Raising the arms past body level or behind the head.",
       "fix": "Stop at about body level.",
-      "claim": "c9"
+      "claim": [
+        "c3",
+        "c9"
+      ]
     }
   ],
   "feel": {
@@ -462,7 +470,7 @@
       },
       {
         "where": "Lower back",
-        "means": "Usually means swinging from the hips.",
+        "means": "Fault: swinging from the hips adds stress here.",
         "fix": "Go lighter and keep the torso still.",
         "claim": [
           "c5",
@@ -474,7 +482,7 @@
   },
   "risks": [
     {
-      "risk": "Swinging heavy dumbbells stresses the lower back and shoulders.",
+      "risk": "Swinging the weights up can stress the lower back and shoulders.",
       "claim": "c5"
     }
   ],
@@ -487,14 +495,21 @@
       "kind": "posture",
       "right": "Hinged at the hips, spine straight, torso still.",
       "wrong": "Rounded back, torso bobbing up each rep.",
-      "claim": "c2"
+      "claim": [
+        "c2",
+        "c4",
+        "c5"
+      ]
     },
     {
       "key": "rdfly-grip",
       "kind": "hand",
-      "right": "Palms facing, wrist straight, elbow slightly bent.",
+      "right": "Palms facing, elbow slightly bent.",
       "wrong": "Elbow bending more as the weight rises.",
-      "claim": "c2"
+      "claim": [
+        "c2",
+        "c12"
+      ]
     }
   ],
   "libraryDiff": {

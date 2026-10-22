@@ -134,12 +134,12 @@
       "quotes": [
         {
           "source": "ggr-rr",
-          "text": "Hex dumbbells allow you to safely navigate this challenging exercise because their six flat sides give you more stability while in the front plank. You can perform this with kettlebells or round dumbbells, but it's more difficult.",
+          "text": "Hex dumbbells allow you to safely navigate this challenging exercise because their six flat sides give you more stability while in the front plank. You can perform this with kettlebells or round dumbbells, but it’s more difficult.",
           "where": "Technique tips: hex dumbbells"
         },
         {
           "source": "bb-rr",
-          "text": "Grip a pair of dumbbells (ideally hexagonal dumbbells that won't roll).",
+          "text": "Grip a pair of dumbbells (ideally hexagonal dumbbells that won’t roll).",
           "where": "How to, step 1"
         }
       ]
@@ -157,12 +157,12 @@
       "quotes": [
         {
           "source": "ggr-rr",
-          "text": "There will be some upper-body rotation, but you don't want too much, as this will make the exercise easier and you'll lose some of the core strengthening benefits. If you rotate excessively, get your feet further apart for a broader support base.",
+          "text": "There will be some upper-body rotation, but you don’t want too much, as this will make the exercise easier and you’ll lose some of the core strengthening benefits. If you rotate excessively, get your feet further apart for a broader support base.",
           "where": "Technique tips: rotation"
         },
         {
           "source": "bb-rr",
-          "text": "Try not to let your torso twist too far away from the side you're rowing the dumbbell. If it does, use a lighter weight.",
+          "text": "Try not to let your torso twist too far away from the side you’re rowing the dumbbell. If it does, use a lighter weight.",
           "where": "How to, step 2, form tip"
         }
       ]
@@ -180,18 +180,18 @@
       "quotes": [
         {
           "source": "bb-rr",
-          "text": "If you're trying to pull too much weight with this lift, you'll likely hike your shoulder and hip up and back to accomplish the range of motion you need.",
+          "text": "If you’re trying to pull too much weight with this lift, you’ll likely hike your shoulder and hip up and back to accomplish the range of motion you need.",
           "where": "Common mistakes: going too heavy"
         },
         {
           "source": "bb-rr",
-          "text": "If you're swinging the dumbbell or hiking up your hips, then scale back the weight.",
+          "text": "If you’re swinging the dumbbell or hiking up your hips, then scale back the weight.",
           "where": "How to, step 3"
         },
         {
           "source": "ggr-rr",
           "text": "Avoid this by starting with a lighter weight than your usual row variation.",
-          "where": "Common mistakes: going too heavy"
+          "where": "Common mistakes: losing control"
         }
       ]
     },
@@ -209,11 +209,11 @@
         {
           "source": "ggr-rr",
           "text": "Not only will you lose the muscle-building tension, but you can hurt your wrists when the dumbbells slam to the ground.",
-          "where": "Common mistakes: going too heavy"
+          "where": "Common mistakes: losing control"
         },
         {
           "source": "bb-rr",
-          "text": "To maintain your wrist health, you've got to keep your wrists in neutral. Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.",
+          "text": "To maintain your wrist health, you’ve got to keep your wrists in neutral. Lowering the dumbbell too quickly and without enough discipline can cause you to land on a corner of the dumbbell.",
           "where": "Common mistakes: landing too hard"
         },
         {
@@ -303,7 +303,7 @@
         },
         {
           "source": "bb-rr",
-          "text": "If you're not ready to add weight to the movement, you can simply practice a dynamic plank variation where you focus on keeping your body still as you row the air with your hands. You can even start on your knees if need be.",
+          "text": "If you’re not ready to add weight to the movement, you can simply practice a dynamic plank variation where you focus on keeping your body still as you row the air with your hands. You can even start on your knees if need be.",
           "where": "Who should do it: beginners"
         }
       ]
@@ -592,7 +592,7 @@
       "claim": "c10"
     },
     {
-      "risk": "Too much weight makes your hip and shoulder hike up.",
+      "risk": "Too much weight can make your hip and shoulder hike up.",
       "claim": "c8"
     }
   ],

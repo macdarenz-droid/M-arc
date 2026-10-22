@@ -393,6 +393,21 @@
           "source": "zhu-2025",
           "text": "However, both exercises produced significantly higher muscle forces compared to BDR (47.911 N, p < 0.001).",
           "where": "Abstract, Results"
+        },
+        {
+          "source": "zhu-2025",
+          "text": "This study aimed to quantitatively evaluate posterior deltoid activation during common strengthening exercises and establish a mathematical trajectory model to guide the control systems of upper-limb rehabilitation robots.",
+          "where": "abstract"
+        },
+        {
+          "source": "zhu-2025",
+          "text": "Inverse Kinematics and Static Optimization were performed using OpenSim musculoskeletal modeling to estimate muscle forces.",
+          "where": "abstract"
+        },
+        {
+          "source": "zhu-2025",
+          "text": "Tukey's HSD post-hoc tests revealed that both BDLR (58.591 N) and SFP (58.183 N) elicited comparable high activation levels with no statistically significant difference ( p > 0.05).",
+          "where": "abstract"
         }
       ]
     },
@@ -512,7 +527,10 @@
     "mistake": {
       "what": "Elbows dropping down, below shoulder height, during the pull.",
       "why": "LR-31 step 2: the only named fault a quote ties to harm. Motra's \"Avoid shoulder pinching by keeping elbows high\" (c9) says the cue that corrects \"Dropping elbows down\" (its list item 2) avoids shoulder pinching; BarBend lists \"Dropping Your Elbows\" first (c9). Elbow height against the shoulder shows from the side.",
-      "claim": "c9",
+      "claim": [
+        "c9",
+        "c10"
+      ],
       "rankNote": "No source measures how often each fault happens. LR-31 step 2: the elbows dropping (c9). Step 1: no frequency word for a fault of this exercise. Set aside: StrengthLog's \"lifters who frequently engage in overhead movements\" and \"if you also do a lot of press work\" are about training; its \"easy to start taking shortcuts\" (c11) uses \"easy to\"; \"Some lifters prefer\" is \"some\" and a stance. BarBend's \"avoiding these common errors:\" is a list sentence and is not read onto one item; \"Face pulls can benefit most lifters and gymgoers\", \"Working on your scapular control will often result in greater shoulder and back health\" and \"most people can find a range of motion that is comfortable for them\" name no fault; \"most of which are smaller in size\" is about muscles. Motra's \"Typical Rep Range\" and \"Not typically needed\" are programming and spotting. Zhu's \"common strengthening exercises\" is about exercises. Step 2: one named fault is tied to harm: the elbows dropping (Motra list item 2 \"Dropping elbows down\", BarBend list item 1 \"Dropping Your Elbows\", c9), by Motra's \"Avoid shoulder pinching by keeping elbows high\" (c9). Shoulder pinching is read as stated harm (pain or discomfort in the shoulder). Set aside: Motra's \"Stop if any shoulder pain occurs\" and BarBend's \"No, if you have pain or discomfort, stop.\" (c13) name no fault (they are the stop quotes the shown pain row cites); \"Maintain neutral spine, no arching\" (c12) states no harm; Motra's other list items \"Pulling too low to chin\" (c10), \"Using momentum from torso\" and \"Rounding shoulders forward\" (c11) are tied to no harm (StrengthLog's \"easy to start taking shortcuts by involving muscles other than the targeted ones, or by using excessive momentum\" uses \"easy to\" and states no harm); StrengthLog's \"target the wrong muscles\" (c10) and BarBend's \"defeating the purpose of the exercise\" (c11) are not harm; BarBend's \"Movements like the bench press and split jerk stress the anterior muscles of the shoulder\" is about other exercises; \"Adding too much weight\" and \"Going Too Heavy\" (c11) are load choices; Motra's \"When to Avoid\" items are conditions. The side view shows the elbows below shoulder height, so drawable is true.",
       "drawable": true
     },

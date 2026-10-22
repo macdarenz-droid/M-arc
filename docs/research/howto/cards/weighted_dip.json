@@ -216,7 +216,7 @@
   },
   {
    "id": "c9",
-   "text": "One physiotherapist-coach advises slow lowering of two to five seconds and says slow dips are gentler on the body, cutting the risk of chest-wall (rib cartilage) pain and shoulder, elbow or wrist injury.",
+   "text": "One physiotherapist-coach advises slow lowering of two to five seconds and says slow dips are gentler on the body, cutting the risk of chest-wall (rib cartilage) pain and shoulder, elbow or wrist injury. No dip source gives seconds for the lifting phase; the plate’s 1 s up is a drawing convention.",
    "tags": [
     "WEAK"
    ],
@@ -452,7 +452,7 @@
    },
    {
     "label": "Depth to parallel",
-    "what": "Upper arm about level with the floor; no deeper.",
+    "what": "Upper arm about level with the floor, or slightly below.",
     "claim": "c4"
    }
   ],
@@ -562,14 +562,18 @@
   {
    "mistake": "Shoulders shrugging toward your ears.",
    "fix": "Shoulders down and back through the whole rep.",
-   "claim": "c6"
+   "claim": [
+    "c6",
+    "c4"
+   ]
   },
   {
    "mistake": "Swinging, a swaying plate or flaring elbows.",
    "fix": "Control the plate; elbows back.",
    "claim": [
     "c7",
-    "c8"
+    "c8",
+    "c4"
    ]
   }
  ],
@@ -634,7 +638,7 @@
    "claim": "c4"
   },
   {
-   "risk": "A swinging plate makes you unsteady.",
+   "risk": "A swinging plate can make you unsteady.",
    "claim": "c8"
   }
  ],

@@ -43,6 +43,14 @@
       "note": ""
     },
     {
+      "claim": "c5",
+      "source": "sl-reverse-fly",
+      "text": "By choosing a pair of dumbbells that are heavier than you can handle, you might end up using excessive momentum or other muscles than the targeted ones to complete the lift, compromising the exercise’s effectiveness and potentially leading to injury.",
+      "status": "verbatim",
+      "closest": "By choosing a pair of dumbbells that are heavier than you can handle, you might end up using excessive momentum or other muscles than the targeted ones to complete the lift, compromising the exercise’s effectiveness and potentially leading to injury.",
+      "note": "Added in the LB7 fix round; curl re-fetch 2026-10-22."
+    },
+    {
       "claim": "c6",
       "source": "sl-reverse-fly",
       "text": "The reverse dumbbell fly primarily works your rotator cuff and rear deltoids, and secondarily your trapezius",

@@ -418,6 +418,11 @@
      "source": "sl-incline",
      "text": "A hidden bonus with push-ups is that you also get some static training of your core, similar to that of the plank exercise.",
      "where": "Commentary"
+    },
+    {
+     "source": "nasm-incline",
+     "text": "Anterior Deltoid",
+     "where": "Muscles Worked, Secondary Muscles"
     }
    ]
   }
@@ -495,7 +500,7 @@
    "why": "BarBend's common-mistakes list says feet too close to the box leave the scapula elevated, which might expose you to a greater risk of shoulder impingement (c10).",
    "claim": "c10",
    "drawable": true,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 2: feet too close to the bench, so the shoulder blades stay raised in a shrug (c10). Step 1 finds no frequency word for a fault of this exercise: BarBend's \"here are some of the most common you’ll come across\" is about push-up variations, \"The incline push-up is often associated with beginners\" and \"let’s say you usually like to finish your strength or bodybuilding workout\" are about the exercise and training, \"For the average gymgoer\" is not a frequency word, and \"Common Incline Push-Up Mistakes\" and NASM's \"Common Mistakes\" are headings; Ebben's \"Push-ups are a common and practical exercise\" is about the exercise. BarBend's \"Sometimes, it’s easiest to make mistakes during the simplest movements simply because you’re breezing through reps without thinking about it.\" is a list sentence about mistakes in general ('easiest' is not a frequency word) and is not read onto one item; \"This error occurs with regular push-ups, too.\" (the lumbar fault) says where the fault occurs, not how often. Not about a fault: NASM's \"injury prevention\" and BarBend's \"minimal injury risk from loading\", \"without as much strain, effort, or skill\" and \"not adding too much fatigue and mechanical strain\" are about the exercise or training. Step 2: three named faults are tied to harm. Feet too close (BarBend's list): \"which might expose you to a greater risk of shoulder impingement\" (c10). Elbows flaring too wide (NASM's list): \"Elbows flaring too wide, which increases shoulder stress\" (c11). Looking up: \"Keep your gaze straight ahead, as looking up may strain your neck.\" (c5), a third harm-tied fault. Tie order: looking up is on no common-mistakes list, so it loses the first tie-break. Feet too close and elbow flare are each on a list, each tied to harm by one source, both direct, and no list names both, so step 3's count decides: both lists are written for this exercise, so the anchor source's list (bb-incline) decides, and only feet too close is on it. Set aside, no harm word: BarBend's lumbar line \"Excessive hyperextension in the lumbar spine (lower back) isn’t something you want to court during your push-ups.\" (c12) and NASM's \"Allowing hips to sag, which indicates core disengagement\" (c12); \"Jerky movements or excessive momentum, which compromises form\" (c13) is a speed-only fault and names no harm. 'compromises form' is not harm. BarBend's \"Lack of a Warm-Up\" (\"Otherwise, you might be setting your shoulders up for failure.\") is preparation, not a position during the set, so not a candidate, and 'setting your shoulders up for failure' names no injury, pain, stress or discomfort. Candidate call (sent to the supervisor as a ruling ask; the pick is kept until then): the fault counted is the shrugged, raised-shoulder position held through the set, which BarBend says feet too close cause; foot distance is read as body position, not a load choice. drawable true: the side view shows the feet close to the bench, a steep body and the shoulders up toward the ears."
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: feet too close to the bench, so the shoulder blades stay raised in a shrug (c10). Step 1 finds no frequency word for a fault of this exercise: BarBend's \"here are some of the most common you’ll come across\" is about push-up variations, \"The incline push-up is often associated with beginners\" and \"let’s say you usually like to finish your strength or bodybuilding workout\" are about the exercise and training, \"For the average gymgoer\" is not a frequency word, and \"Common Incline Push-Up Mistakes\" and NASM's \"Common Mistakes\" are headings; Ebben's \"Push-ups are a common and practical exercise\" is about the exercise. BarBend's \"Sometimes, it’s easiest to make mistakes during the simplest movements simply because you’re breezing through reps without thinking about it.\" is a list sentence about mistakes in general ('easiest' is not a frequency word) and is not read onto one item; \"This error occurs with regular push-ups, too.\" (the lumbar fault) says where the fault occurs, not how often. Not about a fault: NASM's \"injury prevention\" and BarBend's \"minimal injury risk from loading\", \"without as much strain, effort, or skill\" and \"not adding too much fatigue and mechanical strain\" are about the exercise or training. Step 2: three named faults are tied to harm. Feet too close (BarBend's list): \"which might expose you to a greater risk of shoulder impingement\" (c10). Elbows flaring too wide (NASM's list): \"Elbows flaring too wide, which increases shoulder stress\" (c11). Looking up: \"Keep your gaze straight ahead, as looking up may strain your neck.\" (c5), a third harm-tied fault. Tie order: looking up is on no common-mistakes list, so it loses the first tie-break. Feet too close and elbow flare are each on a list, each tied to harm by one source, both direct, and no list names both, so step 3's count decides. Step 3's count (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: feet too close 1 (BarBend's list, c10); elbows flaring too wide 1 (NASM's list, c11). Lines that only give the right position are not counted (NASM's \"Position your feet away from the bench to create an incline angle.\" and BarBend's \"Aim to keep your elbows in line with your shoulders, although it’s okay for them to flare out slightly.\"); counted, both are 2. Still tied, so the first of them on the earliest common-mistakes list written for this exercise, in source order (bb-incline), decides: feet too close. Set aside, no harm word: BarBend's lumbar line \"Excessive hyperextension in the lumbar spine (lower back) isn’t something you want to court during your push-ups.\" (c12) and NASM's \"Allowing hips to sag, which indicates core disengagement\" (c12); \"Jerky movements or excessive momentum, which compromises form\" (c13) is a speed-only fault and names no harm. 'compromises form' is not harm. BarBend's \"Lack of a Warm-Up\" (\"Otherwise, you might be setting your shoulders up for failure.\") is preparation, not a position during the set, so not a candidate, and 'setting your shoulders up for failure' names no injury, pain, stress or discomfort. Candidate: ruled by D-SUP-LB7-FEET (#288, 6340738518): the feet stay where they are for the whole set, so their position is a body position, not a setup choice."
   },
   "tells": [
    {
@@ -626,7 +631,7 @@
     "redFlag": null
    },
    {
-    "where": "Front of the shoulder",
+    "where": "Shoulder",
     "means": "Shrugged shoulders or wide elbows load the shoulder more.",
     "fix": "Walk your feet back and keep your elbows at 45 degrees.",
     "claim": [
@@ -660,13 +665,6 @@
   {
    "risk": "Elbows flared wide add stress to the shoulder.",
    "claim": "c11"
-  },
-  {
-   "risk": "A bench or box that can slide or tip makes the set unsafe.",
-   "claim": [
-    "c1",
-    "c14"
-   ]
   }
  ],
  "redFlags": [

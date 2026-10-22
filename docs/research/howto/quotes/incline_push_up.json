@@ -306,6 +306,14 @@
    "status": "verbatim",
    "closest": "A hidden bonus with push-ups is that you also get some static training of your core, similar to that of the plank exercise.",
    "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "nasm-incline",
+   "text": "Anterior Deltoid",
+   "status": "verbatim",
+   "closest": "Anterior Deltoid",
+   "note": "Added in the LB7 fix round; curl re-fetch 2026-10-22."
   }
  ]
 }

@@ -475,9 +475,9 @@
   },
   {
    "id": "c19",
-   "text": "One source says to set the hands in a comfortable position about shoulder-width apart to protect the shoulders.",
+   "text": "One source, written for the version with the feet on a second bench, says to set the hands in a comfortable position about shoulder-width apart to protect the shoulders.",
    "tags": [
-    "CONSENSUS"
+    "WEAK"
    ],
    "sources": [
     "mf-benchdip"
@@ -759,7 +759,7 @@
     "redFlag": null
    },
    {
-    "where": "Front of the shoulder",
+    "where": "Shoulder",
     "means": "Flared elbows or dipping too low load it more.",
     "fix": "Tuck your elbows and stop with upper arms level.",
     "claim": [

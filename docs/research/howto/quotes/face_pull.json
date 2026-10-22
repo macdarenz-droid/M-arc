@@ -300,6 +300,30 @@
       "note": ""
     },
     {
+      "claim": "c15",
+      "source": "zhu-2025",
+      "text": "This study aimed to quantitatively evaluate posterior deltoid activation during common strengthening exercises and establish a mathematical trajectory model to guide the control systems of upper-limb rehabilitation robots.",
+      "status": "verbatim",
+      "closest": "This study aimed to quantitatively evaluate posterior deltoid activation during common strengthening exercises and establish a mathematical trajectory model to guide the control systems of upper-limb rehabilitation robots.",
+      "note": "Added in the LB7 fix round; curl re-fetch 2026-10-22."
+    },
+    {
+      "claim": "c15",
+      "source": "zhu-2025",
+      "text": "Inverse Kinematics and Static Optimization were performed using OpenSim musculoskeletal modeling to estimate muscle forces.",
+      "status": "verbatim",
+      "closest": "Inverse Kinematics and Static Optimization were performed using OpenSim musculoskeletal modeling to estimate muscle forces.",
+      "note": "Added in the LB7 fix round; curl re-fetch 2026-10-22."
+    },
+    {
+      "claim": "c15",
+      "source": "zhu-2025",
+      "text": "Tukey's HSD post-hoc tests revealed that both BDLR (58.591 N) and SFP (58.183 N) elicited comparable high activation levels with no statistically significant difference ( p > 0.05).",
+      "status": "verbatim",
+      "closest": "Tukey's HSD post-hoc tests revealed that both BDLR (58.591 N) and SFP (58.183 N) elicited comparable high activation levels with no statistically significant difference ( p > 0.05).",
+      "note": "Added in the LB7 fix round; curl re-fetch 2026-10-22."
+    },
+    {
       "claim": "c16",
       "source": "mo-face-pull",
       "text": "3-1-2",
