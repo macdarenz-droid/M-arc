@@ -875,5 +875,56 @@
     "Kolber 2014 (lateral raises and upright rows above 90 degrees) is not cited: it does not name the front raise, so it would be an inference from another exercise, and no read front-raise source ties raising above the shoulders to harm.",
     "drawable: momentum alone is a speed sign, but BarBend names a still sign for this exercise's swing (hips pushed forward, c12), so the side plate can show it (LR-31: a still sign is drawable even when speed causes it).",
     "Not sourced, so left out: where the handle sits in the palm, an elbow angle in degrees, and a way to set the dumbbells down."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.l.elev",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c8",
+      "note": "\"until your arms are level with your shoulders\": the upper arm horizontal, read as shoulder elevation 90 against the upright trunk (PANELS.md 7's sh.r.elev reading)"
+    },
+    {
+      "kind": "angle",
+      "joint": "sh.r.elev",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c8",
+      "note": "\"until your arms are level with your shoulders\": the upper arm horizontal, read as shoulder elevation 90 against the upright trunk (PANELS.md 7's sh.r.elev reading)"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Raise",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 3,
+      "move": true
+    }
+  ],
+  "topFault": "swing"
 }
