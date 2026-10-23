@@ -17,7 +17,8 @@
 //  the ankle range and the lever solved onto the body. Every root finder here is a bisection that throws on a bracket
 //  with no root.
 // Equipment: the `calfMachine` composer, form 'standing' (platform on its post, floor beam, rear tower and pivot hub,
-//  lever arm with the shoulder pad and the hanging handle; eq/calfMachine.mjs); floor.
+//  lever arm with two shoulder pads, one on each shoulder top beside the neck (D-LIB18-PADS), and the hanging handle;
+//  eq/calfMachine.mjs); floor.
 // Pose map (identity): start = plate.start (the bottom), end = plate.end (the top); the Mistake against the end pose.
 // Geometry decisions (confirmed by the engine report `checks` and the drawn-item tests):
 //  Feet (c1, c4): the balls on the platform's top face at z 0 (plant ref 'ball'), each foot under its hip joint
@@ -151,7 +152,7 @@ export const START_LEG = (() => {
 export const SCR = { BALL, PIVOT, ARM, TOWER_Z: PIVOT[2], LS: LS0, LE, LM, machine, angleOf, comOf, start, end, mistakePose, START_TOE, END_TOE };
 
 const PLAT_PLANE = { point: BALL, normal: [0, 1, 0] };
-// the shoulder pad's lower face in one pose (its plane), for the c1 shoulder contact
+// the shoulder pads' lower face in one pose (its plane: both pads share it), for the c1 shoulder contact
 const padFace = lm => { const L = leverOf(lm); return { point: add(L.pad, mul(L.n, -C.shoulderT)), normal: L.n }; };
 const factChecks = (pose, lm, names) => names.map(landmark => ({ landmark, at: lm[landmark], pose, tol: 0.5 }));
 export default {

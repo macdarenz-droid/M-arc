@@ -15,7 +15,7 @@
 //  pad tangent to the upper back and the buttock (:75-77), the butt-wink Mistake (:85-93, M_ROLL about the lumbar pivot)
 //  and the shoulder-width, toes-out plant (:30-34).
 // Equipment: eq/hackSled.mjs (rail, fixed foot plate, fail-safe stop, frame; the moving sled with the back pad, the
-//  shoulder pad and the handle); floor.
+//  two shoulder pads, one on each trapezius beside the neck (D-LIB18-PADS), and the handle); floor.
 // Pose map (DESIGN.md section 9): identity. Start = plate.start (standing in the sled: shoulders under the shoulder pad,
 //  back and hips on the back pad, c1, c2; feet shoulder-width mid-plate, toes slightly out, c1, c12, c13; hands on the
 //  handles, c18; legs extended with a slight knee bend, c3, c7). End = plate.end (the bottom: knee about 90 with the
@@ -46,18 +46,18 @@
 // Camera: fit (capped at the reference scale).
 // Unsourced numbers (SIZES below; lb8/sizes.json holds each with its basis): RAIL, PLATE_TILT, PLATE_Y, KNEE_TOP, FOOT_X,
 //  TOE_OUT, NECK, M_ROLL, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, RAIL_ABOVE, STOP_GAP, FLOOR_BACK,
-//  FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM; the composer's HACK_SLED constants; TILT, SOLE_Z, TRAVEL and RAIL_LO solved. The
+//  FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM, PAD_Y; the composer's HACK_SLED constants; TILT, SOLE_Z, TRAVEL and RAIL_LO solved. The
 //  knee 90 is c4's.
 import { WINTER, REF, landmarksOf, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 import { add, mul, sub, perItem } from '../eq/parts.mjs';
-import { hackSled, HACK_SLED, HACK_SLED_ITEMS } from '../eq/hackSled.mjs';
+import { hackSled, shoulderPadPts, HACK_SLED, HACK_SLED_ITEMS } from '../eq/hackSled.mjs';
 
 const H = 1.75, R = Math.PI / 180;
 export const SIZES = Object.freeze({ RAIL: 45, PLATE_TILT: 0, PLATE_Y: 0.20, KNEE_TOP: 15, FOOT_X: 0.17, TOE_OUT: 8, NECK: 5, M_ROLL: 25,
   HANDLE_X: 0.25, HANDLE_N: 0.24, HANDLE_DOWN: 0.06, POLE_OUT: 0.6, PAD_BELOW: 0.10, RAIL_ABOVE: 0.10, STOP_GAP: 0.02, FLOOR_BACK: 0.15,
-  FLOOR_FRONT: 0.10, FLOOR_LINE: 0.05, TRACE_TRIM: [6, 8] });
+  FLOOR_FRONT: 0.10, FLOOR_LINE: 0.05, TRACE_TRIM: [6, 8], PAD_Y: 0.842 });
 const { RAIL, PLATE_TILT, PLATE_Y, KNEE_TOP, FOOT_X, TOE_OUT, NECK, M_ROLL, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, RAIL_ABOVE,
-  STOP_GAP, FLOOR_BACK, FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM } = SIZES;
+  STOP_GAP, FLOOR_BACK, FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM, PAD_Y } = SIZES;
 
 const dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
 // Bisection on a bracket (throws when the bracket holds no sign change; D-LIB9-CLONE b).
@@ -90,7 +90,7 @@ const PLANT = feetAt(SOLE_Z);
 const LB = L({ ...base, plant: PLANT });
 export const TRAVEL = bisect(d => kneeOf(L({ ...base, root: { at: add(HIP, mul(U, d)), tilt: TILT }, plant: PLANT })) - KNEE_TOP, 0.05, 0.6, 'the sled travel to the top knee');
 const PAD_AT = LB.buttock;                                           // the pad face line: through the end buttock, along U
-const SP = dot(sub(LB['trap.r'], PAD_AT), U);                        // the shoulder pad's lower face rests on the shoulders
+const SP = dot(sub(LB['trap.r'], PAD_AT), U);                        // the shoulder line along the pad (the handles' and the back pad top's reference)
 const gripAt = sx => { const g = add(add(PAD_AT, mul(U, SP - HANDLE_DOWN)), mul(N, HANDLE_N)); return [sx * HANDLE_X, g[1], g[2]]; };
 // hands on the handles, elbows hanging down along the trunk and out to the sides
 const handsAt = d => ({ l: { at: add(gripAt(1), mul(U, d)), pole: [POLE_OUT - U[0], -U[1], -U[2]] }, r: { at: add(gripAt(-1), mul(U, d)), pole: [-POLE_OUT - U[0], -U[1], -U[2]] } });
@@ -108,11 +108,28 @@ const lumbarRot = (() => {
 const mistakePose = { root: { at: lumbarRot, tilt: TILT - M_ROLL }, trunk: M_ROLL };
 
 const C = HACK_SLED, PAD_HI = SP + C.shoulderT, railOff = -(C.padT + C.carriageT + C.railT / 2);
+// The shoulder pads (D-LIB18-PADS): one on each trapezius beside the neck (eq/hackSled.mjs header). Their frame is the
+// end trunk's (the thorax rides fixed on the sled in every pose, the Mistake included): the inner bottom edge runs
+// forward at PAD_Y (H, the front outline's trapezius vertex, body.mjs:42) from the back pad's face (closed form: the
+// thorax line at PAD_Y meets the pad face plane).
+const SHOULDER = (() => {
+  const b = { height: H }, sk = fk(resolve(normPose(end, b), b).q, b), o = sk.thorax([0, 0, 0]);
+  const up = sub(sk.thorax([0, 1, 0]), o), fwd = sub(sk.thorax([0, 0, 1]), o), k = Math.hypot(...up);
+  const f = z => dot(sub(sk.thorax([0, PAD_Y, z]), PAD_AT), N), z = -f(0) / (f(1) - f(0));
+  return { at: sk.thorax([0, PAD_Y, z]), up: mul(up, 1 / k), fwd: mul(fwd, 1 / k) };
+})();
+// a shoulder pad's lower face (its plane, from its drawn corners: through the inner bottom rear corner, normal up out of
+// the trapezius) at a sled travel; s +1 the far (left) pad, -1 the near (right) one
+const padFace = (s, d) => {
+  const p = shoulderPadPts(SHOULDER, s, mul(U, d)), a = sub(p[1], p[0]), b = sub(p[7], p[0]);
+  const n = [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]], k = Math.hypot(...n) * Math.sign(dot(n, SHOULDER.up));
+  return { point: p[7], normal: mul(n, 1 / k) };
+};
 // the rail comes down to the foot plate's bracket level, under the plate's rear half
 export const RAIL_LO = bisect(s => add(add(PAD_AT, mul(U, s)), mul(N, railOff))[1] - (PLATE_Y - C.plateT - C.bracketT), -2, 0, 'the rail bottom');
 const RAIL_HI = PAD_HI + TRAVEL + RAIL_ABOVE;
 const railHiZ = add(add(PAD_AT, mul(U, RAIL_HI)), mul(N, railOff))[2];
-const sledP = { u: U, n: N, pad: { at: PAD_AT, lo: -PAD_BELOW, hi: PAD_HI }, shoulder: SP, grip: gripAt(-1), rail: { lo: RAIL_LO, hi: RAIL_HI },
+const sledP = { u: U, n: N, pad: { at: PAD_AT, lo: -PAD_BELOW, hi: PAD_HI }, shoulder: SHOULDER, grip: gripAt(-1), rail: { lo: RAIL_LO, hi: RAIL_HI },
   stop: -PAD_BELOW - STOP_GAP, plate: { at: [0, PLATE_Y, SOLE_Z], tilt: PLATE_TILT }, floorZ: [railHiZ - FLOOR_BACK, SOLE_Z + C.plateLen / 2 + FLOOR_FRONT] };
 // Start phantom (DRAWING-GUIDE.md 4; D-LIB18-DRAW): the start layer never draws moving equipment, so the start sled's
 // back pad and shoulder pad are redrawn as dashed outlines in the end layer.
@@ -146,15 +163,15 @@ export const START_LEG = (() => {
 
 const startPhantom = [
   { type: 'line', pts: outline(face(-PAD_BELOW), face(PAD_HI), N, -C.padT), cls: 'eq-line m-line', z: 'back', part: 'startSled' },
-  { type: 'line', pts: outline(face(SP), face(SP, C.shoulderLen), U, C.shoulderT), cls: 'eq-line m-line', z: 'back', part: 'startSled' },
+  // the near shoulder pad's side silhouette at the start travel (its outer bottom edge and its top, eq/hackSled.mjs)
+  (() => { const p = shoulderPadPts(SHOULDER, -1, mul(U, TRAVEL)); return { type: 'line', pts: [p[0], p[1], p[3], p[6], p[0]], cls: 'eq-line m-line', z: 'back', part: 'startSled' }; })(),
 ];
 // The knee bend arc (pull_up's and bench_dip's convention: bend from straight): from the end thigh extended past the
 // knee to the ankle, in front of the shin, so its leader starts in open space.
 const THIGH_DIR = [LE['knee.r'][2] - LE['hip.r'][2], LE['knee.r'][1] - LE['hip.r'][1]];
 const PAD_PLANE = { point: PAD_AT, normal: N }, PLATE_PLANE = { point: [0, PLATE_Y, 0], normal: PN };
-const shoulderFace = d => ({ point: add(add(PAD_AT, mul(U, SP)), mul(U, d)), normal: U });
 
-export const HS = { U, N, LE, LS, TILT, SOLE_Z, TRAVEL, RAIL_LO, RAIL_HI, SP, PAD_PLANE, PLATE_PLANE, sledP, mistakePose, travelOf, startPhantom };
+export const HS = { U, N, LE, LS, TILT, SOLE_Z, TRAVEL, RAIL_LO, RAIL_HI, SP, SHOULDER, padFace, PAD_PLANE, PLATE_PLANE, sledP, mistakePose, travelOf, startPhantom };
 // The card's contact facts (lb8 DESIGN.md; D-LIB18-FACTS): each bound by a check on its landmark in its pose, at the
 // drawn point (H6 reads the report's checks); the drawn-item tests prove the contact itself.
 const factChecks = (pose, p, names) => names.map(landmark => ({ landmark, at: L(p)[landmark], pose, tol: 0.5 }));
@@ -175,8 +192,8 @@ export default {
     { landmark: 'backUpper', plane: PAD_PLANE, pose: 'all', tol: 0.5 },
     ...['start', 'end'].map(pose => ({ landmark: 'buttock', plane: PAD_PLANE, pose, tol: 0.5 })),
     ...['backUpper', 'backMid', 'sacrum', 'buttock'].map(landmark => ({ landmark, above: PAD_PLANE, pose: 'all', tol: 0.5 })),
-    // c1: the shoulders under the shoulder pad (its lower face rides with the sled)
-    ...['trap.l', 'trap.r'].flatMap(landmark => [{ landmark, plane: shoulderFace(TRAVEL), pose: 'start', tol: 0.5 }, { landmark, plane: shoulderFace(0), pose: 'end', tol: 0.5 }]),
+    // c1: the shoulders under the shoulder pads: each trapezius on its own pad's lower face (the face rides with the sled)
+    ...[['trap.l', 1], ['trap.r', -1]].flatMap(([landmark, sd]) => [{ landmark, plane: padFace(sd, TRAVEL), pose: 'start', tol: 0.5 }, { landmark, plane: padFace(sd, 0), pose: 'end', tol: 0.5 }]),
     // c6, c14: the whole foot (heel and ball) on the plate in every pose, the toes not through it
     ...['heel.l', 'heel.r', 'ball.l', 'ball.r'].map(landmark => ({ landmark, plane: PLATE_PLANE, pose: 'all', tol: 0.5 })),
     ...['toe.l', 'toe.r'].map(landmark => ({ landmark, above: PLATE_PLANE, pose: 'all', tol: 0 })),

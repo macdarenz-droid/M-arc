@@ -272,6 +272,11 @@
     "unit": "px",
     "basis": "convention: leg_press.mjs:132, the clone source's Trace trim (D-LIB18-TRIM; the trace row carries it too)"
    },
+   "PAD_Y": {
+    "value": 0.842,
+    "unit": "H",
+    "basis": "stated reason (physical; D-LIB18-PADS): the shoulder pads' inner bottom edge at the front outline's trapezius vertex (0.064, 0.842) H (body.mjs:42 torsoHalf), in the trunk's frame, so each pad's lower face lies on the trapezius slope (with the composer's padIn, padOut, padDrop)"
+   },
    "TILT": {
     "value": "solved",
     "unit": "deg",
@@ -315,7 +320,22 @@
    "shoulderT": {
     "value": 0.06,
     "unit": "m",
-    "basis": "stated reason: a 6 cm shoulder pad, a little thinner than the 7 cm back pad, so its top stays under the chin (trap 0.834 H + 6 cm = 0.868 H, chin 0.870 H)"
+    "basis": "stated reason: a 6 cm shoulder pad over its outer bottom edge, a little thinner than the 7 cm back pad; its top face is level in the trunk's frame at 0.831 H + 6 cm = 0.865 H, under the chin (0.870 H, body.mjs WINTER.chinH)"
+   },
+   "padIn": {
+    "value": 0.112,
+    "unit": "m",
+    "basis": "stated reason (physical; D-LIB18-PADS, #306 6357949465): each shoulder pad's inner edge 0.064 H = 11.2 cm off the midline, the front outline's trapezius vertex (0.064, 0.842) H (body.mjs:42 torsoHalf), outside the neck (its half-width is 0.038 H = 6.7 cm at 0.857 H and less above, body.mjs:42), so the pad never reaches the neck"
+   },
+   "padOut": {
+    "value": 0.16625,
+    "unit": "m",
+    "basis": "stated reason (physical; D-LIB18-PADS): each shoulder pad's outer edge 0.095 H = 16.625 cm off the midline, the next front outline vertex (0.095, 0.831) H (body.mjs:42), so the pad reaches over the trapezius top (trap.l, trap.r at 0.078 H = 13.65 cm, body.mjs:169) and stops short of the shoulder cap (its inner side shX - shoulderCap = 0.0995 H, body.mjs:21, :29)"
+   },
+   "padDrop": {
+    "value": 0.01925,
+    "unit": "m",
+    "basis": "stated reason (physical; D-LIB18-PADS): the lower face follows the trapezius slope, the front outline's straight edge from (0.064, 0.842) to (0.095, 0.831) H (body.mjs:42), so it drops 0.011 H = 1.925 cm from the inner edge to the outer one and lies on the body's top there (3D clearance 0 cm); the trap landmark lies 0.0030 H under that edge (body.mjs:169 vs :42), so trap.l and trap.r sit 0.50 cm off the face"
    },
    "carriageT": {
     "value": 0.04,
@@ -471,6 +491,16 @@
     "value": 0.06,
     "unit": "m",
     "basis": "convention: hackSled's shoulder pad; standing form only"
+   },
+   "padIn": {
+    "value": 0.21875,
+    "unit": "m",
+    "basis": "stated reason (physical; D-LIB18-PADS, #306 6357949465): each shoulder pad's inner edge 0.125 H = 21.875 cm off the midline, outside the neck (half-width 0.038 H = 6.7 cm at 0.857 H, body.mjs:42). The flat lower face rests on the shoulder tops (0.830 H: shoulder 0.800 H + cap 0.030 H, body.mjs:21, :29, :153) and the lever turns up to 10.1 deg off the upright trunk (standing_calf_raise's Mistake; 9.6 deg at the end), which drops the face tan(10.1 deg) x 0.0616 H (the trunk's back 10.8 cm behind the shoulder tops at 0.82 H, body.mjs:47 torsoSide) = 0.011 H = 1.9 cm over the trunk's rear edge; at 0.125 H the front outline (its edge (0.122, 0.821)-(0.14, 0.800) H, body.mjs:42) lies 0.0125 H = 2.2 cm under the shoulder tops, so the face clears the trunk in every pose. A first value 0.122 H (the outline vertex) left 1.6 cm, under that 1.9 cm drop (the 3D clearance test measured -0.23 cm in the Mistake), so it was moved out to 0.125 H; standing form only"
+   },
+   "padOut": {
+    "value": 0.28,
+    "unit": "m",
+    "basis": "stated reason (physical; D-LIB18-PADS): each shoulder pad's outer edge 28 cm off the midline, past the shoulder cap's outer side (shX + shoulderCap = 0.1595 H = 27.9 cm, body.mjs:21, :29), so the pad reaches over the shoulder top (shoulderTop.l, shoulderTop.r at 0.1295 H = 22.7 cm); standing form only"
    },
    "tubeT": {
     "value": 0.06,
@@ -1067,6 +1097,11 @@
     "unit": "px",
     "basis": "convention: leg_press.mjs:132, the clone source's Trace trim (D-LIB18-TRIM; the trace row carries it too)"
    },
+   "PAD_Y": {
+    "value": 0.842,
+    "unit": "H",
+    "basis": "stated reason (physical; D-LIB18-PADS): the shoulder pads' inner bottom edge at the front outline's trapezius vertex (0.064, 0.842) H (body.mjs:42 torsoHalf), in the trunk's frame, so each pad's lower face lies on the trapezius slope (with the composer's padIn, padOut, padDrop)"
+   },
    "END_Y": {
     "value": "solved",
     "unit": "m",
@@ -1130,7 +1165,22 @@
    "shoulderT": {
     "value": 0.06,
     "unit": "m",
-    "basis": "stated reason: a 6 cm shoulder pad, a little thinner than the 7 cm back pad, so its top stays under the chin (trap 0.834 H + 6 cm = 0.868 H, chin 0.870 H)"
+    "basis": "stated reason: a 6 cm shoulder pad over its outer bottom edge, a little thinner than the 7 cm back pad; its top face is level in the trunk's frame at 0.831 H + 6 cm = 0.865 H, under the chin (0.870 H, body.mjs WINTER.chinH)"
+   },
+   "padIn": {
+    "value": 0.112,
+    "unit": "m",
+    "basis": "stated reason (physical; D-LIB18-PADS, #306 6357949465): each shoulder pad's inner edge 0.064 H = 11.2 cm off the midline, the front outline's trapezius vertex (0.064, 0.842) H (body.mjs:42 torsoHalf), outside the neck (its half-width is 0.038 H = 6.7 cm at 0.857 H and less above, body.mjs:42), so the pad never reaches the neck"
+   },
+   "padOut": {
+    "value": 0.16625,
+    "unit": "m",
+    "basis": "stated reason (physical; D-LIB18-PADS): each shoulder pad's outer edge 0.095 H = 16.625 cm off the midline, the next front outline vertex (0.095, 0.831) H (body.mjs:42), so the pad reaches over the trapezius top (trap.l, trap.r at 0.078 H = 13.65 cm, body.mjs:169) and stops short of the shoulder cap (its inner side shX - shoulderCap = 0.0995 H, body.mjs:21, :29)"
+   },
+   "padDrop": {
+    "value": 0.01925,
+    "unit": "m",
+    "basis": "stated reason (physical; D-LIB18-PADS): the lower face follows the trapezius slope, the front outline's straight edge from (0.064, 0.842) to (0.095, 0.831) H (body.mjs:42), so it drops 0.011 H = 1.925 cm from the inner edge to the outer one and lies on the body's top there (3D clearance 0 cm); the trap landmark lies 0.0030 H under that edge (body.mjs:169 vs :42), so trap.l and trap.r sit 0.50 cm off the face"
    },
    "armT": {
     "value": 0.07,

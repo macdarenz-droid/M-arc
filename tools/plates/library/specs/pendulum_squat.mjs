@@ -15,7 +15,8 @@
 //  (:132); reverse_lunge (pilot A @ dcac4a38 specs/reverse_lunge.mjs:17-22, PR #109): the rigid foot on its ball, the
 //  ball lifted so the toe pad (the lowest forefoot outline point) rests on the support instead of sinking into it.
 // Equipment: eq/pendulum.mjs (pivot boss, rear post, floor beam, front post, platform bracket, fixed platform, latch;
-//  the moving arm with the carriage, back pad, shoulder pad and handle); floor.
+//  the moving arm with the carriage, back pad, two shoulder pads (one on each trapezius beside the neck, D-LIB18-PADS)
+//  and handle); floor.
 // Pose map (DESIGN.md section 9): identity. Start = plate.start, the top (standing on the platform, shoulders under the
 //  pads, back on the back pad, c1, c3; feet between hip- and shoulder-width, c2; latch released, c4; knees KNEE_TOP from
 //  straight, c21). End = plate.end, the bottom (thighs parallel to the floor, c4, c6: the "or slightly lower" option is
@@ -52,18 +53,18 @@
 // Camera: fit (capped at the reference scale).
 // Unsourced numbers (SIZES below; lb8/sizes.json holds each with its basis): PLAT_Y, FOOT_X, TOE_OUT, KNEE_TOP,
 //  TILT_START, TILT_END, NECK, HEEL_LIFT, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, ARM_AT, LATCH_Y,
-//  FLOOR_BACK, FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM; the composer's PENDULUM constants; the roots,
+//  FLOOR_BACK, FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM, PAD_Y; the composer's PENDULUM constants; the roots,
 //  the pivot and BALL_LIFT solved.
 import { WINTER, REF, normPose, resolve, fk, landmarks } from '../engine.mjs';
 import { add, mul, sub, perItem } from '../eq/parts.mjs';
-import { pendulum, swing, PENDULUM, PENDULUM_ITEMS } from '../eq/pendulum.mjs';
+import { pendulum, swing, shoulderPadPts, PENDULUM, PENDULUM_ITEMS } from '../eq/pendulum.mjs';
 
 const H = 1.75, R = Math.PI / 180;
 export const SIZES = Object.freeze({ PLAT_Y: 0.15, FOOT_X: 0.13, TOE_OUT: 8, KNEE_TOP: 5, TILT_START: -8, TILT_END: 8, NECK: 5, HEEL_LIFT: 12,
   HANDLE_X: 0.25, HANDLE_N: 0.24, HANDLE_DOWN: 0.06, POLE_OUT: 0.6, PAD_BELOW: 0.10, ARM_AT: 0.25, LATCH_Y: 1.2,
-  FLOOR_BACK: 0.03, FLOOR_FRONT: 0, FLOOR_LINE: 0.02, TRACE_TRIM: [6, 8] });
+  FLOOR_BACK: 0.03, FLOOR_FRONT: 0, FLOOR_LINE: 0.02, TRACE_TRIM: [6, 8], PAD_Y: 0.842 });
 const { PLAT_Y, FOOT_X, TOE_OUT, KNEE_TOP, TILT_START, TILT_END, NECK, HEEL_LIFT, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, ARM_AT,
-  LATCH_Y, FLOOR_BACK, FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM } = SIZES;
+  LATCH_Y, FLOOR_BACK, FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM, PAD_Y } = SIZES;
 
 const dot = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0);
 // Bisection on a bracket (throws when the bracket holds no sign change; D-LIB9-CLONE b).
@@ -96,7 +97,7 @@ const PLANT = { l: { at: [FOOT_X, PLAT_Y, 0], normal: [0, 1, 0], toe: toeOf(1) }
 const frameOf = l => { const d = sub(l.backUpper, l.buttock), k = Math.hypot(...d), u = [0, d[1] / k, d[2] / k]; return { o: l.buttock, u, n: [0, -u[2], u[1]] }; };
 // hands on the handles (in the pad frame: HANDLE_DOWN below the shoulder pad's lower face, HANDLE_N in front of the pad
 // face), elbows hanging down along the trunk and out to the sides
-const SP_OF = l => { const f = frameOf(l); return dot(sub(l['trap.r'], f.o), f.u); };   // the shoulder pad's lower face (on the shoulders)
+const SP_OF = l => { const f = frameOf(l); return dot(sub(l['trap.r'], f.o), f.u); };   // the shoulder line along the pad (the handles' and the back pad top's reference)
 const gripAt = (f, sp, sx) => { const g = add(add(f.o, mul(f.u, sp - HANDLE_DOWN)), mul(f.n, HANDLE_N)); return [sx * HANDLE_X, g[1], g[2]]; };
 const legs = (at, tilt) => ({ root: { at, tilt }, trunk: 0, neck: NECK, plant: PLANT });
 const withHands = p => { const l = L(p), f = frameOf(l), sp = SP_OF(l);
@@ -147,10 +148,21 @@ const mistakePose = { plant: heelsUp(BALL_LIFT) };
 
 const C = PENDULUM;
 const PLATFORM = { top: PLAT_Y, z: 0 };                 // centred under the mid-soles
+// The shoulder pads (D-LIB18-PADS): one on each trapezius beside the neck (eq/pendulum.mjs header). Their frame is the
+// end trunk's, turned with the arm (the thorax rides fixed on the back pad: trunk 0 in every pose): the inner bottom
+// edge runs forward at PAD_Y (H, the front outline's trapezius vertex, body.mjs:42) from the back pad's face (closed
+// form: the thorax line at PAD_Y meets the end pad's face plane).
+const SH_END = (() => {
+  const sk = skOf(end), o = sk.thorax([0, 0, 0]), k = Math.hypot(...sub(sk.thorax([0, 1, 0]), o));
+  const up = mul(sub(sk.thorax([0, 1, 0]), o), 1 / k), fwd = mul(sub(sk.thorax([0, 0, 1]), o), 1 / k), n = [0, -FE.u[2], FE.u[1]];
+  const f = z => dot(sub(sk.thorax([0, PAD_Y, z]), LE.buttock), n), z = -f(0) / (f(1) - f(0));
+  return { at: sk.thorax([0, PAD_Y, z]), up, fwd };
+})();
 const machineAt = l => {
   const a = angleOf(l), o = swing(LE.buttock, PIVOT, a), u = swing(add(LE.buttock, FE.u), PIVOT, a);
   const uu = sub(u, o), f = { o, u: uu, n: [0, -uu[2], uu[1]] };
-  return { pivot: PIVOT, frame: f, pad: { lo: -PAD_BELOW, hi: SP + C.shoulderT }, shoulder: SP, grip: { u: SP - HANDLE_DOWN, n: HANDLE_N, x: -HANDLE_X }, armAt: ARM_AT,
+  const at = swing(SH_END.at, PIVOT, a), turn = v => sub(swing(add(SH_END.at, v), PIVOT, a), at);
+  return { pivot: PIVOT, frame: f, pad: { lo: -PAD_BELOW, hi: SP + C.shoulderT }, shoulder: { at, up: turn(SH_END.up), fwd: turn(SH_END.fwd) }, grip: { u: SP - HANDLE_DOWN, n: HANDLE_N, x: -HANDLE_X }, armAt: ARM_AT,
     platform: PLATFORM, frontZ: 0, floorZ: [PIVOT[2] - FLOOR_BACK, C.plateLen / 2 + FLOOR_FRONT], latch: { y: LATCH_Y } };
 };
 // Start phantom (DRAWING-GUIDE.md 4; D-LIB18-DRAW): the start layer never draws moving equipment, so the start back pad,
@@ -160,7 +172,8 @@ const startPhantom = (() => {
   const m = machineAt(LS), f = m.frame, face = (s, off = 0) => add(add(f.o, mul(f.u, s)), mul(f.n, off));
   return [
     { type: 'line', pts: outline(face(-PAD_BELOW), face(SP + C.shoulderT), f.n, -C.padT), cls: 'eq-line m-line', z: 'back', part: 'startArm' },
-    { type: 'line', pts: outline(face(SP), face(SP, C.shoulderLen), f.u, C.shoulderT), cls: 'eq-line m-line', z: 'back', part: 'startArm' },
+    // the near shoulder pad's side silhouette at the start (its outer bottom edge and its top, eq/pendulum.mjs)
+    (() => { const p = shoulderPadPts(m.shoulder, -1); return { type: 'line', pts: [p[0], p[1], p[3], p[6], p[0]], cls: 'eq-line m-line', z: 'back', part: 'startArm' }; })(),
     (() => { const e = face(ARM_AT, -C.padT * 0.75), d = sub(e, PIVOT), k = Math.hypot(...d), w = [0, -d[2] / k, d[1] / k], h = mul(w, C.armT / 2);
       return { type: 'line', pts: [add(PIVOT, h), add(e, h), sub(e, h), sub(PIVOT, h), add(PIVOT, h)], cls: 'eq-line m-line', z: 'back', part: 'startArm' }; })(),
   ];
@@ -169,9 +182,15 @@ const PAD_PLANE = (f) => ({ point: f.o, normal: f.n });
 // the drawn back pad's face in a pose (the composer's frame for that pose, so each check is on the drawn item)
 const PAD_START = machineAt(LS).frame, PAD_END = machineAt(LE).frame, PAD_MISTAKE = machineAt(L({ ...end, ...mistakePose })).frame;
 const PLAT_PLANE = { point: [0, PLAT_Y, 0], normal: [0, 1, 0] };
-const shoulderFace = f => ({ point: add(f.o, mul(f.u, SP)), normal: f.u });
+// a shoulder pad's lower face in a pose (its plane, from its drawn corners: through the inner bottom rear corner, normal up
+// out of the trapezius); s +1 the far (left) pad, -1 the near (right) one
+const padFace = (s, l) => {
+  const sh = machineAt(l).shoulder, p = shoulderPadPts(sh, s), a = sub(p[1], p[0]), b = sub(p[7], p[0]);
+  const n = [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]], k = Math.hypot(...n) * Math.sign(dot(n, sh.up));
+  return { point: p[7], normal: mul(n, 1 / k) };
+};
 
-export const PS = { LS, LE, FS, FE, SWING, PIVOT, SP, END_Y, END_Z, START_Y, START_Z, BALL_LIFT, PLATFORM, machineAt, frameOf, angleOf, startPhantom, mistakePose, start, end, via };
+export const PS = { LS, LE, FS, FE, SWING, PIVOT, SP, SH_END, padFace, END_Y, END_Z, START_Y, START_Z, BALL_LIFT, PLATFORM, machineAt, frameOf, angleOf, startPhantom, mistakePose, start, end, via };
 // The card's contact facts (lb8 DESIGN.md section 11; D-LIB18-FACTS): each bound by a check on its landmark in its pose:
 // the feet (heel, ball) on the platform's top face, the back (backUpper, buttock) on the back pad's face, the hands
 // (wrist) at the drawn hand on the handle (a grip has no plane; the drawn-item tests prove the grip on the handle).
@@ -193,8 +212,8 @@ export default {
     // c3 "throughout": the upper back and the buttock on the pad face in every pose (the Mistake keeps the torso on it)
     ...['backUpper', 'buttock'].flatMap(landmark => [['start', PAD_START], ['end', PAD_END], ['mistake', PAD_MISTAKE]].map(([pose, f]) => ({ landmark, plane: PAD_PLANE(f), pose, tol: 0.5 }))),
     ...['backUpper', 'backMid', 'sacrum', 'buttock'].flatMap(landmark => [['start', PAD_START], ['end', PAD_END], ['mistake', PAD_MISTAKE]].map(([pose, f]) => ({ landmark, above: PAD_PLANE(f), pose, tol: 0.5 }))),
-    // c1: the shoulders under the shoulder pad (its lower face rides with the arm)
-    ...['trap.l', 'trap.r'].flatMap(landmark => [['start', PAD_START], ['end', PAD_END]].map(([pose, f]) => ({ landmark, plane: shoulderFace(f), pose, tol: 0.5 }))),
+    // c1: the shoulders under the shoulder pads: each trapezius on its own pad's lower face (the face rides with the arm)
+    ...[['trap.l', 1], ['trap.r', -1]].flatMap(([landmark, sd]) => [['start', LS], ['end', LE]].map(([pose, l]) => ({ landmark, plane: padFace(sd, l), pose, tol: 0.5 }))),
   ],
   ghosts: { count: 3, parts: ['leg.r'] },
   trace: { point: 'knee.r', trim: TRACE_TRIM },

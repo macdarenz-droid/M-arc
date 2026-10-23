@@ -1139,7 +1139,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
   };
   /** The composer's items in a pose, in its documented order (eq/hackSled.mjs: floor beam, rear post, front post, rail,
    *  rail bracket, foot plate, fail-safe stop, carriage, back pad, shoulder pad, handle bracket, handle grip). */
-  const NAMES = ['beam', 'rearPost', 'frontPost', 'rail', 'railBracket', 'plate', 'stop', 'carriage', 'backPad', 'shoulderPad', 'handleBracket', 'grip'];
+  const NAMES = ['beam', 'rearPost', 'frontPost', 'rail', 'railBracket', 'plate', 'stop', 'carriage', 'backPad', 'shoulderPad', 'handleBracket', 'grip', 'shoulderPadFar'];
   let ENTRY: Map<number, string> | null = null;   // composer item name by equipment entry, read once from the real spec
   const sledItems = (spec: any, pose: string) => {
     if (!ENTRY) { ENTRY = new Map(); itemsIn(s0, 'end').items.filter((i: any) => ['frame', 'plate', 'stop', 'sled'].includes(i.part)).forEach((it: any, k: number) => ENTRY!.set(it.entry, NAMES[k]!)); }
@@ -1208,7 +1208,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
       const pad = it.backPad.surface, padLine = [cam.P(pad[0]), cam.P(pad[1])];
       for (const k of ['backUpper', ...(pose === 'mistake' ? [] : ['buttock'])]) { const d = lineD(L[k], padLine); if (d > 1) out.push(`${pose}: ${k} ${d.toFixed(1)} cm off the back pad`); }
       void padF;
-      if (pose !== 'mistake') { const sp = outlineOf(spec, it.shoulderPad); for (const k of ['trap.l', 'trap.r']) { const d = lineD(L[k], [sp[0]!, sp[1]!]); if (d > 1) out.push(`${pose}: ${k} ${d.toFixed(1)} cm off the shoulder pad`); } }
+      if (pose !== 'mistake') for (const [k, pad] of [['trap.l', it.shoulderPadFar], ['trap.r', it.shoulderPad]] as const) { const sp = outlineOf(spec, pad); const d = lineD(L[k], [sp[0]!, sp[1]!]); if (d > 1) out.push(`${pose}: ${k} ${d.toFixed(1)} cm off the shoulder pad`); }
       const g = it.grip.pts, gc = g.reduce((a: number[], q: number[]) => a.map((v, i) => v + q[i]! / g.length), [0, 0, 0]);
       for (const k of ['grip.l', 'grip.r']) { const d = Math.hypot(L[k][1] - gc[1], L[k][2] - gc[2]) * 100; if (d > 1) out.push(`${pose}: ${k} ${d.toFixed(1)} cm off the handle`); }
       return out;
@@ -1259,7 +1259,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
       expect(insideProblems(bad).some(p => /^end: buttock .* inside the back pad$/.test(p))).toBe(true);
     });
     /** D-LIB18-FRAME: every pad, plate, rail and post touches what carries it (outlines within 1 px). */
-    const JOINS: [string, string][] = [['backPad', 'carriage'], ['carriage', 'rail'], ['shoulderPad', 'backPad'], ['handleBracket', 'shoulderPad'], ['grip', 'handleBracket'],
+    const JOINS: [string, string][] = [['backPad', 'carriage'], ['carriage', 'rail'], ['shoulderPad', 'backPad'], ['shoulderPadFar', 'backPad'], ['handleBracket', 'shoulderPad'], ['grip', 'handleBracket'],
       ['plate', 'railBracket'], ['railBracket', 'rail'], ['rail', 'rearPost'], ['frontPost', 'railBracket'], ['rearPost', 'beam'], ['frontPost', 'beam'], ['stop', 'rail']];
     const polyGap = (a: number[][], b: number[][]) => { if (a.some(p => inPoly(b, p)) || b.some(p => inPoly(a, p))) return 0; let d = Infinity; for (const p of a) for (const [u, v] of segs([...b, b[0]!])) d = Math.min(d, segD(p, u!, v!)); for (const p of b) for (const [u, v] of segs([...a, a[0]!])) d = Math.min(d, segD(p, u!, v!)); return d; };
     const frameProblems = (spec: any) => posesOf(spec).flatMap(pose => {
@@ -1563,7 +1563,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
   const s = () => M.default;
   const POSES = ['start', 'end', 'mistake'];
   // composer slot order (eq/calfMachine.mjs calfMachine's return): entry 1 + slot
-  const SLOT = { beam: 0, platPost: 1, platform: 2, seatPost: 3, seat: 4, tower: 5, hub: 6, arm: 7, pad: 8, handlePost: 9, grip: 10, safety: 11 } as const;
+  const SLOT = { beam: 0, platPost: 1, platform: 2, seatPost: 3, seat: 4, tower: 5, hub: 6, arm: 7, pad: 8, handlePost: 9, grip: 10, safety: 11, farPad: 12, farArm: 13 } as const;
   const E = (slot: number) => 1 + slot;
   /** The drawn polygons (plate px) of every composer item in one pose, keyed by entry index. */
   const drawnEq = (spec: any, pose: string) => { const cam = camOf(spec), out: Record<number, any> = {};
@@ -1625,8 +1625,11 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
       expect(items.filter(Boolean).every((i: any) => eng.PRIMITIVES[i.type])).toBe(true);
       expect(items[SLOT.seat]).toBeNull();
       expect(items[SLOT.pad].type).toBe('poly');
+      expect(items[SLOT.farPad].type).toBe('poly');
       const poly = (k: number) => eng.PRIMITIVES[items[k].type](items[k], cam).filter((x: any) => x.poly).map((x: any) => x.poly);
       expect(polyGap(poly(SLOT.arm), poly(SLOT.pad))).toBeLessThanOrEqual(0.5);
+      expect(polyGap(poly(SLOT.farArm), poly(SLOT.farPad))).toBeLessThanOrEqual(0.5);
+      expect(polyGap(poly(SLOT.farArm), poly(SLOT.hub))).toBeLessThanOrEqual(0.5);
       expect(polyGap(poly(SLOT.tower), poly(SLOT.beam))).toBeLessThanOrEqual(0.5);
     });
   });
@@ -2730,7 +2733,8 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
   // =============================== standing_calf_raise ===============================
   const s = () => SC.default;
   // composer slot order (eq/calfMachine.mjs calfMachine's return): entry 1 + slot; seat, seat post and safety lever are null standing
-  const SLOT = { beam: 0, platPost: 1, platform: 2, seatPost: 3, seat: 4, tower: 5, hub: 6, arm: 7, pad: 8, handlePost: 9, grip: 10, safety: 11 } as const;
+  // (farPad, farArm: the far shoulder pad and lever branch, D-LIB18-PADS; null seated)
+  const SLOT = { beam: 0, platPost: 1, platform: 2, seatPost: 3, seat: 4, tower: 5, hub: 6, arm: 7, pad: 8, handlePost: 9, grip: 10, safety: 11, farPad: 12, farArm: 13 } as const;
   const E = (slot: number) => 1 + slot;
 
   describe('LB8 standing_calf_raise: calfMachine standing form (A2, A18 frame)', () => {
@@ -2739,6 +2743,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
       expect(typeProblems(s())).toEqual([]);
       const D = drawnEq(s(), 'end');
       expect([SLOT.seatPost, SLOT.seat, SLOT.safety].map(k => D[E(k)])).toEqual([undefined, undefined, undefined]);
+      expect([SLOT.farPad, SLOT.farArm].map(k => D[E(k)]?.type)).toEqual(['poly', 'backPad']);
       expect(typeProblems(withEq(s(), E(SLOT.grip), () => () => ({ type: 'wedge', part: 'lever' })))).toEqual(['start: wedge', 'end: wedge', 'mistake: wedge']);
     });
     /** Static parts (frame, platform) draw the same polygon (+-1 px) in start, end and Mistake; every lever
@@ -2766,7 +2771,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
       expect(a2Problems(asLine)).toContain(`moving entry ${E(SLOT.arm)} is a line without a polygon`);
     });
     /** D-LIB18-FRAME: each pad, platform and lever part joins its frame (touching or overlapping polygons, <= 0.5 px). */
-    const JOINS: [keyof typeof SLOT, keyof typeof SLOT][] = [['platform', 'platPost'], ['platPost', 'beam'], ['tower', 'beam'], ['hub', 'tower'], ['arm', 'hub'], ['arm', 'pad'], ['handlePost', 'arm'], ['grip', 'handlePost']];
+    const JOINS: [keyof typeof SLOT, keyof typeof SLOT][] = [['platform', 'platPost'], ['platPost', 'beam'], ['tower', 'beam'], ['hub', 'tower'], ['arm', 'hub'], ['arm', 'pad'], ['farArm', 'hub'], ['farArm', 'farPad'], ['handlePost', 'arm'], ['grip', 'handlePost']];
     const frameProblems = (spec: any) => POSES.flatMap(p => { const D = drawnEq(spec, p);
       return JOINS.filter(([a, b]) => !D[E(SLOT[a])] || !D[E(SLOT[b])] || polyGap(D[E(SLOT[a])].polys, D[E(SLOT[b])].polys) > 0.5).map(([a, b]) => `${p}: ${a} not joined to ${b}`); });
     it('A18: every pad, platform and lever part is joined to the frame in every pose', () => {
@@ -2790,7 +2795,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
       const g = D[E(SLOT.grip)].polys[0], gc = [g.reduce((a: number, q: number[]) => a + q[0]!, 0) / g.length, g.reduce((a: number, q: number[]) => a + q[1]!, 0) / g.length];
       for (const sd of ['l', 'r']) { const w = cam.P(L[`grip.${sd}`]); if (Math.hypot(w[0]! - gc[0]!, w[1]! - gc[1]!) > k) out.push(`${p}: grip.${sd} off the handle`); }
       const pad = D[E(SLOT.pad)].polys;
-      for (const sd of ['l', 'r']) { const d = outside(pad, cam.P(L[`shoulderTop.${sd}`])); if (Math.abs(d) > k) out.push(`${p}: shoulderTop.${sd} ${(d / k).toFixed(1)} cm off the pad`); }
+      for (const [sd, sl] of [['l', SLOT.farPad], ['r', SLOT.pad]] as const) { const d = outside(D[E(sl)].polys, cam.P(L[`shoulderTop.${sd}`])); if (Math.abs(d) > k) out.push(`${p}: shoulderTop.${sd} ${(d / k).toFixed(1)} cm off the pad`); }
       for (const n of ['shoulderTop.l', 'shoulderTop.r', 'trap.l', 'trap.r', 'shoulder.l', 'shoulder.r']) { const d = outside(pad, cam.P(L[n])); if (d < -k) out.push(`${p}: ${n} ${(-d / k).toFixed(1)} cm inside the pad`); }
       return out;
     });
@@ -3417,7 +3422,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
   const CARD = () => readJson('docs/research/howto/cards/pendulum_squat.json');
   /** The composer's items in its documented order (eq/pendulum.mjs: floor beam, rear post, front post, platform bracket,
    *  platform, latch, pivot boss, arm, back pad, shoulder pad, handle bracket, handle grip). */
-  const NAMES = ['beam', 'rearPost', 'frontPost', 'platBracket', 'platform', 'latch', 'boss', 'arm', 'backPad', 'shoulderPad', 'handleBracket', 'grip'];
+  const NAMES = ['beam', 'rearPost', 'frontPost', 'platBracket', 'platform', 'latch', 'boss', 'arm', 'backPad', 'shoulderPad', 'handleBracket', 'grip', 'shoulderPadFar'];
   const STATIC = ['frame', 'platform', 'latch'];
   let ENTRY: Map<number, string> | null = null;   // composer item name by equipment entry, read once from the real spec
   const mach = (spec: any, pose: string) => {
@@ -3492,7 +3497,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
       const L = lmOf(spec, pose), it = mach(spec, pose), out: string[] = [], top = platTop(spec, pose), pad = padFace(spec, pose);
       for (const k of pose === 'mistake' ? ['ball.l', 'ball.r'] : ['heel.l', 'heel.r', 'ball.l', 'ball.r']) { const d = Math.abs(sdCm(spec, L[k], top[0]!, top[1]!)); if (d > 1) out.push(`${pose}: ${k} ${d.toFixed(1)} cm off the platform`); }
       for (const k of ['backUpper', 'buttock']) { const d = Math.abs(sdCm(spec, L[k], pad[0], pad[1])); if (d > 1) out.push(`${pose}: ${k} ${d.toFixed(1)} cm off the back pad`); }
-      if (pose !== 'mistake') { const sp = outlineOf(spec, it.shoulderPad); for (const k of ['trap.l', 'trap.r']) { const d = Math.abs(sdCm(spec, L[k], sp[0]!, sp[1]!)); if (d > 1) out.push(`${pose}: ${k} ${d.toFixed(1)} cm off the shoulder pad`); } }
+      if (pose !== 'mistake') for (const [k, pad] of [['trap.l', it.shoulderPadFar], ['trap.r', it.shoulderPad]] as const) { const sp = outlineOf(spec, pad); const d = Math.abs(sdCm(spec, L[k], sp[0]!, sp[1]!)); if (d > 1) out.push(`${pose}: ${k} ${d.toFixed(1)} cm off the shoulder pad`); }
       const g = it.grip.pts, gc = g.reduce((a: number[], q: number[]) => a.map((v, i) => v + q[i]! / g.length), [0, 0, 0]);
       for (const k of ['grip.l', 'grip.r']) { const d = Math.hypot(L[k][1] - gc[1], L[k][2] - gc[2]) * 100; if (d > 1) out.push(`${pose}: ${k} ${d.toFixed(1)} cm off the handle`); }
       return out;
@@ -3544,7 +3549,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
     });
     /** D-LIB18-FRAME: every pad, the platform, the arm, the latch and the posts touch what carries them (outlines within
      *  1 px), in start, end and Mistake. */
-    const JOINS: [string, string][] = [['backPad', 'arm'], ['arm', 'boss'], ['boss', 'rearPost'], ['shoulderPad', 'backPad'], ['handleBracket', 'shoulderPad'], ['grip', 'handleBracket'],
+    const JOINS: [string, string][] = [['backPad', 'arm'], ['arm', 'boss'], ['boss', 'rearPost'], ['shoulderPad', 'backPad'], ['shoulderPadFar', 'backPad'], ['handleBracket', 'shoulderPad'], ['grip', 'handleBracket'],
       ['platform', 'platBracket'], ['platBracket', 'frontPost'], ['rearPost', 'beam'], ['frontPost', 'beam'], ['latch', 'rearPost']];
     const polyGap = (a: number[][], b: number[][]) => { if (a.some(p => inPoly(b, p)) || b.some(p => inPoly(a, p))) return 0; let d = Infinity; for (const p of a) for (const [u, v] of segs([...b, b[0]!])) d = Math.min(d, segD(p, u!, v!)); for (const p of b) for (const [u, v] of segs([...a, a[0]!])) d = Math.min(d, segD(p, u!, v!)); return d; };
     const frameProblems = (spec: any) => posesOf(spec).flatMap(pose => {
@@ -3877,6 +3882,239 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
       for (const v of [...Object.values(row), ...Object.values(comp)] as any[]) { expect(v.basis).toMatch(/\S/); expect(v.basis).not.toMatch(/PQ-H3|deviationMin|traceLenMin/); }
       expect(row.trace.value).toBe(s().trace.point);
       expect(row.trace.trim).toEqual(s().trace.trim);
+    });
+  });
+}
+
+// D-LIB18-PADS (#306 6357949465): the shoulder pads beside the neck, standing_calf_raise's forked lever, and the A15
+// rule that no pad, roller, seat or bench sits inside the body. Uses the file's helpers (itemsIn, lmOf, camOf, rep,
+// outside, inPoly, segD, eng, body, qaEng, Eng, S, M, specsDrawn, tick, T) and its own, scoped to the block. Every test
+// reads what is drawn (the items a spec emits, the engine's skeleton, shapes and outlines), and every mutation runs the
+// same check on a mutated spec built inline.
+{
+  const B = { height: 1.75 }, HH = 1.75;
+  const v3 = {
+    sub: (a: number[], b: number[]) => a.map((v, i) => v - b[i]!), add: (a: number[], b: number[]) => a.map((v, i) => v + b[i]!),
+    mul: (a: number[], k: number) => a.map(v => v * k), lerp: (a: number[], b: number[], t: number) => a.map((v, i) => v + (b[i]! - v) * t),
+  };
+  const mvT = (M: number[][], v: number[]) => [0, 1, 2].map(j => M[0]![j]! * v[0]! + M[1]![j]! * v[1]! + M[2]![j]! * v[2]!);
+  const edgeD = (P: number[][], p: number[]) => { let d = Infinity; for (let i = 0; i < P.length; i++) d = Math.min(d, segD(p, P[i]!, P[(i + 1) % P.length]!)); return d; };
+  const sdPoly = (P: number[][], p: number[]) => (inPoly(P, p) ? -edgeD(P, p) : edgeD(P, p));   // + outside, - inside
+  /** Every drawn pose of a spec as its solved angles: start, each via key, each ghost (plate.mjs ghostT), end, Mistake. */
+  const posesQ = (spec: any): [string, any][] => {
+    const keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, B)), n = spec.ghosts?.count ?? 3, L = qaEng.poseLandmarks(Eng(), spec);
+    return [['start', L.q.start], ...(spec.poses.via ?? []).map((_: any, i: number) => [`via${i}`, body.resolve(keys[i + 1], B).q] as [string, any]),
+      ...Array.from({ length: n }, (_, i) => [`ghost${i}`, body.poseAt(keys, (i + 1) / (n + 1), B).q] as [string, any]), ['end', L.q.end],
+      ...(L.q.mistake ? [['mistake', L.q.mistake] as [string, any]] : [])];
+  };
+  /** The equipment items a spec draws in a pose given by its angles (functions called as plate.mjs drawPose calls them). */
+  const itemsQ = (spec: any, pose: string, q: any) => {
+    const lm = body.landmarks(body.fk(q, B)), ctx = { pose: pose.startsWith('via') ? 'via' : pose, start: lmOf(spec, 'start'), mistake: pose === 'mistake', body: B, q };
+    const out: any[] = [];
+    spec.equipment.forEach((e: any, i: number) => { for (const one of [].concat(typeof e === 'function' ? e(lm, ctx) ?? [] : e)) if (one) out.push({ ...(one as any), entry: i }); });
+    return out;
+  };
+  // ---- the trunk solid (3D): the engine's own outlines, front (torso, head) and side (torso, head), in the body's
+  // reference frame (H), read from bodyShapes on the neutral pose (skin(r) = H r there), taken as a product (a point is
+  // inside when it is inside both views' outline at its height) and skinned with the pose's skeleton ----
+  const outlinesOf = (q: any) => {
+    const q0 = { ...body.resolve(body.normPose({}, B), B).q, scap: q.scap }, sk0 = body.fk(q0, B), root = sk0.q.root;
+    const shapes = (view: string) => body.bodyShapes(sk0, { view, near: view === 'side' ? 'r' : null, facing: 'right', pxm: 1, P: (w: number[]) => (view === 'side' ? [w[2], w[1]] : [w[0], w[1]]) });
+    const conv = (poly: number[][]) => poly.map(([u, y]) => [u! / HH, (y! - root[1]) / HH + body.REF.hjcY]);
+    const F = shapes('front'), Sd = shapes('side'), get = (a: any[], k: string) => conv(a.find((x: any) => x.key === k).poly);
+    return { torsoF: get(F, 'torso'), headF: get(F, 'head'), torsoS: get(Sd, 'torso'), headS: get(Sd, 'head') };
+  };
+  /** Signed distance (m) of a world point from the skinned trunk solid (torso, neck, head): negative = inside by that
+   *  depth; positive = outside, by at least that much. */
+  const trunkSD = (sk: any, O: any, w: number[]) => {
+    let r = v3.add(mvT(sk.Rt, v3.sub(w, sk.L)).map(v => v / HH), body.REF.lumbar);   // invert the skin (fixed-point steps)
+    for (let i = 0; i < 40; i++) { const e = v3.sub(w, sk.skin(r)); if (Math.hypot(...e) < 1e-10) break; const M = r[1]! <= 0.6 ? sk.Rp : r[1]! >= 0.875 ? sk.Rh : sk.Rt; r = v3.add(r, mvT(M, e).map(v => v / HH)); }
+    const rh = v3.add(mvT(sk.Rh, v3.sub(w, sk.N)).map(v => v / HH), body.REF.neck);
+    const one = (a: number, b: number) => (a < 0 && b < 0 ? Math.max(a, b) : Math.max(a, b, 0));
+    return Math.min(one(sdPoly(O.torsoF, [Math.abs(r[0]!), r[1]!]), sdPoly(O.torsoS, [r[2]!, r[1]!])), one(sdPoly(O.headF, [Math.abs(rh[0]!), rh[1]!]), sdPoly(O.headS, [rh[2]!, rh[1]!]))) * HH;
+  };
+  /** Points every 2 mm on the faces of a drawn pad: its eight corners (eq composers' order: outer bottom rear, outer
+   *  bottom front, inner bottom front, outer top front, inner top front, inner top rear, outer top rear, inner bottom
+   *  rear) or, for a flat pad, its four corners (one sheet). */
+  const padSamples = (pts: number[][], step = 0.002) => {
+    let at: (u: number, v: number, w: number) => number[];
+    if (pts.length === 8) { const [ob0, obL, ibL, otL, itL, it0, ot0, ib0] = pts as number[][];
+      at = (u, v, w) => v3.lerp(v3.lerp(v3.lerp(ib0!, ob0!, u), v3.lerp(it0!, ot0!, u), v), v3.lerp(v3.lerp(ibL!, obL!, u), v3.lerp(itL!, otL!, u), v), w); }
+    else if (pts.length === 4) { const [a, b, c, d] = pts as number[][]; at = (_u, v, w) => v3.lerp(v3.lerp(a!, d!, v), v3.lerp(b!, c!, v), w); }
+    else throw new Error(`a pad with ${pts.length} points`);
+    const n = (p: number[], q: number[]) => Math.max(1, Math.ceil(Math.hypot(...v3.sub(p, q)) / step)), g = (k: number) => Array.from({ length: k + 1 }, (_, i) => i / k);
+    const nU = n(at(0, 0, 0), at(1, 0, 0)), nV = n(at(0, 0, 0), at(0, 1, 0)), nW = n(at(0, 0, 0), at(0, 0, 1)), out: number[][] = [];
+    for (const u of [0, 1]) for (const v of g(nV)) for (const w of g(nW)) out.push(at(u, v, w));
+    for (const v of [0, 1]) for (const u of g(nU)) for (const w of g(nW)) out.push(at(u, v, w));
+    for (const w of [0, 1]) for (const u of g(nU)) for (const v of g(nV)) out.push(at(u, v, w));
+    return out;
+  };
+  const padClearance = (sk: any, O: any, pts: number[][]) => padSamples(pts).reduce((m, w) => Math.min(m, trunkSD(sk, O, w)), Infinity);
+
+  // ---- (a) the three shoulder-pad plates ----
+  // Each plate's two shoulder pads by equipment entry (near = right, x < 0, in the composer's pad slot; far = left, the
+  // composer's later slot) and the landmark each pad rests on (the card's c1 contacts); standing_calf_raise's lever
+  // branches too (near = the arm slot, far = calfMachine's last slot), which carry the pads over the shoulders.
+  const SHOULDER_PADS: Record<string, { near: number, far: number, on: string, arms?: [number, number] }> = {
+    hack_squat: { near: 10, far: 13, on: 'trap' }, pendulum_squat: { near: 10, far: 13, on: 'trap' }, standing_calf_raise: { near: 9, far: 13, on: 'shoulderTop', arms: [8, 14] },
+  };
+  /** A drawn side bar (eq/parts.mjs sideBar: the backPad primitive's surface [hi, lo] and thickness t) as its four corners. */
+  const barCorners = (it: any) => { const [hi, lo] = it.surface as number[][], u = v3.sub(hi!, lo!), k = Math.hypot(...u), o = [0, -u[2]! / k * it.t, u[1]! / k * it.t];
+    return [lo!, hi!, v3.sub(hi!, o), v3.sub(lo!, o)]; };
+  /** Each shoulder pad clears the skinned torso, neck and head in 3D (>= 0 cm; 1 um for the float error of a pad lying
+   *  on the trapezius) in every pose, via and ghost, and reaches over the shoulder it rests on (the landmark's lateral
+   *  place between the pad's inner and outer edges). Returns the problems and the clearances (cm) per pose. */
+  const shoulderPadCheck = async (id: string, spec: any) => {
+    const P = SHOULDER_PADS[id]!, out: string[] = [], cl: Record<string, string> = {};
+    for (const [pose, q] of posesQ(spec)) {
+      await tick();
+      const sk = body.fk(q, B), O = outlinesOf(q), lm = body.landmarks(sk), items = itemsQ(spec, pose, q);
+      const cs: string[] = [];
+      for (const [side, entry] of [['r', P.near], ['l', P.far]] as const) {
+        const it = items.find((x: any) => x.entry === entry);
+        if (!it?.pts) { out.push(`${pose}: no ${side} shoulder pad`); continue; }
+        const c = padClearance(sk, O, it.pts) * 100;
+        cs.push(c.toFixed(3));
+        if (c < -1e-4) out.push(`${pose}: the ${side} shoulder pad ${(-c).toFixed(2)} cm inside the trunk`);
+        const xs = it.pts.map((p: number[]) => p[0]!), x = lm[`${P.on}.${side}`][0];
+        if (!(x >= Math.min(...xs) - 1e-9 && x <= Math.max(...xs) + 1e-9)) out.push(`${pose}: ${P.on}.${side} (x ${x.toFixed(3)}) not under the ${side} shoulder pad [${Math.min(...xs).toFixed(3)}, ${Math.max(...xs).toFixed(3)}]`);
+      }
+      for (const [side, entry] of P.arms ? [['r', P.arms[0]], ['l', P.arms[1]]] as const : []) {
+        const it = items.find((x: any) => x.entry === entry);
+        if (!it?.surface) { out.push(`${pose}: no ${side} lever branch`); continue; }
+        const c = padClearance(sk, O, barCorners(it)) * 100;
+        cs.push(`arm ${c.toFixed(2)}`);
+        if (c < -1e-4) out.push(`${pose}: the ${side} lever branch ${(-c).toFixed(2)} cm inside the trunk`);
+      }
+      cl[pose] = cs.join(' / ');
+    }
+    return { out, cl };
+  };
+  /** The pre-D-LIB18-PADS drawing, built inline: one midline pad (the near pad's side outline at x = 0), no far pad. */
+  const midlinePad = (id: string, spec: any) => {
+    const P = SHOULDER_PADS[id]!;
+    return { ...spec, equipment: spec.equipment.map((e: any, i: number) => (i === P.far ? () => null : i === P.near ? (lm: any, ctx: any) => {
+      const p = e(lm, ctx).pts; return { ...e(lm, ctx), pts: [p[0], p[1], p[3], p[6]].map((w: number[]) => [0, w[1], w[2]]) }; } : e)) };
+  };
+  describe('LIB-18 D-LIB18-PADS: two shoulder pads beside the neck (hack_squat, pendulum_squat, standing_calf_raise)', { timeout: T }, () => {
+    it('standing_calf_raise mutation: the single midline lever arm (the old drawing, no far branch) is inside the neck and head in every pose', async () => {
+      await tick();
+      const [a, b] = SHOULDER_PADS.standing_calf_raise!.arms!, sp = S.standing_calf_raise;
+      const mid = { ...sp, equipment: sp.equipment.map((e: any, i: number) => (i === b ? () => null : i === a ? (lm: any, ctx: any) => { const it = e(lm, ctx); return { ...it, surface: it.surface.map((w: number[]) => [0, w[1], w[2]]) }; } : e)) };
+      const r = await shoulderPadCheck('standing_calf_raise', mid), n = posesQ(sp).length;
+      expect(r.out.filter(x => / r lever branch .* inside the trunk$/.test(x)).length).toBe(n);
+      expect(r.out.filter(x => /no l lever branch/.test(x)).length).toBe(n);
+    });
+    for (const id of Object.keys(SHOULDER_PADS)) {
+      it(`${id}: each pad clears the torso, neck and head in 3D in every pose, via and ghost, and reaches over ${SHOULDER_PADS[id]!.on}.l / .r`, async () => {
+        const r = await shoulderPadCheck(id, S[id]);
+        for (const [pose, c] of Object.entries(r.cl)) console.log(`LIB-18 D-LIB18-PADS ${id} ${pose}: clearance r / l ${c} cm`);   // (and each lever branch's)
+        expect(r.out).toEqual([]);
+      });
+      it(`${id} mutation: the single midline pad (the old drawing) is inside the trunk in every pose`, async () => {
+        await tick();
+        const r = await shoulderPadCheck(id, midlinePad(id, S[id])), n = posesQ(S[id]).length;
+        expect(r.out.filter(x => / r shoulder pad .* inside the trunk$/.test(x)).length).toBe(n);
+        expect(r.out.filter(x => /no l shoulder pad/.test(x)).length).toBe(n);
+      });
+    }
+    it('the c1 shoulder contacts: each trapezius (hack_squat, pendulum_squat) or shoulder top (standing_calf_raise) is checked on its own pad\'s lower face, within 0.5 cm', () => {
+      const out: string[] = [];
+      for (const id of Object.keys(SHOULDER_PADS)) {
+        const on = SHOULDER_PADS[id]!.on, ch = rep(S[id]).checks.filter((c: any) => c.landmark === `${on}.l` || c.landmark === `${on}.r`);
+        console.log(`LIB-18 D-LIB18-PADS ${id} c1: ${ch.map((c: any) => `${c.landmark} ${c.pose} ${c.cm} cm`).join(', ')}`);
+        if (ch.length !== 4 || ch.some((c: any) => !(c.cm <= 0.5))) out.push(`${id}: ${JSON.stringify(ch)}`);
+      }
+      expect(out).toEqual([]);
+    });
+  });
+
+  // ---- (b) A15: no pad, roller, seat or bench inside the body, on every drawn LB8 spec ----
+  // The items each spec's body rests on or against, by name and equipment entry (the composers' documented slots).
+  // Not listed, by kind: frame tubes, rails, posts, levers, platforms, plates, steps and the floor (the body does not lean
+  // on them, or A18 tests the feet on them); hand-held grips and handles (the hand closes round them); the ankle cuffs
+  // (cable_kickback, resisted_hip_flexion: worn round the ankle, so the band is drawn over the shank by design; ankleCuff's
+  // A2 tests fit it); phantoms and lines (no body).
+  const BEARING: Record<string, Record<string, number>> = {
+    hack_squat: { backPad: 9, shoulderPad: 10, shoulderPadFar: 13 }, pendulum_squat: { backPad: 9, shoulderPad: 10, shoulderPadFar: 13 },
+    leg_extension: { seat: 3, backPad: 4, roller: 11 }, seated_calf_raise: { seat: 5, roller: 9 }, standing_calf_raise: { shoulderPad: 9, shoulderPadFar: 13 },
+    bodyweight_calf_raise: {}, hip_thrust: { bench: 1, barPad: 3 }, glute_bridge: {}, cable_kickback: {}, resisted_hip_flexion: {},
+  };
+  // The contact tolerance (cm): a pad rests on the body's surface, so it may touch it; the file's contact checks hold
+  // every contact within 0.5 cm (the specs' `checks` tol 0.5, A2), so an overlap up to 0.5 cm is a contact and deeper is
+  // inside.
+  const TOL_CM = 0.5;
+  // Measured on the plates as drawn now (D-LIB18-PADS round): the items past the tolerance, recorded with their holds
+  // (all four plates are on HELD), never hidden; the supervisor rules on each. A new miss, a fixed one or a changed depth
+  // turns the test red.
+  const BEARING_MISSES = [
+    'leg_extension mistake: seat 1.20 cm inside the body',
+    ...['start', 'ghost0', 'ghost1', 'ghost2', 'end', 'mistake'].map(p => `seated_calf_raise ${p}: seat 0.53 cm inside the body`),
+    'hip_thrust start: barPad 6.75 cm inside the body', 'hip_thrust ghost0: bench 1.08 cm inside the body', 'hip_thrust ghost0: barPad 6.64 cm inside the body',
+    'hip_thrust ghost1: barPad 0.58 cm inside the body',
+  ];
+  const TRUNK_LEGS = /^(head|torso|thigh\.|kneecap\.|shank\.|foot\.)/;   // the arms hang outside a full-width pad's span
+  /** Every bearing item's depth into the body (cm) per pose. A pad drawn off the midline (every point |x| > 0: the
+   *  shoulder pads) is tested in 3D against the skinned trunk; a full-width item (drawn on the midline, or a primitive
+   *  with no points: back pads, seats, rollers, the bench, the bar pad) is tested side-on against the drawn trunk and
+   *  legs (outline points inside the other's outline, 1 px apart, at their depth). */
+  const bearingDepths = async (id: string, spec: any) => {
+    const names = BEARING[id]!, rows: { pose: string, name: string, cm: number }[] = [];
+    if (!Object.keys(names).length) return rows;
+    const cam = camOf(spec), dens = (P: number[][]) => P.flatMap((p, i) => { const q = P[(i + 1) % P.length]!, n = Math.max(1, Math.ceil(Math.hypot(q[0]! - p[0]!, q[1]! - p[1]!))); return Array.from({ length: n }, (_, k) => [p[0]! + (q[0]! - p[0]!) * k / n, p[1]! + (q[1]! - p[1]!) * k / n]); });
+    for (const [pose, q] of posesQ(spec)) {
+      await tick();
+      const sk = body.fk(q, B), items = itemsQ(spec, pose, q);
+      const shapes = body.bodyShapes(sk, cam, { armsFront: spec.armsFront, hand: spec.hand }).filter((x: any) => x.poly && TRUNK_LEGS.test(x.key)).map((x: any) => x.poly as number[][]);
+      let O: any = null;
+      for (const [name, entry] of Object.entries(names)) {
+        const it = items.find((x: any) => x.entry === entry);
+        if (!it) { rows.push({ pose, name, cm: NaN }); continue; }
+        let cm: number;
+        if (it.pts && it.pts.every((p: number[]) => Math.abs(p[0]!) > 1e-9)) { O ??= outlinesOf(q); cm = Math.max(0, -padClearance(sk, O, it.pts) * 100); }
+        else {
+          const polys = eng.PRIMITIVES[it.type](it, cam).filter((x: any) => x.poly).map((x: any) => x.poly as number[][]);
+          const a = polys.flatMap(dens).reduce((m: number, p: number[]) => Math.max(m, -outside(shapes, p)), 0);
+          const b = shapes.flatMap(dens).reduce((m: number, p: number[]) => Math.max(m, -outside(polys, p)), 0);
+          cm = Math.max(a, b) * 100 / cam.pxm;
+        }
+        rows.push({ pose, name, cm });
+      }
+    }
+    return rows;
+  };
+  const bearingProblems = async (id: string, spec: any) => (await bearingDepths(id, spec)).filter(r => !(r.cm <= TOL_CM)).map(r => (Number.isNaN(r.cm) ? `${id} ${r.pose}: ${r.name} not drawn` : `${id} ${r.pose}: ${r.name} ${r.cm.toFixed(2)} cm inside the body`));
+  describe('LIB-18 A15 (D-LIB18-PADS): no pad, roller, seat or bench sits inside the body, on every drawn LB8 spec', { timeout: T }, () => {
+    it('every drawn spec names its bearing items, and every cushion (an `eq` poly drawn mid) is named', () => {
+      const out: string[] = [];
+      for (const id of specsDrawn()) {
+        if (!BEARING[id]) { out.push(`${id}: no bearing row`); continue; }
+        const named = new Set(Object.values(BEARING[id]!));
+        for (const it of itemsIn(S[id], 'end').items) if (it.type === 'poly' && it.cls === 'eq' && it.z === 'mid' && !named.has(it.entry)) out.push(`${id}: eq${it.entry} (${it.part ?? 'no part'}) a cushion not named`);
+      }
+      expect(out).toEqual([]);
+    });
+    it(`each named item clears the body or touches it within ${TOL_CM} cm, in every pose, via and ghost, but the recorded misses (depths logged)`, async () => {
+      const out: string[] = [];
+      for (const id of specsDrawn()) {
+        await tick();
+        const rows = await bearingDepths(id, S[id]), worst: Record<string, number> = {};
+        for (const r of rows) worst[r.name] = Math.max(worst[r.name] ?? 0, Number.isNaN(r.cm) ? Infinity : r.cm);
+        if (rows.length) console.log(`LIB-18 A15 bearing ${id}: deepest ${Object.entries(worst).map(([n, c]) => `${n} ${c.toFixed(2)} cm`).join(', ')}`);
+        out.push(...await bearingProblems(id, S[id]));
+      }
+      expect(out).toEqual(BEARING_MISSES);
+    });
+    it('mutations: the hack back pad pushed 3 cm into the back, the seated calf roller 3 cm down into the thighs and the standing calf\'s single midline pad fail by name', async () => {
+      const hs = S.hack_squat, N = M.hack_squat.HS.N, k = BEARING.hack_squat!.backPad!;
+      const pushed = { ...hs, equipment: hs.equipment.map((e: any, i: number) => (i === k ? (lm: any, ctx: any) => { const it = e(lm, ctx); return { ...it, surface: it.surface.map((p: number[]) => p.map((v, j) => v + N[j] * 0.03)) }; } : e)) };
+      expect((await bearingProblems('hack_squat', pushed)).some(x => /^hack_squat end: backPad .* inside the body$/.test(x))).toBe(true);
+      await tick();
+      const sc = S.seated_calf_raise, r = BEARING.seated_calf_raise!.roller!;
+      const sunk = { ...sc, equipment: sc.equipment.map((e: any, i: number) => (i === r ? (lm: any, ctx: any) => { const it = e(lm, ctx); return { ...it, pts: it.pts.map((p: number[]) => [p[0], p[1]! - 0.03, p[2]]) }; } : e)) };
+      expect((await bearingProblems('seated_calf_raise', sunk)).some(x => /^seated_calf_raise \w+: roller .* inside the body$/.test(x))).toBe(true);
+      await tick();
+      expect((await bearingProblems('standing_calf_raise', midlinePad('standing_calf_raise', S.standing_calf_raise))).some(x => /^standing_calf_raise end: shoulderPad .* inside the body$/.test(x))).toBe(true);
     });
   });
 }
