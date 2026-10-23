@@ -278,7 +278,7 @@ cards.sha.json keeps each card's sha256 without them.
 | medicine_ball_slam | wrist.l, wrist.r start c15; toe.l, toe.r start c2 | none (NOSECS) | `soft` (F7) |
 | sled_push | wrist.l, wrist.r start c1; ball.l, ball.r start c8; ball.l, ball.r end c8; wrist.l, wrist.r end c9 (CF fix 2) | none (NOSECS) | `round` |
 | jump_rope | wrist.l, wrist.r start c2; ball.l, ball.r start c10 (CF fix 3) | Work 30 (move), Rest 60: c16 | `high` |
-| sled_pull | wrist.l, wrist.r start c1; sole.r end c3; wrist.l, wrist.r end c4 (CF fix 4) | none (NOSECS) | `lean` |
+| sled_pull | wrist.l, wrist.r start c1; sole.l, sole.r start c2 (CF re-verify); sole.r end c3; wrist.l, wrist.r end c4 (CF fix 4) | none (NOSECS) | `lean` |
 | farmer_s_carry | wrist.l, wrist.r start c3 | none (NOSECS) | `rush` (F7) |
 | burpee | wrist.l, wrist.r start / card end c2 (pose map) | none (NOSECS) | `rush` (F7) |
 | high_knees | ball.l, ball.r start c4 (CF fix 5); ball.l end c4 | Work 30 (move), Rest 30: c8 | `arch` |

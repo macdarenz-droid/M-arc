@@ -628,6 +628,20 @@
   },
   {
    "kind": "contact",
+   "landmark": "sole.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "sole.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
    "landmark": "sole.r",
    "pose": "end",
    "cardPose": "end",

@@ -90,7 +90,7 @@ describe('LIB-22 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     medicine_ball_slam: [...both('wrist', 'start', 'c15'), ...both('toe', 'start', 'c2')],
     sled_push: [...both('wrist', 'start', 'c1'), ...both('ball', 'start', 'c8'), ...both('ball', 'end', 'c8'), ...both('wrist', 'end', 'c9')],
     jump_rope: [...both('wrist', 'start', 'c2'), ...both('ball', 'start', 'c10')],
-    sled_pull: [...both('wrist', 'start', 'c1'), F('sole.r', 'end', 'c3'), ...both('wrist', 'end', 'c4')],
+    sled_pull: [...both('wrist', 'start', 'c1'), ...both('sole', 'start', 'c2'), F('sole.r', 'end', 'c3'), ...both('wrist', 'end', 'c4')],
     farmer_s_carry: both('wrist', 'start', 'c3'),
     burpee: both('wrist', 'start', 'c2', 'end'),
     high_knees: [...both('ball', 'start', 'c4'), F('ball.l', 'end', 'c4')],
