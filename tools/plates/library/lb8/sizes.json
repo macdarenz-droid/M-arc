@@ -1,0 +1,19 @@
+{
+ "rule": "D-LIB18-SIZE (lib-18-card ruling 14): every number a card does not give, each Mistake's magnitude and each 'slight bend' included, fixed here before PQ-H3 is measured, each with its basis: a claim id, an approved plate's value (file:line) used as a convention, or a stated physical reason in numbers. PQ-H3 is never a basis. A spec's exported SIZES table equals its row here and every row is used (A17, both ways); a composer's exported constants equal theirs; `trace` is the spec's trace point (D-LIB18-TRACE). Values marked 'solved' are computed by the spec from the rule in their basis and exported by it.",
+ "ids": {
+  "hip_thrust": {
+   "PAD_R": { "value": 0.045, "unit": "m", "basis": "stated reason: c4 'a barbell pad': a foam roll about 3 cm thick round the 28 mm shaft (equipment.mjs:261 shaftD 0.028), so 4.5 cm from the bar's centre to the pad's face" },
+   "GRIP_X": { "value": 0.2, "unit": "m", "basis": "claim: c24 'grip it just wider than hip width apart': the hips 33.4 cm wide (body.mjs WINTER.hipW 0.191 H at 1.75 m) plus 3 cm each side" },
+   "PLATE_D": { "value": 0.45, "unit": "m", "basis": "convention: equipment.mjs:261 (the vendor barbell's 450 mm plates)" },
+   "SLEEVE_D": { "value": 0.05, "unit": "m", "basis": "convention: equipment.mjs:261 (the vendor barbell's 50 mm sleeve)" },
+   "BENCH_W": { "value": 0.29, "unit": "m", "basis": "convention: equipment.mjs:157 (the vendor bench, 29 cm wide), seen end-on" },
+   "M_ARCH": { "value": 12, "unit": "deg", "basis": "convention: hanging_leg_raise.mjs:69 (the 8's lumbar arch, trunk -12; D-LIB18-SIZE names it for hip_thrust) for c11-c13 'arch the lower back', 'overextending'" },
+   "FLOOR_BACK": { "value": 0.35, "unit": "m", "basis": "stated reason: layout: the floor line runs 35 cm behind the bench's back edge, past the hanging head" },
+   "FLOOR_FRONT": { "value": 0.3, "unit": "m", "basis": "stated reason: layout: the floor line runs 30 cm past the toes" },
+   "BENCH_TOP": { "value": "solved", "unit": "m", "basis": "physical, from the card's top facts: with the shin plumb (c6), the knee 90 (c8), the foot flat (c1) and the shoulders, hips and knees on one level line (c8), the hip sits a shank plus the ankle height up (0.4985 m); the upper back (backUpper) on that line is the bench edge's height (c2, c9): solved 0.3728 m" },
+   "START_TILT": { "value": "solved", "unit": "deg", "basis": "physical: c10 'slowly lowering back to the ground': lowered on the bench-edge pivot (c9) until the first of the 45 cm plates and the buttock reaches the floor (the plates first): solved -37.82 deg" },
+   "M_TILT": { "value": "solved", "unit": "deg", "basis": "claim: c12 (Contreras) 'substitutes by arching the back' to lock the weight out: with the lumbar at M_ARCH, the bar at the top's height, the upper back on the edge (c9) and the feet planted: solved -83.44 deg" },
+   "trace": { "value": "hip.r", "basis": "claim: c8 'Push the bar towards the ceiling by extending your hips' (D-LIB18-TRACE: the bar in the hip crease); the bar rides the pelvis, and the hip joint is the landmark under it (the engine traces landmarks only, plate.mjs:159)" }
+  }
+ }
+}

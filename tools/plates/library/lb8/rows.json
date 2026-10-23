@@ -3,15 +3,6 @@
  "batch": "LB8",
  "censusRef": "4a9fd86",
  "rows": {
-  "lib_hip_thrust": {
-   "src": "library/specs/hip_thrust.mjs",
-   "slug": "hip-thrust",
-   "prefix": "hip-thrust",
-   "chromeId": "hip-thrust",
-   "mode": "H",
-   "stage": "drawing",
-   "view": "side"
-  },
   "lib_hack_squat": {
    "src": "library/specs/hack_squat.mjs",
    "slug": "hack-squat",
