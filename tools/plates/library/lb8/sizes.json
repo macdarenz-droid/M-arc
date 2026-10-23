@@ -154,6 +154,192 @@
     "unit": "m",
     "basis": "stated reason: a 3.5 cm D-ring that a cable carabiner clips into"
    }
+  },
+  "hack_squat": {
+   "RAIL": {
+    "value": 45,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:18 (the 8's plate-loaded sled, 'Sled rails 45 deg'; the census closest and clone source); the back pad rides the rail, so it reclines the trunk 45 deg (c2)"
+   },
+   "PLATE_TILT": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "claim: c5 'thighs are at least parallel to the floor' with c7 'parallel to the footplate' (plate.end 'thighs about parallel to the plate'): on a level plate the two are one line; with the knee at 90 (c4) the shin then stands square to the plate and the foot lies flat with the ankle neutral (c6, c14)"
+   },
+   "PLATE_Y": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason: the lowest height in 5 cm steps that seats the 3.5 cm plate on its 3 cm bracket over the 6 cm floor beam with at least one tube width (6 cm) of front post showing: 0.035 + 0.03 + 0.06 + 0.06 = 0.185 m, so 0.20 m"
+   },
+   "KNEE_TOP": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB18-SIZE) for c7 'keeping a slight bend in the knees', 'extend fully without locking knees'"
+   },
+   "FOOT_X": {
+    "value": 0.17,
+    "unit": "m",
+    "basis": "convention: leg_press.mjs:31 (sole centres 34 cm apart, shoulder-width at 175 cm) for c1, c12 'shoulder-width apart'"
+   },
+   "TOE_OUT": {
+    "value": 8,
+    "unit": "deg",
+    "basis": "stated reason: c12 'toes slightly pointed out' with c13 'ensure your knees align with your toes': at the FOOT_X stance the toe line that lies in the leg's own bend plane with the sole flat on the plate, so the knee tracks the toes; at 8 deg every foot contact holds within 0.2 cm (start 0.1, end 0.2), while leg_press.mjs:32's 15 deg leaves the toe 7 deg off the knee plane and the sole 0.8-1.5 cm off its plate point"
+   },
+   "NECK": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:71 (neck 5 on a reclined back pad)"
+   },
+   "M_ROLL": {
+    "value": 25,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:87 (M_ROLL 25, the rounding off a pad at the bottom, D-LIB18-SIZE), with c10's 'your lower back rounds ever so slightly' read with that convention; it peels the sacrum 6.4 cm and the buttock 7.9 cm off the pad (c8, c9)"
+   },
+   "HANDLE_X": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "convention: leg_press.mjs:68 (side handles 25 cm out from the midline) for c18's handles, outside the shoulder joints (22.7 cm out at 175 cm)"
+   },
+   "HANDLE_N": {
+    "value": 0.24,
+    "unit": "m",
+    "basis": "stated reason: the grip centre 4 cm ahead of the shoulder pad's 20 cm front end (HACK_SLED.shoulderLen), so the bracket runs out of the pad's front and the hand closes clear of it (plate.equipment 'handles near the head', c18)"
+   },
+   "HANDLE_DOWN": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: the grip centre 6 cm down the rail from the shoulder pad's lower face, level with the shoulder joint (the trap landmark sits 0.034 H = 6 cm above it, body.mjs REF.shY 0.80 and trap 0.834), so the elbows hang along the trunk"
+   },
+   "POLE_OUT": {
+    "value": 0.6,
+    "unit": "",
+    "basis": "stated reason: the elbow IK pole points down the rail and out to the side in a 1 : 0.6 ratio, the elbows hanging along the trunk and out from it as a neutral grip on side handles holds them (c18 'neutral grip'); leg_press.mjs:69 uses an outward pole the same way"
+   },
+   "PAD_BELOW": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the back pad reaches 10 cm below the buttock contact so the hips stay on it through the rep (c2 'hips should be in contact with the back pad') with the buttock's 7.9 cm Mistake lift still over the pad"
+   },
+   "RAIL_ABOVE": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the rail runs 10 cm past the sled's top at the start, so the sled never leaves it"
+   },
+   "STOP_GAP": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "claim: c16 'fail-safes at the bottom of the rail': the stop's upper face 2 cm below the sled's lower end at the drawn bottom (knee 90), so the rep reaches its depth and a deeper drop lands on the stop"
+   },
+   "FLOOR_BACK": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "convention: dipBars.mjs (LB7 #299) beamBack 0.15, the floor beam 15 cm behind the rear post"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the floor beam 10 cm past the foot plate's front edge, so the plate's front sits over the base"
+   },
+   "FLOOR_LINE": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason: the floor line runs 5 cm past each end of the floor beam, so the beam reads as standing on it"
+   },
+   "TRACE_TRIM": {
+    "value": [
+     6,
+     8
+    ],
+    "unit": "px",
+    "basis": "convention: leg_press.mjs:132 (trim [6, 8], the clone source's knee-region trace trim)"
+   },
+   "TILT": {
+    "value": -47.0096,
+    "unit": "deg",
+    "basis": "solved: the pelvis tilt (bisection) that lays the line through backUpper and buttock (the pad face) at RAIL, neutral spine"
+   },
+   "SOLE_Z": {
+    "value": 0.4989,
+    "unit": "m",
+    "basis": "solved: the sole's place on the plate (bisection) that bends the drawn knee 90 at the bottom (c4) with the thigh level and FOOT_X, TOE_OUT"
+   },
+   "TRAVEL": {
+    "value": 0.2455,
+    "unit": "m",
+    "basis": "solved: the sled travel up the rail (bisection) from the bottom to the top knee KNEE_TOP (c7)"
+   },
+   "RAIL_LO": {
+    "value": -0.5039,
+    "unit": "m",
+    "basis": "solved: the rail's lower end along the rail (bisection), where the rail line comes down to the foot plate bracket's level"
+   },
+   "trace": {
+    "value": "knee.r",
+    "basis": "D-LIB18-TRACE: plate.frames 'Trace follows the knee'"
+   }
+  },
+  "hackSled": {
+   "padT": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "convention: equipment.mjs backPad t 0.07 (the vendor back pad)"
+   },
+   "shoulderLen": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason: the shoulder pad reaches 20 cm forward from the back pad's face, over the shoulder (the drawn chest is 25 cm deep, body.mjs torsoSide .144 H), short of the front of the shoulder"
+   },
+   "shoulderT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: a 6 cm shoulder pad, a little thinner than the 7 cm back pad, so its top stays under the chin (trap 0.834 H + 6 cm = 0.868 H, chin 0.870 H)"
+   },
+   "carriageT": {
+    "value": 0.04,
+    "unit": "m",
+    "basis": "stated reason: a 4 cm sled plate behind the pad, between the pad and the rail"
+   },
+   "railT": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "convention: eq/pulloverMachine.mjs (LB6, 2979a4a2) armT 0.05, a 5 cm tube"
+   },
+   "tubeT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: eq/pulloverMachine.mjs (LB6, 2979a4a2) tubeT 0.06 (frame tubes)"
+   },
+   "plateLen": {
+    "value": 0.7,
+    "unit": "m",
+    "basis": "convention: equipment.mjs legPress45 plate h 0.7 and leg_press.mjs:48 (the 8's sled foot plate) for plate.equipment 'a large flat foot plate'"
+   },
+   "plateT": {
+    "value": 0.035,
+    "unit": "m",
+    "basis": "convention: equipment.mjs legPress45 plate t 0.035"
+   },
+   "stopLen": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: a 6 cm stop block on the rail (one tube width)"
+   },
+   "gripLen": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "stated reason: a 12 cm neutral handle, about one hand's width (WINTER.hand 0.108 H = 9.5 cm, plus 2.5 cm)"
+   },
+   "gripT": {
+    "value": 0.032,
+    "unit": "m",
+    "basis": "convention: equipment.mjs chestPress grip 0.016 radius (3.2 cm)"
+   },
+   "bracketT": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: 3 cm brackets (the handle arm and the plate bracket), thinner than the 6 cm frame tubes"
+   }
   }
  }
 }
