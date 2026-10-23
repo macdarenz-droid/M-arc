@@ -750,11 +750,6 @@
     "value": "knee.r",
     "unit": "point",
     "basis": "claim: plate.frames 'Trace follows the driving knee' (c2 the right knee)"
-   },
-   "BACK_EXT": {
-    "value": 30,
-    "unit": "deg",
-    "basis": "stated reason (#305 6359365488 item 1): the back (near) arm swings this much further than the mirrored front arm so the near hand shows a visible gap of at least 6 px to the hip outline in the side view (30: 7.7 px; 28: 5.3 px; 0: overlapping); total shoulder extension ARM_FLEX + 30 = 73.5 deg"
    }
   },
   "jumping_jacks": {

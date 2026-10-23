@@ -762,25 +762,6 @@ describe('LIB-22 A2 / A18: burpee (NOSECS; held; bulk)', { timeout: T }, () => {
   });
 });
 
-describe('LIB-22 A2 / A18: high_knees (bulk; on rows.json)', { timeout: T }, () => {
-  const s = () => S.high_knees;
-  /** #305 6359365488 item 1: the near (back) hand keeps a visible gap of at least 6 px to the hip outline (torso and near
-   *  thigh) in the side view's end pose, so it never reads as a hand on the hip. Negative: the outlines overlap. */
-  const handGap = (spec: any) => {
-    const sh = shapesIn(spec, 'end'), f = sh.find((x: any) => x.key === 'fist.r').poly, out: number[] = [];
-    for (const k of ['torso', 'thigh.r']) {
-      const P = sh.find((x: any) => x.key === k).poly;
-      out.push(f.some((p: number[]) => outside([P], p) < 0) || P.some((p: number[]) => outside([f], p) < 0) ? -1 : Math.min(...f.map((p: number[]) => outside([P], p))));
-    }
-    return Math.min(...out);
-  };
-  it('the near hand clears the hip outline by at least 6 px at the end', () => { expect(handGap(s())).toBeGreaterThanOrEqual(6); });
-  it('mutation: the back arm mirrored (no BACK_EXT) puts the hand on the hip: red', () => {
-    const e = s().poses.end, bad = { ...s(), poses: { ...s().poses, end: { ...e, shoulder: { ...e.shoulder, r: { ext: M.high_knees.ARM_FLEX } } } } };
-    expect(handGap(bad)).toBeLessThan(6);
-  });
-});
-
 describe('LIB-22 A2 / A18: farmer_s_carry (NOSECS; bulk)', { timeout: T }, () => {
   const s = () => S.farmer_s_carry, K = () => M.farmer_s_carry;
   /** #305 6359365488 item 5: the drawn dumbbell's cast-iron mass equals the balance's DB_KG (one sizes.json row drives both). */

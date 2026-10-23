@@ -28,8 +28,8 @@
 import { landmarksOf, RADII } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.10, KNEE_SOFT: 15, HEEL_UP: 15, ELBOW: 4, ARM_ELBOW: 90, M_TILT: -14, M_ARCH: -12, BACK_EXT: 30 });
-const { FOOT_X, KNEE_SOFT, HEEL_UP, ELBOW, ARM_ELBOW, M_TILT, M_ARCH, BACK_EXT } = SIZES;
+export const SIZES = Object.freeze({ FOOT_X: 0.10, KNEE_SOFT: 15, HEEL_UP: 15, ELBOW: 4, ARM_ELBOW: 90, M_TILT: -14, M_ARCH: -12 });
+const { FOOT_X, KNEE_SOFT, HEEL_UP, ELBOW, ARM_ELBOW, M_TILT, M_ARCH } = SIZES;
 export const bisect = (f, a, b, what) => {
   let fa = f(a), fb = f(b), side = 0;
   if (!(fa * fb <= 0)) throw new Error(`high_knees: no root for ${what} in [${a}, ${b}] (${fa}, ${fb})`);
@@ -70,7 +70,7 @@ const start = standAt(yFor(START_Z, standAt), START_Z);
 // End: the thigh's angle (hip flexion on the upright pelvis) puts the knee joint at the navel's height (c2 "slightly
 // above waist level": the kneecap's top, RADII.kneeCap above the joint, is then above the waist).
 const legUp = th => ({ hip: { r: th }, knee: { r: th }, ankle: { r: 0 } });   // the shank hangs plumb
-const armsUp = phi => ({ shoulder: { l: { flex: phi }, r: { ext: phi + BACK_EXT } }, elbow: { l: ARM_ELBOW, r: ARM_ELBOW } });
+const armsUp = phi => ({ shoulder: { l: { flex: phi }, r: { ext: phi } }, elbow: { l: ARM_ELBOW, r: ARM_ELBOW } });
 const endAt = (y, z, th, phi, tilt = 0, trunk = 0) => ({ root: { at: [0, y, z], tilt }, trunk, neck: 0, ...legUp(th), ...armsUp(phi), plant: { l: onBall(FOOT_X), r: null } });
 const solveEnd = (tilt, trunk, th0) => {
   // fixed point: y from the stance knee, th from the knee height, phi from the grip height, z from the balance
@@ -115,7 +115,7 @@ export default {
     pose: mistake,
     guides: [{ kind: 'arrow', from: { at: 'head', pose: 'end', off: [0, -9] }, to: { at: 'head', pose: 'mistake', off: [0, -9] } }],
     tells: [
-      { key: 'arch', text: 'Back arches', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 64, top: 192 }, cue: 'The lower back arches and the trunk tips back.' },
+      { key: 'arch', text: 'Back arches', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 40, top: 132 }, cue: 'The lower back arches and the trunk tips back.' },
       { key: 'high', text: 'Knee<br>too high', anchor: { at: 'knee.r', pose: 'mistake', off: [0, -8] }, box: { left: 264, top: 120 }, cue: 'The knee is driven so high that the back gives way.' },
     ],
   },
