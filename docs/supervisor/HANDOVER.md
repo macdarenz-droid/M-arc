@@ -890,6 +890,40 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 06:00 UTC (10-23)** (usage 7-day 0.55, five-hour 0.24 at 05:46):
+- **LIB-16 (#297): review-complete @ `3a75393a`.**
+  - The delta review found 0 code defects. D-LIB16-BENT is ruled: A15's bent arm is elbow flexion 30-150°, which is stricter.
+  - The supervisor diff-checked the doc and HANDOFF update (6356838375). CI is 17/17 green.
+  - The builder and reviewer are archived. cable_chest_press waits for 'LIB-16 resume' after #279. Merge queue.
+- **GATE-FLAKE-5 (#292): REVIEW PASS @ 11f70e5** (6358351323).
+  - The supervisor's pre-merge push @ `4e97f1a4` adds the D-GF5-TWINS-B6 label and AGENTS.md's fourth exception (cherry-picked from `d2aebc1a`).
+  - CI is running. It merges as a CI-health lane when green. Builder and reviewer archived.
+- **LIB-18 (#306, LB8):**
+  - The slice look was GO, then LB8 BULK GO, with rulings:
+    - **D-LIB18-LIFT:** `lift` on the buttock; Mistake leaders enter the figure once, from the front, and are at most 81.9 px.
+    - **D-LIB18-BACKPAD:** back labels on the back; front entries allowed under the LIFT limits.
+  - CARD FIELDS VERIFIED @ `8daf2ad`, after two VALID runs and **D-LIB18-PUSHTHROUGH**. Merged back as #307 (research `57b3568e`).
+  - BULK DRAWN @ 53e2eb8: **all 6 bulk ids are held (S2; two calf raises also S4)**. hack_squat is the one drawn row.
+  - **D-LIB18-PADS:** the shoulder pads were single midline sheets inside the neck in 3D. Two lateral pads in calfMachine, hackSled and pendulum, plus a 3D pad-vs-body test. hack_squat is fixed now.
+  - Next: the leg curls, their CF verify, then LB8 PLATES READY (panel: hack_squat).
+- **LIB-22 (#305, LB10):**
+  - The slice look was GO, then LB10 BULK GO.
+  - Rulings:
+    - **D-LIB22-FRONT:** a sagittal soft knee cannot show in a front view, and no label claims it.
+    - **D-LIB22-HOPNIT:** four jump_rope crossings.
+    - **D-LIB22-STANCE**, amended: each FOOT_X is its rigid-foot plant limit; medicine_ball_slam's ball moves 7 cm forward.
+    - **D-LIB22-HIKE3D:** the forearm-thigh 3D overlap is capped at 11.1 + 0.5 cm, body against body only.
+    - **D-LIB22-JJ:** jumping_jacks keeps tempo and has no plateFacts; it is held at H6:no-card.
+  - CARD FIELDS VERIFIED @ `e0f217e7` (two VALID runs). Merged back as #308 (research `657eb4e5`).
+  - The bulk is being drawn. **Follow-up F-H6-TEMPO:** a card later, so H6 and validate.mjs accept tempo-only cards.
+- **Lessons:**
+  - A CF set's tempo.json must be regenerated from the head under verify; the cflb10 copy carried a stale "proposed" note.
+  - Rulings made after a set is built must be added to its rules.md.
+  - Check 3D equipment-vs-body clearance, not only side-view contacts. The midline shoulder pads were invisible in 2D.
+  - A spec `checks` value is not the engine's foot-plant contact: LB10's stance numbers were wrong once.
+- **Active LIB builders: 2** (LIB-18, LIB-22). No other lane can start: LB9 is blocked on the owner, E-R5 needs his go, and many held rows wait for LIB-ZOOM (#279), which sits behind #109 in the queue.
+- **Owner pending (unchanged):** the pilot A sheet (#109), the LB9 approval, and the tempo-strip choice.
+
 **Update 03:00 UTC (10-23)** (usage 7-day 0.48, five-hour 0.32 at 01:56):
 - **LIB-15 (#290): REVIEW PASS @ `e9f0985`** (delta 6355406723; all 7 findings fixed). CI is 17/17 green. The reviewer and builder are archived. It waits in the merge queue.
 - **LIB-17 (#299): REVIEW PASS @ 5a9f004.** The fixes @ `14dc56dd` passed the supervisor diff-check (6354754226), and the page `1972ed5b…` is unchanged. Merge queue.
