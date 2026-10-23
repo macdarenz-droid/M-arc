@@ -890,6 +890,15 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 15:00 UTC (10-23)** (usage 7-day 0.60):
+- **LIB-22 (#305): REVIEW PASS @ `a9c64e1`** (6367690360; 0/0/0/3).
+  - The Lows are done in the PR body; the :1402 comment fix rides the pre-train push.
+  - The local gate's HT-3b A3 probe fails even when run alone in a container (125 ms long task), but the app build is byte-identical to main, and CI is 17/17 green.
+  - The builder and reviewer are archived. LIB-22 waits in the merge queue.
+- **LIB-18 (#306):** hack_squat is approved. The builder is re-running the local gate alone (the first run failed HT-3b A3 under CPU contention), then posts READY. 2c59831a only adds a test yield.
+- **Active LIB builders: 1** (LIB-18). No other lane can start. The merge queue is still blocked by #109 (the owner's pilot A sheet), and it carries the held rows' route (LIB-ZOOM #279).
+- **Review-passed and waiting in the queue:** #282 LIB-5v, #271 LIB-7c, #290 LIB-15, #297 LIB-16, #299 LIB-17 and #305 LIB-22, plus #245, #279 and the rest, in plan order behind #109.
+
 **Update 12:00 UTC (10-23)** (usage 7-day 0.59):
 - **Panel verdicts** (recorded in lib4-cards §32-33 on cards `52a9bec2`):
   - **LB10 (#305): all 3 drawn rows APPROVED.** kettlebell_swing @ d721f023 (byte-identical at a9c64e11); battle_ropes and high_knees @ `a9c64e11`, page `22b7d177…`.
