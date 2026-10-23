@@ -445,15 +445,16 @@ describe('LIB-22 A2 / A18: kettlebell_swing and `kettlebell` (tier A; the slice)
     const n = Math.hypot(...shift), moved = pts.map((p: number[]) => p.map((v, i) => v + shift[i]! * (1 - (r0 - 0.02) / n)));
     expect(bellProblems(moved, l).some(p => p.startsWith('inside thigh'))).toBe(true);
   });
+  const flatProblems = (spec: any) => [['start', spec.poses.start], ...spec.poses.via.map((v: any, i: number) => [`via${i}`, v]), ['end', spec.poses.end]]
+    .flatMap(([n, p]: any) => { const q = body.normPose(p, { height: 1.75 }); return q.trunk || q.neck ? [`${n}: trunk ${q.trunk}, neck ${q.neck}`] : []; });
   it('R10: the back flat (trunk 0) and the head in line (neck 0) in every right pose; the feet planted; the hiked bell high (above the knees)', () => {
-    for (const p of [s().poses.start, ...s().poses.via, s().poses.end]) { const q = body.normPose(p, { height: 1.75 }); expect([q.trunk, q.neck]).toEqual([0, 0]); }
+    expect(flatProblems(s())).toEqual([]);
     for (const c of rep(s()).checks.filter((c: any) => /^(heel|ball)\./.test(c.landmark))) expect(c.cm, `${c.landmark} ${c.pose}`).toBeLessThanOrEqual(0.5);
     const l = lmOf(s(), 'start');
     expect(K().bellOf(l)[1]).toBeGreaterThan(l['knee.r'][1]);
   });
   it('R10 mutation: the hike drawn with a rounded back (trunk 20) is red', () => {
-    const q = body.normPose({ ...s().poses.start, trunk: 20 }, { height: 1.75 });
-    expect([q.trunk, q.neck]).not.toEqual([0, 0]);
+    expect(flatProblems({ ...s(), poses: { ...s().poses, start: { ...s().poses.start, trunk: 20 } } })).toEqual(['start: trunk 20, neck 0']);
   });
   it('c8: at the top, ankle, knee, hip and shoulder in one plumb line (±2 cm); c9: the bell centre at the chest\'s height (±1 cm)', () => {
     const l = lmOf(s(), 'end'), z = ['ankle.r', 'knee.r', 'hip.r', 'shoulder.r'].map(k => l[k][2]);
@@ -471,23 +472,24 @@ describe('LIB-22 A2 / A18: medicine_ball_slam and `medBall` (tier A; NOSECS; the
   const s = () => S.medicine_ball_slam, B = () => EQ.medBall.MED_BALL;
   const ballOf = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((i: any) => i.part === 'ball');
   const centre = (pts: number[][]) => [0, 1, 2].map(i => pts.reduce((a, p) => a + p[i]!, 0) / pts.length);
+  const ballTypeProblems = (spec: any) => ['start', 'end', 'mistake'].flatMap(pose => { const t = ballOf(spec, pose).map((i: any) => i.type); return JSON.stringify(t) === '["poly","poly"]' ? [] : [`${pose}: ${t.join(',')}`]; });
   it('the ball is a `poly` circle, never the vendor `pulley`; it moves (overhead → floor) and the Mistake view keeps it', () => {
-    expect(ballOf(s(), 'start').map((i: any) => i.type)).toEqual(['poly', 'poly']);
-    expect(ballOf(s(), 'end').map((i: any) => i.type)).toEqual(['poly', 'poly']);
+    expect(ballTypeProblems(s())).toEqual([]);
   });
   it('mutation: the ball drawn with `pulley` while it moves is red (no `poly`: the Mistake view would drop it)', () => {
     const bad = { ...s(), equipment: s().equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && [].concat(r).map((it: any) => (it?.part === 'ball' ? { type: 'pulley', at: centre(it.pts), r: B().d / 2, part: 'ball' } : it)); } : e)) };
-    expect(itemsIn(bad, 'start').items.filter((i: any) => i.part === 'ball').every((i: any) => i.type === 'poly')).toBe(false);
+    expect(ballTypeProblems(bad).length).toBeGreaterThan(0);
   });
+  const gripOnBall = (spec: any) => { const l = lmOf(spec, 'start'), c = centre(ballOf(spec, 'start')[0].pts); return ['l', 'r'].flatMap(sd => { const d = Math.abs(Math.hypot(l[`grip.${sd}`][1] - c[1]!, l[`grip.${sd}`][2] - c[2]!, l[`grip.${sd}`][0] - c[0]!) - B().d / 2); return d > 0.01 ? [`grip.${sd} ${(d * 100).toFixed(1)} cm off the ball`] : []; }); };
   it('c15: at the start both hands on the ball\'s sides (each grip on the ball\'s outline ±1 cm), the ball overhead plumb over the shoulders (±2 cm)', () => {
     const l = lmOf(s(), 'start'), c = centre(ballOf(s(), 'start')[0].pts);
-    for (const sd of ['l', 'r']) expect(Math.abs(Math.hypot(l[`grip.${sd}`][1] - c[1]!, l[`grip.${sd}`][2] - c[2]!, l[`grip.${sd}`][0] - c[0]!) - B().d / 2), sd).toBeLessThanOrEqual(0.01);
+    expect(gripOnBall(s())).toEqual([]);
     expect(Math.abs(c[2]! - l.shoulders[2])).toBeLessThanOrEqual(0.02);
     expect(c[1]!).toBeGreaterThan(l.head[1]);
   });
   it('mutation: one hand 2 cm off the ball at the start is red', () => {
-    const l = lmOf(s(), 'start'), c = centre(ballOf(s(), 'start')[0].pts), g = l['grip.l'].map((v: number, i: number) => v + (i === 0 ? 0.02 : 0));
-    expect(Math.abs(Math.hypot(g[1] - c[1]!, g[2] - c[2]!, g[0] - c[0]!) - B().d / 2)).toBeGreaterThan(0.01);
+    const st = s().poses.start, reach = { ...st.reach, l: { ...st.reach.l, at: st.reach.l.at.map((v: number, i: number) => v + (i === 0 ? 0.02 : 0)) } };
+    expect(gripOnBall({ ...s(), poses: { ...s().poses, start: { ...st, reach } } }).length).toBe(1);
   });
   /** A18: the ball on (not in) the floor at the end, between the feet in depth, clear of the toes (c10) by 1 cm in 3D. */
   const endBallProblems = (pts: number[][], l: any) => {
@@ -572,23 +574,53 @@ describe('LIB-22 A2 / A18: sled_push and `sled` (NOSECS; the slice)', { timeout:
     const g = postGrip('end'); g[1] = g[1]!.map((v: number, i: number) => v + (i === 1 ? 0.02 : 0));
     expect(handProblems(g)).toEqual(['hand r 2.0 cm off its post']);
   });
-  it('D-LIB22-FRAME: each post stands on its bracket on the body, and the runners sit on the floor', () => {
-    const items = itemsIn(s(), 'end').items.filter((i: any) => i.part === 'sled'), cam = camOf(s()), fy = cam.P([0, 0, 0])[1];
+  /** D-LIB22-FRAME on the drawn items: runners on the floor; two brackets on the body's top, each under a post whose
+   *  foot meets the bracket's corner (±1 mm). Posts are the upright sideBars (eq/parts.mjs: surface [top, foot], each
+   *  offset t/2 along +z) beside the horn's x 0. */
+  const frameProblems = (spec: any) => {
+    const items = itemsIn(spec, 'end').items.filter((i: any) => i.part === 'sled'), cam = camOf(spec), fy = cam.P([0, 0, 0])[1], out: string[] = [];
     const lows = items.flatMap((it: any) => eng.PRIMITIVES[it.type](it, cam).flatMap((p: any) => (p.poly ?? []).map((q: number[]) => q[1])));
-    expect(Math.abs(Math.max(...lows) - fy)).toBeLessThanOrEqual(1);
-    const brackets = items.filter((i: any) => i.type === 'poly' && i.pts.length === 3), top = EQ.sled.SLED.bodyY + EQ.sled.SLED.bodyT / 2;
-    expect(brackets.length).toBe(2);
-    for (const b of brackets) { expect(Math.min(...b.pts.map((p: number[]) => Math.abs(p[1]! - top)))).toBeLessThanOrEqual(0.001); expect(Math.abs(b.pts[0][2] - (K().info.REAR_Z + EQ.sled.SLED.postT / 2))).toBeLessThanOrEqual(0.001); }
+    if (Math.abs(Math.max(...lows) - fy) > 1) out.push('runners off the floor');
+    const top = EQ.sled.SLED.bodyY + EQ.sled.SLED.bodyT / 2, brackets = items.filter((i: any) => i.type === 'poly' && i.pts.length === 3);
+    const posts = items.filter((i: any) => i.type === 'backPad' && i.surface[0][0] !== 0 && Math.abs(i.surface[0][1] - i.surface[1][1]) > 0.5);
+    if (brackets.length !== 2) out.push(`${brackets.length} brackets`);
+    if (posts.length !== 2) out.push(`${posts.length} posts`);
+    for (const p of posts) {
+      const lo = p.surface[0][1] < p.surface[1][1] ? p.surface[0] : p.surface[1], foot = [lo[0], lo[1], lo[2] - p.t / 2];
+      const b = brackets.find((q: any) => Math.abs(q.pts[0][0] - foot[0]!) < 1e-6);
+      if (!b) { out.push(`post x ${foot[0]}: no bracket`); continue; }
+      if (Math.hypot(b.pts[0][1] - foot[1]!, b.pts[0][2] - foot[2]!) > 0.001 || Math.abs(foot[1]! - top) > 0.001) out.push(`post x ${foot[0]}: foot off its bracket`);
+    }
+    return out;
+  };
+  /** #305 6356763967 item 9: the floor line runs under the whole sled; the struts are square blocks, not round-ended bars. */
+  const floorProblems = (spec: any) => {
+    const items = itemsIn(spec, 'end').items, fl = items.find((i: any) => i.type === 'floor'), zs = items.filter((i: any) => i.part === 'sled').flatMap((i: any) => (i.pts ?? i.surface).map((p: number[]) => p[2]!));
+    const out: string[] = [];
+    if (!fl || fl.to < Math.max(...zs) || fl.from > Math.min(...zs)) out.push(`floor ${fl?.from}..${fl?.to} m, sled ${Math.min(...zs).toFixed(2)}..${Math.max(...zs).toFixed(2)} m`);
+    const short = items.filter((i: any) => i.part === 'sled' && i.type === 'backPad' && i.len < 0.1);
+    if (short.length) out.push(`${short.length} short round-ended bars`);
+    return out;
+  };
+  it('the floor runs under the whole sled, and no strut is a short round-ended bar', () => { expect(floorProblems(s())).toEqual([]); });
+  it('mutation: the floor ending at 1.6 m (short of the sled\'s front) is red', () => {
+    const bad = { ...s(), equipment: s().equipment.map((e: any) => (e?.type === 'floor' ? { ...e, to: 1.6 } : e)) };
+    expect(floorProblems(bad).length).toBe(1);
   });
-  it('mutation: the near post detached from its bracket (the bracket dropped) is red', () => {
-    const items = itemsIn(s(), 'end').items.filter((i: any) => i.part === 'sled' && !(i.type === 'poly' && i.pts.length === 3));
-    expect(items.filter((i: any) => i.type === 'poly' && i.pts.length === 3).length).not.toBe(2);
+  it('D-LIB22-FRAME: each post stands on its bracket on the body, and the runners sit on the floor', () => {
+    expect(frameProblems(s())).toEqual([]);
+  });
+  it('mutations: the near bracket dropped, and the near post lifted 2 cm off its bracket, are red', () => {
+    const drop = { ...s(), equipment: s().equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && [].concat(r).filter((it: any) => !(it?.part === 'sled' && it.type === 'poly' && it.pts?.length === 3 && it.z === 'mid')); } : e)) };
+    expect(frameProblems(drop).length).toBeGreaterThan(0);
+    const lift = { ...s(), equipment: s().equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && [].concat(r).map((it: any) => (it?.part === 'sled' && it.type === 'backPad' && it.z === 'mid' ? { ...it, surface: [it.surface[0], [it.surface[1][0], it.surface[1][1] + 0.02, it.surface[1][2]]] } : it)); } : e)) };
+    expect(frameProblems(lift)).toEqual(['post x -0.25: foot off its bracket']);
   });
   it('c8: the balls of the feet down (±1 cm) and the heels up (over 3 cm) in every pose; no toe under the floor', () => {
     for (const pose of posesOf(s())) {
       const l = lmOf(s(), pose);
       for (const sd of ['l', 'r']) {
-        if (pose !== 'mistake' || sd === 'l') expect(l[`ball.${sd}`][1], `${pose} ball.${sd}`).toBeLessThanOrEqual(0.01);
+        expect(l[`ball.${sd}`][1], `${pose} ball.${sd}`).toBeLessThanOrEqual(0.01);
         expect(l[`heel.${sd}`][1], `${pose} heel.${sd}`).toBeGreaterThan(0.03);
       }
     }
@@ -914,7 +946,8 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
       const pose = named ?? (mode === 'mistake' ? 'mistake' : 'end');
       const at = qaEng.resolvePoint(c.anchor, pose, lms, qaEng.cameraOf(spec, r.normal.report));
       const polys = [...shapesIn(spec, pose).map((x: any) => x.poly), ...drawnPolys(spec, pose)];
-      const lines = [...r[mode].svg.matchAll(/<path class="(?:eq-cable|datum|m-arrow|m-line)[^"]*" d="([^"]+)"/g)].flatMap(m => segs(xy(m[1]!)));
+      // a guide arrow (m-arrow) shows a motion, never the part a label names (#305 6356763967 item 1)
+      const lines = [...r[mode].svg.matchAll(/<path class="(?:eq-cable|datum|m-line)[^"]*" d="([^"]+)"/g)].flatMap(m => segs(xy(m[1]!)));
       const dLine = Math.min(Infinity, ...lines.map(([p, q]) => segD(at, p!, q!)));
       if (!(outside(polys, at) <= 3 || dLine <= 3)) out.push(`${spec.id} ${c.key}: anchor ${Math.min(Math.abs(outside(polys, at)), dLine).toFixed(1)} px from any drawn item`);
     }
@@ -924,6 +957,11 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     const out: string[] = [];
     for (const id of specsDrawn()) { out.push(...anchorProblems(S[id])); await yieldNow(); }
     expect(out).toEqual([]);
+  });
+  it('mutation: a tell anchored on its own guide arrow, away from the figure and the equipment, is red', () => {
+    const s = S.kettlebell_swing, g = s.mistake.guides.find((x: any) => x.kind === 'arrow');
+    const tells = [{ ...s.mistake.tells[0], anchor: g.from }, ...s.mistake.tells.slice(1)];
+    expect(anchorProblems({ ...s, mistake: { ...s.mistake, tells } }).length).toBe(1);
   });
   it('mutation: one tell\'s anchor moved to a point with no drawn item is red', () => {
     const s = S.kettlebell_swing, tells = [{ ...s.mistake.tells[0], anchor: [0, 0.4, 0.9] }, ...s.mistake.tells.slice(1)];
@@ -1028,6 +1066,95 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     }
     return out;
   };
+  /** No leader crosses another leader, or another label's text (its ink box, 2 px margin), in either view (#305
+   *  6356763967 items 4 and 6). A leader's own label is left out: the leader ends on it. */
+  const labelProblems = (spec: any) => {
+    const out: string[] = [];
+    for (const mistake of [false, true]) {
+      const r = plate.renderPlate(spec, { id: 'x', mistake }), leads = leadersOf(r.svg), list = listOf(spec, mistake), v = mistake ? 'mistake' : 'normal';
+      const inks = r.report.labels.filter((l: any) => l.key !== 'meta');
+      const X = (a: number[], b: number[], c: number[], d: number[]) => { const r1 = [b[0]! - a[0]!, b[1]! - a[1]!], q = [d[0]! - c[0]!, d[1]! - c[1]!], den = r1[0]! * q[1]! - r1[1]! * q[0]!; if (Math.abs(den) < 1e-9) return false; const t = ((c[0]! - a[0]!) * q[1]! - (c[1]! - a[1]!) * q[0]!) / den, u = ((c[0]! - a[0]!) * r1[1]! - (c[1]! - a[1]!) * r1[0]!) / den; return t > 0 && t < 1 && u > 0 && u < 1; };
+      leads.forEach((p, i) => {
+        for (let j = i + 1; j < leads.length; j++) if (segs(p).some(([a, b]) => segs(leads[j]!).some(([c, d]) => X(a!, b!, c!, d!)))) out.push(`${spec.id} ${v}: leaders ${list[i]?.key} and ${list[j]?.key} cross`);
+        for (const l of inks) {
+          if (l.key === list[i]?.key) continue;
+          const { x0, y0, x1, y1 } = l.ink, m = 2;
+          const hit = segs(p).some(([a, b]) => { for (let k = 0; k <= 50; k++) { const x = a![0]! + (b![0]! - a![0]!) * k / 50, y = a![1]! + (b![1]! - a![1]!) * k / 50; if (x > x0 - m && x < x1 + m && y > y0 - m && y < y1 + m) return true; } return false; });
+          if (hit) out.push(`${spec.id} ${v}: leader ${list[i]?.key} through the text of ${l.key}`);
+        }
+      });
+    }
+    return out;
+  };
+  /** DRAWING-GUIDE §2 (a datum only when it proves a checkpoint; #305 6356763967 item 8): each datum line shows at
+   *  least 24 px outside the solid end figure, the start layer's figure and the drawn equipment, so it reads. */
+  const datumHidden = (spec: any) => {
+    const svg = plate.renderPlate(spec, { id: 'x' }).svg, out: string[] = [];
+    const polys = [...shapesIn(spec, 'end').map((x: any) => x.poly), ...shapesIn(spec, 'start').map((x: any) => x.poly), ...drawnPolys(spec, 'end')];
+    for (const [, d] of svg.matchAll(/<path class="datum[^"]*" d="([^"]+)"/g)) {
+      let vis = 0;
+      for (const [a, b] of segs(xy(d!))) { const n = Math.ceil(Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!)); for (let k = 0; k < n; k++) { const q = [a![0]! + (b![0]! - a![0]!) * (k + 0.5) / n, a![1]! + (b![1]! - a![1]!) * (k + 0.5) / n]; if (outside(polys, q) > 1) vis++; } }
+      if (vis < 24) out.push(`${spec.id}: datum shows ${vis} px`);
+    }
+    return out;
+  };
+  it('every datum line shows at least 24 px outside the figures and the equipment', async () => {
+    const out: string[] = [];
+    for (const id of specsDrawn()) { out.push(...datumHidden(S[id])); await yieldNow(); }
+    expect(out).toEqual([]);
+  });
+  it('mutation: kettlebell_swing\'s former stack line (plumb from the ankle to the head, inside the figure) is red', () => {
+    const s = S.kettlebell_swing;
+    expect(datumHidden({ ...s, datum: [{ x: 'ankle.r', from: 'ankle.r', to: { at: 'head', off: [0, -6] } }] }).length).toBe(1);
+  });
+  /** D-LIB22-DRAW: each implement item that moves between start and end by 6 px or more is redrawn dashed (class
+   *  m-line, part `start<part>`) in the end pose, one closed outline on the start item's points. Under 6 px the dashed
+   *  copy would lie on the solid one (jump_rope's handles ride the 3.8 cm hop: 5.6 px). */
+  const phantomMissing = (spec: any) => {
+    const out: string[] = [], st = itemsIn(spec, 'start').items, en = itemsIn(spec, 'end').items, pxm = camOf(spec).pxm;
+    for (const part of ['bell', 'ball', 'rope']) {
+      const a0 = st.filter((i: any) => i.part === part && i.pts), b = en.filter((i: any) => i.part === part && i.pts);
+      const moved = (i: any, k: number) => !b[k] || b[k].pts.length !== i.pts.length || Math.max(...i.pts.map((p: number[], j: number) => Math.hypot(...p.map((v, n) => v - b[k].pts[j][n])))) * pxm >= 6;
+      const a = a0.filter(moved);
+      if (!a.length) continue;
+      const ph = en.filter((i: any) => i.part === `start${part}`);
+      const match = a.filter((i: any) => ph.some((q: any) => q.type === 'line' && /\bm-line\b/.test(q.cls) && JSON.stringify(q.pts) === JSON.stringify([...i.pts, i.pts[0]])));
+      if (match.length !== a.length) out.push(`${spec.id}: ${part} moves; ${match.length} of ${a.length} start outlines drawn dashed`);
+    }
+    return out;
+  };
+  it('every moving implement has its dashed start phantom in the end pose (kettlebell_swing, medicine_ball_slam, jump_rope)', async () => {
+    const out: string[] = [];
+    for (const id of specsDrawn()) { out.push(...phantomMissing(S[id])); await yieldNow(); }
+    expect(out).toEqual([]);
+    expect(['kettlebell_swing', 'medicine_ball_slam', 'jump_rope'].every(id => itemsIn(S[id], 'end').items.some((i: any) => /^start/.test(i.part ?? '')))).toBe(true);
+  });
+  it('mutation: kettlebell_swing\'s start-bell phantom removed is red', () => {
+    const s = S.kettlebell_swing, bad = { ...s, equipment: s.equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && [].concat(r).filter((it: any) => it?.part !== 'startbell'); } : e)) };
+    expect(phantomMissing(bad).length).toBe(1);
+  });
+  /** report.mjs's engine half: renderPlate reports no issue (a label on the figure, a joint under a label) in either
+   *  view. The browser half ran per plate in the slice post (ok:true); this keeps the engine half in CI. */
+  const engineIssues = (spec: any) => [false, true].flatMap(mistake => plate.renderPlate(spec, { id: 'x', mistake }).report.issues.map((i: string) => `${spec.id}${mistake ? ' mistake' : ''}: ${i}`));
+  it('renderPlate reports no issue on any drawn plate, normal and Mistake', async () => {
+    const out: string[] = [];
+    for (const id of specsDrawn()) { out.push(...engineIssues(S[id])); await yieldNow(); }
+    expect(out).toEqual([]);
+  });
+  it('mutation: sled_push\'s "Balls of feet" box moved onto the figure is red (report.mjs would give ok:false)', () => {
+    const s = S.sled_push, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'balls' ? { ...x, box: { left: 16, top: 262 } } : x)) };
+    expect(engineIssues(bad).length).toBeGreaterThan(0);
+  });
+  it('no leader crosses another leader or another label\'s text', async () => {
+    const out: string[] = [];
+    for (const id of specsDrawn()) { out.push(...labelProblems(S[id])); await yieldNow(); }
+    expect(out).toEqual([]);
+  });
+  it('mutations: medicine_ball_slam\'s "Flat back" box back at {40, 212} (its leader crosses "Hips and knees"), and a box whose leader runs through another label\'s text, are red', () => {
+    const s = S.medicine_ball_slam, at = (key: string, box: any) => ({ ...s, callouts: s.callouts.map((x: any) => (x.key === key ? { ...x, box } : x)) });
+    expect(labelProblems(at('flat', { left: 40, top: 212 }))).toContain('medicine_ball_slam normal: leaders hips and flat cross');
+    expect(labelProblems(at('flat', { left: 40, top: 186 })).some(x => x.includes('through the text of hips'))).toBe(true);
+  });
   it('no leader crosses the solid figure, and no Mistake leader crosses the Mistake figure', async () => {
     const out: string[] = [];
     for (const id of specsDrawn()) { out.push(...crossProblems(S[id])); await yieldNow(); }

@@ -87,7 +87,8 @@ export default {
   id: 'sled_push', name: 'Sled Push', view: 'side', facing: 'right',
   camera: { pxPerM: SIZES.PX_PER_M, x0: 100, y0: 339 },
   poses: { start, via, end },
-  equipment: [{ type: 'floor', from: -1.0, to: 1.6 }, ...perItem(() => sled(SP), SLED_ITEMS)],
+  equipment: [{ type: 'floor', from: -1.0, to: SP.rearZ + SLED.len + 0.1 },   // the floor runs on under the whole sled
+    ...perItem(() => sled(SP), SLED_ITEMS)],
   checks: [
     ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: landmarksOf(start, H)[landmark], pose: 'start', tol: 0.5 })),   // c1 fact: hands on the posts
     ...['ball.l', 'ball.r'].flatMap(landmark => ['start', 'end'].map(pose => ({ landmark, plane: FLOOR, pose, tol: 1 }))),          // c8 facts: the balls of the feet down
@@ -97,12 +98,12 @@ export default {
   ghosts: { count: 1, parts: ['leg.r'] },
   trace: { point: 'ball.r', trim: [10, 12] },
   callouts: [
-    { key: 'line', text: 'Straight line', anchor: 'backUpper', cue: 'Body leans forward in a straight line from head to hips.' },
-    { key: 'flat', text: 'Flat back', anchor: 'backMid', cue: 'Spine neutral, abs tight.' },
+    { key: 'line', text: 'Straight line', anchor: 'backUpper', box: { left: 120, top: 140 }, cue: 'Body leans forward in a straight line from head to hips.' },
+    { key: 'flat', text: 'Flat back', anchor: 'backMid', box: { left: 16, top: 170 }, cue: 'Spine neutral, abs tight.' },
     { key: 'balls', text: 'Balls of feet', anchor: 'ball.r', box: { left: 140, top: 280 }, cue: 'Heels up, push through the balls of your feet.' },
   ],
     // c3: the straight line from the head through the hips, run past both ends
-  datum: [{ x: 0, from: 0, to: 0, line: [{ along: ['head', 'sacrum'], t: 1.25 }, { along: ['sacrum', 'head'], t: 1.15 }] }],
+  datum: [{ x: 0, from: 0, to: 0, line: [{ along: ['head', 'sacrum'], t: 1.6 }, { along: ['sacrum', 'head'], t: 1.4 }] }],
   mistake: {
     pose: mistake,
     guides: [{ kind: 'dashed', smooth: true, pts: HUMP_PTS }],

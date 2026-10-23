@@ -7,9 +7,11 @@
 //  - push form (sled_push c1, plate.equipment "two upright handles"): two upright posts at the body's rear edge, each
 //    joined to the body by a bracket (D-LIB22-FRAME: no free-floating handle); the near post z `mid` (in front of the
 //    trunk and near leg, behind the near arm, so the near fist closes over it), the far post z `back`;
-//  - pull form (sled_pull, bulk): a hitch ring on a bracket at the body's front edge, where the rope starts.
-// The sled is static: every part sits at one place in every pose (D-LIB22-IMPLEMENT), so none needs `poly` for the
-// Mistake view; each part is a `sideBar` (backPad, class `eq`) or a `poly`.
+//  - pull form (sled_pull, bulk): a hitch ring on a bracket at the body's edge nearer the lifter (rearZ: the lifter
+//    faces the sled and walks back from it), where the rope starts.
+// Where the sled sits is the spec's: sled_push keeps it static in every pose; sled_pull drags it (the Q9 ruling, #305
+// 6355155831: in the end pose it moves by the hips' displacement, so the rope keeps its length). The composer only
+// draws one sled at rearZ; each part is a `sideBar` (backPad, class `eq`) or a `poly`.
 // Reads no file. Returns up to SLED_ITEMS items; a spec takes it through eq/parts.mjs perItem.
 // Assumed sizes (no card claim gives them; lb10/sizes.json holds each with its basis).
 import { sideBar } from './parts.mjs';
@@ -27,8 +29,12 @@ export function sled({ rearZ, postTop = 1.4, form = 'push', postX = 0.25 }, C = 
   // runners on the floor (their undersides at y 0), and the skid body on them
   out.push(sideBar([0, C.runnerT / 2, z0], [0, C.runnerT / 2, z1], C.runnerT, { z: 'back', part: 'sled' }));
   out.push(sideBar([0, yB, z0], [0, yB, z1], C.bodyT, { z: 'back', part: 'sled' }));
-  // struts from the runner to the body at both ends
-  for (const zz of [z0 + C.strutIn, z1 - C.strutIn]) out.push(sideBar([0, C.runnerT, zz], [0, yB - C.bodyT / 2, zz], C.strutT, { z: 'back', part: 'sled' }));
+  // struts from the runner to the body at both ends: square-cornered blocks (a short round-ended bar reads as a wheel,
+  // #305 6356763967 item 9)
+  for (const zz of [z0 + C.strutIn, z1 - C.strutIn]) {
+    const y0 = C.runnerT, y1 = yB - C.bodyT / 2, h = C.strutT / 2;
+    out.push({ type: 'poly', pts: [[0, y0, zz - h], [0, y0, zz + h], [0, y1, zz + h], [0, y1, zz - h]], cls: 'eq-solid', z: 'back', part: 'sled' });
+  }
   // loading horn and plates, at the body's middle
   const hz = (z0 + z1) / 2, top = yB + C.bodyT / 2;
   out.push(sideBar([0, top, hz], [0, top + C.hornH, hz], C.hornT, { z: 'back', part: 'sled' }));
@@ -42,10 +48,10 @@ export function sled({ rearZ, postTop = 1.4, form = 'push', postX = 0.25 }, C = 
       out.push({ type: 'poly', pts: [[x, top, pz], [x, top, pz + C.bracket], [x, top + C.bracket, pz]], cls: 'eq-solid', z: zl, part: 'sled' });
     }
   } else {
-    // hitch: a bracket on the front edge and a ring on it
+    // hitch: a bracket on the lifter's edge (z0) and a ring on it, the ring just outside the edge
     const hy = top + C.hitchH;
-    out.push({ type: 'poly', pts: [[0, top, z1 - C.hitchW], [0, top, z1], [0, hy, z1], [0, hy, z1 - C.hitchW / 4]], cls: 'eq-solid', z: 'back', part: 'sled' });
-    out.push({ type: 'poly', pts: Array.from({ length: 12 }, (_, k) => [0, hy + C.ringR + C.ringR * Math.sin(k * Math.PI / 6), z1 + C.ringR * Math.cos(k * Math.PI / 6)]), curve: true, cls: 'eq', z: 'back', part: 'sled' });
+    out.push({ type: 'poly', pts: [[0, top, z0 + C.hitchW], [0, top, z0], [0, hy, z0], [0, hy, z0 + C.hitchW / 4]], cls: 'eq-solid', z: 'back', part: 'sled' });
+    out.push({ type: 'poly', pts: Array.from({ length: 12 }, (_, k) => [0, hy + C.ringR + C.ringR * Math.sin(k * Math.PI / 6), z0 - C.ringR * Math.cos(k * Math.PI / 6)]), curve: true, cls: 'eq', z: 'back', part: 'sled' });
   }
   return out;
 }

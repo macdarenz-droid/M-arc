@@ -156,7 +156,7 @@ export default {
   callouts: [
     { key: 'overhead', text: 'Ball overhead', anchor: { at: 'grip.r', pose: 'start', off: [-15.41, 0] }, box: { left: 30, top: 44 }, cue: 'Tall on your toes, arms straight, ball overhead.' },
     { key: 'hips', text: 'Hips and knees', anchor: 'buttock', box: { left: 28, top: 192 }, cue: 'Press the hips back and bend the knees as you slam.' },
-    { key: 'flat', text: 'Flat back', anchor: 'backUpper', box: { left: 40, top: 212 }, cue: 'Back flat as you slam.' },
+    { key: 'flat', text: 'Flat back', anchor: 'backUpper', box: { left: 40, top: 168 }, cue: 'Back flat as you slam.' },
   ],
   mistake: {
     pose: mistake,

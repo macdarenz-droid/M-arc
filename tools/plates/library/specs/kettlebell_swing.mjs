@@ -121,8 +121,8 @@ export default {
   ],
   ghosts: { count: 2, parts: ['arm.r', 'bell'] },
   trace: { point: 'grip.r', trim: [10, 12] },
-  // c8: the stack line, plumb through the ankle up past the shoulder (ankles, knees, hips and shoulders in line)
-  datum: [{ x: 'ankle.r', from: 'ankle.r', to: { at: 'head', off: [0, -6] } }],
+  // no datum: a plumb line through ankle, knee, hip and shoulder lies inside the figure and would be hidden behind it
+  // (#305 6356763967 item 8); c8's stack is held by a test
   callouts: [
     { key: 'hinge', text: 'Hinge,<br>not squat', anchor: 'start:buttock', box: { left: 16, top: 150 }, cue: 'Hips back, knees only slightly bent.' },
     { key: 'flat', text: 'Flat back', anchor: 'backMid', box: { left: 16, top: 96 }, cue: 'Back flat and straight through the whole swing.' },

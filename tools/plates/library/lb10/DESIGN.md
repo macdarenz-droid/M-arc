@@ -89,8 +89,11 @@ Each composer is `(params) => item[]` returning PRIMITIVES types only (equipment
   y 0), the loading horn with plates (`sideBar` peg and plates as `poly` rectangles), and the two upright posts
   (`sideBar`, the near post z `mid`, the far post z `back`) rising from the body's rear edge, each joined to the body
   by a drawn bracket (`poly` gusset, D-LIB22-FRAME: no free-floating handle). The pull form (bulk, sled_pull) adds the
-  rope hitch: a ring on a bracket at the sled's front edge (`poly`), from which main's `rope` strand runs. **Static:**
-  every part at one place in every pose (D-LIB22-IMPLEMENT; A2 ±1 px), so the Mistake needs no twin.
+  rope hitch: a ring on a bracket at the sled's edge nearer the lifter (`poly`), from which main's `rope` strand runs.
+  **sled_push: static**, every part at one place in every pose (A2 ±1 px), so the Mistake needs no twin. **sled_pull:
+  a drag** (Q9 ruling, #305 6355155831): in the end pose the sled moves in the walking direction by the hips'
+  displacement, so the rope keeps its length and light tension (c1); its start place is redrawn dashed (sled and rope
+  phantom).
 - **`jumpRope`** (eq/jumpRope.mjs; single use, anchor jump_rope; slice; front view). Parts: two handles (`poly`
   capsules in the fists, their rope ends toward the rope) and the rope (one thin closed `poly` strand from handle to
   handle). Start: the rope arcs overhead (plate.frames); end: it passes under the soles (plate.frames, c9), its lowest
@@ -195,21 +198,21 @@ Order follows the drawn order (start → end). The constant rows carry the claim
 pilot-a/tempo.json does; A7 and A11 build them from the table, never through research/validate.mjs's buildTempo (:171
 refuses a moving constant).
 
-| id | card (claim) | proposed phase array |
+| id | card (claim) | phase array (ruled, Q1) |
 |---|---|---|
 | kettlebell_swing | up 1, down 1, pause 0 (c26) | `[{ phase: 'Drive', s: 1, move: true }, { phase: 'Swing down', s: 1, move: true }]` (the drawn start is the hike, so the hip drive comes first; no Hold) |
 | high_knees | null; c8 "To start, aim for 30 seconds, with a 30-second rest between each set." | `[{ phase: 'Work', s: 30, move: true }, { phase: 'Rest', s: 30 }]` |
 | battle_ropes | null; c9 "Continue this movement for 30 seconds. Take a 30-second break and repeat for 3–4 reps or move on to the next exercise." | `[{ phase: 'Work', s: 30, move: true }, { phase: 'Rest', s: 30 }]` |
 | jumping_jacks | null; c9 "Perform jumping jacks in intervals: 30-60 seconds of work followed by brief rest periods." | `[{ phase: 'Work', s: '30–60', move: true }]` (no Rest: "brief rest periods" states no seconds) |
 | bear_crawl | null; c10 "It can be beneficial to crawl for 15 to 30 seconds at a time until you can build up to more." | `[{ phase: 'Work', s: '15–30', move: true }]` (no Rest) |
-| jump_rope | null; c16 "Spend 30 seconds practicing jumping rope, followed by 1 minute of rest." | `[{ phase: 'Work', s: 30, move: true }, { phase: 'Rest', s: 60 }]` (proposed: "1 minute" is 60 s by unit; the ruling may keep Work only) |
+| jump_rope | null; c16 "Spend 30 seconds practicing jumping rope, followed by 1 minute of rest." | `[{ phase: 'Work', s: 30, move: true }, { phase: 'Rest', s: 60 }]` (ruled: Rest 60 because the quote states "1 minute" of rest after the work) |
 
 - **NOSECS** (D-LIB14-NOSECS unchanged): sled_push, sled_pull, farmer_s_carry, burpee, medicine_ball_slam and wall_ball
   have no tempo row; their specs carry no `tempo`; they stay off rows.json, the page, QA and the critic until the strip
   card is on main and 'LIB-22 resume' (section 15). The scan for "second"/"minute" on all 12 quote files agrees with
   D-LIB22-SECS (sled_pull c12, burpee c23, medicine_ball_slam c12, wall_ball c16: not phases of the drawn rep).
 - The range strings keep the quote's own dash: jumping_jacks' quote writes "30-60" with a hyphen; the strip shows
-  '30–60' (an en dash, as pilot A's plank row '10–60' from "10–60"). Proposed: the en dash, as pilot A; the ruling decides.
+  '30–60' (an en dash, as pilot A's plank row '10–60' from "10–60"). Ruled (Q1): ranges kept as ranges, with an en dash.
 - kettlebell_swing has no Rest (13 Q3) and no Hold (pause 0).
 
 ## 8. Pose map (13 Q2 (b)), the Mistake's pose and the fault→key map (13 Q1(a))
@@ -225,7 +228,7 @@ refuses a moving constant).
   the spec's `end`; the verifier is given the map (rules.md).
 - No other id has its fault at the card's start. Checked: wall_ball's fault (standing too far, the body tilting
   forward, c3) is drawn against the spec's end (the squat bottom: the feet further from the wall and the trunk tipped
-  forward over them, the wall static); proposed, the ruling decides (Q8).
+  forward over them, the wall static). Ruled (Q8): accepted if the fault's claim names the bottom; cited at its resume.
 - **Phantoms** (Q2 (c), D-LIB22-DRAW): moving equipment is never drawn in the engine's start layer, so each start
   implement is redrawn dashed in the end pose: kettlebell_swing's start bell, medicine_ball_slam's start ball
   overhead, jump_rope's start rope overhead; and any start limb the end figure covers (sled_push's start rear leg). Ghosts
@@ -455,8 +458,9 @@ LIB-ZOOM; never enlarged, widened, cropped, re-scaled or moved to another point.
 jump_rope's slightly bent knees (c10) and its tell anchors at the knees, are sagittal signs: in the engine's front
 view a sagittal knee bend foreshortens to a few pixels and the shoulder-over-hip stack is a fore-aft position the
 front view cannot show. Their knees are drawn at the sized bend (KNEE_SOFT 15°, never 0°) and no test pretends it
-shows. Renders go with the slice (jump_rope) and the bulk (jumping_jacks), posted as S4 for a ruling; the view is
-never changed, no joint is bent out of its plane, and no checkpoint is dropped.
+shows. The view is never changed, no joint is bent out of its plane, and no checkpoint is dropped. **Ruled (#305
+6356763967): accepted**; no callout or test may claim the bend shows in the front view; c10 is carried by the drawn
+angle and the cue text; jumping_jacks follows the same rule.
 
 ## 14. H slice (Do 2; D-LIB22-SLICE)
 
@@ -494,10 +498,13 @@ Held rows are in no rows file; their specs, tests and card keys stay. Each is co
    two cannot hold.
 5. **S7 on sled_pull**: main's rope.mjs strand is written for a short triceps rope; a long sled rope with a sag may
    need an edit: renders and the needed change posted; never forked.
-6. **Front-view signs** (S4): jumping_jacks' and jump_rope's knees; renders posted.
-7. **The sled's step and the static sled** (sled_pull's plate.frames: "the rear foot stepped back with the sled a
-   little closer"): the sled is static in every pose (D-LIB22-IMPLEMENT), so the lifter steps back from a fixed sled;
-   proposed (Q9), the ruling decides.
+6. **Front-view signs** (S4, ruled D-LIB22-FRONT, #305 6356763967): jumping_jacks' and jump_rope's knees are drawn at
+   KNEE_SOFT 15°, never 0°; a sagittal bend cannot show in a front view, so no callout or test claims it shows there;
+   c10 is carried by the drawn angle and the cue text.
+7. **The sled's step: a drag** (sled_pull's plate.frames: "the rear foot stepped back with the sled a little closer").
+   Ruled (Q9): the sled follows the lifter by the hips' displacement, so the rope length stays constant. A drag test (the
+   sled shift equals the hip shift, the rope length unchanged) with a static-sled mutation; the start sled and rope
+   drawn dashed. A static sled would lengthen the rope: not card-true.
 8. **Shared appends**: docs/COACHING-DECISIONS.md is append-only; conflicts keep both sides.
 9. **CI RPC**: the test file carries the afterEach yield, the per-spec yield and the child-process renders from its
    first commit (D-LIB22-TESTS).
