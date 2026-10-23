@@ -361,6 +361,10 @@ machine_pullover may join it (its arch, section 12) once drawn.
 8. A later research head changes one of the 3 cards (F-LB6-3's Marquette re-fetch included): the note follows it; the
    verifier and QA re-run for that card.
 9. A COACHING-DECISIONS append conflict: keep both sides.
+10. The bent-arm check read the engine's elbow flexion (0 = straight) as the lessons' inside angle, so a straight arm
+    passed (found by the card's A15 mutation, review 6355888923). D-LIB16-BENT (accepted, 6356785268): a bent arm has
+    flexion 30-150, at most 150 deg inside and not folded shut. Mutations: machine_pullover's start elbow at 170 deg inside
+    (flexion 10) and machine_crunch's folded elbow are red; both drawn plates pass.
 
 ## 17. Questions for the supervisor ('LB6 NOTE RULED')
 
