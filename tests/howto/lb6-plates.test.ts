@@ -735,17 +735,29 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   const BENT: Record<string, string[]> = { machine_crunch: ['start', 'end'], machine_pullover: ['start', 'end'] };
   const armProblems = (spec: any) => (BENT[spec.id] ?? []).flatMap(pose => {
     const a = rep(spec).angles[pose], l = lmOf(spec, pose), out: string[] = [];
-    for (const s of ['r', 'l']) if (!(a[`elbow.${s}`] <= 150)) out.push(`${pose}: elbow.${s} ${a[`elbow.${s}`].toFixed(1)}`);
+    // the report gives elbow flexion (0 = straight); the lesson's angle is the inside angle, 180 - flexion: a bent arm
+    // is at most 150 deg inside (flexion >= 30) and not folded shut (flexion <= 150)
+    for (const s of ['r', 'l']) if (!(a[`elbow.${s}`] >= 30 && a[`elbow.${s}`] <= 150)) out.push(`${pose}: elbow.${s} flexion ${a[`elbow.${s}`].toFixed(1)} (inside ${(180 - a[`elbow.${s}`]).toFixed(1)})`);
     if (Math.abs(l['elbow.l'][0] - l['elbow.r'][0]) < Math.abs(l['shoulder.l'][0] - l['shoulder.r'][0])) out.push(`${pose}: elbows inside shoulder width`);
     return out;
   });
-  it('a bent arm reads as bent (elbow at most 150 deg, the elbows apart) on every drawn bent-arm plate', () => {
+  it('a bent arm reads as bent (elbow at most 150 deg inside and not folded shut, the elbows apart) on every drawn bent-arm plate', () => {
     for (const id of specsDrawn()) expect(armProblems(S[id]), id).toEqual([]);
   });
   it('mutation: machine_crunch\'s hands 5 cm from the shoulders (the elbow folded past 150 deg) is red', () => {
     const s = S.machine_crunch, st = s.poses.start, sh = lmOf(s, 'start')['shoulder.r'];
     const reach = { ...st.reach, r: { ...st.reach.r, at: [st.reach.r.at[0], sh[1] + 0.03, sh[2] + 0.04] } };
     expect(armProblems({ ...s, poses: { ...s.poses, start: { ...st, reach } } }).some(p => p.startsWith('start: elbow.r'))).toBe(true);
+  });
+  it('mutation (the card\'s A15): machine_pullover\'s start elbow at 170 deg inside (flexion 10) is red', () => {
+    const s = S.machine_pullover, st = s.poses.start, l = lmOf(s, 'start'), sh = l['shoulder.r'];
+    // the hand target pushed out along the shoulder → target line until the solved elbow opens to 170 deg inside
+    const withK = (k: number) => ({ ...s, poses: { ...s.poses, start: { ...st, reach: { ...st.reach, r: { ...st.reach.r, at: st.reach.r.at.map((v: number, i: number) => sh[i]! + (v - sh[i]!) * k) } } } } });
+    let lo = 1, hi = 2;
+    for (let n = 0; n < 30; n++) { const m = (lo + hi) / 2; if (rep(withK(m)).angles.start['elbow.r'] > 10) lo = m; else hi = m; }
+    const bad = withK((lo + hi) / 2);
+    expect(rep(bad).angles.start['elbow.r']).toBeCloseTo(10, 0);
+    expect(armProblems(bad).some(p => p.startsWith('start: elbow.r'))).toBe(true);
   });
   /** Do 7: a cable runs from its pulley to the handle and is never drawn on top of the trunk, head or near arm: every
    *  cable line that passes inside the solid figure is drawn at z back or center (behind the trunk group). */
