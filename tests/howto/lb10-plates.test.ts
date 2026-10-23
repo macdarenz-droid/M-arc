@@ -9,12 +9,17 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { monitorEventLoopDelay } from 'node:perf_hooks';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 // D-LIB22-TESTS (lessons #299 6351689010, 6352726951): vitest runs back-to-back synchronous tests without returning to
 // the event loop, so the worker cannot answer its RPC ("Timeout calling onTaskUpdate"). One macrotask after every test
 // lets the worker reply; every per-spec loop yields once per spec, and whole-page renders run in a child process.
 afterEach(() => new Promise<void>(r => setImmediate(r)));
+// A19: the worker's longest event-loop block over the whole file, logged for the bulk post (#305 6356763967 item 12).
+const loopDelay = monitorEventLoopDelay({ resolution: 10 });
+loopDelay.enable();
+afterAll(() => { loopDelay.disable(); console.log(`LIB-22 A19 event-loop: max block ${(loopDelay.max / 1e6).toFixed(0)} ms, p99 ${(loopDelay.percentile(99) / 1e6).toFixed(0)} ms`); });
 
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const LB10 = ['sled_push', 'sled_pull', 'farmer_s_carry', 'burpee', 'jumping_jacks', 'high_knees', 'jump_rope', 'battle_ropes',
@@ -259,7 +264,9 @@ const SPECS_DIR = 'tools/plates/library/specs';
 const ROWS = 'tools/plates/library/lb10/rows.json';
 const FRONT = ['jumping_jacks', 'jump_rope'];
 // DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; D-LIB8-shrug holds, measured).
-const HELD = [...NOSECS, 'jump_rope'];
+const HELD = [...NOSECS, 'jump_rope', 'bear_crawl'];
+// The ids drawn on this branch: the slice, then the bulk as each plate is integrated (BULK GO, #305 6356763967).
+const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl'];
 const COMPOSERS = ['kettlebell', 'medBall', 'sled', 'jumpRope'];
 const yieldNow = () => new Promise<void>(r => setImmediate(r));
 let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, markup: any;
@@ -362,8 +369,8 @@ describe('LIB-22 A2 / Do 4: the composers and the drawn plates draw PRIMITIVES o
       expect(src, c).not.toMatch(/layers\//);
     }
   });
-  it('the slice is drawn: kettlebell_swing, medicine_ball_slam, sled_push, jump_rope', () => {
-    expect(specsDrawn()).toEqual(['sled_push', 'jump_rope', 'medicine_ball_slam', 'kettlebell_swing']);
+  it('the drawn set: the slice (kettlebell_swing, medicine_ball_slam, sled_push, jump_rope) and the bulk drawn so far', () => {
+    expect(specsDrawn()).toEqual(LB10.filter(i => DRAWN.includes(i)));
   });
   it('every item the drawn specs draw is a PRIMITIVES type, in every drawn pose', async () => {
     for (const id of specsDrawn()) {
@@ -722,6 +729,30 @@ describe('LIB-22 A2 / A18: sled_push and `sled` (NOSECS; the slice)', { timeout:
   it('the spec carries no tempo (D-LIB22-SECS)', () => { expect(s().tempo).toBeUndefined(); });
 });
 
+describe('LIB-22 A2 / A18: sled_pull, a drag (NOSECS; bulk; ruling Q9, #305 6355155831)', { timeout: T }, () => {
+  const s = () => S.sled_pull, K = () => M.sled_pull;
+  const sledRear = (spec: any, pose: string) => Math.min(...itemsIn(spec, pose).items.filter((i: any) => i.part === 'sled').flatMap((i: any) => (i.pts ?? i.surface).map((p: number[]) => p[2]!)));
+  /** Q9: the sled moves by the hips' shift (±1 cm) and the hitch-to-upper-fist run keeps its length (±1 cm). */
+  const dragProblems = (spec: any, rearOf: (pose: string) => number) => {
+    const out: string[] = [], a = lmOf(spec, 'start'), b = lmOf(spec, 'end');
+    const hip = b.hips[2] - a.hips[2], sled = rearOf('end') - rearOf('start');
+    if (Math.abs(hip - sled) > 0.01) out.push(`sled shift ${(sled * 100).toFixed(1)} cm vs hips ${(hip * 100).toFixed(1)} cm`);
+    const r0 = K().runOf(a, rearOf('start')), r1 = K().runOf(b, rearOf('end'));
+    if (Math.abs(r1 - r0) > 0.01) out.push(`rope run ${(r0 * 100).toFixed(1)} -> ${(r1 * 100).toFixed(1)} cm`);
+    return out;
+  };
+  it('the sled follows the hips and the rope keeps its length, start to end', () => {
+    expect(dragProblems(s(), pose => sledRear(s(), pose))).toEqual([]);
+  });
+  it('mutation: a static sled (left at its start place) lengthens the rope: red', () => {
+    expect(dragProblems(s(), () => sledRear(s(), 'start')).length).toBe(2);
+  });
+  it('the start sled and the start rope are drawn dashed in the end pose', () => {
+    const parts = itemsIn(s(), 'end').items.filter((i: any) => /^start(sled|rope)$/.test(i.part ?? '')).map((i: any) => i.part);
+    expect(new Set(parts)).toEqual(new Set(['startsled', 'startrope']));
+  });
+});
+
 describe('LIB-22 A2 / A18: jump_rope and `jumpRope` (front view; held: D-LIB8-shrug)', { timeout: T }, () => {
   const s = () => S.jump_rope, K = () => M.jump_rope;
   const rope = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((i: any) => i.part === 'rope');
@@ -926,7 +957,7 @@ describe('LIB-22 A3: spec and composer closures are pure and drawn by the vendor
     ...c.filter(p => p.startsWith('tools/plates/library/specs/') && p !== f),
   ];
   it('every drawn LB10 spec passes', async () => {
-    expect(files().length).toBe(4);
+    expect(files().length).toBe(DRAWN.length);
     for (const f of files()) { expect(problems(f, closure.closureOf([f])), f).toEqual([]); await yieldNow(); }
   });
   const scratch = (edit: (root: string) => void) => {
@@ -1189,7 +1220,7 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
    *  copy would lie on the solid one (jump_rope's handles ride the 3.8 cm hop: 5.6 px). */
   const phantomMissing = (spec: any) => {
     const out: string[] = [], st = itemsIn(spec, 'start').items, en = itemsIn(spec, 'end').items, pxm = camOf(spec).pxm;
-    for (const part of ['bell', 'ball', 'rope']) {
+    for (const part of ['bell', 'ball', 'rope', 'sled']) {
       const a0 = st.filter((i: any) => i.part === part && i.pts), b = en.filter((i: any) => i.part === part && i.pts);
       const moved = (i: any, k: number) => !b[k] || b[k].pts.length !== i.pts.length || Math.max(...i.pts.map((p: number[], j: number) => Math.hypot(...p.map((v, n) => v - b[k].pts[j][n])))) * pxm >= 6;
       const a = a0.filter(moved);
@@ -1320,7 +1351,8 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   });
   /** D-LIB22-DRAW, D-LIB16-LOCK: a "slightly bent" knee in a side-view plate bends in the view's plane: the knee sits
    *  off the hip-ankle line by at least 90 % of its sized bend's offset. (The front-view knees follow D-LIB22-FRONT.) */
-  const SOFT: Record<string, [string, string, number][]> = { kettlebell_swing: [['start', 'r', 15], ['start', 'l', 15]] };
+  const SOFT: Record<string, [string, string, number][]> = { kettlebell_swing: [['start', 'r', 15], ['start', 'l', 15]],
+    farmer_s_carry: [['start', 'r', 15], ['start', 'l', 15], ['end', 'l', 15]], burpee: [['end', 'r', 15], ['end', 'l', 15]], sled_pull: [['end', 'r', 15]] };
   const offsetFor = (deg: number) => { const a = 0.245 * 1.75, b = 0.246 * 1.75, c = Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(deg * Math.PI / 180)); return (a * b * Math.sin(deg * Math.PI / 180)) / c; };
   const softProblems = (spec: any) => (SOFT[spec.id] ?? []).flatMap(([pose, s, deg]) => {
     const l = lmOf(spec, pose), h = l[`hip.${s}`], k = l[`knee.${s}`], an = l[`ankle.${s}`];

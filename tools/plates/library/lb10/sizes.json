@@ -466,6 +466,219 @@
     "unit": "m",
     "basis": "stated reason: a 5 mm speed rope"
    }
+  },
+  "sled_pull": {
+   "PX_PER_M": {
+    "value": 126,
+    "unit": "px/m",
+    "basis": "convention: sled_push's scale (sizes.json sled_push PX_PER_M), the same `sled` at the same scale on the one sheet; inside F1's 123.9-146.29"
+   },
+   "FOOT_X": {
+    "value": 0.145,
+    "unit": "m",
+    "basis": "claim: c2 'Plant your feet shoulder-width apart', held at the widest flat stance whose rigid-foot plant keeps every contact within 0.5 cm in start, end and Mistake (0.145: 0.5 cm; 0.150: 0.6 cm in the Mistake) (D-LIB22-STANCE amended, #305 6357040314)"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout', D-LIB16-LOCK) for c2 'keeping your knees soft': the straightest knee of the step (the stepped-back knee in the end and the Mistake)"
+   },
+   "ELBOW_BEND": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention: machine_chest_press.mjs:45 (18 deg short of straight) for c1 'arms slightly bent'"
+   },
+   "GRIP_GAP": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "claim: c1 'one stacked over the other': the two drawn fists touching (2 x RADII.fist 0.02 H, body.mjs:27)"
+   },
+   "SLED_Z": {
+    "value": 0.9,
+    "unit": "m",
+    "basis": "stated reason (framing): the sled's rear edge 0.9 m ahead of the start soles, clear of the coil and the step, with room for the labels on the left; the Trace does not depend on it"
+   },
+   "FOOT_CLEAR": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "convention: mountain_climbers.mjs:49 @ dcac4a38 (the gliding foot) for c3 'short, quick, and controlled' steps; via ghost only"
+   },
+   "COIL_D": {
+    "value": 0.266,
+    "unit": "m",
+    "basis": "stated reason: plate.equipment 'a short coil': one foot length across (WINTER.foot x H)"
+   },
+   "COIL_TURNS": {
+    "value": 3,
+    "unit": "turns",
+    "basis": "stated reason: plate.equipment 'a short coil': a short pile, three turns high"
+   },
+   "ROPE_T": {
+    "value": 0.028,
+    "unit": "m",
+    "basis": "convention: main's eq/rope.mjs default `thick` (rope_triceps_pushdown's rope, the `rope` rig's anchor)"
+   },
+   "ROPE_SAG": {
+    "value": 0.006,
+    "unit": "m",
+    "basis": "convention: main's eq/rope.mjs default `sag`"
+   },
+   "M_TILT": {
+    "value": -14,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (the 8's approved lean) for c8 'pitch your torso back and let your lower back take the load'"
+   },
+   "M_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (the 8's approved arch) for c8 'let your lower back take the load'"
+   },
+   "STEP": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c3 'short' steps: the stepping toe at the stance heel, the shortest step that sets the foot wholly behind ((REF.toe - (REF.heel + 0.008)) H, body.mjs:25, :155-156)"
+   },
+   "HIP_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c2 'quarter squat ... knees soft': the hips' one height through the step (hands and rope keep theirs, Q9) at which the end's stepped-back knee is KNEE_SOFT; the start knees come out at 29.4 deg"
+   },
+   "DRAG": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "ruling Q9 (#305 6355155831): the sled moves by the hips' z change, start to end"
+   },
+   "ROPE_RUN": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "ruling Q9: the hitch-to-upper-fist run at the start, kept in every pose (the rope's length and light tension, c1)"
+   },
+   "M_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "the Mistake's root z: the upper fist on ROPE_RUN from the end's hitch (the sled does not move in the Mistake)"
+   },
+   "M_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "the Mistake's root height: the stepped-back knee at KNEE_SOFT"
+   },
+   "trace": {
+    "value": "ball.r",
+    "unit": "point",
+    "basis": "claim: plate.frames 'the rear foot stepped back' / ruling Q9 'Trace the stepping foot'"
+   }
+  },
+  "farmer_s_carry": {
+   "FOOT_X": {
+    "value": 0.0875,
+    "unit": "m",
+    "basis": "claim: c3 fv-farmers 'Stand between the weights with your feet about hip-width apart': the ankles under the engine's hip-joint centres (body.mjs REF.hjcX 0.05 H = 0.0875 m), every foot contact 0.0 cm; the side view does not show the width"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c6 ggr-farmers 'locking out your knees'"
+   },
+   "SCAP_ELEV": {
+    "value": -1,
+    "unit": "cm",
+    "basis": "convention: dumbbell_biceps_curl.mjs:57 (#109 @ dcac4a38) SCAP elev -1 'shoulders set down', for c5 bb-farmers 'keep your shoulders back and down' (c5 fv-farmers: 'Avoid forcing ... an exaggerated shoulders-back position', so the convention's small set)"
+   },
+   "SCAP_PRO": {
+    "value": -1,
+    "unit": "cm",
+    "basis": "convention: dumbbell_biceps_curl.mjs:57 (#109 @ dcac4a38) SCAP pro -1 'slightly back', for c5 bb-farmers 'back and down'"
+   },
+   "STRIDE": {
+    "value": 0.35,
+    "unit": "m",
+    "basis": "stated reason: c8 ggr-farmers 'taking short, deliberate steps': half of M_STRIDE's regular step (DESIGN section 11, accepted 6355155831 item 5)"
+   },
+   "M_STRIDE": {
+    "value": 0.7,
+    "unit": "m",
+    "basis": "stated reason: c25 bb-farmers 'regular-sized steps': an adult's normal walking step, about 0.7 m for the 1.75 m figure (normal stride about 1.4 m, two steps)"
+   },
+   "VIA_LIFT": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: the ghost's swinging foot just clears the floor at mid-swing: its sole 3 cm up, above normal gait's minimum toe clearance of 1 to 2 cm"
+   },
+   "BODY_KG": {
+    "value": 75,
+    "unit": "kg",
+    "basis": "convention: lb7/sizes.json weighted_dip BODY_KG 75 (#299 @ 5a9f004c), the 1.75 m figure's mass for the balance"
+   },
+   "DB_SHARE": {
+    "value": 0.25,
+    "unit": "fraction",
+    "basis": "claim: c18 ggr-farmers 'Dumbbells that are approximately 25% of your body weight in each hand are a great place to start'"
+   },
+   "DB_KG": {
+    "value": "solved",
+    "unit": "kg",
+    "basis": "DB_SHARE x BODY_KG = 18.75 kg in each hand, at the grips in the centre of mass (A18)"
+   },
+   "trace": {
+    "value": "ball.r",
+    "unit": "point",
+    "basis": "claim: c8 ggr-farmers 'taking short, deliberate steps': the stepping (near) foot (DESIGN section 12; D-LIB22-SIDES: the card names no side)"
+   }
+  },
+  "burpee": {
+   "FOOT_X": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "claim: c1 pg-burpee 'Stand tall with feet shoulder width apart' (one source hip-width, one feet together): the widest stance at which the rigid foot's plant contacts stay within 0.5 cm (0.15 m: 0.5 cm; 0.16 m: 0.6 cm), as kettlebell_swing 0.18 and medicine_ball_slam 0.12; the side view does not show the width"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c11 fv-burpee 'Always land on slightly bent knees'"
+   },
+   "M_KNEE": {
+    "value": 1,
+    "unit": "deg",
+    "basis": "claim: c11 (the hard landing 'without the knees slightly bent', motra-burpee 'Hard landing on jump'): the knees straight, 1 deg short of full extension where the engine's two-bone leg is singular (kettlebell_swing TOP_KNEE 1, lb10/sizes.json)"
+   },
+   "VIA_DROP": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "claim: c14 'Your hips should be below the level of your knees when you put your hands on the floor': the via's hip joints 2 cm below the knee joints (just below; a ghost only, D-LIB22-CYCLE)"
+   },
+   "trace": {
+    "value": "ball.r",
+    "unit": "point",
+    "basis": "claim: c5 fv-burpee 'Jump your feet in and under your body' (the feet, NOTE RULED 6355155831 item 6)"
+   }
+  },
+  "bear_crawl": {
+   "KNEE_HOVER": {
+    "value": 0.0508,
+    "unit": "m",
+    "basis": "claim: c3 ace-bc-shape 'lift knees 2 inches off the ground' (2 in = 5.08 cm, the kneecap's lowest point: the knee joint RADII.kneeCap x H + 5.08 cm up, mountain_climbers' kneecap check)"
+   },
+   "STEP": {
+    "value": 0.0508,
+    "unit": "m",
+    "basis": "claim: c4 'move right arm and left leg forward 2 inches' (2 in = 5.08 cm)"
+   },
+   "M_TILT": {
+    "value": 18.8,
+    "unit": "deg",
+    "basis": "convention: mountain_climbers.mjs:88 HIKE_HIP 30 (#109 @ dcac4a38) as drawn there: its Mistake turns the pelvis 18.8 deg (tilt 72.9 -> 91.7, measured), for c5 bb-bc 'When you lift your knees, don’t lift your butt, too'; HIKE_HIP's own 30 deg of hip flexion cannot be reached with the hands and feet planted (it peaks at +25.7 deg)"
+   },
+   "END_ELBOW": {
+    "value": 1,
+    "unit": "deg",
+    "basis": "stated reason: the arms straight as at the start (c11 ace-bc-shape 'a lot like a moving high plank'), 1 deg short of full extension where the engine's two-bone arm is singular (kettlebell_swing TOP_KNEE 1, lb10/sizes.json)"
+   },
+   "trace": {
+    "value": "wrist.r",
+    "unit": "point",
+    "basis": "plate.frames 'Trace follows the stepping hand' (c4's right arm, the near side)"
+   }
   }
  }
 }
