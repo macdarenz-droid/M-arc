@@ -80,7 +80,7 @@ under the composer's name, exported as constants (A17).
   the rails' low end with its bracket, fail-safe stops at the bottom of the rail, a base frame on the floor (c1, c3,
   c16, c18; plate.equipment). The carriage moves with the body (read back from the drawn back, leg_press's `travelOf`
   pattern), so every carriage part is a `poly`. Static: rails, foot plate, stops, frame.
-- **pendulum** (bulk; anchor pendulum_squat): a swinging arm on a pivot ahead of and above the lifter carrying the
+- **pendulum** (bulk; anchor pendulum_squat): a swinging arm on a pivot behind and above the lifter (solved: y 2.009 m, z -1.815 m, a 16° swing) carrying the
   shoulder pads and back pad, the platform fixed under the feet, the latch, the frame (c1-c3). The arm and its pads move
   (`poly`); the platform and frame are static. The arm geometry decides c3 ("throughout") with c5-c6's upright torso:
   sized by a stated physical basis; S3 if it cannot hold.
@@ -433,7 +433,7 @@ Fault→key (13 Q1(a)); first tell carries the drawn key:
   Claim ids read: c6 (all three quotes: the low back's hyperextension, the hips pushed too high as its cause), c7 (both:
   overextending the back, a neutral spine), c5, c2 (the corrective tuck), c8, plate.tells. "Hips pushed too high" is the
   cause (ruled not a tell); no claim states a second visible sign (no ribs line as on hip_thrust).
-- pendulum_squat: fault c9/c15 (heels lifting). Claim ids read: c9 ("Heels rising: Insufficient ankle mobility
+- **One-tell record** (pendulum_squat): fault c9/c15 (heels lifting). Claim ids read: c9 ("Heels rising: Insufficient ankle mobility
   prevents the heels staying flat through the full depth."), c15 ("Lifting heels off the platform during the descent.
   This shifts weight forward and strains your knees."), c7, plate.tells. "Shifts weight forward" is a consequence with
   no drawn position or size; no second visible sign stated.
@@ -665,6 +665,7 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 | hip_thrust | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lumbar arch (hanging_leg_raise.mjs:69) measures 4.1 px < 11.39 px; the other two readings of c11-c13 give 6.2 and 7.2 px (section 8); the Trace passes (36.9 px at [6, 8]); the c1 fact "Sit on the floor" (seat, start; CARD FIELDS fix 5) is missed: the drawn bottom stops where the plates reach the floor, the seat 4.7 cm above it | LIB-ZOOM (#279) on main and extended to the arch, then 'LIB-18 resume' |
 | cable_kickback | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch measures 4.3 px < 11.39 px (the braced upper body holds the back still); the Trace passes (54.1 px) | LIB-ZOOM, as above |
 | seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°); the c1 fact "toes ... on the foot support" (CARD FIELDS fix 2) is missed at the drawn stretch: the toe 4.2 cm off the platform's top | the owner's route for S4 (D-LIB18-CALF), brought by the supervisor; LIB-ZOOM for S2 |
+| pendulum_squat | D-LIB8-shrug (D-LIB18-SIZE, S2) | the heel lift at 12° about the ball (leg_press.mjs:95) moves the heel 4.39 cm: 5.7 px < 11.39 px at 128.43 px/m; the Trace passes (29.5 px, knee.r, [6, 8]); S3 does not stop (back on pad and upright torso hold in every pose) | LIB-ZOOM, as above |
 | leg_extension | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch (hanging_leg_raise.mjs:69) measures 7.6 px < 11.39 px (`off` on backUpper, 5.2 cm off the pad; `arch` on the sacrum 6.0 px); the Trace passes (75.9 px) | LIB-ZOOM, as above |
 | standing_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 5.1 px < 22.11 px (trim [10, 12], barbell_back_squat.mjs:117); the locked-knee Mistake 7.4 px < 11.39 px; the rigid toe is 4.85 cm inside the platform at the card's top; the c1 toe fact misses by 2.3 cm at the start | the owner's route for S4 (D-LIB18-CALF); LIB-ZOOM for S2 |
 | bodyweight_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace measures 5.8 px < 22.11 px (trim [10, 12]); the Mistake passes (13.6 px); the rigid toe is 4.56 cm inside the step at the top, so the c4 toe fact misses by 4.6 cm | as above |

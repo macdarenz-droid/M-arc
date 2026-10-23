@@ -947,10 +947,240 @@
     "unit": "m",
     "basis": "convention: calfMachine gripR (vendor chestPress grip)"
    },
-   "stack": {
-    "value": "16 x 0.025 m, 0.22 m wide, 6 lifted",
+   "stackW": {
+    "value": 0.22,
     "unit": "m",
-    "basis": "convention: the vendor stack primitive"
+    "basis": "convention: the vendor stack primitive (a 0.22 m wide stack)"
+   },
+   "stackPlates": {
+    "value": 16,
+    "unit": "count",
+    "basis": "convention: the vendor stack primitive (16 plates)"
+   },
+   "stackPlateH": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "convention: the vendor stack primitive (0.025 m plates)"
+   },
+   "stackLoad": {
+    "value": 6,
+    "unit": "count",
+    "basis": "convention: the vendor stack primitive (6 plates lifted)"
+   }
+  },
+  "pendulum_squat": {
+   "PLAT_Y": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: the lowest 5 cm step that seats the 3.5 cm platform (PENDULUM.plateT) on its 3 cm bracket over the 6 cm floor beam: 0.035 + 0.03 + 0.06 = 0.125 m, so 0.15 m (DESIGN.md section 12 'top 0.15 m'); c1 names no height"
+   },
+   "FOOT_X": {
+    "value": 0.13,
+    "unit": "m",
+    "basis": "claim c2 (StrengthLog 'about hip-width', FORM 'roughly shoulder-width'; card note 'The plate draws between the two'): the midpoint of hip-joint width (body hip.r x 0.088 m at 175 cm) and shoulder-width (leg_press.mjs:31 FOOT_X 0.17), 0.129, so sole centres 0.13 m out"
+   },
+   "TOE_OUT": {
+    "value": 8,
+    "unit": "deg",
+    "basis": "claim c2 'toes angled out slightly' with c6 'The knees track over the toes', as hack_squat's TOE_OUT (Q8 accepted, LB8 NOTE RULED): at 8 deg the toe lies in the knee's bend plane and the soles hold the platform within the engine's 0.5 cm contact tolerance"
+   },
+   "KNEE_TOP": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: barbell_back_squat.mjs:30 (standing, 'knees 5 deg soft'), the straight rule (bulk ruling: a quote that says straight = 5 deg) for c21 'Extend fully at the top without locking out hard'"
+   },
+   "TILT_START": {
+    "value": -8,
+    "unit": "deg",
+    "basis": "stated reason: the back pad is fixed on the swinging arm, so the torso turns with it start to end (c3 'throughout'); with c5/c6 'torso upright' each pose keeps the trunk within 8 deg of vertical (barbell_back_squat.mjs:30, standing tall, trunk 8 deg); the 16 deg the pad turns is split evenly, -8 at the top (leaning back on the pad) and +8 at the bottom, the largest swing that keeps both upright, which gives the shortest arm"
+   },
+   "TILT_END": {
+    "value": 8,
+    "unit": "deg",
+    "basis": "stated reason: as TILT_START: +8 deg at the bottom, the trunk within 8 deg of vertical (barbell_back_squat.mjs:30) with the back on the pad (c3, c5, c6)"
+   },
+   "NECK": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:71 (neck 5 on a back pad)"
+   },
+   "HEEL_LIFT": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:95 (HEEL_LIFT 12, named by D-LIB18-SIZE and the bulk ruling) for c9 'Heels rising', c15 'Lifting heels off the platform'; the heels turn up about the balls, the ball lifted so the toe pad rests on the platform (reverse_lunge.mjs:19-22)"
+   },
+   "HANDLE_X": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "convention: leg_press.mjs:68 (side handles 25 cm out from the midline) for c16's handles, outside the shoulder joints (22.7 cm out at 175 cm)"
+   },
+   "HANDLE_N": {
+    "value": 0.24,
+    "unit": "m",
+    "basis": "stated reason: the grip centre 4 cm ahead of the shoulder pad's 20 cm front end (PENDULUM.shoulderLen), so the bracket runs out of the pad's front and the hand closes clear of it (as hack_squat)"
+   },
+   "HANDLE_DOWN": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: the grip centre 6 cm down the pad from the shoulder pad's lower face, level with the shoulder joint (trap 0.834 H sits 6 cm above REF.shY 0.80 H), so the elbows hang along the trunk"
+   },
+   "POLE_OUT": {
+    "value": 0.6,
+    "unit": "",
+    "basis": "stated reason: the elbow IK pole points down the pad and out to the side in a 1 : 0.6 ratio, the elbows hanging along the trunk and out from it as a grip on side handles holds them (c16); leg_press.mjs:69 uses an outward pole the same way"
+   },
+   "PAD_BELOW": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the back pad reaches 10 cm below the buttock contact so the hips stay on it through the rep (c3 'back pressed against the backrest throughout')"
+   },
+   "ARM_AT": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "stated reason: the arm meets the back pad 25 cm up from the buttock contact, the pad's middle (it spans -0.10 to 0.61 m along the pad), so the arm carries it centrally"
+   },
+   "LATCH_Y": {
+    "value": 1.2,
+    "unit": "m",
+    "basis": "stated reason: the latch hinge 1.2 m up the rear post, 0.8 m under the pivot, so the 18 cm lever (PENDULUM.latchLen) hangs turned down along the post (released, c4), clear of the arm's whole swing"
+   },
+   "FLOOR_BACK": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: the floor beam ends 3 cm behind the rear post's centre line, flush with the 6 cm post's back face"
+   },
+   "FLOOR_FRONT": {
+    "value": 0,
+    "unit": "m",
+    "basis": "stated reason: the floor beam ends under the platform's front edge (0.35 m ahead of its centre), so the platform's front sits over the base"
+   },
+   "FLOOR_LINE": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason: the floor line runs 2 cm past each end of the floor beam, so the beam reads as standing on it"
+   },
+   "TRACE_TRIM": {
+    "value": [
+     6,
+     8
+    ],
+    "unit": "px",
+    "basis": "convention: leg_press.mjs:132, the clone source's Trace trim (D-LIB18-TRIM; the trace row carries it too)"
+   },
+   "END_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "solved: the root height (bisection) that levels the thigh (hip-joint centre at the knee's height, c4 'parallel') with the knee over the toe tip (c6) (solves to 0.5942)"
+   },
+   "END_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "solved: the root's fore-aft place (bisection) that sets the knee straight over the toe tip (c6 'The knees track over the toes') (solves to -0.2929)"
+   },
+   "START_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "solved: the root height (bisection) that bends the top knee KNEE_TOP (c21) (solves to 1.0684)"
+   },
+   "START_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "solved: the root's fore-aft place (bisection) that puts the whole-body centre of mass (Winter 2009) over the mid-sole, standing as the latch is released (c4; D-LIB18-BALANCE) (solves to 0.0381)"
+   },
+   "PIVOT_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "solved: the arm's pivot height, closed form: the pole of the back pad's rigid motion from its start place to its end place (each tangent to the upper back and the buttock, c3) (solves to 2.0088)"
+   },
+   "PIVOT_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "solved: the arm's pivot fore-aft place, closed form, as PIVOT_Y (behind and above the lifter) (solves to -1.8147)"
+   },
+   "SWING": {
+    "value": "solved",
+    "unit": "rad",
+    "basis": "solved: the angle the back pad (and arm) turns from the start to the end, read from the drawn back in each pose (TILT_END - TILT_START with the trunk's fixed shape: 16 deg) (solves to 0.2793)"
+   },
+   "BALL_LIFT": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "solved: the Mistake's ball lift (bisection) that rests the toe pad (the lowest forefoot outline point, body.mjs FOOT_SIDE) on the platform at HEEL_LIFT (reverse_lunge.mjs:19-22) (solves to 0.0064)"
+   },
+   "trace": {
+    "value": "knee.r",
+    "basis": "D-LIB18-TRACE: plate.frames 'Trace follows the knee' (c4 'bending your knees'); trim [6, 8]: the clone source's trim, leg_press.mjs:132 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     6,
+     8
+    ]
+   }
+  },
+  "pendulum": {
+   "padT": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "convention: equipment.mjs backPad t 0.07 (the vendor back pad)"
+   },
+   "shoulderLen": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason: the shoulder pad reaches 20 cm forward from the back pad's face, over the shoulder (the drawn chest is 25 cm deep, body.mjs torsoSide .144 H), short of the front of the shoulder (as hackSled)"
+   },
+   "shoulderT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: a 6 cm shoulder pad, a little thinner than the 7 cm back pad, so its top stays under the chin (trap 0.834 H + 6 cm = 0.868 H, chin 0.870 H)"
+   },
+   "armT": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "stated reason: a 7 cm arm tube, one size up from the 6 cm frame tubes, as it carries the lifter and the load"
+   },
+   "tubeT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: eq/pulloverMachine.mjs (LB6, 2979a4a2) tubeT 0.06 (frame tubes)"
+   },
+   "bossR": {
+    "value": 0.045,
+    "unit": "m",
+    "basis": "convention: equipment.mjs pulley r 0.045 (the vendor pulley, drawn as the pivot boss)"
+   },
+   "plateLen": {
+    "value": 0.7,
+    "unit": "m",
+    "basis": "convention: equipment.mjs legPress45 plate h 0.7 and leg_press.mjs:48 (the clone source's foot plate) for plate.equipment 'a fixed foot platform'"
+   },
+   "plateT": {
+    "value": 0.035,
+    "unit": "m",
+    "basis": "convention: equipment.mjs legPress45 plate t 0.035"
+   },
+   "bracketT": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: 3 cm brackets (the handle arm and the platform bracket), thinner than the 6 cm frame tubes"
+   },
+   "gripLen": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "stated reason: a 12 cm handle, about one hand's width (WINTER.hand 0.108 H = 9.5 cm, plus 2.5 cm)"
+   },
+   "gripT": {
+    "value": 0.032,
+    "unit": "m",
+    "basis": "convention: equipment.mjs chestPress grip 0.016 radius (3.2 cm)"
+   },
+   "latchLen": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "stated reason: an 18 cm catch lever, long enough to read as a lever beside the post (three tube widths)"
+   },
+   "latchT": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: a 3 cm lever, the bracket size"
    }
   }
  }
