@@ -612,32 +612,35 @@ const a = await b.buildLb8Page(), c = await b.buildLb8Page(); console.log(JSON.s
   });
 });
 
-/** The named flags (review 6372571513): runQa, node and browser halves, on the held page in memory (`qa.mjs --held`), in
- *  an awaited child process (D-LIB18-TESTS). Each named plate's raised flags equal the ruled set and its F2 equals the
- *  posted value within 0.001. */
+/** The named flags (review 6372571513, D-LIB18-F3KICK). F2 is measured in the browser, which the unit run does not
+ *  have, so `qa.mjs --held --record` (runQa node and browser halves on the held page, in memory) records the named
+ *  plates' flags with the page sha256 they were measured on. This block checks the recording against the ruled set and
+ *  the posted values, and checks that the held page built now (an awaited child process) is the page it was measured
+ *  on: any drawing change turns it red until the flags are measured again. */
 describe('LIB-18 A4: the named flags on the held plates (F2: cable_kickback 0.645, glute_bridge 0.134, bodyweight_calf_raise 0.103; F3: cable_kickback 37.8 px)', { timeout: T }, () => {
-  let qaMod: any, reports: any[];
+  let qaMod: any, rec: any, sha: string, sha2: string;
   beforeAll(async () => {
     qaMod = await import(/* @vite-ignore */ lib('lb8/qa.mjs'));
-    const script = `const q = await import(${JSON.stringify(lib('lb8/qa.mjs'))});
-const { reports } = await q.qaHeld(['lib_glute_bridge', 'lib_bodyweight_calf_raise', 'lib_cable_kickback']);
-process.stdout.write(JSON.stringify(reports.map(r => ({ id: r.id, flags: r.flags }))));`;
-    const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 });
-    reports = JSON.parse(stdout);
+    rec = JSON.parse(readFileSync(qaMod.HELD_FLAGS, 'utf8'));
+    const script = `const b = await import(${JSON.stringify(lib('lb8/build.mjs'))});
+const p = await b.buildHeldPage(undefined, ['lib_glute_bridge', 'lib_bodyweight_calf_raise', 'lib_cable_kickback']);
+const p2 = await b.buildHeldPage(undefined, ['lib_glute_bridge', 'lib_cable_kickback']);
+process.stdout.write(b.sha256(p.html) + ' ' + b.sha256(p2.html));`;
+    [sha, sha2] = (await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 })).stdout.trim().split(' ') as [string, string];
   }, T);
-  it('each named plate raises exactly its ruled flags, with F2 at its posted value (±0.001)', () => {
-    expect(reports.map(r => r.id).sort()).toEqual(Object.keys(qaMod.F2_NAMED).sort());
-    for (const r of reports) console.log(`LIB-18 F2 ${r.id}: ${r.flags.F2.value} (named ${qaMod.F2_NAMED[r.id]})`);
-    expect(reports.find(r => r.id === 'lib_cable_kickback').flags.F3.value).toBeCloseTo(37.8, 1);   // D-LIB18-F3KICK
-    expect(qaMod.flagProblems(reports)).toEqual([]);
+  it('the recording was measured on the held page as it builds now', () => { expect(rec.pageSha).toBe(sha); });
+  it('each named plate raises exactly its ruled flags, F2 at its posted value (±0.001), cable_kickback\'s F3 at 37.8 px (±0.1)', () => {
+    expect(rec.reports.map((r: any) => r.id).sort()).toEqual(Object.keys(qaMod.F2_NAMED).sort());
+    for (const r of rec.reports) console.log(`LIB-18 F2 ${r.id}: ${r.flags.F2.value} (named ${qaMod.F2_NAMED[r.id]})`);
+    expect(rec.reports.find((r: any) => r.id === 'lib_cable_kickback').flags.F3.value).toBeCloseTo(37.8, 1);
+    expect(qaMod.flagProblems(rec.reports)).toEqual([]);
   });
-  it('mutations: glute_bridge\'s F2 shifted by 0.002, cable_kickback with F2 not raised, and its F3 0.2 px longer, are red', () => {
-    const shifted = reports.map(r => (r.id === 'lib_glute_bridge' ? { ...r, flags: { ...r.flags, F2: { ...r.flags.F2, value: r.flags.F2.value + 0.002 } } } : r));
-    expect(qaMod.flagProblems(shifted)).toEqual([expect.stringMatching(/^lib_glute_bridge: F2 /)]);
-    const dropped = reports.map(r => (r.id === 'lib_cable_kickback' ? { ...r, flags: { ...r.flags, F2: { ...r.flags.F2, raised: false } } } : r));
-    expect(qaMod.flagProblems(dropped).some((p: string) => /^lib_cable_kickback: flags /.test(p))).toBe(true);
-    const longer = reports.map(r => (r.id === 'lib_cable_kickback' ? { ...r, flags: { ...r.flags, F3: { ...r.flags.F3, value: r.flags.F3.value + 0.2 } } } : r));
-    expect(qaMod.flagProblems(longer)).toEqual([expect.stringMatching(/^lib_cable_kickback: F3 /)]);
+  it('mutations: glute_bridge\'s F2 shifted by 0.002, cable_kickback with F2 not raised, its F3 0.2 px longer, and a held page drawn differently, are red', () => {
+    const set = (id: string, f: string, v: any) => rec.reports.map((r: any) => (r.id === id ? { ...r, flags: { ...r.flags, [f]: { ...r.flags[f], ...v } } } : r));
+    expect(qaMod.flagProblems(set('lib_glute_bridge', 'F2', { value: rec.reports.find((r: any) => r.id === 'lib_glute_bridge').flags.F2.value + 0.002 }))).toEqual([expect.stringMatching(/^lib_glute_bridge: F2 /)]);
+    expect(qaMod.flagProblems(set('lib_cable_kickback', 'F2', { raised: false })).some((p: string) => /^lib_cable_kickback: flags /.test(p))).toBe(true);
+    expect(qaMod.flagProblems(set('lib_cable_kickback', 'F3', { value: 38.0 }))).toEqual([expect.stringMatching(/^lib_cable_kickback: F3 /)]);
+    expect(sha2).not.toBe(rec.pageSha);   // the held page drawn differently (bodyweight_calf_raise's card left out)
   });
 });
 
