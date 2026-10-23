@@ -38,8 +38,9 @@ const HELD = ['pendulum_squat', 'leg_extension', 'seated_calf_raise', 'standing_
 const ON_ROWS = ['hack_squat'];
 // Card facts the held plates' drawings miss (CARD FIELDS fix round, #306 6356303497): recorded with their holds, never hidden.
 const FACT_MISSES: Record<string, string[]> = { seated_calf_raise: ['check:start:toe.l:4.2cm', 'check:start:toe.r:4.2cm'], standing_calf_raise: ['check:start:toe.l:2.3cm', 'check:start:toe.r:2.3cm'], bodyweight_calf_raise: ['check:end:toe.l:4.6cm', 'check:end:toe.r:4.6cm'], hip_thrust: ['check:start:seat:4.7cm'] };
-// Checks inside PQ-H6's 1 cm but past A2's 0.5 cm, or a back landmark under 1 cm into the floor (no engine issue):
-// glute_bridge's tuck at the ruled 25° ceiling (DESIGN.md section 15), recorded with its hold, never hidden.
+// Measured values inside PQ-H6's 1 cm that are past A2's 0.5 cm, or a back landmark under 1 cm into the floor (no
+// engine issue): glute_bridge's tuck at the ruled 25° ceiling (#306 6357883031 item 2a), listed exactly so any other
+// value or landmark past 0.5 cm stays red.
 const NEAR_MISSES: Record<string, string[]> = { glute_bridge: ['check:start:sacrum:0.7cm', 'above:start:backMid:-0.2cm'] };
 const H6_MISSES: Record<string, string[]> = { seated_calf_raise: ['H6.fact:5:contact:toe.l', 'H6.fact:6:contact:toe.r'], standing_calf_raise: ['H6.fact:2:contact:toe.l', 'H6.fact:3:contact:toe.r'], bodyweight_calf_raise: ['H6.fact:4:contact:toe.l', 'H6.fact:5:contact:toe.r'], hip_thrust: ['H6.fact:0:contact:seat'] };
 // Every spec drawn now (the slice), held or not, in plan order.
@@ -2452,22 +2453,46 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
   });
 
   // ---- A15: leaders, tells, cues, the report ----
+  // Ruling PR #306 6357883031 item 2b (D-LIB18-LIFT): the Mistake tell on the lumbar back may enter the end figure and
+  // the Mistake figure once each, from the front (the box above and to screen right of the anchor), crossing no
+  // equipment (the floor line), at most 81.9 px long. Normal leaders and the start figure: never crossed (past 8 px).
   const crossProblems = (spec: any) => {
-    const out: string[] = [];
+    const out: string[] = [], cam = camOf(spec), floorY = cam.P([0, 0, 0])[1]!;
     for (const mistake of [false, true]) {
-      const polys = [...shapesIn(spec, 'end'), ...shapesIn(spec, 'start'), ...(mistake ? shapesIn(spec, 'mistake') : [])].map((x: any) => x.poly), list = listOf(spec, mistake);
+      const end = shapesIn(spec, 'end').map((x: any) => x.poly), start = shapesIn(spec, 'start').map((x: any) => x.poly), mis = mistake ? shapesIn(spec, 'mistake').map((x: any) => x.poly) : [];
+      const list = listOf(spec, mistake), tag = mistake ? 'mistake' : 'normal';
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
-        let inside = 0;
-        for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) { const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40]; if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) inside++; }
-        if (inside) out.push(`${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the figure`);
+        const samp = segs(p).flatMap(([a, b]) => Array.from({ length: 41 }, (_, k) => [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40]));
+        const far = samp.filter(q => Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8), key = list[i]?.key;
+        if (far.some(q => outside(start, q) < 0)) out.push(`${tag} ${key}: crosses the start figure`);
+        if (samp.some(q => q[1]! >= floorY - 1)) out.push(`${tag} ${key}: crosses the floor`);
+        if (!mistake) { if (far.some(q => outside(end, q) < 0)) out.push(`${tag} ${key}: crosses the figure`); return; }
+        const walk = [...samp].reverse().filter(q => Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 3), len = segs(p).reduce((a, [u, v]) => a + Math.hypot(v![0]! - u![0]!, v![1]! - u![1]!), 0);
+        let total = 0;
+        for (const fig of [end, mis]) {
+          let inn = false, entries = 0; for (const q of walk) { const now = outside(fig, q) <= 0; if (now && !inn) entries++; inn = now; }
+          if (entries > 1) out.push(`${tag} ${key}: enters a figure ${entries} times`);
+          total += entries;
+        }
+        const box = p[p.length - 1]!;
+        if (total && !(box[0]! > p[0]![0]! && box[1]! < p[0]![1]!)) out.push(`${tag} ${key}: enters from behind or below`);
+        if (total && len > 81.9) out.push(`${tag} ${key}: ${len.toFixed(1)} px inside-route leader over 81.9 px`);
       });
     }
     return out;
   };
-  it('no leader crosses the solid end figure, the start figure or (Mistake plate) the Mistake figure', () => { expect(crossProblems(s())).toEqual([]); });
+  it('no leader crosses the start figure or the floor; normal leaders cross no figure; the Mistake tell enters the end and Mistake figures once each, from the front, <= 81.9 px', () => { expect(crossProblems(s())).toEqual([]); });
   it('mutation: the "Straight line" box placed under the bridge (its leader across the body) is red', () => {
     const bad = { ...s(), callouts: s().callouts.map((x: any) => (x.key === 'line' ? { ...x, box: { left: 150, top: 318 } } : x)) };
     expect(crossProblems(bad).some(p => /normal line/.test(p))).toBe(true);
+  });
+  const tellBox = (spec: any, box: any) => ({ ...spec, mistake: { ...spec.mistake, tells: spec.mistake.tells.map((t: any) => ({ ...t, box })) } });
+  it('mutations: the "Back arched" box moved far above (leader past 81.9 px), and behind the anchor (screen left), are red', () => {
+    expect(crossProblems(tellBox(s(), { left: 172, top: 120 })).some(p => /mistake arch: .* over 81\.9 px/.test(p))).toBe(true);
+    expect(crossProblems(tellBox(s(), { left: 60, top: 224 })).some(p => /mistake arch: enters from behind/.test(p))).toBe(true);
+  });
+  it('mutation: the "Back arched" box moved below the floor line (its leader through the start figure, the floor and the end figure twice) is red', () => {
+    expect(crossProblems(tellBox(s(), { left: 172, top: 345 }))).toEqual(expect.arrayContaining(['mistake arch: crosses the start figure', 'mistake arch: crosses the floor', 'mistake arch: enters a figure 2 times']));
   });
   const traceGap = (spec: any) => {
     const svg: string = plate.renderPlate(spec, { id: 'x' }).svg, tr: number[][][] = [];
@@ -2483,6 +2508,20 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
     const bad = { ...s(), callouts: s().callouts.map((x: any) => (x.key === 'tuck' ? { ...x, anchor: { at: 'hip.r', pose: 'start', off: [0, -2] } } : x)) };
     expect(traceGap(bad).some(([k, d]) => k === 'tuck' && d < 6)).toBe(true);
   });
+  // Ruling PR #306 6357883031 item 2c: "Pelvis tucked" sits on the pelvis: on the end torso's outline (<= 1.5 px) and
+  // nearer the hip joint (`hips`) than the belly button (`navel`)
+  const tuckProblems = (spec: any) => {
+    const cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm, c = spec.callouts.find((x: any) => x.key === 'tuck');
+    const torso = shapesIn(spec, 'end').filter((x: any) => x.key === 'torso').map((x: any) => x.poly), p = qaEng.resolvePoint(c.anchor, 'end', L, cam);
+    const on = Math.abs(outside(torso, p)), dH = Math.hypot(p[0]! - cam.P(L.end.hips)[0]!, p[1]! - cam.P(L.end.hips)[1]!), dN = Math.hypot(p[0]! - cam.P(L.end.navel)[0]!, p[1]! - cam.P(L.end.navel)[1]!);
+    return [...(on > 1.5 ? [`tuck: ${on.toFixed(1)} px from the torso outline`] : []), ...(dH >= dN ? [`tuck: ${dH.toFixed(1)} px from the hips, ${dN.toFixed(1)} px from the navel`] : [])];
+  };
+  const tuckAt = (spec: any, anchor: any) => ({ ...spec, callouts: spec.callouts.map((x: any) => (x.key === 'tuck' ? { ...x, anchor } : x)) });
+  it('"Pelvis tucked" sits on the pelvis front: on the end torso outline, nearer the hip joint than the navel', () => { expect(tuckProblems(s())).toEqual([]); });
+  it('mutations: the anchor back at the belly button, and at the hip-joint centre (inside the body), are red', () => {
+    expect(tuckProblems(tuckAt(s(), { along: ['navel', 'hips'], t: -0.05 }))).toEqual([expect.stringMatching(/^tuck: .* from the hips/)]);
+    expect(tuckProblems(tuckAt(s(), { at: 'hips' }))).toEqual([expect.stringMatching(/^tuck: .* from the torso outline/)]);
+  });
   const textProblems = (spec: any) => [false, true].flatMap(mistake => {
     const R = plate.renderPlate(spec, { id: 'x', mistake }), list = listOf(spec, mistake), boxes = R.report.labels.filter((l: any) => l.key !== 'meta');
     return leadersOf(R.svg).flatMap((p, i) => boxes.filter((b: any) => b.key !== list[i]?.key).flatMap((b: any) => {
@@ -2492,22 +2531,25 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
   });
   it('no leader crosses another label\'s text', () => { expect(textProblems(s())).toEqual([]); });
   // one tell (record: notes "One-tell record"; `high` is not a tell, ruled); its key is the card's topFault; the anchor on
-  // the drawn Mistake outline, outside the end figure
+  // the lumbar back (ruling PR #306 6357883031 item 2b): on the drawn Mistake outline and within 1.5 px of the Mistake's
+  // back contour backMid -> sacrum -> buttock (the dashed arch guide's landmarks)
   const tellProblems = (spec: any) => {
-    const cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm, mp = shapesIn(spec, 'mistake').map((x: any) => x.poly), ep = shapesIn(spec, 'end').map((x: any) => x.poly), out: string[] = [];
+    const cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm, mp = shapesIn(spec, 'mistake').map((x: any) => x.poly), out: string[] = [];
+    const back = ['backMid', 'sacrum', 'buttock'].map(n => cam.P(L.mistake[n]));
     const card = JSON.parse(readFileSync('docs/research/howto/cards/glute_bridge.json', 'utf8'));
     if (spec.mistake.tells.length !== 1) out.push(`${spec.mistake.tells.length} tells`);
     if (spec.mistake.tells[0]?.key !== card.topFault) out.push(`first tell ${spec.mistake.tells[0]?.key} != topFault ${card.topFault}`);
     for (const t of spec.mistake.tells) {
-      const p = qaEng.resolvePoint(t.anchor, 'mistake', L, cam), onM = Math.abs(outside(mp, p)), offE = outside(ep, p);
-      if (!(onM <= 1.5 && offE >= -0.5)) out.push(`${t.key}: anchor ${onM.toFixed(1)} px from the Mistake outline, ${offE.toFixed(1)} px from the end figure`);
+      const p = qaEng.resolvePoint(t.anchor, 'mistake', L, cam), onM = Math.abs(outside(mp, p)), onBack = Math.min(...segs(back).map(([a, b]) => segD(p, a!, b!)));
+      if (!(onM <= 1.5 && onBack <= 1.5)) out.push(`${t.key}: anchor ${onM.toFixed(1)} px from the Mistake outline, ${onBack.toFixed(1)} px from the lumbar back`);
     }
     return out;
   };
-  it('one tell, key arch = topFault, its anchor on the drawn Mistake outline outside the end figure', () => { expect(tellProblems(s())).toEqual([]); });
-  it('tell mutations: the anchor moved to open space, and a second `high` tell added, are red', () => {
+  it('one tell, key arch = topFault, its anchor on the drawn Mistake outline at the lumbar back', () => { expect(tellProblems(s())).toEqual([]); });
+  it('tell mutations: the anchor moved to open space, to the old front-outline point (the belly), and a second `high` tell added, are red', () => {
     const t0 = s().mistake.tells[0];
     expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [{ ...t0, anchor: { at: 'knee.r', pose: 'mistake', off: [40, -60] } }] } }).length).toBe(1);
+    expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [{ ...t0, anchor: { along: ['navel', 'hips'], t: -0.05, pose: 'mistake' } }] } })).toEqual([expect.stringMatching(/^arch: anchor 1\.\d px from the Mistake outline, \d+\.\d px from the lumbar back$/)]);
     expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [t0, { key: 'high', text: 'Hips<br>too high', anchor: { at: 'hip.r', pose: 'mistake' }, cue: 'The hips push too high.' }] } })).toContain('2 tells');
   });
   // D-LIB18-ROUND: no solid red guide inside the figure (the arch contour is a dashed guide)

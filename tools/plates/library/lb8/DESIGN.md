@@ -674,6 +674,14 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 
 Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys stay.
 
+**Bulk rulings (LB8 BULK DRAWN RULED, #306 6357883031).** Named nits: hack_squat's "Back on pad" (39 px) and
+resisted_hip_flexion's "No back arch" (63 px), each entering the end figure once from the front, no equipment, at most
+81.9 px (D-LIB18-BACKPAD widened to D-LIB18-LIFT's limits); leg_extension's and pendulum_squat's "Back on pad" (one pad
+crossing); pendulum_squat's "Knees over toes" (pinned by its test). Named flags: F2 on glute_bridge (0.134) and
+bodyweight_calf_raise (0.103). glute_bridge keeps the 25° tuck ceiling: the sacrum 0.65 cm up and backMid 0.2 cm into the
+floor are measured values inside PQ-H6's 1 cm. The calf raises' trunk-0 reading of "standing tall" / "Stay upright" is
+accepted; standing_calf_raise's 0.9 cm start heel is recorded with its S2 hold.
+
 ## 16. Risks and mitigations
 
 1. **The arch Mistakes are small on a braced body** (hip_thrust 4.1 px, cable_kickback 4.3 px measured; leg_extension,

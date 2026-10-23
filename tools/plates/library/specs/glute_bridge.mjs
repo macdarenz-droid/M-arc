@@ -155,9 +155,10 @@ export default {
   trace: { point: 'hip.r', trim: [6, 8] },
   measure: { vertex: 'knee.r', from: { dir: THIGH_DIR }, to: 'ankle.r', radius: 20, title: 'Knee', value: 'about 90°', expect: 90, box: { left: 285, top: 262 } },
   callouts: [
-    // c2, c6, c12: on the front of the pelvis at the belly button (c2 "pulling the belly button towards the spine"), from
-    // the open space above (the low back's underside is enclosed by the start phantom, the ghosts and the arms)
-    { key: 'tuck', text: 'Pelvis<br>tucked', anchor: { along: ['navel', 'hips'], t: -0.05 }, box: { left: 70, top: 215 }, cue: 'Keep the core tight and the pelvis tucked so the low back does not arch.' },
+    // c2, c6, c12: on the pelvis (ruling PR #306 6357883031 item 2c): the torso's front outline straight above the hip
+    // joint (hips + [-5.9, -14] px, perpendicular to the trunk, 0.04 px from the end outline), met from the open space
+    // above; the leader crosses no figure and runs >= 6 px from the Trace (the low back's underside is enclosed)
+    { key: 'tuck', text: 'Pelvis<br>tucked', anchor: { at: 'hips', off: [-5.9, -14] }, box: { left: 70, top: 215 }, cue: 'Keep the core tight and the pelvis tucked so the low back does not arch.' },
     // c4: on the thigh's top edge, on the shoulder-hip-knee line, from the open space above
     { key: 'line', text: 'Straight<br>line', anchor: { along: ['hip.r', 'knee.r'], t: 0.55, off: [0, -11] }, box: { left: 180, top: 205 }, cue: 'At the top your shoulders, hips and knees form a straight line.' },
     // c4: the knee at the top
@@ -170,9 +171,10 @@ export default {
       { kind: 'dashed', smooth: true, pts: [{ at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
     ],
     tells: [
-      // c6, c7: hip_thrust's anchor (the Mistake trunk's top outline at the lumbar level, met from the open space above;
-      // the lumbar underside is enclosed: box scan in the notes)
-      { key: 'arch', text: 'Back<br>arched', anchor: { along: ['navel', 'hips'], t: -0.05, pose: 'mistake' }, box: { left: 80, top: 205 }, cue: 'The lower back overarches as the hips push too high.' },
+      // c6, c7: on the lumbar back (ruling PR #306 6357883031 item 2b): the Mistake sacrum, on the Mistake back outline
+      // (0.0 px), 5.5 px inside the end figure; the leader enters the end figure (and the Mistake figure) once, from the
+      // front (above, box to screen right), crossing no equipment, 72.4 px (D-LIB18-LIFT: at most 81.9; box scan in notes)
+      { key: 'arch', text: 'Back<br>arched', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 172, top: 224 }, cue: 'The lower back overarches as the hips push too high.' },
     ],
   },
   alt: 'Glute bridge, side view. Lying on the back on the floor, arms by the sides, knees bent and feet flat: the hips lift until shoulders, hips and knees form a straight line with the knees at about 90 degrees, then lower back to the floor.',
