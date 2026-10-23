@@ -79,6 +79,21 @@ const CAM = { x0: 110, y0: 339, pxPerM: 146.29 };
 // The plate's right edge in world z (the rope runs on toward the anchor, off the plate).
 export const EDGE_Z = (SIZE - CAM.x0) / CAM.pxPerM;
 const ropes = lm => battleRope({ grips: { l: lm['grip.l'], r: lm['grip.r'] }, restY: (lm['grip.l'][1] + lm['grip.r'][1]) / 2, edgeZ: EDGE_Z, waveLen: WAVE_LEN });
+// The Mistake moves only the shoulder girdle (and the hands with it, 6 cm): its ropes keep the end's lay and redraw only a
+// STUB at each handle, so the red sits on the body (the panel, #305 6361383239 item 1).
+const STUB = 0.05;
+const LE = landmarksOf(end, H), LM = landmarksOf({ ...end, ...mistake }, H);
+const mistakeRopes = lm => battleRope({ grips: { l: lm['grip.l'], r: lm['grip.r'] }, base: { l: LE['grip.l'], r: LE['grip.r'] }, stub: STUB,
+  restY: (LE['grip.l'][1] + LE['grip.r'][1]) / 2, edgeZ: EDGE_Z, waveLen: WAVE_LEN });
+// The shrug on the shoulder girdle (item 2): the Mistake's shoulder-top contour from the neck base to the lifted near
+// shoulder, and the near shoulder joint where the drawn elevation and protraction put it; a short arrow (item 3) above
+// it, up and forward, the way the girdle moves.
+const UPF = [0, Math.SQRT1_2, Math.SQRT1_2];
+const SHRUG_LINE = (() => { const A = LM.neck, B = LM['shoulderTop.r'], M = A.map((v, i) => (v + B[i]) / 2 + (i === 1 ? 0.012 : 0)); return Array.from({ length: 9 }, (_, k) => { const t = k / 8; return A.map((v, i) => (1 - t) ** 2 * v + 2 * t * (1 - t) * M[i] + t * t * B[i]); }); })();
+const JOINT_RING = Array.from({ length: 13 }, (_, k) => { const a = 2 * Math.PI * k / 12; return [LM['shoulder.r'][0], LM['shoulder.r'][1] + 0.016 * Math.sin(a), LM['shoulder.r'][2] + 0.016 * Math.cos(a)]; });
+// the arrow starts 25 px in front of and 1 px above the lifted shoulder top: the nearest place it clears the solid figure
+// by 7 px and the "Shoulders lift" leader by 6 px
+const ARROW_FROM = LM['shoulderTop.r'].map((v, i) => v + [0, 1, 25][i] / 146.29), ARROW_TO = ARROW_FROM.map((v, i) => v + UPF[i] * 0.075);
 // The hunch (c6 "hunch forward") is labelled on the Mistake's rounded upper back; the far upper arm (the first
 // anchor tried) left no label place clear of "Shoulders lift" (PQ-H4).
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
@@ -89,7 +104,7 @@ export default {
   camera: { x0: CAM.x0, y0: CAM.y0, pxPerM: CAM.pxPerM },
   poses: { start, end },
   // the start ropes redrawn dashed in the end pose (D-LIB22-DRAW); they lie along the end's far arm's rope
-  equipment: [{ type: 'floor', from: -0.6, to: EDGE_Z + 0.2 }, ...perItem(lm => ropes(lm), BATTLE_ROPE_ITEMS),
+  equipment: [{ type: 'floor', from: -0.6, to: EDGE_Z + 0.2 }, ...perItem((lm, ctx) => (ctx.pose === 'mistake' ? mistakeRopes(lm) : ropes(lm)), BATTLE_ROPE_ITEMS),
     ...perItem((lm, ctx) => (ctx.pose === 'end' ? START_ROPES : null), BATTLE_ROPE_ITEMS)],
   checks: [
     ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: LS[landmark], pose: 'start', tol: 0.5 })),           // c1 fact: one rope in each hand
@@ -106,6 +121,7 @@ export default {
   ],
   mistake: {
     pose: mistake,
+    guides: [{ kind: 'dashed', smooth: true, pts: SHRUG_LINE }, { kind: 'dashed', smooth: true, pts: JOINT_RING }, { kind: 'arrow', from: ARROW_FROM, to: ARROW_TO }],
     tells: [
       { key: 'shrug', text: 'Shoulders lift', anchor: { at: 'shoulderTop.r', pose: 'mistake', off: [3, 0] }, box: { left: 176, top: 80 }, cue: 'The shoulder blades lift toward the ears.' },
       { key: 'hunch', text: 'Shoulders<br>hunch', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 16, top: 56 }, cue: 'The shoulders round forward, straining the neck.' },

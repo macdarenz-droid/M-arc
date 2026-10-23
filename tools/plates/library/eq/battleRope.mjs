@@ -35,6 +35,13 @@ function strand(line, t) {
  * rest line at the hand); p.edgeZ: the plate edge's world z; p.waveLen: the wave's length (m); p.floorY: the floor.
  * Returns [far rope, near rope], each a closed `poly` strand.
  */
-export function battleRope({ grips, restY, edgeZ, waveLen, floorY = 0, part = 'rope' }, C = BATTLE_ROPE) {
-  return [['l', 'back'], ['r', 'mid']].map(([s, z]) => ({ type: 'poly', pts: strand(ropeLine(grips[s], { restY, edgeZ, waveLen, floorY }, C), C.ropeT), cls: 'eq-solid', z, part }));
+export function battleRope({ grips, restY, edgeZ, waveLen, floorY = 0, part = 'rope', base = null, stub = 0 }, C = BATTLE_ROPE) {
+  return [['l', 'back'], ['r', 'mid']].map(([s, z]) => {
+    let line = ropeLine((base ?? grips)[s], { restY, edgeZ, waveLen, floorY }, C);
+    // base: the rope is laid from these grips (the end pose's), and only its first `stub` metres follow the drawn grips,
+    // fading to nothing, so a pose that moves the hands a little redraws only a stub at each handle (the panel, #305
+    // 6361383239: the Mistake's red sits on the body, not on rope copies to the plate edge)
+    if (base) { const d = sub(grips[s], base[s]); line = line.map(q => { const w = Math.max(0, 1 - Math.hypot(...sub(q, line[0])) / stub); return add(q, mul(d, w)); }); }
+    return { type: 'poly', pts: strand(line, C.ropeT), cls: 'eq-solid', z, part };
+  });
 }

@@ -1236,7 +1236,8 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
    *  solid end figure and the Mistake figure (6348852288 item 1), away from their first 8 px. */
   /** Front entries to the back (D-LIB18-LIFT, widened as D-LIB18-BACKPAD; #305 6360287922 ruling): a named leader may
    *  enter each figure once, from the front (its box end ahead of the anchor), crossing no equipment, at most 81.9 px. */
-  const FRONTNIT = [{ id: 'high_knees', key: 'arch', mistake: true }];
+  // D-LIB22-FRONTNIT was withdrawn by the panel (#305 6361383239): no front entry is named in LB10.
+  const FRONTNIT: any[] = [];
   const frontEntry = (p: number[][], figs: number[][][][], cam: any, spec: any, mistake: boolean) => {
     const len = segs(p).reduce((t, [a, b]) => t + Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!), 0), an = p[0]!, end = p[p.length - 1]!;
     const pts: number[][] = []; for (const [a, b] of segs([...p].reverse())) for (let k = 0; k < 40; k++) pts.push([a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40]);
@@ -1269,12 +1270,6 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     }
     return out;
   };
-  it('the named front entry (high_knees "Back arches" on the lumbar back) stays inside D-LIB18-LIFT; mutations: the nit dropped and a box past 81.9 px are red', () => {
-    expect(crossProblems(S.high_knees)).toEqual([]);
-    expect(crossProblems(S.high_knees, []).length).toBeGreaterThan(0);
-    const at = (box: any) => ({ ...S.high_knees, mistake: { ...S.high_knees.mistake, tells: S.high_knees.mistake.tells.map((x: any) => (x.key === 'arch' ? { ...x, box } : x)) } });
-    expect(crossProblems(at({ left: 256, top: 144 })).some(x => x.includes('front entry outside'))).toBe(true);
-  });
   /** No leader crosses another leader, or another label's text (its ink box, 2 px margin), in either view (#305
    *  6356763967 items 4 and 6). A leader's own label is left out: the leader ends on it. */
   const labelProblems = (spec: any) => {
