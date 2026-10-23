@@ -1,0 +1,16 @@
+{
+ "note": "LB10 H build-ahead rows (LIB-22, D-LIB22-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids with a tempo strip (A5; D-LIB22-SECS keeps the NOSECS ids off; held ids are in DESIGN.md's held table); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
+ "batch": "LB10",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_kettlebell_swing": {
+   "src": "library/specs/kettlebell_swing.mjs",
+   "slug": "kettlebell-swing",
+   "prefix": "kettlebell-swing",
+   "chromeId": "kettlebell-swing",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}

@@ -72,11 +72,6 @@
     "unit": "deg",
     "basis": "convention: hanging_leg_raise.mjs:69 (the 8's approved lumbar arch, trunk -12; LB6 M_ARCH 12), for c14 BarBend 'hyperextending your low back'"
    },
-   "BELL_KG": {
-    "value": 16,
-    "unit": "kg",
-    "basis": "claim: c25 McGill's 16 kg kettlebell (the only bell mass on the card), for the balance"
-   },
    "BODY_KG": {
     "value": 75,
     "unit": "kg",
@@ -85,39 +80,386 @@
    "END_PHI": {
     "value": "solved",
     "unit": "deg",
-    "basis": "claim: c9 'swing the kettlebell to about chest height': the straight arms' angle that puts the bell centre at the chest landmark's height (83.4 deg from plumb)"
+    "basis": "claim: c9 'swing the kettlebell to about chest height': the straight arms' angle that puts the bell centre at the chest landmark's height (solved; the value is in the spec's END_PHI export)"
    },
    "trace": {
     "value": "grip.r",
     "unit": "point",
     "basis": "plate.frames 'the bell arc can be traced': the bell's handle in the fists (the bell centre is not a landmark; it hangs 19 cm on along the same arm line, eq/kettlebell.mjs)"
+   },
+   "BELL_KG": {
+    "value": "solved",
+    "unit": "kg",
+    "basis": "the drawn bell's mass (NOTE RULED 7, #305 6355155831): eq/kettlebell.mjs bellMass, the drawn body, horns and handle in cast iron (7.2 kg/L): 16.04 kg, sized to c25's 16 kg study bell"
+   },
+   "TOP_KNEE": {
+    "value": 1,
+    "unit": "deg",
+    "basis": "claim: c8 Human Kinetics 'pulling your kneecaps up strongly' (knees straight): 1 deg short of full extension, where the engine's two-bone leg is singular"
    }
   },
   "kettlebell": {
    "bodyD": {
-    "value": 0.21,
+    "value": 0.162,
     "unit": "m",
-    "basis": "stated reason: a 16 kg competition kettlebell's body is 21 cm across (one size for every weight)"
+    "basis": "stated reason: the body of a solid cast-iron bell of c25's 16 kg (with bellMass's horns and handle): a 16.2 cm sphere with its base cut flat"
    },
    "reach": {
-    "value": 0.19,
+    "value": 0.151,
     "unit": "m",
-    "basis": "stated reason: the handle centre about 19 cm from the body centre (a 28 cm tall bell less half its 21 cm body, less half the 3.3 cm handle)"
+    "basis": "stated reason: the handle centre 7 cm beyond the body's surface (the horns' height above the body, about two handle thicknesses)"
    },
    "hornT": {
     "value": 0.033,
     "unit": "m",
-    "basis": "stated reason: a competition bell's 33 mm handle"
+    "basis": "stated reason: a 33 mm handle and horns (a common kettlebell handle thickness)"
    },
    "neckW": {
     "value": 0.07,
     "unit": "m",
-    "basis": "stated reason: the horns flare to about 7 cm where they meet the body, seen from the side"
+    "basis": "stated reason: seen from the side the horns flare to about 7 cm where they meet the body"
    },
    "baseFlat": {
     "value": 0.6,
     "unit": "fraction",
-    "basis": "stated reason: the flat base cuts the body circle at 0.6 of its radius (a 17 cm flat on a 21 cm body)"
+    "basis": "stated reason: the flat base cuts the body circle at 0.6 of its radius (a 13 cm flat on a 16.2 cm body), so the bell can stand"
+   },
+   "handleW": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "claim: c2 'both hands next to each other on the handle': a handle 10 cm wide holds two hands side by side"
+   },
+   "density": {
+    "value": 7200,
+    "unit": "kg/m3",
+    "basis": "stated reason: grey cast iron, about 7.2 kg per litre (bellMass)"
+   }
+  },
+  "medicine_ball_slam": {
+   "PX_PER_M": {
+    "value": 134,
+    "unit": "px/m",
+    "basis": "stated reason (framing): the largest whole scale at which the start's ball overhead (its top 2.33 m up) stays under the plate's top margin with the floor at y 339; inside F1's 123.9-146.29 px/m"
+   },
+   "FOOT_X": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "claim: c1 'feet about shoulder-width apart' (ACE: hip-width): mid-soles 24 cm apart, nearer ACE's hip-width; the widest at which the rigid foot's contacts stay within 0.5 cm on the toes and in the deep squat (0.14 m gave 0.6 cm on the toes); the side view does not show the width"
+   },
+   "TOE_OUT": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "convention: a natural toe-out between kettlebell_swing's 17 and romanian_deadlift's 5 (#109), keeping the contacts within 0.5 cm; the card gives none"
+   },
+   "HEEL_UP": {
+    "value": 45,
+    "unit": "deg",
+    "basis": "convention: reverse_lunge.mjs:52 REAR_HEEL 45 (#109 @ dcac4a38), the rigid foot on its ball, for c2 'on your toes'"
+   },
+   "START_KNEE": {
+    "value": 2,
+    "unit": "deg",
+    "basis": "claim: c2 SL 'Extend your knees ... as tall as possible': knees 2 deg short of straight (extended, not hyper-extended)"
+   },
+   "END_ARM": {
+    "value": 0.97,
+    "unit": "fraction",
+    "basis": "claim: c3, c4 BodBot 'follow the slam down': the hands just over the ball's top, the arms 97 % of their straight length (not locked)"
+   },
+   "M_INCL": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "stated reason: c4 'arms only ... without bending the hips and knees': the trunk 10 deg forward over straight legs (a slam with no hip hinge)"
+   },
+   "M_FLEX": {
+    "value": 30,
+    "unit": "deg",
+    "basis": "stated reason: c4: the arms flung 30 deg in front of the trunk line at the end of an arms-only slam"
+   },
+   "END_INCL": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c5 ACE 'the spine and shin angles remain parallel': the trunk's inclination equals the shin's, solved with the balance and END_ARM"
+   },
+   "END_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "balance (D-LIB22-BALANCE): the end pose's root z that puts the Winter centre of mass over mid-foot"
+   },
+   "trace": {
+    "value": "grips",
+    "unit": "point",
+    "basis": "claim: c3 'slam the medicine ball straight down between your feet': the hands on the ball (NOTE RULED 6)"
+   },
+   "VIA_N": {
+    "value": 5,
+    "unit": "count",
+    "basis": "claim: c3 ACE 'Explosively bring the ball down over your head to throw it directly downwards into the floor': five via keys on one arc about the shoulder, so the hands' path follows the arc in front (the middle one is the ghost; D-LIB22-CYCLE)"
+   },
+   "BALL_KG": {
+    "value": 4.5,
+    "unit": "kg",
+    "basis": "claim: c11 'start with the 10-pound ball' (4.5 kg), for the start's balance with the ball overhead"
+   },
+   "BODY_KG": {
+    "value": 75,
+    "unit": "kg",
+    "basis": "convention: lb7/sizes.json weighted_dip BODY_KG 75 (#299 @ 5a9f004c), the 1.75 m figure's mass"
+   },
+   "START_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c2 'hips slightly forward, and on your toes' with D-LIB22-BALANCE: the hips' offset in front of the ankles that puts the centre of mass (the 4.5 kg ball overhead included) over the forefoot (between the balls and the toes)"
+   }
+  },
+  "medBall": {
+   "d": {
+    "value": 0.23,
+    "unit": "m",
+    "basis": "claim: c11 'start with the 10-pound ball': a 4.5 kg slam ball is about 23 cm (9 in) across (stated, not on the card)"
+   },
+   "seam": {
+    "value": 0.12,
+    "unit": "fraction",
+    "basis": "stated reason: the seam lens's half-height, 12 % of the radius, so the ball reads as a ball, not a disc"
+   },
+   "seamTilt": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated reason: the seam turned 20 deg off level so it reads as a moulded seam and not as a horizon line"
+   }
+  },
+  "sled_push": {
+   "PX_PER_M": {
+    "value": 126,
+    "unit": "px/m",
+    "basis": "stated reason (framing, D-LIB22-SIZE): the largest whole scale at which the scene, from the driving foot's heel to the sled's front (about 2.6 m), fits the 358 px plate inside its 16 px margins; inside F1's 123.9-146.29 px/m"
+   },
+   "TRUNK_INCL": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "claim: c3 BarBend 'lean forward so that your spine is parallel to the ground' (a segment angle to the floor, held by a check, D-LIB22-FACTS)"
+   },
+   "HIP_Y": {
+    "value": 0.8,
+    "unit": "m",
+    "basis": "stated reason: the hip joints 0.80 m up, a stride stance with the stance knee bent (about 84 deg at the start) under a level trunk; with straight level arms it puts the hands 0.80 m up, the posts' middle"
+   },
+   "HEEL_UP": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "claim: c8 'only the balls of your feet make contact with the ground', 'Your heel should never touch the ground': the largest heel-up of the engine's rigid foot (no toe joint) whose ball stays within the 1 cm contact tolerance (0.9 cm), the heel then 5.7 cm up (reverse_lunge.mjs:52's method)"
+   },
+   "FAR_DZ": {
+    "value": -0.12,
+    "unit": "m",
+    "basis": "claim: c12 'Start with your feet underneath or just behind your hips' (a choice; the plate draws 'just behind'): the stance foot's ball 12 cm behind the hip joints"
+   },
+   "REAR_KNEE": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "claim: c12 'drive one foot into the ground': the driving leg extended back, the knee 10 deg short of straight (not locked)"
+   },
+   "FRONT_DZ": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "claim: c10 'short, powerful steps' and plate.end 'the rear foot driven through to the front': the ball lands 10 cm in front of the hips (a short step, about 0.65 m of travel)"
+   },
+   "POST_X": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "stated reason: the push sled's posts 50 cm apart, outside the shoulders (the hands on the posts, c1)"
+   },
+   "M_ROLL": {
+    "value": 25,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:87 M_ROLL 25 (the 8's approved rounding), for c7 'a rounded back'"
+   },
+   "FOOT_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: reverse_lunge.mjs:48 FOOT_X 0.10 (#109), the stride's hip-width; the side view does not show it"
+   },
+   "HUMP": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: romanian_deadlift.mjs's HUMP guide (#109 @ dcac4a38): a dashed arc for the rounded back, its control point twice HUMP above the sacrum-neck chord (the curve's apex HUMP above it)"
+   },
+   "VIA_LIFT": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "claim: c8 GGR 'focus on driving the knees higher': the swinging foot's ball 12 cm up as it comes through (the ghost only)"
+   },
+   "M_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "the Mistake's root z: the straight arms still reach the hands on the posts after the rounding (the hands do not move)"
+   },
+   "trace": {
+    "value": "ball.r",
+    "unit": "point",
+    "basis": "claim: plate.end 'the rear foot driven through to the front on the ball of the foot' (c8, c10)"
+   }
+  },
+  "sled": {
+   "len": {
+    "value": 0.8,
+    "unit": "m",
+    "basis": "stated reason: a push sled about 80 cm long"
+   },
+   "bodyT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: the skid body's 6 cm steel tube"
+   },
+   "bodyY": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the body's centre 10 cm off the floor on the runners"
+   },
+   "runnerT": {
+    "value": 0.04,
+    "unit": "m",
+    "basis": "stated reason: 4 cm runners on the floor"
+   },
+   "strutT": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: 3 cm struts from the runners up to the body"
+   },
+   "strutIn": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: the struts 6 cm in from each end of the body"
+   },
+   "postT": {
+    "value": 0.035,
+    "unit": "m",
+    "basis": "stated reason: 35 mm posts, a hand's grip"
+   },
+   "hornH": {
+    "value": 0.36,
+    "unit": "m",
+    "basis": "stated reason: a 36 cm loading horn"
+   },
+   "hornT": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason: a 50 mm horn (bumper plates fit it)"
+   },
+   "plateD": {
+    "value": 0.45,
+    "unit": "m",
+    "basis": "convention: equipment.mjs:261, the vendor barbell's 45 cm plate"
+   },
+   "plateT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: a 6 cm bumper plate"
+   },
+   "plates": {
+    "value": 2,
+    "unit": "count",
+    "basis": "claim: c17 'Load the sled': two plates"
+   },
+   "bracket": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "D-LIB22-FRAME: each post joined to the body by a 12 cm gusset (no free-floating handle)"
+   },
+   "hitchW": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "stated reason (pull form): an 8 cm bracket on the body's front edge for the rope hitch (D-LIB22-FRAME: the hitch joined to the sled)"
+   },
+   "hitchH": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason (pull form): the bracket 6 cm tall"
+   },
+   "ringR": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "stated reason (pull form): a 5 cm ring on the bracket, where the rope starts"
+   }
+  },
+  "jump_rope": {
+   "FOOT_X": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "claim: c4 'your feet together': mid-soles 10 cm apart, the feet's inner edges touching (the foot is 9.6 cm wide)"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c10 'Keep your knees slightly bent'"
+   },
+   "HOP": {
+    "value": 0.038,
+    "unit": "m",
+    "basis": "claim: c9 'roughly 1-2 inches off the ground': the midpoint, 1.5 in (the range is 1 in wide: a size, not a fact, PANELS.md 7)"
+   },
+   "M_HOP": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: c9 'you aren't in a high jump competition': a jump about four times c9's 2 in top, the height of a tuck-free vertical hop (NOTE RULED 5)"
+   },
+   "HAND_OUT": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "claim: c8 'only slightly away from your body': the grip centres 12 cm outside the hip joints (about 2 cm off the thigh's outline)"
+   },
+   "HAND_FWD": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "claim: c5 Elevate 'the hands sit a little in front of the hips': 5 cm in front of the hip joints"
+   },
+   "OVER_CLEAR": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "claim: plate.frames 'the rope overhead' with c4 'Swing the rope overhead': the rope's apex 10 cm over the head"
+   },
+   "UNDER_W": {
+    "value": 0.32,
+    "unit": "m",
+    "basis": "stated reason: under the feet the rope's loop bows 32 cm out from the midline, outside the legs and the hands (the loop turns out of the frontal plane, so its drawn arc is shorter than the rope)"
+   },
+   "FLOOR_GAP": {
+    "value": 0.004,
+    "unit": "m",
+    "basis": "claim: c9 'just enough for the jump rope to pass gracefully under your feet': the rope's centre line 4 mm up, its 5 mm strand just over the floor"
+   },
+   "ROPE_LEN": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c1 'If the ends of the handles touch your armpits, the rope is the right size': twice the armpit's height (the shoulder joint less the upper arm's proximal radius) less a handle, plus the feet's width"
+   },
+   "OVER_W": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c1 (the rope's length): the overhead arc's width that makes the drawn arc the rope's length"
+   },
+   "trace": {
+    "value": "sole.r",
+    "unit": "point",
+    "basis": "claim: c9 'just enough for the jump rope to pass gracefully under your feet' (plate.frames 'the turn is not traced')"
+   }
+  },
+  "jumpRope": {
+   "handleLen": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: a 15 cm skipping-rope handle"
+   },
+   "handleT": {
+    "value": 0.026,
+    "unit": "m",
+    "basis": "stated reason: a 2.6 cm handle, inside the fist"
+   },
+   "ropeT": {
+    "value": 0.005,
+    "unit": "m",
+    "basis": "stated reason: a 5 mm speed rope"
    }
   }
  }

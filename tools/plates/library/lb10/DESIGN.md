@@ -11,10 +11,9 @@ Nothing here ships (D-LIB22-AHEAD): every LB10 row stays at stage `drawing` or `
 `batches/`; `tests/howto/lb10-plates.test.ts` A9 enforces it. rows.json holds only drawn, non-held ids with a tempo
 strip (A5; D-LIB22-SECS). mountain_climbers (LB10's thirteenth row) is pilot A's plate (pA) and is in no LB10 file.
 
-Status of this note: the first version, posted as 'LB10 NOTE READY'. Values marked **measured (prototype)** come from
-the engine (renderPlate report, the tell-anchor move end → Mistake, the Trace path) on a local kettlebell_swing
-prototype (its spec and `kettlebell` composer land with the slice, where they are measured again at that head);
-values marked [est] are estimates. QA evidence comes only after Do 6's verdict (Do 2).
+Status of this note: ruled ('LB10 NOTE RULED', #305 6355155831: Q1-Q9 accepted with the limits recorded in section 17);
+updated with the slice. Values marked **measured** come from the engine (renderPlate report, qa/node.mjs `deviation`,
+the Trace path, the Winter centre of mass in the tests) on the slice at this head; values marked [est] are estimates. QA evidence comes only after Do 6's verdict (Do 2).
 
 ## 1. Engine and modes
 
@@ -84,7 +83,8 @@ Each composer is `(params) => item[]` returning PRIMITIVES types only (equipment
   equipment.mjs:300; A2 mutation). Moving (overhead → floor; and wall_ball's chest → squat), so `poly`. The hands hold
   it at its sides in the overhead start (c15), and at the end the ball rests on the floor (the lowest outline point on
   the floor line, ±1 px, A18).
-- **`sled`** (eq/sled.mjs; two users, both in LB10, anchor sled_push; slice draws the push form). Parts (side view):
+- **`sled`** (eq/sled.mjs; two users, both in LB10, anchor sled_push; slice draws the push form; sled_pull's drag moves
+  the whole sled by the hips' displacement between its start and end, NOTE RULED 9). Parts (side view):
   the sled body (a low skid, `sideBar`), two runners under it (`sideBar`, on the floor line: their lowest points on
   y 0), the loading horn with plates (`sideBar` peg and plates as `poly` rectangles), and the two upright posts
   (`sideBar`, the near post z `mid`, the far post z `back`) rising from the body's rear edge, each joined to the body
@@ -159,8 +159,8 @@ Every anchor gates the plate's sheet, not its drawing (plan 3.1:293-299). None i
 - **Before Do 6 b** every drawn id also shows `H6:no-card` and F7 'no card top fault' (qa/node.mjs:360). Expected.
 - F2 (coverage), F3 (longest leader) and F4 (boxed labels) are measured by authoring QA and posted; any raised flag
   outside this set is posted with its value and range and ruled before READY. [est] F2 risk on battle_ropes (two long
-  ropes to the plate edge) and kettlebell_swing (the swing arc and the hike); measured (prototype) kettlebell_swing
-  coverage 0.176, inside 0.100-0.246.
+  ropes to the plate edge) and kettlebell_swing (the swing arc and the hike); measured kettlebell_swing coverage
+  0.167 (report.mjs), inside 0.100-0.246.
 
 ## 6. R10 items (tier A: farmer_s_carry, medicine_ball_slam, wall_ball, kettlebell_swing)
 
@@ -341,27 +341,27 @@ ids' rows are written with the slice, and the bulk rows below are proposals [pro
 | kettlebell_swing | END_PHI | solved 83.4° | c9 "about chest height": the bell centre at the chest landmark's height |
 | kettlebell_swing | END stack | root over the ankles, knees 0 | c8 "vertically stacked with your ankles, knees, hips, and shoulders all in alignment"; HK "pulling your kneecaps up strongly" |
 | kettlebell_swing | M_TILT, M_ARCH | −14°, −12° | hanging_leg_raise.mjs:69 (the 8's approved arch and lean: tilt −14, trunk −12), for c14 "leaning backward at the top" |
-| kettlebell_swing | BELL_KG, BODY_KG | 16 kg, 75 kg | c25 (McGill's 16 kg bell); BODY_KG lb7/sizes.json weighted_dip (#299) |
-| kettlebell | bodyD, reach, hornT, neckW | 0.21, 0.19, 0.033, 0.07 m | stated: a 16 kg competition bell (21 cm body, about 28 cm tall, 33 mm handle); the handle centre 19 cm from the body centre |
+| kettlebell_swing | BELL_KG (solved), BODY_KG, TOP_KNEE | 16.04 kg, 75 kg, 1° | the drawn bell's mass (bellMass, NOTE RULED 7) sized to c25's 16 kg; lb7/sizes.json weighted_dip (#299); c8 HK knees straight |
+| kettlebell | bodyD, reach, hornT, neckW, baseFlat, handleW, density | 0.162, 0.151, 0.033, 0.07 m; 0.6; 0.10 m; 7.2 kg/L | stated: a solid cast-iron bell of c25's 16 kg (sizes.json bases); bellMass gives 16.04 kg |
 | medicine_ball_slam | BALL_D | 0.23 m | stated: a 4.5 kg (10 lb, c11) slam ball about 9 in across |
-| medicine_ball_slam | FOOT_X | 0.18 m | upright_row.mjs:44 for c1 "about shoulder-width" |
+| medicine_ball_slam | FOOT_X, TOE_OUT | 0.12 m, 10° | c1 (shoulder-width / ACE hip-width); the widest whose rigid-foot contacts stay within 0.5 cm |
 | medicine_ball_slam | START on toes | heel-up 45°, the toe pad on the floor | reverse_lunge.mjs:52 REAR_HEEL 45 (#109) for c2 "on your toes" |
-| medicine_ball_slam | START arms | straight, the ball's centre plumb over the shoulders | barbell_overhead_press (#109) lockout; c2 "ball overhead, arms up" |
-| medicine_ball_slam | START_HIP | hips 4 cm forward of the ankles | c2 "hips slightly forward" (stated: a visible "slightly", under the 5 cm of D-LIB16-LOCK's slight conventions) [proposed] |
-| medicine_ball_slam | END | the ball on the floor between the feet, the hands on it; trunk incl solved (back flat, c5), knees from the solve | c3, c4, c5, c6 |
-| medicine_ball_slam | M (Mistake) | knees 0, hips extended to the trunk's line, the arms down to the ball's top released | c4 "arms only ... without bending the hips and knees" (stated: the opposite of c3/c4's bend) |
+| medicine_ball_slam | START arms, START_KNEE | straight, the hands on the ball's sides; 2° | barbell_overhead_press (#109) lockout; c2 "ball overhead, arms up", "Extend your knees" |
+| medicine_ball_slam | START_Z (solved), BALL_KG, BODY_KG | 0.181 m; 4.5 kg; 75 kg | c2 "hips slightly forward ... on your toes": balanced over the forefoot with the ball overhead; c11's 10-pound ball |
+| medicine_ball_slam | END_ARM; END_INCL, END_Z (solved); VIA_N | 0.97; 41.6°, −0.19 m; 5 | c3, c4 (the hands follow the slam down); c5 ACE spine parallel to the shin; balance; c3's arc |
+| medicine_ball_slam | M_INCL, M_FLEX | 10°, 30° | c4 "arms only ... without bending the hips and knees" (stated) |
 | sled_push | TRUNK_INCL | 90° | c3 BarBend "your spine is parallel to the ground" (held by a check) |
-| sled_push | HANDLE_Y | solved: the shoulder's height | c3 SL "shoulders straight behind your hands"; arms straight (BarBend "locked") |
-| sled_push | POST span | the grip at the post's middle | c1 "about halfway down" |
-| sled_push | HEEL_UP | 45° | reverse_lunge.mjs:52 REAR_HEEL 45 for c8 "only the balls of your feet" |
-| sled_push | STRIDE | 0.45 m (the near ball's travel) | stated: c10 "short, powerful steps": about half a walking step (0.9 m at 1.75 m) [proposed, slice] |
+| sled_push | HIP_Y, POST_X | 0.80 m, 0.25 m | stated (sizes.json); the hands level with the shoulders (c3), at the posts' middle (c1) |
+| sled_push | FAR_DZ, REAR_KNEE, FRONT_DZ, VIA_LIFT | −0.12, 10°, 0.10, 0.12 m | c12 (just behind the hips), c12 (driving leg), c10 (short steps), c8 (knees high) |
+| sled_push | HEEL_UP | 15° | c8: the largest heel-up whose ball stays within the 1 cm contact (0.9 cm), heels 5.7 cm up |
+| sled_push | PX_PER_M, HUMP, M_Z (solved) | 126 px/m, 0.06 m | framing (the scene's width); romanian_deadlift's HUMP guide; the Mistake's arms still reach the posts |
 | sled_push | M_ROLL | 25° lumbar flexion | leg_press.mjs:87 (the 8's rounding, M_ROLL 25) for c7 "a rounded back" |
-| sled | body, runners, posts, horn, plates | (sizes.json) | stated: a push sled about 1.0 m long, 15 cm body, posts to 1.4 m |
+| sled | len, body, runners, struts, posts, horn, plates, bracket, hitch | (sizes.json) | stated: a push sled 80 cm long, posts to 1.47 m (solved from the grip at their middle) |
 | jump_rope | HOP | 0.038 m (1.5 in) | c9 "1 to 2 inches": the midpoint (the range is 1 in wide, under PANELS.md 7's 4: a size, not a fact) |
 | jump_rope | KNEE_SOFT | 15° | leg_press.mjs:13, :23 ("knees 15 deg short of lockout") for c10 "slightly bent" |
-| jump_rope | HAND place | hip height, 8 cm out and 5 cm in front | c5, c8 "hip height ... slightly away from your body ... a little in front of the hips" (stated) |
+| jump_rope | HAND_OUT, HAND_FWD, FOOT_X | 0.12, 0.05, 0.05 m | c8, c5 Elevate, c4 |
 | jump_rope | M_HOP | 0.15 m | stated: c9 "you aren't in a high jump competition": four times c9's 2 in top, a tuck-free jump [proposed] |
-| jumpRope | ROPE_LEN, handle | from c1; handle 15 cm | c1 (armpit sizing); stated handle length |
+| jump_rope, jumpRope | ROPE_LEN, OVER_W (solved); OVER_CLEAR, UNDER_W, FLOOR_GAP; handleLen, handleT, ropeT | c1's length, the overhead arc as long as the rope; 0.10, 0.32, 0.004 m; 0.15, 0.026, 0.005 m | c1, c4, c9 (sizes.json) |
 | all side-view soft knees | KNEE_SOFT | 15° | leg_press.mjs:13, :23 (D-LIB16-LOCK's rule) for sled_pull c2, burpee c11, high_knees c1/c4, battle_ropes c2 [proposed] |
 | sled_pull | ELBOW_BEND | 18° | machine_chest_press.mjs:45 for c1 "arms slightly bent" [proposed] |
 | sled_pull, high_knees | M_TILT, M_ARCH | −14°, −12° | hanging_leg_raise.mjs:69 for c8 "pitch your torso back" and c5 "arch into your back" [proposed] |
@@ -379,11 +379,11 @@ Balance: the Winter (2009) centre of mass (single_leg_romanian_deadlift.mjs:19-3
 landmarks, plus any carried load at its contact. Test: inside the base where it spans two contacts; ±2 cm where it is
 a point. Bases, each with its claim:
 
-| id | pose(s) | base (claim) | measured (prototype) |
+| id | pose(s) | base (claim) | measured at this head |
 |---|---|---|---|
-| kettlebell_swing | start, via, end, Mistake | the feet, heel to toe (c1), with the 16 kg bell at its centre (c25) | start −0.077 m (solved over the ankle, c17), via −0.077, end +0.097, Mistake −0.006 (heel −0.115, toe +0.126) |
-| medicine_ball_slam | start, end, Mistake | the feet (c1), the ball at the hands overhead (c2); at the end the ball rests on the floor (not carried) | [est] inside |
-| sled_push | start, end, Mistake | between the stance foot's ball and the hands on the posts (c1, c3, c12): the sled takes the lean | [est] inside |
+| kettlebell_swing | start, via, end, Mistake | the feet, heel to toe (c1), with the drawn bell (16.04 kg, bellMass) at its centre | start −0.077 m (solved over the ankle, c17), via −0.077 / −0.077, end +0.090, Mistake −0.012 (heel −0.115, toe +0.126); body alone +0.012 / −0.094 / −0.182 / −0.043 / −0.129 (logged) |
+| medicine_ball_slam | start, end, Mistake | on the toes the forefoot (ball to toe; c2), the 4.5 kg ball overhead in the hands; flat feet heel to toe at the end and in the Mistake (the ball on the floor, not carried) | **measured**: start +0.093 m (solved over the forefoot, ball +0.061 to toe +0.124: START_Z), end +0.014, Mistake −0.021 (heel −0.117, toe +0.131) |
+| sled_push | start, end, Mistake | between the stance foot's ball and the hands on the posts (c1, c3, c12): the sled takes the lean | **measured**: inside in every pose (a test) |
 | jump_rope | start | both feet (c4) | [est] inside; the hop is airborne: logged only (plan 2.2:157) |
 | sled_pull | all | the feet, with the rope's light tension (c1, c2) | bulk |
 | farmer_s_carry | all | the stance foot, or both feet in the step, with both dumbbells (c3, c8) | bulk |
@@ -415,10 +415,10 @@ Trace points (sizes.json `trace` rows):
 
 | id | Mistake: largest tell-anchor move, end → Mistake | Trace |
 |---|---|---|
-| kettlebell_swing | **measured (prototype) 26.7 px** (the shoulders; the ear 41.6 px) | **measured (prototype) about 186 px** (the handle's arc) |
-| medicine_ball_slam | [est] over 40 px (the hips rise to standing) | [est] about 250 px |
-| sled_push | [est] 14 px (the upper back, 25° lumbar flexion about the pivot with the hands fixed) | [est] 66 px (0.45 m) |
-| jump_rope | [est] 16 px (the feet, 0.15 − 0.038 m) | [est] **5.6 px** (the hop, 3.8 cm at 146.29 px/m): **below traceLenMin**, held (S2) |
+| kettlebell_swing | **measured 49.7 px** (tell `lean` on the head) | **measured 186.3 px** (the handle's arc) |
+| medicine_ball_slam | **measured 88.1 px** (the hands; at 134 px/m) | **measured 315.5 px** |
+| sled_push | **measured 34.7 px** (tell `line` on the dropped head; `round` sits on the rounded-back arc, a fixed point) | **measured 45.9 px** (the driving foot's ball; at 126 px/m) |
+| jump_rope | **measured 16.4 px** (the feet, 0.15 − 0.038 m) | **measured 5.3 px** (the hop, 3.8 cm at 146.29 px/m): **below traceLenMin**, held (S2) |
 | sled_pull | [est] over 20 px | [est] about 45 px |
 | farmer_s_carry | [est] about 50 px (the stepping foot) | [est] about 50 px |
 | burpee | [est] **5-7 px** (the knee, 15° → 0°): **likely below deviationMin**, held (S2) | [est] over 100 px |
@@ -453,7 +453,7 @@ kettlebell_swing has a strip from the start; the other three render only from `l
 | sled_push, sled_pull, farmer_s_carry, burpee, medicine_ball_slam | D-LIB22-SECS (D-LIB14-NOSECS) | tempo null, no quote states seconds of a drawn phase | the strip card on main, then 'LIB-22 resume' |
 | wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); tempo null | #289 on main, then 'LIB-22 resume' (drawn); the strip card for its row |
 | any cycle row whose constant is not ruled | D-LIB22-SECS | | the ruling or the strip card |
-| jump_rope [est] | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1-2 in) gives a Trace under traceLenMin | LIB-ZOOM (#279) on main, extended to the motion |
+| jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px** < 22.11 px (measured); its Mistake passes (16.4 px) | LIB-ZOOM (#279) on main, extended to the motion |
 | burpee, battle_ropes, bear_crawl [est] | D-LIB8-shrug (S2) | Mistake or Trace likely under the minimum (section 13) | LIB-ZOOM |
 
 Held rows are in no rows file; their specs, tests and card keys stay. Each is confirmed or cleared by measurement.
@@ -463,7 +463,7 @@ Held rows are in no rows file; their specs, tests and card keys stay. Each is co
 1. **Small motions** (jump_rope's hop, bear_crawl's 2-inch step, battle_ropes' shoulder blades, burpee's knee bend):
    held under D-LIB8-shrug with the LIB-ZOOM route; never enlarged.
 2. **Ballistic balance** (kettlebell_swing): with the bell hiked far back, a static balance puts the hips only about
-   12 cm behind the ankles; the prototype balances the hike over the ankle (c17, heels) and the top stacked over the
+   12 cm behind the ankles; the plate balances the hike over the ankle (c17, heels) and the top stacked over the
    ankles inside the base (+0.097 m, toe +0.126 m). If the critic reads the hike as too upright, the conflict between
    "hips pushed back" (c6) and a static balance is posted as S3 with the numbers; never moved off the card.
 3. **The hike behind the top** (kettlebell_swing): the dashed start (the hinge, the plate's first two checkpoints)
@@ -482,7 +482,7 @@ Held rows are in no rows file; their specs, tests and card keys stay. Each is co
 9. **CI RPC**: the test file carries the afterEach yield, the per-spec yield and the child-process renders from its
    first commit (D-LIB22-TESTS).
 
-## 17. Questions for the supervisor ('LB10 NOTE RULED')
+## 17. Questions for the supervisor (ruled: 'LB10 NOTE RULED', #305 6355155831)
 
 1. The tempo map (section 7, `lb10/tempo.json`): kettlebell_swing's Drive/Swing down; the five cycle constants, in
    particular jump_rope's Rest 60 ("1 minute") and the range strings' en dash.
@@ -498,3 +498,19 @@ Held rows are in no rows file; their specs, tests and card keys stay. Each is co
 7. The balance bases (section 12), in particular kettlebell_swing's over the ankle (c17).
 8. wall_ball's Mistake drawn against the squat bottom (section 8).
 9. sled_pull's static sled with the lifter stepping back (risk 7).
+
+**Ruled (#305 6355155831), and what the slice does with it:**
+1. Tempo: accepted. jump_rope keeps Rest 60 (its quote states "followed by 1 minute of rest"); no other card has a Rest.
+2. Pose map: identity for 11; burpee per D-LIB22-POSEMAP.
+3. Fault keys, the F7 keys and the one-tell records: accepted as named flags.
+4. Facts: medicine_ball_slam's toes at the start only; sled_push's balls of the feet at start and end ("Your heel should
+   never touch the ground" counts as throughout); burpee's palms through the map; kettlebell_swing c13 not a fact.
+5. Sizes: accepted on the usual terms (sizes.json both ways, no PQ-H3 basis).
+6. Trace points: accepted with their claim bases (sizes.json `trace` rows).
+7. Balance: kettlebell_swing's balance includes the **drawn bell's mass** at its centre: the bell's mass now comes from
+   its drawn size (eq/kettlebell.mjs `bellMass`, cast iron, 16.04 kg; the drawn bell resized to 16.2 cm so its mass is
+   c25's 16 kg), and the centre of mass stays inside the heel-toe base in start, both via poses, top and Mistake
+   (measured in section 12; a test).
+8. wall_ball's Mistake against the squat bottom, if its claim names the bottom: checked at its resume (c3, c4).
+9. sled_pull is a drag: in the end pose the sled moves in the walking direction by the hips' displacement, so the rope's
+   length and its light tension stay constant; the Trace follows the stepping foot (bulk).
