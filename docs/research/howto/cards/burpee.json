@@ -1003,5 +1003,22 @@
   "Jump-height conflict: BarBend says not to jump as high as you can; Fitness Volt and PureGym say jump as high as you can (c17). No shown line gives a jump height; the jump is not drawn.",
   "Stop lines: the knee row's stop rests on Motra's \"Stop if pain in knees or back occurs\" and the wrist row's on PureGym's \"If you experience pain or don't feel comfortable when performing this exercise, please stop ...\" (c22), both fetched verbatim (R-LB3-4, R-LB6-6). PureGym's referral clause is research data only and is never shown (LR-27); the rows link the shared knee and wrist boxes.",
   "Read but not cited: none. Tried and not usable: NASM exercise library (404), StrengthLog (429), Verywell Fit (402), Garage Gym Reviews, Men's Health and Muscle & Fitness burpee URLs (404), Healthline fitness-exercise/burpees (404), NASM blog (404)."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "end",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "end",
+   "claim": "c2"
+  }
+ ],
+ "topFault": "rush"
 }

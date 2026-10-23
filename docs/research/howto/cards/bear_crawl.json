@@ -568,5 +568,29 @@
     "Wrist zoom shows the right position only (LR-25): no source names a wrong hand position.",
     "Fix round 2026-10-02 (verify w0): A4 feel row 4 fix emptied (no sourced stop line); A5 abs and obliques added as drawn primary regions with BarBend quotes in c9.",
     "LB10 pass 2026-10-22 (LR-31, LR-33, LB7 shown-line checks): all four sources re-fetched by curl; four BarBend quotes now use the page's ’; c6, c8 and c12 texts trimmed to their quotes; rankNote rewritten under LR-31 (tie after step 3, LR-36 keeps the pick); handlingMistakes reordered (hips rise, back arch, hip sway: the arch is tied to harm, c7); risks[1] and handlingMistakes[1] say \"back\", not \"lower back\" (c7 says \"arch your back\"); zooms[0] right drops \"flat\" (no quote says the palm is flat; c3 \"Drive palms into the floor\"). Parent in content.md Appendix A: mountain_climbers; full card, parent null, no inherit entries, every line on its own claims."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Work",
+      "s": "15–30",
+      "move": true
+    }
+  ],
+  "topFault": "hips"
 }
