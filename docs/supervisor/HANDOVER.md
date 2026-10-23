@@ -890,6 +890,15 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 12:00 UTC (10-23)** (usage 7-day 0.59):
+- **Panel verdicts** (recorded in lib4-cards §32-33 on cards `52a9bec2`):
+  - **LB10 (#305): all 3 drawn rows APPROVED.** kettlebell_swing @ d721f023 (byte-identical at a9c64e11); battle_ropes and high_knees @ `a9c64e11`, page `22b7d177…`.
+  - **LB8 (#306): hack_squat APPROVED @ `14ee85c4`**, page `ca51e441…`.
+  - Both runs were VALID. pull_up's follow-up 22 was excepted both times. One panel covered two batches.
+- **Next:** 'LIB-22 READY' and 'LIB-18 READY'. Both builders are running the full checks (LIB-18's local gate started at 10:56). Then a fresh Opus reviewer for each.
+- **Lesson:** critics give leader lengths in 780 px image pixels; halve them for the 390 px limits.
+- **Active LIB builders: 2** (LIB-18, LIB-22).
+
 **Update 09:00 UTC (10-23)** (usage 7-day 0.57):
 - **GATE-FLAKE-5 merged** (#292 → main `0f1f73de`; 17/17 green; it changed no app code, so there is no APK). AGENTS.md's fourth exception went in with it.
 - **LB10 fields merged into research** (#308 → `657eb4e5`).
