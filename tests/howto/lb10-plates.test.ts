@@ -287,6 +287,14 @@ const itemsIn = (spec: any, pose: string, { mistake = false } = {}) => {
   return { items: out, lm };
 };
 const lmOf = (spec: any, pose: string) => qaEng.poseLandmarks(Eng(), spec).lm[pose];
+/** D-LIB22-STANCE amended (#305 6357040314): each stance is the widest the engine's rigid-foot plant holds within its
+ *  0.5 cm contact limit. `widen` moves every planted foot dx further out, in every pose (via and Mistake included). */
+const footErr = (spec: any) => { const c = plate.renderPlate(spec, { id: 'x' }).report.contacts; return Math.max(...Object.values(c).flat().filter((x: any) => x.kind === 'foot').map((x: any) => x.errCm)); };
+const widen = (spec: any, dx: number) => {
+  const w = (p: any) => (p?.plant ? { ...p, plant: Object.fromEntries(Object.entries(p.plant).map(([sd, f]: any) => [sd, { ...f, at: [f.at[0] + Math.sign(f.at[0]) * dx, f.at[1], f.at[2]] }])) } : p);
+  return { ...spec, poses: { start: w(spec.poses.start), via: (spec.poses.via ?? []).map(w), end: w(spec.poses.end) }, mistake: { ...spec.mistake, pose: w(spec.mistake.pose) } };
+};
+
 /** 3D solids for body-vs-body and implement-vs-body checks (#305 6356763967 items 2, 3): segments as capsules of
  *  radius RADII × H (vendor/engine/body.mjs:28), the foot a heel–toe capsule of half-width WINTER.footW·H/2. */
 const H3D = 1.75;
@@ -405,6 +413,11 @@ describe('LIB-22 A2 / A18: kettlebell_swing and `kettlebell` (tier A; the slice)
     }
     return worst;
   };
+  it('D-LIB22-STANCE: FOOT_X 0.18 keeps every foot plant contact within 0.5 cm; mutation: 1 cm wider is red', () => {
+    expect(M.kettlebell_swing.SIZES.FOOT_X).toBe(0.18);
+    expect(footErr(s())).toBeLessThanOrEqual(0.5);
+    expect(footErr(widen(s(), 0.01))).toBeGreaterThan(0.5);
+  });
   const HIKE_CAP = -(0.111 + 0.005);
   it('D-LIB22-HIKE3D: the arm/thigh overlap stays within 11.1 + 0.5 cm in the start and both vias (body against body only)', () => {
     const vals = [lmOf(s(), 'start'), ...s().poses.via.map((v: any) => eng.landmarksOf(v, H3D))].map(armThigh);
@@ -511,7 +524,7 @@ describe('LIB-22 A2 / A18: medicine_ball_slam and `medBall` (tier A; NOSECS; the
   const ballOf = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((i: any) => i.part === 'ball');
   const centre = (pts: number[][]) => [0, 1, 2].map(i => pts.reduce((a, p) => a + p[i]!, 0) / pts.length);
 
-  /** D-LIB22-STANCE (#305 6356835486 2): the ball on the floor at the end and in the Mistake clears each foot and shank
+  /** D-LIB22-STANCE amended (#305 6357040314 (c)): the ball on the floor at the end and in the Mistake clears each foot and shank
    *  in 3D (D-LIB22-FRAME allows 1 cm). Returns the clearances (cm) below that limit. */
   const ballClear = (spec: any) => {
     const R = body.RADII, W = body.WINTER.footW * H3D / 2, out: string[] = [];
@@ -524,13 +537,17 @@ describe('LIB-22 A2 / A18: medicine_ball_slam and `medBall` (tier A; NOSECS; the
     }
     return out;
   };
-  it('3D: the ball clears both feet and shanks at the end and in the Mistake (FOOT_X 0.227, c1 shoulder-width)', () => {
+  it('3D: the ball (BALL_DZ 7 cm in front of mid-foot) clears both feet and shanks at the end and in the Mistake', () => {
     expect(ballClear(s())).toEqual([]);
   });
-  it('mutation: the feet at ±0.12 m (the former stance) put the ball inside the shanks: red', () => {
-    const narrow = (p: any) => ({ ...p, plant: Object.fromEntries(['l', 'r'].map(sd => [sd, { ...p.plant[sd], at: [Math.sign(p.plant[sd].at[0]) * 0.12, p.plant[sd].at[1], p.plant[sd].at[2]] }])) });
-    const bad = { ...s(), poses: { ...s().poses, end: narrow(s().poses.end) }, mistake: { ...s().mistake, pose: narrow({ ...s().poses.end, ...s().mistake.pose }) } };
-    expect(ballClear(bad).length).toBeGreaterThan(0);
+  it('mutation: the ball centred on mid-foot (BALL_DZ 0) sits inside the shanks: red', () => {
+    const back = { ...s(), equipment: s().equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && (ctx.pose === 'end' || ctx.pose === 'mistake') ? [].concat(r).map((it: any) => (it?.part === 'ball' ? { ...it, pts: it.pts.map((p: number[]) => [p[0]!, p[1]!, p[2]! - 0.07]) } : it)) : r; } : e)) };
+    expect(ballClear(back).length).toBeGreaterThan(0);
+  });
+  it('D-LIB22-STANCE: FOOT_X 0.13 keeps every foot plant contact within 0.5 cm; mutation: 1 cm wider is red', () => {
+    expect(M.medicine_ball_slam.SIZES.FOOT_X).toBe(0.13);
+    expect(footErr(s())).toBeLessThanOrEqual(0.5);
+    expect(footErr(widen(s(), 0.01))).toBeGreaterThan(0.5);
   });
   const ballTypeProblems = (spec: any) => ['start', 'end', 'mistake'].flatMap(pose => { const t = ballOf(spec, pose).map((i: any) => i.type); return JSON.stringify(t) === '["poly","poly"]' ? [] : [`${pose}: ${t.join(',')}`]; });
   it('the ball is a `poly` circle, never the vendor `pulley`; it moves (overhead → floor) and the Mistake view keeps it', () => {

@@ -440,7 +440,7 @@ Trace points (sizes.json `trace` rows):
 | id | Mistake: largest tell-anchor move, end → Mistake | Trace |
 |---|---|---|
 | kettlebell_swing | **measured 49.7 px** (tell `lean` on the head) | **measured 186.3 px** (the handle's arc) |
-| medicine_ball_slam | **measured 88.2 px** (the hands; at 134 px/m) | **measured 321.9 px** |
+| medicine_ball_slam | **measured 83.7 px** (the hands; at 134 px/m) | **measured 314.7 px** |
 | sled_push | **measured 34.7 px** (tell `line` on the dropped head; `round` on the Mistake back (`backMid`, Mistake pose)) | **measured 45.9 px** (the driving foot's ball; at 126 px/m) |
 | jump_rope | **measured 16.4 px** (the feet, 0.15 − 0.038 m) | **measured 5.3 px** (the hop, 3.8 cm at 146.29 px/m): **below traceLenMin**, held (S2) |
 | sled_pull | [est] over 20 px | [est] about 45 px |
@@ -585,8 +585,12 @@ Segments as capsules of radius RADII × H (body.mjs:28), the foot a heel–toe c
   geometric limit (forearm and thigh axes meeting, −11.85 cm), so the mutation lays a forearm along the thigh's axis.
   via0's bell sits 12.8 cm below the knees and clears the thighs by 11.4 cm; its basis is re-cited to c5 BarBend
   "sweep the kettlebell back between your legs" (3b).
-- **Stance (correction 6357040314).** D-LIB22-STANCE's 0.227 m fails the engine's rigid-foot plant (contact errors
-  0.6-1.6 cm, over the 0.5 cm limit); my S3 table had quoted spec checks, not plant contacts. Both stances stay at the
-  widest the plant allows (0.18, 0.12) pending the supervisor's call.
-- **medicine_ball_slam's ball.** At FOOT_X 0.12 with the ball centred: end foot −0.4, shank −2.4 cm; options and
-  numbers in 6357040314 (recommended: the ball 7 cm forward of mid-foot, still between the feet).
+- **Stance, D-LIB22-STANCE amended (6357040314, ruled).** 0.227 m failed the engine's rigid-foot plant (contact errors
+  0.6-1.6 cm, over the 0.5 cm limit; my first S3 table had quoted spec checks, not plant contacts). Each stance is the
+  widest the plant holds within 0.5 cm, pinned by a test with a 1 cm wider mutation: kettlebell_swing 0.18 (0.185:
+  0.6 cm); medicine_ball_slam 0.13 (0.13: 0.5 cm; 0.135: 0.6 cm), so the ruled "0.12" is corrected to the measured
+  limit and its 1 cm wider mutation turns red as asked.
+- **medicine_ball_slam's ball, option (c).** BALL_DZ 0.07: the ball's centre 7 cm in front of mid-foot, still between
+  the feet (c3). 3D clearances: end foot +1.1, shank +0.8 cm; Mistake foot +1.2, shank +4.3 cm (centred: shank −1.6,
+  the mutation). Re-measured: H3 deviation 83.7 px, Trace 314.7 px; balance start +0.092 m (ball 0.061 to toe 0.124),
+  end +0.017, Mistake −0.022; report.mjs ok:true.

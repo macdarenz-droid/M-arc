@@ -142,9 +142,9 @@
     "basis": "stated reason (framing): the largest whole scale at which the start's ball overhead (its top 2.33 m up) stays under the plate's top margin with the floor at y 339; inside F1's 123.9-146.29 px/m"
    },
    "FOOT_X": {
-    "value": 0.12,
+    "value": 0.13,
     "unit": "m",
-    "basis": "claim: c1 'feet about shoulder-width apart' (ACE: hip-width): mid-soles 24 cm apart, nearer ACE's hip-width; the widest at which the rigid foot's contacts stay within 0.5 cm on the toes and in the deep squat (0.14 m gave 0.6 cm on the toes); the side view does not show the width"
+    "basis": "claim: c1 'feet about shoulder-width apart' (ACE: hip-width), held at the widest stance the engine's rigid foot allows with every plant contact within 0.5 cm (0.13 m: 0.5 cm on the toes; 0.135 m: 0.6 cm) (D-LIB22-STANCE amended, #305 6357040314); the side view does not show the width"
    },
    "TOE_OUT": {
     "value": 10,
@@ -210,6 +210,11 @@
     "value": "solved",
     "unit": "m",
     "basis": "claim: c2 'hips slightly forward, and on your toes' with D-LIB22-BALANCE: the hips' offset in front of the ankles that puts the centre of mass (the 4.5 kg ball overhead included) over the forefoot (between the balls and the toes)"
+   },
+   "BALL_DZ": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "claim: c3 'straight down between your feet': the ball's centre 7 cm in front of mid-foot, between heel (-0.12 m) and toe (+0.13 m), where in 3D it clears both feet and shanks (end +1.1/+0.8 cm, Mistake +1.2/+4.3 cm; #305 6357040314 option (c))"
    }
   },
   "medBall": {

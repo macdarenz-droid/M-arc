@@ -20,16 +20,16 @@
 //  Mistake (c4): knees straight and hips extended, the trunk M_INCL, the arms flung down M_FLEX in front; the ball on
 //   the floor as at the end. The faulty arm lies over the solid squat, so it is redrawn as a dashed guide on top.
 //  The ball (eq/medBall.mjs) is a `poly` circle; the start ball is redrawn dashed (D-LIB22-DRAW).
-// Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): PX_PER_M, FOOT_X, TOE_OUT, HEEL_UP, BALL_KG,
+// Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): PX_PER_M, FOOT_X, BALL_DZ, TOE_OUT, HEEL_UP, BALL_KG,
 //  START_KNEE, END_ARM, VIA_N, M_INCL, M_FLEX; solved: END_INCL, END_Z.
 import { landmarksOf, WINTER, REF, normPose, resolve } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
 import { medBall, MED_BALL, MED_BALL_ITEMS } from '../eq/medBall.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ PX_PER_M: 134, FOOT_X: 0.12, TOE_OUT: 10, HEEL_UP: 45, START_KNEE: 2, BALL_KG: 4.5, BODY_KG: 75, END_ARM: 0.97,
-  VIA_N: 5, M_INCL: 10, M_FLEX: 30 });
-const { FOOT_X, TOE_OUT, HEEL_UP, START_KNEE, BALL_KG, BODY_KG, END_ARM, VIA_N, M_INCL, M_FLEX } = SIZES;
+export const SIZES = Object.freeze({ PX_PER_M: 134, FOOT_X: 0.13, TOE_OUT: 10, HEEL_UP: 45, START_KNEE: 2, BALL_KG: 4.5, BODY_KG: 75, END_ARM: 0.97,
+  VIA_N: 5, M_INCL: 10, M_FLEX: 30, BALL_DZ: 0.07 });
+const { FOOT_X, TOE_OUT, HEEL_UP, START_KNEE, BALL_KG, BODY_KG, END_ARM, VIA_N, M_INCL, M_FLEX, BALL_DZ } = SIZES;
 const ARM = (WINTER.upperArm + WINTER.forearm + REF.gripOff) * H;
 const BALL_R = MED_BALL.d / 2, GRIP_X = BALL_R;
 
@@ -91,9 +91,11 @@ export const START_Z = bisect(z => { const lm = landmarksOf(startAt(z), H); retu
 const S0 = S0At(START_Z), LS0 = landmarksOf(S0, H);
 const start = startAt(START_Z);
 // End (c3-c6): the ball on the floor between the feet, the hands on its sides; trunk END_INCL (back flat); the root's
-// height puts the shoulders END_ARM of the arm's length from the hands, its z balances the body over the feet.
-const BALL_END = [0, BALL_R, 0];
-const TOP = 2 * BALL_R + 0.02, ballGrips = { l: { at: [0.06, TOP, 0], pole: [1, 0, -0.2] }, r: { at: [-0.06, TOP, 0], pole: [-1, 0, -0.2] } };
+// height puts the shoulders END_ARM of the arm's length from the hands, its z balances the body over the feet. The ball
+// sits BALL_DZ in front of mid-foot, still between the feet (heel -0.12 to toe +0.13 m), so in 3D it clears both feet
+// and shanks (D-LIB22-STANCE amended, #305 6357040314 option (c)).
+const BALL_END = [0, BALL_R, BALL_DZ];
+const TOP = 2 * BALL_R + 0.02, ballGrips = { l: { at: [0.06, TOP, BALL_DZ], pole: [1, 0, -0.2] }, r: { at: [-0.06, TOP, BALL_DZ], pole: [-1, 0, -0.2] } };
 const squatAt = (y, z, incl) => ({ root: { at: [0, y, z], tilt: incl }, trunk: 0, neck: 0, plant: flat });
 const shinIncl = lm => Math.atan2(lm['knee.r'][2] - lm['ankle.r'][2], lm['knee.r'][1] - lm['ankle.r'][1]) / R;
 // Newton with finite differences (mountain_climbers.mjs:41-55 @ dcac4a38), throwing when it does not converge.
