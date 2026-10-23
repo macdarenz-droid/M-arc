@@ -1,0 +1,16 @@
+{
+ "note": "LB4 build-ahead rows (LIB-14, D-LIB14-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (D-LIB14-MODES). The five no-seconds ids are held (D-LIB14-NOSECS) and get no row until the strip lands. censusRef: the census commit (claude/howto-options).",
+ "batch": "LB4",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_wall_sit": {
+   "src": "library/specs/wall_sit.mjs",
+   "slug": "wall-sit",
+   "prefix": "wall-sit",
+   "chromeId": "wall-sit",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}
