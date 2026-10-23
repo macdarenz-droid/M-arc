@@ -610,5 +610,57 @@
   "Fix round 2026-10-02 (verify w0): A20 c12 gains West 2014's peak-power sentence; R-W0-4 calves secondary recorded in libraryDiff.proposal.",
   "LB10 LR-31/LR-33 pass 2026-10-22: rankNote added (LR-31 step 2, pick and drawable unchanged; handlingMistakes order unchanged). gs-sled re-fetched by curl: the page now carries 'Last Edited 23.10.25'; every kept quote is in today's text; 5 quotes in c4, c8, c9 and c11 now carry ’ as the page prints it, and every gs-sled quote's where names today's section heading. New quotes: c8 gains the 'Stack your posture' and 'Anchor with your legs' protect lines (D-SUP-PROTECT); c10 gains the 'surprisingly common' sentence; c13 (new) records the 'Mistakes To Avoid' list. Tempo stays null/null/null: no quote asks for a pause or gives seconds (LR-33). Shown-line fixes (CARD-V2:68, LR-6, hedges): checkpoints[0] and setup[2] 'core engaged' (c2's word); checkpoints[1] drops 'stacked' (not in its claim); setup[1] and setup[4] use their quotes' words; handlingMistakes[0].fix drops 'stacked'; feel.rows[0-1] means use c7's 'lights up'; feel.rows[2].means is in LR-6 shape (no symptom-to-cause clause); risks[2] keeps c11's 'can'. core stays in feel.secondary for LIB-MUSCLE (LR-35, R-LB7-8).",
   "LB10 fix round 2026-10-22 (lb10-research-verify, R-LB10-10): sled_pull-1: c14 (new, gs-sled starting-load rule of thumb), loadProgression cites c9 and c14, unsourced starting-load entry dropped; sled_pull-2: rankNote cites D-SUP-LB10-BREATH; sled_pull-3: handlingMistakes[2].mistake 'Leaving the rope piled at your feet.'; sled_pull-4: gs-sled year 2025."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "sole.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "sole.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "sole.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c3"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c4"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c4"
+  }
+ ],
+ "topFault": "lean"
 }

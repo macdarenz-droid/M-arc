@@ -973,5 +973,22 @@
   "Speed: Garage Gym Reviews and Fitness Volt say slow and controlled, BarBend short, fast strides (c7, c8). The shown lines say short, deliberate steps and the rushing fault, from the slow line.",
   "Read but not cited: McGill 2009 (PubMed 19528856, abstract, efetch; Fitness Volt's source [2]): strongman events and spine load, nothing farmer's-walk specific in the abstract. 404 or 502 on 2026-10-22: healthline.com farmers-walk, puregym.com farmers-walk, muscleandfitness.com farmers-walk (502); ACE farmer's-carry URL redirects to the library index.",
   "LB10 fix round 2026-10-22 (lb10-research-verify, R-LB10-3, R-LB10-10): farmer_s_carry-1: D-SUP-LB10-MAY sets the shrug aside at step 1; the top fault is rushing (step 2, c7; speed only, drawable false), handlingMistakes reordered (rushing, steps too long, shrug; the lean stays in posture and zooms), plate.mistake is BarBend's stride length (step 3, new c25), viewWhy and rankNote rewritten. farmer_s_carry-2: loadProgression keeps Fitness Volt's 'consider'."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c3"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c3"
+  }
+ ],
+ "topFault": "rush"
 }

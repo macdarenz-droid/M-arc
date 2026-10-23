@@ -854,5 +854,36 @@
     "Read and not cited: WorkoutLabs (workoutlabs.com/exercise-guide/medicine-ball-slams/) says \"Keeping your elbows bent, forcefully throw the ball at the ground.\", which conflicts with the straight arms of c2 and c5's BarBend benefits wording; ACE's \"Throw, Catch, Slam: Smarter Medicine-Ball Training\" (Certified, August 2026) is about programming medicine-ball sessions in general; Fitness Volt's and BarBend's slam-alternatives pages are about other exercises.",
     "Tried and not usable (2026-10-22): barbend.com/medicine-ball-slam/, garagegymreviews.com (no slam guide in its sitemap), motra.com (no slam page), menshealth.com and puregym.com exercise URLs gave 404; verywellfit.com and shape.com gave 402; muscleandstrength.com 403.",
     "LB10 fix round 2026-10-22 (lb10-research-verify.md): medicine_ball_slam-1 (R-LB10-6, D-SUP-LB10-FORCE): new c16; handlingMistakes [0] soft slam, [1] arms only, [2] rounding (the toes line stays risks[1], c10); drawable false; why and rankNote rewritten; plate.mistake what and claim unchanged. medicine_ball_slam-2: c13 gains BarBend's obliques sentence. medicine_ball_slam-3: loadProgression keeps Healthline's \"new to\" condition. R-LB10-10: ruling-ask strings replaced by #296 rulings 7(a), 7(b) and D-SUP-LB10-FORCE."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c15"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c15"
+    },
+    {
+      "kind": "contact",
+      "landmark": "toe.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "toe.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    }
+  ],
+  "topFault": "soft"
 }

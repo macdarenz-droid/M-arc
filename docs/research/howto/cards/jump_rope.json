@@ -727,5 +727,47 @@
   "Rope-length conflict: Fitness Volt has the handle ends at the armpits; Garage Gym Reviews has the handles between the collarbone and chin with the rope's end near armpit height (c1). setup[0] follows Fitness Volt.",
   "The wrist row keeps Elevate's \"Usually because ...\" (c6) as its \"usually\"; it is LR-6 shape (place, the source's fault, fix) with no stop line, and links the shared wrist box. Elevate's referral paragraph (\"That is worth showing to a physiotherapist or a doctor.\") is not quoted or shown (LR-27).",
   "Tried and not usable: NASM exercise library, BarBend, Healthline, Motra, PureGym, WebMD, Men's Health and NASM blog jump-rope URLs (404), StrengthLog (429), Verywell Fit (402)."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c10"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c10"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Work",
+   "s": 30,
+   "move": true
+  },
+  {
+   "phase": "Rest",
+   "s": 60
+  }
+ ],
+ "topFault": "high"
 }
