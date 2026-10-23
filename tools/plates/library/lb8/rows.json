@@ -1,0 +1,16 @@
+{
+ "note": "LB8 H build-ahead rows (LIB-18, D-LIB18-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (DESIGN.md section 1). lying_leg_curl and standing_leg_curl join only after 'LIB-18 resume' (D-LIB18-LEGCURL). censusRef: the census commit (claude/howto-options).",
+ "batch": "LB8",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_hack_squat": {
+   "src": "library/specs/hack_squat.mjs",
+   "slug": "hack-squat",
+   "prefix": "hack-squat",
+   "chromeId": "hack-squat",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}
