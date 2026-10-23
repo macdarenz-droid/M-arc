@@ -57,7 +57,7 @@ beforeAll(async () => {
     'inputs-closure.mjs', 'qa/markup.mjs',
   ].map(f => import(/* @vite-ignore */ lib(f))));
   for (const c of COMPOSERS.filter(c => existsSync(`tools/plates/library/eq/${c}.mjs`))) CQ[c] = await import(/* @vite-ignore */ lib(`eq/${c}.mjs`));
-  for (const id of LB8.filter(i => existsSync(`tools/plates/library/specs/${i}.mjs`))) { M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); S[id] = M[id].default; }
+  for (const id of DRAWN_NOW) { M[id] = await import(/* @vite-ignore */ lib(`specs/${id}.mjs`)); S[id] = M[id].default; }
 }, T);
 
 const pins = () => qaIdx.loadPins();
@@ -92,8 +92,9 @@ const shapesIn = (spec: any, pose: string) => {
   return body.bodyShapes(body.fk(body.resolve(body.normPose(fullPose(spec, pose), b), b).q, b), camOf(spec), { armsFront: spec.armsFront, hand: spec.hand }).filter((x: any) => x.poly);
 };
 /** The ids whose spec exists and that are not held, in LB8 order (the rows.json set, A5). */
-const drawn = () => LB8.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`) && !HELD.includes(id));
-const specsDrawn = () => LB8.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`));
+// The drawn set is DRAWN_NOW (in plan order); a test below pins it to the LB8 spec files on disk.
+const drawn = () => DRAWN_NOW.filter(id => !HELD.includes(id));
+const specsDrawn = () => DRAWN_NOW;
 const inPoly = (poly: number[][], [x, y]: number[]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!; if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
 const segD = (p: number[], a: number[], b: number[]) => { const dx = b[0]! - a[0]!, dy = b[1]! - a[1]!, L2 = dx * dx + dy * dy, t = L2 ? Math.max(0, Math.min(1, ((p[0]! - a[0]!) * dx + (p[1]! - a[1]!) * dy) / L2)) : 0; return Math.hypot(p[0]! - a[0]! - dx * t, p[1]! - a[1]! - dy * t); };
 /** Signed distance (px) of p from a set of closed outlines: negative inside. */
@@ -109,6 +110,9 @@ const withEq = (spec: any, k: number, f: (e: any) => any) => ({ ...spec, equipme
 
 
 describe('LIB-18 A5: lb8/rows.json holds exactly the drawn, non-held LB8 H ids, all mode H', () => {
+  it('the LB8 spec files on disk are exactly DRAWN_NOW, in plan order', () => {
+    expect(LB8.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`))).toEqual(DRAWN_NOW);
+  });
   const rowKeys = (text: string) => [...text.matchAll(/^ {2}"(lib_[a-z0-9_]+)": \{/gm)].map(m => m[1]);
   const a5 = (text: string, want: string[]) => {
     const keys = rowKeys(text), bad: string[] = [];
@@ -764,7 +768,7 @@ describe('LIB-18 A17: sizes and trace points are fixed in lb8/sizes.json and nev
     }
     return [...out, ...rowProblems(table)];
   };
-  it('each drawn spec\'s SIZES and trace point equal its sizes.json row, and dipBars\' constants equal theirs, every row with a basis that is not PQ-H3', () => {
+  it('each drawn spec\'s SIZES and trace point equal its sizes.json row, and each LB8 composer\'s constants equal theirs, every row with a basis that is not PQ-H3', () => {
     for (const id of specsDrawn()) expect(sizeProblems(M[id], sizes.ids[id]), id).toEqual([]);
     for (const [c, mod] of Object.entries<any>(CQ)) expect(sizeProblems({ SIZES: { ...mod[CONSTS[c]!] } }, sizes.ids[c] ?? {}), c).toEqual([]);
   });
@@ -956,61 +960,103 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     });
   });
 
-  describe('cable_kickback: A15 drawing lessons', () => {
+  describe('cable_kickback: A15 drawing lessons (each check run on the real spec and on a mutated spec)', () => {
+    /** The dashed Mistake cable: unbroken from the pulley rim to the drawn Mistake D-ring, in the Mistake layer above the
+     *  end figure. Reads the drawn svg (the guide's path) and the drawn ring. */
+    const cableProblems = (spec: any) => {
+      const cam = camOf(spec), svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, out: string[] = [];
+      const g = (spec.mistake.guides ?? []).find((x: any) => x.kind === 'dashed' && x.pts?.length === 2);
+      if (!g) return ['no dashed Mistake cable'];
+      const ring = ringIn(spec, 'mistake').pts.map(cam.P), pul = colIn(spec, 'end').pulley, pc = cam.P(pul.at), [a, b] = g.pts.map(cam.P);
+      if (Math.min(...ring.map((q: number[]) => Math.hypot(q[0]! - b![0]!, q[1]! - b![1]!))) > cam.pxm * 0.01) out.push('the cable stops short of the Mistake ring');
+      if (Math.abs(Math.hypot(a![0]! - pc[0]!, a![1]! - pc[1]!) - pul.r * cam.pxm) > cam.pxm * 0.005) out.push('the cable does not start at the pulley rim');
+      if (!(svg.indexOf('class="mistake-layer"') > svg.indexOf('class="pose-end"'))) out.push('not drawn above the end figure');
+      return out;
+    };
     it('the dashed Mistake cable runs unbroken from the pulley rim to the Mistake D-ring, drawn on top', () => {
-      const svg = plate.renderPlate(S[CK], { id: 'x', mistake: true }).svg, g = S[CK].mistake.guides[0];
-      expect(g.kind).toBe('dashed');
-      const ring = ringIn(S[CK], 'mistake').pts, far = ring[Math.floor(ring.length / 2)], pul = colIn(S[CK], 'end').pulley;
-      expect(cmOf(g.pts[1], far)).toBeLessThanOrEqual(1);
-      expect(Math.abs(cmOf(g.pts[0], pul.at) - pul.r * 100)).toBeLessThanOrEqual(0.5);
-      expect(svg.indexOf('class="mistake-layer"')).toBeGreaterThan(svg.indexOf('class="pose-end"'));
-      // mutations: cut to half its length; hidden (dropped) -> red
-      const half = { ...g, pts: [g.pts[0], g.pts[0].map((v: number, i: number) => (v + g.pts[1][i]) / 2)] };
-      expect(cmOf(half.pts[1], far)).toBeGreaterThan(1);
-      const hid = { ...S[CK], mistake: { ...S[CK].mistake, guides: S[CK].mistake.guides.slice(1) } };
-      expect(hid.mistake.guides.some((x: any) => x.kind === 'dashed' && cmOf(x.pts[x.pts.length - 1], far) <= 1)).toBe(false);
+      expect(cableProblems(S[CK])).toEqual([]);
     });
-    it('the red Mistake leg clears the solid end figure by >= 6 px where it is drawn outside it (or is masked)', () => {
-      const cam = camOf(S[CK]), endPolys = shapesIn(S[CK], 'end').map((x: any) => x.poly);
-      const mLeg = shapesIn(S[CK], 'mistake').filter((x: any) => ['thigh.r', 'shank.r', 'foot.r'].includes(x.key)).flatMap((x: any) => x.poly);
-      const outPts = mLeg.filter((q: number[]) => outside(endPolys, q) > 0);
-      expect(outPts.length).toBeGreaterThan(0);
-      expect(Math.max(...outPts.map((q: number[]) => outside(endPolys, q)))).toBeGreaterThanOrEqual(6);
-      void cam;
+    it('mutations: the Mistake cable cut to half its length, and the cable guide removed, are red', () => {
+      const g = S[CK].mistake.guides[0], half = { ...g, pts: [g.pts[0], g.pts[0].map((v: number, i: number) => (v + g.pts[1][i]) / 2)] };
+      expect(cableProblems({ ...S[CK], mistake: { ...S[CK].mistake, guides: [half, ...S[CK].mistake.guides.slice(1)] } })).toContain('the cable stops short of the Mistake ring');
+      expect(cableProblems({ ...S[CK], mistake: { ...S[CK].mistake, guides: S[CK].mistake.guides.slice(1) } })).toEqual(['no dashed Mistake cable']);
     });
-    it('the hidden start leg and cuff are redrawn as dashed phantoms in the end layer; the Trace starts at the start ankle', () => {
-      const ph = itemsIn(S[CK], 'end').items.filter((it: any) => it.part === 'startLeg' || it.part === 'startCuff');
-      expect(ph.length).toBeGreaterThan(0); expect(ph.every((it: any) => it.type === 'line' && it.cls === 'eq-line m-line')).toBe(true);
-      expect(itemsIn(S[CK], 'start').items.some((it: any) => it.part === 'startLeg')).toBe(false);
-      const bad = withEq(S[CK], 5, () => () => null);
-      expect(itemsIn(bad, 'end').items.some((it: any) => it.part === 'startLeg')).toBe(false);
+    /** Every red Mistake leg point drawn outside the end figure clears it by >= 6 px (the engine masks the rest). */
+    const legClear = (spec: any) => {
+      const endPolys = shapesIn(spec, 'end').map((x: any) => x.poly);
+      const outPts = shapesIn(spec, 'mistake').filter((x: any) => ['thigh.r', 'shank.r', 'foot.r'].includes(x.key)).flatMap((x: any) => x.poly).filter((q: number[]) => outside(endPolys, q) > 0);
+      return outPts.length ? Math.max(...outPts.map((q: number[]) => outside(endPolys, q))) : 0;
+    };
+    it('the red Mistake leg clears the solid end figure by >= 6 px where it is drawn outside it', () => {
+      expect(legClear(S[CK])).toBeGreaterThanOrEqual(6);
     });
+    it('mutation: the Mistake equal to the end pose (no red leg outside the end figure) is red', () => {
+      expect(legClear({ ...S[CK], mistake: { ...S[CK].mistake, pose: {} } })).toBeLessThan(6);
+    });
+    /** The hidden start leg and cuff are dashed phantoms in the end layer only, and the Trace starts at the start ankle. */
+    const phantomProblems = (spec: any) => {
+      const out: string[] = [], ph = itemsIn(spec, 'end').items.filter((it: any) => it.part === 'startLeg' || it.part === 'startCuff');
+      if (!ph.length) out.push('no start phantom');
+      if (!ph.every((it: any) => it.type === 'line' && it.cls === 'eq-line m-line')) out.push('a phantom is not a dashed line');
+      if (itemsIn(spec, 'start').items.some((it: any) => it.part === 'startLeg')) out.push('a phantom in the start layer');
+      const cam = camOf(spec), svg = plate.renderPlate(spec, { id: 'x' }).svg, tr = xy(/<path class="trace"[^>]*? d="([^"]+)"/.exec(svg)![1]!), a0 = cam.P(lmOf(spec, 'start')['ankle.r']);
+      if (Math.hypot(tr[0]![0]! - a0[0]!, tr[0]![1]! - a0[1]!) > 12) out.push('the Trace does not start at the start ankle');
+      return out;
+    };
+    it('the hidden start leg and cuff are redrawn as dashed phantoms in the end layer; the Trace starts at the start ankle (within its 10 px trim)', () => {
+      expect(phantomProblems(S[CK])).toEqual([]);
+    });
+    it('mutation: the phantom entry removed is red', () => {
+      const k = S[CK].equipment.findIndex((e: any, i: number) => typeof e === 'function' && itemsIn({ ...S[CK], equipment: [e] }, 'end').items.some((it: any) => it.part === 'startLeg'));
+      expect(k).toBeGreaterThanOrEqual(0);
+      expect(phantomProblems(withEq(S[CK], k, () => () => null))).toContain('no start phantom');
+    });
+    /** The tell anchor sits on the dashed arch guide (the drawn faulty back contour), within 1 px. */
+    const tellOnGuide = (spec: any) => {
+      const cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm, at = qaEng.resolvePoint(spec.mistake.tells[0].anchor, 'mistake', L, cam);
+      const g = spec.mistake.guides[1].pts.map(cam.P);
+      return Math.min(...g.slice(1).map((q: number[], i: number) => segD(at, g[i]!, q)));
+    };
     it('the tell anchor sits on a drawn item: the Mistake sacrum on the dashed arch guide (within 1 px)', () => {
-      const cam = camOf(S[CK]), sac = cam.P(lmOf(S[CK], 'mistake').sacrum), g = S[CK].mistake.guides[1].pts.map(cam.P);
-      const d = Math.min(...g.slice(1).map((q: number[], i: number) => segD(sac, g[i]!, q)));
-      expect(S[CK].mistake.tells[0].anchor).toBe('sacrum'); expect(d).toBeLessThanOrEqual(1);
-      const moved = [sac[0]! - 20, sac[1]!];                          // mutation: anchor 20 px off -> red
-      expect(Math.min(...g.slice(1).map((q: number[], i: number) => segD(moved, g[i]!, q)))).toBeGreaterThan(1);
+      expect(tellOnGuide(S[CK])).toBeLessThanOrEqual(1);
     });
-    it('no leader runs within 6 px of a cable, the Trace or the column, nor crosses the end figure (normal) or the Mistake figure (Mistake)', () => {
-      const cam = camOf(S[CK]);
+    it('mutation: the tell anchor moved 20 px off the guide is red', () => {
+      const t0 = S[CK].mistake.tells[0], bad = { ...S[CK], mistake: { ...S[CK].mistake, tells: [{ ...t0, anchor: { at: 'sacrum', pose: 'mistake', off: [-20, 0] } }, ...S[CK].mistake.tells.slice(1)] } };
+      expect(tellOnGuide(bad)).toBeGreaterThan(1);
+    });
+    /** No leader within 6 px of a cable (the column's and the dashed Mistake cable), nor inside the figure of its render. */
+    const leaderProblems = (spec: any) => {
+      const cam = camOf(spec), out: string[] = [];
       for (const mistake of [false, true]) {
-        const R = plate.renderPlate(S[CK], { id: 'x', mistake }), L = leadersOf(R.svg);
-        const cab = (mistake ? ['mistake'] : ['end']).flatMap(p => eng.PRIMITIVES.cableColumn(colIn(S[CK], p, { mistake }), cam).filter((it: any) => it.line).map((it: any) => it.line));
-        if (mistake) cab.push(S[CK].mistake.guides[0].pts.map(cam.P));
-        const figure = shapesIn(S[CK], mistake ? 'mistake' : 'end').map((x: any) => x.poly);
-        for (const ld of L) {
-          for (const c of cab) for (const q of ld.slice(1)) expect(segD(q, c[0], c[c.length - 1])).toBeGreaterThan(6);
-          for (const q of ld.slice(1, -1)) expect(outside(figure, q)).toBeGreaterThan(0);
-        }
+        const R = plate.renderPlate(spec, { id: 'x', mistake });
+        const cab = eng.PRIMITIVES.cableColumn(colIn(spec, mistake ? 'mistake' : 'end', { mistake }), cam).filter((it: any) => it.line).map((it: any) => it.line);
+        if (mistake) cab.push(spec.mistake.guides[0].pts.map(cam.P));
+        const figure = shapesIn(spec, mistake ? 'mistake' : 'end').map((x: any) => x.poly);
+        leadersOf(R.svg).forEach((ld, i) => {
+          // sampled along the leader, away from its first 8 px at the anchor
+          const samp = segs(ld).flatMap(([a, b]) => Array.from({ length: 21 }, (_, k) => [a![0]! + (b![0]! - a![0]!) * k / 20, a![1]! + (b![1]! - a![1]!) * k / 20])).filter(q => Math.hypot(q[0]! - ld[0]![0]!, q[1]! - ld[0]![1]!) >= 8);
+          for (const c of cab) for (const q of samp) if (segD(q, c[0], c[c.length - 1]) <= 6) out.push(`${mistake ? 'mistake' : 'normal'} ${i}: near a cable`);
+          for (const q of samp) if (outside(figure, q) <= 0) out.push(`${mistake ? 'mistake' : 'normal'} ${i}: inside the figure`);
+        });
       }
+      return [...new Set(out)];
+    };
+    it('no leader runs within 6 px of a cable, nor crosses the end figure (normal) or the Mistake figure (Mistake)', () => {
+      expect(leaderProblems(S[CK])).toEqual([]);
     });
-    it('cues: one sentence each, 15 words or fewer, no semicolon', () => {
-      for (const c of [...S[CK].callouts, ...S[CK].mistake.tells]) { expect(c.cue.split(/\s+/).length).toBeLessThanOrEqual(15); expect(c.cue).not.toMatch(/;/); expect(c.cue.match(/[.?]/g)).toHaveLength(1); }
-      expect('Keep the working leg long, with only a slight bend at the knee, and keep it there.'.split(/\s+/).length).toBeGreaterThan(15);   // mutation
+    it('mutation: the "Leg long" box moved below the cable (its leader across the cable) is red', () => {
+      const bad = { ...S[CK], callouts: S[CK].callouts.map((c: any) => (c.key === 'leg' ? { ...c, box: { left: 100, top: 300 } } : c)) };
+      expect(leaderProblems(bad).length).toBeGreaterThan(0);
     });
-    it('report.mjs engine checks: no issue in the normal and the Mistake render', () => {
+    const cueProblems = (spec: any) => [...spec.callouts, ...spec.mistake.tells].filter((c: any) => c.cue.split(/\s+/).length > 15 || /;/.test(c.cue) || (c.cue.match(/[.?]/g) ?? []).length !== 1).map((c: any) => c.key);
+    it('cues: one sentence each, 15 words or fewer, no semicolon; mutation: a 16-word cue is red', () => {
+      expect(cueProblems(S[CK])).toEqual([]);
+      expect(cueProblems({ ...S[CK], callouts: S[CK].callouts.map((c: any) => (c.key === 'leg' ? { ...c, cue: 'Keep the working leg long, with only a slight bend at the knee, and keep it there.' } : c)) })).toEqual(['leg']);
+    });
+    it('report.mjs engine checks: no issue in the normal and the Mistake render; mutation: a box on the figure is red', () => {
       expect(rep(S[CK]).issues).toEqual([]); expect(plate.renderPlate(S[CK], { id: 'm', mistake: true }).report.issues).toEqual([]);
+      const bad = { ...S[CK], callouts: S[CK].callouts.map((c: any) => (c.key === 'back' ? { ...c, box: { left: 230, top: 200 } } : c)) };
+      expect(rep(bad).issues.length).toBeGreaterThan(0);
     });
   });
 }
@@ -1866,5 +1912,109 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
       const keys = h6Of('hip_thrust', c, moved);
       expect(keys.some((x: string) => /H6\.fact:\d+:contact:/.test(x)), pose).toBe(true);
     }
+  });
+});
+
+// ---- hip_thrust (slice; held S2): A2, A18, R10 and balance on drawn items (slice look item 5) ----
+describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A2, A18, R10 and balance', { timeout: T }, () => {
+  const HT = () => M.hip_thrust.HT, s = () => S.hip_thrust;
+  const POSES3 = ['start', 'end', 'mistake'];
+  const W = 1.75;
+  /** Every drawn pose with its landmarks: start, end, Mistake and the engine's ghosts. */
+  const allLms = (spec: any) => {
+    const b = { height: W }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, b)), n = spec.ghosts?.count ?? 3;
+    return [...POSES3.map(p => [p, lmOf(spec, p)]), ...Array.from({ length: n }, (_, i) => [`ghost${i}`, body.landmarks(body.fk(body.poseAt(keys, (i + 1) / (n + 1), b).q, b))])] as [string, any][];
+  };
+  /** The drawn bar items (plate ring, pad, sleeve) of a pose, as world points. */
+  const barItems = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((it: any) => it.type === 'poly' && it.pts?.length >= 16);
+  const centre = (pts: number[][]) => [0, 1, 2].map(i => pts.reduce((a, p) => a + p[i]!, 0) / pts.length);
+  // A2: the bench sits at one place in every pose; the bar's parts move and are `poly` (drawn in the Mistake view).
+  const a2Problems = (spec: any) => {
+    const out: string[] = [], bench = (p: string) => itemsIn(spec, p).items.find((it: any) => it.type === 'bench');
+    for (const p of ['end', 'mistake']) if (JSON.stringify(bench(p)) !== JSON.stringify(bench('start'))) out.push(`bench moves in ${p}`);
+    for (const p of POSES3) { const b = barItems(spec, p); if (b.length !== 3) out.push(`${p}: ${b.length} bar polys`); }
+    return out;
+  };
+  it('A2: the bench is static in start, end and Mistake; the plate ring, pad and sleeve are three polys in every pose', () => {
+    expect(a2Problems(s())).toEqual([]);
+  });
+  it('A2 mutations: the bench moved 2 cm in the Mistake, and the bar drawn as a `line`, are red', () => {
+    const k = s().equipment.findIndex((e: any) => e?.type === 'bench');
+    const moved = withEq(s(), k, (e: any) => (lm: any, ctx: any) => ({ ...e, at: ctx.pose === 'mistake' ? [e.at[0], e.at[1], e.at[2] - 0.02] : e.at }));
+    expect(a2Problems(moved)).toContain('bench moves in mistake');
+    const kb = s().equipment.findIndex((e: any) => typeof e === 'function' && barItems({ ...s(), equipment: [e] }, 'end').length === 1);
+    const asLine = withEq(s(), kb, (f: any) => (lm: any, ctx: any) => ({ ...f(lm, ctx), type: 'line' }));
+    expect(a2Problems(asLine).length).toBeGreaterThan(0);
+  });
+  // A18: the plates on or above the floor, the feet on it, nothing through the bench, the bench on its legs.
+  const a18Problems = (spec: any) => {
+    const out: string[] = [];
+    for (const p of POSES3) {
+      const ring = barItems(spec, p)[0]!.pts, low = Math.min(...ring.map((q: number[]) => q[1]!));
+      if (low < -0.0005) out.push(`${p}: plate ${(low * 100).toFixed(1)} cm below the floor`);
+    }
+    const bench = itemsIn(spec, 'end').items.find((it: any) => it.type === 'bench'), top = bench.at[1], edge = bench.at[2] + bench.width / 2;
+    for (const [p, l] of allLms(spec)) {
+      for (const n of ['heel.l', 'heel.r', 'ball.l', 'ball.r', 'toe.l', 'toe.r']) if (l[n][1] < -0.005) out.push(`${p}: ${n} under the floor`);
+      // the upper back rests on the edge: no back landmark more than 1 cm into the bench's top (over the bench's span)
+      for (const n of ['backUpper', 'backMid', 'shoulder.r']) if (l[n][2] <= edge + 0.001 && l[n][1] < top - 0.01) out.push(`${p}: ${n} ${((top - l[n][1]) * 100).toFixed(1)} cm into the bench`);
+    }
+    return out;
+  };
+  it('A18: plates on or above the floor, feet on it, the back never more than 1 cm into the bench, in every pose and ghost', () => {
+    expect(a18Problems(s())).toEqual([]);
+  });
+  it('A18 mutations: the plate 1 cm below the floor at the bottom, and the bench 3 cm into the upper back, are red', () => {
+    const kb = s().equipment.findIndex((e: any) => typeof e === 'function' && barItems({ ...s(), equipment: [e] }, 'end').length === 1);
+    const low = withEq(s(), kb, (f: any) => (lm: any, ctx: any) => { const it = f(lm, ctx); return ctx.pose === 'start' ? { ...it, pts: it.pts.map((q: number[]) => [q[0], q[1]! - (Math.min(...it.pts.map((r: number[]) => r[1])) + 0.01), q[2]]) } : it; });
+    expect(a18Problems(low)).toEqual([expect.stringMatching(/^start: plate -1\.0 cm below the floor$/)]);
+    const k = s().equipment.findIndex((e: any) => e?.type === 'bench');
+    const up = withEq(s(), k, (e: any) => ({ ...e, at: [e.at[0], e.at[1] + 0.03, e.at[2]] }));
+    expect(a18Problems(up).some(p => /into the bench/.test(p))).toBe(true);
+  });
+  // R10 (DESIGN.md 7): the bar padded and centred over the hips, both hands on it, the upper back on the edge.
+  const r10Problems = (spec: any) => {
+    const out: string[] = [];
+    for (const p of POSES3) {
+      const b = barItems(spec, p), l = lmOf(spec, p), c = centre(b[0]!.pts);
+      if (!b.some((it: any) => it.cls === 'eq')) out.push(`${p}: no pad round the bar`);
+      for (const sd of ['l', 'r']) if (Math.hypot(l[`grip.${sd}`][1] - c[1]!, l[`grip.${sd}`][2] - c[2]!) > 0.005) out.push(`${p}: grip.${sd} off the bar`);
+      if (Math.hypot(l.backUpper[1] - HT().edge[1], l.backUpper[2] - HT().edge[2]) > 0.005) out.push(`${p}: the upper back off the bench edge`);
+      const bar = HT().barOf(l); if (Math.hypot(bar[1] - c[1]!, bar[2] - c[2]!) > 0.005) out.push(`${p}: the bar off the hip crease`);
+    }
+    return out;
+  };
+  it('R10: the bar padded, in the crease and held by both hands, the upper back on the bench edge, in start, end and Mistake', () => {
+    expect(r10Problems(s())).toEqual([]);
+  });
+  it('R10 mutation: the pad removed (one R10 item) is red', () => {
+    const kp = s().equipment.findIndex((e: any) => typeof e === 'function' && barItems({ ...s(), equipment: [e] }, 'end')[0]?.cls === 'eq');
+    expect(r10Problems(withEq(s(), kp, () => () => null)).length).toBeGreaterThan(0);
+  });
+  /** Balance (D-LIB18-BALANCE): body (Winter 2009 fractions on the drawn landmarks) plus the bar's load at the crease lies
+   *  between the upper back's contact on the bench edge and the heels, in every drawn pose and ghost. */
+  const comZ = (spec: any, l: any, withLoad = true) => {
+    const L3 = (a: number[], b: number[], t: number) => a.map((v, i) => v + (b[i]! - v) * t);
+    const parts: [number, number[]][] = [[0.081, l.ear], [0.497, L3(l.shoulders, l.hips, 0.5)]];
+    for (const sd of ['l', 'r']) parts.push([0.028, L3(l[`shoulder.${sd}`], l[`elbow.${sd}`], 0.436)], [0.016, L3(l[`elbow.${sd}`], l[`wrist.${sd}`], 0.430)], [0.006, l[`grip.${sd}`]],
+      [0.100, L3(l[`hip.${sd}`], l[`knee.${sd}`], 0.433)], [0.0465, L3(l[`knee.${sd}`], l[`ankle.${sd}`], 0.433)], [0.0145, L3(l[`heel.${sd}`], l[`toe.${sd}`], 0.5)]);
+    const m = parts.reduce((a, p) => a + p[0], 0), z = parts.reduce((a, p) => a + p[0] * p[1][2]!, 0) / m;
+    if (!withLoad) return z;
+    const kg = M.hip_thrust.SIZES, bar = HT().barOf(l);
+    return (z * kg.BODY_KG + bar[2] * kg.LOAD_KG) / (kg.BODY_KG + kg.LOAD_KG);
+  };
+  const balance = (spec: any, withLoad = true) => allLms(spec).map(([p, l]) => [p, comZ(spec, l, withLoad), HT().edge[2], (l['heel.l'][2] + l['heel.r'][2]) / 2] as [string, number, number, number]);
+  it('balance: body plus load inside the base (bench edge to heels) in every pose and ghost; offsets logged', () => {
+    const rows = balance(s());
+    console.log(`LIB-18 hip_thrust balance (cm ahead of the edge / behind the heels): ${rows.map(([p, z, e, h]) => `${p} ${((z - e) * 100).toFixed(1)}/${((h - z) * 100).toFixed(1)}`).join(', ')}`);
+    console.log(`LIB-18 hip_thrust balance, body alone: ${balance(s(), false).map(([p, z, e]) => `${p} ${((z - e) * 100).toFixed(1)}`).join(', ')}`);
+    for (const [p, z, e, h] of rows) { expect(z, p).toBeGreaterThan(e); expect(z, p).toBeLessThan(h); }
+  });
+  it('balance mutation: the load placed 60 cm in front of the heels (a carried load off its contact) is red', () => {
+    const real = HT().barOf;
+    try {
+      HT().barOf = (l: any) => { const b = real(l); return [b[0], b[1], (l['heel.r'][2] as number) + 0.6]; };
+      expect(balance(s()).some(([, z, , h]) => z >= h)).toBe(true);
+    } finally { HT().barOf = real; }
   });
 });

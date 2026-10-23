@@ -48,7 +48,7 @@
 //  TOE_OUT, NECK, M_ROLL, HANDLE_X, HANDLE_N, HANDLE_DOWN, POLE_OUT, PAD_BELOW, RAIL_ABOVE, STOP_GAP, FLOOR_BACK,
 //  FLOOR_FRONT, FLOOR_LINE, TRACE_TRIM; the composer's HACK_SLED constants; TILT, SOLE_Z, TRAVEL and RAIL_LO solved. The
 //  knee 90 is c4's.
-import { WINTER, REF, landmarksOf } from '../engine.mjs';
+import { WINTER, REF, landmarksOf, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 import { add, mul, sub, perItem } from '../eq/parts.mjs';
 import { hackSled, HACK_SLED, HACK_SLED_ITEMS } from '../eq/hackSled.mjs';
 
@@ -118,6 +118,32 @@ const sledP = { u: U, n: N, pad: { at: PAD_AT, lo: -PAD_BELOW, hi: PAD_HI }, sho
 // back pad and shoulder pad are redrawn as dashed outlines in the end layer.
 const outline = (a, b, n, t) => [a, b, add(b, mul(n, t)), add(a, mul(n, t)), a];
 const face = (s, off = 0) => add(add(add(PAD_AT, mul(U, s)), mul(N, off)), mul(U, TRAVEL));
+// Start-leg phantom (slice look item 3; Q2 (c)): the start thigh and knee lie inside the end figure, so the c7 soft knee
+// would not show; the outline of the start near leg's union (thigh, knee cap, shank, foot) is redrawn as hidden lines in
+// the end layer (cable_kickback.mjs's START_LEG method, copied).
+const insidePoly = (p, poly) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+  const [xi, yi] = poly[i], [xj, yj] = poly[j];
+  if ((yi > p[1]) !== (yj > p[1]) && p[0] < (xj - xi) * (p[1] - yi) / (yj - yi) + xi) c = !c; } return c; };
+export const START_LEG = (() => {
+  const b = { height: H }, sk = fk(resolve(normPose(start, b), b).q, b), x = L(start)['knee.r'][0];
+  const cam = { view: 'side', near: 'r', facing: 'right', pxm: 1, P: w => [w[2], -w[1]] };
+  const polys = bodyShapes(sk, cam).filter(sh => ['thigh.r', 'kneecap.r', 'shank.r', 'foot.r'].includes(sh.key)).map(sh => sh.poly);
+  const runs = [];
+  polys.forEach((poly, k) => {
+    let run = [];
+    const flush = () => { if (run.length > 1) runs.push(run); run = []; };
+    for (let i = 0; i < poly.length; i++) {
+      const a = poly[i], q = poly[(i + 1) % poly.length], n = Math.max(1, Math.ceil(Math.hypot(q[0] - a[0], q[1] - a[1]) / 0.002));
+      for (let j = 0; j < n; j++) {
+        const pt = [a[0] + (q[0] - a[0]) * j / n, a[1] + (q[1] - a[1]) * j / n];
+        if (polys.some((o, m) => m !== k && insidePoly(pt, o))) flush(); else run.push(pt);
+      }
+    }
+    flush();
+  });
+  return runs.map(r => ({ type: 'line', pts: r.map(pt => [x, -pt[1], pt[0]]), cls: 'eq-line m-line', z: 'front', part: 'startLeg' }));
+})();
+
 const startPhantom = [
   { type: 'line', pts: outline(face(-PAD_BELOW), face(PAD_HI), N, -C.padT), cls: 'eq-line m-line', z: 'back', part: 'startSled' },
   { type: 'line', pts: outline(face(SP), face(SP, C.shoulderLen), U, C.shoulderT), cls: 'eq-line m-line', z: 'back', part: 'startSled' },
@@ -140,6 +166,7 @@ export default {
     { type: 'floor', from: sledP.floorZ[0] - FLOOR_LINE, to: sledP.floorZ[1] + FLOOR_LINE },
     ...perItem(lm => hackSled({ ...sledP, travel: travelOf(lm) }), HACK_SLED_ITEMS),
     ...perItem((lm, ctx) => (ctx.pose === 'end' ? startPhantom : []), startPhantom.length),
+    (lm, ctx) => (ctx.pose === 'end' ? START_LEG : null),
   ],
   checks: [
     ...factChecks('start', start, ['wrist.l', 'wrist.r']),
@@ -158,7 +185,7 @@ export default {
   trace: { point: 'knee.r', trim: TRACE_TRIM },
   measure: { vertex: 'knee.r', from: { dir: THIGH_DIR }, to: 'ankle.r', radius: 22, title: 'Knee', value: 'about 90°', expect: 90, box: { left: 270, top: 264 } },
   callouts: [
-    // c2: on the front of the trunk at the lumbar level, from the open space above (the back itself lies on the pad)
+    // c2: on the back's pad contact, the sacrum (D-LIB18-BACKPAD), its leader crossing the pad once (named nit)
     { key: 'back', text: 'Back on<br>pad', anchor: 'navel', box: { left: 160, top: 124 }, cue: 'Upper and lower back and hips stay on the back pad.' },
     // c4, c5: on the thigh's top edge, from the open space above the legs
     { key: 'parallel', text: 'Thighs to<br>parallel', anchor: { along: ['hip.r', 'knee.r'], t: 0.55, off: [0, -11] }, box: { left: 250, top: 164 }, cue: 'Lower until your thighs are at least parallel, as far as your mobility allows.' },
@@ -174,11 +201,10 @@ export default {
       { kind: 'dashed', smooth: true, pts: [{ at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }, { at: 'seat', pose: 'mistake' }] },
     ],
     tells: [
-      // c8 "lift their lower back off the back pad", c9 "having your hips leave the backrest": on the red thigh root's top
-      // edge, raised above the end thigh as the hips leave the pad
+      // c8 "lift their lower back off the back pad", c9 "having your hips leave the backrest": on the hips' pad contact, the
+      // Mistake buttock (D-LIB18-LIFT), 7.9 cm off the pad; the leader enters the end figure once, from the front (named nit)
       { key: 'lift', text: 'Hips off<br>pad', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 250, top: 164 }, cue: 'At the bottom the hips and lower back lift off the back pad.' },
-      // c10 "your lower back rounds": the pelvis rolls back, so the front of the red pelvis (the groin, a rigid pelvis
-      // point, given from the pelvis's seat landmark) swings up off the end outline
+      // c10 "your lower back rounds": on the lower back, the Mistake sacrum on the dashed back contour (D-LIB18-ROUND)
       { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 64, top: 292 }, cue: 'The lower back rounds at the bottom of the squat.' },
     ],
   },

@@ -41,7 +41,8 @@
 import { WINTER, REF, landmarksOf } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ PAD_R: 0.045, GRIP_X: 0.2, PLATE_D: 0.45, SLEEVE_D: 0.05, BENCH_W: 0.29, M_ARCH: 12, FLOOR_BACK: 0.35, FLOOR_FRONT: 0.3 });
+export const SIZES = Object.freeze({ PAD_R: 0.045, GRIP_X: 0.2, PLATE_D: 0.45, SLEEVE_D: 0.05, BENCH_W: 0.29, M_ARCH: 12, FLOOR_BACK: 0.35, FLOOR_FRONT: 0.3,
+  BODY_KG: 75, LOAD_KG: 60 });   // BODY_KG, LOAD_KG: the balance's masses (the centre of mass with the bar's load at the crease)
 const { PAD_R, GRIP_X, PLATE_D, SLEEVE_D, BENCH_W, M_ARCH, FLOOR_BACK, FLOOR_FRONT } = SIZES;
 
 // Bisection on a bracket (throws when the bracket holds no sign change; D-LIB9-CLONE b).
@@ -119,7 +120,7 @@ const tiltOf = lm => {
 const barOf = lm => barAt(lm.hips, tiltOf(lm));
 const BARS = { start: barAt(start.root.at, START_TILT), end: BAR_TOP, mistake: barAt(mistakePose.root.at, M_TILT) };
 
-export const HT = { edge: EDGE, benchTop: BENCH_TOP, bars: BARS, barAt, onEdge, start, end, mistakePose };
+export const HT = { edge: EDGE, benchTop: BENCH_TOP, bars: BARS, barAt, barOf, onEdge, start, end, mistakePose };
 // The card's contact facts (lb8 DESIGN.md; D-LIB18-FACTS): each bound by a check on its landmark in its pose, at the
 // drawn point (H6 reads the report's checks); the drawn-item tests prove the contact itself.
 const factChecks = (pose, p, names) => names.map(landmark => ({ landmark, at: L(p)[landmark], pose, tol: 0.5 }));

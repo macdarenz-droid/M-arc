@@ -64,6 +64,16 @@
      6,
      8
     ]
+   },
+   "BODY_KG": {
+    "value": 75,
+    "unit": "kg",
+    "basis": "convention: weighted_dip's BODY_KG 75 kg (lb7/sizes.json @ 5a9f004c), the 1.75 m body's mass for the balance (D-LIB18-BALANCE)"
+   },
+   "LOAD_KG": {
+    "value": 60,
+    "unit": "kg",
+    "basis": "stated physical reason: the drawn barbell, a 20 kg bar (equipment.mjs:261's 2.2 m bar) with one 45 cm plate a side, 20 kg each (the standard 450 mm plate), carried at the hip crease (D-LIB18-BALANCE: the carried load at its contact)"
    }
   },
   "cable_kickback": {
