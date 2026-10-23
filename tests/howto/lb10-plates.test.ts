@@ -61,7 +61,7 @@ describe('LIB-22 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
     for (const id of LB10) expect(valProblems(v, id), id).toEqual([]);
     for (const id of [...NOSECS.filter(i => i !== 'wall_ball'), 'jumping_jacks']) expect(v.validateCardFile(`${id}.json`), id).toEqual([`cards/${id}.json: ${PAIR}`]);
   });
-  it('A11 mutations: plateFacts removed from kettlebell_swing, and a bad fact claim on sled_push, are red in validateCardFile', async () => {
+  it('A11 mutations: plateFacts removed from kettlebell_swing, a bad fact claim on sled_push, and a fact added to jumping_jacks (D-LIB22-JJ) change validateCardFile', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
     const dir = mkdtempSync(join(tmpdir(), 'lb10-val-'));
     try {
@@ -71,6 +71,10 @@ describe('LIB-22 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
       expect(v.validateCardFile('kettlebell_swing.json', dir)).toContain(`cards/kettlebell_swing.json: ${PAIR}`);
       edit('sled_push', c => { c.plateFacts[0].claim = 'c99'; });
       expect(v.validateCardFile('sled_push.json', dir).join()).toContain('unknown claim c99');
+      // D-LIB22-JJ (#305): jumping_jacks is held at the pair problem; a fact written onto it clears that problem (red here)
+      edit('jumping_jacks', c => { c.plateFacts = [{ kind: 'contact', landmark: 'ball.l', pose: 'end', cardPose: 'end', claim: 'c2' }]; });
+      expect(v.validateCardFile('jumping_jacks.json', dir)).not.toContain(`cards/jumping_jacks.json: ${PAIR}`);
+      expect(valProblems(v, 'jumping_jacks', dir)).toEqual([]);
     } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });

@@ -285,7 +285,7 @@ cards.sha.json keeps each card's sha256 without them.
 
 validateCardFile gives no problem for the five cards with both plateFacts and tempo, and exactly the :216 problem
 ("plateFacts and tempo go in together or not at all") for the five NOSECS cards (plateFacts, no tempo, as LB4's do)
-and for jumping_jacks (tempo, no plateFacts; asked on #305).
+and for jumping_jacks (tempo, no plateFacts; D-LIB22-JJ, #305 option 1: held at H6:no-card).
 
 ## 10. Facts plan (D-LIB8M-FACTS, 22's scope, D-LIB13-FACTS2, D-LIB22-FACTS, -SIDES)
 
