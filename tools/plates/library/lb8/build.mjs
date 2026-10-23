@@ -66,7 +66,7 @@ export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mis
 
 /** The ids drawn but held off rows.json (DESIGN.md held table): any held under D-LIB18-SIZE, -CALF or S1-S4 (D-LIB8M-CARDTRUE).
  *  Each with its census view. Empty until a drawn plate is held. */
-export const HELD = { hip_thrust: 'side', cable_kickback: 'side' };
+export const HELD = { seated_calf_raise: 'side', hip_thrust: 'side', cable_kickback: 'side' };
 const slugOf = id => id.replace(/_/g, '-');
 /** The held rows, in memory only (never written to rows.json or any file under the repo), for the held ids whose spec exists. */
 export function heldData(root = ROOT, only = null) {

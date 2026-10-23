@@ -11,15 +11,6 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
-  },
-  "lib_seated_calf_raise": {
-   "src": "library/specs/seated_calf_raise.mjs",
-   "slug": "seated-calf-raise",
-   "prefix": "seated-calf-raise",
-   "chromeId": "seated-calf-raise",
-   "mode": "H",
-   "stage": "drawing",
-   "view": "side"
   }
  }
 }

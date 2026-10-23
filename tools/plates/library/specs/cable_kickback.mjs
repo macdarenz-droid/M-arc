@@ -207,7 +207,7 @@ export default {
   callouts: [
     { key: 'back', text: 'Back<br>flat', anchor: 'backMid', box: { left: 150, top: 100 }, cue: 'Brace so your lower back does not arch as the leg goes back.' },
     { key: 'hips', text: 'Hips<br>square', anchor: 'buttock', box: { left: 86, top: 142 }, cue: 'Keep your hips level and do not twist to lift the leg higher.' },
-    { key: 'leg', text: 'Leg<br>long', anchor: 'thighTop.r', box: { left: 40, top: 196 }, cue: 'Keep the working leg long, with only a slight bend at the knee.' },
+    { key: 'leg', text: 'Leg<br>long', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5 }, box: { left: 24, top: 200 }, cue: 'Keep the working leg long, with only a slight bend at the knee.' },
   ],
   tempo: [{ phase: 'Kick back', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
   mistake: {

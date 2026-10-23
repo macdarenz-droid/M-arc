@@ -255,24 +255,24 @@
     "basis": "convention: leg_press.mjs:132 (trim [6, 8], the clone source's knee-region trace trim)"
    },
    "TILT": {
-    "value": -47.0096,
+    "value": "solved",
     "unit": "deg",
-    "basis": "solved: the pelvis tilt (bisection) that lays the line through backUpper and buttock (the pad face) at RAIL, neutral spine"
+    "basis": "solved: the pelvis tilt (bisection) that lays the line through backUpper and buttock (the pad face) at RAIL, neutral spine (solves to -47.0096)"
    },
    "SOLE_Z": {
-    "value": 0.4989,
+    "value": "solved",
     "unit": "m",
-    "basis": "solved: the sole's place on the plate (bisection) that bends the drawn knee 90 at the bottom (c4) with the thigh level and FOOT_X, TOE_OUT"
+    "basis": "solved: the sole's place on the plate (bisection) that bends the drawn knee 90 at the bottom (c4) with the thigh level and FOOT_X, TOE_OUT (solves to 0.4989)"
    },
    "TRAVEL": {
-    "value": 0.2455,
+    "value": "solved",
     "unit": "m",
-    "basis": "solved: the sled travel up the rail (bisection) from the bottom to the top knee KNEE_TOP (c7)"
+    "basis": "solved: the sled travel up the rail (bisection) from the bottom to the top knee KNEE_TOP (c7) (solves to 0.2455)"
    },
    "RAIL_LO": {
-    "value": -0.5039,
+    "value": "solved",
     "unit": "m",
-    "basis": "solved: the rail's lower end along the rail (bisection), where the rail line comes down to the foot plate bracket's level"
+    "basis": "solved: the rail's lower end along the rail (bisection), where the rail line comes down to the foot plate bracket's level (solves to -0.5039)"
    },
    "trace": {
     "value": "knee.r",
@@ -339,6 +339,167 @@
     "value": 0.03,
     "unit": "m",
     "basis": "stated reason: 3 cm brackets (the handle arm and the plate bracket), thinner than the 6 cm frame tubes"
+   }
+  },
+  "seated_calf_raise": {
+   "START_DF": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated reason (physical): c7/c12 'maximum dorsiflexion', 'full but comfortable stretch without overstretching', 'as far down as comfortably possible' read as the end of the normal ankle dorsiflexion range, 20 deg (the AAOS average range as commonly cited, e.g. Norkin & White; not opened in this session: verify before ruling)"
+   },
+   "END_PF": {
+    "value": 50,
+    "unit": "deg",
+    "basis": "stated reason (physical): c8 'raise heels as high as possible', c12 'full ankle extension' read as the end of the normal plantar flexion range, 50 deg (same norm, same caveat)"
+   },
+   "M_PART": {
+    "value": 0.5,
+    "unit": "fraction of the ankle range (start to end)",
+    "basis": "claim: c12 'half reps get half results!' (D-LIB18-SIZE names it as this plate's part-way basis, as weighted_dip's half rep, 6347885720 Q5)"
+   },
+   "PLAT_Y": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "stated reason (physical): a raised platform; at START_DF the drawn heel hangs 6.2 cm below its top, so its lowest point is 12.1 cm above the floor, 6.1 cm over the 6 cm floor beam"
+   },
+   "PLAT_BACK": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "claim: c3 'balls of the feet on the footplate, with your heels hanging off the edge': the rear edge 2 cm behind the ball, so the ball rests on it and the heel is free"
+   },
+   "PLAT_FRONT": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "claim: c1 (StrengthLog) 'Place your toes and the ball of your feet on the foot support': the platform runs 3 cm past the toe tip"
+   },
+   "SEAT_BACK": {
+    "value": 0.28,
+    "unit": "m",
+    "basis": "convention: the vendor seat's 40 cm pad (equipment.mjs:181), placed 28 cm behind the seat point; stated reason (layout): its front edge ends under the thigh root, leaving the space under the thighs open for the knee arc's and the Mistake's labels"
+   },
+   "SEAT_FRONT": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "as SEAT_BACK (the other 12 cm of the 40 cm pad)"
+   },
+   "SEAT_POST": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "stated reason (layout): the seat post 8 cm in from the pad's rear end, clear of the space under the thighs (the Mistake label 'Half reps' needs 65 px there)"
+   },
+   "TOWER_GAP": {
+    "value": 0.58,
+    "unit": "m",
+    "basis": "stated reason (layout): the lever's front tower 58 cm in front of the toe tip, leaving room between the toes and the tower for the 'Knees at 90' and 'Balls of feet' callouts (63 px wide); the arm is then 0.88 m from the pivot to the pad"
+   },
+   "HANDLE_X": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason (physical): each grip 20 cm out from the midline, just outside the thighs (hip-joint centres 8.75 cm out plus the thigh's 8.4 cm root radius), by the pad (c5, c6)"
+   },
+   "FLOOR_BACK": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the floor beam's rear end"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the tower"
+   },
+   "TRACE_TRIM": {
+    "value": [
+     6,
+     8
+    ],
+    "unit": "px",
+    "basis": "convention: leg_press.mjs:154, the 8's heel Trace trim"
+   },
+   "trace": {
+    "value": "heel.r",
+    "basis": "claims c7, c8, c12 (the heel's range is the cue); D-LIB18-CALF, -TRACE"
+   }
+  },
+  "calfMachine": {
+   "rollerR": {
+    "value": 0.055,
+    "unit": "m",
+    "basis": "convention: the vendor kneePad roller r (equipment.mjs:204)"
+   },
+   "seatLen": {
+    "value": 0.4,
+    "unit": "m",
+    "basis": "convention: the vendor seat (equipment.mjs:181)"
+   },
+   "seatT": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "convention: the vendor seat pad (equipment.mjs:181)"
+   },
+   "shoulderLen": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "convention: hackSled's shoulder pad (eq/hackSled.mjs HACK_SLED.shoulderLen); standing form only"
+   },
+   "shoulderT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: hackSled's shoulder pad; standing form only"
+   },
+   "tubeT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: hackSled's and pulloverMachine's frame tubes"
+   },
+   "armT": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "convention: the vendor chestPress lever, 2 x 0.025 (equipment.mjs:254); pulloverMachine armT"
+   },
+   "platT": {
+    "value": 0.035,
+    "unit": "m",
+    "basis": "convention: the 8's leg press plate, legPress45 t 0.035 (equipment.mjs:220-247); hackSled plateT"
+   },
+   "hubR": {
+    "value": 0.045,
+    "unit": "m",
+    "basis": "convention: the vendor pulley r (equipment.mjs:300)"
+   },
+   "gripR": {
+    "value": 0.016,
+    "unit": "m",
+    "basis": "convention: the vendor chestPress grip, end-on (equipment.mjs:255)"
+   },
+   "postT": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "stated reason (physical): a 2.5 cm handle tube, half the 5 cm arm"
+   },
+   "handleH": {
+    "value": 0.14,
+    "unit": "m",
+    "basis": "stated reason (physical): the grip 14 cm over the arm, so the fist (3.5 cm radius) sits 5.6 cm over the roller's top and the pad shows under the hand"
+   },
+   "handleAt": {
+    "value": 0,
+    "unit": "m",
+    "basis": "claim: plate.equipment 'safety lever and handles by the pad' (c5, c6): the handle post rises at the pad"
+   },
+   "safetyAt": {
+    "value": 0.14,
+    "unit": "m",
+    "basis": "claim: c6 'Grip handles and release the safety lever': the lever 14 cm in front of the pad, within reach by the handles"
+   },
+   "safetyLen": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason (physical): a 10 cm thumb lever"
+   },
+   "safetyT": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason (physical): a 2 cm lever bar"
    }
   }
  }
