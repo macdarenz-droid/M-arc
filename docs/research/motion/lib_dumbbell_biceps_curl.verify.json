@@ -1,0 +1,404 @@
+{
+ "exercise": "lib_dumbbell_biceps_curl",
+ "verdicts": [
+  {
+   "claim": "App data: equipment Dumbbells, primary biceps, secondary forearms, no stabilizers; muscles.ts has a separate brachialis id.",
+   "verdict": "confirmed",
+   "correction": "Checked src/data/exercises.json and src/data/muscles.ts (brachialis, front_delts, upper_traps ids exist).",
+   "sources": []
+  },
+  {
+   "claim": "Model: rubber hex dumbbells, Titan 25 lb: overall length 12 in, handle length 5.125 in, handle diameter 34 mm, head width 5.25 in.",
+   "verdict": "confirmed",
+   "correction": "Titan product page lists exactly these (head size 5.25 in).",
+   "sources": [
+    "https://titan.fitness/products/25-lb-rubber-hex-dumbbells"
+   ]
+  },
+  {
+   "claim": "REP hex: handle 5.2 in; 28 mm up to 15 lb, 34 mm from 17.5 lb; 114 mm handle on REP's rubber-coated line.",
+   "verdict": "unverified",
+   "correction": "REP page did not show specs to the fetcher; a search summary agrees with 5.2 in and 28/34 mm. The 114 mm figure was not found anywhere. Drop 114 mm or re-source it.",
+   "sources": [
+    "https://repfitness.com/products/rubber-hex-dumbbell-pairs"
+   ]
+  },
+  {
+   "claim": "Rogue hex: 25 mm handle up to 10 lb, 35 mm from 12.5 lb; ergonomic knurled chrome handle.",
+   "verdict": "confirmed",
+   "correction": "Rogue: '25MM up to 10LB, 35MM for 12.5LB and above', 'easy-grip, ergonomic Chrome-Plated Handle'. 'Knurled' appears only in customer reviews on that page. At the chosen 10-12.5 kg Rogue's handle is 35 mm, not 34.",
+   "sources": [
+    "https://www.roguefitness.com/rogue-dumbbells"
+   ]
+  },
+  {
+   "claim": "York hex: handle 25 mm at 2.5 lb to 35 mm at 120 lb; 'ergonomically contoured to fit comfortably in the palm'; knurled chrome.",
+   "verdict": "confirmed",
+   "correction": "York page quotes match.",
+   "sources": [
+    "https://yorkbarbell.com/product/rubber-hex-dumbbell/"
+   ]
+  },
+  {
+   "claim": "Setup 1-2: two equal dumbbells; feet about shoulder-width (Athlean, Oliveira).",
+   "verdict": "corrected",
+   "correction": "Athlean says 'feet shoulder-width apart'. Oliveira only says 'a comfortable support base', so drop it as a source for shoulder-width.",
+   "sources": [
+    "https://learn.athleanx.com/articles/how-to-do-bicep-curls",
+    "https://www.jssm.org/jssm-08-24.xml-Fulltext"
+   ]
+  },
+  {
+   "claim": "Setup 3: arms hang at the sides, close to the body, palms forward; elbows 'next to the middle of the body'.",
+   "verdict": "confirmed",
+   "correction": "ACE seated: 'let your arms hang to your sides, close to your body, with your palms facing forward'. ACE barbell: elbows 'next to the middle of the body'. 'Dumbbells beside, not on, the outer thighs' is not in any source (unverified).",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/"
+   ]
+  },
+  {
+   "claim": "Setup 4 and grip thumb: closed grip, thumb wrapped round the handle.",
+   "verdict": "confirmed",
+   "correction": "ACE seated: 'closed, supinated grip (palms facing forward and thumbs wrapped around the handles)'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/"
+   ]
+  },
+  {
+   "claim": "Setup 5 and shrug mistake: scapulae down and back; do not shrug.",
+   "verdict": "confirmed",
+   "correction": "ACE seated: 'Depress and retract ... your scapulae' and 'avoid shrugging your shoulders during the lift'. Note this ACE page is the seated, back-supported version.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/"
+   ]
+  },
+  {
+   "claim": "Setup 6: if the carrying angle forces a bent wrist, let the dumbbells sit wider (ACE seated, Alsubael).",
+   "verdict": "unverified",
+   "correction": "Neither source says this. ACE only asks for a neutral wrist; Alsubael is an X-ray anatomy paper. Mark it derived, not documented.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "https://scialert.net/fulltext/?doi=jms.2010.40.44"
+   ]
+  },
+  {
+   "claim": "Start torso upright 0 deg, chest still; hips neutral.",
+   "verdict": "confirmed",
+   "correction": "ACE barbell: 'Keep chest still, using just the arms'. Coratella grips: standing, arms parallel to the trunk.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/"
+   ]
+  },
+  {
+   "claim": "Start elbow 0-5 deg, straight, not forced into hyperextension (ACE barbell, Sato 2021).",
+   "verdict": "corrected",
+   "correction": "ACE barbell supports a straight line wrist-elbow-shoulder. Sato 2021 is a preacher-curl study and says nothing about the standing start; 'not forced into hyperextension' is unsourced. Keep 0-5 deg as a sensible start, but cite ACE only.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+    "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2021.734509/full"
+   ]
+  },
+  {
+   "claim": "Carrying angle with elbow straight and palm forward: men 5-17 deg (mean 9.3), women 10-27 deg (mean 18.5), X-ray, n=90.",
+   "verdict": "confirmed",
+   "correction": "Alsubael: males 9.29 +/- 2.98 (5-17), females 18.47 +/- 4.12 (10-27), 45 + 45 adults, AP X-ray with elbow fully extended and forearm fully supinated. It is a bone-axis angle; the visible skin angle can differ.",
+   "sources": [
+    "https://scialert.net/fulltext/?doi=jms.2010.40.44"
+   ]
+  },
+  {
+   "claim": "Start/mid/end forearm supinated (palm forward, then up), wrist neutral throughout.",
+   "verdict": "confirmed",
+   "correction": "ACE seated: supinated grip, 'Maintain a neutral wrist position (avoid flexion and extension)'. Mayo: 'keep your wrist straight and rigid'. BWS: wrist 'aligned with your forearm'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "https://www.amerikanhastanesi.org/mayo-clinic-care-network/mayo-clinic-health-information-library/videos/video-biceps-curl-with-dumbbell",
+    "https://builtwithscience.com/fitness-tips/fix-bicep-curls-mistakes/"
+   ]
+  },
+  {
+   "claim": "Mid: about 90 deg elbow flexion, forearm horizontal, shoulder still at 0 deg.",
+   "verdict": "confirmed",
+   "correction": "Derived midpoint; shoulder 0 matches ACE seated ('without ... moving your elbows forward').",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/"
+   ]
+  },
+  {
+   "claim": "Mid: with the upper arm vertical, the dumbbell's lever arm about the elbow is longest at 90 deg (forearm length x sin elbow angle).",
+   "verdict": "confirmed",
+   "correction": "Correct statics: gravity acts vertically, so the moment arm is grip distance x sin(flexion), maximal at 90 deg. Derived, not measured.",
+   "sources": []
+  },
+  {
+   "claim": "End: elbow 120-135 deg; dumbbell-curl elbow excursion measured 123.1 +/- 12.3 deg (Marcolin 2018).",
+   "verdict": "confirmed",
+   "correction": "Marcolin: DC ROM 123.1 +/- 12.3 deg. Caveat: it was an alternate curl with a semi-prone start turning supine at about 90 deg, 65% 1RM. 123 deg is an excursion, not the end angle; with a 0-5 deg start the end is about 123-128 deg.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/"
+   ]
+  },
+  {
+   "claim": "End: shoulder 0 deg, elbows stay by the sides; a 30 deg shoulder-flexion version exists in research.",
+   "verdict": "corrected",
+   "correction": "Coratella 2023 confirms the about-30-deg 'arms flexion' barbell variant. But ACE's own seated-curl variation says 'Curl the dumbbells higher by allowing the elbows to move forward as the dumbbell reaches your chest', for 'a little more emphasis on the biceps and some anterior shoulder muscles'. So a small forward elbow travel at the very top is an accepted variant, not an error; the default 0 deg is fine.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9944112/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/"
+   ]
+  },
+  {
+   "claim": "End: palm facing the shoulder; dumbbells 'toward the shoulders'.",
+   "verdict": "confirmed",
+   "correction": "ACE barbell: 'Lift the barbell toward the shoulders'. ACE seated says 'towards your chest'. Both fit a top position in front of the upper chest/shoulder.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/"
+   ]
+  },
+  {
+   "claim": "Grip orientation: supinated for the whole rep (default), with a neutral-start variant (Marcolin).",
+   "verdict": "confirmed",
+   "correction": "ACE, Mayo ('palm facing upward') support the default. Marcolin: 'semiproned at the initial phase ... supine position at approximately 90 deg of elbow flexion'. ACE seated also lists a rotating variant.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "https://www.amerikanhastanesi.org/mayo-clinic-care-network/mayo-clinic-health-information-library/videos/video-biceps-curl-with-dumbbell",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/"
+   ]
+  },
+  {
+   "claim": "Fingers: all four round the handle, thumb over index and middle fingers; handle centred in the palm.",
+   "verdict": "unverified",
+   "correction": "Closed grip is sourced (ACE); exact finger overlap and centring are not stated by any source opened. Research already marks them unverified.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/"
+   ]
+  },
+  {
+   "claim": "Off-centre grip variant (thumb side against the inner head to load supination).",
+   "verdict": "unverified",
+   "correction": "Page did not load for the fetcher. A search summary of it agrees (thumb and forefinger side against the inside of the plates, pinky side heavier). Its 'several inches' gap is not possible on a 130 mm handle; keep as a variant only.",
+   "sources": [
+    "https://www.strengthzonetraining.com/better-biceps-curls-grab-the-handle-this-way-for-bigger-biceps/"
+   ]
+  },
+  {
+   "claim": "ROM full: 0-5 deg to about 120-135 deg, upper arm still.",
+   "verdict": "confirmed",
+   "correction": "Supported by ACE (straight start), Marcolin (123 deg excursion), Athlean ('from full extension at the bottom to full contraction at the top').",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/",
+    "https://learn.athleanx.com/articles/how-to-do-bicep-curls"
+   ]
+  },
+  {
+   "claim": "Tempo: 2 s up, brief pause, 2 s down; Coratella 1-2-1-2; Marcolin 3 s per rep; Sato 2 s each way.",
+   "verdict": "confirmed",
+   "correction": "Coratella (both papers): 1-2-1-2 s. Sato: 2 s concentric, 2 s eccentric. Marcolin: metronome 3 s per rep (measured 1.44 s up, 1.72 s down).",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9944112/",
+    "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2021.734509/full",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/"
+   ]
+  },
+  {
+   "claim": "Tempo latitude: 0.5-8 s per rep gave similar growth; over 10 s looks worse.",
+   "verdict": "confirmed",
+   "correction": "Schoenfeld 2015 abstract: similar hypertrophy from 0.5 to 8 s; very slow (>10 s) 'inferior', with few controlled studies. Studies trained to failure.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/25601394/"
+   ]
+  },
+  {
+   "claim": "Breathing: exhale up, inhale down; arms curl in unison.",
+   "verdict": "confirmed",
+   "correction": "ACE seated: 'Exhale and slowly bend each elbow in unison' and 'Inhale and gently lower'.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/"
+   ]
+  },
+  {
+   "claim": "Primary biceps.",
+   "verdict": "confirmed",
+   "correction": "ACE (target biceps); Coratella measured it as prime mover.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/"
+   ]
+  },
+  {
+   "claim": "Secondary brachialis: pure elbow flexor in every forearm position.",
+   "verdict": "confirmed",
+   "correction": "Kenhub: brachialis flexes the elbow 'in all positions', 'not affected by pronation or supination', 'the only pure flexor'. StatPearls and ExRx were blocked to the fetcher (search text agrees).",
+   "sources": [
+    "https://www.kenhub.com/en/library/anatomy/brachialis-muscle",
+    "https://www.ncbi.nlm.nih.gov/books/NBK551630/",
+    "https://exrx.net/WeightExercises/Biceps/DBCurl"
+   ]
+  },
+  {
+   "claim": "Secondary forearms note: brachioradialis 'works harder when the grip is pronated' (Kleiber 2015, Coratella 2023 grips).",
+   "verdict": "corrected",
+   "correction": "Kleiber (slow 20 deg/s single flexions, n=16) does show higher brachioradialis palms-down. Coratella 2023 grips shows the opposite under load: brachioradialis was HIGHER with the supinated grip than pronated (+5%) and neutral (+6%) in 8-RM cable curls. Do not cite Coratella for this; say the evidence is mixed and that brachioradialis is clearly active in this palms-up curl, which supports the forearms highlight.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC4526813/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/"
+   ]
+  },
+  {
+   "claim": "Stabilizers front_delts and upper_traps (ExRx list: anterior deltoid, coracobrachialis, upper/middle trapezius, levator scapulae, wrist flexors).",
+   "verdict": "unverified",
+   "correction": "ExRx page blocked (403) to the fetcher; search-index text agrees with the list. Front-delt activity is measured in both Coratella papers, so front_delts as a stabilizer is confirmed; upper_traps rests on ExRx only.",
+   "sources": [
+    "https://exrx.net/WeightExercises/Biceps/DBCurl",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9944112/"
+   ]
+  },
+  {
+   "claim": "Peak effort late in the lift: biceps EMG rose through the lift, significantly highest in the last third (68-100% of ROM); lowering EMG lower.",
+   "verdict": "confirmed",
+   "correction": "Oliveira 2009: phases 0-33/34-67/68-100% of ROM; DBC sEMG 'increased ... from the beginning to the end of concentric contraction, reaching statistical significance at phase 3'; all exercises had less eccentric activity. Caveats: one rep per subject, 40% MVC, slow (3.6-4.7 s per phase), long head only. Coratella flex also shows ascending > descending.",
+   "sources": [
+    "https://www.jssm.org/jssm-08-24.xml-Fulltext",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9944112/"
+   ]
+  },
+  {
+   "claim": "Flag: BWS claim that elbows swaying forward lowers biceps activation is contradicted by Coratella 2023 (+17.7% straight bar, +20.3% EZ bar in the lift with about 30 deg arm flexion; front delt higher).",
+   "verdict": "confirmed",
+   "correction": "BWS does make the claim ('less biceps activation and more front delts activation'). Coratella abstract gives +17.7% (ES 3.93) and +20.3% (ES 5.87), anterior deltoid more excited with flexion. Caveats: barbell, 10 competitive bodybuilders, a deliberate 30 deg flexion, not a swing; in the lowering phase biceps EMG was 2.8-8.1% higher WITHOUT flexion.",
+   "sources": [
+    "https://builtwithscience.com/fitness-tips/fix-bicep-curls-mistakes/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9944112/"
+   ]
+  },
+  {
+   "claim": "Mistake torso swing: knees dip, trunk rocks back, hips drive forward; momentum and lower back take the load; fix lighter load, back to a wall.",
+   "verdict": "confirmed",
+   "correction": "ACE: 'Keep chest still'. Athlean: swinging 'uses momentum rather than muscle strength'. BWS: momentum puts load 'straight to your lower back'; 'stand with your back against a wall to prevent your body from swinging'. Marcolin monitored 'trunk movements together with knee flexions ... to avoid possible cheating', which supports the knee dip. Mayo's 'don't swing' refers to the arm or elbow, not the torso. Lean angle unmeasured.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+    "https://learn.athleanx.com/articles/how-to-do-bicep-curls",
+    "https://builtwithscience.com/fitness-tips/fix-bicep-curls-mistakes/",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/",
+    "https://www.amerikanhastanesi.org/mayo-clinic-care-network/mayo-clinic-health-information-library/videos/video-biceps-curl-with-dumbbell"
+   ]
+  },
+  {
+   "claim": "Mistake elbows drifting forward: front-delt work rises; does not lower biceps EMG; fix keep elbows beside the trunk.",
+   "verdict": "corrected",
+   "correction": "Facts are right (Coratella; ACE 'without ... moving your elbows forward'; Mayo 'keeping your elbow close to your body'). But since ACE lists forward elbow travel at the top as a valid variant, frame the mistake as the upper arm swinging forward early in the lift to throw the weight up, not any forward travel near the top.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC9944112/",
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "https://www.amerikanhastanesi.org/mayo-clinic-care-network/mayo-clinic-health-information-library/videos/video-biceps-curl-with-dumbbell"
+   ]
+  },
+  {
+   "claim": "Mistake stopping short at the bottom: 0-50 deg training grew elbow-flexor thickness 8.9% vs 3.4% for 80-130 deg in 5 weeks.",
+   "verdict": "corrected",
+   "correction": "Numbers are right (Sato 2021: 8.9 +/- 3.9% vs 3.4 +/- 2.7%), but the study used a DUMBBELL PREACHER CURL (45 deg shoulder flexion), in untrained adults, 12 per group. On a preacher bench the 0-50 deg range is heavily loaded; in a standing curl the load's lever arm near 0-50 deg is small (sin of the elbow angle), and Oliveira shows the standing and preacher curls load the range in opposite patterns. Keep the mistake (Athlean, BWS ask for full extension) but drop Sato as the reason here.",
+   "sources": [
+    "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2021.734509/full",
+    "https://www.jssm.org/jssm-08-24.xml-Fulltext",
+    "https://learn.athleanx.com/articles/how-to-do-bicep-curls",
+    "https://builtwithscience.com/fitness-tips/fix-bicep-curls-mistakes/"
+   ]
+  },
+  {
+   "claim": "Mistake curling the wrists: shifts load to forearm flexors.",
+   "verdict": "confirmed",
+   "correction": "ACE: avoid wrist flexion and extension. Mayo: 'If you flex your wrist as you bend your elbow, you won't target the biceps muscle effectively.' BWS lists wrist flexion as a mistake.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+    "https://www.amerikanhastanesi.org/mayo-clinic-care-network/mayo-clinic-health-information-library/videos/video-biceps-curl-with-dumbbell",
+    "https://builtwithscience.com/fitness-tips/fix-bicep-curls-mistakes/"
+   ]
+  },
+  {
+   "claim": "Mistake dropping the weight; fix lower over about 2 s.",
+   "verdict": "confirmed",
+   "correction": "ACE seated 'gently lower'; ACE barbell 'Slowly lower'; Mayo 'slowly lower'; Athlean 'Slowly lower ... maintaining control'. 2 s down used by Sato and Coratella. 'Well under a second' is illustrative.",
+   "sources": [
+    "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+    "https://www.amerikanhastanesi.org/mayo-clinic-care-network/mayo-clinic-health-information-library/videos/video-biceps-curl-with-dumbbell",
+    "https://learn.athleanx.com/articles/how-to-do-bicep-curls",
+    "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2021.734509/full",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/"
+   ]
+  },
+  {
+   "claim": "Key fact: palms up gave 12% more biceps activity than neutral and 19% more than palms down in 8-rep-max curls.",
+   "verdict": "corrected",
+   "correction": "Coratella 2023 grips: +12(9)% vs neutral, +19(7)% vs pronated, lifting phase only (no difference when lowering). It was a CABLE curl (bar for palms up/down, rope for neutral), 10 competitive bodybuilders, 6-rep sets at 8-RM load. Say 'cable curls in trained bodybuilders, lifting phase'.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/"
+   ]
+  },
+  {
+   "claim": "Key fact caveat: Kleiber 2015 found no biceps change across grips in slow, light curls; brachioradialis did the extra work palms-down.",
+   "verdict": "confirmed",
+   "correction": "Kleiber: 16 subjects, 20 deg/s, biceps 'no significant changes in any hand position', brachioradialis increased pronated. 'Light' is not stated; say 'slow, single elbow flexions'.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC4526813/"
+   ]
+  },
+  {
+   "claim": "Key fact: the bottom half builds more (0-50 deg 8.9% vs 80-130 deg 3.4%).",
+   "verdict": "corrected",
+   "correction": "True only for the preacher curl Sato tested. On a standing dumbbell curl it would mislead (the 0-50 deg range carries little load). Move this fact to lib_preacher_curl, which exists in the library, or remove it here.",
+   "sources": [
+    "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2021.734509/full",
+    "https://www.jssm.org/jssm-08-24.xml-Fulltext"
+   ]
+  },
+  {
+   "claim": "Key fact: biceps effort climbs through the lift and is highest in the last third.",
+   "verdict": "confirmed",
+   "correction": "Oliveira 2009 (see peak-effort verdict); add 'in a slow, single-rep test'.",
+   "sources": [
+    "https://www.jssm.org/jssm-08-24.xml-Fulltext"
+   ]
+  },
+  {
+   "claim": "Key fact: focusing on squeezing the biceps grew the elbow flexors 12.4% vs 6.9% over 8 weeks ('nearly doubled').",
+   "verdict": "confirmed",
+   "correction": "Schoenfeld 2018: INTERNAL 12.4% vs EXTERNAL 6.9%, 30 untrained college-aged men, 8 weeks, 4 x 8-12 reps. 12.4/6.9 = 1.8x. Add 'in untrained men'.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/29533715/"
+   ]
+  },
+  {
+   "claim": "Key fact: 0.5-8 s per rep gave similar growth; over 10 s looks worse.",
+   "verdict": "confirmed",
+   "correction": "Schoenfeld 2015 abstract.",
+   "sources": [
+    "https://pubmed.ncbi.nlm.nih.gov/25601394/"
+   ]
+  },
+  {
+   "claim": "Head/neck neutral; knees straight or softly unlocked.",
+   "verdict": "unverified",
+   "correction": "No curl source opened states either. Marcolin treated knee flexion during the rep as cheating, so knees should at least stay still.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/"
+   ]
+  }
+ ],
+ "would_look_wrong": [
+  "Inner dumbbell head clipping the thigh: with palms forward and a centred grip, about 15 cm of a 305 mm Titan 25 lb dumbbell sticks out on the thumb side, which is where the thigh is when the arm hangs. Real lifters hold the bells slightly in front of or wide of the thigh. Run a collision check at the bottom frame and use the carrying angle plus a few degrees of shoulder abduction or forward offset (amount unmeasured).",
+  "Full supination at the bottom (palms facing forward) needs about 85-90 deg of forearm twist. If the shared rig twists only at the wrist joint, the wrist skin will 'candy-wrap'. Spread the twist along the forearm and check it at the bottom frame.",
+  "Perfectly rigid shoulder blades pinched 'down and back' for the whole rep comes from ACE's seated, back-supported page. Standing and overdone, it reads as a puffed, stiff chest. Keep it subtle: shoulders down, not hard-pinched (coach judgement, unverified).",
+  "Peak-effort glow late in the lift (last third) is measured, but a coach expects the heaviest moment near 90 deg, where the lever arm is longest. Keep the glow ramp gentle (rising through the lift) rather than flashing at the very top, so it does not look like the top is the hardest part mechanically.",
+  "Elbow at exactly 0 deg with a carrying angle can look hyperextended on a lean model. Use about 5 deg at the bottom.",
+  "Torso-swing mistake: the lean-back angle is unmeasured. Too little lean is unreadable, too much looks fake. The human-eye review must judge it. Add a small knee dip (Marcolin treats knee flexion as cheating).",
+  "Elbows-forward mistake: show the upper arm swinging forward early to throw the weight. Do not show a few degrees of forward travel at the top as wrong, since ACE lists that as a valid variant.",
+  "At the top (about 125-130 deg, upper arm vertical) the hands sit in front of the upper chest, below shoulder height, about 10-13 cm in front of the chest wall (geometry from a 30 cm forearm-to-grip length). Dumbbells touching the shoulders would need more flexion or forward elbows than the default allows."
+ ],
+ "summary": "44 claims checked: 30 confirmed, 8 corrected, 6 unverified, 0 refuted. Main corrections: (1) the Sato 'bottom half builds more' fact and the stop-short reason come from a dumbbell PREACHER curl; they do not carry over to a standing curl, where the 0-50 deg range is lightly loaded. Move them to lib_preacher_curl. (2) Coratella grips was a cable bar/rope curl in 10 bodybuilders, and it found brachioradialis HIGHER palms-up, which contradicts the 'works harder pronated' note it was cited for. (3) ACE lists forward elbow travel at the top as a valid variant, so the elbows-forward mistake should show an early swing. (4) Setup step 6 (wider dumbbells for carrying angle) has no source. (5) The REP 114 mm handle and the knee and head positions are unverified. ExRx, StatPearls and Strength Zone were blocked; Mayo was confirmed through a Mayo Care Network mirror."
+}

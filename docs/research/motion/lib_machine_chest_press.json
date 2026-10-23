@@ -1,0 +1,397 @@
+{
+  "id": "lib_machine_chest_press",
+  "name": "Machine Chest Press",
+  "researched": "2026-10-02",
+  "evidenceKey": {
+    "documented": "Stated by the cited source for this exercise or this machine.",
+    "documented-by-similarity": "Stated by the source for a close exercise (usually the barbell bench press) and applied here.",
+    "range, coach consensus": "A range from coaching sources. No measurement found.",
+    "derived": "Worked out from cited numbers. The working is given.",
+    "unverified": "No source found. Do not show as fact. Check against a reference photo or the owner's machine."
+  },
+
+  "appData": {
+    "exercisesJson": {
+      "equipment": "Machine",
+      "primary": ["chest"],
+      "secondary": ["front_delts", "triceps"],
+      "stabilizers": [],
+      "pattern": "horizontal_push",
+      "aliases": ["chest press machine", "machine press", "seated chest press"]
+    },
+    "muscleIdMap": {
+      "chest": "pectoralis major, sternal and costal (middle and lower) parts",
+      "upper_chest": "pectoralis major, clavicular part",
+      "front_delts": "anterior deltoid",
+      "triceps": "triceps brachii",
+      "rotator_cuff": "supraspinatus, infraspinatus, teres minor, subscapularis",
+      "upper_traps": "upper trapezius (should stay quiet: shrugging is a fault)",
+      "note": "There is no serratus MuscleId; classifyMuscleText maps 'serratus' to core."
+    }
+  },
+
+  "existingRepoContent": {
+    "files": [
+      "docs/research/howto/lib_machine_chest_press.json (generated stub: source ids and riskFlags wrist, elbow)",
+      "tools/plates/layers/exercises/machine_chest_press.howto.mjs (grip, posture checkpoints, feel rows, mistakes, risks; owner decision 2026-09-30: horizontal handles, palms down, are the main grip)",
+      "tools/plates/layers/exercises/machine_chest_press.mjs (2D plate: machine geometry and start/end/mistake poses)",
+      "docs/research/howto/sources.json (registry entries ace-chest-press, muyor2023, weiss1995, nance2017, fees1998, snyder2012, calatayud2016, barbell-logic-grip, nhs-wrist-pain, nhs-elbow-pain)"
+    ],
+    "reuse": [
+      "Seat so handles meet mid-chest, back and blades on the pad, feet flat, press to extended-not-locked: re-checked on the ACE page today, correct.",
+      "Full grip, thumb wrapped, neutral wrist: re-checked on ACE today, correct.",
+      "Main grip = horizontal handles, palms down (owner decision 2026-09-30). Keep for the 3D model.",
+      "Mistakes 'wrist bent back', 'seat too low', 'shoulders roll off, elbows lock': all still supported (see mistakes below).",
+      "Wrist target 0-10 deg extension: Weiss 1995 abstract re-read today (lowest carpal-tunnel pressure at 2 +/- 9 deg extension). Not a lifting study; keep its MECH/WEAK label."
+    ],
+    "flags": [
+      {
+        "where": "tools/plates/layers/exercises/machine_chest_press.mjs header comment",
+        "issue": "Cites Fees 1998 for 'keep shoulder abduction to about 45 deg' and 'avoid the hands travelling behind the chest line'. The Fees 1998 abstract (re-read today) contains neither figure nor rule. Only the abstract is reachable.",
+        "action": "Treat both as unverified from Fees. The 'no deeper than chest level' rule is directly on the ACE page, so cite ACE for depth instead."
+      },
+      {
+        "where": "tools/plates/layers/exercises/machine_chest_press.mjs machine geometry",
+        "issue": "Seat top 46 cm, back pad 5 deg, lever pivot 1.89 m up, lever 1.0 m, handles 56 cm apart converging to 44 cm, vertical handles 14 cm long: no source given and none found.",
+        "action": "Mark unverified. Handle spacing looks narrow next to Muyor 2023's machine (neutral grip ~150 %, prone grip ~200 % of biacromial width). See equipment.handles.spacing."
+      },
+      {
+        "where": "machine_chest_press.mjs header vs machine_chest_press.howto.mjs",
+        "issue": "The plate header says 'neutral vertical handles'; the how-to says the owner chose horizontal handles, palms down.",
+        "action": "3D model: horizontal handles as the main pair (owner decision), vertical as the alternate."
+      },
+      {
+        "where": "machine_chest_press.howto.mjs handling.width",
+        "issue": "'Pick handles that put your hands just outside your shoulders' is cited to muyor2023, but Muyor's horizontal (prone) grip was ~200 % of biacromial width, well outside the shoulders. Only the vertical grip (~150 %) is close.",
+        "action": "Reword or re-source. Do not cite Muyor for 'just outside the shoulders'."
+      },
+      {
+        "where": "machine_chest_press.howto.mjs RIGHT_POSE handle diameterMm 32",
+        "issue": "No manufacturer handle diameter found. 32 mm (1.25 in) is a common tube size for replacement grips, so the grip's outside diameter would be larger.",
+        "action": "Mark unverified until measured."
+      },
+      {
+        "where": "machine_chest_press.howto.mjs feel.libraryDiff add upper_chest",
+        "issue": "Based on Muyor 2023 (neutral grip clavicular ~30 % MVIC). Coratella 2020 (bodybuilders, 80 % 1RM) found the clavicular head LESS active on the chest press machine than in any free-weight press.",
+        "action": "Mixed evidence. See muscles.disagreement."
+      },
+      {
+        "where": "Plate callout 'Elbows 45°'",
+        "issue": "Coach consensus. Noteboom 2024 (bench press shoulder model) found that elbow angle mattered less than grip width and shoulder-blade position, with trade-offs: 45 deg gave more upward shear in the shoulder joint than 70 deg.",
+        "action": "Keep as a coaching cue, never as a safety fact."
+      }
+    ]
+  },
+
+  "equipment": {
+    "modelThis": {
+      "summary": "Seated selectorized chest press. One weight stack with a selector pin. Two independent lever arms hanging from an overhead pivot that converge (hands come closer) as they move forward. Adjustable seat height. Back pad fixed or with a few recline positions. Each arm carries two handle pairs: horizontal (palms-down grip), the main pair, and vertical (palms-facing grip), the alternate. Easy-start foot bar in front of the seat. Cable from the arms to the stack.",
+      "why": [
+        "These features are what the current selectorized chest presses of four major makers have in common: Technogym Selection (converging arc, independent arms, easy-start lever, dual hand grips), Life Fitness Insignia (independent converging arms, adjustable start), Life Fitness Signature (converging arms, overhead pivot per resellers), Matrix Ultra (independent converging movement, multi-position seat and back pad).",
+        "It matches the existing 2D plate (top-pivot lever), so the 3D and 2D views agree.",
+        "With dual handles, one model can show both grips and the owner's horizontal grip.",
+        "The same frame (seat, stack, shroud, foot bar, overhead-pivot arms) can be reused for the incline press with a reclined back pad and an upward arm path. That saves Meshy generations and keeps the look the same."
+      ],
+      "evidence": "documented (features); which layout is the 'most common' in gyms is unverified: no market data found",
+      "src": ["tg-selection-brochure", "tg-chest-press-manual", "lf-insignia-chest-press", "lf-signature-chest-press", "matrix-ultra-g7s13"]
+    },
+    "variants": [
+      {
+        "name": "Selectorized, overhead-pivot converging arms",
+        "examples": "Technogym Selection Chest Press M970; Life Fitness Insignia SS-CP; Matrix Ultra G7-S13; Life Fitness Signature",
+        "notes": "Chosen configuration.",
+        "src": ["tg-selection-brochure", "lf-insignia-chest-press", "matrix-ultra-g7s13", "lf-signature-chest-press"]
+      },
+      {
+        "name": "Selectorized, fixed-arm press with set start positions",
+        "examples": "Hammer Strength Select Chest Press HS-CP (pressing arm adjusts in five positions)",
+        "src": ["lf-hs-select-chest-press"]
+      },
+      {
+        "name": "Plate-loaded iso-lateral (independent arms, weight horns)",
+        "examples": "Hammer Strength Iso-Lateral Bench Press, sold as IL-BPH (horizontal handles) and IL-BPV (vertical handles)",
+        "notes": "Its manual: seat set so the handles are 'slightly below mid-chest'.",
+        "src": ["hs-isolateral-manual"]
+      },
+      {
+        "name": "Moving-seat design",
+        "examples": "HOIST RS-2301 (seat rocks back so the handles end level with the chin, like a bench press arc; Select-A-Grip handles at 0, 45 and 90 deg)",
+        "notes": "Uncommon. Do not model.",
+        "src": ["hoist-rs2301"]
+      }
+    ],
+    "parts": [
+      { "part": "Seat", "detail": "Height-adjustable. Technogym: lever under the front of the seat; 'to lower the seat you can remain seated; un-weight the seat to raise it'. Matrix Ultra: 7 positions, spring-assisted. Life Fitness Insignia: seat angle tilts as height changes.", "src": ["tg-chest-press-manual", "matrix-ultra-g7s13", "lf-insignia-chest-press"], "evidence": "documented" },
+      { "part": "Back pad", "detail": "Supports the whole back; the user rests the back flat against it. Matrix Ultra: 6 back pad positions over a 20 deg range (4 deg per position). The absolute recline angle is not published by any maker found.", "src": ["tg-chest-press-manual", "matrix-ultra-g7s13"], "evidence": "documented (adjustment); recline angle unverified" },
+      { "part": "Lever arms", "detail": "Two independent arms. They follow a converging arc (hands move inward as they go forward). Overhead pivot on Life Fitness Signature (reseller listings) and Cybex presses. The handle path is an arc that rises slightly as it goes forward, because the arm swings from a pivot above.", "src": ["tg-selection-brochure", "lf-insignia-chest-press", "lf-signature-chest-press"], "evidence": "documented (converging, independent); slight rise derived from overhead-pivot geometry" },
+      { "part": "Handles", "detail": "Technogym Selection Chest Press: 'two fixed with indentations for the fingers; two rotating'. Brochure: 'Dual hand grips encourage training variety'. Grips are rubber sleeves (Hammer Strength: extruded thermo rubber held by aluminium collars).", "src": ["tg-chest-press-manual", "tg-selection-brochure", "lf-hs-select-chest-press"], "evidence": "documented" },
+      { "part": "Start-position adjustment / easy-start foot bar", "detail": "Life Fitness Insignia: 'adjustable start positions allow users to control the range of motion from the seated position'. Technogym: 'Easy Start lever makes entry and exit easy and eliminates the need for an adjustment of the starting position'; the foot bar moves the arms closer to the user. HOIST: foot assist bar controls the pre-stretch.", "src": ["lf-insignia-chest-press", "tg-selection-brochure", "tg-chest-press-manual", "hoist-rs2301"], "evidence": "documented" },
+      { "part": "Weight stack and cable", "detail": "Stack of plates on two guide rods, selector pin. Technogym: 'the levers ... move the weights along two guides by means of a cable'. Life Fitness / Hammer Strength: 7x19 strand nylon-coated cable; Signature pulleys 11 cm and 15 cm diameter. Stack: Technogym 100 kg standard / 130 kg plus; Insignia 260 lb (118 kg) or 305 lb; Hammer Select 295 lb (138 kg).", "src": ["tg-chest-press-manual", "tg-selection-brochure", "lf-signature-chest-press", "lf-hs-select-chest-press", "lf-insignia-chest-press"], "evidence": "documented" },
+      { "part": "Stack position relative to the seat", "detail": "Varies by model; HOIST lets the stack cage go on either side.", "src": ["hoist-rs2301"], "evidence": "unverified for the chosen model; take it from a reference photo" }
+    ],
+    "dimensions": {
+      "machines": [
+        { "model": "Technogym Selection Chest Press M970", "lengthCm": 135, "widthCm": 145, "heightCm": 165, "src": ["tg-selection-brochure"] },
+        { "model": "Life Fitness Insignia Chest Press SS-CP", "lengthCm": 110, "widthCm": 140, "heightCm": 148, "note": "43.2 x 55.3 x 58.1 in", "src": ["lf-insignia-chest-press"] },
+        { "model": "Hammer Strength Select Chest Press HS-CP", "lengthCm": 104, "widthCm": 145, "heightCm": 163, "src": ["lf-hs-select-chest-press"] },
+        { "model": "Matrix Ultra Converging Chest Press G7-S13", "lengthCm": 140, "widthCm": 141, "heightCm": 135, "note": "static; 168.5 cm long in use", "src": ["matrix-ultra-g7s13"] }
+      ],
+      "rangeToModel": "Footprint about 104-140 cm long, 140-145 cm wide, 135-165 cm tall.",
+      "evidence": "documented (overall sizes only)",
+      "notDocumented": "Seat height range, back pad angle, pivot height, lever length, handle length/diameter, handle spacing. All unverified.",
+      "conflict": "Life Fitness Signature Chest Press: official EU page gives 125 x 117 x 163 cm and 95 kg stacks; a reseller gives 145 x 132 x 180 cm and 290 lb. Not used."
+    },
+    "handles": {
+      "orientations": [
+        { "name": "horizontal (main)", "hand": "pronated, palms down/forward", "src": ["muyor2023"], "evidence": "documented" },
+        { "name": "vertical (alternate)", "hand": "neutral, palms facing each other", "src": ["muyor2023"], "evidence": "documented" }
+      ],
+      "spacing": {
+        "text": "On the machine Muyor 2023 tested, the neutral grip sat at ~150 % and the prone grip at ~200 % of biacromial (shoulder-tip) width. Those widths were fixed by the machine.",
+        "src": ["muyor2023"],
+        "evidence": "documented (one unnamed machine)",
+        "derivedExample": "The same lab's participants (Rodriguez-Ridao 2020, mean height 1.8 m) had 150 % biacromial width = 68.3 cm, so biacromial width ~45.5 cm. On such a lifter, neutral grip ~68 cm and prone grip ~91 cm apart. Where on the hand the width was measured is not stated. Derived; check against a reference photo.",
+        "derivedSrc": ["rodriguezridao2020"]
+      },
+      "diameterAndLength": { "text": "Not published by the makers found. 32 mm (1.25 in) is a common tube size for replacement grips, so the rubber grip itself is thicker.", "evidence": "unverified" }
+    },
+    "references": [
+      { "url": "https://www.manualslib.com/manual/2259016/Technogym-Selection-Chest-Press.html?page=3", "shows": "Labelled parts drawing: seat, levers, handgrips, stack, pin, easy-start bar" },
+      { "url": "https://www.manualslib.com/manual/2259016/Technogym-Selection-Chest-Press.html?page=28", "shows": "Seat lever, handgrip height, easy-start bar use" },
+      { "url": "https://www.innovativefit.com/pdfs/900/Brochure%20-%20Technogym%20Selection.pdf", "shows": "Product photo and specs, Chest Press M970 (p. 22)" },
+      { "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/life-fitness/insignia-series-chest-press", "shows": "Product photos, Insignia SS-CP" },
+      { "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select-chest-press", "shows": "Product photos, Hammer Strength Select HS-CP" },
+      { "url": "https://cgmood.com/3d-model/technogym-selection-700-chest-press", "shows": "Third-party 3D model of the Technogym Selection 700 Chest Press, useful for proportions (not opened; title from search results)" }
+    ]
+  },
+
+  "setup": [
+    { "step": 1, "text": "Pick the load with the selector pin.", "landmark": null, "src": ["tg-chest-press-manual"], "evidence": "documented" },
+    { "step": 2, "text": "Set the seat height so the handles are level with mid-chest.", "landmark": "Nipple line / middle of the breastbone. ACE: 'level with your mid-chest (around nipple level)'. Hammer Strength: 'slightly below mid-chest'. Technogym: 'chest high'.", "src": ["ace-chest-press", "hs-isolateral-manual", "tg-chest-press-manual"], "evidence": "documented" },
+    { "step": 3, "text": "Set the start depth so the handles start no deeper than the front of the chest. Use the start-position adjuster if there is one, or the easy-start foot bar.", "landmark": "Front plane of the chest. ACE: 'no deeper than chest level (level with the front of your chest)'.", "src": ["ace-chest-press", "lf-insignia-chest-press", "tg-selection-brochure"], "evidence": "documented" },
+    { "step": 4, "text": "Sit right back: back flat against the back pad, hips back on the seat. Keep the natural low-back curve; do not press the low back into the pad.", "landmark": "Sacrum and upper back touching the pad.", "src": ["tg-chest-press-manual", "ace-chest-press"], "evidence": "documented" },
+    { "step": 5, "text": "Feet flat on the floor (or on foot rests if the machine has them). If there is an easy-start foot bar, push it with one foot to bring the handles forward, take the handles, then let the bar go and put both feet on the floor.", "landmark": "Feet about hip width (unverified width).", "src": ["ace-chest-press", "tg-chest-press-manual"], "evidence": "documented (feet width unverified)" },
+    { "step": 6, "text": "Choose the handle pair (horizontal, palms down = main; vertical, palms in = alternate). Full grip, thumbs wrapped round the handle, wrist in line with the forearm.", "landmark": "Forearm directly behind the handle, in line with the push.", "src": ["ace-chest-press", "tg-chest-press-manual"], "evidence": "documented" },
+    { "step": 7, "text": "Brace the stomach. Pull the shoulder blades down and back into the pad and hold them there for the whole set.", "landmark": "Shoulder blades flat on the pad.", "src": ["ace-chest-press"], "evidence": "documented" }
+  ],
+
+  "posture": {
+    "note": "Joint angles: 'shoulder abduction' = upper arm out from the side of the torso, seen from the front (0 = arm at side). 'Elbow flexion' = 0 when straight.",
+    "start": {
+      "head": { "text": "Neutral, eyes forward, held still. Hammer Strength: 'chest up, head up and shoulders against the back pad'. Whether the back of the head touches the pad depends on pad height.", "src": ["hs-isolateral-manual"], "evidence": "documented (head contact unverified)" },
+      "neck": { "text": "Neutral; chin neither poked forward nor tucked.", "src": [], "evidence": "range, coach consensus" },
+      "torso": { "text": "Upper back and buttocks on the pad, natural low-back curve kept, abs braced. Pad recline angle not published (Matrix Ultra adjusts over 20 deg; the 2D plate uses 5 deg, unsourced).", "src": ["ace-chest-press", "tg-chest-press-manual", "matrix-ultra-g7s13"], "evidence": "documented (recline angle unverified)" },
+      "scapulae": { "text": "Depressed and retracted (down and back), flat on the pad.", "src": ["ace-chest-press"], "evidence": "documented" },
+      "shoulder": {
+        "text": "Elbows below shoulder height. With horizontal handles the upper arm sits about 45-70 deg out from the torso; with vertical handles closer to the body. Seen from the side, the elbows sit level with or slightly behind the torso when the handles are at the front of the chest. Upper arm turned in just enough that the forearm points straight along the push.",
+        "angles": { "abductionDeg": "45-70 (horizontal handles)", "horizontalPosition": "elbow at or slightly behind the chest plane" },
+        "src": ["gravitus-incline", "noteboom2024", "muyor2023", "ace-chest-press"],
+        "evidence": "range, coach consensus (abduction: Gravitus gives 45-60 deg for the incline machine; Noteboom 2024 tested 45, 70 and 90 deg on the bench and found no single safest angle). Elbow-behind-chest is derived from ACE's depth rule plus the forearm-in-line rule. Vertical-handle angle unverified."
+      },
+      "elbow": { "text": "About 90 deg flexion. A 2024 EMG study on a Technogym seated chest press used 'from 90° elbow flexion to full extension'.", "angles": { "flexionDeg": 90 }, "src": ["abelleira2024"], "evidence": "documented (study protocol)" },
+      "forearm": { "text": "Straight behind the handle, pointing the way the handle moves. Pronated on horizontal handles, neutral (thumb up) on vertical handles. Technogym: 'Keep your elbows, wrists and shoulders aligned'.", "src": ["tg-chest-press-manual", "muyor2023"], "evidence": "documented" },
+      "wrist": { "text": "Neutral: knuckles, wrist and forearm in one line. Target 0-10 deg extension. Weiss 1995: lowest carpal-tunnel pressure at 2 +/- 9 deg extension and 2 +/- 6 deg ulnar deviation (nerve-pressure study, not lifting).", "angles": { "extensionDeg": "0-10", "deviationDeg": "about 0" }, "src": ["ace-chest-press", "weiss1995"], "evidence": "documented (neutral); 0-10 deg target documented-by-similarity" },
+      "hips": { "text": "Seated, hips pushed back to the pad, roughly 90 deg flexion.", "src": ["ace-chest-press"], "evidence": "hips back documented; angle unverified" },
+      "knees": { "text": "Roughly 90 deg, shins about vertical.", "src": [], "evidence": "unverified" },
+      "feet": { "text": "Flat on the floor (or foot rests), still for the whole set.", "src": ["ace-chest-press", "tg-chest-press-manual"], "evidence": "documented" }
+    },
+    "mid": {
+      "text": "Handles halfway along the arc, moving slightly inward (converging) and slightly up. Elbow about 45 deg flexion. Blades still flat on the pad, wrists still neutral, head and feet unchanged.",
+      "src": ["tg-selection-brochure", "ace-chest-press"],
+      "evidence": "converging documented; elbow 45 deg derived (halfway between 90 and ~0); slight rise derived from overhead pivot"
+    },
+    "end": {
+      "elbow": { "text": "Extended but not locked: 'fully extended, but not locked' (ACE); 'Do not lock your elbows' (Technogym). How much bend to leave is not given in degrees (the 2D plate uses 15-18 deg, unsourced).", "src": ["ace-chest-press", "tg-chest-press-manual"], "evidence": "documented (degrees unverified)" },
+      "shoulder": { "text": "Arms reach forward about level with mid-chest to slightly higher (the arc rises). Upper arm still below shoulder height.", "src": [], "evidence": "derived from handle height and overhead-pivot arc" },
+      "scapulae": { "text": "Still on the pad, not rolled forward. ACE: the shoulder blades 'should continue to make contact with the backrest'.", "src": ["ace-chest-press"], "evidence": "documented" },
+      "hands": { "text": "Closer together than at the start on converging machines.", "src": ["tg-selection-brochure", "lf-insignia-chest-press"], "evidence": "documented (amount unverified)" },
+      "restUnchanged": "Head, torso, hips, knees and feet as at the start."
+    }
+  },
+
+  "grip": {
+    "horizontal": {
+      "orientation": "Pronated (palms down/forward).",
+      "width": "Set by the handles. Muyor 2023's machine: ~200 % of biacromial width.",
+      "inPalm": "Handle across the palm, pressed through the heel of the hand so the push runs straight down the forearm.",
+      "thumb": "Wrapped round the handle, opposite the fingers. ACE: 'full grip (thumbs clasped around the handles)'. Muyor 2023: 'hook grip with the thumb'.",
+      "fingers": "All four fingers wrapped round the handle. On Technogym fixed handles the fingers sit in moulded finger grooves.",
+      "wrist": "Stacked: knuckles in line with the forearm, 0-10 deg extension.",
+      "src": ["muyor2023", "ace-chest-press", "tg-chest-press-manual", "barbell-logic-grip", "weiss1995"],
+      "evidence": "documented, except heel-of-palm placement: coach consensus (Barbell Logic, written for the barbell bench; not re-read today)"
+    },
+    "vertical": {
+      "orientation": "Neutral (palms facing each other, thumbs up).",
+      "width": "Muyor 2023's machine: ~150 % of biacromial width.",
+      "whatChanges": "Elbows sit closer to the body; the forearm is thumb-up. Chest activity did not differ meaningfully from the horizontal grip (Muyor 2023). Choosing vertical for a sore wrist or shoulder is coach consensus only.",
+      "thumbFingersWrist": "Same as horizontal: full grip, thumb wrapped, wrist straight.",
+      "src": ["muyor2023", "ace-chest-press"],
+      "evidence": "documented (orientation, width, EMG); comfort choice is coach consensus"
+    },
+    "gripWidthVariation": { "text": "Technogym: 'Change your grip from close to wide to adjust the movement trajectory.'", "src": ["tg-chest-press-manual"], "evidence": "documented" }
+  },
+
+  "rangeOfMotion": {
+    "start": "Handles level with the front of the chest, never behind it (ACE). Elbow about 90 deg (study protocol).",
+    "end": "Elbows extended but not locked; shoulder blades still on the pad (ACE, Technogym).",
+    "studyProtocol": "Abelleira-Lamela 2024 (Technogym seated chest press): 'from 90° elbow flexion to full extension'.",
+    "src": ["ace-chest-press", "tg-chest-press-manual", "abelleira2024"],
+    "evidence": "documented"
+  },
+
+  "tempo": {
+    "sources": [
+      { "text": "Muyor 2023 machine-press protocol: 2 s concentric, 2 s eccentric, set by metronome.", "src": ["muyor2023"], "evidence": "documented (study protocol)" },
+      { "text": "ACSM 2009: moderate speed, 1-2 s concentric and 1-2 s eccentric, for heavy loading in intermediate to advanced lifters.", "src": ["acsm2009"], "evidence": "documented (general guideline)" },
+      { "text": "Technogym: 'Maintain a smooth controlled speed'; the incline manual adds a slower speed on the return than on the push.", "src": ["tg-chest-press-manual", "tg-chest-incline-manual"], "evidence": "documented" },
+      { "text": "ACE: press 'slowly', return 'in a slow, controlled manner'.", "src": ["ace-chest-press"], "evidence": "documented" }
+    ],
+    "animationChoice": "Press 2 s, return 2-3 s, no bounce at the bottom; optional brief hold at the end. This choice fits the sources above; the exact split is a design choice."
+  },
+
+  "breathing": {
+    "text": "Breathe out while pressing (ACE: 'Gently exhale and slowly perform a pressing movement'). Breathe in on the way back (ACE says this for the incline dumbbell press; the machine page does not say it).",
+    "src": ["ace-chest-press", "ace-incline-db-press"],
+    "evidence": "exhale documented; inhale documented-by-similarity"
+  },
+
+  "muscles": {
+    "primary": [
+      { "id": "chest", "text": "The middle (sternal) part of the pec was the most active muscle in every press and grip Muyor 2023 tested, except the narrow-grip bench.", "src": ["muyor2023"], "evidence": "documented" }
+    ],
+    "secondary": [
+      { "id": "front_delts", "text": "Anterior deltoid ~24 % MVIC, no difference across presses or grips.", "src": ["muyor2023"], "evidence": "documented" },
+      { "id": "triceps", "text": "Active; triceps work was greater on the free-weight bench than on the chest press machine (Coratella 2020).", "src": ["muyor2023", "coratella2020"], "evidence": "documented" }
+    ],
+    "stabilizersOptional": [
+      { "id": "rotator_cuff", "text": "A bench-press shoulder model found rotator cuff activity was lower with shoulder blades retracted and with narrower grips.", "src": ["noteboom2024"], "evidence": "documented-by-similarity" }
+    ],
+    "keepQuiet": [
+      { "id": "upper_traps", "text": "Shoulders stay down (ACE: 'Depress ... your scapulae'). Shrugging means the set-up is lost.", "src": ["ace-chest-press"], "evidence": "documented (cue)" }
+    ],
+    "notHighlighted": [
+      { "id": "side_delts", "text": "Coratella 2020: lateral deltoid less active on the chest press machine than on free-weight presses.", "src": ["coratella2020"], "evidence": "documented" }
+    ],
+    "disagreement": {
+      "topic": "Should upper_chest be a secondary?",
+      "for": "Muyor 2023: clavicular pec ~30 % MVIC with the neutral grip, more than the bench press at 150 % grip (~25 %).",
+      "against": "Coratella 2020: in 10 competitive bodybuilders at 80 % 1RM, the clavicular head was less active on the chest press machine than in flat, incline and decline barbell presses.",
+      "recommendation": "Keep exercises.json as it is (chest primary; front_delts, triceps secondary). If the figure shows upper_chest at all, show it weaker than the secondaries. The existing how-to's libraryDiff 'add upper_chest' should be reviewed with this conflict in mind.",
+      "src": ["muyor2023", "coratella2020"]
+    },
+    "makerLists": "Technogym lists pectorals, deltoids, triceps.",
+    "makerSrc": ["tg-selection-brochure"]
+  },
+
+  "mistakes": [
+    {
+      "key": "roll-off-lockout",
+      "name": "Shoulders roll off the pad at the end",
+      "looksLike": "In the last part of the press the shoulder blades slide forward round the ribs, the upper back peels a few centimetres off the pad, shoulders move forward, and the elbows often snap straight. Pelvis stays on the seat. (Gap size not documented; the 2D plate uses 3.6 cm.)",
+      "whyItMatters": "ACE: pressing until the blades 'round themselves forward and move off the backrest ... promotes instability within the muscles that hold the shoulder blades to the ribcage'. In a bench-press model, retracted blades lowered shoulder-joint shear and rotator cuff load (Noteboom 2024), so letting them go loses that.",
+      "fix": "Finish the press while the shoulder blades still touch the pad.",
+      "src": ["ace-chest-press", "noteboom2024"],
+      "evidence": "documented; Noteboom documented-by-similarity"
+    },
+    {
+      "key": "hard-lockout",
+      "name": "Elbows locked hard",
+      "looksLike": "Elbows snap fully straight (0 deg) at the end of each rep, often with a jolt in the stack.",
+      "whyItMatters": "ACE and Technogym both say press to extension without locking. The usual reason given (load moves from the muscles to the joint) is coach consensus; no study found.",
+      "fix": "Stop a few degrees short of straight, then return under control.",
+      "src": ["ace-chest-press", "tg-chest-press-manual"],
+      "evidence": "rule documented; mechanism coach consensus"
+    },
+    {
+      "key": "seat-too-low",
+      "name": "Seat too low",
+      "looksLike": "Handles start up near the collarbones instead of mid-chest. The elbows ride up toward shoulder height and the forearms tilt to reach the handles.",
+      "whyItMatters": "All three makers' and ACE's set-up rules put the handles at mid-chest. Feeling it mostly in the front of the shoulders when the handles sit high is coach consensus.",
+      "fix": "Raise the seat until the handles meet the nipple line.",
+      "src": ["ace-chest-press", "hs-isolateral-manual", "tg-chest-press-manual", "gravitus-incline"],
+      "evidence": "correct height documented; effect coach consensus"
+    },
+    {
+      "key": "too-deep",
+      "name": "Handles start behind the chest",
+      "looksLike": "At the bottom of each rep the hands travel behind the front of the chest and the elbows go well behind the torso, stretching the front of the shoulders.",
+      "whyItMatters": "ACE: handles 'no deeper than chest level (level with the front of your chest)'. That this protects the front of the shoulder is coach consensus.",
+      "fix": "Set the start adjuster (or use the foot bar) so the handles start level with the chest.",
+      "src": ["ace-chest-press", "lf-insignia-chest-press"],
+      "evidence": "rule documented; reason coach consensus"
+    },
+    {
+      "key": "wrist-bent-back",
+      "name": "Wrist bent back",
+      "looksLike": "The handle slides from the heel of the hand into the finger bases, the wrist folds back (~30-35 deg in the existing how-to drawing), the thumb comes loose.",
+      "whyItMatters": "ACE asks for wrists in line with the forearms; Technogym asks for elbows, wrists and shoulders aligned. Carpal-tunnel pressure was lowest near a straight wrist (Weiss 1995, not a lifting study).",
+      "fix": "Handle on the heel of the palm, thumb wrapped, lighter load if the wrist still folds.",
+      "src": ["ace-chest-press", "tg-chest-press-manual", "weiss1995"],
+      "evidence": "documented; Weiss documented-by-similarity"
+    },
+    {
+      "key": "arch-hips-up",
+      "name": "Low back arches or hips lift",
+      "looksLike": "The pelvis tips forward, the low back lifts off the pad, the buttocks slide forward or rise off the seat on hard reps.",
+      "whyItMatters": "ACE: 'avoid arching your back throughout the exercise'; Technogym: back flat against the backrest.",
+      "fix": "Brace, feet flat, hips pushed back into the seat.",
+      "src": ["ace-chest-press", "tg-chest-press-manual"],
+      "evidence": "documented"
+    }
+  ],
+
+  "keyFacts": [
+    { "text": "Handle choice barely changes the work: horizontal (palms down) and vertical (palms in) handles gave similar muscle activity, and the middle chest was the most active muscle either way. Pick by comfort.", "src": ["muyor2023"], "evidence": "documented" },
+    { "text": "Machines build as much muscle as free weights. Strength gains stay specific: you get strongest on the tool you train with.", "src": ["haugen2023"], "evidence": "documented (meta-analysis, 13 studies, 1016 people)" },
+    { "text": "The machine takes balancing out. Free-weight bench pressing gave more triceps and side-delt activity than the chest press machine.", "src": ["coratella2020"], "evidence": "documented" },
+    { "text": "Shoulder blades matter more than the exact elbow angle. In a bench-press shoulder model, pinned-back blades and a grip under 1.5 shoulder widths cut joint loads; changing the elbow angle (45, 70, 90 deg) had a smaller effect, with trade-offs.", "src": ["noteboom2024"], "evidence": "documented-by-similarity" },
+    { "text": "The foot bar is for getting in and out: push it to bring the handles to you, and after the last rep lower the weight onto it before letting go.", "src": ["tg-chest-press-manual"], "evidence": "documented" }
+  ],
+
+  "visualReferences": [
+    { "url": "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/", "shows": "ACE step photos of the seated chest press: start at mid-chest, end with arms extended, back on the pad.", "viewed": "page text read; photos not checked" },
+    { "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/", "shows": "Muyor 2023 Figure 1B (seated chest press, prone grip) and 1C (neutral grip): real lifter on the machine, both handle types.", "viewed": "caption read in full text; image file JHK-87-161468-g001.jpg not opened (PMC figure page returned a captcha)" },
+    { "url": "https://www.manualslib.com/manual/2259016/Technogym-Selection-Chest-Press.html?page=28", "shows": "Manufacturer drawings: seat adjustment, handgrip height, easy-start bar.", "viewed": "text read; drawings not checked" },
+    { "url": "https://www.manualslib.com/manual/1070990/Hammer-Strength-Iso-Lateral.html?page=9", "shows": "Hammer Strength Iso-Lateral Bench Press set-up page (horizontal and vertical handle versions).", "viewed": "text read; drawing not checked" },
+    { "url": "https://www.youtube.com/watch?v=YVbiDGkZyx0", "shows": "Life Fitness 'Signature Series Chest Press Instructions' video (title from search results).", "viewed": "not viewed (YouTube returned 429)" },
+    { "url": "https://www.youtube.com/watch?v=_1rj1FY-b1Q", "shows": "Life Fitness Insignia Series Chest Press video (title from search results).", "viewed": "not viewed (YouTube returned 429)" }
+  ],
+
+  "openQuestions": [
+    "Back pad recline angle: not published by any maker found (Matrix Ultra adjusts over a 20 deg range; absolute values unknown). The 2D plate's 5 deg is unsourced. Measure from a side-on reference photo or the owner's machine.",
+    "Handle geometry: length, diameter, finger grooves, spacing at start and end. None published. The plate's 56 cm narrowing to 44 cm looks narrower than Muyor's machine (~68 cm neutral, ~91 cm prone on a 1.8 m lifter, derived).",
+    "On the Technogym Selection Chest Press, which handle pair is fixed (with finger grooves) and which rotates: the manual does not say.",
+    "Elbow bend left at the end ('not locked'): no source gives degrees.",
+    "Shoulder abduction at the start: no machine measurement. 45-70 deg is coach consensus; the plate's 'Elbows 45°' callout is a cue, not a safety fact.",
+    "Fees 1998 claims in the plate header (45 deg abduction, hands not behind the chest) are not in the abstract; full text not reachable.",
+    "Should upper_chest be highlighted? Mixed evidence (Muyor 2023 vs Coratella 2020). Reviewer or owner to decide.",
+    "Hip and knee angles and foot spacing: unverified; set from the seat height chosen.",
+    "Which machine the owner's gym has (model and handle layout): would let the 3D match his real machine.",
+    "Videos listed under visualReferences were not viewed (rate-limited). A human reviewer should watch them before they are used."
+  ],
+
+  "sources": [
+    { "id": "ace-chest-press", "cite": "ACE Exercise Library, Seated Chest Press", "url": "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/", "kind": "guideline (certifying body)", "read": "full page; starting position quoted word for word" },
+    { "id": "ace-incline-db-press", "cite": "ACE Exercise Library, Incline Chest Press (dumbbells)", "url": "https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/", "kind": "guideline (certifying body)", "read": "full page (quotes)" },
+    { "id": "tg-chest-press-manual", "cite": "Technogym Selection Chest Press, User Manual (ManualsLib 2259016)", "url": "https://www.manualslib.com/manual/2259016/Technogym-Selection-Chest-Press.html", "kind": "manufacturer manual", "read": "pages 3, 28, 29 (quotes)" },
+    { "id": "tg-chest-incline-manual", "cite": "Technogym Selection Chest Incline, User Manual (ManualsLib 1510293)", "url": "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html", "kind": "manufacturer manual", "read": "pages 4, 24, 25 (quotes)" },
+    { "id": "tg-selection-brochure", "cite": "Technogym Selection brochure (Chest Press M970, Chest Incline M965)", "url": "https://www.innovativefit.com/pdfs/900/Brochure%20-%20Technogym%20Selection.pdf", "kind": "manufacturer brochure", "read": "full text extracted; chest press and chest incline entries" },
+    { "id": "hs-isolateral-manual", "cite": "Hammer Strength Iso-Lateral Owner's Manual (ManualsLib 1070990)", "url": "https://www.manualslib.com/manual/1070990/Hammer-Strength-Iso-Lateral.html", "kind": "manufacturer manual", "read": "pages 9 (bench press) and 18 (incline press), quotes" },
+    { "id": "lf-insignia-chest-press", "cite": "Life Fitness, Insignia Series Chest Press SS-CP", "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/life-fitness/insignia-series-chest-press", "kind": "manufacturer product page", "read": "page summary; adjustable start positions from search snippets of Life Fitness and reseller pages" },
+    { "id": "lf-signature-chest-press", "cite": "Life Fitness, Signature Series Chest Press (discontinued)", "url": "https://lifefitness.com/en-eu/catalog/strength-training/selectorized/signature-series-chest-press", "kind": "manufacturer product page + reseller listings", "read": "official page summary (dims, stacks, handles); converging arms, overhead pivot and adjustable start lever from reseller search snippets only" },
+    { "id": "lf-hs-select-chest-press", "cite": "Life Fitness, Hammer Strength Select Chest Press HS-CP", "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-select-chest-press", "kind": "manufacturer product page", "read": "page summary" },
+    { "id": "matrix-ultra-g7s13", "cite": "Matrix Ultra Converging Chest Press G7-S13", "url": "https://us.matrixfitness.com/eng/strength/single-station/g7-s13-converging-chest-press", "kind": "manufacturer product page", "read": "search snippets only (official page did not render; specs from reseller pages quoting Matrix)" },
+    { "id": "hoist-rs2301", "cite": "HOIST RS-2301 Chest Press spec sheet and owner's manual", "url": "https://storage.googleapis.com/hoist_products_public_data/spec_sheets/RS-2301%20CHEST%20PRESS.pdf", "kind": "manufacturer spec sheet", "read": "full text" },
+    { "id": "muyor2023", "cite": "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM. Comparison of muscle activity between the horizontal bench press and the seated chest press exercises using several grips. J Hum Kinet 2023;87:23-34", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/", "kind": "peer-reviewed (EMG)", "read": "full text (abstract, methods, results)" },
+    { "id": "coratella2020", "cite": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E. Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders. Eur J Sport Sci 2020;20(5):571-579", "url": "https://pubmed.ncbi.nlm.nih.gov/31397215/", "kind": "peer-reviewed (EMG)", "read": "abstract" },
+    { "id": "abelleira2024", "cite": "Abelleira-Lamela T, Marcos-Pardo PJ, Abraldes JA, et al. Electromyographic comparison of traditional fitness machines, outdoor fitness equipment without load selectors, and outdoor fitness equipment with load selectors in a seated chest press exercise in trained young men. Sensors 2024;24(23):7740", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11644873/", "kind": "peer-reviewed (EMG)", "read": "full text via page summary (methods)" },
+    { "id": "noteboom2024", "cite": "Noteboom L, Belli I, Hoozemans MJM, Seth A, Veeger HEJ, Van Der Helm FCT. Effects of bench press technique variations on musculoskeletal shoulder loads and potential injury risk. Front Physiol 2024;15:1393235", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11224528/", "kind": "peer-reviewed (musculoskeletal model)", "read": "full text via page summary with quotes" },
+    { "id": "rodriguezridao2020", "cite": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM. Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health 2020;17(19):7339", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/", "kind": "peer-reviewed (EMG)", "read": "full text sections (Table 1, methods)" },
+    { "id": "haugen2023", "cite": "Haugen ME, Varvik FT, Larsen S, et al. Effect of free-weight vs. machine-based strength training on maximal strength, hypertrophy and jump performance: a systematic review and meta-analysis. BMC Sports Sci Med Rehabil 2023;15:103", "url": "https://pubmed.ncbi.nlm.nih.gov/37582807/", "kind": "peer-reviewed (meta-analysis)", "read": "abstract" },
+    { "id": "acsm2009", "cite": "American College of Sports Medicine. Progression models in resistance training for healthy adults. Med Sci Sports Exerc 2009;41(3):687-708", "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/", "kind": "guideline (position stand)", "read": "abstract" },
+    { "id": "weiss1995", "cite": "Weiss ND, Gordon L, Bloom T, et al. Position of the wrist associated with the lowest carpal-tunnel pressure: implications for splint design. J Bone Joint Surg Am 1995;77(11):1695-9", "url": "https://pubmed.ncbi.nlm.nih.gov/7593079/", "kind": "peer-reviewed (not lifting)", "read": "abstract" },
+    { "id": "fees1998", "cite": "Fees M, Decker T, Snyder-Mackler L, Axe MJ. Upper extremity weight-training modifications for the injured athlete. Am J Sports Med 1998;26(5):732-42", "url": "https://pubmed.ncbi.nlm.nih.gov/9784824/", "kind": "peer-reviewed (clinical commentary)", "read": "abstract (used only for the flag above)" },
+    { "id": "gravitus-incline", "cite": "Gravitus, Incline Chest Press machine guide", "url": "https://gravitus.com/guides/exercises/incline-chest-press/", "kind": "coach", "read": "full page summary with quotes" },
+    { "id": "barbell-logic-grip", "cite": "Barbell Logic, Bench Press Grip Tips", "url": "https://barbell-logic.com/bench-press-grip-tips/", "kind": "coach", "read": "not re-read today; repo registry (docs/research/howto/sources.json) records full read on 2026-09-30" }
+  ]
+}

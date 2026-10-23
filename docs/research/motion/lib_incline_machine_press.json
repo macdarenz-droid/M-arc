@@ -1,0 +1,334 @@
+{
+  "id": "lib_incline_machine_press",
+  "name": "Incline Machine Press",
+  "researched": "2026-10-02",
+  "evidenceKey": {
+    "documented": "Stated by the cited source for this exercise or this machine.",
+    "documented-by-similarity": "Stated by the source for a close exercise (usually the barbell incline bench press) and applied here.",
+    "range, coach consensus": "A range from coaching sources. No measurement found.",
+    "derived": "Worked out from cited numbers. The working is given.",
+    "unverified": "No source found. Do not show as fact. Check against a reference photo or the owner's machine."
+  },
+
+  "appData": {
+    "exercisesJson": {
+      "equipment": "Machine",
+      "primary": ["upper_chest"],
+      "secondary": ["front_delts", "triceps", "chest"],
+      "stabilizers": [],
+      "pattern": "incline_push",
+      "aliases": ["incline chest press machine"]
+    },
+    "muscleIdMap": {
+      "upper_chest": "pectoralis major, clavicular part",
+      "chest": "pectoralis major, sternal and costal parts",
+      "front_delts": "anterior deltoid",
+      "triceps": "triceps brachii",
+      "rotator_cuff": "supraspinatus, infraspinatus, teres minor, subscapularis",
+      "upper_traps": "upper trapezius (should stay quiet)"
+    }
+  },
+
+  "existingRepoContent": {
+    "files": [
+      "No current docs/research/howto/lib_incline_machine_press.json and no plate layer in tools/plates.",
+      "Git history: docs/research/howto/cards/incline_machine_press.json (commit 95342b1): a 'difference card' of the chest press, anchored on ACE Seated Incline Cable Press, Rodriguez-Ridao 2020, ACSM 2009.",
+      "Git history: src/formguide/research/lib_incline_machine_press.json (commit 2304b9f to 5e7f75c): older card citing ACE 'Incline Chest Press' and Gravitus."
+    ],
+    "reuse": [
+      "From card 95342b1: the ACE Seated Incline Cable Press quotes (back on backrest, hands at upper chest or shoulders, neutral wrists, press to forehead or top-of-head level, extended not locked, pause, slow return, blades on the pad, head stable, no back arching). Re-checked on the ACE page today: correct.",
+      "From card 95342b1: Rodriguez-Ridao 2020 abstract quotes (upper chest peaks at 30 deg; above 45 deg more front delt, less chest). Re-checked: correct.",
+      "From card 95342b1: libraryDiff 'no change' to exercises.json. Still holds (see muscles)."
+    ],
+    "flags": [
+      {
+        "where": "card 95342b1, claims c1-c4",
+        "issue": "They say ACE's cable-press text was 'applied to the lever incline machine by reasoning'.",
+        "action": "Manufacturer text now exists for the machine itself: Hammer Strength Iso-Lateral Incline Press manual (seat, elbows, start position) and Technogym Selection Chest Incline manual (handgrip height, alignment, speed). Cite those first; keep ACE as support."
+      },
+      {
+        "where": "src/formguide/research/lib_incline_machine_press.json (history)",
+        "issue": "Cites 'ACE Incline Chest Press' for keeping the elbows 15 degrees short of lockout. That ACE page (exercise 25) is a dumbbell press on a 45-60 deg bench and does not give 15 degrees.",
+        "action": "Do not reuse the 15 deg figure as sourced."
+      },
+      {
+        "where": "ACE exercise 25 (dumbbell incline press)",
+        "issue": "Uses a 45-60 deg bench. Rodriguez-Ridao 2020 found that above 45 deg the front delts take over and the chest does less.",
+        "action": "Do not use ACE's 45-60 deg bench angle to set the machine's incline."
+      }
+    ]
+  },
+
+  "equipment": {
+    "modelThis": {
+      "summary": "Seated selectorized incline press built on the same frame as the chest press model: height-adjustable seat, one weight stack with selector pin, two independent lever arms from an overhead pivot that converge as they rise, easy-start foot bar. Differences from the flat chest press: the back pad leans back more and the arms press up-and-forward instead of straight forward. Handles: horizontal (palms-down) pair as the main grip; vertical pair optional.",
+      "why": [
+        "Technogym Selection Chest Incline M965 and Cybex E/Eagle Incline Press document this layout (converging arc, independent arms, overhead pivot; Technogym adds easy-start lever and dual handgrips).",
+        "Sharing the chest-press frame means the same seat, stack, shroud and foot-bar meshes can be reused, so fewer Meshy generations and one consistent look.",
+        "Horizontal handles as main: Hammer Strength removed the vertical handle from its current Iso-Lateral Incline Press because 'the grip angle was not ergonomically optimal', and the pilot chest press uses horizontal handles (owner decision 2026-09-30)."
+      ],
+      "evidence": "documented (features); which incline machine is most common in gyms is unverified",
+      "alternative": "Plate-loaded Hammer Strength Iso-Lateral Incline Press (IL-IP): independent converging/diverging arms loaded with plates on horns, horizontal handles. Widely sold, but needs a separate plate-loaded frame, weight horns and plates (more Meshy assets). Pick it if the owner's gym has one.",
+      "src": ["tg-selection-brochure", "tg-chest-incline-manual", "cybex-incline-press", "lf-hs-ilip"]
+    },
+    "variants": [
+      {
+        "name": "Selectorized converging incline press",
+        "examples": "Technogym Selection Chest Incline M965; Cybex E / Eagle Incline Press ('overhead pivot provides a natural path of motion in a 30° plane')",
+        "notes": "Chosen configuration.",
+        "src": ["tg-selection-brochure", "cybex-incline-press"]
+      },
+      {
+        "name": "Selectorized iso-lateral incline press, two stacks",
+        "examples": "Hammer Strength MTS Iso-Lateral Incline Press MTSIP: two 75 kg stacks, overhead pivot, angled seat back for easy entry",
+        "src": ["lf-hs-mts-incline"]
+      },
+      {
+        "name": "Plate-loaded iso-lateral incline press",
+        "examples": "Hammer Strength Iso-Lateral Incline Press IL-IP; older versions IL-IPH (horizontal handles) and IL-IPV (vertical handles)",
+        "src": ["lf-hs-ilip", "hs-isolateral-manual"]
+      }
+    ],
+    "parts": [
+      { "part": "Seat", "detail": "Height-adjustable with a lever; Technogym: 'Adjust the seat height by sitting on it and lifting lever (A) under the front of the seat'; body weight lowers it, stand to raise it.", "src": ["tg-chest-incline-manual"], "evidence": "documented" },
+      { "part": "Back pad", "detail": "Reclined. The angle is not published by any maker found. Gravitus says adjustable incline back pads are set 'between 30 and 45 degrees' (coach source; whether this is measured from horizontal like a bench is not stated).", "src": ["gravitus-incline"], "evidence": "unverified (angle)" },
+      { "part": "Lever arms and path", "detail": "Independent arms, converging arc (Technogym: 'feeling similar to training with dumbbells'). Cybex: overhead pivot, path of motion 'in a 30° plane' (the reference line for the 30 deg is not stated). Hammer MTS: overhead pivot gives a 'natural shoulder arc'.", "src": ["tg-selection-brochure", "cybex-incline-press", "lf-hs-mts-incline"], "evidence": "documented (path angle reference unverified)" },
+      { "part": "Handles", "detail": "Technogym Chest Incline: 'two fixed with indentations for the fingers; two rotating'; brochure: 'Dual handgrips encourage training variety'. Hammer Strength current IL-IP: vertical handle option removed.", "src": ["tg-chest-incline-manual", "tg-selection-brochure", "lf-hs-ilip"], "evidence": "documented" },
+      { "part": "Easy-start foot bar", "detail": "Technogym: optional push bar that 'moves the levers closer to the user to facilitate the grip'. At the end: press the bar, return slowly until the bar takes the weight, let go of the handles, raise the bar slowly.", "src": ["tg-chest-incline-manual"], "evidence": "documented" },
+      { "part": "Weight stack", "detail": "Technogym M965: 100 kg standard, 130 kg plus; levers move the stack by cable. Hammer MTS: 2 x 75 kg.", "src": ["tg-selection-brochure", "tg-chest-incline-manual", "lf-hs-mts-incline"], "evidence": "documented" },
+      { "part": "Plate-loaded alternative", "detail": "Hammer IL-IP: starting resistance 3.6 kg per arm, max 5 x 20 kg plates per arm, 6 storage horns, 147 kg machine.", "src": ["lf-hs-ilip"], "evidence": "documented" }
+    ],
+    "dimensions": {
+      "machines": [
+        { "model": "Technogym Selection Chest Incline M965", "lengthCm": 153, "widthCm": 143, "heightCm": "150 (brochure) or 166.6 (manual)", "src": ["tg-selection-brochure", "tg-chest-incline-manual"] },
+        { "model": "Hammer Strength Iso-Lateral Incline Press IL-IP (plate-loaded)", "lengthCm": 117, "widthCm": 140, "heightCm": 191, "src": ["lf-hs-ilip"] },
+        { "model": "Hammer Strength MTS Iso-Lateral Incline Press", "lengthCm": 102, "widthCm": 173, "heightCm": 196, "note": "Page states 40 x 68 x 77 in and '296 cm' height; 77 in = 196 cm, so 296 is a typo on the page.", "src": ["lf-hs-mts-incline"] }
+      ],
+      "rangeToModel": "Selectorized footprint about 150 cm long, 143 cm wide, 150-167 cm tall (Technogym).",
+      "notDocumented": "Back pad angle, seat height range, pivot height, lever length, handle size and spacing. All unverified.",
+      "evidence": "documented (overall sizes only)"
+    },
+    "inclineGeometryRuleForAnimator": {
+      "text": "What sets the 'incline' felt by the chest is the angle between the press direction and the line straight out from the chest (perpendicular to the back pad), tilted toward the head. Equivalent bench incline = (press path angle above horizontal) - (back pad recline from vertical). Check: on a 30 deg incline bench, recline from vertical = 60 deg, press = vertical (90 deg), so 90 - 60 = 30. Example: pad reclined 15 deg and a press path rising 45-60 deg above horizontal gives a 30-45 deg equivalent incline.",
+      "target": "30-45 deg equivalent incline (upper chest peaked at 30 deg in Rodriguez-Ridao 2020 and was higher at 44 than 28 deg in Trebs 2010; above 45 deg the front delts take over).",
+      "src": ["rodriguezridao2020", "trebs2010"],
+      "evidence": "derived (geometry); targets documented-by-similarity (bench data)"
+    },
+    "references": [
+      { "url": "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=24", "shows": "Seat lever, handgrip height, load pin (drawings)" },
+      { "url": "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=4", "shows": "Labelled parts drawing" },
+      { "url": "https://www.innovativefit.com/pdfs/900/Brochure%20-%20Technogym%20Selection.pdf", "shows": "Product photo and specs, Chest Incline M965 (p. 22)" },
+      { "url": "https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded/plate-loaded-iso-lateral-incline-press", "shows": "Product photos, Hammer Strength IL-IP" },
+      { "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-mts-iso-lateral-incline-press", "shows": "Product photos, Hammer Strength MTS incline" }
+    ]
+  },
+
+  "setup": [
+    { "step": 1, "text": "Pick the load with the pin (or load plates and secure them on a plate-loaded machine).", "landmark": null, "src": ["tg-chest-incline-manual", "hs-isolateral-manual"], "evidence": "documented" },
+    { "step": 2, "text": "Set the seat so the handles start at the upper chest.", "landmark": "Between the nipple line and the collarbones. Hammer Strength: handles 'at or slightly above mid-chest'. ACE: hands 'level with your upper chest or shoulders'. Technogym: 'Handgrips (B) should be chest high'. Gravitus: 'beside your upper chest, just below the collarbones'.", "src": ["hs-isolateral-manual", "ace-incline-cable-press", "tg-chest-incline-manual", "gravitus-incline"], "evidence": "documented (the sources differ slightly; upper chest is their overlap)" },
+    { "step": 3, "text": "Sit back: back firmly against the back pad, shoulders on the pad, chest up, head up.", "landmark": "Upper back and shoulder blades on the pad.", "src": ["ace-incline-cable-press", "hs-isolateral-manual"], "evidence": "documented" },
+    { "step": 4, "text": "Feet flat and firm on the floor. If there is an easy-start bar, push it to bring the handles to you, grip, then put both feet down.", "landmark": null, "src": ["ace-incline-cable-press", "tg-chest-incline-manual"], "evidence": "documented" },
+    { "step": 5, "text": "Grip the handles with wrists in line with the forearms. Elbows slightly below the shoulders.", "landmark": "Elbow just below shoulder height.", "src": ["ace-incline-cable-press", "hs-isolateral-manual"], "evidence": "documented" },
+    { "step": 6, "text": "Brace the stomach without pressing the low back into the pad; keep the natural low-back curve. Pull the shoulder blades down and back and hold them there.", "landmark": null, "src": ["ace-incline-cable-press"], "evidence": "documented" }
+  ],
+
+  "posture": {
+    "note": "'Shoulder abduction' = upper arm out from the side of the torso (0 = arm at side). 'Elbow flexion' = 0 when straight.",
+    "start": {
+      "head": { "text": "Head up and held still. ACE: 'maintain stability of your head'. Whether the head rests on the pad depends on pad height.", "src": ["hs-isolateral-manual", "ace-incline-cable-press"], "evidence": "documented (head contact unverified)" },
+      "neck": { "text": "Neutral; no chin poke.", "src": [], "evidence": "range, coach consensus" },
+      "torso": { "text": "Back firmly on the reclined pad, chest up, natural low-back curve, abs braced. Pad angle unverified (see equipment).", "src": ["ace-incline-cable-press", "hs-isolateral-manual"], "evidence": "documented (angle unverified)" },
+      "scapulae": { "text": "Down and back, flat on the pad.", "src": ["ace-incline-cable-press"], "evidence": "documented" },
+      "shoulder": { "text": "Elbows slightly below shoulder height (Hammer Strength). Upper arm about 45-60 deg out from the torso (Gravitus).", "angles": { "abductionDeg": "45-60" }, "src": ["hs-isolateral-manual", "gravitus-incline"], "evidence": "elbow-below-shoulder documented; 45-60 deg range, coach consensus" },
+      "elbow": { "text": "Bent, hands at the upper chest: roughly 90 deg. No incline-machine source gives a number.", "angles": { "flexionDeg": "about 90" }, "src": [], "evidence": "unverified (90 deg is the flat-machine study protocol in Abelleira-Lamela 2024)" },
+      "forearm": { "text": "Directly behind the handle and in line with the press path. Technogym: 'Keep your elbows, wrists and shoulders aligned'. Pronated on horizontal handles.", "src": ["tg-chest-incline-manual"], "evidence": "documented" },
+      "wrist": { "text": "Neutral, in line with the forearm (ACE). Target 0-10 deg extension, the same as the flat press.", "angles": { "extensionDeg": "0-10" }, "src": ["ace-incline-cable-press", "weiss1995"], "evidence": "documented (neutral); 0-10 deg documented-by-similarity" },
+      "hips": { "text": "Seated, hips back on the seat, not lifting.", "src": ["gravitus-incline"], "evidence": "coach consensus (angle unverified)" },
+      "knees": { "text": "Roughly 90 deg, shins about vertical.", "src": [], "evidence": "unverified" },
+      "feet": { "text": "Flat and firm on the floor.", "src": ["ace-incline-cable-press"], "evidence": "documented" }
+    },
+    "mid": {
+      "text": "Handles halfway up the path, moving up, forward and slightly inward. Elbows about 45 deg. Blades and back still on the pad, wrists straight, head still.",
+      "src": ["tg-selection-brochure", "ace-incline-cable-press"],
+      "evidence": "converging documented; elbow angle derived (halfway)"
+    },
+    "end": {
+      "hands": { "text": "Up and forward to about forehead or top-of-head level (ACE). Closer together than at the start (converging arms).", "src": ["ace-incline-cable-press", "tg-selection-brochure"], "evidence": "documented" },
+      "elbow": { "text": "Extended but not locked (ACE). Hammer Strength's manual says 'until the arms are fully extended'; Technogym says 'without straining your elbows'. Use ACE's 'not locked'. Degrees of bend not given.", "src": ["ace-incline-cable-press", "hs-isolateral-manual", "tg-chest-incline-manual"], "evidence": "documented (sources differ; degrees unverified)" },
+      "scapulae": { "text": "Still on the pad; ACE: 'avoid the rounding of your shoulder blades'.", "src": ["ace-incline-cable-press"], "evidence": "documented" },
+      "pause": { "text": "ACE: 'Pause momentarily then slowly return'.", "src": ["ace-incline-cable-press"], "evidence": "documented" },
+      "restUnchanged": "Head, torso, hips, knees and feet as at the start."
+    }
+  },
+
+  "grip": {
+    "horizontal": {
+      "orientation": "Pronated (palms forward/down). Main grip.",
+      "width": "Set by the handles. No published spacing for an incline machine.",
+      "inPalm": "Handle across the palm, pushed through the heel of the hand, in line with the forearm.",
+      "thumb": "Wrapped round the handle. ACE asks for the same full grip on its machine chest press; the ACE incline cable page says only 'grasp the handles'.",
+      "fingers": "All four wrapped round; on Technogym fixed handles they sit in finger grooves.",
+      "wrist": "In line with the forearm.",
+      "src": ["ace-incline-cable-press", "ace-chest-press", "tg-chest-incline-manual", "barbell-logic-grip"],
+      "evidence": "wrist and finger grooves documented; thumb documented-by-similarity (flat machine press); heel-of-palm coach consensus"
+    },
+    "vertical": {
+      "orientation": "Neutral (palms facing). Only on machines that have it (Technogym rotating handgrips; older Hammer IL-IPV).",
+      "whatChanges": "Elbows closer to the body. No EMG study of grip type on an incline machine was found; on the flat machine, grip type made little difference (Muyor 2023).",
+      "src": ["tg-chest-incline-manual", "hs-isolateral-manual", "muyor2023"],
+      "evidence": "documented (availability); muscle effect documented-by-similarity"
+    },
+    "gripWidthVariation": { "text": "Technogym: 'Placing your grip closer or wider permits you to vary the trajectory of your arm movements from more convergent to more open exercises.'", "src": ["tg-chest-incline-manual"], "evidence": "documented" }
+  },
+
+  "rangeOfMotion": {
+    "start": "Handles lightly touching or close to the upper chest (ACE).",
+    "end": "Hands about forehead or top-of-head level, elbows extended but not locked, blades still on the pad (ACE).",
+    "src": ["ace-incline-cable-press"],
+    "evidence": "documented"
+  },
+
+  "tempo": {
+    "sources": [
+      { "text": "ACE: press, 'Pause momentarily then slowly return'.", "src": ["ace-incline-cable-press"], "evidence": "documented" },
+      { "text": "Technogym: 'a slower speed during the return phase than during the approach phase'.", "src": ["tg-chest-incline-manual"], "evidence": "documented" },
+      { "text": "Gravitus: lower over 2 to 3 seconds; do not let the plates touch at the bottom.", "src": ["gravitus-incline"], "evidence": "coach consensus" },
+      { "text": "Rodriguez-Ridao 2020 bench protocol: 2 s eccentric, 2 s concentric by metronome. ACSM 2009: 1-2 s each way at heavy loads.", "src": ["rodriguezridao2020", "acsm2009"], "evidence": "documented (study protocol / guideline)" }
+    ],
+    "animationChoice": "Press 2 s, pause about 0.5 s at the top, return 2-3 s, no bounce at the bottom. Fits all the sources; the exact split is a design choice."
+  },
+
+  "breathing": {
+    "text": "Breathe out while pressing (ACE incline cable press: 'Gently exhale and perform a pressing movement'). Breathe in while lowering (ACE incline dumbbell press: 'Inhale and slowly lower').",
+    "src": ["ace-incline-cable-press", "ace-incline-db-press"],
+    "evidence": "exhale documented; inhale documented-by-similarity"
+  },
+
+  "muscles": {
+    "primary": [
+      { "id": "upper_chest", "text": "Clavicular pec peaked at a 30 deg bench (Rodriguez-Ridao 2020) and was higher at 44 deg than at 0 and 28 deg (Trebs 2010). A 45 deg incline barbell press beat the chest press machine for clavicular activity (Coratella 2020).", "src": ["rodriguezridao2020", "trebs2010", "coratella2020"], "evidence": "documented-by-similarity (barbell bench at incline)" }
+    ],
+    "secondary": [
+      { "id": "front_delts", "text": "Rises with incline: higher at 28, 44 and 56 deg than flat (Trebs 2010); highest at 60 deg (Rodriguez-Ridao 2020). Expect it to work hard.", "src": ["trebs2010", "rodriguezridao2020"], "evidence": "documented-by-similarity" },
+      { "id": "triceps", "text": "Similar at every bench angle (Rodriguez-Ridao 2020). Hammer Strength lists it.", "src": ["rodriguezridao2020", "hs-isolateral-manual"], "evidence": "documented / documented-by-similarity" },
+      { "id": "chest", "text": "Middle and lower pec highest on the flat bench and lower as incline rises, but still active (Rodriguez-Ridao 2020, Trebs 2010, Lauver 2016).", "src": ["rodriguezridao2020", "trebs2010", "lauver2016"], "evidence": "documented-by-similarity" }
+    ],
+    "stabilizersOptional": [
+      { "id": "rotator_cuff", "text": "Bench-press shoulder model: cuff activity lower with blades retracted (Noteboom 2024).", "src": ["noteboom2024"], "evidence": "documented-by-similarity" }
+    ],
+    "keepQuiet": [
+      { "id": "upper_traps", "text": "Shoulders stay down and back (ACE: 'Depress and retract your scapulae').", "src": ["ace-incline-cable-press"], "evidence": "documented (cue)" }
+    ],
+    "agreementWithExercisesJson": "Agrees: upper_chest primary; front_delts, triceps, chest secondary. No change. Hammer Strength lists 'Pectoralis Major, Anterior Deltoids & Triceps'; Life Fitness: 'Upper chest, shoulders, and triceps'.",
+    "caveat": "No EMG study of an incline press MACHINE was found. All muscle data come from barbell bench presses at different bench angles.",
+    "highlightNote": "Front delts may be about as active as the upper chest here; if the figure shows strength of highlight, front_delts should not look faint.",
+    "src": ["hs-isolateral-manual", "lf-hs-ilip"]
+  },
+
+  "mistakes": [
+    {
+      "key": "roll-off-top",
+      "name": "Shoulder blades roll off the pad at the top",
+      "looksLike": "Near the top the shoulder blades slide forward, the upper back rounds a few centimetres off the pad, shoulders reach toward the handles.",
+      "whyItMatters": "ACE incline: 'avoid the rounding of your shoulder blades'. ACE flat machine press: it 'promotes instability within the muscles that hold the shoulder blades to the ribcage'. Retracted blades lowered shoulder joint loads in a bench-press model (Noteboom 2024).",
+      "fix": "Stop the press while the blades still touch the pad.",
+      "src": ["ace-incline-cable-press", "ace-chest-press", "noteboom2024"],
+      "evidence": "documented; mechanism documented-by-similarity"
+    },
+    {
+      "key": "seat-too-low",
+      "name": "Seat too low",
+      "looksLike": "Handles start at or above shoulder height; elbows above the handle line; the press goes nearly straight up like a shoulder press.",
+      "whyItMatters": "Gravitus: a lower seat makes the press steeper and shifts work to the front delts; a higher seat flattens it. Bench data agree on the effect of steeper angles: above 45 deg, more front delt and less chest (Rodriguez-Ridao 2020).",
+      "fix": "Raise the seat until the handles start at the upper chest, below the collarbones.",
+      "src": ["gravitus-incline", "rodriguezridao2020", "hs-isolateral-manual"],
+      "evidence": "coach consensus; mechanism documented-by-similarity"
+    },
+    {
+      "key": "elbows-flared",
+      "name": "Elbows flared up to shoulder height",
+      "looksLike": "Upper arms straight out to the sides, level with the shoulders (about 90 deg), forearms tilted inward to the handles.",
+      "whyItMatters": "Hammer Strength's set-up puts the elbows 'slightly below shoulders'. Gravitus: flaring straight out 'creates front shoulder strain' (coach claim; no study found for the machine).",
+      "fix": "Keep the elbows a little below the shoulders, about 45-60 deg out from the body.",
+      "src": ["hs-isolateral-manual", "gravitus-incline"],
+      "evidence": "position documented; harm coach consensus"
+    },
+    {
+      "key": "arch-hips-up",
+      "name": "Low back arches or hips lift",
+      "looksLike": "On hard reps the low back lifts off the pad and the hips rise or slide on the seat, turning the press flatter.",
+      "whyItMatters": "ACE: 'avoid arching your back throughout the exercise'; Gravitus lists hips lifting off the seat as a common error.",
+      "fix": "Brace, feet flat, hips down on the seat.",
+      "src": ["ace-incline-cable-press", "gravitus-incline"],
+      "evidence": "documented"
+    },
+    {
+      "key": "wrist-bent-back",
+      "name": "Wrist bent back",
+      "looksLike": "Handle slides into the fingers, wrist folds back, thumb loose.",
+      "whyItMatters": "ACE: keep 'wrists in line with your forearms' through the press. Carpal-tunnel pressure is lowest near a straight wrist (Weiss 1995, not lifting).",
+      "fix": "Handle on the heel of the palm, wrist straight, lighter load if it still folds.",
+      "src": ["ace-incline-cable-press", "weiss1995"],
+      "evidence": "documented; Weiss documented-by-similarity"
+    },
+    {
+      "key": "lock-and-bounce",
+      "name": "Elbows locked at the top, stack bounced at the bottom",
+      "looksLike": "Elbows snap straight at the top; at the bottom the weight plates touch and the next rep starts from the bounce.",
+      "whyItMatters": "ACE: extended 'but not locked', then a slow, controlled return. Gravitus: do not let the plates touch at the bottom.",
+      "fix": "Stop short of lockout, pause, lower slowly, turn around just before the plates touch.",
+      "src": ["ace-incline-cable-press", "gravitus-incline"],
+      "evidence": "documented / coach consensus"
+    }
+  ],
+
+  "keyFacts": [
+    { "text": "The upper chest works hardest at about 30-45 deg of incline. Steeper than 45 deg, the front delts take over and the chest does less.", "src": ["rodriguezridao2020", "trebs2010"], "evidence": "documented-by-similarity (barbell bench)" },
+    { "text": "Expect to lift less than on the flat press: in one study, bench 1RM was 63.3 kg at 30 deg and 57.9 kg at 45 deg against 81.4 kg flat (about 78 % and 71 %).", "src": ["rodriguezridao2020"], "evidence": "documented (bench); percentages derived" },
+    { "text": "On a fixed machine, seat height is your incline: a lower seat makes the press steeper (more front delt), a higher seat makes it flatter.", "src": ["gravitus-incline"], "evidence": "coach consensus; geometry derived (see equipment.inclineGeometryRuleForAnimator)" },
+    { "text": "Flat and incline do different jobs: middle and lower chest work most when flat, upper chest at an incline. The researchers say to do both.", "src": ["trebs2010", "rodriguezridao2020"], "evidence": "documented-by-similarity" },
+    { "text": "The upper-chest gain shows up early in the press: at 30 and 45 deg it was higher during 26-50 % of the push, not across the whole rep.", "src": ["lauver2016"], "evidence": "documented-by-similarity" }
+  ],
+
+  "visualReferences": [
+    { "url": "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/", "shows": "ACE step photos: seated incline press, start at upper chest, end at forehead level, back on pad.", "viewed": "page text read; photos not checked" },
+    { "url": "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html?page=25", "shows": "Manufacturer drawings of the incline press movement and easy-start bar use.", "viewed": "text read; drawings not checked" },
+    { "url": "https://www.manualslib.com/manual/1070990/Hammer-Strength-Iso-Lateral.html?page=18", "shows": "Hammer Strength Iso-Lateral Incline Press set-up page (horizontal and vertical handle versions).", "viewed": "text read; drawing not checked" },
+    { "url": "https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded/plate-loaded-iso-lateral-incline-press", "shows": "Product photos of the plate-loaded Hammer Strength incline press.", "viewed": "text read; photos not checked" },
+    { "url": "https://www.youtube.com/watch?v=xwK8Wd5F0Hk", "shows": "'Hammer Strength Plate-Loaded Incline Press Instructions' (title from search results).", "viewed": "not viewed (YouTube returned 429)" }
+  ],
+
+  "openQuestions": [
+    "Which incline machine the owner's gym has: selectorized converging (chosen) or plate-loaded Hammer Strength. This decides the mesh.",
+    "Back pad angle and press-path angle: no maker publishes them, except Cybex's '30° plane' with no stated reference line. Needed to hit a 30-45 deg equivalent incline. Measure from a side-on photo or the owner's machine.",
+    "Technogym Chest Incline height: brochure 1500 mm vs manual 1666 mm.",
+    "Elbow end point: ACE 'not locked' vs Hammer Strength 'fully extended'. ACE chosen; degrees unverified.",
+    "Start elbow angle and shoulder abduction on the incline machine: not measured anywhere; ranges are coach consensus.",
+    "No EMG study of an incline press machine; muscle data are from barbell bench presses at different angles.",
+    "Handle size and spacing: unpublished.",
+    "Hip and knee angles: unverified.",
+    "The video under visualReferences was not viewed (rate-limited); a human reviewer should watch it before use."
+  ],
+
+  "sources": [
+    { "id": "ace-incline-cable-press", "cite": "ACE Exercise Library, Seated Incline Cable Press (cables or selectorized machine)", "url": "https://www.acefitness.org/resources/everyone/exercise-library/167/seated-incline-cable-press/", "kind": "guideline (certifying body)", "read": "full page; steps quoted" },
+    { "id": "ace-incline-db-press", "cite": "ACE Exercise Library, Incline Chest Press (dumbbells)", "url": "https://www.acefitness.org/resources/everyone/exercise-library/25/incline-chest-press/", "kind": "guideline (certifying body)", "read": "full page (quotes)" },
+    { "id": "ace-chest-press", "cite": "ACE Exercise Library, Seated Chest Press", "url": "https://www.acefitness.org/resources/everyone/exercise-library/188/seated-chest-press/", "kind": "guideline (certifying body)", "read": "full page (quotes)" },
+    { "id": "tg-chest-incline-manual", "cite": "Technogym Selection Chest Incline, User Manual (ManualsLib 1510293)", "url": "https://www.manualslib.com/manual/1510293/Technogym-Selection-Chest-Incline.html", "kind": "manufacturer manual", "read": "pages 4, 24, 25 (quotes); page 5 dimensions via summary" },
+    { "id": "tg-selection-brochure", "cite": "Technogym Selection brochure (Chest Incline M965, Chest Press M970)", "url": "https://www.innovativefit.com/pdfs/900/Brochure%20-%20Technogym%20Selection.pdf", "kind": "manufacturer brochure", "read": "full text extracted; chest press and chest incline entries" },
+    { "id": "hs-isolateral-manual", "cite": "Hammer Strength Iso-Lateral Owner's Manual (ManualsLib 1070990)", "url": "https://www.manualslib.com/manual/1070990/Hammer-Strength-Iso-Lateral.html", "kind": "manufacturer manual", "read": "pages 9 and 18 (quotes)" },
+    { "id": "lf-hs-ilip", "cite": "Life Fitness, Hammer Strength Plate Loaded Iso-Lateral Incline Press IL-IP", "url": "https://www.lifefitness.com/en-us/catalog/strength-training/plate-loaded/plate-loaded-iso-lateral-incline-press", "kind": "manufacturer product page", "read": "page summary with quotes" },
+    { "id": "lf-hs-mts-incline", "cite": "Life Fitness, Hammer Strength MTS Iso-Lateral Incline Press MTSIP", "url": "https://www.lifefitness.com/en-us/catalog/strength-training/selectorized/hammer-strength-mts-iso-lateral-incline-press", "kind": "manufacturer product page", "read": "page summary" },
+    { "id": "cybex-incline-press", "cite": "Cybex E Incline Press, reseller page reproducing Cybex feature copy", "url": "https://www.strengthindustry.com/cybex-incline-presscybex-incline-presscybex-e-incline-press", "kind": "reseller (manufacturer copy)", "read": "full page summary with quotes" },
+    { "id": "gravitus-incline", "cite": "Gravitus, Incline Chest Press machine guide", "url": "https://gravitus.com/guides/exercises/incline-chest-press/", "kind": "coach", "read": "full page summary with quotes" },
+    { "id": "rodriguezridao2020", "cite": "Rodriguez-Ridao D, Antequera-Vique JA, Martin-Fuentes I, Muyor JM. Effect of five bench inclinations on the electromyographic activity of the pectoralis major, anterior deltoid, and triceps brachii during the bench press exercise. Int J Environ Res Public Health 2020;17(19):7339", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7579505/", "kind": "peer-reviewed (EMG)", "read": "abstract plus full-text sections (Table 1, methods, practical applications)" },
+    { "id": "trebs2010", "cite": "Trebs AA, Brandenburg JP, Pitney WA. An electromyography analysis of 3 muscles surrounding the shoulder joint during the performance of a chest press exercise at several angles. J Strength Cond Res 2010;24(7):1925-30", "url": "https://pubmed.ncbi.nlm.nih.gov/20512064/", "kind": "peer-reviewed (EMG)", "read": "abstract" },
+    { "id": "lauver2016", "cite": "Lauver JD, Cayot TE, Scheuermann BW. Influence of bench angle on upper extremity muscular activation during bench press exercise. Eur J Sport Sci 2016;16(3):309-16", "url": "https://pubmed.ncbi.nlm.nih.gov/25799093/", "kind": "peer-reviewed (EMG)", "read": "abstract" },
+    { "id": "coratella2020", "cite": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E. Specific prime movers' excitation during free-weight bench press variations and chest press machine in competitive bodybuilders. Eur J Sport Sci 2020;20(5):571-579", "url": "https://pubmed.ncbi.nlm.nih.gov/31397215/", "kind": "peer-reviewed (EMG)", "read": "abstract" },
+    { "id": "muyor2023", "cite": "Muyor JM, Rodriguez-Ridao D, Oliva-Lozano JM. Comparison of muscle activity between the horizontal bench press and the seated chest press exercises using several grips. J Hum Kinet 2023;87:23-34", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10203828/", "kind": "peer-reviewed (EMG)", "read": "full text" },
+    { "id": "noteboom2024", "cite": "Noteboom L, Belli I, Hoozemans MJM, Seth A, Veeger HEJ, Van Der Helm FCT. Effects of bench press technique variations on musculoskeletal shoulder loads and potential injury risk. Front Physiol 2024;15:1393235", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11224528/", "kind": "peer-reviewed (musculoskeletal model)", "read": "full text via page summary with quotes" },
+    { "id": "acsm2009", "cite": "American College of Sports Medicine. Progression models in resistance training for healthy adults. Med Sci Sports Exerc 2009;41(3):687-708", "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/", "kind": "guideline (position stand)", "read": "abstract" },
+    { "id": "weiss1995", "cite": "Weiss ND, Gordon L, Bloom T, So Y, Rempel DM. Position of the wrist associated with the lowest carpal-tunnel pressure: implications for splint design. J Bone Joint Surg Am 1995;77(11):1695-9", "url": "https://pubmed.ncbi.nlm.nih.gov/7593079/", "kind": "peer-reviewed (not lifting)", "read": "abstract" },
+    { "id": "barbell-logic-grip", "cite": "Barbell Logic, Bench Press Grip Tips", "url": "https://barbell-logic.com/bench-press-grip-tips/", "kind": "coach", "read": "not re-read today; repo registry records a full read on 2026-09-30" }
+  ]
+}

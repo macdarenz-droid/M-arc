@@ -1,0 +1,142 @@
+[
+ {
+  "id": "silent-black",
+  "name": "Silent Black",
+  "radius": {
+   "sm": "8px",
+   "md": "12px",
+   "lg": "16px",
+   "xl": "22px"
+  },
+  "tokens": {
+   "bg": "#08090a",
+   "surface1": "#0f1011",
+   "surface2": "#141516",
+   "surface3": "#1b1c1f",
+   "borderSubtle": "rgba(255,255,255,0.06)",
+   "border": "rgba(255,255,255,0.10)",
+   "text": "#f7f8f8",
+   "text2": "#8a8f98",
+   "text3": "#62666d",
+   "accent": "#5e6ad2",
+   "onAccent": "#ffffff",
+   "mapBody": "#1b1c1f",
+   "mapLine": "rgba(255,255,255,0.10)",
+   "mistake": "#eb5757",
+   "colorScheme": "dark",
+   "accentTextPct": 75
+  }
+ },
+ {
+  "id": "paper",
+  "name": "Paper",
+  "radius": {
+   "sm": "6px",
+   "md": "10px",
+   "lg": "14px",
+   "xl": "18px"
+  },
+  "tokens": {
+   "bg": "#ffffff",
+   "surface1": "#f7f6f3",
+   "surface2": "#efeeea",
+   "surface3": "#e6e4df",
+   "borderSubtle": "rgba(55,53,47,0.08)",
+   "border": "rgba(55,53,47,0.14)",
+   "text": "#37352f",
+   "text2": "#5f5e5a",
+   "text3": "#9b9a97",
+   "accent": "#2383e2",
+   "onAccent": "#ffffff",
+   "mapBody": "#e6e4df",
+   "mapLine": "rgba(55,53,47,0.18)",
+   "mistake": "#c0392b",
+   "colorScheme": "light",
+   "accentTextPct": 70
+  }
+ },
+ {
+  "id": "ember",
+  "name": "Ember",
+  "radius": {
+   "sm": "8px",
+   "md": "12px",
+   "lg": "16px",
+   "xl": "20px"
+  },
+  "tokens": {
+   "bg": "#07080a",
+   "surface1": "#0e1013",
+   "surface2": "#14171b",
+   "surface3": "#1c2026",
+   "borderSubtle": "rgba(255,255,255,0.05)",
+   "border": "rgba(255,255,255,0.09)",
+   "text": "#ffffff",
+   "text2": "#9aa0a6",
+   "text3": "#5f666d",
+   "accent": "#ff6363",
+   "onAccent": "#1a0b0b",
+   "mapBody": "#1c2026",
+   "mapLine": "rgba(255,255,255,0.10)",
+   "mistake": "#b36bff",
+   "colorScheme": "dark",
+   "accentTextPct": 75
+  }
+ },
+ {
+  "id": "emerald",
+  "name": "Emerald",
+  "radius": {
+   "sm": "6px",
+   "md": "8px",
+   "lg": "12px",
+   "xl": "16px"
+  },
+  "tokens": {
+   "bg": "#0f0f0f",
+   "surface1": "#171717",
+   "surface2": "#1c1c1c",
+   "surface3": "#242424",
+   "borderSubtle": "#242424",
+   "border": "#2e2e2e",
+   "text": "#ededed",
+   "text2": "#a0a0a0",
+   "text3": "#707070",
+   "accent": "#3ecf8e",
+   "onAccent": "#062d1c",
+   "mapBody": "#242424",
+   "mapLine": "#393939",
+   "mistake": "#f04438",
+   "colorScheme": "dark",
+   "accentTextPct": 75
+  }
+ },
+ {
+  "id": "midnight",
+  "name": "Midnight",
+  "radius": {
+   "sm": "8px",
+   "md": "12px",
+   "lg": "16px",
+   "xl": "22px"
+  },
+  "tokens": {
+   "bg": "#0a2540",
+   "surface1": "#0f2d4d",
+   "surface2": "#143559",
+   "surface3": "#1a3f68",
+   "borderSubtle": "rgba(246,249,252,0.07)",
+   "border": "rgba(246,249,252,0.12)",
+   "text": "#f6f9fc",
+   "text2": "#a3b6cc",
+   "text3": "#6c839c",
+   "accent": "#635bff",
+   "onAccent": "#ffffff",
+   "mapBody": "#1a3f68",
+   "mapLine": "rgba(246,249,252,0.14)",
+   "mistake": "#ff5c5c",
+   "colorScheme": "dark",
+   "accentTextPct": 65
+  }
+ }
+]

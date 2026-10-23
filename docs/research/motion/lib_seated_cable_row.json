@@ -1,0 +1,983 @@
+{
+ "id": "lib_seated_cable_row",
+ "name": "Seated Cable Row",
+ "researched": "2026-10-02",
+ "evidenceKey": {
+  "documented": "Stated by the cited source for this exercise or this machine.",
+  "documented-by-similarity": "Stated by the source for a close exercise and applied here.",
+  "range, coach consensus": "A range from coaching sources. No measurement found.",
+  "derived": "Worked out from cited numbers. The working is given.",
+  "unverified": "No source found. Do not show as fact. Check against a reference photo or a real machine."
+ },
+ "appData": {
+  "exercisesJson": {
+   "equipment": "Cable",
+   "primary": [
+    "mid_back"
+   ],
+   "secondary": [
+    "lats",
+    "biceps",
+    "rear_delts"
+   ],
+   "stabilizers": [],
+   "pattern": "horizontal_pull",
+   "aliases": [
+    "cable row",
+    "seated row"
+   ]
+  },
+  "muscleIdMap": {
+   "mid_back": "rhomboids and middle trapezius (lower trapezius folds in here; the app has no id for it)",
+   "lats": "latissimus dorsi (teres major folds in here)",
+   "rear_delts": "posterior deltoid",
+   "biceps": "biceps brachii",
+   "brachialis": "brachialis",
+   "forearms": "forearm flexors (grip)",
+   "lower_back": "erector spinae (holds the torso upright)",
+   "upper_traps": "upper trapezius (should stay quiet)"
+  },
+  "note": "The generated feel map (src/howto/generated/feel-seated-cable-row.ts) already says 'Main: mid back, lats. Also working: rear shoulders, biceps, forearms', which disagrees with exercises.json (lats only secondary)."
+ },
+ "existingRepoContent": {
+  "files": [
+   "docs/research/howto/lib_seated_cable_row.json",
+   "docs/research/howto/sources.json",
+   "src/howto/generated/ht-seated-cable-row.ts",
+   "src/howto/generated/feel-seated-cable-row.ts",
+   "tools/plates/layers/exercises/seated_cable_row.mjs"
+  ],
+  "reuse": [
+   "Setup: V-handle, sit facing the stack, feet flat on the plate hip width apart, knees soft, sit tall, shoulders down (UNMC transcript re-read today, matches).",
+   "Torso still and close to vertical every rep; no rocking (Cybex, NSCA checklist, ACE all agree).",
+   "Handle to the upper stomach; elbows travel back close to the body and stop just behind the torso (ACE cable page 48, ACE 168, UNMC, de Abreu 2023).",
+   "Shoulder blades: let them move, no hard extra squeeze (Lehman 2004 and Padovan 2025 re-read in full today; the existing checkpoint text is right).",
+   "Thumb wrapped, wrist straight, handle at the base of the fingers.",
+   "Mistakes already written (rocking, rounding the low back, shrugging and flaring) are supported; see refinements."
+  ],
+  "flags": [
+   {
+    "where": "exercises.json primary",
+    "issue": "Only mid_back is primary. With the close neutral V-handle (elbows in, about 0 deg abduction) the lats are at least co-primary: de Abreu 2023 found lat activity highest at 0 deg abduction; Padovan 2025 (narrow vs wide) found more lat activity with the narrow grip (ES 1.08); the Cybex manual lists lats (with biceps) as primary. Mid back stays primary: Lehman 2004 found the seated row gave the highest middle trapezius/rhomboid activity of the exercises tested.",
+    "action": "Make primary [mid_back, lats]. This matches the app's own feel map."
+   },
+   {
+    "where": "docs/research/howto/sources.json ace-seated-row (id used in ht-seated-cable-row.ts)",
+    "issue": "Points to ACE page 168, a machine row with a chest pad. ACE has a cable version at page 48 ('seated pulley cable machine and a narrow handle ... until the handle touches the front of the stomach. Pause for one second'). The plate file already cites page 48.",
+    "action": "Cite ACE page 48 for the cable row; keep 168 only for carried-over cues (neutral wrist, exhale, elbows past the body)."
+   },
+   {
+    "where": "docs/research/howto/sources.json nsca-low-row",
+    "issue": "Still a flashcard summary. The NSCA proficiency checklist found today covers the chest-pad 'Seated Row' machine, not the low-pulley row, so it does not replace this source.",
+    "action": "Keep marked secondary; no primary NSCA low-pulley text found online."
+   },
+   {
+    "where": "ht-seated-cable-row.ts plate callout 'Squeeze blades'",
+    "issue": "Lehman 2004: actively retracting the shoulder blades did not change middle trapezius/rhomboid activity. Padovan 2025: fixed vs free blades gave similar overall activity. The content already notes this and words the checkpoint correctly.",
+    "action": "For the 3D version label it 'Blades back' or similar, not 'squeeze'."
+   },
+   {
+    "where": "tools/plates/layers/exercises/seated_cable_row.mjs header",
+    "issue": "Cites Bodybuilding.com and REP Fitness (weak) and gives 'torso 8 deg forward at start', 'shoulder blades spread 4 cm', 'handle at 74 cm' with no source. Cybex, Padovan 2025 and de Abreu 2023 all show or ask for an upright torso at the start.",
+    "action": "Treat those numbers as unverified modelling choices. For the 3D figure start upright (0-5 deg forward)."
+   },
+   {
+    "where": "Technogym naming",
+    "issue": "Technogym's 'Selection Low Row' is a chest-pad lever machine, not a cable bench row. A Meshy prompt or reviewer using 'low row machine' can get the wrong machine.",
+    "action": "In prompts and copy say 'seated cable row station: long flat bench, angled foot plate, low cable pulley, V-handle'."
+   },
+   {
+    "where": "docs/research/howto/sources.json deabreu2023, padovan2025scap, difonza2026",
+    "issue": "padovan2025scap and difonza2026 marked 'abstract'; full text is open on Europe PMC (read today). deabreu2023 already 'full'.",
+    "action": "Can upgrade access to full."
+   }
+  ]
+ },
+ "equipment": {
+  "modelThis": {
+   "summary": "Selectorized seated cable row station. A long flat padded bench on a floor rail; at its front end an angled foot plate (feet flat, toes up, plate tilted toward the lifter) fixed to the frame; the cable exits a pulley housed just above the foot plate, between the feet; the weight stack stands behind the foot plate, in front of the lifter. Attachment: a close-grip V (triangle) handle with two parallel grips about 15 cm apart.",
+   "why": [
+    "It is the version the app already shows (side-view plate with bench, footrest and V-handle) and the one exercises.json names (equipment 'Cable').",
+    "It matches the Cybex Modular Low Row drawing (viewed today), the ACE cable page (narrow handle), the UNMC transcript and Padovan 2025 (weight-stack seated row, no chest support, triangle handle).",
+    "Combo stations (Precor VSL026BP) and multi-stations (Matrix Aura G3-MS53) use the same bench + foot support + low pulley layout, so one asset covers most gyms.",
+    "Chest-pad row machines (Technogym Selection Low Row, Matrix Aura G3-S31) are a different exercise with fixed handles; model them separately if the library needs a machine row."
+   ],
+   "src": [
+    "cybex-modular-manual",
+    "ace-seated-row-cable",
+    "unmc-cable-row",
+    "padovan2025scap",
+    "precor-vsl026bp",
+    "matrix-aura-ms",
+    "technogym-low-row"
+   ],
+   "evidence": "documented (layout seen in the Cybex drawing, viewed today)"
+  },
+  "variants": [
+   {
+    "name": "Stand-alone selectorized low row (bench + foot plate)",
+    "notes": "Cybex Modular Low Row 5651/5302: low bench, angled foot plate, pulley in a curved housing above the foot plate.",
+    "src": [
+     "cybex-modular-manual"
+    ]
+   },
+   {
+    "name": "Multi-station low row module",
+    "notes": "Matrix Aura G3-MS53 Low Row: foot bar for stability, own 134 kg stack.",
+    "src": [
+     "matrix-aura-ms"
+    ]
+   },
+   {
+    "name": "Combo pulldown / seated row",
+    "notes": "Precor Vitality VSL026BP: extended seat and foot bar; same stack as the pulldown.",
+    "src": [
+     "precor-vsl026bp"
+    ]
+   },
+   {
+    "name": "Dual-arm cable row",
+    "notes": "Life Fitness Signature Cable Motion Row CMRW: two arms each with its own stack, user-defined path (discontinued).",
+    "src": [
+     "lf-signature-row"
+    ]
+   },
+   {
+    "name": "Chest-pad machine row (different exercise)",
+    "notes": "Technogym Selection Low Row: seat set so the chest pad is halfway up the breastbone, fixed handles.",
+    "src": [
+     "technogym-low-row"
+    ]
+   }
+  ],
+  "parts": [
+   {
+    "part": "Bench (seat)",
+    "detail": "Long flat pad on a floor rail; the lifter slides along it to set the knee bend. Height not documented.",
+    "src": [
+     "cybex-modular-manual",
+     "precor-vsl026bp"
+    ],
+    "evidence": "documented (shape); height unverified"
+   },
+   {
+    "part": "Foot plate / foot bar",
+    "detail": "Angled plate fixed to the frame (Cybex drawing, plate tilted about 60-70 deg from the floor, my estimate from the drawing) or a foot bar (Matrix, Precor). Feet flat on it.",
+    "src": [
+     "cybex-modular-manual",
+     "matrix-aura-ms",
+     "precor-vsl026bp"
+    ],
+    "evidence": "documented (presence); tilt angle unverified"
+   },
+   {
+    "part": "Low pulley",
+    "detail": "In the Cybex drawing the pulley sits in a curved housing just above the foot plate, about level with the hands at the finish, so the cable is near level at the end. Other models put it at foot-plate level (unverified).",
+    "src": [
+     "cybex-modular-manual"
+    ],
+    "evidence": "documented for Cybex; other heights unverified"
+   },
+   {
+    "part": "Weight stack + selector pin",
+    "detail": "In front of the lifter behind the foot plate. Stacks: Matrix Aura MS53 134 kg; Precor 100 kg; Life Fitness CMRW 107 kg (1:2 ratio).",
+    "src": [
+     "matrix-aura-ms",
+     "precor-vsl026bp",
+     "lf-signature-row"
+    ],
+    "evidence": "documented"
+   },
+   {
+    "part": "V (triangle) handle",
+    "detail": "Two parallel grips joined in a V to a single cable eye. American Barbell: 16.5 cm long x 15.2 cm wide, usable grip 11.4 cm, 25.4 mm diameter, knurled.",
+    "src": [
+     "american-barbell-row-handle",
+     "padovan2025scap"
+    ],
+    "evidence": "documented"
+   }
+  ],
+  "dimensions": {
+   "machines": [
+    {
+     "model": "Matrix Aura G3-MS53 Low Row (multi-station module)",
+     "LxWxH_cm": "230 x 71 x 240",
+     "stack": "134 kg",
+     "src": [
+      "matrix-aura-ms"
+     ],
+     "evidence": "documented (owner's guide spec table)"
+    },
+    {
+     "model": "Precor Vitality VSL026BP Pulldown/Seated Row",
+     "LxWxH_cm": "200 x 131 x 220",
+     "stack": "100 kg + 2.5 kg add-on",
+     "src": [
+      "precor-vsl026bp"
+     ],
+     "evidence": "documented"
+    },
+    {
+     "model": "Life Fitness Signature Cable Motion Row CMRW (dual arm)",
+     "LxWxH_cm": "186 x 138 x 171",
+     "stack": "107 kg",
+     "src": [
+      "lf-signature-row"
+     ],
+     "evidence": "documented (search summary)"
+    }
+   ],
+   "rangeToModel": "Stand-alone low row about 200-230 cm long (bench included), 70-130 cm wide, 220-240 cm tall at the stack.",
+   "handle": {
+    "spacing": "Grips about 15 cm apart (handle 15.2 cm wide; Lehman 2004 used forearms 'mid pronated ... 6 inches apart').",
+    "src": [
+     "american-barbell-row-handle",
+     "lehman2004"
+    ],
+    "evidence": "documented"
+   },
+   "notDocumented": "Bench height, foot-plate tilt and height, pulley exit height, distance from bench to foot plate. Measure from a real machine or a scaled photo before modelling."
+  },
+  "references": [
+   {
+    "url": "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+    "shows": "Cybex Modular Low Row start and stop drawings (PDF page 29, printed 2-5): low bench, angled foot plate, pulley above the plate, torso upright, knees slightly bent, elbows behind the torso at the stop.",
+    "viewed": "viewed today (rendered and zoomed)"
+   },
+   {
+    "url": "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf",
+    "shows": "Combo machine photo: extended flat seat and foot bar for the row position.",
+    "viewed": "viewed today"
+   },
+   {
+    "url": "https://content.johnsonfit.com/inc/uploaded_media/0354bbc1b9de4b9c11347ee68d9cc67b/owners_guide/dd0bb4c30d82048733cd18ee18e06603.pdf",
+    "shows": "Matrix Aura G3-MS53 Low Row spec table and training-area diagram.",
+    "viewed": "text read today; diagrams not checked"
+   },
+   {
+    "url": "https://americanbarbell.com/products/seat-row-chinning-handle-solid",
+    "shows": "V-handle specs and photo.",
+    "viewed": "specs read today; photo not checked"
+   }
+  ]
+ },
+ "setup": [
+  {
+   "step": 1,
+   "text": "Clip the V-handle to the low cable and pick the load.",
+   "landmark": null,
+   "src": [
+    "ace-seated-row-cable",
+    "padovan2025scap",
+    "cybex-modular-manual"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "step": 2,
+   "text": "Sit on the bench facing the stack. Put both whole feet on the foot plate, hip width apart.",
+   "landmark": "feet hip width",
+   "src": [
+    "unmc-cable-row",
+    "cybex-modular-manual"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "step": 3,
+   "text": "Bend the knees to reach the handle; take it with thumbs wrapped, palms facing each other.",
+   "landmark": "knees bend, back stays straight",
+   "src": [
+    "cybex-modular-manual",
+    "nsca-proficiencies"
+   ],
+   "evidence": "documented (grasp, keep back straight; closed grip from the NSCA machine-row checklist, by similarity)"
+  },
+  {
+   "step": 4,
+   "text": "Slide back until the arms are straight with the weight lifted off the stack and the knees still slightly bent.",
+   "landmark": "knees slightly bent, elbows straight",
+   "src": [
+    "cybex-modular-manual",
+    "unmc-cable-row",
+    "padovan2025scap"
+   ],
+   "evidence": "documented (slight knee bend, straight arms); 'weight off the stack' range, coach consensus"
+  },
+  {
+   "step": 5,
+   "text": "Sit tall: torso upright, chest up, shoulders down and back.",
+   "landmark": "torso perpendicular to the floor; shoulders away from the ears",
+   "src": [
+    "unmc-cable-row",
+    "deabreu2023",
+    "cybex-modular-manual"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "step": 6,
+   "text": "Check the handle line: arms straight and a little below shoulder height, cable near level.",
+   "landmark": "handle in line with the lower ribs/upper belly",
+   "src": [
+    "cybex-modular-manual",
+    "ronai2019"
+   ],
+   "evidence": "documented (Cybex drawing; Ronai summary: handle slightly below shoulder height)"
+  }
+ ],
+ "posture": {
+  "note": "Angles in degrees. Shoulder flexion 0 = arm hanging by the side, 90 = arm straight forward; extension = elbow behind the torso. Elbow flexion 0 = straight. Torso angle from vertical.",
+  "start": {
+   "head": {
+    "text": "In line with the spine, eyes forward.",
+    "src": [
+     "unmc-cable-row"
+    ],
+    "evidence": "documented-by-similarity ('chest is tall'); gaze unverified"
+   },
+   "neck": {
+    "text": "Neutral, long; no chin poke toward the stack.",
+    "src": [],
+    "evidence": "range, coach consensus"
+   },
+   "torso": {
+    "text": "Upright, low back in its natural curve, chest tall. A small forward tip at full reach is tolerated by some coaches, but every protocol and drawing found keeps it upright.",
+    "angles": {
+     "fromVerticalDeg": "0 (model 0-5 forward)"
+    },
+    "src": [
+     "cybex-modular-manual",
+     "padovan2025scap",
+     "deabreu2023",
+     "mayo-seated-row"
+    ],
+    "evidence": "documented (upright); 0-5 forward range, coach consensus (Mayo: 'do not lean too far forward')"
+   },
+   "scapulae": {
+    "text": "Either held back and down (ACE/UNMC style) or allowed to slide forward slightly at full reach (Mayo; Padovan 'free' row). Overall muscle activity was similar both ways. Model: slightly forward at the start, back and down at the finish.",
+    "src": [
+     "ace-seated-row",
+     "unmc-cable-row",
+     "mayo-seated-row",
+     "padovan2025scap",
+     "lehman2004"
+    ],
+    "evidence": "documented (both styles); modelling choice explained"
+   },
+   "shoulder": {
+    "text": "Arms straight forward, a little below shoulder height, close to shoulder width (set by the handle).",
+    "angles": {
+     "flexionDeg": "about 75-90",
+     "abductionDeg": "about 0-10"
+    },
+    "src": [
+     "cybex-modular-manual",
+     "ronai2019"
+    ],
+    "evidence": "documented-by-similarity (read from the Cybex drawing; Ronai summary says handle slightly below shoulder height); numbers range, coach consensus"
+   },
+   "elbow": {
+    "text": "Fully straight.",
+    "angles": {
+     "flexionDeg": "0"
+    },
+    "src": [
+     "padovan2025scap",
+     "deabreu2023",
+     "ace-seated-row"
+    ],
+    "evidence": "documented"
+   },
+   "forearm": {
+    "text": "Neutral (palms facing each other).",
+    "src": [
+     "lehman2004",
+     "padovan2025scap"
+    ],
+    "evidence": "documented"
+   },
+   "wrist": {
+    "text": "Neutral, straight line from forearm to knuckles.",
+    "angles": {
+     "extensionDeg": "0-20",
+     "deviationDeg": "about 0"
+    },
+    "src": [
+     "ace-seated-row",
+     "odriscoll1992"
+    ],
+    "evidence": "documented (ACE: neutral wrist); 0-20 band range, coach consensus (existing app band)"
+   },
+   "hips": {
+    "text": "Hip flexion about 90-100 (torso vertical, thighs level or rising slightly to the knee).",
+    "src": [
+     "cybex-modular-manual"
+    ],
+    "evidence": "derived (read from the Cybex drawing)"
+   },
+   "knees": {
+    "text": "Slightly bent and kept still all set.",
+    "angles": {
+     "flexionDeg": "about 20-45"
+    },
+    "src": [
+     "cybex-modular-manual",
+     "unmc-cable-row",
+     "padovan2025scap"
+    ],
+    "evidence": "documented ('slight bend'); number read from the Cybex drawing, unverified"
+   },
+   "feet": {
+    "text": "Whole foot flat on the plate, hip width apart.",
+    "src": [
+     "unmc-cable-row",
+     "cybex-modular-manual"
+    ],
+    "evidence": "documented"
+   }
+  },
+  "mid": {
+   "text": "Elbows bending through about 90 deg with the upper arms swinging back close to the ribs; shoulders stay down; torso does not move.",
+   "angles": {
+    "elbowFlexionDeg": "about 90",
+    "shoulderFlexionDeg": "about 30-45"
+   },
+   "src": [
+    "nsca-proficiencies",
+    "ace-seated-row",
+    "cybex-modular-manual"
+   ],
+   "evidence": "documented direction (elbows next to the ribs, torso still); angles derived from the start and end positions"
+  },
+  "end": {
+   "hands": {
+    "text": "Handle touches, or nearly touches, the upper belly: below the lower ribs, above the navel.",
+    "src": [
+     "ace-seated-row-cable",
+     "deabreu2023",
+     "unmc-cable-row",
+     "padovan2025scap"
+    ],
+    "evidence": "documented (ACE cable: 'until the handle touches the front of the stomach'; de Abreu: 'until it touched their torso')"
+   },
+   "elbow": {
+    "text": "Bent, close to the sides, just behind the back line of the torso.",
+    "angles": {
+     "flexionDeg": "about 90-125"
+    },
+    "src": [
+     "lehman2004",
+     "ansur2"
+    ],
+    "evidence": "documented 90 (Lehman 2004 hold position); derived up to about 120-125 when the handle touches the belly (ANSUR II male means: upper arm 33.5 cm, forearm to grip about 32-35 cm, handle about 10 cm in front of the shoulder joint and 30 cm below it). Not measured by a kinematic study."
+   },
+   "shoulder": {
+    "text": "Upper arms behind the torso, close to the body.",
+    "angles": {
+     "extensionDeg": "about 15-45",
+     "abductionDeg": "about 0-20"
+    },
+    "src": [
+     "ace-seated-row",
+     "deabreu2023",
+     "lehman2004",
+     "ansur2"
+    ],
+    "evidence": "documented direction (ACE: pull until the elbows pass the sides of the body; de Abreu: arms beside the trunk, 0 deg abduction); extension derived: about 15-30 if the handle stops a few cm short (Cybex stop drawing), about 35-45 if it touches the belly (same geometry as the elbow)"
+   },
+   "scapulae": {
+    "text": "Moved back toward each other and kept down, not shrugged.",
+    "src": [
+     "unmc-cable-row",
+     "ace-seated-row",
+     "lehman2004"
+    ],
+    "evidence": "documented"
+   },
+   "restUnchanged": "Torso upright (no lean back past vertical), knees still slightly bent, feet on the plate (NSCA: keep the torso in the same position; Cybex: back straight and upright throughout)."
+  }
+ },
+ "grip": {
+  "vHandle": {
+   "orientation": "Neutral (palms facing each other), closed.",
+   "width": "Set by the handle: grips about 15 cm apart, in front of the belly.",
+   "inPalm": "Grip bar across the base of the fingers and top of the palm; the handle's V points away from the lifter toward the cable.",
+   "thumb": "Wrapped round each grip, opposite the fingers.",
+   "fingers": "All four fingers hooked round; firm, not a maximal squeeze.",
+   "wrist": "Neutral and stacked; no curl at the finish.",
+   "src": [
+    "american-barbell-row-handle",
+    "lehman2004",
+    "nsca-proficiencies",
+    "baechle-earle",
+    "ace-seated-row",
+    "odriscoll1992"
+   ],
+   "evidence": "documented (neutral orientation, spacing, closed grip by similarity, neutral wrist); palm/finger placement range, coach consensus (existing app content)"
+  },
+  "otherHandles": [
+   {
+    "handle": "Straight bar, overhand or underhand, at biacromial width",
+    "whatChanges": "Elbows still close to the body (0 deg abduction). de Abreu 2023 reported no force difference between overhand, underhand and neutral at 0 deg, and lat activity was higher near 0 deg for all three.",
+    "src": [
+     "deabreu2023"
+    ],
+    "evidence": "documented"
+   },
+   {
+    "handle": "Wide bar (arms 60-90 deg out from the body)",
+    "whatChanges": "Less force; more upper and middle trapezius and rear-delt activity, less lat activity. Pull goes to the chest rather than the belly.",
+    "src": [
+     "deabreu2023",
+     "padovan2025grip"
+    ],
+    "evidence": "documented"
+   },
+   {
+    "handle": "Two single D-handles on one cable",
+    "whatChanges": "Neutral grip with free hand spacing; de Abreu used this for their neutral condition.",
+    "src": [
+     "deabreu2023"
+    ],
+    "evidence": "documented"
+   }
+  ]
+ },
+ "rangeOfMotion": {
+  "start": "Elbows fully straight; shoulder blades may slide forward slightly.",
+  "end": "Handle touching or nearly touching the upper belly with the elbows just past the sides of the body.",
+  "studyProtocol": "de Abreu 2023: from straight elbows until the handle touched the torso. Padovan 2025: until the handle reached the abdomen, 0.5 s pause at the end of the return.",
+  "src": [
+   "ace-seated-row-cable",
+   "ace-seated-row",
+   "deabreu2023",
+   "padovan2025scap"
+  ],
+  "evidence": "documented"
+ },
+ "tempo": {
+  "sources": [
+   {
+    "text": "de Abreu 2023: 2 s pull and 2 s return (metronome 60 bpm). Padovan 2025: 2 s pull, 2 s return, about 0.5 s pause.",
+    "src": [
+     "deabreu2023",
+     "padovan2025scap"
+    ],
+    "evidence": "documented (study protocols)"
+   },
+   {
+    "text": "ACE cable row: pause for one second at the belly, then straighten the arms slowly.",
+    "src": [
+     "ace-seated-row-cable"
+    ],
+    "evidence": "documented"
+   },
+   {
+    "text": "Hypertrophy review: rep durations of about 2-8 s all work; lower under control.",
+    "src": [
+     "androulakis2024"
+    ],
+    "evidence": "documented (general review)"
+   }
+  ],
+  "animationChoice": "2 s pull, 1 s pause at the belly, 2 s return, 0.5 s at full reach (loop 5.5 s). The current app tempo (1 s pull, 1 s hold, 2 s return, 0.5 s rest) matches ACE's 1 s pause but pulls faster than the study protocols."
+ },
+ "breathing": {
+  "text": "Breathe out as you pull; breathe in as the arms go forward.",
+  "src": [
+   "ace-seated-row"
+  ],
+  "evidence": "documented-by-similarity (ACE machine row: 'gently exhale and perform a pulling movement'); inhale on return range, coach consensus"
+ },
+ "muscles": {
+  "primary": [
+   "mid_back",
+   "lats"
+  ],
+  "secondary": [
+   "biceps",
+   "rear_delts",
+   "brachialis"
+  ],
+  "stabilizersOptional": [
+   "lower_back",
+   "forearms"
+  ],
+  "keepQuiet": [
+   {
+    "id": "upper_traps",
+    "why": "Upper trapezius over-activity is the shrug fault; lifters cut it about 10% with EMG feedback (dos Anjos 2024). Highlight only in the shrug mistake."
+   }
+  ],
+  "notHighlighted": [
+   {
+    "id": "triceps",
+    "why": "Long head recorded active in Padovan 2025 as a shoulder extensor; not a training target."
+   }
+  ],
+  "disagreement": {
+   "topic": "lats: secondary (exercises.json) or primary",
+   "for": "Keep secondary: Lehman 2004 found the seated row gave the highest middle trapezius/rhomboid activity of four lat exercises, so mid back is clearly primary.",
+   "against": "With the V-handle the elbows stay at about 0 deg abduction, where lat activity was highest (de Abreu 2023) and the narrow grip beat the wide for lats (Padovan 2025, ES 1.08). Cybex lists latissimus dorsi as primary. Lehman 2004 also found a high lat-to-biceps ratio in the seated row.",
+   "recommendation": "Primary mid_back and lats; secondary biceps, rear_delts, brachialis (anatomy only, no row EMG on brachialis found); lower_back and forearms as light stabilizer highlights. Wide-bar variants (if added to the library) shift toward mid_back, upper_traps and rear_delts.",
+   "src": [
+    "lehman2004",
+    "deabreu2023",
+    "padovan2025grip",
+    "cybex-modular-manual",
+    "fujita2020",
+    "padovan2025scap"
+   ]
+  },
+  "lowerBack": {
+   "text": "Erector spinae hold the torso upright; Cybex lists them as secondary and Padovan 2025 recorded them. Wide grip raised erector activity in the return phase (Padovan 2025 grip, via Di Fonza).",
+   "src": [
+    "cybex-modular-manual",
+    "padovan2025scap",
+    "padovan2025grip"
+   ],
+   "evidence": "documented"
+  },
+  "makerLists": "Cybex Modular Low Row: primary biceps and latissimus dorsi; secondary erector spinae.",
+  "makerSrc": [
+   "cybex-modular-manual"
+  ]
+ },
+ "mistakes": [
+  {
+   "key": "rock",
+   "name": "Rocking the torso",
+   "looksLike": "Torso tips forward 20-30 deg to reach the handle, then swings back past vertical (10-15 deg behind) to yank it in; the stack bounces. Knees often straighten in the same move.",
+   "whyItMatters": "Momentum moves the load instead of the back; NSCA says do not jerk the torso and keep it in the same position; Cybex says keep the back straight and upright throughout.",
+   "fix": "Pick a weight you can pull with a still, upright torso.",
+   "src": [
+    "nsca-proficiencies",
+    "cybex-modular-manual",
+    "ace-seated-row"
+   ],
+   "evidence": "documented (fault and fix); swing angles unverified (existing plate uses 12 deg past vertical)"
+  },
+  {
+   "key": "round-reach",
+   "name": "Rounding the low back to reach",
+   "looksLike": "At full reach the pelvis tucks under, the low back curves into a C and the head drops toward the stack; the arms get pulled forward by the weight.",
+   "whyItMatters": "Cybex: avoid excessive bending of the spine. Repeated loaded spine bending damaged discs in a pig-spine lab model (Callaghan 2001, weak evidence for this lift).",
+   "fix": "Arms go long, back stays tall; bend the knees a little more if needed.",
+   "src": [
+    "cybex-modular-manual",
+    "mayo-seated-row",
+    "callaghan2001"
+   ],
+   "evidence": "documented (Cybex, Mayo wording); injury link weak"
+  },
+  {
+   "key": "shrug",
+   "name": "Shrugging the handle in",
+   "looksLike": "As the handle reaches the belly the shoulders rise toward the ears and roll forward; the neck shortens; elbows stay in front of the body.",
+   "whyItMatters": "The upper traps take over (dos Anjos 2024 measured this as a common excess); UNMC asks for shoulders down and back.",
+   "fix": "Shoulders down first, then drive the elbows back.",
+   "src": [
+    "dosanjos2024",
+    "unmc-cable-row",
+    "ace-seated-row"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "key": "flare",
+   "name": "Elbows flaring out",
+   "looksLike": "With the V-handle, the elbows swing out to 45-90 deg from the body and the handle drifts up toward the chest instead of the belly.",
+   "whyItMatters": "Elbows out lowers force and moves work from the lats to the upper back and rear delts (de Abreu 2023). Not wrong on a wide bar, but it changes what the exercise trains.",
+   "fix": "Keep the elbows close to the ribs and pull to the belly.",
+   "src": [
+    "deabreu2023",
+    "nsca-proficiencies"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "key": "legs-drive",
+   "name": "Pushing with the legs",
+   "looksLike": "Knees straighten from slightly bent to almost locked as the handle comes in, sliding the hips back on the bench.",
+   "whyItMatters": "The legs move the load; NSCA keeps the knees in the same position, Cybex and UNMC keep a slight bend.",
+   "fix": "Fix the knee bend before the first rep and keep it.",
+   "src": [
+    "nsca-proficiencies",
+    "cybex-modular-manual",
+    "unmc-cable-row"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "key": "curl-wrist",
+   "name": "Curling the wrists at the finish",
+   "looksLike": "Wrists flex so the knuckles turn toward the belly; the handle rolls toward the fingertips; forearm tendons stand out.",
+   "whyItMatters": "A bent wrist weakens grip (O'Driscoll 1992), so the forearms tire first; ACE asks for a neutral wrist.",
+   "fix": "Keep the wrists straight; pull with the elbows.",
+   "src": [
+    "odriscoll1992",
+    "ace-seated-row"
+   ],
+   "evidence": "documented"
+  }
+ ],
+ "keyFacts": [
+  {
+   "text": "Peak force came within the first 8% of the pull. Set your back before the handle moves; the start is the hardest part.",
+   "src": [
+    "cronin2007"
+   ],
+   "evidence": "documented (Olympic rowers)"
+  },
+  {
+   "text": "Elbows close to the body gave the most force and the most lat activity; elbows out at 60-90 degrees shifted work to the upper back and rear delts.",
+   "src": [
+    "deabreu2023"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "text": "A narrow grip gave more lat activity than a wide one; the wide grip loaded the traps and side delts more.",
+   "src": [
+    "padovan2025grip",
+    "difonza2026"
+   ],
+   "evidence": "documented (Padovan 2025 via Di Fonza review, full text)"
+  },
+  {
+   "text": "Squeezing the shoulder blades together on purpose did not raise mid-back activity; letting them move freely gave similar overall activity to holding them back.",
+   "src": [
+    "lehman2004",
+    "padovan2025scap"
+   ],
+   "evidence": "documented"
+  },
+  {
+   "text": "Being told to 'use your back' raised lat activity only in the first few reps of a set taken to failure.",
+   "src": [
+    "fujita2020"
+   ],
+   "evidence": "documented"
+  }
+ ],
+ "visualReferences": [
+  {
+   "url": "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+   "shows": "Cybex Modular Low Row start and stop drawings (PDF page 29): upright torso, slight knee bend, angled foot plate, elbows behind the torso at the stop.",
+   "viewed": "viewed today"
+  },
+  {
+   "url": "https://journal.iusca.org/index.php/Journal/article/download/190/271/1652",
+   "shows": "de Abreu 2023 Figure 1: photos of the seated cable row with pronated, supinated and neutral grips and 30, 60, 90 deg shoulder abduction.",
+   "viewed": "text read today; figure not viewed"
+  },
+  {
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/",
+   "shows": "Padovan 2025 Figure 1: fixed vs free scapula seated row on a Technogym weight-stack row with a triangle handle.",
+   "viewed": "text read via Europe PMC; figure not viewed (PMC captcha)"
+  },
+  {
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/48/seated-row/",
+   "shows": "ACE cable seated row page (narrow handle, handle to the stomach).",
+   "viewed": "page text read; images not checked"
+  },
+  {
+   "url": "https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/seated-row/vid-20084688",
+   "shows": "Mayo Clinic video: seated cable row on a bench, knees bent, shoulders slightly forward at the start, pull to the waist.",
+   "viewed": "not opened (403); content known from search snippet only"
+  },
+  {
+   "url": "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf",
+   "shows": "Combo machine photo with extended seat and foot bar.",
+   "viewed": "viewed today"
+  }
+ ],
+ "openQuestions": [
+  "Bench height, foot-plate tilt and height, pulley exit height and bench-to-plate distance: no manufacturer document found. Measure a real station or a scaled photo before the Meshy prompt fixes them.",
+  "Pulley height differs by model (Cybex: near hand height at the finish; others at foot-plate level, unverified). This sets the cable angle in the animation; pick one and keep the cable near level at the finish.",
+  "Shoulder extension and elbow flexion at the finish are derived from body segment lengths, not measured; they depend on whether the handle touches the belly or stops a few cm short.",
+  "Knee bend of 20-45 deg is read from one drawing; sources only say 'slightly bent'.",
+  "Scapula style (held back vs allowed forward at the start) is a coaching choice with similar EMG; the animation should show one and the copy should not call the other wrong.",
+  "Brachialis as a highlighted secondary rests on anatomy only.",
+  "No primary NSCA text for the low-pulley row was reachable online; the NSCA checklist found covers the chest-pad machine row."
+ ],
+ "sources": [
+  {
+   "id": "ace-seated-row-cable",
+   "cite": "ACE Exercise Library, Seated Row (cable, narrow handle), page 48",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/48/seated-row/",
+   "kind": "guideline (certifying body)",
+   "read": "full page text, quoted"
+  },
+  {
+   "id": "ace-seated-row",
+   "cite": "ACE Exercise Library, Seated Row (machine with chest pad), page 168",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/168/seated-row/",
+   "kind": "guideline (certifying body)",
+   "read": "full page text, quoted; used only for cues that carry over"
+  },
+  {
+   "id": "unmc-cable-row",
+   "cite": "University of Nebraska Medical Center, Center for Healthy Living, cable row video transcript",
+   "url": "https://www.unmc.edu/cfhl/_documents/cable_row_video_transcript.txt",
+   "kind": "coach (university health centre)",
+   "read": "full transcript"
+  },
+  {
+   "id": "nsca-proficiencies",
+   "cite": "NSCA Lifting Proficiencies for Various Strength Movements (Western Illinois University copy), Seated Row checklist (chest-pad machine)",
+   "url": "https://www.wiu.edu/coehs/healthwellness/documents/exercise_science/lift.pdf",
+   "kind": "guideline (NSCA checklist, university-hosted copy)",
+   "read": "full text of the Seated Row checklist"
+  },
+  {
+   "id": "cybex-modular-manual",
+   "cite": "Cybex Modular Owner's and Service Manual, part 55620, 5651/5302 Modular Low Row (p. 2-5)",
+   "url": "http://kb.cybexintl.com/Owners_Manuals/Strength/55620.pdf",
+   "kind": "manufacturer manual",
+   "read": "full text of p. 2-5; start/stop drawings viewed"
+  },
+  {
+   "id": "precor-vsl026bp",
+   "cite": "Precor Vitality Strength Selectorized Pulldown / Seated Row VSL026BP sell sheet (2025)",
+   "url": "https://static.precor.com/sell-sheet/all/VSL/VSL026BP-Pulldown-Seated-Row-NA.pdf",
+   "kind": "manufacturer spec sheet",
+   "read": "full text and product photo viewed"
+  },
+  {
+   "id": "matrix-aura-ms",
+   "cite": "Matrix Aura Series multi-station owner's guide (incl. G3-MS53 Low Row), part 1000417314",
+   "url": "https://content.johnsonfit.com/inc/uploaded_media/0354bbc1b9de4b9c11347ee68d9cc67b/owners_guide/dd0bb4c30d82048733cd18ee18e06603.pdf",
+   "kind": "manufacturer manual",
+   "read": "full text of the spec tables"
+  },
+  {
+   "id": "lf-signature-row",
+   "cite": "Life Fitness Signature Series Row (Cable Motion Row CMRW), specifications",
+   "url": "https://www.lifefitness.com/en-us/catalog/strength-training/cable-motion/life-fitness/signature-series-row",
+   "kind": "manufacturer product page",
+   "read": "summary only (search result)"
+  },
+  {
+   "id": "technogym-low-row",
+   "cite": "Technogym Selection Low Row user manual (chest-pad machine)",
+   "url": "https://www.manualslib.com/manual/1510291/Technogym-Selection-Low-Row.html",
+   "kind": "manufacturer manual (hosted copy)",
+   "read": "summary (fetched page text: setup and dimensions)"
+  },
+  {
+   "id": "american-barbell-row-handle",
+   "cite": "American Barbell Solid Steel Seated Row Chinning Handle",
+   "url": "https://americanbarbell.com/products/seat-row-chinning-handle-solid",
+   "kind": "manufacturer product page",
+   "read": "full spec section"
+  },
+  {
+   "id": "ansur2",
+   "cite": "ANSUR II public data (US Army, 2012), Penn State OPEN Design Lab copy; means computed today from the male (n=4082) and female (n=1986) CSV files",
+   "url": "https://www.openlab.psu.edu/ansur2/",
+   "kind": "anthropometric dataset",
+   "read": "full data; acromion-radiale 335.2/311.2 mm, forearm centre-of-grip 349.0/317.7 mm (male/female)"
+  },
+  {
+   "id": "deabreu2023",
+   "cite": "de Abreu Vasconcelos CMW, Lopes CR, Almeida VM, Krause Neto W, Soares E (2023) Effect of different grip position and shoulder-abduction angle on muscle strength and activation during the seated cable row. Int J Strength Cond 3(1)",
+   "url": "https://doi.org/10.47206/ijsc.v3i1.190",
+   "kind": "peer-reviewed",
+   "read": "full text (PDF), methods and results"
+  },
+  {
+   "id": "padovan2025scap",
+   "cite": "Padovan R et al. (2025) High-density surface electromyography excitation of prime movers across scapular positions in the seated row. J Funct Morphol Kinesiol 11(1):6",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12821611/",
+   "kind": "peer-reviewed",
+   "read": "full text (Europe PMC), methods and results"
+  },
+  {
+   "id": "padovan2025grip",
+   "cite": "Padovan R et al. (2025) High-density surface electromyography excitation of prime movers in the narrow vs. wide grip seated row exercise. J Hum Kinet",
+   "url": "https://doi.org/10.5114/jhk/209550",
+   "kind": "peer-reviewed",
+   "read": "summary (results as reported in the Di Fonza 2026 review, full text)"
+  },
+  {
+   "id": "difonza2026",
+   "cite": "Di Fonza D et al. (2026) EMG analysis of latissimus dorsi activation during common resistance training exercises: a narrative review. J Funct Morphol Kinesiol 11(3):315",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13510307/",
+   "kind": "peer-reviewed review",
+   "read": "full text (Europe PMC), seated row section"
+  },
+  {
+   "id": "lehman2004",
+   "cite": "Lehman GJ et al. (2004) Variations in muscle activation levels during traditional latissimus dorsi weight training exercises: an experimental study. Dyn Med 3(1):4",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC449729/",
+   "kind": "peer-reviewed",
+   "read": "full text (Europe PMC), exercise definitions and results"
+  },
+  {
+   "id": "cronin2007",
+   "cite": "Cronin JB, Jones JV, Hagstrom JT (2007) Kinematics and kinetics of the seated row and implications for conditioning. J Strength Cond Res 21(4):1265-70",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/18076253/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "fujita2020",
+   "cite": "Fujita RA et al. (2020) Mind-muscle connection: limited effect of verbal instructions on muscle activity in a seated row exercise. Percept Mot Skills 127(5):925-938",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32448047/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "dosanjos2024",
+   "cite": "Dos Anjos FV et al. (2024) Assessing the feasibility of EMG biofeedback to reduce the upper trapezius muscle excitation during a seated row exercise. Appl Psychophysiol Biofeedback 49(4):577-587",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/39177899/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "odriscoll1992",
+   "cite": "O'Driscoll SW et al. (1992) The relationship between wrist position, grasp size, and grip strength. J Hand Surg Am 17(1):169-77",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/1538102/",
+   "kind": "peer-reviewed",
+   "read": "abstract"
+  },
+  {
+   "id": "callaghan2001",
+   "cite": "Callaghan JP, McGill SM (2001) Intervertebral disc herniation: studies on a porcine model exposed to highly repetitive flexion/extension motion with compressive force. Clin Biomech 16(1):28-37",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/11114441/",
+   "kind": "peer-reviewed",
+   "read": "not re-read today; existing app source (abstract)"
+  },
+  {
+   "id": "baechle-earle",
+   "cite": "Baechle TR, Earle RW, Weight Training: Steps to Success, grip selection excerpt (Human Kinetics)",
+   "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+   "kind": "guideline (NSCA editors, book excerpt)",
+   "read": "full excerpt; it says to perform all grips with thumbs around the bar"
+  },
+  {
+   "id": "androulakis2024",
+   "cite": "Androulakis Korakakis P, Wolf M, Coleman M et al. (2024) Optimizing resistance training technique to maximize muscle hypertrophy: a narrative review. J Funct Morphol Kinesiol 9(1):9",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10801605/",
+   "kind": "peer-reviewed review",
+   "read": "full text (Europe PMC), tempo section"
+  },
+  {
+   "id": "ronai2019",
+   "cite": "Ronai P (2019) Do it right: the seated cable row exercise. ACSM's Health Fit J 23(4):32-37",
+   "url": "https://journals.lww.com/acsm-healthfitness/Fulltext/2019/07000/Do_It_Right__The_Seated_Cable_Row_Exercise.9.aspx",
+   "kind": "coach (ACSM journal column)",
+   "read": "summary only (paywalled; one setup sentence known from a search snippet)"
+  },
+  {
+   "id": "mayo-seated-row",
+   "cite": "Mayo Clinic, Video: Seated row with weight machine",
+   "url": "https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/seated-row/vid-20084688",
+   "kind": "health institution",
+   "read": "summary only (search snippet; page returned 403)"
+  }
+ ]
+}

@@ -1,0 +1,824 @@
+{
+  "id": "lib_dumbbell_biceps_curl",
+  "name": "Dumbbell Biceps Curl",
+  "researchedOn": "2026-10-02",
+  "confidenceKey": {
+    "measured": "a study measured it (goniometer, motion capture or EMG)",
+    "documented": "a guideline, manual or manufacturer states it",
+    "range, coach consensus": "coaching sources agree; no measured number",
+    "derived": "worked out from geometry or from the sources above; not measured directly",
+    "unverified": "no source found; do not present as fact"
+  },
+  "angleConventions": "Elbow flexion 0 deg = arm straight. Shoulder flexion 0 deg = upper arm hanging vertical beside the trunk. Torso lean 0 deg = trunk vertical.",
+  "appData": {
+    "exercisesJson": {
+      "equipment": "Dumbbells",
+      "primary": [
+        "biceps"
+      ],
+      "secondary": [
+        "forearms"
+      ],
+      "stabilizers": [],
+      "pattern": "elbow_flexion",
+      "aliases": [
+        "db biceps curl",
+        "dumbbell curl",
+        "db curl"
+      ]
+    },
+    "siblingExercises": "The library also has lib_alternating_dumbbell_curl, lib_hammer_curl, lib_concentration_curl and lib_incline_dumbbell_curl, so this entry is the both-arms-together, palms-up version. That settles the open owner question in docs/FORM-GUIDE-PRODUCTION.md 10.6 ('both arms together or alternating') for this id.",
+    "muscleIdNotes": "muscles.ts maps 'brachioradialis' text to forearms (classifyMuscleText) and has a separate brachialis id."
+  },
+  "existingContentReview": {
+    "checked": [
+      "docs/research/howto/: no file for this id",
+      "src/data/coachCues.json: empty for this id",
+      "git 61e3e9c:src/formguide/research/lib_dumbbell_biceps_curl.json (V1-02 research, removed from the app in 5e7f75c)"
+    ],
+    "keep": [
+      "Both arms together, supinated closed grip (ACE Seated Biceps Curl).",
+      "Torso still and elbows not moving forward (ACE).",
+      "front_delts as the muscle that should stay quiet."
+    ],
+    "flags": [
+      {
+        "item": "Mistake reason 'elbows swaying forward led to less biceps activation' (BuiltWithScience, one coach's informal test).",
+        "finding": "Contradicted by a peer-reviewed study: curling with about 30 deg shoulder flexion raised biceps EMG in the lifting phase by 17.7-20.3% and raised front-delt EMG markedly (Coratella 2023, JFMK). Keep the mistake (it is in ACE and Mayo), but the reason must be momentum and front-delt takeover, not lower biceps activity.",
+        "src": [
+          "coratella2023flex",
+          "bws-curl-mistakes"
+        ]
+      },
+      {
+        "item": "elbow_flex max 128 deg = illustrative 5 deg start + Marcolin's 123.1 deg excursion.",
+        "finding": "Acceptable as an approximation, but Marcolin's dumbbell curl was alternating and started semi-prone (thumb forward), turning to supine at about 90 deg. Use 120-135 deg as the top range rather than one exact number.",
+        "src": [
+          "marcolin2018"
+        ]
+      },
+      {
+        "item": "peakAt 0.39 of the rep cycle (end of lift).",
+        "finding": "Consistent with Oliveira 2009: biceps EMG rose through the lift and was significantly highest in the last third of the range. Keep, now with a better source.",
+        "src": [
+          "oliveira2009"
+        ]
+      }
+    ]
+  },
+  "equipment": {
+    "modelThis": {
+      "item": "One pair of rubber-encased hex dumbbells with a knurled chrome handle, mid weight (about 10-12.5 kg / 25 lb).",
+      "why": "Rubber hex dumbbells are sold by the main commercial and garage-gym makers (Rogue, York, Titan, Rep) with published handle sizes, and the flat heads do not roll, which keeps them still in rest frames. A mid weight has a head size that reads clearly at phone size without hiding the hand.",
+      "confidence": "documented (sizes); the choice itself is a design decision"
+    },
+    "dimensions": {
+      "handleLength": {
+        "value": "130-132 mm (5.125 in Titan; 5.2 in Rep standard hex); 114 mm on Rep's rubber-coated line",
+        "src": [
+          "titan-hex",
+          "rep-hex"
+        ],
+        "confidence": "documented"
+      },
+      "handleDiameter": {
+        "value": "34 mm for mid and heavy weights (Titan 34 mm; Rep 34 mm from 17.5 lb). Rogue and York give 25 mm on the lightest bells up to 35 mm on heavy bells.",
+        "src": [
+          "titan-hex",
+          "rep-hex",
+          "rogue-hex",
+          "york-hex"
+        ],
+        "confidence": "documented"
+      },
+      "handleShape": {
+        "value": "chrome, knurled; York describes it as 'ergonomically contoured to fit comfortably in the palm', Rogue as an 'ergonomic' chrome handle",
+        "src": [
+          "york-hex",
+          "rogue-hex"
+        ],
+        "confidence": "documented"
+      },
+      "overall": {
+        "value": "Titan 25 lb: overall length 12 in (305 mm), overall width 5.25 in (133 mm)",
+        "src": [
+          "titan-hex"
+        ],
+        "confidence": "documented"
+      },
+      "headShape": {
+        "value": "six-sided (hex) rubber heads, one each end; head size grows with weight",
+        "src": [
+          "rogue-hex",
+          "york-hex"
+        ],
+        "confidence": "documented"
+      }
+    },
+    "variantsNotModelled": "Round urethane 'pro-style' dumbbells and fixed-plate dumbbells are also common in commercial gyms; no handle spec was collected for them.",
+    "referenceUrls": [
+      "https://titan.fitness/products/25-lb-rubber-hex-dumbbells",
+      "https://www.roguefitness.com/rogue-dumbbells",
+      "https://yorkbarbell.com/product/rubber-hex-dumbbell/",
+      "https://repfitness.com/products/rubber-hex-dumbbell-pairs"
+    ]
+  },
+  "setup": [
+    {
+      "step": 1,
+      "text": "Take two dumbbells of equal weight.",
+      "landmark": "none",
+      "src": [
+        "ace-seated-db-curl"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "step": 2,
+      "text": "Stand with feet about shoulder-width apart on a stable base.",
+      "landmark": "feet under the shoulders",
+      "src": [
+        "athlean-curl",
+        "oliveira2009"
+      ],
+      "confidence": "range, coach consensus"
+    },
+    {
+      "step": 3,
+      "text": "Let the arms hang straight at the sides, close to the body, palms facing forward.",
+      "landmark": "elbows beside the side of the trunk ('next to the middle of the body'); dumbbells beside, not on, the outer thighs",
+      "src": [
+        "ace-seated-db-curl",
+        "ace-bicep-curl"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "step": 4,
+      "text": "Close the grip: fingers round the handle and thumb wrapped over them.",
+      "landmark": "handle across the palm",
+      "src": [
+        "ace-seated-db-curl"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "step": 5,
+      "text": "Set the shoulder blades down and back; do not shrug.",
+      "landmark": "shoulders level, away from the ears",
+      "src": [
+        "ace-seated-db-curl"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "step": 6,
+      "text": "If the elbows' natural outward angle makes palms-forward force a bent wrist, let the dumbbells sit a little wider so the wrist stays straight.",
+      "landmark": "back of the hand in line with the forearm",
+      "src": [
+        "ace-seated-db-curl",
+        "alsubael2010"
+      ],
+      "confidence": "documented"
+    }
+  ],
+  "posture": {
+    "start": {
+      "head_neck": {
+        "value": "neutral, eyes forward",
+        "src": [],
+        "confidence": "unverified (no curl source states it; common to all standing ACE cues)"
+      },
+      "torso_spine": {
+        "value": "upright, 0 deg lean, chest still",
+        "src": [
+          "ace-bicep-curl",
+          "coratella2023grips"
+        ],
+        "confidence": "documented"
+      },
+      "scapulae": {
+        "value": "depressed and retracted (down and back)",
+        "src": [
+          "ace-seated-db-curl"
+        ],
+        "confidence": "documented"
+      },
+      "shoulder": {
+        "value": "0 deg flexion, 0 deg abduction, upper arm vertical and close to the trunk; rotation neutral",
+        "src": [
+          "ace-seated-db-curl",
+          "coratella2023grips"
+        ],
+        "confidence": "documented (rotation: unverified)"
+      },
+      "elbow": {
+        "value": "0-5 deg flexion: straight, not forced into hyperextension",
+        "src": [
+          "ace-bicep-curl",
+          "sato2021"
+        ],
+        "confidence": "documented"
+      },
+      "carryingAngle": {
+        "value": "with palm forward and arm straight the forearm angles outward from the upper arm: men 5-17 deg (mean 9.3), women 10-27 deg (mean 18.5) on X-ray. Build it into the shared figure's elbow so the dumbbells hang slightly wide of the thighs.",
+        "src": [
+          "alsubael2010"
+        ],
+        "confidence": "measured"
+      },
+      "forearm": {
+        "value": "fully supinated, palm forward",
+        "src": [
+          "ace-seated-db-curl",
+          "ace-bicep-curl"
+        ],
+        "confidence": "documented"
+      },
+      "wrist": {
+        "value": "neutral: no flexion, no extension",
+        "src": [
+          "ace-seated-db-curl",
+          "mayo-db-curl"
+        ],
+        "confidence": "documented"
+      },
+      "hips": {
+        "value": "neutral, standing tall",
+        "src": [
+          "ace-bicep-curl"
+        ],
+        "confidence": "documented ('keep chest still')"
+      },
+      "knees": {
+        "value": "straight or softly unlocked",
+        "src": [],
+        "confidence": "unverified"
+      },
+      "feet": {
+        "value": "flat, about shoulder-width",
+        "src": [
+          "athlean-curl"
+        ],
+        "confidence": "range, coach consensus"
+      }
+    },
+    "mid": {
+      "description": "Forearm horizontal.",
+      "elbow": {
+        "value": "about 90 deg flexion",
+        "src": [],
+        "confidence": "derived (midpoint of the arc)"
+      },
+      "shoulder": {
+        "value": "still 0 deg flexion; elbow has not moved forward",
+        "src": [
+          "ace-seated-db-curl"
+        ],
+        "confidence": "documented"
+      },
+      "forearm_wrist": {
+        "value": "palm up, wrist neutral",
+        "src": [
+          "ace-seated-db-curl"
+        ],
+        "confidence": "documented"
+      },
+      "torso_scapulae": {
+        "value": "unchanged from start",
+        "src": [
+          "ace-bicep-curl"
+        ],
+        "confidence": "documented"
+      },
+      "load": {
+        "value": "with the upper arm vertical, the dumbbell's lever arm about the elbow is longest here",
+        "src": [],
+        "confidence": "derived (lever arm = forearm length x sine of elbow angle)"
+      }
+    },
+    "end": {
+      "description": "Dumbbells raised toward the shoulders.",
+      "elbow": {
+        "value": "120-135 deg flexion (dumbbell curl elbow excursion measured 123.1 +/- 12.3 deg)",
+        "src": [
+          "marcolin2018",
+          "ace-bicep-curl"
+        ],
+        "confidence": "measured (range from mean +/- SD)"
+      },
+      "shoulder": {
+        "value": "0 deg flexion: elbows stay by the sides. A version with about 30 deg shoulder flexion exists in research but is a different, front-delt-heavier variant.",
+        "src": [
+          "ace-seated-db-curl",
+          "coratella2023flex"
+        ],
+        "confidence": "documented"
+      },
+      "forearm": {
+        "value": "supinated, palm facing the shoulder",
+        "src": [
+          "ace-seated-db-curl"
+        ],
+        "confidence": "documented"
+      },
+      "wrist": {
+        "value": "neutral; does not curl in",
+        "src": [
+          "ace-seated-db-curl",
+          "mayo-db-curl"
+        ],
+        "confidence": "documented"
+      },
+      "scapulae": {
+        "value": "still down; no shrug at the top",
+        "src": [
+          "ace-seated-db-curl"
+        ],
+        "confidence": "documented"
+      },
+      "torso": {
+        "value": "0 deg; no lean back",
+        "src": [
+          "ace-bicep-curl"
+        ],
+        "confidence": "documented"
+      }
+    }
+  },
+  "grip": {
+    "orientation": {
+      "value": "supinated (palms forward at the bottom, palms up at the top) for the whole rep",
+      "src": [
+        "ace-seated-db-curl",
+        "ace-bicep-curl",
+        "mayo-db-curl"
+      ],
+      "confidence": "documented"
+    },
+    "thumb": {
+      "value": "wrapped round the handle (closed grip)",
+      "src": [
+        "ace-seated-db-curl"
+      ],
+      "confidence": "documented"
+    },
+    "width": {
+      "value": "set by the arms hanging at the sides; one dumbbell per hand beside each thigh",
+      "src": [
+        "ace-seated-db-curl"
+      ],
+      "confidence": "documented"
+    },
+    "handleInPalm": {
+      "value": "handle runs across the palm, fingers wrapped; centred in the hand for the default model",
+      "src": [],
+      "confidence": "unverified (no source states centred; it is the neutral default)"
+    },
+    "wristStack": {
+      "value": "back of hand in line with the forearm; dumbbell moves as a rigid extension of the forearm",
+      "src": [
+        "ace-seated-db-curl",
+        "mayo-db-curl"
+      ],
+      "confidence": "documented"
+    },
+    "fingers": {
+      "value": "all four fingers round the handle, thumb over the index and middle fingers",
+      "src": [
+        "ace-seated-db-curl"
+      ],
+      "confidence": "documented (closed grip); exact finger order unverified"
+    },
+    "variants": [
+      {
+        "name": "neutral start, supinate on the way up",
+        "detail": "Start thumbs forward and turn palms up by about 90 deg of elbow flexion. Used in Marcolin 2018's dumbbell curl.",
+        "src": [
+          "marcolin2018"
+        ],
+        "confidence": "measured (protocol)"
+      },
+      {
+        "name": "off-centre grip",
+        "detail": "Thumb side against the inner head so more weight sits on the little-finger side, adding supination load.",
+        "src": [
+          "strengthzone-offcenter"
+        ],
+        "confidence": "range, coach consensus"
+      }
+    ]
+  },
+  "rangeTempoBreathing": {
+    "rom": {
+      "value": "full: from arms straight (about 0-5 deg) to about 120-135 deg elbow flexion, upper arm still",
+      "src": [
+        "ace-bicep-curl",
+        "marcolin2018",
+        "sato2021"
+      ],
+      "confidence": "measured"
+    },
+    "tempo": {
+      "value": "2 s up, brief pause (up to 1 s), 2 s down, brief pause at the bottom. Two studies used 2 s each way; Coratella used 1-2-1-2 (hold, up, hold, down); Marcolin used 3 s per rep.",
+      "src": [
+        "sato2021",
+        "coratella2023grips",
+        "marcolin2018"
+      ],
+      "confidence": "measured (protocols)"
+    },
+    "tempoLatitude": {
+      "value": "rep durations from 0.5 to 8 s gave similar muscle growth in a meta-analysis",
+      "src": [
+        "schoenfeld2015"
+      ],
+      "confidence": "measured"
+    },
+    "breathing": {
+      "value": "breathe out while curling up, breathe in while lowering",
+      "src": [
+        "ace-seated-db-curl"
+      ],
+      "confidence": "documented"
+    },
+    "armsTogether": {
+      "value": "both arms curl in unison",
+      "src": [
+        "ace-seated-db-curl"
+      ],
+      "confidence": "documented"
+    }
+  },
+  "muscles": {
+    "primary": {
+      "ids": [
+        "biceps"
+      ],
+      "src": [
+        "exrx-db-curl",
+        "coratella2023grips"
+      ],
+      "confidence": "documented"
+    },
+    "secondary": {
+      "ids": [
+        "brachialis",
+        "forearms"
+      ],
+      "note": "Brachialis is a pure elbow flexor in every forearm position; brachioradialis (app: forearms) is active and works harder when the grip is pronated.",
+      "src": [
+        "exrx-db-curl",
+        "statpearls-brachialis",
+        "kleiber2015",
+        "coratella2023grips"
+      ],
+      "confidence": "documented"
+    },
+    "stabilizers": {
+      "ids": [
+        "front_delts",
+        "upper_traps"
+      ],
+      "note": "ExRx lists anterior deltoid, upper and middle trapezius, levator scapulae and wrist flexors as stabilizers. Front-delt EMG was measured in curls and rises when the elbows travel forward.",
+      "src": [
+        "exrx-db-curl",
+        "coratella2023grips",
+        "coratella2023flex"
+      ],
+      "confidence": "documented"
+    },
+    "keepQuiet": {
+      "ids": [
+        "front_delts"
+      ],
+      "src": [
+        "coratella2023flex"
+      ],
+      "confidence": "measured"
+    },
+    "peakEffort": {
+      "value": "late in the lift: biceps EMG rose from start to end of the lifting phase, significantly highest in the last third of the range (68-100% of ROM). Lowering EMG is lower than lifting EMG.",
+      "src": [
+        "oliveira2009",
+        "marcolin2018",
+        "coratella2023flex"
+      ],
+      "confidence": "measured"
+    },
+    "disagreementWithExercisesJson": {
+      "proposal": "Add brachialis to secondary (keep forearms). Optionally add front_delts and upper_traps as stabilizers.",
+      "why": "ExRx lists brachialis as a synergist; anatomy references call it a pure elbow flexor active in all forearm positions. The app already uses brachialis as primary on hammer curls, so listing it here keeps the map honest.",
+      "src": [
+        "exrx-db-curl",
+        "statpearls-brachialis"
+      ],
+      "note": "Brachialis is deep; surface EMG of it was not found in these sources, so its share is not quantified."
+    }
+  },
+  "mistakes": [
+    {
+      "key": "torso-swing",
+      "name": "Swinging the torso",
+      "looksLike": "Knees dip and the trunk rocks back as the lift starts, hips drive forward, and the dumbbells fly up; the torso then leans back past vertical at the top. Lean angle not measured in any source (animate as a clear, readable rock-back; unverified).",
+      "whyItMatters": "Momentum, not the elbow flexors, carries the weight through the start of the lift, and the lower back takes the swing (coach consensus). ACE asks for a still chest; Mayo says not to swing.",
+      "fix": "Lighter dumbbells; keep the chest still. A back-to-wall set removes the swing.",
+      "src": [
+        "ace-bicep-curl",
+        "mayo-db-curl",
+        "athlean-curl",
+        "bws-curl-mistakes"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "key": "elbows-forward",
+      "name": "Elbows drifting forward",
+      "looksLike": "The upper arms swing forward and up during the lift (shoulder flexion; about 30 deg in the research version), so the elbows end in front of the ribs.",
+      "whyItMatters": "Front-delt activity rises markedly and the move turns into part shoulder raise. It does not lower biceps EMG in the lift (Coratella 2023), so the problem is the shifted work and the swing, not a 'switched-off' biceps.",
+      "fix": "Keep the elbows beside the trunk from first rep to last.",
+      "src": [
+        "ace-seated-db-curl",
+        "mayo-db-curl",
+        "coratella2023flex"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "key": "half-reps-bottom",
+      "name": "Stopping short at the bottom",
+      "looksLike": "Arms never straighten: each rep turns around at about 30-50 deg elbow flexion instead of near 0.",
+      "whyItMatters": "Training the 0-50 deg range grew elbow-flexor thickness 8.9% vs 3.4% for the 80-130 deg range in 5 weeks.",
+      "fix": "Straighten the arm fully at the bottom of every rep before the next curl.",
+      "src": [
+        "sato2021",
+        "bws-curl-mistakes",
+        "athlean-curl"
+      ],
+      "confidence": "measured"
+    },
+    {
+      "key": "wrist-curl",
+      "name": "Curling the wrists",
+      "looksLike": "At the top the wrist bends in (flexes) so the dumbbell heads tip toward the forearm; or the wrist bends back at the bottom.",
+      "whyItMatters": "Shifts load to the forearm flexors and away from the elbow flexors; ACE and Mayo both call for a straight, rigid wrist.",
+      "fix": "Lock the wrist straight; the dumbbell moves as part of the forearm.",
+      "src": [
+        "ace-seated-db-curl",
+        "mayo-db-curl",
+        "bws-curl-mistakes"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "key": "shrug",
+      "name": "Shrugging at the top",
+      "looksLike": "Shoulders rise toward the ears as the dumbbells reach the top.",
+      "whyItMatters": "Upper traps join in and the shoulder blades lose their set position.",
+      "fix": "Keep the shoulder blades down and back through the rep.",
+      "src": [
+        "ace-seated-db-curl"
+      ],
+      "confidence": "documented"
+    },
+    {
+      "key": "drop",
+      "name": "Dropping the weight",
+      "looksLike": "The lowering takes well under a second; arms fall straight with a jolt at the bottom.",
+      "whyItMatters": "Loses the controlled lowering every source asks for; the research protocols used about 2 s down.",
+      "fix": "Lower over about 2 s.",
+      "src": [
+        "ace-bicep-curl",
+        "athlean-curl",
+        "sato2021",
+        "coratella2023grips"
+      ],
+      "confidence": "documented"
+    }
+  ],
+  "keyFacts": [
+    {
+      "text": "Palms up matters: in 8-rep-max curls, biceps activity was 12% higher than with a neutral grip and 19% higher than palms down.",
+      "src": [
+        "coratella2023grips"
+      ],
+      "confidence": "measured",
+      "caveat": "In slow, light curls Kleiber 2015 found no biceps change across grips; the brachioradialis did the extra work palms-down."
+    },
+    {
+      "text": "The bottom half builds more: training only the 0-50 deg range grew the elbow flexors 8.9% vs 3.4% for the 80-130 deg range.",
+      "src": [
+        "sato2021"
+      ],
+      "confidence": "measured"
+    },
+    {
+      "text": "Biceps effort climbs through the lift and is highest in the last third, near the top.",
+      "src": [
+        "oliveira2009"
+      ],
+      "confidence": "measured"
+    },
+    {
+      "text": "Focusing on squeezing the biceps nearly doubled elbow-flexor growth over 8 weeks: 12.4% vs 6.9% for focusing on moving the weight.",
+      "src": [
+        "schoenfeld2018"
+      ],
+      "confidence": "measured"
+    },
+    {
+      "text": "Rep speed has wide latitude: 0.5 to 8 s per rep gave similar growth; very slow reps over 10 s look worse.",
+      "src": [
+        "schoenfeld2015"
+      ],
+      "confidence": "measured"
+    }
+  ],
+  "visualReferences": [
+    {
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+      "shows": "ACE photos of the dumbbell curl: supinated closed grip, arms by sides, scapulae set (seated version; same arm action)."
+    },
+    {
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+      "shows": "ACE photos: start with wrists, elbows and shoulders in a line; elbows at the sides; chest still (barbell version)."
+    },
+    {
+      "url": "https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/biceps-curl/vid-20084675",
+      "shows": "Mayo Clinic video of the dumbbell curl: palm up, elbow close to body, straight wrist, no swing."
+    },
+    {
+      "url": "https://exrx.net/WeightExercises/Biceps/DBCurl",
+      "shows": "ExRx dumbbell curl animation and muscle roles (page blocked to our fetcher; check in a browser)."
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/",
+      "shows": "Figure 2: supinated, pronated and neutral curl grips with arms parallel to the trunk (cable bar and rope)."
+    },
+    {
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9944112/",
+      "shows": "Arms flexion vs no-flexion curl technique (about 30 deg shoulder flexion): the elbows-forward look to animate as the mistake."
+    },
+    {
+      "url": "https://titan.fitness/products/25-lb-rubber-hex-dumbbells",
+      "shows": "Rubber hex dumbbell product photos with published dimensions."
+    }
+  ],
+  "openQuestions": [
+    "Default grip: palms forward throughout (chosen; ACE, Mayo) vs neutral start that turns palm up (Marcolin). The owner's question 'does the palm turn?' is answered here as no for the default, with the turning version as a variant. Owner may overrule.",
+    "Head/neck neutral and knee position are not stated by any curl source; marked unverified.",
+    "How far the torso rocks back in the swing mistake has no measured value; animators should make it readable, and the human-eye review should check it looks real.",
+    "Exact handle position in the palm (centred) is a default, not a sourced fact.",
+    "Carrying angle of the shared figure: pick one value (male mean 9.3 deg, female mean 18.5 deg) once the shared body's sex/build is decided, and reuse it for every exercise.",
+    "ExRx, Mayo, Rogue product guide and StatPearls pages were blocked to our fetcher; their content here comes from search-result summaries and should be confirmed in a browser."
+  ],
+  "sources": [
+    {
+      "id": "ace-bicep-curl",
+      "cite": "American Council on Exercise, Exercise Library: Bicep Curl (barbell)",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/70/bicep-curl/",
+      "kind": "guideline",
+      "read": "full"
+    },
+    {
+      "id": "ace-seated-db-curl",
+      "cite": "American Council on Exercise, Exercise Library: Seated Biceps Curl (dumbbells)",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
+      "kind": "guideline",
+      "read": "full"
+    },
+    {
+      "id": "mayo-db-curl",
+      "cite": "Mayo Clinic, Video: Biceps curl with dumbbell",
+      "url": "https://www.mayoclinic.org/healthy-lifestyle/fitness/multimedia/biceps-curl/vid-20084675",
+      "kind": "guideline",
+      "read": "summary (page returned 403; search-result text)"
+    },
+    {
+      "id": "exrx-db-curl",
+      "cite": "ExRx.net, Dumbbell Curl (muscle roles: target biceps brachii; synergists brachialis, brachioradialis; stabilizers anterior deltoid, coracobrachialis, upper and middle trapezius, levator scapulae, wrist flexors)",
+      "url": "https://exrx.net/WeightExercises/Biceps/DBCurl",
+      "kind": "reference library",
+      "read": "summary (Cloudflare block; search-result text)"
+    },
+    {
+      "id": "athlean-curl",
+      "cite": "ATHLEAN-X, How To Do Bicep Curls",
+      "url": "https://learn.athleanx.com/articles/how-to-do-bicep-curls",
+      "kind": "coach consensus",
+      "read": "full"
+    },
+    {
+      "id": "bws-curl-mistakes",
+      "cite": "Built With Science, 5 bicep curl mistakes (informal coach test; not peer reviewed)",
+      "url": "https://builtwithscience.com/fitness-tips/fix-bicep-curls-mistakes/",
+      "kind": "coach consensus",
+      "read": "full"
+    },
+    {
+      "id": "marcolin2018",
+      "cite": "Marcolin G, Panizzolo FA, Petrone N, et al. Differences in electromyographic activity of biceps brachii and brachioradialis while performing three variants of curl. PeerJ 2018;6:e5165. doi:10.7717/peerj.5165",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6047503/",
+      "kind": "peer-reviewed EMG and kinematics",
+      "read": "full text (tool summary)"
+    },
+    {
+      "id": "oliveira2009",
+      "cite": "Oliveira LF, Matta TT, Alves DS, Garcia MAC, Vieira TMM. Effect of the shoulder position on the biceps brachii EMG in different dumbbell curls. J Sports Sci Med 2009;8(1):24-29",
+      "url": "https://www.jssm.org/jssm-08-24.xml-Fulltext",
+      "kind": "peer-reviewed EMG",
+      "read": "full text (tool summary)"
+    },
+    {
+      "id": "coratella2023grips",
+      "cite": "Coratella G, Tornatore G, Longo S, Toninelli N, et al. Biceps Brachii and Brachioradialis Excitation in Biceps Curl Exercise: Different Handgrips, Different Synergy. Sports (Basel) 2023;11(3):64. doi:10.3390/sports11030064",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10054060/",
+      "kind": "peer-reviewed EMG",
+      "read": "abstract and methods"
+    },
+    {
+      "id": "coratella2023flex",
+      "cite": "Coratella G, Tornatore G, Longo S, Esposito F, Ce E. Bilateral Biceps Curl Shows Distinct Biceps Brachii and Anterior Deltoid Excitation Comparing Straight vs. EZ Barbell Coupled with Arms Flexion/No-Flexion. J Funct Morphol Kinesiol 2023;8(1):13. doi:10.3390/jfmk8010013",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9944112/",
+      "kind": "peer-reviewed EMG",
+      "read": "abstract (PubMed) and methods summary"
+    },
+    {
+      "id": "kleiber2015",
+      "cite": "Kleiber T, Kunz L, Disselhorst-Klug C. Muscular coordination of biceps brachii and brachioradialis in elbow flexion with respect to hand position. Front Physiol 2015;6:215. doi:10.3389/fphys.2015.00215",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4526813/",
+      "kind": "peer-reviewed EMG",
+      "read": "abstract"
+    },
+    {
+      "id": "sato2021",
+      "cite": "Sato S, Yoshida R, Kiyono R, et al. Elbow Joint Angles in Elbow Flexor Unilateral Resistance Exercise Training Determine Its Effects on Muscle Strength and Thickness of Trained and Non-trained Arms. Front Physiol 2021;12:734509. doi:10.3389/fphys.2021.734509",
+      "url": "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2021.734509/full",
+      "kind": "peer-reviewed training study (dumbbell preacher curl, 5 weeks)",
+      "read": "full text (tool summary)"
+    },
+    {
+      "id": "schoenfeld2015",
+      "cite": "Schoenfeld BJ, Ogborn DI, Krieger JW. Effect of repetition duration during resistance training on muscle hypertrophy: a systematic review and meta-analysis. Sports Med 2015;45(4):577-85. doi:10.1007/s40279-015-0304-0",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25601394/",
+      "kind": "meta-analysis",
+      "read": "abstract"
+    },
+    {
+      "id": "schoenfeld2018",
+      "cite": "Schoenfeld BJ, Vigotsky A, Contreras B, et al. Differential effects of attentional focus strategies during long-term resistance training. Eur J Sport Sci 2018;18(5):705-712. doi:10.1080/17461391.2018.1447020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29533715/",
+      "kind": "peer-reviewed training study",
+      "read": "abstract"
+    },
+    {
+      "id": "statpearls-brachialis",
+      "cite": "StatPearls: Anatomy, Shoulder and Upper Limb, Brachialis Muscle (pure elbow flexor in all positions, no supination or pronation, 'workhorse of the elbow flexors')",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK551630/",
+      "kind": "anatomy reference",
+      "read": "summary (reCAPTCHA; search-result text)"
+    },
+    {
+      "id": "alsubael2010",
+      "cite": "Alsubael MO, Hegazy AAM. Radiographic Evaluation of the Normal Elbow Carrying Angle in Adults. J Med Sci 2010;10(2):40-44",
+      "url": "https://scialert.net/fulltext/?doi=jms.2010.40.44",
+      "kind": "peer-reviewed anatomy (X-ray, n=90)",
+      "read": "full text (tool summary)"
+    },
+    {
+      "id": "titan-hex",
+      "cite": "Titan Fitness, 25 lb Rubber Hex Dumbbells (overall length 12 in, handle length 5.125 in, handle diameter 34 mm, overall width 5.25 in)",
+      "url": "https://titan.fitness/products/25-lb-rubber-hex-dumbbells",
+      "kind": "manufacturer product page",
+      "read": "full"
+    },
+    {
+      "id": "rep-hex",
+      "cite": "REP Fitness, Hex Dumbbells (handle 5.2 in; 28 mm to 15 lb, 34 mm from 17.5 lb)",
+      "url": "https://repfitness.com/products/rubber-hex-dumbbell-pairs",
+      "kind": "manufacturer product page",
+      "read": "summary (search-result text)"
+    },
+    {
+      "id": "rogue-hex",
+      "cite": "Rogue Fitness, Rubber Hex Dumbbells (handle 25 mm up to 10 lb, 35 mm from 12.5 lb; contoured knurled chrome handle)",
+      "url": "https://www.roguefitness.com/rogue-dumbbells",
+      "kind": "manufacturer product page",
+      "read": "full"
+    },
+    {
+      "id": "york-hex",
+      "cite": "York Barbell, Rubber Hex Dumbbell (handle 25 mm at 2.5 lb to 35 mm at 120 lb; contoured)",
+      "url": "https://yorkbarbell.com/product/rubber-hex-dumbbell/",
+      "kind": "manufacturer product page",
+      "read": "full"
+    },
+    {
+      "id": "strengthzone-offcenter",
+      "cite": "Strength Zone Training, Better Biceps Curls: grab the handle this way",
+      "url": "https://www.strengthzonetraining.com/better-biceps-curls-grab-the-handle-this-way-for-bigger-biceps/",
+      "kind": "coach consensus",
+      "read": "summary (search-result text)"
+    }
+  ]
+}
