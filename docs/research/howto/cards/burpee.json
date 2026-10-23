@@ -1,0 +1,1024 @@
+{
+ "id": "burpee",
+ "libId": "lib_burpee",
+ "name": "Burpee",
+ "family": "Conditioning and carries (jumps)",
+ "tier": "B",
+ "tierNote": "Safety tier B (content.md appendix B); census.json difficulty tier 3.",
+ "archetype": {
+  "hand": "palm-flat",
+  "contact": [
+   "standing-feet"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Start standing. Two sources put the feet about shoulder-width apart; one says hip-width and one says feet together.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "pg-burpee",
+    "hl-burpee",
+    "motra-burpee",
+    "fv-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "pg-burpee",
+     "text": "Stand tall with feet shoulder width apart.",
+     "where": "How to do a Burpee, step 1"
+    },
+    {
+     "source": "hl-burpee",
+     "text": "Start in a squat position with your knees bent, back straight, and your feet about shoulder-width apart.",
+     "where": "How to do a burpee with correct form, step 1"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Stand with feet hip-width apart, arms at sides, core braced, shoulders relaxed.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Stand with your feet together and your hands by your sides.",
+     "where": "How to Do Burpees, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Squat down and put the hands flat on the floor in front of the feet, shoulder-width apart.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-burpee",
+    "motra-burpee",
+    "bb-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "fv-burpee",
+     "text": "Squat down and place your hands flat on the floor in front of your feet shoulder-width apart.",
+     "where": "How to Do Burpees, step 2"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Squat down and place hands on floor in front of feet.",
+     "where": "How to Perform, step 1"
+    },
+    {
+     "source": "bb-burpee",
+     "text": "From a standing position, descend into a crouch/squat. As you get low enough, plant your arms in front of you.",
+     "where": "How To Do Burpees, Step 1"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Put the hands on the floor first, then kick the feet back into a straight-arm plank.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "pg-burpee",
+    "bb-burpee",
+    "motra-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "pg-burpee",
+     "text": "Place hands on the floor first, before pushing your legs out into plank position.",
+     "where": "Burpee tips"
+    },
+    {
+     "source": "bb-burpee",
+     "text": "Once you have stable contact with the ground, kick your legs out behind so you end up in a straight-arm plank position.",
+     "where": "How To Do Burpees, Step 1"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Kick feet back to high plank position.",
+     "where": "How to Perform, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "From the plank, take a breath, brace the core and lower the chest to the floor as in a push-up, then press back up to straight arms.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-burpee",
+    "fv-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "bb-burpee",
+     "text": "From the straight-arm plank position, take a breath, brace your core, and lower your torso to the floor like you would for a standard push-up.",
+     "where": "How To Do Burpees, Step 2"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Bend your arms and lower your chest to lightly touch the floor.",
+     "where": "How to Do Burpees, step 4"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Push back up to full arm extension.",
+     "where": "How to Do Burpees, step 5"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Jump the feet back in under the body, then drive up with the legs into a jump.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-burpee",
+    "fv-burpee",
+    "motra-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "bb-burpee",
+     "text": "As you press your body off the floor, “jump” your legs back underneath your body and release your grip, such that you return to the crouching position you began with. In one fluid motion, drive upwards with the legs and perform a small vertical jump.",
+     "where": "How To Do Burpees, Step 3"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Jump your feet in and under your body, knees close to your elbows.",
+     "where": "How to Do Burpees, step 6"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Explode upward into jump, arms overhead.",
+     "where": "How to Perform, step 5"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "In the plank and push-up, keep the body straight from head to heels with the core braced and the spine neutral; don't let the lower back or hips sag.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-burpee",
+    "bb-burpee",
+    "motra-burpee",
+    "fv-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "hl-burpee",
+     "text": "Keeping your body straight from head to heels, do one pushup. Remember not to let your back sag or to stick your butt in the air.",
+     "where": "How to do a burpee with correct form, step 4"
+    },
+    {
+     "source": "bb-burpee",
+     "text": "During both stages of the movement, strive to ensure you properly brace your core and keep your spine in a neutral position. Don’t allow your lower back to dip or sag along the way.",
+     "where": "Common Burpee Mistakes: Lower Back Sagging"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Lower to full squat with thighs parallel; plank from head to heels straight; push-up chest to 1-2 inches from ground; full extension on jump.",
+     "where": "Range of Motion"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Keep your core tight; do not let your hips drop out of proper alignment.",
+     "where": "Tips for Better Performance and Mistakes to Avoid"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "BarBend's common-mistakes list for the burpee names, in this order: lower back sagging, jumping too high.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "bb-burpee",
+     "text": "Steer clear of these common mistakes next time you go to perform some burpees",
+     "where": "Common Burpee Mistakes, intro"
+    },
+    {
+     "source": "bb-burpee",
+     "text": "Lower Back Sagging",
+     "where": "Common Burpee Mistakes, item 1 heading"
+    },
+    {
+     "source": "bb-burpee",
+     "text": "Jumping Too High",
+     "where": "Common Burpee Mistakes, item 2 heading"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Motra's common-mistakes list for the burpee names, in this order: hips sagging in the plank, rushing the transitions, an arched lower back, knees caving inward, a hard landing on the jump.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "motra-burpee",
+     "text": "Hips sagging in plank",
+     "where": "Common Mistakes, item 1"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Rushing transitions",
+     "where": "Common Mistakes, item 2"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Arched lower back",
+     "where": "Common Mistakes, item 3"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Knees caving inward",
+     "where": "Common Mistakes, item 4"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Hard landing on jump",
+     "where": "Common Mistakes, item 5"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Rushing the transitions is a common mistake; controlling the movements prevents joint stress.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "motra-burpee",
+     "text": "Rushing transitions",
+     "where": "Common Mistakes, item 2"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Control movements to prevent joint stress",
+     "where": "Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Go down into the first squat quickly but under control; just dropping into a low squat is bad for the knees.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "fv-burpee",
+     "text": "Descend quickly but under control. Do not just drop into a low squat, or your knees will suffer.",
+     "where": "Tips for Better Performance and Mistakes to Avoid"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Land softly on slightly bent knees after the jump; the knee bend absorbs impact that could otherwise hurt the feet, ankles, knees, hips or back. A hard landing is on a common-mistakes list.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-burpee",
+    "motra-burpee",
+    "hl-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "fv-burpee",
+     "text": "Always land on slightly bent knees to absorb the impact that could otherwise hurt your feet, ankles, knees, hips, or back.",
+     "where": "Tips for Better Performance and Mistakes to Avoid"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Land on slightly bent knees and then repeat, repeat, REPEAT!",
+     "where": "How to Do Burpees, step 8"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Land softly with bent knees.",
+     "where": "How to Perform, step 6"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Hard landing on jump",
+     "where": "Common Mistakes, item 5"
+    },
+    {
+     "source": "hl-burpee",
+     "text": "As soon as you land with knees bent, get into a squat position and do another repetition.",
+     "where": "How to do a burpee with correct form, step 8"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Diving onto the hands for the push-up may hurt the wrists; burpees can put extra stress on the wrists and shoulders, and going so fast that the wrist twists on landing is to be avoided.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-burpee",
+    "hl-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "fv-burpee",
+     "text": "Avoid diving onto your hands for the push-up as you may hurt your wrists.",
+     "where": "Tips for Better Performance and Mistakes to Avoid"
+    },
+    {
+     "source": "hl-burpee",
+     "text": "Because you need to drop to a pushup, burpees can put extra stress on your wrists and shoulders. Be careful not to go so fast that you twist your wrist when you land.",
+     "where": "Safety tips"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Keep the feet flat on the floor in the first squat, and jump off flat feet where possible to reduce the strain on the knees.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "fv-burpee",
+     "text": "When you drop into the first squat, try to keep your feet flat on the floor.",
+     "where": "Tips for Better Performance and Mistakes to Avoid"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Leap into the air off of flat feet if possible to reduce the strain on your knees.",
+     "where": "Tips for Better Performance and Mistakes to Avoid"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Squat all the way down rather than bending over from the waist, hips below the knees as the hands go down, and try not to round the lower back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "fv-burpee",
+     "text": "Squat all the way down – don’t just bend over from your waist. Your hips should be below the level of your knees when you put your hands on the floor for the push-up.",
+     "where": "Tips for Better Performance and Mistakes to Avoid"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Try not to round your lower back.",
+     "where": "How to Do Burpees, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Keep the neck neutral in the push-up without lowering the head toward the floor, and touch the chest down lightly instead of bouncing it off the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "fv-burpee",
+     "text": "Keep your neck neutral as you do the push-up. Do not lower your head toward the floor.",
+     "where": "Tips for Better Performance and Mistakes to Avoid"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Don’t bounce your chest off the floor. Touch down lightly and without letting your hips drop.",
+     "where": "Tips for Better Performance and Mistakes to Avoid"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "The knees track over the toes; knees caving inward is a common mistake.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "motra-burpee",
+     "text": "Knees track over toes",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Knees caving inward",
+     "where": "Common Mistakes, item 4"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "Jump height conflicts: BarBend says leave the ground and extend the legs fully but don't jump as high as you can (wasted energy, a possible fall); Fitness Volt and PureGym say jump as high as you can.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-burpee",
+    "fv-burpee",
+    "pg-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "bb-burpee",
+     "text": "When you ascend from the squatting position into a vertical jump, don’t obsess over leaping as high as you can. You’ll waste energy and may risk taking a nasty fall.",
+     "where": "Common Burpee Mistakes: Jumping Too High"
+    },
+    {
+     "source": "bb-burpee",
+     "text": "You should leave the ground, but don’t try to catch as much air as you can. As long as you fully extend your legs, you’re good.",
+     "where": "Common Burpee Mistakes: Jumping Too High"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Leap up into the air as high as you can.",
+     "where": "How to Do Burpees, step 7"
+    },
+    {
+     "source": "pg-burpee",
+     "text": "Swing your arms up and jump as high as you so your feet leave the ground.",
+     "where": "How to do a Burpee, step 5"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "Keep the core tight throughout.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-burpee",
+    "bb-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "motra-burpee",
+     "text": "Core tight throughout",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "bb-burpee",
+     "text": "From the straight-arm plank position, take a breath, brace your core, and lower your torso to the floor like you would for a standard push-up.",
+     "where": "How To Do Burpees, Step 2"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "Keep breathing and don't hold the breath: breathe in on the way down into the squat and push-up, and out on the way up and into the jump.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "pg-burpee",
+    "motra-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "pg-burpee",
+     "text": "Don't hold your breathe - keep breathing!",
+     "where": "Burpee tips"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Inhale during squat and push-up descent; exhale forcefully during push-up ascent and jump.",
+     "where": "Coaching Tips, Breathing"
+    }
+   ]
+  },
+  {
+   "id": "c20",
+   "text": "The push-up half works the chest, shoulders and triceps; Motra rates the chest as a primary muscle, with the triceps and the front deltoids also working, and Fitness Volt says the front deltoid is the most active of the three.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-burpee",
+    "motra-burpee",
+    "fv-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "bb-burpee",
+     "text": "It is common knowledge that the push-up is a fantastic exercise for the chest, shoulders, and triceps, so dedicating one-half of the burpee to that movement will obviously reap the same benefits.",
+     "where": "Burpees Muscles Worked: Chest & Shoulders"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Quads, Glutes, Chest",
+     "where": "Primary Muscle Groups"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Anterior Delts",
+     "where": "Muscle Breakdown: Shoulders 6/10"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Lateral Head, Medial Head",
+     "where": "Muscle Breakdown: Triceps 7/10"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "All three work together during burpees, but the anterior or front deltoid is the most active.",
+     "where": "Burpee Muscles Worked: Deltoids"
+    }
+   ]
+  },
+  {
+   "id": "c21",
+   "text": "The jump out of the low squat works the quads, glutes and hamstrings; Motra rates the quads and glutes as primary and the hamstrings and calves as secondary.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-burpee",
+    "motra-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "bb-burpee",
+     "text": "The dynamic power output required to launch the body into the air from an ass-to-grass squat position is more than enough to fry your quads, hamstrings, and glutes.",
+     "where": "Burpees Muscles Worked: Quads & Glutes"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Quads, Glutes, Chest",
+     "where": "Primary Muscle Groups"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "Hamstrings, Calves",
+     "where": "Secondary Muscles"
+    }
+   ]
+  },
+  {
+   "id": "c22",
+   "text": "Stop if pain comes on in the knees or back, or if the exercise hurts or doesn't feel comfortable; for some people it can be stressful on the shoulders, wrist and knees.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-burpee",
+    "pg-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "motra-burpee",
+     "text": "Stop if pain in knees or back occurs",
+     "where": "Safety Notes"
+    },
+    {
+     "source": "pg-burpee",
+     "text": "To some people it can be stressful on the shoulders, wrist and knees. If you experience pain or don't feel comfortable when performing this exercise, please stop and seek advice from a personal trainer or qualified medical professional.",
+     "where": "Commonly asked questions: Are burpees bad for you?"
+    }
+   ]
+  },
+  {
+   "id": "c23",
+   "text": "Progression: start slowly with a few reps and add reps once they are easy and pain-free; to make it easier, skip the jump (return to the squat) or skip the push-up (hold the plank a couple of seconds); for general fitness do 3-4 sets and stop each just before technique starts to degrade.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-burpee",
+    "bb-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "hl-burpee",
+     "text": "Start slowly and just do a few reps at first. Once you get used to the move and can do it easily with no pain, try adding more reps.",
+     "where": "Safety tips"
+    },
+    {
+     "source": "hl-burpee",
+     "text": "Skip the jump. Instead of jumping into the air after the pushup, just return to the squat position.",
+     "where": "How to make it easier"
+    },
+    {
+     "source": "hl-burpee",
+     "text": "Skip the pushup. If your chest muscles or shoulders aren’t ready for pushups, hold a plank position for a couple of seconds instead of doing a pushup.",
+     "where": "How to make it easier"
+    },
+    {
+     "source": "bb-burpee",
+     "text": "For General Fitness: Perform 3-4 sets without a timed interval or repetition target. Listen to your body and stop just before your technique starts to degrade.",
+     "where": "Burpee Sets & Reps"
+    }
+   ]
+  },
+  {
+   "id": "c24",
+   "text": "One source (Motra) gives the burpee tempo 2-0-1, and its Tempo tooltip defines four numbers as eccentric (lowering), bottom pause, concentric (lifting), top pause; the page names no phase for the burpee's three numbers, and the burpee has several phases (squat, plank, push-up, jump), so the digits fix no phase and no seconds are placed. Fitness Volt instead says to descend quickly but under control and gives no seconds.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "motra-burpee",
+    "fv-burpee"
+   ],
+   "quotes": [
+    {
+     "source": "motra-burpee",
+     "text": "2-0-1",
+     "where": "Tempo"
+    },
+    {
+     "source": "motra-burpee",
+     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+     "where": "Tempo heading tooltip (served HTML)"
+    },
+    {
+     "source": "fv-burpee",
+     "text": "Descend quickly but under control. Do not just drop into a low squat, or your knees will suffer.",
+     "where": "Tips for Better Performance and Mistakes to Avoid"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-burpee",
+   "url": "https://barbend.com/burpees/",
+   "title": "How to Do Burpees: Proper Form & Benefits (CPT-Approved) | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-burpee",
+   "url": "https://fitnessvolt.com/burpees/",
+   "title": "Ultimate Burpees Workout: Target Every Key Muscle Group! – Fitness Volt",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "motra-burpee",
+   "url": "https://www.motra.com/exercises/burpee",
+   "title": "Burpee - Exercise Guide | Motra",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "hl-burpee",
+   "url": "https://www.healthline.com/health/how-to-do-a-burpee",
+   "title": "How to Do a Burpee: Step-by-Step Guide, Benefits, Variations",
+   "kind": "coach",
+   "year": 2026,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "pg-burpee",
+   "url": "https://www.puregym.com/exercises/plyometrics/burpees/",
+   "title": "How To Do a Burpee | Burpees Video Workouts | PureGym",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the straight plank from head to heels and the sagging lower back (c6), the neutral neck (c15) and the knee bend at the landing (c11) read from the side. The top fault, rushing the transitions (c9), is speed only and is never drawable; the plate draws the hard landing without bent knees (c11).",
+  "equipment": "Floor line only (census floor). No mat or box: BarBend's box-jump and weighted-vest burpees and Fitness Volt's other variations are harder versions.",
+  "frames": "Two-pose plate (census poses stand and plank): standing after the landing, and the straight-arm plank. The squat, the push-up bottom and the jump are passed through and not drawn.",
+  "start": "Standing tall after the landing: feet about shoulder-width apart (c1), knees slightly bent from a soft landing (c11), knees over the toes (c16).",
+  "end": "Straight-arm plank: hands flat on the floor, shoulder-width apart (c2, c3); arms straight (c3, c4); body straight from head to heels, lower back not sagging (c6); neck neutral, head not dropped toward the floor (c15).",
+  "checkpoints": [
+   {
+    "label": "Straight plank",
+    "what": "Body straight from head to heels, lower back not sagging.",
+    "claim": "c6"
+   },
+   {
+    "label": "Neck neutral",
+    "what": "Neck neutral, head not lowered toward the floor.",
+    "claim": "c15"
+   },
+   {
+    "label": "Soft landing",
+    "what": "Land softly on slightly bent knees.",
+    "claim": "c11"
+   }
+  ],
+  "mistake": {
+   "what": "A hard landing after the jump, without the knees slightly bent.",
+   "why": "The top fault, rushing the transitions (Motra's list and its \"Control movements to prevent joint stress\", c9), is speed only and never drawable, so the plate draws the next fault by the same steps: Motra lists a hard landing on the jump, and Fitness Volt says to land on slightly bent knees to absorb impact that could otherwise hurt the feet, ankles, knees, hips or back (c11).",
+   "claim": "c11",
+   "drawable": false,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: rushing the transitions (c9). Step 1 finds no frequency word for a fault of this exercise. Set aside: BarBend's \"Common Burpee Mistakes\" is a heading and \"Steer clear of these common mistakes next time you go to perform some burpees\" a list sentence, not read onto one item (c7); its \"It is common to see burpees woven between heavier movements in CrossFit WODs\" is programming; \"Many people head right to the squat rack when they want to grow their legs\", \"It’s no secret that many people get into the iron game precisely because they hate doing cardio\" and \"calisthenics usually won’t work as a main course\" are about training; \"Most bodyweight exercises make for a killer ab workout\" is about other exercises and muscles. Fitness Volt's \"Burpees are one of those exercises that most people love to hate\", \"Most people have a favorite training song\" and \"Not many people enjoy doing burpees\" name no fault, and \"the more tired you get, the worse your technique will become\" has no frequency word. Healthline's \"Most people can do about 20 burpees in a minute\" is a rep rate, not a fault. PureGym's \"some people may find that this exercise is not suitable for them\" uses \"some\" and names no fault. Motra's \"Typical Rep Range\" is programming. Step 2: two faults on Motra's common-mistakes list (c8) are tied to harm. Rushing transitions (item 2): Motra's safety note \"Control movements to prevent joint stress\" (c9) says the cue that corrects it prevents joint stress (LR-31: the cue that corrects a fault reduces that harm; read as hip_adduction's \"Keep movements slow to prevent strain\" was in lb6). Hard landing on jump (item 5): Fitness Volt's \"Always land on slightly bent knees to absorb the impact that could otherwise hurt your feet, ankles, knees, hips, or back.\" (c11). Both are on a common-mistakes list, each has one source tying it to harm, both are sourced directly, and Motra's list names both with rushing (item 2) before the hard landing (item 5), so rushing is the top fault. Healthline's \"Be careful not to go so fast that you twist your wrist when you land.\" (c12) adds a second harm source for going too fast if a twisted wrist is read as harm; either way rushing wins. Set aside at step 2 (tied to harm, but on no common-mistakes list, so they lose the first tie-break): Fitness Volt's \"Avoid diving onto your hands for the push-up as you may hurt your wrists.\" (c12), \"Leap into the air off of flat feet if possible to reduce the strain on your knees.\" (c13; the fault it corrects is a take-off from the toes) and \"Do not just drop into a low squat, or your knees will suffer.\" (c10; speed only). Fitness Volt's heading \"Tips for Better Performance and Mistakes to Avoid\" does not call its items common, so it is not read as a common-mistakes list, and its \"Poor technique can lead to injuries, so keep the following points in mind\" is a list sentence, not read onto one item. BarBend's list item \"Jumping Too High\" (\"You’ll waste energy and may risk taking a nasty fall.\", c17): a fall is not one of LR-31's harm words (injury, pain, stress, discomfort or a study-linked injury sign), so it is not counted. BarBend's \"Lower Back Sagging\" (c6) and Motra's \"Hips sagging in plank\", \"Arched lower back\" and \"Knees caving inward\" (c8, c16) are tied to no harm; Fitness Volt's \"Try not to round your lower back\" and \"don’t just bend over from your waist\" (c14), its neck and chest-bounce lines (c15) and its flat-feet squat line (c13) state no harm. PureGym's \"Burpees are an exercise which can cause a lot of stress on the body\" and \"To some people it can be stressful on the shoulders, wrist and knees.\" (c22), Healthline's \"Because you need to drop to a pushup, burpees can put extra stress on your wrists and shoulders.\" (c12) and Fitness Volt's \"it generally makes it safer and puts less stress on your joints\" are about the exercise or doing it right, not a named fault; Motra's \"Stop if pain in knees or back occurs\" (c22) names no fault; BarBend's \"This will reduce stress on the knees and hips\" is about the easier no-jump variation, not a fault. drawable: rushing is speed only, so it is never drawable (LR-31); handlingMistakes[0] stays rushing, and plate.mistake names the next fault by the same steps. Without rushing, the hard landing is the only remaining harm-tied fault on a common-mistakes list (Motra item 5; harm in Fitness Volt, c11), so it wins the first tie-break over the diving, the toe take-off and the drop. Its still sign is knees that are not bent at landing (Fitness Volt's bent-knee line names the right position), which the side view shows; drawable stays false because the top fault, rushing, is speed only. If \"a nasty fall\" were counted as harm, jumping too high (BarBend's list, c17) would tie with the hard landing on every step-2 tie-break (one harm source each, both direct, no list names both); step 3's count of the read sources that tell the lifter to avoid each (sources, not lists) is 1 each (Motra's list item; BarBend's \"don’t obsess over leaping as high as you can\"), with the lines that only give the right position not counted (Fitness Volt's and Healthline's bent-knee landing lines; Fitness Volt's and PureGym's \"as high as you can\" go the other way), so the first of them on the earliest common-mistakes list written for this exercise, in source order (bb-burpee), would be jumping too high; it needs the airborne pose, which the census poses (stand, plank) do not draw, so the plate would still draw the hard landing. Scan completion (fetcher scan 2026-10-22, every read source): step 1 also sets aside, as about the exercise, other exercises, programming or muscles and naming no fault: BarBend's \"they are one of the most grueling movements you can perform without using weights\", \"it isn’t the most customizable movement out there\", \"one too many WODs\", \"The barbell thruster works many of the same muscle groups\", \"not everyone has easy access to a pool\", \"It is common knowledge that the push-up is a fantastic exercise for the chest, shoulders, and triceps\" and \"a single movement that efficiently targets most major muscle groups\"; Fitness Volt's \"They’re a common exercise in CrossFit\", \"the most notable exceptions being your biceps and latissimus dorsi muscles\", \"the anterior or front deltoid is the most active\", \"Burpees can be modified to suit most fitness levels – there are many ways to make burpees easier or harder.\", \"Most burpee variations involve a squat jump.\", \"this potent exercise is not suitable for everyone\", \"To get the most from any exercise, you need to do it right.\", \"most variations require no special workout equipment\", \"Do as many reps as possible\", \"see how many reps you can complete\" and \"In many cases, lots of short sets and brief rests work better than longer sets with extended rests.\"; Healthline's \"work many of the major muscle groups\", \"how many calories you can burn\" and \"many other cardio benefits\"; PureGym's \"Repeat however many reps needed\". Harm quotes set aside at step 2 as naming no fault: BarBend's \"The safest way to add weight to your burpees is to wear a weighted vest.\" (equipment), \"reducing long-term health risks\" (training) and \"The burpee is like any other exercise — it can be dangerous if overdone or performed without attention to technique, but is perfectly safe otherwise.\" (general); Fitness Volt's \"Suffering from knee, hip, lower back, elbow, or shoulder pain\" and \"Assuming it is safe for you to do them\" (the person), and its \"Risk Level\" label; Motra's \"Avoid if acute back or shoulder injury\" and \"Lower back injury\" under When to Avoid (conditions); Healthline's \"Here’s a look at how to do burpees correctly and safely\" and \"Like any exercise, burpees are only effective if you do them safely and avoid injury.\" (general), \"lower risk of heart disease and diabetes\" (benefits), \"can do it easily with no pain\" (progression, c23) and \"talk to your healthcare provider first to make sure burpees are safe for you\" (the person); PureGym's \"Burpees are an exercise which can cause a lot of stress on the body and some people may find that this exercise is not suitable for them.\" (the exercise). Fitness Volt's \"Burpees involve a lot of coordination, and the more tired you get, the worse your technique will become. Poor technique can lead to injuries\" introduces its list and is not read onto one item. Reading applied: LR-31 literal; Motra's \"Control movements to prevent joint stress\" ties rushing (its list item 2) to harm; Fitness Volt's tips list is not a common-mistakes list; \"a nasty fall\" is not an LR-31 harm word; top fault rushing (not drawable), plate the hard landing."
+  },
+  "tells": [
+   {
+    "text": "Body straight from head to heels",
+    "claim": "c6"
+   },
+   {
+    "text": "Land softly on bent knees",
+    "claim": "c11"
+   }
+  ],
+  "tempo": {
+   "up": null,
+   "down": null,
+   "pause": null,
+   "claim": "c24",
+   "text": "Motra lists \"2-0-1\" (c24, WEAK), and its Tempo tooltip defines four numbers (eccentric, bottom pause, concentric, top pause). The page does not say which of the burpee's lowerings the digits time, so no seconds are placed (D-SUP-LB10-BURPEE; R-LB2-1). Fitness Volt says \"Descend quickly but under control\" and gives no seconds. No quote asks for a pause after the lift."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Palms flat on the floor (palm-flat hand pair) (c2).",
+  "width": "Shoulder-width (Fitness Volt, c2).",
+  "thumb": "",
+  "handContact": "Whole hand flat on the floor (c2).",
+  "wrist": "",
+  "claims": [
+   "c2"
+  ],
+  "note": "No burpee source gives a finger direction, thumb or wrist position. The palm-flat shared card lists burpee by inference only; nothing is taken from it (see notes)."
+ },
+ "setup": [
+  {
+   "step": "Stand with your feet about shoulder-width apart.",
+   "claim": "c1"
+  },
+  {
+   "step": "Squat down. Hands flat on the floor, shoulder-width apart.",
+   "claim": "c2"
+  },
+  {
+   "step": "Hands down first, then kick your feet back into a plank.",
+   "claim": "c3"
+  },
+  {
+   "step": "Lower your chest to the floor, then push back up.",
+   "claim": "c4"
+  },
+  {
+   "step": "Jump your feet back under you, then jump up.",
+   "claim": "c5"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Body straight from head to heels in the plank.",
+   "claim": "c6"
+  },
+  {
+   "point": "Brace your core so your lower back doesn't sag.",
+   "claim": [
+    "c6",
+    "c18"
+   ]
+  },
+  {
+   "point": "Neck neutral; don't lower your head toward the floor.",
+   "claim": "c15"
+  },
+  {
+   "point": "Knees track over your toes.",
+   "claim": "c16"
+  },
+  {
+   "point": "Land softly on slightly bent knees.",
+   "claim": "c11"
+  },
+  {
+   "point": "Keep breathing; don't hold your breath.",
+   "claim": "c19"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Rushing the transitions.",
+   "fix": "Control your movements.",
+   "claim": "c9"
+  },
+  {
+   "mistake": "Hard landing on the jump.",
+   "fix": "Land softly on slightly bent knees.",
+   "claim": "c11"
+  },
+  {
+   "mistake": "Lower back sagging in the plank.",
+   "fix": "Brace your core. Keep your body straight from head to heels.",
+   "claim": [
+    "c6",
+    "c18"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "chest",
+    "claim": "c20"
+   },
+   {
+    "muscleId": "quads",
+    "claim": "c21"
+   },
+   {
+    "muscleId": "glutes",
+    "claim": "c21"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "triceps",
+    "claim": "c20"
+   },
+   {
+    "muscleId": "front_delts",
+    "claim": "c20"
+   },
+   {
+    "muscleId": "hamstrings",
+    "claim": "c21"
+   },
+   {
+    "muscleId": "calves",
+    "claim": "c21"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Chest",
+    "means": "It works in the push-up half.",
+    "fix": "",
+    "claim": "c20",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the thighs and glutes",
+    "means": "They launch the jump out of the squat.",
+    "fix": "",
+    "claim": "c21",
+    "redFlag": null
+   },
+   {
+    "where": "Knees",
+    "means": "A hard landing: the impact could hurt them.",
+    "fix": "Land softly on slightly bent knees. Stop if pain occurs.",
+    "claim": [
+     "c11",
+     "c22"
+    ],
+    "redFlag": "knee"
+   },
+   {
+    "where": "Wrists",
+    "means": "Diving onto your hands may hurt your wrists.",
+    "fix": "Place your hands on the floor first. Stop if you experience pain.",
+    "claim": [
+     "c12",
+     "c3",
+     "c22"
+    ],
+    "redFlag": "wrist"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Landing without bent knees, the impact could hurt your feet, ankles, knees, hips or back.",
+   "claim": "c11"
+  },
+  {
+   "risk": "Diving onto your hands may hurt your wrists.",
+   "claim": "c12"
+  },
+  {
+   "risk": "Rushing the transitions can stress your joints.",
+   "claim": "c9"
+  }
+ ],
+ "redFlags": [
+  "knee",
+  "wrist"
+ ],
+ "zooms": [
+  {
+   "key": "landing",
+   "kind": "posture",
+   "right": "Soft landing, knees slightly bent.",
+   "wrong": "Hard landing, knees not bent.",
+   "claim": "c11"
+  },
+  {
+   "key": "plank",
+   "kind": "posture",
+   "right": "Straight from head to heels.",
+   "wrong": "Lower back sagging.",
+   "claim": "c6"
+  },
+  {
+   "key": "hands",
+   "kind": "hand",
+   "right": "Hands flat on the floor, shoulder-width apart.",
+   "wrong": null,
+   "claim": "c2"
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "glutes",
+   "triceps",
+   "front_delts"
+  ],
+  "remove": [],
+  "why": "Library: chest primary; quads and core secondary. Motra lists quads, glutes and chest as primary and rates the triceps and the anterior delts (c20, c21); BarBend names the quads, hamstrings and glutes for the jump and the chest, shoulders and triceps for the push-up half (c20, c21); Fitness Volt says the front deltoid is the most active deltoid (c20). So glutes, triceps and front_delts are proposed as additions. core stays in the library list (BarBend's core section, Motra's \"Core tight throughout\", c18) but is in no feel role (LR-35). A proposal for the LIB data card."
+ },
+ "anchorSource": "bb-burpee",
+ "loadProgression": {
+  "text": "Start slowly with a few reps. Add reps once you can do them easily with no pain. Too hard? Skip the jump or the push-up. Stop each set just before your technique starts to degrade.",
+  "claim": "c23"
+ },
+ "gaps": [],
+ "notes": [
+  "Anchor: BarBend's burpee guide, read in full (steps, variations, sets and reps, muscles, common mistakes). Fitness Volt's, Motra's, Healthline's and PureGym's burpee pages were read in full too.",
+  "Hand: shared/palm-flat.json lists burpee in appliesTo under byRule.inferenceOnly (its rules are sourced on push-up, plank and bird-dog set-ups). Its sources (ACE push-up, Breaking Muscle, Built With Science, ACE bird dog, Nance 2017) are written for other exercises and were not re-quoted here; no palm-flat line is copied. This card's hand lines rest on its own claims (c2, c3).",
+  "Stance conflict: PureGym and Healthline put the feet about shoulder-width, Motra hip-width, Fitness Volt together (c1). The card says about shoulder-width (two sources).",
+  "Jump-height conflict: BarBend says not to jump as high as you can; Fitness Volt and PureGym say jump as high as you can (c17). No shown line gives a jump height; the jump is not drawn.",
+  "Stop lines: the knee row's stop rests on Motra's \"Stop if pain in knees or back occurs\" and the wrist row's on PureGym's \"If you experience pain or don't feel comfortable when performing this exercise, please stop ...\" (c22), both fetched verbatim (R-LB3-4, R-LB6-6). PureGym's referral clause is research data only and is never shown (LR-27); the rows link the shared knee and wrist boxes.",
+  "Read but not cited: none. Tried and not usable: NASM exercise library (404), StrengthLog (429), Verywell Fit (402), Garage Gym Reviews, Men's Health and Muscle & Fitness burpee URLs (404), Healthline fitness-exercise/burpees (404), NASM blog (404)."
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "end",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "end",
+   "claim": "c2"
+  }
+ ],
+ "topFault": "rush"
+}

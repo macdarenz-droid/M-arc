@@ -1,0 +1,889 @@
+{
+  "id": "medicine_ball_slam",
+  "libId": "lib_medicine_ball_slam",
+  "name": "Medicine Ball Slam",
+  "family": "Conditioning and carries (balls and ropes)",
+  "tier": "A",
+  "archetype": {
+    "hand": "implement",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Start standing with the feet about shoulder-width apart, knees slightly bent, holding the ball in both hands at chest height, with the core engaged. ACE gives hip-width feet.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-slam",
+        "bodbot-mb-slam",
+        "ace-os"
+      ],
+      "quotes": [
+        {
+          "source": "sl-slam",
+          "text": "Stand with your feet about shoulder-width apart, your knees and hips slightly bent, holding the ball in both hands at chest height. Engage your core, and keep a good posture.",
+          "where": "How to Do Ball Slams, step 1"
+        },
+        {
+          "source": "bodbot-mb-slam",
+          "text": "Hold the medicine ball with both hands in front of your chest. Engage your core and slightly bend your knees.",
+          "where": "Instructions, Set-up"
+        },
+        {
+          "source": "ace-os",
+          "text": "Stand with your feet hip-width apart and holding a medicine ball in both hands directly in front of your chest",
+          "where": "Step 1, Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Extend the knees and drive the hips forward as the ball goes up; finish tall, the ball overhead, arms straight, hips slightly forward and up on the toes, without leaning backward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-slam",
+        "bodbot-mb-slam",
+        "vit-slam"
+      ],
+      "quotes": [
+        {
+          "source": "sl-slam",
+          "text": "Extend your knees and drive your hips forward while simultaneously lifting the ball. Aim for being as tall as possible, the ball overhead, arms up, hips slightly forward, and on your toes from the force of your drive.",
+          "where": "How to Do Ball Slams, step 2"
+        },
+        {
+          "source": "bodbot-mb-slam",
+          "text": "Raise the ball overhead with extended arms. As you lift, come up onto your toes for full extension (jumping if your body has no limitations).",
+          "where": "Instructions, Movement"
+        },
+        {
+          "source": "vit-slam",
+          "text": "The ball should be just above your head and your arms extended. Keep your arms straight and make sure not to lean backward.",
+          "where": "How to Perform Medicine Ball Slam Throws Precisely?, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Slam the ball straight down between the feet as hard as possible; press the hips back and bend the knees to power the slam.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-slam",
+        "bb-slam",
+        "ace-os"
+      ],
+      "quotes": [
+        {
+          "source": "sl-slam",
+          "text": "Use your core and arms to slam the medicine ball straight down between your feet with as much force as possible. Press your hips back and bend your knees to further power the slam. Exhale as you slam the ball down.",
+          "where": "How to Do Ball Slams, step 3"
+        },
+        {
+          "source": "bb-slam",
+          "text": "Slam the ball downwards into the floor, and do it aggressively. The goal is to accelerate the ball downwards, not simply let gravity take it to rest.",
+          "where": "How to Do the Medicine Ball Slam, Step 3, Slam with Force"
+        },
+        {
+          "source": "ace-os",
+          "text": "Explosively bring the ball down over your head to throw it directly downwards into the floor while dropping your weight back into your hips.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Not working the whole body is on Vitruve's mistakes list: the slam seems to be an arm move, but it uses the upper and lower body; use the arms, abs and legs and bend the knees and hips to follow the slam down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "vit-slam",
+        "bodbot-mb-slam"
+      ],
+      "quotes": [
+        {
+          "source": "vit-slam",
+          "text": "Not Working Your Entire Body",
+          "where": "Mistakes to Avoid, item 5 (heading)"
+        },
+        {
+          "source": "vit-slam",
+          "text": "Although slamming a medicine ball against the ground seems to involve your arms more than other body areas, this workout actively involves your upper and lower body.",
+          "where": "Mistakes to Avoid, Not Working Your Entire Body"
+        },
+        {
+          "source": "bodbot-mb-slam",
+          "text": "Use your whole body (arms, abs, legs) to generate power. Bend your knees and hips to follow the slam down.",
+          "where": "Instructions, Movement"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the back flat: no rounding of the back (no forward flexion of the lumbar spine), with the abs braced and the hinge coming from the hips. One ACE source is written for a heavy (dead) ball slam.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-slam",
+        "ace-heavy",
+        "ace-os"
+      ],
+      "quotes": [
+        {
+          "source": "bb-slam",
+          "text": "“Squeeze” the ground with the feet and squat down to grab the ball. Keep your lower back flat and primed to move.",
+          "where": "How to Do the Medicine Ball Slam, Step 1, Set Up"
+        },
+        {
+          "source": "ace-heavy",
+          "text": "Careful: Once again, don’t round the back and be sure the movement comes from your hips.",
+          "where": "Step 2: Heavy Ball Slam From the Knees"
+        },
+        {
+          "source": "ace-heavy",
+          "text": "Careful: As you did with the prep exercises, ensure there is no forward flexion in the lumbar spine, the knees are lined up over the middle toes, and the spine and shin angles remain parallel.",
+          "where": "Step 3: Heavy Ball Slams"
+        },
+        {
+          "source": "ace-os",
+          "text": "As you throw the ball down, make sure you are maintaining the abdominal bracing and hinge from the hips to maintain spinal stability.",
+          "where": "Step 4"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "After the slam, squat down to pick the ball up (or catch it on the bounce) and go into the next rep; with a heavy ball, drop the hips down and back and squat deep to retrieve it with no rounding of the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-slam",
+        "bodbot-mb-slam",
+        "ace-heavy"
+      ],
+      "quotes": [
+        {
+          "source": "sl-slam",
+          "text": "Squat down to pick up the ball from the floor, then immediately move into the next slam by repeating the movement.",
+          "where": "How to Do Ball Slams, step 4"
+        },
+        {
+          "source": "bodbot-mb-slam",
+          "text": "Catch the ball on the bounce (if it rebounds) or pick it up quickly.",
+          "where": "Instructions, Movement"
+        },
+        {
+          "source": "ace-heavy",
+          "text": "Drop the hips down and back (this creates the energy) and force the heavy ball into the floor. Drop into your deep squat to retrieve the ball and return to the starting position.",
+          "where": "Step 3: Heavy Ball Slams"
+        },
+        {
+          "source": "ace-heavy",
+          "text": "Careful: Ensure there is no forward flexion (rounding of the back), the knees stay aligned with the middle toes and the feet remain flat.",
+          "where": "Step 1: Heavy Ball Squat"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Breathe out as the ball is slammed; take a deep breath between reps and focus on quality rather than speed.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-slam",
+        "vit-slam",
+        "im-slam"
+      ],
+      "quotes": [
+        {
+          "source": "sl-slam",
+          "text": "Exhale as you slam the ball down.",
+          "where": "How to Do Ball Slams, step 3"
+        },
+        {
+          "source": "vit-slam",
+          "text": "Release the breath when slamming the ball.",
+          "where": "How to Perform Medicine Ball Slam Throws Precisely?, step 3"
+        },
+        {
+          "source": "im-slam",
+          "text": "Focus on quality, rather than speed by taking a deep breath in between repetitions, and, of course, be sure the ball does not bounce back up toward your face.",
+          "where": "How To Do Overhead Medicine Ball Slam"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Take care that the ball does not bounce back up into the face.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-slam-ben",
+        "im-slam",
+        "pg-mb"
+      ],
+      "quotes": [
+        {
+          "source": "bb-slam-ben",
+          "text": "Be careful that it doesn’t bounce back in your face.",
+          "where": "How to Do the Medicine Ball Slam, Step 3, Slam the Ball"
+        },
+        {
+          "source": "im-slam",
+          "text": "Focus on quality, rather than speed by taking a deep breath in between repetitions, and, of course, be sure the ball does not bounce back up toward your face.",
+          "where": "How To Do Overhead Medicine Ball Slam"
+        },
+        {
+          "source": "pg-mb",
+          "text": "This exercise is best done using a medicine ball without much bounce as you don't want it flying straight back into your face.",
+          "where": "Overhead Slams"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "A soft slam ball that does not bounce back is the safer choice (Vitruve: the injury risk is minimal with it); with a bouncing ball, make sure there is ample space; with a dead ball, a solid, stable floor; make sure the space is safe.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "vit-slam",
+        "pg-mb",
+        "ace-os",
+        "bodbot-mb-slam"
+      ],
+      "quotes": [
+        {
+          "source": "vit-slam",
+          "text": "You may use any type of medicine ball, but a slam ball is a better option. This is because a slam ball is softer and doesn’t bounce back when you slam it on the floor. Hence, the risk of injury with this ball is minimal.",
+          "where": "How to Perform Medicine Ball Slam Throws Precisely?"
+        },
+        {
+          "source": "pg-mb",
+          "text": "This exercise is best done using a medicine ball without much bounce as you don't want it flying straight back into your face.",
+          "where": "Overhead Slams"
+        },
+        {
+          "source": "ace-os",
+          "text": "If using a bouncing medicine ball make sure that you have ample space for safety; if you are using a non-bouncing medicine ball (a \"dead\" ball) make sure you are on a solid, stable floor that can support the force of the weight being thrown explosively into the floor.",
+          "where": "Step 5, Exercise Variation"
+        },
+        {
+          "source": "bodbot-mb-slam",
+          "text": "Make sure your environment is safe to perform this movement in.",
+          "where": "Instructions, Set-up"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Keep the feet a good distance apart and take care not to throw the ball onto the toes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-mb"
+      ],
+      "quotes": [
+        {
+          "source": "pg-mb",
+          "text": "Keep your feet a good distance apart and be careful not to throw the ball onto your toes.",
+          "where": "Overhead Slams"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Load: about 4 to 20 pounds is enough, and very heavy balls reduce speed; a beginner can start with a 10-pound ball and work up as they get stronger, and with no more than eight reps a set at the start.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-slam",
+        "hl-slam",
+        "vit-slam"
+      ],
+      "quotes": [
+        {
+          "source": "bb-slam",
+          "text": "This can vary, but based on the goal of the movement, roughly four to 20 pounds is sufficient depending on your goal. Excessively heavy loads will reduce your ability to generate speed.",
+          "where": "Frequently Asked Questions, How heavy of a medicine ball should you use for slams?"
+        },
+        {
+          "source": "hl-slam",
+          "text": "If you are new to weightlifting, start with the 10-pound ball and work upwards as you feel comfortable and get stronger.",
+          "where": "Closing section (how often, ball weights)"
+        },
+        {
+          "source": "vit-slam",
+          "text": "It is alright to stick to five sets of no more than eight repetitions at the start.",
+          "where": "Mistakes to Avoid, Trying to Accomplish Everything Too Fast"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "For power: 3-4 sets of 3-5 reps, resting 1:4 to 1:10 (for example 12-30 s after a 3 s set). No source gives seconds for a phase of the rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-slam"
+      ],
+      "quotes": [
+        {
+          "source": "bb-slam",
+          "text": "Start by performing 3 – 4 sets of 3 – 5 repetitions. Rest periods should be on a 1:4 to 1:10 ratio, meaning if a series of slams lasts 3 seconds, rest periods can be anywhere from 12-30 seconds long.",
+          "where": "Medicine Ball Slam Sets, Reps, and Programming Recommendations, To Increase Power"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "The main muscles are the lats, abs and obliques (StrengthLog's primary list); the abs generate the downward force and the lats draw the arms down from overhead. BarBend calls the lats a secondary mover and ties the obliques mainly to rotational slams.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-slam",
+        "bb-slam"
+      ],
+      "quotes": [
+        {
+          "source": "sl-slam",
+          "text": "Lats",
+          "where": "Muscles Worked in Ball Slams, Primary muscles worked"
+        },
+        {
+          "source": "sl-slam",
+          "text": "Abs",
+          "where": "Muscles Worked in Ball Slams, Primary muscles worked"
+        },
+        {
+          "source": "sl-slam",
+          "text": "Obliques",
+          "where": "Muscles Worked in Ball Slams, Primary muscles worked"
+        },
+        {
+          "source": "bb-slam",
+          "text": "The abs are used to generate the downwards force during the slam.",
+          "where": "Muscles Worked by the Medicine Ball Slam, Abdominals"
+        },
+        {
+          "source": "bb-slam",
+          "text": "Taking the medicine ball from overhead to the floor involves drawing the arm down in front of the body. Shoulder extension is a primary function of the lattisimus dorsi, so your back comes heavily into play as a secondary mover in the slam.",
+          "where": "Muscles Worked by the Medicine Ball Slam, Lats"
+        },
+        {
+          "source": "bb-slam",
+          "text": "The obliques are primarily responsible for rotation of the core, so when you’re doing rainbow slams or rotational throwing variations, the obliques are used to a higher degree.",
+          "where": "Muscles Worked by the Medicine Ball Slam, Obliques"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "StrengthLog lists the glutes and front deltoids as secondary muscles.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "sl-slam"
+      ],
+      "quotes": [
+        {
+          "source": "sl-slam",
+          "text": "Glutes",
+          "where": "Muscles Worked in Ball Slams, Secondary muscles worked"
+        },
+        {
+          "source": "sl-slam",
+          "text": "Front Deltoids",
+          "where": "Muscles Worked in Ball Slams, Secondary muscles worked"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Hold the ball firmly in both hands.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-slam",
+        "bodbot-mb-slam"
+      ],
+      "quotes": [
+        {
+          "source": "hl-slam",
+          "text": "Gripping the ball firming, extend your arms and bring the ball overhead.",
+          "where": "Ball slams, step 2"
+        },
+        {
+          "source": "bodbot-mb-slam",
+          "text": "Hold the medicine ball with both hands in front of your chest. Engage your core and slightly bend your knees.",
+          "where": "Instructions, Set-up"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Not using enough force is on Vitruve's mistakes list: a slam that is not powerful does not build power.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "vit-slam"
+      ],
+      "quotes": [
+        {
+          "source": "vit-slam",
+          "text": "Not Using the Required Force to Perform Slam Throws",
+          "where": "Mistakes to Avoid, Not Using the Required Force to Perform Slam Throws"
+        },
+        {
+          "source": "vit-slam",
+          "text": "The main purpose of medicine ball slam throws is to build power, which you will not be able to achieve if your throws are not quite powerful.",
+          "where": "Mistakes to Avoid, Not Using the Required Force to Perform Slam Throws"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bb-slam",
+      "url": "https://barbend.com/medicine-ball-slams/",
+      "title": "Lay the Smackdown on Your Core Workouts with Medicine Ball Slams (BarBend)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "bb-slam-ben",
+      "url": "https://barbend.com/benefits-of-medicine-ball-slams/",
+      "title": "The Main Benefits of Medicine Ball Slams And How to Do Them (BarBend)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-slam",
+      "url": "https://www.strengthlog.com/ball-slams/",
+      "title": "How to Do Ball Slams: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "ace-os",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/182/overhead-slams/",
+      "title": "Overhead Slams (ACE exercise library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "ace-heavy",
+      "url": "https://www.acefitness.org/resources/everyone/blog/3801/heavy-slam-ball-workout/",
+      "title": "Heavy Slam Ball Workout (ACE blog, Shana Verstegen)",
+      "kind": "coach",
+      "year": 2014,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "vit-slam",
+      "url": "https://vitruve.fit/blog/how-to-master-the-medicine-ball-slam-throw-technique/",
+      "title": "How to Master the Medicine Ball Slam Throw Technique (Vitruve)",
+      "kind": "secondary",
+      "year": 2022,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "bodbot-mb-slam",
+      "url": "https://www.bodbot.com/Exercises/966/Medicine-Ball-Slam",
+      "title": "Medicine Ball Slam (BodBot)",
+      "kind": "secondary",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "im-slam",
+      "url": "https://www.ironmanmagazine.com/how-to-do-overhead-medicine-ball-slam/",
+      "title": "How To Do Overhead Medicine Ball Slam (Iron Man Magazine)",
+      "kind": "secondary",
+      "year": 2015,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "pg-mb",
+      "url": "https://www.puregym.com/blog/how-and-why-you-should-use-a-medicine-ball/",
+      "title": "How and Why You Should Use a Medicine Ball (PureGym)",
+      "kind": "coach",
+      "year": 2023,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "hl-slam",
+      "url": "https://www.healthline.com/health/fitness-exercise/slam-ball-exercises",
+      "title": "Slam Ball Exercises and Benefits (Healthline; medically reviewed by a CSCS)",
+      "kind": "secondary",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census: side. The overhead-to-floor arc of the ball (c2, c3), the hips and knees bending at the slam (c3, c4; the plate fault, slamming with the arms only) and the flat back at the pick-up (c5, c6) all read from the side.",
+    "equipment": "Medicine ball (census need medBall, compose: a circle), drawn as a soft, low-bounce slam ball (c9). Floor line. Census note: overhead start, floor end.",
+    "start": "Standing tall, up on the toes, hips slightly forward, arms straight and the ball overhead in both hands (c2, c15); feet about shoulder-width apart (c1).",
+    "end": "Ball on the floor between the feet (c3); hips pressed back and knees bent (c3, c4); back flat, hinge from the hips (c5).",
+    "checkpoints": [
+      {
+        "label": "Ball overhead",
+        "what": "Tall on your toes, arms straight, ball overhead.",
+        "claim": "c2"
+      },
+      {
+        "label": "Hips and knees",
+        "what": "Press the hips back and bend the knees as you slam.",
+        "claim": [
+          "c3",
+          "c4"
+        ]
+      },
+      {
+        "label": "Flat back",
+        "what": "Back flat as you slam; squat down to pick up the ball.",
+        "claim": [
+          "c5",
+          "c6"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Slamming with the arms only, without bending the hips and knees.",
+      "why": "LR-31 step 3 (D-SUP-LB10-FORCE): the top fault is a soft slam, \"Not Using the Required Force to Perform Slam Throws\" (Vitruve's list item 4, c16), the first candidate on the only list written for this exercise. Its only sign is the ball's speed, so it is never drawable, and the plate draws the next fault by the same steps: item 5, \"Not Working Your Entire Body\", slamming with the arms only (c4). StrengthLog and BodBot say to press the hips back and bend the knees to power the slam (c3, c4); straight hips and knees under a slamming arm show from the side.",
+      "claim": [
+        "c4",
+        "c3"
+      ],
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3 (D-SUP-LB10-FORCE): the top fault is the first candidate on the only common-mistakes list written for this exercise, Vitruve's \"Mistakes to Avoid\": \"Not Using the Required Force to Perform Slam Throws\" (c16), a soft slam (\"The main purpose of medicine ball slam throws is to build power, which you will not be able to achieve if your throws are not quite powerful.\"). Its only sign is the ball's speed, so drawable is false and handlingMistakes[0] is the soft slam; plate.mistake is the next fault by the same steps, item 5, \"Not Working Your Entire Body\" (c4), slamming with the arms only, which the side view shows (the hips and knees staying straight while the arms bring the ball down). Step 1: no frequency word for a fault of this exercise. Set aside: BarBend's \"Like most forms of plyometric work\" (all plyometric training), \"three of the most common and widely used slam exercises\" (variations), \"two common alternatives\" (other exercises), \"the two most common ones\" (FAQ questions), \"Many individuals may benefit more from performing slams\" and \"Most sports\" (no fault), \"often between 60-85% of heart rate max\" (cardio); BarBend's benefits page's \"A medicine ball is usually lighter\", \"Typically, you’ll want to use a medicine ball for slams\" and \"Slam balls, on the other hand, are common for overhead tosses, carries, and squats\" (ball types), \"many variations\" and \"many technical intricacies\" (no fault); Vitruve's \"one of the most valuable additions\" and \"One of the most important things about this workout is the perfect posture\" (no fault's frequency); Healthline's \"Most of them range from 10 to 20 pounds in weight\" (ball weights). Step 2: no named fault of this exercise is tied to harm. Set aside: the ball bouncing back into the face (BarBend's benefits page \"Be careful that it doesn’t bounce back in your face.\", Iron Man's \"be sure the ball does not bounce back up toward your face\", PureGym's \"you don't want it flying straight back into your face\", c8): each source ties the rebound to the ball chosen (PureGym's \"best done using a medicine ball without much bounce\"; Vitruve's \"a slam ball is softer and doesn’t bounce back when you slam it on the floor. Hence, the risk of injury with this ball is minimal.\" and ACE's \"If using a bouncing medicine ball make sure that you have ample space for safety\", c9; Iron Man's \"Hold a soft medicine ball\"), an equipment choice that LR-31 excludes (#296 ruling 7(a), comment 6343484589); it stays a risk line (risks[0]). Vitruve's \"Using the Wrong Medicine Ball\" (\"it won’t be the safest option\", \"without fearing a strong bounce off the floor\") is the same equipment choice. PureGym's \"be careful not to throw the ball onto your toes\" (c10, risks[1]) names no harm word. ACE's \"to stiffen your torso and support your spine\" and \"to maintain spinal stability\" (c5) and ACE's heavy-ball \"Now that you’ve mastered a safe, effective and fun heavy ball slam\" name no harm; BarBend's \"Slams can help you learn to fully utilize your core to both promote force and protect your spine while in motion.\" is a benefit line in its rotational-performance section and is not a cue that corrects a named fault (D-SUP-PROTECT needs a cue that corrects a fault); BarBend's \"crush it on impact\" is the ball (D-SUP-STRAIN); Healthline's \"muscles tenderness and soreness (not pain)\" is about all its exercises. Step 3: Vitruve's list, in order: \"Using a Too Heavy Ball\" (a load choice, not a candidate); \"Trying to Accomplish Everything Too Fast\" (its text is the set length and rest a beginner picks: \"You do not want to go with a minute of slams followed by a minute of rest if you are new to medicine ball slams.\" and \"It is alright to stick to five sets of no more than eight repetitions at the start.\", a programming choice, not a candidate; #296 ruling 7(b)); \"Using the Wrong Medicine Ball\" (equipment choice, #296 ruling 7(a)); \"Not Using the Required Force to Perform Slam Throws\" (c16): a candidate (D-SUP-LB10-FORCE), the first on the list, so the top fault, speed only; then \"Not Working Your Entire Body\" (c4), the plate fault. No other read source has a mistakes list (BarBend's two pages, StrengthLog, both ACE pages, BodBot, Iron Man, PureGym, Healthline). The rounded back (c5: ACE heavy-ball \"don’t round the back\"; BarBend's \"Keep your lower back flat\" and ACE's flat-back step only give the right position) is not on a list and is handlingMistakes[2]. Also set aside from the fetcher's full scan (2026-10-22): BarBend's \"While most athletes rightfully find the Olympic lifts alluring\" (other lifts), \"most importantly load the movement more effectively\" (woodchoppers, another exercise), \"There may not be a better exercise for relieving stress\", \"metabolically challenging movements that stress a wide array of muscles at once\" and \"a stress-reliever\" (training load or mood, no fault); StrengthLog's \"release some stress\" and ACE's heavy-ball \"release the tension of a long, stressful workday\" (mood); Vitruve's \"one of the most sought-after qualities\" (another article) and \"cannot usually be used to identify you\" (cookie text); Iron Man's \"many of us are eager to shed excess body fat\" and \"a fitness goal that many aspire to achieve\" (sidebar, no fault); PureGym's \"one of the most underrated pieces of kit\", \"There are many push up variations\" and \"Perform as many reps as you can\" (other exercises, no fault) and \"Medicine balls are designed to be thrown around without risk of injury or destruction of property\" (the ball's design, no fault). Vitruve's \"Mistakes to Avoid\" heading and \"Here is a brief overview of mistakes you should avoid\" are list sentences, never read onto one item. Reading applied: LR-31 literal; a rebound caused by the ball chosen is an equipment choice, not a candidate (#296 ruling 7(a)); a load, programming or equipment choice is not a candidate (#296 ruling 7(b)); not using the required force is a candidate whose only sign is speed (D-SUP-LB10-FORCE); \"support your spine\", \"spinal stability\", \"safe\" and a benefit line's \"protect your spine\" are not harm tied to a named fault (D-SUP-PROTECT needs a cue that corrects one).",
+      "drawable": false
+    },
+    "tells": [
+      {
+        "text": "Ball lands between your feet",
+        "claim": "c3"
+      },
+      {
+        "text": "Hips and knees bend as you slam",
+        "claim": "c3"
+      },
+      {
+        "text": "Back stays flat to pick up",
+        "claim": [
+          "c5",
+          "c6"
+        ]
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "claim": "c12",
+      "text": "Ballistic and continuous: no read source gives seconds for any phase, so up, down and pause stay null (LR-33). BarBend's power sets are 3-4 sets of 3-5 reps with rest at 1:4 to 1:10 (c12). No quote asks for a pause right after the lift overhead or after the slam; Iron Man's \"taking a deep breath in between repetitions\" (c7) is a breath between reps with no seconds."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Two hands on the ball, held firmly (c15); the ball starts at chest height (c1).",
+    "width": "Not given beyond both hands on the ball (shared/implement-medicine-ball-slam.json gaps: hand placement not sourced).",
+    "thumb": "Not given by any read source (implement default).",
+    "handContact": "Not given by any read source.",
+    "wrist": "Not given by any read source.",
+    "claims": [
+      "c15",
+      "c1"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Use a soft ball without much bounce.",
+      "claim": "c9"
+    },
+    {
+      "step": "Feet about shoulder-width apart, knees slightly bent.",
+      "claim": "c1"
+    },
+    {
+      "step": "Hold the ball in both hands at chest height.",
+      "claim": [
+        "c1",
+        "c15"
+      ]
+    },
+    {
+      "step": "Engage your core.",
+      "claim": "c1"
+    },
+    {
+      "step": "Make sure the space around you is safe.",
+      "claim": "c9"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Rise onto your toes, arms straight, ball overhead.",
+      "claim": "c2"
+    },
+    {
+      "point": "Slam the ball straight down between your feet.",
+      "claim": "c3"
+    },
+    {
+      "point": "Press your hips back and bend your knees as you slam.",
+      "claim": "c3"
+    },
+    {
+      "point": "Keep your back flat.",
+      "claim": "c5"
+    },
+    {
+      "point": "Squat down to pick up the ball.",
+      "claim": "c6"
+    },
+    {
+      "point": "Exhale as you slam the ball down.",
+      "claim": "c7"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Slamming too softly.",
+      "fix": "Slam it down with as much force as possible.",
+      "claim": [
+        "c16",
+        "c3"
+      ]
+    },
+    {
+      "mistake": "Slamming with the arms only.",
+      "fix": "Press your hips back and bend your knees as you slam.",
+      "claim": [
+        "c4",
+        "c3"
+      ]
+    },
+    {
+      "mistake": "Rounding the back.",
+      "fix": "Keep your back flat and hinge from the hips.",
+      "claim": "c5"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "abs",
+        "claim": "c13"
+      },
+      {
+        "muscleId": "lats",
+        "claim": "c13"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "obliques",
+        "claim": "c13"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "front_delts",
+        "claim": "c14"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Abs",
+        "means": "They generate the downward force of the slam.",
+        "fix": "",
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "Lats",
+        "means": "They draw the arms down from overhead.",
+        "fix": "",
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Fault: rounding the back as you slam or pick up the ball.",
+        "fix": "Keep your back flat and hinge from the hips.",
+        "claim": [
+          "c5",
+          "c6"
+        ],
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "A bouncy ball can fly back up into your face.",
+      "claim": [
+        "c8",
+        "c9"
+      ]
+    },
+    {
+      "risk": "Take care not to throw the ball onto your toes.",
+      "claim": "c10"
+    },
+    {
+      "risk": "A bouncing ball needs ample space around you.",
+      "claim": "c9"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "slam-hips",
+      "kind": "posture",
+      "right": "Hips back and knees bent as the ball goes down.",
+      "wrong": "Arms only, no hip or knee bend.",
+      "claim": [
+        "c3",
+        "c4"
+      ]
+    },
+    {
+      "key": "pickup-back",
+      "kind": "posture",
+      "right": "Back flat, hips down and back to pick up the ball.",
+      "wrong": "Back rounded.",
+      "claim": [
+        "c5",
+        "c6"
+      ]
+    },
+    {
+      "key": "ball-grip",
+      "kind": "hand",
+      "right": "Both hands holding the ball firmly.",
+      "wrong": null,
+      "claim": "c15"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "abs",
+      "obliques",
+      "glutes",
+      "front_delts"
+    ],
+    "remove": [
+      "side_delts"
+    ],
+    "why": "Library: core primary; side_delts and lats secondary. StrengthLog lists the lats, abs and obliques as primary and the glutes and front deltoids as secondary (c13, c14); BarBend names the abs, obliques and lats (c13). No read source names the side delts, so side_delts is removed. abs and obliques are added as the sourced parts of core; core stays in the library list, but not in feel (LR-35). lats is kept; the card shows it as primary (StrengthLog), and BarBend calls it a secondary mover (c13). glutes and front_delts are added as secondary (c14, one source, WEAK)."
+  },
+  "anchorSource": "bb-slam",
+  "loadProgression": {
+    "text": "New to lifting? Start with a 10-pound ball and work up as you get stronger. Too heavy a ball reduces your speed.",
+    "claims": [
+      "c11"
+    ]
+  },
+  "tierA": {
+    "wayOut": null
+  },
+  "gaps": [
+    "Way out (tier A, LR-3): no read source says how to end a slam set safely when it goes wrong (for example a lost grip overhead or a ball rebounding at the lifter). The rebound and ball choice are covered as risks (c8, c9); no way-out line is shown. Joins the owner's tier-A gap list (LIB-WAYOUT, medicine ball).",
+    "No read source ties a rounded back in the slam to a named harm; the back row is written in LR-6 shape (place, the source's fault, a sourced fix) and links the back box.",
+    "Hand placement on the ball, thumb and wrist at release are not sourced (shared/implement-medicine-ball-slam.json gaps stand).",
+    "Jumping variation: BarBend's set-up page and BodBot allow jumping at the top; no read source gives a landing cue for it, so the plate draws the feet planted and no landing checkpoint is given.",
+    "No study found: PubMed searches for \"ball slam\", \"ball slams\" and \"medicine ball slams\" (2026-10-22) returned no technique or injury paper."
+  ],
+  "notes": [
+    "Own parent (content.md Appendix A). Shared card shared/implement-medicine-ball-slam.json (appliesTo medicine_ball_slam, W0B) is cited, not copied: its lines (both hands firm, catch on the bounce or pick up, a soft slam ball is safer) were re-read here from the pages it cites (Healthline, BodBot, Iron Man, Vitruve, fetched by curl 2026-10-22) and carried only as this card's own claims c6, c9 and c15.",
+    "Tier A, content.md 5.2: way out in gaps (LR-3); thumb and bar not applicable (no bar); load wording: no fix pushes through pain, and loadProgression says to start light (c11); warning link: the lower-back row links the back box (redFlag back; LR-28 ship order: the sheet cannot ship before the back-pain box); risks: three lines, the rebound line is the shared-risk candidate for medicine-ball throws; breathing: posture[5] (exhale on the slam, c7); landing: no jump is drawn, and the catch or pick-up is checkpoint 3 (c6); no condition names on shown lines; hand pair implement, two hands on the ball.",
+    "Start position: BarBend's set-up page starts with the ball on the floor and squats down to grab it (c5's quote); StrengthLog, BodBot and ACE start standing with the ball at the chest (c1). The plate draws the standing overhead start (census note: overhead start, floor end).",
+    "Leaning back at the top: Vitruve says \"make sure not to lean backward\" (c2); ACE's overhead slam says \"lean back while pushing the hips forward to lengthen the abdominal muscles\" (Step 3, not on the card). StrengthLog and BarBend's benefits page give hips slightly forward. The plate draws the trunk tall with the hips slightly forward, and no line asks for a lean.",
+    "Read and not cited: WorkoutLabs (workoutlabs.com/exercise-guide/medicine-ball-slams/) says \"Keeping your elbows bent, forcefully throw the ball at the ground.\", which conflicts with the straight arms of c2 and c5's BarBend benefits wording; ACE's \"Throw, Catch, Slam: Smarter Medicine-Ball Training\" (Certified, August 2026) is about programming medicine-ball sessions in general; Fitness Volt's and BarBend's slam-alternatives pages are about other exercises.",
+    "Tried and not usable (2026-10-22): barbend.com/medicine-ball-slam/, garagegymreviews.com (no slam guide in its sitemap), motra.com (no slam page), menshealth.com and puregym.com exercise URLs gave 404; verywellfit.com and shape.com gave 402; muscleandstrength.com 403.",
+    "LB10 fix round 2026-10-22 (lb10-research-verify.md): medicine_ball_slam-1 (R-LB10-6, D-SUP-LB10-FORCE): new c16; handlingMistakes [0] soft slam, [1] arms only, [2] rounding (the toes line stays risks[1], c10); drawable false; why and rankNote rewritten; plate.mistake what and claim unchanged. medicine_ball_slam-2: c13 gains BarBend's obliques sentence. medicine_ball_slam-3: loadProgression keeps Healthline's \"new to\" condition. R-LB10-10: ruling-ask strings replaced by #296 rulings 7(a), 7(b) and D-SUP-LB10-FORCE."
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c15"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c15"
+    },
+    {
+      "kind": "contact",
+      "landmark": "toe.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "toe.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    }
+  ],
+  "topFault": "soft"
+}
