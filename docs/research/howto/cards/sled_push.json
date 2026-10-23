@@ -1,0 +1,800 @@
+{
+ "id": "sled_push",
+ "libId": "lib_sled_push",
+ "name": "Sled Push",
+ "family": "Conditioning and carries (sled)",
+ "tier": "B",
+ "tierNote": "Safety tier B (content.md appendix B; sled); census.json difficulty tier 3.",
+ "archetype": {
+  "hand": "push",
+  "contact": [
+   "standing-feet"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Stand behind the sled and hold the handles with both hands, about halfway down or at roughly their centre.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush",
+    "bb-sledpush",
+    "fv-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "Stand behind the sled and grab hold of the handles with both hands.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Grip it"
+    },
+    {
+     "source": "bb-sledpush",
+     "text": "Place the hands about halfway down the sled handles.",
+     "where": "How to Do the Sled Push, Step 2 — Grip the Sled"
+    },
+    {
+     "source": "fv-sledpush",
+     "text": "Grab the sled handles at roughly their center.",
+     "where": "How To Do a Sled Push, Step Two — Assume the Starting Position"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Higher hands give a more upright push and lower hands a forward lean; low handles need better trunk control.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "You can set your hands higher for a more upright push or lower for a forward lean. Low handles can feel more athletic, but they also require better trunk control.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Grip it"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Lean forward with the body in a straight line from the head through the hips and the shoulders straight behind the hands. One source uses a staggered stance with the spine near parallel to the ground and the lower back flat.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush",
+    "bb-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "Step back so your body leans forward from your head through your hips in a straight line. Your shoulders should be straight behind your hands.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Move into starting position"
+    },
+    {
+     "source": "bb-sledpush",
+     "text": "Assume a staggered stance, and lean forward so that your spine is parallel to the ground and your lower back is flat.",
+     "where": "How to Do the Sled Push, Step 2 — Grip the Sled"
+    },
+    {
+     "source": "bb-sledpush",
+     "text": "Get your torso as close to parallel to the ground as possible to get the best angle on the sled.",
+     "where": "How to Do the Sled Push, Step 2 — Grip the Sled, Coach’s Tip"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "The arms may be straight or bent; two sources push with the arms locked out.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush",
+    "ggr-sledpush",
+    "bb-sledpush",
+    "fv-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "You can have your arms straight or bent – keeping them straight is often more comfortable if you’re short, but it can reduce the force you’re able to produce.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Move into starting position"
+    },
+    {
+     "source": "ggr-sledpush",
+     "text": "Grip each bar on the sled, either with your arms straight or elbows flexed.",
+     "where": "How To Sled Push"
+    },
+    {
+     "source": "bb-sledpush",
+     "text": "Keep your arms locked and begin aggressively driving forward with your legs.",
+     "where": "How to Do the Sled Push, Step 3 — Drive, Drive, Drive"
+    },
+    {
+     "source": "fv-sledpush",
+     "text": "Ensure your elbows are fully extended and locked out, your back is flat, your core and hip muscles are engaged, and you look forward.",
+     "where": "How To Do a Sled Push, Step Two — Assume the Starting Position"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Bending the arms puts more tension on the legs, but it may cause some discomfort in the elbows and shoulders.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "bb-sledpush",
+     "text": "Bending your arms will place more tension on the legs, as you’re disengaging your upper body, however, it may cause some discomfort to your elbows and shoulders.",
+     "where": "How to Do the Sled Push, Step 3 — Drive, Drive, Drive, Coach’s Tip"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Tighten the abs, keep the spine neutral and keep the eyes just ahead of the sled; one source says bracing the core can help generate force and ensure back safety.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush",
+    "ggr-sledpush",
+    "fv-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "Tighten your abs and keep your spine neutral. Keep your eyes just ahead of the sled without craning your neck.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Get ready"
+    },
+    {
+     "source": "ggr-sledpush",
+     "text": "Hinge at your hips, ensuring your spine is neutral.",
+     "where": "How To Sled Push"
+    },
+    {
+     "source": "fv-sledpush",
+     "text": "Brace your core muscles to create additional intra-abdominal pressure. Intra-abdominal pressure can help generate more force and ensure back safety.",
+     "where": "How To Do a Sled Push, Step Three — Push the Sled, Pro Tip"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Pushing a sled with a rounded back will not favor the spine; hinge at the hips to set the upper body and keep the head up and the shoulders down.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-sledpush",
+     "text": "It may seem easier to grab and go, but pushing or pulling a sled with a rounded back will not favor your spine. Instead, perform a hip hinge to get the upper body in the correct position and keep your head up and shoulders down.",
+     "where": "Common Sled Push Mistakes: Rounded Back"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Push through the balls of the feet with the heels off the floor; if a heel touches down, drive the knees higher. One source says very heavy loads may need the heels down.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-sledpush",
+    "fv-sledpush",
+    "bb-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-sledpush",
+     "text": "To ensure better lower body drive, strike the ground with the balls of your feet. Your heel should never touch the ground. If you find your heel touching the ground, focus on driving the knees higher and remaining on your tippy toes during the sled push.",
+     "where": "Common Sled Push Mistakes: Improper Foot Strike"
+    },
+    {
+     "source": "fv-sledpush",
+     "text": "Avoid placing your feet flat on the floor. Ensure that only the balls of your feet make contact with the ground to mimic the sprinting motion closely.",
+     "where": "How To Do a Sled Push, Step Two — Assume the Starting Position, Pro Tip"
+    },
+    {
+     "source": "fv-sledpush",
+     "text": "While very heavy loads may necessitate placing your heels down, this technique offers limited benefits for improving sprint performance.",
+     "where": "How To Do a Sled Push, Step Two — Assume the Starting Position, Pro Tip"
+    },
+    {
+     "source": "bb-sledpush",
+     "text": "Maintain a forward lean and push through the balls of your feet.",
+     "where": "How to Do the Sled Push, Step 3 — Drive, Drive, Drive"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Keep the same body angle and pressure on the handles through the whole push; don't let the hips rise or the chest drop, even when tired, and keep the hips from bouncing.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "Maintain pressure through the handles and the same body angle through the entire push. Try not to let your hips rise or your chest drop, even if you get tired.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Maintain a forward lean"
+    },
+    {
+     "source": "sl-sledpush",
+     "text": "Keep your hips from bouncing up and down as you push.",
+     "where": "Useful Technique Cues"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Take short, powerful steps, not a jog behind the sled.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush",
+    "fv-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "Take piston-like, powerful steps. You don’t want to look like you’re jogging behind the sled.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Use short steps"
+    },
+    {
+     "source": "fv-sledpush",
+     "text": "Take short, quick steps to maintain momentum and maximize speed.",
+     "where": "How To Do a Sled Push, Step Three — Push the Sled"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Keep the arms in the same position through the push, straight or bent; bending and straightening them makes the push weaker.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "Keep your arms in the same position throughout, whether that’s straight or bent. Bending and straightening them while you push will make them the weak link and your entire push weaker.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Tight upper body"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Start with the feet under or just behind the hips, then drive one foot into the ground, as if pushing the ground backward.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "Start with your feet underneath or just behind your hips, then drive one foot into the ground and start pushing the sled forward. Imagine that you’re pushing the ground backward to bring your glutes into play for extra force.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Start pushing"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "The main muscles are the quadriceps, glutes and calves: the quads extend the knee as the foot drives into the ground, the glutes extend the hip for forward power, and the calves transfer force through the ground.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush",
+    "bb-sledpush",
+    "fv-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "The main muscles involved are the quadriceps, glutes, and calves. The quadriceps extend the knee as you drive the foot into the ground. The glutes extend the hip and create forward power. The calves transfer force through the ground.",
+     "where": "Muscles Trained in the Sled Push"
+    },
+    {
+     "source": "bb-sledpush",
+     "text": "The sled push is a dynamic movement that primarily trains the lower body, especially the glutes, quadriceps, and calves.",
+     "where": "Muscles Worked by the Sled Push"
+    },
+    {
+     "source": "fv-sledpush",
+     "text": "The primary muscles worked during sled pushes include the quadriceps, glutes, and calves.",
+     "where": "Sled Push Muscles Worked"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "The abs, obliques and other trunk muscles work isometrically to keep the ribcage and pelvis connected and pass force from the legs into the sled.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "The trunk muscles work isometrically during sled pushes. The abs, obliques, and trunk stabilizers keep the ribcage and pelvis connected so you can transfer force from your legs into the sled.",
+     "where": "Muscles Trained in the Sled Push"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "In 10 resistance-trained men, a maximal 20-step weighted sled push gave 61.2% more calf (gastrocnemius) EMG than a 10-repetition-maximum back squat, and similar quadriceps, hamstring and deep abdominal EMG.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "maddigan-2014"
+   ],
+   "quotes": [
+    {
+     "source": "maddigan-2014",
+     "text": "Ten healthy resistance-trained men participated in a randomized crossover design study consisting of 2 preparation sessions and 2 testing sessions.",
+     "where": "abstract"
+    },
+    {
+     "source": "maddigan-2014",
+     "text": "were monitored during a 20-step maximum push with the weighted sled apparatus and a 10 repetition maximum with a bilateral back squat.",
+     "where": "abstract"
+    },
+    {
+     "source": "maddigan-2014",
+     "text": "There were main effects for condition with 61.2% greater gastrocnemius EMG with the sled exercise (p = 0.01) and 74.5% greater erector spinae EMG activity with the squat (p = 0.002).",
+     "where": "abstract"
+    },
+    {
+     "source": "maddigan-2014",
+     "text": "In summary, the sled and squat exercises provided similar EMG activity for the quadriceps, hamstrings, and TrA/IO.",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Progression: start with a light or empty sled and focus on body position; then add load, distance, sets or speed, or cut rest, one thing at a time, keeping the body position the same.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "Start with a light or empty sled and focus on your body position as you push it.",
+     "where": "Sled Push FAQ: Are sled pushes good for beginners?"
+    },
+    {
+     "source": "sl-sledpush",
+     "text": "For example, you can increase how much weight you load onto the sled, the distance you push it, the number of sets/intervals you do, or how fast you push. Or you can reduce your rest times.",
+     "where": "How to Progress the Sled Push"
+    },
+    {
+     "source": "sl-sledpush",
+     "text": "Progress one thing at a time, not everything at once.",
+     "where": "How to Progress the Sled Push"
+    },
+    {
+     "source": "sl-sledpush",
+     "text": "For strength, stick with the same distance while you add weight. And make sure your body position doesn’t change.",
+     "where": "How to Progress the Sled Push"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "Load the sled and check that the path is flat, clear and long enough before starting.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "Load the sled and take the time to make sure the path is flat, clear, and long enough before you start.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Set up the sled"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "Finish with control: ease off, stop the sled and stand upright.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "sl-sledpush",
+     "text": "Finish with control. Gradually reduce your effort, stop the sled, and stand upright.",
+     "where": "Detailed Instructions, The Sled Push Step-By Step: Finish with control"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "One source's common-mistakes list for the sled push names, in this order: a rounded back, an improper foot strike, and too heavy a load.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-sledpush"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-sledpush",
+     "text": "Here are a few common hiccups that may stop you from getting the best from your sled push.",
+     "where": "Common Sled Push Mistakes (list intro)"
+    },
+    {
+     "source": "ggr-sledpush",
+     "text": "Rounded Back",
+     "where": "Common Sled Push Mistakes, item 1 heading"
+    },
+    {
+     "source": "ggr-sledpush",
+     "text": "Improper Foot Strike",
+     "where": "Common Sled Push Mistakes, item 2 heading"
+    },
+    {
+     "source": "ggr-sledpush",
+     "text": "Too Heavy",
+     "where": "Common Sled Push Mistakes, item 3 heading"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "sl-sledpush",
+   "url": "https://www.strengthlog.com/sled-push/",
+   "title": "How to Do Sled Push: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": 2026,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "bb-sledpush",
+   "url": "https://barbend.com/sled-push/",
+   "title": "The Sled Push May Be the Ultimate Leg-Builder (Yes, We're Serious) | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-sledpush",
+   "url": "https://fitnessvolt.com/sled-push-guide/",
+   "title": "Sled Push: Ultimate Guide to Strengthen Your Legs and Core",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ggr-sledpush",
+   "url": "https://www.garagegymreviews.com/sled-push-workout",
+   "title": "Sled Push Workout: Trainer Tips | Garage Gym Reviews",
+   "kind": "coach",
+   "year": 2023,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "maddigan-2014",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/25226330/",
+   "title": "Lower-limb and trunk muscle activation with back squats and weighted sled apparatus",
+   "kind": "peer-reviewed",
+   "year": 2014,
+   "pmid": "25226330",
+   "access": "abstract",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the straight-line forward lean (c3), the flat back and its fault, the rounded back (c6, c7), and the heels off the floor (c8) read from the side.",
+  "equipment": "Push sled (census need sled, missing) with two upright handles, on the floor line (census floor) in front of the lifter; hands about halfway down the handles (c1).",
+  "start": "Mid-push, one step: staggered stance, on the balls of the feet with the heels off the floor (c3, c8); feet under or just behind the hips, one foot driving into the ground (c12); body leaning well forward in a straight line from head through hips, back flat (c3, c6); arms straight, hands about halfway down the handles, shoulders straight behind the hands (c1, c3, c4).",
+  "end": "The next step: the rear foot driven through to the front on the ball of the foot (c8, c10), with the same body angle and arm position (c9, c11).",
+  "checkpoints": [
+   {
+    "label": "Straight line",
+    "what": "Body leans forward in a straight line from head to hips.",
+    "claim": "c3"
+   },
+   {
+    "label": "Flat back",
+    "what": "Spine neutral, abs tight.",
+    "claim": "c6"
+   },
+   {
+    "label": "Balls of feet",
+    "what": "Heels up, push through the balls of your feet.",
+    "claim": "c8"
+   }
+  ],
+  "mistake": {
+   "what": "Pushing with a rounded back.",
+   "why": "First item on Garage Gym Reviews' common-mistakes list for the sled push (c19); it says a rounded back will not favor your spine (c7).",
+   "claim": "c7",
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 3: the rounded back (c7), the first fault on the one common-mistakes list written for this exercise, Garage Gym Reviews' \"Common Sled Push Mistakes\" (c19: Rounded Back, Improper Foot Strike, Too Heavy). Step 1 finds no frequency word for a fault: Garage Gym Reviews' heading \"Common Sled Push Mistakes\" and its intro \"Here are a few common hiccups that may stop you from getting the best from your sled push.\" are a list heading and a list sentence (LR-31 exclusion); StrengthLog's \"keeping them straight is often more comfortable if you’re short\" (c4) is about an allowed arm choice, not a fault; StrengthLog's \"It’s a staple in the training of many athletes\", \"Sprinters, football players, soccer players, and field-sport athletes often include sled work in their training\" and \"some of the most common questions about the sled push\", BarBend's \"some of the most common uses for the sled push\", \"is often does not conflict with main strength-building movements\" and \"often doesn’t need to be tweaked\", and Fitness Volt's \"athletes who incorporate sled pushes into their training, regardless of the load, often experience greater speed improvements\" are about the exercise, its users or programming, not a fault. Step 2 finds no named fault that a quote ties to harm in LR-31's words: Garage Gym Reviews says a rounded back \"will not favor your spine\" (c7), which names no injury, pain, stress or discomfort; if it is read as harm, step 2 picks the same fault, the only named fault tied to the body. Set aside at step 2: BarBend's \"Bending your arms ... may cause some discomfort to your elbows and shoulders\" (c5): bent arms are an allowed option (StrengthLog and Garage Gym Reviews: straight or bent, c4), on no mistakes list and not in handlingMistakes; Fitness Volt's \"Brace your core muscles ... Intra-abdominal pressure can help generate more force and ensure back safety\" (c6) is a cue whose fault (an unbraced core) is on no list and not in handlingMistakes, so under D-SUP-PROTECT it ties no named fault; Fitness Volt's \"Start with a lighter weight and focus on proper form and technique. This will help prevent injury\" and Garage Gym Reviews' \"Too Heavy\" item are about the load chosen, not a candidate (LR-31); Garage Gym Reviews' \"prowler flu\" lines and \"Don’t Be A Hero\" (rest between reps) are about load and rest, not a body position; Fitness Volt's \"you risk injuring yourself\" is in its knees-over-toes lunge section (another exercise, R-LB7-5); BarBend's \"heavy deadlifts can cause excessive spinal flexion and heavy back squats can compress the spine\" is about other exercises. Step 3: Garage Gym Reviews' list is the only common-mistakes list on the card and is written for the sled push, so its first item decides; no count is needed. Other scan hits set aside: Fitness Volt's \"Avoid sagging your lower back or lifting your hips.\" is in its wall-push section (another exercise, R-LB7-5); BarBend's \"Over time, enough heavy squats and poorly executed deadlifts have the potential to lead to injury.\" is about other exercises; Fitness Volt's \"Pushing a sled carries little risk.\", \"Sled pushes are quite safe and beginner-friendly\" and \"a low risk of injury\", BarBend's \"it’s a more joint-friendly option, preventing an accumulation of stress\", \"alleviate stress on the lower back\" and \"without adding a ton of stress to the lower back or joints\", Garage Gym Reviews' \"It takes a little stress off the joints\" and \"if lunges, squats, and deadlifts hurt your lower-body joints\", and StrengthLog's eccentric-damage and \"many traditional lifts\" lines are about the exercise as a whole, not a fault; StrengthLog's \"many athletes\", \"many scenarios\", \"most of the force\", \"most of your lower body\", \"You have many ways to go about it.\", BarBend's \"many heavy compound movements\", \"most of the onus\", \"you are often able to perform sled pushes many times a week\", \"typically pounding pavement\", \"six sets at most\" and \"common questions\", and Fitness Volt's \"most basic human movement patterns\", \"the most primal sense of strength\" and \"most gym-goers do sled pushes at least once every two weeks\" are about the exercise, its users or programming, not a fault. Reading applied: the GGR list's first item decides at step 3, and \"will not favor your spine\" is not read as an LR-31 harm word (either reading gives the same pick). drawable is true: the census view is side, and a rounded back is a still sign seen from the side."
+  },
+  "tells": [
+   {
+    "text": "Body straight from head to hips",
+    "claim": "c3"
+   },
+   {
+    "text": "Same body angle the whole push",
+    "claim": "c9"
+   },
+   {
+    "text": "Heels stay off the floor",
+    "claim": "c8"
+   }
+  ],
+  "tempo": {
+   "up": null,
+   "down": null,
+   "pause": null,
+   "text": "Walk: short, powerful steps (c10). No sled-push source gives a step rate, a phase time or a pause, so no seconds are drawn (LR-33; R-LB2-1).",
+   "claim": "c10"
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Both hands on the sled's upright handles, one hand on each, about halfway down (c1).",
+  "width": "The sled's handle width (c1).",
+  "thumb": "",
+  "handContact": "",
+  "wrist": "",
+  "claims": [
+   "c1"
+  ],
+  "note": "No sled-push source gives a thumb or wrist position; the plate draws the push hand-pair's natural grip as a drawing convention (LR-4)."
+ },
+ "setup": [
+  {
+   "step": "Load the sled; check the path is flat and clear.",
+   "claim": "c17"
+  },
+  {
+   "step": "Stand behind the sled; hands about halfway down the handles.",
+   "claim": "c1"
+  },
+  {
+   "step": "Step back and lean forward, head to hips in a straight line.",
+   "claim": "c3"
+  },
+  {
+   "step": "Arms straight, shoulders straight behind your hands.",
+   "claim": [
+    "c3",
+    "c4"
+   ]
+  },
+  {
+   "step": "Tighten your abs and keep your spine neutral.",
+   "claim": "c6"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Shoulders straight behind your hands.",
+   "claim": "c3"
+  },
+  {
+   "point": "Spine neutral, abs tight.",
+   "claim": "c6"
+  },
+  {
+   "point": "Eyes just ahead of the sled.",
+   "claim": "c6"
+  },
+  {
+   "point": "Push through the balls of your feet.",
+   "claim": "c8"
+  },
+  {
+   "point": "Short, powerful steps, not a jog.",
+   "claim": "c10"
+  },
+  {
+   "point": "Keep your arms in the same position.",
+   "claim": "c11"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Rounded back.",
+   "fix": "Hinge at your hips, head up, shoulders down.",
+   "claim": "c7"
+  },
+  {
+   "mistake": "Heels touching the floor.",
+   "fix": "Drive your knees higher and stay on the balls of your feet.",
+   "claim": "c8"
+  },
+  {
+   "mistake": "Hips rising or chest dropping as you tire.",
+   "fix": "Keep the same body angle through the whole push.",
+   "claim": "c9"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "quads",
+    "claim": "c13"
+   },
+   {
+    "muscleId": "glutes",
+    "claim": "c13"
+   },
+   {
+    "muscleId": "calves",
+    "claim": [
+     "c13",
+     "c15"
+    ]
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "abs",
+    "claim": "c14"
+   },
+   {
+    "muscleId": "obliques",
+    "claim": "c14"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Front of the thighs",
+    "means": "Your quads straighten the knee as you drive.",
+    "fix": "",
+    "claim": "c13",
+    "redFlag": null
+   },
+   {
+    "where": "Glutes",
+    "means": "They straighten the hip and drive you forward.",
+    "fix": "",
+    "claim": "c13",
+    "redFlag": null
+   },
+   {
+    "where": "Calves",
+    "means": "They pass the force into the ground.",
+    "fix": "",
+    "claim": "c13",
+    "redFlag": null
+   },
+   {
+    "where": "Lower back",
+    "means": "Fault: a rounded back.",
+    "fix": "Hinge at your hips and keep your back flat.",
+    "claim": [
+     "c7",
+     "c3"
+    ],
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "A rounded back will not favor your spine.",
+   "claim": "c7"
+  },
+  {
+   "risk": "Bent arms may cause some discomfort in your elbows and shoulders.",
+   "claim": "c5"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "back",
+   "kind": "posture",
+   "right": "Back flat, head to hips in a straight line.",
+   "wrong": "Back rounded.",
+   "claim": [
+    "c3",
+    "c7"
+   ]
+  },
+  {
+   "key": "feet",
+   "kind": "posture",
+   "right": "On the balls of your feet, heels up.",
+   "wrong": "Heel down on the floor.",
+   "claim": "c8"
+  },
+  {
+   "key": "hands",
+   "kind": "hand",
+   "right": "Hands about halfway down the handles, arms straight.",
+   "wrong": null,
+   "claim": [
+    "c1",
+    "c4"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "Library: quads and glutes primary; calves and core secondary. StrengthLog, BarBend and Fitness Volt all name the quads, glutes and calves as the main muscles (c13), and Maddigan 2014 found more calf EMG in the sled push than in the squat (c15), so the card's feel puts calves in primary; a proposal for the LIB data card to move calves to primary. The trunk (abs, obliques) works to hold the body still (c14); the card's feel names abs and obliques because core goes in no feel role (LR-35), and the library's core stays.",
+  "proposal": {
+   "primary": [
+    "quads",
+    "glutes",
+    "calves"
+   ],
+   "secondary": [
+    "core"
+   ]
+  }
+ },
+ "anchorSource": "sl-sledpush",
+ "loadProgression": {
+  "text": "Start with a light or empty sled. Then add one thing at a time: weight, distance, sets or speed. Keep your body position the same.",
+  "claim": "c16"
+ },
+ "gaps": [],
+ "notes": [
+  "Anchor: StrengthLog's sled-push page, read in full (short steps, detailed step-by-step, cues, muscles, load, progression, FAQ). BarBend's, Fitness Volt's and Garage Gym Reviews' sled-push pages were read in full too; Garage Gym Reviews' page has the card's only common-mistakes list (c19). Maddigan 2014 is read as its PubMed abstract (efetch).",
+  "Shared cards: none lists lib_sled_push in appliesTo (shared/ at the start head). The lower-back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28): the sheet cannot ship before the back-pain box, and back-pain-box.json's appliesTo does not yet list this id.",
+  "Arms: StrengthLog and Garage Gym Reviews allow straight or bent arms (c4); BarBend's setup step bends the elbows (\"your elbows bent, so your shoulders are almost touching the handles\") and its next step says \"Keep your arms locked\"; Fitness Volt locks them out. The plate draws straight arms, the version three sources use while pushing.",
+  "Lean angle: StrengthLog says lean forward in a straight line from head through hips; BarBend aims for the torso as close to parallel as possible (c3). No source gives degrees; the drawn angle is a drawing choice between the two.",
+  "Heels: Garage Gym Reviews and Fitness Volt keep the heels off the floor; Fitness Volt adds that very heavy loads may need the heels down (c8). The card follows the heels-up line.",
+  "Feel: calves are in feel.primary from c13 and c15 (see libraryDiff). core is in no feel role (LR-35); abs and obliques stand for the trunk (c14).",
+  "The finish (c18) and the hand-height choice (c2) are research data, not shown lines.",
+  "Read but not cited: Muscle & Fitness's sled-push page (one paragraph of steps, nothing the cited pages do not cover). 404 on 2026-10-22: garagegymreviews.com/sled-push, row.gymshark.com/blog/article/how-to-sled-push, menshealth.com sled-push, healthline.com sled-push, blog.nasm.org/sled-push, puregym.com sled-push, motra.com/exercises/sled-push, hevyapp.com, hyrox.com/sled-push, womenshealthmag.com; Verywell Fit 402.",
+  "LB10 fix round 2026-10-22 (lb10-research-verify, R-LB10-10): sled_push-1: setup[1] and zooms[2].right keep 'about'."
+ ]
+}

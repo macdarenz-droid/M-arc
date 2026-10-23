@@ -1,0 +1,572 @@
+{
+  "id": "bear_crawl",
+  "libId": "lib_bear_crawl",
+  "name": "Bear Crawl",
+  "family": "Conditioning and carries (crawl)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md 5.1: not in the A or B lists); census.json difficulty tier 3.",
+  "archetype": {
+    "hand": "palm-flat",
+    "contact": [
+      "floor-body"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Start in a push-up position, hands shoulder-width apart, legs back about hip-width apart, knees bent.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bearcrawl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bearcrawl",
+          "text": "Start in a push-up position with the hands shoulder-width apart and the legs straight out directly behind the body about hip-width apart, keeping the knees bent.",
+          "where": "exercise steps"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Move the opposite hand and leg forward together, alternating, with the back straight and the hips and shoulders at the same height.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bearcrawl"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bearcrawl",
+          "text": "Move the left hand and the right leg forward to start crawling. Alternate the arm and leg movements while keeping the back straight and the hips and shoulders at the same height.",
+          "where": "exercise steps"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "From a table-top position (hands under shoulders, knees under hips, feet hip-width apart), drive the palms into the floor, brace and lift the knees about 2 inches.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bc-shape"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bc-shape",
+          "text": "Start in a table-top position on the floor with hands stacked directly under shoulders, knees bent and stacked directly under hips, and feet hip-width apart. Drive palms into the floor, engage core, and lift knees 2 inches off the ground.",
+          "where": "How to Do the Bear Crawl, step A"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Steps are small (about 2 inches) and controlled, back flat and hips parallel with the floor.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bc-shape"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bc-shape",
+          "text": "Keeping back flat and core engaged, move right arm and left leg forward 2 inches in a controlled manner. Then, move left arm and right leg forward 2 inches, keeping hips parallel with the floor.",
+          "where": "How to Do the Bear Crawl, step B"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "The bottom should not rise when the knees lift; if the core cannot yet keep the back flat, hold a bear plank until it can.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-bc"
+      ],
+      "quotes": [
+        {
+          "source": "bb-bc",
+          "text": "When you lift your knees, don’t lift your butt, too. Keep it in line with your back to fully engage your core.",
+          "where": "How to do, step 2, coach's tip"
+        },
+        {
+          "source": "bb-bc",
+          "text": "Much like in a plank, if your core is not strong enough yet, it can be hard to keep your back flat. If this is the case, start with a modification — like the bear plank — until you can build the strength to start moving.",
+          "where": "FAQ: Why does my butt keep rising when crawling?"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Hips swaying side to side may mean the steps are too big; shorten them until the hips no longer sway.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-bc"
+      ],
+      "quotes": [
+        {
+          "source": "bb-bc",
+          "text": "You want to try to avoid wiggling in your hips as you move. If you find they’re moving too much, your steps may be too big. Try shortening your steps until your hips no longer sway.",
+          "where": "FAQ: How do I keep my hips from moving side-to-side?"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Tighten the core so the back does not arch; arching can mean painful overextension of the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-bc"
+      ],
+      "quotes": [
+        {
+          "source": "bb-bc",
+          "text": "Be sure to tighten your core so you don’t arch your back. This will help prevent potentially painful hyperextension or raising your hips too high for the movement to be effective.",
+          "where": "How to do, step 1, coach's tip"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Avoid raising the butt the whole time, to get the most out of the exercise and to help avoid injury; the knees hover just above the floor the whole time without touching it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-bc"
+      ],
+      "quotes": [
+        {
+          "source": "bb-bc",
+          "text": "Squeeze your core and avoid raising your butt the whole time to help get the most out of the exercise, as well as help avoid injury. Keep your knees close to the ground without touching it.",
+          "where": "How to do, step 3, coach's tip"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "The core stabilises the whole body (the rectus abdominis and the obliques are named), the shoulders hold up the upper body, and the quads keep the knees lifted.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-bc",
+        "ace-bc-shape"
+      ],
+      "quotes": [
+        {
+          "source": "bb-bc",
+          "text": "In the bear crawl, your core acts as a stabilizer to your entire body, so you can maintain proper form and have enough endurance to keep crawling.",
+          "where": "Builds Core Strength and Stability"
+        },
+        {
+          "source": "bb-bc",
+          "text": "Since your shoulders are helping to hold the weight of your upper body as you move forward and hold the position, the bear crawl is a low-impact way to strengthen them.",
+          "where": "Muscles Worked: deltoids"
+        },
+        {
+          "source": "bb-bc",
+          "text": "In the bear crawl, your quads have to work to keep your knees lifted off the ground and help to stabilize your whole body.",
+          "where": "Muscles Worked: quads"
+        },
+        {
+          "source": "ace-bc-shape",
+          "text": "During the bear crawl exercise, your shoulders will work overtime to keep your upper body stable as you step forward and backward.",
+          "where": "Improves Shoulder Stability"
+        },
+        {
+          "source": "bb-bc",
+          "text": "Although the core plays a large role in the bear crawl, it’s not the only muscle that is activated by this exercise.",
+          "where": "Muscles Worked by the Bear Crawl"
+        },
+        {
+          "source": "bb-bc",
+          "text": "The rectus abdominis are the muscles that make up what is commonly known as the “six-pack.”",
+          "where": "Muscles Worked: rectus abdominis"
+        },
+        {
+          "source": "bb-bc",
+          "text": "Located on either side of the abdominal walls are the obliques.",
+          "where": "Muscles Worked: obliques"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Build up from crawls of 15 to 30 seconds; go longer or a little faster only with good form.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-bc"
+      ],
+      "quotes": [
+        {
+          "source": "bb-bc",
+          "text": "It can be beneficial to crawl for 15 to 30 seconds at a time until you can build up to more.",
+          "where": "How to program: endurance"
+        },
+        {
+          "source": "bb-bc",
+          "text": "To emphasize the cardio benefits, try crawling for longer periods of time or go a little bit faster, but make sure to maintain good form throughout.",
+          "where": "FAQ: cardio"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The bear crawl holds the body up on the palms like a moving high plank, so the wrists are loaded bent back. In patients with pain on the back of the wrist in that loaded position (push-ups, planks), MRI found an abnormality in 84 %. Applying this to the bear crawl is an inference, and it is a patient series, not a risk estimate.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-bc-shape",
+        "nance-2017"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bc-shape",
+          "text": "A bear crawl is a lot like a moving high plank — you'll hold all of your body weight above the floor, with just your palms and toes touching the ground",
+          "where": "Builds Core Strength"
+        },
+        {
+          "source": "nance-2017",
+          "text": "Many exercise disciplines incorporate upper extremity weight-bearing exercises in an extended wrist posture, for example push-ups, plank position, and various yoga and Pilates poses.",
+          "where": "abstract, purpose"
+        },
+        {
+          "source": "nance-2017",
+          "text": "MRI demonstrated an identifiable dorsal abnormality in 84% of patients with dorsal wrist pain associated with weight bearing on the extended wrist.",
+          "where": "abstract, conclusion"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "One drill is 4 steps forward, then 4 steps back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-bc-shape"
+      ],
+      "quotes": [
+        {
+          "source": "ace-bc-shape",
+          "text": "Take 4 steps forward, then 4 steps backward.",
+          "where": "How to Do the Bear Crawl, step C"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "ace-bearcrawl",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/150/bear-crawl/",
+      "title": "Bear Crawl (ACE Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "ace-bc-shape",
+      "url": "https://www.acefitness.org/about-ace/press-room/in-the-news/8226/how-to-do-the-bear-crawl-exercise-to-boost-strength-and-coordination-shape/",
+      "title": "How to Do the Bear Crawl Exercise to Boost Strength and Coordination (SHAPE, reprinted by ACE)",
+      "kind": "coach",
+      "year": 2022,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "bb-bc",
+      "url": "https://barbend.com/bear-crawl/",
+      "title": "Build an Unstoppable Core and Upper Body with the Bear Crawl (BarBend)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "nance-2017",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/29085728/",
+      "title": "Dorsal Wrist Pain in the Extended Wrist-Loading Position: An MRI Study",
+      "kind": "peer-reviewed",
+      "year": 2017,
+      "pmid": "29085728",
+      "access": "abstract",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Hands under shoulders and knees under hips (c3), the knee hover (c8) and the hips level with the shoulders (c2) are all sagittal; the hips-rising fault reads from the side.",
+    "equipment": "Floor line only.",
+    "frames": "Walk convention (census motionFlags walk): one step, from the hover with hands and feet square to one hand and the opposite foot moved forward about 2 inches; Trace follows the stepping hand.",
+    "start": "Table-top: hands under shoulders, knees bent under hips, feet hip-width apart, knees lifted about 2 inches off the floor (c3), back flat (c4).",
+    "end": "One hand and the opposite foot moved forward about 2 inches (c4), knees still hovering (c8), hips level with the shoulders (c2).",
+    "checkpoints": [
+      {
+        "label": "Hands under shoulders",
+        "what": "Palms pressed into the floor, hands under the shoulders, knees under the hips.",
+        "claim": "c3"
+      },
+      {
+        "label": "Knees hover",
+        "what": "Knees about 2 inches off the floor, never touching it.",
+        "claim": [
+          "c3",
+          "c8"
+        ]
+      },
+      {
+        "label": "Hips level",
+        "what": "Back straight, hips at the same height as the shoulders.",
+        "claim": "c2"
+      }
+    ],
+    "mistake": {
+      "what": "Hips rise above the line of the back as the knees lift and the steps go on.",
+      "why": "LR-31 step 2: one of two faults a quote ties to harm (BarBend: avoid raising your butt, \"as well as help avoid injury\", c8; the other is the back arch, c7). Still tied after step 3, so LR-36 keeps the head's pick, the fault the side view was chosen for. BarBend repeats it in two coach's tips and an FAQ (c5, c8); it breaks ACE's hips-and-shoulders-level cue (c2).",
+      "claim": [
+        "c5",
+        "c2",
+        "c8"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2, still tied after step 3, LR-36: the hips (butt) rising (c8, c5). Step 1: no frequency word for a fault of this exercise. Set aside: BarBend's FAQ heading \"Why does my butt keep rising when crawling?\" is a heading, not a frequency sentence; \"what is commonly known as the “six-pack.”\" is a name; \"The obliques can be often overlooked\" is about muscles; \"so many lifters could benefit from it\" names no fault; \"Typically, to increase your endurance in any exercise\" is about all training. SHAPE's \"In strength training, we often cue to start bracing the core before a lift\" is about all training. ACE's page has no hit. Nance's \"most common sources of pathology\" and \"most common cause of dorsal wrist pain\" are about scan findings, not a fault. Step 2: two named faults are tied to harm, each by one BarBend quote: the butt rising (\"Squeeze your core and avoid raising your butt the whole time to help get the most out of the exercise, as well as help avoid injury.\", c8) and the back arching (\"Be sure to tighten your core so you don’t arch your back. This will help prevent potentially painful hyperextension\", c7; its \"raising your hips too high for the movement to be effective\" is about effect, not harm). No read source has a common-mistakes list, one source ties each to harm, both are sourced directly, and no list names both: BarBend's step-1 tip names the arch and the hips rising in one cue's outcome sentence; it is not a list of faults, so the list tie-break does not apply. Step 3's count (D-SUP-LB6-CCP), the number of the card's read sources that tell the lifter to avoid each fault (sources, not lists): butt rising 1 (BarBend, c5 and c8); back arching 1 (BarBend, c7). Lines that only give the right position are not counted (R-LB7-4): ACE's \"keeping the back straight and the hips and shoulders at the same height\" (c2), and SHAPE's \"Keeping back flat\" and \"keeping hips parallel with the floor\" (c4); counted, the butt rising has 3 and the arch 2. No common-mistakes list is written for this exercise, so the first-on-the-earliest-list line cannot decide. Still tied. Tie ruled by the supervisor (LR-36): the head's pick stays because the census view was chosen for it (plate.viewWhy: \"the hips-rising fault reads from the side\"); LR-31 gives no further order. Harm with no named fault, set aside: BarBend's \"Without shoulder stability, your risk of injury, pain, and limited mobility can increase.\" and the obliques \"helping protect your back and shoulders from injury\" (muscle roles); SHAPE's \"move through life pain-free\" and \"plays a key role in injury prevention\" (benefits); the wrist lines (c11) name the loaded position, not a fault. Hip sway (c6) states no harm. The side view shows the hips raised above the back, a still sign, so drawable is true. Fetcher scan (2026-10-22), further hits set aside: SHAPE's \"Remember, your core is a group of muscles within your anterior and posterior kinetic chains that all work together to keep you stable and protect your spine.\" is a muscle role, and its quoted \"It is dangerous to lift weights your core can't support, even if your legs would technically be strong enough.\" is about loads in lifting, not a fault of this exercise. BarBend's \"Frequently Asked Questions\" is a heading; \"Having healthy shoulders is crucial for helping to prevent injuries in and outside the gym.\", \"can help prevent shoulder joint damage\", \"It also helps protect the spine from heavy loads.\", \"your core plays an especially important part in a safe and effective lift\" and its two study lines saying core stability can \"reduce the risk of injury\" are benefits of strength, with no named fault; \"It can help you get used to the proper form\" is about the bear plank. Nance's \"Many exercise disciplines incorporate upper extremity weight-bearing exercises\" is about exercise in general, and \"Dorsal wrist pathology was significantly more prevalent in patients with dorsal wrist pain (84%)\" compares patient groups, with no fault. Reading applied: harm counts only where a quote ties a named fault of this exercise to injury or pain (BarBend's butt-rising and arch lines), lines that only give the right position are not counted at step 3 (R-LB7-4), and the remaining tie goes to LR-36's viewWhy rule."
+    },
+    "tells": [
+      {
+        "text": "Hips stay level with your shoulders",
+        "claim": "c2"
+      },
+      {
+        "text": "Knees stay just off the floor",
+        "claim": "c8"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Walk: small, controlled steps of about 2 inches (c4); no source gives a cadence. Sets by time (c10). LR-33: no quote on the card asks for a pause after a step, and no source gives seconds, so up, down and pause stay null. BarBend's strength option \"crawl for 10 seconds and hold the bear plank for 10 seconds\" (not on the card) is an interval of a hold and a crawl, not a pause in the step.",
+      "claim": "c4"
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Palms flat, driven into the floor.",
+    "width": "Hands shoulder-width apart, under the shoulders.",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "Wrist bent back under body weight, as in a plank (c11).",
+    "claims": [
+      "c1",
+      "c3",
+      "c11"
+    ],
+    "note": "No source found on finger spread or weight through the heel of the hand."
+  },
+  "setup": [
+    {
+      "step": "Get on hands and knees: hands under shoulders, knees under hips, feet hip-width apart.",
+      "claim": "c3"
+    },
+    {
+      "step": "Press your palms into the floor, brace, and lift your knees about 2 inches.",
+      "claim": "c3"
+    },
+    {
+      "step": "Move one hand and the opposite foot forward a short way, then switch.",
+      "claim": [
+        "c2",
+        "c4"
+      ]
+    },
+    {
+      "step": "Keep your back straight and your hips level with your shoulders.",
+      "claim": "c2"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Hands under shoulders, knees under hips.",
+      "claim": "c3"
+    },
+    {
+      "point": "Knees hover just off the floor.",
+      "claim": "c8"
+    },
+    {
+      "point": "Back flat, not arched.",
+      "claim": [
+        "c4",
+        "c7"
+      ]
+    },
+    {
+      "point": "Hips at shoulder height.",
+      "claim": "c2"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Hips rise as you crawl.",
+      "fix": "Keep your bottom in line with your back; hold a bear plank until your core can.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Back arches.",
+      "fix": "Tighten your core.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Hips sway side to side.",
+      "fix": "Take shorter steps.",
+      "claim": "c6"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "abs",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "obliques",
+        "claim": "c9"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "front_delts",
+        "claim": "c9"
+      },
+      {
+        "muscleId": "quads",
+        "claim": "c9"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Belly and sides",
+        "means": "Your core is holding the body steady.",
+        "fix": "",
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Shoulders",
+        "means": "They hold up your upper body as you step.",
+        "fix": "",
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the thighs",
+        "means": "They keep your knees lifted.",
+        "fix": "",
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Pain on the back of the wrist",
+        "means": "In people with this pain under load, scans often find a wrist problem.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": "wrist",
+        "fixNote": "No sourced stop line (LR-6); the shared wrist box and the owner line carry what to do."
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Pain on the back of the wrist in the loaded, bent-back position.",
+      "claim": "c11"
+    },
+    {
+      "risk": "An arched back can be painful.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [
+    "wrist"
+  ],
+  "zooms": [
+    {
+      "key": "hand-under-shoulder",
+      "kind": "hand",
+      "right": "Palm pressed into the floor, hand under the shoulder.",
+      "wrong": null,
+      "claim": "c3"
+    },
+    {
+      "key": "hip-line",
+      "kind": "posture",
+      "right": "Hips level with the shoulders, back flat.",
+      "wrong": "Hips raised above the back.",
+      "claim": [
+        "c2",
+        "c5"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "abs",
+      "obliques"
+    ],
+    "remove": [],
+    "proposal": {
+      "primary": [
+        "core",
+        "abs",
+        "obliques"
+      ],
+      "secondary": [
+        "front_delts",
+        "quads"
+      ]
+    },
+    "why": "Library: core primary (text-only, nothing to draw); front_delts and quads secondary. BarBend names the rectus abdominis and the obliques as the core muscles worked (c9), so abs and obliques are proposed as the drawn primary regions alongside core (content.md 8; ruling R-W0-4). No golden-B update is needed. A proposal for the LIB data card."
+  },
+  "anchorSource": "ace-bearcrawl",
+  "anchorNote": "ACE Exercise Library bear crawl page read in full (short); the SHAPE how-to reprinted by ACE and BarBend's guide were read in full for setup detail and faults. PubMed has no technique or EMG study of the bear crawl (search 2026-10-02: 3 hits for \"bear crawl\", none on technique).",
+  "loadProgression": {
+    "text": "Start with 15 to 30 seconds and build up.",
+    "claims": [
+      "c10"
+    ]
+  },
+  "gaps": [],
+  "unsourced": [
+    "Cadence or seconds per step.",
+    "Finger spread and weight through the heel of the hand (palm-flat archetype).",
+    "Breathing.",
+    "Whether fists or handles help a sore wrist."
+  ],
+  "notes": [
+    "Two hand-placement wordings: ACE says hands shoulder-width apart from a push-up position (c1); SHAPE says hands stacked under the shoulders from table-top (c3). They agree; the plate draws c3.",
+    "Wrist zoom shows the right position only (LR-25): no source names a wrong hand position.",
+    "Fix round 2026-10-02 (verify w0): A4 feel row 4 fix emptied (no sourced stop line); A5 abs and obliques added as drawn primary regions with BarBend quotes in c9.",
+    "LB10 pass 2026-10-22 (LR-31, LR-33, LB7 shown-line checks): all four sources re-fetched by curl; four BarBend quotes now use the page's ’; c6, c8 and c12 texts trimmed to their quotes; rankNote rewritten under LR-31 (tie after step 3, LR-36 keeps the pick); handlingMistakes reordered (hips rise, back arch, hip sway: the arch is tied to harm, c7); risks[1] and handlingMistakes[1] say \"back\", not \"lower back\" (c7 says \"arch your back\"); zooms[0] right drops \"flat\" (no quote says the palm is flat; c3 \"Drive palms into the floor\"). Parent in content.md Appendix A: mountain_climbers; full card, parent null, no inherit entries, every line on its own claims."
+  ]
+}

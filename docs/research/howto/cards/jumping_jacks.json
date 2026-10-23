@@ -1,0 +1,600 @@
+{
+  "id": "jumping_jacks",
+  "libId": "lib_jumping_jacks",
+  "name": "Jumping Jacks",
+  "family": "Conditioning and carries (jumps)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md 5.1: not in the A or B lists); census.json difficulty tier 2.",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Start standing with the feet together and the arms at the sides, with room around you to jump and swing the arms.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-jumping-jacks"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Stand with feet together and your arms at your sides. Ensure adequate space around you for safe jumping and arm movement.",
+          "where": "step 1: setup"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Jump the legs apart while raising the arms overhead, landing with the feet hip-width apart and the arms overhead.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-jumping-jacks"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Explosively jump while simultaneously abducting your legs and raising your arms overhead. Coordinate leg and arm movements to land with feet hip-width apart and arms overhead.",
+          "where": "step 3: execute"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Jump the legs back together while lowering the arms to the sides, and go straight into the next rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-jumping-jacks"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Return your legs to together position while lowering your arms to your sides as you land. Immediately prepare for the next repetition in continuous fashion.",
+          "where": "step 4: return"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Another coach puts the feet a little wider than shoulder-width at the open position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "el-jj"
+      ],
+      "quotes": [
+        {
+          "source": "el-jj",
+          "text": "Jump both of your feet out a little wider than shoulder width apart while simultaneously bringing your arms over your head.",
+          "where": "How to, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep a slight bend in the knees, stay upright with the shoulders over the hips, and land softly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "el-jj"
+      ],
+      "quotes": [
+        {
+          "source": "el-jj",
+          "text": "Keep a slight bend in your knees and avoid locking them out.",
+          "where": "Form tips"
+        },
+        {
+          "source": "el-jj",
+          "text": "Maintain an upright posture, your shoulders stacked over your hips, throughout the move.",
+          "where": "Form tips"
+        },
+        {
+          "source": "el-jj",
+          "text": "Jump your feet to shoulder width or slightly wider apart and land softly with each jump.",
+          "where": "Form tips"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Common mistakes: landing with straight or barely bent knees (more joint stress), jerky landings (more impact), rushing the reps, and continuous hard jumping when tired (worse landings).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-jumping-jacks"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Landing with straight knees or minimal knee bend, which increases joint stress",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Jerky or uncontrolled landings, which increases impact stress and injury risk",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Moving too quickly and sacrificing form for speed or total repetitions",
+          "where": "Common mistakes"
+        },
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Performing continuous high-intensity jumping when fatigued, which compromises landing mechanics",
+          "where": "Common mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "The quads and glutes drive the jump; hamstrings, calves, shoulder and core stabilisers assist.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-jumping-jacks"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Quadriceps – primary driver of knee extension and jumping power",
+          "where": "Muscles worked: primary"
+        },
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Glutes – generate hip extension power for vertical propulsion",
+          "where": "Muscles worked: primary"
+        },
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Hamstrings",
+          "where": "Muscles Worked: Secondary Muscles (list item)"
+        },
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Calf Muscles",
+          "where": "Muscles Worked: Secondary Muscles (list item)"
+        },
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Shoulder Stabilizers",
+          "where": "Muscles Worked: Secondary Muscles (list item)"
+        },
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Core Stabilizers",
+          "where": "Muscles Worked: Secondary Muscles (list item)"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Easier: step out instead of jumping, or use smaller arm movements.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-jumping-jacks"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Beginners can perform step-out jacks (stepping instead of jumping) or reduced arm movements to lower impact while still developing cardiovascular fitness.",
+          "where": "FAQ: all fitness levels"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Work in intervals of 30 to 60 seconds with short rests.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nasm-jumping-jacks"
+      ],
+      "quotes": [
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Perform jumping jacks in intervals: 30-60 seconds of work followed by brief rest periods.",
+          "where": "FAQ: how many"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Harder: jump higher or faster; easier: drop the arm swing or step side to side.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "el-jj"
+      ],
+      "quotes": [
+        {
+          "source": "el-jj",
+          "text": "Increase the difficulty by jumping higher or faster, by incorporating resistance bands, or by combining the move with squats, squat thrusts, and planks. Or pull back as needed by taking out the arm swing or replacing the jump with a side-to-side step.",
+          "where": "intro"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Use a flat, even surface; rubber or grass absorbs shock better than concrete or asphalt.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "webmd-jj"
+      ],
+      "quotes": [
+        {
+          "source": "webmd-jj",
+          "text": "Always choose a flat and even surface for all jumping jack variations. Surfaces like rubber or grass absorb shock more effectively than cement or asphalt.",
+          "where": "Jumping Jacks Mistakes to Avoid"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Start with the toes pointed forward, and keep the posture; don't slouch or twist the toes outward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "webmd-jj"
+      ],
+      "quotes": [
+        {
+          "source": "webmd-jj",
+          "text": "Remember to maintain your posture and avoid slouching or twisting your toes outward.",
+          "where": "How to, step 4"
+        },
+        {
+          "source": "webmd-jj",
+          "text": "Stand in a straight position with your feet together, arms fully extended, hands by your sides, and toes pointed forward.",
+          "where": "How to Do Jumping Jacks, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Jumping jacks also work the shoulder muscles, front and back deltoids included, as the arms are raised overhead. That the side deltoids lift the arms is an inference from the movement.",
+      "tags": [
+        "MECH",
+        "WEAK"
+      ],
+      "sources": [
+        "webmd-jj",
+        "nasm-jumping-jacks"
+      ],
+      "quotes": [
+        {
+          "source": "webmd-jj",
+          "text": "Shoulders. Jumping jacks also work your shoulder muscles in different areas, including anterior and posterior deltoids.",
+          "where": "Muscles: secondary"
+        },
+        {
+          "source": "nasm-jumping-jacks",
+          "text": "Explosively jump while simultaneously abducting your legs and raising your arms overhead.",
+          "where": "step 3: execute"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "To get the most out of the movement and avoid injury, keep a strong, athletic posture and move with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "el-jj"
+      ],
+      "quotes": [
+        {
+          "source": "el-jj",
+          "text": "To get the most out of the movement and avoid injury, maintain a strong, athletic posture and move with control.",
+          "where": "Intro"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Choose a suitable speed of repetitions through the session to prevent overuse injuries.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "webmd-jj"
+      ],
+      "quotes": [
+        {
+          "source": "webmd-jj",
+          "text": "Choose a favorable speed of repetitions throughout your workout session to prevent overuse injuries.",
+          "where": "Jumping Jacks Mistakes to Avoid"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "nasm-jumping-jacks",
+      "url": "https://www.nasm.org/resource-center/exercise-library/jumping-jacks",
+      "title": "Jumping Jacks (NASM Exercise Library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "el-jj",
+      "url": "https://experiencelife.lifetime.life/article/break-it-down-the-jumping-jack/",
+      "title": "How to Do Jumping Jacks (Experience Life, Life Time)",
+      "kind": "coach",
+      "year": 2021,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "webmd-jj",
+      "url": "https://www.webmd.com/fitness-exercise/how-to-do-jumping-jacks",
+      "title": "How to Do Jumping Jacks (WebMD; medically reviewed by a DPT)",
+      "kind": "coach",
+      "year": 2026,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "The census plate is two poses that differ only in the frontal plane: feet together and arms down (c1) vs feet apart and arms overhead (c2). The top fault, jerky or uncontrolled landings (c6, c14), has no still sign, and landing with straight knees (c6) needs a side view; the plate draws the toes twisted outward (c12), which the front view shows.",
+    "equipment": "Floor line only.",
+    "frames": "Two-pose plate (census note): closed (feet together, arms at the sides) and open (feet apart, arms overhead); the airborne moment is not drawn.",
+    "start": "Standing tall, feet together, arms at the sides (c1); shoulders over hips (c5).",
+    "end": "Landed with the feet apart, hip-width (c2) to a little wider than shoulder-width (c4); arms overhead (c2); knees slightly bent (c5); toes forward (c12).",
+    "checkpoints": [
+      {
+        "label": "Soft knees",
+        "what": "Land with a slight bend in the knees, never locked.",
+        "claim": [
+          "c5",
+          "c6"
+        ]
+      },
+      {
+        "label": "Arms overhead",
+        "what": "Arms rise overhead as the feet jump apart.",
+        "claim": "c2"
+      },
+      {
+        "label": "Shoulders over hips",
+        "what": "Stay upright the whole time.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Toes twisted outward.",
+      "why": "LR-31 step 2 picks jerky or uncontrolled landings (NASM's list, with Experience Life's \"move with control\" to avoid injury, c6, c14) as the top fault; it has no still sign. The next faults by the same steps, landing with straight knees (c6) and slouching (c12, c14), need a side view, and moving too quickly is speed only. WebMD names twisting the toes outward with slouching (c12), and the front plate shows it.",
+      "claim": "c12",
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: jerky or uncontrolled landings (c6, c14). Step 1 finds no frequency word for a fault of this exercise. Set aside: NASM's \"Common Mistakes\" is a heading, not read onto one item (c6); WebMD's \"These tips will help you avoid significant jumping jack mistakes:\" is a list sentence and \"You can do all common jumping jacks variations at home\" is about variations; WebMD's \"Many people use low-impact jumping jacks to warm up their cardiovascular systems.\" is about use, not a fault; \"The hamstrings are usually quite susceptible to injuries during sports or workouts\" is about a muscle and all training; Experience Life's \"Explore one of its many variations\" is about variations and \"This move is a bit of a brain-teaser for some people\" is another variation (floating-arm jacks) and uses \"some\". Step 2: three faults on NASM's common-mistakes list, written for this exercise (c6), are tied to harm. Landing with straight knees: \"Landing with straight knees or minimal knee bend, which increases joint stress\" (NASM; 1 source). Jerky landings: \"Jerky or uncontrolled landings, which increases impact stress and injury risk\" (NASM), and Experience Life's \"To get the most out of the movement and avoid injury, maintain a strong, athletic posture and move with control.\" (c14), whose cue \"move with control\" corrects uncontrolled movement and avoids injury (D-SUP-PROTECT; 2 sources). Moving too quickly: \"Moving too quickly and sacrificing form for speed or total repetitions\" (NASM, which states no harm for it) is tied to harm by WebMD's \"Choose a favorable speed of repetitions throughout your workout session to prevent overuse injuries.\" (c15), and by Experience Life's \"move with control\" if that cue is also read onto speed (1 or 2 sources). All three are on the list and sourced directly, so the next tie-break, the one more sources tie to harm, picks the jerky landings (2) over the straight knees (1); if Experience Life's cue is read onto speed too, the jerky landings and moving too quickly tie at 2 and NASM's list, which names both, puts the jerky landings (item 2) before moving too quickly (item 3). Set aside at step 2: Experience Life's \"maintain a strong, athletic posture\" (c14) ties poor posture (WebMD's slouching, c12) to injury, but slouching is on no common-mistakes list, so it loses the first tie-break; NASM's \"Excessive upper body movement or momentum, which reduces lower body engagement\" and \"Performing continuous high-intensity jumping when fatigued, which compromises landing mechanics\" state no harm (lower engagement and worse mechanics are not LR-31 harm words); WebMD's \"Consulting a trainer will help you assume the correct position and prevent several knee injuries.\" names no fault; \"This neuromuscular warm-up reduces your risk of injuries\" is about warming up; \"Always choose a flat and even surface\" (c11) and \"Wear supportive athletic shoes\" are equipment and setting choices; \"If you experience pain, consult a physician or physical therapist for alternatives or modifications.\" names no fault. Experience Life's \"If you are pregnant, have a lower-body injury, or suffer from a chronic condition that affects the musculoskeletal system, steer clear of this move\" is about the person, not a fault. NASM's \"reinforces proper movement mechanics essential to long-term performance and injury prevention\" is about the programme. drawable: the jerky landings have no still sign (their only sign is the jerk, speed), so they are not drawable; handlingMistakes[0] is the jerky landings, and plate.mistake names the next fault by the same steps that the front view shows. Straight knees (step 2, NASM item 1) need a side view; moving too quickly (NASM item 3, WebMD) is speed only; slouching (step 2 by Experience Life's posture cue) is a forward rounding the front view cannot show. Step 3 then takes the first remaining fault on NASM's common-mistakes list: item 4, excessive upper-body movement or momentum, names motion with no still position, and item 5, jumping on when fatigued, is a training state, not a position; neither is drawable. NASM's list has no other fault. WebMD's \"Mistakes to Avoid\" list holds no drawable fault (warm-up, surface, shoes and pain advice, and a speed item), so the walk moves on to the faults the read sources tell the lifter to avoid: WebMD's step line \"Remember to maintain your posture and avoid slouching or twisting your toes outward.\" (c12) names the remaining faults the read sources tell the lifter to avoid: slouching (not drawable from the front, above) and the toes twisted outward, which the front view shows. Pick change in this pass: handlingMistakes[0] was landing with straight knees (the head's topFault); it is now the jerky landings. plate.mistake (toes twisted outward) is unchanged, and drawable is now false, because the top fault is not drawable (CARD-V2:36). Scan completion (fetcher scan 2026-10-22, every read source): step 1 also sets aside NASM's \"How many jumping jacks should be performed for cardiovascular benefits?\" (programming), Experience Life's \"For all their benefits and variations, jumping jacks are not for everyone.\" (about the person) and WebMD's \"Jumping jacks are a plyometric exercise that strengthens many of your muscles simultaneously.\" (muscles). Harm quotes set aside at step 2: NASM's \"Ensure adequate space around you for safe jumping and arm movement.\" (space, a setting); WebMD's \"These steps will help you do jumping jacks properly without any injuries:\" (a list sentence over the steps, not read onto one item) and \"As a result, you stay safe from several health issues.\" (benefits). Experience Life's variation step \"Jump your feet back in with control.\" is another version (leg-banded jacks), not counted. No pause, hold or squeeze word asks for a pause after the jump. Reading applied: D-SUP-PROTECT on Experience Life's \"move with control ... avoid injury\" (#296 ruling 6): top fault jerky or uncontrolled landings, not drawable; plate.mistake toes twisted outward."
+    },
+    "tells": [
+      {
+        "text": "Land softly, knees slightly bent",
+        "claim": "c5"
+      },
+      {
+        "text": "Shoulders stay stacked over your hips",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Continuous reps (c3) in 30 to 60 second intervals (c9); no source gives a cadence or phase seconds, so up, down and pause stay null (LR-33: a card with no tempo seconds keeps null). No quote asks for a pause.",
+      "claim": [
+        "c3",
+        "c9"
+      ]
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [],
+    "note": "Hand archetype none."
+  },
+  "setup": [
+    {
+      "step": "Stand with your feet together and your arms at your sides.",
+      "claim": "c1"
+    },
+    {
+      "step": "Jump your feet apart as your arms go overhead.",
+      "claim": "c2"
+    },
+    {
+      "step": "Land softly, knees slightly bent.",
+      "claim": "c5"
+    },
+    {
+      "step": "Jump back together as your arms come down, and go again.",
+      "claim": "c3"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Upright, shoulders over hips.",
+      "claim": "c5"
+    },
+    {
+      "point": "Knees slightly bent, never locked.",
+      "claim": "c5"
+    },
+    {
+      "point": "Toes pointing forward.",
+      "claim": "c12"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Jerky, uncontrolled landings.",
+      "fix": "Move with control and land softly.",
+      "claim": [
+        "c6",
+        "c14",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Landing with straight knees.",
+      "fix": "Keep a slight bend and land softly.",
+      "claim": [
+        "c6",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Rushing the reps.",
+      "fix": "Don't sacrifice form for speed.",
+      "claim": [
+        "c6",
+        "c15"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c7"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c7"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "side_delts",
+        "claim": "c13"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the thighs",
+        "means": "Your quads drive each jump.",
+        "fix": "",
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Glutes",
+        "means": "They power the jump.",
+        "fix": "",
+        "claim": "c7",
+        "redFlag": null
+      },
+      {
+        "where": "Shoulders",
+        "means": "They lift your arms overhead.",
+        "fix": "",
+        "claim": "c13",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Stiff-kneed landings add joint stress; jerky landings add impact stress.",
+      "claim": "c6"
+    },
+    {
+      "risk": "Hard surfaces like cement absorb less shock than rubber or grass.",
+      "claim": "c11"
+    }
+  ],
+  "redFlags": [],
+  "zooms": [
+    {
+      "key": "landing-knees",
+      "kind": "posture",
+      "right": "Soft landing, knees slightly bent.",
+      "wrong": "Knees locked straight on landing.",
+      "claim": [
+        "c5",
+        "c6"
+      ]
+    },
+    {
+      "key": "toes-forward",
+      "kind": "posture",
+      "right": "Toes pointed forward.",
+      "wrong": "Toes twisted outward.",
+      "claim": "c12"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "glutes"
+    ],
+    "remove": [],
+    "proposal": {
+      "primary": [
+        "quads",
+        "glutes"
+      ],
+      "secondary": [
+        "side_delts"
+      ]
+    },
+    "why": "Library: quads primary; side_delts secondary. NASM lists quads and glutes as the primary muscles (c7), so glutes are proposed as primary (ruling R-W0-4). For the shoulders, WebMD names the front and back deltoids and NASM \"shoulder stabilizers\" (c7, c13); no source names the side delts, but the arms rise overhead, which is the side delts' action, so side_delts is kept as a MECH/WEAK reading (c13). A proposal for the LIB data card."
+  },
+  "anchorSource": "nasm-jumping-jacks",
+  "anchorNote": "NASM Exercise Library jumping jacks page read in full; Experience Life (Life Time) and WebMD (DPT-reviewed) read in full. No PubMed technique study found.",
+  "loadProgression": {
+    "text": "Work in 30 to 60 second bursts; jump higher or faster to progress.",
+    "claims": [
+      "c9",
+      "c10"
+    ]
+  },
+  "gaps": [],
+  "unsourced": [
+    "Cadence.",
+    "Where the foot lands (ball vs whole foot).",
+    "Breathing."
+  ],
+  "notes": [
+    "Open-position width: NASM says hip-width (c2), Experience Life a little wider than shoulder-width (c4). The plate draws about shoulder-width, between the two; the text says 'apart' and does not give a width.",
+    "The 'Shoulders' zoom label row uses c13 (WEAK) because the deltoid naming is general.",
+    "Fix round 2026-10-02 (verify w0): A14 glutes proposed as primary, as NASM lists them.",
+    "LR-31/LR-33 pass 2026-10-22 (LB10): rankNote added (step 2). The top fault changed from landing with straight knees to jerky or uncontrolled landings (c6, c14), so handlingMistakes is reordered with a new [0]; plate.mistake (toes twisted outward, c12) is unchanged and drawable is now false (CARD-V2:36); the non-CARD-V2 field plate.mistake.topFault is removed (its content is in the rankNote and handlingMistakes[1]). The dropped handlingMistakes item \"Toes twist outward.\" / \"Keep your toes pointing forward.\" (c12) stays in posture[2], zooms[1] and plate.mistake. New claims c14 (Experience Life's control cue) and c15 (WebMD's speed line); c12 gains WebMD's \"toes pointed forward\" start line, which the posture and zoom words need. Shown-line fixes (CARD-V2:68): risks[1] \"concrete\" -> \"cement\" (c11's word); zooms[1].right \"Toes pointing forward on landing.\" -> \"Toes pointed forward.\"; feel.rows[1].means \"They push you up off the floor.\" -> \"They power the jump.\" (c7's words); handlingMistakes rushing fix \"Slow down and keep your form.\" -> \"Don't sacrifice form for speed.\" (c6's words). Tempo values unchanged (null); tempo.text names LR-33."
+  ]
+}

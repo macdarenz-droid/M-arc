@@ -1,0 +1,524 @@
+{
+  "id": "high_knees",
+  "libId": "lib_high_knees",
+  "name": "High Knees",
+  "family": "Conditioning and carries (run in place)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md 5.1: not in the A or B lists); census.json difficulty tier 3.",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Stand tall, feet about hip- to shoulder-width apart, arms at the sides, eyes ahead, chest open, core braced.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hk"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hk",
+          "text": "Stand tall with your feet about hip-to-shoulder-width apart and your arms at your sides.",
+          "where": "How to, step 1"
+        },
+        {
+          "source": "hl-hk",
+          "text": "Looking straight ahead, open your chest, and engage your core muscles.",
+          "where": "How to, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Bring one knee toward the chest, slightly above waist level, while the opposite hand pumps up; lower both quickly and switch sides.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hk",
+        "ace-cardio15"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hk",
+          "text": "Begin by bringing your right knee toward your chest, slightly above waist level. Simultaneously, move your left hand up in a pumping motion.",
+          "where": "How to, step 3"
+        },
+        {
+          "source": "hl-hk",
+          "text": "Quickly lower your right leg and left hand.",
+          "where": "How to, step 4"
+        },
+        {
+          "source": "ace-cardio15",
+          "text": "Run in place, pumping your arms and lifting your knees up toward your chest. 2 High Knees = 1 rep",
+          "where": "Set #1, cardio"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "The thigh comes up to at least 90 degrees of hip flexion, driven by the hip flexors.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "Explosively flex your right hip and knee, drawing your upper leg to at least 90 degrees of flexion using your hip flexors.",
+          "where": "How to, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Knees soft and weight toward the balls of the feet; spring from the ball of one foot to the other.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "Place your feet hip-width apart and brace your full body. Maintain soft knees and slowly shift towards the balls of your feet.",
+          "where": "How to, step 1"
+        },
+        {
+          "source": "bb-hk",
+          "text": "The goal is to spring between the ball of each foot, flexing your knees and hips on the working side to draw one knee as high as possible.",
+          "where": "How to, intro"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "If the knees go so high that the back arches, that is too far: brace the core.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "If you find your knees getting so high that you arch into your back, you’ve gone too far. Revisit your technique and make sure you have a solid core brace.",
+          "where": "Common mistakes: knees too high"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "If knee height slowly drops, take a short rest.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "If you’re noticing a slow drop off in your knee height, take a brief rest to recover so that the quality remains as high as your knees should go!",
+          "where": "Common mistakes: knees not high enough"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Some outward leg angle is OK; if rotation becomes very noticeable or grows over the set, often as the hip flexors tire, take a break.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "Depending on your limb length or body type, you may absolutely experience some rotation (where your legs angle slightly outward). That’s OK. But if it starts to get very noticeable or increase over the set, you might need to take a break.",
+          "where": "Common mistakes: rotation"
+        },
+        {
+          "source": "bb-hk",
+          "text": "A lot of rotation occurs once your hip flexors start to fatigue. Take a break, shake it out, and come back fresh.",
+          "where": "Common mistakes: rotation"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "To start: 30 seconds, then 30 seconds rest between sets.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hk"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hk",
+          "text": "To start, aim for 30 seconds, with a 30-second rest between each set.",
+          "where": "How to"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Easier: lift and lower the knee slowly as a march, which is lower impact; harder: knees higher, faster, longer or more sets.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hk"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hk",
+          "text": "For example, instead of driving your knee up to your chest in a running motion, slowly lift and lower it in a marching or walking-in-place movement. This turns the move into a low impact exercise, which is easier on the joints (4).",
+          "where": "Variations: decrease the intensity and impact"
+        },
+        {
+          "source": "hl-hk",
+          "text": "If you want to increase the intensity of the traditional high knee exercise, simply lift your knees higher, move at a faster pace, or increase the duration or number of sets.",
+          "where": "Variations: increase the intensity"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Wear supportive shoes and use a supportive gym floor or grass, especially with knee or ankle issues.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hk"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hk",
+          "text": "Before you get started, make sure you’re wearing a comfortable and supportive pair of shoes. Ideally, try to do this exercise on a supportive gym floor or grassy area, especially if you have any knee or ankle issues.",
+          "where": "How to, intro"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The hip flexors pull the thigh up; the quads steady the standing leg and help lift the working one; the glutes, hamstrings and calves also work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk",
+        "hl-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "The hip flexor complex (for example, the iliopsoas and rectus femoris) helps pull your thigh into the top of the high knee position.",
+          "where": "Muscles worked: hip flexors"
+        },
+        {
+          "source": "bb-hk",
+          "text": "They are essential for stabilizing your stance leg while helping to lift your working leg.",
+          "where": "Muscles worked: quadriceps"
+        },
+        {
+          "source": "hl-hk",
+          "text": "High knees activate your quadriceps, hamstrings, calves, glutes, and hip flexors, helping improve muscular endurance, balance, and coordination in these muscles.",
+          "where": "Benefits"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "A full-body brace through the trunk keeps balance during the quick leg switches.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hk",
+          "text": "Maintaining a full-body brace especially through your trunk keeps you from losing balance during rapid transitions between legs.",
+          "where": "Muscles worked: core"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "hl-hk",
+      "url": "https://www.healthline.com/health/fitness/high-knees-benefits",
+      "title": "It's Time to Revisit the High Knees Exercise You Learned in PE (Healthline; medically reviewed by a NASM-CPT)",
+      "kind": "coach",
+      "year": 2021,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "bb-hk",
+      "url": "https://barbend.com/high-knees/",
+      "title": "Learn How to Do High Knees to Step Up Your Leg & Core Game (BarBend)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "ace-cardio15",
+      "url": "https://www.acefitness.org/resources/everyone/blog/5430/rev-up-your-cardio-with-this-15-minute-drill/",
+      "title": "Rev up Your Cardio With This 15-Minute Drill (ACE blog)",
+      "kind": "coach",
+      "year": 2015,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Thigh height (c2, c3), the tall chest (c1) and the back arching as the knee goes too high (c5) are sagittal.",
+    "equipment": "Floor line only.",
+    "frames": "Cycle convention: one half-cycle, from standing on the balls of the feet to one thigh at about hip height with the opposite arm pumped forward; Trace follows the driving knee.",
+    "start": "Standing tall, feet about hip-width apart, knees soft, weight toward the balls of the feet (c1, c4); chest open, eyes ahead (c1).",
+    "end": "One thigh up to at least 90 degrees of hip flexion, knee slightly above waist level (c2, c3); opposite hand pumped up (c2); stance foot on its ball (c4); trunk still upright (c5).",
+    "checkpoints": [
+      {
+        "label": "Chest tall",
+        "what": "Stand tall, eyes ahead, core braced.",
+        "claim": "c1"
+      },
+      {
+        "label": "Thigh to hip",
+        "what": "Knee up to hip height or a little above, opposite arm pumping.",
+        "claim": [
+          "c2",
+          "c3"
+        ]
+      },
+      {
+        "label": "Balls of feet",
+        "what": "Soft knees, springing from the ball of one foot to the other.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Knee driven so high that the lower back arches and the trunk tips back.",
+      "why": "LR-31 step 3: the first fault on BarBend's common-mistakes list (Too High, Not High Enough, Rotation): if the knees get so high that you arch into your back, you’ve gone too far (c5). No read source ties a named fault to harm.",
+      "claim": "c5",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: the knees driven so high that the lower back arches (c5), the first fault on BarBend's common-mistakes list, the only list written for this exercise. Step 1 finds no frequency word for a fault: BarBend's \"High knees are a quick and easy movement to integrate into your training, but there are some key points that often go awry. It’s possible to get your knees too high, not high enough, or start to rotate more than you’d want.\" is the list's intro, a list sentence, and is not read onto one item (LR-31; R-LB4-2); its \"A lot of rotation occurs once your hip flexors start to fatigue.\" (c7) says how much rotation and when, not how often the fault happens (counted, rotation would be handlingMistakes[0], and the side view could not draw it, so plate.mistake would stay); \"Frequently Asked Questions\" is a heading, \"High knees are an exercise that work well with high frequency and repetition counts\" is programming, \"Most of the benefits of performing the high knees exercise period come from hitting that specific knee high\" is about benefits, \"There are many muscles at play\" is about muscles, \"not like your typical resistance training exercise, or even many calisthenics\" is about other exercises, and \"about six inches of height is great for many people\" is the low-box toe-tap, another exercise. Healthline's \"Most of us can recall grinding out a round of high knees in elementary or middle school PE class.\" and \"there’s a good chance we missed learning the steps\" name no fault; \"on most calorie charts\", \"fits into most workouts\" and \"which is often referred to as high intensity circuit training\" are about the exercise and training. Step 2 finds no named fault tied to harm: BarBend's \"If you’re not controlled, you might find yourself leaving your range of motion and starting to hyperextend certain positions.\" and \"you’ve gone too far\" (c5) state no LR-31 harm word; its rotation and knee-height items (c6, c7) state none. Healthline's \"you can count on using your transverse abdominis and obliques to properly execute the move and keep your lower back safe\" is about muscle activity, not a named fault (counted as the core brace that corrects the arch, it picks the same fault at step 2); its \"This turns the move into a low impact exercise, which is easier on the joints\" (c9) is about the marching variation; \"If you have any pain in your ankles, knees, or hips, it’s a good idea to talk with your healthcare provider\" names no fault; BarBend's \"without banging around on your joints\" is a benefit. ACE's drill (c2) gives no fault. Step 3: BarBend's \"Common High Knee Mistakes\" lists Too High, Not High Enough, Rotation, in that order; the first is the knees so high that you arch into your back (c5). The side view shows the arched lower back and the trunk tipping back, so drawable is true. Pick unchanged. Scan completion (fetcher scan 2026-10-22, every read source): step 1 also sets aside Healthline's \"the lower-body muscles most active when performing high knees\" (muscles); BarBend's page-top \"Common Mistakes\" link (a heading) and \"they typically don’t require set-up, tear-down, or equipment\" (equipment); ACE's \"most of us are juggling jobs, families and extracurricular activities\" and \"For many people, lack of time is the single biggest obstacle to fitness.\" (all training). Harm quotes set aside at step 2: Healthline's \"They can help you decide if high knees are right for you and provide guidance on modifying the move to keep you safe.\" (the person); ACE's \"the benefits of exercise and movement definitely outweigh the health risks of not engaging in exercise at all\", \"reduce your stress\" and \"stressed out\" (benefits of exercise). Pause words: BarBend's \"try intentionally pausing with one leg extended and one leg flexed\" and \"holding that position for a full second\" are the easier and paused variations (tempo.text); its sprinter-pose \"Hold this position for a brief moment\" and the jump lunge's \"pause in the down position\" are other exercises; ACE's \"hold this position (deadlift)\" is another exercise. Reading applied: LR-31 literal; the list intro is a list sentence and \"A lot of rotation\" is an amount, so step 3 picks Too High (knees so high the back arches), drawable true."
+    },
+    "tells": [
+      {
+        "text": "Thigh reaches about hip height",
+        "claim": "c3"
+      },
+      {
+        "text": "Chest stays tall",
+        "claim": "c1"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "text": "Cycle: quick, springy switches (c2, c4); 30 seconds on, 30 seconds rest to start (c8). No source gives a cadence or phase seconds, so up, down and pause stay null (LR-33: a card with no tempo seconds keeps null). BarBend's easier modification (\"try intentionally pausing with one leg extended and one leg flexed\") and its paused high-knee variation (\"holding that position for a full second\") pause at the top of the knee drive, but they are variations, not the drawn move, so no pause is written.",
+      "claim": [
+        "c2",
+        "c8"
+      ]
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [],
+    "note": "Hand archetype none: the arms pump freely (c2)."
+  },
+  "setup": [
+    {
+      "step": "Stand tall, feet about hip-width apart, arms at your sides.",
+      "claim": [
+        "c1",
+        "c4"
+      ]
+    },
+    {
+      "step": "Brace your core and shift onto the balls of your feet, knees soft.",
+      "claim": [
+        "c1",
+        "c4"
+      ]
+    },
+    {
+      "step": "Drive one knee up to hip height or a little above as the opposite arm pumps up.",
+      "claim": [
+        "c2",
+        "c3"
+      ]
+    },
+    {
+      "step": "Lower it quickly and switch legs.",
+      "claim": "c2"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Chest tall, eyes ahead.",
+      "claim": "c1"
+    },
+    {
+      "point": "Thigh up to about hip height.",
+      "claim": "c3"
+    },
+    {
+      "point": "Lower back doesn't arch.",
+      "claim": "c5"
+    },
+    {
+      "point": "On the balls of your feet.",
+      "claim": "c4"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Knees so high your back arches.",
+      "fix": "Brace your core and keep the knee at hip height.",
+      "claim": [
+        "c5",
+        "c3"
+      ]
+    },
+    {
+      "mistake": "Knee height slowly drops.",
+      "fix": "Take a short rest.",
+      "claim": "c6"
+    },
+    {
+      "mistake": "Legs turn out more and more as you tire.",
+      "fix": "Take a break and come back fresh.",
+      "claim": "c7"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "hip_flexors",
+        "claim": "c11"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "quads",
+        "claim": "c11"
+      },
+      {
+        "muscleId": "core",
+        "claim": "c12"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Front of the hips",
+        "means": "Your hip flexors pull each thigh up.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Front of the thighs",
+        "means": "They steady the standing leg and help lift the other.",
+        "fix": "",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Trunk",
+        "means": "Your core keeps you balanced as the legs switch.",
+        "fix": "",
+        "claim": "c12",
+        "redFlag": null
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Driving the knees too high arches the lower back.",
+      "claim": "c5"
+    },
+    {
+      "risk": "Wear supportive shoes. Knee or ankle issues? Ideally use a supportive gym floor or grass.",
+      "claim": "c10"
+    }
+  ],
+  "redFlags": [],
+  "zooms": [
+    {
+      "key": "knee-height",
+      "kind": "posture",
+      "right": "Thigh at about hip height, chest tall.",
+      "wrong": "Knee driven higher, lower back arched.",
+      "claim": [
+        "c3",
+        "c5"
+      ]
+    },
+    {
+      "key": "ball-of-foot",
+      "kind": "posture",
+      "right": "Standing foot on its ball, knee soft.",
+      "wrong": null,
+      "claim": "c4"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: hip_flexors primary; quads secondary. BarBend and Healthline name the hip flexors lifting the thigh and the quads steadying the stance leg (c11); the core is named as the balance brace (c12). Matches; no change."
+  },
+  "anchorSource": "hl-hk",
+  "anchorNote": "Healthline's high knees how-to (medically reviewed by a NASM-CPT) and BarBend's high knees guide read in full. No ACE or NASM exercise-library page exists for high knees (NASM URL 404, 2026-10-02); ACE's drill gives a one-line description. No PubMed technique study found.",
+  "loadProgression": {
+    "text": "Start at 30 seconds on, 30 seconds off; then knees higher, faster or longer.",
+    "claims": [
+      "c8",
+      "c9"
+    ]
+  },
+  "gaps": [],
+  "unsourced": [
+    "Cadence (steps per second).",
+    "Arm angle at the elbow.",
+    "Breathing."
+  ],
+  "notes": [
+    "Healthline puts the knee 'slightly above waist level' (c2); BarBend says 'at least 90 degrees of flexion' (c3). The plate draws the thigh about horizontal, which meets both.",
+    "Writer fix 2026-10-02: risk 2 \"forgiving floor\" changed to \"supportive floor\" to match c10; quote re-read in hl-hk.",
+    "Fix round 2026-10-02 (verify w0): A15 c7 gains the \"some rotation is OK\" sentence and the mistake says the turn-out grows; A16 risk reworded to people with knee or ankle issues; A17 knee height is \"hip height or a little above\".",
+    "LR-31/LR-33 pass 2026-10-22 (LB10): rankNote rewritten under LR-31 (step 3), pick and drawable unchanged; plate.mistake.why names the step; tempo.text names LR-33 and BarBend's paused variations (values unchanged, null). Quote characters: c5, c6, c7 and c10 now carry ’ as the live pages print it (R-LB4-5), in the card and the quotes file. Shown-line fixes (CARD-V2:68): feel.rows[2].where \"Belly\" -> \"Trunk\" (c12's \"through your trunk\"); feel.rows[0].means \"lift\" -> \"pull ... up\" (c11's \"pull your thigh\"); handlingMistakes[1] \"Knee height drops as you tire.\" -> \"Knee height slowly drops.\" (c6's \"slow drop off\"). core stays in feel.secondary for LIB-MUSCLE (LR-35; brief). ACE's drill page (ace-cardio15, c2) gave HTTP 403 to the writer's curl on 2026-10-22 but answered 200 to the fetcher on retry the same day; its quote is verbatim. High knees is a child of jumping_jacks in content.md Appendix A but stays a full card: parent null, no inherit entries, every line on its own claims."
+  ]
+}
