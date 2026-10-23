@@ -679,6 +679,189 @@
     "unit": "point",
     "basis": "plate.frames 'Trace follows the stepping hand' (c4's right arm, the near side)"
    }
+  },
+  "high_knees": {
+   "FOOT_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "claim: c4 'Place your feet hip-width apart' with reverse_lunge.mjs:48 @ dcac4a38 (FOOT_X 0.10, feet hip width); every foot contact 0.1 cm"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c4 'Maintain soft knees'"
+   },
+   "HEEL_UP": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "stated reason: c4 'spring between the ball of each foot': the largest whole-degree heel-up whose ball stays within the 1 cm contact limit (15 deg 0.94 cm, 16 deg 1.04 cm)"
+   },
+   "ELBOW": {
+    "value": 4,
+    "unit": "deg",
+    "basis": "convention: reverse_lunge.mjs:55 @ dcac4a38 (ELBOW 4, arms hanging), for c1 'your arms at your sides'"
+   },
+   "ARM_ELBOW": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "stated reason: c2 'move your left hand up in a pumping motion', ACE c2 'pumping your arms': a running arm carriage, the elbow at a right angle [proposed]"
+   },
+   "M_TILT": {
+    "value": -14,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (tilt -14), for c5 'so high that you arch into your back'"
+   },
+   "M_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (trunk -12), for c5 'so high that you arch into your back'"
+   },
+   "START_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c4 'slowly shift towards the balls of your feet': the start's centre of mass over the balls"
+   },
+   "END_HIP": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c2 'slightly above waist level': the knee joint at the navel's height, the kneecap's top above it; c3 'at least 90 degrees' held by a check"
+   },
+   "ARM_FLEX": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "stated reason: c2 'move your left hand up': the left grip at the shoulder's height, the right upper arm extended as far (ACE c2 'pumping your arms') [proposed]"
+   },
+   "END_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c4 'spring between the ball of each foot': the end's centre of mass over the stance ball"
+   },
+   "M_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c4: the Mistake's centre of mass over the stance ball"
+   },
+   "trace": {
+    "value": "knee.r",
+    "unit": "point",
+    "basis": "claim: plate.frames 'Trace follows the driving knee' (c2 the right knee)"
+   }
+  },
+  "jumping_jacks": {
+   "FOOT_X_IN": {
+    "value": 0.055,
+    "unit": "m",
+    "basis": "claim: c1 'Stand with feet together': the narrowest stance whose leg solids pass no more than 1 cm into each other (shanks -0.6 cm, feet 0.9 cm apart; 0.05 gives -1.6 cm)"
+   },
+   "FOOT_X_OUT": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "claim: c2 'land with feet hip-width apart' to c4 'a little wider than shoulder width': the widest flat, toes-forward stance whose foot contacts stay within 0.5 cm (0.15: 0.5 cm, 0.16: 0.6 cm)"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c5 'Keep a slight bend in your knees'"
+   },
+   "ARM_UP": {
+    "value": 180,
+    "unit": "deg",
+    "basis": "stated reason: c2 'raising your arms overhead': the straight arms vertical over the shoulder joints [proposed]"
+   },
+   "M_ROT": {
+    "value": 30,
+    "unit": "deg",
+    "basis": "stated reason: c12 'twisting your toes outward' against c12 'toes pointed forward': 30 deg out past forward [proposed]"
+   },
+   "START_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "stated reason: c1 a quiet stance: the centre of mass over mid-foot"
+   },
+   "END_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "stated reason: c2 the landing on both feet: the centre of mass over mid-foot"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "claim: c2 'raising your arms overhead' (the hands rising overhead)"
+   }
+  },
+  "battle_ropes": {
+   "FOOT_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "claim: c1 'Start with your feet hip-width apart' with reverse_lunge.mjs:48 @ dcac4a38 (FOOT_X 0.10, feet hip width); foot contacts 0.1 cm"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 ('knees 15 deg short of lockout'; D-LIB16-LOCK's rule), for c2 'Bend your knees slightly' and c4 'knees slightly bent'"
+   },
+   "LEAN": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: lat_pulldown.mjs:146 (the 8's slight lean, expect 15, for :148 'Lean back slightly'), for c4 'a slight forward lean of the torso' [proposed]"
+   },
+   "SCAP_DOWN": {
+    "value": -3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36 (scap elev -3, pro -3, depressed and retracted), for c6 'keep your shoulder blades down, gently sliding them down and back'"
+   },
+   "M_ELEV": {
+    "value": 3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36's -3 reversed, for c6 'let your shoulder blades elevate or hunch forward'"
+   },
+   "M_PRO": {
+    "value": 3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36's -3 reversed, for c6 'hunch forward'"
+   },
+   "WAVE_LEN": {
+    "value": 1.0,
+    "unit": "m",
+    "basis": "stated reason: c3 ACE 'Waves - alternating, asymmetrical pattern ... toward the anchor': about one wave between the hands and the plate edge [proposed]"
+   },
+   "ROOT_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c13 'feet to be planted on the floor', c1: the centre of mass over mid-foot"
+   },
+   "PHI_UP": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c5 'until the battle rope handles were approximately shoulder height': the grip at the shoulder joint's height"
+   },
+   "PHI_DOWN": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c5 'until the handles were even with the waist': the grip at the navel's height"
+   },
+   "EDGE_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: plate.equipment 'two rope ends running forward to an anchor off-plate': the plate's right edge, (SIZE - x0) / px per m"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "claim: plate.frames 'Trace follows the near hand'"
+   }
+  },
+  "battleRope": {
+   "ropeT": {
+    "value": 0.038,
+    "unit": "m",
+    "basis": "claim: c8 '1.5 inches (3.8 cm) thick'"
+   },
+   "n": {
+    "value": 64,
+    "unit": "samples",
+    "basis": "stated reason: drawing resolution, 64 segments over at most 1.3 m (under 2.1 cm each)"
+   }
   }
  }
 }

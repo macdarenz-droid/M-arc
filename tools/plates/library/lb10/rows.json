@@ -11,6 +11,24 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
+  },
+  "lib_high_knees": {
+   "src": "library/specs/high_knees.mjs",
+   "slug": "high-knees",
+   "prefix": "high-knees",
+   "chromeId": "high-knees",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_battle_ropes": {
+   "src": "library/specs/battle_ropes.mjs",
+   "slug": "battle-ropes",
+   "prefix": "battle-ropes",
+   "chromeId": "battle-ropes",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
   }
  }
 }

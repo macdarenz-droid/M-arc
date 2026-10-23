@@ -264,10 +264,10 @@ const SPECS_DIR = 'tools/plates/library/specs';
 const ROWS = 'tools/plates/library/lb10/rows.json';
 const FRONT = ['jumping_jacks', 'jump_rope'];
 // DESIGN.md section 15: the held ids (D-LIB22-SECS's NOSECS ids; D-LIB8-shrug holds, measured).
-const HELD = [...NOSECS, 'jump_rope', 'bear_crawl'];
+const HELD = [...NOSECS, 'jump_rope', 'bear_crawl', 'jumping_jacks'];
 // The ids drawn on this branch: the slice, then the bulk as each plate is integrated (BULK GO, #305 6356763967).
-const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl'];
-const COMPOSERS = ['kettlebell', 'medBall', 'sled', 'jumpRope'];
+const DRAWN = ['kettlebell_swing', 'medicine_ball_slam', 'sled_push', 'jump_rope', 'sled_pull', 'farmer_s_carry', 'burpee', 'bear_crawl', 'high_knees', 'jumping_jacks', 'battle_ropes'];
+const COMPOSERS = ['kettlebell', 'medBall', 'sled', 'jumpRope', 'battleRope'];
 const yieldNow = () => new Promise<void>(r => setImmediate(r));
 let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, markup: any;
 const M: Record<string, any> = {}, S: Record<string, any> = {}, EQ: Record<string, any> = {};
@@ -820,7 +820,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H (D-LIB22-B1)', () => {
-    expect(want()).toEqual(['lib_kettlebell_swing']);
+    expect(want()).toEqual(['lib_high_knees', 'lib_battle_ropes', 'lib_kettlebell_swing']);
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('mountain_climbers (pA) and wall_ball (no spec before its resume) are in no lb10/ file as a row', () => {
@@ -846,7 +846,7 @@ describe('LIB-22 A5: lb10/rows.json holds exactly the drawn, non-held LB10 H ids
     const w = want(), j = { batch: 'LB10', rows: Object.fromEntries(w.map(id => [id, row])) };
     const text = JSON.stringify(j, null, 1), add = (id: string) => JSON.stringify({ ...j, rows: { ...j.rows, [id]: row } }, null, 1);
     expect(a5(text, w)).toEqual([]);
-    expect(a5(JSON.stringify({ ...j, rows: {} }, null, 1), w)).toEqual([`${w[0]} x0`]);
+    expect(a5(JSON.stringify({ ...j, rows: {} }, null, 1), w)).toEqual(w.map(x => `${x} x0`));
     expect(a5(text.replace(`  "${w[0]}": {`, `  "${w[0]}": ${JSON.stringify(row)},\n  "${w[0]}": {`), w)).toEqual([`${w[0]} x2`]);
     expect(a5(add('lib_jump_rope'), w), 'a held id').toEqual(['extra lib_jump_rope']);
     expect(a5(add('lib_farmer_s_carry'), w)).toEqual(['extra lib_farmer_s_carry']);
@@ -923,7 +923,7 @@ console.log(JSON.stringify({ ids: b.drawnIds(), a: sha(a.html), c: sha(c.html) }
   };
   it('two builds of the LB10 rows are byte-identical', async () => {
     const r = await twoBuilds();
-    expect(r.ids).toEqual(drawn().map(i => `lib_${i}`));
+    expect([...r.ids].sort()).toEqual(drawn().map(i => `lib_${i}`).sort());
     expect(r.a).toBe(r.c);
     console.log(`LIB-22 A10: plates page sha256 ${r.a}`);
   });
@@ -1352,7 +1352,8 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   /** D-LIB22-DRAW, D-LIB16-LOCK: a "slightly bent" knee in a side-view plate bends in the view's plane: the knee sits
    *  off the hip-ankle line by at least 90 % of its sized bend's offset. (The front-view knees follow D-LIB22-FRONT.) */
   const SOFT: Record<string, [string, string, number][]> = { kettlebell_swing: [['start', 'r', 15], ['start', 'l', 15]],
-    farmer_s_carry: [['start', 'r', 15], ['start', 'l', 15], ['end', 'l', 15]], burpee: [['end', 'r', 15], ['end', 'l', 15]], sled_pull: [['end', 'r', 15]] };
+    farmer_s_carry: [['start', 'r', 15], ['start', 'l', 15], ['end', 'l', 15]], burpee: [['end', 'r', 15], ['end', 'l', 15]], sled_pull: [['end', 'r', 15]],
+    high_knees: [['start', 'l', 15], ['start', 'r', 15], ['end', 'l', 15]], battle_ropes: [['start', 'l', 15], ['start', 'r', 15], ['end', 'l', 15], ['end', 'r', 15]] };
   const offsetFor = (deg: number) => { const a = 0.245 * 1.75, b = 0.246 * 1.75, c = Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(deg * Math.PI / 180)); return (a * b * Math.sin(deg * Math.PI / 180)) / c; };
   const softProblems = (spec: any) => (SOFT[spec.id] ?? []).flatMap(([pose, s, deg]) => {
     const l = lmOf(spec, pose), h = l[`hip.${s}`], k = l[`knee.${s}`], an = l[`ankle.${s}`];
@@ -1384,7 +1385,7 @@ describe('LIB-22 A17: sizes and trace points are fixed in lb10/sizes.json and ne
     }
     return [...out, ...rowProblems(table)];
   };
-  const CONST: Record<string, string> = { kettlebell: 'KETTLEBELL', medBall: 'MED_BALL', sled: 'SLED', jumpRope: 'JUMP_ROPE' };
+  const CONST: Record<string, string> = { kettlebell: 'KETTLEBELL', medBall: 'MED_BALL', sled: 'SLED', jumpRope: 'JUMP_ROPE', battleRope: 'BATTLE_ROPE' };
   it('each drawn spec\'s SIZES and trace point equal its sizes.json row; each composer\'s constants equal theirs; every basis is not PQ-H3', () => {
     for (const id of specsDrawn()) expect(sizeProblems(M[id], sizes.ids[id]), id).toEqual([]);
     for (const [c, k] of Object.entries(CONST)) expect(sizeProblems({ SIZES: { ...EQ[c][k] } }, sizes.ids[c]), c).toEqual([]);

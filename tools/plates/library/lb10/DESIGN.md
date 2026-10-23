@@ -479,7 +479,13 @@ kettlebell_swing has a strip from the start; the other three render only from `l
 | wall_ball | D-LIB22-WALL; D-LIB22-SECS | `wall` is on #289 (open); tempo null | #289 on main, then 'LIB-22 resume' (drawn); the strip card for its row |
 | any cycle row whose constant is not ruled | D-LIB22-SECS | | the ruling or the strip card |
 | jump_rope | D-LIB8-shrug (D-LIB22-SIZE, S2) | the card-true hop (1.5 in, c9) gives a Trace of **5.3 px** < 22.11 px (measured); its Mistake passes (16.4 px) | LIB-ZOOM (#279) on main, extended to the motion |
-| burpee, battle_ropes, bear_crawl [est] | D-LIB8-shrug (S2) | Mistake or Trace likely under the minimum (section 13) | LIB-ZOOM |
+| burpee | D-LIB8-shrug (S2); also NOSECS | measured: Mistake deviation **7.1 px** < 11.39 (c11's stiff landing against KNEE_SOFT 15°); Trace 149.7 px passes | LIB-ZOOM |
+| bear_crawl | D-LIB8-shrug (S2) | measured: Trace **10 px** < 22.11 (the 5.08 cm step, all inside the trims); Mistake 32.7 px passes | LIB-ZOOM |
+| sled_pull | D-LIB8-shrug (S2); also NOSECS | measured: Trace **10.1 px** < 22.11 (the heel-to-toe "short" step, c3); Mistake 23.3 px passes | LIB-ZOOM |
+| jumping_jacks | D-LIB8-shrug (S2) | measured: Mistake deviation **9.6 px** < 11.39 (c12's toes turned out in the front view; S1/S4 asked); Trace 242.0 px passes | LIB-ZOOM |
+
+battle_ropes and high_knees were expected held [est] but measure above both limits (battle_ropes 12.4 / 23.8 px,
+high_knees 13.6 / 100.4 px), so they are on rows.json.
 
 Held rows are in no rows file; their specs, tests and card keys stay. Each is confirmed or cleared by measurement.
 
@@ -594,3 +600,25 @@ Segments as capsules of radius RADII × H (body.mjs:28), the foot a heel–toe c
   the feet (c3). 3D clearances: end foot +1.1, shank +0.8 cm; Mistake foot +1.2, shank +4.3 cm (centred: shank −1.6,
   the mutation). Re-measured: H3 deviation 83.7 px, Trace 314.7 px; balance start +0.092 m (ball 0.061 to toe 0.124),
   end +0.017, Mistake −0.022; report.mjs ok:true.
+
+## 20. Bulk (BULK GO, #305 6356763967)
+
+Drawn on 'LB10 BULK GO'. report.mjs gives ok:true on all seven (dark, paper, Mistake), and every lb10 test passes on
+them. Each sizes.json row carries its basis. Stances follow D-LIB22-STANCE amended (the widest width the plant holds
+within 0.5 cm).
+
+| id | view | status | H3 deviation / Trace (px) | stance | notes |
+|---|---|---|---|---|---|
+| sled_pull | side | held: NOSECS; S2 Trace | 23.3 / **10.1** | 0.145 | drag (Q9): the sled shift equals the hip shift (−0.1218 m); rope run 0.8223 m in every pose (a static sled: +7.7 cm); dashed start sled and rope |
+| farmer_s_carry | side | held: NOSECS | 51.2 / 28.1 | 0.0875 (hip-width, c3) | 18.75 kg per hand in the balance (c18); dumbbells clear the thighs ≥0.56 cm |
+| burpee | side | held: NOSECS; S2 Mistake | **7.1** / 149.7 | 0.15 | pose map: spec start = the plank; ghost = the squat with the hands down |
+| bear_crawl | side | held: S2 Trace | 32.7 / **10** (all inside the trims) | — | floor camera 197.49 px/m (F1 expected) |
+| high_knees | side | on rows.json | 13.6 / 100.4 | 0.10 (hip-width, c4) | QA: all 10 hard checks pass, F5 only |
+| jumping_jacks | front | held: S2 Mistake | **9.6** / 242.0 | FOOT_X_IN 0.055 (0.05: shanks overlap 1.6 cm) | D-LIB22-FRONT |
+| battle_ropes | side | on rows.json | 12.0 / 23.1 | 0.10 (hip-width, c1) | camera 142 px/m (at 146.29 the figure's coverage 0.552 > F2's 0.549); hunch labelled on the Mistake's upper back (PQ-H4); start ropes dashed (they lie along the end's far rope) |
+
+Open points (posted on #305 for rulings) are listed in the bulk post: unsourced sizes (battle_ropes WAVE_LEN,
+jumping_jacks ARM_UP, farmer_s_carry M_STRIDE and VIA_LIFT, high_knees' arm pose), bear_crawl's c2-against-c3 conflict
+and its Mistake size, burpee's squat-ghost trunk in the thighs (3D), farmer_s_carry's second tell, jumping_jacks'
+toes-out fault in the front view (S1/S4), and the sled_pull reading questions (quarter-squat depth, the "short" step,
+the coil).

@@ -67,7 +67,7 @@ export async function cardShots({ ids = drawnIds(), theme = 'paper', mode = 'mis
 /** The ids drawn but held off rows.json (DESIGN.md held table): D-LIB22-SECS's NOSECS ids, then any held under
  *  D-LIB22-SIZE (D-LIB8-shrug). Each with its census view. */
 export const HELD = { sled_push: 'side', sled_pull: 'side', farmer_s_carry: 'side', burpee: 'side', medicine_ball_slam: 'side', wall_ball: 'side',
-  jump_rope: 'front', bear_crawl: 'side', battle_ropes: 'side' };
+  jump_rope: 'front', bear_crawl: 'side', jumping_jacks: 'front' };
 const slugOf = id => id.replace(/_/g, '-');
 /** The held rows, in memory only (never written to rows.json or any file under the repo), for the held ids whose spec exists. */
 export function heldData(root = ROOT, only = null) {
