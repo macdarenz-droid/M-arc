@@ -1,0 +1,32 @@
+{
+ "note": "sha256 per LB8 H card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised canonically as JSON.stringify(card, null, 2) + \"\\n\"; and sha256 of each quotes file, a byte copy from the same head.",
+ "researchHead": "596dbe0748f11d13b431ee11d38d1742771925f1",
+ "cards": {
+  "hack_squat": "ca7ff7ff24aa9222edc5a3c06a0adde3e5cfeac6e718313f80470328898b96ea",
+  "pendulum_squat": "2480dd11094cbc5a82e8690a52051edea85360cac01b2c5228b64de3e8387000",
+  "leg_extension": "07bd06566d03bd8ab876587a78cdd38eb02bd8c7654e31c7a9e1cf997043b711",
+  "lying_leg_curl": "3e803355f7a95ae9726afe29a9781e6bc42926fc553ef5a6665eeeb619415891",
+  "standing_leg_curl": "496f9434bc48e7445532259698a9ec126fa45d81555d6bc7a940ae0dd2cc0ba8",
+  "seated_calf_raise": "e4b807bd3e4714dadb9c4a2d035a5a6d504a6fd54a33490e1ddf258bcdca4029",
+  "standing_calf_raise": "f13868e9746f7e2cb200334e6ebefafbbbb00cf159ed0b4113099aaf153188b2",
+  "bodyweight_calf_raise": "02055d4f9c6594d5f74792d0775bf0602323856d7d4bccbca428e5881be2dab5",
+  "hip_thrust": "4d766ad50ceb607377b292b848d88f5c59e2730f74ddcdd23440be98f65dc045",
+  "glute_bridge": "797288337bc6938c4c594c14e4d429f5f475daa68c8c258e33b64cb84a85c68e",
+  "cable_kickback": "637499cc45b95b32ad787a45f6d043ea6a2b6bcf12c91432c2628d6eedfd4d83",
+  "resisted_hip_flexion": "463189524f04eb57ef651c26441cf8cdf1925eb8052abd62b52123ea4a5ea432"
+ },
+ "quotes": {
+  "hack_squat": "0ad36d7689e0f07ac018e46d9a8ec4ca92ffa6cbc7ba2ce5f77f1f7e9f98e884",
+  "pendulum_squat": "ada6d43b3085f39c57b3a995885b1fa6e1333be793a8971d8cee96564e4c81f0",
+  "leg_extension": "c88e363a2bee9b6443e6eb8e7a4c5255141d71a454ccbad8143d800ad48274d0",
+  "lying_leg_curl": "2fe97f999b19fc8fa9e465b216bf01a4f10c9c9cd060c5a86f2f13eebb62ab27",
+  "standing_leg_curl": "4158b3690a52774d5522a5f3fcd23cbd2ee1d6c804902e49f7a2fbbab7b086f3",
+  "seated_calf_raise": "7a22c523d284b5f811c99457593362a95a70e3750ab0ae5a01db2ebee934ceff",
+  "standing_calf_raise": "3dbfba79a80ccbb3477974d0a30bb1bae40a9862b01064ccac9a78b55de05d95",
+  "bodyweight_calf_raise": "5782f05350560d7f2b5a2d208f8dbce4f701ca2e283f4002a28f65ceff8fc76d",
+  "hip_thrust": "54ff745430f65f142dbe1e9dbee5580350f28d3d8835e292bf7e3fcc498577a2",
+  "glute_bridge": "59138b48252e0f158b77c419db2c620df1bdfe767c28040b0ef24c68047ff212",
+  "cable_kickback": "8207b1f9b63b86e8a10d9d7ced11d0f4cacdcfef9f9b4cd0cb9de4950b7a288c",
+  "resisted_hip_flexion": "f5a618895d3dc35ecda67af5b2af5c81384714dc7491d657f9909fee4f9d1aca"
+ }
+}

@@ -1,0 +1,511 @@
+{
+  "id": "hip_thrust",
+  "checked": "2026-10-22",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sl-ht",
+      "text": "Sit on the floor with your back against a sturdy bench.",
+      "status": "verbatim",
+      "closest": "Sit on the floor with your back against a sturdy bench.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "sl-ht",
+      "text": "Roll the barbell up over your thighs until it is placed over your hips.",
+      "status": "verbatim",
+      "closest": "Roll the barbell up over your thighs until it is placed over your hips.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "sl-ht",
+      "text": "Place your feet on the floor, about shoulder-width apart, with bent knees.",
+      "status": "verbatim",
+      "closest": "Place your feet on the floor, about shoulder-width apart, with bent knees.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "sl-ht",
+      "text": "Place your hands on the bar to stabilize it.",
+      "status": "verbatim",
+      "closest": "Place your hands on the bar to stabilize it.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "bc-ht",
+      "text": "For the regular hip thrust, set up in a position with the bench lined up at around the bottom of the shoulder blades.",
+      "status": "verbatim",
+      "closest": "For the regular hip thrust, set up in a position with the bench lined up at around the bottom of the shoulder blades.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "pg-bht",
+      "text": "Choose a box or bench height that allows the bottom of your shoulder blades to rest on the edge and place your feet hip width apart at a distance that allows the shins to be vertical at the top of the hip thrust.",
+      "status": "verbatim",
+      "closest": "Choose a box or bench height that allows the bottom of your shoulder blades to rest on the edge and place your feet hip width apart at a distance that allows the shins to be vertical at the top of the hip thrust.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "hl-ht",
+      "text": "The bench should hit just below your shoulder blades, and your feet should be about shoulder-width apart.",
+      "status": "verbatim",
+      "closest": "The bench should hit just below your shoulder blades, and your feet should be about shoulder-width apart.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "bc-ht",
+      "text": "The bar should be positioned in the crease of the hip with the hands holding the bar into position throughout the movement so the bar does not move forwards or backwards.",
+      "status": "verbatim",
+      "closest": "The bar should be positioned in the crease of the hip with the hands holding the bar into position throughout the movement so the bar does not move forwards or backwards.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "bc-ht",
+      "text": "Do not let the bar slide forward or backward during the hip thrust – keep it centered over the hips!",
+      "status": "verbatim",
+      "closest": "Do not let the bar slide forward or backward during the hip thrust – keep it centered over the hips!",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "hl-ht",
+      "text": "the barbell should be placed in the crease of the hips with hands on either side to stabilize it throughout the movement.",
+      "status": "verbatim",
+      "closest": "the barbell should be placed in the crease of the hips with hands on either side to stabilize it throughout the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "sl-ht",
+      "text": "We recommend placing something between the bar and your pelvis to soften the pressure from the bar, like a folded yoga mat, a towel, or a barbell pad.",
+      "status": "verbatim",
+      "closest": "We recommend placing something between the bar and your pelvis to soften the pressure from the bar, like a folded yoga mat, a towel, or a barbell pad.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "bb-ht",
+      "text": "You can add a pad or mat in the hip crease to minimize any painful pressing of the barbell into the pelvis/hip flexors.",
+      "status": "verbatim",
+      "closest": "You can add a pad or mat in the hip crease to minimize any painful pressing of the barbell into the pelvis/hip flexors.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "pg-ht",
+      "text": "Use a barbell pad or towel for cushioning the hips, particularly if using a heavy load",
+      "status": "verbatim",
+      "closest": "Use a barbell pad or towel for cushioning the hips, particularly if using a heavy load",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bc-ht",
+      "text": "Heavy hip thrusting is brutal on the hips. While some lifters can tolerate hip thrusting without any padding, most will find the lift excruciatingly painful if padding isn’t used.",
+      "status": "verbatim",
+      "closest": "Heavy hip thrusting is brutal on the hips. While some lifters can tolerate hip thrusting without any padding, most will find the lift excruciatingly painful if padding isn’t used.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "hl-ht",
+      "text": "When you start to add significant weight to your hip thrust, you may notice pain where the bar lies. Consider using specialized pads or rolling up a yoga mat or towel to cushion your hips and prevent discomfort.",
+      "status": "verbatim",
+      "closest": "When you start to add significant weight to your hip thrust, you may notice pain where the bar lies. Consider using specialized pads or rolling up a yoga mat or towel to cushion your hips and prevent discomfort.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "bc-ht",
+      "text": "Set your feet so that at the top of hip thrust, when the hips are fully extended, your shins are vertical.",
+      "status": "verbatim",
+      "closest": "Set your feet so that at the top of hip thrust, when the hips are fully extended, your shins are vertical.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "bc-ht",
+      "text": "Toes can be pointing straight ahead or turned out slightly.",
+      "status": "verbatim",
+      "closest": "Toes can be pointing straight ahead or turned out slightly.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "bc-ht",
+      "text": "Once you follow the steps above and are in the correct starting position, take a deep breath, brace the core, and drive through the heels, keeping the knees in line with the toes",
+      "status": "verbatim",
+      "closest": "Once you follow the steps above and are in the correct starting position, take a deep breath, brace the core, and drive through the heels, keeping the knees in line with the toes",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "bc-ht",
+      "text": "When you approach the top of the movement, finish the lift by contracting your glutes hard and pushing your hips forward. Do not overextend the lower back",
+      "status": "verbatim",
+      "closest": "When you approach the top of the movement, finish the lift by contracting your glutes hard and pushing your hips forward. Do not overextend the lower back",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "bc-ht",
+      "text": "Finish the movement with your hips as high as possible while maintaining a neutral spine. At the top of the movement your torso should be parallel to the ground with hips pushed through",
+      "status": "verbatim",
+      "closest": "Finish the movement with your hips as high as possible while maintaining a neutral spine. At the top of the movement your torso should be parallel to the ground with hips pushed through",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "pg-bht",
+      "text": "push through the heels of your feet to thrust the bar up until your body is in a straight line from shoulders to knees.",
+      "status": "verbatim",
+      "closest": "push through the heels of your feet to thrust the bar up until your body is in a straight line from shoulders to knees.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "sl-ht",
+      "text": "Push the bar towards the ceiling by extending your hips. Your knees should form a ~90-degree angle at the top.",
+      "status": "verbatim",
+      "closest": "Push the bar towards the ceiling by extending your hips. Your knees should form a ~90-degree angle at the top.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bc-ht",
+      "text": "For both variations, make sure your back acts as a pivot point around the bench. Do not allow your back to slide back and forth during the movement!",
+      "status": "verbatim",
+      "closest": "For both variations, make sure your back acts as a pivot point around the bench. Do not allow your back to slide back and forth during the movement!",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "bc-ht",
+      "text": "While performing the hip thrust, it is important to make sure you do not jerk the weight off the floor but use a fluid motion instead.",
+      "status": "verbatim",
+      "closest": "While performing the hip thrust, it is important to make sure you do not jerk the weight off the floor but use a fluid motion instead.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "bc-ht",
+      "text": "Lower the weight under control keeping tension on the glutes",
+      "status": "verbatim",
+      "closest": "Lower the weight under control keeping tension on the glutes",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "pg-bht",
+      "text": "Pause and squeeze the glutes before slowly lowering back to the ground, making sure the spine stays neutral throughout.",
+      "status": "verbatim",
+      "closest": "Pause and squeeze the glutes before slowly lowering back to the ground, making sure the spine stays neutral throughout.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-ht",
+      "text": "Once you are set, pull the belly tight and keep the back flat. Often, lifters will arch the lower back and miss-load the hips at the bottom of the position.",
+      "status": "verbatim",
+      "closest": "Once you are set, pull the belly tight and keep the back flat. Often, lifters will arch the lower back and miss-load the hips at the bottom of the position.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-ht",
+      "text": "Coach’s Tip: Keep your abs tight and pinch you glutes together as you lift. Avoid arching your back.",
+      "status": "verbatim",
+      "closest": "Coach’s Tip: Keep your abs tight and pinch you glutes together as you lift. Avoid arching your back.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "bc-ht",
+      "text": "The glutes aren’t strong enough to lock the weight out so the lifter substitutes by arching the back.",
+      "status": "verbatim",
+      "closest": "The glutes aren’t strong enough to lock the weight out so the lifter substitutes by arching the back.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "bc-ht",
+      "text": "Quick Fix: Reduce the load and brace the core throughout the whole range of motion. Focus on only moving at the hips and on not allowing movement to occur at the lumbar spine.",
+      "status": "verbatim",
+      "closest": "Quick Fix: Reduce the load and brace the core throughout the whole range of motion. Focus on only moving at the hips and on not allowing movement to occur at the lumbar spine.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "hl-ht",
+      "text": "If your ribs are up and your lower back is arched — or hyperextended — at the beginning of the movement, you won’t achieve full extension of the hips for glute activation.",
+      "status": "verbatim",
+      "closest": "If your ribs are up and your lower back is arched — or hyperextended — at the beginning of the movement, you won’t achieve full extension of the hips for glute activation.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "hl-ht",
+      "text": "Make sure that your ribs are down and your lower back is neutral to achieve full extension of the hips.",
+      "status": "verbatim",
+      "closest": "Make sure that your ribs are down and your lower back is neutral to achieve full extension of the hips.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "pg-ht",
+      "text": "Avoid overextending your back as this can put unnecessary pressure particularly on the lower back",
+      "status": "verbatim",
+      "closest": "Avoid overextending your back as this can put unnecessary pressure particularly on the lower back",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "pg-bht",
+      "text": "Maintaining a neutral spine will help to protect the lumbar spine. Tuck your pelvis under and engage the core to straighten the spine and prevent it from overarching.",
+      "status": "verbatim",
+      "closest": "Maintaining a neutral spine will help to protect the lumbar spine. Tuck your pelvis under and engage the core to straighten the spine and prevent it from overarching.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "bc-ht",
+      "text": "Failing to reach full hip extension is also usually due to the load being too heavy.",
+      "status": "verbatim",
+      "closest": "Failing to reach full hip extension is also usually due to the load being too heavy.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "bc-ht",
+      "text": "Quick Fix: Drop the weight, allowing you to completely lock out and finish the movement.",
+      "status": "verbatim",
+      "closest": "Quick Fix: Drop the weight, allowing you to completely lock out and finish the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "hl-ht",
+      "text": "If you stop short of thighs parallel, your glutes won’t see full activation. To fix this, make sure you’re aiming for a 90-degree angle with your legs.",
+      "status": "verbatim",
+      "closest": "If you stop short of thighs parallel, your glutes won’t see full activation. To fix this, make sure you’re aiming for a 90-degree angle with your legs.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "bc-ht",
+      "text": "Quick Fix: Keep your toes on the floor and focus on pushing through the heels throughout the set (you can also dorsiflex and lift the toes if this helps)",
+      "status": "verbatim",
+      "closest": "Quick Fix: Keep your toes on the floor and focus on pushing through the heels throughout the set (you can also dorsiflex and lift the toes if this helps)",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "hl-ht",
+      "text": "Some have the tendency to rise up onto the balls of their feet at the top of the thrust. This happens either because your foot placement is off, or you are quad-dominant.",
+      "status": "verbatim",
+      "closest": "Some have the tendency to rise up onto the balls of their feet at the top of the thrust. This happens either because your foot placement is off, or you are quad-dominant.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "hl-ht",
+      "text": "Reassess where your feet are and ensure that your legs form a 90-degree angle at the top. Then, focus on heel contact throughout the movement.",
+      "status": "verbatim",
+      "closest": "Reassess where your feet are and ensure that your legs form a 90-degree angle at the top. Then, focus on heel contact throughout the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "hl-ht",
+      "text": "If your feet are too far forward, you’ll feel the hip thrust more in your hamstrings. If they’re too far in toward your body, you’ll get more quad engagement.",
+      "status": "verbatim",
+      "closest": "If your feet are too far forward, you’ll feel the hip thrust more in your hamstrings. If they’re too far in toward your body, you’ll get more quad engagement.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "contreras-2015",
+      "text": "Thirteen trained women (n = 13; age = 28.9 years; height = 164 cm; mass = 58.2 kg) performed estimated 10-repetition maximums (RM) in the back squat and barbell hip thrust.",
+      "status": "verbatim",
+      "closest": "Thirteen trained women (n = 13; age = 28.9 years; height = 164 cm; mass = 58.2 kg) performed estimated 10-repetition maximums (RM) in the back squat and barbell hip thrust.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "contreras-2015",
+      "text": "The barbell hip thrust activates the gluteus maximus and biceps femoris to a greater degree than the back squat when using estimated 10RM loads.",
+      "status": "verbatim",
+      "closest": "The barbell hip thrust activates the gluteus maximus and biceps femoris to a greater degree than the back squat when using estimated 10RM loads.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "sl-ht",
+      "text": "Glutes",
+      "status": "verbatim",
+      "closest": "Glutes",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "sl-ht",
+      "text": "Adductors",
+      "status": "verbatim",
+      "closest": "Adductors",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "sl-ht",
+      "text": "Quads",
+      "status": "verbatim",
+      "closest": "Quads",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "hl-ht",
+      "text": "The hip thrust motion mainly targets the glutes — both the gluteus maximus and gluteus medius — as well as the hamstrings. Your quads, core, and hip adductors will be working, too.",
+      "status": "verbatim",
+      "closest": "The hip thrust motion mainly targets the glutes — both the gluteus maximus and gluteus medius — as well as the hamstrings. Your quads, core, and hip adductors will be working, too.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "pg-ht",
+      "text": "The hip thrust exercise targets the gluteus maximus, which is the biggest muscle in your body. It also activates the hamstrings, quadriceps, and adductors.",
+      "status": "verbatim",
+      "closest": "The hip thrust exercise targets the gluteus maximus, which is the biggest muscle in your body. It also activates the hamstrings, quadriceps, and adductors.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "hl-ht",
+      "text": "If you’re a beginner, aim for 3 sets of 12 reps, working your way up to 20 using body weight.",
+      "status": "verbatim",
+      "closest": "If you’re a beginner, aim for 3 sets of 12 reps, working your way up to 20 using body weight.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "hl-ht",
+      "text": "After that, progress in the exercise by experimenting with a single-leg variation or safely adding weight, either with a barbell, plate, or dumbbell — more on that below.",
+      "status": "verbatim",
+      "closest": "After that, progress in the exercise by experimenting with a single-leg variation or safely adding weight, either with a barbell, plate, or dumbbell — more on that below.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "pg-bht",
+      "text": "Start with bodyweight and once you can do multiple reps with good form, slowly add weight to continue to build strength.",
+      "status": "verbatim",
+      "closest": "Start with bodyweight and once you can do multiple reps with good form, slowly add weight to continue to build strength.",
+      "note": ""
+    },
+    {
+      "claim": "c19",
+      "source": "pg-ht",
+      "text": "Start light and gradually increase the weight as you get stronger, focusing on executing the exercise with good technique",
+      "status": "verbatim",
+      "closest": "Start light and gradually increase the weight as you get stronger, focusing on executing the exercise with good technique",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "hackett-2013",
+      "text": "a brief Valsalva maneuver (VM) is unavoidable when lifting heavy loads (>80% of maximal voluntary contraction) or when lifting lighter loads to failure.",
+      "status": "verbatim",
+      "closest": "a brief Valsalva maneuver (VM) is unavoidable when lifting heavy loads (>80% of maximal voluntary contraction) or when lifting lighter loads to failure.",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "hackett-2013",
+      "text": "The VM was associated with an increase in blood pressure during resistance exercise",
+      "status": "verbatim",
+      "closest": "The VM was associated with an increase in blood pressure during resistance exercise",
+      "note": ""
+    },
+    {
+      "claim": "c20",
+      "source": "hackett-2013",
+      "text": "The health risks associated with the VM during resistance exercise remain unconfirmed.",
+      "status": "verbatim",
+      "closest": "The health risks associated with the VM during resistance exercise remain unconfirmed.",
+      "note": ""
+    },
+    {
+      "claim": "c21",
+      "source": "hl-ht",
+      "text": "This specific type of bench allows you to hip thrust with a barbell or resistance bands with a very easy setup.",
+      "status": "verbatim",
+      "closest": "This specific type of bench allows you to hip thrust with a barbell or resistance bands with a very easy setup.",
+      "note": ""
+    },
+    {
+      "claim": "c22",
+      "source": "pg-bht",
+      "text": "Pause and squeeze the glutes before slowly lowering back to the ground, making sure the spine stays neutral throughout.",
+      "status": "verbatim",
+      "closest": "Pause and squeeze the glutes before slowly lowering back to the ground, making sure the spine stays neutral throughout.",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "bc-ht",
+      "text": "Going into cervical flexion can be problematic for some lifters, causing cramping and neck discomfort.",
+      "status": "verbatim",
+      "closest": "Going into cervical flexion can be problematic for some lifters, causing cramping and neck discomfort.",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "bc-ht",
+      "text": "Quick Fix: Be sure to maintain a neutral neck position throughout the movement",
+      "status": "verbatim",
+      "closest": "Quick Fix: Be sure to maintain a neutral neck position throughout the movement",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "hl-ht",
+      "text": "Keeping your chin tucked, push through your heels until your thighs reach parallel to the floor — your legs should form a 90-degree angle.",
+      "status": "verbatim",
+      "closest": "Keeping your chin tucked, push through your heels until your thighs reach parallel to the floor — your legs should form a 90-degree angle.",
+      "note": ""
+    },
+    {
+      "claim": "c23",
+      "source": "pg-ht",
+      "text": "Focus on rotating your pelvic tilt posteriorly at the top and crunching your abs slightly or keeping your chin down to help with this",
+      "status": "verbatim",
+      "closest": "Focus on rotating your pelvic tilt posteriorly at the top and crunching your abs slightly or keeping your chin down to help with this",
+      "note": ""
+    },
+    {
+      "claim": "c24",
+      "source": "pg-bht",
+      "text": "Pull the barbell towards the crease of your hips and place your feet flat on the floor, knees facing the ceiling, and then grip it just wider than hip width apart.",
+      "status": "verbatim",
+      "closest": "Pull the barbell towards the crease of your hips and place your feet flat on the floor, knees facing the ceiling, and then grip it just wider than hip width apart.",
+      "note": ""
+    },
+    {
+      "claim": "c24",
+      "source": "bc-ht",
+      "text": "Some feel more comfortable with a supinated grip (some claim this helps improve lat function which subsequently leads to better glute function), while others prefer a pronated grip. This is entirely up to you.",
+      "status": "verbatim",
+      "closest": "Some feel more comfortable with a supinated grip (some claim this helps improve lat function which subsequently leads to better glute function), while others prefer a pronated grip. This is entirely up to you.",
+      "note": ""
+    }
+  ]
+}
