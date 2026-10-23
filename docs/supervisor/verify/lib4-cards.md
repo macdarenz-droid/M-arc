@@ -4240,3 +4240,16 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - **VALID.** Both plants caught: R5 [3,2,2] and R6 [2,2,2]. lat_pulldown: every median ≥ 4. pull_up: R2 [3,3,3] only, which is golden-B follow-up 22, its one excepted item.
 - **one_arm_dumbbell_row PASS** (every median ≥ 4; R5 4 [4,3,4]). **LB3: 7 of 7 drawn plates approved.** The other 6 are byte-identical from `8781ed0` (proof in the builder's FIX 3 post). one_arm is now the approved F7 example. t_bar_row and the shrugs stay held.
 - LIB-13's builder session is archived. The LB3 owner sheet waits for pilot A to be pinned on main (lib-13-card :20-21).
+
+## 32. LB10 + LB8 critic panel (D-CRITIC-CAL3, set lb10 round 1, 2026-10-23 ~09:20 UTC; #305 @ `d721f023`, page `db346e12…`; #306 @ `dc049494`, page `b6083d84…`)
+
+- One panel for two batches. Candidates: kettlebell_swing, high_knees and battle_ropes (LB10), plus hack_squat (LB8). Anchors: golden B's pull_up and lat_pulldown. Plants: battle_ropes R1 (elbow bent the wrong way) and kettlebell_swing R5 (Mistake sign-flipped). Salt `5c172677…`.
+- **VALID.** Plants caught: R1 [3,3,3] and R5 [1,1,1]. lat_pulldown: every median ≥ 4. pull_up: R2 [4,3,3], golden-B follow-up 22 (no floor line), excepted.
+- **kettlebell_swing PASS.** battle_ropes FAIL on R5 [3,3,3]: red rope copies hid the shrug. high_knees FAIL on R4 [3,4,3]: "Back arches" front entry ended on the forearm, so D-LIB22-FRONTNIT was withdrawn. hack_squat FAIL on R5 [2,2,3]: the solid figure hid the hips-off-pad gap. Fix rounds #305 6361383239 and #306 6361384861.
+- Lesson: critics measure leaders in 780 px image pixels; halve them for the 390 px limits.
+
+## 33. LB10 + LB8 focused recheck (set lb10r, 2026-10-23 ~10:20 UTC; #305 @ `a9c64e11`, page `22b7d177…`; #306 @ `14ee85c4`, page `ca51e441…`)
+
+- Candidates: battle_ropes, high_knees and hack_squat. The same anchors. Plants: high_knees R4 (leader on the head) and hack_squat R1 (bottom stopped at 45°). New salt `2f339692…`.
+- **VALID.** Plants caught: R4 [3,3,3] and R1 [2,2,2]. lat_pulldown: every median ≥ 4. pull_up: R2 [3,3,3], follow-up 22, excepted.
+- **battle_ropes, high_knees and hack_squat PASS** (every median ≥ 4). **LB10: 3 of 3 drawn rows approved** (kettlebell_swing from section 32, byte-identical at a9c64e11). **LB8: hack_squat approved** (its one drawn row). Verdicts: #305 6362679045 and #306 6362680004.
