@@ -20,15 +20,6 @@
    "mode": "H",
    "stage": "drawing",
    "view": "side"
-  },
-  "lib_cable_kickback": {
-   "src": "library/specs/cable_kickback.mjs",
-   "slug": "cable-kickback",
-   "prefix": "cable-kickback",
-   "chromeId": "cable-kickback",
-   "mode": "H",
-   "stage": "drawing",
-   "view": "side"
   }
  }
 }
