@@ -1262,11 +1262,15 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     const JOINS: [string, string][] = [['backPad', 'carriage'], ['carriage', 'rail'], ['shoulderPad', 'backPad'], ['shoulderPadFar', 'backPad'], ['handleBracket', 'shoulderPad'], ['grip', 'handleBracket'],
       ['plate', 'railBracket'], ['railBracket', 'rail'], ['rail', 'rearPost'], ['frontPost', 'railBracket'], ['rearPost', 'beam'], ['frontPost', 'beam'], ['stop', 'rail']];
     const polyGap = (a: number[][], b: number[][]) => { if (a.some(p => inPoly(b, p)) || b.some(p => inPoly(a, p))) return 0; let d = Infinity; for (const p of a) for (const [u, v] of segs([...b, b[0]!])) d = Math.min(d, segD(p, u!, v!)); for (const p of b) for (const [u, v] of segs([...a, a[0]!])) d = Math.min(d, segD(p, u!, v!)); return d; };
-    const frameProblems = (spec: any) => posesOf(spec).flatMap(pose => {
+    const frameProblems = (spec: any, poses: string[] = posesOf(spec)) => poses.flatMap(pose => {
       const it = sledItems(spec, pose);
       return JOINS.flatMap(([a, b]) => { if (!it[a] || !it[b]) return [`${pose}: ${!it[a] ? a : b} not drawn`]; const g = polyGap(outlineOf(spec, it[a]), outlineOf(spec, it[b])); return g <= 1 ? [] : [`${pose}: ${a} ${g.toFixed(1)} px off ${b}`]; });
     });
-    it('every pad, the plate, the rail and the posts are joined to the frame', () => { expect(frameProblems(s())).toEqual([]); });
+    it('every pad, the plate, the rail and the posts are joined to the frame', async () => {
+      const out: string[] = [];
+      for (const pose of posesOf(s())) { await tick(); out.push(...frameProblems(s(), [pose])); }   // one yield per pose (A19)
+      expect(out).toEqual([]);
+    });
     it('mutation: hackSled\'s foot-plate bracket removed is red', () => {
       const k = sledItems(s(), 'end').railBracket.entry;
       expect(frameProblems(withEq(s(), k, () => () => null)).some(p => /railBracket not drawn/.test(p))).toBe(true);
