@@ -129,6 +129,9 @@ const PAD_PLANE = { point: PAD_AT, normal: N }, PLATE_PLANE = { point: [0, PLATE
 const shoulderFace = d => ({ point: add(add(PAD_AT, mul(U, SP)), mul(U, d)), normal: U });
 
 export const HS = { U, N, LE, LS, TILT, SOLE_Z, TRAVEL, RAIL_LO, RAIL_HI, SP, PAD_PLANE, PLATE_PLANE, sledP, mistakePose, travelOf, startPhantom };
+// The card's contact facts (lb8 DESIGN.md; D-LIB18-FACTS): each bound by a check on its landmark in its pose, at the
+// drawn point (H6 reads the report's checks); the drawn-item tests prove the contact itself.
+const factChecks = (pose, p, names) => names.map(landmark => ({ landmark, at: L(p)[landmark], pose, tol: 0.5 }));
 export default {
   id: 'hack_squat', name: 'Hack Squat', view: 'side', facing: 'right',
   camera: { fit: true },
@@ -139,6 +142,7 @@ export default {
     ...perItem((lm, ctx) => (ctx.pose === 'end' ? startPhantom : []), startPhantom.length),
   ],
   checks: [
+    ...factChecks('start', start, ['wrist.l', 'wrist.r']),
     // c2 "throughout": the upper back on the pad in every pose (the thorax stays on it in the Mistake too), the hips
     // (buttock) on it at the start and the end; neither ever inside the pad
     { landmark: 'backUpper', plane: PAD_PLANE, pose: 'all', tol: 0.5 },
@@ -172,10 +176,10 @@ export default {
     tells: [
       // c8 "lift their lower back off the back pad", c9 "having your hips leave the backrest": on the red thigh root's top
       // edge, raised above the end thigh as the hips leave the pad
-      { key: 'lift', text: 'Hips off<br>pad', anchor: { along: ['hip.r', 'knee.r'], t: 0.5, pose: 'mistake', off: [0, -11] }, box: { left: 250, top: 164 }, cue: 'At the bottom the hips and lower back lift off the back pad.' },
+      { key: 'lift', text: 'Hips off<br>pad', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 250, top: 164 }, cue: 'At the bottom the hips and lower back lift off the back pad.' },
       // c10 "your lower back rounds": the pelvis rolls back, so the front of the red pelvis (the groin, a rigid pelvis
       // point, given from the pelvis's seat landmark) swings up off the end outline
-      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'seat', pose: 'mistake', off: [3.4, -17.7] }, box: { left: 140, top: 124 }, cue: 'The lower back rounds at the bottom of the squat.' },
+      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 64, top: 260 }, cue: 'The lower back rounds at the bottom of the squat.' },
     ],
   },
   alt: 'Hack squat, side view. Shoulders under the pads, back on the tall pad of a sled on angled rails, feet flat on a fixed plate, the lifter lowers until the knees bend about 90 degrees with the thighs level, hips on the pad, then pushes back to almost straight legs.',

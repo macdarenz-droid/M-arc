@@ -184,6 +184,9 @@ export const ARCH_PTS = (() => {
 })();
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export const CK = { LS, LE, LM_M, GRIP, PULLEY, START_RING, M_RING, ARCH_PTS, shankR, M_TILT };
+// The card's contact facts (lb8 DESIGN.md; D-LIB18-FACTS): each bound by a check on its landmark in its pose, at the
+// drawn point (H6 reads the report's checks); the drawn-item tests prove the contact itself.
+const factChecks = (pose, p, names) => names.map(landmark => ({ landmark, at: LM(p)[landmark], pose, tol: 0.5 }));
 export default {
   id: 'cable_kickback', name: 'Cable Kickback', view: 'side', facing: 'right',
   camera: { x0: 190, y0: 339 },
@@ -195,6 +198,7 @@ export default {
     (lm, ctx) => (ctx.pose === 'end' ? [...START_LEG, ...START_CUFF] : null),
   ],
   checks: [
+    ...factChecks('start', start, ['ankle.r', 'wrist.l', 'wrist.r']),
     { landmark: 'heel.l', plane: FLOOR, pose: 'all', tol: 0.5 },                 // standing foot flat (c2)
     { landmark: 'ball.l', plane: FLOOR, pose: 'all', tol: 0.5 },
     { landmark: 'toe.r', above: FLOOR, pose: 'all' },                            // working foot off the floor

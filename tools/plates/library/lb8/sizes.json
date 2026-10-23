@@ -59,7 +59,11 @@
    },
    "trace": {
     "value": "hip.r",
-    "basis": "claim: c8 'Push the bar towards the ceiling by extending your hips' (D-LIB18-TRACE: the bar in the hip crease); the bar rides the pelvis, and the hip joint is the landmark under it (the engine traces landmarks only, plate.mjs:159)"
+    "basis": "claim: c8 'Push the bar towards the ceiling by extending your hips' (D-LIB18-TRACE: the bar in the hip crease); the bar rides the pelvis, and the hip joint is the landmark under it (the engine traces landmarks only, plate.mjs:159); trim [6, 8]: the clone source's trim, leg_press.mjs:132 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     6,
+     8
+    ]
    }
   },
   "cable_kickback": {
@@ -81,7 +85,7 @@
    "END_HIP_EXT": {
     "value": 15,
     "unit": "deg",
-    "basis": "stated reason [UNVERIFIED source, needs ruling]: c6 'as far as possible without rotating in the hips' = the hip's extension stop with the pelvis held; clinical tables found 2026-10-23 give 10-15 deg (an unsourced clinical form) and 17 +- 3.9 deg (an AAOS-based table); the primary papers (Roach & Miles 1991, Phys Ther 71:656; Roaas & Andersson 1982, Acta Orthop 53:205) could not be opened (502)"
+    "basis": "stated physical reason (D-LIB18-UNSOURCED): c6 'as far as possible without rotating in the hips' read as the hip's extension stop with the pelvis held, about 15 deg past neutral; no source opened for the number (source not opened)"
    },
    "START_TOE_CLEAR": {
     "value": 0.02,
@@ -120,7 +124,11 @@
    },
    "trace": {
     "value": "ankle.r",
-    "basis": "D-LIB18-TRACE: c5 'extend it behind you' (the working ankle at the cuff)"
+    "basis": "D-LIB18-TRACE: c5 'extend it behind you' (the working ankle at the cuff); trim [10, 12]: the clone source's trim, lat_pulldown.mjs:142 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     10,
+     12
+    ]
    }
   },
   "ankleCuff": {
@@ -184,7 +192,7 @@
    "TOE_OUT": {
     "value": 8,
     "unit": "deg",
-    "basis": "stated reason: c12 'toes slightly pointed out' with c13 'ensure your knees align with your toes': at the FOOT_X stance the toe line that lies in the leg's own bend plane with the sole flat on the plate, so the knee tracks the toes; at 8 deg every foot contact holds within 0.2 cm (start 0.1, end 0.2), while leg_press.mjs:32's 15 deg leaves the toe 7 deg off the knee plane and the sole 0.8-1.5 cm off its plate point"
+    "basis": "claim c13 'Turn out your feet slightly and ensure your knees align with your toes', with the engine's 0.5 cm contact tolerance: at 8 deg the toe lies in the knee's bend plane and the soles hold the plate within 0.2 cm (at leg_press.mjs:31's 15 deg they sit 0.8-1.5 cm off); Q8 accepted (LB8 NOTE RULED)"
    },
    "NECK": {
     "value": 5,
@@ -252,7 +260,7 @@
      8
     ],
     "unit": "px",
-    "basis": "convention: leg_press.mjs:132 (trim [6, 8], the clone source's knee-region trace trim)"
+    "basis": "convention: leg_press.mjs:132, the clone source's Trace trim (D-LIB18-TRIM; the trace row carries it too)"
    },
    "TILT": {
     "value": "solved",
@@ -276,7 +284,11 @@
    },
    "trace": {
     "value": "knee.r",
-    "basis": "D-LIB18-TRACE: plate.frames 'Trace follows the knee'"
+    "basis": "D-LIB18-TRACE: plate.frames 'Trace follows the knee'; trim [6, 8]: the clone source's trim, leg_press.mjs:132 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     6,
+     8
+    ]
    }
   },
   "hackSled": {
@@ -345,12 +357,12 @@
    "START_DF": {
     "value": 20,
     "unit": "deg",
-    "basis": "stated reason (physical): c7/c12 'maximum dorsiflexion', 'full but comfortable stretch without overstretching', 'as far down as comfortably possible' read as the end of the normal ankle dorsiflexion range, 20 deg (the AAOS average range as commonly cited, e.g. Norkin & White; not opened in this session: verify before ruling)"
+    "basis": "stated physical reason (D-LIB18-UNSOURCED): c7, c12 'maximum dorsiflexion', 'full but comfortable stretch without overstretching' read as the end of the normal ankle dorsiflexion range, 20 deg; no source opened for the number (source not opened)"
    },
    "END_PF": {
     "value": 50,
     "unit": "deg",
-    "basis": "stated reason (physical): c8 'raise heels as high as possible', c12 'full ankle extension' read as the end of the normal plantar flexion range, 50 deg (same norm, same caveat)"
+    "basis": "stated physical reason (D-LIB18-UNSOURCED): c8 'raise heels as high as possible', c12 'full ankle extension' read as the end of the normal plantar flexion range, 50 deg; no source opened for the number (source not opened)"
    },
    "M_PART": {
     "value": 0.5,
@@ -413,11 +425,15 @@
      8
     ],
     "unit": "px",
-    "basis": "convention: leg_press.mjs:154, the 8's heel Trace trim"
+    "basis": "convention: leg_press.mjs:132, the clone source's Trace trim (D-LIB18-TRIM; the trace row carries it too)"
    },
    "trace": {
     "value": "heel.r",
-    "basis": "claims c7, c8, c12 (the heel's range is the cue); D-LIB18-CALF, -TRACE"
+    "basis": "claims c7, c8, c12 (the heel's range is the cue); D-LIB18-CALF, -TRACE; trim [6, 8]: the clone source's trim, leg_press.mjs:132 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     6,
+     8
+    ]
    }
   },
   "calfMachine": {

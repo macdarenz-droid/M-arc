@@ -1,658 +1,705 @@
 {
- "id": "bodyweight_calf_raise",
- "libId": "lib_bodyweight_calf_raise",
- "name": "Bodyweight Calf Raise",
- "family": "Calf raise",
- "tier": "C",
- "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
- "archetype": {
-  "hand": "none",
-  "contact": [
-   "standing-feet"
-  ]
- },
- "parent": null,
- "inherit": [],
- "claims": [
-  {
-   "id": "c1",
-   "text": "Stand with the feet hip-width apart and toes forward, core engaged, shoulders relaxed, arms by the sides or hands on a wall or chair for balance if needed. One source says shoulder-width apart.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "motra-bwcr",
-    "peloton-cr",
-    "ggr-calf"
-   ],
-   "quotes": [
+  "id": "bodyweight_calf_raise",
+  "libId": "lib_bodyweight_calf_raise",
+  "name": "Bodyweight Calf Raise",
+  "family": "Calf raise",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
     {
-     "source": "motra-bwcr",
-     "text": "Stand with feet hip-width apart, toes forward, core engaged, and hands on a wall for balance if needed.",
-     "where": "How to Perform, opening paragraph (before the list)"
+      "id": "c1",
+      "text": "Stand with the feet hip-width apart and toes forward, core engaged, shoulders relaxed, arms by the sides or hands on a wall or chair for balance if needed. One source says shoulder-width apart.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-bwcr",
+        "peloton-cr",
+        "ggr-calf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "Stand with feet hip-width apart, toes forward, core engaged, and hands on a wall for balance if needed.",
+          "where": "How to Perform, opening paragraph (before the list)"
+        },
+        {
+          "source": "peloton-cr",
+          "text": "Stand with your feet hip-width distance apart. Keep your shoulders relaxed and your arms by your sides, or place your hands on a wall or chair for balance if needed.",
+          "where": "How to Do Standing Calf Raises, step 1"
+        },
+        {
+          "source": "ggr-calf",
+          "text": "Stand with your feet shoulder-width apart.",
+          "where": "1. Basic Calf Raises (Bodyweight), How to do it"
+        }
+      ]
     },
     {
-     "source": "peloton-cr",
-     "text": "Stand with your feet hip-width distance apart. Keep your shoulders relaxed and your arms by your sides, or place your hands on a wall or chair for balance if needed.",
-     "where": "How to Do Standing Calf Raises, step 1"
+      "id": "c2",
+      "text": "A step or curb gives more range: the calves stretch more at the bottom and contract more fully at the top; on a step, lower to flat or slightly below for a stretch.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "peloton-cr",
+        "motra-bwcr"
+      ],
+      "quotes": [
+        {
+          "source": "peloton-cr",
+          "text": "Doing calf raises on an elevated surface, such as a step or curb, creates the opportunity for more range of movement, Matt explains. This increased range allows your calves to stretch more at the bottom and contract more fully at the top",
+          "where": "Calf Raises Variations and Modifications, Flat vs. Elevated Surface"
+        },
+        {
+          "source": "motra-bwcr",
+          "text": "Raise heels until fully on toes; lower to flat or slightly below if on step for stretch.",
+          "where": "Range of Motion"
+        }
+      ]
     },
     {
-     "source": "ggr-calf",
-     "text": "Stand with your feet shoulder-width apart.",
-     "where": "1. Basic Calf Raises (Bodyweight), How to do it"
+      "id": "c3",
+      "text": "On a step, the heels hang off the edge; this line is from the same page's eccentric (one-leg lowering) variation.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "peloton-cr"
+      ],
+      "quotes": [
+        {
+          "source": "peloton-cr",
+          "text": "Stand on a step with your heels hanging off the edge.",
+          "where": "Calf Raises Variations and Modifications, Eccentric Calf Raise, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Press through the balls of the feet to lift the heels as high as possible, onto the tiptoes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-bwcr",
+        "peloton-cr",
+        "ggr-calf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "Push through balls of feet to raise heels high.",
+          "where": "How to Perform, list item 1 (\"Push through balls of feet ...\")"
+        },
+        {
+          "source": "peloton-cr",
+          "text": "Engage your core as you press through the balls of your feet to lift your heels as high off the ground as possible. Focus on squeezing your calf muscles at the top of the movement.",
+          "where": "How to Do Standing Calf Raises, step 2"
+        },
+        {
+          "source": "ggr-calf",
+          "text": "Stand up onto your tiptoes, lifting the heels off the floor.",
+          "where": "1. Basic Calf Raises (Bodyweight), How to do it"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Squeeze the calves at the top and hold: briefly in one source, a second or two in another, and a pause in a third.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-bwcr",
+        "peloton-cr",
+        "ggr-calf"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "Squeeze calves at the top and hold briefly.",
+          "where": "How to Perform, list item 2 (\"Squeeze calves at the top ...\")"
+        },
+        {
+          "source": "peloton-cr",
+          "text": "Hold the top position for a second or two to maximize muscle engagement.",
+          "where": "How to Do Standing Calf Raises, step 3"
+        },
+        {
+          "source": "ggr-calf",
+          "text": "Pause, then slowly return to the starting position.",
+          "where": "1. Basic Calf Raises (Bodyweight), How to do it"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Lower the heels slowly and with control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-bwcr",
+        "peloton-cr"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "Lower heels slowly with control.",
+          "where": "How to Perform, list item 3 (\"Lower heels slowly ...\")"
+        },
+        {
+          "source": "motra-bwcr",
+          "text": "Control the drop",
+          "where": "Coaching Tips, Form Cues"
+        },
+        {
+          "source": "peloton-cr",
+          "text": "Lower your heels slowly and with control. That’s one rep.",
+          "where": "How to Do Standing Calf Raises, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Keep the knees straight but unlocked (soft), and do not let them hyperextend.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-bwcr"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "Repeat for reps, keeping knees straight but unlocked.",
+          "where": "How to Perform, list item 4 (\"Repeat for reps ...\")"
+        },
+        {
+          "source": "motra-bwcr",
+          "text": "Knees soft",
+          "where": "Coaching Tips, Form Cues"
+        },
+        {
+          "source": "motra-bwcr",
+          "text": "Avoid hyperextension of knees",
+          "where": "Safety, Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "One source's common-mistakes list for the bodyweight calf raise names, in this order: bouncing at the bottom, partial range, locking the knees and leaning forward.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-bwcr"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "Bouncing at bottom",
+          "where": "Safety, Common Mistakes, item 1"
+        },
+        {
+          "source": "motra-bwcr",
+          "text": "Partial range",
+          "where": "Safety, Common Mistakes, item 2"
+        },
+        {
+          "source": "motra-bwcr",
+          "text": "Locking knees",
+          "where": "Safety, Common Mistakes, item 3"
+        },
+        {
+          "source": "motra-bwcr",
+          "text": "Leaning forward",
+          "where": "Safety, Common Mistakes, item 4"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "A coach calls moving too quickly or bouncing through the motion the most common calf-raise mistake he sees; slow down and keep control.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "peloton-cr"
+      ],
+      "quotes": [
+        {
+          "source": "peloton-cr",
+          "text": "The calf raise may be a simple exercise, but proper form matters. “The most common mistake I see is people moving too quickly or bouncing through the motion,” Matt says. Instead, he emphasizes the importance of slowing down and maintaining control.",
+          "where": "Common Mistakes to Avoid"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Stop if Achilles pain occurs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-bwcr"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "Stop if Achilles pain occurs",
+          "where": "Safety, Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Use support for balance.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-bwcr"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "Use support for balance",
+          "where": "Safety, Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Breathe in on the way down and out on the way up, bracing the core.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-bwcr"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "Inhale during descent and exhale during ascent while bracing core.",
+          "where": "Coaching Tips, Breathing"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "The calf raise targets the two main calf muscles, the gastrocnemius and the soleus.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "motra-bwcr",
+        "peloton-cr"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "A bodyweight isolation exercise targeting the gastrocnemius and soleus to build calf strength, endurance, and ankle stability; ideal for beginners and performed standing on flat ground.",
+          "where": "unheaded intro paragraph under the title (above the About tab)"
+        },
+        {
+          "source": "peloton-cr",
+          "text": "This movement targets the two main muscles in your calves: the gastrocnemius, which helps bend the knee, and the soleus, which supports ankle stability and balance.",
+          "where": "Introduction"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Start with 2-3 sets of 8-12 reps; for strength, add weight once the last reps feel too easy.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "peloton-cr"
+      ],
+      "quotes": [
+        {
+          "source": "peloton-cr",
+          "text": "A common starting point is 2-3 sets of 8-12 repetitions, but you can adjust based on your goals and fitness level.",
+          "where": "How to Add Calf Raises to Your Fitness Routine"
+        },
+        {
+          "source": "peloton-cr",
+          "text": "For true strength gains, aim for fewer than 8 reps per set and increase the load once the final reps start to feel too easy, she adds.",
+          "where": "Calf Raises Variations and Modifications, Weighted vs. Unweighted"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "One source gives the tempo 2-1-2, and its Tempo tooltip gives the order: lowering, bottom pause, lifting, top pause, in seconds. Read in that order: 2 s down, a 1 s pause at the bottom, 2 s up; the page shows three numbers, so no top-pause seconds are given there. Another source holds the top a second or two (c5); the plate draws 1 s, the low end.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-bwcr",
+        "peloton-cr"
+      ],
+      "quotes": [
+        {
+          "source": "motra-bwcr",
+          "text": "2-1-2",
+          "where": "Tempo"
+        },
+        {
+          "source": "motra-bwcr",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
+        },
+        {
+          "source": "peloton-cr",
+          "text": "Hold the top position for a second or two to maximize muscle engagement.",
+          "where": "How to Do Standing Calf Raises, step 3"
+        }
+      ]
     }
-   ]
-  },
-  {
-   "id": "c2",
-   "text": "A step or curb gives more range: the calves stretch more at the bottom and contract more fully at the top; on a step, lower to flat or slightly below for a stretch.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "peloton-cr",
-    "motra-bwcr"
-   ],
-   "quotes": [
-    {
-     "source": "peloton-cr",
-     "text": "Doing calf raises on an elevated surface, such as a step or curb, creates the opportunity for more range of movement, Matt explains. This increased range allows your calves to stretch more at the bottom and contract more fully at the top",
-     "where": "Calf Raises Variations and Modifications, Flat vs. Elevated Surface"
-    },
-    {
-     "source": "motra-bwcr",
-     "text": "Raise heels until fully on toes; lower to flat or slightly below if on step for stretch.",
-     "where": "Range of Motion"
-    }
-   ]
-  },
-  {
-   "id": "c3",
-   "text": "On a step, the heels hang off the edge; this line is from the same page's eccentric (one-leg lowering) variation.",
-   "tags": [
-    "WEAK"
-   ],
-   "sources": [
-    "peloton-cr"
-   ],
-   "quotes": [
-    {
-     "source": "peloton-cr",
-     "text": "Stand on a step with your heels hanging off the edge.",
-     "where": "Calf Raises Variations and Modifications, Eccentric Calf Raise, step 1"
-    }
-   ]
-  },
-  {
-   "id": "c4",
-   "text": "Press through the balls of the feet to lift the heels as high as possible, onto the tiptoes.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "motra-bwcr",
-    "peloton-cr",
-    "ggr-calf"
-   ],
-   "quotes": [
-    {
-     "source": "motra-bwcr",
-     "text": "Push through balls of feet to raise heels high.",
-     "where": "How to Perform, list item 1 (\"Push through balls of feet ...\")"
-    },
-    {
-     "source": "peloton-cr",
-     "text": "Engage your core as you press through the balls of your feet to lift your heels as high off the ground as possible. Focus on squeezing your calf muscles at the top of the movement.",
-     "where": "How to Do Standing Calf Raises, step 2"
-    },
-    {
-     "source": "ggr-calf",
-     "text": "Stand up onto your tiptoes, lifting the heels off the floor.",
-     "where": "1. Basic Calf Raises (Bodyweight), How to do it"
-    }
-   ]
-  },
-  {
-   "id": "c5",
-   "text": "Squeeze the calves at the top and hold: briefly in one source, a second or two in another, and a pause in a third.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "motra-bwcr",
-    "peloton-cr",
-    "ggr-calf"
-   ],
-   "quotes": [
-    {
-     "source": "motra-bwcr",
-     "text": "Squeeze calves at the top and hold briefly.",
-     "where": "How to Perform, list item 2 (\"Squeeze calves at the top ...\")"
-    },
-    {
-     "source": "peloton-cr",
-     "text": "Hold the top position for a second or two to maximize muscle engagement.",
-     "where": "How to Do Standing Calf Raises, step 3"
-    },
-    {
-     "source": "ggr-calf",
-     "text": "Pause, then slowly return to the starting position.",
-     "where": "1. Basic Calf Raises (Bodyweight), How to do it"
-    }
-   ]
-  },
-  {
-   "id": "c6",
-   "text": "Lower the heels slowly and with control.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "motra-bwcr",
-    "peloton-cr"
-   ],
-   "quotes": [
-    {
-     "source": "motra-bwcr",
-     "text": "Lower heels slowly with control.",
-     "where": "How to Perform, list item 3 (\"Lower heels slowly ...\")"
-    },
-    {
-     "source": "motra-bwcr",
-     "text": "Control the drop",
-     "where": "Coaching Tips, Form Cues"
-    },
-    {
-     "source": "peloton-cr",
-     "text": "Lower your heels slowly and with control. That’s one rep.",
-     "where": "How to Do Standing Calf Raises, step 4"
-    }
-   ]
-  },
-  {
-   "id": "c7",
-   "text": "Keep the knees straight but unlocked (soft), and do not let them hyperextend.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "motra-bwcr"
-   ],
-   "quotes": [
-    {
-     "source": "motra-bwcr",
-     "text": "Repeat for reps, keeping knees straight but unlocked.",
-     "where": "How to Perform, list item 4 (\"Repeat for reps ...\")"
-    },
-    {
-     "source": "motra-bwcr",
-     "text": "Knees soft",
-     "where": "Coaching Tips, Form Cues"
-    },
-    {
-     "source": "motra-bwcr",
-     "text": "Avoid hyperextension of knees",
-     "where": "Safety, Safety Notes"
-    }
-   ]
-  },
-  {
-   "id": "c8",
-   "text": "One source's common-mistakes list for the bodyweight calf raise names, in this order: bouncing at the bottom, partial range, locking the knees and leaning forward.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "motra-bwcr"
-   ],
-   "quotes": [
-    {
-     "source": "motra-bwcr",
-     "text": "Bouncing at bottom",
-     "where": "Safety, Common Mistakes, item 1"
-    },
-    {
-     "source": "motra-bwcr",
-     "text": "Partial range",
-     "where": "Safety, Common Mistakes, item 2"
-    },
-    {
-     "source": "motra-bwcr",
-     "text": "Locking knees",
-     "where": "Safety, Common Mistakes, item 3"
-    },
-    {
-     "source": "motra-bwcr",
-     "text": "Leaning forward",
-     "where": "Safety, Common Mistakes, item 4"
-    }
-   ]
-  },
-  {
-   "id": "c9",
-   "text": "A coach calls moving too quickly or bouncing through the motion the most common calf-raise mistake he sees; slow down and keep control.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "peloton-cr"
-   ],
-   "quotes": [
-    {
-     "source": "peloton-cr",
-     "text": "The calf raise may be a simple exercise, but proper form matters. “The most common mistake I see is people moving too quickly or bouncing through the motion,” Matt says. Instead, he emphasizes the importance of slowing down and maintaining control.",
-     "where": "Common Mistakes to Avoid"
-    }
-   ]
-  },
-  {
-   "id": "c10",
-   "text": "Stop if Achilles pain occurs.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "motra-bwcr"
-   ],
-   "quotes": [
-    {
-     "source": "motra-bwcr",
-     "text": "Stop if Achilles pain occurs",
-     "where": "Safety, Safety Notes"
-    }
-   ]
-  },
-  {
-   "id": "c11",
-   "text": "Use support for balance.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "motra-bwcr"
-   ],
-   "quotes": [
-    {
-     "source": "motra-bwcr",
-     "text": "Use support for balance",
-     "where": "Safety, Safety Notes"
-    }
-   ]
-  },
-  {
-   "id": "c12",
-   "text": "Breathe in on the way down and out on the way up, bracing the core.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "motra-bwcr"
-   ],
-   "quotes": [
-    {
-     "source": "motra-bwcr",
-     "text": "Inhale during descent and exhale during ascent while bracing core.",
-     "where": "Coaching Tips, Breathing"
-    }
-   ]
-  },
-  {
-   "id": "c13",
-   "text": "The calf raise targets the two main calf muscles, the gastrocnemius and the soleus.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "motra-bwcr",
-    "peloton-cr"
-   ],
-   "quotes": [
-    {
-     "source": "motra-bwcr",
-     "text": "A bodyweight isolation exercise targeting the gastrocnemius and soleus to build calf strength, endurance, and ankle stability; ideal for beginners and performed standing on flat ground.",
-     "where": "unheaded intro paragraph under the title (above the About tab)"
-    },
-    {
-     "source": "peloton-cr",
-     "text": "This movement targets the two main muscles in your calves: the gastrocnemius, which helps bend the knee, and the soleus, which supports ankle stability and balance.",
-     "where": "Introduction"
-    }
-   ]
-  },
-  {
-   "id": "c14",
-   "text": "Start with 2-3 sets of 8-12 reps; for strength, add weight once the last reps feel too easy.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "peloton-cr"
-   ],
-   "quotes": [
-    {
-     "source": "peloton-cr",
-     "text": "A common starting point is 2-3 sets of 8-12 repetitions, but you can adjust based on your goals and fitness level.",
-     "where": "How to Add Calf Raises to Your Fitness Routine"
-    },
-    {
-     "source": "peloton-cr",
-     "text": "For true strength gains, aim for fewer than 8 reps per set and increase the load once the final reps start to feel too easy, she adds.",
-     "where": "Calf Raises Variations and Modifications, Weighted vs. Unweighted"
-    }
-   ]
-  },
-  {
-   "id": "c15",
-   "text": "One source gives the tempo 2-1-2, and its Tempo tooltip gives the order: lowering, bottom pause, lifting, top pause, in seconds. Read in that order: 2 s down, a 1 s pause at the bottom, 2 s up; the page shows three numbers, so no top-pause seconds are given there. Another source holds the top a second or two (c5); the plate draws 1 s, the low end.",
-   "tags": [
-    "CONSENSUS",
-    "WEAK"
-   ],
-   "sources": [
-    "motra-bwcr",
-    "peloton-cr"
-   ],
-   "quotes": [
-    {
-     "source": "motra-bwcr",
-     "text": "2-1-2",
-     "where": "Tempo"
-    },
-    {
-     "source": "motra-bwcr",
-     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
-     "where": "Tempo heading tooltip"
-    },
-    {
-     "source": "peloton-cr",
-     "text": "Hold the top position for a second or two to maximize muscle engagement.",
-     "where": "How to Do Standing Calf Raises, step 3"
-    }
-   ]
-  }
- ],
- "sources": [
-  {
-   "id": "motra-bwcr",
-   "url": "https://www.motra.com/exercises/bodyweightCalfRaise",
-   "title": "Bodyweight Calf Raise - Exercise Guide | Motra",
-   "kind": "coach",
-   "year": null,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "peloton-cr",
-   "url": "https://www.onepeloton.com/blog/calf-raises",
-   "title": "Runners and Cyclists, Here’s Why Calf Raises Should Be Part of Your Routine (Peloton)",
-   "kind": "coach",
-   "year": 2025,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "ggr-calf",
-   "url": "https://www.garagegymreviews.com/calf-exercises",
-   "title": "Trying to Get Big Legs? Try Calf Exercises | Garage Gym Reviews",
-   "kind": "coach",
-   "year": 2023,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  }
- ],
- "plate": {
-  "view": "side",
-  "viewWhy": "Census view is side; the heels rising above and dipping below the step edge (c2, c4), the straight but unlocked knee (c7) and the upright body read from the side. The top fault, moving too quickly or bouncing (c9), shows only as speed, so the plate draws partial range (c8), the heels stopping part way.",
-  "equipment": "Generic box or step (census box) under the forefoot with the heels free (c2, c3), floor line (census floor). Motra teaches the raise on flat ground and allows a step for the stretch (c2, c13); the census note draws the forefoot on an edge.",
-  "start": "Bottom of the rep: standing tall, feet hip-width, toes forward (c1); balls of the feet on the step edge, heels flat or slightly below it for a stretch (c2, c3); knees straight but unlocked (c7); arms by the sides, or hands on a wall for balance (c1). No source gives joint angles.",
-  "end": "Top of the rep: on the tiptoes, heels as high as possible (c4); knees still straight but unlocked (c7); body unchanged.",
-  "checkpoints": [
-   {
-    "label": "Heels high",
-    "what": "Heels as high as possible at the top.",
-    "claim": "c4"
-   },
-   {
-    "label": "Knees soft",
-    "what": "Knees straight but unlocked.",
-    "claim": "c7"
-   },
-   {
-    "label": "Heels dip",
-    "what": "On a step, heels slightly below it at the bottom.",
-    "claim": "c2"
-   }
   ],
-  "mistake": {
-   "what": "Heels moving only part way up or down.",
-   "why": "The top fault, moving too quickly or bouncing, which Peloton's coach calls the most common mistake he sees (c9), shows only as speed, so the plate draws the next fault by the same steps: partial range, next on Motra's common-mistakes list (c8), against its full range from on the toes to flat or slightly below a step (c2).",
-   "claim": [
-    "c8",
-    "c2"
-   ],
-   "drawable": false,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 1: moving too quickly or bouncing through the motion (c9). Peloton, under 'Common Mistakes to Avoid' for the calf raise: \"“The most common mistake I see is people moving too quickly or bouncing through the motion,” Matt says.\" The sentence before ties it to this exercise (\"The calf raise may be a simple exercise, but proper form matters.\"), and the version taught on the page is the bodyweight standing raise, so it counts as a step-1 hit for this exercise's own fault (D-SUP-LB7-DIPREPS). It is not a list sentence read onto one item: it states the frequency itself. Motra's list item 1, \"Bouncing at bottom\" (c8), is the same fault. Set aside at step 1: Peloton's \"A common starting point is 2-3 sets of 8-12 repetitions\" (c14) is programming; Peloton's heading \"Common Mistakes to Avoid\" is a heading, not a frequency word. Garage Gym Reviews' \"commonly neglected calf muscles\" is about the muscles, \"this often-overlooked muscle group\" and \"answering common questions\" about the muscles and the article, \"Most calf workouts will target the gastrocnemius and the soleus\" about training, \"Calf presses are most often performed using a leg press machine.\" another exercise, and \"give your muscle fibers time to recover fully, usually about forty-eight hours\" programming; Motra's \"Popularity Score\" is about the exercise. drawable false: moving too quickly or bouncing shows only as speed (LR-31). The plate draws the next fault by the same steps. Step 1 has no other hit. Step 2: no other named fault is tied to harm: Motra's \"Avoid hyperextension of knees\" (c7) and \"Use support for balance\" (c11) state no harm; its \"Stop if Achilles pain occurs\" (c10) names no fault; its \"When to Avoid\" items are conditions; Peloton's \"reduce injury risk\", \"further reducing the risk of ankle sprains\", \"may also help reduce the risk of injury\", its Achilles overuse study line and \"especially when joint movement is painful\" are about the exercise's benefits and its isometric variation, not a fault; Garage Gym Reviews' \"more likely going to leave you sore and at risk of injury\" is about training the calves every day, and its \"approximately 50% immediate reduction in Achilles tendon pain\" is the isometric hold, another exercise. Step 3: the first remaining fault on the common-mistakes list written for this exercise, in source order (Motra, c8; Peloton's section names only the speed fault): partial range (c8), which the side view shows as the heels stopping part way. handlingMistakes: [0] moving too fast or bouncing (step 1), [1] partial range, [2] locking the knees, in Motra's list order."
-  },
-  "tells": [
-   {
-    "text": "Heels rise as high as possible",
-    "claim": "c4"
-   },
-   {
-    "text": "A one- to two-second hold at the top",
-    "claim": "c5"
-   }
+  "sources": [
+    {
+      "id": "motra-bwcr",
+      "url": "https://www.motra.com/exercises/bodyweightCalfRaise",
+      "title": "Bodyweight Calf Raise - Exercise Guide | Motra",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "peloton-cr",
+      "url": "https://www.onepeloton.com/blog/calf-raises",
+      "title": "Runners and Cyclists, Here’s Why Calf Raises Should Be Part of Your Routine (Peloton)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "ggr-calf",
+      "url": "https://www.garagegymreviews.com/calf-exercises",
+      "title": "Trying to Get Big Legs? Try Calf Exercises | Garage Gym Reviews",
+      "kind": "coach",
+      "year": 2023,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
   ],
-  "tempo": {
-   "up": 2,
-   "down": 2,
-   "pause": 1,
-   "claim": [
-    "c15"
-   ],
-   "text": "Down 2 and up 2 are Motra's 2-1-2 (c15, WEAK), read in its Tempo tooltip's order: lowering, bottom pause, lifting, top pause (R-LB6-2, R-LB6-7); the page shows three numbers, read as the first three. Its 1 s bottom pause is named here and not written in pause (LR-33). Pause 1 is the hold right after the lift: Peloton's \"Hold the top position for a second or two\" (c5, c15) gives seconds, and the plate draws the low end, 1 s; Motra's \"hold briefly\" and Garage Gym Reviews' \"Pause\" (c5) agree. Peloton's eccentric variation lowers over 3-5 seconds on one leg and its coach's \"rising quickly to build power and lowering slowly\" is for athletic performance; neither is this tempo."
-  },
-  "variantLine": null
- },
- "grip": {
-  "type": "",
-  "width": "",
-  "thumb": "",
-  "handContact": "",
-  "wrist": "",
-  "claims": [],
-  "note": "Hand archetype none: no grip. The hands hang by the sides or rest on a wall or chair for balance (c1, c11); no hand zoom."
- },
- "setup": [
-  {
-   "step": "On a step: balls of your feet on the edge, heels off.",
-   "claim": [
-    "c2",
-    "c3",
-    "c4"
-   ]
-  },
-  {
-   "step": "Feet hip-width apart, toes forward.",
-   "claim": "c1"
-  },
-  {
-   "step": "Hands on a wall or chair for balance, if needed.",
-   "claim": [
-    "c1",
-    "c11"
-   ]
-  },
-  {
-   "step": "Shoulders relaxed, core braced.",
-   "claim": [
-    "c1",
-    "c12"
-   ]
-  }
- ],
- "posture": [
-  {
-   "point": "Knees straight but unlocked.",
-   "claim": "c7"
-  },
-  {
-   "point": "Push through the balls of your feet to raise your heels high.",
-   "claim": "c4"
-  },
-  {
-   "point": "Squeeze your calves and hold the top for a second or two.",
-   "claim": "c5"
-  },
-  {
-   "point": "Lower your heels slowly and with control.",
-   "claim": "c6"
-  },
-  {
-   "point": "On a step, let your heels go slightly below it.",
-   "claim": "c2"
-  },
-  {
-   "point": "Breathe in as you lower, out as you rise.",
-   "claim": "c12"
-  }
- ],
- "handlingMistakes": [
-  {
-   "mistake": "Moving too fast or bouncing.",
-   "fix": "Slow down and keep control.",
-   "claim": [
-    "c9",
-    "c8"
-   ]
-  },
-  {
-   "mistake": "Partial range.",
-   "fix": "Rise fully onto your toes. Lower to flat or slightly below.",
-   "claim": [
-    "c8",
-    "c2",
-    "c4"
-   ]
-  },
-  {
-   "mistake": "Locking the knees.",
-   "fix": "Keep your knees straight but unlocked.",
-   "claim": [
-    "c8",
-    "c7"
-   ]
-  }
- ],
- "feel": {
-  "primary": [
-   {
-    "muscleId": "calves",
-    "claim": "c13"
-   }
-  ],
-  "secondary": [],
-  "watch": [],
-  "rows": [
-   {
-    "where": "Calves",
-    "means": "Both main calf muscles are working.",
-    "fix": "",
-    "claim": "c13",
-    "redFlag": null
-   },
-   {
-    "where": "Knee",
-    "means": "Fault: locked or hyperextended knees.",
-    "fix": "Keep your knees straight but unlocked.",
-    "claim": [
-     "c7",
-     "c8"
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side; the heels rising above and dipping below the step edge (c2, c4), the straight but unlocked knee (c7) and the upright body read from the side. The top fault, moving too quickly or bouncing (c9), shows only as speed, so the plate draws partial range (c8), the heels stopping part way.",
+    "equipment": "Generic box or step (census box) under the forefoot with the heels free (c2, c3), floor line (census floor). Motra teaches the raise on flat ground and allows a step for the stretch (c2, c13); the census note draws the forefoot on an edge.",
+    "start": "Bottom of the rep: standing tall, feet hip-width, toes forward (c1); balls of the feet on the step edge, heels flat or slightly below it for a stretch (c2, c3); knees straight but unlocked (c7); arms by the sides, or hands on a wall for balance (c1). No source gives joint angles.",
+    "end": "Top of the rep: on the tiptoes, heels as high as possible (c4); knees still straight but unlocked (c7); body unchanged.",
+    "checkpoints": [
+      {
+        "label": "Heels high",
+        "what": "Heels as high as possible at the top.",
+        "claim": "c4"
+      },
+      {
+        "label": "Knees soft",
+        "what": "Knees straight but unlocked.",
+        "claim": "c7"
+      },
+      {
+        "label": "Heels dip",
+        "what": "On a step, heels slightly below it at the bottom.",
+        "claim": "c2"
+      }
     ],
-    "redFlag": "knee"
-   },
-   {
-    "where": "Achilles",
-    "means": "Pain here means stop.",
-    "fix": "Stop the set if your Achilles hurts.",
-    "claim": "c10",
-    "redFlag": null
-   }
-  ]
- },
- "risks": [
-  {
-   "risk": "Knees: avoid hyperextending them.",
-   "claim": "c7"
+    "mistake": {
+      "what": "Heels moving only part way up or down.",
+      "why": "The top fault, moving too quickly or bouncing, which Peloton's coach calls the most common mistake he sees (c9), shows only as speed, so the plate draws the next fault by the same steps: partial range, next on Motra's common-mistakes list (c8), against its full range from on the toes to flat or slightly below a step (c2).",
+      "claim": [
+        "c8",
+        "c2"
+      ],
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: moving too quickly or bouncing through the motion (c9). Peloton, under 'Common Mistakes to Avoid' for the calf raise: \"“The most common mistake I see is people moving too quickly or bouncing through the motion,” Matt says.\" The sentence before ties it to this exercise (\"The calf raise may be a simple exercise, but proper form matters.\"), and the version taught on the page is the bodyweight standing raise, so it counts as a step-1 hit for this exercise's own fault (D-SUP-LB7-DIPREPS). It is not a list sentence read onto one item: it states the frequency itself. Motra's list item 1, \"Bouncing at bottom\" (c8), is the same fault. Set aside at step 1: Peloton's \"A common starting point is 2-3 sets of 8-12 repetitions\" (c14) is programming; Peloton's heading \"Common Mistakes to Avoid\" is a heading, not a frequency word. Garage Gym Reviews' \"commonly neglected calf muscles\" is about the muscles, \"this often-overlooked muscle group\" and \"answering common questions\" about the muscles and the article, \"Most calf workouts will target the gastrocnemius and the soleus\" about training, \"Calf presses are most often performed using a leg press machine.\" another exercise, and \"give your muscle fibers time to recover fully, usually about forty-eight hours\" programming; Motra's \"Popularity Score\" is about the exercise. drawable false: moving too quickly or bouncing shows only as speed (LR-31). The plate draws the next fault by the same steps. Step 1 has no other hit. Step 2: no other named fault is tied to harm: Motra's \"Avoid hyperextension of knees\" (c7) and \"Use support for balance\" (c11) state no harm; its \"Stop if Achilles pain occurs\" (c10) names no fault; its \"When to Avoid\" items are conditions; Peloton's \"reduce injury risk\", \"further reducing the risk of ankle sprains\", \"may also help reduce the risk of injury\", its Achilles overuse study line and \"especially when joint movement is painful\" are about the exercise's benefits and its isometric variation, not a fault; Garage Gym Reviews' \"more likely going to leave you sore and at risk of injury\" is about training the calves every day, and its \"approximately 50% immediate reduction in Achilles tendon pain\" is the isometric hold, another exercise. Step 3: the first remaining fault on the common-mistakes list written for this exercise, in source order (Motra, c8; Peloton's section names only the speed fault): partial range (c8), which the side view shows as the heels stopping part way. handlingMistakes: [0] moving too fast or bouncing (step 1), [1] partial range, [2] locking the knees, in Motra's list order."
+    },
+    "tells": [
+      {
+        "text": "Heels rise as high as possible",
+        "claim": "c4"
+      },
+      {
+        "text": "A one- to two-second hold at the top",
+        "claim": "c5"
+      }
+    ],
+    "tempo": {
+      "up": 2,
+      "down": 2,
+      "pause": 1,
+      "claim": [
+        "c15"
+      ],
+      "text": "Down 2 and up 2 are Motra's 2-1-2 (c15, WEAK), read in its Tempo tooltip's order: lowering, bottom pause, lifting, top pause (R-LB6-2, R-LB6-7); the page shows three numbers, read as the first three. Its 1 s bottom pause is named here and not written in pause (LR-33). Pause 1 is the hold right after the lift: Peloton's \"Hold the top position for a second or two\" (c5, c15) gives seconds, and the plate draws the low end, 1 s; Motra's \"hold briefly\" and Garage Gym Reviews' \"Pause\" (c5) agree. Peloton's eccentric variation lowers over 3-5 seconds on one leg and its coach's \"rising quickly to build power and lowering slowly\" is for athletic performance; neither is this tempo."
+    },
+    "variantLine": null
   },
-  {
-   "risk": "Achilles pain: stop the set.",
-   "claim": "c10"
+  "grip": {
+    "type": "",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [],
+    "note": "Hand archetype none: no grip. The hands hang by the sides or rest on a wall or chair for balance (c1, c11); no hand zoom."
   },
-  {
-   "risk": "Balance: use a wall or chair for support if needed.",
-   "claim": [
-    "c11",
-    "c1"
-   ]
-  }
- ],
- "redFlags": [
-  "knee"
- ],
- "zooms": [
-  {
-   "key": "foot-edge",
-   "kind": "posture",
-   "right": "Balls of the feet on the step, heels off.",
-   "wrong": null,
-   "claim": [
-    "c3",
-    "c2"
-   ]
+  "setup": [
+    {
+      "step": "On a step: balls of your feet on the edge, heels off.",
+      "claim": [
+        "c2",
+        "c3",
+        "c4"
+      ]
+    },
+    {
+      "step": "Feet hip-width apart, toes forward.",
+      "claim": "c1"
+    },
+    {
+      "step": "Hands on a wall or chair for balance, if needed.",
+      "claim": [
+        "c1",
+        "c11"
+      ]
+    },
+    {
+      "step": "Shoulders relaxed, core braced.",
+      "claim": [
+        "c1",
+        "c12"
+      ]
+    }
+  ],
+  "posture": [
+    {
+      "point": "Knees straight but unlocked.",
+      "claim": "c7"
+    },
+    {
+      "point": "Push through the balls of your feet to raise your heels high.",
+      "claim": "c4"
+    },
+    {
+      "point": "Squeeze your calves and hold the top for a second or two.",
+      "claim": "c5"
+    },
+    {
+      "point": "Lower your heels slowly and with control.",
+      "claim": "c6"
+    },
+    {
+      "point": "On a step, let your heels go slightly below it.",
+      "claim": "c2"
+    },
+    {
+      "point": "Breathe in as you lower, out as you rise.",
+      "claim": "c12"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Moving too fast or bouncing.",
+      "fix": "Slow down and keep control.",
+      "claim": [
+        "c9",
+        "c8"
+      ]
+    },
+    {
+      "mistake": "Partial range.",
+      "fix": "Rise fully onto your toes. Lower to flat or slightly below.",
+      "claim": [
+        "c8",
+        "c2",
+        "c4"
+      ]
+    },
+    {
+      "mistake": "Locking the knees.",
+      "fix": "Keep your knees straight but unlocked.",
+      "claim": [
+        "c8",
+        "c7"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "calves",
+        "claim": "c13"
+      }
+    ],
+    "secondary": [],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Calves",
+        "means": "Both main calf muscles are working.",
+        "fix": "",
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "Knee",
+        "means": "Fault: locked or hyperextended knees.",
+        "fix": "Keep your knees straight but unlocked.",
+        "claim": [
+          "c7",
+          "c8"
+        ],
+        "redFlag": "knee"
+      },
+      {
+        "where": "Achilles",
+        "means": "Pain here means stop.",
+        "fix": "Stop the set if your Achilles hurts.",
+        "claim": "c10",
+        "redFlag": null
+      }
+    ]
   },
-  {
-   "key": "knee",
-   "kind": "posture",
-   "right": "Knee straight but unlocked.",
-   "wrong": "Knee locked or hyperextended.",
-   "claim": [
-    "c7",
-    "c8"
-   ]
+  "risks": [
+    {
+      "risk": "Knees: avoid hyperextending them.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Achilles pain: stop the set.",
+      "claim": "c10"
+    },
+    {
+      "risk": "Balance: use a wall or chair for support if needed.",
+      "claim": [
+        "c11",
+        "c1"
+      ]
+    }
+  ],
+  "redFlags": [
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "foot-edge",
+      "kind": "posture",
+      "right": "Balls of the feet on the step, heels off.",
+      "wrong": null,
+      "claim": [
+        "c3",
+        "c2"
+      ]
+    },
+    {
+      "key": "knee",
+      "kind": "posture",
+      "right": "Knee straight but unlocked.",
+      "wrong": "Knee locked or hyperextended.",
+      "claim": [
+        "c7",
+        "c8"
+      ]
+    },
+    {
+      "key": "heel-top",
+      "kind": "posture",
+      "right": "Heels as high as possible, calves squeezed.",
+      "wrong": "Heels only part way up.",
+      "claim": [
+        "c4",
+        "c5",
+        "c8"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "calves primary matches every read source (c13: the gastrocnemius and the soleus). No secondary muscle is named by a read source."
   },
-  {
-   "key": "heel-top",
-   "kind": "posture",
-   "right": "Heels as high as possible, calves squeezed.",
-   "wrong": "Heels only part way up.",
-   "claim": [
-    "c4",
-    "c5",
-    "c8"
-   ]
-  }
- ],
- "libraryDiff": {
-  "add": [],
-  "remove": [],
-  "why": "calves primary matches every read source (c13: the gastrocnemius and the soleus). No secondary muscle is named by a read source."
- },
- "anchorSource": "motra-bwcr",
- "loadProgression": {
-  "text": "Start with 2-3 sets of 8-12. For strength, add weight once the last reps feel too easy.",
-  "claim": "c14"
- },
- "gaps": [],
- "notes": [
-  "Start head: claude/libht-research @ 6d253b9e. Own parent (content.md Appendix A, 'New parents on their own'); no inherit entries. No shared card lists bodyweight_calf_raise in appliesTo at 6d253b9e (floor-body lists glute_bridge, not this id).",
-  "Anchor: Motra's bodyweight calf raise page, read in full (How to Perform, Coaching Tips, Tempo with its tooltip, Range of Motion, Safety, Common Mistakes). Peloton's calf-raise article and Garage Gym Reviews' calf-exercises page were read in full; only GGR's section 1 (Basic Calf Raises (Bodyweight)) is cited. The fetcher's scan covered GGR through section 1; the writer scanned sections 2-15, the FAQs and the references for LR-31 and LR-33 words (2026-10-22): no frequency or harm word about a calf-raise fault (hits: \"Calf presses are most often performed using a leg press machine\", \"especially helpful in strengthening the calf muscle after an injury\", the isometric hold's Achilles pain line, \"leave you sore and at risk of injury\" and \"usually about forty-eight hours\" on daily training, all set aside in the rankNote or naming no fault); pause words only in other exercises' steps (\"Pause, then slowly return\" in sections 2, 3 and 5, \"Hold briefly, then release.\" in the calf press, \"Hold the position\" in the seated barbell raise and the isometric hold).",
-  "Surface: Motra describes the raise on flat ground and lowers 'to flat or slightly below if on step' (c2); Peloton says a step or curb gives more range (c2). The census draws the forefoot on a box edge, so the card's setup puts the lifter on a step; the heels-hanging-off line comes from Peloton's eccentric variation steps (c3, WEAK).",
-  "Stance width: Motra and Peloton say hip-width; Garage Gym Reviews says shoulder-width (c1). The card follows hip-width.",
-  "The Achilles feel row and risk keep Motra's stop quote (c10, \"Stop if Achilles pain occurs\"; R-LB3-4, R-LB6-6). No shared red-flag box covers the ankle, so its redFlag is null. The knee row is place + the source's fault + fix (LR-6), linking the knee box.",
-  "Read and not cited: ACE's Calf Raises page (exercise-library/51) is the barbell version, another version. Healthline, Verywell Fit (402) and StrengthLog's bodyweight calf raise page (429) could not be used."
- ]
+  "anchorSource": "motra-bwcr",
+  "loadProgression": {
+    "text": "Start with 2-3 sets of 8-12. For strength, add weight once the last reps feel too easy.",
+    "claim": "c14"
+  },
+  "gaps": [],
+  "notes": [
+    "Start head: claude/libht-research @ 6d253b9e. Own parent (content.md Appendix A, 'New parents on their own'); no inherit entries. No shared card lists bodyweight_calf_raise in appliesTo at 6d253b9e (floor-body lists glute_bridge, not this id).",
+    "Anchor: Motra's bodyweight calf raise page, read in full (How to Perform, Coaching Tips, Tempo with its tooltip, Range of Motion, Safety, Common Mistakes). Peloton's calf-raise article and Garage Gym Reviews' calf-exercises page were read in full; only GGR's section 1 (Basic Calf Raises (Bodyweight)) is cited. The fetcher's scan covered GGR through section 1; the writer scanned sections 2-15, the FAQs and the references for LR-31 and LR-33 words (2026-10-22): no frequency or harm word about a calf-raise fault (hits: \"Calf presses are most often performed using a leg press machine\", \"especially helpful in strengthening the calf muscle after an injury\", the isometric hold's Achilles pain line, \"leave you sore and at risk of injury\" and \"usually about forty-eight hours\" on daily training, all set aside in the rankNote or naming no fault); pause words only in other exercises' steps (\"Pause, then slowly return\" in sections 2, 3 and 5, \"Hold briefly, then release.\" in the calf press, \"Hold the position\" in the seated barbell raise and the isometric hold).",
+    "Surface: Motra describes the raise on flat ground and lowers 'to flat or slightly below if on step' (c2); Peloton says a step or curb gives more range (c2). The census draws the forefoot on a box edge, so the card's setup puts the lifter on a step; the heels-hanging-off line comes from Peloton's eccentric variation steps (c3, WEAK).",
+    "Stance width: Motra and Peloton say hip-width; Garage Gym Reviews says shoulder-width (c1). The card follows hip-width.",
+    "The Achilles feel row and risk keep Motra's stop quote (c10, \"Stop if Achilles pain occurs\"; R-LB3-4, R-LB6-6). No shared red-flag box covers the ankle, so its redFlag is null. The knee row is place + the source's fault + fix (LR-6), linking the knee box.",
+    "Read and not cited: ACE's Calf Raises page (exercise-library/51) is the barbell version, another version. Healthline, Verywell Fit (402) and StrengthLog's bodyweight calf raise page (429) could not be used."
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Raise",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "bounce"
 }

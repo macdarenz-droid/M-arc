@@ -185,11 +185,15 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   (c13) and the contacts hold within 0.2 cm.
 - **Fault→key**: plate.mistake "At the bottom, the lower back rounds and lifts off the back pad" (c8, c10, c9; drawable
   true) = handlingMistakes[0] → drawn key `lift` ("Hips off pad", c8 "lift their lower back off the back pad", c9
-  "having your hips leave the backrest"), second tell `round` ("Lower back rounds", c10 "your lower back rounds");
+  "having your hips leave the backrest"; anchored on the hips: the Mistake `buttock`), second tell `round` ("Lower back
+  rounds", c10 "your lower back rounds"; anchored on the lower back: the Mistake `sacrum`, on the dashed back contour;
+  D-LIB18-ROUND applied to both tells);
   topFault `lift`. The Mistake: leg_press's butt wink, the pelvis rolled M_ROLL 25° about the lumbar pivot (c10's "ever
   so slightly" read with the convention, D-LIB18-SIZE); the faulty back contour is a dashed guide (sacrum 6.4 cm,
   buttock 7.9 cm off the pad). Both tells are met from the front: the back lies on the pad with the carriage and rails
-  behind it, and the Mistake buttock is inside the solid end figure.
+  behind it, and the Mistake buttock and sacrum lie inside the solid end figure (1.4 and 4.4 px), so neither tell has a
+  leader that crosses no figure: the full box scan finds none for `lift`; `round`'s box behind the rail crosses the
+  rail and pad. Both are posted with the slice for a ruling (D-LIB15-NIT1).
 - **Facts** (proposed):
 
 | quote (claim) | proposed plateFacts | pose (cardPose) |
@@ -206,15 +210,15 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   test); c12 "shoulder-width", "slightly out" (widths: FOOT_X, TOE_OUT); c13 knees over the toes (frontal); c3 the locks
   and c16 the lever (no drawable state); c14 the heel lift (a fault's sign; the whole-foot contact covers it); the rail
   angle and plate tilt (equipment numbers with no measure callout, D-LIB8M-FACTS).
-- **Trace**: `knee.r` (plate.frames "Trace follows the knee"). **measured 26.4 px at trim [6, 8]** (leg_press.mjs:132,
-  the clone source's trim); **18.2 px at DRAWING-GUIDE §2's "about [10, 12]"**: question 2.
+- **Trace**: `knee.r` (plate.frames "Trace follows the knee"), trim [6, 8], the clone source's (leg_press.mjs:132;
+  D-LIB18-TRIM). **measured 26.4 px**: passes.
 - **Balance**: machine-held, inside the back-pad and foot contacts: the centre of mass 30.8-31.3 cm ahead of the upper
   back's contact and 68.7-86.4 cm behind the toes in every drawn pose and ghost.
 - **Sizes**: lb8/sizes.json `hack_squat` and `hackSled`. PLATE_Y 0.20 m has a frame-stack basis only (no source gives a
   hack squat's platform height).
-- **PQ-H3**: the Mistake **measured 15.8 px** (the `round` tell, anchored at the pelvis's `seat` landmark plus a px
-  offset to the groin: that rigid pelvis point's own drawn motion, 15.5-17.5 px; the `lift` anchor alone 5.5 px; the
-  nearest named landmark, `hips`, gives 10.9 px): question 3.
+- **PQ-H3**: the Mistake **measured 11.7 px** (the `lift` tell on the hips, the Mistake buttock: 11.73 px; `round` on the
+  sacrum: 4.36 px): passes by 0.3 px. (Before D-LIB18-ROUND: 15.8 px at the groin, refused.)
+- **Measured flag outside the ruled set**: **F3 97.9 px** (the `round` leader from behind the rail), posted.
 - **Labels**: "Slight knee bend" anchors on the start knee in a closed pocket (end thigh above, rail and pad end left,
   plate below, start shin, ghosts and the end shin right; 45-55 px free for a 68 × 28 px box): every exit crosses a
   line, and the drawn one crosses the rail once (0.4 px): a named-nit candidate (D-LIB15-NIT1; question 4).
@@ -252,8 +256,8 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   conflict the card resolves as "deep, comfortable": START_DF); c8 "push through the balls of your feet" (a motion cue:
   the end balls are held by a check; the verifier decides); StrengthLog's c1 "toes and the ball of your feet on the
   foot support" (S4 below).
-- **Trace**: `heel.r` (D-LIB18-CALF). **measured 11.8 px at trim [6, 8]** (leg_press.mjs:154's heel trace); the
-  untrimmed path is 25.5 px: **S2, held**.
+- **Trace**: `heel.r` (D-LIB18-CALF), trim [6, 8], the clone source's (leg_press.mjs:132; D-LIB18-TRIM). **measured
+  11.8 px**; the untrimmed path is 25.5 px: **S2, held**.
 - **Mistake**: **measured 12.2 px** (passes).
 - **S4 (toe through the platform), measured on the drawn foot outline, the ball fixed on the platform**: the toe starts
   to enter at 8.9° plantar flexion; 1.0 cm in at 21.8°; 0.48 cm at the Mistake (15°); **2.93 cm at the card's top (50°)**
@@ -261,7 +265,7 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
 - **Balance**: between the seat and the balls: the centre of mass 15.0-15.4 cm ahead of the seat point and 47.4-47.8 cm
   behind the balls in every pose.
 - **Sizes**: lb8/sizes.json `seated_calf_raise` and `calfMachine`. START_DF 20° and END_PF 50° rest on the textbook
-  ankle norms (AAOS, as Norkin & White cite them), not opened this session: question 6. TOWER_GAP 0.58 m is a layout
+  ankle range read as stated physical reasons (source not opened; D-LIB18-UNSOURCED). TOWER_GAP 0.58 m is a layout
   basis that makes a long (0.88 m) lever arm: a critic may score it (R2).
 
 ### hip_thrust (slice; drawn)
@@ -299,7 +303,8 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   hip and knee level ±1 cm at the top). c24 "just wider than hip width": a width (GRIP_X). c23 the neck: the sources
   conflict (card notes), so the head is drawn in line. c4 "a pad or mat": an item, drawn (R10).
 - **Trace**: `hip.r` (c8 "Push the bar towards the ceiling by extending your hips"; the bar rides the pelvis and the
-  engine traces landmarks only). **measured 28.2 px** (trim [10, 12]): passes.
+  engine traces landmarks only), trim [6, 8], the clone source's (leg_press.mjs:132; D-LIB18-TRIM). **measured
+  36.9 px** (28.2 px at the earlier [10, 12]): passes.
 - **Balance**: between the upper back on the bench edge and the heels (c2, c15): the centre of mass (body plus the
   bar's load at the crease) lies between the edge and the heels in every drawn pose (a two-contact base).
 - **Sizes**: lb8/sizes.json `hip_thrust` (PAD_R 0.045 m, GRIP_X 0.2 m, PLATE_D 0.45 m, SLEEVE_D 0.05 m, BENCH_W 0.29 m,
@@ -350,13 +355,14 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
   sized KNEE_SOFT, tested in the view's plane); c6 "as far as possible" and c13 "as far as you comfortably can" (no
   number: END_HIP_EXT); c10 "toe straight down" (a segment angle: tested, heel-to-toe within 2° of vertical); the end
   hand contact: held by a check (no "throughout").
-- **Trace**: `ankle.r` (c5 "extend it behind you"). **measured 54.1 px**: passes.
+- **Trace**: `ankle.r` (c5 "extend it behind you"), trim [10, 12], the clone source's (lat_pulldown.mjs:142;
+  D-LIB18-TRIM). **measured 54.1 px**: passes.
 - **Balance**: the standing foot, heel to toe (c2); the hands steady only. **measured** centre of mass from the
   standing mid-sole: start +1.4, ghosts +0.3 and -0.6, end -1.4, Mistake -0.8 cm (±2 cm and inside heel to toe).
 - **Sizes**: lb8/sizes.json `cable_kickback` (STANCE_X, STANCE_KNEE 15°, KNEE_SOFT 15°, END_HIP_EXT 15°,
   START_TOE_CLEAR 0.02 m, START_ANKLE 0°, ELBOW_SOFT 18°, M_ARCH 12°, PULLEY_Y 0.10 m, FLOOR_*) and `ankleCuff`.
-  END_HIP_EXT's basis (the hip's extension stop with the pelvis held, 10-15° in clinical tables) is not yet checked
-  against a primary source (Roach & Miles 1991, Phys Ther 71:656, could not be opened): question 6.
+  END_HIP_EXT's basis is a stated physical reason (the hip's extension stop with the pelvis held; source not opened;
+  D-LIB18-UNSOURCED).
 - **PQ-H3**: the Mistake **measured 4.3 px** (the `arch` tell at the Mistake sacrum, on the dashed arch guide; other
   back points 4.3-5.3 px) < 11.39 px: **S2, held** (section 15). The leg rides the pelvis (knee 13.1 px, ankle 26.1 px),
   but no claim states the leg's rise as a sign of the arch, so it carries no tell.
@@ -668,7 +674,7 @@ Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys s
 9. **Test manners** (D-LIB18-TESTS): an afterEach macrotask, one yield per spec in every render loop, and generate and
    every whole-page build in an awaited child process from the first commit (A19 pins them).
 
-## 17. Questions for the supervisor ('LB8 NOTE RULED')
+## 17. Questions for the supervisor ('LB8 NOTE RULED' @ 741a386e, #306 6355447835: Q1, Q2, Q4-Q10 accepted with limits, Q3 refused; recorded as D-LIB18-ARCH, -TRIM, -ROUND, -UNSOURCED there)
 
 1. **The arch convention on braced bodies.** At hanging_leg_raise.mjs:69's 12° (D-LIB18-SIZE), hip_thrust's and
    cable_kickback's arches measure 4.1 and 4.3 px (deviationMin 11.39), whichever reading of the claims is drawn
@@ -689,8 +695,8 @@ Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys s
    pendulum_squat c3, leg_extension c4, lying_leg_curl c5); hip_thrust's backUpper on the bench edge at start (c2) and
    end (c9); cable_kickback's standing-foot contact from c2; seated_calf_raise's end balls (c8) as a check only.
 6. **Unverified size bases**, each a stated reason with numbers but no opened primary source: cable_kickback END_HIP_EXT
-   15° (the hip's extension stop; Roach & Miles 1991 could not be opened); seated_calf_raise START_DF 20° and END_PF 50°
-   (the AAOS norms). Accept as stated physical reasons, or route to research?
+   15° (the hip's extension stop; source not opened); seated_calf_raise START_DF 20° and END_PF 50° (the normal ankle
+   range; source not opened). Accept as stated physical reasons, or route to research?
 7. **F2 on cable_kickback**: 0.645 (range 0.191-0.549), the 2.1 m column with its stack and the kicked-back foot at the
    reference scale. Proposed as a named flag; nothing changed to dodge it.
 8. **hack_squat's TOE_OUT 8°** (not leg_press's 15°), so the soles hold the plate within 0.2 cm (c13).

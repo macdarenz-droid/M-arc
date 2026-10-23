@@ -287,9 +287,9 @@ describe('LIB-18 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
     const dir = mkdtempSync(join(tmpdir(), 'lb8-val-'));
     try {
       for (const d of ['cards', 'quotes']) cpSync(`docs/research/howto/${d}`, join(dir, 'docs/research/howto', d), { recursive: true });
-      const p = join(dir, 'docs/research/howto/cards', 'hip_thrust.json'), c = JSON.parse(readFileSync(p, 'utf8'));
-      c.tempo = [{ phase: 'Lift', s: 1, move: true }]; writeFileSync(p, JSON.stringify(c, null, 2));
-      expect(v.validateCardFile('hip_thrust.json', dir).length).toBeGreaterThan(0);
+      const p = join(dir, 'docs/research/howto/cards', 'lying_leg_curl.json'), c = JSON.parse(readFileSync(p, 'utf8'));
+      c.tempo = [{ phase: 'Curl', s: 1, move: true }]; writeFileSync(p, JSON.stringify(c, null, 2));
+      expect(v.validateCardFile('lying_leg_curl.json', dir).length).toBeGreaterThan(0);
     } finally { rmSync(dir, { recursive: true, force: true }); }
   });
 });
@@ -448,7 +448,7 @@ describe('LIB-18 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   };
   // Named-nit candidates posted for a ruling (D-LIB15-NIT1; #290 6351401878): no placement clears them without breaking
   // another rule (the scan is in DESIGN.md). Every other leader must clear 6 px.
-  const NITS: Record<string, string[]> = { hack_squat: ['normal soft'], hip_thrust: ['normal crease', 'mistake arch'] };
+  const NITS: Record<string, string[]> = { hack_squat: ['normal soft', 'mistake round'], hip_thrust: ['normal crease', 'mistake arch'] };
   const gapProblems = (spec: any) => Object.entries(gaps(spec)).filter(([k, v]) => v < 6 && !(NITS[spec.id] ?? []).includes(k)).map(([k, v]) => `${spec.id} ${k}: ${v.toFixed(1)} px`);
   it('no leader comes within 6 px of the Trace, a cable, a pad, a seat, a platform, a rail, the bench or the bar (away from its first 8 px), but the named-nit candidates', async () => {
     for (const id of specsDrawn()) { await tick(); expect(gapProblems(S[id]), id).toEqual([]); }
@@ -476,7 +476,7 @@ describe('LIB-18 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   };
   // Named-nit candidates (D-LIB15-NIT1, posted with their scans): hip_thrust's knee arc sits in the closed angle under
   // the thigh, and every short leader from it crosses the thigh (the clean boxes need leaders over 130 px, past F3).
-  const CROSS_NITS: Record<string, string[]> = { hip_thrust: ['normal _arc'] };
+  const CROSS_NITS: Record<string, string[]> = { hip_thrust: ['normal _arc'], hack_squat: ['mistake lift', 'mistake round'] };   // hack_squat's two tells: pending (slice post)
   it('no leader crosses the solid figure\'s outline, nor a Mistake leader the Mistake figure\'s, but the named-nit candidates', async () => {
     const out: string[] = [];
     for (const id of specsDrawn()) { await tick(); out.push(...crossProblems(S[id])); }
@@ -621,11 +621,10 @@ fs.writeFileSync(${JSON.stringify(out)}, h);`;
       return { ...(await candOf(await pageInChild(file))), spec };
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
-  // Before Do 6 b the card has no machine keys: H6:no-card is the one expected node problem (lib-18-card Do 2); A8's F7
-  // check joins after the keys are written.
-  it('clean: no node-half problem but the expected H6:no-card before the card keys', async () => {
+  it('clean: no node-half problem (H6 passes on the card keys), F7 is not raised (drawable true, topFault = the drawn key)', async () => {
     const r = await qa(await candOf());
-    expect(node(r)).toEqual(['H6:no-card']);
+    expect(node(r)).toEqual([]);
+    expect(r.flags.F7.raised).toBe(false);
   });
   it('A8 mutation: the card copied with topFault set to its other tell key raises F7, and the expected-set check is red', async () => {
     const qaMod = await import(/* @vite-ignore */ lib('lb8/qa.mjs'));
@@ -750,7 +749,13 @@ describe('LIB-18 A17: sizes and trace points are fixed in lb8/sizes.json and nev
     const eq = (a: any, b: any) => JSON.stringify(a) === JSON.stringify(b);
     for (const k of Object.keys(spec)) if (!(k in table)) out.push(`${k}: not in sizes.json`); else if (!eq(table[k].value, spec[k])) out.push(`${k}: spec ${spec[k]} != sizes.json ${table[k].value}`);
     for (const [k, r] of Object.entries<any>(table)) {
-      if (k === 'trace') { if (mod.default?.trace?.point !== r.value) out.push(`trace: spec ${mod.default?.trace?.point} != sizes.json ${r.value}`); continue; }
+      if (k === 'trace') {
+        if (mod.default?.trace?.point !== r.value) out.push(`trace: spec ${mod.default?.trace?.point} != sizes.json ${r.value}`);
+        // D-LIB18-TRIM: the trim is the trace row's, its basis the clone source's trim (file:line) or [10, 12]
+        if (!mod.default?.trace || JSON.stringify(mod.default.trace.trim) !== JSON.stringify(r.trim)) out.push(`trace trim: spec ${JSON.stringify(mod.default?.trace?.trim)} != sizes.json ${JSON.stringify(r.trim)}`);
+        else if (!/trim \[[\d, ]+\]: the clone source's trim, \w+\.mjs:\d+|trim \[10, 12\]/.test(r.basis)) out.push('trace trim: no clone-source basis');
+        continue;
+      }
       if (r.value === 'solved') { if (typeof mod[k] !== 'number') out.push(`${k}: no solved export`); continue; }
       if (!(k in spec) && !eq(mod[k], r.value)) out.push(`${k}: not in the spec`);   // a named export of the spec counts
     }
@@ -769,6 +774,7 @@ describe('LIB-18 A17: sizes and trace points are fixed in lb8/sizes.json and nev
     expect(sizeProblems({ ...m, SIZES: { ...m.SIZES, BAR_TILT: 5 } }, t)).toEqual(['BAR_TILT: not in sizes.json']);
     const c = M.seated_calf_raise;
     expect(sizeProblems({ ...c, default: { ...c.default, trace: { ...c.default.trace, point: 'toe.r' } } }, sizes.ids.seated_calf_raise)).toEqual(['trace: spec toe.r != sizes.json heel.r']);
+    expect(sizeProblems({ ...m, default: { ...m.default, trace: { ...m.default.trace, trim: [10, 12] } } }, t)).toEqual(['trace trim: spec [10,12] != sizes.json [6,8]']);
   });
 });
 
@@ -1240,7 +1246,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     });
     /** Lines a leader keeps 6 px from (away from its first 8 px): the Trace and every drawn equipment outline (pads, the
      *  plate, the rail, the frame, the stop, the handle and the start phantom). */
-    const NIT_PENDING = ['soft'];   // D-LIB15-NIT1 candidate: the start knee sits in a closed pocket (header; LB8 note)
+    const NIT_PENDING = ['soft', 'round'];   // D-LIB15-NIT1 candidate: the start knee sits in a closed pocket (header; LB8 note)
     const gaps = (spec: any) => {
       const out: { key: string, mistake: boolean, min: number }[] = [], cam = camOf(spec);
       for (const mistake of [false, true]) {
@@ -1277,7 +1283,9 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
       }
       return out;
     };
-    it('no leader crosses the solid figure or the Mistake figure', () => { expect(crossProblems(s())).toEqual([]); });
+    // 'Hips off pad' on the hips (D-LIB18-ROUND's rule): no box in the plate gives it a leader that crosses no figure
+    // (full scan posted on #306); pending the ruling, it is the one listed crossing.
+    it('no leader crosses the solid figure or the Mistake figure, but the listed pending ones', () => { expect(crossProblems(s())).toEqual(['mistake lift: crosses the figure', 'mistake round: crosses the figure']); });
     it('mutation: the "Back on pad" box placed behind the rail (its leader across the body) is red', () => {
       const bad = { ...s(), callouts: s().callouts.map((x: any) => (x.key === 'back' ? { ...x, box: { left: 20, top: 200 } } : x)) };
       expect(crossProblems(bad)).toContain('normal back: crosses the figure');
@@ -1333,7 +1341,10 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
       const cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm, mp = shapesIn(spec, 'mistake').map((x: any) => x.poly), ep = shapesIn(spec, 'end').map((x: any) => x.poly);
       return spec.mistake.tells.flatMap((t: any) => {
         const p = qaEng.resolvePoint(t.anchor, 'mistake', L, cam), onM = Math.abs(outside(mp, p)), offE = outside(ep, p);
-        return onM <= 1.5 && offE >= -0.5 ? [] : [`${t.key}: anchor ${onM.toFixed(1)} px from the Mistake outline, ${offE.toFixed(1)} px from the end figure`];
+        // or on a dashed Mistake guide drawn on top (the faulty back contour), which the engine never masks
+        const gs = (spec.mistake.guides ?? []).filter((g: any) => g.kind === 'dashed' && g.pts).map((g: any) => g.pts.map((q: any) => qaEng.resolvePoint(q, 'mistake', L, cam)));
+        const onG = Math.min(Infinity, ...gs.flatMap((g: number[][]) => segs(g).map(([a, b]) => segD(p, a!, b!))));
+        return (onM <= 1.5 && offE >= -0.5) || onG <= 1.5 ? [] : [`${t.key}: anchor ${onM.toFixed(1)} px from the Mistake outline, ${offE.toFixed(1)} px from the end figure, ${onG.toFixed(1)} px from a dashed guide`];
       });
     };
     it('each tell anchor sits on the drawn Mistake outline, outside the end figure', () => { expect(tellProblems(s())).toEqual([]); });
@@ -1743,3 +1754,113 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     });
   });
 }
+
+describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the pose map and the plate facts', { timeout: T }, () => {
+  const KEYS3 = ['plateFacts', 'tempo', 'topFault'];
+  const WITH_KEYS = LB8.filter(id => !LEGCURLS.includes(id));
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  // The ruled facts (LB8 NOTE RULED Q5; DESIGN.md sections 8 and 11), copied here: [landmark|joint, pose, claim, deg?].
+  // Pose map identity for all 12, so each fact's pose is its cardPose.
+  const LRs = (b: string, p: string, c: string) => [[`${b}.l`, p, c], [`${b}.r`, p, c]];
+  const KNs = (p: string, c: string) => [['knee.l', p, c, 90], ['knee.r', p, c, 90]];
+  const RULED: Record<string, any[][]> = {
+    hack_squat: [...LRs('trap', 'start', 'c1'), ...LRs('heel', 'start', 'c1'), ...LRs('ball', 'start', 'c1'), ['backUpper', 'start', 'c2'], ['buttock', 'start', 'c2'],
+      ['backUpper', 'end', 'c2'], ['buttock', 'end', 'c2'], ...LRs('wrist', 'start', 'c18'), ...KNs('end', 'c4'), ...LRs('heel', 'end', 'c6'), ...LRs('ball', 'end', 'c6')],
+    pendulum_squat: [...LRs('heel', 'start', 'c1'), ...LRs('ball', 'start', 'c1'), ['backUpper', 'start', 'c3'], ['buttock', 'start', 'c3'], ['backUpper', 'end', 'c3'],
+      ['buttock', 'end', 'c3'], ...LRs('wrist', 'start', 'c16')],
+    leg_extension: [['seat', 'start', 'c1'], ['backUpper', 'start', 'c4'], ['buttock', 'start', 'c4'], ['backUpper', 'end', 'c4'], ['buttock', 'end', 'c4'],
+      ...LRs('ankle', 'start', 'c2'), ...LRs('wrist', 'start', 'c3'), ...KNs('start', 'c3')],
+    seated_calf_raise: [['seat', 'start', 'c1'], ...LRs('thighTop', 'start', 'c1'), ...KNs('start', 'c1'), ...LRs('ball', 'start', 'c3'), ...LRs('wrist', 'start', 'c6'), ...KNs('end', 'c13')],
+    standing_calf_raise: [...LRs('ball', 'start', 'c1'), ...LRs('toe', 'start', 'c1'), ...LRs('shoulderTop', 'start', 'c1'), ...LRs('wrist', 'start', 'c2')],
+    bodyweight_calf_raise: [...LRs('ball', 'start', 'c3'), ...LRs('ball', 'end', 'c4')],
+    hip_thrust: [...LRs('heel', 'start', 'c1'), ...LRs('ball', 'start', 'c1'), ['backUpper', 'start', 'c2'], ['backUpper', 'end', 'c9'], ...LRs('wrist', 'start', 'c3'),
+      ...LRs('wrist', 'end', 'c3'), ...LRs('heel', 'end', 'c15'), ...KNs('end', 'c8')],
+    glute_bridge: [['backUpper', 'start', 'c1'], ['buttock', 'start', 'c1'], ...LRs('heel', 'start', 'c1'), ...LRs('ball', 'start', 'c1'), ['sacrum', 'start', 'c2'],
+      ...LRs('heel', 'end', 'c3'), ...KNs('end', 'c4')],
+    cable_kickback: [['ankle.r', 'start', 'c1'], ...LRs('wrist', 'start', 'c4'), ['heel.l', 'start', 'c2'], ['ball.l', 'start', 'c2']],
+    resisted_hip_flexion: [['ankle.r', 'start', 'c2'], ['wrist.r', 'start', 'c2']],
+  };
+  const TOP: Record<string, string> = { hack_squat: 'lift', pendulum_squat: 'drop', leg_extension: 'arch', seated_calf_raise: 'bounce', standing_calf_raise: 'bounce',
+    bodyweight_calf_raise: 'bounce', hip_thrust: 'arch', glute_bridge: 'arch', cable_kickback: 'arch', resisted_hip_flexion: 'lean' };
+  const DRAWN_KEY: Record<string, string> = { hack_squat: 'lift', pendulum_squat: 'heels', leg_extension: 'arch', seated_calf_raise: 'range', standing_calf_raise: 'lock',
+    bodyweight_calf_raise: 'part', hip_thrust: 'arch', glute_bridge: 'arch', cable_kickback: 'arch', resisted_hip_flexion: 'lean' };
+  const factProblems = (id: string, card: any) => {
+    const got = (card.plateFacts ?? []).map((f: any) => [f.joint ?? f.landmark, f.pose, f.claim, ...(f.kind === 'angle' ? [f.deg] : [])]), out: string[] = [];
+    if (JSON.stringify(got) !== JSON.stringify(RULED[id])) out.push(`${id}: plateFacts != the ruled set`);
+    for (const f of card.plateFacts ?? []) {
+      if (f.pose !== f.cardPose) out.push(`${id}: ${f.joint ?? f.landmark} pose ${f.pose} is not the pose map's image of ${f.cardPose}`);
+      if (!card.claims.some((c: any) => c.id === f.claim)) out.push(`${id}: ${f.claim} is no claim`);
+    }
+    return out;
+  };
+  it('each card differs from its research-head copy only in the three keys; the 10 drawn-or-planned cards carry them, the two leg curls not yet', () => {
+    for (const id of LB8) {
+      const c = cardOf(id);
+      expect(KEYS3.every(k => k in c), id).toBe(WITH_KEYS.includes(id));
+    }
+  });
+  it('every card\'s plateFacts is the ruled set, each pose the pose map\'s image (identity), each claim on the card', () => {
+    for (const id of WITH_KEYS) expect(factProblems(id, cardOf(id)), id).toEqual([]);
+  });
+  it('mutations: a setup quote\'s contact moved to the end pose, and a start fact named with the end pose only, are red', () => {
+    const c = JSON.parse(JSON.stringify(cardOf('cable_kickback')));
+    c.plateFacts[0].pose = 'end'; c.plateFacts[0].cardPose = 'end';
+    expect(factProblems('cable_kickback', c).length).toBeGreaterThan(0);
+    const d = JSON.parse(JSON.stringify(cardOf('hip_thrust'))); d.plateFacts[0].pose = 'end';
+    expect(factProblems('hip_thrust', d)).toContain('hip_thrust: heel.l pose end is not the pose map\'s image of start');
+  });
+  it('each card\'s tempo is the strip built from lb8/tempo.json and its plate.tempo, and equals its drawn spec\'s', () => {
+    const tj = readJson('tools/plates/library/lb8/tempo.json');
+    for (const id of WITH_KEYS) {
+      const t = cardOf(id).plate.tempo, built = tj.ids[id].rows.map((r: any) => ({ phase: r.phase, s: t[r.from], ...(r.move ? { move: true } : {}) }));
+      expect(cardOf(id).tempo, id).toEqual(built);
+      if (S[id]) expect(S[id].tempo, id).toEqual(built);
+    }
+  });
+  /** A8: drawable true → topFault is the drawn key (the first tell's); drawable false → the ruled key of handlingMistakes[0],
+   *  which differs from the drawn key (F7 raised). */
+  const topProblems = (id: string, card: any) => {
+    const t = card.topFault, drawable = card.plate.mistake.drawable;
+    if (t !== TOP[id]) return [`${id}: topFault ${t} != ruled ${TOP[id]}`];
+    if (drawable && t !== DRAWN_KEY[id]) return [`${id}: drawable, but topFault ${t} != drawn ${DRAWN_KEY[id]}`];
+    if (!drawable && t === DRAWN_KEY[id]) return [`${id}: drawable false, but topFault equals the drawn key`];
+    if (S[id] && S[id].mistake.tells[0].key !== DRAWN_KEY[id]) return [`${id}: first tell ${S[id].mistake.tells[0].key}`];
+    return [];
+  };
+  it('A8: each topFault is the ruled key; F7 exactly on the six drawable-false cards (four with keys now)', () => {
+    for (const id of WITH_KEYS) expect(topProblems(id, cardOf(id)), id).toEqual([]);
+    expect(WITH_KEYS.filter(id => !cardOf(id).plate.mistake.drawable)).toEqual(['pendulum_squat', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise']);
+  });
+  it('A8 mutations: hip_thrust\'s card with topFault set to its other tell key, and seated_calf_raise\'s with topFault set to its drawn key, are red', () => {
+    expect(topProblems('hip_thrust', { ...cardOf('hip_thrust'), topFault: 'ribs' }).length).toBe(1);
+    expect(topProblems('seated_calf_raise', { ...cardOf('seated_calf_raise'), topFault: 'range' }).length).toBe(1);
+  });
+  const h6Of = (id: string, card: any, spec = S[id]) => {
+    const R = { normal: plate.renderPlate(spec, { id: 'x' }), mistake: plate.renderPlate(spec, { id: 'x', mistake: true }) };
+    return qaNode.h6({ spec, research: card }, { engine: Eng(), pins: pins() }, R).map((p: any) => p.key);
+  };
+  it('A6: PQ-H6 is green on every drawn spec against its card', async () => {
+    for (const id of specsDrawn()) { await tick(); expect(h6Of(id, cardOf(id)), id).toEqual([]); }
+  });
+  it('A6 mutations: an angle fact 3° off (hip_thrust\'s end knee.r 93), and a fact with both joint and measure: true, are red', async () => {
+    const c = JSON.parse(JSON.stringify(cardOf('hip_thrust'))), k = c.plateFacts.findIndex((f: any) => f.joint === 'knee.r');
+    c.plateFacts[k].deg = 93;
+    expect(h6Of('hip_thrust', c).some((x: string) => x.startsWith('H6.fact:'))).toBe(true);
+    const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
+    const dir = mkdtempSync(join(tmpdir(), 'lb8-val6-'));
+    try {
+      for (const d of ['cards', 'quotes']) cpSync(`docs/research/howto/${d}`, join(dir, 'docs/research/howto', d), { recursive: true });
+      const p = join(dir, 'docs/research/howto/cards/hip_thrust.json'), j = JSON.parse(readFileSync(p, 'utf8'));
+      j.plateFacts[k].measure = true; writeFileSync(p, JSON.stringify(j, null, 2));
+      expect(v.validateCardFile('hip_thrust.json', dir).some((x: string) => /both joint and measure/.test(x))).toBe(true);
+    } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+  it('A6 mutation: for each contact fact of hip_thrust, its pose\'s body moved 2 cm turns that fact red', () => {
+    const s = S.hip_thrust, c = cardOf('hip_thrust');
+    for (const pose of ['start', 'end']) {
+      const p = s.poses[pose], moved = { ...s, poses: { ...s.poses, [pose]: { ...p, root: { ...p.root, at: [p.root.at[0], p.root.at[1] + 0.02, p.root.at[2]] }, reach: undefined, plant: undefined } } };
+      const keys = h6Of('hip_thrust', c, moved);
+      expect(keys.some((x: string) => /H6\.fact:\d+:contact:/.test(x)), pose).toBe(true);
+    }
+  });
+});

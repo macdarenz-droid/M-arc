@@ -120,6 +120,9 @@ const PAD_END = calfLever({ pivot: PIVOT, arm: ARM, angle: leverAt(LE) }).pad;
 const PAD_ANCHOR = [0, PAD_END[1] + C.rollerR * Math.SQRT1_2, PAD_END[2] + C.rollerR * Math.SQRT1_2];   // the roller's upper front (end pose)
 export const SCR = { HIP, BALL, PIVOT, ARM, TOWER_Z, LS: LS0, LE, LM, machine, leverAt, thighGap, start, end, mistakePose };
 
+// The card's contact facts (lb8 DESIGN.md; D-LIB18-FACTS): each bound by a check on its landmark in its pose, at the
+// drawn point (H6 reads the report's checks); the drawn-item tests prove the contact itself.
+const factChecks = (pose, p, names) => { const b = { height: 1.75 }, l = landmarks(fk(resolve(normPose(p, b), b).q, b)); return names.map(landmark => ({ landmark, at: l[landmark], pose, tol: 0.5 })); };
 export default {
   id: 'seated_calf_raise', name: 'Seated Calf Raise', view: 'side', facing: 'right',
   camera: { fit: true, x0: 100 },
@@ -129,6 +132,7 @@ export default {
     ...perItem(lm => calfMachine({ ...machine, angle: leverAt(lm) }), CALF_MACHINE_ITEMS),
   ],
   checks: [
+    ...factChecks('start', start, ['wrist.l', 'wrist.r', 'thighTop.l', 'thighTop.r']),
     ...['ball.l', 'ball.r'].map(landmark => ({ landmark, plane: { point: BALL, normal: [0, 1, 0] }, pose: 'all', tol: 0.5 })),   // c3: balls on the platform
     { landmark: 'seat', plane: { point: [0, SEAT_TOP, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },                           // seated on the pad
     ...['heel.l', 'heel.r'].map(landmark => ({ landmark, above: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all' })),        // heels over the floor

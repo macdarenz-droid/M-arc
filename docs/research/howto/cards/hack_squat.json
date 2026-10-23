@@ -917,5 +917,152 @@
     "Knee travel: Fitness Volt says people with lower-body joint issues should avoid letting the knees pass the toes on the way down; Legion (read, not cited) lets the knees move forward with the toes. The card draws the knees in line with the toes (c13) and shows no knee-past-toes line.",
     "Feet too close (c12) is the knee row and a risk, not the top fault: its sentence 'Incorrect foot placement is among the most common hack squat mistakes.' is a list sentence (R-LB4-2), and a narrow stance is not visible from the side.",
     "Round 2 (2026-10-22): hl-hack's URL corrected to https://www.healthline.com/health/fitness-exercise/hack-squat (the page the writer fetched, HTTP 200; the card had a wrong path that returns 404). Its 4 quotes (c3, c4, c17, c19) are unchanged and set to pending for re-fetch. rankNote completed from the fetcher scan; pick unchanged."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "trap.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "trap.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c18"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c18"
+    },
+    {
+      "kind": "angle",
+      "joint": "knee.l",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c4"
+    },
+    {
+      "kind": "angle",
+      "joint": "knee.r",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 3,
+      "move": true
+    },
+    {
+      "phase": "Push",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    }
+  ],
+  "topFault": "lift"
 }

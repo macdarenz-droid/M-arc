@@ -120,6 +120,9 @@ const barOf = lm => barAt(lm.hips, tiltOf(lm));
 const BARS = { start: barAt(start.root.at, START_TILT), end: BAR_TOP, mistake: barAt(mistakePose.root.at, M_TILT) };
 
 export const HT = { edge: EDGE, benchTop: BENCH_TOP, bars: BARS, barAt, onEdge, start, end, mistakePose };
+// The card's contact facts (lb8 DESIGN.md; D-LIB18-FACTS): each bound by a check on its landmark in its pose, at the
+// drawn point (H6 reads the report's checks); the drawn-item tests prove the contact itself.
+const factChecks = (pose, p, names) => names.map(landmark => ({ landmark, at: L(p)[landmark], pose, tol: 0.5 }));
 export default {
   id: 'hip_thrust', name: 'Hip Thrust', view: 'side', facing: 'right',
   camera: { fit: true },
@@ -134,11 +137,13 @@ export default {
     (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-line m-line', pts: [...ring(BARS.start, PAD_R, 16), ring(BARS.start, PAD_R, 16)[0]], z: 'front', part: 'phantom' } : null),
   ],
   checks: [
+    ...factChecks('start', start, ['heel.l', 'heel.r', 'ball.l', 'ball.r', 'wrist.l', 'wrist.r']),
+    ...factChecks('end', end, ['heel.l', 'heel.r', 'wrist.l', 'wrist.r']),
     { landmark: 'backUpper', at: EDGE, pose: 'all', tol: 0.5 },                                  // c2, c9: the upper back on the bench edge
     ...['sole.l', 'sole.r'].map(landmark => ({ landmark, at: SOLE(landmark.endsWith('l') ? 1 : -1), pose: 'all', tol: 0.5 })),   // c1: feet flat
   ],
   ghosts: { count: 2, parts: ['trunk', 'leg.r', 'arm.r'] },
-  trace: { point: 'hip.r', trim: [10, 12] },
+  trace: { point: 'hip.r', trim: [6, 8] },
   measure: { vertex: 'knee.r', from: 'hip.r', to: 'ankle.r', radius: 20, title: 'Knee', value: 'about 90°', expect: 90 },
   callouts: [
     { key: 'crease', text: 'Bar in<br>crease', anchor: [0, BAR_TOP[1] + PAD_R, BAR_TOP[2]], box: { left: 196, top: 150 }, cue: 'The bar sits in your hip crease, held there by your hands.' },
