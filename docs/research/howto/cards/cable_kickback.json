@@ -666,5 +666,73 @@
     "The drawn leg is long with a slight knee bend (BarBend, Fitbod; c5); PureGym's hub says a donkey kick bends the knee to 90 degrees, a different exercise.",
     "No read source ties a cable-kickback fault to injury or pain, so the card has one risk (the load line, c11) and the lower-back row is written in LR-6 shape (place + fault + fix).",
     "Read but not cited: fitbod.me/exercises/glute-kickback-machine (another machine). Not reachable: BarBend cable-kickback slugs, Fitness Volt, Healthline, Garage Gym Reviews, Motra, NASM (404), Verywell Fit (402), Muscle & Strength (403), StrengthLog's glute-kickback article (429)."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "ankle.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c7"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c7"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Kick back",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "arch"
 }
