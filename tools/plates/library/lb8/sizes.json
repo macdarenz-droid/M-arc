@@ -527,6 +527,431 @@
     "unit": "m",
     "basis": "stated reason (physical): a 2 cm lever bar"
    }
+  },
+  "resisted_hip_flexion": {
+   "STANCE_X": {
+    "value": 0.09,
+    "unit": "m",
+    "basis": "convention: single_leg_romanian_deadlift.mjs (pilot A @ dcac4a38):43, the standing mid-sole under the standing hip"
+   },
+   "STANCE_KNEE": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "claim c12 'Stand tall and keep your standing leg steady' read as straight, sized by convention barbell_back_squat.mjs:30 ('standing tall: knees 5 deg soft'; NOTE RULED knee sizes)"
+   },
+   "START_HIP_EXT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "claim c5 'full hip extension behind body' with plate.frames 'slightly behind the body': the hip's extension stop with the pelvis held level, about 15 deg past neutral (stated physical reason, as cable_kickback END_HIP_EXT); no source gives the number"
+   },
+   "START_KNEE": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "standing tall at the start (c3, c12): the working knee as the standing knee, barbell_back_squat.mjs:30; no claim bends it before the lift (c3 'bending knee' is the lift)"
+   },
+   "START_TOE_CLEAR": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason: the working foot just off the floor with the weight on the standing leg (c12), as cable_kickback START_TOE_CLEAR and single_leg_romanian_deadlift's free toe 2.7 cm up (header :31); the start ankle is SOLVED for it (11.1 deg)"
+   },
+   "END_HIP": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "claim c5 'thigh parallel to floor' (the drawn option of its 'or', D-LIB17-ORCHOICE; c2 'toward hip height'): with the pelvis level the thigh is level at 90 deg"
+   },
+   "END_KNEE": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "claim c3 'bending knee toward chest': the shank hangs plumb under the level thigh (stated physical reason: no claim holds the shank, so it hangs)"
+   },
+   "END_ANKLE": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "stated reason: no claim gives the end foot; the engine's neutral ankle (foot square to the shank)"
+   },
+   "ARM_BACK": {
+    "value": 45,
+    "unit": "deg",
+    "basis": "claim c2 'Face away from the machine and hold the frame': the arm reaches back to the upright 45 deg behind the vertical, inside the shoulder's normal extension range (about 50-60 deg), DESIGN.md section 12 'arm at most 45 deg extended'; it places the column (card unsourced 'Distance from the column')"
+   },
+   "ELBOW_SOFT": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention: machine_chest_press.mjs:45 (18 deg short of straight, the elbow basis per D-LIB18-SIZE), as cable_kickback"
+   },
+   "M_LEAN": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 trunk -12, 'lower back arches (lumbar extension 12 deg)' (D-LIB18-SIZE; NOTE RULED); with the pelvis level the same extension leans the thorax 12 deg back (c7 'lean back or arch your lower back')"
+   },
+   "PULLEY_Y": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: c1/c2 'low cable pulley': the 9 cm pulley's rim 5.5 cm up, clear of the column's 2.4 cm base rail (equipment.mjs:91), as cable_kickback"
+   },
+   "FLOOR_BACK": {
+    "value": 1.05,
+    "unit": "m",
+    "basis": "stated reason: past the column's back base rail (column centre -0.578 - 0.23 = -0.81) with margin"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.85,
+    "unit": "m",
+    "basis": "stated reason: past the end toe (z 0.61) with margin"
+   },
+   "trace": {
+    "value": "knee.r",
+    "basis": "D-LIB18-TRACE: plate.frames 'Trace follows the knee' (c2 'Drive your knee up and forward'); trim [10, 12]: the clone source's trim, hanging_leg_raise.mjs:124 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     10,
+     12
+    ]
+   }
+  },
+  "glute_bridge": {
+   "FOOT_X": {
+    "value": 0.0875,
+    "unit": "m",
+    "basis": "c1 \"feet ... hip-width apart\": the sole centres at the hip-joint centres, REF.hjcX * H (body.mjs:20), 17.5 cm apart"
+   },
+   "START_TUCK": {
+    "value": 25,
+    "unit": "deg",
+    "basis": "c2 tuck: ruled as the least lumbar flexion that brings the sacrum to the floor with hanging_leg_raise.mjs:52/:54's 25 deg as the ceiling; the solve has no root in [0, 25] (31.0 deg), drawn at the ceiling (recorded miss)"
+   },
+   "M_ARCH": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "hanging_leg_raise.mjs:69 (trunk -12, lumbar arch), D-LIB18-SIZE; neutral top, arch -12, as hip_thrust"
+   },
+   "FLOOR_BACK": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "physical: the floor line runs 25 cm behind the head's rearmost point so the figure lies on a visible floor"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "physical: the floor line runs 25 cm past the toes"
+   },
+   "trace": {
+    "value": "hip.r",
+    "basis": "D-LIB18-TRACE c4 \"push your hips towards the ceiling\"; trim [6, 8]: the clone source's trim, leg_press.mjs:132",
+    "trim": [
+     6,
+     8
+    ]
+   }
+  },
+  "standing_calf_raise": {
+   "START_DF": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated reason (physical; seated_calf_raise's START_DF basis, D-LIB18-UNSOURCED): c10 'a full but comfortable stretch', c9 'Slowly lower heels below platform level for a full stretch' read as the end of the normal ankle dorsiflexion range, 20 deg (source not opened)"
+   },
+   "END_PF": {
+    "value": 50,
+    "unit": "deg",
+    "basis": "stated reason (physical; seated_calf_raise's END_PF basis): c7 'raise your heels as high as you can', 'fully extending ankles', c10 'heels highest possible' read as the end of the normal plantar flexion range, 50 deg (source not opened)"
+   },
+   "KNEE_SOFT": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13/:23 'knees 15 deg short of lockout' for c5 'Keep knees slightly bent' (D-LIB18-SIZE; addendum: slight bend = 15)"
+   },
+   "M_LOCK": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "claim: c6 'Locking knees' (full extension is the fault; the only lock, addendum)"
+   },
+   "PLAT_Y": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason (physical): a raised platform; at START_DF the start foot's lowest drawn point is 14.3 cm above the floor, 8.3 cm over the 6 cm floor beam"
+   },
+   "PLAT_BACK": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "claim: c1 'balls of feet on the edge, heels hanging off': the rear edge 2 cm behind the ball (seated_calf_raise's PLAT_BACK)"
+   },
+   "PLAT_FRONT": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "claim: c1 (StrengthLog) 'Place your toes and the ball of your feet on the foot support': the platform runs 3 cm past the toe tip (seated_calf_raise's PLAT_FRONT)"
+   },
+   "TOWER_BACK": {
+    "value": 0.65,
+    "unit": "m",
+    "basis": "stated reason (layout): the rear tower 65 cm behind the start shoulder top leaves 79 px between the back and the tower for the 'Upright' label (53 px) and its leader, clear of the tower by 6 px; the arm is then 0.60 m from the pivot to the pad centre"
+   },
+   "PAD_BACK": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason (layout): the shoulder pad's centre 5 cm behind the shoulder tops, so its front end stops 8 cm short of the chin (z +13 cm) and the face stays drawn; the shoulder tops rest on its face 5 cm ahead of centre, inside the 10 cm half length (CALF_MACHINE.shoulderLen)"
+   },
+   "HANDLE_FWD": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "stated reason (physical): the grip 25 cm ahead of the shoulder tops, so the fist (3.5 cm radius) clears the chest (12.7 cm ahead) by about 9 cm; c2, c3 'grasp handles', plate.equipment 'handles by the pads'"
+   },
+   "HANDLE_DROP": {
+    "value": 0.16,
+    "unit": "m",
+    "basis": "stated reason (physical): the grip 16 cm under the arm's centre line, 10 cm under the shoulder tops, at chest height, where the hands steady only (c3 'for balance only')"
+   },
+   "HANDLE_X": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason (physical): each grip 20 cm out from the midline, just inside the shoulder tops (22.7 cm out), so the forearms run forward by the pads (c2, c3)"
+   },
+   "FLOOR_BACK": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the floor beam's rear end"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the platform's front"
+   },
+   "TRACE_TRIM": {
+    "value": [
+     10,
+     12
+    ],
+    "unit": "px",
+    "basis": "convention: barbell_back_squat.mjs:117, the clone source's Trace trim (D-LIB18-TRIM)"
+   },
+   "trace": {
+    "value": "heel.r",
+    "basis": "claim c7 'raise your heels as high as you can' (D-LIB18-CALF, -TRACE); trim [10, 12]: the clone source's trim, barbell_back_squat.mjs:117 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     10,
+     12
+    ]
+   }
+  },
+  "bodyweight_calf_raise": {
+   "START_DF": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated reason (physical; seated_calf_raise's START_DF basis): c2 'lower to flat or slightly below if on step for stretch' (the drawn option, slightly below) read as the end of the normal ankle dorsiflexion range, 20 deg; drawn, the heel sits 2.0 cm under the step top (source not opened)"
+   },
+   "END_PF": {
+    "value": 50,
+    "unit": "deg",
+    "basis": "stated reason (physical; seated_calf_raise's END_PF basis): c4 'lift your heels as high off the ground as possible', 'Stand up onto your tiptoes' read as the end of the normal plantar flexion range, 50 deg (source not opened)"
+   },
+   "KNEE_SOFT": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: barbell_back_squat.mjs:30 'knees 5 deg soft' for c7 'keeping knees straight but unlocked' (addendum: straight but unlocked = 5)"
+   },
+   "M_PART": {
+    "value": 0.5,
+    "unit": "fraction of the ankle range (start to end)",
+    "basis": "stated reason: c8 'Partial range' gives no fraction; the midpoint, as seated_calf_raise's M_PART 0.5 (its c12 'half reps')"
+   },
+   "STEP_Y": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason (physical): a 15 cm step, a common stair riser; at START_DF the start foot's lowest drawn point is 13.3 cm above the floor"
+   },
+   "STEP_BACK": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "claim: c3 'Stand on a step with your heels hanging off the edge': the rear edge 2 cm behind the ball (seated_calf_raise's PLAT_BACK)"
+   },
+   "STEP_DEPTH": {
+    "value": 0.28,
+    "unit": "m",
+    "basis": "stated reason (physical): a 28 cm stair tread under the forefoot"
+   },
+   "FLOOR_BACK": {
+    "value": 0.45,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line under the 'Heels high' and 'Heels dip' labels behind the heels"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the step's front"
+   },
+   "TRACE_TRIM": {
+    "value": [
+     10,
+     12
+    ],
+    "unit": "px",
+    "basis": "convention: barbell_back_squat.mjs:117, the clone source's Trace trim (D-LIB18-TRIM)"
+   },
+   "trace": {
+    "value": "heel.r",
+    "basis": "claim c4 'lift your heels as high off the ground as possible' (D-LIB18-CALF, -TRACE); trim [10, 12]: the clone source's trim, barbell_back_squat.mjs:117 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     10,
+     12
+    ]
+   }
+  },
+  "leg_extension": {
+   "TILT": {
+    "value": -5,
+    "unit": "deg",
+    "basis": "convention: machine_chest_press.mjs:30, :54 (the 8's seated back pad reclined 5 deg)"
+   },
+   "FOOT_CLEAR": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason: the hanging foot clears the floor by 5 cm at knee 90 (DESIGN.md section 12 SEAT_TOP: shank 43.1 + ankle 6.8 + 5 cm)"
+   },
+   "SEAT_TOP": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "physical: the start foot's lowest drawn point FOOT_CLEAR above the floor with the thighs level (c1, c3); solves to 0.454 m"
+   },
+   "ROLL_UP": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "claim: c2 'just above your ankles': the roller's contact 8 cm above the ankle joint (DESIGN.md section 12)"
+   },
+   "KNEE_END": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "claim: c7 'straight but not locked' (fv-le) = straight rule, barbell_back_squat.mjs:30"
+   },
+   "M_ARCH": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (trunk -12 lumbar arch) for c5, c6 'arch your back', 'arching your lower back'"
+   },
+   "HANDLE": {
+    "value": [
+     0.25,
+     0.03,
+     0.1
+    ],
+    "unit": "m",
+    "basis": "convention: leg_press.mjs:68 (HANDLE [0.25, hip + 0.03, hip + 0.10], the 8's side handles) for c3 'handles by your sides'"
+   },
+   "PAD_LEN": {
+    "value": 0.62,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:141 (the 8's seated back pad length)"
+   },
+   "PAD_BELOW": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:141 (below 0.06)"
+   },
+   "SEAT_BACK": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: the seat pad ends 3 cm behind the back pad's rear face"
+   },
+   "SEAT_GAP": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "stated reason: the seat front ends 8 cm behind the knee/pivot so the calf hangs free"
+   },
+   "TOWER_GAP": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "stated reason: the rear upright stands 8 cm behind the back pad"
+   },
+   "STACK_GAP": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason: 2 cm between the upright and the stack"
+   },
+   "CAM_R": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: a 10 cm cam radius: the stack rises 10 cm x the lever's turn in radians (85 deg -> 14.8 cm)"
+   },
+   "BRACKET_AT": {
+    "value": 0.3,
+    "unit": "m",
+    "basis": "stated reason: the pad bracket leaves the pad 30 cm up its face (about mid-pad)"
+   },
+   "FLOOR_BACK": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason: layout: the floor beam runs 5 cm behind the stack"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: layout: the floor beam runs 10 cm ahead of the seat post"
+   },
+   "TRACE_TRIM": {
+    "value": [
+     6,
+     8
+    ],
+    "unit": "px",
+    "basis": "convention: leg_press.mjs:132, the clone source's Trace trim (D-LIB18-TRIM)"
+   },
+   "trace": {
+    "value": "ankle.r",
+    "basis": "D-LIB18-TRACE: c7 'Exhale to extend your lower legs'; trim [6, 8]: the clone source's trim, leg_press.mjs:132 (D-LIB18-TRIM, fixed before any measurement)",
+    "trim": [
+     6,
+     8
+    ]
+   }
+  },
+  "legExtMachine": {
+   "rollerR": {
+    "value": 0.055,
+    "unit": "m",
+    "basis": "convention: equipment.mjs:204 (vendor kneePad r)"
+   },
+   "seatT": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "convention: equipment.mjs:181 (vendor seat)"
+   },
+   "padT": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "convention: equipment.mjs:186 (vendor backPad t)"
+   },
+   "tubeT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: hackSled / pulloverMachine tubeT"
+   },
+   "leverT": {
+    "value": 0.04,
+    "unit": "m",
+    "basis": "convention: lb8/DESIGN.md section 12 (legCurlMachine lever tube)"
+   },
+   "bossR": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "convention: lb8/DESIGN.md section 12 (legCurlMachine pivot boss)"
+   },
+   "bracketT": {
+    "value": 0.04,
+    "unit": "m",
+    "basis": "stated reason: pivot bracket 4 cm, as the lever tube"
+   },
+   "postT": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "convention: calfMachine postT"
+   },
+   "gripR": {
+    "value": 0.016,
+    "unit": "m",
+    "basis": "convention: calfMachine gripR (vendor chestPress grip)"
+   },
+   "stack": {
+    "value": "16 x 0.025 m, 0.22 m wide, 6 lifted",
+    "unit": "m",
+    "basis": "convention: the vendor stack primitive"
+   }
   }
  }
 }

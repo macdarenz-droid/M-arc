@@ -6,9 +6,11 @@
 //    platform a tower that carries the lever's pivot; the lever arm runs back from the pivot to a roller pad that rests
 //    across the thighs just above the knees (c1, c2); a handle grip rises from the arm just in front of the pad (c5) and
 //    the safety lever sticks up from the arm beside it (c6);
-//  - form 'standing' (standing_calf_raise, a later plate; drawn by no spec yet): the same platform and floor beam; a
-//    rear tower behind the lifter carries the pivot; the lever arm runs forward from it to a shoulder pad whose lower
-//    face rests on the top of the shoulders; a handle grip rises from the arm in front of the pad. No seat.
+//  - form 'standing' (standing_calf_raise; plate.equipment c1-c3): the same platform and floor beam; a rear tower
+//    behind the lifter carries the pivot; the lever arm runs forward from it to a shoulder pad whose lower face rests on
+//    the top of the shoulders (c1, c2); the handle post hangs from the arm in front of the pad (handleAt < 0, handleH < 0:
+//    the arm runs on to the post) with the grip at its end (c2, c3 "handles by the pads"). No seat and no safety lever
+//    (the standing card names neither).
 //  Static (z back): floor beam, the platform and its post, the seat and its post (seated), the tower and its pivot hub.
 //  Moving (part 'lever', every one a `poly`, eq/parts.mjs sideBar or `poly`, so it is drawn in the Mistake view
 //  whenever it moves, PQ-H9; plate.mjs:205-218): the lever arm, the pad, the handle grip and the safety lever.
@@ -59,7 +61,7 @@ export function calfLever({ pivot, arm, angle, toward = -1, handleAt = CALF_MACH
  * p.pivot, p.arm, p.angle, p.toward: the lever (calfLever). p.towerZ: the tower's z (under the pivot).
  * Returns CALF_MACHINE_ITEMS slots, in order: floor beam, platform post, platform, seat post, seat pad (seated; null in
  * the standing form), tower, pivot hub (static, z back); lever arm, pad (roller or shoulder pad), handle post, handle
- * grip, safety lever (part 'lever'; the pad and the grip z mid, the rest z back).
+ * grip, safety lever (null in the standing form) (part 'lever'; the pad and the grip z mid, the rest z back).
  */
 export function calfMachine(p) {
   const C = CALF_MACHINE, t = C.tubeT, seated = p.form !== 'standing';
@@ -78,7 +80,8 @@ export function calfMachine(p) {
   out.push(sideBar([0, t, p.towerZ], [0, p.pivot[1], p.towerZ], t, { z: 'back', part: 'frame' }),                               // tower
     { type: 'pulley', at: p.pivot, r: C.hubR, z: 'back', part: 'frame' });                                                        // pivot hub
   // moving: the lever
-  const armEnd = add(L.pad, mul(L.u, seated ? 0 : C.shoulderLen / 2));
+  // standing: the arm runs on past the pad to the handle post when the handles sit in front of the pad (handleAt < 0)
+  const armEnd = add(L.pad, mul(L.u, seated ? 0 : Math.max(C.shoulderLen / 2, -(p.handleAt ?? C.handleAt) + C.postT / 2)));
   out.push({ ...sideBar(p.pivot, armEnd, C.armT, { z: 'back' }), part: 'lever' });                                               // lever arm
   if (seated) out.push({ type: 'poly', pts: circle(L.pad, C.rollerR), curve: true, cls: 'eq', z: 'mid', part: 'lever' });        // roller pad on the thighs
   else {                                                                                                                         // shoulder pad: lower face on the shoulders
@@ -87,6 +90,6 @@ export function calfMachine(p) {
   }
   out.push({ ...sideBar(L.gripBase, L.grip, C.postT, { z: 'back' }), part: 'lever' },                                           // handle post, from inside the arm
     { type: 'poly', pts: circle(L.grip, C.gripR, 12), cls: 'eq-solid', z: 'mid', part: 'lever' },                               // handle grip, end-on
-    { ...sideBar(L.safetyBase, L.safetyTip, C.safetyT, { z: 'back' }), part: 'lever' });                                         // safety lever
+    seated ? { ...sideBar(L.safetyBase, L.safetyTip, C.safetyT, { z: 'back' }), part: 'lever' } : null);                      // safety lever (seated only)
   return out;
 }

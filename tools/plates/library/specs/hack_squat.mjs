@@ -185,8 +185,9 @@ export default {
   trace: { point: 'knee.r', trim: TRACE_TRIM },
   measure: { vertex: 'knee.r', from: { dir: THIGH_DIR }, to: 'ankle.r', radius: 22, title: 'Knee', value: 'about 90°', expect: 90, box: { left: 270, top: 264 } },
   callouts: [
-    // c2: on the back's pad contact, the sacrum (D-LIB18-BACKPAD), its leader crossing the pad once (named nit)
-    { key: 'back', text: 'Back on<br>pad', anchor: 'navel', box: { left: 160, top: 124 }, cue: 'Upper and lower back and hips stay on the back pad.' },
+    // c2: on the back's pad contact, the sacrum (D-LIB18-BACKPAD); no box reaches it without crossing the sled, so the
+    // leader enters the figure once and crosses no equipment (named-nit candidate, scan in lb8/DESIGN.md section 13)
+    { key: 'back', text: 'Back on<br>pad', anchor: 'sacrum', box: { left: 162, top: 158 }, cue: 'Upper and lower back and hips stay on the back pad.' },
     // c4, c5: on the thigh's top edge, from the open space above the legs
     { key: 'parallel', text: 'Thighs to<br>parallel', anchor: { along: ['hip.r', 'knee.r'], t: 0.55, off: [0, -11] }, box: { left: 250, top: 164 }, cue: 'Lower until your thighs are at least parallel, as far as your mobility allows.' },
     // c7: on the start knee (named-nit candidate: the leader crosses the rail, see the header)
@@ -203,9 +204,9 @@ export default {
     tells: [
       // c8 "lift their lower back off the back pad", c9 "having your hips leave the backrest": on the hips' pad contact, the
       // Mistake buttock (D-LIB18-LIFT), 7.9 cm off the pad; the leader enters the end figure once, from the front (named nit)
-      { key: 'lift', text: 'Hips off<br>pad', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 250, top: 164 }, cue: 'At the bottom the hips and lower back lift off the back pad.' },
+      { key: 'lift', text: 'Hips off<br>pad', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 252, top: 222 }, cue: 'At the bottom the hips and lower back lift off the back pad.' },
       // c10 "your lower back rounds": on the lower back, the Mistake sacrum on the dashed back contour (D-LIB18-ROUND)
-      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 64, top: 292 }, cue: 'The lower back rounds at the bottom of the squat.' },
+      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 168, top: 164 }, cue: 'The lower back rounds at the bottom of the squat.' },
     ],
   },
   alt: 'Hack squat, side view. Shoulders under the pads, back on the tall pad of a sled on angled rails, feet flat on a fixed plate, the lifter lowers until the knees bend about 90 degrees with the thighs level, hips on the pad, then pushes back to almost straight legs.',

@@ -425,6 +425,14 @@ Fault→key (13 Q1(a)); first tell carries the drawn key:
 - The 6 F7 topFaults differ from their drawn keys (A8): drop≠heels, axis≠arch, drop≠arch, bounce≠lock, bounce≠part.
 
 **One-tell records (D-LIB10-SKULL1).**
+- **One-tell record** (standing_calf_raise): fault: the knees locked (plate.mistake, c6). Claim ids read: c6 ("Locking
+  knees"), c5 (four quotes, the right position only). No second visible sign stated.
+- **One-tell record** (bodyweight_calf_raise): fault: the partial range (plate.mistake, c8). Claim ids read: c8 ("Partial
+  range"), c2, c4, c5. Only the top is drawn, so "part way down" gives no second tell. No second visible sign stated.
+- **One-tell record** (glute_bridge; D-LIB10-SKULL1, the bulk ruling "`high` is NOT a tell"): fault c6/c7 (the arch).
+  Claim ids read: c6 (all three quotes: the low back's hyperextension, the hips pushed too high as its cause), c7 (both:
+  overextending the back, a neutral spine), c5, c2 (the corrective tuck), c8, plate.tells. "Hips pushed too high" is the
+  cause (ruled not a tell); no claim states a second visible sign (no ribs line as on hip_thrust).
 - pendulum_squat: fault c9/c15 (heels lifting). Claim ids read: c9 ("Heels rising: Insufficient ankle mobility
   prevents the heels staying flat through the full depth."), c15 ("Lifting heels off the platform during the descent.
   This shifts weight forward and strains your knees."), c7, plate.tells. "Shifts weight forward" is a consequence with
@@ -638,6 +646,11 @@ A fault below the line is reported at its card-true size and held (D-LIB18-SIZE,
 11. All PQ-H3 numbers are hand estimates from body.mjs segment lengths; the arch values depend on which part the drawn
     override moves (pelvis vs thorax) — hip_thrust's and cable_kickback's slice measurements (4.1 and 4.3 px, section 8) recalibrate them downward.
 
+**hack_squat "Back on pad" (D-LIB18-BACKPAD), box scan on the sacrum** (normal plate; a leader that enters no figure
+and crosses the pad at most once): none. Through the sled side, the best boxes ({left: 66, top: 242}, 47 px) cross the
+sled's outlines 6 times. From the front, eight boxes enter the figure once and cross no equipment ({left: 162, top: 158},
+39 px, drawn; up to 47 px). The front entry is the named-nit candidate posted with the bulk.
+
 ## 14. H slice (Do 2; D-LIB18-SLICE)
 
 hip_thrust, hack_squat with eq/hackSled.mjs, seated_calf_raise with eq/calfMachine.mjs and cable_kickback with
@@ -652,6 +665,11 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 | hip_thrust | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lumbar arch (hanging_leg_raise.mjs:69) measures 4.1 px < 11.39 px; the other two readings of c11-c13 give 6.2 and 7.2 px (section 8); the Trace passes (36.9 px at [6, 8]); the c1 fact "Sit on the floor" (seat, start; CARD FIELDS fix 5) is missed: the drawn bottom stops where the plates reach the floor, the seat 4.7 cm above it | LIB-ZOOM (#279) on main and extended to the arch, then 'LIB-18 resume' |
 | cable_kickback | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch measures 4.3 px < 11.39 px (the braced upper body holds the back still); the Trace passes (54.1 px) | LIB-ZOOM, as above |
 | seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°); the c1 fact "toes ... on the foot support" (CARD FIELDS fix 2) is missed at the drawn stretch: the toe 4.2 cm off the platform's top | the owner's route for S4 (D-LIB18-CALF), brought by the supervisor; LIB-ZOOM for S2 |
+| leg_extension | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch (hanging_leg_raise.mjs:69) measures 7.6 px < 11.39 px (`off` on backUpper, 5.2 cm off the pad; `arch` on the sacrum 6.0 px); the Trace passes (75.9 px) | LIB-ZOOM, as above |
+| standing_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 5.1 px < 22.11 px (trim [10, 12], barbell_back_squat.mjs:117); the locked-knee Mistake 7.4 px < 11.39 px; the rigid toe is 4.85 cm inside the platform at the card's top; the c1 toe fact misses by 2.3 cm at the start | the owner's route for S4 (D-LIB18-CALF); LIB-ZOOM for S2 |
+| bodyweight_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace measures 5.8 px < 22.11 px (trim [10, 12]); the Mistake passes (13.6 px); the rigid toe is 4.56 cm inside the step at the top, so the c4 toe fact misses by 4.6 cm | as above |
+| glute_bridge | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch (hanging_leg_raise.mjs:69) measures 6.8 px < 11.39 px (tell on the trunk's front outline at the lumbar level, as hip_thrust); the hip Trace measures 12.0 px < 22.11 px (26.2 px of motion less the [6, 8] trim, leg_press.mjs:132); the c2 tuck has no solve within the ruled 25° ceiling (sacrum on the floor at 30.9°): drawn at 25°, the sacrum 0.65 cm up (inside PQ-H6's 1 cm) | LIB-ZOOM, as above |
+| resisted_hip_flexion | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lean/arch measures 5.1 px (`arch`; `lean` 2.7 px) < 11.39 px; the Trace passes (82.7 px) | LIB-ZOOM, as above |
 
 Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys stay.
 

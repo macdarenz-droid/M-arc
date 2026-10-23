@@ -33,14 +33,17 @@ const NOT_HERE = ['seated_leg_curl'];
 // D-LIB18-LEGCURL: drawn only after pilot B is on main and 'LIB-18 resume'.
 const LEGCURLS = ['lying_leg_curl', 'standing_leg_curl'];
 // DESIGN.md section 15: every held id, with its ruling there.
-const HELD = ['seated_calf_raise', 'hip_thrust', 'cable_kickback'];
+const HELD = ['leg_extension', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
 // The ids on lb8/rows.json now: drawn and not held (A5).
 const ON_ROWS = ['hack_squat'];
 // Card facts the held plates' drawings miss (CARD FIELDS fix round, #306 6356303497): recorded with their holds, never hidden.
-const FACT_MISSES: Record<string, string[]> = { seated_calf_raise: ['check:start:toe.l:4.2cm', 'check:start:toe.r:4.2cm'], hip_thrust: ['check:start:seat:4.7cm'] };
-const H6_MISSES: Record<string, string[]> = { seated_calf_raise: ['H6.fact:5:contact:toe.l', 'H6.fact:6:contact:toe.r'], hip_thrust: ['H6.fact:0:contact:seat'] };
+const FACT_MISSES: Record<string, string[]> = { seated_calf_raise: ['check:start:toe.l:4.2cm', 'check:start:toe.r:4.2cm'], standing_calf_raise: ['check:start:toe.l:2.3cm', 'check:start:toe.r:2.3cm'], bodyweight_calf_raise: ['check:end:toe.l:4.6cm', 'check:end:toe.r:4.6cm'], hip_thrust: ['check:start:seat:4.7cm'] };
+// Checks inside PQ-H6's 1 cm but past A2's 0.5 cm, or a back landmark under 1 cm into the floor (no engine issue):
+// glute_bridge's tuck at the ruled 25° ceiling (DESIGN.md section 15), recorded with its hold, never hidden.
+const NEAR_MISSES: Record<string, string[]> = { glute_bridge: ['check:start:sacrum:0.7cm', 'above:start:backMid:-0.2cm'] };
+const H6_MISSES: Record<string, string[]> = { seated_calf_raise: ['H6.fact:5:contact:toe.l', 'H6.fact:6:contact:toe.r'], standing_calf_raise: ['H6.fact:2:contact:toe.l', 'H6.fact:3:contact:toe.r'], bodyweight_calf_raise: ['H6.fact:4:contact:toe.l', 'H6.fact:5:contact:toe.r'], hip_thrust: ['H6.fact:0:contact:seat'] };
 // Every spec drawn now (the slice), held or not, in plan order.
-const DRAWN_NOW = ['hack_squat', 'seated_calf_raise', 'hip_thrust', 'cable_kickback'];
+const DRAWN_NOW = ['hack_squat', 'leg_extension', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
 const ROWS = 'tools/plates/library/lb8/rows.json';
 const RESEARCH_HEAD = '596dbe0748f11d13b431ee11d38d1742771925f1';
 const COMPOSERS = ['hackSled', 'pendulum', 'legExtMachine', 'calfMachine', 'ankleCuff'];
@@ -105,6 +108,19 @@ const segs = (p: number[][]) => p.slice(1).map((q, i) => [p[i]!, q]);
 const listOf = (spec: any, mistake: boolean) => (mistake ? spec.mistake.tells : [...(spec.measure ? [{ key: '_arc' }] : []), ...spec.callouts]);
 /** Every leader in a render as its polyline (plate px), starting at its anchor. */
 const leadersOf = (svg: string) => [...svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(([, d]) => { const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]); return p; });
+/** How often a leader enters the figure polygons away from its first 8 px at the anchor, and its drawn length (px). */
+const entryOf = (polys: number[][][], p: number[][]) => {
+  let entries = 0, was = false, len = 0;
+  for (const [a, b] of segs(p)) {
+    len += Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!);
+    for (let k = 0; k <= 40; k++) {
+      const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40], inn = Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0;
+      if (inn && !was) entries++;
+      was = inn;
+    }
+  }
+  return { entries, len };
+};
 const angle3 = (a: number[], v: number[], b: number[]) => { const u = a.map((x, i) => x - v[i]!), w = b.map((x, i) => x - v[i]!); return Math.acos(Math.max(-1, Math.min(1, u.reduce((s, x, i) => s + x * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w)))) * 180 / Math.PI; };
 const withEq = (spec: any, k: number, f: (e: any) => any) => ({ ...spec, equipment: spec.equipment.map((e: any, i: number) => (i === k ? f(e) : e)) });
 
@@ -325,8 +341,8 @@ describe('LIB-18 A2 / Do 4: the LB8 composers and the drawn plates draw PRIMITIV
     for (const id of specsDrawn()) { await tick();
       for (const mistake of [false, true]) expect(plate.renderPlate(S[id], { id: 'x', mistake }).report.issues ?? [], `${id} ${mistake}`).toEqual(FACT_MISSES[id] ?? []);
       const r = rep(S[id]);
-      for (const c of r.checks) if ('cm' in c && !(FACT_MISSES[id] ?? []).includes(`check:${c.pose}:${c.landmark}:${c.cm}cm`)) expect(c.cm, `${id} ${c.landmark} ${c.pose}`).toBeLessThanOrEqual(0.5);
-      for (const c of r.checks) if ('aboveCm' in c) expect(c.aboveCm, `${id} ${c.landmark} ${c.pose}`).toBeGreaterThanOrEqual(0);
+      for (const c of r.checks) if ('cm' in c && ![...(FACT_MISSES[id] ?? []), ...(NEAR_MISSES[id] ?? [])].includes(`check:${c.pose}:${c.landmark}:${c.cm}cm`)) expect(c.cm, `${id} ${c.landmark} ${c.pose}`).toBeLessThanOrEqual(0.5);
+      for (const c of r.checks) if ('aboveCm' in c && !(NEAR_MISSES[id] ?? []).includes(`above:${c.pose}:${c.landmark}:${c.aboveCm}cm`)) expect(c.aboveCm, `${id} ${c.landmark} ${c.pose}`).toBeGreaterThanOrEqual(0);
       for (const p of Object.values<any>(r.contacts)) for (const c of p) expect(c.errCm, `${id} ${c.kind}`).toBeLessThanOrEqual(0.5);
     }
   });
@@ -338,7 +354,7 @@ describe('LIB-18 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', 
   const KEYS: Record<string, string> = { hack_squat: 'lift', pendulum_squat: 'heels', leg_extension: 'arch', lying_leg_curl: 'arch', standing_leg_curl: 'arch',
     seated_calf_raise: 'range', standing_calf_raise: 'lock', bodyweight_calf_raise: 'part', hip_thrust: 'arch', glute_bridge: 'arch', cable_kickback: 'arch',
     resisted_hip_flexion: 'lean' };
-  const ONE_TELL = ['pendulum_squat', 'lying_leg_curl', 'standing_leg_curl', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'cable_kickback'];
+  const ONE_TELL = ['pendulum_squat', 'lying_leg_curl', 'standing_leg_curl', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'glute_bridge', 'cable_kickback'];
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells (or one, with its record in DESIGN.md), the first carrying the proposed key', () => {
     const design = readFileSync('tools/plates/library/lb8/DESIGN.md', 'utf8');
@@ -354,7 +370,7 @@ describe('LIB-18 Mistakes, tells, cues and callouts (DESIGN.md sections 9-10)', 
     expect(keyProblems({ ...s, mistake: { ...s.mistake, tells: [...s.mistake.tells].reverse() } })).toEqual(['hack_squat: first tell round']);
     expect(readFileSync('tools/plates/library/lb8/DESIGN.md', 'utf8').includes('**One-tell record** (hack_squat')).toBe(false);
   });
-  const guideProblems = (spec: any) => spec.mistake.guides.filter((g: any) => !['dashed', 'arrow', 'arc-arrow'].includes(g.kind)).map((g: any) => `${spec.id}: ${g.kind}`);
+  const guideProblems = (spec: any) => (spec.mistake.guides ?? []).filter((g: any) => !['dashed', 'arrow', 'arc-arrow'].includes(g.kind)).map((g: any) => `${spec.id}: ${g.kind}`);
   it('A15: every Mistake guide is dashed or an arrow; mutation: a solid line guide is red', () => {
     for (const id of specsDrawn()) expect(guideProblems(S[id])).toEqual([]);
     const s = S.hack_squat, g0 = s.mistake.guides.find((g: any) => g.pts);
@@ -455,7 +471,7 @@ describe('LIB-18 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   };
   // Named-nit candidates posted for a ruling (D-LIB15-NIT1; #290 6351401878): no placement clears them without breaking
   // another rule (the scan is in DESIGN.md). Every other leader must clear 6 px.
-  const NITS: Record<string, string[]> = { hack_squat: ['normal soft', 'mistake round'], hip_thrust: ['normal crease', 'mistake arch'] };
+  const NITS: Record<string, string[]> = { hack_squat: ['normal soft'], hip_thrust: ['normal crease', 'mistake arch'], leg_extension: ['normal back'] };   // leg_extension's "Back on pad" crosses the pad once (D-LIB18-BACKPAD's allowed named nit)
   const gapProblems = (spec: any) => Object.entries(gaps(spec)).filter(([k, v]) => v < 6 && !(NITS[spec.id] ?? []).includes(k)).map(([k, v]) => `${spec.id} ${k}: ${v.toFixed(1)} px`);
   it('no leader comes within 6 px of the Trace, a cable, a pad, a seat, a platform, a rail, the bench or the bar (away from its first 8 px), but the named-nit candidates', async () => {
     for (const id of specsDrawn()) { await tick(); expect(gapProblems(S[id]), id).toEqual([]); }
@@ -471,23 +487,25 @@ describe('LIB-18 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     for (const mistake of [false, true]) {
       const polys = [...shapesIn(spec, 'end'), ...(mistake ? shapesIn(spec, 'mistake') : [])].map((x: any) => x.poly), list = listOf(spec, mistake);
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
-        let inside = 0;
-        for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
-          const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
-          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) inside++;
-        }
-        if (inside && !(CROSS_NITS[spec.id] ?? []).includes(`${mistake ? 'mistake' : 'normal'} ${list[i]?.key}`)) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the figure`);
+        const tag = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}`, { entries, len } = entryOf(polys, p);
+        // D-LIB18-LIFT: a Mistake leader may enter the figure once, at most 81.9 px long (equipment: the gap test above)
+        const lift = mistake && entries === 1 && len <= 81.9;
+        if (entries && !lift && !(CROSS_NITS[spec.id] ?? []).includes(tag)) out.push(`${spec.id} ${tag}: crosses the figure`);
       });
     }
     return out;
   };
   // Named-nit candidates (D-LIB15-NIT1, posted with their scans): hip_thrust's knee arc sits in the closed angle under
   // the thigh, and every short leader from it crosses the thigh (the clean boxes need leaders over 130 px, past F3).
-  const CROSS_NITS: Record<string, string[]> = { hip_thrust: ['normal _arc'], hack_squat: ['mistake lift', 'mistake round'] };   // hack_squat's two tells: pending (slice post)
+  const CROSS_NITS: Record<string, string[]> = { hip_thrust: ['normal _arc'], hack_squat: ['normal back'], resisted_hip_flexion: ['normal back'] };   // the normal back callouts: D-LIB18-BACKPAD's sacrum or lumbar contour reached only through the figure (scans in DESIGN.md)
   it('no leader crosses the solid figure\'s outline, nor a Mistake leader the Mistake figure\'s, but the named-nit candidates', async () => {
     const out: string[] = [];
     for (const id of specsDrawn()) { await tick(); out.push(...crossProblems(S[id])); }
     expect(out).toEqual([]);
+  });
+  it('mutation: hack_squat\'s "Hips off pad" box moved far above the figure (a Mistake leader past 81.9 px through the figure) is red', () => {
+    const s = S.hack_squat, bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => (x.key === 'lift' ? { ...x, box: { left: 252, top: 40 } } : x)) } };
+    expect(crossProblems(bad)).toContain('hack_squat mistake lift: crosses the figure');
   });
   it('mutation: hack_squat\'s "Thighs to parallel" box placed under the seat side of the figure, so its leader crosses the body, is red', () => {
     const s = S.hack_squat, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'parallel' ? { ...x, box: { left: 60, top: 150 } } : x)) };
@@ -1295,7 +1313,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     });
     /** Lines a leader keeps 6 px from (away from its first 8 px): the Trace and every drawn equipment outline (pads, the
      *  plate, the rail, the frame, the stop, the handle and the start phantom). */
-    const NIT_PENDING = ['soft', 'round'];   // D-LIB15-NIT1 candidate: the start knee sits in a closed pocket (header; LB8 note)
+    const NIT_PENDING = ['back', 'soft'];   // D-LIB15-NIT1 candidates: the start knee sits in a closed pocket (header; LB8 note); "Back on pad" ends on the sacrum at the pad (D-LIB18-BACKPAD)
     const gaps = (spec: any) => {
       const out: { key: string, mistake: boolean, min: number }[] = [], cam = camOf(spec);
       for (const mistake of [false, true]) {
@@ -1325,19 +1343,26 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
       for (const mistake of [false, true]) {
         const polys = [...shapesIn(spec, 'end'), ...(mistake ? shapesIn(spec, 'mistake') : [])].map((x: any) => x.poly), list = listOf(spec, mistake);
         leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
-          let inside = 0;
-          for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) { const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40]; if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) inside++; }
-          if (inside) out.push(`${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the figure`);
+          const { entries, len } = entryOf(polys, p), tag = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}`;
+          // D-LIB18-LIFT: a Mistake leader may enter the figure once, at most 81.9 px long; the pending normal "Back on
+          // pad" is held to the same bound
+          if (entries > 1 || len > 81.9) out.push(`${tag}: enters ${entries} times, ${len.toFixed(1)} px`);
+          else if (entries && !mistake) out.push(`${tag}: crosses the figure`);
         });
       }
       return out;
     };
-    // 'Hips off pad' on the hips (D-LIB18-ROUND's rule): no box in the plate gives it a leader that crosses no figure
-    // (full scan posted on #306); pending the ruling, it is the one listed crossing.
-    it('no leader crosses the solid figure or the Mistake figure, but the listed pending ones', () => { expect(crossProblems(s())).toEqual(['mistake lift: crosses the figure', 'mistake round: crosses the figure']); });
+    // The two tells enter the end figure once, from the front (D-LIB18-LIFT). "Back on pad" on the sacrum
+    // (D-LIB18-BACKPAD): no box reaches it without crossing the sled or entering the figure (scan in DESIGN.md section
+    // 13), so its single front entry is the one pending named-nit candidate.
+    it('no leader crosses the figure, but the Mistake tells once each (at most 81.9 px) and the pending "Back on pad"', () => { expect(crossProblems(s())).toEqual(['normal back: crosses the figure']); });
     it('mutation: the "Back on pad" box placed behind the rail (its leader across the body) is red', () => {
       const bad = { ...s(), callouts: s().callouts.map((x: any) => (x.key === 'back' ? { ...x, box: { left: 20, top: 200 } } : x)) };
-      expect(crossProblems(bad)).toContain('normal back: crosses the figure');
+      expect(crossProblems(bad).filter(x => x.startsWith('normal back:') && x !== 'normal back: crosses the figure').length).toBeGreaterThan(0);
+    });
+    it('mutation: the "Hips off pad" box moved far above the figure (its leader past 81.9 px) is red', () => {
+      const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'lift' ? { ...x, box: { left: 252, top: 40 } } : x)) } };
+      expect(crossProblems(bad).some(x => x.startsWith('mistake lift: enters'))).toBe(true);
     });
     /** No leader crosses another label's text box (report ink boxes). */
     const textProblems = (spec: any) => [false, true].flatMap(mistake => {
@@ -1349,7 +1374,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     });
     it('no leader crosses another label\'s text', () => { expect(textProblems(s())).toEqual([]); });
     it('mutation: the "Lower back rounds" box moved across the "Hips off pad" leader is red', () => {
-      const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'round' ? { ...x, box: { left: 210, top: 186 } } : x)) } };
+      const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'round' ? { ...x, box: { left: 300, top: 226 } } : x)) } };
       expect(textProblems(bad).length).toBeGreaterThan(0);
     });
     /** D-LIB18-DRAW: the start sled (dropped by the start layer) is redrawn dashed in the end layer, on the start sled's
@@ -2018,3 +2043,1306 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
     } finally { HT().barOf = real; }
   });
 });
+
+// ---- resisted_hip_flexion (bulk; eq/ankleCuff.mjs, the slice's composer, unchanged) ----
+{
+  // resisted_hip_flexion tests, for lb8-plates.test.ts. Helpers ASSUMED from the file's top (LB7's lines 1-94 as copied
+  // there): eng, body, plate, qaEng, qaNode, itemsIn, lmOf, rep, camOf, shapesIn, fullPose, outside, leadersOf, segD,
+  // segs, xy, withEq, tick, lib, T, readJson. The spec module is loaded here (RQ), so this block does not need DRAWN_NOW.
+  // Every test reads drawn items (what the spec's entries emit, as the engine calls them), the engine's landmarks and
+  // shapes, the report or the render; never the spec's own solver. Each mutation is a mutated spec run through the same
+  // check, and must turn it red.
+  // Equipment entries: 0 floor, 1 cableColumn, 2-4 ankleCuff parts (perItem), 5 start phantoms (end pose only).
+  let RQ: any, s0: any;
+  beforeAll(async () => { RQ = await import(/* @vite-ignore */ lib('specs/resisted_hip_flexion.mjs')); s0 = RQ.default; }, T);
+  const s = () => s0;
+  const POSES = ['start', 'end', 'mistake'];
+  const W = 1.75;
+  const CARD = 'docs/research/howto/cards/resisted_hip_flexion.json';
+  const Eng = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eng.PRIMITIVES, body });
+  const cmOf = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!) * 100;
+  const colIn = (spec: any, pose: string, o = {}) => itemsIn(spec, pose, o).items.find((it: any) => it.type === 'cableColumn');
+  const cuffIn = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((it: any) => it.part === 'cuff');
+  const ringIn = (spec: any, pose: string) => cuffIn(spec, pose)[2];
+  const postZ = (col: any) => col.base[2] + 0.17 - 0.025;   // the near upright's centre line (the vendor column: width 0.34, post 0.05)
+  const faceZ = (col: any) => col.base[2] + 0.17;            // the column's near face, toward the lifter
+  /** Winter 2009 Table 4.1 centre of mass on drawn landmarks (copied from lb7-plates.test.ts:428-442). */
+  const comOf = (lm: any) => {
+    const L3 = (a: number[], b: number[], t: number) => a.map((v, i) => v + (b[i]! - v) * t);
+    const parts: [number, number[]][] = [[0.081, lm.ear], [0.497, L3(lm.shoulders, lm.hips, 0.5)]];
+    for (const sd of ['l', 'r']) parts.push(
+      [0.028, L3(lm[`shoulder.${sd}`], lm[`elbow.${sd}`], 0.436)], [0.016, L3(lm[`elbow.${sd}`], lm[`wrist.${sd}`], 0.430)], [0.006, lm[`grip.${sd}`]],
+      [0.100, L3(lm[`hip.${sd}`], lm[`knee.${sd}`], 0.433)], [0.0465, L3(lm[`knee.${sd}`], lm[`ankle.${sd}`], 0.433)], [0.0145, L3(lm[`heel.${sd}`], lm[`toe.${sd}`], 0.5)]);
+    const m = parts.reduce((a, p) => a + p[0], 0);
+    return [0, 1, 2].map(i => parts.reduce((a, p) => a + p[0] * p[1][i]!, 0) / m);
+  };
+  /** Landmarks of the drawn ghosts (the engine's poseAt at the ghost times). */
+  const ghostLms = (spec: any) => {
+    const b = { height: W }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, b)), n = spec.ghosts.count;
+    return Array.from({ length: n }, (_, i) => body.landmarks(body.fk(body.poseAt(keys, (i + 1) / (n + 1), b).q, b)));
+  };
+  const lmsAll = (spec: any) => [...POSES.map(p => lmOf(spec, p)), ...ghostLms(spec)];
+  const mutEnd = (spec: any, patch: any) => ({ ...spec, poses: { ...spec.poses, end: { ...spec.poses.end, ...patch } } });
+  const mutMistake = (spec: any, patch: any) => ({ ...spec, mistake: { ...spec.mistake, pose: { ...spec.mistake.pose, ...patch } } });
+  const knee = (lm: any, sd: string) => 180 - angle3(lm[`hip.${sd}`], lm[`knee.${sd}`], lm[`ankle.${sd}`]);
+  const angle3 = (a: number[], v: number[], b: number[]) => { const u = a.map((x, i) => x - v[i]!), w = b.map((x, i) => x - v[i]!); return Math.acos(Math.max(-1, Math.min(1, u.reduce((q, x, i) => q + x * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w)))) * 180 / Math.PI; };
+
+  describe('resisted_hip_flexion: A2 ankleCuff and the cable column per pose', () => {
+    it('ankleCuff emits PRIMITIVES types only, every part a poly, in every pose; mutation: the strap as a `line` is red', () => {
+      for (const p of POSES) { const c = cuffIn(s(), p); expect(c).toHaveLength(3); for (const it of c) { expect(eng.PRIMITIVES[it.type]).toBeTypeOf('function'); expect(it.type).toBe('poly'); } }
+      const bad = withEq(s(), 2, (f: any) => (lm: any, ctx: any) => ({ ...f(lm, ctx), type: 'line' }));
+      expect(cuffIn(bad, 'mistake').every((it: any) => it.type === 'poly')).toBe(false);
+    });
+    it('the column frame and pulley sit at one fixed place (±1 px) in start, end and Mistake; the stack keeps the end lift in the Mistake', () => {
+      const frame = (sp: any, p: string) => eng.PRIMITIVES.cableColumn(colIn(sp, p, { mistake: p === 'mistake' }), camOf(sp)).filter((it: any) => it.cls !== 'eq-cable').map((it: any) => it.d);
+      const near = (a: string[], b: string[]) => a.length === b.length && a.every((d, i) => xy(d).every((q, k) => Math.hypot(q[0]! - xy(b[i]!)[k]![0]!, q[1]! - xy(b[i]!)[k]![1]!) <= 1));
+      const stat = (sp: any, p: string) => frame(sp, p).filter((_: any, i: number) => i < 3 || i >= frame(sp, p).length - 4);
+      expect(near(stat(s(), 'start'), stat(s(), 'end'))).toBe(true);
+      expect(near(frame(s(), 'end'), frame(s(), 'mistake'))).toBe(true);
+      // mutation: the column moved 2 cm in the Mistake -> red
+      const bad = withEq(s(), 1, (f: any) => (lm: any, ctx: any) => { const it = f(lm, ctx); return ctx.pose === 'mistake' ? { ...it, base: [0, 0, it.base[2] + 0.02] } : it; });
+      expect(near(frame(bad, 'end'), frame(bad, 'mistake'))).toBe(false);
+    });
+    it('the right fist holds the near upright (grip centre on its centre line ±1 cm, within its height) in start, end and Mistake (c2)', () => {
+      const ok = (sp: any) => POSES.every(p => { const g = lmOf(sp, p)['grip.r'], col = colIn(sp, p); return Math.abs(g[2] - postZ(col)) * 100 <= 1 && g[1] > 0 && g[1] < 2.1; });
+      expect(ok(s())).toBe(true);
+      const r = s().poses.end.reach, bad = mutEnd(s(), { reach: { ...r, r: { ...r.r, at: [r.r.at[0], r.r.at[1], r.r.at[2] + 0.02] } } });   // mutation: the end fist 2 cm off the post
+      expect(ok(bad)).toBe(false);
+    });
+    it('the standing foot is flat on the floor (heel and ball ±1 cm) and the cuff is on the working ankle in every pose; mutation: the cuff at the knee is red', () => {
+      const cuffOk = (sp: any, p: string) => {
+        const lm = lmOf(sp, p), band = cuffIn(sp, p)[0].pts, c = [0, 1, 2].map(i => band.reduce((a: number, q: number[]) => a + q[i]!, 0) / band.length);
+        const k = lm['knee.r'], a = lm['ankle.r'], u = k.map((v: number, i: number) => v - a[i]), L = Math.hypot(...u), t = u.reduce((q: number, v: number, i: number) => q + v * (c[i]! - a[i]), 0) / L;
+        return t > 0.04 && t < 0.07 && cmOf(c, a.map((v: number, i: number) => v + u[i] / L * t)) <= 1;   // band centre on the shank axis, 4-7 cm above the ankle
+      };
+      for (const p of POSES) {
+        const lm = lmOf(s(), p);
+        expect(Math.abs(lm['heel.l'][1]) * 100).toBeLessThanOrEqual(1); expect(Math.abs(lm['ball.l'][1]) * 100).toBeLessThanOrEqual(1);
+        expect(cuffOk(s(), p)).toBe(true);
+      }
+      const bad = withEq(s(), 2, () => (lm: any) => ({ type: 'poly', part: 'cuff', pts: [lm['knee.r'], lm['hip.r'], lm['knee.l'], lm['hip.l']] }));
+      expect(cuffOk(bad, 'end')).toBe(false);
+    });
+    it('the cable runs back from the drawn D-ring to the low pulley behind the lifter in every pose (D-LIB18-CABLE, c1, c2)', () => {
+      const ok = (sp: any) => ['start', 'end'].every(p => {
+        const col = colIn(sp, p), ring = ringIn(sp, p).pts, far = ring[Math.floor(ring.length / 2)], lm = lmOf(sp, p);
+        return cmOf(col.to, far) <= 1 && col.pulley.at[1] <= 0.15                       // c1 "low cable": pulley centre at most 15 cm up
+          && col.pulley.at[2] < lm['heel.r'][2] && col.pulley.at[2] < lm.sacrum[2]       // behind the lifter (c2 "Face away from the machine")
+          && lm['toe.l'][2] > lm['heel.l'][2];                                           // facing away: the standing toes point away from it
+      });
+      expect(ok(s())).toBe(true);
+      // mutation: the cable end left at the start ring in the end pose -> red
+      expect(ok(withEq(s(), 1, (f: any) => (lm: any, ctx: any) => ({ ...f(lm, ctx), to: f(ctx.start, ctx).to })))).toBe(false);
+    });
+  });
+
+  describe('resisted_hip_flexion: A18 physics on drawn items', () => {
+    it('every heel, ball and toe is on or above the floor line in start, end, Mistake and the ghosts; mutation: the standing heel 1 px down is red', () => {
+      const ok = (sp: any) => lmsAll(sp).every(lm => ['heel', 'ball', 'toe'].every(k => ['l', 'r'].every(sd => lm[`${k}.${sd}`][1] >= -0.0005)));
+      expect(ok(s())).toBe(true);
+      const px = 1 / rep(s()).camera.pxPerM, pl = s().poses.end.plant;
+      expect(ok(mutEnd(s(), { plant: { l: { ...pl.l, at: [pl.l.at[0], -px, pl.l.at[2]] } } }))).toBe(false);
+    });
+    it('the frame stands on the floor and the pulley sits on the near upright (joined, D-LIB18-FRAME); mutation: the pulley 20 cm off the post is red', () => {
+      const ok = (sp: any) => { const col = colIn(sp, 'end'); return col.base[1] === 0 && Math.abs(col.pulley.at[2] - faceZ(col)) <= 0.03; };
+      expect(ok(s())).toBe(true);
+      expect(ok(withEq(s(), 1, (f: any) => (lm: any, ctx: any) => { const it = f(lm, ctx); return { ...it, pulley: { ...it.pulley, at: [it.pulley.at[0], it.pulley.at[1], it.pulley.at[2] + 0.2] } }; }))).toBe(false);
+    });
+    it('no part of the working leg or its cuff passes into the column (every heel, toe and D-ring point in front of its near face, every pose and ghost); mutation: the column 15 cm nearer is red', () => {
+      const ok = (sp: any) => {
+        const f = faceZ(colIn(sp, 'end'));
+        return lmsAll(sp).every(lm => ['heel.r', 'toe.r', 'ankle.r', 'knee.r'].every(k => lm[k][2] > f))
+          && POSES.every(p => cuffIn(sp, p).every((it: any) => it.pts.every((q: number[]) => q[2]! > f + 0.045)));   // clear of the pulley's 4.5 cm rim
+      };
+      expect(ok(s())).toBe(true);
+      expect(ok(withEq(s(), 1, (fn: any) => (lm: any, ctx: any) => { const it = fn(lm, ctx); return { ...it, base: [0, 0, it.base[2] + 0.15] }; }))).toBe(false);
+    });
+    it('the centre of mass lies over the standing foot in every drawn pose and ghost (D-LIB18-BALANCE, c12): within ±2 cm of mid-sole and inside heel to toe; the hand steadies only', () => {
+      const ok = (sp: any) => lmsAll(sp).every(lm => { const c = comOf(lm)[2]!; return Math.abs(c - lm['sole.l'][2]) <= 0.02 && c >= lm['heel.l'][2] && c <= lm['toe.l'][2]; });
+      expect(ok(s())).toBe(true);
+      // mutation (card A18 form): the end trunk moved 10 cm forward -> red
+      const at = s().poses.end.root.at;
+      expect(ok(mutEnd(s(), { root: { ...s().poses.end.root, at: [at[0], at[1], at[2] + 0.10] } }))).toBe(false);
+      // mutation: the Mistake drawn without its balance counter-move (the end root kept under the leaning trunk) -> red
+      expect(ok(mutMistake(s(), { root: s().poses.end.root }))).toBe(false);
+    });
+  });
+
+  describe('resisted_hip_flexion: card facts and sized numbers on the drawn body', () => {
+    const card = () => readJson(CARD);
+    const h6 = (sp: any) => qaNode.h6({ spec: sp, research: card() }, { engine: Eng() }, { normal: plate.renderPlate(sp, { id: 'x' }) }).map((p: any) => p.key);
+    it('PQ-H6: the card facts (ankle.r and wrist.r contacts at the start, c2) and the card tempo hold; mutations: the wrist check removed, the tempo changed', () => {
+      expect(h6(s())).toEqual([]);
+      expect(h6({ ...s(), checks: s().checks.filter((c: any) => c.landmark !== 'wrist.r') })).toContain('H6.fact:1:contact:wrist.r');
+      expect(h6({ ...s(), tempo: [{ phase: 'Lift', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }] })).toContain('H6.tempo');
+    });
+    it('the frame hand is the near (right) wrist, beside its fist on the upright, at the start (card plateFacts wrist.r); mutation: the right hand let go is red', () => {
+      const ok = (sp: any) => { const lm = lmOf(sp, 'start'), col = colIn(sp, 'start'); return cmOf(lm['wrist.r'], lm['grip.r']) < 12 && Math.abs(lm['grip.r'][2] - postZ(col)) * 100 <= 1; };
+      expect(ok(s())).toBe(true);
+      const st = s().poses.start, bad = { ...s(), poses: { ...s().poses, start: { ...st, reach: { ...st.reach, r: { ...st.reach.r, at: [st.reach.r.at[0], st.reach.r.at[1] - 0.25, st.reach.r.at[2] + 0.3] } } } } };
+      expect(ok(bad)).toBe(false);
+    });
+    it('torso upright, hips level (c3, c6): pelvis tilt 0 and thorax (tilt + lumbar) 0 ±2 in start and end; mutation: +3 deg tilt is red', () => {
+      const ok = (sp: any) => ['start', 'end'].every(p => { const a = rep(sp).angles[p]; return Math.abs(a.tilt) <= 2 && Math.abs(a.tilt + a.trunk) <= 2; });
+      expect(ok(s())).toBe(true);
+      expect(ok(mutEnd(s(), { root: { ...s().poses.end.root, tilt: 3 } }))).toBe(false);
+    });
+    it('end: the strapped thigh level (c5 "thigh parallel", the drawn option) and the shank plumb (c3 "bending knee"), each ±2 deg; mutation: the end hip at 80 is red', () => {
+      const deg = (a: number[], b: number[]) => Math.atan2(Math.abs(b[1]! - a[1]!), Math.abs(b[2]! - a[2]!)) * 180 / Math.PI;   // 0 = level, 90 = plumb
+      const ok = (sp: any) => { const lm = lmOf(sp, 'end'); return deg(lm['hip.r'], lm['knee.r']) <= 2 && Math.abs(deg(lm['knee.r'], lm['ankle.r']) - 90) <= 2; };
+      expect(ok(s())).toBe(true);
+      expect(ok(mutEnd(s(), { hip: { ...s().poses.end.hip, r: 80 } }))).toBe(false);
+    });
+    it('start: the strapped hip extended behind the body (c5) by START_HIP_EXT, the knee and ankle behind the hip; mutation: hip at 0 is red', () => {
+      const ok = (sp: any) => { const a = rep(sp).angles.start['hip.r'], lm = lmOf(sp, 'start'); return Math.abs(+/flex (-?[\d.]+)/.exec(a)![1]! + RQ.SIZES.START_HIP_EXT) <= 1 && lm['knee.r'][2] < lm['hip.r'][2] && lm['ankle.r'][2] < lm['knee.r'][2]; };
+      expect(ok(s())).toBe(true);
+      const st = s().poses.start;
+      expect(ok({ ...s(), poses: { ...s().poses, start: { ...st, hip: { ...st.hip, r: 0 } } } })).toBe(false);
+    });
+    it('the standing knee at its sized bend (STANCE_KNEE 5, "Stand tall", barbell_back_squat.mjs:30) in every pose, in the sagittal plane; mutation: the end root 1 cm higher (knee locked) is red', () => {
+      const k0 = RQ.SIZES.STANCE_KNEE, a = 0.245 * W, b = 0.246 * W, Lc = Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(k0 * Math.PI / 180)), off0 = a * b * Math.sin(k0 * Math.PI / 180) / Lc;
+      const off = (lm: any) => segD([lm['knee.l'][2], lm['knee.l'][1]], [lm['hip.l'][2], lm['hip.l'][1]], [lm['ankle.l'][2], lm['ankle.l'][1]]);
+      const ok = (sp: any) => POSES.every(p => { const lm = lmOf(sp, p); return Math.abs(knee(lm, 'l') - k0) <= 2 && off(lm) >= 0.9 * off0 && Math.abs(lm['knee.l'][0] - lm['hip.l'][0]) < 0.01; });
+      expect(ok(s())).toBe(true);
+      const at = s().poses.end.root.at;
+      expect(ok(mutEnd(s(), { root: { ...s().poses.end.root, at: [at[0], at[1] + 0.01, at[2]] } }))).toBe(false);
+    });
+    it('every unsourced number is in SIZES; the trace point is the knee (plate.frames, D-LIB18-TRACE) with the clone trim [10, 12] (hanging_leg_raise.mjs:124); the lean drawn at M_LEAN', () => {
+      expect(Object.keys(RQ.SIZES).sort()).toEqual(['ARM_BACK', 'ELBOW_SOFT', 'END_ANKLE', 'END_HIP', 'END_KNEE', 'FLOOR_BACK', 'FLOOR_FRONT', 'M_LEAN', 'PULLEY_Y', 'STANCE_KNEE', 'STANCE_X', 'START_HIP_EXT', 'START_KNEE', 'START_TOE_CLEAR']);
+      const traceOk = (sp: any) => sp.trace.point === 'knee.r' && JSON.stringify(sp.trace.trim) === '[10,12]';
+      expect(traceOk(s())).toBe(true);
+      expect(traceOk({ ...s(), trace: { ...s().trace, point: 'ankle.r' } })).toBe(false);   // mutation: traced at the ankle -> red
+      expect(rep(s()).angles.mistake.trunk).toBe(-RQ.SIZES.M_LEAN);                           // hanging_leg_raise.mjs:69
+      expect(rep(mutMistake(s(), { trunk: -6 })).angles.mistake.trunk).not.toBe(-RQ.SIZES.M_LEAN);
+    });
+    it('tempo strip = lb8/tempo.json row + card tempo (Lift 2, Hold 2, Lower 2)', () => {
+      expect(s().tempo).toEqual([{ phase: 'Lift', s: 2, move: true }, { phase: 'Hold', s: 2 }, { phase: 'Lower', s: 2, move: true }]);
+      expect(s().tempo).toEqual(card().tempo);
+    });
+  });
+
+  describe('resisted_hip_flexion: A15 drawing lessons (each check run on the real spec and on a mutated spec)', () => {
+    /** The dashed Mistake cable: unbroken from the pulley rim to the drawn Mistake D-ring, in the Mistake layer above the end figure. */
+    const cableProblems = (spec: any) => {
+      const cam = camOf(spec), svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, out: string[] = [];
+      const g = (spec.mistake.guides ?? []).find((x: any) => x.kind === 'dashed' && x.pts?.length === 2);
+      if (!g) return ['no dashed Mistake cable'];
+      const ring = ringIn(spec, 'mistake').pts.map(cam.P), pul = colIn(spec, 'end').pulley, pc = cam.P(pul.at), [a, b] = g.pts.map(cam.P);
+      if (Math.min(...ring.map((q: number[]) => Math.hypot(q[0]! - b![0]!, q[1]! - b![1]!))) > cam.pxm * 0.01) out.push('the cable stops short of the Mistake ring');
+      if (Math.abs(Math.hypot(a![0]! - pc[0]!, a![1]! - pc[1]!) - pul.r * cam.pxm) > cam.pxm * 0.005) out.push('the cable does not start at the pulley rim');
+      if (!(svg.indexOf('class="mistake-layer"') > svg.indexOf('class="pose-end"'))) out.push('not drawn above the end figure');
+      return out;
+    };
+    it('the dashed Mistake cable runs unbroken from the pulley rim to the Mistake D-ring, drawn on top; mutations: cut to half, removed', () => {
+      expect(cableProblems(s())).toEqual([]);
+      const g = s().mistake.guides[0], half = { ...g, pts: [g.pts[0], g.pts[0].map((v: number, i: number) => (v + g.pts[1][i]) / 2)] };
+      expect(cableProblems({ ...s(), mistake: { ...s().mistake, guides: [half, ...s().mistake.guides.slice(1)] } })).toContain('the cable stops short of the Mistake ring');
+      expect(cableProblems({ ...s(), mistake: { ...s().mistake, guides: s().mistake.guides.slice(1) } })).toEqual(['no dashed Mistake cable']);
+    });
+    /** The red Mistake trunk (head and torso) drawn outside the end figure clears it by >= 6 px at its farthest (the engine masks the rest; the faulty back is a dashed guide). */
+    const trunkClear = (spec: any) => {
+      const endPolys = shapesIn(spec, 'end').map((x: any) => x.poly);
+      const outPts = shapesIn(spec, 'mistake').filter((x: any) => ['head', 'torso'].includes(x.key)).flatMap((x: any) => x.poly).filter((q: number[]) => outside(endPolys, q) > 0);
+      return outPts.length ? Math.max(...outPts.map((q: number[]) => outside(endPolys, q))) : 0;
+    };
+    it('the red leaning trunk clears the solid end figure by >= 6 px; mutation: the Mistake equal to the end pose is red', () => {
+      expect(trunkClear(s())).toBeGreaterThanOrEqual(6);
+      expect(trunkClear({ ...s(), mistake: { ...s().mistake, pose: {} } })).toBeLessThan(6);
+    });
+    /** The hidden start leg and cuff are dashed phantoms in the end layer only, and the Trace starts at the start knee. */
+    const phantomProblems = (spec: any) => {
+      const out: string[] = [], ph = itemsIn(spec, 'end').items.filter((it: any) => it.part === 'startLeg' || it.part === 'startCuff');
+      if (!ph.length) out.push('no start phantom');
+      if (!ph.every((it: any) => it.type === 'line' && it.cls === 'eq-line m-line')) out.push('a phantom is not a dashed line');
+      if (itemsIn(spec, 'start').items.some((it: any) => it.part === 'startLeg')) out.push('a phantom in the start layer');
+      const cam = camOf(spec), svg = plate.renderPlate(spec, { id: 'x' }).svg, tr = xy(/<path class="trace"[^>]*? d="([^"]+)"/.exec(svg)![1]!), k0 = cam.P(lmOf(spec, 'start')['knee.r']);
+      if (Math.hypot(tr[0]![0]! - k0[0]!, tr[0]![1]! - k0[1]!) > 12) out.push('the Trace does not start at the start knee');
+      return out;
+    };
+    it('the hidden start leg and cuff are dashed phantoms in the end layer; the Trace starts at the start knee (within its trim); mutation: the phantom entry removed is red', () => {
+      expect(phantomProblems(s())).toEqual([]);
+      expect(phantomProblems(withEq(s(), 5, () => () => null))).toContain('no start phantom');
+    });
+    /** Each tell's anchor sits on a drawn item: the dashed faulty-back guide (within 1 px); the first tell is the card's topFault. */
+    const tellProblems = (spec: any) => {
+      const cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm, g = spec.mistake.guides[1].pts.map(cam.P), out: string[] = [];
+      for (const t of spec.mistake.tells) { const at = qaEng.resolvePoint(t.anchor, 'mistake', L, cam); if (Math.min(...g.slice(1).map((q: number[], i: number) => segD(at, g[i]!, q))) > 1) out.push(`${t.key} off the back guide`); }
+      if (spec.mistake.tells[0].key !== readJson(CARD).topFault) out.push('first tell is not the topFault');
+      return out;
+    };
+    it('both tells (lean, arch) sit on the drawn faulty back, lean first (topFault); mutations: the lean anchor 20 px off, the tells swapped', () => {
+      expect(tellProblems(s())).toEqual([]);
+      const [t0, t1] = s().mistake.tells;
+      expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [{ ...t0, anchor: { at: 'backMid', pose: 'mistake', off: [20, 0] } }, t1] } })).toContain('lean off the back guide');
+      expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [t1, t0] } })).toContain('first tell is not the topFault');
+    });
+    /** Leaders: none within 6 px of a cable or the Trace (away from the anchor's first 8 px), none across the column; a
+     *  leader enters the figure of its render (end figure, or the Mistake figure) at most once, from the front, and is
+     *  then at most 81.9 px long (D-LIB18-ROUND). NIT: the normal 'back' leader enters once from the front (a named-nit
+     *  candidate, D-LIB15-NIT1: the lower back sits in a pocket closed by the frame arm, the upright and the cable). */
+    const leaderProblems = (spec: any) => {
+      const cam = camOf(spec), out: string[] = [];
+      for (const mistake of [false, true]) {
+        const R = plate.renderPlate(spec, { id: 'x', mistake }), tag = mistake ? 'mistake' : 'normal';
+        const colItems = eng.PRIMITIVES.cableColumn(colIn(spec, mistake ? 'mistake' : 'end', { mistake }), cam);
+        const lines = colItems.filter((it: any) => it.line).map((it: any) => it.line);
+        if (mistake) lines.push(spec.mistake.guides[0].pts.map(cam.P));
+        const tr = /<path class="trace"[^>]*? d="([^"]+)"/.exec(R.svg); if (tr && !mistake) { const p = xy(tr[1]!); segs(p).forEach(sg => lines.push(sg)); }
+        const colX = [cam.P([0, 0, colIn(spec, 'end').base[2] - 0.17])[0]!, cam.P([0, 0, faceZ(colIn(spec, 'end'))])[0]!];
+        const figure = shapesIn(spec, mistake ? 'mistake' : 'end').map((x: any) => x.poly), endFig = shapesIn(spec, 'end').map((x: any) => x.poly);
+        // the ghosts' drawn legs (ghosts.parts) and the dashed start phantoms, as plate-px outlines and polylines
+        const b = { height: W }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, b));
+        const ghostPolys = Array.from({ length: spec.ghosts.count }, (_, g) => body.bodyShapes(body.fk(body.poseAt(keys, (g + 1) / (spec.ghosts.count + 1), b).q, b), cam).filter((x: any) => x.poly && ['thigh.r', 'kneecap.r', 'shank.r', 'foot.r'].includes(x.key)).map((x: any) => x.poly)).flat();
+        const phantom = itemsIn(spec, 'end').items.filter((it: any) => it.part === 'startLeg' || it.part === 'startCuff').map((it: any) => it.pts.map(cam.P));
+        const cross = (p: number[], q: number[], r: number[], t: number[]) => { const o = (a: number[], c: number[], d: number[]) => Math.sign((c[0]! - a[0]!) * (d[1]! - a[1]!) - (c[1]! - a[1]!) * (d[0]! - a[0]!)); return o(p, q, r) * o(p, q, t) < 0 && o(r, t, p) * o(r, t, q) < 0; };
+        leadersOf(R.svg).forEach((ld, i) => {
+          const samp = segs(ld).flatMap(([a, b]) => Array.from({ length: 41 }, (_, k) => [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40]));
+          const away = samp.filter(q => Math.hypot(q[0]! - ld[0]![0]!, q[1]! - ld[0]![1]!) >= 8);
+          for (const c of lines) for (const q of away) if (segD(q, c[0], c[c.length - 1]) <= 6) out.push(`${tag} ${i}: near a cable or the Trace`);
+          if (samp.some(q => q[0]! >= colX[0]! - 2 && q[0]! <= colX[1]! + 2)) out.push(`${tag} ${i}: across the column`);
+          if (away.some(q => outside(ghostPolys, q) <= 0)) out.push(`${tag} ${i}: across a ghost`);
+          if (segs(ld).some(([p, q]) => phantom.some((pl: number[][]) => segs(pl).some(([r, t]) => cross(p!, q!, r!, t!))))) out.push(`${tag} ${i}: across the start phantom`);
+          // walk from the box end to the anchor: entries into the figure (both the render's figure and the end figure)
+          for (const fig of mistake ? [figure, endFig] : [figure]) {
+            const walk = [...samp].reverse().filter(q => Math.hypot(q[0]! - ld[0]![0]!, q[1]! - ld[0]![1]!) >= 3);
+            let inside = false, entries = 0; for (const q of walk) { const now = outside(fig, q) <= 0; if (now && !inside) entries++; inside = now; }
+            const len = segs(ld).reduce((a, [p, q]) => a + Math.hypot(q![0]! - p![0]!, q![1]! - p![1]!), 0);
+            if (entries > 1) out.push(`${tag} ${i}: enters the figure ${entries} times`);
+            if (entries === 1 && !(ld[ld.length - 1]![0]! > ld[0]![0]!)) out.push(`${tag} ${i}: enters from behind`);
+            if (entries === 1 && len > 81.9) out.push(`${tag} ${i}: ${len.toFixed(1)} px inside-route leader over 81.9 px`);
+          }
+        });
+      }
+      return [...new Set(out)];
+    };
+    it('no leader near a cable or the Trace, none across the column; a leader that enters the figure does so once, from the front, within 81.9 px', () => {
+      expect(leaderProblems(s())).toEqual([]);
+    });
+    it('mutations: the "No back arch" box left of the column (its leader across the frame) is red; behind the figure no box fits (the pocket box lands on the figure and frame: report red); the "Leans back" box behind the head is red', () => {
+      const back = (box: any) => ({ ...s(), callouts: s().callouts.map((c: any) => (c.key === 'back' ? { ...c, box } : c)) });
+      expect(leaderProblems(back({ left: 20, top: 200 }))).toContain('normal 2: across the column');
+      expect(rep(back({ left: 90, top: 200 })).issues.length).toBeGreaterThan(0);
+      const lean = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((t: any) => (t.key === 'lean' ? { ...t, box: { left: 150, top: 200 } } : t)) } };
+      expect(leaderProblems(lean).some(p => p.startsWith('mistake')) || plate.renderPlate(lean, { id: 'm', mistake: true }).report.issues.length > 0).toBe(true);
+    });
+    const cueProblems = (spec: any) => [...spec.callouts, ...spec.mistake.tells].filter((c: any) => c.cue.split(/\s+/).length > 15 || /;/.test(c.cue) || (c.cue.match(/[.?]/g) ?? []).length !== 1).map((c: any) => c.key);
+    it('cues: one sentence each, 15 words or fewer, no semicolon; mutation: a 16-word cue is red', () => {
+      expect(cueProblems(s())).toEqual([]);
+      expect(cueProblems({ ...s(), callouts: s().callouts.map((c: any) => (c.key === 'thigh' ? { ...c, cue: 'Drive the knee up and forward until the thigh is about parallel to the floor below.' } : c)) })).toEqual(['thigh']);
+    });
+    it('report.mjs engine checks: no issue in the normal and the Mistake render; mutation: a box on the figure is red', () => {
+      expect(rep(s()).issues).toEqual([]); expect(plate.renderPlate(s(), { id: 'm', mistake: true }).report.issues).toEqual([]);
+      const bad = { ...s(), callouts: s().callouts.map((c: any) => (c.key === 'back' ? { ...c, box: { left: 175, top: 170 } } : c)) };
+      expect(rep(bad).issues.length).toBeGreaterThan(0);
+    });
+  });
+}
+
+describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18, facts, balance, A15', { timeout: T }, () => {
+  const s = () => S.glute_bridge, GB = () => M.glute_bridge.GB;
+  const POSES3 = ['start', 'end', 'mistake'];
+  const W = 1.75;
+  const allLms = (spec: any) => {
+    const b = { height: W }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, b)), n = spec.ghosts?.count ?? 3;
+    return [...POSES3.map(p => [p, lmOf(spec, p)]), ...Array.from({ length: n }, (_, i) => [`ghost${i}`, body.landmarks(body.fk(body.poseAt(keys, (i + 1) / (n + 1), b).q, b))])] as [string, any][];
+  };
+  const withPose = (spec: any, pose: string, f: (p: any) => any) => ({ ...spec, poses: { ...spec.poses, [pose]: f(spec.poses[pose]) } });
+  const shiftRoot = (p: any, dy: number, dz = 0) => ({ ...p, root: { ...p.root, at: [p.root.at[0], p.root.at[1] + dy, p.root.at[2] + dz] } });
+  const movePlant = (p: any, dy: number, dz = 0) => ({ ...p, plant: Object.fromEntries(Object.entries(p.plant).map(([k, v]: [string, any]) => [k, { ...v, at: [v.at[0], v.at[1] + dy, v.at[2] + dz] }])) });
+
+  // ---- A2: the floor is the only equipment, static in start, end and Mistake; PRIMITIVES only ----
+  const a2Problems = (spec: any) => {
+    const out: string[] = [], fl = (p: string) => itemsIn(spec, p).items.filter((it: any) => it.type === 'floor');
+    for (const p of POSES3) {
+      const its = itemsIn(spec, p).items;
+      for (const it of its) if (!eng.PRIMITIVES[it.type]) out.push(`${p}: ${it.type} not a primitive`);
+      if (fl(p).length !== 1) out.push(`${p}: ${fl(p).length} floors`);
+      if (JSON.stringify(fl(p)) !== JSON.stringify(fl('start'))) out.push(`floor moves in ${p}`);
+    }
+    return out;
+  };
+  it('A2: one static floor in start, end and Mistake; H9 clean', () => {
+    expect(a2Problems(s())).toEqual([]);
+    expect(h9(s())).toEqual([]);
+  });
+  it('A2 mutations: the floor moved 2 cm in the Mistake, and a {type: "wedge"} item, are red', () => {
+    const moved = withEq(s(), 0, (e: any) => (lm: any, ctx: any) => ({ ...e, from: ctx.pose === 'mistake' ? e.from - 0.02 : e.from }));
+    expect(a2Problems(moved)).toContain('floor moves in mistake');
+    const wedge = { ...s(), equipment: [...s().equipment, { type: 'wedge', at: [0, 0, 0] }] };
+    expect(a2Problems(wedge).some(p => /not a primitive/.test(p))).toBe(true);
+    expect(h9(wedge).some((k: string) => k.startsWith('H9.type:'))).toBe(true);
+  });
+
+  // ---- A18: nothing through the floor (feet, hands on or above it; no body landmark or drawn outline > 1 cm into it) ----
+  const a18Problems = (spec: any) => {
+    const out: string[] = [], cam = camOf(spec), floorY = cam.P([0, 0, 0])[1]!, cm = 100 / cam.pxm;
+    for (const [p, l] of allLms(spec)) {
+      for (const n of ['heel.l', 'heel.r', 'ball.l', 'ball.r', 'toe.l', 'toe.r']) if (l[n][1] < -0.0005) out.push(`${p}: ${n} ${(l[n][1] * 100).toFixed(1)} cm under the floor`);
+      for (const n of ['backUpper', 'backMid', 'sacrum', 'buttock', 'head', 'shoulder.r', 'wrist.l', 'wrist.r']) if (l[n][1] < -0.01) out.push(`${p}: ${n} ${(-l[n][1] * 100).toFixed(1)} cm into the floor`);
+    }
+    for (const p of POSES3) for (const sh of shapesIn(spec, p)) {
+      const low = Math.max(...sh.poly.map((q: number[]) => q[1]!));
+      if ((low - floorY) * cm > 1) out.push(`${p}: ${sh.key} outline ${((low - floorY) * cm).toFixed(1)} cm under the floor`);
+    }
+    return out;
+  };
+  it('A18: feet on or above the floor, no landmark or outline more than 1 cm into it, every pose and ghost', () => {
+    expect(a18Problems(s())).toEqual([]);
+  });
+  it('A18 mutations: the top body lowered 2 cm (the back through the floor), and the feet 1 px below the floor, are red', () => {
+    expect(a18Problems(withPose(s(), 'end', p => shiftRoot(p, -0.02))).some(x => /^end: .* into the floor|^end: .* under the floor/.test(x))).toBe(true);
+    const px = 1 / camOf(s()).pxm;
+    expect(a18Problems(withPose(s(), 'end', p => movePlant(p, -px))).some(x => /^end: heel\.[lr] .* under the floor/.test(x))).toBe(true);
+  });
+
+  // ---- card facts (plateFacts): contacts on the floor plane (a real plane check), knee.r 90 at the end ----
+  const FACTS: [string, string][] = [['backUpper', 'start'], ['buttock', 'start'], ['heel.l', 'start'], ['heel.r', 'start'], ['ball.l', 'start'], ['ball.r', 'start'],
+    ['sacrum', 'start'], ['heel.l', 'end'], ['heel.r', 'end']];
+  const factProblems = (spec: any) => {
+    const out: string[] = [], r = rep(spec);
+    for (const [n, p] of FACTS) {
+      const y = lmOf(spec, p)[n][1];
+      if (Math.abs(y) > 0.01) out.push(`${p}: ${n} ${(y * 100).toFixed(1)} cm off the floor`);
+      const ck = spec.checks.find((c: any) => c.landmark === n && c.pose === p && c.plane);
+      if (!ck || ck.plane.point[1] !== 0 || ck.plane.normal[1] !== 1) out.push(`${p}: ${n} has no floor-plane check`);
+      if (!r.checks.some((c: any) => c.landmark === n && c.pose === p && c.cm != null && c.cm <= 1)) out.push(`${p}: ${n} check not within 1 cm`);
+    }
+    const knee = r.angles?.end?.['knee.r'];
+    if (typeof knee !== 'number' || Math.abs(knee - 90) > 2) out.push(`end knee.r ${knee}`);
+    if (Math.abs(r.measure.drawnDeg - 90) > 2) out.push(`drawn knee arc ${r.measure.drawnDeg}`);
+    return out;
+  };
+  it('facts: backUpper, buttock, sacrum, heels and balls on the floor at the start, heels at the end (+-1 cm), knee.r 90 +-2 deg', () => {
+    const r = rep(s());
+    console.log(`LIB-18 glute_bridge facts: ${FACTS.map(([n, p]) => `${p} ${n} ${(lmOf(s(), p)[n][1] * 100).toFixed(2)} cm`).join(', ')}; end knee.r ${r.angles.end['knee.r']}`);
+    expect(factProblems(s())).toEqual([]);
+  });
+  it('fact mutations: the sacrum check removed, the start feet 2 cm up, and the top feet 6 cm nearer (knee off 90), are red', () => {
+    expect(factProblems({ ...s(), checks: s().checks.filter((c: any) => c.landmark !== 'sacrum') })).toContain('start: sacrum has no floor-plane check');
+    expect(factProblems(withPose(s(), 'start', p => movePlant(p, 0.02))).some(x => /^start: heel/.test(x))).toBe(true);
+    expect(factProblems(withPose(s(), 'end', p => movePlant(p, 0, -0.06))).some(x => /knee/.test(x))).toBe(true);
+  });
+
+  // ---- c4: shoulders, hips and knees in one straight line at the top (side view, +-1 cm) ----
+  const lineOff = (spec: any) => { const l = lmOf(spec, 'end'), [a, h, k] = ['shoulder.r', 'hip.r', 'knee.r'].map(n => [l[n][2], l[n][1]]); return segD(h!, a!, k!); };
+  it('c4: the hip lies on the shoulder-knee line at the top (+-1 cm)', () => { expect(lineOff(s())).toBeLessThanOrEqual(0.01); });
+  it('c4 mutation: the top hips 4 cm higher (feet and shoulders kept) is red', () => {
+    expect(lineOff(withPose(s(), 'end', p => ({ ...shiftRoot(p, 0.04), hip: undefined })))).toBeGreaterThan(0.01);
+  });
+
+  // ---- balance (D-LIB18-BALANCE): the centre of mass between the shoulders' floor contact and the heels ----
+  const comZ = (l: any) => {
+    const L3 = (a: number[], b: number[], t: number) => a.map((v, i) => v + (b[i]! - v) * t);
+    const parts: [number, number[]][] = [[0.081, l.ear], [0.497, L3(l.shoulders, l.hips, 0.5)]];
+    for (const sd of ['l', 'r']) parts.push([0.028, L3(l[`shoulder.${sd}`], l[`elbow.${sd}`], 0.436)], [0.016, L3(l[`elbow.${sd}`], l[`wrist.${sd}`], 0.430)], [0.006, l[`grip.${sd}`]],
+      [0.100, L3(l[`hip.${sd}`], l[`knee.${sd}`], 0.433)], [0.0465, L3(l[`knee.${sd}`], l[`ankle.${sd}`], 0.433)], [0.0145, L3(l[`heel.${sd}`], l[`toe.${sd}`], 0.5)]);
+    const m = parts.reduce((a, p) => a + p[0], 0);
+    return parts.reduce((a, p) => a + p[0] * p[1][2]!, 0) / m;
+  };
+  const balance = (spec: any) => allLms(spec).map(([p, l]) => [p, comZ(l), l['shoulder.r'][2], Math.min(l['heel.l'][2], l['heel.r'][2])] as [string, number, number, number]);
+  it('balance: the centre of mass between the shoulders and the heels in every pose and ghost; offsets logged', () => {
+    const rows = balance(s());
+    console.log(`LIB-18 glute_bridge balance (cm ahead of the shoulders / behind the heels): ${rows.map(([p, z, a, h]) => `${p} ${((z - a) * 100).toFixed(1)}/${((h - z) * 100).toFixed(1)}`).join(', ')}`);
+    for (const [p, z, a, h] of rows) { expect(z, p).toBeGreaterThan(a); expect(z, p).toBeLessThan(h); }
+  });
+  // A supine body folds its legs before its centre of mass leaves the base (feet 55-65 cm nearer, or the trunk 30-40 cm
+  // shifted, all stay inside), so the red case is the heels drawn behind the centre of mass: the feet planted 1.2 m back.
+  it('balance mutation: the top feet planted 1.2 m back (heels behind the centre of mass) is red', () => {
+    expect(balance(withPose(s(), 'end', p => movePlant(p, 0, -1.2))).some(([p, z, , h]) => p === 'end' && z >= h)).toBe(true);
+  });
+
+  // ---- A15: leaders, tells, cues, the report ----
+  const crossProblems = (spec: any) => {
+    const out: string[] = [];
+    for (const mistake of [false, true]) {
+      const polys = [...shapesIn(spec, 'end'), ...shapesIn(spec, 'start'), ...(mistake ? shapesIn(spec, 'mistake') : [])].map((x: any) => x.poly), list = listOf(spec, mistake);
+      leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
+        let inside = 0;
+        for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) { const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40]; if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) inside++; }
+        if (inside) out.push(`${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the figure`);
+      });
+    }
+    return out;
+  };
+  it('no leader crosses the solid end figure, the start figure or (Mistake plate) the Mistake figure', () => { expect(crossProblems(s())).toEqual([]); });
+  it('mutation: the "Straight line" box placed under the bridge (its leader across the body) is red', () => {
+    const bad = { ...s(), callouts: s().callouts.map((x: any) => (x.key === 'line' ? { ...x, box: { left: 150, top: 318 } } : x)) };
+    expect(crossProblems(bad).some(p => /normal line/.test(p))).toBe(true);
+  });
+  const traceGap = (spec: any) => {
+    const svg: string = plate.renderPlate(spec, { id: 'x' }).svg, tr: number[][][] = [];
+    for (const m of svg.matchAll(/<path class="trace"[^>]*? d="([^"]+)"/g)) tr.push(...segs(xy(m[1]!)));
+    return leadersOf(svg).map((p, i) => {
+      let min = Infinity;
+      for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) { const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40]; if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) for (const g of tr) min = Math.min(min, segD(q, g[0]!, g[1]!)); }
+      return [listOf(spec, false)[i]?.key, min] as [string, number];
+    });
+  };
+  it('no leader within 6 px of the Trace', () => { for (const [k, d] of traceGap(s())) expect(d, k).toBeGreaterThanOrEqual(6); });
+  it('mutation: the "Pelvis tucked" anchor moved onto the hip joint (its leader along the Trace) is red', () => {
+    const bad = { ...s(), callouts: s().callouts.map((x: any) => (x.key === 'tuck' ? { ...x, anchor: { at: 'hip.r', pose: 'start', off: [0, -2] } } : x)) };
+    expect(traceGap(bad).some(([k, d]) => k === 'tuck' && d < 6)).toBe(true);
+  });
+  const textProblems = (spec: any) => [false, true].flatMap(mistake => {
+    const R = plate.renderPlate(spec, { id: 'x', mistake }), list = listOf(spec, mistake), boxes = R.report.labels.filter((l: any) => l.key !== 'meta');
+    return leadersOf(R.svg).flatMap((p, i) => boxes.filter((b: any) => b.key !== list[i]?.key).flatMap((b: any) => {
+      const hit = segs(p).some(([a, c]) => { for (let k = 0; k <= 40; k++) { const q = [a![0]! + (c![0]! - a![0]!) * k / 40, a![1]! + (c![1]! - a![1]!) * k / 40]; if (q[0]! > b.ink.x0 && q[0]! < b.ink.x1 && q[1]! > b.ink.y0 && q[1]! < b.ink.y1) return true; } return false; });
+      return hit ? [`${list[i]?.key} crosses ${b.key}`] : [];
+    }));
+  });
+  it('no leader crosses another label\'s text', () => { expect(textProblems(s())).toEqual([]); });
+  // one tell (record: notes "One-tell record"; `high` is not a tell, ruled); its key is the card's topFault; the anchor on
+  // the drawn Mistake outline, outside the end figure
+  const tellProblems = (spec: any) => {
+    const cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm, mp = shapesIn(spec, 'mistake').map((x: any) => x.poly), ep = shapesIn(spec, 'end').map((x: any) => x.poly), out: string[] = [];
+    const card = JSON.parse(readFileSync('docs/research/howto/cards/glute_bridge.json', 'utf8'));
+    if (spec.mistake.tells.length !== 1) out.push(`${spec.mistake.tells.length} tells`);
+    if (spec.mistake.tells[0]?.key !== card.topFault) out.push(`first tell ${spec.mistake.tells[0]?.key} != topFault ${card.topFault}`);
+    for (const t of spec.mistake.tells) {
+      const p = qaEng.resolvePoint(t.anchor, 'mistake', L, cam), onM = Math.abs(outside(mp, p)), offE = outside(ep, p);
+      if (!(onM <= 1.5 && offE >= -0.5)) out.push(`${t.key}: anchor ${onM.toFixed(1)} px from the Mistake outline, ${offE.toFixed(1)} px from the end figure`);
+    }
+    return out;
+  };
+  it('one tell, key arch = topFault, its anchor on the drawn Mistake outline outside the end figure', () => { expect(tellProblems(s())).toEqual([]); });
+  it('tell mutations: the anchor moved to open space, and a second `high` tell added, are red', () => {
+    const t0 = s().mistake.tells[0];
+    expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [{ ...t0, anchor: { at: 'knee.r', pose: 'mistake', off: [40, -60] } }] } }).length).toBe(1);
+    expect(tellProblems({ ...s(), mistake: { ...s().mistake, tells: [t0, { key: 'high', text: 'Hips<br>too high', anchor: { at: 'hip.r', pose: 'mistake' }, cue: 'The hips push too high.' }] } })).toContain('2 tells');
+  });
+  // D-LIB18-ROUND: no solid red guide inside the figure (the arch contour is a dashed guide)
+  const clearance = (spec: any) => {
+    const polys = shapesIn(spec, 'end').map((x: any) => x.poly), svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
+    return [...svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].flatMap(m => {
+      const pts = xy(m[1]!), samp: number[][] = [];
+      for (let i = 0; i + 1 < pts.length; i++) for (let k = 0; k <= 20; k++) samp.push(pts[i]!.map((v, j) => v + (pts[i + 1]![j]! - v) * k / 20));
+      const min = Math.min(...samp.map(p => outside(polys, p)));
+      return min >= 6 ? [] : [`arrow ${min.toFixed(1)} px from the end figure`];
+    });
+  };
+  it('no solid red part within 6 px of the end figure; the arched back is a dashed guide', () => {
+    expect(clearance(s())).toEqual([]);
+    expect(s().mistake.guides.some((g: any) => g.kind === 'dashed')).toBe(true);
+  });
+  it('mutation: an arrow from the end sacrum to the Mistake sacrum (inside the figure) is red', () => {
+    const guides = [...s().mistake.guides, { kind: 'arrow', from: { at: 'sacrum', pose: 'end' }, to: { at: 'sacrum', pose: 'mistake' } }];
+    expect(clearance({ ...s(), mistake: { ...s().mistake, guides } }).length).toBe(1);
+  });
+  const cueProblems = (spec: any) => [...spec.callouts, ...spec.mistake.tells].flatMap((c: any) => {
+    const w = c.cue.trim().split(/\s+/).length, sentences = c.cue.split(/[.!?](\s|$)/).filter((x: string) => x && x.trim()).length;
+    return [...(w > 15 ? [`${c.key}: ${w} words`] : []), ...(/;/.test(c.cue) ? [`${c.key}: semicolon`] : []), ...(sentences !== 1 ? [`${c.key}: ${sentences} sentences`] : [])];
+  });
+  it('cues: one sentence, at most 15 words, no semicolon; labels are the card\'s checkpoint labels', () => {
+    expect(cueProblems(s())).toEqual([]);
+    const card = JSON.parse(readFileSync('docs/research/howto/cards/glute_bridge.json', 'utf8'));
+    expect(s().callouts.map((c: any) => c.text.replace('<br>', ' '))).toEqual(card.plate.checkpoints.map((c: any) => c.label));
+  });
+  it('mutation: a 17-word cue is red', () => {
+    const bad = { ...s(), callouts: s().callouts.map((x: any) => (x.key === 'line' ? { ...x, cue: 'At the very top of the lift your shoulders, hips and knees all form one straight line.' } : x)) };
+    expect(cueProblems(bad)).toEqual(['line: 17 words']);
+  });
+  it('the engine report is clean on the normal and the Mistake plate; tempo and trace as ruled', async () => {
+    expect(plate.renderPlate(s(), { id: 'x' }).report.issues).toEqual([]);
+    await tick();
+    expect(plate.renderPlate(s(), { id: 'x', mistake: true }).report.issues).toEqual([]);
+    expect(s().tempo).toEqual([{ phase: 'Lift', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }]);
+    expect(s().trace).toEqual({ point: 'hip.r', trim: [6, 8] });
+  });
+  it('mutation: the "Straight line" box moved onto the figure gives an engine issue', () => {
+    const bad = { ...s(), callouts: s().callouts.map((x: any) => (x.key === 'line' ? { ...x, box: { left: 160, top: 290 } } : x)) };
+    expect(plate.renderPlate(bad, { id: 'x' }).report.issues.length).toBeGreaterThan(0);
+  });
+});
+
+// ---- standing_calf_raise and bodyweight_calf_raise (bulk; held S2, S4): their own helper copies, scoped to this block ----
+{
+  let eng: any, body: any, qaEng: any, plate: any, calf: any, SC: any, BW: any;
+  beforeAll(async () => {
+    [eng, body, qaEng, plate, calf, SC, BW] = await Promise.all(['engine.mjs', '../vendor/engine/body.mjs', 'qa/engine.mjs', '../vendor/engine/plate.mjs',
+      'eq/calfMachine.mjs', 'specs/standing_calf_raise.mjs', 'specs/bodyweight_calf_raise.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+  }, T);
+
+  // ---- helpers (lb7test.ts:44-94 and the seated_calf_raise block's copies, unchanged) ----
+  const Eng = () => ({ renderPlate: plate.renderPlate, PRIMITIVES: eng.PRIMITIVES, body });
+  const itemsIn = (spec: any, pose: string, { mistake = false } = {}) => {
+    const L = qaEng.poseLandmarks(Eng(), spec), lm = L.lm[pose] ?? null;
+    const ctx = { pose, start: L.lm.start, mistake, body: L.body };
+    const out: any[] = [];
+    spec.equipment.forEach((e: any, i: number) => {
+      for (const one of [].concat(typeof e === 'function' ? e(lm, ctx) ?? [] : e)) if (one) out.push({ ...(one as any), entry: i });
+    });
+    return { items: out, lm };
+  };
+  const lmOf = (spec: any, pose: string) => qaEng.poseLandmarks(Eng(), spec).lm[pose];
+  const rep = (spec: any, mistake = false) => plate.renderPlate(spec, { id: 'x', mistake }).report;
+  const CAMS = new WeakMap<object, any>();
+  const camOf = (spec: any) => {
+    if (CAMS.has(spec)) return CAMS.get(spec);
+    const c = rep(spec).camera, side = spec.view === 'side';
+    const cam = { view: side ? 'side' : 'front', near: side ? 'r' : null, facing: 'right', pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? w[2]! : w[0]!) * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
+    CAMS.set(spec, cam); return cam;
+  };
+  const fullPose = (spec: any, pose: string) => (pose === 'mistake' ? { ...spec.poses.end, ...spec.mistake.pose } : spec.poses[pose]);
+  const shapesOfQ = (spec: any, q: any) => body.bodyShapes(body.fk(q, { height: 1.75 }), camOf(spec), { armsFront: spec.armsFront, hand: spec.hand }).filter((x: any) => x.poly);
+  const qOf = (spec: any, pose: string) => { const b = { height: 1.75 }; return body.resolve(body.normPose(fullPose(spec, pose), b), b).q; };
+  const shapesIn = (spec: any, pose: string) => shapesOfQ(spec, qOf(spec, pose));
+  /** Ghost poses as the engine draws them (plate.mjs:69-76: evenly spaced along start -> end). */
+  const ghostQs = (spec: any) => { const b = { height: 1.75 }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, b)), n = spec.ghosts?.count ?? 3;
+    return Array.from({ length: n }, (_, i) => body.poseAt(keys, (i + 1) / (n + 1), b).q); };
+  const inPoly = (poly: number[][], [x, y]: number[]) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!; if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
+  const segD = (p: number[], a: number[], b: number[]) => { const dx = b[0]! - a[0]!, dy = b[1]! - a[1]!, L2 = dx * dx + dy * dy, t = L2 ? Math.max(0, Math.min(1, ((p[0]! - a[0]!) * dx + (p[1]! - a[1]!) * dy) / L2)) : 0; return Math.hypot(p[0]! - a[0]! - dx * t, p[1]! - a[1]! - dy * t); };
+  const outside = (polys: number[][][], p: number[]) => { let d = Infinity, inn = false; for (const P of polys) { if (inPoly(P, p)) inn = true; for (let i = 0; i < P.length; i++) d = Math.min(d, segD(p, P[i]!, P[(i + 1) % P.length]!)); } return inn ? -d : d; };
+  const xy = (d: string) => [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
+  const leadersOf = (svg: string) => [...svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(([, d]) => { const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]); return p; });
+  const angle3 = (a: number[], v: number[], b: number[]) => { const u = a.map((x, i) => x - v[i]!), w = b.map((x, i) => x - v[i]!); return Math.acos(Math.max(-1, Math.min(1, u.reduce((s, x, i) => s + x * w[i]!, 0) / Math.hypot(...u) / Math.hypot(...w)))) * 180 / Math.PI; };
+  const withEq = (spec: any, k: number, f: (e: any) => any) => ({ ...spec, equipment: spec.equipment.map((e: any, i: number) => (i === k ? f(e) : e)) });
+  /** The drawn polygons (plate px) of every equipment item in one pose, keyed by entry index. */
+  const drawnEq = (spec: any, pose: string) => { const cam = camOf(spec), out: Record<number, any> = {};
+    for (const it of itemsIn(spec, pose, { mistake: pose === 'mistake' }).items) { const d = eng.PRIMITIVES[it.type](it, cam); out[it.entry] = { ...it, polys: d.filter((x: any) => x.poly).map((x: any) => x.poly), lines: d.filter((x: any) => x.line).map((x: any) => x.line) }; }
+    return out; };
+  const polyGap = (A: number[][][], B: number[][][]) => Math.min(...A.flatMap(P => P.map(p => outside(B, p))), ...B.flatMap(P => P.map(p => outside(A, p))));
+  const shiftItem = (it: any, dz: number) => (it?.surface ? { ...it, surface: it.surface.map((p: number[]) => [p[0], p[1], p[2]! + dz]) } : it?.pts ? { ...it, pts: it.pts.map((p: number[]) => [p[0], p[1], p[2]! + dz]) } : it?.at ? { ...it, at: [it.at[0], it.at[1], it.at[2] + dz] } : it);
+  const cm = (spec: any) => camOf(spec).pxm / 100;                // px per cm
+  const POSES = ['start', 'end', 'mistake'];
+  /** Every drawn pose: start, end, Mistake and the ghosts. */
+  const allQs = (spec: any) => [...POSES.map(p => [p, qOf(spec, p)]), ...ghostQs(spec).map((q: any, i: number) => [`ghost${i}`, q])] as [string, any][];
+  /** A spec whose start or end foot plant is turned to toe-down angle d about the same ball (the spec's own plant form). */
+  const turnFoot = (spec: any, pose: 'start' | 'end', d: number, dy = 0) => {
+    const a = d * Math.PI / 180, n = [0, Math.cos(a), Math.sin(a)], t = [0, -Math.sin(a), Math.cos(a)], P = spec.poses[pose].plant;
+    const side = (c: any) => ({ ...c, at: [c.at[0], c.at[1] + dy, c.at[2]], normal: n, toe: t });
+    return { ...spec, poses: { ...spec.poses, [pose]: { ...spec.poses[pose], plant: { l: side(P.l), r: side(P.r) } } } };
+  };
+  /** A spec whose pose (start, end) has its hips moved by dz (m) front-to-back, the feet left where they are. */
+  const moveHips = (spec: any, pose: 'start' | 'end', dz: number) => { const p = spec.poses[pose];
+    return { ...spec, poses: { ...spec.poses, [pose]: { ...p, root: { ...p.root, at: [p.root.at[0], p.root.at[1], p.root.at[2] + dz] } } } }; };
+  /** Whole-body centre of mass, Winter (2009) table 4.1 fractions on the drawn landmarks (lb7test.ts:862-868). */
+  const lerp3 = (a: number[], b: number[], t: number) => a.map((v, i) => v + (b[i]! - v) * t);
+  const comOf = (L: any) => {
+    const parts: [number, number[]][] = [[0.497, lerp3(L.hips, L.shoulders, 0.5)], [0.081, L.ear]];
+    for (const side of ['l', 'r']) parts.push([0.028, lerp3(L[`shoulder.${side}`], L[`elbow.${side}`], 0.436)], [0.016, lerp3(L[`elbow.${side}`], L[`wrist.${side}`], 0.430)],
+      [0.006, lerp3(L[`wrist.${side}`], L[`grip.${side}`], 0.5)], [0.100, lerp3(L[`hip.${side}`], L[`knee.${side}`], 0.433)], [0.0465, lerp3(L[`knee.${side}`], L[`ankle.${side}`], 0.433)],
+      [0.0145, lerp3(L[`ankle.${side}`], L[`toe.${side}`], 0.5)]);
+    const m = parts.reduce((t, [w]) => t + w, 0);
+    return parts.reduce((t, [w, p]) => t.map((v, i) => v + w * p[i]! / m), [0, 0, 0]);
+  };
+  const lmQ = (q: any) => body.landmarks(body.fk(q, { height: 1.75 }));
+  const kneeBend = (L: any) => 180 - angle3(L['hip.r'], L['knee.r'], L['ankle.r']);
+  const trunkLean = (L: any) => Math.atan2(L.shoulders[2] - L.hips[2], L.shoulders[1] - L.hips[1]) * 180 / Math.PI;
+  /** The deepest drawn foot point under a support's top face, inside its front-to-back span (cm; + = inside). */
+  const toeDepthIn = (spec: any, support: number[][], q: any) => { const k = cm(spec), top = Math.min(...support.map(v => v[1]!)), x0 = Math.min(...support.map(v => v[0]!)), x1 = Math.max(...support.map(v => v[0]!));
+    return Math.max(-99, ...shapesOfQ(spec, q).filter((x: any) => /^foot\./.test(x.key)).flatMap((x: any) => x.poly.filter((v: number[]) => v[0]! >= x0 && v[0]! <= x1).map((v: number[]) => (v[1]! - top) / k))); };
+  /** The end pose with both balls lifted dy (m) off the support (reverse_lunge.mjs:19-22's method). */
+  const liftEnd = (spec: any, dy: number) => { const e = spec.poses.end, up = (c: any) => ({ ...c, at: [c.at[0], c.at[1] + dy, c.at[2]] });
+    return { ...spec, poses: { ...spec.poses, end: { ...e, root: { ...e.root, at: [e.root.at[0], e.root.at[1] + dy, e.root.at[2]] }, plant: { l: up(e.plant.l), r: up(e.plant.r) } } } }; };
+  const cueProblems = (spec: any) => [...spec.callouts, ...spec.mistake.tells].flatMap((c: any) => { const w = c.cue.trim().split(/\s+/).length;
+    return [...(w > 15 ? [`${c.key}: ${w} words`] : []), ...(/;/.test(c.cue) ? [`${c.key}: semicolon`] : []), ...((c.cue.match(/[.!?](\s|$)/g) ?? []).length !== 1 ? [`${c.key}: not one sentence`] : [])]; });
+  /** Leaders (Do 7, D-LIB18-ROUND): after 4 px from the anchor a leader never enters the solid figure, the start layer,
+   *  the ghosts or the dashed start phantom, nor (Mistake) the red figure; a Mistake leader may enter the end figure
+   *  once, from the front, at most 81.9 px long. None runs within 6 px of the Trace or of the `keepOff` equipment, and
+   *  none crosses another label's text. */
+  const leaderProblems = (spec: any, mistake: boolean, keepOff: (D: any) => number[][][]) => {
+    const R = plate.renderPlate(spec, { id: 'x', mistake }), out: string[] = [];
+    const sp = spec.startParts, inStart = (x: any) => !sp || sp.includes(x.key) || sp.includes(x.key.replace(/^(thigh|kneecap|shank|foot)\./, 'leg.'));
+    const gp = spec.ghosts?.parts, inGhost = (x: any) => !gp || gp.includes(x.key) || gp.includes(x.key.replace(/^(thigh|kneecap|shank|foot)\./, 'leg.'));
+    const endPolys = shapesIn(spec, 'end').map((x: any) => x.poly);
+    const others = [...shapesIn(spec, 'start').filter(inStart), ...ghostQs(spec).flatMap((q: any) => shapesOfQ(spec, q).filter(inGhost)), ...(mistake ? shapesIn(spec, 'mistake') : [])].map((x: any) => x.poly);
+    const phantom = itemsIn(spec, 'end').items.filter((i: any) => /m-line/.test(i.cls ?? '')).map((i: any) => i.pts.map((p: number[]) => camOf(spec).P(p)));
+    const D = drawnEq(spec, 'end'), off = keepOff(D);
+    const trace = mistake ? [] : [...R.svg.matchAll(/<path class="trace"[^>]* d="([^"]+)"/g)].flatMap(([, d]) => xy(d!));
+    const labels = R.report.labels.filter((l: any) => l.key !== 'meta');
+    leadersOf(R.svg).forEach((pts, i) => {
+      const a = pts[0]!, samples: number[][] = [];
+      for (let j = 1; j < pts.length; j++) { const p = pts[j - 1]!, q = pts[j]!, n = Math.ceil(Math.hypot(q[0]! - p[0]!, q[1]! - p[1]!)); for (let t = 0; t <= n; t++) samples.push([p[0]! + (q[0]! - p[0]!) * t / n, p[1]! + (q[1]! - p[1]!) * t / n]); }
+      const far = samples.filter(p => Math.hypot(p[0]! - a[0]!, p[1]! - a[1]!) > 4), farther = samples.filter(p => Math.hypot(p[0]! - a[0]!, p[1]! - a[1]!) > 8);
+      const inEnd = (p: number[]) => outside(endPolys, p) < 0;
+      if (!mistake && far.some(inEnd)) out.push(`leader ${i} enters the figure`);
+      if (mistake) {
+        const len = samples.length ? pts.slice(1).reduce((s, q, j) => s + Math.hypot(q[0]! - pts[j]![0]!, q[1]! - pts[j]![1]!), 0) : 0;
+        let entries = 0; for (let j = 1; j < samples.length; j++) if (inEnd(samples[j]!) !== inEnd(samples[j - 1]!)) entries++;
+        if (entries > 2) out.push(`leader ${i} enters the end figure more than once`);
+        if (samples.some(inEnd) && (pts[pts.length - 1]![0]! < a[0]! || len > 81.9)) out.push(`leader ${i} enters the end figure from the back or runs ${len.toFixed(1)} px`);
+      }
+      if (far.some(p => outside(others, p) < 0 && !(mistake && inEnd(p)))) out.push(`leader ${i} enters the start layer, a ghost or the red figure`);
+      if (far.some(p => phantom.some((L: number[][]) => L.some((q, j) => j > 0 && segD(p, L[j - 1]!, q) < 1)))) out.push(`leader ${i} crosses the start phantom`);
+      if (farther.some(p => outside(off, p) < 6)) out.push(`leader ${i} runs within 6 px of the equipment`);
+      if (trace.length && farther.some(p => trace.some(t => Math.hypot(t[0]! - p[0]!, t[1]! - p[1]!) < 6))) out.push(`leader ${i} runs within 6 px of the Trace`);
+      const own = labels.filter((l: any) => far.some(p => p[0]! > l.ink.x0 - 2 && p[0]! < l.ink.x1 + 2 && p[1]! > l.ink.y0 - 2 && p[1]! < l.ink.y1 + 2));
+      if (own.length > 1) out.push(`leader ${i} crosses another label's text`);
+    });
+    return out;
+  };
+  /** The start phantom (DRAWING-GUIDE 4): end-layer dashed lines that lie on the start limb's drawn outline (<= 1 px). */
+  const phantomProblems = (spec: any, keys: string[]) => {
+    const lines = itemsIn(spec, 'end').items.filter((i: any) => /m-line/.test(i.cls ?? '') && i.type === 'line'), cam = camOf(spec);
+    const foot = shapesIn(spec, 'start').filter((x: any) => keys.includes(x.key)).map((x: any) => x.poly);
+    if (!lines.length) return ['no start phantom'];
+    const off = Math.max(...lines.flatMap((l: any) => l.pts.map((p: number[]) => Math.abs(outside(foot, cam.P(p))))));
+    const startOnly = itemsIn(spec, 'start').items.some((i: any) => /m-line/.test(i.cls ?? ''));
+    return [...(off > 1 ? [`phantom ${off.toFixed(1)} px off the start foot outline`] : []), ...(startOnly ? ['phantom drawn outside the end layer'] : [])];
+  };
+  const tellProblems = (spec: any) => { const cam = camOf(spec), L: any = { mistake: lmOf(spec, 'mistake'), end: lmOf(spec, 'end') }, mS = shapesIn(spec, 'mistake').map((x: any) => x.poly);
+    return spec.mistake.tells.flatMap((t: any) => { const a = t.anchor, w = cam.P(L[a.pose ?? 'end'][a.at]), o = a.off ?? [0, 0], p = [w[0]! + o[0], w[1]! + o[1]];
+      return Math.abs(outside(mS, p)) <= 2 ? [] : [`${t.key}: anchor ${outside(mS, p).toFixed(1)} px from the Mistake figure`]; }); };
+  const TEMPO = [{ phase: 'Raise', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }];
+
+  // =============================== standing_calf_raise ===============================
+  const s = () => SC.default;
+  // composer slot order (eq/calfMachine.mjs calfMachine's return): entry 1 + slot; seat, seat post and safety lever are null standing
+  const SLOT = { beam: 0, platPost: 1, platform: 2, seatPost: 3, seat: 4, tower: 5, hub: 6, arm: 7, pad: 8, handlePost: 9, grip: 10, safety: 11 } as const;
+  const E = (slot: number) => 1 + slot;
+
+  describe('LB8 standing_calf_raise: calfMachine standing form (A2, A18 frame)', () => {
+    const typeProblems = (spec: any) => POSES.flatMap(p => itemsIn(spec, p).items.filter((i: any) => !eng.PRIMITIVES[i.type]).map((i: any) => `${p}: ${i.type}`));
+    it('returns PRIMITIVES types only, no seat and no safety lever; a {type: "wedge"} is red', () => {
+      expect(typeProblems(s())).toEqual([]);
+      const D = drawnEq(s(), 'end');
+      expect([SLOT.seatPost, SLOT.seat, SLOT.safety].map(k => D[E(k)])).toEqual([undefined, undefined, undefined]);
+      expect(typeProblems(withEq(s(), E(SLOT.grip), () => () => ({ type: 'wedge', part: 'lever' })))).toEqual(['start: wedge', 'end: wedge', 'mistake: wedge']);
+    });
+    /** Static parts (frame, platform) draw the same polygon (+-1 px) in start, end and Mistake; every lever
+     *  part carries a polygon (`poly` or the sideBar backPad), so the Mistake draws whichever moves (plate.mjs:205-218). */
+    const a2Problems = (spec: any) => {
+      const D: any = Object.fromEntries(POSES.map(p => [p, drawnEq(spec, p)])), out: string[] = [];
+      for (const k of Object.keys(D.end).map(Number)) {
+        const it = D.end[k], same = (p: string) => D[p][k] && D[p][k].polys.length === it.polys.length && D[p][k].polys.every((P: number[][], i: number) => P.every((q, j) => Math.hypot(q[0]! - it.polys[i][j][0], q[1]! - it.polys[i][j][1]) <= 1));
+        if (['frame', 'platform'].includes(it.part)) { for (const p of ['start', 'mistake']) if (!same(p)) out.push(`static ${it.part} entry ${k} moves in ${p}`); }
+        else if (it.part === 'lever') {
+          if (!['poly', 'backPad'].includes(it.type) || !it.polys.length) out.push(`moving entry ${k} is a ${it.type} without a polygon`);
+        }
+      }
+      return out;
+    };
+    it('A2: static parts fixed (+-1 px) in start, end and Mistake; the lever parts carry poly (the arm and grip move in the Mistake)', () => {
+      expect(a2Problems(s())).toEqual([]);
+      const D = drawnEq(s(), 'end'), Dm = drawnEq(s(), 'mistake'), moved = (k: number) => D[k].polys[0].some((q: number[], j: number) => Math.hypot(q[0]! - Dm[k].polys[0][j][0], q[1]! - Dm[k].polys[0][j][1]) > 1);
+      expect([SLOT.arm, SLOT.grip].map(k => moved(E(k)))).toEqual([true, true]);
+    });
+    it('A2 mutations: the platform moved 2 cm in the Mistake, and the lever arm drawn with `line`, are red', () => {
+      const moved = withEq(s(), E(SLOT.platform), e => (lm: any, ctx: any) => (ctx.pose === 'mistake' ? shiftItem(e(lm, ctx), 0.02) : e(lm, ctx)));
+      expect(a2Problems(moved)).toContain(`static platform entry ${E(SLOT.platform)} moves in mistake`);
+      const asLine = withEq(s(), E(SLOT.arm), e => (lm: any, ctx: any) => ({ type: 'line', pts: e(lm, ctx).surface, part: 'lever', z: 'back' }));
+      expect(a2Problems(asLine)).toContain(`moving entry ${E(SLOT.arm)} is a line without a polygon`);
+    });
+    /** D-LIB18-FRAME: each pad, platform and lever part joins its frame (touching or overlapping polygons, <= 0.5 px). */
+    const JOINS: [keyof typeof SLOT, keyof typeof SLOT][] = [['platform', 'platPost'], ['platPost', 'beam'], ['tower', 'beam'], ['hub', 'tower'], ['arm', 'hub'], ['arm', 'pad'], ['handlePost', 'arm'], ['grip', 'handlePost']];
+    const frameProblems = (spec: any) => POSES.flatMap(p => { const D = drawnEq(spec, p);
+      return JOINS.filter(([a, b]) => !D[E(SLOT[a])] || !D[E(SLOT[b])] || polyGap(D[E(SLOT[a])].polys, D[E(SLOT[b])].polys) > 0.5).map(([a, b]) => `${p}: ${a} not joined to ${b}`); });
+    it('A18: every pad, platform and lever part is joined to the frame in every pose', () => {
+      expect(frameProblems(s())).toEqual([]);
+    });
+    it('A18 mutations: the platform post removed, and the handle post 3 cm off the arm, are red', () => {
+      expect(frameProblems(withEq(s(), E(SLOT.platPost), () => () => null))).toContain('end: platform not joined to platPost');
+      const off = withEq(s(), E(SLOT.handlePost), e => (lm: any, ctx: any) => shiftItem(e(lm, ctx), 0.4));
+      expect(frameProblems(off)).toContain('end: handlePost not joined to arm');
+    });
+  });
+
+  describe('LB8 standing_calf_raise: contacts and physics (A2, A18, D-LIB18-BALANCE)', () => {
+    /** Each contact the card places, on its drawn item (+-1 cm): balls on the platform's top (c1, c7), hands on the
+     *  handle grip (c2, c3), the shoulder tops on the shoulder pad's lower face (c1), and no landmark of the shoulder line
+     *  (shoulder top, trap, shoulder joint), the part that rests on the pads, more than 1 cm inside it. */
+    const contactProblems = (spec: any) => POSES.flatMap(p => {
+      const L = lmOf(spec, p), D = drawnEq(spec, p), cam = camOf(spec), k = cm(spec), out: string[] = [];
+      const plat = D[E(SLOT.platform)].polys[0], top = Math.min(...plat.map((q: number[]) => q[1])), x0 = Math.min(...plat.map((q: number[]) => q[0])), x1 = Math.max(...plat.map((q: number[]) => q[0]));
+      for (const sd of ['l', 'r']) { const b = cam.P(L[`ball.${sd}`]); if (Math.abs(b[1]! - top) > k || b[0]! < x0 || b[0]! > x1) out.push(`${p}: ball.${sd} off the platform`); }
+      const g = D[E(SLOT.grip)].polys[0], gc = [g.reduce((a: number, q: number[]) => a + q[0]!, 0) / g.length, g.reduce((a: number, q: number[]) => a + q[1]!, 0) / g.length];
+      for (const sd of ['l', 'r']) { const w = cam.P(L[`grip.${sd}`]); if (Math.hypot(w[0]! - gc[0]!, w[1]! - gc[1]!) > k) out.push(`${p}: grip.${sd} off the handle`); }
+      const pad = D[E(SLOT.pad)].polys;
+      for (const sd of ['l', 'r']) { const d = outside(pad, cam.P(L[`shoulderTop.${sd}`])); if (Math.abs(d) > k) out.push(`${p}: shoulderTop.${sd} ${(d / k).toFixed(1)} cm off the pad`); }
+      for (const n of ['shoulderTop.l', 'shoulderTop.r', 'trap.l', 'trap.r', 'shoulder.l', 'shoulder.r']) { const d = outside(pad, cam.P(L[n])); if (d < -k) out.push(`${p}: ${n} ${(-d / k).toFixed(1)} cm inside the pad`); }
+      return out;
+    });
+    it('A2: balls on the platform, hands on the grip, shoulder tops on the pad (+-1 cm) in every pose', () => {
+      expect(contactProblems(s())).toEqual([]);
+    });
+    it('A2 mutation: one foot 2 cm off its platform at the end is red', () => {
+      const e = s().poses.end, bad = { ...s(), poses: { ...s().poses, end: { ...e, plant: { ...e.plant, r: { ...e.plant.r, at: [e.plant.r.at[0], e.plant.r.at[1] + 0.02, e.plant.r.at[2]] } } } } };
+      expect(contactProblems(bad)).toContain('end: ball.r off the platform');
+    });
+    it('A2/A18 mutation: the shoulder pad left at its start place (the lever not riding on the shoulders) is red', () => {
+      const stuck = withEq(s(), E(SLOT.pad), e => (lm: any, ctx: any) => e(ctx.start, ctx));
+      expect(contactProblems(stuck).some(x => /^end: shoulderTop\.r .* (off|inside) the pad/.test(x))).toBe(true);
+    });
+    const floorProblems = (spec: any) => { const floorY = camOf(spec).P([0, 0, 0])[1]!;
+      return allQs(spec).flatMap(([p, q]) => shapesOfQ(spec, q).filter((x: any) => /^foot\./.test(x.key)).flatMap((x: any) => x.poly.some((v: number[]) => v[1]! > floorY) ? [`${p}: ${x.key} below the floor`] : [])); };
+    it('A18: every drawn foot on or above the floor line in every pose, ghosts included; a start foot 1 px under is red', () => {
+      expect(floorProblems(s())).toEqual([]);
+      const cam = camOf(s()), floorY = cam.P([0, 0, 0])[1]!, lowest = Math.max(...shapesIn(s(), 'start').filter((x: any) => x.key === 'foot.r').flatMap((x: any) => x.poly.map((v: number[]) => v[1]!)));
+      const st = s().poses.start, drop = (floorY - lowest + 1) / cam.pxm, dn = (c: any) => ({ ...c, at: [c.at[0], c.at[1] - drop, c.at[2]] });
+      const low = { ...s(), poses: { ...s().poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1] - drop, st.root.at[2]] }, plant: { l: dn(st.plant.l), r: dn(st.plant.r) } } } };
+      expect(floorProblems(low)).toContain('start: foot.r below the floor');
+    });
+    const platOf = (spec: any) => drawnEq(spec, 'start')[E(SLOT.platform)].polys[0];
+    it('A18: the start foot (and the start-side ghost) clear of the platform; a start toe 2 cm inside is red', () => {
+      expect(toeDepthIn(s(), platOf(s()), qOf(s(), 'start'))).toBeLessThanOrEqual(1);
+      const bad = turnFoot(s(), 'start', 30);
+      expect(toeDepthIn(bad, platOf(bad), qOf(bad, 'start'))).toBeGreaterThan(1);
+    });
+    it('S4 (HELD, D-LIB18-CALF): the rigid toe inside the platform at the card-true top; the reverse_lunge lift instead takes the balls off it', () => {
+      // Recorded, not passed: pins the measured depths so a change to the range or the platform shows here; the plate stays
+      // held until the owner rules. The reverse_lunge method (the ball lifted until the toe pad just touches) is measured too.
+      const end = toeDepthIn(s(), platOf(s()), qOf(s(), 'end')), mis = toeDepthIn(s(), platOf(s()), qOf(s(), 'mistake'));
+      let lo = 0, hi = 0.2; for (let i = 0; i < 30; i++) { const m = (lo + hi) / 2, x = liftEnd(s(), m); if (toeDepthIn(x, platOf(x), qOf(x, 'end')) > 0) lo = m; else hi = m; }
+      console.log(`LIB-18 standing_calf_raise S4: toe ${end.toFixed(2)} cm inside the platform at the end, ${mis.toFixed(2)} cm in the Mistake; the balls ${(hi * 100).toFixed(2)} cm off it with the toe pad just touching`);
+      expect(end).toBeGreaterThan(1);
+      expect(hi * 100).toBeGreaterThan(1);
+    });
+    /** D-LIB18-BALANCE: the base is the forefoot on the platform edge (c1), a point base: the centre of mass within 2 cm
+     *  of the balls front-to-back in every drawn pose; the shoulder-pad load sits on the shoulder tops (c1, c2), so the sum
+     *  with any load stays inside when the shoulder tops are within 2 cm of the same plumb line too (a load equal to the
+     *  body weight is checked). */
+    const balanceProblems = (spec: any) => allQs(spec).flatMap(([p, q]) => { const L = lmQ(q), ball = L['ball.r'][2], c = comOf(L)[2]!, st = L['shoulderTop.r'][2], out: string[] = [];
+      if (Math.abs(c - ball) > 0.02) out.push(`${p}: centre of mass ${((c - ball) * 100).toFixed(1)} cm from the balls`);
+      if (Math.abs((c + st) / 2 - ball) > 0.02) out.push(`${p}: with a body-weight load on the shoulders ${(((c + st) / 2 - ball) * 100).toFixed(1)} cm from the balls`);
+      return out; });
+    it('A18: the centre of mass (and with the shoulder load) over the balls in every pose and ghost (offsets logged)', () => {
+      for (const [p, q] of allQs(s())) { const L = lmQ(q); console.log(`LIB-18 standing_calf_raise ${p}: centre of mass ${((comOf(L)[2]! - L['ball.r'][2]) * 100).toFixed(2)} cm, shoulder tops ${((L['shoulderTop.r'][2] - L['ball.r'][2]) * 100).toFixed(2)} cm from the balls`); }
+      expect(balanceProblems(s())).toEqual([]);
+    });
+    it('A18 mutation: the trunk and hips 5 cm back at the top (the load moved off the base) is red', () => {
+      expect(balanceProblems(moveHips(s(), 'end', -0.05)).some(x => x.startsWith('end:'))).toBe(true);
+    });
+  });
+
+  describe('LB8 standing_calf_raise: card facts, sizes, Mistake, labels (A6, A15, A17)', () => {
+    /** The sized numbers on the drawn body: knees KNEE_SOFT 15 (c5 "slightly bent", leg_press.mjs:13/:23) in the start
+     *  and the end, +-2, in the sagittal plane; trunk upright (c2, c11), +-2; the ankle START_DF 20 dorsiflexed at the
+     *  start (c10) and END_PF 50 plantar flexed at the end (c7), +-2 (engine report angles); the Mistake knee locked
+     *  (M_LOCK 0, c6), <= 2. */
+    const factProblems = (spec: any) => { const out: string[] = [], A = rep(spec).angles, Am = rep(spec, true);
+      for (const p of ['start', 'end']) { const L = lmOf(spec, p);
+        if (Math.abs(kneeBend(L) - 15) > 2) out.push(`${p}: knee ${kneeBend(L).toFixed(1)}`);
+        if (Math.abs(L['knee.r'][0] - L['hip.r'][0]) > 0.005) out.push(`${p}: knee out of the sagittal plane`);
+        if (Math.abs(trunkLean(L)) > 2) out.push(`${p}: trunk ${trunkLean(L).toFixed(1)} from upright`); }
+      if (Math.abs(A.start['ankle.r'] - 20) > 2) out.push(`start: ankle ${A.start['ankle.r']}`);
+      if (Math.abs(A.end['ankle.r'] + 50) > 2) out.push(`end: ankle ${A.end['ankle.r']}`);
+      const Lm = lmOf(spec, 'mistake'); if (kneeBend(Lm) > 2) out.push(`mistake: knee ${kneeBend(Lm).toFixed(1)} not locked`);
+      void Am; return out; };
+    it('knees 15 (+-2) at start and end, trunk upright, ankle 20 / -50, Mistake knee locked', () => {
+      for (const p of POSES) { const L = lmOf(s(), p); console.log(`LIB-18 standing_calf_raise ${p}: knee ${kneeBend(L).toFixed(1)}, trunk ${trunkLean(L).toFixed(1)}, ankle ${rep(s()).angles[p === 'mistake' ? 'end' : p]['ankle.r']}`); }
+      expect(factProblems(s())).toEqual([]);
+    });
+    it('fact mutations: the end foot turned 30 deg toe-down (ankle off), and the Mistake knee left at the end\'s bend, are red', () => {
+      expect(factProblems(turnFoot(s(), 'end', 30)).some(x => x.startsWith('end: ankle') || x.startsWith('end: knee'))).toBe(true);
+      expect(factProblems({ ...s(), mistake: { ...s().mistake, pose: { root: s().poses.end.root } } })).toContain(`mistake: knee ${kneeBend(lmOf(s(), 'end')).toFixed(1)} not locked`);
+    });
+    /** PQ-H6 (CARD FIELDS): each contact fact has a check on its landmark and pose on the surface it touches: the balls
+     *  and toes on the platform's drawn top face, the shoulder tops on the drawn pad's lower face (its plane point on the
+     *  pad's outline, +-1 px); the wrists at the drawn grip (the hand fact form, as seated_calf_raise and hack_squat). */
+    const FACTS: [string, string][] = [['ball.l', 'start'], ['ball.r', 'start'], ['toe.l', 'start'], ['toe.r', 'start'], ['shoulderTop.l', 'start'], ['shoulderTop.r', 'start'], ['wrist.l', 'start'], ['wrist.r', 'start'], ['ball.l', 'end'], ['ball.r', 'end']];
+    const h6Problems = (spec: any) => { const cam = camOf(spec), out: string[] = [];
+      for (const [lmk, pose] of FACTS) {
+        const c = spec.checks.find((x: any) => x.landmark === lmk && (x.pose === pose || x.pose === 'all') && (x.plane || x.at));
+        if (!c) { out.push(`${lmk} ${pose}: no check`); continue; }
+        if (/^(ball|toe)/.test(lmk)) { const top = Math.min(...drawnEq(spec, pose)[E(SLOT.platform)].polys[0].map((q: number[]) => q[1])); if (!c.plane || Math.abs(cam.P(c.plane.point)[1]! - top) > 1) out.push(`${lmk} ${pose}: not on the platform's top`); }
+        if (/^shoulderTop/.test(lmk)) { const pad = drawnEq(spec, pose)[E(SLOT.pad)].polys; if (!c.plane || Math.abs(outside(pad, cam.P(c.plane.point))) > 1) out.push(`${lmk} ${pose}: not on the pad's face`); }
+      }
+      return out; };
+    it('PQ-H6: every card contact fact has a real-surface check; the toe miss is the S4 hold (2.3 cm, logged)', () => {
+      expect(h6Problems(s())).toEqual([]);
+      const misses = rep(s()).checks.filter((c: any) => c.cm > 0.5).map((c: any) => `${c.pose}:${c.landmark}:${c.cm}cm`);
+      console.log(`LIB-18 standing_calf_raise fact misses: ${misses.join(', ')}`);
+      expect(misses).toEqual(['start:toe.l:2.3cm', 'start:toe.r:2.3cm']);
+    });
+    it('PQ-H6 mutation: the shoulder checks moved 3 cm up off the pad face is red', () => {
+      const up = { ...s(), checks: s().checks.map((c: any) => (/^shoulderTop/.test(c.landmark) ? { ...c, plane: { ...c.plane, point: [c.plane.point[0], c.plane.point[1] + 0.03, c.plane.point[2]] } } : c)) };
+      expect(h6Problems(up)).toContain('shoulderTop.l start: not on the pad\'s face');
+    });
+    it('A15: the start phantom is the start foot\'s outline, in the end layer; removed is red', () => {
+      expect(phantomProblems(s(), ['foot.r'])).toEqual([]);
+      const n = s().equipment.length, gone = { ...s(), equipment: s().equipment.slice(0, 1 + calf.CALF_MACHINE_ITEMS) };
+      expect(n).toBeGreaterThan(1 + calf.CALF_MACHINE_ITEMS);
+      expect(phantomProblems(gone, ['foot.r'])).toEqual(['no start phantom']);
+    });
+    /** The red Mistake reads outside the solid end figure (13.1): some red leg point (the locked knee's back) clears the
+     *  end figure by >= 6 px. */
+    it('A15: the red Mistake leg clears the end figure by >= 6 px; the Mistake equal to the end is red', () => {
+      const clear = (spec: any) => { const endS = shapesIn(spec, 'end').map((x: any) => x.poly);
+        return Math.max(...shapesIn(spec, 'mistake').filter((x: any) => /^(thigh|kneecap|shank)\.r/.test(x.key)).flatMap((x: any) => x.poly.map((v: number[]) => outside(endS, v)))); };
+      console.log(`LIB-18 standing_calf_raise Mistake leg clearance ${clear(s()).toFixed(1)} px`);
+      expect(clear(s())).toBeGreaterThanOrEqual(6);
+      expect(clear({ ...s(), mistake: { ...s().mistake, pose: { root: s().poses.end.root, plant: s().poses.end.plant, reach: s().poses.end.reach } } })).toBeLessThan(6);
+    });
+    it('A15: one tell, key "lock", anchored on the red knee; the anchor moved off the figure is red', () => {
+      expect(s().mistake.tells.map((t: any) => t.key)).toEqual(['lock']);
+      expect(tellProblems(s())).toEqual([]);
+      const off = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((t: any) => ({ ...t, anchor: { ...t.anchor, off: [40, 0] } })) } };
+      expect(tellProblems(off).length).toBe(1);
+    });
+    const keepOff = (D: any) => [SLOT.pad, SLOT.platform, SLOT.tower, SLOT.arm, SLOT.handlePost, SLOT.grip].flatMap(k => D[E(k)].polys);
+    it('A15: no leader enters a figure, a ghost or the phantom, or runs near the Trace or the machine; the Mistake leader enters the end figure once, from the front', () => {
+      expect(["normal", ...leaderProblems(s(), false, keepOff)]).toEqual(["normal"]);
+      expect(leaderProblems(s(), true, keepOff)).toEqual([]);
+    });
+    it('A15 mutations: "Upright" boxed beyond the tower (leader across it) and "Knees soft" boxed left of the legs are red', () => {
+      const behind = { ...s(), callouts: s().callouts.map((c: any) => (c.key === 'upright' ? { ...c, box: { left: 40, top: 124 } } : c)) };
+      expect(leaderProblems(behind, false, keepOff).some(x => /within 6 px of the equipment/.test(x))).toBe(true);
+      const left = { ...s(), callouts: s().callouts.map((c: any) => (c.key === 'knees' ? { ...c, box: { left: 130, top: 214 } } : c)) };
+      expect(leaderProblems(left, false, keepOff).some(x => /enters the figure|start layer, a ghost/.test(x))).toBe(true);
+    });
+    it('Q-D5-6: every cue is one sentence of 15 words or fewer, no semicolon; a 16-word cue is red', () => {
+      expect(cueProblems(s())).toEqual([]);
+      const long = { ...s(), callouts: s().callouts.map((c: any, i: number) => (i === 0 ? { ...c, cue: 'Put the balls of both your feet on the platform edge with the heels hanging off.' } : c)) };
+      expect(cueProblems(long)).toEqual(['balls: 16 words']);
+    });
+    it('callouts are the card\'s 3 checkpoints with its cues; tempo the ruled row; a 2 s Hold is red', () => {
+      expect(s().callouts.map((c: any) => [c.text.replace('<br>', ' '), c.cue])).toEqual([['Balls of feet', 'Balls of the feet on the platform edge, heels hanging off.'],
+        ['Knees soft', 'Knees slightly bent and stable, never locked.'], ['Upright', 'Stand upright under the pads, back straight.']]);
+      expect(s().tempo).toEqual(TEMPO);
+      expect(s().tempo.map((t: any) => (t.phase === 'Hold' ? { ...t, s: 2 } : t))).not.toEqual(TEMPO);
+    });
+    /** A17: the trace point is the heel (D-LIB18-CALF, -TRACE), trim [10, 12] (barbell_back_squat.mjs:117, D-LIB18-TRIM). */
+    const traceProblems = (spec: any) => [...(spec.trace.point !== 'heel.r' ? [`trace at ${spec.trace.point}`] : []), ...(JSON.stringify(spec.trace.trim) !== JSON.stringify([10, 12]) || JSON.stringify(SC.SIZES.TRACE_TRIM) !== JSON.stringify([10, 12]) ? ['trim not [10, 12]'] : [])];
+    it('A17: the Trace follows the heel with trim [10, 12]; traced at the toe is red', () => {
+      expect(traceProblems(s())).toEqual([]);
+      expect(traceProblems({ ...s(), trace: { ...s().trace, point: 'toe.r' } })).toEqual(['trace at toe.r']);
+    });
+    it('report.mjs engine checks: only the S4 toe misses in the plate and the Mistake; a box moved onto the figure is red', () => {
+      const want = ['check:start:toe.l:2.3cm', 'check:start:toe.r:2.3cm'];
+      expect(rep(s()).issues).toEqual(want);
+      expect(rep(s(), true).issues).toEqual(want);
+      const onFig = { ...s(), callouts: s().callouts.map((c: any) => (c.key === 'knees' ? { ...c, box: { left: 196, top: 160 } } : c)) };
+      expect(rep(onFig).issues.length).toBeGreaterThan(want.length);
+    });
+    it('F7: drawable false, the drawn fault named in pilot.drawableFault (bouncing is the top fault, speed only)', () => {
+      expect(s().pilot.drawableFault).toMatch(/bouncing/);
+      expect(s().mistake.tells[0].key).not.toBe('bounce');
+    });
+  });
+
+  // =============================== bodyweight_calf_raise ===============================
+  const b = () => BW.default;
+  const STEP_E = 1;                                               // equipment entry of the step (vendor box)
+  const stepOf = (spec: any, pose = 'start') => drawnEq(spec, pose)[STEP_E].polys[0];
+
+  describe('LB8 bodyweight_calf_raise: the step, contacts and physics (A2, A18, D-LIB18-BALANCE)', () => {
+    /** The step is static (the same polygon +-1 px in start, end and Mistake) and stands on the floor line (+-0.5 px). */
+    const stepProblems = (spec: any) => { const out: string[] = [], floorY = camOf(spec).P([0, 0, 0])[1]!, s0 = stepOf(spec, 'end');
+      for (const p of ['start', 'mistake']) { const q = stepOf(spec, p); if (!q || q.length !== s0.length || q.some((v: number[], i: number) => Math.hypot(v[0]! - s0[i]![0]!, v[1]! - s0[i]![1]!) > 1)) out.push(`step moves in ${p}`); }
+      if (Math.abs(Math.max(...s0.map((v: number[]) => v[1]!)) - floorY) > 0.5) out.push('step not on the floor');
+      return out; };
+    it('A2/A18: the step is static and stands on the floor; moved 2 cm in the Mistake, or lifted 2 cm, is red', () => {
+      expect(b().equipment.filter((e: any) => typeof e !== 'function').map((e: any) => e.type)).toEqual(['floor', 'box']);
+      expect(stepProblems(b())).toEqual([]);
+      const moved = withEq(b(), STEP_E, e => (lm: any, ctx: any) => (ctx.pose === 'mistake' ? shiftItem(e, 0.02) : e));
+      expect(stepProblems(moved)).toContain('step moves in mistake');
+      const up = withEq(b(), STEP_E, e => ({ ...e, at: [e.at[0], e.at[1] + 0.02, e.at[2]] }));
+      expect(stepProblems(up)).toContain('step not on the floor');
+    });
+    /** The balls on the step's drawn top face (+-1 cm, inside its span) in every pose (c3, c4); the heels hang off its rear edge. */
+    const contactProblems = (spec: any) => POSES.flatMap(p => { const L = lmOf(spec, p), st = stepOf(spec, p), cam = camOf(spec), k = cm(spec), out: string[] = [];
+      const top = Math.min(...st.map((q: number[]) => q[1])), x0 = Math.min(...st.map((q: number[]) => q[0])), x1 = Math.max(...st.map((q: number[]) => q[0]));
+      for (const sd of ['l', 'r']) { const bb = cam.P(L[`ball.${sd}`]); if (Math.abs(bb[1]! - top) > k || bb[0]! < x0 || bb[0]! > x1) out.push(`${p}: ball.${sd} off the step`); }
+      if (cam.P(L['heel.r'])[0]! >= x0) out.push(`${p}: heel over the step`);
+      return out; });
+    it('A2: the balls on the step and the heels off its edge in every pose; one foot 2 cm up at the end is red', () => {
+      expect(contactProblems(b())).toEqual([]);
+      const e = b().poses.end, bad = { ...b(), poses: { ...b().poses, end: { ...e, plant: { ...e.plant, r: { ...e.plant.r, at: [e.plant.r.at[0], e.plant.r.at[1] + 0.02, e.plant.r.at[2]] } } } } };
+      expect(contactProblems(bad)).toContain('end: ball.r off the step');
+    });
+    it('c2 "slightly below": the start heel under the step\'s top (depth logged); the start foot turned level is red', () => {
+      const below = (spec: any) => (camOf(spec).P(lmOf(spec, 'start')['heel.r'])[1]! - Math.min(...stepOf(spec).map((q: number[]) => q[1]!))) / cm(spec);
+      console.log(`LIB-18 bodyweight_calf_raise start heel ${below(b()).toFixed(1)} cm below the step top`);
+      expect(below(b())).toBeGreaterThan(0.5);
+      expect(below(turnFoot(b(), 'start', 0))).toBeLessThanOrEqual(0.5);
+    });
+    const floorProblems = (spec: any) => { const floorY = camOf(spec).P([0, 0, 0])[1]!;
+      return allQs(spec).flatMap(([p, q]) => shapesOfQ(spec, q).filter((x: any) => /^foot\./.test(x.key)).flatMap((x: any) => x.poly.some((v: number[]) => v[1]! > floorY) ? [`${p}: ${x.key} below the floor`] : [])); };
+    it('A18: every drawn foot on or above the floor line in every pose, ghosts included; a start foot 1 px under is red', () => {
+      expect(floorProblems(b())).toEqual([]);
+      const cam = camOf(b()), floorY = cam.P([0, 0, 0])[1]!, lowest = Math.max(...shapesIn(b(), 'start').filter((x: any) => x.key === 'foot.r').flatMap((x: any) => x.poly.map((v: number[]) => v[1]!)));
+      const st = b().poses.start, drop = (floorY - lowest + 1) / cam.pxm, dn = (c: any) => ({ ...c, at: [c.at[0], c.at[1] - drop, c.at[2]] });
+      const low = { ...b(), poses: { ...b().poses, start: { ...st, root: { ...st.root, at: [st.root.at[0], st.root.at[1] - drop, st.root.at[2]] }, plant: { l: dn(st.plant.l), r: dn(st.plant.r) } } } };
+      expect(floorProblems(low)).toContain('start: foot.r below the floor');
+    });
+    it('A18: the start foot clear of the step; a start toe 2 cm inside is red', () => {
+      expect(toeDepthIn(b(), stepOf(b()), qOf(b(), 'start'))).toBeLessThanOrEqual(1);
+      const bad = turnFoot(b(), 'start', 30);
+      expect(toeDepthIn(bad, stepOf(bad), qOf(bad, 'start'))).toBeGreaterThan(1);
+    });
+    it('S4 (HELD, D-LIB18-CALF): the rigid toe inside the step at the card-true top; the reverse_lunge lift instead takes the balls off it', () => {
+      const end = toeDepthIn(b(), stepOf(b()), qOf(b(), 'end')), mis = toeDepthIn(b(), stepOf(b()), qOf(b(), 'mistake'));
+      let lo = 0, hi = 0.2; for (let i = 0; i < 30; i++) { const m = (lo + hi) / 2, x = liftEnd(b(), m); if (toeDepthIn(x, stepOf(x), qOf(x, 'end')) > 0) lo = m; else hi = m; }
+      console.log(`LIB-18 bodyweight_calf_raise S4: toe ${end.toFixed(2)} cm inside the step at the end, ${mis.toFixed(2)} cm in the Mistake; the balls ${(hi * 100).toFixed(2)} cm off it with the toe pad just touching`);
+      expect(end).toBeGreaterThan(1);
+      expect(hi * 100).toBeGreaterThan(1);
+    });
+    /** D-LIB18-BALANCE: the forefoot on the step edge (c3, c4), a point base: the centre of mass within 2 cm of the balls. */
+    const balanceProblems = (spec: any) => allQs(spec).flatMap(([p, q]) => { const L = lmQ(q), d = comOf(L)[2]! - L['ball.r'][2];
+      return Math.abs(d) <= 0.02 ? [] : [`${p}: centre of mass ${(d * 100).toFixed(1)} cm from the balls`]; });
+    it('A18: the centre of mass over the balls in every pose and ghost (offsets and the body lean logged)', () => {
+      for (const [p, q] of allQs(b())) { const L = lmQ(q), lean = Math.atan2(L['hip.r'][2] - L['ankle.r'][2], L['hip.r'][1] - L['ankle.r'][1]) * 180 / Math.PI;
+        console.log(`LIB-18 bodyweight_calf_raise ${p}: centre of mass ${((comOf(L)[2]! - L['ball.r'][2]) * 100).toFixed(2)} cm from the balls; ankle-hip line ${lean.toFixed(1)} deg forward of vertical, trunk ${trunkLean(L).toFixed(1)}`); }
+      expect(balanceProblems(b())).toEqual([]);
+    });
+    it('A18 mutation: the body tipped 5 cm back at the top is red', () => {
+      expect(balanceProblems(moveHips(b(), 'end', -0.05)).some(x => x.startsWith('end:'))).toBe(true);
+    });
+  });
+
+  describe('LB8 bodyweight_calf_raise: card facts, sizes, Mistake, labels (A6, A15, A17)', () => {
+    /** Knees KNEE_SOFT 5 (c7 "straight but unlocked", barbell_back_squat.mjs:30), +-2, sagittal; trunk upright (c1
+     *  "standing tall"), +-2; the ankle START_DF 20 (c2 "for stretch") and END_PF 50 (c4), +-2; the Mistake ankle half way,
+     *  20 - 0.5 x 70 = -15 (M_PART 0.5), +-2; arms hanging by the sides (c1's first option: elbows straight, wrists under the
+     *  shoulders within 3 cm front-to-back). */
+    const factProblems = (spec: any) => { const out: string[] = [], A = rep(spec).angles, Am = rep(spec, true).angles;
+      for (const p of ['start', 'end']) { const L = lmOf(spec, p);
+        if (Math.abs(kneeBend(L) - 5) > 2) out.push(`${p}: knee ${kneeBend(L).toFixed(1)}`);
+        if (Math.abs(L['knee.r'][0] - L['hip.r'][0]) > 0.005) out.push(`${p}: knee out of the sagittal plane`);
+        if (Math.abs(trunkLean(L)) > 2) out.push(`${p}: trunk ${trunkLean(L).toFixed(1)} from upright`);
+        if (Math.abs(L['wrist.r'][2] - L['shoulder.r'][2]) > 0.03) out.push(`${p}: arm not by the side`); }
+      if (Math.abs(A.start['ankle.r'] - 20) > 2) out.push(`start: ankle ${A.start['ankle.r']}`);
+      if (Math.abs(A.end['ankle.r'] + 50) > 2) out.push(`end: ankle ${A.end['ankle.r']}`);
+      if (Math.abs(Am.mistake['ankle.r'] + 15) > 2) out.push(`mistake: ankle ${Am.mistake['ankle.r']}`);
+      return out; };
+    it('knees 5 (+-2), trunk upright, arms by the sides, ankle 20 / -50, Mistake ankle -15', () => {
+      for (const p of ['start', 'end']) { const L = lmOf(b(), p); console.log(`LIB-18 bodyweight_calf_raise ${p}: knee ${kneeBend(L).toFixed(1)}, trunk ${trunkLean(L).toFixed(1)}, ankle ${rep(b()).angles[p]['ankle.r']}`); }
+      expect(factProblems(b())).toEqual([]);
+    });
+    it('fact mutations: the end foot turned 30 deg toe-down, and the Mistake at the end\'s foot, are red', () => {
+      expect(factProblems(turnFoot(b(), 'end', 30)).some(x => x.startsWith('end:'))).toBe(true);
+      expect(factProblems({ ...b(), mistake: { ...b().mistake, pose: { root: b().poses.end.root, plant: b().poses.end.plant } } }).some(x => x.startsWith('mistake: ankle'))).toBe(true);
+    });
+    const FACTS: [string, string][] = [['ball.l', 'start'], ['ball.r', 'start'], ['ball.l', 'end'], ['ball.r', 'end'], ['toe.l', 'end'], ['toe.r', 'end']];
+    const h6Problems = (spec: any) => { const cam = camOf(spec), out: string[] = [];
+      for (const [lmk, pose] of FACTS) { const c = spec.checks.find((x: any) => x.landmark === lmk && (x.pose === pose || x.pose === 'all') && x.plane);
+        const top = Math.min(...stepOf(spec, pose).map((q: number[]) => q[1]!));
+        if (!c || Math.abs(cam.P(c.plane.point)[1]! - top) > 1) out.push(`${lmk} ${pose}: no check on the step's top`); }
+      return out; };
+    it('PQ-H6: every card contact fact has a check on the step\'s drawn top; the end toe miss is the S4 hold (4.6 cm, logged)', () => {
+      expect(h6Problems(b())).toEqual([]);
+      const misses = rep(b()).checks.filter((c: any) => c.cm > 0.5).map((c: any) => `${c.pose}:${c.landmark}:${c.cm}cm`);
+      console.log(`LIB-18 bodyweight_calf_raise fact misses: ${misses.join(', ')}`);
+      expect(misses).toEqual(['end:toe.l:4.6cm', 'end:toe.r:4.6cm']);
+    });
+    it('PQ-H6 mutation: the toe checks moved 3 cm above the step is red', () => {
+      const up = { ...b(), checks: b().checks.map((c: any) => (/^toe/.test(c.landmark) ? { ...c, plane: { ...c.plane, point: [c.plane.point[0], c.plane.point[1] + 0.03, c.plane.point[2]] } } : c)) };
+      expect(h6Problems(up)).toContain('toe.l end: no check on the step\'s top');
+    });
+    it('A15: the start phantom is the start foot\'s outline, in the end layer; removed is red', () => {
+      expect(phantomProblems(b(), ['foot.r'])).toEqual([]);
+      expect(phantomProblems({ ...b(), equipment: b().equipment.slice(0, 2) }, ['foot.r'])).toEqual(['no start phantom']);
+    });
+    /** The red Mistake foot clears the solid end figure by >= 6 px (13.1), and the one tell sits on the red heel. */
+    const mistakeClear = (spec: any) => { const endS = shapesIn(spec, 'end').map((x: any) => x.poly);
+      return Math.max(...shapesIn(spec, 'mistake').filter((x: any) => /^foot\./.test(x.key)).flatMap((x: any) => x.poly.map((v: number[]) => outside(endS, v)))); };
+    it('A15: the red Mistake foot clears the end figure by >= 6 px; the Mistake equal to the end is red', () => {
+      console.log(`LIB-18 bodyweight_calf_raise Mistake foot clearance ${mistakeClear(b()).toFixed(1)} px`);
+      expect(mistakeClear(b())).toBeGreaterThanOrEqual(6);
+      expect(mistakeClear({ ...b(), mistake: { ...b().mistake, pose: { root: b().poses.end.root, plant: b().poses.end.plant } } })).toBeLessThan(6);
+    });
+    it('A15: one tell, key "part", anchored on the red heel; the anchor moved off the figure is red', () => {
+      expect(b().mistake.tells.map((t: any) => t.key)).toEqual(['part']);
+      expect(tellProblems(b())).toEqual([]);
+      const off = { ...b(), mistake: { ...b().mistake, tells: b().mistake.tells.map((t: any) => ({ ...t, anchor: { ...t.anchor, off: [-40, 0] } })) } };
+      expect(tellProblems(off).length).toBe(1);
+    });
+    const keepOff = (D: any) => D[STEP_E].polys;
+    it('A15: no leader enters a figure, the start foot, a ghost or the phantom, or runs near the Trace or the step', () => {
+      expect(["normal", ...leaderProblems(b(), false, keepOff)]).toEqual(["normal"]);
+      expect(leaderProblems(b(), true, keepOff)).toEqual([]);
+    });
+    it('A15 mutations: "Heels dip" boxed onto the step\'s edge and "Knees soft" boxed left of the legs are red', () => {
+      const onStep = { ...b(), callouts: b().callouts.map((c: any) => (c.key === 'dip' ? { ...c, box: { left: 210, top: 306 } } : c)) };
+      expect(leaderProblems(onStep, false, keepOff).length).toBeGreaterThan(0);
+      const left = { ...b(), callouts: b().callouts.map((c: any) => (c.key === 'knees' ? { ...c, box: { left: 90, top: 214 } } : c)) };
+      expect(leaderProblems(left, false, keepOff).some(x => /enters the figure/.test(x))).toBe(true);
+    });
+    it('Q-D5-6: every cue is one sentence of 15 words or fewer, no semicolon; a 16-word cue is red', () => {
+      expect(cueProblems(b())).toEqual([]);
+      const long = { ...b(), callouts: b().callouts.map((c: any, i: number) => (i === 0 ? { ...c, cue: 'Rise onto the balls of both feet until your heels are as high as they go.' } : c)) };
+      expect(cueProblems(long)).toEqual(['high: 16 words']);
+    });
+    it('callouts are the card\'s 3 checkpoints with its cues; tempo the ruled row; a 2 s Hold is red', () => {
+      expect(b().callouts.map((c: any) => [c.text.replace('<br>', ' '), c.cue])).toEqual([['Heels high', 'Heels as high as possible at the top.'],
+        ['Knees soft', 'Knees straight but unlocked.'], ['Heels dip', 'On a step, heels slightly below it at the bottom.']]);
+      expect(b().tempo).toEqual(TEMPO);
+      expect(b().tempo.map((t: any) => (t.phase === 'Hold' ? { ...t, s: 2 } : t))).not.toEqual(TEMPO);
+    });
+    const traceProblems = (spec: any) => [...(spec.trace.point !== 'heel.r' ? [`trace at ${spec.trace.point}`] : []), ...(JSON.stringify(spec.trace.trim) !== JSON.stringify([10, 12]) || JSON.stringify(BW.SIZES.TRACE_TRIM) !== JSON.stringify([10, 12]) ? ['trim not [10, 12]'] : [])];
+    it('A17: the Trace follows the heel with trim [10, 12]; traced at the toe is red', () => {
+      expect(traceProblems(b())).toEqual([]);
+      expect(traceProblems({ ...b(), trace: { ...b().trace, point: 'toe.r' } })).toEqual(['trace at toe.r']);
+    });
+    it('report.mjs engine checks: only the S4 toe misses in the plate and the Mistake; a box moved onto the figure is red', () => {
+      const want = ['check:end:toe.l:4.6cm', 'check:end:toe.r:4.6cm'];
+      expect(rep(b()).issues).toEqual(want);
+      expect(rep(b(), true).issues).toEqual(want);
+      const onFig = { ...b(), callouts: b().callouts.map((c: any) => (c.key === 'knees' ? { ...c, box: { left: 150, top: 150 } } : c)) };
+      expect(rep(onFig).issues.length).toBeGreaterThan(want.length);
+    });
+    it('F7: drawable false, the drawn fault named in pilot.drawableFault (bouncing is the top fault, speed only)', () => {
+      expect(b().pilot.drawableFault).toMatch(/bouncing/);
+      expect(b().mistake.tells[0].key).not.toBe('bounce');
+    });
+  });
+}
+
+{
+  const LX = 'leg_extension';
+  const lx = () => M[LX];
+  const POSES = ['start', 'end', 'mistake'];
+  const W = 1.75, CM = (s: any) => camOf(s).pxm / 100;      // px per cm
+  const E = { beam: 1, post: 2, seat: 3, pad: 4, bracket: 5, upright: 6, stack: 7, pivotBr: 8, handlePost: 9, lever: 10, roller: 11, boss: 12, grip: 13 };
+  const STATIC = ['beam', 'post', 'seat', 'pad', 'bracket', 'upright', 'pivotBr', 'handlePost', 'boss', 'grip'] as const;
+  const cmOf = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!, a[2]! - b[2]!) * 100;
+  const yzCm = (a: number[], b: number[]) => Math.hypot(a[1]! - b[1]!, a[2]! - b[2]!) * 100;
+  const mean = (ps: number[][]) => [0, 1].map(i => ps.reduce((s, p) => s + p[i]!, 0) / ps.length);
+  /** The item one equipment entry draws in a pose (as the engine calls it). */
+  const itemAt = (spec: any, pose: string, k: number, o = {}) => itemsIn(spec, pose, o).items.find((it: any) => it.entry === k);
+  /** What the vendor primitive draws for that item (plate px): [{ d, poly?, line? }]. */
+  const drawnOf = (spec: any, pose: string, k: number, cam: any, o = {}) => { const it = itemAt(spec, pose, k, o); return it ? eng.PRIMITIVES[it.type](it, cam) : []; };
+  const polysOf = (spec: any, pose: string, k: number, cam: any, o = {}) => drawnOf(spec, pose, k, cam, o).filter((d: any) => d.poly).map((d: any) => d.poly);
+  const ptsOf = (spec: any, pose: string, k: number, cam: any, o = {}) => drawnOf(spec, pose, k, cam, o).flatMap((d: any) => xy(d.d));
+  const same = (a: number[][], b: number[][]) => a.length === b.length && a.every((p, i) => Math.hypot(p[0]! - b[i]![0]!, p[1]! - b[i]![1]!) <= 1);
+  /** Smallest gap (px) between two sets of closed outlines; negative when they overlap. */
+  const gapOf = (A: number[][][], B: number[][][]) => Math.min(...A.flat().map(p => outside(B, p)), ...B.flat().map(p => outside(A, p)));
+  /** Winter 2009 Table 4.1 centre of mass on drawn landmarks (copied from lb7-plates.test.ts:428-442). */
+  const comOf = (lm: any) => {
+    const L3 = (a: number[], b: number[], t: number) => a.map((v, i) => v + (b[i]! - v) * t);
+    const parts: [number, number[]][] = [[0.081, lm.ear], [0.497, L3(lm.shoulders, lm.hips, 0.5)]];
+    for (const s of ['l', 'r']) parts.push(
+      [0.028, L3(lm[`shoulder.${s}`], lm[`elbow.${s}`], 0.436)], [0.016, L3(lm[`elbow.${s}`], lm[`wrist.${s}`], 0.430)], [0.006, lm[`grip.${s}`]],
+      [0.100, L3(lm[`hip.${s}`], lm[`knee.${s}`], 0.433)], [0.0465, L3(lm[`knee.${s}`], lm[`ankle.${s}`], 0.433)], [0.0145, L3(lm[`heel.${s}`], lm[`toe.${s}`], 0.5)]);
+    const m = parts.reduce((a, p) => a + p[0], 0);
+    return [0, 1, 2].map(i => parts.reduce((a, p) => a + p[0] * p[1][i]!, 0) / m);
+  };
+  /** Landmarks of the drawn ghosts (the engine's poseAt at the ghost times). */
+  const ghostLms = (spec: any) => {
+    const b = { height: W }, keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, b)), n = spec.ghosts.count;
+    return Array.from({ length: n }, (_, i) => body.landmarks(body.fk(body.poseAt(keys, (i + 1) / (n + 1), b).q, b)));
+  };
+  const lmsAll = (spec: any) => [...POSES.map(p => lmOf(spec, p)), ...ghostLms(spec)];
+  const mutPose = (spec: any, pose: string, patch: any) => ({ ...spec, poses: { ...spec.poses, [pose]: { ...spec.poses[pose], ...patch } } });
+  const moveRoot = (spec: any, pose: string, d: number[]) => { const r = spec.poses[pose].root; return mutPose(spec, pose, { root: { ...r, at: r.at.map((v: number, i: number) => v + d[i]!) } }); };
+  /** An entry's item shifted by d (world m) in the poses `poses` (every point-valued field). */
+  const shifted = (spec: any, k: number, d: number[], poses = POSES) => withEq(spec, k, (f: any) => (lm: any, ctx: any) => {
+    const it = typeof f === 'function' ? f(lm, ctx) : f; if (!it || !poses.includes(ctx.pose)) return it;
+    const mv = (p: number[]) => p.map((v, i) => v + d[i]!);
+    return { ...it, ...(it.pts ? { pts: it.pts.map(mv) } : {}), ...(it.surface ? { surface: it.surface.map(mv) } : {}), ...(it.at ? { at: mv(it.at) } : {}), ...(it.base ? { base: mv(it.base) } : {}) };
+  });
+  // the drawn shank (front outline) of a pose, plate px
+  const shankPoly = (spec: any, pose: string) => shapesIn(spec, pose).find((x: any) => x.key === 'shank.r').poly;
+
+  describe('leg_extension: A2 legExtMachine per pose', { timeout: T }, () => {
+    it('legExtMachine emits PRIMITIVES types only; the moving lever arm and roller draw a poly in every pose', () => {
+      const cam = camOf(S[LX]);
+      const leverOk = (s: any) => POSES.every(p => [E.lever, E.roller].every(k => { const d = drawnOf(s, p, k, cam); return d.length > 0 && d.every((x: any) => x.poly); }));
+      for (const p of POSES) for (let k = 1; k <= 13; k++) { const it = itemAt(S[LX], p, k); expect(it, `entry ${k} ${p}`).toBeTruthy(); expect(eng.PRIMITIVES[it.type]).toBeTypeOf('function'); }
+      expect(itemAt(S[LX], 'end', E.lever).part).toBe('lever'); expect(itemAt(S[LX], 'end', E.roller).part).toBe('lever');
+      expect(leverOk(S[LX])).toBe(true);
+      // mutation: the roller drawn as a `line` (the census's line lever: not drawn in the Mistake view) -> red
+      const bad = withEq(S[LX], E.roller, (f: any) => (lm: any, ctx: any) => ({ type: 'line', pts: f(lm, ctx).pts, part: 'lever' }));
+      expect(leverOk(bad)).toBe(false);
+    });
+    it('static parts stay fixed (±1 px) in start, end and Mistake; the stack keeps the end lift in the Mistake; the lever moves start -> end', () => {
+      const cam = camOf(S[LX]);
+      const fixed = (s: any) => STATIC.every(n => same(ptsOf(s, 'start', E[n], cam), ptsOf(s, 'end', E[n], cam)) && same(ptsOf(s, 'end', E[n], cam), ptsOf(s, 'mistake', E[n], cam, { mistake: true })));
+      expect(fixed(S[LX])).toBe(true);
+      expect(same(ptsOf(S[LX], 'end', E.stack, cam, { mistake: true }), ptsOf(S[LX], 'mistake', E.stack, cam, { mistake: true }))).toBe(true);
+      expect(same(ptsOf(S[LX], 'start', E.stack, cam), ptsOf(S[LX], 'end', E.stack, cam))).toBe(false);
+      expect(same(ptsOf(S[LX], 'start', E.roller, cam), ptsOf(S[LX], 'end', E.roller, cam))).toBe(false);
+      // mutation: the seat pad 2 cm forward in the Mistake -> red
+      expect(fixed(shifted(S[LX], E.seat, [0, 0, 0.02], ['mistake']))).toBe(false);
+    });
+    it('contacts on drawn items (±1 cm): seat on the seat pad top; upper back and buttock on the back pad face (start, end); grips on the handle', () => {
+      const cam = camOf(S[LX]), cm = CM(S[LX]);
+      const seatOk = (s: any) => POSES.every(p => { const top = Math.min(...polysOf(s, p, E.seat, cam).flat().map((q: number[]) => q[1]!)); return Math.abs(cam.P(lmOf(s, p).seat)[1]! - top) <= cm; });
+      const padOk = (s: any) => ['start', 'end'].every(p => ['backUpper', 'buttock'].every(k => Math.abs(outside(polysOf(s, p, E.pad, cam), cam.P(lmOf(s, p)[k]))) <= cm));
+      const gripOk = (s: any) => POSES.every(p => { const g = mean(polysOf(s, p, E.grip, cam)[0]), q = cam.P(lmOf(s, p)['grip.r']); return Math.hypot(g[0]! - q[0]!, g[1]! - q[1]!) <= cm; });
+      expect(seatOk(S[LX])).toBe(true); expect(padOk(S[LX])).toBe(true); expect(gripOk(S[LX])).toBe(true);
+      // mutations: the start body 3 cm lower (into the seat); the back pad 3 cm back; the end hands 3 cm off the grip -> red
+      expect(seatOk(moveRoot(S[LX], 'start', [0, -0.03, 0]))).toBe(false);
+      expect(padOk(shifted(S[LX], E.pad, [0, 0, -0.03]))).toBe(false);
+      const r = S[LX].poses.end.reach;
+      expect(gripOk(mutPose(S[LX], 'end', { reach: { ...r, r: { ...r.r, at: [r.r.at[0], r.r.at[1], r.r.at[2] + 0.03] } } }))).toBe(false);
+    });
+    it('the roller rests on the drawn shin (gap within ±1 cm) just above the ankle (contact 5-11 cm up the shank, c2) in start and end', () => {
+      const cam = camOf(S[LX]), cm = CM(S[LX]);
+      const ok = (s: any) => ['start', 'end'].every(p => {
+        const roll = polysOf(s, p, E.roller, cam), sh = shankPoly(s, p), lm = lmOf(s, p);
+        if (Math.abs(gapOf(roll, [sh])) > cm) return false;
+        const c = mean(roll[0]), k = cam.P(lm['knee.r']), a = cam.P(lm['ankle.r']), u = [a[0]! - k[0]!, a[1]! - k[1]!], L = Math.hypot(u[0]!, u[1]!);
+        const up = (L - ((c[0]! - k[0]!) * u[0]! + (c[1]! - k[1]!) * u[1]!) / L) / cam.pxm;     // the roller's foot on the shank axis, metres above the ankle
+        return up >= 0.05 && up <= 0.11;
+      });
+      expect(ok(S[LX])).toBe(true);
+      expect(ok(shifted(S[LX], E.roller, [0, 0.03, 0], ['end']))).toBe(false);   // mutation: the end roller 3 cm off the shin -> red
+    });
+    it('the knees sit at the pivot boss (c1): knee joint within 1 cm of the drawn boss centre at the start and the end', () => {
+      const ok = (s: any) => ['start', 'end'].every(p => yzCm(itemAt(s, p, E.boss).at, lmOf(s, p)['knee.r']) <= 1);
+      expect(ok(S[LX])).toBe(true);
+      expect(ok(shifted(S[LX], E.boss, [0, 0, 0.03]))).toBe(false);          // mutation: the boss 3 cm forward -> red
+    });
+  });
+
+  describe('leg_extension: A18 physics on drawn items', { timeout: T }, () => {
+    it('every heel, ball and toe is above the floor in every pose and ghost; the floor beam and the stack stand on the floor', async () => {
+      const cam = camOf(S[LX]), floorY = cam.P([0, 0, 0])[1]!;
+      const feet = (s: any) => lmsAll(s).every(lm => ['heel', 'ball', 'toe'].every(k => ['l', 'r'].every(sd => lm[`${k}.${sd}`][1] >= 0)));
+      expect(feet(S[LX])).toBe(true);
+      expect(Math.abs(Math.max(...polysOf(S[LX], 'end', E.beam, cam).flat().map((q: number[]) => q[1]!)) - floorY)).toBeLessThanOrEqual(1);
+      expect(itemAt(S[LX], 'end', E.stack).base[1]).toBeGreaterThanOrEqual(0);
+      await tick();
+      // mutation: the start body lowered until the heel is 1 px below the floor -> red
+      const lowest = Math.min(...['heel.r', 'sole.r', 'toe.r'].map(k => lmOf(S[LX], 'start')[k][1]));
+      expect(feet(moveRoot(S[LX], 'start', [0, -lowest - 1 / cam.pxm, 0]))).toBe(false);
+    });
+    it('no body point is more than 1 cm inside the seat pad, the back pad or the roller in any pose or ghost', async () => {
+      const cam = camOf(S[LX]), cm = CM(S[LX]);
+      const ok = (s: any) => {
+        const seat = polysOf(s, 'end', E.seat, cam), pad = polysOf(s, 'end', E.pad, cam);
+        const bodyOk = lmsAll(s).every(lm => ['seat', 'buttock', 'thighUnder.l', 'thighUnder.r', 'backUpper', 'backMid', 'sacrum'].every(k => outside(seat, cam.P(lm[k])) >= -cm && outside(pad, cam.P(lm[k])) >= -cm));
+        return bodyOk && POSES.every(p => gapOf(polysOf(s, p, E.roller, cam), [shankPoly(s, p)]) >= -cm);
+      };
+      expect(ok(S[LX])).toBe(true);
+      await tick();
+      expect(ok(shifted(S[LX], E.pad, [0, 0, 0.03]))).toBe(false);           // mutation: the back pad 3 cm into the back -> red
+    });
+    it('every pad, seat and lever joins the frame (drawn outlines touch, D-LIB18-FRAME)', () => {
+      const cam = camOf(S[LX]);
+      const P = (s: any, n: keyof typeof E) => polysOf(s, 'end', E[n], cam);
+      const pairs: [keyof typeof E, keyof typeof E][] = [['seat', 'post'], ['post', 'beam'], ['pad', 'bracket'], ['bracket', 'upright'], ['upright', 'beam'], ['pivotBr', 'boss'],
+        ['pivotBr', 'seat'], ['lever', 'boss'], ['lever', 'roller'], ['handlePost', 'seat'], ['handlePost', 'grip'], ['stack', 'beam']];
+      const ok = (s: any) => pairs.every(([a, b]) => { const A = P(s, a), B = P(s, b); return A.length > 0 && B.length > 0 && gapOf(A, B) <= 1; });
+      expect(ok(S[LX])).toBe(true);
+      expect(ok(withEq(S[LX], E.pivotBr, () => () => null))).toBe(false);   // mutation: the pivot bracket removed -> red
+    });
+    it('the centre of mass lies over the seat in every drawn pose (D-LIB18-BALANCE: within the seat and back pad contacts, c1, c4): between the back pad face and the seat front edge', async () => {
+      const cam = camOf(S[LX]);
+      const ok = (s: any) => {
+        const padFace = Math.max(...polysOf(s, 'end', E.pad, cam).flat().filter((q: number[]) => q[1]! > cam.P([0, 0.6, 0])[1]!).map((q: number[]) => q[0]!));   // the pad's face at seat level
+        const front = Math.max(...polysOf(s, 'end', E.seat, cam).flat().map((q: number[]) => q[0]!));
+        return lmsAll(s).every(lm => { const x = cam.P(comOf(lm))[0]!; return x > padFace && x < front; });
+      };
+      expect(ok(S[LX])).toBe(true);
+      await tick();
+      expect(ok(moveRoot(S[LX], 'end', [0, 0, 0.30]))).toBe(false);          // mutation (A18): the end body 30 cm forward -> red
+    });
+  });
+
+  describe('leg_extension: card facts and sized numbers on the drawn body', { timeout: T }, () => {
+    it('knees 90 at the start (c3): engine angles and the drawn hip-knee-ankle angle within ±2°', () => {
+      const ok = (s: any) => ['l', 'r'].every(sd => Math.abs(rep(s).angles.start[`knee.${sd}`] - 90) <= 2 && Math.abs(angle3(lmOf(s, 'start')[`hip.${sd}`], lmOf(s, 'start')[`knee.${sd}`], lmOf(s, 'start')[`ankle.${sd}`]) - 90) <= 2);
+      expect(ok(S[LX])).toBe(true);
+      expect(ok(mutPose(S[LX], 'start', { knee: 93 }))).toBe(false);         // mutation: 93 -> red
+    });
+    it('knees straight but not locked at the end (c7, c8): the knee off the hip-ankle line by >= 90 % of the KNEE_END offset, in the sagittal plane', () => {
+      const k0 = lx().SIZES.KNEE_END, a = 0.245 * W, b = 0.246 * W, Lc = Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(k0 * Math.PI / 180));
+      const off0 = a * b * Math.sin(k0 * Math.PI / 180) / Lc;
+      const off = (lm: any) => segD([lm['knee.r'][2], lm['knee.r'][1]], [lm['hip.r'][2], lm['hip.r'][1]], [lm['ankle.r'][2], lm['ankle.r'][1]]);
+      for (const p of ['end', 'mistake']) { const lm = lmOf(S[LX], p); expect(off(lm)).toBeGreaterThanOrEqual(0.9 * off0); expect(Math.abs(lm['knee.r'][0] - lm['hip.r'][0])).toBeLessThan(0.005); }
+      expect(off(lmOf(mutPose(S[LX], 'end', { knee: 0 }), 'end'))).toBeLessThan(0.9 * off0);   // mutation: knee 0 -> red
+    });
+    it('the shins end about level (c7 "parallel with the ground"): knee-to-ankle within 5° of level at the end', () => {
+      const tilt = (lm: any) => Math.abs(Math.atan2(lm['ankle.r'][1] - lm['knee.r'][1], lm['ankle.r'][2] - lm['knee.r'][2]) * 180 / Math.PI);
+      expect(tilt(lmOf(S[LX], 'end'))).toBeLessThanOrEqual(5);
+      expect(tilt(lmOf(mutPose(S[LX], 'end', { knee: 12 }), 'end'))).toBeGreaterThan(5);   // mutation: knee 12 -> red
+    });
+    it('every card plateFact is met: each contact has a report check on its landmark and pose within 1 cm; each angle within ±2°', () => {
+      const card = JSON.parse(readFileSync('docs/research/howto/cards/leg_extension.json', 'utf8'));
+      const ok = (s: any) => { const r = rep(s); return card.plateFacts.every((f: any) => f.kind === 'angle' ? Math.abs(r.angles[f.pose][f.joint] - f.deg) <= 2
+        : (() => { const h = r.checks.filter((c: any) => c.landmark === f.landmark && c.pose === f.pose && c.cm != null); return h.length > 0 && h.every((c: any) => c.cm <= 1); })()); };
+      expect(card.plateFacts).toHaveLength(11);
+      expect(ok(S[LX])).toBe(true);
+      expect(ok({ ...S[LX], checks: S[LX].checks.filter((c: any) => !c.landmark.startsWith('ankle')) })).toBe(false);   // mutation: the roller contact checks dropped -> red
+    });
+    it('the Mistake is drawn at its size (M_ARCH 12, hanging_leg_raise.mjs:69): the back leaves the drawn pad by >= 4 cm, the seat stays on the seat pad, the thighs stay level', () => {
+      const cam = camOf(S[LX]), cm = CM(S[LX]);
+      const ok = (s: any) => { const lm = lmOf(s, 'mistake'), pad = polysOf(s, 'mistake', E.pad, cam, { mistake: true }), top = Math.min(...polysOf(s, 'mistake', E.seat, cam, { mistake: true }).flat().map((q: number[]) => q[1]!));
+        const th = Math.atan2(lm['knee.r'][1] - lm['hip.r'][1], lm['knee.r'][2] - lm['hip.r'][2]) * 180 / Math.PI;
+        return outside(pad, cam.P(lm.backUpper)) >= 4 * cm && Math.abs(cam.P(lm.seat)[1]! - top) <= cm && Math.abs(th) <= 1; };
+      const a = rep(S[LX]).angles.mistake;
+      expect(a.trunk).toBe(-lx().SIZES.M_ARCH); expect(a.tilt).toBe(lx().SIZES.TILT + lx().SIZES.M_ARCH);
+      expect(ok(S[LX])).toBe(true);
+      const e = S[LX].poses.end;                                              // mutation: no arch (the end torso) -> red
+      expect(ok({ ...S[LX], mistake: { ...S[LX].mistake, pose: { root: e.root, trunk: 0, hip: e.hip } } })).toBe(false);
+    });
+    it('every unsourced number is in SIZES; the Trace is the ankle (D-LIB18-TRACE, c7) at the clone source trim (leg_press.mjs:132)', () => {
+      expect(Object.keys(lx().SIZES).sort()).toEqual(['BRACKET_AT', 'CAM_R', 'FLOOR_BACK', 'FLOOR_FRONT', 'FOOT_CLEAR', 'HANDLE', 'KNEE_END', 'M_ARCH', 'PAD_BELOW', 'PAD_LEN',
+        'ROLL_UP', 'SEAT_BACK', 'SEAT_GAP', 'STACK_GAP', 'TILT', 'TOWER_GAP', 'TRACE_TRIM']);
+      expect(S[LX].trace).toEqual({ point: 'ankle.r', trim: [6, 8] });
+    });
+    it('tempo strip = lb8/tempo.json row + card plate.tempo (Extend 2, Hold 1, Lower 2); no bottom pause phase', () => {
+      const card = JSON.parse(readFileSync('docs/research/howto/cards/leg_extension.json', 'utf8'));
+      const ok = (s: any) => JSON.stringify(s.tempo) === JSON.stringify(card.tempo);
+      expect(S[LX].tempo).toEqual([{ phase: 'Extend', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }]);
+      expect(ok(S[LX])).toBe(true);
+      expect(ok({ ...S[LX], tempo: [...S[LX].tempo, { phase: 'Pause', s: 1 }] })).toBe(false);   // mutation (A7): Motra's 1 s bottom pause added -> red
+    });
+  });
+
+  describe('leg_extension: A15 drawing lessons', { timeout: T }, () => {
+    it('the red Mistake trunk and head clear the solid end figure by >= 6 px where drawn outside it', () => {
+      const clear = (s: any) => { const endP = shapesIn(s, 'end').map((x: any) => x.poly), mP = shapesIn(s, 'mistake').filter((x: any) => ['torso', 'head'].includes(x.key)).flatMap((x: any) => x.poly);
+        const o = mP.map((q: number[]) => outside(endP, q)).filter((d: number) => d > 0); return o.length > 0 && Math.max(...o) >= 6; };
+      expect(S[LX].mistake.parts).toEqual(['torso', 'head']);
+      expect(clear(S[LX])).toBe(true);
+      const m = S[LX].mistake.pose, k = 4;                                     // mutation: a 4° arch (the red trunk inside the clearance) -> red
+      const e = S[LX].poses.end, small = { ...m, root: { at: body.rootOnSeat([0, lx().LX.SEAT_TOP, 0], e.root.tilt + k, W), tilt: e.root.tilt + k }, trunk: -k, hip: { flex: e.hip.flex + k } };
+      expect(clear({ ...S[LX], mistake: { ...S[LX].mistake, pose: small } })).toBe(false);
+    });
+    it('the faulty back contour is a red dashed guide, and each tell anchor sits on it (within 1 px) on the part its label names', () => {
+      const cam = camOf(S[LX]), lm = lmOf(S[LX], 'mistake'), g = S[LX].mistake.guides[0];
+      expect(g.kind).toBe('dashed');
+      const path = g.pts.map((p: any) => cam.P(lm[p.at]));
+      const onIt = (t: any) => { const a = cam.P(lmOf(S[LX], 'mistake')[t.anchor.at]); return Math.min(...path.slice(1).map((q: number[], i: number) => segD(a, path[i]!, q))) <= 1; };
+      expect(S[LX].mistake.tells.map((t: any) => [t.key, t.anchor.at])).toEqual([['arch', 'sacrum'], ['off', 'backUpper']]);   // c6 lower back; the pad contact (D-LIB18-BACKPAD)
+      expect(S[LX].mistake.tells.every(onIt)).toBe(true);
+      expect(onIt({ anchor: { at: 'navel' } })).toBe(false);                  // mutation: an anchor on the navel -> red
+    });
+    it('the first tell carries the card topFault key (arch); a second tell names the c6 sign (off)', () => {
+      const card = JSON.parse(readFileSync('docs/research/howto/cards/leg_extension.json', 'utf8'));
+      expect(S[LX].mistake.tells[0].key).toBe(card.topFault);
+      const swapped = [...S[LX].mistake.tells].reverse();                      // mutation: the tells swapped -> red
+      expect(swapped[0].key).not.toBe(card.topFault);
+    });
+    it('the start lever and roller (dropped by the start layer) are redrawn as dashed phantoms in the end layer only', () => {
+      const ph = (s: any, p: string) => itemsIn(s, p).items.filter((it: any) => it.part === 'startLever');
+      expect(ph(S[LX], 'end')).toHaveLength(3);
+      expect(ph(S[LX], 'end').every((it: any) => it.type === 'line' && it.cls === 'eq-line m-line')).toBe(true);
+      expect(ph(S[LX], 'start')).toHaveLength(0);
+      expect(ph(withEq(withEq(withEq(S[LX], 14, () => () => null), 15, () => () => null), 16, () => () => null), 'end')).toHaveLength(0);   // mutation: removed -> red
+    });
+    it('leaders: bends outside the figure; none within 6 px of the Trace or any machine part but the back pad, which a leader crosses at most once (D-LIB18-BACKPAD nit); Mistake leaders enter the end figure once, from the front, <= 81.9 px', async () => {
+      const cam = camOf(S[LX]);
+      const check = (s: any) => {
+        for (const mistake of [false, true]) {
+          const R = plate.renderPlate(s, { id: 'x', mistake }), L = leadersOf(R.svg);
+          const fig = shapesIn(s, mistake ? 'mistake' : 'end').map((x: any) => x.poly), endFig = shapesIn(s, 'end').map((x: any) => x.poly);
+          const trace = [...R.svg.matchAll(/<path class="trace"[^>]* d="([^"]+)"/g)].flatMap(([, d]) => xy(d!));
+          const eqP = [E.beam, E.post, E.seat, E.bracket, E.upright, E.stack, E.pivotBr, E.handlePost, E.lever, E.roller, E.boss, E.grip].flatMap(k => polysOf(s, 'end', k, cam, { mistake }));
+          const padP = polysOf(s, 'end', E.pad, cam, { mistake });
+          for (const ld of L) {
+            for (const q of ld.slice(1, -1)) if (outside(fig, q) <= 0) return false;
+            const samples = ld.slice(1).flatMap((q: number[], i: number) => Array.from({ length: 20 }, (_, k) => [ld[i]![0]! + (q[0]! - ld[i]![0]!) * k / 20, ld[i]![1]! + (q[1]! - ld[i]![1]!) * k / 20]))
+              .filter((p: number[]) => Math.hypot(p[0]! - ld[0]![0]!, p[1]! - ld[0]![1]!) > 8);
+            if (samples.some((p: number[]) => trace.some((t: number[]) => Math.hypot(p[0]! - t[0]!, p[1]! - t[1]!) < 6) || outside(eqP, p) < 6)) return false;
+            const inPad = samples.map((p: number[]) => outside(padP, p) <= 0);
+            if (inPad.filter((v: boolean, i: number) => v && (i === 0 || !inPad[i - 1])).length > 1) return false;
+            if (mistake) {
+              const len = ld.slice(1).reduce((a: number, q: number[], i: number) => a + Math.hypot(q[0]! - ld[i]![0]!, q[1]! - ld[i]![1]!), 0);
+              const ins = samples.map((p: number[]) => outside(endFig, p) <= 0), entries = ins.filter((v: boolean, i: number) => v && (i === 0 || !ins[i - 1])).length;
+              if (len > 81.9 || entries > 1 || ld[ld.length - 1]![0]! < ld[0]![0]!) return false;   // the box lies in front (screen right) of the anchor
+            }
+          }
+        }
+        return true;
+      };
+      expect(check(S[LX])).toBe(true);
+      await tick();
+      // mutation: the 'Knees unlocked' box moved below the legs, so its leader runs through the ghosts and the Trace -> red
+      expect(check({ ...S[LX], callouts: S[LX].callouts.map((c: any) => (c.key === 'soft' ? { ...c, box: { left: 250, top: 330 } } : c)) })).toBe(false);
+    });
+    it('cues: one sentence each, 15 words or fewer, no semicolon', () => {
+      const ok = (c: any) => c.cue.split(/\s+/).length <= 15 && !/;/.test(c.cue) && (c.cue.match(/[.?!]/g) ?? []).length === 1;
+      expect([...S[LX].callouts, ...S[LX].mistake.tells].every(ok)).toBe(true);
+      expect(ok({ cue: 'Back pressed into the pad. Don\'t arch.' })).toBe(false);   // mutation: the card's two-sentence `what` -> red
+    });
+    it('report.mjs engine checks: no issue in the normal and the Mistake render', () => {
+      expect(rep(S[LX]).issues).toEqual([]); expect(plate.renderPlate(S[LX], { id: 'm', mistake: true }).report.issues).toEqual([]);
+      const moved = { ...S[LX], callouts: S[LX].callouts.map((c: any) => (c.key === 'pivot' ? { ...c, box: { left: 150, top: 230 } } : c)) };   // mutation: a box on the figure -> red
+      expect(rep(moved).issues.length).toBeGreaterThan(0);
+    });
+  });
+}
