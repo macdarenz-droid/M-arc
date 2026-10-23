@@ -1,0 +1,124 @@
+{
+ "rule": "D-LIB22-SIZE (lib-22-card ruling 19): every number a card does not give, each Mistake's magnitude, each stride and each 'slightly bent' or 'soft' joint included, fixed here before PQ-H3 is measured, each with its basis: a claim id, an approved plate's value (file:line) used as a convention, or a stated reason in numbers. PQ-H3 is never a basis. A spec's exported SIZES table equals its row here and every row is used (A17, both ways); a composer's exported constants equal theirs; `trace` is the spec's trace point (D-LIB22-TRACE). Values marked 'solved' are computed by the spec from the rule in their basis. Rows for the other slice ids and the bulk are the note's proposals in DESIGN.md section 11, written here when drawn.",
+ "ids": {
+  "kettlebell_swing": {
+   "FOOT_X": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ dcac4a38):44, the widest stance the engine's rigid foot allows with every sole contact within 0.5 cm (mid-soles 36 cm apart), for c1 'about shoulder-width'; the side view does not show the width"
+   },
+   "TOE_OUT": {
+    "value": 17,
+    "unit": "deg",
+    "basis": "convention: upright_row.mjs (#109 @ dcac4a38):56, the toe direction [0.3, 0, 1] (17 deg) that goes with FOOT_X, for c1 Human Kinetics 'toes pointed slightly outward'"
+   },
+   "KNEE": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: romanian_deadlift.mjs (#109 @ dcac4a38) KNEE 15, pilot A's approved hinge ('about 15 deg'), for c6 'knees only slightly bent'"
+   },
+   "START_INCL": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "claim: c6 Muscle & Fitness 'hinging your torso until it is parallel with the floor' (a segment angle to the floor, held by a check, D-LIB22-FACTS); spine neutral (trunk 0, c13), so the pelvis tilt carries it"
+   },
+   "GRIP_T": {
+    "value": 0.35,
+    "unit": "fraction",
+    "basis": "stated reason: c5 'high into the groin, keeping forearms close to thighs': the straight arms aim at the near thigh's axis a third of the way (0.35) from the hip joint to the knee"
+   },
+   "GRIP_X": {
+    "value": 0.045,
+    "unit": "m",
+    "basis": "stated reason: c2 'both hands next to each other on the handle': hand centres 9 cm apart, about one hand breadth"
+   },
+   "VIA1_INCL": {
+    "value": 55,
+    "unit": "deg",
+    "basis": "claim: c5 Human Kinetics 'Target the kettlebell to the small triangle above your knees': the via pose with the bell passing between the knees, the trunk half risen from the hike (a ghost, never solid, D-LIB22-CYCLE)"
+   },
+   "VIA1_KNEE": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "claim: c5 BarBend 'Your knees can bend slightly': the via pose's knee, between the hike's 15 and the top's 0"
+   },
+   "VIA1_PHI": {
+    "value": -5,
+    "unit": "deg",
+    "basis": "claim: c5 (between the knees): the straight arms 5 deg behind plumb, the bell just under the hands between the knees"
+   },
+   "VIA2_INCL": {
+    "value": 22,
+    "unit": "deg",
+    "basis": "claim: c7 'Explosively drive hips forward ... to propel the bell forward': the via pose with the hips still flexed as the bell passes hip height in front"
+   },
+   "VIA2_KNEE": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "claim: c7 (the hip drive): the knees almost straight as the hips extend"
+   },
+   "VIA2_PHI": {
+    "value": 45,
+    "unit": "deg",
+    "basis": "claim: c7, c9: the arms half way from plumb to the top's chest height"
+   },
+   "M_TILT": {
+    "value": -14,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (the 8's approved arch, pelvis tilt -14), for c14 'leaning backward at the top'"
+   },
+   "M_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (the 8's approved lumbar arch, trunk -12; LB6 M_ARCH 12), for c14 BarBend 'hyperextending your low back'"
+   },
+   "BELL_KG": {
+    "value": 16,
+    "unit": "kg",
+    "basis": "claim: c25 McGill's 16 kg kettlebell (the only bell mass on the card), for the balance"
+   },
+   "BODY_KG": {
+    "value": 75,
+    "unit": "kg",
+    "basis": "convention: lb7/sizes.json weighted_dip BODY_KG 75 (#299 @ 5a9f004c), the 1.75 m figure's mass for the balance"
+   },
+   "END_PHI": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c9 'swing the kettlebell to about chest height': the straight arms' angle that puts the bell centre at the chest landmark's height (83.4 deg from plumb)"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "plate.frames 'the bell arc can be traced': the bell's handle in the fists (the bell centre is not a landmark; it hangs 19 cm on along the same arm line, eq/kettlebell.mjs)"
+   }
+  },
+  "kettlebell": {
+   "bodyD": {
+    "value": 0.21,
+    "unit": "m",
+    "basis": "stated reason: a 16 kg competition kettlebell's body is 21 cm across (one size for every weight)"
+   },
+   "reach": {
+    "value": 0.19,
+    "unit": "m",
+    "basis": "stated reason: the handle centre about 19 cm from the body centre (a 28 cm tall bell less half its 21 cm body, less half the 3.3 cm handle)"
+   },
+   "hornT": {
+    "value": 0.033,
+    "unit": "m",
+    "basis": "stated reason: a competition bell's 33 mm handle"
+   },
+   "neckW": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "stated reason: the horns flare to about 7 cm where they meet the body, seen from the side"
+   },
+   "baseFlat": {
+    "value": 0.6,
+    "unit": "fraction",
+    "basis": "stated reason: the flat base cuts the body circle at 0.6 of its radius (a 17 cm flat on a 21 cm body)"
+   }
+  }
+ }
+}
