@@ -890,6 +890,24 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 03:00 UTC (10-23)** (usage 7-day 0.48, five-hour 0.32 at 01:56):
+- **LIB-15 (#290): REVIEW PASS @ `e9f0985`** (delta 6355406723; all 7 findings fixed). CI is 17/17 green. The reviewer and builder are archived. It waits in the merge queue.
+- **LIB-17 (#299): REVIEW PASS @ 5a9f004.** The fixes @ `14dc56dd` passed the supervisor diff-check (6354754226), and the page `1972ed5b…` is unchanged. Merge queue.
+- **LIB-16 (#297):** READY @ 2979a4a2 (page `2668c838…`). The review FAILed on 0/0/2 (6355888923): the A15 pullover 170° mutation and the A10 Date.now() run were missing. The fixes are @ `24f7c6e9`. The same reviewer (session_011T7YepFg2PV8jeDfXyy5Rw) is doing a delta review. It must also judge the builder's bent-arm check change, from the inside angle to flexion 30-150, which the builder called "D-LIB16-BENT": a correction or a loosening? A builder cannot make a ruling.
+- **LIB-18 (#306, LB8): NOTE RULED** (6355447835).
+  - Q3 is refused (**D-LIB18-ROUND**): a tell's anchor sits on the part its text names. hack_squat's `round` moves from the groin to the lower-back contour; if it falls below 11.39 px, hack_squat is held.
+  - **D-LIB18-TRIM:** each id's trim is its clone source's trim (file:line) or [10, 12], recorded in its trace row.
+  - **D-LIB18-ARCH:** hip_thrust and cable_kickback are held under D-LIB8-shrug.
+  - Q4 named nits; **D-LIB18-UNSOURCED** (no unopened source may be cited); a straight knee is 5° (barbell_back_squat.mjs:30); glute_bridge `high` is not a tell (one fault per Mistake).
+  - SLICE READY and CARD FIELDS READY @ `5841d8cf`. The slice-look helper and the CF blind verify (set cflb8: 10 cards; the two leg curls carry no keys yet; the plant is a number fact 90→88) are running as helpers.
+- **LIB-22 (#305, LB10):**
+  - NOTE RULED (6355155831).
+  - **D-LIB22-HOPNIT** (6355887979, widened 6356244552): jump_rope's `hop`, `elbows` and `hands` leaders each cross one rope line once, at 45° or more. The rope and the start phantom close a ring around the figure. A15 names exactly these three. jump_rope is held.
+  - medicine_ball_slam's ball-edge anchor is accepted.
+  - Next: LB10 SLICE READY, then the slice look.
+- **Active LIB builders: 3** (LIB-18, LIB-22, and LIB-16's fix). LB9 (LIB-21 in the plan) is blocked on the owner's classifier approval. No other lane can start: E-R5 (LIB-20) needs the owner's go, and the release candidate needs every lane.
+- **Owner pending (unchanged):** the pilot A changed-ids sheet (#109), the LB9 approval, and the tempo-strip choice.
+
 **Update 00:00 UTC (10-23):**
 - **Approved drawn rows** (calibrated panels VALID; D-SUP-ANCHOR-3; golden-B follow-up 19 extended, 23 added):
   - **LB5** (#290, page `921cb1d5…`): preacher_curl, cable_curl, bayesian_cable_curl, concentration_curl. CF VERIFIED, merged back (#304). D-LIB15-NIT1 (a leader through the ELBOW text stays, a named nit). Next: LIB-15 READY.
