@@ -118,6 +118,7 @@ export default {
   checks: [
     ...['heel.l', 'heel.r', 'ball.l', 'ball.r'].map(landmark => ({ landmark, plane: FLOOR, pose: 'all', tol: 0.5 })),
     ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: LS[landmark], pose: 'start', tol: 0.5 })),   // c2 fact: both hands on the handle
+    { landmark: 'wrist.r', at: landmarksOf(end, H)['wrist.r'], pose: 'end', tol: 0.5 },   // c24 fact: a full grip on the handle throughout (near side)
   ],
   ghosts: { count: 2, parts: ['arm.r', 'bell'] },
   trace: { point: 'grip.r', trim: [10, 12] },

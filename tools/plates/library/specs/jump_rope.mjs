@@ -77,7 +77,7 @@ export default {
     (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-line m-line', pts: [...START_ROPE.pts, START_ROPE.pts[0]], z: 'back', part: 'startrope' } : null)],
   checks: [
     ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: landmarksOf(start, H)[landmark], pose: 'start', tol: 0.5 })),   // c2 fact: the hands on the handles
-    ...['heel.l', 'heel.r', 'ball.l', 'ball.r'].map(landmark => ({ landmark, plane: FLOOR, pose: 'start', tol: 0.5 })),   // standing on the floor
+    ...['heel.l', 'heel.r', 'ball.l', 'ball.r'].map(landmark => ({ landmark, plane: FLOOR, pose: 'start', tol: 0.5 })),   // standing on the floor; c10 fact: the balls of the feet
     ...['heel.l', 'heel.r', 'ball.l', 'ball.r', 'toe.l', 'toe.r'].map(landmark => ({ landmark, above: { point: [0, HOP - 0.005, 0], normal: [0, 1, 0] }, pose: 'end', tol: 0 })),   // c9: the hop
   ],
   ghosts: { count: 1, parts: [] },
@@ -92,7 +92,7 @@ export default {
     pose: mistake,
     // the raised feet lie over the solid legs (masked): an arrow from the right hop's sole to the faulty one, outside
     guides: [{ kind: 'arrow', from: { at: 'sole.l', pose: 'end', off: [24, 0] }, to: { at: 'sole.l', pose: 'mistake', off: [24, 0] } }],
-    tells: [{ key: 'high', text: 'Too high', anchor: { at: 'sole.l', pose: 'mistake', off: [24, 0] }, box: { left: 224, top: 304 }, cue: 'Jumping far higher than the rope needs.' }],
+    tells: [{ key: 'high', text: 'Too high', anchor: { at: 'sole.l', pose: 'mistake' }, box: { left: 208, top: 304 }, cue: 'Jumping far higher than the rope needs.' }],
   },
   alt: 'Jump rope, front view. Feet together, elbows in by the ribs, hands at hip height turning the rope; a low hop about an inch and a half off the floor, the rope passing just under the feet.',
 };

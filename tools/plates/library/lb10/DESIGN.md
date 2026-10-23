@@ -274,19 +274,20 @@ cards.sha.json keeps each card's sha256 without them.
 
 | id | plateFacts (landmark pose/cardPose claim) | tempo | topFault |
 |---|---|---|---|
-| kettlebell_swing | wrist.l, wrist.r start c2 | Drive 1 (move), Swing down 1 (move): plate.tempo up, down | `lean` |
+| kettlebell_swing | wrist.l, wrist.r start c2; wrist.r end c24 (CF fix 1) | Drive 1 (move), Swing down 1 (move): plate.tempo up, down | `lean` |
 | medicine_ball_slam | wrist.l, wrist.r start c15; toe.l, toe.r start c2 | none (NOSECS) | `soft` (F7) |
-| sled_push | wrist.l, wrist.r start c1; ball.l, ball.r start c8; ball.l, ball.r end c8 | none (NOSECS) | `round` |
-| jump_rope | wrist.l, wrist.r start c2 | Work 30 (move), Rest 60: c16 | `high` |
-| sled_pull | wrist.l, wrist.r start c1; sole.r end c3 | none (NOSECS) | `lean` |
+| sled_push | wrist.l, wrist.r start c1; ball.l, ball.r start c8; ball.l, ball.r end c8; wrist.l, wrist.r end c9 (CF fix 2) | none (NOSECS) | `round` |
+| jump_rope | wrist.l, wrist.r start c2; ball.l, ball.r start c10 (CF fix 3) | Work 30 (move), Rest 60: c16 | `high` |
+| sled_pull | wrist.l, wrist.r start c1; sole.r end c3; wrist.l, wrist.r end c4 (CF fix 4) | none (NOSECS) | `lean` |
 | farmer_s_carry | wrist.l, wrist.r start c3 | none (NOSECS) | `rush` (F7) |
 | burpee | wrist.l, wrist.r start / card end c2 (pose map) | none (NOSECS) | `rush` (F7) |
-| high_knees | ball.l end c4 | Work 30 (move), Rest 30: c8 | `arch` |
-| battle_ropes | wrist.l, wrist.r start c1 | Work 30 (move), Rest 30: c9 | `shrug` |
+| high_knees | ball.l, ball.r start c4 (CF fix 5); ball.l end c4 | Work 30 (move), Rest 30: c8 | `arch` |
+| battle_ropes | wrist.l, wrist.r start c1; sole.l, sole.r end c13 (CF fix 6) | Work 30 (move), Rest 30: c9 | `shrug` |
 | bear_crawl | wrist.l, wrist.r start c3 | Work "15–30" (move): c10 | `hips` |
 | jumping_jacks | none (no stated contact; no `[]`, lib4-cards :2316) | Work "30–60" (move): c9 | `jerky` (F7) |
 
-validateCardFile gives no problem for the five cards with both plateFacts and tempo, and exactly the :216 problem
+CF fix round (#305 6356860734: 6 accepted findings, 2 rejected: medicine_ball_slam's c15 wrists stay, jump_rope's Rest
+stays) added the facts marked "CF fix". validateCardFile gives no problem for the five cards with both plateFacts and tempo, and exactly the :216 problem
 ("plateFacts and tempo go in together or not at all") for the five NOSECS cards (plateFacts, no tempo, as LB4's do)
 and for jumping_jacks (tempo, no plateFacts; D-LIB22-JJ, #305 option 1: held at H6:no-card).
 
@@ -553,19 +554,39 @@ the end or Mistake figure; 6 px from the Trace, the floor and every equipment ou
 - `hop` (anchor `ankle.r`, also `knee.r`): 0 placements that clear the rope;
 - `elbows` (anchor `elbow.r`) and `hands` (anchor `grip.l`), with the phantom added to the avoided lines: 0 placements.
 
-**Ruled exceptions** (exactly three; A15 names each with its line):
+**Ruled exceptions** (exactly four; A15 names each with its view and line; `high` added by #305 6356835486 after
+the anchor moved onto the raised Mistake sole, item 1 of 6356763967: 0 placements clear the rope there):
 
 | callout | line | box | crossings | angle | leader |
 |---|---|---|---|---|---|
 | `hop` | the rope strand | left 80, top 304 | 1 | 57.7° | 28.2 px |
 | `elbows` | `startrope` | left 24, top 152 | 1 | 89.8° | 43.5 px |
 | `hands` | `startrope` | left 240, top 184 | 1 | 70.8° | 36.5 px |
+| `high` (Mistake view) | the rope strand | left 208, top 304 | 1 | 83.4° | 29.3 px |
 
 Limits: one crossing of the named line at 45° or more; no other crossing (text, end figure, Mistake figure, another
-line); 6 px from everything else. Mutations, each red: a fourth exception (one not needed), an exception moved to
-another id, and a second crossing on each of the three. The Mistake tell `high` needs no exception: its arrow and
-anchor sit 24 px beside the raised sole (`off [24, 0]`), outside the ring, and its leader keeps 9.8 px from the rope.
+line); 6 px from everything else. Mutations, each red: a fifth exception (one not needed), an exception moved to
+another id, and a second crossing on each of the four. The guide arrow stays 24 px beside the raised sole; the anchor
+test never counts a guide arrow (`m-arrow`) as an anchor's part.
 
 Also from this check (card line 243, "never cross … the start phantom"): medicine_ball_slam's `overhead` crossed its
 own phantom ball once. It is now anchored on the phantom ball's edge (`grip.r` start, `off [-15.41, 0]`, the drawn
 radius 0.115 m × 134 px/m), accepted in 6356244552. No other plate crosses its phantom.
+
+## 19. 3D body checks (#305 6356763967 items 2-3; 6356835486; correction 6357040314)
+
+Segments as capsules of radius RADII × H (body.mjs:28), the foot a heel–toe capsule of half-width WINTER.footW·H/2.
+
+- **kettlebell_swing, D-LIB22-HIKE3D (ruled option (i)).** At the hike the forearms press into the thighs (c5 "high
+  into the groin, keeping forearms close to thighs"); the rigid thigh capsules meet near the groin, so no card-true
+  hike clears them. Measured at FOOT_X 0.18: start −11.1 cm, via0 +9.8, via1 +31.5. The exception covers body
+  against body only (forearm or upper arm against thigh), in the start and the ghosts next to it, capped at 11.1 +
+  0.5 cm; never equipment, never the bell against the body (D-LIB22-FRAME's 1 cm). The cap sits 0.7 cm from the
+  geometric limit (forearm and thigh axes meeting, −11.85 cm), so the mutation lays a forearm along the thigh's axis.
+  via0's bell sits 12.8 cm below the knees and clears the thighs by 11.4 cm; its basis is re-cited to c5 BarBend
+  "sweep the kettlebell back between your legs" (3b).
+- **Stance (correction 6357040314).** D-LIB22-STANCE's 0.227 m fails the engine's rigid-foot plant (contact errors
+  0.6-1.6 cm, over the 0.5 cm limit); my S3 table had quoted spec checks, not plant contacts. Both stances stay at the
+  widest the plant allows (0.18, 0.12) pending the supervisor's call.
+- **medicine_ball_slam's ball.** At FOOT_X 0.12 with the ball centred: end foot −0.4, shank −2.4 cm; options and
+  numbers in 6357040314 (recommended: the ball 7 cm forward of mid-foot, still between the feet).

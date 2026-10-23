@@ -610,6 +610,20 @@
       "pose": "start",
       "cardPose": "start",
       "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c13"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sole.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c13"
     }
   ],
   "tempo": [

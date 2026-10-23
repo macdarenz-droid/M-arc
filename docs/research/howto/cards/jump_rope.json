@@ -742,6 +742,20 @@
    "pose": "start",
    "cardPose": "start",
    "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c10"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c10"
   }
  ],
  "tempo": [

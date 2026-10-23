@@ -86,15 +86,15 @@ describe('LIB-22 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
   const F = (lm: string, pose: string, claim: string, cardPose = pose) => [lm, pose, cardPose, claim];
   const both = (p: string, pose: string, claim: string, cardPose = pose) => [F(`${p}.l`, pose, claim, cardPose), F(`${p}.r`, pose, claim, cardPose)];
   const FACTS: Record<string, any[] | null> = {
-    kettlebell_swing: both('wrist', 'start', 'c2'),
+    kettlebell_swing: [...both('wrist', 'start', 'c2'), F('wrist.r', 'end', 'c24')],
     medicine_ball_slam: [...both('wrist', 'start', 'c15'), ...both('toe', 'start', 'c2')],
-    sled_push: [...both('wrist', 'start', 'c1'), ...both('ball', 'start', 'c8'), ...both('ball', 'end', 'c8')],
-    jump_rope: both('wrist', 'start', 'c2'),
-    sled_pull: [...both('wrist', 'start', 'c1'), F('sole.r', 'end', 'c3')],
+    sled_push: [...both('wrist', 'start', 'c1'), ...both('ball', 'start', 'c8'), ...both('ball', 'end', 'c8'), ...both('wrist', 'end', 'c9')],
+    jump_rope: [...both('wrist', 'start', 'c2'), ...both('ball', 'start', 'c10')],
+    sled_pull: [...both('wrist', 'start', 'c1'), F('sole.r', 'end', 'c3'), ...both('wrist', 'end', 'c4')],
     farmer_s_carry: both('wrist', 'start', 'c3'),
     burpee: both('wrist', 'start', 'c2', 'end'),
-    high_knees: [F('ball.l', 'end', 'c4')],
-    battle_ropes: both('wrist', 'start', 'c1'),
+    high_knees: [...both('ball', 'start', 'c4'), F('ball.l', 'end', 'c4')],
+    battle_ropes: [...both('wrist', 'start', 'c1'), ...both('sole', 'end', 'c13')],
     bear_crawl: both('wrist', 'start', 'c3'),
     jumping_jacks: null,
   };
@@ -287,6 +287,19 @@ const itemsIn = (spec: any, pose: string, { mistake = false } = {}) => {
   return { items: out, lm };
 };
 const lmOf = (spec: any, pose: string) => qaEng.poseLandmarks(Eng(), spec).lm[pose];
+/** 3D solids for body-vs-body and implement-vs-body checks (#305 6356763967 items 2, 3): segments as capsules of
+ *  radius RADII × H (vendor/engine/body.mjs:28), the foot a heel–toe capsule of half-width WINTER.footW·H/2. */
+const H3D = 1.75;
+const segDist = (a: number[], b: number[], c: number[], d: number[]) => {
+  let best = Infinity;
+  for (let i = 0; i <= 40; i++) {
+    const p = a.map((v, k) => v + (b[k]! - v) * i / 40), cd = d.map((v, k) => v - c[k]!), cp = p.map((v, k) => v - c[k]!);
+    const t = Math.max(0, Math.min(1, cd.reduce((x, v, k) => x + v * cp[k]!, 0) / cd.reduce((x, v) => x + v * v, 0)));
+    best = Math.min(best, Math.hypot(...cp.map((v, k) => v - cd[k]! * t)));
+  }
+  return best;
+};
+
 const lmP = (pose: any) => eng.landmarksOf(pose, 1.75);
 const rep = (spec: any) => plate.renderPlate(spec, { id: 'x' }).report;
 const h9 = (spec: any) => {
@@ -380,6 +393,31 @@ const staticProblems = (spec: any, part: string) => {
 
 describe('LIB-22 A2 / A18: kettlebell_swing and `kettlebell` (tier A; the slice)', { timeout: T }, () => {
   const s = () => S.kettlebell_swing, K = () => M.kettlebell_swing;
+  /** D-LIB22-HIKE3D (#305 6356835486 3a): the forearms press into the thighs at the hike (c5 "high into the groin,
+   *  keeping forearms close to thighs"); the rigid thigh capsules meet near the groin, so body against body may
+   *  overlap up to the measured 11.1 cm + 0.5 cm, and only forearm/upper arm against thigh. Thigh radius: ¾ proximal
+   *  + ¼ distal RADII. Returns the worst overlap (m, negative = into the thigh). */
+  const armThigh = (l: any) => {
+    const R = body.RADII, thighR = R.thigh[1] * H3D * 0.75 + R.thigh[2] * H3D * 0.25; let worst = Infinity;
+    for (const a of ['l', 'r']) for (const t of ['l', 'r']) {
+      worst = Math.min(worst, segDist(l[`elbow.${a}`], l[`wrist.${a}`], l[`hip.${t}`], l[`knee.${t}`]) - R.fore[1] * H3D - thighR);
+      worst = Math.min(worst, segDist(l[`shoulder.${a}`], l[`elbow.${a}`], l[`hip.${t}`], l[`knee.${t}`]) - R.upper[1] * H3D - thighR);
+    }
+    return worst;
+  };
+  const HIKE_CAP = -(0.111 + 0.005);
+  it('D-LIB22-HIKE3D: the arm/thigh overlap stays within 11.1 + 0.5 cm in the start and both vias (body against body only)', () => {
+    const vals = [lmOf(s(), 'start'), ...s().poses.via.map((v: any) => eng.landmarksOf(v, H3D))].map(armThigh);
+    console.log(`LIB-22 D-LIB22-HIKE3D arm/thigh: ${vals.map(v => (v * 100).toFixed(1)).join(' / ')} cm (cap ${(HIKE_CAP * 100).toFixed(1)})`);
+    for (const v of vals) expect(v).toBeGreaterThanOrEqual(HIKE_CAP);
+  });
+  it('mutation: the left forearm laid along the left thigh\'s axis at the start (fully inside it) is past the cap: red', () => {
+    const l = lmOf(s(), 'start'), bad = { ...l };
+    // the left forearm laid along the left thigh's axis (its axes meet: the whole forearm inside the thigh)
+    const on = (f: number) => l['hip.l'].map((v: number, i: number) => v + (l['knee.l'][i] - v) * f);
+    bad['elbow.l'] = on(0.3); bad['wrist.l'] = on(0.6);
+    expect(armThigh(bad)).toBeLessThan(HIKE_CAP);
+  });
   const bellPts = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((i: any) => i.part === 'bell').flatMap((i: any) => i.pts);
   it('the bell moves (start, end, Mistake) and both its parts are `poly`, so the Mistake view outlines them', () => {
     const items = itemsIn(s(), 'mistake').items.filter((i: any) => i.part === 'bell');
@@ -472,6 +510,28 @@ describe('LIB-22 A2 / A18: medicine_ball_slam and `medBall` (tier A; NOSECS; the
   const s = () => S.medicine_ball_slam, B = () => EQ.medBall.MED_BALL;
   const ballOf = (spec: any, pose: string) => itemsIn(spec, pose).items.filter((i: any) => i.part === 'ball');
   const centre = (pts: number[][]) => [0, 1, 2].map(i => pts.reduce((a, p) => a + p[i]!, 0) / pts.length);
+
+  /** D-LIB22-STANCE (#305 6356835486 2): the ball on the floor at the end and in the Mistake clears each foot and shank
+   *  in 3D (D-LIB22-FRAME allows 1 cm). Returns the clearances (cm) below that limit. */
+  const ballClear = (spec: any) => {
+    const R = body.RADII, W = body.WINTER.footW * H3D / 2, out: string[] = [];
+    for (const pose of ['end', 'mistake']) {
+      const l = lmOf(spec, pose), pts = itemsIn(spec, pose).items.filter((i: any) => i.part === 'ball')[0].pts, c = [0, 1, 2].map(i => pts.reduce((a: number, p: number[]) => a + p[i]!, 0) / pts.length), r = EQ.medBall.MED_BALL.d / 2;
+      for (const sd of ['l', 'r']) {
+        const foot = segDist(c, c, l[`heel.${sd}`], l[`toe.${sd}`]) - W - r, shank = segDist(c, c, l[`knee.${sd}`], l[`ankle.${sd}`]) - R.shank[2] * H3D - r;
+        for (const [k, v] of [['foot', foot], ['shank', shank]] as const) if (v < -0.01) out.push(`${pose} ${k}.${sd} ${(v * 100).toFixed(1)} cm`);
+      }
+    }
+    return out;
+  };
+  it('3D: the ball clears both feet and shanks at the end and in the Mistake (FOOT_X 0.227, c1 shoulder-width)', () => {
+    expect(ballClear(s())).toEqual([]);
+  });
+  it('mutation: the feet at ±0.12 m (the former stance) put the ball inside the shanks: red', () => {
+    const narrow = (p: any) => ({ ...p, plant: Object.fromEntries(['l', 'r'].map(sd => [sd, { ...p.plant[sd], at: [Math.sign(p.plant[sd].at[0]) * 0.12, p.plant[sd].at[1], p.plant[sd].at[2]] }])) });
+    const bad = { ...s(), poses: { ...s().poses, end: narrow(s().poses.end) }, mistake: { ...s().mistake, pose: narrow({ ...s().poses.end, ...s().mistake.pose }) } };
+    expect(ballClear(bad).length).toBeGreaterThan(0);
+  });
   const ballTypeProblems = (spec: any) => ['start', 'end', 'mistake'].flatMap(pose => { const t = ballOf(spec, pose).map((i: any) => i.type); return JSON.stringify(t) === '["poly","poly"]' ? [] : [`${pose}: ${t.join(',')}`]; });
   it('the ball is a `poly` circle, never the vendor `pulley`; it moves (overhead → floor) and the Mistake view keeps it', () => {
     expect(ballTypeProblems(s())).toEqual([]);
@@ -995,7 +1055,7 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   };
   /** D-LIB22-HOPNIT (#305 6355887979): jump_rope's `hop` leader, end view only, may cross the rope strand, once and
    *  steeply; it keeps 6 px from everything else. */
-  const HOPNIT = [{ id: 'jump_rope', key: 'hop', mistake: false, part: 'rope' }, { id: 'jump_rope', key: 'elbows', mistake: false, part: 'startrope' }, { id: 'jump_rope', key: 'hands', mistake: false, part: 'startrope' }];
+  const HOPNIT = [{ id: 'jump_rope', key: 'hop', mistake: false, part: 'rope' }, { id: 'jump_rope', key: 'elbows', mistake: false, part: 'startrope' }, { id: 'jump_rope', key: 'hands', mistake: false, part: 'startrope' }, { id: 'jump_rope', key: 'high', mistake: true, part: 'rope' }];
   const HOP_STEEP = 45;
   const isNit = (nits: any[], id: string, key: string, mistake: boolean) => nits.some(n => n.id === id && n.key === key && n.mistake === mistake && n.part === 'rope');
   /** A nit leader's rope crossing: the runs of its samples within 6 px of the strand, and its angle to the strand (deg). */
@@ -1038,7 +1098,7 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   it('D-LIB22-HOPNIT: jump_rope\'s "Low hop" leader crosses the rope strand exactly once, steeply; mutations: the exception given to another key or id is red', () => {
     const g = minGap(S.jump_rope);
     console.log(`LIB-22 D-LIB22-HOPNIT ${g.crossings.join('; ')}`);
-    expect(g.crossings).toHaveLength(1);
+    expect(g.crossings.map(x => x.split(':')[0])).toEqual(['jump_rope hop', 'jump_rope high']);
     expect(minGap(S.jump_rope, [{ id: 'jump_rope', key: 'hands', mistake: false, part: 'rope' }]).min).toBeLessThan(6);
     expect(minGap(S.jump_rope, [{ id: 'sled_push', key: 'hop', mistake: false, part: 'rope' }]).min).toBeLessThan(6);
     expect(minGap(S.jump_rope, [{ id: 'jump_rope', key: 'hop', mistake: true, part: 'rope' }]).min).toBeLessThan(6);
@@ -1199,7 +1259,7 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
    *  and each needed (without it, its plate is red). */
   const nitProblems = (nits: any[]) => {
     const out: string[] = [];
-    if (nits.length !== 3 || nits.some(n => n.id !== 'jump_rope')) out.push(`${nits.length} exceptions: ${nits.map(n => `${n.id}/${n.key}`).join(', ')}`);
+    if (nits.length !== 4 || nits.some(n => n.id !== 'jump_rope')) out.push(`${nits.length} exceptions: ${nits.map(n => `${n.id}/${n.key}`).join(', ')}`);
     for (const n of nits) {
       const rest = nits.filter(m => m !== n), spec = S[n.id];
       const needed = !spec ? false : n.part === 'rope' ? minGap(spec, rest).min < 6 : phantomProblems(spec, rest).length > 0;
@@ -1208,21 +1268,25 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     return out;
   };
   /** A second copy of a line (the rope strand or the start phantom), moved sideways by dx m, in the end view. */
-  const withSecondLine = (spec: any, part: string, dx: number) => ({ ...spec, equipment: [...spec.equipment, (lm: any, ctx: any) => (ctx.pose !== 'end' ? null
+  const withSecondLine = (spec: any, part: string, dx: number, pose = 'end') => ({ ...spec, equipment: [...spec.equipment, (lm: any, ctx: any) => (ctx.pose !== pose ? null
     : spec.equipment.flatMap((e: any) => ([] as any[]).concat(typeof e === 'function' ? e(lm, ctx) ?? [] : e)).filter((it: any) => it && it.part === part && it.z === 'back')
       .map((it: any) => ({ ...it, pts: it.pts.map((q: number[]) => [q[0]! + dx, q[1]!, q[2]!]) })))] });
-  it('D-LIB22-HOPNIT lists exactly the three ruled jump_rope exceptions (hop: the rope; elbows, hands: startrope), each needed', () => {
-    expect(HOPNIT.map(n => `${n.id}/${n.key}/${n.part}`)).toEqual(['jump_rope/hop/rope', 'jump_rope/elbows/startrope', 'jump_rope/hands/startrope']);
+  it('D-LIB22-HOPNIT lists exactly the four ruled jump_rope exceptions (hop, high: the rope; elbows, hands: startrope), each needed', () => {
+    expect(HOPNIT.map(n => `${n.id}/${n.key}/${n.mistake ? 'mistake' : 'normal'}/${n.part}`)).toEqual(['jump_rope/hop/normal/rope', 'jump_rope/elbows/normal/startrope', 'jump_rope/hands/normal/startrope', 'jump_rope/high/mistake/rope']);
     expect(nitProblems(HOPNIT)).toEqual([]);
   });
-  it('mutations: a fourth exception, an exception for another id, and a second crossing on each of the three are red', () => {
-    expect(nitProblems([...HOPNIT, { id: 'jump_rope', key: 'high', mistake: true, part: 'rope' }]).length).toBeGreaterThan(0);
+  it('mutations: a fifth exception, an exception for another id, and a second crossing on each of the four are red', () => {
+    expect(nitProblems([...HOPNIT, { id: 'jump_rope', key: 'elbows', mistake: true, part: 'rope' }]).length).toBeGreaterThan(0);
     expect(nitProblems(HOPNIT.map(n => (n.key === 'hands' ? { ...n, id: 'medicine_ball_slam' } : n))).length).toBeGreaterThan(0);
     const jr = S.jump_rope;
     // hop: its box moved left, so the leader runs on past the rope (one crossing, green), then a second strand beyond it (red)
     const far = { ...jr, callouts: jr.callouts.map((x: any) => (x.key === 'hop' ? { ...x, box: { left: 24, top: 304 } } : x)) };
     expect(minGap(far).min, 'hop, box moved left: one crossing').toBeGreaterThanOrEqual(6);
     expect(minGap(withSecondLine(far, 'rope', -0.2)).min, 'hop: a second rope crossing').toBeLessThan(6);
+    // high (Mistake view): its box moved right, so the leader runs on past the rope (green), then a second strand (red)
+    const farHigh = { ...jr, mistake: { ...jr.mistake, tells: jr.mistake.tells.map((x: any) => (x.key === 'high' ? { ...x, box: { left: 248, top: 304 } } : x)) } };
+    expect(minGap(farHigh).min, 'high, box moved right: one crossing').toBeGreaterThanOrEqual(6);
+    expect(minGap(withSecondLine(farHigh, 'rope', 0.2, 'mistake')).min, 'high: a second rope crossing').toBeLessThan(6);
     for (const [key, dx] of [['elbows', -0.07], ['hands', 0.07]] as const) {
       const bad = phantomProblems(withSecondLine(jr, 'startrope', dx));
       expect(bad.filter(x => x.startsWith(`jump_rope ${key}:`)), `${key}: a second phantom crossing`).toHaveLength(1);

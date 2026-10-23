@@ -35,7 +35,7 @@
    "VIA1_INCL": {
     "value": 55,
     "unit": "deg",
-    "basis": "claim: c5 Human Kinetics 'Target the kettlebell to the small triangle above your knees': the via pose with the bell passing between the knees, the trunk half risen from the hike (a ghost, never solid, D-LIB22-CYCLE)"
+    "basis": "claim: c5 BarBend 'sweep the kettlebell back between your legs': the via pose with the bell passing between the knees (drawn 12.8 cm below them), the trunk half risen from the hike (a ghost, never solid, D-LIB22-CYCLE); re-cited per #305 6356835486 3b (Human Kinetics' 'small triangle above your knees' is the target as the bell starts down, not this frame)"
    },
    "VIA1_KNEE": {
     "value": 12,

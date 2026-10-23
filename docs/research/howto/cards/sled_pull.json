@@ -632,6 +632,20 @@
    "pose": "end",
    "cardPose": "end",
    "claim": "c3"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c4"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c4"
   }
  ],
  "topFault": "lean"

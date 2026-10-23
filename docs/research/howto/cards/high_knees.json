@@ -525,6 +525,20 @@
     {
       "kind": "contact",
       "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
       "pose": "end",
       "cardPose": "end",
       "claim": "c4"

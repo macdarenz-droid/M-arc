@@ -91,6 +91,7 @@ export default {
     ...perItem(() => sled(SP), SLED_ITEMS)],
   checks: [
     ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: landmarksOf(start, H)[landmark], pose: 'start', tol: 0.5 })),   // c1 fact: hands on the posts
+    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: landmarksOf(start, H)[landmark], pose: 'end', tol: 0.5 })),     // c9 fact: the hands keep their place on the handles through the push
     ...['ball.l', 'ball.r'].flatMap(landmark => ['start', 'end'].map(pose => ({ landmark, plane: FLOOR, pose, tol: 1 }))),          // c8 facts: the balls of the feet down
     ...['heel.l', 'heel.r'].map(landmark => ({ landmark, above: { point: [0, 0.03, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0 })), // c8: the heels never touch
     ...['start', 'end'].map(pose => ({ landmark: 'shoulder.r', plane: { point: [0, GRIP_Y, 0], normal: [0, 1, 0] }, pose, tol: 1 })),                           // c3: shoulders straight behind the hands
