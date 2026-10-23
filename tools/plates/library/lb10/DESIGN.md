@@ -416,8 +416,8 @@ Trace points (sizes.json `trace` rows):
 | id | Mistake: largest tell-anchor move, end → Mistake | Trace |
 |---|---|---|
 | kettlebell_swing | **measured 49.7 px** (tell `lean` on the head) | **measured 186.3 px** (the handle's arc) |
-| medicine_ball_slam | **measured 88.1 px** (the hands; at 134 px/m) | **measured 315.5 px** |
-| sled_push | **measured 34.7 px** (tell `line` on the dropped head; `round` sits on the rounded-back arc, a fixed point) | **measured 45.9 px** (the driving foot's ball; at 126 px/m) |
+| medicine_ball_slam | **measured 88.2 px** (the hands; at 134 px/m) | **measured 321.9 px** |
+| sled_push | **measured 34.7 px** (tell `line` on the dropped head; `round` on the Mistake back (`backMid`, Mistake pose)) | **measured 45.9 px** (the driving foot's ball; at 126 px/m) |
 | jump_rope | **measured 16.4 px** (the feet, 0.15 − 0.038 m) | **measured 5.3 px** (the hop, 3.8 cm at 146.29 px/m): **below traceLenMin**, held (S2) |
 | sled_pull | [est] over 20 px | [est] about 45 px |
 | farmer_s_carry | [est] about 50 px (the stepping foot) | [est] about 50 px |
@@ -514,3 +514,31 @@ Held rows are in no rows file; their specs, tests and card keys stay. Each is co
 8. wall_ball's Mistake against the squat bottom, if its claim names the bottom: checked at its resume (c3, c4).
 9. sled_pull is a drag: in the end pose the sled moves in the walking direction by the hips' displacement, so the rope's
    length and its light tension stay constant; the Trace follows the stepping foot (bulk).
+
+## 18. Named nits: jump_rope's ring (D-LIB22-HOPNIT; #305 6355887979, widened 6356244552)
+
+In jump_rope's end view (front, top of the hop) the drawn rope runs from handle to handle under the feet. The dashed
+start rope (the phantom) runs from handle to handle over the head. Together they close a ring around the whole figure,
+so every anchor on the body sits inside it.
+
+**Scans** (box left 16–330, top 24–330 in 12 px steps, then 8 px steps; the renderer's own checks; no crossing of
+the end or Mistake figure; 6 px from the Trace, the floor and every equipment outline, the leader's first 8 px exempt):
+- `hop` (anchor `ankle.r`, also `knee.r`): 0 placements that clear the rope;
+- `elbows` (anchor `elbow.r`) and `hands` (anchor `grip.l`), with the phantom added to the avoided lines: 0 placements.
+
+**Ruled exceptions** (exactly three; A15 names each with its line):
+
+| callout | line | box | crossings | angle | leader |
+|---|---|---|---|---|---|
+| `hop` | the rope strand | left 80, top 304 | 1 | 57.7° | 28.2 px |
+| `elbows` | `startrope` | left 24, top 152 | 1 | 89.8° | 43.5 px |
+| `hands` | `startrope` | left 240, top 184 | 1 | 70.8° | 36.5 px |
+
+Limits: one crossing of the named line at 45° or more; no other crossing (text, end figure, Mistake figure, another
+line); 6 px from everything else. Mutations, each red: a fourth exception (one not needed), an exception moved to
+another id, and a second crossing on each of the three. The Mistake tell `high` needs no exception: its arrow and
+anchor sit 24 px beside the raised sole (`off [24, 0]`), outside the ring, and its leader keeps 9.8 px from the rope.
+
+Also from this check (card line 243, "never cross … the start phantom"): medicine_ball_slam's `overhead` crossed its
+own phantom ball once. It is now anchored on the phantom ball's edge (`grip.r` start, `off [-15.41, 0]`, the drawn
+radius 0.115 m × 134 px/m), accepted in 6356244552. No other plate crosses its phantom.

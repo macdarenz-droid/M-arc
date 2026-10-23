@@ -981,6 +981,39 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     for (const id of specsDrawn()) { out.push(...phantomProblems(S[id])); await yieldNow(); }
     expect(out).toEqual([]);
   });
+  /** D-LIB22-HOPNIT (#305 6355887979, widened 6356244552): exactly three jump_rope exceptions, each tied to its line,
+   *  and each needed (without it, its plate is red). */
+  const nitProblems = (nits: any[]) => {
+    const out: string[] = [];
+    if (nits.length !== 3 || nits.some(n => n.id !== 'jump_rope')) out.push(`${nits.length} exceptions: ${nits.map(n => `${n.id}/${n.key}`).join(', ')}`);
+    for (const n of nits) {
+      const rest = nits.filter(m => m !== n), spec = S[n.id];
+      const needed = !spec ? false : n.part === 'rope' ? minGap(spec, rest).min < 6 : phantomProblems(spec, rest).length > 0;
+      if (!needed) out.push(`${n.id}/${n.key} (${n.part}): not needed`);
+    }
+    return out;
+  };
+  /** A second copy of a line (the rope strand or the start phantom), moved sideways by dx m, in the end view. */
+  const withSecondLine = (spec: any, part: string, dx: number) => ({ ...spec, equipment: [...spec.equipment, (lm: any, ctx: any) => (ctx.pose !== 'end' ? null
+    : spec.equipment.flatMap((e: any) => ([] as any[]).concat(typeof e === 'function' ? e(lm, ctx) ?? [] : e)).filter((it: any) => it && it.part === part && it.z === 'back')
+      .map((it: any) => ({ ...it, pts: it.pts.map((q: number[]) => [q[0]! + dx, q[1]!, q[2]!]) })))] });
+  it('D-LIB22-HOPNIT lists exactly the three ruled jump_rope exceptions (hop: the rope; elbows, hands: startrope), each needed', () => {
+    expect(HOPNIT.map(n => `${n.id}/${n.key}/${n.part}`)).toEqual(['jump_rope/hop/rope', 'jump_rope/elbows/startrope', 'jump_rope/hands/startrope']);
+    expect(nitProblems(HOPNIT)).toEqual([]);
+  });
+  it('mutations: a fourth exception, an exception for another id, and a second crossing on each of the three are red', () => {
+    expect(nitProblems([...HOPNIT, { id: 'jump_rope', key: 'high', mistake: true, part: 'rope' }]).length).toBeGreaterThan(0);
+    expect(nitProblems(HOPNIT.map(n => (n.key === 'hands' ? { ...n, id: 'medicine_ball_slam' } : n))).length).toBeGreaterThan(0);
+    const jr = S.jump_rope;
+    // hop: its box moved left, so the leader runs on past the rope (one crossing, green), then a second strand beyond it (red)
+    const far = { ...jr, callouts: jr.callouts.map((x: any) => (x.key === 'hop' ? { ...x, box: { left: 24, top: 304 } } : x)) };
+    expect(minGap(far).min, 'hop, box moved left: one crossing').toBeGreaterThanOrEqual(6);
+    expect(minGap(withSecondLine(far, 'rope', -0.2)).min, 'hop: a second rope crossing').toBeLessThan(6);
+    for (const [key, dx] of [['elbows', -0.07], ['hands', 0.07]] as const) {
+      const bad = phantomProblems(withSecondLine(jr, 'startrope', dx));
+      expect(bad.filter(x => x.startsWith(`jump_rope ${key}:`)), `${key}: a second phantom crossing`).toHaveLength(1);
+    }
+  });
   it('mutations: medicine_ball_slam\'s "Ball overhead" anchored at the phantom ball\'s centre (its leader crosses the phantom) is red; a phantom nit given to another key is red', () => {
     const s = S.medicine_ball_slam, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'overhead' ? { ...x, anchor: 'start:grip.r' } : x)) };
     expect(phantomProblems(bad).length).toBe(1);
