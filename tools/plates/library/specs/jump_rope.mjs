@@ -84,15 +84,15 @@ export default {
   tempo: [{ phase: 'Work', s: 30, move: true }, { phase: 'Rest', s: 60 }],
   trace: { point: 'sole.r', trim: [0, 0] },
   callouts: [
-    { key: 'elbows', text: 'Elbows in', anchor: 'elbow.r', cue: 'Elbows stay close to your ribs.' },
-    { key: 'hands', text: 'Hands by hips', anchor: 'grip.l', cue: 'Hands at about hip height, slightly away from your body.' },
-    { key: 'hop', text: 'Low hop', anchor: 'ankle.r', cue: 'Feet just clear the rope, about 1 to 2 inches.' },
+    { key: 'elbows', text: 'Elbows in', anchor: 'elbow.r', box: { left: 24, top: 152 }, cue: 'Elbows stay close to your ribs.' },
+    { key: 'hands', text: 'Hands by hips', anchor: 'grip.l', box: { left: 240, top: 184 }, cue: 'Hands at about hip height, slightly away from your body.' },
+    { key: 'hop', text: 'Low hop', anchor: 'ankle.r', box: { left: 80, top: 304 }, cue: 'Feet just clear the rope, about 1 to 2 inches.' },
   ],
   mistake: {
     pose: mistake,
     // the raised feet lie over the solid legs (masked): an arrow from the right hop's sole to the faulty one, outside
-    guides: [{ kind: 'arrow', from: { at: 'sole.l', pose: 'end', off: [18, 0] }, to: { at: 'sole.l', pose: 'mistake', off: [18, 0] } }],
-    tells: [{ key: 'high', text: 'Too high', anchor: { at: 'sole.l', pose: 'mistake', off: [18, 0] }, cue: 'Jumping far higher than the rope needs.' }],
+    guides: [{ kind: 'arrow', from: { at: 'sole.l', pose: 'end', off: [24, 0] }, to: { at: 'sole.l', pose: 'mistake', off: [24, 0] } }],
+    tells: [{ key: 'high', text: 'Too high', anchor: { at: 'sole.l', pose: 'mistake', off: [24, 0] }, box: { left: 224, top: 304 }, cue: 'Jumping far higher than the rope needs.' }],
   },
   alt: 'Jump rope, front view. Feet together, elbows in by the ribs, hands at hip height turning the rope; a low hop about an inch and a half off the floor, the rope passing just under the feet.',
 };

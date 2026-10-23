@@ -859,29 +859,64 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     const s = S.sled_push, guides = [...s.mistake.guides, { kind: 'arrow', from: { at: 'hips', pose: 'end' }, to: { at: 'hips', pose: 'mistake' } }];
     expect(clearance({ ...s, mistake: { ...s.mistake, guides } }).length).toBe(1);
   });
-  /** Lines a leader keeps 6 px from (away from its first 8 px): the Trace and the equipment (rope, sled, ball, bell, floor). */
+  /** Lines a leader keeps 6 px from (away from its first 8 px): the Trace and the equipment (rope, sled, ball, bell, floor).
+   *  `rope` holds the jump rope's strand outline apart, for the named nit below. */
   const avoidOf = (spec: any, mistake: boolean, svg: string) => {
-    const cam = camOf(spec), out: number[][][] = [];
+    const cam = camOf(spec), out: number[][][] = [], rope: number[][][] = [];
     for (const m of svg.matchAll(/<path class="(?:trace|eq-cable|floorline)[^"]*"[^>]*? d="([^"]+)"/g)) out.push(...segs(xy(m[1]!.replace(/H(-?[\d.]+)/, (_, x) => `L${x} ${xy(m[1]!)[0]![1]}`))));
     for (const it of itemsIn(spec, mistake ? 'mistake' : 'end').items) if (['poly', 'backPad', 'line'].includes(it.type) && it.part !== 'startbell' && it.part !== 'startball' && it.part !== 'startrope')
-      for (const p of eng.PRIMITIVES[it.type](it, cam)) { const pts = p.poly ?? p.line; if (pts) out.push(...segs([...pts, pts[0]])); }
-    return out;
+      for (const p of eng.PRIMITIVES[it.type](it, cam)) { const pts = p.poly ?? p.line; if (pts) (it.part === 'rope' && it.z === 'back' ? rope : out).push(...segs([...pts, pts[0]])); }
+    return { out, rope };
   };
-  const minGap = (spec: any) => {
+  /** D-LIB22-HOPNIT (#305 6355887979): jump_rope's `hop` leader, end view only, may cross the rope strand, once and
+   *  steeply; it keeps 6 px from everything else. */
+  const HOPNIT = [{ id: 'jump_rope', key: 'hop', mistake: false, part: 'rope' }, { id: 'jump_rope', key: 'elbows', mistake: false, part: 'startrope' }, { id: 'jump_rope', key: 'hands', mistake: false, part: 'startrope' }];
+  const HOP_STEEP = 45;
+  const isNit = (nits: any[], id: string, key: string, mistake: boolean) => nits.some(n => n.id === id && n.key === key && n.mistake === mistake && n.part === 'rope');
+  /** A nit leader's rope crossing: the runs of its samples within 6 px of the strand, and its angle to the strand (deg). */
+  const ropeCrossing = (lead: number[][], rope: number[][][]) => {
+    let runs = 0, inRun = false, angle = 90;
+    for (const [a, b] of segs(lead)) for (let k = 0; k <= 200; k++) {
+      const q = [a![0]! + (b![0]! - a![0]!) * k / 200, a![1]! + (b![1]! - a![1]!) * k / 200];
+      if (Math.hypot(q[0]! - lead[0]![0]!, q[1]! - lead[0]![1]!) < 8) continue;
+      let best = Infinity, g: number[][] = [];
+      for (const r of rope) { const d = segD(q, r[0]!, r[1]!); if (d < best) { best = d; g = r; } }
+      const near = best < 6;
+      if (near && !inRun) {
+        runs++;
+        const u = [b![0]! - a![0]!, b![1]! - a![1]!], v = [g[1]![0]! - g[0]![0]!, g[1]![1]! - g[0]![1]!];
+        angle = Math.min(angle, Math.acos(Math.abs(u[0]! * v[0]! + u[1]! * v[1]!) / (Math.hypot(u[0]!, u[1]!) * Math.hypot(v[0]!, v[1]!))) * 180 / Math.PI);
+      }
+      inRun = near;
+    }
+    return { runs, angle };
+  };
+  const minGap = (spec: any, nits: any[] = HOPNIT) => {
     let min = Infinity, at = '';
+    const crossings: string[] = [];
     for (const mistake of [false, true]) {
-      const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg, list = listOf(spec, mistake), avoid = avoidOf(spec, mistake, svg);
+      const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg, list = listOf(spec, mistake), { out, rope } = avoidOf(spec, mistake, svg);
       leadersOf(svg).forEach((p, i) => {
+        const nit = isNit(nits, spec.id, list[i]?.key, mistake), avoid = nit ? out : [...out, ...rope];
+        if (nit) { const c = ropeCrossing(p, rope); crossings.push(`${spec.id} ${list[i]?.key}: ${c.runs} crossing(s) at ${c.angle.toFixed(1)} deg`); if (c.runs !== 1 || c.angle < HOP_STEEP) { min = -1; at = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: ${c.runs} rope crossing(s) at ${c.angle.toFixed(1)} deg`; } }
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
           if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) for (const g of avoid) { const d = segD(q, g[0]!, g[1]!); if (d < min) { min = d; at = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}`; } }
         }
       });
     }
-    return { min, at };
+    return { min, at, crossings };
   };
   it('no leader comes within 6 px of the Trace, the floor line or any equipment outline (away from its first 8 px)', async () => {
     for (const id of specsDrawn()) { const g = minGap(S[id]); expect(g.min, `${id} ${g.at}`).toBeGreaterThanOrEqual(6); await yieldNow(); }
+  });
+  it('D-LIB22-HOPNIT: jump_rope\'s "Low hop" leader crosses the rope strand exactly once, steeply; mutations: the exception given to another key or id is red', () => {
+    const g = minGap(S.jump_rope);
+    console.log(`LIB-22 D-LIB22-HOPNIT ${g.crossings.join('; ')}`);
+    expect(g.crossings).toHaveLength(1);
+    expect(minGap(S.jump_rope, [{ id: 'jump_rope', key: 'hands', mistake: false, part: 'rope' }]).min).toBeLessThan(6);
+    expect(minGap(S.jump_rope, [{ id: 'sled_push', key: 'hop', mistake: false, part: 'rope' }]).min).toBeLessThan(6);
+    expect(minGap(S.jump_rope, [{ id: 'jump_rope', key: 'hop', mistake: true, part: 'rope' }]).min).toBeLessThan(6);
   });
   it('mutation: medicine_ball_slam\'s "Hips and knees" box moved under the ball (its leader along the floor line) is red', () => {
     const s = S.medicine_ball_slam, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'hips' ? { ...x, box: { left: 200, top: 318 } } : x)) };
@@ -910,6 +945,46 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     const out: string[] = [];
     for (const id of specsDrawn()) { out.push(...crossProblems(S[id])); await yieldNow(); }
     expect(out).toEqual([]);
+  });
+  /** Card line 243: no leader crosses the start phantom (the dashed start implement, drawn in the end view). Each crossing
+   *  of a phantom segment counts once (proper intersection), away from the leader's first 8 px. A named nit (HOPNIT,
+   *  item 'startrope') allows exactly one crossing of its phantom at HOP_STEEP degrees or more. */
+  const phantomOf = (spec: any) => {
+    const cam = camOf(spec), out: Record<string, number[][][]> = {};
+    for (const it of itemsIn(spec, 'end').items) if (/^start/.test(it.part ?? '')) for (const p of eng.PRIMITIVES[it.type](it, cam)) { const pts = p.poly ?? p.line; if (pts) (out[it.part] ??= []).push(...segs(pts)); }
+    return out;
+  };
+  const crossAt = (a: number[], b: number[], c: number[], d: number[]) => {
+    const r = [b[0]! - a[0]!, b[1]! - a[1]!], q = [d[0]! - c[0]!, d[1]! - c[1]!], den = r[0]! * q[1]! - r[1]! * q[0]!;
+    if (Math.abs(den) < 1e-9) return null;
+    const t = ((c[0]! - a[0]!) * q[1]! - (c[1]! - a[1]!) * q[0]!) / den, u = ((c[0]! - a[0]!) * r[1]! - (c[1]! - a[1]!) * r[0]!) / den;
+    if (t < 0 || t > 1 || u < 0 || u > 1) return null;
+    return { at: [a[0]! + r[0]! * t, a[1]! + r[1]! * t], angle: Math.acos(Math.abs(r[0]! * q[0]! + r[1]! * q[1]!) / (Math.hypot(r[0]!, r[1]!) * Math.hypot(q[0]!, q[1]!))) * 180 / Math.PI };
+  };
+  const phantomProblems = (spec: any, nits: any[] = HOPNIT) => {
+    const out: string[] = [], ph = phantomOf(spec), list = listOf(spec, false);
+    leadersOf(plate.renderPlate(spec, { id: 'x' }).svg).forEach((p, i) => {
+      const key = list[i]?.key;
+      for (const [part, S] of Object.entries(ph)) {
+        // the phantom is a thin closed outline, so one crossing meets both of its edges: hits within 3 px count once
+        const pts: number[][] = [], hits: number[] = [];
+        for (const [a, b] of segs(p)) for (const [c, d] of S) { const x = crossAt(a!, b!, c!, d!); if (x && Math.hypot(x.at[0]! - p[0]![0]!, x.at[1]! - p[0]![1]!) >= 8 && !pts.some(q => Math.hypot(q[0]! - x.at[0]!, q[1]! - x.at[1]!) < 3)) { pts.push(x.at); hits.push(x.angle); } }
+        const nit = nits.some(n => n.id === spec.id && n.key === key && n.mistake === false && n.part === part);
+        if (nit ? hits.length !== 1 || hits[0]! < HOP_STEEP : hits.length) out.push(`${spec.id} ${key}: crosses ${part} ${hits.length}x (${hits.map(h => h.toFixed(1)).join(', ')} deg)`);
+        else if (nit) console.log(`LIB-22 D-LIB22-HOPNIT ${spec.id} ${key}: 1 crossing of ${part} at ${hits[0]!.toFixed(1)} deg`);
+      }
+    });
+    return out;
+  };
+  it('no leader crosses the start phantom (named nits: one steep crossing)', async () => {
+    const out: string[] = [];
+    for (const id of specsDrawn()) { out.push(...phantomProblems(S[id])); await yieldNow(); }
+    expect(out).toEqual([]);
+  });
+  it('mutations: medicine_ball_slam\'s "Ball overhead" anchored at the phantom ball\'s centre (its leader crosses the phantom) is red; a phantom nit given to another key is red', () => {
+    const s = S.medicine_ball_slam, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'overhead' ? { ...x, anchor: 'start:grip.r' } : x)) };
+    expect(phantomProblems(bad).length).toBe(1);
+    expect(phantomProblems(S.jump_rope, HOPNIT.map(n => (n.key === 'elbows' ? { ...n, key: 'hop' } : n))).length).toBeGreaterThan(0);
   });
   it('mutation: kettlebell_swing\'s "Leaning back" box placed right of the figure, so its leader crosses the Mistake figure, is red', () => {
     const s = S.kettlebell_swing, bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => (x.key === 'lean' ? { ...x, box: { left: 200, top: 60 } } : x)) } };
