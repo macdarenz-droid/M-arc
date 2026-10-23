@@ -601,9 +601,9 @@
     "basis": "stated reason: c25 bb-farmers 'regular-sized steps': an adult's normal walking step, about 0.7 m for the 1.75 m figure (normal stride about 1.4 m, two steps)"
    },
    "VIA_LIFT": {
-    "value": 0.03,
+    "value": 0.025,
     "unit": "m",
-    "basis": "stated reason: the ghost's swinging foot just clears the floor at mid-swing: its sole 3 cm up, above normal gait's minimum toe clearance of 1 to 2 cm"
+    "basis": "convention: mountain_climbers.mjs:49 @ dcac4a38 (FOOT_CLEAR 0.025, the approved gliding foot's clearance), for the ghost's swinging foot at mid-swing (the Trace passes through it; #305 6359365488 item 1)"
    },
    "BODY_KG": {
     "value": 75,
@@ -624,6 +624,11 @@
     "value": "ball.r",
     "unit": "point",
     "basis": "claim: c8 ggr-farmers 'taking short, deliberate steps': the stepping (near) foot (DESIGN section 12; D-LIB22-SIDES: the card names no side)"
+   },
+   "DB_SCALE": {
+    "value": "solved",
+    "unit": "factor",
+    "basis": "#305 6359365488 item 5: the engine dumbbell's heads scaled so the drawn cast-iron mass (7200 kg/m3, as eq/kettlebell.mjs) equals DB_KG, the mass the balance uses"
    }
   },
   "burpee": {
@@ -667,7 +672,7 @@
    "M_TILT": {
     "value": 18.8,
     "unit": "deg",
-    "basis": "convention: mountain_climbers.mjs:88 HIKE_HIP 30 (#109 @ dcac4a38) as drawn there: its Mistake turns the pelvis 18.8 deg (tilt 72.9 -> 91.7, measured), for c5 bb-bc 'When you lift your knees, don’t lift your butt, too'; HIKE_HIP's own 30 deg of hip flexion cannot be reached with the hands and feet planted (it peaks at +25.7 deg)"
+    "basis": "convention: mountain_climbers @ dcac4a38, the pelvis turn its HIKE_HIP 30 produces as drawn (18.8 deg, measured), the approved hip hike with hands and feet planted; DESIGN section 11's M_HIP 30 cannot be reached as hip flexion here (peaks at 25.7 deg); ruled #305 6359365488 item 3"
    },
    "END_ELBOW": {
     "value": 1,
@@ -745,6 +750,11 @@
     "value": "knee.r",
     "unit": "point",
     "basis": "claim: plate.frames 'Trace follows the driving knee' (c2 the right knee)"
+   },
+   "BACK_EXT": {
+    "value": 30,
+    "unit": "deg",
+    "basis": "stated reason (#305 6359365488 item 1): the back (near) arm swings this much further than the mirrored front arm so the near hand shows a visible gap of at least 6 px to the hip outline in the side view (30: 7.7 px; 28: 5.3 px; 0: overlapping); total shoulder extension ARM_FLEX + 30 = 73.5 deg"
    }
   },
   "jumping_jacks": {
@@ -766,7 +776,7 @@
    "ARM_UP": {
     "value": 180,
     "unit": "deg",
-    "basis": "stated reason: c2 'raising your arms overhead': the straight arms vertical over the shoulder joints [proposed]"
+    "basis": "claim: c2 nasm 'raising your arms overhead' and c4 el-jj 'bringing your arms over your head': the straight arms vertical over the shoulder joints, hands meeting overhead (stated reason, #305 6359365488 item 1; the Trace's hand path depends on it)"
    },
    "M_ROT": {
     "value": 30,

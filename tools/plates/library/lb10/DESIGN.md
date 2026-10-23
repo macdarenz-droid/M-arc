@@ -610,15 +610,21 @@ within 0.5 cm).
 | id | view | status | H3 deviation / Trace (px) | stance | notes |
 |---|---|---|---|---|---|
 | sled_pull | side | held: NOSECS; S2 Trace | 23.3 / **10.1** | 0.145 | drag (Q9): the sled shift equals the hip shift (−0.1218 m); rope run 0.8223 m in every pose (a static sled: +7.7 cm); dashed start sled and rope |
-| farmer_s_carry | side | held: NOSECS | 51.2 / 28.1 | 0.0875 (hip-width, c3) | 18.75 kg per hand in the balance (c18); dumbbells clear the thighs ≥0.56 cm |
-| burpee | side | held: NOSECS; S2 Mistake | **7.1** / 149.7 | 0.15 | pose map: spec start = the plank; ghost = the squat with the hands down |
-| bear_crawl | side | held: S2 Trace | 32.7 / **10** (all inside the trims) | — | floor camera 197.49 px/m (F1 expected) |
-| high_knees | side | on rows.json | 13.6 / 100.4 | 0.10 (hip-width, c4) | QA: all 10 hard checks pass, F5 only |
+| farmer_s_carry | side | held: NOSECS | 51.2 / 28.0 | 0.0875 (hip-width, c3) | 18.75 kg per hand in the balance (c18) and as drawn (heads ×1.26, cast iron); heads clear thighs and shanks ≥1.2 cm; VIA_LIFT 0.025 (mountain_climbers.mjs:49) |
+| burpee | side | held: NOSECS; S2 Mistake | **7.1** / 149.7 | 0.15 | pose map: spec start = the plank; ghost = the squat with the hands down; D-LIB22-BURPEE3D: trunk/thigh 11.8 cm on the skinned body, cap 12.3 |
+| bear_crawl | side | held: S2 Trace | 32.7 / **10** (all inside the trims) | — | floor camera 197.49 px/m (F1 expected); flat back, option (a): c2's level hips read as a flat back within 7.8 cm (ruled); Mistake M_TILT 18.8 (ruled) |
+| high_knees | side | on rows.json | 14.9 / 100.6 | 0.10 (hip-width, c4) | the back (near) arm BACK_EXT 30 deg past the mirror so the hand clears the hip by 7.7 px (ruled ≥6 px); with the back arm out behind, "Back arches" anchors on the Mistake's buttock (the arch tips the pelvis; no clear place on the upper or mid back) |
 | jumping_jacks | front | held: S2 Mistake | **9.6** / 242.0 | FOOT_X_IN 0.055 (0.05: shanks overlap 1.6 cm) | D-LIB22-FRONT |
-| battle_ropes | side | on rows.json | 12.0 / 23.1 | 0.10 (hip-width, c1) | camera 142 px/m (at 146.29 the figure's coverage 0.552 > F2's 0.549); hunch labelled on the Mistake's upper back (PQ-H4); start ropes dashed (they lie along the end's far rope) |
+| battle_ropes | side | on rows.json | 12.4 / 23.8 | 0.10 (hip-width, c1) | standard 146.29 px/m; F2 0.552 (max 0.549) a named flag (ruled 6359365488); hunch labelled on the Mistake's upper back (PQ-H4); start ropes dashed (they lie along the end's far rope) |
 
 Open points (posted on #305 for rulings) are listed in the bulk post: unsourced sizes (battle_ropes WAVE_LEN,
 jumping_jacks ARM_UP, farmer_s_carry M_STRIDE and VIA_LIFT, high_knees' arm pose), bear_crawl's c2-against-c3 conflict
 and its Mistake size, burpee's squat-ghost trunk in the thighs (3D), farmer_s_carry's second tell, jumping_jacks'
 toes-out fault in the front view (S1/S4), and the sled_pull reading questions (quarter-squat depth, the "short" step,
 the coil).
+
+**Rulings on the bulk (#305 6359365488).** Unsourced sizes accepted as stated reasons; H3 dependence: battle_ropes
+WAVE_LEN none (Trace on the hand, tells on the body); jumping_jacks ARM_UP feeds the Trace (the hand path), re-cited to
+c2 and c4 ("arms overhead", "over your head"); farmer_s_carry M_STRIDE feeds the Mistake deviation (51.2 px, claim c25
+"regular-sized steps", the 0.7 m reading stated) and VIA_LIFT the Trace, so VIA_LIFT moved to mountain_climbers.mjs:49's
+FOOT_CLEAR 0.025 (Trace 28.0 px); high_knees' arm pose and BACK_EXT none (Trace on the knee, tells on the back and knee).

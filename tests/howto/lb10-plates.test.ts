@@ -729,6 +729,102 @@ describe('LIB-22 A2 / A18: sled_push and `sled` (NOSECS; the slice)', { timeout:
   it('the spec carries no tempo (D-LIB22-SECS)', () => { expect(s().tempo).toBeUndefined(); });
 });
 
+describe('LIB-22 A2 / A18: burpee (NOSECS; held; bulk)', { timeout: T }, () => {
+  const s = () => S.burpee;
+  /** D-LIB22-BURPEE3D (#305 6359365488 item 4), on the engine's skinned body: each thigh (a capsule of RADII.thigh's
+   *  side radius, tapering hip to knee) against the skinned torso profile (bodyShapes' torso, sk.skin), counted past 40 %
+   *  of the thigh (the smallest share at which the standing and plank figures show 0 cm: the thigh's root sits inside
+   *  the pelvis by design). Returns the deepest penetration (m). */
+  const trunkThigh = (pose: any) => {
+    const B = { height: H3D }, pxm = 100, cam = { view: 'side', near: 'r', facing: 'right', pxm, P: (w: number[]) => [w[2]! * pxm, -w[1]! * pxm] };
+    const sk = body.fk(body.resolve(body.normPose(pose, B), B).q, B), sh = body.bodyShapes(sk, cam, {}), T = sh.find((x: any) => x.key === 'torso').poly, L = body.landmarks(sk);
+    let worst = 0;
+    for (const sd of ['l', 'r']) {
+      const h = cam.P(L[`hip.${sd}`]), k = cam.P(L[`knee.${sd}`]);
+      for (let i = 21; i <= 50; i++) {
+        const t = i / 50, p = [h[0]! + (k[0]! - h[0]!) * t, h[1]! + (k[1]! - h[1]!) * t], r = (body.RADII.thigh[0] + (body.RADII.thigh[2] - body.RADII.thigh[0]) * t) * H3D * pxm;
+        worst = Math.max(worst, (r - outside([T], p)) / pxm);
+      }
+    }
+    return worst;
+  };
+  const BURPEE_CAP = 0.118 + 0.005;
+  it('D-LIB22-BURPEE3D: the squat ghost\'s trunk-thigh penetration stays within 11.8 + 0.5 cm; the start and end show none', () => {
+    const v = trunkThigh(s().poses.via[0]);
+    console.log(`LIB-22 D-LIB22-BURPEE3D trunk/thigh: ${(v * 100).toFixed(1)} cm (cap ${(BURPEE_CAP * 100).toFixed(1)})`);
+    expect(v).toBeLessThanOrEqual(BURPEE_CAP);
+    expect(trunkThigh(s().poses.start)).toBeLessThanOrEqual(0.001);
+    expect(trunkThigh(s().poses.end)).toBeLessThanOrEqual(0.001);
+  });
+  it('mutation: the ghost\'s trunk tipped 5 deg further into the thighs is past the cap: red', () => {
+    const v = s().poses.via[0];
+    expect(trunkThigh({ ...v, root: { ...v.root, tilt: v.root.tilt + 5 } })).toBeGreaterThan(BURPEE_CAP);
+  });
+});
+
+describe('LIB-22 A2 / A18: high_knees (bulk; on rows.json)', { timeout: T }, () => {
+  const s = () => S.high_knees;
+  /** #305 6359365488 item 1: the near (back) hand keeps a visible gap of at least 6 px to the hip outline (torso and near
+   *  thigh) in the side view's end pose, so it never reads as a hand on the hip. Negative: the outlines overlap. */
+  const handGap = (spec: any) => {
+    const sh = shapesIn(spec, 'end'), f = sh.find((x: any) => x.key === 'fist.r').poly, out: number[] = [];
+    for (const k of ['torso', 'thigh.r']) {
+      const P = sh.find((x: any) => x.key === k).poly;
+      out.push(f.some((p: number[]) => outside([P], p) < 0) || P.some((p: number[]) => outside([f], p) < 0) ? -1 : Math.min(...f.map((p: number[]) => outside([P], p))));
+    }
+    return Math.min(...out);
+  };
+  it('the near hand clears the hip outline by at least 6 px at the end', () => { expect(handGap(s())).toBeGreaterThanOrEqual(6); });
+  it('mutation: the back arm mirrored (no BACK_EXT) puts the hand on the hip: red', () => {
+    const e = s().poses.end, bad = { ...s(), poses: { ...s().poses, end: { ...e, shoulder: { ...e.shoulder, r: { ext: M.high_knees.ARM_FLEX } } } } };
+    expect(handGap(bad)).toBeLessThan(6);
+  });
+});
+
+describe('LIB-22 A2 / A18: farmer_s_carry (NOSECS; bulk)', { timeout: T }, () => {
+  const s = () => S.farmer_s_carry, K = () => M.farmer_s_carry;
+  /** #305 6359365488 item 5: the drawn dumbbell's cast-iron mass equals the balance's DB_KG (one sizes.json row drives both). */
+  const massProblems = (drawnHead: number, drawnLen: number) => {
+    const kg = 7200 * (2 * (3 * Math.sqrt(3) / 2) * (drawnHead / 2) ** 2 * drawnLen + Math.PI * 0.008 ** 2 * 0.14);
+    return Math.abs(kg - K().DB_KG) <= 0.1 ? [] : [`drawn ${kg.toFixed(2)} kg != balance ${K().DB_KG} kg`];
+  };
+  it('the drawn dumbbells weigh the balance\'s DB_KG (±0.1 kg)', () => {
+    const db = itemsIn(s(), 'end').items.filter((i: any) => i.type === 'dumbbell');
+    expect(db).toHaveLength(2);
+    for (const d of db) expect(massProblems(d.head, d.headLen)).toEqual([]);
+  });
+  it('mutation: the engine\'s default dumbbell (11.9 cm heads, 7 cm long) is red', () => {
+    expect(massProblems(0.119, 0.07).length).toBe(1);
+  });
+  /** 3D: each dumbbell head (a cylinder of the hex's half-flats) clears each thigh and shank (tapered capsules, RADII x H). */
+  const headClear = (spec: any) => {
+    const R = body.RADII, out: string[] = [];
+    const taper = (p: number[], c: number[], d: number[], r0: number, r1: number) => { const cd = d.map((v, k) => v - c[k]!), cp = p.map((v, k) => v - c[k]!), t = Math.max(0, Math.min(1, cd.reduce((x, v, k) => x + v * cp[k]!, 0) / cd.reduce((x, v) => x + v * v, 0))); return Math.hypot(...cp.map((v, k) => v - cd[k]! * t)) - (r0 + (r1 - r0) * t); };
+    for (const pose of ['start', 'end', 'mistake']) {
+      const l = lmOf(spec, pose);
+      for (const d of itemsIn(spec, pose).items.filter((i: any) => i.type === 'dumbbell')) {
+        const hh = d.head * 0.866 / 2;
+        for (const sg of [-1, 1]) for (let i = 0; i <= 10; i++) {
+          const p = [d.at[0], d.at[1], d.at[2] + sg * (0.065 + d.headLen * i / 10)];
+          for (const t of ['l', 'r']) {
+            const th = taper(p, l[`hip.${t}`], l[`knee.${t}`], R.thigh[1] * H3D, R.thigh[2] * H3D) - hh, sh = taper(p, l[`knee.${t}`], l[`ankle.${t}`], R.shank[1] * H3D, R.shank[2] * H3D) - hh;
+            if (th < 0) out.push(`${pose} head in thigh.${t} ${(th * 100).toFixed(1)} cm`);
+            if (sh < 0) out.push(`${pose} head in shank.${t} ${(sh * 100).toFixed(1)} cm`);
+          }
+        }
+      }
+    }
+    return [...new Set(out)];
+  };
+  it('3D: the dumbbell heads clear both thighs and shanks in start, end and Mistake', () => {
+    expect(headClear(s())).toEqual([]);
+  });
+  it('mutation: dumbbells 6 cm toward the midline (into the thighs) are red', () => {
+    const bad = { ...s(), equipment: s().equipment.map((e: any) => (typeof e === 'function' ? (lm: any, ctx: any) => { const r = e(lm, ctx); return r && r.type === 'dumbbell' ? { ...r, at: [r.at[0] - Math.sign(r.at[0]) * 0.06, r.at[1], r.at[2]] } : r; } : e)) };
+    expect(headClear(bad).length).toBeGreaterThan(0);
+  });
+});
+
 describe('LIB-22 A2 / A18: sled_pull, a drag (NOSECS; bulk; ruling Q9, #305 6355155831)', { timeout: T }, () => {
   const s = () => S.sled_pull, K = () => M.sled_pull;
   const sledRear = (spec: any, pose: string) => Math.min(...itemsIn(spec, pose).items.filter((i: any) => i.part === 'sled').flatMap((i: any) => (i.pts ?? i.surface).map((p: number[]) => p[2]!)));

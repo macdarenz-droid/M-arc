@@ -29,7 +29,7 @@
 import { landmarksOf, resolve, normPose } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.0875, KNEE_SOFT: 15, SCAP_ELEV: -1, SCAP_PRO: -1, STRIDE: 0.35, M_STRIDE: 0.70, VIA_LIFT: 0.03, BODY_KG: 75, DB_SHARE: 0.25 });
+export const SIZES = Object.freeze({ FOOT_X: 0.0875, KNEE_SOFT: 15, SCAP_ELEV: -1, SCAP_PRO: -1, STRIDE: 0.35, M_STRIDE: 0.70, VIA_LIFT: 0.025, BODY_KG: 75, DB_SHARE: 0.25 });
 const { FOOT_X, KNEE_SOFT, SCAP_ELEV, SCAP_PRO, STRIDE, M_STRIDE, VIA_LIFT, BODY_KG, DB_SHARE } = SIZES;
 // c18 'approximately 25% of your body weight in each hand', on the BODY_KG figure.
 export const DB_KG = DB_SHARE * BODY_KG;
@@ -102,13 +102,18 @@ const mistake = body(QM, M_STRIDE);
 const via = [body({ y: (QS.y + QE.y) / 2, z: (QS.z + QE.z) / 2, th: QE.th / 2 }, STRIDE / 2, VIA_LIFT)];
 
 // Dumbbells in both fists, neutral grip (handle front-to-back, reverse_lunge.mjs:104-108 @ dcac4a38): one entry each.
+// The engine dumbbell (equipment.mjs:30-40: handle 13 cm, drawn 1.6 cm thick; hex heads 11.9 cm across the corners,
+// 7 cm long) is scaled by DB_SCALE (heads only, the handle stays the hand's width) so its cast-iron mass (7200 kg/m3,
+// as eq/kettlebell.mjs) equals DB_KG, the mass the balance uses (#305 6359365488 item 5).
+const dbMass = k => 7200 * (2 * (3 * Math.sqrt(3) / 2) * (0.119 * k / 2) ** 2 * 0.07 * k + Math.PI * 0.008 ** 2 * 0.14);
+export const DB_SCALE = (() => { let a = 0.5, b = 3; for (let i = 0; i < 80; i++) { const c = (a + b) / 2; if (dbMass(c) < DB_KG) a = c; else b = c; } return (a + b) / 2; })();
+const DB = { handle: 0.13, headLen: 0.07 * DB_SCALE, head: 0.119 * DB_SCALE, hh: 0.119 * DB_SCALE * 0.866 / 2, ht: 0.016 };
+export const DB_DRAWN_KG = dbMass(DB_SCALE);
 const bells = lm => [
-  { type: 'dumbbell', at: lm['grip.l'], axis: [0, 0, 1], z: 'back', part: 'db' },
-  { type: 'dumbbell', at: lm['grip.r'], axis: [0, 0, 1], z: 'front', part: 'db' },
+  { type: 'dumbbell', at: lm['grip.l'], axis: [0, 0, 1], head: DB.head, headLen: DB.headLen, z: 'back', part: 'db' },
+  { type: 'dumbbell', at: lm['grip.r'], axis: [0, 0, 1], head: DB.head, headLen: DB.headLen, z: 'front', part: 'db' },
 ];
-// The engine dumbbell side-on (equipment.mjs:30-40 defaults: handle 13 cm, 1.6 cm thick; hex heads 11.9 cm across the
-// corners, 7 cm long): its outline as world points, for the dashed start phantom.
-const DB = { handle: 0.13, headLen: 0.07, hh: 0.119 * 0.866 / 2, ht: 0.016 };
+// Its outline as world points, for the dashed start phantom.
 const dbOutline = g => {
   const [x, y, z] = g, P = (dz, dy) => [x, y + dy, z + dz], a = DB.handle / 2, b = a + DB.headLen;
   return [

@@ -75,7 +75,7 @@ const start = bodyAt(Y, Z, arms(PHI_UP, PHI_DOWN));
 const end = bodyAt(Y, Z, arms(PHI_DOWN, PHI_UP));
 // Mistake (c6): the shoulder blades elevate and hunch forward.
 const mistake = { scap: { elev: M_ELEV, pro: M_PRO } };
-const CAM = { x0: 110, y0: 339, pxPerM: 142 };   // inside F1; the figure's coverage inside F2
+const CAM = { x0: 110, y0: 339, pxPerM: 146.29 };
 // The plate's right edge in world z (the rope runs on toward the anchor, off the plate).
 export const EDGE_Z = (SIZE - CAM.x0) / CAM.pxPerM;
 const ropes = lm => battleRope({ grips: { l: lm['grip.l'], r: lm['grip.r'] }, restY: (lm['grip.l'][1] + lm['grip.r'][1]) / 2, edgeZ: EDGE_Z, waveLen: WAVE_LEN });
@@ -102,13 +102,13 @@ export default {
   callouts: [
     { key: 'knees', text: 'Soft knees', anchor: 'knee.r', cue: 'Knees slightly bent, back straight, a slight forward lean.' },
     { key: 'down', text: 'Shoulders<br>down', anchor: 'backUpper', box: { left: 16, top: 84 }, cue: 'Shoulder blades down and back, not lifting or hunching.' },
-    { key: 'travel', text: 'Shoulder<br>to waist', anchor: { at: 'grip.r', off: [-4, 0] }, box: { left: 124, top: 196 }, cue: 'Each hand travels between shoulder and waist height, opposite the other.' },
+    { key: 'travel', text: 'Shoulder<br>to waist', anchor: { at: 'grip.r', off: [-4, 0] }, box: { left: 208, top: 96 }, cue: 'Each hand travels between shoulder and waist height, opposite the other.' },
   ],
   mistake: {
     pose: mistake,
     tells: [
       { key: 'shrug', text: 'Shoulders lift', anchor: { at: 'shoulderTop.r', pose: 'mistake', off: [3, 0] }, box: { left: 176, top: 80 }, cue: 'The shoulder blades lift toward the ears.' },
-      { key: 'hunch', text: 'Shoulders hunch', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 16, top: 56 }, cue: 'The shoulders round forward, straining the neck.' },
+      { key: 'hunch', text: 'Shoulders<br>hunch', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 16, top: 56 }, cue: 'The shoulders round forward, straining the neck.' },
     ],
   },
   alt: 'Battle ropes, side view. Knees slightly bent, back straight with a slight forward lean, one rope end in each hand. The straight arms swing the ropes in opposite waves between shoulder and waist height.',
