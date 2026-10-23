@@ -7,14 +7,14 @@ import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, wri
 import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 // Most tests here render plates synchronously, and vitest runs back-to-back synchronous tests without returning to the
 // event loop, so the worker could not answer its RPC for 40 s locally (over vitest's 60 s limit on CI: the source-gate's
 // "Timeout calling onTaskUpdate"). One macrotask after every test lets the worker reply.
 afterEach(() => new Promise<void>(r => setImmediate(r)));
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;

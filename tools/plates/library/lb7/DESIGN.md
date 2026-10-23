@@ -296,6 +296,21 @@ claim whose quote states it; each contact gets a `checks` entry in its spec (H6)
   angle. Drawn and tested: the shoulder on the parallel line (±1 cm), the elbow at END_FLEX (±0.5°), body plus the 20 kg
   plate at the belt point over the grips (±2 cm) in every pose; the body alone is −3.6 / −4.5 / −4.4 cm (start, end,
   Mistake), logged only.
+- **D-LIB17-DIPBAL option table** (condition 5; the corrected table, #299 6348923058, on which option P was ruled,
+  6348947992). All balanced on the spec's own solver (body COM over the grips); upper arm + = the shoulder above the
+  elbow; the parallel line = the shoulder at 1.592 m (BAR_Y 1.25 at the time: upper arm level over a plumb forearm).
+
+  | option | elbow bend | upper arm | shoulder vs parallel line | lean | legs | breaks |
+  |---|---|---|---|---|---|---|
+  | C′ as ruled (corrected) | 90 | 26° above level | +11 cm | 15° | knees 90, thighs 40° back | c4 "parallel"; it is the Mistake's own fault (well above parallel) |
+  | C′ with c3 legs | 90 | 36° above | +13 cm | 15° | c3 | as above |
+  | E | 90 | 18° above | +8.5 cm | 30° | back | c4, c5 |
+  | E′ | 90 | 11° above | +5.6 cm | 45° | back | c5 ("at most a slight forward lean") |
+  | P (ruled) | 112.5 | 9° above | 0 (at the line) | 15° | back | c4's 90 (a card fact change: F-LB7-1) |
+  | P′ | 100.7 | 1° (level) | 0 | 45° | back | c4's 90 and c5 |
+
+  Drawn P after the re-solve (body plus the 20 kg plate at the belt point, BAR_Y 1.10, the line at 1.442 m): elbow
+  115.7°, upper arm 14° above level, the shoulder on the line, lean 15° (the next item).
 - weighted_dip c1 "about shoulder-width", "within two inches outside": a width the side view cannot show; drawn as BAR_X
   (section 11). c8 "near the shins or feet": near something (D-LIB17-FACTS). c4 SL "until your shoulder is below your
   elbow": the deeper of c4's two readings; the card follows the parallel line (its notes), so the 90 deg fact is BarBend's.
