@@ -50,12 +50,12 @@
    "START_TILT": {
     "value": "solved",
     "unit": "deg",
-    "basis": "physical: c10 'slowly lowering back to the ground': lowered on the bench-edge pivot (c9) until the first of the 45 cm plates and the buttock reaches the floor (the plates first): solved -37.82 deg"
+    "basis": "physical: c10 'slowly lowering back to the ground', c1 'Sit on the floor': lowered on the bench-edge pivot (c9), the padded bar resting in the drawn hip crease (c3, #306 6358957999 item 1), until the first of the 45 cm plates, the seat and the buttock reaches the floor (the seat first; the plates stay 11.4 cm up): solved -29.69 deg"
    },
    "M_TILT": {
     "value": "solved",
     "unit": "deg",
-    "basis": "claim: c12 (Contreras) 'substitutes by arching the back' to lock the weight out: with the lumbar at M_ARCH, the bar at the top's height, the upper back on the edge (c9) and the feet planted: solved -83.44 deg"
+    "basis": "claim: c12 (Contreras) 'substitutes by arching the back' to lock the weight out: with the lumbar at M_ARCH, the bar at the top's height (resting in the drawn hip crease), the upper back on the edge (c9) and the feet planted: solved -82.94 deg"
    },
    "trace": {
     "value": "hip.r",
@@ -413,6 +413,11 @@
     "value": 0.03,
     "unit": "m",
     "basis": "claim: c1 (StrengthLog) 'Place your toes and the ball of your feet on the foot support': the platform runs 3 cm past the toe tip"
+   },
+   "SEAT_TOP": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "physical (supervisor ruling, PR #306 comment 6358957999 item 3): midway between the seat landmark and the drawn underside (the lowest torso or thigh outline point over the seat pad, 0.53 cm below the landmark), so each sits 0.26 cm from the pad top, inside A2's 0.5 cm seat contact and A15's 0.5 cm bearing; solves to 0.5331 m"
    },
    "SEAT_BACK": {
     "value": 0.28,
@@ -854,6 +859,16 @@
     "value": 12,
     "unit": "deg",
     "basis": "convention: hanging_leg_raise.mjs:69 (trunk -12 lumbar arch) for c5, c6 'arch your back', 'arching your lower back'"
+   },
+   "END_DEPTH": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "physical: the end pose's drawn underside (the lowest torso or thigh outline point over the seat pad's span) under the seat top, the seat contact the Mistake keeps; solves to 0.0045 m"
+   },
+   "M_LIFT": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "physical (supervisor ruling, PR #306 comment 6358957999 item 2): the Mistake's pelvis, tipped M_ARCH about the seat landmark, rolls on the seat pad: lifted until its drawn underside sits END_DEPTH into the seat, as in the end, so the arch is lumbar extension and the pelvis keeps its seat contact; solves to 0.0075 m"
    },
    "HANDLE": {
     "value": [

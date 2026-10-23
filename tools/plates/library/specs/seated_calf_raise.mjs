@@ -23,7 +23,9 @@
 // Pose map (identity): start = plate.start (the bottom), end = plate.end (the top); the Mistake against the end pose.
 // Geometry decisions (confirmed by the engine report `angles`, `checks` and the drawn-item tests):
 //  Hips: the hip-joint centres at z 0, trunk upright (tilt 0, trunk 0: c5, c13 "back straight"); the seat pad's top
-//   at the seat landmark (SEAT_TOP), so the pelvis rests on it in every pose.
+//   SEAT_TOP (solved): midway between the seat landmark and the drawn underside (the lowest torso or thigh outline
+//   point over the seat pad, 0.53 cm below the landmark), so the landmark and the drawn pelvis each sit 0.26 cm from
+//   the pad's top (A2's 0.5 cm contact, A15's 0.5 cm bearing) and the pelvis rests on it in every pose.
 //  Feet (c3): the balls on the platform's top face (plant ref 'ball'), each foot under its hip joint (hip-width), toes
 //   forward. Start: thigh level and shin vertical (knee 90, c1, c4) with the ankle START_DF dorsiflexed, which fixes
 //   the ball's place and, with PLAT_Y, the hip height. The ball never moves; every other pose turns the foot about it.
@@ -41,7 +43,7 @@
 // Unsourced numbers (SIZES below; lb8/sizes.json holds each with its basis): START_DF, END_PF, M_PART, PLAT_Y, PLAT_BACK,
 //  PLAT_FRONT, SEAT_BACK, SEAT_FRONT, SEAT_POST, TOWER_GAP, HANDLE_X, FLOOR_BACK, FLOOR_FRONT, TRACE_TRIM; the
 //  composer's CALF_MACHINE sizes; END_TOE, M_TOE and PIVOT_Y solved. The knee 90 and the vertical shin are c1's and c4's.
-import { WINTER, REF, RADII, normPose, resolve, fk, landmarks } from '../engine.mjs';
+import { WINTER, REF, RADII, normPose, resolve, fk, landmarks, bodyShapes } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
 import { calfMachine, calfLever, CALF_MACHINE, CALF_MACHINE_ITEMS } from '../eq/calfMachine.mjs';
 
@@ -109,11 +111,15 @@ const posed = d => { const p = legs(d), a = leverAt(solved(p).lm);
 const start = posed(-START_DF), end = posed(END_TOE), mistakePose = posed(M_TOE);
 const LS0 = solved(start).lm, LE = solved(end).lm, LM = solved({ ...end, ...mistakePose }).lm;
 
-const SEAT_TOP = LS0.seat[1];
+const SEAT_Z = [LS0.seat[2] - SEAT_BACK, LS0.seat[2] + SEAT_FRONT];
+const SIDE_CAM = { view: 'side', near: 'r', facing: 'right', pxm: 1, P: w => [w[2], w[1]] };
+const UNDER = Math.min(...bodyShapes(fk(solved(start).q, { height: H }), SIDE_CAM).filter(s => s.poly && /^(torso|thigh\.)/.test(s.key))
+  .flatMap(s => s.poly.filter(([z]) => z >= SEAT_Z[0] && z <= SEAT_Z[1]).map(([, y]) => y)));
+export const SEAT_TOP = (LS0.seat[1] + UNDER) / 2;
 const machine = {
   form: 'seated', pivot: PIVOT, arm: ARM, towerZ: TOWER_Z,
   platform: { top: PLAT_Y, z: [BALL[2] - PLAT_BACK, TOE_TIP + PLAT_FRONT], postZ: (BALL[2] + TOE_TIP) / 2 },
-  seat: { top: SEAT_TOP, z: [LS0.seat[2] - SEAT_BACK, LS0.seat[2] + SEAT_FRONT], postZ: LS0.seat[2] - SEAT_BACK + SEAT_POST },
+  seat: { top: SEAT_TOP, z: SEAT_Z, postZ: LS0.seat[2] - SEAT_BACK + SEAT_POST },
   floorZ: [LS0.seat[2] - SEAT_BACK, TOWER_Z + C.tubeT],
 };
 const PAD_END = calfLever({ pivot: PIVOT, arm: ARM, angle: leverAt(LE) }).pad;

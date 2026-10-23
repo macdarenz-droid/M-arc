@@ -2,7 +2,7 @@
 // census closest leg_press, closeness N: D-LIB18-CLONE; composer `legExtMachine`, single use, its own anchor: plan
 // 2.1:141, D-LIB18-COMPOSERS).
 // HELD (S2; D-LIB8-shrug, D-LIB18-SIZE): drawn card-true, measured, never enlarged or moved: the Mistake's largest tell
-//  deviation (the upper back, carried 5.2 cm off the pad by the 12 deg arch) measures 7.6 px at 146.29 px/m, under
+//  deviation (the upper back, carried off the pad by the 12 deg arch) measures 7.8 px at 146.29 px/m, under
 //  deviationMin 11.39 px; the Trace (the ankle) measures 75.9 px and passes.
 // View: side (card plate.view = census view). The knee at the pivot (c1), the roller on the lower shins (c2), the knee
 //  range from 90 to straight but not locked (c3, c7, c8), the back on the pad (c4) and the fault, the back arching off
@@ -36,13 +36,15 @@
 //   SOLVED so the roller touches the drawn shins, so the shins move the lever.
 //  End (c7 "straight but not locked", c8): the knee KNEE_END short of straight, so the shins sit KNEE_END below level
 //   (c7 BarBend "parallel with the ground").
-//  Mistake (c5, c6; hanging_leg_raise.mjs:69's lumbar arch): at the end the pelvis tips forward M_ARCH about its seat
-//   contact (it stays on the seat) and the lumbar extends M_ARCH (trunk -M_ARCH), so the thorax keeps its angle and is
-//   carried forward off the back pad; the hips flex M_ARCH more so the thighs stay level on the seat; the hands keep
-//   the handles. The faulty back contour (masked inside the solid end trunk) is a red dashed guide.
+//  Mistake (c5, c6; hanging_leg_raise.mjs:69's lumbar arch): at the end the pelvis tips forward M_ARCH and the lumbar
+//   extends M_ARCH (trunk -M_ARCH), so the thorax keeps its angle and is carried forward off the back pad; the hips
+//   flex M_ARCH more so the thighs stay level on the seat; the hands keep the handles. The rigid pelvis rolls on the
+//   seat (PR #306 6358957999 item 2): lifted M_LIFT (solved) so its drawn underside sits END_DEPTH (solved) into the
+//   seat pad, as in the end, never deeper; the seat landmark, behind the new contact, is held above the seat. The faulty
+//   back contour (masked inside the solid end trunk) is a red dashed guide.
 //  Every bisection throws on a bracket with no sign change (D-LIB9-CLONE b). They solve to: ROLL_OFF (the roller's
-//   offset from the start shank axis that rests it on the drawn shin) and, per pose, the lever angle that rests the
-//   roller on the drawn shins.
+//   offset from the start shank axis that rests it on the drawn shin), M_LIFT (the Mistake pelvis's lift onto its end
+//   seat contact) and, per pose, the lever angle that rests the roller on the drawn shins.
 // Labels: "Knee at pivot" meets the pivot boss's upper rear rim and "Knees unlocked" the end shin's top just ahead of the
 //  knee, both from the open space above the legs (the lever runs behind the near leg, so no leader meets it). "Back on
 //  pad" meets the upper back's pad contact (D-LIB18-BACKPAD) from above and behind, crossing the back pad once (the
@@ -53,9 +55,9 @@
 // Camera: fit (capped at the reference scale).
 // Unsourced numbers (SIZES below; the notes hold each with its basis): TILT, FOOT_CLEAR, ROLL_UP, KNEE_END, M_ARCH,
 //  HANDLE, PAD_LEN, PAD_BELOW, SEAT_BACK, SEAT_GAP, TOWER_GAP, STACK_GAP, CAM_R, BRACKET_AT, FLOOR_BACK,
-//  FLOOR_FRONT, TRACE_TRIM; the composer's LEG_EXT constants; SEAT_TOP, ROLL_OFF, ARM and the lever angles solved. The
+//  FLOOR_FRONT, TRACE_TRIM; the composer's LEG_EXT constants; SEAT_TOP, END_DEPTH, M_LIFT, ROLL_OFF, ARM and the lever angles solved. The
 //  knee 90 is c3's.
-import { WINTER, REF, RADII, landmarksOf, rootOnSeat } from '../engine.mjs';
+import { WINTER, REF, RADII, landmarksOf, rootOnSeat, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 import { add, mul, sub, perItem } from '../eq/parts.mjs';
 import { legExtMachine, legExtLever, LEG_EXT, LEG_EXT_ITEMS } from '../eq/legExtMachine.mjs';
 
@@ -92,9 +94,7 @@ const GRIP = s => [s * HANDLE[0], ROOT[1] + HANDLE[1], ROOT[2] + HANDLE[2]];    
 const hands = { l: { at: GRIP(1), pole: [1, 0.25, 0] }, r: { at: GRIP(-1), pole: [-1, 0.25, 0] } };   // elbows out to the sides (leg_press.mjs:69)
 const start = seated(SEAT_TOP, 90, { reach: hands });
 const end = seated(SEAT_TOP, KNEE_END, { reach: hands });
-// Mistake: the pelvis tips forward M_ARCH about its seat contact, the lumbar extends M_ARCH, the thighs stay level
-const mistakePose = { root: { at: rootOnSeat(SEAT, TILT + M_ARCH, H), tilt: TILT + M_ARCH }, trunk: -M_ARCH, hip: { flex: FLEX + M_ARCH } };
-const LS = L(start), LE = L(end), LM = L({ ...end, ...mistakePose });
+const LS = L(start), LE = L(end);
 
 // ---- the drawn shank outline (body.mjs limb(), radii RADII.shank; limbR copied from geom.mjs:69) ----
 const limbR = (rA, rM, rB, m) => t => t < m ? rA + (rM - rA) * Math.sin((t / m) * Math.PI / 2) : rM + (rB - rM) * (1 - Math.cos(((t - m) / (1 - m)) * Math.PI / 2));
@@ -141,6 +141,22 @@ const machine = {
   pivot: PIVOT, arm: ARM, pivotTo: [0, SEAT_TOP - C.seatT / 2, SEAT_FRONT - C.bracketT / 2],
   grip: yz(GRIP(-1)), gripTo: [0, SEAT_TOP - C.seatT / 2, GRIP(-1)[2]],
 };
+// ---- the Mistake (c5, c6; hanging_leg_raise.mjs:69): the pelvis tips forward M_ARCH and rolls on the seat pad, the
+// lumbar extends M_ARCH (trunk -M_ARCH), so the thorax keeps its angle and is carried off the back pad; the hips flex
+// M_ARCH more so the thighs stay level. The pelvis is rigid (body.mjs fk skin: the outline below .60 rides the pelvis),
+// so tipped about the seat landmark its drawn underside would sink 1.20 cm into the seat pad: it rolls instead, lifted
+// by M_LIFT (solved) until the drawn underside sits as deep on the seat as in the end (END_DEPTH), its seat contact
+// unchanged. The seat landmark, behind the new contact, rises off the seat by M_LIFT. ----
+const fkOf = p => { const b = { height: H }; return fk(resolve(normPose(p, b), b).q, b); };
+const SIDE_CAM = { view: 'side', near: 'r', facing: 'right', pxm: 1, P: w => [w[2], w[1]] };
+// the depth (m) of the drawn body under the seat top: the lowest torso or thigh outline point over the seat pad's span
+const seatDepth = p => SEAT_TOP - Math.min(...bodyShapes(fkOf(p), SIDE_CAM).filter(s => s.poly && /^(torso|thigh\.)/.test(s.key))
+  .flatMap(s => s.poly.filter(([z]) => z >= SEAT_REAR && z <= SEAT_FRONT).map(([, y]) => y)));
+export const END_DEPTH = seatDepth(end);
+const archAt = lift => ({ root: { at: add(rootOnSeat(SEAT, TILT + M_ARCH, H), [0, lift, 0]), tilt: TILT + M_ARCH }, trunk: -M_ARCH, hip: { flex: FLEX + M_ARCH } });
+export const M_LIFT = bisect(d => seatDepth({ ...end, ...archAt(d) }) - END_DEPTH, 0, 0.05, 'the lift that rolls the tipped pelvis onto its end seat contact');
+const mistakePose = archAt(M_LIFT);
+const LM = L({ ...end, ...mistakePose });
 // one solve per drawn pose: perItem calls the composer once per slot with the same landmarks object
 const memo = new WeakMap();
 const machineAt = (lm, ctx) => {
@@ -170,7 +186,7 @@ const rollerPlanes = lm => {
   return { across: { point: add(foot, mul(u, ROLL_UP)), normal: u }, along: { point: foot, normal: n } };
 };
 const RP0 = rollerPlanes(LS);
-export const LX = { SEAT_TOP, PIVOT, ARM, ROLL_OFF, PSI, LS, LE, LM, machine, leverAt, shinGap, shankAngle, liftOf, start, end, mistakePose, startPhantom, PAD_PLANE, SEAT_PLANE, rollerPlanes };
+export const LX = { SEAT_TOP, END_DEPTH, M_LIFT, PIVOT, ARM, ROLL_OFF, PSI, LS, LE, LM, machine, leverAt, shinGap, shankAngle, liftOf, start, end, mistakePose, startPhantom, PAD_PLANE, SEAT_PLANE, rollerPlanes };
 // The card's facts (lb8 DESIGN.md section 10; D-LIB18-FACTS): each contact bound by a check on its landmark and pose,
 // on the item it touches where one exists (seat, pad, roller); the wrists by the drawn point (the handle grips are
 // held by the grip landmark's own check).
@@ -187,7 +203,10 @@ export default {
   checks: [
     ...factChecks('start', start, ['wrist.l', 'wrist.r']),
     ...['grip.l', 'grip.r'].map(landmark => ({ landmark, at: GRIP(landmark.endsWith('l') ? 1 : -1), pose: 'all', tol: 0.5 })),   // c3: hands on the handles
-    { landmark: 'seat', plane: SEAT_PLANE, pose: 'all', tol: 0.5 },                                                            // c1: seated on the seat pad
+    ...['start', 'end'].map(pose => ({ landmark: 'seat', plane: SEAT_PLANE, pose, tol: 0.5 })),                                // c1: seated on the seat pad
+    // the Mistake's rolled pelvis: the seat landmark lies behind its contact, so it is held above the seat (its drawn
+    // underside's contact is held by the drawn-item tests: as deep as the end's, never past 0.5 cm)
+    { landmark: 'seat', above: SEAT_PLANE, pose: 'mistake', tol: 0.5 },
     ...['thighUnder.l', 'thighUnder.r', 'buttock'].map(landmark => ({ landmark, above: SEAT_PLANE, pose: 'all', tol: 0.5 })),    // never inside the seat
     // c4 "throughout": the upper back and the buttock on the back pad at the start and the end; never inside it
     ...['start', 'end'].flatMap(pose => ['backUpper', 'buttock'].map(landmark => ({ landmark, plane: PAD_PLANE, pose, tol: 0.5 }))),

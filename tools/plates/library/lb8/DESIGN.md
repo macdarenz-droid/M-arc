@@ -297,14 +297,14 @@ Each slice block follows the rules of sections 9-13 below (the tempo rule, the p
 
 - **Not facts**: c1, c2 "shoulder-width" / "hip width": a width the side view cannot show. c3 "positioned in the crease
   of the hip": the model has no hip-crease landmark (PANELS.md 7's kinds); held by a check-free drawn-item test (the bar
-  centre PAD_R off the pelvis's front outline at the hip joint's height, in every pose) and R10. c6 "your shins are
+  centre PAD_R clear of the drawn torso and thigh outlines at the visible crease, in every pose and ghost; bearing fix, #306 6358957999) and R10. c6 "your shins are
   vertical" and c8 "torso should be parallel to the ground", "a straight line from shoulders to knees": angles to the
   floor with no model joint (PANELS.md 7 maps none of them); held by drawn-item tests (the shin plumb ±1°, the shoulder,
   hip and knee level ±1 cm at the top). c24 "just wider than hip width": a width (GRIP_X). c23 the neck: the sources
   conflict (card notes), so the head is drawn in line. c4 "a pad or mat": an item, drawn (R10).
 - **Trace**: `hip.r` (c8 "Push the bar towards the ceiling by extending your hips"; the bar rides the pelvis and the
   engine traces landmarks only), trim [6, 8], the clone source's (leg_press.mjs:132; D-LIB18-TRIM). **measured
-  36.9 px** (28.2 px at the earlier [10, 12]): passes.
+  46.6 px** since the bearing fix (36.9 px before it; 28.2 px at the earlier [10, 12]): passes.
 - **Balance**: between the upper back on the bench edge and the heels (c2, c15): the centre of mass (body plus the
   bar's load at the crease) lies between the edge and the heels in every drawn pose (a two-contact base).
 - **Sizes**: lb8/sizes.json `hip_thrust` (PAD_R 0.045 m, GRIP_X 0.2 m, PLATE_D 0.45 m, SLEEVE_D 0.05 m, BENCH_W 0.29 m,
@@ -662,7 +662,7 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 
 | id | ruling | why (measured at the ruled sizes) | route |
 |---|---|---|---|
-| hip_thrust | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lumbar arch (hanging_leg_raise.mjs:69) measures 4.1 px < 11.39 px; the other two readings of c11-c13 give 6.2 and 7.2 px (section 8); the Trace passes (36.9 px at [6, 8]); the c1 fact "Sit on the floor" (seat, start; CARD FIELDS fix 5) is missed: the drawn bottom stops where the plates reach the floor, the seat 4.7 cm above it | LIB-ZOOM (#279) on main and extended to the arch, then 'LIB-18 resume' |
+| hip_thrust | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lumbar arch (hanging_leg_raise.mjs:69) measures 4.1 px < 11.39 px; the other two readings of c11-c13 give 6.2 and 7.2 px (section 8); the Trace passes (46.6 px at [6, 8]); since the bearing fix (#306 6358957999: the bar pad rests in the visible crease, the ghosts pivot on the bench edge) the seat lands first and the c1 fact "Sit on the floor" is met (0 cm); measured now: Mistake 4.16 px | LIB-ZOOM (#279) on main and extended to the arch, then 'LIB-18 resume' |
 | cable_kickback | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch measures 4.3 px < 11.39 px (the braced upper body holds the back still); the Trace passes (54.1 px) | LIB-ZOOM, as above |
 | seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°); the c1 fact "toes ... on the foot support" (CARD FIELDS fix 2) is missed at the drawn stretch: the toe 4.2 cm off the platform's top | the owner's route for S4 (D-LIB18-CALF), brought by the supervisor; LIB-ZOOM for S2 |
 | pendulum_squat | D-LIB8-shrug (D-LIB18-SIZE, S2) | the heel lift at 12° about the ball (leg_press.mjs:95) moves the heel 4.39 cm: 5.7 px < 11.39 px at 128.43 px/m; the Trace passes (29.5 px, knee.r, [6, 8]); S3 does not stop (back on pad and upright torso hold in every pose) | LIB-ZOOM, as above |
