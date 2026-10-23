@@ -48,22 +48,105 @@ describe('LIB-22 A11 (Do 6 a): the 12 cards and quotes are byte copies of the LB
   it('mountain_climbers (pilot A\'s plate) is not copied here', () => {
     expect(Object.keys(cardsSha.cards)).not.toContain('mountain_climbers');
   });
-  it('research/validate.mjs validateCardFile: no problem on the 12 research copies before the card keys (Do 6 b)', async () => {
+  /** A11 after Do 6 b: no problem for a card with plateFacts and tempo (or with no keys: wall_ball, D-LIB22-WALL);
+   *  exactly the :216 problem for a card with one of the two (the NOSECS cards; jumping_jacks, which has no fact). */
+  const PAIR = 'plateFacts and tempo go in together or not at all';
+  const valProblems = (v: any, id: string, dir?: string) => {
+    const got = v.validateCardFile(`${id}.json`, dir), c = dir ? JSON.parse(readFileSync(join(dir, `docs/research/howto/cards/${id}.json`), 'utf8')) : cardOf(id);
+    const want = ('plateFacts' in c) === ('tempo' in c) ? [] : [`cards/${id}.json: ${PAIR}`];
+    return JSON.stringify(got) === JSON.stringify(want) ? [] : [`${id}: ${JSON.stringify(got)}`];
+  };
+  it('research/validate.mjs validateCardFile: no problem with both keys or none; exactly the pair problem for a NOSECS card and jumping_jacks', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
-    for (const id of LB10) {
-      const c = cardOf(id);
-      if (!('plateFacts' in c)) expect(v.validateCardFile(`${id}.json`), id).toEqual([]);
-    }
+    for (const id of LB10) expect(valProblems(v, id), id).toEqual([]);
+    for (const id of [...NOSECS.filter(i => i !== 'wall_ball'), 'jumping_jacks']) expect(v.validateCardFile(`${id}.json`), id).toEqual([`cards/${id}.json: ${PAIR}`]);
   });
-  it('A11 mutation: a tempo key added to a NOSECS card without plateFacts is red in validateCardFile', async () => {
+  it('A11 mutations: plateFacts removed from kettlebell_swing, and a bad fact claim on sled_push, are red in validateCardFile', async () => {
     const v = await import(/* @vite-ignore */ lib('research/validate.mjs'));
     const dir = mkdtempSync(join(tmpdir(), 'lb10-val-'));
     try {
       for (const d of ['cards', 'quotes']) cpSync(`docs/research/howto/${d}`, join(dir, 'docs/research/howto', d), { recursive: true });
-      const p = join(dir, 'docs/research/howto/cards/sled_push.json'), c = JSON.parse(readFileSync(p, 'utf8'));
-      c.tempo = [{ phase: 'Push', s: 1, move: true }]; writeFileSync(p, JSON.stringify(c, null, 2));
-      expect(v.validateCardFile('sled_push.json', dir)).toContain('cards/sled_push.json: plateFacts and tempo go in together or not at all');
+      const edit = (id: string, f: (c: any) => void) => { const p = join(dir, `docs/research/howto/cards/${id}.json`), c = JSON.parse(readFileSync(p, 'utf8')); f(c); writeFileSync(p, JSON.stringify(c, null, 2)); };
+      edit('kettlebell_swing', c => { delete c.plateFacts; });
+      expect(v.validateCardFile('kettlebell_swing.json', dir)).toContain(`cards/kettlebell_swing.json: ${PAIR}`);
+      edit('sled_push', c => { c.plateFacts[0].claim = 'c99'; });
+      expect(v.validateCardFile('sled_push.json', dir).join()).toContain('unknown claim c99');
     } finally { rmSync(dir, { recursive: true, force: true }); }
+  });
+});
+
+describe('LIB-22 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled maps (#305 6355155831)', () => {
+  const cardOf = (id: string) => readJson(`docs/research/howto/cards/${id}.json`);
+  const t = readJson('tools/plates/library/lb10/tempo.json');
+  // The ruled facts plan (DESIGN.md section 10; Q4): [landmark, spec pose, card pose, claim]. burpee through the pose map.
+  const F = (lm: string, pose: string, claim: string, cardPose = pose) => [lm, pose, cardPose, claim];
+  const both = (p: string, pose: string, claim: string, cardPose = pose) => [F(`${p}.l`, pose, claim, cardPose), F(`${p}.r`, pose, claim, cardPose)];
+  const FACTS: Record<string, any[] | null> = {
+    kettlebell_swing: both('wrist', 'start', 'c2'),
+    medicine_ball_slam: [...both('wrist', 'start', 'c15'), ...both('toe', 'start', 'c2')],
+    sled_push: [...both('wrist', 'start', 'c1'), ...both('ball', 'start', 'c8'), ...both('ball', 'end', 'c8')],
+    jump_rope: both('wrist', 'start', 'c2'),
+    sled_pull: [...both('wrist', 'start', 'c1'), F('sole.r', 'end', 'c3')],
+    farmer_s_carry: both('wrist', 'start', 'c3'),
+    burpee: both('wrist', 'start', 'c2', 'end'),
+    high_knees: [F('ball.l', 'end', 'c4')],
+    battle_ropes: both('wrist', 'start', 'c1'),
+    bear_crawl: both('wrist', 'start', 'c3'),
+    jumping_jacks: null,
+  };
+  // The ruled fault→key map (DESIGN.md section 8; Q3): drawable-false ids carry the F7 key, never the drawn one.
+  const TOP: Record<string, [string, string]> = {
+    kettlebell_swing: ['lean', 'lean'], medicine_ball_slam: ['soft', 'arms'], sled_push: ['round', 'round'], jump_rope: ['high', 'high'],
+    sled_pull: ['lean', 'lean'], farmer_s_carry: ['rush', 'long'], burpee: ['rush', 'landing'], high_knees: ['arch', 'arch'],
+    battle_ropes: ['shrug', 'shrug'], bear_crawl: ['hips', 'hips'], jumping_jacks: ['jerky', 'toes'],
+  };
+  const tempoOf = (id: string) => (t.rows[id] ? t.rows[id].map((r: any) => ({ phase: r.phase, s: r.from ? cardOf(id).plate.tempo[r.from] : r.constant, ...(r.move ? { move: true } : {}) })) : undefined);
+  const keyProblems = (id: string, c: any) => {
+    const out: string[] = [], facts = FACTS[id];
+    const want = facts ? facts.map(([landmark, pose, cardPose, claim]) => ({ kind: 'contact', landmark, pose, cardPose, claim })) : undefined;
+    if (JSON.stringify(c.plateFacts) !== JSON.stringify(want)) out.push(`${id}: plateFacts ${JSON.stringify(c.plateFacts)}`);
+    if (JSON.stringify(c.tempo) !== JSON.stringify(tempoOf(id))) out.push(`${id}: tempo ${JSON.stringify(c.tempo)}`);
+    if (c.topFault !== TOP[id]![0]) out.push(`${id}: topFault ${c.topFault}`);
+    if (NOSECS.includes(id) && 'tempo' in c) out.push(`${id}: NOSECS with tempo`);
+    const known = new Set(c.claims.map((x: any) => x.id));
+    for (const f of c.plateFacts ?? []) if (!known.has(f.claim)) out.push(`${id}: fact claim ${f.claim} unknown`);
+    return out;
+  };
+  it('the 11 cards carry the ruled facts, tempo and topFault; wall_ball carries none (D-LIB22-WALL)', () => {
+    for (const id of Object.keys(TOP)) expect(keyProblems(id, cardOf(id)), id).toEqual([]);
+    const w = cardOf('wall_ball'); for (const k of ['plateFacts', 'tempo', 'topFault']) expect(k in w, k).toBe(false);
+  });
+  it('each fact\'s pose is the pose map\'s image of its card pose: identity for 10, burpee start ↔ plate.end', () => {
+    for (const id of Object.keys(TOP)) for (const f of cardOf(id).plateFacts ?? []) {
+      const mapped = t.poseMap[id] ? (t.poseMap[id][f.pose] === `plate.${f.cardPose}`) : f.pose === f.cardPose;
+      expect(mapped, `${id} ${f.landmark}`).toBe(true);
+    }
+  });
+  it('drawable-true: topFault is the drawn spec\'s first tell key; drawable-false: it differs from it (F7 stays raised)', () => {
+    for (const id of specsDrawn()) {
+      const [top, drawn] = TOP[id]!, first = S[id].mistake.tells[0].key;
+      expect(first, id).toBe(drawn);
+      expect(top === first, id).toBe(top === drawn);
+    }
+  });
+  it('every fact on a drawn spec has a rendered check in its pose within qa/node.mjs LIMITS.cm (H6\'s own rule)', async () => {
+    for (const id of specsDrawn()) {
+      const rep = plate.renderPlate(S[id], { id: 'x' }).report;
+      for (const f of cardOf(id).plateFacts ?? []) {
+        const hits = rep.checks.filter((k: any) => k.landmark === f.landmark && k.pose === f.pose && k.cm != null);
+        expect(hits.length > 0 && hits.every((k: any) => k.cm <= qaNode.LIMITS.cm), `${id} ${f.landmark} ${f.pose}: ${JSON.stringify(hits)}`).toBe(true);
+      }
+      await yieldNow();
+    }
+  });
+  it('mutations: a topFault set to the drawn key on medicine_ball_slam, a fact moved to the end, a tempo second changed, a Rest added to jumping_jacks are red', () => {
+    const m = cardOf('medicine_ball_slam');
+    expect(keyProblems('medicine_ball_slam', { ...m, topFault: 'arms' }).length).toBe(1);
+    expect(keyProblems('medicine_ball_slam', { ...m, plateFacts: m.plateFacts.map((f: any, i: number) => (i ? f : { ...f, pose: 'end', cardPose: 'end' })) }).length).toBe(1);
+    const k = cardOf('kettlebell_swing');
+    expect(keyProblems('kettlebell_swing', { ...k, tempo: [{ ...k.tempo[0], s: 2 }, k.tempo[1]] }).length).toBe(1);
+    const j = cardOf('jumping_jacks');
+    expect(keyProblems('jumping_jacks', { ...j, tempo: [...j.tempo, { phase: 'Rest', s: 30 }] }).length).toBe(1);
   });
 });
 

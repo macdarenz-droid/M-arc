@@ -265,7 +265,27 @@ each drawable-false card's handlingMistakes[0] is speed or a sign the plate cann
 
 ## 9. Card keys
 
-Written after 'LB10 NOTE RULED' (Do 6 b), from the ruled sections 7, 8 and 10.
+Written after 'LB10 NOTE RULED' (Do 6 b), from the ruled sections 7, 8 and 10, on 11 cards (wall_ball gets its keys
+after it is drawn, D-LIB22-WALL). Each key is inserted at the end of the card's own bytes, in the file's own indent;
+cards.sha.json keeps each card's sha256 without them.
+
+| id | plateFacts (landmark pose/cardPose claim) | tempo | topFault |
+|---|---|---|---|
+| kettlebell_swing | wrist.l, wrist.r start c2 | Drive 1 (move), Swing down 1 (move): plate.tempo up, down | `lean` |
+| medicine_ball_slam | wrist.l, wrist.r start c15; toe.l, toe.r start c2 | none (NOSECS) | `soft` (F7) |
+| sled_push | wrist.l, wrist.r start c1; ball.l, ball.r start c8; ball.l, ball.r end c8 | none (NOSECS) | `round` |
+| jump_rope | wrist.l, wrist.r start c2 | Work 30 (move), Rest 60: c16 | `high` |
+| sled_pull | wrist.l, wrist.r start c1; sole.r end c3 | none (NOSECS) | `lean` |
+| farmer_s_carry | wrist.l, wrist.r start c3 | none (NOSECS) | `rush` (F7) |
+| burpee | wrist.l, wrist.r start / card end c2 (pose map) | none (NOSECS) | `rush` (F7) |
+| high_knees | ball.l end c4 | Work 30 (move), Rest 30: c8 | `arch` |
+| battle_ropes | wrist.l, wrist.r start c1 | Work 30 (move), Rest 30: c9 | `shrug` |
+| bear_crawl | wrist.l, wrist.r start c3 | Work "15–30" (move): c10 | `hips` |
+| jumping_jacks | none (no stated contact; no `[]`, lib4-cards :2316) | Work "30–60" (move): c9 | `jerky` (F7) |
+
+validateCardFile gives no problem for the five cards with both plateFacts and tempo, and exactly the :216 problem
+("plateFacts and tempo go in together or not at all") for the five NOSECS cards (plateFacts, no tempo, as LB4's do)
+and for jumping_jacks (tempo, no plateFacts; asked on #305).
 
 ## 10. Facts plan (D-LIB8M-FACTS, 22's scope, D-LIB13-FACTS2, D-LIB22-FACTS, -SIDES)
 

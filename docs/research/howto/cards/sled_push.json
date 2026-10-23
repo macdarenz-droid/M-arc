@@ -796,5 +796,50 @@
   "The finish (c18) and the hand-height choice (c2) are research data, not shown lines.",
   "Read but not cited: Muscle & Fitness's sled-push page (one paragraph of steps, nothing the cited pages do not cover). 404 on 2026-10-22: garagegymreviews.com/sled-push, row.gymshark.com/blog/article/how-to-sled-push, menshealth.com sled-push, healthline.com sled-push, blog.nasm.org/sled-push, puregym.com sled-push, motra.com/exercises/sled-push, hevyapp.com, hyrox.com/sled-push, womenshealthmag.com; Verywell Fit 402.",
   "LB10 fix round 2026-10-22 (lb10-research-verify, R-LB10-10): sled_push-1: setup[1] and zooms[2].right keep 'about'."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c8"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c8"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.l",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c8"
+  },
+  {
+   "kind": "contact",
+   "landmark": "ball.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c8"
+  }
+ ],
+ "topFault": "round"
 }

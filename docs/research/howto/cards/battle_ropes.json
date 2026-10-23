@@ -595,5 +595,33 @@
     "LB10 LR-31/LR-33 pass 2026-10-22: rankNote rewritten to LR-31 (step 2, pick unchanged: the shoulder blades lifting or hunching, c6; drawable true). Tempo stays null/null/null (LR-33; no pause quote). Shown-line fixes under CARD-V2:68: plate.mistake.what and handlingMistakes[0] drop \"toward the ears\" and \"creep\" (no quote), handlingMistakes[1].fix and setup[2] use the quotes' words (\"increase your breathing\", \"engage your core\"), feel.rows[0].means, rows[2].means and rows[3] (where \"Neck\": no quote names the tops of the shoulders) follow their claims, risks[0] and zooms[1].wrong follow c6. F-LB7-2 / R-LB7-7: feel.rows[0].where \"Front of the shoulders\" is kept, because c10 now quotes Calatayud's methods sentence naming the \"anterior deltoid (AD)\"; c10 also gains the abstract's \"moderate to high levels\" line. c6 and c13 texts trimmed to their quotes. Three hl-br quotes (c6, c8 x2) now carry the page's ’ (R-LB4-5). core stays in feel.secondary for LIB-MUSCLE (LR-35, R-LB7-8). shared/implement-battle-ropes.json (appliesTo battle_ropes) holds the hand rules (palms facing, about 10 cm from the end, firm but relaxed); none of its lines is copied here, and the card's grip stays the handshake grip of c4 and c14.",
     "LB10 after the fetcher (2026-10-22): quote `where` fields follow the pages' headings (c8 \"5 battle rope exercises to try\"; ace-br-emg \"The Study\", \"The Results\", \"The Bottom Line\"; ace-br-total \"Grace of the Wave\", \"Grips\"). ace-br-emg year: the page shows no date; its HTML meta dates are 2020-02-07 and 2020-03-14, so year is 2020 (was 2019). ace-br-total: the served page dates it April 28, 2015 (year 2015), and it serves no exercise list under \"The Workout\" (access summary); c3 and c14 sit in the text it does serve.",
     "LB10 fix round 2026-10-22: battle_ropes-1: feel.rows[2].means \"Your grip works hard in every rope exercise tested.\" (c11)."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Work",
+      "s": 30,
+      "move": true
+    },
+    {
+      "phase": "Rest",
+      "s": 30
+    }
+  ],
+  "topFault": "shrug"
 }

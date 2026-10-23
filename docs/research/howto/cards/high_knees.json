@@ -520,5 +520,26 @@
     "Writer fix 2026-10-02: risk 2 \"forgiving floor\" changed to \"supportive floor\" to match c10; quote re-read in hl-hk.",
     "Fix round 2026-10-02 (verify w0): A15 c7 gains the \"some rotation is OK\" sentence and the mistake says the turn-out grows; A16 risk reworded to people with knee or ankle issues; A17 knee height is \"hip height or a little above\".",
     "LR-31/LR-33 pass 2026-10-22 (LB10): rankNote rewritten under LR-31 (step 3), pick and drawable unchanged; plate.mistake.why names the step; tempo.text names LR-33 and BarBend's paused variations (values unchanged, null). Quote characters: c5, c6, c7 and c10 now carry ’ as the live pages print it (R-LB4-5), in the card and the quotes file. Shown-line fixes (CARD-V2:68): feel.rows[2].where \"Belly\" -> \"Trunk\" (c12's \"through your trunk\"); feel.rows[0].means \"lift\" -> \"pull ... up\" (c11's \"pull your thigh\"); handlingMistakes[1] \"Knee height drops as you tire.\" -> \"Knee height slowly drops.\" (c6's \"slow drop off\"). core stays in feel.secondary for LIB-MUSCLE (LR-35; brief). ACE's drill page (ace-cardio15, c2) gave HTTP 403 to the writer's curl on 2026-10-22 but answered 200 to the fetcher on retry the same day; its quote is verbatim. High knees is a child of jumping_jacks in content.md Appendix A but stays a full card: parent null, no inherit entries, every line on its own claims."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Work",
+      "s": 30,
+      "move": true
+    },
+    {
+      "phase": "Rest",
+      "s": 30
+    }
+  ],
+  "topFault": "arch"
 }

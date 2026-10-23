@@ -1155,5 +1155,34 @@
     "LR-31 reading recorded (rankNote; D-SUP-LB10-FLAT corrected, R-LB10-4): overextension (leaning back) at the top is tied to harm by 4 sources (BarBend, Nike, Garage Gym Reviews c13 and c15, Muscle & Fitness) and rounding by 3 (Nike, Garage Gym Reviews, Muscle & Fitness), so overextension is the top fault and plate.mistake; drawable true.",
     "LR-31 step 1 (#296 ruling 3, comment 6343484589): Nike's \"Many beginners get confused about the differences between hip hinges and squat movement patterns.\" is set aside; it names confusion between two patterns, not a fault made in the swing.",
     "Read and not cited: Levine et al. 2025 (PMID 37126368, abstract) on fatigue in a 30 s on / 30 s off swing protocol. Tried and not usable: barbend.com/kettlebell-swing/, garagegymreviews.com/kettlebell-swing, healthline, nasm blog, menshealth (404); verywellfit (402); fitnessvolt.com/kettlebell-swing/ returned an image; the ACE library id tried redirected to the index."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Drive",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Swing down",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "lean"
 }
