@@ -612,6 +612,35 @@ const a = await b.buildLb8Page(), c = await b.buildLb8Page(); console.log(JSON.s
   });
 });
 
+/** The named flags (review 6372571513): runQa, node and browser halves, on the held page in memory (`qa.mjs --held`), in
+ *  an awaited child process (D-LIB18-TESTS). Each named plate's raised flags equal the ruled set and its F2 equals the
+ *  posted value within 0.001. */
+describe('LIB-18 A4: the named flags on the held plates (F2: cable_kickback 0.645, glute_bridge 0.134, bodyweight_calf_raise 0.103; F3: cable_kickback 37.8 px)', { timeout: T }, () => {
+  let qaMod: any, reports: any[];
+  beforeAll(async () => {
+    qaMod = await import(/* @vite-ignore */ lib('lb8/qa.mjs'));
+    const script = `const q = await import(${JSON.stringify(lib('lb8/qa.mjs'))});
+const { reports } = await q.qaHeld(['lib_glute_bridge', 'lib_bodyweight_calf_raise', 'lib_cable_kickback']);
+process.stdout.write(JSON.stringify(reports.map(r => ({ id: r.id, flags: r.flags }))));`;
+    const { stdout } = await promisify(execFile)(process.execPath, ['--input-type=module', '-e', script], { maxBuffer: 1 << 26 });
+    reports = JSON.parse(stdout);
+  }, T);
+  it('each named plate raises exactly its ruled flags, with F2 at its posted value (±0.001)', () => {
+    expect(reports.map(r => r.id).sort()).toEqual(Object.keys(qaMod.F2_NAMED).sort());
+    for (const r of reports) console.log(`LIB-18 F2 ${r.id}: ${r.flags.F2.value} (named ${qaMod.F2_NAMED[r.id]})`);
+    expect(reports.find(r => r.id === 'lib_cable_kickback').flags.F3.value).toBeCloseTo(37.8, 1);   // D-LIB18-F3KICK
+    expect(qaMod.flagProblems(reports)).toEqual([]);
+  });
+  it('mutations: glute_bridge\'s F2 shifted by 0.002, cable_kickback with F2 not raised, and its F3 0.2 px longer, are red', () => {
+    const shifted = reports.map(r => (r.id === 'lib_glute_bridge' ? { ...r, flags: { ...r.flags, F2: { ...r.flags.F2, value: r.flags.F2.value + 0.002 } } } : r));
+    expect(qaMod.flagProblems(shifted)).toEqual([expect.stringMatching(/^lib_glute_bridge: F2 /)]);
+    const dropped = reports.map(r => (r.id === 'lib_cable_kickback' ? { ...r, flags: { ...r.flags, F2: { ...r.flags.F2, raised: false } } } : r));
+    expect(qaMod.flagProblems(dropped).some((p: string) => /^lib_cable_kickback: flags /.test(p))).toBe(true);
+    const longer = reports.map(r => (r.id === 'lib_cable_kickback' ? { ...r, flags: { ...r.flags, F3: { ...r.flags.F3, value: r.flags.F3.value + 0.2 } } } : r));
+    expect(qaMod.flagProblems(longer)).toEqual([expect.stringMatching(/^lib_cable_kickback: F3 /)]);
+  });
+});
+
 describe('LIB-18 A4: runQa node half on an LB8 plate (lib_hack_squat), LIB-3 M1-M7 and a colour literal', { timeout: T }, () => {
   const ID = 'lib_hack_squat', cg = () => S.hack_squat;
   let build: any, cand: any, muts: any, golden: any, mirror: any, E: any, all: any, html: string;
@@ -1318,7 +1347,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     });
     /** Lines a leader keeps 6 px from (away from its first 8 px): the Trace and every drawn equipment outline (pads, the
      *  plate, the rail, the frame, the stop, the handle and the start phantom). */
-    const NIT_PENDING = ['back', 'soft'];   // D-LIB15-NIT1 candidates: the start knee sits in a closed pocket (header; LB8 note); "Back on pad" ends on the sacrum at the pad (D-LIB18-BACKPAD)
+    const NITS_RULED = ['back', 'soft'];   // named nits (D-LIB15-NIT1), ruled: the start knee in a closed pocket (6355447835 Q4); "Back on pad" on the sacrum at the pad (D-LIB18-BACKPAD, 6357883031 item 1)
     const gaps = (spec: any) => {
       const out: { key: string, mistake: boolean, min: number }[] = [], cam = camOf(spec);
       for (const mistake of [false, true]) {
@@ -1336,7 +1365,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     it('no leader within 6 px of the Trace or any equipment, but the ruling-pending ones; the pending list is exactly the failing leaders', () => {
       const g = gaps(s());
       for (const x of g) console.log(`LIB-18 hack_squat leader ${x.mistake ? 'mistake' : 'normal'} ${x.key}: ${x.min.toFixed(1)} px from the nearest Trace or equipment line`);
-      expect(g.filter(x => x.min < 6).map(x => x.key).sort()).toEqual([...NIT_PENDING].sort());
+      expect(g.filter(x => x.min < 6).map(x => x.key).sort()).toEqual([...NITS_RULED].sort());
     });
     it('mutation: the "Thighs to parallel" box moved under the plate (its leader across the plate edge) is red', () => {
       const bad = { ...s(), callouts: s().callouts.map((x: any) => (x.key === 'parallel' ? { ...x, box: { left: 200, top: 318 } } : x)) };
@@ -3895,7 +3924,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
       });
       return out;
     };
-    // Named-nit candidate (ruling pending): the knee is boxed in by the ghosts' knees above it and their shanks below it;
+    // Named nit (ruled, 6357883031 item 3): the knee is boxed in by the ghosts' knees above it and their shanks below it;
     // every point on the end knee's outline whose leader can reach a box crosses ghost0's knee tip within 6 px of the
     // anchor (scan in notes.md). "Knees over toes" touches it from 4.1 to 5.9 px; past 6 px no leader enters anything.
     it('no leader enters the start figure or a ghost (past 6 px; past 4 px only the named "Knees over toes" touch), or crosses the start phantom', () => {
@@ -4308,7 +4337,7 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
       }
       expect(out).toEqual([]);
     });
-    it(`each named item clears the body or touches it within ${TOL_CM} cm, in every pose, via and ghost, but the recorded misses (depths logged)`, async () => {
+    it(`each named item clears the body or touches it within ${TOL_CM} cm, in every pose, via and ghost (depths logged)`, async () => {
       const out: string[] = [];
       for (const id of specsDrawn()) {
         await tick();

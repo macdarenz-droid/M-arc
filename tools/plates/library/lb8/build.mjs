@@ -82,7 +82,7 @@ export async function buildHeldPage(root = ROOT, only = null) {
   const data = heldData(root, only), withSources = lb8Data(root, data), ids = Object.keys(data.rows);
   const all = rows(root, { batches: [...batchFiles(root).map(p => [p, read(root, p)]), ['tools/plates/library/lb8/held (memory)', withSources]] });
   const { html } = await buildPlatesPage(await groupsConfig({ groups: [{ id: 'lb8-held', title: 'LB8 held', ids }] }, all, 'tools/plates/library/lb8/held (memory)'));
-  return { html, data, ids };
+  return { html, data, ids, all };
 }
 
 const main = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];

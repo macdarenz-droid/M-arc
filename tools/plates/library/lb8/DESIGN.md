@@ -145,6 +145,9 @@ LB1's anchors is pinned on main yet.
 - **No F1** (D-LIB18-CALF): every plate is drawn at a scale inside 123.9-146.3 px/m (the reference 146.29 or `fit`
   capped there). A fault too small at that scale is held (section 15), never zoomed here.
 - **No F6**: all 12 cards' plate.view is side, equal to the census view.
+- **Named flags** (pinned in lb8/qa.mjs and its in-memory test on the held page): F2 on cable_kickback 0.645 (6355447835
+  Q7), glute_bridge 0.134 and bodyweight_calf_raise 0.103 (6357883031 items 2d, 4); F3 on cable_kickback, longest
+  leader 37.8 px (D-LIB18-F3KICK, 6372672239).
 - **Before Do 6 b** every drawn id also shows `H6:no-card` and F7 'no card top fault' (qa/node.mjs:360). Expected.
 - F2 (coverage), F3 (longest leader) and F4 (boxed labels) are measured by authoring QA and posted with the slice; any
   raised flag outside this set is posted with its value and range and ruled before READY, never dodged.
