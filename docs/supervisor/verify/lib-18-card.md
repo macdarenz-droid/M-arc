@@ -1,4 +1,4 @@
-Card LIB-18: LB8 plates, build-ahead, H slice only, 12 ids (2026-10-23; status `blocked`; rulings D-LIB18-* recorded below). LB8's thirteenth row, seated_leg_curl, is pilot B's plate (pB) and is not in this card (section "LB8 ids"). The ship phase (layers, pin, button) is a later card.
+Card LIB-18: LB8 plates, build-ahead, H slice only, 12 ids (2026-10-23; status `ready`; rulings D-LIB18-* recorded below). LB8's thirteenth row, seated_leg_curl, is pilot B's plate (pB) and is not in this card (section "LB8 ids"). The ship phase (layers, pin, button) is a later card.
 
 Status: ready (supervisor, 2026-10-23 00:3x UTC). The lane slot is free: LIB-15 is at READY and LIB-8M waits on the owner, so neither holds a slot; active LIB builders are LIB-16, LIB-17 and LIB-18 (3 of 4; D-LIB-LANE-ACTIVE).
 
