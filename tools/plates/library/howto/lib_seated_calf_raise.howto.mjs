@@ -1,0 +1,2 @@
+// LIB-18 (LB8 build-ahead): the How-to source of lib_seated_calf_raise: its id and research card only (D-LIB9a-HOWTOID); the ship card writes the layer copy later.
+export default { id: 'lib_seated_calf_raise', research: { card: 'docs/research/howto/cards/seated_calf_raise.json' } };
