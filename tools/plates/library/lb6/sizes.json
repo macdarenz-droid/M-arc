@@ -1,0 +1,342 @@
+{
+ "rule": "D-LIB16-SIZE (lib-16-card ruling 9): every number a card does not give, each Mistake's magnitude included, fixed here before PQ-H3 is measured, each with its basis: a claim id, an approved plate's value (file:line on main 5158609c) used as a convention, or a stated physical reason. PQ-H3 is never a basis. A spec's exported SIZES table equals its row here (A17); a composer's exported constants equal theirs. Rows for ids not drawn yet are the note's proposals, ruled with 'LB6 NOTE RULED'.",
+ "ids": {
+  "cable_chest_press": {
+   "FEET_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:31 (the 8), feet hip width"
+   },
+   "STAGGER": {
+    "value": 0.53,
+    "unit": "m",
+    "basis": "stated reason: c2 'one foot in front of the other': mid-soles two foot lengths (2 x 0.152 H) apart, the front heel about a foot length ahead of the rear toe"
+   },
+   "ROOT_DROP": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: the hips 6 cm below standing hip height, so both legs reach the floor in the stagger with soft knees (about 23 deg); the hips sit over the middle of the two ankles"
+   },
+   "GRIP_DY": {
+    "value": 0.128,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:41 (the 8), the handle at the nipple line 12.8 cm below the shoulder joint centre (c4)"
+   },
+   "GRIP_DX": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "claim: c3 'just outside shoulder width': 3 cm outside each shoulder joint"
+   },
+   "START_FLEX": {
+    "value": 91,
+    "unit": "deg",
+    "basis": "claim: c3 'Keep the elbows just below 90 degrees': 89 deg inside, flexion 91 (D-LIB16-CCP-START, #297 6343632260)"
+   },
+   "END_FLEX": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention (D-LIB16-LOCK): machine_chest_press.mjs:45 (the 8), elbows 18 deg short of straight for 'fully extended, but not locked' (c5 'almost locked')"
+   },
+   "M_FLEX": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "claim: c17, c5 the elbows locked straight"
+   },
+   "COLUMN_BACK": {
+    "value": 0.46,
+    "unit": "m",
+    "basis": "claim: c1 'a foot or two in front of the cables': the midpoint, from the rear heel to the column's pulley line"
+   },
+   "HANDLE_GRIP": {
+    "value": 0.13,
+    "unit": "m",
+    "basis": "convention: the vendor dumbbell handle 13 cm (equipment.mjs:30)"
+   },
+   "HANDLE_R": {
+    "value": 0.008,
+    "unit": "m",
+    "basis": "stated reason: the grip bar 1.6 cm thick, half the vendor chestPress grip's 3.2 cm (equipment.mjs:248), so the fist reads around it"
+   },
+   "HANDLE_STRAP": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the single handle's strap reaches 10 cm from the grip to the cable ring"
+   },
+   "FLOOR_BACK": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "stated reason: the floor line runs 25 cm behind the column (layout)"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "stated reason: the floor line runs 25 cm past the locked handle (layout)"
+   }
+  },
+  "machine_crunch": {
+   "SEAT_TOP": {
+    "value": 0.46,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:28 (the 8), seat pad top 46 cm"
+   },
+   "SEAT_Z": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:140 (the 8), the seat pad centred 10 cm in front of the buttock contact"
+   },
+   "FEET_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:31 (the 8), feet hip width"
+   },
+   "FEET_Z": {
+    "value": 0.47,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:31 (the 8), feet flat with the knees about 90 deg"
+   },
+   "GRIP_X": {
+    "value": 0.22,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:32 (the 8), handles 44 cm apart"
+   },
+   "GRIP_FWD": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason: the drawing note's handles by the shoulders (c3, D-LIB16-VLINE); 20 cm in front of the shoulder joint keeps the hand clear of the face with the elbow bent about 140 deg (the bent-arm rule, about 150 deg or less, #289 6341498444 item 2)"
+   },
+   "GRIP_UP": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "stated reason: as GRIP_FWD; the hand just above the shoulder joint, by the shoulder"
+   },
+   "CURL": {
+    "value": 40,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:54 (the 8), its top pose curls the trunk 40 deg against the pelvis (pelvis tilt -25 and lumbar 15); drawn here at the engine's one lumbar pivot with the pelvis held on the seat (c2 hips back, c4 ribs toward the pelvis)"
+   },
+   "ROLLER_T": {
+    "value": 0.62,
+    "unit": "fraction knee-to-ankle",
+    "basis": "stated reason: the roller on the lower shin (c2), clear of the ankle and the foot"
+   },
+   "PAD_LEN": {
+    "value": 0.62,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:141 (the 8), back pad 62 cm"
+   },
+   "PAD_BELOW": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "stated reason: the back pad reaches 8 cm below the buttock contact, down to the seat pad"
+   },
+   "FRAME_BACK": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: the upright 15 cm behind the pad face, clear of the 7 cm pad"
+   },
+   "BEAM_OUT": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the floor beam runs 10 cm past the upright and the roller post"
+   },
+   "FLOOR_BACK": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason: the floor line runs 20 cm behind the upright (layout)"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.3,
+    "unit": "m",
+    "basis": "stated reason: the floor line runs 30 cm past the feet (layout)"
+   },
+   "M_TRUNK": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "claim: c14 as the card reads it (notes; plate.mistake.why): the trunk stays upright, the start's 0 deg"
+   },
+   "M_ARM": {
+    "value": 40,
+    "unit": "deg",
+    "basis": "stated reason: the movement arm at the end's angle (CURL), the same stack travel as the correct rep; only who does the pull changes (c14)"
+   }
+  },
+  "machine_pullover": {
+   "SEAT_TOP": {
+    "value": 0.46,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:28 (the 8), seat pad top 46 cm"
+   },
+   "SEAT_Z": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:140 (the 8), the seat pad centred 10 cm in front of the buttock contact"
+   },
+   "FEET_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:31 (the 8), feet hip width"
+   },
+   "FEET_Z": {
+    "value": 0.47,
+    "unit": "m",
+    "basis": "convention: machine_chest_press.mjs:31 (the 8), feet flat, knees about 90 deg (c3 takes the feet off the bar)"
+   },
+   "PIVOT_UP": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "claim: c1 'shoulders are slightly below the axis of rotation': the pivot 3 cm above the shoulder joint centre"
+   },
+   "ELBOW_FLEX": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "stated reason: the forearm square to the upper arm, so the backs of the upper arms rest on the pads and the open hands on the bar (c3, c6); inside the bent-arm rule (150 deg or less, #289 6341498444 item 2)"
+   },
+   "BAR_BEHIND": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "claim: c3 'position movement arm near or slightly behind the head': the bar 3 cm behind the back of the head"
+   },
+   "BAR_OVER_BELT": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "claim: c4 'Hold the bar in tight to the seat belt': the bar 3 cm above the belt's top"
+   },
+   "BELT_T": {
+    "value": 0.25,
+    "unit": "fraction hip-to-knee",
+    "basis": "stated reason: the belt across the lap, a quarter of the way from the hip to the knee (c2 'Secure seat belt')"
+   },
+   "PAD_LEN": {
+    "value": 1.0,
+    "unit": "m",
+    "basis": "stated reason: the back pad runs from the seat to above the head, so the torso and head rest on it (c7)"
+   },
+   "PAD_BELOW": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "stated reason: the back pad reaches 8 cm below the buttock contact, down to the seat pad"
+   },
+   "FRAME_BACK": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: the upright 15 cm behind the pad face, clear of the 7 cm pad"
+   },
+   "FOOT_BAR_UP": {
+    "value": 0.3,
+    "unit": "m",
+    "basis": "stated reason: the foot bar 30 cm above the ankle, in front of the shins, where the feet push it (c3) and rest off it in the drawn poses"
+   },
+   "FOOT_BAR_FWD": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the foot bar 10 cm in front of the knee and ankle line"
+   },
+   "BEAM_OUT": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: the floor beam runs 10 cm past the upright and the foot bar post"
+   },
+   "FLOOR_BACK": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason: the floor line runs 20 cm behind the upright (layout)"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.3,
+    "unit": "m",
+    "basis": "stated reason: the floor line runs 30 cm past the feet (layout)"
+   },
+   "M_ARCH": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (the 8), its Mistake arches the low back 12 deg (trunk -12): here the pelvis tips forward 12 deg and the lumbar spine extends 12 deg (c8)"
+   },
+   "M_NECK": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:54 (the 8), its neck bends 12 deg: here forward, so the head pulls off the pad (c8)"
+   }
+  }
+ },
+ "composers": {
+  "crunchMachine": {
+   "seatLen": {
+    "value": 0.4,
+    "unit": "m",
+    "basis": "convention: the vendor seat primitive's default pad (equipment.mjs:181)"
+   },
+   "padT": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "convention: the vendor seat and backPad pad thickness (equipment.mjs:181, :186)"
+   },
+   "tubeT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: eq/romanChair.mjs beamT (LB3, #274 a6f4bd07), 6 cm square tube"
+   },
+   "rollerR": {
+    "value": 0.055,
+    "unit": "m",
+    "basis": "convention: the vendor kneePad radius (equipment.mjs:204)"
+   },
+   "grip": {
+    "value": 0.14,
+    "unit": "m",
+    "basis": "convention: the vendor chestPress neutral grip (equipment.mjs:248)"
+   }
+  },
+  "pulloverMachine": {
+   "seatLen": {
+    "value": 0.4,
+    "unit": "m",
+    "basis": "convention: the vendor seat primitive's default pad (equipment.mjs:181)"
+   },
+   "padT": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "convention: the vendor seat and backPad pad thickness (equipment.mjs:181, :186)"
+   },
+   "tubeT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: eq/romanChair.mjs beamT (LB3, #274 a6f4bd07), 6 cm square tube"
+   },
+   "armT": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason: the movement arm a 5 cm tube, lighter than the frame"
+   },
+   "elbowPadLen": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason: the elbow pad 20 cm along the upper arm, so the elbow stays on it as the arm turns (c3)"
+   },
+   "barR": {
+    "value": 0.016,
+    "unit": "m",
+    "basis": "convention: the vendor chestPress grip, 3.2 cm (equipment.mjs:248)"
+   },
+   "beltW": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason: a 5 cm seat belt strap (c2)"
+   },
+   "beltT": {
+    "value": 0.015,
+    "unit": "m",
+    "basis": "stated reason: the belt strap 1.5 cm thick"
+   },
+   "footBarR": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: a 6 cm padded foot bar"
+   },
+   "hubR": {
+    "value": 0.045,
+    "unit": "m",
+    "basis": "convention: the vendor pulley radius (equipment.mjs:300)"
+   }
+  }
+ }
+}
