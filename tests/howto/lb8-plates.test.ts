@@ -8,7 +8,8 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { monitorEventLoopDelay } from 'node:perf_hooks';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 // D-LIB18-TESTS (VITEST-RPC; #299 6351689010, 6352726951): most tests here render plates synchronously, and vitest runs
 // back-to-back synchronous tests without returning to the event loop, so the worker cannot answer its RPC. One
@@ -16,6 +17,10 @@ import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 // awaited child process (A19 pins all three).
 afterEach(() => new Promise<void>(r => setImmediate(r)));
 const tick = () => new Promise<void>(r => setImmediate(r));
+// A19's recorded check: the longest event-loop block over the whole file, logged for each milestone post.
+const loopDelay = monitorEventLoopDelay({ resolution: 20 });
+loopDelay.enable();
+afterAll(() => { loopDelay.disable(); console.log(`LIB-18 A19: longest event-loop block ${(loopDelay.max / 1e9).toFixed(2)} s`); });
 
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
@@ -633,6 +638,7 @@ fs.writeFileSync(${JSON.stringify(out)}, h);`;
     let hit: any = null;
     for (const [dx, dy] of [[-1, 0], [0, -1], [0, 1], [1, 0]]) {
       for (let d = 1; d <= 120 && !hit; d++) {
+        await tick();   // one render per macrotask (D-LIB18-TESTS)
         const box = { left: c0.box.left + dx! * d, top: c0.box.top + dy! * d }, is = plate.renderPlate(at(box), { id: 'm' }).report.issues;
         if (is.some((i: string) => !i.startsWith(`figure:${c0.text}`))) break;
         if (is.length) hit = { box, clean: { left: box.left - dx!, top: box.top - dy! } };
