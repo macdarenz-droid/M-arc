@@ -1,0 +1,36 @@
+{
+ "note": "sha256 per LB1 card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised as JSON.stringify(card, null, 2) + \"\\n\" (the research files own form); and sha256 of each quotes file, a byte copy from the same head.",
+ "researchHead": "9eaa2480fea8f8f82a52ac2596c14d9a0da08ca5",
+ "cards": {
+  "chin_up": "7d5210b2c093a24b4dea4e4cf3d6a7309c7adea3e291d29edc94c2a73a46faad",
+  "hanging_knee_raise": "a57135e2ebf813856d14433bc1159ad38d08e417730504fcaf7097afc5f46e98",
+  "assisted_pull_up": "5068cce01034200f1e46dd64f0ac2ae0fca7f35094a7159e24510f2ed1676045",
+  "inverted_row": "de93da2ee75d5db847d0584a04a6c431c469dc15381abf5ddaed6d4f5d21a4f8",
+  "close_grip_pulldown": "03fd718eda981a23555824757e807000baf944e4a932a4254723095ecf65e670",
+  "underhand_lat_pulldown": "b97c1945a48f66d7346149a5277e1e6c9f3b44d2b6a84ebf0694fe42b4a17411",
+  "single_arm_lat_pulldown": "cb0e80eab014212749c87cb399502e59d08726f800d7152461ee38aa471b9211",
+  "straight_arm_pulldown": "3654d30e0dc5ea3d7370c4a820057afb10052331875a9d00f2c8bef1494c654f",
+  "chest_supported_row": "064a7e8bb29a9d88460937eae57007d223c1ed2e1a4c2876afe5479b8438053c",
+  "resistance_band_row": "e49ab3102ef3ad3ecfb2638ce58832691e9ab6feaf59fafcd74203326bb0312d",
+  "incline_machine_press": "85a42cc70172236fcc6d984defb52fcb2108eefa646578eb5c2326ecfba1e728",
+  "shoulder_press": "04cd7853f791df45bfcd66a8f6e0d43f4c24bb4629716b2e3c4873e9b408f161",
+  "horizontal_leg_press": "64466e47f79365622e0f7676468ba5ddbee7160e9c8e552e8cc9cc4cd94f17b8",
+  "leg_press_calf_raise": "6f4a2e6835fd6205363c08bece2ceedd8cebb5d633d3d852f6471b7126dedde3"
+ },
+ "quotes": {
+  "chin_up": "a1709733ce81dd5c9bc4b7f296db976a9efff8229ffe9c091655ecd5be168996",
+  "hanging_knee_raise": "8a4a644772d08865a07adb17c3fbbc7b8eaea3494787230322f82fe5c935ec91",
+  "assisted_pull_up": "a33f25b39e03ee1bc6cf714e61f46f66a685af9029726ebecc7b02f4cc7e7ca7",
+  "inverted_row": "5b27425d57f12d4b1c8ea0dabdb5d81c175b6e462125784e53e74c69d79a480a",
+  "close_grip_pulldown": "8e8820657a1bf1355f45c364653ca8f03f6a7b835106a0b98abb1912a2a0be65",
+  "underhand_lat_pulldown": "3df622406a472f34be3bcf0ef452e00fbd8813293b802eff6b329ac5c2dc7b98",
+  "single_arm_lat_pulldown": "5c73f0e65ccb13c0522ed433305463a4dfb05f4cfb59f252f730d7b8f5ffc0da",
+  "straight_arm_pulldown": "8692f1de3c4535091e5df4b71cdeceff35e5562dcf8b2ad2d791bd9de49049e8",
+  "chest_supported_row": "65f8c72a7176c5ba8940839279c2c93bbaaa4e91d7602071b8ce8bea054550fa",
+  "resistance_band_row": "83e0c81cf7747bc750b3b41e566b4eff50e529b7ceb937c1c8801e0ca33a742d",
+  "incline_machine_press": "3b2a397a3b674c0d2fc8a7831628b3893f6460e25efc2ca8a16980207a21b4a9",
+  "shoulder_press": "3ec6a15140539c6155ec0022a1d4af29716fa8735738c8d88ced38b05a204a0b",
+  "horizontal_leg_press": "5fc5372883fd0fcd731fe59c33a6ef4bd729f401ea2146b9a93b5050f02abb26",
+  "leg_press_calf_raise": "14b6262588e438ac45dcbf9d20ddf361a045cdf2cfc9603d7cd328c79f15aea5"
+ }
+}
