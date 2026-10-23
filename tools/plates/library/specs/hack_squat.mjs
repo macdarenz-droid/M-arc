@@ -179,7 +179,7 @@ export default {
       { key: 'lift', text: 'Hips off<br>pad', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 250, top: 164 }, cue: 'At the bottom the hips and lower back lift off the back pad.' },
       // c10 "your lower back rounds": the pelvis rolls back, so the front of the red pelvis (the groin, a rigid pelvis
       // point, given from the pelvis's seat landmark) swings up off the end outline
-      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 64, top: 260 }, cue: 'The lower back rounds at the bottom of the squat.' },
+      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 64, top: 292 }, cue: 'The lower back rounds at the bottom of the squat.' },
     ],
   },
   alt: 'Hack squat, side view. Shoulders under the pads, back on the tall pad of a sled on angled rails, feet flat on a fixed plate, the lifter lowers until the knees bend about 90 degrees with the thighs level, hips on the pad, then pushes back to almost straight legs.',
