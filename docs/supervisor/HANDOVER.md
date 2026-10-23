@@ -890,6 +890,26 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 09:00 UTC (10-23)** (usage 7-day 0.57):
+- **GATE-FLAKE-5 merged** (#292 → main `0f1f73de`; 17/17 green; it changed no app code, so there is no APK). AGENTS.md's fourth exception went in with it.
+- **LB10 fields merged into research** (#308 → `657eb4e5`).
+- **Panel running: set lb10, round 1**, covering LB10 kettlebell_swing, high_knees and battle_ropes (#305 @ d721f023, page db346e12) **and LB8 hack_squat** (#306 @ dc049494, page b6083d84). This is one panel for two batches.
+  - The set is built: 8 T. Plants: battle_ropes R1 (an elbow bent the wrong way) and kettlebell_swing R5 (the Mistake sign flipped). Anchors: pull_up and lat_pulldown.
+  - Files: scratchpad critic-lb10*, brief rv-briefs/lb10p-critic.txt. 3 critics are running.
+- **LB10 rulings since 06:00:**
+  - **D-LIB22-BURPEE3D**: a named body-on-body exception for the burpee squat ghost.
+  - **D-LIB22-ARMS**: the 6 px hand-gap rule is withdrawn, because it forced 73.5° of shoulder extension. Lesson: a rule must not force an unnatural pose.
+  - **D-LIB22-FRONTNIT**: "Back arches" on the lumbar back, by a front entry at 80.7 px.
+  - battle_ropes stays at 146.29 px/m, with F2 0.552 as a named flag.
+  - bear_crawl uses option (a), a flat back.
+  - farmer_s_carry's M_STRIDE basis stays open until resume.
+- **LB8 rulings since 06:00:**
+  - **D-LIB18-PADS**: two lateral shoulder pads, with a 3D clearance test.
+  - The bearing misses are fixed with no exemption list: hip_thrust's bar pad and seat, leg_extension's Mistake pelvis, and seated_calf_raise's seat.
+  - The leg curls wait for pilot B on main.
+  - 9 LB8 rows are held (S2, with S4 on the calf raises).
+- **Active LIB builders: 2** (LIB-18 and LIB-22, both holding their heads until the panel verdict).
+
 **Update 06:00 UTC (10-23)** (usage 7-day 0.55, five-hour 0.24 at 05:46):
 - **LIB-16 (#297): review-complete @ `3a75393a`.**
   - The delta review found 0 code defects. D-LIB16-BENT is ruled: A15's bent arm is elbow flexion 30-150°, which is stricter.
