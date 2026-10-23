@@ -2058,9 +2058,9 @@ describe('LIB-18 hip_thrust (H; tier A; the bridge class; held: D-LIB8-shrug): A
       const items: any[] = spec.equipment.flatMap((e: any) => [].concat(typeof e === 'function' ? e(lm, ctx) ?? [] : e)).filter(Boolean);
       const shapes = body.bodyShapes(sk, cam, {}).filter((x: any) => x.poly && HT_LEGS.test(x.key)).map((x: any) => x.poly as number[][]);
       const polysOf = (it: any) => eng.PRIMITIVES[it.type](it, cam).filter((x: any) => x.poly).map((x: any) => x.poly as number[][]);
-      const depth = (polys: number[][][]) => Math.max(polys.flatMap(dens).reduce((m, p) => Math.max(m, -outside(shapes, p)), 0), shapes.flatMap(dens).reduce((m, p) => Math.max(m, -outside(polys, p)), 0)) * 100 / cam.pxm;
+      const depth = (polys: number[][][]) => Math.max(polys.flatMap(dens).reduce((m, p) => Math.max(m, -outside(shapes, p)), 0), shapes.flatMap(dens).reduce((m: number, p: number[]) => Math.max(m, -outside(polys, p)), 0)) * 100 / cam.pxm;
       const pad = items.find((it: any) => it.type === 'poly' && it.cls === 'eq' && it.z === 'mid'), bench = items.find((it: any) => it.type === 'bench');
-      const padPolys = polysOf(pad), gap = Math.max(0, padPolys.flat().reduce((m, p) => Math.min(m, outside(shapes, p)), Infinity)) * 100 / cam.pxm;
+      const padPolys = polysOf(pad), gap = Math.max(0, padPolys.flat().reduce((m: number, p: number[]) => Math.min(m, outside(shapes, p)), Infinity)) * 100 / cam.pxm;
       out[pose] = { pad: depth(padPolys), gap, bench: depth(polysOf(bench)) };
     }
     return out;
