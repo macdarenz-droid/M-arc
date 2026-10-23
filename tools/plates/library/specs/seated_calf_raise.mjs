@@ -135,6 +135,9 @@ export default {
     ...factChecks('start', start, ['wrist.l', 'wrist.r', 'thighTop.l', 'thighTop.r']),
     ...['ball.l', 'ball.r'].map(landmark => ({ landmark, plane: { point: BALL, normal: [0, 1, 0] }, pose: 'all', tol: 0.5 })),   // c3: balls on the platform
     { landmark: 'seat', plane: { point: [0, SEAT_TOP, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },                           // seated on the pad
+    // c1 (StrengthLog) toes on the support at the start: the card's fact, checked on the platform's top; the rigid foot misses
+    // it at the drawn stretch (the toe is up off the platform), a miss recorded with the S4 hold (CARD FIELDS fix 2)
+    ...['toe.l', 'toe.r'].map(landmark => ({ landmark, plane: { point: BALL, normal: [0, 1, 0] }, pose: 'start', tol: 0.5 })),
     ...['heel.l', 'heel.r'].map(landmark => ({ landmark, above: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all' })),        // heels over the floor
   ],
   ghosts: { count: 3, parts: ['leg.r', 'lever'] },

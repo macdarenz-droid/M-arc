@@ -139,6 +139,9 @@ export default {
   checks: [
     ...factChecks('start', start, ['heel.l', 'heel.r', 'ball.l', 'ball.r', 'wrist.l', 'wrist.r']),
     ...factChecks('end', end, ['heel.l', 'heel.r', 'wrist.l', 'wrist.r']),
+    // c1 "Sit on the floor" (setup): the seat on the floor at the start; the drawn bottom stops where the plates reach the
+    // floor first, so the seat sits above it: a miss recorded with the hold (CARD FIELDS fix 5)
+    { landmark: 'seat', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'start', tol: 0.5 },
     { landmark: 'backUpper', at: EDGE, pose: 'all', tol: 0.5 },                                  // c2, c9: the upper back on the bench edge
     ...['sole.l', 'sole.r'].map(landmark => ({ landmark, at: SOLE(landmark.endsWith('l') ? 1 : -1), pose: 'all', tol: 0.5 })),   // c1: feet flat
   ],

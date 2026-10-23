@@ -791,14 +791,6 @@
     },
     {
       "kind": "angle",
-      "joint": "knee.l",
-      "pose": "end",
-      "cardPose": "end",
-      "deg": 90,
-      "claim": "c4"
-    },
-    {
-      "kind": "angle",
       "joint": "knee.r",
       "pose": "end",
       "cardPose": "end",

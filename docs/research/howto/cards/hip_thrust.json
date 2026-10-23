@@ -1068,6 +1068,13 @@
   "plateFacts": [
     {
       "kind": "contact",
+      "landmark": "seat",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
       "landmark": "heel.l",
       "pose": "start",
       "cardPose": "start",

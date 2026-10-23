@@ -649,9 +649,9 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 
 | id | ruling | why (measured at the ruled sizes) | route |
 |---|---|---|---|
-| hip_thrust | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lumbar arch (hanging_leg_raise.mjs:69) measures 4.1 px < 11.39 px; the other two readings of c11-c13 give 6.2 and 7.2 px (section 8); the Trace passes (28.2 px) | LIB-ZOOM (#279) on main and extended to the arch, then 'LIB-18 resume' |
+| hip_thrust | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lumbar arch (hanging_leg_raise.mjs:69) measures 4.1 px < 11.39 px; the other two readings of c11-c13 give 6.2 and 7.2 px (section 8); the Trace passes (36.9 px at [6, 8]); the c1 fact "Sit on the floor" (seat, start; CARD FIELDS fix 5) is missed: the drawn bottom stops where the plates reach the floor, the seat 4.7 cm above it | LIB-ZOOM (#279) on main and extended to the arch, then 'LIB-18 resume' |
 | cable_kickback | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch measures 4.3 px < 11.39 px (the braced upper body holds the back still); the Trace passes (54.1 px) | LIB-ZOOM, as above |
-| seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°) | the owner's route for S4 (D-LIB18-CALF), brought by the supervisor; LIB-ZOOM for S2 |
+| seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°); the c1 fact "toes ... on the foot support" (CARD FIELDS fix 2) is missed at the drawn stretch: the toe 4.2 cm off the platform's top | the owner's route for S4 (D-LIB18-CALF), brought by the supervisor; LIB-ZOOM for S2 |
 
 Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys stay.
 

@@ -683,6 +683,20 @@
       "pose": "end",
       "cardPose": "end",
       "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "toe.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "toe.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
     }
   ],
   "tempo": [

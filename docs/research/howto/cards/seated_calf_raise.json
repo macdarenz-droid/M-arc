@@ -908,6 +908,20 @@
     },
     {
       "kind": "contact",
+      "landmark": "toe.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "toe.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
       "landmark": "ball.l",
       "pose": "start",
       "cardPose": "start",
@@ -933,6 +947,20 @@
       "pose": "start",
       "cardPose": "start",
       "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c8"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c8"
     },
     {
       "kind": "angle",

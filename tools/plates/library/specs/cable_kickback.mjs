@@ -199,6 +199,7 @@ export default {
   ],
   checks: [
     ...factChecks('start', start, ['ankle.r', 'wrist.l', 'wrist.r']),
+    ...factChecks('end', end, ['wrist.l', 'wrist.r']),
     { landmark: 'heel.l', plane: FLOOR, pose: 'all', tol: 0.5 },                 // standing foot flat (c2)
     { landmark: 'ball.l', plane: FLOOR, pose: 'all', tol: 0.5 },
     { landmark: 'toe.r', above: FLOOR, pose: 'all' },                            // working foot off the floor

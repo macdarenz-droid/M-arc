@@ -906,6 +906,20 @@
       "pose": "start",
       "cardPose": "start",
       "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c7"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c7"
     }
   ],
   "tempo": [

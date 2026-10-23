@@ -702,6 +702,20 @@
       "pose": "start",
       "cardPose": "start",
       "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c7"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c7"
     }
   ],
   "tempo": [
