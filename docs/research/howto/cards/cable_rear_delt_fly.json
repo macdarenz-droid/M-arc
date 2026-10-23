@@ -1,0 +1,564 @@
+{
+  "id": "cable_rear_delt_fly",
+  "libId": "lib_cable_rear_delt_fly",
+  "name": "Cable Rear Delt Fly",
+  "family": "Rear delt and cuff",
+  "tier": "C",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Attach a handle to each upper (high) pulley of a cable crossover.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-cable-fly",
+        "fv-cable-rdf"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Attach two handles to the upper pulleys of a cable crossover.",
+          "where": "How to Do Reverse Cable Flyes, step 1"
+        },
+        {
+          "source": "fv-cable-rdf",
+          "text": "Attach D-shaped handles to a high cable crossover machine. Alternatively, you can grip the ends of the cables.",
+          "where": "How to Do Cable Rear Delt Flys, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "The cables are crossed: the left cable's handle goes in the right hand and the right cable's handle in the left hand.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-cable-fly",
+        "fv-cable-rdf"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Reach across your body and grab the right-hand handle with your left hand, and the left-hand handle with your right.",
+          "where": "How to Do Reverse Cable Flyes, step 2"
+        },
+        {
+          "source": "fv-cable-rdf",
+          "text": "Take the left cable in your right hand and the right cable in your left hand.",
+          "where": "How to Do Cable Rear Delt Flys, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Stand in the middle between the two pulleys so the arms have a clear path, chest up and braced.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Position yourself in the center of the machine. Keep your arms straight ahead, your chest up, and brace your core.",
+          "where": "How to Do Reverse Cable Flyes, step 3"
+        },
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Position yourself in the middle between the two pulleys so that your arms have a clear path to move.",
+          "where": "Proper Form & Technique, Positioning"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Start with the arms straight ahead, the cables crossing at about eye level, and the elbows extended but not locked.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-cable-rdf",
+        "sl-rev-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "fv-cable-rdf",
+          "text": "Step back and extend your arms so the cables cross at about eye level. Extend but do not lock your elbows.",
+          "where": "How to Do Cable Rear Delt Flys, step 3"
+        },
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Keep your arms straight ahead, your chest up, and brace your core.",
+          "where": "How to Do Reverse Cable Flyes, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the shoulders rolled back and down for the whole set; StrengthLog says this targets the right muscles and protects the shoulder joints.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-cable-fly",
+        "fv-cable-rdf"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Your shoulders should be rolled back and down to make sure that you’re targeting the correct muscles and protecting your shoulder joints.",
+          "where": "Proper Form & Technique, Positioning"
+        },
+        {
+          "source": "fv-cable-rdf",
+          "text": "Pull your shoulders down and back.",
+          "where": "How to Do Cable Rear Delt Flys, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep a slight, fixed bend in the elbows for the whole movement while the arms open back and slightly down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-cable-fly",
+        "fv-cable-rdf"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "You should keep your arms in the same position, with a slight bend in the elbow, throughout the movement.",
+          "where": "Proper Form & Technique, Positioning"
+        },
+        {
+          "source": "fv-cable-rdf",
+          "text": "Keeping your elbows slightly bent but rigid, open your arms and draw them back and slightly downward.",
+          "where": "How to Do Cable Rear Delt Flys, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Pull the arms back until they are about parallel to the body, with the handles close together at the start and as far apart as possible at the end.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Keep your elbows slightly bent as you pull your arms back until they are about parallel to your body.",
+          "where": "How to Do Reverse Cable Flyes, step 4"
+        },
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Aim for a full range of motion, bringing the handles close together at the starting point and pulling them as far apart as possible at the end of the movement to fully engage the rear deltoids.",
+          "where": "Proper Form & Technique, Movement"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Return by bringing the arms in and together to the start, then repeat.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-cable-rdf",
+        "sl-rev-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "fv-cable-rdf",
+          "text": "Bring your arms in and together to return to the starting position.",
+          "where": "How to Do Cable Rear Delt Flys, step 5"
+        },
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Reverse the movement, and repeat for reps.",
+          "where": "How to Do Reverse Cable Flyes, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Not keeping form, on StrengthLog's common-mistakes list: using momentum by swinging and/or overextending the lower back, which can put unnecessary stress on the lower back and shoulder joints. Keep the movement slow and controlled.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Not keeping form. This is an exercise where it’s easy to use momentum by swinging and/or starting to overextend your lower back. This can place unnecessary stress on the lower back and shoulder joints. Keep the movement slow and controlled.",
+          "where": "Common Mistakes in Reverse Cable Flyes, item 2"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Use a light to moderate weight: a weight that is too heavy brings in excessive momentum or other muscles and can lead to injury; a light weight lets you move slowly and with control, without starting to hinge.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-cable-fly",
+        "fv-cable-rdf"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Picking a weight that’s too heavy. By choosing a weight that is heavier than you can handle, you might end up using excessive momentum or other muscles than the targeted ones to complete the lift, compromising the exercise’s effectiveness and potentially leading to injury.",
+          "where": "Common Mistakes in Reverse Cable Flyes, item 1"
+        },
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "Pick a light weight, so that you can move slowly and controlled without starting to hinge and create excessive momentum.",
+          "where": "Proper Form & Technique, Movement"
+        },
+        {
+          "source": "fv-cable-rdf",
+          "text": "This exercise is best done using light to moderate weights and medium to high reps.",
+          "where": "How to Do Cable Rear Delt Flys, after the steps"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Cheating with momentum takes the work away from the rear deltoid.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-cable-fly"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "This is an exercise where it is easy to cheat by using momentum, which takes away the work from the rear deltoid.",
+          "where": "Which Muscles Do the Reverse Cable Fly Work?"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "The exercise mainly works the rear deltoids and rotator cuff, and also the trapezius; its middle fibres and the rhomboids pull the shoulder blades back and together.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-rev-cable-fly",
+        "fv-cable-rdf"
+      ],
+      "quotes": [
+        {
+          "source": "sl-rev-cable-fly",
+          "text": "The reverse cable fly primarily works your rotator cuff and rear deltoids, and secondarily your trapezius.",
+          "where": "Which Muscles Do the Reverse Cable Fly Work?"
+        },
+        {
+          "source": "fv-cable-rdf",
+          "text": "Rear delt cable flys hit the middle fibers of the traps, which are responsible for pulling your shoulder blades back and together in a movement called retraction.",
+          "where": "Cable Rear Delt Fly – Muscles Worked"
+        },
+        {
+          "source": "fv-cable-rdf",
+          "text": "Rhomboids – located between the shoulder blades and beneath the trapezius, the rhomboids also pull your shoulders back and together in retraction.",
+          "where": "Cable Rear Delt Fly – Muscles Worked"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "sl-rev-cable-fly",
+      "url": "https://www.strengthlog.com/reverse-cable-fly/",
+      "title": "How to Do Reverse Cable Flyes: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "fv-cable-rdf",
+      "url": "https://fitnessvolt.com/cable-rear-delt-fly/",
+      "title": "Cable Rear Delt Fly: Strengthen Your Delts and Upper Back (Fitness Volt)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "front",
+    "viewWhy": "Census: front. The move is the arms opening out from crossed in front to about parallel with the body (c4, c7), which reads clearly from the front, as do the shoulders kept down and back (c5). The top fault, swinging and overextending the lower back (c9), shows from the side, so it is left to text.",
+    "equipment": "Cable crossover: two high pulleys with a D-handle on each (c1), cables crossed in front of the lifter at about eye level (c2, c4). Floor line.",
+    "start": "Standing in the middle between the pulleys, chest up (c3); arms straight ahead with the cables crossed at about eye level, elbows extended but not locked (c4); shoulders down and back (c5); left cable in the right hand, right cable in the left (c2).",
+    "end": "Arms opened back and slightly down until about parallel to the body, handles as far apart as they go (c6, c7); elbows still slightly bent (c6); shoulders still down and back (c5).",
+    "checkpoints": [
+      {
+        "label": "Shoulders down",
+        "what": "Shoulders stay rolled back and down for every rep.",
+        "claim": "c5"
+      },
+      {
+        "label": "Soft elbows",
+        "what": "The same slight elbow bend from start to finish.",
+        "claim": "c6"
+      },
+      {
+        "label": "Arms to body",
+        "what": "Pull back until the arms are about parallel to the body.",
+        "claim": "c7"
+      }
+    ],
+    "mistake": {
+      "what": "Shoulders not kept rolled back and down as the arms open.",
+      "why": "The top fault (LR-31 step 2) is StrengthLog's \"Not keeping form\": swinging and overextending the lower back (c9). Its signs show from the side and the census view is front, so drawable is false. The next fault by the same step is the shoulders not kept back and down: StrengthLog's cue says keeping them rolled back and down protects the shoulder joints (c5), and it shows from the front.",
+      "claim": "c5",
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: swinging and overextending the lower back (c9). Step 1: no frequency word for a fault of this exercise. Set aside: StrengthLog's \"This is an exercise where it’s easy to use momentum\" (c9) and \"easy to cheat by using momentum\" (c11) use \"easy to\"; \"Many lifters have stronger pushing muscles\" and \"trains many of the antagonists of common pressing exercises\" are about muscles; \"Common Mistakes in Reverse Cable Flyes\" is a heading. Fitness Volt's \"most bodybuilders would place the rear or posterior deltoids at the bottom of the list\", \"They’re often undertrained\", \"A lot of lifters also train this muscle\", \"The rear deltoid is usually the least well-developed\", \"usually known simply as the triceps\" and \"Inverted rows are typically thought of as a lat exercise\" are about muscles or programming; \"a lot of lifters have poor posture\" is about posture in general, not a fault of this exercise; \"most gyms have cable crossover machines\" and \"suitable for most lifters\" name no fault. Step 2: two named faults are tied to harm. (1) Swinging and overextending the lower back, StrengthLog's list item 2 \"Not keeping form\" (c9): \"This can place unnecessary stress on the lower back and shoulder joints.\" (2) Shoulders not kept rolled back and down (handlingMistakes[1], c5): \"Your shoulders should be rolled back and down to make sure that you’re targeting the correct muscles and protecting your shoulder joints.\" (D-SUP-PROTECT). Tie order: (1) is on a common-mistakes list and (2) is not, so (1) is the top fault. Set aside: StrengthLog's item 1 \"Picking a weight that’s too heavy. By choosing a weight that is heavier than you can handle, you might end up using excessive momentum or other muscles than the targeted ones to complete the lift, compromising the exercise’s effectiveness and potentially leading to injury.\" (c10) is a load choice, not a candidate; its harm runs through momentum, which is fault (1), so it adds no second fault and no further harm source beyond c9's list item; Fitness Volt's \"make sure you hinge from the hips rather than round your lower back, as doing so can lead to injury\" is about the bent-over variation, another exercise; \"Weak rear delts are a leading cause of shoulder pain\" names no fault; \"Get more from cable rear delt flys while keeping your risk of injury to a minimum by following these guidelines:\" introduces the whole step list and is not read onto one step (read like LR-31's list-sentence exclusion); \"No lower back stress – unlike some freeweight posterior deltoid exercises, rear delt cable flys are done in a standing position.\", \"As such, there is very little lower back stress to worry about.\" and \"This exercise is suitable for most lifters, even those suffering from low back pain.\" name no fault (they compare the exercise with free-weight versions); \"Face pulls are also good for your shoulder health and could help ward off shoulder joint pain.\" is about another exercise. The swing and the lower-back arch show from the side, and the census view is front, so drawable is false and plate.mistake names the next fault by the same steps: (2), the shoulders, which shows from the front. handlingMistakes[0] stays the swing.",
+      "drawable": false
+    },
+    "tells": [
+      {
+        "text": "Same slight elbow bend throughout",
+        "claim": "c6"
+      },
+      {
+        "text": "No swing, slow and controlled",
+        "claim": "c9"
+      }
+    ],
+    "tempo": {
+      "up": null,
+      "down": null,
+      "pause": null,
+      "claim": "c9",
+      "text": "No read source gives seconds: StrengthLog says to keep the movement slow and controlled (c9) and to move slowly with control (c10). No quote asks for a pause, hold or squeeze at any point of the rep. With no tempo seconds at all, up, down and pause stay null (LR-33)."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "D-handle in each hand, cables crossed: left cable in the right hand, right cable in the left (c2). Fitness Volt also allows gripping the cable ends (c1).",
+    "width": "Set by the crossed cables; the hands start close together in front at about eye level (c4, c7).",
+    "thumb": "Not given by any source read (hold archetype default).",
+    "handContact": "Not given by any source read (hold archetype default).",
+    "wrist": "Not given by any source read (hold archetype default).",
+    "claims": [
+      "c1",
+      "c2",
+      "c4",
+      "c7"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Attach a handle to each high pulley of a cable crossover.",
+      "claim": "c1"
+    },
+    {
+      "step": "Take the left handle in your right hand, right in left.",
+      "claim": "c2"
+    },
+    {
+      "step": "Stand in the middle, between the two pulleys.",
+      "claim": "c3"
+    },
+    {
+      "step": "Arms straight ahead, cables crossing at about eye level.",
+      "claim": "c4"
+    },
+    {
+      "step": "Pull your shoulders down and back.",
+      "claim": "c5"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Chest up.",
+      "claim": "c3"
+    },
+    {
+      "point": "Elbows slightly bent, never locked.",
+      "claim": [
+        "c6",
+        "c4"
+      ]
+    },
+    {
+      "point": "Shoulders stay rolled back and down.",
+      "claim": "c5"
+    },
+    {
+      "point": "Pull back until the arms are about parallel to the body.",
+      "claim": "c7"
+    },
+    {
+      "point": "Move slow and controlled, no swing.",
+      "claim": "c9"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Swinging, lower back overextending.",
+      "fix": "Pick a lighter weight. Keep it slow and controlled.",
+      "claim": [
+        "c9",
+        "c10"
+      ]
+    },
+    {
+      "mistake": "Shoulders not back and down.",
+      "fix": "Roll your shoulders back and down.",
+      "claim": "c5"
+    },
+    {
+      "mistake": "Elbows locked or bending.",
+      "fix": "Keep the same slight bend in the elbows.",
+      "claim": [
+        "c4",
+        "c6"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "rear_delts",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "mid_back",
+        "claim": "c12"
+      },
+      {
+        "muscleId": "rotator_cuff",
+        "claim": "c12"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c9"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Backs of the shoulders",
+        "means": "The rear delts are doing the work.",
+        "fix": "",
+        "claim": "c12",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Swinging or overextending the lower back.",
+        "fix": "Pick a lighter weight. Keep it slow and controlled.",
+        "claim": [
+          "c9",
+          "c10"
+        ],
+        "redFlag": "back"
+      },
+      {
+        "where": "Shoulder joints",
+        "means": "Shoulders not kept back and down.",
+        "fix": "Roll your shoulders back and down.",
+        "claim": "c5",
+        "redFlag": "shoulder"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Swinging or overextending the lower back can stress the lower back and shoulders.",
+      "claim": "c9"
+    },
+    {
+      "risk": "Too heavy a weight can bring in momentum and may lead to injury.",
+      "claim": "c10"
+    }
+  ],
+  "redFlags": [
+    "back",
+    "shoulder"
+  ],
+  "zooms": [
+    {
+      "key": "crdf-elbows",
+      "kind": "posture",
+      "right": "Slight, fixed elbow bend as the arms open.",
+      "wrong": "Elbows locked straight.",
+      "claim": [
+        "c6",
+        "c4"
+      ]
+    },
+    {
+      "key": "crdf-shoulders",
+      "kind": "posture",
+      "right": "Shoulders rolled back and down.",
+      "wrong": null,
+      "claim": "c5"
+    },
+    {
+      "key": "crdf-grip",
+      "kind": "hand",
+      "right": "Cables crossed: left handle in the right hand.",
+      "wrong": null,
+      "claim": "c2"
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "rotator_cuff"
+    ],
+    "remove": [],
+    "why": "rear_delts primary matches exercises.json (c12). mid_back secondary matches (c12: middle traps and rhomboids). rotator_cuff (text-only) added: StrengthLog names it as a primary muscle of this exercise (c12)."
+  },
+  "anchorSource": "sl-rev-cable-fly",
+  "notes": [
+    "LR-4: no source read names a palm direction for the crossed handles; the plate draws the single D-handle's natural grip. Drawing convention, not a claim.",
+    "Fitness Volt says the standing cable version has \"very little lower back stress to worry about\"; StrengthLog's mistakes list says swinging and overextending the lower back stresses it (c9). The card follows StrengthLog for the fault: Fitness Volt compares with free-weight bent-over versions and names no fault.",
+    "Census note \"Crossed cables.\" is sourced by c2.",
+    "Read and not cited: none. Fetched and not usable: motra.com has no page for this exercise (cableBentoverRearDeltFlySingleArm is a bent-over single-arm variant); barbend.com, puregym.com, garagegymreviews.com slugs tried gave 404; muscleandstrength.com and acefitness.org gave 403."
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    }
+  ],
+  "topFault": "swing"
+}

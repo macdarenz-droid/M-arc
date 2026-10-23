@@ -1,0 +1,906 @@
+{
+ "id": "bench_dip",
+ "libId": "lib_bench_dip",
+ "name": "Bench Dip",
+ "family": "Dip",
+ "tier": "B",
+ "tierNote": "Safety tier B (content.md appendix B); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "palm-flat",
+  "contact": [
+   "bench-lying"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Sit on the edge of a sturdy bench and put the hands on it beside the hips (next to the thighs), about shoulder-width apart.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip",
+    "fv-benchdip",
+    "sl-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "Sit down on a bench, hands next to your thighs.",
+     "where": "How do you do it?, step 1"
+    },
+    {
+     "source": "fv-benchdip",
+     "text": "Begin by sitting on the edge of a sturdy bench or platform.",
+     "where": "How to Perform a Bench Dip, 1. Positioning"
+    },
+    {
+     "source": "sl-benchdip",
+     "text": "Turn your back towards a sturdy training bench, and put your hands on the pad about shoulder-width apart. Extend your legs in front of you.",
+     "where": "How to Do Bench Dips, step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "The hands go flat on the bench. One source's main steps point the fingers forward; its second set of steps points them out to the sides.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "fv-benchdip",
+     "text": "Place your hands shoulder-width apart beside your hips, with fingers pointing forward.",
+     "where": "How to Perform a Bench Dip, 1. Positioning"
+    },
+    {
+     "source": "fv-benchdip",
+     "text": "Place both hands flat on the bench so that your fingers are pointing laterally away from your body.",
+     "where": "Exercise Instructions"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Walk the feet out and straighten the legs in front, heels on the floor and toes up, then lift the hips off the bench, moving slightly forward to clear its edge, and hold there on straight arms.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip",
+    "fv-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "Walk your feet out and extend your legs, lifting your bottom off the bench and holding there with extended arms.",
+     "where": "How do you do it?, step 2"
+    },
+    {
+     "source": "fv-benchdip",
+     "text": "Extend your legs out in front, keeping the heels on the ground and toes pointing up.",
+     "where": "How to Perform a Bench Dip, 1. Positioning"
+    },
+    {
+     "source": "fv-benchdip",
+     "text": "Lift your buttocks off the bench, moving slightly forward to clear the edge.",
+     "where": "How to Perform a Bench Dip, 2. Descending"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Keep the hips close to the bench with the legs straight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "fv-benchdip",
+     "text": "Lift your butt off the bench and extend your legs out straight keeping your butt close to the bench.",
+     "where": "Exercise Instructions"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Lower by bending the elbows until they reach about 90 degrees, with the upper arm about parallel to the floor. One set of steps stops slightly above parallel, and another source says lower as far as is comfortable.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip",
+    "fv-benchdip",
+    "sl-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "Hinging at the elbow, lower your body down as far as you can go, or until your arms form a 90-degree angle.",
+     "where": "How do you do it?, step 3"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "Make sure you lower down until your upper arm is parallel to the ground and your elbow forms a 90-degree angle.",
+     "where": "Common mistakes, You’re not going low enough"
+    },
+    {
+     "source": "fv-benchdip",
+     "text": "Lower your body by bending the elbows, ensuring they remain close to your body and create about a 90-degree angle.",
+     "where": "How to Perform a Bench Dip, 2. Descending"
+    },
+    {
+     "source": "fv-benchdip",
+     "text": "Retract your scapula and lean back slightly, then dip to where your upper arm is slightly above parallel.",
+     "where": "Exercise Instructions"
+    },
+    {
+     "source": "sl-benchdip",
+     "text": "Lower yourself with control for as far as comfortable by bending your arms.",
+     "where": "How to Do Bench Dips, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Push up through the palms, straightening the elbows, back to the start.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip",
+    "fv-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "Push up through your palms back to start.",
+     "where": "How do you do it?, step 4"
+    },
+    {
+     "source": "fv-benchdip",
+     "text": "Push through the palms, extending the elbows and using the triceps to raise your body back to the initial position.",
+     "where": "How to Perform a Bench Dip, 3. Ascending"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Letting the elbows flare out moves the tension from the triceps to the shoulders and can cause injury; keep the elbows tucked in close to the body through the whole dip.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip",
+    "fv-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "When you let your elbows flare out, you move the tension from your triceps to your shoulders, which can cause injury.",
+     "where": "Common mistakes, You’re flaring your elbows"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "Ensure that your elbows stay tucked into your body throughout the dip.",
+     "where": "Common mistakes, You’re flaring your elbows"
+    },
+    {
+     "source": "fv-benchdip",
+     "text": "Elbow Vigilance: Ensure your elbows remain tucked close to your body throughout to prevent undue strain.",
+     "where": "Safety Tips and Precautions"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Dropping too low puts too much pressure and stress on the shoulders; stop when the upper arms are parallel to the floor and rise back up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip",
+    "fv-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "If you drop too low into the dip, you’ll put too much pressure on your shoulder.",
+     "where": "Common mistakes, You’re going too low"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "Stop when your upper arms are parallel to the floor and rise back up.",
+     "where": "Common mistakes, You’re going too low"
+    },
+    {
+     "source": "fv-benchdip",
+     "text": "Shield Your Shoulders: Avoid dipping exceedingly low, as it can impose undue stress on the shoulders. Always maintain a controlled trajectory.",
+     "where": "Safety Tips and Precautions"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Partial reps that stop short of the full depth don't fully work the triceps.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "Completing partial reps instead of a full rep won’t fully engage the triceps, negating some of the benefits of the exercise.",
+     "where": "Common mistakes, You’re not going low enough"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Relying on momentum misses some of the exercise's benefits; move slowly and with control.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "If you rely on momentum to complete each rep, you miss out on some of the move’s many benefits. Move slowly and with control for maximum results.",
+     "where": "Common mistakes, You’re moving too quickly"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "One source's common-mistakes list for the bench dip names, in this order: not going low enough, flaring the elbows, going too low, moving too quickly.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "The bench dip is simple from an equipment angle, but there are some nuances to its form. Watch out for these common mistakes.",
+     "where": "What are the most common mistakes to watch for?"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "You’re not going low enough",
+     "where": "Common mistakes, item 1 heading"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "You’re flaring your elbows",
+     "where": "Common mistakes, item 2 heading"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "You’re going too low",
+     "where": "Common mistakes, item 3 heading"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "You’re moving too quickly",
+     "where": "Common mistakes, item 4 heading"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "The triceps do most of the work; the chest and front shoulders help. The bench dip puts more emphasis on the triceps than the bar dip does.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-benchdip",
+    "hl-benchdip",
+    "mckenzie-2022"
+   ],
+   "quotes": [
+    {
+     "source": "sl-benchdip",
+     "text": "Primary muscles worked: Triceps Secondary muscles worked: Chest Front Deltoid",
+     "where": "Muscles Worked in Bench Dips box"
+    },
+    {
+     "source": "sl-benchdip",
+     "text": "This exercise puts more emphasis on your triceps than the bar dip does, which instead emphasizes your chest and front delts more.",
+     "where": "Commentary"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "Although this bodyweight exercise mainly targets the triceps, it also hits your chest and anterior deltoid, or the front part of your shoulder.",
+     "where": "Introduction"
+    },
+    {
+     "source": "mckenzie-2022",
+     "text": "The bench dip predominantly targets the triceps brachii but requires greater shoulder extension range.",
+     "where": "Abstract"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "In 13 experienced men, the bench dip took the shoulder through more extension than the bar or ring dip: about 88 degrees on average, about 101% of each man's own maximal range test.",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "mckenzie-2022"
+   ],
+   "quotes": [
+    {
+     "source": "mckenzie-2022",
+     "text": "Thirteen experienced males performed four repetitions of each dip variation.",
+     "where": "Abstract"
+    },
+    {
+     "source": "mckenzie-2022",
+     "text": "The bench dip also had the largest shoulder extension ROM, which was on average 88.13° (±8.86°), representing 101.35% (±6.49%) of the maximal ROM test.",
+     "where": "4.1 The Bench Dip"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "The study's authors suggest this large shoulder range may raise the risk of injury to the front of the shoulder capsule through repeated straining.",
+   "tags": [
+    "MECH"
+   ],
+   "sources": [
+    "mckenzie-2022"
+   ],
+   "quotes": [
+    {
+     "source": "mckenzie-2022",
+     "text": "This greater ROM at the shoulder joint may increase the risk of injury to the anterior shoulder capsule through the repetitive submaximal straining of the anterior band of the inferior glenohumeral ligament.",
+     "where": "4.1 The Bench Dip"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Progression: aim for 3 sets of 10-12; if that is too hard, bend the knees and walk the feet closer. Inch the feet out week by week, then put the feet up on a second bench, then add a dumbbell or weight plate on the lap with the feet back on the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip",
+    "fv-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "Shoot for 3 sets of 10–12 reps here. If this is too challenging, try bending your knees and walking your feet closer to your body to perform the dip.",
+     "where": "How do you do it?"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "Continue to inch your feet out week after week, progressing to more advanced variations to challenge yourself.",
+     "where": "How can you add this to your routine?"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "Position two benches — or even chairs — across from each other. Place your hands on one and your feet on the other, completing a dip.",
+     "where": "Variations, Cross bench dip"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "Once this becomes easy, try adding weight. Starting with your feet on the floor again, position a dumbbell or weighted plate in your lap for added resistance.",
+     "where": "Can you add weight?"
+    },
+    {
+     "source": "fv-benchdip",
+     "text": "Introduce a weight plate or dumbbell on your lap for added resistance, promoting consistent muscle development.",
+     "where": "Different Variations of Bench Dips, Weighted Bench Dips"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Lower slowly and with control. No bench-dip source gives seconds for the lowering or the lifting, so the plate's 2 s down and 1 s up is a drawing convention.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "hl-benchdip",
+    "sl-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "If you rely on momentum to complete each rep, you miss out on some of the move’s many benefits. Move slowly and with control for maximum results.",
+     "where": "Common mistakes, You’re moving too quickly"
+    },
+    {
+     "source": "sl-benchdip",
+     "text": "Lower yourself with control for as far as comfortable by bending your arms.",
+     "where": "How to Do Bench Dips, step 2"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "One source, written for the version with the feet on a second bench, asks for a pause at the top of each rep to contract the triceps and gives no seconds for it; the plate's 1 s pause after the press is a drawing convention.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "mf-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "mf-benchdip",
+     "text": "Make sure you pause at the top of each rep so that you really contract your triceps.",
+     "where": "Trainer’s Tips"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "The same source, with the feet on a second bench, lowers to a 90-degree elbow and pauses there for one second before pressing back up.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "mf-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "mf-benchdip",
+     "text": "Set two benches beside each other and about three feet apart. Sit on the edge of one bench, positioning the hands beside the hips while placing your feet on the opposite bench.",
+     "where": "How to"
+    },
+    {
+     "source": "mf-benchdip",
+     "text": "Slowly lower your hips by bending the arms at the elbow until they form a 90-degree angle. Pause for one second, flex the triceps to return to the starting position.",
+     "where": "How to"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "One source, written for the version with the feet on a second bench, says to set the hands in a comfortable position about shoulder-width apart to protect the shoulders.",
+   "tags": [
+    "WEAK"
+   ],
+   "sources": [
+    "mf-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "mf-benchdip",
+     "text": "To protect your shoulders make sure you position your hands in a comfortable position about shoulder-width apart.",
+     "where": "Trainer’s Tips"
+    }
+   ]
+  },
+  {
+   "id": "c20",
+   "text": "Pull the shoulder blades back and lean back slightly before dipping.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "fv-benchdip",
+     "text": "Retract your scapula and lean back slightly, then dip to where your upper arm is slightly above parallel.",
+     "where": "Exercise Instructions"
+    }
+   ]
+  },
+  {
+   "id": "c21",
+   "text": "Done incorrectly, the bench dip can injure the shoulder, and with an existing shoulder injury dips may not be the best choice.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-benchdip"
+   ],
+   "quotes": [
+    {
+     "source": "hl-benchdip",
+     "text": "When performed incorrectly, this exercise can cause a shoulder impingement, or an injury to the muscles between bones in the shoulder area.",
+     "where": "How can you add this to your routine?"
+    },
+    {
+     "source": "hl-benchdip",
+     "text": "Important to note: If you have a preexisting shoulder injury, dips may not be the best option.",
+     "where": "How can you add this to your routine?"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "hl-benchdip",
+   "url": "https://www.healthline.com/health/fitness-exercise/bench-dips",
+   "title": "Bench Dips: 13 Benefits, Form Tips, Variations, Weights, More",
+   "kind": "coach",
+   "year": 2020,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-benchdip",
+   "url": "https://www.strengthlog.com/bench-dip/",
+   "title": "How to Do Bench Dip: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-benchdip",
+   "url": "https://fitnessvolt.com/bench-dip/",
+   "title": "Bench Dip: Target Your Triceps and Build Upper Body Strength – Fitness Volt",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "mf-benchdip",
+   "url": "https://www.muscleandfitness.com/exercise/workouts/arm-exercises/bench-dip/",
+   "title": "Bench Dip - Muscle & Fitness",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "mckenzie-2022",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9603242/",
+   "title": "Bench, Bar, and Ring Dips: Do Kinematics and Muscle Activity Differ?",
+   "kind": "peer-reviewed",
+   "year": 2022,
+   "pmid": 36293792,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the depth (c5, c8), the hips close to the bench (c4) and the straight legs with the heels down (c3) read from the side. The top fault, flared elbows (c7), is sideways and this view cannot show it; going too low (c8) is drawn instead.",
+  "equipment": "Flat bench (census flatBench) behind the lifter, hands on its edge; floor line for the heels (census floor). Feet on the floor, not on a second bench: Healthline's cross bench dip (c15) and Muscle & Fitness's two-bench setup (c18) are the harder version.",
+  "start": "Top: arms straight (c3, c6); palms flat on the bench beside the hips, about shoulder-width, fingers forward (c1, c2, c19); hips just clear of the edge and close to the bench (c3, c4); legs straight out in front, heels on the floor, toes up (c3); shoulder blades back with a slight lean back (c20).",
+  "end": "Bottom: elbows bent to about 90 degrees with the upper arm about parallel to the floor (c5, c8); elbows tucked close to the body (c7); hips still close to the bench (c4); legs straight, heels down (c3).",
+  "checkpoints": [
+   {
+    "label": "Elbows at 90",
+    "what": "Upper arm about level with the floor at the bottom.",
+    "claim": [
+     "c5",
+     "c8"
+    ]
+   },
+   {
+    "label": "Hips close",
+    "what": "Hips stay close to the bench.",
+    "claim": "c4"
+   },
+   {
+    "label": "Legs out",
+    "what": "Legs straight out, heels on the floor.",
+    "claim": "c3"
+   }
+  ],
+  "mistake": {
+   "what": "Dropping too low into the dip, the upper arms well below level with the floor.",
+   "why": "The top fault, flared elbows (c7), is sideways and the side view cannot show it, so the plate draws the next fault by the same steps: Healthline says dropping too low puts too much pressure on the shoulder, and Fitness Volt says dipping exceedingly low can impose undue stress on the shoulders (c8).",
+   "claim": "c8",
+   "drawable": false,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the elbows flaring out (c7). Step 1 finds no frequency word for a fault: Healthline's \"What are the most common mistakes to watch for?\" and \"Watch out for these common mistakes.\" are a list heading and its intro (c11); Fitness Volt's \"most people are unaware of how significant tricep development is\" is about triceps training; McKenzie's \"three common dip variations\", \"The dip is often called the “triceps dip”\" and \"More experienced exercisers often choose to overload the shoulder flexors and elbow extensors\" are about the exercise, its name and its users, not a fault. Step 2: two faults on Healthline's common-mistakes list (c11) are tied to harm in a listed word. Flared elbows: \"When you let your elbows flare out, you move the tension from your triceps to your shoulders, which can cause injury.\" (Healthline, c7). Going too low: \"Avoid dipping exceedingly low, as it can impose undue stress on the shoulders.\" (Fitness Volt, c8). Both are on the list and sourced directly. Two more quotes tie them to harm: Fitness Volt's \"Elbow Vigilance: Ensure your elbows remain tucked close to your body throughout to prevent undue strain.\" (tucked elbows, c7) and Healthline's \"If you drop too low into the dip, you’ll put too much pressure on your shoulder.\" (going too low, c8; 'pressure' is not an LR-31 harm word). \"Strain\" counts as harm by the lb6 precedent (low_to_high_cable_fly: PureGym's \"minimising strain to the shoulder joint\" decided step 2), so the flared elbows have two sources (Healthline, Fitness Volt). Going too low has one (Fitness Volt) or, if \"pressure\" also counts, two; either way the flared elbows win, on source count or on Healthline's list order. Set aside: Muscle & Fitness's \"To protect your shoulders make sure you position your hands in a comfortable position about shoulder-width apart.\" (c19) ties hand width to harm under D-SUP-PROTECT, but hand width is on no mistakes list and not in handlingMistakes, and it would lose the first tie-break (on a common-mistakes list) anyway; McKenzie's \"This greater ROM at the shoulder joint may increase the risk of injury to the anterior shoulder capsule\" (c14) is about the bench dip's own range, not a named fault; Healthline's \"When performed incorrectly, this exercise can cause a shoulder impingement\" (c21) names no fault. Healthline's 'You’re moving too quickly' item (\"If you rely on momentum to complete each rep, you miss out on some of the move’s many benefits. Move slowly and with control for maximum results.\", c10) states no harm and is speed only; not going low enough (c9) states no harm. McKenzie's \"This larger shoulder extension ROM may also excessively strain the PM when likely operating at a mechanical disadvantage\", \"the dip has also been criticised as a potentially high-risk exercise for injury to the shoulder\" and \"particularly to exercisers with a history of shoulder pain and injury\" are about the exercise and its users, not a named fault. Fitness Volt's \"Engage Your Core: A taut core ensures stability, fostering a safe and efficient workout regimen.\" names no fault and no harm; its \"ensuring you can dip safely and effectively\" is about the platform, an equipment choice; Healthline's \"Important to note: If you have a preexisting shoulder injury, dips may not be the best option.\" (c21) is about the lifter, not a fault. drawable is false: the flare is sideways and the side view cannot show it (as on overhead_cable_triceps_extension). The plate draws the next fault by the same steps, going too low (c8), which the side view shows as the upper arms sunk well below level. handlingMistakes[0] stays the flared elbows."
+  },
+  "tells": [
+   {
+    "text": "Elbows stop at about 90 degrees",
+    "claim": "c5"
+   },
+   {
+    "text": "Hips stay close to the bench",
+    "claim": "c4"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 2,
+   "pause": 1,
+   "claim": [
+    "c16",
+    "c17"
+   ],
+   "text": "Drawing convention: the sources say lower slowly and with control (c16) and give no seconds for the lowering or the lifting; 2 s down and 1 s up shows a slower lowering than lifting. Pause 1: Muscle & Fitness asks for a pause at the top of each rep with no seconds (c17), so the 1 s is a drawing convention (LR-33). Its \"Pause for one second\" sits at the bottom, at the 90-degree elbow, in its feet-on-a-bench version (c18); that bottom pause is not in the pause field. ACSM's 1-2 s is not cited (LR-15)."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Palms flat on the bench edge beside the hips (palm-flat hand pair) (c1, c2).",
+  "width": "About shoulder-width (c1); Muscle & Fitness: a comfortable position about shoulder-width apart, to protect the shoulders (c19).",
+  "thumb": "",
+  "handContact": "Whole palm on the bench; push up through the palms (c2, c6).",
+  "wrist": "",
+  "claims": [
+   "c1",
+   "c2",
+   "c6",
+   "c19"
+  ],
+  "note": "Finger direction: Fitness Volt's main steps say fingers pointing forward, its second instructions say pointing laterally away from the body (c2). The plate draws fingers forward (the main steps). No bench-dip source gives a thumb or wrist position."
+ },
+ "setup": [
+  {
+   "step": "Sit on the edge of a sturdy bench.",
+   "claim": "c1"
+  },
+  {
+   "step": "Hands flat beside your hips, about shoulder-width apart.",
+   "claim": [
+    "c1",
+    "c2"
+   ]
+  },
+  {
+   "step": "Point your fingers forward.",
+   "claim": "c2"
+  },
+  {
+   "step": "Walk your feet out, legs straight, heels down.",
+   "claim": "c3"
+  },
+  {
+   "step": "Lift your hips just clear of the edge on straight arms.",
+   "claim": "c3"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Elbows tucked in close to your body.",
+   "claim": "c7"
+  },
+  {
+   "point": "Hips close to the bench.",
+   "claim": "c4"
+  },
+  {
+   "point": "Shoulder blades back, lean back slightly.",
+   "claim": "c20"
+  },
+  {
+   "point": "Lower until your upper arms are level with the floor.",
+   "claim": [
+    "c5",
+    "c8"
+   ]
+  },
+  {
+   "point": "Push through your palms to straight arms.",
+   "claim": "c6"
+  },
+  {
+   "point": "Move slowly and with control.",
+   "claim": "c10"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Elbows flaring out.",
+   "fix": "Keep your elbows tucked in close to your body.",
+   "claim": "c7"
+  },
+  {
+   "mistake": "Dropping too low.",
+   "fix": "Stop when your upper arms are level with the floor.",
+   "claim": "c8"
+  },
+  {
+   "mistake": "Stopping short of depth.",
+   "fix": "Lower until your elbows reach about 90 degrees.",
+   "claim": [
+    "c9",
+    "c5"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "triceps",
+    "claim": "c12"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "chest",
+    "claim": "c12"
+   },
+   {
+    "muscleId": "front_delts",
+    "claim": "c12"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Back of the arms",
+    "means": "Your triceps are doing most of the work.",
+    "fix": "",
+    "claim": "c12",
+    "redFlag": null
+   },
+   {
+    "where": "Chest and front of the shoulders",
+    "means": "They help, less than the triceps.",
+    "fix": "",
+    "claim": "c12",
+    "redFlag": null
+   },
+   {
+    "where": "Shoulder",
+    "means": "Flared elbows or dipping too low load it more.",
+    "fix": "Tuck your elbows and stop with upper arms level.",
+    "claim": [
+     "c7",
+     "c8"
+    ],
+    "redFlag": "shoulder"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Flared elbows move the load to the shoulders and can cause injury.",
+   "claim": "c7"
+  },
+  {
+   "risk": "Dropping too low puts too much pressure on the shoulder.",
+   "claim": "c8"
+  },
+  {
+   "risk": "This dip bends the shoulder far back, which may strain its front.",
+   "claim": [
+    "c13",
+    "c14"
+   ]
+  }
+ ],
+ "redFlags": [
+  "shoulder"
+ ],
+ "zooms": [
+  {
+   "key": "depth",
+   "kind": "posture",
+   "right": "Upper arm level with the floor, elbow at 90 degrees.",
+   "wrong": "Dropped far too low into the dip.",
+   "claim": [
+    "c5",
+    "c8"
+   ]
+  },
+  {
+   "key": "elbows",
+   "kind": "posture",
+   "right": "Elbows tucked in close to your body.",
+   "wrong": "Elbows flared out.",
+   "claim": "c7"
+  },
+  {
+   "key": "hands",
+   "kind": "hand",
+   "right": "Palms flat beside your hips, fingers forward.",
+   "wrong": null,
+   "claim": [
+    "c1",
+    "c2"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [],
+  "remove": [],
+  "why": "triceps primary with chest and front_delts secondary matches StrengthLog's muscle box and Healthline (c12); McKenzie's EMG says the bench dip predominantly targets the triceps (c12). Fitness Volt also names lats and rhomboids; no other read source does, so they are not added."
+ },
+ "anchorSource": "hl-benchdip",
+ "loadProgression": {
+  "text": "Aim for 3 sets of 10 to 12. Too hard? Bend your knees and bring your feet closer. Then inch your feet out each week. Next, rest your feet on a second bench. Later, feet back on the floor, hold a plate on your lap.",
+  "claim": "c15"
+ },
+ "gaps": [],
+ "notes": [
+  "Anchor: Healthline's bench-dip page, read in full (steps, common-mistakes list, progressions). StrengthLog's and Fitness Volt's bench-dip pages and the McKenzie 2022 full text (PMC, efetch db=pmc) were read in full too. Muscle & Fitness's page is written for the two-bench version (feet on a second bench, c18); its claims say so and are used only for the tempo (c17, c18, WEAK) and the hand-width cue (c19).",
+  "Hand: the palm-flat shared card (shared/palm-flat.json) does not list lib_bench_dip in appliesTo, so nothing is taken from it; this card's hand lines rest on its own claims (c1, c2).",
+  "Finger direction is drawn forward, from Fitness Volt's main steps (c2); its second instructions say fingers pointing laterally away. Both are in c2's quotes.",
+  "The shoulder feel row is place + the sources' faults (c7, c8) + their fix, with no symptom-to-cause clause and no stop-the-set line (LR-6; R-LB6-6). Its fix's 'stop at upper arms level' restates Healthline's 'Stop when your upper arms are parallel to the floor' (c8), a depth line, not a stop-the-set line.",
+  "Depth: Healthline and Fitness Volt's main steps say about 90 degrees with the upper arm parallel; Fitness Volt's second instructions say slightly above parallel, and StrengthLog says as far as comfortable (c5). The card follows the 90-degree, parallel line that two sources give and that matches the too-low fault (c8).",
+  "McKenzie (c13, c14) also writes: 'As the TB can be activated to similar levels in other exercises that do not require loaded end-range extension, the bench dip should not be part of regular strength training or rehabilitation protocols.' That is a programming judgement about the exercise, not a form point, so no shown line says it; risks[2] keeps the authors' 'may'.",
+  "Tier B: the critic's tier-B checks that apply here are depth (c5, c8) and lockout; Muscle & Fitness's 'elbows are locked out' at the top is in its two-bench steps only, so the card says straight arms (c3, c6) and no lock line.",
+  "Read but not cited: BarBend (barbend.com/bench-dip/, /bench-dips/, /tricep-dips/: 404), ACE (no bench-dip page in its arms, chest, shoulders or bench listings; exercise-library/14 is the bird dog), Muscle & Strength (403), Fitness Volt bench-dip-guide (404), Verywell Fit (402), Garage Gym Reviews and Men's Health (404), Motra (404), Mayo Clinic (403), NASM (404)."
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c3"
+  },
+  {
+   "kind": "contact",
+   "landmark": "heel.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c3"
+  },
+  {
+   "kind": "angle",
+   "joint": "elbow.l",
+   "pose": "end",
+   "cardPose": "end",
+   "deg": 90,
+   "claim": "c5"
+  },
+  {
+   "kind": "angle",
+   "joint": "elbow.r",
+   "pose": "end",
+   "cardPose": "end",
+   "deg": 90,
+   "claim": "c5"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Lower",
+   "s": 2,
+   "move": true
+  },
+  {
+   "phase": "Press",
+   "s": 1,
+   "move": true
+  },
+  {
+   "phase": "Hold",
+   "s": 1
+  }
+ ],
+ "topFault": "flare"
+}
