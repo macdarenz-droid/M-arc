@@ -1234,11 +1234,29 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   });
   /** No leader crosses a figure: normal leaders stay outside the solid end figure; Mistake leaders stay outside both the
    *  solid end figure and the Mistake figure (6348852288 item 1), away from their first 8 px. */
-  const crossProblems = (spec: any) => {
-    const out: string[] = [];
+  /** Front entries to the back (D-LIB18-LIFT, widened as D-LIB18-BACKPAD; #305 6360287922 ruling): a named leader may
+   *  enter each figure once, from the front (its box end ahead of the anchor), crossing no equipment, at most 81.9 px. */
+  const FRONTNIT = [{ id: 'high_knees', key: 'arch', mistake: true }];
+  const frontEntry = (p: number[][], figs: number[][][][], cam: any, spec: any, mistake: boolean) => {
+    const len = segs(p).reduce((t, [a, b]) => t + Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!), 0), an = p[0]!, end = p[p.length - 1]!;
+    const pts: number[][] = []; for (const [a, b] of segs([...p].reverse())) for (let k = 0; k < 40; k++) pts.push([a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40]);
+    const use = pts.filter(q => Math.hypot(q[0]! - an[0]!, q[1]! - an[1]!) >= 8);
+    const entries = figs.map(F => { let n = 0, was = false; for (const q of use) { const v = outside(F, q) < 0; if (v && !was) n++; was = v; } return n; });
+    const eq = itemsIn(spec, mistake ? 'mistake' : 'end').items.filter((i: any) => i.type !== 'floor').flatMap((it: any) => eng.PRIMITIVES[it.type](it, cam).map((x: any) => x.poly).filter(Boolean));
+    const eqHit = eq.length > 0 && use.some(q => outside(eq, q) < 0);
+    return { len, entries, front: end[0]! > an[0]!, eqHit };
+  };
+  const crossProblems = (spec: any, nits: any[] = FRONTNIT) => {
+    const out: string[] = [], cam = camOf(spec);
     for (const mistake of [false, true]) {
       const list = listOf(spec, mistake), figs = [shapesIn(spec, 'end').map((x: any) => x.poly), ...(mistake ? [shapesIn(spec, 'mistake').map((x: any) => x.poly)] : [])];
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
+        if (nits.some(n => n.id === spec.id && n.key === list[i]?.key && n.mistake === mistake)) {
+          const f = frontEntry(p, figs, cam, spec, mistake);
+          if (f.len > 81.9 || f.entries.some(n => n > 1) || !f.front || f.eqHit) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: front entry outside D-LIB18-LIFT (len ${f.len.toFixed(1)}, entries ${f.entries}, front ${f.front}, equipment ${f.eqHit})`);
+          else console.log(`LIB-22 front entry ${spec.id} ${list[i]?.key}: ${f.len.toFixed(1)} px, entries ${f.entries}`);
+          return;
+        }
         figs.forEach((polys, f) => {
           let inside = 0;
           for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
@@ -1251,6 +1269,12 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     }
     return out;
   };
+  it('the named front entry (high_knees "Back arches" on the lumbar back) stays inside D-LIB18-LIFT; mutations: the nit dropped and a box past 81.9 px are red', () => {
+    expect(crossProblems(S.high_knees)).toEqual([]);
+    expect(crossProblems(S.high_knees, []).length).toBeGreaterThan(0);
+    const at = (box: any) => ({ ...S.high_knees, mistake: { ...S.high_knees.mistake, tells: S.high_knees.mistake.tells.map((x: any) => (x.key === 'arch' ? { ...x, box } : x)) } });
+    expect(crossProblems(at({ left: 256, top: 144 })).some(x => x.includes('front entry outside'))).toBe(true);
+  });
   /** No leader crosses another leader, or another label's text (its ink box, 2 px margin), in either view (#305
    *  6356763967 items 4 and 6). A leader's own label is left out: the leader ends on it. */
   const labelProblems = (spec: any) => {

@@ -115,8 +115,8 @@ export default {
     pose: mistake,
     guides: [{ kind: 'arrow', from: { at: 'head', pose: 'end', off: [0, -9] }, to: { at: 'head', pose: 'mistake', off: [0, -9] } }],
     tells: [
-      { key: 'arch', text: 'Back arches', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 40, top: 132 }, cue: 'The lower back arches and the trunk tips back.' },
-      { key: 'high', text: 'Knee<br>too high', anchor: { at: 'knee.r', pose: 'mistake', off: [0, -8] }, box: { left: 264, top: 120 }, cue: 'The knee is driven so high that the back gives way.' },
+      { key: 'arch', text: 'Back arches', anchor: { at: 'lumbar', pose: 'mistake', off: [-3.35, 0] }, box: { left: 206, top: 92 }, cue: 'The lower back arches and the trunk tips back.' },
+      { key: 'high', text: 'Knee<br>too high', anchor: { at: 'knee.r', pose: 'mistake', off: [0, -8] }, box: { left: 272, top: 144 }, cue: 'The knee is driven so high that the back gives way.' },
     ],
   },
   alt: 'High knees, side view. Standing tall on the balls of the feet, the right knee drives up to waist height while the left arm pumps forward. The trunk stays upright.',
