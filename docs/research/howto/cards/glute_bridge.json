@@ -723,5 +723,96 @@
     "Arms: the bodyweight plate draws the arms straight by the sides on the floor (c1); the barbell version holds the bar (c14).",
     "Healthline's variations page gives one quick-pointer list for all bridge variations (c4, c12) and per-variation steps; only the shared pointers, the heel/toe contrast (c11) and the sets (c13) are used.",
     "Healthline's \"If you feel your form suffering, take a break and recuperate so that you can regain your strength and perform it correctly.\" is a rest line, not a stop line for pain; no row uses it."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sacrum",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2",
+      "note": "the low back flat against the floor by the drawn tuck (D-LIB11-SACRUM; LB8 NOTE RULED Q10.7)"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
+    },
+    {
+      "kind": "angle",
+      "joint": "knee.r",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c4"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lift",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "arch"
 }

@@ -813,5 +813,104 @@
     "c15 and c16 rest on a gym blog written in the first person; they are tagged WEAK.",
     "Fix round 2026-10-02 (verify w0): A1/R-W0-3: the re-latch and exit was moved out of unsourced and is now sourced (c17: BoxLife, named author; YR Fitness, a machine maker's guide; both read in full), so it is no longer a gap. Setup step 5 adds the lock-then-step-out line. The True Fitness PLS1400 manual PDF returned 404 and its ManualsLib copy covers assembly only; manualzz returned 403.",
     "LB8 pass (2026-10-22, start head 6d253b9e): LR-31 rankNote written. PICK CHANGED: the top fault is now losing control and dropping into the bottom (YR Fitness: 'I often see people add too much weight and then lose control on the way down', c20; LR-31 step 1), seen only as speed, so drawable is false; plate.mistake still draws heels lifting (c9, c15). handlingMistakes reordered (texts unchanged; [0] cites c10 and c20). Tempo was null with the 2-3 s descent in text: now down 3 (c10, c18; R-LB2-1), up 1 drawing convention (c18, WEAK; R-LB7-6), pause 0 (LR-33); BoxLife's bottom pause (c19) is named in tempo.text. Shown-line fixes (CARD-V2:68, R-LB7-7): feel.rows[0] where 'Front of the thighs' -> 'Thighs' (no cited quote has a front word) and means 'Your quads do most of the work.' -> 'Your quads are the primary driver.' (c12 gains FORM's line); c3 gains YR's 'lightly brace your core' for the brace wording in setup and checkpoints; setup[3] also cites c6 ('at least parallel'). c17's two BoxLife quotes now use ’ as the page prints, and their where names match the page's step headings. Lockout is now sourced (c21: YR, XcelerateGyms) and leaves unsourced; no shown line was added for it. The get-in-out shared card does not list pendulum_squat (standing); nothing is taken from it."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c16"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c16"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c5"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 3,
+      "move": true
+    },
+    {
+      "phase": "Push",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "drop"
 }

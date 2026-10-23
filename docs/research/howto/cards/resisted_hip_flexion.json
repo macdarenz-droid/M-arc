@@ -783,5 +783,39 @@
     "Fix round 2026-10-02 (verify w0): A7/R-W0-2: claims resting only on motra-hf or kovo-hf tagged WEAK; a named source (Outside, Amber Sayer, CPT) added as anchor with c13-c17; setup and tempo now cite it; variantLine rewritten so it does not say the two versions share rules. The anchor is a band source while the plate draws the cable. Supervisor ruling R-W0-7 (2026-10-02, verify/w0.md): the bar is met. The movement is the same (low anchor behind, facing away, knee drive, hold, slow lower), and content.md 3.2 asks for an exercise-specific technique source. The cable-only setup stays on the WEAK full-access pages, and the plate draws nothing that only the band source gives.",
     "Recheck Low 1 (2026-10-02): loadProgression no longer says \"more weight\", which no cited claim supports; it follows c16 (a band with greater tension).",
     "LB8 pass (2026-10-22, start head 6d253b9e): LR-31 rankNote added; the pick is unchanged (step 2, the lean back and arch; drawable true), and handlingMistakes keeps its order. New claim c18 holds Motra's common-mistakes list. LR-33: values unchanged (2/2/2); c8 gains Motra's Tempo tooltip, and tempo.text now places Motra's middle 1 s at the bottom (the start) and the pause field's 2 s at the top, from Outside's 2-3 s hold (c15). Shown-line fixes (CARD-V2:68, LR-6, R-LB3-4): mistake.what drops 'the knee'; tells[1] 'no twist' -> 'no rotation'; handlingMistakes[0] fix 'Stand tall and stop at thigh level.' -> 'Stand tall. Lift only as high as you can without arching.' (c5 allows up to the knee near the chest; the old line was stricter); feel.rows[2].means is now in LR-6 shape ('Fault: ...'), with no symptom-to-cause clause; risks[1] 'Sudden, recent' -> 'Acute' (c11's word); risks[2] -> 'Stop if balance causes strain.' (c11's own stop line, nothing added); zooms[1] right 'cable taut behind you' -> 'slight cable tension' (c1) and c2 gains Kovo's ankle-cuff line for 'cuff'; loadProgression -> 'Start light. Do 10-15 reps a leg. Over time, use a band with greater tension.' (c16's words). Claim lists widened where a line used another claim's words (setup[0], setup[2], posture[3], feel.rows[1], zooms[0]). No shared card lists resisted_hip_flexion."
-  ]
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "ankle.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2",
+      "note": "one hand on the frame: the hand nearer the frame in the drawn view (the column in the working leg’s plane, on the right; LB8 NOTE RULED Q10.9)"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lift",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 2
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "lean"
 }
