@@ -65,7 +65,7 @@ export const mistakeShots = opts => cardShots({ ...opts, mode: 'mistake' });
 
 /** The owner-visible notes per id on the LB5 sheet (DESIGN.md sections 6, 11, 13; rulings named). */
 export const SHEET_NOTES = {
-  lib_cross_body_hammer_curl: ['F7: drawable fault. The top fault, the arm fully straight at the bottom (c15), is a small elbow bend toward the camera that the front view cannot show; the plate draws the next fault, the wrist twist (needs your named yes)'],
+  lib_cross_body_hammer_curl: ['F7: drawable fault. The top fault, the arm fully straight at the bottom (c15), is a small elbow bend toward the camera that the front view cannot show; the plate draws the next fault, the working shoulder shrugging (c5, c6; F-LB5-1) (needs your named yes)'],
   lib_incline_dumbbell_curl: ['F7: drawable fault. The top fault, the wrists bending (c11), cannot be seen from the side; the plate draws the elbows drifting forward (needs your named yes)'],
   lib_wrist_curl: ['F7: drawable fault. The top fault, the weight rolling to the fingertips (c5), needs open fingers, which the plate figure does not draw; the plate draws the lean and the arm straightening (needs your named yes)'],
   lib_preacher_curl: ['new rig: the preacherPad composer (D-LIB15-PREACHER; preacherPad anchor)', 'plate size: its own drawn value (0.23 m), not skull_crusher\'s'],

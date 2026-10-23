@@ -372,7 +372,7 @@ describe('LIB-15 A10: the LB5 plates page is deterministic (PQ-H7)', { timeout: 
   });
 });
 
-describe('LIB-15 A7: the tempo strips follow the cards (D-LIB15-SECS; DESIGN.md section 8, proposed)', () => {
+describe('LIB-15 A7: the tempo strips follow the cards (D-LIB15-SECS; DESIGN.md section 8, ruled #290 6340022161)', () => {
   // The proposed table (DESIGN.md section 8), copied here, never read from tempo.json or a spec: phase name and source.
   const TABLE: Record<string, [string, string][]> = {
     overhead_cable_triceps_extension: [['Extend', 'up'], ['Hold', 'pause'], ['Lower', 'down']],
@@ -637,7 +637,7 @@ describe('LIB-15 A4: runQa node half on an LB5 plate (lib_preacher_curl), LIB-3 
       return { ...(await candOf(h.toString('utf8'))), spec };
     } finally { rmSync(dir, { recursive: true, force: true }); }
   };
-  it('clean: no node-half problem but the expected H6:no-card (before Do 6 b)', async () => {
+  it('clean: no node-half problem (H6 green against the card since Do 6 b)', async () => {
     const r = await qa(await candOf());
     expect(node(r)).toEqual([]);
   });
@@ -750,16 +750,21 @@ describe('LIB-15 A11, A6, A8 (Do 6 b): the card fields, the ruled maps and the p
   const topFaultProblems = (card: any, drawnKey: string) => (card.plate.mistake.drawable
     ? (card.topFault === drawnKey ? [] : ['drawable:true but topFault is not the drawn fault'])
     : (card.topFault !== drawnKey ? [] : ['drawable:false but topFault equals the drawn fault']));
+  /** One card's A8 problems: topFault off the ruled map, a drawable/topFault pair that contradicts itself, or an F7 id
+   *  (D-LIB15-F7) whose card is not drawable:false. */
+  const a8Problems = (id: string, card: any) => [
+    ...(card.topFault === TOP[id] ? [] : [`${id}: topFault ${card.topFault} != ruled ${TOP[id]}`]),
+    ...topFaultProblems(card, DRAWN[id]!).map(p => `${id}: ${p}`),
+    ...(F7_IDS.includes(id) && card.plate.mistake.drawable !== false ? [`${id}: F7 id with drawable ${card.plate.mistake.drawable}`] : []),
+  ];
   it('Q1 / A8: each topFault follows the ruled map; wrist_curl is drawable:false with topFault grip, unlike its drawn key; every spec\'s first tell carries the drawn key', () => {
-    for (const id of FIELDED) { expect(cardOf(id).topFault, id).toBe(TOP[id]); expect(topFaultProblems(cardOf(id), DRAWN[id]!), id).toEqual([]); }
+    for (const id of FIELDED) expect(a8Problems(id, cardOf(id)), id).toEqual([]);
     expect([cardOf('wrist_curl').plate.mistake.drawable, cardOf('wrist_curl').topFault]).toEqual([false, 'grip']);
     for (const id of FIELDED.filter(i => S[i])) expect(S[id].mistake.tells[0].key, id).toBe(DRAWN[id]);
   });
-  it('A8 mutation: wrist_curl\'s card copied with drawable true and topFault equal to the drawn key is red against the F7 expectation', () => {
-    const c = cardOf('wrist_curl'); c.topFault = 'lean';
-    expect(topFaultProblems(c, 'lean')).toEqual(['drawable:false but topFault equals the drawn fault']);
-    c.plate.mistake.drawable = true;   // the F7 id's expectation is drawable false: a true field is itself the red
-    expect(c.plate.mistake.drawable === false && c.topFault !== 'lean').toBe(false);
+  it('A8 mutation: cross_body_hammer_curl\'s card with drawable true and topFault equal to its drawn key (shrug) is red', () => {
+    const c = cardOf('cross_body_hammer_curl'); c.plate.mistake.drawable = true; c.topFault = 'shrug';
+    expect(a8Problems('cross_body_hammer_curl', c)).toEqual(['cross_body_hammer_curl: topFault shrug != ruled straight', 'cross_body_hammer_curl: F7 id with drawable true']);
   });
   const factProblems = (id: string, c: any) => c.plateFacts.flatMap((f: any, i: number) => [
     ...(['contact', 'angle', 'height'].includes(f.kind) ? [] : [`${i}: kind`]),

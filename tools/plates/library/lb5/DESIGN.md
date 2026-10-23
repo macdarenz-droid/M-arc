@@ -28,7 +28,7 @@ incline_dumbbell_curl waits for pilot A on main (D-LIB15-INCLINE): it is in this
 |---|---|---|
 | overhead_cable_triceps_extension | lat_pulldown | pose (standing, back to a low pulley, arms overhead; the 8's is seated), the rope (no PARAMS path draws it; `bar.kind: 'rope'` is a name, the composer is not), the cable from below, tempo (1/1/2 with Hold, c21), Mistake (lower-back arch, c9) |
 | dumbbell_overhead_triceps_extension | dumbbell_lateral_raise (no spec: ref-src, qa/node.mjs:156 'H6:not-engine') | no engine parent at all; pose (split stance, arms overhead), one dumbbell vertical in two hands, tempo, Mistake (arch, c9) |
-| cross_body_hammer_curl | dumbbell_lateral_raise (no spec) | no engine parent; front view curl across the body, neutral grip, tempo, Mistake (wrist twist, c7) |
+| cross_body_hammer_curl | dumbbell_lateral_raise (no spec) | no engine parent; front view curl across the body, neutral grip, tempo, Mistake (the shrug, c5, c6; F-LB5-1, after the wrist twist, c7, proved undrawable) |
 | cable_curl | lat_pulldown | pose (standing, facing a low pulley), a straight bar from below, tempo, Mistake (arms straight at the bottom, c13) |
 | bayesian_cable_curl | lat_pulldown | pose (split stance facing away from a low pulley, arm behind the trunk), single handle, tempo, Mistake (upper arm swings forward, c5) |
 | preacher_curl | machine_chest_press | the `preacherPad` (census gap), the EZ bar, pose (seated, arms on an angled pad), tempo, Mistake (arms off the pad, c5) |
