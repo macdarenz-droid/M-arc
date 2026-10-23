@@ -170,6 +170,25 @@ const startPhantom = [
 // knee to the ankle, in front of the shin, so its leader starts in open space.
 const THIGH_DIR = [LE['knee.r'][2] - LE['hip.r'][2], LE['knee.r'][1] - LE['hip.r'][1]];
 const PAD_PLANE = { point: PAD_AT, normal: N }, PLATE_PLANE = { point: [0, PLATE_Y, 0], normal: PN };
+// The Mistake's faulty back contour (panel R5, #306 6361384861): the drawn back outline of the Mistake torso, sampled
+// between the Mistake backMid and the seat (around the lifted sacrum and buttock), as the engine draws it after the
+// M_ROLL roll (bodyShapes' torso outline; side camera at 1 px per m, START_LEG's method), never a straight line.
+const LM = L({ ...end, ...mistakePose });
+export const BACK_CONTOUR = (() => {
+  const b = { height: H }, sk = fk(resolve(normPose({ ...end, ...mistakePose }, b), b).q, b);
+  const cam = { view: 'side', near: 'r', facing: 'right', pxm: 1, P: w => [w[2], -w[1]] };
+  const poly = bodyShapes(sk, cam).find(sh => sh.key === 'torso').poly, at = w => [w[2], -w[1]];
+  const near = w => { const q = at(w); let k = 0; poly.forEach((p, i) => { if (Math.hypot(p[0] - q[0], p[1] - q[1]) < Math.hypot(poly[k][0] - q[0], poly[k][1] - q[1])) k = i; }); return k; };
+  const i0 = near(LM.backMid), i1 = near(LM.seat);
+  if (!(i0 < i1)) throw new Error('hack_squat: the torso outline does not run from backMid down to the seat');
+  // the outline's own vertices strictly between the two landmarks (the back contour runs top to bottom, then the seat)
+  const inner = poly.slice(i0 + 1, i1).filter(p => Math.hypot(p[0] - at(LM.backMid)[0], p[1] - at(LM.backMid)[1]) > 1e-3 && Math.hypot(p[0] - at(LM.seat)[0], p[1] - at(LM.seat)[1]) > 1e-3);
+  return [LM.backMid, ...inner.map(p => [0, -p[1], p[0]]), LM.seat];
+})();
+// The hip-to-pad gap (panel R5): across the space between the pad face and the lifted Mistake buttock, along the pad
+// normal N, from 12 % to 88 % of the span so the dashes sit in the gap, touching neither the pad face nor the contour.
+const GAP_FOOT = sub(LM.buttock, mul(N, dot(sub(LM.buttock, PAD_AT), N)));
+export const GAP_MARK = [0.12, 0.88].map(t => add(GAP_FOOT, mul(sub(LM.buttock, GAP_FOOT), t)));
 
 export const HS = { U, N, LE, LS, TILT, SOLE_Z, TRAVEL, RAIL_LO, RAIL_HI, SP, SHOULDER, padFace, PAD_PLANE, PLATE_PLANE, sledP, mistakePose, travelOf, startPhantom };
 // The card's contact facts (lb8 DESIGN.md; D-LIB18-FACTS): each bound by a check on its landmark in its pose, at the
@@ -215,15 +234,22 @@ export default {
     pose: mistakePose,
     parts: ['torso', 'leg.r', 'leg.l'],
     guides: [
-      // the faulty back contour: backMid stays near the pad, the sacrum and buttock peel off it (6.4 and 7.9 cm)
-      { kind: 'dashed', smooth: true, pts: [{ at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }, { at: 'seat', pose: 'mistake' }] },
+      // the faulty back contour: the Mistake torso's drawn back outline from backMid to the seat (BACK_CONTOUR above):
+      // backMid stays near the pad, the sacrum and buttock peel off it (6.4 and 7.9 cm)
+      { kind: 'dashed', smooth: true, pts: BACK_CONTOUR },
+      // the empty space between the pad face and the lifted buttock (GAP_MARK above), dashed over the end figure (A15)
+      { kind: 'dashed', pts: GAP_MARK },
+      // the hips move away from the pad: a 12 px arrow along the pad normal N (screen (0.707, -0.707)), in the open hip
+      // crease in front of the Mistake hip, at least 6 px clear of the solid end figure (A15)
+      { kind: 'arrow', from: { at: 'hip.r', pose: 'mistake', off: [17.5, -11.25] }, to: { at: 'hip.r', pose: 'mistake', off: [25.99, -19.74] } },
     ],
     tells: [
       // c8 "lift their lower back off the back pad", c9 "having your hips leave the backrest": on the hips' pad contact, the
-      // Mistake buttock (D-LIB18-LIFT), 7.9 cm off the pad; the leader enters the end figure once, from the front (named nit)
-      { key: 'lift', text: 'Hips off<br>pad', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 252, top: 222 }, cue: 'At the bottom the hips and lower back lift off the back pad.' },
+      // Mistake buttock (D-LIB18-LIFT), 7.9 cm off the pad; the box sits above the hips and its short leader drops into the
+      // end figure once, from the front (the hip crease), never along the thigh's underside (panel R5; named nit)
+      { key: 'lift', text: 'Hips off<br>pad', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 174, top: 162 }, cue: 'At the bottom the hips and lower back lift off the back pad.' },
       // c10 "your lower back rounds": on the lower back, the Mistake sacrum on the dashed back contour (D-LIB18-ROUND)
-      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 168, top: 164 }, cue: 'The lower back rounds at the bottom of the squat.' },
+      { key: 'round', text: 'Lower back<br>rounds', anchor: { at: 'sacrum', pose: 'mistake' }, box: { left: 144, top: 115 }, cue: 'The lower back rounds at the bottom of the squat.' },
     ],
   },
   alt: 'Hack squat, side view. Shoulders under the pads, back on the tall pad of a sled on angled rails, feet flat on a fixed plate, the lifter lowers until the knees bend about 90 degrees with the thighs level, hips on the pad, then pushes back to almost straight legs.',

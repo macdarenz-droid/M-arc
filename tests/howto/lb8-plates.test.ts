@@ -1375,8 +1375,8 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     });
     it('no leader crosses another label\'s text', () => { expect(textProblems(s())).toEqual([]); });
     it('mutation: the "Lower back rounds" box moved across the "Hips off pad" leader is red', () => {
-      const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'round' ? { ...x, box: { left: 300, top: 226 } } : x)) } };
-      expect(textProblems(bad).length).toBeGreaterThan(0);
+      const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'round' ? { ...x, box: { left: 160, top: 200 } } : x)) } };   // across the lift leader (x 180, y 196-245)
+      expect(textProblems(bad)).toContain('lift crosses round');
     });
     /** D-LIB18-DRAW: the start sled (dropped by the start layer) is redrawn dashed in the end layer, on the start sled's
      *  drawn back pad and shoulder pad (+-1 px). */
@@ -1449,6 +1449,112 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
     it('mutation: the "Thighs to parallel" box moved onto the figure gives an engine issue', () => {
       const bad = { ...s(), callouts: s().callouts.map((x: any) => (x.key === 'parallel' ? { ...x, box: { left: 160, top: 200 } } : x)) };
       expect(plate.renderPlate(bad, { id: 'x' }).report.issues.length).toBeGreaterThan(0);
+    });
+    // Panel R5 (#306 6361384861): the lifted hips and the rounded lower back read at a glance. Each check reads the
+    // guides as the engine resolves them (plate px) and the drawn shapes, and runs on the real spec and a mutated one.
+    const mRes = (spec: any) => { const cam = camOf(spec), L = qaEng.poseLandmarks(Eng(), spec).lm; return { cam, L, at: (q: any) => qaEng.resolvePoint(q, 'mistake', L, cam) as number[] }; };
+    /** The pad face (plate px): a point on it and its screen normal toward the lifter; dPad(p) is p's distance off it. */
+    const padOf = (spec: any) => { const cam = camOf(spec), o = cam.P(HS().PAD_PLANE.point), n = [HS().N[2], -HS().N[1]], k = Math.hypot(n[0]!, n[1]!), u = [n[0]! / k, n[1]! / k];
+      return { u, dPad: (p: number[]) => (p[0]! - o[0]!) * u[0]! + (p[1]! - o[1]!) * u[1]! }; };
+    /** The faulty back contour: the dashed guide from the Mistake backMid to the Mistake seat, every point on the drawn
+     *  Mistake torso outline (<= 1 px), and its largest distance from its own chord (px). */
+    const contourOf = (spec: any) => {
+      const { L, cam, at } = mRes(spec), bm = cam.P(L.mistake.backMid), seat = cam.P(L.mistake.seat);
+      const torso = shapesIn(spec, 'mistake').find((x: any) => x.key === 'torso').poly as number[][];
+      const g = (spec.mistake.guides ?? []).filter((x: any) => x.kind === 'dashed' && x.pts).map((x: any) => x.pts.map(at) as number[][])
+        .find((p: number[][]) => Math.hypot(p[0]![0]! - bm[0]!, p[0]![1]! - bm[1]!) <= 1);
+      if (!g) return { problems: ['no dashed contour from the Mistake backMid'], dev: 0 };
+      const last = g[g.length - 1]!, off = Math.max(...g.map((p: number[]) => Math.min(...segs([...torso, torso[0]!]).map(([a, b]) => segD(p, a!, b!)))));
+      const dev = Math.max(...g.map((p: number[]) => segD(p, g[0]!, last)));
+      return { dev, problems: [...(Math.hypot(last[0]! - seat[0]!, last[1]! - seat[1]!) > 1 ? ['the contour does not end at the Mistake seat'] : []), ...(off > 1 ? [`a contour point ${off.toFixed(1)} px off the Mistake torso outline`] : []),
+        ...(dev < 10 ? [`the contour is ${dev.toFixed(1)} px from its chord (< 10, straight)`] : [])] };
+    };
+    // Measured: the drawn contour (backMid, five torso-outline vertices, seat) bows 13.5 px from its chord; >= 10 px is
+    // required. A straight backMid-seat line is 0 px.
+    it('R5: the Mistake lower back is the drawn torso outline from backMid to the seat, curved (>= 10 px from its chord)', () => {
+      const c = contourOf(s());
+      console.log(`LIB-18 hack_squat R5 back contour: ${c.dev.toFixed(1)} px from its chord`);
+      expect(c.problems).toEqual([]);
+    });
+    it('R5 mutation: the contour drawn as a straight backMid-seat line is red', () => {
+      const guides = s().mistake.guides.map((g: any, i: number) => (i === 0 ? { ...g, pts: [{ at: 'backMid', pose: 'mistake' }, { at: 'seat', pose: 'mistake' }] } : g));
+      expect(contourOf({ ...s(), mistake: { ...s().mistake, guides } }).problems).toEqual(['the contour is 0.0 px from its chord (< 10, straight)']);
+    });
+    /** The drawn solid arrows (plate px): tail, tip. */
+    const arrowsOf = (spec: any) => [...plate.renderPlate(spec, { id: 'x', mistake: true }).svg.matchAll(/<path class="m-arrow" d="([^"]+)"/g)].map(m => xy(m[1]!).slice(0, 2));
+    /** An arrow at the Mistake hip (tail within 25 px of the Mistake hip joint: in the hip crease in front of it; measured
+     *  20.8 px), 10-14 px long, along the pad normal +-10 deg. */
+    const hipArrowProblems = (spec: any) => {
+      const { L, cam } = mRes(spec), hip = cam.P(L.mistake['hip.r']), { u } = padOf(spec);
+      const near = arrowsOf(spec).filter(([a]) => Math.hypot(a![0]! - hip[0]!, a![1]! - hip[1]!) <= 25);
+      if (!near.length) return ['no arrow at the Mistake hip'];
+      return near.flatMap(([a, b]) => {
+        const d = [b![0]! - a![0]!, b![1]! - a![1]!], len = Math.hypot(d[0]!, d[1]!), ang = Math.acos(Math.max(-1, Math.min(1, (d[0]! * u[0]! + d[1]! * u[1]!) / len))) * 180 / Math.PI;
+        return [...(len < 10 || len > 14 ? [`arrow ${len.toFixed(1)} px long`] : []), ...(ang > 10 ? [`arrow ${ang.toFixed(1)} deg off the pad normal`] : [])];
+      });
+    };
+    it('R5: a 12 px arrow at the Mistake hip points straight away from the pad (along its normal, +-10 deg)', () => { expect(hipArrowProblems(s())).toEqual([]); });
+    it('R5 mutations: the arrow removed, and the arrow turned along the pad, are red', () => {
+      const noArrow = { ...s(), mistake: { ...s().mistake, guides: s().mistake.guides.filter((g: any) => g.kind !== 'arrow') } };
+      expect(hipArrowProblems(noArrow)).toEqual(['no arrow at the Mistake hip']);
+      // turned along the pad: the tip 12 px from the tail along the pad face (screen (-0.707, -0.707), up the rail)
+      const along = { ...s(), mistake: { ...s().mistake, guides: s().mistake.guides.map((g: any) => (g.kind === 'arrow' ? { ...g, to: { ...g.from, off: [g.from.off[0] - 8.49, g.from.off[1] - 8.49] } } : g)) } };
+      expect(hipArrowProblems(along)).toEqual(['arrow 90.0 deg off the pad normal']);
+    });
+    /** The gap mark: a straight dashed guide (not the contour) whose every point lies off the pad face (>= 1 px) and
+     *  outside the Mistake figure (>= 0.5 px), with the Mistake buttock contour within 15 px further along the pad
+     *  normal; at least 6 px long, along the normal +-10 deg. */
+    const gapProblems = (spec: any) => {
+      const { at } = mRes(spec), { u, dPad } = padOf(spec), mp = shapesIn(spec, 'mistake').map((x: any) => x.poly);
+      const marks = (spec.mistake.guides ?? []).filter((g: any) => g.kind === 'dashed' && g.pts && !g.smooth).map((g: any) => g.pts.map(at) as number[][]);
+      if (!marks.length) return ['no gap mark'];
+      return marks.flatMap((m: number[][]) => {
+        const out: string[] = [], a = m[0]!, b = m[m.length - 1]!, len = Math.hypot(b[0]! - a[0]!, b[1]! - a[1]!);
+        const ang = Math.acos(Math.min(1, Math.abs((b[0]! - a[0]!) * u[0]! + (b[1]! - a[1]!) * u[1]!) / len)) * 180 / Math.PI;
+        if (len < 6) out.push(`gap mark ${len.toFixed(1)} px long`);
+        if (ang > 10) out.push(`gap mark ${ang.toFixed(1)} deg off the pad normal`);
+        for (const p of m) {
+          if (dPad(p) < 1) out.push(`gap mark point ${dPad(p).toFixed(1)} px off the pad face`);
+          if (outside(mp, p) < 0.5) out.push(`gap mark point inside the Mistake figure`);
+          let hit = false; for (let k = 1; k <= 30 && !hit; k++) hit = outside(mp, [p[0]! + u[0]! * k / 2, p[1]! + u[1]! * k / 2]) < 0;
+          if (!hit) out.push('no Mistake buttock contour within 15 px beyond the gap mark');
+        }
+        return [...new Set(out)];
+      });
+    };
+    it('R5: a dashed gap mark lies in the space between the pad face and the lifted Mistake buttock', () => {
+      const { dPad } = padOf(s()), { at } = mRes(s());
+      console.log(`LIB-18 hack_squat R5 gap: the Mistake buttock ${dPad(at({ at: 'buttock', pose: 'mistake' })).toFixed(1)} px off the pad face`);
+      expect(gapProblems(s())).toEqual([]);
+    });
+    it('R5 mutation: the gap mark moved 12 px along the pad normal, into the Mistake body, is red', () => {
+      const { u } = padOf(s()), cam = camOf(s()), shift = [u[0]! * 12, u[1]! * 12];
+      // the mark's points as plate px offsets on its own world points (resolved by the engine), moved into the body
+      const guides = s().mistake.guides.map((g: any) => (g.kind === 'dashed' && !g.smooth ? { ...g, pts: g.pts.map((w: number[]) => { const p = cam.P(w); return [p[0]! + shift[0]!, p[1]! + shift[1]!]; }) } : g));
+      expect(gapProblems({ ...s(), mistake: { ...s().mistake, guides } })).toContain('gap mark point inside the Mistake figure');
+    });
+    /** The "Hips off pad" leader's length (px, past its first 8 px) within 6 px of the end thigh's drawn underside (the
+     *  thigh.r outline below the end hip-knee line). A leader that crosses the underside once runs a few px; one laid
+     *  along it runs most of its length. Measured: 0 px now, 67.3 px for the old box (252, 222); at most 12 px allowed. */
+    const underRun = (spec: any) => {
+      const cam = camOf(spec), L = lmOf(spec, 'end'), h = cam.P(L['hip.r']), k = cam.P(L['knee.r']);
+      const th = shapesIn(spec, 'end').find((x: any) => x.key === 'thigh.r').poly as number[][];
+      const under = th.filter(p => (k[0]! - h[0]!) * (p[1]! - h[1]!) - (k[1]! - h[1]!) * (p[0]! - h[0]!) > 0).sort((a, b) => a[0]! - b[0]!);
+      const i = spec.mistake.tells.findIndex((t: any) => t.key === 'lift'), p = leadersOf(plate.renderPlate(spec, { id: 'x', mistake: true }).svg)[i]!;
+      let run = 0;
+      for (const [a, b] of segs(p)) { const n = 40, L2 = Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!); for (let j = 0; j < n; j++) {
+        const q = [a![0]! + (b![0]! - a![0]!) * (j + 0.5) / n, a![1]! + (b![1]! - a![1]!) * (j + 0.5) / n];
+        if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && Math.min(...segs(under).map(([u, v]) => segD(q, u!, v!))) < 6) run += L2 / n; } }
+      return run;
+    };
+    it('R5: the "Hips off pad" leader does not run along the end thigh\'s underside (<= 12 px within 6 px of it)', () => {
+      const r = underRun(s());
+      console.log(`LIB-18 hack_squat R5 lift leader: ${r.toFixed(1)} px along the end thigh underside`);
+      expect(r).toBeLessThanOrEqual(12);
+    });
+    it('R5 mutation: the old "Hips off pad" box (252, 222), its leader along the thigh underside, is red', () => {
+      const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'lift' ? { ...x, box: { left: 252, top: 222 } } : x)) } };
+      expect(underRun(bad)).toBeGreaterThan(12);
     });
   });
 
@@ -3388,6 +3494,24 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
       const a = seat.flatMap(dens).reduce((m: number, v: number[]) => Math.max(m, -outside(shapes, v)), 0), b = shapes.flatMap(dens).reduce((m: number, v: number[]) => Math.max(m, -outside(seat, v)), 0);
       return Math.max(a, b) * 100 / cam.pxm;
     };
+    /** The drawn body's clear gap (cm) above the drawn seat pad: 0 when they touch or overlap (panel, #306 6361384861). */
+    const seatGap = (spec: any, pose: string) => {
+      const cam = camOf(spec), seat = polysOf(spec, pose, E.seat, cam, { mistake: pose === 'mistake' }) as number[][][];
+      const shapes = shapesIn(spec, pose).filter((x: any) => /^(head|torso|thigh\.|kneecap\.|shank\.|foot\.)/.test(x.key)).map((x: any) => x.poly as number[][]);
+      const pts: number[][] = shapes.flatMap((P: number[][]) => P.flatMap((a: number[], i: number) => { const b = P[(i + 1) % P.length]!, n = Math.max(1, Math.ceil(Math.hypot(b[0]! - a[0]!, b[1]! - a[1]!))); return Array.from({ length: n }, (_, k) => [a[0]! + (b[0]! - a[0]!) * k / n, a[1]! + (b[1]! - a[1]!) * k / n]); }));
+      return Math.max(0, Math.min(...pts.map((v: number[]) => outside(seat, v)))) * 100 / cam.pxm;
+    };
+    it('A15 bearing: the Mistake pelvis sits on the seat in every pose (no clear gap); mutation: the Mistake pelvis lifted 2 cm off the seat is red', async () => {
+      const g = POSES.map(p => seatGap(S[LX], p));
+      console.log(`LIB-18 leg_extension A15 seat gap: ${POSES.map((p, i) => `${p} ${g[i]!.toFixed(2)}`).join(', ')} cm`);
+      expect(g).toEqual([0, 0, 0]);
+      await tick();
+      const m = S[LX].mistake.pose, lifted = { ...S[LX], mistake: { ...S[LX].mistake, pose: { ...m, root: { ...m.root, at: [m.root.at[0], m.root.at[1] + 0.02, m.root.at[2]] } } } };
+      const c = seatGap(lifted, 'mistake');
+      console.log(`LIB-18 leg_extension A15 seat gap, Mistake lifted 2 cm: ${c.toFixed(2)} cm`);
+      expect(c).toBeGreaterThan(0.5);
+      expect(seatBearing(lifted, 'mistake').toFixed(2)).not.toBe('0.45');   // the existing depth pin turns red too
+    });
     it('A15 bearing: the Mistake pelvis rolls on the seat (lifted M_LIFT), its drawn underside as deep as the end\'s (0.45 cm, <= 0.5); the seat landmark held above the seat', async () => {
       const r = POSES.map(p => seatBearing(S[LX], p));
       console.log(`LIB-18 leg_extension A15 seat: ${POSES.map((p, i) => `${p} ${r[i]!.toFixed(2)}`).join(', ')} cm; M_LIFT ${(lx().M_LIFT * 100).toFixed(2)} cm`);
