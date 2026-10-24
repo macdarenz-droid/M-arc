@@ -28,9 +28,13 @@ const at = async (cwd: string, code: string) => {
 const problemsIn = (tree: string) => at(tree, "import { manifestProblems } from './tools/plates/library/ci/manifest.mjs'; console.log('@@' + JSON.stringify(await manifestProblems()));");
 
 describe('C0: L0-lib on this tree', () => {
-  it('MANIFEST.json lists exactly the pinned rows: 0 here, and no problem', async () => {
-    expect(JSON.parse(readFileSync(join(ROOT, MANIFEST), 'utf8'))).toEqual({ rows: {} });
-    expect(await manifestOf(ROOT)).toEqual({ rows: {} });
+  // LIB-8M Do 13 (A14): pilot A's pin adds the first rows, exactly its 13 ids (was 0 before the pin)
+  const PILOT_A = ['barbell_overhead_press', 'barbell_row', 'dumbbell_bench_press', 'dumbbell_biceps_curl', 'dumbbell_shoulder_press', 'mountain_climbers',
+    'pec_fly', 'plank', 'romanian_deadlift', 'rope_triceps_pushdown', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'upright_row'].map(id => `lib_${id}`);
+  it('MANIFEST.json lists exactly the pinned rows: pilot A\'s 13 here, and no problem', async () => {
+    const file = JSON.parse(readFileSync(join(ROOT, MANIFEST), 'utf8'));
+    expect(Object.keys(file.rows)).toEqual(PILOT_A);
+    expect(await manifestOf(ROOT)).toEqual(file);
     expect(await manifestProblems(ROOT)).toEqual([]);
   });
 });
