@@ -85,9 +85,9 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 // DESIGN.md section 15: the held ids ('LB9 NOTE RULED', #312 6382248634: none; ab_wheel_rollout is drawn at the plank
 // class's -30 deg sag, D-LIB21-ABSAG, and joins rows.json).
 // DESIGN.md section 15: cable_crunch held by D-LIB21-CCHOLD (#312) for a LIB-SPINE engine card (F-SPINE-1).
-const HELD: string[] = ['cable_crunch'];
+const HELD: string[] = ['cable_crunch', 'superman', 'pallof_press'];   // superman, pallof_press: D-LIB21-SIZE (S2)
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn.
-const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog'];
+const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press'];
 const COMPOSERS = ['abWheel'];
 const yieldNow = () => new Promise<void>(r => setImmediate(r));
 let reg: any, eng: any, body: any, qaNode: any, qaEng: any, qaIdx: any, plate: any, closure: any, markup: any;
@@ -156,7 +156,9 @@ const h9 = (spec: any) => {
 };
 const camOf = (spec: any) => {
   const c = rep(spec).camera, side = spec.view === 'side';
-  return { view: side ? 'side' : 'front', near: side ? 'r' : null, facing: 'right', pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? w[2]! : w[0]!) * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
+  // facing follows the spec (plate.mjs makeCamera: facing 'left' mirrors z and makes the left side near)
+  const left = side && spec.facing === 'left';
+  return { view: side ? 'side' : 'front', near: side ? (left ? 'l' : 'r') : null, facing: left ? 'left' : 'right', pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? (left ? -w[2]! : w[2]!) : w[0]!) * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
 };
 const mergeDeep = (a: any, b: any): any => {
   if (b === undefined) return a;
@@ -802,11 +804,11 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     }
     for (const id of ['side_plank', 'russian_twist', 'bicycle_crunch']) expect(existsSync(`${SPECS_DIR}/${id}.mjs`), id).toBe(false);
   });
-  it('the held ids (cable_crunch, D-LIB21-CCHOLD) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
+  it('the held ids (cable_crunch D-LIB21-CCHOLD; superman, pallof_press D-LIB21-SIZE) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
-    expect(build.HELD).toEqual({ cable_crunch: 'side' });
+    expect(build.HELD).toEqual({ cable_crunch: 'side', superman: 'side', pallof_press: 'side' });
     const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
-    for (const id of HELD) expect(new RegExp(`\\| ${id} \\| D-LIB21-CCHOLD`).test(design), id).toBe(true);
+    for (const id of HELD) expect(new RegExp(`\\| ${id} \\| D-LIB21-[A-Z]+`).test(design), id).toBe(true);
     for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
   });
   it('mutations: a dropped row, a duplicated row, a held id, plank, crunch, flutter_kicks, side_plank and one mode set to D are red', () => {
@@ -1014,7 +1016,7 @@ describe('LIB-21 A16: no other card\'s composer is copied, forked or imported (D
 
 describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and soft bends (DESIGN.md sections 6-12)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { cable_crunch: 'hips', ab_wheel_rollout: 'arch', bird_dog: 'arch', superman: 'head', pallof_press: 'arch' };
-  const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch'];
+  const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch', 'pallof_press'];
   const keyProblems = (spec: any) => (spec.mistake?.tells?.[0]?.key === KEYS[spec.id] ? [] : [`${spec.id}: first tell ${spec.mistake?.tells?.[0]?.key}`]);
   it('each drawn plate draws its Mistake with 2-3 tells (or one, with its record), the first carrying the ruled key', () => {
     for (const id of specsDrawn()) {
@@ -1286,15 +1288,16 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
   /** D-LIB21-DRAW, D-LIB16-LOCK: a sized soft bend ("slightly bent") in a side view sits off its neighbours' line by 90 %
    *  of its sized offset. None of the three drawn plates sizes one (pallof_press's KNEE comes with the bulk); the rule
    *  is checked against sizes.json so a soft knee cannot be drawn without a row here. */
-  const SOFT: Record<string, [string, string, number][]> = {};
+  const SOFT: Record<string, [string, string, number][]> = { pallof_press: ['start', 'end', 'mistake'].flatMap(p => [[p, 'l', 15], [p, 'r', 15]] as [string, string, number][]) };
   const offsetFor = (deg: number) => { const a = 0.245 * 1.75, b = 0.246 * 1.75, c = Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(deg * Math.PI / 180)); return (a * b * Math.sin(deg * Math.PI / 180)) / c; };
   const softProblems = (spec: any, soft = SOFT) => (soft[spec.id] ?? []).flatMap(([pose, sd, deg]) => {
     const l = lmOf(spec, pose), h = l[`hip.${sd}`], k = l[`knee.${sd}`], an = l[`ankle.${sd}`], off = segD([k[2], k[1]], [h[2], h[1]], [an[2], an[1]]);
     return off >= 0.9 * offsetFor(deg) ? [] : [`${pose} knee.${sd} ${(off * 100).toFixed(1)} cm off the line < 90 % of ${(offsetFor(deg) * 100).toFixed(1)}`];
   });
-  it('soft bends: no drawn spec sizes a soft knee yet (no KNEE row), and the 90 % rule is red on a straight leg', () => {
+  it('soft bends: pallof_press\'s KNEE 15 (c2 "knees slightly bent") drawn bent in every pose; only it sizes a KNEE; the 90 % rule is red on a straight leg', () => {
     const sizes = readJson('tools/plates/library/lb9/sizes.json');
-    for (const id of specsDrawn()) { expect(Object.keys(sizes.ids[id] ?? {}), id).not.toContain('KNEE'); expect(softProblems(S[id]), id).toEqual([]); }
+    for (const id of specsDrawn()) { expect(Object.keys(sizes.ids[id] ?? {}).includes('KNEE'), id).toBe(id === 'pallof_press'); expect(softProblems(S[id]), id).toEqual([]); }
+    expect(sizes.ids.pallof_press.KNEE.value).toBe(15);
     // bird_dog's raised left leg is straight at the end: as a 15 deg "soft" knee it is red
     expect(softProblems(S.bird_dog, { bird_dog: [['end', 'l', 15]] }).length).toBe(1);
   });

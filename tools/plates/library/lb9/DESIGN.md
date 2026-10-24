@@ -189,6 +189,9 @@ start limbs lie exactly behind the far arm and near leg in side view, so their d
 starts at the hidden start ankle.
 
 **One-tell record (D-LIB10-SKULL1; #290 6345185694).**
+- pallof_press: fault c8 (and c9); claim ids read: c5, c8 ("Over-arching the lower back ... keep a neutral spine"),
+  c9 ("Overarching the lower back, or rounding it"), c10. One stated sign: the lower back over-arching; the trunk leaning
+  back and the handle coming back are the fault's geometry, not signs a claim states. So one tell.
 - cable_crunch: fault c8 (and c3); claim ids read: c8 (Fitness Volt: "You will see a lot of people doing this
   exercise by moving their hips too, but that's a mistake ... Done correctly, only your spine should move."; Motra:
   "Using hips to pull"), c3 (Motra: "keeping hips stationary", "Hips still and elevated", "Spine flexes, not hips").
@@ -294,6 +297,9 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 | id | ruling | route |
 |---|---|---|
 | cable_crunch | D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
+
+| superman | D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
+| pallof_press | D-LIB21-SIZE (S2): the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39); and S4: from the side the cable runs along the depth axis, so the anti-rotation set-up cannot be read | a ruling on S4 (a front view, D-LIB21-FRONT) and LIB-ZOOM for the arch |
 
 ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG; it and bird_dog are approved (slice panel and recheck).
 

@@ -139,6 +139,81 @@
     "unit": "m",
     "basis": "stated reason: the head-frame grip height (from the ear up toward the temple, c2 'either side of your head') is solved as the lowest at which main's rope, with its ferrule on the cable line (slice panel R2, #312 6383060997: a rope under tension runs straight from the pulley), clears the skinned head and body by 3 mm in every key pose, not exactly 0, so a second clearance model (the A18 test's, sampled about 2 mm apart) also reads 0 cm or more (D-LIB18-PADS: >= 0 cm)"
    }
+  },
+  "superman": {
+   "MAT_T": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "stated reason: c1 'Lie prone (on your stomach) on a mat' gives no thickness; 10 mm, a foam exercise-mat thickness, the same mat as bird_dog (lb9/sizes.json bird_dog MAT_T), drawn 1.4 px at 140.91 px/m so the mat reads as a bar on the floor line; no source states it"
+   },
+   "MAT_LEN": {
+    "value": 1.73,
+    "unit": "m",
+    "basis": "stated reason: c1 'on a mat'; 1.73 m (68 in), the usual exercise mat length and bird_dog's mat (lb9/sizes.json bird_dog MAT_LEN); centred on the start's navel by the spec; shorter than the prone body with the arms overhead (2.30 m drawn), so the trunk, thighs and shins lie on it and the hands and feet rest on the floor beyond its ends; no source states it"
+   },
+   "LIFT": {
+    "value": 0.0762,
+    "unit": "m",
+    "basis": "c3 'Lift body 3-6 inches off the ground' (mo-superman): 3 in = 7.62 cm, the lowest the range allows (D-SUP-LB9-RANGE's reading; DESIGN.md section 11); inside c2's 'a few inches' (ace-superman) and below its 'four to five inches' (bb-superman); measured as the gap from the floor to the lowest drawn point of the feet and of the hands at the end"
+   },
+   "END_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (tools/plates/vendor/exercises, the approved 12 deg lumbar arch, D-LIB18-ARCH, the first basis D-LIB21-SIZE names) as the size of c3's 'a slight arch without hyperextending the back' (no magnitude); the pelvis and the lifts are then solved"
+   },
+   "M_NECK": {
+    "value": -45,
+    "unit": "deg",
+    "basis": "stated reason: c6 'Lifting the head too high', 'Looking up straining neck', 'Head/neck to moving out of neutral line' give no magnitude; eyes down (c5) the face points at the floor and looking straight ahead is a 90 deg turn of the head; 45 deg, half of that turn, drawn at the engine's one neck pivot (C7); no approved plate draws a neck-extension fault; no source states it"
+   },
+   "trace": {
+    "point": "ankle.r",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE (DRAWING-GUIDE.md:29; DESIGN.md section 12 'superman the feet lifting (c2)'): the near foot, c2 'extend both hips (raise both legs) a few inches off the floor' and the checkpoint 'Arms, legs up' (c2, c4); trim [10, 12] = hanging_leg_raise.mjs:124 (D-LIB18-TRIM)."
+   }
+  },
+  "pallof_press": {
+   "KNEE": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 (15 deg short of lockout) for c2 'knees slightly bent' (ACE 'the knees slightly bent'; StrengthLog 'knees slightly bent'; BarBend 'a slight bend in your knees'); drawn in every pose (feet planted, root fixed): the knee joint 5.61 cm off the hip-ankle line, 100.4 % of the 5.59 cm offset of a 15 deg bend (D-LIB21-DRAW, D-LIB16-LOCK)"
+   },
+   "M_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (lumbar extension 12 deg; LB6 M_ARCH; D-LIB18-ARCH; D-LIB21-SIZE's first basis for pallof_press) for c8 Motra 'Over-arching lower back'"
+   },
+   "START_GAP": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "claim: c3 BarBend 'hold the band right at your chest' (ACE: hands at the chest, elbows in by the sides): at the chest, not in it: each fist 1 cm in front of the chest surface (the chest landmark, the thorax's front at 0.745 H), the fist's surface not touching the drawn torso"
+   },
+   "COL_X": {
+    "value": 0.9144,
+    "unit": "m",
+    "basis": "claim: c4 Garage Gym Reviews 'walk out from the cable stack until you feel the pull' gives no distance; stated reason in numbers: 3 ft (0.914 m) from the body's midline out to the pulley keeps the cable within 29 deg of the lateral line at the pressed-out hold (the handle 0.51 m in front of the pulley's depth), so the pull stays to the side (c1 'directly to the right of the body'); the same 3 ft as cable_crunch's COL_FRONT (StrengthLog 'a few feet'). In the side view it is depth only and does not show"
+   },
+   "HANDLE_L": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "stated reason: c1 and c3 'one single handle' held in both hands, fingers laced: a single cable handle's grip 12 cm long, room for the two side-by-side fists (2 x 3.5 cm fist radius, RADII.fist x H) with 2.5 cm showing at each end; no source states it"
+   },
+   "HANDLE_D": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: the grip 3 cm thick, the same as ab_wheel_rollout's handles (eq/abWheel.mjs AB_WHEEL, 'handles 3 cm thick'); no source states it"
+   },
+   "trace": {
+    "point": "grips",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE candidate 'the handle pressed straight out (c5, c6)': c5 Motra 'Press the handle straight out to full arm extension', c6 BarBend 'pressing your fists in a straight line from start to finish': the handle's centre, the grips' midpoint; trim = the clone source's, seated_cable_row.mjs:82 trace.trim [10, 12] (D-LIB18-TRIM)"
+   }
   }
  }
 }
