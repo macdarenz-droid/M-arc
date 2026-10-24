@@ -276,7 +276,7 @@ export default {
   callouts: [
     { key: 'hips', text: 'Hips still', anchor: { at: 'buttock', off: [5.5, 12] }, box: { left: 8, top: 286 }, cue: 'Keep the hips still and raised while only the spine bends.' },
     { key: 'curl', text: 'Curl the<br>spine', anchor: { at: 'sacrum', off: [0, -3] }, box: { left: 16, top: 240 }, cue: 'Curl your spine so the elbows move toward your thighs.' },
-    { key: 'rope', text: 'Rope by<br>head', anchor: ROPE_PT, box: { left: 200, top: 238 }, cue: 'Hands hold the rope by your head, and the arms don\'t yank.' },
+    { key: 'rope', text: 'Rope by<br>head', anchor: { at: ROPE_PT, off: [2, 0] }, box: { left: 200, top: 246 }, cue: 'Hands hold the rope by your head, and the arms don\'t yank.' },
   ],
   tempo: [{ phase: 'Crunch', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 3, move: true }],
   mistake: {

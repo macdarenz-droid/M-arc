@@ -144,10 +144,10 @@ export default {
     ...['toe.l', 'toe.r'].map(landmark => ({ landmark, plane: TOP, pose: 'start', tol: 0.5 })),              // c1: toes tucked on the mat
     { landmark: 'toe.r', at: LS['toe.r'], pose: 'all', tol: 0.5 },                                          // c11: the down toes stay
   ],
-  ghosts: { count: 2, parts: ['arm.r', 'leg.l'] },
+  ghosts: { count: 0 },   // D-LIB21-DOGGHOST (#312): no in-between poses, so the down hand's label has room right of the arm,
   trace: { point: 'ankle.l', trim: [10, 12] },
   callouts: [
-    { key: 'under', text: 'Hands,<br>knees<br>under', anchor: { at: 'wrist.l', off: [-5, -8] }, box: { left: 164, top: 283 }, cue: 'Hands under the shoulders, knees under the hips.' },
+    { key: 'under', text: 'Hands, knees<br>under', anchor: { at: 'wrist.l', off: [5, -8] }, box: { left: 244, top: 288 }, cue: 'Hands under the shoulders, knees under the hips.' },
     { key: 'flat', text: 'Back flat', anchor: 'backMid', box: { left: 168, top: 196 }, cue: 'Spine neutral: no sagging or arching as the leg rises.' },
     { key: 'level', text: 'Arm, leg<br>level', anchor: { along: ['elbow.r', 'wrist.r'], t: 0.5, off: [0, -7] }, box: { left: 284, top: 172 }, cue: 'Arm and leg at or near parallel to the floor, hips level.' },
   ],

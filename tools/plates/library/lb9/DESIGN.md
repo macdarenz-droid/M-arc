@@ -337,5 +337,14 @@ and `torso: 'volume'`. Re-read on main at the resume; a (b) spec sets only field
   Motra's hands near the shoulders; StrengthLog's beside-the-head position (setup line 4, plate.start) is the drawn one.
 - D-LIB21-CCFLAGS: cable_crunch's F2 0.623 and F3 26.2 are named flags (qa.mjs, pinned with red mutations).
 
+- Slice panel (#312 6383060997, VALID): ab_wheel_rollout APPROVED (kept byte-identical). Fix round:
+  - cable_crunch R2: main's rope with its ferrule on the cable line in every pose (no turn); the head-frame grip point
+    beside the temple, its height solved from ROPE_MARGIN; GRIP_GAP removed. R7: the Mistake cable is one dashed guide
+    stroke (`mistakeTwin: false`). D-LIB21-ROPENIT withdrawn: the "Rope by head" leader now clears the strand by 7.28 px.
+  - bird_dog R5: M_ARCH -30 (plank.mjs:103); the low back drops 10.6 px at 780. R4 (D-LIB21-DOGGHOST): ghosts.count 0
+    and "Hands, knees under" right of the down arm, its leader on the down hand.
+  - Named flags re-measured after the fixes: bird_dog F3 33.5 (the "Leg too high" box raised clear of the Mistake leg),
+    cable_crunch F2 0.622 and F3 26.05.
+
 Asked with the slice (ruled as D-LIB21-CCFLAGS): cable_crunch's F2 (coverage 0.623: the high-pulley cable spans the plate) and F3
 (longest leader 26.2 px: labels beside their parts) as named flags in D-LIB18-F3KICK's form.

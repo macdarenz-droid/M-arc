@@ -751,12 +751,12 @@ describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and
   let qa: any;
   beforeAll(async () => { qa = await import(/* @vite-ignore */ lib('lb9/qa.mjs')); }, T);
   const report = (id: string, raised: Record<string, number>) => ({ id, flags: Object.fromEntries(['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7'].map(f => [f, { raised: f in raised, value: raised[f] ?? null }])) });
-  const dog = (o: Record<string, number> = {}) => report('lib_bird_dog', { F1: 151.49, F3: 26.5, F5: 3.57, ...o });
-  const cc = (o: Record<string, number> = {}) => report('lib_cable_crunch', { F2: 0.623, F3: 26.2, F5: 3.57, ...o });
-  it('the named sets: F1 151.49 and F3 26.5 on bird_dog, F2 0.623 and F3 26.2 on cable_crunch; EXPECTED gives F5 alone on ab_wheel_rollout', () => {
+  const dog = (o: Record<string, number> = {}) => report('lib_bird_dog', { F1: 151.49, F3: 33.5, F5: 3.57, ...o });
+  const cc = (o: Record<string, number> = {}) => report('lib_cable_crunch', { F2: 0.622, F3: 26.05, F5: 3.57, ...o });
+  it('the named sets: F1 151.49 and F3 33.5 on bird_dog, F2 0.622 and F3 26.05 on cable_crunch; EXPECTED gives F5 alone on ab_wheel_rollout', () => {
     expect(qa.F1_NAMED).toEqual({ lib_bird_dog: 151.49 });
-    expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 26.5, lib_cable_crunch: 26.2 });
-    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.623 });
+    expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 33.5, lib_cable_crunch: 26.05 });
+    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.622 });
     expect(qa.EXPECTED('lib_bird_dog')).toEqual(['F1', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_cable_crunch')).toEqual(['F2', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_ab_wheel_rollout')).toEqual(['F5']);
@@ -765,7 +765,7 @@ describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and
   it('mutations: bird_dog\'s F3 at 27.0, F3 raised on another id, F1 off its px/m, F3 missing on bird_dog, cable_crunch\'s F2 at 0.645 and F3 at 27.0 are red', () => {
     expect(qa.flagProblems([cc({ F2: 0.645 })]).length).toBe(1);
     expect(qa.flagProblems([cc({ F3: 27.0 })]).length).toBe(1);
-    expect(qa.flagProblems([dog({ F3: 27.0 })]).length).toBe(1);
+    expect(qa.flagProblems([dog({ F3: 34.0 })]).length).toBe(1);
     expect(qa.flagProblems([report('lib_ab_wheel_rollout', { F3: 26.5, F5: 3.57 })]).length).toBe(1);
     expect(qa.flagProblems([dog({ F1: 160 })]).length).toBe(1);
     const noF3 = dog(); noF3.flags.F3 = { raised: false, value: null };
@@ -1115,17 +1115,11 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
       for (const p of eng.PRIMITIVES[it.type](it, cam)) { const pts = p.poly ?? p.line; if (pts) out.push(...segs([...pts, pts[0]])); }
     return out;
   };
-  /** D-LIB21-ROPENIT (#312, 'LIB-21 question' 6382529719, ruled): cable_crunch's "Rope by head" leader meets the steep
-   *  strand at about 34 deg and comes 4.98 px from its outline; a named nit, pinned below, judged by the panel. */
-  const NITS: Record<string, { key: string, mistake: boolean, gap: number }> = { cable_crunch: { key: 'rope', mistake: false, gap: 4.98 } };
-  const minGap = (spec: any, only: string | null = null) => {
+  const minGap = (spec: any) => {
     let min = Infinity, at = '';
-    const nit = NITS[spec.id];
     for (const mistake of [false, true]) {
       const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg, list = listOf(spec, mistake), avoid = avoidOf(spec, mistake, svg);
       leadersOf(svg).forEach((p, i) => {
-        const isNit = !!nit && nit.mistake === mistake && list[i]?.key === nit.key;
-        if (only === 'nit' ? !isNit : isNit) return;
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
           if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) for (const g of avoid) { const d = segD(q, g[0]!, g[1]!); if (d < min) { min = d; at = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}`; } }
@@ -1137,13 +1131,10 @@ describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and sof
   it('no leader comes within 6 px of the Trace, the floor line, a cable or any equipment outline (away from its first 8 px)', async () => {
     for (const id of specsDrawn()) { const g = minGap(S[id]); console.log(`LIB-21 leader gap ${id}: ${g.min.toFixed(1)} px (${g.at})`); expect(g.min, `${id} ${g.at}`).toBeGreaterThanOrEqual(6); await yieldNow(); }
   });
-  it('D-LIB21-ROPENIT: cable_crunch\'s "Rope by head" leader is the one named nit, pinned at 4.98 px (±0.1)', () => {
-    expect(Object.keys(NITS)).toEqual(['cable_crunch']);
-    expect(Math.abs(minGap(S.cable_crunch, 'nit').min - NITS.cable_crunch!.gap)).toBeLessThanOrEqual(0.1);
-  });
-  it('D-LIB21-ROPENIT mutation: the "Rope by head" box at 200/232 (2.46 px) is red', () => {
+  // D-LIB21-ROPENIT is withdrawn: after the slice fix round the "Rope by head" leader clears the strand by 7.28 px.
+  it('mutation: cable_crunch\'s "Rope by head" box at 200/232 (its leader along the strand) is red', () => {
     const s = S.cable_crunch, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'rope' ? { ...x, box: { left: 200, top: 232 } } : x)) };
-    expect(Math.abs(minGap(bad, 'nit').min - NITS.cable_crunch!.gap)).toBeGreaterThan(0.1);
+    expect(minGap(bad).min).toBeLessThan(6);
   });
   it('mutation: ab_wheel_rollout\'s "Roll slowly" box moved down to the floor right of the wheel (its leader across the wheel and the floor line) is red', () => {
     const s = S.ab_wheel_rollout, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'slow' ? { ...x, box: { left: 300, top: 334 } } : x)) };
