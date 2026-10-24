@@ -890,6 +890,16 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 11:00 UTC (10-24)** (usage 7-day 0.69, rising about 2 % an hour with 4 builders plus panels; the 80 % pause is likely near 16:00 UTC):
+- **#109 pilot A:** the plank focused recheck is **VALID**, plank is approved, and page `5d0e562f…` is approved (6382619662, lib4-cards 34). The builder is pinning 13 (Do 13, then Do 14).
+- **LIB-STRIP (#309):** STRIP ROWS VERIFIED @ 511ded30. Rulings D-STRIP-GROUPS (E1 106) and D-STRIP-GATETIME (a), 270 s. Building toward READY.
+- **LIB-20 (#311):** READY @ 471339d. Reviewer session_015CQwDBT2tML1FkE4ceowrM is running.
+- **LIB-21 (#312):**
+  - NOTE RULED (6382248634). CARD FIELDS VERIFIED @ 931714d2 (cflb9 plant caught; D-LIB21-TRAPS).
+  - Slice panel lb9s is VALID. ab_wheel_rollout is approved; cable_crunch and bird_dog are in a fix round (D-LIB21-DOGGHOST: bird_dog ghosts 0).
+  - SLICE FIX @ 276029ae, page `f7570211…`. The focused recheck set lb9r is being built.
+- **Active LIB builders: 4.**
+
 **Update 08:30 UTC (10-24)** (usage 7-day 0.62):
 - **#109 pilot A:**
   - **D-LIB8M-PLANKREDRAW (6381942908)** replaces PLANKHOLD. Plank stays in pilot A, because it anchors LB4, LB7, LB9 and LB10. Only its Mistake is redrawn ("Hips hiked up."). The pin is 13.
