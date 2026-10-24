@@ -1,6 +1,6 @@
 {
  "rule": "D-STRIP-B, -ROWS, -FORMS, -SAYS, -SCOPE, D-STRIP-ALL, -VALIDATE, -WHOLE, -CONTEST, -QUOTEWORD, -AFALL, -BURPEE (LIB-STRIP card, claude/sup-lib4-cards @ ad335ef2). A row is { phase, move?, word? | blank: true, claim, says?, quote? }: says is the verbatim span of text that names the word, quote the verbatim claim quote that holds it; blank marks a phase with no card-true word. text and claim are the card's plate.tempo.text and plate.tempo.claim, byte for byte. Only { phase, move?, word? } goes on a card's tempo key and its spec (tempoOf).",
- "research": "claude/libht-research 657eb4e5a4e4a871fd3e2a60ab4a5b8c1f24eb3a",
+ "research": "claude/libht-research 42cf542afbb55f85c9d615f08eaf8a57d2e81ba0",
  "cards": [
   {
    "id": "front_squat",
@@ -348,7 +348,7 @@
   {
    "id": "flutter_kicks",
    "lane": "LB9",
-   "text": "Cycle: short, crisp alternating kicks (c3); sets of 30-50 kicks for endurance (c12). No source gives a cadence.",
+   "text": "Cycle: short, crisp alternating kicks (c3); sets of 30-50 kicks for endurance (c12). Up, down and pause stay null (LR-33, R-LB7-6). Decided against 2 s / 1 s: no quote on the card asks for a slow lowering, and the read sources disagree on speed. Hevy says \"Keep your movements short and crisp.\" (c3) and \"short and quick leg motions\" (c9); Healthline's flutter steps say \"Slowly lower your right leg a few inches while simultaneously lifting your left leg a few inches.\" (not cited on the card); Fitness Volt says \"you can vary the tempo based on your goals\" with a slower pace for the abs (not cited). The kick is an alternating cycle in which one leg lowers while the other lifts, so there is no single lowering phase to slow, and the WEAK convention would side with one source against the anchor. No quote asks for a pause, hold or squeeze in the kick. Fitness Volt's interval option, 30 s of kicks and 10-15 s rest, is a set format, not a phase time.",
    "claim": [
     "c3",
     "c12"
