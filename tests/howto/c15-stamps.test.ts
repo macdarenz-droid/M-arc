@@ -49,7 +49,7 @@ describe('LIB-5 S8: stampProblems is strict', () => {
   it('a matching entry passes; a stale hash, a wrong scope, and a scratch entry outside a marked root each fail', async () => {
     const { scope, hash } = await S.stampOf('lib_pull_up');
     const one = (e: any) => S.stampProblems(['lib_pull_up'], { reviews: { schema: 1, entries: [e] } });
-    expect(await one({ scope, hash, date: '2026-10-18' })).toEqual([]);
+    expect(await one({ scope, hash, date: '2026-10-18', approvedBy: 'supervisor', decision: 'D-LIB5-STAMPS', approval: 'https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb', open: 0 })).toEqual([]);
     expect(await one({ scope, hash: hash.replace(/^./, (c: string) => (c === '0' ? '1' : '0')), date: '2026-10-18' })).toEqual([`LIB-5 stamp: lib_pull_up: no reviews.json entry for scope lib_pull_up hash ${hash.slice(0, 12)}…`]);
     expect(await one({ scope: 'lib_leg_press', hash, date: '2026-10-18' })).toHaveLength(1);
     expect(await one({ scope, hash, date: '2026-10-18', scratch: true })).toHaveLength(1);

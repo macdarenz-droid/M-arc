@@ -1,0 +1,237 @@
+{
+ "note": "Pilot A (library plan 6.1, card LIB-8). tier: content.md appendix B lists (A 47, B 27, C the rest); closest: census.json closestApproved; view: census view; class: the new pose class, rule or rig the plate anchors (plan 2.1, 2.2). extras: other renders shown beside the plate on the sheet (go/no-go alternates as spec ids, previews as image files in evidence/). held: plates kept off the sheet by a supervisor ruling, listed in one line each. rulings: a supervisor ruling that names a raised flag, printed with that flag on the sheet.",
+ "plates": [
+  {
+   "id": "dumbbell_bench_press",
+   "tier": "A",
+   "closest": "machine_chest_press",
+   "view": "side",
+   "class": "supine bench (BENCH parent)"
+  },
+  {
+   "id": "incline_dumbbell_press",
+   "tier": "A",
+   "closest": "machine_chest_press",
+   "view": "side",
+   "class": "incline; inclineBench (BENCH child)",
+   "held": "Mistake arch does not read (critic R5 [3,3,2] @ 94c551f; D-LIB8M-CRIT3)"
+  },
+  {
+   "id": "dumbbell_shoulder_press",
+   "tier": "A",
+   "closest": "machine_chest_press",
+   "view": "side",
+   "class": "seated press (SEATPRESS parent); inclineBench"
+  },
+  {
+   "id": "barbell_overhead_press",
+   "tier": "A",
+   "closest": "barbell_back_squat",
+   "view": "side",
+   "class": "standing overhead press"
+  },
+  {
+   "id": "barbell_row",
+   "tier": "A",
+   "closest": "seated_cable_row",
+   "view": "side",
+   "class": "hinge (HROW parent)"
+  },
+  {
+   "id": "romanian_deadlift",
+   "tier": "A",
+   "closest": "barbell_back_squat",
+   "view": "side",
+   "class": "hinge (HINGE parent)"
+  },
+  {
+   "id": "single_leg_romanian_deadlift",
+   "tier": "A",
+   "closest": "barbell_back_squat",
+   "view": "side",
+   "class": "single leg; drawable-fault rule"
+  },
+  {
+   "id": "barbell_shrug",
+   "tier": "A",
+   "closest": "lateral_raise",
+   "view": "side",
+   "class": "small-motion zoom (SHRUG parent), F1",
+   "held": "the shrug zoom (D-LIB8-shrug; follow-up card)"
+  },
+  {
+   "id": "box_jump",
+   "tier": "A",
+   "closest": "barbell_back_squat",
+   "view": "side",
+   "class": "airborne",
+   "held": "a tempo strip for plates with no sourced seconds (D-LIB8M-NOSTRIP; follow-up card)"
+  },
+  {
+   "id": "dumbbell_fly",
+   "tier": "A",
+   "closest": "machine_chest_press",
+   "view": "front",
+   "class": "view conflict go/no-go (supine)",
+   "extras": [
+    {
+     "spec": "dumbbell_fly__alt",
+     "caption": "Side view (the previous plate), for comparison"
+    }
+   ],
+   "held": "needs a raised foot-end camera (engine follow-up card, plan 2.8)"
+  },
+  {
+   "id": "dumbbell_biceps_curl",
+   "tier": "C",
+   "closest": "lateral_raise",
+   "view": "side",
+   "class": "engine dumbbell primitive (CURL parent)"
+  },
+  {
+   "id": "upright_row",
+   "tier": "B",
+   "closest": "lateral_raise",
+   "view": "front",
+   "class": "engine-drawn front view"
+  },
+  {
+   "id": "triceps_pushdown",
+   "tier": "C",
+   "closest": "lat_pulldown",
+   "view": "side",
+   "class": "cable pushdown (PUSHDOWN parent)"
+  },
+  {
+   "id": "rope_triceps_pushdown",
+   "tier": "C",
+   "closest": "lat_pulldown",
+   "view": "side",
+   "class": "rope (PUSHDOWN child)",
+   "extras": [
+    {
+     "image": "evidence/rope-pushdown-poly-silent-black.png",
+     "caption": "Preview: rope drawn with the LIB-25 poly primitive (PR #120, 8480052)"
+    }
+   ],
+   "notes": [
+    "Rope does not read as a rope at 390 px (drawn with the dumbbell primitive); the fix is the LIB-25 poly primitive, previewed beside it"
+   ]
+  },
+  {
+   "id": "pec_fly",
+   "tier": "B",
+   "closest": "machine_chest_press",
+   "view": "front",
+   "class": "pecDeck, front-view pivot arms go/no-go (FSEAT parent)"
+  },
+  {
+   "id": "bent_over_dumbbell_rear_delt_fly",
+   "tier": "C",
+   "closest": "lateral_raise",
+   "view": "front",
+   "class": "view conflict go/no-go (hinge)",
+   "extras": [
+    {
+     "spec": "bent_over_dumbbell_rear_delt_fly__alt",
+     "caption": "Front view (census view): no-go"
+    }
+   ],
+   "held": "needs a front-view bent-over torso (follow-up card)"
+  },
+  {
+   "id": "reverse_lunge",
+   "tier": "B",
+   "closest": "barbell_back_squat",
+   "view": "side",
+   "class": "split stance (SPLIT parent)",
+   "held": "a tempo strip for plates with no sourced seconds (D-LIB8M-NOSTRIP; follow-up card)"
+  },
+  {
+   "id": "plank",
+   "tier": "C",
+   "closest": "hanging_leg_raise",
+   "view": "side",
+   "class": "hold plate",
+   "rulings": {
+    "F1": "D-LIB8-floor (floor-horizontal class): floor at the approved y, scale up to x1.35 of 146.29 px/m to fill the width between the approved side margins"
+   }
+  },
+  {
+   "id": "mountain_climbers",
+   "tier": "C",
+   "closest": "hanging_leg_raise",
+   "view": "side",
+   "class": "cycle plate",
+   "rulings": {
+    "F1": "D-LIB8-floor (floor-horizontal class): floor at the approved y, scale up to x1.35 of 146.29 px/m to fill the width between the approved side margins"
+   }
+  }
+ ],
+ "cards": "docs/research/howto/cards/ = verified research cards, byte copies from claude/libht-research f57e7944ebb366a71f812146287ff0c4a6d2edef",
+ "handsNote": "hands: LIB-12 hand renders shown on the sheet only (not plates), renderPair(id) from tools/plates/library/hands/pairs.mjs on claude/lib-12-hand-views 06519f9 (LIB-7 loader aacebf5 merged), Silent Black and Paper at 390 px; flags as the LIB-12 note on PR #109 (2026-10-02 14:10). LIB-7 curl, rope and EZ: renderPair(id) from main 5158609 (#193), same method (D-LIB8M-SHEET, Do 12). Cupped and front-rack: GAPS (D-LIB12FIX-R8-GAPS).",
+ "hands": [
+  {
+   "key": "cupped",
+   "id": "goblet_squat",
+   "name": "Cupped hold (goblet)",
+   "images": [],
+   "flags": [
+    "No close-up: moved to GAPS after the R8 panel (D-LIB12FIX-R8-GAPS, #191 6274835211); accepted in PILOT A PIN GO (#109 6381356655). Redraw: F-LIB12-R8B."
+   ]
+  },
+  {
+   "key": "front-rack",
+   "id": "front_squat",
+   "name": "Front rack",
+   "images": [],
+   "flags": [
+    "No close-up: moved to GAPS after the R8 panel (D-LIB12FIX-R8-GAPS, #191 6274835211); accepted in PILOT A PIN GO (#109 6381356655). Redraw: F-LIB12-R8B."
+   ]
+  },
+  {
+   "key": "curl",
+   "id": "dumbbell_biceps_curl",
+   "name": "Curl",
+   "images": [
+    "evidence/lib7-curl-silent-black.png",
+    "evidence/lib7-curl-paper.png"
+   ],
+   "flags": [
+    "LIB-7 pair: renderPair(id) at 390 px, every fault page (main 5158609, #193); approved in LIB-7's hand panel (10-03), pinned in hand-pairs.test.ts 'critic fixes (10-03)'"
+   ]
+  },
+  {
+   "key": "rope",
+   "id": "rope_triceps_pushdown",
+   "name": "Rope",
+   "images": [
+    "evidence/lib7-rope-silent-black.png",
+    "evidence/lib7-rope-paper.png"
+   ],
+   "flags": [
+    "LIB-7 pair: renderPair(id) at 390 px, every fault page (main 5158609, #193); approved in LIB-7's hand panel (10-03), pinned in hand-pairs.test.ts 'critic fixes (10-03)'"
+   ]
+  },
+  {
+   "key": "ez",
+   "id": "ez_bar_curl",
+   "name": "EZ bar",
+   "images": [
+    "evidence/lib7-ez-silent-black.png",
+    "evidence/lib7-ez-paper.png"
+   ],
+   "flags": [
+    "LIB-7 pair: renderPair(id) at 390 px, every fault page (main 5158609, #193); approved in LIB-7's hand panel (10-03), pinned in hand-pairs.test.ts 'critic fixes (10-03)'"
+   ]
+  },
+  {
+   "key": "band",
+   "name": "Band",
+   "images": [],
+   "flags": [
+    "No render: LIB-7 has no band pair yet (hands/hand-band.mjs on #193 @ 55e91e9f); the look at band (plan 2.3) waits for that pair"
+   ]
+  }
+ ]
+}

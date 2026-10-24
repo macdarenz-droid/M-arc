@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=3a5a3f52b388ece4bb71e150037c26a9468493174f96fe20eeab3a36ec70c813
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=818755af322e9e3a56ead18a08bfbff08aa32d1c5e31d59188d838234d556928
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_dumbbell_lateral_raise",
   name: "Dumbbell Lateral Raise",
-  hashes: { inputsSha256: "3a5a3f52b388ece4bb71e150037c26a9468493174f96fe20eeab3a36ec70c813", golden: "8bb81d44ec6f7b3514c3eff5ce6940d79cb0cae175aae00968a89e4b463a856b" },
+  hashes: { inputsSha256: "818755af322e9e3a56ead18a08bfbff08aa32d1c5e31d59188d838234d556928", golden: "8bb81d44ec6f7b3514c3eff5ce6940d79cb0cae175aae00968a89e4b463a856b" },
   plate: {
     view: "front",
     normal: {
