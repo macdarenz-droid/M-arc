@@ -297,9 +297,8 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 | id | ruling | route |
 |---|---|---|
 | cable_crunch | D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
-
 | superman | D-LIB21-SIZE (D-LIB8-shrug, S2): the card-true 3 in lift (c3) moves the Trace point (ankle.r, c2) 6.95 cm, 9.8 px at 140.91 px/m, under the trim, so no Trace draws (traceLen 0 < 22.11; hands 10.6 px, toe 12.2 px) | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
-| pallof_press | D-LIB21-SIZE (S2): the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39); and S4: from the side the cable runs along the depth axis, so the anti-rotation set-up cannot be read | a ruling on S4 (a front view, D-LIB21-FRONT) and LIB-ZOOM for the arch |
+| pallof_press | D-LIB21-PALLOFHOLD (#312 6383823760 item 1): S2, the 12° arch (hanging_leg_raise.mjs:69) moves the low-back tell anchor 1.03 px (< 11.39), so it waits for LIB-ZOOM in any view; S4, a side view hides the sideways cable and a front view hides the press toward the viewer | no front view; after LIB-20 is on main, one design note for a turned view (`root.yaw`, or a LIB-20 camera yaw) showing both the cable and the press, together with LIB-ZOOM for the arch; then 'LIB-21 resume' |
 
 ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG; it and bird_dog are approved (slice panel and recheck).
 
@@ -339,7 +338,7 @@ and `torso: 'volume'`. Re-read on main at the resume; a (b) spec sets only field
   whether it reads as natural; if forced, it is held then.
 - Q5: the tempo map, pose map, facts plan and sizes accepted as written.
 - pallof_press S4: side-view renders at the bulk; a front view goes to a ruling only if the cable cannot be read.
-- D-LIB21-ROPENIT (#312, after 6382529719): cable_crunch's "Rope by head" box at 200/238, its leader 4.98 px from the
+- D-LIB21-ROPENIT (#312, after 6382529719; withdrawn in the slice fix round below): cable_crunch's "Rope by head" box at 200/238, its leader 4.98 px from the
   steep strand (about 34°, no crossing), is a named nit, pinned in lb9-plates.test.ts with a red mutation (200/232).
 
 - CARD FIELDS VERIFIED @ 931714d2 (one fix round: cable_crunch wrist.l/r end c2; ab_wheel_rollout knee.l/r end c7).
@@ -358,3 +357,17 @@ and `torso: 'volume'`. Re-read on main at the resume; a (b) spec sets only field
 
 Asked with the slice (ruled as D-LIB21-CCFLAGS): cable_crunch's F2 (coverage 0.623: the high-pulley cable spans the plate) and F3
 (longest leader 26.2 px: labels beside their parts) as named flags in D-LIB18-F3KICK's form.
+
+Later rulings:
+- Slice approvals: ab_wheel_rollout APPROVED @ 27215fba (#312 6383060997); bird_dog APPROVED @ 276029ae on the recheck
+  (#312 6383628526).
+- D-LIB21-CCHOLD (#312, after 6383637352): cable_crunch held for a LIB-SPINE engine card (F-SPINE-1); section 15.
+- Bulk rulings (#312 6383823760):
+  - D-LIB21-PALLOFHOLD (item 1): pallof_press stays held; no front-view build; the turned-view note with LIB-ZOOM at
+    the resume (section 15).
+  - superman held (item 2; S2, LIB-ZOOM), as posted; its F2/F3 names, the mat length and the profile hands go on the
+    resume note.
+  - Item 3: no new critic run; the approvals stand for unchanged bytes, shown by the fragment proof (ab_wheel_rollout
+    `#card` 45e60298… at 27215fba and at the head; bird_dog ecddc7e1… at 276029ae and at the head).
+  - Item 4: the camOf fix accepted (the camera follows facing), named in the A-table with a mutation that keeps the
+    facing-right assumption red on pallof_press.

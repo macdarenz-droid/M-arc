@@ -85,7 +85,7 @@ const ROWS = 'tools/plates/library/lb9/rows.json';
 // DESIGN.md section 15: the held ids ('LB9 NOTE RULED', #312 6382248634: none; ab_wheel_rollout is drawn at the plank
 // class's -30 deg sag, D-LIB21-ABSAG, and joins rows.json).
 // DESIGN.md section 15: cable_crunch held by D-LIB21-CCHOLD (#312) for a LIB-SPINE engine card (F-SPINE-1).
-const HELD: string[] = ['cable_crunch', 'superman', 'pallof_press'];   // superman, pallof_press: D-LIB21-SIZE (S2)
+const HELD: string[] = ['cable_crunch', 'superman', 'pallof_press'];   // superman: D-LIB21-SIZE (S2); pallof_press: D-LIB21-PALLOFHOLD
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn.
 const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'pallof_press'];
 const COMPOSERS = ['abWheel'];
@@ -804,7 +804,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     }
     for (const id of ['side_plank', 'russian_twist', 'bicycle_crunch']) expect(existsSync(`${SPECS_DIR}/${id}.mjs`), id).toBe(false);
   });
-  it('the held ids (cable_crunch D-LIB21-CCHOLD; superman, pallof_press D-LIB21-SIZE) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
+  it('the held ids (cable_crunch D-LIB21-CCHOLD; superman D-LIB21-SIZE; pallof_press D-LIB21-PALLOFHOLD) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
     expect(build.HELD).toEqual({ cable_crunch: 'side', superman: 'side', pallof_press: 'side' });
     const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
