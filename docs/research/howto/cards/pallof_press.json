@@ -1,0 +1,813 @@
+{
+ "id": "pallof_press",
+ "libId": "lib_pallof_press",
+ "name": "Pallof Press",
+ "family": "Rotation and lateral core",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 2.",
+ "archetype": {
+  "hand": "hold",
+  "contact": [
+   "standing-feet"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Set the cable pulley at about chest height and stand side-on to it, the cable directly to one side of the body.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-antirotation",
+    "sl-pallof",
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "ace-antirotation",
+     "text": "The cable pulley should be at approximately chest height and directly to the right of the body (while pressing the handle away from the body, the cable should be parallel with the chest.)",
+     "where": "Instruction paragraph under the title block (no heading)"
+    },
+    {
+     "source": "sl-pallof",
+     "text": "Attach a handle in a cable machine at chest height and stand with your side facing the machine.",
+     "where": "How to Do Pallof Press, step 1"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Attach a single handle to a cable machine at chest height. Stand perpendicular to the machine with feet hip-width apart, gripping the handle at your chest.",
+     "where": "How to Perform"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Stand with the feet hip-width apart, hips straight and knees slightly bent, in an athletic stance with the chest up.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-antirotation",
+    "sl-pallof",
+    "bb-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "ace-antirotation",
+     "text": "Stand with the feet hip-width apart and the hips straight with the knees slightly bent.",
+     "where": "Instruction paragraph under the title block (no heading)"
+    },
+    {
+     "source": "sl-pallof",
+     "text": "Grab the handle with both hands and stand with feet hip-width apart and knees slightly bent.",
+     "where": "How to Do Pallof Press, step 2"
+    },
+    {
+     "source": "bb-pallof",
+     "text": "You want to be in an athletic stance, with a slight bend in your knees and your chest up.",
+     "where": "How to Do the Pallof Press, Step 1, Coach’s Tip"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Grip one handle in both hands with the fingers laced together, elbows in by the sides, hands at the chest.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-antirotation",
+    "bb-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "ace-antirotation",
+     "text": "Grip one handle in both hands with the fingers laced together and elbows in by the sides.",
+     "where": "Instruction paragraph under the title block (no heading)"
+    },
+    {
+     "source": "bb-pallof",
+     "text": "Interlock your fingers and hold the band right at your chest.",
+     "where": "How to Do the Pallof Press, Step 1 —Establish Proper Alignment"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "On the cable version, walk out from the stack until you feel the pull of the resistance.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-pallof",
+     "text": "Grip the D handle and walk out from the cable stack until you feel the pull of the resistance.",
+     "where": "Pallof Press Variations, Cable Pallof Press"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Keep the back straight and tall and press the handle straight out in front of the chest to full arm extension, without rotating the torso.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-antirotation",
+    "sl-pallof",
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "ace-antirotation",
+     "text": "Keep the back straight and tall while pressing the handle forward, and hold for 2-3 seconds before slowly pulling the elbows back to the sides.",
+     "where": "Instruction paragraph under the title block (no heading)"
+    },
+    {
+     "source": "sl-pallof",
+     "text": "Pull the handle to your chest, engage your core, and then press your arms straight out in front of you without rotating your torso.",
+     "where": "How to Do Pallof Press, step 3"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Press the handle straight out to full arm extension.",
+     "where": "How to Perform"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Press the hands in a straight line from start to finish; letting them drift toward the anchor side takes tension off the trunk and makes the movement easier (a named mistake).",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "bb-pallof",
+     "text": "As you push your hands outward, it will become more and more tempting to drift them toward the side that the band is fixed on. This will take tension off your trunk and make the movement easier.",
+     "where": "Common Pallof Press Mistakes, Not Pressing Straight"
+    },
+    {
+     "source": "bb-pallof",
+     "text": "Take great care to ensure you’re pressing your fists in a straight line from start to finish.",
+     "where": "Common Pallof Press Mistakes, Not Pressing Straight"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Torso rotation is a named mistake: avoid bending or twisting at the torso or hips, which defeats the purpose of the exercise; too much resistance makes the torso rotate, so keep the hips and shoulders square and reduce the weight if rotation occurs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-pallof",
+    "ggr-pallof",
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "bb-pallof",
+     "text": "As such, you should avoid bending or twisting at the torso or hips at all costs, as it defeats the purpose of the exercise.",
+     "where": "Common Pallof Press Mistakes, Torso Twisting"
+    },
+    {
+     "source": "ggr-pallof",
+     "text": "But if too much resistance is used, it will cause your torso to rotate, and then all the benefits of the Pallof press disappear like magic.",
+     "where": "Common Pallof Press Exercise Mistakes, Too Much Rotation"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Allowing torso rotation",
+     "where": "Common Mistakes"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Keep hips and shoulders square",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Reduce weight if rotation occurs",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Over-arching the lower back is a named mistake; keep a neutral spine to protect the back, and return the handle to the chest without arching the spine.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "mo-pallof",
+     "text": "Over-arching lower back",
+     "where": "Common Mistakes"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Maintain neutral spine to protect back",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Extend arms fully forward at chest height without torso rotation; retract to chest without arching spine.",
+     "where": "Coaching Tips, Range of Motion"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Overarching the lower back, or rounding it, loses the exercise's benefits; keeping a good pressing posture and engaging the glutes prevents it.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-pallof",
+     "text": "Overarching your lower back or putting it into flexion puts the anterior and posterior core muscles at a disadvantage, and you’ll lose all the benefits of this wonderful core exercise.",
+     "where": "Common Pallof Press Exercise Mistakes, Watch Your Lower Back"
+    },
+    {
+     "source": "ggr-pallof",
+     "text": "Keeping an excellent pressing posture (using the cue above) and engaging your glutes will prevent this from happening.",
+     "where": "Common Pallof Press Exercise Mistakes, Watch Your Lower Back"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Keep the chest up and shoulders down; pressing with elevated shoulders puts the spine out of position and the upper traps get too involved. Keep the shoulder blades squeezed together so the shoulders do not track forward.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-pallof",
+    "bb-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-pallof",
+     "text": "Keeping your chest up and shoulders down while performing the Pallof Press ensures the correct muscles are doing the work. Pressing with elevated shoulders puts the spine out of position, and the upper traps get too involved.",
+     "where": "Common Pallof Press Exercise Mistakes, Poor Pressing Position"
+    },
+    {
+     "source": "bb-pallof",
+     "text": "Ensure that your shoulder blades are squeezed together (so that your shoulders don’t track forward), and extend your arms.",
+     "where": "How to Do the Pallof Press, Step 2 — Press Forward"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Hold briefly, then bring the handle slowly back to the chest in a controlled motion, abs tight.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-pallof",
+    "mo-pallof",
+    "bb-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "sl-pallof",
+     "text": "Hold briefly, then bring the handle back to your chest in a controlled motion.",
+     "where": "How to Do Pallof Press, step 4"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Slowly retract the handle to your chest.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "bb-pallof",
+     "text": "Keeping your abs flexed and your shoulder blades retracted, slowly return the band to your chest.",
+     "where": "How to Do the Pallof Press, Step 3 — Pull Your Hands Back"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Hold the pressed-out position for 2-3 seconds (one source) or 1-2 seconds (another), resisting rotation, before slowly bringing the elbows back.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-antirotation",
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "ace-antirotation",
+     "text": "Keep the back straight and tall while pressing the handle forward, and hold for 2-3 seconds before slowly pulling the elbows back to the sides.",
+     "where": "Instruction paragraph under the title block (no heading)"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Hold for 1-2 seconds resisting rotation.",
+     "where": "How to Perform"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Tempo: one coaching page lists 3-2-1 for the cable Pallof press; read through its site-wide Tempo tooltip (eccentric, bottom pause, concentric, top pause), that is 3 s to bring the handle back, a 2 s pause at the chest and 1 s to press out. Tagged WEAK: one coach page, three numbers read against a four-number format.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "mo-pallof",
+     "text": "3-2-1",
+     "where": "Coaching Tips, Tempo"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+     "where": "Tempo heading tooltip (served HTML)"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "The Pallof press particularly targets the obliques, which work to stop the spine and torso from rotating; two coaching pages list the obliques and abs as primary.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-pallof",
+    "ggr-pallof",
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "sl-pallof",
+     "text": "The Pallof Press is an excellent anti-rotation exercise that builds core strength and stability, particularly targeting the obliques.",
+     "where": "Commentary"
+    },
+    {
+     "source": "ggr-pallof",
+     "text": "This means your obliques work overtime to stop your spine and torso from rotating.",
+     "where": "Trainer Tips for Form, Front-On Torso"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Obliques, Abs",
+     "where": "About Exercise, Primary Muscle Groups"
+    },
+    {
+     "source": "sl-pallof",
+     "text": "Primary muscles worked: Obliques Abs",
+     "where": "Muscles Worked in Pallof Press"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "The rectus abdominis also works, contracting isometrically to help stabilise the spine.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-pallof",
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "bb-pallof",
+     "text": "The rectus abdominis — to six-pack muscles — contracts isometrically to assist in spinal stabilization during this movement.",
+     "where": "Muscles Worked by the Pallof Press, Rectus Abdominis"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Cable anti-rotation press targeting obliques and rectus abdominis to build core stability and resist spinal rotation",
+     "where": "Page summary"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Keep the glutes tight (engaged) throughout; one coaching page lists the glutes as secondary.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-pallof",
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "bb-pallof",
+     "text": "By keeping your glutes tight throughout the Pallof press, you’ll enhance your foundational strength for all other lifts.",
+     "where": "Muscles Worked by the Pallof Press, Gluteals"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Brace your core and engage glutes.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Glutes",
+     "where": "About Exercise, Secondary Muscles"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "Start with light resistance and master form before progressing.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-pallof",
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-pallof",
+     "text": "Start light and ensure proper form before progressing this exercise.",
+     "where": "Trainer Tips for Form, Light Resistance"
+    },
+    {
+     "source": "mo-pallof",
+     "text": "Start with light weight to master form",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "Breathe out as you press out and in as you bring the handle back, keeping braced.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "mo-pallof",
+     "text": "Exhale as you press out; inhale as you retract while keeping core braced.",
+     "where": "Coaching Tips, Breathing"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "Avoid the exercise with acute lower back pain.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-pallof"
+   ],
+   "quotes": [
+    {
+     "source": "mo-pallof",
+     "text": "Avoid if acute lower back pain present",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "ace-antirotation",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/332/standing-anti-rotation-press/",
+   "title": "Standing Anti-Rotation Press | Exercise Library | ACE",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "bb-pallof",
+   "url": "https://barbend.com/pallof-press/",
+   "title": "Perfect the Pallof Press for More Core Strength and Stability | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ggr-pallof",
+   "url": "https://www.garagegymreviews.com/pallof-press-exercise",
+   "title": "Pallof Press Exercise: Expert Tips | Garage Gym Reviews",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-pallof",
+   "url": "https://www.strengthlog.com/pallof-press/",
+   "title": "How to Do Pallof Press: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "mo-pallof",
+   "url": "https://www.motra.com/exercises/cablePallofPress",
+   "title": "Cable Pallof Press - Exercise Guide | Motra",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side: the arms pressing straight out from the chest (c5, c6), the back straight and tall without an arch (c5, c8) and the soft knees (c2) read from the side. The census note says the rotation fault (c7) cannot be drawn from this view.",
+  "equipment": "Cable column and stack with a single handle at about chest height, the cable running out to one side of the lifter (c1); floor line.",
+  "start": "Standing side-on to the column, feet hip-width, hips straight, knees slightly bent, chest up (c2); handle held in both hands with the fingers laced, at the chest, elbows in by the sides (c3); stepped out so the cable pulls (c4).",
+  "end": "Arms straight out in front of the chest at chest height, handle in line with the chest (c5, c6, c8); back straight and tall, lower back not arched (c5, c8); shoulders down, chest up (c10). Held about 2 s (c12).",
+  "checkpoints": [
+   {
+    "label": "Arms straight out",
+    "what": "Handle pressed straight out in front of the chest.",
+    "claim": [
+     "c5",
+     "c6"
+    ]
+   },
+   {
+    "label": "Back neutral",
+    "what": "Back straight and tall, lower back not arched.",
+    "claim": [
+     "c5",
+     "c8"
+    ]
+   },
+   {
+    "label": "Shoulders down",
+    "what": "Shoulders down, chest up.",
+    "claim": "c10"
+   }
+  ],
+  "mistake": {
+   "what": "Lower back over-arching while pressing and returning the handle.",
+   "why": "LR-31 step 2: Motra lists \"Over-arching lower back\" among its common mistakes and its cue \"Maintain neutral spine to protect back\" ties the fault to harm (c8, D-SUP-PROTECT). The arch shows from the side; the rotation fault cannot be drawn (census). How often it happens is not measured.",
+   "claim": "c8",
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: over-arching the lower back (c8). Common-mistakes lists read (all written for this exercise), in source order: BarBend \"Common Pallof Press Mistakes\": 1 Torso Twisting, 2 Not Pressing Straight, 3 Standing Too Close (or Too Far) (a set-up choice, not a candidate); Garage Gym Reviews \"Common Pallof Press Exercise Mistakes\": 1 Too Much Rotation, 2 Poor Pressing Position (elevated shoulders), 3 Watch Your Lower Back (overarching or flexing the lower back); Motra \"Common Mistakes\": 1 Allowing torso rotation, 2 Rushing the press, 3 Over-arching lower back, 4 Locking knees, 5 Leaning toward cable. ACE and StrengthLog have no list. Step 1: no frequency word counts for a fault of this exercise. Set aside: the headings \"Common Pallof Press Mistakes\", \"Common Pallof Press Exercise Mistakes\", \"Common Mistakes\", \"Frequently Asked Questions\" and \"Typical Rep Range\"; Garage Gym Reviews' \"Here are some common mistakes to avoid when performing the Pallof press.\" is a list sentence; BarBend's \"This is often one of the first progressions used with beginners as it’s generally easier to do.\" is about a variation, \"The obliques are challenged isometrically to resist rotation, often responsible for shearing forces placed on the lumbar spine.\" about a muscle, \"who often rotate to throw and catch a ball\" about athletes' sports, and \"The transverse abdominals (often targeted through plank variations)\" about another exercise; BarBend's \"it will become more and more tempting to drift them toward the side that the band is fixed on\" (c6) says the drift tempts, not that many do it (read like 'tend'); its \"many gymgoers don’t know how to brace properly\" is about bracing in heavy lifts generally (R-LB7-3). Step 2: harm words were checked on every list item and every rotation line. Only one named fault is tied to harm: over-arching the lower back (Motra list item 3 \"Over-arching lower back\"), by Motra's cue \"Maintain neutral spine to protect back\" (c8; D-SUP-PROTECT: the cue that corrects the fault protects a named body part; Motra's range line asks to \"retract to chest without arching spine\"). No other fault is tied to harm, so step 2's tie order (on a list, more harm sources, direct, earlier on a list naming both, step 3's count) is not reached. Checked and set aside: Garage Gym Reviews' Watch Your Lower Back text \"Overarching your lower back or putting it into flexion puts the anterior and posterior core muscles at a disadvantage, and you’ll lose all the benefits of this wonderful core exercise.\" (c9) states lost effect, no harm word; the rotation lines carry no harm word: BarBend's \"you should avoid bending or twisting at the torso or hips at all costs, as it defeats the purpose of the exercise\" (c7), Garage Gym Reviews' \"if too much resistance is used, it will cause your torso to rotate, and then all the benefits of the Pallof press disappear like magic\" (c7) and \"The benefits of the Pallof press are lost if your torso and midsection rotates.\", Motra's \"Reduce weight if rotation occurs\" (c7); Garage Gym Reviews' \"Pressing with elevated shoulders puts the spine out of position, and the upper traps get too involved.\" (c10) and BarBend's \"This will take tension off your trunk and make the movement easier.\" (c6) state no harm. Harm words that name no fault of this exercise: Motra's \"Avoid if acute lower back pain present\" (c19) and When to Avoid \"Acute lower back injury\" (conditions); Garage Gym Reviews' \"If you have back pain, the Pallof press is the better choice.\" and \"If you don’t have back pain, the Pallof press and the plank deserve a place in your workout routine.\" (exercise choice); BarBend's \"decrease injury risks when placing heavy loads on the spine or performing loaded carries\", \"minimizing excessive strain on the lumbar spine is key to longevity\" and \"help you protect yourself from back injuries in the future\" (benefits for other lifts), \"Can I do the Pallof press if I have lower back pain?\" (a question) and \"enough muscular stress to build up your six-pack\" (training stimulus). Reading not taken (D-SUP-LB9-PALLOF rules the tie above): if Motra's neutral-spine cue were not read as the cue for its arch item, no fault is tied to harm and step 3 decides by D-SUP-LB6-CCP's count, the read sources that tell the lifter to avoid each fault (sources, not lists): torso rotation 3 (BarBend, Garage Gym Reviews, Motra; c7); over-arching or flexing the lower back 2 (Garage Gym Reviews, Motra; c8, c9); not pressing straight 1 (BarBend, c6); elevated shoulders 1 (Garage Gym Reviews, c10); rushing the press, locking knees and leaning toward the cable 1 each (Motra). Lines that only give the right position are not counted (StrengthLog's \"press your arms straight out in front of you without rotating your torso\" and ACE's \"Keep the back straight and tall\", c5; Motra's \"Keep hips and shoulders square\"). Torso rotation would then be the top fault; the census note says the rotation fault cannot be drawn, so drawable would be false and plate.mistake would be the arch, next by the same count (2). The plate shows the arch under either reading; only handlingMistakes[0] would change. The arched lower back is a still sign the side view shows, so drawable is true.",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Hands move in a straight line",
+    "claim": "c6"
+   },
+   {
+    "text": "Hips and shoulders stay square",
+    "claim": "c7"
+   },
+   {
+    "text": "Shoulders down, chest up",
+    "claim": "c10"
+   }
+  ],
+  "tempo": {
+   "up": 1,
+   "down": 3,
+   "pause": 2,
+   "claim": [
+    "c13",
+    "c12"
+   ],
+   "text": "Up 1 and down 3 are Motra's Tempo 3-2-1 (c13, WEAK). Its Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause; the page shows three numbers, read as the first three: 3 s eccentric (bringing the handle back to the chest), a 2 s bottom pause (handle at the chest, between the return and the next press) and 1 s concentric (the press out). That 2 s pause is not right after the concentric, so it is named here and not written in pause (LR-33); 3-2-1 has no fourth number, so it fixes no top pause. Pause 2 is the hold right after the press out, sourced (R-LB2-1) but from two sources with different ranges for the same phase: ACE \"hold for 2-3 seconds\" and Motra's own How to Perform step \"Hold for 1-2 seconds resisting rotation.\" (c12). 2 s is the lowest (and only) value in the overlap of the two ranges (D-SUP-LB9-RANGE). StrengthLog's \"Hold briefly\" (c11) gives no seconds. BarBend's \"5 sets of 5 reps with a very slow and controlled tempo\" is a technique-learning option with no seconds."
+  },
+  "variantLine": "Cable column drawn (census equipment: cable). BarBend's and Garage Gym Reviews' band set-up (anchor at chest height, step out for tension) and their form lines hold for both; Garage Gym Reviews says band and cable are interchangeable."
+ },
+ "grip": {
+  "type": "One single handle held in both hands, fingers laced together (c3).",
+  "width": "Both hands together on one handle (c3).",
+  "thumb": "",
+  "handContact": "Palms clasping the handle at the chest, elbows in by the sides (c3).",
+  "wrist": "",
+  "claims": [
+   "c3"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Set a single handle at about chest height.",
+   "claim": "c1"
+  },
+  {
+   "step": "Stand side-on to the machine, feet hip-width apart.",
+   "claim": [
+    "c1",
+    "c2"
+   ]
+  },
+  {
+   "step": "Knees slightly bent, chest up.",
+   "claim": "c2"
+  },
+  {
+   "step": "Hold the handle in both hands at your chest, fingers laced.",
+   "claim": "c3"
+  },
+  {
+   "step": "Walk out until you feel the pull of the cable.",
+   "claim": "c4"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Back straight and tall. Don't arch your lower back.",
+   "claim": [
+    "c5",
+    "c8"
+   ]
+  },
+  {
+   "point": "Keep your hips and shoulders square.",
+   "claim": "c7"
+  },
+  {
+   "point": "Press your hands in a straight line.",
+   "claim": "c6"
+  },
+  {
+   "point": "Shoulders down, chest up.",
+   "claim": "c10"
+  },
+  {
+   "point": "Keep your glutes tight.",
+   "claim": "c16"
+  },
+  {
+   "point": "Breathe out as you press, in as you return.",
+   "claim": "c18"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Over-arching your lower back.",
+   "fix": "Keep a neutral spine. Keep your glutes tight.",
+   "claim": [
+    "c8",
+    "c9",
+    "c16"
+   ]
+  },
+  {
+   "mistake": "Twisting at the torso or hips.",
+   "fix": "Keep your hips and shoulders square. Reduce the weight if you rotate.",
+   "claim": "c7"
+  },
+  {
+   "mistake": "Hands drifting toward the machine.",
+   "fix": "Press your hands in a straight line from start to finish.",
+   "claim": "c6"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "obliques",
+    "claim": "c14"
+   },
+   {
+    "muscleId": "abs",
+    "claim": [
+     "c15",
+     "c14"
+    ]
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "glutes",
+    "claim": "c16"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Sides of the waist",
+    "means": "Your obliques work to stop your torso rotating.",
+    "fix": "",
+    "claim": "c14",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the belly",
+    "means": "Your abs help keep your spine stable.",
+    "fix": "",
+    "claim": "c15",
+    "redFlag": null
+   },
+   {
+    "where": "Low back",
+    "means": "Fault: over-arching the lower back.",
+    "fix": "Keep a neutral spine to protect your back.",
+    "claim": "c8",
+    "redFlag": "back"
+   },
+   {
+    "where": "Top of the shoulders and neck",
+    "means": "Fault: pressing with elevated shoulders. The upper traps get too involved.",
+    "fix": "Shoulders down, chest up.",
+    "claim": "c10",
+    "redFlag": null
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Keep a neutral spine to protect your back.",
+   "claim": "c8"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "grip",
+   "kind": "hand",
+   "right": "One handle in both hands, fingers laced.",
+   "wrong": null,
+   "claim": "c3"
+  },
+  {
+   "key": "back-line",
+   "kind": "posture",
+   "right": "Back straight and tall.",
+   "wrong": "Lower back over-arching.",
+   "claim": [
+    "c5",
+    "c8"
+   ]
+  },
+  {
+   "key": "shoulders",
+   "kind": "posture",
+   "right": "Shoulders down, chest up.",
+   "wrong": "Shoulders elevated.",
+   "claim": "c10"
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   {
+    "muscleId": "abs",
+    "role": "primary",
+    "claim": [
+     "c15",
+     "c14"
+    ],
+    "why": "StrengthLog and Motra list abs with the obliques as primary (c14); BarBend says the rectus abdominis contracts to stabilise the spine (c15). abs is the drawn region for the library's text-only core (content.md 8; bear_crawl, R-W0-4)."
+   },
+   {
+    "muscleId": "glutes",
+    "role": "secondary",
+    "claim": "c16",
+    "why": "Motra lists glutes as secondary and BarBend says to keep them tight throughout (c16)."
+   }
+  ],
+  "remove": [],
+  "why": "Library: core and obliques primary, no secondary. obliques stay primary (c14). core stays in the library primary and in no feel role (LR-35). abs is proposed as a drawn primary and glutes as secondary, from the claims named. A proposal for the LIB data card."
+ },
+ "anchorSource": "ace-antirotation",
+ "gaps": [],
+ "notes": [
+  "Shared card: selector-pin.json (appliesTo lists pallof_press) covers setting the weight on the stack. No line is copied here; the sheet links the shared steps.",
+  "Stance width: ACE, StrengthLog and Motra say hip-width (c1, c2); Garage Gym Reviews says shoulder-width. The card shows hip-width.",
+  "Orientation words: ACE puts the pulley directly to one side, StrengthLog says side facing the machine, Motra says perpendicular to it, and Garage Gym Reviews says parallel to it; all describe standing side-on with the cable across the front of the chest (c1).",
+  "Hands: ACE laces the fingers around one handle (c3); BarBend squeezes the hands together and straightens the fingers on a band, which the cable handle does not need. The card draws ACE's grip.",
+  "No stop line: no read source gives a stop-for-pain line for this exercise. The low back row uses LR-6 shape (place, the source's fault, its fix) and links the back box.",
+  "Not used: Garage Gym Reviews' Pallof Press Hold and the half-kneeling, double-kneeling and overhead-reach variations are other exercises; BarBend's standing too close or too far is a set-up choice (LR-31), and its band-thickness and stack-weight lines are load choices.",
+  "Read and not cited: none. Tried and not found: motra.com/exercises/pallofPress (404)."
+ ]
+}

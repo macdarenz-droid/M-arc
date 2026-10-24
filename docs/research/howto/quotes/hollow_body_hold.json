@@ -1,0 +1,311 @@
+{
+ "id": "hollow_body_hold",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "bb-hollow",
+   "text": "Lie on the floor with your legs straightened and your arms extended behind your head. You can clasp your hands together if you like. Your feet should be together as well.",
+   "status": "verbatim",
+   "closest": "Lie on the floor with your legs straightened and your arms extended behind your head. You can clasp your hands together if you like. Your feet should be together as well.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "bb-hollow",
+   "text": "You might want to grab a yoga mat to lay on, though.",
+   "status": "verbatim",
+   "closest": "You might want to grab a yoga mat to lay on, though.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "fv-hollow",
+   "text": "Lie on your back and extend your arms overhead, so your biceps are next to your ears. Straighten your legs and point your toes, knees, and feet pressed together.",
+   "status": "verbatim",
+   "closest": "Lie on your back and extend your arms overhead, so your biceps are next to your ears. Straighten your legs and point your toes, knees, and feet pressed together.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-hollow",
+   "text": "From your starting position, exhale deeply and depress your ribcage. Your lower back should flatten out against the floor and stay flush to the ground the entire time.",
+   "status": "verbatim",
+   "closest": "From your starting position, exhale deeply and depress your ribcage. Your lower back should flatten out against the floor and stay flush to the ground the entire time.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-hollow",
+   "text": "Once you feel that point of contact, lift your shoulders and legs off the ground. Hold this position for time.",
+   "status": "verbatim",
+   "closest": "Once you feel that point of contact, lift your shoulders and legs off the ground. Hold this position for time.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ggr-hollow",
+   "text": "Press your lower back and hips into the ground and hold for the desired time.",
+   "status": "verbatim",
+   "closest": "Press your lower back and hips into the ground and hold for the desired time.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-hollow",
+   "text": "Your lumbar spine and hips should remain in contact with the ground; your body should resemble a crescent.",
+   "status": "verbatim",
+   "closest": "Your lumbar spine and hips should remain in contact with the ground; your body should resemble a crescent.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-hollow",
+   "text": "Aim to suspend your legs between 15 and 30 degrees off the ground.",
+   "status": "verbatim",
+   "closest": "Aim to suspend your legs between 15 and 30 degrees off the ground.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-hollow",
+   "text": "Ensure that your legs are no higher than about 30 degrees relative to the floor.",
+   "status": "verbatim",
+   "closest": "Ensure that your legs are no higher than about 30 degrees relative to the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ggr-hollow",
+   "text": "Your legs only need to be four to six inches off the ground.",
+   "status": "verbatim",
+   "closest": "Your legs only need to be four to six inches off the ground.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-hollow",
+   "text": "To sufficiently challenge your core musculature, you have to lift your legs off the floor when performing the hollow hold. Your knees should be straight and locked if possible as well.",
+   "status": "verbatim",
+   "closest": "To sufficiently challenge your core musculature, you have to lift your legs off the floor when performing the hollow hold. Your knees should be straight and locked if possible as well.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-hollow",
+   "text": "If you can’t lift your legs high enough, you might place too much stress onto your hips flexors at the expense of your abs.",
+   "status": "verbatim",
+   "closest": "If you can’t lift your legs high enough, you might place too much stress onto your hips flexors at the expense of your abs.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-hollow",
+   "text": "On the other hand, you shouldn’t lift your legs up so far that they point at the ceiling. This will turn the hollow hold into a leg raise movement, defeating the purpose of the exercise.",
+   "status": "verbatim",
+   "closest": "On the other hand, you shouldn’t lift your legs up so far that they point at the ceiling. This will turn the hollow hold into a leg raise movement, defeating the purpose of the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ggr-hollow",
+   "text": "Your feet need to be around four to six inches off the ground because any more than this will put your legs in an L-shape. Then, your hip flexors will do more of the work, which is not a hollow hold.",
+   "status": "verbatim",
+   "closest": "Your feet need to be around four to six inches off the ground because any more than this will put your legs in an L-shape. Then, your hip flexors will do more of the work, which is not a hollow hold.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-hollow",
+   "text": "You can guarantee that your body is in the correct position by making sure that your lower back stays flush to the ground the entire time.",
+   "status": "verbatim",
+   "closest": "You can guarantee that your body is in the correct position by making sure that your lower back stays flush to the ground the entire time.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ggr-hollow",
+   "text": "Your lower back needs to be on the ground for the entire exercise, or else you’ll lose all the juicy ab tension the hollow hold is known for.",
+   "status": "verbatim",
+   "closest": "Your lower back needs to be on the ground for the entire exercise, or else you’ll lose all the juicy ab tension the hollow hold is known for.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "fv-hollow",
+   "text": "There should be no space between your lower back and the ground. An arched lower back could lead to injury. Stop your set if you feel your lower back lifting or use one of the easier alternatives elsewhere in this article.",
+   "status": "verbatim",
+   "closest": "There should be no space between your lower back and the ground. An arched lower back could lead to injury. Stop your set if you feel your lower back lifting or use one of the easier alternatives elsewhere in this article.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ggr-hollow",
+   "text": "Your shoulder blades and head tend to drop to the ground, making it harder to keep your lower back in neutral, which may result in lower back pain.",
+   "status": "verbatim",
+   "closest": "Your shoulder blades and head tend to drop to the ground, making it harder to keep your lower back in neutral, which may result in lower back pain.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ggr-hollow",
+   "text": "If you feel this happening, lower your limbs, rest, and do another quality set.",
+   "status": "verbatim",
+   "closest": "If you feel this happening, lower your limbs, rest, and do another quality set.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ggr-hollow",
+   "text": "Raise your upper body off the ground and bring your arms overhead with your biceps by your ears and head in neutral to avoid neck strain.",
+   "status": "verbatim",
+   "closest": "Raise your upper body off the ground and bring your arms overhead with your biceps by your ears and head in neutral to avoid neck strain.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "fv-hollow",
+   "text": "This can lead to hyperextension of the neck, which could result in neck pain or even injury. Avoid this problem by lowering your chin and looking down your body at your feet.",
+   "status": "verbatim",
+   "closest": "This can lead to hyperextension of the neck, which could result in neck pain or even injury. Avoid this problem by lowering your chin and looking down your body at your feet.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "fv-hollow",
+   "text": "Look down your body to your feet; do not tuck your chin into your chest.",
+   "status": "verbatim",
+   "closest": "Look down your body to your feet; do not tuck your chin into your chest.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-hollow",
+   "text": "Because hollow holds are isometric, there are no obvious cues for breathing, so some people may mistakenly hold their breath. This causes a significant rise in blood pressure.",
+   "status": "verbatim",
+   "closest": "Because hollow holds are isometric, there are no obvious cues for breathing, so some people may mistakenly hold their breath. This causes a significant rise in blood pressure.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-hollow",
+   "text": "Avoid this problem by breathing shallowly throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Avoid this problem by breathing shallowly throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-hollow",
+   "text": "If you can’t seem to keep your core locked in while your legs are straight, you can dial down the difficulty by bending your knees.",
+   "status": "verbatim",
+   "closest": "If you can’t seem to keep your core locked in while your legs are straight, you can dial down the difficulty by bending your knees.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ggr-hollow",
+   "text": "Expert tip: If this position is too difficult at first you can keep your arms on the floor to increase your stability or lift your legs higher.",
+   "status": "verbatim",
+   "closest": "Expert tip: If this position is too difficult at first you can keep your arms on the floor to increase your stability or lift your legs higher.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-hollow",
+   "text": "As a Beginner: Start with two sets of holds for time up to 30 seconds.",
+   "status": "verbatim",
+   "closest": "As a Beginner: Start with two sets of holds for time up to 30 seconds.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-hollow",
+   "text": "Three rounds of 15-20 seconds at the start of your workout should do wonders.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-hollow",
+   "text": "For Endurance: Try five rounds of 20-30 seconds, adding five seconds per week.",
+   "status": "verbatim",
+   "closest": "For Endurance: Try five rounds of 20-30 seconds, adding five seconds per week.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "ggr-hollow",
+   "text": "How long you should hold a hollow hold depends on how long you can hold it with good form. As a general guideline, anywhere from 30 to 60 seconds is considered challenging for most people.",
+   "status": "verbatim",
+   "closest": "How long you should hold a hollow hold depends on how long you can hold it with good form. As a general guideline, anywhere from 30 to 60 seconds is considered challenging for most people.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "fv-hollow",
+   "text": "Hold for just a few seconds and then relax, working up to longer holds as you get stronger.",
+   "status": "verbatim",
+   "closest": "Hold for just a few seconds and then relax, working up to longer holds as you get stronger.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "bb-hollow",
+   "text": "However, your abs also have the role of stabilizing your trunk. They can contract to “square” your ribs by depressing them and, simultaneously, posteriorly tilting your pelvis.",
+   "status": "verbatim",
+   "closest": "However, your abs also have the role of stabilizing your trunk. They can contract to “square” your ribs by depressing them and, simultaneously, posteriorly tilting your pelvis.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "fv-hollow",
+   "text": "During hollow holds, the rectus abdominis works isometrically or statically, which means it generates tension but doesn’t produce any movement.",
+   "status": "verbatim",
+   "closest": "During hollow holds, the rectus abdominis works isometrically or statically, which means it generates tension but doesn’t produce any movement.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-hollow",
+   "text": "These muscles are located on the front of your upper thigh, where your leg meets your abdomen. Oftentimes, people trying to train their abs can’t help but feel a distinct pinching sensation in the crease of their hips.",
+   "status": "verbatim",
+   "closest": "These muscles are located on the front of your upper thigh, where your leg meets your abdomen. Oftentimes, people trying to train their abs can’t help but feel a distinct pinching sensation in the crease of their hips.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-hollow",
+   "text": "That’s your hip flexors working overtime on what is supposed to be an ab exercise. While you won’t be able to take them out of the equation entirely during the hollow hold, you can avoid biasing your hip flexors by lifting your legs a bit higher.",
+   "status": "verbatim",
+   "closest": "That’s your hip flexors working overtime on what is supposed to be an ab exercise. While you won’t be able to take them out of the equation entirely during the hollow hold, you can avoid biasing your hip flexors by lifting your legs a bit higher.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "fv-hollow",
+   "text": "Like all the other muscles involved in hollow holds, your hip flexors work isometrically during this exercise.",
+   "status": "verbatim",
+   "closest": "Like all the other muscles involved in hollow holds, your hip flexors work isometrically during this exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "fv-hollow",
+   "text": "During hollow holds, their main job is to act as a stabilizer to prevent unwanted wobbling.",
+   "status": "verbatim",
+   "closest": "During hollow holds, their main job is to act as a stabilizer to prevent unwanted wobbling.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "ggr-hollow",
+   "text": "This will help improve core strength in your abs, obliques, and spinal (low back) erectors.",
+   "status": "verbatim",
+   "closest": "This will help improve core strength in your abs, obliques, and spinal (low back) erectors.",
+   "note": ""
+  }
+ ]
+}

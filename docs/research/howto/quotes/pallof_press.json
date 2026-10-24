@@ -1,0 +1,375 @@
+{
+ "id": "pallof_press",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-antirotation",
+   "text": "The cable pulley should be at approximately chest height and directly to the right of the body (while pressing the handle away from the body, the cable should be parallel with the chest.)",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-pallof",
+   "text": "Attach a handle in a cable machine at chest height and stand with your side facing the machine.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "mo-pallof",
+   "text": "Attach a single handle to a cable machine at chest height. Stand perpendicular to the machine with feet hip-width apart, gripping the handle at your chest.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-antirotation",
+   "text": "Stand with the feet hip-width apart and the hips straight with the knees slightly bent.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-pallof",
+   "text": "Grab the handle with both hands and stand with feet hip-width apart and knees slightly bent.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-pallof",
+   "text": "You want to be in an athletic stance, with a slight bend in your knees and your chest up.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-antirotation",
+   "text": "Grip one handle in both hands with the fingers laced together and elbows in by the sides.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-pallof",
+   "text": "Interlock your fingers and hold the band right at your chest.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ggr-pallof",
+   "text": "Grip the D handle and walk out from the cable stack until you feel the pull of the resistance.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-antirotation",
+   "text": "Keep the back straight and tall while pressing the handle forward, and hold for 2-3 seconds before slowly pulling the elbows back to the sides.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-pallof",
+   "text": "Pull the handle to your chest, engage your core, and then press your arms straight out in front of you without rotating your torso.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "mo-pallof",
+   "text": "Press the handle straight out to full arm extension.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-pallof",
+   "text": "As you push your hands outward, it will become more and more tempting to drift them toward the side that the band is fixed on. This will take tension off your trunk and make the movement easier.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-pallof",
+   "text": "Take great care to ensure you’re pressing your fists in a straight line from start to finish.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-pallof",
+   "text": "As such, you should avoid bending or twisting at the torso or hips at all costs, as it defeats the purpose of the exercise.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ggr-pallof",
+   "text": "But if too much resistance is used, it will cause your torso to rotate, and then all the benefits of the Pallof press disappear like magic.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "mo-pallof",
+   "text": "Allowing torso rotation",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "mo-pallof",
+   "text": "Keep hips and shoulders square",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "mo-pallof",
+   "text": "Reduce weight if rotation occurs",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "mo-pallof",
+   "text": "Over-arching lower back",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "mo-pallof",
+   "text": "Maintain neutral spine to protect back",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "mo-pallof",
+   "text": "Extend arms fully forward at chest height without torso rotation; retract to chest without arching spine.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ggr-pallof",
+   "text": "Overarching your lower back or putting it into flexion puts the anterior and posterior core muscles at a disadvantage, and you’ll lose all the benefits of this wonderful core exercise.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ggr-pallof",
+   "text": "Keeping an excellent pressing posture (using the cue above) and engaging your glutes will prevent this from happening.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ggr-pallof",
+   "text": "Keeping your chest up and shoulders down while performing the Pallof Press ensures the correct muscles are doing the work. Pressing with elevated shoulders puts the spine out of position, and the upper traps get too involved.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-pallof",
+   "text": "Ensure that your shoulder blades are squeezed together (so that your shoulders don’t track forward), and extend your arms.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "sl-pallof",
+   "text": "Hold briefly, then bring the handle back to your chest in a controlled motion.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "mo-pallof",
+   "text": "Slowly retract the handle to your chest.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-pallof",
+   "text": "Keeping your abs flexed and your shoulder blades retracted, slowly return the band to your chest.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "ace-antirotation",
+   "text": "Keep the back straight and tall while pressing the handle forward, and hold for 2-3 seconds before slowly pulling the elbows back to the sides.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "mo-pallof",
+   "text": "Hold for 1-2 seconds resisting rotation.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "mo-pallof",
+   "text": "3-2-1",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "mo-pallof",
+   "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "sl-pallof",
+   "text": "The Pallof Press is an excellent anti-rotation exercise that builds core strength and stability, particularly targeting the obliques.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "ggr-pallof",
+   "text": "This means your obliques work overtime to stop your spine and torso from rotating.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "mo-pallof",
+   "text": "Obliques, Abs",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "sl-pallof",
+   "text": "Primary muscles worked: Obliques Abs",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-pallof",
+   "text": "The rectus abdominis — to six-pack muscles — contracts isometrically to assist in spinal stabilization during this movement.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "mo-pallof",
+   "text": "Cable anti-rotation press targeting obliques and rectus abdominis to build core stability and resist spinal rotation",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "bb-pallof",
+   "text": "By keeping your glutes tight throughout the Pallof press, you’ll enhance your foundational strength for all other lifts.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "mo-pallof",
+   "text": "Brace your core and engage glutes.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "mo-pallof",
+   "text": "Glutes",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "ggr-pallof",
+   "text": "Start light and ensure proper form before progressing this exercise.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "mo-pallof",
+   "text": "Start with light weight to master form",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "mo-pallof",
+   "text": "Exhale as you press out; inhale as you retract while keeping core braced.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "mo-pallof",
+   "text": "Avoid if acute lower back pain present",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  }
+ ]
+}

@@ -27,7 +27,7 @@
         {
           "source": "hevy-fk",
           "text": "Lie on the floor with your legs straight, arms to your sides, and palms flat against the ground.",
-          "where": "How to, step 1"
+          "where": "How to do Flutter Kicks, step 1"
         }
       ]
     },
@@ -44,7 +44,7 @@
         {
           "source": "hevy-fk",
           "text": "With your lower back in contact with the floor, take a breath and lift your feet several inches off the floor.",
-          "where": "How to, step 2"
+          "where": "How to do Flutter Kicks, step 2"
         }
       ]
     },
@@ -61,13 +61,13 @@
         {
           "source": "hevy-fk",
           "text": "Take another breath and begin moving your legs up and down alternatingly. Keep your movements short and crisp.",
-          "where": "How to, step 3"
+          "where": "How to do Flutter Kicks, step 3"
         }
       ]
     },
     {
       "id": "c4",
-      "text": "Draw the shoulder blades down and together and use the abs to flatten the lower back to the floor, and keep it that way throughout.",
+      "text": "Squeeze the shoulder blades down and together and use the abs to flatten the lower back to the floor; it needs to stay that way throughout.",
       "tags": [
         "CONSENSUS"
       ],
@@ -78,7 +78,7 @@
         {
           "source": "hawkes-fk",
           "text": "Lying on your back, squeeze your shoulder blades down and together and use your abdominals to flatten your lower back to the floor. This needs to remain the same throughout",
-          "where": "instructions"
+          "where": "Step by Step (instructions)"
         }
       ]
     },
@@ -95,7 +95,7 @@
         {
           "source": "hawkes-fk",
           "text": "Next raise both feet off the floor with straight knees and essentially kick your legs at the hips",
-          "where": "instructions"
+          "where": "Step by Step (instructions)"
         }
       ]
     },
@@ -112,7 +112,7 @@
         {
           "source": "hevy-fk",
           "text": "An important tip for a safe and effective flutter kick is to keep your lower back flat against the floor at all times. Doing so ensures that your abs stay engaged, provide stability, and do most of the work involved in keeping your legs in the air and moving.",
-          "where": "Performing flutter kicks safely"
+          "where": "Performing Flutter Kicks Safely"
         }
       ]
     },
@@ -129,12 +129,12 @@
         {
           "source": "hevy-fk",
           "text": "A common mistake with the movement and numerous other ab exercises is arching the lower back. Doing so places unnecessary stress on your spine and lengthens the abs, preventing them from engaging as effectively.",
-          "where": "Mistakes"
+          "where": "Mistakes to Avoid, Arching Your Lower Back"
         },
         {
           "source": "hevy-fk",
           "text": "Avoid the error by keeping your lower back in contact with the floor from start to finish.",
-          "where": "Mistakes"
+          "where": "Mistakes to Avoid, Arching Your Lower Back"
         }
       ]
     },
@@ -151,7 +151,7 @@
         {
           "source": "hevy-fk",
           "text": "The second tip for kicks is keeping the leg motions short and controlled. Doing so is vital for maintaining your balance and keeping your spine in a healthy position. Moving your legs uncontrollably leads to instability and increases the risk of arching your lower back.",
-          "where": "Performing flutter kicks safely"
+          "where": "Performing Flutter Kicks Safely"
         }
       ]
     },
@@ -167,8 +167,8 @@
       "quotes": [
         {
           "source": "hevy-fk",
-          "text": "The second mistake with flutter kicks is moving your legs through an extended range of motion. Doing so isn't necessarily fatal, but the objective is to perform short and quick leg motions, alternating numerous times per set.",
-          "where": "Mistakes"
+          "text": "The second mistake with flutter kicks is moving your legs through an extended range of motion. Doing so isn’t necessarily fatal, but the objective is to perform short and quick leg motions, alternating numerous times per set.",
+          "where": "Mistakes to Avoid, Moving Your Legs Too Much"
         }
       ]
     },
@@ -186,23 +186,23 @@
         {
           "source": "hevy-fk",
           "text": "The primary muscle that works during the exercise is the rectus abdominis.",
-          "where": "Muscles worked"
+          "where": "Flutter Kicks Muscles Worked"
         },
         {
           "source": "hevy-fk",
           "text": "Kicks also engage the five hip flexors. The collection of muscles assists the abs in keeping our legs in the air and moving up and down.",
-          "where": "Muscles worked"
+          "where": "Flutter Kicks Muscles Worked"
         },
         {
           "source": "hawkes-fk",
           "text": "This exercise works your hip flexors and core",
-          "where": "intro"
+          "where": "Step by Step (opening lines)"
         }
       ]
     },
     {
       "id": "c11",
-      "text": "It should be pain free, or not raise existing pain, during the exercise, after it and the next day; muscle soreness 48-72 hours later is normal if it stays manageable.",
+      "text": "It should be pain free, or not raise existing pain, during the exercise, after it and the next day; some delayed muscle soreness 48-72 hours later is normal if it stays manageable.",
       "tags": [
         "CONSENSUS"
       ],
@@ -212,13 +212,13 @@
       "quotes": [
         {
           "source": "hawkes-fk",
-          "text": "Like any exercise this should be pain free or shouldn't increase existing pain levels, during, after and the next day.",
-          "where": "intro"
+          "text": "Like any exercise this should be pain free or shouldn’t increase existing pain levels, during, after and the next day.",
+          "where": "Step by Step (opening lines)"
         },
         {
           "source": "hawkes-fk",
           "text": "It is normal to feel some delayed onset muscle soreness between 48-72 hours but this should be manageable",
-          "where": "intro"
+          "where": "Step by Step (opening lines)"
         }
       ]
     },
@@ -235,17 +235,17 @@
         {
           "source": "hawkes-fk",
           "text": "For endurance you should perform 30-50 kicks to fatigue",
-          "where": "dosage"
+          "where": "Step by Step (endurance dose)"
         },
         {
           "source": "hawkes-fk",
           "text": "You should perform 3-5 sets with no more than 30 second rests",
-          "where": "dosage"
+          "where": "Step by Step (endurance dose)"
         },
         {
           "source": "hawkes-fk",
           "text": "To make this exercise harder you can add ankles weight progressively",
-          "where": "progression"
+          "where": "Step by Step (progression line)"
         }
       ]
     },
@@ -262,7 +262,51 @@
         {
           "source": "hevy-fk",
           "text": "Breathe as steadily as you can and go for as long as your abs allow you.",
-          "where": "How to, step 4"
+          "where": "How to do Flutter Kicks, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "One coach says the way many people do flutter kicks, legs held a few inches up while kicking, creates a big arch in the lower back and is a recipe for lower back pain.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-fk"
+      ],
+      "quotes": [
+        {
+          "source": "fv-fk",
+          "text": "The way that many people perform flutter kicks is a recipe for lower back pain.",
+          "where": "Crucial form tips"
+        },
+        {
+          "source": "fv-fk",
+          "text": "As explained in the video above, they’ll lie on their back, hold their legs up a few inches from the ground and begin to flutter away. However, from the example shown, this creates a big arch in the lower back.",
+          "where": "Crucial form tips"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "A lower-ab workout that includes flutter kicks gives the safety tip to stop if it hurts.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-lowerab"
+      ],
+      "quotes": [
+        {
+          "source": "hl-lowerab",
+          "text": "When performing any workout program, there are always safety tips to remember. Lower ab exercises are no different.",
+          "where": "Lower ab workout safety considerations"
+        },
+        {
+          "source": "hl-lowerab",
+          "text": "Stop if it hurts.",
+          "where": "Lower ab workout safety considerations"
         }
       ]
     }
@@ -276,7 +320,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
     },
     {
       "id": "hawkes-fk",
@@ -286,7 +330,27 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-02"
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "fv-fk",
+      "url": "https://fitnessvolt.com/flutter-kicks/",
+      "title": "Flutter Kicks Guide: Muscles Worked, How-To, Variations and More (Fitness Volt; ACE-certified author)",
+      "kind": "coach",
+      "year": 2021,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "hl-lowerab",
+      "url": "https://www.healthline.com/health/fitness-exercise/flutter-kicks",
+      "title": "Lower Ab Workout: 10 Exercises for a Stronger Core (Healthline; flutter kicks is exercise 10)",
+      "kind": "coach",
+      "year": 2026,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
     }
   ],
   "plate": {
@@ -299,14 +363,14 @@
     "checkpoints": [
       {
         "label": "Low back flat",
-        "what": "Abs press the lower back to the floor, and it stays there.",
+        "what": "Abs flatten the lower back to the floor, and it stays there.",
         "claim": [
           "c4",
           "c6"
         ]
       },
       {
-        "label": "Feet low",
+        "label": "Feet lifted",
         "what": "Both feet several inches off the floor, knees straight.",
         "claim": [
           "c2",
@@ -315,18 +379,24 @@
       },
       {
         "label": "Short kicks",
-        "what": "Small, quick, alternating kicks from the hips.",
+        "what": "Short, quick, alternating kicks from the hips.",
         "claim": [
           "c3",
-          "c9"
+          "c9",
+          "c5"
         ]
       }
     ],
     "mistake": {
       "what": "Lower back arches up off the floor as the legs kick.",
-      "why": "Hevy names it as the common mistake, stressing the spine (c7); bigger, uncontrolled kicks make it more likely (c8).",
-      "claim": "c7",
-      "drawable": true
+      "why": "LR-31 step 1: Fitness Volt says many people do flutter kicks in a way that creates a big arch in the lower back, a recipe for lower back pain (c14); Hevy says arching puts unnecessary stress on the spine (c7), and bigger, uncontrolled kicks make it more likely (c8).",
+      "claim": [
+        "c7",
+        "c14",
+        "c5"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the lower back arching off the floor (c14, c7). Fitness Volt's \"The way that many people perform flutter kicks is a recipe for lower back pain.\" is followed by \"As explained in the video above, they’ll lie on their back, hold their legs up a few inches from the ground and begin to flutter away. However, from the example shown, this creates a big arch in the lower back.\" (c14, 'Crucial form tips'): many people make this fault of this exercise, the arch, named in the next sentence; it is one fault, not a list (D-SUP-LB7-DIPREPS reading). No other fault passes step 1. Set aside: Hevy's \"A common mistake with the movement and numerous other ab exercises is arching the lower back.\" (c7) opens the first item of its 'Mistakes to Avoid' list, a list sentence, and is not counted (R-LB4-2); counted, it picks the same fault. Fitness Volt's \"As far as reps go, the flutter kick is commonly performed in a four-count fashion.\" ('Sets/reps') is a counting format, not a fault; its \"some people might place their hands or fists under their butt or lower back to prevent the arching\" has no frequency word and is an aid. Hevy's \"do most of the work\" (c6) is about the abs' work and \"Unlike many ab movements\" is about the cable crunch, another exercise; Healthline's \"Many different exercises engage the lower abdominal muscles.\" is about exercises. Step 2 is not needed; the same fault is also the one most tied to harm: Hevy \"Doing so places unnecessary stress on your spine\" (c7); Fitness Volt \"a recipe for lower back pain\" (c14) and \"The psoas muscle, which is one of the hip flexors, pulls on the spine, therefore, causing some real discomfort.\" Harm quotes set aside: Hevy's \"increases the risk of arching your lower back\" (c8) ties uncontrolled kicks to the arch, not to harm; Hevy's 'Moving Your Legs Too Much' says \"Doing so isn’t necessarily fatal\" (c9), which states no harm; Fitness Volt's \"otherwise it’s useless and dangerous\" names no fault, and its bent-leg \"could also further reduce the strain on your lower back\" is a variation; Hawkes' \"this should be pain free\" (c11) and Healthline's \"Stop if it hurts.\" (c15) name no fault; Fitness Volt's \"It protects your lower back from straining whether lifting weights, doing basic activities, or just walking for long hours at a time.\" and \"you’ll be less prone to injuries\" and Healthline's \"A strong core can help improve posture, prevent injuries, and relieve back pain.\" are benefits; Fitness Volt's \"due to the stress being placed on the core muscles\" is training stress, not harm. Step 3 gives the same fault: Hevy's 'Mistakes to Avoid' list, written for this exercise, runs 1 'Arching Your Lower Back' (c7), 2 'Moving Your Legs Too Much' (c9); Fitness Volt's 'Crucial form tips' names only the arch; Hawkes and Healthline have no mistakes list. drawable stays true: the side view shows the lower back lifted off the floor, a still sign. Pick unchanged; handlingMistakes[0] is already the arch."
     },
     "tells": [
       {
@@ -335,14 +405,17 @@
       },
       {
         "text": "Kicks stay short and quick",
-        "claim": "c3"
+        "claim": [
+          "c3",
+          "c9"
+        ]
       }
     ],
     "tempo": {
       "up": null,
       "down": null,
       "pause": null,
-      "text": "Cycle: short, crisp alternating kicks (c3); sets of 30-50 kicks for endurance (c12). No source gives a cadence.",
+      "text": "Cycle: short, crisp alternating kicks (c3); sets of 30-50 kicks for endurance (c12). Up, down and pause stay null (LR-33, R-LB7-6). Decided against 2 s / 1 s: no quote on the card asks for a slow lowering, and the read sources disagree on speed. Hevy says \"Keep your movements short and crisp.\" (c3) and \"short and quick leg motions\" (c9); Healthline's flutter steps say \"Slowly lower your right leg a few inches while simultaneously lifting your left leg a few inches.\" (not cited on the card); Fitness Volt says \"you can vary the tempo based on your goals\" with a slower pace for the abs (not cited). The kick is an alternating cycle in which one leg lowers while the other lifts, so there is no single lowering phase to slow, and the WEAK convention would side with one source against the anchor. No quote asks for a pause, hold or squeeze in the kick. Fitness Volt's interval option, 30 s of kicks and 10-15 s rest, is a set format, not a phase time.",
       "claim": [
         "c3",
         "c12"
@@ -364,10 +437,13 @@
   "setup": [
     {
       "step": "Lie on your back, legs straight, arms at your sides, palms flat.",
-      "claim": "c1"
+      "claim": [
+        "c1",
+        "c4"
+      ]
     },
     {
-      "step": "Draw your shoulder blades down and flatten your lower back to the floor.",
+      "step": "Squeeze your shoulder blades down and flatten your lower back.",
       "claim": "c4"
     },
     {
@@ -379,7 +455,10 @@
     },
     {
       "step": "Kick your legs up and down, alternating, in short quick moves.",
-      "claim": "c3"
+      "claim": [
+        "c3",
+        "c9"
+      ]
     }
   ],
   "posture": [
@@ -399,14 +478,14 @@
   "handlingMistakes": [
     {
       "mistake": "Lower back arches off the floor.",
-      "fix": "Use your abs to press it flat again.",
+      "fix": "Use your abs to flatten it again.",
       "claim": [
         "c7",
         "c4"
       ]
     },
     {
-      "mistake": "Big, sweeping kicks.",
+      "mistake": "Kicking through an extended range.",
       "fix": "Keep the kicks short and controlled.",
       "claim": [
         "c9",
@@ -456,8 +535,12 @@
       {
         "where": "Pain in the lower back, during, after or the next day",
         "means": "This exercise should not cause or raise pain.",
-        "fix": "Don't train through the pain.",
-        "claim": "c11",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": [
+          "c11",
+          "c14",
+          "c15"
+        ],
         "redFlag": "back"
       }
     ]
@@ -490,7 +573,7 @@
       "key": "kick-size",
       "kind": "posture",
       "right": "Short kicks, feet several inches up.",
-      "wrong": "Large, sweeping kicks.",
+      "wrong": "Kicks through an extended range.",
       "claim": [
         "c3",
         "c9"
@@ -513,7 +596,7 @@
   "anchorSource": "hevy-fk",
   "anchorNote": "Hevy's flutter kicks guide (certified trainer) and Hawkes Physiotherapy's exercise page read in full. No ACE, NASM or PubMed technique source found for the supine flutter kick (PubMed 'flutter kick' hits are swimming studies, 2026-10-02).",
   "loadProgression": {
-    "text": "Build to 30-50 kicks a set; ankle weights make it harder.",
+    "text": "For endurance: 30-50 kicks to fatigue; ankle weights make it harder.",
     "claims": [
       "c12"
     ]
@@ -527,6 +610,8 @@
   "notes": [
     "The back row links redFlag 'back' as a pending link (LR-11, LR-27, LR-28); its sheet cannot ship before the back-pain box.",
     "The row timing (during, after, the next day; soreness 48-72 hours) follows owner D-LR23-9 and is sourced to c11.",
-    "Fix round 2026-10-02 (verify w0): A6 abs primary and hip_flexors secondary proposed, why corrected; A8 back-row fix is now \"Don't train through the pain.\"; A9 \"a few\" became \"several\"; A10 breath-holding mistake dropped (unsourced as a mistake) and risk 2 no longer says \"big\"."
+    "Fix round 2026-10-02 (verify w0): A6 abs primary and hip_flexors secondary proposed, why corrected; A8 back-row fix is now \"Don't train through the pain.\"; A9 \"a few\" became \"several\"; A10 breath-holding mistake dropped (unsourced as a mistake) and risk 2 no longer says \"big\".",
+    "LB9 LR-31/LR-33 pass 2026-10-22: rankNote added (step 1, c14); new sources fv-fk (Fitness Volt, read in full) and hl-lowerab (Healthline lower-ab workout, flutter kicks section and safety list read). Shown-line fixes under CARD-V2:68: checkpoint 1 'flatten' (c4's word, not 'press'), checkpoint 2 label 'Feet lifted' (c2's 'lift'), checkpoint 3 and tells 2 and setup 4 cite c9 for 'quick', setup 2 and c4 use the source's 'squeeze', handlingMistakes[1] and the kick-size zoom use c9's 'extended range' (no source says 'sweeping'). R-LB3-4/R-LB6-6: the back row's stop now cites c15 (Healthline's 'Stop if it hurts.') and its 'lower back' place c14; c9 and c11 quotes keep the pages' ’.",
+    "Height conflict, recorded: Fitness Volt says raising the legs high and lowering only until just before the back arches avoids the arch it ties to legs held a few inches up (c14); Hevy (c2) and Healthline (about 6 inches) keep the feet low with the lower back on the floor. The plate keeps Hevy's several inches with the back flat (c2, c4); the arch, not the height, is the fault drawn."
   ]
 }

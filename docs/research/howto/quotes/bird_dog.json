@@ -1,0 +1,415 @@
+{
+ "id": "bird_dog",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-birddog",
+   "text": "Starting Position: Kneel on an exercise mat or floor, positioning your knees and feet hip-width apart, with your feet dorsi-flexed (toes pointing towards your body).",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-birddog",
+   "text": "Slowly lean forward to place your hands on the mat, positioning them directly under your shoulders at shoulder-width with your fingers facing forward.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-birddog",
+   "text": "Reposition your hands and knees as necessary so that your knees are directly under your hips and hands are directly under your shoulders.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-birddog",
+   "text": "Get into a quadruped position by placing your hands directly underneath your shoulders and your knees under your hips. Establish a neutral spine.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-birddog",
+   "text": "Stiffen your core and abdominal muscles to position your spine in a neutral position, avoid any excessive sagging or arching.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ggr-birddog",
+   "text": "we want to form a nice straight line with a flat back and a neutral neck and spine.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-birddog",
+   "text": "Hip Extension: Slowly extend your left hip (raise and straighten the knee) attempting to extend it until it is at, or near parallel, to the floor without any rotation in the hip. Your goal is to keep both hips parallel to the floor.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-birddog",
+   "text": "This exercise involves simultaneous movement of your leg and contralateral (opposite) arm.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ace-birddog",
+   "text": "Shoulder flexion: Slowly flex your right arm (raise and straighten the arm) attempting to raise it until it is at, or near parallel, to the floor without any tilting at the shoulders. Your goal is to keep the both shoulders parallel to the floor.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ace-birddog",
+   "text": "Your head should remain aligned with the spine throughout the movement.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ggr-birddog",
+   "text": "The idea is to keep your neck and spine in a neutral position as you move, so, even though it’ll be kinda boring, you have to make intense eye contact with the floor as you do your reps.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ace-birddog",
+   "text": "As the leg is raised, individuals may witness an increase in lumbar lordosis (low back sagging). Only raise the limbs to heights where the low back position can be maintained through the combined actions of the core and abdominal muscles.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "hl-birddog",
+   "text": "Avoid lifting your leg too high or allowing your spine to curve past its natural position.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "mo-birddog",
+   "text": "Lengthen limbs, don't lift high",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ggr-birddog",
+   "text": "“Arching or rounding the back puts increased stress on the lumbar spine,” Kate says, “which can lead to lower back pain and increase your risk of injury.”",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "mo-birddog",
+   "text": "Arching lower back",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ggr-birddog",
+   "text": "“Lifting your head to look forward instead of keeping your eyes fixed on the floor will take your neck out of alignment,” says Kate, “increasing your risk of injury.”",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-birddog",
+   "text": "If your mindset with bird dogs is to get them done just because you should, you probably need to slow down your reps.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-birddog",
+   "text": "But moving too fast can actually make you lose your balance faster — and also cancel out the benefits of going slowly and deliberately, which increases muscle engagement.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "mo-birddog",
+   "text": "Rushing the movement",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-birddog",
+   "text": "Focus on pressing down into the ground with your non-moving hand, knee, and toes.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "bb-birddog",
+   "text": "This will help prevent you from shifting your hips and shoulders during the movement.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "hl-birddog",
+   "text": "Keep your hips level. Don’t rotate your pelvis.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-birddog",
+   "text": "To avoid tilted hips, press down into the floor with your unmoving limbs. Keep your core tight the entire time.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "mo-birddog",
+   "text": "Rotating hips or shoulders",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "hl-birddog",
+   "text": "Maintain smooth and even breathing.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "mo-birddog",
+   "text": "Holding breath",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "ggr-birddog",
+   "text": "It’s also a reminder to not hold our breath; something many of us are guilty of, especially when the going gets tough!",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "bb-birddog",
+   "text": "Once you reach full extension, maintain the position for a beat.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "hl-birddog",
+   "text": "Hold this position for a few seconds, then lower back down to the starting position.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "ace-birddog",
+   "text": "Downward Phase: Gently lower yourself back to your starting position and repeat with the opposite limbs.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-birddog",
+   "text": "By extending your opposite arm and leg, you’re targeting your erector spinae, which extends from your neck to your hip.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-birddog",
+   "text": "Your back is, indeed, part of your core. It will be working plenty hard during this move.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "bb-birddog",
+   "text": "your back will be one of the key components of keeping your body stable.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "mo-birddog",
+   "text": "A bodyweight core stability exercise from a tabletop position that extends the opposite arm and leg, targeting erector spinae, abs, and glutes",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "bb-birddog",
+   "text": "Your glutes will kick in when you kick back with your moving leg.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "mo-birddog",
+   "text": "Abs, Glutes",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "mo-birddog",
+   "text": "Hamstrings, Shoulders",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "bb-birddog",
+   "text": "Your rectus abdominis, that front part of your core, will be working hard to keep you stable during this move.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "calatayud-2019",
+   "text": "13 outpatients (average age 52 years; all with standing or walking work in their current or latest job) performed 3 consecutive repetitions at 15-repetition maximum during different exercises in random order.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "calatayud-2019",
+   "text": "The squat and bird-dog exercises are especially effective in activing the lumbar erector spinae; with nEMG of 40% (24-87%) and 29% (27-46%), respectively.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "mo-birddog",
+   "text": "Stop if any pain occurs",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "hl-birddog",
+   "text": "If you develop any pain or discomfort during or after the exercise, discontinue the practice and talk with a doctor or certified personal trainer.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "ggr-birddog",
+   "text": "If you find yourself struggling to maintain proper form, listen to your body and stop.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "ggr-birddog",
+   "text": "You’re better off resting and finishing the set with good form after a breather than to eke out sloppy reps and strain your back muscles in the process.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "mo-birddog",
+   "text": "3-2-3",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "mo-birddog",
+   "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "mo-birddog",
+   "text": "Hold position for 3-5 seconds while keeping hips and shoulders level.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c21",
+   "source": "mo-birddog",
+   "text": "Slowly return arm and leg to starting position.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c22",
+   "source": "mo-birddog",
+   "text": "Use mat for knee comfort",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c22",
+   "source": "hl-birddog",
+   "text": "Place a flat cushion or folded towel under your knees for extra cushioning.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  }
+ ]
+}

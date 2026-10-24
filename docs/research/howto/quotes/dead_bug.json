@@ -1,0 +1,223 @@
+{
+ "id": "dead_bug",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ace-deadbug",
+   "text": "Starting Position: Lie supine (on your back) on an exercise mat or firm surface, bending your knees until your feet are positioned flat on the floor 12 - 18\" from your buttocks.",
+   "status": "verbatim",
+   "closest": "Starting Position: Lie supine (on your back) on an exercise mat or firm surface, bending your knees until your feet are positioned flat on the floor 12 - 18\" from your buttocks.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ace-deadbug",
+   "text": "Depress and retract your scapulae (pull your shoulders down and back) without increasing the arch in your low back or lifting your hips off the mat / floot. Hold this position throughout the exercise.",
+   "status": "verbatim",
+   "closest": "Depress and retract your scapulae (pull your shoulders down and back) without increasing the arch in your low back or lifting your hips off the mat / floot. Hold this position throughout the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ace-deadbug",
+   "text": "Once you have used a hollowing movement to stabilize your spine and pelvis, lift both legs and arms off of the floor; the knees should be directly over the hip joints and bent ninety degrees (pictured)",
+   "status": "verbatim",
+   "closest": "Once you have used a hollowing movement to stabilize your spine and pelvis, lift both legs and arms off of the floor; the knees should be directly over the hip joints and bent ninety degrees (pictured)",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ggr-deadbug",
+   "text": "Lie face up on the floor with your knees forming a 90-degree angle above your hips and your arms fully extended above your chest.",
+   "status": "verbatim",
+   "closest": "Lie face up on the floor with your knees forming a 90-degree angle above your hips and your arms fully extended above your chest.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "ggr-deadbug",
+   "text": "Brace your core, pushing your lower back into the mat.",
+   "status": "verbatim",
+   "closest": "Brace your core, pushing your lower back into the mat.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ace-deadbug",
+   "text": "Inhale and maintain the abdominal hollowing while slowly lowering the right heel and left hand towards the floor. The hand and heel should lightly touch the floor (but not rest), exhale continue the abdominal hollowing and slowly bring the leg and arm back to the initial starting position.",
+   "status": "verbatim",
+   "closest": "Inhale and maintain the abdominal hollowing while slowly lowering the right heel and left hand towards the floor. The hand and heel should lightly touch the floor (but not rest), exhale continue the abdominal hollowing and slowly bring the leg and arm back to the initial starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ggr-deadbug",
+   "text": "Extend your right hand above your head and your left leg in front of you.",
+   "status": "verbatim",
+   "closest": "Extend your right hand above your head and your left leg in front of you.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ggr-deadbug",
+   "text": "Return to the starting position and repeat for the left arm and right leg.",
+   "status": "verbatim",
+   "closest": "Return to the starting position and repeat for the left arm and right leg.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ggr-deadbug",
+   "text": "Check in with your form on each rep and make sure your back remains flat and in contact with the mat.",
+   "status": "verbatim",
+   "closest": "Check in with your form on each rep and make sure your back remains flat and in contact with the mat.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "ggr-deadbug",
+   "text": "Losing that flat back and neutral spine positioning places unnecessary shear forces on the lumbar spine.",
+   "status": "verbatim",
+   "closest": "Losing that flat back and neutral spine positioning places unnecessary shear forces on the lumbar spine.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ggr-deadbug",
+   "text": "As you rack up the reps, however, and that position becomes excruciating to hold, it’s then easy to lose core tension and start arching the back and overextending the spine to compensate.",
+   "status": "verbatim",
+   "closest": "As you rack up the reps, however, and that position becomes excruciating to hold, it’s then easy to lose core tension and start arching the back and overextending the spine to compensate.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ggr-deadbug",
+   "text": "Not only does arching reduce the overall effectiveness of the exercise, it could contribute to a back injury including strains, sprains, and herniations.",
+   "status": "verbatim",
+   "closest": "Not only does arching reduce the overall effectiveness of the exercise, it could contribute to a back injury including strains, sprains, and herniations.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "ggr-deadbug",
+   "text": "We know it’s a challenging movement, but try to take a beat in between each rep and ensure you’re maintaining proper form and alignment. If you do feel yourself losing that perfect flat back positioning, finish the reps you’re on and rest.",
+   "status": "verbatim",
+   "closest": "We know it’s a challenging movement, but try to take a beat in between each rep and ensure you’re maintaining proper form and alignment. If you do feel yourself losing that perfect flat back positioning, finish the reps you’re on and rest.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ggr-deadbug",
+   "text": "It’s tempting to look down at your legs while doing the dead bug, but doing so places strain on your neck.",
+   "status": "verbatim",
+   "closest": "It’s tempting to look down at your legs while doing the dead bug, but doing so places strain on your neck.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ggr-deadbug",
+   "text": "Craning your neck is another great way to lose proper spinal alignment and place undue stress on critical regions of your body.",
+   "status": "verbatim",
+   "closest": "Craning your neck is another great way to lose proper spinal alignment and place undue stress on critical regions of your body.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ggr-deadbug",
+   "text": "Stare straight up at the ceiling during the dead bug exercise to ensure proper alignment and prevent possible injury to your neck.",
+   "status": "verbatim",
+   "closest": "Stare straight up at the ceiling during the dead bug exercise to ensure proper alignment and prevent possible injury to your neck.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ggr-deadbug",
+   "text": "A great way to make sure you’re doing that is by taking a deep breath as you extend your arm and leg, then exhaling as you move to return to the starting position.",
+   "status": "verbatim",
+   "closest": "A great way to make sure you’re doing that is by taking a deep breath as you extend your arm and leg, then exhaling as you move to return to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ggr-deadbug",
+   "text": "“Sync your breath with your movement,” says Capritto, “and never hold your breath.”",
+   "status": "verbatim",
+   "closest": "“Sync your breath with your movement,” says Capritto, “and never hold your breath.”",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ace-deadbug",
+   "text": "Continue to breathe while holding the abdominal hollowing and bracing.",
+   "status": "verbatim",
+   "closest": "Continue to breathe while holding the abdominal hollowing and bracing.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-deadbug",
+   "text": "To have more control (making it easier) when learning this exercise, start with the hands resting on the floor above the head and the feet resting gently on the floor in front of the buttocks",
+   "status": "verbatim",
+   "closest": "To have more control (making it easier) when learning this exercise, start with the hands resting on the floor above the head and the feet resting gently on the floor in front of the buttocks",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ace-deadbug",
+   "text": "slowly lift the right arm and left leg off of the floor together while maintaining the abdominal hollowing",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-deadbug",
+   "text": "To make the exercise easier especially if you have limited hip range of motion or mobility; keep your leg/s higher off the ground at first and then gradually lower it little by little.",
+   "status": "verbatim",
+   "closest": "To make the exercise easier especially if you have limited hip range of motion or mobility; keep your leg/s higher off the ground at first and then gradually lower it little by little.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ace-deadbug",
+   "text": "Target Body Part: Abs",
+   "status": "verbatim",
+   "closest": "Target Body Part: Abs",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ggr-deadbug",
+   "text": "including abdominal muscles like the rectus abdominis, transverse abdominis, and obliques, as well as the erector spinae, multifidus, hip flexors, and pelvic floor",
+   "status": "verbatim",
+   "closest": "including abdominal muscles like the rectus abdominis, transverse abdominis, and obliques, as well as the erector spinae, multifidus, hip flexors, and pelvic floor",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ggr-deadbug",
+   "text": "Hip flexors: These muscles, as the name suggests, flex your hips and help you bring your legs towards your torso, which is required for getting into the dead bug position.",
+   "status": "verbatim",
+   "closest": "Hip flexors: These muscles, as the name suggests, flex your hips and help you bring your legs towards your torso, which is required for getting into the dead bug position.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "pereira-2017",
+   "text": "Electromyographic analysis assessed the multifidus, external oblique, internal oblique, and rectus abdominis muscles during classical Pilates exercises (single leg stretch, criss-cross, and dead bug).",
+   "status": "verbatim",
+   "closest": "Electromyographic analysis assessed the multifidus, external oblique, internal oblique, and rectus abdominis muscles during classical Pilates exercises (single leg stretch, criss-cross, and dead bug).",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "pereira-2017",
+   "text": "the criss-cross and dead bug created more activation of the oblique compared with the multifidus and rectus.",
+   "status": "verbatim",
+   "closest": "the criss-cross and dead bug created more activation of the oblique compared with the multifidus and rectus.",
+   "note": ""
+  }
+ ]
+}

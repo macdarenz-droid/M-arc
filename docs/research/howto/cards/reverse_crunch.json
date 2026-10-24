@@ -1,0 +1,855 @@
+{
+ "id": "reverse_crunch",
+ "libId": "lib_reverse_crunch",
+ "name": "Reverse Crunch",
+ "family": "Trunk flexion (crunch) (child of crunch)",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+ "archetype": {
+  "hand": "none",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": "crunch",
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Lie on your back on a mat, arms straight by your sides (or spread out to the sides) with the palms down, pressing into the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-revcrunch",
+    "bb-revcrunch",
+    "motra-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-revcrunch",
+     "text": "Starting Position: Lie in a supine (on your back) position on a mat with your knees bent, feet flat on the floor and arms spread out to your sides with your palms facing down.",
+     "where": "Step 1, Starting Position"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "Lie down on a flat surface with your back on the ground and your eyes facing toward the ceiling. Position your arms straight by the sides of your body. Push your palms into the ground.",
+     "where": "How to Do the Reverse Crunch, Step 1 — Set Up"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "Lie flat on your back on a mat with arms by your sides, palms down.",
+     "where": "How to Perform, list item 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Brace the trunk and lift the feet off the floor so the knees are directly above the hips, bent at 90 degrees (thighs vertical, shins parallel to the floor), with the lower back flat on the floor: this is the start.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-revcrunch",
+    "bb-revcrunch",
+    "motra-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-revcrunch",
+     "text": "Gently exhale, stiffen your torso by contracting your abdominal/core muscles (\"bracing\") and slowly lift your feet off the floor, raising your knees directly above your hips while maintaining a 90 degree bend in the knees.",
+     "where": "Step 1, Starting Position"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "Lift your lower body off the ground and bend your knees, so your legs form an upside-down “L.” Make sure that when you are in this position, your lower back is flat on the floor. This is the starting position for the reverse crunch.",
+     "where": "How to Do the Reverse Crunch, Step 1 — Set Up"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "Bend knees to 90 degrees, lifting thighs perpendicular to floor and shins parallel.",
+     "where": "How to Perform, list item 2"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Breathe out and contract the abs to raise the hips and lower back off the mat, rolling the spine up and bringing the knees toward the chest (or head), the pelvis moving toward the rib cage.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-revcrunch",
+    "bb-revcrunch",
+    "pg-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-revcrunch",
+     "text": "Upward Phase: Exhale, contract your abdominal, core and hip flexor muscles and slowly raise your hips off the mat, rolling your spine up as if trying to bring your knees towards your head (your hips and pelvis should move towards your rib cage).",
+     "where": "Step 2, Upward Phase"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "Crunch through your abdominal muscles to bring your knees to your chest as you roll your lower back off the floor. Exhale as you bring your thighs up and back toward your chest.",
+     "where": "How to Do the Reverse Crunch, Step 2 — Crunch Your Abs"
+    },
+    {
+     "source": "pg-revcrunch",
+     "text": "Brace your core by pushing the bellybutton to the spine, then curl your glutes and lower back off the floor to bring your knees towards your chest.",
+     "where": "How To Do Reverse Crunches (one unnumbered paragraph), sentence 2"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Keep the knee angle at 90 degrees, unchanged, through the whole movement.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-revcrunch",
+    "bb-revcrunch",
+    "motra-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-revcrunch",
+     "text": "Avoid any change in the angle of your knees during the roll-up.",
+     "where": "Step 2, Upward Phase"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "Make sure that you keep your knee angle consistent at 90 degrees throughout the whole movement.",
+     "where": "How to Do the Reverse Crunch, Step 2 — Crunch Your Abs"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "Keep knees bent at 90 degrees throughout the lift.",
+     "where": "How to Perform, list item 4"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Curl up until the spine cannot roll any further (the tailbone clears the floor and the knees approach the chest), using the arms for balance, and hold briefly; on the way down, lower until the lower back touches the mat, without dropping the legs fully.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-revcrunch",
+    "motra-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-revcrunch",
+     "text": "Use your arms and hands to assist with maintaining your balance and continue to curl-up until your spine cannot roll any further. Hold this position briefly.",
+     "where": "Step 2, Upward Phase"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "Lift hips until tailbone clears floor and knees approach chest; lower until lower back contacts mat without full leg drop.",
+     "where": "Coaching Tips, Range of Motion"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Breathe in and lower the spine back to the mat slowly and under control, rolling down gradually to the tailbone until the thighs are back over the hips.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-revcrunch",
+    "bb-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-revcrunch",
+     "text": "Downward Phase: Gently inhale and lower your spine back towards the mat in a controlled fashion, moving your upper thighs backwards until they are positioned directly over your hips.",
+     "where": "Step 3, Downward Phase"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "Inhale as you slowly return your lower back to the floor in a controlled manner. Flatten your back gradually down to your tailbone. Stop when you reach your starting position.",
+     "where": "How to Do the Reverse Crunch, Step 3 — Return Your Legs to the Start Position"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Proper form prevents excessive stress on the low back: on the way back to the start, control the legs so the knees do not move past the hips but return directly above them.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-revcrunch",
+     "text": "Proper form is important when performing this exercise to prevent excessive stresses on your low back. When returning to your starting position during the repetitions, control your leg movement ensuring that your knees don't move past your hips, but instead return to a position directly above your hips.",
+     "where": "Step 3, Downward Phase (closing paragraph)"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "The movement should pull the pelvis up toward the rib cage, driven by the core rather than started with the legs, so it does not become mostly a hip flexor exercise.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-revcrunch",
+    "bb-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "ace-revcrunch",
+     "text": "Since the abdominals connect the rib cage to the pelvis, the emphasis of the movement should be on pulling your pelvis upwards towards your rib cage.",
+     "where": "Step 3, Downward Phase (closing paragraph)"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "To avoid making this ab move too much of a hip flexor exercise, use your core to curl your hips off the floor toward your chest instead of initiating the movement with your legs.",
+     "where": "How to Do the Reverse Crunch, Step 2, Coach’s Tip"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Not lifting the back is a listed mistake: only hinging at the hips trains the hip flexors instead of the abs; actively curl the lower back away from the floor with the abs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-revcrunch",
+     "text": "If you do not lift your back off the floor and you end up only hinging at your hips, you are not engaging your abdominals enough. You are consequently only training your hip flexors instead.",
+     "where": "Common Reverse Crunch Mistakes, Not Lifting Your Back"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "To make sure you’re fully engaging your abs instead of just yanking through your hip flexors, focus on making sure the movement comes from crunching your abs together. Actively curl your lower back away from the ground to help this happen.",
+     "where": "Common Reverse Crunch Mistakes, Not Lifting Your Back"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Letting the back flop down as one unit is a listed mistake: return vertebra by vertebra, slowly and with control.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-revcrunch",
+     "text": "Avoid letting your back just flop back down as one unit. Really concentrate on returning to the ground vertebrae by vertebrae, moving slowly and with control.",
+     "where": "Common Reverse Crunch Mistakes, Not Allowing Your Back to Roll Back Down"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Tucking the knees too far back toward you is a listed mistake: it brings the whole body weight onto the upper back and toward the neck and risks the neck's alignment; keeping the knees at 90 degrees helps protect the neck.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-revcrunch",
+     "text": "You do not want to tuck your knees too far back toward yourself when you perform the reverse crunch. This is because when you tuck your knees back too much you end up bringing your whole body weight onto your upper back and then towards your neck.",
+     "where": "Common Reverse Crunch Mistakes, Tucking Your Knees"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "You don’t want to lose control at the top of the lift and risk the alignment of your neck. Instead, maintain a 90-degree angle with your knees at all times throughout the exercise. This will help protect your neck and keep the emphasis on your core.",
+     "where": "Common Reverse Crunch Mistakes, Tucking Your Knees"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Arching the lower back is a listed mistake: keep the core engaged so the lower back does not arch, as arching can put strain on the lower back; lower the hips without arching.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "pg-revcrunch",
+    "motra-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "pg-revcrunch",
+     "text": "It is important to keep the core engaged to ensure the lower back does not arch when performing reverse crunches, as this can put strain on the lower back.",
+     "where": "Are Reverse Crunches Bad For Your Back?"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "Arching lower back.",
+     "where": "Safety, Common Mistakes"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "Inhale and slowly lower hips back to start without arching lower back.",
+     "where": "How to Perform, list item 6"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Swinging the legs with momentum is a listed mistake: lift with control so the movement comes from the abs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-revcrunch",
+    "pg-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-revcrunch",
+     "text": "Swinging legs with momentum.",
+     "where": "Safety, Common Mistakes"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "Curl from abs, not momentum.",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "pg-revcrunch",
+     "text": "It can be tempting to use momentum to lift the legs, however reverse crunches should be performed with control to ensure the movement comes from the abs.",
+     "where": "Tips for Reverse Crunches"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Letting the feet touch the floor between reps is a listed mistake.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "motra-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-revcrunch",
+     "text": "Letting feet touch floor between reps.",
+     "where": "Safety, Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "The rectus abdominis (abs) is the main muscle; the obliques and hip flexors also work, and the reverse crunch may be felt more in the lower abs.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "pg-revcrunch",
+    "bb-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "pg-revcrunch",
+     "text": "The reverse crunch primarily works the rectus abdominis through spinal flexion. The obliques and hip flexors are also worked.",
+     "where": "What Do Reverse Crunches Work?"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "While mainly targeting the abdominal muscles (what you think of when you visualize a six-pack), this move also targets the obliques and hip flexors.",
+     "where": "Introduction"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "You may feel the reverse crunch in your lower abdominal fibers more and feel the crunch in your upper abdominal fibers more.",
+     "where": "FAQs, Which is better: the crunch or the reverse crunch?"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Some hip flexor work is normal, but start each movement with the abs, not the legs, so the hip flexors do not take over.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-revcrunch",
+     "text": "As such, it’s normal for them to be somewhat involved in the reverse crunch. Just make sure they don’t take over the exercise by concentrating on initiating each movement with your abs, not your legs.",
+     "where": "Muscles Worked by the Reverse Crunch, Hip Flexors"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "Breathe out during the hip lift and breathe in while lowering; keep the core braced throughout.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-revcrunch",
+     "text": "Exhale during the hip lift and contraction; inhale as you lower back to start. Brace core throughout.",
+     "where": "Coaching Tips, Breathing"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "Stop if sharp pain occurs in the back or neck; one source says to avoid the exercise with acute back or neck injuries.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "motra-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-revcrunch",
+     "text": "Stop if sharp pain occurs in back or neck.",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "Avoid if you have acute back or neck injuries.",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "If the lower back is hard to flatten, put the hands under the tailbone or hips for support.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-revcrunch",
+    "motra-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-revcrunch",
+     "text": "If you have a hard time flattening your lower back, you can keep your hands underneath your tailbone. This will help you tuck your pelvis under and flatten your lower back.",
+     "where": "How to Do the Reverse Crunch, Step 1, Coach’s Tip"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "Use hands under hips for support if needed.",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c20",
+   "text": "For muscle size, 3 to 4 sets of 8 to 20 reps; to add load, attach ankle weights or a cable handle to the ankles.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-revcrunch",
+     "text": "For Muscle Mass: Aim for three to four sets of eight to 20 repetitions.",
+     "where": "Reverse Crunch Sets and Reps"
+    },
+    {
+     "source": "bb-revcrunch",
+     "text": "If you need to load the reverse crunch to achieve this, you can attach ankle weights or a cable machine handle to your ankles to increase resistance.",
+     "where": "Reverse Crunch Sets and Reps, For Strength"
+    }
+   ]
+  },
+  {
+   "id": "c21",
+   "text": "Tempo: one coach page gives 2-1-2, which its Tempo tooltip orders as eccentric, bottom pause, concentric, top pause: 2 s lowering, a 1 s pause at the bottom, 2 s lifting, and no top-pause digit. Three sources ask for a brief hold or short pause at the top with no seconds, so the plate's 1 s pause right after the lift is a drawing convention.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "motra-revcrunch",
+    "ace-revcrunch",
+    "pg-revcrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-revcrunch",
+     "text": "2-1-2",
+     "where": "Coaching Tips, Tempo"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+     "where": "Tempo heading tooltip"
+    },
+    {
+     "source": "motra-revcrunch",
+     "text": "Pause briefly at top to squeeze abs.",
+     "where": "How to Perform, list item 5"
+    },
+    {
+     "source": "ace-revcrunch",
+     "text": "Hold this position briefly.",
+     "where": "Step 2, Upward Phase"
+    },
+    {
+     "source": "pg-revcrunch",
+     "text": "Take a short pause before slowly lowering your legs, glutes, and lower back as you return to the starting position.",
+     "where": "How To Do Reverse Crunches (one unnumbered paragraph), sentence 3"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "ace-revcrunch",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/76/reverse-crunch/",
+   "title": "How To Do a Reverse Ab Crunch | Exercise Library | ACE",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "bb-revcrunch",
+   "url": "https://barbend.com/reverse-crunch/",
+   "title": "Learn the Reverse Crunch to Fire Up Your Core Training | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "motra-revcrunch",
+   "url": "https://motra.com/exercises/reverseCrunch",
+   "title": "Reverse Crunch - Exercise Guide | Motra",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "pg-revcrunch",
+   "url": "https://www.puregym.com/exercises/abs/reverse-crunches/",
+   "title": "How To Do Reverse Crunches | PureGym",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the pelvis curling up toward the rib cage (c3, c8), the knees held at 90 degrees (c4) and the top fault, the knees tucked too far (c11), read from the side.",
+  "equipment": "Floor line, mat optional (c1).",
+  "start": "Lying on the back, arms by the sides, palms down (c1); feet lifted, knees directly over the hips and bent at 90 degrees, thighs vertical, shins parallel to the floor (c2); lower back flat on the floor (c2).",
+  "end": "Hips and lower back curled off the floor, tailbone clear, pelvis toward the rib cage, knees toward the chest (c3, c5, c8); knee angle still 90 degrees (c4); arms on the floor for balance (c5).",
+  "checkpoints": [
+   {
+    "label": "Knees at 90",
+    "what": "Knee angle stays at 90 degrees the whole rep.",
+    "claim": "c4"
+   },
+   {
+    "label": "Hips curl up",
+    "what": "Curl your hips and lower back off the floor toward your rib cage.",
+    "claim": [
+     "c3",
+     "c8"
+    ]
+   },
+   {
+    "label": "Back down",
+    "what": "Lower back flat on the floor at the start, not arching.",
+    "claim": [
+     "c2",
+     "c12"
+    ]
+   }
+  ],
+  "mistake": {
+   "what": "Knees tucked too far toward the chest, the knee angle closing and the weight rolling onto the upper back and neck.",
+   "why": "BarBend lists tucking the knees too far: it brings the body weight onto the upper back and toward the neck and risks the neck's alignment, and keeping 90 degrees helps protect the neck (c11). ACE says to avoid any change in the knee angle (c4). How often it happens is not measured.",
+   "claim": [
+    "c11",
+    "c4"
+   ],
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2, settled by step 3's count: tucking the knees too far toward the chest (c11). Step 1 finds no frequency word for a fault: BarBend's \"Common Reverse Crunch Mistakes\" and Motra's \"Common Mistakes\" are headings, and BarBend's \"There are some common mistakes that you definitely need to watch out for\" is a list sentence; \"The reverse crunch is a very popular core exercise\", \"Physique athletes are often looking for ways\", \"a popular piece of equipment found in many commercial gyms\", \"Much to the chagrin of many lifters, spot fat reduction simply doesn’t work.\" and \"questions that get asked about the reverse crunch all the time\" are about the exercise, athletes, equipment or fat loss; PureGym's \"Most Commonly Asked Questions About Reverse Crunches\" is a heading and \"generally recommended\" is about reps; PureGym's \"It can be tempting to use momentum\" uses 'tempting', not a frequency word. Step 2: three named faults are tied to harm. Tucking the knees too far (BarBend's list): \"You don’t want to lose control at the top of the lift and risk the alignment of your neck.\" and \"This will help protect your neck\" (c11; D-SUP-PROTECT). The lower back arching (Motra's list): PureGym \"as this can put strain on the lower back\" (c12). The knees moving past the hips on the way down (handlingMistakes): ACE \"Proper form is important when performing this exercise to prevent excessive stresses on your low back. When returning to your starting position during the repetitions, control your leg movement ensuring that your knees don't move past your hips\" (c7; the form point named in the next sentence is read as the form that prevents the stress, D-SUP-PROTECT). Common-mistakes lists (fetcher scan, 2026-10-22): BarBend's \"Common Reverse Crunch Mistakes\": 1 Not Lifting Your Back, 2 Not Allowing Your Back to Roll Back Down, 3 Tucking Your Knees; Motra's \"Common Mistakes\": 1 Swinging legs with momentum, 2 Arching lower back, 3 Letting feet touch floor between reps, 4 Pulling on neck. ACE and PureGym have none. Tie order: the knee tuck (BarBend item 3) and the arch (Motra item 2) are each on a common-mistakes list, and the knees-past-hips fault is on none, so it drops out. The tuck and the arch are tied to harm by one source each, both directly. No list names both: BarBend's has the tuck and not the arch, Motra's has the arch and not the tuck. So step 3's count decides. Step 3's count (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: the knee tuck 2 (BarBend's list item, c11; ACE \"Avoid any change in the angle of your knees during the roll-up.\", c4); the arch 2 (Motra's list \"Arching lower back.\" and step \"Inhale and slowly lower hips back to start without arching lower back.\", one source; PureGym \"ensure the lower back does not arch\", c12). Lines that only give the right position are not counted (BarBend's and Motra's 'knees at 90 degrees' lines, c4, for the tuck; BarBend's \"your lower back is flat on the floor\", c2, and Motra's \"Press low back down.\" for the arch); counted, the tuck is 3 (ACE, BarBend, Motra) and the arch 3 (BarBend, Motra, PureGym), still tied, and the same line decides. Still tied at 2, so the first of the tied faults on the earliest common-mistakes list written for this exercise, in the card's source order (ace-revcrunch has no list; bb-revcrunch is next), decides: of the two tied faults, BarBend's list names only the knee tuck (item 3), so the tuck is the first tied fault on it. (Motra's list, source 3, would give the arch, but BarBend's comes first in source order.) Set aside, no harm: BarBend's \"you are not engaging your abdominals enough\" (c9) and its roll-down item (c10); Motra's \"Swinging legs with momentum.\", \"Letting feet touch floor between reps.\" and \"Pulling on neck.\" state no harm; Motra's \"Stop if sharp pain occurs in back or neck.\" and \"Avoid if you have acute back or neck injuries.\" (c18) name no fault; Motra's \"suited for those preferring less neck strain than traditional crunches\" and PureGym's \"It is less taxing on the upper back and neck than the traditional crunch, making it a more suitable choice for those prone to back or neck pain.\" compare exercises; BarBend's \"you run the risk of developing imbalances\" is about training, its \"Reduced Pain\" is a link title and \"minimize your stress\" is about lifestyle; Motra's \"Consult professional for pregnancy or post-injury.\" and its \"When to Avoid\" list name no fault. Step-1 scan hits also set aside: Motra's Popularity Score tooltip \"How commonly this exercise is used in training programs\" and its Range of Motion tooltip \"Full range of motion typically provides better results\" are about the exercise and range, and \"Typical Rep Range\" is programming. drawable true: the census view is side, and the knees pulled in past 90 degrees with the weight rolled onto the upper back is a still sign the side view shows (c11, c4)."
+  },
+  "tells": [
+   {
+    "text": "Knees stay at 90 degrees",
+    "claim": "c4"
+   },
+   {
+    "text": "Hips lift off the floor",
+    "claim": "c3"
+   }
+  ],
+  "tempo": {
+   "up": 2,
+   "down": 2,
+   "pause": 1,
+   "claim": "c21",
+   "text": "Motra's 2-1-2 (c21, WEAK), read in its Tempo tooltip's fixed order (R-LB6-2, R-LB6-7): 2 s eccentric (lowering) and 2 s concentric (lifting), an exercise-specific source that fixes each phase (R-LB2-1). Its middle 1 s is a pause at the bottom, between lowering and the next lift; it is named here and not written in pause (LR-33). Pause 1: Motra's \"Pause briefly at top to squeeze abs.\", ACE's \"Hold this position briefly.\" and PureGym's \"Take a short pause before slowly lowering\" come right after the lift and give no seconds, so the 1 s is a drawing convention named in c21 (LR-33)."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "",
+  "width": "",
+  "thumb": "",
+  "handContact": "Arms by the sides, palms pressing into the floor (c1); hands under the tailbone or hips if the lower back is hard to flatten (c19).",
+  "wrist": "",
+  "claims": [
+   "c1",
+   "c19"
+  ],
+  "note": "Hand archetype none: no hand zoom."
+ },
+ "setup": [
+  {
+   "step": "Lie on your back, arms by your sides, palms down.",
+   "claim": "c1"
+  },
+  {
+   "step": "Brace and lift your feet, knees over your hips.",
+   "claim": "c2"
+  },
+  {
+   "step": "Bend your knees to 90 degrees.",
+   "claim": "c2"
+  },
+  {
+   "step": "Lower back flat on the floor.",
+   "claim": "c2"
+  },
+  {
+   "step": "Hard to flatten your back? Put your hands under your hips.",
+   "claim": "c19"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Breathe out and curl your hips toward your rib cage.",
+   "claim": [
+    "c3",
+    "c8",
+    "c17"
+   ]
+  },
+  {
+   "point": "Keep your knees at 90 degrees.",
+   "claim": "c4"
+  },
+  {
+   "point": "Curl until your tailbone clears the floor.",
+   "claim": "c5"
+  },
+  {
+   "point": "Hold briefly at the top.",
+   "claim": "c5"
+  },
+  {
+   "point": "Breathe in and roll down slowly, vertebra by vertebra.",
+   "claim": [
+    "c6",
+    "c10",
+    "c17"
+   ]
+  },
+  {
+   "point": "Knees return over your hips, not past them.",
+   "claim": "c7"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Tucking your knees too far.",
+   "fix": "Keep your knees at 90 degrees.",
+   "claim": [
+    "c11",
+    "c4"
+   ]
+  },
+  {
+   "mistake": "Lower back arching.",
+   "fix": "Brace so your lower back doesn't arch.",
+   "claim": [
+    "c12",
+    "c17"
+   ]
+  },
+  {
+   "mistake": "Knees moving past your hips on the way down.",
+   "fix": "Control your legs. Knees return over your hips.",
+   "claim": "c7"
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "abs",
+    "claim": "c15"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "obliques",
+    "claim": "c15"
+   },
+   {
+    "muscleId": "hip_flexors",
+    "claim": [
+     "c15",
+     "c16"
+    ]
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "lower_back",
+    "claim": [
+     "c12",
+     "c7"
+    ]
+   }
+  ],
+  "rows": [
+   {
+    "where": "Lower belly",
+    "means": "Your abs are curling your hips up. You may feel it more in your lower abs.",
+    "fix": "",
+    "claim": [
+     "c15",
+     "c3"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Front of the hips",
+    "means": "Some hip flexor work is normal.",
+    "fix": "Start each rep with your abs, not your legs.",
+    "claim": "c16",
+    "redFlag": null
+   },
+   {
+    "where": "Neck",
+    "means": "Fault: knees tucked too far, weight rolling toward your neck.",
+    "fix": "Keep your knees at 90 degrees. Stop if sharp pain occurs.",
+    "claim": [
+     "c11",
+     "c18"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Lower back",
+    "means": "Fault: your lower back arching can strain it.",
+    "fix": "Brace so it doesn't arch. Stop if sharp pain occurs.",
+    "claim": [
+     "c12",
+     "c17",
+     "c18"
+    ],
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Tucking your knees too far brings your weight onto your upper back and neck.",
+   "claim": "c11"
+  },
+  {
+   "risk": "If your lower back arches, it can strain your lower back.",
+   "claim": "c12"
+  },
+  {
+   "risk": "Control your legs on the way down to avoid extra stress on your low back.",
+   "claim": "c7"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "knees",
+   "kind": "posture",
+   "right": "Knees bent at 90 degrees.",
+   "wrong": "Knees tucked too far toward the chest.",
+   "claim": [
+    "c4",
+    "c11"
+   ]
+  },
+  {
+   "key": "low-back",
+   "kind": "posture",
+   "right": "Lower back flat on the floor.",
+   "wrong": "Lower back arching.",
+   "claim": [
+    "c2",
+    "c12"
+   ]
+  },
+  {
+   "key": "hips",
+   "kind": "posture",
+   "right": "Hips and lower back curled off the floor.",
+   "wrong": "Only hinging at the hips, back still flat.",
+   "claim": [
+    "c3",
+    "c9"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "obliques"
+  ],
+  "remove": [],
+  "why": "exercises.json lists abs primary and hip_flexors secondary; both stay (c15, c16). Add obliques as secondary: PureGym and BarBend both name them (c15)."
+ },
+ "anchorSource": "ace-revcrunch",
+ "loadProgression": {
+  "text": "To add load, strap ankle weights to your ankles.",
+  "claim": "c20"
+ },
+ "notes": [
+  "LR-34 check against cards/crunch.json on head 6d253b9e (pilot B, not edited): no inherit entry is kept. Every line rests on this card's own reverse-crunch claims, fetched by curl (way 1). Parent lines that do not hold whole here: feet flat on the floor and the upper back lifting (crunch c1, c3; here the feet are up and the pelvis lifts, c2, c3), the hand options and the chin tuck (crunch c2, c7; the arms lie by the sides here, c1), and the parent's tempo convention (replaced by Motra's 2-1-2, c21). The ACE page is the same library as the parent's anchor, but a separate reverse-crunch page.",
+  "Shared cards: floor-body (docs/research/howto/shared/floor-body.json @ 6d253b9e) lists reverse_crunch in appliesTo, and its gaps say lying face-up ids have no shared checkpoint; this card's checkpoints are its own. No other shared card lists this id.",
+  "Anchor: ACE (ace-revcrunch) read in full (starting position, upward phase, downward phase and its closing form paragraph). BarBend, Motra and PureGym were read in full. Source order on the card (ACE, BarBend, Motra, PureGym) is anchor first, then the pages with a common-mistakes list; it decides LR-31 step 3's last tie-break (rankNote).",
+  "Starts differ: PureGym starts with the feet on the floor and curls from there; ACE, BarBend and Motra lift the knees over the hips first (c2). The plate draws the knees-over-hips start.",
+  "The neck and back rows cite Motra's \"Stop if sharp pain occurs in back or neck.\" (c18; R-LB3-4, R-LB6-6). No neck red-flag box exists, so the neck row links none. Motra's \"Consult professional for pregnancy or post-injury.\" is referral wording and is not used on any line (LR-27).",
+  "Not reachable or not found: StrengthLog (HTTP 429, rate limited, two tries on 2026-10-22), Garage Gym Reviews and Healthline reverse-crunch URLs (404); the Fitness Volt URL served an image, not a page."
+ ]
+}
