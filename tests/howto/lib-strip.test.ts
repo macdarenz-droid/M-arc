@@ -346,3 +346,35 @@ describe('A11: the rows (D-STRIP-ROWS, -SCOPE, -SAYS, D-STRIP-ALL)', () => {
     expect(createHash('sha256').update(JSON.stringify(R3)).digest('hex')).not.toBe(ROWS_PIN);
   });
 });
+
+describe('D-STRIP-GROUPS: the LIB-STRIP gate block is one group, packed into exactly one job per time zone', () => {
+  let B: any, G: any, SRC = '', TIMES: any;
+  beforeAll(async () => {
+    B = await import(/* @vite-ignore */ url('scripts/gate-blocks.mjs'));
+    G = await import(/* @vite-ignore */ url('scripts/gate-split.mjs'));
+    SRC = read('scripts/screenshot-gate.mjs'); TIMES = JSON.parse(read('scripts/gate-times.json'));
+  });
+  const GUARD = "if (gate.runs('LIB-STRIP'))\n";
+  /** Problems with the LIB-STRIP group in a gate source: not exactly one group, or not in exactly one job per time zone. */
+  const groupProblems = (src: string) => {
+    const { groups, problems } = B.parseGate(src), keys = groups.map((g: any) => g.key), out = [...problems];
+    const n = keys.filter((k: string) => k === 'LIB-STRIP').length;
+    if (n !== 1 || src.split(GUARD).length - 1 !== 1) out.push(`LIB-STRIP is ${n} groups (${src.split(GUARD).length - 1} guards), want 1`);
+    if (n) for (const tz of ['UTC', 'Pacific/Auckland']) {
+      const jobs = G.planFor(keys, TIMES, TIMES.K, tz).filter((j: string[]) => j.includes('LIB-STRIP')).length;
+      if (jobs !== 1) out.push(`${tz}: LIB-STRIP in ${jobs} jobs, want 1`);
+    }
+    return out;
+  };
+  it('the gate has one LIB-STRIP group, after LIB-12, in exactly one of the K jobs per time zone', () => {
+    expect(groupProblems(SRC)).toEqual([]);
+    const keys = B.parseGate(SRC).groups.map((g: any) => g.key);
+    expect(keys.slice(-2)).toEqual(['LIB-12', 'LIB-STRIP']);
+  });
+  it('mutations: the block twice, and the block missing, are red', () => {
+    const at = SRC.indexOf(`// LIB-STRIP: the tempo strip without seconds`), end = SRC.indexOf('\nawait gate.done();\n');
+    const block = SRC.slice(at, end);
+    expect(groupProblems(SRC.slice(0, end) + '\n' + block + SRC.slice(end)).length).toBeGreaterThan(0);
+    expect(groupProblems(SRC.slice(0, at) + SRC.slice(end)).some(p => /LIB-STRIP is 0 groups/.test(p))).toBe(true);
+  });
+});
