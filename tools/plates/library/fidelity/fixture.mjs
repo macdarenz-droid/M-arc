@@ -87,6 +87,10 @@ export function transformSources(s, src) {
   let howto = repoint(readFileSync(join(src, SRC_HOWTO), 'utf8'), SRC_HOWTO, P.howto, { [SRC_SPEC]: P.spec });
   howto = once(howto, `id: 'lib_${s.from}'`, `id: '${s.id}'`, `How-to id line in ${SRC_HOWTO}`);
   howto = once(howto, `research: { card: 'grip/research/${s.from}.json', rev: 1 }`, `research: { card: '${P.research}', rev: 1 }`, `research line in ${SRC_HOWTO}`);
+  // LIB-5v: a target whose equipment names two kinds needs its variant line (D-LIB5-VARIANT); one word, the second kind,
+  // because each pool sheet already reads 449 of 450 (D-LIB5-WORDS (a))
+  const kinds = String(ex.find(e => e.id === s.id)?.equipment ?? '').split('/').map(k => k.trim());
+  if (kinds.length > 1) howto = once(howto, '\n  copy: {\n', `\n  copy: {\n    variantLine: '${kinds[1]}.',\n`, `copy line in ${SRC_HOWTO}`);
   return { spec, howto };
 }
 

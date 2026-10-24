@@ -180,13 +180,19 @@ describe('LIB-5 D-LIB5-VARIANT / VARIANT8: the variant-line rule', () => {
     expect(L.variantLine({ id: 'lib_underhand_lat_pulldown', equipment: 'Cable / Machine' }).violations).toHaveLength(1);
     expect(L.variantLine({ id: 'lib_x', equipment: 'Cable / Machine', line: 'Shown with a cable. Machine: same rules.' }).words).toBe(7);
   });
-  /** The tripwire: every shipped row with "/" and no line is red, except the exemption (exact ids). */
-  const tripwire = (rows: { id: string }[], ex: any[]) => rows.flatMap(r => L.variantLine({ id: r.id, equipment: ex.find(e => e.id === r.id)?.equipment, line: L.variantLineOf(r) }).violations.map((v: any) => `${r.id}: ${v.rule}`));
-  it('tripwire over every shipped row is green on main; injected rows and data are red', () => {
-    expect(tripwire(SHIPPED as any, exercises as any[])).toEqual([]);
-    expect(tripwire([...SHIPPED, { id: 'lib_underhand_lat_pulldown' }] as any, exercises as any[])).toEqual(['lib_underhand_lat_pulldown: variant line required: equipment names two kinds']);
+  /** The tripwire: every shipped row with "/" and no line is red, except the exemption (exact ids). LIB-5v: the line is
+   *  read from each row's content (`c`, loadContent's for a shipped row; injected rows bring their own or none). */
+  const tripwire = (rows: { id: string; c?: any }[], ex: any[]) => rows.flatMap(r => L.variantLine({ id: r.id, equipment: ex.find(e => e.id === r.id)?.equipment, line: L.variantLineOf(r.c) }).violations.map((v: any) => `${r.id}: ${v.rule}`));
+  it('tripwire over every shipped row is green on main; injected rows and data are red', async () => {
+    const ROWS = await Promise.all(SHIPPED.map(async r => ({ ...r, c: (await content.loadContent(r.id)).content })));
+    expect(tripwire(ROWS as any, exercises as any[])).toEqual([]);
+    expect(tripwire([...ROWS, { id: 'lib_underhand_lat_pulldown' }] as any, exercises as any[])).toEqual(['lib_underhand_lat_pulldown: variant line required: equipment names two kinds']);
     const moved = (exercises as any[]).map(e => (e.id === 'lib_pull_up' ? { ...e, equipment: 'Bar / Rings' } : e));
-    expect(tripwire(SHIPPED as any, moved)).toEqual(['lib_pull_up: variant line required: equipment names two kinds']);
+    expect(tripwire(ROWS as any, moved)).toEqual(['lib_pull_up: variant line required: equipment names two kinds']);
+    // LIB-5v V6: injected underhand content with its line is green; lib_pull_up's content given a line is red (one kind)
+    expect(tripwire([...ROWS, { id: 'lib_underhand_lat_pulldown', c: { copy: { setupLine: '', mistakeLine: '', variantLine: 'Machine.' } } }] as any, exercises as any[])).toEqual([]);
+    const lined = ROWS.map(r => (r.id === 'lib_pull_up' ? { ...r, c: { ...r.c, copy: { ...r.c.copy, variantLine: 'Machine.' } } } : r));
+    expect(tripwire(lined as any, exercises as any[])).toEqual(['lib_pull_up: variant line on a row whose equipment names one kind']);
     expect(L.eightWithSlash(EIGHT, moved)).not.toEqual([...L.VARIANT_LINE_EXEMPT].sort());
     const lost = (exercises as any[]).map(e => (e.id === 'lib_leg_press' ? { ...e, equipment: 'Machine' } : e));
     expect(L.eightWithSlash(EIGHT, lost)).not.toEqual([...L.VARIANT_LINE_EXEMPT].sort());
@@ -347,7 +353,7 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
       const bad = [
         ...checkC1(c, known), ...checkC2(c), ...checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? ''), ...checkC4(c), ...checkC7(c),
         ...checkC8(c, SOURCES), ...checkC15(c, plate, reviews), ...checkC16(c),
-        ...C19.checkC19Copy(CL.copyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),
+        ...C19.checkC19Copy(L.shownCopyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),
         ...L.lintLibraryRow(M, shared).map((x: any) => `lint: ${x.path}: ${x.rule}`),
       ];
       expect([r.id, bad]).toEqual([r.id, []]);
