@@ -4261,6 +4261,18 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
   - mountain_climbers' hands 15 cm ahead of the shoulders (R1).
 - **plank:** no score ≤ 3 from any critic. **APPROVED** (#109 6382619662).
 - **mountain_climbers:** clean.
-- **Anchors:** pull_up R2 is golden-B follow-up 22 (excepted). pull_up R1 (head tilted back, chin reaching; 2 of 3 critics) is new: **golden-B follow-up 23**. One critic gave lat_pulldown R2=3, which is not a finding.
+- **Anchors:** pull_up R2 is golden-B follow-up 22, and pull_up R1 (head tilted back) is the already-recorded follow-up 20 (PANELS.md §1.3); both are excepted. Correction: an earlier draft of this line called the head tilt "follow-up 23", and #109 6382619662 repeats that label; it is follow-up 20. One critic gave lat_pulldown R2=3, which is not a finding.
 - **Rulings this window:** D-LIB8M-ROUTED, D-LIB8M-PLANKREDRAW (it replaces PLANKHOLD), D-STRIP-B and its card rulings, D-ER5-GO and D-ER5-YAW, and the confirmed D-LIB20-* and D-LIB21-* start rulings.
 - **Strip rows CARD FIELDS verify (cfstrip):** VALID. The plant, a contested speed word, was caught. Fix round: cable_rear_delt_fly cites c9, and the jump_squat j7 note was added. STRIP ROWS VERIFIED @ 511ded30 (#309 6381998628).
+
+## 35. LB9 slice: panel lb9s and focused recheck lb9r (2026-10-24)
+- **lb9s** (#312 @ 27215fba, page `17b61afa…`): VALID, both plants caught 3/3.
+  - ab_wheel_rollout is **APPROVED**.
+  - cable_crunch failed R2 (the start rope bent in mid air) and R7 (a doubled red Mistake cable).
+  - bird_dog failed R4 (its leader ended on the hip) and R5 (a 6 px arch).
+  - Rulings: D-LIB21-DOGGHOST (no ghosts) and the -30° arch on the plank basis (#312 6383060997, 6383113404).
+- **lb9r** (#312 @ 276029ae, page `f7570211…`): VALID, both plants caught 3/3.
+  - bird_dog is **APPROVED**.
+  - cable_crunch failed R1 (2/3): the end trunk's chord is 67 px against a 137 px trunk, a collapse rather than a curl. It gets a second focused round (D-LIB13-PANEL2; #312 6383628526).
+- **Anchors:** lat_pulldown R1 is follow-up 19, pull_up R1 is 20 and R2 is 22. pull_up R3 (the forearm ends under the end-on bar, with no fist around it) is new, confirmed on the PNG crop: **golden-B follow-up 24**.
+- **LB9 CARD FIELDS (cflb9):** VALID. Plant: a fact from a quote about another version, caught. Fix round: cable_crunch's end wrists and ab_wheel_rollout's end knees; D-LIB21-TRAPS. VERIFIED @ 931714d2.
