@@ -155,7 +155,7 @@ export default {
     pose: mistake,
     guides: [
       { kind: 'arrow', from: { along: ['sacrum', 'backMid'], t: 0.5, pose: 'mistake', off: [0, -16] }, to: { along: ['sacrum', 'backMid'], t: 0.5, pose: 'mistake', off: [0, -3] } },
-      { kind: 'arrow', from: { along: ['knee.l', 'ankle.l'], t: 0.7, pose: 'end', off: [0, -9] }, to: { along: ['knee.l', 'ankle.l'], t: 0.7, pose: 'mistake', off: [0, -9] } },
+      { kind: 'arrow', from: { along: ['knee.l', 'ankle.l'], t: 0.7, pose: 'mistake', off: [0, 3] }, to: { along: ['knee.l', 'ankle.l'], t: 0.7, pose: 'mistake', off: [0, -9] } },
     ],
     tells: [
       { key: 'arch', text: 'Low back<br>arches', anchor: { along: ['sacrum', 'backMid'], t: 0.85, pose: 'mistake' }, box: { left: 150, top: 186 }, cue: 'The low back sags into an arch as the leg rises.' },

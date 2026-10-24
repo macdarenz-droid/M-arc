@@ -99,6 +99,51 @@
     ],
     "basis": "D-LIB21-TRACE (DRAWING-GUIDE.md:29): the rising foot, c4 'Slowly extend your left hip (raise and straighten the knee)' and c7 'As the leg is raised' (the checkpoint 'Arm, leg level' and the Mistake are about the leg); the left leg is the raised one (D-LIB21-SIDES). Trim [10, 12] = hanging_leg_raise.mjs:124 (D-LIB18-TRIM)"
    }
+  },
+  "cable_crunch": {
+   "HINGE": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "claim: c3 Motra 'Hinge slightly backward from hips to elevate them': the thigh 20 deg back of vertical with the pelvis and spine upright (hip flexion 20). Stated reason in numbers (D-LIB21-BALANCE, c1 base): the 15 deg 'slight' convention (romanian_deadlift.mjs:53 @ dcac4a38, KNEE 15) puts the Winter centre of mass of the mid-curl ghost (key 6) and key 7 1.6 cm ahead of the knees' floor contact, outside the knees-and-shins base; 20 deg keeps every key pose and the Mistake 1.2 cm or more behind it"
+   },
+   "NECK": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:54 (the 8, the clone source, D-LIB21-CLONE) A1 neck 12, the tucked chin of its curl, for c3 'keeping chin tucked' and c12 'Chin tucked'; the same in the start, end and Mistake"
+   },
+   "ELBOW_GAP": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "claim: c5 Motra 'crunch until elbows near thighs': near, not touching: 2 cm from the elbow cap's surface to its own thigh's surface, about half the elbow cap's 3.85 cm radius (RADII.elbowCap x H); the end's trunk flexion is solved from it (97.0 deg; c4 'curling the spine as much as you can')"
+   },
+   "COL_FRONT": {
+    "value": 0.9144,
+    "unit": "m",
+    "basis": "claim: c1 StrengthLog 'Sit down on your knees a few feet away, facing the pulley': 3 ft (0.914 m) from the knees to the column's front face"
+   },
+   "VIA_N": {
+    "value": 9,
+    "unit": "count",
+    "basis": "stated reason: 2 ghosts sit at t 1/3 and 2/3, so a multiple of 3 lands both on key poses; 9 keys = one per 10.8 deg of the 97.0 deg curl, as rope_triceps_pushdown.mjs:84 @ dcac4a38 keys its arc every 1/12 of the sweep"
+   },
+   "GRIP_GAP": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason in numbers: c2 hands on either side of the head with the rope (2.8 cm thick, eq/rope.mjs) running from the fist over the crown: with the fist against the widest skull (0 cm) the default 30 cm strands clear the skinned head only with the ferrule turned 94.5 deg off the cable line at the start (behind the crown); 2 cm off the skull (about one rope thickness less the stopper overlap) brings it to 70.6 deg (over the crown), every drawn pose clearing by 0 cm or more"
+   },
+   "trace": {
+    "point": "shoulder.r",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE candidate 'the elbows or shoulders curling toward the thighs (c3, c5)': c3 Motra 'bringing shoulders toward pelvis', the motion the 'Curl the spine' cue names (the near shoulder's path from the upright start into the curl); trim = the clone source's, hanging_leg_raise.mjs:124 trace.trim [10, 12] (D-LIB18-TRIM)"
+   },
+   "ROPE_MARGIN": {
+    "value": 0.003,
+    "unit": "m",
+    "basis": "stated reason: the ferrule turn is solved so the rope clears the skinned head and body by 3 mm, not exactly 0, so a second clearance model (the A18 test's, sampled about 2 mm apart, which reads up to 1.3 mm deeper than the spec's own at 1 mm) also reads 0 cm or more (D-LIB18-PADS: >= 0 cm)"
+   }
   }
  }
 }

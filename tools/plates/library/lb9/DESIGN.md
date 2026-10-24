@@ -165,7 +165,7 @@ the leg rises; the head in the hold; the arch while pressing).
 | id | plate.mistake (claim; drawable) | drawn key (other tells) | handlingMistakes[0] | topFault |
 |---|---|---|---|---|
 | ab_wheel_rollout | low back arching as the arms reach overhead (c3, c13; true) | `arch` "Low back arches" (one tell; record below) | the same fault | `arch` |
-| cable_crunch | moving the hips to pull (c8, c3; true) | `hips` (from the slice) | the same | `hips` |
+| cable_crunch | moving the hips to pull (c8, c3; true) | `hips` "Hips move" (one tell; record below) | the same | `hips` |
 | bird_dog | low back arching as the leg rises (c8, c7; true) | `arch` "Low back arches" (`high` "Leg too high", c7 "avoid lifting the leg too high") | the same | `arch` |
 | superman | head lifted to look up (c6; true) | `head` [planned] | the same | `head` |
 | pallof_press | lower back over-arching (c8; true) | `arch` [planned] | the same | `arch` |
@@ -189,6 +189,13 @@ start limbs lie exactly behind the far arm and near leg in side view, so their d
 starts at the hidden start ankle.
 
 **One-tell record (D-LIB10-SKULL1; #290 6345185694).**
+- cable_crunch: fault c8 (and c3); claim ids read: c8 (Fitness Volt: "You will see a lot of people doing this
+  exercise by moving their hips too, but that's a mistake ... Done correctly, only your spine should move."; Motra:
+  "Using hips to pull"), c3 (Motra: "keeping hips stationary", "Hips still and elevated", "Spine flexes, not hips").
+  The stated signs are the hips moving (c8, c3) and the spine not flexing (c3, the inverse of c8). The second lies inside
+  the solid end figure (the Mistake's straight back is 2-4 px inside it), so no leader can reach it without crossing the
+  figure; it is drawn as the red dashed back line inside the torso and named in the one tell's cue ("The hips move back
+  to pull while the spine stays straight."). So one tell.
 - ab_wheel_rollout: fault c3 (and c13); claim ids read: c3 ("Extend your hips toward the floor and let your chest sink
   forward toward the ground. Avoid arching your lower back as you extend your arms above your head."), c13 (lumbar
   extension or torso rotation), c5 (rolling too fast: speed), c2 (the right line). The one stated sign is the low back
@@ -249,7 +256,7 @@ are written in sizes.json with the slice; the spec headers name them under "Unso
 
 | id | base (claims) | measured |
 |---|---|---|
-| ab_wheel_rollout | the knees on the pad and the hands on the wheel (c1, c2) | the centre of mass lies between the knee contact and the wheel contact in every pose (start z −0.02 m, end 0.54 m; knees 0, wheel 0.17 → 1.45 m) |
+| ab_wheel_rollout | the knees, shins and feet on the pad (c1 "kneel on a soft pad") and the hands on the wheel (c1, c2) | the centre of mass lies between the toes and the wheel contact in every pose and ghost (start z −0.020 m, just behind the knee joints at 0; end 0.523; Mistake 0.527; toes about −0.6, wheel 0.17 → 1.45 m) |
 | cable_crunch | the knees and shins (c1) | from the slice |
 | bird_dog | all four at the start (c1, c2); the down hand and down knee (and toes, c11) in the reach | end 0.08 cm from the hand–knee line (+1.18 cm inside the palm–knee–toe hull); Mistake 0.22 cm (+1.44); ghosts 1.11 and 0.61 cm |
 | superman | the floor contact of the trunk and thighs (c1, c2) | [planned] |

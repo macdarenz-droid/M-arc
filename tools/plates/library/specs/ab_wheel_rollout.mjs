@@ -151,7 +151,7 @@ export const START_HIDDEN = (() => {
 })();
 
 // The straight line knees to head (c2): the end knee joint to the crown, run LINE_RUN m past each end (plank.mjs LINE).
-const LINE_RUN = 0.1;
+const LINE_RUN = 0.19;
 const LINE = (() => { const a = LE['knee.r'], b = LE.head, d = b.map((v, i) => v - a[i]), n = Math.hypot(...d);
   return [a.map((v, i) => v - d[i] / n * LINE_RUN), b.map((v, i) => v + d[i] / n * LINE_RUN)]; })();
 const LINE_TIP = (() => { const [a, b] = LINE; return a.map((v, i) => v + (b[i] - v) * (1 - 0.05 / Math.hypot(...b.map((w, k) => w - a[k])))); })();   // on the run past the crown
@@ -184,17 +184,18 @@ export default {
   callouts: [
     { key: 'line', text: 'Straight<br>line', anchor: LINE_TIP, box: { left: 244, top: 179 }, cue: 'Knees to head in one line, back straight.' },
     { key: 'arch', text: 'No back<br>arch', anchor: { along: ['sacrum', 'backMid'], t: 0.5 }, box: { left: 171, top: 167 }, cue: 'Don\'t let your low back arch as you reach.' },
-    { key: 'slow', text: 'Roll<br>slowly', anchor: { at: 'grip.r', off: [0, -12] }, box: { left: 290, top: 226 }, cue: 'Roll out and back slowly and under control.' },
+    { key: 'slow', text: 'Roll<br>slowly', anchor: { at: 'grip.r', off: [0, -12] }, box: { left: 290, top: 262 }, cue: 'Roll out and back slowly and under control.' },
   ],
   mistake: {
     pose: mistake,
     // The arch lies inside the solid end figure (lib4-cards 32-33): its true contour (the engine's dashed outline) and a
-    // short red arrow (about 12 px) from just above the end low back down to the arched low back.
-    guides: [{ kind: 'arrow', from: { along: ['sacrum', 'backMid'], t: 0.5, pose: 'end', off: [0, -4] }, to: { along: ['sacrum', 'backMid'], t: 0.5, pose: 'mistake' } }],
+    // short red arrow (12 px) down onto the arched low back. The tell's leader ends on the end figure's low back, right
+    // above it (the arch's own contour lies inside the solid figure, so a leader to it would cross the figure).
+    guides: [{ kind: 'arrow', from: { along: ['sacrum', 'backMid'], t: 0.5, pose: 'mistake', off: [0, -12] }, to: { along: ['sacrum', 'backMid'], t: 0.5, pose: 'mistake' } }],
     // One tell (D-LIB10-SKULL1; DESIGN.md one-tell record): c3 and c13 state one sign of this fault, the low back
     // arching (lumbar extension); the hips dropping is its geometry, not a sign a claim states.
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { along: ['sacrum', 'backMid'], t: 0.5, pose: 'mistake' }, box: { left: 171, top: 175 }, cue: 'The low back arches as the arms reach overhead.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { along: ['sacrum', 'backMid'], t: 0.5, pose: 'end' }, box: { left: 171, top: 175 }, cue: 'The low back arches as the arms reach overhead.' },
     ],
   },
   tempo: [{ phase: 'Roll out', s: 2, move: true }, { phase: 'Roll back', s: 1, move: true }],
