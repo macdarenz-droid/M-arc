@@ -95,7 +95,7 @@ Columns:
 | reverse_crunch | new (T), child of crunch | C | 2, settled by the step-3 count | Knees tucked too far toward the chest, the knee angle closing and the weight rolling onto the upper back and neck. | true | 2/2/1 | 4 | 47/47 | 0 |
 | dead_bug | new (T) | C | 2 | Back arching off the mat as the arm and leg lower. | true | null | 4 | 26/26 | 0 |
 | v_up | new (T), child of hollow_body_hold | B | 2 | Lower back arching off the floor at the start of the rep. | true | null | 4 | 25/25 | 0 |
-| hollow_body_hold | new (T), parent of v_up | C | 3, after a step-2 tie | Legs too low, not lifted high enough off the floor. | true | hold: set 2, up to 30 s | 3 | 37/37 | 0 |
+| hollow_body_hold | new (T), parent of v_up | C | 2, settled by the step-3 count | Legs too low, not lifted high enough off the floor. | true | hold: set 2, up to 30 s | 3 | 37/37 | 0 |
 | plank | LR-31/33 pass (pilot A) | C | 3 | unchanged on the card: Low back sags (LR-31 gives hips hiked: finding P1) | true | hold 10-60 s, unchanged | 4 | 22/22 | 0 |
 | ab_wheel_rollout | LR-31/33 pass | A | 2 | Low back arching as the arms reach forward overhead (pick unchanged; text fixed to c3, c13) | true | 1/2/0 | 7 | 35/35 | 0 |
 | flutter_kicks | LR-31/33 pass | C | 1 | Lower back arches up off the floor as the legs kick (pick unchanged) | true | null | 4 | 23/23 | 0 |
@@ -136,20 +136,22 @@ No PICK CHANGED on ab_wheel_rollout or flutter_kicks.
   - No shown line, pick or drawable changed. The findings below are for the supervisor to route.
 
 ## Findings for the supervisor (plank, pilot A; not made on the card)
-- **P1 Pick.** LR-31 step 3 (D-SUP-LB6-CCP count, no common-mistakes list on any source) gives the hips hiked up:
+The verify routed these to pilot A's owner sheet with its own ids (R-LB9-3); they are not made on the card. D-SUP-LB9-PLANK rules P1's reading: Harvard's line counts for the hiked hips, so there is no 4-way tie. P5 needs no change.
+- **P1 Pick (plank-R1, high; routed).** LR-31 step 3 (D-SUP-LB6-CCP count, no common-mistakes list on any source) gives the hips hiked up:
   - hips hiked 2: ACE c4, and Harvard's "Don't bend at your hips." c13, read as the hips piking up;
   - sag 1, bent knees 1, shrug 1.
 
   The plate draws the sag. The hiked hips would also be drawable from the side. If "Don't bend at your hips." names no direction, the four faults tie 1-1-1-1. viewWhy names all four, so LR-36 does not settle that tie and a ruling is needed. handlingMistakes has no hiked-hips item.
-- **P2.** mistake.what: "hips drop below the shoulder-heel line" is not in c4's words.
-- **P3.** handlingMistakes[0].fix: "Brace harder; if you can't hold it, end the hold." c4 has no fix words, and "end the hold" has no source.
-- **P4.** handlingMistakes[2], "Holding the breath.": no source names it as a mistake. c6 is an instruction (the flutter A10 precedent).
-- **P5.** risks[0], "Low back sagging (arching) during the hold.": no quote ties the sag to harm. By incline_push_up-1, the risk is cut.
-- **P6.** Zoom words not in c4 or c5: "in line with shoulders and heels", "hips dropped" and "ahead of the elbows".
-- **P7.** posture[3]: "tuck the pelvis" and "draw the shoulder blades together" are not words from c11's quotes, which say posterior tilt and scapular adduction.
-- **P8.** feel.rows[1].means, "Not a training feeling.": this is not in c8.
+- **P2 (plank-R4, low; routed).** mistake.what: "hips drop below the shoulder-heel line" is not in c4's words.
+- **P3 (plank-R2, medium; routed).** handlingMistakes[0].fix: "Brace harder; if you can't hold it, end the hold." c4 has no fix words, and "end the hold" has no source.
+- **P4 (plank-R3, low; routed).** handlingMistakes[2], "Holding the breath.": no source names it as a mistake. c6 is an instruction (the flutter A10 precedent).
+- **P5 (no change: every word is c4's, R-W1-3).** risks[0], "Low back sagging (arching) during the hold.": no quote ties the sag to harm. By incline_push_up-1, the risk is cut.
+- **P6 (plank-R5, low; routed).** Zoom words not in c4 or c5: "in line with shoulders and heels", "hips dropped" and "ahead of the elbows".
+- **P7 (plank-R6, low; routed).** posture[3]: "tuck the pelvis" and "draw the shoulder blades together" are not words from c11's quotes, which say posterior tilt and scapular adduction.
+- **P8 (plank-R7, low; routed).** feel.rows[1].means, "Not a training feeling.": this is not in c8.
 
 ## Rulings asked (PR #295)
+All nine were ruled on #295 (comment 6343350047). The ruling ids are under "Verify (LR-29) and fix round".
 Each card keeps the value shown in the table until a ruling. Where a ruling would change a line, the other reading is written in that card's rankNote or tempo.text.
 1. **plank (P1).** Does Harvard's "Don't bend at your hips." count for the hiked hips?
    - If yes: a pick-change finding for the pilot A plate.
@@ -194,3 +196,86 @@ Each card keeps the value shown in the table until a ruling. Where a ruling woul
 - No ACE page was found for cable_crunch or bicycle_crunch.
 - No BarBend or Garage Gym Reviews superman technique page was found. BarBend's superman benefits article is used.
 - There is no neck red-flag box, so neck rows link none.
+
+## Verify (LR-29) and fix round
+The full record is docs/supervisor/verify/lb9-research-verify.md @ `56bcb7dc` (claude/sup-lib4-cards).
+
+### Run
+- Verified head: #295 @ `5ee54944`. A history-free copy of the 12 changed cards was split into three blind groups of 4. crunch, side_plank and russian_twist were unchanged and out of scope.
+  - Each group had a fresh Opus critic and 2 plants, with plantScope set to every field.
+  - All three groups are **VALID**: 6/6 plants caught, and each safety plant was rated blocker.
+- Re-fetch: 441/441 quotes verbatim, across 56 sources. Supervisor 10 % re-fetch (seed 20261022): 45/45.
+- LR-31: 12/12 agree, under D-SUP-STRAIN. LR-33: 12/12 agree on values.
+- Census check: every plate.view matches its census view.
+- Real findings, plants removed: 0 blocker, 0 high, 0 medium, 20 low (18 from the critics, 2 from the scoring).
+- Routed (plank, pilot A): 1 high, 1 medium, 5 low, never made on the card.
+- 11 critic items were not actioned, 4 of them void under D-SUP-STRAIN.
+
+### Rulings
+- The nine asks:
+  1. plank P1: D-SUP-LB9-PLANK. Harvard's line counts for the hiked hips. The pick change is routed (plank-R1).
+  2. hollow_body_hold list: D-SUP-LB9-DRAWBACKS. The drawbacks list is not a common-mistakes list.
+  3. cable_crunch step 1: D-SUP-LB9-CRUNCH1. It is a step-1 hit.
+  4. cable_crunch tempo: D-SUP-LB9-TEMPODIR. The card's reading (by muscle action) stands.
+  5. Pause from a range: D-SUP-LB9-RANGE. Take the lowest value every source allows (bird_dog 3, pallof_press 2).
+  6. bicycle_crunch drawable: the card's call stands. The verify checked it against the census view.
+  7. pallof_press step 2: D-SUP-LB9-PALLOF. Motra's cue ties the arch to harm (D-SUP-PROTECT).
+  8. bird_dog step 1: both set-asides stand (#295, point 8).
+  9. bird_dog feel.primary: D-SUP-LB9-PRIMARY. Each promoted muscle rests on its own claim, and the verify checked each.
+- D-SUP-STRAIN: "strain", and "pressure" on a named body part, are LR-31 step-2 harm words.
+- R-LB9-1: the plant findings are not on the real head.
+- R-LB9-2: D-SUP-STRAIN voids two highs (h2's superman and bicycle_crunch) and h3's reverse_crunch medium. It also voids the neck-count part of h3's hollow_body_hold medium. The picks stand.
+- R-LB9-3: on plank (pilot A), only plank-1, the new Harvard claim c14 and the rankNote change on the card. The pick and the shown-line fixes go to pilot A's owner sheet.
+- R-LB9-4: `core` in feel.primary on plank and ab_wheel_rollout stays for LIB-MUSCLE.
+- R-LB9-5: superman's Motra "Tempo 0-5-0" is read by its Tempo tooltip. Pause 3 stands.
+- R-LB9-6: six critic lows are not actioned, because no rule asks for them.
+- R-LB9-7: every other low takes its fix as written, in one round, and every "ruling asked" string takes its ruling id.
+  - F-LB9-1: these verified cards have checkpoint labels over 3 words: high_knees, pendulum_squat and resisted_hip_flexion. The next research pass shortens them.
+
+### Fix round checks
+- Valid JSON on the 15 changed files. Each keeps its indent and trailing newline.
+- Pre-push check: 0 problems on all 12 cards.
+  - The check is a scratch script, not committed. It runs main @ `0f1f73de`'s `validateCardFile` (tools/plates/library/research/validate.mjs).
+  - On the shown lines it runs copy-lint's CONTACT_RE, SOURCE_RE, SOURCE_CS_RE, SAFETY_LINE_RE and OWN_RED_FLAG, the source names, and C8's RED_FLAG_WORDING.
+  - It also checks the CARD-V2 shape, LR-31's opening sentence, LR-33, muscles.ts and LR-35.
+  - At `5ee54944` it finds 3 problems: the 4-word labels that bird_dog-3 and superman-3 fix.
+- Copy lint and C8: 0 hits.
+- Advisory, unchanged, and not on shown lines:
+  - cable_crunch grip.handContact names BarBend and Motra;
+  - ab_wheel_rollout grip.note says "source";
+  - `core` stays on plank and ab_wheel_rollout (R-LB9-4).
+- New quotes: 6, each verbatim, at most 50 words by c7's `words()`:
+  - plank c14: Harvard's knees line (28 words), fetched 2026-10-24;
+  - superman c16: Ekstrom's methods sentence (36 words), PubMed efetch, 2026-10-24;
+  - pallof_press c14: StrengthLog's "Primary muscles worked: Obliques Abs" (5 words; an h3 and two list items, tags removed), 2026-10-24;
+  - pallof_press c16: Motra's "Glutes" under Secondary Muscles (1 word), 2026-10-24;
+  - dead_bug c10: ACE's Step 4 clause (18 words), checked in the supervisor's verify copy of 2026-10-22, not fetched again;
+  - hollow_body_hold c12: BarBend's warm-up line (14 words), 2026-10-24.
+- Quotes now: 447/447 verbatim (441 + 6).
+
+### Findings and fixes (commit `e3cf79aa`)
+| Finding | Fix |
+|---|---|
+| plank-1 | c11 text drops "(not more than backward tilt with the shoulder blades apart)" |
+| plank (R-LB9-3) | new claim c14, Harvard's knees line (CONSENSUS); rankNote cites D-SUP-LB9-PLANK and routes the pick (plank-R1) |
+| cable_crunch-1 | tempo.text "so the labels conflict; D-SUP-LB9-TEMPODIR rules Reading A (by muscle action)." |
+| flutter_kicks-1 | loadProgression.text "For endurance: 30-50 kicks to fatigue; ankle weights make it harder." (c12) |
+| flutter_kicks-2 | setup[0].claim ["c1","c4"] |
+| bird_dog-1 | tempo.text "3 is the lowest value the range allows (D-SUP-LB9-RANGE)." |
+| bird_dog-2 | rankNote: both step-1 set-asides cite the supervisor's ruling (#295 point 8) |
+| bird_dog-3 | checkpoints[0].label "Hands, knees under"; [2].label "Arm, leg level" |
+| superman-1 | tempo.text quotes Calgary's range (c19, D-SUP-LB9-RANGE) and reads Motra's "Tempo 0-5-0" by its tooltip (R-LB9-5) |
+| superman-2 | c16 text kept to its quotes; c16 gains Ekstrom's methods sentence; libraryDiff.why "(c14; c16: one of three exercises at a mean 77-82 % of maximum back-extensor EMG)" |
+| superman-3 | checkpoints[1].label "Arms, legs up" |
+| superman-4 | rankNote "(c18; D-SUP-PROTECT: the cue that corrects it, as D-SUP-LB9-PALLOF reads Motra's cue)" |
+| pallof_press-1 | c14 gains StrengthLog's primary list and "two coaching pages list the obliques and abs as primary"; c16 gains Motra's "Glutes" and "one coaching page lists the glutes as secondary" |
+| pallof_press-2 | rankNote "Reading not taken (D-SUP-LB9-PALLOF rules the tie above): if Motra's neutral-spine cue were not read as ..." |
+| pallof_press-3 | tempo.text: the "waits on a supervisor ruling" sentence becomes "2 s is the lowest (and only) value in the overlap of the two ranges (D-SUP-LB9-RANGE)."; both quoted ranges kept |
+| dead_bug-1 | c10 gains ACE's Step 4 clause as its second quote |
+| reverse_crunch-1 | handlingMistakes[2].mistake "Knees moving past your hips on the way down." |
+| hollow_body_hold-1 | rankNote "LR-31 step 2, settled by step 3's count (D-SUP-LB6-CCP)", and the closing sentence cites D-SUP-LB9-DRAWBACKS; the per-card table cell is corrected (this file) |
+| hollow_body_hold-2 | c12 gains BarBend's "Three rounds of 15-20 seconds at the start of your workout should do wonders." |
+| v_up-1 | rankNote: "one named fault is tied to harm, the arch"; ACE's "control movement speed" is set aside |
+| v_up-2 | zooms[1].wrong "Legs flopping around." |
+
+P1-P8 above carry the verify's routed ids (plank-R1 to plank-R7), so no plank shown line changed here.
