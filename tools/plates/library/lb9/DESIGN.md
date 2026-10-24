@@ -329,3 +329,8 @@ and `torso: 'volume'`. Re-read on main at the resume; a (b) spec sets only field
   whether it reads as natural; if forced, it is held then.
 - Q5: the tempo map, pose map, facts plan and sizes accepted as written.
 - pallof_press S4: side-view renders at the bulk; a front view goes to a ruling only if the cable cannot be read.
+- D-LIB21-ROPENIT (#312, after 6382529719): cable_crunch's "Rope by head" box at 200/238, its leader 4.98 px from the
+  steep strand (about 34°, no crossing), is a named nit, pinned in lb9-plates.test.ts with a red mutation (200/232).
+
+Asked with the slice (not yet ruled): cable_crunch's F2 (coverage 0.623: the high-pulley cable spans the plate) and F3
+(longest leader 26.2 px: labels beside their parts) as named flags in D-LIB18-F3KICK's form.
