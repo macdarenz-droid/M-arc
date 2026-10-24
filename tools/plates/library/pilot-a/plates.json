@@ -169,34 +169,60 @@
   }
  ],
  "cards": "docs/research/howto/cards/ = verified research cards, byte copies from claude/libht-research f57e7944ebb366a71f812146287ff0c4a6d2edef",
- "handsNote": "hands: LIB-12 hand renders shown on the sheet only (not plates), renderPair(id) from tools/plates/library/hands/pairs.mjs on claude/lib-12-hand-views 06519f9 (LIB-7 loader aacebf5 merged), Silent Black and Paper at 390 px; flags as the LIB-12 note on PR #109 (2026-10-02 14:10).",
+ "handsNote": "hands: LIB-12 hand renders shown on the sheet only (not plates), renderPair(id) from tools/plates/library/hands/pairs.mjs on claude/lib-12-hand-views 06519f9 (LIB-7 loader aacebf5 merged), Silent Black and Paper at 390 px; flags as the LIB-12 note on PR #109 (2026-10-02 14:10). LIB-7 curl, rope and EZ: renderPair(id) from main 5158609 (#193), same method (D-LIB8M-SHEET, Do 12). Cupped and front-rack: GAPS (D-LIB12FIX-R8-GAPS).",
  "hands": [
   {
    "key": "cupped",
    "id": "goblet_squat",
    "name": "Cupped hold (goblet)",
-   "images": [
-    "evidence/lib12-cupped-silent-black.png",
-    "evidence/lib12-cupped-paper.png"
-   ],
+   "images": [],
    "flags": [
-    "New hand kind (plan 2.3)",
-    "Drawing values (D-LIB12-2), not sourced: dumbbell head 180 mm across, 70 mm thick, handle 32 mm",
-    "Thumb and fingers not drawn: no goblet source places them, so the palms are one outline"
+    "No close-up: moved to GAPS after the R8 panel (D-LIB12FIX-R8-GAPS, #191 6274835211); accepted in PILOT A PIN GO (#109 6381356655). Redraw: F-LIB12-R8B."
    ]
   },
   {
    "key": "front-rack",
    "id": "front_squat",
    "name": "Front rack",
+   "images": [],
+   "flags": [
+    "No close-up: moved to GAPS after the R8 panel (D-LIB12FIX-R8-GAPS, #191 6274835211); accepted in PILOT A PIN GO (#109 6381356655). Redraw: F-LIB12-R8B."
+   ]
+  },
+  {
+   "key": "curl",
+   "id": "dumbbell_biceps_curl",
+   "name": "Curl",
    "images": [
-    "evidence/lib12-front-rack-silent-black.png",
-    "evidence/lib12-front-rack-paper.png"
+    "evidence/lib7-curl-silent-black.png",
+    "evidence/lib7-curl-paper.png"
    ],
    "flags": [
-    "New hand kind (plan 2.3)",
-    "Drawing value (D-LIB12-2), not sourced: bar 28 mm (golden B's value)",
-    "Wrist: no number drawn; the front-rack exemption replaces the on-body range"
+    "LIB-7 pair: renderPair(id) at 390 px, every fault page (main 5158609, #193); approved in LIB-7's hand panel (10-03), pinned in hand-pairs.test.ts 'critic fixes (10-03)'"
+   ]
+  },
+  {
+   "key": "rope",
+   "id": "rope_triceps_pushdown",
+   "name": "Rope",
+   "images": [
+    "evidence/lib7-rope-silent-black.png",
+    "evidence/lib7-rope-paper.png"
+   ],
+   "flags": [
+    "LIB-7 pair: renderPair(id) at 390 px, every fault page (main 5158609, #193); approved in LIB-7's hand panel (10-03), pinned in hand-pairs.test.ts 'critic fixes (10-03)'"
+   ]
+  },
+  {
+   "key": "ez",
+   "id": "ez_bar_curl",
+   "name": "EZ bar",
+   "images": [
+    "evidence/lib7-ez-silent-black.png",
+    "evidence/lib7-ez-paper.png"
+   ],
+   "flags": [
+    "LIB-7 pair: renderPair(id) at 390 px, every fault page (main 5158609, #193); approved in LIB-7's hand panel (10-03), pinned in hand-pairs.test.ts 'critic fixes (10-03)'"
    ]
   },
   {
