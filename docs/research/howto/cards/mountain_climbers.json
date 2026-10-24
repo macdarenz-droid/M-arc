@@ -552,7 +552,10 @@
       {
         "label": "Hands under shoulders",
         "what": "Arms straight, hands directly under the shoulders, shoulders over the wrists.",
-        "claim": "c2"
+        "claim": [
+          "c2",
+          "c6"
+        ]
       },
       {
         "label": "Straight line",
@@ -579,7 +582,10 @@
       },
       {
         "text": "Hips stay level as legs switch",
-        "claim": "c4"
+        "claim": [
+          "c4",
+          "c16"
+        ]
       }
     ],
     "tempo": {
@@ -609,7 +615,7 @@
       "c2",
       "c12"
     ],
-    "note": "No source found on finger spread, weight through the heel of the hand, or whether fists or push-up handles help a sore wrist."
+    "note": "No source found on finger spread or weight through the heel of the hand."
   },
   "setup": [
     {
@@ -650,8 +656,11 @@
   "handlingMistakes": [
     {
       "mistake": "Hips hike up.",
-      "fix": "Keep the plank line; slow down or step instead of hopping.",
-      "claim": "c4"
+      "fix": "Keep your hips level; slow down.",
+      "claim": [
+        "c16",
+        "c18"
+      ]
     },
     {
       "mistake": "Weight shifts back toward the feet.",
@@ -685,7 +694,7 @@
     "rows": [
       {
         "where": "Belly, shoulders and arms",
-        "means": "The plank is working.",
+        "means": "You might feel these muscles working.",
         "fix": "",
         "claim": "c11",
         "redFlag": null
@@ -699,11 +708,15 @@
       },
       {
         "where": "Pain on the back of the wrist",
-        "means": "Not a normal training feeling.",
-        "fix": "Stop the exercise.",
-        "claim": "c12",
+        "means": "",
+        "fix": "Stop the exercise. Hands on a bench, or dumbbells to keep the wrists neutral.",
+        "claim": [
+          "c12",
+          "c22",
+          "c21"
+        ],
         "redFlag": "wrist",
-        "fixNote": "The shared wrist box covers what to do next. Hands on a bench or step (c9) only means less load on the arms and core; no source says it relieves the wrist, so it is not offered as a wrist fix."
+        "fixNote": "The shared wrist box covers what to do next. The bench and dumbbell option is c21's: Healthline says the bench option \"puts less weight on your wrists\", and Lohre says \"If your wrists bother you, elevate your hands on a bench or use dumbbells to keep the wrists neutral.\""
       }
     ]
   },
@@ -713,7 +726,7 @@
       "claim": "c12"
     },
     {
-      "risk": "Bouncing adds impact and costs control.",
+      "risk": "Bouncing on your toes can add impact and make control harder.",
       "claim": "c7"
     }
   ],
@@ -726,14 +739,22 @@
       "kind": "hand",
       "right": "Palm flat, hand directly under the shoulder.",
       "wrong": "Hands ahead of the shoulders, weight shifted back.",
-      "claim": "c6"
+      "claim": [
+        "c2",
+        "c6",
+        "c19"
+      ]
     },
     {
       "key": "hip-line",
       "kind": "posture",
       "right": "Hips level with the head-to-heel line.",
       "wrong": "Hips hiked up as the knee drives.",
-      "claim": "c4"
+      "claim": [
+        "c4",
+        "c3",
+        "c16"
+      ]
     }
   ],
   "libraryDiff": {
@@ -746,14 +767,13 @@
   "unsourced": [
     "Cadence (steps per second); work and rest times are now sourced (c13, c14).",
     "Finger spread and weight through the heel of the hand (palm-flat archetype).",
-    "Whether fists or push-up handles help a sore wrist.",
-    "Breathing.",
     "Where the driving foot lands (toe tap vs floating)."
   ],
   "notes": [
     "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c13 (Julie Lohre) and c14 (Healthline) add timed work and rest; no source gives a cadence.",
     "W1 fix round 2026-10-03: F05/R-W1-2 tempo default is the beginner row (2-3 × 15 s on/15 s off, c13); 20/20 and 30/30 are progressions; 20/10 is labelled as the high-intensity option (c14). c15 adds Lohre's progression and stop cue; loadProgression added from c13 and c15.",
-    "LB10 pass 2026-10-22 (research only, pilot A; D-SUP-LB8-PILOTS): all four sources re-fetched by curl, c4 quote now uses the page's ’, c7 text keeps the source's hedge, c16-c22 added (Healthline and Julie Lohre fault lines, wrist options, the NHS wrist stop line as MECH/WEAK); rankNote rewritten under LR-31. LR-33: up, down and pause stay null (no source gives seconds for a step); Lohre's slow variation \"Run the same movement at half speed, pausing briefly with the knee drawn in.\" is a variation's pause at the knee drive with no seconds, not written in pause. Shown-line findings for the supervisor are in the LB10 writer record; no shown line, pick or drawable was changed here."
+    "LB10 pass 2026-10-22 (research only, pilot A; D-SUP-LB8-PILOTS): all four sources re-fetched by curl, c4 quote now uses the page's ’, c7 text keeps the source's hedge, c16-c22 added (Healthline and Julie Lohre fault lines, wrist options, the NHS wrist stop line as MECH/WEAK); rankNote rewritten under LR-31. LR-33: up, down and pause stay null (no source gives seconds for a step); Lohre's slow variation \"Run the same movement at half speed, pausing briefly with the knee drawn in.\" is a variation's pause at the knee drive with no seconds, not written in pause. Shown-line findings for the supervisor are in the LB10 writer record; no shown line, pick or drawable was changed here.",
+    "Pilot A routed lines 2026-10-24 (D-LIB8M-ROUTED; mountain_climbers-R1 to R9 from lb10-research-verify.md). R6: no claim says \"palm\". LR-4: zooms[0]'s \"Palm flat\" is the palm-flat hand archetype the plate draws. Drawing convention, not a claim."
   ],
   "loadProgression": {
     "text": "Start with 2-3 sets of 15 seconds on, 15 off; lengthen the interval before adding sets; stop the set when your hips start bouncing.",
