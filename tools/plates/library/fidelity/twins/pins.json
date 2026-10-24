@@ -663,7 +663,7 @@
   ]
  },
  "gate:HT-9": {
-  "sha256": "6bb3f58d03adf83925107a3738f4bc87a0465b6d665dbbf78ef014555a6a6923",
+  "sha256": "438bc905c70af6ab7878f79578d84bbc494aaf1663cc350b06d46b7ccf3cceb5",
   "map": [
    {
     "m": "throw new Error",
@@ -729,6 +729,16 @@
     "m": "errors.push(",
     "t": "HT9/show-<n>@390",
     "why": "page error"
+   },
+   {
+    "m": "failedReqs.push(",
+    "t": "HT9/show-<n>@390",
+    "why": "GATE-FLAKE-5 B5: failed requests B6 adds to a close-up that did not open (not collect: B6 reads it in its errors.push)"
+   },
+   {
+    "m": "__gf5Toasts.push(",
+    "t": "HT9/show-<n>@390",
+    "why": "GATE-FLAKE-5 B5: toast texts B6 adds to a close-up that did not open (not collect: B6 reads it in its errors.push)"
    },
    {
     "m": "seen.push(",
@@ -921,7 +931,7 @@
   ]
  },
  "gate:HT-8": {
-  "sha256": "fcdd4f7de1eaaf4e797113f4896ec7fcf5b89e432cb819f73a6a2e7d1a136da6",
+  "sha256": "8afe34c3e912fca7cc41a0b065498701fad58323a821085a06aa5791ef06ba10",
   "map": [
    {
     "m": "errors.push(",
@@ -937,6 +947,16 @@
     "m": "throw new Error",
     "t": "def",
     "why": "click helper: a missing control throws; the twin's catch fails the current state"
+   },
+   {
+    "m": "failed.push(",
+    "t": "collect:failed",
+    "why": "GATE-FLAKE-5 B1: failed requests for the load state and B3's early end (reaches problems only through ld() in B3/B4)"
+   },
+   {
+    "m": "__gf5Toasts.push(",
+    "t": "collect:window.__gf5Toasts",
+    "why": "GATE-FLAKE-5 B1: toast texts for the load state (reaches problems only through ld() in B3/B4)"
    },
    {
     "m": "feelReqs.push(",
