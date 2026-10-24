@@ -890,6 +890,19 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 14:00 UTC (10-24)** (usage 7-day 0.71 at 13:51; five-hour 0.20):
+- **#109 LIB-8M:** pinned 13 @ `b898578` (pin commit `7349a75` [golden update]; page `5d0e562f…`). Reviewer session_01RnSGLM2JBRgHeBMpscfP3b: check, test:tz and gate green, mutations running. On PASS: merge train 34.
+- **LIB-18 (#306, LB8): REVIEW PASS** @ `d76fc305`. Two Lows (the qa.mjs:4 header, the test title at :1368) ride the pre-train push.
+- **LIB-20 (#311): REVIEW PASS** @ `471339d`. It merges before the LB7 lanes; its pre-train push carries the D-LIB20-L0 (b) MANIFEST rewrite after #109 pins.
+- **LIB-STRIP (#309):** READY @ `ef71b1fe`. Reviewer session_01EHdxRcZzDm7iHF1YF5oAqx is running its long jobs.
+- **LIB-21 (#312, LB9):**
+  - Focused recheck lb9r VALID (6383628526): **bird_dog approved @ `276029ae`**; ab_wheel_rollout was approved @ `27215fba`.
+  - Held: cable_crunch (**D-LIB21-CCHOLD**, a LIB-SPINE engine card, F-SPINE-1: the curl folds at one joint); superman (LIB-ZOOM); pallof_press (**D-LIB21-PALLOFHOLD**: LIB-ZOOM plus a turned view after LIB-20). The (b) rows side_plank, russian_twist and bicycle_crunch wait for LIB-20 on main.
+  - **PLATES READY @ `810fc537`** (page `12163664…`; both approved fragments byte-identical; CI 17/17). Reviewer session_01VVDC3bfNVEMQFCDHjNype5.
+  - Card fields merge-back to research: **#313** (`0bf7ee72`, the 5 (a) cards byte-equal to 810fc537; CI running).
+- **Golden-B follow-up 24:** pull_up's forearm ends under the end-on bar circle, with no fist around it (confirmed on the PNG crop).
+- **Active LIB builders: 3** (LIB-8M, LIB-STRIP, LIB-21), all at review. **Next after the reset (Thu 02:00 UTC):** the LIB-SPINE card, LIB-ZOOM resume, 'LIB-21 resume' after LIB-20 merges.
+
 **Update 11:00 UTC (10-24)** (usage 7-day 0.69, rising about 2 % an hour with 4 builders plus panels; the 80 % pause is likely near 16:00 UTC):
 - **#109 pilot A:** the plank focused recheck is **VALID**, plank is approved, and page `5d0e562f…` is approved (6382619662, lib4-cards 34). The builder is pinning 13 (Do 13, then Do 14).
 - **LIB-STRIP (#309):** STRIP ROWS VERIFIED @ 511ded30. Rulings D-STRIP-GROUPS (E1 106) and D-STRIP-GATETIME (a), 270 s. Building toward READY.
