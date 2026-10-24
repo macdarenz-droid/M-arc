@@ -27,7 +27,7 @@ const at = async (cwd: string, code: string) => {
 };
 const problemsIn = (tree: string) => at(tree, "import { manifestProblems } from './tools/plates/library/ci/manifest.mjs'; console.log('@@' + JSON.stringify(await manifestProblems()));");
 
-describe('C0: L0-lib on this tree', () => {
+describe('C0: L0-lib on this tree', { timeout: 300_000 }, () => {   // F-C0-TIMEOUT: 13 rows take about 3.5 s alone and over 5 s under a full run
   // LIB-8M Do 13 (A14): pilot A's pin adds the first rows, exactly its 13 ids (was 0 before the pin)
   const PILOT_A = ['barbell_overhead_press', 'barbell_row', 'dumbbell_bench_press', 'dumbbell_biceps_curl', 'dumbbell_shoulder_press', 'mountain_climbers',
     'pec_fly', 'plank', 'romanian_deadlift', 'rope_triceps_pushdown', 'single_leg_romanian_deadlift', 'triceps_pushdown', 'upright_row'].map(id => `lib_${id}`);
