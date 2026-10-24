@@ -291,7 +291,11 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 
 ## 15. Held ids
 
-None held at this head (ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG).
+| id | ruling | route |
+|---|---|---|
+| cable_crunch | D-LIB21-CCHOLD (#312, after 6383637352): the recheck's R1 (the trunk folds at the engine's one lumbar pivot, a 67.5 px hip–shoulder chord at 780 against 138.2 at the start) needs distributed spinal flexion, which the vendored engine lacks | a LIB-SPINE engine card (F-SPINE-1); R2/R7 fixes and its verified card fields kept; then 'LIB-21 resume' |
+
+ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG; it and bird_dog are approved (slice panel and recheck).
 
 Held ids are drawn and tested, and appear in `lb9/build.mjs` HELD (the `--held` page, renders only), never in rows.json.
 

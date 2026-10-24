@@ -84,7 +84,8 @@ const SPECS_DIR = 'tools/plates/library/specs';
 const ROWS = 'tools/plates/library/lb9/rows.json';
 // DESIGN.md section 15: the held ids ('LB9 NOTE RULED', #312 6382248634: none; ab_wheel_rollout is drawn at the plank
 // class's -30 deg sag, D-LIB21-ABSAG, and joins rows.json).
-const HELD: string[] = [];
+// DESIGN.md section 15: cable_crunch held by D-LIB21-CCHOLD (#312) for a LIB-SPINE engine card (F-SPINE-1).
+const HELD: string[] = ['cable_crunch'];
 // The ids drawn on this branch: the slice (ab_wheel_rollout, cable_crunch, bird_dog), then the bulk as it is drawn.
 const DRAWN = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog'];
 const COMPOSERS = ['abWheel'];
@@ -791,7 +792,7 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
   };
   const want = () => drawn().map(i => `lib_${i}`);
   it('each drawn, non-held id with a strip exactly once in the raw text, nothing else, every mode H', () => {
-    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch']);
+    expect([...want()].sort()).toEqual(['lib_ab_wheel_rollout', 'lib_bird_dog']);   // cable_crunch held (D-LIB21-CCHOLD)
     expect(a5(readFileSync(ROWS, 'utf8'), want())).toEqual([]);
   });
   it('plank, crunch, the 5 T ids and the 3 (b) ids (no spec before their resume) are in no lb9/ file as a row', () => {
@@ -801,9 +802,11 @@ describe('LIB-21 A5: lb9/rows.json holds exactly the drawn, non-held LB9 H ids w
     }
     for (const id of ['side_plank', 'russian_twist', 'bicycle_crunch']) expect(existsSync(`${SPECS_DIR}/${id}.mjs`), id).toBe(false);
   });
-  it('no held id now: build.mjs HELD is empty and every drawn id is on rows.json', async () => {
+  it('the held ids (cable_crunch, D-LIB21-CCHOLD) are build.mjs HELD with their census view, in DESIGN.md\'s held table, and in no rows file', async () => {
     const build = await import(/* @vite-ignore */ lib('lb9/build.mjs'));
-    expect(build.HELD).toEqual({});
+    expect(build.HELD).toEqual({ cable_crunch: 'side' });
+    const design = readFileSync('tools/plates/library/lb9/DESIGN.md', 'utf8');
+    for (const id of HELD) expect(new RegExp(`\\| ${id} \\| D-LIB21-CCHOLD`).test(design), id).toBe(true);
     for (const id of HELD) expect(readFileSync(ROWS, 'utf8').includes(`lib_${id}`), id).toBe(false);
   });
   it('mutations: a dropped row, a duplicated row, a held id, plank, crunch, flutter_kicks, side_plank and one mode set to D are red', () => {
