@@ -78,7 +78,8 @@ function keyProblems(mods: any[], wordFiles: string[]) {
   return bad;
 }
 const WORD_FILES = () => readdirSync('tools/plates/library/hands/words');
-const LINE69 = (src: string, d: number) => src.split('\n')[68]!.includes(`C.sweep(P.keysOf(), ${8 + d}, 'pair keys')`);
+// LIB-12's 2 keys came first on main (lib7-fix.test.ts:69 '8 + 2', D-LIB12FIX-R8-GAPS); LIB-7c adds its |D| after them
+const LINE69 = (src: string, d: number) => src.split('\n')[68]!.includes(`C.sweep(P.keysOf(), 8 + 2 + ${d}, 'pair keys')`);
 
 describe('LIB-7c 7c-A1: modules and keys (D-LIB7c-KEYS, D-LIB7FIX-KEY)', () => {
   it('2 modules, 4 variants, drawn ids + gap ids = the six, disjoint; archetypes = census; gaps as ruled', () => {
@@ -111,7 +112,8 @@ describe('LIB-7c 7c-A1: modules and keys (D-LIB7c-KEYS, D-LIB7FIX-KEY)', () => {
     const gapped = withMods(m => { const b = key(m, 'bar'); b.GAPS.chin_up = 'planted'; delete b.IDS.chin_up; });
     expect(keyProblems(gapped, WORD_FILES()).join('\n')).toMatch(/words files .* are not the drawn keys/);
     const src = readFileSync('tests/library/lib7-fix.test.ts', 'utf8').split('\n');
-    src[68] = src[68]!.replace(/C\.sweep\(P\.keysOf\(\), \d+,/, 'C.sweep(P.keysOf(), 8,');
+    src[68] = src[68]!.replace(/C\.sweep\(P\.keysOf\(\), 8 \+ 2 \+ \d+,/, 'C.sweep(P.keysOf(), 8 + 2,');
+    expect(src[68]).toContain('C.sweep(P.keysOf(), 8 + 2, ');
     expect(LINE69(src.join('\n'), new Set(lib7cDrawn().map(id => RULED[id])).size)).toBe(false);
   });
 });
