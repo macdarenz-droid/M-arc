@@ -367,9 +367,12 @@
       }
     ],
     "mistake": {
-      "what": "Low back sags: hips drop below the shoulder-heel line.",
-      "why": "ACE names sagging first among the faults to avoid (c4) and says low-back pain means stop (c8).",
-      "claim": "c4",
+      "what": "Hips hiked up.",
+      "why": "ACE and Harvard both tell the lifter to avoid it (c4, c13).",
+      "claim": [
+        "c4",
+        "c13"
+      ],
       "drawable": true,
       "rankNote": "No source measures how often each fault happens. LR-31 step 3: hips hiked up (c4, c13), by step 3's count. Step 1 finds no frequency word for a fault: Harvard's 'Common Conditions' is a site menu and \"sometimes referred to as a modified push-up position\" names a version; \"doing as many reps as needed\" is about reps; Cortell's \"Prone plank is a widely used exercise in core stability training.\" is about the exercise; Schoenfeld's \"tends to contribute more\" is about muscle activity (and 'tend' is not a frequency word). ACE has none. Step 2 finds no named fault tied to harm: ACE's \"If you experience any pain in the low back with this movement, stop the exercise immediately and consult with your doctor.\" (c8) names pain but no fault; Harvard's \"There's a saying that when you can hold a plank for a minute, your back pain will be gone,\" and \"Planks may ease back pain because as your core muscles strengthen, they provide more support for your spine.\" are benefits, and 'A lumbar belt may help ease low back pain', 'Light exposure at night may raise risk for heart disease', 'Whole grains may improve several heart risk factors at once' and the 'Related Topics' pain links are page chrome linking other articles; none names a plank fault. Step 3: no read source has a common-mistakes list (Harvard's 'Plank tips and techniques' is a tips list), so the count decides (D-SUP-LB6-CCP): the read sources that tell the lifter to avoid each fault (sources, not lists). Hips hiked 2: ACE \"hiking (upwards) in your hips\" (c4) and Harvard \"Don't bend at your hips.\" (c13), read as hip bending, the hips piking up. Low back sagging 1: ACE \"Avoid any arching (sagging) in your low back\" (c4). Knees bending 1: ACE (c4). Shrugging 1: ACE \"Avoid shrugging your shoulder\" (c5). Not counted, as they only give the right position: Harvard's \"Keep your neck and spine neutral during the plank.\" and \"Keep your shoulders down and back.\" (c13), \"Be certain to keep your back straight and your head in a neutral position looking at the ground.\" and \"aligning your shoulders directly over your elbows\"; ACE's \"keep your shoulders positioned directly over your elbows\" (c5) and \"Continue to breath while holding this position\" (c6). Schoenfeld and Cortell name no fault. So LR-31's top fault is the hips hiked up, not the head's sag; drawable would be true (the side view shows the hips raised above the shoulder-heel line). Harvard's line counts for the hiked hips, as hiking the hips is bending at the hips (D-SUP-LB9-PLANK). Pilot A plate held (D-SUP-LB8-PILOTS): this pass is research only on plank, so plate.mistake (the sag) and handlingMistakes are unchanged here; the changed pick is routed to pilot A's owner sheet (plank-R1, R-LB9-3). The head's old note, \"ACE lists sagging first\", is not an LR-31 step (ACE's sentence is an avoid line, not a common-mistakes list)."
     },
@@ -442,25 +445,32 @@
       "claim": "c4"
     },
     {
-      "point": "Harder version: tuck the pelvis and draw the shoulder blades together.",
+      "point": "Harder version: tilt the pelvis backward and draw the shoulder blades together.",
       "claim": "c11"
     }
   ],
   "handlingMistakes": [
     {
+      "mistake": "Hips hiked up.",
+      "fix": "Don't bend at your hips.",
+      "claim": [
+        "c4",
+        "c13"
+      ]
+    },
+    {
       "mistake": "Low back sags.",
-      "fix": "Brace harder; if you can't hold it, end the hold.",
-      "claim": "c4"
+      "fix": "Brace your trunk. Can't hold it? Rest on your knees.",
+      "claim": [
+        "c4",
+        "c2",
+        "c14"
+      ]
     },
     {
       "mistake": "Shrugging, shoulders drifting away from the elbows.",
       "fix": "Shoulders back over the elbows.",
       "claim": "c5"
-    },
-    {
-      "mistake": "Holding the breath.",
-      "fix": "Keep breathing through the hold.",
-      "claim": "c6"
     }
   ],
   "feel": {
@@ -496,7 +506,7 @@
       },
       {
         "where": "Pain in the low back",
-        "means": "Not a training feeling.",
+        "means": "",
         "fix": "Stop the exercise.",
         "claim": "c8",
         "redFlag": "back"
@@ -520,15 +530,15 @@
     {
       "key": "hip-line",
       "kind": "posture",
-      "right": "Hips in line with shoulders and heels.",
-      "wrong": "Low back sagging, hips dropped.",
+      "right": "No sagging low back, no hiked hips.",
+      "wrong": "Low back sagging.",
       "claim": "c4"
     },
     {
       "key": "shoulder-stack",
       "kind": "posture",
       "right": "Shoulders straight over the elbows.",
-      "wrong": "Shoulders shrugged or ahead of the elbows.",
+      "wrong": "Shoulders shrugged, not over the elbows.",
       "claim": "c5"
     }
   ],
