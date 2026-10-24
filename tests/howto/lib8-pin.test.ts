@@ -30,13 +30,12 @@ const BLOBS: Record<string, [string, string]> = {
 };
 // incline_dumbbell_press is held after its last critic run (D-LIB8M-CARDTRUE, lib4-cards 21.6): its card copy and keys stay as verified
 const CARDS = Object.keys(BLOBS);
-// plank is held for its Mistake redraw in LIB-21 (D-LIB8M-PLANKHOLD, #109 6381763639): its card copy and keys stay as copied
-const PINNED = CARDS.filter(id => id !== 'incline_dumbbell_press' && id !== 'plank');
-const HELD = ['barbell_shrug', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly', 'box_jump', 'reverse_lunge', 'incline_dumbbell_press', 'plank'];
+const PINNED = CARDS.filter(id => id !== 'incline_dumbbell_press');
+const HELD = ['barbell_shrug', 'dumbbell_fly', 'bent_over_dumbbell_rear_delt_fly', 'box_jump', 'reverse_lunge', 'incline_dumbbell_press'];
 // census views (claude/howto-options 4a9fd86, docs/howto/library/inputs/census.json blob 70553d5d)
 const VIEW: Record<string, string> = Object.fromEntries(PINNED.map(id => [id, id === 'upright_row' || id === 'pec_fly' ? 'front' : 'side']));
 // the pilot A page the registry builds (build.mjs's page at the Do 6 head); the pin's page entry must equal it
-const PAGE = { sha256: 'b97795e9d109c59f71d3b1964036f143acfc69ac7783a354d42956647d5000b0', bytes: 1237093 };
+const PAGE = { sha256: '43a264e5a4a9f5d9bb1069684c65a7dda51ceaddc4023daed6114d24156f26c6', bytes: 1325713 };
 const blobId = (buf: Buffer) => createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
 // Do 7 inserts the three card keys as one block before the final brace; A6 takes it out again
 const withoutKeys = (text: string) => { const i = text.lastIndexOf(',\n  "plateFacts": '); return i < 0 ? text : `${text.slice(0, i)}\n}${text.slice(text.lastIndexOf('\n}') + 2)}`; };
@@ -95,7 +94,7 @@ describe('LIB-8M A7: card keys and the tempo map', () => {
 
 describe('LIB-8M A11: rows, pages and held ids', () => {
   const raw = read('tools/plates/library/batches/pilot-a.json'), batch = JSON.parse(raw);
-  it('batches/pilot-a.json holds exactly the 12 pinned ids, each once, mode H, census view, one stage', () => {
+  it('batches/pilot-a.json holds exactly the 13 pinned ids, each once, mode H, census view, one stage', () => {
     for (const id of PINNED) expect(raw.split(`"lib_${id}"`).length - 1).toBe(1);
     expect(Object.keys(batch.rows).sort()).toEqual(PINNED.map(id => `lib_${id}`).sort());
     const stages = new Set(Object.values(batch.rows).map((r: any) => r.stage));
@@ -111,12 +110,12 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     const chain = ROOT + 'tests/howto/golden/library/pilot-a.json';
     if (existsSync(chain)) expect(JSON.parse(readFileSync(chain, 'utf8')).entries.some((e: any) => e.kind === 'layers-page')).toBe(false);
   });
-  it('the seven held ids appear in no batch or library golden file', () => {
+  it('the six held ids appear in no batch or library golden file', () => {
     const files = [...readdirSync(ROOT + 'tools/plates/library/batches').filter(f => f.endsWith('.json')).map(f => `tools/plates/library/batches/${f}`),
       ...(existsSync(ROOT + 'tests/howto/golden/library') ? readdirSync(ROOT + 'tests/howto/golden/library').map(f => `tests/howto/golden/library/${f}`) : [])];
     for (const f of files) for (const id of HELD) expect(new RegExp(`\\b${id}\\b`).test(read(f)), `${id} in ${f}`).toBe(false);
   });
-  it('the page config lists the 12 ids once each, as registry ids', () => {
+  it('the page config lists the 13 ids once each, as registry ids', () => {
     const ids = JSON.parse(read('tools/plates/library/pages/pilot-a.json')).groups.flatMap((g: any) => g.ids);
     expect([...ids].sort()).toEqual(PINNED.map(id => `lib_${id}`).sort());
   });
