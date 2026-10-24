@@ -292,6 +292,14 @@
    "note": ""
   },
   {
+   "claim": "c14",
+   "source": "sl-pallof",
+   "text": "Primary muscles worked: Obliques Abs",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
    "claim": "c15",
    "source": "bb-pallof",
    "text": "The rectus abdominis — to six-pack muscles — contracts isometrically to assist in spinal stabilization during this movement.",
@@ -319,6 +327,14 @@
    "claim": "c16",
    "source": "mo-pallof",
    "text": "Brace your core and engage glutes.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "mo-pallof",
+   "text": "Glutes",
    "status": "verbatim",
    "closest": "",
    "note": ""

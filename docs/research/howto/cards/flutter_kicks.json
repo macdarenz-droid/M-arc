@@ -437,7 +437,10 @@
   "setup": [
     {
       "step": "Lie on your back, legs straight, arms at your sides, palms flat.",
-      "claim": "c1"
+      "claim": [
+        "c1",
+        "c4"
+      ]
     },
     {
       "step": "Squeeze your shoulder blades down and flatten your lower back.",
@@ -593,7 +596,7 @@
   "anchorSource": "hevy-fk",
   "anchorNote": "Hevy's flutter kicks guide (certified trainer) and Hawkes Physiotherapy's exercise page read in full. No ACE, NASM or PubMed technique source found for the supine flutter kick (PubMed 'flutter kick' hits are swimming studies, 2026-10-02).",
   "loadProgression": {
-    "text": "Build to 30-50 kicks a set; ankle weights make it harder.",
+    "text": "For endurance: 30-50 kicks to fatigue; ankle weights make it harder.",
     "claims": [
       "c12"
     ]

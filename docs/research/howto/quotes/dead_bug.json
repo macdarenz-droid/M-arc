@@ -165,6 +165,14 @@
   },
   {
    "claim": "c10",
+   "source": "ace-deadbug",
+   "text": "slowly lift the right arm and left leg off of the floor together while maintaining the abdominal hollowing",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
    "source": "fv-deadbug",
    "text": "To make the exercise easier especially if you have limited hip range of motion or mobility; keep your leg/s higher off the ground at first and then gradually lower it little by little.",
    "status": "verbatim",

@@ -388,7 +388,7 @@
   },
   {
    "id": "c16",
-   "text": "In adults aged 21 to 35 (surface EMG), the superman (prone extension with the arms and legs lifted) worked the longissimus thoracis and lumbar multifidus at a mean 77-82 % of maximum, among the higher back-rehabilitation exercises tested.",
+   "text": "In adults aged 21 to 35 (surface EMG of the longissimus thoracis and lumbar multifidi), the superman was one of three exercises whose mean activity ranged from 77 % to 82 % of maximum.",
    "tags": [
     "DATA"
    ],
@@ -404,6 +404,11 @@
     {
      "source": "ekstrom-2008",
      "text": "Groups 1 and 2 each had 30 subjects and group 2 had 29 subjects, ranging in age from 21 to 35 years.",
+     "where": "abstract, methods"
+    },
+    {
+     "source": "ekstrom-2008",
+     "text": "Surface EMG analysis of the muscle activity of the longissimus thoracis and lumbar multifidi was carried out bilaterally on 3 different experimental groups while performing a variety of exercises commonly used in low back rehabilitation programs.",
      "where": "abstract, methods"
     }
    ]
@@ -553,7 +558,7 @@
     "claim": "c5"
    },
    {
-    "label": "Arms and legs up",
+    "label": "Arms, legs up",
     "what": "Arms and legs straight, a few inches off the floor.",
     "claim": [
      "c2",
@@ -573,7 +578,7 @@
    "what": "Head lifted to look up, the neck out of line.",
    "why": "LR-31 step 2: Liftosaur lists lifting the head too high first among its common mistakes and says to avoid it to prevent neck strain; Motra lists looking up as straining the neck (c6). The raised head shows from the side. How often it happens is not measured.",
    "claim": "c6",
-   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the head lifted too high, looking up (c6). Common-mistakes lists read, in source order: Liftosaur \"Common Mistakes\": Lifting the head too high., Overextending the lower back., Allowing the legs or arms to fall too far out of alignment.; Motra \"Common Mistakes\": Overarching the back, Looking up straining neck, Holding breath, Jerky uncontrolled movements, Lifting too high causing strain. The University of Calgary's \"Avoid\" list (Head/neck to moving out of neutral line, Shoulder coming up to ear, Rounding the back to lift the legs off the ground) is headed \"Avoid\", not a common-mistakes list. ACE, BarBend and Ekstrom have no list. Step 1: no frequency word counts for a fault of this exercise. Set aside: the \"Common Mistakes\" headings (Liftosaur, Motra) are headings; Motra's \"Typical Rep Range\" is programming; BarBend's \"The superman exercise is one of those exercises that’s often neglected because it seems too simple to work and lifters bypass it for more complex exercises.\" is about the exercise, and its \"These exercises can be important for CrossFitters, weightlifters, and powerlifters who tend to see at least a few of these exercises often.\" is about other exercises; BarBend's \"it can be fairly easy to do improperly\" uses 'easy to' and names no fault; Ekstrom's \"a variety of exercises commonly used in low back rehabilitation programs\" is about exercises. Step 2: three named faults are tied to harm. The head lifted too high: Liftosaur's \"Avoid lifting your head too high to prevent neck strain.\" (the cue against its list item 1 \"Lifting the head too high.\") and Motra's list item 2 \"Looking up straining neck\" (c6): 2 sources. Lifting too high: Motra's list item 5 \"Lifting too high causing strain\" (c8): 1 source. Jerky movements: Liftosaur's \"Keep your movements controlled to maximize effectiveness and minimize risk of injury.\" read as the cue against Motra's list item 4 \"Jerky uncontrolled movements\" (c18; D-SUP-PROTECT; ruling asked): 1 source. Tie order: all three are on a common-mistakes list; the one more sources tie to harm wins: the head (2). Set aside at step 2: Liftosaur's \"Keep your neck in a neutral position; avoid straining it.\" is the same head fault; Motra's \"Do not hyperextend spine\" (c7) states no harm; Motra's \"Stop if sharp pain occurs\", \"Avoid if acute lower back pain\", \"Consult professional if pregnant or injured\" and its When to Avoid items \"Chronic lower back pain\" and \"Recent back injuries\" name no fault (stop rules and conditions); the University of Calgary's \"Injury prevention for upper and mid-back\" is the exercise's purpose; BarBend's \"This is a good variation for anyone who feels strain during the standard superman or don’t have the coordination or balance yet.\" is about who picks a variation, and its \"Since you’re on all fours and not lying down, it can help reduce stress in the low back.\" is about the bird dog, another exercise (R-LB7-5); BarBend's \"Studies suggest that poor posture can result in back and neck pain\" is about posture in daily life, not a fault in the set; its other injury and pain lines (\"Reduces Low Back Pain\", \"Guards Against Injury\", \"injury prevention purposes\", \"prevent injury when lifting heavy loads\", \"reduce the risk of overall injuries\", \"A stable spine is important not only in helping reduce the risk of injury\") are benefits; Ekstrom's \"patients with low back pain (LBP)\" is the study context. The head lifted out of line is a still sign the side view shows, so drawable is true.",
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the head lifted too high, looking up (c6). Common-mistakes lists read, in source order: Liftosaur \"Common Mistakes\": Lifting the head too high., Overextending the lower back., Allowing the legs or arms to fall too far out of alignment.; Motra \"Common Mistakes\": Overarching the back, Looking up straining neck, Holding breath, Jerky uncontrolled movements, Lifting too high causing strain. The University of Calgary's \"Avoid\" list (Head/neck to moving out of neutral line, Shoulder coming up to ear, Rounding the back to lift the legs off the ground) is headed \"Avoid\", not a common-mistakes list. ACE, BarBend and Ekstrom have no list. Step 1: no frequency word counts for a fault of this exercise. Set aside: the \"Common Mistakes\" headings (Liftosaur, Motra) are headings; Motra's \"Typical Rep Range\" is programming; BarBend's \"The superman exercise is one of those exercises that’s often neglected because it seems too simple to work and lifters bypass it for more complex exercises.\" is about the exercise, and its \"These exercises can be important for CrossFitters, weightlifters, and powerlifters who tend to see at least a few of these exercises often.\" is about other exercises; BarBend's \"it can be fairly easy to do improperly\" uses 'easy to' and names no fault; Ekstrom's \"a variety of exercises commonly used in low back rehabilitation programs\" is about exercises. Step 2: three named faults are tied to harm. The head lifted too high: Liftosaur's \"Avoid lifting your head too high to prevent neck strain.\" (the cue against its list item 1 \"Lifting the head too high.\") and Motra's list item 2 \"Looking up straining neck\" (c6): 2 sources. Lifting too high: Motra's list item 5 \"Lifting too high causing strain\" (c8): 1 source. Jerky movements: Liftosaur's \"Keep your movements controlled to maximize effectiveness and minimize risk of injury.\" read as the cue against Motra's list item 4 \"Jerky uncontrolled movements\" (c18; D-SUP-PROTECT: the cue that corrects it, as D-SUP-LB9-PALLOF reads Motra's cue): 1 source. Tie order: all three are on a common-mistakes list; the one more sources tie to harm wins: the head (2). Set aside at step 2: Liftosaur's \"Keep your neck in a neutral position; avoid straining it.\" is the same head fault; Motra's \"Do not hyperextend spine\" (c7) states no harm; Motra's \"Stop if sharp pain occurs\", \"Avoid if acute lower back pain\", \"Consult professional if pregnant or injured\" and its When to Avoid items \"Chronic lower back pain\" and \"Recent back injuries\" name no fault (stop rules and conditions); the University of Calgary's \"Injury prevention for upper and mid-back\" is the exercise's purpose; BarBend's \"This is a good variation for anyone who feels strain during the standard superman or don’t have the coordination or balance yet.\" is about who picks a variation, and its \"Since you’re on all fours and not lying down, it can help reduce stress in the low back.\" is about the bird dog, another exercise (R-LB7-5); BarBend's \"Studies suggest that poor posture can result in back and neck pain\" is about posture in daily life, not a fault in the set; its other injury and pain lines (\"Reduces Low Back Pain\", \"Guards Against Injury\", \"injury prevention purposes\", \"prevent injury when lifting heavy loads\", \"reduce the risk of overall injuries\", \"A stable spine is important not only in helping reduce the risk of injury\") are benefits; Ekstrom's \"patients with low back pain (LBP)\" is the study context. The head lifted out of line is a still sign the side view shows, so drawable is true.",
    "drawable": true
   },
   "tells": [
@@ -595,7 +600,7 @@
    "down": 2,
    "pause": 3,
    "claim": "c19",
-   "text": "Pause 3 is the hold right after the lift: BarBend's \"Hold this raised position for three seconds\" (c11, c19), sourced (R-LB2-1); the University of Calgary gives 2-4 s and ACE \"Hold this position briefly.\" Down 2 and up 1 are a drawing convention named in the WEAK tempo claim c19, which holds BarBend's slow-lowering quote (R-LB7-6); no source gives seconds for raising or lowering. Motra's Superman Hold page lists 0-5-0, a held variation, not used."
+   "text": "Pause 3 is the hold right after the lift: BarBend's \"Hold this raised position for three seconds\" (c11, c19), sourced (R-LB2-1); the University of Calgary's \"holding each rep for 2-4 seconds\" (c19) includes 3, the lowest value both sources allow (D-SUP-LB9-RANGE) and ACE \"Hold this position briefly.\" Down 2 and up 1 are a drawing convention named in the WEAK tempo claim c19, which holds BarBend's slow-lowering quote (R-LB7-6); no source gives seconds for raising or lowering. Motra's Superman Hold page (the same exercise) lists \"Tempo 0-5-0\"; read by its Tempo tooltip (D-SUP-LB9-TEMPODIR), that is 0 s lowering, a 5 s bottom pause and 0 s lifting. A bottom pause is not written in pause (LR-33), and 0 s phases give no phase time."
   },
   "variantLine": null
  },
@@ -799,7 +804,7 @@
    }
   ],
   "remove": [],
-  "why": "Library: lower_back primary, glutes secondary. lower_back stays primary (c14, with EMG of the back extensors at 77-82 % of maximum, c16). glutes move up to primary and mid_back is added as secondary, from the claims named. A proposal for the LIB data card."
+  "why": "Library: lower_back primary, glutes secondary. lower_back stays primary (c14; c16: one of three exercises at a mean 77-82 % of maximum back-extensor EMG). glutes move up to primary and mid_back is added as secondary, from the claims named. A proposal for the LIB data card."
  },
  "anchorSource": "ace-superman",
  "gaps": [],

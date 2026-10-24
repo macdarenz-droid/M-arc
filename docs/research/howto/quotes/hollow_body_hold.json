@@ -222,6 +222,14 @@
   {
    "claim": "c12",
    "source": "bb-hollow",
+   "text": "Three rounds of 15-20 seconds at the start of your workout should do wonders.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-hollow",
    "text": "For Endurance: Try five rounds of 20-30 seconds, adding five seconds per week.",
    "status": "verbatim",
    "closest": "For Endurance: Try five rounds of 20-30 seconds, adding five seconds per week.",
