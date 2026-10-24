@@ -31,18 +31,18 @@
 //   scale is the named F1 flag of that ruling (plates.json note).
 // Plate text (card plank plate, verified: claude/libht-research e2a70bc):
 //  Callouts = the 3 plate.checkpoints (c5 elbows under shoulders, c4 hips level, c4 knees straight). Datum = the plank
-//   line, shoulder to heel of the held pose, run past both ends (the held pose lies on it; the sag drops below it).
-//  Mistake = plate.mistake (c4, drawable): the low back sags, hips below the shoulder-heel line (solved: SAG_LUMBAR).
-//  Tells: the card's plate.tells ("Shoulders stay over your elbows", "You can keep breathing") are signs of good form,
-//   not signs of the fault, so the Mistake tells restate plate.mistake.what (hips drop, low back sags; c4). Flagged on
-//   PR #109 for the critic.
+//   line, shoulder to heel of the held pose, run past both ends (the held pose lies on it; the hiked hips rise above it).
+//  Mistake = plate.mistake (c4, c13, drawable; D-SUP-LB9-PLANK, D-LIB8M-PLANKREDRAW): the hips hike up above the
+//   shoulder-heel line (solved: HIKE_HIP, mountain_climbers' hike basis). Tells: the card's plate.tells ("Shoulders stay
+//   over your elbows", "You can keep breathing") are signs of good form, not signs of the fault, so the Mistake tell
+//   restates plate.mistake.what (hips hiked up; c4, c13).
 //  Measure: none. The card gives no angle, and the body line is the datum (a 180 deg arc at the hip reads as noise).
 //  Tempo: left out. The card gives Hold 5+ s only (c6) and no Set or Rest seconds; the engine strip needs seconds for
 //   every phase, and none may be invented (pilot note, PR #109).
 // CARD (checked against card v2): from the card: elbows under the shoulders (c5), straight line and straight knees
 //  (c4), entry face down on the forearms with the belly down (c1: NAVEL_Y), toes pulled toward the shins (c2: ANKLE).
-//  Not in the card, left flagged: ENTRY_HIP (-10 deg thigh extension lying down), SAG_LUMBAR (how far the Mistake
-//  sags). TOE_Z follows from the body model.
+//  Not in the card, left flagged: ENTRY_HIP (-10 deg thigh extension lying down), HIKE_HIP (how far the Mistake
+//  hikes). TOE_Z follows from the body model.
 import { landmarksOf, RADII } from '../engine.mjs';
 
 const H = 1.75;
@@ -96,11 +96,12 @@ const entry = q => body({ ...q, hip: ENTRY_HIP });
 const EQ = solve({ y: 0.1, z: HQ.z, tilt: 90, trunk: -20, ankle: 0 }, entry,
   lm => [lm['shoulder.r'][1] - SH[1], lm['shoulder.r'][2] - SH[2], lm.navel[1] - NAVEL_Y, lm['toe.r'][1], lm['toe.r'][2] - TOE_Z]);
 const start = { ...entry(EQ), reach: end.reach };
-// Mistake (card plate.mistake, c4): the low back sags, the hips drop below the shoulder-heel line. Forearms and toes
-// stay on their floor spots (same shoulder, same toe tip); the lumbar spine extends SAG_LUMBAR deg and the pelvis,
-// root and hip angle are solved so the shoulder and the toe tip do not move. How far it sags is a drawing choice
-// (the card gives no number): enough to read in 2 seconds at 390 px.
-const SAG_LUMBAR = -30;
+// Mistake (card plate.mistake, c4, c13): the hips hike up above the shoulder-heel line. Forearms and toes stay on their
+// floor spots (same shoulder, same toe tip); both hips flex HIKE_HIP deg (mountain_climbers.mjs's basis, its far leg's
+// hike), the trunk and knees stay straight, and root, pelvis tilt and ankle are solved so the shoulder and the toe tip
+// do not move. How high the hips go is a drawing choice (the card gives no number): enough to read in 2 seconds at
+// 390 px.
+const HIKE_HIP = 30;
 // The plank line (datum): shoulder to heel of the held pose, run LINE_RUN m past each end so it shows beyond the body
 // (the engine draws datums under the figure).
 const LINE_RUN = 0.22;
@@ -108,10 +109,10 @@ const LINE = (() => {
   const lm = landmarksOf(end, H), a = lm['shoulder.r'], b = lm['heel.r'], d = b.map((v, i) => v - a[i]), n = Math.hypot(...d);
   return [a.map((v, i) => v - d[i] / n * LINE_RUN), b.map((v, i) => v + d[i] / n * LINE_RUN)];
 })();
-const sag = q => body({ ...q, trunk: SAG_LUMBAR });
-const MQ = solve({ y: HQ.y - 0.05, z: HQ.z, tilt: HQ.tilt, hip: -5 }, sag,
+const hike = q => body({ ...q, hip: HIKE_HIP });
+const MQ = solve({ y: HQ.y + 0.15, z: HQ.z, tilt: HQ.tilt + 20, ankle: -20 }, hike,
   lm => [lm['shoulder.r'][1] - SH[1], lm['shoulder.r'][2] - SH[2], lm['toe.r'][1], lm['toe.r'][2] - TOE_Z]);
-const MISTAKE = { ...sag(MQ), reach: end.reach };
+const MISTAKE = { ...hike(MQ), reach: end.reach };
 
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 const onFloor = (landmark, tol = 0.5) => ({ landmark, plane: FLOOR, pose: 'all', tol });
@@ -132,7 +133,7 @@ export default {
   startParts: ['torso', 'leg.l', 'leg.r'],
   ghosts: { count: 2, parts: ['torso', 'leg.r'] },   // no ghost heads (the head does not move)
   trace: { point: 'hip.r', trim: [4, 6] },
-  // The plank line, shoulder to heel: the held pose lies on it (c4); in the Mistake the hips drop below it.
+  // The plank line, shoulder to heel: the held pose lies on it (c4); in the Mistake the hips rise above it.
   datum: [{ x: 0, from: 0, to: 0, line: LINE }],
   // D-LIB8-floor: labels spread into the space above the figure (boxed), 44 px hit boxes clear of each other at 340 px
   //  (LIB-3 PQ-H4); "Elbows under shoulders" ends on the shoulder, straight above the elbow (a leader to the elbow
@@ -148,7 +149,7 @@ export default {
       { kind: 'arrow', from: { at: 'hip.r', pose: 'end' }, to: { at: 'hip.r', pose: 'mistake' } },
     ],
     tells: [
-      { key: 'sag', text: 'Low back<br>sags', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 150, top: 192 }, cue: 'The low back sags and the hips drop below the shoulder-heel line.' },
+      { key: 'hike', text: 'Hips hike', anchor: { at: 'buttock', pose: 'mistake' }, box: { left: 110, top: 140 }, cue: 'The hips hike up above the shoulder-heel line.' },
     ],
   },
   // Tempo (supervisor, from the wave-1 research c12): hold 10-60 s. A range, not one number: the locked page builder
