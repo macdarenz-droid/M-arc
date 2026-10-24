@@ -153,3 +153,6 @@ I report any difference before any other step.
   - Its coverage stage reads `queued`, like the other held ids: the registry takes a stage only from a batch row, and a held id has none (A11).
   - Follow-up: its Mistake redraw goes to LB2 (LIB-10, D-LIB10-PA).
   - The page drops its article and nothing else: no fragment of the 13 moved, and their order is unchanged.
+- plank held (D-LIB8M-PLANKHOLD, #109 6381763639): routed R1 makes the top fault "Hips hiked up." (D-SUP-LB9-PLANK), and the drawn Mistake is the sag, so the redraw goes to LIB-21.
+  - It gets a `held` line, and its batch row and How-to file are removed. Pilot A pins 12 ids and holds 7. Its card copy and keys stay.
+  - The page drops its article and nothing else (b97795e9…, 1,237,093 B; 0 fragments of the 12 moved).
