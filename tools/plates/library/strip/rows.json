@@ -1,5 +1,5 @@
 {
- "rule": "D-STRIP-B, -ROWS, -FORMS, -SAYS, -SCOPE, D-STRIP-ALL, -VALIDATE, -WHOLE, -CONTEST, -QUOTEWORD, -AFALL (LIB-STRIP card, claude/sup-lib4-cards @ ad335ef2). A row is { phase, move?, word? | blank: true, claim, says?, quote? }: says is the verbatim span of text that names the word, quote the verbatim claim quote that holds it; blank marks a phase with no card-true word. text and claim are the card's plate.tempo.text and plate.tempo.claim, byte for byte. Only { phase, move?, word? } goes on a card's tempo key and its spec (tempoOf).",
+ "rule": "D-STRIP-B, -ROWS, -FORMS, -SAYS, -SCOPE, D-STRIP-ALL, -VALIDATE, -WHOLE, -CONTEST, -QUOTEWORD, -AFALL, -BURPEE (LIB-STRIP card, claude/sup-lib4-cards @ ad335ef2). A row is { phase, move?, word? | blank: true, claim, says?, quote? }: says is the verbatim span of text that names the word, quote the verbatim claim quote that holds it; blank marks a phase with no card-true word. text and claim are the card's plate.tempo.text and plate.tempo.claim, byte for byte. Only { phase, move?, word? } goes on a card's tempo key and its spec (tempoOf).",
  "research": "claude/libht-research 657eb4e5a4e4a871fd3e2a60ab4a5b8c1f24eb3a",
  "cards": [
   {
@@ -389,6 +389,40 @@
    ]
   },
   {
+   "id": "burpee",
+   "lane": "LIB-22 #305",
+   "text": "Motra lists \"2-0-1\" (c24, WEAK), and its Tempo tooltip defines four numbers (eccentric, bottom pause, concentric, top pause). The page does not say which of the burpee's lowerings the digits time, so no seconds are placed (D-SUP-LB10-BURPEE; R-LB2-1). Fitness Volt says \"Descend quickly but under control\" and gives no seconds. No quote asks for a pause after the lift.",
+   "claim": "c24",
+   "rows": [
+    {
+     "phase": "Squat down",
+     "move": true,
+     "word": "Controlled",
+     "claim": "c24",
+     "says": "Descend quickly but under control",
+     "quote": "Descend quickly but under control. Do not just drop into a low squat, or your knees will suffer."
+    },
+    {
+     "phase": "Kick back",
+     "move": true,
+     "blank": true,
+     "claim": "c24"
+    },
+    {
+     "phase": "Jump in",
+     "move": true,
+     "blank": true,
+     "claim": "c24"
+    },
+    {
+     "phase": "Jump up",
+     "move": true,
+     "blank": true,
+     "claim": "c24"
+    }
+   ]
+  },
+  {
    "id": "farmer_s_carry",
    "lane": "LIB-22 #305",
    "text": "Walk: short steps (c8). The sources differ on speed: Garage Gym Reviews and Fitness Volt walk slowly and with control (c7, c4), BarBend uses short, fast strides, and StrengthLog lengthens the stride as speed rises (c8). No source gives seconds, a step rate or a pause, so no seconds are drawn (LR-33; R-LB2-1).",
@@ -450,11 +484,6 @@
    "id": "sled_push",
    "lane": "LIB-22 #305",
    "why": "S3: \"short, powerful steps\" (c10); \"powerful\" is not a FORMS form and the text names no other cadence"
-  },
-  {
-   "id": "burpee",
-   "lane": "LIB-22 #305",
-   "why": "the only FORMS form, \"under control\" in \"Descend quickly but under control\", is Fitness Volt's line, which the text cites by no claim id; plate.tempo.claim c24 is Motra's 2-0-1, so no row claim is card-true (A11)"
   },
   {
    "id": "medicine_ball_slam",

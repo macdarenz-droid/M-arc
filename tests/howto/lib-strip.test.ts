@@ -82,6 +82,7 @@ const LABELS: Record<string, string> = {
   sled_pull: 'Tempo: walk quick',
   flutter_kicks: 'Tempo: kick crisp',
   cable_rear_delt_fly: 'Tempo: open slow, return slow',
+  burpee: 'Tempo: squat down controlled, kick back, jump in, jump up',
   farmer_s_carry: 'Tempo: walk controlled',
 };
 
@@ -273,7 +274,7 @@ const SCOPE = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'step_up', 'pi
   'cable_rear_delt_fly', 'sled_push', 'farmer_s_carry', 'burpee', 'medicine_ball_slam', 'wall_ball', 'diamond_push_up', 'pike_push_up'];
 const SET_LEVEL_PHASE = /^(set|sets|rep|reps|rest)$/i, SET_LEVEL_SAYS = /(?<![A-Za-z])(set|sets|rep|reps|rest|round|rounds|failure)(?![A-Za-z])/i;
 /** sha256 of rows.json's canonical JSON (JSON.stringify of the parsed file), set at 'STRIP ROWS VERIFIED' (Do 6). */
-const ROWS_PIN = '7e28159406246194fedb78b4974886b539c016500d4ea489087f22080594c674';   // pre-verify; re-set at STRIP ROWS VERIFIED
+const ROWS_PIN = '7ed7862a39a31c61d9bbb3b1dd8f796059cfd013cbf5ac0dba698b7a6214cfb7';   // the rows verified at 511ded30 plus D-STRIP-BURPEE's burpee row
 
 /** A11's checks on a parsed rows.json; returns problems. */
 function rowProblems(R: any, V: any): string[] {
