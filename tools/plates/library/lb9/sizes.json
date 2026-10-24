@@ -87,9 +87,9 @@
     "basis": "stated reason: c1, c2, c22 'an exercise mat'; 1.73 m (68 in), the usual exercise/yoga mat length, longer than the start's toe-tip-to-fingertip span (1.17 m) so hands, knees and toes all rest on it; centred on that span by the spec; no source states it"
    },
    "M_ARCH": {
-    "value": -12,
+    "value": -30,
     "unit": "deg",
-    "basis": "convention: hanging_leg_raise.mjs:69 (tools/plates/vendor/exercises, the 8's clone source, D-LIB21-CLONE) MISTAKE trunk -12, the approved 12 deg lumbar arch, for c7 'an increase in lumbar lordosis (low back sagging)' and c8 'Arching lower back' (no magnitude); the pelvis tilt that follows (+8.3 deg) is solved"
+    "basis": "convention: plank.mjs:103 (pilot A #109 @ dcac4a38) SAG_LUMBAR -30, the approved plank-class trunk sag; slice panel R5 (#312 6383060997: 'A prone or quadruped trunk sag of the approved plank-class size is a fair basis'), as D-LIB21-ABSAG; for c7 'the low back may sag into more arch' and c8 'Arching lower back' (no magnitude); the pelvis tilt that follows is solved"
    },
    "trace": {
     "point": "ankle.l",

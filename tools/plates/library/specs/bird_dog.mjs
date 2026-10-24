@@ -31,10 +31,10 @@
 //   the far left leg straight (knee 0, ankle 0) and level (ankle at hip height, c4). The down left hand, right knee and
 //   right toes stay on their spots. The raised foot is a plant target at both ends, so its path is the straight
 //   blend from the mat to the reach and never passes into the mat (the angle blend took the toe 1.3 cm in).
-//  Mistake (c7, c8): the low back sags into an arch: lumbar extension M_ARCH (trunk), the pelvis follows (tilt +8.3,
+//  Mistake (c7, c8): the low back sags into an arch: lumbar extension M_ARCH (trunk; plank.mjs:103 -30, the slice panel R5 basis), the pelvis follows (tilt +20.4,
 //   solved); the shoulders stay where they were (c11), the down hand, knee and toes stay on their spots (the knee joint
 //   held on its circle about the hip), the down arm stays straight and its palm flat; the raised arm stays level. With
-//   the hip angle unchanged the anterior tilt lifts the raised leg 8.3 deg past parallel (c7 "lifting the leg too high").
+//   the hip angle unchanged the anterior tilt lifts the raised leg 20.4 deg past parallel (c7 "lifting the leg too high").
 //  Balance (D-LIB21-BALANCE; Winter com on the drawn landmarks): start inside the four contacts; end and Mistake over
 //   the down hand-and-knee line (c2, c4, c5, c11): 0.08 / 0.22 cm from the grip-to-knee segment (within 2 cm), inside
 //   the hull of the flat palm, the knee and the toes by 1.18 / 1.44 cm. Ghosts: 1.11 / 0.61 cm from the line.
@@ -46,7 +46,7 @@
 import { landmarksOf, RADII, WINTER } from '../engine.mjs';
 
 const H = 1.75;
-export const SIZES = Object.freeze({ MAT_T: 0.01, MAT_LEN: 1.73, M_ARCH: -12 });
+export const SIZES = Object.freeze({ MAT_T: 0.01, MAT_LEN: 1.73, M_ARCH: -30 });
 const { MAT_T, MAT_LEN, M_ARCH } = SIZES;
 const WRIST_Y = MAT_T + RADII.fore[2] * H;     // flat palm (LIB-26): the wrist the forearm's distal radius above the mat top
 const WRIST = 90;                               // arms plumb: the wrist extends 90 deg and the palm lies flat (bear_crawl)
@@ -147,7 +147,7 @@ export default {
   ghosts: { count: 2, parts: ['arm.r', 'leg.l'] },
   trace: { point: 'ankle.l', trim: [10, 12] },
   callouts: [
-    { key: 'under', text: 'Hands, knees<br>under', anchor: 'buttock', box: { left: 60, top: 186 }, cue: 'Hands under the shoulders, knees under the hips.' },
+    { key: 'under', text: 'Hands,<br>knees<br>under', anchor: { at: 'wrist.l', off: [-5, -8] }, box: { left: 164, top: 283 }, cue: 'Hands under the shoulders, knees under the hips.' },
     { key: 'flat', text: 'Back flat', anchor: 'backMid', box: { left: 168, top: 196 }, cue: 'Spine neutral: no sagging or arching as the leg rises.' },
     { key: 'level', text: 'Arm, leg<br>level', anchor: { along: ['elbow.r', 'wrist.r'], t: 0.5, off: [0, -7] }, box: { left: 284, top: 172 }, cue: 'Arm and leg at or near parallel to the floor, hips level.' },
   ],
@@ -159,7 +159,7 @@ export default {
     ],
     tells: [
       { key: 'arch', text: 'Low back<br>arches', anchor: { along: ['sacrum', 'backMid'], t: 0.85, pose: 'mistake' }, box: { left: 150, top: 186 }, cue: 'The low back sags into an arch as the leg rises.' },
-      { key: 'high', text: 'Leg too high', anchor: { along: ['knee.l', 'ankle.l'], t: 0.4, pose: 'mistake', off: [0, -7] }, box: { left: 20, top: 200 }, cue: 'The leg lifts too high, past parallel to the floor.' },
+      { key: 'high', text: 'Leg too high', anchor: { along: ['knee.l', 'ankle.l'], t: 0.4, pose: 'mistake', off: [0, -7] }, box: { left: 20, top: 160 }, cue: 'The leg lifts too high, past parallel to the floor.' },
     ],
   },
   tempo: [{ phase: 'Reach', s: 3, move: true }, { phase: 'Hold', s: 3 }, { phase: 'Return', s: 3, move: true }],
