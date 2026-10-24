@@ -1,0 +1,931 @@
+{
+ "id": "bird_dog",
+ "libId": "lib_bird_dog",
+ "name": "Bird Dog",
+ "family": "Anti-extension and static core",
+ "tier": "C",
+ "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 2.",
+ "archetype": {
+  "hand": "palm-flat",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Start kneeling on a mat or the floor, knees and feet hip-width apart, toes pointing toward the body.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "ace-birddog",
+     "text": "Starting Position: Kneel on an exercise mat or floor, positioning your knees and feet hip-width apart, with your feet dorsi-flexed (toes pointing towards your body).",
+     "where": "Step 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Hands on the mat directly under the shoulders at shoulder-width, fingers facing forward; knees directly under the hips.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-birddog",
+    "bb-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "ace-birddog",
+     "text": "Slowly lean forward to place your hands on the mat, positioning them directly under your shoulders at shoulder-width with your fingers facing forward.",
+     "where": "Step 2"
+    },
+    {
+     "source": "ace-birddog",
+     "text": "Reposition your hands and knees as necessary so that your knees are directly under your hips and hands are directly under your shoulders.",
+     "where": "Step 2"
+    },
+    {
+     "source": "bb-birddog",
+     "text": "Get into a quadruped position by placing your hands directly underneath your shoulders and your knees under your hips. Establish a neutral spine.",
+     "where": "How to Do the Bird Dog, Step 1 — Set Up"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Stiffen the core to hold the spine neutral, avoiding excessive sagging or arching; the back stays flat in a straight line with a neutral neck and spine.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-birddog",
+    "ggr-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "ace-birddog",
+     "text": "Stiffen your core and abdominal muscles to position your spine in a neutral position, avoid any excessive sagging or arching.",
+     "where": "Step 3"
+    },
+    {
+     "source": "ggr-birddog",
+     "text": "we want to form a nice straight line with a flat back and a neutral neck and spine.",
+     "where": "Trainer Tips for Form, Maintain a Flat Back/Neutral Spine"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Slowly raise and straighten one leg until it is at or near parallel to the floor, with no rotation in the hip, keeping both hips parallel to the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "ace-birddog",
+     "text": "Hip Extension: Slowly extend your left hip (raise and straighten the knee) attempting to extend it until it is at, or near parallel, to the floor without any rotation in the hip. Your goal is to keep both hips parallel to the floor.",
+     "where": "Step 4"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "At the same time, slowly raise and straighten the opposite arm until it is at or near parallel to the floor, without tilting at the shoulders, keeping both shoulders parallel to the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "ace-birddog",
+     "text": "This exercise involves simultaneous movement of your leg and contralateral (opposite) arm.",
+     "where": "Step 4"
+    },
+    {
+     "source": "ace-birddog",
+     "text": "Shoulder flexion: Slowly flex your right arm (raise and straighten the arm) attempting to raise it until it is at, or near parallel, to the floor without any tilting at the shoulders. Your goal is to keep the both shoulders parallel to the floor.",
+     "where": "Step 5"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "The head stays aligned with the spine throughout; keep the neck and spine neutral by keeping the eyes on the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-birddog",
+    "ggr-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "ace-birddog",
+     "text": "Your head should remain aligned with the spine throughout the movement.",
+     "where": "Step 5"
+    },
+    {
+     "source": "ggr-birddog",
+     "text": "The idea is to keep your neck and spine in a neutral position as you move, so, even though it’ll be kinda boring, you have to make intense eye contact with the floor as you do your reps.",
+     "where": "Trainer Tips for Form, Keep Your Gaze Toward the Ground"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "As the leg is raised, the low back may sag into more arch (lumbar lordosis); raise the limbs only as high as the low back position can be held, and avoid lifting the leg too high.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ace-birddog",
+    "hl-birddog",
+    "mo-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "ace-birddog",
+     "text": "As the leg is raised, individuals may witness an increase in lumbar lordosis (low back sagging). Only raise the limbs to heights where the low back position can be maintained through the combined actions of the core and abdominal muscles.",
+     "where": "Step 6"
+    },
+    {
+     "source": "hl-birddog",
+     "text": "Avoid lifting your leg too high or allowing your spine to curve past its natural position.",
+     "where": "Proper technique and alignment tips"
+    },
+    {
+     "source": "mo-birddog",
+     "text": "Lengthen limbs, don't lift high",
+     "where": "Coaching Tips, Form Cues"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Arching the lower back is a named bird dog mistake; arching or rounding the back puts increased stress on the lumbar spine, which can lead to lower back pain and increase the risk of injury.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-birddog",
+    "mo-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-birddog",
+     "text": "“Arching or rounding the back puts increased stress on the lumbar spine,” Kate says, “which can lead to lower back pain and increase your risk of injury.”",
+     "where": "Common Bird Dog Mistakes, Arching the Back"
+    },
+    {
+     "source": "mo-birddog",
+     "text": "Arching lower back",
+     "where": "Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Lifting the head to look forward instead of keeping the eyes on the floor takes the neck out of alignment, increasing the risk of injury.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-birddog",
+     "text": "“Lifting your head to look forward instead of keeping your eyes fixed on the floor will take your neck out of alignment,” says Kate, “increasing your risk of injury.”",
+     "where": "Common Bird Dog Mistakes, Looking Forward Instead of Down"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Moving too quickly is a named bird dog mistake: slow the reps down; moving too fast can make you lose balance faster and cancels the benefits of going slowly and deliberately.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-birddog",
+    "mo-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "bb-birddog",
+     "text": "If your mindset with bird dogs is to get them done just because you should, you probably need to slow down your reps.",
+     "where": "Common Bird Dog Mistakes, Moving Too Quickly"
+    },
+    {
+     "source": "bb-birddog",
+     "text": "But moving too fast can actually make you lose your balance faster — and also cancel out the benefits of going slowly and deliberately, which increases muscle engagement.",
+     "where": "FAQs, What if I keep tipping over during the bird dog?"
+    },
+    {
+     "source": "mo-birddog",
+     "text": "Rushing the movement",
+     "where": "Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Press down into the ground with the non-moving hand, knee and toes; this helps prevent the hips and shoulders from shifting.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "bb-birddog",
+     "text": "Focus on pressing down into the ground with your non-moving hand, knee, and toes.",
+     "where": "Common Bird Dog Mistakes, Not Engaging the Ground"
+    },
+    {
+     "source": "bb-birddog",
+     "text": "This will help prevent you from shifting your hips and shoulders during the movement.",
+     "where": "Common Bird Dog Mistakes, Not Engaging the Ground"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Keep the hips level and do not rotate the pelvis; to avoid tilted hips, press the floor with the unmoving limbs and keep the core tight; rotating the hips or shoulders is a named mistake.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-birddog",
+    "bb-birddog",
+    "mo-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "hl-birddog",
+     "text": "Keep your hips level. Don’t rotate your pelvis.",
+     "where": "Proper technique and alignment tips"
+    },
+    {
+     "source": "bb-birddog",
+     "text": "To avoid tilted hips, press down into the floor with your unmoving limbs. Keep your core tight the entire time.",
+     "where": "Common Bird Dog Mistakes, Shifting Your Hips"
+    },
+    {
+     "source": "mo-birddog",
+     "text": "Rotating hips or shoulders",
+     "where": "Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Keep breathing smoothly and evenly; holding the breath is a named mistake, and syncing breath with the movement is a reminder not to hold it.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "hl-birddog",
+    "mo-birddog",
+    "ggr-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "hl-birddog",
+     "text": "Maintain smooth and even breathing.",
+     "where": "Proper technique and alignment tips"
+    },
+    {
+     "source": "mo-birddog",
+     "text": "Holding breath",
+     "where": "Common Mistakes"
+    },
+    {
+     "source": "ggr-birddog",
+     "text": "It’s also a reminder to not hold our breath; something many of us are guilty of, especially when the going gets tough!",
+     "where": "Trainer Tips for Form, Breathe In Sync With Your Movements"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "Hold the reached position briefly (a beat, or a few seconds), then lower back to the start and repeat with the opposite arm and leg.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-birddog",
+    "hl-birddog",
+    "ace-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "bb-birddog",
+     "text": "Once you reach full extension, maintain the position for a beat.",
+     "where": "How to Do the Bird Dog, Step 3 — Return to Start and Repeat"
+    },
+    {
+     "source": "hl-birddog",
+     "text": "Hold this position for a few seconds, then lower back down to the starting position.",
+     "where": "How to do the Bird Dog exercise"
+    },
+    {
+     "source": "ace-birddog",
+     "text": "Downward Phase: Gently lower yourself back to your starting position and repeat with the opposite limbs.",
+     "where": "Step 7"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "The bird dog targets the erector spinae; the back works hard during the move and is one of the key parts of keeping the body stable.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-birddog",
+    "mo-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "bb-birddog",
+     "text": "By extending your opposite arm and leg, you’re targeting your erector spinae, which extends from your neck to your hip.",
+     "where": "Benefits of the Bird Dog, Increase Spinal Stability"
+    },
+    {
+     "source": "bb-birddog",
+     "text": "Your back is, indeed, part of your core. It will be working plenty hard during this move.",
+     "where": "Muscles Worked by the Bird Dog, Erector Spinae"
+    },
+    {
+     "source": "bb-birddog",
+     "text": "your back will be one of the key components of keeping your body stable.",
+     "where": "Muscles Worked by the Bird Dog, Erector Spinae"
+    },
+    {
+     "source": "mo-birddog",
+     "text": "A bodyweight core stability exercise from a tabletop position that extends the opposite arm and leg, targeting erector spinae, abs, and glutes",
+     "where": "Page summary"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "The glutes kick in as the moving leg kicks back; one coaching page lists abs and glutes as the primary muscle groups and hamstrings as secondary.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-birddog",
+    "mo-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "bb-birddog",
+     "text": "Your glutes will kick in when you kick back with your moving leg.",
+     "where": "Muscles Worked by the Bird Dog, Glutes"
+    },
+    {
+     "source": "mo-birddog",
+     "text": "Abs, Glutes",
+     "where": "About Exercise, Primary Muscle Groups"
+    },
+    {
+     "source": "mo-birddog",
+     "text": "Hamstrings, Shoulders",
+     "where": "About Exercise, Secondary Muscles"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "The rectus abdominis, the front of the core, works hard to keep the body stable during the move.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "bb-birddog",
+     "text": "Your rectus abdominis, that front part of your core, will be working hard to keep you stable during this move.",
+     "where": "Muscles Worked by the Bird Dog, Rectus Abdominis"
+    }
+   ]
+  },
+  {
+   "id": "c18",
+   "text": "In 13 outpatients with non-specific low back pain (surface EMG, 3 repetitions at a 15-repetition maximum), the bird dog was especially effective at activating the lumbar erector spinae (median 29 % of maximum).",
+   "tags": [
+    "DATA"
+   ],
+   "sources": [
+    "calatayud-2019"
+   ],
+   "quotes": [
+    {
+     "source": "calatayud-2019",
+     "text": "13 outpatients (average age 52 years; all with standing or walking work in their current or latest job) performed 3 consecutive repetitions at 15-repetition maximum during different exercises in random order.",
+     "where": "abstract"
+    },
+    {
+     "source": "calatayud-2019",
+     "text": "The squat and bird-dog exercises are especially effective in activing the lumbar erector spinae; with nEMG of 40% (24-87%) and 29% (27-46%), respectively.",
+     "where": "abstract"
+    }
+   ]
+  },
+  {
+   "id": "c19",
+   "text": "Stop if any pain occurs; if form cannot be held, stop and rest rather than straining the back with sloppy reps.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-birddog",
+    "hl-birddog",
+    "ggr-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "mo-birddog",
+     "text": "Stop if any pain occurs",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "hl-birddog",
+     "text": "If you develop any pain or discomfort during or after the exercise, discontinue the practice and talk with a doctor or certified personal trainer.",
+     "where": "Conclusion"
+    },
+    {
+     "source": "ggr-birddog",
+     "text": "If you find yourself struggling to maintain proper form, listen to your body and stop.",
+     "where": "Common Bird Dog Mistakes, Arching the Back"
+    },
+    {
+     "source": "ggr-birddog",
+     "text": "You’re better off resting and finishing the set with good form after a breather than to eke out sloppy reps and strain your back muscles in the process.",
+     "where": "Common Bird Dog Mistakes, Arching the Back"
+    }
+   ]
+  },
+  {
+   "id": "c20",
+   "text": "Tempo: one coaching page lists 3-2-3 for the bird dog; read through its site-wide Tempo tooltip (eccentric, bottom pause, concentric, top pause), that is 3 s to return the limbs, a 2 s pause at the start position and 3 s to extend them. Tagged WEAK: one coach page, three numbers read against a four-number format, and lowering and lifting mapped onto a bodyweight reach.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "mo-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "mo-birddog",
+     "text": "3-2-3",
+     "where": "Coaching Tips, Tempo"
+    },
+    {
+     "source": "mo-birddog",
+     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+     "where": "Tempo heading tooltip (served HTML)"
+    }
+   ]
+  },
+  {
+   "id": "c21",
+   "text": "Hold the extended position for 3-5 seconds, keeping the hips and shoulders level, then slowly return the arm and leg.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "mo-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "mo-birddog",
+     "text": "Hold position for 3-5 seconds while keeping hips and shoulders level.",
+     "where": "How to Perform"
+    },
+    {
+     "source": "mo-birddog",
+     "text": "Slowly return arm and leg to starting position.",
+     "where": "How to Perform"
+    }
+   ]
+  },
+  {
+   "id": "c22",
+   "text": "Use a mat, cushion or folded towel under the knees for comfort.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "mo-birddog",
+    "hl-birddog"
+   ],
+   "quotes": [
+    {
+     "source": "mo-birddog",
+     "text": "Use mat for knee comfort",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "hl-birddog",
+     "text": "Place a flat cushion or folded towel under your knees for extra cushioning.",
+     "where": "How to do the Bird Dog exercise"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "ace-birddog",
+   "url": "https://www.acefitness.org/resources/everyone/exercise-library/14/bird-dog/",
+   "title": "Bird Dog | Exercise Library | ACE",
+   "kind": "guideline",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "bb-birddog",
+   "url": "https://barbend.com/bird-dog-exercise/",
+   "title": "Master the Bird Dog to Give Your Core Routine Wings | BarBend",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ggr-birddog",
+   "url": "https://www.garagegymreviews.com/bird-dog-exercise",
+   "title": "The Bird Dog Exercise: Your Ticket to a Strong Core | Garage Gym Reviews",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "hl-birddog",
+   "url": "https://www.healthline.com/health/bird-dog-exercise",
+   "title": "Bird Dog Exercise: How to Do, Variations, and Muscles Targeted",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "mo-birddog",
+   "url": "https://www.motra.com/exercises/birdDog",
+   "title": "Bird Dog - Exercise Guide | Motra",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "calatayud-2019",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/31547140/",
+   "title": "Tolerability and Muscle Activity of Core Muscle Exercises in Chronic Low-back Pain.",
+   "kind": "peer-reviewed",
+   "year": 2019,
+   "pmid": 31547140,
+   "access": "abstract",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side: the low back's sag as the leg rises (c7, c8), the limbs at or near parallel to the floor (c4, c5) and the head in line (c6) read from the side. The census note says the hip rotation fault (c12) cannot be drawn from this view.",
+  "equipment": "Floor line and mat under the knees (c22).",
+  "start": "On all fours: knees and feet hip-width, toes tucked toward the body (c1); hands flat under the shoulders, fingers forward, knees under the hips (c2); spine neutral, back flat (c3); head in line, eyes on the floor (c6).",
+  "end": "One leg straight back at or near parallel to the floor and the opposite arm straight forward at or near parallel (c4, c5); hips and shoulders level (c4, c5); low back still flat (c3, c7); head in line (c6). Held briefly (c14, c21).",
+  "checkpoints": [
+   {
+    "label": "Hands, knees under",
+    "what": "Hands under the shoulders, knees under the hips.",
+    "claim": "c2"
+   },
+   {
+    "label": "Back flat",
+    "what": "Spine neutral: no sagging or arching as the leg rises.",
+    "claim": [
+     "c3",
+     "c7"
+    ]
+   },
+   {
+    "label": "Arm, leg level",
+    "what": "Arm and leg at or near parallel to the floor, hips level.",
+    "claim": [
+     "c4",
+     "c5"
+    ]
+   }
+  ],
+  "mistake": {
+   "what": "Low back arching, sagging toward the floor as the leg rises.",
+   "why": "LR-31 step 2: Garage Gym Reviews lists Arching the Back first among its common bird dog mistakes and says arching or rounding the back stresses the lumbar spine and can lead to lower back pain (c8); Motra lists \"Arching lower back\" first (c8). ACE says the low back may sag into more lordosis as the leg is raised (c7). The sagging low back shows from the side. How often it happens is not measured.",
+   "claim": [
+    "c8",
+    "c7"
+   ],
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: arching the lower back (c8). Common-mistakes lists read (all written for this exercise), in source order: BarBend \"Common Bird Dog Mistakes\": Moving Too Quickly, Not Engaging the Ground, Shifting Your Hips; Garage Gym Reviews \"Common Bird Dog Mistakes\": Arching the Back, Looking Forward Instead of Down, Moving Arms and Legs Out of Sync; Motra \"Common Mistakes\": Arching lower back, Rotating hips or shoulders, Lifting limbs too high, Rushing the movement, Sagging in hold position, Holding breath. ACE (steps only), Healthline (alignment tips only) and Calatayud (abstract) have no list. Step 1: no frequency word counts for a fault of this exercise. Set aside: Garage Gym Reviews' \"Here are some of the most common mistakes people make when learning and performing the bird dog exercise, so you know what to avoid!\" and BarBend's \"Make sure you’re not making these common mistakes with the bird dog.\" are list sentences and are not read onto one item; Garage Gym Reviews' \"It’s also a reminder to not hold our breath; something many of us are guilty of, especially when the going gets tough!\" (c13) is about holding the breath under effort in general (\"many of us\", \"when the going gets tough\"), a statement about all training (R-LB7-3; supervisor's bird_dog step-1 ruling, #295 point 8); BarBend's \"For many athletes, it’s tempting to move quickly to try and eke out your reps before you topple over.\" and Garage Gym Reviews' \"You’ll be tempted to arch as your core gets sore, but fight the urge!\" say the fault tempts, not that many make it (read like 'tend'; the same ruling); BarBend's \"That can be a lot of coordination for many lifters to sort out\" is about coordination, and the embedded video title \"The Most Common #Exercise for Low Back Pain | Bird Dog\" is about the exercise; Garage Gym Reviews' \"those who perform core exercises regularly, tend to have less NSLBP symptoms\", \"commonly referred to as the “six-pack” muscle\", \"often included during Pilates and/or core-based workouts\" and the author line \"is often found running\" name no fault; Healthline's \"suitable for most people\" is about the exercise; ACE's \"individuals may witness an increase in lumbar lordosis (low back sagging)\" (c7) uses 'may'; Calatayud's \"Most of the studies evaluating core muscle activity\" is about studies. Step 2: two named faults are tied to harm, both on Garage Gym Reviews' list: arching the back (\"“Arching or rounding the back puts increased stress on the lumbar spine,” Kate says, “which can lead to lower back pain and increase your risk of injury.”\", c8; also Motra's item 1 \"Arching lower back\") and looking forward (\"“Lifting your head to look forward instead of keeping your eyes fixed on the floor will take your neck out of alignment,” says Kate, “increasing your risk of injury.”\", c9; its tip \"Looking anywhere else could take your neck out of alignment and increase your risk of injury.\" is the same fault). Tie order: both on a common-mistakes list; one source ties each to harm (Garage Gym Reviews); both direct; the earlier on a list that names both (Garage Gym Reviews: Arching the Back, then Looking Forward Instead of Down) picks the arch. Set aside at step 2: Motra's \"Focus on control to prevent strain\" names no fault (as cable_external_rotation c13's \"Maintain strict form to prevent strain\"); read as the cue against its item 4 \"Rushing the movement\", the arch still wins, earlier on Motra's list, which names both. Garage Gym Reviews' \"You’re better off resting and finishing the set with good form after a breather than to eke out sloppy reps and strain your back muscles in the process.\" (c19) sits under the arch item and adds to the same fault. Motra's \"Stop if any pain occurs\" and \"Avoid if acute back or shoulder pain present\" and Healthline's \"If you develop any pain or discomfort during or after the exercise, discontinue the practice\" (c19) name no fault (stop rules and a condition). Healthline's and Garage Gym Reviews' low back pain lines (\"relieve lower back pain\", \"Low back pain has been the leading cause of global disability\", \"less pain\"), Motra's \"back pain prevention\" and Calatayud's patients with low back pain are benefits or study groups, not faults. BarBend's \"without having to put any pressure on your wrists or knees\" (the standing variation) and \"without the pressure of a heavy barbell\" name no fault of this exercise; its list ties no item to harm; Healthline's \"Keep your spine neutral and engage your core to prevent your back from sagging\" and \"Move slowly with control, avoiding rotation or overarching your back\" state no harm. The arch has a still sign the side view shows (the low back sagging as the leg rises), so drawable is true.",
+   "drawable": true
+  },
+  "tells": [
+   {
+    "text": "Back stays flat as the leg rises",
+    "claim": [
+     "c3",
+     "c7"
+    ]
+   },
+   {
+    "text": "Hips stay level, not tilting",
+    "claim": [
+     "c4",
+     "c12"
+    ]
+   },
+   {
+    "text": "Eyes stay on the floor",
+    "claim": "c6"
+   }
+  ],
+  "tempo": {
+   "up": 3,
+   "down": 3,
+   "pause": 3,
+   "claim": [
+    "c20",
+    "c21"
+   ],
+   "text": "All three numbers come from one source, Motra. Up 3 and down 3 are its Tempo 3-2-3 (c20, WEAK). Its Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause; the page shows three numbers, read as the first three, so the first 3 is the eccentric (returning the arm and leg), the middle 2 is the bottom pause, and the last 3 is the concentric (raising them). On the bird dog the bottom pause is at the start position on all fours, between the return and the next reach, so the 2 s is named here and not written in pause, which LR-33 keeps for the pause right after the concentric. 3-2-3 has no fourth number, so it fixes no top pause. Pause 3 is Motra's own How to Perform step \"Hold position for 3-5 seconds\" (c21), which sits right after the reach (LR-33; R-LB2-1, sourced seconds used as sourced). 3 is the lowest value the range allows (D-SUP-LB9-RANGE). BarBend's \"maintain the position for a beat\" and Healthline's \"Hold this position for a few seconds\" (c14) give no seconds. Garage Gym Reviews' Pause Bird Dog (15-30 s) is a named variation, not this exercise."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "",
+  "width": "Shoulder-width (c2).",
+  "thumb": "",
+  "handContact": "Hands flat on the mat directly under the shoulders, fingers facing forward (c2).",
+  "wrist": "",
+  "claims": [
+   "c2"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Kneel on a mat, knees and feet hip-width apart.",
+   "claim": "c1"
+  },
+  {
+   "step": "Put a cushion or folded towel under your knees.",
+   "claim": "c22"
+  },
+  {
+   "step": "Hands on the mat under your shoulders, fingers forward.",
+   "claim": "c2"
+  },
+  {
+   "step": "Knees directly under your hips.",
+   "claim": "c2"
+  },
+  {
+   "step": "Hold your spine neutral, back flat.",
+   "claim": "c3"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Back flat: no sagging or arching.",
+   "claim": "c3"
+  },
+  {
+   "point": "Raise the limbs only as high as you can hold your low back.",
+   "claim": "c7"
+  },
+  {
+   "point": "Keep your hips and shoulders level.",
+   "claim": [
+    "c4",
+    "c5",
+    "c12"
+   ]
+  },
+  {
+   "point": "Move slowly and keep breathing.",
+   "claim": [
+    "c10",
+    "c13"
+   ]
+  },
+  {
+   "point": "Head in line with your spine, eyes on the floor.",
+   "claim": "c6"
+  },
+  {
+   "point": "Press the floor with your unmoving hand, knee and toes.",
+   "claim": [
+    "c11",
+    "c12"
+   ]
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Arching the lower back as the leg rises.",
+   "fix": "Raise the limbs only as high as you can hold your low back.",
+   "claim": [
+    "c8",
+    "c7"
+   ]
+  },
+  {
+   "mistake": "Lifting your head to look forward.",
+   "fix": "Keep your eyes on the floor, head in line with your spine.",
+   "claim": [
+    "c9",
+    "c6"
+   ]
+  },
+  {
+   "mistake": "Hips tilting or rotating.",
+   "fix": "Press the floor with your unmoving hand, knee and toes. Keep your hips level.",
+   "claim": [
+    "c12",
+    "c11"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "lower_back",
+    "claim": [
+     "c15",
+     "c18"
+    ]
+   },
+   {
+    "muscleId": "glutes",
+    "claim": "c16"
+   },
+   {
+    "muscleId": "abs",
+    "claim": [
+     "c17",
+     "c16"
+    ]
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "hamstrings",
+    "claim": "c16"
+   }
+  ],
+  "watch": [],
+  "rows": [
+   {
+    "where": "Low back",
+    "means": "Your back is working to keep your body stable.",
+    "fix": "",
+    "claim": [
+     "c15",
+     "c18"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Glutes of the raised leg",
+    "means": "Your glutes kick in as the leg kicks back.",
+    "fix": "",
+    "claim": "c16",
+    "redFlag": null
+   },
+   {
+    "where": "Low back pain",
+    "means": "Fault: arching the back can lead to lower back pain.",
+    "fix": "Stop if any pain occurs. Keep your back flat.",
+    "claim": [
+     "c8",
+     "c19",
+     "c3"
+    ],
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Arching or rounding the back puts increased stress on the lumbar spine.",
+   "claim": "c8"
+  },
+  {
+   "risk": "Lifting your head to look forward takes your neck out of alignment, increasing your risk of injury.",
+   "claim": "c9"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "back-line",
+   "kind": "posture",
+   "right": "Back flat as the leg rises.",
+   "wrong": "Low back sagging into an arch.",
+   "claim": [
+    "c3",
+    "c7",
+    "c8"
+   ]
+  },
+  {
+   "key": "head",
+   "kind": "posture",
+   "right": "Head in line, eyes on the floor.",
+   "wrong": "Head lifted to look forward.",
+   "claim": [
+    "c6",
+    "c9"
+   ]
+  },
+  {
+   "key": "hands",
+   "kind": "hand",
+   "right": "Hands under the shoulders, fingers facing forward.",
+   "wrong": null,
+   "claim": "c2"
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   {
+    "muscleId": "lower_back",
+    "role": "primary (from secondary)",
+    "claim": [
+     "c15",
+     "c18"
+    ],
+    "why": "BarBend says the bird dog targets the erector spinae and Motra names it first among its targets (c15); EMG in low-back-pain patients found it especially effective at activating the lumbar erector spinae (c18)."
+   },
+   {
+    "muscleId": "glutes",
+    "role": "primary (from secondary)",
+    "claim": "c16",
+    "why": "Motra lists glutes with abs as the primary muscle groups; BarBend says the glutes kick in as the leg kicks back (c16)."
+   },
+   {
+    "muscleId": "abs",
+    "role": "primary",
+    "claim": [
+     "c17",
+     "c16"
+    ],
+    "why": "BarBend says the rectus abdominis works hard to keep you stable (c17) and Motra lists abs as a primary group (c16). abs is the drawn region for the library's text-only core (content.md 8; bear_crawl, R-W0-4)."
+   },
+   {
+    "muscleId": "hamstrings",
+    "role": "secondary",
+    "claim": "c16",
+    "why": "Motra lists hamstrings as secondary (c16)."
+   }
+  ],
+  "remove": [],
+  "why": "Library: core primary (text-only, nothing to draw); lower_back and glutes secondary. core stays in the library primary and in no feel role (LR-35). The proposal draws lower_back, glutes and abs as primary and hamstrings as secondary, from the claims named. A proposal for the LIB data card."
+ },
+ "anchorSource": "ace-birddog",
+ "gaps": [],
+ "notes": [
+  "Shared cards: palm-flat.json (appliesTo lists bird_dog; byRule shoulderOverHand cites ace-birddog, its c6) and floor-body.json (appliesTo lists bird_dog; default checkpoint head-in-line, its c4 from ace-birddog). No line is copied: the card's own c2 and c6 re-quote ACE and the other sources for the hands and the head.",
+  "feel.primary: the census primary is core, which LR-35 keeps out of every feel role. The card draws lower_back, glutes and abs as primary from its own claims (c15-c18), as the libraryDiff proposal says, rather than leaving primary empty (cable_external_rotation, D-SUP-LB7-NOPRIMARY): here three drawable muscles are named as targets by coach pages and one by EMG data.",
+  "Breathing conflict: BarBend inhales as the limbs lengthen and exhales on the return; Motra exhales as the arm and leg extend. No breath direction is shown; the card keeps only steady breathing and not holding the breath (c13).",
+  "Not used: Healthline's \"tuck your chin into your chest to gaze down at the floor\" (the other sources keep the neck neutral, c6); ACE's light bar across the hips or shoulders (an optional feedback tool, not drawn); BarBend's knee-to-elbow finish (an option); the variations (twisted, renegade, elevated, standing, weighted, banded, pause) are other exercises.",
+  "Read and not cited: McGill and Karpowicz 2009 (PMID 19154838, abstract): bird dog EMG with corrective techniques, no finding this card needs. Tried and not readable: strengthlog.com/bird-dog/ (429 on three tries), verywellfit (402), fitnessvolt and blog.nasm.org slugs (404)."
+ ]
+}

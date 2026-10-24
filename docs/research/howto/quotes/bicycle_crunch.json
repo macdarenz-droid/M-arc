@@ -1,0 +1,391 @@
+{
+ "id": "bicycle_crunch",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "ggr-bicycle",
+   "text": "Lie face up with your lower back on the ground.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "ggr-bicycle",
+   "text": "Bend your knees at a 90-degree angle, slightly above your hips.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-bicycle",
+   "text": "Lie on your back with your hands behind your head and your legs raised, knees bent at 90 degrees.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "ggr-bicycle",
+   "text": "Place your hands lightly behind your ears (making sure not to strain your neck) and raise your head and torso so your shoulder blades are off the ground.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "motra-bicycle",
+   "text": "Place hands lightly behind your head with elbows wide.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "motra-bicycle",
+   "text": "Elbows stay wide.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "motra-bicycle",
+   "text": "Elbows caving in.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "motra-bicycle",
+   "text": "Engage your core and lift shoulder blades off the floor.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-bicycle",
+   "text": "Lift your head and shoulders off the ground by engaging your core.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-bicycle",
+   "text": "Extend your right leg while simultaneously rotating your torso to bring your right elbow toward your left knee.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-bicycle",
+   "text": "Switch sides in a pedaling motion by extending your left leg and bringing your left elbow toward your right knee.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-bicycle",
+   "text": "Continue alternating sides in a controlled and steady rhythm for the desired number of reps.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "ggr-bicycle",
+   "text": "Extend your left leg and bring your left elbow to the inside of your right knee.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "motra-bicycle",
+   "text": "Lift shoulders until elbow nears opposite knee; extend leg to 6-12 inches above floor without touching down.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "motra-bicycle",
+   "text": "Touching extended leg down.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "motra-bicycle",
+   "text": "Keep lower back pressed into the floor throughout.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-bicycle",
+   "text": "While you may need to rest after a few reps, keep your core tight and your lower back pressed into the floor.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "ggr-bicycle",
+   "text": "Engage your core muscle by continuing to press your lower back into the ground.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "pg-bicycle",
+   "text": "To protect your lower back, keep it pressed against the floor throughout and only allow your torso to rotate. If your back starts to arch it will shift the tension away from the core and onto the lower back, exposing it to injury risks.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "motra-bicycle",
+   "text": "Arching lower back.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ggr-bicycle",
+   "text": "Your upper body and core should do all the rotation, not your hips. Additionally, your legs should move back and forth in a biking motion, but your hips should stay still. Keeping your lower back pressed into the ground should stop any excess hip rotation.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "pg-bicycle",
+   "text": "Aim to keep the lower back pressed against the floor and hips in a neutral position during the move, with only the torso rotating. This helps to reduce risk of injury to the lower back and neck.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-bicycle",
+   "text": "During the bicycle crunch, one common mistake is pulling on your neck with your hands. This can strain the neck muscles and shift the focus away from the core.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-bicycle",
+   "text": "Instead, place your hands lightly behind your head for support, and avoid actively pulling on your neck as a way of “forcing” more range of motion.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "motra-bicycle",
+   "text": "Pulling on neck.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "motra-bicycle",
+   "text": "Rotate from ribs, not neck.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "ggr-bicycle",
+   "text": "Don’t pull on your head or neck with your hands while doing the rotation. If you find your neck hurting or straining while rotating, just rotate as far as you can without discomfort.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-bicycle",
+   "text": "Rapidly performing bicycle crunches with momentum can reduce the effectiveness of the exercise. Slow, controlled movements allow for proper muscle engagement and ensure the core muscles do the work.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "ggr-bicycle",
+   "text": "Before performing it with speed, ensure good movement by doing it with control. Plus, slowing the movement down a tad will help you get more out of this functional core exercise and prevent neck and back pain.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "motra-bicycle",
+   "text": "Using momentum.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "motra-bicycle",
+   "text": "Keep movements controlled to prevent injury.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "pg-bicycle",
+   "text": "Performing bicycle crunches in a slow, controlled manner is important to ensure the core controls the movement rather than shifting the tension to other muscles.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "ggr-bicycle",
+   "text": "Your eyes should be following your working elbow to get the full benefit of this rotational movement while keeping your head and neck safe.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "bb-bicycle",
+   "text": "As you draw your arm toward your knee, exhale sharply (this will also help you contract your abs a bit more). Then, as you release and change limbs, inhale a fresh breath.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "motra-bicycle",
+   "text": "Exhale during the crunch and rotation; inhale as you return to center.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "sl-bicycle",
+   "text": "Primary muscles worked: Obliques Secondary muscles worked: Abs",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "bb-bicycle",
+   "text": "Located in the front of the abdomen, the rectus abdominis is commonly called the “six-pack” muscles.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "bb-bicycle",
+   "text": "The obliques are located on the sides of the waist.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "bb-bicycle",
+   "text": "Your rectus abdominis flexes the spine and assists in the forward crunching motion during bicycle crunches.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "bb-bicycle",
+   "text": "The external obliques are involved in the rotation and side-bending movements during bicycle crunches, while the internal obliques help stabilize the core.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "ggr-bicycle",
+   "text": "The bicycle crunch is a safe and effective core workout for the rectus abdominis, oblique muscles, and hip flexors, especially when you pay attention to these trainer tips on form to do it correctly.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "motra-bicycle",
+   "text": "Hip Flexors, Quads, Hamstrings",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "motra-bicycle",
+   "text": "Stop if neck strain occurs.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "motra-bicycle",
+   "text": "Avoid if acute back or neck pain exists.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "motra-bicycle",
+   "text": "2-0-2",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "motra-bicycle",
+   "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "motra-bicycle",
+   "text": "Maintain slow, deliberate pace without momentum.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "bb-bicycle",
+   "text": "To make bicycle crunches more challenging, you can increase repetitions, slow down the tempo, add weight or resistance, focus on isometric holds, increase speed and intensity, and incorporate alternating variations.",
+   "status": "verbatim",
+   "closest": "",
+   "note": ""
+  }
+ ]
+}
