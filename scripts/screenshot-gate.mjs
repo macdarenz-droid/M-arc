@@ -9571,8 +9571,14 @@ if (gate.runs('LIB-STRIP'))
     const E = await loadEngine(mirror), squat = await E.spec('barbell_back_squat');
     const cands = extractPlates(html).map(p => ({ id: p.chromeId, chromeId: p.chromeId, plate: p, spec: { ...squat, tempo: tempos[p.chromeId.replace(/-/g, '_')] ?? squat.tempo } }));
     if (cands.length !== ids.length) errors.push(`${tag}: ${cands.length} cards extracted, want ${ids.length}`);
-    const { cards, errors: pageErrors } = await measurePage(stripBrowser, html, cands, E, { css: '#card-strip-seed .tempo-label { min-width: 160px; }' });
-    for (const m of pageErrors) errors.push(`${tag}: page error: ${m}`);
+    // D-STRIP-GATETIME: measurePage itself on 4 disjoint sets of cards side by side (each set measures every theme and
+    // width once, so the first cell's label-ink pass still runs once per card); judge gets every card back
+    const css = '#card-strip-seed .tempo-label { min-width: 160px; }', cards = {}, sets = [0, 1, 2, 3].map(k => cands.filter((_, i) => i % 4 === k));
+    for (const p of await Promise.all(sets.map(set => measurePage(stripBrowser, html, set, E, { css })))) {
+      for (const m of p.errors) errors.push(`${tag}: page error: ${m}`);
+      Object.assign(cards, p.cards);
+    }
+    if (Object.keys(cards).length !== cands.length) errors.push(`${tag}: ${Object.keys(cards).length} cards measured, want ${cands.length}`);
     const envelope = loadPins().envelope;
     let real = 0;
     for (const c of cands) {
