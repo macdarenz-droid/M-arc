@@ -190,21 +190,6 @@
    ],
    "stage": "review"
   },
-  "lib_plank": {
-   "src": "library/specs/plank.mjs",
-   "slug": "plank",
-   "prefix": "plank",
-   "chromeId": "plank",
-   "mode": "H",
-   "view": "side",
-   "sources": [
-    "Front Plank (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/",
-    "An electromyographic comparison of a modified version of the plank with a long lever and posterior tilt versus the traditional plank exercise (2014). https://pubmed.ncbi.nlm.nih.gov/25325773/ PMID 25325773",
-    "Influence of Scapular Position on the Core Musculature Activation in the Prone Plank Exercise (2017). https://pubmed.ncbi.nlm.nih.gov/27787465/ PMID 27787465",
-    "Try this move for better core strength (Harvard Health Publishing; quotes Dr. Edward Phillips, Harvard Medical School). https://www.health.harvard.edu/back-pain/try-this-move-for-better-core-strength"
-   ],
-   "stage": "review"
-  },
   "lib_mountain_climbers": {
    "src": "library/specs/mountain_climbers.mjs",
    "slug": "mountain-climbers",

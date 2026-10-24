@@ -155,7 +155,8 @@
    "class": "hold plate",
    "rulings": {
     "F1": "D-LIB8-floor (floor-horizontal class): floor at the approved y, scale up to x1.35 of 146.29 px/m to fill the width between the approved side margins"
-   }
+   },
+   "held": "Mistake redrawn in LIB-21: hiked hips (D-SUP-LB9-PLANK; D-LIB8M-PLANKHOLD, #109 6381763639)"
   },
   {
    "id": "mountain_climbers",
