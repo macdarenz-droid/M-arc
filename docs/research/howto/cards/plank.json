@@ -27,7 +27,7 @@
         {
           "source": "ace-plank",
           "text": "Lie prone (on your stomach) on an exercise mat or floor with your elbows close to your sides and directly under your shoulders, palms down and hands facing forward.",
-          "where": "Step 1: Starting Position"
+          "where": "Step 1 Starting Position"
         }
       ]
     },
@@ -44,7 +44,7 @@
         {
           "source": "ace-plank",
           "text": "Contract your quadriceps to extend your legs and dorsiflex your ankles (pull toes towards your shins). Contract your core and abdominal muscles to stiffen your torso.",
-          "where": "Step 1: Starting Position"
+          "where": "Step 1 Starting Position"
         }
       ]
     },
@@ -61,7 +61,7 @@
         {
           "source": "ace-plank",
           "text": "Slowly lift your entire torso off the floor or mat, maintaining a stiff torso and legs.",
-          "where": "Step 2: Upward Phase"
+          "where": "Step 2 Upward Phase"
         }
       ]
     },
@@ -78,7 +78,7 @@
         {
           "source": "ace-plank",
           "text": "Avoid any arching (sagging) in your low back, hiking (upwards) in your hips or bending in the knees.",
-          "where": "Step 2: Upward Phase"
+          "where": "Step 2 Upward Phase"
         }
       ]
     },
@@ -95,7 +95,7 @@
         {
           "source": "ace-plank",
           "text": "Avoid shrugging your shoulder and keep your shoulders positioned directly over your elbows with your palms facing down.",
-          "where": "Step 2: Upward Phase"
+          "where": "Step 2 Upward Phase"
         }
       ]
     },
@@ -112,7 +112,7 @@
         {
           "source": "ace-plank",
           "text": "Continue to breath while holding this position for a specified time (5+ seconds).",
-          "where": "Step 2: Upward Phase"
+          "where": "Step 2 Upward Phase"
         }
       ]
     },
@@ -129,7 +129,7 @@
         {
           "source": "ace-plank",
           "text": "While maintaining a stiff torso and extended knees, gently lower your body back towards the mat or floor before relaxing.",
-          "where": "Step 3: Downward Phase"
+          "where": "Step 3 Downward Phase"
         }
       ]
     },
@@ -146,13 +146,13 @@
         {
           "source": "ace-plank",
           "text": "If you experience any pain in the low back with this movement, stop the exercise immediately and consult with your doctor.",
-          "where": "caution note"
+          "where": "Step 3 Downward Phase (closing sentence)"
         }
       ]
     },
     {
       "id": "c9",
-      "text": "In 30-second holds, a long-lever plank with a backward pelvic tilt raised abdominal muscle activity versus the standard plank; the long lever added more than the tilt, and the tilt alone raised external-oblique activity.",
+      "text": "In 30-second holds, a long-lever plank with a backward (posterior) pelvic tilt raised abdominal muscle activity versus the traditional prone plank; the long lever tends to contribute more than the tilt, and the tilt alone raised external-oblique activity.",
       "tags": [
         "DATA"
       ],
@@ -202,7 +202,7 @@
     },
     {
       "id": "c11",
-      "text": "A backward pelvic tilt with the shoulder blades drawn together gave more overall core activity than the two forward-tilt versions (not more than backward tilt with the shoulder blades apart), and was rated the hardest of the four.",
+      "text": "Of four prone-plank versions, a backward (posterior) pelvic tilt with the shoulder blades drawn together (scapular adduction) gave more overall EMG activity than the two forward-tilt versions, and was rated the hardest of the four.",
       "tags": [
         "DATA"
       ],
@@ -210,6 +210,11 @@
         "cortell-2017"
       ],
       "quotes": [
+        {
+          "source": "cortell-2017",
+          "text": "Four variations of the prone plank were evaluated: scapular abduction with anterior (ABANT) and posterior (ABRET) pelvic tilt; and scapular adduction with anterior (ADANT), and posterior (ADRET) pelvic tilt.",
+          "where": "abstract, methods"
+        },
         {
           "source": "cortell-2017",
           "text": "The ADRET resulted in higher overall EMG activity compared with ABANT (p = 0.04) and ADANT (p = 0.04).",
@@ -235,7 +240,7 @@
         {
           "source": "harvard-plank",
           "text": "Front plank Reps: 1–6 Sets: 1 Hold: 10–60 seconds Rest: 30–60 seconds between reps",
-          "where": "Core strength exercises: Planks, front plank"
+          "where": "Core strength exercises: Planks, Front plank"
         },
         {
           "source": "harvard-plank",
@@ -246,6 +251,50 @@
           "source": "harvard-plank",
           "text": "The ultimate goal is to be able to hold your plank for a full minute.",
           "where": "Test yourself"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Plank tips: keep the neck and spine neutral, keep the shoulders down and back, and don't bend at the hips.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "harvard-plank"
+      ],
+      "quotes": [
+        {
+          "source": "harvard-plank",
+          "text": "Keep your neck and spine neutral during the plank.",
+          "where": "Core strength exercises: Planks, Plank tips and techniques"
+        },
+        {
+          "source": "harvard-plank",
+          "text": "Keep your shoulders down and back.",
+          "where": "Core strength exercises: Planks, Plank tips and techniques"
+        },
+        {
+          "source": "harvard-plank",
+          "text": "Don't bend at your hips.",
+          "where": "Core strength exercises: Planks, Plank tips and techniques"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "If you cannot hold the plank, rest on the knees instead of the feet.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "harvard-plank"
+      ],
+      "quotes": [
+        {
+          "source": "harvard-plank",
+          "text": "If you can't hold the position, modify the exercise by resting your weight on your knees instead of your feet (sometimes referred to as a modified push-up position).",
+          "where": "Core strength exercises: Planks"
         }
       ]
     }
@@ -259,7 +308,7 @@
       "year": null,
       "pmid": null,
       "access": "full",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "schoenfeld-2014",
@@ -269,7 +318,7 @@
       "year": 2014,
       "pmid": "25325773",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "cortell-2017",
@@ -279,17 +328,18 @@
       "year": 2017,
       "pmid": "27787465",
       "access": "abstract",
-      "checked": "2026-09-30"
+      "checked": "2026-10-22"
     },
     {
       "id": "harvard-plank",
-      "url": "https://www.health.harvard.edu/back-pain/try-this-move-for-better-core-strength",
-      "title": "Try this move for better core strength (Harvard Health Publishing; quotes Dr. Edward Phillips, Harvard Medical School)",
+      "url": "https://www.health.harvard.edu/healthy-aging-and-longevity/try-this-move-for-better-core-strength",
+      "title": "Try this move for better core strength",
       "kind": "coach",
-      "year": null,
+      "year": 2021,
       "pmid": null,
       "access": "full",
-      "checked": "2026-10-03"
+      "checked": "2026-10-22",
+      "note": "Harvard Health Publishing page dated 2021-02-01; quotes Dr. Edward Phillips, Harvard Medical School. The old /back-pain/ URL redirects here."
     }
   ],
   "plate": {
@@ -317,11 +367,14 @@
       }
     ],
     "mistake": {
-      "what": "Low back sags: hips drop below the shoulder-heel line.",
-      "why": "ACE names sagging first among the faults to avoid (c4) and says low-back pain means stop (c8).",
-      "claim": "c4",
+      "what": "Hips hiked up.",
+      "why": "ACE and Harvard both tell the lifter to avoid it (c4, c13).",
+      "claim": [
+        "c4",
+        "c13"
+      ],
       "drawable": true,
-      "rankNote": "No source ranks plank faults by frequency; ACE lists sagging first. Hiked hips (c4) is the opposite fault and can be the layer's second picture."
+      "rankNote": "No source measures how often each fault happens. LR-31 step 3: hips hiked up (c4, c13), by step 3's count. Step 1 finds no frequency word for a fault: Harvard's 'Common Conditions' is a site menu and \"sometimes referred to as a modified push-up position\" names a version; \"doing as many reps as needed\" is about reps; Cortell's \"Prone plank is a widely used exercise in core stability training.\" is about the exercise; Schoenfeld's \"tends to contribute more\" is about muscle activity (and 'tend' is not a frequency word). ACE has none. Step 2 finds no named fault tied to harm: ACE's \"If you experience any pain in the low back with this movement, stop the exercise immediately and consult with your doctor.\" (c8) names pain but no fault; Harvard's \"There's a saying that when you can hold a plank for a minute, your back pain will be gone,\" and \"Planks may ease back pain because as your core muscles strengthen, they provide more support for your spine.\" are benefits, and 'A lumbar belt may help ease low back pain', 'Light exposure at night may raise risk for heart disease', 'Whole grains may improve several heart risk factors at once' and the 'Related Topics' pain links are page chrome linking other articles; none names a plank fault. Step 3: no read source has a common-mistakes list (Harvard's 'Plank tips and techniques' is a tips list), so the count decides (D-SUP-LB6-CCP): the read sources that tell the lifter to avoid each fault (sources, not lists). Hips hiked 2: ACE \"hiking (upwards) in your hips\" (c4) and Harvard \"Don't bend at your hips.\" (c13), read as hip bending, the hips piking up. Low back sagging 1: ACE \"Avoid any arching (sagging) in your low back\" (c4). Knees bending 1: ACE (c4). Shrugging 1: ACE \"Avoid shrugging your shoulder\" (c5). Not counted, as they only give the right position: Harvard's \"Keep your neck and spine neutral during the plank.\" and \"Keep your shoulders down and back.\" (c13), \"Be certain to keep your back straight and your head in a neutral position looking at the ground.\" and \"aligning your shoulders directly over your elbows\"; ACE's \"keep your shoulders positioned directly over your elbows\" (c5) and \"Continue to breath while holding this position\" (c6). Schoenfeld and Cortell name no fault. So LR-31's top fault is the hips hiked up, and drawable is true (the side view shows the hips raised above the shoulder-heel line). Harvard's line counts for the hiked hips, as hiking the hips is bending at the hips (D-SUP-LB9-PLANK). Pilot A: the pick went to the owner sheet as plank-R1 (D-SUP-LB8-PILOTS, R-LB9-3) and is applied (D-SUP-LB9-PLANK, D-LIB8M-ROUTED), so plate.mistake and handlingMistakes[0] are the hiked hips; the sag is handlingMistakes[1]. The head's old note, \"ACE lists sagging first\", is not an LR-31 step (ACE's sentence is an avoid line, not a common-mistakes list)."
     },
     "tells": [
       {
@@ -392,25 +445,32 @@
       "claim": "c4"
     },
     {
-      "point": "Harder version: tuck the pelvis and draw the shoulder blades together.",
+      "point": "Harder version: tilt the pelvis backward and draw the shoulder blades together.",
       "claim": "c11"
     }
   ],
   "handlingMistakes": [
     {
+      "mistake": "Hips hiked up.",
+      "fix": "Don't bend at your hips.",
+      "claim": [
+        "c4",
+        "c13"
+      ]
+    },
+    {
       "mistake": "Low back sags.",
-      "fix": "Brace harder; if you can't hold it, end the hold.",
-      "claim": "c4"
+      "fix": "Brace your trunk. Can't hold it? Rest on your knees.",
+      "claim": [
+        "c4",
+        "c2",
+        "c14"
+      ]
     },
     {
       "mistake": "Shrugging, shoulders drifting away from the elbows.",
       "fix": "Shoulders back over the elbows.",
       "claim": "c5"
-    },
-    {
-      "mistake": "Holding the breath.",
-      "fix": "Keep breathing through the hold.",
-      "claim": "c6"
     }
   ],
   "feel": {
@@ -446,7 +506,7 @@
       },
       {
         "where": "Pain in the low back",
-        "means": "Not a training feeling.",
+        "means": "",
         "fix": "Stop the exercise.",
         "claim": "c8",
         "redFlag": "back"
@@ -470,15 +530,15 @@
     {
       "key": "hip-line",
       "kind": "posture",
-      "right": "Hips in line with shoulders and heels.",
-      "wrong": "Low back sagging, hips dropped.",
+      "right": "No sagging low back, no hiked hips.",
+      "wrong": "Low back sagging.",
       "claim": "c4"
     },
     {
       "key": "shoulder-stack",
       "kind": "posture",
       "right": "Shoulders straight over the elbows.",
-      "wrong": "Shoulders shrugged or ahead of the elbows.",
+      "wrong": "Shoulders shrugged, not over the elbows.",
       "claim": "c5"
     }
   ],
@@ -497,9 +557,10 @@
   ],
   "notes": [
     "Tempo research 2026-10-02 (LIB-3 H2, pilot A #109): c12 adds Harvard Health's front-plank hold, rest and build-up; the hold and rest are no longer unsourced.",
-    "W1 fix round 2026-10-03: F22/R-W1-3 risks[0] now stays within c4's words; \"loads the lower back\" removed (no source says it)."
+    "W1 fix round 2026-10-03: F22/R-W1-3 risks[0] now stays within c4's words; \"loads the lower back\" removed (no source says it).",
+    "LB9 LR-31 pass 2026-10-22 (pilot A, D-SUP-LB8-PILOTS: rankNote, claims and quotes only): rankNote rewritten to LR-31 (step 3 count: hips hiked 2, sag 1; finding for verify/lb9.md, plate unchanged). New claim c13 (Harvard's plank tips, read in full; now cited by plate.mistake and handlingMistakes[0], pilot A plank-R1, D-LIB8M-ROUTED). c11 gains Cortell's sentence defining ABANT, ABRET, ADANT and ADRET, so its text rests on quotes; c9 keeps Schoenfeld's 'tends'. LR-33: an isometric hold (hold/rest shape); no quote asks for a pause after a lift."
   ],
   "plateFacts": [],
   "tempo": [{"phase":"Hold","s":"10–60"}],
-  "topFault": "sag"
+  "topFault": "hike"
 }

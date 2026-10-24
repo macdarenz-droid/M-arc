@@ -25,8 +25,9 @@ const BLOBS: Record<string, [string, string]> = {
   triceps_pushdown: ['af1ae69e480bdf93dbda01ba79bf834543381077', 'fe1b1fb826f7c9fe50bf67b9f5a86c2611008caf'],
   rope_triceps_pushdown: ['dbdf966aebcc76d914c195c2dbf83a5199c63fad', '6ab0c376511bcabd58f2bfefab98e61dbc7f149c'],
   pec_fly: ['28f6c1b5e44870a53da965862a95c8c45b801da8', '6a05573d57ba3c9d1e5956b88c17fe4487d95fc1'],
-  plank: ['2d51c7013b3900986350f1b11d0b07de4bbbccf6', '5ac3c7cf04a9bc200256725357d05741d767e07b'],
-  mountain_climbers: ['1509d52c6c9f0360f83ce40b84d5fd5fd8514306', '3686899e207320cdb159cb90181f5097e4477667'],
+  // plank and mountain_climbers at f574bb4b (D-LIB8M-ROUTED, -PLANKREDRAW: the routed lines, #109 6381942908)
+  plank: ['374a9bc2e187cd3252496f2fddb4ae90ac7e6f5b', '357caedd59542babe3468a58c79cadb95e9ab5c2'],
+  mountain_climbers: ['18e56b6267184f27b81d9dcbabdb679c7d3d769d', 'f39f0312406a171f15e0d85e5190717e5727e8b7'],
 };
 // incline_dumbbell_press is held after its last critic run (D-LIB8M-CARDTRUE, lib4-cards 21.6): its card copy and keys stay as verified
 const CARDS = Object.keys(BLOBS);
@@ -55,7 +56,7 @@ const TOPFAULT: Record<string, string> = {
   incline_dumbbell_press: 'arch', dumbbell_shoulder_press: 'behind', barbell_overhead_press: 'elbows', barbell_row: 'swing',
   romanian_deadlift: 'round', single_leg_romanian_deadlift: 'round', mountain_climbers: 'hike', dumbbell_bench_press: 'arch',
   dumbbell_biceps_curl: 'wrist-bend',   // drawable false: the bent wrist (c6), not the drawn 'elbows' (D-LIB8M-TF1 4)
-  triceps_pushdown: 'lean', rope_triceps_pushdown: 'lean', upright_row: 'chin', pec_fly: 'short', plank: 'sag',   // 6259314475
+  triceps_pushdown: 'lean', rope_triceps_pushdown: 'lean', upright_row: 'chin', pec_fly: 'short', plank: 'hike',   // 6259314475; plank 'hike' (D-LIB8M-PLANKREDRAW)
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const builtTempo = (rows: any[], t: any) => rows.filter(r => !(r.from === 'pause' && !(t.pause > 0)))
