@@ -8,6 +8,7 @@ import { howToLoadFailed } from './lazy';
 import { LoadersContext, type HowToLoaders } from './loadersContext';
 import { PlateApiContext, PlateView } from './PlateView';
 import type { PlateApi } from './usePlateState';
+import { VariantLine } from './VariantLine';
 import { SECTIONS } from './sections';
 import './css/plate.css';
 import './css/sheet.css';
@@ -33,6 +34,7 @@ export function HowToSheet({ exerciseId, name, onClose }: HowToSheetProps) {
   if (!howTo) return null;
   return (
     <Sheet class="ht" eyebrow={HOWTO_LABEL} title={name} onClose={onClose}>
+      <VariantLine howTo={howTo.built} />
       <PlateView howTo={howTo.built} onApi={setApi} />
       <LoadersContext.Provider value={howTo.loaders}>
         <PlateApiContext.Provider value={api}>

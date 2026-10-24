@@ -287,6 +287,18 @@ describe('LIB-4b B5: the scratch fixture sources (D-LIB4-FIXTURE, lib4-cards 11.
       const t = transformSources(s, ROOT), P = paths(s), edits = COPY_EDITS[s.from];
       for (const [kind, copy, orig] of [['spec', t.spec, `tools/plates/layers/exercises/${s.from}.mjs`], ['howto', t.howto, `tools/plates/layers/exercises/${s.from}.howto.mjs`]] as const) {
         const a = readFileSync(join(ROOT, orig), 'utf8').split('\n'), b = copy.split('\n'), why: string[] = [];
+        // LIB-5v (D-LIB5v-FIXLINE): a target whose exercises.json equipment has '/' carries exactly one inserted line,
+        // `    variantLine: '<second kind>.',`, directly after the clone's one `  copy: {` line; it is taken out here, so
+        // every other line keeps the comparison below. Any other target carries none (the line count catches one).
+        if (kind === 'howto') {
+          const kinds = String(JSON.parse(readFileSync(join(ROOT, 'src/data/exercises.json'), 'utf8')).find((e: { id: string }) => e.id === s.id)?.equipment ?? '').split('/').map(k => k.trim());
+          const at = b.flatMap((l: string, i: number) => (l === '  copy: {' ? [i] : []));
+          expect(at, `${s.id} howto: one copy line`).toHaveLength(1);
+          if (kinds.length > 1) {
+            expect(b[at[0]! + 1], `${s.id} howto: the variant line directly after copy`).toBe(`    variantLine: '${kinds[1]}.',`);
+            b.splice(at[0]! + 1, 1);
+          }
+        }
         expect(b.length, `${s.id} ${kind}: line count`).toBe(a.length);
         for (let i = 0; i < a.length; i++) {
           if (a[i] === b[i]) continue;
