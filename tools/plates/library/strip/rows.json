@@ -1,0 +1,453 @@
+{
+ "rule": "D-STRIP-B, -ROWS, -FORMS, -SAYS, -SCOPE, D-STRIP-ALL (LIB-STRIP card, claude/sup-lib4-cards @ ad335ef2). A row is { phase, move?, word? | blank: true, claim, says? }: says is the verbatim span of text that names the word; blank marks a phase with no card-true word. text and claim are the card's plate.tempo.text and plate.tempo.claim, byte for byte. Only { phase, move?, word? } goes on a card's tempo key and its spec (tempoOf).",
+ "research": "claude/libht-research 657eb4e5a4e4a871fd3e2a60ab4a5b8c1f24eb3a",
+ "cards": [
+  {
+   "id": "front_squat",
+   "lane": "LIB-14 #289",
+   "text": "Controlled descent, drive up; some sets with control and pauses at the bottom (c21). No source gives seconds for the standard rep. The anchor lists variations, among them \"a pause in the bottom\" and \"slow eccentrics (usually 3-6 seconds)\"; these are options, not the default rep, so up, down and pause stay null (LR-33).",
+   "claim": "c21",
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Controlled",
+     "claim": "c21",
+     "says": "Controlled descent"
+    },
+    {
+     "phase": "Drive up",
+     "move": true,
+     "blank": true,
+     "claim": "c21"
+    }
+   ]
+  },
+  {
+   "id": "goblet_squat",
+   "lane": "LIB-14 #289",
+   "text": "Smooth and controlled, no jerky reps; no source gives seconds.",
+   "claim": "g7",
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Smooth",
+     "claim": "g7",
+     "says": "Smooth and controlled"
+    },
+    {
+     "phase": "Drive up",
+     "move": true,
+     "word": "Smooth",
+     "claim": "g7",
+     "says": "Smooth and controlled"
+    }
+   ]
+  },
+  {
+   "id": "bodyweight_squat",
+   "lane": "LIB-14 #289",
+   "text": "Controlled descent, breathe out on the way up; no source gives seconds.",
+   "claim": "b7",
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Controlled",
+     "claim": "b7",
+     "says": "Controlled descent"
+    },
+    {
+     "phase": "Drive up",
+     "move": true,
+     "blank": true,
+     "claim": "b7"
+    }
+   ]
+  },
+  {
+   "id": "step_up",
+   "lane": "LIB-14 #289",
+   "text": "Rise with the top leg; control the way down instead of dropping. No source gives seconds.",
+   "claim": "c2",
+   "rows": [
+    {
+     "phase": "Rise",
+     "move": true,
+     "blank": true,
+     "claim": "c2"
+    },
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Controlled",
+     "claim": "c2",
+     "says": "control the way down"
+    }
+   ]
+  },
+  {
+   "id": "pistol_squat",
+   "lane": "LIB-14 #289",
+   "text": "Slow and controlled, no bounce at the bottom (p8); no source gives seconds. Physitrack's step 4, \"Pause briefly, and repeat.\", places a brief pause after standing up; with no tempo seconds on the card, up, down and pause stay null (LR-33).",
+   "claim": "p8",
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Slow",
+     "claim": "p8",
+     "says": "Slow and controlled"
+    },
+    {
+     "phase": "Drive up",
+     "move": true,
+     "word": "Slow",
+     "claim": "p8",
+     "says": "Slow and controlled"
+    }
+   ]
+  },
+  {
+   "id": "box_jump",
+   "lane": "pilot A #109",
+   "text": "Explosive take-off; step down; full rest between sets; never to failure. Airborne plate: take-off and landing frames only.",
+   "claim": "c11",
+   "rows": [
+    {
+     "phase": "Take-off",
+     "move": true,
+     "word": "Explosive",
+     "claim": "c11",
+     "says": "Explosive take-off"
+    },
+    {
+     "phase": "Step down",
+     "move": true,
+     "blank": true,
+     "claim": "c11"
+    }
+   ]
+  },
+  {
+   "id": "reverse_lunge",
+   "lane": "pilot A #109",
+   "text": "Default: lower slowly, rise a little quicker (c7, c16); no source gives seconds for the standard lunge. Progressions: 3 s down in the tempo reverse lunge (c15), then a pause at the bottom of 1-2 s, building to about 5 s (c16).",
+   "claim": [
+    "c7",
+    "c16",
+    "c15"
+   ],
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Slow",
+     "claim": "c16",
+     "says": "lower slowly"
+    },
+    {
+     "phase": "Rise",
+     "move": true,
+     "word": "Quicker",
+     "claim": "c16",
+     "says": "rise a little quicker"
+    }
+   ]
+  },
+  {
+   "id": "jump_squat",
+   "lane": "LB4",
+   "text": "Controlled squat down, then explosive jump; 3-5 reps per set, never to failure (j15). ACE asks for \"ONLY a very brief pause at the bottom\" (j3) and Catalyst says \"immediately rebound\" (j9): the pause is at the bottom, not after the concentric, so it is named here and not in pause. No source gives seconds, so up, down and pause stay null (LR-33). Airborne plate: take-off and landing frames only.",
+   "claim": "j9",
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Controlled",
+     "claim": "j9",
+     "says": "Controlled squat down"
+    },
+    {
+     "phase": "Jump",
+     "move": true,
+     "word": "Explosive",
+     "claim": "j9",
+     "says": "explosive jump"
+    }
+   ]
+  },
+  {
+   "id": "bulgarian_split_squat",
+   "lane": "LB4",
+   "text": "Controlled speed down, no crash into the bottom. No source gives seconds.",
+   "claim": [
+    "c3",
+    "c8"
+   ],
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Controlled",
+     "claim": "c3",
+     "says": "Controlled speed down"
+    },
+    {
+     "phase": "Stand",
+     "move": true,
+     "blank": true,
+     "claim": "c3"
+    }
+   ]
+  },
+  {
+   "id": "walking_lunge",
+   "lane": "LB4",
+   "text": "Controlled descent with a full-length step; no crash into the bottom (c8). No source gives seconds for the standard walking lunge, so up, down and pause stay null (LR-33). Eccentric lunge walking, a slow variant, holds the body on the stepping leg \"for ~ 3 s\" (c11); it is not the standard lunge, so its seconds are not drawn. ACE's twist variant says \"Hold this position momentarily before stepping forward\" for the one-leg balance before the first step only; it is not in pause.",
+   "claim": [
+    "c8",
+    "c11"
+   ],
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Controlled",
+     "claim": "c8",
+     "says": "Controlled descent"
+    },
+    {
+     "phase": "Rise",
+     "move": true,
+     "blank": true,
+     "claim": "c8"
+    }
+   ]
+  },
+  {
+   "id": "forward_lunge",
+   "lane": "LB4",
+   "text": "Land heel first and shift the weight slowly (c4); lower smoothly with no crash (c7). No source gives seconds, so up, down and pause stay null (LR-33). ACE's forward-lunge page asks to \"Hold this position momentarily before stepping forward\" (the one-leg stand at the top, before each step); with no tempo seconds on the card it is named here, not in pause.",
+   "claim": "c4",
+   "rows": [
+    {
+     "phase": "Step",
+     "move": true,
+     "word": "Slow",
+     "claim": "c4",
+     "says": "shift the weight slowly"
+    },
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Smooth",
+     "claim": "c7",
+     "says": "lower smoothly"
+    },
+    {
+     "phase": "Rise",
+     "move": true,
+     "blank": true,
+     "claim": "c4"
+    }
+   ]
+  },
+  {
+   "id": "bodyweight_lunge",
+   "lane": "LB4",
+   "text": "Slow weight transfer onto the front foot (c2). No source gives seconds, so up, down and pause stay null (LR-33). ACE asks to \"Hold this position momentarily before stepping forward\" (the one-leg stand at the top, before each step); with no tempo seconds on the card it is named here, not in pause.",
+   "claim": "c2",
+   "rows": [
+    {
+     "phase": "Step",
+     "move": true,
+     "word": "Slow",
+     "claim": "c2",
+     "says": "Slow weight transfer onto the front foot"
+    },
+    {
+     "phase": "Lower",
+     "move": true,
+     "blank": true,
+     "claim": "c2"
+    },
+    {
+     "phase": "Rise",
+     "move": true,
+     "blank": true,
+     "claim": "c2"
+    }
+   ]
+  },
+  {
+   "id": "bodyweight_split_squat",
+   "lane": "LB4",
+   "text": "Smooth, no crash into the bottom. No source gives seconds.",
+   "claim": "c6",
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Smooth",
+     "claim": "c6",
+     "says": "Smooth"
+    },
+    {
+     "phase": "Rise",
+     "move": true,
+     "word": "Smooth",
+     "claim": "c6",
+     "says": "Smooth"
+    }
+   ]
+  },
+  {
+   "id": "renegade_row",
+   "lane": "LIB-17 #299",
+   "text": "Lower with control, keeping tension (c5, c15); reset the plank between reps (c15). No source gives seconds, so up, down and pause stay null (LR-33). No quote on the card or its read pages asks for a pause, hold or squeeze right after the row; 'squeeze your glutes' (c2, c4) and the plank hold (c12) are body cues, and the reset (c15) sits between reps.",
+   "claim": [
+    "c5",
+    "c15"
+   ],
+   "rows": [
+    {
+     "phase": "Row",
+     "move": true,
+     "blank": true,
+     "claim": "c5"
+    },
+    {
+     "phase": "Lower",
+     "move": true,
+     "word": "Controlled",
+     "claim": "c5",
+     "says": "Lower with control"
+    }
+   ]
+  },
+  {
+   "id": "sled_pull",
+   "lane": "LIB-22 #305",
+   "text": "Walk: short, quick, controlled steps; exhale with each step (c3, c6). No source gives a step rate, a phase time or a pause, so no seconds are drawn (LR-33; R-LB2-1).",
+   "claim": [
+    "c3",
+    "c6"
+   ],
+   "rows": [
+    {
+     "phase": "Walk",
+     "move": true,
+     "word": "Quick",
+     "claim": "c3",
+     "says": "short, quick, controlled steps"
+    }
+   ]
+  },
+  {
+   "id": "flutter_kicks",
+   "lane": "LB9",
+   "text": "Cycle: short, crisp alternating kicks (c3); sets of 30-50 kicks for endurance (c12). No source gives a cadence.",
+   "claim": [
+    "c3",
+    "c12"
+   ],
+   "rows": [
+    {
+     "phase": "Kick",
+     "move": true,
+     "word": "Crisp",
+     "claim": "c3",
+     "says": "short, crisp alternating kicks"
+    }
+   ]
+  },
+  {
+   "id": "cable_rear_delt_fly",
+   "lane": "LIB-17 #299",
+   "text": "No read source gives seconds: StrengthLog says to keep the movement slow and controlled (c9) and to move slowly with control (c10). No quote asks for a pause, hold or squeeze at any point of the rep. With no tempo seconds at all, up, down and pause stay null (LR-33).",
+   "claim": "c9",
+   "rows": [
+    {
+     "phase": "Open",
+     "move": true,
+     "word": "Slow",
+     "claim": "c9",
+     "says": "keep the movement slow and controlled"
+    },
+    {
+     "phase": "Return",
+     "move": true,
+     "word": "Slow",
+     "claim": "c9",
+     "says": "keep the movement slow and controlled"
+    }
+   ]
+  },
+  {
+   "id": "farmer_s_carry",
+   "lane": "LIB-22 #305",
+   "text": "Walk: short steps (c8). The sources differ on speed: Garage Gym Reviews and Fitness Volt walk slowly and with control (c7, c4), BarBend uses short, fast strides, and StrengthLog lengthens the stride as speed rises (c8). No source gives seconds, a step rate or a pause, so no seconds are drawn (LR-33; R-LB2-1).",
+   "claim": [
+    "c7",
+    "c8"
+   ],
+   "rows": [
+    {
+     "phase": "Walk",
+     "move": true,
+     "word": "Controlled",
+     "claim": "c4",
+     "says": "with control"
+    }
+   ]
+  }
+ ],
+ "timedAtHead": [
+  {
+   "id": "bear_crawl",
+   "lane": "LB10",
+   "claim": "c10",
+   "tempo": [
+    {
+     "phase": "Work",
+     "s": "15–30",
+     "move": true
+    }
+   ]
+  }
+ ],
+ "leftOut": [
+  {
+   "id": "sled_push",
+   "lane": "LIB-22 #305",
+   "why": "S3: \"short, powerful steps\" (c10); \"powerful\" is not a FORMS form and the text names no other cadence"
+  },
+  {
+   "id": "burpee",
+   "lane": "LIB-22 #305",
+   "why": "the only FORMS form, \"under control\" in \"Descend quickly but under control\", is Fitness Volt's line, which the text cites by no claim id; plate.tempo.claim c24 is Motra's 2-0-1, so no row claim is card-true (A11)"
+  },
+  {
+   "id": "medicine_ball_slam",
+   "lane": "LIB-22 #305",
+   "why": "S3: \"Ballistic and continuous\"; no FORMS form in the text"
+  },
+  {
+   "id": "wall_ball",
+   "lane": "LIB-22 #305",
+   "why": "S3: \"Cyclic and continuous\", \"go directly into the next rep\"; no FORMS form in the text"
+  },
+  {
+   "id": "diamond_push_up",
+   "lane": "LB7",
+   "why": "S3: \"push back up forcefully\" (c5); \"forcefully\" is not a FORMS form"
+  },
+  {
+   "id": "pike_push_up",
+   "lane": "LB7",
+   "why": "S3: \"Moving too quickly without controlling\" (c9) is a named mistake, and \"quickly\", \"controlling\" are not FORMS forms"
+  }
+ ]
+}
