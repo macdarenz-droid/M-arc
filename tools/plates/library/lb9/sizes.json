@@ -1,0 +1,104 @@
+{
+ "rule": "D-LIB21-SIZE (lib-21-card ruling 17): every number a card does not give, each Mistake's magnitude included, fixed here before PQ-H3 is measured, each with its basis: a claim id, an approved plate's value (file:line) used as a convention, or a stated reason in numbers. PQ-H3 is never a basis. A spec's exported SIZES table equals its row here and every row is used (A17, both ways); a composer's exported constants equal theirs; `trace` is the spec's trace point and trim (D-LIB21-TRACE, D-LIB18-TRIM). Rows for the bulk are the note's proposals in DESIGN.md section 11, written here when drawn.",
+ "composers": {
+  "abWheel": {
+   "r": {
+    "value": 0.09,
+    "unit": "m",
+    "basis": "stated reason: c1 and plate.equipment 'a small wheel': 18 cm across; no source gives a size"
+   },
+   "width": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason: a small wheel's tread, 5 cm; no source gives it"
+   },
+   "hubR": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "stated reason: the hub 5 cm across on the axle, so it reads inside the wheel"
+   },
+   "handleD": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: a hand-sized handle 3 cm thick, inside the 3.5 cm fist so the hand reads wrapped round it"
+   },
+   "handlePast": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: each handle runs 6 cm past the grip centre, so the whole drawn fist (7 cm across, RADII.fist 0.02 H) sits on it"
+   }
+  }
+ },
+ "ids": {
+  "ab_wheel_rollout": {
+   "PAD_T": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: c1 'a soft pad' under the knees gives no thickness; a 3 cm foam kneeling pad, 4 px at the plate's 134.56 px/m so it reads as a pad on the floor line; no source states it"
+   },
+   "BEAR": {
+    "value": 0.0025,
+    "unit": "m",
+    "basis": "the bearing rule (#306 6358957999): the pad top 0.25 cm under the lowest drawn point of the kneecap, shin and foot (inside the 0.5 cm cap), LB8's seat value (lb8-plates.test.ts @ d76fc305:1876)"
+   },
+   "SHIN_RISE": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "stated reason: in a kneel the shins lie flat along the pad (the shank horizontal); the ankle is then solved so the foot's lowest drawn point is level with the shin's"
+   },
+   "WHEEL_GAP": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "claim: c1 'the wheel on the floor just in front of the knees' ('placed directly in front of your knees'): the wheel's rear edge 3 cm in front of the kneecaps"
+   },
+   "END_ELBOW": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: bear_crawl.mjs END_ELBOW's reason (#305 @ a9c64e11), straight arms short of the singular full extension; hanging_leg_raise.mjs's hang uses elbows about 5 deg"
+   },
+   "END_SHOULDER": {
+    "value": 135,
+    "unit": "deg",
+    "basis": "claims: c3 'extend your arms above your head' (the arm past 90 deg to the trunk) and c7 a moderate roll-out of the kneeling version (a limited range first): halfway between overhead (90 deg) and the full roll-out with the arms in line with the trunk (180 deg)"
+   },
+   "M_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (tools/plates/vendor/exercises, the 8's clone source, D-LIB21-CLONE) MISTAKE trunk -12, the approved 12 deg lumbar arch; D-LIB21-SIZE's first basis for this id; for c3 'Avoid arching your lower back' and c13 (no magnitude)"
+   },
+   "trace": {
+    "point": "grip.r",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE (DRAWING-GUIDE.md:29): c2 'slowly roll the wheel forward': the hands on the wheel rolling out; trim [10, 12] = hanging_leg_raise.mjs:124 (D-LIB18-TRIM)"
+   }
+  },
+  "bird_dog": {
+   "MAT_T": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "stated reason: c1, c2 and c22 put the hands, knees and toes on an exercise mat and give no thickness; 10 mm, a foam exercise-mat thickness (between a 6 mm yoga mat and a 15 mm thick mat), drawn 1.5 px at 151.49 px/m so the mat reads as a bar on the floor line; no source states it"
+   },
+   "MAT_LEN": {
+    "value": 1.73,
+    "unit": "m",
+    "basis": "stated reason: c1, c2, c22 'an exercise mat'; 1.73 m (68 in), the usual exercise/yoga mat length, longer than the start's toe-tip-to-fingertip span (1.17 m) so hands, knees and toes all rest on it; centred on that span by the spec; no source states it"
+   },
+   "M_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (tools/plates/vendor/exercises, the 8's clone source, D-LIB21-CLONE) MISTAKE trunk -12, the approved 12 deg lumbar arch, for c7 'an increase in lumbar lordosis (low back sagging)' and c8 'Arching lower back' (no magnitude); the pelvis tilt that follows (+8.3 deg) is solved"
+   },
+   "trace": {
+    "point": "ankle.l",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE (DRAWING-GUIDE.md:29): the rising foot, c4 'Slowly extend your left hip (raise and straighten the knee)' and c7 'As the leg is raised' (the checkpoint 'Arm, leg level' and the Mistake are about the leg); the left leg is the raised one (D-LIB21-SIDES). Trim [10, 12] = hanging_leg_raise.mjs:124 (D-LIB18-TRIM)"
+   }
+  }
+ }
+}
