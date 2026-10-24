@@ -4253,3 +4253,14 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - Candidates: battle_ropes, high_knees and hack_squat. The same anchors. Plants: high_knees R4 (leader on the head) and hack_squat R1 (bottom stopped at 45°). New salt `2f339692…`.
 - **VALID.** Plants caught: R4 [3,3,3] and R1 [2,2,2]. lat_pulldown: every median ≥ 4. pull_up: R2 [3,3,3], follow-up 22, excepted.
 - **battle_ropes, high_knees and hack_squat PASS** (every median ≥ 4). **LB10: 3 of 3 drawn rows approved** (kettlebell_swing from section 32, byte-identical at a9c64e11). **LB8: hack_squat approved** (its one drawn row). Verdicts: #305 6362679045 and #306 6362680004.
+
+## 34. Pilot A plank Mistake redraw: focused recheck (2026-10-24)
+- **Set:** paplank. Salt `8fc52679…`. 6 tiles: plank (the candidate), mountain_climbers (hidden control), pull_up and lat_pulldown (hidden anchors, byte-identical to lb10r), and 2 plants. Head #109 @ b68159d, page `5d0e562f…`, rebuilt twice.
+- **Plants**, both caught 3/3:
+  - plank's hike drawn too small (R5, HIKE_HIP 6° instead of 30°);
+  - mountain_climbers' hands 15 cm ahead of the shoulders (R1).
+- **plank:** no score ≤ 3 from any critic. **APPROVED** (#109 6382619662).
+- **mountain_climbers:** clean.
+- **Anchors:** pull_up R2 is golden-B follow-up 22 (excepted). pull_up R1 (head tilted back, chin reaching; 2 of 3 critics) is new: **golden-B follow-up 23**. One critic gave lat_pulldown R2=3, which is not a finding.
+- **Rulings this window:** D-LIB8M-ROUTED, D-LIB8M-PLANKREDRAW (it replaces PLANKHOLD), D-STRIP-B and its card rulings, D-ER5-GO and D-ER5-YAW, and the confirmed D-LIB20-* and D-LIB21-* start rulings.
+- **Strip rows CARD FIELDS verify (cfstrip):** VALID. The plant, a contested speed word, was caught. Fix round: cable_rear_delt_fly cites c9, and the jump_squat j7 note was added. STRIP ROWS VERIFIED @ 511ded30 (#309 6381998628).
