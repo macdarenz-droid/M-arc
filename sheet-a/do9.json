@@ -1,0 +1,1744 @@
+[
+ {
+  "id": "lib_dumbbell_bench_press",
+  "report": {
+   "id": "lib_dumbbell_bench_press",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 146.29,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 79.68079003570497,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F4": {
+     "value": 1,
+     "range": [
+      2,
+      6
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "arch",
+     "expect": "arch",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.3043,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 43.73501575689111,
+    "leaderMax": 79.68079003570497,
+    "altWords": 39,
+    "pxPerM": 146.29,
+    "boxed": 1,
+    "deviation": 11.703199999999981,
+    "cover": 0.3043,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_dumbbell_shoulder_press",
+  "report": {
+   "id": "lib_dumbbell_shoulder_press",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 146.29,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 30.854299316927435,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F4": {
+     "value": 1,
+     "range": [
+      2,
+      6
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "behind",
+     "expect": "behind",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.2513,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 51.39381903335694,
+    "leaderMax": 30.854299316927435,
+    "altWords": 35,
+    "pxPerM": 146.29,
+    "boxed": 1,
+    "deviation": 70.3628614141441,
+    "cover": 0.2513,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_barbell_overhead_press",
+  "report": {
+   "id": "lib_barbell_overhead_press",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 134.58,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 89.62990455852625,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F4": {
+     "value": 3,
+     "range": [
+      2,
+      6
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "elbows",
+     "expect": "elbows",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.1653,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 55.94,
+    "leaderMax": 89.62990455852625,
+    "altWords": 40,
+    "pxPerM": 134.58,
+    "boxed": 3,
+    "deviation": 38.920487226528586,
+    "cover": 0.1653,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_barbell_row",
+  "report": {
+   "id": "lib_barbell_row",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 146.29,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 53.83359556322067,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F4": {
+     "value": 0,
+     "range": [
+      2,
+      6
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "swing",
+     "expect": "swing",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.1944,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 35.26999999999998,
+    "leaderMax": 53.83359556322067,
+    "altWords": 41,
+    "pxPerM": 146.29,
+    "boxed": 0,
+    "deviation": 23.967737205981955,
+    "cover": 0.1944,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_romanian_deadlift",
+  "report": {
+   "id": "lib_romanian_deadlift",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 146.29,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 54.96850119806086,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F4": {
+     "value": 2,
+     "range": [
+      2,
+      6
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "round",
+     "expect": "round",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.2614,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 41.50188259699489,
+    "leaderMax": 54.96850119806086,
+    "altWords": 44,
+    "pxPerM": 146.29,
+    "boxed": 2,
+    "deviation": 13.051630855446001,
+    "cover": 0.2614,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_single_leg_romanian_deadlift",
+  "report": {
+   "id": "lib_single_leg_romanian_deadlift",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 146.29,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 76.26358351311826,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F4": {
+     "value": 1,
+     "range": [
+      2,
+      6
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "round",
+     "expect": "round",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.5049,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 53.413020103093444,
+    "leaderMax": 76.26358351311826,
+    "altWords": 47,
+    "pxPerM": 146.29,
+    "boxed": 1,
+    "deviation": 32.76510895502676,
+    "cover": 0.5049,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_dumbbell_biceps_curl",
+  "report": {
+   "id": "lib_dumbbell_biceps_curl",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 146.29,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 60.40294138242331,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F4": {
+     "value": 1,
+     "range": [
+      2,
+      6
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "elbows",
+     "expect": "wrist-bend",
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F2": {
+     "value": 0.1519,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 94.35178944837205,
+    "leaderMax": 60.40294138242331,
+    "altWords": 37,
+    "pxPerM": 146.29,
+    "boxed": 1,
+    "deviation": 36.44477631776852,
+    "cover": 0.1519,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_upright_row",
+  "report": {
+   "id": "lib_upright_row",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 146.29,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 62.73439646637241,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F4": {
+     "value": 2,
+     "range": [
+      2,
+      6
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F6": {
+     "value": "front",
+     "expect": "front",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "chin",
+     "expect": "chin",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.6423,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 47.52354283363397,
+    "leaderMax": 62.73439646637241,
+    "altWords": 47,
+    "pxPerM": 146.29,
+    "boxed": 2,
+    "deviation": 38.74526604318916,
+    "cover": 0.6423,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_triceps_pushdown",
+  "report": {
+   "id": "lib_triceps_pushdown",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 133.79,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 66.43607830087504,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F4": {
+     "value": 2,
+     "range": [
+      2,
+      6
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "lean",
+     "expect": "lean",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.2898,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 76.3217274353748,
+    "leaderMax": 66.43607830087504,
+    "altWords": 43,
+    "pxPerM": 133.79,
+    "boxed": 2,
+    "deviation": 22.645508107037603,
+    "cover": 0.2898,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_rope_triceps_pushdown",
+  "report": {
+   "id": "lib_rope_triceps_pushdown",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 133.79,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 66.47971194281756,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F4": {
+     "value": 3,
+     "range": [
+      2,
+      6
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "lean",
+     "expect": "lean",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.2901,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 52.21434299959194,
+    "leaderMax": 66.47971194281756,
+    "altWords": 50,
+    "pxPerM": 133.79,
+    "boxed": 3,
+    "deviation": 22.645508107037603,
+    "cover": 0.2901,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_pec_fly",
+  "report": {
+   "id": "lib_pec_fly",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 146.29,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F3": {
+     "value": 61.89811749957796,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F4": {
+     "value": 3,
+     "range": [
+      2,
+      6
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F6": {
+     "value": "front",
+     "expect": "front",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "short",
+     "expect": "short",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.451,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 93.67999999999999,
+    "leaderMax": 61.89811749957796,
+    "altWords": 49,
+    "pxPerM": 146.29,
+    "boxed": 3,
+    "deviation": 63.12655681025609,
+    "cover": 0.451,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_plank",
+  "report": {
+   "id": "lib_plank",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 174.22,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F3": {
+     "value": 81.45658402134823,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F4": {
+     "value": 4,
+     "range": [
+      2,
+      6
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "hike",
+     "expect": "hike",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.2361,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 24.20985411976285,
+    "leaderMax": 81.45658402134823,
+    "altWords": 41,
+    "pxPerM": 174.22,
+    "boxed": 4,
+    "deviation": 28.831867016148966,
+    "cover": 0.2361,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ },
+ {
+  "id": "lib_mountain_climbers",
+  "report": {
+   "id": "lib_mountain_climbers",
+   "mode": "H",
+   "ok": false,
+   "hard": {
+    "PQ-H1": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H2": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H3": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H4": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H5": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H6": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H7": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H8": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H9": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    },
+    "PQ-H10": {
+     "pass": true,
+     "problems": [],
+     "exempted": []
+    }
+   },
+   "flags": {
+    "F1": {
+     "value": 191.92,
+     "range": [
+      123.91,
+      146.29
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F3": {
+     "value": 126.35160505983576,
+     "range": [
+      49.33358107266614,
+      82.26061513715476
+     ],
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    },
+    "F4": {
+     "value": 5,
+     "range": [
+      2,
+      6
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F6": {
+     "value": "side",
+     "expect": "side",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F7": {
+     "value": "hike",
+     "expect": "hike",
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F2": {
+     "value": 0.3816,
+     "range": [
+      0.19113061526277303,
+      0.5494338800179128
+     ],
+     "raised": false,
+     "approved": false,
+     "blocks": false
+    },
+    "F5": {
+     "value": 3.57,
+     "min": 4.5,
+     "raised": true,
+     "approved": false,
+     "blocks": true
+    }
+   },
+   "metrics": {
+    "traceLen": 150.4765778446557,
+    "leaderMax": 126.35160505983576,
+    "altWords": 40,
+    "pxPerM": 191.92,
+    "boxed": 5,
+    "deviation": 31.761043527170205,
+    "cover": 0.3816,
+    "labelContrast": 3.57
+   },
+   "unusedExemptions": []
+  }
+ }
+]
