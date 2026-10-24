@@ -890,6 +890,20 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 08:30 UTC (10-24)** (usage 7-day 0.62):
+- **#109 pilot A:**
+  - **D-LIB8M-PLANKREDRAW (6381942908)** replaces PLANKHOLD. Plank stays in pilot A, because it anchors LB4, LB7, LB9 and LB10. Only its Mistake is redrawn ("Hips hiked up."). The pin is 13.
+  - Research head for the copies: `f574bb4b` (6381948414). Next: SHEET READY, then the supervisor's focused critic recheck on plank, then the pin.
+- **Research:** #295 (LB9 fix round, recheck PASS 6381491908) and #310 (pilot A routed lines) are merged. The research head is `f574bb4b`. The blocked LB9 session is archived.
+- **D-ER5-GO (#278 6381385131)** and D-ER5-YAW. **LIB-20** card `lib-20-card.md` @ a233ef95; builder session_01Vn74WfsbKuNL2goL84R1aT, PR #311.
+- **LIB-STRIP** card @ ad335ef2; builder session_015ghURsavAYhbPxt4cbX7E3, PR #309.
+  - Rulings: D-STRIP-VALIDATE, -WHOLE, -CONTEST, -QUOTEWORD, -FORMS-EXPL, -AFALL, -GATETIME and -GROUPS.
+  - The rows' CARD FIELDS verify is **VALID** (6381982069). Plant: a contested speed word, caught. One fix round: cable_rear_delt_fly cites c9, and the jump_squat note is added. Next: the delta check, then STRIP ROWS VERIFIED.
+- **LIB-21** (LB9 H) card @ 760f774f; builder session_017MdAevYBsuCF8gdmyjtwob, branch claude/lib-21-lb9.
+  - Slice: ab_wheel_rollout, cable_crunch, bird_dog.
+  - Held for LIB-20: side_plank, russian_twist, bicycle_crunch.
+- **Active LIB builders: 4** (LIB-8M, LIB-20, LIB-STRIP, LIB-21). That is the cap.
+
 **Update 07:45 UTC (10-24): OWNER DELEGATION.** The owner (07:15): "U do qll that. Dont stall and decide for me." The supervisor now makes the owner's open library choices, and records each one with its reason. Owner-only items in AGENTS.md stay his: Worker deploys, signing and keys, releases and store listings, new kinds of stored or sent data, paid services and spending.
 - **Pilot A (#109): PILOT A PIN GO @ dcac4a38 (6381356655).**
   - "Use proposed" on every line.
