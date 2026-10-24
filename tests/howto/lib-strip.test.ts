@@ -66,11 +66,9 @@ describe('A2, A3: the goldens the rebuild tests prove (library-core :455-485, la
 /** Expected aria-labels, one literal per rows.json card (D-STRIP-B: "<phase> <word>", lower case). */
 const LABELS: Record<string, string> = {
   front_squat: 'Tempo: lower controlled, drive up',
-  goblet_squat: 'Tempo: lower smooth, drive up smooth',
-  bodyweight_squat: 'Tempo: lower controlled, drive up',
+  goblet_squat: 'Tempo: lower controlled, drive up controlled',
   step_up: 'Tempo: rise, lower controlled',
   pistol_squat: 'Tempo: lower slow, drive up slow',
-  box_jump: 'Tempo: take-off explosive, step down',
   reverse_lunge: 'Tempo: lower slow, rise quicker',
   jump_squat: 'Tempo: lower controlled, jump explosive',
   bulgarian_split_squat: 'Tempo: lower controlled, stand',
@@ -134,7 +132,7 @@ const untimedCard = (tempo?: any[]) => {
   return { ...fx, tempo: tempo ?? S.tempoOf(fs.rows), plate: { ...fx.plate, tempo: { ...fx.plate.tempo, text: fs.text } } };
 };
 /** Rows whose tempoOf is `tempo` (blank: true where no word), so only the word checks are left to fire. */
-const rowsFor = (tempo: any[]) => tempo.map(t => ({ ...t, ...('word' in t ? { says: 'x' } : { blank: true }), claim: 'c21' }));
+const rowsFor = (tempo: any[]) => tempo.map(t => ({ ...t, ...('word' in t ? { says: 'x', quote: 'x' } : { blank: true }), claim: 'c21' }));
 
 describe('A6: the validator accepts the untimed shapes (D-STRIP-SHAPE), add-only', () => {
   let V: any;
@@ -258,7 +256,7 @@ const SCOPE = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'step_up', 'pi
   'cable_rear_delt_fly', 'sled_push', 'farmer_s_carry', 'burpee', 'medicine_ball_slam', 'wall_ball', 'diamond_push_up', 'pike_push_up'];
 const SET_LEVEL_PHASE = /^(set|sets|rep|reps|rest)$/i, SET_LEVEL_SAYS = /(?<![A-Za-z])(set|sets|rep|reps|rest|round|rounds|failure)(?![A-Za-z])/i;
 /** sha256 of rows.json's canonical JSON (JSON.stringify of the parsed file), set at 'STRIP ROWS VERIFIED' (Do 6). */
-const ROWS_PIN = 'f38612a5dfdbbbe4db69bcf5407ae92b162c07309b6c2111e2068aac3f39f059';   // pre-verify; re-set at STRIP ROWS VERIFIED
+const ROWS_PIN = '4cd8ae4e86a884efecfa6ddd82a7c74b435949a7b31b28e4b9c786fc27e78cc3';   // pre-verify; re-set at STRIP ROWS VERIFIED
 
 /** A11's checks on a parsed rows.json; returns problems. */
 function rowProblems(R: any, V: any): string[] {
@@ -271,8 +269,13 @@ function rowProblems(R: any, V: any): string[] {
     for (const r of c.rows) {
       const at = `${c.id}.${r.phase}`;
       if (SET_LEVEL_PHASE.test(r.phase)) out.push(`${at}: set-level phase`);
-      if (!claims.includes(r.claim) && !new RegExp(`\\((?:[a-z]+\\d+, )*${r.claim}(?:, [a-z]+\\d+)*\\)`).test(c.text)) out.push(`${at}: claim ${r.claim} not in plate.tempo.claim nor cited in the text`);
-      if (!('word' in r)) continue;
+      if (!('word' in r)) {   // a blank phase: the card's tempo claim, or one its text cites
+        if (!claims.includes(r.claim) && !new RegExp(`\\((?:[a-z]+\\d+, )*${r.claim}(?:, [a-z]+\\d+)*\\)`).test(c.text)) out.push(`${at}: claim ${r.claim} not in plate.tempo.claim nor cited in the text`);
+        if ('quote' in r) out.push(`${at}: a blank phase carries a quote`);
+        continue;
+      }
+      // D-STRIP-QUOTEWORD: a worded phase's claim has a quote (stored verbatim as `quote`) that holds the word or its form
+      if (typeof r.quote !== 'string' || !S.formIn(r.word, r.quote)) out.push(`${at}: the quote of claim ${r.claim} does not hold ${r.word}`);
       if (typeof r.says !== 'string' || !c.text.includes(r.says)) out.push(`${at}: says is not a verbatim span of the text`);
       if (!S.formIn(r.word, r.says)) out.push(`${at}: ${r.word} is not a whole word in says`);
       if (SET_LEVEL_SAYS.test(r.says ?? '')) out.push(`${at}: set-level says`);
@@ -302,9 +305,12 @@ describe('A11: the rows (D-STRIP-ROWS, -SCOPE, -SAYS, D-STRIP-ALL)', () => {
     const cases: [string, string[], RegExp][] = [
       ['a word not in its text', edit('front_squat', c => { c.rows[0].word = 'Quick'; }), /front_squat\.Lower: Quick is not a whole word in says/],
       ['front_squat\'s Controlled moved to Drive up', edit('front_squat', c => { c.rows[1] = { ...c.rows[0], phase: 'Drive up' }; c.rows[0] = { phase: 'Lower', move: true, blank: true, claim: 'c21' }; }), /front_squat\.Drive up: says is down, the phase up/],
-      ['box_jump given a Rest phase', edit('box_jump', c => { c.rows.push({ phase: 'Rest', word: 'Slow', says: 'full rest between sets', claim: 'c11' }); }), /box_jump\.Rest: set-level phase/],
+      ['jump_squat given a Rest phase', edit('jump_squat', c => { c.rows.push({ phase: 'Rest', move: true, blank: true, claim: 'j9' }); }), /jump_squat\.Rest: set-level phase/],
+      ['a says naming set-level advice', edit('jump_squat', c => { c.rows[1].says = '3-5 reps per set'; }), /jump_squat\.Jump: set-level says/],
+      ['a row whose claim\'s quote lacks its word', edit('front_squat', c => { c.rows[0].quote = 'Some front squat training should include pauses.'; }), /front_squat\.Lower: the quote of claim c21 does not hold Controlled/],
+      ['a row with no quote', edit('jump_squat', c => { delete c.rows[1].quote; }), /jump_squat\.Jump: the quote of claim j7 does not hold Explosive/],
       ['a says edited by one character', edit('reverse_lunge', c => { c.rows[0].says = 'lower slowlY '; }), /reverse_lunge\.Lower: says is not a verbatim span/],
-      ['a claim not cited', edit('step_up', c => { c.rows[1].claim = 'c9'; }), /step_up\.Lower: claim c9 not in plate\.tempo\.claim nor cited/],
+      ['a blank phase\'s claim not cited', edit('step_up', c => { c.rows[0].claim = 'c9'; }), /step_up\.Rise: claim c9 not in plate\.tempo\.claim nor cited/],
       ['a says with both directions', edit('front_squat', c => { c.rows[0].says = 'Controlled descent, drive up'; }), /front_squat\.Lower: says carries both directions/],
     ];
     for (const [name, bad, re] of cases) expect([name, bad.some(b => re.test(b))]).toEqual([name, true]);

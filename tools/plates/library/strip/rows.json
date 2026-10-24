@@ -13,7 +13,8 @@
      "move": true,
      "word": "Controlled",
      "claim": "c21",
-     "says": "Controlled descent"
+     "says": "Controlled descent",
+     "quote": "at least some front squat training should be done with control through the deepest range of motion, including pauses."
     },
     {
      "phase": "Drive up",
@@ -32,37 +33,18 @@
     {
      "phase": "Lower",
      "move": true,
-     "word": "Smooth",
-     "claim": "g7",
-     "says": "Smooth and controlled"
+     "word": "Controlled",
+     "claim": "g9",
+     "says": "Smooth and controlled",
+     "quote": "Select weight allowing controlled movement with proper form and upright posture."
     },
     {
      "phase": "Drive up",
-     "move": true,
-     "word": "Smooth",
-     "claim": "g7",
-     "says": "Smooth and controlled"
-    }
-   ]
-  },
-  {
-   "id": "bodyweight_squat",
-   "lane": "LIB-14 #289",
-   "text": "Controlled descent, breathe out on the way up; no source gives seconds.",
-   "claim": "b7",
-   "rows": [
-    {
-     "phase": "Lower",
      "move": true,
      "word": "Controlled",
-     "claim": "b7",
-     "says": "Controlled descent"
-    },
-    {
-     "phase": "Drive up",
-     "move": true,
-     "blank": true,
-     "claim": "b7"
+     "claim": "g9",
+     "says": "Smooth and controlled",
+     "quote": "Select weight allowing controlled movement with proper form and upright posture."
     }
    ]
   },
@@ -83,7 +65,8 @@
      "move": true,
      "word": "Controlled",
      "claim": "c2",
-     "says": "control the way down"
+     "says": "control the way down",
+     "quote": "To maximize effectiveness, control the motion back down as much as possible instead of just dropping."
     }
    ]
   },
@@ -98,35 +81,16 @@
      "move": true,
      "word": "Slow",
      "claim": "p8",
-     "says": "Slow and controlled"
+     "says": "Slow and controlled",
+     "quote": "Bouncing at the bottom: This movement should be slow and controlled, without any bounce at the bottom of the squat."
     },
     {
      "phase": "Drive up",
      "move": true,
      "word": "Slow",
      "claim": "p8",
-     "says": "Slow and controlled"
-    }
-   ]
-  },
-  {
-   "id": "box_jump",
-   "lane": "pilot A #109",
-   "text": "Explosive take-off; step down; full rest between sets; never to failure. Airborne plate: take-off and landing frames only.",
-   "claim": "c11",
-   "rows": [
-    {
-     "phase": "Take-off",
-     "move": true,
-     "word": "Explosive",
-     "claim": "c11",
-     "says": "Explosive take-off"
-    },
-    {
-     "phase": "Step down",
-     "move": true,
-     "blank": true,
-     "claim": "c11"
+     "says": "Slow and controlled",
+     "quote": "Bouncing at the bottom: This movement should be slow and controlled, without any bounce at the bottom of the squat."
     }
    ]
   },
@@ -145,14 +109,16 @@
      "move": true,
      "word": "Slow",
      "claim": "c16",
-     "says": "lower slowly"
+     "says": "lower slowly",
+     "quote": "“So you want to slowly lower yourself down and then you can go a little quicker on the way up.”"
     },
     {
      "phase": "Rise",
      "move": true,
      "word": "Quicker",
      "claim": "c16",
-     "says": "rise a little quicker"
+     "says": "rise a little quicker",
+     "quote": "“So you want to slowly lower yourself down and then you can go a little quicker on the way up.”"
     }
    ]
   },
@@ -167,14 +133,16 @@
      "move": true,
      "word": "Controlled",
      "claim": "j9",
-     "says": "Controlled squat down"
+     "says": "Controlled squat down",
+     "quote": "Squat with control of proper posture and balance into the bottom, then immediately rebound up and drive into a maximal vertical jump."
     },
     {
      "phase": "Jump",
      "move": true,
      "word": "Explosive",
-     "claim": "j9",
-     "says": "explosive jump"
+     "claim": "j7",
+     "says": "explosive jump",
+     "quote": "It is suggested, you first learn how to squat and land before attempting to jump. Once you have mastered the hip-hinge mechanism, begin with small jumps, but emphasize your landing mechanics. Only progress to more explosive jumps once you have mastered your landing mechanics."
     }
    ]
   },
@@ -192,7 +160,8 @@
      "move": true,
      "word": "Controlled",
      "claim": "c3",
-     "says": "Controlled speed down"
+     "says": "Controlled speed down",
+     "quote": "At a controlled speed, bend at the knee to lower yourself until the rear knee lightly contacts the floor without resting on it, then stand again by pushing through the whole foot."
     },
     {
      "phase": "Stand",
@@ -215,8 +184,9 @@
      "phase": "Lower",
      "move": true,
      "word": "Controlled",
-     "claim": "c8",
-     "says": "Controlled descent"
+     "claim": "c7",
+     "says": "Controlled descent",
+     "quote": "If you can’t maintain a controlled descent into the bottom of the lunge, maintain an upright trunk, and maintain balance between the feet, reduce the weight."
     },
     {
      "phase": "Rise",
@@ -237,14 +207,16 @@
      "move": true,
      "word": "Slow",
      "claim": "c4",
-     "says": "shift the weight slowly"
+     "says": "shift the weight slowly",
+     "quote": "The raised (swing) leg should initiate contact with a heel strike first, slowly transferring your body weight into the leading (forward) foot placed firmly on the floor."
     },
     {
      "phase": "Lower",
      "move": true,
      "word": "Smooth",
      "claim": "c7",
-     "says": "lower smoothly"
+     "says": "lower smoothly",
+     "quote": "Sets of 3-10 reps per leg are usually appropriate with weight that allows a full length step, smooth movement and no crashing into the bottom position."
     },
     {
      "phase": "Rise",
@@ -265,7 +237,8 @@
      "move": true,
      "word": "Slow",
      "claim": "c2",
-     "says": "Slow weight transfer onto the front foot"
+     "says": "Slow weight transfer onto the front foot",
+     "quote": "The raised (swing) leg should initiate contact with a heel strike first, slowly transferring your body weight into the leading (forward) foot placed firmly on the floor."
     },
     {
      "phase": "Lower",
@@ -292,14 +265,16 @@
      "move": true,
      "word": "Smooth",
      "claim": "c6",
-     "says": "Smooth"
+     "says": "Smooth",
+     "quote": "Sets of 5-10 reps are usually appropriate with weight that allows a smooth movement and no crashing into the bottom position."
     },
     {
      "phase": "Rise",
      "move": true,
      "word": "Smooth",
      "claim": "c6",
-     "says": "Smooth"
+     "says": "Smooth",
+     "quote": "Sets of 5-10 reps are usually appropriate with weight that allows a smooth movement and no crashing into the bottom position."
     }
    ]
   },
@@ -323,7 +298,8 @@
      "move": true,
      "word": "Controlled",
      "claim": "c5",
-     "says": "Lower with control"
+     "says": "Lower with control",
+     "quote": "Lower the weight back to the ground with control."
     }
    ]
   },
@@ -341,7 +317,8 @@
      "move": true,
      "word": "Quick",
      "claim": "c3",
-     "says": "short, quick, controlled steps"
+     "says": "short, quick, controlled steps",
+     "quote": "To pull, step back one foot at a time, dragging the sled toward you. Each step should be short, quick, and controlled-think of driving through your midfoot while keeping the rope close to your body."
     }
    ]
   },
@@ -359,7 +336,8 @@
      "move": true,
      "word": "Crisp",
      "claim": "c3",
-     "says": "short, crisp alternating kicks"
+     "says": "short, crisp alternating kicks",
+     "quote": "Take another breath and begin moving your legs up and down alternatingly. Keep your movements short and crisp."
     }
    ]
   },
@@ -373,15 +351,17 @@
      "phase": "Open",
      "move": true,
      "word": "Slow",
-     "claim": "c9",
-     "says": "keep the movement slow and controlled"
+     "claim": "c10",
+     "says": "keep the movement slow and controlled",
+     "quote": "Pick a light weight, so that you can move slowly and controlled without starting to hinge and create excessive momentum."
     },
     {
      "phase": "Return",
      "move": true,
      "word": "Slow",
-     "claim": "c9",
-     "says": "keep the movement slow and controlled"
+     "claim": "c10",
+     "says": "keep the movement slow and controlled",
+     "quote": "Pick a light weight, so that you can move slowly and controlled without starting to hinge and create excessive momentum."
     }
    ]
   },
@@ -399,7 +379,8 @@
      "move": true,
      "word": "Controlled",
      "claim": "c4",
-     "says": "with control"
+     "says": "with control",
+     "quote": "Keep your arms long, your torso upright, and your gaze ahead. Walk with controlled steps."
     }
    ]
   }
@@ -419,6 +400,16 @@
   }
  ],
  "leftOut": [
+  {
+   "id": "box_jump",
+   "lane": "pilot A #109",
+   "why": "D-STRIP-QUOTEWORD: no claim quote holds \"explosive\" for the take-off. c3 (\"Explosively extend your hips, knees, and ankles\") holds \"explosively\", which is not a FORMS form (S3, ruling asked); c8's \"explosive power\" is load progression, not the take-off; c11 has no cadence word"
+  },
+  {
+   "id": "bodyweight_squat",
+   "lane": "LIB-14 #289",
+   "why": "D-STRIP-QUOTEWORD: \"Controlled descent\" (b7) has no claim whose quote names a controlled descent; b8's \"control the amount of forward translation\" is shin travel, not cadence, so Lower stays blank and the card has no word"
+  },
   {
    "id": "sled_push",
    "lane": "LIB-22 #305",
