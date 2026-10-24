@@ -1014,6 +1014,25 @@ describe('LIB-21 A16: no other card\'s composer is copied, forked or imported (D
   });
 });
 
+describe('LIB-21 test camera (supervisor, bulk rulings on #312): camOf follows the spec\'s facing', { timeout: T }, () => {
+  /** The engine's joint marks (plate.mjs: the near shoulder, elbow, hip and knee in side view) against camOf's projection
+   *  of the same landmarks in the end pose; the facing-blind camera (the earlier camOf: near 'r', x0 + z) misplaces them
+   *  on a facing-left plate. Returns the worst miss in px. */
+  const markMiss = (spec: any, cam: any) => {
+    const marks = [...plate.renderPlate(spec, { id: 'x' }).svg.matchAll(/<circle class="joint" cx="(-?[\d.]+)" cy="(-?[\d.]+)"/g)].map(m => [+m[1]!, +m[2]!]);
+    const l = lmOf(spec, 'end'), keys = ['shoulder', 'elbow', 'hip', 'knee'].map(k => `${k}.${cam.near}`);
+    return Math.max(...keys.map((k, i) => Math.hypot(cam.P(l[k])[0] - marks[i]![0]!, cam.P(l[k])[1] - marks[i]![1]!)));
+  };
+  const blind = (spec: any) => { const c = rep(spec).camera; return { near: 'r', P: (w: number[]) => [c.x0 + w[2]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM] }; };
+  it('camOf puts every drawn spec\'s near joints on the engine\'s joint marks (±0.1 px), pallof_press (facing left) included', async () => {
+    for (const id of specsDrawn()) { expect(markMiss(S[id], camOf(S[id])), id).toBeLessThanOrEqual(0.1); await yieldNow(); }
+    expect(S.pallof_press.facing).toBe('left');
+  });
+  it('mutation: the facing-blind camera misplaces pallof_press\'s joints by many px (red)', () => {
+    expect(markMiss(S.pallof_press, blind(S.pallof_press))).toBeGreaterThan(20);
+  });
+});
+
 describe('LIB-21 A15: Mistakes, tells, cues, callouts, leaders, phantoms and soft bends (DESIGN.md sections 6-12)', { timeout: T }, () => {
   const KEYS: Record<string, string> = { cable_crunch: 'hips', ab_wheel_rollout: 'arch', bird_dog: 'arch', superman: 'head', pallof_press: 'arch' };
   const ONE_TELL = ['ab_wheel_rollout', 'cable_crunch', 'pallof_press'];
