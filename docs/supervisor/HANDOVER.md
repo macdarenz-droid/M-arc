@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-24 ~16:30 UTC · main `dd7116e9` · **8.0q PAUSE (owner, 10-24 ~16:15): all work paused; the hourly tick is disabled; read 8.0q first** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-24 ~17:05 UTC · main `cd6113c4` · **8.0q PAUSE (owner, 10-24 ~16:15): all work paused; the hourly tick is disabled; read 8.0q first** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -818,15 +818,15 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **Owner items pending:** none. The owner delegated his open library choices to the supervisor on 10-24 07:15 ("U do qll that. Dont stall and decide for me."; 8.0p 07:45). Owner-only items in AGENTS.md stay his.
 
 #### Finished at pause (in flight when the owner paused; the supervisor let each finish its step)
-- **Train 35** (#315, `claude/sup-merge-train-35` @ `a2048023`: #282 LIB-5v @ `2ad1bf3c` + this handover @ `f1771325`, on main `dd7116e9`). Result: see the line added at the end of this section.
+- **Train 35** (#315, `claude/sup-merge-train-35` @ `a2048023`: #282 LIB-5v @ `2ad1bf3c` + this handover @ `f1771325`, on main `dd7116e9`). **Result: merged** (#315 → main `cd6113c4`, all checks green on `a2048023`). No APK: the variant-gate plugin writes no outputs, so nothing in the app changes. #282 is done.
 - **#271 LIB-7c catch-up:** main `dd7116e9` merged in (`aa1d03d6`, all four conflicts kept both sides), the 7c-A1 `LINE69` follow-on (`5e0fba3`), and **D-LIB7c-R12COUNT** (6386394399: lib12-fix.test.ts:154 re-counted to `8 + 2 + 5 - 1` / "pair keys: 15, expected 14"). The builder runs C0, A1-A10, check, test:tz and the gate, then posts 'LIB-7c CATCH-UP READY @ <sha>'. Result: see the end of this section.
 
 #### Merge queue (plan order; each through a merge train, 6.8; the next train is **36**)
 | # | PR | Head | Verdict | What it needs before its train |
 |---|---|---|---|---|
 | 6 | #109 LIB-8M pilot A pin | `b898578` | PASS 6385655672 | **merged** (train 34, main `dd7116e9`) |
-| 7 | #282 LIB-5v | `2ad1bf3c` | PASS 6337619598 | in train 35 |
-| 8 | #271 LIB-7c | after its catch-up | PASS @ 4b894f1 (6347992738) | a **delta review of the catch-up merge** (an Opus helper is enough: the merge commit, the 5 count lines, R12COUNT), then train 36 |
+| 7 | #282 LIB-5v | `2ad1bf3c` | PASS 6337619598 | **merged** (train 35, main `cd6113c4`) |
+| 8 | #271 LIB-7c | after its catch-up | PASS @ 4b894f1 (6347992738) | main moved again after its catch-up (train 35 added LIB-5v, which also edits library-lint.test.ts and lint/index.mjs), so first merge main `cd6113c4` once more and keep both sides; then a **delta review of the catch-up merges** (an Opus helper is enough: the merge commit, the 5 count lines, R12COUNT), then train 36 |
 | — | #316 F-C0-TIMEOUT (CI health, off the checklist) | `7bcd76fe` | PASS 6386490672 | can ride train 36. Fixes a 5 s vitest timeout in library-manifest.test.ts "C0 … on this tree" (3.5 s alone, 4.8 s in a full run, over 5 s under load). Until it merges, a full local `npx vitest run` can fail on that one test under load; CI has stayed green. |
 | 9 | #245 LIB-9a LB1 | `9e5d9666` | WAITING since 10-19 (pilot A on main, now true) | resume: main catch-up, then its card's remaining Do steps, READY, review |
 | 10 | #279 LIB-ZOOM | `754176a0` | PASS (delta, 10-19) | **conflicts with main**; catch-up plus a `[golden update]` re-pin of pilot A's 13 MANIFEST rows (collision rule below), then a delta review |
