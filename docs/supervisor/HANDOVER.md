@@ -890,6 +890,8 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 06:00 UTC (10-24)**: no change since 21:00. Active LIB builders: 0. Every lane still waits on the owner.
+
 **Update 03:00 UTC (10-24)** (usage 7-day 0.61, last read 23:19): no change since 21:00. Active LIB builders: 0. Every lane still waits on the owner.
 
 **Update 00:00 UTC (10-24)** (usage 7-day 0.61): no change since 21:00. Active LIB builders: 0. Every lane waits on the owner: the pilot A sheet (#109), LB9's approval, the strip choice and E-R5's go.
