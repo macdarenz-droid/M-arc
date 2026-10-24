@@ -175,7 +175,7 @@ export function h6(c, ctx, R) {
     } else out.push(P(tag, `unknown plate fact kind ${f.kind}`));
   }
   if (JSON.stringify(r.tempo) !== JSON.stringify(c.spec.tempo)) out.push(P('H6.tempo', `tempo ${JSON.stringify(c.spec.tempo)} != the card's ${JSON.stringify(r.tempo)}`));
-  if (isUntimed(c.spec.tempo)) for (const k of wordProblems(c.spec.tempo, r.tempoText)) out.push(P(`H6.tempo-${k}`, `tempo ${k}: ${JSON.stringify(c.spec.tempo)} against the card's plate.tempo.text ${JSON.stringify(r.tempoText ?? null)}`));   // LIB-STRIP (D-STRIP-H6)
+  if (isUntimed(c.spec.tempo)) for (const k of wordProblems(c.spec.tempo, r.tempoText, { allBlank: r.tempoFallbackA === true })) out.push(P(`H6.tempo-${k}`, `tempo ${k}: ${JSON.stringify(c.spec.tempo)} against the card's plate.tempo.text ${JSON.stringify(r.tempoText ?? null)}`));   // LIB-STRIP (D-STRIP-H6)
   return out;
 }
 

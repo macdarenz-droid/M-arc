@@ -30,7 +30,7 @@ export const FORMS = {
   Smooth: ['smooth', 'smoothly'],
   Quicker: ['quicker'],
   Quick: ['quick'],
-  Explosive: ['explosive'],
+  Explosive: ['explosive', 'explosively'],   // explosively: supervisor ruling on #309 (box_jump c3), that form only
   Crisp: ['crisp'],
 };
 /** D-STRIP-SAYS: direction terms; a `says` and its phase name that both carry one must agree. */
@@ -51,18 +51,21 @@ export const isUntimed = tempo => Array.isArray(tempo) && tempo.some(t => t && t
 
 /**
  * The word checks shared by the validator and H6 (D-STRIP-H6, -SHAPE), for an untimed tempo against its verified
- * card's plate.tempo.text. Returns codes: 'text' (no text), 'noword' (no entry has a word), 'word:<i>' (word i is not a
+ * card's plate.tempo.text. `allBlank` (D-STRIP-AFALL) marks a card listed under rows.json fallbackA: its phases carry
+ * no word at all. Returns codes: 'text' (no text), 'noword' (no entry has a word, on any other card), 'word:<i>:fallback'
+ * (a word on a fallbackA card), 'word:<i>' (word i is not a
  * FORMS key, or no form of it is a whole word in the text), 'word:<i>:timed' (entry i has both `s` and `word`).
  */
-export function wordProblems(tempo, text) {
+export function wordProblems(tempo, text, { allBlank = false } = {}) {
   const out = [];
   if (typeof text !== 'string' || !text) out.push('text');
   for (const [i, t] of tempo.entries()) {
     if (!('word' in t)) continue;
-    if (t.s != null) out.push(`word:${i}:timed`);
+    if (allBlank) out.push(`word:${i}:fallback`);
+    else if (t.s != null) out.push(`word:${i}:timed`);
     else if (!formIn(t.word, text)) out.push(`word:${i}`);
   }
-  if (!tempo.some(t => 'word' in t)) out.push('noword');
+  if (!allBlank && !tempo.some(t => 'word' in t)) out.push('noword');
   return out;
 }
 

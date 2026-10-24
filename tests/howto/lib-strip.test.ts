@@ -63,12 +63,14 @@ describe('A2, A3: the goldens the rebuild tests prove (library-core :455-485, la
   });
 });
 
-/** Expected aria-labels, one literal per rows.json card (D-STRIP-B: "<phase> <word>", lower case). */
+/** Expected aria-labels, one literal per rows.json card and fallbackA card (D-STRIP-B: "<phase> <word>", lower case). */
 const LABELS: Record<string, string> = {
   front_squat: 'Tempo: lower controlled, drive up',
   goblet_squat: 'Tempo: lower controlled, drive up controlled',
+  bodyweight_squat: 'Tempo: lower, drive up',
   step_up: 'Tempo: rise, lower controlled',
   pistol_squat: 'Tempo: lower slow, drive up slow',
+  box_jump: 'Tempo: take-off explosive, step down',
   reverse_lunge: 'Tempo: lower slow, rise quicker',
   jump_squat: 'Tempo: lower controlled, jump explosive',
   bulgarian_split_squat: 'Tempo: lower controlled, stand',
@@ -105,7 +107,7 @@ describe('A4: the strip, on NOSECS_STRIP with the vendored esc and plain', () =>
     expect([aria(h), flexes(h), values(h)]).toEqual(['Tempo: lower 2–3 seconds, push', ['1 1 0', '1 1 0'], ['2–3 s', '&nbsp;']]);
   });
   it('every rows.json card gives its expected aria-label', () => {
-    const f = stripOf(S.NOSECS_STRIP), cards = JSON.parse(read(ROWS)).cards;
+    const f = stripOf(S.NOSECS_STRIP), R = JSON.parse(read(ROWS)), cards = [...R.cards, ...R.fallbackA];
     expect(Object.fromEntries(cards.map((c: any) => [c.id, aria(f(S.tempoOf(c.rows)))]))).toEqual(LABELS);
   });
   it('tempoOf keeps { phase, move?, word? } in that order and refuses a timed row', () => {
@@ -118,7 +120,9 @@ describe('A4: the strip, on NOSECS_STRIP with the vendored esc and plain', () =>
 describe('D-STRIP-FORMS and -SAYS: whole-word, case-insensitive', () => {
   it('a form matches only as a whole word; directions read both ways', () => {
     expect([S.formIn('Controlled', 'Controlled descent'), S.formIn('Controlled', 'control the way down'), S.formIn('Controlled', 'controlling both phases'),
-      S.formIn('Slow', 'slower'), S.formIn('Quick', 'quicker'), S.formIn('Steady', 'steady')]).toEqual([true, true, false, false, false, false]);
+      S.formIn('Slow', 'slower'), S.formIn('Quick', 'quicker'), S.formIn('Steady', 'steady'), S.formIn('Explosive', 'Explosively extend'), S.formIn('Explosive', 'explosiveness')])
+      .toEqual([true, true, false, false, false, false, true, false]);
+    expect(Object.fromEntries(Object.entries(S.FORMS).map(([k, v]: any) => [k, v.length]))).toEqual({ Controlled: 2, Slow: 2, Smooth: 2, Quicker: 1, Quick: 1, Explosive: 2, Crisp: 1 });
     expect([S.directionsOf('Take-off'), S.directionsOf('Step down'), S.directionsOf('Controlled descent, drive up'), S.directionsOf('Walk'), S.directionsOf('Lowering')])
       .toEqual([['up'], ['down'], ['down', 'up'], [], ['down']]);
   });
@@ -159,6 +163,12 @@ describe('A6: the validator accepts the untimed shapes (D-STRIP-SHAPE), add-only
       ['a blank row without its marker', v(untimedCard(), frontSquat().rows.map((r: any, i: number) => (i ? { ...r, blank: undefined } : r))), /strip row 1 \(Drive up\) needs a word or blank: true/],
     ];
     for (const [name, bad, re] of cases) expect([name, bad.some(b => re.test(b))]).toEqual([name, true]);
+    // D-STRIP-AFALL both ways: all blank is valid only on a fallbackA card, and a fallbackA card carries no word
+    const blank = [{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true }], fa = (c: any, rows: any[], on: boolean) =>
+      V.validateCard(c, q(), { file: 'cable_lateral_raise.json', untimed: new Map([['cable_lateral_raise', rows]]), fallbackA: new Set(on ? ['cable_lateral_raise'] : []) });
+    expect(fa(untimedCard(blank), rowsFor(blank), true)).toEqual([]);
+    expect(fa(untimedCard(blank), rowsFor(blank), false).some((b: string) => /tempo words: noword/.test(b))).toBe(true);
+    expect(fa(untimedCard(), frontSquat().rows, true).some((b: string) => /tempo words: word:0:fallback/.test(b))).toBe(true);
     const fx = JSON.parse(read(FX));
     expect(v({ ...fx, tempo: [{ ...fx.tempo[0], word: 'Controlled' }, ...fx.tempo.slice(1)] })).toContain('cards/cable_lateral_raise.json: tempo[0] keys phase,s,move,word, want phase,s[,move]');
     expect(v({ ...fx, tempo: [{ ...fx.tempo[0], extra: 1 }, ...fx.tempo.slice(1)] })).toContain('cards/cable_lateral_raise.json: tempo[0] keys phase,s,move,extra, want phase,s[,move]');
@@ -201,6 +211,12 @@ describe('A7, A8: H6 and H8 through runQa on a candidate built from the fixture 
       ['the word moved to the other phase in the spec only', c, [{ phase: 'Lower', move: true }, { ...t[1], word: 'Controlled' }], 'H6.tempo'],
     ];
     for (const [name, card, tempo, key] of cases) expect([name, (await keys(cand(card, tempo), 'PQ-H6', 'H6.tempo')).includes(key)]).toEqual([name, true]);
+    // D-STRIP-AFALL: researchOf marks a card listed under fallbackA (bodyweight_squat); its all-blank tempo passes, a word is red
+    const blank = [{ phase: 'Lower', move: true }, { phase: 'Drive up', move: true }], bw = (tempo: any[]) => ({ ...untimedCard(tempo), id: 'bodyweight_squat' });
+    expect(cand(bw(blank), blank).research.tempoFallbackA).toBe(true);
+    expect('tempoFallbackA' in cand(c, t).research).toBe(false);
+    expect(await keys(cand(bw(blank), blank), 'PQ-H6', 'H6.tempo')).toEqual([]);
+    expect(await keys(cand(bw(t), t), 'PQ-H6', 'H6.tempo')).toContain('H6.tempo-word:0:fallback');
   }, T);
   it('H8: each value line that is not &nbsp; is a label; the 1-3 word rule and the bans apply', async () => {
     const node = await import(/* @vite-ignore */ url('tools/plates/library/qa/node.mjs'));
@@ -222,7 +238,8 @@ const MIXED = [{ phase: 'Lower', move: true, s: '2–3' }, { phase: 'Push', move
 async function standInPage(extra: Record<string, any[]>) {
   const bp = await import(/* @vite-ignore */ url('tools/plates/library/build-page.mjs'));
   const dir = mkdtempSync(join(tmpdir(), 'lib-strip-page-')); temps.push(dir);
-  const tempos: Record<string, any[]> = { ...Object.fromEntries(JSON.parse(read(ROWS)).cards.map((c: any) => [`strip_${c.id}`, S.tempoOf(c.rows)])), strip_worst: WORST, strip_mixed: MIXED, ...extra };
+  const R = JSON.parse(read(ROWS));
+  const tempos: Record<string, any[]> = { ...Object.fromEntries([...R.cards, ...R.fallbackA].map((c: any) => [`strip_${c.id}`, S.tempoOf(c.rows)])), strip_worst: WORST, strip_mixed: MIXED, ...extra };
   const specs = Object.fromEntries(Object.entries(tempos).map(([id, t]) => {
     const f = join(dir, `${id}.mjs`);
     // the mirror's own copy (the page build runs in <mirror>/artifact), as render.mjs's mirror exercises did
@@ -256,16 +273,17 @@ const SCOPE = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'step_up', 'pi
   'cable_rear_delt_fly', 'sled_push', 'farmer_s_carry', 'burpee', 'medicine_ball_slam', 'wall_ball', 'diamond_push_up', 'pike_push_up'];
 const SET_LEVEL_PHASE = /^(set|sets|rep|reps|rest)$/i, SET_LEVEL_SAYS = /(?<![A-Za-z])(set|sets|rep|reps|rest|round|rounds|failure)(?![A-Za-z])/i;
 /** sha256 of rows.json's canonical JSON (JSON.stringify of the parsed file), set at 'STRIP ROWS VERIFIED' (Do 6). */
-const ROWS_PIN = '4cd8ae4e86a884efecfa6ddd82a7c74b435949a7b31b28e4b9c786fc27e78cc3';   // pre-verify; re-set at STRIP ROWS VERIFIED
+const ROWS_PIN = 'ccf667edfa6ef3933fe21a30f9fe0045801d2a90b1aa0659c7da1937c2e50254';   // pre-verify; re-set at STRIP ROWS VERIFIED
 
 /** A11's checks on a parsed rows.json; returns problems. */
 function rowProblems(R: any, V: any): string[] {
-  const out: string[] = [], seen = [...R.cards, ...R.timedAtHead, ...R.leftOut].map((c: any) => c.id);
+  const out: string[] = [], seen = [...R.cards, ...R.fallbackA, ...R.timedAtHead, ...R.leftOut].map((c: any) => c.id);
   if (JSON.stringify([...seen].sort()) !== JSON.stringify([...SCOPE].sort())) out.push(`ids ${seen.join()} are not the scope's ${SCOPE.length}, each once`);
   for (const t of R.timedAtHead) if (!t.tempo.every((p: any) => p.s != null)) out.push(`${t.id}: timedAtHead without s on every phase`);
-  for (const c of R.cards) {
+  const fallbackA = new Set(R.fallbackA.map((c: any) => c.id));
+  for (const c of [...R.cards, ...R.fallbackA]) {
     const claims: string[] = [].concat(c.claim);
-    if (!c.rows.some((r: any) => 'word' in r)) out.push(`${c.id}: no word`);
+    if (fallbackA.has(c.id) ? c.rows.some((r: any) => 'word' in r) : !c.rows.some((r: any) => 'word' in r)) out.push(`${c.id}: ${fallbackA.has(c.id) ? 'a word on a fallbackA card' : 'no word'}`);
     for (const r of c.rows) {
       const at = `${c.id}.${r.phase}`;
       if (SET_LEVEL_PHASE.test(r.phase)) out.push(`${at}: set-level phase`);
@@ -284,7 +302,7 @@ function rowProblems(R: any, V: any): string[] {
       if (d.length === 1 && p.length === 1 && d[0] !== p[0]) out.push(`${at}: says is ${d[0]}, the phase ${p[0]}`);
     }
     const tempo = S.tempoOf(c.rows), u = untimedCard(tempo), card = { ...u, plate: { ...u.plate, tempo: { ...u.plate.tempo, text: c.text } } };
-    for (const b of V.validateCard(card, JSON.parse(read(FXQ)), { file: 'cable_lateral_raise.json', untimed: new Map([['cable_lateral_raise', c.rows]]) })) out.push(`${c.id}: ${b}`);
+    for (const b of V.validateCard(card, JSON.parse(read(FXQ)), { file: 'cable_lateral_raise.json', untimed: new Map([['cable_lateral_raise', c.rows]]), fallbackA: new Set(fallbackA.has(c.id) ? ['cable_lateral_raise'] : []) })) out.push(`${c.id}: ${b}`);
     const tree = join(ROOT, `docs/research/howto/cards/${c.id}.json`);
     if (existsSync(tree) && JSON.parse(readFileSync(tree, 'utf8')).plate?.tempo?.text !== c.text) out.push(`${c.id}: text differs from the tree's card`);
   }
@@ -318,6 +336,12 @@ describe('A11: the rows (D-STRIP-ROWS, -SCOPE, -SAYS, D-STRIP-ALL)', () => {
     expect(rowProblems(R1, V).some(b => /are not the scope's 25, each once/.test(b))).toBe(true);
     const R2 = rows(); R2.cards.pop();
     expect(rowProblems(R2, V).some(b => /are not the scope's 25, each once/.test(b))).toBe(true);
+    const R4 = rows(); R4.fallbackA[0].rows[0] = { phase: 'Lower', move: true, word: 'Controlled', says: 'Controlled descent', quote: 'control', claim: 'b7' };
+    expect(rowProblems(R4, V)).toContain('bodyweight_squat: a word on a fallbackA card');
+    const R5 = rows(); R5.cards.find((c: any) => c.id === 'front_squat').rows[0] = { phase: 'Lower', move: true, blank: true, claim: 'c21' };
+    expect(rowProblems(R5, V)).toContain('front_squat: no word');
+    const ex = S.FORMS.Explosive;
+    try { S.FORMS.Explosive = ['explosive']; expect(rowProblems(rows(), V)).toContain('box_jump.Take-off: the quote of claim c3 does not hold Explosive'); } finally { S.FORMS.Explosive = ex; }
     const R3 = rows(); R3.cards[0].rows[0].word = 'Slow';
     expect(createHash('sha256').update(JSON.stringify(R3)).digest('hex')).not.toBe(ROWS_PIN);
   });

@@ -9535,6 +9535,68 @@ if (gate.runs('LIB-12'))
   }
 }
 
+// LIB-STRIP: the tempo strip without seconds (card LIB-STRIP, D-STRIP-B; tools/plates/library/strip/). One fixture
+// plates page built through buildPlatesPage: a stand-in card per strip/rows.json card and fallbackA card (the vendored back squat with its
+// tempo replaced by tempoOf(rows)), the 3-phase worst case, the mixed fixture, the timed back squat as control and a seed
+// (a copy of the worst case). qa/browser.mjs measurePage and judge run on every card at 390, 360 and 340 px in the 5
+// themes, with the seed's labels widened by the css option (qa/mutations.mjs B7's pattern). Red when a real card has
+// H4.tempo, when a strip's height differs from the control's, or when the seed does not overflow at 340 px.
+if (gate.runs('LIB-STRIP'))
+{
+  const tag = 'LIB-STRIP';
+  const t0 = Date.now(), e0 = errors.length;
+  const { mkdtempSync: mkdtempStrip, rmSync: rmStrip } = await import('node:fs');
+  const { tmpdir: tmpdirStrip } = await import('node:os');
+  const S = await import('../tools/plates/library/strip/tempo-strip.mjs');
+  const { buildPlatesPage, GOLDEN_A_HEADING } = await import('../tools/plates/library/build-page.mjs');
+  const { makeMirror, extractPlates } = await import('../tools/plates/golden.mjs');
+  const { loadEngine } = await import('../tools/plates/library/qa/engine.mjs');
+  const { measurePage, judge, THEMES, WIDTHS } = await import('../tools/plates/library/qa/browser.mjs');
+  const { loadPins } = await import('../tools/plates/library/qa/index.mjs');
+  const { openGolden } = await import('../tools/plates/fidelity/harness.mjs');
+  const worst = [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Jump', move: true, word: 'Explosive' }, { phase: 'Step down', move: true }];
+  const rowsFile = JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/strip/rows.json'), 'utf8'));
+  const tempos = { ...Object.fromEntries([...rowsFile.cards, ...rowsFile.fallbackA].map(c => [`strip_${c.id}`, S.tempoOf(c.rows)])), strip_worst: worst,
+    strip_mixed: [{ phase: 'Lower', move: true, s: '2–3' }, { phase: 'Push', move: true }], strip_control: null, strip_seed: worst };
+  const dir = mkdtempStrip(join(tmpdirStrip(), 'lib-strip-gate-')), mirror = makeMirror(), stripBrowser = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    // each stand-in imports the build mirror's own back squat (the page build runs in <mirror>/artifact)
+    const specs = Object.fromEntries(Object.entries(tempos).map(([id, t]) => {
+      const f = join(dir, `${id}.mjs`);
+      writeFileSync(f, `import { pathToFileURL } from 'node:url';\nconst base = (await import(new URL('../exercises/barbell_back_squat.mjs', pathToFileURL(\`\${process.cwd()}/\`)).href)).default;\nexport default ${t ? `{ ...base, tempo: ${JSON.stringify(t)} }` : 'base'};\n`);
+      return [id, f];
+    }));
+    const ids = Object.keys(tempos);
+    const html = (await buildPlatesPage({ groups: [{ id: 'strip', title: 'Tempo', ids }], sources: Object.fromEntries(ids.map(id => [id, ['LIB-STRIP fixture']])), specs, heading: GOLDEN_A_HEADING })).html.toString('utf8');
+    const E = await loadEngine(mirror), squat = await E.spec('barbell_back_squat');
+    const cands = extractPlates(html).map(p => ({ id: p.chromeId, chromeId: p.chromeId, plate: p, spec: { ...squat, tempo: tempos[p.chromeId.replace(/-/g, '_')] ?? squat.tempo } }));
+    if (cands.length !== ids.length) errors.push(`${tag}: ${cands.length} cards extracted, want ${ids.length}`);
+    const { cards, errors: pageErrors } = await measurePage(stripBrowser, html, cands, E, { css: '#card-strip-seed .tempo-label { min-width: 160px; }' });
+    for (const m of pageErrors) errors.push(`${tag}: page error: ${m}`);
+    const envelope = loadPins().envelope;
+    let real = 0;
+    for (const c of cands) {
+      const h4 = judge(c, cards[c.chromeId], envelope).H4.map(p => p.key).filter(k => k.startsWith('H4.tempo'));
+      if (c.chromeId === 'strip-seed') { if (!h4.includes('H4.tempo:340')) errors.push(`${tag}: the seed card did not overflow at 340 px (${h4.join(', ') || 'no H4.tempo'})`); }
+      else { real++; for (const k of h4) errors.push(`${tag}: ${c.chromeId} ${k}`); }
+    }
+    const heights = [];
+    for (const theme of THEMES) for (const w of WIDTHS) {
+      const { ctx, page } = await openGolden(stripBrowser, theme, { viewport: { width: w, height: 844 }, html });
+      try {
+        const hs = await page.evaluate(() => Object.fromEntries([...document.querySelectorAll('article.sheet-card')].map(a => [a.id.slice(5), a.querySelector('.tempo').getBoundingClientRect().height])));
+        heights.push(hs['strip-control']);
+        for (const [id, h] of Object.entries(hs)) if (id !== 'strip-seed' && h !== hs['strip-control']) errors.push(`${tag}: ${theme} ${w} px: ${id} strip ${h} px tall, the timed control's ${hs['strip-control']} px`);
+      } finally { await ctx.close(); }
+    }
+    if (errors.length === e0) console.log(`${tag}: ${real} strips (${rowsFile.cards.length + rowsFile.fallbackA.length} rows.json cards, worst case, mixed, timed control) x 5 themes x 3 widths: no H4.tempo, strip ${[...new Set(heights)].join('/')} px as the control; the seed overflows at 340 px (${((Date.now() - t0) / 1000).toFixed(1)} s)`);
+  } finally {
+    await stripBrowser.close();
+    rmStrip(dir, { recursive: true, force: true });
+    rmStrip(mirror, { recursive: true, force: true });
+  }
+}
+
 await gate.done();
 await browser.close();
 stopping = true;

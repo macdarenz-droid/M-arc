@@ -1,5 +1,5 @@
 {
- "rule": "D-STRIP-B, -ROWS, -FORMS, -SAYS, -SCOPE, D-STRIP-ALL (LIB-STRIP card, claude/sup-lib4-cards @ ad335ef2). A row is { phase, move?, word? | blank: true, claim, says? }: says is the verbatim span of text that names the word; blank marks a phase with no card-true word. text and claim are the card's plate.tempo.text and plate.tempo.claim, byte for byte. Only { phase, move?, word? } goes on a card's tempo key and its spec (tempoOf).",
+ "rule": "D-STRIP-B, -ROWS, -FORMS, -SAYS, -SCOPE, D-STRIP-ALL, -VALIDATE, -WHOLE, -CONTEST, -QUOTEWORD, -AFALL (LIB-STRIP card, claude/sup-lib4-cards @ ad335ef2). A row is { phase, move?, word? | blank: true, claim, says?, quote? }: says is the verbatim span of text that names the word, quote the verbatim claim quote that holds it; blank marks a phase with no card-true word. text and claim are the card's plate.tempo.text and plate.tempo.claim, byte for byte. Only { phase, move?, word? } goes on a card's tempo key and its spec (tempoOf).",
  "research": "claude/libht-research 657eb4e5a4e4a871fd3e2a60ab4a5b8c1f24eb3a",
  "cards": [
   {
@@ -45,6 +45,28 @@
      "claim": "g9",
      "says": "Smooth and controlled",
      "quote": "Select weight allowing controlled movement with proper form and upright posture."
+    }
+   ]
+  },
+  {
+   "id": "box_jump",
+   "lane": "pilot A #109",
+   "text": "Explosive take-off; step down; full rest between sets; never to failure. Airborne plate: take-off and landing frames only.",
+   "claim": "c11",
+   "rows": [
+    {
+     "phase": "Take-off",
+     "move": true,
+     "word": "Explosive",
+     "claim": "c3",
+     "says": "Explosive take-off",
+     "quote": "Explosively extend your hips, knees, and ankles while swinging your arms upward to generate momentum."
+    },
+    {
+     "phase": "Step down",
+     "move": true,
+     "blank": true,
+     "claim": "c11"
     }
    ]
   },
@@ -385,6 +407,29 @@
    ]
   }
  ],
+ "fallbackA": [
+  {
+   "id": "bodyweight_squat",
+   "lane": "LIB-14 #289",
+   "text": "Controlled descent, breathe out on the way up; no source gives seconds.",
+   "claim": "b7",
+   "rows": [
+    {
+     "phase": "Lower",
+     "move": true,
+     "blank": true,
+     "claim": "b7"
+    },
+    {
+     "phase": "Drive up",
+     "move": true,
+     "blank": true,
+     "claim": "b7"
+    }
+   ],
+   "why": "D-STRIP-AFALL: \"Controlled descent\" (b7) has no claim whose quote names a controlled descent (b8 is shin travel), so every phase stays blank (option A)"
+  }
+ ],
  "timedAtHead": [
   {
    "id": "bear_crawl",
@@ -400,16 +445,6 @@
   }
  ],
  "leftOut": [
-  {
-   "id": "box_jump",
-   "lane": "pilot A #109",
-   "why": "D-STRIP-QUOTEWORD: no claim quote holds \"explosive\" for the take-off. c3 (\"Explosively extend your hips, knees, and ankles\") holds \"explosively\", which is not a FORMS form (S3, ruling asked); c8's \"explosive power\" is load progression, not the take-off; c11 has no cadence word"
-  },
-  {
-   "id": "bodyweight_squat",
-   "lane": "LIB-14 #289",
-   "why": "D-STRIP-QUOTEWORD: \"Controlled descent\" (b7) has no claim whose quote names a controlled descent; b8's \"control the amount of forward translation\" is shin travel, not cadence, so Lower stays blank and the card has no word"
-  },
   {
    "id": "sled_push",
    "lane": "LIB-22 #305",
