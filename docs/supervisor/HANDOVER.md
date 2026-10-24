@@ -890,6 +890,16 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 07:45 UTC (10-24): OWNER DELEGATION.** The owner (07:15): "U do qll that. Dont stall and decide for me." The supervisor now makes the owner's open library choices, and records each one with its reason. Owner-only items in AGENTS.md stay his: Worker deploys, signing and keys, releases and store listings, new kinds of stored or sent data, paid services and spending.
+- **Pilot A (#109): PILOT A PIN GO @ dcac4a38 (6381356655).**
+  - "Use proposed" on every line.
+  - 13 ids pinned, with the exemptions from 6261394431; plank's F7 is named. 6 held.
+  - **D-LIB8M-ROUTED (6381374935):** research applies plank's and mountain_climbers' routed lines on its cards (after LB9's fix round), and #109 copies them from one research head.
+  - The builder session_01DtfGjqYEVnEwyRxtRGwSj6 is preparing the pin.
+- **LB9 (#295):** the supervisor runs the fix round itself, under the owner's approval. A helper is applying lb9-research-verify.md. The blocked research session is archived. Next: recheck the delta, merge into research, then the routed-lines research change, then post the head on #109.
+- **D-STRIP-B:** the no-seconds tempo strip is option B (card cadence words). Design: cards `strip/NOTE.md` @ 71241668. A helper is drafting `lib-strip-card.md`. Then a LIB-STRIP builder starts.
+- **Active LIB builders: 1** (LIB-8M).
+
 **Update 06:00 UTC (10-24)**: no change since 21:00. Active LIB builders: 0. Every lane still waits on the owner.
 
 **Update 03:00 UTC (10-24)** (usage 7-day 0.61, last read 23:19): no change since 21:00. Active LIB builders: 0. Every lane still waits on the owner.
