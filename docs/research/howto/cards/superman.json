@@ -815,5 +815,38 @@
   "Arms: ACE extends the arms overhead with the palms facing each other (c1); the University of Calgary starts in a Y-shape with the thumbs up (a field hockey version). The plate draws ACE's arms.",
   "Not used: Motra's Superman Hold tempo 0-5-0 (a held variation); BarBend's variations (reverse hollow hold, hold and roll, bird dog, alternating superman, swimmer) are other exercises.",
   "Read and not cited: Atalay 2025 (PMID 40572674, abstract; an unstable superman variant in hyperlordotic and normal groups) and Oliver 2010 (PMID 21079441, abstract; multifidus highest in all exercises, superman values not given). Tried and not found: barbend.com/superman-exercise/, garagegymreviews.com/superman-exercise, healthline and verywellfit slugs (404 or 402); fitnessvolt.com/superman-exercise/ (404)."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "navel",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "navel",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c2"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Lift",
+   "s": 1,
+   "move": true
+  },
+  {
+   "phase": "Hold",
+   "s": 3
+  },
+  {
+   "phase": "Lower",
+   "s": 2,
+   "move": true
+  }
+ ],
+ "topFault": "head"
 }

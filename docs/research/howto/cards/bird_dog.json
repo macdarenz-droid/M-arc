@@ -927,5 +927,52 @@
   "Breathing conflict: BarBend inhales as the limbs lengthen and exhales on the return; Motra exhales as the arm and leg extend. No breath direction is shown; the card keeps only steady breathing and not holding the breath (c13).",
   "Not used: Healthline's \"tuck your chin into your chest to gaze down at the floor\" (the other sources keep the neck neutral, c6); ACE's light bar across the hips or shoulders (an optional feedback tool, not drawn); BarBend's knee-to-elbow finish (an option); the variations (twisted, renegade, elevated, standing, weighted, banded, pause) are other exercises.",
   "Read and not cited: McGill and Karpowicz 2009 (PMID 19154838, abstract): bird dog EMG with corrective techniques, no finding this card needs. Tried and not readable: strengthlog.com/bird-dog/ (429 on three tries), verywellfit (402), fitnessvolt and blog.nasm.org slugs (404)."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "knee.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "knee.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Reach",
+   "s": 3,
+   "move": true
+  },
+  {
+   "phase": "Hold",
+   "s": 3
+  },
+  {
+   "phase": "Return",
+   "s": 3,
+   "move": true
+  }
+ ],
+ "topFault": "arch"
 }
