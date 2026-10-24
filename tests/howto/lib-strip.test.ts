@@ -266,7 +266,7 @@ function rowProblems(R: any, V: any): string[] {
   if (JSON.stringify([...seen].sort()) !== JSON.stringify([...SCOPE].sort())) out.push(`ids ${seen.join()} are not the scope's ${SCOPE.length}, each once`);
   for (const t of R.timedAtHead) if (!t.tempo.every((p: any) => p.s != null)) out.push(`${t.id}: timedAtHead without s on every phase`);
   for (const c of R.cards) {
-    const claims = [].concat(c.claim);
+    const claims: string[] = [].concat(c.claim);
     if (!c.rows.some((r: any) => 'word' in r)) out.push(`${c.id}: no word`);
     for (const r of c.rows) {
       const at = `${c.id}.${r.phase}`;
