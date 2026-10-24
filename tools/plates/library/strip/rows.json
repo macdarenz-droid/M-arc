@@ -164,7 +164,8 @@
      "word": "Explosive",
      "claim": "j7",
      "says": "explosive jump",
-     "quote": "It is suggested, you first learn how to squat and land before attempting to jump. Once you have mastered the hip-hinge mechanism, begin with small jumps, but emphasize your landing mechanics. Only progress to more explosive jumps once you have mastered your landing mechanics."
+     "quote": "It is suggested, you first learn how to squat and land before attempting to jump. Once you have mastered the hip-hinge mechanism, begin with small jumps, but emphasize your landing mechanics. Only progress to more explosive jumps once you have mastered your landing mechanics.",
+     "note": "j7 is a load-progression line; it names the jump as explosive. Accepted by the supervisor on #309 (evidence only)."
     }
    ]
   },
@@ -373,17 +374,17 @@
      "phase": "Open",
      "move": true,
      "word": "Slow",
-     "claim": "c10",
+     "claim": "c9",
      "says": "keep the movement slow and controlled",
-     "quote": "Pick a light weight, so that you can move slowly and controlled without starting to hinge and create excessive momentum."
+     "quote": "Not keeping form. This is an exercise where it’s easy to use momentum by swinging and/or starting to overextend your lower back. This can place unnecessary stress on the lower back and shoulder joints. Keep the movement slow and controlled."
     },
     {
      "phase": "Return",
      "move": true,
      "word": "Slow",
-     "claim": "c10",
+     "claim": "c9",
      "says": "keep the movement slow and controlled",
-     "quote": "Pick a light weight, so that you can move slowly and controlled without starting to hinge and create excessive momentum."
+     "quote": "Not keeping form. This is an exercise where it’s easy to use momentum by swinging and/or starting to overextend your lower back. This can place unnecessary stress on the lower back and shoulder joints. Keep the movement slow and controlled."
     }
    ]
   },

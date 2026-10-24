@@ -273,7 +273,7 @@ const SCOPE = ['front_squat', 'goblet_squat', 'bodyweight_squat', 'step_up', 'pi
   'cable_rear_delt_fly', 'sled_push', 'farmer_s_carry', 'burpee', 'medicine_ball_slam', 'wall_ball', 'diamond_push_up', 'pike_push_up'];
 const SET_LEVEL_PHASE = /^(set|sets|rep|reps|rest)$/i, SET_LEVEL_SAYS = /(?<![A-Za-z])(set|sets|rep|reps|rest|round|rounds|failure)(?![A-Za-z])/i;
 /** sha256 of rows.json's canonical JSON (JSON.stringify of the parsed file), set at 'STRIP ROWS VERIFIED' (Do 6). */
-const ROWS_PIN = 'ccf667edfa6ef3933fe21a30f9fe0045801d2a90b1aa0659c7da1937c2e50254';   // pre-verify; re-set at STRIP ROWS VERIFIED
+const ROWS_PIN = '7e28159406246194fedb78b4974886b539c016500d4ea489087f22080594c674';   // pre-verify; re-set at STRIP ROWS VERIFIED
 
 /** A11's checks on a parsed rows.json; returns problems. */
 function rowProblems(R: any, V: any): string[] {
