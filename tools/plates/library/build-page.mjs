@@ -13,6 +13,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { VENDOR, makeMirror, verifyVendor } from '../golden.mjs';
+import { VENDOR_STRIP, NOSECS_STRIP } from './strip/tempo-strip.mjs';   // LIB-STRIP
 
 const VENDORED_PAGE = join(VENDOR, 'artifact/build-page.mjs');
 
@@ -53,6 +54,7 @@ export function patchedBuilder(src = readFileSync(VENDORED_PAGE, 'utf8')) {
   s = once(s, `<p>${GOLDEN_A_HEADING.intro}</p>`, '<p>${__CFG.heading.intro}</p>');
   s = once(s, `<p>${GOLDEN_A_HEADING.foot}</p>`, '<p>${__CFG.heading.foot}</p>');
   s = once(s, "console.log(out, (html.length / 1024).toFixed(0) + ' KB');", '');
+  s = once(s, VENDOR_STRIP, NOSECS_STRIP);   // LIB-STRIP: D-STRIP-PATCH, the tempo strip without seconds
   const lastImport = s.lastIndexOf('\nimport ');
   const eol = s.indexOf('\n', lastImport + 1);
   return `${s.slice(0, eol + 1)}const __CFG = JSON.parse(process.env.LIB_PAGE_CFG);\n${s.slice(eol + 1)}`;
