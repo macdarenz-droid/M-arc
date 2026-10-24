@@ -736,6 +736,20 @@
    "pose": "start",
    "cardPose": "start",
    "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "knee.l",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c7"
+  },
+  {
+   "kind": "contact",
+   "landmark": "knee.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c7"
   }
  ],
  "tempo": [

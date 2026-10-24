@@ -698,8 +698,8 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
   const F = (lm: string, pose: string, claim: string, cardPose = pose) => [lm, pose, cardPose, claim];
   const both = (p: string, pose: string, claim: string) => [F(`${p}.l`, pose, claim), F(`${p}.r`, pose, claim)];
   const FACTS: Record<string, any[]> = {
-    ab_wheel_rollout: [...both('wrist', 'start', 'c1'), ...both('knee', 'start', 'c1')],
-    cable_crunch: [...both('wrist', 'start', 'c2'), ...both('knee', 'start', 'c1')],
+    ab_wheel_rollout: [...both('wrist', 'start', 'c1'), ...both('knee', 'start', 'c1'), ...both('knee', 'end', 'c7')],   // CF fix 2 (c7 cited by plate.end)
+    cable_crunch: [...both('wrist', 'start', 'c2'), ...both('knee', 'start', 'c1'), ...both('wrist', 'end', 'c2')],   // CF fix 1 (c2 'throughout')
     bird_dog: [...both('wrist', 'start', 'c2'), ...both('knee', 'start', 'c1')],
     superman: [F('navel', 'start', 'c1'), F('navel', 'end', 'c2')],
     pallof_press: [...both('wrist', 'start', 'c3'), ...both('sole', 'start', 'c2')],

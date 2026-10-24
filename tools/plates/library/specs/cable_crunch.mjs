@@ -268,6 +268,7 @@ export default {
   ],
   checks: [
     ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: LS[landmark], pose: 'start', tol: 0.5 })),   // c2 fact: the hands on the rope ends
+    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: LE[landmark], pose: 'end', tol: 0.5 })),     // c2 fact ('throughout'): the hands still on the rope ends at the end
     ...knees.map(landmark => ({ landmark, at: KNEE[landmark.slice(-1)], pose: 'all', tol: 0.5 })),          // c1: the knees on one spot
     ...knees.map(landmark => ({ landmark, plane: { point: [0, KNEE_Y, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 })),   // upper shin on the floor
     ...['toe.l', 'toe.r', 'ankle.l', 'ankle.r'].map(landmark => ({ landmark, at: LS[landmark], pose: 'all', tol: 0.5 })),  // shins and feet still
