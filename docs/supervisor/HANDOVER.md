@@ -890,6 +890,16 @@ Free LIB slot: kept for #193's catch-up push after #181 merges.
 - **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
 - **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
 
+**Update 15:45 UTC (10-24)** (usage 7-day 0.71 at 14:27):
+- **Train 34 merged** (#314 → main `dd7116e9`): **#109 LIB-8M, pilot A pinned (13 plates)**. REVIEW PASS @ b898578 (6385655672, 0/0/1/2). The train head ran `library: full` and L1 passed. The A15 mutation ref `claude/lib-8m-a15-mut` @ `de356864` turned L1 red (6385872981; evidence only, never merged). No APK: the 13 rows stay `pending` in coverage.ts, so nothing in the app changes. The reviewer and builder are archived.
+  - **Collision rule (review Medium):** #311 (LIB-20), #309 (LIB-STRIP) and #279 (LIB-ZOOM) change inputs of all 13 pilot A MANIFEST rows. Each one's catch-up after #109 carries a `[golden update]` re-pin of those rows, or C0 (and L1 if page bytes move) goes red.
+  - **F-LIB8M-PROV (Low 1):** the provenance text in pilot-a/plates.json `cards`, build.mjs:23 and :181, and MERGE.md:144 should read "f57e7944; plank and mountain_climbers f574bb4b; barbell_row and romanian_deadlift 2dd60ae0". It rides the first pilot A re-pin.
+- **Train 35 building:** #282 LIB-5v @ `2ad1bf3c` merges cleanly on dd7116e9, and C0 on the merged tree is []. D-LIB5v-ORDER is ratified (6386116481).
+- **LIB-STRIP #309: REVIEW PASS** @ `75a9be48` (6385991109). Rulings: D-STRIP-BURPEE (burpee gets a row: Controlled on Squat down, c24), D-STRIP-CONTEST-CITED (only cited claims can contest a word, so flutter_kicks keeps Crisp). rows.json is re-synced to research `42cf542a`. The gate entry is 290 s; F-STRIP-5 re-times it from CI after merge. Its catch-up needs the pilot A re-pin.
+- **LIB-21 #312:** REVIEW FAIL @ 810fc537 on doc-only items (6385913099). LIB-21 FIX @ `e132e57e`; the reviewer is re-checking the delta.
+- **Research:** #313 merged (LB9 card fields, research head `42cf542a`).
+- **Active LIB builders: 2** (LIB-STRIP waiting for its slot, LIB-21 at delta review).
+
 **Update 14:00 UTC (10-24)** (usage 7-day 0.71 at 13:51; five-hour 0.20):
 - **#109 LIB-8M:** pinned 13 @ `b898578` (pin commit `7349a75` [golden update]; page `5d0e562f…`). Reviewer session_01RnSGLM2JBRgHeBMpscfP3b: check, test:tz and gate green, mutations running. On PASS: merge train 34.
 - **LIB-18 (#306, LB8): REVIEW PASS** @ `d76fc305`. Two Lows (the qa.mjs:4 header, the test title at :1368) ride the pre-train push.
