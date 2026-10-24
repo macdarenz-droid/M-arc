@@ -747,30 +747,36 @@ describe('LIB-21 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
   });
 });
 
-describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and F3 named on bird_dog)', { timeout: T }, () => {
+describe('LIB-21 A4 (D-LIB21-FLAGS): qa.mjs\'s ruled flag set (F5 on all; F1 and F3 named on bird_dog; F2 and F3 on cable_crunch, D-LIB21-CCFLAGS)', { timeout: T }, () => {
   let qa: any;
   beforeAll(async () => { qa = await import(/* @vite-ignore */ lib('lb9/qa.mjs')); }, T);
   const report = (id: string, raised: Record<string, number>) => ({ id, flags: Object.fromEntries(['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7'].map(f => [f, { raised: f in raised, value: raised[f] ?? null }])) });
   const dog = (o: Record<string, number> = {}) => report('lib_bird_dog', { F1: 151.49, F3: 26.5, F5: 3.57, ...o });
-  it('the named sets: F1 151.49 px/m and F3 26.5 px on lib_bird_dog only; EXPECTED gives F1, F3, F5 there and F5 alone elsewhere', () => {
+  const cc = (o: Record<string, number> = {}) => report('lib_cable_crunch', { F2: 0.623, F3: 26.2, F5: 3.57, ...o });
+  it('the named sets: F1 151.49 and F3 26.5 on bird_dog, F2 0.623 and F3 26.2 on cable_crunch; EXPECTED gives F5 alone on ab_wheel_rollout', () => {
     expect(qa.F1_NAMED).toEqual({ lib_bird_dog: 151.49 });
-    expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 26.5 });
+    expect(qa.F3_NAMED).toEqual({ lib_bird_dog: 26.5, lib_cable_crunch: 26.2 });
+    expect(qa.F2_NAMED).toEqual({ lib_cable_crunch: 0.623 });
     expect(qa.EXPECTED('lib_bird_dog')).toEqual(['F1', 'F3', 'F5']);
-    expect(qa.EXPECTED('lib_cable_crunch')).toEqual(['F5']);
+    expect(qa.EXPECTED('lib_cable_crunch')).toEqual(['F2', 'F3', 'F5']);
     expect(qa.EXPECTED('lib_ab_wheel_rollout')).toEqual(['F5']);
-    expect(qa.flagProblems([dog(), report('lib_cable_crunch', { F5: 3.57 }), report('lib_ab_wheel_rollout', { F5: 3.57 })])).toEqual([]);
+    expect(qa.flagProblems([dog(), cc(), report('lib_ab_wheel_rollout', { F5: 3.57 })])).toEqual([]);
   });
-  it('mutations: bird_dog\'s F3 at 27.0, F3 raised on another id, F1 off its px/m, and F3 missing on bird_dog are red', () => {
+  it('mutations: bird_dog\'s F3 at 27.0, F3 raised on another id, F1 off its px/m, F3 missing on bird_dog, cable_crunch\'s F2 at 0.645 and F3 at 27.0 are red', () => {
+    expect(qa.flagProblems([cc({ F2: 0.645 })]).length).toBe(1);
+    expect(qa.flagProblems([cc({ F3: 27.0 })]).length).toBe(1);
     expect(qa.flagProblems([dog({ F3: 27.0 })]).length).toBe(1);
-    expect(qa.flagProblems([report('lib_cable_crunch', { F3: 26.5, F5: 3.57 })]).length).toBe(1);
+    expect(qa.flagProblems([report('lib_ab_wheel_rollout', { F3: 26.5, F5: 3.57 })]).length).toBe(1);
     expect(qa.flagProblems([dog({ F1: 160 })]).length).toBe(1);
     const noF3 = dog(); noF3.flags.F3 = { raised: false, value: null };
     expect(qa.flagProblems([noF3]).length).toBeGreaterThanOrEqual(1);
   });
-  it('the logged longest leader on bird_dog is the named F3 value (26.5 px ±0.1)', () => {
+  it('the longest leaders on bird_dog and cable_crunch are their named F3 values (±0.1 px)', () => {
     const len = (p: number[][]) => segs(p).reduce((t, [a, b]) => t + Math.hypot(b![0]! - a![0]!, b![1]! - a![1]!), 0);
     const max = Math.max(...[false, true].flatMap(m => leadersOf(plate.renderPlate(S.bird_dog, { id: 'x', mistake: m }).svg).map(len)));
     expect(Math.abs(max - qa.F3_NAMED.lib_bird_dog)).toBeLessThanOrEqual(0.1);
+    const maxCc = Math.max(...[false, true].flatMap(m => leadersOf(plate.renderPlate(S.cable_crunch, { id: 'x', mistake: m }).svg).map(len)));
+    expect(Math.abs(maxCc - qa.F3_NAMED.lib_cable_crunch)).toBeLessThanOrEqual(0.1);
   });
 });
 
