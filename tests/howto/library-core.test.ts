@@ -131,7 +131,7 @@ describe('L2-A1, L2-A18, L2-A20: the 8 as data (pins.json, LIB_OF, HT_PLATES)', 
   it('a vendored file from a commit not in pins.json vendorSources is refused, with the same message as before', () => {
     const m = g.readManifest(), k = Object.keys(m.files)[0]!;
     const bad = structuredClone(m); bad.files[k].source = 'abc1234:docs/howto/technical-plate/x';
-    expect(g.verifyVendor(undefined, bad)).toContain(`${k}: source abc1234:docs/howto/technical-plate/x is not a bc0f378 blob, the ref-src commit or a golden update (7859292, de00174, 48153c4: LIB-25 poly; f214700: LIB-26 flat palm)`);
+    expect(g.verifyVendor(undefined, bad)).toContain(`${k}: source abc1234:docs/howto/technical-plate/x is not a bc0f378 blob, the ref-src commit or a golden update (7859292, de00174, 48153c4: LIB-25 poly; f214700: LIB-26 flat palm; c35e0a4: LIB-20 E-R5)`);
   });
   it('LIB_OF, now read from plates.json, equals the literal it replaced, key for key and in order (8 pairs)', () => {
     const was = [['lateral-raise', 'lib_dumbbell_lateral_raise'], ['barbell-back-squat', 'lib_barbell_back_squat'], ['pull-up', 'lib_pull_up'],

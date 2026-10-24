@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=9c698c0ef5fd14992962ce053b51e46815f7f9fc6cf9fd9d7772834e07e5ac6e
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=c5de28942c88a7a09ea88769ccc2c1384030dc514e2a8daa78e924ec590b70b1
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_hanging_leg_raise",
   name: "Hanging Leg Raise",
-  hashes: { inputsSha256: "9c698c0ef5fd14992962ce053b51e46815f7f9fc6cf9fd9d7772834e07e5ac6e", golden: "59644b737389e9c10626701e297d441385c1bfa1dd90805e3e6baa7727ec9539" },
+  hashes: { inputsSha256: "c5de28942c88a7a09ea88769ccc2c1384030dc514e2a8daa78e924ec590b70b1", golden: "59644b737389e9c10626701e297d441385c1bfa1dd90805e3e6baa7727ec9539" },
   plate: {
     view: "side",
     normal: {
