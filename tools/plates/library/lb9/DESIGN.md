@@ -332,5 +332,10 @@ and `torso: 'volume'`. Re-read on main at the resume; a (b) spec sets only field
 - D-LIB21-ROPENIT (#312, after 6382529719): cable_crunch's "Rope by head" box at 200/238, its leader 4.98 px from the
   steep strand (about 34°, no crossing), is a named nit, pinned in lb9-plates.test.ts with a red mutation (200/232).
 
-Asked with the slice (not yet ruled): cable_crunch's F2 (coverage 0.623: the high-pulley cable spans the plate) and F3
+- CARD FIELDS VERIFIED @ 931714d2 (one fix round: cable_crunch wrist.l/r end c2; ab_wheel_rollout knee.l/r end c7).
+- D-LIB21-TRAPS: BarBend's "lay the attachment across your traps" (c2) is not a fact: an "or" choice beside
+  Motra's hands near the shoulders; StrengthLog's beside-the-head position (setup line 4, plate.start) is the drawn one.
+- D-LIB21-CCFLAGS: cable_crunch's F2 0.623 and F3 26.2 are named flags (qa.mjs, pinned with red mutations).
+
+Asked with the slice (ruled as D-LIB21-CCFLAGS): cable_crunch's F2 (coverage 0.623: the high-pulley cable spans the plate) and F3
 (longest leader 26.2 px: labels beside their parts) as named flags in D-LIB18-F3KICK's form.
