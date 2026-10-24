@@ -707,5 +707,48 @@
   "Range zoom wrong is null (LR-25).",
   "W1 fixer round 2026-10-03: F13: c9 drops 'the deep abs' and 'chest' (no quote supports them); libraryDiff.why drops the chest.",
   "LB9 LR-31/LR-33 pass 2026-10-22: rankNote added (step 2, c13; pick unchanged). New claims c13 (BarBend's harm line and ab-wheel control line) and c14 (WEAK tempo convention, R-LB7-6); c8 gains the case report's title and case sentence, so 'fall' and 'spinal cord' rest on quotes. Shown-line fixes under CARD-V2:68 and LR-6: mistake.what keeps c3's words (no 'sagging'); back-line zoom wrong drops 'hips sagging' (c3 asks the hips to extend toward the floor); tells 2 drops 'steady'; handlingMistakes[1] fix drops 'every inch'; the low-back row reads 'Fault: ...' in LR-6 shape with no symptom-to-cause clause; risks[0] no longer says 'too far' or 'strain' (no quote ties either to harm) and splits into the c13 harm line and the c5 speed line. c5's text keeps the source's 'can'."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "knee.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "knee.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Roll out",
+   "s": 2,
+   "move": true
+  },
+  {
+   "phase": "Roll back",
+   "s": 1,
+   "move": true
+  }
+ ],
+ "topFault": "arch"
 }

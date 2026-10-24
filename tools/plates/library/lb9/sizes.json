@@ -62,9 +62,9 @@
     "basis": "claims: c3 'extend your arms above your head' (the arm past 90 deg to the trunk) and c7 a moderate roll-out of the kneeling version (a limited range first): halfway between overhead (90 deg) and the full roll-out with the arms in line with the trunk (180 deg)"
    },
    "M_ARCH": {
-    "value": -12,
+    "value": -30,
     "unit": "deg",
-    "basis": "convention: hanging_leg_raise.mjs:69 (tools/plates/vendor/exercises, the 8's clone source, D-LIB21-CLONE) MISTAKE trunk -12, the approved 12 deg lumbar arch; D-LIB21-SIZE's first basis for this id; for c3 'Avoid arching your lower back' and c13 (no magnitude)"
+    "basis": "convention: plank.mjs:103 (pilot A #109 @ dcac4a38) SAG_LUMBAR -30, the approved plank sag; D-LIB21-ABSAG ('LB9 NOTE RULED' Q4, #312 6382248634): the roll-out's end is a prone line held by the arms, the plank's class; for c3 'Avoid arching your lower back' and c13 (no magnitude)"
    },
    "trace": {
     "point": "grip.r",

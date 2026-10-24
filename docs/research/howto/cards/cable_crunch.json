@@ -721,5 +721,52 @@
   "Conflict, read but not cited: Fitbod (https://fitbod.me/exercises/cable-crunch, fetched 2026-10-22) says \"Hinge your hips backward to lower the rope until your torso becomes parallel with the floor and then flex the bottom of your ribcage towards to top of your pelvis.\", while Motra and Fitness Volt keep the hips still (c3, c8). The card follows the two that keep the hips still. Fitbod's \"Sitting Up Too Far\" item is written for the floor crunch (\"Crunches are designed so you only raise your shoulder blades\") and is not counted.",
   "BarBend's going-too-heavy and going-too-light items are load choices (LR-31); the load line is risks[2] (c11). The back feel row is LR-6 shape (place, Motra's listed fault, the range-of-motion fix) and links the back box; no source names a stop for back pain during the set, so the row carries none (R-LB3-4, R-LB6-6). risks[1] restates Motra's \"Avoid if acute lower back pain\" (c13).",
   "Not reachable or not found: NASM, Healthline, Garage Gym Reviews and PureGym cable-crunch URLs (404), Verywell Fit (402), Muscle & Fitness (502), ACE (no cable crunch entry found)."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "knee.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "knee.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Crunch",
+   "s": 2,
+   "move": true
+  },
+  {
+   "phase": "Hold",
+   "s": 1
+  },
+  {
+   "phase": "Return",
+   "s": 3,
+   "move": true
+  }
+ ],
+ "topFault": "hips"
 }

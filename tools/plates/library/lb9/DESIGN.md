@@ -52,7 +52,7 @@ Not in this card (each in no LB9 file; A5 tests it):
 
 | id | group | clone (D-LIB21-CLONE) | composer | hand (ship-time gap) | state |
 |---|---|---|---|---|---|
-| ab_wheel_rollout | a, slice, tier A | hanging_leg_raise; plank (#109), assisted_pull_up (#245), bear_crawl (#305) | `abWheel` (this PR) | push: ab-wheel gap (hand-ab-wheel.mjs:4) | drawn; **held** (section 13) |
+| ab_wheel_rollout | a, slice, tier A | hanging_leg_raise; plank (#109), assisted_pull_up (#245), bear_crawl (#305) | `abWheel` (this PR) | push: ab-wheel gap (hand-ab-wheel.mjs:4) | drawn |
 | cable_crunch | a, slice | hanging_leg_raise; rope_triceps_pushdown (#109), assisted_pull_up (#245) | main's `rope` | on-body: rope gap (hand-rope.mjs:34) | drawing |
 | bird_dog | a, slice | hanging_leg_raise; plank, mountain_climbers (#109), bear_crawl (#305) | none (a mat bar, eq/parts.mjs) | palm-flat: main's shared key (hand-palm-flat.mjs:27) | drawn |
 | superman | a, bulk | hanging_leg_raise; plank (#109) | none (a mat) | none | after 'LB9 BULK GO' |
@@ -78,10 +78,10 @@ Hands: no hand module is built (D-LIBHANDS-COUNT); the gaps go to the ship card.
   - the knee pad (`kneelPad`): a flat 3 cm pad on the floor under the knees, shins and feet (parts.mjs `sideBar`, the
     vendor `backPad` primitive), static.
   - Joins (D-LIB21-FRAME): both handles meet the hub face on the one axle; the pad lies on the floor line.
-  - **Deviation from D-LIB21-COMPOSERS' text (Q1):** the ruling names the vendor `kneePad` for the pad. `kneePad` is an
+  - **D-LIB21-KNEEPAD (ruled Q1):** the ruling names the vendor `kneePad` for the pad. `kneePad` is an
     11 cm roller (equipment.mjs:203-204, "knee / thigh roller pad"), a leg-curl roller, not a flat kneeling pad, so
     drawing it would misstate the card's "a soft pad under the knees" (c1). The flat pad is drawn with existing
-    primitives (D-LIB21-COMPOSERS' "compose from existing parts"). Proposed; the ruling decides.
+    primitives (D-LIB21-COMPOSERS' "compose from existing parts"). Accepted ('LB9 NOTE RULED', #312 6382248634).
 - **`rope`** (main's eq/rope.mjs, imported, never edited; D-LIB21-ROPE): cable_crunch's rope from the high pulley,
   strands beside the head. Any edit it would need is S7.
 - **Cable column** (pallof_press, cable_crunch): vendor `cableColumn` and `stack`; pallof_press's single handle is a
@@ -114,13 +114,14 @@ All are sheet or merge gates, not drawing gates, except LIB-20 for the (b) rows.
   reference-like fit (`fit` with hanging_leg_raise's margins); ab_wheel_rollout **measured 134.56 px/m**, inside the 8's
   123.9-146.3, so no F1.
 - **F7 on the 3 (b) ids only** (D-LIB21-F7), once drawn.
-- **Named F3 on bird_dog (Q2):** its leaders are short (longest **measured 26.5 px**, below the envelope's 49.33
+- **Named F3 on bird_dog (D-LIB21-F3DOG, ruled Q2):** its leaders are short (longest **measured 26.5 px**, below the envelope's 49.33
   minimum of the approved range [49.33, 82.26]); the labels sit right above the figure. Not a defect; proposed as a
-  named flag in LB8's form (D-LIB18-F3KICK), pinned at its measured value, never cleared by lengthening a leader.
+  named flag in LB8's form (D-LIB18-F3KICK), pinned at 26.5 px ± 0.1 in qa.mjs `F3_NAMED` with a red mutation, never
+  cleared by lengthening a leader.
 - **No F6**: every card's plate.view equals its census view.
 - **No small-motion F1** (D-LIB21-SIZE).
 - **Before Do 6 b** every drawn id shows `H6:no-card` and F7 'no card top fault' (qa/node.mjs:360). Expected.
-- qa.mjs holds the ruled set (`F7_IDS`, `F1_NAMED`; the named F3 is added on the ruling).
+- qa.mjs holds the ruled set (`F7_IDS`, `F1_NAMED` bird_dog 151.49, `F3_NAMED` bird_dog 26.5).
 
 ## 6. R10 items (tier A: ab_wheel_rollout)
 
@@ -175,7 +176,7 @@ the leg rises; the head in the hold; the arch while pressing).
 Every drawable-true card's handlingMistakes[0] is its plate.mistake (checked at `f574bb4b`; the D-LIB15-XBODY check).
 
 **Mistake poses.**
-- ab_wheel_rollout: the lumbar extends M_ARCH (12°); the shoulders and knees stay where they are, so the arms, hands
+- ab_wheel_rollout: the lumbar extends M_ARCH (-30°, plank.mjs:103's approved sag; D-LIB21-ABSAG, ruled Q4); the shoulders and knees stay where they are, so the arms, hands
   and wheel do not move (plank.mjs's sag keeps its forearms and toes the same way); root, pelvis tilt and hip angle
   solved. The arch lies inside the solid end figure: its true contour (the engine's dashed outline) and a 12 px red
   arrow onto the arched low back (lib4-cards 32-33).
@@ -231,7 +232,7 @@ are written in sizes.json with the slice; the spec headers name them under "Unso
 | ab_wheel_rollout | WHEEL_GAP | 0.03 m | c1 "just in front of the knees": the wheel's rear edge 3 cm in front of the kneecaps |
 | ab_wheel_rollout | END_ELBOW | 5° | convention: bear_crawl.mjs END_ELBOW's reason (#305), straight arms short of the singular full extension (hanging_leg_raise's hang about 5°) |
 | ab_wheel_rollout | END_SHOULDER | 135° | c3 "arms reach forward overhead" (past 90° to the trunk) and c7 a moderate roll-out of the kneeling version: halfway between overhead (90°) and the full roll-out with the arms in line with the trunk (180°) |
-| ab_wheel_rollout | M_ARCH | -12° | convention: hanging_leg_raise.mjs:69 MISTAKE trunk -12 (D-LIB21-SIZE's first basis for this id) |
+| ab_wheel_rollout | M_ARCH | -30° | convention: plank.mjs:103 SAG_LUMBAR -30, the approved plank sag (D-LIB21-ABSAG, ruled Q4: the roll-out's end is a prone line held by the arms, the plank's class) |
 | ab_wheel_rollout | wheel r, width, hub, handle | 0.09, 0.05, 0.025, 0.03, +0.06 m | stated reason: a "small wheel" (c1), 18 cm across; handles 3 cm thick; eq/abWheel.mjs AB_WHEEL. No source gives sizes |
 | ab_wheel_rollout | trace | grip.r, [10, 12] | c2 "slowly roll the wheel forward": the hands on the wheel; trim = hanging_leg_raise.mjs:124 (D-LIB18-TRIM) |
 | bird_dog | MAT_T | 0.01 m | stated reason: a foam exercise mat (c1, c2, c22), 10 mm; no source states it |
@@ -262,15 +263,12 @@ lifting (c2); pallof_press the handle pressed straight out (c5, c6).
 
 | id | Mistake deviation | Trace | state |
 |---|---|---|---|
-| ab_wheel_rollout | **measured 8.5 px** at M_ARCH -12° (< 11.39) | **147.5 px** | **held** under D-LIB21-SIZE (D-LIB8-shrug, S2): kept as drawn, routed to a LIB-ZOOM zoom circle once #279 is on main and extended to the motion |
+| ab_wheel_rollout | **measured 13.6 px** at M_ARCH -30° (8.5 px at the earlier -12°) | **147.5 px** | passes at the ruled size (D-LIB21-ABSAG); the panel judges whether it reads as natural, and holds it there if forced |
 | bird_dog | **measured 13.3 px** (the `high` tell on the raised shank) | **57.7 px** | passes at the ruled sizes |
 | cable_crunch | from the slice | from the slice | |
 | superman [est] | head lift: small (a neck turn of about 20-30° moves the crown about 5-8 cm, about 9-14 px at 170 px/m) | the 3 in lift: about 8 cm, about 13 px (< 22.11): likely held | |
 | pallof_press [est] | 12° arch: about 4 px (LB8 measured 4.1-4.3 px at 12°) | handle out about 45 cm, about 65 px | the Mistake likely held |
 
-- ab_wheel_rollout for the record only (not a basis, S5): with plank.mjs:103's -30° sag (the plank class's own
-  approved fault size) it measures 13.6 px. The card's ruling names 12° as this id's first basis, so it is drawn at 12°
-  and held. Q4 asks whether the plank class's sag is the better convention for this id (a class reason, not PQ-H3).
 - pallof_press (S4, D-LIB21-FRONT): c1 puts the pulley "directly to the right of the body" with the cable "parallel
   with the chest". In the engine's side view facing right the figure's right is the near side, so the column stands
   between the figure and the camera and the cable runs along the depth axis. With `facing: 'left'` the near side is
@@ -286,9 +284,7 @@ row, each balance offset, each 3D clearance and bearing value, and report.mjs pe
 
 ## 15. Held ids
 
-| id | ruling | route |
-|---|---|---|
-| ab_wheel_rollout | D-LIB21-SIZE (D-LIB8-shrug): H3.deviation 8.5 px at 12° | LIB-ZOOM (#279) on main and extended to the motion, then 'LIB-21 resume' |
+None held at this head (ab_wheel_rollout was held at -12° and released by D-LIB21-ABSAG).
 
 Held ids are drawn and tested, and appear in `lb9/build.mjs` HELD (the `--held` page, renders only), never in rows.json.
 
@@ -306,8 +302,8 @@ and `torso: 'volume'`. Re-read on main at the resume; a (b) spec sets only field
 
 ## 17. Risks and mitigations
 
-- The 12° arches are under deviationMin (ab_wheel_rollout measured 8.5 px; pallof_press likely): held and routed to
-  LIB-ZOOM, never enlarged (D-LIB21-SIZE).
+- The 12° arches are under deviationMin (pallof_press likely; ab_wheel_rollout measured 8.5 px at 12° before
+  D-LIB21-ABSAG): held and routed to LIB-ZOOM, never enlarged (D-LIB21-SIZE).
 - Labels and the engine's occupancy: the engine counts every in-between pose's whole body as drawn for label
   placement (plate.mjs occupancy adds the ghost poses' shapes even when `ghosts.parts` draws only some), so labels sit
   above the swept band. Mitigation: boxed labels with short vertical leaders; report.mjs ok:true on every plate.
@@ -317,13 +313,12 @@ and `torso: 'volume'`. Re-read on main at the resume; a (b) spec sets only field
 - superman's prone anchor (lying_leg_curl) is held on LIB-18: superman may roll at the sheet.
 - LIB-20 late: the (b) rows wait; the (a) rows do not.
 
-## 18. Questions for the supervisor ('LB9 NOTE RULED')
+## 18. Rulings ('LB9 NOTE RULED', #312 6382248634)
 
-- **Q1** The knee pad: a flat pad from `sideBar` instead of the vendor `kneePad` roller (section 3).
-- **Q2** bird_dog's named F3 (short leaders, 26.5 px), pinned at its measured value (section 5).
-- **Q3** bird_dog's c11 ("pressing down into the ground with your non-moving hand, knee, and toes"): an end fact
-  although plate.end does not cite c11? Proposed: not a fact (the rule), listed for the verifier.
-- **Q4** ab_wheel_rollout's arch: keep 12° (hanging_leg_raise, the ruling's first basis; held at 8.5 px) or the plank
-  class's approved sag (plank.mjs:103, -30°), since ab_wheel_rollout's end is a prone straight line held by the arms
-  like the plank. Proposed: 12° and held, unless the supervisor rules the class convention.
-- **Q5** The tempo map (section 7), the pose map (section 8) and the facts plan (section 10) as proposed.
+- Q1 D-LIB21-KNEEPAD: accepted, the flat `sideBar` knee pad.
+- Q2 D-LIB21-F3DOG: accepted, bird_dog's F3 named at 26.5 px ± 0.1 with a red mutation.
+- Q3: accepted, c11 is not an end fact; the CARD FIELDS verify checks it.
+- Q4 D-LIB21-ABSAG: not held; ab_wheel_rollout's arch uses plank.mjs:103's -30° (13.6 px). The calibrated panel judges
+  whether it reads as natural; if forced, it is held then.
+- Q5: the tempo map, pose map, facts plan and sizes accepted as written.
+- pallof_press S4: side-view renders at the bulk; a front view goes to a ruling only if the cable cannot be read.

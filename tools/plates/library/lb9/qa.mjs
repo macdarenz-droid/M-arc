@@ -47,15 +47,19 @@ export const tableOf = reports => [
  *  (D-LIB21-F7); F1 on each D-LIB21-FLOOR plate at its measured px/m (named, D-LIB18-F3KICK's form). */
 export const F7_IDS = ['lib_side_plank', 'lib_russian_twist', 'lib_bicycle_crunch'];
 /** F1 named per D-LIB21-FLOOR plate: its px/m from the width-filling scale (D-LIB8-floor), fixed before H3. */
-export const F1_NAMED = {};
-export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(id in F1_NAMED ? ['F1'] : [])].sort();
+export const F1_NAMED = { lib_bird_dog: 151.49 };
+/** F3 named on bird_dog (D-LIB21-F3DOG, 'LB9 NOTE RULED' Q2, #312 6382248634): its longest leader, px, short of the
+ *  envelope's minimum because the labels sit in open space beside their parts; never cleared by lengthening a leader. */
+export const F3_NAMED = { lib_bird_dog: 26.5 };
+export const EXPECTED = id => ['F5', ...(F7_IDS.includes(id) ? ['F7'] : []), ...(id in F1_NAMED ? ['F1'] : []), ...(id in F3_NAMED ? ['F3'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, F5 at any value other than 3.57, or a named
- *  F1 more than 0.1 px/m from its ruled value. */
+ *  F1 (F3) more than 0.1 px/m (px) from its ruled value. */
 export const flagProblems = reports => reports.flatMap(r => {
   const raised = FLAGS.filter(f => r.flags[f].raised).sort(), want = EXPECTED(r.id), out = [];
   if (JSON.stringify(raised) !== JSON.stringify(want)) out.push(`${r.id}: flags ${raised.join(',') || 'none'} != ruled ${want.join(',')}`);
   if (r.flags.F5.raised && +r.flags.F5.value.toFixed(2) !== F5_EXEMPT) out.push(`${r.id}: F5 ${r.flags.F5.value.toFixed(2)}:1 != the exempt ${F5_EXEMPT}:1`);
+  if (r.id in F3_NAMED && !(Math.abs(r.flags.F3.value - F3_NAMED[r.id]) <= 0.1)) out.push(`${r.id}: F3 ${r.flags.F3.value} != the named ${F3_NAMED[r.id]} px`);
   if (r.id in F1_NAMED && !(Math.abs(r.flags.F1.value - F1_NAMED[r.id]) <= 0.1)) out.push(`${r.id}: F1 ${r.flags.F1.value} != the named ${F1_NAMED[r.id]} px/m`);
   return out;
 });
@@ -66,6 +70,6 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   console.log(`LB9 plates page sha256 ${sha}`);
   for (const line of tableOf(reports)) console.log(line);
   const bad = flagProblems(reports);
-  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the expected set (F5 3.57 on all; F7 on the (b) drawable-false cards; F1 on the named floor plates)');
+  console.log(bad.length ? `flag set DIFFERS from the ruled set:\n${bad.join('\n')}` : 'flag set: equal to the expected set (F5 3.57 on all; F7 on the (b) drawable-false cards; F1 on the named floor plates; F3 named on bird_dog)');
   if (bad.length || reports.some(r => HARD.some(h => !r.hard[h].pass))) process.exit(1);
 }

@@ -25,7 +25,8 @@
 //  End (c2, c3, c7): one straight line from the knees to the head (hip 0, trunk 0, neck 0), the arms straight and
 //   forward overhead at END_SHOULDER to the trunk line (short of in line: c7's moderate roll-out of the kneeling
 //   version); root, pelvis tilt and the wheel's roll (its axle on the floor line) solved.
-//  Mistake (c3, c13): the low back arches as the arms reach: the lumbar spine extends M_ARCH deg; the shoulders and the
+//  Mistake (c3, c13): the low back arches as the arms reach: the lumbar spine extends M_ARCH deg (plank.mjs:103's
+//   approved sag, D-LIB21-ABSAG: the roll-out's end is a prone line held by the arms, the plank's class); the shoulders and the
 //   knees stay where they are (so the arms, the hands and the wheel do not move, as plank.mjs's sag keeps its forearms
 //   and toes); root, pelvis tilt and hip angle solved, so the hips sag below the knees-to-shoulders line.
 //  Balance: the Winter centre of mass lies between the knees' pad contact and the wheel's floor contact in every pose.
@@ -38,7 +39,7 @@ import { abWheel, abWheelGeometry, kneelPad, AB_WHEEL, AB_WHEEL_ITEMS } from '..
 import { perItem } from '../eq/parts.mjs';
 
 const H = 1.75, D = Math.PI / 180;
-export const SIZES = Object.freeze({ PAD_T: 0.03, BEAR: 0.0025, SHIN_RISE: 0, WHEEL_GAP: 0.03, END_ELBOW: 5, END_SHOULDER: 135, M_ARCH: -12 });
+export const SIZES = Object.freeze({ PAD_T: 0.03, BEAR: 0.0025, SHIN_RISE: 0, WHEEL_GAP: 0.03, END_ELBOW: 5, END_SHOULDER: 135, M_ARCH: -30 });
 const { PAD_T, BEAR, SHIN_RISE, WHEEL_GAP, END_ELBOW, END_SHOULDER, M_ARCH } = SIZES;
 const GX = REF.shX * H;                       // c1: grip centres the shoulder joints' width apart
 const KX = REF.hjcX * H;                      // knees under the hip joints (lateral)
@@ -115,6 +116,7 @@ const POLE_S = [0, -0.2, -1], POLE_E = [0, -1, -0.2];
 const QS = solve({ y: 0.55, z: -0.1, tilt: 60, hip: 80 }, q => pose(q, W0, POLE_S), lm => [...kneeRes(lm),
   lm['shoulder.r'][2] - W0, dist(lm['shoulder.r'], [-GX, WR, W0]) - REACH], 'the start');
 const start = pose(QS, W0, POLE_S);
+const LS0 = landmarksOf(start, H);
 // End: the straight line knees to head (hip 0), the shoulder at END_SHOULDER between the trunk line and the arm.
 const QE = solve({ y: 0.25, z: 0.3, tilt: 75, W: 1.2 }, q => pose({ ...q, hip: 0 }, q.W, POLE_E), lm => [...kneeRes(lm),
   angleAt(lm['hip.r'], lm['shoulder.r'], lm['grip.r']) - END_SHOULDER, dist(lm['shoulder.r'], [-GX, WR, lm['grip.r'][2]]) - REACH], 'the end');
@@ -168,6 +170,7 @@ export default {
   ],
   checks: [
     ...['knee.l', 'knee.r'].map(landmark => ({ landmark, plane: { point: [0, KY, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 })),   // c1: knees on the pad
+    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: LS0[landmark], pose: 'start', tol: 0.5 })),                             // c1 fact: the hands on the handles
     ...['grip.l', 'grip.r'].map(landmark => ({ landmark, plane: { point: [0, WR, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 })),    // hands on the handles, the wheel on the floor
     ...['toe.l', 'toe.r'].map(landmark => ({ landmark, above: { point: [0, PAD_T - 0.005, 0], normal: [0, 1, 0] }, pose: 'all' })),     // feet on the pad
     { landmark: 'shoulder.r', plane: { point: [0, 0, W0], normal: [0, 0, 1] }, pose: 'start', tol: 0.5 },                                 // arms plumb at the start
@@ -191,7 +194,7 @@ export default {
     // One tell (D-LIB10-SKULL1; DESIGN.md one-tell record): c3 and c13 state one sign of this fault, the low back
     // arching (lumbar extension); the hips dropping is its geometry, not a sign a claim states.
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { along: ['sacrum', 'backMid'], t: 0.5, pose: 'mistake' }, box: { left: 171, top: 167 }, cue: 'The low back arches as the arms reach overhead.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { along: ['sacrum', 'backMid'], t: 0.5, pose: 'mistake' }, box: { left: 171, top: 175 }, cue: 'The low back arches as the arms reach overhead.' },
     ],
   },
   tempo: [{ phase: 'Roll out', s: 2, move: true }, { phase: 'Roll back', s: 1, move: true }],

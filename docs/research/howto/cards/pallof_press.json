@@ -809,5 +809,52 @@
   "No stop line: no read source gives a stop-for-pain line for this exercise. The low back row uses LR-6 shape (place, the source's fault, its fix) and links the back box.",
   "Not used: Garage Gym Reviews' Pallof Press Hold and the half-kneeling, double-kneeling and overhead-reach variations are other exercises; BarBend's standing too close or too far is a set-up choice (LR-31), and its band-thickness and stack-weight lines are load choices.",
   "Read and not cited: none. Tried and not found: motra.com/exercises/pallofPress (404)."
- ]
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c3"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c3"
+  },
+  {
+   "kind": "contact",
+   "landmark": "sole.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "sole.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Press",
+   "s": 1,
+   "move": true
+  },
+  {
+   "phase": "Hold",
+   "s": 2
+  },
+  {
+   "phase": "Return",
+   "s": 3,
+   "move": true
+  }
+ ],
+ "topFault": "arch"
 }
