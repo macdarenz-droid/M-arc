@@ -63,7 +63,7 @@ export const CRITIC = {
   triceps_pushdown: 'approved, recheck @ 013f84e (D-LIB8M-CRIT2), no item at 3 or less',
   rope_triceps_pushdown: 'approved, recheck @ 013f84e (D-LIB8M-CRIT2), no item at 3 or less',
   pec_fly: 'approved, recheck @ 013f84e (D-LIB8M-CRIT2), no item at 3 or less',
-  plank: 'Mistake redrawn as hiked hips (D-LIB8M-PLANKREDRAW): focused recheck pending; normal plate approved, recheck @ 013f84e (D-LIB8M-CRIT2)',
+  plank: 'Mistake redrawn, focused recheck PASS (supervisor, #109 6382619662); normal plate approved, recheck @ 013f84e (D-LIB8M-CRIT2)',
   upright_row: 'approved, last recheck @ 94c551f (D-LIB8M-CRIT3), every scored item passes',
   barbell_row: 'approved, wf_cad21b92-9ed @ e6f39ff (carried, D-LIB8M-CARRY)',
   romanian_deadlift: 'approved, wf_cad21b92-9ed @ e6f39ff (carried, D-LIB8M-CARRY)',
