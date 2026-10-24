@@ -1,0 +1,794 @@
+{
+ "id": "bicycle_crunch",
+ "libId": "lib_bicycle_crunch",
+ "name": "Bicycle Crunch",
+ "family": "Rotation and lateral core (census); child of crunch (content.md appendix A)",
+ "tier": "B",
+ "tierNote": "Safety tier B (content.md appendix B); census.json difficulty tier 3 (R5: the engine cannot draw yaw). Tier B adds where the hands go for crunches (no neck pulling): hands light behind the head, elbows wide, no pulling on the neck (c2, c9).",
+ "archetype": {
+  "hand": "none",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": "crunch",
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Lie on your back with the lower back on the ground, the legs raised and the knees bent at 90 degrees, slightly above the hips.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-bicycle",
+    "sl-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-bicycle",
+     "text": "Lie face up with your lower back on the ground.",
+     "where": "How To Do Bicycle Crunches, list item 1"
+    },
+    {
+     "source": "ggr-bicycle",
+     "text": "Bend your knees at a 90-degree angle, slightly above your hips.",
+     "where": "How To Do Bicycle Crunches, list item 2"
+    },
+    {
+     "source": "sl-bicycle",
+     "text": "Lie on your back with your hands behind your head and your legs raised, knees bent at 90 degrees.",
+     "where": "How to Do the Bicycle Crunch, list item 1"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "Hands rest lightly behind the head or ears, elbows wide, without straining the neck; elbows caving in is a listed mistake.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-bicycle",
+    "motra-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-bicycle",
+     "text": "Place your hands lightly behind your ears (making sure not to strain your neck) and raise your head and torso so your shoulder blades are off the ground.",
+     "where": "How To Do Bicycle Crunches, list item 3"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Place hands lightly behind your head with elbows wide.",
+     "where": "How to Perform, list item 1"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Elbows stay wide.",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Elbows caving in.",
+     "where": "Safety, Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Engage the core and lift the head and shoulders (shoulder blades) off the floor.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-bicycle",
+    "sl-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "motra-bicycle",
+     "text": "Engage your core and lift shoulder blades off the floor.",
+     "where": "How to Perform, list item 2"
+    },
+    {
+     "source": "sl-bicycle",
+     "text": "Lift your head and shoulders off the ground by engaging your core.",
+     "where": "How to Do the Bicycle Crunch, list item 2"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Rotate the torso to bring one elbow toward (to the inside of) the opposite knee while the other leg extends, then switch sides in a pedaling motion, alternating in a controlled, steady rhythm.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-bicycle",
+    "ggr-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "sl-bicycle",
+     "text": "Extend your right leg while simultaneously rotating your torso to bring your right elbow toward your left knee.",
+     "where": "How to Do the Bicycle Crunch, list item 3"
+    },
+    {
+     "source": "sl-bicycle",
+     "text": "Switch sides in a pedaling motion by extending your left leg and bringing your left elbow toward your right knee.",
+     "where": "How to Do the Bicycle Crunch, list item 4"
+    },
+    {
+     "source": "sl-bicycle",
+     "text": "Continue alternating sides in a controlled and steady rhythm for the desired number of reps.",
+     "where": "How to Do the Bicycle Crunch, list item 5"
+    },
+    {
+     "source": "ggr-bicycle",
+     "text": "Extend your left leg and bring your left elbow to the inside of your right knee.",
+     "where": "How To Do Bicycle Crunches, list item 5"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "Lift the shoulders until the elbow nears the opposite knee, and extend the other leg to 6-12 inches (about 15-30 cm) above the floor without touching down; touching the extended leg down is a listed mistake.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "motra-bicycle",
+     "text": "Lift shoulders until elbow nears opposite knee; extend leg to 6-12 inches above floor without touching down.",
+     "where": "Coaching Tips, Range of Motion"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Touching extended leg down.",
+     "where": "Safety, Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Keep the core tight and the lower back pressed into the floor throughout.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-bicycle",
+    "bb-bicycle",
+    "ggr-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "motra-bicycle",
+     "text": "Keep lower back pressed into the floor throughout.",
+     "where": "How to Perform, list item 6"
+    },
+    {
+     "source": "bb-bicycle",
+     "text": "While you may need to rest after a few reps, keep your core tight and your lower back pressed into the floor.",
+     "where": "How to Do the Bicycle Crunch, Step 3 — Repeat!, Coach’s Tip"
+    },
+    {
+     "source": "ggr-bicycle",
+     "text": "Engage your core muscle by continuing to press your lower back into the ground.",
+     "where": "How To Do Bicycle Crunches, list item 4"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Arching the lower back is a listed mistake: if the back starts to arch, tension shifts from the core onto the lower back and exposes it to injury risk; keeping it pressed to the floor protects it.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "pg-bicycle",
+    "motra-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "pg-bicycle",
+     "text": "To protect your lower back, keep it pressed against the floor throughout and only allow your torso to rotate. If your back starts to arch it will shift the tension away from the core and onto the lower back, exposing it to injury risks.",
+     "where": "Are Bicycle Crunches Bad For Your Back?"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Arching lower back.",
+     "where": "Safety, Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Hip rotation is a listed mistake: the upper body and core do all the rotation, not the hips, which stay still and neutral while the legs pedal; keeping the lower back pressed down stops excess hip rotation, and one source says this helps reduce the risk of injury to the lower back and neck.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-bicycle",
+    "pg-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-bicycle",
+     "text": "Your upper body and core should do all the rotation, not your hips. Additionally, your legs should move back and forth in a biking motion, but your hips should stay still. Keeping your lower back pressed into the ground should stop any excess hip rotation.",
+     "where": "Bicycle Crunch Mistakes, Hip Rotation"
+    },
+    {
+     "source": "pg-bicycle",
+     "text": "Aim to keep the lower back pressed against the floor and hips in a neutral position during the move, with only the torso rotating. This helps to reduce risk of injury to the lower back and neck.",
+     "where": "Tips for Bicycle Crunches"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Pulling on the neck or head with the hands is a listed mistake that can strain the neck muscles and takes the focus off the core; rest the hands lightly behind the head, rotate from the ribs, not the neck, and if the neck hurts or strains, rotate only as far as you can without discomfort.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bicycle",
+    "motra-bicycle",
+    "ggr-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bicycle",
+     "text": "During the bicycle crunch, one common mistake is pulling on your neck with your hands. This can strain the neck muscles and shift the focus away from the core.",
+     "where": "Common Bicycle Crunch Mistakes, Neck Strain"
+    },
+    {
+     "source": "bb-bicycle",
+     "text": "Instead, place your hands lightly behind your head for support, and avoid actively pulling on your neck as a way of “forcing” more range of motion.",
+     "where": "Common Bicycle Crunch Mistakes, Neck Strain"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Pulling on neck.",
+     "where": "Safety, Common Mistakes"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Rotate from ribs, not neck.",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "ggr-bicycle",
+     "text": "Don’t pull on your head or neck with your hands while doing the rotation. If you find your neck hurting or straining while rotating, just rotate as far as you can without discomfort.",
+     "where": "Bicycle Crunch Mistakes, Straining Your Neck"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Going fast with momentum is a listed mistake that makes the exercise less effective; slow, controlled reps keep the work on the core, and sources say slowing down or keeping the movement controlled helps prevent neck and back pain or injury.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bicycle",
+    "ggr-bicycle",
+    "motra-bicycle",
+    "pg-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bicycle",
+     "text": "Rapidly performing bicycle crunches with momentum can reduce the effectiveness of the exercise. Slow, controlled movements allow for proper muscle engagement and ensure the core muscles do the work.",
+     "where": "Common Bicycle Crunch Mistakes, Excessive Speed"
+    },
+    {
+     "source": "ggr-bicycle",
+     "text": "Before performing it with speed, ensure good movement by doing it with control. Plus, slowing the movement down a tad will help you get more out of this functional core exercise and prevent neck and back pain.",
+     "where": "Trainer Tips on Form, Slow Before Fast"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Using momentum.",
+     "where": "Safety, Common Mistakes"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Keep movements controlled to prevent injury.",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "pg-bicycle",
+     "text": "Performing bicycle crunches in a slow, controlled manner is important to ensure the core controls the movement rather than shifting the tension to other muscles.",
+     "where": "Tips for Bicycle Crunches"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "The eyes follow the working elbow, which helps the rotation and keeps the head and neck safe.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "ggr-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-bicycle",
+     "text": "Your eyes should be following your working elbow to get the full benefit of this rotational movement while keeping your head and neck safe.",
+     "where": "Trainer Tips on Form, Follow Your Elbow"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Breathe out as the elbow comes toward the knee (the crunch and rotation) and breathe in as you return and switch sides.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bicycle",
+    "motra-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bicycle",
+     "text": "As you draw your arm toward your knee, exhale sharply (this will also help you contract your abs a bit more). Then, as you release and change limbs, inhale a fresh breath.",
+     "where": "Bicycle Crunch Tips, Breathe as You Move"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Exhale during the crunch and rotation; inhale as you return to center.",
+     "where": "Coaching Tips, Breathing"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "The obliques and the rectus abdominis do the work: one source lists the obliques as primary and the abs as secondary; the external obliques, on the sides of the waist, do the rotation, and the rectus abdominis, at the front of the abdomen, flexes the spine for the crunch.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-bicycle",
+    "bb-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "sl-bicycle",
+     "text": "Primary muscles worked: Obliques Secondary muscles worked: Abs",
+     "where": "Muscles Worked in the Bicycle Crunch"
+    },
+    {
+     "source": "bb-bicycle",
+     "text": "Located in the front of the abdomen, the rectus abdominis is commonly called the “six-pack” muscles.",
+     "where": "Muscles Worked by the Bicycle Crunch, Rectus Abdominis"
+    },
+    {
+     "source": "bb-bicycle",
+     "text": "The obliques are located on the sides of the waist.",
+     "where": "Muscles Worked by the Bicycle Crunch, Obliques"
+    },
+    {
+     "source": "bb-bicycle",
+     "text": "Your rectus abdominis flexes the spine and assists in the forward crunching motion during bicycle crunches.",
+     "where": "Muscles Worked by the Bicycle Crunch, Rectus Abdominis"
+    },
+    {
+     "source": "bb-bicycle",
+     "text": "The external obliques are involved in the rotation and side-bending movements during bicycle crunches, while the internal obliques help stabilize the core.",
+     "where": "Muscles Worked by the Bicycle Crunch, Obliques"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "The hip flexors also work in the bicycle crunch.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "ggr-bicycle",
+    "motra-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "ggr-bicycle",
+     "text": "The bicycle crunch is a safe and effective core workout for the rectus abdominis, oblique muscles, and hip flexors, especially when you pay attention to these trainer tips on form to do it correctly.",
+     "where": "Trainer Tips on Form"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Hip Flexors, Quads, Hamstrings",
+     "where": "About Exercise, Secondary Muscles"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "Stop if neck strain occurs; one source says to avoid the exercise with acute back or neck pain.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "motra-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "motra-bicycle",
+     "text": "Stop if neck strain occurs.",
+     "where": "Safety, Safety Notes"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Avoid if acute back or neck pain exists.",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Tempo: one coach page gives 2-0-2, which its Tempo tooltip orders as eccentric, bottom pause, concentric, top pause: 2 s for the return (eccentric), no pause before the next crunch, and 2 s for the crunch and rotation (concentric); no top pause is given, and it asks for a slow, deliberate pace without momentum.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "motra-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "motra-bicycle",
+     "text": "2-0-2",
+     "where": "Coaching Tips, Tempo"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+     "where": "Tempo heading tooltip"
+    },
+    {
+     "source": "motra-bicycle",
+     "text": "Maintain slow, deliberate pace without momentum.",
+     "where": "How to Perform, list item 7"
+    }
+   ]
+  },
+  {
+   "id": "c17",
+   "text": "To make the bicycle crunch harder: more reps, a slower tempo, added weight or resistance, isometric holds, more speed and intensity, or alternating variations.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-bicycle"
+   ],
+   "quotes": [
+    {
+     "source": "bb-bicycle",
+     "text": "To make bicycle crunches more challenging, you can increase repetitions, slow down the tempo, add weight or resistance, focus on isometric holds, increase speed and intensity, and incorporate alternating variations.",
+     "where": "FAQs, What are the best ways to make bicycle crunches harder?"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-bicycle",
+   "url": "https://barbend.com/bicycle-crunch/",
+   "title": "How to Do the Bicycle Crunch for Conditioning and Carved Abs | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "ggr-bicycle",
+   "url": "https://www.garagegymreviews.com/bicycle-crunches",
+   "title": "How to Do Bicycle Crunches: Expert Tips | Garage Gym Reviews",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "motra-bicycle",
+   "url": "https://motra.com/exercises/bicycleCrunch",
+   "title": "Bicycle Crunch - Exercise Guide | Motra",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-bicycle",
+   "url": "https://www.strengthlog.com/bicycle-crunch/",
+   "title": "How to Do Bicycle Crunch: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": 2025,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "pg-bicycle",
+   "url": "https://www.puregym.com/exercises/abs/bicycle-crunches/",
+   "title": "How To Do Bicycle Crunches | PureGym",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "front",
+  "viewWhy": "Census view is front: the trunk turning so one elbow nears the opposite knee while the hips stay still (c4, c8) reads from the front. Census poses supine and yaw are R5 (yaw is not in the pose model; only the knee drive can be drawn), so the plate waits on the engine (E-R5); the card is complete.",
+  "equipment": "Floor line; mat optional. No equipment (census).",
+  "start": "Lying on the back, lower back pressed to the floor (c1, c6); legs raised, knees bent at 90 degrees slightly above the hips (c1); hands lightly behind the head, elbows wide (c2); head and shoulder blades off the floor (c3).",
+  "end": "Trunk turned so one elbow nears the opposite knee, that knee bent toward the chest (c4, c5); the other leg extended about 15-30 cm above the floor, not touching down (c5); lower back still pressed down and hips still (c6, c8); elbows still wide (c2).",
+  "checkpoints": [
+   {
+    "label": "Hips still",
+    "what": "Only your upper body rotates. Your hips stay still.",
+    "claim": "c8"
+   },
+   {
+    "label": "Elbow to knee",
+    "what": "Rotate your torso until the elbow nears the opposite knee.",
+    "claim": [
+     "c4",
+     "c5"
+    ]
+   },
+   {
+    "label": "Hands light",
+    "what": "Hands lightly behind your head, elbows wide. Don't pull your neck.",
+    "claim": [
+     "c2",
+     "c9"
+    ]
+   }
+  ],
+  "mistake": {
+   "what": "Hips rotating with the trunk instead of staying still.",
+   "why": "The top fault, pulling on the neck with the hands (c9), shows as the head pulled forward, which reads from the side, not the census front view. The next fault, going fast with momentum (c10), shows only as speed, and the lower back arching (c7) reads from the side. So the plate draws the next fault by LR-31's steps, the hips rotating: Garage Gym Reviews lists hip rotation as a mistake (the upper body does the rotation, the hips stay still), and PureGym says keeping the hips neutral with only the torso rotating helps reduce the risk of injury to the lower back and neck (c8).",
+   "claim": "c8",
+   "drawable": false,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 2: pulling on the neck with the hands (c9). Step 1 finds no frequency word for a fault: BarBend's \"During the bicycle crunch, one common mistake is pulling on your neck with your hands.\" (c9) is a list sentence inside its common-mistakes list, set aside under LR-31's literal exclusion as R-LB4-2 set aside \"Another common error is doing reverse lunges too fast.\" (if the verify counts it, step 1 picks the same fault). Also set aside (fetcher scan, 2026-10-22): BarBend's \"Frequently Asked Questions\" and \"These frequently asked questions might have the answers.\" are about the page; BarBend's \"Common Bicycle Crunch Mistakes\", Garage Gym Reviews' \"Bicycle Crunch Mistakes\" and Motra's \"Common Mistakes\" are headings; BarBend's \"avoiding common mistakes is key\" is a list sentence; \"Or at least that is what people instantly think of\" is about the exercise; \"most folks opt for higher reps with controlled form\" is programming; \"commonly called the “six-pack” muscles\" is a muscle; \"How often should you do bicycle crunches?\" is training; Garage Gym Reviews' \"gets a bad rap from many experts and personal trainers\" and \"Many crunch variations flex and extend the spine, and this can aggravate lower back issues.\" are about crunches in general, other exercises (R-LB7-5); PureGym's \"Most Commonly Asked Questions About Bicycle Crunches\" is a heading, and \"most people find they need to reach below a certain level of body fat\" and \"Strength training along with fat loss is usually required\" are about fat loss. Step 2: four named faults are tied to harm. Pulling on the neck: BarBend \"This can strain the neck muscles\" (c9, Neck Strain item) and Garage Gym Reviews \"If you find your neck hurting or straining while rotating\" (c9, Straining Your Neck item): 2 sources. Going fast with momentum: Garage Gym Reviews \"slowing the movement down a tad will help ... prevent neck and back pain\" and Motra \"Keep movements controlled to prevent injury.\" (c10; D-SUP-PROTECT: the correcting cue prevents harm): 2 sources. The lower back arching: PureGym \"exposing it to injury risks\" (c7): 1 source. The hips rotating: PureGym \"This helps to reduce risk of injury to the lower back and neck.\" (c8, the cue that keeps the hips neutral): 1 source. Tie order: all four are on a common-mistakes list (neck: BarBend, Motra, Garage Gym Reviews; speed: BarBend, Motra; arch: Motra; hips: Garage Gym Reviews). More sources tying to harm: neck 2 and speed 2 lead. Both sourced directly. The earlier on a list that names both: BarBend's list (Neck Strain, Excessive Speed, Incorrect Breathing) and Motra's (Pulling on neck., Arching lower back., Using momentum., ...) both put the neck first: the neck pull is the top fault. Not harm: BarBend's \"can reduce the effectiveness of the exercise\" and PureGym's \"shifting the tension to other muscles\"; BarBend's list sentence \"minimizing the risk of injury\" and Garage Gym Reviews' \"while preventing unnecessary strain and injury\" introduce whole lists and are not read onto one item; Motra's \"Avoid if acute back or neck pain exists.\" and \"Stop if neck strain occurs.\" (c15) name no fault; Garage Gym Reviews' \"keeping your head and neck safe\" (c11) belongs to the eyes-follow-the-elbow cue, which names no fault. Garage Gym Reviews' setup cue \"Place your hands lightly behind your ears (making sure not to strain your neck)\" (c2) also ties the neck pull to strain, from the same source already counted. Not about a fault: BarBend's \"to prevent and mitigate injuries or accidents\", \"may contribute to injury prevention\" and \"perhaps even reduce the risk of lower back pain\", and PureGym's \"can help with posture and back pain\" and \"reduced injuries\", are benefits of core training; Motra's \"When to Avoid\" list names conditions, not faults. Incorrect breathing (BarBend) states no harm and is not drawable. Common-mistakes lists: BarBend's \"Common Bicycle Crunch Mistakes\": 1 Neck Strain, 2 Excessive Speed, 3 Incorrect Breathing; Garage Gym Reviews' \"Bicycle Crunch Mistakes\": 1 Hip Rotation, 2 Straining Your Neck; Motra's \"Common Mistakes\": 1 Pulling on neck, 2 Arching lower back, 3 Using momentum, 4 Elbows caving in, 5 Lifting head too high, 6 Touching extended leg down. StrengthLog and PureGym have none. drawable false: the census view is front, and the neck pull's still sign, the head pulled forward toward the chest by the hands, reads from the side, not the front (writer call, sent to the lead). plate.mistake names the next fault by the same steps: going fast with momentum (step 2, 2 sources) shows only as speed and is never drawable; the lower back arching and the hips rotating then tie at step 2 (1 source each, both on a list, both direct, no list names both), so step 3's count (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: arching 2 (Motra's list \"Arching lower back.\" and PureGym \"If your back starts to arch ...\", c7); hips rotating 1 (Garage Gym Reviews' Hip Rotation item, c8). Lines that only give the right position are not counted (BarBend's and Garage Gym Reviews' 'lower back pressed into the floor', Motra's \"Keep lower back pressed into the floor throughout.\" and \"Press lower back flat.\" for the arch; PureGym's \"hips in a neutral position ... with only the torso rotating\" for the hips); counted, the arch is 5 and the hips 2, the same order. The arch lifts the lower back off the floor, which reads from the side, not the front. The next, the hips rotating with the trunk (c8), shows from the front as the pelvis turning with the upper body, so plate.mistake names it. "
+  },
+  "tells": [
+   {
+    "text": "Lower back stays on the floor",
+    "claim": "c6"
+   },
+   {
+    "text": "Hips stay still",
+    "claim": "c8"
+   }
+  ],
+  "tempo": {
+   "up": 2,
+   "down": 2,
+   "pause": 0,
+   "claim": "c16",
+   "text": "Motra's 2-0-2 (c16, WEAK), read in its Tempo tooltip's fixed order (R-LB6-2, R-LB6-7): 2 s eccentric (the return, drawn as down), 0 s bottom pause, 2 s concentric (the crunch and rotation, drawn as up), an exercise-specific source that fixes each phase (R-LB2-1); the page shows three numbers, so no top pause is given. Pause 0: no quote on the card asks for a pause right after the crunch (LR-33). Each side is one rep of this tempo. BarBend, PureGym and Motra also ask for slow, controlled reps (c10, c16)."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "",
+  "width": "",
+  "thumb": "",
+  "handContact": "Hands rest lightly behind the head or ears, elbows wide; no pulling on the head or neck (c2, c9).",
+  "wrist": "",
+  "claims": [
+   "c2",
+   "c9"
+  ],
+  "note": "Hand archetype none: no hand zoom."
+ },
+ "setup": [
+  {
+   "step": "Lie on your back with your lower back on the floor.",
+   "claim": "c1"
+  },
+  {
+   "step": "Raise your legs, knees bent at 90 degrees above your hips.",
+   "claim": "c1"
+  },
+  {
+   "step": "Hands lightly behind your head, elbows wide.",
+   "claim": "c2"
+  },
+  {
+   "step": "Lift your head and shoulder blades off the floor.",
+   "claim": "c3"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Rotate your torso to bring one elbow toward the opposite knee.",
+   "claim": "c4"
+  },
+  {
+   "point": "Extend the other leg without touching down.",
+   "claim": [
+    "c4",
+    "c5"
+   ]
+  },
+  {
+   "point": "Lower back stays pressed into the floor.",
+   "claim": "c6"
+  },
+  {
+   "point": "Only your upper body rotates. Your hips stay still.",
+   "claim": "c8"
+  },
+  {
+   "point": "Eyes follow your working elbow.",
+   "claim": "c11"
+  },
+  {
+   "point": "Breathe out as you rotate, in as you switch.",
+   "claim": "c12"
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Pulling on your neck.",
+   "fix": "Rest your hands lightly behind your head.",
+   "claim": "c9"
+  },
+  {
+   "mistake": "Going fast with momentum.",
+   "fix": "Use slow, controlled movements.",
+   "claim": "c10"
+  },
+  {
+   "mistake": "Lower back arching.",
+   "fix": "Keep your lower back pressed into the floor.",
+   "claim": [
+    "c7",
+    "c6"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "obliques",
+    "claim": "c13"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "abs",
+    "claim": "c13"
+   },
+   {
+    "muscleId": "hip_flexors",
+    "claim": "c14"
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "lower_back",
+    "claim": "c7"
+   }
+  ],
+  "rows": [
+   {
+    "where": "Sides of the waist",
+    "means": "Your obliques are doing the rotation.",
+    "fix": "",
+    "claim": "c13",
+    "redFlag": null
+   },
+   {
+    "where": "Front of the belly",
+    "means": "Your abs are doing the crunch.",
+    "fix": "",
+    "claim": "c13",
+    "redFlag": null
+   },
+   {
+    "where": "Neck",
+    "means": "Pulling on your neck can strain the neck muscles.",
+    "fix": "Rest your hands lightly behind your head. Stop if neck strain occurs.",
+    "claim": [
+     "c9",
+     "c15"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Lower back",
+    "means": "Fault: your lower back arching shifts tension onto it.",
+    "fix": "Keep your lower back pressed into the floor.",
+    "claim": [
+     "c7",
+     "c6"
+    ],
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Pulling on your neck can strain the neck muscles.",
+   "claim": "c9"
+  },
+  {
+   "risk": "If your lower back arches, tension shifts onto it and exposes it to injury risk.",
+   "claim": "c7"
+  },
+  {
+   "risk": "Slowing the movement down will help prevent neck and back pain.",
+   "claim": "c10"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "hips",
+   "kind": "posture",
+   "right": "Hips still, only the upper body rotating.",
+   "wrong": "Hips rotating with the trunk.",
+   "claim": "c8"
+  },
+  {
+   "key": "neck",
+   "kind": "posture",
+   "right": "Hands light behind the head, elbows wide.",
+   "wrong": "Hands pulling on the neck.",
+   "claim": [
+    "c2",
+    "c9"
+   ]
+  },
+  {
+   "key": "low-back",
+   "kind": "posture",
+   "right": "Lower back pressed into the floor.",
+   "wrong": "Lower back arching.",
+   "claim": [
+    "c6",
+    "c7"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "hip_flexors"
+  ],
+  "remove": [],
+  "why": "exercises.json lists obliques primary and abs secondary, as StrengthLog does (c13); kept. Add hip_flexors as secondary: Garage Gym Reviews names the hip flexors among the muscles worked and Motra lists them as a secondary muscle (c14)."
+ },
+ "anchorSource": "bb-bicycle",
+ "loadProgression": {
+  "text": "Harder: more reps, a slower tempo, or added weight or resistance.",
+  "claim": "c17"
+ },
+ "notes": [
+  "LR-34 check against cards/crunch.json on head 6d253b9e (pilot B, not edited): no inherit entry is kept. Every line rests on this card's own bicycle-crunch claims, fetched by curl (way 1). Parent lines that do not hold whole here: feet flat on the floor (crunch c1; the legs are raised here, c1), arms crossed over the chest (crunch c2; no bicycle source gives it), the low back, tailbone and feet on the mat (crunch c3; the legs pedal here), and the parent's tempo convention (replaced by Motra's 2-0-2, c16).",
+  "Shared cards: floor-body (docs/research/howto/shared/floor-body.json @ 6d253b9e) lists bicycle_crunch in appliesTo, and its gaps say lying face-up ids have no shared checkpoint; this card's checkpoints are its own. No other shared card lists this id.",
+  "Anchor: BarBend (bb-bicycle) read in full: steps with coach's tips, variations, tips, sets and reps, muscles, a common-mistakes section and FAQ. Garage Gym Reviews, Motra and PureGym were read in full; StrengthLog's page is short (five steps and the muscle box).",
+  "Start positions differ: StrengthLog and Garage Gym Reviews start with the legs raised and the knees bent at 90 degrees (c1); Motra starts with the feet flat and PureGym with the legs extended and hovering. The plate draws the raised-knees start.",
+  "Hands: BarBend and StrengthLog put the hands behind the head, Garage Gym Reviews lightly behind the ears (c2, c9). No bicycle source crosses the arms.",
+  "Neck row: the stop cites Motra's \"Stop if neck strain occurs.\" (c15; R-LB3-4, R-LB6-6). No neck red-flag box exists, so the row links none. Motra's \"Consult doctor for spinal issues.\" is referral wording and is not used on any line (LR-27).",
+  "Not reachable or not found: Healthline, NASM and Fitness Volt bicycle-crunch URLs (404), Verywell Fit (402); no ACE bicycle crunch page was found in its abs listing."
+ ]
+}

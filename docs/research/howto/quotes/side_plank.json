@@ -1,0 +1,223 @@
+{
+ "id": "side_plank",
+ "checked": "2026-10-02",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "bb-sideplank",
+   "text": "Step 1 — Lie on one side with your elbow under your shoulder and your top leg stacked over your bottom leg. You can keep your knees bent or opt to keep your legs straight.",
+   "status": "verbatim",
+   "closest": "Step 1 — Lie on one side with your elbow under your shoulder and your top leg stacked over your bottom leg. You can keep your knees bent or opt to keep your legs straight.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "bb-sideplank",
+   "text": "Step 2 — Press your elbow, your hips, and your bottom foot into the ground. Raise your hips as high as you can, aiming to establish a straight line from your ribs through your hips and bottom leg.",
+   "status": "verbatim",
+   "closest": "Step 2 — Press your elbow, your hips, and your bottom foot into the ground. Raise your hips as high as you can, aiming to establish a straight line from your ribs through your hips and bottom leg.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-sideplank",
+   "text": "Brace your core, and try to form and hold a straight line from your head to your feet.",
+   "status": "verbatim",
+   "closest": "Brace your core, and try to form and hold a straight line from your head to your feet.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "bb-sideplank",
+   "text": "Step 3 — Once you’ve found your optimal position, hold it as steadily as you’re able. Your top arm can rest on your hip or side with your arm straight or bent.",
+   "status": "verbatim",
+   "closest": "Step 3 — Once you’ve found your optimal position, hold it as steadily as you’re able. Your top arm can rest on your hip or side with your arm straight or bent.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-sideplank",
+   "text": "You can make the side plank more accessible by placing your top foot on the ground in front of your bottom foot. This will widen your base of support and give you a stronger starting point, making balance less of an issue.",
+   "status": "verbatim",
+   "closest": "You can make the side plank more accessible by placing your top foot on the ground in front of your bottom foot. This will widen your base of support and give you a stronger starting point, making balance less of an issue.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "bb-sideplank",
+   "text": "You can also lower your bottom knee completely, letting it rest on the ground to give yourself more points of contact.",
+   "status": "verbatim",
+   "closest": "You can also lower your bottom knee completely, letting it rest on the ground to give yourself more points of contact.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "sl-sideplank",
+   "text": "Place the foot of the top leg in front of the other foot.",
+   "status": "verbatim",
+   "closest": "Place the foot of the top leg in front of the other foot.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "bb-sideplank",
+   "text": "Keeping your hips up — as though there’s an invisible string pulling them up toward the ceiling — is critical for an effective side plank. When your hips start to sink, your core muscles become much less involved in the movement.",
+   "status": "verbatim",
+   "closest": "Keeping your hips up — as though there’s an invisible string pulling them up toward the ceiling — is critical for an effective side plank. When your hips start to sink, your core muscles become much less involved in the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-sideplank",
+   "text": "One of the biggest crimes you can commit during your side plank is forgetting to breathe.",
+   "status": "verbatim",
+   "closest": "One of the biggest crimes you can commit during your side plank is forgetting to breathe.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "bb-sideplank",
+   "text": "Hold your core in a strong brace during this lift, and take big, slow breaths through your abdomen.",
+   "status": "verbatim",
+   "closest": "Hold your core in a strong brace during this lift, and take big, slow breaths through your abdomen.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-sideplank",
+   "text": "make sure you’re keeping your shoulder down and away from your ear. Continue to avoid shrugging your shoulder up toward your face even when the going gets tough.",
+   "status": "verbatim",
+   "closest": "make sure you’re keeping your shoulder down and away from your ear. Continue to avoid shrugging your shoulder up toward your face even when the going gets tough.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "bb-sideplank",
+   "text": "To further increase your arm’s comfort — which might be a reason your shoulder starts to shrug — place a soft yoga mat or exercise mat under your elbow and forearm.",
+   "status": "verbatim",
+   "closest": "To further increase your arm’s comfort — which might be a reason your shoulder starts to shrug — place a soft yoga mat or exercise mat under your elbow and forearm.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-sideplank-mod",
+   "text": "Bend your right leg to 90 degrees of flexion while keeping the left leg extended, with the inside surface of your left foot making contact with the mat.",
+   "status": "verbatim",
+   "closest": "Bend your right leg to 90 degrees of flexion while keeping the left leg extended, with the inside surface of your left foot making contact with the mat.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-sideplank-mod",
+   "text": "Raise your upper body to support yourself on your right arm, with your elbow bent to 90 degrees and positioned directly under your shoulder.",
+   "status": "verbatim",
+   "closest": "Raise your upper body to support yourself on your right arm, with your elbow bent to 90 degrees and positioned directly under your shoulder.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-sideplank-mod",
+   "text": "Align your head with your spine and keep your hips and right knee in contact with the exercise mat.",
+   "status": "verbatim",
+   "closest": "Align your head with your spine and keep your hips and right knee in contact with the exercise mat.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-sideplank-mod",
+   "text": "Inhale and gently return yourself to your starting position.",
+   "status": "verbatim",
+   "closest": "Inhale and gently return yourself to your starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-sideplank-mod",
+   "text": "Exhale, gently contract your abdominal / core muscles to stiffen your spine and lift your hips and right leg off the mat.",
+   "status": "verbatim",
+   "closest": "Exhale, gently contract your abdominal / core muscles to stiffen your spine and lift your hips and right leg off the mat.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "ace-sideplank-mod",
+   "text": "Any excessive pressure on the inside of your upper foot or upper knee may cause undesirable stresses on those joints and merits termination of this exercise.",
+   "status": "verbatim",
+   "closest": "Any excessive pressure on the inside of your upper foot or upper knee may cause undesirable stresses on those joints and merits termination of this exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-sideplank",
+   "text": "You should hold the side plank for as long as you can hold excellent form (and keep your time even on both sides). For some athletes, this may last five to 15 seconds.",
+   "status": "verbatim",
+   "closest": "You should hold the side plank for as long as you can hold excellent form (and keep your time even on both sides). For some athletes, this may last five to 15 seconds.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-sideplank",
+   "text": "add to that time gradually, pushing your efforts further a few seconds at a time until you can approach a 30-second or even 45-second plank on either side.",
+   "status": "verbatim",
+   "closest": "add to that time gradually, pushing your efforts further a few seconds at a time until you can approach a 30-second or even 45-second plank on either side.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-sideplank",
+   "text": "If you can, aim to hold the side plank for 30 to 60 seconds per side.",
+   "status": "verbatim",
+   "closest": "If you can, aim to hold the side plank for 30 to 60 seconds per side.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "bb-sideplank",
+   "text": "Start your set on your weaker side.",
+   "status": "verbatim",
+   "closest": "Start your set on your weaker side.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-sideplank",
+   "text": "Primary muscles worked: Obliques Secondary muscles worked: Abs",
+   "status": "verbatim",
+   "closest": "Primary muscles worked: Obliques Secondary muscles worked: Abs",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "bb-sideplank",
+   "text": "The side plank primarily works the sides of your core — your obliques. You’ll be involving your hips and shoulders, too, since those will be holding you up.",
+   "status": "verbatim",
+   "closest": "The side plank primarily works the sides of your core — your obliques. You’ll be involving your hips and shoulders, too, since those will be holding you up.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "juker-1998",
+   "text": "Several isometric abdominal exercises were evaluated using the criteria of maximizing abdominal activation while minimizing psoas activity: the side (bridge) support exercise proved the best training method for the abdominal wall.",
+   "status": "verbatim",
+   "closest": "Several isometric abdominal exercises were evaluated using the criteria of maximizing abdominal activation while minimizing psoas activity: the side (bridge) support exercise proved the best training method for the abdominal wall.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "mcgill-2009",
+   "text": "In general, bracing of the abdominal wall enhanced activation of the obliques",
+   "status": "verbatim",
+   "closest": "In general, bracing of the abdominal wall enhanced activation of the obliques",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "mcgill-2009",
+   "text": "To quantify several forms of the curl-up, side-bridge, and birddog exercises",
+   "status": "verbatim",
+   "closest": "To quantify several forms of the curl-up, side-bridge, and birddog exercises",
+   "note": ""
+  }
+ ]
+}
