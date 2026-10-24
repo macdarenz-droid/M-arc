@@ -1,0 +1,411 @@
+{
+  "base": {
+    "index": 8,
+    "hash": "e48d731d176c5e3994cab5e2de5ea2db938cbdf6c249600679588daa58b22361"
+  },
+  "entries": [
+    {
+      "kind": "page",
+      "pageSha256": "5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8",
+      "bytes": 1325644,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72).",
+      "supersedes": null,
+      "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_barbell_row",
+      "src": "library/specs/barbell_row.mjs",
+      "slug": "barbell-row",
+      "prefix": "barbell-row",
+      "chromeId": "barbell-row",
+      "fragments": {
+        "normalSvg": "82b80c739a5797025aa39521b6665afdb3f28de70e81244b0783f1b02fc5b38d",
+        "normalOverlay": "4753ea1c02afd49135389ff983ffe05cdc51778f9bf9cc5fdada5823c191bc90",
+        "mistakeSvg": "bedb815857e07ed0c0676df32055547a75874258a965c1fc4fa263cd8fd76c35",
+        "mistakeOverlay": "5e4d2d3deb44f53dbf5bb78bac6eb42499f41218235ead64dc5512f24c31b87c",
+        "tells": "66d3799abf0a2c916a25f7d11de5074a1c4ee8bc5d28b22424076e935edccca7",
+        "tempo": "85464aff27287f56375923a2ea166aab9e5aab3fac8821ace0063acb9b3a3e0f",
+        "cues": "b88a51277c8ea6df3b23abb7e87f961badec995ebc7592ee9cc1fd2dd0c70c5b",
+        "alt": "a9aee6e19e3fcbe4be3d1cc144788ee9a486dcceed3e7b0d70f7f49d09ac5399",
+        "mistakeAlt": "3e43ff2a241cb5d2c3e9c6409efcaaf0fff97640011bbedf5eeed94612d30ee1"
+      },
+      "exemptions": [
+        "F4",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F4, F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "5fcab63e485bcfea5a5300fd70a891eb10f85d745c0243ffe0d306d069217711"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_dumbbell_bench_press",
+      "src": "library/specs/dumbbell_bench_press.mjs",
+      "slug": "dumbbell-bench-press",
+      "prefix": "dumbbell-bench-press",
+      "chromeId": "dumbbell-bench-press",
+      "fragments": {
+        "normalSvg": "f2a8563eddcdb2da9766472d750a338e8de138ebef03018158e4903cebdee3ac",
+        "normalOverlay": "0523eb5bba377484856bc111c903b53351873d8846f146122c73253dd586ca87",
+        "mistakeSvg": "0b516fd0f06f9f0e0cb2d30ea6f1d847f8db511804a984c0ad180ec2103e20e2",
+        "mistakeOverlay": "fd3515a2e064951d250e2463b84457a35b82edf37d54115c2ae041735ea7afbb",
+        "tells": "78adfc08a4a57e3a2d3cd01c07d567569070f9508f7978ee6d577f1e021f742a",
+        "tempo": "9af9e6552a529e3708cf8dafa367dc90b5d5d8b5b1f51cedaf88fe48e65d10d8",
+        "cues": "f97f0a0718f9b94cc21a44a73436069c081675b12fd08e86e912b9448a82ef66",
+        "alt": "6d8969d03b3c7113d7abaa2d979a85069a34c79969ccd33e736f5a8459283de5",
+        "mistakeAlt": "f03803dc38640f60041712f0aa45f107f380be648f469b84812bcf8a2af2fc1d"
+      },
+      "exemptions": [
+        "F4",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F4, F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "866f4630d228ff8f304e91c051c8eec6aa3a43f1f465b7ead7f4d19dbc215852"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_dumbbell_shoulder_press",
+      "src": "library/specs/dumbbell_shoulder_press.mjs",
+      "slug": "dumbbell-shoulder-press",
+      "prefix": "dumbbell-shoulder-press",
+      "chromeId": "dumbbell-shoulder-press",
+      "fragments": {
+        "normalSvg": "6d5a66c6bae2c8558cacea30632c254d5ca138d3a00518b0ae576335ef6dfcad",
+        "normalOverlay": "9c46edbe485d1c910e1e5350a0abc71ccd05cffeffd6344ce76fa9c99613e710",
+        "mistakeSvg": "796a2477c7cec72ce73f2cb291937cff153d93612db145e8654ffe3ecf8cd4b0",
+        "mistakeOverlay": "ec76c0ca41284c94e96185ab3d262fa09aaccfcdbccbebfe78d471e039774da0",
+        "tells": "a0c52216c67081cb5aae4ff40971b4d39d311f4dfb53f7663d49810236f57882",
+        "tempo": "7e32c0e848a9e6ce971b689bf96058ea943956570433e96247d364eb475c7aff",
+        "cues": "62cfccc15e41eb34e06e9da2a4fdae63b7426937ff19a1bd64988d10270b8e4f",
+        "alt": "1e274648ca9f33e351512bf9fc1655ce62245f4a870c1293be964590b7945c03",
+        "mistakeAlt": "9d685ae04d58ca3e365519e707b0193827b7ecfac2903315c97d7d4ea0a1944d"
+      },
+      "exemptions": [
+        "F3",
+        "F4",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F3, F4, F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "1487551594d78b6f3f15cbd963011d8569670519d1107d7cfc22b915bcd9642f"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_barbell_overhead_press",
+      "src": "library/specs/barbell_overhead_press.mjs",
+      "slug": "barbell-overhead-press",
+      "prefix": "barbell-overhead-press",
+      "chromeId": "barbell-overhead-press",
+      "fragments": {
+        "normalSvg": "34198189e686e2dbb712454e7e9f2e9397426ab5f35bc9c17b40c83793694007",
+        "normalOverlay": "a624e05ad67d1bf6e433b2db0d70e3ce721821c67880fb251e3083574cfc8ed7",
+        "mistakeSvg": "6bf09b6afdd90f8730b46b7503413e4781feb11fcc286108026bb1aab7cb921e",
+        "mistakeOverlay": "37cf131224514e7aa073d2575be623587760bed882eb219c86594596c2fcb050",
+        "tells": "1504a47356e13d0a5cef4f3b112cc3a551f0ed5786e68910448b67bf4b250202",
+        "tempo": "dddad8d714b29d378423e6eb0693413e83f20772a2de9912c4f7870f59dab928",
+        "cues": "5653964f3b42d7a707d911ba96747448682aa6bd4ad038f856a7a2d2f189cfe0",
+        "alt": "8ad0444bcfa4dac2e6ca83a35afde56a3eab283b7a913f60bec127e579fb3dbb",
+        "mistakeAlt": "7a8dc57add59738a9e2756c47d0dd4af942d397338cee692e31e2ef23a2aa5f1"
+      },
+      "exemptions": [
+        "F2",
+        "F3",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F2, F3, F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "599e71eae7316493c1dfbd1c7c8091dd9049dce6e6bfad6df3dc443787b20aaa"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_romanian_deadlift",
+      "src": "library/specs/romanian_deadlift.mjs",
+      "slug": "romanian-deadlift",
+      "prefix": "romanian-deadlift",
+      "chromeId": "romanian-deadlift",
+      "fragments": {
+        "normalSvg": "46bdd83cbf2e319564e11ea8e049b170e25d02dc250968879673809868461da4",
+        "normalOverlay": "5fb582a6376b81a11e10ba3ccc6d7f564e0321dda8a279bfd2acf0b832bcc7d4",
+        "mistakeSvg": "ef455313c22b98379da045110b4306f6550c2643d8798a93b27fec6166a2b09f",
+        "mistakeOverlay": "036f11e2567334c5c161be79b15a4310ec65828211f6d1c3b109b588d4ec8b57",
+        "tells": "7a78b9982311368868ab5386554b22497ccc4ba308deca1ffd4f06290dbfae86",
+        "tempo": "d779228da386025e8d7f2ba40e2cd2eeb7440d2dcd29882ce9633f0e2d38d8ee",
+        "cues": "1a8916d47fe1439aafb36b64023cfde8a8934f82116ff74143db184edf630dcf",
+        "alt": "b30ebaa71b131126888c987cd9599d4220671faa0be689725750e75ef37687d3",
+        "mistakeAlt": "85c5a7bccb5090dd40c43f505954306ce8131e1b587616e6bf391d7e16694b2d"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "f3b0740f7a358852c2df46a4a8abb5714e93c22ad14d78fe6cc57bd93576c161"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_single_leg_romanian_deadlift",
+      "src": "library/specs/single_leg_romanian_deadlift.mjs",
+      "slug": "single-leg-romanian-deadlift",
+      "prefix": "single-leg-romanian-deadlift",
+      "chromeId": "single-leg-romanian-deadlift",
+      "fragments": {
+        "normalSvg": "66e4d65badc47d14b923c815bb569e9cd3123b17c98bffe79490700343bc873b",
+        "normalOverlay": "d42a4a1287bf7352db754e29deb646934d69be7a42682b458303e478d1bfba75",
+        "mistakeSvg": "98de941452732a41f24a4ad2681549232e26aca14a364514d71b9332288000af",
+        "mistakeOverlay": "814f5535cc2098ec1ba5447b5d4f64d71e3e48ff9ac84256fad9a33fa9418d77",
+        "tells": "366d9506cf40877ccf342e06000d093d563101f29b31aa50cb8061db38c9f816",
+        "tempo": "f48a79330ac4dfb10dd1610833710a53bb6dbcf0281aef60398ba9af21cfb667",
+        "cues": "0f6b9703573c936a7e8ffdd117cfaf950ceab539aede911b32b0ffccc12083ed",
+        "alt": "47400077a5cf623a7bc2af3f8749f7173a272f2345dd974ce0c34919f709f124",
+        "mistakeAlt": "573b410a346479dec479d7e7c9680d8173c7cb7d4e1107f6a170b44637e7d700"
+      },
+      "exemptions": [
+        "F4",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F4, F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "54854e617715b1037e086e7429d77096cb97e6a0589f3d360ad3d09352b9f1ab"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_upright_row",
+      "src": "library/specs/upright_row.mjs",
+      "slug": "upright-row",
+      "prefix": "upright-row",
+      "chromeId": "upright-row",
+      "fragments": {
+        "normalSvg": "b4d55b83a38ca968e7d5ad18b2f5c81d792d666d611f98964302709b22500bfb",
+        "normalOverlay": "5e5f06a47f943c454922e7298ea39aacd50cadba096077e18b60f43b7564f818",
+        "mistakeSvg": "3352b8b083d6f8ae5471d3eaadda8f96dca08fd749d253394c1ce71675b386a9",
+        "mistakeOverlay": "79576b7d478fabbbba06bca1a00e8b43c19e32c1d54e6d331e1487307ce889d2",
+        "tells": "3fa8dfd2ce3be2e0bd46f38ef51ce44936863b49c6b64b329090a80f17ef36c2",
+        "tempo": "85464aff27287f56375923a2ea166aab9e5aab3fac8821ace0063acb9b3a3e0f",
+        "cues": "a9ad470e4bda2fc1b313d3e1c14e32ddbbf9c6e0adcd4c5f8769998e7ca0a1a2",
+        "alt": "ef13e57e63f2651f3654d17448fabb86b1a222c718fb59e44527b5d5b56e5de0",
+        "mistakeAlt": "64b816a2dd4a2eea2badac270b1949eecb4c992a4739897b54d334d78460f0a6"
+      },
+      "exemptions": [
+        "F2",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F2, F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "0976dacb08724d995c8106dec74a7280976f620176330ec755f0aac079d4b7f3"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_pec_fly",
+      "src": "library/specs/pec_fly.mjs",
+      "slug": "pec-fly",
+      "prefix": "pec-fly",
+      "chromeId": "pec-fly",
+      "fragments": {
+        "normalSvg": "966d14a9d4f9f3bd7ec060393c6194700d1b4eb661975c51cdba4a50175db66e",
+        "normalOverlay": "3a130cbf63beec4092aa65cc39586ad7a90970c045dc9be94db3c98a7e357a73",
+        "mistakeSvg": "df4589fdf2e5b2aa94f2fe11d32449a8dce24935cac0fc7a09a86660e8287cfb",
+        "mistakeOverlay": "6c307eefb1e4a6e3e08cb71f9680a73b6cfa7256226c70bb59be020daf04cd8c",
+        "tells": "be6ed8624011a4d06e62d2e13426831ee7c79f885b36eb4fd3314a04798b78db",
+        "tempo": "85cfc3fa1c2c7b57a8c9a688489c6f2b0376e60f66c4a3ac924f6391c139e0e8",
+        "cues": "cccc988a77260dbf39f21d6ce952e9a915d9c1080dcb77e88c253513b80a51bc",
+        "alt": "9002465a2b55518dea8739de92aaa444fcb4533a082700d48b92af2ed29aab39",
+        "mistakeAlt": "dd4f725b0a71169e836dfe665bb866201fdc578c65fafab0bb296704090beef3"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "67141932c41ec43f7c4a9960e69616b2ae91ae63ad4d065d2b77a5b1d8206510"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_dumbbell_biceps_curl",
+      "src": "library/specs/dumbbell_biceps_curl.mjs",
+      "slug": "dumbbell-biceps-curl",
+      "prefix": "dumbbell-biceps-curl",
+      "chromeId": "dumbbell-biceps-curl",
+      "fragments": {
+        "normalSvg": "eef9613ee12c860fd4ea294c06a89cd27a8266debd6b5a093ce2ba1bd7768beb",
+        "normalOverlay": "15f41bcc9517122bdd28a6a098bcb0503a8120002cccb7b65a46dd6d92b71cf6",
+        "mistakeSvg": "ceaedb0970679f4ee41a7309e9310119f3035158c6c2b5883f6e68dd0354b886",
+        "mistakeOverlay": "43c143e43947ad100589ed2eebca4cf585688623973ca2a6d001edc321bbecd7",
+        "tells": "7cb5c8b9c1ac7fef9d7fb8fc60b5d45630749ac3bf772d05534f3b1d80e7fd30",
+        "tempo": "f386d1107371db1728bc77c2c41d6abcea83024f7c7e37468eef6ad004020d10",
+        "cues": "d08166f76333f20bad514b2447fcd10ef3af5f35c0f76463dc44438a78df9ad2",
+        "alt": "d5ede9c2bbc96a3c47eb87930cc0f651e9e6894f0c65fa1acb7caa73b70180c0",
+        "mistakeAlt": "751d48a6123a0ef493eeaeef971ba6b0fb9ee0e9572d0e0e4d8d8166769c9db3"
+      },
+      "exemptions": [
+        "F2",
+        "F4",
+        "F5",
+        "F7"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F2, F4, F5, F7 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "40444b55a1ae8442a0c9dc8727f9e216233ba0aab438c73e288068a428d6bb70"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_rope_triceps_pushdown",
+      "src": "library/specs/rope_triceps_pushdown.mjs",
+      "slug": "rope-triceps-pushdown",
+      "prefix": "rope-triceps-pushdown",
+      "chromeId": "rope-triceps-pushdown",
+      "fragments": {
+        "normalSvg": "8e23be9793590591a83c88228bd87570060afd7ab0c9e85f7349e0541d712edb",
+        "normalOverlay": "94412dd33177b82013cde62f22000cff1a4f754a77be9421c01892ba89995cb9",
+        "mistakeSvg": "c68cac8f1061fb681acb3d7e62d9bf2fbf6ce8adf85b8566fec4936bd578e768",
+        "mistakeOverlay": "6fb855cb5a1d91013f703f00acec7f95a2aaca19987af1c92165d082bc95a623",
+        "tells": "009eeee148d4a5ba5f74bffb48376a7ed2ae7855dc2615af7424edc2b4cabdf7",
+        "tempo": "53272b91a92329c972c61abbe98900f7ea8db8ac732e81efa5659ec37d03d016",
+        "cues": "16f059b35289cbae8da35a2723b668b8a2892f147df45a4e7f33e808e6a2f2be",
+        "alt": "a4fc6fac444458f1eb2091224e9f9e6f108c0aafe10ace9653f01f21aa18075a",
+        "mistakeAlt": "6bff19d05f737cf7e2cb73457bc1f8c84b49adbcec4169312f89b275b4b9d8aa"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "3427b7f18562ea998355ebee46f7adf0769a97aa811527fe3a6ed0858e73f605"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_plank",
+      "src": "library/specs/plank.mjs",
+      "slug": "plank",
+      "prefix": "plank",
+      "chromeId": "plank",
+      "fragments": {
+        "normalSvg": "285a7b7354cc943c4e9a413b4d8b31be23ad674007294199bec3e66e6bfd7a29",
+        "normalOverlay": "b976f5d57e8d35b3b1c599e1f2f8bb96d155cd554b5491de6f0a8b69761f0e5a",
+        "mistakeSvg": "8fee6ec32015318f0a9f544c47be36cad552927cb95e3255c76e31e0bda75713",
+        "mistakeOverlay": "a93f682f14c6cfb1ef18868fa74ace27f5ff1f8406bc2fabdf6049237dca9eee",
+        "tells": "d02598a20ba2dafb34f2bab9e277f507fa29c0b8ef48f19028554f97cb9f4160",
+        "tempo": "77c8fb97c11749bf1a5614efcdaa05f0bc5021b896a4e09eca9d0e1a0368042c",
+        "cues": "083ed83db9a04a0831d07611ee0cf601e245059fb709ca4c2fd313ea6ced0d90",
+        "alt": "977154ba2b4d3078a59d1010074a30686a94252da49b5036492e6a22b661c8cd",
+        "mistakeAlt": "040328ef834d487de19dd4637bc7bd305b1757a745dabcbc6c38c712ad66cb5f"
+      },
+      "exemptions": [
+        "F1",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F1, F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "123d954ce38771708e7b65398eb575f99d3ca5a10fe0b214a69593fcc51fc61e"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_mountain_climbers",
+      "src": "library/specs/mountain_climbers.mjs",
+      "slug": "mountain-climbers",
+      "prefix": "mountain-climbers",
+      "chromeId": "mountain-climbers",
+      "fragments": {
+        "normalSvg": "8877bd6145ae9b7e9da4684cba2462e9d382b39203ec48a5744646286948b2df",
+        "normalOverlay": "63736332aa712b8461d3b5d0f1e058be123570f7e840aabfdedffcd3775685dc",
+        "mistakeSvg": "cb1d2546af61eb39d79d892c10c552c8c775465935c63ffb3f07127f40c7a6b6",
+        "mistakeOverlay": "28bd784bed392ec6f176c6d0cfbeef315476ac685f5d38856e1828ddd814a701",
+        "tells": "4e440c8146daccc753106c43c64691eed50bb1b7e3f8c03cdcd2aa703f967085",
+        "tempo": "db8459bd7bbc059edbd81525264154c1952a4a4136a967c8e2b777cd0a88ccb6",
+        "cues": "74645e6faa272f2d15f592839126132e4ab81de5fa10259bc5f612823c466d8c",
+        "alt": "ff98eff20ac6ea82ef9adcf52b4867655f49cfe51bd0254107a86f5cc5598ad0",
+        "mistakeAlt": "73c00c9f99cb886c18ccd093bba8858e4c18d69ca125646a7749a7c2e281f50f"
+      },
+      "exemptions": [
+        "F1",
+        "F3",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F1, F3, F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "17406d46b12c3a8a361a826fe3be325282b9ba7e73f177413e661adde221714c"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_triceps_pushdown",
+      "src": "library/specs/triceps_pushdown.mjs",
+      "slug": "triceps-pushdown",
+      "prefix": "triceps-pushdown",
+      "chromeId": "triceps-pushdown",
+      "fragments": {
+        "normalSvg": "066dd96ddbb2841cdbcd5b0165a391db5d34be90ed1d7269ae2b38c4822013c9",
+        "normalOverlay": "fb8471c5a40f6cb85805294a47e97e4061e2c76fef85b82fc173731b2bb201dd",
+        "mistakeSvg": "f02e8ed11211cd97b8391fdf22c75b795336c64aca75ecac15859c351c714fd5",
+        "mistakeOverlay": "0ddbbc275f0aefb65cecf0eb25be3bac9c58780958eb9ceeeb7de568a010e4a1",
+        "tells": "688f33d35e39d203028c60fb0b8d8badd38e7ce4789fdf5538fde8c736e501d4",
+        "tempo": "f0dc1b6cd544cc25b341b91f9c3276eaa45d732be8524bdb125f54ff1c3badd9",
+        "cues": "da855b27a7b3b379b5eb358ce9bf8129ace2eeb4769efcd22df08d58a910595e",
+        "alt": "f9548bd688688f0ae374c76f53d8ad8224335d45e59ecb74003989d6fc6c19c7",
+        "mistakeAlt": "12e39e893e08a1bdca66fb859d7cd3d3bed46dbad034f4392aabd404a71c1aa8"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTA",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/109#issuecomment-6382619662 @ b68159de97122c61a43096fcd08d68525ed6a615",
+      "date": "2026-10-24",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196); PILOT A PIN GO #109 6381356655 with D-LIB8M-PLANKREDRAW 6381942908. Owner answers, verbatim: 2026-10-19 \"Pilot a ok\" (#109 6266791221, the pilot A sheet 7e5deff7, each raised flag shown with its default \"approve as named exemptions\"); 2026-10-24 \"U do qll that. Dont stall and decide for me.\" (#109 6381356655, the changed-ids sheet 283f8a72). Named exemptions: F5 (the raised flags of the Do 9 table, #109 6261394431 and 6382247802). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "c331a386e8db274400f940ad0378be046795371f032c052f985490b96180dbfa"
+    }
+  ]
+}

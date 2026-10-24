@@ -24,7 +24,7 @@
     "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
     "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_dumbbell_bench_press": {
    "src": "library/specs/dumbbell_bench_press.mjs",
@@ -45,7 +45,7 @@
     "Pectoralis Major Rupture: Evaluation and Management (2022). https://pubmed.ncbi.nlm.nih.gov/35025841/ PMID 35025841",
     "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_dumbbell_shoulder_press": {
    "src": "library/specs/dumbbell_shoulder_press.mjs",
@@ -63,7 +63,7 @@
     "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
     "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_barbell_overhead_press": {
    "src": "library/specs/barbell_overhead_press.mjs",
@@ -83,7 +83,7 @@
     "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
     "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_romanian_deadlift": {
    "src": "library/specs/romanian_deadlift.mjs",
@@ -104,7 +104,7 @@
     "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
     "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_single_leg_romanian_deadlift": {
    "src": "library/specs/single_leg_romanian_deadlift.mjs",
@@ -121,7 +121,7 @@
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
     "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_upright_row": {
    "src": "library/specs/upright_row.mjs",
@@ -138,7 +138,7 @@
     "Shoulder injuries attributed to resistance training: a brief review. (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
     "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_pec_fly": {
    "src": "library/specs/pec_fly.mjs",
@@ -155,7 +155,7 @@
     "Influence of exercise order on electromyographic activity during upper body resistance training (2014). https://pmc.ncbi.nlm.nih.gov/articles/PMC4327372/ PMID 25713681",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_dumbbell_biceps_curl": {
    "src": "library/specs/dumbbell_biceps_curl.mjs",
@@ -172,7 +172,7 @@
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
     "Epidemiology of weight training-related injuries presenting to United States emergency departments, 1990 to 2007 (2010). https://pubmed.ncbi.nlm.nih.gov/20139328/ PMID 20139328"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_rope_triceps_pushdown": {
    "src": "library/specs/rope_triceps_pushdown.mjs",
@@ -188,7 +188,7 @@
     "How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (2023). https://www.strengthlog.com/tricep-pushdown/",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_plank": {
    "src": "library/specs/plank.mjs",
@@ -203,7 +203,7 @@
     "Influence of Scapular Position on the Core Musculature Activation in the Prone Plank Exercise (2017). https://pubmed.ncbi.nlm.nih.gov/27787465/ PMID 27787465",
     "Try this move for better core strength (2021). https://www.health.harvard.edu/healthy-aging-and-longevity/try-this-move-for-better-core-strength"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_mountain_climbers": {
    "src": "library/specs/mountain_climbers.mjs",
@@ -219,7 +219,7 @@
     "What Do Mountain Climbers Work? (Healthline; medically reviewed by a CPT) (2022). https://www.healthline.com/health/fitness/what-do-mountain-climbers-work",
     "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   },
   "lib_triceps_pushdown": {
    "src": "library/specs/triceps_pushdown.mjs",
@@ -235,7 +235,7 @@
     "Muscle Fatigue in the Three Heads of Triceps Brachii During Intensity and Speed Variations of Triceps Push-Down Exercise (2020). https://pmc.ncbi.nlm.nih.gov/articles/PMC7047337/ PMID 32153422",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "review"
+   "stage": "approved-plate"
   }
  }
 }
