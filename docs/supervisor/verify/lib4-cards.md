@@ -4353,3 +4353,26 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
   - a fact with no claim.
 - No card file changes.
 - LIB-STRIP merges the fix branch into its own branch, so its A6 is green on its own head.
+
+## 41. Resume rulings: inline zoom extended, calf-raise S4, leg-curl call site (2026-10-25 ~23:55 UTC; #325)
+**D-LIBZOOM-EXTEND.**
+- LIB-ZOOM's inline zoom circle (ruled for horizontal_leg_press's knee lock, §26; `zoom/inline.mjs` on main since #279) may now be used for any held row whose drawn fault or fact is too small at plate scale (the D-LIB8-shrug holds). That covers the lumbar arch (LB8: hip_thrust, cable_kickback, leg_extension, resisted_hip_flexion, glute_bridge), the heel lift (pendulum_squat), the heel rise (the calf raises) and the LB9 rows held for LIB-ZOOM.
+- The rules of lib-zoom-card.md apply unchanged:
+  - no angle text inside a zoom;
+  - zoom labels are words only, 1–3 words;
+  - no card fact changes;
+  - the plate stays byte-identical outside the zoom;
+  - H3's bar must be reached at the zoom's own scale;
+  - nothing is loosened;
+  - the critic scores R11 ("the zoom shows at a glance what it magnifies").
+- Each resume PR names each row's zoom region in its RESUME PLAN. If the primitive cannot express a region without a code change, the builder posts a short design note first, and the supervisor rules on it before any drawing.
+
+**D-LIB18-CALF-S4.** The owner delegated library choices on 10-24 ("U do qll that. Dont stall and decide for me."), so the supervisor rules the conditional S4 route by the owner's own precedent, answer 1a (lib-zoom-card.md:33):
+- If S4 arises on a calf raise (no card-true drawing keeps the stated contact and the toe out of the platform in the solid start and end poses), that calf raise goes on the named list with the toe-through-platform reason and its renders, as leg_press_calf_raise did. It is decided at the release candidate.
+- If S4 does not arise, the calf raise ships through the normal QA and critic.
+
+**D-LIB18-LEGCURL-A** (#325 6405104161):
+- The leg curls call pilot B's `legCurlMachine` unchanged and keep the needed items by its documented return order.
+- Tests pin the count and order and that the dropped items are absent.
+- A second set of placeholder values must leave every kept item byte-identical.
+- **F-LEGCURL-NULL** (nullable seat, back and thigh in pilot B's composer) is left to pilot B's owner card.
