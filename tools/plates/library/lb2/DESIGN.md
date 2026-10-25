@@ -242,6 +242,28 @@ an arc from the end elbow, read in the side view as the elbow at shoulder height
   (c4); end: swung 97° back, grips 8 cm under shoulder height (c5). Tempo Lower 2, Pull 1 (c18). Mistake `bend` (c7):
   the upper arm stops 60° back and the elbow folds to 86°, so the dumbbell comes 17 cm in toward the shoulders and
   hangs past the bench end (2.9 cm clear); tells `bend` and `near`.
+- **incline_barbell_bench_press (H, D-LIB10-BENCH-H; drawn after pilot A merged, main 1edb3c6):** incline_dumbbell_
+  press's reclined body on pilot A's `inclineBench` at BACK 60° from vertical, 30° from horizontal (c1; the measure arc
+  reads 30°, plateFacts c1); grips 0.30 m off the midline (c4, as barbell_bench_press); start: straight arms, the bar
+  over the shoulder joints (c5); end: the bar's underside on the chest with the elbow straight under it in the side
+  view, the touch height solved so the upper arm sits 60° from the torso (plateFacts c7, engine elevation 60.5°): thorax
+  0.778 H, 1.3 cm above incline_dumbbell_press's upper-chest level (c7), 18.6 cm from the chin. Rack: the bench's own
+  (card equipment), one upright at the head end with its J-hook (racked bar over the brow, elbows 25° bent) and a
+  safety catch 3 cm under the bar at the touch, running 24 cm past it (c6), its hidden span redrawn dashed in the end
+  pose. Tempo Lower 2, Press 1 (c14). Mistake `flare` (c8, c9, c7): the bar stays at the touch, the upper arm goes out
+  90° from the torso, level with the shoulder, 11.9° behind the chest plane (solved so the forearm still reaches the
+  bar); the elbow moves 16 cm headward; dashed ghost upper arm and forearm and an arrow from the end elbow; tells
+  `flare` and `level`.
+- **arnold_press (H, Q6; drawn after pilot A merged):** dumbbell_shoulder_press's upright bench (BACK 10° from
+  vertical, "just short of" vertical, c2); start (the card starts at the bottom): the upper arm forward, 15° below level
+  ("about level", c4), the forearm vertical, so the dumbbell stands 25 cm in front of the chin and 9 cm above it
+  (c1 says "in front of the chest"; with this forearm an exactly level upper arm would put it at eye height; recorded);
+  end: straight arms over the shoulder joints (c1). The palm turn is not drawable (card viewWhy); the 'Palms in'
+  callout and the 'Arms straight up' cue carry it. Tempo Press 1, Lower 2 (c12). Mistake `arch` (c3): at the top the
+  pelvis tips 22° forward, the buttocks stay on the pad and seat, the lumbar spine is solved so the upper back stands
+  10 cm off the pad (mid back 11 cm); golden B's pad-to-back gap dimension (dashed, with ticks) at the mid back, the
+  gap cleared to the card colour (incline_dumbbell_press's GAP_FILL) and an arrow at the belly; tells `arch` (Back off
+  pad) and `belly` (Belly pushes out).
 - **Flat-bench rack (both barbell plates):** the head-side upright under the racked bar over the brow, the foot-side
   upright RACK_DEPTH 1.6 m away (a deep power rack; at 1.2 m it stood where the labels need room), 1.5 m tall, the pin
   3 cm under the bar's underside at the touch. All unsourced, listed in the spec headers.
@@ -259,7 +281,10 @@ Each spec header lists its own. decline_bench_press: PAD_Y 0.60, HIP_FLEX 30, KN
 the rack over the brow, RACK_ELBOW 25, SAFETY_BELOW 0.03, GRIP_X 0.30, LOW_CHEST 0.685 H, PLATE_D 0.45, the declineBench
 sizes. skull_crusher: BENCH_TOP and FOOT_Z (the anchor's), HEAD_END 0.02, GRIP_X 0.16, TOP_ELBOW 4, FOREHEAD_GAP 0.05,
 EZ_PLATE_D 0.30, DRIFT 25 (the Mistake's tip). decline_bench_press also: HIGH_CHEST 0.80 H (the Mistake touch). The
-BENCH barbell default grip width (Q1(b)) is a template constant listed in the template header.
+BENCH barbell default grip width (Q1(b)) is a template constant listed in the template header. incline_barbell_bench_press: SEAT_TILT, SEAT_TOP, BACK_LEN, BEAM_Z, FOOT_Z, SCAP
+(incline_dumbbell_press's), TOP_ELBOW, GRIP_X 0.30, RACK_ELBOW 25, RACK_H 1.6, SAFETY_BELOW 0.03, CATCH_PAST 0.24,
+PLATE_D 0.45, the Mistake's 90°. arnold_press: BACK 10, SEAT_TILT, SEAT_TOP, BACK_LEN, BEAM_Z, FOOT_Z, SCAP, END_X
+(dumbbell_shoulder_press's), START_DROP 15, START_X 0.20, MIS_TILT 22, MIS_GAP 0.10.
 
 ## 11. Work split (if a second drawer joins, `claude/lib-10-lb2-b`)
 
