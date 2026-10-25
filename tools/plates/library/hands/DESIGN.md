@@ -256,3 +256,124 @@ Card LIB-7-FIX; rulings D-LIB7FIX-* (lib4-cards section 18). Nothing here change
 - `declarationsOf(mods, BASE)` merges them over pairs.mjs's own entries (`BASE`, a frozen copy taken before the merge) between `MODULES` and `INDEX`, so `indexOf`, `pairSpec`, sheet.mjs and checks.mjs read the merged objects. It throws on a name already defined, camera words for an orientation nobody holds, and a module using a name another module declares.
 - Key modules are still found by filename; there is no list of keys.
 - The shared engine (pairs.mjs with its static closure, zoom.mjs, `words/chrome.json`) is what every keyed row lists; editing it after a pin needs a pin replacement.
+
+## 9. Library hand blocks (LIB-7b)
+Card LIB-7b (lib-7b-card.md @ ddc99219); rulings D-LIB7b-SCOPE, -PAGEDUP, -SLOT (lib4-cards section 18). Base main 5158609c (#181 + LIB-6-PM, #193 + LIB-7-FIX, LIB-4b). Every fact below was measured on that base; the scripts are in the PR's design-note comment.
+
+**Baseline (Do 2, main 5158609c).** Stops 4 pages, sha256 / bytes:
+- the 8 (`buildLayersPage(GOLDEN_B_SPEC)`): `e7b81413…c928a` / 2320561 (= PAGE_SHA256);
+- LIB-2b `cable-lateral-raise.layers.html`: `6b78c2c2…3ba53` / 418552;
+- LIB-4b B5 scratch page (`fixture.mjs <tree> stage`, `page`): `26ed8761…a4a51` / 986519;
+- LIB-4c scratch page (`stage` + `page` with SCRATCH_4C): `0a1a4021…72af2272` / 1894365.
+- LIB-7's three pins and LIB-7-FIX's tests: hand-pairs.test.ts + lib7-fix.test.ts 74/74 pass. `generate --check`: PASS, 61 files fresh.
+
+**(a) Config field.** A batch's layers config names a pair row: `closeups: { <lib id>: { optionsKey, pair: '<key>' } }`. layersSpecOf already copies the entry whole (layers-spec.mjs:57-60); LIB-7b adds one validation there: `pair`, when present, is a string matching `^[a-z0-9-]+$` (the id being a row of the batch is rowOf's existing check). Rows are chosen only by this field; no page build reads a pairs loader to choose rows.
+
+**(b) Hook (build-layers-page.mjs, one block marked LIB-7b).**
+- Where: `buildLayersPage`'s last step, after `runNode` and before the mirror is removed: `return pairRowsOf(spec).length ? withPairPanels(page) : page`. No vendored text is patched and no exact-once anchor is added; LIB-6-PM's patches and their anchors are untouched.
+- Block: for each pair row (`pre` = its card id dashed), the one `<div class="zx" id="<pre>-zoom-hand" data-zoom="hand"` block (balanced divs, exactly once, else throw) becomes `await pairPanel(key)` byte for byte. pairPanel is loaded by `import()` inside the block, so a spec that names no pair never loads pairs.mjs (ci/manifest.mjs already lists hands/pairs.mjs as a BUILDER, :27).
+- References that move: `aria-controls="<pre>-zoom-hand"` on the Hand chip (howto-layers.mjs:183) and on the push rows' ht-also button (:292) become the panel's id. After the swap the hook throws if `<pre>-zoom-hand` is left anywhere, or any idref (aria-labelledby/describedby/controls, for, href="#", url(#)) names an id of the removed block.
+- CSS: once per key, `/* close-ups: library/hands/pairs.mjs hp-<key> */` + the pair scope's rules, appended after the cards' close-up CSS (right before HOWTO_CSS, which the page's style holds once), so HX_TAIL keeps winning ties as for every card. The rules are golden B's rendererCss (howto-layers.mjs:69-96, not exported, so re-stated in the block) applied to hands/page.mjs `CSS` (zoomCss({ thumb: 'plain' }), the sheet the pairs were approved in) with scope `.hx-hp-<key>`. Proof that the re-stated scoper is golden B's: applied to each of the 8's sheets (zoomCss / zboxCss with closeups-8.mjs options) it reproduces all 8 `/* close-ups: … */` blocks of the approved page byte for byte (8/8). The pair scope has no at-rule (flatStyle-safe).
+- Why Stops 4 pages cannot change: their configs name no pair, so `pairRowsOf` is empty and the built bytes are returned as read. Measured: the B5 tree rebuilt with the hook and no pair field equals its baseline; 7b-A1 re-measures all four.
+
+**(c) App styling (gen/handpairs.mjs, add-only, `after = ['tools/plates/gen/hands.mjs']`).** For a shipped pair row, zoom-<chromeId>.css (from ctx.prev) is re-emitted as `rewrite(scopedRules(.hx-<chromeId>) + scopedRules(.hx-hp-<key>) + HX_TAIL, { inPanel: true })`, cut from the row's pinned page with gen/hands.mjs's own exports; the plugin first proves that the same call without the pair rules equals ctx.prev's text byte for byte, else throws. The pair chunk still imports nothing (library-rows.test.ts:66); the HAND loader loads zoom-<chromeId>.css first (D-LIB2b-HANDCSS). Evidence: one fresh-context open styled, pager tab height as on the page (C10), on the scratch tree (7b-A2/A3).
+
+**(d) Pair-row checks (same plugin).** For each shipped library row whose layers config names pair K: `HAND_OF_ID[id] === K`, and its archetype (coverage-archetypes.json) is not 'none', else throw naming id and file. A 'none' row whose card on its page holds a `data-zoom="hand"` panel with an `hp-` id throws. The converse (every keyed row names its pair) stays LIB-9's D-LIB4-ENTRY check. gen/hands.mjs is not edited; on main no row ships, so 0 headers move.
+
+**(e) D-LIB7b-PAGEDUP measurement.** Fixture: the B5 tree's page with two rows on `curl-dumbbell-under` (and one on `rope-push-neutral`), built through the hook. Probe: open each card's hand chip with the other copy present and hidden, screenshot every fault page, light and dark; compare with the same page minus the other copy.
+- Verbatim copies (the ruling's default): copy 0 equal; **copy 1 differs on every page, both schemes, in Chromium 141.0.7390.37 and Chrome 153.0.8010.12 (CI's), 3 of 3 runs each** (1937-1940 px in the drawing area). The panel holds 138 `url(#…)`/`href="#…"` refs (pattern, clips); in copy 1 they resolve to copy 0's defs, which sit in a `hidden` subtree. Condition (1) fails, so verbatim repeats are out.
+- Option (B), page-only namespace: the second and later copies of a key on one page get `<pre>-` in front of every `hp-<key>-` id and idref (id, aria-labelledby/describedby/controls, for, href="#", url(#)); the chip/also refs follow. Reversing that one rewrite gives `pairPanel(key)` byte for byte. Measured: 0 duplicate ids; both copies pixel-equal to alone, 5 of 5 runs in each browser (one extra cold first run of Chrome 153 differed and then repeated equal; every later run equal, self-repeat equal).
+- Option (C) (separate layers pages per shared key) is not needed if (B) is ruled.
+- Id-uniqueness checks, unchanged under (B): HT7-A2 (zooms.test.ts:147-176, the 8 only today), gate HT-7 A2 (:7382), its twin (ht7.mjs:201), shoot2.mjs:200. Under (B) a page has no repeated id, so none of them needs an exception.
+- The app context (open card A's hand, close it, open card B's on the same key, then the HT-7 A2 duplicate-id probe) runs on the scratch tree with 7b-A3/A4; proposal: it joins the HT-6 twin as one state for every key with two shipped ids, so it runs on every gate once LB rows ship.
+- **Proposal D-LIB7b-PAGEDUP = (B)**, with the new check (3) read as: every pair panel on a page, after reversing its one named rewrite, === pairPanel(key), and no id repeats.
+
+**(f) Twin and shared-key tree.**
+- ht6.mjs: `panelSel(id)` (:21) and `openClose` (:48-51) find a pair row's panel by its pair markup: in the app `#hp-<key>-zoom-hand`, on the page the panel the row's Hand chip controls (`aria-controls`), close button `#<that id>-close`. A row with no key keeps `#<chromeId>-zoom-hand`. The 8's HT-6 gate block and pins.json are untouched.
+- **Open point for a ruling (D-LIB7b-HALVES):** the HT-6 twin's C16 (ht6.mjs:181) needs the halves labelled Right/Wrong (`role="img"` per half). The pair panel has no TalkBack halves (§8 (b): splitHalves not applied, F4), while every card block on today's pages has them (cleanZoom). So 7b-A3 (ii) cannot pass with today's panel. Measured: golden B's exported `splitHalves` (howto-layers.mjs:112) works on all 8 panels and is pixel-identical to the unsplit panel in both browsers (70 of 70 shots: 8 keys × 5 themes × every page). Proposal: panelHtml applies splitHalves (an attribute-only change; panel.mjs's only edit), F4 reads "the SVG equals renderPair's with the uid swapped, after splitHalves", F3 and F4 are re-run. The alternative, keeping panels unsplit, needs a ruling that C16 does not apply to pair rows, which this card cannot make (nothing is loosened).
+- Shared-key tree: the B5 fixture tree (stage + page) with two scratch ids outside LB1/LB2 and not taken (D-LIB-SCRATCHIDS; ci/scratch.mjs:29-32), proposal `lib_barbell_row` and `lib_t_bar_row` (cloned from lat_pulldown and seated_cable_row), joined to `curl-dumbbell-under` by a scratch-only edit of hand-curl.mjs's `IDS` (same variant, orientation, ordered faults). The real pairs.mjs is used (the fixture's own pair loader is not written). Scratch-artifact reds expected only in LIB-7's counted sweeps (12 drawn ids; PERKEY's 8 keys). CI through claude/lib-7b-scratch, pushed by the supervisor.
+
+**(g) Lines in other cards' files.**
+- build-layers-page.mjs: the `return` line of `buildLayersPage` (:134-136 at 5158609c) and one new block after the function; no import line.
+- layers-spec.mjs: the closeups loop (:57-60), one `pair` validation line.
+- gen/handpairs.mjs: add-only after :67 (`after`, the checks, the CSS re-emit). Nothing existing changes.
+- fidelity/twins/ht6.mjs: :21, :48-51 and the readers that take `panelSel` (l3's default, :145-170's `panelSel(id)` calls).
+- panel.mjs: only if D-LIB7b-HALVES is ruled as proposed: one call of splitHalves in `panelHtml`.
+- New: tests/library/lib7b.test.ts, tests/library/fixtures/lib7b/**.
+
+**Rulings as applied (#284 6333886735, 6334052838).** PAGEDUP = (B) (`namespaced` / `unNamespaced` / `pairPanelProblems`); HALVES (panelHtml applies golden B's `splitHalves`; F4 reads "after splitHalves"); ZOOMS (gen/zooms.mjs `styleWithout` drops exactly the named keys' `pairCss(K)` lines, else throws; 10 GENERATED headers moved, bodies byte-identical). Changes to (b) and (g) above: `pairCss` is synchronous, so build-layers-page.mjs gains static imports of zoom-css.mjs and the layers engine CSS (marked LIB-7b; all already in the BUILDERS closure); gen/zooms.mjs gains two imports and the `styleWithout` block. The PAGEDUP probe (`tests/library/fixtures/lib7b/pagedup-probe.mjs`) waits deterministically (the page's own reduced-motion state, fonts, images, animations, two frames) and launches a fresh browser per shot. With those waits, Chromium 141 under load still differs on 2 of 40 shots, and its `--control` run (the same alone page against itself, no repeat anywhere) differs on 2 of 40 with the same signature: about 375 px in the HTML text rows only (heading, Right/Wrong labels, pager labels), no SVG pixel. Chrome 153: 0 of 40 in both. So that variance is the browser's run-to-run text raster, not PAGEDUP; its cause inside Chromium is not known (reported on #284).
+
+**Later rulings (#284 6334672289, 6334811344).** D-LIB7b-TUPLES: fidelity/tuples.mjs `sourceFacts` (one LIB-7b block) counts a keyed id's HT6 pages from the panel it ships (`pairPanel(key)`). D-LIB7b-PAGEDUP-141: the probe is exact in Chrome 153 and bounded in Chromium 141 by text boxes and the pooled control. Lines in other cards' files, final: build-layers-page.mjs (imports, the `return` line, the block), layers-spec.mjs (one line), gen/handpairs.mjs (one import, `outputs`'s `prev` and one `push`, the appended block), gen/zooms.mjs (two imports, the `styleWithout` block), panel.mjs (the import and the `splitHalves` call), twins/ht6.mjs (`panelSel`, `closeSel`, `openClose`, `run`'s key line and the close/visibility readers), fidelity/tuples.mjs (the `sourceFacts` block), tests/library/lib7-fix.test.ts (F4's `want` line and its import).
+
+## 10. LB1 hand pairs (LIB-7c)
+
+Design note for card LIB-7c (lib-7c-card.md @ 9eaa2480's card head). I read lib4-cards section 19 at `f7824b5b` (lines 3636-3918: every D-LIB7c-* ruling, D-LIB7FIX-PERKEY and both rechecks) and sections 22 and 23 on `claude/sup-lib4-cards`. Base: #193's PERKEY head `a8ec1a6`. Research: `9eaa2480`. Every point below was rendered from uncommitted scratch modules on that head (the files of (a), byte for byte as they will be committed), and settled by a measured render or a file:line.
+
+### (a) Modules, variants and handles (D-LIB7c-KEYS, -HANDLE)
+- `hand-bar.mjs`: KEY 'bar', OWNER 'LIB-7c', VIEW 'radial', INPUTS radial-rules.mjs and golden-B engine/equipment.mjs (the composer the sizes match). Declares `CONVENTIONS['ga:hang-base']` = 'GA 3.1 hang: top of the palm where the fingers start; extension 0 to 35'.
+- `hand-v-handle.mjs`: KEY 'v-handle', same owner, view and INPUTS. Declares `ORIENTATIONS['neutral-overhead'] = 'side'` and `CAMERA_TEXT['neutral-overhead'] = 'Seen from the thumb side'` as literals. Neither imports pairs.mjs.
+
+| variant | handle (profile, mm) | plate composer | archetype | Right | Wrong |
+|---|---|---|---|---|---|
+| bar/hang | bar-32, 32 | pullupBar `d = 0.032` (equipment.mjs:45) | hang | (b) | curled: wrist -30 only |
+| bar/row | bar-32, 32 | pullupBar `d = 0.032` | pull | pullVariant (radial-rules.mjs:45-55) | pullVariant curled (:52) |
+| bar/pulldown | pulldown-bar, 28 | latBar `d = 0.028` (:113) | pull | pullVariant | pullVariant curled |
+| v-handle/pull | v-handle, 30 | vHandle grip `bar(..., 0.015 * m)`, 0.015 a half-thickness (:132; geom.mjs:56) = HANDLES['v-handle'].d 30 (engine/hand.mjs:35) | pull | pullVariant | pullVariant curled |
+
+Keys (all five render and pass G1-G9 on the scratch modules: `pairProblems(id)` = [] for each of the six ids):
+
+| key | ids |
+|---|---|
+| bar-hang-under | chin_up |
+| bar-hang-over | hanging_knee_raise, assisted_pull_up |
+| bar-row-over | inverted_row |
+| bar-pulldown-under | underhand_lat_pulldown |
+| v-handle-pull-neutral-overhead | close_grip_pulldown |
+
+After Do 7 (D-LIB7c-PANEL1, VALID @ 3bdd609, approvals #271 6264406128): G = ∅ (no gap, so no gap reason); D = bar-hang-under, bar-hang-over, bar-row-over, bar-pulldown-under, v-handle-pull-neutral-overhead (|D| = 5).
+
+### (b) The hang variant
+- Right: golden B hanging_leg_raise's pose values (hanging_leg_raise.howto.mjs:92-93): forearm 180, ext 10, contactAt 1.0, fingers curl 1, thumb wrapped, squeeze firm, load gravity. wristRange [0, 35]; loadAxis 'across'; contact 'base' (CONTACT_AT 1.0).
+- `loadLine: false`: renderPair strips the force line, its head and the wrist tick (pairs.mjs:273-277). Measured: no `h-load`, `h-load-head` or `h-tick` in the SVG; `h-contact` is kept, and G4 passes. Flag on the variant: "hang: no force line (pull_up), contact dot kept (G4)".
+- Right note 'Base of fingers'. Alt texts are LIB-7's approved pullVariant strings (radial-rules.mjs:49, :53).
+- Wrong: `{ wrist: { ext: -30 } }` only, label 'Wrist curled'. Contact, fingers and thumb are the Right's. Golden B's slip pose (contactAt 1.4, fingers open 0.4; follow-up 11) is not used and not a reference.
+
+### (c) Cameras and palm direction (D-LIB7c-CAMERA)
+- Every bar key is seen from the side. Under and over differ only by the engine's mirror (PALM_UP, pairs.mjs:32, :100); no facing row is drawn.
+- Measured on the Right half (`report.measured`, px; handle x minus wrist x): chin_up -12.48 and underhand_lat_pulldown -17.34 (under); hanging_knee_raise +12.48, assisted_pull_up +12.48, inverted_row +19.21 (over). Under is on the opposite side of the wrist from over, and every id of one orientation is on the same side. 7c-A4 asserts this.
+- close_grip_pulldown: camera 'side', aria label "Seen from the thumb side. …" and the label SEEN FROM THE THUMB SIDE (renderPair's cameraText path, :263-266); G8 passes against the merged CAMERA_TEXT. Rendered, the thumb side faces the camera as in golden B's radial view, so Do 3 (c) does not stop.
+
+### (d) Claims at 9eaa2480 and the checker (D-LIB7c-ORIENT, -CONTACT, -FAULT)
+
+| id | orientation refs | thumb | wrist | curled |
+|---|---|---|---|---|
+| chin_up | #grip.type ("Underhand (supinated), …") | #c1 | #c3 | #c20 |
+| hanging_knee_raise | #grip.type, #c2 | #c3 | #c16 | #c16 |
+| assisted_pull_up | #grip.type, #c1 | #c12 | #c14 | #c14 |
+| inverted_row | #grip.type ("Overhand (pronated) drawn, …"), #c2 (names both grips; flagged on the sheet) | #c14 | #c15 | #c15 |
+| underhand_lat_pulldown | #grip.type, #c1 | #c2 ("allows a wrapped or thumbless grip"; the only thumb claim on the card) | #c18 | #c18 |
+| close_grip_pulldown | #grip.type, #c1 | #c16 | #c15 | #c15 |
+
+- Contact: `ga:hang-base` (hang), `ga:pull-base` (row, pulldown, v-handle pull). chin_up#c25 and hanging_knee_raise#c17 ("just below the base of the fingers") agree with ga:hang-base and are recorded here, not cited.
+- The hang variant's thumb, wrist and curled claims hold one ref from each of its three ids' cards (rule (ii)).
+- First orientation phrase (rule (i)), the earliest PHRASES match in #grip.type: Underhand → under (chin_up, underhand_lat_pulldown); Overhand → over (the other three bar ids); Neutral → neutral (close_grip_pulldown, `neutral-overhead` mapped to PHRASES.neutral).
+- lib7c-claims.mjs extracts 24 refs from the 6 card files at 9eaa2480, with each file's sha256. The checker copies hand-pairs.test.ts:300-331 verbatim with the one substitution, proven equal by a text test; rules (i)-(v) run in a separate function.
+
+### (e) Sheet
+- lib7c-sheet.mjs calls `buildSheet({ mods })` on copies of the LIB-7c modules with CLAIMS_TEXT from lib7c-claims.json, never `calibrate: true`. Labelled references: golden B pull_up/p1 on both hang tiles; seated_cable_row on the V-handle tile. buildSheet itself adds lat_pulldown/p1 to every pull tile.
+- `--anchors [[id, page], [id, page]]` inserts two golden-B pages unlabelled (as sheet.mjs:83-87), writes the key to calibration-key.json, and refuses any page shown labelled (pull_up/p1, seated_cable_row, lat_pulldown/p1).
+- Pages the supervisor may pick its two anchors from (each renders through approvedHand): dumbbell_lateral_raise, barbell_back_squat, machine_chest_press, leg_press, lat_pulldown/p2, pull_up/p2. hanging_leg_raise is left out: its Wrong is golden-B follow-up 11's defect.
+
+### (f) Lines in other cards' files (D-LIB7c-SCOPE)
+- tests/library/lib7-fix.test.ts:69: `8` → `8 + 5` as the literal 13 with "+ LIB-7c 5 (D-LIB7c-SCOPE)" (|D| as ruled after Do 7).
+- scripts/screenshot-gate.mjs: one block `if (gate.runs('LIB-7c')) { … }` inserted before `await gate.done();` (:9453).
+- tests/gate-split.test.ts:55: 104 → 105, with "+ LIB-7c".
+- scripts/gate-times.json: one "LIB-7c" entry, measured as 11.1 item 16 (b).
+- tests/howto/library-lint.test.ts, the five D-LIBHANDS-COUNT lines (lib4-cards §20; "a card that adds hand modules raises these five lines"): hands 13 → 17 (3 + 14 fault entries), 10 → 14, the title, the 7 sorted modules, [10, 10] → [14, 14]. LIB-7c adds 4 fault entries (bar: hang, row, pulldown; v-handle: pull).
+- Nothing else outside the new files, this §10 and appended D-LIB7c-* entries in docs/COACHING-DECISIONS.md.
+- Known reds until #193's D-LIB12FIX-ORDER head is merged: lib7-fix.test.ts F1 (:74) and PK2 expect `[CHROME_WORDS, wordsFileOf(k)]` in sort order, and `words/bar-*.json` sorts before chrome.json.
+
+### Risks
+- The hang has no golden-B pure-curl precedent; the angle is golden B's, the pose LIB-7's approved curl. If it fails after one fix round, its three ids go to GAPS (D-LIB7c-SHIP).
+- Palm direction on `bar-*-under` rests on the mirror alone; a median below 4 sends the key to GAPS.
+- 7c-A10 early check: with the scratch modules loaded, `inputsFor(k)` and every listed file's sha256 for the 8 LIB-7 keys equal the base's (digest 267ce6e6… on both trees).

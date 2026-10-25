@@ -11,6 +11,11 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { cleanupMirror, makeMirror } from '../layers.mjs';
 import { LEGACY_SCRIPTS } from './render/legacy.mjs';
+import { zoomCss } from './render/closeup/zoom-css.mjs';   // LIB-7b: the pair sheet CSS (hands/page.mjs CSS)
+import { allThemesCss } from '../layers/engine/themes.mjs';   // LIB-7b
+import { PLATE_CSS } from '../layers/engine/index.mjs';   // LIB-7b
+import { HAND_CSS } from '../layers/engine/hand.mjs';   // LIB-7b
+import { FEEL_CSS } from '../layers/engine/feelmap.mjs';   // LIB-7b
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 export const RENDERER_URL = pathToFileURL(join(HERE, 'render', 'closeups.mjs')).href;
@@ -134,6 +139,119 @@ export async function buildLayersPage(spec) {
     writeFileSync(hl, patchHowtoLayers(readFileSync(hl, 'utf8'), plan));
     writeFileSync(bp, patchBuildPage(readFileSync(bp, 'utf8'), spec));
     await runNode(mirror, 'artifact/build-page.mjs');
-    return readFileSync(join(mirror, 'artifact', 'technical-plates.html'));
+    const page = readFileSync(join(mirror, 'artifact', 'technical-plates.html'));
+    return pairRowsOf(spec).length ? Buffer.from(await withPairPanels(page.toString('utf8'), spec)) : page;   // LIB-7b
   } finally { cleanupMirror(mirror); }
+}
+
+// ---- LIB-7b (D-LIB7b-SCOPE (a), D-LIB9-HANDPAGE; hands/DESIGN.md §9): library hand blocks from the pair key --------
+// A spec row whose closeups entry names `pair` gets the app's shared hand close-up on its page: its hand zx block becomes
+// `await pairPanel(key)` byte for byte, each reference to the old block names the panel's id, and the page's style gains
+// the pair scope's rules (`.hx-hp-<key> …`) once per key, after the cards' close-up CSS. A post-build step on the built
+// page: no vendored text is patched. A spec that names no pair returns the built page untouched.
+/** The CSS comment label of a pair scope's close-up rules. */
+export const PAIR_LABEL = 'library/hands/pairs.mjs';
+/** [{ howtoId, pre, key }] for the spec rows that name a pair. */
+export function pairRowsOf(spec) {
+  return Object.entries(spec.closeups ?? {}).filter(([, c]) => c.pair !== undefined).map(([howtoId, c]) => {
+    if (typeof c.pair !== 'string' || !/^[a-z0-9-]+$/.test(c.pair)) throw new Error(`layers page: ${howtoId}: bad pair key ${c.pair}`);
+    return { howtoId, pre: (howtoId === 'dumbbell_lateral_raise' ? 'lateral_raise' : howtoId).replace(/_/g, '-'), key: c.pair };
+  });
+}
+/** The whole element starting at `start` (a `<div`), by balanced div tags (gen/hands.mjs divAt). */
+export function divAt(html, start) {
+  const re = /<div\b|<\/div>/g;
+  re.lastIndex = start;
+  let d = 0;
+  for (let m; (m = re.exec(html));) { d += m[0] === '</div>' ? -1 : 1; if (!d) return html.slice(start, m.index + 6); }
+  throw new Error(`layers page: unclosed div at ${start}`);
+}
+/** golden B's rendererCss (artifact/howto-layers.mjs:69-96): a close-up sheet's CSS without the shared engine blocks,
+ *  the pager's tab state as cleanZoom leaves it, scoped to `scope` (page-level rules and @font-face dropped). */
+export function scopedSheetCss(css, scope) {
+  const shared = [readFileSync(join(HERE, '../layers/engine/tokens.css'), 'utf8'), allThemesCss(), PLATE_CSS, HAND_CSS, FEEL_CSS];
+  for (const s of shared) css = css.split(s).join('');
+  return scopeCss(css.split('.pager-btn[aria-selected="true"]').join('.pager-btn[aria-pressed="true"]'), scope);
+}
+const splitTop = s => { const out = []; let d = 0, cur = ''; for (const ch of s) { if (ch === '(') d++; if (ch === ')') d--; if (ch === ',' && !d) { out.push(cur); cur = ''; } else cur += ch; } out.push(cur); return out; };
+function scopeCss(css, scope) {
+  css = css.replace(/\/\*[\s\S]*?\*\//g, '');
+  let out = '', i = 0;
+  while (i < css.length) {
+    const open = css.indexOf('{', i);
+    if (open < 0) break;
+    const head = css.slice(i, open).trim();
+    let depth = 1, j = open + 1;
+    while (depth && j < css.length) { if (css[j] === '{') depth++; else if (css[j] === '}') depth--; j++; }
+    const body = css.slice(open + 1, j - 1);
+    if (/^@(media|supports)/.test(head)) out += `${head}{${scopeCss(body, scope)}}`;
+    else if (/^@keyframes/.test(head)) out += `${head}{${body}}`;
+    else if (!head.startsWith('@')) {
+      const sels = splitTop(head).map(s => s.trim()).filter(s => s && !/^(html|body|:root)\b/.test(s));
+      if (sels.length) out += `${sels.map(s => `${scope} ${s}`).join(',')}{${body.trim()}}\n`;
+    }
+    i = j;
+  }
+  return out;
+}
+/** The sheet CSS the pair pages are drawn and approved in: hands/page.mjs `CSS` (page.mjs:9, frozen by D-LIB7FIX-CARRY). */
+export const PAIR_SHEET_CSS = zoomCss({ thumb: 'plain' });
+/** The pair scope's rules: PAIR_SHEET_CSS scoped to `.hx-hp-<key>` (also read by gen/zooms.mjs, D-LIB7b-ZOOMS). */
+export const pairCss = key => scopedSheetCss(PAIR_SHEET_CSS, `.hx-hp-${key}`);
+/** golden B's HOWTO_CSS text (build-page.mjs), which the page's style holds right after the cards' close-up CSS. */
+const howtoCssText = () => {
+  const src = readFileSync(join(HERE, '../layers/artifact/build-page.mjs'), 'utf8'), a = src.indexOf('const HOWTO_CSS = `'), b = src.indexOf('\n`;', a);
+  if (a < 0 || b < 0) throw new Error('layers page: no HOWTO_CSS in build-page.mjs');
+  return src.slice(a + 'const HOWTO_CSS = `'.length, b + 1);
+};
+const once = (html, s, what) => { const a = html.indexOf(s); if (a < 0 || html.indexOf(s, a + 1) >= 0) throw new Error(`layers page: ${what}: ${a < 0 ? 'not found' : 'found twice'}`); return a; };
+const idsIn = html => [...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]);
+const refsIn = html => [...html.matchAll(/(?:aria-(?:labelledby|describedby|controls)|for)="([^"]+)"|href="#([^"]+)"|url\(['"]?#([^)'"]+)/g)].flatMap(m => (m[1] ? m[1].split(/\s+/) : [m[2] ?? m[3]]));
+/** `html` with `f` applied to every id and idref token (id, aria-labelledby/describedby/controls, for, href="#…", url(#…)). */
+const mapIds = (html, f) => html
+  .replace(/(\s(?:id|aria-labelledby|aria-describedby|aria-controls|for)=")([^"]*)"/g, (m, a, v) => `${a}${v.split(/(\s+)/).map(t => (/^\s*$/.test(t) ? t : f(t))).join('')}"`)
+  .replace(/((?:xlink:)?href="#)([^"]+)"/g, (m, a, v) => `${a}${f(v)}"`)
+  .replace(/(url\((['"]?)#)([^)'"]+)/g, (m, a, q, v) => `${a}${f(v)}`);
+/** D-LIB7b-PAGEDUP (B): the page-only id namespace of a repeated copy: `<pre>-` before every `hp-<key>-` id and idref. */
+export const namespaced = (panel, key, pre) => mapIds(panel, t => (t.startsWith(`hp-${key}-`) ? `${pre}-${t}` : t));
+/** The one named rewrite reversed. */
+export const unNamespaced = (panel, key, pre) => mapIds(panel, t => (t.startsWith(`${pre}-hp-${key}-`) ? t.slice(pre.length + 1) : t));
+/** The built page with each pair row's hand block replaced by its pair panel: the first copy of a key verbatim, each
+ *  later copy on the same page under its card's namespace (D-LIB7b-PAGEDUP (B)). */
+export async function withPairPanels(html, spec, panelOf) {
+  panelOf ??= (await import('./hands/pairs.mjs')).pairPanel;
+  const rows = pairRowsOf(spec), done = new Set();
+  for (const { howtoId, pre, key } of rows) {
+    const old = divAt(html, once(html, `<div class="zx" id="${pre}-zoom-hand" data-zoom="hand"`, `${howtoId}: hand close-up`));
+    const raw = await panelOf(key);
+    if (!raw.startsWith(`<div class="zx" id="hp-${key}-zoom-hand" data-zoom="hand"`) || divAt(raw, 0) !== raw) throw new Error(`layers page: ${howtoId}: pairPanel(${key}) is not one zx panel`);
+    const panel = done.has(key) ? namespaced(raw, key, pre) : raw, zid = idsIn(panel)[0];
+    html = html.replace(old, () => panel).split(`aria-controls="${pre}-zoom-hand"`).join(`aria-controls="${zid}"`);
+    const gone = new Set(idsIn(old)), left = refsIn(html).filter(r => gone.has(r));
+    if (left.length || new RegExp(`(?<![a-z0-9-])${pre}-zoom-hand`).test(html)) throw new Error(`layers page: ${howtoId}: references to the old hand block left: ${[...new Set(left)]}`);
+    done.add(key);
+  }
+  const ids = idsIn(html), dup = ids.filter((x, i) => ids.indexOf(x) !== i);
+  if (dup.length) throw new Error(`layers page: repeated ids after the pair panels: ${[...new Set(dup)].slice(0, 5)}`);
+  const at = once(html, howtoCssText(), 'HOWTO_CSS') - 1;
+  if (html[at] !== '\n') throw new Error('layers page: HOWTO_CSS does not follow the close-up CSS');
+  let css = '';
+  for (const k of done) css += `\n/* close-ups: ${PAIR_LABEL} hp-${k} */\n${pairCss(k)}`;
+  return html.slice(0, at) + css + html.slice(at);
+}
+/** D-LIB7b-PAGEDUP check (3): every pair panel on a page, its one named rewrite reversed, === pairPanel(key); no id
+ *  repeats on the page; a namespaced copy keeps no un-namespaced `hp-<key>-` idref. [] when all hold. */
+export async function pairPanelProblems(html, panelOf) {
+  panelOf ??= (await import('./hands/pairs.mjs')).pairPanel;
+  const bad = [], ids = idsIn(html), dup = [...new Set(ids.filter((x, i) => ids.indexOf(x) !== i))];
+  if (dup.length) bad.push(`repeated ids: ${dup.slice(0, 5)}`);
+  for (const m of html.matchAll(/<div class="zx" id="([a-z0-9-]*hp-[a-z0-9-]+-zoom-hand)" data-zoom="hand"/g)) {
+    const block = divAt(html, m.index), key = block.match(/<div class="hx hx-hp-([a-z0-9-]+)">/)?.[1], tail = `hp-${key}-zoom-hand`;
+    if (!key || !(m[1] === tail || m[1].endsWith(`-${tail}`))) { bad.push(`${m[1]}: no pair scope of its own key`); continue; }
+    const pre = m[1].slice(0, -tail.length).replace(/-$/, '');
+    const back = pre ? unNamespaced(block, key, pre) : block;
+    if (back !== await panelOf(key)) bad.push(`${pre || 'first copy'} on ${key}: not pairPanel(${key}) after the one named rewrite`);
+    if (pre && (idsIn(block).some(t => !t.startsWith(`${pre}-hp-${key}-`)) || refsIn(block).some(t => t.startsWith(`hp-${key}-`)))) bad.push(`${pre} on ${key}: an id or idref outside its namespace`);
+  }
+  return bad;
 }

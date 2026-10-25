@@ -17,3 +17,5 @@
 .ht .ht-golden { color: var(--text); font-family: var(--font); font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: var(--ls-body); }
 /* The app's .sr-only adds margin: -1px; the gallery's has none. Inside the golden block the gallery's values hold. */
 .ht .ht-golden .sr-only { margin: 0; }
+/* LIB-5v (D-LIB5v-PLACE): the variant line above the golden block, in existing tokens. */
+.ht .ht-variant { margin: 0 0 var(--sp-2); font-size: var(--fs-small); line-height: var(--lh-small); color: var(--text-2); }

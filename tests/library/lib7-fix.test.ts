@@ -66,7 +66,7 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
       .toThrow(/lib_dumbbell_lateral_raise is one of the 8/);
   });
   it('inputsFor(key) and inputsFor(id) are equal and non-empty for every id on a key, with the key\'s module file and no other', () => {
-    for (const k of C.sweep(P.keysOf(), 8, 'pair keys')) {
+    for (const k of C.sweep(P.keysOf(), 8 + 2 + 5, 'pair keys')) {   // LIB-7's 8 + LIB-12's 2 (D-LIB12FIX-R8-GAPS, #191 6274835211) + LIB-7c 5 (D-LIB7c-SCOPE)
       const byKey = P.inputsFor(k), file = P.INDEX.drawn.get(idsOfKey(k)[0]).mod.FILE;
       expect(byKey.length).toBeGreaterThan(0);
       expect(byKey).toContain(file);
@@ -221,12 +221,13 @@ describe('LIB-7-FIX F4: the 12 approvals carry (D-LIB7FIX-CARRY)', () => {
   it('the frozen files are byte-identical to the approved heads', () => {
     for (const [f, h] of Object.entries(FROZEN)) expect([f, sha(readFileSync(f))]).toEqual([f, h]);
   });
-  it('for each approved id and fault, the panel\'s SVG === renderPair(id, { fault }).svg with hp-<id>-<fault> swapped for the panel uid (22 pages)', async () => {
+  it('for each approved id and fault, the panel\'s SVG === renderPair(id, { fault }).svg with hp-<id>-<fault> swapped for the panel uid, after splitHalves (22 pages)', async () => {
     let n = 0;
+    const { splitHalves } = await import(/* @vite-ignore */ url('tools/plates/layers/artifact/howto-layers.mjs'));   // LIB-7b: D-LIB7b-HALVES (F4 after splitHalves)
     for (const id of C.sweep(APPROVED, 12, 'approved ids')) {
       const k = P.HAND_OF_ID[`lib_${id}`], svgs = panelSvgs(await P.pairPanel(k));
       P.pairSpec(id).wrong.forEach((w: any, i: number) => {
-        const want = P.renderPair(id, { fault: w.key }).svg.split(`hp-${id.replace(/_/g, '-')}-${w.key}`).join(`hp-${k}-${w.key}`);
+        const want = splitHalves(P.renderPair(id, { fault: w.key }).svg.split(`hp-${id.replace(/_/g, '-')}-${w.key}`).join(`hp-${k}-${w.key}`));   // LIB-7b: D-LIB7b-HALVES
         expect([id, w.key, svgs[i] === want]).toEqual([id, w.key, true]);
         n++;
       });
