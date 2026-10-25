@@ -13,7 +13,7 @@
   "chest_supported_row": "064a7e8bb29a9d88460937eae57007d223c1ed2e1a4c2876afe5479b8438053c",
   "resistance_band_row": "e49ab3102ef3ad3ecfb2638ce58832691e9ab6feaf59fafcd74203326bb0312d",
   "incline_machine_press": "85a42cc70172236fcc6d984defb52fcb2108eefa646578eb5c2326ecfba1e728",
-  "shoulder_press": "04cd7853f791df45bfcd66a8f6e0d43f4c24bb4629716b2e3c4873e9b408f161",
+  "shoulder_press": "115038fa08b00228c4b530a127c2e8bb2d25a49b3f8cc4b5fa5426ed03cec2b0",
   "horizontal_leg_press": "64466e47f79365622e0f7676468ba5ddbee7160e9c8e552e8cc9cc4cd94f17b8",
   "leg_press_calf_raise": "6f4a2e6835fd6205363c08bece2ceedd8cebb5d633d3d852f6471b7126dedde3"
  },
@@ -32,5 +32,11 @@
   "shoulder_press": "3ec6a15140539c6155ec0022a1d4af29716fa8735738c8d88ced38b05a204a0b",
   "horizontal_leg_press": "5fc5372883fd0fcd731fe59c33a6ef4bd729f401ea2146b9a93b5050f02abb26",
   "leg_press_calf_raise": "14b6262588e438ac45dcbf9d20ddf361a045cdf2cfc9603d7cd328c79f15aea5"
+ },
+ "recopied": {
+  "shoulder_press": {
+   "researchHead": "0d832e18a2c52ec091a37b654572db5f0468913b",
+   "why": "F-LB1-SETUP (#318): the inherit[] entry setup['Pick the weight ...'] is removed and notes gain one line; the other 13 cards and all 14 quotes are unchanged between the two heads"
+  }
  }
 }

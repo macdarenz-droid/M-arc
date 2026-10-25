@@ -382,26 +382,26 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   const refuse = (id: string, c: any, card = cards.get(id), res: any = shipped) => FM.familyRefusal(id, c, () => card, res);
   const UNRULED = (id: string) => `${id}: family: docs/research/howto/cards/${id.slice(4)}.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`;
 
-  it('the map covers every inherit[] field of the 9 cards exactly; only shoulder_press\'s setup line is unmapped (F-LB1-SETUP)', () => {
+  it('the map covers every inherit[] field of the 9 cards exactly, and no field is unmapped', () => {
     expect(SHIPPED.length).toBe(8);
     for (const [id, card] of cards) {
       expect([id, card.inherit.length > 0, typeof card.parent]).toEqual([id, true, 'string']);
-      expect([id, FM.unmappedFields(id, card)]).toEqual([id, id === 'lib_shoulder_press' ? [SETUP_FIELD] : []]);
-      expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).filter((f: string) => f !== SETUP_FIELD).sort()]);
+      expect([id, FM.unmappedFields(id, card)]).toEqual([id, []]);
+      expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).sort()]);
     }
-    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys()].filter(id => id !== 'lib_shoulder_press').concat('lib_shoulder_press').sort());
+    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys()].sort());
   });
   it('every mapped path holds leaves in its shipped parent; a faithful child copy with its own claims passes', () => {
     for (const [id, card] of cards) {
       for (const p of Object.values(FM.INHERIT_MAP[id]).flat()) expect([id, p, FM.leaves(FM.atPath(parents.get(`lib_${card.parent}`), p)).length > 0]).toEqual([id, p, true]);
-      if (id !== 'lib_shoulder_press') expect([id, refuse(id, childOf(id))]).toEqual([id, null]);
+      expect([id, refuse(id, childOf(id))]).toEqual([id, null]);
     }
   });
-  it('shoulder_press throws on exactly its setup entry: without it the child passes, without any other entry it still throws', () => {
+  it('shoulder_press passes after F-LB1-SETUP (#318) removed its setup entry; the entry put back is unmapped and still throws', () => {
     const id = 'lib_shoulder_press', card = cards.get(id), c = childOf(id);
-    expect(refuse(id, c)).toBe(UNRULED(id));
-    expect(refuse(id, c, { ...card, inherit: card.inherit.filter((e: any) => e.field !== SETUP_FIELD) })).toBeNull();
-    for (const e of card.inherit.filter((x: any) => x.field !== SETUP_FIELD)) expect(refuse(id, c, { ...card, inherit: card.inherit.filter((x: any) => x !== e) })).toBe(UNRULED(id));
+    expect(card.inherit.map((e: any) => e.field)).not.toContain(SETUP_FIELD);
+    expect(refuse(id, c)).toBeNull();
+    expect(refuse(id, c, { ...card, inherit: [...card.inherit, { field: SETUP_FIELD, why: 'the pre-#318 entry' }] })).toBe(UNRULED(id));
   });
   it('mutations, each refused with its message', () => {
     const id = 'lib_chin_up', card = cards.get(id), ok = childOf(id);

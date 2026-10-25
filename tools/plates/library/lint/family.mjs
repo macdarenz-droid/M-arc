@@ -14,7 +14,7 @@ const UNRULED = (id, field) => `${id}: family: ${field}: inherited-string map no
 
 /** D-LIB9a-MAP (#245 6393424755): each LB1 child's inherit[] field, exactly as its card names it, to the paths of the
  *  parent's shipped How-to content that must match. A field missing here is unmapped and refused; shoulder_press's
- *  setup['Pick the weight…'] stays unmapped because machine_chest_press ships no such line (F-LB1-SETUP). */
+ *  setup['Pick the weight…'] left inherit[] in F-LB1-SETUP (#318): machine_chest_press ships no such line. */
 const THUMB = ['handling.thumb.mode', 'handling.pose.thumb'];
 export const INHERIT_MAP = {
   lib_chin_up: { 'grip.thumb (wrapped, never thumbless by default)': THUMB, 'zooms.hand (full grip, thumb around the bar, is the only grip shown)': ['zooms[key=hand]'] },
