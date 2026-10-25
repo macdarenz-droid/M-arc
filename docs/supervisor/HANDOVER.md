@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-18 ~08:40 UTC · main `b99a9e25` (train 25; train 26 in CI) · **8.0n new supervisor running (update 08:40)** · by supervisor session `session_01HtNEBU3oDR8NyHKK3uCwUi` (new account). Re-capture section 8 live right before each commit of this file.
+**Last updated:** 2026-10-25 ~00:50 UTC · main `cd6113c4` · **8.0r RESUMED (owner, 10-25 00:23); usage 0.76, merges only until the 10-29 reset; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -809,6 +809,525 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
 
+### 8.0r RESUMED 10-25 ~00:23 UTC (owner: "Continue now"; read first, then 8.0q)
+- The hourly tick is **re-enabled**. **Usage: 7-day 0.76 at 00:23 UTC** (the 0.75 warning is passed; reset Thu 10-29 02:00 UTC). With about 4 % left before the owner's 80 % pause, only merges of already-reviewed work run now; no new builders start before the reset.
+- **#271 LIB-7c:** catch-up delta REVIEW PASS @ `6f40f62e` (6391426386, 0/0/0/0; a trial merge with main `cd6113c4` is clean and the five focused test files pass).
+- **Train 36** (`claude/sup-merge-train-36` @ `7fe4b449` + this handover): #271 @ `6f40f62e` and #316 F-C0-TIMEOUT @ `7bcd76fe` on main `cd6113c4`. Local: typecheck 0; vitest 252 files, 3559 tests pass. C0 = [] on the merged tree.
+
+### 8.0q PAUSE 10-24 ~16:20 UTC (owner: "Pause all tasks and update handover to repo for any claude agent to continue in the future. Pause the task now if their done, if not keep goinf until its done until u pause."; read first, supersedes 8.0p where they differ)
+
+**State: PAUSED.** Nothing new starts until the owner says to resume. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled** (re-enable it with `update_trigger enabled=true` on resume). The supervisor's /loop and Monitor are stopped. Sessions: every builder and reviewer is archived (the last, LIB-7c's catch-up builder session_01Dv8q3UZnqqQnaqcPdrNe8s, finished its step first). No session holds work in progress.
+
+**Usage:** 7-day 0.71 at 14:27 UTC 10-24; weekly reset **Thu 10-29 02:00 UTC** (resetsAt 1793239200). The owner's rule still holds: pause at 0.80, letting each agent finish its current step.
+
+**Owner items pending:** none. The owner delegated his open library choices to the supervisor on 10-24 07:15 ("U do qll that. Dont stall and decide for me."; 8.0p 07:45). Owner-only items in AGENTS.md stay his.
+
+#### Finished at pause (in flight when the owner paused; the supervisor let each finish its step)
+- **Train 35** (#315, `claude/sup-merge-train-35` @ `a2048023`: #282 LIB-5v @ `2ad1bf3c` + this handover @ `f1771325`, on main `dd7116e9`). **Result: merged** (#315 → main `cd6113c4`, all checks green on `a2048023`). No APK: the variant-gate plugin writes no outputs, so nothing in the app changes. #282 is done.
+- **#271 LIB-7c catch-up:** main `dd7116e9` merged in (`aa1d03d6`, all four conflicts kept both sides), the 7c-A1 `LINE69` follow-on (`5e0fba3`), and **D-LIB7c-R12COUNT** (6386394399: lib12-fix.test.ts:154 re-counted to `8 + 2 + 5 - 1` / "pair keys: 15, expected 14"). The builder runs C0, A1-A10, check, test:tz and the gate, then posts 'LIB-7c CATCH-UP READY @ <sha>'. **Result: CATCH-UP READY @ `6f40f62e`** (#271): check, test:tz and the gate (106/106) pass, C0 and A10 against dd7116e9 pass, CI 17/17 green. The builder stopped for the pause and is archived.
+
+#### Merge queue (plan order; each through a merge train, 6.8; the next train is **36**)
+| # | PR | Head | Verdict | What it needs before its train |
+|---|---|---|---|---|
+| 6 | #109 LIB-8M pilot A pin | `b898578` | PASS 6385655672 | **merged** (train 34, main `dd7116e9`) |
+| 7 | #282 LIB-5v | `2ad1bf3c` | PASS 6337619598 | **merged** (train 35, main `cd6113c4`) |
+| 8 | #271 LIB-7c | `6f40f62e` | PASS @ 4b894f1 (6347992738) | main moved again after its catch-up (train 35 added LIB-5v, which also edits library-lint.test.ts and lint/index.mjs), so first merge main `cd6113c4` once more and keep both sides; then a **delta review of the catch-up merges** (an Opus helper is enough: the merge commit, the 5 count lines, R12COUNT), then train 36 |
+| — | #316 F-C0-TIMEOUT (CI health, off the checklist) | `7bcd76fe` | PASS 6386490672 | can ride train 36. Fixes a 5 s vitest timeout in library-manifest.test.ts "C0 … on this tree" (3.5 s alone, 4.8 s in a full run, over 5 s under load). Until it merges, a full local `npx vitest run` can fail on that one test under load; CI has stayed green. |
+| 9 | #245 LIB-9a LB1 | `9e5d9666` | WAITING since 10-19 (pilot A on main, now true) | resume: main catch-up, then its card's remaining Do steps, READY, review |
+| 10 | #279 LIB-ZOOM | `754176a0` | PASS (delta, 10-19) | **conflicts with main**; catch-up plus a `[golden update]` re-pin of pilot A's 13 MANIFEST rows (collision rule below), then a delta review |
+| 11 | #265 LIB-10 LB2 | `2dcbac15` | WAITING since 10-19 (pilot A on main, now true) | resume as #245 |
+| 12 | #278 LIB-11 pilot B | `d3b231d6` | D-ER5-GO 10-24 07:20 | its pin waited for #109 (now merged): resume at its pin step |
+| 13 | #273 HT-11 | `e0722148` | PASS (Low 2) | **conflicts with main**; catch-up and regenerate, then a delta review |
+| 14 | #274 LIB-13 LB3 | `a6f4bd07` | 7/7 plates approved | the LB3 owner sheet waited for pilot A on main (now true); then READY and review |
+
+Build-ahead lanes, reviewed and waiting for their slots behind the list above (each needs a main catch-up and a delta review at its slot): #289 LIB-14 LB4 (`6846c5af`), #290 LIB-15 LB5 (`e9f09858`, PASS), #297 LIB-16 LB6 (`3a75393a`, fixes diff-checked after the 24f7c6e FAIL), #299 LIB-17 LB7 (`14dc56dd`, PASS + diff-check), #305 LIB-22 LB10 (`a9c64e11`, PASS), #306 LIB-18 LB8 (`d76fc305`, PASS; two Lows ride its pre-train push: the qa.mjs:4 header and the test title at :1368), #309 LIB-STRIP (`75a9be48`, PASS 6385991109), #311 LIB-20 (`471339d3`, PASS; merges **before** the LB7 lanes; its pre-train push carries the D-LIB20-L0 (b) MANIFEST rewrite), #312 LIB-21 LB9 (`e132e57e`, delta PASS after the doc-only FAIL 6385913099, CI 17/17).
+
+**Collision rule (from #109's review Medium):** #311, #309 and #279 change inputs of all 13 pilot A MANIFEST rows. Each one's catch-up after #109 must carry a `[golden update]` re-pin of those rows, or C0 (and L1 if page bytes move) goes red. Check any other lane the same way before its train: on the merged tree run `node -e "import('./tools/plates/library/ci/manifest.mjs').then(async m=>console.log(JSON.stringify(await m.manifestProblems())))"`; it must print `[]`.
+
+#### Next steps on resume, in order
+1. Re-enable the hourly tick; re-arm the Monitor (docs/supervisor/scripts/monitor.sh + heads.sh); read the meter.
+2. If train 35 did not merge, rebuild it on the latest main (6.8 step 11) and run it again.
+3. #271: delta review of the catch-up, then train 36 (#271 + #316 + a handover update).
+4. Resume #245 and #265 (pilot A is on main) and #278's pin; then #279 and #273 catch-ups. At most 4 active LIB builders.
+5. After the weekly reset (10-29): the LIB-SPINE card (F-SPINE-1, for cable_crunch's spinal curl); LIB-ZOOM resume (superman, pallof_press, the LB5 four, LB7 four, wrist_curl, cross_body_hammer_curl); 'LIB-21 resume' for the (b) rows (side_plank, russian_twist, bicycle_crunch) once LIB-20 is on main; pallof_press's turned-view design note (D-LIB21-PALLOFHOLD).
+
+#### Rulings made 10-24 afternoon (all on the PRs)
+- **#309:** D-STRIP-BURPEE (burpee gets a row: Controlled on Squat down, claim c24, 6385340710); D-STRIP-CONTEST-CITED (only cited claims can contest a word; flutter_kicks keeps Crisp, 6385439805); rows.json re-synced to research `42cf542a`. lib-strip-card A13's seed must be committed (`9abc02b1` on claude/sup-lib4-cards).
+- **#312:** D-LIB21-CCHOLD, -PALLOFHOLD, -DOGGHOST, -ABSAG, -TRAPS, -ROPENIT (withdrawn), -CCFLAGS; bulk rulings 6383823760.
+- **#271:** D-LIB7c-R12COUNT (6386394399).
+- **#282:** D-LIB5v-ORDER ratified (6386116481).
+- **#109:** F-LIB8M-PROV (stale provenance text; rides the first pilot A re-pin); A15 mutation ref `claude/lib-8m-a15-mut` @ `de356864` is evidence only, never merge it.
+
+#### Open follow-ups
+F-STRIP-1..5 (F-STRIP-5: re-time the LIB-STRIP gate group from CI after merge; CI ran it in 467 s and 296 s against the 290 s entry), F-SPINE-1, F-GATE-COACHFB, golden-B follow-ups 18-24 (24: pull_up's forearm ends under the end-on bar with no fist around it), D-STRIP-AIR (airborne convention before box_jump and jump_squat are un-held), F-H6-TEMPO, F-LIB8M-PROV, F-C0-TIMEOUT (#316).
+
+#### Research branch
+`claude/libht-research` @ `42cf542a` (#313 merged the LB9 card fields). #259 (LP source check) is open against it.
+
+### 8.0p 10-22 ~02:08 UTC: new supervisor running on the new account (read first; supersedes 8.0o where they differ)
+
+**Supervisor:** session_01PeNM9HeWPrhrcscMwXzupy (auto mode, claude-opus-5-5). **Hourly tick:** `trig_01LvkAzRwZUPqSR1m1KAGScf` (`57 * * * *`, bound to this session, prompt = 8.0o H). **Usage (this account):** 7-day 0.00 at 02:01 UTC; weekly reset **Thu 02:00 UTC** (resetsAt 1793239200, 10-29), not Sat as PANELS.md 9 says for the old account. **Watchers:** monitor.sh + heads.sh under one Monitor (SINCE 2026-10-19T22:50Z), re-armed every 30 min. **PR subscriptions fail on this account** ("Could not subscribe"): rely on monitor.sh for comments and ci-watch.sh for CI.
+
+All heads matched 8.0o C at 02:03 UTC. Started (active LIB builders 3 of 4):
+| lane | session | step |
+|---|---|---|
+| #181 LIB-6-PM reviewer | session_018xPdHRpvCFrEn8puLHjwjG | one review of 9b8f76e6..56d3bbbf (**D-SUP-181-R1R2:** the card's R1 and R2 fold into one, as no R1 ran; LIB-6 itself PASSED @ 9b8f76e and is not redone) |
+| #274 LIB-13 builder | session_01Kj5X64C7VWg2YQCfpPxqPY | D-LIB13-PANEL2 only (pendlay_row, one_arm_dumbbell_row); then the supervisor's focused recheck |
+| LIB-5v builder (new PR) | session_01KU566by8W2s7KehqC21gp6 | the whole card (variant-line-card.md, ruled 10-18); fresh Opus fallback, as the LIB-5 session is gone. **D-SUP-LIB5V-NOW:** started now, not after #109: it is `ready`, blocks none of #181/#193/#109, and must be READY before LIB-9 READY |
+| #191 LIB-12-FIX builder | session_01KcC5dTrh5Euq6ts5RJrj6q | **D-SUP-191-EARLY:** the pre-train push (main merge, Lows 2-4 per 6278835457) now instead of at its slot, to take it off the critical path; a delta review follows; the train still waits for slot 5 |
+
+Free LIB slot: kept for #193's catch-up push after #181 merges.
+
+**Update 03:35 UTC** (usage 7-day 0.01 at 02:47):
+- **#181 REVIEW LIB-6-PM @ 56d3bbb: PASS** (0/0/0/2; 6331958891). Lows ruled with no code change (6331977335): Low 1 is a card note on lib-6-pm-card.md (`ddc99219`); Low 2 is recorded per line in that ruling. Reviewer archived. **#181 rides merge train 33.**
+- **#191 REVIEW LIB-12-FIX @ 8bea5af: PASS** (delta, 0/0/0/0; 6331690104; Low 4 → F-LIB12-R8B). It was run as an Opus helper inside the supervisor session: a one-file test delta needs no reviewer session. Frozen at `8bea5afc` until its slot 5 train. Builder archived.
+- **#282 LIB-5v** (new PR, `claude/lib-5v-variant-line`): STOP @ 732c78e ruled in 6331379360. **D-LIB5v-GENWRITER:** the variant call goes in a new `tools/plates/gen/variant-gate.mjs` plugin with no outputs, so no generated file changes (V10). **D-LIB5v-FIXLINE:** one add-only LIB-5v block each in library-fidelity.test.ts and scratch.mjs C16 allows exactly the one ruled `variantLine` line after `  copy: {` on '/' targets, required there and refused elsewhere, with 3 mutations each. **F-LIB5v-1:** `fixture.mjs all` + `generate` needs scratch stamps (C15) on main.
+- heads.sh now watches `claude/lib-5v-variant-line`.
+
+**Update 06:05 UTC** (usage 7-day 0.02 at 05:43; five-hour 0.06):
+- **Train 33 merged** (#283 → main `2647c3a6`): #181 LIB-6 + LIB-6-PM and this handover. No APK (nothing visible changes).
+- **#193 merged by itself** (main `5158609c`, 05:37). The supervisor caught it up with merge commit `7f39a1a` (clean). A fresh Opus helper delta-reviewed it: PASS 0/0/0/0 (6333171349), CI 17/17 green. **D-SUP-SINGLE:** a PR whose reviewed head already contains the latest main merges by itself (6.8 single-PR steps), with no train and no extra CI cycle. The handover rides the next real train.
+- #193 and #271 were retargeted to base `main`.
+- **LIB-7b started** (#284, session_01FX6LmsD7bEMtPPnueqrYT9). Design note approved (6333886735). **D-LIB7b-PAGEDUP = (B)**: a page-only id prefix on the 2nd+ copies; check (3) is reverse-rewrite `===` pairPanel and no id repeats. Its condition: explain Chrome 153's cold first-run difference. **D-LIB7b-HALVES:** panelHtml applies golden B's `splitHalves` (attribute-only, proven by test, 70/70 pixel-equal; F4 reads "after splitHalves"); C16 is not exempted. When LIB-7b lands, #271 and #191 merge main and re-run their pair checks.
+- **#271 LIB-7c is held until LIB-7b is on main**, then resumes with Do 8-9 (main merge, 7c-A1..A10, READY). Doing it now would mean redoing it after HALVES changes panelHtml. **#265 LIB-10** waits for pilot A on main (its WAITING 6263372543).
+- Active LIB builders: 3 of 4 (LIB-13 #274, LIB-5v #282, LIB-7b #284). An Opus helper is mapping the batches after LB3/pilot B for the 4th slot.
+- HT-11 #273 conflicts with main (screenshot-gate.mjs, loaders.ts, gate-split.test.ts); it needs its catch-up and regenerate at slot 11.
+
+**Update 08:00 UTC** (usage 7-day 0.09 at 07:38; heavy verify burst, about 0.016 per hour; watch it):
+- **Research for LB4, LB5 and LB6** (no LIB slot): briefs `lb4/5/6-research-card.md` (cards `f9a608df`). Sessions: LB4 session_018wXZ18trjB6gd3oCG511EP (#285), LB5 session_01CcEQFyk7tDxmYu7j5GnXHF (#286), LB6 session_01VEuBusV1m1mqtiEqNWiEyq (#287). All three LR-29 verifies are **VALID**; records `lb4/5/6-research-verify.md`. Fix rounds are done and rechecked: LB4 @ `3f0330e6` PASS; LB5 @ `9bdf4084` (3 parent/child fixes after recheck); LB6 @ `51d5bb58` (2 fixes after recheck). **Next: merge each PR into claude/libht-research once CI is green**, then name the heads to LIB-14 (LB4) and to the later LB5/LB6 cards.
+- **New rulings:** D-SUP-PROTECT (a "protects" cue counts as LR-31 step-2 harm; verified precedent), D-SUP-LB6-CCP, D-SUP-LB4-PACOPY, D-SUP-LB4-REVLUNGE (corrected to reading A), R-LB4-1..7, R-LB5-1..7, R-LB6-1..10. **Lesson:** check verified precedent before ruling an LR reading (D-SUP-LB4-REVLUNGE needed a correction).
+- **LB3 (#274):** recheck 2 VALID (lib4-cards 30): **pendlay PASS, so 6 of 7 are approved**; golden-B follow-up 22 (pull_up floor). one_arm fails R5 only (draw order), so **D-LIB13-PANEL3** is one mechanical round, then an R5 recheck.
+- **LIB-7b (#284):** rulings D-LIB7b-ZOOMS (A), -TUPLES (A), -PAGEDUP-141 (i); F-LIB7b-1 and -2 logged. Do 6's scratch ref `claude/lib-7b-scratch` is being built by the supervisor.
+- **LIB-5v (#282) READY @ 2ad1bf3c**; reviewer session_015fLqgHyqJm3GfvALqRjDSX is running.
+- **No-seconds tempo strip:** a design sheet (options A, B, C; B recommended) was sent to the owner at about 07:15 for his choice. It unblocks about 25 cards, including LB4's 5 build-ahead rows and the held box_jump and reverse_lunge.
+- **LIB-14 (LB4 build-ahead) card:** a DRAFT is on cards `9ceaaf9f`. It waits for the LB4 research merge and the owner's tempo choice.
+
+**Update 11:00 UTC** (usage 7-day 0.13 at 10:54; five-hour 0.25):
+- **Research LB4, LB5 and LB6 merged** into claude/libht-research (#285, #286, #287) → head `3812989f`. The three research sessions are archived.
+- **LB7 card writing** started: session_01WkcFihBxhzv6Y4HBUt7b86, branch claude/libht-research-lb7 (10 new cards, plus the LR-31/33 pass on 3). Brief: `lb7-research-card.md`.
+- **LB3 #274: 7 of 7 drawn plates approved** (recheck 3 VALID, lib4-cards 31; one_arm PASS @ `a6f4bd07`). LIB-13's builder is archived. The LB3 owner sheet waits for pilot A to be pinned on main (lib-13-card :20-21).
+- **LIB-14 (LB4 build-ahead, 6 rows) started:** #289, session_01PXZM4Xmr3uEdw31Q5Xpr7C, card `lib-14-card.md` @ `9d24e30c` (ready, D-LIB14-*). The note's Q1-Q4 are ruled (6338977366).
+- **LIB-7b #284:** D-LIB7b-SCRATCH2 (P1-P5) ruled. The scratch refs are `claude/lib-7b-scratch` @ cdbb3a3 (the "without" record) and **`claude/lib-7b-scratch-2` @ c9e8c814** (a new ref, because the guard refuses force-pushes). Its CI is expected-red only, except one HT-9 Show Paper chunk-fetch failure in Auckland, which the builder showed is unrelated to this PR (6338539064). **Gate-flake lead:** this is the second Paper-theme timing failure after 10-19's HT-8 one. Open a GATE-FLAKE card if it recurs.
+- **LIB-5v #282:** reviewer session_015fLqgHyqJm3GfvALqRjDSX is running on 2ad1bf3c.
+- **LIB-15 (LB5 H slice) card:** being drafted and critiqued by a helper.
+- **Active LIB builders: 2 of 4** (LIB-7b, LIB-14).
+- Containers restart often (3 restarts this morning). Every long job keeps a check-in, and a lost run is re-run whole.
+
+**Update 13:55 UTC** (usage 7-day 0.15 at 12:40; five-hour 0.04):
+- **LIB-5v #282: REVIEW PASS** @ 2ad1bf3c (0/0/0/2, 6337619598). It is frozen; Low 1 rides the pre-train catch-up push, and Low 2 went to GATE-FLAKE-5 (6340183618). Reviewer and builder archived. It merges at its plan slot.
+- **F-LB5-1 merged** (#291) → research head **`a8e66f32`**. cross_body_hammer_curl is now drawable false, with plate.mistake = the working shoulder's shrug (c5, c6).
+- **LIB-15 #290** (session_01QfnPtGgguJ3XPQnY2jNEPw): **wrist_curl and cross_body_hammer_curl are HELD under D-LIB8-shrug.** wrist_curl's Trace is 5.2 px; cross_body's shrug gives 7.3 px at 5 cm and needs ≥ 7.8 cm, which no claim states (6340849204). Route: a LIB-ZOOM (#279) zoom circle once it is on main. The slice and the bulk go on with the other 7. 'LB5 BULK GO' comes only after the supervisor's slice look; the builder waits for LB5 SLICE READY.
+- **LIB-14 #289:** CARD FIELDS **VERIFIED @ `12651ff4`** (two blind runs, both VALID: 6341470610 and the tightenings 6342086947). 'LB4 BULK GO' with 6 slice-look items is posted (6341498444); bulk drawing is under way. The field commit is merging back into research as **#293** (CI running).
+- **Lesson (CARD FIELDS):** before ruling a fact's pose, read the card's own plate.start/plate.end claim ids and setup[]. They decide which pose a quote states. Two of my fix-round lines needed correcting on the re-verify. A quote that says "both", or a plural paired part, states each side.
+- **LB7 research #288:** rulings D-SUP-LB7-DIPREPS, -FEET and -NOPRIMARY (6340738518). The LR-29 verify is **VALID** (6/6 plants caught; 0/0/2/24; R-LB7-1..9; record `lb7-research-verify.md` on cards `6e710ace`). Fixed and rechecked @ **`0c7d476c`**. It merges into research when CI is green. **F-LB7-1:** one library rule for "slow quote, no seconds" cards, set together with the owner's strip choice. **F-LB7-2:** verified cards with a "Front of the shoulder" row and no front word (next research pass).
+- **GATE-FLAKE-5** (HT/gate lane, no LIB slot): card `gate-flake-5-card.md` (critic fixes `a92c4fea`). The AGENTS.md fourth exception is on cards `d2aebc1a` and rides its train. Builder session_01TyBfnGyiGtUC5e4qvgX8pB, #292. Root causes: COPY-2 reads a dropped frame as a snap (proven); HT-8 and HT-9 Show see a How-to chunk that never arrives (cause in CI not yet known). **App follow-up:** ZoomHost leaves a failed hand-chunk load unhandled, so the user sees nothing. A BUG card is to be written.
+- **LIB-16 (LB6 H build-ahead: cable_chest_press, machine_pullover, machine_crunch)** started: session_019X62NzhJsMCCchgTPBsnAU, card `lib-16-card.md` @ `4b3c3a6f`. **D-LIB16-PILOTB:** pilot B's answer gates the sheet and the merge, not the drawing. The plan names LB6 as LIB-17; D-LIB16-SCOPE records the id.
+- **Active LIB builders: 4 of 4** (LIB-7b, LIB-14, LIB-15, LIB-16). LIB-7b is still finishing before READY (head `3aa1729a`).
+- **Missed signal:** LB7 CARDS READY (09:06) was not seen until 12:2x. Every tick now reads the latest comment on each open research PR as well.
+
+**Update 17:00 UTC** (usage 7-day 0.28 at 15:45; five-hour 0.53; bursts of verifies run about 0.04 per hour):
+- **LIB-7b merged** (#284 → main **`66ff5500`**, D-SUP-SINGLE, REVIEW PASS 0/0/0/2). No APK: src/** changed only in GENERATED header lines. The Lows are **F-LIB7b-3**: select pair rows by the row's own key in goldenB.mjs:134, harness.mjs:1079 and ht6.mjs:53.
+- **#191 LIB-12-FIX catch-up:** my first merge `c6e55f9b` used a stale origin/main. **Lesson: always `git fetch` right before a catch-up merge.** `bc2f2715` merges the real main, and X3 (lib12-fix.test.ts:181, battle_ropes death-grip) is red from LIB-7b's HALVES. A builder fixes it: session_01Cw7EowZxJKe64uRLTcSLcC. Then a delta review and the merge at slot 2.
+- **#271 LIB-7c:** Do 8-9 done, READY @ `4b894f10`. Reviewer session_013yguxvE82fPB4sP7xgNhiZ.
+- **Research, LB7, LB8 and LB10 merged** into claude/libht-research (now **`53cb2845`**). **LB9 (#295)** is in its fix round (session_01RczpBxQgJ8UfXenHSJxrH4). Records: `lb7/8/9/10-research-verify.md` on cards.
+  - Rulings: D-SUP-LB7-*, D-SUP-LB8-KICKBACK/-ISSUES/-AXIS/-PILOTS, D-SUP-LB9-*, D-SUP-LB10-*, R-LB7..10-*.
+  - **D-SUP-STRAIN:** "strain", and "pressure" or "impact" on a named body part, are harm words; vague words such as "issues" are not.
+  - **D-SUP-SAFETYTIER:** the critic brief now rates any wrong, weakened or missing safety line a blocker on any card.
+  - LB8's h1 was re-verified; it found two missing failed-rep way outs, now fixed. **F-WAYOUT-1:** check verified machine cards for a failed-rep way out that is sourced but not shown.
+- **Routed to the pilot A owner sheet (D-SUP-LB8-PILOTS):** these go on pilot A's changed-ids sheet before the PIN GO.
+  - plank: top fault "Hips hiked up." (D-SUP-LB9-PLANK), and the handlingMistakes[0] fix "Brace your trunk. Can't hold it? Rest on your knees." (new c14);
+  - mountain_climbers: 2 medium and 7 low shown-line items (lb10-research-verify.md "Routed").
+- **LIB-14 (#289): CARD FIELDS VERIFIED @ `12651ff4`** (merged back to research as #293). PLATES READY @ `6846c5a`: wall_sit is on the page; front/goblet/bodyweight/pistol/step_up are drawn and held (NOSECS; step_up also waits on reverse_lunge). The builder is archived. **On 'LIB-14 resume', after the strip release:** one critic panel for all six.
+- **LIB-15 (#290):** LB5 BULK GO. **Held under D-LIB8-shrug (route LIB-ZOOM #279):** wrist_curl, cross_body_hammer_curl, overhead_cable_triceps_extension and dumbbell_overhead_triceps_extension (the M_ARCH 25 arch is under PQ-H3). concentration_curl's F2 is a named flag; one-tell plates are ruled per id (D-LIB10-SKULL1, with a record).
+- **LIB-16 (#297, LB6):** note ruled (Q1-Q10; cable_chest_press is plate.start as written, and held if under H3). CARD FIELDS verify VALID with a fix round on cable_chest_press. Slice look running.
+- **GATE-FLAKE-5 (#292):** D-GF5-TWINS (pins.json HT-8/HT-9 keys; B2 re-run before the re-pin) is done @ `87673b4`.
+- **LIB-17 (LB7 H build-ahead) card:** a helper is drafting it. Start it when a LIB slot is free.
+- **F-CI-1:** `playwright install --with-deps` sits inside the 30-minute job cap of gate-shard and howto-shard. A slow apt mirror today (about 664 s against about 100 s) cancelled jobs on #191 and #289 before any test ran. Fix (supervisor, .github): a step timeout on the install and a job cap that does not eat the shard's time, keeping the verdict's 1800 s budget. First check what the verdict measures.
+- **Active LIB builders:** LIB-15, LIB-16 and the LIB-12-FIX fix (3); LIB-7c is at review. Research sessions: LB9 only.
+
+**Update 15:45 UTC (10-24)** (usage 7-day 0.71 at 14:27):
+- **Train 34 merged** (#314 → main `dd7116e9`): **#109 LIB-8M, pilot A pinned (13 plates)**. REVIEW PASS @ b898578 (6385655672, 0/0/1/2). The train head ran `library: full` and L1 passed. The A15 mutation ref `claude/lib-8m-a15-mut` @ `de356864` turned L1 red (6385872981; evidence only, never merged). No APK: the 13 rows stay `pending` in coverage.ts, so nothing in the app changes. The reviewer and builder are archived.
+  - **Collision rule (review Medium):** #311 (LIB-20), #309 (LIB-STRIP) and #279 (LIB-ZOOM) change inputs of all 13 pilot A MANIFEST rows. Each one's catch-up after #109 carries a `[golden update]` re-pin of those rows, or C0 (and L1 if page bytes move) goes red.
+  - **F-LIB8M-PROV (Low 1):** the provenance text in pilot-a/plates.json `cards`, build.mjs:23 and :181, and MERGE.md:144 should read "f57e7944; plank and mountain_climbers f574bb4b; barbell_row and romanian_deadlift 2dd60ae0". It rides the first pilot A re-pin.
+- **Train 35 building:** #282 LIB-5v @ `2ad1bf3c` merges cleanly on dd7116e9, and C0 on the merged tree is []. D-LIB5v-ORDER is ratified (6386116481).
+- **LIB-STRIP #309: REVIEW PASS** @ `75a9be48` (6385991109). Rulings: D-STRIP-BURPEE (burpee gets a row: Controlled on Squat down, c24), D-STRIP-CONTEST-CITED (only cited claims can contest a word, so flutter_kicks keeps Crisp). rows.json is re-synced to research `42cf542a`. The gate entry is 290 s; F-STRIP-5 re-times it from CI after merge. Its catch-up needs the pilot A re-pin.
+- **LIB-21 #312:** REVIEW FAIL @ 810fc537 on doc-only items (6385913099). LIB-21 FIX @ `e132e57e`; the reviewer is re-checking the delta.
+- **Research:** #313 merged (LB9 card fields, research head `42cf542a`).
+- **Active LIB builders: 2** (LIB-STRIP waiting for its slot, LIB-21 at delta review).
+
+**Update 14:00 UTC (10-24)** (usage 7-day 0.71 at 13:51; five-hour 0.20):
+- **#109 LIB-8M:** pinned 13 @ `b898578` (pin commit `7349a75` [golden update]; page `5d0e562f…`). Reviewer session_01RnSGLM2JBRgHeBMpscfP3b: check, test:tz and gate green, mutations running. On PASS: merge train 34.
+- **LIB-18 (#306, LB8): REVIEW PASS** @ `d76fc305`. Two Lows (the qa.mjs:4 header, the test title at :1368) ride the pre-train push.
+- **LIB-20 (#311): REVIEW PASS** @ `471339d`. It merges before the LB7 lanes; its pre-train push carries the D-LIB20-L0 (b) MANIFEST rewrite after #109 pins.
+- **LIB-STRIP (#309):** READY @ `ef71b1fe`. Reviewer session_01EHdxRcZzDm7iHF1YF5oAqx is running its long jobs.
+- **LIB-21 (#312, LB9):**
+  - Focused recheck lb9r VALID (6383628526): **bird_dog approved @ `276029ae`**; ab_wheel_rollout was approved @ `27215fba`.
+  - Held: cable_crunch (**D-LIB21-CCHOLD**, a LIB-SPINE engine card, F-SPINE-1: the curl folds at one joint); superman (LIB-ZOOM); pallof_press (**D-LIB21-PALLOFHOLD**: LIB-ZOOM plus a turned view after LIB-20). The (b) rows side_plank, russian_twist and bicycle_crunch wait for LIB-20 on main.
+  - **PLATES READY @ `810fc537`** (page `12163664…`; both approved fragments byte-identical; CI 17/17). Reviewer session_01VVDC3bfNVEMQFCDHjNype5.
+  - Card fields merge-back to research: **#313** (`0bf7ee72`, the 5 (a) cards byte-equal to 810fc537; CI running).
+- **Golden-B follow-up 24:** pull_up's forearm ends under the end-on bar circle, with no fist around it (confirmed on the PNG crop).
+- **Active LIB builders: 3** (LIB-8M, LIB-STRIP, LIB-21), all at review. **Next after the reset (Thu 02:00 UTC):** the LIB-SPINE card, LIB-ZOOM resume, 'LIB-21 resume' after LIB-20 merges.
+
+**Update 11:00 UTC (10-24)** (usage 7-day 0.69, rising about 2 % an hour with 4 builders plus panels; the 80 % pause is likely near 16:00 UTC):
+- **#109 pilot A:** the plank focused recheck is **VALID**, plank is approved, and page `5d0e562f…` is approved (6382619662, lib4-cards 34). The builder is pinning 13 (Do 13, then Do 14).
+- **LIB-STRIP (#309):** STRIP ROWS VERIFIED @ 511ded30. Rulings D-STRIP-GROUPS (E1 106) and D-STRIP-GATETIME (a), 270 s. Building toward READY.
+- **LIB-20 (#311):** READY @ 471339d. Reviewer session_015CQwDBT2tML1FkE4ceowrM is running.
+- **LIB-21 (#312):**
+  - NOTE RULED (6382248634). CARD FIELDS VERIFIED @ 931714d2 (cflb9 plant caught; D-LIB21-TRAPS).
+  - Slice panel lb9s is VALID. ab_wheel_rollout is approved; cable_crunch and bird_dog are in a fix round (D-LIB21-DOGGHOST: bird_dog ghosts 0).
+  - SLICE FIX @ 276029ae, page `f7570211…`. The focused recheck set lb9r is being built.
+- **Active LIB builders: 4.**
+
+**Update 08:30 UTC (10-24)** (usage 7-day 0.62):
+- **#109 pilot A:**
+  - **D-LIB8M-PLANKREDRAW (6381942908)** replaces PLANKHOLD. Plank stays in pilot A, because it anchors LB4, LB7, LB9 and LB10. Only its Mistake is redrawn ("Hips hiked up."). The pin is 13.
+  - Research head for the copies: `f574bb4b` (6381948414). Next: SHEET READY, then the supervisor's focused critic recheck on plank, then the pin.
+- **Research:** #295 (LB9 fix round, recheck PASS 6381491908) and #310 (pilot A routed lines) are merged. The research head is `f574bb4b`. The blocked LB9 session is archived.
+- **D-ER5-GO (#278 6381385131)** and D-ER5-YAW. **LIB-20** card `lib-20-card.md` @ a233ef95; builder session_01Vn74WfsbKuNL2goL84R1aT, PR #311.
+- **LIB-STRIP** card @ ad335ef2; builder session_015ghURsavAYhbPxt4cbX7E3, PR #309.
+  - Rulings: D-STRIP-VALIDATE, -WHOLE, -CONTEST, -QUOTEWORD, -FORMS-EXPL, -AFALL, -GATETIME and -GROUPS.
+  - The rows' CARD FIELDS verify is **VALID** (6381982069). Plant: a contested speed word, caught. One fix round: cable_rear_delt_fly cites c9, and the jump_squat note is added. Next: the delta check, then STRIP ROWS VERIFIED.
+- **LIB-21** (LB9 H) card @ 760f774f; builder session_017MdAevYBsuCF8gdmyjtwob, branch claude/lib-21-lb9.
+  - Slice: ab_wheel_rollout, cable_crunch, bird_dog.
+  - Held for LIB-20: side_plank, russian_twist, bicycle_crunch.
+- **Active LIB builders: 4** (LIB-8M, LIB-20, LIB-STRIP, LIB-21). That is the cap.
+
+**Update 07:45 UTC (10-24): OWNER DELEGATION.** The owner (07:15): "U do qll that. Dont stall and decide for me." The supervisor now makes the owner's open library choices, and records each one with its reason. Owner-only items in AGENTS.md stay his: Worker deploys, signing and keys, releases and store listings, new kinds of stored or sent data, paid services and spending.
+- **Pilot A (#109): PILOT A PIN GO @ dcac4a38 (6381356655).**
+  - "Use proposed" on every line.
+  - 13 ids pinned, with the exemptions from 6261394431; plank's F7 is named. 6 held.
+  - **D-LIB8M-ROUTED (6381374935):** research applies plank's and mountain_climbers' routed lines on its cards (after LB9's fix round), and #109 copies them from one research head.
+  - The builder session_01DtfGjqYEVnEwyRxtRGwSj6 is preparing the pin.
+- **LB9 (#295):** the supervisor runs the fix round itself, under the owner's approval. A helper is applying lb9-research-verify.md. The blocked research session is archived. Next: recheck the delta, merge into research, then the routed-lines research change, then post the head on #109.
+- **D-STRIP-B:** the no-seconds tempo strip is option B (card cadence words). Design: cards `strip/NOTE.md` @ 71241668. A helper is drafting `lib-strip-card.md`. Then a LIB-STRIP builder starts.
+- **Active LIB builders: 1** (LIB-8M).
+
+**Update 06:00 UTC (10-24)**: no change since 21:00. Active LIB builders: 0. Every lane still waits on the owner.
+
+**Update 03:00 UTC (10-24)** (usage 7-day 0.61, last read 23:19): no change since 21:00. Active LIB builders: 0. Every lane still waits on the owner.
+
+**Update 00:00 UTC (10-24)** (usage 7-day 0.61): no change since 21:00. Active LIB builders: 0. Every lane waits on the owner: the pilot A sheet (#109), LB9's approval, the strip choice and E-R5's go.
+
+**Update 21:00 UTC (10-23)** (usage 7-day 0.60):
+- **LIB-18 (#306): REVIEW PASS @ `d76fc305`.**
+  - The full review of 2c59831 (6372571513) failed on 1 Medium: the named F2 flags were not pinned. It also had 3 nits.
+  - Ruling D-LIB18-F3KICK (6372672239) names F3 on cable_kickback at 37.8 px.
+  - The supervisor's delta check (6374733846) PASSED. I re-ran `qa.mjs --held` myself, and it matches held-flags.json, page `347b82a5…`.
+  - CI is 17/17 green. The drawn page is still `ca51e441…`.
+  - Two Lows ride the pre-train push: qa.mjs:4 "Writes nothing", and the title at test :1368.
+  - The builder and the reviewer are archived. LIB-18 waits in the merge queue.
+- **Active LIB builders: 0.** No lane can start: the held rows wait on LIB-ZOOM (#279), pilot B and the owner's choices, and LB9 waits on the owner's approval.
+- **F-GATE-COACHFB (follow-up):** on af9a4b61, gate-shard 3/4 UTC failed COACH-FB once ("the hidden list does not name …", screenshot-gate.mjs:5515, a `visible(…, 1500)` wait). The diff touches nothing under src/, and the same shard passed on d76fc305. If it recurs, it is a gate-flake card; root-cause it before any re-run.
+
+**Update 18:00 UTC (10-23)** (usage 7-day 0.60):
+- **LIB-18 (#306): READY @ `2c59831a`.** A fresh Opus reviewer (session_016H2mowxa1xmUwK3HkQs2uh) is reviewing it. Two container restarts lost its local jobs; it re-runs them detached, with send_later check-ins. On PASS, archive the reviewer and the builder (session_01EVBibBfsY1sC2AnXE6QRLA). On FAIL, route the fixes to the builder.
+- Nothing else changed since 15:00. The merge queue still waits on #109 (the owner's pilot A sheet). LB9 still waits on the owner's approval of the blocked fix round.
+
+**Update 15:00 UTC (10-23)** (usage 7-day 0.60):
+- **LIB-22 (#305): REVIEW PASS @ `a9c64e1`** (6367690360; 0/0/0/3).
+  - The Lows are done in the PR body; the :1402 comment fix rides the pre-train push.
+  - The local gate's HT-3b A3 probe fails even when run alone in a container (125 ms long task), but the app build is byte-identical to main, and CI is 17/17 green.
+  - The builder and reviewer are archived. LIB-22 waits in the merge queue.
+- **LIB-18 (#306):** hack_squat is approved. The builder is re-running the local gate alone (the first run failed HT-3b A3 under CPU contention), then posts READY. 2c59831a only adds a test yield.
+- **Active LIB builders: 1** (LIB-18). No other lane can start. The merge queue is still blocked by #109 (the owner's pilot A sheet), and it carries the held rows' route (LIB-ZOOM #279).
+- **Review-passed and waiting in the queue:** #282 LIB-5v, #271 LIB-7c, #290 LIB-15, #297 LIB-16, #299 LIB-17 and #305 LIB-22, plus #245, #279 and the rest, in plan order behind #109.
+
+**Update 12:00 UTC (10-23)** (usage 7-day 0.59):
+- **Panel verdicts** (recorded in lib4-cards §32-33 on cards `52a9bec2`):
+  - **LB10 (#305): all 3 drawn rows APPROVED.** kettlebell_swing @ d721f023 (byte-identical at a9c64e11); battle_ropes and high_knees @ `a9c64e11`, page `22b7d177…`.
+  - **LB8 (#306): hack_squat APPROVED @ `14ee85c4`**, page `ca51e441…`.
+  - Both runs were VALID. pull_up's follow-up 22 was excepted both times. One panel covered two batches.
+- **Next:** 'LIB-22 READY' and 'LIB-18 READY'. Both builders are running the full checks (LIB-18's local gate started at 10:56). Then a fresh Opus reviewer for each.
+- **Lesson:** critics give leader lengths in 780 px image pixels; halve them for the 390 px limits.
+- **Active LIB builders: 2** (LIB-18, LIB-22).
+
+**Update 09:00 UTC (10-23)** (usage 7-day 0.57):
+- **GATE-FLAKE-5 merged** (#292 → main `0f1f73de`; 17/17 green; it changed no app code, so there is no APK). AGENTS.md's fourth exception went in with it.
+- **LB10 fields merged into research** (#308 → `657eb4e5`).
+- **Panel running: set lb10, round 1**, covering LB10 kettlebell_swing, high_knees and battle_ropes (#305 @ d721f023, page db346e12) **and LB8 hack_squat** (#306 @ dc049494, page b6083d84). This is one panel for two batches.
+  - The set is built: 8 T. Plants: battle_ropes R1 (an elbow bent the wrong way) and kettlebell_swing R5 (the Mistake sign flipped). Anchors: pull_up and lat_pulldown.
+  - Files: scratchpad critic-lb10*, brief rv-briefs/lb10p-critic.txt. 3 critics are running.
+- **LB10 rulings since 06:00:**
+  - **D-LIB22-BURPEE3D**: a named body-on-body exception for the burpee squat ghost.
+  - **D-LIB22-ARMS**: the 6 px hand-gap rule is withdrawn, because it forced 73.5° of shoulder extension. Lesson: a rule must not force an unnatural pose.
+  - **D-LIB22-FRONTNIT**: "Back arches" on the lumbar back, by a front entry at 80.7 px.
+  - battle_ropes stays at 146.29 px/m, with F2 0.552 as a named flag.
+  - bear_crawl uses option (a), a flat back.
+  - farmer_s_carry's M_STRIDE basis stays open until resume.
+- **LB8 rulings since 06:00:**
+  - **D-LIB18-PADS**: two lateral shoulder pads, with a 3D clearance test.
+  - The bearing misses are fixed with no exemption list: hip_thrust's bar pad and seat, leg_extension's Mistake pelvis, and seated_calf_raise's seat.
+  - The leg curls wait for pilot B on main.
+  - 9 LB8 rows are held (S2, with S4 on the calf raises).
+- **Active LIB builders: 2** (LIB-18 and LIB-22, both holding their heads until the panel verdict).
+
+**Update 06:00 UTC (10-23)** (usage 7-day 0.55, five-hour 0.24 at 05:46):
+- **LIB-16 (#297): review-complete @ `3a75393a`.**
+  - The delta review found 0 code defects. D-LIB16-BENT is ruled: A15's bent arm is elbow flexion 30-150°, which is stricter.
+  - The supervisor diff-checked the doc and HANDOFF update (6356838375). CI is 17/17 green.
+  - The builder and reviewer are archived. cable_chest_press waits for 'LIB-16 resume' after #279. Merge queue.
+- **GATE-FLAKE-5 (#292): REVIEW PASS @ 11f70e5** (6358351323).
+  - The supervisor's pre-merge push @ `4e97f1a4` adds the D-GF5-TWINS-B6 label and AGENTS.md's fourth exception (cherry-picked from `d2aebc1a`).
+  - CI is running. It merges as a CI-health lane when green. Builder and reviewer archived.
+- **LIB-18 (#306, LB8):**
+  - The slice look was GO, then LB8 BULK GO, with rulings:
+    - **D-LIB18-LIFT:** `lift` on the buttock; Mistake leaders enter the figure once, from the front, and are at most 81.9 px.
+    - **D-LIB18-BACKPAD:** back labels on the back; front entries allowed under the LIFT limits.
+  - CARD FIELDS VERIFIED @ `8daf2ad`, after two VALID runs and **D-LIB18-PUSHTHROUGH**. Merged back as #307 (research `57b3568e`).
+  - BULK DRAWN @ 53e2eb8: **all 6 bulk ids are held (S2; two calf raises also S4)**. hack_squat is the one drawn row.
+  - **D-LIB18-PADS:** the shoulder pads were single midline sheets inside the neck in 3D. Two lateral pads in calfMachine, hackSled and pendulum, plus a 3D pad-vs-body test. hack_squat is fixed now.
+  - Next: the leg curls, their CF verify, then LB8 PLATES READY (panel: hack_squat).
+- **LIB-22 (#305, LB10):**
+  - The slice look was GO, then LB10 BULK GO.
+  - Rulings:
+    - **D-LIB22-FRONT:** a sagittal soft knee cannot show in a front view, and no label claims it.
+    - **D-LIB22-HOPNIT:** four jump_rope crossings.
+    - **D-LIB22-STANCE**, amended: each FOOT_X is its rigid-foot plant limit; medicine_ball_slam's ball moves 7 cm forward.
+    - **D-LIB22-HIKE3D:** the forearm-thigh 3D overlap is capped at 11.1 + 0.5 cm, body against body only.
+    - **D-LIB22-JJ:** jumping_jacks keeps tempo and has no plateFacts; it is held at H6:no-card.
+  - CARD FIELDS VERIFIED @ `e0f217e7` (two VALID runs). Merged back as #308 (research `657eb4e5`).
+  - The bulk is being drawn. **Follow-up F-H6-TEMPO:** a card later, so H6 and validate.mjs accept tempo-only cards.
+- **Lessons:**
+  - A CF set's tempo.json must be regenerated from the head under verify; the cflb10 copy carried a stale "proposed" note.
+  - Rulings made after a set is built must be added to its rules.md.
+  - Check 3D equipment-vs-body clearance, not only side-view contacts. The midline shoulder pads were invisible in 2D.
+  - A spec `checks` value is not the engine's foot-plant contact: LB10's stance numbers were wrong once.
+- **Active LIB builders: 2** (LIB-18, LIB-22). No other lane can start: LB9 is blocked on the owner, E-R5 needs his go, and many held rows wait for LIB-ZOOM (#279), which sits behind #109 in the queue.
+- **Owner pending (unchanged):** the pilot A sheet (#109), the LB9 approval, and the tempo-strip choice.
+
+**Update 03:00 UTC (10-23)** (usage 7-day 0.48, five-hour 0.32 at 01:56):
+- **LIB-15 (#290): REVIEW PASS @ `e9f0985`** (delta 6355406723; all 7 findings fixed). CI is 17/17 green. The reviewer and builder are archived. It waits in the merge queue.
+- **LIB-17 (#299): REVIEW PASS @ 5a9f004.** The fixes @ `14dc56dd` passed the supervisor diff-check (6354754226), and the page `1972ed5b…` is unchanged. Merge queue.
+- **LIB-16 (#297):** READY @ 2979a4a2 (page `2668c838…`). The review FAILed on 0/0/2 (6355888923): the A15 pullover 170° mutation and the A10 Date.now() run were missing. The fixes are @ `24f7c6e9`. The same reviewer (session_011T7YepFg2PV8jeDfXyy5Rw) is doing a delta review. It must also judge the builder's bent-arm check change, from the inside angle to flexion 30-150, which the builder called "D-LIB16-BENT": a correction or a loosening? A builder cannot make a ruling.
+- **LIB-18 (#306, LB8): NOTE RULED** (6355447835).
+  - Q3 is refused (**D-LIB18-ROUND**): a tell's anchor sits on the part its text names. hack_squat's `round` moves from the groin to the lower-back contour; if it falls below 11.39 px, hack_squat is held.
+  - **D-LIB18-TRIM:** each id's trim is its clone source's trim (file:line) or [10, 12], recorded in its trace row.
+  - **D-LIB18-ARCH:** hip_thrust and cable_kickback are held under D-LIB8-shrug.
+  - Q4 named nits; **D-LIB18-UNSOURCED** (no unopened source may be cited); a straight knee is 5° (barbell_back_squat.mjs:30); glute_bridge `high` is not a tell (one fault per Mistake).
+  - SLICE READY and CARD FIELDS READY @ `5841d8cf`. The slice-look helper and the CF blind verify (set cflb8: 10 cards; the two leg curls carry no keys yet; the plant is a number fact 90→88) are running as helpers.
+- **LIB-22 (#305, LB10):**
+  - NOTE RULED (6355155831).
+  - **D-LIB22-HOPNIT** (6355887979, widened 6356244552): jump_rope's `hop`, `elbows` and `hands` leaders each cross one rope line once, at 45° or more. The rope and the start phantom close a ring around the figure. A15 names exactly these three. jump_rope is held.
+  - medicine_ball_slam's ball-edge anchor is accepted.
+  - Next: LB10 SLICE READY, then the slice look.
+- **Active LIB builders: 3** (LIB-18, LIB-22, and LIB-16's fix). LB9 (LIB-21 in the plan) is blocked on the owner's classifier approval. No other lane can start: E-R5 (LIB-20) needs the owner's go, and the release candidate needs every lane.
+- **Owner pending (unchanged):** the pilot A changed-ids sheet (#109), the LB9 approval, and the tempo-strip choice.
+
+**Update 00:00 UTC (10-23):**
+- **Approved drawn rows** (calibrated panels VALID; D-SUP-ANCHOR-3; golden-B follow-up 19 extended, 23 added):
+  - **LB5** (#290, page `921cb1d5…`): preacher_curl, cable_curl, bayesian_cable_curl, concentration_curl. CF VERIFIED, merged back (#304). D-LIB15-NIT1 (a leader through the ELBOW text stays, a named nit). Next: LIB-15 READY.
+  - **LB6** (#297, page `2668c838…`): machine_crunch, machine_pullover. The pullover's seat post and pad bracket were fixed in round 2. Next: LIB-16 READY.
+  - **LB7** (#299, page `1972ed5b…`): cable_lateral_raise, cable_external_rotation, face_pull, weighted_dip, dumbbell_front_raise. Its RPC test fix (yields between sync render tests) is in. Build-ahead (D-LIB17-AHEAD). Next: LIB-17 READY.
+  - Held (LIB-ZOOM / strip card): LB5 four, LB6 cable_chest_press, LB7 four.
+- **F-CI-1 #303 merged** (main `1ffd0dac`): each Chromium install has its own 15-min cap, and the shard job caps are 50. Review PASS + delta PASS.
+- **#109 LIB-8M:** PILOT A CHANGED SHEET READY @ dcac4a3 (sheet `283f8a72…`; scratch branch `claude/lib-8m-sheet` @ 1df9dda). **Sent to the owner at about 22:00 UTC** with "use proposed on all lines" recommended. Waiting for the answer, then 'PILOT A PIN GO'. D-LIB8M-SCRATCH7B: non-library scratch id + guard.
+- **Owner pending:** the pilot A changed-ids sheet; the LB9 research session's classifier approval (session_01RczpBxQgJ8UfXenHSJxrH4); the no-seconds tempo-strip A/B/C choice (from 10-22 morning).
+- **Lesson:** every helper launched must hand back; the LB6 slice-look helper died silently and LB6 waited 2 h for BULK GO.
+
+**Update 21:00 UTC** (supervisor context about 524k after compaction; the owner was told earlier that the handover is ready for a fresh supervisor):
+- **LIB-15 (#290, LB5): all 4 drawn plates approved** at page `921cb1d5…` (fb69dff3): preacher_curl, cable_curl, bayesian_cable_curl (round 1, byte-identical) and concentration_curl (focused recheck 6350979367).
+  - **CARD FIELDS VERIFIED @ fb69dff3** (6350552705), merged back as #304 (`596dbe07`).
+  - **F-LB5-2** (#302, `baf2ff09`) added BarBend's each-side quote (c14), which is what D-LIB15-MIRROR rests on.
+  - Next: one label tightening (the "Slow lowering" leader through the ELBOW text; supervisor render check), then LIB-15 READY.
+- **D-SUP-ANCHOR-3** (PANELS §1, `e646fb2a`): a confirmed, recorded anchor defect is excepted, and any other anchor item below 4 voids the run. This replaces the one-item limit. **Golden-B follow-up 23:** pull_up's "ELBOW about 145°" callout against its card's c6 (93.4 ± 14.6°).
+- **LIB-16 (#297):** BULK READY @ 21d30bf9 was ruled (6350058285): CF VERIFIED @ ef2e8044 carries, Q8 is extended (D-LIB16-Q8B), and PULLOVER-TRACE is accepted on the c3 basis. Next: 'LB6 PLATES READY', then the calibrated panel (machine_pullover and machine_crunch; cable_chest_press held).
+- **LIB-17 (#299):** bulk running after BULK GO. weighted_dip re-copies the F-LB7-1 card (#301, `e5ed66ca`), and its card diff gets a supervisor diff-check at READY.
+- **F-CI-1 #303** (`claude/sup-f-ci-1`, head `06438492`): REVIEW PASS @ 443385d (6350585026). Review fixes applied: job caps 50, step comments, D-F-CI-1 and GATE-SPLIT-DESIGN updated. Merge when CI is green (a CI-health lane, off the LIB checklist, like VITEST-RPC).
+- **#109 LIB-8M:** D-LIB8M-SCRATCH7B amended to option (2): a non-library scratch id added only to the fixture's scratch-tree exercises.json, plus a guard. Waiting for 'PILOT A CHANGED SHEET READY'.
+
+**Update 19:45 UTC** (usage 7-day 0.34, 5-hour 0.10 at 18:58):
+- **#191 LIB-12-FIX merged** (main `b0370201`). The X3 fix `62549cc` passed a delta review (6348810322, 0/0/0/0), and CI was 17/17 green. Builder archived. **Lesson:** run `git fetch` right before every catch-up merge (`c6e55f9b` merged a stale main).
+- **LB9 research (#295) is BLOCKED on the owner.** The auto-mode classifier denied session_01RczpBxQgJ8UfXenHSJxrH4's fix round. The owner was told at 18:00 to approve it in that session. Never work around it.
+- **#271 LIB-7c:** REVIEW PASS @ 4b894f1 (6347992738; Medium and Low are doc-only). The fixes @ `7791b44` passed the supervisor's diff-check (6348263063). Reviewer archived. It merges after #109 and #282.
+- **#109 LIB-8M:** new builder session_01DtfGjqYEVnEwyRxtRGwSj6 for the **pilot A changed-ids sheet** (main merged in; sheet `b00970e8…`; page `43a264e5…` unchanged). **D-LIB8M-SCRATCH7B** (6349402613): LIB-7b's scratch id `lib_barbell_row` collides with pilot-a.json. The fix is a non-library id added only to the fixture's scratch-tree exercises.json, plus a guard. Then 'PILOT A CHANGED SHEET READY', which the supervisor sends to the owner (owner item F1, plus the plank and mountain_climbers routed items).
+- **LIB-17 (#299, LB7):**
+  - Note ruled (6347885720): tells `lean`→`hips`, `traps` dropped, `below`→`parallel`. The bench_dip heel is start-only (D-LIB9-FACTPOSE; the note's wider rule was corrected).
+  - **CARD FIELDS VERIFIED @ `109e82b2`** (6348241751; **D-LIB17-ORCHOICE:** an "or" between two end points or stop points is a choice, not a fact). Merged back as #300 (`e3814561`).
+  - Slice NO-GO (6348157337), then **BULK GO** after the re-look @ `1457e06` (6349108629).
+  - **D-LIB17-DIPBAL** (6348947992): weighted_dip draws option P (shoulder on the parallel line, 15° lean, legs back, elbow flexion about 112.5°; balance on body plus plate). **F-LB7-1** (#301, merged `e5ed66ca`) dropped the card's elbow-90 fact. weighted_dip's re-copied card needs a supervisor diff-check at READY.
+- **LIB-16 (#297, LB6):** the LB6 slice-look helper died before handing back. Its notes (slice-lb6/notes.md) gave GO, so **LB6 BULK GO** was posted at 19:0x (6348852288), with the crunch "Arms pull" leader, crossProblems extended to the Mistake figure, and the crunch start phantom. **Lesson:** each tick, check that every helper started has handed back.
+- **LIB-15 (#290, LB5):**
+  - **Calibrated panel VALID** @ `138c7a8c` (6349640307): **preacher_curl, cable_curl and bayesian_cable_curl approved**. concentration_curl gets one fix round (R5: ghost upper arm and elbow; R7: smooth Trace arc).
+  - CARD FIELDS: the run was VALID (6349063103) and the fix @ `42988823` passed the diff-check (6349512355). New rulings: **D-LIB15-MIRROR**; an "or" stop point is no fact (DOTE c5 and concentration c7 removed); hand contacts come from grip quotes.
+  - **F-LB5-2** (#302, CI running) adds the concentration each-side quote (BarBend, verified on the live page). After it merges: the builder re-copies the card, posts 'LB5 PANEL FIX', then the focused panel recheck (concentration only) and the focused CF re-verify (8 cards, new plant).
+- **GATE-FLAKE-5 (#292):** the D-GF5-TWINS deviation is accepted as D-GF5-TWINS-B6 (6348857532). The builder is running its gates.
+- **Active LIB builders: 4** (LIB-15, LIB-16, LIB-17, LIB-8M). LIB-7c is waiting at no slot; GATE-FLAKE-5 is a CI lane.
+- **Merge queue:** #109 (owner sheet first), #282 LIB-5v (frozen `2ad1bf3c`, 7a), #271 LIB-7c, #245, #279, #265, #278, #273, #274…
+
+### 8.0o TAKEOVER 10-22: the owner moves the work to his other account (read first; supersedes 8.0n and section 10 where they differ)
+
+**Written by** the old supervisor, session_01HtNEBU3oDR8NyHKK3uCwUi, on the account being left, on 2026-10-22. Nothing has been built since the usage pause of 10-19 22:58 UTC.
+
+#### A. Situation in one paragraph
+On 10-19 the owner ruled: pause at 80 % of the weekly usage limit, and let each agent finish its current task first. The pause started at 0.79 and ended at 0.82, and every lane posted WAITING. On 10-22 the owner said: "Put all info and instructions to new agent in my other claude account. I will continue the work there."
+
+The old account is now fully stopped:
+- its hourly tick `trig_019LBJDA2jX95HgcWEgQPMJ6` is **disabled**;
+- its resume one-shot `trig_01VB7ivEtA6N8YHw9BkoR6ez` is **deleted**;
+- its worker sessions are all idle, with their work pushed.
+
+**The new account cannot message or archive those old sessions.** Never assume one of them is running, and never wait for one. Every lane restarts with a new session on the new account, on the same branch (C below). If an old session ever wakes and pushes, the new builder's `git pull --no-rebase` before every push catches it, and the tick's head check flags it.
+
+#### B. First hour on the new account (in order)
+1. **Session.** The supervisor runs in **auto mode** on an environment with GitHub, the agent proxy's GitHub auth for `curl`, Chromium at `/opt/pw-browsers/chromium`, and Node/npm (10.1). Models allowed: `claude-opus-5-5` for judgement, every reviewer and every non-mechanical card; `claude-sonnet-5` only for fully spelled-out steps. Never Haiku or Fable, so the built-in Explore helper is out; a search helper must name `sonnet`. **Relay is skipped** (owner: "No need to update relay for now"); owed Relay lines go in 8.5.
+2. **Read**, in section 0's order:
+   - this file (this copy is on `claude/sup-handover-1445` until a train merges it);
+   - `AGENTS.md` from `origin/main`;
+   - `.claude/skills/supervisor/*`;
+   - `docs/supervisor/PROMPTS.md` (the exact message templates);
+   - **`docs/supervisor/verify/PANELS.md`** (new: how to run the critic panels, the CARD FIELDS verifies and the usage meter, with every prompt template);
+   - the cards in `docs/supervisor/verify/` on `claude/sup-lib4-cards` (@ `f371edbc`), with `lib4-cards.md` sections 24-29 for the panel records;
+   - the library plan `docs/howto/library/LIBRARY-HOWTO-ARCHITECTURE.md` on `claude/howto-options` (@ `b41ac833`).
+3. **Usage.** The new account has its own weekly limit. Read the meter as PANELS.md section 9 says, after a few turns on your own session. The owner's rule from 10-19 stands each week unless he changes it: **pause at 80 %, and let every agent finish its current step first**. Check every tick, and every 20 min from 0.75.
+4. **Hourly loop.** Create it with `create_trigger`:
+   - `name` `M/ARC supervisor tick`;
+   - `cron_expression` `57 * * * *`;
+   - no `persistent_session_id`;
+   - `initiation` `human_request`;
+   - `prompt` = the text in H below.
+
+   Then check it with `get_trigger`.
+5. **Watchers.** Use the repo copies in `docs/supervisor/scripts/` (heads.sh has its branch list updated today). Run `monitor.sh` + `heads.sh` under one Monitor with `SINCE=2026-10-19T22:50:00Z`, re-armed every 30 min. `ci-watch.sh` (with `HT10_LEGS=4 GATE_LEGS=6`) runs on every train head; `apk-watch.sh` runs after an app-changing merge.
+6. **Restart the lanes** in the order of D, using the table in C, and the templates in PROMPTS.md: P1 builder (the replacement variant: `source_revision` **and** `outcome_branch` set to the card's branch) and P2 reviewer. **Count the active LIB builders in every start or resume message (at most 4).**
+7. **Tell the owner** in one short message: the takeover is done, what runs now, and the usage reading.
+
+#### C. Lanes (heads checked 10-22 via the GitHub API; re-check live)
+main = `07ad7f1c` (train 32). Research head: `claude/libht-research` @ `38d5f9c6` (LB3 and pilot B research merged).
+
+| PR | card (file on claude/sup-lib4-cards) | branch @ head | state | first action on the new account |
+|---|---|---|---|---|
+| #181 | LIB-6 + PM (`lib-6-pm-card.md`) | claude/lib-6-closeup-renderer @ `56d3bbbf` | **READY** (CI 17/17; S5-L and PM-A8 green; HANDOFF in the PR body) | **Start a fresh Opus reviewer (P2). This is plan slot 2, the next train.** |
+| #193 | LIB-7 + FIX (`lib-7-fix-card.md`) | claude/lib-7-radial-pairs @ `9c70344b` (base: #181's branch) | PASS (delta PASS @ 9c70344), frozen | It trains after #181. It must merge main/#181 first: a pre-train catch-up push with a delta review. |
+| — | LIB-7b (`lib-7b-card.md`) | claude/lib-7b-hand-blocks (new) | not started | Start it after #193 is on main ("LIB-7b start", with D-LIB7b-SCOPE, SLOT and PAGEDUP quoted). It gates #109's PIN GO. |
+| #191 | LIB-12 + FIX (`lib-12-fix-card.md`) | claude/lib-12-hand-views @ `ea916e9f` | PASS (0/0/0/4), frozen | Before its train, post "LIB-12-FIX train next". The builder then makes the pre-train push: main merged, Low 2 (test titles), **Low 3 (R8-DRIFT exact signed and length compare, required)** and Low 4 (6278835457). A delta review by a new reviewer follows. |
+| #109 | LIB-8M pilot A (`lib-8-merge-card.md`, `lib-8-fix-card.md`) | claude/lib-8-pilot-a @ `ff7c5c4f` | WAITING for PILOT A PIN GO. The owner said "Pilot a ok" (10-19 12:10). F-LB3-1 is in, and its diff check PASSED. | PIN GO needs LIB-7b on main, LIB-12 on main and merged in, and **the owner's changed-ids sheet sent first**. On that sheet, goblet_squat and front_squat lose their hand close-ups (GAPS) and mountain_climbers' palm-flat is redrawn (D-LIB12FIX-SHIP (2)). |
+| — | LIB-5v | — | per plan | It is plan slot 7, after #109. Check the plan for its card. |
+| #271 | LIB-7c (`lib-7c-card.md`) | claude/lib-7c-lb1-hands @ `88ad31bd` (base: #193's branch) | WAITING (panel VALID, lib4-cards 25; words look PASS) | It needs a review when its slot comes; re-base it after #193 merges. |
+| #245 | LIB-9a LB1 (`lib-9a-card.md`) | claude/lib-9-lb1 @ `9e5d9666` | WAITING (MAIN565 FIXED accepted; HLP row dropped to LIB-ZOOM) | It is slot 8. It needs a main catch-up and a review at its turn. |
+| #279 | LIB-ZOOM (`lib-zoom-card.md`) | claude/lib-zoom @ `754176a0` (built on #245 9e5d966 and main) | PASS (delta PASS @ 754176a), frozen | It merges right after #245. |
+| #265 | LIB-10 LB2 (`lib-10-card.md`) | claude/lib-10-lb2 @ `2dcbac15` | WAITING (panel VALID, lib4-cards 24) | Slot 9. It needs a main catch-up and a review. |
+| #278 | LIB-11 pilot B (`lib-11-card.md`) | claude/lib-11-pilot-b @ `d3b231d6` | WAITING. **All 4 drawn plates are approved** @ d3b231d (lib4-cards 28); crunch is held. The E-R5 renders are reproduced and scored as advisory. | Next comes Do 10, the owner sheet, once #109 and #191 are on main. Then 'PILOT B PIN GO'. It is slot 10. The sheet sections are in 6276882489, 6277782675 and the hands ruling below. |
+| #273 | HT-11 (`ht-11-card.md`) | claude/ht-11-delta @ `e0722148` | PASS, WAITING | Slot 11, before LIB-13 merges. It needs a main catch-up and regenerate. |
+| #274 | LIB-13 LB3 (`lib-13-card.md`) | claude/lib-13-lb3 @ `423acc18` | WAITING. **5 of 7 approved** @ 423acc1 (landmine, DRDL, conventional, sumo, back_extension); t_bar_row is held. | **D-LIB13-PANEL2:** one more focused fix round on pendlay_row (the bar ring's centre came off the plate) and one_arm_dumbbell_row (draw the whole red working arm from the shoulder; R1 is card-true under D-LIB13-ONEARM). Then a focused recheck panel (PANELS.md). Still failing means HELD. Slot 13. |
+| #190 | engine spike | claude/lib-engine-spike @ `82ae2d40` | do not merge | It is the reference for E-R5 only. |
+| #3, #221, #88 | watch lane | — | **hands off**; never merge #3 | — |
+| #1, #92, #94, #144, #149, #158, #188, #192, #197, #209, #259 | docs, parked or old | — | not in the lanes | Gym Finder #158 is PARKED. #259 (research LP) is stale: check it before using it. |
+
+#### D. Merge order (owner checklist; builds may run ahead, merges may not)
+1. LIB-5 Do 9: **done** (train 32).
+2. #181.
+3. #193.
+4. LIB-7b.
+5. #191.
+6. #109 (pin).
+7. LIB-5v.
+8. #271.
+9. #245.
+10. #279.
+11. #265.
+12. #278 (pin).
+13. #273.
+14. #274.
+
+Each one goes through a merge train (6.8): `claude/sup-merge-train-<N>` from main, `--no-ff` merges of the reviewed heads, local typecheck and vitest, a draft PR, `ci-watch.sh`, ready, then `merge_pull_request` with `expectedHeadSha`. The next train is **33**. Send the APK only when the app visibly changes: train 32 changed only code that nothing ships yet, so no APK was sent, following train 22's precedent. The last APK sent was train 24's.
+
+#### E. Rulings made 10-19 that the next steps depend on
+**Hand close-ups:**
+- **D-LIB12FIX-R8-GAPS:** palm-flat and battle-rope are approved. wall_ball, front_squat and goblet_squat moved to GAPS. Their words files were removed, which is accepted; their view code stays.
+- **D-LIB12FIX-R8:** R8-DRIFT pins the engine values copied in `hands/lib12-hand.mjs`.
+
+**LB3:**
+- **D-LIB13-ONEARM:** the one-arm row's support arm stays bent. The card says hand under the shoulder and back parallel, and on the standard body that needs a bent elbow. The owner sheet carries a line about it.
+- **D-LIB13-PANEL2:** see the #274 row in C.
+- One_arm's end-pose support contacts are accepted. The sumo Q2 range test is 5-10°.
+- pendlay's knee bound is now relational from c1; this is accepted.
+
+**Pilot B:**
+- **D-LIB11-FACTS2:** contact facts are required.
+- **D-LIB11-SACRUM:** the back-pad lower end is `buttock`.
+- **D-LIB11-PANEL1:** one fix round, then the recheck passed.
+- **E-R5 SCOPE RULED:** plan 2.4 and row 20 propose the five engine fields (`root.roll`, `trunk.yaw`, `trunk.lat`, `camera.pitch`, the volume trunk). The owner gives **one** go/no-go on four renders: side_plank, russian_twist, dumbbell_fly at pitch 45, and the rear-delt fly at pitch 15 with the volume trunk. russian_twist's Mistake needs a sixth field, `root.yaw`.
+
+**Other:**
+- **VITEST-RPC** is on main (train 31): the vitest worker RPC timeouts are fixed.
+- An **HT-8 Paper `locator.waitFor` timeout** happened once on #274's gate-shard (3/4, UTC) and passed on its one re-run. If it recurs on any head, open a GATE-FLAKE card. Never re-run to green without a root cause.
+
+#### F. Owner items (send each as one short, plain message when its time comes)
+1. **The pilot A changed-ids sheet, before PILOT A PIN GO.** It shows goblet_squat and front_squat without close-ups (the R8 scores: cupped C5 [2,4,3]; front-rack C1, C3, C5 and C7 below the bar) and mountain_climbers' new palm-flat close-up (R8 PASS).
+2. **The pilot B sheet (LIB-11 Do 10).** It holds:
+   - the 4 plates with critic scores and the smith and legCurlMachine rigs;
+   - the **E-R5 go/no-go**, with the advisory scores beside each render;
+   - the hand kinds (palm-flat, battle-rope; the others are "no drawing yet");
+   - **battle_ropes' camera (i), (ii) or (iii)**.
+3. **The LB3 sheet**, once LB3 is approved. It holds the one_arm bent-arm line, a sumo line (a side view cannot show the wide stance), pendlay's F2 as a named flag, landmine's 228 mm plate, and the one_arm F7 drawable-fault note, which needs his named yes.
+
+#### G. Follow-ups (not blocking)
+- **F-LIB12-R8B:** redraw ball-contact, front-rack and cupped-goblet to the R8 bar, starting from the #191 findings (6273389908, 6274835211).
+- **F-LB3-7:** research the one-arm row's support-arm form.
+- **F-PB-1:** stale research notes (smith `notes[0]`, seated_leg_curl `notes[3]`).
+- **F-LB3-1..6** and **F-HT11-1, -2**: see their records.
+- **Golden-B follow-ups 18-21** (PANELS.md 1.3), done when golden B is next unlocked.
+
+#### H. Hourly tick prompt for the new account (the old prompt, with the old session id removed)
+```text
+Hourly tick. You are the only M/ARC supervisor (this session). Run the tick in .claude/skills/supervisor/tick.md, with docs/supervisor/HANDOVER.md (newest copy per its section 0; section 8 is the live state; read 8.0o first) and AGENTS.md from origin/main. Work from live state: git ls-remote heads, the latest comment on every open lane PR, get_session for every builder/reviewer you started, CI on heads.
+
+OWNER CHAT: write to the owner only for (a) a new APK (link, what changed, what to check on the phone), (b) a problem no agent can solve, (c) a choice only he can make, (d) the finish-line reminder. Otherwise the whole reply is exactly ".". Builders and reviewers never write to him.
+USAGE (owner 10-19): pause all work at 80% of the weekly limit; let every agent finish its current step first, then post WAITING. Read the meter each tick (docs/supervisor/verify/PANELS.md section 9).
+RELAY: "No need to update relay for now." Skip Relay upkeep; keep owed Relay lines in HANDOVER 8.5.
+FOCUS: "continue ur task on working the library drawings, if u can make it faster thats good".
+PARKED: Gym Finder (#158). The iPhone release starts only when all 153 library drawings are merged. No Play closed-test upload before the public release.
+MODELS: claude-opus-5-5 for judgement, every reviewer and any non-mechanical card; claude-sonnet-5 only for fully spelled-out steps; never Haiku or Fable. Sessions in auto mode.
+LANES: at most 4 active LIB builders (D-LIB-LANE-ACTIVE); research sessions hold no LIB slot; count active builders in every start or resume message. Builders run long jobs detached and keep a send_later check-in every 20 minutes (idle containers are reclaimed).
+Each tick: re-arm the PR/branch Monitor if it expired (docs/supervisor/scripts/monitor.sh + heads.sh); answer builder questions with rulings on the PR and by message; one fresh Opus reviewer per READY; run the calibrated critic panels and CARD FIELDS verifies yourself per docs/supervisor/verify/PANELS.md; stalled builder → one message, then replace from its HANDOFF; merge only via merge trains (HANDOVER 6.8: review PASS, all checks green on a train head built on latest main, plan order); APK to the owner after an app-visible merge once the fingerprint step passes; HANDOVER section 8 update in every train or every 3 h.
+NEVER: commit secrets; touch signing, EXPECTED_SHA256 or the keystore; push to main or claude/escobar-v2-implementation-eidx64; rewrite history on a branch you don't own; merge escobar-worker/** without the owner's per-PR yes; merge the watch agent's #3; loosen, skip or delete a test or guard; re-run CI to green without a root cause; work around a permission or classifier denial.
+```
+
+#### I. Lessons from 10-19 (also add them to section 9 at the next edit)
+- **Idle containers are reclaimed, and background jobs die with them.** Every builder, reviewer and helper that runs a job over about 15 minutes keeps a `send_later` check-in every 20 minutes. A run lost to a reclaim is never evidence; re-run it whole.
+- **The supervisor does a small fix itself** when the merge queue waits on it. Example: #270's two missing test mutations, pushed as a test-only supervisor commit `d2d3be0`, then a delta review by the same reviewer. Keep it to small, test-only changes, and say so on the PR.
+- **Critic panels cost about 0.7 M tokens each.** Run them only at READY or FIX points, never speculatively. Scored helpers (panel builders, verifiers, critics) are Opus subagents in the supervisor session, not sessions.
+- **Card truth beats a critic's technique assumption** (D-LIB13-ONEARM). Never tune a drawing off its card to please a critic. Rule it, give the owner a sheet line, and open a research follow-up.
+- **Log times from `date -u`, never from memory.** The 10-19 logs needed several fixes.
+
+#### J. DONE: do not redo (owner, 10-22: "I dont want repeat work")
+**The rule.** A verdict, approval or verify recorded on a PR or in `lib4-cards.md` is valid for the sha it names. If `git ls-remote` shows the same head, **trust it and move on**. Redo a check only when the head changed after it, and then only for the changed part: a delta review, or a focused recheck of the changed plates.
+
+**Done and valid at these heads. Do not repeat any of them:**
+- **Code reviews (PASS):**
+  - #193 @ 9c70344 (delta PASS)
+  - #191 @ ea916e9
+  - #279 @ 754176a (delta PASS)
+  - #273 @ e072214
+  - #109 (LIB-8-FIX PASS; F-LB3-1 diff check PASS @ ff7c5c4)
+  - #270, merged
+
+  Frozen PRs only get a delta review of a later push (a main catch-up or the ruled Lows).
+- **Approved drawings (critic panels):**
+  - LB1 12 plates (#245)
+  - LB2 5 plates (#265, lib4-cards 24)
+  - LIB-7c hand pairs (#271, section 25)
+  - horizontal_leg_press @ 9fbdfb5 (#279, section 26)
+  - LIB-12 palm-flat and battle-rope @ 6b6e5ab (section 27)
+  - pilot B 4 plates @ d3b231d (section 28)
+  - LB3 landmine, DRDL, conventional, sumo and back_extension @ 423acc1 (section 29)
+  - pilot A 13 plates (owner "Pilot a ok")
+- **CARD FIELDS verifies:**
+  - LB3 VERIFIED @ eced1c1, with tightenings diff-checked @ 59d3d78
+  - pilot B VERIFIED @ 0d97059, with buttock tightenings @ 4033daf / d3b231d
+- **Research:** the LB3 and pilot B research verifies are done and merged into `claude/libht-research` @ 38d5f9c6. Do not re-verify.
+- **E-R5:**
+  - the renders are posted and reproduced byte-identically;
+  - the advisory scores are posted (#278 6277782675);
+  - the scope is written into plan 2.4, row 20, decision 5 and risk 6.
+
+  Only the owner's answer is open.
+- **Rulings:** every D-entry in E above is final. Do not re-decide them unless the owner asks.
+
+**Restarting a lane is not restarting its card.** The replacement builder reads the PR body's HANDOFF and the PR comments from the last verdict or ruling on. It continues from the branch head with **only the next open step** named in the C table. It never rebuilds, re-renders or re-verifies anything already posted. Put this sentence in every restart message: "Everything already posted on this PR is done; do only <next step>."
+
+**Read only what you need.** Read 8.0o, then the sections and cards it points to for the step at hand. Sections 8.0a-8.0n are history; open them only to look up a specific ruling.
+
 ### 8.0n 10-18 ~05:35 UTC: new supervisor running (read first; supersedes 8.0m where they differ)
 
 **Supervisor.** session_01HtNEBU3oDR8NyHKK3uCwUi (new account, environment env_013Ap2eNfQ92RBapFBzsfRs7). Hourly routine `trig_019LBJDA2jX95HgcWEgQPMJ6` "M/ARC supervisor tick" (cron 57 * * * *, fires into this session; its prompt carries the owner rules: owner chat ".", Relay skipped, the library focus, the parked items, the models). Watchers: monitor.sh + heads.sh under one Monitor (SKIP adds 188 190 192 197 209 221 237; BR adds claude/libht-research-split). `subscribe_pr_activity` failed on this account too.
@@ -1046,6 +1565,282 @@ Each research session runs Opus, gives plain exact edits to a Sonnet helper and 
   10. slot 7a: LIB-5v
   11. slot 8: LB1 #245
   - LIB-3c may merge before #245. LB1 cannot merge before #109.
+
+**Update ~01:00 UTC (10-19).**
+- **Train 28 merged** (#266, main `d9dbd067`): LIB-4b, LIB-4c + #249, LIB-4d, cards `9d06627c`, handover `651a767f`. No app change, so no APK. LIB-4b/4c/4d builders and reviewers are archived. #257 is closed.
+  - Deleting the scratch refs (claude/lib-4c-seed-1..3, lib-4c-scratch, lib-4b-scratch) was refused with HTTP 403. They are left as they are.
+- **Train 29** (#267, `83075956`): LIB-5 + sup-lib5-bundle + BOX-CAP. Local checks are green; CI is running. After it merges:
+  - resume the LIB-5 builder (session_01EtPBie8dERvuaHFMj9AWUU) for Do 9, the back box;
+  - archive the BOX-CAP builder (session_01WLyzwuYeV2k1jZjS6XTSqU);
+  - LIB-8M Do 3 and LIB-6-PM's back patches open.
+- **Research:** #263 merged into `claude/libht-research` @ `7d7c52e1`.
+  - That was 3 LR-29 verifies with plants (all valid), 5 fix rounds and 2 focused re-checks. Copy lint and C8 are 0 on the 26 cards.
+  - Rulings R-LB2-1..26 are on #263.
+  - R-LB2-27 (dumbbell_biceps_curl drawable false; plate.mistake becomes elbow positioning c4, so the curl is a redraw) is #268 @ `f7d3ea7`. It merges when CI is green, and that gives the new <RESEARCH_HEAD>.
+  - Process: the verify runs by hand (a plant agent, then a blind critic agent) under scratchpad `vlb2*`. Keep the answer key out of shared files while the critic runs.
+- **New cards on `claude/sup-lib4-cards`:**
+  - `0b85c963`: LIB-6-PM, section 17, D-LIB-ORDER-2.
+  - `9d06627c`: LIB-7-FIX, LIB-7b, section 18.
+  - `39c71b01`: LIB-7c and section 19 (six-key rulings, D-LIB7FIX-PERKEY).
+  - Each card was critiqued and re-checked before it started.
+- **Posted rulings:**
+  - D-LIBHANDS-COUNT, on #193: hand-adding cards raise library-lint :241, :302 and :307 exactly.
+  - D-LIB8M-DEG, -NOFACTS, -SLRDLLINE and -MISTAKEPARTS, on #109.
+  - D-LIB10-BENCH-H, -BBELBOW and -SKULL1, on #265: the three BENCH ids are H, so BENCH is not built in LB2.
+- **Lanes (4 of 4 active):**
+  - LIB-10 #265 is drawing barbell_bench_press and close_grip; incline_bb and arnold wait for pilot A.
+  - LIB-7-FIX #193 is building PERKEY, then READY.
+  - LIB-8M #109: 4 redraws are pushed (`774becf`). The curl redraw comes next. Then one calibrated critic panel (D-CRITIC-CAL3) on all 5.
+  - LIB-3c #264 passed review @ `a76b72c` and is fixing M1/L1/L2 plus a main merge.
+  - WAITING: LIB-6-PM #181 @ `02ebed5` (needs LIB-5).
+- **Being drafted or critiqued:** LIB-12-FIX on #191, slot 6c. It needs per-key words files, the lint and gate counts, and a gate guard. LIB-12 keys mountain_climbers, so it merges before the pilot A pin.
+- **Merge order (checklist):**
+  1. LIB-5 + bundle and BOX-CAP (train 29)
+  2. LIB-5 Do 9
+  3. LIB-6 #181 + LIB-6-PM
+  4. LIB-7 #193 + LIB-7-FIX
+  5. LIB-7b (6b)
+  6. LIB-12 #191 + LIB-12-FIX (6c)
+  7. LIB-8M #109 (7). PIN GO waits for LIB-7b and LIB-12.
+  8. LIB-5v (7a)
+  9. LIB-7c (7b, before LB1)
+  10. LB1 #245 (8)
+  - LIB-3c can merge any time after its delta passes.
+- **Owner:** nothing is owed to him now. The pilot A sheet comes after LIB-8M's critic and QA.
+
+**Update ~03:25 UTC (10-19).**
+- **Train 29 merged** (#267, main `f125edab`): LIB-5 + bundle + BOX-CAP. No app change, so no APK. The BOX-CAP builder is archived.
+- **Train 30 merged** (#269, main `565ea5a4`): LIB-3c #264 @ `4309cfc` (delta PASS, 0 findings; the train tree equals `4309cfc`; CI green on every leg). No app change, so no APK. LIB-8M's Do 9 and LIB-10's qa.mjs are open.
+- **Research:** #268 (R-LB2-27, curl drawable false) merged; `claude/libht-research` @ `f57e7944` is pilot A's <RESEARCH_HEAD>. LB2 stays on `7d7c52e1` (named on #265); every LB2 card is byte-identical on both.
+- **Pilot A critic panel and TOPFAULT** (lib4-cards section 21 @ `47ade203`; #109 6258287101 and 6258289883):
+  - Panel VALID. Approved @ `83735ab`: dumbbell_shoulder_press, dumbbell_biceps_curl. incline_dumbbell_press R5 fails (the arch reads as a belly): fix round 1.
+  - TOPFAULT (14 blind Opus passes): 7 single keys equal firstKey. dumbbell_bench_press answered 'arch' against firstKey 'hips': the tells are reordered. 5 answered 'several' (triceps_pushdown, rope_triceps_pushdown, upright_row, pec_fly, plank): both tells name the card's one fault, so their tells are redrawn (CARDTRUE), followed by one final blind pass on the new tells. The curl (drawable false) has the ruled key 'wrist-bend' (c6); F7 stays raised for the owner's named yes on the sheet.
+  - The pilot A panel is run by hand under scratchpad critic-pa/ and topfault-pa/ (private keys in *-private/).
+  - The plan is amended on `claude/howto-options` @ `a5e87d9e`: SLRDL leaves the drawable-fault list and the curl joins it; the count stays 6.
+- **Lanes (4 of 4 active):**
+  - LIB-8M #109: fix round (incline, bench reorder, 5 tell redraws), then 'PILOT A FIX READY'. The supervisor then runs the final blind pass and one calibrated recheck. Do 7 for the settled ids runs meanwhile; Do 9 follows on a head with main merged.
+  - LIB-7-FIX #193: `5354a38` is red because the D-LIBHANDS-COUNT lines were not raised (source-gate job 117851558354). Nudged at 03:01.
+  - LIB-10 #265 @ `c3195a4`: 5 of 7 drawn (pullover added). Do 6 is open; incline_bb and arnold wait for pilot A on main.
+  - LIB-5 Do 9 #270 (on `claude/lib-5-shared-layers`, restarted from main, `eef8685`): waiting for 'LIB-5 DO9 READY'.
+  - WAITING: LIB-6-PM #181 @ `02ebed5` (its back patches are open now that LIB-5 is on main; resume at the next free slot).
+- **Queue as slots free:** LIB-6-PM back patches, then LIB-12-FIX (after PERKEY lands on #193; card `f7824b5b`), then LIB-7c (`39c71b01`). LIB-12's calibrated hand-view panel (12 ids) runs before PILOT A PIN GO.
+- **Merge order:** unchanged from the 01:00 update, less LIB-3c (merged).
+- **Owner:** nothing is owed to him now. The pilot A sheet comes after the recheck, Do 9 and CARD FIELDS; it carries the curl's F7 question.
+
+**Update ~06:00 UTC (10-19).**
+- **Pilot A (#109) is through its critic, TOPFAULT and CARD FIELDS gates** (lib4-cards 21.3-21.7; `claude/sup-lib4-cards` @ `1ff18a84`).
+  - Approved on every scored item (calibrated panels, all VALID):
+    - at `83735ab`: dumbbell_shoulder_press and dumbbell_biceps_curl;
+    - at `013f84e`: dumbbell_bench_press, triceps_pushdown, rope_triceps_pushdown, pec_fly and plank;
+    - at `94c551f`: upright_row.
+    The rest carry from their earlier approval with their fragments unchanged.
+  - **incline_dumbbell_press is held** (D-LIB8M-CRIT3): its R5 arch failed the last run, [3,3,2]. After #109 merges, its redraw goes to LB2 (LIB-10; #265 6260478491). Pilot A pins **13**.
+  - TOPFAULT settled for all 14. The 5 'several' ids were redrawn to one tell each, and a final blind pass gave 5/5. incline's blind pass after FIX2 gave 'arch'.
+  - **CARD FIELDS VERIFIED @ `1d2a809`** (D-LIB8M-CF1/CF2): a full blind run plus a focused re-verify, each catching its plant. New rule **D-LIB8M-FACTS**: every number a quote gives for a drawn pose becomes a plate fact, and a range is written as its midpoint when it is at least 4° wide.
+  - Do 9 at `94c551f`: every hard check passes on all 14. Flags are the measured set (D-LIB8M-TF2 3).
+  - **Next:** the incline-hold push, then Do 9 on that head, Do 11 (carry), Do 12 (the sheet), then the owner sheet. PIN GO waits for LIB-7b, for LIB-12 on main and merged in, and for LIB-12's R8 panel.
+- **Lanes (4 of 4 active):**
+  - LIB-10 #265: 5 of 7 drawn (`c3195a4`). Do 6 is open (research `7d7c52e1`).
+  - LIB-8M #109.
+  - LIB-5 Do 9 #270: D-LIB5-TWIN plus two B2 golden8 runs at P=1, about 2 h each. READY about 07:15 or later.
+  - LIB-12-FIX #191: started 05:33 (session_01JQUfc9aqCRBZPa3TJ22Zcp; "LIB-12-FIX start" 6260420122 carries the verbatim rulings; #193's PERKEY head is `a8ec1a6`).
+- **WAITING:**
+  - LIB-7-FIX #193: READY `a8ec1a6`; reviewer session_014mbWcrLHLUs3oFjNUV6Uxv.
+  - LIB-6-PM #181 `7215896`: Do 5-6 done; Do 7 waits for LIB-5 Do 9.
+- **Queue:** LIB-7c when a slot frees. LIB-7b after #193 merges.
+- **Merge order:** unchanged. Merge #3 (LIB-6 + LIB-6-PM) is the chain's bottleneck: it waits for LIB-5 Do 9, then LIB-6-PM Do 7.
+- **Scratch tooling:** critic-pa{,2,3}, topfault-pa{,2,3}, cfpa{,2}. Answer keys and plants are in *-private/ or the *-plant.txt files, never in shared files.
+- **Owner:** nothing is owed now. The pilot A sheet will carry the curl's F7 question (D-LIB8M-TF1 4) and the measured flags.
+
+**Update ~09:00 UTC (10-19).** Cards branch `claude/sup-lib4-cards` @ `fa3ce1a6`.
+- **Pilot A (#109):**
+  - @`9f656cc`: 13 pinned (incline held). Do 9 passes every hard check on all 13, Do 11 carry is proven, and CARD FIELDS carries (the docs/research diff is empty).
+  - **The sheet went to the owner at 07:1x** (@`48d49bb`, page `43a264e5…`, sheet `7e5deff7…`, reproduced byte-identical). It asks for OK, or names of plates to change, plus a named yes on F1, F2, F3, F4 and F7. No answer yet.
+  - PIN GO waits for: the owner's answers; LIB-7b; LIB-12 on main and merged in; LIB-12's R8 hand panel.
+  - LIB-8M is WAITING.
+  - **D-LIB8M-RPC (b):** #109's source-gate went red twice on `[vitest-worker]: Timeout calling "onTaskUpdate"`. That is a real defect, so there are no more re-runs. The root cause is library-ci D-LIB4c-3, which calls execFileSync generate 4 times, longer than vitest's 60 s birpc limit. The fix goes through VITEST-RPC.
+- **VITEST-RPC** (card `a2f0da69`; CI-health lane, no LIB slot): session_01XobygLfvdTDCUZASfA2C8E on claude/vitest-rpc. Next is its 'VITEST-RPC NOTE READY', then the ruling.
+- **LIB-7-FIX #193:**
+  - review PASS @`a8ec1a6`;
+  - D-LIB12FIX-ORDER fix @`9c70344`, delta review PASS.
+  - It rides its train after #181.
+- **LIB-12-FIX #191** (session_01JQUfc9aqCRBZPa3TJ22Zcp): the words note @`c99cb66` (merged #193 `9c70344`) passed the supervisor's look. Next:
+  1. its Do 11 critic head;
+  2. the calibrated R8 hand panel on LIB-12's 12 drawn ids (hands/DESIGN.md §5, sheet.mjs --plant);
+  3. the cupped and front-rack scores to the owner.
+- **LIB-7c #271** (session_01StPqb429KznqycToN9K17p; claude/lib-7c-lb1-hands from `a8ec1a6`): starts by reference (D-LIB7c-STARTREF, lib4-cards 23 @`f579d20e`). Its note @`a88daef` was accepted. Next: Do 4-8, then its panel.
+- **LB2 / LIB-10 #265:**
+  - CARD FIELDS VERIFIED @`ccbe6f5` (lib4-cards 22; the D-LIB8M-FACTS scope is exact).
+  - Do 8 QA @`2dcbac1`.
+  - Panel 1 (lib4-cards 24, D-LIB10-PANEL1: golden-B anchors until pilot A is pinned) is VALID: 5 plates approved @`2dcbac1` (6263322398).
+  - LIB-10 is **WAITING @`2dcbac1`**. incline_barbell, arnold and the incline_dumbbell redraw wait for pilot A on main.
+  - Advisory: the pilot A report's "nothing under a label" check fails on bench, decline and pullover, while LB2's own QA passes. This is decided after #109 merges.
+  - golden-B follow-ups 16 and 17 stand (8.0n ~03:25).
+- **LB3 research** (brief lb3-research-card.md @`08e9234c`): session_01UnpUkKrqrJbEAKHWNwjLAv on claude/libht-research-lb3. It holds no slot. It covers the 10 non-pilot LB3 cards (readiness, LR-31, LR-33), followed by an LR-29 verify by hand.
+- **HT-11 started** (card ht-11-card.md @`fa3ce1a6`; no card existed before). Library plan 5.1 says HT-11 must merge before LB3, and LIB-13 depends on HT-11 and LIB-10.
+  - Builder session_019fSiZ166dkvKgzrqiZ7BWf, on claude/ht-11-delta from main `565ea5a4`.
+  - Do 0 (design note) comes first, then 'HT-11 NOTE RULED'.
+- **Lanes (4 of 4 active):** LIB-5 Do 9 #270, LIB-7c #271, LIB-12-FIX #191, HT-11.
+- **WAITING:** LIB-10 (pilot A on main), LIB-8M (owner sheet), LIB-6-PM #181 @`7215896` (LIB-5 Do 9), LIB-7-FIX (merge order).
+- **Next for the supervisor:**
+  - rule the HT-11 note and the VITEST-RPC note;
+  - review LIB-5 Do 9 when READY, then its train, then LIB-6-PM Do 7;
+  - run the R8 panel when LIB-12-FIX posts its critic head;
+  - verify LB3 by hand when it is READY, then draft the LIB-13 card;
+  - sheet cosmetics for the next rebuild: capitalise the held lines, and write the F5 line in plain words.
+- **Merge order:** unchanged (LIB-5 Do 9 → LIB-6+PM → LIB-7+FIX → LIB-7b → LIB-12+FIX → LIB-8M → LIB-5v → LIB-7c → LB1). HT-11 merges before LIB-13.
+
+**Update ~11:30 UTC (10-19).** Cards branch `claude/sup-lib4-cards` @ `5144ecc6`. Research head **`892d6516`**.
+- **LB3 research is done.** It is on claude/libht-research as `892d6516`: #272 merged as `2dd60ae0`, then #275.
+  - LR-29 verify: two blind Opus halves, both VALID, all 4 plants caught. The verifier re-fetched 359/359 quotes verbatim; the supervisor's 10 % re-fetch got 36/36.
+  - Rulings R-LB3-1..12 (lb3-research-verify.md and lb3-research-recheck.md on the cards branch).
+  - Follow-ups:
+    - F-LB3-1: #109 re-copies 3 breath lines under a supervisor diff check (#109 6264369545).
+    - F-LB3-2: LB2's shoulder stop rows.
+    - F-LB3-3: hold-wrist alignment.
+    - F-LB3-4: barbell_shrug's 7 copy-lint hits.
+    - F-LB3-5: the DB RDL and sumo variantLine texts move to notes.
+    - F-LB3-6: t_bar_row joins the LIB-ZOOM small-motion question.
+- **LIB-13 started** (LB3 build-ahead; card lib-13-card.md @ `5144ecc6`, critic-reviewed, 23 findings applied; #274; session_01PfNzDw3QCuJfeECLioJymX).
+  - Split: LIB-13 draws the non-shrug ids; LIB-13s (the 3 shrugs) waits for LIB-ZOOM.
+  - Note RULED: all H, plateFacts [], drawn-item tests Q1 and Q2.
+  - D-LIB13-LANDMINE-2: research found "smaller plates" and "until the plates touch the torso". landmine_row draws a 228 mm plate as a drawing convention with its own flag.
+  - D-LIB13-TBAR: t_bar_row is HELD. Its card-true hand rise is 11-12 cm against about 30 cm for PQ-H3. LIB-13 now draws 7.
+  - Merge: after rows 1-12 of the checklist, LIB-11 included, and after HT-11.
+- **HT-11** (#273; card ht-11-card.md; session_019fSiZ166dkvKgzrqiZ7BWf).
+  - Note RULED. Base chunks are 37.6-62.9 % smaller in gz, byte-preserving.
+  - R1-R4 are yes, plus a no-eval test. D-HT11-CROPREF (b): no crop refs, and HT7-A5 is unchanged.
+  - Follow-ups: F-HT11-1 (one shared decoder needs vite.config) and F-HT11-2.
+- **LIB-7c** (#271): panel round 2 VALID (lib4-cards 25), with 6 ids approved @ `3bdd609`. Round 1 was invalid: one plant was too subtle.
+  - golden-B follow-up 18: dumbbell_lateral_raise's Wrong handle floats.
+  - 7c-A5 pins @ `88ad31b`; the words look passed.
+  - **WAITING** for #193 to merge (Do 8).
+- **LIB-5 Do 9 READY @ `121df94`** (#270). Reviewer session_018H7am5XjyzXrMNSRHuWTQ2. The builder saw the gate timing probes red on a busy container while CI was green; the reviewer runs them 3 times idle, against main.
+- **LIB-12-FIX** (#191): D-LIB12FIX-CI1 (6263538456). The source-gate red @ `c99cb66` is library-fidelity:46 at 5235 ms against a 5 s timeout.
+  - The builder measures main against the head, 10 runs each. The run was restarted at 10:27 after a container recycle; the result is due about 12:30.
+  - If the red is not this PR's: the critic head, then the R8 panel.
+- **VITEST-RPC** (#276): note RULED A + B. A: D-LIB4c-3's generator calls become async. B: the generator fan-outs in S7 and in "7 mutations" are capped at 2. The second symptom, the fidelity 5 s timeout, is CPU starvation from those fan-outs. Next: READY with its proof list.
+- **Lesson:** a builder that leaves a long background run while its session is idle can lose its container. The fix is check-ins every 20 minutes. The tip went to all builders.
+- **Lanes (4 of 4):** LIB-12-FIX, HT-11, LIB-13, and one free slot while LIB-5 waits on review (LIB-11's card is being drafted for it).
+- **WAITING:** LIB-10, LIB-8M (owner sheet), LIB-6-PM (LIB-5 Do 9 merge), LIB-7-FIX (merge order), LIB-7c (#193).
+- **Owner:** the pilot A sheet answers are still due. Nothing else is owed.
+
+**Update ~14:00 UTC (10-19).** Cards `claude/sup-lib4-cards` @ `7c389904`. Research head **`38d5f9c6`** (pilot B, on top of LB3's `892d6516`).
+- **Owner, 12:10: "Pilot a ok"** (#109 6266791221). All 13 plates are approved. Each flag's shown default (approve as named exemptions) is accepted for F1-F4 and F7, and the held plates stay held. PIN GO still waits for LIB-7b, for LIB-12 on main, and for its R8 panel. F-LB3-1 (3 breath lines) rides #109's next push.
+- **Pilot B research is merged** (#277 → `38d5f9c6`).
+  - Focused LR-29 verify VALID: both plants caught, 263/263 quotes verbatim, and the supervisor's 10 % sample 18/18.
+  - Rulings R-PB-1..5 (pb-research-verify.md @ `712e2433`).
+  - PICK CHANGED: smith (flared elbows) and seated_leg_curl (pushing with the calves).
+- **LIB-11 pilot B started** (#278; card lib-11-card.md @ `70eb1460`, critic-reviewed with 26 findings; session_017gk3dd83jc9VpFjQCvYZqm).
+  - Note RULED: smith `sh.r.elev` 45; cable_fly F2 as a named flag.
+  - **crunch is HELD** (small motion; trace 9.4 px against 22.11).
+  - Slice look PASS (smith, seated_leg_curl, cable_fly), then PILOT B BULK GO (push_up).
+  - The E-R5 renders are done in scratch from #190's full spike set.
+- **LIB-13 LB3 (#274):**
+  - Slice look PASS, then rows and hinge BULK GO.
+  - D-LIB13-Q1b: landmine's Q1 test is REP's "roughly parallel", within 15°.
+  - pendlay F2 is a named flag.
+  - CARD FIELDS verify VALID. Fix D-LIB13-FACTS2: contact facts on 6 cards. This corrects my numbers-only reading; a focused re-verify follows.
+- **LIB-ZOOM started** (#279; amendment D-LIBZOOM-NOW @ `7c389904`, base #245 `38b436d`; session_01RBW26AifVHZ7uWufU2BJRx).
+  - Note RULED: option 1, the inline zoom circle, which is the owner's chosen form.
+  - It covers the 6 small-motion plates: horizontal_leg_press, barbell_shrug, dumbbell_shrug, cable_shrug, t_bar_row and crunch.
+  - Build @ `7c26b77`; its calibrated panel is running (S/critic-zoom), with R11 "zoom reads".
+  - D-LIBZOOM-HLP: #245 drops horizontal_leg_press's row before LB1 merges.
+- **LB1 (#245) fails 2 of its own tests on today's main** (lb1-plates :1140 and :1151, H10). Queued as D-LIB9a-MAIN565 for the next free slot.
+- **HT-11:** REVIEW PASS @ `e072214` (2 lows; R1b recorded). It is WAITING for merge slot 11, which comes after rows 1-10.
+- **In review:** LIB-5 Do 9 (#270; reviewer session_018H7am5XjyzXrMNSRHuWTQ2, running idle gate timing runs).
+- **Active LIB (4):** LIB-12-FIX (CI1 measurement), LIB-13, LIB-11, LIB-ZOOM.
+- **WAITING:** LIB-10, LIB-8M, LIB-6-PM, LIB-7-FIX, LIB-7c, HT-11. LB1 is queued.
+- **Supervisor owes:**
+  - before pilot B's renders reach the owner: plan 2.4 and row 20 E-R5 scope, and plan 6.1:663 hands;
+  - VITEST-RPC's READY review;
+  - the follow-ups F-LB3-1..6, F-HT11-1..2 and golden-B 18.
+
+**Update ~17:05 UTC (10-19).** main **`7307b30`** (train 31). Cards `claude/sup-lib4-cards` @ `fcc43fde`. Research head `38d5f9c6`.
+- **Owner usage rule (15:00, 15:02):** pause all work at 80 % of the weekly limit. At the trigger, start nothing new. Every builder, reviewer and research session finishes its current task to its next milestone post, then posts WAITING and stops. Going a little past 80 % to finish is fine. Resume after the reset (Sat 24 Oct 11:00 UTC) or on the owner's word.
+  - Meter: `list_events(kinds:["rate_limit_event"])` on any busy session gives `unifiedWindows.seven_day.utilization`. It read 0.61 at 16:31 and rises about 2 %/h, so 0.80 is about 02:00 UTC Tue.
+  - From 0.75 on, check every 20 min.
+  - The guard notes are in the supervisor's scratch usage-guard.md; this line is the rule.
+- **Train 31 merged** (#280 → `7307b30`): VITEST-RPC, the vitest RPC timeout fix. It changes tests only, so no APK. LIB-12-FIX and LIB-8M are told to merge main at their next push.
+- **LIB-ZOOM (#279):**
+  - Panel VALID; horizontal_leg_press APPROVED @ `9fbdfb5` (lib4-cards 26 @ `fcc43fde`; golden-B follow-up 19).
+  - Merged #245 `9e5d966` in (merge commit) and pushed `f0dc516`.
+  - Its container was reclaimed during a local gate, so it was nudged at 17:05 to re-run, merge main and post READY.
+- **LB1 (#245):** MAIN565 FIXED @ `9e5d966` accepted. The root cause was LIB-3c's h10 ctx (a test-only fix). The HLP row is dropped. LIB-9a is WAITING (slot 8).
+- **LIB-13 LB3 (#274):** CARD FIELDS VERIFIED @ `eced1c1` (focused re-verify; plant caught). Two tightenings are asked: one_arm end-pose contacts and the sumo Q2 range test. The session had been idle since 14:57 (container reclaimed) and was nudged at 17:05.
+- **LIB-11 pilot B (#278):**
+  - MAPS RULED @ `6ade71ef` (D-LIB11-FACTS2: quoted contacts are facts).
+  - CARD FIELDS READY @ `24d2b68`. The blind verify was VALID (plant caught).
+  - RULED (6272494659): tempo and topFault pass; plateFacts gets one fix round (cardPose on every contact, plus the missing contacts listed there).
+  - Follow-up **F-PB-1** (research lane): stale notes, smith `notes[0]` and seated_leg_curl `notes[3]`.
+- **LIB-12-FIX (#191):** the measurement shows the timeout is not this PR's (15:25). 'LIB-12-FIX CRITIC HEAD' is next, then the R8 hand panel.
+- **Lanes now.**
+  - Active LIB, 4 of 4: LIB-12-FIX, LIB-13, LIB-11, LIB-ZOOM.
+  - WAITING: LIB-9a #245, LIB-10 #265, LIB-7c #271, HT-11 #273 (PASS), LIB-6-PM #181, LIB-7-FIX #193 (PASS), LIB-8M #109 (pilot A ok; PIN GO waits for LIB-7b, LIB-12 and R8).
+  - In review: LIB-5 Do 9 #270 (reviewer session_018H7am5XjyzXrMNSRHuWTQ2). It is first in merge order.
+
+**Update ~19:50 UTC (10-19).** main **`07ad7f1`** (train 32). Cards `claude/sup-lib4-cards` @ `1e6bc1b4`.
+- **Train 32 merged** (#281 → `07ad7f1`): LIB-5 Do 9, the back-pain box (#270, plan slot 1).
+  - Review @ 121df94 FAILed on 1 Medium: two S4 mutations were missing. The supervisor fixed it in a test-only commit @ `d2d3be0`, a small fix done directly to keep slot 1 moving. The delta review PASSed. CI was 17/17 green.
+  - **No APK.** The APK built and the fingerprint step passed (run 39307996359, artifact 12216217541), but nothing changes on screen: the box shows only on sheets flagged `back`, and none of the 8 shipped sheets is. This follows train 22's precedent. The next app-visible train sends an APK that carries this code too. The last APK sent is still train 24's.
+- **Usage meter:** 0.69 at 19:08, rising about 2.5 %/h, so 0.80 is about 23:30 UTC. When the meter reaches 0.80, the pause rule (update ~17:05) applies. Every running builder has already been told to finish to its next milestone, then post WAITING.
+- **LIB-12-FIX (#191):**
+  - The R8 panel round 1 @ `2aa3732` was VALID: battle-rope passed, and 4 keys failed.
+  - D-LIB12FIX-R8 gave one fix round, with an R8-DRIFT test. FIXED @ `6b6e5ab` adds a new `hands/lib12-hand.mjs`.
+  - Round 2 was VALID: palm-flat PASSES. ball-contact, front-rack and cupped-goblet still fail and move to GAPS (D-LIB12FIX-R8-GAPS; wall_ball, front_squat, goblet_squat).
+  - Follow-up **F-LIB12-R8B** redraws those three. The record is lib4-cards 27.
+  - Next: 'LIB-12-FIX READY', then a fresh reviewer.
+  - Owner: before PILOT A PIN GO, he gets the changed-ids sheet. goblet_squat and front_squat lose their close-up, and mountain_climbers' palm-flat is redrawn (D-LIB12FIX-SHIP (2)).
+- **#109 LIB-8M:** F-LB3-1 plus the main merge @ `ff7c5c4`; the diff check PASSED. WAITING for PIN GO (LIB-7b, LIB-12 on main, R8 done).
+- **LIB-11 pilot B (#278):**
+  - CARD FIELDS VERIFIED @ `0d97059` (focused re-verify VALID).
+  - PLATES READY @ `4033daf` (page `94fe6085…`). The smith `buttock` fact is diff-checked. D-LIB11-SACRUM: seated_leg_curl uses `buttock` for c4, because of the lumbar hollow.
+  - Calibrated panel running: S/critic-pb; golden-B anchors; plants on smith feet (R3) and on the cable_fly leader (R4).
+  - Before pilot B renders reach the owner, the supervisor still writes the E-R5 scope into plan 2.4 and row 20.
+- **LIB-ZOOM (#279):** READY @ `29316a6`. Reviewer session_017mpinCbWveN3VVAWJvrxzy reviews its own diff over the scratch merge of #245 and main. It merges after LB1 (#245, slot 8).
+- **Lanes now.**
+  - Active LIB, 4 of 4: LIB-12-FIX, LIB-13 (LB3; working through an R10 failure in build.mjs), LIB-11, and LIB-6-PM (#181 `claude/lib-6-closeup-renderer`; resumed for Do 7 now that Do 9 is on main; next in merge order, slot 2).
+  - In review: LIB-ZOOM.
+  - WAITING: LIB-9a #245, LIB-10 #265, LIB-7c #271, HT-11 #273 (PASS), LIB-7-FIX #193 (PASS), LIB-8M #109.
+
+**Update ~22:20 UTC (10-19).** main `07ad7f1`. Cards `claude/sup-lib4-cards` @ `c3f1d6eb`. Plan `claude/howto-options` @ `b41ac833`.
+- **Usage:** the meter read 0.77 at 22:13, so 0.80 is about 23:20 UTC. At 0.80 the pause rule (update ~17:05) starts: nothing new starts, every running session finishes its current step, then posts WAITING. Every builder has already been told.
+- **Pilot B (#278):** all 4 drawn plates are approved @ `d3b231d` (lib4-cards 28: round 1, one fix round, recheck VALID; golden-B follow-up 20, pull_up's head tipped back). crunch stays held.
+  - **E-R5 SCOPE RULED** (plan 2.4, row 20, decision 5, risk 6, 6.1 hand kinds). The proposal is five engine fields, and the owner answers once on four renders.
+  - The renders were posted and reproduced byte for byte. russian_twist's Mistake needs `root.yaw`, which the spike lacks; this is recorded in 2.4.
+  - Advisory scores were posted: the renders are below the plate bar, and that is expected for a spike.
+  - Next: LIB-11's sheet, which the supervisor sends to the owner, then 'PILOT B PIN GO' once #109 is on main.
+- **LB3 (#274):** READY @ `59d3d78`. The panel is VALID: landmine, DRDL, conventional and sumo PASS. back_extension, pendlay_row and one_arm_dumbbell_row get one fix round (lib4-cards 29; golden-B follow-up 21, lat_pulldown's roller unmounted). Then a focused recheck.
+- **LIB-12-FIX (#191):** READY @ `ea916e9` (9 drawn, 12 gaps). The removal of the 3 GAPS words files is accepted. Reviewer session_013tXthxaGVshCnf4bNfZFBy.
+- **LIB-ZOOM (#279):** the review FAILed on 1 High: three ruled QA rows had no mutation. A test-only fix is under way, then the same reviewer's delta review.
+- **LIB-6-PM (#181):** Do 7 plus the main merge. It is re-running its regression after a container kill and after its own CI red at be56b05 ("cause is mine"). READY is next; it is slot 2.
+- **Follow-ups added today:** F-LIB12-R8B (redraw ball-contact, front-rack and cupped-goblet), F-PB-1 (stale research notes), golden-B 20 and 21.
+- **HT-8 timeout:** HT-8 Paper timed out once on #274's gate-shard (3/4, UTC) and passed on its re-run. If it recurs, it gets a GATE-FLAKE card.
+- **Lanes now.**
+  - Active LIB, 4 of 4: LIB-13, LIB-11, LIB-6-PM, LIB-ZOOM (the fix).
+  - In review: LIB-12-FIX.
+  - WAITING: LIB-9a #245, LIB-10 #265, LIB-7c #271, HT-11 #273, LIB-7-FIX #193, LIB-8M #109.
+
+**Update ~23:15 UTC (10-19): USAGE PAUSE.** main `07ad7f1`. Cards @ `f371edbc`. Plan @ `b41ac833`.
+- **Pause** (owner, 15:00 and 15:02): pause at 80 % of the weekly limit, and let each agent finish its current task first.
+  - The meter read 0.79 at 22:51. The pause started at 22:58 UTC; starting at 0.79 keeps the overshoot from finishing work small.
+  - LIB-6-PM, LIB-11 and LIB-13 finished their current steps and posted WAITING. Every other lane was already WAITING or frozen. No session is building.
+  - The supervisor's hourly routine `trig_019LBJDA2jX95HgcWEgQPMJ6` is disabled. A one-shot resume is scheduled for Sat 24 Oct 11:05 UTC (the reset is 11:00 UTC). The owner can resume sooner.
+- **On resume, in this order:**
+  1. Re-enable the routine and restart /loop. Read the usage meter: `list_events(kinds:["rate_limit_event"])` → seven_day.utilization.
+  2. **#181 LIB-6-PM** is READY @ `56d3bbbf` (CI 17/17; S5-L and PM-A8 green). Start a fresh Opus reviewer; it is plan slot 2, the next train.
+  3. **#274 LIB-13:** D-LIB13-PANEL2, a second focused round on pendlay_row (the bar glyph's centre) and one_arm_dumbbell_row (the full Mistake arm), then a recheck. 5 of 7 are approved @ `423acc1` (lib4-cards 29).
+  4. Merge order: #181 → #193 LIB-7-FIX (PASS) → LIB-7b (starts after #193 is on main; card lib-7b-card.md) → #191 LIB-12-FIX (PASS; first its pre-train push with Lows 2-4, then a delta review) → #109 LIB-8M (PIN GO waits for LIB-7b, LIB-12 on main and merged in; R8 done) → LIB-5v → #271 LIB-7c → #245 LB1 → #279 LIB-ZOOM (PASS) → #265 LB2 → #278 LIB-11 (pilot B approved; the pin waits for #109) → #273 HT-11 (PASS) → #274 LIB-13.
+  5. **Owner sheets:**
+     - before PILOT A PIN GO, the changed-ids sheet: goblet_squat and front_squat lose their close-ups (GAPS), and mountain_climbers' palm-flat is redrawn;
+     - the pilot B sheet (LIB-11 Do 10): the E-R5 one answer with advisory scores, the hand kinds, battle_ropes' camera;
+     - the LB3 sheet: the one_arm bent support arm line, the sumo side-view line, pendlay F2 and landmine's 228 mm plate.
+- **Follow-ups:**
+  - F-LIB12-R8B: redraw ball-contact, front-rack and cupped-goblet.
+  - F-LB3-7: research the one_arm support-arm form.
+  - F-PB-1: stale research notes.
+  - golden-B follow-ups 18-21.
+  - Watch HT-8: if the timeout recurs, it gets a GATE-FLAKE card.
 
 **Relay backlog (8.5; Relay is skipped by the owner's "No need to update relay for now"):** the 8.0m and 8.0n changes above.
 
@@ -1611,6 +2406,8 @@ Link form: `https://github.com/macdarenz-droid/M-arc/actions/runs/<run>/artifact
 13. Lat pulldown (golden B), R4: the "LEAN BACK" angle mark sits at x 268-292, y 450-468, in the V of the elbow, about 85 px above its hip vertex (291,537). It reads as an elbow mark. Supervisor-confirmed (13.5).
 14. Hanging leg raise (golden B), R7: the ceiling line sits level with the SIDE VIEW title (y about 46), and the bar style differs from pull_up's wall arm. The ceiling mount is deliberate (spec: "no wall for the swing to hit"). Flagged by the panel (13.5 round 2); this is a style choice only.
 15. Leg press (golden B): "Knees cave" cannot be seen in a side view (R5 = 2), and the back looks off the pad (R3 = 3). Flagged by the panel (13.5 round 2); the supervisor has not checked them yet.
+16. Pull-up (golden B), R2: the bar bracket ends in a wall plate with no wall, upright or floor line (dark.png x 365-494, y 118-185), so the bar floats. Pilot A panel [3, 3, 4]; supervisor-confirmed (D-LIB8M-CRIT1, lib4-cards 21.1).
+17. Lat pulldown (golden B), R2: the thigh roller at (385, 512) has no post, and the seat base (x 228-362) is not joined to the tower base (x 458 on). Pilot A panel [3, 3, 4]; supervisor-confirmed (21.1).
 
 **First audit, 32 findings (4 P1 + 28 P2): COMPLETE 07:56.**
 

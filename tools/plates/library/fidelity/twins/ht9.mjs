@@ -23,10 +23,10 @@ function content(root) {
     const { build: esb } = await import('esbuild');
     const genDir = join(root, 'src/howto/generated');
     const htFiles = readdirSync(genDir).filter(f => /^ht-.*\.ts$/.test(f));
-    const entry = `${htFiles.map((f, i) => `import h${i} from ${JSON.stringify(join(genDir, f))};`).join('\n')}\nexport const HOWTOS = [${htFiles.map((_, i) => `h${i}`).join(', ')}];\nexport * from ${JSON.stringify(join(root, 'src/howto/archetypes.ts'))};\n`;
+    const entry = `${htFiles.map((f, i) => `import h${i} from ${JSON.stringify(join(genDir, f))};`).join('\n')}\nexport const HOWTOS = [${htFiles.map((_, i) => `h${i}`).join(', ')}];\nexport * from ${JSON.stringify(join(root, 'src/howto/archetypes.ts'))};\nexport * from ${JSON.stringify(join(root, 'src/howto/red-flag-back.ts'))};\n`;
     const bundled = await esb({ stdin: { contents: entry, resolveDir: root, loader: 'ts' }, bundle: true, format: 'esm', platform: 'node', write: false, logLevel: 'silent' });
     const C = await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString('base64')}`);
-    const FLAG = { wrist: C.RED_FLAG, shoulder: C.RED_FLAG_SHOULDER, knee: C.RED_FLAG_KNEE, elbow: C.RED_FLAG_ELBOW };
+    const FLAG = { wrist: C.RED_FLAG, shoulder: C.RED_FLAG_SHOULDER, knee: C.RED_FLAG_KNEE, elbow: C.RED_FLAG_ELBOW, back: C.RED_FLAG_BACK };
     const flagLines = Object.fromEntries(Object.entries(FLAG).map(([k, F]) => [k, [F.name, F.now, F.doctor]]));
     return { C, flagLines };
   })());

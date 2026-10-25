@@ -1,0 +1,37 @@
+{
+ "research": "9eaa2480",
+ "files": {
+  "cards/assisted_pull_up.json": "5068cce01034200f1e46dd64f0ac2ae0fca7f35094a7159e24510f2ed1676045",
+  "cards/chin_up.json": "7d5210b2c093a24b4dea4e4cf3d6a7309c7adea3e291d29edc94c2a73a46faad",
+  "cards/close_grip_pulldown.json": "03fd718eda981a23555824757e807000baf944e4a932a4254723095ecf65e670",
+  "cards/hanging_knee_raise.json": "a57135e2ebf813856d14433bc1159ad38d08e417730504fcaf7097afc5f46e98",
+  "cards/inverted_row.json": "de93da2ee75d5db847d0584a04a6c431c469dc15381abf5ddaed6d4f5d21a4f8",
+  "cards/underhand_lat_pulldown.json": "b97c1945a48f66d7346149a5277e1e6c9f3b44d2b6a84ebf0694fe42b4a17411"
+ },
+ "claims": {
+  "cards/assisted_pull_up.json#c1": "Take the bar overhand, about shoulder width or a little wider, put the knees (or feet) on the pad and let body weight push it down until you hang with straight arms.",
+  "cards/assisted_pull_up.json#c12": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar. Written for barbell lifts (a drill lifting a bar from the floor); applied to the assisted pull-up machine's bar by inference.",
+  "cards/assisted_pull_up.json#c14": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
+  "cards/assisted_pull_up.json#grip.type": "Overhand (pronated), palms away, full closed grip.",
+  "cards/chin_up.json#c1": "ACE sets up the chin-up with the palms facing you and a full grip, thumbs wrapped around the bar.",
+  "cards/chin_up.json#c20": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
+  "cards/chin_up.json#c3": "ACE asks for a neutral wrist: the wrist in a straight line with the forearm.",
+  "cards/chin_up.json#grip.type": "Underhand (supinated), palms facing you, full closed grip.",
+  "cards/close_grip_pulldown.json#c1": "The close-grip pulldown uses a V-handle for a close, neutral (palms facing each other) grip.",
+  "cards/close_grip_pulldown.json#c15": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
+  "cards/close_grip_pulldown.json#c16": "Thumbs go around the handle: a general grip drill for all grips, applied to the cable handle by inference (not a pulldown text).",
+  "cards/close_grip_pulldown.json#grip.type": "Neutral (palms facing each other) on a V-handle.",
+  "cards/hanging_knee_raise.json#c16": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
+  "cards/hanging_knee_raise.json#c2": "Take the bar overhand (palms away) and hang with the arms fully straight.",
+  "cards/hanging_knee_raise.json#c3": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar. Written for barbell lifts (a drill lifting a bar from the floor); applied to the hanging bar by inference.",
+  "cards/hanging_knee_raise.json#grip.type": "Overhand (palms away), full closed grip.",
+  "cards/inverted_row.json#c14": "NSCA-editor textbook guidance is to perform all grips with the thumbs around the bar.",
+  "cards/inverted_row.json#c15": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
+  "cards/inverted_row.json#c2": "Grip the bar a little wider than shoulder width; both overhand (pronated) and underhand (supinated) grips are used and were studied.",
+  "cards/inverted_row.json#grip.type": "Overhand (pronated) drawn, full closed grip; underhand is also used. Lat activity differs between the two, direction not reported in the abstract.",
+  "cards/underhand_lat_pulldown.json#c1": "Take the bar underhand (palms facing you), about shoulder-width apart, standing, then sit down.",
+  "cards/underhand_lat_pulldown.json#c18": "In 20 healthy adults squeezing a hand dynamometer, grip was strongest with the wrist in the position they chose themselves (about 35 degrees bent back) and weaker when the wrist was moved 10 to 15 degrees away from it in any direction, including curled forward (flexion). Applied to holding a bar or handle by reasoning, not measured on this exercise.",
+  "cards/underhand_lat_pulldown.json#c2": "A second coach source sets the hands a little closer than shoulder width and allows a wrapped or thumbless grip.",
+  "cards/underhand_lat_pulldown.json#grip.type": "Underhand (supinated), palms facing you."
+ }
+}

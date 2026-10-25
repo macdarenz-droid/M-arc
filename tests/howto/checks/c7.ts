@@ -274,6 +274,10 @@ export function checkC7(content: HowToContent, { boxKey }: { boxKey?: string } =
   bad.push(...checkLength('copy.setupLine', content.copy.setupLine, LIMITS.leadLineWords, LIMITS.leadLineSentences));
   bad.push(...checkLength('copy.mistakeLine', content.copy.mistakeLine, LIMITS.leadLineWords, LIMITS.leadLineSentences));
   bad.push(...checkLength('copy.cueLine', content.copy.cueLine ?? '', LIMITS.cueWords, null));
+  // LIB-5v (D-LIB5-VARIANT 4): the shown variant line, a caption, counted toward the visible budget
+  scan('copy.variantLine', content.copy.variantLine);
+  bad.push(...checkLength('copy.variantLine', content.copy.variantLine ?? '', LIMITS.captionWords, null));
+  shown('copy.variantLine', content.copy.variantLine);
   content.mistakes.forEach((m, i) => {
     scan(`mistakes[${i}] (${m.key}).title`, m.title);
     scan(`mistakes[${i}] (${m.key}).fix`, m.fix);
