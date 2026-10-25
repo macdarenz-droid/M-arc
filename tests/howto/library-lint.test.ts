@@ -417,6 +417,7 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     expect(refuse(id, { ...ok, extends: 'lib_lat_pulldown' })).toBe(`${id}: family: extends: "lib_lat_pulldown" disagrees with the card's parent "pull_up" (D-LIB5-FAMILY)`);
     expect(refuse(id, { ...ok, extends: 'lib_pull_up' })).toBe(`${id}: family: extends: inherited-string map not ruled (D-LIB5-FAMILY)`);
     expect(refuse(id, ok, card, () => undefined)).toBe(`${id}: family: docs/research/howto/cards/chin_up.json#inherit: parent lib_pull_up is not shipped in this head (D-LIB5-FAMILY)`);
+    // D-LIB9a-GATEWIRE: library-gate.mjs calls with no resolver until LIB-9 adds it (F-LIB9-GATEWIRE), so a mapped row fails closed.
     expect(FM.familyRefusal(id, ok, () => card)).toBe(`${id}: family: docs/research/howto/cards/chin_up.json#inherit: no shipped-content resolver (D-LIB5-FAMILY)`);
     expect(refuse(id, ok, { ...card, parent: undefined })).toBe(`${id}: family: docs/research/howto/cards/chin_up.json#inherit: inherit[] with no card parent (D-LIB5-FAMILY)`);
     expect(refuse(id, { ...ok, zooms: ok.zooms.filter((z: any) => z.key !== 'hand') })).toBe(`${id}: family: zooms.hand (full grip, thumb around the bar, is the only grip shown): zooms[key=hand]: [key=hand] matches 0 items (D-LIB5-FAMILY)`);
