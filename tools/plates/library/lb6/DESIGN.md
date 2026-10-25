@@ -415,3 +415,22 @@ DRAWING-GUIDE section 2's handle grip as a trace point; Q10 F2 0.161 a named fla
   to the back pad's back face at the middle of its two contact points. The figure is unchanged. Test: the seat pad
   reaches the floor beam without the back pad, and the back pad without the seat pad; red with the post or the
   bracket removed. Page 2668c838…e84e; QA unchanged (all 10 pass, F5 only).
+
+## 18. LIB-16 resume (D-LIB-ORDER-3; base main `9c3287cd`)
+
+Held rows of this card and their blockers on main:
+
+| row | held under | blocker | on main? |
+|---|---|---|---|
+| cable_chest_press zoom plate | D-LIB8-shrug (D-LIB16-SIZE, -LOCK, -CCP-START) | LIB-ZOOM #279 | yes |
+| cable_chest_press slice item 3 (#297 6346404542: column and floor clipped at the left edge; "Spine neutral" leader along the low back; `lock` and `line` show one sign) | slice look | none (waited for this resume) | n/a |
+| F-LB6-6 (which claim sets the bottom) | research follow-up | claude/libht-research | not yet; the card is unchanged, so the plate is drawn from today's card and redrawn only if F-LB6-6 changes it |
+| cable_chest_press sheet (reverse_lunge anchor) | D-LIB16-SPLIT | reverse_lunge pinned | ship card, not this resume |
+
+Measured on main (node, `zoom/inline.mjs` zoomOf; spec unchanged):
+- Mistake: the `lock` tell moves 2.98 px at plate scale. A Mistake zoom at k 4 (the maximum) gives 11.91 px against
+  deviationMin 11.39; at k 3.8 it gives 11.31 (red).
+- Normal: the Trace is 6.6 px after the trims, under traceLenMin 22.11, so the normal view fails PQ-H3 too. Today's
+  normal plate has no place for a circle that clears ink, labels and leaders (zoomOf throws at k 2 and k 3).
+- LIB-ZOOM's field is one `{ view, k }` per spec (`zoomFieldProblems` rejects a list; qa/zoom.mjs raises
+  `H3.zoom:unexpected` on a second view). One zoom therefore cannot clear both bars: the ruling asked on the resume PR.
