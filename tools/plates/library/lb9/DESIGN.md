@@ -371,3 +371,24 @@ Later rulings:
     `#card` 45e60298… at 27215fba and at the head; bird_dog ecddc7e1… at 276029ae and at the head).
   - Item 4: the camOf fix accepted (the camera follows facing), named in the A-table with a mutation that keeps the
     facing-right assumption red on pallof_press.
+
+## 19. Resume plan ('LIB-21 resume', on main `9c3287cd`)
+
+Every row the build-ahead PR (#312) held, with its blocker and that blocker's state on main `9c3287cd`.
+
+| id | held by | blocker | on main? | this resume |
+|---|---|---|---|---|
+| side_plank | D-LIB21-ER5 | LIB-20 (#311) | yes | build: E-R5 slice (Do 7b); hold constant per D-LIB21-SECS (proposed below; NOSECS if none) |
+| russian_twist | D-LIB21-ER5 | LIB-20 (#311); `medBallOptional` | yes | build: `medBallOptional` and the E-R5 slice (Do 7b); tempo 1/1/0 as the card holds it (F-LB9-2 open) |
+| bicycle_crunch | D-LIB21-ER5 | LIB-20 (#311), then 'LB9 ER5 GO' | LIB-20 yes; GO no | build after 'LB9 ER5 GO' (Do 7b) |
+| superman | D-LIB21-SIZE (S2) | LIB-ZOOM (#279), extended to the motion by the supervisor | LIB-ZOOM yes; extension no | held: the extension ruling is asked; the zoom plate follows it |
+| pallof_press | D-LIB21-PALLOFHOLD (S2, S4) | LIB-ZOOM (#279); a ruled turned-view route | LIB-ZOOM yes; route no | the turned-view design note only (its first step); no row until ruled |
+| cable_crunch | D-LIB21-CCHOLD | LIB-SPINE (F-SPINE-1) | no | held |
+
+- side_plank: D-LIB8M-TEMPO takes one quote's own string. Proposed: `30–60` (c9, "aim to hold the side plank for
+  30 to 60 seconds per side"), the target the card's tempo.text names; the other quote's `5–15` is the start level.
+  With no constant ruled, side_plank is NOSECS and stays off rows.json until LIB-STRIP (#309) is on main.
+- russian_twist: the card's 1/1/0 is verified at the research head and F-LB9-2 has not changed it. If research nulls
+  it, the row turns NOSECS and waits for LIB-STRIP (D-LIB21-SECS).
+- Approved bytes stay: ab_wheel_rollout `#card` 45e60298…, bird_dog ecddc7e1…, LB9 page `12163664…f24f9` until a
+  (b) row joins rows.json; C0 `[]`, pilot A L1 `5d0e562f…5ba8`, pilot B `ff3e017c…`.
