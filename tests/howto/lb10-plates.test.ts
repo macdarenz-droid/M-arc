@@ -1059,14 +1059,33 @@ describe('LIB-22 A3: spec and composer closures are pure and drawn by the vendor
 });
 
 describe('LIB-22 A16: no other card\'s composer is copied, forked or imported (D-LIB22-COMPOSERS, -ROPE, -WALL)', () => {
-  // main's eq/ at 1ffd0dac: parts.mjs and rope.mjs; this card adds its five composers (four at the slice).
-  const MAIN_EQ = ['parts.mjs', 'rope.mjs'], OURS = ['kettlebell.mjs', 'medBall.mjs', 'sled.mjs', 'jumpRope.mjs', 'battleRope.mjs'];
-  const eqProblems = (names: string[]) => [...names.filter(n => !MAIN_EQ.includes(n) && !OURS.includes(n)).map(n => `extra ${n}`), ...MAIN_EQ.filter(n => !names.includes(n)).map(n => `missing ${n}`)];
-  it('tools/plates/library/eq/ holds exactly main\'s files plus the LB10 composers', () => {
-    expect(eqProblems(readdirSync('tools/plates/library/eq'))).toEqual([]);
+  // D-LIB-A16-COMPOSE (lib4-cards section 39): main's eq/ at 40f9ea93, this card's five composers, and the composers other build-ahead cards own by exact name.
+  const MAIN_EQ = ['assistMachine', 'band', 'chestRowMachine', 'dHandle', 'declineBench', 'inclineBench', 'landmine', 'legCurlMachine', 'parts', 'pecDeck', 'polybar', 'romanChair', 'rope', 'safetyArms', 'smith'].map(n => `${n}.mjs`);
+  const OURS = ['kettlebell.mjs', 'medBall.mjs', 'sled.mjs', 'jumpRope.mjs', 'battleRope.mjs'];
+  const OTHER_CARDS: Record<string, string[]> = { 'LIB-14': ['wall'], 'LIB-15': ['preacherPad'], 'LIB-16': ['crunchMachine', 'pulloverMachine'], 'LIB-17': ['dipBars'],
+    'LIB-18': ['ankleCuff', 'calfMachine', 'hackSled', 'legExtMachine', 'pendulum'], 'LIB-21': ['abWheel'] };
+  const OTHER = Object.values(OTHER_CARDS).flat().map(n => `${n}.mjs`);
+  const EQ = 'tools/plates/library/eq';
+  const eqFiles = () => readdirSync(EQ).map(name => ({ name, bytes: readFileSync(join(EQ, name), 'utf8') }));
+  const eqProblems = (files: { name: string; bytes: string }[]) => {
+    const names = files.map(f => f.name), ours = files.filter(f => OURS.includes(f.name));
+    return [...names.filter(n => !MAIN_EQ.includes(n) && !OURS.includes(n) && !OTHER.includes(n)).map(n => `extra ${n}`),
+      ...[...MAIN_EQ, ...OURS].filter(n => !names.includes(n)).map(n => `missing ${n}`),
+      ...files.filter(f => !OURS.includes(f.name)).flatMap(f => ours.filter(o => o.bytes === f.bytes).map(o => `${f.name} copies ${o.name}`))];
+  };
+  it('tools/plates/library/eq/ holds main\'s files, the LB10 composers and only other cards\' named composers', () => {
+    expect(eqProblems(eqFiles())).toEqual([]);
   });
   it('mutation: a copy of #289\'s eq/wall.mjs added under eq/ under another name is red', () => {
-    expect(eqProblems([...readdirSync('tools/plates/library/eq'), 'ballWall.mjs'])).toEqual(['extra ballWall.mjs']);
+    expect(eqProblems([...eqFiles(), { name: 'ballWall.mjs', bytes: 'export const wall = () => [];' }])).toEqual(['extra ballWall.mjs']);
+  });
+  it('mutation: a file named as another card\'s composer holding a byte copy of one of ours is red', () => {
+    const sled = eqFiles().find(f => f.name === 'sled.mjs')!;
+    expect(eqProblems([...eqFiles().filter(f => f.name !== 'hackSled.mjs'), { name: 'hackSled.mjs', bytes: sled.bytes }])).toEqual(['hackSled.mjs copies sled.mjs']);
+  });
+  it('mutation: a main file or an own composer missing is red; this card\'s own names are not in OTHER_CARDS', () => {
+    expect(eqProblems(eqFiles().filter(f => f.name !== 'smith.mjs' && f.name !== 'kettlebell.mjs'))).toEqual(['missing smith.mjs', 'missing kettlebell.mjs']);
+    expect(OTHER.filter(n => OURS.includes(n))).toEqual([]);
   });
 });
 
