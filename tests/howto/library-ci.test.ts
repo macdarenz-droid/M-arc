@@ -611,9 +611,11 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
     expect([c.rebuild.length, c.shards.length]).toEqual([1, 2]);
   });
   // LIB-8M Do 13: pilot A's pin adds the first pinned page, exactly its page entry (was empty before the pin)
-  it('the pinned-page list is pilot A\'s page on this tree and sha256 is the pin hash', () => {
+  // LIB-11 Do 11 (supervisor ruling 1, #278 6393188049): pilot B's pin adds exactly its page entry
+  it('the pinned-page list is pilot A\'s and pilot B\'s pages on this tree and sha256 is the pin hash', () => {
     expect(pinnedPages(ROOT)).toEqual({ pages: [{ id: 'tests/howto/golden/library/pilot-a.json#page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'page',
-      pageSha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 }], unknown: [] });
+      pageSha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 }, { id: 'tests/howto/golden/library/pilot-b.json#page',
+      file: 'tests/howto/golden/library/pilot-b.json', kind: 'page', pageSha256: 'ff3e017c98f73b6d049808a6ffea057a7fa350eed764d9ceedb9a582fa22583f', bytes: 409765 }], unknown: [] });
     expect(sha256('')).toHaveLength(64);
   });
 });
