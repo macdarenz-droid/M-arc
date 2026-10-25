@@ -1,0 +1,18 @@
+{
+ "note": "sha256 of each pilot B card and quotes file as copied byte for byte from the research head (LIB-11 Do 5 a). The cards gain only the three machine keys (plateFacts, tempo, topFault) in one block before the final brace (Do 5 b); tests/howto/lib11-pilot-b.test.ts removes that block and compares these bytes.",
+ "researchHead": "38d5f9c608b492587b3f923382ccb02bea8f1345",
+ "cards": {
+  "smith_machine_bench_press": "c980efac82e97e7cf244d5a8963e189a0706292a2ea463cf2f523730a78dfeaf",
+  "cable_fly": "ef6a50470be17f5dd9b5d757b6b88497500de33f040c17b96803749783dd52a7",
+  "push_up": "70a4d343d9aaba6abd6f715b4a5e556edc7c0e2df4d928d63706b24a4abc618f",
+  "seated_leg_curl": "56c57afe61980c1341e4684817bec9d35399255888dc91c4856ac4dfba9fc9ab",
+  "crunch": "8e45ee1579fae82b255377ddead6b581fef7298fe2ed8b4a7e579ce5d3d0fe13"
+ },
+ "quotes": {
+  "smith_machine_bench_press": "674d98d45e7d7a0c105ac2d0eb7388dbb6f29917febab74be56c9ee13cab9618",
+  "cable_fly": "f301a67ee2fcfc61c45ba0d2759a1ce1b95916c11a2f3502e4db33130ab0e9ab",
+  "push_up": "c2357f7e64f21e695b1172523eef2bfecc11e06ff8165266b08ac29fbd1735f9",
+  "seated_leg_curl": "09ee08765170f354378fe31f22de611f3df3c25b86e717980d0fa177971ecffa",
+  "crunch": "f31cc3a6cea20091fa22a96d9fb90484123cb15030dcaa70ca415f048c6ffbea"
+ }
+}

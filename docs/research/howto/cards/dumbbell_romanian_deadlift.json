@@ -1,0 +1,934 @@
+{
+  "id": "dumbbell_romanian_deadlift",
+  "libId": "lib_dumbbell_romanian_deadlift",
+  "name": "Dumbbell Romanian Deadlift",
+  "family": "HINGE",
+  "tier": "A",
+  "archetype": {
+    "hand": "hold",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": "romanian_deadlift",
+  "inherit": [
+    {
+      "field": "grip.wrist",
+      "why": "true for this child because the arms hang straight and only hold the weights (c15), so the wrist stays neutral as in the parent."
+    },
+    {
+      "field": "posture: knees fixed at a slight bend, movement at the hips (parent c4)",
+      "why": "true for this child because the dumbbell sources give the same soft, unchanged knee bend and hips-back hinge (c3, c6)."
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Start standing, feet about shoulder width, a dumbbell in each hand; Sweat holds them in front of the legs, palms facing the body, while Fitbod holds them next to the hips.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-db-rdl",
+        "fitbod-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-db-rdl",
+          "text": "Stand with your feet shoulder-width apart, holding a dumbbell in each hand with an overhand grip (palms facing towards your body) in front of your legs.",
+          "where": "How to do a dumbbell Romanian deadlift"
+        },
+        {
+          "source": "fitbod-db-rdl",
+          "text": "Stand upright with your feet shoulder width apart while holding a pair of dumbbells next to your hips.",
+          "where": "Instructions for Proper Form"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Shoulder blades down and back, chest slightly out, core braced.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-db-rdl",
+          "text": "Draw your shoulder blades down and back to push your chest out slightly and draw your belly button to your spine to engage your core.",
+          "where": "How to do a dumbbell Romanian deadlift"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Hinge from the hips with a slight knee bend, letting the dumbbells run down the thighs to about halfway down the shins.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-db-rdl",
+          "text": "Bend your knees slightly hinge forward from your hips and allow the dumbbells to run along the length of your thighs and halfway down your shins.",
+          "where": "How to do a dumbbell Romanian deadlift"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "The dumbbells stay in contact with (almost grazing) the legs.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-db-rdl",
+          "text": "Ensure that the dumbbells remain in contact with your legs.",
+          "where": "How to do a dumbbell Romanian deadlift"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "You should feel like you’re almost grazing your legs with your dumbbells.",
+          "where": "Technique tips: Arms and hands"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Stand up by pushing through the heels with the glutes and hamstrings, then extend knees and hips.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-db-rdl",
+          "text": "As the dumbbells reach halfway down your shins, push through your heels and use your glutes and hamstrings to bring your body upright, then extend your knees and hips to return to the starting position.",
+          "where": "How to do a dumbbell Romanian deadlift"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Keep a soft knee bend with the knees behind the toes; push the hips back, not down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-db-rdl",
+          "text": "Master a soft bend and your knees should stay behind your toes throughout each rep.",
+          "where": "Technique tips: Knees"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "think about pushing your hips back towards the wall behind you, rather than down towards the floor as you would with a squat.",
+          "where": "Technique tips: Hips"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Eyes start looking straight ahead, then move to a spot on the floor in front as you lower, so the neck does not arch.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-db-rdl",
+          "text": "You want to avoid looking straight ahead the whole time as your neck will become strained and arched when you get to the bottom of the movement.",
+          "where": "Technique tips: Eyes"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "Throughout each rep, you want your body to form one nice straight line from your back to your head, so as you lower down, your eyes should start by looking straight ahead, but then move to a spot on the floor in front of you as you lower down.",
+          "where": "Technique tips: Eyes"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Rounding the back to reach lower is a common mistake: it raises injury risk and makes the exercise less effective.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitbod-db-rdl",
+        "sl-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "fitbod-db-rdl",
+          "text": "Rounding your back will allow you to reach closer to the floor, but also increases your risk of injury, and reduces the effectiveness of this exercise.",
+          "where": "Common Form Mistakes: Rounding Your Back"
+        },
+        {
+          "source": "sl-db-rdl",
+          "text": "Lean forward as far as possible without rounding your back.",
+          "where": "How to Do Dumbbell Romanian Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Going too low is a mistake: depth stops where the hip hinge (hamstring flexibility) runs out.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitbod-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "fitbod-db-rdl",
+          "text": "limit your range of motion to as low as your hip hinge allows. Hamstring flexibility is the deciding factor in how low you should go.",
+          "where": "Common Form Mistakes: Going too Low"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Another common mistake is using back strength to stand up, arching the back in the second half; the back stays neutral.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-db-rdl",
+          "text": "A common deadlift mistake is to think you’re using your back strength to stand up, leading to an arched back in the second half of each rep",
+          "where": "Technique tips: Back"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "your back should remain in a neutral position.",
+          "where": "Technique tips: Back"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "but the strength to power the movement should be coming from your hamstrings and glutes",
+          "where": "Technique tips: Back"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Breathe in and brace slightly before hinging; breathe out on the way up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-db-rdl",
+          "text": "Inhale, brace your core slightly, and lean forward by hinging in your hips. Keep your knees almost completely extended.",
+          "where": "How to Do Dumbbell Romanian Deadlifts"
+        },
+        {
+          "source": "sl-db-rdl",
+          "text": "Reverse the movement and return to the starting position. Exhale on the way up.",
+          "where": "How to Do Dumbbell Romanian Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "You can stand on a plate to add range without the dumbbells hitting the floor; touching the floor is optional.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-db-rdl",
+          "text": "Note: you can stand on an elevation (for example a weight plate) if you want to extend the range of motion without hitting the floor.",
+          "where": "How to Do Dumbbell Romanian Deadlifts"
+        },
+        {
+          "source": "sl-db-rdl",
+          "text": "You don’t have to touch the dumbbells to the floor, although it is OK if you do.",
+          "where": "How to Do Dumbbell Romanian Deadlifts"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Feel tension in the back of the thighs on the way down and the glutes on the way up; with no hamstring feel, push the hips back or reduce knee bend.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-db-rdl",
+          "text": "As you lower your dumbbells down past your thighs towards your shins, you should feel the tension in the backs of your thighs.",
+          "where": "Technique tips: Hamstrings"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "If you’re not feeling it, focus on pushing your hips back, or check that you only have a slight bend in your knees.",
+          "where": "Technique tips: Hamstrings"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "you should also feel the power coming from your glutes as you pull your hips through and squeeze your glutes at the top",
+          "where": "Technique tips: Glutes"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Muscles: glutes, lower back and hamstrings primary; adductors, trapezius and forearm flexors secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-db-rdl",
+        "fitbod-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sl-db-rdl",
+          "text": "Primary muscles worked: Glutes Lower Back Hamstrings Secondary muscles worked: Adductors Trapezius Forearm Flexors",
+          "where": "Muscles Worked in Dumbbell Romanian Deadlifts, list"
+        },
+        {
+          "source": "fitbod-db-rdl",
+          "text": "Like other Romanian Deadlifts, this is a compound exercise that primarily targets your hamstrings and glutes.",
+          "where": "Instructions for Proper Form"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The arms only hold the weights; keep them straight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sweat-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "sweat-db-rdl",
+          "text": "Your arms really aren’t doing anything here beyond holding your weights",
+          "where": "Technique tips: Arms and hands"
+        },
+        {
+          "source": "sweat-db-rdl",
+          "text": "Keep them straight and keep your hands close to your legs.",
+          "where": "Technique tips: Arms and hands"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Dumbbells can ease some mobility limits and are a good first step toward the barbell version.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fitbod-db-rdl"
+      ],
+      "quotes": [
+        {
+          "source": "fitbod-db-rdl",
+          "text": "The use of dumbbells can help with some limitations in mobility, and is a great starting point for anyone working towards performing Deadlifts or Romanian Deadlifts with a barbell.",
+          "where": "Instructions for Proper Form"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "In the RDL pattern the lower back works less than the hamstrings (barbell data, applied to dumbbells by inference).",
+      "tags": [
+        "DATA",
+        "MECH"
+      ],
+      "sources": [
+        "martinfuentes2020"
+      ],
+      "quotes": [
+        {
+          "source": "martinfuentes2020",
+          "text": "However, the Romanian Deadlift is associated with lower activation for erector spinae than for biceps femoris and semitendinosus.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Heavy lifting with a held breath (Valsalva) drives blood pressure very high.",
+      "tags": [
+        "DATA"
+      ],
+      "sources": [
+        "macdougall1985"
+      ],
+      "quotes": [
+        {
+          "source": "macdougall1985",
+          "text": "It was concluded that when healthy young subjects perform weight-lifting exercises the mechanical compression of blood vessels combines with a potent pressor response and a Valsalva response to produce extreme elevations in blood pressure.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Tempo: about 1-2 s up and 1-2 s down, controlled. ACSM gives its 1-2 s each way for intermediate to advanced lifters working toward heavy loads, so the seconds are a drawing convention.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "For intermediate (individuals with approximately 6 months of consistent RT experience) to advanced (individuals with years of RT experience) training",
+          "where": "abstract"
+        },
+        {
+          "source": "acsm2009",
+          "text": "with eventual emphasis on heavy loading (1-6 RM) using 3- to 5-min rest periods between sets performed at a moderate contraction velocity (1-2 s CON; 1-2 s ECC)",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Add load in small steps (2-10%) once you can do 1-2 reps more than planned.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "acsm2009"
+      ],
+      "quotes": [
+        {
+          "source": "acsm2009",
+          "text": "When training at a specific RM load, it is recommended that 2-10% increase in load be applied when the individual can perform the current workload for one to two repetitions over the desired number.",
+          "where": "abstract"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Back pain with weakness or numbness in both legs, or loss of feeling around the genitals, needs 999; pain not better after a few weeks needs a GP.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "Call 999 or go to A&E if:",
+          "where": "Immediate action required"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "pain, tingling, weakness or numbness in both legs",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "a loss of feeling around your genitals or anus",
+          "where": "Immediate action required, list"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "See a GP if:",
+          "where": "Non-urgent advice"
+        },
+        {
+          "source": "nhs-back-pain",
+          "text": "it does not improve after treating it at home for a few weeks",
+          "where": "Non-urgent advice, list"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "From barbell deadlift coaching (inferred for dumbbells): if you cannot keep a neutral spine, lower the weight or do fewer reps.",
+      "tags": [
+        "MECH"
+      ],
+      "sources": [
+        "sl-deadlift"
+      ],
+      "quotes": [
+        {
+          "source": "sl-deadlift",
+          "text": "Generally avoid lifting with a flexed back in your training – if you cannot maintain a neutral spine, lower the weight or perform less reps per set.",
+          "where": "So - Should You Deadlift With a Neutral or Flexed Spine?"
+        }
+      ]
+    },
+    {
+      "id": "c23",
+      "text": "The NHS advises stopping back exercises if back pain gets worse and seeing a GP for advice (NHS advice on exercises for back pain, applied here to training).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "nhs-back-pain"
+      ],
+      "quotes": [
+        {
+          "source": "nhs-back-pain",
+          "text": "But stop if your pain gets worse and see a GP for advice.",
+          "where": "Exercises and stretches for back pain"
+        }
+      ]
+    },
+    {
+      "id": "c24",
+      "text": "Wrap the thumbs around the handle (a barbell grip rule, applied here to the dumbbell handle).",
+      "tags": [
+        "CONSENSUS",
+        "MECH"
+      ],
+      "sources": [
+        "baechle-grip"
+      ],
+      "quotes": [
+        {
+          "source": "baechle-grip",
+          "text": "Perform all grips with your thumbs around the bar.",
+          "where": "Grip selection and location"
+        }
+      ]
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Hips back, the soft fixed knee bend, a flat back and the dumbbells grazing the legs are front-to-back positions (c3, c4, c6); the side view shows them, and the arched back while standing up (the top fault, c10).",
+    "equipment": "A pair of dumbbells held in front of the thighs, palms facing the body (c1); floor line. Optional plate under the feet (c12) not drawn.",
+    "start": "Standing tall, feet about shoulder width, dumbbells in front of the thighs (c1), shoulders back and down (c2), knees softly bent (c6).",
+    "end": "Hips pushed back, flat back (c8, c10), knees still softly bent behind the toes, dumbbells about halfway down the shins and touching the legs (c3, c4, c6), eyes toward the floor (c7).",
+    "checkpoints": [
+      {
+        "label": "Hips back",
+        "what": "Push the hips back, not down. Knees stay softly bent.",
+        "claim": "c6"
+      },
+      {
+        "label": "Bells on legs",
+        "what": "Dumbbells run down the thighs and shins, touching the legs.",
+        "claim": [
+          "c4",
+          "c3"
+        ]
+      },
+      {
+        "label": "Flat back",
+        "what": "Back stays neutral. Stop where it would round.",
+        "claim": [
+          "c8",
+          "c10"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "Back arches to stand up: the lifter uses back strength in the second half of the rep.",
+      "why": "Named a common mistake: thinking you are using your back strength to stand up leads to an arched back in the second half of each rep; the back should stay neutral (c10).",
+      "claim": "c10",
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the arched back while standing up (c10). Sweat's dumbbell Romanian deadlift technique tip says \"A common deadlift mistake is to think you’re using your back strength to stand up, leading to an arched back in the second half of each rep\": a frequency word for one named fault, given for this exercise. No other fault passes step 1. Set aside: Fitbod's \"Common Form Mistakes\" is a list heading. StrengthLog's deadlift guide (c22) is written for the barbell deadlift, and its frequency lines are about the load (\"swift increases in training are a common source of injury\"), a grip (\"The mixed grip is the most common grip technique in powerlifting\"), the lift's sticking point (\"the most common sticking point in the deadlift\") or the stance (\"More common and the best fit for most people\"); \"most powerlifting injuries seem to creep up over time, rather than being acute\" names no fault, and \"the beginning of a deadlift is where most lifters get stuck and fail their lift\" is about where lifts fail; none names a fault. If \"a common deadlift mistake\" is read as about the barbell deadlift, another exercise, step 2 gives the rounded back instead: it is the only named fault a quote ties to harm (\"Rounding your back will allow you to reach closer to the floor, but also increases your risk of injury\", c8). Sweat's gaze line (\"your neck will become strained and arched\", c7) also ties a fault to harm, but the rounded back is on Fitbod's common-mistakes list and the gaze is not, so the rounded back would win that step-2 tie. drawable true: the arched back is a still sign the side view shows. Pick changed: rounding the back to reach lower, the head's pick until now, is handlingMistakes[1]."
+    },
+    "tells": [
+      {
+        "text": "Tension in the backs of thighs",
+        "claim": "c13"
+      },
+      {
+        "text": "Dumbbells graze your legs",
+        "claim": "c4"
+      },
+      {
+        "text": "Glutes squeeze at the top",
+        "claim": "c13"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 0,
+      "claim": "c20",
+      "text": "Up 1 and down 2 keep ACSM's 1-2 s, stated for intermediate to advanced training (c20, WEAK; LR-15). Pause 0: no quote on the card asks for a pause right after the lift. Sweat's \"squeeze your glutes at the top before starting your next rep\" (c13) asks for a squeeze with no pause length and no brief or momentary hold (LR-33)."
+    },
+    "variantLine": "Drawn with dumbbells in front of the thighs, palms facing the body (Sweat, c1). Fitbod starts them beside the hips (c1); the hinge claims hold for both."
+  },
+  "grip": {
+    "type": "One dumbbell in each hand, palms facing the body.",
+    "width": "Hands in front of the thighs, dumbbells close to the legs.",
+    "thumb": "Wrapped around the handle.",
+    "handContact": "Handle across the middle of the palm, fingers wrapped (hold archetype).",
+    "wrist": "Neutral (inherited).",
+    "claims": [
+      "c1",
+      "c4",
+      "c24"
+    ]
+  },
+  "setup": [
+    {
+      "step": "Feet shoulder width, dumbbells in front of your legs.",
+      "claim": "c1"
+    },
+    {
+      "step": "Shoulder blades down and back, core braced.",
+      "claim": "c2"
+    },
+    {
+      "step": "Breathe in and brace slightly before each rep.",
+      "claim": "c11"
+    },
+    {
+      "step": "Want more range? Stand on a plate.",
+      "claim": "c12"
+    },
+    {
+      "step": "Add weight in small steps once you beat your target reps.",
+      "claim": "c21"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Hips back, knees softly bent behind the toes.",
+      "claim": "c6"
+    },
+    {
+      "point": "Dumbbells touch the legs all the way.",
+      "claim": "c4"
+    },
+    {
+      "point": "Down to about mid-shin, only as low as the hinge allows.",
+      "claim": [
+        "c9",
+        "c3"
+      ]
+    },
+    {
+      "point": "Back neutral going down and coming up.",
+      "claim": "c10"
+    },
+    {
+      "point": "Eyes move to the floor as you lower.",
+      "claim": "c7"
+    },
+    {
+      "point": "Push through the heels to stand.",
+      "claim": "c5"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Arching to stand up.",
+      "fix": "Drive with glutes and hamstrings. Keep the back neutral.",
+      "claim": [
+        "c10",
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Rounding to reach lower.",
+      "fix": "Stop where the back stays flat. If it rounds, go lighter.",
+      "claim": [
+        "c8",
+        "c22"
+      ]
+    },
+    {
+      "mistake": "Going too low.",
+      "fix": "Stop where the hamstrings stop the hinge.",
+      "claim": "c9"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c13"
+      },
+      {
+        "muscleId": "glutes",
+        "claim": "c13"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "adductors",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "upper_traps",
+        "claim": "c14"
+      },
+      {
+        "muscleId": "forearms",
+        "claim": "c14"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c17"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Backs of thighs, going down",
+        "means": "This tension is what you should feel.",
+        "fix": null,
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "No feeling in the hamstrings",
+        "means": "Fault: too much knee bend, or hips not going back.",
+        "fix": "Push the hips back and keep only a slight knee bend.",
+        "claim": "c13",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back more than the hamstrings",
+        "means": "Fault: using the back to stand up.",
+        "fix": "Use your glutes and hamstrings to stand up.",
+        "claim": [
+          "c10",
+          "c5"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Lower back pain while lifting",
+        "means": "Is it getting worse?",
+        "fix": "Stop the set. Don't train through the pain.",
+        "claim": "c23",
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Rounding the back to reach lower raises injury risk.",
+      "claim": "c8"
+    },
+    {
+      "risk": "Heavy reps with a held breath send blood pressure very high.",
+      "claim": "c19"
+    },
+    {
+      "risk": "Looking straight ahead at the bottom strains the neck.",
+      "claim": "c7"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "dbrdl-grip",
+      "kind": "hand",
+      "right": "Dumbbells on the thighs, palms facing you, thumbs wrapped.",
+      "wrong": "Dumbbells hanging away from the legs.",
+      "claim": [
+        "c4",
+        "c1",
+        "c24"
+      ]
+    },
+    {
+      "key": "dbrdl-bottom",
+      "kind": "posture",
+      "right": "Hips back, flat back, soft knees, dumbbells at mid-shin.",
+      "wrong": "Rounded back reaching the dumbbells to the floor.",
+      "claim": [
+        "c8",
+        "c3",
+        "c6"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "adductors",
+      "upper_traps",
+      "forearms"
+    ],
+    "remove": [],
+    "why": "Library primary hamstrings and secondary glutes, lower_back match (c13, c14). Glutes are listed primary in the feel spec (StrengthLog and Fitbod name them a main mover, c14). Add adductors, upper_traps (trapezius) and forearms (forearm flexors) as secondary: StrengthLog lists all three (c14)."
+  },
+  "anchorSource": "sweat-db-rdl",
+  "sources": [
+    {
+      "id": "sweat-db-rdl",
+      "url": "https://sweat.com/blogs/fitness/how-to-dumbbell-romanian-deadlift",
+      "title": "How To Master Dumbbell Romanian Deadlifts (Sweat)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "fitbod-db-rdl",
+      "url": "https://fitbod.me/exercises/dumbbell-romanian-deadlift",
+      "title": "Dumbbell Romanian Deadlift: Form, Muscles Worked, Target Weight & Variations (Fitbod)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "sl-db-rdl",
+      "url": "https://www.strengthlog.com/dumbbell-romanian-deadlift/",
+      "title": "How to Do Dumbbell Romanian Deadlift: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "martinfuentes2020",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/32107499/",
+      "title": "Electromyographic activity in deadlift exercise and its variants. A systematic review.",
+      "kind": "peer-reviewed",
+      "year": 2020,
+      "pmid": 32107499,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "macdougall1985",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/3980383/",
+      "title": "Arterial blood pressure response to heavy resistance exercise.",
+      "kind": "peer-reviewed",
+      "year": 1985,
+      "pmid": 3980383,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "acsm2009",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19204579/",
+      "title": "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults.",
+      "kind": "peer-reviewed",
+      "year": 2009,
+      "pmid": 19204579,
+      "access": "abstract",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "nhs-back-pain",
+      "url": "https://www.nhs.uk/conditions/back-pain/",
+      "title": "Back pain (NHS)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "sl-deadlift",
+      "url": "https://www.strengthlog.com/deadlift/",
+      "title": "How to Deadlift: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "baechle-grip",
+      "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+      "title": "Grip selection and location. Excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)",
+      "kind": "textbook",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-19"
+    }
+  ],
+  "notes": [
+    "Drawing conventions (LR-4; LR-34 way 2; R-LB3-5): grip.handContact (\"Handle across the middle of the palm, fingers wrapped (hold archetype).\") and the drawn palm direction (palms facing the body, as grip.type states from c1) are drawing conventions, not claims. The drawn wrist, grip.wrist (\"Neutral (inherited).\"), is this card's convention until the hand lane decides the hold and pull wrists across cards (F-LB3-3)."
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "hip.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "knee.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "knee.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ankle.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c4"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    },
+    {
+      "phase": "Stand",
+      "s": 1,
+      "move": true
+    }
+  ],
+  "topFault": "arch"
+}

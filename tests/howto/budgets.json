@@ -21,75 +21,75 @@
     },
     {
       "chunk": "ht-dumbbell-lateral-raise-*.js",
-      "rawMax": 77365,
-      "gzMax": 16814,
-      "measuredRaw": 70331,
-      "measuredGz": 15285,
-      "setBy": "HT-5",
-      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+      "rawMax": 35502,
+      "gzMax": 10486,
+      "measuredRaw": 32274,
+      "measuredGz": 9532,
+      "setBy": "HT-11",
+      "reason": "HT-11: the four figure strings ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 70331 / 15285 B, set by HT-5)."
     },
     {
       "chunk": "ht-barbell-back-squat-*.js",
-      "rawMax": 110349,
-      "gzMax": 26407,
-      "measuredRaw": 100317,
-      "measuredGz": 24006,
-      "setBy": "HT-5",
-      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+      "rawMax": 43608,
+      "gzMax": 11493,
+      "measuredRaw": 39643,
+      "measuredGz": 10448,
+      "setBy": "HT-11",
+      "reason": "HT-11: the four figure strings ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 100317 / 24006 B, set by HT-5)."
     },
     {
       "chunk": "ht-pull-up-*.js",
-      "rawMax": 144539,
-      "gzMax": 34477,
-      "measuredRaw": 131399,
-      "measuredGz": 31342,
-      "setBy": "HT-5",
-      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+      "rawMax": 45876,
+      "gzMax": 12777,
+      "measuredRaw": 41705,
+      "measuredGz": 11615,
+      "setBy": "HT-11",
+      "reason": "HT-11: the four figure strings ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 131399 / 31342 B, set by HT-5)."
     },
     {
       "chunk": "ht-hanging-leg-raise-*.js",
-      "rawMax": 136887,
-      "gzMax": 33692,
-      "measuredRaw": 124442,
-      "measuredGz": 30629,
-      "setBy": "HT-5",
-      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+      "rawMax": 49565,
+      "gzMax": 12781,
+      "measuredRaw": 45059,
+      "measuredGz": 11619,
+      "setBy": "HT-11",
+      "reason": "HT-11: the four figure strings ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 124442 / 30629 B, set by HT-5)."
     },
     {
       "chunk": "ht-lat-pulldown-*.js",
-      "rawMax": 131048,
-      "gzMax": 29704,
-      "measuredRaw": 119134,
-      "measuredGz": 27003,
-      "setBy": "HT-5",
-      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+      "rawMax": 50954,
+      "gzMax": 12958,
+      "measuredRaw": 46321,
+      "measuredGz": 11780,
+      "setBy": "HT-11",
+      "reason": "HT-11: the four figure strings ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 119134 / 27003 B, set by HT-5)."
     },
     {
       "chunk": "ht-seated-cable-row-*.js",
-      "rawMax": 137268,
-      "gzMax": 31203,
-      "measuredRaw": 124789,
-      "measuredGz": 28366,
-      "setBy": "HT-5",
-      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+      "rawMax": 54394,
+      "gzMax": 13499,
+      "measuredRaw": 49449,
+      "measuredGz": 12271,
+      "setBy": "HT-11",
+      "reason": "HT-11: the four figure strings ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 124789 / 28366 B, set by HT-5)."
     },
     {
       "chunk": "ht-leg-press-*.js",
-      "rawMax": 111312,
-      "gzMax": 22892,
-      "measuredRaw": 101192,
-      "measuredGz": 20810,
-      "setBy": "HT-5",
-      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+      "rawMax": 41640,
+      "gzMax": 11171,
+      "measuredRaw": 37854,
+      "measuredGz": 10155,
+      "setBy": "HT-11",
+      "reason": "HT-11: the four figure strings ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 101192 / 20810 B, set by HT-5)."
     },
     {
       "chunk": "ht-machine-chest-press-*.js",
-      "rawMax": 117593,
-      "gzMax": 24847,
-      "measuredRaw": 106902,
-      "measuredGz": 22588,
-      "setBy": "HT-5",
-      "reason": "HT-5: re-measured after the content fields (handling, setup, posture, zoom descriptors, mistakes, risks, copy, sources, research) merged into the base chunk."
+      "rawMax": 44754,
+      "gzMax": 10959,
+      "measuredRaw": 40685,
+      "measuredGz": 9962,
+      "setBy": "HT-11",
+      "reason": "HT-11: the four figure strings ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 106902 / 22588 B, set by HT-5)."
     },
     {
       "chunk": "feel-lateral-raise-*.js",
@@ -165,75 +165,75 @@
     },
     {
       "chunk": "posture-lateral-raise-*.js",
-      "rawMax": 137992,
-      "gzMax": 24815,
-      "measuredRaw": 125447,
-      "measuredGz": 22559,
-      "setBy": "HT-7",
-      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+      "rawMax": 48165,
+      "gzMax": 8315,
+      "measuredRaw": 43786,
+      "measuredGz": 7559,
+      "setBy": "HT-11",
+      "reason": "HT-11: the panels and zdots ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 125447 / 22559 B, set by HT-7)."
     },
     {
       "chunk": "posture-barbell-back-squat-*.js",
-      "rawMax": 73500,
-      "gzMax": 13315,
-      "measuredRaw": 66818,
-      "measuredGz": 12104,
-      "setBy": "HT-7",
-      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+      "rawMax": 33942,
+      "gzMax": 7056,
+      "measuredRaw": 30856,
+      "measuredGz": 6414,
+      "setBy": "HT-11",
+      "reason": "HT-11: the panels and zdots ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 66818 / 12104 B, set by HT-7)."
     },
     {
       "chunk": "posture-pull-up-*.js",
-      "rawMax": 99938,
-      "gzMax": 19002,
-      "measuredRaw": 90852,
-      "measuredGz": 17274,
-      "setBy": "HT-7",
-      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+      "rawMax": 40328,
+      "gzMax": 8858,
+      "measuredRaw": 36661,
+      "measuredGz": 8052,
+      "setBy": "HT-11",
+      "reason": "HT-11: the panels and zdots ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 90852 / 17274 B, set by HT-7)."
     },
     {
       "chunk": "posture-hanging-leg-raise-*.js",
-      "rawMax": 74572,
-      "gzMax": 17992,
-      "measuredRaw": 67792,
-      "measuredGz": 16356,
-      "setBy": "HT-7",
-      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+      "rawMax": 37355,
+      "gzMax": 8384,
+      "measuredRaw": 33959,
+      "measuredGz": 7621,
+      "setBy": "HT-11",
+      "reason": "HT-11: the panels and zdots ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 67792 / 16356 B, set by HT-7)."
     },
     {
       "chunk": "posture-lat-pulldown-*.js",
-      "rawMax": 120270,
-      "gzMax": 16824,
-      "measuredRaw": 109336,
-      "measuredGz": 15294,
-      "setBy": "HT-7",
-      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+      "rawMax": 45391,
+      "gzMax": 8431,
+      "measuredRaw": 41264,
+      "measuredGz": 7664,
+      "setBy": "HT-11",
+      "reason": "HT-11: the panels and zdots ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 109336 / 15294 B, set by HT-7)."
     },
     {
       "chunk": "posture-seated-cable-row-*.js",
-      "rawMax": 126906,
-      "gzMax": 17844,
-      "measuredRaw": 115369,
-      "measuredGz": 16221,
-      "setBy": "HT-7",
-      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+      "rawMax": 48740,
+      "gzMax": 9040,
+      "measuredRaw": 44309,
+      "measuredGz": 8218,
+      "setBy": "HT-11",
+      "reason": "HT-11: the panels and zdots ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 115369 / 16221 B, set by HT-7)."
     },
     {
       "chunk": "posture-leg-press-*.js",
-      "rawMax": 79881,
-      "gzMax": 11383,
-      "measuredRaw": 72619,
-      "measuredGz": 10348,
-      "setBy": "HT-7",
-      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+      "rawMax": 32014,
+      "gzMax": 6740,
+      "measuredRaw": 29103,
+      "measuredGz": 6127,
+      "setBy": "HT-11",
+      "reason": "HT-11: the panels and zdots ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 72619 / 10348 B, set by HT-7)."
     },
     {
       "chunk": "posture-machine-chest-press-*.js",
-      "rawMax": 115761,
-      "gzMax": 16470,
-      "measuredRaw": 105237,
-      "measuredGz": 14972,
-      "setBy": "HT-7",
-      "reason": "HT-7: golden B's two posture close-ups for this exercise (Right and Wrong crops, byte for byte), loaded on the first posture tap; the card's own limit is 24 KB gz."
+      "rawMax": 45731,
+      "gzMax": 8244,
+      "measuredRaw": 41573,
+      "measuredGz": 7494,
+      "setBy": "HT-11",
+      "reason": "HT-11: the panels and zdots ship path-encoded (src/howto/delta.js) and are decoded at import; measured + 10 % on main 565ea5a4 + HT-11 (before: 105237 / 14972 B, set by HT-7)."
     }
   ],
   "perId": [
@@ -252,12 +252,12 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 2553647,
-      "gzMax": 563379,
-      "measuredRaw": 2321497,
-      "measuredGz": 512162,
-      "setBy": "HT-10",
-      "reason": "8 exercises with hand, posture and feel chunks; per-chunk entries pin each chunk. Final: re-measured on main 000918e (HT-7, HT-8, HT-9 merged)."
+      "rawMax": 1456974,
+      "gzMax": 367195,
+      "measuredRaw": 1324521,
+      "measuredGz": 333813,
+      "setBy": "HT-11",
+      "reason": "HT-11 lowered the measured 8 (D-LIB2-total: HT-11 may only lower it) to the superset How-to total on main 565ea5a4 + HT-11, plates and posture close-ups path-encoded (before: 2321497 / 512162 B, set by HT-10, 8 exercises with hand, posture and feel chunks; per-chunk entries pin each chunk. Final: re-measured on main 000918e (HT-7, HT-8, HT-9 merged).)"
     }
   ]
 }

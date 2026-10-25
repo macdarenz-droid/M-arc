@@ -18,11 +18,11 @@ import { manifestOf, manifestText, MANIFEST } from './manifest.mjs';
 
 /** The scratch set: two targets per usable pool source, each with its own pair key (D-LIB4c-1 (a)). */
 export const SCRATCH_4C = [
-  { id: 'lib_barbell_row', from: 'lat_pulldown', key: 'lib4c-scratch-a' },
+  { id: 'lib_jumping_jacks', from: 'lat_pulldown', key: 'lib4c-scratch-a' },   // D-LIB11-SCRATCHA: was lib_barbell_row (pilot A)
   { id: 'lib_one_arm_dumbbell_row', from: 'lat_pulldown', key: 'lib4c-scratch-b' },
   { id: 'lib_t_bar_row', from: 'seated_cable_row', key: 'lib4c-scratch-c' },
   { id: 'lib_landmine_row', from: 'seated_cable_row', key: 'lib4c-scratch-d' },
-  { id: 'lib_smith_machine_bench_press', from: 'machine_chest_press', key: 'lib4c-scratch-e' },
+  { id: 'lib_sled_push', from: 'machine_chest_press', key: 'lib4c-scratch-e' },   // D-LIB11-SCRATCHIDS (a): was lib_smith_machine_bench_press (pilot B)
   { id: 'lib_smith_machine_incline_press', from: 'machine_chest_press', key: 'lib4c-scratch-f' },
 ];
 /** docs/howto/library/arch/batchlines.md @ 4a9fd86 (D-LIB-SCRATCHIDS): never a scratch target. */
@@ -30,6 +30,9 @@ export const LB1 = ['chin_up', 'hanging_knee_raise', 'assisted_pull_up', 'invert
 export const LB2 = ['dumbbell_bench_press', 'barbell_bench_press', 'incline_dumbbell_press', 'incline_barbell_bench_press', 'decline_bench_press', 'close_grip_bench_press', 'dumbbell_shoulder_press', 'barbell_overhead_press', 'arnold_press', 'dumbbell_fly', 'skull_crusher', 'dumbbell_pullover'];
 /** Ids other fixtures use (LIB-2b's clone, LIB-4b's B5 set). */
 export const TAKEN = ['lib_cable_lateral_raise', 'lib_underhand_lat_pulldown', 'lib_chest_supported_row', 'lib_cable_chest_press'];
+/** D-LIB11-SCRATCHIDS (a) and D-LIB11-SCRATCHA: pinned batches' ids (pilot B's held crunch included), never a scratch target. */
+export const PILOT_A = ['barbell_row', 'dumbbell_bench_press', 'dumbbell_shoulder_press', 'barbell_overhead_press', 'romanian_deadlift', 'single_leg_romanian_deadlift', 'upright_row', 'pec_fly', 'dumbbell_biceps_curl', 'rope_triceps_pushdown', 'plank', 'mountain_climbers', 'triceps_pushdown'];
+export const PILOT_B = ['smith_machine_bench_press', 'seated_leg_curl', 'cable_fly', 'push_up', 'crunch'];
 
 /** Refuses a scratch set that targets an LB1/LB2 id, a taken id, a shared key or an id outside exercises.json. */
 export function setProblems(set, root = ROOT) {
@@ -38,6 +41,7 @@ export function setProblems(set, root = ROOT) {
     const name = s.id.replace(/^lib_/, '');
     if (LB1.includes(name) || LB2.includes(name)) out.push(`${s.id} is an ${LB1.includes(name) ? 'LB1' : 'LB2'} id (D-LIB-SCRATCHIDS)`);
     if (TAKEN.includes(s.id)) out.push(`${s.id} is another fixture's id`);
+    if (PILOT_A.includes(name) || PILOT_B.includes(name)) out.push(`${s.id} is a pilot ${PILOT_A.includes(name) ? 'A' : 'B'} id (D-LIB11-SCRATCHIDS)`);
     if (!known.has(s.id)) out.push(`${s.id} is not in src/data/exercises.json`);
   }
   if (new Set(set.map(s => s.id)).size !== set.length) out.push('an id is listed twice');
@@ -94,6 +98,19 @@ export function copyProblems(root, set = SCRATCH_4C) {
     const t = transformSources(s, root), P = paths(s);
     for (const [kind, mine, src] of [['spec', t.spec, `tools/plates/layers/exercises/${s.from}.mjs`], ['howto', t.howto, `tools/plates/layers/exercises/${s.from}.howto.mjs`]]) {
       const a = readFileSync(join(root, src), 'utf8').split('\n'), b = mine.split('\n');
+      // LIB-5v (D-LIB5v-FIXLINE): a target whose exercises.json equipment has '/' carries exactly one inserted line,
+      // `    variantLine: '<second kind>.',`, directly after the clone's one `  copy: {` line; it is taken out here, so
+      // every other line keeps the comparison below. Any other target carries none (the line count catches one).
+      if (kind === 'howto') {
+        const kinds = String(JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8')).find(e => e.id === s.id)?.equipment ?? '').split('/').map(k => k.trim());
+        const at = b.flatMap((l, i) => (l === '  copy: {' ? [i] : []));
+        if (at.length !== 1) { out.push(`${s.id} howto: ${at.length} copy lines, want 1`); continue; }
+        if (kinds.length > 1) {
+          const want = `    variantLine: '${kinds[1]}.',`;
+          if (b[at[0] + 1] !== want) { out.push(`${s.id} howto:${at[0] + 2}: ${JSON.stringify(b[at[0] + 1]?.trim() ?? '').slice(0, 80)}, want the variant line ${JSON.stringify(want.trim())}`); continue; }
+          b.splice(at[0] + 1, 1);
+        }
+      }
       if (a.length !== b.length) { out.push(`${s.id} ${kind}: ${b.length} lines, its source ${a.length}`); continue; }
       const edits = (COPY_EDITS[s.from] ?? []).map(([from, to]) => [from, to]);
       for (let i = 0; i < a.length; i++) {
