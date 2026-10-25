@@ -360,3 +360,96 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
     }
   });
 });
+
+describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] against its shipped parent (D-LIB9a-MAP)', () => {
+  let FM: any;
+  const parents = new Map<string, any>(), cards = new Map<string, any>();
+  /** The LB1 cards with an inherit[] (lib4-cards 14 OPEN-6 point 6), read from this head's research copies. */
+  const CHILDREN = ['chin_up', 'close_grip_pulldown', 'hanging_knee_raise', 'incline_machine_press', 'shoulder_press', 'single_arm_lat_pulldown',
+    'underhand_lat_pulldown', 'horizontal_leg_press', 'leg_press_calf_raise'];
+  const SETUP_FIELD = "setup['Pick the weight. Start lighter than you think; if you have to bend your wrist back to hold it, it is too heavy.']";
+  beforeAll(async () => {
+    FM = await import(/* @vite-ignore */ url('tools/plates/library/lint/family.mjs'));
+    for (const r of SHIPPED) parents.set(r.id, (await content.loadContent(r.id)).content);
+    for (const c of CHILDREN) cards.set(`lib_${c}`, JSON.parse(readFileSync(join(ROOT, `docs/research/howto/cards/${c}.json`), 'utf8')));
+  });
+  /** A deep copy that keeps functions and gives every `claim` the child's own sources (C1 leaves claims out). */
+  const own = (v: any): any => (Array.isArray(v) ? v.map(own) : v && typeof v === 'object'
+    ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, k === 'claim' ? { tags: ['CONSENSUS'], sources: ['child-c1'] } : own(x)])) : v);
+  /** The child's How-to content as LIB-9's copy would write it: the parent's mapped values, the child's own claims. */
+  const childOf = (id: string, parent = parents.get(`lib_${cards.get(id).parent}`)) => ({ ...own(parent), id, research: { card: `docs/research/howto/cards/${id.slice(4)}.json` } });
+  const shipped = (id: string) => parents.get(id);
+  const refuse = (id: string, c: any, card = cards.get(id), res: any = shipped) => FM.familyRefusal(id, c, () => card, res);
+  const UNRULED = (id: string) => `${id}: family: docs/research/howto/cards/${id.slice(4)}.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`;
+
+  it('the map covers every inherit[] field of the 9 cards exactly, and no field is unmapped', () => {
+    expect(SHIPPED.length).toBe(8);
+    for (const [id, card] of cards) {
+      expect([id, card.inherit.length > 0, typeof card.parent]).toEqual([id, true, 'string']);
+      expect([id, FM.unmappedFields(id, card)]).toEqual([id, []]);
+      expect([id, Object.keys(FM.INHERIT_MAP[id]).sort()]).toEqual([id, card.inherit.map((e: any) => e.field).sort()]);
+    }
+    expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys()].sort());
+  });
+  /** D-LIB9a-MAP as ruled (#245 6393424755 on the tables of 6393419324), keyed by each card's exact field string. Literal:
+   *  a narrowed or widened path in INHERIT_MAP turns this red. shoulder_press's setup line is not in it (F-LB1-SETUP). */
+  const THUMB = ['handling.thumb.mode', 'handling.pose.thumb'];
+  const RULED = {
+    lib_chin_up: { 'grip.thumb (wrapped, never thumbless by default)': THUMB, 'zooms.hand (full grip, thumb around the bar, is the only grip shown)': ['zooms[key=hand]'] },
+    lib_close_grip_pulldown: { 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
+    lib_hanging_knee_raise: { 'grip.thumb (wrapped every set)': THUMB },
+    lib_incline_machine_press: { 'grip.type': ['handling.handle'], 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'],
+      "posture['Straight wrist, forearm behind the handle']": ['posture[key=wrist]'], "posture['Feet flat, hips back']": ['posture[key=feet]'], "zooms['hand']": ['zooms[key=hand]'] },
+    lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], "zooms['hand']": ['zooms[key=hand]'] },
+    lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': ['setup[kind=position,zoom=path].text'] },
+    lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path]'], 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
+    lib_horizontal_leg_press: { grip: ['handling'], "posture['Tailbone and lower back flat on the pad']": ['posture[key=back]'], "posture['Whole foot flat, mid-platform']": ['posture[key=feet]'],
+      "posture['Soft knees at the top']": ['posture[key=soft]'], "posture['Hands light on the side handles']": ['posture[key=hands]'] },
+    lib_leg_press_calf_raise: { grip: ['handling'],
+      "setup['After the last rep, pause at the top, turn the handles back in, and let the sled settle on the catches before you take your feet off or let go.']": ['setup[kind=finish]'],
+      "posture['Hands light on the side handles']": ['posture[key=hands]'] },
+  };
+  it('INHERIT_MAP is exactly the ruled map (D-LIB9a-MAP): every field and every path', () => {
+    expect(FM.INHERIT_MAP).toStrictEqual(RULED);
+  });
+  it('every mapped path holds leaves in its shipped parent; a faithful child copy with its own claims passes', () => {
+    for (const [id, card] of cards) {
+      for (const p of Object.values(FM.INHERIT_MAP[id]).flat()) expect([id, p, FM.leaves(FM.atPath(parents.get(`lib_${card.parent}`), p)).length > 0]).toEqual([id, p, true]);
+      expect([id, refuse(id, childOf(id))]).toEqual([id, null]);
+    }
+  });
+  it('shoulder_press passes after F-LB1-SETUP (#318) removed its setup entry; the entry put back is unmapped and still throws', () => {
+    const id = 'lib_shoulder_press', card = cards.get(id), c = childOf(id);
+    expect(card.inherit.map((e: any) => e.field)).not.toContain(SETUP_FIELD);
+    expect(refuse(id, c)).toBeNull();
+    expect(refuse(id, c, { ...card, inherit: [...card.inherit, { field: SETUP_FIELD, why: 'the pre-#318 entry' }] })).toBe(UNRULED(id));
+  });
+  it('mutations, each refused with its message', () => {
+    const id = 'lib_chin_up', card = cards.get(id), ok = childOf(id);
+    const drift = { ...ok, handling: { ...ok.handling, thumb: { ...ok.handling.thumb, mode: 'over' } } };
+    expect(refuse(id, drift)).toBe(`${id}: family: grip.thumb (wrapped, never thumbless by default): handling.thumb.mode "over" !== parent lib_pull_up's "wrapped" (D-LIB5-FAMILY)`);
+    const zoomed = { ...ok, zooms: ok.zooms.map((z: any) => (z.key === 'hand' ? { ...z, caption: { ...z.caption, right: 'Bar in the palm.' } } : z)) };
+    expect(refuse(id, zoomed)).toMatch(/^lib_chin_up: family: zooms\.hand .*: zooms\[key=hand\]\.caption\.right "Bar in the palm\." !== parent lib_pull_up's /);
+    const extra = { ...ok, zooms: ok.zooms.map((z: any) => (z.key === 'hand' ? { ...z, chipCaption: 'Underhand' } : z)) };
+    expect(refuse(id, extra)).toMatch(/zooms\[key=hand\]\.chipCaption "Underhand" is not in parent lib_pull_up \(D-LIB5-FAMILY\)$/);
+    const pu = parents.get('lib_pull_up'), moved = { ...pu, handling: { ...pu.handling, pose: { ...pu.handling.pose, thumb: 'hook' } } };
+    expect(refuse(id, ok, card, (k: string) => (k === 'lib_pull_up' ? moved : shipped(k)))).toBe(`${id}: family: grip.thumb (wrapped, never thumbless by default): handling.pose.thumb "wrapped" !== parent lib_pull_up's "hook" (D-LIB5-FAMILY)`);
+    expect(refuse(id, ok, { ...card, inherit: [...card.inherit, { field: 'grip.width', why: 'm' }] })).toBe(UNRULED(id));
+    expect(refuse(id, { ...ok, extends: 'lib_lat_pulldown' })).toBe(`${id}: family: extends: "lib_lat_pulldown" disagrees with the card's parent "pull_up" (D-LIB5-FAMILY)`);
+    expect(refuse(id, { ...ok, extends: 'lib_pull_up' })).toBe(`${id}: family: extends: inherited-string map not ruled (D-LIB5-FAMILY)`);
+    expect(refuse(id, ok, card, () => undefined)).toBe(`${id}: family: docs/research/howto/cards/chin_up.json#inherit: parent lib_pull_up is not shipped in this head (D-LIB5-FAMILY)`);
+    // D-LIB9a-GATEWIRE: library-gate.mjs calls with no resolver until LIB-9 adds it (F-LIB9-GATEWIRE), so a mapped row fails closed.
+    expect(FM.familyRefusal(id, ok, () => card)).toBe(`${id}: family: docs/research/howto/cards/chin_up.json#inherit: no shipped-content resolver (D-LIB5-FAMILY)`);
+    expect(refuse(id, ok, { ...card, parent: undefined })).toBe(`${id}: family: docs/research/howto/cards/chin_up.json#inherit: inherit[] with no card parent (D-LIB5-FAMILY)`);
+    expect(refuse(id, { ...ok, zooms: ok.zooms.filter((z: any) => z.key !== 'hand') })).toBe(`${id}: family: zooms.hand (full grip, thumb around the bar, is the only grip shown): zooms[key=hand]: [key=hand] matches 0 items (D-LIB5-FAMILY)`);
+    expect(refuse(id, { ...ok, zooms: [...ok.zooms, ok.zooms.find((z: any) => z.key === 'hand')] })).toBe(`${id}: family: zooms.hand (full grip, thumb around the bar, is the only grip shown): zooms[key=hand]: [key=hand] matches 2 items (D-LIB5-FAMILY)`);
+    FM.INHERIT_MAP.lib_x = { f: ['handling.empty'] };
+    try {
+      expect(FM.familyRefusal('lib_x', { research: { card: 'c.json' }, handling: { empty: {} } }, () => ({ parent: 'pull_up', inherit: [{ field: 'f' }] }),
+        (k: string) => (k === 'lib_pull_up' ? { ...pu, handling: { ...pu.handling, empty: {} } } : undefined))).toBe('lib_x: family: f: parent lib_pull_up: handling.empty holds nothing to compare (D-LIB5-FAMILY)');
+    } finally { delete FM.INHERIT_MAP.lib_x; }
+    // LIB-5's M1-M3 stay unmapped cases with a resolver too.
+    expect(FM.familyRefusal('lib_x', { research: { card: 'c.json' } }, () => ({ parent: 'pull_up', inherit: [{ field: 'grip.thumb' }] }), shipped)).toBe('lib_x: family: c.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)');
+    expect(FM.familyRefusal('lib_x', { research: { card: 'c.json' } }, () => ({ parent: 'pull_up', inherit: true }), shipped)).toBe('lib_x: family: c.json#inherit: inherited-string map not ruled (D-LIB5-FAMILY)');
+  });
+});
