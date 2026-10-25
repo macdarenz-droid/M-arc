@@ -1,0 +1,738 @@
+{
+  "id": "cable_kickback",
+  "libId": "lib_cable_kickback",
+  "name": "Cable Kickback",
+  "family": "Glute and hip extension",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "standing-feet"
+    ]
+  },
+  "parent": null,
+  "parentNote": "Its own parent (content.md Appendix A: new parents on their own).",
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Attach an ankle strap or cuff to the cable at its lowest setting and put it around the working ankle.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-gk",
+        "pg-ck",
+        "sl-ck"
+      ],
+      "quotes": [
+        {
+          "source": "bb-gk",
+          "text": "Step 1 — Place the ankle strap on the cable machine carabiner and adjust its height to the lowest position",
+          "where": "How to Do the Glute Kickback, step 1"
+        },
+        {
+          "source": "pg-ck",
+          "text": "Attach the ankle cuff to the cable pulley and set it on the lowest setting. Attach the cuff to your ankle.",
+          "where": "How To Do Cable Kickbacks, step 1"
+        },
+        {
+          "source": "sl-ck",
+          "text": "Attach an ankle strap to a cable machine and place it around your ankle.",
+          "where": "How to Do Cable Glute Kickback, step 1"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Face the pulley and hinge forward at the hips: PureGym says by about 45 degrees, BarBend says lightly; hold the machine for support, with most of the weight on the non-working leg.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-ck",
+        "bb-gk"
+      ],
+      "quotes": [
+        {
+          "source": "pg-ck",
+          "text": "Face the pulley and hinge forward by about 45 degrees at the hips. You can hold on to the pulley machine for support if needed.",
+          "where": "How To Do Cable Kickbacks, step 2"
+        },
+        {
+          "source": "bb-gk",
+          "text": "Step 2 — With the ankle strap around your ankle, face the cable machine and lightly hinge to stabilize. Place most of your weight on the non-working leg. This is your starting position.",
+          "where": "How to Do the Glute Kickback, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Fitbod stands upright facing the pulley with the feet hip-width apart, holding the frame, which differs from the hinge in c2.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fb-che"
+      ],
+      "quotes": [
+        {
+          "source": "fb-che",
+          "text": "Stand upright facing the pulley with your feet hip-width apart and grab ahold of the steel frame.",
+          "where": "Instructions for Proper Form, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Brace the core and use the hands and free leg as stability points against the machine, keeping the body still.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-gk",
+        "sl-ck",
+        "fb-che"
+      ],
+      "quotes": [
+        {
+          "source": "bb-gk",
+          "text": "Step 3 — Using your hands and free leg to brace, press into the machine to create a counterforce to your kickback. Brace your core, tighten your legs, and secure your grip on the cable machine as stability points.",
+          "where": "How to Do the Glute Kickback, step 3"
+        },
+        {
+          "source": "sl-ck",
+          "text": "Brace your core, keep your body still, and start to press your leg backward and upwards by activating the glute.",
+          "where": "How to Do Cable Glute Kickback, step 2"
+        },
+        {
+          "source": "fb-che",
+          "text": "Brace your core to maintain a neutral spine.",
+          "where": "Instructions for Proper Form, step 3"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Keep the working leg long with only a slight knee bend and drive it backward by squeezing the glute.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-gk",
+        "fb-che"
+      ],
+      "quotes": [
+        {
+          "source": "bb-gk",
+          "text": "Step 4 — Keep your working leg long, with only a subtle bend at the knee. Squeeze your glute on the working side as you drive your leg backward against the resistance.",
+          "where": "How to Do the Glute Kickback, step 4"
+        },
+        {
+          "source": "fb-che",
+          "text": "Keeping your right leg extended with the knee slightly flexed, extend it behind you by flexing your right glute.",
+          "where": "Instructions for Proper Form, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Drive the leg back as far as possible without rotating at the hips; squeeze the glute at the top and pause for a second, then return slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-ck",
+        "sl-ck",
+        "bb-gk"
+      ],
+      "quotes": [
+        {
+          "source": "pg-ck",
+          "text": "Engage your abs, then use your glutes to drive back your leg as far as possible.",
+          "where": "How To Do Cable Kickbacks, step 3"
+        },
+        {
+          "source": "sl-ck",
+          "text": "Push the leg as far up as you can without rotating in the hips, then return to the starting position.",
+          "where": "How to Do Cable Glute Kickback, step 3"
+        },
+        {
+          "source": "pg-ck",
+          "text": "Squeeze your glutes at the top of the movement and pause for a second before slowly returning back to the starting position.",
+          "where": "How To Do Cable Kickbacks, step 4"
+        },
+        {
+          "source": "bb-gk",
+          "text": "Step 5 – Once your glute has fully contracted, slowly lower back to the starting position. Perform for repetitions.",
+          "where": "How to Do the Glute Kickback, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "A lot of lifters move other parts of the body to do the kickback; brace and anchor against the machine, do not let the lower back arch, the upper back flare or the hips sway, and let only the glutes move the pulley.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-gk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-gk",
+          "text": "While that may sound silly, the reality is that a lot of lifters move other parts of their body to accomplish the glute kickback.",
+          "where": "Common Glute Kickback Mistakes: Not Bracing Properly"
+        },
+        {
+          "source": "bb-gk",
+          "text": "Do not allow your lower back to arch, don’t flare your upper back, or sway your hips. Brace up, and only contract your glutes. Movement from your butt should move that pulley, nothing else.",
+          "where": "Common Glute Kickback Mistakes: Not Bracing Properly"
+        },
+        {
+          "source": "bb-gk",
+          "text": "Anchoring yourself in place with a strong brace and counterforce against the machine (using your arms to lock yourself in a specific position) are key ways to isolate your glutes.",
+          "where": "Common Glute Kickback Mistakes: Not Bracing Properly"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Poor form is likely to bring in the lower back instead of the glutes; once hinged, pull the belly button in to flatten the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-ck"
+      ],
+      "quotes": [
+        {
+          "source": "pg-ck",
+          "text": "Having good form is key to isolating the glutes in this exercise – poor form is likely to recruit the lower back instead. Once you have hinged forward, engage your core by pulling the belly button in towards the spine to flatten your back.",
+          "where": "Cable Kickback Tips"
+        },
+        {
+          "source": "pg-ck",
+          "text": "Make sure you are hinging forward at the hips and engaging the core to keep a neutral spine and avoid using momentum to swing the weight. It should be a smooth and controlled movement.",
+          "where": "Commonly Asked Questions: How To Feel Cable Kickbacks In Glutes"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Momentum (swinging the leg) is a listed kickback mistake: brace and contract only the glutes through a full range; if you cannot move the weight without swinging, drop the weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-gk",
+        "pg-ck"
+      ],
+      "quotes": [
+        {
+          "source": "bb-gk",
+          "text": "Be disciplined, brace up, and only contract your glutes with proper form and a full range of motion.",
+          "where": "Common Glute Kickback Mistakes: Momentum"
+        },
+        {
+          "source": "pg-ck",
+          "text": "If you are unable to move the weight without swinging your legs to create momentum, drop the weight.",
+          "where": "Cable Kickback Tips"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Keep the hips level (square): twisting lets the leg rise higher but makes the exercise less effective; point the toe straight down.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fb-che"
+      ],
+      "quotes": [
+        {
+          "source": "fb-che",
+          "text": "Keep your hips level to the ground. Twisting will let you raise your leg higher, but it will also reduce the effectiveness of this exercise. Focus on pointing your toe straight down towards the ground.",
+          "where": "Common Form Mistakes: Hips Square"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "The long lever means heavy loading breaks the form down quickly; load for about 10 to 15 reps, 2-4 sets of 10-15 for muscle, feeling the glute and holding position.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-gk"
+      ],
+      "quotes": [
+        {
+          "source": "bb-gk",
+          "text": "The glute kickback isn’t one that you’re going to do for max load. Since you are using a long lever with your leg, heavier loading would break down your form too quickly.",
+          "where": "Glute Kickback Sets and Reps"
+        },
+        {
+          "source": "bb-gk",
+          "text": "For Muscle Mass: Perform 2-4 sets of 10-15 repetitions.",
+          "where": "Glute Kickback Sets and Reps"
+        },
+        {
+          "source": "bb-gk",
+          "text": "Aim for loading schemes that allow you to mainly feel the glute, maintain position, and hit close to muscle failure around 10 to 15 repetitions.",
+          "where": "Common Glute Kickback Mistakes: Too Much Weight"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Muscles: the glutes are the main target; StrengthLog and Fitbod list the hamstrings as secondary (StrengthLog also the adductors), and PureGym says the hamstrings help stabilise.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-ck",
+        "pg-ck",
+        "bb-gk",
+        "fb-che"
+      ],
+      "quotes": [
+        {
+          "source": "sl-ck",
+          "text": "Glutes",
+          "where": "Muscles Worked: Primary muscles worked"
+        },
+        {
+          "source": "sl-ck",
+          "text": "Hamstrings",
+          "where": "Muscles Worked: Secondary muscles worked"
+        },
+        {
+          "source": "sl-ck",
+          "text": "Adductors",
+          "where": "Muscles Worked: Secondary muscles worked"
+        },
+        {
+          "source": "pg-ck",
+          "text": "While the hamstrings, quads, calves and core help to stabilise the movement, the glute muscles are the key driver in this exercise.",
+          "where": "What Is A Cable Kickback?"
+        },
+        {
+          "source": "bb-gk",
+          "text": "The glutes are the major muscle group worked by the glute kickback.",
+          "where": "Muscles Worked by the Glute Kickback"
+        },
+        {
+          "source": "fb-che",
+          "text": "Hamstrings",
+          "where": "Target muscles worked: Secondary Muscles"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "General kickback tips (PureGym's page for all kickback versions, including the cable one): use the full range, kicking the leg back as far as you comfortably can, and squeeze the glutes at the top.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "pg-gkhub"
+      ],
+      "quotes": [
+        {
+          "source": "pg-gkhub",
+          "text": "Make sure you are using your full range of motion. Aim to kickback your leg as far as you comfortably can, rather than stopping when it starts to get challenging.",
+          "where": "Glute kickback tips"
+        },
+        {
+          "source": "pg-gkhub",
+          "text": "Use the glutes to drive the movement, and make sure to squeeze the glutes at the top of the kickback.",
+          "where": "Glute kickback tips"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Tempo (drawing convention for up and down): PureGym pauses for a second at the top and returns slowly, with no seconds for the lift or the return. No cable-kickback source gives those seconds, so the plate's 2 s down and 1 s up are a drawing convention (R-LB7-6); the 1 s top pause is sourced.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "pg-ck"
+      ],
+      "quotes": [
+        {
+          "source": "pg-ck",
+          "text": "Squeeze your glutes at the top of the movement and pause for a second before slowly returning back to the starting position.",
+          "where": "How To Do Cable Kickbacks, step 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "bb-gk",
+      "url": "https://barbend.com/glute-kickbacks/",
+      "title": "How to Do Glute Kickbacks to Build Your Butt (BarBend)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "pg-ck",
+      "url": "https://www.puregym.com/exercises/glutes/glute-kickbacks/cable-kickbacks/",
+      "title": "Cable Kickbacks (PureGym exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-ck",
+      "url": "https://www.strengthlog.com/cable-glute-kickback/",
+      "title": "How to Do Cable Glute Kickback: Muscled Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "fb-che",
+      "url": "https://fitbod.me/exercises/cable-hip-extension",
+      "title": "Cable Hip Extension (also known as Cable Kickback): Form, Muscles Worked (Fitbod)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "pg-gkhub",
+      "url": "https://www.puregym.com/exercises/glutes/glute-kickbacks/",
+      "title": "Glute Kickback Variations (PureGym exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side (poses hinge, single). The drawn fault, the lower back arching as the leg drives back (c7), reads from the side, and so do the forward hinge (c2), the long working leg (c5) and how far it travels back (c6).",
+    "equipment": "Cable column with the pulley at its lowest setting and an ankle cuff on the working ankle (c1; census ankleCuff, compose); hands on the machine frame (c2, c4); floor line.",
+    "start": "Facing the pulley, hinged forward at the hips (c2), most of the weight on the standing leg (c2), core braced, hands holding the machine (c4); working leg long with a slight knee bend, cuff on its ankle (c1, c5).",
+    "end": "Working leg driven back as far as it goes without the hips rotating (c6), knee still only slightly bent (c5), glute squeezed (c6); back flat, hips level, torso unchanged (c7, c8, c10).",
+    "checkpoints": [
+      {
+        "label": "Back flat",
+        "what": "Core braced, lower back does not arch as the leg goes back.",
+        "claim": [
+          "c7",
+          "c8"
+        ]
+      },
+      {
+        "label": "Hips square",
+        "what": "Hips level, no twisting to lift the leg higher.",
+        "claim": [
+          "c10",
+          "c6"
+        ]
+      },
+      {
+        "label": "Leg long",
+        "what": "Working leg long, only a slight bend at the knee.",
+        "claim": "c5"
+      }
+    ],
+    "mistake": {
+      "what": "Lower back arching as the leg kicks back, instead of the body staying braced and still.",
+      "why": "BarBend says a lot of lifters move other parts of the body to do the kickback and says not to let the lower back arch (c7); PureGym says poor form is likely to recruit the lower back instead (c8).",
+      "claim": [
+        "c7",
+        "c8"
+      ],
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: not bracing, so other parts of the body move, shown by the lower back arching (c7). BarBend's \"Not Bracing Properly\" item, a sentence of its own, not a list sentence: \"While that may sound silly, the reality is that a lot of lifters move other parts of their body to accomplish the glute kickback.\" (c7), followed by \"Do not allow your lower back to arch, don’t flare your upper back, or sway your hips.\" Read 'a lot of lifters' as 'many lifters', a step-1 hit about this exercise's own fault (D-SUP-LB7-DIPREPS). D-SUP-LB8-KICKBACK (#294, 6343216702) rules it a step-1 hit: 'a lot of lifters' is LR-31's 'many people' in other words, tied to this exercise's fault. If it does not count, step 2 finds no harm quote for any fault (no read source ties a kickback fault to injury, pain, stress or discomfort; PureGym's \"poor form is likely to recruit the lower back instead\" is a muscle-use line), so LR-31 step 3 takes the first fault on a common-mistakes list written for this exercise, in source order: BarBend's (\"Not Bracing Properly\", \"Momentum\", \"Too Much Weight\"), so not bracing, the lower back arching, is still the top fault; Fitbod's one-item list (\"Hips Square\") comes later in source order. Step 3's count is used only when no source has a list. The pick, handlingMistakes[0] and drawable are the same under both readings. Set aside at step 1: BarBend's \"there are still some common mistakes that flare up from time to time\" and \"Not bracing properly, adding too much momentum, and improper load selection are the biggest culprits.\" are a list heading and a list sentence (R-LB4-2); \"Momentum is an issue with nearly every exercise from time to time.\" is about all training (R-LB7-3); \"which is often your weaker side\", \"The glute kickback is often overlooked as a prominent glute exercise\" and \"Many athletes do moves like this one to warm up for squats\" (another exercise) name no kickback fault; PureGym's \"Most gyms will have dedicated ankle straps\" is equipment, and its hub's \"the terms are often used interchangeably\" is about names. BarBend's 'Too Much Weight' item is a load choice, not a candidate. Harm words in the full scan tie no kickback fault to harm, so step 2 stays empty under either reading (D-SUP-PROTECT needs a cue that corrects a named fault): PureGym's hub \"Having strong glutes helps to protect the lower back, hamstrings, and knees, and stabilise the pelvis.\" is a benefit of strong glutes, not a form cue; PureGym's \"Unilateral exercises are great for improving muscular imbalances which can result in greater overall strength as well as reduced risk of injury.\" is a benefit of one-sided training; BarBend's \"without the added strain of another heavy barbell\" and \"You can load heavily without strain on your lower back or overall body.\" are about other exercises (barbell lifts, the hip abduction machine); \"helps stress your gluteus medius a bit more\" is muscle use. Other frequency words: Fitbod's \"usually bodyweight exercise\" is the dumbbell hip thrust (another exercise); BarBend's \"mostly by reliving all of his mistakes\" is the author bio. drawable true: the arched lower back is a still sign the side view shows.",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "Only your glute moves the pulley",
+        "claim": "c7"
+      },
+      {
+        "text": "Toe points straight down",
+        "claim": "c10"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c14",
+      "text": "Pause 1 is sourced: PureGym pauses for a second at the top (c6, c14), right after the lift (LR-33). Down and up are a drawing convention: PureGym and BarBend ask for a slow return (c6) and give no seconds for either phase, so 2 s down and 1 s up show a slower lowering than lifting (c14, WEAK; R-LB7-6). BarBend's \"Use a 1-2 second pause in the fully contracted position for the best results.\" sits under \"For Warming Up\" (Glute Kickback Sets and Reps), so it is for warm-up sets, not the working rep; the card keeps PureGym's working-rep 1 s (LR-33 keeps sourced seconds, and 1 s is inside BarBend's 1-2 s)."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Hands hold the cable machine for support (c2, c4).",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c2",
+      "c4"
+    ],
+    "note": "Hand archetype balance: the hands steady the body, no hand zoom needed."
+  },
+  "setup": [
+    {
+      "step": "Set the pulley to its lowest setting.",
+      "claim": "c1"
+    },
+    {
+      "step": "Attach the ankle cuff to your working ankle.",
+      "claim": "c1"
+    },
+    {
+      "step": "Face the machine and hold it for support.",
+      "claim": [
+        "c2",
+        "c4"
+      ]
+    },
+    {
+      "step": "Hinge forward at the hips.",
+      "claim": "c2"
+    },
+    {
+      "step": "Put most of your weight on the other leg.",
+      "claim": "c2"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Brace and keep your body still.",
+      "claim": "c4"
+    },
+    {
+      "point": "Pull your belly button in to keep your back flat.",
+      "claim": "c8"
+    },
+    {
+      "point": "Keep the working leg long, knee slightly bent.",
+      "claim": "c5"
+    },
+    {
+      "point": "Drive the leg back as far as you can.",
+      "claim": [
+        "c6",
+        "c13"
+      ]
+    },
+    {
+      "point": "Squeeze your glute and pause for a second at the top.",
+      "claim": "c6"
+    },
+    {
+      "point": "Return slowly.",
+      "claim": "c6"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Not bracing, lower back arching.",
+      "fix": "Brace against the machine. Only your glute moves the leg.",
+      "claim": "c7"
+    },
+    {
+      "mistake": "Swinging the leg.",
+      "fix": "Drop the weight. Use a smooth, controlled movement.",
+      "claim": [
+        "c9",
+        "c8"
+      ]
+    },
+    {
+      "mistake": "Twisting the hips.",
+      "fix": "Keep your hips level and your toe pointing down.",
+      "claim": "c10"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "glutes",
+        "claim": "c12"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c12"
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": "c8"
+      }
+    ],
+    "rows": [
+      {
+        "where": "Glute of the working leg",
+        "means": "The main mover is working.",
+        "fix": "",
+        "claim": [
+          "c12",
+          "c5"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Fault: poor form can bring in the lower back.",
+        "fix": "Pull your belly button in and flatten your back.",
+        "claim": [
+          "c8",
+          "c7"
+        ],
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Heavy loading breaks your form down quickly on this long lever.",
+      "claim": "c11"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "redFlagNote": "back links the shared back box (shared/back-pain-box.json); the row carries no referral wording (LR-27).",
+  "zooms": [
+    {
+      "key": "braced-back",
+      "kind": "posture",
+      "right": "Hinged forward, back flat, core braced.",
+      "wrong": "Lower back arching as the leg kicks back.",
+      "claim": [
+        "c2",
+        "c8",
+        "c7"
+      ]
+    },
+    {
+      "key": "hips-square",
+      "kind": "posture",
+      "right": "Hips level, toe pointing straight down.",
+      "wrong": "Hips twisting to lift the leg higher.",
+      "claim": "c10"
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "Library: glutes primary, hamstrings secondary; both match (c12). StrengthLog also lists the adductors as secondary; one source only, so no change."
+  },
+  "loadProgression": {
+    "text": "2-4 sets of 10-15. Pick a load you can move without swinging.",
+    "claims": [
+      "c11",
+      "c9"
+    ]
+  },
+  "anchorSource": "bb-gk",
+  "anchorNote": "BarBend's glute kickback page (the cable version as standard) read in full: steps, variations, sets and reps, muscles, a common-mistakes list. PureGym's cable kickback page, StrengthLog's and Fitbod's cable pages were also read in full.",
+  "gaps": [],
+  "unsourced": [
+    "Seconds for the lifting and lowering phases (the plate's numbers are a drawing convention, c14).",
+    "A hinge angle all sources share: PureGym about 45 degrees, BarBend a light hinge, Fitbod upright (c2, c3).",
+    "Getting the ankle cuff on and off and where to stand from the column."
+  ],
+  "notes": [
+    "Start head 6d253b9e (claude/libht-research). Its own parent; no inherit entries.",
+    "Shared card: selector-pin (shared/selector-pin.json) lists cable_kickback in appliesTo; its pin steps (pin fully in, move the pin only with the stack resting) are cited for the stack, not copied onto this card.",
+    "Torso: PureGym hinges forward about 45 degrees, BarBend lightly, and Fitbod stands upright (c2, c3). The census poses are hinge and single, so the plate draws a forward hinge.",
+    "The drawn leg is long with a slight knee bend (BarBend, Fitbod; c5); PureGym's hub says a donkey kick bends the knee to 90 degrees, a different exercise.",
+    "No read source ties a cable-kickback fault to injury or pain, so the card has one risk (the load line, c11) and the lower-back row is written in LR-6 shape (place + fault + fix).",
+    "Read but not cited: fitbod.me/exercises/glute-kickback-machine (another machine). Not reachable: BarBend cable-kickback slugs, Fitness Volt, Healthline, Garage Gym Reviews, Motra, NASM (404), Verywell Fit (402), Muscle & Strength (403), StrengthLog's glute-kickback article (429)."
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "ankle.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c7"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c7"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Kick back",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Return",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "arch"
+}

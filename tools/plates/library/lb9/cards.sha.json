@@ -1,0 +1,24 @@
+{
+ "note": "sha256 per LB9 H card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised canonically as JSON.stringify(card, null, 2) + \"\\n\" (the research-head files are 1-space JSON; the hash is of the canonical form, not the bytes); and sha256 of each quotes file, a byte copy from the same head.",
+ "researchHead": "f574bb4b761ded9010a61b59881b6eae125b58e0",
+ "cards": {
+  "cable_crunch": "a36946e0d7fe9056831a5dd016f1cbe803cba3e145037267d1d579d4dafd927d",
+  "ab_wheel_rollout": "a06fc90a03da55296d218b26b9fffc38f1d87eef4f1735da86bd4021fd8c5c01",
+  "bird_dog": "2c711994b9d75c8dfee65050d74dcd58f0b0dfb6232af8f22fb704864bef4712",
+  "superman": "cb76fe0c7ad2b86d9f22e5f1bada72660917691febe74d0ef1b07b474a0bea33",
+  "pallof_press": "d87bd9d245fd4e1905935424e8631238f30aeee3ee5d59ec594e6bd2b84da32b",
+  "side_plank": "f55f3ad188e7df293b0f506df07973ce4aa52c01e33ffe06a9a778eb869a129e",
+  "russian_twist": "a23ea99e37c320500995d33a8310f750316d4960b8b57d093ca55cb5e478f990",
+  "bicycle_crunch": "2ef0d53d38c977c23675c525feb898b3d01ca2bb0f42c5b875475153271432c4"
+ },
+ "quotes": {
+  "cable_crunch": "4cca09b5bc71ac3af6c9af0f5855dc69fe1fedb8aa8b231320743d59ed0f221a",
+  "ab_wheel_rollout": "9c309ef658d117fecb9e06968c90bbab85bfa09b38d38391b323331ea476ad94",
+  "bird_dog": "90227dbb0b0499161f259ec38dadecc3e91b076c4270d34984ca47cbcd8ab5b1",
+  "superman": "60555d03483a5c2ad960d7187541bc9f8c52cd0613a10dbac1e8cb0a9d334a44",
+  "pallof_press": "90eb52182d9d51bcfcb9ba619eaa463643e8f8d42131881590fc330b709d5f4b",
+  "side_plank": "f4bd56e2e70ca90971a29c7474ace3f54f8641fc7fbe2544cdfaa1c22ecb40fa",
+  "russian_twist": "965f625496370e52db4a16cd07173c44d3bfac71c8e6f3755d772f80d56fd8db",
+  "bicycle_crunch": "45e7e5bed5cc209a50f86a1e0ad52bb38dd0ec5d5f71f5951745e305d62fc87e"
+ }
+}

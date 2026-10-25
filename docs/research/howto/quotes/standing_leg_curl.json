@@ -1,0 +1,263 @@
+{
+ "id": "standing_leg_curl",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "sl-stlc",
+   "text": "Adjust the standing leg curl machine so that the pad rests just above the heel of the working leg.",
+   "status": "verbatim",
+   "closest": "Adjust the standing leg curl machine so that the pad rests just above the heel of the working leg.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "hevy-stlc",
+   "text": "Adjust the pad of the machine to be right above your Achilles tendon. Start with a lighter weight to get a good feel for the movement.",
+   "status": "verbatim",
+   "closest": "Adjust the pad of the machine to be right above your Achilles tendon. Start with a lighter weight to get a good feel for the movement.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "hevy-stlc",
+   "text": "Lean forward on the machine by placing your thighs against the supportive pad, grab the handles, and have the back of your legs against the lower pad.",
+   "status": "verbatim",
+   "closest": "Lean forward on the machine by placing your thighs against the supportive pad, grab the handles, and have the back of your legs against the lower pad.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "sl-stlc",
+   "text": "Grip the handles for balance and maintain an upright posture.",
+   "status": "verbatim",
+   "closest": "Grip the handles for balance and maintain an upright posture.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "hevy-stlc",
+   "text": "Take a deep breath and plant your left foot firmly on the floor.",
+   "status": "verbatim",
+   "closest": "Take a deep breath and plant your left foot firmly on the floor.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "hevy-stlc",
+   "text": "Curl the weight up with your right leg by contracting your hamstring muscle.",
+   "status": "verbatim",
+   "closest": "Curl the weight up with your right leg by contracting your hamstring muscle.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "sl-stlc",
+   "text": "Flex your leg by pulling your heel up toward your glutes while keeping your upper body still.",
+   "status": "verbatim",
+   "closest": "Flex your leg by pulling your heel up toward your glutes while keeping your upper body still.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "hevy-stlc",
+   "text": "Go up until your foot becomes higher than your knee, and you feel a strong contraction in the back of your thighs.",
+   "status": "verbatim",
+   "closest": "Go up until your foot becomes higher than your knee, and you feel a strong contraction in the back of your thighs.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "hevy-stlc",
+   "text": "The first tip to keep in mind for standing leg curls is to perform each repetition with a full range of motion.",
+   "status": "verbatim",
+   "closest": "The first tip to keep in mind for standing leg curls is to perform each repetition with a full range of motion.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "hevy-stlc",
+   "text": "Meaning, you should flex your leg until your ankle is higher than your knee and squeeze the hamstring. You then have to extend your knee fully, stretching the hamstring.",
+   "status": "verbatim",
+   "closest": "Meaning, you should flex your leg until your ankle is higher than your knee and squeeze the hamstring. You then have to extend your knee fully, stretching the hamstring.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "hevy-stlc",
+   "text": "Hold the position for a second and exhale as you slowly lower the weight and extend your leg.",
+   "status": "verbatim",
+   "closest": "Hold the position for a second and exhale as you slowly lower the weight and extend your leg.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "sl-stlc",
+   "text": "Pause briefly at the top position, then slowly lower your leg back to the starting position.",
+   "status": "verbatim",
+   "closest": "Pause briefly at the top position, then slowly lower your leg back to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "hevy-stlc",
+   "text": "Similarly, it’s important to keep your knee steady as you flex and extend it. Avoid having your knee travel forward as you extend it and back as you flex because that can rob your hamstrings of the tension they need to grow.",
+   "status": "verbatim",
+   "closest": "Similarly, it’s important to keep your knee steady as you flex and extend it. Avoid having your knee travel forward as you extend it and back as you flex because that can rob your hamstrings of the tension they need to grow.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "hevy-stlc",
+   "text": "The third mistake to avoid is not controlling the weight on the way down. Many trainees lift the weight through their hamstrings but then drop it to the starting position.",
+   "status": "verbatim",
+   "closest": "The third mistake to avoid is not controlling the weight on the way down. Many trainees lift the weight through their hamstrings but then drop it to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "hevy-stlc",
+   "text": "Another mistake to look out for with leg curls is shortening the range of motion, often resulting from excessive loading. The goal is to flex your leg until the ankle is higher than your knee, then straighten it fully.",
+   "status": "verbatim",
+   "closest": "Another mistake to look out for with leg curls is shortening the range of motion, often resulting from excessive loading. The goal is to flex your leg until the ankle is higher than your knee, then straighten it fully.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "hevy-stlc",
+   "text": "The most common mistake with standing leg curls is using too much weight, which doesn’t benefit you in any way. Using too much weight prevents you from loading your hamstrings effectively and controlling each repetition.",
+   "status": "verbatim",
+   "closest": "The most common mistake with standing leg curls is using too much weight, which doesn’t benefit you in any way. Using too much weight prevents you from loading your hamstrings effectively and controlling each repetition.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "hevy-stlc",
+   "text": "Instead, you have to resort to momentum and body swinging to move the weight from point A to B, defeating the exercise’s purpose.",
+   "status": "verbatim",
+   "closest": "Instead, you have to resort to momentum and body swinging to move the weight from point A to B, defeating the exercise’s purpose.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-stlc",
+   "text": "Perform the movement in a controlled manner and avoid swinging your leg to maximize hamstring activation.",
+   "status": "verbatim",
+   "closest": "Perform the movement in a controlled manner and avoid swinging your leg to maximize hamstring activation.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "sl-stlc",
+   "text": "The standing leg curl isolates the hamstrings and requires a bit more balance than the seated or lying variations.",
+   "status": "verbatim",
+   "closest": "The standing leg curl isolates the hamstrings and requires a bit more balance than the seated or lying variations.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-llc",
+   "text": "Useful for unilateral loading, but balance and machine design vary.",
+   "status": "verbatim",
+   "closest": "Useful for unilateral loading, but balance and machine design vary.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "hevy-stlc",
+   "text": "Remaining balanced during the exercise is also vital for the safety and effectiveness of the activity. Many people start doing the leg curl unsupported while using lighter weights. But it becomes necessary to hold onto something as you start curling more weight.",
+   "status": "verbatim",
+   "closest": "Remaining balanced during the exercise is also vital for the safety and effectiveness of the activity. Many people start doing the leg curl unsupported while using lighter weights. But it becomes necessary to hold onto something as you start curling more weight.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "sl-stlc",
+   "text": "Repeat for the desired number of repetitions, then switch legs.",
+   "status": "verbatim",
+   "closest": "Repeat for the desired number of repetitions, then switch legs.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "hevy-stlc",
+   "text": "Once you’re done, plant your right foot and curl the weight with your left leg.",
+   "status": "verbatim",
+   "closest": "Once you’re done, plant your right foot and curl the weight with your left leg.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "hevy-stlc",
+   "text": "The primary muscles that work during standing leg curls are our hamstrings, the posterior thigh muscles (1, 2).",
+   "status": "verbatim",
+   "closest": "The primary muscles that work during standing leg curls are our hamstrings, the posterior thigh muscles (1, 2).",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "hevy-stlc",
+   "text": "Gastrocnemius, one of the muscles in the lower leg, assists our hamstrings in causing knee flexion.",
+   "status": "verbatim",
+   "closest": "Gastrocnemius, one of the muscles in the lower leg, assists our hamstrings in causing knee flexion.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "hl-hc",
+   "text": "It’s important to keep your back neutral during hamstring curls. If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.",
+   "status": "verbatim",
+   "closest": "It’s important to keep your back neutral during hamstring curls. If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "hl-hc",
+   "text": "To avoid arching your back, contract your abs during the exercise.",
+   "status": "verbatim",
+   "closest": "To avoid arching your back, contract your abs during the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "hl-hc",
+   "text": "It’s also best to move slowly. Sudden, jerking movements can lead to injury, so your movements should be controlled.",
+   "status": "verbatim",
+   "closest": "It’s also best to move slowly. Sudden, jerking movements can lead to injury, so your movements should be controlled.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "hl-hc",
+   "text": "Stop doing hamstring curls if you feel pain in your knees, hips, or back.",
+   "status": "verbatim",
+   "closest": "Stop doing hamstring curls if you feel pain in your knees, hips, or back.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "sl-stlc",
+   "text": "Pause briefly at the top position, then slowly lower your leg back to the starting position.",
+   "status": "verbatim",
+   "closest": "Pause briefly at the top position, then slowly lower your leg back to the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "hevy-stlc",
+   "text": "Doing controlled repetition is the fourth crucial tip to keep in mind for standing leg curls. The goal is to use your hamstrings to overcome the resistance and control the weight as you extend your leg.",
+   "status": "verbatim",
+   "closest": "Doing controlled repetition is the fourth crucial tip to keep in mind for standing leg curls. The goal is to use your hamstrings to overcome the resistance and control the weight as you extend your leg.",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "hevy-stlc",
+   "text": "Hold the position for a second and exhale as you slowly lower the weight and extend your leg.",
+   "status": "verbatim",
+   "closest": "Hold the position for a second and exhale as you slowly lower the weight and extend your leg.",
+   "note": ""
+  }
+ ]
+}

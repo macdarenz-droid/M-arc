@@ -1,0 +1,25 @@
+{
+ "note": "LB6 H build-ahead rows (LIB-16, D-LIB16-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
+ "batch": "LB6",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_machine_pullover": {
+   "src": "library/specs/machine_pullover.mjs",
+   "slug": "machine-pullover",
+   "prefix": "machine-pullover",
+   "chromeId": "machine-pullover",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_machine_crunch": {
+   "src": "library/specs/machine_crunch.mjs",
+   "slug": "machine-crunch",
+   "prefix": "machine-crunch",
+   "chromeId": "machine-crunch",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}

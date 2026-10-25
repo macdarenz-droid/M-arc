@@ -1,0 +1,415 @@
+{
+ "id": "standing_calf_raise",
+ "checked": "2026-10-22",
+ "fetcher": "sonnet source fetcher",
+ "quotes": [
+  {
+   "claim": "c1",
+   "source": "motra-scr",
+   "text": "Adjust shoulder pads to your height and step onto the platform with balls of feet on the edge, heels hanging off.",
+   "status": "verbatim",
+   "closest": "Adjust shoulder pads to your height and step onto the platform with balls of feet on the edge, heels hanging off.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "fv-mscr",
+   "text": "Then, place the balls of your feet on the edge of the platforms so your heels are hanging off.",
+   "status": "verbatim",
+   "closest": "Then, place the balls of your feet on the edge of the platforms so your heels are hanging off.",
+   "note": ""
+  },
+  {
+   "claim": "c1",
+   "source": "sl-scr",
+   "text": "Place your toes and the ball of your feet on the foot support. Place the shoulder pads against your shoulders and stand upright in the starting position.",
+   "status": "verbatim",
+   "closest": "Place your toes and the ball of your feet on the foot support. Place the shoulder pads against your shoulders and stand upright in the starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "motra-scr",
+   "text": "Position shoulders under pads, grasp handles, and stand upright with knees slightly bent and core engaged.",
+   "status": "verbatim",
+   "closest": "Position shoulders under pads, grasp handles, and stand upright with knees slightly bent and core engaged.",
+   "note": ""
+  },
+  {
+   "claim": "c2",
+   "source": "fv-calf-svs",
+   "text": "Step onto the standing calf raise machine, positioning your shoulders under the pads and the balls of your feet on the footplate. Your heels should be hanging off the edge.",
+   "status": "verbatim",
+   "closest": "Step onto the standing calf raise machine, positioning your shoulders under the pads and the balls of your feet on the footplate. Your heels should be hanging off the edge.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "fv-calf-svs",
+   "text": "Grasp the handles on the machine for stability.",
+   "status": "verbatim",
+   "closest": "Grasp the handles on the machine for stability.",
+   "note": ""
+  },
+  {
+   "claim": "c3",
+   "source": "fv-calf-svs",
+   "text": "Use the handles for balance only; don’t pull yourself up with them.",
+   "status": "verbatim",
+   "closest": "Use the handles for balance only; don’t pull yourself up with them.",
+   "note": ""
+  },
+  {
+   "claim": "c4",
+   "source": "fv-calf-svs",
+   "text": "Make sure your feet are parallel and hip-width apart for balanced muscle engagement.",
+   "status": "verbatim",
+   "closest": "Make sure your feet are parallel and hip-width apart for balanced muscle engagement.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "motra-scr",
+   "text": "Keep knees slightly bent and posture straight.",
+   "status": "verbatim",
+   "closest": "Keep knees slightly bent and posture straight.",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "motra-scr",
+   "text": "Keep knees soft",
+   "status": "verbatim",
+   "closest": "Keep knees soft",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "motra-scr",
+   "text": "Maintain slight knee bend to protect joints",
+   "status": "verbatim",
+   "closest": "Maintain slight knee bend to protect joints",
+   "note": ""
+  },
+  {
+   "claim": "c5",
+   "source": "fv-calf-svs",
+   "text": "Keep your knees slightly bent but stable throughout the exercise to avoid strain.",
+   "status": "verbatim",
+   "closest": "Keep your knees slightly bent but stable throughout the exercise to avoid strain.",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "motra-scr",
+   "text": "Bouncing at bottom",
+   "status": "verbatim",
+   "closest": "Bouncing at bottom",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "motra-scr",
+   "text": "Locking knees",
+   "status": "verbatim",
+   "closest": "Locking knees",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "motra-scr",
+   "text": "Leaning forward",
+   "status": "verbatim",
+   "closest": "Leaning forward",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "motra-scr",
+   "text": "Partial range of motion",
+   "status": "verbatim",
+   "closest": "Partial range of motion",
+   "note": ""
+  },
+  {
+   "claim": "c6",
+   "source": "motra-scr",
+   "text": "Using too much weight",
+   "status": "verbatim",
+   "closest": "Using too much weight",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "motra-scr",
+   "text": "Push through balls of feet to raise heels high, fully extending ankles.",
+   "status": "verbatim",
+   "closest": "Push through balls of feet to raise heels high, fully extending ankles.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "fv-calf-svs",
+   "text": "Push through the balls of your feet to raise your heels as high as you can.",
+   "status": "verbatim",
+   "closest": "Push through the balls of your feet to raise your heels as high as you can.",
+   "note": ""
+  },
+  {
+   "claim": "c7",
+   "source": "sl-scr",
+   "text": "Push yourself up by extending your ankles.",
+   "status": "verbatim",
+   "closest": "Push yourself up by extending your ankles.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "motra-scr",
+   "text": "Squeeze calves at the top and hold briefly.",
+   "status": "verbatim",
+   "closest": "Squeeze calves at the top and hold briefly.",
+   "note": ""
+  },
+  {
+   "claim": "c8",
+   "source": "fv-calf-svs",
+   "text": "At the top, pause briefly to squeeze your calf muscles.",
+   "status": "verbatim",
+   "closest": "At the top, pause briefly to squeeze your calf muscles.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "motra-scr",
+   "text": "Slowly lower heels below platform level for a full stretch.",
+   "status": "verbatim",
+   "closest": "Slowly lower heels below platform level for a full stretch.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "motra-scr",
+   "text": "Control the descent",
+   "status": "verbatim",
+   "closest": "Control the descent",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "fv-calf-svs",
+   "text": "Slowly lower your heels back to the starting position, feeling the stretch in your calf muscles.",
+   "status": "verbatim",
+   "closest": "Slowly lower your heels back to the starting position, feeling the stretch in your calf muscles.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "fv-mscr",
+   "text": "Slowly lower your heels until you feel a slight stretch in your calf muscles.",
+   "status": "verbatim",
+   "closest": "Slowly lower your heels until you feel a slight stretch in your calf muscles.",
+   "note": ""
+  },
+  {
+   "claim": "c9",
+   "source": "sl-scr",
+   "text": "Lower yourself down by bending your ankles in a controlled movement.",
+   "status": "verbatim",
+   "closest": "Lower yourself down by bending your ankles in a controlled movement.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "motra-scr",
+   "text": "Lower heels until calves are fully stretched below platform; raise until ankles are fully extended with heels highest possible.",
+   "status": "verbatim",
+   "closest": "Lower heels until calves are fully stretched below platform; raise until ankles are fully extended with heels highest possible.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-calf-svs",
+   "text": "Focus on a full range of motion, lowering your heels as much as possible and raising them as high as you can.",
+   "status": "verbatim",
+   "closest": "Focus on a full range of motion, lowering your heels as much as possible and raising them as high as you can.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-calf-svs",
+   "text": "Lower your heels towards the ground, stretching your calf muscles as much as comfortably possible. This is your starting position.",
+   "status": "verbatim",
+   "closest": "Lower your heels towards the ground, stretching your calf muscles as much as comfortably possible. This is your starting position.",
+   "note": ""
+  },
+  {
+   "claim": "c10",
+   "source": "fv-mscr",
+   "text": "Do not overstretch your calves during the negative portion of the exercise.",
+   "status": "verbatim",
+   "closest": "Do not overstretch your calves during the negative portion of the exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "motra-scr",
+   "text": "Stay upright",
+   "status": "verbatim",
+   "closest": "Stay upright",
+   "note": ""
+  },
+  {
+   "claim": "c11",
+   "source": "fv-calf-svs",
+   "text": "Keep your back straight and your core engaged. Look straight ahead and not down at your feet.",
+   "status": "verbatim",
+   "closest": "Keep your back straight and your core engaged. Look straight ahead and not down at your feet.",
+   "note": ""
+  },
+  {
+   "claim": "c12",
+   "source": "motra-scr",
+   "text": "Exhale as you raise your heels; inhale as you lower them. Brace core throughout.",
+   "status": "verbatim",
+   "closest": "Exhale as you raise your heels; inhale as you lower them. Brace core throughout.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "motra-scr",
+   "text": "Calves",
+   "status": "verbatim",
+   "closest": "Calves",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "sl-scr",
+   "text": "Standing calf raises train both the inner (solues) and outer (gastrocnemius) calf muscles simultaneously.",
+   "status": "verbatim",
+   "closest": "Standing calf raises train both the inner (solues) and outer (gastrocnemius) calf muscles simultaneously.",
+   "note": ""
+  },
+  {
+   "claim": "c13",
+   "source": "fv-calf-svs",
+   "text": "So, while seated calf raises emphasize the soleus muscle and the gastrocnemius and plantaris take a secondary role, during standing calf raises, all three muscles share top billing.",
+   "status": "verbatim",
+   "closest": "So, while seated calf raises emphasize the soleus muscle and the gastrocnemius and plantaris take a secondary role, during standing calf raises, all three muscles share top billing.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "kinoshita2023",
+   "text": "Fourteen untrained adults conducted calf-raise training with one leg in a standing/knee-extended position and the other leg in a seated/knee 90°-flexed position at 70% of one-repetition maximum.",
+   "status": "verbatim",
+   "closest": "Fourteen untrained adults conducted calf-raise training with one leg in a standing/knee-extended position and the other leg in a seated/knee 90°-flexed position at 70% of one-repetition maximum.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "kinoshita2023",
+   "text": "Each leg performed 10 repetitions/set, 5 sets/session, 2 sessions/week for 12 weeks.",
+   "status": "verbatim",
+   "closest": "Each leg performed 10 repetitions/set, 5 sets/session, 2 sessions/week for 12 weeks.",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "kinoshita2023",
+   "text": "The changes in muscle volume were significantly greater for the standing than seated condition leg in the lateral gastrocnemius (12.4% vs. 1.7%), medial gastrocnemius (9.2% vs. 0.6%), and whole triceps surae (5.6% vs. 2.1%) (p ≤ 0.011), but similar between legs in the soleus (2.1% vs. 2.9%, p = 0.410).",
+   "status": "verbatim",
+   "closest": "The changes in muscle volume were significantly greater for the standing than seated condition leg in the lateral gastrocnemius (12.4% vs. 1.7%), medial gastrocnemius (9.2% vs. 0.6%), and whole triceps surae (5.6% vs. 2.1%) (p ≤ 0.011), but similar between legs in the soleus (2.1% vs. 2.9%, p = 0.410).",
+   "note": ""
+  },
+  {
+   "claim": "c14",
+   "source": "kinoshita2023",
+   "text": "Standing calf-raise was by far more effective, therefore recommended, than seated calf-raise for inducing muscle hypertrophy of the gastrocnemius and consequently the whole triceps surae.",
+   "status": "verbatim",
+   "closest": "Standing calf-raise was by far more effective, therefore recommended, than seated calf-raise for inducing muscle hypertrophy of the gastrocnemius and consequently the whole triceps surae.",
+   "note": ""
+  },
+  {
+   "claim": "c15",
+   "source": "motra-scr",
+   "text": "Avoid excessive weight to prevent Achilles strain",
+   "status": "verbatim",
+   "closest": "Avoid excessive weight to prevent Achilles strain",
+   "note": ""
+  },
+  {
+   "claim": "c16",
+   "source": "motra-scr",
+   "text": "Stop if sharp pain occurs",
+   "status": "verbatim",
+   "closest": "Stop if sharp pain occurs",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "fv-calf-svs",
+   "text": "With the load resting on your shoulders, heavy calf raises put a lot of vertical stress on your spine, which can cause compression of the intervertebral disks. In short, this exercise could make you temporarily shorter and could even cause back pain.",
+   "status": "verbatim",
+   "closest": "With the load resting on your shoulders, heavy calf raises put a lot of vertical stress on your spine, which can cause compression of the intervertebral disks. In short, this exercise could make you temporarily shorter and could even cause back pain.",
+   "note": ""
+  },
+  {
+   "claim": "c17",
+   "source": "fv-calf-svs",
+   "text": "However, if you have any lower back issues, you may want to proceed cautiously with standing calf raises, as they may exacerbate it.",
+   "status": "verbatim",
+   "closest": "However, if you have any lower back issues, you may want to proceed cautiously with standing calf raises, as they may exacerbate it.",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "fv-calf-svs",
+   "text": "Choose a weight that allows you to perform 10-12 reps with good form. If you’re new to this exercise, start lighter and work your way up.",
+   "status": "verbatim",
+   "closest": "Choose a weight that allows you to perform 10-12 reps with good form. If you’re new to this exercise, start lighter and work your way up.",
+   "note": ""
+  },
+  {
+   "claim": "c18",
+   "source": "motra-scr",
+   "text": "Use lighter weight if new to exercise.",
+   "status": "verbatim",
+   "closest": "Use lighter weight if new to exercise.",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "motra-scr",
+   "text": "2-1-2",
+   "status": "verbatim",
+   "closest": "2-1-2",
+   "note": ""
+  },
+  {
+   "claim": "c19",
+   "source": "motra-scr",
+   "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+   "status": "verbatim",
+   "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+   "note": "found in served HTML only (not visible text)"
+  },
+  {
+   "claim": "c20",
+   "source": "motra-scr",
+   "text": "Squeeze calves at the top and hold briefly.",
+   "status": "verbatim",
+   "closest": "Squeeze calves at the top and hold briefly.",
+   "note": ""
+  },
+  {
+   "claim": "c20",
+   "source": "fv-calf-svs",
+   "text": "At the top, pause briefly to squeeze your calf muscles.",
+   "status": "verbatim",
+   "closest": "At the top, pause briefly to squeeze your calf muscles.",
+   "note": ""
+  }
+ ]
+}

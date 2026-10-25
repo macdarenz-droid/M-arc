@@ -1,0 +1,12 @@
+{
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 8 pose map: identity for all 8, D-LIB21-POSEMAP). Proposed: D-LIB21-TEMPO (lib-21-card ruling 24), for 'LB9 NOTE RULED'. The 3 (b) rows (side_plank, russian_twist, bicycle_crunch) get their rows at their resume (D-LIB21-ER5, D-LIB21-SECS). No constant row: every (a) phase comes from the card's plate.tempo.",
+ "research": "claude/libht-research f574bb4b761ded9010a61b59881b6eae125b58e0",
+ "poseMap": {},
+ "rows": {
+  "cable_crunch": [{ "phase": "Crunch", "from": "up", "move": true }, { "phase": "Hold", "from": "pause" }, { "phase": "Return", "from": "down", "move": true }],
+  "ab_wheel_rollout": [{ "phase": "Roll out", "from": "down", "move": true }, { "phase": "Roll back", "from": "up", "move": true }],
+  "bird_dog": [{ "phase": "Reach", "from": "up", "move": true }, { "phase": "Hold", "from": "pause" }, { "phase": "Return", "from": "down", "move": true }],
+  "superman": [{ "phase": "Lift", "from": "up", "move": true }, { "phase": "Hold", "from": "pause" }, { "phase": "Lower", "from": "down", "move": true }],
+  "pallof_press": [{ "phase": "Press", "from": "up", "move": true }, { "phase": "Hold", "from": "pause" }, { "phase": "Return", "from": "down", "move": true }]
+ }
+}

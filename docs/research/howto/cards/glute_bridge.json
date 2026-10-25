@@ -1,0 +1,818 @@
+{
+  "id": "glute_bridge",
+  "libId": "lib_glute_bridge",
+  "name": "Glute Bridge",
+  "family": "Glute and hip extension",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "none",
+    "contact": [
+      "floor-body"
+    ]
+  },
+  "parent": null,
+  "parentNote": "Its own parent (content.md Appendix A: new parents on their own).",
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Lie on the back with the arms straight by the sides, knees bent, feet flat on the floor and hip-width apart, toes facing away.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-gb",
+        "ace-gb"
+      ],
+      "quotes": [
+        {
+          "source": "pg-gb",
+          "text": "Lie flat on your back with arms straight by your side, knees bent hip-width apart, and feet flat on the floor.",
+          "where": "How To Do A Glute Bridge, step 1"
+        },
+        {
+          "source": "ace-gb",
+          "text": "Lie supine (on your back) on an exercise mat or the floor in a bent-knee position with your feet flat on the floor. Place your feet hip-width apart with the toes facing away from you.",
+          "where": "Step 1: Starting Position"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Before lifting, brace the abs (belly button toward the spine) and tuck the pelvis under so the low back is flat against the floor, and keep that contraction through the exercise.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-gb",
+        "ace-gb",
+        "sl-gb"
+      ],
+      "quotes": [
+        {
+          "source": "pg-gb",
+          "text": "Engage your core by pulling the belly button towards the spine and tucking your pelvis under so your lower back is flat against the floor.",
+          "where": "How To Do A Glute Bridge, step 2"
+        },
+        {
+          "source": "ace-gb",
+          "text": "Gently contract your abdominal muscles to flatten your low back into the floor. Attempt to maintain this gentle muscle contraction throughout the exercise",
+          "where": "Step 1: Starting Position"
+        },
+        {
+          "source": "sl-gb",
+          "text": "Tuck the pelvis in to properly activate the glutes.",
+          "where": "How to Do Glute Bridges, step 2"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Breathe out and press the hips up by contracting the glutes, pressing the heels into the floor; breathe in and lower slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-gb"
+      ],
+      "quotes": [
+        {
+          "source": "ace-gb",
+          "text": "Gently exhale while holding your abdominal contraction and press your hips upwards off the floor into extension by contracting your glutes (butt muscles). At the same time press your heels into the floor for more stability.",
+          "where": "Step 2: Upward Phase"
+        },
+        {
+          "source": "ace-gb",
+          "text": "Inhale and slowly lower yourself back towards your starting position.",
+          "where": "Step 3: Lowering Phase"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "At the top, shoulders, hips and knees form a straight line, with the shin and thigh at roughly 90 degrees.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-gb",
+        "hl-gb"
+      ],
+      "quotes": [
+        {
+          "source": "pg-gb",
+          "text": "Use your glutes to push your hips towards the ceiling so your shoulders, hips and knees are in a straight line. Your shin and thigh should roughly be at a 90 degree angle.",
+          "where": "How To Do A Glute Bridge, step 3"
+        },
+        {
+          "source": "hl-gb",
+          "text": "At the top of the movement, your shoulders, hips, and knees should be in a straight line.",
+          "where": "Quick pointers for all glute bridge variations"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Squeeze the glutes and hold the top for a second, then lower slowly without letting the back overarch.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-gb",
+        "sl-gb"
+      ],
+      "quotes": [
+        {
+          "source": "pg-gb",
+          "text": "Squeeze your glutes and hold the top position for a second before slowly returning to the start position, making sure your back doesn’t overarch.",
+          "where": "How To Do A Glute Bridge, step 4"
+        },
+        {
+          "source": "sl-gb",
+          "text": "Squeeze your glutes at the top.",
+          "where": "How to Do Glute Bridges, step 4"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Do not let the lower back arch: pushing the hips too high generally increases the arch, and keeping the abs contracted before and through the lift helps avoid it; keep a neutral spine through the bridge.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-gb",
+        "pg-gb"
+      ],
+      "quotes": [
+        {
+          "source": "ace-gb",
+          "text": "Avoid pushing your hips too high as this generally increases the amount of hyperextension (arching) in your low back. Maintaining your abdominal contraction helps avoid excessive arching in your low back.",
+          "where": "Step 2: Upward Phase"
+        },
+        {
+          "source": "ace-gb",
+          "text": "Avoid arching your lower back as your press your hips upward which normally occurs if your attempt to push your hips as high as possible. This can be achieved by contracting your abdominal muscles prior to lifting, and keeping them engaged throughout the lift",
+          "where": "Step 4: Progression (closing tip)"
+        },
+        {
+          "source": "pg-gb",
+          "text": "Preventing the lower back from arching is key to ensuring the glutes power the hip extension, rather than the lower back.",
+          "where": "Glute Bridge Tips"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Overextending the back can lead to lower back pain; keeping the core engaged avoids it, and a neutral spine keeps the work on the glutes and protects the back from injury.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-gbhub",
+        "pg-gb"
+      ],
+      "quotes": [
+        {
+          "source": "pg-gbhub",
+          "text": "Keep your core engaged throughout the exercise to avoid overextending your back, which can lead to lower back pain.",
+          "where": "Glute bridge tips"
+        },
+        {
+          "source": "pg-gb",
+          "text": "Keeping a neutral spine helps to prevent tension from switching from the glutes to the lower back, making sure the glutes are worked hard and the back is protected from injury.",
+          "where": "Commonly Asked Questions: Do Glute Bridges Work Lower Back?"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Glute bridges should not hurt the back; if the back feels tension, the exercise may be done incorrectly, and the common mistakes named are the wrong foot position or overarching the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-gbhub"
+      ],
+      "quotes": [
+        {
+          "source": "pg-gbhub",
+          "text": "Performing glute bridges should not be hurting your back. If you're feeling tension in your back performing glute bridges, then you may be performing the exercises incorrectly or your body may be compensating for other weaknesses.",
+          "where": "Commonly asked questions: Why do glute bridges hurt my back?"
+        },
+        {
+          "source": "pg-gbhub",
+          "text": "Common mistakes when perfoming glute bridges is not having the correct foot positioning for your body or overarching the back.",
+          "where": "Commonly asked questions: Why do glute bridges hurt my back?"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Done correctly, the pressure is felt in the glutes and hamstrings, and the drive comes from the hips rather than the feet.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-gbhub"
+      ],
+      "quotes": [
+        {
+          "source": "pg-gbhub",
+          "text": "When performed correctly, you should feel the pressure in the glutes and hamstrings.",
+          "where": "Glute bridge tips"
+        },
+        {
+          "source": "pg-gbhub",
+          "text": "When adopting the bridge position, the thrust of power should come from your hips rather than your feet.",
+          "where": "Glute bridge tips"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Muscles: the glutes are the main muscle; the hamstrings also work (PureGym), and StrengthLog lists the quads as secondary.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-gb",
+        "sl-gb",
+        "pg-gbhub"
+      ],
+      "quotes": [
+        {
+          "source": "pg-gb",
+          "text": "Glute bridges do work the hamstrings, however the glutes are the main muscle group strengthened in this exercise.",
+          "where": "Commonly Asked Questions: Do Glute Bridges Work Hamstrings?"
+        },
+        {
+          "source": "sl-gb",
+          "text": "Glutes",
+          "where": "Muscles Worked: Primary muscles worked"
+        },
+        {
+          "source": "sl-gb",
+          "text": "Quads",
+          "where": "Muscles Worked: Secondary muscles worked"
+        },
+        {
+          "source": "pg-gbhub",
+          "text": "Glute bridges primarily strengthen the glutes, however the hamstrings and core are also worked in this exercise.",
+          "where": "Commonly asked questions: What does the glute bridge work?"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Pressing through the heels works the glutes and hamstrings most; driving through the toes makes the quads do more work.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-gb"
+      ],
+      "quotes": [
+        {
+          "source": "hl-gb",
+          "text": "Focusing on pressing through your heels as you elevate your hips will isolate your glute muscles and hamstring muscles the most, versus pressing down through your toes.",
+          "where": "Press through the heels"
+        },
+        {
+          "source": "hl-gb",
+          "text": "Driving your weight down through your toes will force your quadricep muscles to do more work.",
+          "where": "Press through the toes"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Keep the knees and toes in the same line, and the back and core tight, through the whole movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-gb"
+      ],
+      "quotes": [
+        {
+          "source": "hl-gb",
+          "text": "Be sure to keep your back and core tight throughout the entire movement.",
+          "where": "Quick pointers for all glute bridge variations"
+        },
+        {
+          "source": "hl-gb",
+          "text": "Focus on squeezing your buttocks and keeping your knees and toes in the same line.",
+          "where": "Quick pointers for all glute bridge variations"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Load: 3 sets of 15 (or 3 rounds of a 30-second hold); harder versions add a weight held on the hips, dumbbells, then a barbell once you have progressed to about 20 kg or more.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-gb",
+        "pg-gbhub"
+      ],
+      "quotes": [
+        {
+          "source": "hl-gb",
+          "text": "Perform 3 sets of 15 repetitions, or 3 rounds of a 30-second hold.",
+          "where": "Press through the heels"
+        },
+        {
+          "source": "hl-gb",
+          "text": "You can elevate the difficulty of any glute bridge variation by simply placing a weight on your hips.",
+          "where": "Take it to the next level"
+        },
+        {
+          "source": "pg-gbhub",
+          "text": "Progress your glute bridges with dumbbells. Adding weight increases the challenge for bigger gains.",
+          "where": "Glute Bridge Variations"
+        },
+        {
+          "source": "pg-gbhub",
+          "text": "Barbell glute bridges are ideal for when you have progressed to lifting 20kg or more.",
+          "where": "Glute Bridge Variations"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Barbell version: roll the bar over the legs until it is centred above the hips, feet flat about hip width and close to the glutes, grip overhand just outside hip width and use the hands to stop the bar rolling; pause at the top, then lower slowly.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "pg-bgb"
+      ],
+      "quotes": [
+        {
+          "source": "pg-bgb",
+          "text": "Load a barbell to the desired weight using bumper plates, then sit in front of the barbell with your legs extended straight out and roll the barbell until it is centred above your hips.",
+          "where": "How To Do A Barbell Glute Bridge, step 1"
+        },
+        {
+          "source": "pg-bgb",
+          "text": "Lie your upper body back and bring your feet flat on the floor around hip width apart, close to your glutes, knees bent and facing the ceiling.",
+          "where": "How To Do A Barbell Glute Bridge, step 2"
+        },
+        {
+          "source": "pg-bgb",
+          "text": "Firmly grip the barbell with a pronated (overhand) grip just outside hip width apart.",
+          "where": "How To Do A Barbell Glute Bridge, step 3"
+        },
+        {
+          "source": "pg-bgb",
+          "text": "Use your hands to prevent the bar from rolling down your body.",
+          "where": "How To Do A Barbell Glute Bridge, step 4"
+        },
+        {
+          "source": "pg-bgb",
+          "text": "Pause at the top before slowly lowering back to the ground.",
+          "where": "How To Do A Barbell Glute Bridge, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "Tempo (drawing convention for up and down): PureGym holds the top for a second and returns slowly, with no seconds for the lift or the lowering. No glute-bridge source gives those seconds, so the plate's 2 s down and 1 s up are a drawing convention (R-LB7-6); the 1 s top hold is sourced.",
+      "tags": [
+        "WEAK"
+      ],
+      "sources": [
+        "pg-gb"
+      ],
+      "quotes": [
+        {
+          "source": "pg-gb",
+          "text": "Squeeze your glutes and hold the top position for a second before slowly returning to the start position, making sure your back doesn’t overarch.",
+          "where": "How To Do A Glute Bridge, step 4"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "pg-gb",
+      "url": "https://www.puregym.com/exercises/glutes/glute-bridge/glute-bridges/",
+      "title": "Glute Bridges (PureGym exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "ace-gb",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/49/glute-bridge/",
+      "title": "Glute Bridge (ACE Exercise Library)",
+      "kind": "guideline",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "pg-gbhub",
+      "url": "https://www.puregym.com/exercises/glutes/glute-bridge/",
+      "title": "Glute Bridge Exercises (PureGym exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-gb",
+      "url": "https://www.strengthlog.com/glute-bridge/",
+      "title": "How to Do Glute Bridge: Muscles Worked & Proper Form (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "hl-gb",
+      "url": "https://www.healthline.com/health/fitness-exercise/glute-bridge-variations",
+      "title": "How to Perform 5 Variations of the Glute Bridge Exercise (Healthline)",
+      "kind": "coach",
+      "year": 2020,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "pg-bgb",
+      "url": "https://www.puregym.com/exercises/glutes/glute-bridge/barbell-glute-bridges/",
+      "title": "Barbell Glute Bridges (PureGym exercise guide)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side. The top fault, the lower back overarching at the top (c6, c7), reads from the side, and so do the straight line from shoulders to knees and the 90-degree knee at the top (c4).",
+    "equipment": "Floor line only (bodyweight version; census equipmentNeeds floor).",
+    "start": "Lying on the back, arms straight by the sides, knees bent, feet flat and hip-width apart (c1); core engaged and pelvis tucked so the low back is flat on the floor (c2).",
+    "end": "Hips up so shoulders, hips and knees form a straight line, shin and thigh at roughly 90 degrees (c4); low back not arched (c5, c6); heels pressing into the floor (c3).",
+    "checkpoints": [
+      {
+        "label": "Pelvis tucked",
+        "what": "Core tight, pelvis tucked, low back not arched.",
+        "claim": [
+          "c2",
+          "c6",
+          "c12"
+        ]
+      },
+      {
+        "label": "Straight line",
+        "what": "Shoulders, hips and knees in a straight line at the top.",
+        "claim": "c4"
+      },
+      {
+        "label": "Knees at 90",
+        "what": "Shin and thigh at roughly 90 degrees at the top.",
+        "claim": "c4"
+      }
+    ],
+    "mistake": {
+      "what": "Lower back overarching at the top, the hips pushed too high.",
+      "why": "PureGym says overextending the back can lead to lower back pain and that a neutral spine protects the back (c7); ACE says pushing the hips too high increases the arch (c6).",
+      "claim": [
+        "c6",
+        "c7"
+      ],
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the lower back overarching (c6, c7, c8). Candidates: the back overarching, the feet set in the wrong place (held for the whole set, so a body position: D-SUP-LB7-FEET), the hips pushed too high, the power coming from the feet, not the hips, and the knees out of line with the toes. Step 1: no frequency word counts for a fault. Set aside: PureGym's \"Common mistakes when perfoming glute bridges is not having the correct foot positioning for your body or overarching the back.\" (c8) is a list sentence (LR-31, R-LB4-2); ACE's \"which normally occurs if your attempt to push your hips as high as possible\" and \"this generally increases the amount of hyperextension (arching) in your low back\" say what causes the arch, not how often it happens, and 'normally' and 'generally' are not step-1 words; PureGym's \"glute bridges are often done bodyweight only\" is about the load; Healthline's \"are common bridge exercise variations\" names variations; PureGym's \"sitting down for most of the day\" names no fault. Step 2: two candidates are tied to harm. The overarching back: PureGym's hub \"Keep your core engaged throughout the exercise to avoid overextending your back, which can lead to lower back pain.\" (c7) and PureGym's how-to \"Keeping a neutral spine helps to prevent tension from switching from the glutes to the lower back, making sure the glutes are worked hard and the back is protected from injury.\" (c7; the cue that corrects the arch, D-SUP-PROTECT), so 2 sources; and PureGym's hub answer to \"Why do glute bridges hurt my back?\" (c8), which names the foot position and the overarching back. The foot position: that same answer only, 1 source. Both are on the same common-mistakes sentence, so the next tie-break, the one more sources tie to harm, picks the overarching back (2 against 1). Also set aside from the full scan (no fault named, or another exercise or version): PureGym's \"find hip thrusts hurt your lower back\" (another exercise), \"The muscles in the lower back are worked in glute bridges, however they should not feel painful during or after this exercise.\" (names no fault), \"Strengthening the glutes in hip extension can help improve posture, reduce back pain, lower risk of injury\" (a benefit) and \"an ideal exercise for beginners\"; PureGym's barbell page \"There is also less opportunity to overextend the spine in the glute bridge, making it more suitable for those with back pain\" compares exercises, and \"reducing back and knee pain\" is a benefit; Healthline's \"ideal for those with knee or hip discomfort\" (a benefit) and \"Yoga mat optional to minimize back discomfort.\" (equipment). None changes the pick. drawable true: the arched lower back is a still sign the side view shows. handlingMistakes: [1] the foot position (step 2, harm-tied, 1 source); [2] the hips pushed too high (ACE, c6), which ACE names as the cause of the arch and states no harm of its own. The power from the feet (c9) and the knees out of line (c12) are posture lines.",
+      "drawable": true
+    },
+    "tells": [
+      {
+        "text": "You feel it in glutes and hamstrings",
+        "claim": "c9"
+      },
+      {
+        "text": "Heels stay pressed into the floor",
+        "claim": "c3"
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 2,
+      "pause": 1,
+      "claim": "c15",
+      "text": "Pause 1 is sourced: PureGym holds the top position for a second (c5, c15), right after the lift (LR-33). Down and up are a drawing convention: PureGym and ACE ask for a slow lowering (c5, c3) and give no seconds for either phase, so 2 s down and 1 s up show a slower lowering than lifting (c15, WEAK; R-LB7-6). Healthline's 30-second hold (c13) is a separate way to do the exercise, not part of the rep. The same PureGym page's embedded video description says \"Hold for a couple of seconds squeezing your glutes before slowly returning to the start position\"; the page's own written steps say one second, so the card keeps the 1 s (no source picks between them), and PureGym's barbell page says only \"Pause at the top\" (c14), no seconds."
+    },
+    "variantLine": "exercises.json lists Bodyweight / Barbell. The plate draws the bodyweight bridge on the floor (census equipmentNeeds floor only). Setup steps c1 and c2, posture, mistakes and feel hold for both versions. The barbell version adds rolling the bar over the legs until it is centred above the hips, feet close to the glutes, an overhand grip just outside hip width with the hands stopping the bar rolling, and a pause at the top before a slow lowering (c14); its arms are on the bar, not by the sides."
+  },
+  "grip": {
+    "type": "No hand grip in the bodyweight version: arms straight by the sides (c1). Barbell version: overhand grip on the bar (c14).",
+    "width": "Barbell version: just outside hip width (c14).",
+    "thumb": "",
+    "handContact": "Bodyweight: arms rest on the floor by the sides (c1).",
+    "wrist": "",
+    "claims": [
+      "c1",
+      "c14"
+    ],
+    "note": "Hand archetype none: no hand zoom needed."
+  },
+  "setup": [
+    {
+      "step": "Lie on your back, knees bent, feet flat, hip-width apart.",
+      "claim": "c1"
+    },
+    {
+      "step": "Arms straight by your sides.",
+      "claim": "c1"
+    },
+    {
+      "step": "Toes facing away from you.",
+      "claim": "c1"
+    },
+    {
+      "step": "Pull your belly button in, tuck your pelvis, low back flat.",
+      "claim": "c2"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Breathe out as you lift, in as you lower.",
+      "claim": "c3"
+    },
+    {
+      "point": "Press your heels into the floor.",
+      "claim": [
+        "c3",
+        "c11"
+      ]
+    },
+    {
+      "point": "Drive with your hips, not your feet.",
+      "claim": "c9"
+    },
+    {
+      "point": "Shoulders, hips and knees in a straight line at the top.",
+      "claim": "c4"
+    },
+    {
+      "point": "Squeeze your glutes and hold the top for a second.",
+      "claim": "c5"
+    },
+    {
+      "point": "Knees in line with your toes.",
+      "claim": "c12"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Overarching the lower back.",
+      "fix": "Pull your belly button in and tuck your pelvis.",
+      "claim": [
+        "c7",
+        "c6",
+        "c2"
+      ]
+    },
+    {
+      "mistake": "Feet in the wrong place.",
+      "fix": "Set your feet so shin and thigh are roughly 90 degrees at the top.",
+      "claim": [
+        "c8",
+        "c4"
+      ]
+    },
+    {
+      "mistake": "Pushing the hips too high.",
+      "fix": "Stop when shoulders, hips and knees line up.",
+      "claim": [
+        "c6",
+        "c4"
+      ]
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "glutes",
+        "claim": "c10"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": [
+          "c10",
+          "c9"
+        ]
+      },
+      {
+        "muscleId": "quads",
+        "claim": [
+          "c10",
+          "c11"
+        ]
+      }
+    ],
+    "watch": [
+      {
+        "muscleId": "lower_back",
+        "claim": [
+          "c7",
+          "c8"
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "where": "Glutes and hamstrings",
+        "means": "Working as they should.",
+        "fix": "",
+        "claim": "c9",
+        "redFlag": null
+      },
+      {
+        "where": "Quads",
+        "means": "Driving through the toes makes the quads do more work.",
+        "fix": "Press through your heels.",
+        "claim": "c11",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Fault: overextending your back can lead to pain here.",
+        "fix": "Pull your belly button in and tuck your pelvis.",
+        "claim": [
+          "c7",
+          "c2"
+        ],
+        "redFlag": "back"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Overextending your back can lead to lower back pain.",
+      "claim": "c7"
+    },
+    {
+      "risk": "Pushing the hips too high generally increases the arch in your low back.",
+      "claim": "c6"
+    }
+  ],
+  "redFlags": [
+    "back"
+  ],
+  "redFlagNote": "back links the shared back box (shared/back-pain-box.json); the row carries no referral wording (LR-27).",
+  "zooms": [
+    {
+      "key": "spine-top",
+      "kind": "posture",
+      "right": "Core tight, pelvis tucked, straight line at the top.",
+      "wrong": "Hips pushed too high, low back arched.",
+      "claim": [
+        "c2",
+        "c4",
+        "c6",
+        "c12"
+      ]
+    },
+    {
+      "key": "heels-down",
+      "kind": "posture",
+      "right": "Feet flat, heels pressing into the floor.",
+      "wrong": null,
+      "claim": [
+        "c1",
+        "c3"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "quads"
+    ],
+    "remove": [],
+    "why": "Library: glutes primary, hamstrings secondary; both kept (c10). Add quads as secondary: StrengthLog lists them (c10), and Healthline says driving through the toes makes them work more (c11)."
+  },
+  "loadProgression": {
+    "text": "3 sets of 15. Then add a weight on your hips: dumbbells, then a barbell.",
+    "claims": [
+      "c13"
+    ]
+  },
+  "anchorSource": "pg-gb",
+  "anchorNote": "PureGym's glute bridge how-to read in full (steps, tips, questions on the hamstrings and lower back); ACE's glute bridge page read in full.",
+  "gaps": [],
+  "unsourced": [
+    "Seconds for the lifting and lowering phases (the plate's numbers are a drawing convention, c15).",
+    "A wrong position for the feet (the heels-down zoom shows only the right one, LR-25)."
+  ],
+  "notes": [
+    "Start head 6d253b9e (claude/libht-research). Its own parent; no inherit entries.",
+    "Shared card: floor-body (shared/floor-body.json) lists glute_bridge in appliesTo, but its gaps say lying face up has no shared checkpoint (\"They stay per exercise, as GA 3.2 says.\"). Nothing is taken from it; this card's checkpoints rest on its own claims.",
+    "Arms: the bodyweight plate draws the arms straight by the sides on the floor (c1); the barbell version holds the bar (c14).",
+    "Healthline's variations page gives one quick-pointer list for all bridge variations (c4, c12) and per-variation steps; only the shared pointers, the heel/toe contrast (c11) and the sets (c13) are used.",
+    "Healthline's \"If you feel your form suffering, take a break and recuperate so that you can regain your strength and perform it correctly.\" is a rest line, not a stop line for pain; no row uses it."
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "sacrum",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2",
+      "note": "the low back flat against the floor by the drawn tuck (D-LIB11-SACRUM; LB8 NOTE RULED Q10.7)"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c3"
+    },
+    {
+      "kind": "angle",
+      "joint": "knee.r",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c4"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lift",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 2,
+      "move": true
+    }
+  ],
+  "topFault": "arch"
+}

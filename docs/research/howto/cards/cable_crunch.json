@@ -1,0 +1,786 @@
+{
+ "id": "cable_crunch",
+ "libId": "lib_cable_crunch",
+ "name": "Cable Crunch",
+ "family": "Trunk flexion (crunch)",
+ "tier": "B",
+ "tierNote": "Safety tier B (content.md appendix B); census.json difficulty tier 1. Tier B adds where the hands go for crunches (no neck pulling): the hands hold the rope by the head and the arms do not yank (c2, c9).",
+ "archetype": {
+  "hand": "on-body",
+  "contact": [
+   "floor-body"
+  ]
+ },
+ "parent": null,
+ "inherit": [],
+ "claims": [
+  {
+   "id": "c1",
+   "text": "Fix a rope to the high (upper) pulley and choose a light to moderate weight; kneel a few feet away, facing the machine (one source allows facing away), with the stance about hip to shoulder-width apart.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-cablecrunch",
+    "motra-cablecrunch",
+    "bb-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "sl-cablecrunch",
+     "text": "Fasten a rope handle in the upper position on a cable pulley. Sit down on your knees a few feet away, facing the pulley.",
+     "where": "How to Do Cable Crunches, list item 1"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Attach a rope to the high pulley of a cable machine and select a light to moderate weight. Kneel facing the machine, grasp the rope ends, and pull them to position your hands near your shoulders with elbows bent.",
+     "where": "How to Perform, list item 1"
+    },
+    {
+     "source": "bb-cablecrunch",
+     "text": "Kneel down and set your stance about hip to shoulder-width apart. You can face toward or away from the machine, depending on your preference.",
+     "where": "How to Do the Cable Crunch, Step 1 – Set Up"
+    }
+   ]
+  },
+  {
+   "id": "c2",
+   "text": "A triceps rope is the best handle: hold one rope end in each hand at the knot or end piece, lay the rope across the traps and hold it as at the top of a hammer curl, with the hands on either side of the head (or near the shoulders, elbows bent) for the whole set.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-cablecrunch",
+    "sl-cablecrunch",
+    "motra-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-cablecrunch",
+     "text": "The cable crunch is best performed using a triceps extension rope handle.",
+     "where": "How to Do the Cable Crunch (intro paragraph, before Step 1)"
+    },
+    {
+     "source": "bb-cablecrunch",
+     "text": "Using the triceps extension rope attachment, secure each hand at the base (usually there is a knot or hard plastic end piece). With the rope in your hands, lay the attachment across your traps. Hold it in your hands as though you were at the top of a hammer curl.",
+     "where": "How to Do the Cable Crunch, Step 1 – Set Up"
+    },
+    {
+     "source": "sl-cablecrunch",
+     "text": "Hold the ropes on either side of your head throughout the movement.",
+     "where": "How to Do Cable Crunches, list item 2"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Kneel facing the machine, grasp the rope ends, and pull them to position your hands near your shoulders with elbows bent.",
+     "where": "How to Perform, list item 1"
+    }
+   ]
+  },
+  {
+   "id": "c3",
+   "text": "Start with a slight backward hinge from the hips that raises them, chin tucked; then curl the upper body forward with the abs, shoulders toward the pelvis, while the hips stay still and raised: the spine bends, not the hips.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-cablecrunch",
+     "text": "Hinge slightly backward from hips to elevate them, keeping chin tucked.",
+     "where": "How to Perform, list item 2"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Contract abs to curl upper body forward, bringing shoulders toward pelvis while keeping hips stationary.",
+     "where": "How to Perform, list item 3"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Hips still and elevated",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Spine flexes, not hips",
+     "where": "Coaching Tips, Form Cues"
+    }
+   ]
+  },
+  {
+   "id": "c4",
+   "text": "Brace (quads, glutes and core), squeeze the rope, breathe all the air out and contract the abs to curl the torso toward the ground, curling the spine as much as you can.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-cablecrunch",
+    "sl-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-cablecrunch",
+     "text": "Begin your crunch by bracing your core. Flex your quads, glutes, and core. Squeeze the rope attachment in your hands. While breathing out all of your air, contract your abdominals and curl your torso towards the ground. The goal is to curl your spine as much as you can.",
+     "where": "How to Do the Cable Crunch, Step 2 – Crunch"
+    },
+    {
+     "source": "sl-cablecrunch",
+     "text": "Bend your upper body forward by contracting your abs.",
+     "where": "How to Do Cable Crunches, list item 2"
+    }
+   ]
+  },
+  {
+   "id": "c5",
+   "text": "The elbows move toward the thighs as the ribcage and hips come closer; crunch until the elbows are near the thighs or the lower abs are fully contracted, from a start with the torso upright, without rounding the lower back excessively.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-cablecrunch",
+     "text": "Elbows move toward thighs, shortening distance between ribcage and hips.",
+     "where": "How to Perform, list item 4"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Start from slight backward hinge with torso upright; crunch until elbows near thighs or lower abs fully contracted, without rounding lower back excessively.",
+     "where": "Coaching Tips, Range of Motion"
+    }
+   ]
+  },
+  {
+   "id": "c6",
+   "text": "Return by slowly straightening the torso (extending the spine) to the start, with control, keeping the brace so the hips do not change position much and keeping tension on the abs the whole time.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-cablecrunch",
+    "sl-cablecrunch",
+    "motra-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-cablecrunch",
+     "text": "Maintain your brace as much as possible to prevent big changes in your hip positioning throughout the reset. Slowly straighten your torso back to the starting position. Maintain tension on your abs the entire time.",
+     "where": "How to Do the Cable Crunch, Step 3 – Reset"
+    },
+    {
+     "source": "sl-cablecrunch",
+     "text": "Reverse the motion and return to the starting position with control.",
+     "where": "How to Do Cable Crunches, list item 3"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Slowly extend spine to return to start, maintaining tension in abs.",
+     "where": "How to Perform, list item 6"
+    }
+   ]
+  },
+  {
+   "id": "c7",
+   "text": "Breathe out forcefully during the crunch and breathe in on the way back to the start.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-cablecrunch",
+     "text": "Inhale as you return to the starting position; exhale forcefully during the crunch.",
+     "where": "Coaching Tips, Breathing"
+    }
+   ]
+  },
+  {
+   "id": "c8",
+   "text": "Moving the hips during the cable crunch (using the hips to pull) is a mistake that one source says a lot of people make; it takes tension off the abs and puts it on the hip flexors, and done correctly only the spine moves.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "fv-cablecrunch",
+    "motra-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "fv-cablecrunch",
+     "text": "You will see a lot of people doing this exercise by moving their hips too, but that’s a mistake. This takes tension off your abs and places it on your hip flexors instead. Done correctly, only your spine should move.",
+     "where": "What are Cable Crunches?"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Using hips to pull",
+     "where": "Safety, Common Mistakes"
+    }
+   ]
+  },
+  {
+   "id": "c9",
+   "text": "Yanking with the arms is a mistake: the arms and traps hold the weight in place but should not be involved in the movement itself.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-cablecrunch",
+    "bb-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-cablecrunch",
+     "text": "Yanking with arms",
+     "where": "Safety, Common Mistakes"
+    },
+    {
+     "source": "bb-cablecrunch",
+     "text": "Yes, you’ll need your arms and traps to hold and support the weight in place, but they by no means should be involved in the actual movement.",
+     "where": "Muscles Worked by the Cable Crunch"
+    }
+   ]
+  },
+  {
+   "id": "c10",
+   "text": "Too much body English (breaking form and shoving yourself forward with momentum), which going too heavy often brings, may take tension off the abs completely; keep the reps strict.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-cablecrunch",
+     "text": "One of the consequences of going too heavy is often increased body English, or breaking form to use momentum to complete your reps.",
+     "where": "Common Cable Crunch Mistakes, Too Much Body English"
+    },
+    {
+     "source": "bb-cablecrunch",
+     "text": "Shoving yourself forward with momentum to complete your reps may take tension off of your abdominals completely.",
+     "where": "Common Cable Crunch Mistakes, Too Much Body English"
+    },
+    {
+     "source": "bb-cablecrunch",
+     "text": "Keep things strict for the best gains with this exercise.",
+     "where": "Common Cable Crunch Mistakes, Too Much Body English"
+    }
+   ]
+  },
+  {
+   "id": "c11",
+   "text": "Keep the load manageable so the abs do most of the moving; too heavy a load risks underloading the abs and overloading the traps, arms and back. Start light to master the form.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-cablecrunch",
+    "motra-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-cablecrunch",
+     "text": "Keep the load manageable so that you can primarily use your abdominals to move. Otherwise, you’ll risk underloading your abs and overloading your traps, arms, and back instead.",
+     "where": "Common Cable Crunch Mistakes, Going Too Heavy"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Start light to master form",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c12",
+   "text": "Neck: keep the chin tucked (not tucking it is a listed mistake) and keep the movement controlled to prevent neck strain.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "motra-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-cablecrunch",
+     "text": "Chin tucked",
+     "where": "Coaching Tips, Form Cues"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Not tucking chin",
+     "where": "Safety, Common Mistakes"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Keep movement controlled to prevent neck strain",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c13",
+   "text": "Rounding the lower back is a listed mistake; one source says to avoid the exercise with acute lower back pain.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "motra-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-cablecrunch",
+     "text": "Rounding lower back",
+     "where": "Safety, Common Mistakes"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Avoid if acute lower back pain",
+     "where": "Safety, Safety Notes"
+    }
+   ]
+  },
+  {
+   "id": "c14",
+   "text": "The abs (rectus abdominis) are the primary muscle; one source lists the obliques as secondary.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "sl-cablecrunch",
+    "bb-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "sl-cablecrunch",
+     "text": "Primary muscles worked: Abs Secondary muscles worked: Obliques",
+     "where": "Muscles Worked in Cable Crunches"
+    },
+    {
+     "source": "bb-cablecrunch",
+     "text": "The primary muscle worked by the cable crunch will be your rectus abdominis.",
+     "where": "Muscles Worked by the Cable Crunch, Rectus Abdominis"
+    }
+   ]
+  },
+  {
+   "id": "c15",
+   "text": "For muscle size, 3 to 4 sets of 10 to 12 reps with a moderate but challenging load.",
+   "tags": [
+    "CONSENSUS"
+   ],
+   "sources": [
+    "bb-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "bb-cablecrunch",
+     "text": "For Muscle Mass: Perform three to four sets of 10 to 12 reps, using a moderate but challenging load.",
+     "where": "Cable Crunch Sets and Reps"
+    }
+   ]
+  },
+  {
+   "id": "c16",
+   "text": "Tempo: one coach page gives 3-1-2 (three numbers), and its Tempo tooltip orders the four numbers as eccentric (lowering), bottom pause, concentric (lifting), top pause; its steps ask for a brief pause at the bottom of the crunch. On this exercise the tooltip's two labels point different ways, so the phases are ambiguous: read by muscle action, 3 s is the return (eccentric), 2 s the crunch (concentric), and the 1 s pause falls at the upright start, so no source gives seconds for the pause right after the crunch and the plate's 1 s there is a drawing convention; read by direction, 3 s is the crunch (the torso lowering), the 1 s is the sourced pause at the bottom of the crunch, and 2 s is the return (lifting). Both readings give a 1 s pause right after the crunch.",
+   "tags": [
+    "CONSENSUS",
+    "WEAK"
+   ],
+   "sources": [
+    "motra-cablecrunch"
+   ],
+   "quotes": [
+    {
+     "source": "motra-cablecrunch",
+     "text": "3-1-2",
+     "where": "Coaching Tips, Tempo"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+     "where": "Tempo heading tooltip"
+    },
+    {
+     "source": "motra-cablecrunch",
+     "text": "Pause briefly at bottom to squeeze abs.",
+     "where": "How to Perform, list item 5"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "bb-cablecrunch",
+   "url": "https://barbend.com/cable-crunch/",
+   "title": "Learn the Cable Crunch to Build Yourself a Strong, Supportive Core | BarBend",
+   "kind": "coach",
+   "year": 2024,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "motra-cablecrunch",
+   "url": "https://motra.com/exercises/cableCrunch",
+   "title": "Cable Crunch - Exercise Guide | Motra",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "sl-cablecrunch",
+   "url": "https://www.strengthlog.com/cable-crunch/",
+   "title": "How to Do Cable Crunch: Muscles Worked & Proper Form – StrengthLog",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  },
+  {
+   "id": "fv-cablecrunch",
+   "url": "https://fitnessvolt.com/cable-crunch/",
+   "title": "The 10 Best Cable Crunch Alternatives for Stronger, More Defined Abs – Fitness Volt",
+   "kind": "coach",
+   "year": null,
+   "pmid": null,
+   "access": "full",
+   "checked": "2026-10-22"
+  }
+ ],
+ "plate": {
+  "view": "side",
+  "viewWhy": "Census view is side; the spine curling while the hips stay still and raised (c3, c5) and the top fault, the hips moving to pull (c8), read from the side.",
+  "equipment": "Cable column and weight stack with a triceps rope on the high pulley (census needs cable, exists, and ropeLikely, missing; c1, c2); floor line under the knees. The lifter kneels facing the stack (c1).",
+  "start": "Kneeling a few feet from the high pulley, facing it, stance about hip to shoulder-width (c1); rope ends held on either side of the head, elbows bent (c2); a slight backward hinge from the hips that raises them, torso upright, chin tucked (c3, c5).",
+  "end": "Spine curled, shoulders toward the pelvis, elbows near the thighs (c3, c5); hips unchanged, still and raised (c3); chin still tucked (c12); lower back not rounded excessively (c5).",
+  "checkpoints": [
+   {
+    "label": "Hips still",
+    "what": "Hips stay still and raised. Only the spine bends.",
+    "claim": [
+     "c3",
+     "c8"
+    ]
+   },
+   {
+    "label": "Curl the spine",
+    "what": "Curl your spine. Elbows move toward your thighs.",
+    "claim": [
+     "c4",
+     "c5"
+    ]
+   },
+   {
+    "label": "Rope by head",
+    "what": "Hands hold the rope by your head. The arms don't yank.",
+    "claim": [
+     "c2",
+     "c9"
+    ]
+   }
+  ],
+  "mistake": {
+   "what": "Moving the hips to pull, instead of only the spine bending.",
+   "why": "Fitness Volt says a lot of people move their hips in this exercise and calls it a mistake that takes tension off the abs and puts it on the hip flexors (c8); Motra lists \"Using hips to pull\" first among its common mistakes and cues \"Spine flexes, not hips\" (c8, c3).",
+   "claim": [
+    "c8",
+    "c3"
+   ],
+   "drawable": true,
+   "rankNote": "No source measures how often each fault happens. LR-31 step 1: moving the hips, using the hips to pull (c8). Fitness Volt, in its section on what cable crunches are: \"You will see a lot of people doing this exercise by moving their hips too, but that’s a mistake.\" (c8): 'a lot of people' is read as LR-31's 'many people' (D-SUP-LB7-DIPREPS: a 'most/many people' sentence about this exercise's own fault counts); it is not a list sentence, and the sentences after it tie it to this exercise (\"Done correctly, only your spine should move.\"). No other fault passes step 1, so step 2's order is not needed. Set aside at step 1: BarBend's \"One common mistake is going too heavy too early.\" and \"The complete opposite is also a common error when performing the cable crunch.\" (going too light) are load choices, not candidates (LR-31); \"One of the consequences of going too heavy is often increased body English, or breaking form to use momentum to complete your reps.\" (c10) says what going too heavy brings, a cause, not how often lifters use body English (the renegade_row reading of BarBend's \"Often a symptom of going too heavy\", lb7-research-verify.md item 4); \"usually there is a knot or hard plastic end piece\" is about the rope; \"the cable crunch is routinely passed over\" is about the exercise; \"Spinal flexion is often regarded as unsafe during exercise\" is about spinal flexion in general; \"which could make the move less accessible to many lifters\" is about a straight-bar handle; \"How often should I perform the cable crunch?\" and \"no more often than every other day\" are training; \"Common Cable Crunch Mistakes\" is a heading. Fitness Volt's \"So why is it that so many people do much higher reps for their abs?\" and \"It’s not uncommon to see exercisers banging out dozens if not hundreds of reps using next to no resistance.\" are about ab training in general (R-LB7-3), and \"if you do them too often\" is training. Motra's \"Common Mistakes\" is a heading and \"Not typically needed\" is about spotting. Fitbod (read, not cited) \"Common Form Mistakes\" is a heading and \"Crunches are one of the most common exercises out there.\" is about other exercises. Harm quotes about a fault, not needed because step 1 decides: Motra's \"Keep movement controlled to prevent neck strain\" (c12) ties losing control to neck strain (D-SUP-PROTECT), a speed-only fault; BarBend's \"you’ll risk underloading your abs and overloading your traps, arms, and back instead\" (c11) is about the load. If the verify does not count 'a lot of people', step 1 finds nothing, step 2 picks losing control (the only named fault tied to harm), which is speed-only and never drawable, and plate.mistake would then name the next fault by the same steps (step 3: Motra's list for this exercise starts with \"Using hips to pull\", c8), the same drawn fault. Common-mistakes lists (fetcher scan, 2026-10-22): BarBend's \"Common Cable Crunch Mistakes\" (intro \"Some mistakes to avoid are going too heavy, going too light, and using far too much body English.\"): 1 Going Too Heavy, 2 Going Too Light, 3 Too Much Body English; Motra's \"Common Mistakes\": 1 Using hips to pull, 2 Rounding lower back, 3 Yanking with arms, 4 Not tucking chin. StrengthLog and Fitness Volt have none. Other scan hits set aside: BarBend's \"Frequently Asked Questions\" is a heading; Motra's \"Typical Rep Range\" is programming; BarBend's \"you need a strong core to support all that stress on your torso\" is about other lifts, and \"training them directly won’t hurt\" names no harm; Fitness Volt's \"mechanical and metabolic stress\" is about rep ranges and \"intra-abdominal pressure\" is about a muscle; Motra's \"Avoid if acute lower back pain\", \"Acute lower back injury\" and \"Neck strain issues\" (When to Avoid) name no fault. drawable true: the census view is side, and the hips moving away from their still, raised position during the crunch is a still sign the side view shows (c3, c8)."
+  },
+  "tells": [
+   {
+    "text": "Hips stay still",
+    "claim": "c3"
+   },
+   {
+    "text": "Elbows move toward your thighs",
+    "claim": "c5"
+   }
+  ],
+  "tempo": {
+   "up": 2,
+   "down": 3,
+   "pause": 1,
+   "claim": "c16",
+   "text": "Motra gives \"3-1-2\" (c16, WEAK) and its Tempo tooltip orders the numbers \"eccentric (lowering), bottom pause, concentric (lifting), top pause\". On the cable crunch the eccentric (the return) raises the torso and the concentric (the crunch) lowers it, so the labels conflict; D-SUP-LB9-TEMPODIR rules Reading A (by muscle action). Reading A, by muscle action (drawn; R-LB6-2's fixed order as on machine_crunch): 3 s eccentric = the return (down 3), 2 s concentric = the crunch (up 2), and the 1 s bottom pause sits between the return and the next crunch, at the upright start; it is named here, not written in pause (LR-33). Pause 1 is then the LR-33 drawing convention for Motra's \"Pause briefly at bottom to squeeze abs.\", which comes right after the crunch with no seconds of its own. Reading B, by direction: 3 s lowering = the crunch, the 1 s bottom pause = the sourced pause right after the crunch (matching \"Pause briefly at bottom\"), 2 s lifting = the return; then up 3, down 2, pause 1 (sourced, not the convention). Pause is 1 under both readings; only up and down swap. BarBend and Motra also ask for a slow return (c6)."
+  },
+  "variantLine": null
+ },
+ "grip": {
+  "type": "Triceps rope, one rope end in each hand at the knot or end piece (c2).",
+  "width": "Hands on either side of the head (c2).",
+  "thumb": "",
+  "handContact": "Rope laid across the traps and held as at the top of a hammer curl (BarBend), or hands near the shoulders with the elbows bent (Motra) (c2).",
+  "wrist": "",
+  "claims": [
+   "c2"
+  ]
+ },
+ "setup": [
+  {
+   "step": "Fix a rope to the high pulley. Choose a light to moderate weight.",
+   "claim": "c1"
+  },
+  {
+   "step": "Kneel a few feet away, facing the machine.",
+   "claim": "c1"
+  },
+  {
+   "step": "Set your stance about hip to shoulder-width apart.",
+   "claim": "c1"
+  },
+  {
+   "step": "Hold the rope ends on either side of your head.",
+   "claim": "c2"
+  },
+  {
+   "step": "Hinge back slightly from your hips to raise them. Tuck your chin.",
+   "claim": "c3"
+  }
+ ],
+ "posture": [
+  {
+   "point": "Brace, breathe out and curl your spine.",
+   "claim": [
+    "c4",
+    "c7"
+   ]
+  },
+  {
+   "point": "Elbows move toward your thighs.",
+   "claim": "c5"
+  },
+  {
+   "point": "Hips stay still and raised.",
+   "claim": "c3"
+  },
+  {
+   "point": "Chin stays tucked.",
+   "claim": "c12"
+  },
+  {
+   "point": "Breathe in and straighten slowly. Keep tension on your abs.",
+   "claim": [
+    "c6",
+    "c7"
+   ]
+  }
+ ],
+ "handlingMistakes": [
+  {
+   "mistake": "Moving your hips to pull.",
+   "fix": "Keep your hips still. Only your spine bends.",
+   "claim": [
+    "c8",
+    "c3"
+   ]
+  },
+  {
+   "mistake": "Yanking with your arms.",
+   "fix": "Arms only hold the rope. Move with your abs.",
+   "claim": [
+    "c9",
+    "c11"
+   ]
+  },
+  {
+   "mistake": "Rounding your lower back.",
+   "fix": "Stop at elbows near thighs, without rounding your lower back excessively.",
+   "claim": [
+    "c13",
+    "c5"
+   ]
+  }
+ ],
+ "feel": {
+  "primary": [
+   {
+    "muscleId": "abs",
+    "claim": "c14"
+   }
+  ],
+  "secondary": [
+   {
+    "muscleId": "obliques",
+    "claim": "c14"
+   }
+  ],
+  "watch": [
+   {
+    "muscleId": "hip_flexors",
+    "claim": "c8"
+   }
+  ],
+  "rows": [
+   {
+    "where": "Front of the belly",
+    "means": "Your abs are curling your spine.",
+    "fix": "",
+    "claim": [
+     "c14",
+     "c4"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Front of the hips",
+    "means": "Moving your hips puts tension on your hip flexors.",
+    "fix": "Keep your hips still. Only your spine bends.",
+    "claim": [
+     "c8",
+     "c3"
+    ],
+    "redFlag": null
+   },
+   {
+    "where": "Neck",
+    "means": "Fault: reps not controlled, or chin not tucked.",
+    "fix": "Keep the movement controlled and your chin tucked.",
+    "claim": "c12",
+    "redFlag": null
+   },
+   {
+    "where": "Lower back",
+    "means": "Fault: rounding your lower back.",
+    "fix": "Stop at elbows near thighs, without rounding your lower back excessively.",
+    "claim": [
+     "c13",
+     "c5"
+    ],
+    "redFlag": "back"
+   }
+  ]
+ },
+ "risks": [
+  {
+   "risk": "Keep the movement controlled to prevent neck strain.",
+   "claim": "c12"
+  },
+  {
+   "risk": "Acute lower back pain? Avoid this exercise.",
+   "claim": "c13"
+  },
+  {
+   "risk": "Too much weight risks overloading your traps, arms and back instead of your abs.",
+   "claim": "c11"
+  }
+ ],
+ "redFlags": [
+  "back"
+ ],
+ "zooms": [
+  {
+   "key": "hips",
+   "kind": "posture",
+   "right": "Hips still and raised, the spine curling.",
+   "wrong": "Hips moving to pull, not only the spine.",
+   "claim": [
+    "c3",
+    "c8"
+   ]
+  },
+  {
+   "key": "rope",
+   "kind": "hand",
+   "right": "Rope ends held on either side of the head.",
+   "wrong": "Arms yanking the rope down.",
+   "claim": [
+    "c2",
+    "c9"
+   ]
+  }
+ ],
+ "libraryDiff": {
+  "add": [
+   "obliques"
+  ],
+  "remove": [],
+  "why": "Add obliques as secondary: StrengthLog lists them as the secondary muscle (c14). exercises.json lists abs primary and no secondary; abs stays primary (c14)."
+ },
+ "anchorSource": "bb-cablecrunch",
+ "loadProgression": {
+  "text": "For muscle: 3 to 4 sets of 10 to 12 reps, with a moderate but challenging load.",
+  "claim": "c15"
+ },
+ "notes": [
+  "Anchor: BarBend (bb-cablecrunch) read in full: setup, crunch, reset, sets and reps, a common-mistakes section, muscles and FAQ. Motra's page is read in full (steps, form cues, breathing, tempo, range of motion, safety and its Common Mistakes list). StrengthLog's page is short (three steps and the muscle box). The Fitness Volt page is an alternatives article; only its section on what cable crunches are is about this exercise, and only that is cited.",
+  "Shared cards: selector-pin (docs/research/howto/shared/selector-pin.json @ 6d253b9e) lists cable_crunch in appliesTo; its steps (pin fully into the stack, move it only while the stack rests, no extra weights) are cited, not copied. floor-body (shared/floor-body.json) lists cable_crunch, and its gaps say kneeling ids have no shared checkpoint; this card's checkpoints are its own.",
+  "Rope: census need ropeLikely (\"rope is standard (data says Cable)\") is supported by BarBend's \"best performed using a triceps extension rope handle\" (c2). BarBend allows facing toward or away from the stack (c1); the plate draws facing it, as StrengthLog and Motra do.",
+  "Conflict, read but not cited: Fitbod (https://fitbod.me/exercises/cable-crunch, fetched 2026-10-22) says \"Hinge your hips backward to lower the rope until your torso becomes parallel with the floor and then flex the bottom of your ribcage towards to top of your pelvis.\", while Motra and Fitness Volt keep the hips still (c3, c8). The card follows the two that keep the hips still. Fitbod's \"Sitting Up Too Far\" item is written for the floor crunch (\"Crunches are designed so you only raise your shoulder blades\") and is not counted.",
+  "BarBend's going-too-heavy and going-too-light items are load choices (LR-31); the load line is risks[2] (c11). The back feel row is LR-6 shape (place, Motra's listed fault, the range-of-motion fix) and links the back box; no source names a stop for back pain during the set, so the row carries none (R-LB3-4, R-LB6-6). risks[1] restates Motra's \"Avoid if acute lower back pain\" (c13).",
+  "Not reachable or not found: NASM, Healthline, Garage Gym Reviews and PureGym cable-crunch URLs (404), Verywell Fit (402), Muscle & Fitness (502), ACE (no cable crunch entry found)."
+ ],
+ "plateFacts": [
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "knee.l",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "knee.r",
+   "pose": "start",
+   "cardPose": "start",
+   "claim": "c1"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.l",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c2"
+  },
+  {
+   "kind": "contact",
+   "landmark": "wrist.r",
+   "pose": "end",
+   "cardPose": "end",
+   "claim": "c2"
+  }
+ ],
+ "tempo": [
+  {
+   "phase": "Crunch",
+   "s": 2,
+   "move": true
+  },
+  {
+   "phase": "Hold",
+   "s": 1
+  },
+  {
+   "phase": "Return",
+   "s": 3,
+   "move": true
+  }
+ ],
+ "topFault": "hips"
+}

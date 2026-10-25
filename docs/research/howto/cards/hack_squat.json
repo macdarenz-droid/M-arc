@@ -1,0 +1,1068 @@
+{
+  "id": "hack_squat",
+  "libId": "lib_hack_squat",
+  "name": "Hack Squat",
+  "family": "Leg press and squat machines",
+  "tier": "B",
+  "tierNote": "Safety tier B (content.md Appendix B; 5.2 tier B: machine depth catches and lockout, lower back on the pad); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "foot-platform"
+    ]
+  },
+  "parent": null,
+  "inherit": [],
+  "claims": [
+    {
+      "id": "c1",
+      "text": "Set the machine to your height, shoulders against the shoulder pads, and the feet on the plate about shoulder-width apart, slightly in front of the base of the sled.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-hack",
+        "hl-hack"
+      ],
+      "quotes": [
+        {
+          "source": "sl-hack",
+          "text": "Adjust the machine to the correct height and place your shoulders against the shoulder pads.",
+          "where": "How to Do Hack Squats with Proper Form, step 1"
+        },
+        {
+          "source": "sl-hack",
+          "text": "Put your feet on the plate, slightly in front of the base of the sled and about shoulder width apart.",
+          "where": "How to Do Hack Squats with Proper Form, step 2"
+        },
+        {
+          "source": "hl-hack",
+          "text": "Step into the machine, placing your feet shoulder-width apart and your shoulders and back against the pads.",
+          "where": "How do you do it?"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Keep the spine's natural curve, with the upper and lower back and the hips on the back pad through the whole rep; keep the hips and torso connected with the pad at all times.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack",
+        "bb-hackmachine"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "Maintain your spine’s natural curvature throughout the exercise. Your upper and lower back and hips should be in contact with the back pad.",
+          "where": "How To Perform Hack Squats: Step One — Take Your Position"
+        },
+        {
+          "source": "fv-hack",
+          "text": "Keep your back and glutes glued to the back pad throughout the range of motion.",
+          "where": "How To Perform Hack Squats: Step Two — Lower Into a Squat"
+        },
+        {
+          "source": "bb-hackmachine",
+          "text": "Find a stance that allows you to keep your hips and torso firmly connected with the seat at all times.",
+          "where": "Common Hack Squat Machine Mistakes: Letting Your Hips Rise"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "With the legs straightened, release the sled's safety locks (the safety handles or the rail-guard lever) before the first rep.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-hack",
+        "bb-hackmachine",
+        "hl-hack"
+      ],
+      "quotes": [
+        {
+          "source": "sl-hack",
+          "text": "Extend your legs and disengage the sled’s locks.",
+          "where": "How to Do Hack Squats with Proper Form, step 3"
+        },
+        {
+          "source": "bb-hackmachine",
+          "text": "Once you’re set up against the backrest and have your feet where you want them, push against the foot plate to release the sled from where it rests against the safety handles.",
+          "where": "How to Use the Hack Squat Machine: Step 3 — Squat"
+        },
+        {
+          "source": "bb-hackmachine",
+          "text": "Then, remove the railguards by adjusting the lever (there should be one on the side of the machine near your head or hips).",
+          "where": "How to Use the Hack Squat Machine: Step 3 — Squat"
+        },
+        {
+          "source": "hl-hack",
+          "text": "Release the safety handles, inhale, and lower down, bending your knees until they reach a 90-degree angle.",
+          "where": "How do you do it?"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "Lower slowly by bending the hips, knees and ankles, as far as your mobility allows; the upper and lower legs at about a right angle (knees at 90 degrees) at the bottom. One source pauses there before pushing up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack",
+        "hl-hack"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "Take a deep breath into your belly and hold it as you slowly lower into a squat by flexing your hips, knees, and ankles.",
+          "where": "How To Perform Hack Squats: Step Two — Lower Into a Squat"
+        },
+        {
+          "source": "fv-hack",
+          "text": "Go down as far as your mobility allows. Your upper and lower legs should be at a right angle at the bottom.",
+          "where": "How To Perform Hack Squats: Step Two — Lower Into a Squat"
+        },
+        {
+          "source": "hl-hack",
+          "text": "Pause here, then push up through the back of your feet to extend your legs back to the starting position.",
+          "where": "How do you do it?"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Cutting the squat short is a named mistake: many athletes stop above the depth that works the muscles fully; lower until the thighs are at least parallel, without rounding the back.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "Many athletes cut the squat short, not reaching the depth necessary to engage the target muscles fully. A shallow squat limits the activation of the glutes and hamstrings.",
+          "where": "Common Mistakes: 2. Inadequate Depth"
+        },
+        {
+          "source": "fv-hack",
+          "text": "How To Avoid: Aim to lower your body until your thighs are at least parallel to the floor, ensuring deeper muscle engagement. Remember, depth should be achieved without compromising form. Avoid rounding your back on eccentrics.",
+          "where": "Common Mistakes: 2. Inadequate Depth"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Push back up through the whole foot, extending the knees, ankles and hips; breathe out on the way up.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack",
+        "sl-hack"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "Breathe out sharply and extend your knees, ankles, and hips while pushing through your whole feet to return to the starting position.",
+          "where": "How To Perform Hack Squats: Step Three — Concentrics"
+        },
+        {
+          "source": "sl-hack",
+          "text": "Reverse the movement with control, and extend your legs again until you’re back in the starting position. Exhale on the way up.",
+          "where": "How to Do Hack Squats with Proper Form, step 5"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "At the top keep a slight bend in the knees: extend fully without locking them; locking the knees at the top is a listed mistake (one app guide with no named author).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-hs"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hs",
+          "text": "Exhale near the top of the movement, keeping a slight bend in the knees.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "motra-hs",
+          "text": "Lower until thighs are parallel to the footplate or deeper; extend fully without locking knees.",
+          "where": "Range of Motion"
+        },
+        {
+          "source": "motra-hs",
+          "text": "Do not lock knees aggressively",
+          "where": "Safety Notes"
+        },
+        {
+          "source": "motra-hs",
+          "text": "Locking knees at top",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "Many people lift the lower back off the back pad at the bottom (in the hole) to get momentum; this can strain the lower back and raise the injury risk. Keep the work in the quads and glutes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "Pro Tip: Many people lift their lower back off the back pad to generate momentum when in the hole. Doing so can put unnecessary strain on your lower back and increase your injury risk. Limit the movement to the quads and glutes.",
+          "where": "How To Perform Hack Squats: Step Three — Concentrics"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "A named hack-squat-machine mistake: the hips rising, the pelvis or lower back drifting off the backrest, for example when the feet are set too far up the plate; set the feet roughly in line with the knees or slightly ahead.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hackmachine"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hackmachine",
+          "text": "If your feet are placed too far up the plate, they may fall out of alignment with your hips.",
+          "where": "Common Hack Squat Machine Mistakes: Letting Your Hips Rise"
+        },
+        {
+          "source": "bb-hackmachine",
+          "text": "To compensate, you may feel your pelvis or lower back drift off of the backrest while you exert effort. This is a major no-no for the hack squat machine.",
+          "where": "Common Hack Squat Machine Mistakes: Letting Your Hips Rise"
+        },
+        {
+          "source": "bb-hackmachine",
+          "text": "However, put your feet too high, and you run the risk of diminishing your force output, or even having your hips leave the backrest. Start by placing your feet roughly in-line with your knees or slightly “ahead,” and tweak from there.",
+          "where": "Common Hack Squat Machine Mistakes: Setting Your Feet Too High"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "Butt wink, the lower back rounding slightly at the bottom, is a common occurrence to watch for when hack squatting; with limited mobility, going too deep with the back against the pad leaves a lot of flexing stress on the lumbar spine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mh-hack"
+      ],
+      "quotes": [
+        {
+          "source": "mh-hack",
+          "text": "If you haven’t heard of “butt wink,” it’s something you must constantly be aware of when hack squatting. It’s a common occurrence at the bottom of a squat, when your lower back rounds ever so slightly.",
+          "where": "How the Hack Squat Works: Fixed Back Position"
+        },
+        {
+          "source": "mh-hack",
+          "text": "Placing the back against a board and going too deep when hack squatting leaves a lot of flexing stress for the lumbar spine if you have limited mobility.",
+          "where": "How the Hack Squat Works: Fixed Back Position"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Never arch or round the back: it can cause pain and injury.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "Never arch or round your back, as this can cause pain and injury.",
+          "where": "Hack Squat Tips"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Feet too close together can put undue stress on the knees; a stance too wide shifts the work away from the quads. Set the feet shoulder-width apart, toes slightly out, in the middle of the plate.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "Placing your feet too close can place undue stress on the knees, while too wide a stance can shift the focus away from the quadriceps.",
+          "where": "Common Mistakes: 1. Improper Foot Placement"
+        },
+        {
+          "source": "fv-hack",
+          "text": "How To Avoid: Position your feet shoulder-width apart with toes slightly pointed out in the middle of the foot platform to get the best of all worlds.",
+          "where": "Common Mistakes: 1. Improper Foot Placement"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Turn the feet out slightly so the knees line up with the toes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "Turn out your feet slightly and ensure your knees align with your toes.",
+          "where": "How To Perform Hack Squats: Step One — Take Your Position"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Heels coming off the platform, with trembling legs, is a sign to lower the weight; an app guide lists heels lifting among its common mistakes.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack",
+        "motra-hs"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "If your legs start trembling during a hack squat and your heels come off the platform, it is a sign that you should lower the weight.",
+          "where": "Hack Squat Target Muscles: Calves"
+        },
+        {
+          "source": "motra-hs",
+          "text": "Heels lifting off platform",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "The quads do the vast majority of the work; the glutes and adductors also work, and the hamstrings help.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "bb-hackmachine",
+        "sl-hack",
+        "fv-hack"
+      ],
+      "quotes": [
+        {
+          "source": "bb-hackmachine",
+          "text": "Like all squat variations out there, your quadriceps will perform the vast majority of the work for the duration of your set, since most of the anatomical movement comes from the knee joint upon which your quads attach.",
+          "where": "Muscles Worked by the Hack Squat Machine: Quadriceps"
+        },
+        {
+          "source": "sl-hack",
+          "text": "The machine hack squat is a classic leg exercise that’s great for targeting several of your large leg muscles, such as your quads, glutes, and adductors.",
+          "where": "What is the Hack Squat?"
+        },
+        {
+          "source": "fv-hack",
+          "text": "While the quads are the stars, the hamstrings are the essential supporting cast.",
+          "where": "Hack Squat Target Muscles: Hamstrings"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "A way out and the finish: many machines have safety locks, brakes or bottom fail-safes you can use if the weight gets too heavy; the rail-guard lever can be re-engaged from the standing position to end the set.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "sl-hack",
+        "bb-hackmachine"
+      ],
+      "quotes": [
+        {
+          "source": "sl-hack",
+          "text": "In addition, many hack squat machines have safety locks or brakes that you can pull if the weight gets too heavy and you need to get out.",
+          "where": "Hack Squat Benefits and Drawbacks: Pros"
+        },
+        {
+          "source": "bb-hackmachine",
+          "text": "Coach’s Tip: You can terminate the set from a “standing” position by re-engaging the rail guard lever.",
+          "where": "How to Use the Hack Squat Machine: Step 3 — Squat"
+        },
+        {
+          "source": "bb-hackmachine",
+          "text": "Many hack squat stations have fail-safes at the bottom of the rail that will prevent you from collapsing onto your legs should you reach muscular failure. Moreover, the rail guard lever is easily accessible while you’re lifting, so you can terminate the set quickly if needed.",
+          "where": "Benefits of the Hack Squat Machine: Safe to Load Heavily"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "Load: start light, 2 sets of 10-12 reps, work up to 3 sets, and add weight once that is easy; increase the weight gradually as you get stronger.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hack",
+        "fv-hack"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hack",
+          "text": "Start by completing 2 sets of 10–12 reps, then work your way up to 3 sets. Once you can complete this easily, add more weight.",
+          "where": "How do you do it?"
+        },
+        {
+          "source": "fv-hack",
+          "text": "Start off light and gradually increase your working weights as you become stronger.",
+          "where": "Hack Squat Tips"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Hold the machine's handles with a neutral grip; use them to brace, and don't push on them or on the knees with the hands to move the weight.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack",
+        "bb-hackmachine"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "Hold the machine’s handles in a comfortable position with a neutral grip.",
+          "where": "How To Perform Hack Squats: Step One — Take Your Position"
+        },
+        {
+          "source": "bb-hackmachine",
+          "text": "However, don’t get caught up in trying to “push” against the handles with your arms to move the weight. Moreover, definitely don’t get into the habit of placing your hands onto your knees and assisting yourself that way.",
+          "where": "Common Hack Squat Machine Mistakes: Using Your Arms"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "With lower back or knee pain, the hack squat usually isn't a good choice.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "hl-hack"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hack",
+          "text": "If you have lower back or knee pain, the hack squat usually isn’t a good choice.",
+          "where": "Is there anyone who should skip it?"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Tempo (one app guide, no named author): Motra lists 3-1-1 and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 3 s lowering, a 1 s pause at the bottom, 1 s lifting.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "motra-hs"
+      ],
+      "quotes": [
+        {
+          "source": "motra-hs",
+          "text": "3-1-1",
+          "where": "Tempo"
+        },
+        {
+          "source": "motra-hs",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "Fitness Volt asks for a pause at the top, after returning to the start, with no seconds; the plate's 1 s pause there is a drawing convention (LR-33).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "fv-hack"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "Pause and contract your quads and glutes at the isometric contraction point.",
+          "where": "How To Perform Hack Squats: Step Three — Concentrics"
+        }
+      ]
+    },
+    {
+      "id": "c22",
+      "text": "Reduce the weight and use slow, controlled lowering and lifting.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-hack"
+      ],
+      "quotes": [
+        {
+          "source": "fv-hack",
+          "text": "How To Avoid: Reduce the weight and use slow and controlled eccentrics and concentrics to make the most of this exercise.",
+          "where": "Common Mistakes: 5. Rapid Movements"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "fv-hack",
+      "url": "https://fitnessvolt.com/hack-squat/",
+      "title": "Hack Squat: Target Muscles, Benefits, Exercise Instructions, And Variations (Fitness Volt, Matthew Magnante, ACE)",
+      "kind": "coach",
+      "year": 2024,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "bb-hackmachine",
+      "url": "https://barbend.com/hack-squat-machine/",
+      "title": "Crack the Code on New Leg Gains With the Hack Squat Machine (BarBend, Jake Dickson, NASM-CPT)",
+      "kind": "coach",
+      "year": 2025,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-hack",
+      "url": "https://www.strengthlog.com/hack-squat/",
+      "title": "How to Do Hack Squats: Muscles Worked & Benefits (StrengthLog)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "hl-hack",
+      "url": "https://www.healthline.com/health/fitness-exercise/hack-squat",
+      "title": "How to Do a Hack Squat the Right Way (Healthline, Nicole Davis; medically reviewed by Daniel Bubnis, NASM-CPT)",
+      "kind": "coach",
+      "year": 2020,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "mh-hack",
+      "url": "https://www.menshealth.com/fitness/a39318435/hack-squat/",
+      "title": "Want Monster Quads? Time to Learn the Hack Squat. (Men's Health, David Otey, CSCS, and Brett Williams, NASM)",
+      "kind": "coach",
+      "year": 2023,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "motra-hs",
+      "url": "https://www.motra.com/exercises/machineHackSquat",
+      "title": "Hack Squat (Facing Out) - Exercise Guide (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
+  ],
+  "plate": {
+    "view": "side",
+    "viewWhy": "The lower back and hips on the back pad (c2) and the top fault, the lower back lifting off the pad at the bottom (c8, c9, c10), depth (c4, c5) and the soft knees at the top (c7) are all seen from the side.",
+    "equipment": "Hack squat machine (census need hackSled, missing): a sled on angled rails with a tall back pad, shoulder pads and handles near the head, a large flat foot plate at the bottom, safety handles or a rail-guard lever, and fail-safes at the bottom of the rail (c1, c3, c16, c18). Floor line.",
+    "frames": "Rep convention: start standing in the sled, legs straight with a slight knee bend, end at the bottom; Trace follows the knee.",
+    "start": "Shoulders against the shoulder pads, back and hips on the back pad (c1, c2); feet shoulder-width on the plate, toes slightly out, in the middle of the plate (c1, c12, c13); hands on the handles (c18); legs extended with a slight knee bend, locks released (c3, c7).",
+    "end": "Knees and hips bent, thighs about parallel to the plate, about a right angle at the knee (c4, c5); hips and lower back still on the pad (c2); knees in line with the toes (c13); whole foot on the plate (c6, c14).",
+    "checkpoints": [
+      {
+        "label": "Back on pad",
+        "what": "Upper and lower back and hips stay on the back pad.",
+        "claim": [
+          "c2"
+        ]
+      },
+      {
+        "label": "Thighs to parallel",
+        "what": "Lower until your thighs are at least parallel, as far as your mobility allows.",
+        "claim": [
+          "c4",
+          "c5"
+        ]
+      },
+      {
+        "label": "Slight knee bend",
+        "what": "Extend fully without locking the knees. Keep a slight bend.",
+        "claim": [
+          "c7"
+        ]
+      }
+    ],
+    "mistake": {
+      "what": "At the bottom, the lower back rounds and lifts off the back pad.",
+      "why": "Fitness Volt says many people lift the lower back off the back pad in the hole and that this can strain the lower back (c8); Men's Health calls the lower back rounding at the bottom a common occurrence and ties it to flexing stress on the lumbar spine (c10); BarBend lists the pelvis or lower back drifting off the backrest as a machine mistake (c9).",
+      "claim": [
+        "c8",
+        "c10",
+        "c9"
+      ],
+      "drawable": true,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 1: the lower back lifting off the back pad at the bottom (c8). Step 1 hits: Fitness Volt's \"Pro Tip: Many people lift their lower back off the back pad to generate momentum when in the hole.\" (c8), a 'many people' sentence about this exercise's own fault, not in a list (D-SUP-LB7-DIPREPS); its \"Many athletes cut the squat short, not reaching the depth necessary to engage the target muscles fully.\" (c5) is a second hit, for cutting the depth short; Men's Health's \"It’s a common occurrence at the bottom of a squat, when your lower back rounds ever so slightly.\" (butt wink, c10) is read as a hit for the same lower-back fault, because the sentence before ties it to the hack squat (\"something you must constantly be aware of when hack squatting\"); the rounding is the lower back leaving the pad at the bottom, so the two are read as one fault. Several faults pass step 1, so step 2's order decides: the lower-back fault is tied to harm (\"Doing so can put unnecessary strain on your lower back and increase your injury risk.\", c8; \"leaves a lot of flexing stress for the lumbar spine if you have limited mobility\", c10; \"Never arch or round your back, as this can cause pain and injury.\", c11) and is on BarBend's common-mistakes list for the machine (\"Letting Your Hips Rise\": \"you may feel your pelvis or lower back drift off of the backrest\", c9); cutting the depth short names no harm (\"A shallow squat limits the activation of the glutes and hamstrings.\"). If the butt wink is read as a separate fault, or its sentence as about squats in general, the pick is the same: Fitness Volt's hit alone picks the lower back off the pad over the depth. Set aside at step 1: Fitness Volt's \"Incorrect foot placement is among the most common hack squat mistakes.\" is a list sentence inside its common-mistakes list, read literally like \"Another common error is ...\" (R-LB4-2), so its feet-too-close harm (\"can place undue stress on the knees\", c12) is not reached; \"The back coming off the back pad is one of the most common signs of a lack of core engagement.\" is a list sentence too, and names the same fault as the pick; \"Many people let their egos get the better of them on the hack squat.\" and \"Folks who cannot perform a single rep ...\" are about the load chosen; \"Many beginners experience shaky calves during a relatively heavy hack squat.\" is a muscle sign, not a position; \"Most people have no idea how to differentiate lactic acid build-up with muscle and joint pain or discomfort.\" is about pain awareness; \"Taller individuals usually find placing their feet higher on the platform more comfortable\" is a stance choice. StrengthLog's \"Most hack squat machines are fairly easy to use\" and \"many hack squat machines have safety locks or brakes\", BarBend's \"Many hack squat stations have fail-safes\" and \"most if not all hack squat machines come with convenient, ergonomic handles\", and Healthline's \"This usually means you’ll be able to lift less\" are about machines or the load; Healthline's \"What are the most common mistakes to watch for?\" is a list heading; Healthline's \"If you have lower back or knee pain, the hack squat usually isn’t a good choice.\" (c19) is about the lifter. Men's Health's \"there are often issues with the fixed back position\" is about the machine, and \"LEG DAY OFTEN MEANS one thing for the vast majority of exercisers\" and \"squats are commonly the backbone of lower body routines\" are about training. Read but not cited (another exercise, R-LB7-5): BarBend's barbell hack squat page, \"In the hack squat, it’s common to flex your spine (round your back) on the way down, letting the weight pull you too fast.\", and Garage Gym Reviews' barbell page, \"Here are the most common ones to look out for while learning how to do the hack squat.\" (a list sentence). Harm quotes about other faults: Fitness Volt's forward lean (\"Leaning too far forward during the movement can strain the lower back\"; \"this places undue stress on the lower back, which skyrockets your chances of getting hurt\") and its overloading and breathing items, and Men's Health's \"So don’t bounce quickly through the motion.\" with \"your lower back has to do too much\", are not step-1 faults, so step 2 does not reach them. drawable true: the side view shows the hips and lower back off the pad, rounded, at the bottom. Scan completion (fetcher scan, 2026-10-22): further harm lines that support the pick are Fitness Volt's \"This contraction is subtle yet powerful, preventing any unwanted forward lean or rounding of the back, which could lead to injury.\" and its core item's \"Actively engage your core throughout the movement to maintain balance and protect your spine.\" (D-SUP-PROTECT, the back coming off the pad); BarBend's \"you run the risk of your hips leaving the security of the backrest\" names no harm. Set aside, not a frequency hit for a fault: Fitness Volt's \"I’ve witnessed every possible mistake people make when performing the hack squat.\" and \"Here are some of the most common ones and how to avoid them to maximize results and minimize injury risk\" (list sentences), \"Powerlifters usually perform the hack squat as an accessory lift in their workouts.\", \"Beginners should start with three sets\" and \"The hack squat is generally safe to perform for most people\" (training and the exercise), \"Short and frequent breaths are some of the best ways to hamper your performance.\" (no frequency word), and a reader comment, \"you drew attention to an extremely common matter!\"; BarBend's \"this usually means stacking all working levers (the joints that bear load) in a line\" (how the body finds a posture), \"Hack squats also have a tall backrest and, usually, handles near where your head is supposed to go\" and \"the backrest may even reduce some of the load that is usually applied to your lumbar spine during free-weight squatting movements\" (the machine; another exercise); StrengthLog's \"typically\" lines (the leg press against the hack squat); Legion's \"the hack squat is often a more joint-friendly option\" and \"the best approach for most people is to include both\" (exercise choice). Set aside, harm not tied to a named fault of this exercise: Fitness Volt's \"Pushing through pain can exacerbate existing issues and lead to serious injury.\" and \"If you experience discomfort, especially in the knees or back, assess and adjust your form or consult a fitness professional.\" (pain awareness), \"Warm up with a few sets of 40 to 60 percent of your one-rep max before training heavy to reduce injury risk.\" (warm-up), \"Remember, going too heavy and compromising your form can significantly increase your injury risk.\" (the load) and \"This will reduce the strain on your lower back.\" (the reverse hack squat, another exercise); StrengthLog's \"which might lead to discomfort or an increased injury risk\" (machine fit, an equipment choice); BarBend's \"this technique may place some extra stress onto your lower back\" (the hack squat good morning, another exercise); Men's Health's \"can be a recipe for chronic pain\" (lifters with knee or lower-spine issues); the barbell pages' \"Going too heavy too fast can cause extra stress on your spine\" and Garage Gym Reviews' rounding and core lines (another exercise, R-LB7-5). Healthline (URL corrected, read in full): its mistakes section has no frequency or harm word about a fault. \"What are the most common mistakes to watch for?\" is a heading and \"While the hack squat is a beginner-friendly movement, there are a few things to watch out for.\" a list sentence; 'Your foot placement' (\"There may be a temptation to place your feet higher and wider to hit your quads harder, but stick with shoulder-width.\"; 'temptation' is not a frequency word) and 'Going too heavy too fast' (\"With too much weight on the machine, you’ll have a hard time reaching that depth.\", the load) state no harm. Its other lines are set aside: \"Although the machine does provide assistance in terms of stabilization, there will still be strain on the joints, which could aggravate any existing problems.\" and \"If you have lower back or knee pain, the hack squat usually isn’t a good choice.\" (about the lifter, no fault), \"A barbell squat is usually performed in a rack\" (another exercise) and \"This usually means you’ll be able to lift less\" (the load). Pick unchanged. handlingMistakes after the two step-1 faults: feet too close (step 2, harm-tied, Fitness Volt's list item 1, c12)."
+    },
+    "tells": [
+      {
+        "text": "Hips and lower back stay on the pad",
+        "claim": [
+          "c2",
+          "c9"
+        ]
+      },
+      {
+        "text": "Whole foot stays on the plate",
+        "claim": [
+          "c6",
+          "c14"
+        ]
+      }
+    ],
+    "tempo": {
+      "up": 1,
+      "down": 3,
+      "pause": 1,
+      "claim": [
+        "c20",
+        "c21",
+        "c22"
+      ],
+      "text": "Up 1 and down 3 are Motra's 3-1-1 for the machine hack squat (c20, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause (R-LB6-7); the page shows three numbers, read as the first three. Its middle 1 s is a pause at the bottom, between the lowering and the push, so it is named here and not written in pause (LR-33); Healthline also pauses at the bottom, at 90 degrees, with no seconds (c4). Pause 1: Fitness Volt asks for a pause at the top after returning to the start, with no seconds, so the 1 s is a drawing convention (c21, WEAK; LR-33). Fitness Volt's 'slow and controlled eccentrics and concentrics' (c22) gives no seconds."
+    },
+    "variantLine": null
+  },
+  "grip": {
+    "type": "Hands on the machine's handles, neutral grip (c18).",
+    "width": "",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c18"
+    ],
+    "note": "Hand archetype balance. The handles brace the upper body; no source gives a width, thumb or wrist line."
+  },
+  "setup": [
+    {
+      "step": "Shoulders on the pads, back and hips on the pad, feet shoulder-width.",
+      "claim": [
+        "c1",
+        "c2"
+      ]
+    },
+    {
+      "step": "Hold the handles. Straighten your legs and release the safety.",
+      "claim": [
+        "c18",
+        "c3"
+      ]
+    },
+    {
+      "step": "Lower to at least parallel. Push up through your whole foot.",
+      "claim": [
+        "c4",
+        "c5",
+        "c6"
+      ]
+    },
+    {
+      "step": "Lock the safety lever to finish.",
+      "claim": "c16"
+    },
+    {
+      "step": "Too heavy? Pull the safety lock or lever to get out.",
+      "claim": "c16"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Back and hips on the pad.",
+      "claim": [
+        "c2"
+      ]
+    },
+    {
+      "point": "Knees in line with your toes.",
+      "claim": [
+        "c13"
+      ]
+    },
+    {
+      "point": "Push through your whole foot.",
+      "claim": [
+        "c6"
+      ]
+    },
+    {
+      "point": "Slight knee bend at the top.",
+      "claim": [
+        "c7"
+      ]
+    },
+    {
+      "point": "Hold the handles. Don't push with your arms.",
+      "claim": [
+        "c18"
+      ]
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Lower back off the pad.",
+      "fix": "Keep your hips and back on the pad.",
+      "claim": [
+        "c8",
+        "c9",
+        "c2"
+      ]
+    },
+    {
+      "mistake": "Cutting the squat short.",
+      "fix": "Lower until your thighs are at least parallel.",
+      "claim": [
+        "c5"
+      ]
+    },
+    {
+      "mistake": "Feet too close together.",
+      "fix": "Set your feet shoulder-width, toes slightly out.",
+      "claim": "c12"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "quads",
+        "claim": "c15"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "glutes",
+        "claim": "c15"
+      },
+      {
+        "muscleId": "adductors",
+        "claim": "c15"
+      },
+      {
+        "muscleId": "hamstrings",
+        "claim": "c15"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Thighs",
+        "means": "Your quads do the vast majority of the work.",
+        "fix": "",
+        "claim": "c15",
+        "redFlag": null
+      },
+      {
+        "where": "Glutes",
+        "means": "Your glutes work too.",
+        "fix": "",
+        "claim": "c15",
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Fault: lower back lifting off the pad at the bottom.",
+        "fix": "Keep your hips and back on the pad. Don't set your feet too high.",
+        "claim": [
+          "c8",
+          "c9",
+          "c2"
+        ],
+        "redFlag": "back"
+      },
+      {
+        "where": "Knees",
+        "means": "Fault: feet too close together.",
+        "fix": "Set your feet shoulder-width, toes slightly out.",
+        "claim": [
+          "c12"
+        ],
+        "redFlag": "knee"
+      }
+    ]
+  },
+  "risks": [
+    {
+      "risk": "Lifting your lower back off the pad can strain it.",
+      "claim": [
+        "c8"
+      ]
+    },
+    {
+      "risk": "Feet too close together can stress the knees.",
+      "claim": [
+        "c12"
+      ]
+    },
+    {
+      "risk": "Lower back or knee pain? This is usually not a good choice.",
+      "claim": [
+        "c19"
+      ]
+    }
+  ],
+  "redFlags": [
+    "back",
+    "knee"
+  ],
+  "zooms": [
+    {
+      "key": "back-pad",
+      "kind": "posture",
+      "right": "Hips and lower back on the pad.",
+      "wrong": "Lower back rounded off the pad at the bottom.",
+      "claim": [
+        "c2",
+        "c8",
+        "c10"
+      ]
+    },
+    {
+      "key": "knee-lock",
+      "kind": "posture",
+      "right": "Slight knee bend at the top.",
+      "wrong": "Knees locked at the top.",
+      "claim": [
+        "c7"
+      ]
+    },
+    {
+      "key": "feet-plate",
+      "kind": "posture",
+      "right": "Feet shoulder-width, middle of the plate.",
+      "wrong": "Feet too high on the plate.",
+      "claim": [
+        "c12",
+        "c9"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [
+      "adductors"
+    ],
+    "remove": [],
+    "why": "Library: quads primary; glutes and hamstrings secondary. StrengthLog names the quads, glutes and adductors, BarBend says the quads do the vast majority of the work, and Fitness Volt calls the hamstrings the supporting cast (c15). Adductors are proposed as a secondary. A proposal for the LIB data card.",
+    "proposal": {
+      "primary": [
+        "quads"
+      ],
+      "secondary": [
+        "glutes",
+        "hamstrings",
+        "adductors"
+      ]
+    }
+  },
+  "anchorSource": "fv-hack",
+  "anchorNote": "Fitness Volt's machine hack squat page (an ACE-certified trainer; step-by-step form, tips and an 8-item common-mistakes list) read in full. BarBend's hack squat machine page (steps, a common-mistakes list written for the machine, the rail-guard lever), StrengthLog's machine page, Healthline's machine page, Men's Health's page (its 'Fixed Back Position' section is about the machine) and Motra's app guide (no named author, so its claims are WEAK) were read in full. Read, not cited: BarBend's and Garage Gym Reviews' hack squat pages (both teach the barbell hack squat, another exercise), Legion's machine page (its setup lines are covered by the cited sources) and Fitbod's machine page. ExRx not used (403); no ACE or NASM hack squat page was found (404).",
+  "loadProgression": {
+    "text": "Start light. Do 2 sets of 10-12. Work up to 3, then add weight once it is easy.",
+    "claims": [
+      "c17"
+    ]
+  },
+  "gaps": [],
+  "unsourced": [
+    "Breathing beyond 'exhale on the way up': Fitness Volt asks to hold the breath on the descent (step two, and its breathing item); not used, because no tier-B breath line is needed and no source weighs the breath hold.",
+    "Exact foot height on the plate: sources differ (StrengthLog slightly in front of the base of the sled, Fitness Volt the middle of the plate, BarBend roughly in line with the knees)."
+  ],
+  "notes": [
+    "LB8 (2026-10-22): written from start head 6d253b9e (claude/libht-research-lb8). Its own parent (content.md Appendix A lists it as pendulum_squat's parent; pendulum_squat is a full card with no inherit entries).",
+    "Shared card: get-in-out (docs/research/howto/shared/get-in-out.json @ 6d253b9e) lists hack_squat in appliesTo. Its steps (safety stops set, pins engaged, sit or lie in position with a weight you can control, ease the weight back) are cited, not copied. Its gaps say no source covers getting out of the reclined sleds; this card supplies the finish from its own claims: re-engage the rail-guard lever from the standing position (c16, BarBend) after releasing the locks at the start (c3).",
+    "Stop lines: none. The lower-back and knee rows are written in LR-6 shape (place + the source's fault + fix) and link the shared back and knee boxes (R-LB3-4, R-LB6-6).",
+    "Knee travel: Fitness Volt says people with lower-body joint issues should avoid letting the knees pass the toes on the way down; Legion (read, not cited) lets the knees move forward with the toes. The card draws the knees in line with the toes (c13) and shows no knee-past-toes line.",
+    "Feet too close (c12) is the knee row and a risk, not the top fault: its sentence 'Incorrect foot placement is among the most common hack squat mistakes.' is a list sentence (R-LB4-2), and a narrow stance is not visible from the side.",
+    "Round 2 (2026-10-22): hl-hack's URL corrected to https://www.healthline.com/health/fitness-exercise/hack-squat (the page the writer fetched, HTTP 200; the card had a wrong path that returns 404). Its 4 quotes (c3, c4, c17, c19) are unchanged and set to pending for re-fetch. rankNote completed from the fetcher scan; pick unchanged."
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "trap.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "trap.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "backUpper",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "buttock",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c2"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c18"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c18"
+    },
+    {
+      "kind": "angle",
+      "joint": "knee.l",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c4"
+    },
+    {
+      "kind": "angle",
+      "joint": "knee.r",
+      "pose": "end",
+      "cardPose": "end",
+      "deg": 90,
+      "claim": "c4"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "heel.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ball.r",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c6"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Lower",
+      "s": 3,
+      "move": true
+    },
+    {
+      "phase": "Push",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    }
+  ],
+  "topFault": "lift"
+}

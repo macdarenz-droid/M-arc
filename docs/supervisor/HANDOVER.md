@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-25 ~17:00 UTC · main `40f9ea93` · **8.0r: train 38 merged; D-LIB-ORDER-3; train 39 (7 PRs) building; owner 10-25 03:40 "Just continue until maxxed out"; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-25 ~20:00 UTC · main `1974a41a` · **8.0r: trains 38 and 39 merged; D-LIB-ORDER-3 and D-LIB-A16-COMPOSE; 4 catch-up builders for train 40; owner 10-25 03:40 "Just continue until maxxed out"; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -826,6 +826,17 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | #278 LIB-11 pilot B | session_01UHomn1uKNdA1g3v5Pjdii4 | main catch-up, Do 10 'PILOT B SHEET READY' for the supervisor's decision (owner delegation), then the pin |
   | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
   | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
+
+**Update 20:00 UTC (10-25):**
+- **Train 39 merged** (#322) → main `1974a41a`: #311 LIB-20 and #290 LB5. The GENERATED headers were regenerated, and `[golden update]` `4d92ef0f` re-pinned pilot B's 4 MANIFEST rows. Nothing visible changes, so no APK.
+- **LB6–LB10 left train 39.** Their A16 composer tests pin an old main's `eq/` list and fail on today's main. LB8's D-LIB18-LEGCURL test also flips now that pilot B is on main. Ruling **D-LIB-A16-COMPOSE** (lib4-cards §39 @ `99c2434b`): main's eq at `40f9ea93` plus OURS must be present; any other file must be another build-ahead card's named composer; the copy mutations stay red.
+- **Catch-up builders running** (4 of 4 LIB slots), each merging main `1974a41a`:
+  - LIB-16 #297: session_01HdAYAVYv4NVXfzY6sg9ou2;
+  - LIB-17 #299: session_01B3F2GnYqEiYdzQBGEWAUYj;
+  - LIB-18 #306: session_011gijFMarfH8GjaTGtjJDZo;
+  - LIB-21 #312: session_019z7iUuh42aT5hP354ZcG4H.
+  - Each posts '<CARD> CATCH-UP READY'. Then a delta review by an in-chat Opus helper each, then train 40.
+- **Queued:** LB10 #305 catch-up (same ruling) at the next free slot, then the LIB-STRIP #309 catch-up, then 'LIB-14 resume'. After that: resume PRs for LB8 (leg curls) and LB9 (Do 7b rows; LIB-20 is on main now).
 
 **Update 17:00 UTC (10-25)** (usage 7-day 0.81 at 11:44):
 - **Train 38 merged** (#321) → main `40f9ea93`: #265 LIB-10 LB2 (REVIEW PASS 6400302122; Low recorded as **F-LB2-A9PIN**: pin pilot A's batch and golden files in an A9 `it` with the ship card's first push), #278 LIB-11 pilot B, #273 HT-11 (nothing visible, so no APK), #274 LIB-13 LB3 (PASS 6399187918; **F-LB3-DOC**: DESIGN.md:122 says 0.163, should be 0.164, with the next lb3 push). The resolution was loaders.ts's GENERATED header, regenerated.

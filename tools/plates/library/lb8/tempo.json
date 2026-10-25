@@ -1,0 +1,264 @@
+{
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. No Rest. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 9 pose map: start to end, then back). Proposed: D-LIB18-TEMPO (lib-18-card ruling 20), for 'LB8 NOTE RULED'. The bottom pauses (Motra's middle second, BoxLife's and BarBend's) are named in tempo.text only and not drawn (LR-33).",
+ "research": "claude/libht-research 596dbe0748f11d13b431ee11d38d1742771925f1",
+ "constants": {},
+ "ids": {
+  "hack_squat": {
+   "claim": [
+    "c20",
+    "c21",
+    "c22"
+   ],
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    },
+    {
+     "phase": "Push",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    }
+   ]
+  },
+  "pendulum_squat": {
+   "claim": [
+    "c18",
+    "c19"
+   ],
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    },
+    {
+     "phase": "Push",
+     "from": "up",
+     "move": true
+    }
+   ]
+  },
+  "leg_extension": {
+   "claim": [
+    "c15",
+    "c16"
+   ],
+   "rows": [
+    {
+     "phase": "Extend",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "lying_leg_curl": {
+   "claim": [
+    "c18",
+    "c20"
+   ],
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "standing_leg_curl": {
+   "claim": [
+    "c15",
+    "c16"
+   ],
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "seated_calf_raise": {
+   "claim": [
+    "c19",
+    "c9"
+   ],
+   "rows": [
+    {
+     "phase": "Raise",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "standing_calf_raise": {
+   "claim": [
+    "c19",
+    "c20"
+   ],
+   "rows": [
+    {
+     "phase": "Raise",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "bodyweight_calf_raise": {
+   "claim": [
+    "c15"
+   ],
+   "rows": [
+    {
+     "phase": "Raise",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "hip_thrust": {
+   "claim": [
+    "c22"
+   ],
+   "rows": [
+    {
+     "phase": "Lift",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "glute_bridge": {
+   "claim": [
+    "c15"
+   ],
+   "rows": [
+    {
+     "phase": "Lift",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "cable_kickback": {
+   "claim": [
+    "c14"
+   ],
+   "rows": [
+    {
+     "phase": "Kick back",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Return",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "resisted_hip_flexion": {
+   "claim": [
+    "c8",
+    "c15"
+   ],
+   "rows": [
+    {
+     "phase": "Lift",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  }
+ }
+}

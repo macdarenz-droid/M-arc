@@ -1,0 +1,26 @@
+{
+ "note": "sha256 per LB7 H card as copied from the research head: the card file with its three machine keys (plateFacts, tempo, topFault) removed, serialised canonically as JSON.stringify(card, null, 2) + \"\\n\" for every card (weighted_dip and bench_dip are 1-space files at the research head; the hash is of the canonical form, not the bytes); and sha256 of each quotes file, a byte copy from the same head.",
+ "researchHead": "e5ed66ca1c7c7c2f6418001d262d053431b4c67f",
+ "cards": {
+  "cable_lateral_raise": "0a176e39414532020a084fddd110be49159191c857c8cae67ded8934ae4e9788",
+  "dumbbell_front_raise": "b5d09c1dcc94a297a4fdd86c03b6d85581365bdf250ee592e1b8138177acc35e",
+  "cable_rear_delt_fly": "9d8d360dd1c451f8462677c7fbaa59c0e2df9e8a1b3740fc86262b3eed9bd597",
+  "face_pull": "7b29c3bb485c69930bef55097d52db76f7847fa8e45c6b894015c21588be0b81",
+  "cable_external_rotation": "4ff51bd0500d6c5bbaf5b4929194b0d696bc07ff14323a2048642cc8de92f24d",
+  "resistance_band_pull_apart": "3a5128c99d22c47577c5d4484de742adcfc031f2f53f975bd38b31e260e034da",
+  "renegade_row": "b0d82d4aba2b357e6ed1cf4397fcaea8d225af2f0394faf219a6b41534a2f071",
+  "weighted_dip": "f82fffbefe4003b6cd3a24a9017b0e06a6756bc85515b18f75a38b6634ae837b",
+  "bench_dip": "180fb6efa7d531235e166cb0b810022291612b115410ed3b16991fc22e9f1fcf"
+ },
+ "quotes": {
+  "cable_lateral_raise": "1ee3f137a6c7a7c80b8d5a55731c20764eb39fdabe394d5ab2bb6f4d8352047f",
+  "dumbbell_front_raise": "2ffdc9847376891a0d4faf87e6e2ee58b5f517831eeb400faf6b0dde776f73ab",
+  "cable_rear_delt_fly": "82986cd95038741af436a5d8d798b2a14952416e7f793e07cd3cf1e1ac68424f",
+  "face_pull": "90d4b54c647bf4f1e74573232c799e677ad28bb56bf83726bce7c1d56c10d374",
+  "cable_external_rotation": "b3bf45504a7d49d83ae3d04b2e283ff235d1d654b9d333c693fbf6745cdb7361",
+  "resistance_band_pull_apart": "f655a75cba509971fdf5868b9199ed8c9b29e5f6064f8dc017dc043224bfb468",
+  "renegade_row": "f6194d61df38f4d79efb1468b1f3077751829ec38e205e23d1b43af1948850d0",
+  "weighted_dip": "88ba7cb4577f2bfef94efb27e311b84da945b974581a1ba4be0b5ae5e8751118",
+  "bench_dip": "94fac184642b1f97edd36be44c57c182219ddc617ea9a0d33f0f50bd7e504cd1"
+ }
+}

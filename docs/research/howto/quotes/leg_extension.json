@@ -1,0 +1,415 @@
+{
+  "id": "leg_extension",
+  "checked": "2026-10-22",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "sl-le",
+      "text": "Make sure that the joint of the machine aligns with your knee joint, and that the back pad is adjusted so that you can press your back against it.",
+      "status": "verbatim",
+      "closest": "Make sure that the joint of the machine aligns with your knee joint, and that the back pad is adjusted so that you can press your back against it.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "mo-le",
+      "text": "Sit on the leg extension machine with your back against the pad. Adjust the seat so your knees align with the machine's pivot point and position the padded lever above your ankles.",
+      "status": "verbatim",
+      "closest": "Sit on the leg extension machine with your back against the pad. Adjust the seat so your knees align with the machine's pivot point and position the padded lever above your ankles.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "lifto-le",
+      "text": "Adjust the Seat: Position the seat so your back is supported and knees align with the machine's pivot.",
+      "status": "verbatim",
+      "closest": "Adjust the Seat: Position the seat so your back is supported and knees align with the machine's pivot.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "lifto-le",
+      "text": "Leg Pad Position: Adjust the pad so it rests on the lower part of your shins, just above your feet.",
+      "status": "verbatim",
+      "closest": "Leg Pad Position: Adjust the pad so it rests on the lower part of your shins, just above your feet.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "fv-le",
+      "text": "Adjust the padded bar so it rests on top of your lower shins just above your ankles.",
+      "status": "verbatim",
+      "closest": "Adjust the padded bar so it rests on top of your lower shins just above your ankles.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "bb-le",
+      "text": "Adjust the height of your seat so your legs are bent at 90 degrees with your lower shins behind the pad. Sit back in the chair and hold on to the handles by your sides.",
+      "status": "verbatim",
+      "closest": "Adjust the height of your seat so your legs are bent at 90 degrees with your lower shins behind the pad. Sit back in the chair and hold on to the handles by your sides.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "lifto-le",
+      "text": "Starting Position: Sit with your back against the support. Feet should be under the pad, knees bent at a 90-degree angle.",
+      "status": "verbatim",
+      "closest": "Starting Position: Sit with your back against the support. Feet should be under the pad, knees bent at a 90-degree angle.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "bb-le",
+      "text": "Draw your navel towards your spine to engage your abs. Try not to arch your back to maintain a neutral spine.",
+      "status": "verbatim",
+      "closest": "Draw your navel towards your spine to engage your abs. Try not to arch your back to maintain a neutral spine.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "bb-le",
+      "text": "Coach’s Tip: Keep your back against the pad and hold the position before starting the movement.",
+      "status": "verbatim",
+      "closest": "Coach’s Tip: Keep your back against the pad and hold the position before starting the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "lifto-le",
+      "text": "Body Position: Keep your back pressed against the backrest throughout the exercise.",
+      "status": "verbatim",
+      "closest": "Body Position: Keep your back pressed against the backrest throughout the exercise.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "mo-le",
+      "text": "Keep back flat against pad",
+      "status": "verbatim",
+      "closest": "Keep back flat against pad",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-le",
+      "text": "It’s common to arch your back during the leg extension as you focus your attention and effort on the movement.",
+      "status": "verbatim",
+      "closest": "It’s common to arch your back during the leg extension as you focus your attention and effort on the movement.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "bb-le",
+      "text": "If you find yourself compensating for a heavier weight by hyperextending your lumbar spine try going a bit lighter until you can lift without arching your back.",
+      "status": "verbatim",
+      "closest": "If you find yourself compensating for a heavier weight by hyperextending your lumbar spine try going a bit lighter until you can lift without arching your back.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "sl-le",
+      "text": "Not activating your core, and therefore arching your lower back during the exercise can lead to discomfort and also move the focus from your quads. Let them do the work, and keep your back pressed firmly against the backrest during the entire movement.",
+      "status": "verbatim",
+      "closest": "Not activating your core, and therefore arching your lower back during the exercise can lead to discomfort and also move the focus from your quads. Let them do the work, and keep your back pressed firmly against the backrest during the entire movement.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "mo-le",
+      "text": "Allowing back to arch off the seat",
+      "status": "verbatim",
+      "closest": "Allowing back to arch off the seat",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "lifto-le",
+      "text": "Allowing your back to lift from the support.",
+      "status": "verbatim",
+      "closest": "Allowing your back to lift from the support.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "bb-le",
+      "text": "Inhale and brace your core. Exhale to extend your lower legs until they are parallel with the ground.",
+      "status": "verbatim",
+      "closest": "Inhale and brace your core. Exhale to extend your lower legs until they are parallel with the ground.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "mo-le",
+      "text": "Straighten your legs until nearly fully extended without locking your knees.",
+      "status": "verbatim",
+      "closest": "Straighten your legs until nearly fully extended without locking your knees.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "fv-le",
+      "text": "Then, push up using only your legs until they’re straight but not locked at the knees.",
+      "status": "verbatim",
+      "closest": "Then, push up using only your legs until they’re straight but not locked at the knees.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "bb-le",
+      "text": "The leg extension can be a helpful tool for strengthening your knee joints but be careful not to add extra stress by locking or hyperextending them at the top of the lift.",
+      "status": "verbatim",
+      "closest": "The leg extension can be a helpful tool for strengthening your knee joints but be careful not to add extra stress by locking or hyperextending them at the top of the lift.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "mo-le",
+      "text": "Avoid full knee lockout to prevent joint stress",
+      "status": "verbatim",
+      "closest": "Avoid full knee lockout to prevent joint stress",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "mo-le",
+      "text": "Locking knees at the top",
+      "status": "verbatim",
+      "closest": "Locking knees at the top",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "lifto-le",
+      "text": "Locking knees at the top of the extension.",
+      "status": "verbatim",
+      "closest": "Locking knees at the top of the extension.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "sl-le",
+      "text": "Extend your knees with control, until they are completely straight.",
+      "status": "verbatim",
+      "closest": "Extend your knees with control, until they are completely straight.",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "sl-le",
+      "text": "Make sure not to overextend your knees in the top position.",
+      "status": "verbatim",
+      "closest": "Make sure not to overextend your knees in the top position.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "bb-le",
+      "text": "Coach’s Tip: Try to initiate the movement from your quads to avoid extra stress on your knees.",
+      "status": "verbatim",
+      "closest": "Coach’s Tip: Try to initiate the movement from your quads to avoid extra stress on your knees.",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "fv-le",
+      "text": "Lift up instead of kicking out to protect your knee joint as you exercise.",
+      "status": "verbatim",
+      "closest": "Lift up instead of kicking out to protect your knee joint as you exercise.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "sl-le",
+      "text": "Loading more weight than you can handle can increase the risk of injury and probably lead to using excessive momentum to move the weight.",
+      "status": "verbatim",
+      "closest": "Loading more weight than you can handle can increase the risk of injury and probably lead to using excessive momentum to move the weight.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "sl-le",
+      "text": "Keep the movement slow and controlled.",
+      "status": "verbatim",
+      "closest": "Keep the movement slow and controlled.",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "mo-le",
+      "text": "Using momentum to lift",
+      "status": "verbatim",
+      "closest": "Using momentum to lift",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "lifto-le",
+      "text": "Avoid Swinging: Do not use momentum; focus on a smooth, controlled motion.",
+      "status": "verbatim",
+      "closest": "Avoid Swinging: Do not use momentum; focus on a smooth, controlled motion.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-le",
+      "text": "Lower your legs back to starting position slowly with control. Resist the weight and gravity trying to pull you down faster.",
+      "status": "verbatim",
+      "closest": "Lower your legs back to starting position slowly with control. Resist the weight and gravity trying to pull you down faster.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "bb-le",
+      "text": "If you’re going heavy or are reaching fatigue during the leg extension there may be a tendency to drop your legs quickly after you reach the top.",
+      "status": "verbatim",
+      "closest": "If you’re going heavy or are reaching fatigue during the leg extension there may be a tendency to drop your legs quickly after you reach the top.",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "fv-le",
+      "text": "A third issue comes from fast movements. Fast reps can injure you or cheat on muscle growth.",
+      "status": "verbatim",
+      "closest": "A third issue comes from fast movements. Fast reps can injure you or cheat on muscle growth.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "mo-le",
+      "text": "Inhale as you lower the weight, exhale as you extend your legs.",
+      "status": "verbatim",
+      "closest": "Inhale as you lower the weight, exhale as you extend your legs.",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "lifto-le",
+      "text": "Breathing: Exhale while extending, and inhale while lowering.",
+      "status": "verbatim",
+      "closest": "Breathing: Exhale while extending, and inhale while lowering.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "bb-le",
+      "text": "Although it’s important to stabilize your full body when doing this exercise, the leg extension technically only works your quadriceps femoris muscles.",
+      "status": "verbatim",
+      "closest": "Although it’s important to stabilize your full body when doing this exercise, the leg extension technically only works your quadriceps femoris muscles.",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "sl-le",
+      "text": "The leg extension is an isolation exercise for the quadriceps, especially for the rectus femoris",
+      "status": "verbatim",
+      "closest": "The leg extension is an isolation exercise for the quadriceps, especially for the rectus femoris",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "fv-le",
+      "text": "A leg extension is a strength training exercise primarily targeting the quadriceps muscles in the front of your thigh.",
+      "status": "verbatim",
+      "closest": "A leg extension is a strength training exercise primarily targeting the quadriceps muscles in the front of your thigh.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "lifto-le",
+      "text": "If you feel any sharp pain, discontinue the exercise immediately and reassess your form.",
+      "status": "verbatim",
+      "closest": "If you feel any sharp pain, discontinue the exercise immediately and reassess your form.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "fv-le",
+      "text": "Always listen to your body – if you feel any discomfort or pain while performing the exercise, stop immediately.",
+      "status": "verbatim",
+      "closest": "Always listen to your body – if you feel any discomfort or pain while performing the exercise, stop immediately.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "fv-le",
+      "text": "Your body also hints at errors in form or posture. Wrong move? You may feel it in your knees or back instead of the quads!",
+      "status": "verbatim",
+      "closest": "Your body also hints at errors in form or posture. Wrong move? You may feel it in your knees or back instead of the quads!",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "mo-le",
+      "text": "2-1-2",
+      "status": "verbatim",
+      "closest": "2-1-2",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "mo-le",
+      "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "mo-le",
+      "text": "Pause briefly at the top and squeeze your quads.",
+      "status": "verbatim",
+      "closest": "Pause briefly at the top and squeeze your quads.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "lifto-le",
+      "text": "Control the Movement: Pause briefly at the top of the movement, ensuring the extension is full but avoiding locking out your knees.",
+      "status": "verbatim",
+      "closest": "Control the Movement: Pause briefly at the top of the movement, ensuring the extension is full but avoiding locking out your knees.",
+      "note": ""
+    },
+    {
+      "claim": "c16",
+      "source": "fv-le",
+      "text": "Pause here before going back down.",
+      "status": "verbatim",
+      "closest": "Pause here before going back down.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "fv-le",
+      "text": "Start with a lower weight to get comfortable with the exercise, then you can gradually increase as your strength improves.",
+      "status": "verbatim",
+      "closest": "Start with a lower weight to get comfortable with the exercise, then you can gradually increase as your strength improves.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "mo-le",
+      "text": "Pause briefly at the top and squeeze your quads.",
+      "status": "verbatim",
+      "closest": "Pause briefly at the top and squeeze your quads.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "lifto-le",
+      "text": "Control the Movement: Pause briefly at the top of the movement, ensuring the extension is full but avoiding locking out your knees.",
+      "status": "verbatim",
+      "closest": "Control the Movement: Pause briefly at the top of the movement, ensuring the extension is full but avoiding locking out your knees.",
+      "note": ""
+    },
+    {
+      "claim": "c18",
+      "source": "fv-le",
+      "text": "Pause here before going back down.",
+      "status": "verbatim",
+      "closest": "Pause here before going back down.",
+      "note": ""
+    }
+  ]
+}

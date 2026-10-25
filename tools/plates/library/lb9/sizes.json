@@ -1,0 +1,219 @@
+{
+ "rule": "D-LIB21-SIZE (lib-21-card ruling 17): every number a card does not give, each Mistake's magnitude included, fixed here before PQ-H3 is measured, each with its basis: a claim id, an approved plate's value (file:line) used as a convention, or a stated reason in numbers. PQ-H3 is never a basis. A spec's exported SIZES table equals its row here and every row is used (A17, both ways); a composer's exported constants equal theirs; `trace` is the spec's trace point and trim (D-LIB21-TRACE, D-LIB18-TRIM). Rows for the bulk are the note's proposals in DESIGN.md section 11, written here when drawn.",
+ "composers": {
+  "abWheel": {
+   "r": {
+    "value": 0.09,
+    "unit": "m",
+    "basis": "stated reason: c1 and plate.equipment 'a small wheel': 18 cm across; no source gives a size"
+   },
+   "width": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "stated reason: a small wheel's tread, 5 cm; no source gives it"
+   },
+   "hubR": {
+    "value": 0.025,
+    "unit": "m",
+    "basis": "stated reason: the hub 5 cm across on the axle, so it reads inside the wheel"
+   },
+   "handleD": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: a hand-sized handle 3 cm thick, inside the 3.5 cm fist so the hand reads wrapped round it"
+   },
+   "handlePast": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: each handle runs 6 cm past the grip centre, so the whole drawn fist (7 cm across, RADII.fist 0.02 H) sits on it"
+   }
+  }
+ },
+ "ids": {
+  "ab_wheel_rollout": {
+   "PAD_T": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: c1 'a soft pad' under the knees gives no thickness; a 3 cm foam kneeling pad, 4 px at the plate's 134.56 px/m so it reads as a pad on the floor line; no source states it"
+   },
+   "BEAR": {
+    "value": 0.0025,
+    "unit": "m",
+    "basis": "the bearing rule (#306 6358957999): the pad top 0.25 cm under the lowest drawn point of the kneecap, shin and foot (inside the 0.5 cm cap), LB8's seat value (lb8-plates.test.ts @ d76fc305:1876)"
+   },
+   "SHIN_RISE": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "stated reason: in a kneel the shins lie flat along the pad (the shank horizontal); the ankle is then solved so the foot's lowest drawn point is level with the shin's"
+   },
+   "WHEEL_GAP": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "claim: c1 'the wheel on the floor just in front of the knees' ('placed directly in front of your knees'): the wheel's rear edge 3 cm in front of the kneecaps"
+   },
+   "END_ELBOW": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: bear_crawl.mjs END_ELBOW's reason (#305 @ a9c64e11), straight arms short of the singular full extension; hanging_leg_raise.mjs's hang uses elbows about 5 deg"
+   },
+   "END_SHOULDER": {
+    "value": 135,
+    "unit": "deg",
+    "basis": "claims: c3 'extend your arms above your head' (the arm past 90 deg to the trunk) and c7 a moderate roll-out of the kneeling version (a limited range first): halfway between overhead (90 deg) and the full roll-out with the arms in line with the trunk (180 deg)"
+   },
+   "M_ARCH": {
+    "value": -30,
+    "unit": "deg",
+    "basis": "convention: plank.mjs:103 (pilot A #109 @ dcac4a38) SAG_LUMBAR -30, the approved plank sag; D-LIB21-ABSAG ('LB9 NOTE RULED' Q4, #312 6382248634): the roll-out's end is a prone line held by the arms, the plank's class; for c3 'Avoid arching your lower back' and c13 (no magnitude)"
+   },
+   "trace": {
+    "point": "grip.r",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE (DRAWING-GUIDE.md:29): c2 'slowly roll the wheel forward': the hands on the wheel rolling out; trim [10, 12] = hanging_leg_raise.mjs:124 (D-LIB18-TRIM)"
+   }
+  },
+  "bird_dog": {
+   "MAT_T": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "stated reason: c1, c2 and c22 put the hands, knees and toes on an exercise mat and give no thickness; 10 mm, a foam exercise-mat thickness (between a 6 mm yoga mat and a 15 mm thick mat), drawn 1.5 px at 151.49 px/m so the mat reads as a bar on the floor line; no source states it"
+   },
+   "MAT_LEN": {
+    "value": 1.73,
+    "unit": "m",
+    "basis": "stated reason: c1, c2, c22 'an exercise mat'; 1.73 m (68 in), the usual exercise/yoga mat length, longer than the start's toe-tip-to-fingertip span (1.17 m) so hands, knees and toes all rest on it; centred on that span by the spec; no source states it"
+   },
+   "M_ARCH": {
+    "value": -30,
+    "unit": "deg",
+    "basis": "convention: plank.mjs:103 (pilot A #109 @ dcac4a38) SAG_LUMBAR -30, the approved plank-class trunk sag; slice panel R5 (#312 6383060997: 'A prone or quadruped trunk sag of the approved plank-class size is a fair basis'), as D-LIB21-ABSAG; for c7 'the low back may sag into more arch' and c8 'Arching lower back' (no magnitude); the pelvis tilt that follows is solved"
+   },
+   "trace": {
+    "point": "ankle.l",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE (DRAWING-GUIDE.md:29): the rising foot, c4 'Slowly extend your left hip (raise and straighten the knee)' and c7 'As the leg is raised' (the checkpoint 'Arm, leg level' and the Mistake are about the leg); the left leg is the raised one (D-LIB21-SIDES). Trim [10, 12] = hanging_leg_raise.mjs:124 (D-LIB18-TRIM)"
+   }
+  },
+  "cable_crunch": {
+   "HINGE": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "claim: c3 Motra 'Hinge slightly backward from hips to elevate them': the thigh 20 deg back of vertical with the pelvis and spine upright (hip flexion 20). Stated reason in numbers (D-LIB21-BALANCE, c1 base): the 15 deg 'slight' convention (romanian_deadlift.mjs:53 @ dcac4a38, KNEE 15) puts the Winter centre of mass of the mid-curl ghost (key 6) and key 7 1.6 cm ahead of the knees' floor contact, outside the knees-and-shins base; 20 deg keeps every key pose and the Mistake 1.0 cm or more behind it"
+   },
+   "NECK": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:54 (the 8, the clone source, D-LIB21-CLONE) A1 neck 12, the tucked chin of its curl, for c3 'keeping chin tucked' and c12 'Chin tucked'; the same in the start, end and Mistake"
+   },
+   "ELBOW_GAP": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "claim: c5 Motra 'crunch until elbows near thighs': near, not touching: 2 cm from the elbow cap's surface to its own thigh's surface, about half the elbow cap's 3.85 cm radius (RADII.elbowCap x H); the end's trunk flexion is solved from it (99.9 deg; c4 'curling the spine as much as you can')"
+   },
+   "COL_FRONT": {
+    "value": 0.9144,
+    "unit": "m",
+    "basis": "claim: c1 StrengthLog 'Sit down on your knees a few feet away, facing the pulley': 3 ft (0.914 m) from the knees to the column's front face"
+   },
+   "VIA_N": {
+    "value": 9,
+    "unit": "count",
+    "basis": "stated reason: 2 ghosts sit at t 1/3 and 2/3, so a multiple of 3 lands both on key poses; 9 keys = one per 11.1 deg of the 99.9 deg curl, as rope_triceps_pushdown.mjs:84 @ dcac4a38 keys its arc every 1/12 of the sweep"
+   },
+   "trace": {
+    "point": "shoulder.r",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE candidate 'the elbows or shoulders curling toward the thighs (c3, c5)': c3 Motra 'bringing shoulders toward pelvis', the motion the 'Curl the spine' cue names (the near shoulder's path from the upright start into the curl); trim = the clone source's, hanging_leg_raise.mjs:124 trace.trim [10, 12] (D-LIB18-TRIM)"
+   },
+   "ROPE_MARGIN": {
+    "value": 0.003,
+    "unit": "m",
+    "basis": "stated reason: the head-frame grip height (from the ear up toward the temple, c2 'either side of your head') is solved as the lowest at which main's rope, with its ferrule on the cable line (slice panel R2, #312 6383060997: a rope under tension runs straight from the pulley), clears the skinned head and body by 3 mm in every key pose, not exactly 0, so a second clearance model (the A18 test's, sampled about 2 mm apart) also reads 0 cm or more (D-LIB18-PADS: >= 0 cm)"
+   }
+  },
+  "superman": {
+   "MAT_T": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "stated reason: c1 'Lie prone (on your stomach) on a mat' gives no thickness; 10 mm, a foam exercise-mat thickness, the same mat as bird_dog (lb9/sizes.json bird_dog MAT_T), drawn 1.4 px at 140.91 px/m so the mat reads as a bar on the floor line; no source states it"
+   },
+   "MAT_LEN": {
+    "value": 1.73,
+    "unit": "m",
+    "basis": "stated reason: c1 'on a mat'; 1.73 m (68 in), the usual exercise mat length and bird_dog's mat (lb9/sizes.json bird_dog MAT_LEN); centred on the start's navel by the spec; shorter than the prone body with the arms overhead (2.30 m drawn), so the trunk, thighs and shins lie on it and the hands and feet rest on the floor beyond its ends; no source states it"
+   },
+   "LIFT": {
+    "value": 0.0762,
+    "unit": "m",
+    "basis": "c3 'Lift body 3-6 inches off the ground' (mo-superman): 3 in = 7.62 cm, the lowest the range allows (D-SUP-LB9-RANGE's reading; DESIGN.md section 11); inside c2's 'a few inches' (ace-superman) and below its 'four to five inches' (bb-superman); measured as the gap from the floor to the lowest drawn point of the feet and of the hands at the end"
+   },
+   "END_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (tools/plates/vendor/exercises, the approved 12 deg lumbar arch, D-LIB18-ARCH, the first basis D-LIB21-SIZE names) as the size of c3's 'a slight arch without hyperextending the back' (no magnitude); the pelvis and the lifts are then solved"
+   },
+   "M_NECK": {
+    "value": -45,
+    "unit": "deg",
+    "basis": "stated reason: c6 'Lifting the head too high', 'Looking up straining neck', 'Head/neck to moving out of neutral line' give no magnitude; eyes down (c5) the face points at the floor and looking straight ahead is a 90 deg turn of the head; 45 deg, half of that turn, drawn at the engine's one neck pivot (C7); no approved plate draws a neck-extension fault; no source states it"
+   },
+   "trace": {
+    "point": "ankle.r",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE (DRAWING-GUIDE.md:29; DESIGN.md section 12 'superman the feet lifting (c2)'): the near foot, c2 'extend both hips (raise both legs) a few inches off the floor' and the checkpoint 'Arms, legs up' (c2, c4); trim [10, 12] = hanging_leg_raise.mjs:124 (D-LIB18-TRIM)."
+   }
+  },
+  "pallof_press": {
+   "KNEE": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "convention: leg_press.mjs:13, :23 (15 deg short of lockout) for c2 'knees slightly bent' (ACE 'the knees slightly bent'; StrengthLog 'knees slightly bent'; BarBend 'a slight bend in your knees'); drawn in every pose (feet planted, root fixed): the knee joint 5.61 cm off the hip-ankle line, 100.4 % of the 5.59 cm offset of a 15 deg bend (D-LIB21-DRAW, D-LIB16-LOCK)"
+   },
+   "M_ARCH": {
+    "value": -12,
+    "unit": "deg",
+    "basis": "convention: hanging_leg_raise.mjs:69 (lumbar extension 12 deg; LB6 M_ARCH; D-LIB18-ARCH; D-LIB21-SIZE's first basis for pallof_press) for c8 Motra 'Over-arching lower back'"
+   },
+   "START_GAP": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "claim: c3 BarBend 'hold the band right at your chest' (ACE: hands at the chest, elbows in by the sides): at the chest, not in it: each fist 1 cm in front of the chest surface (the chest landmark, the thorax's front at 0.745 H), the fist's surface not touching the drawn torso"
+   },
+   "COL_X": {
+    "value": 0.9144,
+    "unit": "m",
+    "basis": "claim: c4 Garage Gym Reviews 'walk out from the cable stack until you feel the pull' gives no distance; stated reason in numbers: 3 ft (0.914 m) from the body's midline out to the pulley keeps the cable within 29 deg of the lateral line at the pressed-out hold (the handle 0.51 m in front of the pulley's depth), so the pull stays to the side (c1 'directly to the right of the body'); the same 3 ft as cable_crunch's COL_FRONT (StrengthLog 'a few feet'). In the side view it is depth only and does not show"
+   },
+   "HANDLE_L": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "stated reason: c1 and c3 'one single handle' held in both hands, fingers laced: a single cable handle's grip 12 cm long, room for the two side-by-side fists (2 x 3.5 cm fist radius, RADII.fist x H) with 2.5 cm showing at each end; no source states it"
+   },
+   "HANDLE_D": {
+    "value": 0.03,
+    "unit": "m",
+    "basis": "stated reason: the grip 3 cm thick, the same as ab_wheel_rollout's handles (eq/abWheel.mjs AB_WHEEL, 'handles 3 cm thick'); no source states it"
+   },
+   "trace": {
+    "point": "grips",
+    "trim": [
+     10,
+     12
+    ],
+    "basis": "D-LIB21-TRACE candidate 'the handle pressed straight out (c5, c6)': c5 Motra 'Press the handle straight out to full arm extension', c6 BarBend 'pressing your fists in a straight line from start to finish': the handle's centre, the grips' midpoint; trim = the clone source's, seated_cable_row.mjs:82 trace.trim [10, 12] (D-LIB18-TRIM)"
+   }
+  }
+ }
+}
