@@ -125,6 +125,25 @@ describe('LIB-5 D-LIB5-REACH: the lint names exactly what c7 and C19 name on a b
       expect([name, ref]).toEqual([name, want]);
     }
   });
+  it('S4 (Do 9): the answered back box under its key: lint === c7 (boxKey) + C19 === []; at the named limit + 1, both name the count', async () => {
+    const back = (await import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs'))).backBox();
+    const { content: c } = await content.loadContent('lib_pull_up'), KEY = 'back-pain-box';
+    const both = (B: any) => [lintTokens(L.boxReach('redFlag(back)', B, [], KEY)), refTokens(checkC7({ ...c, redFlag: B }, { boxKey: KEY }), checkC19Shared({ RED_FLAG_BACK: B, DISCLAIMER: shared.DISCLAIMER }, 'back'))];
+    expect(CL.words([back.name, back.now, back.doctor].join(' '))).toBe(50);
+    expect(both(back)).toEqual([[], []]);
+    expect(L.backBoxRules('RED_FLAG_BACK', back)).toEqual([]);
+    expect(both({ ...back, doctor: 'No better in a few weeks? See a doctor soon.' })).toEqual([['count'], ['count']]);
+    // 'Call 999' and 'today' removed on the answered box itself (S4; review 121df94)
+    expect(both({ ...back, now: back.now.replace('Get emergency help now.', 'Call 999 now.') })).toEqual([['contact', 'safety'], ['contact', 'safety']]);
+    expect(both({ ...back, now: back.now.replace('See a doctor today.', 'See a doctor.') })).toEqual([['today'], ['today']]);
+    // with no key the box is held to 30, in both the lint and c7: BOX-CAP names this one key only
+    expect([lintTokens(L.boxReach('redFlag(back)', back)), refTokens(checkC7({ ...c, redFlag: back }), [])]).toEqual([['count'], ['count']]);
+    expect((back.now.match(/Get emergency help now\./g) ?? []).length).toBe(1);
+    // each kept trigger dropped, and nhs-back removed, is red
+    for (const t of L.BACK_BOX_TRIGGERS) expect(L.backBoxRules('RED_FLAG_BACK', { ...back, now: back.now.replace(t, '') }).map((x: any) => x.rule)).toEqual(['kept back-box trigger missing (D-LIB5-BOX)']);
+    expect(L.backBoxRules('RED_FLAG_BACK', { ...back, claim: { tags: ['CONSENSUS'], sources: [] } }).map((x: any) => x.rule)).toEqual(['the back box must cite nhs-back (S4)']);
+    expect(L.BACK_BOX_TRIGGERS).toHaveLength(7);
+  });
   it('the same comparison on every shipped row\'s red-flag boxes', async () => {
     for (const r of SHIPPED) {
       const M = await import(/* @vite-ignore */ url((await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'))).sourceOf(r.id)));
@@ -161,13 +180,19 @@ describe('LIB-5 D-LIB5-VARIANT / VARIANT8: the variant-line rule', () => {
     expect(L.variantLine({ id: 'lib_underhand_lat_pulldown', equipment: 'Cable / Machine' }).violations).toHaveLength(1);
     expect(L.variantLine({ id: 'lib_x', equipment: 'Cable / Machine', line: 'Shown with a cable. Machine: same rules.' }).words).toBe(7);
   });
-  /** The tripwire: every shipped row with "/" and no line is red, except the exemption (exact ids). */
-  const tripwire = (rows: { id: string }[], ex: any[]) => rows.flatMap(r => L.variantLine({ id: r.id, equipment: ex.find(e => e.id === r.id)?.equipment, line: L.variantLineOf(r) }).violations.map((v: any) => `${r.id}: ${v.rule}`));
-  it('tripwire over every shipped row is green on main; injected rows and data are red', () => {
-    expect(tripwire(SHIPPED as any, exercises as any[])).toEqual([]);
-    expect(tripwire([...SHIPPED, { id: 'lib_underhand_lat_pulldown' }] as any, exercises as any[])).toEqual(['lib_underhand_lat_pulldown: variant line required: equipment names two kinds']);
+  /** The tripwire: every shipped row with "/" and no line is red, except the exemption (exact ids). LIB-5v: the line is
+   *  read from each row's content (`c`, loadContent's for a shipped row; injected rows bring their own or none). */
+  const tripwire = (rows: { id: string; c?: any }[], ex: any[]) => rows.flatMap(r => L.variantLine({ id: r.id, equipment: ex.find(e => e.id === r.id)?.equipment, line: L.variantLineOf(r.c) }).violations.map((v: any) => `${r.id}: ${v.rule}`));
+  it('tripwire over every shipped row is green on main; injected rows and data are red', async () => {
+    const ROWS = await Promise.all(SHIPPED.map(async r => ({ ...r, c: (await content.loadContent(r.id)).content })));
+    expect(tripwire(ROWS as any, exercises as any[])).toEqual([]);
+    expect(tripwire([...ROWS, { id: 'lib_underhand_lat_pulldown' }] as any, exercises as any[])).toEqual(['lib_underhand_lat_pulldown: variant line required: equipment names two kinds']);
     const moved = (exercises as any[]).map(e => (e.id === 'lib_pull_up' ? { ...e, equipment: 'Bar / Rings' } : e));
-    expect(tripwire(SHIPPED as any, moved)).toEqual(['lib_pull_up: variant line required: equipment names two kinds']);
+    expect(tripwire(ROWS as any, moved)).toEqual(['lib_pull_up: variant line required: equipment names two kinds']);
+    // LIB-5v V6: injected underhand content with its line is green; lib_pull_up's content given a line is red (one kind)
+    expect(tripwire([...ROWS, { id: 'lib_underhand_lat_pulldown', c: { copy: { setupLine: '', mistakeLine: '', variantLine: 'Machine.' } } }] as any, exercises as any[])).toEqual([]);
+    const lined = ROWS.map(r => (r.id === 'lib_pull_up' ? { ...r, c: { ...r.c, copy: { ...r.c.copy, variantLine: 'Machine.' } } } : r));
+    expect(tripwire(lined as any, exercises as any[])).toEqual(['lib_pull_up: variant line on a row whose equipment names one kind']);
     expect(L.eightWithSlash(EIGHT, moved)).not.toEqual([...L.VARIANT_LINE_EXEMPT].sort());
     const lost = (exercises as any[]).map(e => (e.id === 'lib_leg_press' ? { ...e, equipment: 'Machine' } : e));
     expect(L.eightWithSlash(EIGHT, lost)).not.toEqual([...L.VARIANT_LINE_EXEMPT].sort());
@@ -239,7 +264,7 @@ describe('LIB-5 S7 generator cases: E1\'s row in per-case copies of E1\'s tree (
       ['M3: inherit true on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": true,\n  "topFault":'),
         `lib_cable_lateral_raise: family: ${F.CARD_FILE}#inherit: inherited-string map not ruled (D-LIB5-FAMILY)`],
       ['D-LIB5-FAULTKEYS 4: a hand module labels hand-ahead \'Hands forward\'', () => withHand("'hand-ahead': { label: 'Hand ahead'", "'hand-ahead': { label: 'Hands forward'"),
-        'library family (rows 13, shared 14, hands 3):\n  fault hand-ahead: one label per fault key (content.md 4, family consistency) ("Hands forward" (hand-fixture.mjs) vs "Hand ahead" (hands.mjs#PALM_FLAT))'],
+        'library family (rows 13, shared 14, hands 23):\n  fault hand-ahead: one label per fault key (content.md 4, family consistency) ("Hands forward" (hand-fixture.mjs) vs "Hand ahead" (hands.mjs#PALM_FLAT))'],
       ['control: the fixture hand module as it is', () => withHand(), null],
       ['control: inherit [] on the scratch card', () => copyWith(F.CARD_FILE, '"topFault":', '"inherit": [],\n  "topFault":'), null],
       ['control: the unedited tree', () => tree, null],
@@ -300,13 +325,13 @@ describe('LIB-5 D-LIB5-FAULTKEYS 4: the family reader over the 8, the shared mod
     const rows = await Promise.all(SHIPPED.map(async r => ({ src: r.id, M: await import(/* @vite-ignore */ url(R.sourceOf(r.id))) })));
     const r = await FM.treeFamily(rows);
     console.log(`family reader (this head): rows ${r.counts.eight}, shared ${r.counts.shared}, hands ${r.counts.hands}`);
-    expect([r.counts.eight > 0, r.counts.shared > 0, r.counts.hands]).toEqual([true, true, 0]);
+    expect([r.counts.eight > 0, r.counts.shared > 0, r.counts.hands]).toEqual([true, true, 20]);
     expect(r.problems).toEqual([]);
   });
-  it('on this head: no hand-*.mjs (LIB-7/12 merge after LIB-5, D-LIB5-ORDER), so the hands count is 0 and equals what is exported', async () => {
+  it('on this head: LIB-7\'s five, LIB-12\'s eight and LIB-7c\'s two hand-*.mjs (hand-ab-wheel, hand-band, hand-dip-bar and hand-implement export no fault), so the hands count is 20 and equals what is exported', async () => {
     const mods = await FM.handModules();
-    expect(mods).toEqual([]);
-    expect([FM.handSources(mods), FM.exportedHandFaults(mods)]).toEqual([[], 0]);
+    expect(mods.map((m: any) => m.src)).toEqual(['hand-ab-wheel.mjs', 'hand-ball-contact.mjs', 'hand-band.mjs', 'hand-bar.mjs', 'hand-battle-rope.mjs', 'hand-cupped.mjs', 'hand-curl.mjs', 'hand-d-handle.mjs', 'hand-dip-bar.mjs', 'hand-ez.mjs', 'hand-front-rack.mjs', 'hand-implement.mjs', 'hand-palm-flat.mjs', 'hand-rope.mjs', 'hand-v-handle.mjs']);
+    expect([FM.handSources(mods).reduce((n: number, h: any) => n + h.faults.length, 0), FM.exportedHandFaults(mods)]).toEqual([20, 20]);
   });
 });
 
@@ -328,7 +353,7 @@ describe('LIB-5 Do 5 sweep: every shipped row passes C1-C4, C7, C8, C15, C16 and
       const bad = [
         ...checkC1(c, known), ...checkC2(c), ...checkC3(c, (exercises as any[]).find(e => e.id === r.id)?.equipment ?? ''), ...checkC4(c), ...checkC7(c),
         ...checkC8(c, SOURCES), ...checkC15(c, plate, reviews), ...checkC16(c),
-        ...C19.checkC19Copy(CL.copyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),
+        ...C19.checkC19Copy(L.shownCopyFields(c), r.id, names), ...checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, r.id, names),
         ...L.lintLibraryRow(M, shared).map((x: any) => `lint: ${x.path}: ${x.rule}`),
       ];
       expect([r.id, bad]).toEqual([r.id, []]);

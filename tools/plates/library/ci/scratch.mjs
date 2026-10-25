@@ -94,6 +94,19 @@ export function copyProblems(root, set = SCRATCH_4C) {
     const t = transformSources(s, root), P = paths(s);
     for (const [kind, mine, src] of [['spec', t.spec, `tools/plates/layers/exercises/${s.from}.mjs`], ['howto', t.howto, `tools/plates/layers/exercises/${s.from}.howto.mjs`]]) {
       const a = readFileSync(join(root, src), 'utf8').split('\n'), b = mine.split('\n');
+      // LIB-5v (D-LIB5v-FIXLINE): a target whose exercises.json equipment has '/' carries exactly one inserted line,
+      // `    variantLine: '<second kind>.',`, directly after the clone's one `  copy: {` line; it is taken out here, so
+      // every other line keeps the comparison below. Any other target carries none (the line count catches one).
+      if (kind === 'howto') {
+        const kinds = String(JSON.parse(readFileSync(join(root, 'src/data/exercises.json'), 'utf8')).find(e => e.id === s.id)?.equipment ?? '').split('/').map(k => k.trim());
+        const at = b.flatMap((l, i) => (l === '  copy: {' ? [i] : []));
+        if (at.length !== 1) { out.push(`${s.id} howto: ${at.length} copy lines, want 1`); continue; }
+        if (kinds.length > 1) {
+          const want = `    variantLine: '${kinds[1]}.',`;
+          if (b[at[0] + 1] !== want) { out.push(`${s.id} howto:${at[0] + 2}: ${JSON.stringify(b[at[0] + 1]?.trim() ?? '').slice(0, 80)}, want the variant line ${JSON.stringify(want.trim())}`); continue; }
+          b.splice(at[0] + 1, 1);
+        }
+      }
       if (a.length !== b.length) { out.push(`${s.id} ${kind}: ${b.length} lines, its source ${a.length}`); continue; }
       const edits = (COPY_EDITS[s.from] ?? []).map(([from, to]) => [from, to]);
       for (let i = 0; i < a.length; i++) {

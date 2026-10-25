@@ -302,9 +302,9 @@ describe('C4 class 3: the per-output inputs map, proven against every generated 
     const real = await inputsMap(ROOT);
     expect(real.why).toEqual([]);
     expect(real.proven).toBe(true);
-    expect(real.inputs.size).toBe(60);
+    expect(real.inputs.size).toBe(61);
     const r = await run(tree, ['--input-type=module', '-e', "import { inputsMap } from './tools/plates/library/ci/affected.mjs'; const m = await inputsMap(); console.log('@@' + JSON.stringify({ proven: m.proven, why: m.why, n: m.inputs.size }));"]);
-    expect(JSON.parse(r.out.split('\n').find(l => l.startsWith('@@'))!.slice(2))).toEqual({ proven: true, why: [], n: 66 });
+    expect(JSON.parse(r.out.split('\n').find(l => l.startsWith('@@'))!.slice(2))).toEqual({ proven: true, why: [], n: 67 });
   });
   it('D-LIB4c-3: a new composer imported only by the fixture id\'s spec selects all (ids.ts, ids-node.mjs and sources.json list it); a path only per-id files list (the batch\'s layersConfig) selects that id; one the 8\'s outputs list selects all', async () => {
     const SPEC = F.SPEC as string, gen = (root: string) => promisify(execFile)(process.execPath, ['tools/plates/generate.mjs'], { cwd: root });
@@ -610,8 +610,10 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
     const c = collectLibrary(d);
     expect([c.rebuild.length, c.shards.length]).toEqual([1, 2]);
   });
-  it('the pinned-page list is empty on this tree and sha256 is the pin hash', () => {
-    expect(pinnedPages(ROOT)).toEqual({ pages: [], unknown: [] });
+  // LIB-8M Do 13: pilot A's pin adds the first pinned page, exactly its page entry (was empty before the pin)
+  it('the pinned-page list is pilot A\'s page on this tree and sha256 is the pin hash', () => {
+    expect(pinnedPages(ROOT)).toEqual({ pages: [{ id: 'tests/howto/golden/library/pilot-a.json#page', file: 'tests/howto/golden/library/pilot-a.json', kind: 'page',
+      pageSha256: '5d0e562f51ddbbeb0ebcf16fb80c121b5a783d7a421575ec2f84ecffa1bd5ba8', bytes: 1325644 }], unknown: [] });
     expect(sha256('')).toHaveLength(64);
   });
 });
