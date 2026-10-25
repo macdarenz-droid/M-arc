@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-25 ~02:00 UTC · main `1edb3c66` · **8.0r: train 36 merged; budget pause until the 10-29 02:00 UTC reset (usage 0.76-0.77); read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-25 ~02:00 UTC · main `1edb3c66` · **8.0r: train 36 merged; owner 10-25 03:40 "Just continue until maxxed out" (no 80 % pause this week); 5 builders running; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -817,6 +817,15 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 - **Budget pause (owner rule, 80 %):** usage is 0.76-0.77 and no remaining queue item fits in the last few percent as one bounded step (each needs a builder: #245 and #265 resume, #278's pin, #279 and #273 catch-ups). So work pauses until the weekly reset. The hourly tick is **disabled again** so idle ticks do not spend the budget, and a one-shot check-in at **Thu 10-29 02:10 UTC** wakes this session to re-enable it and resume.
 - **Next on resume (plan order):** #245 LIB-9a and #265 LIB-10 (WAITING for pilot A on main, now true), #278 LIB-11's pin, then the #279 and #273 catch-ups (#279 also re-pins pilot A's 13 MANIFEST rows), then #274 LIB-13's LB3 sheet. The build-ahead lanes and the post-reset cards are listed in 8.0q.
 - The supervisor session's own context is about 450k tokens. A fresh supervisor that reads 8.0r, then 8.0q, costs far less per turn.
+- **Owner, 10-25 ~03:40 UTC: "Just continue until maxxed out."** This replaces the 80 % pause for this week: work runs until the weekly limit itself stops it. Every builder posts WAITING with a HANDOFF block if a usage limit stops it. The hourly tick is **re-enabled**; the 10-29 02:10 UTC check-in (`trig_01UTtMaggqcu642zfrMdRXGH`) stays as the restart after the reset.
+- **Started 03:44 UTC** (active LIB builders 4 of 4, plus the HT lane):
+  | lane | session | step |
+  |---|---|---|
+  | #245 LIB-9a LB1 | session_01NAUEzFBKLpDWTYYW3bN17g | main catch-up, then the card's remaining Do steps to READY |
+  | #265 LIB-10 LB2 | session_01Jd7LM4kQm7iKTuCeuwW3q3 | main catch-up, draw incline_barbell_bench_press and arnold_press, then to READY (the supervisor runs their critic panel) |
+  | #278 LIB-11 pilot B | session_01UHomn1uKNdA1g3v5Pjdii4 | main catch-up, Do 10 'PILOT B SHEET READY' for the supervisor's decision (owner delegation), then the pin |
+  | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
+  | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
 
 ### 8.0q PAUSE 10-24 ~16:20 UTC (owner: "Pause all tasks and update handover to repo for any claude agent to continue in the future. Pause the task now if their done, if not keep goinf until its done until u pause."; read first, supersedes 8.0p where they differ)
 
