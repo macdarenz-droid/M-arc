@@ -48,7 +48,7 @@ const MEASURE = ([id, joints, mode, geo]) => {
   if (geo) for (const l of labels) { l.ink = onInk(l.text); l.joints = jointPts.filter(j => j.p[0] > l.text.x0 - 3 && j.p[0] < l.text.x1 + 3 && j.p[1] > l.text.y0 - 3 && j.p[1] < l.text.y1 + 3).map(j => j.k); }
   // figure coverage (normal figure only): union bbox of the start, ghost and end layers
   let cover = null;
-  if (mode === 'normal') { const bs = [...svg.querySelectorAll('g.pose-start, g.ghost, g.pose-end')].map(g => g.getBBox()).filter(b => b.width > 0);
+  if (mode === 'normal') { const bs = [...svg.querySelectorAll('g.pose-start, g.ghost, g.pose-end')].filter(g => !g.closest('.plate-zoom')).map(g => g.getBBox()).filter(b => b.width > 0);
     const x0 = Math.min(...bs.map(b => b.x)), y0 = Math.min(...bs.map(b => b.y)), x1 = Math.max(...bs.map(b => b.x + b.width)), y1 = Math.max(...bs.map(b => b.y + b.height));
     cover = Math.max(0, Math.min(358, x1) - Math.max(0, x0)) * Math.max(0, Math.min(358, y1) - Math.max(0, y0)) / (358 * 358); }
   // contrast: computed colour with ancestor opacity over the plate backdrop
@@ -74,10 +74,14 @@ const MEASURE = ([id, joints, mode, geo]) => {
   const strokeC = (sel, cls) => { for (const el of svg.querySelectorAll(sel)) { if (!shown(el)) continue; const cs = getComputedStyle(el); if (!paints(cs.stroke)) continue;
     add(cls, ratio(over(cs.stroke, parseFloat(cs.strokeOpacity) * opa(el), plateBg), plateBg), el); } };
   strokeC('.pose-end .u-stroke use', 'ink'); strokeC('path.trace', 'trace'); strokeC('.m-pose .u-stroke use, .mistake-layer path.m-arrow, .mistake-layer path.m-line', 'mistake');
+  strokeC('.plate-zoom .pz-ring', 'ink');   // LIB-ZOOM: the zoom ring is held to the ink floor
   // tempo strip
   const tempo = document.querySelector(`#card-${id} .tempo`), tr = tempo.getBoundingClientRect();
   const tempoOut = [...tempo.querySelectorAll('.tempo-label')].filter(l => { const r = l.getBoundingClientRect(); return r.left < tr.left - 0.5 || r.right > tr.right + 0.5; }).length;
-  return { labels, cover, contrast, where, zoom: F.width / 358, plate: { x0: F.left, y0: F.top, x1: F.right, y1: F.bottom }, tempo: { scroll: tempo.scrollWidth, client: tempo.clientWidth, out: tempoOut } };
+  // LIB-ZOOM: the zoom circle in CSS px (its ring's box), for the label and hit-box rows
+  const ring = svg.querySelector('.plate-zoom .pz-ring'), rb = ring && shown(ring) ? ring.getBoundingClientRect() : null;
+  const zc = rb ? { cx: (rb.left + rb.right) / 2, cy: (rb.top + rb.bottom) / 2, r: rb.width / 2 } : null;
+  return { labels, cover, contrast, where, zc, zoom: F.width / 358, plate: { x0: F.left, y0: F.top, x1: F.right, y1: F.bottom }, tempo: { scroll: tempo.scrollWidth, client: tempo.clientWidth, out: tempoOut } };
 };
 
 async function showMode(page, id, mode) {
@@ -150,6 +154,10 @@ export function judge(c, m, envelope) {
         if (a.hit.w < min || a.hit.h < min) push(H4, P(`H4.small:${mode}:${a.key}`, `${mode} callout ${a.key} hit box ${a.hit.w.toFixed(1)}x${a.hit.h.toFixed(1)} < ${(min + 0.01).toFixed(1)} px square (44 x zoom ${z}, at ${w} px)`));
         hits.slice(i + 1).forEach(b => { const o = overlap(a.hit, b.hit); if (o > 0) push(H4, P(`H4.overlap:${mode}:${a.key}|${b.key}`, `${mode} callouts ${a.key} and ${b.key} hit boxes overlap by ${o.toFixed(2)} px² (at ${w} px)`)); });
       });
+      // LIB-ZOOM: no label text box or callout hit box overlaps the zoom circle, at every width
+      if (d.zc) for (const l of d.labels) for (const [what, b] of [['label', l.css], ['hit', l.hit]]) {
+        if (b && Math.hypot(Math.max(b.x0 - d.zc.cx, 0, d.zc.cx - b.x1), Math.max(b.y0 - d.zc.cy, 0, d.zc.cy - b.y1)) < d.zc.r) push(H4, P(`H4.zoom:${what}:${w}:${mode}:${l.key}`, `${w} px: ${mode} ${l.key} ${what === 'hit' ? 'hit box' : 'text'} overlaps the zoom circle`));
+      }
       if (d.tempo.scroll > d.tempo.client || d.tempo.out) push(H4, P(`H4.tempo:${w}`, `${w} px: tempo strip overflows (${d.tempo.scroll} > ${d.tempo.client}, ${d.tempo.out} labels outside)`));
       for (const cls of CLASSES) {
         const v = d.contrast[cls];

@@ -16,8 +16,9 @@
 //  - End: the sled is placed so the knee is 15 deg short of straight (soft: a small bend left, c4), the approved
 //    leg_press top ("knees 15 deg short of lockout", vendor leg_press.mjs:13, :23; ruling Q-D5-3, lib4-cards 13.3).
 //    Mistake: the sled runs on until the knee is straight (0.5 deg); hips and back stay on the pad (one fault only).
-//  - HELD (Q-D5-3, D-LIB8-shrug): at 15 deg PQ-H3's Mistake deviation is 8.2 px against the 11.39 px minimum. The end
-//    pose stays card-true; the plate waits for a sourced end-knee number or the owner's design option.
+//  - Zoom (LIB-ZOOM, owner option A, D-LIB8-shrug): at 15 deg PQ-H3's Mistake deviation is 8.2 px at plate scale, under
+//    the 11.39 px bar. The end pose stays card-true; the Mistake view carries a zoom circle on the knee at k 2, where the
+//    lock moves 16.3 px. No angle in the circle (owner rule).
 // Unsourced numbers: back pad 40 deg from vertical (pelvis tilt -40); hip-joint centre 0.55 m up; bottom shin 12 deg
 //  below horizontal; plate face 24 cm above the rail, plate 62 cm tall, rail 1.25 m; mid-sole 10 cm above the face
 //  reference; feet 11 cm either side of the midline (hip width); handle 25 cm out, 2 cm above and 12 cm ahead of the
@@ -128,10 +129,13 @@ export default {
   mistake: {
     pose: mistakePose,
     parts: ['leg.r', 'sled'],
-    guides: [],
+    // the locked leg's axis, hip -> ankle: the skeleton is straight (knee 0.5 deg) but the tapered thigh and the calf
+    // make its outline kink at the knee (LIB-ZOOM panel R5), so one straight line through the knee shows the lock
+    guides: [{ kind: 'line', pts: [{ at: 'hip.r', pose: 'mistake' }, { at: 'ankle.r', pose: 'mistake' }] }],
     tells: [
       { key: 'lock', text: 'Knees<br>locked', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 204, top: 256 }, cue: 'The knees snap straight and lock at the end of the push.' },
     ],
   },
+  zoom: { view: 'mistake', k: 2 },
   alt: 'Horizontal leg press, side view. Seated with the back and tailbone on a reclined pad and the feet flat on a vertical plate, the lifter pushes the sled along a level rail from knees at about 90 degrees until the knees are relaxed and nearly straight, never locked.',
 };

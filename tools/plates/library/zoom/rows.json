@@ -1,0 +1,16 @@
+{
+ "note": "LIB-ZOOM (#279) rows: horizontal_leg_press, re-added with its approved zoom (recheck panel @ 9fbdfb5; zoom/approved.json) after LB1 held its row out (D-LIB9a-MAIN565, D-LIBZOOM-HLP). Stage drawing, never in batches/; LB1's own rows and bytes are untouched. censusRef: the census commit (claude/howto-options), as LB1's.",
+ "batch": "LIB-ZOOM",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_horizontal_leg_press": {
+   "src": "library/specs/horizontal_leg_press.mjs",
+   "slug": "horizontal-leg-press",
+   "prefix": "horizontal-leg-press",
+   "chromeId": "horizontal-leg-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}
