@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-25 ~12:45 UTC · main `a22d84e5` · **8.0r: train 37 merged; LB2 all 8 approved; owner 10-25 03:40 "Just continue until maxxed out" (no 80 % pause this week); read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-25 ~17:00 UTC · main `40f9ea93` · **8.0r: train 38 merged; D-LIB-ORDER-3; train 39 (7 PRs) building; owner 10-25 03:40 "Just continue until maxxed out"; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -826,6 +826,23 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | #278 LIB-11 pilot B | session_01UHomn1uKNdA1g3v5Pjdii4 | main catch-up, Do 10 'PILOT B SHEET READY' for the supervisor's decision (owner delegation), then the pin |
   | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
   | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
+
+**Update 17:00 UTC (10-25)** (usage 7-day 0.81 at 11:44):
+- **Train 38 merged** (#321) → main `40f9ea93`: #265 LIB-10 LB2 (REVIEW PASS 6400302122; Low recorded as **F-LB2-A9PIN**: pin pilot A's batch and golden files in an A9 `it` with the ship card's first push), #278 LIB-11 pilot B, #273 HT-11 (nothing visible, so no APK), #274 LIB-13 LB3 (PASS 6399187918; **F-LB3-DOC**: DESIGN.md:122 says 0.163, should be 0.164, with the next lb3 push). The resolution was loaders.ts's GENERATED header, regenerated.
+- **D-LIB-ORDER-3** (lib4-cards §38 @ `ee258598`; #289 6400369812):
+  1. **Train 39:** LIB-20 #311 → LB5 #290 → LB6 #297 → LB7 #299 → LB8 #306 → LB9 #312 → LB10 #305.
+  2. **Then LIB-STRIP #309**, which needs a builder catch-up (it conflicts in build-page.mjs, candidate.mjs, gate-split.test.ts and gate-times.json).
+  3. **Then LB4 #289:** 'LIB-14 resume' (the strip release, a panel of six, then review).
+  - Held rows roll into resume PRs: LB8's leg curls (pilot B is on main now) and its held rows; LB9's Do 7b rows (after LIB-20) and its held rows.
+- **Train 39** (`claude/sup-merge-train-39`, built locally on `40f9ea93`):
+  - The LIB-20 merge needed GENERATED headers regenerated (golden hashes unchanged).
+  - A `[golden update]` commit `632902b2` re-pins pilot B's 4 MANIFEST rows (the same five files as D-LIB20-L0 (b)). C0 [], L1 A `5d0e562f`, B `ff3e017c`.
+  - Local vitest is running; then push, CI, merge.
+- **Card fix `0b223b7b`:** the A9/leak-check seed is a committed byte, because a three-dot diff never sees uncommitted bytes (#274 review Low 3).
+- **Sessions:** every builder and reviewer from today is archived. Active LIB builders: 0.
+- **Next:**
+  - after train 39: the LIB-STRIP catch-up builder, plus resume builders for LB8 and LB9 on fresh branches from main;
+  - after #309: LB4 resume, plus pilot A's box_jump and reverse_lunge, LB7's renegade_row and LB10's sled_pull.
 
 **Update 12:45 UTC (10-25)** (usage 7-day 0.81 at 11:44; the owner's "until maxxed out" holds until the 10-29 reset):
 - **Train 37 merged** → main `a22d84e5` (#245 LB1, #279 LIB-ZOOM, #320 F-CI-2: source-gate limit 60 → 90 min, D-SUP-CI-2).

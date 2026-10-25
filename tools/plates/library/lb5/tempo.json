@@ -1,0 +1,161 @@
+{
+ "rule": "D-LIB8M-TEMPO (lib4-cards.md section 16): the concentric phase takes up, the eccentric takes down; Hold takes pause right after the concentric, only if pause > 0; any other static phase is a constant only with a quote that states its seconds; a range is the quote's string. No Rest. Phase names, order and move flags are labels; order follows the drawn order (DESIGN.md section 9 pose map). Ruled: D-LIB15-TEMPO, #290 comment 6340022161.",
+ "research": "claude/libht-research 3812989f59c000705731f7944d7a1a275e86045d",
+ "constants": {},
+ "ids": {
+  "overhead_cable_triceps_extension": {
+   "claim": [
+    "c21",
+    "c13"
+   ],
+   "rows": [
+    {
+     "phase": "Extend",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "dumbbell_overhead_triceps_extension": {
+   "claim": "c18",
+   "rows": [
+    {
+     "phase": "Press",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "cross_body_hammer_curl": {
+   "claim": "c11",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "cable_curl": {
+   "claim": "c10",
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    },
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    }
+   ]
+  },
+  "bayesian_cable_curl": {
+   "claim": "c12",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "preacher_curl": {
+   "claim": "c14",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "incline_dumbbell_curl": {
+   "claim": "c12",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "concentration_curl": {
+   "claim": "c12",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  },
+  "wrist_curl": {
+   "claim": "c10",
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up",
+     "move": true
+    },
+    {
+     "phase": "Lower",
+     "from": "down",
+     "move": true
+    }
+   ]
+  }
+ }
+}
