@@ -735,3 +735,25 @@ accepted; standing_calf_raise's 0.9 cm start heel is recorded with its S2 hold.
 10. The bulk planning items in section 13's last list ("Bulk planning items not settled") (the pendulum arm, the unlocked-knee size where a quote says
     straight, glute_bridge's `high` tell against handlingMistakes[2], resisted_hip_flexion's frame hand and `lean`
     anchor, lying_leg_curl c3's "against the lower calf").
+
+## 18. Resume plan ('LIB-18 resume', 2026-10-25; base main `9c3287cd`)
+
+Built now (blocker on main):
+
+| id | blocker | on main |
+|---|---|---|
+| lying_leg_curl | pilot B's `eq/legCurlMachine.mjs` (D-LIB18-LEGCURL) | yes (#278; `9c3287cd`) |
+| standing_leg_curl | as lying_leg_curl | yes |
+
+S7 check on main's composer (read at `9c3287cd`, eq/legCurlMachine.mjs:34-45): `seat[1]`/`seat[2]` are dereferenced
+for the seat post and `back` is always drawn, so `seat: null` (both leg curls, as the header's "Later users" note says)
+throws a TypeError. The composer is never edited here; its fix, if one is wanted, is ruled for its owner card (S7).
+
+Still held (section 15's reasons stand; nothing is redrawn or enlarged):
+
+| id | waits for |
+|---|---|
+| hip_thrust, cable_kickback, leg_extension, resisted_hip_flexion | LIB-ZOOM's convention (#279, on main; ruled for horizontal_leg_press's knee lock only, lib4-cards 26) extended by the supervisor to the lumbar arch |
+| glute_bridge | as above, for the arch and for its hip Trace |
+| pendulum_squat | LIB-ZOOM's convention extended to the heel lift |
+| seated_calf_raise, standing_calf_raise, bodyweight_calf_raise | the owner's S4 route (D-LIB18-CALF; not ruled), then LIB-ZOOM's convention extended to the heel rise |
