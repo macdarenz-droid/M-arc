@@ -827,6 +827,12 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
   | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
 
+**Update 10:00 UTC (10-25):**
+- **#245 LIB-9a: REVIEW PASS @ `19c99837`** (6396051602; the High was fixed by pinning INHERIT_MAP to a literal copy of the ruled map).
+- **#278 LIB-11: REVIEW PASS @ `96413966`** (6395423829; test-only fixes to the GO-approval and A8 checks). **F-LIB11-COMMENT** stays open.
+- **Train 37** (`claude/sup-merge-train-37`): #245 @ `19c99837` and #279 @ `7af6bd2f` on main `1edb3c66`, both merged clean. C0 = [], pilot A's L1 = `5d0e562f…`, typecheck 0, vitest 254 files / 3689 tests pass.
+- **#265 LIB-10:** D-LIB10-IDP (incline_dumbbell_press joins LB2) → **D-LIB10-IDP-A**: the redraw goes in a new `specs/incline_dumbbell_press__lb2.mjs` (the old spec is a pilot A MANIFEST input). **F-IDP-SPEC:** the held spec retires at the next pilot A re-pin. One critic panel follows for all three new LB2 plates at 'LB2 PLATES READY 2'.
+
 **Update 07:00 UTC (10-25)** (usage 7-day 0.77 at 04:35; a classifier outage blocked every action from about 06:00 to 06:35, then cleared):
 - **#278 LIB-11 pilot B: PINNED and READY @ `8ae48ed9`** (4 plates; page `ff3e017c…`; CI 17/17). The supervisor's decisions and PILOT B PIN GO (6393170019): text-only feel yes, battle_ropes camera (i), cable_fly F2 0.628 named, A16 = 6 PNGs. Rulings: **D-LIB11-SCRATCHIDS = (a)** (scratch-e → lib_sled_push) and **D-LIB11-SCRATCHA** (scratch-a off the pinned lib_barbell_row; setProblems refuses every pinned id) (6393188049). **F-LIB11-COMMENT:** a stale comment at push_up.mjs:18-19 rides the next pilot B re-pin. Reviewer session_017RGKV4MJoaRiZ61FbxesQ4.
 - **#279 LIB-ZOOM: catch-up delta PASS @ `7af6bd2f`** (6394078462). It carries the `[golden update]` re-pin of pilot A's 13 MANIFEST rows. It waits for #245 (plan order).
