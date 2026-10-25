@@ -391,6 +391,27 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     }
     expect(Object.keys(FM.INHERIT_MAP).sort()).toEqual([...cards.keys()].sort());
   });
+  /** D-LIB9a-MAP as ruled (#245 6393424755 on the tables of 6393419324), keyed by each card's exact field string. Literal:
+   *  a narrowed or widened path in INHERIT_MAP turns this red. shoulder_press's setup line is not in it (F-LB1-SETUP). */
+  const THUMB = ['handling.thumb.mode', 'handling.pose.thumb'];
+  const RULED = {
+    lib_chin_up: { 'grip.thumb (wrapped, never thumbless by default)': THUMB, 'zooms.hand (full grip, thumb around the bar, is the only grip shown)': ['zooms[key=hand]'] },
+    lib_close_grip_pulldown: { 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
+    lib_hanging_knee_raise: { 'grip.thumb (wrapped every set)': THUMB },
+    lib_incline_machine_press: { 'grip.type': ['handling.handle'], 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'],
+      "posture['Straight wrist, forearm behind the handle']": ['posture[key=wrist]'], "posture['Feet flat, hips back']": ['posture[key=feet]'], "zooms['hand']": ['zooms[key=hand]'] },
+    lib_shoulder_press: { 'grip.thumb': THUMB, 'grip.handContact': ['handling.contact'], 'grip.wrist': ['handling.wrist'], "zooms['hand']": ['zooms[key=hand]'] },
+    lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': ['setup[kind=position,zoom=path].text'] },
+    lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path]'], 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
+    lib_horizontal_leg_press: { grip: ['handling'], "posture['Tailbone and lower back flat on the pad']": ['posture[key=back]'], "posture['Whole foot flat, mid-platform']": ['posture[key=feet]'],
+      "posture['Soft knees at the top']": ['posture[key=soft]'], "posture['Hands light on the side handles']": ['posture[key=hands]'] },
+    lib_leg_press_calf_raise: { grip: ['handling'],
+      "setup['After the last rep, pause at the top, turn the handles back in, and let the sled settle on the catches before you take your feet off or let go.']": ['setup[kind=finish]'],
+      "posture['Hands light on the side handles']": ['posture[key=hands]'] },
+  };
+  it('INHERIT_MAP is exactly the ruled map (D-LIB9a-MAP): every field and every path', () => {
+    expect(FM.INHERIT_MAP).toStrictEqual(RULED);
+  });
   it('every mapped path holds leaves in its shipped parent; a faithful child copy with its own claims passes', () => {
     for (const [id, card] of cards) {
       for (const p of Object.values(FM.INHERIT_MAP[id]).flat()) expect([id, p, FM.leaves(FM.atPath(parents.get(`lib_${card.parent}`), p)).length > 0]).toEqual([id, p, true]);
