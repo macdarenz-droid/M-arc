@@ -4276,3 +4276,11 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
   - cable_crunch failed R1 (2/3): the end trunk's chord is 67 px against a 137 px trunk, a collapse rather than a curl. It gets a second focused round (D-LIB13-PANEL2; #312 6383628526).
 - **Anchors:** lat_pulldown R1 is follow-up 19, pull_up R1 is 20 and R2 is 22. pull_up R3 (the forearm ends under the end-on bar, with no fist around it) is new, confirmed on the PNG crop: **golden-B follow-up 24**.
 - **LB9 CARD FIELDS (cflb9):** VALID. Plant: a fact from a quote about another version, caught. Fix round: cable_crunch's end wrists and ab_wheel_rollout's end knees; D-LIB21-TRAPS. VERIFIED @ 931714d2.
+
+## 36. LB2 panel 2: set lb2n (2026-10-25 ~11:15 UTC; #265 @ `31d0bfcf`, page `4ebcfcc1…7c50`)
+- **lb2n:** VALID, both plants caught 3/3: incline_barbell_bench_press with the bar on the belly (R1) and arnold_press with a label naming the head (R4).
+  - arnold_press and incline_dumbbell_press are **APPROVED**.
+  - incline_barbell_bench_press failed R4 (3/3: the Back on pad leader ends at the elbow and crosses the 30° arc's tick) and R5 (3, 3, 4: the flare Mistake is a knot of red marks half under the solid arm). One fix round, with the main catch-up to `a22d84e5` (#265 6396940823).
+- **Anchors:** lat_pulldown R2 is follow-up 21; pull_up R2 is 22. Two new defects, confirmed on the PNG crop:
+  - **golden-B follow-up 25:** pull_up R6, the Trace starts on the end elbow, not at a start-pose landmark;
+  - **golden-B follow-up 26:** pull_up R2, the bar's wall plate has no wall.
