@@ -281,7 +281,7 @@ Each gate job writes `screenshots/gate-proof-<utc|auckland>-<k>of<K>.json` with 
 6. a `gate-theme` (key, TZ, theme) appears in two manifests, or a group's theme set differs between UTC and Auckland;
 7. `meta.www`, `meta.chrome` or `meta.plan` differ between manifests, or `meta.plan` differs from the verdict's own computation;
 8. any row's result is `fail`;
-9. **the 30 min goal** (D-HT10-A5c-2: "the 30 min goal returns in GATE-SPLIT") lives here as `JOB_BUDGET_S = 1800`: any manifest's `meta.gateSeconds` over 1,800 s is red. Separately, any shard over `SHARD_TARGET_S = 900` is printed as "re-pick K/N" (2.2) and is not red. New shard jobs also get `timeout-minutes: 30` as a runaway limit; the existing jobs keep their 60 (`.github` is add-only);
+9. **the 30 min goal** (D-HT10-A5c-2: "the 30 min goal returns in GATE-SPLIT") lives here as `JOB_BUDGET_S = 1800`: any manifest's `meta.gateSeconds` over 1,800 s is red. Separately, any shard over `SHARD_TARGET_S = 900` is printed as "re-pick K/N" (2.2) and is not red. New shard jobs also get `timeout-minutes: 30` (50 since F-CI-1: setup, a 15-minute install cap and the 1800 s budget) as a runaway limit; the existing jobs keep their 60 (`.github` is add-only);
 10. the ht10 family: `coverProblems(ht10Rows, ht10RunTuples())` is not empty, or shard k of N is missing or repeated;
 11. `GATE_TZS = ['UTC', 'Pacific/Auckland']` is a constant in `ci-verdict.mjs`, not an input. Dropping Auckland from the workflow leaves its rows missing, so the verdict turns red.
 
@@ -394,7 +394,7 @@ The build is relied on only after E1-E10 pass on its final head, as the AGENTS.m
    - matrix `tz: [UTC, Pacific/Auckland]` × `k: [2, 3]`, with `if: inputs.arrangement != 'serial'`;
    - `env: TZ`, `MARC_GATE_JOB: ${{ matrix.k }}/3`, `MARC_HT10_OWN_JOB: '1'`, and a `MARC_GATE_PORT` per shard;
    - steps: checkout, setup-node, npm ci, `npm run build`, install Chromium, `npm run gate`, upload `screenshots/` as `MARC-gate-<tz>-<k>` (`if: always()`, error if no files);
-   - `timeout-minutes: 30`.
+   - `timeout-minutes: 30` (50 since F-CI-1, with a 15-minute cap on the Chromium install step).
 4. **`ht10-gate`** as in 8.7 step 6, with a matrix of N shards (N by the rule in 2.2) and an upload of `screenshots/ht10-proof.json` per shard.
 5. **New `gate-verdict`:** `needs: [source-gate, visual-gate-tz, gate-shard, ht10-gate]`, `if: always()`. It downloads every proof and runs `node scripts/ci-verdict.mjs`.
 6. **`android-gate.needs`:** append `gate-shard`, `ht10-gate`, `gate-verdict`.

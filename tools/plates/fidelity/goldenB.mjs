@@ -120,8 +120,22 @@ export async function openZoom(page, id, key) {
   await settle(page);
 }
 export async function closeZoom(page, id, key) {
-  await clickSel(page, `#${id}-zoom-${key}-close`);
+  await clickSel(page, `${await zoomSel(page, id, key)} .zx-close`);   // LIB-7b (D-LIB7b-SCRATCH2 P5): the panel's own close button
   await settle(page);
+}
+/** LIB-7b (D-LIB7b-SCRATCH2 P5): the `#id` selector of card `id`'s close-up `key`, found by data-zoom in the card. Throws
+ *  unless exactly one matches and its id is today's `<id>-zoom-<key>` (a row with no pair key) or, for a pair row's hand
+ *  close-up, its pair panel's `hp-<k>-zoom-hand` or that id under the card's page namespace (D-LIB7b-PAGEDUP (B)). */
+export async function zoomSel(page, id, key) {
+  const r = await page.evaluate(([id, key]) => {
+    const zs = [...document.querySelectorAll(`#card-${id} .zx[data-zoom="${key}"]`)];
+    if (zs.length !== 1) return { bad: `${id}: zoom ${key}: ${zs.length} close-ups with data-zoom ${key} in the card` };
+    const p = zs[0], k = p.querySelector(':scope > .hx[class*="hx-hp-"]')?.className.match(/\bhx-hp-([a-z0-9-]+)/)?.[1];
+    const ok = k && key === 'hand' ? [`hp-${k}-zoom-hand`, `${id}-hp-${k}-zoom-hand`] : [`${id}-zoom-${key}`];
+    return ok.includes(p.id) ? { id: p.id } : { bad: `${id}: zoom ${key}: close-up id ${p.id}, expected ${ok.join(' or ')}` };
+  }, [id, key]);
+  if (r.bad) throw new Error(r.bad);
+  return `#${r.id}`;
 }
 /** Handling-mistake row (the Mistake pill on the plate). */
 export async function openMistake(page, id) { await clickSel(page, `#${id}-mistake`); await settle(page); }
@@ -218,7 +232,7 @@ export async function statesFor(page, id) {
     { name: `${id}: setup (every step shown)`, selector: `${card} .setup`, open: () => assertAllSetupStepsShown(page, id) },
     { name: `${id}: risks`, selector: [`${card} .risks`, `${card} .ht-disclaimer`] },
   ];
-  for (const z of zoomKeys) states.push({ name: `${id}: zoom ${z}`, selector: `#${id}-zoom-${z}`, open: () => openZoom(page, id, z), close: () => closeZoom(page, id, z) });
+  for (const z of zoomKeys) states.push({ name: `${id}: zoom ${z}`, selector: await zoomSel(page, id, z), open: () => openZoom(page, id, z), close: () => closeZoom(page, id, z) });   // LIB-7b: zoomSel
   for (const r of rows) states.push({ name: `${id}: feel row ${r}`, selector: `${card} .feel`, group: 'feel', open: () => openFeelRow(page, id, r) });
   return states;
 }

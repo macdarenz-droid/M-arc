@@ -1,0 +1,44 @@
+// LIB-12 key ball-contact (hands/DESIGN.md §1 module shape; drawing code in view-ball.mjs). Plan 2.3; research
+// shared/implement-wall-ball.json. Front camera (the spec's camera is not used). Pilot B (D-LIB12-5).
+import { LIB12_CLAIMS, reportChecks } from './view-common.mjs';
+import { handPair } from './lib12-hand.mjs';
+import { WALL_BALL, ballHalf, ballProblems } from './view-ball.mjs';
+
+export const KEY = 'ball-contact', OWNER = 'LIB-12', VIEW = 'ball';
+export const HANDLE = { profile: 'wall-ball', diameterMm: WALL_BALL.diameterMm };   // D-LIB12-2
+export const INPUTS = ['tools/plates/library/hands/view-ball.mjs', 'tools/plates/library/hands/lib12-hand.mjs', 'tools/plates/library/hands/view-common.mjs'];
+export const VIEW_FILES = ['tools/plates/layers/engine/hand.mjs', 'tools/plates/layers/engine/geom.mjs'];
+const B = 'shared/implement-wall-ball.json';
+export const VARIANTS = {
+  catch: {
+    archetype: 'implement', loadAxis: 'across', wristRange: null, contact: 'underside',
+    right: { contactDeg: 47, forearmDeg: 95 }, rightNote: 'Hands under',
+    alt: 'Both hands under the ball, wrists about six inches apart, elbows in front and below.',
+    drawn: { 'hands under the ball': [`${B}#c1`], 'wrists about 152 mm apart': [`${B}#c3`], 'elbows in front, not out': [`${B}#c2`] },
+    faults: {
+      'side-sandwich': { label: 'Hands on sides', side: 'sides', pose: { contactDeg: 0, forearmDeg: 25 }, markers: [], claims: [`${B}#c1`, `${B}#c2`, `${B}#c4`],
+        alt: 'Hands on the sides of the ball with the elbows out; the ball can slip through.' },
+    },
+    claims: [`${B}#c1`, `${B}#c2`, `${B}#c3`, `${B}#c4`],
+  },
+};
+// D-LIB12FIX-R8-GAPS (#191 6274835211): wall_ball moved to GAPS after the one R8 fix round; its variant, words file and view
+// code stay for follow-up F-LIB12-R8B.
+export const IDS = {};
+export const GAPS = { wall_ball: 'R8 panel 2026-10-19: below the hand bar (lib4-cards 27)', medicine_ball_slam: 'no hand placement, thumb, wrist or hand fault sourced (shared/implement-medicine-ball-slam.json gaps)' };
+/** Census scope: plan 2.3 "ball-contact (2)". */
+export const CENSUS = { source: 'plan 2.3 ball-contact (2)', count: 2 };
+
+export function render(spec) {
+  const out = handPair({ uid: spec.uid, camera: 'front', right: ballHalf(spec.right), wrong: ballHalf(spec.wrong, { role: 'wrong' }),
+    rightNote: spec.rightNote, wrongNote: spec.wrongNote, alt: spec.alt, panelHeight: spec.panelHeight ?? 200 });
+  const problems = ballProblems(out.report);
+  return { svg: out.svg, report: { ...out.report, problems, ok: problems.length === 0 } };
+}
+
+/** The sheet's check hook (LIB-7 checks.mjs problemsOf): this view's own geometry checks. */
+export const checks = reportChecks;
+/** Claim texts for the refs this key cites (a sheet resolves them here). */
+export const CLAIMS_TEXT = LIB12_CLAIMS;
+/** Sheet flags (D-LIB7-SHEET): this key's unsourced values. */
+export const FLAGS = ['sizes and pose values: drawing values (D-LIB12-2, D-LIB12-9)'];
