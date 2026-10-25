@@ -67,7 +67,7 @@ export const SHEET = {
   lib_pendlay_row: { tier: 'A', class: 'hinge row, floor start (H; ruling 4)', anchor: 'barbell_row',
     critic: 'approved, focused recheck 2 @ 8781ed0 (D-LIB13-PANEL2): every median 4 or more', notes: [] },
   lib_landmine_row: { tier: 'A', class: 'landmine rig (landmine anchor; D-LIB13-LANDMINE)', anchor: 'barbell_row',
-    critic: 'approved, recheck @ 423acc1 (D-LIB13-PANEL1); bytes unchanged at 8781ed0 and a6f4bd0',
+    critic: 'approved, panel @ 59d3d78 (D-LIB13-PANEL1); bytes unchanged since',
     notes: ['Rig: landmine, new composer. Later user: t_bar_row (held, D-LIB13-TBAR)', 'Plate size: drawing convention (228 mm), the 10 lb plate (D-LIB13-TBAR)'] },
   lib_one_arm_dumbbell_row: { tier: 'C', class: 'bench support (support anchor; D-LIB13-SUPPORT); drawable-fault example', anchor: 'barbell_row',
     critic: 'approved, focused recheck 3 @ a6f4bd0 (D-LIB13-PANEL3): R5 4 [4,3,4]',
@@ -99,7 +99,7 @@ export const SHEET_DECISIONS = [
   { name: 'Pendlay row F2', state: 'pendlay_row\'s figure cover is under the envelope floor (value above): a held hinge where only the arms and bar move. Options: (i) a named exemption; (ii) hold. Recommended: (i), plan 8 decision 9\'s default; a figure is never padded to raise cover. Supervisor decides.' },
   { name: 'Landmine plate size', state: 'landmine_row draws the 10 lb plate (228 mm) as a drawing convention (D-LIB13-TBAR): the largest real plate that passes on this plate. Options: (i) accept; (ii) hold for a larger plate; every larger real plate fails this plate\'s checks (D-LIB13-TBAR). Recommended: (i). Supervisor decides.' },
   { name: 'Support anchor', state: 'one_arm_dumbbell_row anchors the bench-support class; back_extension is its other LB3 user (D-LIB13-SUPPORT). Options: (i) approve the anchor; (ii) reject it, and back_extension is redrawn. Recommended: (i): every item passed at a6f4bd0. Supervisor decides.' },
-  { name: 'Landmine anchor', state: 'landmine_row anchors the new landmine rig; its later user t_bar_row is held (D-LIB13-LANDMINE). Options: (i) approve the anchor; (ii) reject it. Recommended: (i): approved at 423acc1, bytes unchanged. Supervisor decides.' },
+  { name: 'Landmine anchor', state: 'landmine_row anchors the new landmine rig; its later user t_bar_row is held (D-LIB13-LANDMINE). Options: (i) approve the anchor; (ii) reject it. Recommended: (i): approved in the panel at 59d3d78, bytes unchanged since. Supervisor decides.' },
 ];
 const QA_LINE = {
   F2: f => `Figure cover ${+f.value.toFixed(3)}, approved ${f.range.map(v => +v.toFixed(3)).join('-')}. Named flag (#274 6267110489)`,
