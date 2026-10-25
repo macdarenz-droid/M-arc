@@ -4329,3 +4329,27 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 **Why this keeps the check's strength:** an unknown extra file is still red, a renamed copy is still red, and a missing main file or own composer is still red. A known name can enter only by merging its own card, because a same-name copy would conflict at merge. The lanes now pass alone, in any train order, and after each other merges.
 
 **LB8 (D-LIB18-LEGCURL):** pilot B is on main, so the "before pilot B" test flips. Its catch-up applies the card's post-pilot-B rule: no LB8 spec draws a leg-curl machine of its own; leg curls import pilot B's `eq/legCurlMachine.mjs`. The leg-curl rows stay held and roll to 'LIB-18 resume' (D-LIB-ORDER-3).
+
+## 40. Empty plateFacts (D-PLATEFACTS-EMPTY, 2026-10-25 ~21:00 UTC; #309 6403126624)
+**Found** (LIB-STRIP catch-up, A6 "every card on main still validates"): main's own `tools/plates/library/research/validate.mjs:209` rejects `plateFacts: []` ("leave the key out instead"). That line comes from D-LIB5-TEMPO8 2 (:2229, "never []"). 16 cards on main carry `plateFacts: []`, as D-LIB8M-NOFACTS later ruled: `[]` is allowed only when no quote gives a number for a drawn pose (:4075), and the CARD FIELDS verifies enforce that. Main's tests validate only 8 cards, so nothing caught the clash. The 16 cards are barbell_overhead_press, barbell_row, chin_up, dumbbell_bench_press, dumbbell_biceps_curl, dumbbell_shoulder_press, hanging_knee_raise, landmine_row, mountain_climbers, pec_fly, plank, rope_triceps_pushdown, straight_arm_pulldown, t_bar_row, triceps_pushdown and upright_row.
+
+**Ruling.** The later, specific ruling governs.
+- validate.mjs accepts `plateFacts: []` as D-LIB8M-NOFACTS's verified "no numeric quote for a drawn pose".
+- These stay red:
+  - a plateFacts that is not a list;
+  - any fact that names no claim or an unknown claim;
+  - any fact with a bad form.
+- The key may still be left out.
+- QA's H6 already reads `[]` this way (qa/node.mjs:152 checks `Array.isArray`), so QA behaviour does not change.
+
+**Rejected alternative:** dropping the key from the 16 cards. QA would then raise H6:no-card on 16 approved plates and change their ruled flag sets. It would also break the lb1/lb3 card pins, and it would erase the ruled distinction between "verified none" and "not researched".
+
+**Fix card F-PLATEFACTS** (its own PR from main, merged ahead of #309):
+- Change only line 209's condition and its message; the rest of the validator stays as it is.
+- Update the validator test that pinned the old rejection so it pins the new rule, citing D-LIB8M-NOFACTS. Add one test that every card on main validates (all of `docs/research/howto/cards` that main holds). Show these mutations red:
+  - `plateFacts: {}`;
+  - `plateFacts: 'x'`;
+  - a fact with an unknown claim;
+  - a fact with no claim.
+- No card file changes.
+- LIB-STRIP merges the fix branch into its own branch, so its A6 is green on its own head.
