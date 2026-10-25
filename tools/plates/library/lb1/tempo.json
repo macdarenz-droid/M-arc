@@ -1,0 +1,256 @@
+{
+ "note": "LB1 tempo map (LIB-9a, ruled D-LIB9a-NOTE Q3, lib4-cards section 13 @ 8669e21). Each card's tempo array is built only from this file and that card's plate.tempo: a row's s is plate.tempo[from]; 'up' is the concentric phase, 'down' the eccentric, 'pause' a Hold right after the concentric, present if and only if pause > 0. Moving rows are {phase, s, move: true}, Hold is {phase, s}. No Rest phase: the set of named constants is empty.",
+ "ruling": "D-LIB9a-NOTE Q3",
+ "constants": {},
+ "poseMap": {
+  "assisted_pull_up": {
+   "plate.start": "end",
+   "plate.end": "start",
+   "mistake": "mistake",
+   "ruling": "D-LIB9a-NOTE Q2"
+  }
+ },
+ "ids": {
+  "chin_up": {
+   "claim": "c8",
+   "rows": [
+    {
+     "phase": "Pull",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down"
+    }
+   ]
+  },
+  "hanging_knee_raise": {
+   "claim": "c9",
+   "rows": [
+    {
+     "phase": "Lift",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down"
+    }
+   ]
+  },
+  "assisted_pull_up": {
+   "claim": "c9",
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down"
+    },
+    {
+     "phase": "Pull",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    }
+   ]
+  },
+  "inverted_row": {
+   "claim": "c6",
+   "rows": [
+    {
+     "phase": "Pull",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down"
+    }
+   ]
+  },
+  "close_grip_pulldown": {
+   "claim": "c10",
+   "rows": [
+    {
+     "phase": "Pull",
+     "from": "up"
+    },
+    {
+     "phase": "Return",
+     "from": "down"
+    }
+   ]
+  },
+  "underhand_lat_pulldown": {
+   "claim": "c12",
+   "rows": [
+    {
+     "phase": "Pull",
+     "from": "up"
+    },
+    {
+     "phase": "Return",
+     "from": "down"
+    }
+   ]
+  },
+  "single_arm_lat_pulldown": {
+   "claim": "c14",
+   "rows": [
+    {
+     "phase": "Pull",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Return",
+     "from": "down"
+    }
+   ]
+  },
+  "straight_arm_pulldown": {
+   "claim": [
+    "c15",
+    "c7"
+   ],
+   "rows": [
+    {
+     "phase": "Pull",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Return",
+     "from": "down"
+    }
+   ]
+  },
+  "chest_supported_row": {
+   "claim": [
+    "c12",
+    "c5"
+   ],
+   "rows": [
+    {
+     "phase": "Pull",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Return",
+     "from": "down"
+    }
+   ]
+  },
+  "resistance_band_row": {
+   "claim": "c10",
+   "rows": [
+    {
+     "phase": "Pull",
+     "from": "up"
+    },
+    {
+     "phase": "Return",
+     "from": "down"
+    }
+   ]
+  },
+  "incline_machine_press": {
+   "claim": [
+    "c8",
+    "c3"
+   ],
+   "rows": [
+    {
+     "phase": "Press",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Return",
+     "from": "down"
+    }
+   ]
+  },
+  "shoulder_press": {
+   "claim": [
+    "c12",
+    "c6"
+   ],
+   "rows": [
+    {
+     "phase": "Press",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Return",
+     "from": "down"
+    }
+   ]
+  },
+  "horizontal_leg_press": {
+   "claim": [
+    "c12",
+    "c13"
+   ],
+   "rows": [
+    {
+     "phase": "Press",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Return",
+     "from": "down"
+    }
+   ]
+  },
+  "leg_press_calf_raise": {
+   "claim": "c15",
+   "rows": [
+    {
+     "phase": "Raise",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Lower",
+     "from": "down"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,22 @@
+{
+ "heading": {
+  "text": "Hand: right and wrong",
+  "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS; D-LIB7c-KEYS)"
+ },
+ "faults": {
+  "curled": {
+   "right": {
+    "text": "Base of fingers",
+    "source": "golden B's approved hang Right note, tools/plates/layers/howto/render-hanging_leg_raise.mjs:138; the pullVariant note, radial-rules.mjs:48 (D-LIB7c-HANDLE)"
+   },
+   "wrong": {
+    "text": "Wrist curled",
+    "source": "the D-LIB7-10 fault label, tools/plates/library/hands/radial-rules.mjs:52 (pullVariant); hand-bar.mjs and hand-v-handle.mjs draw the same label (D-LIB7c-FAULT)"
+   },
+   "pager": {
+    "text": "Wrist curled",
+    "source": "the D-LIB7-10 fault label, tools/plates/library/hands/radial-rules.mjs:52 (pullVariant) (pager labels, D-LIB7FIX-WORDS; D-LIB7c-FAULT)"
+   }
+  }
+ }
+}

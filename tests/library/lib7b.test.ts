@@ -27,6 +27,11 @@ beforeAll(async () => {
 }, 300_000);
 afterAll(() => { for (const d of tmps) rmSync(d, { recursive: true, force: true }); });
 
+// D-LIB8M-SCRATCH7B (#109): the copyOf scratch id is never a real row (not in exercises.json, in no batch file)
+it('the scratch id is in neither src/data/exercises.json nor any batch file', () => {
+  expect(F.scratchRowProblems()).toEqual([]);
+});
+
 const idsIn = (h: string) => [...h.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]!);
 /** 7b-A1's problems on a built page, for the fixture's rows: each pair row's card holds exactly one hand zx block, the
  *  key's pair panel (namespaced for a repeated key), every reference names it, and the pair CSS is there once per key. */
@@ -60,8 +65,8 @@ describe('7b-A1: a pair row\'s hand block is its pair panel (D-LIB9-HANDPAGE, D-
     expect((await a1Problems(raw)).length).toBeGreaterThanOrEqual(F.SCRATCH_7B.length);
   });
   it('mutations: an aria-controls left at <chromeId>-zoom-hand; the panel inserted twice; each red', async () => {
-    const left = page.replace('aria-controls="hp-curl-dumbbell-under-zoom-hand"', 'aria-controls="barbell-row-zoom-hand"');
-    expect((await a1Problems(left)).join('\n')).toMatch(/lib_barbell_row: references|barbell-row-zoom-hand left/);
+    const left = page.replace('aria-controls="hp-curl-dumbbell-under-zoom-hand"', 'aria-controls="scratch-pull-row-zoom-hand"');
+    expect((await a1Problems(left)).join('\n')).toMatch(/lib_scratch_pull_row: references|scratch-pull-row-zoom-hand left/);
     const panel = await P.pairPanel('rope-push-neutral'), twice = page.replace(panel, () => panel + panel);
     expect((await a1Problems(twice)).join('\n')).toMatch(/repeated ids|hand blocks/);
   });
@@ -81,9 +86,9 @@ describe('7b-A1: a pair row\'s hand block is its pair panel (D-LIB9-HANDPAGE, D-
     expect(() => node(tree, `
       import { readFileSync, writeFileSync, mkdtempSync } from 'node:fs'; import { tmpdir } from 'node:os'; import { join } from 'node:path';
       import { layersSpecOf } from './tools/plates/library/layers-spec.mjs'; import { BATCH, PAGES } from './tools/plates/library/fidelity/fixture.mjs';
-      const c = JSON.parse(readFileSync(PAGES.layersConfig, 'utf8')); c.closeups.lib_barbell_row.pair = 'Curl Dumbbell'; writeFileSync(PAGES.layersConfig, JSON.stringify(c));
-      try { layersSpecOf(BATCH, { stageDir: mkdtempSync(join(tmpdir(), 'x-')) }); } finally { c.closeups.lib_barbell_row.pair = 'curl-dumbbell-under'; writeFileSync(PAGES.layersConfig, JSON.stringify(c, null, 2) + '\\n'); }
-    `)).toThrow(/lib_barbell_row: pair "Curl Dumbbell" is not a pair key/);
+      const c = JSON.parse(readFileSync(PAGES.layersConfig, 'utf8')); c.closeups.lib_scratch_pull_row.pair = 'Curl Dumbbell'; writeFileSync(PAGES.layersConfig, JSON.stringify(c));
+      try { layersSpecOf(BATCH, { stageDir: mkdtempSync(join(tmpdir(), 'x-')) }); } finally { c.closeups.lib_scratch_pull_row.pair = 'curl-dumbbell-under'; writeFileSync(PAGES.layersConfig, JSON.stringify(c, null, 2) + '\\n'); }
+    `)).toThrow(/lib_scratch_pull_row: pair "Curl Dumbbell" is not a pair key/);
   });
 });
 
@@ -140,10 +145,10 @@ describe('D-LIB7b-HALVES: the pair panel gets golden B\'s TalkBack halves, attri
 });
 
 describe('7b-A2: handpairs.mjs pair-row checks', () => {
-  const row = { id: 'lib_barbell_row', chromeId: 'barbell-row', pages: { layers: 'x.layers.html', layersConfig: 'x.layers.json' } };
+  const row = { id: 'lib_scratch_pull_row', chromeId: 'scratch-pull-row', pages: { layers: 'x.layers.html', layersConfig: 'x.layers.json' } };
   it('a config pair K with HAND_OF_ID[id] !== K throws; a \'none\' row naming a pair throws; a \'none\' row whose card holds a pair panel throws', () => {
     expect(() => hp.pairRowCheck(row, 'curl-dumbbell-under', 'curl-dumbbell-under', 'pull', page)).not.toThrow();
-    expect(() => hp.pairRowCheck(row, 'curl-dumbbell-under', 'ez-curl-over', 'pull', page)).toThrow(/lib_barbell_row: x.layers.json names pair curl-dumbbell-under, but HAND_OF_ID gives ez-curl-over/);
+    expect(() => hp.pairRowCheck(row, 'curl-dumbbell-under', 'ez-curl-over', 'pull', page)).toThrow(/lib_scratch_pull_row: x.layers.json names pair curl-dumbbell-under, but HAND_OF_ID gives ez-curl-over/);
     expect(() => hp.pairRowCheck(row, 'curl-dumbbell-under', undefined, 'pull', page)).toThrow(/HAND_OF_ID gives undefined/);
     expect(() => hp.pairRowCheck(row, 'curl-dumbbell-under', 'curl-dumbbell-under', 'none', page)).toThrow(/archetype 'none', but x.layers.json names pair/);
     expect(() => hp.pairRowCheck(row, undefined, undefined, 'none', page)).toThrow(/archetype 'none', but its card on x.layers.html holds a pair panel/);
@@ -161,7 +166,7 @@ describe('7b-A2: handpairs.mjs pair-row checks', () => {
       console.log(styleWithout(style, rows().filter(r => r.batchFile === BATCH)) === styleWithout(golden, goldenRows()) ? 'EQUAL' : 'DIFFERENT');
     `).trim();
     expect(run('')).toBe('EQUAL');
-    expect(() => run("style = style.replace('.hx-hp-curl-dumbbell-under .zoom', '.hx-hp-curl-dumbbell-under .zoom{}\\n.hx-hp-curl-dumbbell-under .zoom');")).toThrow(/zooms: lib_barbell_row, lib_t_bar_row: the page's .hx-hp-curl-dumbbell-under rules are not pairCss\(curl-dumbbell-under\) exactly/);
+    expect(() => run("style = style.replace('.hx-hp-curl-dumbbell-under .zoom', '.hx-hp-curl-dumbbell-under .zoom{}\\n.hx-hp-curl-dumbbell-under .zoom');")).toThrow(/zooms: lib_scratch_pull_row, lib_t_bar_row: the page's .hx-hp-curl-dumbbell-under rules are not pairCss\(curl-dumbbell-under\) exactly/);
     expect(run("style = style + '\\n.hx-hp-zz-none .zoom{color:red}';")).toBe('DIFFERENT');
     expect(() => run("style = style.replace(/(\\.hx-hp-rope-push-neutral [^{]*\\{[^}]*?)(\\d)/, (m, a, d) => a + (d === '1' ? '2' : '1'));")).toThrow(/lib_smith_machine_shoulder_press: the page's .hx-hp-rope-push-neutral rules are not pairCss/);
   }, 120_000);
@@ -175,7 +180,7 @@ describe('7b-A2 on a scratch tree: the real pipeline with the scratch rows shipp
       import { render } from './tools/plates/generate.mjs';
       const out = await render(), o = {};
       for (const [p, v] of out) { mkdirSync(dirname(p), { recursive: true }); writeFileSync(p, v.text); }   // the tree's generated files (D-LIB7b-TUPLES reads them)
-      for (const [p, v] of out) if (/zoom-(barbell-row|t-bar-row|smith-machine-shoulder-press)\\.css$|handpair-/.test(p)) o[p] = { writers: v.writers, text: v.text };
+      for (const [p, v] of out) if (/zoom-(scratch-pull-row|t-bar-row|smith-machine-shoulder-press)\\.css$|handpair-/.test(p)) o[p] = { writers: v.writers, text: v.text };
       console.log(JSON.stringify(o));
     `).trim().split('\n').pop());
     expect(Object.keys(out).filter(p => p.includes('handpair-')).sort()).toEqual(['src/howto/generated/handpair-curl-dumbbell-under.ts', 'src/howto/generated/handpair-rope-push-neutral.ts']);
@@ -193,9 +198,9 @@ describe('D-LIB7b-TUPLES: the HT-6 twin expects the pages of the panel a keyed i
     const got = JSON.parse(node(tree, `
       import { sourceFacts } from './tools/plates/library/fidelity/tuples.mjs';
       const o = {};
-      for (const id of ['lib_barbell_row', 'lib_t_bar_row', 'lib_smith_machine_shoulder_press', 'lib_lat_pulldown', 'lib_seated_cable_row']) o[id] = (await sourceFacts(id)).hand?.pages ?? null;
+      for (const id of ['lib_scratch_pull_row', 'lib_t_bar_row', 'lib_smith_machine_shoulder_press', 'lib_lat_pulldown', 'lib_seated_cable_row']) o[id] = (await sourceFacts(id)).hand?.pages ?? null;
       console.log(JSON.stringify(o));
     `).trim().split('\n').pop());
-    expect(got).toEqual({ lib_barbell_row: 2, lib_t_bar_row: 2, lib_smith_machine_shoulder_press: 1, lib_lat_pulldown: 3, lib_seated_cable_row: 1 });
+    expect(got).toEqual({ lib_scratch_pull_row: 2, lib_t_bar_row: 2, lib_smith_machine_shoulder_press: 1, lib_lat_pulldown: 3, lib_seated_cable_row: 1 });
   }, 120_000);
 });

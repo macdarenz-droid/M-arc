@@ -1,0 +1,80 @@
+{
+ "note": "Pilot B tempo map (LIB-11, DESIGN.md section 7; research claude/libht-research @ 38d5f9c6). Each card tempo array is built only from this file and that card plate.tempo: a row s is plate.tempo[from]; up is the concentric phase, down the eccentric, pause a Hold right after the concentric, present if and only if pause > 0. Moving rows are {phase, s, move: true}; Hold is {phase, s}. No constants, no Rest phase. crunch is held (no row).",
+ "ruling": "PILOT B MAPS RULED @ 6ade71ef (#278 comment 6269835256)",
+ "research": "38d5f9c608b492587b3f923382ccb02bea8f1345",
+ "constants": {},
+ "poseMap": {
+  "push_up": {
+   "start": "plate.end",
+   "end": "plate.start",
+   "why": "the Mistake is the end pose plus an override (plate.mjs:78, :208): at the bottom the body is a hand's width off the floor, so sagging hips would pass through it; at the top the sag reads against the solid straight body, as pilot A's plank"
+  }
+ },
+ "ids": {
+  "smith_machine_bench_press": {
+   "claim": [
+    "c12",
+    "c18"
+   ],
+   "rows": [
+    {
+     "phase": "Lower",
+     "from": "down"
+    },
+    {
+     "phase": "Press",
+     "from": "up"
+    }
+   ]
+  },
+  "cable_fly": {
+   "claim": [
+    "c12",
+    "c5"
+   ],
+   "rows": [
+    {
+     "phase": "Close",
+     "from": "up"
+    },
+    {
+     "phase": "Hold",
+     "from": "pause"
+    },
+    {
+     "phase": "Open",
+     "from": "down"
+    }
+   ]
+  },
+  "push_up": {
+   "claim": "c13",
+   "rows": [
+    {
+     "phase": "Press",
+     "from": "up"
+    },
+    {
+     "phase": "Lower",
+     "from": "down"
+    }
+   ]
+  },
+  "seated_leg_curl": {
+   "claim": [
+    "c7",
+    "c13"
+   ],
+   "rows": [
+    {
+     "phase": "Curl",
+     "from": "up"
+    },
+    {
+     "phase": "Return",
+     "from": "down"
+    }
+   ]
+  }
+ }
+}

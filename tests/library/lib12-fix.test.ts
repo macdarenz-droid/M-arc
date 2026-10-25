@@ -151,7 +151,7 @@ describe('LIB-12-FIX X1: words per LIB-12 key (D-LIB12FIX-WORDS)', () => {
     const none = { chrome: all.chrome, keys: {} };
     expect(() => PN.panelHtml(k, pages, none)).toThrow(`hand panel ${k}: no words in tools/plates/library/hands/words/${k}.json`);
     expect(wordsProblems({ ...all, keys: Object.fromEntries(Object.entries(all.keys).filter(([x]) => x !== k)) })).toEqual([`${k}: no words`]);
-    expect(() => C.sweep(P.keysOf(), 8 + 1, 'pair keys')).toThrow('pair keys: 10, expected 9');   // D-LIB12FIX-R8-GAPS: 8 + 2
+    expect(() => C.sweep(P.keysOf(), 8 + 2 + 5 - 1, 'pair keys')).toThrow('pair keys: 15, expected 14');   // D-LIB12FIX-R8-GAPS: 8 + 2, + LIB-7c 5 (D-LIB7c-SCOPE)
     const long = structuredClone(all); long.keys[k].faults['hand-ahead'].wrong.text = 'Hand ahead of the shoulder line with weight on the fingers';
     expect(() => PN.panelHtml(k, pages, { chrome: long.chrome, keys: { [k]: long.keys[k] } })).toThrow(/hand-ahead.wrong has 11 words \(max 10\)/);
     const noSrc = structuredClone(all); noSrc.keys[k].faults['cupped-palm'].right.source = '';

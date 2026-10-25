@@ -46,14 +46,22 @@ export function readReviews(root = ROOT) {
   try { return JSON.parse(readFileSync(join(root, REVIEWS), 'utf8')); } catch { return null; }
 }
 
-/** One line per id with no matching entry. A scratch entry counts only in a root that holds SCRATCH_MARKER. */
+/** One line per id with no matching entry. A scratch entry counts only in a root that holds SCRATCH_MARKER. A matching
+ *  entry that is not scratch must be the supervisor's, with a decision, an approval and open 0 (D-LIB8M-O5GATE). */
 export async function stampProblems(ids, { root = ROOT, reviews = readReviews(root) } = {}) {
   const entries = Array.isArray(reviews?.entries) ? reviews.entries : [];
   const marked = existsSync(join(root, SCRATCH_MARKER)), bad = [];
+  const filled = v => typeof v === 'string' && v.trim() !== '';
   for (const id of ids) {
     const { scope, hash } = await stampOf(id, { root });
     if (!entries.length) { bad.push(`LIB-5 stamp: ${id}: reviews.json is missing, unparsable or empty`); continue; }
-    if (!entries.some(e => e.scope === scope && e.hash === hash && (!e.scratch || marked))) bad.push(`LIB-5 stamp: ${id}: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`);
+    const matching = entries.filter(e => e.scope === scope && e.hash === hash && (!e.scratch || marked));
+    if (!matching.length) { bad.push(`LIB-5 stamp: ${id}: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`); continue; }
+    for (const e of matching.filter(m => !m.scratch)) {
+      if (e.approvedBy !== 'supervisor') bad.push(`LIB-5 stamp: ${id}: approvedBy ${JSON.stringify(e.approvedBy)} is not supervisor`);
+      if (!filled(e.decision) || !filled(e.approval)) bad.push(`LIB-5 stamp: ${id}: the entry needs a decision and an approval`);
+      if (e.open !== 0) bad.push(`LIB-5 stamp: ${id}: open ${JSON.stringify(e.open)} is not 0`);
+    }
   }
   return bad;
 }
