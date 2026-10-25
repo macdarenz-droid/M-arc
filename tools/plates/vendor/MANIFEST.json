@@ -15,14 +15,14 @@
       "gitBlob": "fa7c6645385a0b10102ef51a7fae25287676a9df"
     },
     "engine/SPEC.md": {
-      "sha256": "af4b34331d256b9002db325a3714e9c4bdbc3306330a93ded128298aa466b5cb",
-      "source": "48153c4:docs/howto/technical-plate/engine/SPEC.md",
-      "gitBlob": "d5abe2e457a51fa0c29bd523576cf1091391c12f"
+      "sha256": "18ea53fda33b5dff4f817051bcca475183f7eeb48327ed8b2e59ba70d5aca0b6",
+      "source": "c35e0a4:docs/howto/technical-plate/engine/SPEC.md",
+      "gitBlob": "0bf9d4a68fdc73670544d352f0d37fd5181133ba"
     },
     "engine/body.mjs": {
-      "sha256": "704b42d651bb5c30fccfcc4411679ee46858469146f02862c490fabcd721fcba",
-      "source": "f214700:docs/howto/technical-plate/engine/body.mjs",
-      "gitBlob": "c4b017075b7dbc7d3f3d980e36802213497a79fa"
+      "sha256": "bdf6dc6ef726e3c03914b66508a0d53c6386ed13f61602c14427382ee7348163",
+      "source": "c35e0a4:docs/howto/technical-plate/engine/body.mjs",
+      "gitBlob": "bbd2d1a2d48fda94f5749be9147389e64f25d08b"
     },
     "engine/equipment.mjs": {
       "sha256": "d1f7d82a8962e411525ab29138a1b36eb444d10b04e1e75a14e9475b15eaa638",
@@ -55,9 +55,9 @@
       "gitBlob": "769d3d8b2617be918a054ede241b69f42a51770f"
     },
     "engine/plate.mjs": {
-      "sha256": "984cd4783b4a5bc6c14ec1c32cba0678e72348d38397227ef01536f3eed1131a",
-      "source": "f214700:docs/howto/technical-plate/engine/plate.mjs",
-      "gitBlob": "6113e70e4e22230647c3fce71fcd3be82f2864f3"
+      "sha256": "5cd7c88994b0be818ef00cd655d29b5105533e961cba6f4b7580e21ebc2ce532",
+      "source": "c35e0a4:docs/howto/technical-plate/engine/plate.mjs",
+      "gitBlob": "fadbec8d78899194d5e5ef1a23a7507c4600a915"
     },
     "engine/render.mjs": {
       "sha256": "eee26ec10e398a16afedc45b0ff763a088f4fb8efc5b90a161f57ca5a85ace47",
@@ -103,6 +103,16 @@
       "sha256": "5e9016862e4f145076d0a7ee1b0dba9c8b2d951692ff6aab79930f691cac17a9",
       "source": "bc0f378:docs/howto/technical-plate/exercises/_test_side.mjs",
       "gitBlob": "fb09b64f6802efe860114856b6a046c5a6061e42"
+    },
+    "exercises/_test_er5.mjs": {
+      "sha256": "9fa81dd0da0d66b6970c2b82b505a27e716790e40a6a31db468015ea292e3b7c",
+      "source": "c35e0a4:docs/howto/technical-plate/exercises/_test_er5.mjs",
+      "gitBlob": "3bd13801c4079af6a8b5eea05d3ef427dd31ba7e"
+    },
+    "exercises/_test_pitch.mjs": {
+      "sha256": "1432618d996055ba18d781d1594c53d354824fef01a6696a24c4e89da67175f5",
+      "source": "c35e0a4:docs/howto/technical-plate/exercises/_test_pitch.mjs",
+      "gitBlob": "40da3811b17ab9fca8d7f5e378cec4707aa6c1c6"
     },
     "exercises/barbell_back_squat.mjs": {
       "sha256": "4edd909a013bf3d0209eadaf094610ba3ed6871fe47a47539b2af2c1dee6769c",

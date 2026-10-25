@@ -1,0 +1,43 @@
+{
+ "note": "LB5 build-ahead rows (LIB-15, D-LIB15-AHEAD): stage drawing or review only, never in batches/. Only drawn, non-held ids (A5); all H (DESIGN.md section 1). censusRef: the census commit (claude/howto-options).",
+ "batch": "LB5",
+ "censusRef": "4a9fd86",
+ "rows": {
+  "lib_preacher_curl": {
+   "src": "library/specs/preacher_curl.mjs",
+   "slug": "preacher-curl",
+   "prefix": "preacher-curl",
+   "chromeId": "preacher-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_cable_curl": {
+   "src": "library/specs/cable_curl.mjs",
+   "slug": "cable-curl",
+   "prefix": "cable-curl",
+   "chromeId": "cable-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_bayesian_cable_curl": {
+   "src": "library/specs/bayesian_cable_curl.mjs",
+   "slug": "bayesian-cable-curl",
+   "prefix": "bayesian-cable-curl",
+   "chromeId": "bayesian-cable-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
+  "lib_concentration_curl": {
+   "src": "library/specs/concentration_curl.mjs",
+   "slug": "concentration-curl",
+   "prefix": "concentration-curl",
+   "chromeId": "concentration-curl",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  }
+ }
+}
