@@ -277,6 +277,7 @@ describe('LIB-11 A5: batches/pilot-b.json holds exactly the drawn ids that are n
 
 describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f28d2)', { timeout: T }, () => {
   const GOLD = 'tests/howto/golden/library/pilot-b.json', PAGE = 'ff3e017c98f73b6d049808a6ffea057a7fa350eed764d9ceedb9a582fa22583f';
+  const APPROVAL = 'https://github.com/macdarenz-droid/M-arc/pull/278#issuecomment-6393170019 @ 1d7f28d2e2369472fd98930b15998cf0cc890eae';   // the PIN GO, at the GO head
   const GO: Record<string, string[]> = { lib_smith_machine_bench_press: ['F5'], lib_seated_leg_curl: ['F5'], lib_cable_fly: ['F2', 'F5'], lib_push_up: ['F5'] };
   let golden: any, html = '';
   beforeAll(async () => {
@@ -289,6 +290,8 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     const out: string[] = [...golden.verifyBatchChain(file, readJson('tests/howto/golden/GOLDEN.json').entries)];
     const [pg, ...pl] = file.entries;
     if (pg?.kind !== 'page' || pg.pageSha256 !== PAGE || golden.sha256(page) !== PAGE || pg.bytes !== Buffer.byteLength(page)) out.push('page entry');
+    for (const e of file.entries) if (e.approval !== APPROVAL) out.push(`${e.id ?? e.kind}: approval is not the GO`);
+    if (file.entries.some((e: any) => e.kind === 'layers-page')) out.push('a layers-page entry');
     const plates = golden.extractPlates(page);
     if (pl.map((e: any) => e.id).join() !== plates.map((p: any) => `lib_${p.chromeId.replace(/-/g, '_')}`).join()) out.push('plate entries are not the page\'s plates in page order');
     for (const e of pl) {
@@ -309,6 +312,17 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
   it('the golden file holds the page and the 4 plates with the GO\'s exemptions exactly; its chain is valid', () => {
     expect(pinProblems(readJson(GOLD), html)).toEqual([]);
   });
+  const layersProblems = (p: any) => [p.layers, p.layersConfig].filter((f: string) => existsSync(f)).map((f: string) => `${f} exists`);
+  it('the pages object is the ruled three paths, and neither layers file exists', () => {
+    expect(layersProblems(readJson(ROWS).pages)).toEqual([]);
+  });
+  /** The 4 pinned ids in any other library golden file (entry ids, chromeIds, srcs, card ids in HTML). */
+  const otherGolden = (files: Record<string, string>) => Object.entries(files).flatMap(([n, t]) =>
+    DRAWN.filter(id => [`"lib_${id}"`, `"library/specs/${id}.mjs"`, `"chromeId": "${id.replace(/_/g, '-')}"`, `id="card-${id.replace(/_/g, '-')}"`].some(v => t.includes(v))).map(id => `${n}: ${id}`));
+  const goldenFiles = () => Object.fromEntries(readdirSync('tests/howto/golden/library').filter(n => n !== 'pilot-b.json').map(n => [n, readFileSync(join('tests/howto/golden/library', n), 'utf8')]));
+  it('no other library golden file names a pinned pilot B id', () => {
+    expect(otherGolden(goldenFiles())).toEqual([]);
+  });
   it('the held crunch is in no batch, page or golden file', () => {
     const hits = ['tools/plates/library/batches', 'tools/plates/library/pages', 'tests/howto/golden/library'].flatMap(d => readdirSync(d).filter(n => n.endsWith('.json'))
       .filter(n => /"lib_crunch"|"library\/specs\/crunch\.mjs"|"chromeId": "crunch"/.test(readFileSync(join(d, n), 'utf8'))).map(n => `${d}/${n}`));
@@ -324,6 +338,20 @@ describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f2
     const cr = structuredClone(g); cr.entries.push({ ...cr.entries[4], id: 'lib_crunch' });
     expect(pinProblems(cr, html).length).toBeGreaterThan(0);
     expect(pinProblems(g, html.replace('Smith Machine Bench Press', 'Smith Machine Bench Pres'))).toContain('page entry');
+    const ap = structuredClone(g); ap.entries[4].approval = ap.entries[4].approval.replace('6393170019', '6393188049');
+    expect(pinProblems(ap, html)).toEqual(['lib_push_up: approval is not the GO']);
+    const pa = structuredClone(g); pa.entries[0].approval = pa.entries[0].approval.replace('1d7f28d2', '8ae48ed9');
+    expect(pinProblems(pa, html)).toContain('page: approval is not the GO');
+    const ow = structuredClone(g); ow.entries[1].approvedBy = 'owner';
+    expect(pinProblems(ow, html).length).toBeGreaterThan(0);
+    const lp = structuredClone(g); lp.entries.push({ ...lp.entries[0], kind: 'layers-page' });
+    expect(pinProblems(lp, html)).toContain('a layers-page entry');
+  });
+  it('mutations: an existing layers file and a pinned id in another golden file are red', () => {
+    const p = readJson(ROWS).pages;
+    expect(layersProblems({ ...p, layers: GOLD })).toEqual([`${GOLD} exists`]);
+    expect(otherGolden({ ...goldenFiles(), 'lb9.json': '{"entries":[{"kind":"plate","id":"lib_push_up"}]}' })).toEqual(['lb9.json: push_up']);
+    expect(otherGolden({ 'x.layers.html': '<article id="card-cable-fly"></article>' })).toEqual(['x.layers.html: cable_fly']);
   });
 });
 
