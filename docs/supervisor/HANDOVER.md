@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-25 ~02:00 UTC · main `1edb3c66` · **8.0r: train 36 merged; owner 10-25 03:40 "Just continue until maxxed out" (no 80 % pause this week); 5 builders running; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-25 ~12:45 UTC · main `a22d84e5` · **8.0r: train 37 merged; LB2 all 8 approved; owner 10-25 03:40 "Just continue until maxxed out" (no 80 % pause this week); read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -826,6 +826,19 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | #278 LIB-11 pilot B | session_01UHomn1uKNdA1g3v5Pjdii4 | main catch-up, Do 10 'PILOT B SHEET READY' for the supervisor's decision (owner delegation), then the pin |
   | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
   | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
+
+**Update 12:45 UTC (10-25)** (usage 7-day 0.81 at 11:44; the owner's "until maxxed out" holds until the 10-29 reset):
+- **Train 37 merged** → main `a22d84e5` (#245 LB1, #279 LIB-ZOOM, #320 F-CI-2: source-gate limit 60 → 90 min, D-SUP-CI-2).
+- **#265 LIB-10: all 8 LB2 plates approved.**
+  - Panel lb2n @ `31d0bfcf` (6396940823): VALID; arnold_press and incline_dumbbell_press approved.
+  - Focused recheck lb2r @ `41648561` (6397434964): VALID; incline_barbell_bench_press approved.
+  - The head carries main `a22d84e5`. The builder (session_01Jd7LM4kQm7iKTuCeuwW3q3) finishes the card steps, then posts READY; one fresh reviewer follows.
+  - New golden-B follow-ups **25** (pull_up's Trace starts on the end elbow) and **26** (pull_up's wall plate has no wall), recorded in PANELS §1 and lib4-cards 36–37. PANELS §1 also gains **24**.
+- **#278 LIB-11:** CATCH-UP READY @ `483232db` (main `a22d84e5`; pilot B's 4 MANIFEST rows re-pinned). An in-chat Opus delta review is running.
+- **#274 LIB-13 (session_01TUMeh9jrsqQS7Kxfopz6xH):** LB3 SHEET READY @ `bccea6f5` (main merged). Decisions **D-LIB13-SHEET-1..7** (6397404581) take every recommended option. Next: the builder posts READY, then a reviewer.
+- **#311 LIB-20 (session_011ZTZfSNqMuq6rc1yKG2mAs):** catch-up plus the D-LIB20-L0 (b) pilot A re-pin at `5a18a86b`. Five file hashes move per row (golden.mjs, pins.json, vendor/MANIFEST.json and the vendored engine/body.mjs and plate.mjs); ruled in scope by message.
+- **#273 HT-11 (session_01Q5TW2K1HEbn4jUMzyjDYkF):** catch-up 2 is running.
+- **Train 38**, plan order: #265 → #278 → #273 → #274; each joins once its review passes. #278 and #311 both pin MANIFEST rows, so whichever merges second regenerates them.
 
 **Update 10:00 UTC (10-25):**
 - **#245 LIB-9a: REVIEW PASS @ `19c99837`** (6396051602; the High was fixed by pinning INHERIT_MAP to a literal copy of the ruled map).
