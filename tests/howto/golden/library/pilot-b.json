@@ -1,0 +1,137 @@
+{
+  "base": {
+    "index": 8,
+    "hash": "e48d731d176c5e3994cab5e2de5ea2db938cbdf6c249600679588daa58b22361"
+  },
+  "entries": [
+    {
+      "kind": "page",
+      "pageSha256": "ff3e017c98f73b6d049808a6ffea057a7fa350eed764d9ceedb9a582fa22583f",
+      "bytes": 409765,
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/278#issuecomment-6393170019 @ 1d7f28d2e2369472fd98930b15998cf0cc890eae",
+      "date": "2026-10-25",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); PILOT B PIN GO #278 6393170019 on the pilot B sheet 3ad351c4 (PILOT B SHEET READY 6393161936), each raised flag shown with its default \"approve as named exemptions\". Panel: rechecks @ d3b231d (#278 6276782102), push_up round 1 @ 4033daf (6275943464), bytes unchanged since.",
+      "supersedes": null,
+      "prev": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_smith_machine_bench_press",
+      "src": "library/specs/smith_machine_bench_press.mjs",
+      "slug": "smith-machine-bench-press",
+      "prefix": "smith-machine-bench-press",
+      "chromeId": "smith-machine-bench-press",
+      "fragments": {
+        "normalSvg": "6e486661c1a4ae976b4ff7d102a9adbf25805772fa761c66bc9e6ade0d7a947a",
+        "normalOverlay": "d0c930b1a6cce7fd86b3f7459b59d0e1d5803a283508d3dbdf54015536d1d02a",
+        "mistakeSvg": "8595aeafdbe304531b218b165040691a608c6d136e088064b9a0da71b341d4e2",
+        "mistakeOverlay": "2f09dc8ad42f7526ed160401eddc4a6aceec828dc655550e9cce2e7acc2f1860",
+        "tells": "bec9ba26ac2b7142fb443afae135952dc3055ce8db6fe3eb6191bca332eb777e",
+        "tempo": "9af9e6552a529e3708cf8dafa367dc90b5d5d8b5b1f51cedaf88fe48e65d10d8",
+        "cues": "5fb22e73fd62570d1e05ded46d901573ec0d668884423def727d92cc56b1d771",
+        "alt": "64b45d254409412052a95ee88e5e9395bd5d90101cce762c8a780b668f824c1b",
+        "mistakeAlt": "c99242ab8172809c00427bd65f767075a61bf35fef73da59e906155fa57fb1c4"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/278#issuecomment-6393170019 @ 1d7f28d2e2369472fd98930b15998cf0cc890eae",
+      "date": "2026-10-25",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); PILOT B PIN GO #278 6393170019 on the pilot B sheet 3ad351c4 (PILOT B SHEET READY 6393161936), each raised flag shown with its default \"approve as named exemptions\". Panel: rechecks @ d3b231d (#278 6276782102), push_up round 1 @ 4033daf (6275943464), bytes unchanged since. Named exemptions: F5 (the raised flags of the Do 7 table, #278 6276079953 and 6393161936). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "814738834e5386a2b456c9e9bbda0f624b7e7e4b24010cb4516de138b363b2ce"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_seated_leg_curl",
+      "src": "library/specs/seated_leg_curl.mjs",
+      "slug": "seated-leg-curl",
+      "prefix": "seated-leg-curl",
+      "chromeId": "seated-leg-curl",
+      "fragments": {
+        "normalSvg": "7d3f7e0d15fba8d66b478311878bf42f73e10d75f837596f534a9dfc2bb26c4c",
+        "normalOverlay": "1c2170573cd32ca2f66cb4317c97165e5b81b66843c9161a3439e50f9b690fb9",
+        "mistakeSvg": "1ac6befc290ae60cdf336dfe02866b629e8bc704e259281e248497da82e541d4",
+        "mistakeOverlay": "3bcc7dd5f002ebf9a788ab68692d1220285c5ab2b9114c0ea3c0a3541fe3fe3c",
+        "tells": "3733dc201ba2e66d293bfbafdedf332036606276f8e112f7911a407a249c2a40",
+        "tempo": "7a03361abe53f6246837752c4ad2be48fe66b232a929bac4e4b5ca53832a7ccb",
+        "cues": "111e1af1d195218a12259389acf65e8e5bd02f44bd4cebfa933ca0735b1efc96",
+        "alt": "7ea32cfe4e3f8cee15862f8218e71031f35eb3930d995089d5d3d143987489e5",
+        "mistakeAlt": "e6cf168e59f62fe5e276e561b60120175117ba8744bb9e7127260bc2f3dbef00"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/278#issuecomment-6393170019 @ 1d7f28d2e2369472fd98930b15998cf0cc890eae",
+      "date": "2026-10-25",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); PILOT B PIN GO #278 6393170019 on the pilot B sheet 3ad351c4 (PILOT B SHEET READY 6393161936), each raised flag shown with its default \"approve as named exemptions\". Panel: rechecks @ d3b231d (#278 6276782102), push_up round 1 @ 4033daf (6275943464), bytes unchanged since. Named exemptions: F5 (the raised flags of the Do 7 table, #278 6276079953 and 6393161936). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "e818bfaaa391812ae6448b7f2afa6ac387a0d3b9ae0200d602f12c5327cc02e5"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_cable_fly",
+      "src": "library/specs/cable_fly.mjs",
+      "slug": "cable-fly",
+      "prefix": "cable-fly",
+      "chromeId": "cable-fly",
+      "fragments": {
+        "normalSvg": "e2e49d0e04f36430f0f21aeb5cbe5c07c125652a9878c1c317bb4020b08fea42",
+        "normalOverlay": "3137714d3a5abc3ef3d1421cde9d46e6c5fb25cfc3903d5a669d0d3775be65fc",
+        "mistakeSvg": "6df75bef82b934697c5ab36d468fb3b6368bbf531b363d596daecb37ca8f8a4b",
+        "mistakeOverlay": "2f2ec519b96c2a54e1092a742871fe8aa59b0882e69037d497e6869856d28855",
+        "tells": "974fd5d7ae64e02e87f859bccdabbb824add81f8cc501ed38abe50e0a29b6b25",
+        "tempo": "b2657c960dfa57843b9f26e0e07fb3a38c22b2fe8e87482c84ff8f71d7c986a3",
+        "cues": "8af2c731a349fd209514e4b159922648253d11d112d286258419c42cb044771b",
+        "alt": "93644c0fb43782336edd088638b29a704bed7d378dbf81c587f493571d0cbec8",
+        "mistakeAlt": "bc452797282e7c4a85fee282036bc6337b5d604b952b79eef3a0af8af6ce8287"
+      },
+      "exemptions": [
+        "F2",
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/278#issuecomment-6393170019 @ 1d7f28d2e2369472fd98930b15998cf0cc890eae",
+      "date": "2026-10-25",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); PILOT B PIN GO #278 6393170019 on the pilot B sheet 3ad351c4 (PILOT B SHEET READY 6393161936), each raised flag shown with its default \"approve as named exemptions\". Panel: rechecks @ d3b231d (#278 6276782102), push_up round 1 @ 4033daf (6275943464), bytes unchanged since. Named exemptions: F2, F5 (the raised flags of the Do 7 table, #278 6276079953 and 6393161936). F2: figure box area 0.628 against 0.191-0.549, the two full-height cable columns outside the open hands (NOTE RULED #278 6267313038 item 2; PIN GO decision 4). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "64c94b77d76ab60cb85f1298447dfebba80b1cd3b7cc584fb5c50c50992b250d"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_push_up",
+      "src": "library/specs/push_up.mjs",
+      "slug": "push-up",
+      "prefix": "push-up",
+      "chromeId": "push-up",
+      "fragments": {
+        "normalSvg": "ade2d0ddba62d74ba6e3d3ce656f58c96c3a062437f99656a59d8a85363ae189",
+        "normalOverlay": "19bb7c1336bb2e246f368b532c6b82e3a16ee269484156e620e280ed56eb1b78",
+        "mistakeSvg": "3668d8e5fd5031aa5ce4b04302dbb15d30bbc9086c1d4cf239dca3fc9a31c04b",
+        "mistakeOverlay": "f0101f7cc1a3a79606f3a46bc12da9a0eb39876c616dffed3607db105a1a73c1",
+        "tells": "2b74918e1172f8b6ebb7760f79ab3fba0a8b47e1429582c471b2fb3272988a7c",
+        "tempo": "7e32c0e848a9e6ce971b689bf96058ea943956570433e96247d364eb475c7aff",
+        "cues": "102d9633220af843faa5e8a67fb878961c30f71a61e5236ea30c43c393d42778",
+        "alt": "42582c0f09f4b76cab52da239af84bcc55367fcbd0e328ca669dcf6e1f5321aa",
+        "mistakeAlt": "8315e6769964c47aa3e2b95fa0bb969870eef17f8dc8029502038f45b72352b6"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "supervisor",
+      "decision": "D-LIB-PILOTB",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/278#issuecomment-6393170019 @ 1d7f28d2e2369472fd98930b15998cf0cc890eae",
+      "date": "2026-10-25",
+      "why": "Approved by the supervisor under the owner's 10-01 delegation (plan 14.8 point 5; HANDOVER:196) and his 10-24 delegation of open library choices (\"U do qll that. Dont stall and decide for me.\", #109 6381356655; D-ER5-GO #278 6381385131); PILOT B PIN GO #278 6393170019 on the pilot B sheet 3ad351c4 (PILOT B SHEET READY 6393161936), each raised flag shown with its default \"approve as named exemptions\". Panel: rechecks @ d3b231d (#278 6276782102), push_up round 1 @ 4033daf (6275943464), bytes unchanged since. Named exemptions: F5 (the raised flags of the Do 7 table, #278 6276079953 and 6393161936). F5: approved chrome: the selected Mistake tell (button.plate-callout.m, pressed) measures 3.57:1 in Midnight, the same on all 8 by construction (locked chrome CSS); an owner item like O7",
+      "supersedes": null,
+      "prev": "fd08e3cb8098ab8507a1440e3dafc43e2c1dadeb94d966bb757c55e362bb7faf"
+    }
+  ]
+}
