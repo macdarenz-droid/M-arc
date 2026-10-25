@@ -1,0 +1,263 @@
+{
+  "id": "resistance_band_pull_apart",
+  "checked": "2026-10-22",
+  "fetcher": "sonnet source fetcher",
+  "quotes": [
+    {
+      "claim": "c1",
+      "source": "mo-band-pull-apart",
+      "text": "Stand tall with feet hip-width apart, knees slightly bent. Grip a resistance band at shoulder height with overhand grip, hands wider than shoulders, arms straight with slight tension in band.",
+      "status": "verbatim",
+      "closest": "Stand tall with feet hip-width apart, knees slightly bent. Grip a resistance band at shoulder height with overhand grip, hands wider than shoulders, arms straight with slight tension in band.",
+      "note": ""
+    },
+    {
+      "claim": "c1",
+      "source": "sl-band-pull-apart",
+      "text": "Grab an elastic band, and hold it out before you on straight arms.",
+      "status": "verbatim",
+      "closest": "Grab an elastic band, and hold it out before you on straight arms.",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "mo-band-pull-apart",
+      "text": "Inspect band for damage before use",
+      "status": "verbatim",
+      "closest": "Inspect band for damage before use",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "mo-band-pull-apart",
+      "text": "Select band resistance for 10-20 controlled reps",
+      "status": "verbatim",
+      "closest": "Select band resistance for 10-20 controlled reps",
+      "note": ""
+    },
+    {
+      "claim": "c2",
+      "source": "mo-band-pull-apart",
+      "text": "Avoid overstretching band beyond twice its length",
+      "status": "verbatim",
+      "closest": "Avoid overstretching band beyond twice its length",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "mo-band-pull-apart",
+      "text": "Engage core and keep shoulders down.",
+      "status": "verbatim",
+      "closest": "Engage core and keep shoulders down.",
+      "note": ""
+    },
+    {
+      "claim": "c3",
+      "source": "mo-band-pull-apart",
+      "text": "Avoid shrugging shoulders",
+      "status": "verbatim",
+      "closest": "Avoid shrugging shoulders",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "mo-band-pull-apart",
+      "text": "Exhale and squeeze shoulder blades together.",
+      "status": "verbatim",
+      "closest": "Exhale and squeeze shoulder blades together.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "mo-band-pull-apart",
+      "text": "Pull band apart horizontally until arms align with shoulders.",
+      "status": "verbatim",
+      "closest": "Pull band apart horizontally until arms align with shoulders.",
+      "note": ""
+    },
+    {
+      "claim": "c4",
+      "source": "sl-band-pull-apart",
+      "text": "Pull the band apart by moving your arms to the sides as far as you can, or until your arms are pointing straight out.",
+      "status": "verbatim",
+      "closest": "Pull the band apart by moving your arms to the sides as far as you can, or until your arms are pointing straight out.",
+      "note": ""
+    },
+    {
+      "claim": "c5",
+      "source": "mo-band-pull-apart",
+      "text": "Start with arms extended forward at shoulder height; pull until arms are in line with torso or band touches chest, keeping elbows slightly bent.",
+      "status": "verbatim",
+      "closest": "Start with arms extended forward at shoulder height; pull until arms are in line with torso or band touches chest, keeping elbows slightly bent.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "mo-band-pull-apart",
+      "text": "Inhale and slowly return hands to start under control.",
+      "status": "verbatim",
+      "closest": "Inhale and slowly return hands to start under control.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "mo-band-pull-apart",
+      "text": "Maintain tension in band throughout.",
+      "status": "verbatim",
+      "closest": "Maintain tension in band throughout.",
+      "note": ""
+    },
+    {
+      "claim": "c6",
+      "source": "sl-band-pull-apart",
+      "text": "Return with control to the starting position.",
+      "status": "verbatim",
+      "closest": "Return with control to the starting position.",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "mo-band-pull-apart",
+      "text": "Keep arms at shoulder height",
+      "status": "verbatim",
+      "closest": "Keep arms at shoulder height",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "mo-band-pull-apart",
+      "text": "Drive from upper back",
+      "status": "verbatim",
+      "closest": "Drive from upper back",
+      "note": ""
+    },
+    {
+      "claim": "c7",
+      "source": "mo-band-pull-apart",
+      "text": "Maintain straight posture",
+      "status": "verbatim",
+      "closest": "Maintain straight posture",
+      "note": ""
+    },
+    {
+      "claim": "c8",
+      "source": "mo-band-pull-apart",
+      "text": "Shrugging shoulders upward",
+      "status": "verbatim",
+      "closest": "Shrugging shoulders upward",
+      "note": ""
+    },
+    {
+      "claim": "c9",
+      "source": "mo-band-pull-apart",
+      "text": "Bending elbows excessively",
+      "status": "verbatim",
+      "closest": "Bending elbows excessively",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "mo-band-pull-apart",
+      "text": "Arching lower back",
+      "status": "verbatim",
+      "closest": "Arching lower back",
+      "note": ""
+    },
+    {
+      "claim": "c10",
+      "source": "mo-band-pull-apart",
+      "text": "Maintain straight posture",
+      "status": "verbatim",
+      "closest": "Maintain straight posture",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "mo-band-pull-apart",
+      "text": "Letting band snap back",
+      "status": "verbatim",
+      "closest": "Letting band snap back",
+      "note": ""
+    },
+    {
+      "claim": "c11",
+      "source": "mo-band-pull-apart",
+      "text": "Head jutting forward",
+      "status": "verbatim",
+      "closest": "Head jutting forward",
+      "note": ""
+    },
+    {
+      "claim": "c12",
+      "source": "mo-band-pull-apart",
+      "text": "Stop if shoulder pain occurs",
+      "status": "verbatim",
+      "closest": "Stop if shoulder pain occurs",
+      "note": ""
+    },
+    {
+      "claim": "c13",
+      "source": "mo-band-pull-apart",
+      "text": "A resistance band exercise that targets the rhomboids, mid traps, and rear delts through scapular retraction to build upper back strength and shoulder stability; commonly used as a warm-up or accessory for pressing movements.",
+      "status": "verbatim",
+      "closest": "A resistance band exercise that targets the rhomboids, mid traps, and rear delts through scapular retraction to build upper back strength and shoulder stability; commonly used as a warm-up or accessory for pressing movements.",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "fukunaga-2022",
+      "text": "There was a significant main effect of hand position for the infraspinatus and lower trapezius, where muscle activity was highest with the palm up hand position (p < 0.001), and for the upper trapezius and posterior deltoid, where muscle activity was highest with the palm down position (p-value range < 0.001-0.004).",
+      "status": "verbatim",
+      "closest": "There was a significant main effect of hand position for the infraspinatus and lower trapezius, where muscle activity was highest with the palm up hand position (p < 0.001), and for the upper trapezius and posterior deltoid, where muscle activity was highest with the palm down position (p-value range < 0.001-0.004).",
+      "note": ""
+    },
+    {
+      "claim": "c14",
+      "source": "fukunaga-2022",
+      "text": "Data were collected from 10 healthy subjects (all males, age 36±12 years). Peak muscle activity ranged from 15.3% to 72.6% of MVC across muscles and exercise conditions.",
+      "status": "verbatim",
+      "closest": "Data were collected from 10 healthy subjects (all males, age 36±12 years). Peak muscle activity ranged from 15.3% to 72.6% of MVC across muscles and exercise conditions.",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "mo-band-pull-apart",
+      "text": "2-1-2",
+      "status": "verbatim",
+      "closest": "2-1-2",
+      "note": ""
+    },
+    {
+      "claim": "c15",
+      "source": "mo-band-pull-apart",
+      "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "status": "verbatim",
+      "closest": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+      "note": "Found only in served raw HTML (page data), not in rendered text."
+    },
+    {
+      "claim": "c16",
+      "source": "mo-band-pull-apart",
+      "text": "Pause briefly at full retraction.",
+      "status": "verbatim",
+      "closest": "Pause briefly at full retraction.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "fukunaga-2022",
+      "text": "Pace of movement was standardized to three seconds for each phase of movement (i.e., concentric and eccentric) guided by a metronome set to 20 beats per minute.",
+      "status": "verbatim",
+      "closest": "Pace of movement was standardized to three seconds for each phase of movement (i.e., concentric and eccentric) guided by a metronome set to 20 beats per minute.",
+      "note": ""
+    },
+    {
+      "claim": "c17",
+      "source": "fukunaga-2022",
+      "text": "As the tension of a resistance band is affected by the amount of elongation, subjects were instructed to hold the band without slack or tension at the beginning of each exercise movement.",
+      "status": "verbatim",
+      "closest": "As the tension of a resistance band is affected by the amount of elongation, subjects were instructed to hold the band without slack or tension at the beginning of each exercise movement.",
+      "note": ""
+    }
+  ]
+}

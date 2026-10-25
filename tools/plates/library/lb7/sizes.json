@@ -1,0 +1,770 @@
+{
+ "rule": "D-LIB17-SIZE (lib-17-card ruling 13): every number a card does not give, each Mistake's magnitude and each 'slight bend' included, fixed here before PQ-H3 is measured, each with its basis: a claim id, an approved plate's value (file:line) used as a convention, or a stated reason. PQ-H3 is never a basis. A spec's exported SIZES table equals its row here and every row is used (A17, both ways); a composer's exported constants equal theirs; `trace` is the spec's trace point (D-LIB17-TRACE). Values marked 'solved' are computed by the spec from the rule in their basis. Rows for the 5 bulk ids are the note's proposals in DESIGN.md section 11, written here at the bulk.",
+ "ids": {
+  "cable_external_rotation": {
+   "FOOT_X": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):44, the engine front view's stance (the card gives none)"
+   },
+   "KNEE_SOFT": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):45, knees soft"
+   },
+   "START_ROT": {
+    "value": -55,
+    "unit": "deg",
+    "basis": "stated reason: c4 'forearm across the body': the shoulder's internal turn that keeps the forearm's inner edge in front of the navel (the torso front, body.mjs:166) with the fist past the midline; a deeper turn would put the forearm inside the stomach"
+   },
+   "END_ROT": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "claim: c6 (ACE) 'the hand outside the body line': the fist centre 3 cm outside the upper arm's outline (card notes: ACE's end drawn)"
+   },
+   "M_ABD": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated reason: c9 'letting the elbow flare out': the upper arm off the side, the elbow joint 11 cm out from the side line, more than the upper arm's own 5.4 cm radius at the elbow cap, so a gap shows between arm and torso"
+   },
+   "FREE_ELBOW": {
+    "value": 2,
+    "unit": "deg",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):21, the hanging start arms (elbow 2 deg)"
+   },
+   "COLUMN_X": {
+    "value": 0.7,
+    "unit": "m",
+    "basis": "stated reason: a step from the figure's right side to the column's centre line; how far to stand is not sourced (card notes)"
+   },
+   "PULLEY_Z": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "stated reason: the column and pulley in front of the hips, on the handle line at the start (side-on stance, c2)"
+   },
+   "HANDLE_GRIP": {
+    "value": 0.13,
+    "unit": "m",
+    "basis": "convention: the vendor dumbbell handle 13 cm (equipment.mjs:30); D-LIB17-HANDLE"
+   },
+   "HANDLE_R": {
+    "value": 0.008,
+    "unit": "m",
+    "basis": "convention: LB6's single handle (#297 lb6/sizes.json HANDLE_R, D-LIB16-HANDLE): the grip bar 1.6 cm thick, half the vendor chestPress grip"
+   },
+   "HANDLE_STRAP": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: #245 eq/dHandle.mjs:4-5 @ 9e5d9666 (the D-handle's strap to the ring, read as a pattern; D-LIB17-HANDLE)"
+   },
+   "FLOOR_L": {
+    "value": 1.05,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line under the column"
+   },
+   "FLOOR_R": {
+    "value": 0.62,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the working hand"
+   },
+   "trace": {
+    "value": "grip.l",
+    "unit": "point",
+    "basis": "claim: c6 'move the left hand to the outside of the body' (ACE): the hand (D-LIB17-TRACE)"
+   }
+  },
+  "cable_lateral_raise": {
+   "FOOT_X": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):44, the engine front view's stance (the card gives none)"
+   },
+   "KNEE_SOFT": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):45, knees soft"
+   },
+   "ELBOW_BEND": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention (D-LIB16-LOCK): machine_chest_press.mjs:45 (the 8), elbows 18 deg short of straight for c4 and c9's 'slight elbow bend' (not locked)"
+   },
+   "START_ELEV": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "stated reason: c5 'the handle in front of the body' with the arm hanging (c4): the hanging arm swung 12 deg across the front so the fist hangs in front of the near thigh (grip 13 cm out, 20 cm forward of the hip line)"
+   },
+   "START_PLANE": {
+    "value": 135,
+    "unit": "deg",
+    "basis": "stated reason: with START_ELEV, the plane across the front of the body (c5)"
+   },
+   "LEAD": {
+    "value": 8,
+    "unit": "deg",
+    "basis": "convention: the approved dumbbell_lateral_raise (golden A, ref-src/plate.mjs:3 'lead 8'): the forearm trails the upper arm by 8 deg (c6, c13 'elbow leading the hand')"
+   },
+   "M_OVER": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated reason: c19 'above 90 degrees': 20 deg past level, clearly beyond Motra's 'or slightly above' (c7), which the card does not draw as a fault"
+   },
+   "FREE_ELBOW": {
+    "value": 2,
+    "unit": "deg",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):21, the hanging start arms (elbow 2 deg)"
+   },
+   "COLUMN_X": {
+    "value": 0.7,
+    "unit": "m",
+    "basis": "stated reason: c3 'step away so the cable has tension': a step from the figure's right side to the column's centre line; the distance is not sourced"
+   },
+   "PULLEY_Y": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "claim: c1 'the pulley at its lowest point': its centre 12 cm up, just above the column's base frame (equipment.mjs:85-90)"
+   },
+   "PULLEY_Z": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason: the column and pulley on the start handle line in front of the body (c5)"
+   },
+   "HANDLE_GRIP": {
+    "value": 0.13,
+    "unit": "m",
+    "basis": "convention: the vendor dumbbell handle 13 cm (equipment.mjs:30); D-LIB17-HANDLE"
+   },
+   "HANDLE_STRAP": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: #245 eq/dHandle.mjs:4-5 @ 9e5d9666 (read as a pattern; D-LIB17-HANDLE)"
+   },
+   "FLOOR_L": {
+    "value": 1.05,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line under the column"
+   },
+   "FLOOR_R": {
+    "value": 1.05,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the raised hand"
+   },
+   "trace": {
+    "value": "grip.l",
+    "unit": "point",
+    "basis": "claim: c7 'lift the handle outward' (the card's raise cue names the handle): the hand on the handle (D-LIB17-TRACE)"
+   }
+  },
+  "weighted_dip": {
+   "BAR_X": {
+    "value": 0.2266,
+    "unit": "m",
+    "basis": "claim: c1 'hands about shoulder-width apart': the bars at the shoulder joints' width (WINTER.shoulderW / 2, body.mjs:18, 21)"
+   },
+   "BAR_Y": {
+    "value": 1.1,
+    "unit": "m",
+    "basis": "stated reason (D-LIB17-DIP, physical; D-LIB17-DIPBAL option P (#299 6348947992)): the lowest height, in 5 cm steps, that keeps every drawn foot point and the plate FLOOR_GAP above the floor in every pose (the plate's bottom at the P bottom binds: 0.167 m)"
+   },
+   "TOP_LEAN": {
+    "value": 4,
+    "unit": "deg",
+    "basis": "claim: c5 'torso nearly upright' at the top: a 4 deg forward pelvis tilt"
+   },
+   "BOTTOM_LEAN": {
+    "value": 15,
+    "unit": "deg",
+    "basis": "claim: c5 'at most a slight forward lean' and BarBend step 2 'keeping your torso upright': 15 deg at the bottom"
+   },
+   "KNEE": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "claim: c3 'a slight knee bend'"
+   },
+   "HIP_ADD": {
+    "value": 6,
+    "unit": "deg",
+    "basis": "stated reason: c3 'crossing the ankles': the hips adducted until the ankles meet under the body midline (hip joints 8.75 cm out, legs 0.86 m long)"
+   },
+   "ANKLE": {
+    "value": -22,
+    "unit": "deg",
+    "basis": "convention: pull_up.mjs:30 (the 8), the hanging feet"
+   },
+   "SCAP_ELEV": {
+    "value": -3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36 (the 8), 'scapulae depressed and retracted' for c3, c6 'shoulders down and back'"
+   },
+   "SCAP_PRO": {
+    "value": -3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36 (the 8), as SCAP_ELEV"
+   },
+   "BELT_W": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "stated reason: a dip belt band 6 cm tall (c8 names the belt, no size)"
+   },
+   "BELT_T": {
+    "value": 0.012,
+    "unit": "m",
+    "basis": "stated reason: the belt 1.2 cm proud of the torso outline"
+   },
+   "CHAIN_W": {
+    "value": 0.008,
+    "unit": "m",
+    "basis": "stated reason: the chain drawn 8 mm wide"
+   },
+   "PLATE_D": {
+    "value": 0.45,
+    "unit": "m",
+    "basis": "convention: the vendor barbell plate 45 cm (equipment.mjs:261), the only plate size the engine draws"
+   },
+   "HOLE_D": {
+    "value": 0.05,
+    "unit": "m",
+    "basis": "convention: the vendor barbell sleeve 5 cm (equipment.mjs:261), the plate hole it passes through"
+   },
+   "FLOOR_GAP": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: the feet clearly off the floor at the bottom (about 19 px), so the bottom reads as a hang, not a stand"
+   },
+   "FLOOR_BACK": {
+    "value": 0.3,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line behind the uprights"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.3,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line in front of the bottom's shoulders"
+   },
+   "CHAIN_LEN": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "claim: c8 'hang it low, near the shins': solved so the plate centre sits at mid-shin at the top (0.705 m)"
+   },
+   "trace": {
+    "value": "shoulder.r",
+    "unit": "point",
+    "basis": "claim: c4's StrengthLog quote 'until your shoulder is below your elbow' (the lowering cue names the shoulder; D-LIB17-TRACE)"
+   },
+   "POST_FRONT": {
+    "value": 0.5,
+    "unit": "m",
+    "basis": "stated reason (D-LIB17-DIPBAL option P (#299 6348947992)): the uprights in front of the lifter, at least 5 cm clear of the plate's front edge (0.393 m) and the head in every pose; with the P legs back the feet pass 0.80 m behind the grips, where rear uprights would cross them"
+   },
+   "TOP_THIGH": {
+    "value": -15,
+    "unit": "deg",
+    "basis": "stated reason (physics; slice look item 3, #299 6348157337): the thighs 15 deg back at the top so the plate, plumb under the belt, hangs clear in front of the shins (2.6 cm at the top); c3 states the knee bend, not the thigh"
+   },
+   "BOTTOM_KNEE": {
+    "value": 90,
+    "unit": "deg",
+    "basis": "stated reason: balance (physics); c3 states the top only (D-LIB17-DIPBAL option P (#299 6348947992) condition 1)"
+   },
+   "BOTTOM_THIGH": {
+    "value": -40,
+    "unit": "deg",
+    "basis": "stated reason: balance (physics); c3 states the top only (D-LIB17-DIPBAL option P (#299 6348947992) condition 1)"
+   },
+   "M_DEPTH": {
+    "value": 0.5,
+    "unit": "fraction",
+    "basis": "claim: c14 'quarter or half reps': the half rep, the shoulder halfway from the top down to the parallel line, on the balanced path (D-LIB17-DIPBAL option P (#299 6348947992) condition 4)"
+   },
+   "BODY_KG": {
+    "value": 75,
+    "unit": "kg",
+    "basis": "stated reason: the drawn body's mass for the balance (a 1.75 m adult; Winter's fractions are of body mass), only the plate-to-body ratio enters"
+   },
+   "PLATE_KG": {
+    "value": 20,
+    "unit": "kg",
+    "basis": "convention: the 45 cm plate drawn (PLATE_D) is the 20 kg standard plate; its weight acts at the belt point (D-LIB17-DIPBAL condition 3)"
+   },
+   "END_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "D-LIB17-DIPBAL option P (#299 6348947992): the bottom's shoulder on the parallel line, the shoulder height of a level upper arm over a plumb forearm (BAR_Y + forearm and hand, 1.442 m); the balanced elbow is then 115.7 deg"
+   },
+   "TOP_Z": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "physics: the top's shoulder z solved so the body plus the plate balances over the grips with straight arms (c2)"
+   },
+   "END_FLEX": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "solved: balance at the parallel line, D-LIB17-DIPBAL (#299 6348947992): the bottom elbow of the balanced pose with the shoulder on the parallel line, BOTTOM_LEAN and the legs back (115.7 deg; the ruling quotes about 112.5)"
+   }
+  },
+  "dipBars": {
+   "barT": {
+    "value": 0.045,
+    "unit": "m",
+    "basis": "stated reason: a dip bar tube 4.5 cm across (the hand closes round it; the vendor pull-up bar is 3.2 cm, equipment.mjs:45)"
+   },
+   "barLen": {
+    "value": 0.6,
+    "unit": "m",
+    "basis": "stated reason: the bars run 60 cm forward from the uprights, past the bottom position's hands"
+   },
+   "postT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: romanChair beamT 6 cm (#274 eq/romanChair.mjs @ a6f4bd07), the frame tube"
+   },
+   "postAbove": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "stated reason: the uprights rise 12 cm above the bars, as a dip tower's frame"
+   },
+   "beamT": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "convention: romanChair beamT 6 cm (#274 @ a6f4bd07)"
+   },
+   "beamBack": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: the floor beams reach 15 cm behind the uprights"
+   },
+   "beamFront": {
+    "value": 0.95,
+    "unit": "m",
+    "basis": "stated reason: the floor beams run 95 cm forward under the station, so it stands"
+   }
+  },
+  "renegade_row": {
+   "DB_X": {
+    "value": 0.2266,
+    "unit": "m",
+    "basis": "claim: c1 'hands shoulder-width apart' and c2 'hands under the shoulders': each dumbbell under its shoulder joint (body.mjs:18, 21)"
+   },
+   "ANKLE": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "convention: plank.mjs @ ff7c5c4f (pilot A, ANKLE 0: 'foot at right angles to the shin (toes tucked)')"
+   },
+   "TOE_Z": {
+    "value": -1.25,
+    "unit": "m",
+    "basis": "stated reason: layout only; the body is one straight line solved from the shoulder over the grip, so the toe spot places the figure in the plate"
+   },
+   "END_BACK": {
+    "value": 0.21,
+    "unit": "m",
+    "basis": "claim: c4 'row toward the same-side hip until it brushes the ribcage': the dumbbell centre 12% of the body height behind the shoulder joint, at the lower ribs"
+   },
+   "END_OUT": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "stated reason: c4 'brushes the ribcage': the dumbbell's inner head (its centre 13.5 cm from the inner end) just clear of the ribcage's side"
+   },
+   "M_TURN": {
+    "value": 30,
+    "unit": "deg",
+    "basis": "claim: c9 'onto a corner'; 30 deg is the geometry of a hex resting on a corner (a vertex straight down; the vendor hex sits on a flat, equipment.mjs:33-35), not a chosen size (ruled #299 6347885720)"
+   },
+   "FLOOR_BACK": {
+    "value": 0.12,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line behind the toes"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.3,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line in front of the head"
+   },
+   "LINE_RUN": {
+    "value": 0.22,
+    "unit": "m",
+    "basis": "convention: plank.mjs @ ff7c5c4f LINE_RUN 0.22, the plank line run past the body"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "claim: plate.frames 'Trace follows the near dumbbell' (c4, c5; D-LIB17-TRACE)"
+   }
+  },
+  "cable_rear_delt_fly": {
+   "FOOT_X": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):44, the engine front view's stance (the card gives none)"
+   },
+   "KNEE_SOFT": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):45, knees soft"
+   },
+   "ELBOW_BEND": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention (D-LIB16-LOCK): machine_chest_press.mjs:45 (the 8), elbows 18 deg short of straight for c4 'not locked' and c6 'a slight, fixed bend'"
+   },
+   "START_ROT": {
+    "value": -90,
+    "unit": "deg",
+    "basis": "stated reason: c6 'a fixed bend ... while the arms open back': with the arms straight ahead the bend lies level, in the plane the arms open in, the forearms toward the midline"
+   },
+   "END_ROT": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "stated reason: c6, the same: with the arms out the bend lies level, in the opening plane, the forearms forward"
+   },
+   "START_ELEV": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "solved: c4 'the cables crossing at about eye level': the shoulder flexion straight ahead (plane 90) at which the two cables cross at the ear's height (the engine has no eye landmark; the ear is level with it), bracket 80-130"
+   },
+   "END_ELEV": {
+    "value": 80,
+    "unit": "deg",
+    "basis": "stated reason: c6 'back and slightly down', c7 'about parallel to the body': the arms in the frontal plane 10 deg below level"
+   },
+   "M_ELEV": {
+    "value": 3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36 (the 8), the scapulae 3 cm down and back for 'shoulders down and back', reversed: 3 cm up (c5's fault)"
+   },
+   "M_PRO": {
+    "value": 3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36 (the 8), reversed: 3 cm forward (c5 'rolled back' not kept)"
+   },
+   "COLUMN_X": {
+    "value": 1,
+    "unit": "m",
+    "basis": "stated reason: a crossover's columns either side with the arms' clear path (c3), the hands at the end inside the pulleys; DESIGN.md section 11 (PULLEY_X +-1.0 m)"
+   },
+   "COLUMN_H": {
+    "value": 2.1,
+    "unit": "m",
+    "basis": "convention: the vendor cableColumn height (equipment.mjs:85)"
+   },
+   "PULLEY_Y": {
+    "value": 1.95,
+    "unit": "m",
+    "basis": "claim: c1 'upper (high) pulley': just under the column's own top pulley (height - 0.09, equipment.mjs:94)"
+   },
+   "HANDLE_GRIP": {
+    "value": 0.13,
+    "unit": "m",
+    "basis": "convention: the vendor dumbbell handle 13 cm (equipment.mjs:30); D-LIB17-HANDLE"
+   },
+   "HANDLE_STRAP": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "convention: #245 eq/dHandle.mjs:4-5 @ 9e5d9666 (read as a pattern; D-LIB17-HANDLE)"
+   },
+   "FLOOR_L": {
+    "value": 1.25,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line under the right column"
+   },
+   "FLOOR_R": {
+    "value": 1.25,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line under the left column"
+   },
+   "trace": {
+    "value": "grip.l",
+    "unit": "point",
+    "basis": "claim: c7 'handles ... as far apart as possible at the end' (the card names the handles): the hand on the handle (D-LIB17-TRACE)"
+   }
+  },
+  "resistance_band_pull_apart": {
+   "FOOT_X": {
+    "value": 0.18,
+    "unit": "m",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):44, the engine front view's stance (the card gives none)"
+   },
+   "KNEE_SOFT": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "convention: upright_row.mjs (pilot A #109 @ ff7c5c4f):45, knees soft (c1 'knees slightly bent', no number)"
+   },
+   "ELBOW_BEND": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention (D-LIB16-LOCK): machine_chest_press.mjs:45 (the 8), elbows 18 deg short of straight for c1 and c5's 'elbows slightly bent' (not locked)"
+   },
+   "START_PLANE": {
+    "value": 75,
+    "unit": "deg",
+    "basis": "stated reason: c1 'hands wider than the shoulders' with c5 'arms extended forward': the arms 15 deg out from straight ahead, so each fist sits about 7 cm outside its shoulder joint"
+   },
+   "END_PLANE": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "stated reason: c4 'until arms align with shoulders' with c5's band near the chest (D-LIB17-ORCHOICE): 10 deg forward of the frontal plane keeps the band, at the fists' depth (22 cm forward), in front of the chest (13 cm); at 0 deg it would pass through the chest"
+   },
+   "START_ROT": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "solved: the shoulder rotation that puts the fists at shoulder height (c1 'at shoulder height'), bracket -100 to -50"
+   },
+   "END_ROT": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "solved: the shoulder rotation that keeps the fists at shoulder height at the end (c7 'keep arms at shoulder height'), bracket -60 to 0"
+   },
+   "BAND_T": {
+    "value": 0.012,
+    "unit": "m",
+    "basis": "convention (D-LIB17-BAND): LB1's band strand at the hands, 1.2 cm (#245 eq/band.mjs:8-9, :26 @ 9e5d9666, read, never imported), class eq-solid (:33)"
+   },
+   "M_SHRUG": {
+    "value": 5,
+    "unit": "cm",
+    "basis": "convention: the approved dumbbell_lateral_raise's shrug (golden A, ref-src/plate.mjs:147 'shrug_cm 5'), the same fault (c8), the first basis (#290 6343211054 item 1)"
+   },
+   "FLOOR_L": {
+    "value": 1.05,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the outstretched hands"
+   },
+   "FLOOR_R": {
+    "value": 1.05,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the outstretched hands"
+   },
+   "trace": {
+    "value": "grip.l",
+    "unit": "point",
+    "basis": "claim: c4 'pull the band apart horizontally, arms moving out to the sides': the hand on the band (D-LIB17-TRACE)"
+   }
+  },
+  "dumbbell_front_raise": {
+   "FOOT_X": {
+    "value": 0.14,
+    "unit": "m",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f) FOOT_X, the engine dumbbell's standing side view (c3's width is not visible from the side)"
+   },
+   "KNEE_SOFT": {
+    "value": 6,
+    "unit": "deg",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f) KNEE_SOFT, knees soft (the card gives no knee angle)"
+   },
+   "ELBOW_BEND": {
+    "value": 18,
+    "unit": "deg",
+    "basis": "convention (D-LIB16-LOCK): machine_chest_press.mjs:45 (the 8), elbows 18 deg short of straight for c2's 'soft bend' (not locked)"
+   },
+   "ARM_ROT": {
+    "value": 180,
+    "unit": "deg",
+    "basis": "panel R1 (#299, the LB7 panel): the 18 deg soft bend turned into the side-view plane at the top, so the forearm drops below the level upper arm by the bend and the elbow leads the dumbbell (c2 'soft bend', c5 'elbows leading'); was -90 (across the body, which the side view cannot show)"
+   },
+   "START_ROT": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "panel R1 (#299): at the hanging start the soft bend lies in the side-view plane, the forearm forward of the upper arm's line (c2 'soft bend', the hand on the thigh's front, c1)"
+   },
+   "SCAP_ELEV": {
+    "value": -1,
+    "unit": "cm",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f) SCAP elev -1 for c4 'shoulders down and back'"
+   },
+   "SCAP_PRO": {
+    "value": -1,
+    "unit": "cm",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f) SCAP pro -1 for c4 'shoulders down and back'"
+   },
+   "START_FLEX": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c1 'dumbbells in front of the thighs', c2 'lightly touching the fronts of your thighs': the shoulder flexion that puts the start dumbbell's back corner on the near thigh's front outline at the grip's height (DESIGN.md section 10)"
+   },
+   "M_HIP": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "stated reason (DESIGN.md section 11, ruled): c12 'pushing the hips forward': the hips 8 cm forward over the planted feet, the root height re-solved for the same knee bend"
+   },
+   "M_LEAN": {
+    "value": 12,
+    "unit": "deg",
+    "basis": "stated reason (DESIGN.md section 11, ruled): the body's counter-lean that goes with c12's hip push (the trunk 12 deg back), unlabelled"
+   },
+   "FLOOR_BACK": {
+    "value": 0.5,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line from behind the heels (dumbbell_biceps_curl.mjs's floor -0.5)"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.85,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line under the raised dumbbells, which reach about 0.75 m in front"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "claim: c5 'raise the dumbbells in front of the body': the near hand and its dumbbell (D-LIB17-TRACE)"
+   }
+  },
+  "face_pull": {
+   "KNEE_SOFT": {
+    "value": 6,
+    "unit": "deg",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f):47, the standing side view's soft knees (c3 'stand up straight' gives no angle)"
+   },
+   "START_ELBOW": {
+    "value": 10,
+    "unit": "deg",
+    "basis": "stated reason: c3 'arms extended', drawn short of straight, never locked (D-LIB16-LOCK's basis, machine_chest_press.mjs:45)"
+   },
+   "GRIP_X0": {
+    "value": 0.07,
+    "unit": "m",
+    "basis": "convention: rope_triceps_pushdown.mjs (pilot A #109 @ ff7c5c4f):47 GRIP_X0, the rope ends together under the ferrule with the arms extended"
+   },
+   "END_X": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: c7 'hands near ears': the fist centre beside the head (the head's half-width and the fist's)"
+   },
+   "END_FWD": {
+    "value": 0.02,
+    "unit": "m",
+    "basis": "stated reason: c7 'hands near ears': the fist at the ear, 2 cm in front of the engine's ear landmark"
+   },
+   "M_X": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: c10 'pulling too low to chin' (Motra): the fists close in front of the chin"
+   },
+   "M_FWD": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "stated reason: c10 'to chin': the fists in front of the chin, the rope at the chin"
+   },
+   "M_DROP": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated: c9, c10 'below shoulder height', the upper arm clearly sloping down (DESIGN.md section 11 proposal)"
+   },
+   "M_POLE": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "solved: the arm IK pole's angle below level that puts the Mistake elbows M_DROP below the end shoulder line"
+   },
+   "SCAP_START": {
+    "value": -1,
+    "unit": "cm",
+    "basis": "convention: dumbbell_biceps_curl.mjs (pilot A #109 @ ff7c5c4f):57 SCAP pro -1, for c4 'shoulders back'"
+   },
+   "SCAP_END": {
+    "value": -3,
+    "unit": "cm",
+    "basis": "convention: vendor/exercises/pull_up.mjs:36's scap pro -3 (the 8), for c6, c7 'squeezing the shoulder blades together'"
+   },
+   "PULLEY_Y": {
+    "value": "solved",
+    "unit": "m",
+    "basis": "solved: c1 'at about head or eye height': the drawn figure's ear landmark height (the engine has no eye landmark; eyes and ears share a level)"
+   },
+   "CABLE_START": {
+    "value": 0.532,
+    "unit": "m",
+    "basis": "stated: c3 'a couple of steps back' = 2 x 0.152 H foot lengths (DESIGN.md section 11), read as the cable paid out from the pulley to the start ferrule"
+   },
+   "COLUMN_BACK": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "convention: seated_cable_row.mjs (vendor/exercises, the 8):25-26, the pulley 8 cm in front of the stack tower"
+   },
+   "FLOOR_B": {
+    "value": 0.45,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line behind the heels"
+   },
+   "FLOOR_F": {
+    "value": 0.2,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the column base"
+   },
+   "trace": {
+    "value": "grip.r",
+    "unit": "point",
+    "basis": "claim: c5 'pull the rope toward the face': the near hand on the rope (D-LIB17-TRACE)"
+   }
+  },
+  "bench_dip": {
+   "BENCH_TOP": {
+    "value": 0.42,
+    "unit": "m",
+    "basis": "convention: one_arm_dumbbell_row.mjs (#274 @ a6f4bd07):41 BENCH_TOP 0.42, the vendor bench's low end (DESIGN.md section 11)"
+   },
+   "BENCH_W": {
+    "value": 0.29,
+    "unit": "m",
+    "basis": "convention: the vendor bench's pad width (equipment.mjs:158 width 0.29), seen end-on (the lifter sits on its long side, c1)"
+   },
+   "FINGER_IN": {
+    "value": 0.01,
+    "unit": "m",
+    "basis": "stated reason: c1 'put the hands on it', c2 'fingers pointing forward': the fingertips 1 cm in from the bench's front edge"
+   },
+   "HIP_CLEAR": {
+    "value": 0.08,
+    "unit": "m",
+    "basis": "claim: c3 'moving slightly forward to clear the edge', c4 'keeping your butt close to the bench': the buttock this far in front of the bench's front edge at the top; the least whole cm at which the drawn torso outline stays off the drawn bench pad in every drawn pose (start, both via poses, end and the Mistake; 7 cm put the Mistake's outline 0.1 px into the pad). The bench's legs stand at its ends, outside the body's width, so only the pad can collide"
+   },
+   "TOP_LEAN": {
+    "value": 5,
+    "unit": "deg",
+    "basis": "claim: c20 'lean back slightly': the pelvis tilted 5 deg back at the top"
+   },
+   "ANKLE": {
+    "value": 0,
+    "unit": "deg",
+    "basis": "claim: c3 'toes pointing up': the foot square to the shin"
+   },
+   "SCAP_PRO": {
+    "value": -3,
+    "unit": "cm",
+    "basis": "convention: pull_up.mjs:36's 3 cm (the 8's shoulder blades back) for c20 'Pull the shoulder blades back'"
+   },
+   "M_FLEX": {
+    "value": 20,
+    "unit": "deg",
+    "basis": "stated: c8 'well below' level, clearly past c5's 'about parallel' and 'slightly above'; with the legs straight and the heels planted, 25 deg (the note's proposal) put the drawn buttock 0.5 cm through the floor, so the deepest whole 5 deg step that keeps it above the floor"
+   },
+   "FLOOR_BACK": {
+    "value": 0.15,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the bench's back edge"
+   },
+   "FLOOR_FRONT": {
+    "value": 0.25,
+    "unit": "m",
+    "basis": "stated reason: layout, the floor line past the toes"
+   },
+   "TOP_U": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c3 'holding there with extended arms' with HIP_CLEAR: the straight arm's slope from plumb that puts the buttock HIP_CLEAR in front of the edge (-36.6 deg)"
+   },
+   "END_TILT": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "claim: c3 'heels on the ground', c4 'legs out straight': the pelvis tilt that keeps the straight-legged heel on its floor point at the bottom (2.8 deg)"
+   },
+   "M_TILT": {
+    "value": "solved",
+    "unit": "deg",
+    "basis": "the END_TILT rule in the Mistake (2.0 deg)"
+   },
+   "trace": {
+    "value": "shoulder.r",
+    "unit": "point",
+    "basis": "claim: c5, the lowering cue (the elbow bend, whose moving end is the shoulder; DESIGN.md section 16 item 6; D-LIB17-TRACE)"
+   }
+  }
+ }
+}
