@@ -1,0 +1,16 @@
+{
+ "note": "LIB-ZOOM: horizontal_leg_press approved by the supervisor recheck panel @ 9fbdfb5 (#279). Plate fragments (golden.mjs fragmentsOf, zoom circle included), pinned by tests/howto/lib-zoom.test.ts.",
+ "approvedAt": "9fbdfb52cb0da33e37668db39dec606b0057aefe",
+ "chromeId": "horizontal-leg-press",
+ "fragments": {
+  "normalSvg": "63b264a9c21c810e4b45ef5979f8ce354cb43352839c726caaaa0894d70ef627",
+  "normalOverlay": "f9285069939c58575d275c956f75e1a150fb06be51e24c746e6ea73050f77d1d",
+  "mistakeSvg": "dad4efcda3dc8349a928657cb5bfe9501e7470146226ac5b5916b467498f776a",
+  "mistakeOverlay": "8188d344422d314148e8d86d8f84ec1bf49936dbe146460c2771c59317d535c5",
+  "tells": "cb31438195b705c447b302b48b21599a6bbbce3bc54a082d1ca0c0ec0d9bbc50",
+  "tempo": "5472d1d641b3a34dbd529cb0be7506dd93281fc12d368b58f46c54a75e0cc5e8",
+  "cues": "1047a0ef67ccdc9e9c00f5acc437a261f2db1f06a513e1d0276036f77153fcc5",
+  "alt": "11fdbc38ac485614fd0fa093ffd73e5037c43c6e3414357c7802990837ef8a7a",
+  "mistakeAlt": "d47372d48dc4f04e1d6b64799522bc993959934f6fbfa93bc6ea91757a2f38eb"
+ }
+}

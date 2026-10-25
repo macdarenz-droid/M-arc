@@ -13,6 +13,7 @@ import { join } from 'node:path';
 import { ROOT, sha256 } from '../lib/inputs.mjs';
 import { FIXTURE, FONT, GOLDEN_JSON, LIB_OF, firstDiff, buildGallery, extractPlates, fragmentsOf, latestEntries, makeMirror, readManifest, verifyChain } from '../golden.mjs';
 import { galleryCss, rewriteCss } from '../css.mjs';
+import { CODEC, decoderSource, pack } from './codec/delta.mjs';
 
 const rel = p => p.slice(ROOT.length + 1).split('\\').join('/');
 export const PLATES_JSON = 'tools/plates/plates.json';
@@ -43,16 +44,43 @@ export function problemsOf(p, entry, row) {
 }
 
 const lit = s => JSON.stringify(s);
-const figure = (f, pad) => [
+// `refs` (HT-11): the names the svg and overlay are bound to in a packed module, else they are written as literals
+const figure = (f, pad, refs) => [
   `{`,
-  `${pad}  svg: ${lit(f.svg)},`,
-  `${pad}  overlay: ${lit(f.overlay)},`,
+  `${pad}  svg: ${refs ? refs[0] : lit(f.svg)},`,
+  `${pad}  overlay: ${refs ? refs[1] : lit(f.overlay)},`,
   `${pad}  firstKey: ${lit(f.firstKey)},`,
   `${pad}  cues: [${f.cues.map(c => `{ key: ${lit(c.key)}, cue: ${lit(c.cue)} }`).join(', ')}],`,
   `${pad}}`,
 ].join('\n');
 
-export function moduleText(id, p, entry, hash) {
+/** The module text. With `packed` (HT-11, the shipped form) the four figure strings are path-encoded
+ *  (tools/plates/gen/codec/delta.mjs) and decoded once at import. Without it they are literals, byte-stable for
+ *  LIB-3 H7's sizing (L2-A19). */
+export function moduleText(id, p, entry, hash, packed = false) {
+  const plate = pad => [
+    `view: ${lit(viewOf(p.normal.overlay))},`,
+    `normal: ${figure(p.normal, pad, packed && ['nSvg', 'nOverlay'])},`,
+    `mistake: ${figure(p.mistake, pad, packed && ['mSvg', 'mOverlay'])},`,
+    `tells: ${lit(p.tells)},`,
+    `tempo: ${lit(p.tempo)},`,
+    `alt: ${lit(p.alt)},`,
+    `mistakeAlt: ${lit(p.mistakeAlt)},`,
+  ].map(l => `${pad}${l}`).join('\n');
+  // HT-11: the packed plate is an arrow called in place, so the module keeps its one import and its object literal
+  const body = packed ? `(() => {
+    // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
+    // gives back their golden bytes once, at import.
+    const unpack = ${decoderSource().replace(/\n/g, '\n    ')};
+    const [nSvg = '', nOverlay = '', mSvg = '', mOverlay = ''] = unpack([
+${pack([p.normal.svg, p.normal.overlay, p.mistake.svg, p.mistake.overlay]).map(s => `      ${lit(s)},`).join('\n')}
+    ]);
+    return {
+${plate('      ')}
+    };
+  })()` : `{
+${plate('    ')}
+  }`;
   return `import type { BuiltHowTo } from '../types';
 
 export default {
@@ -60,15 +88,7 @@ export default {
   id: ${lit(id)},
   name: ${lit(p.name)},
   hashes: { inputsSha256: ${lit(hash)}, golden: ${lit(sha256(JSON.stringify(entry)))} },
-  plate: {
-    view: ${lit(viewOf(p.normal.overlay))},
-    normal: ${figure(p.normal, '    ')},
-    mistake: ${figure(p.mistake, '    ')},
-    tells: ${lit(p.tells)},
-    tempo: ${lit(p.tempo)},
-    alt: ${lit(p.alt)},
-    mistakeAlt: ${lit(p.mistakeAlt)},
-  },
+  plate: ${body},
 } satisfies BuiltHowTo;
 `;
 }
@@ -105,7 +125,7 @@ async function outputsOf({ hashFor }) {
   const byId = new Map(plates.map(p => [LIB_OF[p.chromeId], p]));
   const out = goldenIds.map(id => {
     const path = `src/howto/generated/${chunkName(rows[id].slug)}.ts`;
-    return { path, text: moduleText(id, byId.get(id), latest.get(id), hashFor(path, inputsFor(path))) };
+    return { path, text: moduleText(id, byId.get(id), latest.get(id), hashFor(path, inputsFor(path)), true) };
   });
   out.push({ path: 'src/howto/generated/index.ts', text: indexText() });
   const plateCss = rewriteCss(galleryCss(html));
@@ -161,7 +181,7 @@ async function libraryOutputs(hashFor, plateCss) {
       if (bad.length) throw new Error(`plates: refusing to generate ${row.id}:\n${bad.join('\n')}`);
       await gateNodeHalf(row, html, engine, all);
       const path = `src/howto/generated/${chunkName(row.slug)}.ts`;
-      out.push({ path, text: moduleText(row.id, p, entry, hashFor(path, inputsFor(path))) });
+      out.push({ path, text: moduleText(row.id, p, entry, hashFor(path, inputsFor(path)), true) });
     }
     return out;
   } finally { dropMirror(mirror); }
@@ -173,8 +193,8 @@ async function libraryOutputs(hashFor, plateCss) {
  *  ht-<slug>.ts adds its plates page config, the closure of its spec (closureOf), its batch file and batch golden file. */
 export function inputsFor(path) {
   const row = libraryRows().find(r => path === `src/howto/generated/${chunkName(r.slug)}.ts`);
-  if (!row) return inputs();
-  return [...inputs(), 'tools/plates/library/plates-page.mjs', 'tools/plates/library/build-page.mjs', 'tools/plates/library/batch-golden.mjs',
+  if (!row) return /\/ht-[^/]+\.ts$/.test(path) ? [...inputs(), ...CODEC] : inputs();   // HT-11: an ht-*.ts is packed with CODEC
+  return [...inputs(), ...CODEC, 'tools/plates/library/plates-page.mjs', 'tools/plates/library/build-page.mjs', 'tools/plates/library/batch-golden.mjs',
     pagesOf(row).plates, ...closureOf([`tools/plates/${row.src}`]), row.batchFile, batchGoldenOf(row.batchFile)];
 }
 export async function outputs(ctx) {
