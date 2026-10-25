@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-26 ~00:15 UTC · main `9c3287cd` · **8.0r: trains 38-40 merged (LB2, pilot B, HT-11, LB3, LIB-20, LB5-LB9); train 41 = LB10 + F-PLATEFACTS; owner 10-25 03:40 "Just continue until maxxed out"; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-25 ~23:45 UTC · main `9c3287cd` · **8.0r: trains 38-40 merged (LB2, pilot B, HT-11, LB3, LIB-20, LB5-LB9); train 41 = LB10 + F-PLATEFACTS; owner 10-25 03:40 "Just continue until maxxed out"; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -827,7 +827,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
   | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
 
-**Update 00:15 UTC (10-26):**
+**Update 23:45 UTC (10-25):**
 - **Train 40 merged** (#324) → main `9c3287cd`: #297 LB6, #299 LB7, #306 LB8, #312 LB9.
   - All four catch-ups passed delta review under D-LIB-A16-COMPOSE.
   - LB7 had a Medium (a merge duplicated main's F-CI-1 heading) and LB8 had a Low (a loosened leg-curl comment check). Both were fixed and diff-checked.
