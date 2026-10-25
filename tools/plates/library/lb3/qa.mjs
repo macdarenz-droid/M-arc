@@ -3,13 +3,18 @@
 // authoring: true }): zero exemptions, no pin read, refused at approved-plate or shipped. Prints the per-id table: hard
 // checks, raised flags and metrics. Writes nothing in the repo.
 //   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb3/qa.mjs [lib_id ...]
+//   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb3/qa.mjs --sheet
+//     the LB3 owner sheet (build.mjs buildOwnerSheet; card :20-21), built twice into a temp directory with the table
 import { fileURLToPath } from 'node:url';
 import { makeMirror } from '../../golden.mjs';
 import { candidateOf } from '../candidate.mjs';
 import { browserResults, launch } from '../qa/browser.mjs';
 import { dropMirror, loadEngine } from '../qa/engine.mjs';
 import { FLAGS, HARD, loadPins, runQa } from '../qa/index.mjs';
-import { buildLb3Page, drawnIds, lb3All, sha256 } from './build.mjs';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { buildLb3Page, buildOwnerSheet, drawnIds, lb3All, sha256 } from './build.mjs';
 
 /** { sha, reports: [runQa report] } for `ids` (default: every drawn LB3 id). */
 export async function qaLb3({ ids = drawnIds(), all = lb3All(), browser: given = null } = {}) {
@@ -54,7 +59,15 @@ export const flagProblems = reports => reports.flatMap(r => {
   return out;
 });
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1] && process.argv[2] === '--sheet') {
+  const dir = mkdtempSync(join(tmpdir(), 'lb3-sheet-')), runs = [];
+  for (const n of [1, 2]) { const r = await buildOwnerSheet({ qaLb3, flagProblems, tableOf }); writeFileSync(join(dir, `lb3-sheet-${n}.html`), r.html); runs.push(r); console.log(`sheet ${n}: ${r.sheetSha} (${Buffer.byteLength(r.html)} B) ${join(dir, `lb3-sheet-${n}.html`)}; plates page ${r.pageSha}`); }
+  for (const line of runs[0].table) console.log(line);
+  console.log(JSON.stringify(runs[0].flags));
+  const same = runs[0].sheetSha === runs[1].sheetSha && runs[0].pageSha === runs[1].pageSha;
+  console.log(same ? `sheet: identical, sha256 ${runs[0].sheetSha}` : 'sheet: the two builds DIFFER');
+  if (!same) process.exit(1);
+} else if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const ids = process.argv.slice(2);
   const { sha, reports } = await qaLb3(ids.length ? { ids } : {});
   console.log(`LB3 plates page sha256 ${sha}`);
