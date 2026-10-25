@@ -4284,3 +4284,9 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - **Anchors:** lat_pulldown R2 is follow-up 21; pull_up R2 is 22. Two new defects, confirmed on the PNG crop:
   - **golden-B follow-up 25:** pull_up R6, the Trace starts on the end elbow, not at a start-pose landmark;
   - **golden-B follow-up 26:** pull_up R2, the bar's wall plate has no wall.
+
+## 37. LB2 focused recheck: set lb2r (2026-10-25 ~12:30 UTC; #265 @ `41648561`, page `cb267416…`)
+- **lb2r:** VALID, both plants caught 3/3: the flare arrow reversed (R5) and the Trace overshooting into the body (R6).
+- incline_barbell_bench_press is **APPROVED**; every median is ≥ 4.
+- All 8 LB2 plates are approved (#265 6263322398, 6396940823 and the lb2r verdict).
+- **Anchors:** every item below 4 is a recorded follow-up: pull_up R1 (20, 23) and R2 (22, 26), and lat_pulldown R1 (19).
