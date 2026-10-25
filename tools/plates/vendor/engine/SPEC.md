@@ -23,6 +23,8 @@ unchanged, plus `ENGINE_CSS` (new classes only: `.far`, `.eq*`, `.m-pose`). Ever
   plate y 339. Plate is 358 x 358 px. Override with `camera: { pxPerM, x0, y0 }` or `camera: { fit: true | {left,
   right, top, bottom} margins, maxScale }` (fits start, ghosts, end and equipment, never larger than the reference
   unless `maxScale > 1`).
+- `camera.pitch` (deg, default 0; front view only, ignored in side view): the camera is raised on the viewer's side
+  and looks down, screen-up = `y cos p - z sin p`. At 0 the level projection above is used unchanged (LIB-20).
 - Angles: degrees.
 
 ## 2. Body model
@@ -43,7 +45,16 @@ Side view: far limbs first in a lighter stroke (`.far`), then torso + head + nea
 ```js
 {
   root: { at: [x, y, z], tilt },   // HJC midpoint (m); tilt = pelvis tilt, + forward (anterior), - leaning back
-  trunk: 0,                        // spine flexion relative to the pelvis, + forward
+  root: { roll },                  // default 0, both views: the whole body turns about the forward axis; + tips the head
+                                   // toward the figure's right. Pelvis frame rotY(yaw)·rotZ(roll)·rotX(tilt) (LIB-20)
+  root: { yaw },                   // default 0, both views: the pelvis turns about the world vertical through the root,
+                                   // + turns the hips toward the figure's left; planted feet stay put, hips and knees turn
+  trunk: 0,                        // spine flexion relative to the pelvis, + forward; a number = { flex }
+  trunk: { flex, yaw, lat },       // defaults 0 (absent, null and 0 = 0), both views. yaw: the thorax and head turn about
+                                   // the thorax's long axis, + toward the figure's left; lat: side bend after the flex,
+                                   // + toward the figure's right. Thorax Rp·rotZ(lat)·rotX(flex)·rotY(yaw) (LIB-20).
+                                   // Mistake merge: poses.end.trunk and mistake.pose.trunk must both be numbers or
+                                   // both objects; a mix throws (it would drop the flex or the yaw and lat)
   neck: 0,                         // head flexion relative to the thorax, + chin down
   scap: { elev, pro },             // shoulder girdle offset in cm: elev + shrug, pro + protract / - retract
   shoulder: { elev, plane, rot },  // elev from hanging; plane 0 = abduction plane, 90 = flexion plane; rot + external
@@ -97,6 +108,7 @@ Helpers (`import { ... } from '../engine/index.mjs'`):
 | `marks` | landmarks that get a joint circle (default: shoulders + elbows in front view; near shoulder, elbow, hip, knee in side view) |
 | `armsFront` | front view: always draw the arms over the torso |
 | `hand` | `'flat'` (both hands) or `{ l, r }`: an open hand, palm flat, instead of the fist. One outline from the wrist to the fingertips, joined to the forearm (no gap); its palm side (screen-down) is straight at the forearm's distal radius (`RADII.fore[2]`), so a wrist placed that far above a surface lays the palm flat on it (`exercises/_test_flat.mjs`). Unset: the fist |
+| `torso` | `'volume'`: the trunk and head as closed hulls of stacked elliptic sections (`torso.<n>`, `head.<n>`), so a trunk seen end-on or from a pitched camera keeps its depth. Front view: a trunk nearer the camera than the knees goes in group `chest`, drawn over the legs, and its head in `headF` over that (`exercises/_test_pitch.mjs`). Unset: the flat outline, groups `body` / `trunk` (LIB-20) |
 | `callouts` | up to 3 `{ key, text (1-3 words, `<br>` for 2 lines), anchor, cue (one sentence), box?: { left, top } (button px), prefer?: 'left'|'right'|'above'|'below', guide?: [points] (accent dashed line when selected) }` |
 | `tempo` | `[{ phase, s, move? }]`, phase names that suit the lift (e.g. Pull / Hold / Return / Rest) |
 | `mistake` | `{ pose (partial, merged over poses.end), parts?, guides, tells }`. The faulty pose is drawn as a dashed `--mistake` outline of only what differs from the correct end pose. `guides`: `{ kind: 'arrow', from, to }`, `{ kind: 'line' | 'dashed', pts, smooth? }`, `{ kind: 'arc-arrow', center, r, a0, a1 }` (screen degrees, 0 = right, -90 = up). `tells`: 1-3 `{ key, text, anchor, cue }` |

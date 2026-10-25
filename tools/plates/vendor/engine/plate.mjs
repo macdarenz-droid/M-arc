@@ -25,17 +25,31 @@ const mergeDeep = (a, b) => {
   return b;
 };
 
+// D-LIB20-TRUNK: the Mistake merge never drops a trunk field. A numeric trunk merged with an object one (either way round)
+// would lose the flex or the yaw and lat, so it throws; write both as { flex, yaw, lat }.
+const isObj = v => v && typeof v === 'object';
+function mistakePose(spec) {
+  const e = spec.poses.end.trunk, m = spec.mistake.pose.trunk;
+  if ((typeof e === 'number' && isObj(m)) || (isObj(e) && typeof m === 'number'))
+    throw new Error(`${spec.id}: poses.end.trunk and mistake.pose.trunk mix a number and { flex, yaw, lat }; write both as objects (D-LIB20-TRUNK)`);
+  return mergeDeep(spec.poses.end, spec.mistake.pose);
+}
+
 function makeCamera(spec, cam) {
   const side = spec.view === 'side', facing = spec.facing ?? 'right';
   const sx = side ? (w => (facing === 'left' ? -w[2] : w[2])) : (w => w[0]);
-  const P = w => [cam.x0 + sx(w) * cam.pxPerM, cam.y0 - w[1] * cam.pxPerM];
+  // LIB-20: camera.pitch (deg, front view only, default 0) raises the camera on the viewer's side and tilts it down:
+  // screen-up = y cos p - z sin p. At 0 the original projection is used, not a multiply by cos 0.
+  const pitch = side ? 0 : (spec.camera?.pitch ?? 0), pc = Math.cos(pitch * R), ps = Math.sin(pitch * R);
+  const P = pitch ? (w => [cam.x0 + sx(w) * cam.pxPerM, cam.y0 - (w[1] * pc - w[2] * ps) * cam.pxPerM])
+    : (w => [cam.x0 + sx(w) * cam.pxPerM, cam.y0 - w[1] * cam.pxPerM]);
   return { view: side ? 'side' : 'front', facing, near: side ? (facing === 'left' ? 'l' : 'r') : null, P, pxm: cam.pxPerM, ...cam };
 }
 
 // Everything drawn for one pose: body shapes + equipment items, in plate px.
 function drawPose(spec, body, q, cam, ctx) {
   const sk = fk(q, body), lm = landmarks(sk);
-  const shapes = bodyShapes(sk, cam, { armsFront: spec.armsFront, hand: spec.hand }).map(s => ({ ...s, part: partOf(s.key) }));
+  const shapes = bodyShapes(sk, cam, { armsFront: spec.armsFront, hand: spec.hand, torso: spec.torso }).map(s => ({ ...s, part: partOf(s.key) }));
   const eq = [];
   (spec.equipment ?? []).forEach((e, i) => {
     let ent = typeof e === 'function' ? e(lm, { ...ctx, q }) : e;
@@ -75,7 +89,7 @@ export function renderPlate(spec, { id = 'p', mistake = false, selected = null }
   const at = t => poseAt(keys, t, body);
   const rStart = at(0), rEnd = at(1), rGhost = ghostT.map(at);
   let rMis = null;
-  if (spec.mistake?.pose) rMis = resolve(normPose(mergeDeep(spec.poses.end, spec.mistake.pose), body), body);
+  if (spec.mistake?.pose) rMis = resolve(normPose(mistakePose(spec), body), body);
 
   // ---- camera (reference scale by default; optional fit) ----
   let camCfg = { ...REF_CAMERA, ...(spec.camera ?? {}) };
@@ -135,7 +149,7 @@ export function renderPlate(spec, { id = 'p', mistake = false, selected = null }
     };
     const grp = g => union(bodyIn.filter(s => s.group === g).map(s => def(`${tag}-${s.key}`, s.d)), g === 'far' ? 'far' : '');
     if (cam.view === 'side') return eqBlock('back') + grp('far') + eqBlock('center') + grp('trunk') + eqBlock('mid') + grp('near') + eqBlock('front');
-    return eqBlock('back') + grp('body') + eqBlock('center') + grp('legs') + eqBlock('mid') + grp('arms') + eqBlock('front');
+    return eqBlock('back') + grp('body') + eqBlock('center') + grp('legs') + grp('chest') + grp('headF') + eqBlock('mid') + grp('arms') + eqBlock('front');
   }
   void groups;
   const staticBack = E.eq.filter(it => it.z === 'back' && !eqMoving(it)).map(eqEl).join('');
