@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-24 ~17:50 UTC · main `cd6113c4` · **8.0q PAUSE (owner, 10-24 ~16:15): all work paused; the hourly tick is disabled; read 8.0q first** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-25 ~00:50 UTC · main `cd6113c4` · **8.0r RESUMED (owner, 10-25 00:23); usage 0.76, merges only until the 10-29 reset; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -808,6 +808,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0r RESUMED 10-25 ~00:23 UTC (owner: "Continue now"; read first, then 8.0q)
+- The hourly tick is **re-enabled**. **Usage: 7-day 0.76 at 00:23 UTC** (the 0.75 warning is passed; reset Thu 10-29 02:00 UTC). With about 4 % left before the owner's 80 % pause, only merges of already-reviewed work run now; no new builders start before the reset.
+- **#271 LIB-7c:** catch-up delta REVIEW PASS @ `6f40f62e` (6391426386, 0/0/0/0; a trial merge with main `cd6113c4` is clean and the five focused test files pass).
+- **Train 36** (`claude/sup-merge-train-36` @ `7fe4b449` + this handover): #271 @ `6f40f62e` and #316 F-C0-TIMEOUT @ `7bcd76fe` on main `cd6113c4`. Local: typecheck 0; vitest 252 files, 3559 tests pass. C0 = [] on the merged tree.
 
 ### 8.0q PAUSE 10-24 ~16:20 UTC (owner: "Pause all tasks and update handover to repo for any claude agent to continue in the future. Pause the task now if their done, if not keep goinf until its done until u pause."; read first, supersedes 8.0p where they differ)
 
