@@ -579,20 +579,72 @@ describe('LIB-18 A3: spec and composer closures are pure and drawn by the vendor
   });
 });
 
-describe('LIB-18 A16: no other card\'s composer is copied, forked or imported (D-LIB18-COMPOSERS, -LEGCURL)', () => {
-  // main's eq/ at 1ffd0dac: parts.mjs and rope.mjs; this card adds the five LB8 composers only (legCurlMachine is pilot B's).
-  const MAIN_EQ = ['parts.mjs', 'rope.mjs'], OURS = COMPOSERS.map(c => `${c}.mjs`);
-  const eqProblems = (names: string[]) => [...names.filter(n => !MAIN_EQ.includes(n) && !OURS.includes(n)).map(n => `extra ${n}`), ...MAIN_EQ.filter(n => !names.includes(n)).map(n => `missing ${n}`)];
-  it('tools/plates/library/eq/ holds exactly main\'s files plus the LB8 composers', () => {
-    expect(eqProblems(readdirSync('tools/plates/library/eq'))).toEqual([]);
-    for (const c of ['hackSled', 'calfMachine', 'ankleCuff']) expect(readdirSync('tools/plates/library/eq')).toContain(`${c}.mjs`);
+describe('LIB-18 A16: no other card\'s composer is copied, forked or imported (D-LIB18-COMPOSERS, -LEGCURL, D-LIB-A16-COMPOSE)', () => {
+  const EQ = 'tools/plates/library/eq';
+  // D-LIB-A16-COMPOSE (lib4-cards section 39): main's eq/ at 40f9ea93, this card's composers, and the composers each other
+  // build-ahead card owns by exact name (this card's own names dropped). legCurlMachine is pilot B's.
+  const MAIN_EQ = ['assistMachine', 'band', 'chestRowMachine', 'dHandle', 'declineBench', 'inclineBench', 'landmine', 'legCurlMachine', 'parts',
+    'pecDeck', 'polybar', 'romanChair', 'rope', 'safetyArms', 'smith'].map(c => `${c}.mjs`);
+  const OURS = COMPOSERS.map(c => `${c}.mjs`);
+  const OTHER_CARDS: Record<string, string[]> = {
+    'LIB-14': ['wall'], 'LIB-15': ['preacherPad'], 'LIB-16': ['crunchMachine', 'pulloverMachine'], 'LIB-17': ['dipBars'], 'LIB-21': ['abWheel'],
+    'LIB-22': ['battleRope', 'jumpRope', 'kettlebell', 'medBall', 'sled'],
+  };
+  const OTHERS = Object.values(OTHER_CARDS).flat().map(c => `${c}.mjs`);
+  const readEq = (): Record<string, string> => Object.fromEntries(readdirSync(EQ).map(n => [n, readFileSync(join(EQ, n), 'utf8')]));
+  /** Every file in eq/ that is not main's or ours must be another card's composer by exact name, and no file but ours may hold a byte copy of ours. */
+  const eqProblems = (eq: Record<string, string>) => {
+    const names = Object.keys(eq);
+    return [...names.filter(n => !MAIN_EQ.includes(n) && !OURS.includes(n) && !OTHERS.includes(n)).map(n => `extra ${n}`),
+      ...[...MAIN_EQ, ...OURS].filter(n => !names.includes(n)).map(n => `missing ${n}`),
+      ...names.filter(n => !OURS.includes(n)).flatMap(n => OURS.filter(o => o in eq && eq[o] === eq[n]).map(o => `${n}: a byte copy of ${o}`))];
+  };
+  it('tools/plates/library/eq/ holds main\'s files and the LB8 composers, and any other file is another card\'s composer by exact name', () => {
+    expect(eqProblems(readEq())).toEqual([]);
+  });
+  it('OTHER_CARDS names no LB8 composer and none of main\'s files', () => {
+    expect(OTHERS.filter(n => OURS.includes(n) || MAIN_EQ.includes(n))).toEqual([]);
   });
   it('mutation: a copy of #278\'s eq/legCurlMachine.mjs added under eq/ under another name is red', () => {
-    expect(eqProblems([...readdirSync('tools/plates/library/eq'), 'curlMachine.mjs'])).toEqual(['extra curlMachine.mjs']);
+    const eq = readEq();
+    expect(eqProblems({ ...eq, 'curlMachine.mjs': eq['legCurlMachine.mjs']! })).toEqual(['extra curlMachine.mjs']);
   });
-  it('no LB8 spec draws or imports a leg curl machine of its own before pilot B is on main (D-LIB18-LEGCURL)', () => {
-    for (const id of specsDrawn()) expect(readFileSync(`tools/plates/library/specs/${id}.mjs`, 'utf8'), id).not.toMatch(/legCurlMachine/);
-    for (const id of LEGCURLS) expect(existsSync(`tools/plates/library/specs/${id}.mjs`), id).toBe(existsSync('tools/plates/library/eq/legCurlMachine.mjs'));
+  it('mutation: a file named as another card\'s composer (LIB-14 wall) holding a byte copy of eq/hackSled.mjs is red; control: the same name with its own source is green', () => {
+    const eq = readEq();
+    expect(eqProblems({ ...eq, 'wall.mjs': eq['hackSled.mjs']! })).toEqual(['wall.mjs: a byte copy of hackSled.mjs']);
+    expect(eqProblems({ ...eq, 'wall.mjs': 'export const WALL = {};\n' })).toEqual([]);
+  });
+  it('mutations: one of main\'s files (rope.mjs) and one LB8 composer (pendulum.mjs) removed are red', () => {
+    const { 'rope.mjs': _r, 'pendulum.mjs': _p, ...eq } = readEq();
+    expect(eqProblems(eq)).toEqual(['missing rope.mjs', 'missing pendulum.mjs']);
+  });
+  // D-LIB18-LEGCURL after pilot B (section 39): no LB8 spec or composer draws a leg curl machine of its own; a leg curl
+  // spec imports pilot B's eq/legCurlMachine.mjs. The leg curl rows stay held for 'LIB-18 resume' (D-LIB-ORDER-3).
+  const LEGCURL_IMPORT = /import\s*\{[^}]*\blegCurlMachine\b[^}]*\}\s*from\s*'\.\.\/eq\/legCurlMachine\.mjs'/;
+  /** Source without comments, so a sizes note naming legCurlMachine (lb8/DESIGN.md section 12) is not code. */
+  const code = (src: string) => src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"])\/\/.*$/gm, '$1');
+  const legCurlProblems = (specs: Record<string, string>, composers: Record<string, string>) => [
+    ...Object.entries(specs).flatMap(([id, src]) => (LEGCURLS.includes(id)
+      ? (LEGCURL_IMPORT.test(src) ? [] : [`${id}: does not import pilot B's eq/legCurlMachine.mjs`])
+      : (/legCurlMachine|LEG_CURL/.test(code(src)) ? [`${id}: not a leg curl, names legCurlMachine`] : []))),
+    ...Object.entries(composers).filter(([, src]) => /legCurl|LEG_CURL/i.test(code(src))).map(([c]) => `${c}: a leg curl machine of its own`),
+  ];
+  const lb8Specs = () => Object.fromEntries([...specsDrawn(), ...LEGCURLS.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`))]
+    .map(id => [id, readFileSync(`tools/plates/library/specs/${id}.mjs`, 'utf8')]));
+  const lb8Composers = () => Object.fromEntries(OURS.map(c => [c, readFileSync(join(EQ, c), 'utf8')]));
+  it('pilot B is on main: no LB8 spec or composer draws a leg curl machine of its own, leg curls import eq/legCurlMachine.mjs, and the leg curls stay held', () => {
+    expect(existsSync(join(EQ, 'legCurlMachine.mjs'))).toBe(true);
+    expect(LEGCURL_IMPORT.test(readFileSync('tools/plates/library/specs/seated_leg_curl.mjs', 'utf8'))).toBe(true);
+    expect(legCurlProblems(lb8Specs(), lb8Composers())).toEqual([]);
+    for (const id of LEGCURLS) expect(existsSync(`tools/plates/library/specs/${id}.mjs`), `${id} is held`).toBe(false);
+  });
+  it('mutations: a lying_leg_curl spec without the import, hack_squat importing legCurlMachine and an LB8 composer with its own leg curl machine are red; control: a lying_leg_curl spec with the import is green', () => {
+    const specs = lb8Specs(), composers = lb8Composers();
+    const imp = "import { legCurlMachine, LEG_CURL_ITEMS } from '../eq/legCurlMachine.mjs';\n";
+    expect(legCurlProblems({ ...specs, lying_leg_curl: 'export default {};\n' }, composers)).toEqual(['lying_leg_curl: does not import pilot B\'s eq/legCurlMachine.mjs']);
+    expect(legCurlProblems({ ...specs, hack_squat: imp + specs.hack_squat }, composers)).toEqual(['hack_squat: not a leg curl, names legCurlMachine']);
+    expect(legCurlProblems(specs, { ...composers, 'hackSled.mjs': `${composers['hackSled.mjs']}export function legCurlPad() {}\n` })).toEqual(['hackSled.mjs: a leg curl machine of its own']);
+    expect(legCurlProblems({ ...specs, lying_leg_curl: `${imp}export default {};\n` }, composers)).toEqual([]);
   });
 });
 
