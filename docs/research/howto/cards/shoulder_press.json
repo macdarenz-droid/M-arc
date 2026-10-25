@@ -25,10 +25,6 @@
       "why": "true for this child because ACE asks for the same neutral wrist, in line with the forearm, at the start and all the way up (c2, c5)."
     },
     {
-      "field": "setup['Pick the weight. Start lighter than you think; if you have to bend your wrist back to hold it, it is too heavy.']",
-      "why": "true for this child because the wrist-fold fault it guards against comes from the same handle, grip and push line."
-    },
-    {
       "field": "zooms['hand']",
       "why": "true for this child because the hand on the handle and the bent-back-wrist fault look the same; the forearm is simply vertical instead of horizontal."
     }
