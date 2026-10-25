@@ -9515,6 +9515,23 @@ if (gate.runs('LIB-7'))
   } finally { await lib7.close(); }
 }
 
+if (gate.runs('LIB-7c'))
+{
+  // LIB-7c (hands/DESIGN.md §10; card 7c-A8): LIB-7's checks over the LB1 hand pairs (keys bar and v-handle) only
+  const tag = 'LIB-7c';
+  const { lib7cGate, expectedPages } = await import('../tools/plates/library/hands/lib7c-gate.mjs');
+  const lib7c = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    const empty = await lib7cGate(lib7c, { index: { drawn: new Map(), gaps: new Map() } });
+    if (!empty.problems.some(p => /no hand pair page/.test(p))) errors.push(`${tag}: the block passes with no pages (self-check)`);
+    const t0 = Date.now(), r = await lib7cGate(lib7c), want = expectedPages();
+    for (const p of r.problems) errors.push(`${tag}: ${p}`);
+    // one page per drawn id (fault list ['curled'], D-LIB7c-KEYS): 6 ids, less any D-LIB7c-SHIP gaps
+    if (r.pages !== want || want !== 6) errors.push(`${tag}: ${r.pages} pages, expected ${want} (the 6 ruled ids)`);
+    console.log(`${tag} hand pairs (${lib7c.version()}): ${r.pages} pages x ${r.themes} themes x ${r.widths} widths, ${r.shots} pixel shots, ${r.problems.length} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  } finally { await lib7c.close(); }
+}
+
 // LIB-12: the hand views (palm-flat, cupped, front-rack, ball-contact) and the battle-rope pair (card LIB-12; plan 2.3;
 // tools/plates/library/hands/gate-lib12.mjs). Every LIB-12 drawn pair in 5 themes at 390, 360 and 340 px: no horizontal
 // scroll, SVG and text inside the plate (H4); each ink class's contrast >= golden B's minimum for it, measured in the

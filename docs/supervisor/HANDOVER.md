@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-23 00:00 UTC · main `1ffd0dac` · **8.0p (update 00:00): LB5, LB6, LB7 drawn rows all approved; F-CI-1 merged; pilot A changed-ids sheet sent to the owner; LB9 still blocked on the owner** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-25 ~00:50 UTC · main `cd6113c4` · **8.0r RESUMED (owner, 10-25 00:23); usage 0.76, merges only until the 10-29 reset; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -808,6 +808,61 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 **RESUMED 10-03 ~19:08 UTC** (owner: "Continue work progress /loop"). Routine re-enabled, monitor re-armed, /loop re-armed. Resume messages went to the HT-10 reviewer (delta `b94e63a..edeefd2`), the LIB-12 builder (merge LIB-7 `1114bc1`) and the pilot A builder (shoulder press Mistake). The LIB-7 panel restarted with fixed anchors lat_pulldown p1 + barbell_back_squat p1 (golden-B follow-up 8: the chest-press hand label). The motion-fix workflow was resumed. Idle workers (GATE-SPLIT, LIB-2 enabler, LIB-3, research) stay idle until HT-10, and their next message counts as resume.
 
 **20:10 UTC.** Motion-fix artifact published for the owner to judge: https://claude.ai/artifact/91QXAHtN1nnXfHmQz1B6F4 ("Chest Press Motion"; private, owner's account). Artifacts do not serve `.glb`, so the two models went up as embedded glTF JSON (`figure.json`, `machine.json`); the page's own metrics on that build: hand gap 0.0002 mm, stack error 0 %, penetration 0, muscles monotonic, no red cell. Source stays in the supervisor scratchpad. LIB-7 delta at 93f5b2a FAILED on one Medium (orphan wrist tick); ruling D-LIB7-18b on #193 amends D-LIB7-18a to strip the tick as the squat precedent does. **LIB-7 delta PASS @ `f3e285c` 20:18**; panel critic running on it (lib7-critic.js, run wf_1cd427f5-b00). PILOT-A FIXED @ `e6f39ff`; panel critic running (pilot-a-critic.js, run wf_cad21b92-9ed). HT-10 delta PASS 20:27; train 13 built.
+
+### 8.0r RESUMED 10-25 ~00:23 UTC (owner: "Continue now"; read first, then 8.0q)
+- The hourly tick is **re-enabled**. **Usage: 7-day 0.76 at 00:23 UTC** (the 0.75 warning is passed; reset Thu 10-29 02:00 UTC). With about 4 % left before the owner's 80 % pause, only merges of already-reviewed work run now; no new builders start before the reset.
+- **#271 LIB-7c:** catch-up delta REVIEW PASS @ `6f40f62e` (6391426386, 0/0/0/0; a trial merge with main `cd6113c4` is clean and the five focused test files pass).
+- **Train 36** (`claude/sup-merge-train-36` @ `7fe4b449` + this handover): #271 @ `6f40f62e` and #316 F-C0-TIMEOUT @ `7bcd76fe` on main `cd6113c4`. Local: typecheck 0; vitest 252 files, 3559 tests pass. C0 = [] on the merged tree.
+
+### 8.0q PAUSE 10-24 ~16:20 UTC (owner: "Pause all tasks and update handover to repo for any claude agent to continue in the future. Pause the task now if their done, if not keep goinf until its done until u pause."; read first, supersedes 8.0p where they differ)
+
+**State: PAUSED.** Nothing new starts until the owner says to resume. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled** (re-enable it with `update_trigger enabled=true` on resume). The supervisor's /loop and Monitor are stopped. Sessions: every builder and reviewer is archived (the last, LIB-7c's catch-up builder session_01Dv8q3UZnqqQnaqcPdrNe8s, finished its step first). No session holds work in progress.
+
+**Usage:** 7-day 0.71 at 14:27 UTC 10-24; weekly reset **Thu 10-29 02:00 UTC** (resetsAt 1793239200). The owner's rule still holds: pause at 0.80, letting each agent finish its current step.
+
+**Owner items pending:** none. The owner delegated his open library choices to the supervisor on 10-24 07:15 ("U do qll that. Dont stall and decide for me."; 8.0p 07:45). Owner-only items in AGENTS.md stay his.
+
+#### Finished at pause (in flight when the owner paused; the supervisor let each finish its step)
+- **Train 35** (#315, `claude/sup-merge-train-35` @ `a2048023`: #282 LIB-5v @ `2ad1bf3c` + this handover @ `f1771325`, on main `dd7116e9`). **Result: merged** (#315 → main `cd6113c4`, all checks green on `a2048023`). No APK: the variant-gate plugin writes no outputs, so nothing in the app changes. #282 is done.
+- **#271 LIB-7c catch-up:** main `dd7116e9` merged in (`aa1d03d6`, all four conflicts kept both sides), the 7c-A1 `LINE69` follow-on (`5e0fba3`), and **D-LIB7c-R12COUNT** (6386394399: lib12-fix.test.ts:154 re-counted to `8 + 2 + 5 - 1` / "pair keys: 15, expected 14"). The builder runs C0, A1-A10, check, test:tz and the gate, then posts 'LIB-7c CATCH-UP READY @ <sha>'. **Result: CATCH-UP READY @ `6f40f62e`** (#271): check, test:tz and the gate (106/106) pass, C0 and A10 against dd7116e9 pass, CI 17/17 green. The builder stopped for the pause and is archived.
+
+#### Merge queue (plan order; each through a merge train, 6.8; the next train is **36**)
+| # | PR | Head | Verdict | What it needs before its train |
+|---|---|---|---|---|
+| 6 | #109 LIB-8M pilot A pin | `b898578` | PASS 6385655672 | **merged** (train 34, main `dd7116e9`) |
+| 7 | #282 LIB-5v | `2ad1bf3c` | PASS 6337619598 | **merged** (train 35, main `cd6113c4`) |
+| 8 | #271 LIB-7c | `6f40f62e` | PASS @ 4b894f1 (6347992738) | main moved again after its catch-up (train 35 added LIB-5v, which also edits library-lint.test.ts and lint/index.mjs), so first merge main `cd6113c4` once more and keep both sides; then a **delta review of the catch-up merges** (an Opus helper is enough: the merge commit, the 5 count lines, R12COUNT), then train 36 |
+| — | #316 F-C0-TIMEOUT (CI health, off the checklist) | `7bcd76fe` | PASS 6386490672 | can ride train 36. Fixes a 5 s vitest timeout in library-manifest.test.ts "C0 … on this tree" (3.5 s alone, 4.8 s in a full run, over 5 s under load). Until it merges, a full local `npx vitest run` can fail on that one test under load; CI has stayed green. |
+| 9 | #245 LIB-9a LB1 | `9e5d9666` | WAITING since 10-19 (pilot A on main, now true) | resume: main catch-up, then its card's remaining Do steps, READY, review |
+| 10 | #279 LIB-ZOOM | `754176a0` | PASS (delta, 10-19) | **conflicts with main**; catch-up plus a `[golden update]` re-pin of pilot A's 13 MANIFEST rows (collision rule below), then a delta review |
+| 11 | #265 LIB-10 LB2 | `2dcbac15` | WAITING since 10-19 (pilot A on main, now true) | resume as #245 |
+| 12 | #278 LIB-11 pilot B | `d3b231d6` | D-ER5-GO 10-24 07:20 | its pin waited for #109 (now merged): resume at its pin step |
+| 13 | #273 HT-11 | `e0722148` | PASS (Low 2) | **conflicts with main**; catch-up and regenerate, then a delta review |
+| 14 | #274 LIB-13 LB3 | `a6f4bd07` | 7/7 plates approved | the LB3 owner sheet waited for pilot A on main (now true); then READY and review |
+
+Build-ahead lanes, reviewed and waiting for their slots behind the list above (each needs a main catch-up and a delta review at its slot): #289 LIB-14 LB4 (`6846c5af`), #290 LIB-15 LB5 (`e9f09858`, PASS), #297 LIB-16 LB6 (`3a75393a`, fixes diff-checked after the 24f7c6e FAIL), #299 LIB-17 LB7 (`14dc56dd`, PASS + diff-check), #305 LIB-22 LB10 (`a9c64e11`, PASS), #306 LIB-18 LB8 (`d76fc305`, PASS; two Lows ride its pre-train push: the qa.mjs:4 header and the test title at :1368), #309 LIB-STRIP (`75a9be48`, PASS 6385991109), #311 LIB-20 (`471339d3`, PASS; merges **before** the LB7 lanes; its pre-train push carries the D-LIB20-L0 (b) MANIFEST rewrite), #312 LIB-21 LB9 (`e132e57e`, delta PASS after the doc-only FAIL 6385913099, CI 17/17).
+
+**Collision rule (from #109's review Medium):** #311, #309 and #279 change inputs of all 13 pilot A MANIFEST rows. Each one's catch-up after #109 must carry a `[golden update]` re-pin of those rows, or C0 (and L1 if page bytes move) goes red. Check any other lane the same way before its train: on the merged tree run `node -e "import('./tools/plates/library/ci/manifest.mjs').then(async m=>console.log(JSON.stringify(await m.manifestProblems())))"`; it must print `[]`.
+
+#### Next steps on resume, in order
+1. Re-enable the hourly tick; re-arm the Monitor (docs/supervisor/scripts/monitor.sh + heads.sh); read the meter.
+2. If train 35 did not merge, rebuild it on the latest main (6.8 step 11) and run it again.
+3. #271: delta review of the catch-up, then train 36 (#271 + #316 + a handover update).
+4. Resume #245 and #265 (pilot A is on main) and #278's pin; then #279 and #273 catch-ups. At most 4 active LIB builders.
+5. After the weekly reset (10-29): the LIB-SPINE card (F-SPINE-1, for cable_crunch's spinal curl); LIB-ZOOM resume (superman, pallof_press, the LB5 four, LB7 four, wrist_curl, cross_body_hammer_curl); 'LIB-21 resume' for the (b) rows (side_plank, russian_twist, bicycle_crunch) once LIB-20 is on main; pallof_press's turned-view design note (D-LIB21-PALLOFHOLD).
+
+#### Rulings made 10-24 afternoon (all on the PRs)
+- **#309:** D-STRIP-BURPEE (burpee gets a row: Controlled on Squat down, claim c24, 6385340710); D-STRIP-CONTEST-CITED (only cited claims can contest a word; flutter_kicks keeps Crisp, 6385439805); rows.json re-synced to research `42cf542a`. lib-strip-card A13's seed must be committed (`9abc02b1` on claude/sup-lib4-cards).
+- **#312:** D-LIB21-CCHOLD, -PALLOFHOLD, -DOGGHOST, -ABSAG, -TRAPS, -ROPENIT (withdrawn), -CCFLAGS; bulk rulings 6383823760.
+- **#271:** D-LIB7c-R12COUNT (6386394399).
+- **#282:** D-LIB5v-ORDER ratified (6386116481).
+- **#109:** F-LIB8M-PROV (stale provenance text; rides the first pilot A re-pin); A15 mutation ref `claude/lib-8m-a15-mut` @ `de356864` is evidence only, never merge it.
+
+#### Open follow-ups
+F-STRIP-1..5 (F-STRIP-5: re-time the LIB-STRIP gate group from CI after merge; CI ran it in 467 s and 296 s against the 290 s entry), F-SPINE-1, F-GATE-COACHFB, golden-B follow-ups 18-24 (24: pull_up's forearm ends under the end-on bar with no fist around it), D-STRIP-AIR (airborne convention before box_jump and jump_squat are un-held), F-H6-TEMPO, F-LIB8M-PROV, F-C0-TIMEOUT (#316).
+
+#### Research branch
+`claude/libht-research` @ `42cf542a` (#313 merged the LB9 card fields). #259 (LP source check) is open against it.
 
 ### 8.0p 10-22 ~02:08 UTC: new supervisor running on the new account (read first; supersedes 8.0o where they differ)
 
