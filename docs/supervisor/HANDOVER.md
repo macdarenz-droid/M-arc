@@ -8,7 +8,7 @@ The repo is **public**. Never put any of these in this file: secrets, tokens, pa
 
 ## 0. How to use this file
 
-**Last updated:** 2026-10-25 ~00:50 UTC · main `cd6113c4` · **8.0r RESUMED (owner, 10-25 00:23); usage 0.76, merges only until the 10-29 reset; read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
+**Last updated:** 2026-10-25 ~02:00 UTC · main `1edb3c66` · **8.0r: train 36 merged; budget pause until the 10-29 02:00 UTC reset (usage 0.76-0.77); read 8.0r, then 8.0q** · by session_01PeNM9HeWPrhrcscMwXzupy
 
 - **First find the newest copy of this file. It may not be merged yet.** A handover update rides the next merge train, so `main` can be one update behind. Run:
   ```
@@ -813,6 +813,10 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
 - The hourly tick is **re-enabled**. **Usage: 7-day 0.76 at 00:23 UTC** (the 0.75 warning is passed; reset Thu 10-29 02:00 UTC). With about 4 % left before the owner's 80 % pause, only merges of already-reviewed work run now; no new builders start before the reset.
 - **#271 LIB-7c:** catch-up delta REVIEW PASS @ `6f40f62e` (6391426386, 0/0/0/0; a trial merge with main `cd6113c4` is clean and the five focused test files pass).
 - **Train 36** (`claude/sup-merge-train-36` @ `7fe4b449` + this handover): #271 @ `6f40f62e` and #316 F-C0-TIMEOUT @ `7bcd76fe` on main `cd6113c4`. Local: typecheck 0; vitest 252 files, 3559 tests pass. C0 = [] on the merged tree.
+- **Train 36 merged** (#317 → main `1edb3c66`, all checks green on `f3235473`). #271 LIB-7c and #316 F-C0-TIMEOUT are done. No APK (nothing visible changes).
+- **Budget pause (owner rule, 80 %):** usage is 0.76-0.77 and no remaining queue item fits in the last few percent as one bounded step (each needs a builder: #245 and #265 resume, #278's pin, #279 and #273 catch-ups). So work pauses until the weekly reset. The hourly tick is **disabled again** so idle ticks do not spend the budget, and a one-shot check-in at **Thu 10-29 02:10 UTC** wakes this session to re-enable it and resume.
+- **Next on resume (plan order):** #245 LIB-9a and #265 LIB-10 (WAITING for pilot A on main, now true), #278 LIB-11's pin, then the #279 and #273 catch-ups (#279 also re-pins pilot A's 13 MANIFEST rows), then #274 LIB-13's LB3 sheet. The build-ahead lanes and the post-reset cards are listed in 8.0q.
+- The supervisor session's own context is about 450k tokens. A fresh supervisor that reads 8.0r, then 8.0q, costs far less per turn.
 
 ### 8.0q PAUSE 10-24 ~16:20 UTC (owner: "Pause all tasks and update handover to repo for any claude agent to continue in the future. Pause the task now if their done, if not keep goinf until its done until u pause."; read first, supersedes 8.0p where they differ)
 
