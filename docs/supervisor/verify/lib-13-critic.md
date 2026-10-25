@@ -34,7 +34,7 @@ Confirmed correct (no action): base sha and train 30; candidate.mjs:76-130 and :
   > - once pilot A is on main: each of the 4 reused ids has exactly one registry row, whose `batchFile` is pilot A's batch file, and no lb3/ file names it;
   > - no LB3 spec, composer, How-to or test imports anything under hands/.
 - Add after card:266:
-  > Before each milestone post, run `git diff --exit-code origin/main...HEAD -- tools/plates/library/batches tests/howto/golden tools/plates/library/hands tests/howto/library-lint.test.ts src tools/plates/gen` on the merged head and paste its empty output. Seed it once in a temporary worktree: one uncommitted byte changed in tests/howto/library-lint.test.ts must give exit 1. This is a recorded check, not a unit test.
+  > Before each milestone post, run `git diff --exit-code origin/main...HEAD -- tools/plates/library/batches tests/howto/golden tools/plates/library/hands tests/howto/library-lint.test.ts src tools/plates/gen` on the merged head and paste its empty output. Seed it once in a temporary worktree: one committed byte (a throwaway commit; the three-dot diff never sees uncommitted bytes) changed in tests/howto/library-lint.test.ts must give exit 1. This is a recorded check, not a unit test.
 
 ### H3. The H slice's evidence cannot be built from its own head
 - Card lines: :24, :25, :186, :205.
