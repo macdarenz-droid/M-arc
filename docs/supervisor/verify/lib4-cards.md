@@ -4290,3 +4290,21 @@ The prep agent also checked, by cmp, that the 7 approved plates render byte-iden
 - incline_barbell_bench_press is **APPROVED**; every median is ≥ 4.
 - All 8 LB2 plates are approved (#265 6263322398, 6396940823 and the lb2r verdict).
 - **Anchors:** every item below 4 is a recorded follow-up: pull_up R1 (20, 23) and R2 (22, 26), and lat_pulldown R1 (19).
+
+## 38. Merge order after LB3 (D-LIB-ORDER-3, 2026-10-25 ~16:50 UTC)
+Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklist item, LB4 (#289), cannot finish yet: five of its six rows are held under D-LIB14-NOSECS until the strip card (#309) is on main, step_up also waits on reverse_lunge, and its one panel runs for all six after that. Every later batch is reviewed and green.
+
+**D-LIB-ORDER-3.** The order from here:
+1. **Train 39:** LIB-20 #311 → LB5 #290 → LB6 #297 → LB7 #299 → LB8 #306 → LB9 #312 → LB10 #305.
+2. **Then LIB-STRIP #309** (slot 14a; the card leaves its slot to the supervisor, lib-strip-card :10). It needs a main catch-up, because it conflicts in build-page.mjs, candidate.mjs, gate-split.test.ts and gate-times.json.
+3. **Then LB4 #289:** 'LIB-14 resume' (the strip release, the panel of six, then review).
+
+**Why:**
+- Plan 6.3 (:781-784): a batch's dependency on the previous batch is checklist order only. Its real prerequisites are the "Needs before it" rows, and none of LB5–LB10 needs LB4.
+- LIB-20 keeps its place before the LB7 lanes (HANDOVER :1002).
+- Rows still held in a lane roll to that lane's resume PR (lib-14-card :51; plan 3.5:376). This covers LB8's leg curls and held rows, and LB9's Do 7b rows and held rows.
+- Nothing is loosened: each PR merges at its reviewed head, through a train whose CI is green on the latest main.
+
+**Train resolutions** (tooling only):
+- The LIB-20 merge conflicted only on GENERATED headers and hashes. They were regenerated, `--check` passes, and every golden hash is unchanged.
+- Pilot B's 4 MANIFEST rows were re-pinned after LIB-20 changed the same five files ruled under D-LIB20-L0 (b), as a `[golden update]` commit. C0 is [], and the pilot A and pilot B pages are unchanged.
