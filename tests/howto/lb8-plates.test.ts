@@ -621,12 +621,13 @@ describe('LIB-18 A16: no other card\'s composer is copied, forked or imported (D
   // D-LIB18-LEGCURL after pilot B (section 39): no LB8 spec or composer draws a leg curl machine of its own; a leg curl
   // spec imports pilot B's eq/legCurlMachine.mjs. The leg curl rows stay held for 'LIB-18 resume' (D-LIB-ORDER-3).
   const LEGCURL_IMPORT = /import\s*\{[^}]*\blegCurlMachine\b[^}]*\}\s*from\s*'\.\.\/eq\/legCurlMachine\.mjs'/;
-  /** Source without comments, so a sizes note naming legCurlMachine (lb8/DESIGN.md section 12) is not code. */
+  /** Composer source without comments, so legExtMachine's sizes note naming legCurlMachine (lb8/DESIGN.md section 12) is
+   *  not code. Specs are read raw: a non-leg-curl spec may not name legCurlMachine even in a comment (as before pilot B). */
   const code = (src: string) => src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"])\/\/.*$/gm, '$1');
   const legCurlProblems = (specs: Record<string, string>, composers: Record<string, string>) => [
     ...Object.entries(specs).flatMap(([id, src]) => (LEGCURLS.includes(id)
       ? (LEGCURL_IMPORT.test(src) ? [] : [`${id}: does not import pilot B's eq/legCurlMachine.mjs`])
-      : (/legCurlMachine|LEG_CURL/.test(code(src)) ? [`${id}: not a leg curl, names legCurlMachine`] : []))),
+      : (/legCurlMachine|LEG_CURL/.test(src) ? [`${id}: not a leg curl, names legCurlMachine`] : []))),
     ...Object.entries(composers).filter(([, src]) => /legCurl|LEG_CURL/i.test(code(src))).map(([c]) => `${c}: a leg curl machine of its own`),
   ];
   const lb8Specs = () => Object.fromEntries([...specsDrawn(), ...LEGCURLS.filter(id => existsSync(`tools/plates/library/specs/${id}.mjs`))]
@@ -638,11 +639,12 @@ describe('LIB-18 A16: no other card\'s composer is copied, forked or imported (D
     expect(legCurlProblems(lb8Specs(), lb8Composers())).toEqual([]);
     for (const id of LEGCURLS) expect(existsSync(`tools/plates/library/specs/${id}.mjs`), `${id} is held`).toBe(false);
   });
-  it('mutations: a lying_leg_curl spec without the import, hack_squat importing legCurlMachine and an LB8 composer with its own leg curl machine are red; control: a lying_leg_curl spec with the import is green', () => {
+  it('mutations: a lying_leg_curl spec without the import, hack_squat importing legCurlMachine or naming it in a comment, and an LB8 composer with its own leg curl machine are red; control: a lying_leg_curl spec with the import is green', () => {
     const specs = lb8Specs(), composers = lb8Composers();
     const imp = "import { legCurlMachine, LEG_CURL_ITEMS } from '../eq/legCurlMachine.mjs';\n";
     expect(legCurlProblems({ ...specs, lying_leg_curl: 'export default {};\n' }, composers)).toEqual(['lying_leg_curl: does not import pilot B\'s eq/legCurlMachine.mjs']);
     expect(legCurlProblems({ ...specs, hack_squat: imp + specs.hack_squat }, composers)).toEqual(['hack_squat: not a leg curl, names legCurlMachine']);
+    expect(legCurlProblems({ ...specs, hack_squat: `// sizes as eq/legCurlMachine.mjs\n${specs.hack_squat}` }, composers)).toEqual(['hack_squat: not a leg curl, names legCurlMachine']);
     expect(legCurlProblems(specs, { ...composers, 'hackSled.mjs': `${composers['hackSled.mjs']}export function legCurlPad() {}\n` })).toEqual(['hackSled.mjs: a leg curl machine of its own']);
     expect(legCurlProblems({ ...specs, lying_leg_curl: `${imp}export default {};\n` }, composers)).toEqual([]);
   });
