@@ -56,7 +56,7 @@ describe('E5: gate-verdict', () => {
   it('the serial arrangement passes only on workflow_dispatch', () => {
     expect(run({ gate: proofs(1), event: 'workflow_dispatch', arrangement: 'serial', needs: { ...OK_NEEDS, 'gate-shard': { result: 'skipped' } } }).problems).toEqual([]);
     red({ needs: { ...OK_NEEDS, 'gate-shard': { result: 'skipped' } } }, /needed job gate-shard ended skipped/);
-    // the serial reference keeps today's 60 min timeout; the 30 min budget is for split shards (review of 0df9648, CI run 37182075671)
+    // the serial reference keeps its job's runaway timeout (D-SUP-CI-1, D-SUP-CI-2); the 30 min budget is for split shards (review of 0df9648, CI run 37182075671)
     const slow = proofs(1); for (const m of slow) m.meta.gateSeconds = 2747.5;
     expect(run({ gate: slow, event: 'workflow_dispatch', arrangement: 'serial', needs: { ...OK_NEEDS, 'gate-shard': { result: 'skipped' } } }).problems).toEqual([]);
     red({ gate: proofs(1), event: 'push', arrangement: 'split' }, new RegExp(`expected gate proofs for jobs 1\\.\\.${TIMES.K} of ${TIMES.K}`));
