@@ -196,7 +196,8 @@ export function factFormProblems(facts) {
 }
 
 /** S2 for one per-exercise card and its quotes file (CARD-V2): its claims, sources and quotes, and its machine fields
- *  when present (plateFacts non-empty, each fact naming a known claim, one form per fact; tempo entries in H6's shape
+ *  when present (plateFacts a list, [] = verified with no numeric quote for a drawn pose (D-LIB8M-NOFACTS, D-PLATEFACTS-EMPTY),
+ *  each fact naming a known claim, one form per fact; tempo entries in H6's shape
  *  with no claim key; topFault a key). `file` is the card's file name (<id>.json). */
 export function validateCard(card, quotes, { file } = {}) {
   const tag = `cards/${file ?? `${card?.id}.json`}`, bad = [];

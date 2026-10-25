@@ -157,7 +157,7 @@ These are top-level keys of `docs/research/howto/cards/<card id>.json`, read by 
 
 - **plateFacts** `[{ kind, joint|landmark, pose?, deg|m, measure?, claim }]`.
   - Every fact names a claim whose verbatim quote states it; H6 ignores `claim`.
-  - An id with a spec gets the key only if it is non-empty and holds its measured-joint angle fact in the form the ruled plateFacts form table gives (section k). Otherwise there is no key, never `[]`. plateFacts and tempo go in together or not at all.
+  - An id with a spec holds its measured-joint angle fact in the form the ruled plateFacts form table gives (section k). `[]` means verified: no quote gives a number for a drawn pose (D-LIB8M-NOFACTS; D-PLATEFACTS-EMPTY, lib4-cards §40). plateFacts and tempo go in together or not at all.
 - **tempo** `[{ phase, s, move? }]`.
   - Built only from LIB-5's own ruled 8-row map (section k) and the card's verified `plate.tempo`.
   - A moving phase takes `up` or `down`, never a constant. Any other `s` is a ruled constant with its verified claim and quote.
