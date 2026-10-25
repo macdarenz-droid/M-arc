@@ -9464,6 +9464,32 @@ if (gate.runs('BUG-41'))
   if (!errors.some(e => e.startsWith(`${tag} `))) console.log(`${tag}: Rear Delt and Lateral read Improving with the line ending highest, "Top load" under the line once, max label in kg and lb, readout 35.5 kg × 10, line points = bars; a one-row carry draws no line and keeps its tiles, bars and rows`);
 }
 
+// LIB-ZOOM (#279 review High, ruling condition 2): the zoom ring's H5 contrast row bites in the browser. On the LIB-ZOOM
+// plates page (horizontal_leg_press, Mistake zoom) at 390 px in the 5 themes: no H5 problem as drawn; with the ring's
+// stroke planted as the plate's own background (var(--surface-2)), H5.contrast:<theme>:ink in every theme.
+if (gate.runs('LIB-ZOOM'))
+{
+  const tag = 'LIB-ZOOM';
+  const Z = await import('../tools/plates/library/zoom/build.mjs');
+  const { candidateOf } = await import('../tools/plates/library/candidate.mjs');
+  const { browserResults, THEMES } = await import('../tools/plates/library/qa/browser.mjs');
+  const { loadEngine, dropMirror } = await import('../tools/plates/library/qa/engine.mjs');
+  const { loadPins } = await import('../tools/plates/library/qa/index.mjs');
+  const { makeMirror } = await import('../tools/plates/golden.mjs');
+  const all = Z.zoomAll(), html = (await Z.buildZoomPage({ all })).html.toString('utf8');
+  const mirror = makeMirror();
+  try {
+    const E = await loadEngine(mirror), env = loadPins().envelope;
+    const c = await candidateOf('lib_horizontal_leg_press', { all, platesHtml: html, engine: E, authoring: true });
+    if (!c.plate.zoom?.mistake) errors.push(`${tag}: horizontal_leg_press has no Mistake zoom on its page`);
+    const h5 = async css => (await browserResults(browser, html, [c], E, env, { widths: [390], css })).get(c.id).H5.map(p => p.key);
+    const clean = await h5(null), planted = await h5('.plate .pz-ring { stroke: var(--surface-2); }');
+    if (clean.length) errors.push(`${tag}: H5 problems on the zoom page as drawn: ${clean.join(', ')}`);
+    for (const t of THEMES) if (!planted.includes(`H5.contrast:${t}:ink`)) errors.push(`${tag}: the ring planted as var(--surface-2) is not H5.contrast:${t}:ink red (got ${planted.join(', ') || 'nothing'})`);
+    if (!errors.some(e => e.startsWith(`${tag}`))) console.log(`${tag}: zoom ring H5 clean as drawn; planted on the plate background, H5.contrast:<theme>:ink in all ${THEMES.length} themes`);
+  } finally { dropMirror(mirror); }
+}
+
 // LIB-7: the radial hand pairs (card LIB-7; tools/plates/library/hands/DESIGN.md §4 A5). Every drawn library hand page,
 // rendered through hands/zoom.mjs with golden B's own zoom CSS, in 5 themes at 390, 360 and 340 px: no overflow (H4), each
 // ink class's contrast >= golden B's on its 8 hands in the same job (H5), bend values off the outline (G9, real boxes),
@@ -9513,6 +9539,23 @@ if (gate.runs('LIB-7'))
       console.log(`${tag} F6 handpair chunks: ${assets.length} built, ${shipped.length} shipped pair keys, ${[...budgets.keys()].filter(c => c.startsWith('handpair-')).length} entries, cap ${cap.raw}/${cap.gz} B`);
     }
   } finally { await lib7.close(); }
+}
+
+if (gate.runs('LIB-7c'))
+{
+  // LIB-7c (hands/DESIGN.md §10; card 7c-A8): LIB-7's checks over the LB1 hand pairs (keys bar and v-handle) only
+  const tag = 'LIB-7c';
+  const { lib7cGate, expectedPages } = await import('../tools/plates/library/hands/lib7c-gate.mjs');
+  const lib7c = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    const empty = await lib7cGate(lib7c, { index: { drawn: new Map(), gaps: new Map() } });
+    if (!empty.problems.some(p => /no hand pair page/.test(p))) errors.push(`${tag}: the block passes with no pages (self-check)`);
+    const t0 = Date.now(), r = await lib7cGate(lib7c), want = expectedPages();
+    for (const p of r.problems) errors.push(`${tag}: ${p}`);
+    // one page per drawn id (fault list ['curled'], D-LIB7c-KEYS): 6 ids, less any D-LIB7c-SHIP gaps
+    if (r.pages !== want || want !== 6) errors.push(`${tag}: ${r.pages} pages, expected ${want} (the 6 ruled ids)`);
+    console.log(`${tag} hand pairs (${lib7c.version()}): ${r.pages} pages x ${r.themes} themes x ${r.widths} widths, ${r.shots} pixel shots, ${r.problems.length} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  } finally { await lib7c.close(); }
 }
 
 // LIB-12: the hand views (palm-flat, cupped, front-rack, ball-contact) and the battle-rope pair (card LIB-12; plan 2.3;

@@ -314,7 +314,11 @@ export interface HowToContent {
   readonly chips?: readonly string[];
   /** `gripLine` here mirrors `handling.gripLine` on some golden-B files (barbell_back_squat, leg_press): the grip
    *  section repeats it under `copy` for the sheet's own "Grip" line since `handling` is optional-shaped. */
-  readonly copy: { readonly setupLine: string; readonly mistakeLine: string; readonly cueLine?: string; readonly gripLine?: string };
+  readonly copy: {
+    readonly setupLine: string; readonly mistakeLine: string; readonly cueLine?: string; readonly gripLine?: string;
+    /** D-LIB5-VARIANT: the caption-class variant line a row whose equipment names two kinds shows above the plate. */
+    readonly variantLine?: string;
+  };
   readonly mistakes: readonly HandlingMistake[];
   readonly risks: readonly Risk[];
   /** Which shared joint red-flag blocks this sheet shows, cross-checked against `feel.rows[].redFlag`/`mistakes`/`risks`. */
