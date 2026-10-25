@@ -1418,7 +1418,7 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     for (const id of specsDrawn()) { out.push(...phantomProblems(S[id])); await yieldNow(); }
     expect(out).toEqual([]);
   });
-  /** D-LIB22-HOPNIT (#305 6355887979, widened 6356244552): exactly three jump_rope exceptions, each tied to its line,
+  /** D-LIB22-HOPNIT (#305 6355887979, widened 6356244552): exactly four jump_rope exceptions, each tied to its line,
    *  and each needed (without it, its plate is red). */
   const nitProblems = (nits: any[]) => {
     const out: string[] = [];
