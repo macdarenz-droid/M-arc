@@ -4376,3 +4376,14 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - Tests pin the count and order and that the dropped items are absent.
 - A second set of placeholder values must leave every kept item byte-identical.
 - **F-LEGCURL-NULL** (nullable seat, back and thigh in pilot B's composer) is left to pilot B's owner card.
+
+**D-LIB16-ZOOMVIEWS** (#327 6405117790), for LB6's cable_chest_press. `zoom` may be one `{ view, k }` or a list of at most two entries with different views. The edits are additive, in `zoom/inline.mjs` and `qa/zoom.mjs`, and they belong to LIB-16's resume only. A single entry behaves exactly as today. Conditions:
+- horizontal_leg_press and every approved plate stay byte-identical;
+- because zoom/inline.mjs is in pilot A's and pilot B's closure, the MANIFEST is re-pinned in a `[golden update]` commit, and both pages stay byte-identical;
+- H3 is checked per view, with no bar lowered;
+- mutations: two zooms on the same view, three entries, an entry under its view's bar, an unknown view;
+- if no place frees up for the normal-view circle, that view stays held on H3.trace, and nothing moves only to make room.
+
+**D-LIB21-SECS** (#326 6405118542): side_plank holds `30–60`, c9's own string and the target its tempo.text names.
+
+**D-LIB21-SUPERMANZOOM** (#326): superman gets one normal-view zoom whose source ring holds the whole Trace, with k in 1.5–4 so that the clipped Trace reaches 22.11 px at zoom scale.
