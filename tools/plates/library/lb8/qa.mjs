@@ -1,7 +1,7 @@
 // LIB-18 (lib-18-card Do 5, Do 8; copied from lb8/qa.mjs @ 5a9f004c): authoring-time plate QA of the LB8 rows (D-LIB9-AUTHORQA). Builds the LB8 plates
 // page (build.mjs), then for each drawn id runs LIB-3's runQa, node and browser halves, on candidateOf(id, { all,
 // authoring: true }): zero exemptions, no pin read, refused at approved-plate or shipped. Prints the per-id table: hard
-// checks, raised flags and metrics. Writes nothing in the repo.
+// checks, raised flags and metrics. Writes nothing in the repo, but `--held --record` writes lb8/held-flags.json.
 //   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb8/qa.mjs [--held [--record] | lib_id ...]
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';

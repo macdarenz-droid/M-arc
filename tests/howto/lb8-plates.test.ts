@@ -1417,7 +1417,7 @@ describe('LIB-18 A19: test manners (D-LIB18-TESTS; VITEST-RPC ruling A)', () => 
       }
       return out;
     };
-    it('no leader within 6 px of the Trace or any equipment, but the ruling-pending ones; the pending list is exactly the failing leaders', () => {
+    it('no leader within 6 px of the Trace or any equipment, but the ruled nits; NITS_RULED is exactly the failing leaders', () => {
       const g = gaps(s());
       for (const x of g) console.log(`LIB-18 hack_squat leader ${x.mistake ? 'mistake' : 'normal'} ${x.key}: ${x.min.toFixed(1)} px from the nearest Trace or equipment line`);
       expect(g.filter(x => x.min < 6).map(x => x.key).sort()).toEqual([...NITS_RULED].sort());
