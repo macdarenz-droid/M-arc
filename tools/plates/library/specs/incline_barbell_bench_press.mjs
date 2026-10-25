@@ -30,8 +30,10 @@
 //  - Scale: reference 146.29 px/m.
 // Plate labels (card): callouts = plate.checkpoints c1 (Bench at 30°), c7 (To upper chest), c3 (Back on pad); measure =
 //   back pad from horizontal, expect 30 (c1); Mistake = plate.mistake c8, c9, c7 (key `flare`): the elbow raised level
-//   with the shoulder at the bottom (D-LIB10-NOTE section 8), a dashed ghost upper arm and forearm with an arrow from
-//   the end elbow; tempo = plate.tempo c14 (up 1, down 2, no pause): Lower 2, Press 1.
+//   with the shoulder at the bottom (D-LIB10-NOTE section 8), a dashed ghost upper arm and forearm, a dashed joint ring
+//   at the flared elbow and an arrow the full way from the end elbow to it; 'Level with shoulders' ends on the shoulder
+//   joint, 'Elbows flare out' on the ring (panel 2 fix, #265 6396940823). 'Back on pad' ends on the back where it lies
+//   on the pad, clear of the arm and the measure arc; tempo = plate.tempo c14 (up 1, down 2, no pause): Lower 2, Press 1.
 // Unsourced numbers (no card claim gives them; 13.3 must-fix 14): SEAT_TILT, SEAT_TOP, BACK_LEN, BEAM_Z, FOOT_Z and SCAP
 //   (incline_dumbbell_press's), TOP_ELBOW (the anchor's), GRIP_X 0.30 (as barbell_bench_press), RACK_ELBOW 25 and the
 //   bar over the brow, RACK_H, SAFETY_BELOW, CATCH_PAST, PLATE_D (45 cm, as the 8), and the Mistake's 90 deg (the flared
@@ -142,6 +144,12 @@ const capsule = (a, b, ra, rb, n = 8) => { const u = [b[1] - a[1], b[2] - a[2]],
   for (let i = 0; i <= n; i++) { const q = ang0 - Math.PI * i / n; pts.push([0, b[1] + rb * Math.cos(q), b[2] + rb * Math.sin(q)]); }
   for (let i = 0; i <= n; i++) { const q = ang0 + Math.PI - Math.PI * i / n; pts.push([0, a[1] + ra * Math.cos(q), a[2] + ra * Math.sin(q)]); }
   return [...pts, pts[0]]; };
+// Panel 2 fix (#265 6396940823, R5): a dashed ring of the joint-marker radius (2.25 px, plate.mjs) at the flared elbow,
+// and the arrow runs the full way from the correct elbow to that ring.
+const JOINT_R = 2.25 / 146.29;
+const RING = Array.from({ length: 13 }, (_, k) => [0, lmM['elbow.r'][1] + JOINT_R * Math.sin(2 * Math.PI * k / 12), lmM['elbow.r'][2] + JOINT_R * Math.cos(2 * Math.PI * k / 12)]);
+const RING_EDGE = (() => { const a = lmE['elbow.r'], b = lmM['elbow.r'], d = Math.hypot(b[1] - a[1], b[2] - a[2]);
+  return [0, b[1] - (b[1] - a[1]) / d * JOINT_R, b[2] - (b[2] - a[2]) / d * JOINT_R]; })();
 const GHOST_UPPER = capsule(lmM['shoulder.r'], lmM['elbow.r'], 0.052, 0.040), GHOST_FORE = capsule(lmM['elbow.r'], lmM['grip.r'], 0.040, 0.026);
 export const info = () => { const e = lmE['elbow.r'], m = lmM['elbow.r'], along = p => (p[1] - S.r[1]) * UP[1] + (p[2] - S.r[2]) * UP[2];
   return { touch: +TOUCH.toFixed(4), touchBelowUpperChestCm: +((UPPER_CHEST - TOUCH) * H * 100).toFixed(1), endArmFromTorsoDeg: +armFromTorso(e).toFixed(1),
@@ -198,18 +206,19 @@ export default {
   callouts: [
     { key: 'bench', text: 'Bench<br>at 30°', anchor: onPadBack(0.62), box: { left: 40, top: 214 }, cue: 'Set the back pad to about 30 degrees, never steeper than 45.' },
     { key: 'chest', text: 'To upper<br>chest', anchor: 'grip.r', box: { left: 222, top: 176 }, cue: 'Lower the bar under control to the top of your chest, not your neck.' },
-    { key: 'pad', text: 'Back<br>on pad', anchor: onPadFront(0.30), box: { left: 160, top: 286 }, cue: 'Keep your head, shoulders and hips on the bench, with no big arch.' },
+    { key: 'pad', text: 'Back<br>on pad', anchor: onPadFront(0.03), box: { left: 160, top: 286 }, cue: 'Keep your head, shoulders and hips on the bench, with no big arch.' },
   ],
   mistake: {
     pose: mistakePose,
     guides: [
       { kind: 'dashed', pts: GHOST_UPPER },                                                          // the flared upper arm (ghost)
       { kind: 'dashed', pts: GHOST_FORE },
-      { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [-4, -4] }, to: { at: 'elbow.r', pose: 'mistake', off: [3, 3] } },   // the elbow swings up and out
+      { kind: 'dashed', pts: RING },                                                                 // the flared elbow's joint ring
+      { kind: 'arrow', from: [0, lmE['elbow.r'][1], lmE['elbow.r'][2]], to: RING_EDGE },             // from the correct elbow to the ring
     ],
     tells: [
       { key: 'flare', text: 'Elbows<br>flare out', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 24, top: 248 }, cue: 'Your elbows flare out as the bar comes down.' },
-      { key: 'level', text: 'Level with<br>shoulders', anchor: [0, (lmM['shoulder.r'][1] + lmM['elbow.r'][1]) / 2, (lmM['shoulder.r'][2] + lmM['elbow.r'][2]) / 2], box: { left: 8, top: 198 }, cue: 'Your upper arms come up level with your shoulders instead of staying below them.' },
+      { key: 'level', text: 'Level with<br>shoulders', anchor: { at: 'shoulder.r', pose: 'mistake' }, box: { left: 8, top: 198 }, cue: 'Your upper arms come up level with your shoulders instead of staying below them.' },
     ],
   },
   alt: 'Incline barbell bench press, side view. On a bench set to 30 degrees in a rack, head, shoulders and hips on the pad and feet flat, the lifter lowers the bar from straight arms over the shoulders to the upper chest, forearms vertical, then presses back up.',

@@ -464,6 +464,68 @@ describe('LIB-10 incline_barbell_bench_press (H, D-LIB10-BENCH-H): drawn facts',
   });
 });
 
+describe('LIB-10 incline_barbell_bench_press panel 2 fix (#265 6396940823: R4 and R5)', { timeout: T }, () => {
+  /** World point to plate px (side view facing right, the plate's 146.29 px/m reference scale). */
+  const px = (spec: any, w: number[]) => [spec.camera.x0 + w[2]! * 146.29, spec.camera.y0 - w[1]! * 146.29];
+  const segDist = (p: number[], a: number[], b: number[]) => { const dx = b[0]! - a[0]!, dy = b[1]! - a[1]!, L2 = dx * dx + dy * dy || 1;
+    const t = Math.max(0, Math.min(1, ((p[0]! - a[0]!) * dx + (p[1]! - a[1]!) * dy) / L2)); return Math.hypot(p[0]! - a[0]! - t * dx, p[1]! - a[1]! - t * dy); };
+  const nums = (d: string) => [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
+  /** R4: the 'Back on pad' dot lies on the pad face, at least 25 px from the end elbow and 6 px from the buttock, and its
+   *  leader keeps 6 px from every point of the measure arc's wedge. */
+  const padProblems = (spec: any) => {
+    const out: string[] = [], c = spec.callouts.find((x: any) => x.key === 'pad'), e = itemsIn(spec, 'end').lm, a = px(spec, c.anchor);
+    if (dist(a.concat(0), px(spec, e['elbow.r']).concat(0)) < 25) out.push('dot within 25 px of the elbow');
+    if (dist(a.concat(0), px(spec, e.buttock).concat(0)) < 6) out.push('dot on the hip');
+    const svg: string = plate.renderPlate(spec, { id: 'x' }).svg;
+    const wedge = nums(/<path class="arc measure" d="([^"]+)"/.exec(svg)![1]!);
+    const lead = [...svg.matchAll(/<path class="leader" d="([^"]+)"/g)].map(m => nums(m[1]!)).find(p => Math.abs(p[0]![0]! - a[0]!) < 0.05 && Math.abs(p[0]![1]! - a[1]!) < 0.05)!;
+    const L = lead.length > 1 ? lead : [lead[0]!, lead[0]!];
+    for (let i = 0; i + 1 < L.length; i++) for (const w of wedge) if (segDist(w, L[i]!, L[i + 1]!) < 6) { out.push('leader within 6 px of the arc'); i = L.length; break; }
+    return out;
+  };
+  it('R4: the Back on pad dot is on the trunk\'s back on the pad, clear of the arm, the hip and the measure arc', () => {
+    expect(padProblems(ibp)).toEqual([]);
+    const c = ibp.callouts.find((x: any) => x.key === 'pad');
+    const padN = [0, Math.sin(60 * Math.PI / 180), Math.cos(60 * Math.PI / 180)], seat = itemsIn(ibp, 'end').lm.backUpper;
+    expect(Math.abs((c.anchor[1] - seat[1]) * padN[1]! + (c.anchor[2] - seat[2]) * padN[2]!)).toBeLessThan(0.011);   // on the pad face (backUpper lies on it within 1 cm)
+  });
+  it('R4 mutation: the dot back at the elbow (0.30 up the pad) is red', () => {
+    const c = ibp.callouts.find((x: any) => x.key === 'pad'), B = 60 * Math.PI / 180, d = 0.27;
+    const moved = { ...ibp, callouts: ibp.callouts.map((x: any) => (x === c ? { ...x, anchor: [0, c.anchor[1] + Math.cos(B) * d, c.anchor[2] - Math.sin(B) * d] } : x)) };
+    expect(padProblems(moved)).toContain('dot within 25 px of the elbow');
+  });
+  /** R5: a dashed joint ring (2.25 px) at the flared elbow; the arrow from the correct elbow to the ring's edge; the level
+   *  tell on the shoulder joint and the flare tell on the ring, their dots apart; the red marks paint after the solid figure. */
+  const r5Problems = (spec: any) => {
+    const out: string[] = [], e = itemsIn(spec, 'end').lm, m = itemsIn(spec, 'mistake').lm, me = px(spec, m['elbow.r']), ee = px(spec, e['elbow.r']);
+    const ring = spec.mistake.guides.find((g: any) => g.kind === 'dashed' && g.pts.length >= 12 && g.pts.every((q: number[]) => Math.abs(dist(px(spec, q).concat(0), me.concat(0)) - 2.25) < 0.05));
+    if (!ring) out.push('no 2.25 px ring at the flared elbow');
+    const arrow = spec.mistake.guides.find((g: any) => g.kind === 'arrow');
+    if (!arrow || !Array.isArray(arrow.from) || dist(px(spec, arrow.from).concat(0), ee.concat(0)) > 0.05) out.push('arrow does not start at the correct elbow');
+    if (!arrow || !Array.isArray(arrow.to) || Math.abs(dist(px(spec, arrow.to).concat(0), me.concat(0)) - 2.25) > 0.05) out.push('arrow does not end on the ring');
+    const t = (k: string) => spec.mistake.tells.find((x: any) => x.key === k);
+    if (JSON.stringify(t('level')?.anchor) !== JSON.stringify({ at: 'shoulder.r', pose: 'mistake' })) out.push('level not on the shoulder joint');
+    if (JSON.stringify(t('flare')?.anchor) !== JSON.stringify({ at: 'elbow.r', pose: 'mistake' })) out.push('flare not on the ring');
+    const svg: string = plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
+    if (!(svg.indexOf('class="mistake-layer"') > svg.lastIndexOf('pose-end'))) out.push('red marks under the solid figure');
+    const ends = [...svg.matchAll(/<path class="leader m" d="M(-?[\d.]+) (-?[\d.]+)/g)].map(x => [+x[1]!, +x[2]!]);
+    if (ends.length !== 2 || Math.hypot(ends[0]![0]! - ends[1]![0]!, ends[0]![1]! - ends[1]![1]!) < 6) out.push('leader dots not apart');
+    return out;
+  };
+  it('R5: the flared elbow has its joint ring, the arrow runs the full way to it, the two tells end on separate joints', () => {
+    expect(r5Problems(ibp)).toEqual([]);
+  });
+  it('R5 mutations: no ring, the old short arrow, and the level tell back on the upper arm are each red', () => {
+    const ringless = { ...ibp, mistake: { ...ibp.mistake, guides: ibp.mistake.guides.filter((g: any) => !(g.kind === 'dashed' && g.pts.length === 13)) } };
+    expect(r5Problems(ringless)).toContain('no 2.25 px ring at the flared elbow');
+    const short = { ...ibp, mistake: { ...ibp.mistake, guides: ibp.mistake.guides.map((g: any) => (g.kind === 'arrow' ? { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [-4, -4] }, to: { at: 'elbow.r', pose: 'mistake', off: [3, 3] } } : g)) } };
+    expect(r5Problems(short)).toEqual(expect.arrayContaining(['arrow does not start at the correct elbow', 'arrow does not end on the ring']));
+    const m = itemsIn(ibp, 'mistake').lm, mid = [0, (m['shoulder.r'][1] + m['elbow.r'][1]) / 2, (m['shoulder.r'][2] + m['elbow.r'][2]) / 2];
+    const level = { ...ibp, mistake: { ...ibp.mistake, tells: ibp.mistake.tells.map((x: any) => (x.key === 'level' ? { ...x, anchor: mid } : x)) } };
+    expect(r5Problems(level)).toContain('level not on the shoulder joint');
+  });
+});
+
 describe('LIB-10 arnold_press (H, D-LIB10-NOTE Q6): drawn facts', { timeout: T }, () => {
   it('c1, c4: at the start the upper arm is within 20 deg of level, the dumbbell in front of the chin and face by at least 15 cm, the forearm vertical', () => {
     const s = itemsIn(ap, 'start').lm, ua = sub3(s['elbow.r'], s['shoulder.r']);
