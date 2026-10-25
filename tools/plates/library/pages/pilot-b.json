@@ -1,0 +1,14 @@
+{
+ "groups": [
+  {
+   "id": "pilot-b",
+   "title": "Pilot B",
+   "ids": [
+    "lib_smith_machine_bench_press",
+    "lib_seated_leg_curl",
+    "lib_cable_fly",
+    "lib_push_up"
+   ]
+  }
+ ]
+}

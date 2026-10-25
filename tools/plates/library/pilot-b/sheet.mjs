@@ -1,6 +1,6 @@
 // LIB-11 (lib-11-card Do 10, D-LIB8M-SHEET's pattern): the pilot B review sheet around the plates page's own card bytes.
 // The sheet part is copied from pilot-a/build.mjs on main 1edb3c66 (#109 merged; D-LIB11-SMITH), never imported; it
-// differs where the card's Do 10 differs: the rows come from build.mjs (pilot-b/rows.json), the F-lines are only LIB-3's
+// differs where the card's Do 10 differs: the rows come from build.mjs (the registry's batches/pilot-b.json), the F-lines are only LIB-3's
 // raised flags from the Do 7 report (qa.mjs --json), the closest plate is the pilot A anchor (or golden A's leg_press),
 // and the sheet adds the hand renders, the E-R5 renders and the decisions. Writes only into <out> (never the repo).
 //   MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/pilot-b/sheet.mjs <out> --qa <qa.json> --er5 <png dir>

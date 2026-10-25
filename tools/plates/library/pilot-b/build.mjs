@@ -1,7 +1,7 @@
-// LIB-11 (lib-11-card Do 4, Do 7, A9): the pilot B plates page, built from pilot-b/rows.json read as if it were a batch
-// file (it never goes into batches/ before the pin, Do 11). Copied from lb2/build.mjs @ 2dcbac1 (#265, D-LIB11-SMITH),
-// never imported; only the names and paths differ. Each row's sources lines come from its research card, in memory only.
-// The page holds every pilot B row whose spec exists (the build-ahead draws in steps).
+// LIB-11 (lib-11-card Do 4, Do 7, A9): the pilot B plates page, built from the registry's batches/pilot-b.json rows (the
+// pin, Do 11; before it, pilot-b/rows.json was read as one more batch file). Copied from lb2/build.mjs @ 2dcbac1 (#265, D-LIB11-SMITH),
+// never imported; only the names and paths differ. Each row's sources lines come from its research card.
+// The page holds every pilot B row whose spec exists.
 //   node tools/plates/library/pilot-b/build.mjs     builds the page twice into a temp directory and prints both sha256
 import { createHash } from 'node:crypto';
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
@@ -11,25 +11,25 @@ import { fileURLToPath } from 'node:url';
 import { ROOT } from '../../lib/inputs.mjs';
 import { buildPlatesPage } from '../build-page.mjs';
 import { groupsConfig } from '../plates-page.mjs';
-import { batchFiles, rows } from '../registry.mjs';
+import { rows } from '../registry.mjs';
 
-export const PB_ROWS = 'tools/plates/library/pilot-b/rows.json';
+export const PB_ROWS = 'tools/plates/library/batches/pilot-b.json';
 const read = (root, p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
 const cardOf = (root, id) => read(root, `docs/research/howto/cards/${id.slice(4)}.json`);
 /** A research card's source list as page lines (title, year, url, PMID). */
 export const sourceLines = card => card.sources.map(s => `${s.title}${s.year ? ` (${s.year})` : ''}. ${s.url}${s.pmid ? ` PMID ${s.pmid}` : ''}`);
 
-/** The pilot B rows data with each row's sources from its card (memory only). `data` defaults to pilot-b/rows.json. */
+/** The pilot B rows data with each row's sources from its card. `data` defaults to batches/pilot-b.json. */
 export function pbData(root = ROOT, data = read(root, PB_ROWS)) {
   return { ...data, rows: Object.fromEntries(Object.entries(data.rows).map(([id, r]) => [id, { ...r, sources: sourceLines(cardOf(root, id)) }])) };
 }
 
-/** Every registry row: the 8, the batch files, then pilot-b/rows.json read as one more batch file (Do 4). */
-export function pbAll(root = ROOT, data = pbData(root)) {
-  return rows(root, { batches: [...batchFiles(root).map(p => [p, read(root, p)]), [PB_ROWS, data]] });
+/** Every registry row: the 8 and the batch files, batches/pilot-b.json among them (Do 11). */
+export function pbAll(root = ROOT) {
+  return rows(root);
 }
 
-/** The pilot B ids whose spec file exists, in rows.json order. */
+/** The pilot B ids whose spec file exists, in batch-file order. */
 export const drawnIds = (root = ROOT, data = read(root, PB_ROWS)) => Object.entries(data.rows).filter(([, r]) => existsSync(join(root, 'tools/plates', r.src))).map(([id]) => id);
 
 /** The pilot B plates page bytes ({ html: Buffer, warnings }) for `ids` (default: every drawn id). */

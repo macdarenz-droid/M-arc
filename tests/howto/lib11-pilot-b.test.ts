@@ -11,9 +11,9 @@ import { beforeAll, describe, expect, it } from 'vitest';
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
 const PILOT_B = ['smith_machine_bench_press', 'cable_fly', 'push_up', 'seated_leg_curl', 'crunch'];
-const DRAWN = ['smith_machine_bench_press', 'seated_leg_curl', 'cable_fly', 'push_up'];   // drawn, not held (rows.json)
+const DRAWN = ['smith_machine_bench_press', 'seated_leg_curl', 'cable_fly', 'push_up'];   // drawn, not held (batches/pilot-b.json)
 const HELD = ['crunch'];                                                       // D-LIB11-SMALL (DESIGN.md section 13)
-const ROWS = 'tools/plates/library/pilot-b/rows.json';
+const ROWS = 'tools/plates/library/batches/pilot-b.json';   // pilot-b/rows.json until the pin (Do 11)
 const COMPOSERS = ['smith', 'legCurlMachine'];
 const readJson = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
 
@@ -239,7 +239,7 @@ describe('LIB-11 A3: spec and composer closures are pure and drawn by the vendor
   });
 });
 
-describe('LIB-11 A5: pilot-b/rows.json holds exactly the drawn ids that are not held', () => {
+describe('LIB-11 A5: batches/pilot-b.json holds exactly the drawn ids that are not held', () => {
   const IDS = DRAWN.map(i => `lib_${i}`);
   const rowKeys = (text: string) => [...text.matchAll(/^ {2}"(lib_[a-z0-9_]+)": \{/gm)].map(m => m[1]);
   const a5 = (text: string) => {
@@ -275,63 +275,66 @@ describe('LIB-11 A5: pilot-b/rows.json holds exactly the drawn ids that are not 
   });
 });
 
-describe('LIB-11 A7: nothing is pinned before the pin commit (D-LIB10-AHEAD ceiling)', { timeout: T }, () => {
-  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => !['drawing', 'review'].includes(r.stage)).map(([id, r]) => `${id}: ${r.stage}`);
-  it('every row is at stage drawing or review, and no pilot B id is shipped with rows.json read as a batch file', () => {
-    expect(stageProblems(readJson(ROWS).rows)).toEqual([]);
-    const rows = reg.rows(undefined, { batches: [...reg.batchFiles().map((p: string) => [p, readJson(p)]), [ROWS, readJson(ROWS)]] });
-    expect(rows.filter((r: any) => DRAWN.includes(r.id.slice(4))).length).toBe(DRAWN.length);
-    expect(reg.shippedIds(rows).filter((i: string) => PILOT_B.includes(i.slice(4)))).toEqual([]);
-  });
-  it('mutation: a row set to approved-plate is red', () => {
-    const rows = readJson(ROWS).rows;
-    expect(stageProblems({ ...rows, lib_cable_fly: { ...rows.lib_cable_fly, stage: 'approved-plate' } })).toEqual(['lib_cable_fly: approved-plate']);
-  });
-  /** Whole-value hits of a pilot B id: `lib_<id>`, `<id>`, its hyphen slug, or `library/specs/<id>.mjs`. */
-  const VALUES = (id: string) => [`lib_${id}`, id, id.replace(/_/g, '-'), `library/specs/${id}.mjs`, `tools/plates/library/specs/${id}.mjs`];
-  const isPb = (v: unknown) => typeof v === 'string' && PILOT_B.some(id => VALUES(id).includes(v));
-  /** A batch file: its rows keys and each row's src, slug, prefix and chromeId, as whole field values. */
-  const batchScan = (name: string, text: string) => {
-    const out: string[] = [], j = JSON.parse(text);
-    for (const [k, r] of Object.entries<any>(j.rows ?? {})) {
-      if (isPb(k)) out.push(`${name}: row ${k}`);
-      for (const f of ['src', 'slug', 'prefix', 'chromeId']) if (isPb(r?.[f])) out.push(`${name}: ${k}.${f} ${r[f]}`);
+describe('LIB-11 A7 / A8: the pin (Do 11; PILOT B PIN GO #278 6393170019 @ 1d7f28d2)', { timeout: T }, () => {
+  const GOLD = 'tests/howto/golden/library/pilot-b.json', PAGE = 'ff3e017c98f73b6d049808a6ffea057a7fa350eed764d9ceedb9a582fa22583f';
+  const GO: Record<string, string[]> = { lib_smith_machine_bench_press: ['F5'], lib_seated_leg_curl: ['F5'], lib_cable_fly: ['F2', 'F5'], lib_push_up: ['F5'] };
+  let golden: any, html = '';
+  beforeAll(async () => {
+    golden = await import(/* @vite-ignore */ new URL('../../tools/plates/golden.mjs', import.meta.url).href);
+    html = (await (await import(/* @vite-ignore */ lib('pilot-b/build.mjs'))).buildPbPage()).html.toString('utf8');
+  }, T);
+  const stageProblems = (rows: Record<string, any>) => Object.entries(rows).filter(([, r]) => r.stage !== 'approved-plate').map(([id, r]) => `${id}: ${r.stage}`);
+  /** The golden file against the built page and the GO: [problems]. */
+  const pinProblems = (file: any, page: string) => {
+    const out: string[] = [...golden.verifyBatchChain(file, readJson('tests/howto/golden/GOLDEN.json').entries)];
+    const [pg, ...pl] = file.entries;
+    if (pg?.kind !== 'page' || pg.pageSha256 !== PAGE || golden.sha256(page) !== PAGE || pg.bytes !== Buffer.byteLength(page)) out.push('page entry');
+    const plates = golden.extractPlates(page);
+    if (pl.map((e: any) => e.id).join() !== plates.map((p: any) => `lib_${p.chromeId.replace(/-/g, '_')}`).join()) out.push('plate entries are not the page\'s plates in page order');
+    for (const e of pl) {
+      const p = plates.find((x: any) => `lib_${x.chromeId.replace(/-/g, '_')}` === e.id);
+      if (!p || JSON.stringify(e.fragments) !== JSON.stringify(golden.fragmentsOf(p))) out.push(`${e.id}: fragments`);
+      if (JSON.stringify(e.exemptions) !== JSON.stringify(GO[e.id])) out.push(`${e.id}: exemptions ${e.exemptions}`);
+      if (e.decision !== 'D-LIB-PILOTB' || e.approvedBy !== 'supervisor') out.push(`${e.id}: approval`);
     }
     return out;
   };
-  /** A golden JSON: each entry's id; a layers HTML: id="card-…", data-ex and data-id. */
-  const goldenScan = (name: string, text: string) => {
-    const out: string[] = [];
-    if (name.endsWith('.json')) for (const e of JSON.parse(text).entries ?? []) if (isPb(e?.id)) out.push(`${name}: entry ${e.id}`);
-    if (name.endsWith('.html')) for (const m of text.matchAll(/(?:id="card-([^"]*)"|data-ex="([^"]*)"|data-id="([^"]*)")/g)) { const v = m[1] ?? m[2] ?? m[3]; if (isPb(v)) out.push(`${name}: ${v}`); }
-    return out;
-  };
-  const common = (name: string, text: string) => [...(/pilot-b/i.test(name) ? [`${name}: a pilot B file name`] : []), ...(/"batch"\s*:\s*"PILOT-B"/.test(text) ? [`${name}: names batch PILOT-B`] : [])];
-  const scanDir = (dir: string, f: (n: string, t: string) => string[]) => (existsSync(dir) ? readdirSync(dir).filter(n => /\.(json|html)$/.test(n)).flatMap(n => { const t = readFileSync(join(dir, n), 'utf8'); return [...common(n, t), ...f(n, t)]; }) : []);
-  it('the structural scan finds no pilot B id in batches/ or tests/howto/golden/library/', () => {
-    expect(scanDir('tools/plates/library/batches', batchScan)).toEqual([]);
-    expect(scanDir('tests/howto/golden/library', goldenScan)).toEqual([]);
+  it('every pilot B row is approved-plate, none is shipped, and the held crunch has no row', () => {
+    const rows = readJson(ROWS).rows;
+    expect(stageProblems(rows)).toEqual([]);
+    expect(Object.keys(rows).sort()).toEqual(DRAWN.map(i => `lib_${i}`).sort());
+    expect(reg.shippedIds(reg.rows()).filter((i: string) => PILOT_B.includes(i.slice(4)))).toEqual([]);
+    expect(readJson(ROWS).pages).toEqual({ plates: 'tools/plates/library/pages/pilot-b.json', layers: 'tests/howto/golden/library/pilot-b.layers.html', layersConfig: 'tools/plates/library/pages/pilot-b.layers.json' });
   });
-  it('controls stay green: a "walkout from a push-up" sources line, lib_cable_crunch / cable-crunch, lib_incline_push_up', () => {
-    const ctl = JSON.stringify({ batch: 'LB9', rows: {
-      lib_inchworm: { src: 'library/specs/inchworm.mjs', slug: 'inchworm', prefix: 'inchworm', chromeId: 'inchworm', sources: ['walkout from a push-up'] },
-      lib_cable_crunch: { src: 'library/specs/cable_crunch.mjs', slug: 'cable-crunch', prefix: 'cable-crunch', chromeId: 'cable-crunch' },
-      lib_incline_push_up: { src: 'library/specs/incline_push_up.mjs', slug: 'incline-push-up', prefix: 'incline-push-up', chromeId: 'incline-push-up' } } });
-    expect([...common('lb9.json', ctl), ...batchScan('lb9.json', ctl)]).toEqual([]);
+  it('the golden file holds the page and the 4 plates with the GO\'s exemptions exactly; its chain is valid', () => {
+    expect(pinProblems(readJson(GOLD), html)).toEqual([]);
   });
-  it('every real id in exercises.json that contains a pilot B id is listed, and none matches the scan', () => {
-    const ex: string[] = readJson('src/data/exercises.json').map((e: any) => e.id);
-    const holders = ex.filter(e => PILOT_B.some(id => e !== `lib_${id}` && e.includes(id))).sort();
-    expect(holders).toEqual(['lib_bicycle_crunch', 'lib_cable_crunch', 'lib_diamond_push_up', 'lib_high_to_low_cable_fly', 'lib_incline_push_up',
-      'lib_low_to_high_cable_fly', 'lib_machine_crunch', 'lib_pike_push_up', 'lib_reverse_crunch']);
-    for (const h of holders) expect(isPb(h) || isPb(h.slice(4)) || isPb(h.slice(4).replace(/_/g, '-')), h).toBe(false);
+  it('the held crunch is in no batch, page or golden file', () => {
+    const hits = ['tools/plates/library/batches', 'tools/plates/library/pages', 'tests/howto/golden/library'].flatMap(d => readdirSync(d).filter(n => n.endsWith('.json'))
+      .filter(n => /"lib_crunch"|"library\/specs\/crunch\.mjs"|"chromeId": "crunch"/.test(readFileSync(join(d, n), 'utf8'))).map(n => `${d}/${n}`));
+    expect(hits).toEqual([]);
   });
-  it('mutations: rows.json copied into batches/, a golden entry lib_crunch, a page-only PILOT-B entry in other.json are red', () => {
-    expect(batchScan('x.json', readFileSync(ROWS, 'utf8')).length).toBeGreaterThanOrEqual(DRAWN.length);
-    expect(common('pilot-b.json', readFileSync(ROWS, 'utf8')).length).toBe(2);
-    expect(goldenScan('x.json', '{"entries":[{"kind":"plate","id":"lib_crunch"}]}')).toEqual(['x.json: entry lib_crunch']);
-    expect(common('other.json', '{"entries":[{"kind":"page","batch":"PILOT-B"}]}')).toEqual(['other.json: names batch PILOT-B']);
-    expect(goldenScan('x.layers.html', '<article id="card-push-up" data-ex="lib_push_up"></article>')).toEqual(['x.layers.html: push-up', 'x.layers.html: lib_push_up']);
+  it('mutations: a row at review, an exemption added, a fragment changed, a crunch entry and a moved page byte are red', () => {
+    const rows = readJson(ROWS).rows, g = readJson(GOLD);
+    expect(stageProblems({ ...rows, lib_cable_fly: { ...rows.lib_cable_fly, stage: 'review' } })).toEqual(['lib_cable_fly: review']);
+    const ex = structuredClone(g); ex.entries[1].exemptions = [...ex.entries[1].exemptions, 'F1'];
+    expect(pinProblems(ex, html).some(p => p.endsWith('exemptions F5,F1'))).toBe(true);
+    const fr = structuredClone(g); fr.entries[2].fragments.mistakeSvg = '0'.repeat(64);
+    expect(pinProblems(fr, html).some(p => p.endsWith(': fragments'))).toBe(true);
+    const cr = structuredClone(g); cr.entries.push({ ...cr.entries[4], id: 'lib_crunch' });
+    expect(pinProblems(cr, html).length).toBeGreaterThan(0);
+    expect(pinProblems(g, html.replace('Smith Machine Bench Press', 'Smith Machine Bench Pres'))).toContain('page entry');
+  });
+});
+
+describe('LIB-11 D-LIB11-SCRATCHIDS (a) and D-LIB11-SCRATCHA: no scratch target is a pinned id', () => {
+  it('the scratch set is clean; a set targeting lib_barbell_row (pilot A) or lib_smith_machine_bench_press (pilot B) is refused', async () => {
+    const C = await import(/* @vite-ignore */ lib('ci/scratch.mjs'));
+    expect(C.setProblems(C.SCRATCH_4C)).toEqual([]);
+    const swap = (key: string, id: string) => C.SCRATCH_4C.map((s: any) => (s.key === key ? { ...s, id } : s));
+    expect(C.setProblems(swap('lib4c-scratch-a', 'lib_barbell_row'))).toEqual(['lib_barbell_row is a pilot A id (D-LIB11-SCRATCHIDS)']);
+    expect(C.setProblems(swap('lib4c-scratch-e', 'lib_smith_machine_bench_press'))).toEqual(['lib_smith_machine_bench_press is a pilot B id (D-LIB11-SCRATCHIDS)']);
+    expect(C.PILOT_A.map((i: string) => `lib_${i}`).sort()).toEqual(Object.keys(readJson('tools/plates/library/batches/pilot-a.json').rows).sort());
   });
 });
 
