@@ -7693,6 +7693,7 @@ if (gate.runs('HT-9'))
   let bad = 0, opened = 0, pending = 0;
   await Promise.all(['silent-black', 'paper'].map(async theme => {   // both themes side by side, each in its own context
     const { ctx, page } = await H.openAppTrain(browser, PORT, theme, { onError: m => { errors.push(`${tag} ${theme}: page error: ${m}`); bad++; } });
+    const failedReqs = []; ctx.on('requestfailed', r => failedReqs.push(`${r.url().split('/').pop()} ${r.failure()?.errorText} (${r.serviceWorker() ? 'service worker' : 'page'})`)); page.evaluate(() => { window.__gf5Toasts = []; new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) for (const t of [n, ...n.querySelectorAll('div.toast')]) if (t.matches('div.toast')) window.__gf5Toasts.push(t.textContent); }).observe(document.body, { childList: true, subtree: true }); }).catch(() => {});   // GATE-FLAKE-5
     const seen = [];
     try {
       for (const [index, [id]] of H.HT_PLATES.entries()) {
@@ -7719,7 +7720,7 @@ if (gate.runs('HT-9'))
           }, btn.key);
           if (shown && !state) opened++;
           else if (!HT7 && btn.key !== 'hand') pending++;   // the hand close-up's key is "hand" in every generated How-to
-          else { errors.push(`${tag} ${theme}/${id}: ${btn.id} (${btn.key}): ${state ?? 'nothing opened'}`); bad++; }
+          else { errors.push(`${tag} ${theme}/${id}: ${btn.id} (${btn.key}): ${state ?? 'nothing opened'}; failed requests: ${failedReqs.join('; ') || 'none'}; toasts ${JSON.stringify(await page.evaluate(() => window.__gf5Toasts ?? []).catch(() => []))}`); bad++; }
           await page.evaluate(() => document.querySelector('dialog.sheet.ht .zx:not([hidden]) .zx-close')?.click());
           await H.settleApp(page);
         }
@@ -8016,6 +8017,29 @@ if (gate.runs('HT-8'))
   /** Waits until nothing runs inside `sel` (the rest of the golden page may still play its own maps). */
   const quiet = (p, sel) => p.waitForFunction(s => { const e = document.querySelector(s); return !!e && !e.getAnimations({ subtree: true }).some(a => a.playState === 'running'); }, sel, { timeout: 9000 }).then(() => frames2(p));
   const click = (p, sel) => p.evaluate(s => { const e = document.querySelector(s); if (!e) throw new Error(`no ${s}`); e.click(); }, sel);
+  /** GATE-FLAKE-5 (D-GF5-1): from now on, the load state of `page`'s context (failed requests with their path, /assets/
+   *  requests in flight, every toast shown, the service worker); `.feel(wait, id)` is `wait`, ended early only when the
+   *  page's own request for that exercise's feel chunk has failed (a failed dynamic import is never retried, QA4-13). */
+  const loads = page => {
+    const ctx = page.context(), t0 = Date.now(), live = new Map(), failed = [], waits = new Set();
+    const file = r => r.url().split('/').pop(), via = r => (r.serviceWorker() ? 'service worker' : 'page');
+    ctx.on('request', r => { if (r.url().includes('/assets/')) live.set(r, Date.now()); });
+    ctx.on('requestfinished', r => live.delete(r));
+    ctx.on('requestfailed', r => { live.delete(r); const f = { file: file(r), error: r.failure()?.errorText, at: Date.now() - t0, via: via(r) }; failed.push(f); for (const w of waits) w(f); });
+    page.evaluate(() => { window.__gf5Toasts = []; new MutationObserver(ms => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) for (const t of [n, ...n.querySelectorAll('div.toast')]) if (t.matches('div.toast')) window.__gf5Toasts.push(t.textContent); }).observe(document.body, { childList: true, subtree: true }); }).catch(() => {});
+    const state = async () => {
+      const pg = await page.evaluate(async () => { const r = await navigator.serviceWorker?.getRegistration(); return { toasts: window.__gf5Toasts ?? [], controller: !!navigator.serviceWorker?.controller, reg: !r ? 'none' : r.active ? 'active' : r.installing ? 'installing' : r.waiting ? 'waiting' : 'none' }; }).catch(e => ({ unread: e.message.split('\n')[0] }));
+      const now = Date.now();
+      return `load state: failed ${failed.map(f => `${f.file} ${f.error} (${f.via}, at ${f.at} ms)`).join('; ') || 'none'}; in flight ${[...live].map(([r, t]) => `${file(r)} (${via(r)}, ${now - t} ms)`).join('; ') || 'none'}; toasts ${JSON.stringify(pg.toasts ?? [])}; worker ${pg.unread ? `not read (${pg.unread})` : `controller ${pg.controller ? 'set' : 'not set'}, registration ${pg.reg}`}`;
+    };
+    state.feel = (wait, id) => new Promise((res, rej) => {
+      const t = Date.now(), re = new RegExp(`^feel-${id}-[\\w-]+\\.js$`);
+      const early = f => { if (f.via === 'page' && re.test(f.file)) { waits.delete(early); rej(new Error(`${APP} ended early after ${Date.now() - t} ms: the page's request for ${f.file} failed (${f.error})`)); } };
+      wait.then(() => { waits.delete(early); res(); }, async e => { waits.delete(early); rej(new Error(`${e.message}\n${await state()}`)); });
+      waits.add(early); for (const f of failed) early(f);
+    });
+    return state;
+  };
   /** The app: the feel section scrolled just under the sheet header, on its own layer; returns its rect. */
   async function placeApp(page) {
     return page.evaluate(s => {
@@ -8078,6 +8102,7 @@ if (gate.runs('HT-8'))
     const full = H.HT_FULL.includes(theme);
     const viewport = { width: 390, height: H.TALL_H };
     const { ctx, page } = await H.openAppTrain(b8, PORT, theme, { viewport, onError: onError(`app ${theme}`) });
+    const ld = loads(page);
     const g = await H.openGolden(b8, theme, { viewport, html: GB, onError: onError(`golden B ${theme}`) });
     const feelReqs = [];
     page.on('request', r => { if (/\/assets\/feel-[a-z-]+-[\w-]+\.js$/.test(r.url())) feelReqs.push(r.url()); });
@@ -8087,7 +8112,7 @@ if (gate.runs('HT-8'))
         const before = feelReqs.length;
         await H.openHowTo(page, i);
         await page.evaluate(() => document.querySelector('dialog.sheet.ht .ht-feel-host').scrollIntoView({ block: 'center' }));
-        await page.locator(APP).waitFor({ state: 'visible', timeout: 8000 });
+        await ld.feel(page.locator(APP).waitFor({ state: 'visible', timeout: 8000 }), id);
         const got = feelReqs.slice(before);
         if (theme === 'silent-black' && (got.length !== 1 || !got[0].includes(`/feel-${id}-`))) problems.push(`${S('chunk')}: feel chunk requests after the tap ${JSON.stringify(got)}`);
         // S5: tap the map in both, compare the band animation lists (L4), then the paused frames
@@ -8130,7 +8155,7 @@ if (gate.runs('HT-8'))
         for (const i of [2, 1, 6]) {
           await H.openHowTo(page, i);
           await page.evaluate(() => document.querySelector('dialog.sheet.ht .ht-feel-host').scrollIntoView({ block: 'center' }));
-          await page.locator(APP).waitFor({ state: 'visible', timeout: 8000 });
+          await ld.feel(page.locator(APP).waitFor({ state: 'visible', timeout: 8000 }), H.HT_PLATES[i][0]);
           await placeApp(page);
           await click(page, `${APP} [data-feel-map]`);
           await page.waitForTimeout(END + 1000);
@@ -8139,7 +8164,7 @@ if (gate.runs('HT-8'))
           await H.closeHowTo(page);
         }
       }
-    } catch (e) { problems.push(`${theme}: crashed: ${e.message.split('\n')[0]}`); } finally { await ctx.close(); await g.ctx.close(); }
+    } catch (e) { problems.push(`${theme}: crashed: ${e.message.split('\n')[0]}${(m => (m ? ` (${m[0].replace(/\u001b\[[\d;]*m/g, '').trim()})` : ''))(/waiting for locator\(.*$/m.exec(e.message))}; ${await ld()}`); } finally { await ctx.close(); await g.ctx.close(); }
     return { problems, stats };
   }
 
@@ -8149,13 +8174,14 @@ if (gate.runs('HT-8'))
     const viewport = { width: 390, height: H.TALL_H };
     const { ctx, page } = await H.openAppTrain(b8, PORT, theme, { viewport, reducedMotion: 'reduce', onError: onError(`app reduced ${theme}`) });
     const g = await H.openGolden(b8, theme, { viewport, reducedMotion: 'reduce', html: GB, onError: onError(`golden B reduced ${theme}`) });
+    const ld = loads(page);
     let pairs = 0;
     try {
       for (let i = 0; i < H.HT_PLATES.length; i++) {
         const [id] = H.HT_PLATES[i];
         await H.openHowTo(page, i);
         await page.evaluate(() => document.querySelector('dialog.sheet.ht .ht-feel-host').scrollIntoView({ block: 'center' }));
-        await page.locator(APP).waitFor({ state: 'visible', timeout: 8000 });
+        await ld.feel(page.locator(APP).waitFor({ state: 'visible', timeout: 8000 }), id);
         await placeApp(page);
         await click(page, `${APP} [data-feel-map]`);
         await page.waitForTimeout(400);
@@ -8164,7 +8190,7 @@ if (gate.runs('HT-8'))
         const p = await pair(page, g.page, id, `reduced ${theme} ${id} rest`); pairs++; if (p) problems.push(p);
         await H.closeHowTo(page);
       }
-    } catch (e) { problems.push(`reduced ${theme}: crashed: ${e.message.split('\n')[0]}`); } finally { await ctx.close(); await g.ctx.close(); }
+    } catch (e) { problems.push(`reduced ${theme}: crashed: ${e.message.split('\n')[0]}${(m => (m ? ` (${m[0].replace(/\u001b\[[\d;]*m/g, '').trim()})` : ''))(/waiting for locator\(.*$/m.exec(e.message))}; ${await ld()}`); } finally { await ctx.close(); await g.ctx.close(); }
     return { problems, pairs };
   }
 
@@ -8179,10 +8205,11 @@ if (gate.runs('HT-8'))
         ? await H.openAppTrain(b8, PORT, 'silent-black', { onError: onError('app tripwire') })
         : await H.openGolden(b8, 'silent-black', { html: GB, onError: onError('golden B tripwire') });
       const page = o.page, sel = which === 'app' ? APP : GOLD(id);
+      const ld = loads(page);
       if (which === 'app') {
         await H.openHowTo(page, idx);
         await page.evaluate(() => document.querySelector('dialog.sheet.ht .ht-feel-host').scrollIntoView({ block: 'center' }));
-        await page.locator(APP).waitFor({ state: 'visible', timeout: 8000 });
+        await ld.feel(page.locator(APP).waitFor({ state: 'visible', timeout: 8000 }), id);
       }
       await page.evaluate(s => document.querySelector(s).querySelector('[data-feel-map]').scrollIntoView({ block: 'center' }), sel);
       return { o, page, sel, idle: [], runs: [] };
@@ -8217,6 +8244,7 @@ if (gate.runs('HT-8'))
     // a request the service worker answers)
     const noSw = { newContext: o => b8.newContext({ ...o, serviceWorkers: 'block' }) };
     const { ctx, page } = await H.openAppTrain(noSw, PORT, theme, { onError: onError(`app early chip ${theme}`) });
+    const ld = loads(page);
     try {
       const card = await H.openCard(page, 1);   // barbell back squat
       // the feel chunk is held until the tap, as on a slow phone: once BUG-37's sheet is open, the chunk loads and the
@@ -8262,7 +8290,7 @@ if (gate.runs('HT-8'))
         problems.push(`${theme}: 4 s after an early "Feel it" tap: ${JSON.stringify(st)} (want loaded, in view, heading focused, playing)`);
       }
       if (held !== 1) problems.push(`${theme}: the feel chunk was requested ${held} times, expected once (the hold did not apply)`);
-    } catch (e) { problems.push(`${theme}: crashed: ${e.message.split('\n')[0]}`); } finally { await ctx.close(); }
+    } catch (e) { problems.push(`${theme}: crashed: ${e.message.split('\n')[0]}${(m => (m ? ` (${m[0].replace(/\u001b\[[\d;]*m/g, '').trim()})` : ''))(/waiting for locator\(.*$/m.exec(e.message))}; ${await ld()}`); } finally { await ctx.close(); }
     return problems;
   }
 
@@ -8924,7 +8952,8 @@ if (gate.runs('AUD-12'))
 // Paper at 1x and 4x CPU, with an 8-lift split so the brief is shorter: the top moves one way only (any
 // reversal is a bounce) and down by >= 20 px, no frame steps more than max(16 px, a quarter of the travel)
 // (a snap; a ~100 px ease peaks near 20 px a frame), one sheet throughout, and nothing moves or resizes for
-// >= 100 ms after it rests.
+// >= 100 ms after it rests. A sample pair more than 1.5 frames apart (a dropped frame) is checked on the panel's own
+// swap animation, replayed paused at each 1000/60 ms of its time (GATE-FLAKE-5, D-GF5-1).
 if (gate.runs('COPY-2'))
 {
   const C2_EX = ['lib_barbell_bench_press', 'lib_incline_dumbbell_press', 'lib_barbell_row', 'lib_lat_pulldown', 'lib_dumbbell_shoulder_press', 'lib_dumbbell_lateral_raise', 'lib_dumbbell_biceps_curl', 'lib_triceps_pushdown'];
@@ -8949,11 +8978,14 @@ if (gate.runs('COPY-2'))
   };
   const c2Sample = (page) => page.evaluate(() => new Promise(resolve => {
     const out = []; const t0 = performance.now(); let n = 0;
-    const f = () => {
+    const f = (ts) => {
       const d = [...document.querySelectorAll('dialog.sheet[open]')].pop(); const p = d?.querySelector('.sheet-panel');
       if (d && !d.__c2) d.__c2 = ++window.__c2Id || (window.__c2Id = 1);
+      // GATE-FLAKE-5: ct is the currentTime of the first running swap (first keyframe a negative translateY), kept for the replay
+      if (p && !window.__c2Swap) { const a = p.getAnimations().find(x => x.playState === 'running' && /^translateY\(-/.test(x.effect?.getKeyframes()[0]?.transform || '')); if (a) window.__c2Swap = { a, el: p, keyframes: a.effect.getKeyframes(), timing: a.effect.getTiming() }; }
+      const sw = window.__c2Swap, ct = sw && sw.a.playState === 'running' ? sw.a.currentTime : null;
       out.push({ t: performance.now() - t0, dlg: d?.__c2 ?? null, title: d?.querySelector('h2')?.textContent ?? null,
-        top: p ? p.getBoundingClientRect().top : null, h: p ? p.getBoundingClientRect().height : null });
+        top: p ? p.getBoundingClientRect().top : null, h: p ? p.getBoundingClientRect().height : null, ts, ct });
       if (performance.now() - t0 < 900 && ++n < 400) requestAnimationFrame(f); else resolve(out);
     };
     requestAnimationFrame(f);
@@ -8974,6 +9006,37 @@ if (gate.runs('COPY-2'))
     const cdp = await ctx.newCDPSession(page); await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu });
     let frames = c2Sample(page); await page.getByRole('button', { name: 'Skip' }).click(); frames = await frames;
     await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
+    // GATE-FLAKE-5 (D-GF5-1): a gap pair (ts >= 25 ms apart) is replayable when the swap ran at its own speed across it
+    // (no restart, seek, faster rate or early cancel); its replayed one-frame steps are checked instead of its raw step.
+    // The replay is a paused copy of the swap on the same panel, read after sampling ended and cancelled before the shot.
+    const c2On = frames.filter(x => x.top != null);
+    const c2Rp = await page.evaluate(on => {
+      const s = window.__c2Swap; if (!s) return { end: null, gaps: [], atCt: [] };
+      const end = s.a.effect.getComputedTiming().endTime, step = 1000 / 60, gaps = [];
+      for (let i = 1; i < on.length; i++) {
+        const x = on[i - 1], y = on[i], dt = y.ts - x.ts;
+        if (dt < 25) continue;
+        let span = null;
+        if (x.ct != null && y.ct != null) { if (y.ct - x.ct >= 0 && y.ct - x.ct <= dt + 1) span = [x.ct, y.ct]; }
+        else if (y.ct != null) { if (y.ct <= dt + 1) span = [0, y.ct]; }
+        else if (x.ct != null) { if (x.ct + dt >= end - 1) span = [x.ct, end]; }
+        gaps.push({ i, dt, span });
+      }
+      const r = new Animation(new KeyframeEffect(s.el, s.keyframes, s.timing), document.timeline); r.pause();
+      const at = t => { r.currentTime = t; return s.el.getBoundingClientRect().top; };
+      for (const g of gaps) if (g.span) { g.tops = []; for (let k = 0; g.span[0] + k * step < g.span[1]; k++) g.tops.push(at(g.span[0] + k * step)); g.tops.push(at(g.span[1])); }
+      const atCt = on.flatMap((x, i) => (x.ct != null ? [{ i, top: at(x.ct) }] : []));
+      r.cancel();
+      return { end, gaps, atCt };
+    }, c2On);
+    const c2Gap = i => c2Rp.gaps.find(g => g.i === i && g.tops);
+    const c2Steps = i => { const g = c2Gap(i); return g ? g.tops.slice(1).map((y, k) => y - g.tops[k]) : [c2On[i].top - c2On[i - 1].top]; };
+    // the replayed top against the recorded one: at every ct, and a replayable gap's side without a ct at the start or end
+    const c2Pts = [...c2Rp.atCt.map(m => ({ t: c2On[m.i].t, top: c2On[m.i].top, r: m.top })),
+      ...c2Rp.gaps.filter(g => g.tops && c2On[g.i - 1].ct == null).map(g => ({ t: c2On[g.i - 1].t, top: c2On[g.i - 1].top, r: g.tops[0] })),
+      ...c2Rp.gaps.filter(g => g.tops && c2On[g.i].ct == null).map(g => ({ t: c2On[g.i].t, top: c2On[g.i].top, r: g.tops[g.tops.length - 1] }))];
+    var c2Gf5; c2Gf5 ??= { gaps: 0, diff: 0 };
+    c2Gf5.gaps += c2Rp.gaps.length; c2Gf5.diff = Math.max(c2Gf5.diff, ...c2Pts.map(x => Math.abs(x.top - x.r)));
     const on = frames.filter(x => x.top != null);
     if (!on.some(x => x.title === 'COPY2 SPLIT')) errors.push(`${tag}: Skip did not lead to the brief`);
     if (on.length < 10) { errors.push(`${tag}: only ${on.length} frames with the sheet open, expected >= 10`); await ctx.close(); continue; }
@@ -8982,8 +9045,10 @@ if (gate.runs('COPY-2'))
     const snapLimit = Math.max(16, travel / 4);
     const back = on.findIndex((x, i) => i > 0 && x.top - on[i - 1].top < -0.5);
     if (back > 0) errors.push(`${tag}: the panel's top reversed ${(on[back].top - on[back - 1].top).toFixed(1)} px at ${on[back].t.toFixed(0)} ms (${on[back - 1].top.toFixed(1)} -> ${on[back].top.toFixed(1)}), a bounce`);
-    const snap = on.findIndex((x, i) => i > 0 && Math.abs(x.top - on[i - 1].top) > snapLimit);
-    if (snap > 0) errors.push(`${tag}: the panel's top snapped ${(on[snap].top - on[snap - 1].top).toFixed(1)} px in one frame at ${on[snap].t.toFixed(0)} ms (limit ${snapLimit.toFixed(1)} px)`);
+    for (const g of c2Rp.gaps.filter(g => g.tops)) { const k = g.tops.findIndex((y, k) => k > 0 && y - g.tops[k - 1] < -0.5); if (k > 0) { errors.push(`${tag}: the panel's top reversed ${(g.tops[k] - g.tops[k - 1]).toFixed(1)} px at ${on[g.i].t.toFixed(0)} ms (${g.tops[k - 1].toFixed(1)} -> ${g.tops[k].toFixed(1)}), a bounce (replayed)`); break; } }
+    const snap = on.findIndex((x, i) => i > 0 && c2Steps(i).some(d => Math.abs(d) > snapLimit));
+    if (snap > 0) { const d = c2Steps(snap).find(d => Math.abs(d) > snapLimit); errors.push(`${tag}: the panel's top snapped ${d.toFixed(1)} px in one frame at ${on[snap].t.toFixed(0)} ms (limit ${snapLimit.toFixed(1)} px)${c2Gap(snap) ? ' (replayed)' : ''}`); }
+    { const x = c2Pts.find(x => Math.abs(x.top - x.r) > 0.5); if (x) errors.push(`${tag}: at ${x.t.toFixed(0)} ms the panel's top was ${x.top.toFixed(2)} px and its swap animation replayed gives ${x.r.toFixed(2)} px: the panel moved other than by its swap animation`); }
     const ids = new Set(on.map(x => x.dlg)); if (ids.size !== 1) errors.push(`${tag}: ${ids.size} different sheets showed during the swap, expected one`);
     const end = on[on.length - 1];
     const restAt = on.findIndex((x, i) => on.slice(i).every(y => Math.abs(y.top - end.top) <= 0.5));
@@ -8993,7 +9058,7 @@ if (gate.runs('COPY-2'))
     if (cpu === 1) await page.screenshot({ path: `${OUT}/${theme}-copy-2-swap.png` });
     await ctx.close();
   }
-  if (!errors.some(e => e.startsWith('COPY-2 swap '))) console.log('COPY-2 swap: a brief shorter than the check-in eases the same sheet down (one direction, >= 20 px, no step over max(16 px, travel / 4), still after rest), in Silent Black and Paper at 1x and 4x CPU');
+  if (!errors.some(e => e.startsWith('COPY-2 swap '))) console.log(`COPY-2 swap: a brief shorter than the check-in eases the same sheet down (one direction, >= 20 px, no step over max(16 px, travel / 4), still after rest), in Silent Black and Paper at 1x and 4x CPU; ${c2Gf5?.gaps ?? 0} gap pairs (>= 25 ms) over the 4 contexts, replay within ${(c2Gf5?.diff ?? 0).toFixed(3)} px`);
 }
 
 // OLD-ANDROID-1: the WebView floor (card OLD-ANDROID-1b, D-OA1-FLOOR). Each probe takes away one feature the
@@ -9436,6 +9501,94 @@ if (gate.runs('HT-11'))
   }
   await ctx.close();
   if (!errors.some(e => e.startsWith(`${tag}: `))) console.log(`${tag}: 8 base chunks at most 65 % of their main gz; ${checked} decoded strings (plate figures by GOLDEN sha256, posture panels ===) equal the golden in Chromium`);
+}
+
+// LIB-7: the radial hand pairs (card LIB-7; tools/plates/library/hands/DESIGN.md §4 A5). Every drawn library hand page,
+// rendered through hands/zoom.mjs with golden B's own zoom CSS, in 5 themes at 390, 360 and 340 px: no overflow (H4), each
+// ink class's contrast >= golden B's on its 8 hands in the same job (H5), bend values off the outline (G9, real boxes),
+// Right and Wrong hands different pixels, two renders identical. A self-check proves the block fails on no input.
+if (gate.runs('LIB-7'))
+{
+  const tag = 'LIB-7';
+  const { lib7Gate } = await import('../tools/plates/library/hands/gate.mjs');
+  const lib7 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    const empty = await lib7Gate(lib7, { index: { drawn: new Map(), gaps: new Map() } });
+    if (!empty.problems.some(p => /no hand pair page/.test(p))) errors.push(`${tag}: the block passes with no pages (self-check)`);
+    const t0 = Date.now(), r = await lib7Gate(lib7);
+    for (const p of r.problems) errors.push(`${tag}: ${p}`);
+    if (r.pages !== 22) errors.push(`${tag}: ${r.pages} pages, expected 22 (12 drawn ids; 2 push ids parked as gaps, D-LIB7-19a)`);
+    console.log(`${tag} hand pairs (${lib7.version()}): ${r.pages} pages x ${r.themes} themes x ${r.widths} widths, ${r.shots} pixel shots, ${r.problems.length} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+    // LIB-7-FIX F6 (c) (D-LIB7FIX-BUDGET): the built handpair-<key>-*.js chunks equal the shipped rows' pair keys, each
+    // within its tests/howto/budgets.json entry and handCeiling('pull-up'), the largest of the 8's hand ceilings; a
+    // chunk with no entry fails. A self-check with an oversize fixture asset must be red.
+    {
+      const { gzipSync } = await import('node:zlib');
+      const { loadPairs, pairsOf } = await import('../tools/plates/gen/handpairs.mjs');
+      const { handCeiling } = await import('../tools/plates/gen/hands.mjs');
+      const { shippedIds } = await import('../tools/plates/library/registry.mjs');
+      const cap = handCeiling('pull-up'), shipped = pairsOf(await loadPairs(), shippedIds()).keys;
+      const budgets = new Map(JSON.parse(readFileSync(join(ROOT, 'tests/howto/budgets.json'), 'utf8')).budgets.map(b => [b.chunk, b]));
+      const handpairProblems = assets => {
+        const out = [], built = assets.map(a => ({ ...a, key: a.name.match(/^handpair-([a-z0-9-]+)-[\w-]{8}\.js$/)?.[1] }));
+        for (const a of built) if (!a.key) out.push(`${a.name}: not a handpair-<key>-<hash>.js chunk`);
+        const keys = built.filter(a => a.key).map(a => a.key).sort();
+        if (JSON.stringify(keys) !== JSON.stringify([...shipped].sort())) out.push(`handpair chunks [${keys}] != the shipped rows' pair keys [${[...shipped].sort()}]`);
+        for (const a of built.filter(x => x.key)) {
+          const b = budgets.get(`handpair-${a.key}-*.js`);
+          if (!b) out.push(`${a.name} is ${a.raw} B raw / ${a.gz} B gz and has no entry in tests/howto/budgets.json; the batch PR that ships ${a.key} adds it at measured + 10 %`);
+          else if (a.raw > b.rawMax || a.gz > b.gzMax) out.push(`${a.name} is ${a.raw}/${a.gz} B, over its entry ${b.rawMax}/${b.gzMax} (set by ${b.setBy})`);
+          if (a.raw > cap.raw || a.gz > cap.gz) out.push(`${a.name} is ${a.raw}/${a.gz} B, over the cap ${cap.raw}/${cap.gz}`);
+        }
+        return out;
+      };
+      const self = handpairProblems([{ name: 'handpair-zz-fixture-AAAAAAAA.js', raw: cap.raw + 1, gz: cap.gz + 1 }]);
+      if (!self.some(p => /over the cap/.test(p)) || !self.some(p => /no entry/.test(p))) errors.push(`${tag} F6: the handpair budget passes an oversize chunk with no entry (self-check): ${self.join('; ')}`);
+      const assets = readdirSync(join(ROOT, 'www/assets')).filter(n => n.startsWith('handpair-')).map(name => {
+        const buf = readFileSync(join(ROOT, 'www/assets', name));
+        return { name, raw: buf.length, gz: gzipSync(buf).length };
+      });
+      for (const p of handpairProblems(assets)) errors.push(`${tag} F6: ${p}`);
+      console.log(`${tag} F6 handpair chunks: ${assets.length} built, ${shipped.length} shipped pair keys, ${[...budgets.keys()].filter(c => c.startsWith('handpair-')).length} entries, cap ${cap.raw}/${cap.gz} B`);
+    }
+  } finally { await lib7.close(); }
+}
+
+if (gate.runs('LIB-7c'))
+{
+  // LIB-7c (hands/DESIGN.md §10; card 7c-A8): LIB-7's checks over the LB1 hand pairs (keys bar and v-handle) only
+  const tag = 'LIB-7c';
+  const { lib7cGate, expectedPages } = await import('../tools/plates/library/hands/lib7c-gate.mjs');
+  const lib7c = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    const empty = await lib7cGate(lib7c, { index: { drawn: new Map(), gaps: new Map() } });
+    if (!empty.problems.some(p => /no hand pair page/.test(p))) errors.push(`${tag}: the block passes with no pages (self-check)`);
+    const t0 = Date.now(), r = await lib7cGate(lib7c), want = expectedPages();
+    for (const p of r.problems) errors.push(`${tag}: ${p}`);
+    // one page per drawn id (fault list ['curled'], D-LIB7c-KEYS): 6 ids, less any D-LIB7c-SHIP gaps
+    if (r.pages !== want || want !== 6) errors.push(`${tag}: ${r.pages} pages, expected ${want} (the 6 ruled ids)`);
+    console.log(`${tag} hand pairs (${lib7c.version()}): ${r.pages} pages x ${r.themes} themes x ${r.widths} widths, ${r.shots} pixel shots, ${r.problems.length} problems, ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+  } finally { await lib7c.close(); }
+}
+
+// LIB-12: the hand views (palm-flat, cupped, front-rack, ball-contact) and the battle-rope pair (card LIB-12; plan 2.3;
+// tools/plates/library/hands/gate-lib12.mjs). Every LIB-12 drawn pair in 5 themes at 390, 360 and 340 px: no horizontal
+// scroll, SVG and text inside the plate (H4); each ink class's contrast >= golden B's minimum for it, measured in the
+// same job (H5); Right and Wrong halves differ; two renders give identical pixels. Red when no pair loads.
+if (gate.runs('LIB-12'))
+{
+  const tag = 'LIB-12';
+  const t0 = Date.now();
+  const { runLib12Gate } = await import('../tools/plates/library/hands/gate-lib12.mjs');
+  const lib12 = await chromium.launch({ ...(process.env.MARC_CHROMIUM ? { executablePath: process.env.MARC_CHROMIUM } : { channel: 'chromium' }), args: ['--no-sandbox', '--disable-lcd-text'] });
+  try {
+    const { problems, stats } = await runLib12Gate(lib12);
+    for (const p of problems) errors.push(`${tag}: ${p}`);
+    if (stats.pairs !== 17 * 5) errors.push(`${tag}: ${stats.pairs} pair renders, expected 85 (17 pairs x 5 themes; D-LIB12FIX-R8-GAPS)`);
+    if (!problems.length) console.log(`${tag}: ${stats.pairs / 5} hand pairs x 5 themes x 3 widths fit, contrast >= golden B, Right != Wrong, stable (${((Date.now() - t0) / 1000).toFixed(1)} s)`);
+  } finally {
+    await lib12.close();
+  }
 }
 
 await gate.done();

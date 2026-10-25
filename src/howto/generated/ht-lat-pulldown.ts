@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=356b36741768ea9f8511e5c5349f696f0ad938a0a7a70a943a4fc0af4263a2e1
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=0f544969c0f0e55c665b691671af35be609cac37ffa328c6d62a5e71ef477919
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_lat_pulldown",
   name: "Lat Pulldown",
-  hashes: { inputsSha256: "356b36741768ea9f8511e5c5349f696f0ad938a0a7a70a943a4fc0af4263a2e1", golden: "0666827521cc8d42721a01e804596a3a3670ca11ce83b074da95d728e89c5ea3" },
+  hashes: { inputsSha256: "0f544969c0f0e55c665b691671af35be609cac37ffa328c6d62a5e71ef477919", golden: "0666827521cc8d42721a01e804596a3a3670ca11ce83b074da95d728e89c5ea3" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

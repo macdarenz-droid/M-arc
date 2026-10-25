@@ -63,6 +63,19 @@ export function boxReach(path, box, names = [], key) {
   return out;
 }
 
+/** Do 9 (D-LIB5-BOX, S4): every trigger question the owner-approved back box keeps (option 1, R-W0-1: the NHS
+ *  emergency questions (c1), then the same-day questions (c4)), pinned so that losing one is red. */
+export const BACK_BOX_TRIGGERS = Object.freeze(['Pain, numbness, tingling or weakness in both legs?', 'Numb genitals or anus?',
+  'Bladder, bowel or sexual changes?', 'Chest pain?', 'Serious accident?', 'Sudden severe or fast-worsening pain?', 'Hot, cold, shivery or unwell?']);
+/** The back box's own rules (S4): one violation per pinned trigger missing from its `now` line, and its claim must
+ *  cite the NHS back-pain page (nhs-back). */
+export function backBoxRules(path, box) {
+  const out = [], t = plain(box?.now ?? '');
+  for (const x of BACK_BOX_TRIGGERS) if (!t.includes(x)) v(out, `${path}.now`, 'kept back-box trigger missing (D-LIB5-BOX)', `"${x}"`);
+  if (!(box?.claim?.sources ?? []).includes('nhs-back')) v(out, `${path}.claim`, 'the back box must cite nhs-back (S4)');
+  return out;
+}
+
 /** The red-flag box a flag shows: golden B's shared block, or one of `extraBoxes` (flags RED_FLAG_BLOCKS lacks). */
 const boxOf = (flag, shared, extraBoxes) => (RED_FLAG_BLOCKS[flag] ? shared[RED_FLAG_BLOCKS[flag].exp] : extraBoxes[flag]);
 
@@ -71,6 +84,8 @@ const boxOf = (flag, shared, extraBoxes) => (RED_FLAG_BLOCKS[flag] ? shared[RED_
 export function sheetWords(M, shared, extraBoxes = {}) {
   const H = M.default ?? M, out = [];
   let total = lintHowto(M, shared).words.total;
+  const line = variantLineOf(M);
+  if (typeof line === 'string' && line) total += words(line);   // LIB-5v: the shown variant line (D-LIB5v-FIELD)
   for (const f of H.riskFlags ?? ['wrist']) {
     if (RED_FLAG_BLOCKS[f]) continue;
     const B = extraBoxes[f];
@@ -84,7 +99,11 @@ export function sheetWords(M, shared, extraBoxes = {}) {
 /** D-LIB5-VARIANT: the caption-class variant line. `line` comes from one accessor (undefined until the field card). */
 export function variantLine({ id, equipment, line, names = [] }) {
   const out = [], slash = String(equipment ?? '').includes('/'), t = typeof line === 'string' ? plain(line) : '', n = t ? words(t) : 0;
-  if (VARIANT_LINE_EXEMPT.includes(id)) return { violations: out, words: n };
+  if (VARIANT_LINE_EXEMPT.includes(id)) {
+    // D-LIB5v-EXEMPT: an exempt id carries no line, so no shown line skips the scans below
+    if (n > 0) v(out, 'variantLine', 'variant line on an exempt golden-B id (D-LIB5-VARIANT8)', String(equipment));
+    return { violations: out, words: n };
+  }
   if (slash && n === 0) v(out, 'variantLine', 'variant line required: equipment names two kinds', String(equipment));
   if (!slash && n > 0) v(out, 'variantLine', 'variant line on a row whose equipment names one kind', String(equipment));
   if (n > CAPTION_MAX_WORDS) v(out, 'variantLine', `caption > ${CAPTION_MAX_WORDS} words`, `${n} words`);
@@ -98,8 +117,14 @@ export function variantLine({ id, equipment, line, names = [] }) {
   }
   return { violations: out, words: n };
 }
-/** The one accessor for a row's variant line: no shown field exists yet (D-LIB5-VARIANT 4). */
-export const variantLineOf = () => undefined;
+/** The one accessor for a row's variant line, `copy.variantLine` (D-LIB5-VARIANT 4, D-LIB5v-FIELD), from a module
+ *  namespace or loadContent's content. */
+export const variantLineOf = H => (H?.default ?? H)?.copy?.variantLine;
+/** Golden B's copyFields plus the shown variant line, a caption (D-LIB5v-FIELD): copyFields lists copy.* by name. */
+export function shownCopyFields(H) {
+  const text = variantLineOf(H);
+  return [...copyFields(H), ...(typeof text === 'string' && text ? [{ path: 'copy.variantLine', text, kind: 'caption' }] : [])];
+}
 /** The ids among `eightIds` whose exercises.json equipment contains '/' (D-LIB5-VARIANT8). */
 export const eightWithSlash = (eightIds, exercises) => eightIds.filter(id => String(exercises.find(e => e.id === id)?.equipment ?? '').includes('/')).sort();
 

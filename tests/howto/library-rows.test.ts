@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 import { readHowTo } from './generated-module';
 
@@ -90,11 +91,11 @@ describe('E1: a shipped library row gets every output', { timeout: 120_000 }, ()
     for (const b of p.builds) expect(b.pageSha256).toBe(p.pageSha256);
   });
 
-  it('generate writes the 60 files plus exactly the clone\'s 6 (ht, feel, posture, zoom css, research card, its hand pair), never hand-<chromeId>', () => {
+  it('generate writes the 61 files plus exactly the clone\'s 6 (ht, feel, posture, zoom css, research card, its hand pair), never hand-<chromeId>', () => {
     const extra = [...treeOut.keys()].filter(p => !mainOut.has(p)).sort();
-    expect(mainOut.size).toBe(60);
+    expect(mainOut.size).toBe(61);
     expect(extra).toEqual([...CLONE_OUTPUTS].sort());
-    expect(treeOut.size).toBe(60 + CLONE_OUTPUTS.length);
+    expect(treeOut.size).toBe(61 + CLONE_OUTPUTS.length);
     expect(treeOut.has('src/howto/generated/hand-cable-lateral-raise.ts')).toBe(false);
   });
 
@@ -108,7 +109,7 @@ describe('E1: a shipped library row gets every output', { timeout: 120_000 }, ()
 
   it('generate --check and npm run build pass on the tree', async () => {
     const c = await run(root, ['tools/plates/generate.mjs', '--check']);
-    expect(c.out).toContain(`PASS, ${60 + CLONE_OUTPUTS.length} files fresh`);
+    expect(c.out).toContain(`PASS, ${61 + CLONE_OUTPUTS.length} files fresh`);
     const b = await run(root, ['node_modules/vite/bin/vite.js', 'build', '--logLevel', 'error', '--manifest']);
     expect(b.code, b.out).toBe(0);
     expect(readdirSync(join(root, 'www/assets')).some(f => /^ht-cable-lateral-raise-[\w-]+\.js$/.test(f))).toBe(true);
@@ -116,11 +117,7 @@ describe('E1: a shipped library row gets every output', { timeout: 120_000 }, ()
     expect(builtHandCssProblems(join(root, 'www'), 'cable-lateral-raise', 'lib2b-scratch')).toEqual([]);
   }, 600_000);
 
-  it('LIB-6 rebuild: where its builder exists the page rebuilds byte for byte through layersSpecOf; where it does not, render/ is absent too', async () => {
-    if (!existsSync(join(F.REPO, 'tools/plates/library/build-layers-page.mjs'))) {
-      expect(existsSync(join(F.REPO, 'tools/plates/library/render'))).toBe(false);
-      return;
-    }
+  it('LIB-6 rebuild: the page rebuilds byte for byte through layersSpecOf and build-layers-page.mjs', async () => {
     const stage = mkdtempSync(join(tmpdir(), 'lib2b-stage-')); tmps.push(stage);
     const { layersSpecOf } = await import(/* @vite-ignore */ turl('tools/plates/library/layers-spec.mjs'));
     const { buildLayersPage } = await import(/* @vite-ignore */ url('tools/plates/library/build-layers-page.mjs'));
@@ -151,13 +148,13 @@ describe('E1/E3/E7 failure paths: the generator throws, naming the id and the fi
     ['no hand pair', r => rmSync(join(r, 'tools/plates/library/hands/pairs.mjs')), /hands: lib_cable_lateral_raise: no hand pair/],
   ];
   it(`${cases.length} mutations, each refused`, async () => {
-    const results = await Promise.all(cases.map(async ([name, mutate, want]) => {
+    const results = await mapLimit(cases, 2, async ([name, mutate, want]) => {
       const r = mkdtempSync(join(tmpdir(), 'lib2b-mut-')); tmps.push(r);
       cpSync(root, r, { recursive: true, verbatimSymlinks: true });
       mutate(r);
       const g = await run(r, ['tools/plates/generate.mjs']);
       return { name, code: g.code, ok: want.test(g.out), out: g.out.slice(-1500) };
-    }));
+    });
     for (const x of results) {
       expect(x.code, x.name).not.toBe(0);
       expect(x.ok, `${x.name}:\n${x.out}`).toBe(true);
