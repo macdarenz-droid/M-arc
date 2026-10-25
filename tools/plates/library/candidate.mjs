@@ -26,6 +26,7 @@ import { PARAMS } from './derive.mjs';
 import { cardIdOf, groupsConfig, specIdOf } from './plates-page.mjs';
 import { LIBRARY_GOLDEN_DIR, rows, sourceOf } from './registry.mjs';
 import { pinOf } from './batch-golden.mjs';
+import { plateZooms } from './zoom/inline.mjs';
 import { isUntimed } from './strip/tempo-strip.mjs';   // LIB-STRIP
 import { fallbackAIds } from './research/validate.mjs';   // LIB-STRIP
 
@@ -97,8 +98,9 @@ export async function candidateOf(id, { root = ROOT, platesHtml, engine, all = r
     return c;
   }
   if (row.mode === 'P') fail(row, "mode 'P' has no candidate rule yet (unruled)");
-  const plate = extractPlates(platesHtml).find(p => p.chromeId === row.chromeId);
-  if (!plate) fail(row, `card-${row.chromeId} is not in its plates page`);
+  const found = extractPlates(platesHtml).find(p => p.chromeId === row.chromeId);
+  if (!found) fail(row, `card-${row.chromeId} is not in its plates page`);
+  const plate = plateZooms(found);   // LIB-ZOOM: plate-scale checks read the svg without its zoom circle (plate.zoom)
   if (!row.view) fail(row, 'no census view (batch row field `view`)');
   if (typeof row.censusRef !== 'string' || !/^[0-9a-f]{7,40}$/.test(row.censusRef)) fail(row, 'its batch file records no census source (`censusRef`)');
   for (const f of [`tools/plates/${row.src}`, howtoOf(id, root, all)]) if (!existsSync(join(root, f))) fail(row, `no source file ${f}`);

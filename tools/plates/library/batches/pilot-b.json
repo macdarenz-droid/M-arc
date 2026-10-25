@@ -1,0 +1,78 @@
+{
+ "batch": "PILOT-B",
+ "censusRef": "4a9fd86",
+ "pages": {
+  "plates": "tools/plates/library/pages/pilot-b.json",
+  "layers": "tests/howto/golden/library/pilot-b.layers.html",
+  "layersConfig": "tools/plates/library/pages/pilot-b.layers.json"
+ },
+ "rows": {
+  "lib_smith_machine_bench_press": {
+   "src": "library/specs/smith_machine_bench_press.mjs",
+   "slug": "smith-machine-bench-press",
+   "prefix": "smith-machine-bench-press",
+   "chromeId": "smith-machine-bench-press",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Smith Machine Bench Press: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/smith-machine-bench-press/",
+    "Smith Machine Bench Press - Exercise Guide (Motra). https://www.motra.com/exercises/smithMachineBenchPress",
+    "How to Use a Smith Machine: 8 Exercises & Form Tips (EoS Fitness) (2025). https://www.eosfitness.com/blog/how-to-use-smith-machine",
+    "A comparison of muscle activation between a Smith machine and free weight bench press (2010). https://pubmed.ncbi.nlm.nih.gov/20093960/ PMID 20093960",
+    "Comparison of muscle force production using the Smith machine and free weights for bench press and squat exercises (2005). https://pubmed.ncbi.nlm.nih.gov/15705030/ PMID 15705030",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Traumatic asphyxia in weightlifters (2007). https://pubmed.ncbi.nlm.nih.gov/17456099/ PMID 17456099",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
+    "Smith Machine Incline Bench Press - Exercise Guide (Motra). https://www.motra.com/exercises/smithMachineInclineBenchPress"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_seated_leg_curl": {
+   "src": "library/specs/seated_leg_curl.mjs",
+   "slug": "seated-leg-curl",
+   "prefix": "seated-leg-curl",
+   "chromeId": "seated-leg-curl",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "How to Do Seated Leg Curl: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/seated-leg-curl/",
+    "Master the Leg Curl for Stronger Hamstrings and Heavier Deadlifts | BarBend. https://barbend.com/leg-curls/",
+    "Greater Hamstrings Muscle Hypertrophy but Similar Damage Protection after Training at Long versus Short Muscle Lengths. (2021). https://pubmed.ncbi.nlm.nih.gov/33009197/ PMID 33009197",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults. (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_cable_fly": {
+   "src": "library/specs/cable_fly.mjs",
+   "slug": "cable-fly",
+   "prefix": "cable-fly",
+   "chromeId": "cable-fly",
+   "mode": "H",
+   "view": "front",
+   "sources": [
+    "Standing Chest Fly (ACE Exercise Library). https://www.acefitness.org/resources/everyone/exercise-library/160/standing-chest-fly/",
+    "How To Do Cable Flyes (PureGym). https://www.puregym.com/exercises/chest/chest-fly/cable-flyes/",
+    "How to Do Standing Cable Chest Fly: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/standing-cable-chest-fly/",
+    "Chest Exercises: Movement and Loading of Shoulder, Elbow and Wrist Joints (2022). https://pubmed.ncbi.nlm.nih.gov/35202059/ PMID 35202059",
+    "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579",
+    "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476"
+   ],
+   "stage": "approved-plate"
+  },
+  "lib_push_up": {
+   "src": "library/specs/push_up.mjs",
+   "slug": "push-up",
+   "prefix": "push-up",
+   "chromeId": "push-up",
+   "mode": "H",
+   "view": "side",
+   "sources": [
+    "Push-Ups | Exercise Library | ACE. https://www.acefitness.org/resources/everyone/exercise-library/41/push-up/",
+    "How to Do Push-Up: Muscles Worked & Proper Form – StrengthLog. https://www.strengthlog.com/push-up/",
+    "How to Perform the Push-Up — Tips, Tricks, & Variations | BarBend (2024). https://barbend.com/push-up/",
+    "Low-load bench press and push-up induce similar muscle hypertrophy and strength gain. (2017). https://pubmed.ncbi.nlm.nih.gov/29541130/ PMID 29541130"
+   ],
+   "stage": "approved-plate"
+  }
+ }
+}
