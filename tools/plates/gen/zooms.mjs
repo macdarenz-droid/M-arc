@@ -17,6 +17,7 @@ import { ROOT, sha256 } from '../lib/inputs.mjs';
 import { LAYERS, PAGE_SHA256, buildLayerPage, cleanupMirror, makeMirror, readManifest } from '../layers.mjs';
 import { galleryCss, parse } from '../css.mjs';
 import { chromeRules, divAt, howtoCss, libraryInputs, libraryRows, rewrite } from './hands.mjs';
+import { CODEC, decoderSource, pack } from './codec/delta.mjs';
 import { configPairOf } from './handpairs.mjs';   // LIB-7b (D-LIB7b-ZOOMS)
 import { pairCss } from '../library/build-layers-page.mjs';   // LIB-7b (D-LIB7b-ZOOMS)
 
@@ -24,6 +25,7 @@ export const PLATES_JSON = 'tools/plates/plates.json';
 export const inputs = () => [
   ...Object.keys(readManifest().files).map(p => `tools/plates/layers/${p}`),
   'tools/plates/layers/MANIFEST.json', 'tools/plates/layers.mjs', 'tools/plates/css.mjs', 'tools/plates/gen/hands.mjs', ...goldenInputs(),
+  ...CODEC,   // HT-11: the posture chunks are packed with them
 ];
 
 /** The page's rule for the dot pattern's dots (HOWTO_CSS). */
@@ -71,10 +73,24 @@ export function posturePanels(html, id) {
 }
 
 const lit = s => JSON.stringify(s);
-export const postureText = (id, panels, zdots) => `// The ${id} posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.\n`
-  + `import '../../slices/howto/css/zoom-${id}.css';\n`
-  + `export const panels: Readonly<Record<string, string>> = {\n${panels.map(p => `  ${lit(p.key)}: ${lit(p.panel)},\n`).join('')}};\n`
-  + `export const zdots = ${lit(zdots)};\n`;
+/** The module text. With `packed` (HT-11, the shipped form) the panels and zdots are path-encoded
+ *  (tools/plates/gen/codec/delta.mjs) and decoded once at import by a copy of src/howto/delta.js's unpack, so the
+ *  chunk keeps its one import. */
+export function postureText(id, panels, zdots, packed = false) {
+  const head = `// The ${id} posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.\n`
+    + `import '../../slices/howto/css/zoom-${id}.css';\n`;
+  if (!packed) return head
+    + `export const panels: Readonly<Record<string, string>> = {\n${panels.map(p => `  ${lit(p.key)}: ${lit(p.panel)},\n`).join('')}};\n`
+    + `export const zdots = ${lit(zdots)};\n`;
+  const names = panels.map((_, n) => `p${n}`);
+  return head
+    + `// HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives\n`
+    + `// back their golden bytes once, at import.\n`
+    + `const unpack = ${decoderSource()};\n`
+    + `const [${[...names, 'z'].map(n => `${n} = ''`).join(', ')}] = unpack([\n${pack([...panels.map(p => p.panel), zdots]).map(s => `  ${lit(s)},\n`).join('')}]);\n`
+    + `export const panels: Readonly<Record<string, string>> = {\n${panels.map((p, n) => `  ${lit(p.key)}: ${names[n]},\n`).join('')}};\n`
+    + `export const zdots = z;\n`;
+}
 /** posture.css from a layers page's style and its HOWTO_CSS (the 8's from golden B; a library page must rebuild it). */
 export function postureCssOf(style, chrome) {
   const plate = cropPlateCss(style), zdot = rewrite(chromeRules(chrome, POSTURE_SELECTORS));
@@ -108,7 +124,7 @@ async function outputsOf() {
     const out = [];
     for (const row of Object.values(rows)) {
       const id = row.chromeId, panels = posturePanels(html, id);
-      out.push({ path: `src/howto/generated/posture-${id}.ts`, text: postureText(id, panels, L.ZDOTS) });
+      out.push({ path: `src/howto/generated/posture-${id}.ts`, text: postureText(id, panels, L.ZDOTS, true) });
     }
     const postureCss = postureCssOf(style, chrome);
     out.push({ path: 'src/slices/howto/css/posture.css', text: postureCss });
@@ -119,7 +135,7 @@ async function outputsOf() {
       if (styleWithout(lib, libraryRows().filter(r => pagesOf(r).layers === file)) !== base) throw new Error(`zooms: ${row.id}: ${file}'s style, without its own .hx- rules, is not golden B's`);
       if (postureCssOf(lib, howtoCss(readFileSync(join(LAYERS, 'artifact', 'build-page.mjs'), 'utf8'), lib)) !== postureCss) throw new Error(`zooms: ${row.id}: ${file} does not rebuild posture.css byte for byte`);
       const panels = posturePanels(page, id);
-      out.push({ path: `src/howto/generated/posture-${id}.ts`, text: postureText(id, panels, L.ZDOTS) });
+      out.push({ path: `src/howto/generated/posture-${id}.ts`, text: postureText(id, panels, L.ZDOTS, true) });
     }
     return out;
   } finally {
@@ -134,7 +150,7 @@ async function outputsOf() {
  *  (hands.mjs libraryInputs: ZDOTS is checked against the MANIFEST-locked golden B). The 8 keep the whole layers set. */
 export function inputsFor(path) {
   const row = libraryRows().find(r => path === `src/howto/generated/posture-${r.chromeId}.ts`);
-  return row ? [...libraryInputs(row), 'tools/plates/gen/hands.mjs'] : inputs();
+  return row ? [...libraryInputs(row), 'tools/plates/gen/hands.mjs', ...CODEC] : inputs();
 }
 export async function outputs(ctx) {
   return (await outputsOf(ctx)).map(o => ({ ...o, inputs: inputsFor(o.path) }));

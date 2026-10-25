@@ -15,6 +15,7 @@
 import { readFileSync } from 'node:fs';
 import { APPROVED_IDS } from './approved.mjs';
 import { h1Engine, h2, h3, h6, h7, h8, h9, h10, nodeFlags, nodeMetrics, rendersOf } from './node.mjs';
+import { zoomMetrics, zoomRows } from './zoom.mjs';
 
 const here = new URL('.', import.meta.url);
 export const readJson = name => JSON.parse(readFileSync(new URL(name, here), 'utf8'));
@@ -35,10 +36,13 @@ export async function runQa(c, ctx) {
   let R = null, renderError = null;
   try { R = rendersOf(c, env.engine); } catch (e) { renderError = e.message; }
   const M = nodeMetrics(c, env, R);
+  if (c.plate.zoom?.normal || c.plate.zoom?.mistake) M.zoom = zoomMetrics(c, env, R);
   const raw = {
     'PQ-H1': h1Engine(c, R, renderError), 'PQ-H2': h2(c, env), 'PQ-H3': h3(c, env, R, M), 'PQ-H4': [], 'PQ-H5': [],
     'PQ-H6': h6(c, env, R), 'PQ-H7': await h7(c, env, R), 'PQ-H8': h8(c, env), 'PQ-H9': h9(c, env, R), 'PQ-H10': await h10(c, env),
   };
+  const Z = zoomRows(c, env, R, M);   // LIB-ZOOM rows (none for a plate with no zoom field and no zoom circle)
+  raw['PQ-H2'].push(...Z.H2); raw['PQ-H3'].push(...Z.H3); raw['PQ-H4'].push(...Z.H4);
   if (c.mode === 'approved' && !APPROVED_IDS.includes(c.id)) raw['PQ-H2'].push({ key: 'mode', text: `${c.id} is not one of the 8 and cannot be 'approved'` });
   const flags = nodeFlags(c, env, M);
   const b = env.browser?.get(c.id);
