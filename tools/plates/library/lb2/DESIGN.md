@@ -264,6 +264,15 @@ an arc from the end elbow, read in the side view as the elbow at shoulder height
   10 cm off the pad (mid back 11 cm); golden B's pad-to-back gap dimension (dashed, with ticks) at the mid back, the
   gap cleared to the card colour (incline_dumbbell_press's GAP_FILL) and an arrow at the belly; tells `arch` (Back off
   pad) and `belly` (Belly pushes out).
+- **incline_dumbbell_press (H; D-LIB10-IDP, D-LIB10-IDP-A, #265):** pilot A held it for its Mistake (critic R5, D-LIB8M-CRIT3).
+  The LB2 copy is `specs/incline_dumbbell_press__lb2.mjs` (row src in lb2/rows.json): pilot A's spec copied byte for byte,
+  then only the Mistake redrawn per the critics' common fix (6260478491). One red dashed back curve off the pad, peak
+  11 cm at 0.72 of the way from the upper back to the buttock (below the elbow); golden B's dashed gap marker with ticks
+  from the pad face to that peak; the tell 'Off the pad' (key `arch`); the engine's faulty outline limited to the legs, so
+  the arch is the only back curve; `hips` keeps its belly arrow. The normal plate renders byte-identical to pilot A's
+  (normal SVG and overlay equal). Pilot A's own file stays untouched, because every pinned pilot A row's MANIFEST
+  closure holds it (C0 stays [], L1 stays 5d0e562f). Its card is pilot A's verified copy byte for byte, which is the
+  research copy at 0d832e18 plus the three machine keys.
 - **Flat-bench rack (both barbell plates):** the head-side upright under the racked bar over the brow, the foot-side
   upright RACK_DEPTH 1.6 m away (a deep power rack; at 1.2 m it stood where the labels need room), 1.5 m tall, the pin
   3 cm under the bar's underside at the touch. All unsourced, listed in the spec headers.

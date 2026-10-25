@@ -21,6 +21,15 @@
    "stage": "drawing",
    "view": "side"
   },
+  "lib_incline_dumbbell_press": {
+   "src": "library/specs/incline_dumbbell_press__lb2.mjs",
+   "slug": "incline-dumbbell-press",
+   "prefix": "incline-dumbbell-press",
+   "chromeId": "incline-dumbbell-press",
+   "mode": "H",
+   "stage": "drawing",
+   "view": "side"
+  },
   "lib_close_grip_bench_press": {
    "src": "library/specs/close_grip_bench_press.mjs",
    "slug": "close-grip-bench-press",
