@@ -827,6 +827,15 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   | #279 LIB-ZOOM | session_019yqtiX6Lk9FKqMYh651Bpn | main catch-up plus the `[golden update]` re-pin of pilot A's 13 MANIFEST rows (L1 must stay 5d0e562f…), then a delta review |
   | #273 HT-11 (HT lane) | session_01Q5TW2K1HEbn4jUMzyjDYkF | main catch-up and regenerate, then a delta review |
 
+**Update 07:00 UTC (10-25)** (usage 7-day 0.77 at 04:35; a classifier outage blocked every action from about 06:00 to 06:35, then cleared):
+- **#278 LIB-11 pilot B: PINNED and READY @ `8ae48ed9`** (4 plates; page `ff3e017c…`; CI 17/17). The supervisor's decisions and PILOT B PIN GO (6393170019): text-only feel yes, battle_ropes camera (i), cable_fly F2 0.628 named, A16 = 6 PNGs. Rulings: **D-LIB11-SCRATCHIDS = (a)** (scratch-e → lib_sled_push) and **D-LIB11-SCRATCHA** (scratch-a off the pinned lib_barbell_row; setProblems refuses every pinned id) (6393188049). **F-LIB11-COMMENT:** a stale comment at push_up.mjs:18-19 rides the next pilot B re-pin. Reviewer session_017RGKV4MJoaRiZ61FbxesQ4.
+- **#279 LIB-ZOOM: catch-up delta PASS @ `7af6bd2f`** (6394078462). It carries the `[golden update]` re-pin of pilot A's 13 MANIFEST rows. It waits for #245 (plan order).
+- **#273 HT-11: catch-up delta PASS @ `d07c0390`** (6394539637). **F-HT10-LOCAL:** an unsharded local HT-10 inside the full local gate went idle at 0 CPU (CI never runs that arrangement; not root-caused). Note: #279 and #273 each set gate-split to 107, so whichever merges second needs one more catch-up (108).
+- **#245 LIB-9a: Do 9 READY @ `f58897a5`** (6394598480). Rulings **D-LIB9a-MAP** (6393424755) and **D-LIB9a-GATEWIRE** (6393472134; **F-LIB9-GATEWIRE:** LIB-9 wires the gate's shipped-content resolver). Reviewer session_01SC3je3GTRhw42Cf9RTyTRj.
+- **Research #318 merged** (F-LB1-SETUP: shoulder_press drops a phantom inherit[] entry) → research head `0d832e18`.
+- **#265 LIB-10:** caught up with main, drawing incline_barbell_bench_press and arnold_press (no post yet).
+- **Next trains, in plan order:** #245 → #279 → #265 → #278 → #273 → #274. #245 and #279 can ride one train once #245 passes.
+
 ### 8.0q PAUSE 10-24 ~16:20 UTC (owner: "Pause all tasks and update handover to repo for any claude agent to continue in the future. Pause the task now if their done, if not keep goinf until its done until u pause."; read first, supersedes 8.0p where they differ)
 
 **State: PAUSED.** Nothing new starts until the owner says to resume. The hourly tick `trig_01LvkAzRwZUPqSR1m1KAGScf` is **disabled** (re-enable it with `update_trigger enabled=true` on resume). The supervisor's /loop and Monitor are stopped. Sessions: every builder and reviewer is archived (the last, LIB-7c's catch-up builder session_01Dv8q3UZnqqQnaqcPdrNe8s, finished its step first). No session holds work in progress.
