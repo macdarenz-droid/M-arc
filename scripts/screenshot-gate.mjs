@@ -9645,7 +9645,8 @@ if (gate.runs('LIB-STRIP'))
     // each stand-in imports the build mirror's own back squat (the page build runs in <mirror>/artifact)
     const specs = Object.fromEntries(Object.entries(tempos).map(([id, t]) => {
       const f = join(dir, `${id}.mjs`);
-      writeFileSync(f, `import { pathToFileURL } from 'node:url';\nconst base = (await import(new URL('../exercises/barbell_back_squat.mjs', pathToFileURL(\`\${process.cwd()}/\`)).href)).default;\nexport default ${t ? `{ ...base, tempo: ${JSON.stringify(t)} }` : 'base'};\n`);
+      // LIB-ZOOM's applyZooms also imports each spec in this process (cwd = the repo) and reads only its `zoom`: there the spec is the tempo alone
+      writeFileSync(f, `import { pathToFileURL } from 'node:url';\nconst base = process.cwd() === ${JSON.stringify(ROOT)} ? {} : (await import(new URL('../exercises/barbell_back_squat.mjs', pathToFileURL(\`\${process.cwd()}/\`)).href)).default;\nexport default ${t ? `{ ...base, tempo: ${JSON.stringify(t)} }` : 'base'};\n`);
       return [id, f];
     }));
     const ids = Object.keys(tempos);
