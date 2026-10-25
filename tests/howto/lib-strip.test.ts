@@ -243,8 +243,9 @@ async function standInPage(extra: Record<string, any[]>) {
   const tempos: Record<string, any[]> = { ...Object.fromEntries([...R.cards, ...R.fallbackA].map((c: any) => [`strip_${c.id}`, S.tempoOf(c.rows)])), strip_worst: WORST, strip_mixed: MIXED, ...extra };
   const specs = Object.fromEntries(Object.entries(tempos).map(([id, t]) => {
     const f = join(dir, `${id}.mjs`);
-    // the mirror's own copy (the page build runs in <mirror>/artifact), as render.mjs's mirror exercises did
-    writeFileSync(f, `import { pathToFileURL } from 'node:url';\nconst base = (await import(new URL('../exercises/barbell_back_squat.mjs', pathToFileURL(\`\${process.cwd()}/\`)).href)).default;\nexport default { ...base, tempo: ${JSON.stringify(t)} };\n`);
+    // the mirror's own copy (the page build runs in <mirror>/artifact), as render.mjs's mirror exercises did. Since LIB-ZOOM
+    // applyZooms also imports each spec in this process (cwd = the repo) and reads only its `zoom`, so there it is the tempo alone
+    writeFileSync(f, `import { pathToFileURL } from 'node:url';\nconst base = process.cwd() === ${JSON.stringify(ROOT.replace(/\/$/, ''))} ? {} : (await import(new URL('../exercises/barbell_back_squat.mjs', pathToFileURL(\`\${process.cwd()}/\`)).href)).default;\nexport default { ...base, tempo: ${JSON.stringify(t)} };\n`);
     return [id, f];
   }));
   const ids = Object.keys(tempos);
