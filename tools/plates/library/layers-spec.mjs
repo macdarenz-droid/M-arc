@@ -56,6 +56,7 @@ export function layersSpecOf(batchFile, { stageDir, root = ROOT, all = rows(root
   const closeups = {};
   for (const [id, c] of Object.entries(cfg.closeups ?? {})) {
     if (c.regionFix === false) throw new Error(`layers-spec: ${pages.layersConfig}: ${id}: regionFix:false is never set by a batch`);
+    if ('pair' in c && (typeof c.pair !== 'string' || !/^[a-z0-9-]+$/.test(c.pair))) throw new Error(`layers-spec: ${pages.layersConfig}: ${id}: pair ${JSON.stringify(c.pair)} is not a pair key`);   // LIB-7b (D-LIB7b-SCOPE (b))
     closeups[howtoIdOf(cardIdOf(rowOf(id)))] = c;
   }
   if (cfg.regionFix === false) throw new Error(`layers-spec: ${pages.layersConfig}: regionFix:false is never set by a batch`);

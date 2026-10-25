@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=c2987a795e490e4d4219431913cd8c0368bc3e3abb68f3d82275caf942abbb71
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=52da59e4a838ff5373570534165b260705048274e47811b4b71768fd30b12ef1
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_machine_chest_press",
   name: "Machine Chest Press",
-  hashes: { inputsSha256: "c2987a795e490e4d4219431913cd8c0368bc3e3abb68f3d82275caf942abbb71", golden: "1fcf5153e9184711135d62da5d92ea8d3deed8b61a529b277bbb434a83ad530b" },
+  hashes: { inputsSha256: "52da59e4a838ff5373570534165b260705048274e47811b4b71768fd30b12ef1", golden: "1fcf5153e9184711135d62da5d92ea8d3deed8b61a529b277bbb434a83ad530b" },
   plate: {
     view: "side",
     normal: {

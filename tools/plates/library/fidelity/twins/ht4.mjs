@@ -89,6 +89,7 @@ export async function captureLayersBuild(root, specOf) {
   const T = mkdtempSync(join(tmpdir(), 'lib4b-ht4-'));
   try {
     cpSync(join(root, 'tools/plates'), join(T, 'tools/plates'), { recursive: true });
+    cpSync(join(root, 'src/data'), join(T, 'src/data'), { recursive: true });   // LIB-7b (D-LIB7b-SCRATCH2 P4): a pair row's build loads hands/pairs.mjs, which reads src/data/exercises.json
     symlinkSync(join(root, 'node_modules'), join(T, 'node_modules'));
     const eng = join(T, 'tools/plates/layers/engine'), out = join(T, 'rp-calls.json');
     renameSync(join(eng, 'plate.mjs'), join(eng, 'plate.real.mjs'));

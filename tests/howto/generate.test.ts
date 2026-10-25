@@ -113,6 +113,16 @@ describe('HT2-A2 (freshness): every generated file starts with a fresh header ov
       expect(w, p).toEqual([...w].sort());
       for (const x of w) expect(plugins, `${p}: writer ${x} is not a plugin in tools/plates/gen/`).toContain(x);
       if (w.length === 1) continue;
+      // LIB-7b (D-LIB7b-SCRATCH2 P2): a pair row's zoom-<id>.css is gen/hands.mjs's text that gen/handpairs.mjs (run after
+      // it) extends with the pair scope's rules; no third writer, and only for a row whose layers config names a pair
+      if (/^src\/slices\/howto\/css\/zoom-[a-z0-9-]+\.css$/.test(p)) {
+        expect(w, p).toEqual(['tools/plates/gen/handpairs.mjs', 'tools/plates/gen/hands.mjs']);
+        const hp = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs')), reg = await import(/* @vite-ignore */ url('tools/plates/library/registry.mjs'));
+        expect(hp.after ?? [], `${p}: handpairs.mjs must run after hands.mjs`).toContain('tools/plates/gen/hands.mjs');
+        const row = reg.rows().find((r: any) => p === `src/slices/howto/css/zoom-${r.chromeId}.css`);
+        expect(row && hp.configPairOf(row), `${p}: a second writer for a row whose layers config names no pair`).toBeTruthy();
+        continue;
+      }
       expect(p, `${p}: only ht-<slug>.ts and ids.ts may have more than one writer`).toMatch(/^src\/howto\/(generated\/ht-[a-z0-9-]+\.ts|ids\.ts)$/);
       const first = p === 'src/howto/ids.ts' ? 'tools/plates/gen/ids.mjs' : PLATES;
       expect(w, `${p}: plan 2.2 allows exactly ${first} then content.mjs`).toEqual(['tools/plates/gen/content.mjs', first].sort());

@@ -20,6 +20,7 @@ export async function syntheticRoot(src, n) {
   const root = mkdtempSync(join(tmpdir(), `lib2-n${n}-`));
   for (const p of COPY) if (existsSync(join(src, p))) cpSync(join(src, p), join(root, p), { recursive: true });
   symlinkSync(join(src, 'node_modules'), join(root, 'node_modules'), 'dir');
+  rmSync(join(root, 'tools/plates/library/hands/pairs.mjs'), { force: true });   // LIB-7-FIX: the clones never use LIB-7's pairs; write-ids writes its own loader, and a real one imported here would stay cached (ESM) after write-ids replaces it
   const plates = JSON.parse(readFileSync(join(root, 'tools/plates/plates.json'), 'utf8'));
   const eight = Object.keys(plates);
   if (eight.length !== 8) throw new Error(`synthetic: expected the 8 in plates.json, found ${eight.length}`);
