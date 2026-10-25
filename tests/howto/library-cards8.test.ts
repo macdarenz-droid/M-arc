@@ -4,7 +4,7 @@
 // table below are this test's own literal copies of the ruling; expected values come only from them and the cards'
 // plate.tempo, never from a spec, a plate or the builder's TEMPO8. The checks that need a wired card run on the S3
 // fixture card in a temp copy of E1's tree, through candidateOf and runQa (D-LIB5-FIXTURE 4).
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -135,11 +135,20 @@ describe('LIB-5 S12: the 8\'s cards are research 9eaa248\'s bytes, validated, wi
     const v = (c: any) => V.validateCard(c, q, { file: 'cable_lateral_raise.json' });
     const { claim: _c, ...noClaim } = fx.plateFacts[0];
     expect(v({ ...fx, plateFacts: [noClaim] })).toEqual(['cards/cable_lateral_raise.json: plateFacts[0] names no claim']);
-    expect(v({ ...fx, plateFacts: [] })).toEqual(['cards/cable_lateral_raise.json: plateFacts is empty or not a list (leave the key out instead)']);
+    // F-PLATEFACTS (D-PLATEFACTS-EMPTY): [] is a verified "no fact" (D-LIB8M-NOFACTS); a non-list, an unknown claim and no claim stay red
+    expect(v({ ...fx, plateFacts: [] })).toEqual([]);
+    expect(v({ ...fx, plateFacts: {} })).toEqual(['cards/cable_lateral_raise.json: plateFacts is not a list']);
+    expect(v({ ...fx, plateFacts: 'x' })).toEqual(['cards/cable_lateral_raise.json: plateFacts is not a list']);
+    expect(v({ ...fx, plateFacts: [{ ...fx.plateFacts[0], claim: 'c999' }] })).toEqual(['cards/cable_lateral_raise.json: plateFacts[0].claim names unknown claim c999', 'cards/cable_lateral_raise.json: plateFacts[0] names unknown claim c999']);
     expect(v({ ...fx, plateFacts: [{ ...fx.plateFacts[0], measure: true }] })).toEqual(['cards/cable_lateral_raise.json: plateFacts[0]: both joint and measure (one form per fact)']);
     expect(v({ ...fx, tempo: [{ ...fx.tempo[0], claim: 'c2' }, ...fx.tempo.slice(1)] })).toEqual(['cards/cable_lateral_raise.json: tempo[0] keys phase,s,move,claim, want phase,s[,move]']);
     const { tempo: _t, ...noTempo } = fx;
     expect(v(noTempo)).toEqual(['cards/cable_lateral_raise.json: plateFacts and tempo go in together or not at all']);
+  });
+  it('F-PLATEFACTS: every card main holds validates (D-PLATEFACTS-EMPTY)', () => {
+    const cards = readdirSync(join(ROOT, HOWTO, 'cards')).filter((f: string) => f.endsWith('.json'));
+    expect(cards.length).toBeGreaterThan(EIGHT.length);
+    expect(cards.flatMap((f: string) => V.validateCardFile(f))).toEqual([]);
   });
 });
 

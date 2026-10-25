@@ -205,13 +205,15 @@ export function validateCard(card, quotes, { file } = {}) {
   bad.push(...claimProblems(card, quotes, tag));
   const ids = new Set((card.claims ?? []).map(c => c.id));
   if ('plateFacts' in card) {
-    if (!Array.isArray(card.plateFacts) || !card.plateFacts.length) bad.push(`${tag}: plateFacts is empty or not a list (leave the key out instead)`);
-    for (const [i, f] of (card.plateFacts ?? []).entries()) {
+    // F-PLATEFACTS (D-PLATEFACTS-EMPTY): [] is a verified "no fact" (D-LIB8M-NOFACTS, #109 6257000888), as H6 reads it; a non-list stays red
+    const facts = Array.isArray(card.plateFacts) ? card.plateFacts : [];
+    if (!Array.isArray(card.plateFacts)) bad.push(`${tag}: plateFacts is not a list`);
+    for (const [i, f] of facts.entries()) {
       const refs = [].concat(f.claim ?? []);
       if (!refs.length) bad.push(`${tag}: plateFacts[${i}] names no claim`);
       for (const r of refs) if (!ids.has(r)) bad.push(`${tag}: plateFacts[${i}] names unknown claim ${r}`);
     }
-    bad.push(...factFormProblems(card.plateFacts).map(x => `${tag}: ${x}`));
+    bad.push(...factFormProblems(facts).map(x => `${tag}: ${x}`));
   }
   if ('plateFacts' in card !== 'tempo' in card) bad.push(`${tag}: plateFacts and tempo go in together or not at all`);
   if ('tempo' in card) {
