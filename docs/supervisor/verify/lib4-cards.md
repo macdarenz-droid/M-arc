@@ -4308,3 +4308,24 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 **Train resolutions** (tooling only):
 - The LIB-20 merge conflicted only on GENERATED headers and hashes. They were regenerated, `--check` passes, and every golden hash is unchanged.
 - Pilot B's 4 MANIFEST rows were re-pinned after LIB-20 changed the same five files ruled under D-LIB20-L0 (b), as a `[golden update]` commit. C0 is [], and the pilot A and pilot B pages are unchanged.
+
+## 39. Composer checks that compose (D-LIB-A16-COMPOSE, 2026-10-25 ~17:20 UTC)
+**Found** (train 39 trial, all lanes merged on `40f9ea93`): the A16 tests of LB6, LB7, LB8, LB9 and LB10 fail, and LB8's D-LIB18-LEGCURL test fails too. Each A16 pins main's `tools/plates/library/eq/` as the list it saw when built (for example `['parts.mjs', 'rope.mjs']` at 66ff5500), so the test asserts eq/ is exactly that list plus the card's own composers. Main now holds 15 eq files, and the other build-ahead lanes add theirs. These lanes fail even alone on today's main. LIB-20 and LB5 pass, and train 39 now carries only those two.
+
+**Ruling.** Each lane's main catch-up rewrites its A16 file check into this form. The intent stays "no other card's composer is copied, forked or imported", and nothing is loosened.
+1. eq/ contains every file in MAIN_EQ, now pinned as main's eq/ at `40f9ea93`: assistMachine, band, chestRowMachine, dHandle, declineBench, inclineBench, landmine, legCurlMachine, parts, pecDeck, polybar, romanChair, rope, safetyArms, smith (.mjs). It also contains every file in OURS.
+2. Every other file in eq/ must be a composer that another build-ahead card owns, by exact name, in a constant `OTHER_CARDS`:
+   - LIB-14: wall
+   - LIB-15: preacherPad
+   - LIB-16: crunchMachine, pulloverMachine
+   - LIB-17: dipBars
+   - LIB-18: ankleCuff, calfMachine, hackSled, legExtMachine, pendulum
+   - LIB-21: abWheel
+   - LIB-22: battleRope, jumpRope, kettlebell, medBall, sled
+
+   The card drops its own names from that constant. Any other name is red, which keeps the existing mutation ("a copy of X added under another name is red") red. Add one more mutation: a file named as another card's composer but holding a byte copy of one of OURS is red.
+3. The A16 closure and import checks stay as they are.
+
+**Why this keeps the check's strength:** an unknown extra file is still red, a renamed copy is still red, and a missing main file or own composer is still red. A known name can enter only by merging its own card, because a same-name copy would conflict at merge. The lanes now pass alone, in any train order, and after each other merges.
+
+**LB8 (D-LIB18-LEGCURL):** pilot B is on main, so the "before pilot B" test flips. Its catch-up applies the card's post-pilot-B rule: no LB8 spec draws a leg-curl machine of its own; leg curls import pilot B's `eq/legCurlMachine.mjs`. The leg-curl rows stay held and roll to 'LIB-18 resume' (D-LIB-ORDER-3).
