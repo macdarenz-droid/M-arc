@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { HELD, PAIR, heldShapeProblems, pairingMismatches, pairingMutations } from './held-pairing';   // D-PLATEFACTS-HELD
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -144,10 +145,22 @@ describe('A6: the validator accepts the untimed shapes (D-STRIP-SHAPE), add-only
   beforeAll(async () => { V = await import(/* @vite-ignore */ url('tools/plates/library/research/validate.mjs')); });
   const q = () => JSON.parse(read(FXQ));
   const v = (c: any, rows = frontSquat().rows) => V.validateCard(c, q(), { file: 'cable_lateral_raise.json', untimed: new Map([['cable_lateral_raise', rows]]) });
-  it('front_squat\'s rows through tempoOf validate; every card on main still validates; the timed fixture still does', () => {
+  it('front_squat\'s rows through tempoOf validate; every card on main still validates (bar the ruled hold markers); the timed fixture still does', () => {
     expect(v(untimedCard())).toEqual([]);
     expect(V.validateCard(JSON.parse(read(FX)), q(), { file: 'cable_lateral_raise.json' })).toEqual([]);
-    expect(readdirSync(join(ROOT, 'docs/research/howto/cards')).flatMap((f: string) => V.validateCardFile(f))).toEqual([]);
+    expect(readdirSync(join(ROOT, 'docs/research/howto/cards')).length).toBeGreaterThan(8);
+    expect(heldShapeProblems(HELD)).toEqual([]);
+    expect(pairingMismatches(V)).toEqual([]);   // D-PLATEFACTS-HELD: a held id gives exactly the pairing marker, every other card []
+  });
+  it('D-PLATEFACTS-HELD: mutations (a)-(e) are red; the control is green', () => {
+    const m = pairingMutations(V);
+    expect(m.control).toEqual([]);
+    expect(m.a).toEqual([`barbell_row: [], want ${JSON.stringify([PAIR('barbell_row')])}`]);
+    expect(m.b).toEqual([`plank: ${JSON.stringify([PAIR('plank')])}, want []`]);
+    expect(m.c.length).toBe(1);
+    expect(m.c[0]).toMatch(/^barbell_row: .*names unknown claim c999/);
+    expect(m.d).toEqual([`barbell_row: ${JSON.stringify([PAIR('barbell_row')])}, want []`]);
+    expect(m.e).toEqual([`held[0] (${HELD[0]!.id}) has no ruling`]);
   });
   it('mutations, each red on its own check', () => {
     const T = S.tempoOf(frontSquat().rows), with0 = (x: any) => [{ ...T[0], ...x }, T[1]];
