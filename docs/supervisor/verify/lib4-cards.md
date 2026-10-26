@@ -4415,3 +4415,25 @@ Train 38 merged #265, #278, #273 and #274 → main `40f9ea93`. The next checklis
 - **superman held (F-ZOOM-TRIM):** the zoom re-renders the plate-scale trim, so k ≤ 4 cannot reach 22.11 px.
 - **pallof_press held (F-PALLOF-ARCH):** a 12° arch at 1.03 px cannot reach 11.39 px at any allowed k.
 - **LB9 named front entries approved:** side_plank "Hips sink" and russian_twist "Knees swing" (D-LIB18-LIFT form).
+
+## 44. Resume rulings, 10-26 (supervisor, ~03:00-06:40 UTC)
+- **F-ZOOM-INK merged** (train 42, #330 → main `be796240`). Its fixes after review were diff-checked (#329 6407346146): a drawn-ink probe inside r 52, the gate block F-ZOOM-INK (gate-split count 110), and a HANDOFF.
+- **D-LIB14-ANCHORS in practice:** every panel since pilot A's pin keeps golden B's pull_up and lat_pulldown as the hidden anchors. barbell_overhead_press is only *eligible* after the pin (:4145), and golden-B follow-ups 19-26 are calibrated on this pair.
+- **D-LIB18-LLCFACTS** (#325 6409658327; a focused CARD FIELDS verify, VALID because its plant was caught):
+  - lying_leg_curl's c1 "lie face down / on your stomach" is a trunk-front contact, checked at chest and navel at the start (setup quote);
+  - c5's "front of your hips … throughout" is checked at hip.l and hip.r at start and end, against the drawn pelvis front, which is pinned 0.65 cm over the bench top;
+  - the navel end fact is removed. standing_leg_curl passes. The page is unchanged (`dab7d0e5`).
+- **D-LIB21-F1** (#326 6409707279): named F1 flags. side_plank is 150.31 px/m (D-LIB21-FLOOR's width-filling scale); russian_twist is 197.49 px/m (the ×1.35 cap). At 146.29 px/m russian_twist's cover is 0.124, below F2's 0.191, so one of F1 or F2 is always raised. The F1 range is unchanged for every other id.
+- **LB9 E-R5 slice look** (#326 6409707279):
+  - side_plank draws true (`root.roll`, `trunk.lat`).
+  - russian_twist's right arm was inside the body (pole `[-1,-1,0]`). It was fixed with pole `[0,1,0.5]`, `BALL_LIFT` 0.25 m and a 3D `limbClearance` test, whose mutation is red.
+  - 'LB9 ER5 GO' was given for bicycle_crunch on condition of that test.
+- **D-LIB21-RTWIST-TELL** (#326 6409808767): russian_twist is held on its "Knees swing" tell. The red knee sits in a pocket closed by the torso, forearm and ball.
+  - (a) would mean a 52 / 41 px front entry, over the approved 18.17 / 14.53;
+  - (b) would put the anchor on the shin, 18 cm off the named part (D-LIB18-ROUND).
+  - Route: **F-RTWIST-TELL**, a design note in the next LB9 resume (a knee zoom, or a turned pelvis that clears the knee).
+- **D-LIB21-BICYCLE** (#326 6409862229): bicycle_crunch is held. The front draw order sorts depth by world z (body.mjs:297-298, :366-367), not by the pitched view's depth, so the bent knee draws under the trunk. The single lumbar pivot leaves the elbow at least 0.21 m from the opposite knee. Route: **F-ENGINE-PITCHDEPTH**, batched with LIB-SPINE.
+- **D-LIB22-AFALL** (#331 6409745507): sled_push and medicine_ball_slam take D-STRIP-AFALL (every phase blank, with the claim). "Short, powerful steps" and "ballistic and continuous" are not cadences, so FORMS does not grow.
+- **F-LB10-STRIDE** (#331): farmer_s_carry's M_STRIDE 0.70 m has no basis (no quote, approved plate or measured convention). It is held and routed to research, batched with F-PALLOF-ARCH. jump_rope is held at kMax 4 (21.3 < 22.11 px), with F-ZOOM-2.
+- **D-LIB17-ZOOMPAIR → F-ZOOM-2** (#332 6409786985): renegade_row's fault is a rotation about a fixed tell anchor, so `faultOf` reads 0 px. F-ZOOM-2, written after #327 merges, adds an opt-in `zoom.pair: [flat, turned]` of drawn vertices to `faultOf`, together with F-ZOOM-TRIM (superman). Every other spec stays byte-identical. Mutations: an equal pair; a pair outside the ring; a pair point off a drawn vertex. renegade_row is held until then.
+- **New resumes started** (WAITING builders hold no slot, D-LIB-LANE-ACTIVE): LIB-17 resume #332 (session_019M2mv3xosDU1LUQNcDVLZ3) and LIB-22 resume #331 (session_013S59n44XV6LVWqpoL6WppU).
