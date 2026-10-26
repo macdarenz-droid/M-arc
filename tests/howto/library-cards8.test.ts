@@ -9,6 +9,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { HELD, PAIR, heldShapeProblems, pairingMismatches, pairingMutations } from './held-pairing';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -145,10 +146,21 @@ describe('LIB-5 S12: the 8\'s cards are research 9eaa248\'s bytes, validated, wi
     const { tempo: _t, ...noTempo } = fx;
     expect(v(noTempo)).toEqual(['cards/cable_lateral_raise.json: plateFacts and tempo go in together or not at all']);
   });
-  it('F-PLATEFACTS: every card main holds validates (D-PLATEFACTS-EMPTY)', () => {
+  it('F-PLATEFACTS: every card main holds validates, except the ruled hold markers (D-PLATEFACTS-EMPTY, D-PLATEFACTS-HELD)', () => {
     const cards = readdirSync(join(ROOT, HOWTO, 'cards')).filter((f: string) => f.endsWith('.json'));
     expect(cards.length).toBeGreaterThan(EIGHT.length);
-    expect(cards.flatMap((f: string) => V.validateCardFile(f))).toEqual([]);
+    expect(heldShapeProblems(HELD)).toEqual([]);
+    expect(pairingMismatches(V)).toEqual([]);
+  });
+  it('F-PLATEFACTS FIX 2 (D-PLATEFACTS-HELD): mutations (a)-(e) are red; the control is green', () => {
+    const m = pairingMutations(V);
+    expect(m.control).toEqual([]);
+    expect(m.a).toEqual([`barbell_row: [], want ${JSON.stringify([PAIR('barbell_row')])}`]);
+    expect(m.b).toEqual([`plank: ${JSON.stringify([PAIR('plank')])}, want []`]);
+    expect(m.c.length).toBe(1);
+    expect(m.c[0]).toMatch(/^barbell_row: .*names unknown claim c999/);
+    expect(m.d).toEqual([`barbell_row: ${JSON.stringify([PAIR('barbell_row')])}, want []`]);
+    expect(m.e).toEqual([`held[0] (${HELD[0]!.id}) has no ruling`]);
   });
 });
 
