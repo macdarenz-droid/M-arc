@@ -32,6 +32,7 @@ Used for every drawn batch (pilot A/B, LB1-LB10, LIB-ZOOM), after the builder po
    - **24:** pull_up, the forearm ends under the end-on bar circle, with no fist around it (lib4-cards 35, confirmed on the lb9s PNG crop, #312).
    - **25:** pull_up, the Trace runs about 100 px along the end forearm, from the elbow to the chin, and starts at no start-pose landmark, while the body rises about 150 px (lib4-cards 36, confirmed on the lb2n PNG crop, #265).
    - **26:** pull_up, the bar's wall plate is drawn with no wall behind it (lib4-cards 36, confirmed on the lb2n PNG crop, #265).
+   - **27:** lat_pulldown's Mistake: the SHRUG leader ends on the dashed fault head's jaw, at the arrow tip (≈199,403 at 780 px), not on the dashed shoulder line about 25 px lower (confirmed on the mx1 PNG crop, 10-26; R4 3/5/3).
 4. **Verdict.** A plate whose every median is ≥ 4 is **approved at that sha**. A failing plate gets **one fix round**: post the findings with pixel places and buildable fixes. After 'PANEL FIX @ <sha>', run a **focused recheck**: only the fixed plates, the same anchors, new plants and a new shuffle. A plate that still fails gets a second focused round (D-LIB13-PANEL2) or is **HELD** (D-LIB8M-CARDTRUE).
 5. **Card truth wins.** A critic's fix that breaks a quoted card claim is never built. Rule it card-true (D-LIB13-ONEARM: the bent support arm on one_arm_dumbbell_row), tell the next critics in one prompt sentence, and give the owner a sheet line. If the sources might support the other form, open a research follow-up.
 

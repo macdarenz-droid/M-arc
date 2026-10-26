@@ -8,6 +8,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { otherCards } from './eq-composers';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -853,11 +854,7 @@ describe('LIB-16 A16: no other card\'s composer is copied, forked or imported (D
   const MAIN_EQ = ['assistMachine', 'band', 'chestRowMachine', 'dHandle', 'declineBench', 'inclineBench', 'landmine', 'legCurlMachine', 'parts', 'pecDeck',
     'polybar', 'romanChair', 'rope', 'safetyArms', 'smith'].map(c => `${c}.mjs`);
   const OURS = COMPOSERS.map(c => `${c}.mjs`);
-  const OTHER_CARDS: Record<string, string[]> = {
-    'LIB-14': ['wall'], 'LIB-15': ['preacherPad'], 'LIB-17': ['dipBars'],
-    'LIB-18': ['ankleCuff', 'calfMachine', 'hackSled', 'legExtMachine', 'pendulum'], 'LIB-21': ['abWheel'],
-    'LIB-22': ['battleRope', 'jumpRope', 'kettlebell', 'medBall', 'sled'],
-  };
+  const OTHER_CARDS: Record<string, string[]> = otherCards('LIB-16');   // D-LIB-A16-REGISTRY (#326): the shared registry
   const OTHER = Object.values(OTHER_CARDS).flat().map(c => `${c}.mjs`);
   const EQ = 'tools/plates/library/eq';
   const eqFiles = (): [string, string][] => readdirSync(EQ).map(n => [n, readFileSync(join(EQ, n), 'utf8')]);
