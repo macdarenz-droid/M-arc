@@ -1097,8 +1097,9 @@ describe('LIB-14 panel lb4p fix round (#289 6410190090): items 1-7 on drawn item
       expect(anchorPx(bad, 'chest')[0]!, `${id} mutation`).toBeLessThan(sh[0]!);
     }
     // goblet: between the chin and the dumbbell's top head
-    const g = anchorPx(S.goblet_squat, 'chest'), db = itemsIn(S.goblet_squat, 'end').items, dbTop = Math.min(...db.filter((i: any) => i.part === 'db' || /dumbbell/.test(i.type)).flatMap((i: any) => [].concat(i.at ? [camOf(S.goblet_squat).P(i.at)[1]] : [])));
-    if (Number.isFinite(dbTop)) expect(g[1]!).toBeLessThan(dbTop);
+    const g = anchorPx(S.goblet_squat, 'chest'), db = itemsIn(S.goblet_squat, 'end').items, dbTop = Math.min(...db.filter((i: any) => (i.part === 'db' || /dumbbell/.test(i.type)) && i.at).map((i: any) => camOf(S.goblet_squat).P(i.at)[1]!));
+    expect(Number.isFinite(dbTop)).toBe(true);
+    expect(g[1]!).toBeLessThan(dbTop);
   });
   it('item 2: front_squat\'s dropped arm is the drawn arm (its end outlines, every drawn length kept) rotated about the faulty shoulder to the Mistake elbow\'s direction, with a dashed elbow joint circle and a red arrow along the drop; mutations: the arrow or the joint circle removed, or the copy not rotated, are red', () => {
     const s = S.front_squat, cam = camOf(s), mod = M.front_squat;
