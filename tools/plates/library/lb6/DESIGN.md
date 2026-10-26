@@ -457,5 +457,11 @@ Zooms, built (D-LIB16-ZOOMVIEWS, #327 6405117790; `zoom: [{ view: 'normal', k: 3
   clipped render as ink only inside its circle (H1; the clip is not seen by isPointInFill).
 - Authoring QA (`lb6/qa.mjs lib_cable_chest_press`): all 10 hard checks pass. Normal zoom at (298, 96), Trace 63.0 px
   in the circle; Mistake zoom at (270, 232), deviation 11.91 px. Raised flags F5 3.57 (ruled) and F2 0.580 against
-  0.191-0.549 (ruling asked, #327 6405361295).
+  0.191-0.549: a named flag (D-LIB16-F2CCP, #327 6405365741; card-true width, the 53 cm stagger c2 and the column
+  46 cm behind the rear heel c1), in `lb6/qa.mjs` EXPECTED for cable_chest_press only.
 - The approved machine_pullover and machine_crunch fragments equal main's page 2668c838 (test pins them).
+- H1 mutations (browser, one label stepped 1 px at a time on the built page): "Handles at nipples" as one line, from
+  (284, 14) down onto the normal zoom circle: clean at 0 px, red at 1 px (ink at 290,44, the ring); inside the circle
+  the ring and its disc count as ink, so any label there is red. "Spine neutral" from (74, 186) left onto the column,
+  outside both circles: clean at 13 px, red at 14 px (ink at 67,194). With the clip disc widened to r 400 the clipped
+  render counts again: H1.ink on normal meta, normal spine and mistake meta (the fix reverted gives the same three).

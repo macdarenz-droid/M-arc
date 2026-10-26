@@ -43,8 +43,9 @@ export const tableOf = reports => [
 ];
 
 /** The ruled expected flags (DESIGN.md section 6; LB6 NOTE RULED, #297 6343632260): F5 on every id at exactly the
- *  approved chrome's 3.57:1 (D-LIB9-F5), F2 on machine_crunch (Q10, a named flag); no F7 (all 3 cards drawable true). */
-export const EXPECTED = id => ['F5', ...(id === 'lib_machine_crunch' ? ['F2'] : [])].sort();
+ *  approved chrome's 3.57:1 (D-LIB9-F5), F2 on machine_crunch (Q10) and on cable_chest_press
+ *  (D-LIB16-F2CCP, #327 6405365741), named flags; no F7 (all 3 cards drawable true). */
+export const EXPECTED = id => ['F5', ...(['lib_machine_crunch', 'lib_cable_chest_press'].includes(id) ? ['F2'] : [])].sort();
 export const F5_EXEMPT = 3.57;
 /** Each report's differences from the ruled set: a missing or extra flag, or F5 at any value other than 3.57. */
 export const flagProblems = reports => reports.flatMap(r => {
