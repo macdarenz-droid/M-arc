@@ -1,923 +1,991 @@
 {
- "id": "lying_leg_curl",
- "libId": "lib_lying_leg_curl",
- "name": "Lying Leg Curl",
- "family": "Knee machines (extension, curl)",
- "tier": "C",
- "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
- "archetype": {
-  "hand": "balance",
-  "contact": [
-   "pivot-pad"
-  ]
- },
- "parent": null,
- "inherit": [],
- "claims": [
-  {
-   "id": "c1",
-   "text": "Lie face down with the knees close to the edge of the bench and line the machine's axis of rotation up with the knee joint; placing the machine's joint in line with the knees is the most important part of the setup.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc",
-    "ace-llc",
-    "sl-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "Lie face down and place your knees close to the edge of the bench. Adjust your position so the machine’s rotational axis lines up with your knee joint.",
-     "where": "How to Do the Lying Leg Curl, 1. Set the machine to your body"
-    },
-    {
-     "source": "ace-llc",
-     "text": "Lie on your stomach on the machine, aligning the mid-point of your knee joint with the axis of rotation of the moving lever (arm) of the machine.",
-     "where": "Step 1"
-    },
-    {
-     "source": "sl-llc",
-     "text": "The most important aspect is to place the machine’s joint in line with your knees.",
-     "where": "Commentary"
-    }
-   ]
-  },
-  {
-   "id": "c2",
-   "text": "Knees out of line with the machine's axis is a listed mistake: one source says align them to prevent joint stress; another says poor alignment can make the movement feel awkward and changes the machine's leverage.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "mo-llc",
-    "fv-llc"
-   ],
-   "quotes": [
-    {
-     "source": "mo-llc",
-     "text": "Ensure knees align with the machine's axis of rotation to prevent joint stress.",
-     "where": "Safety, Safety Notes"
-    },
-    {
-     "source": "mo-llc",
-     "text": "Incorrect knee alignment",
-     "where": "Safety, Common Mistakes"
-    },
-    {
-     "source": "fv-llc",
-     "text": "Misaligning the knee and machine pivot: Poor alignment can make the movement feel awkward and changes the machine’s leverage.",
-     "where": "Common Lying Leg Curl Mistakes"
-    }
-   ]
-  },
-  {
-   "id": "c3",
-   "text": "Set the roller on the lower calf just above the heel, not on the Achilles tendon (two other sources also say just above the heels); ACE instead puts the pads on the lower third of the lower legs and says to avoid contact at or just above the heel. The card follows the majority.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc",
-    "lifto-llc",
-    "mo-llc",
-    "ace-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "Set the roller against the lower calf, just above the heel rather than directly on the Achilles tendon.",
-     "where": "How to Do the Lying Leg Curl, 1. Set the machine to your body"
-    },
-    {
-     "source": "lifto-llc",
-     "text": "Adjust the Machine: Set the pad to rest just above your heels.",
-     "where": "Setup"
-    },
-    {
-     "source": "mo-llc",
-     "text": "Lie face-down on the machine with your knees aligned with the pivot point and the roller pad resting just above your heels.",
-     "where": "How to Perform"
-    },
-    {
-     "source": "ace-llc",
-     "text": "Position the backs of the lower 1/3 of your lower legs under the resistance pads, avoiding contact with the pads at, or just above the heel.",
-     "where": "Step 1"
-    }
-   ]
-  },
-  {
-   "id": "c4",
-   "text": "A pad set too high on the calf shortens the lever and may let you use more weight without the same knee-flexion demand; a pad pressing into the heel or Achilles tendon can be uncomfortable; use the lowest comfortable position on the calf that still lets you control the machine.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "A pad set too high on the calf shortens the lever and may let you use more weight without creating the same knee-flexion demand. A pad pressing into the heel or Achilles tendon can be uncomfortable.",
-     "where": "Setup Details That Change the Exercise, Pad placement"
-    },
-    {
-     "source": "fv-llc",
-     "text": "Use the lowest comfortable position on the calf that still lets you control the machine.",
-     "where": "Setup Details That Change the Exercise, Pad placement"
-    }
-   ]
-  },
-  {
-   "id": "c5",
-   "text": "Hold the handles, gently tighten or brace the abs, and keep the front of the hips pressed against the pad; the hips stay on the machine throughout.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc",
-    "mo-llc",
-    "nasm-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "Hold the handles, gently tighten your abs, and keep the front of your hips in contact with the pad.",
-     "where": "How to Do the Lying Leg Curl, 2. Brace before you curl"
-    },
-    {
-     "source": "mo-llc",
-     "text": "Grasp the handles and brace your core to keep your hips pressed firmly against the bench.",
-     "where": "How to Perform"
-    },
-    {
-     "source": "nasm-llc",
-     "text": "Ensure your hips remain on the machine throughout the movement.",
-     "where": "How to Perform, Step 1: Setup"
-    }
-   ]
-  },
-  {
-   "id": "c6",
-   "text": "Start with the knees nearly straight, but do not force them into a painful locked position; avoid hyperextending the knees at the bottom of the movement.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc",
-    "mo-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "Start with your knees nearly straight, but do not force them into a painful locked position.",
-     "where": "How to Do the Lying Leg Curl, 2. Brace before you curl"
-    },
-    {
-     "source": "mo-llc",
-     "text": "Avoid hyperextending the knees at the bottom of the movement.",
-     "where": "Safety, Safety Notes"
-    }
-   ]
-  },
-  {
-   "id": "c7",
-   "text": "Breathing out, bend the knees and bring the roller toward the glutes; stop at the end of the controlled range or before the hips begin to lift (one source: knees bent more than 90 degrees, lower legs about vertical, or the pads close to the butt).",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc",
-    "ace-llc",
-    "mo-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "Bend your knees and bring the roller toward your glutes. Stop when you reach the end of your controlled range or before your hips begin to lift.",
-     "where": "How to Do the Lying Leg Curl, 3. Curl through your available range"
-    },
-    {
-     "source": "ace-llc",
-     "text": "Continue contracting the hamstrings and moving the resistance pad until your knees are bent more than 90 degrees, or your lower legs are aligned vertical to the floor, or the pads come close to touching your butt.",
-     "where": "Step 3"
-    },
-    {
-     "source": "mo-llc",
-     "text": "Exhale and curl your heels toward your glutes by flexing the knees.",
-     "where": "How to Perform"
-    }
-   ]
-  },
-  {
-   "id": "c8",
-   "text": "The pelvis or hips lifting off the pad is on three sources' mistakes lists; if the load pulls the pelvis off the bench, reduce the weight or stop the curl slightly earlier, because lifting the hips changes the hamstrings' position and often brings in lower-back movement.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc",
-    "lifto-llc",
-    "mo-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "Letting the pelvis lift: Keep the front of the hips against the pad and use only the range you can own.",
-     "where": "Common Lying Leg Curl Mistakes"
-    },
-    {
-     "source": "fv-llc",
-     "text": "If the load pulls your pelvis off the bench, reduce the weight or stop the curl slightly earlier. Lifting the hips changes the position of the hamstrings and often introduces lower-back movement that does not help the target action.",
-     "where": "Setup Details That Change the Exercise, Hip and pelvis position"
-    },
-    {
-     "source": "lifto-llc",
-     "text": "Lifting hips off the pad.",
-     "where": "Common Mistakes"
-    },
-    {
-     "source": "mo-llc",
-     "text": "Lifting hips off the pad",
-     "where": "Safety, Common Mistakes"
-    }
-   ]
-  },
-  {
-   "id": "c9",
-   "text": "Brace the abs to steady the spine and avoid moving or arching the low back during the curl; hyperextending the lower back is a listed mistake; if you cannot control movement in the low back, use a lighter resistance.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "ace-llc",
-    "lifto-llc",
-    "mo-llc",
-    "fv-llc"
-   ],
-   "quotes": [
-    {
-     "source": "ace-llc",
-     "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid movement in your low back throughout the exercise.",
-     "where": "Step 1"
-    },
-    {
-     "source": "ace-llc",
-     "text": "Avoid arching your back during this movement.",
-     "where": "Step 2"
-    },
-    {
-     "source": "ace-llc",
-     "text": "Stabilize your low back throughout the exercise and use a lighter resistance if you are unable to control movement in the low back.",
-     "where": "Step 5 (after the variation)"
-    },
-    {
-     "source": "lifto-llc",
-     "text": "Avoid Overextension: Do not hyperextend your lower back.",
-     "where": "Tips"
-    },
-    {
-     "source": "mo-llc",
-     "text": "Hyperextending the lower back",
-     "where": "Safety, Common Mistakes"
-    },
-    {
-     "source": "fv-llc",
-     "text": "The curl should come from the knee, not from lifting your hips or arching your lower back.",
-     "where": "Introduction"
-    }
-   ]
-  },
-  {
-   "id": "c10",
-   "text": "One source written for hamstring curls in general (not the lying machine) says arching the lower back stops the hamstrings working properly and can cause back pain and discomfort; contract the abs to avoid arching.",
-   "tags": [
-    "CONSENSUS",
-    "WEAK"
-   ],
-   "sources": [
-    "hl-hc"
-   ],
-   "quotes": [
-    {
-     "source": "hl-hc",
-     "text": "It’s important to keep your back neutral during hamstring curls. If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.",
-     "where": "Things to keep in mind"
-    },
-    {
-     "source": "hl-hc",
-     "text": "To avoid arching your back, contract your abs during the exercise.",
-     "where": "Things to keep in mind"
-    }
-   ]
-  },
-  {
-   "id": "c11",
-   "text": "Lower the weight under control and resist the machine; keep the stack from slamming down or touching between reps, and keep the same hip position throughout.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc",
-    "lifto-llc",
-    "mo-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "Return the weight under control.",
-     "where": "How to Do the Lying Leg Curl, 4. Lower with control"
-    },
-    {
-     "source": "fv-llc",
-     "text": "Keep the stack from slamming down and maintain the same hip position throughout the rep.",
-     "where": "How to Do the Lying Leg Curl, 4. Lower with control"
-    },
-    {
-     "source": "fv-llc",
-     "text": "Dropping the eccentric: The lowering phase is part of the rep. Resist the machine instead of letting the stack pull your legs down.",
-     "where": "Common Lying Leg Curl Mistakes"
-    },
-    {
-     "source": "lifto-llc",
-     "text": "Lower the Weight: Slowly extend your legs back to the starting position without letting the weight stack touch down.",
-     "where": "Execution"
-    },
-    {
-     "source": "mo-llc",
-     "text": "Maintain tension at the bottom without letting the weight stack touch.",
-     "where": "How to Perform"
-    }
-   ]
-  },
-  {
-   "id": "c12",
-   "text": "Breathe out as you curl the weight up and in as you lower it.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "mo-llc",
-    "lifto-llc"
-   ],
-   "quotes": [
-    {
-     "source": "mo-llc",
-     "text": "Exhale as you curl the weight up, inhale as you lower it.",
-     "where": "Coaching Tips, Breathing"
-    },
-    {
-     "source": "lifto-llc",
-     "text": "Breathing: Exhale when curling up and inhale while lowering the weight.",
-     "where": "Tips"
-    }
-   ]
-  },
-  {
-   "id": "c13",
-   "text": "Too much weight is a listed mistake: if the first rep needs a hip pop, the weight is too heavy.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc",
-    "lifto-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "Loading more than you can control: If the first rep requires a hip pop, the weight is too heavy for the intended movement.",
-     "where": "Common Lying Leg Curl Mistakes"
-    },
-    {
-     "source": "lifto-llc",
-     "text": "Using too much weight, leading to poor form.",
-     "where": "Common Mistakes"
-    }
-   ]
-  },
-  {
-   "id": "c14",
-   "text": "Avoid momentum and jerky or uncontrolled movements.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "lifto-llc",
-    "nasm-llc",
-    "mo-llc"
-   ],
-   "quotes": [
-    {
-     "source": "lifto-llc",
-     "text": "Maintain Control: Avoid using momentum; focus on muscle contraction.",
-     "where": "Tips"
-    },
-    {
-     "source": "nasm-llc",
-     "text": "Jerky or uncontrolled movements, which reduce time under tension",
-     "where": "Common Mistakes"
-    },
-    {
-     "source": "mo-llc",
-     "text": "Using momentum",
-     "where": "Safety, Common Mistakes"
-    }
-   ]
-  },
-  {
-   "id": "c15",
-   "text": "One source written for hamstring curls in general (not the lying machine) says to move slowly, because sudden, jerking movements can lead to injury, and to stop hamstring curls if you feel pain in your knees, hips or back.",
-   "tags": [
-    "CONSENSUS",
-    "WEAK"
-   ],
-   "sources": [
-    "hl-hc"
-   ],
-   "quotes": [
-    {
-     "source": "hl-hc",
-     "text": "It’s also best to move slowly. Sudden, jerking movements can lead to injury, so your movements should be controlled.",
-     "where": "Things to keep in mind"
-    },
-    {
-     "source": "hl-hc",
-     "text": "Stop doing hamstring curls if you feel pain in your knees, hips, or back.",
-     "where": "Things to keep in mind"
-    }
-   ]
-  },
-  {
-   "id": "c16",
-   "text": "Effort in the back of the thigh is expected; sharp pain behind the knee is a reason to stop and reassess; try a lighter load, a different pad position or another curl variation.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "Muscular effort in the back of the thigh is expected. Sharp pain behind the knee, cramping that does not settle after changing the load, or back and hip discomfort caused by the machine setup are reasons to stop and reassess.",
-     "where": "When to Modify or Stop"
-    },
-    {
-     "source": "fv-llc",
-     "text": "Try a lighter load, a different pad position, or another curl variation.",
-     "where": "When to Modify or Stop"
-    }
-   ]
-  },
-  {
-   "id": "c17",
-   "text": "The hamstrings (biceps femoris, semitendinosus, semimembranosus) do most of the work; the gastrocnemius (calf) assists because it also crosses the knee.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc",
-    "nasm-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "The hamstrings do most of the work, while the gastrocnemius assists because it also crosses the knee.",
-     "where": "Introduction"
-    },
-    {
-     "source": "nasm-llc",
-     "text": "Hamstring Group (Biceps Femoris, Semitendinosus, Semimembranosus) -- primary mover for knee flexion and hamstring curling motion",
-     "where": "Muscles Worked, Primary Muscles"
-    },
-    {
-     "source": "nasm-llc",
-     "text": "Gastrocnemius",
-     "where": "Muscles Worked, Secondary Muscles"
-    }
-   ]
-  },
-  {
-   "id": "c18",
-   "text": "Tempo: Motra lists 3-1-1 for this exercise and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 3 s for the lowering, a 1 s pause at the bottom and 1 s for the curl.",
-   "tags": [
-    "CONSENSUS",
-    "WEAK"
-   ],
-   "sources": [
-    "mo-llc"
-   ],
-   "quotes": [
-    {
-     "source": "mo-llc",
-     "text": "3-1-1",
-     "where": "Coaching Tips, Tempo"
-    },
-    {
-     "source": "mo-llc",
-     "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
-     "where": "Tempo heading tooltip (served HTML)"
-    }
-   ]
-  },
-  {
-   "id": "c19",
-   "text": "Tempo: one source gives a two-to-three-second lowering as an optional coaching target, not a tested tempo.",
-   "tags": [
-    "CONSENSUS",
-    "WEAK"
-   ],
-   "sources": [
-    "fv-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "A two-to-three-second lowering is an optional coaching target, not a tempo tested by the cited study.",
-     "where": "How to Do the Lying Leg Curl, 4. Lower with control"
-    }
-   ]
-  },
-  {
-   "id": "c20",
-   "text": "Tempo: two sources ask for a momentary pause or squeeze at the top, right after the curl, and none gives its seconds, so the 1 s pause is a drawing convention (LR-33).",
-   "tags": [
-    "CONSENSUS",
-    "WEAK"
-   ],
-   "sources": [
-    "ace-llc",
-    "lifto-llc"
-   ],
-   "quotes": [
-    {
-     "source": "ace-llc",
-     "text": "Pause momentarily, then slowly return to your starting position by lowering the resistance pads in a controlled manner.",
-     "where": "Step 4"
-    },
-    {
-     "source": "lifto-llc",
-     "text": "Pause: At the top of the curl, squeeze your hamstrings for a moment.",
-     "where": "Execution"
-    }
-   ]
-  },
-  {
-   "id": "c21",
-   "text": "For muscle gain, 3 to 4 sets of 8 to 15 reps; add a small amount of weight after reaching the top of the range with controlled reps.",
-   "tags": [
-    "CONSENSUS"
-   ],
-   "sources": [
-    "fv-llc"
-   ],
-   "quotes": [
-    {
-     "source": "fv-llc",
-     "text": "3 to 4 sets of 8 to 15 reps",
-     "where": "Sets, Reps, and Progression, Muscle gain"
-    },
-    {
-     "source": "fv-llc",
-     "text": "Add a small amount of weight after reaching the top of the range with controlled reps.",
-     "where": "Sets, Reps, and Progression, Muscle gain"
-    }
-   ]
-  }
- ],
- "sources": [
-  {
-   "id": "fv-llc",
-   "url": "https://fitnessvolt.com/24561/lying-leg-curl/",
-   "title": "Lying Leg Curl: Muscles Worked, Form, and Variations (Fitness Volt)",
-   "kind": "coach",
-   "year": 2026,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "mo-llc",
-   "url": "https://www.motra.com/exercises/machineLegCurlLying",
-   "title": "Machine Leg / Hamstring Curl Prone (Motra)",
-   "kind": "coach",
-   "year": null,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "lifto-llc",
-   "url": "https://www.liftosaur.com/exercises/leverage-machine-lying-leg-curl",
-   "title": "Leverage Machine Lying Leg Curl - How To, Muscles Worked & Form Guide | Liftosaur",
-   "kind": "coach",
-   "year": null,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "ace-llc",
-   "url": "https://www.acefitness.org/resources/everyone/exercise-library/153/lying-hamstrings-curl/",
-   "title": "Lying Hamstrings Curl | Exercise Library | ACE",
-   "kind": "coach",
-   "year": null,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "nasm-llc",
-   "url": "https://www.nasm.org/resource-center/exercise-library/lying-leg-curl",
-   "title": "Lying Leg Curl (NASM exercise library)",
-   "kind": "coach",
-   "year": null,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "sl-llc",
-   "url": "https://www.strengthlog.com/lying-leg-curl/",
-   "title": "How to Do Lying Leg Curl: Muscles Worked & Proper Form – StrengthLog",
-   "kind": "coach",
-   "year": null,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  },
-  {
-   "id": "hl-hc",
-   "url": "https://www.healthline.com/health/hamstring-curls",
-   "title": "5 Types of Hamstring Curls for Stronger Thighs (Healthline)",
-   "kind": "coach",
-   "year": 2019,
-   "pmid": null,
-   "access": "full",
-   "checked": "2026-10-22"
-  }
- ],
- "plate": {
-  "view": "side",
-  "viewWhy": "Census view is side. The knee-to-axis line (c1), the roller just above the heel (c3), the hips on the pad (c5, c8), the low back (c9) and the knee bend (c7) all read from the side, and so does the drawn fault, the lower back arching (c9, c10).",
-  "equipment": "Lying leg curl machine composed from a flat bench and a roller pad on a lever (census 'legCurlMachine', compose; 'flatBench', 'kneePad'): the lifter lies face down with the knees close to the bench edge and the machine's axis level with the knee joint (c1), the roller on the lower calf just above the heel (c3), handles at the front of the bench (c5).",
-  "start": "Lying face down, front of the hips pressed on the pad (c5), knees close to the bench edge and in line with the axis (c1), knees nearly straight but not forced locked (c6), roller just above the heels (c3), hands on the handles, abs braced (c5).",
-  "end": "Knees bent more than 90 degrees, lower legs about vertical or the roller close to the glutes (c7); hips still on the pad (c7, c8); low back not arched (c9).",
-  "checkpoints": [
-   {
-    "label": "Knee at axis",
-    "what": "Knees line up with the machine's axis.",
-    "claim": "c1"
-   },
-   {
-    "label": "Hips on pad",
-    "what": "Front of the hips stays pressed on the pad.",
-    "claim": [
-     "c5",
-     "c8"
+  "id": "lying_leg_curl",
+  "libId": "lib_lying_leg_curl",
+  "name": "Lying Leg Curl",
+  "family": "Knee machines (extension, curl)",
+  "tier": "C",
+  "tierNote": "Safety tier C (content.md appendix B: not in the A or B lists); census.json difficulty tier 1.",
+  "archetype": {
+    "hand": "balance",
+    "contact": [
+      "pivot-pad"
     ]
-   },
-   {
-    "label": "Low back still",
-    "what": "Abs braced. The low back doesn't arch.",
-    "claim": [
-     "c9",
-     "c5"
-    ]
-   }
-  ],
-  "mistake": {
-   "what": "Lower back arching as the legs curl.",
-   "why": "The top fault, knees out of line with the machine's axis (c2), has no sourced direction, so the plate draws the next fault by the same steps: a source written for hamstring curls in general says arching the lower back can cause back pain and discomfort (c10), and Motra lists hyperextending the lower back as a common mistake (c9).",
-   "claim": [
-    "c9",
-    "c10"
-   ],
-   "drawable": false,
-   "rankNote": "No source measures how often each fault happens. LR-31 step 2: the knees out of line with the machine's axis (c2, c1). Candidates: the roller-pad setting (c3, c4, including Fitness Volt's \"A pad pressing into the heel or Achilles tendon can be uncomfortable.\") and the load (Fitness Volt's \"Loading more than you can control\" and Liftosaur's \"Using too much weight, leading to poor form.\", c13) are setup and load choices, not candidates. The knee-to-axis line is a candidate on this machine (D-SUP-LB8-AXIS: the body stays where it is placed on the bench for the whole set, a candidate under D-SUP-LB7-FEET; on seated_leg_curl the seat and pad settings fix the knee): the lifter sets it by placing the body on the bench (Fitness Volt: \"Adjust your position so the machine’s rotational axis lines up with your knee joint.\", c1) and the knees stay there for the whole set, a body position under D-SUP-LB7-FEET; on seated_leg_curl the seat setting fixes it and it was set aside. Step 1 finds no frequency word for a fault: Fitness Volt's \"Lifting the hips changes the position of the hamstrings and often introduces lower-back movement that does not help the target action.\" (c8) says what a hip lift leads to, not how often lifters lift the hips or arch (a cause statement, as renegade_row's \"Often a symptom of going too heavy\"); its \"Most lifters can place curls after squats, hinges, or other demanding leg exercises.\" is programming; Motra's \"commonly scaled by performing unilaterally\" is programming; Healthline's \"Typically, the exercise is done on a leg curl machine.\" is the equipment; StrengthLog's \"it is easy to focus on the hamstrings\" uses 'easy to' and names no fault; Fitness Volt's \"Common Lying Leg Curl Mistakes\" and Liftosaur's, Motra's and NASM's \"Common Mistakes\" are headings. Read but not cited: Inspire US's lying-leg-curl alternatives page (\"many individuals avoid “leg day”\", \"one common mistake is not paying enough attention to the area through a lack of variety\" and \"Another common mistake in performing hamstring exercises is ignoring the eccentric part of the movement.\") is about hamstring training in general, and the last is a list sentence; BarBend's leg-curl page, written for the seated machine (\"it’s often all laid out for you\", machines; \"many lifters neglect direct hamstring training\", training). Step 2: three named faults are tied to harm. Knees out of line with the axis: Motra's \"Ensure knees align with the machine's axis of rotation to prevent joint stress.\" (c2; the cue that corrects it, D-SUP-PROTECT), on Motra's list (\"Incorrect knee alignment\") and Fitness Volt's (\"Misaligning the knee and machine pivot\"). Arching the lower back: Healthline's \"If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.\" (c10, WEAK: written for hamstring curls in general), on Motra's list (\"Hyperextending the lower back\"). Jerky movements: Healthline's \"Sudden, jerking movements can lead to injury\" (c15, WEAK), on NASM's list (\"Jerky or uncontrolled movements, which reduce time under tension\", c14). Tie order: all three are on a common-mistakes list and each is tied to harm by one source; only the knee line is sourced directly (Motra, this exercise), so it wins. Tied to harm but on no common-mistakes list, so it loses the first tie-break: forcing the knees into a locked position at the start, Fitness Volt's \"do not force them into a painful locked position\" (c6). Further scan (fetcher, 2026-10-22), set aside: Fitness Volt's \"Scalable resistance: Beginners can learn the action with a light stack\" names who, not a fault or how often; its \"Not an injury guarantee: Stronger hamstrings may be useful in many programs, but one exercise cannot prevent injury by itself.\" and \"Persistent pain or symptoms following an injury warrant guidance from a qualified clinician.\" name no fault; Motra's \"Acute hamstring strain\" and \"Lower back injury\" (When to Avoid) are conditions, and its spotting line \"use the machine's safety stops or lighter weight\" names no fault; Motra's common-mistakes list (\"Lifting hips off the pad\", \"Using momentum\", \"Hyperextending the lower back\", \"Incorrect knee alignment\") has no frequency or harm word on any item; NASM's \"providing a safe, stable training environment\", \"injury prevention\" and \"essential to long-term performance and injury prevention\" are about the exercise; Healthline's \"When you have strong hamstrings, you’re less prone to injury and pain.\", \"can help relieve quad tightness and back pain\", \"which can reduce your risk of injury\" and \"they might recommend safer alternatives\" are benefits or advice, not a fault; BarBend's seated page (read, not cited): \"Strength athletes and bodybuilders alike are often on the hunt\", \"Often performed on a glute-ham developer\", \"may not typically prioritize single-joint movement\" and \"beginners gravitate towards machines\" are about training or other exercises, and \"avoiding added stress to your lower back\" and \"put a lot of strain and compressed load onto your spine\" are about the leg curl against squats and deadlifts, not a fault. Also set aside: Fitness Volt's \"Sharp pain behind the knee, cramping that does not settle after changing the load, or back and hip discomfort caused by the machine setup are reasons to stop and reassess.\" (c16) names no fault of the lifter's position; Motra's \"Avoid hyperextending the knees at the bottom of the movement.\" (c6) carries no harm word; Liftosaur's \"you'll maximize the effectiveness of the Lying Leg Curl while minimizing the risk of injury\" closes all its steps and ties no one fault to harm; ACE's \"Improper technique will result in excessive recruitment (use) of the lumber extensors (low back muscles).\" is muscle use, not harm; Fitness Volt's \"Poor alignment can make the movement feel awkward\" (c2) carries no harm word. The hip lift (on Fitness Volt's, Liftosaur's and Motra's lists, c8) has no harm word in any read source. drawable false: the side view shows the knee and the axis, but no read source names which way the knee sits off the axis, so no sourced wrong position can be drawn (as on seated_leg_curl, W1 F06 / R-W1-7, knee-pivot zoom wrong null). plate.mistake is the next fault by the same steps: the arch and the jerky movements are both on a list with one WEAK harm source each, and no list names both, so step 3's count decides (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: arching 5 (ACE \"Avoid arching your back during this movement.\", Liftosaur \"Do not hyperextend your lower back.\", Motra's list, Fitness Volt \"not from lifting your hips or arching your lower back\", Healthline \"To avoid arching your back, contract your abs during the exercise.\"; c9, c10); jerky movements 2 (NASM's list, Healthline's \"Sudden, jerking movements can lead to injury\"; c14, c15; Liftosaur's and Motra's momentum lines name momentum, not jerking; counted, it is 4 and the arch still leads). Lines that only give the right position are not counted (Healthline's \"keep your back neutral\"; Healthline counts once, by its avoid line). The jerky movements are seen only as speed, so they are never drawable anyway. The arch is a still sign the side view shows (the low back lifting into an arch on the bench), so plate.mistake is the arch, drawable from this view. Reading B, if the knee-to-axis line is read as setup (the seated_leg_curl reading): it leaves the candidates, step 2's tie between the arch and the jerky movements gives the arch by the same count (5 to 2), the arch is the top fault with drawable true, and plate.mistake is unchanged; only handlingMistakes[0] and drawable change. Reading A (the card): the knee line is the top fault, drawable false, as above. handlingMistakes keeps three: the knee line (top fault), the arch (plate), and the hip lift (first on Fitness Volt's list of named faults after the load item, and on Liftosaur's and Motra's lists). The locked-knee start stays in posture and the jerky movements in risks. If Motra's 'Using momentum' is read as the jerky fault, its list names both with momentum first, so the jerky movements would win the tie before the count and be handlingMistakes[1]; they are seen only as speed, so plate.mistake stays the arch. This card reads momentum and jerking as separate faults, as in its count."
   },
-  "tells": [
-   {
-    "text": "Hips stay on the pad",
-    "claim": [
-     "c5",
-     "c8"
-    ]
-   },
-   {
-    "text": "Stack never touches between reps",
-    "claim": "c11"
-   }
-  ],
-  "tempo": {
-   "up": 1,
-   "down": 3,
-   "pause": 1,
-   "claim": [
-    "c18",
-    "c20"
-   ],
-   "text": "Down 3 and up 1 are Motra's 3-1-1 (c18, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause; the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the next curl, so it is named here and not written in pause (LR-33). Fitness Volt's optional two-to-three-second lowering (c19) agrees with the 3 s. Pause 1 is the pause right after the curl: ACE's \"Pause momentarily\" and Liftosaur's squeeze \"for a moment\" give no seconds, so the 1 s is a drawing convention (c20, WEAK; LR-33). Motra's \"Squeeze the hamstrings hard at the top position.\" asks a squeeze with no pause or seconds, and its 3-1-1 has no top pause; the card follows ACE and Liftosaur for the brief pause."
-  },
-  "variantLine": null
- },
- "grip": {
-  "type": "Hands on the handles (c5).",
-  "width": "Handles fixed on the machine (c5).",
-  "thumb": "",
-  "handContact": "",
-  "wrist": "",
+  "parent": null,
+  "inherit": [],
   "claims": [
-   "c5"
+    {
+      "id": "c1",
+      "text": "Lie face down with the knees close to the edge of the bench and line the machine's axis of rotation up with the knee joint; placing the machine's joint in line with the knees is the most important part of the setup.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc",
+        "ace-llc",
+        "sl-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "Lie face down and place your knees close to the edge of the bench. Adjust your position so the machine’s rotational axis lines up with your knee joint.",
+          "where": "How to Do the Lying Leg Curl, 1. Set the machine to your body"
+        },
+        {
+          "source": "ace-llc",
+          "text": "Lie on your stomach on the machine, aligning the mid-point of your knee joint with the axis of rotation of the moving lever (arm) of the machine.",
+          "where": "Step 1"
+        },
+        {
+          "source": "sl-llc",
+          "text": "The most important aspect is to place the machine’s joint in line with your knees.",
+          "where": "Commentary"
+        }
+      ]
+    },
+    {
+      "id": "c2",
+      "text": "Knees out of line with the machine's axis is a listed mistake: one source says align them to prevent joint stress; another says poor alignment can make the movement feel awkward and changes the machine's leverage.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-llc",
+        "fv-llc"
+      ],
+      "quotes": [
+        {
+          "source": "mo-llc",
+          "text": "Ensure knees align with the machine's axis of rotation to prevent joint stress.",
+          "where": "Safety, Safety Notes"
+        },
+        {
+          "source": "mo-llc",
+          "text": "Incorrect knee alignment",
+          "where": "Safety, Common Mistakes"
+        },
+        {
+          "source": "fv-llc",
+          "text": "Misaligning the knee and machine pivot: Poor alignment can make the movement feel awkward and changes the machine’s leverage.",
+          "where": "Common Lying Leg Curl Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c3",
+      "text": "Set the roller on the lower calf just above the heel, not on the Achilles tendon (two other sources also say just above the heels); ACE instead puts the pads on the lower third of the lower legs and says to avoid contact at or just above the heel. The card follows the majority.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc",
+        "lifto-llc",
+        "mo-llc",
+        "ace-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "Set the roller against the lower calf, just above the heel rather than directly on the Achilles tendon.",
+          "where": "How to Do the Lying Leg Curl, 1. Set the machine to your body"
+        },
+        {
+          "source": "lifto-llc",
+          "text": "Adjust the Machine: Set the pad to rest just above your heels.",
+          "where": "Setup"
+        },
+        {
+          "source": "mo-llc",
+          "text": "Lie face-down on the machine with your knees aligned with the pivot point and the roller pad resting just above your heels.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "ace-llc",
+          "text": "Position the backs of the lower 1/3 of your lower legs under the resistance pads, avoiding contact with the pads at, or just above the heel.",
+          "where": "Step 1"
+        }
+      ]
+    },
+    {
+      "id": "c4",
+      "text": "A pad set too high on the calf shortens the lever and may let you use more weight without the same knee-flexion demand; a pad pressing into the heel or Achilles tendon can be uncomfortable; use the lowest comfortable position on the calf that still lets you control the machine.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "A pad set too high on the calf shortens the lever and may let you use more weight without creating the same knee-flexion demand. A pad pressing into the heel or Achilles tendon can be uncomfortable.",
+          "where": "Setup Details That Change the Exercise, Pad placement"
+        },
+        {
+          "source": "fv-llc",
+          "text": "Use the lowest comfortable position on the calf that still lets you control the machine.",
+          "where": "Setup Details That Change the Exercise, Pad placement"
+        }
+      ]
+    },
+    {
+      "id": "c5",
+      "text": "Hold the handles, gently tighten or brace the abs, and keep the front of the hips pressed against the pad; the hips stay on the machine throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc",
+        "mo-llc",
+        "nasm-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "Hold the handles, gently tighten your abs, and keep the front of your hips in contact with the pad.",
+          "where": "How to Do the Lying Leg Curl, 2. Brace before you curl"
+        },
+        {
+          "source": "mo-llc",
+          "text": "Grasp the handles and brace your core to keep your hips pressed firmly against the bench.",
+          "where": "How to Perform"
+        },
+        {
+          "source": "nasm-llc",
+          "text": "Ensure your hips remain on the machine throughout the movement.",
+          "where": "How to Perform, Step 1: Setup"
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "text": "Start with the knees nearly straight, but do not force them into a painful locked position; avoid hyperextending the knees at the bottom of the movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc",
+        "mo-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "Start with your knees nearly straight, but do not force them into a painful locked position.",
+          "where": "How to Do the Lying Leg Curl, 2. Brace before you curl"
+        },
+        {
+          "source": "mo-llc",
+          "text": "Avoid hyperextending the knees at the bottom of the movement.",
+          "where": "Safety, Safety Notes"
+        }
+      ]
+    },
+    {
+      "id": "c7",
+      "text": "Breathing out, bend the knees and bring the roller toward the glutes; stop at the end of the controlled range or before the hips begin to lift (one source: knees bent more than 90 degrees, lower legs about vertical, or the pads close to the butt).",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc",
+        "ace-llc",
+        "mo-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "Bend your knees and bring the roller toward your glutes. Stop when you reach the end of your controlled range or before your hips begin to lift.",
+          "where": "How to Do the Lying Leg Curl, 3. Curl through your available range"
+        },
+        {
+          "source": "ace-llc",
+          "text": "Continue contracting the hamstrings and moving the resistance pad until your knees are bent more than 90 degrees, or your lower legs are aligned vertical to the floor, or the pads come close to touching your butt.",
+          "where": "Step 3"
+        },
+        {
+          "source": "mo-llc",
+          "text": "Exhale and curl your heels toward your glutes by flexing the knees.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c8",
+      "text": "The pelvis or hips lifting off the pad is on three sources' mistakes lists; if the load pulls the pelvis off the bench, reduce the weight or stop the curl slightly earlier, because lifting the hips changes the hamstrings' position and often brings in lower-back movement.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc",
+        "lifto-llc",
+        "mo-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "Letting the pelvis lift: Keep the front of the hips against the pad and use only the range you can own.",
+          "where": "Common Lying Leg Curl Mistakes"
+        },
+        {
+          "source": "fv-llc",
+          "text": "If the load pulls your pelvis off the bench, reduce the weight or stop the curl slightly earlier. Lifting the hips changes the position of the hamstrings and often introduces lower-back movement that does not help the target action.",
+          "where": "Setup Details That Change the Exercise, Hip and pelvis position"
+        },
+        {
+          "source": "lifto-llc",
+          "text": "Lifting hips off the pad.",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-llc",
+          "text": "Lifting hips off the pad",
+          "where": "Safety, Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c9",
+      "text": "Brace the abs to steady the spine and avoid moving or arching the low back during the curl; hyperextending the lower back is a listed mistake; if you cannot control movement in the low back, use a lighter resistance.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "ace-llc",
+        "lifto-llc",
+        "mo-llc",
+        "fv-llc"
+      ],
+      "quotes": [
+        {
+          "source": "ace-llc",
+          "text": "Stiffen (“brace”) your abdominal muscles to stabilize your spine, and attempt to avoid movement in your low back throughout the exercise.",
+          "where": "Step 1"
+        },
+        {
+          "source": "ace-llc",
+          "text": "Avoid arching your back during this movement.",
+          "where": "Step 2"
+        },
+        {
+          "source": "ace-llc",
+          "text": "Stabilize your low back throughout the exercise and use a lighter resistance if you are unable to control movement in the low back.",
+          "where": "Step 5 (after the variation)"
+        },
+        {
+          "source": "lifto-llc",
+          "text": "Avoid Overextension: Do not hyperextend your lower back.",
+          "where": "Tips"
+        },
+        {
+          "source": "mo-llc",
+          "text": "Hyperextending the lower back",
+          "where": "Safety, Common Mistakes"
+        },
+        {
+          "source": "fv-llc",
+          "text": "The curl should come from the knee, not from lifting your hips or arching your lower back.",
+          "where": "Introduction"
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "text": "One source written for hamstring curls in general (not the lying machine) says arching the lower back stops the hamstrings working properly and can cause back pain and discomfort; contract the abs to avoid arching.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "hl-hc"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hc",
+          "text": "It’s important to keep your back neutral during hamstring curls. If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.",
+          "where": "Things to keep in mind"
+        },
+        {
+          "source": "hl-hc",
+          "text": "To avoid arching your back, contract your abs during the exercise.",
+          "where": "Things to keep in mind"
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "text": "Lower the weight under control and resist the machine; keep the stack from slamming down or touching between reps, and keep the same hip position throughout.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc",
+        "lifto-llc",
+        "mo-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "Return the weight under control.",
+          "where": "How to Do the Lying Leg Curl, 4. Lower with control"
+        },
+        {
+          "source": "fv-llc",
+          "text": "Keep the stack from slamming down and maintain the same hip position throughout the rep.",
+          "where": "How to Do the Lying Leg Curl, 4. Lower with control"
+        },
+        {
+          "source": "fv-llc",
+          "text": "Dropping the eccentric: The lowering phase is part of the rep. Resist the machine instead of letting the stack pull your legs down.",
+          "where": "Common Lying Leg Curl Mistakes"
+        },
+        {
+          "source": "lifto-llc",
+          "text": "Lower the Weight: Slowly extend your legs back to the starting position without letting the weight stack touch down.",
+          "where": "Execution"
+        },
+        {
+          "source": "mo-llc",
+          "text": "Maintain tension at the bottom without letting the weight stack touch.",
+          "where": "How to Perform"
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "text": "Breathe out as you curl the weight up and in as you lower it.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "mo-llc",
+        "lifto-llc"
+      ],
+      "quotes": [
+        {
+          "source": "mo-llc",
+          "text": "Exhale as you curl the weight up, inhale as you lower it.",
+          "where": "Coaching Tips, Breathing"
+        },
+        {
+          "source": "lifto-llc",
+          "text": "Breathing: Exhale when curling up and inhale while lowering the weight.",
+          "where": "Tips"
+        }
+      ]
+    },
+    {
+      "id": "c13",
+      "text": "Too much weight is a listed mistake: if the first rep needs a hip pop, the weight is too heavy.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc",
+        "lifto-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "Loading more than you can control: If the first rep requires a hip pop, the weight is too heavy for the intended movement.",
+          "where": "Common Lying Leg Curl Mistakes"
+        },
+        {
+          "source": "lifto-llc",
+          "text": "Using too much weight, leading to poor form.",
+          "where": "Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c14",
+      "text": "Avoid momentum and jerky or uncontrolled movements.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "lifto-llc",
+        "nasm-llc",
+        "mo-llc"
+      ],
+      "quotes": [
+        {
+          "source": "lifto-llc",
+          "text": "Maintain Control: Avoid using momentum; focus on muscle contraction.",
+          "where": "Tips"
+        },
+        {
+          "source": "nasm-llc",
+          "text": "Jerky or uncontrolled movements, which reduce time under tension",
+          "where": "Common Mistakes"
+        },
+        {
+          "source": "mo-llc",
+          "text": "Using momentum",
+          "where": "Safety, Common Mistakes"
+        }
+      ]
+    },
+    {
+      "id": "c15",
+      "text": "One source written for hamstring curls in general (not the lying machine) says to move slowly, because sudden, jerking movements can lead to injury, and to stop hamstring curls if you feel pain in your knees, hips or back.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "hl-hc"
+      ],
+      "quotes": [
+        {
+          "source": "hl-hc",
+          "text": "It’s also best to move slowly. Sudden, jerking movements can lead to injury, so your movements should be controlled.",
+          "where": "Things to keep in mind"
+        },
+        {
+          "source": "hl-hc",
+          "text": "Stop doing hamstring curls if you feel pain in your knees, hips, or back.",
+          "where": "Things to keep in mind"
+        }
+      ]
+    },
+    {
+      "id": "c16",
+      "text": "Effort in the back of the thigh is expected; sharp pain behind the knee is a reason to stop and reassess; try a lighter load, a different pad position or another curl variation.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "Muscular effort in the back of the thigh is expected. Sharp pain behind the knee, cramping that does not settle after changing the load, or back and hip discomfort caused by the machine setup are reasons to stop and reassess.",
+          "where": "When to Modify or Stop"
+        },
+        {
+          "source": "fv-llc",
+          "text": "Try a lighter load, a different pad position, or another curl variation.",
+          "where": "When to Modify or Stop"
+        }
+      ]
+    },
+    {
+      "id": "c17",
+      "text": "The hamstrings (biceps femoris, semitendinosus, semimembranosus) do most of the work; the gastrocnemius (calf) assists because it also crosses the knee.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc",
+        "nasm-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "The hamstrings do most of the work, while the gastrocnemius assists because it also crosses the knee.",
+          "where": "Introduction"
+        },
+        {
+          "source": "nasm-llc",
+          "text": "Hamstring Group (Biceps Femoris, Semitendinosus, Semimembranosus) -- primary mover for knee flexion and hamstring curling motion",
+          "where": "Muscles Worked, Primary Muscles"
+        },
+        {
+          "source": "nasm-llc",
+          "text": "Gastrocnemius",
+          "where": "Muscles Worked, Secondary Muscles"
+        }
+      ]
+    },
+    {
+      "id": "c18",
+      "text": "Tempo: Motra lists 3-1-1 for this exercise and its Tempo tooltip gives the order (eccentric, bottom pause, concentric, top pause): 3 s for the lowering, a 1 s pause at the bottom and 1 s for the curl.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "mo-llc"
+      ],
+      "quotes": [
+        {
+          "source": "mo-llc",
+          "text": "3-1-1",
+          "where": "Coaching Tips, Tempo"
+        },
+        {
+          "source": "mo-llc",
+          "text": "The speed for each phase of the movement, written as four numbers (e.g., 3-1-2-0): eccentric (lowering), bottom pause, concentric (lifting), top pause. Each number represents seconds.",
+          "where": "Tempo heading tooltip (served HTML)"
+        }
+      ]
+    },
+    {
+      "id": "c19",
+      "text": "Tempo: one source gives a two-to-three-second lowering as an optional coaching target, not a tested tempo.",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "fv-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "A two-to-three-second lowering is an optional coaching target, not a tempo tested by the cited study.",
+          "where": "How to Do the Lying Leg Curl, 4. Lower with control"
+        }
+      ]
+    },
+    {
+      "id": "c20",
+      "text": "Tempo: two sources ask for a momentary pause or squeeze at the top, right after the curl, and none gives its seconds, so the 1 s pause is a drawing convention (LR-33).",
+      "tags": [
+        "CONSENSUS",
+        "WEAK"
+      ],
+      "sources": [
+        "ace-llc",
+        "lifto-llc"
+      ],
+      "quotes": [
+        {
+          "source": "ace-llc",
+          "text": "Pause momentarily, then slowly return to your starting position by lowering the resistance pads in a controlled manner.",
+          "where": "Step 4"
+        },
+        {
+          "source": "lifto-llc",
+          "text": "Pause: At the top of the curl, squeeze your hamstrings for a moment.",
+          "where": "Execution"
+        }
+      ]
+    },
+    {
+      "id": "c21",
+      "text": "For muscle gain, 3 to 4 sets of 8 to 15 reps; add a small amount of weight after reaching the top of the range with controlled reps.",
+      "tags": [
+        "CONSENSUS"
+      ],
+      "sources": [
+        "fv-llc"
+      ],
+      "quotes": [
+        {
+          "source": "fv-llc",
+          "text": "3 to 4 sets of 8 to 15 reps",
+          "where": "Sets, Reps, and Progression, Muscle gain"
+        },
+        {
+          "source": "fv-llc",
+          "text": "Add a small amount of weight after reaching the top of the range with controlled reps.",
+          "where": "Sets, Reps, and Progression, Muscle gain"
+        }
+      ]
+    }
   ],
-  "note": "Hand archetype balance: the hands steady the body, no hand zoom needed."
- },
- "setup": [
-  {
-   "step": "Lie face down, knees close to the bench edge.",
-   "claim": "c1"
-  },
-  {
-   "step": "Line your knees up with the machine's axis.",
-   "claim": "c1"
-  },
-  {
-   "step": "Roller on your lower calf, just above the heel.",
-   "claim": "c3"
-  },
-  {
-   "step": "Hold the handles and tighten your abs.",
-   "claim": "c5"
-  },
-  {
-   "step": "Press the front of your hips into the pad.",
-   "claim": "c5"
-  }
- ],
- "posture": [
-  {
-   "point": "Knees start nearly straight, not forced locked.",
-   "claim": "c6"
-  },
-  {
-   "point": "Hips stay on the pad the whole set.",
-   "claim": [
-    "c5",
-    "c8"
-   ]
-  },
-  {
-   "point": "Abs braced. Don't arch your lower back.",
-   "claim": "c9"
-  },
-  {
-   "point": "Curl toward your glutes. Stop before your hips lift.",
-   "claim": "c7"
-  },
-  {
-   "point": "Breathe out as you curl, in as you lower.",
-   "claim": "c12"
-  },
-  {
-   "point": "Lower under control. Don't let the stack touch.",
-   "claim": "c11"
-  }
- ],
- "handlingMistakes": [
-  {
-   "mistake": "Knees off the machine's axis.",
-   "fix": "Line your knees up with the axis before you start.",
-   "claim": [
-    "c2",
-    "c1"
-   ]
-  },
-  {
-   "mistake": "Arching your lower back.",
-   "fix": "Brace your abs. Use a lighter weight if your low back moves.",
-   "claim": [
-    "c9",
-    "c10"
-   ]
-  },
-  {
-   "mistake": "Hips lifting off the pad.",
-   "fix": "Keep your hips down. Use less weight or stop earlier.",
-   "claim": "c8"
-  }
- ],
- "feel": {
-  "primary": [
-   {
-    "muscleId": "hamstrings",
-    "claim": "c17"
-   }
+  "sources": [
+    {
+      "id": "fv-llc",
+      "url": "https://fitnessvolt.com/24561/lying-leg-curl/",
+      "title": "Lying Leg Curl: Muscles Worked, Form, and Variations (Fitness Volt)",
+      "kind": "coach",
+      "year": 2026,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "mo-llc",
+      "url": "https://www.motra.com/exercises/machineLegCurlLying",
+      "title": "Machine Leg / Hamstring Curl Prone (Motra)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "lifto-llc",
+      "url": "https://www.liftosaur.com/exercises/leverage-machine-lying-leg-curl",
+      "title": "Leverage Machine Lying Leg Curl - How To, Muscles Worked & Form Guide | Liftosaur",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "ace-llc",
+      "url": "https://www.acefitness.org/resources/everyone/exercise-library/153/lying-hamstrings-curl/",
+      "title": "Lying Hamstrings Curl | Exercise Library | ACE",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "nasm-llc",
+      "url": "https://www.nasm.org/resource-center/exercise-library/lying-leg-curl",
+      "title": "Lying Leg Curl (NASM exercise library)",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "sl-llc",
+      "url": "https://www.strengthlog.com/lying-leg-curl/",
+      "title": "How to Do Lying Leg Curl: Muscles Worked & Proper Form – StrengthLog",
+      "kind": "coach",
+      "year": null,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    },
+    {
+      "id": "hl-hc",
+      "url": "https://www.healthline.com/health/hamstring-curls",
+      "title": "5 Types of Hamstring Curls for Stronger Thighs (Healthline)",
+      "kind": "coach",
+      "year": 2019,
+      "pmid": null,
+      "access": "full",
+      "checked": "2026-10-22"
+    }
   ],
-  "secondary": [
-   {
-    "muscleId": "calves",
-    "claim": "c17"
-   }
-  ],
-  "watch": [],
-  "rows": [
-   {
-    "where": "Back of the thighs",
-    "means": "Effort here is expected: the hamstrings do most of the work.",
-    "fix": "",
-    "claim": [
-     "c16",
-     "c17"
+  "plate": {
+    "view": "side",
+    "viewWhy": "Census view is side. The knee-to-axis line (c1), the roller just above the heel (c3), the hips on the pad (c5, c8), the low back (c9) and the knee bend (c7) all read from the side, and so does the drawn fault, the lower back arching (c9, c10).",
+    "equipment": "Lying leg curl machine composed from a flat bench and a roller pad on a lever (census 'legCurlMachine', compose; 'flatBench', 'kneePad'): the lifter lies face down with the knees close to the bench edge and the machine's axis level with the knee joint (c1), the roller on the lower calf just above the heel (c3), handles at the front of the bench (c5).",
+    "start": "Lying face down, front of the hips pressed on the pad (c5), knees close to the bench edge and in line with the axis (c1), knees nearly straight but not forced locked (c6), roller just above the heels (c3), hands on the handles, abs braced (c5).",
+    "end": "Knees bent more than 90 degrees, lower legs about vertical or the roller close to the glutes (c7); hips still on the pad (c7, c8); low back not arched (c9).",
+    "checkpoints": [
+      {
+        "label": "Knee at axis",
+        "what": "Knees line up with the machine's axis.",
+        "claim": "c1"
+      },
+      {
+        "label": "Hips on pad",
+        "what": "Front of the hips stays pressed on the pad.",
+        "claim": [
+          "c5",
+          "c8"
+        ]
+      },
+      {
+        "label": "Low back still",
+        "what": "Abs braced. The low back doesn't arch.",
+        "claim": [
+          "c9",
+          "c5"
+        ]
+      }
     ],
-    "redFlag": null
-   },
-   {
-    "where": "Lower back",
-    "means": "Fault: arching the lower back can cause back pain and discomfort.",
-    "fix": "Brace your abs. Use a lighter weight if your low back moves.",
-    "claim": [
-     "c10",
-     "c9"
+    "mistake": {
+      "what": "Lower back arching as the legs curl.",
+      "why": "The top fault, knees out of line with the machine's axis (c2), has no sourced direction, so the plate draws the next fault by the same steps: a source written for hamstring curls in general says arching the lower back can cause back pain and discomfort (c10), and Motra lists hyperextending the lower back as a common mistake (c9).",
+      "claim": [
+        "c9",
+        "c10"
+      ],
+      "drawable": false,
+      "rankNote": "No source measures how often each fault happens. LR-31 step 2: the knees out of line with the machine's axis (c2, c1). Candidates: the roller-pad setting (c3, c4, including Fitness Volt's \"A pad pressing into the heel or Achilles tendon can be uncomfortable.\") and the load (Fitness Volt's \"Loading more than you can control\" and Liftosaur's \"Using too much weight, leading to poor form.\", c13) are setup and load choices, not candidates. The knee-to-axis line is a candidate on this machine (D-SUP-LB8-AXIS: the body stays where it is placed on the bench for the whole set, a candidate under D-SUP-LB7-FEET; on seated_leg_curl the seat and pad settings fix the knee): the lifter sets it by placing the body on the bench (Fitness Volt: \"Adjust your position so the machine’s rotational axis lines up with your knee joint.\", c1) and the knees stay there for the whole set, a body position under D-SUP-LB7-FEET; on seated_leg_curl the seat setting fixes it and it was set aside. Step 1 finds no frequency word for a fault: Fitness Volt's \"Lifting the hips changes the position of the hamstrings and often introduces lower-back movement that does not help the target action.\" (c8) says what a hip lift leads to, not how often lifters lift the hips or arch (a cause statement, as renegade_row's \"Often a symptom of going too heavy\"); its \"Most lifters can place curls after squats, hinges, or other demanding leg exercises.\" is programming; Motra's \"commonly scaled by performing unilaterally\" is programming; Healthline's \"Typically, the exercise is done on a leg curl machine.\" is the equipment; StrengthLog's \"it is easy to focus on the hamstrings\" uses 'easy to' and names no fault; Fitness Volt's \"Common Lying Leg Curl Mistakes\" and Liftosaur's, Motra's and NASM's \"Common Mistakes\" are headings. Read but not cited: Inspire US's lying-leg-curl alternatives page (\"many individuals avoid “leg day”\", \"one common mistake is not paying enough attention to the area through a lack of variety\" and \"Another common mistake in performing hamstring exercises is ignoring the eccentric part of the movement.\") is about hamstring training in general, and the last is a list sentence; BarBend's leg-curl page, written for the seated machine (\"it’s often all laid out for you\", machines; \"many lifters neglect direct hamstring training\", training). Step 2: three named faults are tied to harm. Knees out of line with the axis: Motra's \"Ensure knees align with the machine's axis of rotation to prevent joint stress.\" (c2; the cue that corrects it, D-SUP-PROTECT), on Motra's list (\"Incorrect knee alignment\") and Fitness Volt's (\"Misaligning the knee and machine pivot\"). Arching the lower back: Healthline's \"If you arch your lower back, your hamstrings won’t work properly. Your back will do the work instead, which can cause back pain and discomfort.\" (c10, WEAK: written for hamstring curls in general), on Motra's list (\"Hyperextending the lower back\"). Jerky movements: Healthline's \"Sudden, jerking movements can lead to injury\" (c15, WEAK), on NASM's list (\"Jerky or uncontrolled movements, which reduce time under tension\", c14). Tie order: all three are on a common-mistakes list and each is tied to harm by one source; only the knee line is sourced directly (Motra, this exercise), so it wins. Tied to harm but on no common-mistakes list, so it loses the first tie-break: forcing the knees into a locked position at the start, Fitness Volt's \"do not force them into a painful locked position\" (c6). Further scan (fetcher, 2026-10-22), set aside: Fitness Volt's \"Scalable resistance: Beginners can learn the action with a light stack\" names who, not a fault or how often; its \"Not an injury guarantee: Stronger hamstrings may be useful in many programs, but one exercise cannot prevent injury by itself.\" and \"Persistent pain or symptoms following an injury warrant guidance from a qualified clinician.\" name no fault; Motra's \"Acute hamstring strain\" and \"Lower back injury\" (When to Avoid) are conditions, and its spotting line \"use the machine's safety stops or lighter weight\" names no fault; Motra's common-mistakes list (\"Lifting hips off the pad\", \"Using momentum\", \"Hyperextending the lower back\", \"Incorrect knee alignment\") has no frequency or harm word on any item; NASM's \"providing a safe, stable training environment\", \"injury prevention\" and \"essential to long-term performance and injury prevention\" are about the exercise; Healthline's \"When you have strong hamstrings, you’re less prone to injury and pain.\", \"can help relieve quad tightness and back pain\", \"which can reduce your risk of injury\" and \"they might recommend safer alternatives\" are benefits or advice, not a fault; BarBend's seated page (read, not cited): \"Strength athletes and bodybuilders alike are often on the hunt\", \"Often performed on a glute-ham developer\", \"may not typically prioritize single-joint movement\" and \"beginners gravitate towards machines\" are about training or other exercises, and \"avoiding added stress to your lower back\" and \"put a lot of strain and compressed load onto your spine\" are about the leg curl against squats and deadlifts, not a fault. Also set aside: Fitness Volt's \"Sharp pain behind the knee, cramping that does not settle after changing the load, or back and hip discomfort caused by the machine setup are reasons to stop and reassess.\" (c16) names no fault of the lifter's position; Motra's \"Avoid hyperextending the knees at the bottom of the movement.\" (c6) carries no harm word; Liftosaur's \"you'll maximize the effectiveness of the Lying Leg Curl while minimizing the risk of injury\" closes all its steps and ties no one fault to harm; ACE's \"Improper technique will result in excessive recruitment (use) of the lumber extensors (low back muscles).\" is muscle use, not harm; Fitness Volt's \"Poor alignment can make the movement feel awkward\" (c2) carries no harm word. The hip lift (on Fitness Volt's, Liftosaur's and Motra's lists, c8) has no harm word in any read source. drawable false: the side view shows the knee and the axis, but no read source names which way the knee sits off the axis, so no sourced wrong position can be drawn (as on seated_leg_curl, W1 F06 / R-W1-7, knee-pivot zoom wrong null). plate.mistake is the next fault by the same steps: the arch and the jerky movements are both on a list with one WEAK harm source each, and no list names both, so step 3's count decides (D-SUP-LB6-CCP), the read sources that tell the lifter to avoid each: arching 5 (ACE \"Avoid arching your back during this movement.\", Liftosaur \"Do not hyperextend your lower back.\", Motra's list, Fitness Volt \"not from lifting your hips or arching your lower back\", Healthline \"To avoid arching your back, contract your abs during the exercise.\"; c9, c10); jerky movements 2 (NASM's list, Healthline's \"Sudden, jerking movements can lead to injury\"; c14, c15; Liftosaur's and Motra's momentum lines name momentum, not jerking; counted, it is 4 and the arch still leads). Lines that only give the right position are not counted (Healthline's \"keep your back neutral\"; Healthline counts once, by its avoid line). The jerky movements are seen only as speed, so they are never drawable anyway. The arch is a still sign the side view shows (the low back lifting into an arch on the bench), so plate.mistake is the arch, drawable from this view. Reading B, if the knee-to-axis line is read as setup (the seated_leg_curl reading): it leaves the candidates, step 2's tie between the arch and the jerky movements gives the arch by the same count (5 to 2), the arch is the top fault with drawable true, and plate.mistake is unchanged; only handlingMistakes[0] and drawable change. Reading A (the card): the knee line is the top fault, drawable false, as above. handlingMistakes keeps three: the knee line (top fault), the arch (plate), and the hip lift (first on Fitness Volt's list of named faults after the load item, and on Liftosaur's and Motra's lists). The locked-knee start stays in posture and the jerky movements in risks. If Motra's 'Using momentum' is read as the jerky fault, its list names both with momentum first, so the jerky movements would win the tie before the count and be handlingMistakes[1]; they are seen only as speed, so plate.mistake stays the arch. This card reads momentum and jerking as separate faults, as in its count."
+    },
+    "tells": [
+      {
+        "text": "Hips stay on the pad",
+        "claim": [
+          "c5",
+          "c8"
+        ]
+      },
+      {
+        "text": "Stack never touches between reps",
+        "claim": "c11"
+      }
     ],
-    "redFlag": "back"
-   },
-   {
-    "where": "Behind the knee",
-    "means": "Sharp pain here is a reason to stop.",
-    "fix": "Stop the set. Try a lighter load or a different pad position.",
-    "claim": "c16",
-    "redFlag": "knee"
-   }
-  ]
- },
- "risks": [
-  {
-   "risk": "Line your knees up with the machine's axis to prevent joint stress.",
-   "claim": "c2"
+    "tempo": {
+      "up": 1,
+      "down": 3,
+      "pause": 1,
+      "claim": [
+        "c18",
+        "c20"
+      ],
+      "text": "Down 3 and up 1 are Motra's 3-1-1 (c18, WEAK), whose Tempo tooltip gives the order eccentric (lowering), bottom pause, concentric (lifting), top pause; the page shows three numbers, read as the first three, with no top pause. Its 1 s bottom pause sits between the lowering and the next curl, so it is named here and not written in pause (LR-33). Fitness Volt's optional two-to-three-second lowering (c19) agrees with the 3 s. Pause 1 is the pause right after the curl: ACE's \"Pause momentarily\" and Liftosaur's squeeze \"for a moment\" give no seconds, so the 1 s is a drawing convention (c20, WEAK; LR-33). Motra's \"Squeeze the hamstrings hard at the top position.\" asks a squeeze with no pause or seconds, and its 3-1-1 has no top pause; the card follows ACE and Liftosaur for the brief pause."
+    },
+    "variantLine": null
   },
-  {
-   "risk": "Arching your lower back can cause back pain and discomfort.",
-   "claim": "c10"
+  "grip": {
+    "type": "Hands on the handles (c5).",
+    "width": "Handles fixed on the machine (c5).",
+    "thumb": "",
+    "handContact": "",
+    "wrist": "",
+    "claims": [
+      "c5"
+    ],
+    "note": "Hand archetype balance: the hands steady the body, no hand zoom needed."
   },
-  {
-   "risk": "Sudden, jerking movements can lead to injury.",
-   "claim": "c15"
-  }
- ],
- "redFlags": [
-  "knee",
-  "back"
- ],
- "zooms": [
-  {
-   "key": "knee-axis",
-   "kind": "posture",
-   "right": "Knee in line with the machine's axis.",
-   "wrong": null,
-   "claim": "c1"
+  "setup": [
+    {
+      "step": "Lie face down, knees close to the bench edge.",
+      "claim": "c1"
+    },
+    {
+      "step": "Line your knees up with the machine's axis.",
+      "claim": "c1"
+    },
+    {
+      "step": "Roller on your lower calf, just above the heel.",
+      "claim": "c3"
+    },
+    {
+      "step": "Hold the handles and tighten your abs.",
+      "claim": "c5"
+    },
+    {
+      "step": "Press the front of your hips into the pad.",
+      "claim": "c5"
+    }
+  ],
+  "posture": [
+    {
+      "point": "Knees start nearly straight, not forced locked.",
+      "claim": "c6"
+    },
+    {
+      "point": "Hips stay on the pad the whole set.",
+      "claim": [
+        "c5",
+        "c8"
+      ]
+    },
+    {
+      "point": "Abs braced. Don't arch your lower back.",
+      "claim": "c9"
+    },
+    {
+      "point": "Curl toward your glutes. Stop before your hips lift.",
+      "claim": "c7"
+    },
+    {
+      "point": "Breathe out as you curl, in as you lower.",
+      "claim": "c12"
+    },
+    {
+      "point": "Lower under control. Don't let the stack touch.",
+      "claim": "c11"
+    }
+  ],
+  "handlingMistakes": [
+    {
+      "mistake": "Knees off the machine's axis.",
+      "fix": "Line your knees up with the axis before you start.",
+      "claim": [
+        "c2",
+        "c1"
+      ]
+    },
+    {
+      "mistake": "Arching your lower back.",
+      "fix": "Brace your abs. Use a lighter weight if your low back moves.",
+      "claim": [
+        "c9",
+        "c10"
+      ]
+    },
+    {
+      "mistake": "Hips lifting off the pad.",
+      "fix": "Keep your hips down. Use less weight or stop earlier.",
+      "claim": "c8"
+    }
+  ],
+  "feel": {
+    "primary": [
+      {
+        "muscleId": "hamstrings",
+        "claim": "c17"
+      }
+    ],
+    "secondary": [
+      {
+        "muscleId": "calves",
+        "claim": "c17"
+      }
+    ],
+    "watch": [],
+    "rows": [
+      {
+        "where": "Back of the thighs",
+        "means": "Effort here is expected: the hamstrings do most of the work.",
+        "fix": "",
+        "claim": [
+          "c16",
+          "c17"
+        ],
+        "redFlag": null
+      },
+      {
+        "where": "Lower back",
+        "means": "Fault: arching the lower back can cause back pain and discomfort.",
+        "fix": "Brace your abs. Use a lighter weight if your low back moves.",
+        "claim": [
+          "c10",
+          "c9"
+        ],
+        "redFlag": "back"
+      },
+      {
+        "where": "Behind the knee",
+        "means": "Sharp pain here is a reason to stop.",
+        "fix": "Stop the set. Try a lighter load or a different pad position.",
+        "claim": "c16",
+        "redFlag": "knee"
+      }
+    ]
   },
-  {
-   "key": "roller",
-   "kind": "posture",
-   "right": "Roller on the lower calf, just above the heel.",
-   "wrong": "Roller pressing into the heel or Achilles tendon.",
-   "claim": [
-    "c3",
-    "c4"
-   ]
+  "risks": [
+    {
+      "risk": "Line your knees up with the machine's axis to prevent joint stress.",
+      "claim": "c2"
+    },
+    {
+      "risk": "Arching your lower back can cause back pain and discomfort.",
+      "claim": "c10"
+    },
+    {
+      "risk": "Sudden, jerking movements can lead to injury.",
+      "claim": "c15"
+    }
+  ],
+  "redFlags": [
+    "knee",
+    "back"
+  ],
+  "zooms": [
+    {
+      "key": "knee-axis",
+      "kind": "posture",
+      "right": "Knee in line with the machine's axis.",
+      "wrong": null,
+      "claim": "c1"
+    },
+    {
+      "key": "roller",
+      "kind": "posture",
+      "right": "Roller on the lower calf, just above the heel.",
+      "wrong": "Roller pressing into the heel or Achilles tendon.",
+      "claim": [
+        "c3",
+        "c4"
+      ]
+    },
+    {
+      "key": "hips-pad",
+      "kind": "posture",
+      "right": "Front of the hips pressed into the pad.",
+      "wrong": "Hips lifting off the pad.",
+      "claim": [
+        "c5",
+        "c8"
+      ]
+    }
+  ],
+  "libraryDiff": {
+    "add": [],
+    "remove": [],
+    "why": "hamstrings primary and calves secondary match exercises.json: the hamstrings do most of the work and the gastrocnemius assists (c17). Fitness Volt also lists the erector spinae and glutes as secondary, and Motra the glutes; Fitness Volt's own muscle table says the trunk and hip muscles \"Brace isometrically to keep the pelvis and torso still\", so they are not added."
   },
-  {
-   "key": "hips-pad",
-   "kind": "posture",
-   "right": "Front of the hips pressed into the pad.",
-   "wrong": "Hips lifting off the pad.",
-   "claim": [
-    "c5",
-    "c8"
-   ]
-  }
- ],
- "libraryDiff": {
-  "add": [],
-  "remove": [],
-  "why": "hamstrings primary and calves secondary match exercises.json: the hamstrings do most of the work and the gastrocnemius assists (c17). Fitness Volt also lists the erector spinae and glutes as secondary, and Motra the glutes; Fitness Volt's own muscle table says the trunk and hip muscles \"Brace isometrically to keep the pelvis and torso still\", so they are not added."
- },
- "anchorSource": "fv-llc",
- "loadProgression": {
-  "text": "At the top of your rep range with controlled reps, add a little weight.",
-  "claim": "c21"
- },
- "gaps": [
-  "No read source describes getting on or off the lying leg curl machine (shared get-in-out lists this as a gap; the card must supply it)."
- ],
- "notes": [
-  "Written on claude/libht-research-lb8 from head 6d253b9e. Own parent (content.md Appendix A: lying_leg_curl is the parent of standing_leg_curl).",
-  "Shared cards: get-in-out (shared/get-in-out.json) lists lying_leg_curl; its general steps (set pins fully in, pick a weight you can control, ease the weight back) are cited, not copied, and its gap for the lying machine stays in gaps here. prone-checkpoints (shared/prone-checkpoints.json) gives 'Hips on pad' for lying_leg_curl; this card sources the same checkpoint with its own quotes (c5, c8) from the same pages (Fitness Volt, Liftosaur) read again on 2026-10-22. The shared card's 'Neck in line' is not applied to this exercise (its gap), and no read source here gives a head or neck rule.",
-  "Anchor: Fitness Volt's lying-leg-curl page (updated 2026), read in full: setup, each phase, pad, hip and ankle position, a common-mistakes list, programming and when to stop. Motra, Liftosaur, ACE, NASM and StrengthLog are exercise-specific pages, read in full. Healthline's page is written for hamstring curls in general (standing, seated and prone band versions); its claims are WEAK and say so (c10, c15).",
-  "Roller height: Fitness Volt, Liftosaur and Motra put it just above the heel; ACE puts it on the lower third of the lower leg and avoids the heel area (c3). The card follows the three.",
-  "Start position: NASM's steps say to start with 'your knees bent at approximately 90 degrees', while Fitness Volt, Motra and ACE start from nearly straight legs (c6, c11). The plate draws nearly straight knees, not locked.",
-  "The knee feel row's stop rests on Fitness Volt's verbatim stop quote (c16; R-LB3-4, R-LB6-6). The lower-back row is place + the source's fault + fix (LR-6), with the back box carrying the stop.",
-  "Not reachable: Garage Gym Reviews (404), Muscle & Fitness (502), PureGym, Gymshark, Hevy, Steel Supplements lying-leg-curl URLs (404), Motra's other leg-curl slugs (404). Read but not cited: Inspire US lying-leg-curl alternatives page; BarBend's leg-curl page (written for the seated machine); both are set aside in the rankNote."
- ]
+  "anchorSource": "fv-llc",
+  "loadProgression": {
+    "text": "At the top of your rep range with controlled reps, add a little weight.",
+    "claim": "c21"
+  },
+  "gaps": [
+    "No read source describes getting on or off the lying leg curl machine (shared get-in-out lists this as a gap; the card must supply it)."
+  ],
+  "notes": [
+    "Written on claude/libht-research-lb8 from head 6d253b9e. Own parent (content.md Appendix A: lying_leg_curl is the parent of standing_leg_curl).",
+    "Shared cards: get-in-out (shared/get-in-out.json) lists lying_leg_curl; its general steps (set pins fully in, pick a weight you can control, ease the weight back) are cited, not copied, and its gap for the lying machine stays in gaps here. prone-checkpoints (shared/prone-checkpoints.json) gives 'Hips on pad' for lying_leg_curl; this card sources the same checkpoint with its own quotes (c5, c8) from the same pages (Fitness Volt, Liftosaur) read again on 2026-10-22. The shared card's 'Neck in line' is not applied to this exercise (its gap), and no read source here gives a head or neck rule.",
+    "Anchor: Fitness Volt's lying-leg-curl page (updated 2026), read in full: setup, each phase, pad, hip and ankle position, a common-mistakes list, programming and when to stop. Motra, Liftosaur, ACE, NASM and StrengthLog are exercise-specific pages, read in full. Healthline's page is written for hamstring curls in general (standing, seated and prone band versions); its claims are WEAK and say so (c10, c15).",
+    "Roller height: Fitness Volt, Liftosaur and Motra put it just above the heel; ACE puts it on the lower third of the lower leg and avoids the heel area (c3). The card follows the three.",
+    "Start position: NASM's steps say to start with 'your knees bent at approximately 90 degrees', while Fitness Volt, Motra and ACE start from nearly straight legs (c6, c11). The plate draws nearly straight knees, not locked.",
+    "The knee feel row's stop rests on Fitness Volt's verbatim stop quote (c16; R-LB3-4, R-LB6-6). The lower-back row is place + the source's fault + fix (LR-6), with the back box carrying the stop.",
+    "Not reachable: Garage Gym Reviews (404), Muscle & Fitness (502), PureGym, Gymshark, Hevy, Steel Supplements lying-leg-curl URLs (404), Motra's other leg-curl slugs (404). Read but not cited: Inspire US lying-leg-curl alternatives page; BarBend's leg-curl page (written for the seated machine); both are set aside in the rankNote."
+  ],
+  "plateFacts": [
+    {
+      "kind": "contact",
+      "landmark": "chest",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "navel",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "navel",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "wrist.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ankle.l",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    },
+    {
+      "kind": "contact",
+      "landmark": "ankle.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c3"
+    }
+  ],
+  "tempo": [
+    {
+      "phase": "Curl",
+      "s": 1,
+      "move": true
+    },
+    {
+      "phase": "Hold",
+      "s": 1
+    },
+    {
+      "phase": "Lower",
+      "s": 3,
+      "move": true
+    }
+  ],
+  "topFault": "axis"
 }

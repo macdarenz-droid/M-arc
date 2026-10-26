@@ -440,10 +440,10 @@ Fault→key (13 Q1(a)); first tell carries the drawn key:
   prevents the heels staying flat through the full depth."), c15 ("Lifting heels off the platform during the descent.
   This shifts weight forward and strains your knees."), c7, plate.tells. "Shifts weight forward" is a consequence with
   no drawn position or size; no second visible sign stated.
-- lying_leg_curl: fault c9/c10 (the arch). Claim ids read: c9 (all six quotes), c10, c8, c13. Hips lifting (c8;
+- **One-tell record** (lying_leg_curl): fault c9/c10 (the arch). Claim ids read: c9 (all six quotes), c10, c8, c13. Hips lifting (c8;
   c9 "not from lifting your hips or arching your lower back") is a separate listed fault (handlingMistakes[2]); c10's
   "back pain and discomfort" is a consequence; no second visible sign stated.
-- standing_leg_curl: fault c13. Claim ids read: c13 (both quotes), c3 ("keeping your upper body still"), c9 ("body
+- **One-tell record** (standing_leg_curl): fault c13. Claim ids read: c13 (both quotes), c3 ("keeping your upper body still"), c9 ("body
   swinging": the load/momentum fault). No second visible sign stated.
 - standing_calf_raise: fault c6/c5 (locked knees). Claim ids read: c6 ("Locking knees"), c5 (four quotes, the right
   position only). No second visible sign stated.
@@ -674,6 +674,8 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 | bodyweight_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace measures 5.8 px < 22.11 px (trim [10, 12]); the Mistake passes (13.6 px); the rigid toe is 4.56 cm inside the step at the top, so the c4 toe fact misses by 4.6 cm | as above |
 | glute_bridge | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch (hanging_leg_raise.mjs:69) measures 6.8 px < 11.39 px (tell on the trunk's front outline at the lumbar level, as hip_thrust); the hip Trace measures 12.0 px < 22.11 px (26.2 px of motion less the [6, 8] trim, leg_press.mjs:132); the c2 tuck has no solve within the ruled 25° ceiling (sacrum on the floor at 30.9°): drawn at 25°, the sacrum 0.65 cm up (inside PQ-H6's 1 cm) | LIB-ZOOM, as above |
 | resisted_hip_flexion | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lean/arch measures 5.1 px (`arch`; `lean` 2.7 px) < 11.39 px; the Trace passes (82.7 px) | LIB-ZOOM, as above |
+| lying_leg_curl | D-LIB8-shrug (D-LIB18-SIZE, S2) | drawn at 'LIB-18 resume' with pilot B's legCurlMachine (D-LIB18-LEGCURL; S7 option (a), #325): the card-true 12° lumbar arch (hanging_leg_raise.mjs:69), the hips kept on the pad (c8 is its own fault), moves the `arch` tell's anchor (backMid) 3.4 px < 11.39 px; the Trace passes (92.8 px, heel.r, [6, 8]) | LIB-ZOOM (#279, on main) extended to the arch, then 'LIB-18 resume' |
+| standing_leg_curl | D-LIB8-shrug (D-LIB18-SIZE, S2) | drawn at 'LIB-18 resume' as lying_leg_curl: the card-true 12° arch with the thighs on the pad moves the `arch` tell's anchor (backMid) 3.4 px < 11.39 px; the Trace passes (118.1 px, heel.r, [6, 8]) | LIB-ZOOM, as above |
 
 Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys stay.
 
@@ -745,9 +747,27 @@ Built now (blocker on main):
 | lying_leg_curl | pilot B's `eq/legCurlMachine.mjs` (D-LIB18-LEGCURL) | yes (#278; `9c3287cd`) |
 | standing_leg_curl | as lying_leg_curl | yes |
 
-S7 check on main's composer (read at `9c3287cd`, eq/legCurlMachine.mjs:34-45): `seat[1]`/`seat[2]` are dereferenced
-for the seat post and `back` is always drawn, so `seat: null` (both leg curls, as the header's "Later users" note says)
-throws a TypeError. The composer is never edited here; its fix, if one is wanted, is ruled for its owner card (S7).
+S7 check on main's composer (read at `9c3287cd`, eq/legCurlMachine.mjs:39-41): `seat[1]`/`seat[2]` are dereferenced
+for the seat post and the back pad is always drawn, so `seat: null` (both leg curls, as the header's "Later users" note
+says) throws a TypeError. The composer is never edited here; its fix, if one is wanted, is ruled for its owner card (S7).
+Posted with option (a) recommended (#325): each spec calls the composer unchanged and keeps only the items its machine
+has, by the documented order (:29-30): lying_leg_curl lever, ankle pad, pivot boss, pivot post, handle and floor beam;
+standing_leg_curl the same plus the thigh pad. The bench pad's top (lying) or the floor beam under the pivot (standing)
+is passed as `seat` for the dropped seat post; `back` and the lying `thigh` are null (never dereferenced). Each spec
+throws if the composer stops returning its 10 items.
+
+Drawn at the resume (both held under D-LIB8-shrug, S2, section 15; sizes in lb8/sizes.json, before H3):
+- lying_leg_curl: prone on the vendor flat bench (top 0.43 m), the trunk and thighs solved on their drawn outlines
+  (superman's method), the knee joint 4 cm past the bench end at the pivot, the roller on the calf at 0.85 of the shank
+  (pilot B's ANKLE_T), knees 15 → 100, the handles ahead of and below the shoulders on an upright from the floor beam.
+- standing_leg_curl: the left foot flat on the floor, both thighs plumb on the thigh pad with the trunk 10° forward
+  (Q10 5), the working knee 5 → 110 (Q10 1 sets the start's "extend fully" at 5°, not section 12's 0°), the roller on
+  the calf at 0.85, the handles on a strut from the thigh pad's roller.
+- Facts (Do 6 b; section 11, Q10 4 and 6): lying chest start (c1), navel start and end (c5), wrists start (c5), ankles
+  start (c3); standing thighTop both start (c2), wrists start (c2), ankle.r start (c2), heel.l and ball.l start (c3). The
+  ankle contacts follow leg_extension's verified roller convention (two planes through the drawn roller). Focused
+  CARD FIELDS verify next.
+- Measured: each Mistake's `arch` tell anchor (backMid) moves 3.4 px at the 12° arch (< 11.39 px). The Traces pass.
 
 Still held (section 15's reasons stand; nothing is redrawn or enlarged):
 
