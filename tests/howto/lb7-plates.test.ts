@@ -931,11 +931,25 @@ describe('LIB-17 bench_dip (H; tier B; the support class, the bench; the normal-
     const t = ((end[0]! - el[0]!) * (sh[0]! - el[0]!) + (end[1]! - el[1]!) * (sh[1]! - el[1]!)) / ((sh[0]! - el[0]!) ** 2 + (sh[1]! - el[1]!) ** 2);
     return { d: segD(end, el, sh), t };
   };
-  it('panel R4 fix: the "Below parallel" leader ends on the Mistake upper arm (within 1 px), in its shoulder half; the label box stays at (200, 128)', () => {
+  it('panel R4 fix: the "Below parallel" leader ends on the Mistake upper arm (within 1 px), in its shoulder half', () => {
     const { d, t } = parallelEnd(s());
     expect(d).toBeLessThanOrEqual(1);
     expect(t).toBeGreaterThanOrEqual(0.5);
-    expect(s().mistake.tells.find((x: any) => x.key === 'parallel').box).toEqual({ left: 200, top: 128 });
+  });
+  // D-LIB17-BDIPBOX (#332): only the "Below parallel" box moves, so its leader falls inside F3's range (envelope F3)
+  const parallelLen = (spec: any) => {
+    const svg = plate.renderPlate(spec, { id: 'x', mistake: true }).svg, i = listOf(spec, true).findIndex((x: any) => x.key === 'parallel');
+    return segs(leadersOf(svg)[i]!).reduce((a, [p, q]) => a + Math.hypot(q![0]! - p![0]!, q![1]! - p![1]!), 0);
+  };
+  it('D-LIB17-BDIPBOX: the "Below parallel" box sits at (176, 160) and its leader is inside F3\'s range', () => {
+    const [lo, hi] = pins().envelope.F3;
+    expect(s().mistake.tells.find((x: any) => x.key === 'parallel').box).toEqual({ left: 176, top: 160 });
+    expect(parallelLen(s())).toBeGreaterThanOrEqual(lo);
+    expect(parallelLen(s())).toBeLessThanOrEqual(hi);
+  });
+  it('D-LIB17-BDIPBOX mutation: the box back at the panel\'s (200, 128) puts the leader over F3\'s range (red)', () => {
+    const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'parallel' ? { ...x, box: { left: 200, top: 128 } } : x)) } };
+    expect(parallelLen(bad)).toBeGreaterThan(pins().envelope.F3[1]);
   });
   it('panel R4 mutation: the old leader end (the end shoulder + 26 px, in front of the chest) is red', () => {
     const bad = { ...s(), mistake: { ...s().mistake, tells: s().mistake.tells.map((x: any) => (x.key === 'parallel' ? { ...x, anchor: { at: 'shoulder.r', pose: 'end', off: [26, 0] } } : x)) } };

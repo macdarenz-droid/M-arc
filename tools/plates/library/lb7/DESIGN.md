@@ -497,3 +497,7 @@ for a ruling. No pose, size or fact changed.
 A15's "no leader crosses the solid figure" test carries the ruling as one named entry (ENTERS_ONCE: bench_dip's
 Mistake "parallel" leader may enter the solid figure once and run inside it to its anchor); every other leader is held
 to the old rule, and two mutations (the entry removed; the label moved so the leader enters twice) are red.
+
+**D-LIB17-BDIPBOX (#332).** F3 is not named: only the "Below parallel" box moves, (200, 128) → (176, 160), so the
+leader (70.8 px) falls inside F3's range; its end stays on the dashed fault upper arm. Pinned by a test, with the old
+box as a red mutation. QA: all 10 hard checks pass; flags F5 3.57 and F7, the ruled set.
