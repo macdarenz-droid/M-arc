@@ -144,6 +144,10 @@ const rollerChecks = names => names.flatMap(landmark => [{ landmark, plane: RP0.
 const START_PAD = (() => { const ap = anklePadOf(LS), r = 0.055, c = [0, ap.at[1] + ap.normal[1] * r, ap.at[2] + ap.normal[2] * r];
   return Array.from({ length: 17 }, (_, k) => [0, c[1] + r * Math.sin(k * Math.PI / 8), c[2] + r * Math.cos(k * Math.PI / 8)]); })();
 const TOP = { point: [0, BENCH_TOP, 0], normal: [0, 1, 0] };
+/** The drawn pelvis front's gap (m) to the bench top under the hips: the torso outline's lowest point within 3 cm of the
+ *  hip joint's z, in a pose (c5: the front of the hips on the pad). */
+export const pelvisFront = pose => { const hz = landmarksOf(pose, H)['hip.r'][2], t = shapesOf(pose).find(s => s.key === 'torso').poly;
+  return Math.min(...t.filter(v => Math.abs(v[0] - hz) <= 0.03).map(v => -v[1])) - BENCH_TOP; };
 export const info = () => ({ tilt: +TILT.toFixed(2), hip: +HIP.toFixed(2), benchEnd: +BENCH_END.toFixed(3), kneeZ: +LS['knee.r'][2].toFixed(3),
   navelY: +LS.navel[1].toFixed(4), chestY: [LS.chest[1], LM.chest[1]].map(v => +v.toFixed(3)), heelEnd: LE['heel.r'].map(v => +v.toFixed(3)) });
 
@@ -159,7 +163,10 @@ export default {
     (lm, ctx) => (ctx.pose === 'end' ? { type: 'line', cls: 'eq-line m-line', pts: START_PAD, z: 'front', part: 'startpad' } : null),
   ],
   checks: [
-    ...['start', 'end'].map(p => ({ landmark: 'navel', plane: TOP, pose: p, tol: 0.5 })),          // c5: the front of the hips on the pad
+    ...['start', 'end'].map(p => ({ landmark: 'navel', plane: TOP, pose: p, tol: 0.5 })),          // c1: the trunk's front on the pad
+    // c5 "keep the front of your hips in contact with the pad" (D-LIB18-LLCFACTS): the hips stay where the pelvis rests on
+    // the pad (its drawn front on the bench top, the drawn-item test PELVIS_FRONT), start and end
+    ...['start', 'end'].flatMap(pose => ['hip.l', 'hip.r'].map(landmark => ({ landmark, at: LS[landmark], pose, tol: 0.5 }))),
     { landmark: 'chest', plane: TOP, pose: 'start', tol: 0.5 },                                       // c1: lying on the stomach on the machine
     ...factChecks('start', start, ['wrist.l', 'wrist.r']),                                            // c5: hold the handles
     ...rollerChecks(['ankle.l', 'ankle.r']),                                                          // c3: the roller against the lower calf

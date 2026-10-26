@@ -2087,7 +2087,7 @@ describe('LIB-18 A11, A6, A8 (Do 6 b): the card fields, the ruled tempo map, the
     resisted_hip_flexion: [['ankle.r', 'start', 'c2'], ['wrist.r', 'start', 'c2']],
     // 'LIB-18 resume' (DESIGN.md section 11; #306 6355447835 Q10 4 and 6): c3 "against the lower calf" and c2 "the back of
     // your legs against the lower pad" are ankle contacts at the start, as leg_extension's roller (CARD FIELDS VERIFIED 8daf2ad).
-    lying_leg_curl: [['chest', 'start', 'c1'], ['navel', 'start', 'c5'], ['navel', 'end', 'c5'], ...LRs('wrist', 'start', 'c5'), ...LRs('ankle', 'start', 'c3')],
+    lying_leg_curl: [['chest', 'start', 'c1'], ['navel', 'start', 'c1'], ...LRs('hip', 'start', 'c5'), ...LRs('hip', 'end', 'c5'), ...LRs('wrist', 'start', 'c5'), ...LRs('ankle', 'start', 'c3')],   // D-LIB18-LLCFACTS
     standing_leg_curl: [...LRs('thighTop', 'start', 'c2'), ...LRs('wrist', 'start', 'c2'), ['ankle.r', 'start', 'c2'], ['heel.l', 'start', 'c3'], ['ball.l', 'start', 'c3']],
   };
   const TOP: Record<string, string> = { hack_squat: 'lift', pendulum_squat: 'drop', leg_extension: 'arch', lying_leg_curl: 'axis', standing_leg_curl: 'drop', seated_calf_raise: 'bounce', standing_calf_raise: 'bounce',
@@ -4633,10 +4633,19 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
       it('every card plateFact is met: each contact has a report check on its landmark and pose within 1 cm', () => {
         const card = cardOf(id);
         const ok = (sp: any) => { const r = rep(sp); return card.plateFacts.every((f: any) => { const h = r.checks.filter((c: any) => c.landmark === f.landmark && c.pose === f.pose && c.cm != null); return h.length > 0 && h.every((c: any) => c.cm <= 1); }); };
-        expect(card.plateFacts).toHaveLength(7);
+        expect(card.plateFacts).toHaveLength(id === 'lying_leg_curl' ? 10 : 7);
         expect(ok(s())).toBe(true);
         expect(ok({ ...s(), checks: s().checks.filter((c: any) => !c.landmark.startsWith('ankle')) })).toBe(false);   // mutation: the roller contact checks dropped -> red
       });
+      if (id === 'lying_leg_curl') {
+        it('D-LIB18-LLCFACTS: the drawn pelvis front under the hips sits 0.65 cm (±0.05) above the bench top at the start and the end, inside PQ-H6\'s 1 cm; mutation: the end hips 2 cm up is red', () => {
+          const g = ['start', 'end'].map(p => m().pelvisFront(s().poses[p]) * 100);
+          console.log(`LIB-18 lying_leg_curl pelvis front gap: start ${g[0]!.toFixed(2)} cm, end ${g[1]!.toFixed(2)} cm`);
+          expect(g.map(v => +v.toFixed(2))).toEqual([0.65, 0.65]);
+          const e = s().poses.end, up = { ...e, root: { ...e.root, at: [e.root.at[0], e.root.at[1] + 0.02, e.root.at[2]] } };
+          expect(m().pelvisFront(up) * 100).toBeGreaterThan(1);
+        });
+      }
       it('the knees are drawn at their sizes (engine angles ±1°): start START_KNEE, end END_KNEE', () => {
         const ok = (sp: any) => Math.abs(rep(sp).angles.start['knee.r'] - m().SIZES.START_KNEE) <= 1 && Math.abs(rep(sp).angles.end['knee.r'] - m().SIZES.END_KNEE) <= 1;
         expect(ok(s())).toBe(true);

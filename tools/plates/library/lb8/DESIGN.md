@@ -757,7 +757,7 @@ Drawn at the resume (both held under D-LIB8-shrug, S2, section 15; sizes in lb8/
 - standing_leg_curl: the left foot flat on the floor, both thighs plumb on the thigh pad with the trunk 10° forward
   (Q10 5), the working knee 5 → 110 (Q10 1 sets the start's "extend fully" at 5°, not section 12's 0°), the roller on
   the calf at 0.85, the handles on a strut from the thigh pad's roller.
-- Facts (Do 6 b; section 11, Q10 4 and 6): lying chest start (c1), navel start and end (c5), wrists start (c5), ankles
+- Facts (Do 6 b; section 11, Q10 4 and 6; D-LIB18-LLCFACTS): lying chest and navel start (c1), hips both sides start and end (c5; the drawn pelvis front 0.65 cm over the bench top under the hips), wrists start (c5), ankles
   start (c3); standing thighTop both start (c2), wrists start (c2), ankle.r start (c2), heel.l and ball.l start (c3). The
   ankle contacts follow leg_extension's verified roller convention (two planes through the drawn roller). Focused
   CARD FIELDS verify next.

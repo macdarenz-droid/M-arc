@@ -933,11 +933,32 @@
       "landmark": "navel",
       "pose": "start",
       "cardPose": "start",
+      "claim": "c1"
+    },
+    {
+      "kind": "contact",
+      "landmark": "hip.l",
+      "pose": "start",
+      "cardPose": "start",
       "claim": "c5"
     },
     {
       "kind": "contact",
-      "landmark": "navel",
+      "landmark": "hip.r",
+      "pose": "start",
+      "cardPose": "start",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "hip.l",
+      "pose": "end",
+      "cardPose": "end",
+      "claim": "c5"
+    },
+    {
+      "kind": "contact",
+      "landmark": "hip.r",
       "pose": "end",
       "cardPose": "end",
       "claim": "c5"
