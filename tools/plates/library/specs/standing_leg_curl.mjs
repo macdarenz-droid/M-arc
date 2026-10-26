@@ -173,6 +173,9 @@ export default {
     { key: 'still', text: 'Upper body<br>still', anchor: 'backUpper', box: { left: 60, top: 110 }, cue: 'Thighs on the pad, upper body still.' },
     { key: 'foot', text: 'Foot above<br>knee', anchor: { at: 'heel.r', pose: 'end' }, box: { left: 30, top: 184 }, cue: 'Curl until your foot is higher than your knee.' },
   ],
+  // LIB-ZOOM's inline zoom circle (D-LIBZOOM-EXTEND, #325 6405116791): the Mistake's fault drawn again at k 3.5, the smallest of
+  // 1.5-4 whose tell-anchor move reaches deviationMin 11.39 px at the zoom's own scale (12.0 px); zoom/inline.mjs places it.
+  zoom: { view: 'mistake', k: 3.5 },
   mistake: {
     pose: mistakePose,
     parts: ['torso', 'head'],

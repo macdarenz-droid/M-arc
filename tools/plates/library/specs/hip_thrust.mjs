@@ -218,6 +218,9 @@ export default {
     { key: 'shins', text: 'Shins<br>vertical', anchor: { along: ['knee.r', 'ankle.r'], t: 0.5 }, cue: 'At the top your shins are vertical and your torso is flat.' },
   ],
   tempo: [{ phase: 'Lift', s: 1, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Lower', s: 2, move: true }],
+  // LIB-ZOOM's inline zoom circle (D-LIBZOOM-EXTEND, #325 6405116791): the Mistake's fault drawn again at k 3, the smallest of
+  // 1.5-4 whose tell-anchor move reaches deviationMin 11.39 px at the zoom's own scale (12.5 px); zoom/inline.mjs places it.
+  zoom: { view: 'mistake', k: 3 },
   mistake: {
     pose: mistakePose,
     guides: [

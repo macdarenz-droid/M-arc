@@ -33,9 +33,10 @@ const NOT_HERE = ['seated_leg_curl'];
 // D-LIB18-LEGCURL: drawn only after pilot B is on main and 'LIB-18 resume'.
 const LEGCURLS = ['lying_leg_curl', 'standing_leg_curl'];
 // DESIGN.md section 15: every held id, with its ruling there.
-const HELD = ['pendulum_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'hip_thrust', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
+const HELD = ['pendulum_squat', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'glute_bridge', 'cable_kickback', 'resisted_hip_flexion'];
 // The ids on lb8/rows.json now: drawn and not held (A5).
-const ON_ROWS = ['hack_squat'];
+// 'LIB-18 resume': the leg curls, and leg_extension and hip_thrust with a LIB-ZOOM circle (D-LIBZOOM-EXTEND).
+const ON_ROWS = ['hack_squat', 'leg_extension', 'lying_leg_curl', 'standing_leg_curl', 'hip_thrust'];
 // Card facts the held plates' drawings miss (CARD FIELDS fix round, #306 6356303497): recorded with their holds, never hidden.
 const FACT_MISSES: Record<string, string[]> = { seated_calf_raise: ['check:start:toe.l:4.2cm', 'check:start:toe.r:4.2cm'], standing_calf_raise: ['check:start:toe.l:2.3cm', 'check:start:toe.r:2.3cm'], bodyweight_calf_raise: ['check:end:toe.l:4.6cm', 'check:end:toe.r:4.6cm'] };
 // Measured values inside PQ-H6's 1 cm that are past A2's 0.5 cm, or a back landmark under 1 cm into the floor (no
@@ -4660,12 +4661,15 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
         expect(ok(s())).toBe(true);
         expect(ok({ ...s(), mistake: { ...s().mistake, pose: { trunk: -12, root: { ...s().poses.end.root, tilt: s().poses.end.root.tilt - 5 } } } })).toBe(false);   // mutation: the pelvis tips too -> red
       });
-      it('HELD (D-LIB8-shrug, S2): the `arch` tell anchor (backMid) moves 3.4 px (±0.1) end -> Mistake, under deviationMin 11.39 px; drawn card-true, never enlarged', () => {
+      it('D-LIBZOOM-EXTEND: the `arch` tell anchor (backMid) moves 3.4 px (±0.1) at plate scale, drawn card-true and never enlarged; the Mistake zoom at k 3.5 brings it to >= 11.39 px', () => {
         const dev = (sp: any) => { const cam = camOf(sp), a = cam.P(lmOf(sp, 'end').backMid), b = cam.P(lmOf(sp, 'mistake').backMid); return Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!); };
         const d = dev(s());
-        console.log(`LIB-18 ${id} H3 tell deviation (backMid): ${d.toFixed(2)} px`);
+        console.log(`LIB-18 ${id} H3 tell deviation (backMid): ${d.toFixed(2)} px; at k 3.5 ${(d * 3.5).toFixed(2)} px`);
         expect(+d.toFixed(1)).toBe(3.4);
         expect(d).toBeLessThan(11.39);
+        expect(s().zoom).toEqual({ view: 'mistake', k: 3.5 });
+        expect(d * s().zoom.k).toBeGreaterThanOrEqual(11.39);
+        expect(d * 3).toBeLessThan(11.39);                                       // k 3.5 is the smallest of the 1.5-4 ladder that reaches the bar
         expect(m().SIZES.M_ARCH).toBe(12);
         expect(+dev({ ...s(), mistake: { ...s().mistake, pose: { trunk: -30 } } }).toFixed(1)).not.toBe(3.4);   // mutation: a 30° arch changes the pinned value -> red
       });
@@ -4735,3 +4739,39 @@ describe('LIB-18 glute_bridge (C; the bridge class; held: D-LIB8-shrug): A2, A18
     });
   }
 }
+
+// ---- D-LIBZOOM-EXTEND ('LIB-18 resume'): the rows released with a Mistake-view LIB-ZOOM circle ----
+describe('LIB-18 D-LIBZOOM-EXTEND: the Mistake zooms (zoom/inline.mjs as on main)', { timeout: T }, () => {
+  // k: the smallest of the ladder whose tell-anchor move reaches deviationMin at the zoom's scale (DESIGN.md section 18)
+  const ZOOMED: Record<string, number> = { leg_extension: 1.5, lying_leg_curl: 3.5, standing_leg_curl: 3.5, hip_thrust: 3 };
+  const LADDER = [1.5, 2, 2.5, 3, 3.5, 4], BAR = 11.39;
+  let Z: any;
+  beforeAll(async () => { Z = await import(/* @vite-ignore */ lib('zoom/inline.mjs')); }, T);
+  const zoomProblems = (id: string, spec: any) => {
+    const want = ZOOMED[id]!, out: string[] = [];
+    if (JSON.stringify(spec.zoom) !== JSON.stringify({ view: 'mistake', k: want })) out.push(`${id}: zoom ${JSON.stringify(spec.zoom)}`);
+    let z: any;
+    try { z = Z.zoomOf(spec); } catch (e: any) { return [...out, `${id}: ${e.message}`]; }
+    const d = z.fault.d, lower = LADDER.filter(k => k < spec.zoom.k);
+    if (!(d * spec.zoom.k >= BAR)) out.push(`${id}: ${(d * spec.zoom.k).toFixed(1)} px at k ${spec.zoom.k} < ${BAR}`);
+    if (lower.some(k => d * k >= BAR)) out.push(`${id}: a smaller k reaches the bar`);
+    if (/<(text|foreignObject|tspan)\b|°/.test(z.svg)) out.push(`${id}: text in the zoom`);
+    return out;
+  };
+  it('each released row carries its zoom at the ruled k, which reaches 11.39 px while no smaller ladder k does; no text in the circle', () => {
+    for (const id of Object.keys(ZOOMED)) expect(zoomProblems(id, S[id]), id).toEqual([]);
+  });
+  it('the plate is byte-identical outside the zoom: each view renders the same svg with and without the zoom field', () => {
+    for (const id of Object.keys(ZOOMED)) for (const mistake of [false, true])
+      expect(plate.renderPlate(S[id], { id: 'x', mistake }).svg, `${id} ${mistake}`).toBe(plate.renderPlate({ ...S[id], zoom: undefined }, { id: 'x', mistake }).svg);
+  });
+  it('mutations: hip_thrust at k 2 (under the bar), leg_extension at k 2 (a smaller k reaches it) and the lying zoom removed are red', () => {
+    expect(zoomProblems('hip_thrust', { ...S.hip_thrust, zoom: { view: 'mistake', k: 2 } })).toEqual([
+      'hip_thrust: zoom {"view":"mistake","k":2}', expect.stringMatching(/^hip_thrust: 8\.\d px at k 2 < 11\.39$/)]);
+    expect(zoomProblems('leg_extension', { ...S.leg_extension, zoom: { view: 'mistake', k: 2 } })).toEqual(['leg_extension: zoom {"view":"mistake","k":2}', 'leg_extension: a smaller k reaches the bar']);
+    expect(zoomProblems('lying_leg_curl', { ...S.lying_leg_curl, zoom: undefined }).length).toBeGreaterThan(0);
+  });
+  it('every held row is on no rows file and carries no zoom (the rows pending Q1, the zoom per view or the named list)', () => {
+    for (const id of HELD) expect(S[id].zoom, id).toBeUndefined();
+  });
+});

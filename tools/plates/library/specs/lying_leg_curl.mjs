@@ -176,6 +176,9 @@ export default {
     { key: 'hips', text: 'Hips on<br>pad', anchor: 'buttock', box: { left: 160, top: 186 }, cue: 'Keep the front of your hips pressed on the pad.' },
     { key: 'back', text: 'Low back<br>still', anchor: 'backMid', box: { left: 240, top: 194 }, cue: "Brace your abs so your low back doesn't arch." },
   ],
+  // LIB-ZOOM's inline zoom circle (D-LIBZOOM-EXTEND, #325 6405116791): the Mistake's fault drawn again at k 3.5, the smallest of
+  // 1.5-4 whose tell-anchor move reaches deviationMin 11.39 px at the zoom's own scale (12.0 px); zoom/inline.mjs places it.
+  zoom: { view: 'mistake', k: 3.5 },
   mistake: {
     pose: mistakePose,
     parts: ['torso', 'head'],
@@ -183,7 +186,7 @@ export default {
       { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
     ],
     tells: [
-      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 156, top: 186 }, cue: 'Your lower back arches as your legs curl.' },
+      { key: 'arch', text: 'Low back<br>arches', anchor: { at: 'backMid', pose: 'mistake' }, box: { left: 150, top: 180 }, cue: 'Your lower back arches as your legs curl.' },
     ],
   },
   alt: 'Lying leg curl, side view. Face down on the bench with the hips on the pad, the knees just past the bench edge and in line with the machine axis and the roller just above the heels, the lifter curls the heels toward the glutes.',

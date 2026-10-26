@@ -665,17 +665,13 @@ plate passes pilot A's report.mjs with ok:true (dark, paper and Mistake; DRAWING
 
 | id | ruling | why (measured at the ruled sizes) | route |
 |---|---|---|---|
-| hip_thrust | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lumbar arch (hanging_leg_raise.mjs:69) measures 4.1 px < 11.39 px; the other two readings of c11-c13 give 6.2 and 7.2 px (section 8); the Trace passes (46.6 px at [6, 8]); since the bearing fix (#306 6358957999: the bar pad rests in the visible crease, the ghosts pivot on the bench edge) the seat lands first and the c1 fact "Sit on the floor" is met (0 cm); measured now: Mistake 4.16 px | LIB-ZOOM (#279) on main and extended to the arch, then 'LIB-18 resume' |
-| cable_kickback | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch measures 4.3 px < 11.39 px (the braced upper body holds the back still); the Trace passes (54.1 px) | LIB-ZOOM, as above |
-| seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°); the c1 fact "toes ... on the foot support" (CARD FIELDS fix 2) is missed at the drawn stretch: the toe 4.2 cm off the platform's top | the owner's route for S4 (D-LIB18-CALF), brought by the supervisor; LIB-ZOOM for S2 |
-| pendulum_squat | D-LIB8-shrug (D-LIB18-SIZE, S2) | the heel lift at 12° about the ball (leg_press.mjs:95) moves the heel 4.39 cm: 5.7 px < 11.39 px at 128.43 px/m; the Trace passes (29.5 px, knee.r, [6, 8]); S3 does not stop (back on pad and upright torso hold in every pose) | LIB-ZOOM, as above |
-| leg_extension | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch (hanging_leg_raise.mjs:69) measures 7.6 px < 11.39 px (`off` on backUpper, 5.2 cm off the pad; `arch` on the sacrum 6.0 px); the Trace passes (75.9 px) | LIB-ZOOM, as above |
-| standing_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 5.1 px < 22.11 px (trim [10, 12], barbell_back_squat.mjs:117); the locked-knee Mistake 7.4 px < 11.39 px; the rigid toe is 4.85 cm inside the platform at the card's top; the c1 toe fact misses by 2.3 cm at the start | the owner's route for S4 (D-LIB18-CALF); LIB-ZOOM for S2 |
-| bodyweight_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace measures 5.8 px < 22.11 px (trim [10, 12]); the Mistake passes (13.6 px); the rigid toe is 4.56 cm inside the step at the top, so the c4 toe fact misses by 4.6 cm | as above |
-| glute_bridge | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch (hanging_leg_raise.mjs:69) measures 6.8 px < 11.39 px (tell on the trunk's front outline at the lumbar level, as hip_thrust); the hip Trace measures 12.0 px < 22.11 px (26.2 px of motion less the [6, 8] trim, leg_press.mjs:132); the c2 tuck has no solve within the ruled 25° ceiling (sacrum on the floor at 30.9°): drawn at 25°, the sacrum 0.65 cm up (inside PQ-H6's 1 cm) | LIB-ZOOM, as above |
-| resisted_hip_flexion | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lean/arch measures 5.1 px (`arch`; `lean` 2.7 px) < 11.39 px; the Trace passes (82.7 px) | LIB-ZOOM, as above |
-| lying_leg_curl | D-LIB8-shrug (D-LIB18-SIZE, S2) | drawn at 'LIB-18 resume' with pilot B's legCurlMachine (D-LIB18-LEGCURL; S7 option (a), #325): the card-true 12° lumbar arch (hanging_leg_raise.mjs:69), the hips kept on the pad (c8 is its own fault), moves the `arch` tell's anchor (backMid) 3.4 px < 11.39 px; the Trace passes (92.8 px, heel.r, [6, 8]) | LIB-ZOOM (#279, on main) extended to the arch, then 'LIB-18 resume' |
-| standing_leg_curl | D-LIB8-shrug (D-LIB18-SIZE, S2) | drawn at 'LIB-18 resume' as lying_leg_curl: the card-true 12° arch with the thighs on the pad moves the `arch` tell's anchor (backMid) 3.4 px < 11.39 px; the Trace passes (118.1 px, heel.r, [6, 8]) | LIB-ZOOM, as above |
+| cable_kickback | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch measures 4.3 px < 11.39 px (the braced upper body holds the back still); the Trace passes (54.1 px) | a Mistake LIB-ZOOM circle (D-LIBZOOM-EXTEND), pending Q1 on #325 (no zoom place as drawn) |
+| seated_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 11.8 px < 22.11 px; the rigid toe is 2.93 cm inside the platform at the card's top (enters past 8.9°); the c1 fact "toes ... on the foot support" (CARD FIELDS fix 2) is missed at the drawn stretch: the toe 4.2 cm off the platform's top | the named list (D-LIB18-CALF-S4, #325 6405116791): S4 arose, so the row is left out with the toe-through-platform reason and its renders, decided at the release candidate |
+| pendulum_squat | D-LIB8-shrug (D-LIB18-SIZE, S2) | the heel lift at 12° about the ball (leg_press.mjs:95) moves the heel 4.39 cm: 5.7 px < 11.39 px at 128.43 px/m; the Trace passes (29.5 px, knee.r, [6, 8]); S3 does not stop (back on pad and upright torso hold in every pose) | a Mistake LIB-ZOOM circle (D-LIBZOOM-EXTEND), pending Q1 on #325 (no zoom place as drawn) |
+| standing_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace at the card-true range measures 5.1 px < 22.11 px (trim [10, 12], barbell_back_squat.mjs:117); the locked-knee Mistake 7.4 px < 11.39 px; the rigid toe is 4.85 cm inside the platform at the card's top; the c1 toe fact misses by 2.3 cm at the start | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
+| bodyweight_calf_raise | D-LIB8-shrug (D-LIB18-CALF, S2) and D-LIB18-CALF S4 | the heel Trace measures 5.8 px < 22.11 px (trim [10, 12]); the Mistake passes (13.6 px); the rigid toe is 4.56 cm inside the step at the top, so the c4 toe fact misses by 4.6 cm | the named list (D-LIB18-CALF-S4), as seated_calf_raise |
+| glute_bridge | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° arch (hanging_leg_raise.mjs:69) measures 6.8 px < 11.39 px (tell on the trunk's front outline at the lumbar level, as hip_thrust); the hip Trace measures 12.0 px < 22.11 px (26.2 px of motion less the [6, 8] trim, leg_press.mjs:132); the c2 tuck has no solve within the ruled 25° ceiling (sacrum on the floor at 30.9°): drawn at 25°, the sacrum 0.65 cm up (inside PQ-H6's 1 cm) | LIB-ZOOM circles on both views (D-LIBZOOM-EXTEND), after D-LIB16-ZOOMVIEWS (LIB-16's resume) is on main |
+| resisted_hip_flexion | D-LIB8-shrug (D-LIB18-SIZE, S2) | the card-true 12° lean/arch measures 5.1 px (`arch`; `lean` 2.7 px) < 11.39 px; the Trace passes (82.7 px) | a Mistake LIB-ZOOM circle (D-LIBZOOM-EXTEND), pending Q1 on #325 (no zoom place as drawn) |
 
 Held rows are in no rows file; their specs, tests and (after Do 6 b) card keys stay.
 
@@ -777,3 +773,16 @@ Still held (section 15's reasons stand; nothing is redrawn or enlarged):
 | glute_bridge | as above, for the arch and for its hip Trace |
 | pendulum_squat | LIB-ZOOM's convention extended to the heel lift |
 | seated_calf_raise, standing_calf_raise, bodyweight_calf_raise | the owner's S4 route (D-LIB18-CALF; not ruled), then LIB-ZOOM's convention extended to the heel rise |
+
+Released at the resume with a Mistake-view LIB-ZOOM circle (D-LIBZOOM-EXTEND, #325 6405116791; zoom/inline.mjs and
+qa/zoom.mjs unchanged; k is the smallest of 1.5 / 2 / 2.5 / 3 / 3.5 / 4 whose tell-anchor move reaches 11.39 px at the
+zoom's scale; the plate is otherwise unchanged): lying_leg_curl k 3.5 (3.4 → 12.0 px; its new tell box moved to 150,180
+so the zoom's link clears it), standing_leg_curl k 3.5 (3.4 → 12.0 px), hip_thrust k 3 (4.16 → 12.5 px), leg_extension
+k 1.5 (7.8 → 11.7 px). They are on rows.json. Open on #325: Q1 (one label move each to free the zoom place on
+cable_kickback, resisted_hip_flexion and pendulum_squat, which find no place as drawn), F-ZOOM-INK (PQ-H1's ink test
+reads the zoom's clipped re-render outside the circle: lying_leg_curl, hip_thrust and leg_extension red on H1.ink only),
+glute_bridge (one zoom per view, D-LIB16-ZOOMVIEWS, LIB-16's resume).
+
+Named list (D-LIB18-CALF-S4): seated_calf_raise, standing_calf_raise and bodyweight_calf_raise. Renders:
+`MARC_CHROMIUM=/opt/pw-browsers/chromium node tools/plates/library/lb8/build.mjs --held paper|silent-black
+lib_<id>` (the held page, never evidence); reasons in section 15.
