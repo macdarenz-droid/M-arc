@@ -1080,24 +1080,33 @@ describe('LIB-17 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     expect(minGap(bad).min).toBeLessThan(6);
   });
   /** No leader runs across the solid figure: away from its first 8 px at the anchor, a leader stays outside the solid
-   *  end figure, on the normal and the Mistake plate. */
-  const crossProblems = (spec: any) => {
+   *  end figure, on the normal and the Mistake plate. ENTERS_ONCE: a leader ruled to end on a part drawn over the solid
+   *  figure may enter it once and stay in to its anchor (one inside run, touching the anchor's 8 px); nothing else. */
+  const ENTERS_ONCE: Record<string, string> = { 'bench_dip mistake parallel': 'PANEL mx1 R4, #332 6414222882: "It may enter the solid figure once"' };
+  const crossProblems = (spec: any, once: Record<string, string> = ENTERS_ONCE) => {
     const polys = shapesIn(spec, 'end').map((x: any) => x.poly), out: string[] = [];
     for (const mistake of [false, true]) {
       const list = listOf(spec, mistake);
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
-        let inside = 0;
+        const marks: boolean[] = [];   // from the anchor outwards, samples past its first 8 px: inside the figure?
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
-          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) inside++;
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) marks.push(outside(polys, q) < 0);
         }
-        if (inside) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the figure`);
+        const name = `${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}`, runs = marks.filter((m, j) => m && !marks[j - 1]).length;
+        const ok = marks.every(m => !m) || (name in once && runs === 1 && marks[0] === true);
+        if (!ok) out.push(`${name}: crosses the figure`);
       });
     }
     return out;
   };
   it('no leader crosses the solid figure\'s outline', () => {
     expect(specsDrawn().flatMap(id => crossProblems(S[id]))).toEqual([]);
+  });
+  it('ENTERS_ONCE mutations: bench_dip\'s ruled leader red without its entry; its label moved below the figure (the leader enters, leaves and enters) red', () => {
+    expect(crossProblems(S.bench_dip, {})).toEqual(['bench_dip mistake parallel: crosses the figure']);
+    const s = S.bench_dip, bad = { ...s, mistake: { ...s.mistake, tells: s.mistake.tells.map((x: any) => (x.key === 'parallel' ? { ...x, box: { left: 40, top: 300 } } : x)) } };
+    expect(crossProblems(bad)).toContain('bench_dip mistake parallel: crosses the figure');
   });
   it('mutation: weighted_dip\'s "Depth to parallel" box placed behind the figure, so its leader crosses the body, is red', () => {
     const s = S.weighted_dip, bad = { ...s, callouts: s.callouts.map((x: any) => (x.key === 'depth' ? { ...x, box: { left: 30, top: 200 } } : x)) };

@@ -494,3 +494,6 @@ at t 0.8 from the elbow (`{ along: ['mistake:elbow.r', 'mistake:shoulder.r'], t:
 dashed fault upper arm near the shoulder; the label box stays at (200, 128), as ruled. The leader is now 108.5 px, so
 F3 is raised on bench_dip (range up to 82.26): a consequence of keeping the label where the ruling puts it, posted
 for a ruling. No pose, size or fact changed.
+A15's "no leader crosses the solid figure" test carries the ruling as one named entry (ENTERS_ONCE: bench_dip's
+Mistake "parallel" leader may enter the solid figure once and run inside it to its anchor); every other leader is held
+to the old rule, and two mutations (the entry removed; the label moved so the leader enters twice) are red.
