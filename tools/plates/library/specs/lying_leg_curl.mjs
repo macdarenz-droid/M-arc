@@ -188,7 +188,7 @@ export default {
   zoom: { view: 'mistake', k: 3.5 },
   mistake: {
     pose: mistakePose,
-    parts: ['torso', 'head'],
+    parts: ['head'],   // the back is the one red dashed guide below (panel lb8q, #325 6410306586 item 1)
     guides: [
       { kind: 'dashed', smooth: true, pts: [{ at: 'backUpper', pose: 'mistake' }, { at: 'backMid', pose: 'mistake' }, { at: 'sacrum', pose: 'mistake' }, { at: 'buttock', pose: 'mistake' }] },
     ],
