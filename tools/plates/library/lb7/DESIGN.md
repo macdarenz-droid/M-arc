@@ -406,7 +406,7 @@ Still held:
 | id | ruling | why | route |
 |---|---|---|---|
 | cable_rear_delt_fly | D-LIB8-shrug (D-LIB17-SIZE, S2); no zoom place | the card-true shoulder roll (scapulae 3 cm up, 3 cm forward) measures 4.4 px < 11.39 px (section 12); a Mistake circle (r 52 + 6 px gap) fits nowhere on the plate at any k from 1.5 to 4: the two cable columns stand at the plate's edges and leave about 93 px between a column and the body | a ruling (section 17); never re-scaled, cropped or moved |
-| renegade_row | D-LIB8-shrug (D-LIB17-SIZE, S2); zoom needs a ruling | the card-true corner landing moves 4.9 px < 11.39 px (section 12); the tell anchor is a fixed point, so the zoom's deviation is 0 px at any k | the ruling asked on #332 (section 17) |
+| renegade_row | D-LIB8-shrug (D-LIB17-SIZE, S2); D-LIB17-ZOOMPAIR | H3.zoom deviation 0 px: rotation fault (F-ZOOM-2). The card-true corner landing moves 4.9 px < 11.39 px (section 12); the tell anchor is a fixed point, so the zoom's deviation is 0 px at any k | F-ZOOM-2 (an opt-in `zoom.pair`, batched with F-ZOOM-TRIM after #327; #332 6409786985), then a resume; rolls |
 
 Held rows are in no rows file; their specs, tests and card keys stay.
 
@@ -457,7 +457,7 @@ Held rows (section 14) and their blockers on main:
 Merge-only conditions (pins of push_up, one_arm_dumbbell_row, resistance_band_row; the F7 named yes) stay with the ship card.
 No row needs LB4, LB6, LB8 or LB9's resume.
 
-**renegade_row zoom (design note, D-LIBZOOM-EXTEND).** QA's zoom deviation is `faultOf`: the tell anchor's move from the
+**renegade_row zoom (design note, D-LIBZOOM-EXTEND; ruled A as fix card F-ZOOM-2, D-LIB17-ZOOMPAIR, #332 6409786985: not built here, renegade_row rolls).** QA's zoom deviation is `faultOf`: the tell anchor's move from the
 end pose to the Mistake, times k (zoom/inline.mjs:33, qa/zoom.mjs). renegade_row's sign is a still one: the near dumbbell
 turned 30° onto a corner, against the far dumbbell flat in the same side-view place (pose map, section 9). Its tell
 anchor is the fixed point M_HEX[0], so the move is 0 px at any k. The 4.9 px is the turned vertex against the flat
